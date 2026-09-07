@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { execFile as nodeExecFile } from "node:child_process";
-import { open, readFile, writeFile } from "node:fs/promises";
+import { open, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 import { performance } from "node:perf_hooks";
@@ -76,45 +76,41 @@ async function boundedFileBytes(filePath, maxBytes) {
   }
 }
 
-async function baselineForCase(project, terms) {
-  const files = new Set();
-  let bytes = 0;
-  for (const term of terms) {
-    let output;
-    try {
-      output = await execFile("rg", [
-        "--files-with-matches",
-        "--hidden",
-        "--glob",
-        "!.git",
-        "--glob",
-        "!.git/**",
-        "--glob",
-        "!.forgeloop",
-        "--glob",
-        "!.forgeloop/**",
-        "--",
-        term,
-        ".",
-      ], { cwd: project, maxBuffer: 2 * 1024 * 1024, windowsHide: true });
-    } catch (error) {
-      if (error?.code === 1) continue;
-      throw error;
-    }
-    for (const line of output.stdout.split("\n").map((entry) => entry.trim()).filter(Boolean)) {
-      const absolute = path.isAbsolute(line) ? line : path.resolve(project, line);
-      const relative = path.relative(project, absolute).replaceAll(path.sep, "/");
-      if (
-        relative.startsWith("../")
-        || relative === "."
-        || relative === ".git"
-        || relative.startsWith(".git/")
-        || relative === ".forgeloop"
-        || relative.startsWith(".forgeloop/")
-      ) continue;
-      files.add(relative);
+async function fileContainsTerm(filePath, term, maxBytes = 2 * 1024 * 1024) {
+  const handle = await open(filePath, "r");
+  try {
+    const buffer = Buffer.allocUnsafe(maxBytes);
+    const { bytesRead } = await handle.read(buffer, 0, maxBytes, 0);
+    const text = buffer.subarray(0, bytesRead).toString("utf8");
+    return new RegExp(term, "u").test(text);
+  } finally {
+    await handle.close();
+  }
+}
+
+async function matchingFiles(term, current, relativeDirectory = "") {
+  const matches = [];
+  const entries = (await readdir(current, { withFileTypes: true }))
+    .sort((left, right) => left.name.localeCompare(right.name));
+  for (const entry of entries) {
+    if (entry.name === ".git" || entry.name === ".forgeloop") continue;
+    const relative = relativeDirectory ? `${relativeDirectory}/${entry.name}` : entry.name;
+    const absolute = path.join(current, entry.name);
+    if (entry.isDirectory()) {
+      matches.push(...await matchingFiles(term, absolute, relative));
+    } else if (entry.isFile() && await fileContainsTerm(absolute, term)) {
+      matches.push(relative.replaceAll(path.sep, "/"));
     }
   }
+  return matches;
+}
+
+async function baselineForCase(project, terms) {
+  const files = new Set();
+  for (const term of terms) {
+    for (const relative of await matchingFiles(term, project)) files.add(relative);
+  }
+  let bytes = 0;
   for (const relative of [...files].sort()) {
     bytes += await boundedFileBytes(path.join(project, relative), 32 * 1024);
   }
