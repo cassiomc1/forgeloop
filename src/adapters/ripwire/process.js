@@ -70,10 +70,10 @@ function waitForChildClose(child) {
       // Windows can retain a child working directory for a short interval
       // after close; allow the OS to release it before the caller tears down
       // a temporary project tree.
-      setTimeout(finish, 50);
+      setTimeout(finish, 500);
     };
     child.once?.("close", finishAfterClose);
-    const fallbackTimer = setTimeout(finish, RIPWIRE_PROCESS_LIMITS.terminationGraceMs + 500);
+    const fallbackTimer = setTimeout(finish, RIPWIRE_PROCESS_LIMITS.terminationGraceMs + 1000);
   });
 }
 
