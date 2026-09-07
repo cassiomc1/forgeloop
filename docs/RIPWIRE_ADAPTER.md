@@ -119,7 +119,7 @@ character budget used by the core advisory normalizer.
 | Invalid JSON or unsupported response shape | `E_ADVISORY_CONTEXT_RESULT_INVALID` |
 | Timeout | `E_ADVISORY_CONTEXT_TIMEOUT` |
 | Stdout/stderr or candidate ceiling exceeded | `E_ADVISORY_CONTEXT_OUTPUT_LIMIT` |
-| Secret or control character in selected context | `E_PORTABLE_CONTEXT_INVALID` |
+| Unsafe content or control character in selected context | `E_PORTABLE_CONTEXT_INVALID` |
 
 These failures affect the explicit recall operation only. They do not change a
 ForgeLoop task phase and do not write `.forgeloop` state.
