@@ -58,17 +58,24 @@ function terminateChild(child) {
 }
 
 function waitForChildClose(child) {
-  if (child.exitCode !== null || child.signalCode !== null) return Promise.resolve();
   return new Promise((resolve) => {
     let settled = false;
+    let fallbackTimer;
     const finish = () => {
       if (settled) return;
       settled = true;
+      clearTimeout(fallbackTimer);
       resolve();
     };
-    child.once?.("close", finish);
-    child.once?.("exit", finish);
-    setTimeout(finish, RIPWIRE_PROCESS_LIMITS.terminationGraceMs + 500).unref?.();
+    const finishAfterClose = () => {
+      // Windows can retain a child working directory for a short interval
+      // after close; allow the OS to release it before the caller tears down
+      // a temporary project tree.
+      setTimeout(finish, 50).unref?.();
+    };
+    child.once?.("close", finishAfterClose);
+    fallbackTimer = setTimeout(finish, RIPWIRE_PROCESS_LIMITS.terminationGraceMs + 500);
+    fallbackTimer.unref?.();
   });
 }
 
