@@ -81,6 +81,7 @@ is historical evidence and is not part of the published core package.
 | **Fixing a broken or stale state** | [`docs/TROUBLESHOOTING.md`](./docs/TROUBLESHOOTING.md) |
 | **Looking for quick recipes** | [`docs/RECIPES.md`](./docs/RECIPES.md) |
 | **Configuring structural quality feedback** | [`docs/STRUCTURAL_QUALITY.md`](./docs/STRUCTURAL_QUALITY.md) |
+| **Configuring Ripwire advisory context** | [`docs/RIPWIRE_ADAPTER.md`](./docs/RIPWIRE_ADAPTER.md) |
 | **Understanding verification trust** | [`docs/REVISION_PROVIDERS.md`](./docs/REVISION_PROVIDERS.md#differential-verification-scope) |
 | **Understanding attestation trust** | [`docs/CODE_ATTESTATION.md`](./docs/CODE_ATTESTATION.md#trust-levels) |
 | **Maintaining generated diagrams** | [`docs/diagrams/README.md`](./docs/diagrams/README.md) |
@@ -141,7 +142,7 @@ scope, exact commands, and migration boundary are recorded in
 [`scripts/CI_VALIDATORS.md`](./scripts/CI_VALIDATORS.md).
 
 The package has no runtime dependencies. Development dependencies are limited
-to ESLint and c8 and are checked by
+to c8, ESLint, TypeScript, and YAML and are checked by
 `npm run dependency:policy`. GitHub Actions use `npm ci`, pinned action SHAs,
 CodeQL, dependency review, and generated-release notes; npm publication still
 uses trusted OIDC publishing and is not implied by local verification.

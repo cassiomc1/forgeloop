@@ -39,6 +39,15 @@ dark presentation so it remains legible in repository previews; the adjacent tex
 [`README.md`](../../README.md#architecture-flow) carries the same lifecycle
 semantics for text-only readers.
 
+Advisory context, including the optional Ripwire adapter, is intentionally not
+drawn as a lifecycle node or transition. It is a host-injected, explicit,
+non-evidence input that can guide inspection while remaining outside state,
+authority, verification, completion, and next-action decisions. Its boundary
+is documented in [`ADVISORY_CONTEXT.md`](../ADVISORY_CONTEXT.md) and
+[`RIPWIRE_ADAPTER.md`](../RIPWIRE_ADAPTER.md); keeping it out of these P0
+visuals prevents an optional side channel from being mistaken for protocol
+control flow.
+
 Archify is vendored at `vendor/archify/v2.15.0/archify` under its MIT license.
 The exact source commit and cryptographic vendor-tree hash are recorded in
 `vendor/archify/v2.15.0/PIN.json`; generated-file hashes are recorded in the

@@ -2,10 +2,39 @@
 
 ## Unreleased
 
-- Record the protocol-correctness, Integration API, and tooling changes that
-  shipped inside published package 1.10.1 under the 1.10.1 release notes
-  instead of an `Unreleased` section, so the package version identifies the
-  behavior it actually contains.
+Changes after 1.10.2 will be recorded here.
+
+## 1.10.2 - 2026-09-07
+
+### Added
+
+- Added an optional host-injected Ripwire advisory context adapter to the
+  public Integration API. Hosts provide an absolute executable path and exact
+  version, then explicitly request ranked source signatures through
+  `recallAdvisoryContext`.
+- Added bounded Ripwire process transport, JSON mapping, path containment, and
+  deterministic fixture coverage. The adapter validates the version immediately
+  before each query and fails closed on unsafe or malformed output.
+
+### Changed
+
+- Documented the Ripwire adapter's advisory-only trust boundary, process
+  contract, failure codes, verification commands, and repository-only retrieval
+  benchmark.
+- Audited the npm package boundary so the adapter, declarations, schemas,
+  documentation, and governed diagram artifacts are shipped while tests,
+  lifecycle state, benchmark results, and Ripwire benchmark fixtures remain
+  excluded.
+- Corrected dependency documentation to match the locked development toolchain:
+  c8, ESLint, TypeScript, and YAML. The runtime remains dependency-free.
+
+### Compatibility
+
+- Protocol v1, schema v1, Integration API v1, and Node.js `>=20` support are
+  unchanged.
+- Advisory context remains lazy, opt-in, non-persisted, non-evidence,
+  non-authoritative, and non-executable. Ripwire is not installed, discovered,
+  or contacted automatically by ForgeLoop.
 
 ## 1.10.1 - 2026-09-05
 

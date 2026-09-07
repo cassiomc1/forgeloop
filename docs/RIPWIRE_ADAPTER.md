@@ -152,6 +152,12 @@ software or discover a binary.
 
 ## Retrieval benchmark
 
+The retrieval benchmark is a repository-maintainer check. Its runner, cases,
+and fixture corpus are intentionally excluded from the core npm tarball; the
+published consumer surface is the adapter, its declarations, and this guide.
+Run it from a clean ForgeLoop checkout when a host-qualified Ripwire binary is
+available.
+
 `benchmarks/ripwire-context/cases.json` freezes six task-shaped queries,
 expected files, lexical baseline terms, and the ForgeLoop commit used for the
 comparison. Run the benchmark only against a clean checkout and an explicitly

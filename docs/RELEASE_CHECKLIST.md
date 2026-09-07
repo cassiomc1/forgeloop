@@ -11,8 +11,8 @@ preparation and verification checklist; it does not authorize publication.
 - [ ] `npm run release:identity` passes for the candidate version.
 - [ ] No release tag or registry version collision exists.
 - [ ] `npm pack --dry-run` contains the required scenario definitions but no
-      raw or aggregate benchmark results, tests, local state, or repository
-      metadata.
+      raw or aggregate benchmark results, Ripwire benchmark runner/cases/
+      fixtures, tests, local state, or repository metadata.
 - [ ] [`docs/PACKAGE_CONTENTS.md`](./PACKAGE_CONTENTS.md) matches the current
       `package.json` file list and documents intentional inclusions and
       exclusions.
