@@ -604,6 +604,20 @@
         "external-memory"
       ],
       "packaged": true
+    },
+    {
+      "path": "docs/RIPWIRE_ADAPTER.md",
+      "id": "ripwire-adapter",
+      "class": "reference",
+      "audience": [
+        "harness",
+        "integrator",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "ripwire-adapter"
+      ],
+      "packaged": true
     }
   ]
 }

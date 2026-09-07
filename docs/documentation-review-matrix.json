@@ -57,6 +57,7 @@
     { "path": "docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["docs/KNOWLEDGE_SOURCES.md", "ENG/accessibility-eng.md", "ENG/design-code-eng.md", "GUIDE_ROUTER.md", "LOOP_ENGINEERING.md", "LOOP_SYSTEM_DESIGN.md", "QUALITY_SCORECARD.md", "docs/EXECUTION_PROFILE_BENCHMARKS.md"] },
     { "path": "docs/KNOWLEDGE_SOURCES.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md", "DOCS_INDEX.md", "docs/DOCUMENTATION_GUIDE.md"] },
     { "path": "docs/STRUCTURAL_QUALITY.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/core/structural-quality/", "schemas/structural-quality.schema.json", "LOOP_ENGINEERING.md", "PROTOCOL_INTEGRATION.md"] },
-    { "path": "docs/ADVISORY_CONTEXT.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/core/advisory-context/", "src/core/portable-context.js", "src/integration.js", "LOOP_ENGINEERING.md"] }
+    { "path": "docs/ADVISORY_CONTEXT.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/core/advisory-context/", "src/core/portable-context.js", "src/integration.js", "LOOP_ENGINEERING.md"] },
+    { "path": "docs/RIPWIRE_ADAPTER.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/adapters/ripwire/", "src/integration.js", "tests/ripwire-advisory-provider.test.js", "docs/ADVISORY_CONTEXT.md"] }
   ]
 }

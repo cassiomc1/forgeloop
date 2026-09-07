@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "repository": "cassiomc1/forgeloop",
+  "commit": "30aa49e359c723bcb8c786a7af969016bd12b02c",
+  "description": "Frozen task-shaped advisory retrieval cases for a clean ForgeLoop checkout.",
+  "cases": [
+    {
+      "id": "stale-handoff",
+      "query": "stale handoff acceptance repository fingerprint",
+      "baselineTerms": ["stale", "handoff", "repositoryFingerprint"],
+      "expectedFiles": ["src/core/handoff.js", "src/core/handoff-acceptance.js", "src/core/error-codes.js"]
+    },
+    {
+      "id": "advisory-context-boundary",
+      "query": "advisory context provider normalization trust metadata",
+      "baselineTerms": ["advisory", "provider", "normalizeAdvisoryContextResult"],
+      "expectedFiles": ["src/core/advisory-context/provider.js", "src/core/advisory-context/service.js", "src/core/runtime-context.js"]
+    },
+    {
+      "id": "exactly-once-handoff-acceptance",
+      "query": "exactly once handoff acceptance idempotent consumer",
+      "baselineTerms": ["exactly", "idempotent", "consumer"],
+      "expectedFiles": ["src/core/handoff-acceptance.js", "src/core/handoff.js", "src/core/events.js"]
+    },
+    {
+      "id": "task-namespace-selection",
+      "query": "task selection namespace active task discovery",
+      "baselineTerms": ["task", "namespace", "active"],
+      "expectedFiles": ["src/core/task-discovery.js", "src/core/task-identity.js", "src/core/task-context.js"]
+    },
+    {
+      "id": "verification-execution-provenance",
+      "query": "verification execution provenance isolation capability",
+      "baselineTerms": ["verification", "provenance", "isolation"],
+      "expectedFiles": ["src/core/verification-execution.js", "src/core/verification-capability.js", "src/core/execution.js"]
+    },
+    {
+      "id": "structural-quality-source-freshness",
+      "query": "structural quality provider source freshness timeout output limit",
+      "baselineTerms": ["structural", "source", "freshness", "timeout"],
+      "expectedFiles": ["src/core/structural-quality/provider.js", "src/core/structural-quality/sentrux-mcp.js", "src/core/structural-quality/source-fingerprint.js"]
+    }
+  ]
+}

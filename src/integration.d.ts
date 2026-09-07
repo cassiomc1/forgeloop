@@ -108,6 +108,14 @@ export interface ForgeLoopAdvisoryContextProvider {
 
 export type ForgeLoopAdvisoryContextProviderFactory = () => ForgeLoopAdvisoryContextProvider | Promise<ForgeLoopAdvisoryContextProvider>;
 
+/** Options for the optional, host-injected Ripwire advisory adapter. */
+export interface ForgeLoopRipwireProviderOptions {
+  /** Absolute path selected by the host; ForgeLoop does not discover it. */
+  executablePath: string;
+  /** Exact version string qualified by the host and checked lazily at recall time. */
+  expectedVersion: string;
+}
+
 export interface ForgeLoopNormalizedAdvisoryContextResult {
   provider: {
     id: string;
@@ -269,6 +277,9 @@ export declare function recallAdvisoryContext(input: {
   timeoutMs?: number;
   runtimeContext?: ForgeLoopContext | Record<string, unknown>;
 }): Promise<ForgeLoopNormalizedAdvisoryContextResult>;
+export declare function createRipwireAdvisoryContextProvider(
+  options: ForgeLoopRipwireProviderOptions,
+): ForgeLoopAdvisoryContextProvider;
 export declare const ADVISORY_CONTEXT_LIMITS: Readonly<Record<string, number>>;
 export declare const ADVISORY_CONTEXT_TRUST: Readonly<Record<string, unknown>>;
 export declare function normalizeAdvisoryRecallOptions(input?: Partial<ForgeLoopAdvisoryRecallOptions>): ForgeLoopAdvisoryRecallOptions;
