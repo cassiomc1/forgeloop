@@ -60,7 +60,6 @@ function terminateChild(child) {
 function waitForChildClose(child) {
   return new Promise((resolve) => {
     let settled = false;
-    let fallbackTimer;
     const finish = () => {
       if (settled) return;
       settled = true;
@@ -74,7 +73,7 @@ function waitForChildClose(child) {
       setTimeout(finish, 50).unref?.();
     };
     child.once?.("close", finishAfterClose);
-    fallbackTimer = setTimeout(finish, RIPWIRE_PROCESS_LIMITS.terminationGraceMs + 500);
+    const fallbackTimer = setTimeout(finish, RIPWIRE_PROCESS_LIMITS.terminationGraceMs + 500);
     fallbackTimer.unref?.();
   });
 }
