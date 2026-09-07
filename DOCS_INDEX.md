@@ -32,6 +32,7 @@ integration and guide context. Use this map before editing documentation.
 | Platform adapters | [`docs/PLATFORM_ADAPTERS.md`](./docs/PLATFORM_ADAPTERS.md) | Generic CI boundary and platform mapping guidance |
 | Universal integration API | [`docs/UNIVERSAL_INTEGRATION.md`](./docs/UNIVERSAL_INTEGRATION.md) | Programmatic integration subpath, envelope semantics, and consumer map |
 | Advisory context providers | [`docs/ADVISORY_CONTEXT.md`](./docs/ADVISORY_CONTEXT.md) | Optional external host context, non-evidence trust boundary, allowlist normalization, and safety rules |
+| Ripwire advisory adapter | [`docs/RIPWIRE_ADAPTER.md`](./docs/RIPWIRE_ADAPTER.md) | Ripwire-specific registration, process contract, JSON mapping, limits, and verification |
 | Local-first MCP adapter | [`docs/MCP.md`](./docs/MCP.md) | stdio default, optional strict loopback HTTP; server modes/capabilities and canonical resources |
 | Adaptive execution-profile benchmarks | [`docs/EXECUTION_PROFILE_BENCHMARKS.md`](./docs/EXECUTION_PROFILE_BENCHMARKS.md) | Measured provider/host runs, robust statistics, paired/distribution deltas, tail status, outliers, and profile-aware host context |
 | Knowledge integration gap analysis | [`docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md`](./docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md) | Repository-only research audit of candidate coverage, proven gaps, canonical homes, context cost, and intentional skip/defer decisions |

@@ -20,6 +20,8 @@ import {
   E_PORTABLE_CONTEXT_INVALID,
 } from "../error-codes.js";
 
+const PROVIDER_CLEANUP_GRACE_MS = 1000;
+
 function serviceError(code, message, cause) {
   const error = new Error(message, cause !== undefined ? { cause } : undefined);
   error.name = "AdvisoryContextServiceError";
@@ -106,30 +108,50 @@ export async function recallAdvisoryContext({
   }
 
   let timer;
+  let cleanupTimer;
+  const timeoutError = serviceError(
+    E_ADVISORY_CONTEXT_TIMEOUT,
+    `Advisory recall from provider "${providerName}" timed out after ${effectiveOptions.timeoutMs}ms`,
+  );
+  const recallPromise = Promise.resolve(
+    provider.recall({
+      projectPath: path.resolve(target),
+      taskId,
+      query: normalizedQuery,
+      ...effectiveOptions,
+    }),
+  );
+  let timedOut = false;
+  const guardedRecallPromise = recallPromise.then(
+    (value) => timedOut ? new Promise(() => {}) : value,
+    (error) => {
+      if (timedOut) return new Promise(() => {});
+      throw error;
+    },
+  );
   const timeoutPromise = new Promise((_, reject) => {
     timer = setTimeout(() => {
-      reject(
-        serviceError(
-          E_ADVISORY_CONTEXT_TIMEOUT,
-          `Advisory recall from provider "${providerName}" timed out after ${effectiveOptions.timeoutMs}ms`,
-        ),
+      timedOut = true;
+      cleanupTimer = setTimeout(() => reject(timeoutError), PROVIDER_CLEANUP_GRACE_MS);
+      recallPromise.then(
+        () => {
+          clearTimeout(cleanupTimer);
+          reject(timeoutError);
+        },
+        () => {
+          clearTimeout(cleanupTimer);
+          reject(timeoutError);
+        },
       );
     }, effectiveOptions.timeoutMs);
   });
 
   let rawResult;
   try {
-    const recallPromise = Promise.resolve(
-      provider.recall({
-        projectPath: path.resolve(target),
-        taskId,
-        query: normalizedQuery,
-        ...effectiveOptions,
-      }),
-    );
-    rawResult = await Promise.race([recallPromise, timeoutPromise]);
+    rawResult = await Promise.race([guardedRecallPromise, timeoutPromise]);
   } finally {
     clearTimeout(timer);
+    clearTimeout(cleanupTimer);
   }
 
   return normalizeAdvisoryContextResult(rawResult, {

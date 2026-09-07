@@ -126,7 +126,7 @@ export async function acceptCanonicalHandoff(target, {
     assertPortableContextSafe(normalizedHarness, { label: "harness" });
   }
 
-  return withTaskTransaction(
+  const runAcceptance = () => withTaskTransaction(
     {
       target,
       taskId,
@@ -274,4 +274,13 @@ export async function acceptCanonicalHandoff(target, {
       };
     },
   );
+
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      return await runAcceptance();
+    } catch (error) {
+      if (error?.code !== "E_TASK_LOCKED" || attempt === 2) throw error;
+      await new Promise((resolve) => setTimeout(resolve, 25 * (attempt + 1)));
+    }
+  }
 }

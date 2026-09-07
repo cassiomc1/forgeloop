@@ -172,3 +172,27 @@ The public boundary reports these stable codes:
 
 The host owns whether and when to display or use advisory context. ForgeLoop
 owns only the bounded normalization and trust-role projection.
+
+## Ripwire adapter
+
+ForgeLoop includes an optional host-injected adapter for the [Ripwire](https://github.com/redhat-et/ripwire)
+ranked source map. The adapter is deliberately outside the default runtime:
+the host must provide an absolute executable path and an exact expected
+version, register the returned provider under the `ripwire` key, and invoke
+`recallAdvisoryContext` explicitly. Creating the provider performs no discovery,
+network access, process start, or lifecycle write.
+
+The adapter runs Ripwire's qualified `--for=<query> --signatures-only --json
+--no-cache --exclude=.forgeloop` form with `shell: false`, closes standard
+input, bounds stdout to 1 MiB and stderr to 64 KiB, and applies the caller's
+existing advisory deadline. It validates the version immediately before the
+query, rejects malformed JSON and unsafe paths, and never copies raw stderr
+into an error message. Ripwire's graph is approximate, so the first returned
+item is a bounded status card that preserves cap, omission, ambiguity,
+unindexed-content, and unknown-completeness warnings after core normalization.
+
+See [RIPWIRE_ADAPTER.md](RIPWIRE_ADAPTER.md) for registration, tests, the
+opt-in real-binary smoke test, and the retrieval benchmark. A real binary and
+its exact version must be qualified by the host; ForgeLoop does not install or
+discover Ripwire and does not treat an unavailable smoke test as proof of
+interoperability.

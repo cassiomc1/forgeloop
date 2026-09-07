@@ -1,0 +1,22 @@
+{
+  "at": "fixture+dirty",
+  "task": "stale handoff",
+  "route": "fixture-ranked",
+  "confidence": "medium",
+  "margin_pct": 12,
+  "bundle": "sigs",
+  "lens": "compose,lego,routes,docs",
+  "sigs_total": 1,
+  "sigs_shown": 1,
+  "sigs_capped": false,
+  "sigs": [
+    {
+      "l": 10,
+      "n": "rejectStaleHandoff",
+      "p": "src/handoff.js",
+      "r": 1,
+      "k": 0.91,
+      "sig": "function rejectStaleHandoff(snapshot, current) { return snapshot !== current; }"
+    }
+  ]
+}

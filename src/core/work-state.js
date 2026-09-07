@@ -307,12 +307,21 @@ export async function mutateWorkState(target, { expectedRevision, packageRoot = 
     throw error;
   }
   if (!(await getTaskTransaction(target))) {
-    return withTaskTransaction({
-      target,
-      taskId: taskId ?? "legacy-work-state",
-      lockTaskId: taskId ?? "legacy-work-state",
-      operation: "mutate-work-state",
-    }, async () => mutateWorkState(target, { expectedRevision, packageRoot, taskId, statePath }, updater));
+    try {
+      return await withTaskTransaction({
+        target,
+        taskId: taskId ?? "legacy-work-state",
+        lockTaskId: taskId ?? "legacy-work-state",
+        operation: "mutate-work-state",
+      }, async () => mutateWorkState(target, { expectedRevision, packageRoot, taskId, statePath }, updater));
+    } catch (error) {
+      if (error?.code === "E_TASK_LOCKED") {
+        const revisionError = new WorkStateError("Work state revision is being mutated concurrently");
+        revisionError.code = "E_STATE_REVISION_CONFLICT";
+        throw revisionError;
+      }
+      throw error;
+    }
   }
   const current = await readWorkState(target, { packageRoot, taskId, statePath });
   if (!current || (current.revision ?? 0) !== expectedRevision) {

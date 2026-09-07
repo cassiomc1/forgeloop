@@ -108,6 +108,7 @@ test("npm tarball contains the CLI, templates, published scenarios, and license 
     "docs/REVISION_PROVIDERS.md",
     "docs/SIGNING_PROVIDERS.md",
     "docs/PLATFORM_ADAPTERS.md",
+    "docs/RIPWIRE_ADAPTER.md",
     "docs/AGENT_PROTOCOL_SUMMARY.md",
     "docs/diagrams/README.md",
     "docs/diagrams/manifest.json",

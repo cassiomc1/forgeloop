@@ -81,6 +81,7 @@ export {
   VERIFICATION_ISOLATION_MODES,
 } from "./core/verification-execution.js";
 export { recallAdvisoryContext } from "./core/advisory-context/service.js";
+export { createRipwireAdvisoryContextProvider } from "./adapters/ripwire/provider.js";
 export {
   ADVISORY_CONTEXT_LIMITS,
   ADVISORY_CONTEXT_TRUST,
