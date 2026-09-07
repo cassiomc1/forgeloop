@@ -57,6 +57,21 @@ function terminateChild(child) {
   }, RIPWIRE_PROCESS_LIMITS.terminationGraceMs).unref?.();
 }
 
+function waitForChildClose(child) {
+  if (child.exitCode !== null || child.signalCode !== null) return Promise.resolve();
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      resolve();
+    };
+    child.once?.("close", finish);
+    child.once?.("exit", finish);
+    setTimeout(finish, RIPWIRE_PROCESS_LIMITS.terminationGraceMs + 500).unref?.();
+  });
+}
+
 function normalizeRunOptions({
   cwd,
   timeoutMs,
@@ -153,7 +168,9 @@ export function runRipwireCommand(executablePath, args, options = {}) {
       settled = true;
       cleanup();
       terminateChild(child);
-      reject(error);
+      child.stdout?.resume?.();
+      child.stderr?.resume?.();
+      waitForChildClose(child).then(() => reject(error));
     };
 
     const succeed = (code, signal) => {
