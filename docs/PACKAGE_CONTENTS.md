@@ -34,6 +34,8 @@ The published tarball includes the following consumer-facing groups:
   and generated results are repository evidence and are excluded.
 - **User documentation:** the getting-started, integration, CLI, artifact,
   troubleshooting, release, package-boundary, and related reference pages.
+  The advisory-context and Ripwire adapter guides ship with the corresponding
+  public integration surface.
   The typed diagram sources, generated HTML/SVG/receipt artifacts, and
   source-bound review records under `docs/diagrams/` are included together so
   the packaged documentation keeps its visual provenance.
@@ -51,6 +53,9 @@ The tarball intentionally omits repository-only material:
   exception);
 - raw or aggregate benchmark results, package archives, and release train
   contracts;
+- the Ripwire retrieval benchmark runner, cases, and fixture corpus; those
+  maintainer-only files require a clean repository checkout and are not part of
+  the consumer adapter surface;
 - historical release plans and retired MCP adapter sources; the MCP adapter
   is published as its own package;
 - the repository README hero PNG, which is a GitHub-only asset. The packaged

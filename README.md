@@ -142,7 +142,9 @@ ForgeLoop can consume host-provided advisory context through the Integration
 API. Providers are lazy and opt-in, and ForgeLoop does not persist their
 results. Provider output is never lifecycle state, evidence, authority,
 completion truth, or next-action authority, and it is never executable as a
-protocol command. See [`docs/ADVISORY_CONTEXT.md`](./docs/ADVISORY_CONTEXT.md).
+protocol command. The optional Ripwire adapter follows the same boundary; see
+[`docs/ADVISORY_CONTEXT.md`](./docs/ADVISORY_CONTEXT.md) and
+[`docs/RIPWIRE_ADAPTER.md`](./docs/RIPWIRE_ADAPTER.md).
 
 ### Optional task boundaries and differential verification
 
@@ -505,11 +507,10 @@ JSON is size/depth limited; manifests, schemas, receipts, and secret-like
 values are checked; and install-capable verification requires trusted host
 authority. See [`THREAT_MODEL.md`](./THREAT_MODEL.md) for the full inventory.
 
-Development tooling is intentionally separate from runtime dependencies. The
-repository policy allows only ESLint and c8 as development dependencies;
-`npm run dependency:policy` fails if runtime or unapproved dependencies
-appear. The documentation renderer is vendored and pinned under
-`vendor/archify/v2.15.0/` rather than installed as a package dependency.
+Development tooling stays separate from runtime dependencies. The policy allows
+c8, ESLint, TypeScript, and YAML as development dependencies;
+`npm run dependency:policy` rejects runtime or unapproved dependencies. Archify
+is vendored at `vendor/archify/v2.15.0/` rather than installed as a package.
 
 To report vulnerabilities or contribute changes, see
 [`SECURITY.md`](./SECURITY.md) and [`CONTRIBUTING.md`](./CONTRIBUTING.md).
@@ -555,8 +556,8 @@ through `init`, `update`, or `doctor`.
 ## Release and maintenance
 
 The release workflow uses [npm trusted publishing](https://docs.npmjs.com/trusted-publishers)
-through GitHub Actions OIDC. A `vX.Y.Z` tag must match `package.json`; after
-publishing, verify the immutable release identity:
+through GitHub Actions OIDC. A merged `vX.Y.Z` tag must match `package.json`;
+after publishing, verify the immutable release identity:
 
 ```bash
 RELEASE_COMMIT="$(git rev-list -n1 vX.Y.Z)"

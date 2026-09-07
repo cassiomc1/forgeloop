@@ -101,6 +101,7 @@ test("npm tarball contains the CLI, templates, published scenarios, and license 
     "PROTOCOL_INTEGRATION.md",
     "DOCS_INDEX.md",
     "docs/STRUCTURAL_QUALITY.md",
+    "docs/ADVISORY_CONTEXT.md",
     "docs/RELEASE_CHECKLIST.md",
     "docs/MCP.md",
     "docs/UNIVERSAL_INTEGRATION.md",
@@ -155,6 +156,8 @@ test("npm tarball contains the CLI, templates, published scenarios, and license 
     // Benchmark scenarios are public package inputs; historical measurements
     // remain repository evidence and must never inflate the core tarball.
     ...listing.filter((entry) => entry.startsWith("benchmarks/execution-profiles/results")),
+    ...listing.filter((entry) => entry.startsWith("benchmarks/ripwire-context/")),
+    ...listing.filter((entry) => entry === "scripts/benchmark-ripwire-context.mjs"),
     ...listing.filter((entry) => entry.startsWith(".forgeloop/") && entry !== ".forgeloop/forgeloop.gitignore"),
     // The MCP package ships separately, never inside the core tarball.
     ...listing.filter((entry) => entry.startsWith("integrations/mcp/")),
