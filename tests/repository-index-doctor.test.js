@@ -5,7 +5,7 @@ import path from "node:path";
 import { test } from "node:test";
 
 import { runDoctor } from "../src/commands/doctor.js";
-import { packageRoot } from "./helpers/repository-index.js";
+import { createFixtureRepository, nativeOptions, packageRoot, removeFixtureRepository, requireNativeBinary } from "./helpers/repository-index.js";
 
 test("doctor defers Repository Index readiness for a non-repository target", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-repository-index-doctor-"));
@@ -30,6 +30,32 @@ test("doctor treats the mandatory engine as unhealthy when a repository has no t
     assert.equal(result.ok, false);
   } finally {
     await rm(target, { recursive: true, force: true });
+    await rm(homeDirectory, { recursive: true, force: true });
+  }
+});
+
+test("doctor public JSON omits absolute Repository Index paths", async (t) => {
+  const binary = await requireNativeBinary(t);
+  if (!binary) return;
+  const target = await createFixtureRepository();
+  const homeDirectory = await mkdtemp(path.join(os.tmpdir(), "forgeloop-repository-index-doctor-privacy-home-"));
+  try {
+    const result = await runDoctor({
+      target,
+      packageRoot,
+      repositoryIndex: true,
+      repositoryIndexOptions: nativeOptions(binary, { homeDirectory }),
+    });
+    const serialized = JSON.stringify(result);
+    assert.equal(serialized.includes(target), false);
+    assert.equal(serialized.includes(homeDirectory), false);
+    assert.equal(serialized.includes(binary), false);
+    assert.doesNotMatch(serialized, /ForgeLoop Repository Index Test/u);
+    assert.doesNotMatch(serialized, /engines[\\/]tgrep/u);
+    assert.equal(result.repositoryIndex.indexPath, ".forgeloop/repository-index/tgrep");
+    assert.doesNotMatch(serialized, /repository-index-test/u);
+  } finally {
+    await removeFixtureRepository(target);
     await rm(homeDirectory, { recursive: true, force: true });
   }
 });
