@@ -6,7 +6,7 @@ import { LAYOUT_VERSION } from "../core/target-layout.js";
 import { inspectNativeAdapter, validateNativeAdapterTargets } from "../core/native-adapters.js";
 import { findIncompleteTransactions, recoverIncompleteTransactions } from "../core/transaction.js";
 import { isRepositoryCandidate } from "../repository-index/lifecycle.js";
-import { getRepositoryIndexStatus } from "../repository-index/status.js";
+import { getRepositoryIndexStatus, sanitizeRepositoryIndexStatus } from "../repository-index/status.js";
 import { searchRepository } from "../repository-index/search.js";
 import { getPersistentTransportStatus } from "../persistent-transport/client.js";
 
@@ -126,14 +126,15 @@ async function inspectRepositoryIndexForDoctor({ target, packageRoot, repository
   }
 
   const status = await getRepositoryIndexStatus(target, { packageRoot, ...repositoryIndexOptions, includeLocalPaths: true });
+  const publicStatus = sanitizeRepositoryIndexStatus(status);
   const result = {
-    status: status.health,
+    status: publicStatus.health,
     required: true,
-    engine: status.engine,
-    engineVersion: status.engineVersion,
-    indexPath: status.indexPath,
-    server: status.server,
-    diagnostics: status.diagnostics,
+    engine: publicStatus.engine,
+    engineVersion: publicStatus.engineVersion,
+    indexPath: ".forgeloop/repository-index/tgrep",
+    server: publicStatus.server,
+    diagnostics: publicStatus.diagnostics,
     persistentTransport,
   };
   if (status.health === "READY") {
@@ -168,12 +169,12 @@ async function inspectRepositoryIndexForDoctor({ target, packageRoot, repository
   }
   if (status.health !== "READY") {
     findings.push(finding(
-      status.diagnostics?.[0]?.code ?? "E_REPOSITORY_INDEX_SERVER_UNHEALTHY",
+      publicStatus.diagnostics?.[0]?.code ?? "E_REPOSITORY_INDEX_SERVER_UNHEALTHY",
       "error",
       ".forgeloop/repository-index",
-      `Repository Index is ${status.health}; ${status.diagnostics?.[0]?.message ?? "native index health is not ready"}`,
+      `Repository Index is ${status.health}; ${publicStatus.diagnostics?.[0]?.message ?? "native index health is not ready"}`,
       "Run forgeloop index-setup or forgeloop index-rebuild with an approved managed tgrep asset.",
-      status,
+      publicStatus,
     ));
   }
   return result;
