@@ -10,6 +10,8 @@ import {
 } from "../core/manifest.js";
 import { readTemplateEntries } from "../core/templates.js";
 import { isNativeAdapterPath, LAYOUT_VERSION, LEGACY_PROFILE_PATH } from "../core/target-layout.js";
+import { isRepositoryCandidate } from "../repository-index/lifecycle.js";
+import { setupRepositoryIndex } from "../repository-index/server.js";
 
 const LEGACY_CLEANUP_DIRECTORIES = Object.freeze(["ENG", "schemas"]);
 
@@ -295,7 +297,33 @@ async function migrateLegacyLayout({ target, dryRun, packageVersion, currentMani
   return { actions, conflicts, manifest: nextManifest };
 }
 
-export async function runUpdate({ target, dryRun, packageRoot, packageVersion, hooks = {} }) {
+async function attachRepositoryIndexResult(result, { target, dryRun, packageRoot, repositoryIndex, repositoryIndexOptions = {} }) {
+  if (!repositoryIndex) return result;
+  if (!(await isRepositoryCandidate(target))) {
+    return { ...result, repositoryIndex: { status: "DEFERRED", required: true, reason: "target is not a Git repository" } };
+  }
+  if (dryRun) {
+    return { ...result, repositoryIndex: { status: "WOULD_SETUP", required: true, reason: "dry-run does not provision or execute the native index engine" } };
+  }
+  if (result.conflicts?.length > 0) {
+    return { ...result, repositoryIndex: { status: "BLOCKED", required: true, reason: "update conflicts must be resolved before index maintenance" } };
+  }
+  const setup = await setupRepositoryIndex(target, { ...repositoryIndexOptions, packageRoot });
+  return {
+    ...result,
+    repositoryIndex: {
+      status: "READY",
+      required: true,
+      health: setup.status?.health ?? "READY",
+      engine: setup.status?.engine ?? "tgrep",
+      engineVersion: setup.status?.engineVersion ?? null,
+      indexPath: setup.status?.indexPath ?? null,
+      server: setup.status?.server ?? null,
+    },
+  };
+}
+
+export async function runUpdate({ target, dryRun, packageRoot, packageVersion, hooks = {}, repositoryIndex, repositoryIndexOptions }) {
   const currentManifest = await readManifest(target);
   if (!currentManifest) {
     throw new Error("No .forgeloop/manifest.json found; run forgeloop init first.");
@@ -303,7 +331,8 @@ export async function runUpdate({ target, dryRun, packageRoot, packageVersion, h
 
   const entries = await readTemplateEntries(packageRoot);
   if ((currentManifest.layoutVersion ?? 1) < LAYOUT_VERSION) {
-    return migrateLegacyLayout({ target, dryRun, packageVersion, currentManifest, entries, hooks });
+    const result = await migrateLegacyLayout({ target, dryRun, packageVersion, currentManifest, entries, hooks });
+    return attachRepositoryIndexResult(result, { target, dryRun, packageRoot, repositoryIndex, repositoryIndexOptions });
   }
 
   const nextManifest = structuredClone(currentManifest);
@@ -405,7 +434,7 @@ export async function runUpdate({ target, dryRun, packageRoot, packageVersion, h
   }
 
   if (conflicts.length > 0) {
-    return { actions, conflicts, manifest: currentManifest };
+    return attachRepositoryIndexResult({ actions, conflicts, manifest: currentManifest }, { target, dryRun, packageRoot, repositoryIndex, repositoryIndexOptions });
   }
 
   for (const relativePath of Object.keys(nextManifest.files)) {
@@ -423,5 +452,5 @@ export async function runUpdate({ target, dryRun, packageRoot, packageVersion, h
   nextManifest.packageVersion = packageVersion;
   await writeManifest(target, nextManifest, { dryRun });
   await cleanupLegacyFiles({ target, dryRun, cleanupFiles, cleanupDirectories, hooks, actions, conflicts });
-  return { actions, conflicts, manifest: nextManifest };
+  return attachRepositoryIndexResult({ actions, conflicts, manifest: nextManifest }, { target, dryRun, packageRoot, repositoryIndex, repositoryIndexOptions });
 }

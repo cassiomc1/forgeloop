@@ -29,6 +29,7 @@ Concise, copy-paste friendly recipes for common ForgeLoop tasks.
 21. [Generate and Verify Code Attestation](#recipe-21--generate-and-verify-code-attestation)
 22. [Verify a Revision Range](#recipe-22--verify-a-revision-range)
 23. [Run Structural Quality Feedback](#recipe-23--run-structural-quality-feedback)
+24. [Use ForgeLoop Repository Search](#recipe-24--use-forgeloop-repository-search)
 
 ---
 
@@ -661,6 +662,35 @@ unavailable or incomparable evidence remains visible as `NOT_OBSERVED` and
 does not block completion by itself. See
 [`STRUCTURAL_QUALITY.md`](./STRUCTURAL_QUALITY.md) for policy, provider,
 Sentrux, bundle, and error-code details.
+
+---
+
+### Recipe 24 — Use ForgeLoop Repository Search
+
+Repository-wide search uses the mandatory managed Repository Index. The
+service is shared by the CLI, Integration API, and MCP adapter; it never
+silently falls back to an unpinned executable or another search tool.
+
+```bash
+forgeloop init
+forgeloop index-status --json
+forgeloop search "ExecutionReceipt" --glob "*.js" --context 2 --json
+```
+
+Use the explicit `FORGELOOP_TGREP_BINARY=/absolute/path/to/tgrep` override
+only for development or tests. For an air-gapped setup, preload the exact
+release archive:
+
+```bash
+forgeloop index-setup --asset /absolute/path/tgrep-v1.0.3-asset.tar.gz --json
+```
+
+If status is not `READY`, inspect its structured diagnostic and use the
+narrowest repair (`index-start`, `index-setup`, or `index-rebuild`). Search
+output is discovery data, never verification evidence, task state, or a
+reason to narrow a verification scope. See
+[`REPOSITORY_INDEX.md`](./REPOSITORY_INDEX.md) for the provider-neutral result
+contract, resource policy, offline behavior, and security boundary.
 
 ## Run ForgeLoop through MCP (safe mode)
 

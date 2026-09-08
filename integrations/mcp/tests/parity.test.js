@@ -77,6 +77,9 @@ test("capabilities advertised by core match the MCP-visible catalog surface", as
       if (tools.includes(expectedTool)) continue;
     }
     assert.ok(tools.length > 0);
+    assert.ok(tools.includes("forgeloop_search"));
+    const resources = (await client.listResources()).resources;
+    assert.ok(resources.some((resource) => resource.uri === "forgeloop://repository/index-status"));
     await client.close();
   } finally {
     await removeTempTree(target);

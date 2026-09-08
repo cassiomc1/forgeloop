@@ -46,3 +46,21 @@ provider tier remain `null` and do not become fabricated evidence.
 
 Sentrux installation, upgrades, and analytics preferences remain user-managed;
 ForgeLoop does not install the provider or modify its global analytics setting.
+
+## Repository Index security boundary
+
+The Repository Index provisions only the pinned tgrep release for the current
+platform. ForgeLoop validates the HTTPS asset identity, SHA-256 digest,
+archive paths, extracted executable, and reported version before atomic
+installation. Native arguments are passed directly with `shell: false`; paths,
+patterns, filters, and context values are bounded, so shell syntax is not
+evaluated.
+
+Index files are opaque derived cache under
+`.forgeloop/repository-index/tgrep/`; they are not evidence, completion truth,
+or authority. Server stop/start validates the repository root, index path,
+serve metadata, binary, process liveness, and command line before acting, and
+never terminates by process name or PID alone. Search content remains local
+and is not automatically logged or sent to telemetry. Corrupt or stale cache
+is handled through status and explicit rebuild rather than by trusting native
+index internals or silently falling back to another search executable.

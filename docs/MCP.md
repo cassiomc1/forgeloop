@@ -56,6 +56,14 @@ Capability flags (process-scoped, immutable after launch):
 - `forgeloop://task/{taskId}/context` — bounded profile-aware host context
 - `forgeloop://task/{taskId}/evaluations`
 - `forgeloop://project/capability-policy`
+- `forgeloop://repository/index-status` — mandatory Repository Index health,
+  pinned engine, policy, and owned-server projection
+
+The `forgeloop_search` tool is the read-only MCP projection of the canonical
+provider-neutral Repository Search command. It accepts bounded search inputs
+and returns project-relative normalized matches; it does not accept raw tgrep
+arguments, arbitrary binaries, or a no-index bypass. Setup/start/stop/rebuild
+remain maintenance commands and are launch-capability gated.
 
 The durable-action resources are read-only projections. The first release does
 not expose `run-action` or host-attestation minting over MCP. An action that is

@@ -10,5 +10,6 @@ yarn-error.log*
 __pycache__/
 .forgeloop/*
 !.forgeloop/forgeloop.gitignore
+.forgeloop/repository-index/
 docs/superpowers/
 *.py[cod]

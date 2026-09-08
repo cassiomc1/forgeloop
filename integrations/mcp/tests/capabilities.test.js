@@ -40,6 +40,9 @@ test("forgeloop_capabilities exists and reports versions, features, policy, and 
     const data = result.structuredContent;
     assert.equal(data.integrationApiVersion, 1);
     assert.equal(data.features.taskClaimRecovery.validatedClaimProjection, true);
+    assert.equal(data.features.repositoryIndex.required, true);
+    assert.equal(data.features.repositoryIndex.engineVersion, "1.0.3");
+    assert.equal(data.features.repositoryIndex.noPathFallback, true);
     assert.equal(data.server.package, "@cassiomc1/forgeloop-mcp");
     assert.equal(data.server.mode, "full");
     // Policy is reported safely: capability booleans only.
@@ -67,6 +70,7 @@ test("forgeloop_capabilities exists and reports versions, features, policy, and 
         "task/context",
         "task/evaluations",
         "project/capability-policy",
+        "repository/index-status",
       ],
     );
   } finally {

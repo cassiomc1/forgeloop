@@ -24,6 +24,9 @@ The published tarball includes the following consumer-facing groups:
   repository for historical context and are explicitly excluded:
   `src/core/cli-metadata.js`, `src/core/decision-classification.js`,
   `src/core/gates.js`, and `src/core/workflow-compatibility.js`.
+  This includes the provider-neutral Repository Index runtime and its pinned
+  `src/repository-index/tgrep-manifest.json`; native engine binaries are
+  provisioned outside the npm tarball.
 - **Initialization material:** the root protocol and integration documents,
   legal notices, the target profile template, and every path listed by
   `src/core/templates.js`. These files are read by `init` and `update`, so
@@ -32,6 +35,8 @@ The published tarball includes the following consumer-facing groups:
 - **Benchmark inputs:** execution-profile scenario definitions and their
   README. They make new measurements reproducible; historical measurements
   and generated results are repository evidence and are excluded.
+  Repository Index query inputs and benchmark instructions are also shipped;
+  generated local repositories and measurements are not.
 - **User documentation:** the getting-started, integration, CLI, artifact,
   troubleshooting, release, package-boundary, and related reference pages.
   The advisory-context and Ripwire adapter guides ship with the corresponding

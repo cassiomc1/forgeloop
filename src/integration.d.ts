@@ -19,6 +19,94 @@ export interface ForgeLoopCommandInput {
   commandArgv?: string[];
 }
 
+export interface RepositorySearchRequest {
+  pattern: string;
+  globs?: string[];
+  types?: string[];
+  fixedStrings?: boolean;
+  ignoreCase?: boolean;
+  smartCase?: boolean;
+  wordRegexp?: boolean;
+  context?: number | null;
+  beforeContext?: number | null;
+  afterContext?: number | null;
+  maxCount?: number | null;
+  filesWithMatches?: boolean;
+  stats?: boolean;
+  /** Explicit host-selected binary override; ForgeLoop never discovers PATH executables. */
+  binaryPath?: string;
+  /** Preloaded archive used by the managed-engine provisioning path. */
+  assetPath?: string;
+}
+
+export interface RepositorySearchSubmatch {
+  start: number;
+  end: number;
+  match: string | null;
+}
+
+export interface RepositorySearchMatch {
+  path: string;
+  line: number;
+  column: number | null;
+  offset: number | null;
+  text: string;
+  submatches: readonly RepositorySearchSubmatch[];
+}
+
+export interface RepositorySearchResult {
+  schemaVersion: 1;
+  query: RepositorySearchRequest & { globs: readonly string[]; types: readonly string[] };
+  repositoryIndex: { engine: string; engineVersion: string | null; indexed: boolean; server: boolean };
+  repositoryRoot: string;
+  matches: readonly RepositorySearchMatch[];
+  contexts: readonly RepositorySearchMatch[];
+  files: readonly string[];
+  stats: Readonly<Record<string, number>>;
+  metrics: {
+    queryDurationMs: number;
+    nativeDurationMs: number;
+    matchCount: number;
+    matchedFileCount: number;
+    engine: string;
+    engineVersion: string | null;
+    serverUsed: boolean;
+    exitCode: number;
+    ignoredNativeEvents: number;
+    bytesSearched?: number;
+    matchedLines?: number;
+  };
+}
+
+export interface RepositoryIndexStatus {
+  schemaVersion: 1;
+  required: true;
+  engine: "tgrep";
+  engineVersion: string | null;
+  managedBinary: boolean;
+  overridden: boolean;
+  binaryPath: string | null;
+  repositoryRoot: string;
+  indexPath: string;
+  statePath: string;
+  index: {
+    present: boolean;
+    complete: boolean;
+    files: number | null;
+    trigrams: number | null;
+    createdAt: number | null;
+    updatedAt: number | null;
+    rootPath: string | null;
+  };
+  policy: { maxFileSize: string | number; maxCpuPercent: number; watcherQueueCap: number; autoSaveMutations: number };
+  server: { running: boolean; owned: boolean; pid: number | null; port: number | null; watcher: string; indexing: string; files: number | null };
+  health: "READY" | "INDEXING" | "NOT_INITIALIZED" | "ENGINE_MISSING" | "ENGINE_INVALID" | "SERVER_DOWN" | "SERVER_UNHEALTHY" | "ERROR";
+  diagnostics: readonly { code: string; message: string }[];
+}
+
+export declare function repositorySearch(input: RepositorySearchRequest & { projectPath?: string }): Promise<RepositorySearchResult>;
+export declare function repositoryIndexStatus(input?: { projectPath?: string; binaryPath?: string; assetPath?: string }): Promise<RepositoryIndexStatus>;
+
 export interface ForgeLoopCommandEnvelope<T = unknown> {
   ok: boolean;
   command: string | null;
@@ -265,6 +353,14 @@ export declare function getForgeLoopCapabilities(input?: { packageVersion?: stri
 export declare function classifyForgeLoopInvocation(command: string, input?: ForgeLoopCommandInput): ForgeLoopInvocationClassification;
 export declare function readForgeLoopIntegrationResource(uri: string, input?: Record<string, unknown>): Promise<Record<string, unknown>>;
 export declare function resolveForgeLoopProjectRoot(projectPath?: string, input?: { cwd?: string }): Promise<string>;
+export declare function searchRepository(request: RepositorySearchRequest & { repoRoot: string }): Promise<RepositorySearchResult>;
+export declare function searchRepository(projectPath: string, request: RepositorySearchRequest): Promise<RepositorySearchResult>;
+export declare function getRepositoryIndexStatus(projectPath: string, options?: Record<string, unknown>): Promise<RepositoryIndexStatus>;
+export declare function setupRepositoryIndex(projectPath: string, options?: Record<string, unknown>): Promise<Record<string, unknown>>;
+export declare function startRepositoryIndexServer(projectPath: string, options?: Record<string, unknown>): Promise<Record<string, unknown>>;
+export declare function stopRepositoryIndexServer(projectPath: string, options?: Record<string, unknown>): Promise<Record<string, unknown>>;
+export declare function rebuildRepositoryIndex(projectPath: string, options?: Record<string, unknown>): Promise<Record<string, unknown>>;
+export declare function restartRepositoryIndexServer(projectPath: string, options?: Record<string, unknown>): Promise<Record<string, unknown>>;
 export declare function createForgeLoopContext(input?: Record<string, unknown>): ForgeLoopContext;
 export declare function recallAdvisoryContext(input: {
   target: string;

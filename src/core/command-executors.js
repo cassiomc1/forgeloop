@@ -82,6 +82,14 @@ import { runAttestationVerify } from "../commands/attestation-verify.js";
 import { runAttestationStatus } from "../commands/attestation-status.js";
 import { runAttestationVerifyRange } from "../commands/attestation-verify-range.js";
 import { exitCodeForAttestationResult } from "./exit-codes.js";
+import {
+  runRepositoryIndexRebuild,
+  runRepositoryIndexSetup,
+  runRepositoryIndexStart,
+  runRepositoryIndexStatus,
+  runRepositoryIndexStop,
+  runSearch,
+} from "../commands/repository-index.js";
 
 /**
  * Canonical transport-neutral command executors.
@@ -100,7 +108,7 @@ export const COMMAND_EXECUTORS = {
     exitCode: 0,
   }),
   init: async ({ target, packageRoot, packageVersion, options }) => ({
-    result: await runInit({ target, dryRun: options.dryRun, packageRoot, packageVersion }),
+    result: await runInit({ target, dryRun: options.dryRun, packageRoot, packageVersion, repositoryIndex: true }),
     exitCode: 0,
   }),
   doctor: async ({ target, packageRoot, options }) => {
@@ -110,6 +118,7 @@ export const COMMAND_EXECUTORS = {
       adoptPaths: options.adopt,
       strict: options.strict,
       fix: options.fix,
+      repositoryIndex: true,
     });
     return { result, exitCode: result.ok ? 0 : 1 };
   },
@@ -663,9 +672,33 @@ export const COMMAND_EXECUTORS = {
     exitCode: 0,
   }),
   update: async ({ target, packageRoot, packageVersion, options }) => {
-    const result = await runUpdate({ target, dryRun: options.dryRun, packageRoot, packageVersion });
+    const result = await runUpdate({ target, dryRun: options.dryRun, packageRoot, packageVersion, repositoryIndex: true });
     return { result, exitCode: result.conflicts.length === 0 ? 0 : 1 };
   },
+  "index-setup": async ({ target, packageRoot, options }) => ({
+    result: await runRepositoryIndexSetup({ target, packageRoot, options }),
+    exitCode: 0,
+  }),
+  "index-start": async ({ target, packageRoot, options }) => ({
+    result: await runRepositoryIndexStart({ target, packageRoot, options }),
+    exitCode: 0,
+  }),
+  "index-stop": async ({ target, packageRoot, options }) => ({
+    result: await runRepositoryIndexStop({ target, packageRoot, options }),
+    exitCode: 0,
+  }),
+  "index-status": async ({ target, packageRoot, options }) => ({
+    result: await runRepositoryIndexStatus({ target, packageRoot, options }),
+    exitCode: 0,
+  }),
+  "index-rebuild": async ({ target, packageRoot, options }) => ({
+    result: await runRepositoryIndexRebuild({ target, packageRoot, options }),
+    exitCode: 0,
+  }),
+  search: async ({ target, packageRoot, options }) => ({
+    result: await runSearch({ target, packageRoot, options }),
+    exitCode: 0,
+  }),
 };
 
 export const EXECUTOR_EXCEPTIONS = Object.freeze([

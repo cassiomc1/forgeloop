@@ -99,6 +99,23 @@ What `init` does:
 - Installs the canonical instruction kit under `.forgeloop/kit/`;
 - Places native discovery shims at the project root (`AGENTS.md`, `CLAUDE.md`, `.cursor/rules/`, `.github/copilot-instructions.md`);
 - Creates `.forgeloop/` for project configuration and `.forgeloop/task-state/` for isolated task execution.
+- For a Git repository, provisions the pinned managed Repository Index, builds
+  its derived cache under `.forgeloop/repository-index/tgrep/`, starts the
+  owned watcher, and verifies readiness. The first setup may need network
+  access; use `forgeloop index-setup --asset <absolute-archive>` for an
+  explicitly preloaded release asset.
+
+Repository discovery uses the same canonical service from every transport:
+
+```bash
+forgeloop index-status --json
+forgeloop search "ExecutionReceipt" --json
+```
+
+The index is a disposable local cache. Its matches help an agent find relevant
+files but do not define verification scope, evidence, task ownership, or
+completion truth. Read [`REPOSITORY_INDEX.md`](./REPOSITORY_INDEX.md) for the
+full command, Integration API, MCP, platform, offline, and security contract.
 
 ---
 

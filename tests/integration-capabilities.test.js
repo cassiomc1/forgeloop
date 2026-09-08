@@ -29,6 +29,27 @@ test("capabilities report versions, features, commands, and resources", () => {
     modes: ["NATIVE_PROJECT", "PROJECT_ISOLATED", "SYSTEM_ISOLATED"],
     protocolProjectRootSeparateFromExecutionCwd: true,
   });
+  assert.deepEqual(capabilities.features.repositoryIndex, {
+    version: 1,
+    required: true,
+    providerNeutral: true,
+    implementation: "microsoft/tgrep",
+    engineVersion: "1.0.3",
+    engineManagedByForgeLoop: true,
+    commands: ["search", "index-setup", "index-start", "index-stop", "index-status", "index-rebuild"],
+    resource: "repository/index-status",
+    managedBinary: true,
+    noPathFallback: true,
+    supports: {
+      regex: true,
+      fixedStrings: true,
+      glob: true,
+      fileType: true,
+      context: true,
+      structuredOutput: true,
+      liveIndex: true,
+    },
+  });
   assert.equal(capabilities.executorParity, true);
 
   const names = capabilities.commands.map((command) => command.name);
@@ -38,6 +59,7 @@ test("capabilities report versions, features, commands, and resources", () => {
   const resourceNames = capabilities.resources.map((resource) => resource.name);
   assert.ok(resourceNames.includes("task/ownership"));
   assert.ok(resourceNames.includes("task/context"));
+  assert.ok(resourceNames.includes("repository/index-status"));
 });
 
 test("protocol-info and Integration API expose matching advisory and handoff contracts", () => {

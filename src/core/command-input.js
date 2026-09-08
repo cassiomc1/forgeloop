@@ -8,6 +8,12 @@ function inputError(message) {
   return error;
 }
 
+function validateSearchCommandInput(command, options, help) {
+  if (command === "search" && !help && (typeof options.pattern !== "string" || options.pattern.length === 0)) {
+    throw inputError("search requires a pattern");
+  }
+}
+
 /**
  * Transport-neutral option defaults shared by the CLI parser and the
  * programmatic command runtime so every executor observes the same
@@ -22,6 +28,22 @@ export function defaultCommandInputValues() {
     strict: false,
     fix: false,
     adopt: [],
+    pattern: null,
+    globs: [],
+    types: [],
+    fixedStrings: false,
+    ignoreCase: false,
+    smartCase: false,
+    wordRegexp: false,
+    context: null,
+    beforeContext: null,
+    afterContext: null,
+    maxCount: null,
+    filesWithMatches: false,
+    stats: false,
+    assetPath: null,
+    binaryPath: null,
+    force: false,
     workType: null,
     surfaces: [],
     risks: [],
@@ -118,6 +140,7 @@ export function validateForgeLoopCommandInput({ command, input, help = false } =
   if (command === "task-create" && !options.taskId) {
     throw inputError("task-create requires --task");
   }
+  validateSearchCommandInput(command, options, help);
   if (options.executionProfile !== null && options.executionProfile !== undefined) {
     if (command !== "route") throw inputError(`executionProfile is not valid for ${command}`);
     if (!EXECUTION_PROFILE_REQUESTS.includes(options.executionProfile)) {

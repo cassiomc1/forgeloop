@@ -173,6 +173,18 @@ API-backed operations remain disabled until their documented credentials or
 service endpoints are configured. The kit links to the upstream project but
 does not bundle its source, MCP server, model, or dependencies.
 
+### Repository Index
+
+The Repository Index is a mandatory, provider-neutral discovery boundary for
+Git repositories. The CLI, Integration API, and MCP adapter share one search
+service backed initially by a ForgeLoop-managed, pinned Microsoft `tgrep`
+1.0.3 executable. The executable is verified before use; the project index
+under `.forgeloop/repository-index/tgrep/` and `engine-state.json` are derived
+cache/state outside the task ledger. Index health can block operational
+readiness, but index contents never become evidence, completion authority,
+task ownership, or historical truth. A host uses `forgeloop search` rather
+than assuming `grep`, `rg`, or `tgrep` is present on PATH.
+
 ### `GUIDE_ROUTER.md`
 
 Canonical map between request or project signals and applicable guides. Each route records:

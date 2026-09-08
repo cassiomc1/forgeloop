@@ -90,6 +90,7 @@ Phases: RECEIVED, DISCOVERING, CONTRACT_READY, ROUTED, DESIGNING, PLANNED, EXECU
 | integrationApi | 1 | yes |
 | observabilityStability | n/a | yes |
 | reflection | 1 | yes |
+| repositoryIndex | 1 | yes |
 | responsibilityConstraints | 1 | yes |
 | structuralQuality | 1 | yes |
 | structuredTrace | 1 | yes |
@@ -198,12 +199,14 @@ capability-family versions.
 | efficiency | READ_ONLY | Projects usage and timing efficiency, comparing only against a metadata-compatible local baseline. |
 | eval | MUTATING | Evaluates the current trajectory against a validated project-local reference scenario. |
 | history | READ_ONLY | Shows chronological protocol history reconstructed from canonical ForgeLoop state. |
+| index-status | READ_ONLY | Reports provider-neutral repository-index health, metadata, and owned-server status. |
 | inspect | READ_ONLY | Inspects target repository health, dirty files, active branch, and artifact freshness. |
 | metrics | READ_ONLY | Projects trajectory, action, execution, timing, and known usage metrics without mutating state. |
 | profile-interview | READ_ONLY | Optional interactive or dry-run interview to refine project profile facts. |
 | progress | READ_ONLY | Evaluates task progress across verification cycles and detects stalls deterministically. |
 | protocol-info | READ_ONLY | Reports versioning, lifecycle, command, guide, and public error compatibility metadata for external harnesses. |
 | reflect | READ_ONLY | Analyzes diagnostic and correction history deterministically for information gain, repeated failures, ineffective interventions, and oscillation. |
+| search | READ_ONLY | Searches the ForgeLoop repository index through the provider-neutral search contract. |
 | status | READ_ONLY | Displays current lifecycle phase, active checks, blockers, and artifact freshness bindings. |
 | trace | READ_ONLY | Emits detailed structured task trace with provenance and artifact relationships. |
 | usage-record | MUTATING | Records actor-reported usage telemetry without treating it as verification evidence. |
@@ -248,6 +251,10 @@ capability-family versions.
 
 | Command | Mutation | Purpose |
 | --- | --- | --- |
+| index-rebuild | MUTATING | Atomically rebuilds the repository index and restarts its owned watcher. |
+| index-setup | MUTATING | Provisions the pinned tgrep engine, builds the repository index, and starts its owned watcher. |
+| index-start | MUTATING | Starts the owned tgrep repository-index watcher after an index has been built. |
+| index-stop | MUTATING | Stops only a tgrep server whose process identity is provably owned by ForgeLoop. |
 | init | MUTATING | Initializes a target project directory with ForgeLoop discovery adapters, schemas, and templates. |
 | migrate-protocol | MUTATING | Safely migrates explicitly supported protocol state; unknown target versions fail without rewriting artifacts. |
 | task-migrate | MUTATING | Migrates a legacy 1.0 singleton task state layout into a task-namespaced layout. |

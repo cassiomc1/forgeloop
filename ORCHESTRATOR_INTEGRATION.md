@@ -34,6 +34,15 @@ Any non-terminal state → BLOCKED when a genuine blocker is evidenced
 - `COMPLETE`
 - `BLOCKED`
 
+## Repository Index readiness
+
+For Git repositories, the mandatory Repository Index is an operational
+readiness dependency, not a second workflow state machine. An orchestrator
+should surface `index-status` health and route repair through the canonical
+`index-setup`, `index-start`, `index-stop`, and `index-rebuild` commands. An
+index failure must not rewrite historical completion, task claims, receipts,
+or verification evidence; discovery remains non-authoritative cache/state.
+
 ## Canonical transition table
 
 | From | Condition | To |

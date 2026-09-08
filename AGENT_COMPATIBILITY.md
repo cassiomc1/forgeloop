@@ -24,3 +24,10 @@ retained as a deprecated compatibility stub:
   immutable handoff.
 - Preserve the distinction between `consumerId`, harness labels, and
   authenticated identity; none grants authority or transfers claims.
+- For repository-wide textual discovery, prefer `forgeloop search` and its
+  provider-neutral contract. Do not require a host-installed `grep`, `rg`, or
+  `tgrep`, and do not silently substitute one when the mandatory index is
+  unhealthy.
+- Treat Repository Index results as local discovery context only. They are not
+  evidence, completion truth, task ownership, or authority to execute a
+  command.

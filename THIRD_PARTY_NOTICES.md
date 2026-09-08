@@ -213,6 +213,17 @@ or make its prescriptive examples universal.
 
 ## Runtime dependencies with upstream notices
 
+### Microsoft tgrep
+
+- Project: [microsoft/tgrep](https://github.com/microsoft/tgrep).
+- License declared by the upstream project: MIT.
+- Use in this collection: the initially pinned native engine behind the
+  ForgeLoop Repository Index and normalized Repository Search contract.
+- Boundary: ForgeLoop verifies the exact release asset checksum and version
+  before managed installation. The executable is provisioned outside the npm
+  package; future redistribution must continue to include the MIT notice and
+  verify any changed upstream asset.
+
 ### Model Context Protocol SDK (MCP package only)
 
 - Packages: `@modelcontextprotocol/server` and `@modelcontextprotocol/client`

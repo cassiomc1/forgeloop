@@ -20,6 +20,7 @@ import { readVerificationScope } from "./verification-scope.js";
 import { resolveAttestationStatus } from "./attestation.js";
 import { buildExecutionProfileContext } from "./execution-profile-context.js";
 import { projectStructuralQualityStatus } from "./structural-quality/service.js";
+import { getRepositoryIndexStatus } from "../repository-index/status.js";
 
 /**
  * Canonical integration resource allowlist.
@@ -87,6 +88,7 @@ export const INTEGRATION_RESOURCE_DEFINITIONS = Object.freeze({
   "task/context": Object.freeze({ scope: "TASK", description: "Read-only profile-aware task context with bounded presentation policy." }),
   "task/evaluations": Object.freeze({ scope: "TASK", description: "Persisted trajectory evaluations for one task." }),
   "project/capability-policy": Object.freeze({ scope: "PROJECT", description: "Project capability policy, never host authority." }),
+  "repository/index-status": Object.freeze({ scope: "PROJECT", description: "Provider-neutral repository-index health and owned-server status." }),
 });
 
 function ownershipProjection(projection) {
@@ -103,7 +105,7 @@ function ownershipProjection(projection) {
   };
 }
 
-export async function readForgeLoopIntegrationResource(uri, {
+async function readForgeLoopIntegrationResourceCore(uri, {
   projectPath = ".",
   packageRoot = undefined,
   packageVersion = null,
@@ -287,4 +289,17 @@ export async function readForgeLoopIntegrationResource(uri, {
   // task/continuity
   const continuity = await runContinuity({ target: projectPath, packageRoot, taskId });
   return { uri, taskId, data: continuity };
+}
+
+export async function readForgeLoopIntegrationResource(uri, options = {}) {
+  if (uri === "repository/index-status") {
+    return {
+      uri,
+      data: await getRepositoryIndexStatus(options.projectPath ?? ".", {
+        packageRoot: options.packageRoot,
+        ...(options.repositoryIndexOptions ?? {}),
+      }),
+    };
+  }
+  return readForgeLoopIntegrationResourceCore(uri, options);
 }

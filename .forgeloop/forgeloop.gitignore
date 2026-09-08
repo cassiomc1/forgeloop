@@ -1,3 +1,4 @@
 # Local resumable task state is untrusted, target-specific data.
 work-state.json
 executions/
+repository-index/

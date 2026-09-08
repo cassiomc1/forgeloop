@@ -95,4 +95,16 @@ export function registerIntegrationResources(server, { projectRoot, packageRoot 
       return { contents: [{ uri: uri.href, mimeType: "application/json", text: stringifyBoundedMcpJson(resource.data) }] };
     },
   );
+  if (INTEGRATION_RESOURCE_DEFINITIONS["repository/index-status"]) server.registerResource(
+    "forgeloop-repository-index-status",
+    "forgeloop://repository/index-status",
+    { description: INTEGRATION_RESOURCE_DEFINITIONS["repository/index-status"].description },
+    async (uri) => {
+      const resource = await readForgeLoopIntegrationResource("repository/index-status", {
+        projectPath: projectRoot,
+        packageRoot,
+      });
+      return { contents: [{ uri: uri.href, mimeType: "application/json", text: stringifyBoundedMcpJson(resource.data) }] };
+    },
+  );
 }

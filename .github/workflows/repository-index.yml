@@ -1,0 +1,82 @@
+name: Repository Index
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: repository-index-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  manifest:
+    name: Verify Repository Index manifest
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+
+      - name: Install locked Node toolchain
+        run: npm ci --ignore-scripts
+
+      - name: Verify pinned tgrep manifest
+        run: npm run repository-index:manifest
+
+  native-linux:
+    name: Native Repository Index (Linux)
+    runs-on: ubuntu-latest
+    needs: manifest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+
+      - name: Install locked Node toolchain
+        run: npm ci --ignore-scripts
+
+      - name: Download and verify the pinned Linux tgrep asset
+        shell: bash
+        run: |
+          asset_name="$(node -e 'const m=require("./src/repository-index/tgrep-manifest.json"); process.stdout.write(m.assets["linux-x64"].assetName)')"
+          asset_url="$(node -e 'const m=require("./src/repository-index/tgrep-manifest.json"); process.stdout.write(`${m.releaseBaseUrl}/${m.assets["linux-x64"].assetName}`)')"
+          asset_sha="$(node -e 'const m=require("./src/repository-index/tgrep-manifest.json"); process.stdout.write(m.assets["linux-x64"].sha256)')"
+          curl --fail --location --proto '=https' --tlsv1.2 "$asset_url" --output "$asset_name"
+          printf '%s  %s\n' "$asset_sha" "$asset_name" | sha256sum --check --status
+          mkdir -p "$RUNNER_TEMP/tgrep"
+          tar -xzf "$asset_name" -C "$RUNNER_TEMP/tgrep"
+          tgrep_path="$(find "$RUNNER_TEMP/tgrep" -type f -name tgrep -print -quit)"
+          test -n "$tgrep_path"
+          chmod +x "$tgrep_path"
+          echo "FORGELOOP_TGREP_BINARY=$tgrep_path" >> "$GITHUB_ENV"
+
+      - name: Verify native version and behavior
+        run: |
+          "$FORGELOOP_TGREP_BINARY" --version
+          node --test \
+            tests/repository-index-live.test.js \
+            tests/repository-index-differential.test.js \
+            tests/repository-index-migration.test.js
+
+      - name: Verify CLI lifecycle and doctor behavior with native tgrep
+        run: node --test tests/repository-index-native-cli.test.js
