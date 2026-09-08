@@ -1,7 +1,11 @@
 import { spawn } from "node:child_process";
+import path from "node:path";
 
 import { REPOSITORY_INDEX_DEFAULTS } from "./constants.js";
 import { REPOSITORY_INDEX_ERROR_CODES, repositoryIndexError } from "./errors.js";
+
+const MAX_COMMAND_TIMEOUT_MS = 120_000;
+const SAFE_EXECUTABLE_PATH = /^(?:[A-Za-z]:[\\/]|[\\/])[A-Za-z0-9._~+@% =-]+(?:[\\/][A-Za-z0-9._~+@% =-]+)*$/u;
 
 function assertArgs(args) {
   if (!Array.isArray(args) || args.some((arg) => typeof arg !== "string" || arg.length === 0)) {
@@ -12,6 +16,9 @@ export async function runTgrep({ binaryPath, repoRoot, args, stdin = null, timeo
   if (typeof binaryPath !== "string" || binaryPath.trim() === "") {
     throw repositoryIndexError(REPOSITORY_INDEX_ERROR_CODES.ENGINE_EXECUTION_FAILED, "A verified managed tgrep binary path is required");
   }
+  if (!path.isAbsolute(binaryPath) || !SAFE_EXECUTABLE_PATH.test(binaryPath)) {
+    throw repositoryIndexError(REPOSITORY_INDEX_ERROR_CODES.ENGINE_EXECUTION_FAILED, "The managed tgrep binary path contains unsafe command characters");
+  }
   if (typeof repoRoot !== "string" || repoRoot.trim() === "") {
     throw repositoryIndexError(REPOSITORY_INDEX_ERROR_CODES.ENGINE_EXECUTION_FAILED, "A repository root is required to execute tgrep");
   }
@@ -19,6 +26,7 @@ export async function runTgrep({ binaryPath, repoRoot, args, stdin = null, timeo
   if (!Number.isInteger(timeoutMs) || timeoutMs <= 0) {
     throw repositoryIndexError(REPOSITORY_INDEX_ERROR_CODES.ENGINE_EXECUTION_FAILED, "tgrep timeoutMs must be a positive integer");
   }
+  const effectiveTimeoutMs = Math.min(timeoutMs, MAX_COMMAND_TIMEOUT_MS);
 
   const startedAt = Date.now();
   return new Promise((resolve, reject) => {
@@ -42,7 +50,7 @@ export async function runTgrep({ binaryPath, repoRoot, args, stdin = null, timeo
     const timer = setTimeout(() => {
       timedOut = true;
       try { child.kill("SIGTERM"); } catch { /* process may already be gone */ }
-    }, timeoutMs);
+    }, effectiveTimeoutMs);
 
     const finish = (fn, value) => {
       if (settled) return;
