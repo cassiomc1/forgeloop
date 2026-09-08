@@ -36,7 +36,7 @@ function fakeVersionSpawn(version) {
     child.stderr = new EventEmitter();
     child.stdin = { end() {} };
     child.kill = () => {};
-    queueMicrotask(() => {
+    Promise.resolve().then(() => {
       child.stdout.emit("data", Buffer.from(`tgrep ${version}\n`));
       child.emit("close", 0, null);
     });
