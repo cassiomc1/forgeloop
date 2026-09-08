@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { test } from "node:test";
 
-import { runTgrep } from "../src/repository-index/process.js";
+import { createTgrepBinaryHandle, runTgrep } from "../src/repository-index/process.js";
 
 function fixtureSpawn(_executable, args, options) {
   const script = args[0] === "--emit-large"
@@ -14,7 +14,7 @@ function fixtureSpawn(_executable, args, options) {
 test("runTgrep preserves exact argv and uses a shell-free project boundary", async () => {
   let observed;
   const result = await runTgrep({
-    binaryPath: "/opt/tgrep",
+    binary: createTgrepBinaryHandle("/opt/tgrep"),
     repoRoot: process.cwd(),
     args: ["search", "--regexp", "$(touch injected)"],
     spawnImpl: (executable, args, options) => {
@@ -34,7 +34,7 @@ test("runTgrep preserves exact argv and uses a shell-free project boundary", asy
 test("runTgrep fails closed when native output exceeds the bounded limit", async () => {
   await assert.rejects(
     () => runTgrep({
-      binaryPath: "/opt/tgrep",
+      binary: createTgrepBinaryHandle("/opt/tgrep"),
       repoRoot: process.cwd(),
       args: ["--emit-large"],
       maxOutputBytes: 32,
@@ -46,11 +46,7 @@ test("runTgrep fails closed when native output exceeds the bounded limit", async
 
 test("runTgrep rejects executable paths containing command syntax", async () => {
   await assert.rejects(
-    () => runTgrep({
-      binaryPath: "/opt/tgrep;touch-injected",
-      repoRoot: process.cwd(),
-      args: ["--version"],
-    }),
+    () => Promise.resolve().then(() => createTgrepBinaryHandle("/opt/tgrep;touch-injected")),
     (error) => error.code === "E_REPOSITORY_INDEX_ENGINE_EXECUTION_FAILED",
   );
 });

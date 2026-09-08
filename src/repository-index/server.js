@@ -8,7 +8,7 @@ import { REPOSITORY_INDEX_ERROR_CODES as ERROR_CODES, repositoryIndexError, wrap
 import { ensureManagedTgrep } from "./binary-manager.js";
 import { getCanonicalRepositoryIndexArgs } from "./args.js";
 import { withRepositoryIndexLock } from "./lock.js";
-import { runTgrep, spawnTgrepServer } from "./process.js";
+import { createTgrepBinaryHandle, runTgrep, spawnTgrepServer } from "./process.js";
 import {
   getRepositoryIndexRoot,
   getRepositoryIndexStatePath,
@@ -207,7 +207,7 @@ async function startUnderLock(repositoryRoot, options, engine) {
 
   const startedAt = new Date().toISOString();
   const child = spawnTgrepServer({
-    binaryPath: engine.binaryPath,
+    binary: createTgrepBinaryHandle(engine.binaryPath),
     repoRoot: repositoryRoot,
     args: serverArgs(indexPath, options.config),
     env: options.env,
@@ -261,7 +261,7 @@ async function startUnderLock(repositoryRoot, options, engine) {
 async function buildUnderLock(repositoryRoot, options, engine, { force = false } = {}) {
   const indexPath = getTgrepIndexPath(repositoryRoot);
   const result = await runTgrep({
-    binaryPath: engine.binaryPath,
+    binary: createTgrepBinaryHandle(engine.binaryPath),
     repoRoot: repositoryRoot,
     args: indexArgs(indexPath, options.config, force),
     env: options.env,

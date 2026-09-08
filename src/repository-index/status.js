@@ -6,7 +6,7 @@ import { REPOSITORY_INDEX_DEFAULTS, REPOSITORY_INDEX_HEALTH, REPOSITORY_INDEX_SC
 import { REPOSITORY_INDEX_ERROR_CODES } from "./errors.js";
 import { verifyManagedTgrep } from "./binary-manager.js";
 import { getCanonicalRepositoryIndexArgs } from "./args.js";
-import { runTgrep } from "./process.js";
+import { createTgrepBinaryHandle, runTgrep } from "./process.js";
 import { getRepositoryIndexStatePath, getTgrepIndexPath } from "./paths.js";
 import { getPackageRoot } from "../core/templates.js";
 
@@ -283,7 +283,7 @@ async function projectIndexMetadata(status, meta, canonicalRoot, config) {
 
 async function readNativeStatus({ engine, canonicalRoot, indexPath, config, spawnImpl }) {
   return runTgrep({
-    binaryPath: engine.binaryPath,
+    binary: createTgrepBinaryHandle(engine.binaryPath),
     repoRoot: canonicalRoot,
     args: ["status", ...getCanonicalRepositoryIndexArgs({ mode: "status", indexPath, config }), canonicalRoot],
     spawnImpl,

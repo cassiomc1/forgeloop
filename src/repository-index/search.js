@@ -6,7 +6,7 @@ import { REPOSITORY_INDEX_ERROR_CODES, repositoryIndexError } from "./errors.js"
 import { getManagedTgrepBinaryPath, getTgrepIndexPath } from "./paths.js";
 import { getRepositoryIndexPlatform } from "./platform.js";
 import { loadTgrepManifest } from "./manifest.js";
-import { runTgrep } from "./process.js";
+import { createTgrepBinaryHandle, runTgrep } from "./process.js";
 import { normalizeTgrepJson } from "./normalize-json.js";
 import { setupRepositoryIndex } from "./server.js";
 import { getRepositoryIndexStatus } from "./status.js";
@@ -125,7 +125,7 @@ function buildSearchArgs({ indexPath, canonicalRoot, request }) {
 async function runSearch({ binaryPath, status, canonicalRoot, request, args }) {
   const startedAt = Date.now();
   const result = await (request.runTgrepImpl ?? runTgrep)({
-    binaryPath,
+    binary: createTgrepBinaryHandle(binaryPath),
     repoRoot: canonicalRoot,
     args,
     env: request.env,

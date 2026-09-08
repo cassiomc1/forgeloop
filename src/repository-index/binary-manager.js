@@ -24,7 +24,7 @@ import { REPOSITORY_INDEX_ERROR_CODES, repositoryIndexError } from "./errors.js"
 import { getRepositoryIndexPlatform } from "./platform.js";
 import { getManagedTgrepBinaryPath, getManagedTgrepDirectory, getEngineHome } from "./paths.js";
 import { getTgrepAsset, loadTgrepManifest } from "./manifest.js";
-import { runTgrep } from "./process.js";
+import { createTgrepBinaryHandle, runTgrep } from "./process.js";
 import { acquireRepositoryIndexLock } from "./lock.js";
 
 const VERSION_PATTERN = /\btgrep\s+(?:v)?(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?)\b/i;
@@ -83,7 +83,7 @@ function parseVersion(output) {
 
 export async function verifyTgrepVersion({ binaryPath, expectedVersion, repoRoot = process.cwd(), spawnImpl, timeoutMs = 15_000 } = {}) {
   const result = await runTgrep({
-    binaryPath,
+    binary: createTgrepBinaryHandle(binaryPath),
     repoRoot,
     args: ["--version"],
     spawnImpl,
