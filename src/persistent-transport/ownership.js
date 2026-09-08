@@ -98,14 +98,44 @@ async function endpointMatchesState(state, expectedEndpoint) {
   }
 }
 
+function validPersistentTransportState(state) {
+  if (!state || state.schemaVersion !== 1) return false;
+  if (!Number.isInteger(state.pid) || state.pid <= 0) return false;
+  if (typeof state.nonce !== "string" || typeof state.scopeId !== "string") return false;
+  if (typeof state.entrypoint !== "string") return false;
+  return typeof state.endpoint === "string" && state.endpoint.length > 0;
+}
+
+function ownershipResult(state, owned, ownershipMode = null) {
+  return {
+    owned,
+    running: owned,
+    pid: state.pid,
+    ownershipMode,
+    reason: owned ? null : "PROCESS_IDENTITY_UNVERIFIED",
+    commandLine: null,
+  };
+}
+
+async function inspectEndpointIdentity(state, expectedEndpoint) {
+  const owned = await endpointMatchesState(state, expectedEndpoint);
+  return ownershipResult(state, owned, owned ? "ENDPOINT_HANDSHAKE" : null);
+}
+
+function inspectCommandLineIdentity(state, commandLine) {
+  const command = comparable(commandLine);
+  const entrypoint = comparable(state.entrypoint);
+  const scopeMarker = comparable(state.scopeId);
+  const owned = command.includes(entrypoint) && command.includes("--persistent-transport-server") && command.includes(scopeMarker);
+  return ownershipResult(state, owned, owned ? "PROCESS_COMMAND_LINE" : null);
+}
+
 export async function inspectPersistentTransportOwnership(state, {
   processApi = process,
   processInspector = {},
   expectedEndpoint = null,
 } = {}) {
-  if (!state || state.schemaVersion !== 1 || !Number.isInteger(state.pid) || state.pid <= 0
-    || typeof state.nonce !== "string" || typeof state.scopeId !== "string" || typeof state.entrypoint !== "string"
-    || typeof state.endpoint !== "string" || state.endpoint.length === 0) {
+  if (!validPersistentTransportState(state)) {
     return { owned: false, running: false, reason: "STATE_INVALID" };
   }
   if (typeof expectedEndpoint === "string" && comparable(state.endpoint) !== comparable(expectedEndpoint)) {
@@ -114,42 +144,15 @@ export async function inspectPersistentTransportOwnership(state, {
   const alive = (processInspector.isAlive ?? ((pid) => processIsAlive(pid, processApi)))(state.pid);
   if (!alive) return { owned: true, running: false, reason: "PROCESS_EXITED", pid: state.pid };
   if (process.platform === "win32" && processInspector.commandLine === undefined) {
-    const endpointOwned = await endpointMatchesState(state, expectedEndpoint);
-    return {
-      owned: endpointOwned,
-      running: endpointOwned,
-      pid: state.pid,
-      ownershipMode: endpointOwned ? "ENDPOINT_HANDSHAKE" : null,
-      reason: endpointOwned ? null : "PROCESS_IDENTITY_UNVERIFIED",
-      commandLine: null,
-    };
+    return inspectEndpointIdentity(state, expectedEndpoint);
   }
   const commandLine = processInspector.commandLine === undefined
     ? await processCommandLine(state.pid, { platform: process.platform })
     : await processInspector.commandLine(state.pid);
   if (typeof commandLine !== "string" || commandLine.length === 0) {
-    const endpointOwned = await endpointMatchesState(state, expectedEndpoint);
-    return {
-      owned: endpointOwned,
-      running: endpointOwned,
-      pid: state.pid,
-      ownershipMode: endpointOwned ? "ENDPOINT_HANDSHAKE" : null,
-      reason: endpointOwned ? null : "PROCESS_IDENTITY_UNVERIFIED",
-      commandLine: null,
-    };
+    return inspectEndpointIdentity(state, expectedEndpoint);
   }
-  const command = typeof commandLine === "string" ? comparable(commandLine) : "";
-  const entrypoint = comparable(state.entrypoint);
-  const scopeMarker = comparable(state.scopeId);
-  const owned = command.includes(entrypoint) && command.includes("--persistent-transport-server") && command.includes(scopeMarker);
-  return {
-    owned,
-    running: owned,
-    pid: state.pid,
-    ownershipMode: owned ? "PROCESS_COMMAND_LINE" : null,
-    reason: owned ? null : "PROCESS_IDENTITY_UNVERIFIED",
-    commandLine: owned ? null : null,
-  };
+  return inspectCommandLineIdentity(state, commandLine);
 }
 
 export async function requireOwnedPersistentTransport(state, options = {}) {
