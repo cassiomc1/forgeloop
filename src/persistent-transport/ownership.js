@@ -2,7 +2,8 @@ import { processCommandLine, processIsAlive } from "../repository-index/status.j
 import { PERSISTENT_TRANSPORT_ERROR_CODES, persistentTransportError } from "./errors.js";
 
 function comparable(value) {
-  return process.platform === "win32" ? value.toLowerCase() : value;
+  if (process.platform !== "win32") return value;
+  return value.toLowerCase().replaceAll("\\", "/");
 }
 
 export async function inspectPersistentTransportOwnership(state, {
