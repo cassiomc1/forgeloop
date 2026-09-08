@@ -47,6 +47,9 @@ test("doctor public JSON omits absolute Repository Index paths", async (t) => {
       repositoryIndexOptions: nativeOptions(binary, { homeDirectory }),
     });
     const serialized = JSON.stringify(result);
+    assert.equal(serialized.includes(target), false);
+    assert.equal(serialized.includes(homeDirectory), false);
+    assert.equal(serialized.includes(binary), false);
     assert.doesNotMatch(serialized, /ForgeLoop Repository Index Test/u);
     assert.doesNotMatch(serialized, /engines[\\/]tgrep/u);
     assert.equal(result.repositoryIndex.indexPath, ".forgeloop/repository-index/tgrep");
