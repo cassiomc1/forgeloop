@@ -1,6 +1,7 @@
 import { access, cp, mkdtemp, rm } from "node:fs/promises";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
+import { setTimeout as delay } from "node:timers/promises";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -49,5 +50,14 @@ export async function createFixtureRepository() {
 }
 
 export async function removeFixtureRepository(target) {
-  await rm(target, { recursive: true, force: true });
+  const deadline = Date.now() + 15_000;
+  while (true) {
+    try {
+      await rm(target, { recursive: true, force: true });
+      return;
+    } catch (error) {
+      if (!["EBUSY", "EPERM"].includes(error.code) || Date.now() >= deadline) throw error;
+      await delay(100);
+    }
+  }
 }

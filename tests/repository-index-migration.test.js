@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm } from "node:fs/promises";
+import { mkdir, mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -7,7 +7,7 @@ import { test } from "node:test";
 import { runInit } from "../src/commands/init.js";
 import { runUpdate } from "../src/commands/update.js";
 import { stopRepositoryIndexServer } from "../src/repository-index/server.js";
-import { explicitNativeBinary, nativeOptions, packageRoot } from "./helpers/repository-index.js";
+import { explicitNativeBinary, nativeOptions, packageRoot, removeFixtureRepository } from "./helpers/repository-index.js";
 
 test("pre-Repository-Index projects migrate through update without rewriting task state", async (t) => {
   const binary = await (async () => {
@@ -28,8 +28,8 @@ test("pre-Repository-Index projects migrate through update without rewriting tas
       repositoryIndexOptions: nativeOptions(binary),
     });
     assert.equal(result.repositoryIndex.status, "READY");
-    await stopRepositoryIndexServer(target, nativeOptions(binary));
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await stopRepositoryIndexServer(target, nativeOptions(binary)).catch(() => {});
+    await removeFixtureRepository(target);
   }
 });
