@@ -103,14 +103,14 @@ jobs:
             if (path.posix.isAbsolute(portable) || path.win32.isAbsolute(portable) || normalized === ".." || normalized.startsWith("../")) throw new Error(`unsafe archive entry: ${entry}`);
             return normalized;
           }
-          const listingCommand = asset.archive === "zip" && process.platform !== "win32" ? "unzip" : "tar";
+          const listingCommand = asset.archive === "zip" ? "unzip" : "tar";
           const listingArgs = listingCommand === "unzip" ? ["-Z1", archivePath] : ["-tf", archivePath];
           const listing = await execFile(listingCommand, listingArgs);
           const entries = listing.stdout.split(/\r?\n/u).filter(Boolean).map(validateEntry);
           if (!entries.some((entry) => path.posix.basename(entry) === asset.binaryName)) throw new Error(`archive does not contain ${asset.binaryName}`);
           const extractionDirectory = path.join(tempRoot, "extract");
           await mkdir(extractionDirectory);
-          const extractCommand = asset.archive === "zip" && process.platform !== "win32" ? "unzip" : "tar";
+          const extractCommand = asset.archive === "zip" ? "unzip" : "tar";
           const extractArgs = extractCommand === "unzip" ? ["-q", archivePath, "-d", extractionDirectory] : ["-xf", archivePath, "-C", extractionDirectory];
           await execFile(extractCommand, extractArgs);
           const found = [];
