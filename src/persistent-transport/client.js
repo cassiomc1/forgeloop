@@ -181,20 +181,8 @@ async function ensureHost({ homeDirectory, idleTimeoutMs, startupTimeoutMs, env,
   const deadline = Date.now() + startupTimeoutMs;
   let lock = null;
   while (!lock) {
-    lock = await acquirePersistentTransportStartupLock({ homeDirectory, timeoutMs: 1, tryOnly: true });
+    lock = await acquirePersistentTransportStartupLock({ homeDirectory, tryOnly: true });
     if (lock) break;
-    const inspection = await inspectPersistentTransport({ homeDirectory });
-    if (inspection.status === "OWNERSHIP_UNVERIFIED") {
-      throw persistentTransportError(PERSISTENT_TRANSPORT_ERROR_CODES.OWNERSHIP_UNVERIFIED, "A process owns the persistent search endpoint but is not a verified ForgeLoop host");
-    }
-    if (!recover && inspection.status === "READY") {
-      try {
-        await pingHost({ homeDirectory, timeoutMs: Math.min(startupTimeoutMs, 2_000), maxFrameBytes: PERSISTENT_TRANSPORT_DEFAULTS.maxResponseFrameBytes });
-        return inspection;
-      } catch (error) {
-        if (!isConnectionFailure(error)) throw error;
-      }
-    }
     if (Date.now() >= deadline) {
       throw persistentTransportError(PERSISTENT_TRANSPORT_ERROR_CODES.START_FAILED, "Persistent search host startup coordination exceeded its bounded timeout");
     }

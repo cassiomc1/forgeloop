@@ -76,7 +76,20 @@ export function assertSearchParams(params) {
 }
 
 export function projectSearchQuery(query) {
-  return Object.fromEntries(PERSISTENT_SEARCH_QUERY_KEYS
-    .filter((key) => query[key] !== undefined)
-    .map((key) => [key, query[key]]));
+  const projected = {
+    pattern: query.pattern,
+    globs: query.globs,
+    types: query.types,
+    context: query.context,
+    beforeContext: query.beforeContext,
+    afterContext: query.afterContext,
+    maxCount: query.maxCount,
+    filesWithMatches: query.filesWithMatches,
+    stats: query.stats,
+    fixedStrings: query.fixedStrings,
+    ignoreCase: query.ignoreCase,
+    smartCase: query.smartCase,
+    wordRegexp: query.wordRegexp,
+  };
+  return Object.fromEntries(Object.entries(projected).filter(([, value]) => value !== undefined));
 }

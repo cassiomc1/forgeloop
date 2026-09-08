@@ -100,9 +100,9 @@ export async function startPersistentSearchHost({ homeDirectory = os.homedir(), 
   return { child, paths, entrypoint };
 }
 
-export async function acquirePersistentTransportStartupLock({ homeDirectory = os.homedir(), timeoutMs = PERSISTENT_TRANSPORT_DEFAULTS.startupTimeoutMs, tryOnly = false } = {}) {
+export async function acquirePersistentTransportStartupLock({ homeDirectory = os.homedir(), tryOnly = false } = {}) {
   const paths = await ensurePersistentTransportDirectory({ homeDirectory });
-  return acquireRepositoryIndexLock(paths.lockPath, "persistent-search-host-startup", { timeoutMs, tryOnly });
+  return acquireRepositoryIndexLock(paths.lockPath, "persistent-search-host-startup", { timeoutMs: PERSISTENT_TRANSPORT_DEFAULTS.startupTimeoutMs, tryOnly });
 }
 
 export async function removeDeadPersistentTransport({ homeDirectory = os.homedir() } = {}) {
