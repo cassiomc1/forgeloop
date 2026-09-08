@@ -7,7 +7,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { searchRepository } from "../../src/repository-index/search.js";
-import { runTgrep } from "../../src/repository-index/process.js";
+import { createTgrepBinaryHandle, runTgrep } from "../../src/repository-index/process.js";
 import { stopRepositoryIndexServer } from "../../src/repository-index/server.js";
 import { getCanonicalRepositorySearchArgs, appendSearchFilters } from "../../src/repository-index/args.js";
 import { getTgrepIndexPath } from "../../src/repository-index/paths.js";
@@ -22,6 +22,7 @@ const iterations = Number.parseInt(process.env.FORGELOOP_BENCHMARK_ITERATIONS ??
 
 if (!binary || !path.isAbsolute(binary)) throw new Error("Set FORGELOOP_TGREP_BINARY to the absolute path of the pinned native tgrep binary");
 if (!Number.isSafeInteger(iterations) || iterations < 1 || iterations > 1_000) throw new Error("FORGELOOP_BENCHMARK_ITERATIONS must be an integer from 1 to 1000");
+const binaryHandle = createTgrepBinaryHandle(binary);
 
 const fixture = await mkdtemp(path.join(os.tmpdir(), "forgeloop-persistent-transport-benchmark-"));
 const persistentHome = await mkdtemp(path.join(os.tmpdir(), "forgeloop-persistent-transport-home-"));
@@ -76,7 +77,7 @@ async function rawTgrep(searchQuery = query) {
   const args = [...getCanonicalRepositorySearchArgs({ indexPath: getTgrepIndexPath(fixture), pattern: searchQuery.pattern, options: searchQuery })];
   appendSearchFilters(args, searchQuery);
   args.push(fixture);
-  const result = await runTgrep({ binaryPath: binary, repoRoot: fixture, args, timeoutMs: options.commandTimeoutMs, maxOutputBytes: 4 * 1024 * 1024 });
+  const result = await runTgrep({ binary: binaryHandle, repoRoot: fixture, args, timeoutMs: options.commandTimeoutMs, maxOutputBytes: 4 * 1024 * 1024 });
   if (![0, 1].includes(result.exitCode)) throw new Error(`raw tgrep failed: ${result.stderr}`);
 }
 

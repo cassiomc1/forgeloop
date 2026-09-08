@@ -75,7 +75,7 @@ Passed checks:
 - `npm run complexity:check` — passed with no regressions.
 - `npm run dependency:policy` — passed.
 - `npm run repository-index:manifest` — passed for tgrep `1.0.3` and four managed assets.
-- `npm run performance:check` — passed; CLI startup median `113.5 ms`, budget `1,000 ms`.
+- `npm run performance:check` — passed; CLI startup median `186.5 ms`, budget `1,000 ms`.
 - `npm run pack:check` — 9 passed.
 - `npm run pack:smoke` and `npm pack --dry-run --json` — passed.
 - Python loop, Markdown, and secret validators — passed; `pytest` 50 passed and 15 subtests passed.
@@ -99,17 +99,17 @@ The benchmark was run on the environment above with 100 iterations. Values are m
 
 | Path | Cold | Min | Mean | Median | Max | p95 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Persistent transport host start | 89 | — | — | — | — | — |
-| Fresh CLI | 260 | — | — | — | — | — |
-| Direct Integration API | — | 4 | 5 | 5 | 9 | 8 |
-| Warm persistent transport | — | 5 | 6 | 6 | 11 | 9 |
-| Warm CLI through persistent transport | — | 104 | 120 | 116 | 270 | 144 |
-| Raw tgrep | — | 4 | 5 | 5 | 10 | 8 |
-| `rg` | — | 4 | 6 | 6 | 10 | 9 |
+| Persistent transport host start | 108 | — | — | — | — | — |
+| Fresh CLI | 188 | — | — | — | — | — |
+| Direct Integration API | — | 4 | 4 | 4 | 5 | 5 |
+| Warm persistent transport | — | 4 | 5 | 5 | 28 | 5 |
+| Warm CLI through persistent transport | — | 103 | 106 | 106 | 111 | 108 |
+| Raw tgrep | — | 4 | 4 | 4 | 5 | 4 |
+| `rg` | — | 4 | 5 | 6 | 7 | 6 |
 
-The ten-query agent workload produced identical match-count vectors for direct API, persistent transport, and CLI. Totals were 58 ms for direct API (mean 6 ms/query), 59 ms for persistent transport (mean 6 ms/query), and 1,143 ms for the CLI (mean 114 ms/query). The workload therefore adds approximately 0.1 ms/query over the direct API in this run, with no meaningful direct-API regression. The warm `rg` baseline was 6 ms/query on the same fixture; the benchmark's explicit ten-query section measured the API, persistent, and CLI paths, while `rg` was measured in the separate 100-iteration baseline.
+The ten-query agent workload produced identical match-count vectors for direct API, persistent transport, and CLI. Totals were 48 ms for direct API (mean 5 ms/query), 51 ms for persistent transport (mean 5 ms/query), and 1,056 ms for the CLI (mean 106 ms/query). The workload therefore adds approximately 0.3 ms/query over the direct API in this run, with no meaningful direct-API regression. The warm `rg` baseline was 5 ms/query on the same fixture; the benchmark's explicit ten-query section measured the API, persistent, and CLI paths, while `rg` was measured in the separate 100-iteration baseline.
 
-The standalone Node process-start measurement was 34 ms. Full CLI timings also include CLI module loading, argument parsing, host connection, response formatting, and process teardown, so 34 ms is a component rather than an explanation of the 114 ms full CLI path.
+The standalone Node process-start measurement was 31 ms. Full CLI timings also include CLI module loading, argument parsing, host connection, response formatting, and process teardown, so 31 ms is a component rather than an explanation of the 106 ms full CLI path.
 
 Resource usage was bounded by the implementation's frame, timeout, concurrency, and idle limits. Peak RSS and CPU were not instrumented by this benchmark and are therefore not claimed as measured results. Same-repository requests are serialized to protect readiness state; different repositories can progress concurrently.
 
@@ -139,10 +139,10 @@ Resource usage was bounded by the implementation's frame, timeout, concurrency, 
 ## Required questions
 
 1. Persistent transport reduces repeated host setup/readiness overhead after the first request and provides bounded reuse. It does not make the complete fresh CLI process cheap by itself.
-2. No. In this fixture, the CLI-through-host agent workload averaged 114 ms/query, while warm `rg` averaged 6 ms/query. The persistent transport is intended to remove repeated service startup, not to outperform a direct process-level `rg` invocation.
-3. Bare Node startup measured 34 ms. The remaining full CLI latency also includes ForgeLoop startup, argument handling, transport exchange, result formatting, and process teardown.
-4. The measured persistent path added approximately 0.1 ms/query over the direct Integration API in the ten-query workload; rounded warm means were equal at 6 ms/query.
-5. No meaningful Integration API regression was observed: direct API mean was 5 ms warm and 6 ms/query in the ten-query workload.
+2. No. In this fixture, the CLI-through-host agent workload averaged 106 ms/query, while warm `rg` averaged 5 ms/query. The persistent transport is intended to remove repeated service startup, not to outperform a direct process-level `rg` invocation.
+3. Bare Node startup measured 31 ms. The remaining full CLI latency also includes ForgeLoop startup, argument handling, transport exchange, result formatting, and process teardown.
+4. The measured persistent path added approximately 0.3 ms/query over the direct Integration API in the ten-query workload; rounded warm means were equal at 5 ms/query.
+5. No meaningful Integration API regression was observed: direct API mean was 4 ms warm and 5 ms/query in the ten-query workload.
 6. No search result difference was observed. The ten-query match-count vectors and the separate 9-vector semantic comparison were identical, and existing differential/oracle coverage passed.
 7. Yes: local-only IPC, strict framing and parameter validation, owner-only POSIX socket permissions, verified process ownership, safe cleanup, managed-tgrep integrity, and public privacy boundaries were preserved locally and confirmed by the exact-head cross-platform CI matrix.
 8. Not on the current evidence. Node startup is measurable, but a native launcher would add packaging and maintenance complexity; it should be considered only after a product-level CLI latency requirement and cross-platform measurements justify it.
