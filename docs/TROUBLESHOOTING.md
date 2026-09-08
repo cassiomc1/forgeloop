@@ -35,6 +35,8 @@ This guide provides symptom-first recovery procedures for common ForgeLoop proto
 - [Structural-quality evidence is stale or incomparable](#symptom-structural-quality-evidence-is-stale-or-incomparable)
 - [Repository Index is not ready](#symptom-repository-index-is-not-ready)
 - [Repository search fails](#symptom-repository-search-fails)
+- [Persistent search host is unavailable](#symptom-persistent-search-host-is-unavailable)
+- [Persistent search host ownership is unverified or stale](#symptom-persistent-search-host-ownership-is-unverified-or-stale)
 - [Another harness cannot resume the task](#symptom-another-harness-cannot-resume)
 - [Task claim conflict or recovered task](#symptom-task-creation-blocked-by-a-write-claim-conflict-e_task_scope_conflict)
 - [Stable Error & Reason Code Reference](#stable-error-and-reason-codes)
@@ -1068,6 +1070,69 @@ when the error is `E_REPOSITORY_INDEX_REQUEST_INVALID`. For
 rebuild; repeated malformed output indicates a pinned-engine regression.
 Native exit code `1` means no matches and is normalized to a successful empty
 ForgeLoop result. Native exit code `2` is an actual search failure.
+
+### Symptom: Persistent search host is unavailable
+
+#### What it means
+
+The CLI-only local transport could not connect to or start its user-scoped
+ForgeLoop host within the bounded startup/request timeout. This is a transport
+failure, not permission to bypass the mandatory Repository Index or switch to
+`rg`, `grep`, or an arbitrary executable.
+
+#### Inspect
+
+```bash
+forgeloop doctor --json
+forgeloop index-status --json
+forgeloop search "pattern" --json
+```
+
+#### Safe recovery
+
+Retry the search once after confirming that the current package is complete
+and the managed Repository Index reports `READY`. The client performs at most
+one bounded transport recovery attempt. If it still fails, preserve the
+structured error and follow the Repository Index recovery procedure above;
+transport recovery does not rebuild task state or completion evidence.
+
+`E_PERSISTENT_TRANSPORT_UNAVAILABLE`,
+`E_PERSISTENT_TRANSPORT_TIMEOUT`, and
+`E_PERSISTENT_TRANSPORT_START_FAILED` identify the local transport boundary.
+The canonical search error, if one is returned after a successful connection,
+must be diagnosed as a Repository Index or request error instead.
+
+### Symptom: Persistent search host ownership is unverified or stale
+
+#### What it means
+
+The local state or endpoint does not prove that the live process is the expected
+ForgeLoop persistent host. Common causes include a host from another package
+version, a process that exited while state remained, endpoint substitution, or
+PID reuse. A PID or process name alone is never sufficient ownership evidence.
+
+#### Inspect
+
+```bash
+forgeloop doctor --json
+forgeloop search "pattern" --json
+```
+
+The sanitized `persistentTransport` status reports only its public schema,
+state, running/owned flags, and protocol/package versions. It intentionally
+does not print endpoint, home, lock, repository, index, binary, or entrypoint
+paths.
+
+#### Safe recovery
+
+Allow the CLI's bounded recovery path to reconcile a stale or incompatible
+transport state. Explicit shutdown also requires a verified endpoint and nonce.
+If the status remains `OWNERSHIP_UNVERIFIED`, do not kill a PID or delete a
+whole `.forgeloop` directory; inspect the structured error and use the normal
+package/process recovery boundary. The relevant stable codes are
+`E_PERSISTENT_TRANSPORT_OWNERSHIP_UNVERIFIED`,
+`E_PERSISTENT_TRANSPORT_HOST_STALE`, and
+`E_PERSISTENT_TRANSPORT_PROTOCOL_MISMATCH`.
 
 ## Stable Error and Reason Codes
 

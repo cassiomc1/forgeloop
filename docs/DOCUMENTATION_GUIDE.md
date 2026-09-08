@@ -11,7 +11,7 @@ ForgeLoop strictly separates normative protocol definitions from operational doc
 | Area | Location | Responsibility | Rule |
 | --- | --- | --- | --- |
 | **Normative Protocol** | Root (`LOOP_ENGINEERING.md`, `PROTOCOL_INTEGRATION.md`, `LOOP_SYSTEM_DESIGN.md`, `THREAT_MODEL.md`, `EXECUTION_STATE.md`) | Canonical authority for protocol rules, schemas, state transitions, and security | Never duplicate normative rules in sub-documents; link back to root files. |
-| **Operational & Reference** | `docs/` (`GETTING_STARTED.md`, `CROSS_HARNESS_CONTINUITY.md`, `CLI_REFERENCE.md`, `ARTIFACT_REFERENCE.md`, `TROUBLESHOOTING.md`, `RECIPES.md`, `REPOSITORY_INDEX.md`) | Tutorials, command reference, handoff workflows, repository search, and troubleshooting | Explains how to operate the system. Links to normative sources for formal specifications. |
+| **Operational & Reference** | `docs/` (`GETTING_STARTED.md`, `CROSS_HARNESS_CONTINUITY.md`, `CLI_REFERENCE.md`, `ARTIFACT_REFERENCE.md`, `TROUBLESHOOTING.md`, `RECIPES.md`, `REPOSITORY_INDEX.md`, `PERSISTENT_SEARCH_TRANSPORT.md`) | Tutorials, command reference, handoff workflows, repository search, transport behavior, and troubleshooting | Explains how to operate the system. Links to normative sources for formal specifications. |
 | **Domain Engineering** | `ENG/` (`clean-code-eng.md`, `design-code-eng.md`, `test-code-eng.md`, etc.) | Domain-specific implementation and quality standards | Frontmatter must adhere to `validate_loop_system.py` standards. |
 | **Consumer Documentation Quality** | [`ENG/documentation-quality-eng.md`](../ENG/documentation-quality-eng.md) | Quality standards for documentation work in projects using ForgeLoop | Governs client/consumer project documentation tasks via guide routing. |
 | **Visual Architecture** | `docs/diagrams/manifest.json` + the three typed workflow sources under `docs/diagrams/` | Governance metadata and canonical typed Archify workflow sources | Animated HTML explorers, animated SVG fallbacks, deterministic receipts, and source-bound human reviews are committed under `docs/assets/diagrams/` and `docs/diagrams/reviews/`. |
@@ -35,6 +35,7 @@ Integration API truth   -> src/integration.js (exports, envelope, limits, risk c
 MCP behavior truth      -> integrations/mcp/src/* and integrations/mcp/package.json
 MCP package boundary    -> MCP package tests + scripts/mcp-package-smoke.mjs
 Repository Index truth  -> src/repository-index/*, CLI definitions, Integration API, and MCP resource registry
+Persistent transport truth -> src/persistent-transport/*, CLI search dispatcher, and transport tests
 ```
 
 Operational documentation must explain canonical behavior, not redefine it.
@@ -131,6 +132,7 @@ conformance checks detect omissions.
 | **Task-layout path freshness** | `TASK_LAYOUT_DOCUMENTS` & `task-paths.js` | `scripts/validate_documentation_conformance.mjs` |
 | **Package-shipped docs and runtime** | `package.json` (`files`) + `docs/PACKAGE_CONTENTS.md` | `tests/package.test.js` + `scripts/package_smoke.mjs` |
 | **Repository Index contract** | `src/repository-index/*`, `src/core/cli-command-definitions.js`, `src/integration.js` | Repository Index unit/native tests + `scripts/verify-tgrep-manifest.mjs` |
+| **Persistent CLI search transport** | `src/persistent-transport/*`, `src/commands/repository-index.js`, `src/repository-index/search.js` | Persistent transport unit/native tests + Repository Index integration tests |
 | **Architecture and trust diagrams** | `docs/diagrams/manifest.json` plus each typed workflow source | `scripts/check-documentation-diagrams.mjs` and `scripts/documentation-diagram-inventory.mjs` |
 
 ---
@@ -206,10 +208,11 @@ requires an explicit mapping and tests before activation.
 
 ## 8. README Hero and Package Boundary
 
-README hero assets are branding/conceptual illustrations. They are not the
-canonical protocol diagram. The typed Archify workflow under `docs/diagrams/`
-remains the canonical architecture flow source, with generated outputs under
-`docs/assets/diagrams/`.
+README hero assets are branding/conceptual architecture illustrations. They are
+not the canonical protocol diagram. The typed Archify workflow under
+`docs/diagrams/` remains the canonical lifecycle architecture source, with
+generated outputs under `docs/assets/diagrams/`; the CLI-only persistent search
+transport is explained by `docs/PERSISTENT_SEARCH_TRANSPORT.md`.
 
 The README hero is intentionally GitHub-repository-only:
 

@@ -3,6 +3,27 @@
 This is the current release checklist for `@cassiomc1/forgeloop`. It is a
 preparation and verification checklist; it does not authorize publication.
 
+## ForgeLoop 1.11.0 candidate scope
+
+The 1.11.0 candidate refreshes the public documentation architecture around
+the managed Repository Index and CLI-only persistent search transport. The
+candidate must keep these boundaries explicit:
+
+- [ ] README architecture visual and text fallback describe CLI persistent
+      search separately from direct Integration API/MCP access.
+- [ ] [`docs/REPOSITORY_INDEX.md`](./REPOSITORY_INDEX.md) and
+      [`docs/PERSISTENT_SEARCH_TRANSPORT.md`](./PERSISTENT_SEARCH_TRANSPORT.md)
+      agree on tgrep management, no-fallback behavior, local IPC, ownership,
+      bounded recovery, privacy, and derived-state semantics.
+- [ ] All package-shipped documentation indexes and the package file list
+      include the persistent transport reference.
+- [ ] Lifecycle, evidence, completion, and publication remain independent of
+      Repository Index and persistent-host health.
+
+This branch prepares the candidate and its pull request. npm publication,
+tagging, GitHub Release, deployment, and merge remain separately authorized
+actions.
+
 ## Contract and package identity
 
 - [ ] `package.json` and `package-lock.json` contain the same package version.

@@ -428,7 +428,7 @@ The canonical source is the typed Archify workflow
 [`docs/diagrams/forgeloop-engineering-flow.workflow.json`](./docs/diagrams/forgeloop-engineering-flow.workflow.json).
 The committed animated interactive explorer is
 [`docs/assets/diagrams/forgeloop-engineering-flow.html`](./docs/assets/diagrams/forgeloop-engineering-flow.html),
-which opens in the dark presentation stage and traces the workflow. The
+which traces it. The
 animated, self-contained SVG fallback is
 [`docs/assets/diagrams/forgeloop-engineering-flow.svg`](./docs/assets/diagrams/forgeloop-engineering-flow.svg),
 and the deterministic hash receipt is
@@ -436,20 +436,21 @@ and the deterministic hash receipt is
 The governance source is [`docs/diagrams/manifest.json`](./docs/diagrams/manifest.json),
 and the source-bound visual approval is kept in
 [`docs/diagrams/reviews/forgeloop-engineering-flow.review.json`](./docs/diagrams/reviews/forgeloop-engineering-flow.review.json).
-The broader architecture and boundaries are in
-[`LOOP_SYSTEM_DESIGN.md`](./LOOP_SYSTEM_DESIGN.md).
+The broader architecture and the CLI-only search boundary are in
+[`LOOP_SYSTEM_DESIGN.md`](./LOOP_SYSTEM_DESIGN.md) and
+[`PERSISTENT_SEARCH_TRANSPORT.md`](./docs/PERSISTENT_SEARCH_TRANSPORT.md).
 
 [Open the animated ForgeLoop evidence-first engineering flow](./docs/assets/diagrams/forgeloop-engineering-flow.html)
 
 ![ForgeLoop evidence-first engineering flow (animated SVG fallback)](./docs/assets/diagrams/forgeloop-engineering-flow.svg)
 
-The architecture flow is complemented by two focused, source-bound workflow
-diagrams. The [Verification Trust Flow source](./docs/diagrams/forgeloop-verification-trust-flow.workflow.json),
+Two focused, source-bound workflow
+diagrams complement it. The [Verification Trust Flow source](./docs/diagrams/forgeloop-verification-trust-flow.workflow.json),
 [animated explorer](./docs/assets/diagrams/forgeloop-verification-trust-flow.html),
 [SVG fallback](./docs/assets/diagrams/forgeloop-verification-trust-flow.svg),
 [receipt](./docs/assets/diagrams/forgeloop-verification-trust-flow.receipt.json),
 and [visual review](./docs/diagrams/reviews/forgeloop-verification-trust-flow.review.json)
-show why narrow verification is fail-closed. The [Code Attestation Chain
+show fail-closed verification. The [Code Attestation Chain
 source](./docs/diagrams/forgeloop-code-attestation-flow.workflow.json),
 [animated explorer](./docs/assets/diagrams/forgeloop-code-attestation-flow.html),
 [SVG fallback](./docs/assets/diagrams/forgeloop-code-attestation-flow.svg),

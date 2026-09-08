@@ -9,7 +9,7 @@ import { searchRepository } from "../../src/repository-index/search.js";
 import { stopRepositoryIndexServer } from "../../src/repository-index/server.js";
 import { getCanonicalRepositorySearchArgs, appendSearchFilters } from "../../src/repository-index/args.js";
 import { getTgrepIndexPath } from "../../src/repository-index/paths.js";
-import { runTgrep } from "../../src/repository-index/process.js";
+import { createTgrepBinaryHandle, runTgrep } from "../../src/repository-index/process.js";
 
 const execFileAsync = promisify(execFile);
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -19,6 +19,7 @@ const binary = process.env.FORGELOOP_TGREP_BINARY;
 if (!binary || !path.isAbsolute(binary)) {
   throw new Error("Set FORGELOOP_TGREP_BINARY to the absolute path of the pinned native tgrep binary");
 }
+const binaryHandle = createTgrepBinaryHandle(binary);
 
 const fixture = await mkdtemp(path.join(os.tmpdir(), "forgeloop-repository-index-benchmark-"));
 const queries = JSON.parse(await readFile(path.join(packageRoot, "benchmarks/repository-index/queries.json"), "utf8")).queries;
@@ -72,7 +73,7 @@ async function measureRawTgrep(query) {
   args.push(fixture);
   const startedAt = performance.now();
   const result = await runTgrep({
-    binaryPath: binary,
+    binary: binaryHandle,
     repoRoot: fixture,
     args,
     timeoutMs: options.commandTimeoutMs,

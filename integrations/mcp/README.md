@@ -52,6 +52,18 @@ standard, or expanded presentation context while preserving lifecycle phases,
 required gates, verification truth, authority, provenance, safety floors, and
 validator-backed completion.
 
+### Repository search
+
+The adapter exposes the canonical read-only `forgeloop_search` tool and the
+`forgeloop://repository/index-status` resource. Both use ForgeLoop's direct
+Integration API and normalized Repository Index contract. They do not connect
+to or start the CLI's persistent search host, accept raw tgrep arguments, or
+provide a no-index fallback. Repository Index health and search results remain
+operational data, never lifecycle evidence or completion authority. See the
+core [`Repository Index`](../../docs/REPOSITORY_INDEX.md) and
+[`Persistent Search Transport`](../../docs/PERSISTENT_SEARCH_TRANSPORT.md)
+references for the shared boundary.
+
 ## Security model
 
 - Project root is pinned at startup (realpath + frozen); never a tool input.

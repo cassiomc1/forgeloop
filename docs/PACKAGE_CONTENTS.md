@@ -38,7 +38,8 @@ The published tarball includes the following consumer-facing groups:
   Repository Index query inputs and benchmark instructions are also shipped;
   generated local repositories and measurements are not.
 - **User documentation:** the getting-started, integration, CLI, artifact,
-  troubleshooting, release, package-boundary, and related reference pages.
+  Repository Index, Persistent Search Transport, troubleshooting, release,
+  package-boundary, and related reference pages.
   The advisory-context and Ripwire adapter guides ship with the corresponding
   public integration surface.
   The typed diagram sources, generated HTML/SVG/receipt artifacts, and

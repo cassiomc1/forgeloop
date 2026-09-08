@@ -67,6 +67,36 @@ may be absent only when the canonical protocol marks it not applicable;
 presentation depth cannot change evidence, verification truth, authority,
 provenance, safety-floor, or validator-backed completion requirements.
 
+### Repository Search boundary
+
+The Integration API exposes direct, transport-neutral repository operations:
+
+```js
+import {
+  repositorySearch,
+  repositoryIndexStatus,
+} from "@cassiomc1/forgeloop/integration";
+
+const result = await repositorySearch({
+  projectPath: ".",
+  pattern: "needle",
+  fixedStrings: true,
+});
+
+const status = await repositoryIndexStatus({ projectPath: "." });
+```
+
+These operations call the canonical Repository Search service and require the
+managed Repository Index for supported Git repositories. The shell-facing CLI
+`search` command may use the user-scoped persistent local IPC host described in
+[`PERSISTENT_SEARCH_TRANSPORT.md`](./PERSISTENT_SEARCH_TRANSPORT.md), but that
+host is only a CLI startup/reuse optimization. Integration API and MCP callers
+do not use it, and no transport carries lifecycle, claims, receipts, evidence,
+or completion authority.
+
+See [`REPOSITORY_INDEX.md`](./REPOSITORY_INDEX.md) for the normalized search
+contract, tgrep management, status resource, and maintenance commands.
+
 ### Usage and efficiency boundary
 
 Create a context with an optional trusted provider:
