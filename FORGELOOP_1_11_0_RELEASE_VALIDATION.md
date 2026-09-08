@@ -228,7 +228,7 @@ adapters.
 - npm run changelog:check — passed; reports published-history freshness at
   v1.10.2, which is expected before candidate publication.
 - npm run release:identity -- --version 1.11.0 --release-commit
-  b46acc4bfc5be99b23c09d42876c4acd6a3a4e5c --json — 
+  b46acc4bfc5be99b23c09d42876c4acd6a3a4e5c --json —
   RELEASE_IDENTITY_NOT_VERIFIED because the npm registry returned HTTP 404.
   No publication was attempted.
 
@@ -281,4 +281,3 @@ The intended delivery boundary is therefore:
    validator-backed COMPLETE only when the required evidence is present.
 5. Stop before npm publication, tagging, GitHub Release creation, deployment,
    or merge.
-

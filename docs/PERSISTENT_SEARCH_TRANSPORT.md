@@ -287,4 +287,3 @@ The package release boundary ships the transport runtime and this reference,
 but not user-specific state, sockets, named pipes, native release binaries, or
 derived repository indexes. The release checklist is
 [`RELEASE_CHECKLIST.md`](./RELEASE_CHECKLIST.md).
-
