@@ -50,7 +50,7 @@ Limits are explicit: 1 MiB requests, 16 MiB responses, 4,096-character patterns,
 - Child processes are spawned with `shell: false`; no shell interpolation is used.
 - Transport search parameters use a closed allowlist and are projected before reaching the canonical search implementation; binary paths, environments, timeouts, and package roots cannot be supplied over IPC.
 - POSIX socket permissions are set to owner-only (`0600`). Windows uses the named-pipe endpoint supplied by the local OS transport.
-- A host is reusable only when its state, protocol/version, scope, endpoint, PID, entrypoint, and process command line agree. Termination refuses unverified or unrelated processes.
+- A host is reusable only when its state, protocol/version, scope, endpoint, PID, entrypoint, and ownership identity agree. POSIX uses the verified process command line; Windows uses an authenticated state-bound endpoint handshake when process inspection is unavailable. Termination refuses unverified or unrelated processes.
 - State cleanup is nonce-conditional and does not remove an unowned live host.
 - Existing managed-tgrep resolution and checksum verification remain unchanged.
 - Transport state is operational runtime state, not Repository Index evidence, lifecycle authority, completion proof, or historical state.
@@ -62,10 +62,10 @@ Passed checks:
 
 - `npm ci` — completed; 133 packages added, 0 vulnerabilities reported.
 - `npm run lint -- --quiet` — passed.
-- `npm test` — 1,610 tests, 1,601 passed, 9 skipped, 0 failed.
-- `npm run coverage` — passed; 85.65% lines/statements, 83.70% functions, and 76.20% branches against thresholds of 80%/75%/70%.
-- Managed persistent transport tests (`tests/persistent-transport.test.js` and `tests/persistent-transport-native.test.js`) — 7 passed, 0 failed.
-- Managed native set (`repository-index-live`, differential, migration, native CLI, and persistent transport) — 7 passed, 0 failed.
+- `npm test` — 1,613 tests, 1,604 passed, 9 skipped, 0 failed.
+- `npm run coverage` — passed; 85.63% lines/statements, 83.78% functions, and 76.18% branches against thresholds of 80%/75%/70%.
+- Explicit managed transport/native/server suite (`tests/persistent-transport.test.js`, `tests/persistent-transport-native.test.js`, and `tests/repository-index-server.test.js`) — 12 passed, 0 failed.
+- Focused transport/platform/server suite — 14 passed, 0 failed.
 - `npm run mcp:test` — 69 passed, 0 failed.
 - `npm run mcp:pack:check` — passed; core and MCP tarball integrity plus consumer smoke passed.
 - Direct API versus persistent transport vector parity — passed for 9 literal, rare, regex, zero-match, case, word, glob, type, context, and max-count query vectors; run-variable timing/byte counters were excluded from the comparison.
@@ -89,9 +89,9 @@ Not verified:
 ## Platform results
 
 - macOS: native persistent transport passed, including 50 concurrent cold searches, warm reuse, multiple repositories, shutdown/restart recovery, and CLI cold/warm behavior.
-- Linux: the workflow matrix now runs the native persistent transport test on Ubuntu, but no remote CI run was initiated for this local-only implementation.
-- Windows: the workflow matrix now runs the native persistent transport test on Windows, including named-pipe code paths, but no remote CI run was initiated.
-- The native CI job is a required matrix entry without `continue-on-error`; exact-head remote evidence remains a delivery follow-up for the new PR.
+- Linux: the exact-head GitHub workflow passed the native persistent transport test on Ubuntu.
+- Windows: the exact-head GitHub workflow passed the native persistent transport test, including named-pipe code paths.
+- The required exact-head GitHub matrix passed, including Windows Node 20 and Node 24 CLI portability, documentation quality, package smoke, audit, dependency review, CodeQL, and Repository Index checks.
 
 ## Performance measurements
 
@@ -128,14 +128,13 @@ Resource usage was bounded by the implementation's frame, timeout, concurrency, 
 
 - P0: none observed.
 - P1: none observed.
-- P2: Linux and Windows exact-head native CI evidence is still pending; the full resource benchmark does not yet capture peak RSS/CPU.
+- P2: the full resource benchmark does not yet capture peak RSS/CPU.
 - P3: a native launcher could be revisited if a stricter end-to-end CLI SLA is required, but current evidence does not establish that it is necessary.
 
 ## Limitations and recommended follow-ups
 
-1. Run the required native matrix on an exact pushed PR head and retain Ubuntu, macOS, and Windows receipts.
-2. Add process RSS/CPU sampling to the benchmark if resource budgets become release criteria.
-3. If CLI latency remains a product blocker after transport adoption, perform a separate native-launcher experiment with equivalent protocol, ownership, packaging, and cross-platform tests. The current measurements do not justify adding that maintenance surface solely for this change.
+1. Add process RSS/CPU sampling to the benchmark if resource budgets become release criteria.
+2. If CLI latency remains a product blocker after transport adoption, perform a separate native-launcher experiment with equivalent protocol, ownership, packaging, and cross-platform tests. The current measurements do not justify adding that maintenance surface solely for this change.
 
 ## Required questions
 
@@ -145,7 +144,7 @@ Resource usage was bounded by the implementation's frame, timeout, concurrency, 
 4. The measured persistent path added approximately 0.1 ms/query over the direct Integration API in the ten-query workload; rounded warm means were equal at 6 ms/query.
 5. No meaningful Integration API regression was observed: direct API mean was 5 ms warm and 6 ms/query in the ten-query workload.
 6. No search result difference was observed. The ten-query match-count vectors and the separate 9-vector semantic comparison were identical, and existing differential/oracle coverage passed.
-7. Yes locally: local-only IPC, strict framing and parameter validation, owner-only POSIX socket permissions, verified process ownership, safe cleanup, managed-tgrep integrity, and public privacy boundaries were preserved. Cross-platform confirmation awaits the exact-head native CI run.
+7. Yes: local-only IPC, strict framing and parameter validation, owner-only POSIX socket permissions, verified process ownership, safe cleanup, managed-tgrep integrity, and public privacy boundaries were preserved locally and confirmed by the exact-head cross-platform CI matrix.
 8. Not on the current evidence. Node startup is measurable, but a native launcher would add packaging and maintenance complexity; it should be considered only after a product-level CLI latency requirement and cross-platform measurements justify it.
 
 PASS WITH FOLLOW-UPS
