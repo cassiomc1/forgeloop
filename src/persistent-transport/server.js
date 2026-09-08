@@ -8,7 +8,7 @@ import { searchRepository } from "../repository-index/search.js";
 import { getPackageRoot } from "../core/templates.js";
 import { PERSISTENT_TRANSPORT_DEFAULTS, PERSISTENT_TRANSPORT_PROTOCOL_VERSION } from "./constants.js";
 import { encodeFrame, FrameDecoder, parseFrame } from "./framing.js";
-import { createErrorResponse, createSuccessResponse, validateRequest, assertSearchParams, projectSearchQuery } from "./protocol.js";
+import { createErrorResponse, createSuccessResponse, validateRequest, assertSearchParams } from "./protocol.js";
 import { PERSISTENT_TRANSPORT_ERROR_CODES, persistentTransportError } from "./errors.js";
 import { getPersistentTransportPaths } from "./paths.js";
 import { writePersistentTransportState, removePersistentTransportState } from "./state.js";
@@ -32,7 +32,19 @@ function safeError(error) {
 
 function publicSearchRequest(query) {
   return {
-    ...projectSearchQuery(query),
+    pattern: query.pattern,
+    globs: query.globs,
+    types: query.types,
+    context: query.context,
+    beforeContext: query.beforeContext,
+    afterContext: query.afterContext,
+    maxCount: query.maxCount,
+    filesWithMatches: query.filesWithMatches,
+    stats: query.stats,
+    fixedStrings: query.fixedStrings,
+    ignoreCase: query.ignoreCase,
+    smartCase: query.smartCase,
+    wordRegexp: query.wordRegexp,
     packageRoot: getPackageRoot(),
   };
 }

@@ -4,6 +4,10 @@ import path from "node:path";
 
 import { REPOSITORY_INDEX_ERROR_CODES, repositoryIndexError } from "./errors.js";
 
+const LOCK_POLL_INTERVAL_MS = 50;
+const DEFAULT_LOCK_TIMEOUT_MS = 30_000;
+const MAX_LOCK_TIMEOUT_MS = 120_000;
+
 function readLock(lockPath) {
   return readFile(lockPath, "utf8")
     .then((value) => JSON.parse(value))
@@ -51,7 +55,7 @@ async function releaseDeadLock(lockPath, observed) {
   return true;
 }
 
-export async function acquireRepositoryIndexLock(lockPath, operation, { timeoutMs = 30_000, pollMs = 50, tryOnly = false } = {}) {
+export async function acquireRepositoryIndexLock(lockPath, operation, { timeoutMs = DEFAULT_LOCK_TIMEOUT_MS, tryOnly = false } = {}) {
   await mkdir(path.dirname(lockPath), { recursive: true });
   const lock = {
     schemaVersion: 1,
@@ -60,7 +64,10 @@ export async function acquireRepositoryIndexLock(lockPath, operation, { timeoutM
     operation,
     acquiredAt: new Date().toISOString(),
   };
-  const deadline = Date.now() + timeoutMs;
+  const boundedTimeoutMs = Number.isSafeInteger(timeoutMs) && timeoutMs > 0
+    ? Math.min(timeoutMs, MAX_LOCK_TIMEOUT_MS)
+    : DEFAULT_LOCK_TIMEOUT_MS;
+  const deadline = Date.now() + boundedTimeoutMs;
   while (true) {
     let handle = null;
     try {
@@ -89,7 +96,7 @@ export async function acquireRepositoryIndexLock(lockPath, operation, { timeoutM
         if (Date.now() >= deadline) {
           throw repositoryIndexError(REPOSITORY_INDEX_ERROR_CODES.LOCK_UNSAFE, `Repository Index operation lock is busy: ${lockPath}`, { lock: observed });
         }
-        await new Promise((resolve) => setTimeout(resolve, pollMs));
+        await new Promise((resolve) => setTimeout(resolve, LOCK_POLL_INTERVAL_MS));
       }
     }
   }

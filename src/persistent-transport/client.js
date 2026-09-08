@@ -227,6 +227,21 @@ async function ensureHost({ homeDirectory, idleTimeoutMs, startupTimeoutMs, env,
   }
 }
 
+const startupCoordinators = new Map();
+
+function coordinateEnsureHost(options) {
+  const key = getPersistentTransportPaths({ homeDirectory: options.homeDirectory }).root;
+  const active = startupCoordinators.get(key);
+  if (active) return active;
+  const pending = ensureHost(options);
+  startupCoordinators.set(key, pending);
+  const clear = () => {
+    if (startupCoordinators.get(key) === pending) startupCoordinators.delete(key);
+  };
+  pending.then(clear, clear);
+  return pending;
+}
+
 export async function searchViaPersistentTransport(repositoryRoot, request = {}, options = {}) {
   const canonicalRoot = await realpath(repositoryRoot);
   const homeDirectory = options.homeDirectory ?? process.env.FORGELOOP_PERSISTENT_TRANSPORT_HOME ?? undefined;
@@ -245,7 +260,7 @@ export async function searchViaPersistentTransport(repositoryRoot, request = {},
     } catch (error) {
       lastError = error;
       if (error.remote || !isConnectionFailure(error)) throw error;
-      await ensureHost({ ...transportOptions, recover: attempt === 1 });
+      await coordinateEnsureHost({ ...transportOptions, recover: attempt === 1 });
     }
   }
   throw lastError ?? persistentTransportError(PERSISTENT_TRANSPORT_ERROR_CODES.UNAVAILABLE, "Persistent search host is unavailable");
