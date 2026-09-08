@@ -1,6 +1,7 @@
 import { rebuildRepositoryIndex, setupRepositoryIndex, startRepositoryIndexServer, stopRepositoryIndexServer } from "../repository-index/server.js";
 import { searchRepository } from "../repository-index/search.js";
 import { formatRepositoryIndexStatus, getRepositoryIndexStatus, sanitizeRepositoryIndexStatus } from "../repository-index/status.js";
+import { searchViaPersistentTransport } from "../persistent-transport/client.js";
 
 function sanitizeLifecycleResult(result) {
   const { status, indexed, ...rest } = result ?? {};
@@ -68,7 +69,16 @@ export async function runRepositoryIndexRebuild({ target, packageRoot, options =
   });
 }
 
-export async function runSearch({ target, packageRoot, options = {} } = {}) {
+export async function runSearch({ target, packageRoot, options = {}, transport = "integration" } = {}) {
+  if (transport === "cli") {
+    return searchViaPersistentTransport(target, options, {
+      homeDirectory: options.homeDirectory,
+      idleTimeoutMs: options.persistentTransportIdleTimeoutMs,
+      startupTimeoutMs: options.persistentTransportStartupTimeoutMs,
+      requestTimeoutMs: options.persistentTransportRequestTimeoutMs,
+      env: options.env,
+    });
+  }
   return searchRepository(target, {
     ...options,
     packageRoot,

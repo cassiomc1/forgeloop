@@ -27,6 +27,7 @@
     "benchmarks/repository-index/queries.json",
     "benchmarks/repository-index/README.md",
     "benchmarks/repository-index/run-hot-path.mjs",
+    "benchmarks/repository-index/run-persistent-transport.mjs",
     ".forgeloop/forgeloop.gitignore",
     "AGENTS.md",
     "CLAUDE.md",

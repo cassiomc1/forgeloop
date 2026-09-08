@@ -399,7 +399,7 @@ export const COMMAND_HANDLERS = Object.freeze({
     return 0;
   },
   search: async ({ target, packageRoot, options }) => {
-    const { result, exitCode } = await COMMAND_EXECUTORS.search({ target, packageRoot, options });
+    const { result, exitCode } = await COMMAND_EXECUTORS.search({ target, packageRoot, options, transport: "cli" });
     renderJsonOr(options, result, formatSearchResult);
     return exitCode;
   },

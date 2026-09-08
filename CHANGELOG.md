@@ -14,6 +14,11 @@
   warm per-repository search readiness with bounded recovery, path-safe public
   search/status projections, and real pinned native CI coverage on Linux,
   macOS, and Windows.
+- Added a user-scoped persistent local search host for the CLI, with a
+  versioned length-prefixed IPC protocol, ownership-checked startup/recovery,
+  idle shutdown, same-repository contention serialization, and native
+  cross-platform transport coverage. Integration API and MCP search remain
+  direct canonical calls.
 
 ### Compatibility and operations
 
