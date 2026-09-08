@@ -8,7 +8,9 @@ import { PERSISTENT_TRANSPORT_DEFAULTS } from "../src/persistent-transport/const
 import { PERSISTENT_TRANSPORT_ERROR_CODES, persistentTransportError } from "../src/persistent-transport/errors.js";
 import { encodeFrame, FrameDecoder, parseFrame } from "../src/persistent-transport/framing.js";
 import { getPersistentTransportStatus, pingPersistentSearchHost, shutdownPersistentSearchHost } from "../src/persistent-transport/client.js";
-import { startPersistentSearchHost } from "../src/persistent-transport/lifecycle.js";
+import { inspectPersistentTransport, startPersistentSearchHost } from "../src/persistent-transport/lifecycle.js";
+import { terminateOwnedPersistentTransport } from "../src/persistent-transport/ownership.js";
+import { readPersistentTransportState } from "../src/persistent-transport/state.js";
 import { assertSearchParams, createRequest, validateRequest } from "../src/persistent-transport/protocol.js";
 
 async function waitForHost(homeDirectory) {
@@ -67,6 +69,44 @@ test("persistent transport host publishes bounded status and shuts down through 
     assert.equal(Object.hasOwn(status, "entrypoint"), false);
     await shutdownPersistentSearchHost({ homeDirectory, timeoutMs: 5_000 });
     assert.equal((await getPersistentTransportStatus({ homeDirectory })).status, "NOT_RUNNING");
+  } finally {
+    await shutdownPersistentSearchHost({ homeDirectory, timeoutMs: 1_000 }).catch(() => {});
+    await rm(homeDirectory, { recursive: true, force: true });
+  }
+});
+
+test("persistent transport can verify a live host through its authenticated endpoint", async () => {
+  const homeDirectory = await mkdtemp(path.join(os.tmpdir(), "forgeloop-persistent-transport-endpoint-"));
+  try {
+    await startPersistentSearchHost({ homeDirectory, idleTimeoutMs: 5_000 });
+    await waitForHost(homeDirectory);
+    const inspection = await inspectPersistentTransport({
+      homeDirectory,
+      processInspector: { isAlive: () => true, commandLine: async () => null },
+    });
+    assert.equal(inspection.status, "READY");
+    assert.equal(inspection.owned, true);
+    assert.equal(inspection.ownershipMode, "ENDPOINT_HANDSHAKE");
+  } finally {
+    await shutdownPersistentSearchHost({ homeDirectory, timeoutMs: 1_000 }).catch(() => {});
+    await rm(homeDirectory, { recursive: true, force: true });
+  }
+});
+
+test("endpoint-authenticated cleanup shuts down the verified host without killing a PID", async () => {
+  const homeDirectory = await mkdtemp(path.join(os.tmpdir(), "forgeloop-persistent-transport-cleanup-"));
+  try {
+    const { paths } = await startPersistentSearchHost({ homeDirectory, idleTimeoutMs: 5_000 });
+    await waitForHost(homeDirectory);
+    const { state } = await readPersistentTransportState(paths.statePath);
+    let killCount = 0;
+    const result = await terminateOwnedPersistentTransport(state, {
+      expectedEndpoint: paths.endpoint,
+      processApi: { kill: () => { killCount += 1; } },
+      processInspector: { isAlive: () => true, commandLine: async () => null },
+    });
+    assert.equal(result.termination, "ENDPOINT_SHUTDOWN");
+    assert.equal(killCount, 0);
   } finally {
     await shutdownPersistentSearchHost({ homeDirectory, timeoutMs: 1_000 }).catch(() => {});
     await rm(homeDirectory, { recursive: true, force: true });

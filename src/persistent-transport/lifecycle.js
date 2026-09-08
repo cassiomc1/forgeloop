@@ -37,14 +37,14 @@ export async function inspectPersistentTransport({ homeDirectory = os.homedir(),
   const { state, invalid } = await readPersistentTransportState(paths.statePath);
   if (invalid) return { status: "STALE", running: false, owned: false, paths, state: null, reason: "STATE_INVALID" };
   if (!state) return { status: "NOT_RUNNING", running: false, owned: false, paths, state: null };
-  const ownership = await inspectPersistentTransportOwnership(state, { processApi, processInspector });
+  const ownership = await inspectPersistentTransportOwnership(state, { processApi, processInspector, expectedEndpoint: paths.endpoint });
   if (!ownership.running && ownership.reason === "PROCESS_EXITED") return { status: "STALE", running: false, owned: true, paths, state, reason: ownership.reason };
   if (!ownership.owned) return { status: "OWNERSHIP_UNVERIFIED", running: false, owned: false, paths, state, reason: ownership.reason };
   const packageVersion = await readPackageVersion();
   if (state.protocolVersion !== PERSISTENT_TRANSPORT_PROTOCOL_VERSION || (packageVersion && state.forgeLoopVersion !== packageVersion)) {
-    return { status: "INCOMPATIBLE", running: true, owned: true, paths, state, reason: "VERSION_MISMATCH", packageVersion };
+    return { status: "INCOMPATIBLE", running: true, owned: true, paths, state, reason: "VERSION_MISMATCH", packageVersion, ownershipMode: ownership.ownershipMode };
   }
-  return { status: "READY", running: true, owned: true, paths, state, packageVersion };
+  return { status: "READY", running: true, owned: true, paths, state, packageVersion, ownershipMode: ownership.ownershipMode };
 }
 
 export async function getPersistentTransportStatus(options = {}) {
@@ -62,7 +62,7 @@ export async function getPersistentTransportStatus(options = {}) {
 export async function cleanPersistentTransportState(inspection, { processApi = process } = {}) {
   if (!inspection?.state || inspection.owned !== true) return;
   if (inspection.owned && inspection.running) {
-    await terminateOwnedPersistentTransport(inspection.state, { processApi });
+    await terminateOwnedPersistentTransport(inspection.state, { processApi, expectedEndpoint: inspection.paths.endpoint });
     const deadline = Date.now() + 1_000;
     while (Date.now() < deadline && processIsAlive(inspection.state.pid, processApi)) {
       await new Promise((resolve) => setTimeout(resolve, 25));
