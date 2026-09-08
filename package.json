@@ -26,6 +26,7 @@
     "benchmarks/execution-profiles/README.md",
     "benchmarks/repository-index/queries.json",
     "benchmarks/repository-index/README.md",
+    "benchmarks/repository-index/run-hot-path.mjs",
     ".forgeloop/forgeloop.gitignore",
     "AGENTS.md",
     "CLAUDE.md",

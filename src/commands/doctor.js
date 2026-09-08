@@ -123,7 +123,7 @@ async function inspectRepositoryIndexForDoctor({ target, packageRoot, repository
     return { status: "DEFERRED", required: true, reason: "target is not a Git repository" };
   }
 
-  const status = await getRepositoryIndexStatus(target, { packageRoot, ...repositoryIndexOptions });
+  const status = await getRepositoryIndexStatus(target, { packageRoot, ...repositoryIndexOptions, includeLocalPaths: true });
   const result = {
     status: status.health,
     required: true,

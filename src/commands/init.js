@@ -130,7 +130,6 @@ async function prepareRepositoryIndexForInit({ target, dryRun, packageRoot, repo
     health: setup.status?.health ?? "READY",
     engine: setup.status?.engine ?? "tgrep",
     engineVersion: setup.status?.engineVersion ?? null,
-    indexPath: setup.status?.indexPath ?? null,
     server: setup.status?.server ?? null,
   };
 }

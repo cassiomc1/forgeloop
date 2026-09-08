@@ -21,8 +21,13 @@ test("Integration API advertises provider-neutral repository search and status",
   try {
     const resource = await readForgeLoopIntegrationResource("repository/index-status", { projectPath: target, repositoryIndexOptions: { env: {} } });
     assert.equal(resource.data.health, "ENGINE_MISSING");
+    assert.equal(Object.hasOwn(resource.data, "repositoryRoot"), false);
+    assert.equal(Object.hasOwn(resource.data, "indexPath"), false);
+    assert.equal(Object.hasOwn(resource.data, "binaryPath"), false);
     const status = await repositoryIndexStatus({ projectPath: target, env: {} });
     assert.equal(status.health, "ENGINE_MISSING");
+    assert.equal(Object.hasOwn(status, "repositoryRoot"), false);
+    assert.equal(Object.hasOwn(status, "indexPath"), false);
     await assert.rejects(
       () => repositorySearch({ projectPath: target, pattern: "" }),
       (error) => error.code === "E_REPOSITORY_INDEX_REQUEST_INVALID",

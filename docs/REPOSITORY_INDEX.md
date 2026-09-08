@@ -75,7 +75,12 @@ on `index.bin`, `lookup.bin`, `files.bin`, or other native file formats.
 The checked-in
 [`tgrep-manifest.json`](../src/repository-index/tgrep-manifest.json) is the
 distribution source of truth. It pins the upstream repository, semantic
-version, release asset name, archive type, binary name, and SHA-256 checksum.
+version, release asset name, archive type, binary name, archive SHA-256
+checksum, and extracted executable SHA-256 checksum. Managed installation
+verifies the executable digest before it ever runs `tgrep --version`; a digest
+mismatch is reported and explicit setup/repair safely replaces the quarantined
+binary. The development override remains version-checked but is deliberately
+non-canonical and is not covered by the release binary digest.
 The manifest currently contains verified assets for:
 
 | ForgeLoop key | Native platform | Archive |
@@ -122,9 +127,10 @@ forgeloop index-setup --asset /absolute/path/tgrep-v1.0.3-release.tar.gz
 ```
 
 The archive filename may differ from the manifest asset name, but its bytes
-must match the checksum for the current platform. Setup downloads or reads
-into a temporary directory, validates the archive, rejects unsafe entries,
-verifies the extracted executable version, and installs atomically.
+must match the archive and executable checksums for the current platform. Setup
+downloads or reads into a temporary directory, validates the archive, rejects
+unsafe entries, verifies the extracted executable digest before version
+execution, and installs atomically.
 
 ## Search CLI
 
@@ -203,6 +209,21 @@ matches, and `2` for a ForgeLoop/search error. The `metrics.exitCode` field
 preserves the observed native result (`0` for matches or `1` for no matches)
 for diagnostics. A native exit code `2` is always a structured search error.
 
+Structured search output intentionally omits `repositoryRoot`, `indexPath`,
+`statePath`, `binaryPath`, and other machine-local paths. Match and file paths
+are repository-relative. The same sanitized projection is used by the CLI,
+Integration API, and MCP adapter; `doctor` remains the explicit diagnostic
+surface for local troubleshooting details.
+
+The first search in a process performs strong setup and readiness checks.
+Subsequent searches use a per-repository process-local readiness record and a
+cheap PID liveness check, without repeating native version/status commands or
+process command-line inspection. A healthy cache is invalidated when the
+manifest version, selected binary, index boundary, or server liveness no
+longer matches. If a query observes a server/index execution failure, ForgeLoop
+performs one bounded setup-and-retry cycle. Native exit code `1` remains a
+successful zero-match result and is never treated as a recovery failure.
+
 Search patterns, paths, and filters are passed as direct argument-array values
 with `shell: false`. Shell syntax is not evaluated. Request limits are:
 
@@ -226,8 +247,10 @@ forgeloop index-status --json
 
 This command is read-only. It does not repair a stale server or download an
 engine. The normalized status includes `health`, pinned engine information,
-the project-relative index boundary, effective resource policy, index metadata,
-and owned-server state. Health is one of `READY`, `INDEXING`,
+effective resource policy, index metadata, and owned-server state. Structured
+status omits machine-local repository, index, state, and binary paths;
+diagnostics may expose local paths only through the explicit `doctor`
+diagnostic surface. Health is one of `READY`, `INDEXING`,
 `NOT_INITIALIZED`, `ENGINE_MISSING`, `ENGINE_INVALID`, `SERVER_DOWN`,
 `SERVER_UNHEALTHY`, or `ERROR`. Only `READY` satisfies mandatory readiness.
 
@@ -358,10 +381,11 @@ forgeloop index-setup --asset /absolute/path/tgrep-v1.0.3-x86_64-unknown-linux-m
 ```
 
 The preloaded archive path must be absolute and regular. ForgeLoop validates
-the exact platform checksum, rejects archive path traversal and symbolic-link
-entries, extracts only to a temporary directory, verifies `tgrep --version`,
-and performs an atomic install. A failed or partial download is removed and
-does not become a trusted engine.
+the exact platform archive and executable checksums, rejects archive path
+traversal and symbolic-link entries, extracts only to a temporary directory,
+verifies the executable digest before `tgrep --version`, and performs an
+atomic install. A failed or partial download is removed and does not become a
+trusted engine.
 
 ## Troubleshooting
 
@@ -388,6 +412,7 @@ Stable Repository Index errors include:
 | `E_REPOSITORY_INDEX_ENGINE_MISSING` | Managed/override binary is absent or not a regular executable | Run `index-setup` or provide `FORGELOOP_TGREP_BINARY` for development |
 | `E_REPOSITORY_INDEX_ENGINE_DOWNLOAD_FAILED` | Pinned asset could not be safely downloaded/read | Check network or use `--asset` |
 | `E_REPOSITORY_INDEX_ENGINE_CHECKSUM_MISMATCH` | Archive bytes differ from the manifest | Obtain the exact release asset; do not bypass verification |
+| `E_REPOSITORY_INDEX_ENGINE_BINARY_CHECKSUM_MISMATCH` | Managed or extracted executable bytes differ from the manifest | Run `index-setup` or `index-rebuild` to repair the managed binary; do not run a mismatched executable |
 | `E_REPOSITORY_INDEX_ENGINE_EXTRACTION_FAILED` | Archive is invalid or unsafe | Replace the archive with the exact pinned asset |
 | `E_REPOSITORY_INDEX_ENGINE_VERSION_MISMATCH` | Binary does not report the pinned version | Use `tgrep 1.0.3` |
 | `E_REPOSITORY_INDEX_ENGINE_EXECUTION_FAILED` | Managed executable could not be launched/verified | Inspect permissions and host compatibility |
@@ -405,15 +430,17 @@ Stable Repository Index errors include:
 
 The Repository Index is a local derived-cache boundary:
 
-- version, asset, and SHA-256 are pinned in source control;
+- version, asset, archive SHA-256, and executable SHA-256 are pinned in source control;
 - release URLs are restricted to the expected HTTPS GitHub hosts;
-- downloads and extraction are bounded and atomic;
+- downloads and extraction are bounded and atomic; managed binaries are hashed
+  before any execution and tampered binaries are repaired only through the
+  canonical setup path;
 - archive absolute paths, `..` traversal, and symbolic links are rejected;
 - native processes receive direct argument arrays with `shell: false`;
 - server stop requires repository-root, index-path, metadata, binary, and
   command-line identity, not just a PID;
-- search patterns, match text, and repository paths are not sent to telemetry
-  by default;
+- search patterns, match text, and machine-local repository paths are not sent
+  to telemetry or returned in normal structured search/status output by default;
 - native index files are never interpreted as protocol truth;
 - search metrics remain operational observations, not evidence or completion
   proof.
@@ -428,10 +455,10 @@ stale cache. The operation is deliberately scoped to derived Repository Index
 data. It does not run task recovery, rewrite completion, alter claims, remove
 receipts, or change guide/profile authority.
 
-If an owned server unexpectedly exits, the next normal search checks ownership
-and starts a replacement under a short project-scoped startup lock. Concurrent
-searches share one verified server; the lock is not held for the duration of a
-search query.
+If an owned server unexpectedly exits, the next normal search invalidates its
+local readiness record and performs one recovery setup/retry under a short
+project-scoped startup lock. Concurrent searches share one verified server; the
+lock is not held for the duration of a search query.
 
 ## Upgrade behavior
 
@@ -451,7 +478,7 @@ The reproducible benchmark input is
 [`benchmarks/repository-index/queries.json`](../benchmarks/repository-index/queries.json)
 and its protocol is described in
 [`benchmarks/repository-index/README.md`](../benchmarks/repository-index/README.md).
-Measure cold index build, warm startup, warm selective queries, post-mutation
+Measure cold index build, first-use setup, warm selective queries, post-mutation
 queries, and high-match queries. Record actual duration, match counts, commit,
 platform, architecture, Node version, and engine version. Do not convert these
 measurements into token savings, cost savings, or universal speed claims.

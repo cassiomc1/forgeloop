@@ -58,7 +58,6 @@ export interface RepositorySearchResult {
   schemaVersion: 1;
   query: RepositorySearchRequest & { globs: readonly string[]; types: readonly string[] };
   repositoryIndex: { engine: string; engineVersion: string | null; indexed: boolean; server: boolean };
-  repositoryRoot: string;
   matches: readonly RepositorySearchMatch[];
   contexts: readonly RepositorySearchMatch[];
   files: readonly string[];
@@ -85,10 +84,6 @@ export interface RepositoryIndexStatus {
   engineVersion: string | null;
   managedBinary: boolean;
   overridden: boolean;
-  binaryPath: string | null;
-  repositoryRoot: string;
-  indexPath: string;
-  statePath: string;
   index: {
     present: boolean;
     complete: boolean;
@@ -96,7 +91,6 @@ export interface RepositoryIndexStatus {
     trigrams: number | null;
     createdAt: number | null;
     updatedAt: number | null;
-    rootPath: string | null;
   };
   policy: { maxFileSize: string | number; maxCpuPercent: number; watcherQueueCap: number; autoSaveMutations: number };
   server: { running: boolean; owned: boolean; pid: number | null; port: number | null; watcher: string; indexing: string; files: number | null };

@@ -41,7 +41,7 @@ export function nativeOptions(binary, extra = {}) {
 }
 
 export async function createFixtureRepository() {
-  const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-repository-index-test-"));
+  const target = await mkdtemp(path.join(os.tmpdir(), "ForgeLoop Repository Index Test "));
   await cp(fixtureRoot, target, { recursive: true });
   await execFileAsync("git", ["init", "--quiet", target]);
   await execFileAsync("git", ["-C", target, "add", "."]);

@@ -1,6 +1,18 @@
 import { rebuildRepositoryIndex, setupRepositoryIndex, startRepositoryIndexServer, stopRepositoryIndexServer } from "../repository-index/server.js";
 import { searchRepository } from "../repository-index/search.js";
-import { formatRepositoryIndexStatus, getRepositoryIndexStatus } from "../repository-index/status.js";
+import { formatRepositoryIndexStatus, getRepositoryIndexStatus, sanitizeRepositoryIndexStatus } from "../repository-index/status.js";
+
+function sanitizeLifecycleResult(result) {
+  const { status, indexed, ...rest } = result ?? {};
+  const publicIndexed = indexed && typeof indexed === "object"
+    ? Object.fromEntries(Object.entries(indexed).filter(([key]) => !["root_path", "rootPath", "indexPath", "repositoryRoot"].includes(key)))
+    : indexed;
+  return {
+    ...rest,
+    ...(status ? { status: sanitizeRepositoryIndexStatus(status) } : {}),
+    ...(indexed ? { indexed: publicIndexed } : {}),
+  };
+}
 
 function nativeOptions(options, packageRoot) {
   return {
@@ -16,19 +28,19 @@ function nativeOptions(options, packageRoot) {
 export async function runRepositoryIndexSetup({ target, packageRoot, options = {} } = {}) {
   const native = nativeOptions(options, packageRoot);
   const result = await setupRepositoryIndex(target, native);
-  return { ...result, status: result.status ?? await getRepositoryIndexStatus(target, { ...native, packageRoot }) };
+  return sanitizeLifecycleResult({ ...result, status: result.status ?? await getRepositoryIndexStatus(target, { ...native, packageRoot, includeLocalPaths: true }) });
 }
 
 export async function runRepositoryIndexStart({ target, packageRoot, options = {} } = {}) {
   const native = nativeOptions(options, packageRoot);
   const result = await startRepositoryIndexServer(target, native);
-  return { ...result, status: result.status ?? await getRepositoryIndexStatus(target, { ...native, packageRoot }) };
+  return sanitizeLifecycleResult({ ...result, status: result.status ?? await getRepositoryIndexStatus(target, { ...native, packageRoot, includeLocalPaths: true }) });
 }
 
 export async function runRepositoryIndexStop({ target, packageRoot, options = {} } = {}) {
   const native = nativeOptions(options, packageRoot);
   const result = await stopRepositoryIndexServer(target, native);
-  return { ...result, status: await getRepositoryIndexStatus(target, { ...native, packageRoot, skipNativeStatus: true }) };
+  return sanitizeLifecycleResult({ ...result, status: await getRepositoryIndexStatus(target, { ...native, packageRoot, skipNativeStatus: true }) });
 }
 
 export async function runRepositoryIndexStatus({ target, packageRoot, options = {} } = {}) {
@@ -45,15 +57,15 @@ export async function runRepositoryIndexRebuild({ target, packageRoot, options =
     fixedStrings: true,
     maxCount: 1,
   });
-  return {
+  return sanitizeLifecycleResult({
     ...result,
-    status,
+    status: sanitizeRepositoryIndexStatus(status),
     smokeSearch: {
       status: "OK",
       matchCount: smoke.matches.length,
       nativeExitCode: smoke.metrics.exitCode,
     },
-  };
+  });
 }
 
 export async function runSearch({ target, packageRoot, options = {} } = {}) {

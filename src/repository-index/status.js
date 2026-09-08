@@ -173,6 +173,48 @@ function baseStatus({ repositoryRoot, indexPath, statePath }) {
   };
 }
 
+function redactLocalPaths(message, paths = []) {
+  let redacted = typeof message === "string" ? message : String(message ?? "");
+  for (const value of paths.filter((item) => typeof item === "string" && item.length > 0).sort((left, right) => right.length - left.length)) {
+    redacted = redacted.replaceAll(value, "<local-path>");
+  }
+  return redacted;
+}
+
+export function sanitizeRepositoryIndexStatus(status) {
+  if (!status || typeof status !== "object") return status;
+  const {
+    binaryPath: _binaryPath,
+    repositoryRoot: _repositoryRoot,
+    indexPath: _indexPath,
+    statePath: _statePath,
+    index = {},
+    diagnostics = [],
+    ...publicStatus
+  } = status;
+  const localPaths = [
+    status.binaryPath,
+    status.repositoryRoot,
+    status.indexPath,
+    status.statePath,
+    index.rootPath,
+    ...diagnostics.map((diagnostic) => diagnostic.path),
+  ];
+  const { rootPath: _rootPath, ...publicIndex } = index;
+  return {
+    ...publicStatus,
+    index: publicIndex,
+    diagnostics: diagnostics.map(({ path: _path, ...diagnostic }) => ({
+      ...diagnostic,
+      message: redactLocalPaths(diagnostic.message, localPaths),
+    })),
+  };
+}
+
+function statusOutput(status, includeLocalPaths) {
+  return includeLocalPaths ? status : sanitizeRepositoryIndexStatus(status);
+}
+
 function healthResult(status, health, diagnostic) {
   status.health = REPOSITORY_INDEX_HEALTH.includes(health) ? health : "ERROR";
   if (diagnostic) status.diagnostics.push(diagnostic);
@@ -192,6 +234,7 @@ async function verifyEngineForStatus(status, options) {
     healthResult(status, missing ? "ENGINE_MISSING" : "ENGINE_INVALID", {
       code: error.code ?? REPOSITORY_INDEX_ERROR_CODES.ENGINE_MISSING,
       message: error.message,
+      path: error.path,
     });
     return null;
   }
@@ -284,6 +327,7 @@ export async function getRepositoryIndexStatus(repositoryRoot, {
   spawnImpl,
   processInspector = {},
   skipNativeStatus = false,
+  includeLocalPaths = false,
 } = {}) {
   const canonicalRoot = await realpath(repositoryRoot);
   const indexPath = getTgrepIndexPath(canonicalRoot);
@@ -300,21 +344,21 @@ export async function getRepositoryIndexStatus(repositoryRoot, {
     homeDirectory,
     spawnImpl,
   });
-  if (!engine) return status;
+  if (!engine) return statusOutput(status, includeLocalPaths);
 
   const metadata = await readStatusMetadata(indexPath, statePath);
-  if (metadata.error) return healthResult(status, "SERVER_UNHEALTHY", metadata.error);
+  if (metadata.error) return statusOutput(healthResult(status, "SERVER_UNHEALTHY", metadata.error), includeLocalPaths);
   const { meta, state, serve } = metadata;
-  if (!meta) return healthResult(status, "NOT_INITIALIZED", { code: REPOSITORY_INDEX_ERROR_CODES.NOT_INITIALIZED, message: "Repository Index has not been built" });
-  if (!await projectIndexMetadata(status, meta, canonicalRoot, config)) return status;
+  if (!meta) return statusOutput(healthResult(status, "NOT_INITIALIZED", { code: REPOSITORY_INDEX_ERROR_CODES.NOT_INITIALIZED, message: "Repository Index has not been built" }), includeLocalPaths);
+  if (!await projectIndexMetadata(status, meta, canonicalRoot, config)) return statusOutput(status, includeLocalPaths);
 
   if (!skipNativeStatus) {
     const native = await readNativeStatus({ engine, canonicalRoot, indexPath, config, spawnImpl });
     if (nativeStatusFailed(native)) {
-      return healthResult(status, "SERVER_UNHEALTHY", {
+      return statusOutput(healthResult(status, "SERVER_UNHEALTHY", {
         code: native.error?.code ?? REPOSITORY_INDEX_ERROR_CODES.SERVER_UNHEALTHY,
         message: native.error?.message ?? "tgrep status failed",
-      });
+      }), includeLocalPaths);
     }
     status.native = parseStatusText(`${native.stdout}\n${native.stderr}`);
   }
@@ -326,15 +370,15 @@ export async function getRepositoryIndexStatus(repositoryRoot, {
     indexPath,
     processInspector,
   });
-  return projectServerStatus(status, ownership, serve, state);
+  return statusOutput(projectServerStatus(status, ownership, serve, state), includeLocalPaths);
 }
 
 export function formatRepositoryIndexStatus(status) {
   const lines = [
     `Repository Index: ${status.health}`,
     `Engine: ${status.engine} ${status.engineVersion ?? "unknown"}${status.overridden ? " (explicit override)" : ""}`,
-    `Repository: ${status.repositoryRoot}`,
-    `Index: ${status.indexPath}`,
+    `Repository: ${status.repositoryRoot ?? "hidden"}`,
+    `Index: ${status.indexPath ?? "hidden"}`,
     `Indexed files: ${status.index.files ?? "unknown"}`,
     `Server: ${status.server.running ? `running (pid ${status.server.pid ?? "unknown"}, port ${status.server.port ?? "unknown"})` : "not running"}`,
     `Watcher: ${status.server.watcher}`,

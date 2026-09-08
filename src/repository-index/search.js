@@ -1,11 +1,23 @@
+import { realpath } from "node:fs/promises";
+
 import { getCanonicalRepositorySearchArgs, appendSearchFilters } from "./args.js";
-import { REPOSITORY_INDEX_DEFAULTS } from "./constants.js";
+import { REPOSITORY_INDEX_DEFAULTS, REPOSITORY_INDEX_ENV_BINARY } from "./constants.js";
 import { REPOSITORY_INDEX_ERROR_CODES, repositoryIndexError } from "./errors.js";
+import { getManagedTgrepBinaryPath, getTgrepIndexPath } from "./paths.js";
+import { getRepositoryIndexPlatform } from "./platform.js";
+import { loadTgrepManifest } from "./manifest.js";
 import { runTgrep } from "./process.js";
 import { normalizeTgrepJson } from "./normalize-json.js";
 import { setupRepositoryIndex } from "./server.js";
 import { getRepositoryIndexStatus } from "./status.js";
 import { buildRepositorySearchMetrics } from "./metrics.js";
+import {
+  getRepositoryIndexReadiness,
+  invalidateRepositoryIndexReadiness,
+  isRepositoryIndexReadinessUsable,
+  markRepositoryIndexSearchSucceeded,
+  rememberRepositoryIndexReadiness,
+} from "./readiness.js";
 
 const MAX_PATTERN_CHARS = 4_096;
 const MAX_FILTERS = 32;
@@ -38,18 +50,55 @@ function normalizeSearchInvocation(repositoryRoot, request) {
 }
 
 async function prepareSearch(repositoryRoot, request) {
-  const setup = await setupRepositoryIndex(repositoryRoot, request);
-  const canonicalRoot = setup.status?.repositoryRoot ?? repositoryRoot;
-  let indexPath = setup.status?.indexPath;
-  let status = setup.status;
-  if (!indexPath) {
-    status = await getRepositoryIndexStatus(canonicalRoot, request);
-    if (status.health !== "READY") {
-      throw repositoryIndexError(REPOSITORY_INDEX_ERROR_CODES.SERVER_UNHEALTHY, "Repository Index is not ready for search", { status });
+  const canonicalRoot = await realpath(repositoryRoot);
+  const setupImpl = request.setupRepositoryIndexImpl ?? setupRepositoryIndex;
+  const cached = getRepositoryIndexReadiness(canonicalRoot, request.platform ?? process.platform);
+  if (cached) {
+    const expected = await expectedReadiness(canonicalRoot, request);
+    if (isRepositoryIndexReadinessUsable(cached, expected, { isAlive: request.processIsAliveImpl })) {
+      return {
+        status: cached.status,
+        canonicalRoot,
+        indexPath: cached.indexPath,
+        binaryPath: cached.binaryPath,
+        cacheHit: true,
+      };
     }
-    indexPath = status.indexPath;
+    invalidateRepositoryIndexReadiness(canonicalRoot, request.platform ?? process.platform);
   }
-  return { setup, status, canonicalRoot, indexPath };
+
+  const setup = await setupImpl(repositoryRoot, request);
+  const status = setup.status?.repositoryRoot
+    ? setup.status
+    : await (request.getRepositoryIndexStatusImpl ?? getRepositoryIndexStatus)(canonicalRoot, { ...request, includeLocalPaths: true });
+  if (status.health !== "READY") {
+    throw repositoryIndexError(REPOSITORY_INDEX_ERROR_CODES.SERVER_UNHEALTHY, "Repository Index is not ready for search", { status });
+  }
+  const indexPath = status.indexPath;
+  const binaryPath = status.binaryPath ?? request.binaryPath;
+  if (!indexPath || !binaryPath) {
+    throw repositoryIndexError(REPOSITORY_INDEX_ERROR_CODES.SERVER_UNHEALTHY, "Repository Index readiness did not provide executable paths", { status });
+  }
+  rememberRepositoryIndexReadiness({ canonicalRoot, status, platform: request.platform });
+  return { status, canonicalRoot, indexPath, binaryPath, cacheHit: false };
+}
+
+async function expectedReadiness(canonicalRoot, request) {
+  const manifest = await loadTgrepManifest(request.packageRoot);
+  const selectedPlatform = getRepositoryIndexPlatform({ platform: request.platform, arch: request.arch });
+  const override = request.binaryPath
+    ?? (request.env === undefined ? process.env[REPOSITORY_INDEX_ENV_BINARY] : request.env?.[REPOSITORY_INDEX_ENV_BINARY]);
+  const binaryPath = override ?? getManagedTgrepBinaryPath(manifest.version, selectedPlatform.key, {
+    homeDirectory: request.homeDirectory,
+    windows: selectedPlatform.platform === "win32",
+  });
+  return {
+    canonicalRoot,
+    indexPath: getTgrepIndexPath(canonicalRoot),
+    binaryPath,
+    engineVersion: manifest.version,
+    platform: selectedPlatform.platform,
+  };
 }
 
 function assertSearchInvocation(repositoryRoot, request) {
@@ -73,10 +122,10 @@ function buildSearchArgs({ indexPath, canonicalRoot, request }) {
   return args;
 }
 
-async function runSearch({ setup, status, canonicalRoot, request, args }) {
+async function runSearch({ binaryPath, status, canonicalRoot, request, args }) {
   const startedAt = Date.now();
-  const result = await runTgrep({
-    binaryPath: setup.status?.binaryPath ?? request.binaryPath,
+  const result = await (request.runTgrepImpl ?? runTgrep)({
+    binaryPath,
     repoRoot: canonicalRoot,
     args,
     env: request.env,
@@ -97,7 +146,49 @@ async function runSearch({ setup, status, canonicalRoot, request, args }) {
   return { result, normalized, startedAt, status };
 }
 
-function buildSearchResult({ request, canonicalRoot, status, result, normalized, startedAt }) {
+function isRecoverableSearchFailure(error) {
+  if (error?.code === REPOSITORY_INDEX_ERROR_CODES.ENGINE_EXECUTION_FAILED) return true;
+  if (error?.code !== REPOSITORY_INDEX_ERROR_CODES.SEARCH_FAILED) return false;
+  return /server|index|connect|connection|not running|metadata|broken pipe|no such file|unavailable/i.test(error.stderr ?? "");
+}
+
+function collectErrorPaths(error) {
+  const paths = [];
+  const seen = new Set();
+  for (let current = error; current && !seen.has(current); current = current.cause) {
+    seen.add(current);
+    for (const key of ["path", "binaryPath", "repositoryRoot", "indexPath", "statePath", "archivePath", "manifestPath", "source"]) {
+      if (typeof current[key] === "string") paths.push(current[key]);
+    }
+    const status = current.status;
+    if (status && typeof status === "object") {
+      for (const value of [status.binaryPath, status.repositoryRoot, status.indexPath, status.statePath, status.index?.rootPath]) {
+        if (typeof value === "string") paths.push(value);
+      }
+    }
+  }
+  return [...new Set(paths)].sort((left, right) => right.length - left.length);
+}
+
+function sanitizeSearchError(error, request, repositoryRoot) {
+  const localPaths = [...new Set([
+    repositoryRoot,
+    request.binaryPath,
+    request.homeDirectory,
+    request.assetPath,
+    process.cwd(),
+    ...collectErrorPaths(error),
+  ].filter((value) => typeof value === "string" && value.length > 0))].sort((left, right) => right.length - left.length);
+  const redact = (value) => localPaths.reduce((result, localPath) => result.replaceAll(localPath, "<local-path>"), String(value ?? ""));
+  if (localPaths.length === 0) return error;
+  const sanitized = repositoryIndexError(error.code ?? REPOSITORY_INDEX_ERROR_CODES.SEARCH_FAILED, redact(error.message));
+  for (const key of ["exitCode", "signal", "timedOut", "stderr", "stdout", "expectedVersion", "actualVersion"]) {
+    if (error[key] !== undefined) sanitized[key] = typeof error[key] === "string" ? redact(error[key]) : error[key];
+  }
+  return sanitized;
+}
+
+function buildSearchResult({ request, status, result, normalized, startedAt }) {
   return {
     schemaVersion: 1,
     query: {
@@ -121,7 +212,6 @@ function buildSearchResult({ request, canonicalRoot, status, result, normalized,
       indexed: true,
       server: status?.server?.running === true,
     },
-    repositoryRoot: canonicalRoot,
     matches: normalized.matches,
     contexts: normalized.contexts,
     files: normalized.files,
@@ -141,8 +231,32 @@ export async function searchRepository(repositoryRoot, request = {}) {
   ({ repositoryRoot, request } = normalizeSearchInvocation(repositoryRoot, request));
   assertSearchInvocation(repositoryRoot, request);
   validateSearchRequest(request);
-  const { setup, status, canonicalRoot, indexPath } = await prepareSearch(repositoryRoot, request);
-  const args = buildSearchArgs({ indexPath, canonicalRoot, request });
-  const execution = await runSearch({ setup, status, canonicalRoot, request, args });
-  return buildSearchResult({ request, canonicalRoot, ...execution });
+  let prepared;
+  try {
+    prepared = await prepareSearch(repositoryRoot, request);
+  } catch (error) {
+    throw sanitizeSearchError(error, request, repositoryRoot);
+  }
+  let args = buildSearchArgs({ indexPath: prepared.indexPath, canonicalRoot: prepared.canonicalRoot, request });
+  try {
+    const execution = await runSearch({ binaryPath: prepared.binaryPath, status: prepared.status, canonicalRoot: prepared.canonicalRoot, request, args });
+    markRepositoryIndexSearchSucceeded(prepared.canonicalRoot, request.platform ?? process.platform);
+    return buildSearchResult({ request, ...execution });
+  } catch (error) {
+    if (!isRecoverableSearchFailure(error)) throw sanitizeSearchError(error, request, prepared.canonicalRoot);
+    invalidateRepositoryIndexReadiness(prepared.canonicalRoot, request.platform ?? process.platform);
+    try {
+      prepared = await prepareSearch(prepared.canonicalRoot, request);
+    } catch (recoveryError) {
+      throw sanitizeSearchError(recoveryError, request, prepared.canonicalRoot);
+    }
+    args = buildSearchArgs({ indexPath: prepared.indexPath, canonicalRoot: prepared.canonicalRoot, request });
+    try {
+      const execution = await runSearch({ binaryPath: prepared.binaryPath, status: prepared.status, canonicalRoot: prepared.canonicalRoot, request, args });
+      markRepositoryIndexSearchSucceeded(prepared.canonicalRoot, request.platform ?? process.platform);
+      return buildSearchResult({ request, ...execution });
+    } catch (retryError) {
+      throw sanitizeSearchError(retryError, request, prepared.canonicalRoot);
+    }
+  }
 }

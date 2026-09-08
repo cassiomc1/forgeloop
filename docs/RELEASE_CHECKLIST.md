@@ -77,11 +77,13 @@ preparation and verification checklist; it does not authorize publication.
 - [ ] `npm run mcp:pack:check` passes when MCP dependencies are available.
 - [ ] Repository Index provider-neutral CLI, Integration API, and MCP
       surfaces expose the same normalized result and status contracts.
-- [ ] The checked-in tgrep manifest passes checksum/version validation for
-      every supported platform, with no placeholder hashes or `latest` URL.
-- [ ] At least one CI job runs the real pinned tgrep artifact; native live,
-      differential, crash-recovery, migration, and resource-limit tests are
-      either green or explicitly skipped only without an explicit binary.
+- [ ] The checked-in tgrep manifest passes archive and executable checksum/
+      version validation for every supported platform, with no placeholder
+      hashes or `latest` URL.
+- [ ] Matrix CI runs the real pinned tgrep artifact on Linux, macOS, and
+      Windows; native setup/start/status/search/live-watcher, crash-recovery,
+      migration, differential, and stop tests are green with no continue-on-
+      error path.
 - [ ] `doctor` reports an unhealthy mandatory Repository Index instead of
       silently falling back to `rg`, `grep`, or `PATH` discovery.
 - [ ] Generic CI verification uses explicit provider, base, and head revisions.

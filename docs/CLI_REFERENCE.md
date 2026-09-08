@@ -127,6 +127,10 @@ identity are verified as ForgeLoop-owned.
 Reports normalized Repository Index engine, index, policy, watcher, and health
 state without repairing or provisioning it.
 
+Structured output is path-safe by default: it omits machine-local repository,
+index, state, and binary paths. Use `doctor` when an explicitly diagnostic
+surface needs local path details.
+
 - **Options**:
 
 <!-- BEGIN FORGELOOP GENERATED: cli:index-status:options -->
@@ -156,6 +160,11 @@ boundary.
 
 Searches the managed Repository Index through the provider-neutral structured
 search contract. Native tgrep flags are not accepted as a generic pass-through.
+
+The first query performs strong setup checks. Warm queries reuse process-local
+per-repository readiness and avoid repeated `tgrep --version`, native status,
+and process-inspection commands. A server/index failure gets one bounded
+setup-and-retry attempt; native exit code `1` is a successful empty result.
 
 - **Options**:
 

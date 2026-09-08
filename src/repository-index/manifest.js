@@ -66,6 +66,9 @@ function assertManifestAsset(asset, platformKey, source) {
   if (!SHA256.test(asset.sha256) || /^0+$/.test(asset.sha256) || /replace|todo|placeholder/i.test(asset.sha256)) {
     manifestError(source, `${platformKey} checksum is not a verified SHA-256`, REPOSITORY_INDEX_ERROR_CODES.ENGINE_CHECKSUM_MISMATCH);
   }
+  if (!SHA256.test(asset.binarySha256) || /^0+$/.test(asset.binarySha256) || /replace|todo|placeholder/i.test(asset.binarySha256)) {
+    manifestError(source, `${platformKey} binarySha256 is not a verified SHA-256`, REPOSITORY_INDEX_ERROR_CODES.ENGINE_BINARY_CHECKSUM_MISMATCH);
+  }
 }
 
 function assertManifestAssets(value, source) {

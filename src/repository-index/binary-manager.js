@@ -1,5 +1,6 @@
 import { createHash, randomUUID } from "node:crypto";
 import { execFile as nodeExecFile } from "node:child_process";
+import { createReadStream } from "node:fs";
 import {
   access,
   chmod,
@@ -138,7 +139,9 @@ export async function verifyManagedTgrep({ packageRoot, repoRoot = process.cwd()
     homeDirectory,
     windows: selectedPlatform.platform === "win32",
   });
+  const asset = manifest.assets[selectedPlatform.key];
   await verifyExecutable(binaryPath, { platform: selectedPlatform.platform });
+  await verifyBinaryChecksum(binaryPath, asset.binarySha256);
   const version = await verifyTgrepVersion({ binaryPath, expectedVersion: manifest.version, repoRoot, spawnImpl });
   return Object.freeze({
     engine: manifest.engine,
@@ -148,7 +151,7 @@ export async function verifyManagedTgrep({ packageRoot, repoRoot = process.cwd()
     managed: true,
     overridden: false,
     canonical: true,
-    asset: manifest.assets[selectedPlatform.key],
+    asset,
   });
 }
 
@@ -225,12 +228,34 @@ async function findBinary(root, binaryName) {
 }
 
 export async function verifyArchiveChecksum(archivePath, expectedSha256) {
-  const actual = createHash("sha256").update(await readFile(archivePath)).digest("hex");
+  const actual = await sha256File(archivePath);
   if (actual !== expectedSha256) {
     throw repositoryIndexError(
       REPOSITORY_INDEX_ERROR_CODES.ENGINE_CHECKSUM_MISMATCH,
       `tgrep archive checksum mismatch: expected ${expectedSha256}, got ${actual}`,
       { expectedSha256, actualSha256: actual, archivePath },
+    );
+  }
+  return actual;
+}
+
+export async function sha256File(filePath) {
+  return new Promise((resolve, reject) => {
+    const hash = createHash("sha256");
+    const stream = createReadStream(filePath);
+    stream.on("data", (chunk) => hash.update(chunk));
+    stream.on("error", reject);
+    stream.on("end", () => resolve(hash.digest("hex")));
+  });
+}
+
+export async function verifyBinaryChecksum(binaryPath, expectedSha256) {
+  const actual = await sha256File(binaryPath);
+  if (actual !== expectedSha256) {
+    throw repositoryIndexError(
+      REPOSITORY_INDEX_ERROR_CODES.ENGINE_BINARY_CHECKSUM_MISMATCH,
+      `tgrep binary checksum mismatch: expected ${expectedSha256}, got ${actual}`,
+      { expectedSha256, actualSha256: actual, binaryPath },
     );
   }
   return actual;
@@ -320,19 +345,18 @@ export async function ensureManagedTgrep({ packageRoot, repoRoot = process.cwd()
   const provisionLockPath = path.join(getEngineHome({ homeDirectory }), ".provision.lock");
   const lease = await acquireRepositoryIndexLock(provisionLockPath, "tgrep-provision", { timeoutMs: 120_000 });
   try {
+    let repairRequired = false;
     try {
       await verifyExecutable(binaryPath, { platform: selectedPlatform.platform });
+      await verifyBinaryChecksum(binaryPath, manifest.assets[selectedPlatform.key].binarySha256);
       await verifyTgrepVersion({ binaryPath, expectedVersion: manifest.version, repoRoot, spawnImpl });
       return binaryDescriptor({ manifest, selectedPlatform, binaryPath, managed: true, overridden: false, asset: manifest.assets[selectedPlatform.key] });
     } catch (cause) {
       if (cause.code !== REPOSITORY_INDEX_ERROR_CODES.ENGINE_MISSING
         && cause.code !== REPOSITORY_INDEX_ERROR_CODES.ENGINE_VERSION_MISMATCH
-        && cause.code !== REPOSITORY_INDEX_ERROR_CODES.ENGINE_EXECUTION_FAILED) throw cause;
-      try {
-        await rename(binaryPath, `${binaryPath}.invalid-${randomUUID()}`);
-      } catch (renameError) {
-        if (renameError.code !== "ENOENT") throw cause;
-      }
+        && cause.code !== REPOSITORY_INDEX_ERROR_CODES.ENGINE_EXECUTION_FAILED
+        && cause.code !== REPOSITORY_INDEX_ERROR_CODES.ENGINE_BINARY_CHECKSUM_MISMATCH) throw cause;
+      repairRequired = true;
     }
 
     const asset = await getTgrepAsset(selectedPlatform.key, packageRoot);
@@ -350,14 +374,35 @@ export async function ensureManagedTgrep({ packageRoot, repoRoot = process.cwd()
       await extractArchive(archivePath, extractionDirectory, { archive: asset.archive, execFileImpl });
       const extractedBinary = await findBinary(extractionDirectory, asset.binaryName);
       await ensureRegularFile(extractedBinary, REPOSITORY_INDEX_ERROR_CODES.ENGINE_EXTRACTION_FAILED, "Extracted tgrep binary");
+      await verifyBinaryChecksum(extractedBinary, asset.binarySha256);
       const stagedBinary = path.join(temporaryRoot, asset.binaryName);
       await copyFile(extractedBinary, stagedBinary);
       if (selectedPlatform.platform !== "win32") await chmod(stagedBinary, 0o755);
       await mkdir(finalDirectory, { recursive: true });
-      await rename(stagedBinary, binaryPath);
-      if (selectedPlatform.platform !== "win32") await chmod(binaryPath, 0o755);
-      await verifyExecutable(binaryPath, { platform: selectedPlatform.platform });
-      await verifyTgrepVersion({ binaryPath, expectedVersion: manifest.version, repoRoot, spawnImpl });
+      const quarantinePath = `${binaryPath}.invalid-${randomUUID()}`;
+      let quarantined = false;
+      let installed = false;
+      try {
+        if (repairRequired) {
+          try {
+            await rename(binaryPath, quarantinePath);
+            quarantined = true;
+          } catch (cause) {
+            if (cause.code !== "ENOENT") throw cause;
+          }
+        }
+        await rename(stagedBinary, binaryPath);
+        installed = true;
+        if (selectedPlatform.platform !== "win32") await chmod(binaryPath, 0o755);
+        await verifyExecutable(binaryPath, { platform: selectedPlatform.platform });
+        await verifyBinaryChecksum(binaryPath, asset.binarySha256);
+        await verifyTgrepVersion({ binaryPath, expectedVersion: manifest.version, repoRoot, spawnImpl });
+      } catch (cause) {
+        if (installed) await rm(binaryPath, { force: true }).catch(() => {});
+        if (quarantined) await rename(quarantinePath, binaryPath).catch(() => {});
+        throw cause;
+      }
+      if (quarantined) await rm(quarantinePath, { force: true });
       return binaryDescriptor({ manifest, selectedPlatform, binaryPath, managed: true, overridden: false, asset });
     } finally {
       await rm(temporaryRoot, { recursive: true, force: true });

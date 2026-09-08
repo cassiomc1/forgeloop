@@ -200,6 +200,13 @@ The index is derived local cache/state: it is never lifecycle evidence,
 completion authority, task ownership, or historical source of truth. Hosts
 must not replace an unhealthy index with a silent `rg`, `grep`, or PATH-based
 fallback, and must not treat search results as proof of verification.
+Normal structured search and status projections are path-safe: match paths are
+repository-relative and machine-local repository, index, state, and binary
+paths are omitted across the CLI, Integration API, and MCP adapter. The first
+query performs strong readiness validation; warm queries use a per-repository
+process-local readiness cache with one bounded recovery retry after a
+server/index failure. Native exit code `1` remains a successful zero-match
+result.
 
 `canonicalHandoffs` v2 advertises `supported: true`, immutable snapshots,
 `lifecycleAuthority: false`, `evidenceAuthority: false`,

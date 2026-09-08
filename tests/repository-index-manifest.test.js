@@ -14,6 +14,8 @@ test("the shipped tgrep manifest is pinned and verified for all supported platfo
   for (const asset of Object.values(manifest.assets)) {
     assert.match(asset.sha256, /^[a-f0-9]{64}$/);
     assert.doesNotMatch(asset.sha256, /replace|todo|placeholder/i);
+    assert.match(asset.binarySha256, /^[a-f0-9]{64}$/);
+    assert.doesNotMatch(asset.binarySha256, /replace|todo|placeholder/i);
   }
 });
 
@@ -30,11 +32,14 @@ test("manifest validation rejects placeholder checksums and untrusted release UR
       archive: key === "windows-x64" ? "zip" : "tar.gz",
       binaryName: key === "windows-x64" ? "tgrep.exe" : "tgrep",
       sha256: "a".repeat(64),
+      binarySha256: "b".repeat(64),
     }])),
   };
   assert.equal(validateTgrepManifest(valid).version, "1.0.3");
   assert.throws(() => validateTgrepManifest({ ...valid, releaseBaseUrl: "https://example.invalid/tgrep" }));
   assert.throws(() => validateTgrepManifest({ ...valid, assets: { ...valid.assets, "linux-x64": { ...valid.assets["linux-x64"], sha256: "REPLACE_WITH_VERIFIED_SHA256" } } }));
+  assert.throws(() => validateTgrepManifest({ ...valid, assets: { ...valid.assets, "linux-x64": { ...valid.assets["linux-x64"], binarySha256: undefined } } }), (error) => error.code === "E_REPOSITORY_INDEX_ENGINE_BINARY_CHECKSUM_MISMATCH");
+  assert.throws(() => validateTgrepManifest({ ...valid, assets: { ...valid.assets, "linux-x64": { ...valid.assets["linux-x64"], binarySha256: "not-a-sha" } } }), (error) => error.code === "E_REPOSITORY_INDEX_ENGINE_BINARY_CHECKSUM_MISMATCH");
   assert.throws(() => validateTgrepManifest({ ...valid, assets: { ...valid.assets, "linux-x64": { ...valid.assets["linux-x64"], assetName: "../escape.tar.gz" } } }));
   assert.throws(() => validateTgrepManifest({ ...valid, assets: { ...valid.assets, "darwin-arm64": { ...valid.assets["darwin-arm64"], binaryName: "other" } } }));
 });

@@ -10,6 +10,10 @@
 - Added managed native provisioning with verified platform assets, live indexed
   search, `search`/`index-*` CLI commands, Integration API support, MCP
   discovery, and doctor readiness reporting.
+- Added executable-level SHA-256 pinning and hash-before-version verification,
+  warm per-repository search readiness with bounded recovery, path-safe public
+  search/status projections, and real pinned native CI coverage on Linux,
+  macOS, and Windows.
 
 ### Compatibility and operations
 

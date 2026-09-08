@@ -6,12 +6,18 @@ universal speed target.
 
 Measure at least:
 
-- cold initial index build;
-- warm server startup;
+- first-use setup and search;
+- warm server-backed selective query;
 - warm indexed selective query;
 - query after a file mutation;
 - high-match query;
 - low-match/no-match query.
+
+The hot-path runner also performs 100 repeated low-match queries by default
+for raw `tgrep`, the ForgeLoop search service, and `rg`. It reports total,
+mean, median, and p95 milliseconds for each series. Set
+`FORGELOOP_BENCHMARK_ITERATIONS` only when a different bounded sample size is
+needed.
 
 For every result, record the repository identifier and commit, platform,
 architecture, Node.js version, pinned tgrep version, query id, mode, duration,
@@ -38,3 +44,16 @@ fallback and must not change the ForgeLoop search contract. Publish measured
 results with the fixture, command, and platform context; do not claim that
 indexed search is always faster or that search metrics imply token, cost, or
 agent-quality improvements.
+
+Run the hot-path benchmark against the exact native binary used by CI or the
+host:
+
+```bash
+FORGELOOP_TGREP_BINARY=/absolute/path/to/tgrep \
+  node benchmarks/repository-index/run-hot-path.mjs
+```
+
+The runner reports first-use, warm, post-mutation, and repeated low-match
+timings. It is observational and does not replace correctness, lifecycle, or
+cross-platform CI checks. `rg` is benchmark-only; it is never a ForgeLoop
+runtime fallback.

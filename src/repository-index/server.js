@@ -15,6 +15,7 @@ import {
   getTgrepIndexPath,
 } from "./paths.js";
 import { getRepositoryIndexStatus, inspectRepositoryIndexServer, processIsAlive } from "./status.js";
+import { invalidateRepositoryIndexReadiness, rememberRepositoryIndexReadiness } from "./readiness.js";
 
 async function readJson(filePath) {
   try {
@@ -176,7 +177,7 @@ async function startUnderLock(repositoryRoot, options, engine) {
         alreadyRunning: true,
         pid: ownership.pid,
         port: ownership.port,
-        status: await getRepositoryIndexStatus(repositoryRoot, { ...options, packageRoot: options.packageRoot, binaryPath: engine.overridden ? engine.binaryPath : undefined, skipNativeStatus: true }),
+        status: await getRepositoryIndexStatus(repositoryRoot, { ...options, packageRoot: options.packageRoot, binaryPath: engine.overridden ? engine.binaryPath : undefined, skipNativeStatus: true, includeLocalPaths: true }),
       };
     }
     if (metadata.serve && !ownership.owned) {
@@ -232,7 +233,7 @@ async function startUnderLock(repositoryRoot, options, engine) {
       alreadyRunning: false,
       pid: ready.ownership.pid,
       port: ready.ownership.port,
-      status: await getRepositoryIndexStatus(repositoryRoot, { ...options, packageRoot: options.packageRoot, binaryPath: engine.overridden ? engine.binaryPath : undefined, skipNativeStatus: true }),
+      status: await getRepositoryIndexStatus(repositoryRoot, { ...options, packageRoot: options.packageRoot, binaryPath: engine.overridden ? engine.binaryPath : undefined, skipNativeStatus: true, includeLocalPaths: true }),
     };
   } catch (error) {
     try { process.kill(child.pid); } catch { /* best effort for the exact child only */ }
@@ -293,11 +294,14 @@ async function prepareEngine(repositoryRoot, options) {
 
 export async function startRepositoryIndexServer(repositoryRoot, options = {}) {
   const canonicalRoot = await realpathWithTransientWindowsRetry(repositoryRoot);
+  invalidateRepositoryIndexReadiness(canonicalRoot, options.platform ?? process.platform);
   await assertIndexPaths(canonicalRoot);
-  return withRepositoryIndexLock(canonicalRoot, "index-start", async () => {
+  const result = await withRepositoryIndexLock(canonicalRoot, "index-start", async () => {
     const engine = await prepareEngine(canonicalRoot, options);
     return startUnderLock(canonicalRoot, { ...options, repositoryRoot: canonicalRoot }, engine);
   }, options);
+  rememberRepositoryIndexReadiness({ canonicalRoot, status: result.status, platform: options.platform });
+  return result;
 }
 
 export async function restartRepositoryIndexServer(repositoryRoot, options = {}) {
@@ -307,6 +311,7 @@ export async function restartRepositoryIndexServer(repositoryRoot, options = {})
 
 export async function stopRepositoryIndexServer(repositoryRoot, options = {}) {
   const canonicalRoot = await realpathWithTransientWindowsRetry(repositoryRoot);
+  invalidateRepositoryIndexReadiness(canonicalRoot, options.platform ?? process.platform);
   await assertIndexPaths(canonicalRoot);
   return withRepositoryIndexLock(canonicalRoot, "index-stop", async () => {
     const indexPath = getTgrepIndexPath(canonicalRoot);
@@ -322,8 +327,9 @@ export async function stopRepositoryIndexServer(repositoryRoot, options = {}) {
 
 export async function rebuildRepositoryIndex(repositoryRoot, options = {}) {
   const canonicalRoot = await realpathWithTransientWindowsRetry(repositoryRoot);
+  invalidateRepositoryIndexReadiness(canonicalRoot, options.platform ?? process.platform);
   await assertIndexPaths(canonicalRoot);
-  return withRepositoryIndexLock(canonicalRoot, "index-rebuild", async () => {
+  const result = await withRepositoryIndexLock(canonicalRoot, "index-rebuild", async () => {
     const engine = await prepareEngine(canonicalRoot, options);
     const indexPath = getTgrepIndexPath(canonicalRoot);
     const metadata = await readIndexMetadata(canonicalRoot);
@@ -355,12 +361,15 @@ export async function rebuildRepositoryIndex(repositoryRoot, options = {}) {
     const started = await startUnderLock(canonicalRoot, { ...options, repositoryRoot: canonicalRoot }, engine);
     return { ...started, rebuilt: true, indexed: built.meta };
   }, options);
+  rememberRepositoryIndexReadiness({ canonicalRoot, status: result.status, platform: options.platform });
+  return result;
 }
 
 export async function setupRepositoryIndex(repositoryRoot, options = {}) {
   const canonicalRoot = await realpathWithTransientWindowsRetry(repositoryRoot);
+  invalidateRepositoryIndexReadiness(canonicalRoot, options.platform ?? process.platform);
   await assertIndexPaths(canonicalRoot);
-  return withRepositoryIndexLock(canonicalRoot, "index-setup", async () => {
+  const result = await withRepositoryIndexLock(canonicalRoot, "index-setup", async () => {
     const engine = await prepareEngine(canonicalRoot, options);
     const indexPath = getTgrepIndexPath(canonicalRoot);
     const metadata = await readIndexMetadata(canonicalRoot);
@@ -397,4 +406,6 @@ export async function setupRepositoryIndex(repositoryRoot, options = {}) {
     const started = await startUnderLock(canonicalRoot, { ...options, repositoryRoot: canonicalRoot }, engine);
     return { ...started, setup: true, rebuilt: false, indexed: metadata.meta };
   }, options);
+  rememberRepositoryIndexReadiness({ canonicalRoot, status: result.status, platform: options.platform });
+  return result;
 }
