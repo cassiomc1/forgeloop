@@ -43,18 +43,27 @@ function execFileAsync(execFileImpl, file, args) {
 export async function processCommandLine(pid, { platform = process.platform, execFileImpl = nodeExecFile } = {}) {
   if (!Number.isInteger(pid) || pid <= 0) return null;
   if (platform === "win32") {
-    // PowerShell is part of supported Windows hosts. The interpolated value
-    // is already an integer, so this remains an exact non-shell process
-    // query rather than a user-controlled command string.
+    // PowerShell is part of supported Windows hosts. Encode the command as
+    // UTF-16LE instead of relying on Windows argument re-quoting for the
+    // nested CIM filter. The interpolated value is already an integer, so
+    // this remains an exact non-shell process query rather than a
+    // user-controlled command string.
+    const command = [
+      "$ErrorActionPreference = 'Stop'",
+      "$OutputEncoding = [System.Text.Encoding]::UTF8",
+      "[Console]::OutputEncoding = [System.Text.Encoding]::UTF8",
+      `(Get-CimInstance -ClassName Win32_Process -Filter 'ProcessId = ${pid}').CommandLine`,
+    ].join("; ");
+    const encodedCommand = Buffer.from(command, "utf16le").toString("base64");
     const result = await execFileAsync(execFileImpl, "powershell.exe", [
       "-NoProfile",
       "-NonInteractive",
-      "-Command",
-      `(Get-CimInstance Win32_Process -Filter \"ProcessId = ${pid}\").CommandLine`,
+      "-EncodedCommand",
+      encodedCommand,
     ]);
     if (result.error) return null;
-    const command = result.stdout.trim();
-    return command || null;
+    const commandLine = result.stdout.replaceAll("\0", "").trim();
+    return commandLine || null;
   }
   const result = await execFileAsync(execFileImpl, "ps", ["-p", String(pid), "-o", "command="]);
   if (result.error) return null;

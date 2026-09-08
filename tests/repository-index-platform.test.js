@@ -35,7 +35,7 @@ test("Windows ownership inspection uses a bounded PowerShell command-line query"
   });
   assert.equal(commandLine, "C:\\tgrep.exe serve --index-path C:\\repo\\.forgeloop\\repository-index\\tgrep C:\\repo");
   assert.equal(observed.file, "powershell.exe");
-  assert.deepEqual(observed.args.slice(0, 3), ["-NoProfile", "-NonInteractive", "-Command"]);
-  assert.match(observed.args[3], /ProcessId = 321/u);
+  assert.deepEqual(observed.args.slice(0, 3), ["-NoProfile", "-NonInteractive", "-EncodedCommand"]);
+  assert.match(Buffer.from(observed.args[3], "base64").toString("utf16le"), /ProcessId = 321/u);
   assert.equal(observed.options.shell, false);
 });
