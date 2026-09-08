@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
-import { mkdtemp } from "node:fs/promises";
+import { mkdtemp, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { test } from "node:test";
 
 import { inspectRepositoryIndexServer } from "../src/repository-index/status.js";
-import { withRepositoryIndexLock } from "../src/repository-index/lock.js";
+import { acquireRepositoryIndexLock, withRepositoryIndexLock } from "../src/repository-index/lock.js";
 
 test("server ownership requires state, serve metadata, liveness, and command-line identity", async () => {
   const state = {
@@ -74,5 +74,18 @@ test("repository-index startup lock serializes concurrent operations", async () 
     assert.deepEqual(order.slice().sort(), ["first:end", "first:start", "second:end", "second:start"]);
   } finally {
     await import("node:fs/promises").then(({ rm }) => rm(target, { recursive: true, force: true }));
+  }
+});
+
+test("try-only repository-index lock still recovers a dead owner", async () => {
+  const target = await mkdtemp(path.join(tmpdir(), "forgeloop-repository-index-try-lock-"));
+  const lockPath = path.join(target, "operation.lock");
+  try {
+    await writeFile(lockPath, `${JSON.stringify({ schemaVersion: 1, lockId: "stale", pid: -1, operation: "stale", acquiredAt: new Date().toISOString() })}\n`);
+    const lease = await acquireRepositoryIndexLock(lockPath, "replacement", { tryOnly: true });
+    assert.ok(lease);
+    await lease.release();
+  } finally {
+    await rm(target, { recursive: true, force: true });
   }
 });

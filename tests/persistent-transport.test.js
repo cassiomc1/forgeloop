@@ -49,6 +49,7 @@ test("persistent transport framing rejects invalid, oversized, and truncated fra
 test("persistent transport protocol rejects unknown methods and malformed search parameters", () => {
   assert.throws(() => validateRequest(createRequest("unknown.method")), { code: PERSISTENT_TRANSPORT_ERROR_CODES.INVALID_REQUEST });
   assert.throws(() => assertSearchParams({ repository: "/repo", query: {} }), { code: PERSISTENT_TRANSPORT_ERROR_CODES.INVALID_REQUEST });
+  assert.throws(() => assertSearchParams({ repository: "/repo", query: { pattern: "needle", binaryPath: "/tmp/untrusted" } }), { code: PERSISTENT_TRANSPORT_ERROR_CODES.INVALID_REQUEST });
   assert.throws(() => validateRequest({ protocolVersion: 99, id: "one", method: "handshake", params: {} }), { code: PERSISTENT_TRANSPORT_ERROR_CODES.PROTOCOL_MISMATCH });
 });
 

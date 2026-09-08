@@ -5,6 +5,10 @@ import { PERSISTENT_TRANSPORT_METHODS, PERSISTENT_TRANSPORT_PROTOCOL_VERSION } f
 import { PERSISTENT_TRANSPORT_ERROR_CODES, persistentTransportError } from "./errors.js";
 
 const MAX_REQUEST_ID_CHARS = 128;
+export const PERSISTENT_SEARCH_QUERY_KEYS = Object.freeze([
+  "pattern", "globs", "types", "context", "beforeContext", "afterContext", "maxCount",
+  "filesWithMatches", "stats", "fixedStrings", "ignoreCase", "smartCase", "wordRegexp",
+]);
 
 function invalid(message, details = {}) {
   return persistentTransportError(PERSISTENT_TRANSPORT_ERROR_CODES.INVALID_REQUEST, message, details);
@@ -65,6 +69,14 @@ export function assertSearchParams(params) {
   if (!params || typeof params !== "object" || Array.isArray(params)) throw invalid("repository.search params must be an object");
   if (typeof params.repository !== "string" || !path.isAbsolute(params.repository) || params.repository.length > 4_096) throw invalid("repository.search repository identity is invalid");
   if (!params.query || typeof params.query !== "object" || Array.isArray(params.query)) throw invalid("repository.search query must be an object");
+  const unknownKeys = Object.keys(params.query).filter((key) => !PERSISTENT_SEARCH_QUERY_KEYS.includes(key));
+  if (unknownKeys.length > 0) throw invalid(`repository.search query contains unsupported fields: ${unknownKeys.join(", ")}`);
   if (typeof params.query.pattern !== "string" || params.query.pattern.length === 0 || params.query.pattern.length > 4_096) throw invalid("repository.search query pattern is invalid");
   return params;
+}
+
+export function projectSearchQuery(query) {
+  return Object.fromEntries(PERSISTENT_SEARCH_QUERY_KEYS
+    .filter((key) => query[key] !== undefined)
+    .map((key) => [key, query[key]]));
 }

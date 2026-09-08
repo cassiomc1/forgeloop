@@ -83,6 +83,8 @@ export async function startPersistentSearchHost({ homeDirectory = os.homedir(), 
       env: {
         ...process.env,
         ...env,
+        HOME: homeDirectory,
+        USERPROFILE: homeDirectory,
         FORGELOOP_PERSISTENT_TRANSPORT_HOME: homeDirectory,
         FORGELOOP_PERSISTENT_TRANSPORT_SCOPE: paths.scopeId,
       },
@@ -98,9 +100,9 @@ export async function startPersistentSearchHost({ homeDirectory = os.homedir(), 
   return { child, paths, entrypoint };
 }
 
-export async function acquirePersistentTransportStartupLock({ homeDirectory = os.homedir(), timeoutMs = PERSISTENT_TRANSPORT_DEFAULTS.startupTimeoutMs } = {}) {
+export async function acquirePersistentTransportStartupLock({ homeDirectory = os.homedir(), timeoutMs = PERSISTENT_TRANSPORT_DEFAULTS.startupTimeoutMs, tryOnly = false } = {}) {
   const paths = await ensurePersistentTransportDirectory({ homeDirectory });
-  return acquireRepositoryIndexLock(paths.lockPath, "persistent-search-host-startup", { timeoutMs });
+  return acquireRepositoryIndexLock(paths.lockPath, "persistent-search-host-startup", { timeoutMs, tryOnly });
 }
 
 export async function removeDeadPersistentTransport({ homeDirectory = os.homedir() } = {}) {

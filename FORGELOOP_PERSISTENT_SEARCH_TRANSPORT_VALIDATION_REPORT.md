@@ -22,9 +22,9 @@
 
 The new `src/persistent-transport/` runtime provides a user-scoped, on-demand host shared by CLI searches. It keeps the existing `searchRepository` implementation as the canonical Repository Index path and reuses the existing managed-tgrep setup, readiness, checksum, watcher, and mutation behavior.
 
-- `client.js`: bounded connect, handshake, request/response validation, startup locking, reuse, stale/incompatible recovery, and one bounded retry.
+- `client.js`: bounded connect, handshake, request/response validation, nonblocking startup-lock coordination, reuse, stale/incompatible recovery, and one bounded retry.
 - `server.js`: local IPC host, per-repository readiness, same-repository serialization, cross-repository concurrency, status, shutdown, idle expiry, and cleanup.
-- `protocol.js` and `framing.js`: versioned JSON messages with a four-byte big-endian length prefix, strict method/parameter validation, bounded frames, and stable errors.
+- `protocol.js` and `framing.js`: versioned JSON messages with a four-byte big-endian length prefix, strict method/parameter validation and query projection, bounded frames, and stable errors.
 - `lifecycle.js`, `ownership.js`, `state.js`, and `paths.js`: user-scoped state, endpoint derivation, verified PID/entrypoint/scope ownership, safe termination, and nonce-conditional cleanup.
 - CLI `search --json` routes through the host; direct MCP and Integration API calls remain direct and do not spawn a second ForgeLoop process.
 - The host never invokes `rg` or another ForgeLoop CLI as a runtime fallback.
@@ -48,6 +48,7 @@ Limits are explicit: 1 MiB requests, 16 MiB responses, 4,096-character patterns,
 
 - No network listener is exposed; communication is local IPC only.
 - Child processes are spawned with `shell: false`; no shell interpolation is used.
+- Transport search parameters use a closed allowlist and are projected before reaching the canonical search implementation; binary paths, environments, timeouts, and package roots cannot be supplied over IPC.
 - POSIX socket permissions are set to owner-only (`0600`). Windows uses the named-pipe endpoint supplied by the local OS transport.
 - A host is reusable only when its state, protocol/version, scope, endpoint, PID, entrypoint, and process command line agree. Termination refuses unverified or unrelated processes.
 - State cleanup is nonce-conditional and does not remove an unowned live host.
@@ -61,9 +62,9 @@ Passed checks:
 
 - `npm ci` — completed; 133 packages added, 0 vulnerabilities reported.
 - `npm run lint -- --quiet` — passed.
-- `npm test` — 1,609 tests, 1,600 passed, 9 skipped, 0 failed.
-- `npm run coverage` — passed; 85.66% lines/statements, 83.70% functions, and 76.21% branches against thresholds of 80%/75%/70%.
-- `node --test tests/persistent-transport.test.js` — 6 passed, 0 failed.
+- `npm test` — 1,610 tests, 1,601 passed, 9 skipped, 0 failed.
+- `npm run coverage` — passed; 85.65% lines/statements, 83.70% functions, and 76.20% branches against thresholds of 80%/75%/70%.
+- Managed persistent transport tests (`tests/persistent-transport.test.js` and `tests/persistent-transport-native.test.js`) — 7 passed, 0 failed.
 - Managed native set (`repository-index-live`, differential, migration, native CLI, and persistent transport) — 7 passed, 0 failed.
 - `npm run mcp:test` — 69 passed, 0 failed.
 - `npm run mcp:pack:check` — passed; core and MCP tarball integrity plus consumer smoke passed.
@@ -74,7 +75,7 @@ Passed checks:
 - `npm run complexity:check` — passed with no regressions.
 - `npm run dependency:policy` — passed.
 - `npm run repository-index:manifest` — passed for tgrep `1.0.3` and four managed assets.
-- `npm run performance:check` — passed; CLI startup median `235.9 ms`, budget `1,000 ms`.
+- `npm run performance:check` — passed; CLI startup median `113.5 ms`, budget `1,000 ms`.
 - `npm run pack:check` — 9 passed.
 - `npm run pack:smoke` and `npm pack --dry-run --json` — passed.
 - Python loop, Markdown, and secret validators — passed; `pytest` 50 passed and 15 subtests passed.
@@ -98,23 +99,24 @@ The benchmark was run on the environment above with 100 iterations. Values are m
 
 | Path | Cold | Min | Mean | Median | Max | p95 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Persistent transport host start | 81 | — | — | — | — | — |
-| Fresh CLI | 180 | — | — | — | — | — |
-| Direct Integration API | — | 4 | 5 | 5 | 6 | 5 |
-| Warm persistent transport | — | 4 | 5 | 5 | 32 | 6 |
-| Warm CLI through persistent transport | — | 103 | 107 | 105 | 155 | 114 |
-| Raw tgrep | — | 4 | 4 | 4 | 6 | 5 |
-| `rg` | — | 4 | 5 | 6 | 6 | 6 |
+| Persistent transport host start | 89 | — | — | — | — | — |
+| Fresh CLI | 260 | — | — | — | — | — |
+| Direct Integration API | — | 4 | 5 | 5 | 9 | 8 |
+| Warm persistent transport | — | 5 | 6 | 6 | 11 | 9 |
+| Warm CLI through persistent transport | — | 104 | 120 | 116 | 270 | 144 |
+| Raw tgrep | — | 4 | 5 | 5 | 10 | 8 |
+| `rg` | — | 4 | 6 | 6 | 10 | 9 |
 
-The ten-query agent workload produced identical match-count vectors for direct API, persistent transport, and CLI. Totals were 48 ms for direct API (mean 5 ms/query), 51 ms for persistent transport (mean 5 ms/query), and 1,068 ms for the CLI (mean 107 ms/query). The workload therefore adds approximately 0.3 ms/query over the direct API in this run, with no meaningful direct-API regression. The warm `rg` baseline was 5 ms/query on the same fixture; the benchmark's explicit ten-query section measured the API, persistent, and CLI paths, while `rg` was measured in the separate 100-iteration baseline.
+The ten-query agent workload produced identical match-count vectors for direct API, persistent transport, and CLI. Totals were 58 ms for direct API (mean 6 ms/query), 59 ms for persistent transport (mean 6 ms/query), and 1,143 ms for the CLI (mean 114 ms/query). The workload therefore adds approximately 0.1 ms/query over the direct API in this run, with no meaningful direct-API regression. The warm `rg` baseline was 6 ms/query on the same fixture; the benchmark's explicit ten-query section measured the API, persistent, and CLI paths, while `rg` was measured in the separate 100-iteration baseline.
 
-The standalone Node process-start measurement was 32 ms. Full CLI timings also include CLI module loading, argument parsing, host connection, response formatting, and process teardown, so 32 ms is a component rather than an explanation of the 107 ms full CLI path.
+The standalone Node process-start measurement was 34 ms. Full CLI timings also include CLI module loading, argument parsing, host connection, response formatting, and process teardown, so 34 ms is a component rather than an explanation of the 114 ms full CLI path.
 
 Resource usage was bounded by the implementation's frame, timeout, concurrency, and idle limits. Peak RSS and CPU were not instrumented by this benchmark and are therefore not claimed as measured results. Same-repository requests are serialized to protect readiness state; different repositories can progress concurrently.
 
 ## Recovery and correctness
 
 - Concurrent cold-start coverage passed with 50 clients and one reusable host.
+- Try-only startup-lock acquisition still reclaims a verified dead owner without serializing active waiters.
 - Stale/unowned ownership behavior passed without terminating an unrelated live process.
 - Shutdown, cleanup, restart, and mutation-after-reuse passed on the native macOS path.
 - Existing live, differential, migration, recovery, and native CLI tests passed in the managed-engine set.
@@ -126,7 +128,7 @@ Resource usage was bounded by the implementation's frame, timeout, concurrency, 
 
 - P0: none observed.
 - P1: none observed.
-- P2: Linux and Windows exact-head native CI evidence is still pending; MCP-specific verification is unavailable until its declared dependencies are present; the full resource benchmark does not yet capture peak RSS/CPU.
+- P2: Linux and Windows exact-head native CI evidence is still pending; the full resource benchmark does not yet capture peak RSS/CPU.
 - P3: a native launcher could be revisited if a stricter end-to-end CLI SLA is required, but current evidence does not establish that it is necessary.
 
 ## Limitations and recommended follow-ups
@@ -138,10 +140,10 @@ Resource usage was bounded by the implementation's frame, timeout, concurrency, 
 ## Required questions
 
 1. Persistent transport reduces repeated host setup/readiness overhead after the first request and provides bounded reuse. It does not make the complete fresh CLI process cheap by itself.
-2. No. In this fixture, the CLI-through-host agent workload averaged 107 ms/query, while warm `rg` averaged 5 ms/query. The persistent transport is intended to remove repeated service startup, not to outperform a direct process-level `rg` invocation.
-3. Bare Node startup measured 32 ms. The remaining full CLI latency also includes ForgeLoop startup, argument handling, transport exchange, result formatting, and process teardown.
-4. The measured persistent path added approximately 0.3 ms/query over the direct Integration API in the ten-query workload; rounded warm means were equal at 5 ms/query.
-5. No meaningful Integration API regression was observed: direct API mean was 5 ms warm and 5 ms/query in the ten-query workload.
+2. No. In this fixture, the CLI-through-host agent workload averaged 114 ms/query, while warm `rg` averaged 6 ms/query. The persistent transport is intended to remove repeated service startup, not to outperform a direct process-level `rg` invocation.
+3. Bare Node startup measured 34 ms. The remaining full CLI latency also includes ForgeLoop startup, argument handling, transport exchange, result formatting, and process teardown.
+4. The measured persistent path added approximately 0.1 ms/query over the direct Integration API in the ten-query workload; rounded warm means were equal at 6 ms/query.
+5. No meaningful Integration API regression was observed: direct API mean was 5 ms warm and 6 ms/query in the ten-query workload.
 6. No search result difference was observed. The ten-query match-count vectors and the separate 9-vector semantic comparison were identical, and existing differential/oracle coverage passed.
 7. Yes locally: local-only IPC, strict framing and parameter validation, owner-only POSIX socket permissions, verified process ownership, safe cleanup, managed-tgrep integrity, and public privacy boundaries were preserved. Cross-platform confirmation awaits the exact-head native CI run.
 8. Not on the current evidence. Node startup is measurable, but a native launcher would add packaging and maintenance complexity; it should be considered only after a product-level CLI latency requirement and cross-platform measurements justify it.

@@ -51,7 +51,7 @@ async function releaseDeadLock(lockPath, observed) {
   return true;
 }
 
-export async function acquireRepositoryIndexLock(lockPath, operation, { timeoutMs = 30_000, pollMs = 50 } = {}) {
+export async function acquireRepositoryIndexLock(lockPath, operation, { timeoutMs = 30_000, pollMs = 50, tryOnly = false } = {}) {
   await mkdir(path.dirname(lockPath), { recursive: true });
   const lock = {
     schemaVersion: 1,
@@ -79,6 +79,11 @@ export async function acquireRepositoryIndexLock(lockPath, operation, { timeoutM
         try { await handle.close(); } catch { /* preserve original failure */ }
       }
       if (error.code !== "EEXIST") throw error;
+      if (tryOnly) {
+        const observed = await readLock(lockPath);
+        if (observed && await releaseDeadLock(lockPath, observed)) continue;
+        return null;
+      }
       const observed = await readLock(lockPath);
       if (!observed || !(await releaseDeadLock(lockPath, observed))) {
         if (Date.now() >= deadline) {

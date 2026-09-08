@@ -8,7 +8,7 @@ import { searchRepository } from "../repository-index/search.js";
 import { getPackageRoot } from "../core/templates.js";
 import { PERSISTENT_TRANSPORT_DEFAULTS, PERSISTENT_TRANSPORT_PROTOCOL_VERSION } from "./constants.js";
 import { encodeFrame, FrameDecoder, parseFrame } from "./framing.js";
-import { createErrorResponse, createSuccessResponse, validateRequest, assertSearchParams } from "./protocol.js";
+import { createErrorResponse, createSuccessResponse, validateRequest, assertSearchParams, projectSearchQuery } from "./protocol.js";
 import { PERSISTENT_TRANSPORT_ERROR_CODES, persistentTransportError } from "./errors.js";
 import { getPersistentTransportPaths } from "./paths.js";
 import { writePersistentTransportState, removePersistentTransportState } from "./state.js";
@@ -30,10 +30,9 @@ function safeError(error) {
   return persistentTransportError(PERSISTENT_TRANSPORT_ERROR_CODES.INVALID_REQUEST, error?.message ?? "Transport request failed");
 }
 
-function publicSearchRequest(query, homeDirectory) {
+function publicSearchRequest(query) {
   return {
-    ...query,
-    homeDirectory,
+    ...projectSearchQuery(query),
     packageRoot: getPackageRoot(),
   };
 }
@@ -174,7 +173,7 @@ class PersistentSearchHost {
     if (request.method === "repository.search") {
       const params = assertSearchParams(request.params);
       const repositoryRoot = params.repository;
-      return this.#enqueueRepository(repositoryRoot, () => searchRepository(repositoryRoot, publicSearchRequest(params.query, this.#homeDirectory)));
+      return this.#enqueueRepository(repositoryRoot, () => searchRepository(repositoryRoot, publicSearchRequest(params.query)));
     }
     throw persistentTransportError(PERSISTENT_TRANSPORT_ERROR_CODES.INVALID_REQUEST, `Unsupported transport method: ${request.method}`);
   }

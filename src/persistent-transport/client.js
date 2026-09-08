@@ -6,7 +6,7 @@ import { getPackageRoot } from "../core/templates.js";
 import { acquirePersistentTransportStartupLock, cleanPersistentTransportState, getPersistentTransportStatus as getLifecycleStatus, inspectPersistentTransport, startPersistentSearchHost } from "./lifecycle.js";
 import { PERSISTENT_TRANSPORT_DEFAULTS, PERSISTENT_TRANSPORT_PROTOCOL_VERSION } from "./constants.js";
 import { encodeFrame, FrameDecoder, parseFrame } from "./framing.js";
-import { assertSearchParams, createRequest, validateResponse } from "./protocol.js";
+import { assertSearchParams, createRequest, projectSearchQuery, validateResponse } from "./protocol.js";
 import { PERSISTENT_TRANSPORT_ERROR_CODES, isPersistentTransportError, persistentTransportError } from "./errors.js";
 import { getPersistentTransportPaths } from "./paths.js";
 import { readPersistentTransportState } from "./state.js";
@@ -157,12 +157,7 @@ export async function pingPersistentSearchHost({ homeDirectory = undefined, time
 }
 
 function searchQuery(request) {
-  const keys = [
-    "pattern", "globs", "types", "context", "beforeContext", "afterContext", "maxCount",
-    "filesWithMatches", "stats", "fixedStrings", "ignoreCase", "smartCase", "wordRegexp", "config",
-    "commandTimeoutMs", "maxProcessOutputBytes",
-  ];
-  return Object.fromEntries(keys.filter((key) => request[key] !== undefined).map((key) => [key, request[key]]));
+  return projectSearchQuery(request);
 }
 
 async function requestSearch({ repositoryRoot, request, options, timeoutMs, maxFrameBytes }) {
@@ -183,7 +178,28 @@ async function requestSearch({ repositoryRoot, request, options, timeoutMs, maxF
 }
 
 async function ensureHost({ homeDirectory, idleTimeoutMs, startupTimeoutMs, env, recover = false }) {
-  const lock = await acquirePersistentTransportStartupLock({ homeDirectory, timeoutMs: startupTimeoutMs });
+  const deadline = Date.now() + startupTimeoutMs;
+  let lock = null;
+  while (!lock) {
+    lock = await acquirePersistentTransportStartupLock({ homeDirectory, timeoutMs: 1, tryOnly: true });
+    if (lock) break;
+    const inspection = await inspectPersistentTransport({ homeDirectory });
+    if (inspection.status === "OWNERSHIP_UNVERIFIED") {
+      throw persistentTransportError(PERSISTENT_TRANSPORT_ERROR_CODES.OWNERSHIP_UNVERIFIED, "A process owns the persistent search endpoint but is not a verified ForgeLoop host");
+    }
+    if (!recover && inspection.status === "READY") {
+      try {
+        await pingHost({ homeDirectory, timeoutMs: Math.min(startupTimeoutMs, 2_000), maxFrameBytes: PERSISTENT_TRANSPORT_DEFAULTS.maxResponseFrameBytes });
+        return inspection;
+      } catch (error) {
+        if (!isConnectionFailure(error)) throw error;
+      }
+    }
+    if (Date.now() >= deadline) {
+      throw persistentTransportError(PERSISTENT_TRANSPORT_ERROR_CODES.START_FAILED, "Persistent search host startup coordination exceeded its bounded timeout");
+    }
+    await delay(Math.min(25, Math.max(1, deadline - Date.now())));
+  }
   try {
     let inspection = await inspectPersistentTransport({ homeDirectory });
     if (inspection.status === "OWNERSHIP_UNVERIFIED") {
