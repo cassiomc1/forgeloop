@@ -18,6 +18,7 @@ integration and guide context. Use this map before editing documentation.
 | Cross-harness continuity | [`docs/CROSS_HARNESS_CONTINUITY.md`](./docs/CROSS_HARNESS_CONTINUITY.md) | Operational resume guidance, immutable handoffs, and multi-tool resumption |
 | Agent bootstrap summary | [`docs/AGENT_PROTOCOL_SUMMARY.md`](./docs/AGENT_PROTOCOL_SUMMARY.md) | Generated concise navigation aid for protocol invariants and commands |
 | CLI command reference | [`docs/CLI_REFERENCE.md`](./docs/CLI_REFERENCE.md) | Full syntax, options, and JSON examples for all commands |
+| Repository Index and Search | [`docs/REPOSITORY_INDEX.md`](./docs/REPOSITORY_INDEX.md) | Mandatory managed engine, indexed search contract, lifecycle, resource, security, and benchmark behavior |
 | Artifact and schema reference | [`docs/ARTIFACT_REFERENCE.md`](./docs/ARTIFACT_REFERENCE.md) | Purpose, mutability, and trust classifications of `.forgeloop/` |
 | Durable actions and trajectory evidence | [`docs/EXECUTION_TRACE.md`](./docs/EXECUTION_TRACE.md) and [`docs/RECIPES.md`](./docs/RECIPES.md) | Action provenance, reconciliation, metrics, and project-local evaluation |
 | Troubleshooting and recovery | [`docs/TROUBLESHOOTING.md`](./docs/TROUBLESHOOTING.md) | Symptom-first recovery and stable error code reference |
@@ -99,6 +100,7 @@ is historical evidence and is not part of the published core package.
 - **Inspect real execution PoC and audit evidence**: [`poc/README.md`](./poc/README.md)
 - **Resume after switching tools**: [`docs/CROSS_HARNESS_CONTINUITY.md`](./docs/CROSS_HARNESS_CONTINUITY.md)
 - **Check CLI options and syntax**: [`docs/CLI_REFERENCE.md`](./docs/CLI_REFERENCE.md)
+- **Search the repository through ForgeLoop**: [`docs/REPOSITORY_INDEX.md`](./docs/REPOSITORY_INDEX.md)
 - **Understand what `.forgeloop/` stores**: [`docs/ARTIFACT_REFERENCE.md`](./docs/ARTIFACT_REFERENCE.md)
 - **Fix a blocked, stale, or invalid state**: [`docs/TROUBLESHOOTING.md`](./docs/TROUBLESHOOTING.md)
 - **Recover a stale task or reacquire released claims**: [`docs/RECIPES.md`](./docs/RECIPES.md#recipe-15--release-and-reacquire-claims-for-an-abandoned-task)
@@ -130,6 +132,9 @@ process into adapters or README sections; link to the canonical source.
 7. Use [`docs/REVISION_PROVIDERS.md`](./docs/REVISION_PROVIDERS.md) and
    [`docs/CODE_ATTESTATION.md`](./docs/CODE_ATTESTATION.md) when verification
    scope, provider boundaries, signing, or revision-range coverage is involved.
+8. Use [`docs/REPOSITORY_INDEX.md`](./docs/REPOSITORY_INDEX.md) for repository
+   discovery; search output remains operational context and never replaces
+   guides, contracts, verification evidence, or completion validation.
 
 ## Verification and release
 

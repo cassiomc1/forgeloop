@@ -33,6 +33,7 @@ const READ_ONLY_COMMANDS = Object.freeze(new Set([
   "workspace-status", "handoff-list", "handoff-show", "responsibility-status",
   "attestation-verify", "attestation-status", "attestation-verify-range",
   "quality-status",
+  "index-status", "search",
 ]));
 
 const LOOP_MUTATION_COMMANDS = Object.freeze(new Set([
@@ -73,6 +74,10 @@ const STATIC_RISK_CLASSES = Object.freeze({
   "migrate-protocol": INTEGRATION_RISK_CLASSES.MAINTENANCE,
   "clear-state": INTEGRATION_RISK_CLASSES.MAINTENANCE,
   doctor: INTEGRATION_RISK_CLASSES.MAINTENANCE,
+  "index-setup": INTEGRATION_RISK_CLASSES.MAINTENANCE,
+  "index-start": INTEGRATION_RISK_CLASSES.MAINTENANCE,
+  "index-stop": INTEGRATION_RISK_CLASSES.MAINTENANCE,
+  "index-rebuild": INTEGRATION_RISK_CLASSES.MAINTENANCE,
   "policy-discover": INTEGRATION_RISK_CLASSES.MAINTENANCE,
   baseline: INTEGRATION_RISK_CLASSES.MAINTENANCE,
   "task-unlock": INTEGRATION_RISK_CLASSES.MAINTENANCE,
@@ -249,6 +254,27 @@ export function getForgeLoopCapabilities({ packageVersion = null } = {}) {
         modes: [...VERIFICATION_ISOLATION_MODES],
         protocolProjectRootSeparateFromExecutionCwd: true,
       },
+      repositoryIndex: {
+        version: 1,
+        required: true,
+        providerNeutral: true,
+        implementation: "microsoft/tgrep",
+        engineVersion: "1.0.3",
+        engineManagedByForgeLoop: true,
+        commands: ["search", "index-setup", "index-start", "index-stop", "index-status", "index-rebuild"],
+        resource: "repository/index-status",
+        managedBinary: true,
+        noPathFallback: true,
+        supports: {
+          regex: true,
+          fixedStrings: true,
+          glob: true,
+          fileType: true,
+          context: true,
+          structuredOutput: true,
+          liveIndex: true,
+        },
+      },
     },
     commands,
     resources: [
@@ -271,6 +297,7 @@ export function getForgeLoopCapabilities({ packageVersion = null } = {}) {
       { name: "task/context", scope: "TASK" },
       { name: "task/evaluations", scope: "TASK" },
       { name: "project/capability-policy", scope: "PROJECT" },
+      { name: "repository/index-status", scope: "PROJECT" },
     ],
   };
 }

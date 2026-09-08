@@ -9,6 +9,8 @@ import { readTemplateEntries } from "../core/templates.js";
 import { PROJECT_ARTIFACT_PATHS } from "../core/task-paths.js";
 import { isKitPath } from "../core/target-layout.js";
 import { E_INIT_KIT_CONFLICT, E_POLICY_INITIALIZATION_FAILED } from "../core/error-codes.js";
+import { isRepositoryCandidate } from "../repository-index/lifecycle.js";
+import { setupRepositoryIndex } from "../repository-index/server.js";
 
 // Compatibility re-exports: the canonical semantic definitions live in
 // src/core/error-codes.js; this keeps existing import paths working while
@@ -107,6 +109,31 @@ function kitConflictError(relativePath) {
   return error;
 }
 
+async function prepareRepositoryIndexForInit({ target, dryRun, packageRoot, repositoryIndex, repositoryIndexOptions, actions }) {
+  if (!repositoryIndex) return { status: "DISABLED", required: false };
+  if (!(await isRepositoryCandidate(target))) {
+    return { status: "DEFERRED", required: true, reason: "target is not a Git repository" };
+  }
+  if (dryRun) {
+    return {
+      status: "WOULD_SETUP",
+      required: true,
+      reason: "dry-run does not provision or execute the native index engine",
+    };
+  }
+
+  const setup = await setupRepositoryIndex(target, { ...repositoryIndexOptions, packageRoot });
+  actions.push({ action: "repository-index-ready", path: ".forgeloop/repository-index", reason: "managed tgrep index and watcher are ready" });
+  return {
+    status: "READY",
+    required: true,
+    health: setup.status?.health ?? "READY",
+    engine: setup.status?.engine ?? "tgrep",
+    engineVersion: setup.status?.engineVersion ?? null,
+    server: setup.status?.server ?? null,
+  };
+}
+
 /**
  * Initializes a target project with the ForgeLoop kit and executable-policy
  * bootstrap, committing manifest authority LAST.
@@ -152,6 +179,8 @@ export async function runInit({
   packageRoot,
   packageVersion,
   hooks = {},
+  repositoryIndex,
+  repositoryIndexOptions,
 } = {}) {
   const entries = await readTemplateEntries(packageRoot);
   const existingManifest = await readManifest(target);
@@ -332,6 +361,15 @@ export async function runInit({
     }
   }
 
+  const repositoryIndexResult = await prepareRepositoryIndexForInit({
+    target,
+    dryRun,
+    packageRoot,
+    repositoryIndex,
+    repositoryIndexOptions,
+    actions,
+  });
+
   // 10. Commit manifest authority LAST: successful initialization is only
   // real once the manifest exists.
   if (hooks.beforeManifestWrite) {
@@ -343,5 +381,5 @@ export async function runInit({
   }
   await writeManifest(target, manifest, { dryRun });
 
-  return { actions, manifest };
+  return { actions, manifest, repositoryIndex: repositoryIndexResult };
 }

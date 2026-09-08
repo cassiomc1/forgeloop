@@ -12,6 +12,7 @@ When working in this repository:
 1. If an official ForgeLoop structured integration is available in your host, prefer it for protocol operations; otherwise use the project-local ForgeLoop CLI. Never simulate ForgeLoop-managed lifecycle, claim, recovery, ledger, or completion state directly.
 1. Verify [`PROJECT_PROFILE.md`](./PROJECT_PROFILE.md) against real sources; initialize if in `template` mode.
 1. Consult [`GUIDE_ROUTER.md`](./GUIDE_ROUTER.md), select relevant guides, and announce their IDs.
+1. For repository-wide textual discovery, prefer `forgeloop search` and treat its results as discovery only; do not use them as verification evidence or scope authority.
 1. Make small changes, run specific checks, and run proportional regression checks.
 1. Investigate root causes before fixing failures; do not make unverified attempts.
 1. Request authority for unrelated installations, publications, deletions, or migrations. Do not install a missing verification tool merely to satisfy a check. For missing Qwen-MM-Plugins, follow `LOOP_ENGINEERING.md`.

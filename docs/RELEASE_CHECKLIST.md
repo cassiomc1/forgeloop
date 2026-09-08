@@ -68,11 +68,24 @@ preparation and verification checklist; it does not authorize publication.
 ## Integration and cross-platform evidence
 
 - [ ] `npm run pack:check` and `npm run pack:smoke` pass.
+- [ ] `npm pack --dry-run` includes Repository Index runtime/manifest/docs and
+      excludes native release binaries and derived `.forgeloop` index data.
 - [ ] The npm publication workflow runs `npm run pack:smoke` before its
       provenance-backed publish step.
 - [ ] `npm run mcp:test` either runs the configured MCP tests or reports the
       single actionable setup prerequisite.
 - [ ] `npm run mcp:pack:check` passes when MCP dependencies are available.
+- [ ] Repository Index provider-neutral CLI, Integration API, and MCP
+      surfaces expose the same normalized result and status contracts.
+- [ ] The checked-in tgrep manifest passes archive and executable checksum/
+      version validation for every supported platform, with no placeholder
+      hashes or `latest` URL.
+- [ ] Matrix CI runs the real pinned tgrep artifact on Linux, macOS, and
+      Windows; native setup/start/status/search/live-watcher, crash-recovery,
+      migration, differential, and stop tests are green with no continue-on-
+      error path.
+- [ ] `doctor` reports an unhealthy mandatory Repository Index instead of
+      silently falling back to `rg`, `grep`, or `PATH` discovery.
 - [ ] Generic CI verification uses explicit provider, base, and head revisions.
 - [ ] Windows full-suite evidence is green on the main branch when scheduled.
 - [ ] Frozen Python 3.9+ validators pass with `python3 -m unittest discover -s tests`.

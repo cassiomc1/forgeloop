@@ -29,6 +29,24 @@ and an arbitrary external system in one transaction. Idempotency, durable
 intent, evidence, and reconciliation reduce duplicate-effect risk but do not
 provide a universal exactly-once guarantee.
 
+## Repository Index boundary
+
+The Repository Index is a local derived-cache and discovery boundary. Its
+native files are opaque inputs to the managed engine, never protocol evidence
+or completion authority. ForgeLoop owns the engine version, asset identity,
+index location, process lifecycle, and normalized result boundary.
+
+| Threat | Mitigation | Residual limitation | Test evidence |
+| --- | --- | --- | --- |
+| Supply-chain asset replacement | Version, archive SHA-256, and executable SHA-256 are pinned; the executable digest is checked before version execution and atomic installation; extracted version is verified | A separately privileged host can replace files after validation | `tests/repository-index-manifest.test.js`, `tests/repository-index-binary-manager.test.js` |
+| Archive path traversal | Archives are inspected for absolute, parent-traversing, and symbolic-link entries and extracted only into a temporary directory | Filesystem privileges can still alter the temporary directory outside the process boundary | `tests/repository-index-binary-manager.test.js` |
+| Malicious repository path or pattern shell injection | Native execution uses direct argument arrays with `shell: false`; request values are bounded and never interpolated into shell text | A hostile native engine remains an external process within the configured resource limits | `tests/repository-index-search.test.js`, `tests/repository-index-platform.test.js` |
+| Stale index | The tgrep watcher, strong first-use checks, process-local per-repository readiness cache, bounded recovery retry, status checks, doctor, explicit rebuild, and live/differential tests keep current working-tree visibility observable | A crash or native-engine defect can require an explicit rebuild | `tests/repository-index-hot-path.test.js`, `tests/repository-index-live.test.js`, `tests/repository-index-differential.test.js` |
+| Incorrect server ownership or PID reuse | Stop/start validates repository root, index path, server metadata, binary, liveness, and command line; it never kills by name or PID alone | A privileged process can rewrite all local metadata consistently | `tests/repository-index-server.test.js` |
+| Sensitive match-content leakage | Search stays local; matches are not sent to telemetry or globally logged; metrics contain counts and timings rather than content | A caller can intentionally export its own local result | `tests/repository-index-search.test.js`, `tests/repository-index-integration.test.js` |
+| Machine-local path leakage | Normal CLI, Integration API, and MCP search/status projections omit absolute repository, index, state, and binary paths; matches are normalized relative paths | Explicit diagnostic commands may reveal local paths when requested | `tests/repository-index-privacy.test.js`, `tests/repository-index-hot-path.test.js`, `tests/repository-index-integration.test.js` |
+| Attacker-controlled or corrupt index files | Native index files remain opaque derived cache; corruption fails closed and is repaired by discard/rebuild, never interpreted as trusted truth | Native engine semantics and filesystem corruption remain outside ForgeLoop's parser | `tests/repository-index-migration.test.js`, `tests/repository-index-server.test.js` |
+
 ### Hardened durable-action threats (T-DURABLE-01 … T-DURABLE-13)
 
 | ID | Threat | Mitigation | Test evidence |

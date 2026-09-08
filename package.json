@@ -24,6 +24,9 @@
     "schemas",
     "benchmarks/execution-profiles/*.json",
     "benchmarks/execution-profiles/README.md",
+    "benchmarks/repository-index/queries.json",
+    "benchmarks/repository-index/README.md",
+    "benchmarks/repository-index/run-hot-path.mjs",
     ".forgeloop/forgeloop.gitignore",
     "AGENTS.md",
     "CLAUDE.md",
@@ -72,6 +75,7 @@
     "docs/PLATFORM_ADAPTERS.md",
     "docs/AGENT_PROTOCOL_SUMMARY.md",
     "docs/EXECUTION_PROFILE_BENCHMARKS.md",
+    "docs/REPOSITORY_INDEX.md",
     "docs/KNOWLEDGE_SOURCES.md",
     "scripts/generate-shell-completions.mjs",
     "scripts/generate-agent-protocol-summary.mjs",
@@ -80,6 +84,8 @@
     "scripts/validate-execution-profile-benchmarks.mjs",
     "scripts/report-execution-profile-outliers.mjs",
     "scripts/report-tail-interpretation.mjs",
+    "scripts/verify-tgrep-manifest.mjs",
+    "scripts/update-tgrep-manifest.mjs",
     "scripts/check-efficiency-regression.mjs",
     "scripts/lib/execution-profile-benchmark-io.mjs",
     "scripts/benchmark-cli-startup.mjs",
@@ -131,7 +137,8 @@
     "benchmark:profiles:tail-analysis": "node scripts/report-tail-interpretation.mjs",
     "benchmark:profiles:regression": "node scripts/check-efficiency-regression.mjs",
     "transactions:compact": "node scripts/compact-transactions.mjs",
-    "complexity:check": "node scripts/check-complexity.mjs"
+    "complexity:check": "node scripts/check-complexity.mjs",
+    "repository-index:manifest": "node scripts/verify-tgrep-manifest.mjs"
   },
   "devDependencies": {
     "c8": "^12.0.0",

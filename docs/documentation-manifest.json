@@ -618,6 +618,21 @@
         "ripwire-adapter"
       ],
       "packaged": true
+    },
+    {
+      "path": "docs/REPOSITORY_INDEX.md",
+      "id": "repository-index",
+      "class": "guide",
+      "audience": [
+        "user",
+        "harness",
+        "integrator",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "repository-index"
+      ],
+      "packaged": true
     }
   ]
 }

@@ -33,6 +33,8 @@ This guide provides symptom-first recovery procedures for common ForgeLoop proto
 - [Structural-quality verification reports a regression](#symptom-structural-quality-verification-reports-a-regression)
 - [Structural-quality provider is unavailable or invalid](#symptom-structural-quality-provider-is-unavailable-or-invalid)
 - [Structural-quality evidence is stale or incomparable](#symptom-structural-quality-evidence-is-stale-or-incomparable)
+- [Repository Index is not ready](#symptom-repository-index-is-not-ready)
+- [Repository search fails](#symptom-repository-search-fails)
 - [Another harness cannot resume the task](#symptom-another-harness-cannot-resume)
 - [Task claim conflict or recovered task](#symptom-task-creation-blocked-by-a-write-claim-conflict-e_task_scope_conflict)
 - [Stable Error & Reason Code Reference](#stable-error-and-reason-codes)
@@ -1016,6 +1018,57 @@ Resolve the legitimate drift through the normal task lifecycle. Do not edit a
 baseline or evaluation by hand, and do not use a bundle as a reason to bypass
 current-cycle validation.
 
+### Symptom: Repository Index is not ready
+
+#### What it means
+
+`forgeloop index-status` did not report `READY`. For a Git repository the
+engine is mandatory, so `doctor` and repository-wide search remain unhealthy
+until the pinned binary, derived index, and ForgeLoop-owned watcher are
+verified.
+
+#### Inspect
+
+```bash
+forgeloop index-status --json
+forgeloop doctor --json
+```
+
+#### Safe recovery
+
+1. Run `forgeloop index-start --json` when the index is complete but the
+   watcher is down.
+2. Run `forgeloop index-setup --asset /absolute/path/to/pinned-asset.tar.gz`
+   for a missing engine or an air-gapped host.
+3. Run `forgeloop index-rebuild --json` after corruption or a confirmed stale
+   index.
+
+Never delete the whole `.forgeloop` directory and never stop a process by
+executable name. A status of `DEFERRED` for a non-Git protocol fixture is
+intentional and is not evidence that a real repository is healthy.
+
+### Symptom: Repository search fails
+
+#### What it means
+
+The provider-neutral search service rejected the request, could not verify the
+managed engine, or received an invalid native result. Search never falls back
+silently to `rg`, `grep`, or an arbitrary `PATH` executable.
+
+#### Inspect
+
+```bash
+forgeloop search "pattern" --json
+forgeloop index-status --json
+```
+
+Correct request bounds such as the pattern, filters, context, or `max-count`
+when the error is `E_REPOSITORY_INDEX_REQUEST_INVALID`. For
+`E_REPOSITORY_INDEX_OUTPUT_INVALID`, preserve the bounded diagnostic and
+rebuild; repeated malformed output indicates a pinned-engine regression.
+Native exit code `1` means no matches and is normalized to a successful empty
+ForgeLoop result. Native exit code `2` is an actual search failure.
+
 ## Stable Error and Reason Codes
 
 <!-- BEGIN FORGELOOP GENERATED: public-error-codes -->
@@ -1208,6 +1261,25 @@ current-cycle validation.
 | `E_RECONCILE_REQUIREMENT_UNKNOWN` | The supplied check id and requirement text do not exactly match a contract verification item of type VERIFICATION. | Supply the exact id and requirement text of an existing contract verification item. |
 | `E_RECONCILE_UNSUPPORTED_DRIFT` | Work-state drift includes kinds other than REPOSITORY_CHANGED (contract or required-artifact drift). | Resolve contract or artifact drift through their dedicated recovery surfaces; reconcile-closure only refreshes repository fingerprint drift. |
 | `E_REPOSITORY_CHANGED` | The repository fingerprint (branch or HEAD) moved after the work-state checkpoint was recorded. | If the task objective is already satisfied in the current repository, run forgeloop reconcile-closure; otherwise resume from a checkpoint that matches the current repository. |
+| `E_REPOSITORY_INDEX_ENGINE_BINARY_CHECKSUM_MISMATCH` | The extracted or managed tgrep executable bytes do not match the pinned binary SHA-256 digest. | Run forgeloop index-setup or index-rebuild to repair the managed binary; do not run a mismatched executable. |
+| `E_REPOSITORY_INDEX_ENGINE_CHECKSUM_MISMATCH` | The tgrep archive or executable bytes do not match the pinned manifest SHA-256 digest. | Obtain the exact manifest asset and retry; do not install a checksum mismatch. |
+| `E_REPOSITORY_INDEX_ENGINE_DOWNLOAD_FAILED` | The pinned tgrep release asset could not be downloaded or read. | Retry with network access or preload the exact manifest archive; never bypass provisioning verification. |
+| `E_REPOSITORY_INDEX_ENGINE_EXECUTION_FAILED` | A managed tgrep process could not be launched, completed, or stayed within its execution boundary. | Inspect the structured error and index status, then retry with the verified managed engine. |
+| `E_REPOSITORY_INDEX_ENGINE_EXTRACTION_FAILED` | The tgrep archive is malformed, unsafe, or could not be extracted to a temporary directory. | Use the exact supported archive and retry; unsafe paths and links are rejected. |
+| `E_REPOSITORY_INDEX_ENGINE_MISSING` | The managed tgrep executable is absent, unreadable, or has not been provisioned. | Run forgeloop index-setup or preload the exact manifest archive with --asset. |
+| `E_REPOSITORY_INDEX_ENGINE_VERSION_MISMATCH` | The executable reports a version different from the ForgeLoop-pinned tgrep version. | Provision the manifest-pinned tgrep release and retry; do not use an unpinned binary. |
+| `E_REPOSITORY_INDEX_INDEXING` | The repository index is still being built or reconciled and is not ready for the requested operation. | Wait for index-status to report READY, or use index-rebuild if the operation remains stuck. |
+| `E_REPOSITORY_INDEX_LOCK_UNSAFE` | A Repository Index operation lock is malformed, conflicting, or cannot be safely acquired. | Wait for a concurrent operation to finish and retry; use status or rebuild for a persistent lock failure. |
+| `E_REPOSITORY_INDEX_NOT_INITIALIZED` | The repository index has no complete derived index available for the requested operation. | Run forgeloop index-setup or forgeloop index-rebuild for the selected repository. |
+| `E_REPOSITORY_INDEX_OUTPUT_INVALID` | Native tgrep output did not match the bounded provider-neutral JSON contract. | Treat the result as unusable, inspect the engine, and rebuild or provision the pinned release. |
+| `E_REPOSITORY_INDEX_OUTPUT_LIMIT` | Managed tgrep output exceeded ForgeLoop's bounded process-output limit. | Narrow the search or resource policy and retry; oversized output is never promoted to a result. |
+| `E_REPOSITORY_INDEX_PLATFORM_UNSUPPORTED` | The current operating-system and architecture pair has no pinned tgrep release asset. | Use a supported platform or add a separately reviewed manifest asset; do not substitute a PATH executable. |
+| `E_REPOSITORY_INDEX_REBUILD_FAILED` | The derived repository index could not be rebuilt successfully. | Inspect the structured failure, resource policy, and repository paths, then retry index-rebuild. |
+| `E_REPOSITORY_INDEX_REQUEST_INVALID` | Repository Index command input is outside the bounded provider-neutral request contract. | Correct the pattern, path filters, context, or lifecycle options and retry the canonical command. |
+| `E_REPOSITORY_INDEX_SEARCH_FAILED` | The native tgrep search failed with an execution or provider error; no-match is not an error. | Inspect index-status and retry the query or rebuild the derived index; ForgeLoop does not fall back silently. |
+| `E_REPOSITORY_INDEX_SERVER_START_FAILED` | The ForgeLoop-owned tgrep watcher could not be started or did not become healthy. | Run index-status, inspect the structured reason, and retry index-start or index-rebuild. |
+| `E_REPOSITORY_INDEX_SERVER_STOP_FAILED` | The ForgeLoop-owned tgrep watcher could not be stopped or its ownership could not be proven. | Use index-status and retry the canonical stop operation; never terminate processes by name or PID alone. |
+| `E_REPOSITORY_INDEX_SERVER_UNHEALTHY` | Repository Index server, metadata, process identity, or index readiness validation failed. | Run index-status, then use index-rebuild after resolving the reported boundary. |
 | `E_RESPONSIBILITY_FROZEN_INPUT_DRIFT` | A ForgeLoop boundary, artifact, provider, or attestation validation condition was not satisfied. | Inspect the structured command result, correct the named boundary or artifact, then retry the canonical command. |
 | `E_RESPONSIBILITY_INVALID` | A ForgeLoop boundary, artifact, provider, or attestation validation condition was not satisfied. | Inspect the structured command result, correct the named boundary or artifact, then retry the canonical command. |
 | `E_RESPONSIBILITY_REQUIRED_CHECK_MISSING` | A ForgeLoop boundary, artifact, provider, or attestation validation condition was not satisfied. | Inspect the structured command result, correct the named boundary or artifact, then retry the canonical command. |

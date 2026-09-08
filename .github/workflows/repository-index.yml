@@ -1,0 +1,157 @@
+name: Repository Index
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: repository-index-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  manifest:
+    name: Verify Repository Index manifest
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+
+      - name: Install locked Node toolchain
+        run: npm ci --ignore-scripts
+
+      - name: Verify pinned tgrep manifest
+        run: npm run repository-index:manifest
+
+  native:
+    name: Native Repository Index (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+    runs-on: ${{ matrix.os }}
+    needs: manifest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+
+      - name: Install locked Node toolchain
+        run: npm ci --ignore-scripts
+
+      - name: Download, extract, and verify the pinned native tgrep asset
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import { createHash } from "node:crypto";
+          import { appendFile, chmod, mkdir, mkdtemp, readFile, readdir, writeFile } from "node:fs/promises";
+          import { execFile as nodeExecFile } from "node:child_process";
+          import os from "node:os";
+          import path from "node:path";
+
+          const manifest = JSON.parse(await readFile("src/repository-index/tgrep-manifest.json", "utf8"));
+          const platformName = ({ darwin: "darwin", linux: "linux", win32: "windows" })[process.platform];
+          const platformKey = `${platformName}-${process.arch}`;
+          const asset = manifest.assets[platformKey];
+          if (!asset) throw new Error(`No pinned tgrep asset for ${process.platform}/${process.arch} (${platformKey})`);
+          const tempRoot = await mkdtemp(path.join(process.env.RUNNER_TEMP ?? os.tmpdir(), "ForgeLoop Native Test "));
+          const archivePath = path.join(tempRoot, asset.assetName);
+          const response = await fetch(`${manifest.releaseBaseUrl}/${asset.assetName}`, { redirect: "follow" });
+          if (!response.ok) throw new Error(`tgrep asset download failed: HTTP ${response.status}`);
+          await writeFile(archivePath, Buffer.from(await response.arrayBuffer()), { flag: "wx" });
+
+          async function sha256(filePath) {
+            const hash = createHash("sha256");
+            hash.update(await readFile(filePath));
+            return hash.digest("hex");
+          }
+          const archiveSha = await sha256(archivePath);
+          if (archiveSha !== asset.sha256) throw new Error(`archive checksum mismatch: expected ${asset.sha256}, got ${archiveSha}`);
+
+          function execFile(file, args) {
+            return new Promise((resolve, reject) => nodeExecFile(file, args, { shell: false, maxBuffer: 4 * 1024 * 1024 }, (error, stdout, stderr) => {
+              if (error) { error.stdout = stdout; error.stderr = stderr; reject(error); return; }
+              resolve({ stdout, stderr });
+            }));
+          }
+          function validateEntry(entry) {
+          const portable = entry.replaceAll("\\", "/").replace(/^\.\//u, "") || ".";
+            const normalized = path.posix.normalize(portable);
+            if (path.posix.isAbsolute(portable) || path.win32.isAbsolute(portable) || normalized === ".." || normalized.startsWith("../")) throw new Error(`unsafe archive entry: ${entry}`);
+            return normalized;
+          }
+          const listingCommand = asset.archive === "zip" ? "unzip" : "tar";
+          const listingArgs = listingCommand === "unzip" ? ["-Z1", archivePath] : ["-tf", archivePath];
+          const listing = await execFile(listingCommand, listingArgs);
+          const entries = listing.stdout.split(/\r?\n/u).filter(Boolean).map(validateEntry);
+          if (!entries.some((entry) => path.posix.basename(entry) === asset.binaryName)) throw new Error(`archive does not contain ${asset.binaryName}`);
+          const extractionDirectory = path.join(tempRoot, "extract");
+          await mkdir(extractionDirectory);
+          const extractCommand = asset.archive === "zip" ? "unzip" : "tar";
+          const extractArgs = extractCommand === "unzip" ? ["-q", archivePath, "-d", extractionDirectory] : ["-xf", archivePath, "-C", extractionDirectory];
+          await execFile(extractCommand, extractArgs);
+          const found = [];
+          async function visit(directory) {
+            for (const entry of await readdir(directory, { withFileTypes: true })) {
+              const entryPath = path.join(directory, entry.name);
+              if (entry.isSymbolicLink()) throw new Error(`extracted symbolic link: ${entry.name}`);
+              if (entry.isDirectory()) await visit(entryPath);
+              else if (entry.isFile() && entry.name === asset.binaryName) found.push(entryPath);
+            }
+          }
+          await visit(extractionDirectory);
+          if (found.length !== 1) throw new Error(`expected exactly one ${asset.binaryName}, found ${found.length}`);
+          const binaryPath = found[0];
+          const binarySha = await sha256(binaryPath);
+          if (binarySha !== asset.binarySha256) throw new Error(`binary checksum mismatch: expected ${asset.binarySha256}, got ${binarySha}`);
+          if (process.platform !== "win32") await chmod(binaryPath, 0o755);
+          console.log(`Native tgrep platform=${process.platform} arch=${process.arch} asset=${asset.assetName}`);
+          console.log(`Native tgrep binary=${binaryPath}`);
+          await appendFile(process.env.GITHUB_ENV, `FORGELOOP_TGREP_BINARY=${binaryPath}\n`);
+          NODE
+
+      - name: Verify native version and behavior
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import { execFile } from "node:child_process";
+          const binary = process.env.FORGELOOP_TGREP_BINARY;
+          if (!binary) throw new Error("FORGELOOP_TGREP_BINARY is not set");
+          await new Promise((resolve, reject) => execFile(binary, ["--version"], { shell: false }, (error, stdout, stderr) => {
+            if (error) { error.stdout = stdout; error.stderr = stderr; reject(error); return; }
+            console.log("Native tgrep version: " + stdout.trim());
+            resolve();
+          }));
+          console.log("Native runner platform=" + process.platform + " arch=" + process.arch + " node=" + process.version);
+          NODE
+          node --test \
+            tests/repository-index-live.test.js \
+            tests/repository-index-differential.test.js \
+            tests/repository-index-migration.test.js
+
+      - name: Verify CLI lifecycle and doctor behavior with native tgrep
+        shell: bash
+        run: node --test tests/repository-index-native-cli.test.js

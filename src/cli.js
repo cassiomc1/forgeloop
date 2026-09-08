@@ -85,6 +85,11 @@ import { formatAttestationCreateResult } from "./commands/attestation-create.js"
 import { formatAttestationVerifyResult } from "./commands/attestation-verify.js";
 import { formatAttestationStatusResult } from "./commands/attestation-status.js";
 import { formatAttestationVerifyRangeResult } from "./commands/attestation-verify-range.js";
+import {
+  formatRepositoryIndexResult,
+  formatRepositoryIndexStatus,
+  formatSearchResult,
+} from "./commands/repository-index.js";
 import { defaultCommandInputValues, validateForgeLoopCommandInput } from "./core/command-input.js";
 import { COMMAND_EXECUTORS } from "./core/command-executors.js";
 import { resolveTarget } from "./core/filesystem.js";
@@ -367,6 +372,36 @@ export const COMMAND_HANDLERS = Object.freeze({
         : "unhealthy: ForgeLoop target needs attention");
     }
     return result.ok ? 0 : 1;
+  },
+  "index-setup": async ({ target, packageRoot, options }) => {
+    const { result } = await COMMAND_EXECUTORS["index-setup"]({ target, packageRoot, options });
+    renderJsonOr(options, result, formatRepositoryIndexResult);
+    return 0;
+  },
+  "index-start": async ({ target, packageRoot, options }) => {
+    const { result } = await COMMAND_EXECUTORS["index-start"]({ target, packageRoot, options });
+    renderJsonOr(options, result, formatRepositoryIndexResult);
+    return 0;
+  },
+  "index-stop": async ({ target, packageRoot, options }) => {
+    const { result } = await COMMAND_EXECUTORS["index-stop"]({ target, packageRoot, options });
+    renderJsonOr(options, result, formatRepositoryIndexResult);
+    return 0;
+  },
+  "index-status": async ({ target, packageRoot, options }) => {
+    const { result } = await COMMAND_EXECUTORS["index-status"]({ target, packageRoot, options });
+    renderJsonOr(options, result, formatRepositoryIndexStatus);
+    return 0;
+  },
+  "index-rebuild": async ({ target, packageRoot, options }) => {
+    const { result } = await COMMAND_EXECUTORS["index-rebuild"]({ target, packageRoot, options });
+    renderJsonOr(options, result, formatRepositoryIndexResult);
+    return 0;
+  },
+  search: async ({ target, packageRoot, options }) => {
+    const { result, exitCode } = await COMMAND_EXECUTORS.search({ target, packageRoot, options });
+    renderJsonOr(options, result, formatSearchResult);
+    return exitCode;
   },
   route: async ({ target, packageRoot, options }) => {
     const { result } = await COMMAND_EXECUTORS.route({ target, packageRoot, options });

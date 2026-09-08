@@ -11,6 +11,26 @@ import {
   E_VERIFICATION_ISOLATION_UNAVAILABLE,
 } from "./verification-execution.js";
 
+export const E_REPOSITORY_INDEX_PLATFORM_UNSUPPORTED = "E_REPOSITORY_INDEX_PLATFORM_UNSUPPORTED";
+export const E_REPOSITORY_INDEX_ENGINE_MISSING = "E_REPOSITORY_INDEX_ENGINE_MISSING";
+export const E_REPOSITORY_INDEX_ENGINE_DOWNLOAD_FAILED = "E_REPOSITORY_INDEX_ENGINE_DOWNLOAD_FAILED";
+export const E_REPOSITORY_INDEX_ENGINE_CHECKSUM_MISMATCH = "E_REPOSITORY_INDEX_ENGINE_CHECKSUM_MISMATCH";
+export const E_REPOSITORY_INDEX_ENGINE_BINARY_CHECKSUM_MISMATCH = "E_REPOSITORY_INDEX_ENGINE_BINARY_CHECKSUM_MISMATCH";
+export const E_REPOSITORY_INDEX_ENGINE_EXTRACTION_FAILED = "E_REPOSITORY_INDEX_ENGINE_EXTRACTION_FAILED";
+export const E_REPOSITORY_INDEX_ENGINE_VERSION_MISMATCH = "E_REPOSITORY_INDEX_ENGINE_VERSION_MISMATCH";
+export const E_REPOSITORY_INDEX_ENGINE_EXECUTION_FAILED = "E_REPOSITORY_INDEX_ENGINE_EXECUTION_FAILED";
+export const E_REPOSITORY_INDEX_OUTPUT_LIMIT = "E_REPOSITORY_INDEX_OUTPUT_LIMIT";
+export const E_REPOSITORY_INDEX_NOT_INITIALIZED = "E_REPOSITORY_INDEX_NOT_INITIALIZED";
+export const E_REPOSITORY_INDEX_INDEXING = "E_REPOSITORY_INDEX_INDEXING";
+export const E_REPOSITORY_INDEX_SERVER_START_FAILED = "E_REPOSITORY_INDEX_SERVER_START_FAILED";
+export const E_REPOSITORY_INDEX_SERVER_STOP_FAILED = "E_REPOSITORY_INDEX_SERVER_STOP_FAILED";
+export const E_REPOSITORY_INDEX_SERVER_UNHEALTHY = "E_REPOSITORY_INDEX_SERVER_UNHEALTHY";
+export const E_REPOSITORY_INDEX_SEARCH_FAILED = "E_REPOSITORY_INDEX_SEARCH_FAILED";
+export const E_REPOSITORY_INDEX_OUTPUT_INVALID = "E_REPOSITORY_INDEX_OUTPUT_INVALID";
+export const E_REPOSITORY_INDEX_REBUILD_FAILED = "E_REPOSITORY_INDEX_REBUILD_FAILED";
+export const E_REPOSITORY_INDEX_REQUEST_INVALID = "E_REPOSITORY_INDEX_REQUEST_INVALID";
+export const E_REPOSITORY_INDEX_LOCK_UNSAFE = "E_REPOSITORY_INDEX_LOCK_UNSAFE";
+
 export const E_TASK_REQUIRED = "E_TASK_REQUIRED";
 export const E_TASK_NOT_FOUND = "E_TASK_NOT_FOUND";
 export const E_TASK_ALREADY_EXISTS = "E_TASK_ALREADY_EXISTS";
@@ -373,6 +393,91 @@ const ADVISORY_CONTEXT_AND_HANDOFF_ERROR_METADATA = Object.freeze(Object.fromEnt
   })],
 ]));
 
+const REPOSITORY_INDEX_ERROR_METADATA = Object.freeze(Object.fromEntries([
+  [E_REPOSITORY_INDEX_PLATFORM_UNSUPPORTED, [
+    "The current operating-system and architecture pair has no pinned tgrep release asset.",
+    "Use a supported platform or add a separately reviewed manifest asset; do not substitute a PATH executable.",
+  ]],
+  [E_REPOSITORY_INDEX_ENGINE_MISSING, [
+    "The managed tgrep executable is absent, unreadable, or has not been provisioned.",
+    "Run forgeloop index-setup or preload the exact manifest archive with --asset.",
+  ]],
+  [E_REPOSITORY_INDEX_ENGINE_DOWNLOAD_FAILED, [
+    "The pinned tgrep release asset could not be downloaded or read.",
+    "Retry with network access or preload the exact manifest archive; never bypass provisioning verification.",
+  ]],
+  [E_REPOSITORY_INDEX_ENGINE_CHECKSUM_MISMATCH, [
+    "The tgrep archive or executable bytes do not match the pinned manifest SHA-256 digest.",
+    "Obtain the exact manifest asset and retry; do not install a checksum mismatch.",
+  ]],
+  [E_REPOSITORY_INDEX_ENGINE_BINARY_CHECKSUM_MISMATCH, [
+    "The extracted or managed tgrep executable bytes do not match the pinned binary SHA-256 digest.",
+    "Run forgeloop index-setup or index-rebuild to repair the managed binary; do not run a mismatched executable.",
+  ]],
+  [E_REPOSITORY_INDEX_ENGINE_EXTRACTION_FAILED, [
+    "The tgrep archive is malformed, unsafe, or could not be extracted to a temporary directory.",
+    "Use the exact supported archive and retry; unsafe paths and links are rejected.",
+  ]],
+  [E_REPOSITORY_INDEX_ENGINE_VERSION_MISMATCH, [
+    "The executable reports a version different from the ForgeLoop-pinned tgrep version.",
+    "Provision the manifest-pinned tgrep release and retry; do not use an unpinned binary.",
+  ]],
+  [E_REPOSITORY_INDEX_ENGINE_EXECUTION_FAILED, [
+    "A managed tgrep process could not be launched, completed, or stayed within its execution boundary.",
+    "Inspect the structured error and index status, then retry with the verified managed engine.",
+  ]],
+  [E_REPOSITORY_INDEX_OUTPUT_LIMIT, [
+    "Managed tgrep output exceeded ForgeLoop's bounded process-output limit.",
+    "Narrow the search or resource policy and retry; oversized output is never promoted to a result.",
+  ]],
+  [E_REPOSITORY_INDEX_NOT_INITIALIZED, [
+    "The repository index has no complete derived index available for the requested operation.",
+    "Run forgeloop index-setup or forgeloop index-rebuild for the selected repository.",
+  ]],
+  [E_REPOSITORY_INDEX_INDEXING, [
+    "The repository index is still being built or reconciled and is not ready for the requested operation.",
+    "Wait for index-status to report READY, or use index-rebuild if the operation remains stuck.",
+  ]],
+  [E_REPOSITORY_INDEX_SERVER_START_FAILED, [
+    "The ForgeLoop-owned tgrep watcher could not be started or did not become healthy.",
+    "Run index-status, inspect the structured reason, and retry index-start or index-rebuild.",
+  ]],
+  [E_REPOSITORY_INDEX_SERVER_STOP_FAILED, [
+    "The ForgeLoop-owned tgrep watcher could not be stopped or its ownership could not be proven.",
+    "Use index-status and retry the canonical stop operation; never terminate processes by name or PID alone.",
+  ]],
+  [E_REPOSITORY_INDEX_SERVER_UNHEALTHY, [
+    "Repository Index server, metadata, process identity, or index readiness validation failed.",
+    "Run index-status, then use index-rebuild after resolving the reported boundary.",
+  ]],
+  [E_REPOSITORY_INDEX_SEARCH_FAILED, [
+    "The native tgrep search failed with an execution or provider error; no-match is not an error.",
+    "Inspect index-status and retry the query or rebuild the derived index; ForgeLoop does not fall back silently.",
+  ]],
+  [E_REPOSITORY_INDEX_OUTPUT_INVALID, [
+    "Native tgrep output did not match the bounded provider-neutral JSON contract.",
+    "Treat the result as unusable, inspect the engine, and rebuild or provision the pinned release.",
+  ]],
+  [E_REPOSITORY_INDEX_REBUILD_FAILED, [
+    "The derived repository index could not be rebuilt successfully.",
+    "Inspect the structured failure, resource policy, and repository paths, then retry index-rebuild.",
+  ]],
+  [E_REPOSITORY_INDEX_REQUEST_INVALID, [
+    "Repository Index command input is outside the bounded provider-neutral request contract.",
+    "Correct the pattern, path filters, context, or lifecycle options and retry the canonical command.",
+  ]],
+  [E_REPOSITORY_INDEX_LOCK_UNSAFE, [
+    "A Repository Index operation lock is malformed, conflicting, or cannot be safely acquired.",
+    "Wait for a concurrent operation to finish and retry; use status or rebuild for a persistent lock failure.",
+  ]],
+].map(([code, [meaning, safeResolution]]) => [code, Object.freeze({
+  code,
+  category: "repository-index",
+  classification: "PUBLIC_STABLE",
+  meaning,
+  safeResolution,
+})])));
+
 /**
  * Public, stable ForgeLoop error and reason codes documented for users and harnesses.
  */
@@ -380,6 +485,7 @@ export const PUBLIC_ERROR_CODES = Object.freeze({
   ...EXTENSION_PUBLIC_ERROR_CODES,
   ...STRUCTURAL_QUALITY_ERROR_METADATA,
   ...ADVISORY_CONTEXT_AND_HANDOFF_ERROR_METADATA,
+  ...REPOSITORY_INDEX_ERROR_METADATA,
   E_PREFLIGHT_NOT_READY: Object.freeze({
     code: "E_PREFLIGHT_NOT_READY",
     category: "preflight",
@@ -1259,6 +1365,25 @@ export const ALL_KNOWN_ERROR_CODES = Object.freeze(new Set([
   E_BASELINE_RECORD_DURING_ACTIVE_TASK,
   E_POLICY_INITIALIZATION_FAILED,
   E_INIT_KIT_CONFLICT,
+  E_REPOSITORY_INDEX_PLATFORM_UNSUPPORTED,
+  E_REPOSITORY_INDEX_ENGINE_MISSING,
+  E_REPOSITORY_INDEX_ENGINE_DOWNLOAD_FAILED,
+  E_REPOSITORY_INDEX_ENGINE_CHECKSUM_MISMATCH,
+  E_REPOSITORY_INDEX_ENGINE_BINARY_CHECKSUM_MISMATCH,
+  E_REPOSITORY_INDEX_ENGINE_EXTRACTION_FAILED,
+  E_REPOSITORY_INDEX_ENGINE_VERSION_MISMATCH,
+  E_REPOSITORY_INDEX_ENGINE_EXECUTION_FAILED,
+  E_REPOSITORY_INDEX_OUTPUT_LIMIT,
+  E_REPOSITORY_INDEX_NOT_INITIALIZED,
+  E_REPOSITORY_INDEX_INDEXING,
+  E_REPOSITORY_INDEX_SERVER_START_FAILED,
+  E_REPOSITORY_INDEX_SERVER_STOP_FAILED,
+  E_REPOSITORY_INDEX_SERVER_UNHEALTHY,
+  E_REPOSITORY_INDEX_SEARCH_FAILED,
+  E_REPOSITORY_INDEX_OUTPUT_INVALID,
+  E_REPOSITORY_INDEX_REBUILD_FAILED,
+  E_REPOSITORY_INDEX_REQUEST_INVALID,
+  E_REPOSITORY_INDEX_LOCK_UNSAFE,
   E_ACTION_INVALID,
   E_ACTION_NOT_FOUND,
   E_ACTION_STATE_MISMATCH,

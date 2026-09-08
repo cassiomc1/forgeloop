@@ -10,8 +10,8 @@
     "textFallback": "README.md#architecture-flow"
   },
   "documents": [
-    { "path": "AGENTS.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["LOOP_ENGINEERING.md", "PROTOCOL_INTEGRATION.md"] },
-    { "path": "CLAUDE.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["AGENTS.md"] },
+    { "path": "AGENTS.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["LOOP_ENGINEERING.md", "PROTOCOL_INTEGRATION.md", "docs/REPOSITORY_INDEX.md"] },
+    { "path": "CLAUDE.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["AGENTS.md", "docs/REPOSITORY_INDEX.md"] },
     { "path": "GUIDE_ROUTER.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["src/config/guides.json"] },
     { "path": "LOOP_ENGINEERING.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["src/core/protocol.js", "src/core/verification-execution.js", "schemas/"] },
     { "path": "PROTOCOL_INTEGRATION.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["src/integration.js", "src/core/verification-execution.js", "src/core/runtime-context.js"] },
@@ -27,14 +27,14 @@
     { "path": "PROJECT_PROFILE.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["package.json", "README.md"] },
     { "path": "THIRD_PARTY_NOTICES.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["LICENSE", "LICENSE-DOCS.md", "vendor/archify/v2.15.0/PIN.json"] },
     { "path": "LICENSE-DOCS.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["LICENSE-DOCS.md", "THIRD_PARTY_NOTICES.md"] },
-    { "path": ".github/copilot-instructions.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["AGENTS.md", "LOOP_ENGINEERING.md"] },
+    { "path": ".github/copilot-instructions.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["AGENTS.md", "LOOP_ENGINEERING.md", "docs/REPOSITORY_INDEX.md"] },
     { "path": "README.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["DOCS_INDEX.md", "LOOP_ENGINEERING.md", "docs/diagrams/forgeloop-engineering-flow.workflow.json"] },
     { "path": "DOCS_INDEX.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["docs/documentation-manifest.json", "docs/diagrams/manifest.json"] },
-    { "path": "docs/GETTING_STARTED.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["src/cli.js", "LOOP_ENGINEERING.md"] },
+    { "path": "docs/GETTING_STARTED.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["src/cli.js", "LOOP_ENGINEERING.md", "docs/REPOSITORY_INDEX.md"] },
     { "path": "docs/CROSS_HARNESS_CONTINUITY.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["PROTOCOL_INTEGRATION.md", "src/core/discovery-surfaces.js"] },
-    { "path": "docs/CLI_REFERENCE.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["src/core/cli-command-definitions.js"] },
+    { "path": "docs/CLI_REFERENCE.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["src/core/cli-command-definitions.js"] },
     { "path": "docs/ARTIFACT_REFERENCE.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["src/core/artifact-registry.js", "schemas/"] },
-    { "path": "docs/TROUBLESHOOTING.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["src/core/error-codes.js", "src/core/protocol.js"] },
+    { "path": "docs/TROUBLESHOOTING.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["src/core/error-codes.js", "src/core/protocol.js", "src/repository-index/errors.js"] },
     { "path": "docs/RECIPES.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["docs/CLI_REFERENCE.md", "LOOP_ENGINEERING.md"] },
     { "path": "docs/DOCUMENTATION_GUIDE.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["docs/documentation-manifest.json", "docs/diagrams/manifest.json", "package.json"] },
     { "path": "docs/diagrams/README.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["docs/diagrams/manifest.json", "vendor/archify/v2.15.0/PIN.json"] },
@@ -58,6 +58,7 @@
     { "path": "docs/KNOWLEDGE_SOURCES.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md", "DOCS_INDEX.md", "docs/DOCUMENTATION_GUIDE.md"] },
     { "path": "docs/STRUCTURAL_QUALITY.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/core/structural-quality/", "schemas/structural-quality.schema.json", "LOOP_ENGINEERING.md", "PROTOCOL_INTEGRATION.md"] },
     { "path": "docs/ADVISORY_CONTEXT.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/core/advisory-context/", "src/core/portable-context.js", "src/integration.js", "LOOP_ENGINEERING.md"] },
-    { "path": "docs/RIPWIRE_ADAPTER.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/adapters/ripwire/", "src/integration.js", "tests/ripwire-advisory-provider.test.js", "docs/ADVISORY_CONTEXT.md"] }
+    { "path": "docs/RIPWIRE_ADAPTER.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/adapters/ripwire/", "src/integration.js", "tests/ripwire-advisory-provider.test.js", "docs/ADVISORY_CONTEXT.md"] },
+    { "path": "docs/REPOSITORY_INDEX.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/repository-index/", "src/core/cli-command-definitions.js", "src/integration.js", "integrations/mcp/src/resource-registry.js", "tests/repository-index-cli.test.js"] }
   ]
 }

@@ -58,8 +58,8 @@ error codes. Default output and default JSON remain unchanged.
 
 | Category | Commands |
 | --- | --- |
-| **Inspection & Diagnostics** | [`protocol-info`](#protocol-info), [`doctor`](#doctor), [`metrics`](#metrics), [`usage-record`](#usage-record), [`efficiency`](#efficiency), [`eval`](#eval), [`history`](#history), [`trace`](#trace), [`reflect`](#reflect), [`progress`](#progress), [`profile-interview`](#profile-interview), [`inspect`](#inspect), [`status`](#status), [`validate-state`](#validate-state), [`validate-protocol`](#validate-protocol) |
-| **Setup & Maintenance** | [`init`](#init), [`update`](#update), [`task-migrate`](#task-migrate), [`migrate-protocol`](#migrate-protocol), [`task-unlock`](#task-unlock), [`task-recover`](#task-recover), [`task-repair-legacy-recovery`](#task-repair-legacy-recovery), [`task-resume`](#task-resume) |
+| **Inspection & Diagnostics** | [`protocol-info`](#protocol-info), [`doctor`](#doctor), [`index-status`](#index-status), [`search`](#search), [`metrics`](#metrics), [`usage-record`](#usage-record), [`efficiency`](#efficiency), [`eval`](#eval), [`history`](#history), [`trace`](#trace), [`reflect`](#reflect), [`progress`](#progress), [`profile-interview`](#profile-interview), [`inspect`](#inspect), [`status`](#status), [`validate-state`](#validate-state), [`validate-protocol`](#validate-protocol) |
+| **Setup & Maintenance** | [`init`](#init), [`index-setup`](#index-setup), [`index-start`](#index-start), [`index-stop`](#index-stop), [`index-rebuild`](#index-rebuild), [`update`](#update), [`task-migrate`](#task-migrate), [`migrate-protocol`](#migrate-protocol), [`task-unlock`](#task-unlock), [`task-recover`](#task-recover), [`task-repair-legacy-recovery`](#task-repair-legacy-recovery), [`task-resume`](#task-resume) |
 | **Lifecycle & State** | [`activate`](#activate), [`route`](#route), [`preflight`](#preflight), [`advance`](#advance), [`next`](#next), [`record-diagnosis`](#record-diagnosis), [`record-intervention`](#record-intervention), [`record-hypothesis-disposition`](#record-hypothesis-disposition), [`record-decision-criterion`](#record-decision-criterion), [`complete`](#complete), [`clear-state`](#clear-state), [`reconcile-closure`](#reconcile-closure), [`task-create`](#task-create), [`task-list`](#task-list), [`task-show`](#task-show), [`task-lock-status`](#task-lock-status), [`task-scope`](#task-scope) |
 | **Verification & Completion** | [`quality-baseline`](#quality-baseline), [`quality-verify`](#quality-verify), [`quality-status`](#quality-status), [`prepare-completion`](#prepare-completion), [`run-check`](#run-check), [`record-check`](#record-check), [`record-terminal-result`](#record-terminal-result), [`audit`](#audit), [`report`](#report), [`validate-receipt`](#validate-receipt), [`verify-scope`](#verify-scope) |
 | **Cross-Harness Continuity** | [`continuity`](#continuity), [`record-continuity`](#record-continuity), [`reconcile-continuity`](#reconcile-continuity), [`clear-continuity`](#clear-continuity), [`handoff-create`](#handoff-create), [`handoff-list`](#handoff-list), [`handoff-show`](#handoff-show) |
@@ -75,6 +75,118 @@ error codes. Default output and default JSON remain unchanged.
 ---
 
 ## 1. Setup & Maintenance
+
+### `index-setup`
+
+Provisions or reuses the managed Repository Index engine, builds its derived
+index, and starts the owned watcher.
+
+- **Purpose**: Establish mandatory repository-search readiness.
+- **Mutation**: Writes only Repository Index runtime state and cache data.
+- **Options**:
+
+<!-- BEGIN FORGELOOP GENERATED: cli:index-setup:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--asset <path>`: use a preloaded pinned tgrep archive instead of downloading
+- `--force`: rebuild the repository index even when metadata is current
+- `--json`: emit repository-index setup as JSON
+
+<!-- END FORGELOOP GENERATED: cli:index-setup:options -->
+
+### `index-start`
+
+Starts the ForgeLoop-owned Repository Index watcher after a complete index is
+available. A verified healthy server is reused.
+
+- **Options**:
+
+<!-- BEGIN FORGELOOP GENERATED: cli:index-start:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--json`: emit repository-index start as JSON
+
+<!-- END FORGELOOP GENERATED: cli:index-start:options -->
+
+### `index-stop`
+
+Stops only a server whose repository, index, metadata, executable, and process
+identity are verified as ForgeLoop-owned.
+
+- **Options**:
+
+<!-- BEGIN FORGELOOP GENERATED: cli:index-stop:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--json`: emit repository-index stop as JSON
+
+<!-- END FORGELOOP GENERATED: cli:index-stop:options -->
+
+### `index-status`
+
+Reports normalized Repository Index engine, index, policy, watcher, and health
+state without repairing or provisioning it.
+
+Structured output is path-safe by default: it omits machine-local repository,
+index, state, and binary paths. Use `doctor` when an explicitly diagnostic
+surface needs local path details.
+
+- **Options**:
+
+<!-- BEGIN FORGELOOP GENERATED: cli:index-status:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--json`: emit repository-index health as JSON
+
+<!-- END FORGELOOP GENERATED: cli:index-status:options -->
+
+### `index-rebuild`
+
+Rebuilds only the derived Repository Index cache and restarts its owned
+watcher. ForgeLoop task and protocol artifacts remain outside the deletion
+boundary.
+
+- **Options**:
+
+<!-- BEGIN FORGELOOP GENERATED: cli:index-rebuild:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--asset <path>`: use a preloaded pinned tgrep archive instead of downloading
+- `--json`: emit repository-index rebuild as JSON
+
+<!-- END FORGELOOP GENERATED: cli:index-rebuild:options -->
+
+### `search`
+
+Searches the managed Repository Index through the provider-neutral structured
+search contract. Native tgrep flags are not accepted as a generic pass-through.
+
+The first query performs strong setup checks. Warm queries reuse process-local
+per-repository readiness and avoid repeated `tgrep --version`, native status,
+and process-inspection commands. A server/index failure gets one bounded
+setup-and-retry attempt; native exit code `1` is a successful empty result.
+
+- **Options**:
+
+<!-- BEGIN FORGELOOP GENERATED: cli:search:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `<pattern>`: regular expression or literal search pattern
+- `--glob <glob>`: include files matching a glob (repeatable)
+- `--type <type>`: include files of a tgrep type (repeatable)
+- `--fixed-strings`: treat the pattern as a literal string
+- `--ignore-case`: search case-insensitively
+- `--smart-case`: use case-insensitive search only for lowercase patterns
+- `--word-regexp`: match whole words only
+- `--context <lines>`: lines of context before and after matches
+- `--before-context <lines>`: lines of context before matches
+- `--after-context <lines>`: lines of context after matches
+- `--max-count <number>`: maximum matches per file
+- `--files-with-matches`: return matching file paths only
+- `--stats`: include observed native search statistics
+- `--json`: emit normalized provider-neutral search JSON
+
+<!-- END FORGELOOP GENERATED: cli:search:options -->
 
 ## Workspace, Handoff, Responsibility, Scope, and Attestation
 

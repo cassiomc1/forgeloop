@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "engine": "tgrep",
+  "repository": "microsoft/tgrep",
+  "version": "1.0.3",
+  "license": "MIT",
+  "releaseBaseUrl": "https://github.com/microsoft/tgrep/releases/download/v1.0.3",
+  "assets": {
+    "darwin-arm64": {
+      "assetName": "tgrep-v1.0.3-aarch64-apple-darwin.tar.gz",
+      "archive": "tar.gz",
+      "binaryName": "tgrep",
+      "sha256": "d91f1662148d5dcea85710e34f8e2830ca33c041f6b5232ecf7650b7e9ea222b",
+      "binarySha256": "0a2a15bf794bad8273e2043474a9555032ba7ab9ed8da325a4a5af4a0961d7dd"
+    },
+    "darwin-x64": {
+      "assetName": "tgrep-v1.0.3-x86_64-apple-darwin.tar.gz",
+      "archive": "tar.gz",
+      "binaryName": "tgrep",
+      "sha256": "58b9bfb9b2d4fa7c4cb3ef49202ef98b6d3812c60fd0ed2f00ed7a5a5d9046d7",
+      "binarySha256": "9a8778094f73eaf097802b8d7c593e0005f10958470cdbb1b16fde0a78da4981"
+    },
+    "linux-x64": {
+      "assetName": "tgrep-v1.0.3-x86_64-unknown-linux-musl.tar.gz",
+      "archive": "tar.gz",
+      "binaryName": "tgrep",
+      "sha256": "ef97d99225d1454a7c18e4b632cee25c125b7321d8ec50adf464903f0ddf38ae",
+      "binarySha256": "d788c5323f1cd6e610e3f8629fc7797ec0ddaaf602027114c7ad508e12bd5d48"
+    },
+    "windows-x64": {
+      "assetName": "tgrep-v1.0.3-x86_64-pc-windows-msvc.zip",
+      "archive": "zip",
+      "binaryName": "tgrep.exe",
+      "sha256": "922b6c8657c0f910cbc2957adc06286cb9ce1953d46ea1d0ef44dc7b7649b384",
+      "binarySha256": "77070e3ebf4125d71678606cb71b409175419a377eb65dcc09f1617d99ecf3a6"
+    }
+  }
+}

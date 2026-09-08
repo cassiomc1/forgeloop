@@ -5,6 +5,9 @@ import { createEvidence } from "../core/evidence.js";
 import { LAYOUT_VERSION } from "../core/target-layout.js";
 import { inspectNativeAdapter, validateNativeAdapterTargets } from "../core/native-adapters.js";
 import { findIncompleteTransactions, recoverIncompleteTransactions } from "../core/transaction.js";
+import { isRepositoryCandidate } from "../repository-index/lifecycle.js";
+import { getRepositoryIndexStatus } from "../repository-index/status.js";
+import { searchRepository } from "../repository-index/search.js";
 
 function finding(code, severity, relativePath, message, remediation = null, evidence = null) {
   const evidenceRecord = evidence && typeof evidence === "object"
@@ -114,7 +117,66 @@ async function adoptAdapters({ target, manifest, adoptPaths, findings }) {
   return nextManifest;
 }
 
-export async function runDoctor({ target, packageRoot, adoptPaths = [], strict = false, fix = false }) {
+async function inspectRepositoryIndexForDoctor({ target, packageRoot, repositoryIndex, repositoryIndexOptions, findings }) {
+  if (!repositoryIndex) return { status: "DISABLED", required: false };
+  if (!(await isRepositoryCandidate(target))) {
+    return { status: "DEFERRED", required: true, reason: "target is not a Git repository" };
+  }
+
+  const status = await getRepositoryIndexStatus(target, { packageRoot, ...repositoryIndexOptions, includeLocalPaths: true });
+  const result = {
+    status: status.health,
+    required: true,
+    engine: status.engine,
+    engineVersion: status.engineVersion,
+    indexPath: status.indexPath,
+    server: status.server,
+    diagnostics: status.diagnostics,
+  };
+  if (status.health === "READY") {
+    try {
+      const smoke = await searchRepository(target, {
+        ...repositoryIndexOptions,
+        packageRoot,
+        pattern: "__FORGELOOP_DOCTOR_INDEX_SMOKE__",
+        fixedStrings: true,
+        maxCount: 1,
+      });
+      result.smokeSearch = {
+        status: "OK",
+        matchCount: smoke.matches.length,
+        nativeExitCode: smoke.metrics.exitCode,
+      };
+    } catch (error) {
+      result.smokeSearch = {
+        status: "ERROR",
+        code: error.code ?? "E_REPOSITORY_INDEX_SEARCH_FAILED",
+        message: error.message,
+      };
+      findings.push(finding(
+        error.code ?? "E_REPOSITORY_INDEX_SEARCH_FAILED",
+        "error",
+        ".forgeloop/repository-index",
+        `Repository Index smoke search failed: ${error.message}`,
+        "Run forgeloop index-status --json, then index-rebuild if the managed search service is unhealthy.",
+        error.message,
+      ));
+    }
+  }
+  if (status.health !== "READY") {
+    findings.push(finding(
+      status.diagnostics?.[0]?.code ?? "E_REPOSITORY_INDEX_SERVER_UNHEALTHY",
+      "error",
+      ".forgeloop/repository-index",
+      `Repository Index is ${status.health}; ${status.diagnostics?.[0]?.message ?? "native index health is not ready"}`,
+      "Run forgeloop index-setup or forgeloop index-rebuild with an approved managed tgrep asset.",
+      status,
+    ));
+  }
+  return result;
+}
+
+export async function runDoctor({ target, packageRoot, adoptPaths = [], strict = false, fix = false, repositoryIndex, repositoryIndexOptions }) {
   const findings = [];
   let incompleteTransactions = await findIncompleteTransactions(target);
   if (fix && incompleteTransactions.some((transaction) => transaction.status === "COMMITTING")) {
@@ -318,11 +380,20 @@ export async function runDoctor({ target, packageRoot, adoptPaths = [], strict =
     await writeManifest(target, manifest);
   }
 
+  const repositoryIndexResult = await inspectRepositoryIndexForDoctor({
+    target,
+    packageRoot,
+    repositoryIndex,
+    repositoryIndexOptions,
+    findings,
+  });
+
   const ok = findings.every((item) => item.severity !== "error")
     && (!strict || findings.every((item) => item.severity !== "warning"));
   return {
     ok,
     findings,
+    repositoryIndex: repositoryIndexResult,
     evidence: [createEvidence({
       kind: "OBSERVED",
       source: "ForgeLoop doctor",

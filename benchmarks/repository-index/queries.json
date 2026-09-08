@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "queries": [
+    { "id": "selective-literal", "pattern": "repositoryFingerprint", "fixedStrings": true },
+    { "id": "regex", "pattern": "E_[A-Z_]+", "fixedStrings": false },
+    { "id": "case-insensitive", "pattern": "executionreceipt", "ignoreCase": true },
+    { "id": "word", "pattern": "receipt", "wordRegexp": true },
+    { "id": "javascript", "pattern": "export", "types": ["js"] },
+    { "id": "high-match", "pattern": "const", "fixedStrings": true },
+    { "id": "no-match", "pattern": "FORGELOOP_BENCHMARK_ABSENT", "fixedStrings": true }
+  ]
+}

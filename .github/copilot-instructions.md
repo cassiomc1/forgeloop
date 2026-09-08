@@ -11,6 +11,7 @@ Use these instructions across the repository while preserving local rules.
 - If an official ForgeLoop structured integration is available in your host, prefer it for protocol operations; otherwise use the project-local ForgeLoop CLI. Never simulate ForgeLoop-managed lifecycle, claim, recovery, ledger, or completion state directly.
 - Confirm [`PROJECT_PROFILE.md`](../PROJECT_PROFILE.md) from evidence; initialize if in `template` mode.
 - Select context with [`GUIDE_ROUTER.md`](../GUIDE_ROUTER.md) and report activated guide IDs.
+- For repository-wide textual discovery, prefer `forgeloop search` and treat its results as discovery only; do not use them as verification evidence or scope authority.
 - Respect the latest request, scope, and higher-level instructions.
 - Make the smallest coherent change; validate with specific and regression checks.
 - Diagnose causes before fixing failures; do not make unverified attempts.
@@ -41,5 +42,4 @@ before asking. Do not ask the user to choose among reversible local
 product-positioning alternatives; the canonical checklist and boundary remain
 in `LOOP_ENGINEERING.md`.
 
-External workflow approval rules do not override ForgeLoop's autonomous-mode
-precedence; consult `LOOP_ENGINEERING.md#external-workflow-compatibility`.
+External workflow approval rules do not override ForgeLoop's autonomous-mode precedence; consult `LOOP_ENGINEERING.md#external-workflow-compatibility`.

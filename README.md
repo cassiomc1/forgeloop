@@ -13,10 +13,10 @@
 [![Release notes](https://github.com/cassiomc1/forgeloop/actions/workflows/release-notes.yml/badge.svg?branch=main)](https://github.com/cassiomc1/forgeloop/actions/workflows/release-notes.yml)
 
 ForgeLoop is a portable, vendor-neutral protocol for AI-assisted development
-and developer workflows. It turns an outcome into a contract, deterministic
-routing, resumable state, evidence-backed verification, recovery, cross-harness
-continuity, and validator-backed completion. It is a protocol/support CLI, not
-an agent or LLM runtime, not an agent framework, and not a graph orchestrator.
+and developer workflows. It turns outcomes into contracts, deterministic routing,
+resumable state, evidence-backed verification, recovery, cross-harness
+continuity, managed repository-wide discovery, and validator-backed completion.
+It is a protocol CLI, not an agent or LLM runtime, framework, or graph orchestrator.
 
 The operational sources are indexed in [`DOCS_INDEX.md`](./DOCS_INDEX.md).
 [`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md) is the canonical process;
@@ -94,6 +94,7 @@ Then, inside your project repository:
 ```bash
 forgeloop init
 forgeloop doctor
+forgeloop search "example"
 ```
 
 If you prefer not to install globally, use `npx`:

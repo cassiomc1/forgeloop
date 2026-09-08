@@ -2,7 +2,26 @@
 
 ## Unreleased
 
-Changes after 1.10.2 will be recorded here.
+### Added
+
+- Added the mandatory ForgeLoop Repository Index and provider-neutral
+  Repository Search capability, initially powered by a ForgeLoop-managed
+  pinned Microsoft `tgrep` 1.0.3 engine.
+- Added managed native provisioning with verified platform assets, live indexed
+  search, `search`/`index-*` CLI commands, Integration API support, MCP
+  discovery, and doctor readiness reporting.
+- Added executable-level SHA-256 pinning and hash-before-version verification,
+  warm per-repository search readiness with bounded recovery, path-safe public
+  search/status projections, and real pinned native CI coverage on Linux,
+  macOS, and Windows.
+
+### Compatibility and operations
+
+- The first setup may need network access unless the exact pinned release asset
+  is preloaded with `index-setup --asset`.
+- Supported initial platform keys are `darwin-arm64`, `darwin-x64`,
+  `linux-x64`, and `windows-x64`. The project index is disposable cache data;
+  search health does not rewrite task completion or evidence.
 
 ## 1.10.2 - 2026-09-07
 

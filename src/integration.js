@@ -46,6 +46,27 @@ export {
 };
 
 export { createForgeLoopContext } from "./core/runtime-context.js";
+export { searchRepository } from "./repository-index/search.js";
+export { getRepositoryIndexStatus } from "./repository-index/status.js";
+export {
+  rebuildRepositoryIndex,
+  restartRepositoryIndexServer,
+  setupRepositoryIndex,
+  startRepositoryIndexServer,
+  stopRepositoryIndexServer,
+} from "./repository-index/server.js";
+
+/** Stable Integration API operation for provider-neutral repository search. */
+export async function repositorySearch({ projectPath = ".", ...request } = {}) {
+  const { searchRepository } = await import("./repository-index/search.js");
+  return searchRepository(projectPath, request);
+}
+
+/** Stable read-only Integration API projection for repository-index health. */
+export async function repositoryIndexStatus({ projectPath = ".", ...options } = {}) {
+  const { getRepositoryIndexStatus } = await import("./repository-index/status.js");
+  return getRepositoryIndexStatus(projectPath, options);
+}
 export {
   assertStructuralQualityProvider,
   createStructuralQualityProviderRegistry,

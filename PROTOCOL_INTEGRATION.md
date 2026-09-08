@@ -191,6 +191,23 @@ from Protocol v1, schema v1, and Integration API v1:
 | `canonicalHandoffs` | v2 | Immutable handoff snapshots with ledger-backed exactly-once operational acceptance |
 | `advisoryContextProviders` | v1 | Lazy, opt-in, provider-neutral Integration API injection only |
 
+`repositoryIndex` v1 is a mandatory provider-neutral discovery capability for
+Git repositories. ForgeLoop currently implements it with a managed, pinned
+Microsoft `tgrep` 1.0.3 release. `protocol-info --json` and the stable
+Integration API advertise the same `repository/search` operation and
+`repository/index-status` project resource used by the CLI and MCP adapter.
+The index is derived local cache/state: it is never lifecycle evidence,
+completion authority, task ownership, or historical source of truth. Hosts
+must not replace an unhealthy index with a silent `rg`, `grep`, or PATH-based
+fallback, and must not treat search results as proof of verification.
+Normal structured search and status projections are path-safe: match paths are
+repository-relative and machine-local repository, index, state, and binary
+paths are omitted across the CLI, Integration API, and MCP adapter. The first
+query performs strong readiness validation; warm queries use a per-repository
+process-local readiness cache with one bounded recovery retry after a
+server/index failure. Native exit code `1` remains a successful zero-match
+result.
+
 `canonicalHandoffs` v2 advertises `supported: true`, immutable snapshots,
 `lifecycleAuthority: false`, `evidenceAuthority: false`,
 `exactlyOnceAcceptance: true`, `acceptanceLedgerBacked: true`, and the
