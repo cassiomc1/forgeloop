@@ -30,6 +30,16 @@ export const E_REPOSITORY_INDEX_OUTPUT_INVALID = "E_REPOSITORY_INDEX_OUTPUT_INVA
 export const E_REPOSITORY_INDEX_REBUILD_FAILED = "E_REPOSITORY_INDEX_REBUILD_FAILED";
 export const E_REPOSITORY_INDEX_REQUEST_INVALID = "E_REPOSITORY_INDEX_REQUEST_INVALID";
 export const E_REPOSITORY_INDEX_LOCK_UNSAFE = "E_REPOSITORY_INDEX_LOCK_UNSAFE";
+export const E_PERSISTENT_TRANSPORT_FRAME_INVALID = "E_PERSISTENT_TRANSPORT_FRAME_INVALID";
+export const E_PERSISTENT_TRANSPORT_FRAME_TOO_LARGE = "E_PERSISTENT_TRANSPORT_FRAME_TOO_LARGE";
+export const E_PERSISTENT_TRANSPORT_HOST_STALE = "E_PERSISTENT_TRANSPORT_HOST_STALE";
+export const E_PERSISTENT_TRANSPORT_INVALID_REQUEST = "E_PERSISTENT_TRANSPORT_INVALID_REQUEST";
+export const E_PERSISTENT_TRANSPORT_INVALID_RESPONSE = "E_PERSISTENT_TRANSPORT_INVALID_RESPONSE";
+export const E_PERSISTENT_TRANSPORT_OWNERSHIP_UNVERIFIED = "E_PERSISTENT_TRANSPORT_OWNERSHIP_UNVERIFIED";
+export const E_PERSISTENT_TRANSPORT_PROTOCOL_MISMATCH = "E_PERSISTENT_TRANSPORT_PROTOCOL_MISMATCH";
+export const E_PERSISTENT_TRANSPORT_START_FAILED = "E_PERSISTENT_TRANSPORT_START_FAILED";
+export const E_PERSISTENT_TRANSPORT_TIMEOUT = "E_PERSISTENT_TRANSPORT_TIMEOUT";
+export const E_PERSISTENT_TRANSPORT_UNAVAILABLE = "E_PERSISTENT_TRANSPORT_UNAVAILABLE";
 
 export const E_TASK_REQUIRED = "E_TASK_REQUIRED";
 export const E_TASK_NOT_FOUND = "E_TASK_NOT_FOUND";
@@ -478,6 +488,55 @@ const REPOSITORY_INDEX_ERROR_METADATA = Object.freeze(Object.fromEntries([
   safeResolution,
 })])));
 
+const PERSISTENT_TRANSPORT_ERROR_METADATA = Object.freeze(Object.fromEntries([
+  [E_PERSISTENT_TRANSPORT_FRAME_INVALID, [
+    "The local persistent-search byte stream did not contain a complete valid JSON frame.",
+    "Retry the bounded local request; inspect the host only if malformed frames recur.",
+  ]],
+  [E_PERSISTENT_TRANSPORT_FRAME_TOO_LARGE, [
+    "A persistent-search request or response exceeded its bounded frame limit.",
+    "Narrow the search request or inspect the host resource boundary; oversized frames are rejected.",
+  ]],
+  [E_PERSISTENT_TRANSPORT_HOST_STALE, [
+    "Persistent-search state points to a host process that is no longer running.",
+    "Retry the CLI search so ForgeLoop can remove only the verified stale host state and restart it.",
+  ]],
+  [E_PERSISTENT_TRANSPORT_INVALID_REQUEST, [
+    "A local persistent-search request is outside the versioned transport contract.",
+    "Use the supported ForgeLoop search command or update the compatible client and host together.",
+  ]],
+  [E_PERSISTENT_TRANSPORT_INVALID_RESPONSE, [
+    "The persistent-search host returned a response outside the versioned transport contract.",
+    "Retry once through the bounded recovery path; do not consume an unvalidated response.",
+  ]],
+  [E_PERSISTENT_TRANSPORT_OWNERSHIP_UNVERIFIED, [
+    "ForgeLoop could not prove that the process or endpoint belongs to its user-scoped persistent-search host.",
+    "Do not terminate the process; inspect the endpoint and retry after resolving the ownership conflict.",
+  ]],
+  [E_PERSISTENT_TRANSPORT_PROTOCOL_MISMATCH, [
+    "The persistent-search client and host do not agree on the supported protocol version.",
+    "ForgeLoop may replace only a verified compatible host; otherwise update the installed package and retry.",
+  ]],
+  [E_PERSISTENT_TRANSPORT_START_FAILED, [
+    "The user-scoped persistent-search host could not start or become ready within its bounded startup window.",
+    "Inspect the structured diagnostics and retry; direct integration APIs remain available without this optimization.",
+  ]],
+  [E_PERSISTENT_TRANSPORT_TIMEOUT, [
+    "A persistent-search connection, handshake, or request exceeded its bounded timeout.",
+    "Retry once through the ownership-checked recovery path and inspect host/index health if it persists.",
+  ]],
+  [E_PERSISTENT_TRANSPORT_UNAVAILABLE, [
+    "The user-scoped persistent-search endpoint was not reachable.",
+    "ForgeLoop starts one verified local host and retries once; persistent failure is reported without an rg fallback.",
+  ]],
+].map(([code, [meaning, safeResolution]]) => [code, Object.freeze({
+  code,
+  category: "persistent-transport",
+  classification: "PUBLIC_STABLE",
+  meaning,
+  safeResolution,
+})])));
+
 /**
  * Public, stable ForgeLoop error and reason codes documented for users and harnesses.
  */
@@ -486,6 +545,7 @@ export const PUBLIC_ERROR_CODES = Object.freeze({
   ...STRUCTURAL_QUALITY_ERROR_METADATA,
   ...ADVISORY_CONTEXT_AND_HANDOFF_ERROR_METADATA,
   ...REPOSITORY_INDEX_ERROR_METADATA,
+  ...PERSISTENT_TRANSPORT_ERROR_METADATA,
   E_PREFLIGHT_NOT_READY: Object.freeze({
     code: "E_PREFLIGHT_NOT_READY",
     category: "preflight",
@@ -1384,6 +1444,16 @@ export const ALL_KNOWN_ERROR_CODES = Object.freeze(new Set([
   E_REPOSITORY_INDEX_REBUILD_FAILED,
   E_REPOSITORY_INDEX_REQUEST_INVALID,
   E_REPOSITORY_INDEX_LOCK_UNSAFE,
+  E_PERSISTENT_TRANSPORT_FRAME_INVALID,
+  E_PERSISTENT_TRANSPORT_FRAME_TOO_LARGE,
+  E_PERSISTENT_TRANSPORT_HOST_STALE,
+  E_PERSISTENT_TRANSPORT_INVALID_REQUEST,
+  E_PERSISTENT_TRANSPORT_INVALID_RESPONSE,
+  E_PERSISTENT_TRANSPORT_OWNERSHIP_UNVERIFIED,
+  E_PERSISTENT_TRANSPORT_PROTOCOL_MISMATCH,
+  E_PERSISTENT_TRANSPORT_START_FAILED,
+  E_PERSISTENT_TRANSPORT_TIMEOUT,
+  E_PERSISTENT_TRANSPORT_UNAVAILABLE,
   E_ACTION_INVALID,
   E_ACTION_NOT_FOUND,
   E_ACTION_STATE_MISMATCH,

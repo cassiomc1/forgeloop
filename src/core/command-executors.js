@@ -695,8 +695,8 @@ export const COMMAND_EXECUTORS = {
     result: await runRepositoryIndexRebuild({ target, packageRoot, options }),
     exitCode: 0,
   }),
-  search: async ({ target, packageRoot, options }) => ({
-    result: await runSearch({ target, packageRoot, options }),
+  search: async ({ target, packageRoot, options, transport = "integration" }) => ({
+    result: await runSearch({ target, packageRoot, options, transport }),
     exitCode: 0,
   }),
 };

@@ -18,13 +18,14 @@ test("Integration API advertises provider-neutral repository search and status",
   assert.ok(capabilities.resources.some((resource) => resource.name === "repository/index-status"));
 
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-repository-index-api-"));
+  const homeDirectory = await mkdtemp(path.join(os.tmpdir(), "forgeloop-repository-index-api-home-"));
   try {
-    const resource = await readForgeLoopIntegrationResource("repository/index-status", { projectPath: target, repositoryIndexOptions: { env: {} } });
+    const resource = await readForgeLoopIntegrationResource("repository/index-status", { projectPath: target, repositoryIndexOptions: { env: {}, homeDirectory } });
     assert.equal(resource.data.health, "ENGINE_MISSING");
     assert.equal(Object.hasOwn(resource.data, "repositoryRoot"), false);
     assert.equal(Object.hasOwn(resource.data, "indexPath"), false);
     assert.equal(Object.hasOwn(resource.data, "binaryPath"), false);
-    const status = await repositoryIndexStatus({ projectPath: target, env: {} });
+    const status = await repositoryIndexStatus({ projectPath: target, env: {}, homeDirectory });
     assert.equal(status.health, "ENGINE_MISSING");
     assert.equal(Object.hasOwn(status, "repositoryRoot"), false);
     assert.equal(Object.hasOwn(status, "indexPath"), false);
@@ -34,5 +35,6 @@ test("Integration API advertises provider-neutral repository search and status",
     );
   } finally {
     await rm(target, { recursive: true, force: true });
+    await rm(homeDirectory, { recursive: true, force: true });
   }
 });

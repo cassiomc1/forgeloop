@@ -150,7 +150,8 @@ jobs:
           node --test \
             tests/repository-index-live.test.js \
             tests/repository-index-differential.test.js \
-            tests/repository-index-migration.test.js
+            tests/repository-index-migration.test.js \
+            tests/persistent-transport-native.test.js
 
       - name: Verify CLI lifecycle and doctor behavior with native tgrep
         shell: bash

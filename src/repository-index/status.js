@@ -6,7 +6,7 @@ import { REPOSITORY_INDEX_DEFAULTS, REPOSITORY_INDEX_HEALTH, REPOSITORY_INDEX_SC
 import { REPOSITORY_INDEX_ERROR_CODES } from "./errors.js";
 import { verifyManagedTgrep } from "./binary-manager.js";
 import { getCanonicalRepositoryIndexArgs } from "./args.js";
-import { runTgrep } from "./process.js";
+import { createTgrepBinaryHandle, runTgrep } from "./process.js";
 import { getRepositoryIndexStatePath, getTgrepIndexPath } from "./paths.js";
 import { getPackageRoot } from "../core/templates.js";
 
@@ -43,18 +43,27 @@ function execFileAsync(execFileImpl, file, args) {
 export async function processCommandLine(pid, { platform = process.platform, execFileImpl = nodeExecFile } = {}) {
   if (!Number.isInteger(pid) || pid <= 0) return null;
   if (platform === "win32") {
-    // PowerShell is part of supported Windows hosts. The interpolated value
-    // is already an integer, so this remains an exact non-shell process
-    // query rather than a user-controlled command string.
+    // PowerShell is part of supported Windows hosts. Encode the command as
+    // UTF-16LE instead of relying on Windows argument re-quoting for the
+    // nested CIM filter. The interpolated value is already an integer, so
+    // this remains an exact non-shell process query rather than a
+    // user-controlled command string.
+    const command = [
+      "$ErrorActionPreference = 'Stop'",
+      "$OutputEncoding = [System.Text.Encoding]::UTF8",
+      "[Console]::OutputEncoding = [System.Text.Encoding]::UTF8",
+      `(Get-CimInstance -ClassName Win32_Process -Filter 'ProcessId = ${pid}').CommandLine`,
+    ].join("; ");
+    const encodedCommand = Buffer.from(command, "utf16le").toString("base64");
     const result = await execFileAsync(execFileImpl, "powershell.exe", [
       "-NoProfile",
       "-NonInteractive",
-      "-Command",
-      `(Get-CimInstance Win32_Process -Filter \"ProcessId = ${pid}\").CommandLine`,
+      "-EncodedCommand",
+      encodedCommand,
     ]);
     if (result.error) return null;
-    const command = result.stdout.trim();
-    return command || null;
+    const commandLine = result.stdout.replaceAll("\0", "").trim();
+    return commandLine || null;
   }
   const result = await execFileAsync(execFileImpl, "ps", ["-p", String(pid), "-o", "command="]);
   if (result.error) return null;
@@ -283,7 +292,7 @@ async function projectIndexMetadata(status, meta, canonicalRoot, config) {
 
 async function readNativeStatus({ engine, canonicalRoot, indexPath, config, spawnImpl }) {
   return runTgrep({
-    binaryPath: engine.binaryPath,
+    binary: createTgrepBinaryHandle(engine.binaryPath),
     repoRoot: canonicalRoot,
     args: ["status", ...getCanonicalRepositoryIndexArgs({ mode: "status", indexPath, config }), canonicalRoot],
     spawnImpl,

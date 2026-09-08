@@ -224,6 +224,44 @@ longer matches. If a query observes a server/index execution failure, ForgeLoop
 performs one bounded setup-and-retry cycle. Native exit code `1` remains a
 successful zero-match result and is never treated as a recovery failure.
 
+### Persistent CLI search host
+
+The CLI search path uses a user-scoped persistent ForgeLoop host so separate
+`forgeloop search` processes can reuse one local Node runtime and the existing
+per-repository readiness cache. The host can serve multiple repositories. It is
+an optimization layer only: it calls the canonical `searchRepository()` service
+directly and never spawns `forgeloop`, `rg`, or a second search implementation.
+
+The Integration API and MCP adapter continue to call the canonical service
+directly. They do not cross the CLI transport or inherit its process lifecycle.
+The CLI syntax and normalized result contract are unchanged.
+
+The host uses a versioned length-prefixed JSON protocol over a local Unix-domain
+socket on POSIX systems and a user-scoped Windows named pipe on Windows. The
+authoritative operational state is kept under `~/.forgeloop/persistent-search/`;
+it contains only protocol/version, PID, scope, nonce, endpoint, entrypoint, and
+timestamps. It contains no repository roots, search history, matches, or
+evidence. Requests and responses have bounded frame sizes, bounded
+connection/startup timeouts, and stable transport error codes. A host idles out
+after ten minutes by default without stopping repository tgrep watchers or
+deleting their derived indexes.
+
+Startup is serialized by a user-scoped lock. Every reuse, recovery, and stop
+operation correlates the state record with a live PID, the exact host entrypoint,
+the persistent-server marker, scope identity, and a nonce-bearing handshake.
+Stale state is removed only after that boundary is proven; an unrelated process
+is never terminated by name, broad pattern, or PID alone. The client performs
+at most one bounded recovery attempt and never falls back to `rg`.
+
+The transport protocol and ownership tests run without a native engine. Native
+CI additionally runs real transport searches on Ubuntu, macOS, and Windows,
+including cold/warm reuse, multiple repositories, 50-client startup
+contention, recovery, and result differential checks. The observational
+benchmark runner is [`run-persistent-transport.mjs`](../benchmarks/repository-index/run-persistent-transport.mjs);
+it reports cold and warm API, persistent-host CLI, raw tgrep, and optional `rg`
+timings separately, including a Node process-startup measurement. Results are
+workload-specific and are not a correctness or universal speed claim.
+
 Search patterns, paths, and filters are passed as direct argument-array values
 with `shell: false`. Shell syntax is not evaluated. Request limits are:
 

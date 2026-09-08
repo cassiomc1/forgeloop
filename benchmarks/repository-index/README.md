@@ -57,3 +57,17 @@ The runner reports first-use, warm, post-mutation, and repeated low-match
 timings. It is observational and does not replace correctness, lifecycle, or
 cross-platform CI checks. `rg` is benchmark-only; it is never a ForgeLoop
 runtime fallback.
+
+The persistent-host benchmark compares the direct API, the user-scoped
+persistent transport, a fresh CLI process, raw tgrep, and optional `rg` over
+the same low-match workload. It records cold and warm timings, p95 values, and
+the separate Node process-startup component:
+
+```bash
+FORGELOOP_TGREP_BINARY=/absolute/path/to/tgrep \
+  node benchmarks/repository-index/run-persistent-transport.mjs
+```
+
+The benchmark starts an isolated host under a temporary user home and removes
+it after the run. A missing `rg` is reported as unavailable rather than being
+treated as a ForgeLoop failure.

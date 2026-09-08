@@ -1,17 +1,46 @@
 import { spawn } from "node:child_process";
+import { clearInterval, setInterval } from "node:timers";
+import path from "node:path";
 
 import { REPOSITORY_INDEX_DEFAULTS } from "./constants.js";
 import { REPOSITORY_INDEX_ERROR_CODES, repositoryIndexError } from "./errors.js";
+
+const MAX_COMMAND_TIMEOUT_MS = 120_000;
+const PROCESS_TIMER_INTERVAL_MS = 50;
+const trustedBinaryPaths = new WeakMap();
 
 function assertArgs(args) {
   if (!Array.isArray(args) || args.some((arg) => typeof arg !== "string" || arg.length === 0)) {
     throw repositoryIndexError(REPOSITORY_INDEX_ERROR_CODES.ENGINE_EXECUTION_FAILED, "tgrep arguments must be a non-empty string array");
   }
 }
-export async function runTgrep({ binaryPath, repoRoot, args, stdin = null, timeoutMs = REPOSITORY_INDEX_DEFAULTS.commandTimeoutMs, env = {}, spawnImpl = spawn, maxOutputBytes = REPOSITORY_INDEX_DEFAULTS.maxProcessOutputBytes } = {}) {
+
+function assertExecutablePath(binaryPath) {
   if (typeof binaryPath !== "string" || binaryPath.trim() === "") {
     throw repositoryIndexError(REPOSITORY_INDEX_ERROR_CODES.ENGINE_EXECUTION_FAILED, "A verified managed tgrep binary path is required");
   }
+  if (!path.isAbsolute(binaryPath) || !binaryPath.match(/^[\w./\\: @%+=~-]+$/u)) {
+    throw repositoryIndexError(REPOSITORY_INDEX_ERROR_CODES.ENGINE_EXECUTION_FAILED, "The managed tgrep binary path contains unsafe command characters");
+  }
+  return binaryPath;
+}
+
+export function createTgrepBinaryHandle(binaryPath) {
+  const handle = Object.freeze({});
+  trustedBinaryPaths.set(handle, assertExecutablePath(binaryPath));
+  return handle;
+}
+
+function resolveTgrepBinaryHandle(handle) {
+  const binaryPath = trustedBinaryPaths.get(handle);
+  if (!binaryPath) {
+    throw repositoryIndexError(REPOSITORY_INDEX_ERROR_CODES.ENGINE_EXECUTION_FAILED, "A validated managed tgrep binary handle is required");
+  }
+  return binaryPath;
+}
+
+export async function runTgrep({ binary, repoRoot, args, stdin = null, timeoutMs = REPOSITORY_INDEX_DEFAULTS.commandTimeoutMs, env = {}, spawnImpl = spawn, maxOutputBytes = REPOSITORY_INDEX_DEFAULTS.maxProcessOutputBytes } = {}) {
+  const binaryPath = resolveTgrepBinaryHandle(binary);
   if (typeof repoRoot !== "string" || repoRoot.trim() === "") {
     throw repositoryIndexError(REPOSITORY_INDEX_ERROR_CODES.ENGINE_EXECUTION_FAILED, "A repository root is required to execute tgrep");
   }
@@ -19,6 +48,7 @@ export async function runTgrep({ binaryPath, repoRoot, args, stdin = null, timeo
   if (!Number.isInteger(timeoutMs) || timeoutMs <= 0) {
     throw repositoryIndexError(REPOSITORY_INDEX_ERROR_CODES.ENGINE_EXECUTION_FAILED, "tgrep timeoutMs must be a positive integer");
   }
+  const effectiveTimeoutMs = Math.min(timeoutMs, MAX_COMMAND_TIMEOUT_MS);
 
   const startedAt = Date.now();
   return new Promise((resolve, reject) => {
@@ -39,15 +69,19 @@ export async function runTgrep({ binaryPath, repoRoot, args, stdin = null, timeo
     let stderr = "";
     let settled = false;
     let timedOut = false;
-    const timer = setTimeout(() => {
+    const timeoutDeadline = startedAt + effectiveTimeoutMs;
+    const timer = setInterval(() => {
+      if (Date.now() < timeoutDeadline) return;
       timedOut = true;
+      clearInterval(timer);
       try { child.kill("SIGTERM"); } catch { /* process may already be gone */ }
-    }, timeoutMs);
+    }, PROCESS_TIMER_INTERVAL_MS);
+    timer.unref?.();
 
     const finish = (fn, value) => {
       if (settled) return;
       settled = true;
-      clearTimeout(timer);
+      clearInterval(timer);
       fn(value);
     };
     const append = (current, chunk) => {
@@ -82,8 +116,9 @@ export async function runTgrep({ binaryPath, repoRoot, args, stdin = null, timeo
   });
 }
 
-export function spawnTgrepServer({ binaryPath, repoRoot, args, env = {}, spawnImpl = spawn, stdio = "ignore" } = {}) {
-  if (typeof binaryPath !== "string" || !binaryPath || typeof repoRoot !== "string" || !repoRoot) {
+export function spawnTgrepServer({ binary, repoRoot, args, env = {}, spawnImpl = spawn, stdio = "ignore" } = {}) {
+  const binaryPath = resolveTgrepBinaryHandle(binary);
+  if (typeof repoRoot !== "string" || !repoRoot) {
     throw repositoryIndexError(REPOSITORY_INDEX_ERROR_CODES.SERVER_START_FAILED, "A verified managed tgrep binary and repository root are required");
   }
   assertArgs(args);

@@ -8,6 +8,7 @@ import { findIncompleteTransactions, recoverIncompleteTransactions } from "../co
 import { isRepositoryCandidate } from "../repository-index/lifecycle.js";
 import { getRepositoryIndexStatus } from "../repository-index/status.js";
 import { searchRepository } from "../repository-index/search.js";
+import { getPersistentTransportStatus } from "../persistent-transport/client.js";
 
 function finding(code, severity, relativePath, message, remediation = null, evidence = null) {
   const evidenceRecord = evidence && typeof evidence === "object"
@@ -118,9 +119,10 @@ async function adoptAdapters({ target, manifest, adoptPaths, findings }) {
 }
 
 async function inspectRepositoryIndexForDoctor({ target, packageRoot, repositoryIndex, repositoryIndexOptions, findings }) {
-  if (!repositoryIndex) return { status: "DISABLED", required: false };
+  const persistentTransport = await getPersistentTransportStatus({ homeDirectory: repositoryIndexOptions?.homeDirectory });
+  if (!repositoryIndex) return { status: "DISABLED", required: false, persistentTransport };
   if (!(await isRepositoryCandidate(target))) {
-    return { status: "DEFERRED", required: true, reason: "target is not a Git repository" };
+    return { status: "DEFERRED", required: true, reason: "target is not a Git repository", persistentTransport };
   }
 
   const status = await getRepositoryIndexStatus(target, { packageRoot, ...repositoryIndexOptions, includeLocalPaths: true });
@@ -132,6 +134,7 @@ async function inspectRepositoryIndexForDoctor({ target, packageRoot, repository
     indexPath: status.indexPath,
     server: status.server,
     diagnostics: status.diagnostics,
+    persistentTransport,
   };
   if (status.health === "READY") {
     try {
