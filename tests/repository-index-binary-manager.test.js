@@ -76,7 +76,7 @@ test("managed binary checksum verification fails before version execution", asyn
 test("managed same-version tampering is rejected before the version command runs", async () => {
   const homeDirectory = await mkdtemp(path.join(os.tmpdir(), "forgeloop-tgrep-managed-tamper-"));
   try {
-    const binary = getManagedTgrepBinaryPath("1.0.3", "darwin-arm64", { homeDirectory });
+    const binary = getManagedTgrepBinaryPath("1.0.3", "darwin-arm64", { homeDirectory, windows: false });
     await writeFile(binary, "#!/bin/sh\nprintf 'tgrep 1.0.3\\n'\n", { flag: "w" }).catch(async (error) => {
       if (error.code !== "ENOENT") throw error;
       await mkdir(path.dirname(binary), { recursive: true });
@@ -119,7 +119,7 @@ test("setup repairs a tampered managed binary only after verifying the replaceme
     };
     await writeFile(path.join(manifestDirectory, "tgrep-manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);
 
-    const managedBinary = getManagedTgrepBinaryPath("1.0.3", "darwin-arm64", { homeDirectory: directory });
+    const managedBinary = getManagedTgrepBinaryPath("1.0.3", "darwin-arm64", { homeDirectory: directory, windows: false });
     await mkdir(path.dirname(managedBinary), { recursive: true });
     await writeFile(managedBinary, "tampered same-version executable\n");
     await chmod(managedBinary, 0o755);
