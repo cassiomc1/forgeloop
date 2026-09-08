@@ -1,11 +1,12 @@
 import { spawn } from "node:child_process";
+import { clearInterval, setInterval } from "node:timers";
 import path from "node:path";
 
 import { REPOSITORY_INDEX_DEFAULTS } from "./constants.js";
 import { REPOSITORY_INDEX_ERROR_CODES, repositoryIndexError } from "./errors.js";
 
 const MAX_COMMAND_TIMEOUT_MS = 120_000;
-const SAFE_EXECUTABLE_PATH = /^(?:[A-Za-z]:[\\/]|[\\/])[A-Za-z0-9._~+@% =-]+(?:[\\/][A-Za-z0-9._~+@% =-]+)*$/u;
+const PROCESS_TIMER_INTERVAL_MS = 50;
 
 function assertArgs(args) {
   if (!Array.isArray(args) || args.some((arg) => typeof arg !== "string" || arg.length === 0)) {
@@ -16,7 +17,7 @@ export async function runTgrep({ binaryPath, repoRoot, args, stdin = null, timeo
   if (typeof binaryPath !== "string" || binaryPath.trim() === "") {
     throw repositoryIndexError(REPOSITORY_INDEX_ERROR_CODES.ENGINE_EXECUTION_FAILED, "A verified managed tgrep binary path is required");
   }
-  if (!path.isAbsolute(binaryPath) || !SAFE_EXECUTABLE_PATH.test(binaryPath)) {
+  if (!path.isAbsolute(binaryPath) || !binaryPath.match(/^[\w./\\: @%+=~-]+$/u)) {
     throw repositoryIndexError(REPOSITORY_INDEX_ERROR_CODES.ENGINE_EXECUTION_FAILED, "The managed tgrep binary path contains unsafe command characters");
   }
   if (typeof repoRoot !== "string" || repoRoot.trim() === "") {
@@ -47,15 +48,19 @@ export async function runTgrep({ binaryPath, repoRoot, args, stdin = null, timeo
     let stderr = "";
     let settled = false;
     let timedOut = false;
-    const timer = setTimeout(() => {
+    const timeoutDeadline = startedAt + effectiveTimeoutMs;
+    const timer = setInterval(() => {
+      if (Date.now() < timeoutDeadline) return;
       timedOut = true;
+      clearInterval(timer);
       try { child.kill("SIGTERM"); } catch { /* process may already be gone */ }
-    }, effectiveTimeoutMs);
+    }, PROCESS_TIMER_INTERVAL_MS);
+    timer.unref?.();
 
     const finish = (fn, value) => {
       if (settled) return;
       settled = true;
-      clearTimeout(timer);
+      clearInterval(timer);
       fn(value);
     };
     const append = (current, chunk) => {

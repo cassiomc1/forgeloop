@@ -43,3 +43,14 @@ test("runTgrep fails closed when native output exceeds the bounded limit", async
     (error) => error.code === "E_REPOSITORY_INDEX_OUTPUT_LIMIT",
   );
 });
+
+test("runTgrep rejects executable paths containing command syntax", async () => {
+  await assert.rejects(
+    () => runTgrep({
+      binaryPath: "/opt/tgrep;touch-injected",
+      repoRoot: process.cwd(),
+      args: ["--version"],
+    }),
+    (error) => error.code === "E_REPOSITORY_INDEX_ENGINE_EXECUTION_FAILED",
+  );
+});
