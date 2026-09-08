@@ -72,15 +72,31 @@ async function readIndexMetadata(repositoryRoot) {
   };
 }
 
-function indexIsUsable({ meta, state, repositoryRoot, engineVersion }) {
+function comparableRepositoryPath(value, platform = process.platform) {
+  const pathApi = platform === "win32" ? path.win32 : path;
+  let normalized = pathApi.normalize(value);
+  if (platform === "win32") {
+    normalized = normalized.replace(/^\\\\\?\\/u, "").replace(/^\\\\\.\\/u, "");
+    normalized = normalized.toLowerCase();
+  }
+  return normalized;
+}
+
+function sameRepositoryPath(left, right, platform = process.platform) {
+  return typeof left === "string"
+    && typeof right === "string"
+    && comparableRepositoryPath(left, platform) === comparableRepositoryPath(right, platform);
+}
+
+function indexIsUsable({ meta, state, repositoryRoot, engineVersion, platform = process.platform }) {
   return meta?.complete === true
     && typeof meta.root_path === "string"
-    && path.normalize(meta.root_path) === path.normalize(repositoryRoot)
+    && sameRepositoryPath(meta.root_path, repositoryRoot, platform)
     && state?.schemaVersion === 1
     && state?.engine === "tgrep"
     && state?.engineVersion === engineVersion
-    && state?.repositoryRoot === repositoryRoot
-    && state?.indexPath === getTgrepIndexPath(repositoryRoot);
+    && sameRepositoryPath(state?.repositoryRoot, repositoryRoot, platform)
+    && sameRepositoryPath(state?.indexPath, getTgrepIndexPath(repositoryRoot), platform);
 }
 
 async function waitForServerReady({ repositoryRoot, indexPath, child, engine, timeoutMs, processInspector }) {
@@ -261,7 +277,7 @@ async function buildUnderLock(repositoryRoot, options, engine, { force = false }
     });
   }
   const meta = await readJson(path.join(indexPath, "meta.json"));
-  if (!meta?.complete || typeof meta.root_path !== "string" || path.normalize(meta.root_path) !== path.normalize(repositoryRoot)) {
+  if (!meta?.complete || typeof meta.root_path !== "string" || !sameRepositoryPath(meta.root_path, repositoryRoot, options.platform ?? process.platform)) {
     throw repositoryIndexError(ERROR_CODES.REBUILD_FAILED, "tgrep index completed without valid repository metadata");
   }
   return { result, meta };
@@ -373,7 +389,12 @@ export async function setupRepositoryIndex(repositoryRoot, options = {}) {
     const engine = await prepareEngine(canonicalRoot, options);
     const indexPath = getTgrepIndexPath(canonicalRoot);
     const metadata = await readIndexMetadata(canonicalRoot);
-    if (options.force === true || !indexIsUsable({ ...metadata, repositoryRoot: canonicalRoot, engineVersion: engine.engineVersion })) {
+    if (options.force === true || !indexIsUsable({
+      ...metadata,
+      repositoryRoot: canonicalRoot,
+      engineVersion: engine.engineVersion,
+      platform: options.platform ?? process.platform,
+    })) {
       if (metadata.serve || metadata.state) {
         await terminateOwnedServer({
           repositoryRoot: canonicalRoot,
