@@ -1,7 +1,7 @@
 # ForgeLoop 1.11.0 Release Validation
 
-Status: release candidate prepared; pull request and exact-head CI are the
-remaining external delivery gates.
+Status: release candidate prepared in PR #159; exact-head CI is the remaining
+external delivery gate.
 
 Verdict: PASS WITH FOLLOW-UPS
 
@@ -18,6 +18,7 @@ creation, deployment, or pull-request merge.
 | Package | @cassiomc1/forgeloop@1.11.0 in package.json and package-lock.json |
 | Candidate branch | codex/release-1.11.0 |
 | Candidate source commit | b46acc4bfc5be99b23c09d42876c4acd6a3a4e5c |
+| Release pull request | #159, open, base main; merge commit absent |
 | Exact origin/main baseline | 19b8ff622a2de3bfa29df300ebed7ac04947c4bc |
 | PR #157 | Merged; f82a393c8dee859d51ede2715f2183dc0084459a; persistent search transport |
 | PR #158 | Merged; 19b8ff622a2de3bfa29df300ebed7ac04947c4bc; Repository Index doctor-path privacy fix |
@@ -165,7 +166,7 @@ Observed and documented behavior:
 
 All listed commands exited successfully unless explicitly marked otherwise.
 Commands were run against the candidate source commit before pull-request
-delivery; the exact final PR head must be checked again after push.
+delivery; the exact final PR head must be checked again after each push.
 
 ### Documentation and protocol
 
@@ -266,8 +267,8 @@ npm run performance:check also passed with a CLI startup median of
 
 ## Final delivery gate
 
-The branch must be pushed as codex/release-1.11.0 in a pull request to
-main. Before closing the ForgeLoop task, query the live PR head and require
+PR #159 is open with branch codex/release-1.11.0 targeting main. Before
+closing the ForgeLoop task, query the live PR head and require
 all applicable checks at that exact SHA to be green. If the head changes,
 repeat the exact-head validation and canonical lifecycle reconciliation.
 
