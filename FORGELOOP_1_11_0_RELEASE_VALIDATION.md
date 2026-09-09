@@ -60,10 +60,11 @@ The required report-only follow-up PR #161 initially exposed a real Windows
 portability defect in the existing safe-path code: the concurrent-ledger
 test failed on Windows Node 24 while reading the shared lock because the
 canonical root and child could be returned with different equivalent Windows
-path spellings. The correction resolves the child from the canonical root
-before applying the realpath containment check. The affected local regression
-tests pass 9/9; PR #161 must be revalidated at its new exact head before this
-release gate can proceed.
+path spellings. The correction resolves each logical project-relative child
+from the canonical root before applying the realpath containment check,
+including the ancestor walk used when a concurrent lock is observed. The
+affected local regression tests pass 9/9; PR #161 must be revalidated at its
+new exact head before this release gate can proceed.
 
 The final diff was restricted to the intended 1.11.0 version, lockfile,
 changelog, README and architecture asset, documentation, diagrams, Repository

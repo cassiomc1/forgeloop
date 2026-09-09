@@ -129,6 +129,7 @@ export async function assertSafePath(root, relativePath) {
   }
 
   let existing = destination;
+  let relativeExisting = path.normalize(relativePath);
   while (true) {
     try {
       const info = await lstatWithTransientWindowsRetry(existing);
@@ -142,7 +143,6 @@ export async function assertSafePath(root, relativePath) {
       // paths are canonicalized independently. Reconstructing the child from
       // the canonical root keeps the comparison in one namespace without
       // weakening the realpath containment check for junctions or symlinks.
-      const relativeExisting = path.relative(absoluteRoot, existing);
       const canonicalExisting = path.resolve(resolvedRoot, relativeExisting);
       const resolvedExisting = await realpathWithTransientWindowsRetry(canonicalExisting);
       if (!isPathWithin(resolvedRoot, resolvedExisting)) {
@@ -154,6 +154,7 @@ export async function assertSafePath(root, relativePath) {
       const parent = path.dirname(existing);
       if (parent === existing) throw new Error(`Path does not resolve inside target directory: ${relativePath}`);
       existing = parent;
+      relativeExisting = path.dirname(relativeExisting);
     }
   }
 }
