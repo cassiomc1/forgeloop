@@ -68,7 +68,8 @@ test("concurrent mutations cannot both commit from the same work-state revision"
     const results = await Promise.allSettled([first, second]);
     assert.equal(results.filter((result) => result.status === "fulfilled").length, 1);
     assert.equal(results.filter((result) => result.status === "rejected").length, 1);
-    assert.equal(results.find((result) => result.status === "rejected").reason.code, "E_STATE_REVISION_CONFLICT");
+    const rejected = results.find((result) => result.status === "rejected");
+    assert.equal(rejected.reason.code, "E_STATE_REVISION_CONFLICT", rejected.reason.stack ?? rejected.reason.message);
   } finally {
     await removeTempTree(target);
   }
