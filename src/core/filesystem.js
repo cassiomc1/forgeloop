@@ -136,7 +136,15 @@ export async function assertSafePath(root, relativePath) {
         throw new Error(`Path uses a symlink inside target directory: ${relativePath}`);
       }
       const resolvedRoot = await realpathWithTransientWindowsRetry(absoluteRoot);
-      const resolvedExisting = await realpathWithTransientWindowsRetry(existing);
+      // Resolve the comparison path from the canonical root. Windows can
+      // return different equivalent spellings (for example, short names or
+      // extended-length prefixes) for the root and a child path when those
+      // paths are canonicalized independently. Reconstructing the child from
+      // the canonical root keeps the comparison in one namespace without
+      // weakening the realpath containment check for junctions or symlinks.
+      const relativeExisting = path.relative(absoluteRoot, existing);
+      const canonicalExisting = path.resolve(resolvedRoot, relativeExisting);
+      const resolvedExisting = await realpathWithTransientWindowsRetry(canonicalExisting);
       if (!isPathWithin(resolvedRoot, resolvedExisting)) {
         throw new Error(`Path escapes target directory: ${relativePath}`);
       }
