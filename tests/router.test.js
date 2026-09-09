@@ -87,6 +87,41 @@ test("documentation work selects documentation as its primary guide", () => {
   assert.deepEqual(result.reasons.documentation, ["WORK_DOCUMENTATION"]);
 });
 
+test("confirmed Flutter project evidence adds the specialist and baseline checks", () => {
+  const result = evaluateRoute({
+    workType: "code",
+    projectEvidence: {
+      schemaVersion: 1,
+      scope: "MATCH",
+      frameworks: ["flutter"],
+      projectRoots: ["apps/mobile"],
+      primarySignals: ["apps/mobile/pubspec.yaml:dependencies.flutter.sdk"],
+      supportingSignals: [],
+    },
+  });
+
+  assert.deepEqual(result.guides, ["flutter", "clean", "test"]);
+  assert.equal(result.primary, "flutter");
+  assert.equal(result.excluded.flutter, undefined);
+});
+
+test("Flutter evidence does not activate for documentation-only work", () => {
+  const result = evaluateRoute({
+    workType: "documentation",
+    projectEvidence: {
+      schemaVersion: 1,
+      scope: "MATCH",
+      frameworks: ["flutter"],
+      projectRoots: ["."],
+      primarySignals: ["pubspec.yaml:dependencies.flutter.sdk"],
+      supportingSignals: [],
+    },
+  });
+
+  assert.deepEqual(result.guides, ["documentation"]);
+  assert.deepEqual(result.excluded.flutter, ["NO_FLUTTER_EXECUTABLE_WORK"]);
+});
+
 test("duplicate selection of documentation work and surface is deduplicated and retains both reasons", () => {
   const result = evaluateRoute({
     workType: "documentation",

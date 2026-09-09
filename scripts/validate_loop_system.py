@@ -146,6 +146,7 @@ ROUTING_SCENARIOS = {
     "app-mobile-ui": "clean,test,design,accessibility,security,performance",
     "game-web-multiplayer": "games,clean,test,security,performance,accessibility,design",
     "documentation": "documentation",
+    "flutter-app-feature": "flutter,clean,test",
 }
 
 REQUIRED_GUIDE_FRONTMATTER = {
@@ -676,6 +677,7 @@ def _fixture_guide_registry() -> dict[str, dict]:
         "accessibility": {"path": "ENG/accessibility-eng.md", "install": True},
         "games": {"path": "ENG/games-code-design-web-eng.md", "install": True},
         "documentation": {"path": "ENG/documentation-quality-eng.md", "install": True},
+        "flutter": {"path": "ENG/flutter-development-eng.md", "install": True},
     }
 
 
@@ -754,6 +756,7 @@ def _valid_fixture(root: Path) -> None:
         "app-mobile-ui": "clean,test,design,accessibility,security,performance",
         "game-web-multiplayer": "games,clean,test,security,performance,accessibility,design",
         "documentation": "documentation",
+        "flutter-app-feature": "flutter,clean,test",
     }
     markers = "\n".join(
         f"<!-- route:{scenario}={ids} -->" for scenario, ids in scenarios.items()
