@@ -6,7 +6,6 @@
 
 [![CodeQL](https://github.com/cassiomc1/forgeloop/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/cassiomc1/forgeloop/actions/workflows/codeql.yml)
 [![Dependency review](https://github.com/cassiomc1/forgeloop/actions/workflows/dependency-review.yml/badge.svg?branch=main)](https://github.com/cassiomc1/forgeloop/actions/workflows/dependency-review.yml)
-[![Documentation](https://github.com/cassiomc1/forgeloop/actions/workflows/docs.yml/badge.svg?branch=main)](https://github.com/cassiomc1/forgeloop/actions/workflows/docs.yml)
 [![ForgeLoop audit](https://github.com/cassiomc1/forgeloop/actions/workflows/forgeloop-audit.yml/badge.svg?branch=main)](https://github.com/cassiomc1/forgeloop/actions/workflows/forgeloop-audit.yml)
 [![Publish npm package](https://github.com/cassiomc1/forgeloop/actions/workflows/npm-publish.yml/badge.svg?branch=main)](https://github.com/cassiomc1/forgeloop/actions/workflows/npm-publish.yml)
 [![Package smoke](https://github.com/cassiomc1/forgeloop/actions/workflows/package-smoke.yml/badge.svg?branch=main)](https://github.com/cassiomc1/forgeloop/actions/workflows/package-smoke.yml)
