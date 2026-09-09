@@ -75,7 +75,7 @@ permission.
 | Benchmark regression check | PASS command; reports a non-blocking observational `EFFICIENCY_REGRESSION` |
 | Benchmark outlier/tail reports | PASS command; existing tail observations remain diagnostic, not a release failure |
 | `actionlint` | NOT_VERIFIED: tool is not installed; no tool was installed solely for this check |
-| Exact-head PR #163 checks at `7a48afcefc671a0e0f11ec912640929ab1c5f7ac` | PASS: all 15 check runs completed successfully |
+| Exact-head PR #163 checks at `8092a7ad1033117674519fffb869355d44ae0ebe` | PASS: all 15 check runs completed successfully |
 
 The first local full-tier attempt caught the repository's frozen 45-line
 adapter-instruction policy after documentation edits. The documentation was
@@ -89,8 +89,9 @@ the canonical validator requires the exact post-publication inputs.
 
 The first pushed candidate head `dcbc31766a4915a2f7cc97a243b5585e61b17988`
 failed only because Lychee correctly found the new `docs.yml` badge was not
-yet present on `main`. The badge was removed, the documentation checks passed,
-and the replacement exact head above passed every applicable remote check.
+yet present on `main`. The badge was removed, the replacement head
+`7a48afcefc671a0e0f11ec912640929ab1c5f7ac` passed every applicable remote
+check, and the final report-only head above passed the same exact-head gate.
 
 ## Conditional path logic
 
