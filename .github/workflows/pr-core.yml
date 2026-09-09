@@ -1,0 +1,235 @@
+name: PR Core
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-core-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  classify:
+    name: Classify changed paths
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      docs: ${{ steps.classify.outputs.docs }}
+      docs_only: ${{ steps.classify.outputs.docs_only }}
+      repository_index: ${{ steps.classify.outputs.repository_index }}
+      package: ${{ steps.classify.outputs.package }}
+      audit: ${{ steps.classify.outputs.audit }}
+      node_compat: ${{ steps.classify.outputs.node_compat }}
+      source: ${{ steps.classify.outputs.source }}
+      release: ${{ steps.classify.outputs.release }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+      - name: Classify changed paths
+        id: classify
+        run: node scripts/ci-classify.mjs --github-output
+
+  core:
+    name: Core validation (Node ${{ matrix.node-version }})
+    needs: classify
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [20, 24]
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+      - name: Install locked Node toolchain
+        run: npm ci --ignore-scripts
+      - name: Enforce dependency policy once
+        if: ${{ matrix.node-version == 24 }}
+        run: npm run dependency:policy
+      - name: Run the single full clean-room suite on Node 24
+        if: ${{ matrix.node-version == 24 }}
+        env:
+          DOCS_ONLY: ${{ needs.classify.outputs.docs_only }}
+        run: |
+          if [ "$DOCS_ONLY" = "true" ]; then
+            npm run test:quick
+          else
+            npm run coverage
+            npm run critical-coverage:check
+          fi
+      - name: Run targeted Node 20 CLI compatibility
+        if: ${{ matrix.node-version == 20 }}
+        run: |
+          npm run test:quick
+          node src/cli.js --help
+          node src/cli.js protocol-info --json
+
+  docs-diagram:
+    name: Verify generated Archify diagram
+    needs: classify
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository for documentation changes
+        if: ${{ needs.classify.outputs.docs == 'true' }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node.js for documentation changes
+        if: ${{ needs.classify.outputs.docs == 'true' }}
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install documentation toolchain
+        if: ${{ needs.classify.outputs.docs == 'true' }}
+        run: npm ci --ignore-scripts
+      - name: Validate documentation and diagrams
+        if: ${{ needs.classify.outputs.docs == 'true' }}
+        run: npm run docs:check
+      - name: Lint Markdown
+        if: ${{ needs.classify.outputs.docs == 'true' }}
+        uses: DavidAnson/markdownlint-cli2-action@21c1be1b93ad9ed58fa840aacc3f279cde2a72ff # v24.2.0
+        with:
+          globs: |
+            --no-globs
+            **/*.{md,markdown}
+            #vendor/archify/**
+      - name: Check external documentation links
+        if: ${{ needs.classify.outputs.docs == 'true' }}
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: >-
+            --config .lychee.toml
+            --verbose
+            --no-progress
+            --exclude-path '(^|/)node_modules(/|$)'
+            --exclude-path '(^|/)coverage(/|$)'
+            --exclude-path '(^|/)\.worktrees(/|$)'
+            --exclude-path '(^|/)\.superpowers(/|$)'
+            --exclude-path '(^|/)docs/superpowers(/|$)'
+            './**/*.md'
+          fail: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Validate frozen Markdown and loop contracts
+        if: ${{ needs.classify.outputs.docs == 'true' }}
+        run: |
+          python3 -c 'import sys; assert sys.version_info >= (3, 9), "Python 3.9+ is required"'
+          python3 -m unittest tests.test_validate_markdown tests.test_validate_loop_system -v
+          python3 scripts/validate_markdown.py --self-test
+          python3 scripts/validate_markdown.py
+          python3 scripts/validate_loop_system.py --self-test
+          python3 scripts/validate_loop_system.py
+      - name: Documentation validation not applicable
+        if: ${{ needs.classify.outputs.docs != 'true' }}
+        run: echo "Documentation and diagram validation not applicable for this change."
+
+  audit:
+    name: audit
+    needs: classify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository for audit changes
+        if: ${{ needs.classify.outputs.audit == 'true' }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node.js for audit changes
+        if: ${{ needs.classify.outputs.audit == 'true' }}
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 20
+      - name: Install locked Node toolchain
+        if: ${{ needs.classify.outputs.audit == 'true' }}
+        run: npm ci --ignore-scripts
+      - name: Audit supplied receipts
+        if: ${{ needs.classify.outputs.audit == 'true' }}
+        run: node scripts/audit-receipts.mjs
+      - name: Receipt audit not applicable
+        if: ${{ needs.classify.outputs.audit != 'true' }}
+        run: echo "Receipt audit not applicable for this change."
+
+  tarball-smoke:
+    name: tarball smoke (ubuntu-latest)
+    needs: classify
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository for package changes
+        if: ${{ needs.classify.outputs.package == 'true' }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node.js for package changes
+        if: ${{ needs.classify.outputs.package == 'true' }}
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install locked Node toolchain
+        if: ${{ needs.classify.outputs.package == 'true' }}
+        run: npm ci --ignore-scripts
+      - name: Install MCP test dependencies
+        if: ${{ needs.classify.outputs.package == 'true' }}
+        run: npm run mcp:setup
+      - name: Run Ubuntu package and MCP smoke
+        if: ${{ needs.classify.outputs.package == 'true' }}
+        run: |
+          npm run mcp:test
+          npm run mcp:pack:check
+          npm run pack:smoke
+      - name: Package smoke not applicable
+        if: ${{ needs.classify.outputs.package != 'true' }}
+        run: echo "Package and MCP smoke not applicable for this change."
+
+  repository-index:
+    name: Repository Index native matrix
+    needs: classify
+    if: ${{ needs.classify.outputs.repository_index == 'true' }}
+    uses: ./.github/workflows/repository-index.yml
+
+  required-validation:
+    name: validate (22)
+    needs: [classify, core, docs-diagram, audit, tarball-smoke, repository-index]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Require applicable validation jobs
+        env:
+          REQUIRED_RESULTS: ${{ toJSON(needs) }}
+          REPOSITORY_INDEX_APPLICABLE: ${{ needs.classify.outputs.repository_index }}
+        run: |
+          node --input-type=module <<'NODE'
+          const needs = JSON.parse(process.env.REQUIRED_RESULTS);
+          for (const name of ["classify", "core", "docs-diagram", "audit", "tarball-smoke"]) {
+            if (needs[name]?.result !== "success") {
+              throw new Error(`${name} did not succeed: ${needs[name]?.result ?? "missing"}`);
+            }
+          }
+          const indexResult = needs["repository-index"]?.result;
+          if (process.env.REPOSITORY_INDEX_APPLICABLE === "true") {
+            if (indexResult !== "success") throw new Error(`repository-index did not succeed: ${indexResult ?? "missing"}`);
+          } else if (indexResult !== "skipped") {
+            throw new Error(`repository-index ran unexpectedly: ${indexResult ?? "missing"}`);
+          }
+          console.log("Required validation passed for all applicable jobs.");
+          NODE

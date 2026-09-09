@@ -121,7 +121,7 @@
     "mcp:test": "node scripts/run-mcp-tests.mjs",
     "completions:generate": "node scripts/generate-shell-completions.mjs --write",
     "completions:check": "node scripts/generate-shell-completions.mjs --check",
-    "test:quick": "node --test tests/cli.test.js tests/schema-health.test.js tests/schema-golden.test.js tests/protocol-info.test.js tests/integration-capabilities.test.js",
+    "test:quick": "node --test tests/cli.test.js tests/schema-health.test.js tests/schema-golden.test.js tests/protocol-info.test.js tests/integration-capabilities.test.js tests/ci-classify.test.js tests/validation-tiers.test.js",
     "performance:check": "node scripts/benchmark-cli-startup.mjs",
     "critical-coverage:check": "node scripts/check-critical-coverage.mjs",
     "changelog:check": "node scripts/check-changelog-freshness.mjs",
@@ -140,7 +140,11 @@
     "benchmark:profiles:regression": "node scripts/check-efficiency-regression.mjs",
     "transactions:compact": "node scripts/compact-transactions.mjs",
     "complexity:check": "node scripts/check-complexity.mjs",
-    "repository-index:manifest": "node scripts/verify-tgrep-manifest.mjs"
+    "repository-index:manifest": "node scripts/verify-tgrep-manifest.mjs",
+    "verify:fast": "node scripts/run-validation.mjs --tier fast",
+    "verify:local": "node scripts/run-validation.mjs --tier local",
+    "verify:prepush": "node scripts/run-validation.mjs --tier prepush",
+    "verify:release": "node scripts/run-validation.mjs --tier release"
   },
   "devDependencies": {
     "c8": "^12.0.0",

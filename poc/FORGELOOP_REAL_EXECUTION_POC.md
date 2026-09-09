@@ -568,12 +568,13 @@ those originals being disclosed later.
 
 ## CI verifies the evidence, not only the application code
 
-The current CI definition is versioned at:
+The historical CI definition described by this evidence is preserved in the
+repository history. The current PR CI boundary is versioned at:
 
-[`.github/workflows/docs-quality.yml`](../.github/workflows/docs-quality.yml)
+[`.github/workflows/pr-core.yml`](../.github/workflows/pr-core.yml)
 
-The workflow runs its main validation job on Node 20, 22, and 24. Among other repository
-checks, the matrix executes:
+The historical workflow ran its main validation job on Node 20, 22, and 24. Among other
+repository checks, that historical matrix executed:
 
 ```bash
 npm test
@@ -587,9 +588,11 @@ npm run docs:generated:check
 npm run docs:conformance
 ```
 
-It also runs Markdown linting, link checking, repository Markdown validation, loop-system
-validation, and secret scanning. A separate portability matrix runs on Ubuntu, macOS, and
-Windows with Node 20 and 24.
+It also ran Markdown linting, link checking, repository Markdown validation, loop-system
+validation, and secret scanning. A separate historical portability matrix ran on Ubuntu,
+macOS, and Windows with Node 20 and 24. The current PR workflow keeps the independent
+security gates and selects the relevant documentation, package, audit, and native checks
+through its path-aware aggregator.
 
 After PR #114 was merged as commit `71b2285c...`, GitHub Actions independently recorded
 successful runs for:

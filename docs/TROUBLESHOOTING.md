@@ -37,6 +37,7 @@ This guide provides symptom-first recovery procedures for common ForgeLoop proto
 - [Repository search fails](#symptom-repository-search-fails)
 - [Persistent search host is unavailable](#symptom-persistent-search-host-is-unavailable)
 - [Persistent search host ownership is unverified or stale](#symptom-persistent-search-host-ownership-is-unverified-or-stale)
+- [Local validation tier is unavailable or reports `NOT_VERIFIED`](#symptom-local-validation-tier-is-unavailable-or-reports-not_verified)
 - [Another harness cannot resume the task](#symptom-another-harness-cannot-resume)
 - [Task claim conflict or recovered task](#symptom-task-creation-blocked-by-a-write-claim-conflict-e_task_scope_conflict)
 - [Stable Error & Reason Code Reference](#stable-error-and-reason-codes)
@@ -53,6 +54,29 @@ mismatch. This check does not create or mutate task state.
 forgeloop protocol-info --json
 ```
 <!-- END FORGELOOP EXAMPLE -->
+
+### Symptom: local validation tier is unavailable or reports `NOT_VERIFIED`
+
+#### What it means
+
+The selected local validation tier could not run a required external validator
+or setup prerequisite. `NOT_VERIFIED` is an explicit limitation, not a test
+pass and not permission to install tools implicitly.
+
+#### Safe recovery
+
+1. Check the tier and its command list with `node scripts/run-validation.mjs
+   --tier <fast|local|prepush|release> --list`.
+2. Run `npm run mcp:setup` explicitly when MCP dependencies are in scope and
+   installation is authorized.
+3. Confirm Python 3.9 or newer is available for the frozen validators.
+4. Re-run the tier and record any still-unavailable check as `NOT_VERIFIED` in
+   the validation report.
+
+The ordinary PR workflow remains path-aware and always publishes the required
+status contexts; its `validate (22)` aggregator fails closed on an applicable
+job failure, cancellation, or unexpected skip. Local success cannot substitute
+for a required remote security or cross-platform check.
 
 ### Symptom: `preflight` is `BLOCKED`
 

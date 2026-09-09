@@ -1,28 +1,49 @@
 name: ForgeLoop audit
 
 on:
-  pull_request:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: forgeloop-audit-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   audit:
+    name: audit
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - name: Check out repository
+      - name: Check out repository for audit classification
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          fetch-depth: 0
           persist-credentials: false
       - name: Set up Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 20
-      - name: Install locked Node toolchain
+      - name: Classify invocation
+        id: classify
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            node scripts/ci-classify.mjs --all --github-output
+          else
+            node scripts/ci-classify.mjs --github-output
+          fi
+      - name: Install locked Node toolchain for audit changes
+        if: ${{ steps.classify.outputs.audit == 'true' }}
         run: npm ci --ignore-scripts
-      - name: Audit supplied receipts or report NOT_VERIFIED
+      - name: Audit supplied receipts
+        if: ${{ steps.classify.outputs.audit == 'true' }}
         run: node scripts/audit-receipts.mjs
-    timeout-minutes: 15
+      - name: Receipt audit not applicable
+        if: ${{ steps.classify.outputs.audit != 'true' }}
+        run: echo "Receipt audit not applicable for this change."

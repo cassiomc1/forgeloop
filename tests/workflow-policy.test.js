@@ -19,18 +19,26 @@ function workflowJobBlocks(workflow) {
   return headers.map((start, index) => lines.slice(start, headers[index + 1] ?? lines.length).join("\n"));
 }
 
-test("quality workflows install the lockfile and enforce the local toolchain", async () => {
-  const docs = await readWorkflow("docs-quality.yml");
+test("PR and release quality workflows enforce the intended validation boundary", async () => {
+  const core = await readWorkflow("pr-core.yml");
+  const docs = await readWorkflow("docs.yml");
   const audit = await readWorkflow("forgeloop-audit.yml");
   const publish = await readWorkflow("npm-publish.yml");
 
+  assert.match(core, /npm ci --ignore-scripts/);
+  assert.match(core, /npm run dependency:policy/);
+  assert.match(core, /npm run coverage/);
+  assert.match(core, /npm run critical-coverage:check/);
+  assert.doesNotMatch(core, /(?:^|\s)npm test(?:\s|$)/u);
+  assert.match(core, /name: validate \(22\)/);
+  assert.match(core, /name: Verify generated Archify diagram/);
+  assert.match(core, /name: tarball smoke \(ubuntu-latest\)/);
+  assert.match(core, /steps\.classify\.outputs\.docs/);
+  assert.match(core, /steps\.classify\.outputs\.audit/);
+  assert.match(core, /steps\.classify\.outputs\.package/);
   assert.match(docs, /npm ci --ignore-scripts/);
-  assert.match(docs, /npm run dependency:policy/);
-  assert.match(docs, /npm run lint/);
-  assert.match(docs, /npm run coverage/);
-  assert.match(docs, /npm run docs:diagrams:check/);
   assert.match(docs, /npm run docs:check/);
-  assert.match(docs, /npm run docs:check/);
+  assert.match(docs, /paths:/);
   assert.match(docs, /--exclude-path '\(\^\|\/\)node_modules\(\/\|\$\)'/);
   assert.match(docs, /--exclude-path '\(\^\|\/\)coverage\(\/\|\$\)'/);
   assert.match(await readFile(".markdownlint-cli2.jsonc", "utf8"), /"ignores"/);
@@ -40,23 +48,18 @@ test("quality workflows install the lockfile and enforce the local toolchain", a
   assert.match(publish, /npm ci --ignore-scripts/);
   assert.match(publish, /npm run dependency:policy/);
 
-  for (const workflow of [docs, audit, publish]) {
+  for (const workflow of [core, docs, audit, publish]) {
     assert.ok((workflow.match(pinnedAction) ?? []).length > 0);
   }
 });
 
-test("CLI portability timeout covers the slowest supported runner", async () => {
-  const docs = await readWorkflow("docs-quality.yml");
-  const portabilityJob = docs.match(/\n  cli-portability:\n([\s\S]*?)(?=\n  [a-z][^:\n]*:\n|$)/)?.[1];
-
-  assert.ok(portabilityJob, "cli-portability job must exist");
-  const timeoutMinutes = Number(
-    portabilityJob.match(/^    timeout-minutes:\s*(\d+)\s*$/m)?.[1],
-  );
-  assert.ok(
-    timeoutMinutes >= 15,
-    `cli-portability timeout must be at least 15 minutes; found ${timeoutMinutes}`,
-  );
+test("Node compatibility uses targeted smoke instead of repeated full suites", async () => {
+  const workflow = await readWorkflow("node-compat.yml");
+  assert.match(workflow, /node-version: 20/);
+  assert.match(workflow, /test:quick/);
+  assert.match(workflow, /workflow_dispatch:/);
+  assert.match(workflow, /expanded:/);
+  assert.doesNotMatch(workflow, /(?:^|\s)npm test(?:\s|$)/u);
 });
 
 test("security and release workflows are present and use pinned actions", async () => {
@@ -85,6 +88,9 @@ test("every tracked workflow job has a bounded timeout and read-only checkouts",
     const jobs = workflowJobBlocks(workflow);
     assert.ok(jobs.length > 0, `${name} must declare jobs`);
     for (const job of jobs) {
+      if (job.includes("\n    uses: ./.github/workflows/")) {
+        continue;
+      }
       const timeout = Number(job.match(/^    timeout-minutes:\s*(\d+)\s*$/mu)?.[1]);
       assert.ok(Number.isInteger(timeout) && timeout > 0 && timeout < 360, `${name} has an unbounded job timeout`);
       if (job.includes("actions/checkout@")) {

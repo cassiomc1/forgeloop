@@ -13,7 +13,7 @@ Use these instructions across the repository while preserving local rules.
 - Select context with [`GUIDE_ROUTER.md`](../GUIDE_ROUTER.md) and report activated guide IDs.
 - For repository-wide textual discovery, prefer `forgeloop search` and treat its results as discovery only; do not use them as verification evidence or scope authority.
 - Respect the latest request, scope, and higher-level instructions.
-- Make the smallest coherent change; validate with specific and regression checks.
+- Make the smallest coherent change; use `npm run verify:fast` while editing and `npm run verify:prepush` before a PR, then validate with proportional regression checks.
 - Diagnose causes before fixing failures; do not make unverified attempts.
 - Do not install software, publish, delete, or alter external state without authority. Do not install a missing verification tool merely to satisfy a check. For missing Qwen-MM-Plugins, follow `LOOP_ENGINEERING.md`.
 - Before creating or activating new lifecycle state: discover existing tasks first with `forgeloop task-list --json`; if an existing task is selected or identifiable, use `forgeloop next --task <id> --json` before creating another task, reconcile continuity when present, and inspect the checkout. A change of harness, model, provider, IDE, process, terminal, or session does not create a new task. Legacy singleton state such as `.forgeloop/work-state.json` is compatibility-only, not the primary modern discovery mechanism.

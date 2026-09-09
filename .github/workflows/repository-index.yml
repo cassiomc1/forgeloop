@@ -1,7 +1,7 @@
 name: Repository Index
 
 on:
-  pull_request:
+  workflow_call:
   push:
     branches:
       - main
@@ -15,8 +15,39 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  classify:
+    name: Classify Repository Index paths
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      repository_index: ${{ steps.classify.outputs.repository_index }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+
+      - name: Classify invocation
+        id: classify
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT_NAME" = "workflow_call" ] || [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            node scripts/ci-classify.mjs --all --github-output
+          else
+            node scripts/ci-classify.mjs --github-output
+          fi
+
   manifest:
     name: Verify Repository Index manifest
+    needs: classify
+    if: ${{ needs.classify.outputs.repository_index == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -46,7 +77,8 @@ jobs:
           - macos-latest
           - windows-latest
     runs-on: ${{ matrix.os }}
-    needs: manifest
+    needs: [classify, manifest]
+    if: ${{ needs.classify.outputs.repository_index == 'true' && needs.manifest.result == 'success' }}
     timeout-minutes: 20
     steps:
       - name: Check out repository

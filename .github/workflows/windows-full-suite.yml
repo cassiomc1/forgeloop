@@ -9,8 +9,13 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: windows-full-suite-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
+    name: Windows full Node suite
     runs-on: windows-latest
     timeout-minutes: 35
     steps:
@@ -25,22 +30,5 @@ jobs:
           cache: npm
       - name: Install locked Node toolchain
         run: npm ci --ignore-scripts
-      - name: Run full Node suite
+      - name: Run full Node suite with Windows process and filesystem semantics
         run: npm test
-      - name: Run package and documentation gates
-        run: |
-          npm run lint
-          npm run docs:check
-          npm run completions:check
-          npm run summary:check
-          npm run pack:check
-      - name: Run frozen Python validators
-        shell: pwsh
-        run: |
-          py -3 -c "import sys; assert sys.version_info >= (3, 9), 'Python 3.9+ is required'"
-          py -3 -m unittest discover -s tests -v
-          py -3 scripts/validate_markdown.py --self-test
-          py -3 scripts/validate_markdown.py
-          py -3 scripts/validate_loop_system.py --self-test
-          py -3 scripts/validate_loop_system.py
-          py -3 scripts/scan_secrets.py

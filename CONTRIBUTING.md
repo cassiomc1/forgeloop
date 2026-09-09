@@ -2,12 +2,21 @@
 
 ## Before opening a pull request
 
-Run `npm test`, `npm run docs:check`, `npm run pack:check`, and the Python
-repository validators. For fast feedback, use `npm run test:quick`; the full
-suite remains the release gate. Keep CLI metadata, generated references,
-schemas, completions, summaries, and conformance scenarios aligned. Do not add
-vendor-specific runtime behavior: ForgeLoop remains a file-backed protocol
-and support CLI.
+Run `npm run verify:prepush` before opening a pull request. For fast feedback,
+use `npm run verify:fast`; the full suite and coverage gate are run once by
+the local pre-push tier and by the PR core workflow. Run `npm run mcp:setup`
+explicitly when MCP checks are in scope. Keep CLI metadata, generated
+references, schemas, completions, summaries, and conformance scenarios
+aligned. Do not add vendor-specific runtime behavior: ForgeLoop remains a
+file-backed protocol and support CLI.
+
+The ordinary PR workflow is intentionally path-aware. `pr-core.yml` always
+publishes the ruleset contexts `audit`, `CodeQL`, `Verify generated Archify
+diagram`, `validate (22)`, `tarball smoke (ubuntu-latest)`, and
+`dependency-review`; `validate (22)` fails closed if an applicable job fails
+or is skipped unexpectedly. Broader main-branch and release workflows provide
+the explicit cross-platform, package, Windows, documentation, and audit
+coverage that is not duplicated on every pull request.
 
 ## Protocol changes
 

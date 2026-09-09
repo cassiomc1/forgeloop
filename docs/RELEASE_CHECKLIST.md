@@ -24,6 +24,22 @@ This branch prepares the candidate and its pull request. npm publication,
 tagging, GitHub Release, deployment, and merge remain separately authorized
 actions.
 
+## CI minimization validation
+
+- [ ] `npm run verify:fast` passes for edit-time feedback.
+- [ ] `npm run verify:prepush` passes before the release pull request; MCP
+      setup, when needed, was run explicitly with `npm run mcp:setup`.
+- [ ] Ordinary PR validation uses `.github/workflows/pr-core.yml` with the
+      unchanged required contexts `audit`, `CodeQL`, `Verify generated Archify
+      diagram`, `validate (22)`, `tarball smoke (ubuntu-latest)`, and
+      `dependency-review`.
+- [ ] `validate (22)` is always present and fails closed on an applicable
+      prerequisite failure, cancellation, or unexpected skip.
+- [ ] Path classification scenarios cover README-only, ordinary source,
+      Repository Index, package-export, and forced release validation.
+- [ ] Main-branch documentation, Node compatibility, package smoke, audit,
+      and Windows full-suite workflows remain available for broader validation.
+
 ## Contract and package identity
 
 - [ ] `package.json` and `package-lock.json` contain the same package version.
