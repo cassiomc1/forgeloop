@@ -1824,7 +1824,7 @@ Do not assume a bug is in Flutter framework code until browser and deployment ev
 | CPU-heavy parsing on UI isolate | Frame jank | Measure and use `compute()`/isolate when needed |
 | Performance testing in debug mode | Misleading results | Profile in profile/release-appropriate mode |
 | Raw exception shown to user | Leaks internals and poor UX | Normalize errors and expose safe messages |
-| Secret embedded in app | Client binaries are inspectable | Keep privileged credentials server-side |
+| Sensitive value embedded in app | Client binaries are inspectable | Keep privileged credentials server-side |
 | Client-only authorization | Bypassable | Enforce authorization server-side |
 | Blind dependency upgrade | Large unrelated risk | Update only required packages and test impact |
 | Hand-edit generated code | Regeneration destroys change | Edit source schema/config and regenerate |

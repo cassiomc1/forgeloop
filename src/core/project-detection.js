@@ -14,6 +14,7 @@ const MAX_MANIFESTS = 256;
 const MAX_MANIFEST_BYTES = 1024 * 1024;
 const MAX_SOURCE_FILES = 256;
 const MAX_SOURCE_BYTES = 512 * 1024;
+const UNSUPPORTED_YAML_VALUE = Symbol("unsupported-yaml-value");
 const IGNORED_DIRECTORIES = new Set([
   ".dart_tool",
   ".forgeloop",
@@ -26,22 +27,6 @@ const IGNORED_DIRECTORIES = new Set([
   "node_modules",
   "out",
   "vendor",
-]);
-const FLUTTER_PROJECT_PATHS = new Set([
-  ".metadata",
-  "analysis_options.yaml",
-  "android",
-  "assets",
-  "integration_test",
-  "ios",
-  "lib",
-  "linux",
-  "macos",
-  "pubspec.yaml",
-  "test",
-  "tool",
-  "web",
-  "windows",
 ]);
 const PLATFORM_DIRECTORIES = Object.freeze([
   "android",
@@ -201,11 +186,17 @@ function parseInlineMap(value) {
 function parseYamlValue(value) {
   const withoutComment = stripYamlComment(value).trim();
   if (withoutComment === "") return "";
-  if (withoutComment.startsWith("{") && withoutComment.endsWith("}")) {
-    return parseInlineMap(withoutComment);
+  if (withoutComment.startsWith("{")) {
+    return withoutComment.endsWith("}") ? parseInlineMap(withoutComment) : null;
   }
-  if (withoutComment.startsWith("[") && withoutComment.endsWith("]")) return null;
+  if (withoutComment.startsWith("[")) return UNSUPPORTED_YAML_VALUE;
   return unquoteYamlScalar(withoutComment);
+}
+
+function containsUnsupportedYamlValue(value) {
+  if (value === UNSUPPORTED_YAML_VALUE) return true;
+  if (!value || typeof value !== "object") return false;
+  return Object.values(value).some(containsUnsupportedYamlValue);
 }
 
 function parseYamlLine(line) {
@@ -215,7 +206,7 @@ function parseYamlLine(line) {
   if (content === "" || content === "---" || content === "..." || content.startsWith("#")) {
     return null;
   }
-  if (content.startsWith("- ") || content === "-") return null;
+  if (content.startsWith("- ") || content === "-") return { indent, sequence: true };
   const separator = findTopLevelColon(content);
   if (separator <= 0) return null;
   const key = unquoteYamlScalar(content.slice(0, separator));
@@ -275,7 +266,13 @@ function readNestedDependencyMap(parsedLines, entryIndex, parentIndent) {
   for (let index = entryIndex + 1; index < parsedLines.length; index += 1) {
     const parsed = parsedLines[index];
     if (!parsed) continue;
+    if (parsed.invalid) return null;
+    if (parsed.sequence) {
+      if (parsed.indent > parentIndent) return null;
+      break;
+    }
     if (parsed.indent <= parentIndent) break;
+    if (containsUnsupportedYamlValue(parsed.value)) return null;
     nestedIndent ??= parsed.indent;
     if (parsed.indent !== nestedIndent) continue;
     if (Object.prototype.hasOwnProperty.call(nested, parsed.key)) return null;
@@ -289,7 +286,9 @@ function readBlockDependencyEntries(parsedLines, sectionIndex, sectionIndent) {
   for (let index = sectionIndex + 1; index < parsedLines.length; index += 1) {
     const parsed = parsedLines[index];
     if (!parsed) continue;
+    if (parsed.invalid) return null;
     if (parsed.indent === 0) break;
+    if (parsed.sequence || containsUnsupportedYamlValue(parsed.value)) return null;
     if (parsed.indent !== sectionIndent) continue;
     if (Object.prototype.hasOwnProperty.call(entries, parsed.key)) return null;
     const entry = { value: parsed.value };
@@ -313,6 +312,9 @@ function readDependencySection(lines, sectionName) {
   const section = parsedLines[sectionIndex];
   const entries = {};
   if (section.value !== "") {
+    if (containsUnsupportedYamlValue(section.value)) {
+      return { present: true, valid: false, entries: {} };
+    }
     const inlineEntries = dependencyEntriesFromInline(section.value);
     if (inlineEntries === null) {
       return { present: true, valid: false, entries: {} };
@@ -404,7 +406,8 @@ async function findDartFiles(root) {
     }
     entries.sort((left, right) => left.name.localeCompare(right.name));
     for (const entry of entries) {
-      if (result.length >= MAX_SOURCE_FILES || entry.isSymbolicLink()) return;
+      if (result.length >= MAX_SOURCE_FILES) return;
+      if (entry.isSymbolicLink()) continue;
       const absolutePath = path.join(directory, entry.name);
       if (entry.isDirectory()) {
         if (!IGNORED_DIRECTORIES.has(entry.name)) await visit(absolutePath);
@@ -436,16 +439,17 @@ function normalizeClaim(value) {
   return path.posix.normalize(replaced).replace(/^\.\//u, "").toLowerCase();
 }
 
-function claimMatchesProject(claim, projectRoot) {
+function claimMatchesProject(claim, projectRoot, projectRoots) {
   if (claim === ".") return true;
   const root = projectRoot.toLowerCase();
-  if (root !== ".") {
-    if (claim === root || root.startsWith(`${claim}/`)) return true;
-    if (!claim.startsWith(`${root}/`)) return false;
-    const relative = claim.slice(root.length + 1);
-    return [...FLUTTER_PROJECT_PATHS].some((prefix) => relative === prefix || relative.startsWith(`${prefix}/`));
+  if (root === ".") {
+    const nestedRoots = projectRoots
+      .map((candidate) => candidate.toLowerCase())
+      .filter((candidate) => candidate !== ".");
+    // A root project owns claims outside confirmed nested project boundaries.
+    return !nestedRoots.some((candidate) => claim === candidate || claim.startsWith(`${candidate}/`));
   }
-  return [...FLUTTER_PROJECT_PATHS].some((prefix) => claim === prefix || claim.startsWith(`${prefix}/`));
+  return claim === root || claim.startsWith(`${root}/`) || root.startsWith(`${claim}/`);
 }
 
 async function inspectProject(root, manifestPath, targetRoot) {
@@ -493,8 +497,13 @@ export async function detectProjectEvidence(target, { claims = [] } = {}) {
 
   const normalizedClaims = uniqueSorted((Array.isArray(claims) ? claims : []).map(normalizeClaim).filter(Boolean));
   const hasClaims = Array.isArray(claims) && claims.length > 0;
+  const projectRoots = projects.map((project) => project.root);
   const selectedProjects = hasClaims
-    ? projects.filter((project) => normalizedClaims.some((claim) => claimMatchesProject(claim, project.root)))
+    ? projects.filter((project) => normalizedClaims.some((claim) => claimMatchesProject(
+      claim,
+      project.root,
+      projectRoots,
+    )))
     : projects;
   const scope = hasClaims
     ? (selectedProjects.length > 0 ? "MATCH" : "NO_MATCH")

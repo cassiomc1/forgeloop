@@ -208,13 +208,13 @@ rg -n '^## |accuracy|completeness|Diátaxis|tutorial|how-to|reference|explanatio
 
 ### `flutter` — Flutter application engineering
 
-**Activate when:** the affected project has a structurally parsed `pubspec.yaml` with `dependencies.flutter.sdk: flutter` in the task scope. The guide then provides the Flutter-specific architecture, implementation, testing, performance, accessibility, platform integration, and release context.
+**Activate when:** a confirmed project root has a structurally parsed `pubspec.yaml` with `dependencies.flutter.sdk: flutter`, and the task scope intersects that root. Once the root is confirmed, every claim under it matches, including lockfiles, localization/configuration files, source, tooling, and native platform configuration; confirmed nested project roots remain isolated. The guide then provides the Flutter-specific architecture, implementation, testing, performance, accessibility, platform integration, and release context.
 
 **Do not activate merely because:** prose, Markdown, a lockfile, a transitive package name, an arbitrary directory name, a hosted package named `flutter`, or an unrelated monorepo project mentions Flutter. `flutter_test` and platform/source signals are supporting evidence only; they cannot replace the primary SDK dependency signal.
 
 **Usually combine with:** `clean` and `test`; add `design`, `accessibility`, `security`, or `performance` when the affected surface or risk requires them.
 
-The route command obtains this evidence from `src/core/project-detection.js`. It walks bounded, non-symlinked project manifests, parses dependency structure, and intersects detected project roots with task write claims. An unscoped route can inspect all detected projects; an explicit claim that does not reach a Flutter project produces `NO_FLUTTER_SCOPE_MATCH` and does not activate the guide.
+The route command obtains this evidence from `src/core/project-detection.js`. It walks bounded, non-symlinked project manifests, parses dependency structure, and matches task write claims against confirmed project roots. An unscoped route can inspect all detected projects; an explicit claim that does not reach a Flutter project produces `NO_FLUTTER_SCOPE_MATCH` and does not activate the guide. Documentation and UI-copy exclusions remain routing decisions, not project-detection heuristics.
 
 ```bash
 rg -n '^## |architecture|testing|performance|accessibility|platform|release|Flutter' ENG/flutter-development-eng.md
@@ -312,7 +312,7 @@ Negative routing guarantees:
 - `flutter_test`, a Flutter word in documentation, or a lockfile package does
   not replace the primary Flutter SDK dependency signal;
 - an unrelated monorepo project does not activate Flutter when task claims do
-  not intersect its known project paths;
+  not intersect its confirmed project root; nested project roots remain isolated;
 - an explicit executable-change signal adds `clean` and `test` even when the
   semantic work type is documentation.
 

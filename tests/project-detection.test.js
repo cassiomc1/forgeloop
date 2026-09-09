@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -111,6 +111,31 @@ dev_dependencies:
   });
 });
 
+test("pubspec parsing accepts supported forms, ignores unrelated flow lists, and fails closed for dependency sequences", () => {
+  const inline = parsePubspec(`name: inline
+dependencies: {flutter: {sdk: flutter}}
+`);
+  assert.equal(inline.valid, true);
+  assert.equal(inline.primary, true);
+
+  const unrelatedList = parsePubspec(`name: list
+some_field: [one, two]
+dependencies:
+  flutter:
+    sdk: flutter
+`);
+  assert.equal(unrelatedList.valid, true);
+  assert.equal(unrelatedList.primary, true);
+
+  const malformed = parsePubspec(`name: malformed
+dependencies:
+  flutter:
+    - sdk: flutter
+`);
+  assert.equal(malformed.valid, false);
+  assert.equal(malformed.primary, false);
+});
+
 test("prose, lockfiles, hosted flutter packages, and arbitrary names do not trigger detection", async () => {
   await temporaryProject("forgeloop-flutter-detection-negative-", async (target) => {
     await writeFile(path.join(target, "README.md"), "Flutter is mentioned here, but this is not a Flutter project.\n");
@@ -135,15 +160,19 @@ test("nested projects honor task claim scope and avoid unrelated Flutter activat
     await mkdir(path.join(target, "apps", "mobile", "lib"), { recursive: true });
     await mkdir(path.join(target, "apps", "server"), { recursive: true });
     await writeFile(path.join(target, "apps", "mobile", "pubspec.yaml"), flutterPubspec);
+    await writeFile(path.join(target, "apps", "mobile", "pubspec.lock"), "packages: {}\n");
+    await writeFile(path.join(target, "apps", "mobile", "l10n.yaml"), "arb-dir: lib/l10n\n");
     await writeFile(path.join(target, "apps", "server", "pubspec.yaml"), `name: server
 dependencies:
   shelf: ^1.0.0
 `);
 
-    const mobile = await detectProjectEvidence(target, { claims: ["apps/mobile/lib"] });
-    assert.equal(mobile.scope, "MATCH");
-    assert.deepEqual(mobile.projectRoots, ["apps/mobile"]);
-    assert.deepEqual(mobile.frameworks, ["flutter"]);
+    for (const claim of ["apps/mobile/lib", "apps/mobile/pubspec.lock", "apps/mobile/l10n.yaml"]) {
+      const mobile = await detectProjectEvidence(target, { claims: [claim] });
+      assert.equal(mobile.scope, "MATCH");
+      assert.deepEqual(mobile.projectRoots, ["apps/mobile"]);
+      assert.deepEqual(mobile.frameworks, ["flutter"]);
+    }
 
     const server = await detectProjectEvidence(target, { claims: ["apps/server"] });
     assert.equal(server.scope, "MATCH");
@@ -156,5 +185,35 @@ dependencies:
     const route = evaluateRoute({ workType: "code", projectEvidence: unrelated });
     assert.equal(route.guides.includes("flutter"), false);
     assert.deepEqual(route.excluded.flutter, ["NO_FLUTTER_SCOPE_MATCH"]);
+  });
+});
+
+test("Dart discovery skips symlinks without skipping sorted siblings", async () => {
+  await temporaryProject("forgeloop-flutter-detection-symlink-", async (target) => {
+    await mkdir(path.join(target, "lib"), { recursive: true });
+    await writeFile(path.join(target, "outside.dart"), "void outside() {}\n");
+    await symlink(path.join(target, "outside.dart"), path.join(target, "lib", "a_symlink.dart"));
+    await writeFile(
+      path.join(target, "lib", "main.dart"),
+      "import 'package:flutter/material.dart';\nvoid main() {}\n",
+    );
+    await writeFile(path.join(target, "pubspec.yaml"), flutterPubspec);
+
+    const evidence = await detectProjectEvidence(target);
+    assert.ok(evidence.supportingSignals.includes("source:package:flutter"));
+  });
+
+  await temporaryProject("forgeloop-flutter-detection-no-follow-", async (target) => {
+    await mkdir(path.join(target, "lib"), { recursive: true });
+    await writeFile(
+      path.join(target, "outside.dart"),
+      "import 'package:flutter/material.dart';\nvoid outside() {}\n",
+    );
+    await symlink(path.join(target, "outside.dart"), path.join(target, "lib", "a_symlink.dart"));
+    await writeFile(path.join(target, "lib", "main.dart"), "void main() {}\n");
+    await writeFile(path.join(target, "pubspec.yaml"), flutterPubspec);
+
+    const evidence = await detectProjectEvidence(target);
+    assert.equal(evidence.supportingSignals.includes("source:package:flutter"), false);
   });
 });

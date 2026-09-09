@@ -18,12 +18,6 @@ const RESUME_PHASE_BY_MILESTONE = Object.freeze({
   VERIFICATION_RECORDED: "VERIFYING",
 });
 
-const RESUME_PHASE_RANK = Object.freeze({
-  PLANNED: 1,
-  EXECUTING: 2,
-  VERIFYING: 3,
-});
-
 async function deriveResumePhaseFromLedger(target, packageRoot, taskId) {
   let ledger;
   try {
@@ -39,9 +33,11 @@ async function deriveResumePhaseFromLedger(target, packageRoot, taskId) {
   for (const event of scoped) {
     const phase = positions[event.event];
     if (!phase) continue;
-    if (!derived || RESUME_PHASE_RANK[phase] > RESUME_PHASE_RANK[derived]) {
+    if (!derived) {
       derived = phase;
+      continue;
     }
+    if (phase === "VERIFYING") derived = "VERIFYING";
   }
   return derived;
 }
