@@ -4,6 +4,14 @@
 
 No changes yet.
 
+## 1.11.1 - 2026-09-09
+
+### Changed
+
+- Refreshed the README architecture image to reflect the current ForgeLoop
+  entry points, canonical protocol, managed Repository Index, persistent CLI
+  transport, and evidence boundary.
+
 ## 1.11.0 - 2026-09-08
 
 ### Added

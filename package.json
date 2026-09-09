@@ -1,6 +1,6 @@
 {
   "name": "@cassiomc1/forgeloop",
-  "version": "1.11.0",
+  "version": "1.11.1",
   "description": "Portable, verifiable engineering protocol for AI coding environments and developer workflows",
   "repository": {
     "type": "git",
