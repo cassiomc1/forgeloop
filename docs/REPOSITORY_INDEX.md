@@ -13,6 +13,11 @@ keeps up with working-tree changes, but it is not a task ledger, a dependency
 graph, verification evidence, completion authority, or historical source of
 truth.
 
+The CLI-only persistent local transport is documented separately in
+[`PERSISTENT_SEARCH_TRANSPORT.md`](./PERSISTENT_SEARCH_TRANSPORT.md). It is a
+startup/reuse optimization over this service; the Integration API and MCP
+adapter remain direct consumers.
+
 ## Why Repository Index exists
 
 Repeated full-tree scans are noisy and can be expensive on larger projects.
@@ -45,17 +50,21 @@ server is down.
 ## Architecture
 
 ```text
-CLI / Integration API / MCP
-            |
-            v
-  provider-neutral search service
-            |
-            v
-  managed tgrep executable and server
-       |                    |
-       v                    v
-  opaque project cache   working-tree watcher
-  .forgeloop/.../tgrep   current file mutations
+CLI `search` only
+      |
+      v
+CLI persistent local IPC host
+      |
+      +-----------------------------+
+                                    v
+Integration API / MCP ----> provider-neutral search service
+                                    |
+                                    v
+                    managed tgrep executable and server
+                         |                    |
+                         v                    v
+                    opaque project cache   working-tree watcher
+                    .forgeloop/.../tgrep   current file mutations
 ```
 
 The user-level binary cache and project-level index are separate:
@@ -264,6 +273,10 @@ workload-specific and are not a correctness or universal speed claim.
 
 Search patterns, paths, and filters are passed as direct argument-array values
 with `shell: false`. Shell syntax is not evaluated. Request limits are:
+
+For the transport protocol, host lifecycle, ownership proof, privacy boundary,
+and recovery behavior, see the dedicated
+[`Persistent Search Transport`](./PERSISTENT_SEARCH_TRANSPORT.md) reference.
 
 | Input | Limit |
 | --- | --- |

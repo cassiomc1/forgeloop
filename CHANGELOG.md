@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+No changes yet.
+
+## 1.11.0 - 2026-09-08
+
 ### Added
 
 - Added the mandatory ForgeLoop Repository Index and provider-neutral

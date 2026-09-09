@@ -87,3 +87,13 @@ These explanations are part of the JSON sources and generated explorers;
 matching textual fallbacks live in the README, revision-provider guide, and
 attestation guide. Re-render before renewing a visual review, then inspect
 the new output at desktop and narrow widths before binding the review hashes.
+
+The Repository Index and Persistent Search Transport are runtime discovery
+boundaries rather than lifecycle transitions. Their current CLI/API/MCP
+separation and local IPC sequence are documented in
+[`REPOSITORY_INDEX.md`](../REPOSITORY_INDEX.md) and
+[`PERSISTENT_SEARCH_TRANSPORT.md`](../PERSISTENT_SEARCH_TRANSPORT.md). They are
+intentionally not added as a fourth Archify workflow merely to increase the
+diagram count; the README hero provides the conceptual architecture overview,
+while these three governed visuals remain focused on lifecycle, verification,
+and attestation.

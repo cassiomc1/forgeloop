@@ -66,6 +66,12 @@ index, state, or binary paths; it does not accept raw tgrep arguments, arbitrary
 binaries, or a no-index bypass. Setup/start/stop/rebuild
 remain maintenance commands and are launch-capability gated.
 
+MCP calls the canonical Repository Search service directly. It does not use
+the CLI's user-scoped persistent search host or its local IPC endpoint. The
+transport distinction, host lifecycle, ownership proof, bounded recovery, and
+privacy projection are documented in
+[`PERSISTENT_SEARCH_TRANSPORT.md`](./PERSISTENT_SEARCH_TRANSPORT.md).
+
 The durable-action resources are read-only projections. The first release does
 not expose `run-action` or host-attestation minting over MCP. An action that is
 `COMMIT_UNKNOWN` is surfaced as an external reconciliation requirement; MCP
@@ -144,7 +150,7 @@ forgeloop-mcp-http --project /repo --mode safe          # 127.0.0.1:3333
 
 | Component | Current contract |
 | --- | --- |
-| ForgeLoop core package | `>=1.5.0 <2` dependency range; current release `1.10.2` |
+| ForgeLoop core package | `>=1.5.0 <2` dependency range; current release candidate `1.11.0` |
 | ForgeLoop protocol | `1` |
 | Integration API | `1` |
 | MCP package | `0.1.x` initial package |

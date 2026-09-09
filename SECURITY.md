@@ -66,3 +66,10 @@ and machine-local paths remain local and are not returned by normal structured
 output or automatically logged/sent to telemetry. Corrupt or stale cache
 is handled through status and explicit rebuild rather than by trusting native
 index internals or silently falling back to another search executable.
+
+The CLI's persistent search host is a local IPC optimization over the same
+canonical search service. Its user-scoped state, handshake/nonce ownership
+checks, bounded recovery, and sanitized public status are documented in
+[`docs/PERSISTENT_SEARCH_TRANSPORT.md`](./docs/PERSISTENT_SEARCH_TRANSPORT.md).
+Integration API and MCP search remain direct calls; neither transport treats
+the persistent host or derived index as lifecycle authority.

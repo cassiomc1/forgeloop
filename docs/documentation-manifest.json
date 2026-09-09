@@ -633,6 +633,20 @@
         "repository-index"
       ],
       "packaged": true
+    },
+    {
+      "path": "docs/PERSISTENT_SEARCH_TRANSPORT.md",
+      "id": "persistent-search-transport",
+      "class": "architecture",
+      "audience": [
+        "user",
+        "integrator",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "persistent-search-transport"
+      ],
+      "packaged": true
     }
   ]
 }

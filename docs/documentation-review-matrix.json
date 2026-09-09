@@ -24,7 +24,7 @@
     { "path": "THREAT_MODEL.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["src/core/verification-execution.js", "src/core/command-input.js", "package.json"] },
     { "path": "CONTRACT_COVERAGE.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["tests/", "scripts/"] },
     { "path": "AGENT_COMPATIBILITY.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["PROTOCOL_INTEGRATION.md"] },
-    { "path": "PROJECT_PROFILE.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["package.json", "README.md"] },
+    { "path": "PROJECT_PROFILE.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["PROJECT_PROFILE.md"] },
     { "path": "THIRD_PARTY_NOTICES.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["LICENSE", "LICENSE-DOCS.md", "vendor/archify/v2.15.0/PIN.json"] },
     { "path": "LICENSE-DOCS.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["LICENSE-DOCS.md", "THIRD_PARTY_NOTICES.md"] },
     { "path": ".github/copilot-instructions.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["AGENTS.md", "LOOP_ENGINEERING.md", "docs/REPOSITORY_INDEX.md"] },
@@ -37,11 +37,11 @@
     { "path": "docs/TROUBLESHOOTING.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["src/core/error-codes.js", "src/core/protocol.js", "src/repository-index/errors.js"] },
     { "path": "docs/RECIPES.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["docs/CLI_REFERENCE.md", "LOOP_ENGINEERING.md"] },
     { "path": "docs/DOCUMENTATION_GUIDE.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["docs/documentation-manifest.json", "docs/diagrams/manifest.json", "package.json"] },
-    { "path": "docs/diagrams/README.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["docs/diagrams/manifest.json", "vendor/archify/v2.15.0/PIN.json"] },
+    { "path": "docs/diagrams/README.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["docs/diagrams/manifest.json", "vendor/archify/v2.15.0/PIN.json", "docs/PERSISTENT_SEARCH_TRANSPORT.md"] },
     { "path": "docs/RELEASE_CHECKLIST_1_4.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["LOOP_ENGINEERING.md", "docs/CLI_REFERENCE.md"] },
     { "path": "scripts/CI_VALIDATORS.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": [".github/workflows/docs-quality.yml", "scripts/"] },
     { "path": "docs/MCP.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["integrations/mcp/src/", "integrations/mcp/package.json"] },
-    { "path": "docs/UNIVERSAL_INTEGRATION.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["src/integration.js", "src/core/integration-resources.js"] },
+    { "path": "docs/UNIVERSAL_INTEGRATION.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["src/integration.js", "src/core/integration-resources.js", "src/persistent-transport/"] },
     { "path": "docs/RELEASE_CHECKLIST_1_5_MCP.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["docs/MCP.md", "docs/UNIVERSAL_INTEGRATION.md"] },
     { "path": "docs/RELEASE_CHECKLIST_1_6_1.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["package.json", "src/core/verification-execution.js", "src/core/protocol-info.js", ".github/workflows/npm-publish.yml", "scripts/verify_release_identity.mjs"] },
     { "path": "docs/RELEASE_CHECKLIST.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["package.json", ".github/workflows/", "scripts/", "docs/EXECUTION_PROFILE_BENCHMARKS.md"] },
@@ -59,6 +59,7 @@
     { "path": "docs/STRUCTURAL_QUALITY.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/core/structural-quality/", "schemas/structural-quality.schema.json", "LOOP_ENGINEERING.md", "PROTOCOL_INTEGRATION.md"] },
     { "path": "docs/ADVISORY_CONTEXT.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/core/advisory-context/", "src/core/portable-context.js", "src/integration.js", "LOOP_ENGINEERING.md"] },
     { "path": "docs/RIPWIRE_ADAPTER.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/adapters/ripwire/", "src/integration.js", "tests/ripwire-advisory-provider.test.js", "docs/ADVISORY_CONTEXT.md"] },
-    { "path": "docs/REPOSITORY_INDEX.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/repository-index/", "src/core/cli-command-definitions.js", "src/integration.js", "integrations/mcp/src/resource-registry.js", "tests/repository-index-cli.test.js"] }
+    { "path": "docs/REPOSITORY_INDEX.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["src/repository-index/", "src/core/cli-command-definitions.js", "src/integration.js", "integrations/mcp/src/resource-registry.js", "tests/repository-index-cli.test.js"] },
+    { "path": "docs/PERSISTENT_SEARCH_TRANSPORT.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/persistent-transport/", "src/commands/repository-index.js", "src/repository-index/search.js", "tests/persistent-transport.test.js", "tests/persistent-transport-native.test.js"] }
   ]
 }

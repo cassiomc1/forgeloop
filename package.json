@@ -1,6 +1,6 @@
 {
   "name": "@cassiomc1/forgeloop",
-  "version": "1.10.2",
+  "version": "1.11.0",
   "description": "Portable, verifiable engineering protocol for AI coding environments and developer workflows",
   "repository": {
     "type": "git",
@@ -77,6 +77,7 @@
     "docs/AGENT_PROTOCOL_SUMMARY.md",
     "docs/EXECUTION_PROFILE_BENCHMARKS.md",
     "docs/REPOSITORY_INDEX.md",
+    "docs/PERSISTENT_SEARCH_TRANSPORT.md",
     "docs/KNOWLEDGE_SOURCES.md",
     "scripts/generate-shell-completions.mjs",
     "scripts/generate-agent-protocol-summary.mjs",
