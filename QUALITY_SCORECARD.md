@@ -94,6 +94,7 @@ are both present:
 | Dimension | Implementation evidence | Executable evidence |
 | --- | --- | --- |
 | Routing | `src/core/router.js`, route schemas, stable reason codes, and exclusions | `tests/router.test.js`, `tests/fixtures/routes/` |
+| Flutter project detection and routing | `src/core/project-detection.js`, `src/core/router.js`, `src/config/guides.json`, and scoped manifest evidence | `tests/project-detection.test.js`, `tests/guide-registry.test.js`, `tests/router.test.js` |
 | Observability | `src/core/receipt.js`, `src/core/inspect.js`, `src/core/evidence.js`, and schema health | `tests/observability.test.js`, `tests/receipt-semantics.test.js`, `tests/schema-health.test.js` |
 | Resume/checkpoint | `src/core/work-state.js`, `EXECUTION_STATE.md`, shared loaded-state classifier, contract/artifact classifiers, and atomic writes | `tests/work-state.test.js`, `tests/checkpoint-freshness.test.js`, status, validate-state, and validate-protocol tests |
 | Delegation | `src/core/delegation.js`, delegation-set validator, and `DELEGATION_PROTOCOL.md` | `tests/delegation.test.js`, `tests/delegation-set.test.js` |

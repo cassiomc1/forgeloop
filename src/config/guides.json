@@ -38,5 +38,9 @@
   "documentation": {
     "path": "ENG/documentation-quality-eng.md",
     "install": true
+  },
+  "flutter": {
+    "path": "ENG/flutter-development-eng.md",
+    "install": true
   }
 }

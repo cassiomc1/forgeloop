@@ -99,6 +99,12 @@ test("router only emits registered guide IDs across all work types", () => {
   }
 });
 
+test("Flutter specialist is registered with the canonical guide path", () => {
+  assert.equal(GUIDE_REGISTRY.flutter.path, "ENG/flutter-development-eng.md");
+  assert.equal(GUIDE_REGISTRY.flutter.install, true);
+  assert.ok(GUIDE_IDS.includes("flutter"));
+});
+
 test("ui-copy routes to design and accessibility, never documentation", () => {
   const result = evaluateRoute({
     workType: "ui-copy",

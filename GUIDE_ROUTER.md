@@ -52,6 +52,7 @@ project commands.
 | `accessibility` | [Accessibility](./ENG/accessibility-eng.md) | WCAG, keyboard access, focus, semantics, and assistive technology |
 | `games` | [Web games](./ENG/games-code-design-web-eng.md) | Architecture and operation of 2D, 3D, and procedural web games |
 | `documentation` | [Documentation quality](./ENG/documentation-quality-eng.md) | Accuracy, architecture, freshness, accessibility, and verifiable technical documentation |
+| `flutter` | [Flutter application engineering](./ENG/flutter-development-eng.md) | Architecture, implementation, testing, performance, accessibility, platform integration, and release of production Flutter applications |
 
 ## Domain rules
 
@@ -205,6 +206,22 @@ rg -n '^## |accuracy|completeness|Diátaxis|tutorial|how-to|reference|explanatio
 
 **Expected evidence:** documentation purpose and audience are clear, factual claims are cross-checked against canonical project sources, changed documentation surfaces are complete, relevant examples/links/builds are validated when available, and unavailable required checks are recorded as `NOT_VERIFIED`.
 
+### `flutter` — Flutter application engineering
+
+**Activate when:** a confirmed project root has a structurally parsed `pubspec.yaml` with `dependencies.flutter.sdk: flutter`, and the task scope intersects that root. Once the root is confirmed, every claim under it matches, including lockfiles, localization/configuration files, source, tooling, and native platform configuration; confirmed nested project roots remain isolated. The guide then provides the Flutter-specific architecture, implementation, testing, performance, accessibility, platform integration, and release context.
+
+**Do not activate merely because:** prose, Markdown, a lockfile, a transitive package name, an arbitrary directory name, a hosted package named `flutter`, or an unrelated monorepo project mentions Flutter. `flutter_test` and platform/source signals are supporting evidence only; they cannot replace the primary SDK dependency signal.
+
+**Usually combine with:** `clean` and `test`; add `design`, `accessibility`, `security`, or `performance` when the affected surface or risk requires them.
+
+The route command obtains this evidence from `src/core/project-detection.js`. It walks bounded, non-symlinked project manifests, parses dependency structure, and matches task write claims against confirmed project roots. An unscoped route can inspect all detected projects; an explicit claim that does not reach a Flutter project produces `NO_FLUTTER_SCOPE_MATCH` and does not activate the guide. Documentation and UI-copy exclusions remain routing decisions, not project-detection heuristics.
+
+```bash
+rg -n '^## |architecture|testing|performance|accessibility|platform|release|Flutter' ENG/flutter-development-eng.md
+```
+
+**Expected evidence:** a confirmed affected Flutter project, a scoped route, platform-appropriate tests, measured performance or accessibility checks when relevant, and honest `NOT_VERIFIED` reporting for unavailable Flutter tooling.
+
 ## Work-type matrix
 
 | Work | Primary guide | Common complements | Exclude when |
@@ -214,6 +231,7 @@ rg -n '^## |accuracy|completeness|Diátaxis|tutorial|how-to|reference|explanatio
 | Code or bug without UI | `clean` | `test`; risk may add `security` or `performance` | The surface is unchanged |
 | Backend, API, or data | `clean` | `test`, `security`; `performance` for a critical path | That layer does not exist |
 | Web, mobile, or desktop UI | `design` | `accessibility`, `clean`, `test`; risk defines the rest | Users cannot observe the change |
+| Flutter application | `flutter` | `clean`, `test`; add `design`, `accessibility`, `security`, or `performance` as applicable | No primary Flutter SDK dependency in the affected project scope |
 | Complete website | `premium` | `design`, `accessibility`, `clean`, `test`, `security`, `performance` | The deliverable is not a complete site |
 | Web game | `games` | `clean`, `test`, `security`, `performance`, `accessibility`; `design` with UI | The product is not a game |
 | HTML video or motion | `design` | `accessibility`, `performance`, `test`, `security` | There is no audiovisual composition |
@@ -226,7 +244,9 @@ HyperFrames is optional and may be used only when requested or already available
 The active agent may classify natural language, but it must pass declared
 signals to the deterministic evaluator in `src/core/router.js`. The evaluator
 does not parse natural language, call a model, or infer a stack from a word in
-the repository.
+the repository. `runRoute` may also pass `projectEvidence` from
+`src/core/project-detection.js`; that evidence is produced by structural
+manifest parsing and scope intersection, not by prose or model confidence.
 
 The first routing contract is versioned as `schemaVersion: 1`. It accepts:
 
@@ -243,19 +263,28 @@ The first routing contract is versioned as `schemaVersion: 1`. It accepts:
 - `platforms`: `web`, `mobile`, `desktop`, `server`, `ci`, or
   `cross-platform`;
 - optional boolean `behaviorChange` and `executableChange` signals.
+- optional `projectEvidence` with a schema version, a scope result, detected
+  framework IDs, affected project roots, primary signals, and supporting
+  signals. The current framework ID is `flutter`; its primary signal is an
+  affected `dependencies.flutter.sdk: flutter` entry in `pubspec.yaml`.
 
 Rule precedence is deterministic: the work type establishes the primary
 closure; affected surfaces add mandatory complements; risks add security,
 performance, or accessibility; executable/behavior changes add clean and
 test; required rules win over optional exclusions; and the evaluator preserves
-canonical insertion order. Unknown or duplicate signals fail with a routing
-error.
+canonical insertion order. A matching Flutter project adds `flutter` plus the
+`clean`/`test` baseline before ordinary work-type complements; documentation
+and UI-copy work do not activate the specialist. Unknown or duplicate signals
+fail with a routing error.
 
 Every selected guide has stable reason codes such as
 `WORK_COMPLETE_WEBSITE`, `SURFACE_UI`, `RISK_UNTRUSTED_INPUT`, and
 `CHANGE_EXECUTABLE_CONFIG`. Exclusions use stable codes such as
 `NO_TRUST_BOUNDARY`, `NO_MEASURABLE_PERFORMANCE_RISK`, and
-`NO_DOCUMENTATION_SURFACE`.
+`NO_DOCUMENTATION_SURFACE`. Flutter uses
+`PROJECT_FLUTTER_SDK_DEPENDENCY`, `PROJECT_FLUTTER_BASELINE`,
+`NO_FLUTTER_PRIMARY_EVIDENCE`, `NO_FLUTTER_SCOPE_MATCH`, and
+`NO_FLUTTER_EXECUTABLE_WORK`.
 
 Platform signals are contextual, not automatic guide activators:
 
@@ -280,6 +309,10 @@ Negative routing guarantees:
 - a backend refactor does not activate `design` or `accessibility`;
 - static UI copy does not activate `security` without a trust-boundary signal;
 - a package file alone does not prove that Node is an affected task surface;
+- `flutter_test`, a Flutter word in documentation, or a lockfile package does
+  not replace the primary Flutter SDK dependency signal;
+- an unrelated monorepo project does not activate Flutter when task claims do
+  not intersect its confirmed project root; nested project roots remain isolated;
 - an explicit executable-change signal adds `clean` and `test` even when the
   semantic work type is documentation.
 
@@ -322,6 +355,15 @@ Verify the game loop, authoritative server, reconciliation, input, assets, fallb
 <!-- route:documentation=documentation -->
 
 Verify Markdown, links, paths, commands, and examples.
+
+### Flutter application feature
+
+<!-- route:flutter-app-feature=flutter,clean,test -->
+
+Verify the affected `pubspec.yaml` contains the Flutter SDK dependency, confirm
+the task claim reaches that project, and cover widget/state behavior, platform
+integration, accessibility, performance, and release checks according to the
+changed surface. Supporting signals alone must leave `flutter` excluded.
 
 ## Route changes
 

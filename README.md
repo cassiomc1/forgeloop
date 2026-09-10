@@ -72,10 +72,10 @@ changed the repository.
 | Accessibility | [`ENG/accessibility-eng.md`](./ENG/accessibility-eng.md) |
 | Web games | [`ENG/games-code-design-web-eng.md`](./ENG/games-code-design-web-eng.md) |
 | Documentation quality | [`ENG/documentation-quality-eng.md`](./ENG/documentation-quality-eng.md) |
+| Flutter | [guide](./ENG/flutter-development-eng.md) |
 | Structural quality feedback | [`docs/STRUCTURAL_QUALITY.md`](./docs/STRUCTURAL_QUALITY.md) |
 
-Each guide declares its name, language, version, and review date in
-frontmatter. Repository validators keep the catalog and metadata synchronized.
+Guide metadata is validator-checked.
 
 ## Quickstart
 

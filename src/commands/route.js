@@ -2,6 +2,7 @@ import { evaluateRoute } from "../core/router.js";
 import { persistRoute } from "../core/route-artifact.js";
 import { readContract } from "../core/contract.js";
 import { readConfig } from "../core/config.js";
+import { detectProjectEvidence } from "../core/project-detection.js";
 import { withTaskMutation } from "../core/task-command.js";
 
 export async function runRoute({ target, packageRoot, workType, surfaces, risks, platforms, behaviorChange, executableChange, executionProfile = null, taskId, task }) {
@@ -19,6 +20,9 @@ export async function runRoute({ target, packageRoot, workType, surfaces, risks,
     } catch (error) {
       if (error.code !== "ARTIFACT_MISSING") throw error;
     }
+    const projectEvidence = target
+      ? await detectProjectEvidence(target, { claims: ctx?.descriptor?.writeClaims ?? [] })
+      : null;
     const route = evaluateRoute({
       workType,
       surfaces,
@@ -26,6 +30,7 @@ export async function runRoute({ target, packageRoot, workType, surfaces, risks,
       platforms,
       behaviorChange,
       executableChange,
+      ...(projectEvidence ? { projectEvidence } : {}),
     }, {
       contract,
       taskDescriptor: ctx?.descriptor ?? null,
