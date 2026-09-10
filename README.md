@@ -45,16 +45,11 @@ relevant guides.
 
 ## Real execution proof
 
-ForgeLoop includes a public real-execution PoC with the workload,
-protocol artifacts, trusted command provenance, execution receipt,
-event history, cryptographic evidence manifest, and technical audit.
+Public [execution PoC](./poc/README.md) covers workload, protocol
+artifacts, trusted provenance, receipts, evidence, and audit. It reached
+validator-backed `COMPLETE / VALID` and preserves a later
+`E_RECEIPT_PATH_MISMATCH` after publication changed the repository.
 
-The original task reached validator-backed `COMPLETE / VALID`.
-The evidence package also preserves a later
-`E_RECEIPT_PATH_MISMATCH`, detected after evidence publication itself
-changed the repository.
-
-- [PoC overview](./poc/README.md)
 - [Canonical technical audit](./poc/reports/poc-20260826-real-execution-technical-audit-v2.md)
 - [Evidence package](./poc/evidence/poc-20260826-real-execution/)
 
@@ -76,6 +71,10 @@ changed the repository.
 | Structural quality feedback | [`docs/STRUCTURAL_QUALITY.md`](./docs/STRUCTURAL_QUALITY.md) |
 
 Guide metadata is validator-checked.
+
+Parsed `pubspec.yaml` with `dependencies.flutter.sdk: flutter` selects
+Flutter; mentions, lockfiles, hosted packages, and unrelated monorepos do not.
+See [guide](./ENG/flutter-development-eng.md).
 
 ## Quickstart
 
@@ -459,9 +458,11 @@ and [visual review](./docs/diagrams/reviews/forgeloop-code-attestation-flow.revi
 show exact content binding, optional signing, and separate revision-range
 coverage.
 
-Text-only fallback: discovery creates the contract and route; required gates
-and `PREFLIGHT_READY` authorize execution; verification creates structured
-evidence; failures enter diagnosis and correction; review precedes
+Text-only fallback: discovery creates the contract and route; parsed
+`dependencies.flutter.sdk: flutter` selects Flutter for that root; routing is
+not verification/completion evidence. Gates and
+`PREFLIGHT_READY` authorize execution; verification creates
+structured evidence; failures enter diagnosis and correction; review precedes
 validator-backed completion. Drift reopens verification, and migration keeps
 modified or unmanaged files for review. The terminal result is one of
 `VALID`, `INCOMPLETE`, `STALE`, `INCONSISTENT`, or `INVALID`.

@@ -3,14 +3,24 @@
 This is the current release checklist for `@cassiomc1/forgeloop`. It is a
 preparation and verification checklist; it does not authorize publication.
 
-## ForgeLoop 1.11.0 candidate scope
+## ForgeLoop 1.12.0 candidate scope
 
-The 1.11.0 candidate refreshes the public documentation architecture around
-the managed Repository Index and CLI-only persistent search transport. The
-candidate must keep these boundaries explicit:
+The 1.12.0 candidate carries the first-class Flutter guide and deterministic,
+scope-aware project routing added by PR #165. The candidate must keep these
+boundaries explicit:
 
-- [ ] README architecture visual and text fallback describe CLI persistent
-      search separately from direct Integration API/MCP access.
+- [ ] README catalog and architecture fallback identify
+      `ENG/flutter-development-eng.md` and explain that the specialist is
+      selected only from a structurally parsed
+      `dependencies.flutter.sdk: flutter` entry in affected scope.
+- [ ] The canonical engineering-flow source and regenerated HTML/SVG diagram
+      explain project detection as routing context, not verification or
+      completion evidence.
+- [ ] Positive clean-room package routing selects `flutter`, `clean`, and
+      `test` for a Flutter root.
+- [ ] Documentation-only mentions, lockfiles, hosted packages, malformed
+      dependency shapes, symlink traversal, and unrelated monorepo roots do
+      not activate the Flutter specialist.
 - [ ] [`docs/REPOSITORY_INDEX.md`](./REPOSITORY_INDEX.md) and
       [`docs/PERSISTENT_SEARCH_TRANSPORT.md`](./PERSISTENT_SEARCH_TRANSPORT.md)
       agree on tgrep management, no-fallback behavior, local IPC, ownership,
@@ -37,6 +47,9 @@ actions.
 - [ ] [`docs/PACKAGE_CONTENTS.md`](./PACKAGE_CONTENTS.md) matches the current
       `package.json` file list and documents intentional inclusions and
       exclusions.
+- [ ] The candidate tarball includes the registered Flutter guide and every
+      other `src/config/guides.json` path; no repository-only guide state is
+      packaged.
 - [ ] Every maintained `src/**/*.js` module is present in the candidate
       tarball; only the four explicitly retired compatibility helpers are
       excluded.
@@ -89,8 +102,9 @@ actions.
 ## Integration and cross-platform evidence
 
 - [ ] `npm run pack:check` and `npm run pack:smoke` pass.
-- [ ] `npm pack --dry-run` includes Repository Index runtime/manifest/docs and
-      excludes native release binaries and derived `.forgeloop` index data.
+- [ ] `npm pack --dry-run` includes the Flutter guide, Repository Index
+      runtime/manifest/docs, and excludes native release binaries and derived
+      `.forgeloop` index data.
 - [ ] The npm publication workflow runs `npm run pack:smoke` before its
       provenance-backed publish step.
 - [ ] `npm run mcp:test` either runs the configured MCP tests or reports the

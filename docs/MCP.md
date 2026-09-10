@@ -150,7 +150,7 @@ forgeloop-mcp-http --project /repo --mode safe          # 127.0.0.1:3333
 
 | Component | Current contract |
 | --- | --- |
-| ForgeLoop core package | `>=1.5.0 <2` dependency range; current release `1.11.1` |
+| ForgeLoop core package | `>=1.5.0 <2` dependency range; current release `1.12.0` |
 | ForgeLoop protocol | `1` |
 | Integration API | `1` |
 | MCP package | `0.1.x` initial package |

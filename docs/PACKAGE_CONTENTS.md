@@ -27,6 +27,11 @@ The published tarball includes the following consumer-facing groups:
   This includes the provider-neutral Repository Index runtime and its pinned
   `src/repository-index/tgrep-manifest.json`; native engine binaries are
   provisioned outside the npm tarball.
+- **Specialist guidance:** every registered consumer guide under `ENG/`,
+  including `ENG/flutter-development-eng.md`, ships with the guide registry
+  and is resolved from a package-local path. The Flutter specialist is
+  selected only for an affected root with the structural SDK dependency
+  signal; the package does not install or invoke Flutter tooling.
 - **Initialization material:** the root protocol and integration documents,
   legal notices, the target profile template, and every path listed by
   `src/core/templates.js`. These files are read by `init` and `update`, so
@@ -87,7 +92,9 @@ npm run pack:smoke
 
 `pack:smoke` installs the candidate tarball into a temporary consumer and
 exercises the CLI, public Integration API, initialization, schemas, and
-packaged documentation references. The tag-triggered publication workflow
+packaged documentation references. The package-boundary tests also assert
+that every registered guide path, including the Flutter specialist, is
+present in the candidate. The tag-triggered publication workflow
 runs the same smoke gate before `npm publish --provenance --access public`.
 Publication therefore remains owned by the trusted GitHub Actions OIDC
 workflow; local package inspection proves the candidate boundary but does not

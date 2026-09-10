@@ -4,6 +4,33 @@
 
 No changes yet.
 
+## 1.12.0 - 2026-09-09
+
+### Added
+
+- Added the first-class Flutter application engineering guide and registered
+  it as the `flutter` specialist in the canonical guide catalog.
+- Added deterministic Flutter project detection from the structured
+  `dependencies.flutter.sdk: flutter` entry in an affected `pubspec.yaml`.
+- Added scope-aware routing so confirmed Flutter projects select the Flutter
+  specialist with the baseline clean-code and test guides, while unrelated
+  monorepo projects remain isolated.
+
+### Changed
+
+- Extended the routing documentation, package-boundary checks, and generated
+  architecture documentation to describe the Flutter detection and specialist
+  selection boundary.
+- Hardened detection against documentation-only mentions, lockfiles, hosted
+  packages named `flutter`, malformed YAML shapes, and symlink traversal.
+
+### Compatibility
+
+- Protocol v1, Schema v1, Integration API v1, and Node.js `>=20` support are
+  unchanged.
+- The runtime remains dependency-free; Flutter tooling is not installed or
+  invoked by ForgeLoop automatically.
+
 ## 1.11.1 - 2026-09-09
 
 ### Changed
