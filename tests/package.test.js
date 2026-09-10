@@ -231,6 +231,19 @@ test("npm tarball ships every maintained runtime module", async () => {
   }
 });
 
+test("canonical guide registry resolves every consumer guide in the tarball", async () => {
+  const registry = JSON.parse(await readFile("src/config/guides.json", "utf8"));
+  const listing = packageListing();
+
+  for (const [guideId, entry] of Object.entries(registry)) {
+    assert.equal(entry.install, true, `guide ${guideId} must be installable`);
+    assert.match(entry.path, /^ENG\/[A-Za-z0-9._-]+\.md$/u, `invalid package guide path for ${guideId}`);
+    assert.ok(listing.includes(entry.path), `guide ${guideId} is missing from the npm tarball: ${entry.path}`);
+  }
+
+  assert.ok(listing.includes("ENG/flutter-development-eng.md"));
+});
+
 test("CLI package entry is executable by Node-compatible shells", async () => {
   const cli = (await readFile("src/cli.js", "utf8")).replace(/\r\n/g, "\n");
   const metadata = await stat("src/cli.js");

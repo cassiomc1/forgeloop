@@ -3,7 +3,7 @@
   "diagram_type": "workflow",
   "meta": {
     "title": "ForgeLoop Evidence-First Engineering Flow",
-    "subtitle": "Structured intent \u2192 project-bound work \u2192 observed evidence \u2192 valid closure",
+    "subtitle": "Structured intent \u2192 deterministic project scope \u2192 observed evidence \u2192 valid closure",
     "animation": "trace",
     "visual_preset": "signal-flow",
     "quality_profile": "showcase",
@@ -180,7 +180,7 @@
       "col": 1,
       "type": "backend",
       "label": "Profile",
-      "sublabel": "discover",
+      "sublabel": "scope",
       "width": 50
     },
     {
@@ -417,6 +417,16 @@
         "Failures return to diagnosis before another claim",
         "Completion is validator-backed, not inferred from a screenshot",
         "Blocked pre-execution refresh requires a valid ledger and revised route"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Deterministic project routing",
+      "items": [
+        "Repository evidence feeds bounded project and surface detection",
+        "A parsed dependencies.flutter.sdk: flutter entry proves Flutter project scope",
+        "The router selects the Flutter specialist only for an affected scoped root",
+        "Detection context is routing input, not verification or completion evidence"
       ]
     },
     {
