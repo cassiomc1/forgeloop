@@ -1,4 +1,4 @@
-import { readdir, readFile } from "node:fs/promises";
+import { open, readdir } from "node:fs/promises";
 import path from "node:path";
 
 export const PROJECT_EVIDENCE_SCHEMA_VERSION = 1;
@@ -73,6 +73,21 @@ const NODE_BACKEND_DEPENDENCIES = new Set([
   "@hapi/hapi",
 ]);
 const NODE_SOURCE_EXTENSIONS = new Set([".js", ".mjs", ".cjs", ".ts", ".mts", ".cts"]);
+const NODE_NON_RUNTIME_DIRECTORIES = new Set([
+  "test",
+  "tests",
+  "__tests__",
+  "fixtures",
+  "mocks",
+  "examples",
+  "docs",
+  "coverage",
+  "dist",
+  "build",
+  "node_modules",
+  ".next",
+  ".turbo",
+]);
 const NODE_SERVER_BUILTINS = Object.freeze([
   "node:http",
   "node:https",
@@ -477,21 +492,82 @@ function commandStartsWithNode(command) {
   return executable === "node" || executable === "node.exe";
 }
 
+function maskJavaScriptCommentsAndTemplates(text) {
+  let result = "";
+  let state = "code";
+  let escaped = false;
+  for (let index = 0; index < text.length; index += 1) {
+    const character = text[index];
+    const next = text[index + 1];
+    if (state === "line-comment") {
+      if (character === "\n") {
+        result += character;
+        state = "code";
+      } else {
+        result += " ";
+      }
+      continue;
+    }
+    if (state === "block-comment") {
+      if (character === "*" && next === "/") {
+        result += "  ";
+        index += 1;
+        state = "code";
+      } else {
+        result += character === "\n" ? "\n" : " ";
+      }
+      continue;
+    }
+    if (state === "template") {
+      if (escaped) {
+        result += character === "\n" ? "\n" : " ";
+        escaped = false;
+      } else if (character === "\\") {
+        result += " ";
+        escaped = true;
+      } else if (character === "`") {
+        result += " ";
+        state = "code";
+      } else {
+        result += character === "\n" ? "\n" : " ";
+      }
+      continue;
+    }
+    if (character === "/" && next === "/") {
+      result += "  ";
+      index += 1;
+      state = "line-comment";
+    } else if (character === "/" && next === "*") {
+      result += "  ";
+      index += 1;
+      state = "block-comment";
+    } else if (character === "`") {
+      result += " ";
+      state = "template";
+    } else {
+      result += character;
+    }
+  }
+  return result;
+}
+
 function packageServerBuiltin(text) {
   if (typeof text !== "string") return null;
+  const source = maskJavaScriptCommentsAndTemplates(text);
   const moduleAlternation = [...NODE_SERVER_BUILTINS]
     .sort((left, right) => right.length - left.length)
     .map((value) => value.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&"))
     .join("|");
   const patterns = [
-    new RegExp(`^\\s*(?:import|export)\\b[^\\n;]*?\\bfrom\\s*["'](${moduleAlternation})["']`, "mu"),
-    new RegExp(`^\\s*(?:import|export)\\s*["'](${moduleAlternation})["']`, "mu"),
+    new RegExp(`^\\s*import(?!\\s+type\\b)\\b[^\\n;]*?\\bfrom\\s*["'](${moduleAlternation})["']`, "mu"),
+    new RegExp(`^\\s*export(?!\\s+type\\b)\\b[^\\n;]*?\\bfrom\\s*["'](${moduleAlternation})["']`, "mu"),
+    new RegExp(`^\\s*import\\s*["'](${moduleAlternation})["']`, "mu"),
     new RegExp(`^\\s*(?:const|let|var)\\b[^\\n=]*=\\s*require\\(\\s*["'](${moduleAlternation})["']\\s*\\)`, "mu"),
     new RegExp(`^\\s*require\\(\\s*["'](${moduleAlternation})["']\\s*\\)`, "mu"),
     new RegExp(`^\\s*(?:await\\s+)?import\\(\\s*["'](${moduleAlternation})["']\\s*\\)`, "mu"),
   ];
   for (const pattern of patterns) {
-    const match = text.match(pattern);
+    const match = source.match(pattern);
     if (match?.[1]) return match[1];
   }
   return null;
@@ -820,13 +896,24 @@ async function findProjectFiles(root, budget) {
   };
 }
 
-async function readBounded(filePath, maxBytes) {
+export async function readBounded(filePath, maxBytes) {
+  if (!Number.isSafeInteger(maxBytes) || maxBytes < 0) return null;
+  let handle;
   try {
-    const bytes = await readFile(filePath);
-    if (bytes.length > maxBytes) return null;
-    return bytes.toString("utf8");
+    handle = await open(filePath, "r");
+    const buffer = Buffer.allocUnsafe(maxBytes + 1);
+    let bytesRead = 0;
+    while (bytesRead < buffer.length) {
+      const result = await handle.read(buffer, bytesRead, buffer.length - bytesRead, bytesRead);
+      if (result.bytesRead === 0) break;
+      bytesRead += result.bytesRead;
+    }
+    if (bytesRead > maxBytes) return null;
+    return buffer.subarray(0, bytesRead).toString("utf8");
   } catch {
     return null;
+  } finally {
+    if (handle) await handle.close().catch(() => {});
   }
 }
 
@@ -893,8 +980,13 @@ async function findNodeSourceFiles(root, budget, nestedRoots = []) {
       if (entry.isSymbolicLink()) continue;
       const absolutePath = path.join(directory, entry.name);
       if (entry.isDirectory()) {
-        if (!IGNORED_DIRECTORIES.has(entry.name)) await visit(absolutePath);
-      } else if (entry.isFile() && NODE_SOURCE_EXTENSIONS.has(path.extname(entry.name).toLowerCase())) {
+        const directoryName = entry.name.toLowerCase();
+        if (!IGNORED_DIRECTORIES.has(entry.name) && !NODE_NON_RUNTIME_DIRECTORIES.has(directoryName)) {
+          await visit(absolutePath);
+        }
+      } else if (entry.isFile()
+        && !/\.d\.(?:ts|mts|cts)$/iu.test(entry.name)
+        && NODE_SOURCE_EXTENSIONS.has(path.extname(entry.name).toLowerCase())) {
         result.push(absolutePath);
       }
     }
@@ -937,30 +1029,52 @@ function normalizeClaim(value) {
   return path.posix.normalize(replaced).replace(/^\.\//u, "").toLowerCase();
 }
 
+function nestedProjectRoots(projectRoot, projectRoots) {
+  const root = projectRoot.toLowerCase();
+  return projectRoots
+    .map((candidate) => candidate.toLowerCase())
+    .filter((candidate) => candidate !== root
+      && (root === "." ? candidate !== "." : candidate.startsWith(`${root}/`)));
+}
+
+function projectPathHasNestedBoundary(candidate, projectRoot, projectRoots) {
+  const normalizedCandidate = candidate.toLowerCase();
+  return nestedProjectRoots(projectRoot, projectRoots)
+    .some((nestedRoot) => normalizedCandidate === nestedRoot
+      || normalizedCandidate.startsWith(`${nestedRoot}/`));
+}
+
+function projectOwnsPath(candidate, projectRoot, projectRoots) {
+  const normalizedCandidate = candidate.toLowerCase();
+  const root = projectRoot.toLowerCase();
+  if (projectPathHasNestedBoundary(normalizedCandidate, root, projectRoots)) return false;
+  if (root === ".") return true;
+  return normalizedCandidate === root
+    || normalizedCandidate.startsWith(`${root}/`)
+    || root.startsWith(`${normalizedCandidate}/`);
+}
+
+function sharedFileWithinProjectScope(directory, projectRoot, projectRoots) {
+  if (directory === ".") return true;
+  return projectOwnsPath(directory, projectRoot, projectRoots);
+}
+
 function claimMatchesProject(claim, project, projectRoots) {
   if (claim === ".") return true;
   const root = project.root.toLowerCase();
   const manifest = project.manifest.toLowerCase();
   if (claim === manifest || claim === root) return true;
-  if (root === ".") {
-    const nestedRoots = projectRoots
-      .map((candidate) => candidate.toLowerCase())
-      .filter((candidate) => candidate !== ".");
-    // A root project owns claims outside confirmed nested project boundaries.
-    return !nestedRoots.some((candidate) => claim === candidate || claim.startsWith(`${candidate}/`));
-  }
-  return claim.startsWith(`${root}/`) || root.startsWith(`${claim}/`);
+  return projectOwnsPath(claim, root, projectRoots);
 }
 
 function isSharedDotNetClaim(claim) {
   return SHARED_DOTNET_FILES.has(path.posix.basename(claim).toLowerCase());
 }
 
-function claimMatchesSharedDotNetFile(claim, project) {
+function claimMatchesSharedDotNetFile(claim, project, projectRoots) {
   if (!project.dotnet || !isSharedDotNetClaim(claim)) return false;
   const directory = path.posix.dirname(claim).toLowerCase();
-  const root = project.root.toLowerCase();
-  return directory === "." || root === directory || root.startsWith(`${directory}/`);
+  return sharedFileWithinProjectScope(directory, project.root, projectRoots);
 }
 
 function isSharedNodeClaim(claim) {
@@ -970,17 +1084,7 @@ function isSharedNodeClaim(claim) {
 function claimMatchesSharedNodeFile(claim, project, projectRoots) {
   if (!project.nodejs || !isSharedNodeClaim(claim)) return false;
   const directory = path.posix.dirname(claim).toLowerCase();
-  const root = project.root.toLowerCase();
-  if (root === "." && directory !== ".") {
-    const nestedRoots = projectRoots
-      .map((candidate) => candidate.toLowerCase())
-      .filter((candidate) => candidate !== ".");
-    if (nestedRoots.some((candidate) => directory === candidate || directory.startsWith(`${candidate}/`))) return false;
-  }
-  return directory === "."
-    || root === directory
-    || root.startsWith(`${directory}/`)
-    || directory.startsWith(`${root}/`);
+  return sharedFileWithinProjectScope(directory, project.root, projectRoots);
 }
 
 function claimMatchesNodeWorkspaceManifest(claim, project, projects) {
@@ -1033,19 +1137,9 @@ function parseSolutionMembership(text, extension, solutionPath, targetRoot) {
   return uniqueSorted(members);
 }
 
-function sharedNodeSignalApplies(sharedFile, projectRoot, nodeProjectRoots) {
+function sharedNodeSignalApplies(sharedFile, projectRoot, projectRoots) {
   const sharedDirectory = path.posix.dirname(sharedFile).toLowerCase();
-  const root = projectRoot.toLowerCase();
-  if (root === "." && sharedDirectory !== ".") {
-    const nestedRoots = nodeProjectRoots
-      .map((candidate) => candidate.toLowerCase())
-      .filter((candidate) => candidate !== ".");
-    if (nestedRoots.some((candidate) => sharedDirectory === candidate || sharedDirectory.startsWith(`${candidate}/`))) return false;
-  }
-  return sharedDirectory === "."
-    || root === sharedDirectory
-    || root.startsWith(`${sharedDirectory}/`)
-    || sharedDirectory.startsWith(`${root}/`);
+  return sharedFileWithinProjectScope(sharedDirectory, projectRoot, projectRoots);
 }
 
 async function inspectProject(manifestInfo, targetRoot, budget, manifestInfos, sharedFiles) {
@@ -1086,11 +1180,9 @@ async function inspectProject(manifestInfo, targetRoot, budget, manifestInfos, s
 
   if (manifestInfo.kind === "nodejs") {
     const parsed = parsePackageJson(manifestText ?? "");
-    const nodeProjectRoots = manifestInfos
-      .filter((candidate) => candidate.kind === "nodejs")
+    const projectRoots = manifestInfos
       .map((candidate) => portableRelative(targetRoot, path.dirname(candidate.path)));
-    const nestedRoots = nodeProjectRoots
-      .filter((candidate) => candidate !== projectRoot && candidate.startsWith(`${projectRoot}/`))
+    const nestedRoots = nestedProjectRoots(projectRoot, projectRoots)
       .map((candidate) => path.resolve(targetRoot, candidate));
     const primarySignals = [];
     for (const dependency of parsed.backendDependencySignals) primarySignals.push(`${manifestRelative}:${dependency}`);
@@ -1111,7 +1203,7 @@ async function inspectProject(manifestInfo, targetRoot, budget, manifestInfos, s
     for (const dependency of parsed.supportingDependencies) supportingSignals.push(`${manifestRelative}:supportingDependency=${dependency}`);
     for (const sharedFile of sharedFiles) {
       const relative = portableRelative(targetRoot, sharedFile.path);
-      if (sharedNodeSignalApplies(relative, projectRoot, nodeProjectRoots)) {
+      if (sharedNodeSignalApplies(relative, projectRoot, projectRoots)) {
         supportingSignals.push(`${relative}:node-scope`);
       }
     }
@@ -1195,7 +1287,7 @@ export async function detectProjectEvidence(target, { claims = [], limits = {} }
       if (solutionClaims.includes(claim)) {
         return project.dotnet && solutionMembership.get(claim).includes(project.manifest.toLowerCase());
       }
-      if (isSharedDotNetClaim(claim)) return claimMatchesSharedDotNetFile(claim, project);
+      if (isSharedDotNetClaim(claim)) return claimMatchesSharedDotNetFile(claim, project, projectRoots);
       if (isSharedNodeClaim(claim)) return claimMatchesSharedNodeFile(claim, project, projectRoots);
       return claimMatchesProject(claim, project, projectRoots)
         || claimMatchesNodeWorkspaceManifest(claim, project, projects);

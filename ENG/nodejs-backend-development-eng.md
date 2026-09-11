@@ -77,6 +77,15 @@ The project detector uses three independent strong signals:
    `node:net`, `node:tls`, or `node:dgram`. Legacy bare equivalents are
    accepted only in the same narrow syntactic forms.
 
+The source rule is deliberately conservative. Comments and template-literal
+text do not count; TypeScript type-only imports/exports and declaration files
+(`*.d.ts`, `*.d.mts`, and `*.d.cts`) do not count; and source beneath
+`test`, `tests`, `__tests__`, `fixtures`, `mocks`, `examples`, `docs`,
+`coverage`, `dist`, `build`, `node_modules`, `.next`, or `.turbo` does not
+provide runtime evidence. Bounded source and manifest reads are discovery
+signals only. Confirmed nested Flutter, .NET, and Node project roots form
+framework-agnostic ownership boundaries for scans, claims, and shared files.
+
 `engines.node`, `type`, `packageManager`, workspaces, lockfiles, `.nvmrc`,
 `.node-version`, `@types/node`, TypeScript, `tsx`, Docker, and CI are
 supporting context. They can guide scope matching but cannot replace primary
@@ -100,8 +109,8 @@ Resolve conflicts in this order:
 Before implementation, inspect the smallest complete set of sources that can
 explain the change:
 
-- `package.json` files from the affected package root and confirmed nested
-  package roots;
+- bounded `package.json` files from the affected package root and confirmed
+  nested package roots;
 - the lockfile and package-manager configuration that owns that root;
 - `.nvmrc`, `.node-version`, `.tool-versions`, CI runtime setup, and container
   base images when they affect the executable environment;
@@ -521,7 +530,8 @@ Reject these shortcuts during review:
   sibling backend guide;
 - executing package scripts, installing dependencies, importing source, or
   making network calls during project detection;
-- reading unbounded manifests or following symlinks outside the target;
+- reading unbounded manifests or source files, treating comments/type-only
+  declarations as runtime evidence, or following symlinks outside the target;
 - placing business logic in framework middleware or a controller until it is
   impossible to test without the framework;
 - swallowing promise rejections, timeout, abort, or shutdown errors;
@@ -551,10 +561,18 @@ Before completion, confirm the applicable items:
 
 ## 21. Sources and further reading
 
-Prefer the documentation for the pinned versions in the repository. Useful
-primary references include:
+Prefer the documentation for the pinned versions in the repository. Latest or
+Current Node.js documentation is not an automatic production target: establish
+the repository's runtime truth first, use documentation for the matching major,
+and do not migrate merely because a newer Current release exists. For greenfield
+production services, prefer a supported LTS release unless a documented
+requirement justifies Current.
+
+Useful primary references include:
 
 - [Node.js documentation](https://nodejs.org/docs/latest/api/)
+- [Node.js LLM documentation index](https://nodejs.org/docs/latest-v26.x/llms.txt)
+- [Node.js release policy](https://nodejs.org/en/about/previous-releases)
 - [Node.js HTTP](https://nodejs.org/api/http.html), [HTTP/2](https://nodejs.org/api/http2.html),
   [net](https://nodejs.org/api/net.html), and [TLS](https://nodejs.org/api/tls.html)
 - [Node.js package exports](https://nodejs.org/api/packages.html)

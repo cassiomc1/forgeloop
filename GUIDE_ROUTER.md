@@ -265,11 +265,15 @@ configuration, or operational contract changes.
 
 The route command obtains this evidence from
 `src/core/project-detection.js`. It walks bounded, non-symlinked manifests and
-source files, isolates nested `package.json` roots, recognizes workspace-root
-and shared lockfile scope, and preserves `projectEvidence.schemaVersion: 1`.
-Mixed Flutter/.NET/Node repositories retain each confirmed framework; a claim
-that does not reach a confirmed Node project produces
-`NO_NODEJS_SCOPE_MATCH` or leaves the specialist excluded.
+source files, isolates nested project roots across Flutter, .NET, and Node.js,
+recognizes workspace-root and shared lockfile scope, and preserves
+`projectEvidence.schemaVersion: 1`. Node source evidence ignores comments,
+template text, type-only imports/exports, declaration files, and non-runtime
+directories such as tests, fixtures, examples, docs, build output, and package
+caches. Mixed Flutter/.NET/Node repositories retain each confirmed framework;
+claims and shared files stop at the same nested ownership boundaries. A claim
+that does not reach a confirmed Node project produces `NO_NODEJS_SCOPE_MATCH`
+or leaves the specialist excluded.
 
 ```bash
 rg -n '^## |activation|runtime|architecture|Express|Fastify|NestJS|security|testing|performance|deployment|Definition of Done' ENG/nodejs-backend-development-eng.md
@@ -342,8 +346,12 @@ canonical insertion order. A matching Flutter project adds `flutter` plus the
   and UI-copy work do not activate the specialist. A matching .NET project adds
   `dotnet` plus the `clean`/`test` baseline and records ASP.NET Core/ABP reasons
   on that guide. A matching Node.js project adds `nodejs` plus the `clean`/`test`
-  baseline and records dependency, direct-script, and server-runtime reasons as
-  applicable. Unknown or duplicate signals fail with a routing error.
+  baseline and records `PROJECT_NODEJS_CONFIRMED`; dependency, direct-script,
+  and server-runtime reasons are optional enrichments when the corresponding
+  primary signals are present. The public `frameworks` field remains the
+  authority for the confirmed framework; the router does not reverse-engineer
+  Node selection from private signal substrings. Unknown or duplicate signals
+  fail with a routing error.
 
 Every selected guide has stable reason codes such as
 `WORK_COMPLETE_WEBSITE`, `SURFACE_UI`, `RISK_UNTRUSTED_INPUT`, and
@@ -353,7 +361,8 @@ Every selected guide has stable reason codes such as
   `PROJECT_FLUTTER_SDK_DEPENDENCY`, `PROJECT_FLUTTER_BASELINE`,
   `NO_FLUTTER_PRIMARY_EVIDENCE`, `NO_FLUTTER_SCOPE_MATCH`, and
   `NO_FLUTTER_EXECUTABLE_WORK`.
-  Node.js uses `PROJECT_NODEJS_BACKEND_FRAMEWORK`,
+  Node.js uses `PROJECT_NODEJS_CONFIRMED`,
+  `PROJECT_NODEJS_BACKEND_FRAMEWORK`,
   `PROJECT_NODEJS_RUNTIME_SCRIPT`, `PROJECT_NODEJS_SERVER_RUNTIME`,
   `PROJECT_NODEJS_BASELINE`, `NO_NODEJS_PRIMARY_EVIDENCE`,
   `NO_NODEJS_SCOPE_MATCH`, and `NO_NODEJS_EXECUTABLE_WORK`.
@@ -387,8 +396,16 @@ Negative routing guarantees:
   lockfile-only, Docker-only, and CI-only evidence does not activate `nodejs`;
 - Node.js detection does not execute package scripts, import source, install
   dependencies, follow symlinks, read unbounded files, or make network calls;
+- comments, template text, type-only imports/exports, declaration files, and
+  test/fixture/example/documentation/build/cache directories do not create
+  Node.js runtime evidence;
+- a `MATCH` or `UNSCOPED` public `projectEvidence` object whose frameworks
+  include `nodejs` selects the Node.js guide for executable work even when its
+  primary signal list is empty; signal details only enrich the reason list;
 - a workspace root may scope confirmed Node descendants, but a frontend or
-  unrelated nested package remains isolated;
+  unrelated nested package remains isolated, and nested project boundaries are
+  applied consistently to Flutter, .NET, Node source scans, claims, and shared
+  files;
 - documentation, UI-copy, and mobile-only work do not activate the Node.js
   specialist even when the repository contains a confirmed Node package;
 - `flutter_test`, a Flutter word in documentation, or a lockfile package does

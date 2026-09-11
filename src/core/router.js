@@ -159,6 +159,7 @@ function addNodeJsProjectGuides(input, add) {
   if (!projectEvidence?.frameworks.includes("nodejs")
     || !["MATCH", "UNSCOPED"].includes(projectEvidence.scope)
     || !hasNodeJsWorkContext(input.workType)) return;
+  add("nodejs", "PROJECT_NODEJS_CONFIRMED");
   if (projectEvidence.primarySignals.some((signal) => signal.includes(":dependencies.") || signal.includes(":optionalDependencies."))) {
     add("nodejs", "PROJECT_NODEJS_BACKEND_FRAMEWORK");
   }

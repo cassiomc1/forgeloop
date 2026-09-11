@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, rm, symlink, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, rm, symlink, truncate, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -8,6 +8,7 @@ import {
   detectProjectEvidence,
   parsePackageJson,
   PROJECT_DETECTION_LIMITS,
+  readBounded,
 } from "../src/core/project-detection.js";
 import { evaluateRoute } from "../src/core/router.js";
 
@@ -70,7 +71,7 @@ test("Express and Fastify runtime dependencies select the Node.js specialist", a
 
     const route = evaluateRoute({ workType: "backend", projectEvidence: evidence });
     assert.deepEqual(route.guides, ["nodejs", "clean", "test"]);
-    assert.deepEqual(route.reasons.nodejs, ["PROJECT_NODEJS_BACKEND_FRAMEWORK"]);
+    assert.deepEqual(route.reasons.nodejs, ["PROJECT_NODEJS_CONFIRMED", "PROJECT_NODEJS_BACKEND_FRAMEWORK"]);
   });
 });
 
@@ -90,7 +91,10 @@ test("direct node scripts and raw HTTP server imports provide distinct routing r
     assert.deepEqual(evidence.frameworks, ["nodejs"]);
     assert.ok(evidence.primarySignals.includes("package.json:scripts.dev=node"));
     assert.equal(evidence.primarySignals.some((signal) => signal.includes(":import=node:http")), false);
-    assert.deepEqual(evaluateRoute({ workType: "code", projectEvidence: evidence }).reasons.nodejs, ["PROJECT_NODEJS_RUNTIME_SCRIPT"]);
+    assert.deepEqual(evaluateRoute({ workType: "code", projectEvidence: evidence }).reasons.nodejs, [
+      "PROJECT_NODEJS_CONFIRMED",
+      "PROJECT_NODEJS_RUNTIME_SCRIPT",
+    ]);
 
     const sourceOnly = await temporaryProject("forgeloop-nodejs-source-only-", async (sourceTarget) => {
       await writePackage(sourceTarget, "package.json", { name: "source-only", type: "module" });
@@ -104,7 +108,37 @@ test("direct node scripts and raw HTTP server imports provide distinct routing r
     assert.ok(sourceOnly.primarySignals.includes("src/server.mjs:import=node:https"));
 
     const route = evaluateRoute({ workType: "code", projectEvidence: sourceOnly });
-    assert.deepEqual(route.reasons.nodejs, ["PROJECT_NODEJS_SERVER_RUNTIME"]);
+    assert.deepEqual(route.reasons.nodejs, ["PROJECT_NODEJS_CONFIRMED", "PROJECT_NODEJS_SERVER_RUNTIME"]);
+  });
+});
+
+test("source evidence ignores comments, type-only imports, declarations, generic built-ins, and non-runtime directories", async () => {
+  await temporaryProject("forgeloop-nodejs-source-negative-", async (target) => {
+    await writePackage(target, "package.json", { name: "source-negative", type: "module" });
+    const files = {
+      "src/comments.js": [
+        "// import http from \"node:http\";",
+        "/*",
+        "const net = require(\"node:net\");",
+        "*/",
+        "// require(\"http\")",
+      ].join("\n"),
+      "src/type-only.ts": "import type { Server } from \"node:http\";\n",
+      "src/type-only-export.ts": "export type { Server } from \"node:http\";\n",
+      "types/server.d.ts": "import type { Server } from \"node:http\";\n",
+      "src/tool.js": "import fs from \"node:fs\";\n",
+      "tests/fixture.mjs": "import http from \"node:http\";\n",
+      "examples/example.mjs": "const http = require(\"node:http\");\n",
+    };
+    for (const [relativePath, source] of Object.entries(files)) {
+      const filePath = path.join(target, relativePath);
+      await mkdir(path.dirname(filePath), { recursive: true });
+      await writeFile(filePath, source, "utf8");
+    }
+
+    const evidence = await detectProjectEvidence(target);
+    assert.deepEqual(evidence.frameworks, []);
+    assert.deepEqual(evidence.primarySignals, []);
   });
 });
 
@@ -157,6 +191,19 @@ test("malformed and oversized package manifests fail closed", async () => {
   });
 });
 
+test("bounded file reads reject oversized files without materializing the full file", async () => {
+  await temporaryProject("forgeloop-nodejs-bounded-read-", async (target) => {
+    const packagePath = path.join(target, "package.json");
+    await writeFile(packagePath, "", "utf8");
+    await truncate(packagePath, PROJECT_DETECTION_LIMITS.maxManifestBytes + 1);
+
+    assert.equal(await readBounded(packagePath, PROJECT_DETECTION_LIMITS.maxManifestBytes), null);
+    const evidence = await detectProjectEvidence(target);
+    assert.deepEqual(evidence.frameworks, []);
+    assert.deepEqual(evidence.primarySignals, []);
+  });
+});
+
 test("nested workspace projects remain isolated and workspace-root claims include confirmed descendants", async () => {
   await temporaryProject("forgeloop-nodejs-nested-scope-", async (target) => {
     await writePackage(target, "package.json", { name: "workspace", workspaces: ["services/*"] });
@@ -188,6 +235,118 @@ test("nested workspace projects remain isolated and workspace-root claims includ
     const unrelated = await detectProjectEvidence(target, { claims: ["README.md"] });
     assert.equal(unrelated.scope, "MATCH");
     assert.deepEqual(unrelated.frameworks, []);
+  });
+});
+
+test("Node source scanning and claims stop at nested Flutter and .NET boundaries", async () => {
+  await temporaryProject("forgeloop-nodejs-cross-stack-boundaries-", async (target) => {
+    await writePackage(target, "packages/platform/package.json", { name: "platform", type: "module" });
+    await mkdir(path.join(target, "packages/platform/mobile/src"), { recursive: true });
+    await writeFile(
+      path.join(target, "packages/platform/mobile/pubspec.yaml"),
+      "name: mobile\ndependencies:\n  flutter:\n    sdk: flutter\n",
+      "utf8",
+    );
+    await writeFile(
+      path.join(target, "packages/platform/mobile/src/server.mjs"),
+      "import http from \"node:http\";\n",
+      "utf8",
+    );
+    await mkdir(path.join(target, "packages/platform/services/api"), { recursive: true });
+    await writeFile(
+      path.join(target, "packages/platform/services/api/Api.csproj"),
+      "<Project Sdk=\"Microsoft.NET.Sdk.Web\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>\n",
+      "utf8",
+    );
+    await writeFile(
+      path.join(target, "packages/platform/services/api/tool.mjs"),
+      "const http = require(\"node:http\");\n",
+      "utf8",
+    );
+
+    const evidence = await detectProjectEvidence(target);
+    assert.deepEqual(evidence.frameworks, ["aspnetcore", "dotnet", "flutter"]);
+    assert.equal(evidence.frameworks.includes("nodejs"), false);
+
+    const parentClaim = await detectProjectEvidence(target, {
+      claims: ["packages/platform/package.json"],
+    });
+    assert.deepEqual(parentClaim.projectRoots, ["packages/platform"]);
+    assert.deepEqual(parentClaim.frameworks, []);
+    assert.deepEqual(parentClaim.primarySignals, []);
+  });
+});
+
+test("nested Node shared files remain with the child at arbitrary depth", async () => {
+  await temporaryProject("forgeloop-nodejs-nested-shared-scope-", async (target) => {
+    await writePackage(target, "packages/platform/package.json", {
+      name: "platform",
+      dependencies: { express: "^5.0.0" },
+    });
+    await writePackage(target, "packages/platform/services/api/package.json", {
+      name: "api",
+      dependencies: { fastify: "^5.0.0" },
+    });
+    await writeFile(
+      path.join(target, "packages/platform/services/api/package-lock.json"),
+      "{\"lockfileVersion\": 3}\n",
+      "utf8",
+    );
+
+    const childLockfile = await detectProjectEvidence(target, {
+      claims: ["packages/platform/services/api/package-lock.json"],
+    });
+    assert.deepEqual(childLockfile.projectRoots, ["packages/platform/services/api"]);
+    assert.deepEqual(childLockfile.frameworks, ["nodejs"]);
+    assert.ok(childLockfile.primarySignals.includes("packages/platform/services/api/package.json:dependencies.fastify"));
+
+    const parentManifest = await detectProjectEvidence(target, {
+      claims: ["packages/platform/package.json"],
+    });
+    assert.deepEqual(parentManifest.projectRoots, ["packages/platform"]);
+    assert.ok(parentManifest.primarySignals.includes("packages/platform/package.json:dependencies.express"));
+  });
+});
+
+test("Flutter and .NET parents remain isolated from nested Node packages", async () => {
+  await temporaryProject("forgeloop-flutter-parent-node-child-", async (target) => {
+    await mkdir(path.join(target, "apps/mobile"), { recursive: true });
+    await writeFile(
+      path.join(target, "apps/mobile/pubspec.yaml"),
+      "name: mobile\ndependencies:\n  flutter:\n    sdk: flutter\n",
+      "utf8",
+    );
+    await writePackage(target, "apps/mobile/packages/api/package.json", {
+      name: "api",
+      dependencies: { express: "^5.0.0" },
+    });
+
+    const flutter = await detectProjectEvidence(target, { claims: ["apps/mobile/pubspec.yaml"] });
+    assert.deepEqual(flutter.projectRoots, ["apps/mobile"]);
+    assert.deepEqual(flutter.frameworks, ["flutter"]);
+    const node = await detectProjectEvidence(target, { claims: ["apps/mobile/packages/api/package.json"] });
+    assert.deepEqual(node.projectRoots, ["apps/mobile/packages/api"]);
+    assert.deepEqual(node.frameworks, ["nodejs"]);
+  });
+
+  await temporaryProject("forgeloop-dotnet-parent-node-child-", async (target) => {
+    await mkdir(path.join(target, "services/api"), { recursive: true });
+    await writeFile(
+      path.join(target, "services/api/Api.csproj"),
+      "<Project Sdk=\"Microsoft.NET.Sdk.Web\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>\n",
+      "utf8",
+    );
+    await writePackage(target, "services/api/tools/node/package.json", {
+      name: "tool",
+      dependencies: { fastify: "^5.0.0" },
+    });
+
+    const dotnet = await detectProjectEvidence(target, { claims: ["services/api/Api.csproj"] });
+    assert.deepEqual(dotnet.projectRoots, ["services/api"]);
+    assert.deepEqual(dotnet.frameworks, ["aspnetcore", "dotnet"]);
+    const node = await detectProjectEvidence(target, { claims: ["services/api/tools/node/package.json"] });
+    assert.deepEqual(node.projectRoots, ["services/api/tools/node"]);
+    assert.deepEqual(node.frameworks, ["nodejs"]);
   });
 });
 
