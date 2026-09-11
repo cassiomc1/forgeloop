@@ -7,6 +7,7 @@ import { createReceipt } from "./receipt.js";
 import { currentRepositoryFingerprint } from "./repository.js";
 import { taskArtifactPath } from "./task-paths.js";
 import { classifyLoadedWorkState, readWorkState, mutateWorkState } from "./work-state.js";
+import { classifyRequirement } from "./evidence-readiness.js";
 
 export const RECONCILE_EVENT = "CHECKPOINT_RECONCILED";
 
@@ -133,7 +134,9 @@ export async function runReconcileClosure({
     if (typeof item === "string") {
       return item === requirement;
     }
-    return item.type === "VERIFICATION" && item.id === checkId && item.text === requirement;
+    return classifyRequirement(item).type === "VERIFICATION"
+      && item.id === checkId
+      && item.text === requirement;
   });
   if (!verificationItem) {
     throw reconcileError(
