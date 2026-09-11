@@ -111,6 +111,12 @@ test(".NET specialist is registered with the canonical guide path", () => {
   assert.ok(GUIDE_IDS.includes("dotnet"));
 });
 
+test("Node.js specialist is registered with the canonical guide path", () => {
+  assert.equal(GUIDE_REGISTRY.nodejs.path, "ENG/nodejs-backend-development-eng.md");
+  assert.equal(GUIDE_REGISTRY.nodejs.install, true);
+  assert.ok(GUIDE_IDS.includes("nodejs"));
+});
+
 test("ui-copy routes to design and accessibility, never documentation", () => {
   const result = evaluateRoute({
     workType: "ui-copy",
