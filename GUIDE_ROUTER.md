@@ -245,9 +245,10 @@ rg -n '^## |architecture|dependency injection|middleware|endpoints|configuration
 **Activate when:** a confirmed project root has a valid `package.json` with an
 allowlisted runtime backend dependency (`express`, `fastify`, `@nestjs/core`,
 `koa`, or `@hapi/hapi`), a direct `node`/`node.exe` runtime script, or bounded
-source evidence importing a Node server/network built-in such as `node:http`,
-`node:https`, `node:http2`, `node:net`, `node:tls`, or `node:dgram`, and the task
-scope intersects that root.
+source evidence importing or re-exporting a Node server/network built-in such
+as `node:http`, `node:https`, `node:http2`, `node:net`, `node:tls`, or `node:dgram`
+from a plausible runtime application surface, and the task scope intersects
+that root.
 
 **Do not activate merely because:** a `package.json`, `engines.node`, `type`,
 `packageManager`, lockfile, `.nvmrc`, `.node-version`, `@types/node`,
@@ -268,12 +269,18 @@ The route command obtains this evidence from
 source files, isolates nested project roots across Flutter, .NET, and Node.js,
 recognizes workspace-root and shared lockfile scope, and preserves
 `projectEvidence.schemaVersion: 1`. Node source evidence ignores comments,
-template text, type-only imports/exports, declaration files, and non-runtime
-directories such as tests, fixtures, examples, docs, build output, and package
-caches. Mixed Flutter/.NET/Node repositories retain each confirmed framework;
-claims and shared files stop at the same nested ownership boundaries. A claim
-that does not reach a confirmed Node project produces `NO_NODEJS_SCOPE_MATCH`
-or leaves the specialist excluded.
+template text, `import type`/`export type`, inline type-only specifiers,
+declaration files, tooling/configuration filenames, and non-runtime directories
+such as tests, fixtures, examples, docs, build output, scripts, tools, codegen,
+and package caches. A mixed declaration counts only when a runtime value
+specifier is safely recognized; unsupported complex declarations fail closed.
+Runtime re-exports with a value specifier are included because the specialist
+covers Node.js server/runtime library surfaces as well as services and workers.
+Node.js execution used only for build, test, or configuration tooling is not
+sufficient backend/runtime evidence. Mixed Flutter/.NET/Node repositories
+retain each confirmed framework; claims and shared files stop at the same
+nested ownership boundaries. A claim that does not reach a confirmed Node
+project produces `NO_NODEJS_SCOPE_MATCH` or leaves the specialist excluded.
 
 ```bash
 rg -n '^## |activation|runtime|architecture|Express|Fastify|NestJS|security|testing|performance|deployment|Definition of Done' ENG/nodejs-backend-development-eng.md
@@ -391,14 +398,16 @@ Negative routing guarantees:
 - static UI copy does not activate `security` without a trust-boundary signal;
 - a package file alone does not prove that Node is an affected task surface;
 - a valid `package.json` without an allowlisted runtime dependency, direct Node
-  runtime script, or narrow server-builtin import does not activate `nodejs`;
+  runtime script, or narrow server-builtin import from a plausible runtime
+  surface does not activate `nodejs`;
 - React/Vite, Next-only, engines-only, `@types/node`-only, devDependency-only,
   lockfile-only, Docker-only, and CI-only evidence does not activate `nodejs`;
 - Node.js detection does not execute package scripts, import source, install
   dependencies, follow symlinks, read unbounded files, or make network calls;
-- comments, template text, type-only imports/exports, declaration files, and
-  test/fixture/example/documentation/build/cache directories do not create
-  Node.js runtime evidence;
+- comments, template text, `import type`/`export type`, inline type-only
+  specifiers, declaration files, tooling/configuration files, and
+  test/fixture/example/documentation/build/script/tool/codegen/cache directories
+  do not create Node.js runtime evidence;
 - a `MATCH` or `UNSCOPED` public `projectEvidence` object whose frameworks
   include `nodejs` selects the Node.js guide for executable work even when its
   primary signal list is empty; signal details only enrich the reason list;

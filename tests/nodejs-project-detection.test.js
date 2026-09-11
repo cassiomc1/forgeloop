@@ -126,6 +126,9 @@ test("source evidence ignores comments, type-only imports, declarations, generic
       "src/type-only.ts": "import type { Server } from \"node:http\";\n",
       "src/type-only-export.ts": "export type { Server } from \"node:http\";\n",
       "types/server.d.ts": "import type { Server } from \"node:http\";\n",
+      "types/server.d.mts": "import { type Server } from \"node:http\";\n",
+      "types/server.d.cts": "const http = require(\"node:http\");\n",
+      "src/template.js": "const source = `import http from \"node:http\";`;\n",
       "src/tool.js": "import fs from \"node:fs\";\n",
       "tests/fixture.mjs": "import http from \"node:http\";\n",
       "examples/example.mjs": "const http = require(\"node:http\");\n",
@@ -140,6 +143,80 @@ test("source evidence ignores comments, type-only imports, declarations, generic
     assert.deepEqual(evidence.frameworks, []);
     assert.deepEqual(evidence.primarySignals, []);
   });
+});
+
+test("raw Node workers remain detectable through an explicit runtime script", async () => {
+  await temporaryProject("forgeloop-nodejs-worker-runtime-", async (target) => {
+    await writePackage(target, "package.json", {
+      name: "worker",
+      scripts: { start: "node src/worker.js" },
+    });
+    await mkdir(path.join(target, "src"), { recursive: true });
+    await writeFile(path.join(target, "src", "worker.js"), "await runJob();\n", "utf8");
+    const evidence = await detectProjectEvidence(target);
+    assert.deepEqual(evidence.frameworks, ["nodejs"]);
+    assert.ok(evidence.primarySignals.includes("package.json:scripts.start=node"));
+  });
+});
+
+test("TypeScript inline type-only specifiers do not create runtime evidence, while mixed specifiers do", async () => {
+  const negativeSources = [
+    ["import-inline-type-only", "import { type Server } from \"node:http\";\n"],
+    ["export-inline-type-only", "export { type Server } from \"node:http\";\n"],
+    ["multiline-inline-type-only", "import {\n  type Server,\n  type IncomingMessage\n} from \"node:http\";\n"],
+  ];
+  for (const [name, source] of negativeSources) {
+    await temporaryProject(`forgeloop-nodejs-${name}-`, async (target) => {
+      await writePackage(target, "package.json", { name, type: "module" });
+      await mkdir(path.join(target, "src"), { recursive: true });
+      await writeFile(path.join(target, "src", "server.ts"), source, "utf8");
+      const evidence = await detectProjectEvidence(target);
+      assert.deepEqual(evidence.frameworks, [], name);
+      assert.deepEqual(evidence.primarySignals, [], name);
+    });
+  }
+
+  const positiveSources = [
+    ["import-mixed-specifiers", "import { type Server, createServer } from \"node:http\";\n"],
+    ["export-mixed-specifiers", "export { type Server, createServer } from \"node:http\";\n"],
+    ["named-type-value", "import { type } from \"node:http\";\n"],
+  ];
+  for (const [name, source] of positiveSources) {
+    await temporaryProject(`forgeloop-nodejs-${name}-`, async (target) => {
+      await writePackage(target, "package.json", { name, type: "module" });
+      await mkdir(path.join(target, "src"), { recursive: true });
+      await writeFile(path.join(target, "src", "server.ts"), source, "utf8");
+      const evidence = await detectProjectEvidence(target);
+      assert.deepEqual(evidence.frameworks, ["nodejs"], name);
+      assert.ok(evidence.primarySignals.includes("src/server.ts:import=node:http")
+        || evidence.primarySignals.includes("src/server.ts:export=node:http"), name);
+    });
+  }
+});
+
+test("Node tooling and configuration source do not classify a frontend package as a backend", async () => {
+  const toolingFiles = [
+    ["vite.config.ts", "import { createServer } from \"node:http\";\n"],
+    ["webpack.config.js", "const http = require(\"node:http\");\n"],
+    ["something.config.ts", "import http from \"node:http\";\n"],
+    ["scripts/build.js", "import { createServer } from \"node:http\";\n"],
+    ["tools/generate.mjs", "const http = require(\"node:http\");\n"],
+  ];
+  for (const [relativePath, source] of toolingFiles) {
+    await temporaryProject("forgeloop-nodejs-tooling-negative-", async (target) => {
+      await writePackage(target, "package.json", {
+        name: "frontend-tooling",
+        dependencies: { react: "^19.0.0", vite: "^7.0.0" },
+        scripts: { dev: "vite" },
+      });
+      const filePath = path.join(target, relativePath);
+      await mkdir(path.dirname(filePath), { recursive: true });
+      await writeFile(filePath, source, "utf8");
+      const evidence = await detectProjectEvidence(target);
+      assert.deepEqual(evidence.frameworks, [], relativePath);
+      assert.deepEqual(evidence.primarySignals, [], relativePath);
+    });
+  }
 });
 
 test("supporting-only and frontend evidence never activates the Node.js specialist", async () => {

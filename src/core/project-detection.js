@@ -87,6 +87,47 @@ const NODE_NON_RUNTIME_DIRECTORIES = new Set([
   "node_modules",
   ".next",
   ".turbo",
+  ".storybook",
+  "storybook",
+  "scripts",
+  "tools",
+  "tooling",
+  "config",
+  "configs",
+  "codegen",
+  "generator",
+  "generators",
+]);
+const NODE_RUNTIME_SOURCE_DIRECTORIES = new Set([
+  "api",
+  "app",
+  "apps",
+  "backend",
+  "lib",
+  "runtime",
+  "server",
+  "servers",
+  "service",
+  "services",
+  "src",
+  "worker",
+  "workers",
+]);
+const NODE_RUNTIME_ENTRY_NAMES = new Set([
+  "api",
+  "app",
+  "bootstrap",
+  "daemon",
+  "entry",
+  "http",
+  "https",
+  "index",
+  "main",
+  "network",
+  "runtime",
+  "server",
+  "service",
+  "worker",
 ]);
 const NODE_SERVER_BUILTINS = Object.freeze([
   "node:http",
@@ -551,16 +592,72 @@ function maskJavaScriptCommentsAndTemplates(text) {
   return result;
 }
 
-function packageServerBuiltin(text) {
-  if (typeof text !== "string") return null;
-  const source = maskJavaScriptCommentsAndTemplates(text);
-  const moduleAlternation = [...NODE_SERVER_BUILTINS]
+function isNodeToolingConfigFile(filePath) {
+  const fileName = path.posix.basename(filePath).toLowerCase();
+  return /\.config\.(?:js|mjs|cjs|ts|mts|cts)$/u.test(fileName);
+}
+
+function isNodeRuntimeSourceFile(filePath) {
+  const normalizedPath = filePath.replaceAll("\\", "/").toLowerCase();
+  if (isNodeToolingConfigFile(normalizedPath)) return false;
+  const segments = normalizedPath.split("/");
+  const fileName = path.posix.basename(normalizedPath);
+  const stem = fileName.slice(0, fileName.lastIndexOf("."));
+  return segments.slice(0, -1).some((segment) => NODE_RUNTIME_SOURCE_DIRECTORIES.has(segment))
+    || NODE_RUNTIME_ENTRY_NAMES.has(stem)
+    || /(?:^|-)(?:server|worker|daemon|service|bootstrap|entry|runtime)(?:-|$)/u.test(stem);
+}
+
+function classifyImportSpecifier(specifier) {
+  if (/^type\s+[A-Za-z_$][\w$]*(?:\s+as\s+[A-Za-z_$][\w$]*)?$/u.test(specifier)) return "type-only";
+  if (/^[A-Za-z_$][\w$]*(?:\s+as\s+[A-Za-z_$][\w$]*)?$/u.test(specifier)) return "runtime";
+  return "unknown";
+}
+
+function classifyImportExportClause(clause) {
+  const trimmed = clause.trim();
+  if (trimmed === "" || /^type(?:\s|\{|\*)/u.test(trimmed)) return "type-only";
+  const openBrace = trimmed.indexOf("{");
+  if (openBrace < 0) return "runtime";
+  const closeBrace = trimmed.lastIndexOf("}");
+  if (closeBrace < openBrace || trimmed.slice(closeBrace + 1).trim() !== "") return "unknown";
+  const prefix = trimmed.slice(0, openBrace).trim();
+  if (prefix && !/^[A-Za-z_$][\w$]*,?$/u.test(prefix)) return "unknown";
+  const specifiers = splitTopLevel(trimmed.slice(openBrace + 1, closeBrace));
+  if (specifiers.length === 0) return "unknown";
+  const classifications = specifiers.map((specifier) => classifyImportSpecifier(specifier.trim()));
+  if (classifications.includes("unknown")) return "unknown";
+  if (prefix || classifications.includes("runtime")) return "runtime";
+  return "type-only";
+}
+
+function nodeServerBuiltinPattern() {
+  return [...NODE_SERVER_BUILTINS]
     .sort((left, right) => right.length - left.length)
     .map((value) => value.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&"))
     .join("|");
+}
+
+function packageImportExportServerBuiltin(source, moduleAlternation) {
+  const declarationPattern = new RegExp(
+    `^\\s*(?:import|export)\\b([\\s\\S]*?)\\bfrom\\s*["'](${moduleAlternation})["']`,
+    "gmu",
+  );
+  for (const match of source.matchAll(declarationPattern)) {
+    const clause = match[1];
+    if (clause.includes(";") || /^\s*(?:import|export)\b/m.test(clause)) continue;
+    if (classifyImportExportClause(clause) === "runtime") return match[2];
+  }
+  return null;
+}
+
+function packageServerBuiltin(text) {
+  if (typeof text !== "string") return null;
+  const source = maskJavaScriptCommentsAndTemplates(text);
+  const moduleAlternation = nodeServerBuiltinPattern();
+  const importedModule = packageImportExportServerBuiltin(source, moduleAlternation);
+  if (importedModule) return importedModule;
   const patterns = [
-    new RegExp(`^\\s*import(?!\\s+type\\b)\\b[^\\n;]*?\\bfrom\\s*["'](${moduleAlternation})["']`, "mu"),
-    new RegExp(`^\\s*export(?!\\s+type\\b)\\b[^\\n;]*?\\bfrom\\s*["'](${moduleAlternation})["']`, "mu"),
     new RegExp(`^\\s*import\\s*["'](${moduleAlternation})["']`, "mu"),
     new RegExp(`^\\s*(?:const|let|var)\\b[^\\n=]*=\\s*require\\(\\s*["'](${moduleAlternation})["']\\s*\\)`, "mu"),
     new RegExp(`^\\s*require\\(\\s*["'](${moduleAlternation})["']\\s*\\)`, "mu"),
@@ -986,7 +1083,8 @@ async function findNodeSourceFiles(root, budget, nestedRoots = []) {
         }
       } else if (entry.isFile()
         && !/\.d\.(?:ts|mts|cts)$/iu.test(entry.name)
-        && NODE_SOURCE_EXTENSIONS.has(path.extname(entry.name).toLowerCase())) {
+        && NODE_SOURCE_EXTENSIONS.has(path.extname(entry.name).toLowerCase())
+        && !isNodeToolingConfigFile(entry.name)) {
         result.push(absolutePath);
       }
     }
@@ -1010,11 +1108,13 @@ async function findNodeServerImports(projectRoot, targetRoot, budget, nestedRoot
   const imports = [];
   const files = await findNodeSourceFiles(projectRoot, budget, nestedRoots);
   for (const filePath of files) {
+    const relative = portableRelative(targetRoot, filePath);
+    if (!isNodeRuntimeSourceFile(relative)) continue;
     const text = await readBounded(filePath, MAX_SOURCE_BYTES);
     const moduleName = packageServerBuiltin(text);
     if (!moduleName) continue;
     imports.push({
-      file: portableRelative(targetRoot, filePath),
+      file: relative,
       module: moduleName,
     });
   }

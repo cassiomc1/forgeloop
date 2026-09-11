@@ -18,11 +18,13 @@ completion-evidence:
 >
 > This guide is activated only by bounded structural evidence for an affected
 > project root: an ordinary `package.json` with an allowlisted runtime backend
-> dependency, a direct Node runtime script, or a valid source file that imports
-> a Node server/network built-in. A `package.json` alone, a frontend package,
-> a lockfile, `engines.node`, `@types/node`, a Dockerfile, or CI setup alone is
-> not backend evidence. Detection is read-only, bounded, non-networking, and
-> never executes package scripts or source code.
+> dependency, a direct Node runtime script, or a valid runtime-surface source
+> file that imports a Node server/network built-in. A `package.json` alone, a
+> frontend package, a lockfile, `engines.node`, `@types/node`, a Dockerfile, or
+> CI setup alone is not backend evidence. Node.js execution used only for build,
+> test, or configuration tooling is not sufficient backend/runtime evidence.
+> Detection is read-only, bounded, non-networking, and never executes package
+> scripts or source code.
 >
 > This guide complements [`clean-code-eng.md`](./clean-code-eng.md) for
 > maintainability, [`test-code-eng.md`](./test-code-eng.md) for verification,
@@ -73,18 +75,31 @@ The project detector uses three independent strong signals:
    `--env-file`. The detector does not follow `npm`, `npx`, arbitrary wrappers,
    substring matches, or prose containing the word `node`.
 3. A bounded JavaScript or TypeScript source scan finds a narrow import,
-   `require`, or dynamic import of `node:http`, `node:https`, `node:http2`,
-   `node:net`, `node:tls`, or `node:dgram`. Legacy bare equivalents are
-   accepted only in the same narrow syntactic forms.
+   re-export, `require`, or dynamic import of `node:http`, `node:https`,
+   `node:http2`, `node:net`, `node:tls`, or `node:dgram`. Legacy bare
+   equivalents are accepted only in the same narrow syntactic forms. Source-
+   only confirmation also requires a plausible runtime application surface,
+   such as `src`, `lib`, `server`, `worker`, `service`, `api`, `backend`, or a
+   recognized runtime-entry filename; generic tooling/configuration surfaces
+   do not qualify.
 
 The source rule is deliberately conservative. Comments and template-literal
-text do not count; TypeScript type-only imports/exports and declaration files
-(`*.d.ts`, `*.d.mts`, and `*.d.cts`) do not count; and source beneath
-`test`, `tests`, `__tests__`, `fixtures`, `mocks`, `examples`, `docs`,
-`coverage`, `dist`, `build`, `node_modules`, `.next`, or `.turbo` does not
-provide runtime evidence. Bounded source and manifest reads are discovery
-signals only. Confirmed nested Flutter, .NET, and Node project roots form
-framework-agnostic ownership boundaries for scans, claims, and shared files.
+text do not count; `import type`, `export type`, `import { type X }`, and
+`export { type X }` do not count when every specifier is type-only; mixed
+declarations count only when a runtime value specifier is safely recognized;
+unsupported complex declarations fail closed. Declaration files (`*.d.ts`,
+`*.d.mts`, and `*.d.cts`) do not count. Source beneath `test`, `tests`,
+`__tests__`, `fixtures`, `mocks`, `examples`, `docs`, `coverage`, `dist`,
+`build`, `scripts`, `tools`, `tooling`, `config`, `configs`, `codegen`,
+`generators`, `node_modules`, `.next`, `.turbo`, or Storybook directories does
+not provide runtime evidence. Common `*.config.js`, `*.config.mjs`,
+`*.config.cjs`, `*.config.ts`, `*.config.mts`, and `*.config.cts` files are
+tooling/configuration surfaces and do not provide source-only evidence.
+Bounded source and manifest reads are discovery signals only. Confirmed nested
+Flutter, .NET, and Node project roots form framework-agnostic ownership
+boundaries for scans, claims, and shared files. Runtime re-exports count when
+they contain at least one safely classified value specifier because the guide
+covers Node.js server/runtime library surfaces as well as services and workers.
 
 `engines.node`, `type`, `packageManager`, workspaces, lockfiles, `.nvmrc`,
 `.node-version`, `@types/node`, TypeScript, `tsx`, Docker, and CI are
@@ -531,7 +546,8 @@ Reject these shortcuts during review:
 - executing package scripts, installing dependencies, importing source, or
   making network calls during project detection;
 - reading unbounded manifests or source files, treating comments/type-only
-  declarations as runtime evidence, or following symlinks outside the target;
+  declarations or build/config tooling as runtime evidence, or following
+  symlinks outside the target;
 - placing business logic in framework middleware or a controller until it is
   impossible to test without the framework;
 - swallowing promise rejections, timeout, abort, or shutdown errors;
