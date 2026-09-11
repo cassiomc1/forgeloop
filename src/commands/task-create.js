@@ -57,6 +57,23 @@ export async function assertNoScopeConflictsWithInspection(claims, existingTasks
   }
 }
 
+async function validateTaskCreateScope({ target, packageRoot, claims, taskId }) {
+  const allTasks = await discoverTasks(target, packageRoot);
+  await assertNoScopeConflictsWithInspection(claims, allTasks, taskId, { target, packageRoot });
+  if (claims.length > 0) await assertScopeClean(target, claims);
+}
+
+function previewResult({ taskId, normalizedClaims, preset, proposedContract }) {
+  return {
+    preview: true,
+    taskId,
+    writeClaims: normalizedClaims,
+    preset,
+    contract: proposedContract,
+    createsLifecycleState: false,
+  };
+}
+
 export async function runTaskCreate({
   target,
   packageRoot,
@@ -109,24 +126,22 @@ export async function runTaskCreate({
     proposedContract = { ...proposedContract, taskId };
   }
 
+  if (proposedContract) await validateContract({ ...proposedContract, taskId }, packageRoot);
+
+  // Preview is advisory: it must never create the claims-lock directory, remove
+  // a stale lock, or fail because another process currently owns the lock.
+  if (preview) {
+    await validateTaskCreateScope({ target, packageRoot, claims: normalizedClaims, taskId });
+    return previewResult({ taskId, normalizedClaims, preset, proposedContract });
+  }
+
   return withProjectClaimsLock(target, async () => {
-    const allTasks = await discoverTasks(target, packageRoot);
-    await assertNoScopeConflictsWithInspection(normalizedClaims, allTasks, taskId, { target, packageRoot });
-    if (normalizedClaims.length > 0) {
-      await assertScopeClean(target, normalizedClaims);
+    // Re-check after acquiring the reservation. Preview results are not a
+    // reservation and the repository may have changed since they were built.
+    if (await findTaskById(target, taskId, packageRoot)) {
+      throw taskError(E_TASK_ALREADY_EXISTS, `Task already exists: ${taskId}`);
     }
-
-    if (preview) {
-      return {
-        preview: true,
-        taskId,
-        writeClaims: normalizedClaims,
-        preset,
-        contract: proposedContract,
-        createsLifecycleState: false,
-      };
-    }
-
+    await validateTaskCreateScope({ target, packageRoot, claims: normalizedClaims, taskId });
     return withTaskTransaction({ target, taskId, operation: "task-create", packageRoot, recordCommitEvent: true }, async () => {
       const descriptor = createTaskDescriptor({
         taskId,

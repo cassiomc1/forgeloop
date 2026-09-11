@@ -29,6 +29,7 @@ import { getPackageRoot } from "../src/core/templates.js";
 import { createWorkState, writeWorkState } from "../src/core/work-state.js";
 import { evaluateCompletion } from "../src/core/completion.js";
 import { NEXT_ACTIONS, getNextAction } from "../src/core/next-action.js";
+import { explainNextAction } from "../src/core/next-explanation.js";
 
 const packageRoot = getPackageRoot();
 const cliPath = path.join(packageRoot, "src", "cli.js");
@@ -1207,4 +1208,31 @@ test("next never recommends CALLER_ACKNOWLEDGED for a required host approval", a
     assert.equal(result.authorityRequired.kind, "HOST_ATTESTED");
     assert.equal(result.authorityRequired.approvalId, "approval-next");
   } finally { await rm(target, { recursive: true, force: true }); }
+});
+
+test("next explanations bound every variable-length reason and artifact field", () => {
+  const huge = "x".repeat(10000);
+  const input = {
+    nextAction: huge,
+    currentPhase: huge,
+    reasons: Array.from({ length: 5 }, (_, index) => ({
+      code: `${huge}-${index}`,
+      message: huge,
+      artifacts: [huge, huge, "stable-artifact"],
+    })),
+  };
+
+  const first = explainNextAction(input);
+  const second = explainNextAction(input);
+  assert.deepEqual(second, first);
+  assert.equal(first.bounded, true);
+  assert.ok(first.summary.length <= 240);
+  assert.equal(first.reasons.length, 3);
+  for (const reason of first.reasons) {
+    assert.ok(reason.code.length <= 96);
+    assert.ok(reason.failedInvariant.length <= 240);
+    assert.ok(reason.safeArtifacts.length <= 6);
+    assert.ok(reason.safeArtifacts.every((artifact) => artifact.length <= 240));
+  }
+  assert.ok(JSON.stringify(first).length < 5000);
 });

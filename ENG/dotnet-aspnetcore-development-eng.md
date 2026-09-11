@@ -11,7 +11,7 @@ guide-id: dotnet
 
 > Production-oriented guidance for ForgeLoop-enabled agents and developers working on SDK-style .NET applications, ASP.NET Core services, workers, Razor, Blazor, and conditional ABP applications.
 >
-> This guide is activated by structural project evidence: an SDK-style `*.csproj`, `*.fsproj`, or `*.vbproj` using a supported `Microsoft.NET.Sdk` family. A web, Razor, Blazor, or `Microsoft.AspNetCore.App` signal confirms ASP.NET Core context. `Volo.Abp.*` package references add the ABP overlay. A README, source comment, Dockerfile, lockfile, directory name, or package name alone does not activate this guide.
+> This guide is activated by structural project evidence: an SDK-style `*.csproj`, `*.fsproj`, or `*.vbproj` using a deliberate supported SDK allowlist (`Microsoft.NET.Sdk` family, `Aspire.AppHost.Sdk`, or `MSTest.Sdk`). A web, Razor, Blazor, or `Microsoft.AspNetCore.App` signal confirms ASP.NET Core context. `Volo.Abp.*` package references add the ABP overlay. A README, source comment, Dockerfile, lockfile, directory name, or package name alone does not activate this guide.
 >
 > This guide complements, rather than replaces, ForgeLoop's general engineering guides. Use `clean-code-eng.md` for maintainability, `test-code-eng.md` for verification, `sec-code-eng.md` for trust boundaries, `perf-code-eng.md` for measured optimization, `documentation-quality-eng.md` for technical docs, and the interface guides when the application has a user-facing surface.
 >
@@ -102,7 +102,7 @@ host / composition root
 
 Separate concerns only to the degree the repository's complexity needs. A small service may use feature folders and direct handlers; a larger system may have host, application, domain, infrastructure, contracts, and test projects. Preserve existing dependency direction, naming, namespaces, analyzers, and generated-code boundaries.
 
-For multi-project repositories, identify the exact project and solution membership. Do not apply a root-level change to every project just because a shared file exists. Directory-scoped MSBuild and NuGet files affect descendants; verify which projects inherit them.
+For multi-project repositories, identify the exact project and solution membership. Do not apply a root-level change to every project just because a shared file exists. Directory-scoped MSBuild and NuGet files affect descendants; verify which projects inherit them. ForgeLoop's detector treats a claimed `global.json` as shared .NET SDK-selection scope for confirmed descendant projects for routing purposes; it does not reproduce the complete MSBuild or .NET SDK resolution algorithm.
 
 For monorepos, keep unrelated Flutter, JavaScript, native, and .NET applications isolated. Shared configuration is evidence of scope only when the changed claim is actually in the file's applicable directory boundary.
 
@@ -379,7 +379,7 @@ The repository router selects this guide when the selected project evidence cont
 
 Accepted structural primary evidence:
 
-- `Microsoft.NET.Sdk`, `Microsoft.NET.Sdk.Web`, `Microsoft.NET.Sdk.Worker`, `Microsoft.NET.Sdk.Razor`, or `Microsoft.NET.Sdk.BlazorWebAssembly` in an SDK-style project;
+- `Microsoft.NET.Sdk`, `Microsoft.NET.Sdk.Web`, `Microsoft.NET.Sdk.Worker`, `Microsoft.NET.Sdk.Razor`, `Microsoft.NET.Sdk.BlazorWebAssembly`, `Aspire.AppHost.Sdk`, or `MSTest.Sdk` in an SDK-style project;
 - the equivalent `<Sdk Name="..." />` form;
 - ASP.NET Core confirmation from a supported web/Razor/Blazor SDK or `FrameworkReference Include="Microsoft.AspNetCore.App"`;
 - ABP confirmation from a `PackageReference Include="Volo.Abp..."`.

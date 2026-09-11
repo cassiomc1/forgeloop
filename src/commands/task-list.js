@@ -9,11 +9,9 @@ export async function runTaskList({ target, packageRoot, phase = null, active = 
     error.code = "E_TASK_PHASE_INVALID";
     throw error;
   }
-  const phaseFiltered = normalizedPhase ? tasks.filter((task) => task.healthy === false || task.phase === normalizedPhase) : tasks;
+  const phaseFiltered = normalizedPhase ? tasks.filter((task) => task.phase === normalizedPhase) : tasks;
   const filtered = active
-    ? phaseFiltered.filter((task) => task.healthy !== false
-      && task.phase !== "COMPLETE"
-      && task.claimState !== "RELEASED_BY_RECOVERY")
+    ? phaseFiltered.filter((task) => task.claimState === "ACTIVE" && task.mutationAllowed === true)
     : phaseFiltered;
   const start = Number.isInteger(offset) && offset >= 0 ? offset : 0;
   const end = Number.isInteger(limit) && limit >= 0 ? start + limit : undefined;

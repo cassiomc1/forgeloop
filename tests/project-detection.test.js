@@ -9,6 +9,7 @@ import {
   detectProjectEvidence,
   parseDotNetProject,
   parsePubspec,
+  PROJECT_DETECTION_LIMITS,
 } from "../src/core/project-detection.js";
 import { evaluateRoute } from "../src/core/router.js";
 import { getPackageRoot } from "../src/core/templates.js";
@@ -283,6 +284,40 @@ test("alternate SDK syntax, worker projects, and project references are structur
   assert.equal(worker.aspnetcore, false);
 });
 
+test("the deliberate SDK allowlist recognizes Aspire AppHost and MSTest without adding ASP.NET Core", () => {
+  for (const sdk of ["Aspire.AppHost.Sdk", "MSTest.Sdk"]) {
+    const parsed = parseDotNetProject(`<Project Sdk="${sdk}" />`);
+    assert.equal(parsed.valid, true);
+    assert.equal(parsed.dotnet, true);
+    assert.equal(parsed.aspnetcore, false);
+    assert.deepEqual(parsed.projectSdks, [sdk]);
+  }
+});
+
+test("TargetFramework values use structural direct text and keep expressions unresolved", () => {
+  const direct = parseDotNetProject(`<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>`);
+  assert.deepEqual(direct.targetFrameworks, ["net10.0"]);
+
+  const multiTarget = parseDotNetProject(`<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>net8.0;unexpected</TargetFramework></PropertyGroup></Project>`);
+  assert.deepEqual(multiTarget.targetFrameworks, ["net8.0", "unexpected"]);
+
+  const expression = parseDotNetProject(`<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>$(TargetFramework)</TargetFramework></PropertyGroup></Project>`);
+  assert.deepEqual(expression.targetFrameworks, ["$(TargetFramework)"]);
+
+  const cdata = parseDotNetProject(`<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework><![CDATA[net8.0]]></TargetFramework></PropertyGroup></Project>`);
+  assert.deepEqual(cdata.targetFrameworks, ["net8.0"]);
+
+  const nested = parseDotNetProject(`<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework><Value>net8.0</Value></TargetFramework></PropertyGroup></Project>`);
+  assert.deepEqual(nested.targetFrameworks, []);
+
+  const malformed = parseDotNetProject(`<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>net8.0<Broken></TargetFramework></PropertyGroup></Project>`);
+  assert.equal(malformed.valid, false);
+  assert.equal(malformed.dotnet, false);
+
+  const large = parseDotNetProject(`<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>${"x".repeat(5000)}</TargetFramework></PropertyGroup></Project>`);
+  assert.deepEqual(large.targetFrameworks, []);
+});
+
 test("malformed, oversized, and weak .NET signals fail closed", async () => {
   const malformedText = `<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup>`;
   const malformed = parseDotNetProject(malformedText);
@@ -322,11 +357,16 @@ test("shared .NET configuration and exact solution membership constrain scope", 
     await writeFile(path.join(target, "Directory.Packages.props"), "<Project />\n");
     await writeFile(path.join(target, "global.json"), "{\"sdk\":{\"version\":\"10.0.100\"}}\n");
     await writeFile(path.join(target, "Product.sln"), `Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{F}") = "Folder", "src", "{F}"
+EndProject
 Project("{A}") = "A", "src\\A\\A.csproj", "{A}"
 EndProject
-Project("{B}") = "B", "src\\B\\B.csproj", "{B}"
+    Project("{B}") = "B", "src\\B\\B.csproj", "{B}"
 EndProject
 `);
+    await writeFile(path.join(target, "Product.slnx"), `<Solution><Project Path="src/A/A.csproj" /><Project Path="src/B/B.csproj" /></Solution>`);
+    await writeFile(path.join(target, "Malformed.slnx"), `<Solution><Project /></Solution>`);
+    await writeFile(path.join(target, "Malformed.sln"), `Project("{bad}") = "Broken", "../outside.csproj"`);
 
     const shared = await detectProjectEvidence(target, { claims: ["Directory.Build.props"] });
     assert.equal(shared.scope, "MATCH");
@@ -336,6 +376,18 @@ EndProject
     const solution = await detectProjectEvidence(target, { claims: ["Product.sln"] });
     assert.deepEqual(solution.projectRoots, ["src/A", "src/B"]);
     assert.deepEqual(solution.frameworks, ["aspnetcore", "dotnet"]);
+
+    const slnx = await detectProjectEvidence(target, { claims: ["Product.slnx"] });
+    assert.deepEqual(slnx.projectRoots, ["src/A", "src/B"]);
+    assert.deepEqual(slnx.frameworks, ["aspnetcore", "dotnet"]);
+
+    const malformedSlnx = await detectProjectEvidence(target, { claims: ["Malformed.slnx"] });
+    assert.equal(malformedSlnx.scope, "NO_MATCH");
+    assert.deepEqual(malformedSlnx.frameworks, []);
+
+    const malformedSln = await detectProjectEvidence(target, { claims: ["Malformed.sln"] });
+    assert.equal(malformedSln.scope, "NO_MATCH");
+    assert.deepEqual(malformedSln.frameworks, []);
 
     const sibling = await detectProjectEvidence(target, { claims: ["src/A/A.csproj"] });
     assert.deepEqual(sibling.projectRoots, ["src/A"]);
@@ -360,5 +412,29 @@ test("Flutter and .NET projects remain isolated in a mixed monorepo", async () =
     assert.deepEqual(api.frameworks, ["dotnet"]);
     const both = await detectProjectEvidence(target, { claims: ["apps/mobile", "services/api"] });
     assert.deepEqual(both.frameworks, ["dotnet", "flutter"]);
+  });
+});
+
+test("project discovery fails conservatively when the independent traversal budget is exhausted", async () => {
+  await temporaryProject("forgeloop-project-detection-budget-", async (target) => {
+    await mkdir(path.join(target, "aaa", "nested"), { recursive: true });
+    await writeFile(path.join(target, "aaa", "irrelevant.txt"), "not a project\n");
+    await writeFile(path.join(target, "later.csproj"), dotnetLibraryProject);
+
+    const limited = await detectProjectEvidence(target, {
+      limits: {
+        maxVisitedDirectories: 2,
+        maxVisitedEntries: 10,
+      },
+    });
+    assert.equal(limited, null);
+
+    const first = await detectProjectEvidence(target, {
+      limits: PROJECT_DETECTION_LIMITS,
+    });
+    const second = await detectProjectEvidence(target, {
+      limits: PROJECT_DETECTION_LIMITS,
+    });
+    assert.deepEqual(second, first);
   });
 });

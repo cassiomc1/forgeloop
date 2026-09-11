@@ -183,6 +183,15 @@ test("invalid project framework values remain rejected", () => {
   );
 });
 
+test("ASP.NET Core and ABP project evidence overlays require dotnet", () => {
+  for (const framework of ["aspnetcore", "abp"]) {
+    assert.throws(
+      () => evaluateRoute({ workType: "code", projectEvidence: { frameworks: [framework] } }),
+      /frameworks aspnetcore and abp require dotnet/,
+    );
+  }
+});
+
 test("duplicate selection of documentation work and surface is deduplicated and retains both reasons", () => {
   const result = evaluateRoute({
     workType: "documentation",

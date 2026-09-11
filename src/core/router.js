@@ -234,6 +234,10 @@ function normalizeProjectEvidence(value) {
     throw new RouteInputError(`Unsupported projectEvidence schema version: ${value.schemaVersion}`);
   }
   const frameworks = normalizeArray(value.frameworks, "frameworks", PROJECT_FRAMEWORKS);
+  const hasDotnet = frameworks.includes("dotnet");
+  if (!hasDotnet && frameworks.some((framework) => framework === "aspnetcore" || framework === "abp")) {
+    throw new RouteInputError("projectEvidence frameworks aspnetcore and abp require dotnet");
+  }
   const scope = value.scope ?? (frameworks.length > 0 ? "UNSCOPED" : "NONE");
   if (!PROJECT_EVIDENCE_SCOPES.includes(scope)) {
     throw new RouteInputError(`Unknown project evidence scope: ${scope}`);

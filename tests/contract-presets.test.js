@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { access, mkdtemp, rm } from "node:fs/promises";
+import { access, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -40,8 +40,43 @@ test("task-create preset preview validates scope but creates no lifecycle state"
     assert.equal(result.preview, true);
     assert.equal(result.createsLifecycleState, false);
     assert.equal(result.contract.taskId, "preview-feature");
+    await assert.rejects(access(path.join(target, ".forgeloop")));
     await assert.rejects(access(path.join(target, ".forgeloop", "task-state")));
     assert.equal((await runTaskList({ target, packageRoot })).tasks.length, 0);
+  } finally {
+    await rm(target, { recursive: true, force: true });
+  }
+});
+
+test("task-create preview does not acquire, remove, or rename an existing claims lock", async () => {
+  const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-preset-preview-lock-"));
+  const lockPath = path.join(target, ".forgeloop", ".claims.lock");
+  try {
+    await mkdir(path.dirname(lockPath), { recursive: true });
+    await writeFile(lockPath, `${JSON.stringify({
+      lockId: "stale-preview-lock",
+      scope: "claims-reservation",
+      operation: "fixture",
+      ownerInstanceId: "fixture-owner",
+      acquiredAt: "1970-01-01T00:00:00.000Z",
+      heartbeatAt: "1970-01-01T00:00:00.000Z",
+      leaseMs: 1,
+    })}\n`, "utf8");
+    const before = await readFile(lockPath);
+
+    const result = await runTaskCreate({
+      target,
+      packageRoot,
+      taskId: "preview-with-lock",
+      claims: ["src"],
+      preset: "feature",
+      preview: true,
+    });
+
+    assert.equal(result.preview, true);
+    assert.deepEqual(await readFile(lockPath), before);
+    assert.deepEqual(await readdir(path.join(target, ".forgeloop")), [".claims.lock"]);
+    await assert.rejects(access(path.join(target, ".forgeloop", "task-state")));
   } finally {
     await rm(target, { recursive: true, force: true });
   }

@@ -1,4 +1,6 @@
 const MAX_EXPLANATION_TEXT = 240;
+const MAX_EXPLANATION_REASON_CODE = 96;
+const MAX_EXPLANATION_ARTIFACT_TEXT = 240;
 const MAX_EXPLANATION_REASONS = 3;
 const MAX_EXPLANATION_ARTIFACTS = 6;
 
@@ -20,14 +22,16 @@ function bounded(value, limit = MAX_EXPLANATION_TEXT) {
 }
 
 function reasonExplanation(reason) {
-  const artifacts = [...new Set((reason.artifacts ?? [])
-    .filter((artifact) => typeof artifact === "string" && artifact.length > 0))]
+  const source = reason && typeof reason === "object" ? reason : {};
+  const artifacts = [...new Set((Array.isArray(source.artifacts) ? source.artifacts : [])
+    .filter((artifact) => typeof artifact === "string" && artifact.length > 0)
+    .map((artifact) => bounded(artifact, MAX_EXPLANATION_ARTIFACT_TEXT)))]
     .slice(0, MAX_EXPLANATION_ARTIFACTS);
   return {
-    code: reason.code,
-    failedInvariant: bounded(reason.message),
+    code: bounded(source.code ?? "E_NEXT_ACTION_BLOCKED", MAX_EXPLANATION_REASON_CODE),
+    failedInvariant: bounded(source.message),
     safeArtifacts: artifacts,
-    requiredChange: REQUIRED_CHANGES[reason.code] ?? "Satisfy the canonical condition described by this reason before continuing.",
+    requiredChange: REQUIRED_CHANGES[source.code] ?? "Satisfy the canonical condition described by this reason before continuing.",
     evidenceNeeded: artifacts.length > 0
       ? `Inspect or update only the listed protocol artifacts, then re-run the canonical next action.`
       : "Provide a fresh, scoped, independently observable result for the blocked condition.",
@@ -35,8 +39,10 @@ function reasonExplanation(reason) {
 }
 
 export function explainNextAction(result) {
-  const reasons = (result?.reasons ?? []).slice(0, MAX_EXPLANATION_REASONS).map(reasonExplanation);
-  const mutating = (result?.commandSpecs ?? []).some((spec) => [
+  const reasons = (Array.isArray(result?.reasons) ? result.reasons : [])
+    .slice(0, MAX_EXPLANATION_REASONS)
+    .map(reasonExplanation);
+  const mutating = (Array.isArray(result?.commandSpecs) ? result.commandSpecs : []).some((spec) => [
     "advance",
     "clear-state",
     "complete",

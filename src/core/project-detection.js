@@ -10,11 +10,21 @@ export const PROJECT_EVIDENCE_SCOPES = Object.freeze([
   "NONE",
 ]);
 
-const MAX_MANIFESTS = 256;
-const MAX_SOLUTION_FILES = 64;
-const MAX_MANIFEST_BYTES = 1024 * 1024;
-const MAX_SOURCE_FILES = 256;
-const MAX_SOURCE_BYTES = 512 * 1024;
+export const PROJECT_DETECTION_LIMITS = Object.freeze({
+  maxManifests: 256,
+  maxSolutionFiles: 64,
+  maxManifestBytes: 1024 * 1024,
+  maxSourceFiles: 256,
+  maxSourceBytes: 512 * 1024,
+  maxVisitedDirectories: 4096,
+  maxVisitedEntries: 20000,
+});
+const MAX_MANIFESTS = PROJECT_DETECTION_LIMITS.maxManifests;
+const MAX_SOLUTION_FILES = PROJECT_DETECTION_LIMITS.maxSolutionFiles;
+const MAX_MANIFEST_BYTES = PROJECT_DETECTION_LIMITS.maxManifestBytes;
+const MAX_SOURCE_FILES = PROJECT_DETECTION_LIMITS.maxSourceFiles;
+const MAX_SOURCE_BYTES = PROJECT_DETECTION_LIMITS.maxSourceBytes;
+const MAX_XML_TEXT_LENGTH = 4096;
 const UNSUPPORTED_YAML_VALUE = Symbol("unsupported-yaml-value");
 const IGNORED_DIRECTORIES = new Set([
   ".dart_tool",
@@ -40,6 +50,8 @@ const DOTNET_SDKS = new Set([
   "Microsoft.NET.Sdk.Worker",
   "Microsoft.NET.Sdk.Razor",
   "Microsoft.NET.Sdk.BlazorWebAssembly",
+  "Aspire.AppHost.Sdk",
+  "MSTest.Sdk",
 ]);
 const ASPNETCORE_SDKS = new Set([
   "Microsoft.NET.Sdk.Web",
@@ -428,6 +440,14 @@ function parseXmlAttributes(text) {
   return attributes;
 }
 
+function appendXmlText(stack, value) {
+  if (value === "") return true;
+  const current = stack[stack.length - 1];
+  if (!current) return value.trim() === "";
+  current.textParts.push(value);
+  return true;
+}
+
 function parseXmlStructure(text, expectedRoot = null) {
   if (typeof text !== "string" || text.length > MAX_MANIFEST_BYTES || /\r(?!\n)/u.test(text)) return null;
   const nodes = [];
@@ -438,7 +458,7 @@ function parseXmlStructure(text, expectedRoot = null) {
   for (; index < text.length;) {
     const tagStart = text.indexOf("<", index);
     if (tagStart < 0) break;
-    if (stack.length === 0 && text.slice(index, tagStart).trim() !== "") return null;
+    if (!appendXmlText(stack, text.slice(index, tagStart))) return null;
     if (text.startsWith("<!--", tagStart)) {
       const end = text.indexOf("-->", tagStart + 4);
       if (end < 0) return null;
@@ -447,7 +467,8 @@ function parseXmlStructure(text, expectedRoot = null) {
     }
     if (text.startsWith("<![CDATA[", tagStart)) {
       const end = text.indexOf("]]>", tagStart + 9);
-      if (end < 0) return null;
+      if (end < 0 || stack.length === 0) return null;
+      stack[stack.length - 1].textParts.push(text.slice(tagStart + 9, end));
       index = end + 3;
       continue;
     }
@@ -466,7 +487,7 @@ function parseXmlStructure(text, expectedRoot = null) {
       const closing = raw.slice(1).trim().match(/^([A-Za-z_][A-Za-z0-9_.:-]*)\s*$/u)?.[1];
       const open = stack.pop();
       if (!closing || !open || open.name !== closing) return null;
-      open.text = text.slice(open.contentStart, tagStart);
+      open.text = open.textParts.join("");
       if (stack.length === 0) {
         if (rootClosed || open !== root) return null;
         rootClosed = true;
@@ -482,14 +503,15 @@ function parseXmlStructure(text, expectedRoot = null) {
     if (!root && expectedRoot && name !== expectedRoot) return null;
     const attributes = parseXmlAttributes(body.slice(name.length).trim());
     if (!attributes) return null;
-    const node = { name, attributes, contentStart: tagEnd + 1, text: "" };
+    const node = { name, attributes, textParts: [], children: [], text: "" };
     nodes.push(node);
+    if (stack.length > 0) stack[stack.length - 1].children.push(node);
     if (!root) root = node;
     if (!selfClosing) stack.push(node);
     else if (node === root) rootClosed = true;
     index = tagEnd + 1;
   }
-  if (stack.length === 0 && text.slice(index).trim() !== "") return null;
+  if (!appendXmlText(stack, text.slice(index))) return null;
   if (!root || stack.length > 0 || !rootClosed) return null;
   return { root, nodes };
 }
@@ -507,8 +529,10 @@ function xmlValues(nodes, name, attribute = "Include") {
 
 function targetFrameworkValues(nodes) {
   return uniqueSorted(nodes
-    .filter((node) => node.name === "TargetFramework" || node.name === "TargetFrameworks")
-    .flatMap((node) => (node.text ?? "").replace(/<[^>]*>/gu, "").split(";"))
+    .filter((node) => (node.name === "TargetFramework" || node.name === "TargetFrameworks")
+      && node.children.length === 0
+      && node.text.length <= MAX_XML_TEXT_LENGTH)
+    .flatMap((node) => node.text.split(";"))
     .map((value) => value.trim())
     .filter(Boolean));
 }
@@ -549,11 +573,41 @@ export function parseDotNetProject(text) {
   };
 }
 
-async function findProjectFiles(root) {
+function createTraversalBudget(limits = {}) {
+  const positiveLimit = (value, fallback) => Number.isInteger(value) && value > 0 ? value : fallback;
+  return {
+    maxVisitedDirectories: positiveLimit(limits.maxVisitedDirectories, PROJECT_DETECTION_LIMITS.maxVisitedDirectories),
+    maxVisitedEntries: positiveLimit(limits.maxVisitedEntries, PROJECT_DETECTION_LIMITS.maxVisitedEntries),
+    visitedDirectories: 0,
+    visitedEntries: 0,
+    exhausted: false,
+  };
+}
+
+function consumeDirectory(budget) {
+  if (budget.exhausted || budget.visitedDirectories >= budget.maxVisitedDirectories) {
+    budget.exhausted = true;
+    return false;
+  }
+  budget.visitedDirectories += 1;
+  return true;
+}
+
+function consumeEntry(budget) {
+  if (budget.exhausted || budget.visitedEntries >= budget.maxVisitedEntries) {
+    budget.exhausted = true;
+    return false;
+  }
+  budget.visitedEntries += 1;
+  return true;
+}
+
+async function findProjectFiles(root, budget) {
   const manifests = [];
   const solutions = [];
   async function visit(directory) {
     if (manifests.length >= MAX_MANIFESTS && solutions.length >= MAX_SOLUTION_FILES) return;
+    if (!consumeDirectory(budget)) return;
     let entries;
     try {
       entries = await readdir(directory, { withFileTypes: true });
@@ -563,6 +617,7 @@ async function findProjectFiles(root) {
     entries.sort((left, right) => left.name.localeCompare(right.name));
     for (const entry of entries) {
       if (manifests.length >= MAX_MANIFESTS && solutions.length >= MAX_SOLUTION_FILES) return;
+      if (!consumeEntry(budget)) return;
       const absolutePath = path.join(directory, entry.name);
       if (entry.isSymbolicLink()) continue;
       if (entry.isDirectory()) {
@@ -598,19 +653,26 @@ async function readBounded(filePath, maxBytes) {
   }
 }
 
-async function directDirectoryNames(directory) {
+async function directDirectoryNames(directory, budget) {
+  if (!consumeDirectory(budget)) return new Set();
   try {
     const entries = await readdir(directory, { withFileTypes: true });
-    return new Set(entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name));
+    const directories = new Set();
+    for (const entry of entries) {
+      if (!consumeEntry(budget)) break;
+      if (entry.isDirectory()) directories.add(entry.name);
+    }
+    return directories;
   } catch {
     return new Set();
   }
 }
 
-async function findDartFiles(root) {
+async function findDartFiles(root, budget) {
   const result = [];
   async function visit(directory) {
     if (result.length >= MAX_SOURCE_FILES) return;
+    if (!consumeDirectory(budget)) return;
     let entries;
     try {
       entries = await readdir(directory, { withFileTypes: true });
@@ -620,6 +682,7 @@ async function findDartFiles(root) {
     entries.sort((left, right) => left.name.localeCompare(right.name));
     for (const entry of entries) {
       if (result.length >= MAX_SOURCE_FILES) return;
+      if (!consumeEntry(budget)) return;
       if (entry.isSymbolicLink()) continue;
       const absolutePath = path.join(directory, entry.name);
       if (entry.isDirectory()) {
@@ -633,9 +696,9 @@ async function findDartFiles(root) {
   return result;
 }
 
-async function hasFlutterImport(projectRoot) {
+async function hasFlutterImport(projectRoot, budget) {
   for (const directory of SOURCE_DIRECTORIES) {
-    const files = await findDartFiles(path.join(projectRoot, directory));
+    const files = await findDartFiles(path.join(projectRoot, directory), budget);
     for (const filePath of files) {
       const text = await readBounded(filePath, MAX_SOURCE_BYTES);
       if (text && /^\s*(?:import|export)\s+["']package:flutter\//mu.test(text)) return true;
@@ -678,32 +741,47 @@ function claimMatchesSharedDotNetFile(claim, project) {
   return directory === "." || root === directory || root.startsWith(`${directory}/`);
 }
 
+function normalizedSolutionMember(relativePath, solutionPath, targetRoot) {
+  if (typeof relativePath !== "string" || relativePath.trim() === "") return null;
+  const portable = relativePath.trim().replaceAll("\\", "/");
+  if (portable.startsWith("/") || /^[A-Za-z]:\//u.test(portable)) return null;
+  const absolute = path.resolve(path.dirname(solutionPath), portable);
+  const member = portableRelative(targetRoot, absolute).toLowerCase();
+  if (member === ".." || member.startsWith("../")) return null;
+  return member;
+}
+
 function parseSolutionMembership(text, extension, solutionPath, targetRoot) {
   if (typeof text !== "string") return null;
   const members = [];
   if (extension === ".sln") {
-    const pattern = /^Project\("[^\r\n]*"\)\s*=\s*"[^"]*",\s*"([^"]+\.(?:csproj|fsproj|vbproj))",/gimu;
-    for (const match of text.matchAll(pattern)) {
-      const relativeToSolution = match[1].replaceAll("\\", "/");
-      const absolute = path.resolve(path.dirname(solutionPath), relativeToSolution);
-      members.push(portableRelative(targetRoot, absolute).toLowerCase());
+    const pattern = /^Project\("[^\r\n]*"\)\s*=\s*"[^"\r\n]*",\s*"([^"\r\n]+)"\s*,\s*"[^"\r\n]*"\s*$/u;
+    for (const line of text.split(/\r?\n/u)) {
+      if (!/^Project\(/u.test(line.trim())) continue;
+      const match = line.trim().match(pattern);
+      if (!match) return null;
+      if (!/(?:\.csproj|\.fsproj|\.vbproj)$/iu.test(match[1])) continue;
+      const member = normalizedSolutionMember(match[1], solutionPath, targetRoot);
+      if (!member) return null;
+      members.push(member);
     }
     return uniqueSorted(members);
   }
 
-  const document = parseXmlStructure(text);
+  const document = parseXmlStructure(text, "Solution");
   if (!document) return null;
   for (const node of document.nodes) {
     const projectPath = node.attributes.Path ?? node.attributes.path;
-    if (node.name === "Project" && typeof projectPath === "string" && /\.(?:csproj|fsproj|vbproj)$/iu.test(projectPath)) {
-      const absolute = path.resolve(path.dirname(solutionPath), projectPath.replaceAll("\\", "/"));
-      members.push(portableRelative(targetRoot, absolute).toLowerCase());
-    }
+    if (node.name !== "Project") continue;
+    if (typeof projectPath !== "string" || !/(?:\.csproj|\.fsproj|\.vbproj)$/iu.test(projectPath)) return null;
+    const member = normalizedSolutionMember(projectPath, solutionPath, targetRoot);
+    if (!member) return null;
+    members.push(member);
   }
   return uniqueSorted(members);
 }
 
-async function inspectProject(manifestInfo, targetRoot) {
+async function inspectProject(manifestInfo, targetRoot, budget) {
   const manifestPath = manifestInfo.path;
   const projectRootPath = path.dirname(manifestPath);
   const projectRoot = portableRelative(targetRoot, projectRootPath);
@@ -750,11 +828,11 @@ async function inspectProject(manifestInfo, targetRoot) {
     supportingSignals.push(`${projectRoot === "." ? ".metadata" : `${projectRoot}/.metadata`}:project_type`);
   }
 
-  const directories = await directDirectoryNames(projectRootPath);
+  const directories = await directDirectoryNames(projectRootPath, budget);
   for (const platform of PLATFORM_DIRECTORIES) {
     if (directories.has(platform)) supportingSignals.push(`${projectRoot === "." ? platform : `${projectRoot}/${platform}`}:directory`);
   }
-  if (await hasFlutterImport(projectRootPath)) {
+  if (await hasFlutterImport(projectRootPath, budget)) {
     supportingSignals.push(`${projectRoot === "." ? "source" : `${projectRoot}/source`}:package:flutter`);
   }
 
@@ -771,12 +849,17 @@ async function inspectProject(manifestInfo, targetRoot) {
   };
 }
 
-export async function detectProjectEvidence(target, { claims = [] } = {}) {
+export async function detectProjectEvidence(target, { claims = [], limits = {} } = {}) {
   const targetRoot = path.resolve(target);
-  const discovered = await findProjectFiles(targetRoot);
+  const budget = createTraversalBudget(limits);
+  const discovered = await findProjectFiles(targetRoot, budget);
+  if (budget.exhausted) return null;
   if (discovered.manifests.length === 0) return null;
   const projects = [];
-  for (const manifestInfo of discovered.manifests) projects.push(await inspectProject(manifestInfo, targetRoot));
+  for (const manifestInfo of discovered.manifests) {
+    projects.push(await inspectProject(manifestInfo, targetRoot, budget));
+    if (budget.exhausted) return null;
+  }
 
   const solutionMembership = new Map();
   for (const solutionPath of discovered.solutions) {
