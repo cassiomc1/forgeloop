@@ -1142,87 +1142,90 @@ function sharedNodeSignalApplies(sharedFile, projectRoot, projectRoots) {
   return sharedFileWithinProjectScope(sharedDirectory, projectRoot, projectRoots);
 }
 
-async function inspectProject(manifestInfo, targetRoot, budget, manifestInfos, sharedFiles) {
-  const manifestPath = manifestInfo.path;
-  const projectRootPath = path.dirname(manifestPath);
-  const projectRoot = portableRelative(targetRoot, projectRootPath);
-  const manifestRelative = portableRelative(targetRoot, manifestPath);
-  const manifestText = await readBounded(manifestPath, MAX_MANIFEST_BYTES);
+function inspectDotNetProject({ projectRoot, manifestRelative, manifestText }) {
+  const parsed = parseDotNetProject(manifestText ?? "");
+  const primarySignals = parsed.dotnet
+    ? parsed.projectSdks
+      .filter((sdk) => DOTNET_SDKS.has(sdk))
+      .map((sdk) => `${manifestRelative}:project.sdk=${sdk}`)
+    : [];
+  const supportingSignals = [];
+  for (const targetFramework of parsed.targetFrameworks) supportingSignals.push(`${manifestRelative}:targetFramework=${targetFramework}`);
+  for (const reference of parsed.frameworkReferences) supportingSignals.push(`${manifestRelative}:frameworkReference=${reference}`);
+  for (const reference of parsed.packageReferences) supportingSignals.push(`${manifestRelative}:packageReference=${reference}`);
+  for (const reference of parsed.projectReferences) supportingSignals.push(`${manifestRelative}:projectReference=${reference}`);
+  const frameworks = [];
+  if (parsed.dotnet) frameworks.push("dotnet");
+  if (parsed.aspnetcore) frameworks.push("aspnetcore");
+  if (parsed.abp) frameworks.push("abp");
+  return {
+    kind: "dotnet",
+    root: projectRoot,
+    manifest: manifestRelative,
+    validManifest: parsed.valid,
+    primary: parsed.dotnet,
+    dotnet: parsed.dotnet,
+    frameworks,
+    primarySignals,
+    supportingSignals,
+  };
+}
 
-  if (manifestInfo.kind === "dotnet") {
-    const parsed = parseDotNetProject(manifestText ?? "");
-    const primarySignals = parsed.dotnet
-      ? parsed.projectSdks
-        .filter((sdk) => DOTNET_SDKS.has(sdk))
-        .map((sdk) => `${manifestRelative}:project.sdk=${sdk}`)
-      : [];
-    const supportingSignals = [];
-    for (const targetFramework of parsed.targetFrameworks) supportingSignals.push(`${manifestRelative}:targetFramework=${targetFramework}`);
-    for (const reference of parsed.frameworkReferences) supportingSignals.push(`${manifestRelative}:frameworkReference=${reference}`);
-    for (const reference of parsed.packageReferences) supportingSignals.push(`${manifestRelative}:packageReference=${reference}`);
-    for (const reference of parsed.projectReferences) supportingSignals.push(`${manifestRelative}:projectReference=${reference}`);
-    const frameworks = [];
-    if (parsed.dotnet) frameworks.push("dotnet");
-    if (parsed.aspnetcore) frameworks.push("aspnetcore");
-    if (parsed.abp) frameworks.push("abp");
-    return {
-      kind: "dotnet",
-      root: projectRoot,
-      manifest: manifestRelative,
-      validManifest: parsed.valid,
-      primary: parsed.dotnet,
-      dotnet: parsed.dotnet,
-      frameworks,
-      primarySignals,
-      supportingSignals,
-    };
+async function inspectNodeProject({
+  projectRootPath,
+  projectRoot,
+  manifestRelative,
+  manifestText,
+  targetRoot,
+  budget,
+  manifestInfos,
+  sharedFiles,
+}) {
+  const parsed = parsePackageJson(manifestText ?? "");
+  const projectRoots = manifestInfos
+    .map((candidate) => portableRelative(targetRoot, path.dirname(candidate.path)));
+  const nestedRoots = nestedProjectRoots(projectRoot, projectRoots)
+    .map((candidate) => path.resolve(targetRoot, candidate));
+  const primarySignals = [];
+  for (const dependency of parsed.backendDependencySignals) primarySignals.push(`${manifestRelative}:${dependency}`);
+  for (const script of parsed.runtimeScripts) primarySignals.push(`${manifestRelative}:scripts.${script}=node`);
+
+  const serverImports = parsed.valid && primarySignals.length === 0
+    ? await findNodeServerImports(projectRootPath, targetRoot, budget, nestedRoots)
+    : [];
+  for (const serverImport of serverImports) {
+    primarySignals.push(`${serverImport.file}:import=${serverImport.module}`);
   }
 
-  if (manifestInfo.kind === "nodejs") {
-    const parsed = parsePackageJson(manifestText ?? "");
-    const projectRoots = manifestInfos
-      .map((candidate) => portableRelative(targetRoot, path.dirname(candidate.path)));
-    const nestedRoots = nestedProjectRoots(projectRoot, projectRoots)
-      .map((candidate) => path.resolve(targetRoot, candidate));
-    const primarySignals = [];
-    for (const dependency of parsed.backendDependencySignals) primarySignals.push(`${manifestRelative}:${dependency}`);
-    for (const script of parsed.runtimeScripts) primarySignals.push(`${manifestRelative}:scripts.${script}=node`);
-
-    const serverImports = parsed.valid && primarySignals.length === 0
-      ? await findNodeServerImports(projectRootPath, targetRoot, budget, nestedRoots)
-      : [];
-    for (const serverImport of serverImports) {
-      primarySignals.push(`${serverImport.file}:import=${serverImport.module}`);
+  const supportingSignals = [];
+  if (parsed.enginesNode) supportingSignals.push(`${manifestRelative}:engines.node`);
+  if (parsed.moduleType) supportingSignals.push(`${manifestRelative}:type`);
+  if (parsed.packageManager) supportingSignals.push(`${manifestRelative}:packageManager`);
+  if (parsed.workspaceRoot) supportingSignals.push(`${manifestRelative}:workspaces`);
+  for (const dependency of parsed.supportingDependencies) supportingSignals.push(`${manifestRelative}:supportingDependency=${dependency}`);
+  for (const sharedFile of sharedFiles) {
+    const relative = portableRelative(targetRoot, sharedFile.path);
+    if (sharedNodeSignalApplies(relative, projectRoot, projectRoots)) {
+      supportingSignals.push(`${relative}:node-scope`);
     }
-
-    const supportingSignals = [];
-    if (parsed.enginesNode) supportingSignals.push(`${manifestRelative}:engines.node`);
-    if (parsed.moduleType) supportingSignals.push(`${manifestRelative}:type`);
-    if (parsed.packageManager) supportingSignals.push(`${manifestRelative}:packageManager`);
-    if (parsed.workspaceRoot) supportingSignals.push(`${manifestRelative}:workspaces`);
-    for (const dependency of parsed.supportingDependencies) supportingSignals.push(`${manifestRelative}:supportingDependency=${dependency}`);
-    for (const sharedFile of sharedFiles) {
-      const relative = portableRelative(targetRoot, sharedFile.path);
-      if (sharedNodeSignalApplies(relative, projectRoot, projectRoots)) {
-        supportingSignals.push(`${relative}:node-scope`);
-      }
-    }
-
-    const primary = parsed.valid && primarySignals.length > 0;
-    return {
-      kind: "nodejs",
-      root: projectRoot,
-      manifest: manifestRelative,
-      validManifest: parsed.valid,
-      primary,
-      nodejs: primary,
-      workspaceRoot: parsed.workspaceRoot,
-      frameworks: primary ? ["nodejs"] : [],
-      primarySignals,
-      supportingSignals,
-    };
   }
 
+  const primary = parsed.valid && primarySignals.length > 0;
+  return {
+    kind: "nodejs",
+    root: projectRoot,
+    manifest: manifestRelative,
+    validManifest: parsed.valid,
+    primary,
+    nodejs: primary,
+    workspaceRoot: parsed.workspaceRoot,
+    frameworks: primary ? ["nodejs"] : [],
+    primarySignals,
+    supportingSignals,
+  };
+}
+
+async function inspectFlutterProject({ projectRootPath, projectRoot, manifestRelative, manifestText, budget }) {
   const parsed = parsePubspec(manifestText ?? "");
   const primarySignals = parsed.primary ? [`${manifestRelative}:dependencies.flutter.sdk`] : [];
   const supportingSignals = [];
@@ -1254,6 +1257,23 @@ async function inspectProject(manifestInfo, targetRoot, budget, manifestInfos, s
     primarySignals,
     supportingSignals,
   };
+}
+
+async function inspectProject(manifestInfo, targetRoot, budget, manifestInfos, sharedFiles) {
+  const manifestPath = manifestInfo.path;
+  const projectRootPath = path.dirname(manifestPath);
+  const context = {
+    projectRootPath,
+    projectRoot: portableRelative(targetRoot, projectRootPath),
+    manifestRelative: portableRelative(targetRoot, manifestPath),
+    manifestText: await readBounded(manifestPath, MAX_MANIFEST_BYTES),
+  };
+
+  if (manifestInfo.kind === "dotnet") return inspectDotNetProject(context);
+  if (manifestInfo.kind === "nodejs") {
+    return inspectNodeProject({ ...context, targetRoot, budget, manifestInfos, sharedFiles });
+  }
+  return inspectFlutterProject({ ...context, budget });
 }
 
 export async function detectProjectEvidence(target, { claims = [], limits = {} } = {}) {
