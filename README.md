@@ -67,13 +67,12 @@ validator-backed `COMPLETE / VALID` and preserves a later
 | Documentation quality | [`ENG/documentation-quality-eng.md`](./ENG/documentation-quality-eng.md) |
 | Flutter | [guide](./ENG/flutter-development-eng.md) |
 | .NET and ASP.NET Core | [guide](./ENG/dotnet-aspnetcore-development-eng.md) |
+| Node.js | [guide](./ENG/nodejs-backend-development-eng.md) |
 | Structural quality feedback | [`docs/STRUCTURAL_QUALITY.md`](./docs/STRUCTURAL_QUALITY.md) |
 
-Guide metadata is validator-checked.
-
-Parsed `pubspec.yaml` with `dependencies.flutter.sdk: flutter` selects
-Flutter; mentions, lockfiles, hosted packages, and unrelated monorepos do not.
-See [guide](./ENG/flutter-development-eng.md).
+Routing: [Flutter](./ENG/flutter-development-eng.md) needs SDK evidence;
+[Node.js](./ENG/nodejs-backend-development-eng.md) needs runtime evidence.
+Metadata alone fails.
 
 ## Quickstart
 

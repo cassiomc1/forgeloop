@@ -147,6 +147,26 @@ test("confirmed .NET evidence selects one specialist plus clean and test", () =>
   assert.deepEqual(result.excluded.flutter, ["NO_FLUTTER_PRIMARY_EVIDENCE"]);
 });
 
+test("confirmed public Node.js framework evidence is authoritative without private signals", () => {
+  const result = evaluateRoute({
+    workType: "code",
+    projectEvidence: {
+      schemaVersion: 1,
+      scope: "MATCH",
+      frameworks: ["nodejs"],
+      projectRoots: ["services/api"],
+      primarySignals: [],
+      supportingSignals: [],
+    },
+  });
+
+  assert.deepEqual(result.guides, ["nodejs", "clean", "test"]);
+  assert.equal(result.primary, "nodejs");
+  assert.deepEqual(result.reasons.nodejs, ["PROJECT_NODEJS_CONFIRMED"]);
+  assert.deepEqual(result.reasons.clean, ["PROJECT_NODEJS_BASELINE", "WORK_CODE"]);
+  assert.deepEqual(result.reasons.test, ["PROJECT_NODEJS_BASELINE", "WORK_CODE"]);
+});
+
 test(".NET evidence is excluded from documentation-only work and no scope match", () => {
   const documentation = evaluateRoute({
     workType: "documentation",

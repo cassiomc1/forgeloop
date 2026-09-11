@@ -8,6 +8,7 @@ import { ARTIFACT_REGISTRY } from "../src/core/artifact-registry.js";
 import { CLI_COMMAND_DEFINITIONS } from "../src/core/cli-command-definitions.js";
 import { PUBLIC_ERROR_REGISTRY } from "../src/core/error-codes.js";
 import { PROJECT_DETECTION_LIMITS, PROJECT_EVIDENCE_SCHEMA_VERSION } from "../src/core/project-detection.js";
+import { GUIDE_REGISTRY } from "../src/core/guide-registry.js";
 import { protocolInfo } from "../src/core/protocol-info.js";
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -42,6 +43,12 @@ function commandCatalog() {
     ])
     .flat()
     .join("\n\n");
+}
+
+function guideCatalog() {
+  const rows = Object.entries(GUIDE_REGISTRY)
+    .map(([id, definition]) => [id, definition.path, definition.install ? "yes" : "no"]);
+  return `## Guide registry\n\n${table(["Guide", "Path", "Installable"], rows)}`;
 }
 
 async function render() {
@@ -175,6 +182,8 @@ Phases: ${info.lifecycle.phases.join(", ")}
 ${table(["Feature", "Version", "Supported"], features)}
 
 ${capabilityContracts}
+
+${guideCatalog()}
 
 ## Public artifact registry
 

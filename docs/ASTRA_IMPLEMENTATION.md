@@ -1,6 +1,6 @@
 # Astra implementation record
 
-This document maps the nineteen findings in the historical [Astra audit](../astra.md) to the implementation merged in PR #167 and present on `main`. The audit baseline is commit `fe13c597b3ba669dab93dc72d3d8e6d099dd129b`; the merged implementation is based on source commit `1f6f68f621217670836281136569646367adb36c` and merge commit `613af0cadcb8b11509ab0092fec29a325b5c1fdd`. The historical audit and the pre-existing release-evidence edit are preserved.
+This document maps the nineteen findings in the historical [Astra audit](../astra.md) to the implementation merged in PR 167 and present on `main`. The audit baseline is commit `fe13c597b3ba669dab93dc72d3d8e6d099dd129b`; the merged implementation is based on source commit `1f6f68f621217670836281136569646367adb36c` and merge commit `613af0cadcb8b11509ab0092fec29a325b5c1fdd`. The historical audit and the pre-existing release-evidence edit are preserved.
 
 ## Current plan execution checkpoint — 2026-09-11
 

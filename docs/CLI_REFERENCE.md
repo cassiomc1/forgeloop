@@ -838,7 +838,7 @@ Updates the managed instruction kit to match the current ForgeLoop package versi
 
 Calculates and persists deterministic engineering guide routing.
 
-- **Purpose**: Selects relevant technical guides (e.g. `clean`, `test`, `security`, `design`) from declared work attributes and bounded structural project evidence such as an affected Flutter SDK dependency or SDK-style .NET project manifest. ASP.NET Core and ABP are conditional reasons on the `dotnet` specialist, not standalone guides.
+- **Purpose**: Selects relevant technical guides (e.g. `clean`, `test`, `security`, `design`) from declared work attributes and bounded structural project evidence such as an affected Flutter SDK dependency, supported .NET project, or confirmed Node.js backend runtime. ASP.NET Core and ABP are conditional reasons on the `dotnet` specialist, not standalone guides.
 - **When to use**: During discovery before preflight.
 - **Mutation**: Writes `.forgeloop/task-state/<taskKey>/routing-result.json`.
 - **Options**:

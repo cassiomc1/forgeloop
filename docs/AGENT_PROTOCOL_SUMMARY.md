@@ -141,6 +141,24 @@ Phases: RECEIVED, DISCOVERING, CONTRACT_READY, ROUTED, DESIGNING, PLANNED, EXECU
 Protocol v1, schema v1, and Integration API v1 remain independent of these
 capability-family versions.
 
+## Guide registry
+
+| Guide | Path | Installable |
+| --- | --- | --- |
+| premium | ENG/premium-sites-studio-eng.md | yes |
+| clean | ENG/clean-code-eng.md | yes |
+| test | ENG/test-code-eng.md | yes |
+| security | ENG/sec-code-eng.md | yes |
+| design | ENG/design-code-eng.md | yes |
+| taste | ENG/taste-frontend-eng.md | yes |
+| performance | ENG/perf-code-eng.md | yes |
+| accessibility | ENG/accessibility-eng.md | yes |
+| games | ENG/games-code-design-web-eng.md | yes |
+| documentation | ENG/documentation-quality-eng.md | yes |
+| flutter | ENG/flutter-development-eng.md | yes |
+| dotnet | ENG/dotnet-aspnetcore-development-eng.md | yes |
+| nodejs | ENG/nodejs-backend-development-eng.md | yes |
+
 ## Public artifact registry
 
 | Key | Scope | Path | Schema | Trust role |

@@ -46,5 +46,9 @@
   "dotnet": {
     "path": "ENG/dotnet-aspnetcore-development-eng.md",
     "install": true
+  },
+  "nodejs": {
+    "path": "ENG/nodejs-backend-development-eng.md",
+    "install": true
   }
 }
