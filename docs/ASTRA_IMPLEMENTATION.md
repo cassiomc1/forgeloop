@@ -15,7 +15,7 @@ or external cleanup was performed.
 | IMP-02 | `src/core/next-explanation.js`, `next --explain` | Opt-in bounded explanation is derived from canonical reason codes and safe artifact references; compact output is unchanged without the flag. |
 | IMP-03 | Command-input validation decomposition | Policy, task creation, profile/usage, output, selector, and check validation are separated without changing rejection order; completion/phase decomposition remains a later independent slice. |
 | IMP-04 | `conformance/adapter-test-kit.mjs`, refreshed conformance instructions | Public API kit reports `PASS`, `FAIL`, and explicit `UNAVAILABLE`; historical release identities remain untouched. |
-| IMP-05 | `task-list --phase/--active/--limit/--offset`, benchmark script | Ordering and bounds are deterministic; discovery benchmark records cold/warm timing in disposable fixtures; no cache or history deletion was introduced. |
+| IMP-05 | `task-list --phase/--active/--limit/--offset`, benchmark script | Task discovery remains exhaustive where ownership/conflict correctness requires it; the task-list projection applies deterministic filtering and bounded pagination to the discovered results, while the benchmark records cold/warm timing in disposable fixtures. No cache or history deletion was introduced. |
 | IMP-06 | .NET/ASP.NET Core structural detector and `dotnet` guide | SDK-style projects, scoped shared files, solution membership, negative cases, router reasons, schemas, registry, docs, and mixed-monorepo isolation are covered. |
 
 The adapter kit intentionally reports policy-drift and interrupted-transaction

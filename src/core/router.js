@@ -235,8 +235,12 @@ function normalizeProjectEvidence(value) {
   }
   const frameworks = normalizeArray(value.frameworks, "frameworks", PROJECT_FRAMEWORKS);
   const hasDotnet = frameworks.includes("dotnet");
-  if (!hasDotnet && frameworks.some((framework) => framework === "aspnetcore" || framework === "abp")) {
-    throw new RouteInputError("projectEvidence frameworks aspnetcore and abp require dotnet");
+  const invalidOverlays = frameworks.filter((framework) => framework === "aspnetcore" || framework === "abp");
+  if (!hasDotnet && invalidOverlays.length > 0) {
+    const noun = invalidOverlays.length === 1 ? "framework" : "frameworks";
+    const verb = invalidOverlays.length === 1 ? "requires" : "require";
+    const labels = invalidOverlays.map((framework) => `"${framework}"`).join(", ");
+    throw new RouteInputError(`projectEvidence ${noun} ${labels} ${verb} "dotnet"`);
   }
   const scope = value.scope ?? (frameworks.length > 0 ? "UNSCOPED" : "NONE");
   if (!PROJECT_EVIDENCE_SCOPES.includes(scope)) {

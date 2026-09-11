@@ -183,12 +183,26 @@ test("invalid project framework values remain rejected", () => {
   );
 });
 
-test("ASP.NET Core and ABP project evidence overlays require dotnet", () => {
-  for (const framework of ["aspnetcore", "abp"]) {
+test("ASP.NET Core and ABP project evidence overlays report only invalid frameworks", () => {
+  const invalidCases = [
+    [["aspnetcore"], 'projectEvidence framework "aspnetcore" requires "dotnet"'],
+    [["abp"], 'projectEvidence framework "abp" requires "dotnet"'],
+    [["aspnetcore", "abp"], 'projectEvidence frameworks "abp", "aspnetcore" require "dotnet"'],
+  ];
+  for (const [frameworks, message] of invalidCases) {
     assert.throws(
-      () => evaluateRoute({ workType: "code", projectEvidence: { frameworks: [framework] } }),
-      /frameworks aspnetcore and abp require dotnet/,
+      () => evaluateRoute({ workType: "code", projectEvidence: { frameworks } }),
+      (error) => error.message === message,
     );
+  }
+});
+
+test("valid .NET framework overlays remain accepted", () => {
+  for (const frameworks of [["dotnet", "aspnetcore"], ["dotnet", "abp"], ["dotnet", "aspnetcore", "abp"]]) {
+    assert.doesNotThrow(() => evaluateRoute({
+      workType: "code",
+      projectEvidence: { frameworks },
+    }));
   }
 });
 
