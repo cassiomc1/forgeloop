@@ -11,6 +11,7 @@ export const PROJECT_EVIDENCE_SCOPES = Object.freeze([
 ]);
 
 const MAX_MANIFESTS = 256;
+const MAX_SOLUTION_FILES = 64;
 const MAX_MANIFEST_BYTES = 1024 * 1024;
 const MAX_SOURCE_FILES = 256;
 const MAX_SOURCE_BYTES = 512 * 1024;
@@ -21,12 +22,36 @@ const IGNORED_DIRECTORIES = new Set([
   ".git",
   ".idea",
   ".vscode",
+  "artifacts",
+  "bin",
   "build",
   "coverage",
   "dist",
   "node_modules",
+  "obj",
   "out",
+  "TestResults",
   "vendor",
+]);
+const DOTNET_PROJECT_EXTENSIONS = new Set([".csproj", ".fsproj", ".vbproj"]);
+const DOTNET_SDKS = new Set([
+  "Microsoft.NET.Sdk",
+  "Microsoft.NET.Sdk.Web",
+  "Microsoft.NET.Sdk.Worker",
+  "Microsoft.NET.Sdk.Razor",
+  "Microsoft.NET.Sdk.BlazorWebAssembly",
+]);
+const ASPNETCORE_SDKS = new Set([
+  "Microsoft.NET.Sdk.Web",
+  "Microsoft.NET.Sdk.Razor",
+  "Microsoft.NET.Sdk.BlazorWebAssembly",
+]);
+const SHARED_DOTNET_FILES = new Set([
+  "directory.build.props",
+  "directory.build.targets",
+  "directory.packages.props",
+  "global.json",
+  "nuget.config",
 ]);
 const PLATFORM_DIRECTORIES = Object.freeze([
   "android",
@@ -349,10 +374,186 @@ export function parsePubspec(text) {
   };
 }
 
-async function findPubspecFiles(root) {
-  const result = [];
+function invalidDotNetProject() {
+  return {
+    valid: false,
+    sdkStyle: false,
+    projectSdks: [],
+    targetFrameworks: [],
+    frameworkReferences: [],
+    packageReferences: [],
+    projectReferences: [],
+    dotnet: false,
+    aspnetcore: false,
+    abp: false,
+  };
+}
+
+function findXmlTagEnd(text, start) {
+  let quote = null;
+  for (let index = start; index < text.length; index += 1) {
+    const character = text[index];
+    if (quote) {
+      if (character === quote) quote = null;
+    } else if (character === "\"" || character === "'") {
+      quote = character;
+    } else if (character === ">") {
+      return index;
+    }
+  }
+  return -1;
+}
+
+function parseXmlAttributes(text) {
+  const attributes = {};
+  let index = 0;
+  while (index < text.length) {
+    while (index < text.length && /\s/u.test(text[index])) index += 1;
+    if (index >= text.length) break;
+    const name = text.slice(index).match(/^[A-Za-z_][A-Za-z0-9_.:-]*/u)?.[0];
+    if (!name) return null;
+    index += name.length;
+    while (index < text.length && /\s/u.test(text[index])) index += 1;
+    if (text[index] !== "=") return null;
+    index += 1;
+    while (index < text.length && /\s/u.test(text[index])) index += 1;
+    const quote = text[index];
+    if (quote !== "\"" && quote !== "'") return null;
+    index += 1;
+    const end = text.indexOf(quote, index);
+    if (end < 0 || Object.prototype.hasOwnProperty.call(attributes, name)) return null;
+    attributes[name] = text.slice(index, end);
+    index = end + 1;
+  }
+  return attributes;
+}
+
+function parseXmlStructure(text, expectedRoot = null) {
+  if (typeof text !== "string" || text.length > MAX_MANIFEST_BYTES || /\r(?!\n)/u.test(text)) return null;
+  const nodes = [];
+  const stack = [];
+  let root = null;
+  let rootClosed = false;
+  let index = 0;
+  for (; index < text.length;) {
+    const tagStart = text.indexOf("<", index);
+    if (tagStart < 0) break;
+    if (stack.length === 0 && text.slice(index, tagStart).trim() !== "") return null;
+    if (text.startsWith("<!--", tagStart)) {
+      const end = text.indexOf("-->", tagStart + 4);
+      if (end < 0) return null;
+      index = end + 3;
+      continue;
+    }
+    if (text.startsWith("<![CDATA[", tagStart)) {
+      const end = text.indexOf("]]>", tagStart + 9);
+      if (end < 0) return null;
+      index = end + 3;
+      continue;
+    }
+    if (text.startsWith("<?", tagStart)) {
+      const end = text.indexOf("?>", tagStart + 2);
+      if (end < 0) return null;
+      index = end + 2;
+      continue;
+    }
+    if (text.startsWith("<!", tagStart)) return null;
+    const tagEnd = findXmlTagEnd(text, tagStart + 1);
+    if (tagEnd < 0) return null;
+    const raw = text.slice(tagStart + 1, tagEnd).trim();
+    if (raw === "") return null;
+    if (raw.startsWith("/")) {
+      const closing = raw.slice(1).trim().match(/^([A-Za-z_][A-Za-z0-9_.:-]*)\s*$/u)?.[1];
+      const open = stack.pop();
+      if (!closing || !open || open.name !== closing) return null;
+      open.text = text.slice(open.contentStart, tagStart);
+      if (stack.length === 0) {
+        if (rootClosed || open !== root) return null;
+        rootClosed = true;
+      }
+      index = tagEnd + 1;
+      continue;
+    }
+    const selfClosing = /\/\s*$/u.test(raw);
+    const body = selfClosing ? raw.replace(/\/\s*$/u, "").trimEnd() : raw;
+    const name = body.match(/^([A-Za-z_][A-Za-z0-9_.:-]*)/u)?.[1];
+    if (!name) return null;
+    if (stack.length === 0 && (root || rootClosed)) return null;
+    if (!root && expectedRoot && name !== expectedRoot) return null;
+    const attributes = parseXmlAttributes(body.slice(name.length).trim());
+    if (!attributes) return null;
+    const node = { name, attributes, contentStart: tagEnd + 1, text: "" };
+    nodes.push(node);
+    if (!root) root = node;
+    if (!selfClosing) stack.push(node);
+    else if (node === root) rootClosed = true;
+    index = tagEnd + 1;
+  }
+  if (stack.length === 0 && text.slice(index).trim() !== "") return null;
+  if (!root || stack.length > 0 || !rootClosed) return null;
+  return { root, nodes };
+}
+
+function normalizeSdkName(value) {
+  return typeof value === "string" ? value.trim().split("/")[0] : "";
+}
+
+function xmlValues(nodes, name, attribute = "Include") {
+  return uniqueSorted(nodes
+    .filter((node) => node.name === name && typeof node.attributes?.[attribute] === "string")
+    .map((node) => node.attributes[attribute].trim())
+    .filter(Boolean));
+}
+
+function targetFrameworkValues(nodes) {
+  return uniqueSorted(nodes
+    .filter((node) => node.name === "TargetFramework" || node.name === "TargetFrameworks")
+    .flatMap((node) => (node.text ?? "").replace(/<[^>]*>/gu, "").split(";"))
+    .map((value) => value.trim())
+    .filter(Boolean));
+}
+
+export function parseDotNetProject(text) {
+  const invalid = invalidDotNetProject();
+  if (typeof text !== "string" || text.length > MAX_MANIFEST_BYTES) return invalid;
+  const document = parseXmlStructure(text, "Project");
+  if (!document) return invalid;
+
+  const sdkValues = [
+    document.root.attributes.Sdk ?? "",
+    ...document.nodes.filter((node) => node.name === "Sdk").map((node) => node.attributes.Name ?? ""),
+  ];
+  const projectSdks = uniqueSorted(sdkValues
+    .flatMap((value) => value.split(";"))
+    .map(normalizeSdkName)
+    .filter(Boolean));
+  const recognizedSdks = projectSdks.filter((sdk) => DOTNET_SDKS.has(sdk));
+  const frameworkReferences = xmlValues(document.nodes, "FrameworkReference");
+  const packageReferences = xmlValues(document.nodes, "PackageReference");
+  const projectReferences = xmlValues(document.nodes, "ProjectReference");
+  const dotnet = recognizedSdks.length > 0;
+  const aspnetcore = dotnet && (recognizedSdks.some((sdk) => ASPNETCORE_SDKS.has(sdk))
+    || frameworkReferences.some((reference) => reference.toLowerCase() === "microsoft.aspnetcore.app"));
+  const abp = dotnet && packageReferences.some((reference) => reference.toLowerCase().startsWith("volo.abp."));
+  return {
+    valid: true,
+    sdkStyle: dotnet,
+    projectSdks,
+    targetFrameworks: targetFrameworkValues(document.nodes),
+    frameworkReferences,
+    packageReferences,
+    projectReferences,
+    dotnet,
+    aspnetcore,
+    abp,
+  };
+}
+
+async function findProjectFiles(root) {
+  const manifests = [];
+  const solutions = [];
   async function visit(directory) {
-    if (result.length >= MAX_MANIFESTS) return;
+    if (manifests.length >= MAX_MANIFESTS && solutions.length >= MAX_SOLUTION_FILES) return;
     let entries;
     try {
       entries = await readdir(directory, { withFileTypes: true });
@@ -361,18 +562,30 @@ async function findPubspecFiles(root) {
     }
     entries.sort((left, right) => left.name.localeCompare(right.name));
     for (const entry of entries) {
-      if (result.length >= MAX_MANIFESTS) return;
+      if (manifests.length >= MAX_MANIFESTS && solutions.length >= MAX_SOLUTION_FILES) return;
       const absolutePath = path.join(directory, entry.name);
       if (entry.isSymbolicLink()) continue;
       if (entry.isDirectory()) {
         if (!IGNORED_DIRECTORIES.has(entry.name)) await visit(absolutePath);
-      } else if (entry.isFile() && entry.name === "pubspec.yaml") {
-        result.push(absolutePath);
+        continue;
+      }
+      if (!entry.isFile()) continue;
+      const extension = path.extname(entry.name).toLowerCase();
+      if (entry.name === "pubspec.yaml" && manifests.length < MAX_MANIFESTS) {
+        manifests.push({ path: absolutePath, kind: "flutter" });
+      } else if (DOTNET_PROJECT_EXTENSIONS.has(extension) && manifests.length < MAX_MANIFESTS) {
+        manifests.push({ path: absolutePath, kind: "dotnet" });
+      } else if ((extension === ".sln" || extension === ".slnx") && solutions.length < MAX_SOLUTION_FILES) {
+        solutions.push(absolutePath);
       }
     }
   }
   await visit(root);
-  return result.sort((left, right) => portableRelative(root, left).localeCompare(portableRelative(root, right)));
+  const sortPaths = (left, right) => portableRelative(root, left.path ?? left).localeCompare(portableRelative(root, right.path ?? right));
+  return {
+    manifests: manifests.sort(sortPaths),
+    solutions: solutions.sort(sortPaths),
+  };
 }
 
 async function readBounded(filePath, maxBytes) {
@@ -439,9 +652,11 @@ function normalizeClaim(value) {
   return path.posix.normalize(replaced).replace(/^\.\//u, "").toLowerCase();
 }
 
-function claimMatchesProject(claim, projectRoot, projectRoots) {
+function claimMatchesProject(claim, project, projectRoots) {
   if (claim === ".") return true;
-  const root = projectRoot.toLowerCase();
+  const root = project.root.toLowerCase();
+  const manifest = project.manifest.toLowerCase();
+  if (claim === manifest || claim === root) return true;
   if (root === ".") {
     const nestedRoots = projectRoots
       .map((candidate) => candidate.toLowerCase())
@@ -449,14 +664,81 @@ function claimMatchesProject(claim, projectRoot, projectRoots) {
     // A root project owns claims outside confirmed nested project boundaries.
     return !nestedRoots.some((candidate) => claim === candidate || claim.startsWith(`${candidate}/`));
   }
-  return claim === root || claim.startsWith(`${root}/`) || root.startsWith(`${claim}/`);
+  return claim.startsWith(`${root}/`) || root.startsWith(`${claim}/`);
 }
 
-async function inspectProject(root, manifestPath, targetRoot) {
+function isSharedDotNetClaim(claim) {
+  return SHARED_DOTNET_FILES.has(path.posix.basename(claim).toLowerCase());
+}
+
+function claimMatchesSharedDotNetFile(claim, project) {
+  if (!project.dotnet || !isSharedDotNetClaim(claim)) return false;
+  const directory = path.posix.dirname(claim).toLowerCase();
+  const root = project.root.toLowerCase();
+  return directory === "." || root === directory || root.startsWith(`${directory}/`);
+}
+
+function parseSolutionMembership(text, extension, solutionPath, targetRoot) {
+  if (typeof text !== "string") return null;
+  const members = [];
+  if (extension === ".sln") {
+    const pattern = /^Project\("[^\r\n]*"\)\s*=\s*"[^"]*",\s*"([^"]+\.(?:csproj|fsproj|vbproj))",/gimu;
+    for (const match of text.matchAll(pattern)) {
+      const relativeToSolution = match[1].replaceAll("\\", "/");
+      const absolute = path.resolve(path.dirname(solutionPath), relativeToSolution);
+      members.push(portableRelative(targetRoot, absolute).toLowerCase());
+    }
+    return uniqueSorted(members);
+  }
+
+  const document = parseXmlStructure(text);
+  if (!document) return null;
+  for (const node of document.nodes) {
+    const projectPath = node.attributes.Path ?? node.attributes.path;
+    if (node.name === "Project" && typeof projectPath === "string" && /\.(?:csproj|fsproj|vbproj)$/iu.test(projectPath)) {
+      const absolute = path.resolve(path.dirname(solutionPath), projectPath.replaceAll("\\", "/"));
+      members.push(portableRelative(targetRoot, absolute).toLowerCase());
+    }
+  }
+  return uniqueSorted(members);
+}
+
+async function inspectProject(manifestInfo, targetRoot) {
+  const manifestPath = manifestInfo.path;
   const projectRootPath = path.dirname(manifestPath);
   const projectRoot = portableRelative(targetRoot, projectRootPath);
   const manifestRelative = portableRelative(targetRoot, manifestPath);
   const manifestText = await readBounded(manifestPath, MAX_MANIFEST_BYTES);
+
+  if (manifestInfo.kind === "dotnet") {
+    const parsed = parseDotNetProject(manifestText ?? "");
+    const primarySignals = parsed.dotnet
+      ? parsed.projectSdks
+        .filter((sdk) => DOTNET_SDKS.has(sdk))
+        .map((sdk) => `${manifestRelative}:project.sdk=${sdk}`)
+      : [];
+    const supportingSignals = [];
+    for (const targetFramework of parsed.targetFrameworks) supportingSignals.push(`${manifestRelative}:targetFramework=${targetFramework}`);
+    for (const reference of parsed.frameworkReferences) supportingSignals.push(`${manifestRelative}:frameworkReference=${reference}`);
+    for (const reference of parsed.packageReferences) supportingSignals.push(`${manifestRelative}:packageReference=${reference}`);
+    for (const reference of parsed.projectReferences) supportingSignals.push(`${manifestRelative}:projectReference=${reference}`);
+    const frameworks = [];
+    if (parsed.dotnet) frameworks.push("dotnet");
+    if (parsed.aspnetcore) frameworks.push("aspnetcore");
+    if (parsed.abp) frameworks.push("abp");
+    return {
+      kind: "dotnet",
+      root: projectRoot,
+      manifest: manifestRelative,
+      validManifest: parsed.valid,
+      primary: parsed.dotnet,
+      dotnet: parsed.dotnet,
+      frameworks,
+      primarySignals,
+      supportingSignals,
+    };
+  }
+
   const parsed = parsePubspec(manifestText ?? "");
   const primarySignals = parsed.primary ? [`${manifestRelative}:dependencies.flutter.sdk`] : [];
   const supportingSignals = [];
@@ -477,10 +759,13 @@ async function inspectProject(root, manifestPath, targetRoot) {
   }
 
   return {
+    kind: "flutter",
     root: projectRoot,
     manifest: manifestRelative,
     validManifest: parsed.valid,
     primary: parsed.primary,
+    dotnet: false,
+    frameworks: parsed.primary ? ["flutter"] : [],
     primarySignals,
     supportingSignals,
   };
@@ -488,22 +773,33 @@ async function inspectProject(root, manifestPath, targetRoot) {
 
 export async function detectProjectEvidence(target, { claims = [] } = {}) {
   const targetRoot = path.resolve(target);
-  const manifestPaths = await findPubspecFiles(targetRoot);
-  if (manifestPaths.length === 0) return null;
+  const discovered = await findProjectFiles(targetRoot);
+  if (discovered.manifests.length === 0) return null;
   const projects = [];
-  for (const manifestPath of manifestPaths) {
-    projects.push(await inspectProject(targetRoot, manifestPath, targetRoot));
+  for (const manifestInfo of discovered.manifests) projects.push(await inspectProject(manifestInfo, targetRoot));
+
+  const solutionMembership = new Map();
+  for (const solutionPath of discovered.solutions) {
+    const solutionRelative = portableRelative(targetRoot, solutionPath).toLowerCase();
+    const text = await readBounded(solutionPath, MAX_MANIFEST_BYTES);
+    solutionMembership.set(
+      solutionRelative,
+      parseSolutionMembership(text, path.extname(solutionPath).toLowerCase(), solutionPath, targetRoot) ?? [],
+    );
   }
 
   const normalizedClaims = uniqueSorted((Array.isArray(claims) ? claims : []).map(normalizeClaim).filter(Boolean));
   const hasClaims = Array.isArray(claims) && claims.length > 0;
   const projectRoots = projects.map((project) => project.root);
+  const solutionClaims = normalizedClaims.filter((claim) => solutionMembership.has(claim));
   const selectedProjects = hasClaims
-    ? projects.filter((project) => normalizedClaims.some((claim) => claimMatchesProject(
-      claim,
-      project.root,
-      projectRoots,
-    )))
+    ? projects.filter((project) => normalizedClaims.some((claim) => {
+      if (solutionClaims.includes(claim)) {
+        return project.dotnet && solutionMembership.get(claim).includes(project.manifest.toLowerCase());
+      }
+      if (isSharedDotNetClaim(claim)) return claimMatchesSharedDotNetFile(claim, project);
+      return claimMatchesProject(claim, project, projectRoots);
+    }))
     : projects;
   const scope = hasClaims
     ? (selectedProjects.length > 0 ? "MATCH" : "NO_MATCH")
@@ -511,7 +807,7 @@ export async function detectProjectEvidence(target, { claims = [] } = {}) {
   return {
     schemaVersion: PROJECT_EVIDENCE_SCHEMA_VERSION,
     scope,
-    frameworks: selectedProjects.some((project) => project.primary) ? ["flutter"] : [],
+    frameworks: uniqueSorted(selectedProjects.flatMap((project) => project.frameworks)),
     projectRoots: uniqueSorted(selectedProjects.map((project) => project.root)),
     primarySignals: uniqueSorted(selectedProjects.flatMap((project) => project.primarySignals)),
     supportingSignals: uniqueSorted(selectedProjects.flatMap((project) => project.supportingSignals)),

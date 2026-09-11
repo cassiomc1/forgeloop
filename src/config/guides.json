@@ -42,5 +42,9 @@
   "flutter": {
     "path": "ENG/flutter-development-eng.md",
     "install": true
+  },
+  "dotnet": {
+    "path": "ENG/dotnet-aspnetcore-development-eng.md",
+    "install": true
   }
 }

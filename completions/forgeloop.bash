@@ -140,7 +140,7 @@ _forgeloop() {
     inspect) COMPREPLY=( $(compgen -W '--contract-file --help --json --path --task --version' -- "$cur") );;
     metrics) COMPREPLY=( $(compgen -W '--help --json --path --task --version' -- "$cur") );;
     migrate-protocol) COMPREPLY=( $(compgen -W '--dry-run --help --json --path --to --version' -- "$cur") );;
-    next) COMPREPLY=( $(compgen -W '--compact --help --json --path --task --version' -- "$cur") );;
+    next) COMPREPLY=( $(compgen -W '--compact --explain --help --json --path --task --version' -- "$cur") );;
     policy) COMPREPLY=( $(compgen -W '--help --json --path --task --version' -- "$cur") );;
     policy-diff) COMPREPLY=( $(compgen -W '--after --before --help --json --path --task --version' -- "$cur") );;
     policy-discover) COMPREPLY=( $(compgen -W '--help --json --path --version --write' -- "$cur") );;
@@ -172,8 +172,8 @@ _forgeloop() {
     run-check) COMPREPLY=( $(compgen -W '-- --details --help --id --json --path --requirement --scope-ref --task --timeout-ms --version' -- "$cur") );;
     search) COMPREPLY=( $(compgen -W '--after-context --before-context --context --files-with-matches --fixed-strings --glob --help --ignore-case --json --max-count --path --smart-case --stats --type --version --word-regexp' -- "$cur") );;
     status) COMPREPLY=( $(compgen -W '--contract-file --help --json --path --task --version' -- "$cur") );;
-    task-create) COMPREPLY=( $(compgen -W '--claim --contract-file --help --json --path --task --version' -- "$cur") );;
-    task-list) COMPREPLY=( $(compgen -W '--help --json --path --version' -- "$cur") );;
+    task-create) COMPREPLY=( $(compgen -W '--claim --contract-file --help --json --path --preset --preview --task --version' -- "$cur") );;
+    task-list) COMPREPLY=( $(compgen -W '--active --help --json --limit --offset --path --phase --version' -- "$cur") );;
     task-lock-status) COMPREPLY=( $(compgen -W '--help --json --path --task --version' -- "$cur") );;
     task-migrate) COMPREPLY=( $(compgen -W '--dry-run --help --json --path --version' -- "$cur") );;
     task-recover) COMPREPLY=( $(compgen -W '--acknowledge-recovery --help --json --operator-authorized --path --task --version' -- "$cur") );;

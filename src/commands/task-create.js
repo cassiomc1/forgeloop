@@ -9,6 +9,7 @@ import { withTaskTransaction } from "../core/transaction.js";
 import { taskDirectory } from "../core/task-paths.js";
 import { ensureWithin, fileExists } from "../core/filesystem.js";
 import { validateContract, writeContract } from "../core/contract.js";
+import { createPresetContract, CONTRACT_PRESET_IDS } from "../core/contract-presets.js";
 import { appendProtocolEvent } from "../core/events.js";
 import { E_TASK_REQUIRED, E_TASK_ALREADY_EXISTS, E_TASK_DESCRIPTOR_INVALID } from "../core/error-codes.js";
 import { recoveryGuidanceForClassification } from "../core/next-action-model.js";
@@ -56,12 +57,28 @@ export async function assertNoScopeConflictsWithInspection(claims, existingTasks
   }
 }
 
-export async function runTaskCreate({ target, packageRoot, taskId, claims = [], contractFile = null } = {}) {
+export async function runTaskCreate({
+  target,
+  packageRoot,
+  taskId,
+  claims = [],
+  contractFile = null,
+  preset = null,
+  preview = false,
+} = {}) {
   if (!taskId) {
     throw taskError(E_TASK_REQUIRED, "--task is required for task-create");
   }
   assertTaskId(taskId);
 
+  if (preset && !CONTRACT_PRESET_IDS.includes(preset)) {
+    const error = new Error(`Unknown contract preset: ${preset}. Expected one of ${CONTRACT_PRESET_IDS.join(", ")}`);
+    error.code = "E_CONTRACT_PRESET_UNKNOWN";
+    throw error;
+  }
+  if (preset && contractFile) {
+    throw taskError("E_CONTRACT_INPUT_CONFLICT", "Use either --preset or --contract-file, not both");
+  }
   const existing = await findTaskById(target, taskId, packageRoot);
   if (existing) {
     throw taskError(E_TASK_ALREADY_EXISTS, `Task already exists: ${taskId}`);
@@ -69,11 +86,45 @@ export async function runTaskCreate({ target, packageRoot, taskId, claims = [], 
 
   const normalizedClaims = normalizeWriteClaims(claims ?? []);
 
+  let proposedContract = null;
+  if (preset) proposedContract = createPresetContract({ taskId, preset, claims: normalizedClaims });
+  if (contractFile) {
+    const sourcePath = ensureWithin(target, contractFile);
+    if (!(await fileExists(sourcePath))) {
+      throw taskError("E_CONTRACT_MISSING", `Specified contract file not found: ${contractFile}`);
+    }
+    const raw = await readFile(sourcePath, "utf8");
+    try {
+      proposedContract = JSON.parse(raw);
+    } catch {
+      throw taskError("E_CONTRACT_INVALID", `Specified contract file is not valid JSON: ${contractFile}`);
+    }
+    await validateContract(proposedContract, packageRoot);
+    if (proposedContract.taskId && proposedContract.taskId !== taskId) {
+      throw taskError(
+        E_TASK_DESCRIPTOR_INVALID,
+        `Contract taskId "${proposedContract.taskId}" does not match requested taskId "${taskId}"`,
+      );
+    }
+    proposedContract = { ...proposedContract, taskId };
+  }
+
   return withProjectClaimsLock(target, async () => {
     const allTasks = await discoverTasks(target, packageRoot);
     await assertNoScopeConflictsWithInspection(normalizedClaims, allTasks, taskId, { target, packageRoot });
     if (normalizedClaims.length > 0) {
       await assertScopeClean(target, normalizedClaims);
+    }
+
+    if (preview) {
+      return {
+        preview: true,
+        taskId,
+        writeClaims: normalizedClaims,
+        preset,
+        contract: proposedContract,
+        createsLifecycleState: false,
+      };
     }
 
     return withTaskTransaction({ target, taskId, operation: "task-create", packageRoot, recordCommitEvent: true }, async () => {
@@ -84,26 +135,9 @@ export async function runTaskCreate({ target, packageRoot, taskId, claims = [], 
       const written = await writeTaskDescriptor(target, descriptor, packageRoot);
 
       let contractCopied = false;
-      if (contractFile) {
-        const sourcePath = ensureWithin(target, contractFile);
-        if (!(await fileExists(sourcePath))) {
-          throw taskError("E_CONTRACT_MISSING", `Specified contract file not found: ${contractFile}`);
-        }
-        const raw = await readFile(sourcePath, "utf8");
-        let parsed;
-        try {
-          parsed = JSON.parse(raw);
-        } catch {
-          throw taskError("E_CONTRACT_INVALID", `Specified contract file is not valid JSON: ${contractFile}`);
-        }
+      if (proposedContract) {
+        const parsed = { ...proposedContract, taskId };
         await validateContract(parsed, packageRoot);
-        if (parsed.taskId && parsed.taskId !== taskId) {
-          throw taskError(
-            E_TASK_DESCRIPTOR_INVALID,
-            `Contract taskId "${parsed.taskId}" does not match requested taskId "${taskId}"`,
-          );
-        }
-        parsed.taskId = taskId;
         await writeContract(target, parsed, packageRoot, { taskId });
         contractCopied = true;
       }
@@ -128,6 +162,16 @@ export async function runTaskCreate({ target, packageRoot, taskId, claims = [], 
 }
 
 export function formatTaskCreateResult(result) {
+  if (result.preview) {
+    return `${JSON.stringify({
+      preview: true,
+      taskId: result.taskId,
+      preset: result.preset,
+      writeClaims: result.writeClaims,
+      contract: result.contract,
+      createsLifecycleState: false,
+    }, null, 2)}\n`;
+  }
   const claims = result.writeClaims.length === 0 ? "none" : result.writeClaims.join(", ");
   return `created task: ${result.taskId}\nkey: ${result.taskKey}\ndirectory: ${result.directory}\nclaims: ${claims}\n`;
 }

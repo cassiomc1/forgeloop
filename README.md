@@ -68,6 +68,7 @@ validator-backed `COMPLETE / VALID` and preserves a later
 | Web games | [`ENG/games-code-design-web-eng.md`](./ENG/games-code-design-web-eng.md) |
 | Documentation quality | [`ENG/documentation-quality-eng.md`](./ENG/documentation-quality-eng.md) |
 | Flutter | [guide](./ENG/flutter-development-eng.md) |
+| .NET and ASP.NET Core | [guide](./ENG/dotnet-aspnetcore-development-eng.md) |
 | Structural quality feedback | [`docs/STRUCTURAL_QUALITY.md`](./docs/STRUCTURAL_QUALITY.md) |
 
 Guide metadata is validator-checked.

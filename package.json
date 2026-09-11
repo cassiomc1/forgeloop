@@ -140,6 +140,7 @@
     "benchmark:profiles:regression": "node scripts/check-efficiency-regression.mjs",
     "transactions:compact": "node scripts/compact-transactions.mjs",
     "complexity:check": "node scripts/check-complexity.mjs",
+    "task-discovery:benchmark": "node scripts/benchmark-task-discovery.mjs",
     "repository-index:manifest": "node scripts/verify-tgrep-manifest.mjs"
   },
   "devDependencies": {

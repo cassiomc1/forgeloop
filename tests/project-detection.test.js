@@ -7,6 +7,7 @@ import { test } from "node:test";
 import { runRoute } from "../src/commands/route.js";
 import {
   detectProjectEvidence,
+  parseDotNetProject,
   parsePubspec,
 } from "../src/core/project-detection.js";
 import { evaluateRoute } from "../src/core/router.js";
@@ -215,5 +216,149 @@ test("Dart discovery skips symlinks without skipping sorted siblings", async () 
 
     const evidence = await detectProjectEvidence(target);
     assert.equal(evidence.supportingSignals.includes("source:package:flutter"), false);
+  });
+});
+
+const dotnetLibraryProject = `<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+</Project>
+`;
+
+test("SDK-style .NET projects provide primary evidence and parse structural metadata", async () => {
+  const parsed = parseDotNetProject(dotnetLibraryProject);
+  assert.equal(parsed.valid, true);
+  assert.equal(parsed.sdkStyle, true);
+  assert.equal(parsed.dotnet, true);
+  assert.equal(parsed.aspnetcore, false);
+  assert.deepEqual(parsed.projectSdks, ["Microsoft.NET.Sdk"]);
+  assert.deepEqual(parsed.targetFrameworks, ["net10.0"]);
+
+  await temporaryProject("forgeloop-dotnet-detection-positive-", async (target) => {
+    await writeFile(path.join(target, "Library.csproj"), dotnetLibraryProject);
+    const evidence = await detectProjectEvidence(target);
+    assert.deepEqual(evidence.frameworks, ["dotnet"]);
+    assert.equal(evidence.scope, "UNSCOPED");
+    assert.deepEqual(evidence.projectRoots, ["."]);
+    assert.deepEqual(evidence.primarySignals, ["Library.csproj:project.sdk=Microsoft.NET.Sdk"]);
+    assert.ok(evidence.supportingSignals.includes("Library.csproj:targetFramework=net10.0"));
+  });
+});
+
+test("Web SDK, framework references, and ABP packages classify overlays without changing the guide ID", () => {
+  const web = parseDotNetProject(`<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup><TargetFrameworks>net8.0; net10.0</TargetFrameworks></PropertyGroup>
+  <ItemGroup><FrameworkReference Include="Microsoft.AspNetCore.App" /></ItemGroup>
+</Project>`);
+  assert.equal(web.valid, true);
+  assert.equal(web.dotnet, true);
+  assert.equal(web.aspnetcore, true);
+  assert.deepEqual(web.targetFrameworks, ["net10.0", "net8.0"]);
+  assert.deepEqual(web.frameworkReferences, ["Microsoft.AspNetCore.App"]);
+
+  const abp = parseDotNetProject(`<Project Sdk="Microsoft.NET.Sdk.Web">
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc"><Version>8.2.0</Version></PackageReference>
+    <PackageReference Include="Volo.Abp.EntityFrameworkCore" Version="8.2.0" />
+  </ItemGroup>
+</Project>`);
+  assert.equal(abp.aspnetcore, true);
+  assert.equal(abp.abp, true);
+  assert.deepEqual(abp.packageReferences, ["Volo.Abp.AspNetCore.Mvc", "Volo.Abp.EntityFrameworkCore"]);
+});
+
+test("alternate SDK syntax, worker projects, and project references are structural evidence", () => {
+  const alternate = parseDotNetProject(`<Project>
+  <Sdk Name="Microsoft.NET.Sdk.Web" />
+  <ItemGroup><ProjectReference Include="../Domain/Domain.csproj" /></ItemGroup>
+</Project>`);
+  assert.equal(alternate.valid, true);
+  assert.equal(alternate.dotnet, true);
+  assert.equal(alternate.aspnetcore, true);
+  assert.deepEqual(alternate.projectReferences, ["../Domain/Domain.csproj"]);
+
+  const worker = parseDotNetProject(`<Project Sdk="Microsoft.NET.Sdk.Worker"></Project>`);
+  assert.equal(worker.dotnet, true);
+  assert.equal(worker.aspnetcore, false);
+});
+
+test("malformed, oversized, and weak .NET signals fail closed", async () => {
+  const malformedText = `<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup>`;
+  const malformed = parseDotNetProject(malformedText);
+  assert.equal(malformed.valid, false);
+  assert.equal(malformed.dotnet, false);
+
+  const oversized = parseDotNetProject(`<Project Sdk="Microsoft.NET.Sdk">${"x".repeat(1024 * 1024)}</Project>`);
+  assert.equal(oversized.valid, false);
+  assert.equal(oversized.dotnet, false);
+  const trailingText = parseDotNetProject(`${dotnetLibraryProject}unexpected`);
+  assert.equal(trailingText.valid, false);
+  assert.equal(trailingText.dotnet, false);
+
+  await temporaryProject("forgeloop-dotnet-detection-negative-", async (target) => {
+    await writeFile(path.join(target, "Program.cs"), "class Program {}\n");
+    await writeFile(path.join(target, "README.md"), "This will use ASP.NET Core and ABP.\n");
+    await writeFile(path.join(target, "Dockerfile"), "FROM mcr.microsoft.com/dotnet/aspnet:10.0\n");
+    await writeFile(path.join(target, "packages.lock.json"), "{}\n");
+    assert.equal(await detectProjectEvidence(target), null);
+
+    await writeFile(path.join(target, "Broken.csproj"), malformedText);
+    const evidence = await detectProjectEvidence(target);
+    assert.deepEqual(evidence.frameworks, []);
+    assert.deepEqual(evidence.primarySignals, []);
+  });
+});
+
+test("shared .NET configuration and exact solution membership constrain scope", async () => {
+  await temporaryProject("forgeloop-dotnet-detection-scope-", async (target) => {
+    await mkdir(path.join(target, "src", "A"), { recursive: true });
+    await mkdir(path.join(target, "src", "B"), { recursive: true });
+    await mkdir(path.join(target, "tools", "Unrelated"), { recursive: true });
+    await writeFile(path.join(target, "src", "A", "A.csproj"), dotnetLibraryProject);
+    await writeFile(path.join(target, "src", "B", "B.csproj"), `<Project Sdk="Microsoft.NET.Sdk.Web" />`);
+    await writeFile(path.join(target, "tools", "Unrelated", "Tool.csproj"), dotnetLibraryProject);
+    await writeFile(path.join(target, "Directory.Build.props"), "<Project />\n");
+    await writeFile(path.join(target, "Directory.Packages.props"), "<Project />\n");
+    await writeFile(path.join(target, "global.json"), "{\"sdk\":{\"version\":\"10.0.100\"}}\n");
+    await writeFile(path.join(target, "Product.sln"), `Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{A}") = "A", "src\\A\\A.csproj", "{A}"
+EndProject
+Project("{B}") = "B", "src\\B\\B.csproj", "{B}"
+EndProject
+`);
+
+    const shared = await detectProjectEvidence(target, { claims: ["Directory.Build.props"] });
+    assert.equal(shared.scope, "MATCH");
+    assert.deepEqual(shared.projectRoots, ["src/A", "src/B", "tools/Unrelated"]);
+    assert.deepEqual(shared.frameworks, ["aspnetcore", "dotnet"]);
+
+    const solution = await detectProjectEvidence(target, { claims: ["Product.sln"] });
+    assert.deepEqual(solution.projectRoots, ["src/A", "src/B"]);
+    assert.deepEqual(solution.frameworks, ["aspnetcore", "dotnet"]);
+
+    const sibling = await detectProjectEvidence(target, { claims: ["src/A/A.csproj"] });
+    assert.deepEqual(sibling.projectRoots, ["src/A"]);
+    assert.deepEqual(sibling.frameworks, ["dotnet"]);
+
+    const unrelated = await detectProjectEvidence(target, { claims: ["README.md"] });
+    assert.equal(unrelated.scope, "NO_MATCH");
+    assert.deepEqual(unrelated.frameworks, []);
+  });
+});
+
+test("Flutter and .NET projects remain isolated in a mixed monorepo", async () => {
+  await temporaryProject("forgeloop-mixed-project-detection-", async (target) => {
+    await mkdir(path.join(target, "apps", "mobile", "lib"), { recursive: true });
+    await mkdir(path.join(target, "services", "api"), { recursive: true });
+    await writeFile(path.join(target, "apps", "mobile", "pubspec.yaml"), flutterPubspec);
+    await writeFile(path.join(target, "services", "api", "Api.csproj"), dotnetLibraryProject);
+
+    const mobile = await detectProjectEvidence(target, { claims: ["apps/mobile/lib/main.dart"] });
+    assert.deepEqual(mobile.frameworks, ["flutter"]);
+    const api = await detectProjectEvidence(target, { claims: ["services/api/Api.csproj"] });
+    assert.deepEqual(api.frameworks, ["dotnet"]);
+    const both = await detectProjectEvidence(target, { claims: ["apps/mobile", "services/api"] });
+    assert.deepEqual(both.frameworks, ["dotnet", "flutter"]);
   });
 });

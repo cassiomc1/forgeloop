@@ -105,6 +105,12 @@ test("Flutter specialist is registered with the canonical guide path", () => {
   assert.ok(GUIDE_IDS.includes("flutter"));
 });
 
+test(".NET specialist is registered with the canonical guide path", () => {
+  assert.equal(GUIDE_REGISTRY.dotnet.path, "ENG/dotnet-aspnetcore-development-eng.md");
+  assert.equal(GUIDE_REGISTRY.dotnet.install, true);
+  assert.ok(GUIDE_IDS.includes("dotnet"));
+});
+
 test("ui-copy routes to design and accessibility, never documentation", () => {
   const result = evaluateRoute({
     workType: "ui-copy",

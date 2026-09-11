@@ -2,6 +2,29 @@
 
 This document maps the nineteen findings in the historical [Astra audit](../astra.md) to the implementation on `codex/astra-improvements`. The audit baseline is commit `fe13c597b3ba669dab93dc72d3d8e6d099dd129b`. The historical audit and the pre-existing release-evidence edit are preserved.
 
+## Current plan execution checkpoint — 2026-09-11
+
+The actionable plan added on 2026-09-10 has been executed as additive,
+validator-backed increments in an isolated worktree. Existing CLI/API
+contracts remain the source of truth; no publication, deployment, installation,
+or external cleanup was performed.
+
+| Plan item | Delivered surface | Evidence and boundary |
+| --- | --- | --- |
+| IMP-01 | `src/core/contract-presets.js`, `task-create --preset/--preview`, first-task docs | Four deterministic schema-valid presets; preview validates scope and writes no task namespace; release retains a typed publication criterion. |
+| IMP-02 | `src/core/next-explanation.js`, `next --explain` | Opt-in bounded explanation is derived from canonical reason codes and safe artifact references; compact output is unchanged without the flag. |
+| IMP-03 | Command-input validation decomposition | Policy, task creation, profile/usage, output, selector, and check validation are separated without changing rejection order; completion/phase decomposition remains a later independent slice. |
+| IMP-04 | `conformance/adapter-test-kit.mjs`, refreshed conformance instructions | Public API kit reports `PASS`, `FAIL`, and explicit `UNAVAILABLE`; historical release identities remain untouched. |
+| IMP-05 | `task-list --phase/--active/--limit/--offset`, benchmark script | Ordering and bounds are deterministic; discovery benchmark records cold/warm timing in disposable fixtures; no cache or history deletion was introduced. |
+| IMP-06 | .NET/ASP.NET Core structural detector and `dotnet` guide | SDK-style projects, scoped shared files, solution membership, negative cases, router reasons, schemas, registry, docs, and mixed-monorepo isolation are covered. |
+
+The adapter kit intentionally reports policy-drift and interrupted-transaction
+scenarios as `UNAVAILABLE` because a public adapter must not fabricate durable
+policy or transaction artifacts. Their canonical fixtures remain the authority
+for those cases. Local checks run for this checkpoint are recorded in the task
+receipt and final delivery; unavailable environment checks remain
+`NOT_VERIFIED` rather than inferred as passed.
+
 ## Changes by finding
 
 | Finding | Implementation | Verification |
