@@ -397,5 +397,5 @@ Official references for version-sensitive work:
 - [ASP.NET Core documentation](https://learn.microsoft.com/aspnet/core/)
 - [EF Core documentation](https://learn.microsoft.com/ef/core/)
 - [ABP documentation](https://abp.io/docs/latest)
-- [ABP modularity](https://abp.io/docs/latest/framework/architecture/modularity)
+- [ABP modularity](https://abp.io/docs/latest/framework/architecture/modularity/basics)
 - [ABP unit of work](https://abp.io/docs/latest/framework/architecture/domain-driven-design/unit-of-work)
