@@ -54,6 +54,7 @@ project commands.
 | `documentation` | [Documentation quality](./ENG/documentation-quality-eng.md) | Accuracy, architecture, freshness, accessibility, and verifiable technical documentation |
 | `flutter` | [Flutter application engineering](./ENG/flutter-development-eng.md) | Architecture, implementation, testing, performance, accessibility, platform integration, and release of production Flutter applications |
 | `dotnet` | [.NET and ASP.NET Core development engineering](./ENG/dotnet-aspnetcore-development-eng.md) | Architecture, implementation, testing, performance, security, data access, hosting, observability, and release of production .NET applications |
+| `nodejs` | [Node.js backend development engineering](./ENG/nodejs-backend-development-eng.md) | Architecture, implementation, testing, security, performance, observability, and release of production Node.js services and workers |
 
 ## Domain rules
 
@@ -239,6 +240,46 @@ rg -n '^## |architecture|dependency injection|middleware|endpoints|configuration
 
 **Expected evidence:** a confirmed affected .NET project, a scoped route, compatible SDK/runtime decisions, focused and integration checks for changed boundaries, and honest `NOT_VERIFIED` reporting for unavailable .NET tooling or runtime environments.
 
+### `nodejs` — Node.js backend development engineering
+
+**Activate when:** a confirmed project root has a valid `package.json` with an
+allowlisted runtime backend dependency (`express`, `fastify`, `@nestjs/core`,
+`koa`, or `@hapi/hapi`), a direct `node`/`node.exe` runtime script, or bounded
+source evidence importing a Node server/network built-in such as `node:http`,
+`node:https`, `node:http2`, `node:net`, `node:tls`, or `node:dgram`, and the task
+scope intersects that root.
+
+**Do not activate merely because:** a `package.json`, `engines.node`, `type`,
+`packageManager`, lockfile, `.nvmrc`, `.node-version`, `@types/node`,
+TypeScript, `tsx`, Dockerfile, CI setup, frontend dependency, Next-only
+dependency, prose mention, or development-only framework dependency exists.
+Malformed or oversized manifests fail closed. The detector never executes
+scripts or source code, follows symlinks, installs packages, or accesses the
+network.
+
+**Usually combine with:** `clean` and `test`; add `security` for input,
+authentication, authorization, dependency, secret, external-service, or
+publication risks; add `performance` for measured latency, throughput,
+memory, event-loop, queue, or database work; add `documentation` when the API,
+configuration, or operational contract changes.
+
+The route command obtains this evidence from
+`src/core/project-detection.js`. It walks bounded, non-symlinked manifests and
+source files, isolates nested `package.json` roots, recognizes workspace-root
+and shared lockfile scope, and preserves `projectEvidence.schemaVersion: 1`.
+Mixed Flutter/.NET/Node repositories retain each confirmed framework; a claim
+that does not reach a confirmed Node project produces
+`NO_NODEJS_SCOPE_MATCH` or leaves the specialist excluded.
+
+```bash
+rg -n '^## |activation|runtime|architecture|Express|Fastify|NestJS|security|testing|performance|deployment|Definition of Done' ENG/nodejs-backend-development-eng.md
+```
+
+**Expected evidence:** a confirmed affected Node project, a scoped route,
+validated inputs and configuration, bounded trust and resource controls,
+focused plus integration/adversarial checks, observable failure and shutdown
+behavior, and honest `NOT_VERIFIED` reporting for unavailable Node tooling.
+
 ## Work-type matrix
 
 | Work | Primary guide | Common complements | Exclude when |
@@ -250,6 +291,7 @@ rg -n '^## |architecture|dependency injection|middleware|endpoints|configuration
 | Web, mobile, or desktop UI | `design` | `accessibility`, `clean`, `test`; risk defines the rest | Users cannot observe the change |
 | Flutter application | `flutter` | `clean`, `test`; add `design`, `accessibility`, `security`, or `performance` as applicable | No primary Flutter SDK dependency in the affected project scope |
 | .NET / ASP.NET Core application | `dotnet` | `clean`, `test`; add `security`, `performance`, `documentation`, or UI guides as applicable | No supported SDK-style .NET project in the affected project scope |
+| Node.js backend, API, worker, or server runtime | `nodejs` | `clean`, `test`; add `security`, `performance`, or `documentation` as applicable | No primary Node.js backend/runtime evidence in the affected project scope |
 | Complete website | `premium` | `design`, `accessibility`, `clean`, `test`, `security`, `performance` | The deliverable is not a complete site |
 | Web game | `games` | `clean`, `test`, `security`, `performance`, `accessibility`; `design` with UI | The product is not a game |
 | HTML video or motion | `design` | `accessibility`, `performance`, `test`, `security` | There is no audiovisual composition |
@@ -283,29 +325,38 @@ The first routing contract is versioned as `schemaVersion: 1`. It accepts:
 - optional boolean `behaviorChange` and `executableChange` signals.
 - optional `projectEvidence` with a schema version, a scope result, detected
   framework IDs, affected project roots, primary signals, and supporting
-  signals. The current framework IDs are `flutter`, `dotnet`, `aspnetcore`, and
-  `abp`. Flutter's primary signal is an affected `dependencies.flutter.sdk:
-  flutter` entry in `pubspec.yaml`. .NET's primary signal is a supported
-  SDK-style project manifest; ASP.NET Core and ABP are structural overlays.
+  signals. The current framework IDs are `flutter`, `dotnet`, `aspnetcore`,
+  `abp`, and `nodejs`. Flutter's primary signal is an affected
+  `dependencies.flutter.sdk: flutter` entry in `pubspec.yaml`. .NET's primary
+  signal is a supported SDK-style project manifest; ASP.NET Core and ABP are
+  structural overlays. Node.js primary signals are an allowlisted runtime
+  dependency, direct Node runtime script, or narrow server-builtin source
+  import in a valid `package.json` project.
 
 Rule precedence is deterministic: the work type establishes the primary
 closure; affected surfaces add mandatory complements; risks add security,
 performance, or accessibility; executable/behavior changes add clean and
 test; required rules win over optional exclusions; and the evaluator preserves
 canonical insertion order. A matching Flutter project adds `flutter` plus the
-`clean`/`test` baseline before ordinary work-type complements; documentation
-and UI-copy work do not activate the specialist. A matching .NET project adds
-`dotnet` plus the `clean`/`test` baseline and records ASP.NET Core/ABP reasons
-on that guide. Unknown or duplicate signals fail with a routing error.
+  `clean`/`test` baseline before ordinary work-type complements; documentation
+  and UI-copy work do not activate the specialist. A matching .NET project adds
+  `dotnet` plus the `clean`/`test` baseline and records ASP.NET Core/ABP reasons
+  on that guide. A matching Node.js project adds `nodejs` plus the `clean`/`test`
+  baseline and records dependency, direct-script, and server-runtime reasons as
+  applicable. Unknown or duplicate signals fail with a routing error.
 
 Every selected guide has stable reason codes such as
 `WORK_COMPLETE_WEBSITE`, `SURFACE_UI`, `RISK_UNTRUSTED_INPUT`, and
 `CHANGE_EXECUTABLE_CONFIG`. Exclusions use stable codes such as
 `NO_TRUST_BOUNDARY`, `NO_MEASURABLE_PERFORMANCE_RISK`, and
-`NO_DOCUMENTATION_SURFACE`. Flutter uses
-`PROJECT_FLUTTER_SDK_DEPENDENCY`, `PROJECT_FLUTTER_BASELINE`,
-`NO_FLUTTER_PRIMARY_EVIDENCE`, `NO_FLUTTER_SCOPE_MATCH`, and
-`NO_FLUTTER_EXECUTABLE_WORK`.
+  `NO_DOCUMENTATION_SURFACE`. Flutter uses
+  `PROJECT_FLUTTER_SDK_DEPENDENCY`, `PROJECT_FLUTTER_BASELINE`,
+  `NO_FLUTTER_PRIMARY_EVIDENCE`, `NO_FLUTTER_SCOPE_MATCH`, and
+  `NO_FLUTTER_EXECUTABLE_WORK`.
+  Node.js uses `PROJECT_NODEJS_BACKEND_FRAMEWORK`,
+  `PROJECT_NODEJS_RUNTIME_SCRIPT`, `PROJECT_NODEJS_SERVER_RUNTIME`,
+  `PROJECT_NODEJS_BASELINE`, `NO_NODEJS_PRIMARY_EVIDENCE`,
+  `NO_NODEJS_SCOPE_MATCH`, and `NO_NODEJS_EXECUTABLE_WORK`.
 
 Platform signals are contextual, not automatic guide activators:
 
@@ -330,6 +381,16 @@ Negative routing guarantees:
 - a backend refactor does not activate `design` or `accessibility`;
 - static UI copy does not activate `security` without a trust-boundary signal;
 - a package file alone does not prove that Node is an affected task surface;
+- a valid `package.json` without an allowlisted runtime dependency, direct Node
+  runtime script, or narrow server-builtin import does not activate `nodejs`;
+- React/Vite, Next-only, engines-only, `@types/node`-only, devDependency-only,
+  lockfile-only, Docker-only, and CI-only evidence does not activate `nodejs`;
+- Node.js detection does not execute package scripts, import source, install
+  dependencies, follow symlinks, read unbounded files, or make network calls;
+- a workspace root may scope confirmed Node descendants, but a frontend or
+  unrelated nested package remains isolated;
+- documentation, UI-copy, and mobile-only work do not activate the Node.js
+  specialist even when the repository contains a confirmed Node package;
 - `flutter_test`, a Flutter word in documentation, or a lockfile package does
   not replace the primary Flutter SDK dependency signal;
 - a .NET word in documentation, a `Dockerfile`, `project.assets.json`, a
@@ -405,6 +466,17 @@ ordering, endpoint contracts, validation, authorization, cancellation, data
 access, observability, and integration behavior according to the changed
 surface. A worker/library project remains on the same specialist guide but
 does not receive an ASP.NET Core claim without structural web evidence.
+
+### Node.js backend feature
+
+<!-- route:nodejs-backend-feature=nodejs,clean,test -->
+
+Verify the affected package has primary Node.js evidence, confirm the claim
+reaches the correct package root or workspace descendant, and cover runtime and
+module-system compatibility, input/configuration validation, authentication and
+authorization, middleware order, timeouts/cancellation, persistence and
+external-service boundaries, observability, shutdown, and adversarial tests.
+Supporting package metadata and lockfiles alone must leave `nodejs` excluded.
 
 ## Route changes
 

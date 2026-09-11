@@ -2,7 +2,22 @@
 
 ## Unreleased
 
-No changes yet.
+### Added
+
+- Added the first-class Node.js backend engineering guide and registered it as
+  the `nodejs` specialist in the canonical guide catalog.
+- Added bounded Node.js project detection for allowlisted runtime backend
+  dependencies, direct Node runtime scripts, and narrow server-builtin source
+  imports while keeping supporting metadata non-authoritative.
+- Added adversarial detection and routing coverage for frontend/tooling false
+  positives, malformed or oversized manifests, nested workspaces, shared
+  lockfiles, mixed Flutter/.NET/Node repositories, symlinks, and traversal
+  budgets.
+
+### Changed
+
+- Extended the routing schema, package checks, router reference, README, and
+  package-contents documentation for the Node.js specialist.
 
 ## 1.12.0 - 2026-09-09
 

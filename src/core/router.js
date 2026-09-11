@@ -62,7 +62,7 @@ const SIGNALS = Object.freeze({
   platforms: new Set(["web", "mobile", "desktop", "server", "ci", "cross-platform"]),
 });
 
-const PROJECT_FRAMEWORKS = new Set(["flutter", "dotnet", "aspnetcore", "abp"]);
+const PROJECT_FRAMEWORKS = new Set(["flutter", "dotnet", "aspnetcore", "abp", "nodejs"]);
 
 export const PLATFORM_SEMANTICS = Object.freeze({
   web: Object.freeze({
@@ -134,8 +134,6 @@ function addFlutterProjectGuides(input, add) {
     || !["MATCH", "UNSCOPED"].includes(projectEvidence.scope)
     || !hasFlutterWorkContext(input.workType)) return;
   add("flutter", "PROJECT_FLUTTER_SDK_DEPENDENCY");
-  add("clean", "PROJECT_FLUTTER_BASELINE");
-  add("test", "PROJECT_FLUTTER_BASELINE");
 }
 
 function hasDotNetWorkContext(workType) {
@@ -150,8 +148,43 @@ function addDotNetProjectGuides(input, add) {
   add("dotnet", "PROJECT_DOTNET_SDK_PROJECT");
   if (projectEvidence.frameworks.includes("aspnetcore")) add("dotnet", "PROJECT_ASPNETCORE_CONFIRMED");
   if (projectEvidence.frameworks.includes("abp")) add("dotnet", "PROJECT_ABP_CONFIRMED");
-  add("clean", "PROJECT_DOTNET_BASELINE");
-  add("test", "PROJECT_DOTNET_BASELINE");
+}
+
+function hasNodeJsWorkContext(workType) {
+  return !["documentation", "ui-copy", "mobile-ui"].includes(workType);
+}
+
+function addNodeJsProjectGuides(input, add) {
+  const projectEvidence = input.projectEvidence;
+  if (!projectEvidence?.frameworks.includes("nodejs")
+    || !["MATCH", "UNSCOPED"].includes(projectEvidence.scope)
+    || !hasNodeJsWorkContext(input.workType)) return;
+  if (projectEvidence.primarySignals.some((signal) => signal.includes(":dependencies.") || signal.includes(":optionalDependencies."))) {
+    add("nodejs", "PROJECT_NODEJS_BACKEND_FRAMEWORK");
+  }
+  if (projectEvidence.primarySignals.some((signal) => signal.includes(":scripts."))) {
+    add("nodejs", "PROJECT_NODEJS_RUNTIME_SCRIPT");
+  }
+  if (projectEvidence.primarySignals.some((signal) => signal.includes(":import="))) {
+    add("nodejs", "PROJECT_NODEJS_SERVER_RUNTIME");
+  }
+}
+
+function addProjectBaselineGuides(input, add) {
+  const projectEvidence = input.projectEvidence;
+  if (!projectEvidence || !["MATCH", "UNSCOPED"].includes(projectEvidence.scope)) return;
+  if (projectEvidence.frameworks.includes("flutter") && hasFlutterWorkContext(input.workType)) {
+    add("clean", "PROJECT_FLUTTER_BASELINE");
+    add("test", "PROJECT_FLUTTER_BASELINE");
+  }
+  if (projectEvidence.frameworks.includes("dotnet") && hasDotNetWorkContext(input.workType)) {
+    add("clean", "PROJECT_DOTNET_BASELINE");
+    add("test", "PROJECT_DOTNET_BASELINE");
+  }
+  if (projectEvidence.frameworks.includes("nodejs") && hasNodeJsWorkContext(input.workType)) {
+    add("clean", "PROJECT_NODEJS_BASELINE");
+    add("test", "PROJECT_NODEJS_BASELINE");
+  }
 }
 
 function flutterExclusionReason(projectEvidence, workType) {
@@ -170,6 +203,14 @@ function dotNetExclusionReason(projectEvidence, workType) {
   return "NO_DOTNET_PRIMARY_EVIDENCE";
 }
 
+function nodeJsExclusionReason(projectEvidence, workType) {
+  if (!projectEvidence) return "NO_NODEJS_PROJECT_EVIDENCE";
+  if (projectEvidence.scope === "NO_MATCH") return "NO_NODEJS_SCOPE_MATCH";
+  if (!projectEvidence.frameworks.includes("nodejs")) return "NO_NODEJS_PRIMARY_EVIDENCE";
+  if (!hasNodeJsWorkContext(workType)) return "NO_NODEJS_EXECUTABLE_WORK";
+  return "NO_NODEJS_PRIMARY_EVIDENCE";
+}
+
 function exclusionReasonForGuide(guide, projectEvidence, workType) {
   if (guide === "security") return "NO_TRUST_BOUNDARY";
   if (guide === "performance") return "NO_MEASURABLE_PERFORMANCE_RISK";
@@ -179,6 +220,7 @@ function exclusionReasonForGuide(guide, projectEvidence, workType) {
   if (guide === "documentation") return "NO_DOCUMENTATION_SURFACE";
   if (guide === "flutter") return flutterExclusionReason(projectEvidence, workType);
   if (guide === "dotnet") return dotNetExclusionReason(projectEvidence, workType);
+  if (guide === "nodejs") return nodeJsExclusionReason(projectEvidence, workType);
   return "NO_BEHAVIOR_OR_EXECUTABLE_CHANGE";
 }
 
@@ -298,6 +340,8 @@ export function evaluateRoute(input = {}, profileOptions = {}) {
   const projectEvidence = normalized.projectEvidence;
   addFlutterProjectGuides(normalized, add);
   addDotNetProjectGuides(normalized, add);
+  addNodeJsProjectGuides(normalized, add);
+  addProjectBaselineGuides(normalized, add);
 
   const workReason = reasonForWorkType(normalized.workType);
   for (const guide of WORK_GUIDES[normalized.workType]) add(guide, workReason);

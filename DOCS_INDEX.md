@@ -53,7 +53,7 @@ integration and guide context. Use this map before editing documentation.
 | Architecture and safety boundaries | [`LOOP_SYSTEM_DESIGN.md`](./LOOP_SYSTEM_DESIGN.md) and [`THREAT_MODEL.md`](./THREAT_MODEL.md) | Design rationale and residual risk |
 | Artifact and phase schemas | [`schemas/`](./schemas/) and [`CONTRACT_COVERAGE.md`](./CONTRACT_COVERAGE.md) | Versioned machine-readable contract |
 | CLI/package behavior | [`src/`](./src/) and [`tests/`](./tests/) | Executable implementation and regression evidence |
-| Guide content | [`ENG/`](./ENG/) | Context-specific, English-only operational guides, including the Flutter specialist |
+| Guide content | [`ENG/`](./ENG/) | Context-specific, English-only operational guides, including the Flutter, .NET, and Node.js specialists |
 | Diagram governance | [`docs/diagrams/manifest.json`](./docs/diagrams/manifest.json) | Authoritative taxonomy, renderer mapping, canonical purposes, artifact ownership, and references |
 | Diagram maintainer entrypoint | [`docs/diagrams/README.md`](./docs/diagrams/README.md) | Typed Archify source, animated HTML explorer, animated SVG fallback, review, and regeneration workflow |
 | Engineering flow diagram | [`docs/assets/diagrams/forgeloop-engineering-flow.html`](./docs/assets/diagrams/forgeloop-engineering-flow.html) | Conceptual lifecycle from request through validator-backed completion |

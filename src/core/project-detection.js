@@ -65,6 +65,39 @@ const SHARED_DOTNET_FILES = new Set([
   "global.json",
   "nuget.config",
 ]);
+const NODE_BACKEND_DEPENDENCIES = new Set([
+  "express",
+  "fastify",
+  "@nestjs/core",
+  "koa",
+  "@hapi/hapi",
+]);
+const NODE_SOURCE_EXTENSIONS = new Set([".js", ".mjs", ".cjs", ".ts", ".mts", ".cts"]);
+const NODE_SERVER_BUILTINS = Object.freeze([
+  "node:http",
+  "node:https",
+  "node:http2",
+  "node:net",
+  "node:tls",
+  "node:dgram",
+  "http",
+  "https",
+  "http2",
+  "net",
+  "tls",
+  "dgram",
+]);
+const SHARED_NODE_FILES = new Set([
+  "package-lock.json",
+  "npm-shrinkwrap.json",
+  "pnpm-lock.yaml",
+  "yarn.lock",
+  ".npmrc",
+  ".yarnrc.yml",
+  "pnpm-workspace.yaml",
+  ".nvmrc",
+  ".node-version",
+]);
 const PLATFORM_DIRECTORIES = Object.freeze([
   "android",
   "ios",
@@ -386,6 +419,130 @@ export function parsePubspec(text) {
   };
 }
 
+function invalidNodePackage() {
+  return {
+    valid: false,
+    backendDependencies: [],
+    backendDependencySignals: [],
+    runtimeScripts: [],
+    serverBuiltins: [],
+    supportingDependencies: [],
+    enginesNode: false,
+    moduleType: false,
+    packageManager: false,
+    workspaceRoot: false,
+  };
+}
+
+function isPlainObject(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function validStringMap(value) {
+  return isPlainObject(value) && Object.values(value).every((entry) => typeof entry === "string");
+}
+
+function packageWorkspaceRoot(value) {
+  if (Array.isArray(value)) return value.length > 0 && value.every((entry) => typeof entry === "string");
+  return isPlainObject(value)
+    && Array.isArray(value.packages)
+    && value.packages.length > 0
+    && value.packages.every((entry) => typeof entry === "string");
+}
+
+function commandStartsWithNode(command) {
+  if (typeof command !== "string") return false;
+  let remaining = command.trim();
+  if (remaining === "") return false;
+
+  // Allow the ordinary shell environment-prefix form while keeping the
+  // executable decision conservative. Wrappers such as npx, npm, and
+  // cross-env are intentionally not followed.
+  while (true) {
+    const assignment = remaining.match(/^[A-Za-z_][A-Za-z0-9_]*=(?:"[^"]*"|'[^']*'|[^\s;&|<>]+)\s+/u);
+    if (!assignment) break;
+    remaining = remaining.slice(assignment[0].length).trimStart();
+  }
+  if (remaining.startsWith("env ")) {
+    remaining = remaining.slice(4).trimStart();
+    while (true) {
+      const assignment = remaining.match(/^[A-Za-z_][A-Za-z0-9_]*=(?:"[^"]*"|'[^']*'|[^\s;&|<>]+)\s+/u);
+      if (!assignment) break;
+      remaining = remaining.slice(assignment[0].length).trimStart();
+    }
+  }
+
+  const token = remaining.match(/^(?:"([^"]+)"|'([^']+)'|([^\s;&|<>]+))/u);
+  const executable = token?.[1] ?? token?.[2] ?? token?.[3] ?? "";
+  return executable === "node" || executable === "node.exe";
+}
+
+function packageServerBuiltin(text) {
+  if (typeof text !== "string") return null;
+  const moduleAlternation = [...NODE_SERVER_BUILTINS]
+    .sort((left, right) => right.length - left.length)
+    .map((value) => value.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&"))
+    .join("|");
+  const patterns = [
+    new RegExp(`^\\s*(?:import|export)\\b[^\\n;]*?\\bfrom\\s*["'](${moduleAlternation})["']`, "mu"),
+    new RegExp(`^\\s*(?:import|export)\\s*["'](${moduleAlternation})["']`, "mu"),
+    new RegExp(`^\\s*(?:const|let|var)\\b[^\\n=]*=\\s*require\\(\\s*["'](${moduleAlternation})["']\\s*\\)`, "mu"),
+    new RegExp(`^\\s*require\\(\\s*["'](${moduleAlternation})["']\\s*\\)`, "mu"),
+    new RegExp(`^\\s*(?:await\\s+)?import\\(\\s*["'](${moduleAlternation})["']\\s*\\)`, "mu"),
+  ];
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match?.[1]) return match[1];
+  }
+  return null;
+}
+
+export function parsePackageJson(text) {
+  const invalid = invalidNodePackage();
+  if (typeof text !== "string" || text.length > MAX_MANIFEST_BYTES || /\r(?!\n)/u.test(text)) return invalid;
+
+  let value;
+  try {
+    value = JSON.parse(text);
+  } catch {
+    return invalid;
+  }
+  if (!isPlainObject(value)) return invalid;
+
+  const dependencyFields = ["dependencies", "optionalDependencies", "devDependencies", "peerDependencies"];
+  if (dependencyFields.some((field) => value[field] !== undefined && !validStringMap(value[field]))) return invalid;
+  if (value.scripts !== undefined && !validStringMap(value.scripts)) return invalid;
+  if (value.engines !== undefined && !validStringMap(value.engines)) return invalid;
+  if (value.workspaces !== undefined && !packageWorkspaceRoot(value.workspaces)) return invalid;
+  if (value.type !== undefined && typeof value.type !== "string") return invalid;
+  if (value.packageManager !== undefined && typeof value.packageManager !== "string") return invalid;
+
+  const backendDependencySignals = ["dependencies", "optionalDependencies"]
+    .flatMap((field) => Object.keys(value[field] ?? {})
+      .filter((name) => NODE_BACKEND_DEPENDENCIES.has(name))
+      .map((name) => `${field}.${name}`));
+  const runtimeScripts = Object.entries(value.scripts ?? {})
+    .filter(([, command]) => commandStartsWithNode(command))
+    .map(([name]) => name)
+    .sort((left, right) => left.localeCompare(right));
+  const supportingDependencies = ["devDependencies", "peerDependencies"]
+    .flatMap((field) => Object.keys(value[field] ?? {}))
+    .filter((name) => ["@types/node", "typescript", "tsx"].includes(name));
+
+  return {
+    valid: true,
+    backendDependencies: uniqueSorted(backendDependencySignals.map((signal) => signal.split(".").slice(1).join("."))),
+    backendDependencySignals: uniqueSorted(backendDependencySignals),
+    runtimeScripts,
+    serverBuiltins: [],
+    supportingDependencies: uniqueSorted(supportingDependencies),
+    enginesNode: typeof value.engines?.node === "string",
+    moduleType: value.type === "module" || value.type === "commonjs",
+    packageManager: typeof value.packageManager === "string",
+    workspaceRoot: packageWorkspaceRoot(value.workspaces),
+  };
+}
+
 function invalidDotNetProject() {
   return {
     valid: false,
@@ -618,6 +775,7 @@ function consumeEntry(budget) {
 async function findProjectFiles(root, budget) {
   const manifests = [];
   const solutions = [];
+  const sharedFiles = [];
   async function visit(directory) {
     if (manifests.length >= MAX_MANIFESTS && solutions.length >= MAX_SOLUTION_FILES) return;
     if (!consumeDirectory(budget)) return;
@@ -641,10 +799,15 @@ async function findProjectFiles(root, budget) {
       const extension = path.extname(entry.name).toLowerCase();
       if (entry.name === "pubspec.yaml" && manifests.length < MAX_MANIFESTS) {
         manifests.push({ path: absolutePath, kind: "flutter" });
+      } else if (entry.name === "package.json" && manifests.length < MAX_MANIFESTS) {
+        manifests.push({ path: absolutePath, kind: "nodejs" });
       } else if (DOTNET_PROJECT_EXTENSIONS.has(extension) && manifests.length < MAX_MANIFESTS) {
         manifests.push({ path: absolutePath, kind: "dotnet" });
       } else if ((extension === ".sln" || extension === ".slnx") && solutions.length < MAX_SOLUTION_FILES) {
         solutions.push(absolutePath);
+      }
+      if (SHARED_NODE_FILES.has(entry.name.toLowerCase())) {
+        sharedFiles.push({ path: absolutePath, kind: "nodejs" });
       }
     }
   }
@@ -653,6 +816,7 @@ async function findProjectFiles(root, budget) {
   return {
     manifests: manifests.sort(sortPaths),
     solutions: solutions.sort(sortPaths),
+    sharedFiles: sharedFiles.sort(sortPaths),
   };
 }
 
@@ -709,6 +873,36 @@ async function findDartFiles(root, budget) {
   return result;
 }
 
+async function findNodeSourceFiles(root, budget, nestedRoots = []) {
+  const result = [];
+  const boundaries = nestedRoots.map((nestedRoot) => path.resolve(nestedRoot));
+  async function visit(directory) {
+    if (result.length >= MAX_SOURCE_FILES) return;
+    if (boundaries.some((boundary) => directory !== root && (directory === boundary || directory.startsWith(`${boundary}${path.sep}`)))) return;
+    if (!consumeDirectory(budget)) return;
+    let entries;
+    try {
+      entries = await readdir(directory, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    entries.sort((left, right) => left.name.localeCompare(right.name));
+    for (const entry of entries) {
+      if (result.length >= MAX_SOURCE_FILES) return;
+      if (!consumeEntry(budget)) return;
+      if (entry.isSymbolicLink()) continue;
+      const absolutePath = path.join(directory, entry.name);
+      if (entry.isDirectory()) {
+        if (!IGNORED_DIRECTORIES.has(entry.name)) await visit(absolutePath);
+      } else if (entry.isFile() && NODE_SOURCE_EXTENSIONS.has(path.extname(entry.name).toLowerCase())) {
+        result.push(absolutePath);
+      }
+    }
+  }
+  await visit(root);
+  return result;
+}
+
 async function hasFlutterImport(projectRoot, budget) {
   for (const directory of SOURCE_DIRECTORIES) {
     const files = await findDartFiles(path.join(projectRoot, directory), budget);
@@ -718,6 +912,21 @@ async function hasFlutterImport(projectRoot, budget) {
     }
   }
   return false;
+}
+
+async function findNodeServerImports(projectRoot, targetRoot, budget, nestedRoots = []) {
+  const imports = [];
+  const files = await findNodeSourceFiles(projectRoot, budget, nestedRoots);
+  for (const filePath of files) {
+    const text = await readBounded(filePath, MAX_SOURCE_BYTES);
+    const moduleName = packageServerBuiltin(text);
+    if (!moduleName) continue;
+    imports.push({
+      file: portableRelative(targetRoot, filePath),
+      module: moduleName,
+    });
+  }
+  return imports;
 }
 
 function normalizeClaim(value) {
@@ -752,6 +961,36 @@ function claimMatchesSharedDotNetFile(claim, project) {
   const directory = path.posix.dirname(claim).toLowerCase();
   const root = project.root.toLowerCase();
   return directory === "." || root === directory || root.startsWith(`${directory}/`);
+}
+
+function isSharedNodeClaim(claim) {
+  return SHARED_NODE_FILES.has(path.posix.basename(claim).toLowerCase());
+}
+
+function claimMatchesSharedNodeFile(claim, project, projectRoots) {
+  if (!project.nodejs || !isSharedNodeClaim(claim)) return false;
+  const directory = path.posix.dirname(claim).toLowerCase();
+  const root = project.root.toLowerCase();
+  if (root === "." && directory !== ".") {
+    const nestedRoots = projectRoots
+      .map((candidate) => candidate.toLowerCase())
+      .filter((candidate) => candidate !== ".");
+    if (nestedRoots.some((candidate) => directory === candidate || directory.startsWith(`${candidate}/`))) return false;
+  }
+  return directory === "."
+    || root === directory
+    || root.startsWith(`${directory}/`)
+    || directory.startsWith(`${root}/`);
+}
+
+function claimMatchesNodeWorkspaceManifest(claim, project, projects) {
+  if (path.posix.basename(claim) !== "package.json" || project.kind !== "nodejs" || !project.nodejs) return false;
+  const workspace = projects.find((candidate) => candidate.kind === "nodejs"
+    && candidate.manifest.toLowerCase() === claim
+    && candidate.workspaceRoot);
+  if (!workspace) return false;
+  const workspacePrefix = workspace.root === "." ? "" : `${workspace.root}/`;
+  return project.root === workspace.root || project.root.startsWith(workspacePrefix);
 }
 
 function normalizedSolutionMember(relativePath, solutionPath, targetRoot) {
@@ -794,7 +1033,22 @@ function parseSolutionMembership(text, extension, solutionPath, targetRoot) {
   return uniqueSorted(members);
 }
 
-async function inspectProject(manifestInfo, targetRoot, budget) {
+function sharedNodeSignalApplies(sharedFile, projectRoot, nodeProjectRoots) {
+  const sharedDirectory = path.posix.dirname(sharedFile).toLowerCase();
+  const root = projectRoot.toLowerCase();
+  if (root === "." && sharedDirectory !== ".") {
+    const nestedRoots = nodeProjectRoots
+      .map((candidate) => candidate.toLowerCase())
+      .filter((candidate) => candidate !== ".");
+    if (nestedRoots.some((candidate) => sharedDirectory === candidate || sharedDirectory.startsWith(`${candidate}/`))) return false;
+  }
+  return sharedDirectory === "."
+    || root === sharedDirectory
+    || root.startsWith(`${sharedDirectory}/`)
+    || sharedDirectory.startsWith(`${root}/`);
+}
+
+async function inspectProject(manifestInfo, targetRoot, budget, manifestInfos, sharedFiles) {
   const manifestPath = manifestInfo.path;
   const projectRootPath = path.dirname(manifestPath);
   const projectRoot = portableRelative(targetRoot, projectRootPath);
@@ -830,6 +1084,53 @@ async function inspectProject(manifestInfo, targetRoot, budget) {
     };
   }
 
+  if (manifestInfo.kind === "nodejs") {
+    const parsed = parsePackageJson(manifestText ?? "");
+    const nodeProjectRoots = manifestInfos
+      .filter((candidate) => candidate.kind === "nodejs")
+      .map((candidate) => portableRelative(targetRoot, path.dirname(candidate.path)));
+    const nestedRoots = nodeProjectRoots
+      .filter((candidate) => candidate !== projectRoot && candidate.startsWith(`${projectRoot}/`))
+      .map((candidate) => path.resolve(targetRoot, candidate));
+    const primarySignals = [];
+    for (const dependency of parsed.backendDependencySignals) primarySignals.push(`${manifestRelative}:${dependency}`);
+    for (const script of parsed.runtimeScripts) primarySignals.push(`${manifestRelative}:scripts.${script}=node`);
+
+    const serverImports = parsed.valid && primarySignals.length === 0
+      ? await findNodeServerImports(projectRootPath, targetRoot, budget, nestedRoots)
+      : [];
+    for (const serverImport of serverImports) {
+      primarySignals.push(`${serverImport.file}:import=${serverImport.module}`);
+    }
+
+    const supportingSignals = [];
+    if (parsed.enginesNode) supportingSignals.push(`${manifestRelative}:engines.node`);
+    if (parsed.moduleType) supportingSignals.push(`${manifestRelative}:type`);
+    if (parsed.packageManager) supportingSignals.push(`${manifestRelative}:packageManager`);
+    if (parsed.workspaceRoot) supportingSignals.push(`${manifestRelative}:workspaces`);
+    for (const dependency of parsed.supportingDependencies) supportingSignals.push(`${manifestRelative}:supportingDependency=${dependency}`);
+    for (const sharedFile of sharedFiles) {
+      const relative = portableRelative(targetRoot, sharedFile.path);
+      if (sharedNodeSignalApplies(relative, projectRoot, nodeProjectRoots)) {
+        supportingSignals.push(`${relative}:node-scope`);
+      }
+    }
+
+    const primary = parsed.valid && primarySignals.length > 0;
+    return {
+      kind: "nodejs",
+      root: projectRoot,
+      manifest: manifestRelative,
+      validManifest: parsed.valid,
+      primary,
+      nodejs: primary,
+      workspaceRoot: parsed.workspaceRoot,
+      frameworks: primary ? ["nodejs"] : [],
+      primarySignals,
+      supportingSignals,
+    };
+  }
+
   const parsed = parsePubspec(manifestText ?? "");
   const primarySignals = parsed.primary ? [`${manifestRelative}:dependencies.flutter.sdk`] : [];
   const supportingSignals = [];
@@ -855,6 +1156,7 @@ async function inspectProject(manifestInfo, targetRoot, budget) {
     manifest: manifestRelative,
     validManifest: parsed.valid,
     primary: parsed.primary,
+    nodejs: false,
     dotnet: false,
     frameworks: parsed.primary ? ["flutter"] : [],
     primarySignals,
@@ -870,7 +1172,7 @@ export async function detectProjectEvidence(target, { claims = [], limits = {} }
   if (discovered.manifests.length === 0) return null;
   const projects = [];
   for (const manifestInfo of discovered.manifests) {
-    projects.push(await inspectProject(manifestInfo, targetRoot, budget));
+    projects.push(await inspectProject(manifestInfo, targetRoot, budget, discovered.manifests, discovered.sharedFiles));
     if (budget.exhausted) return null;
   }
 
@@ -894,7 +1196,9 @@ export async function detectProjectEvidence(target, { claims = [], limits = {} }
         return project.dotnet && solutionMembership.get(claim).includes(project.manifest.toLowerCase());
       }
       if (isSharedDotNetClaim(claim)) return claimMatchesSharedDotNetFile(claim, project);
-      return claimMatchesProject(claim, project, projectRoots);
+      if (isSharedNodeClaim(claim)) return claimMatchesSharedNodeFile(claim, project, projectRoots);
+      return claimMatchesProject(claim, project, projectRoots)
+        || claimMatchesNodeWorkspaceManifest(claim, project, projects);
     }))
     : projects;
   const scope = hasClaims
