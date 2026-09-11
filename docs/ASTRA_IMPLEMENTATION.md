@@ -6,7 +6,7 @@ This document maps the nineteen findings in the historical [Astra audit](../astr
 
 The actionable plan added on 2026-09-10 was executed as additive,
 validator-backed increments in an isolated worktree and merged through PR
-#167. Existing CLI/API contracts remain the source of truth; no publication,
+PR 167. Existing CLI/API contracts remain the source of truth; no publication,
 deployment, installation, or external cleanup was performed.
 
 | Plan item | Delivered surface | Evidence and boundary |
