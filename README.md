@@ -12,18 +12,16 @@
 [![Package smoke](https://github.com/cassiomc1/forgeloop/actions/workflows/package-smoke.yml/badge.svg?branch=main)](https://github.com/cassiomc1/forgeloop/actions/workflows/package-smoke.yml)
 [![Release notes](https://github.com/cassiomc1/forgeloop/actions/workflows/release-notes.yml/badge.svg?branch=main)](https://github.com/cassiomc1/forgeloop/actions/workflows/release-notes.yml)
 
-ForgeLoop is a portable, vendor-neutral protocol for AI-assisted development
-and developer workflows. It turns outcomes into contracts, deterministic routing,
-resumable state, evidence-backed verification, recovery, cross-harness
-continuity, managed repository-wide discovery, and validator-backed completion.
-It is a protocol CLI, not an agent or LLM runtime, framework, or graph orchestrator.
+ForgeLoop is a protocol CLI for AI-assisted development.
+It turns outcomes into contracts, deterministic routing, resumable state,
+evidence-backed verification, recovery, cross-harness continuity, repository
+discovery, and validator-backed completion—not an agent or LLM runtime.
 
-The operational sources are indexed in [`DOCS_INDEX.md`](./DOCS_INDEX.md).
-[`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md) is the canonical process;
-[`PROTOCOL_INTEGRATION.md`](./PROTOCOL_INTEGRATION.md) defines capability
-levels and discovery; [`PROJECT_PROFILE.md`](./PROJECT_PROFILE.md) stores
-durable project facts; and [`GUIDE_ROUTER.md`](./GUIDE_ROUTER.md) selects only
-relevant guides.
+Operational sources are indexed in [`DOCS_INDEX.md`](./DOCS_INDEX.md).
+[`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md) is canonical;
+[`PROTOCOL_INTEGRATION.md`](./PROTOCOL_INTEGRATION.md) defines discovery,
+[`PROJECT_PROFILE.md`](./PROJECT_PROFILE.md) stores project facts, and
+[`GUIDE_ROUTER.md`](./GUIDE_ROUTER.md) selects relevant guides.
 
 ## Where should I start?
 
@@ -68,6 +66,7 @@ validator-backed `COMPLETE / VALID` and preserves a later
 | Web games | [`ENG/games-code-design-web-eng.md`](./ENG/games-code-design-web-eng.md) |
 | Documentation quality | [`ENG/documentation-quality-eng.md`](./ENG/documentation-quality-eng.md) |
 | Flutter | [guide](./ENG/flutter-development-eng.md) |
+| .NET and ASP.NET Core | [guide](./ENG/dotnet-aspnetcore-development-eng.md) |
 | Structural quality feedback | [`docs/STRUCTURAL_QUALITY.md`](./docs/STRUCTURAL_QUALITY.md) |
 
 Guide metadata is validator-checked.

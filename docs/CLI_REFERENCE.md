@@ -982,6 +982,7 @@ Computes the deterministic next action required by the protocol.
 - `--path <directory>`: target project directory (default: current directory)
 - `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
 - `--compact`: emit a bounded next-action projection
+- `--explain`: include bounded read-only blocker and recovery explanation
 - `--json`: emit structured output as JSON
 
 <!-- END FORGELOOP GENERATED: cli:next:options -->
@@ -2016,6 +2017,8 @@ Initializes a new isolated task namespace with write claims and contract.
 - `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
 - `--claim <path>`: scoped file path or directory prefix claimed for mutation (repeatable)
 - `--contract-file <path>`: path to initial contract file
+- `--preset <name>`: bounded contract preset: documentation, bug, feature, or release
+- `--preview`: preview the contract without creating lifecycle state
 - `--json`: emit structured output as JSON
 
 <!-- END FORGELOOP GENERATED: cli:task-create:options -->
@@ -2034,6 +2037,12 @@ Initializes a new isolated task namespace with write claims and contract.
 
   `--contract-file` points to a contract JSON that is validated and copied into the task namespace.
 
+  Use `--preset documentation|bug|feature|release --preview` for a bounded,
+  read-only contract proposal. Preview validates claims and creates no task
+  namespace; repeat without `--preview` after reviewing the proposal. Presets
+  record unresolved decisions when concrete deliverables are not supplied and
+  do not publish or deploy release artifacts.
+
 ### `task-list`
 
 Lists all tasks discovered in `.forgeloop/task-state/`.
@@ -2045,9 +2054,19 @@ Lists all tasks discovered in `.forgeloop/task-state/`.
 <!-- BEGIN FORGELOOP GENERATED: cli:task-list:options -->
 
 - `--path <directory>`: target project directory (default: current directory)
+- `--phase <phase>`: only return tasks in this lifecycle phase
+- `--active`: only return healthy tasks with active ownership and a non-terminal phase
+- `--limit <number>`: maximum tasks to return
+- `--offset <number>`: number of sorted tasks to skip
 - `--json`: emit structured output as JSON
 
 <!-- END FORGELOOP GENERATED: cli:task-list:options -->
+
+  Results are sorted by task ID. `--phase` and `--active` filter the
+  presentation only; ownership and corruption checks still run for every
+  discovered task before filtering. `--limit` and `--offset` provide bounded
+  pagination and return `total` and `hasMore` in JSON. Listing never removes
+  ledger or recovery evidence.
 
 - **Example**:
 

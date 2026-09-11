@@ -49,6 +49,30 @@ forgeloop next --task task-contact-form-001 --compact --json
 forgeloop task-show --task task-contact-form-001 --compact --json
 ```
 
+When the task shape is known but a full contract has not been written yet,
+use a bounded preset preview. Preview is read-only and records unresolved
+decisions instead of guessing project facts:
+
+```bash
+forgeloop task-create --task task-contact-form-001 \
+  --claim src/components --claim tests \
+  --preset feature --preview --json
+```
+
+After reviewing the proposed contract, repeat the command without
+`--preview` to create the namespace and persist the same validated contract.
+The supported presets are `documentation`, `bug`, `feature`, and `release`.
+The release preset retains an independently verified publication requirement;
+it does not publish or deploy anything.
+
+For a bounded explanation of a blocked or recovery-sensitive next action, opt
+in with `--explain`. The explanation is read-only and derived from canonical
+reason codes and artifact references:
+
+```bash
+forgeloop next --task task-contact-form-001 --explain --json
+```
+
 These commands do not bypass contracts, gates, verification, provenance,
 lifecycle phases, or validator-backed completion. Usage telemetry is optional,
 never estimated, and never verification evidence; `efficiency --task` compares

@@ -53,6 +53,7 @@ project commands.
 | `games` | [Web games](./ENG/games-code-design-web-eng.md) | Architecture and operation of 2D, 3D, and procedural web games |
 | `documentation` | [Documentation quality](./ENG/documentation-quality-eng.md) | Accuracy, architecture, freshness, accessibility, and verifiable technical documentation |
 | `flutter` | [Flutter application engineering](./ENG/flutter-development-eng.md) | Architecture, implementation, testing, performance, accessibility, platform integration, and release of production Flutter applications |
+| `dotnet` | [.NET and ASP.NET Core development engineering](./ENG/dotnet-aspnetcore-development-eng.md) | Architecture, implementation, testing, performance, security, data access, hosting, observability, and release of production .NET applications |
 
 ## Domain rules
 
@@ -222,6 +223,22 @@ rg -n '^## |architecture|testing|performance|accessibility|platform|release|Flut
 
 **Expected evidence:** a confirmed affected Flutter project, a scoped route, platform-appropriate tests, measured performance or accessibility checks when relevant, and honest `NOT_VERIFIED` reporting for unavailable Flutter tooling.
 
+### `dotnet` — .NET and ASP.NET Core development engineering
+
+**Activate when:** a confirmed project root has a structurally parsed SDK-style `*.csproj`, `*.fsproj`, or `*.vbproj` using a supported `Microsoft.NET.Sdk` family, and the task scope intersects that root. Web, Razor, or Blazor SDKs, or `FrameworkReference Include="Microsoft.AspNetCore.App"`, confirm ASP.NET Core context. A `Volo.Abp.*` package reference adds the ABP overlay while retaining the single `dotnet` guide ID.
+
+**Do not activate merely because:** prose, Markdown, source snippets, a Dockerfile, a lockfile, an arbitrary directory name, a package cache, or an unrelated monorepo project mentions .NET, ASP.NET Core, or ABP. A malformed, oversized, non-SDK-style, or unsupported project file fails closed. Shared `Directory.Build.*`, `Directory.Packages.props`, `global.json`, and NuGet files apply only to descendant .NET projects in their directory scope; `.sln`/`.slnx` claims use exact solution membership.
+
+**Usually combine with:** `clean` and `test`; add `security` for trust-boundary or dependency changes, `performance` for measured cost or critical paths, `documentation` for technical documentation, and the UI guides for Razor/Blazor or other user-facing changes.
+
+The route command obtains this evidence from `src/core/project-detection.js`. It walks bounded, non-symlinked project manifests, parses SDK/target/reference structure, and matches task claims against project roots, shared configuration scope, or exact solution membership. ASP.NET Core and ABP are routing reasons on the specialist guide, not additional guide IDs.
+
+```bash
+rg -n '^## |architecture|dependency injection|middleware|endpoints|configuration|authentication|authorization|EF Core|testing|WebApplicationFactory|workers|Blazor|ABP|publish|troubleshooting' ENG/dotnet-aspnetcore-development-eng.md
+```
+
+**Expected evidence:** a confirmed affected .NET project, a scoped route, compatible SDK/runtime decisions, focused and integration checks for changed boundaries, and honest `NOT_VERIFIED` reporting for unavailable .NET tooling or runtime environments.
+
 ## Work-type matrix
 
 | Work | Primary guide | Common complements | Exclude when |
@@ -232,6 +249,7 @@ rg -n '^## |architecture|testing|performance|accessibility|platform|release|Flut
 | Backend, API, or data | `clean` | `test`, `security`; `performance` for a critical path | That layer does not exist |
 | Web, mobile, or desktop UI | `design` | `accessibility`, `clean`, `test`; risk defines the rest | Users cannot observe the change |
 | Flutter application | `flutter` | `clean`, `test`; add `design`, `accessibility`, `security`, or `performance` as applicable | No primary Flutter SDK dependency in the affected project scope |
+| .NET / ASP.NET Core application | `dotnet` | `clean`, `test`; add `security`, `performance`, `documentation`, or UI guides as applicable | No supported SDK-style .NET project in the affected project scope |
 | Complete website | `premium` | `design`, `accessibility`, `clean`, `test`, `security`, `performance` | The deliverable is not a complete site |
 | Web game | `games` | `clean`, `test`, `security`, `performance`, `accessibility`; `design` with UI | The product is not a game |
 | HTML video or motion | `design` | `accessibility`, `performance`, `test`, `security` | There is no audiovisual composition |
@@ -265,8 +283,10 @@ The first routing contract is versioned as `schemaVersion: 1`. It accepts:
 - optional boolean `behaviorChange` and `executableChange` signals.
 - optional `projectEvidence` with a schema version, a scope result, detected
   framework IDs, affected project roots, primary signals, and supporting
-  signals. The current framework ID is `flutter`; its primary signal is an
-  affected `dependencies.flutter.sdk: flutter` entry in `pubspec.yaml`.
+  signals. The current framework IDs are `flutter`, `dotnet`, `aspnetcore`, and
+  `abp`. Flutter's primary signal is an affected `dependencies.flutter.sdk:
+  flutter` entry in `pubspec.yaml`. .NET's primary signal is a supported
+  SDK-style project manifest; ASP.NET Core and ABP are structural overlays.
 
 Rule precedence is deterministic: the work type establishes the primary
 closure; affected surfaces add mandatory complements; risks add security,
@@ -274,8 +294,9 @@ performance, or accessibility; executable/behavior changes add clean and
 test; required rules win over optional exclusions; and the evaluator preserves
 canonical insertion order. A matching Flutter project adds `flutter` plus the
 `clean`/`test` baseline before ordinary work-type complements; documentation
-and UI-copy work do not activate the specialist. Unknown or duplicate signals
-fail with a routing error.
+and UI-copy work do not activate the specialist. A matching .NET project adds
+`dotnet` plus the `clean`/`test` baseline and records ASP.NET Core/ABP reasons
+on that guide. Unknown or duplicate signals fail with a routing error.
 
 Every selected guide has stable reason codes such as
 `WORK_COMPLETE_WEBSITE`, `SURFACE_UI`, `RISK_UNTRUSTED_INPUT`, and
@@ -311,6 +332,15 @@ Negative routing guarantees:
 - a package file alone does not prove that Node is an affected task surface;
 - `flutter_test`, a Flutter word in documentation, or a lockfile package does
   not replace the primary Flutter SDK dependency signal;
+- a .NET word in documentation, a `Dockerfile`, `project.assets.json`, a
+  package-lock file, or an arbitrary package name does not activate `dotnet`;
+- a worker or library SDK selects the .NET specialist without claiming it is
+  an ASP.NET Core application; web/Razor/Blazor SDK or framework-reference
+  evidence is required for the ASP.NET Core reason;
+- ABP guidance is not added for a plain ASP.NET Core project without a
+  structural `Volo.Abp.*` package reference;
+- a shared MSBuild/NuGet file does not activate unrelated projects outside its
+  directory scope, and a solution claim does not activate non-members;
 - an unrelated monorepo project does not activate Flutter when task claims do
   not intersect its confirmed project root; nested project roots remain isolated;
 - an explicit executable-change signal adds `clean` and `test` even when the
@@ -364,6 +394,17 @@ Verify the affected `pubspec.yaml` contains the Flutter SDK dependency, confirm
 the task claim reaches that project, and cover widget/state behavior, platform
 integration, accessibility, performance, and release checks according to the
 changed surface. Supporting signals alone must leave `flutter` excluded.
+
+### .NET / ASP.NET Core application feature
+
+<!-- route:dotnet-app-feature=dotnet,clean,test -->
+
+Verify the affected project uses a supported SDK-style .NET manifest, confirm
+the claim scope or exact solution membership, and cover DI lifetimes, pipeline
+ordering, endpoint contracts, validation, authorization, cancellation, data
+access, observability, and integration behavior according to the changed
+surface. A worker/library project remains on the same specialist guide but
+does not receive an ASP.NET Core claim without structural web evidence.
 
 ## Route changes
 

@@ -62,7 +62,7 @@ const SIGNALS = Object.freeze({
   platforms: new Set(["web", "mobile", "desktop", "server", "ci", "cross-platform"]),
 });
 
-const PROJECT_FRAMEWORKS = new Set(["flutter"]);
+const PROJECT_FRAMEWORKS = new Set(["flutter", "dotnet", "aspnetcore", "abp"]);
 
 export const PLATFORM_SEMANTICS = Object.freeze({
   web: Object.freeze({
@@ -138,12 +138,36 @@ function addFlutterProjectGuides(input, add) {
   add("test", "PROJECT_FLUTTER_BASELINE");
 }
 
+function hasDotNetWorkContext(workType) {
+  return !["documentation", "ui-copy"].includes(workType);
+}
+
+function addDotNetProjectGuides(input, add) {
+  const projectEvidence = input.projectEvidence;
+  if (!projectEvidence?.frameworks.includes("dotnet")
+    || !["MATCH", "UNSCOPED"].includes(projectEvidence.scope)
+    || !hasDotNetWorkContext(input.workType)) return;
+  add("dotnet", "PROJECT_DOTNET_SDK_PROJECT");
+  if (projectEvidence.frameworks.includes("aspnetcore")) add("dotnet", "PROJECT_ASPNETCORE_CONFIRMED");
+  if (projectEvidence.frameworks.includes("abp")) add("dotnet", "PROJECT_ABP_CONFIRMED");
+  add("clean", "PROJECT_DOTNET_BASELINE");
+  add("test", "PROJECT_DOTNET_BASELINE");
+}
+
 function flutterExclusionReason(projectEvidence, workType) {
   if (!projectEvidence) return "NO_FLUTTER_PROJECT_EVIDENCE";
   if (projectEvidence.scope === "NO_MATCH") return "NO_FLUTTER_SCOPE_MATCH";
   if (!projectEvidence.frameworks.includes("flutter")) return "NO_FLUTTER_PRIMARY_EVIDENCE";
   if (!hasFlutterWorkContext(workType)) return "NO_FLUTTER_EXECUTABLE_WORK";
   return "NO_FLUTTER_PRIMARY_EVIDENCE";
+}
+
+function dotNetExclusionReason(projectEvidence, workType) {
+  if (!projectEvidence) return "NO_DOTNET_PROJECT_EVIDENCE";
+  if (projectEvidence.scope === "NO_MATCH") return "NO_DOTNET_SCOPE_MATCH";
+  if (!projectEvidence.frameworks.includes("dotnet")) return "NO_DOTNET_PRIMARY_EVIDENCE";
+  if (!hasDotNetWorkContext(workType)) return "NO_DOTNET_EXECUTABLE_WORK";
+  return "NO_DOTNET_PRIMARY_EVIDENCE";
 }
 
 function exclusionReasonForGuide(guide, projectEvidence, workType) {
@@ -154,6 +178,7 @@ function exclusionReasonForGuide(guide, projectEvidence, workType) {
   if (guide === "taste") return "NO_TASTE_FRONTEND_CONTEXT";
   if (guide === "documentation") return "NO_DOCUMENTATION_SURFACE";
   if (guide === "flutter") return flutterExclusionReason(projectEvidence, workType);
+  if (guide === "dotnet") return dotNetExclusionReason(projectEvidence, workType);
   return "NO_BEHAVIOR_OR_EXECUTABLE_CHANGE";
 }
 
@@ -209,6 +234,14 @@ function normalizeProjectEvidence(value) {
     throw new RouteInputError(`Unsupported projectEvidence schema version: ${value.schemaVersion}`);
   }
   const frameworks = normalizeArray(value.frameworks, "frameworks", PROJECT_FRAMEWORKS);
+  const hasDotnet = frameworks.includes("dotnet");
+  const invalidOverlays = frameworks.filter((framework) => framework === "aspnetcore" || framework === "abp");
+  if (!hasDotnet && invalidOverlays.length > 0) {
+    const noun = invalidOverlays.length === 1 ? "framework" : "frameworks";
+    const verb = invalidOverlays.length === 1 ? "requires" : "require";
+    const labels = invalidOverlays.map((framework) => `"${framework}"`).join(", ");
+    throw new RouteInputError(`projectEvidence ${noun} ${labels} ${verb} "dotnet"`);
+  }
   const scope = value.scope ?? (frameworks.length > 0 ? "UNSCOPED" : "NONE");
   if (!PROJECT_EVIDENCE_SCOPES.includes(scope)) {
     throw new RouteInputError(`Unknown project evidence scope: ${scope}`);
@@ -264,6 +297,7 @@ export function evaluateRoute(input = {}, profileOptions = {}) {
 
   const projectEvidence = normalized.projectEvidence;
   addFlutterProjectGuides(normalized, add);
+  addDotNetProjectGuides(normalized, add);
 
   const workReason = reasonForWorkType(normalized.workType);
   for (const guide of WORK_GUIDES[normalized.workType]) add(guide, workReason);

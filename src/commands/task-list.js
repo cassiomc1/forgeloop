@@ -1,9 +1,23 @@
 import { discoverTasks } from "../core/task-discovery.js";
+import { WORK_PHASES } from "../core/protocol.js";
 
-export async function runTaskList({ target, packageRoot } = {}) {
+export async function runTaskList({ target, packageRoot, phase = null, active = false, limit = null, offset = 0 } = {}) {
   const tasks = await discoverTasks(target, packageRoot);
+  const normalizedPhase = typeof phase === "string" && phase.trim() !== "" ? phase.trim().toUpperCase() : null;
+  if (normalizedPhase && !WORK_PHASES.includes(normalizedPhase)) {
+    const error = new Error(`Unknown task phase filter: ${phase}`);
+    error.code = "E_TASK_PHASE_INVALID";
+    throw error;
+  }
+  const phaseFiltered = normalizedPhase ? tasks.filter((task) => task.phase === normalizedPhase) : tasks;
+  const filtered = active
+    ? phaseFiltered.filter((task) => task.claimState === "ACTIVE" && task.mutationAllowed === true)
+    : phaseFiltered;
+  const start = Number.isInteger(offset) && offset >= 0 ? offset : 0;
+  const end = Number.isInteger(limit) && limit >= 0 ? start + limit : undefined;
+  const projected = filtered.slice(start, end);
   return {
-    tasks: tasks.map((task) => {
+    tasks: projected.map((task) => {
       if (task.healthy === false) {
         return {
           taskId: task.taskId ?? null,
@@ -35,6 +49,12 @@ export async function runTaskList({ target, packageRoot } = {}) {
         updatedAt: task.updatedAt,
       };
     }),
+    ...(normalizedPhase ? { phase: normalizedPhase } : {}),
+    ...(active ? { active: true } : {}),
+    offset: start,
+    ...(Number.isInteger(limit) && limit >= 0 ? { limit } : {}),
+    total: filtered.length,
+    hasMore: end !== undefined ? end < filtered.length : false,
   };
 }
 
