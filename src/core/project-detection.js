@@ -448,72 +448,85 @@ function appendXmlText(stack, value) {
   return true;
 }
 
+function consumeXmlSpecialToken(text, tagStart, stack) {
+  if (text.startsWith("<!--", tagStart)) {
+    const end = text.indexOf("-->", tagStart + 4);
+    return end < 0 ? { valid: false } : { valid: true, nextIndex: end + 3 };
+  }
+  if (text.startsWith("<![CDATA[", tagStart)) {
+    const end = text.indexOf("]]>", tagStart + 9);
+    if (end < 0 || stack.length === 0) return { valid: false };
+    stack[stack.length - 1].textParts.push(text.slice(tagStart + 9, end));
+    return { valid: true, nextIndex: end + 3 };
+  }
+  if (text.startsWith("<?", tagStart)) {
+    const end = text.indexOf("?>", tagStart + 2);
+    return end < 0 ? { valid: false } : { valid: true, nextIndex: end + 2 };
+  }
+  if (text.startsWith("<!", tagStart)) return { valid: false };
+  return null;
+}
+
+function closeXmlNode(raw, state) {
+  const closing = raw.slice(1).trim().match(/^([A-Za-z_][A-Za-z0-9_.:-]*)\s*$/u)?.[1];
+  const open = state.stack.pop();
+  if (!closing || !open || open.name !== closing) return false;
+  open.text = open.textParts.join("");
+  if (state.stack.length === 0) {
+    if (state.rootClosed || open !== state.root) return false;
+    state.rootClosed = true;
+  }
+  return true;
+}
+
+function openXmlNode(raw, state) {
+  const selfClosing = /\/\s*$/u.test(raw);
+  const body = selfClosing ? raw.replace(/\/\s*$/u, "").trimEnd() : raw;
+  const name = body.match(/^([A-Za-z_][A-Za-z0-9_.:-]*)/u)?.[1];
+  if (!name) return false;
+  if (state.stack.length === 0 && (state.root || state.rootClosed)) return false;
+  if (!state.root && state.expectedRoot && name !== state.expectedRoot) return false;
+  const attributes = parseXmlAttributes(body.slice(name.length).trim());
+  if (!attributes) return false;
+  const node = { name, attributes, textParts: [], children: [], text: "" };
+  state.nodes.push(node);
+  if (state.stack.length > 0) state.stack[state.stack.length - 1].children.push(node);
+  if (!state.root) state.root = node;
+  if (!selfClosing) state.stack.push(node);
+  else if (node === state.root) state.rootClosed = true;
+  return true;
+}
+
+function consumeXmlTag(text, tagStart, state) {
+  const tagEnd = findXmlTagEnd(text, tagStart + 1);
+  if (tagEnd < 0) return null;
+  const raw = text.slice(tagStart + 1, tagEnd).trim();
+  if (raw === "") return null;
+  const valid = raw.startsWith("/") ? closeXmlNode(raw, state) : openXmlNode(raw, state);
+  return { valid, nextIndex: tagEnd + 1 };
+}
+
 function parseXmlStructure(text, expectedRoot = null) {
   if (typeof text !== "string" || text.length > MAX_MANIFEST_BYTES || /\r(?!\n)/u.test(text)) return null;
-  const nodes = [];
-  const stack = [];
-  let root = null;
-  let rootClosed = false;
+  const state = { nodes: [], stack: [], root: null, rootClosed: false, expectedRoot };
   let index = 0;
-  for (; index < text.length;) {
+  while (index < text.length) {
     const tagStart = text.indexOf("<", index);
     if (tagStart < 0) break;
-    if (!appendXmlText(stack, text.slice(index, tagStart))) return null;
-    if (text.startsWith("<!--", tagStart)) {
-      const end = text.indexOf("-->", tagStart + 4);
-      if (end < 0) return null;
-      index = end + 3;
+    if (!appendXmlText(state.stack, text.slice(index, tagStart))) return null;
+    const special = consumeXmlSpecialToken(text, tagStart, state.stack);
+    if (special) {
+      if (!special.valid) return null;
+      index = special.nextIndex;
       continue;
     }
-    if (text.startsWith("<![CDATA[", tagStart)) {
-      const end = text.indexOf("]]>", tagStart + 9);
-      if (end < 0 || stack.length === 0) return null;
-      stack[stack.length - 1].textParts.push(text.slice(tagStart + 9, end));
-      index = end + 3;
-      continue;
-    }
-    if (text.startsWith("<?", tagStart)) {
-      const end = text.indexOf("?>", tagStart + 2);
-      if (end < 0) return null;
-      index = end + 2;
-      continue;
-    }
-    if (text.startsWith("<!", tagStart)) return null;
-    const tagEnd = findXmlTagEnd(text, tagStart + 1);
-    if (tagEnd < 0) return null;
-    const raw = text.slice(tagStart + 1, tagEnd).trim();
-    if (raw === "") return null;
-    if (raw.startsWith("/")) {
-      const closing = raw.slice(1).trim().match(/^([A-Za-z_][A-Za-z0-9_.:-]*)\s*$/u)?.[1];
-      const open = stack.pop();
-      if (!closing || !open || open.name !== closing) return null;
-      open.text = open.textParts.join("");
-      if (stack.length === 0) {
-        if (rootClosed || open !== root) return null;
-        rootClosed = true;
-      }
-      index = tagEnd + 1;
-      continue;
-    }
-    const selfClosing = /\/\s*$/u.test(raw);
-    const body = selfClosing ? raw.replace(/\/\s*$/u, "").trimEnd() : raw;
-    const name = body.match(/^([A-Za-z_][A-Za-z0-9_.:-]*)/u)?.[1];
-    if (!name) return null;
-    if (stack.length === 0 && (root || rootClosed)) return null;
-    if (!root && expectedRoot && name !== expectedRoot) return null;
-    const attributes = parseXmlAttributes(body.slice(name.length).trim());
-    if (!attributes) return null;
-    const node = { name, attributes, textParts: [], children: [], text: "" };
-    nodes.push(node);
-    if (stack.length > 0) stack[stack.length - 1].children.push(node);
-    if (!root) root = node;
-    if (!selfClosing) stack.push(node);
-    else if (node === root) rootClosed = true;
-    index = tagEnd + 1;
+    const tag = consumeXmlTag(text, tagStart, state);
+    if (!tag?.valid) return null;
+    index = tag.nextIndex;
   }
-  if (!appendXmlText(stack, text.slice(index))) return null;
-  if (!root || stack.length > 0 || !rootClosed) return null;
-  return { root, nodes };
+  if (!appendXmlText(state.stack, text.slice(index))) return null;
+  if (!state.root || state.stack.length > 0 || !state.rootClosed) return null;
+  return { root: state.root, nodes: state.nodes };
 }
 
 function normalizeSdkName(value) {

@@ -42,20 +42,28 @@ function validateTaskCreationInput(command, options) {
   }
 }
 
-function validateProfileAndUsageInput(command, options, help) {
+function validateExecutionProfileInput(command, options) {
   if (options.executionProfile !== null && options.executionProfile !== undefined) {
     if (command !== "route") throw inputError(`executionProfile is not valid for ${command}`);
     if (!EXECUTION_PROFILE_REQUESTS.includes(options.executionProfile)) {
       throw inputError(`route --execution-profile must be one of ${EXECUTION_PROFILE_REQUESTS.join(", ")}`);
     }
   }
+}
+
+function validateUsageInput(command, options, help) {
   if (command === "usage-record" && !help) {
     if (!options.taskId) throw inputError("usage-record requires --task");
     if ((options.usageSource ?? "ACTOR_REPORTED") !== "ACTOR_REPORTED") {
       throw inputError("usage-record accepts only --source ACTOR_REPORTED");
     }
   }
-  if (command === "efficiency" && !help && !options.taskId) throw inputError("efficiency requires --task");
+  if (command === "efficiency" && !help && !options.taskId) {
+    throw inputError("efficiency requires --task");
+  }
+}
+
+function validateQualityInput(command, options, help) {
   if (["quality-baseline", "quality-verify", "quality-status"].includes(command) && !help && !options.taskId) {
     throw inputError(`${command} requires --task`);
   }
@@ -64,6 +72,12 @@ function validateProfileAndUsageInput(command, options, help) {
     && (!Number.isInteger(options.timeoutMs) || options.timeoutMs < 0 || options.timeoutMs > 300000)) {
     throw inputError(`${command} --timeout-ms must be between 0 and 300000`);
   }
+}
+
+function validateProfileAndUsageInput(command, options, help) {
+  validateExecutionProfileInput(command, options);
+  validateUsageInput(command, options, help);
+  validateQualityInput(command, options, help);
   if (command !== "quality-baseline" && options.replace === true) throw inputError("--replace is only valid for quality-baseline");
   if (command !== "usage-record" && options.usageSource !== undefined && options.usageSource !== "ACTOR_REPORTED") {
     throw inputError(`usageSource is not valid for ${command}`);
