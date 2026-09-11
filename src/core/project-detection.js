@@ -487,8 +487,8 @@ function commandStartsWithNode(command) {
     }
   }
 
-  const token = remaining.match(/^(?:"([^"]+)"|'([^']+)'|([^\s;&|<>]+))/u);
-  const executable = token?.[1] ?? token?.[2] ?? token?.[3] ?? "";
+  const executableMatch = remaining.match(/^(?:"([^"]+)"|'([^']+)'|([^\s;&|<>]+))/u);
+  const executable = executableMatch?.[1] ?? executableMatch?.[2] ?? executableMatch?.[3] ?? "";
   return executable === "node" || executable === "node.exe";
 }
 
