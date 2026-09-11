@@ -2,7 +2,14 @@
 
 ## Unreleased
 
-No changes yet.
+### Added
+
+- Documented structural .NET, ASP.NET Core, and conditional ABP routing,
+  including scoped mixed-stack discovery, supported SDK evidence, bounded
+  traversal, and overlay validation.
+- Documented Astra task previews, exhaustive ownership-aware discovery,
+  deterministic task-list filters and pagination, and bounded `next --explain`
+  projections.
 
 ## 1.12.0 - 2026-09-09
 

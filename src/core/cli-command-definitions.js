@@ -992,7 +992,7 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
     writes: [".forgeloop/task-state/<taskKey>/executions/exec-<id>.json", ".forgeloop/task-state/<taskKey>/work-state.json", ".forgeloop/task-state/<taskKey>/events.ndjson"],
     removes: [],
     mayExecuteExternalProcess: true,
-    description: "Refreshes the work-state checkpoint of an EXECUTING task whose objective is already satisfied in the current repository, after contract-bound executed evidence, so canonical completion can proceed.",
+    description: "Refreshes the work-state checkpoint of an EXECUTING, VERIFYING, or REVIEWING task whose objective is already satisfied in the current repository, after contract-bound executed evidence, so canonical completion can proceed.",
   }),
   "validate-receipt": Object.freeze({
     name: "validate-receipt",

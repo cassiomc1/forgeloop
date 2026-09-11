@@ -28,10 +28,14 @@ The published tarball includes the following consumer-facing groups:
   `src/repository-index/tgrep-manifest.json`; native engine binaries are
   provisioned outside the npm tarball.
 - **Specialist guidance:** every registered consumer guide under `ENG/`,
-  including `ENG/flutter-development-eng.md`, ships with the guide registry
+  including `ENG/flutter-development-eng.md` and
+  `ENG/dotnet-aspnetcore-development-eng.md`, ships with the guide registry
   and is resolved from a package-local path. The Flutter specialist is
   selected only for an affected root with the structural SDK dependency
-  signal; the package does not install or invoke Flutter tooling.
+  signal; the .NET specialist is selected only for an affected root with a
+  supported SDK-style project manifest. ASP.NET Core and ABP are conditional
+  routing overlays on the `dotnet` guide, not additional package guides. The
+  package does not install or invoke Flutter or .NET tooling.
 - **Initialization material:** the root protocol and integration documents,
   legal notices, the target profile template, and every path listed by
   `src/core/templates.js`. These files are read by `init` and `update`, so
