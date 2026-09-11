@@ -158,6 +158,7 @@ capability-family versions.
 | flutter | ENG/flutter-development-eng.md | yes |
 | dotnet | ENG/dotnet-aspnetcore-development-eng.md | yes |
 | nodejs | ENG/nodejs-backend-development-eng.md | yes |
+| rust | ENG/rust-development-eng.md | yes |
 
 ## Public artifact registry
 

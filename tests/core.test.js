@@ -38,7 +38,7 @@ test("round-trips a versioned manifest", async () => {
 test("template entries use safe relative paths", async () => {
   const entries = await readTemplateEntries();
   assert.equal(entries.length, TEMPLATE_PATHS.length);
-  assert.equal(TEMPLATE_PATHS.length, 83);
+  assert.equal(TEMPLATE_PATHS.length, 84);
   assert.ok(entries.some((entry) => entry.relativePath === ".forgeloop/kit/LICENSE"));
   assert.ok(entries.some((entry) => entry.relativePath === ".forgeloop/kit/LICENSE-DOCS.md"));
   for (const entry of entries) {

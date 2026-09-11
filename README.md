@@ -68,11 +68,11 @@ validator-backed `COMPLETE / VALID` and preserves a later
 | Flutter | [guide](./ENG/flutter-development-eng.md) |
 | .NET and ASP.NET Core | [guide](./ENG/dotnet-aspnetcore-development-eng.md) |
 | Node.js | [guide](./ENG/nodejs-backend-development-eng.md) |
+| Rust | [guide](./ENG/rust-development-eng.md) |
 | Structural quality feedback | [`docs/STRUCTURAL_QUALITY.md`](./docs/STRUCTURAL_QUALITY.md) |
 
-Routing: [Flutter](./ENG/flutter-development-eng.md) needs SDK evidence;
-[Node.js](./ENG/nodejs-backend-development-eng.md) needs runtime evidence.
-Metadata alone fails.
+Routing requires Flutter SDK evidence, Node.js runtime evidence, or a valid Rust
+Cargo package/workspace manifest. Metadata alone fails.
 
 ## Quickstart
 
@@ -456,9 +456,11 @@ and [visual review](./docs/diagrams/reviews/forgeloop-code-attestation-flow.revi
 show exact content binding, optional signing, and separate revision-range
 coverage.
 
-Text-only fallback: discovery creates the route; Flutter uses a parsed SDK
-dependency, .NET a supported SDK-style manifest, and ASP.NET Core/ABP are
-overlays. Routing is not evidence. Gates and
+Text-only fallback: discovery creates the contract and route; parsed
+`dependencies.flutter.sdk: flutter` selects Flutter for that root; a supported
+SDK-style manifest selects .NET; parsed `[package]` or `[workspace]` in
+`Cargo.toml` selects Rust for that root; ASP.NET Core and ABP remain .NET
+overlays. Routing is not verification/completion evidence. Gates and
 `PREFLIGHT_READY` authorize execution; verification creates
 structured evidence; failures enter diagnosis and correction; review precedes
 validator-backed completion. Drift reopens verification, and migration keeps
@@ -502,16 +504,15 @@ it must not infer current ownership from `task.json` or `recovery.json` alone.
 
 ## Security and dependency boundary
 
-The runtime uses Node built-ins only and does not install agents, providers,
-plugins, remote services, or telemetry. Target paths and symlinks are bounded;
-JSON is size/depth limited; manifests, schemas, receipts, and secret-like
-values are checked; and install-capable verification requires trusted host
-authority. See [`THREAT_MODEL.md`](./THREAT_MODEL.md) for the full inventory.
+Runtime uses Node built-ins and approved exact `smol-toml`; it installs no
+agents, providers, plugins, services, or telemetry. Paths, symlinks, JSON,
+manifests, schemas, receipts, and secret-like values are bounded or checked.
+Install-capable verification requires trusted host authority; see
+[`THREAT_MODEL.md`](./THREAT_MODEL.md).
 
-Development tooling stays separate from runtime dependencies. The policy allows
-c8, ESLint, TypeScript, and YAML as development dependencies;
-`npm run dependency:policy` rejects runtime or unapproved dependencies. Archify
-is vendored at `vendor/archify/v2.15.0/` rather than installed as a package.
+c8, ESLint, TypeScript, and YAML remain development-only. The dependency
+policy rejects unapproved runtime or development dependencies. Archify is
+vendored at `vendor/archify/v2.15.0/` rather than installed as a package.
 
 To report vulnerabilities or contribute changes, see
 [`SECURITY.md`](./SECURITY.md) and [`CONTRIBUTING.md`](./CONTRIBUTING.md).

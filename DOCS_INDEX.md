@@ -53,7 +53,7 @@ integration and guide context. Use this map before editing documentation.
 | Architecture and safety boundaries | [`LOOP_SYSTEM_DESIGN.md`](./LOOP_SYSTEM_DESIGN.md) and [`THREAT_MODEL.md`](./THREAT_MODEL.md) | Design rationale and residual risk |
 | Artifact and phase schemas | [`schemas/`](./schemas/) and [`CONTRACT_COVERAGE.md`](./CONTRACT_COVERAGE.md) | Versioned machine-readable contract |
 | CLI/package behavior | [`src/`](./src/) and [`tests/`](./tests/) | Executable implementation and regression evidence |
-| Guide content | [`ENG/`](./ENG/) | Context-specific, English-only operational guides, including the Flutter, .NET, and Node.js specialists; ASP.NET Core and ABP remain .NET overlays |
+| Guide content | [`ENG/`](./ENG/) | Context-specific, English-only operational guides, including the Flutter, .NET, Node.js, and Rust specialists; ASP.NET Core and ABP remain .NET overlays |
 | Diagram governance | [`docs/diagrams/manifest.json`](./docs/diagrams/manifest.json) | Authoritative taxonomy, renderer mapping, canonical purposes, artifact ownership, and references |
 | Diagram maintainer entrypoint | [`docs/diagrams/README.md`](./docs/diagrams/README.md) | Typed Archify source, animated HTML explorer, animated SVG fallback, review, and regeneration workflow |
 | Engineering flow diagram | [`docs/assets/diagrams/forgeloop-engineering-flow.html`](./docs/assets/diagrams/forgeloop-engineering-flow.html) | Conceptual lifecycle from request through validator-backed completion |
@@ -151,11 +151,12 @@ loop, and secret-scanning contracts that have not been migrated to Node. Their
 scope, exact commands, and migration boundary are recorded in
 [`scripts/CI_VALIDATORS.md`](./scripts/CI_VALIDATORS.md).
 
-The package has no runtime dependencies. Development dependencies are limited
-to c8, ESLint, TypeScript, and YAML and are checked by
-`npm run dependency:policy`. GitHub Actions use `npm ci`, pinned action SHAs,
-CodeQL, dependency review, and generated-release notes; npm publication still
-uses trusted OIDC publishing and is not implied by local verification.
+The package uses the approved exact `smol-toml` runtime dependency for bounded
+Cargo manifest parsing. Development dependencies remain limited to c8, ESLint,
+TypeScript, and YAML and are checked by `npm run dependency:policy`. GitHub
+Actions use `npm ci`, pinned action SHAs, CodeQL, dependency review, and
+generated-release notes; npm publication still uses trusted OIDC publishing
+and is not implied by local verification.
 
 ## Editing rules
 

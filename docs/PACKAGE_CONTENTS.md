@@ -11,8 +11,9 @@ part of the consumer tarball.
 
 The package exposes the `forgeloop` executable from `src/cli.js` and the
 `@cassiomc1/forgeloop/integration` subpath from `src/integration.js`, with its
-declaration file. The package has no runtime dependencies and requires Node.js
-20 or newer.
+declaration file. The package has the approved exact `smol-toml` runtime
+dependency for bounded Cargo manifest parsing and requires Node.js 20 or
+newer.
 
 ## Included files
 
@@ -29,13 +30,14 @@ The published tarball includes the following consumer-facing groups:
   provisioned outside the npm tarball.
 - **Specialist guidance:** every registered consumer guide under `ENG/`,
   including `ENG/flutter-development-eng.md`,
-  `ENG/dotnet-aspnetcore-development-eng.md`, and
-  `ENG/nodejs-backend-development-eng.md`, ships with the guide registry and
-  is resolved from a package-local path. Flutter, .NET, and Node.js
-  specialists are selected only from their bounded structural primary
-  evidence. ASP.NET Core and ABP are conditional routing overlays on the
-  `dotnet` guide, not additional package guides. The package does not install
-  or invoke framework tooling.
+  `ENG/dotnet-aspnetcore-development-eng.md`,
+  `ENG/nodejs-backend-development-eng.md`, and
+  `ENG/rust-development-eng.md`, ships with the guide registry and is resolved
+  from a package-local path. Flutter, .NET, Node.js, and Rust specialists are
+  selected only from their bounded structural primary evidence. ASP.NET Core
+  and ABP are conditional routing overlays on the `dotnet` guide, not
+  additional package guides. The package does not install or invoke framework
+  tooling.
 - **Initialization material:** the root protocol and integration documents,
   legal notices, the target profile template, and every path listed by
   `src/core/templates.js`. These files are read by `init` and `update`, so
@@ -97,8 +99,9 @@ npm run pack:smoke
 `pack:smoke` installs the candidate tarball into a temporary consumer and
 exercises the CLI, public Integration API, initialization, schemas, and
 packaged documentation references. The package-boundary tests also assert
-that every registered guide path, including the Flutter, .NET, and Node.js
-specialists, is present in the candidate. The tag-triggered publication workflow
+that every registered guide path, including the Flutter, .NET, Node.js, and
+Rust specialists, is present in the candidate. The tag-triggered publication
+workflow
 runs the same smoke gate before `npm publish --provenance --access public`.
 Publication therefore remains owned by the trusted GitHub Actions OIDC
 workflow; local package inspection proves the candidate boundary but does not
