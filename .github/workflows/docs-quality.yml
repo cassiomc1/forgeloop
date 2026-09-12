@@ -187,6 +187,9 @@ jobs:
         with:
           node-version: 24
 
+      - name: Install locked Node toolchain
+        run: npm ci --ignore-scripts
+
       - name: Verify pinned Archify workflow and generated artifacts
         run: npm run docs:diagrams:check
 
