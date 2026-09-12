@@ -23,9 +23,11 @@ PHP + SQL, Node.js + SQL, and Rust + SQL are valid same-root outcomes.
 
 Comments, quoted literals, prose, connection strings, driver dependencies,
 database images, empty files, generated output, and vendored SQL do not
-activate this guide. Detection masks lexical noise, reads bounded text, and
-never connects to a database, executes a query, applies a migration, reads
-credentials, or introspects a schema.
+activate this guide. Detection masks `--` and block comments while preserving
+dialect tokens such as PostgreSQL `#>` and `#>>`; it recognizes only bounded
+statement families and common CTE shapes, not complete SQL syntax. It reads
+bounded text and never connects to a database, executes a query, applies a
+migration, reads credentials, or introspects a schema.
 
 ## Authority and precedence
 

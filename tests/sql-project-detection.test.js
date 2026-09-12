@@ -15,6 +15,13 @@ test("SQL recognizer masks comments and quoted text and requires a statement sha
   assert.equal(looksLikeSql("$$CREATE TABLE fake (id integer)$$"), false);
   assert.equal(looksLikeSql("$tag$\nSELECT * FROM fake"), false);
   assert.equal(looksLikeSql("`CREATE TABLE fake`"), false);
+  assert.equal(looksLikeSql("SELECT payload #> '{user}' FROM events;"), true);
+  assert.equal(looksLikeSql("SELECT payload #>> '{user,name}' FROM events;"), true);
+  assert.equal(looksLikeSql("WITH recent AS (SELECT id FROM events) SELECT * FROM recent;"), true);
+  assert.equal(looksLikeSql("MERGE INTO accounts USING updates ON accounts.id = updates.id;"), true);
+  assert.equal(looksLikeSql("CREATE FUNCTION refresh_cache() RETURNS void AS $$ BEGIN END; $$ LANGUAGE plpgsql;"), true);
+  assert.equal(looksLikeSql("GRANT SELECT ON TABLE accounts TO analyst;"), true);
+  assert.equal(looksLikeSql("-- CREATE TABLE fake (id INTEGER);\n/* SELECT * FROM fake */"), false);
 });
 
 test("SQL migrations in owned directories provide bounded overlay evidence", async () => {

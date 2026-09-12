@@ -23,8 +23,9 @@ version string, an extension package, Docker/CI setup, static HTML, a README,
 and dependency names alone do not establish a PHP project.
 
 ForgeLoop parses Composer JSON and checks a claimed source file conservatively;
-it never runs PHP, Composer scripts/plugins, autoload generation, package
-resolution, or project code, and it does not access the network.
+the standard `<?php` and short echo `<?=` tags provide executable-source
+evidence. It never runs PHP, Composer scripts/plugins, autoload generation,
+package resolution, or project code, and it does not access the network.
 
 ## Authority and precedence
 

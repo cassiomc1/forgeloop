@@ -12,6 +12,11 @@ test("Go module parsing requires one valid module directive", () => {
   assert.equal(parseGoMod("go 1.27\n").valid, false);
   assert.equal(parseGoMod("module a\nmodule b\n").valid, false);
   assert.equal(parseGoMod("module example.com/app\nrequire garbage\n").valid, false);
+  assert.deepEqual(parseGoMod("module example.com/app\nignore ./generated\n").ignorePaths, ["./generated"]);
+  assert.deepEqual(parseGoMod("module example.com/app\nignore (\n  ./generated\n  ./fixtures\n)\n").ignorePaths, ["./generated", "./fixtures"]);
+  assert.equal(parseGoMod("module example.com/app\nignore /outside\n").valid, false);
+  assert.equal(parseGoMod("module example.com/app\nignore ../outside\n").valid, false);
+  assert.equal(parseGoWork("go 1.27\nignore generated\nuse ./app\n").valid, false);
   assert.equal(parseGoWork("go 1.27\nuse ./app\n").valid, true);
   assert.equal(parseGoWork("go 1.27\ntoolchain go1.27.1\ngodebug default=go1.27\nuse ./app\n").valid, true);
 });
@@ -31,6 +36,13 @@ test("valid go.mod activates the Go specialist and go.sum alone does not", async
   await temporaryProject("forgeloop-go-sum-only-", async (target) => {
     await writeFiles(target, { "go.sum": "example.com/dependency v1.0.0 h1:ignored\n" });
     assert.equal(await detectProjectEvidence(target), null);
+  });
+
+  await temporaryProject("forgeloop-go-ignore-", async (target) => {
+    await writeFiles(target, {
+      "go.mod": "module example.com/app\ngo 1.27\nignore (\n  ./generated\n  legacy\n)\n",
+    });
+    assert.deepEqual((await detectProjectEvidence(target)).frameworks, ["go"]);
   });
 });
 

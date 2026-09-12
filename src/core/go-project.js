@@ -2,7 +2,7 @@ import path from "node:path";
 
 import { createLanguageProject, portablePath } from "./multi-language-project.js";
 
-const GO_DIRECTIVE = /^(module|go|toolchain|godebug|require|replace|exclude|retract|tool)\b/u;
+const GO_DIRECTIVE = /^(module|go|toolchain|godebug|require|replace|exclude|retract|tool|ignore)\b/u;
 const GO_WORK_DIRECTIVES = new Set(["go", "toolchain", "godebug", "use", "replace", "tool"]);
 
 function invalidGoResult() {
@@ -13,6 +13,7 @@ function invalidGoResult() {
     toolchain: null,
     uses: [],
     localReplacements: [],
+    ignorePaths: [],
   };
 }
 
@@ -22,8 +23,8 @@ function stripGoComment(line) {
 }
 
 function parseGoDirective(line) {
-  const block = line.match(/^(module|go|toolchain|godebug|require|replace|exclude|retract|use|tool)\b\s*\(\s*$/u);
-  const match = line.match(/^(module|go|toolchain|godebug|require|replace|exclude|retract|use|tool)\b\s*(?:\(([^)]*)\)|(.+))$/u);
+  const block = line.match(/^(module|go|toolchain|godebug|require|replace|exclude|retract|use|tool|ignore)\b\s*\(\s*$/u);
+  const match = line.match(/^(module|go|toolchain|godebug|require|replace|exclude|retract|use|tool|ignore)\b\s*(?:\(([^)]*)\)|(.+))$/u);
   if (block) return { name: block[1], value: "" };
   if (!match) return null;
   return {
@@ -44,6 +45,15 @@ function collectGoBlock(lines, start) {
 
 function validGoDirectiveValue(name, value) {
   if (!value || /\s{2,}/u.test(value)) return false;
+  if (name === "ignore") {
+    const portable = value.replaceAll("\\", "/");
+    const segments = portable.split("/");
+    return !value.includes("\\")
+      && !portable.startsWith("/")
+      && !/^[A-Za-z]:\//u.test(portable)
+      && !segments.includes("..")
+      && !value.includes("=>");
+  }
   if (["require", "exclude"].includes(name)) return /^\S+\s+v\S+$/u.test(value);
   if (name === "replace") return /^\S+(?:\s+v\S+)?\s+=>\s+\S+(?:\s+v\S+)?$/u.test(value);
   if (name === "retract") return /^\S+(?:\s*,\s*\S+)?$/u.test(value);
@@ -52,45 +62,70 @@ function validGoDirectiveValue(name, value) {
   return true;
 }
 
+function parseGoModMetadataDirective(state, directive) {
+  if (directive.name === "module") {
+    if (state.module !== null || directive.value === "" || /\s/u.test(directive.value)) return false;
+    state.module = directive.value;
+    return true;
+  }
+  if (directive.name === "go") {
+    if (state.goVersion !== null || !/^\d+(?:\.\d+){1,2}$/u.test(directive.value)) return false;
+    state.goVersion = directive.value;
+    return true;
+  }
+  if (directive.name === "toolchain") {
+    if (state.toolchain !== null || !/^\S+$/u.test(directive.value)) return false;
+    state.toolchain = directive.value;
+    return true;
+  }
+  return null;
+}
+
+function parseGoModBlockDirective(lines, index, directive) {
+  const block = collectGoBlock(lines, index);
+  const valid = block.valid && block.values.every((value) => validGoDirectiveValue(directive.name, value));
+  return {
+    valid,
+    end: block.end,
+    ignorePaths: valid && directive.name === "ignore" ? block.values : [],
+  };
+}
+
+function parseGoModLine(lines, index, state) {
+  const line = stripGoComment(lines[index]);
+  if (line === "" || line.startsWith("//")) return { valid: true, end: index, ignorePaths: [] };
+  const directive = parseGoDirective(line);
+  if (!directive || !GO_DIRECTIVE.test(line)) return { valid: false, end: index, ignorePaths: [] };
+  const metadataValid = parseGoModMetadataDirective(state, directive);
+  if (metadataValid !== null) return { valid: metadataValid, end: index, ignorePaths: [] };
+  if (line.endsWith("(")) return parseGoModBlockDirective(lines, index, directive);
+  const valid = validGoDirectiveValue(directive.name, directive.value);
+  return {
+    valid,
+    end: index,
+    ignorePaths: valid && directive.name === "ignore" ? [directive.value] : [],
+  };
+}
+
 export function parseGoMod(text) {
   if (typeof text !== "string" || text.length > 1024 * 1024 || /\r(?!\n)/u.test(text)) return invalidGoResult();
   const lines = text.replaceAll("\r\n", "\n").split("\n");
-  let module = null;
-  let goVersion = null;
-  let toolchain = null;
-  let valid = true;
+  const state = { module: null, goVersion: null, toolchain: null, valid: true };
+  const ignorePaths = [];
   for (let index = 0; index < lines.length; index += 1) {
-    const line = stripGoComment(lines[index]);
-    if (line === "" || line.startsWith("//")) continue;
-    const directive = parseGoDirective(line);
-    if (!directive || !GO_DIRECTIVE.test(line)) {
-      valid = false;
-      continue;
-    }
-    if (directive.name === "module") {
-      if (module !== null || directive.value === "" || /\s/u.test(directive.value)) valid = false;
-      else module = directive.value;
-    } else if (directive.name === "go") {
-      if (goVersion !== null || !/^\d+(?:\.\d+){1,2}$/u.test(directive.value)) valid = false;
-      else goVersion = directive.value;
-    } else if (directive.name === "toolchain") {
-      if (toolchain !== null || !/^\S+$/u.test(directive.value)) valid = false;
-      else toolchain = directive.value;
-    } else if (line.endsWith("(")) {
-      const block = collectGoBlock(lines, index);
-      if (!block.valid || !block.values.every((value) => validGoDirectiveValue(directive.name, value))) valid = false;
-      index = block.end;
-    } else if (!validGoDirectiveValue(directive.name, directive.value)) {
-      valid = false;
-    }
+    const parsed = parseGoModLine(lines, index, state);
+    state.valid &&= parsed.valid;
+    ignorePaths.push(...parsed.ignorePaths);
+    index = parsed.end;
   }
   return {
-    valid: valid && module !== null,
-    module,
-    goVersion,
-    toolchain,
+    valid: state.valid && state.module !== null,
+    module: state.module,
+    goVersion: state.goVersion,
+    toolchain: state.toolchain,
     uses: [],
     localReplacements: [],
+    ignorePaths: [...new Set(ignorePaths)],
   };
 }
 

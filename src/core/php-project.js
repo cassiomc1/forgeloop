@@ -60,7 +60,7 @@ export function parseComposerJson(text) {
 }
 
 export function phpSourceLooksExecutable(text) {
-  return typeof text === "string" && /<\?php(?:\s|$)/iu.test(text);
+  return typeof text === "string" && /<\?(?:php(?:\s|$)|=)/iu.test(text);
 }
 
 export function inspectPhpProject({ projectRoot, manifestRelative, manifestText }) {

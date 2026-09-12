@@ -10,6 +10,9 @@ test("TypeScript config parsing accepts bounded JSONC but fails closed for malfo
   assert.deepEqual(parseJsonc("{ // comment\n \"references\": [{\"path\": \"packages/core\"}],\n}\n").references, [{ path: "packages/core" }]);
   assert.equal(parseTypeScriptConfig("{\"references\":{}}", "tsconfig.json").valid, false);
   assert.equal(parseTypeScriptConfig("{\"extends\": 42}", "tsconfig.json").valid, false);
+  assert.deepEqual(parseTypeScriptConfig("{\"extends\": [\"./base.json\", \"./strict.json\"]}").extends, ["./base.json", "./strict.json"]);
+  assert.deepEqual(parseTypeScriptConfig("{\"extends\": \"./base.json\"}").extends, ["./base.json"]);
+  assert.equal(parseTypeScriptConfig("{\"extends\": [\"./base.json\", 42]}").valid, false);
   assert.equal(parseTypeScriptConfig("{\"files\": 42}", "tsconfig.json").valid, false);
   assert.equal(parseTypeScriptConfig("{/* unterminated", "tsconfig.json").valid, false);
   assert.equal(parseTypeScriptConfig("{}", "jsconfig.json").valid, true);
@@ -44,7 +47,9 @@ test("custom TypeScript configs need a reference or direct task claim", async ()
     await writeFiles(target, {
       "tsconfig.build.json": "{\"compilerOptions\": {\"composite\": true}}\n",
     });
-    assert.deepEqual((await detectProjectEvidence(target)).frameworks, []);
+    const evidence = await detectProjectEvidence(target);
+    assert.deepEqual(evidence.frameworks, []);
+    assert.deepEqual(evidence.projectRoots, []);
 
     await writeFiles(target, { "tsconfig.json": "{\"references\": [{\"path\": \".\/tsconfig.build.json\"}]}\n" });
     assert.deepEqual((await detectProjectEvidence(target)).frameworks, ["typescript"]);
@@ -93,5 +98,47 @@ test("TypeScript references and local extends are order-independent and bounded"
     const baseEvidence = await detectProjectEvidence(target, { claims: ["configs/base.json"] });
     assert.deepEqual(baseEvidence.frameworks, ["typescript"]);
     assert.ok(baseEvidence.primarySignals.includes("configs/base.json:tsconfig"));
+  });
+});
+
+test("TypeScript extends arrays resolve conservatively without making shared configs ownership roots", async () => {
+  await temporaryProject("forgeloop-typescript-extends-array-", async (target) => {
+    await writeFiles(target, {
+      "tsconfig.json": "{\"extends\": [\"./app/tsconfig.json\"]}\n",
+      "app/tsconfig.json": "{\"extends\": [\"@tsconfig/strictest/tsconfig.json\", \"../configs/base.json\", \"../configs/strict.json\"]}\n",
+      "configs/base.json": "{}\n",
+      "configs/strict.json": "{}\n",
+    });
+    const defaultEvidence = await detectProjectEvidence(target);
+    assert.deepEqual(defaultEvidence.frameworks, ["typescript"]);
+    assert.deepEqual(defaultEvidence.projectRoots, [".", "app"]);
+
+    const claimedEvidence = await detectProjectEvidence(target, { claims: ["app/tsconfig.json"] });
+    assert.deepEqual(claimedEvidence.frameworks, ["typescript"]);
+    assert.deepEqual(claimedEvidence.projectRoots, ["app"]);
+    assert.equal(claimedEvidence.projectRoots.includes("configs"), false);
+  });
+});
+
+test("TypeScript external extends remain unresolved without filesystem escape", async () => {
+  await temporaryProject("forgeloop-typescript-external-extends-", async (target) => {
+    await writeFiles(target, {
+      "tsconfig.json": "{\"extends\": [\"../../../outside/tsconfig.json\", \"@tsconfig/node22/tsconfig.json\"]}\n",
+    });
+    const evidence = await detectProjectEvidence(target);
+    assert.deepEqual(evidence.frameworks, ["typescript"]);
+    assert.deepEqual(evidence.projectRoots, ["."]);
+  });
+});
+
+test("TypeScript config graph cycles terminate within discovered files", async () => {
+  await temporaryProject("forgeloop-typescript-extends-cycle-", async (target) => {
+    await writeFiles(target, {
+      "tsconfig.json": "{\"extends\": \"./configs/a.json\"}\n",
+      "configs/a.json": "{\"extends\": \"../tsconfig.json\"}\n",
+    });
+    const evidence = await detectProjectEvidence(target);
+    assert.deepEqual(evidence.frameworks, ["typescript"]);
+    assert.deepEqual(evidence.projectRoots, ["."]);
   });
 });

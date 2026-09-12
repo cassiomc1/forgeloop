@@ -10,6 +10,10 @@ function invalidJava() {
     javaCompiler: false,
     packaging: null,
     modules: [],
+    includes: [],
+    gradleBuild: false,
+    gradleSettings: false,
+    gradleProperties: false,
   };
 }
 
@@ -94,6 +98,50 @@ function maskGradleStringsAndComments(text) {
   return state === "code" ? result : null;
 }
 
+function stripGradleComments(text) {
+  let result = "";
+  let state = "code";
+  let quote = null;
+  let escaped = false;
+  for (let index = 0; index < text.length; index += 1) {
+    const character = text[index];
+    const next = text[index + 1];
+    if (state === "string") {
+      result += character;
+      if (escaped) escaped = false;
+      else if (character === "\\") escaped = true;
+      else if (character === quote) {
+        state = "code";
+        quote = null;
+      }
+    } else if (state === "line-comment") {
+      if (character === "\n" || character === "\r") {
+        result += character;
+        state = "code";
+      } else result += " ";
+    } else if (state === "block-comment") {
+      if (character === "*" && next === "/") {
+        result += "  ";
+        index += 1;
+        state = "code";
+      } else result += character === "\n" || character === "\r" ? character : " ";
+    } else if (character === "\"" || character === "'") {
+      result += character;
+      quote = character;
+      state = "string";
+    } else if (character === "/" && next === "/") {
+      result += "  ";
+      index += 1;
+      state = "line-comment";
+    } else if (character === "/" && next === "*") {
+      result += "  ";
+      index += 1;
+      state = "block-comment";
+    } else result += character;
+  }
+  return state === "code" ? result : null;
+}
+
 const JAVA_PLUGIN_IDS = new Set(["java", "java-library", "java-platform", "application", "war"]);
 
 function quotedPluginId(rawBlock, start) {
@@ -124,6 +172,118 @@ function hasJavaPlugin(text) {
   return false;
 }
 
+function splitGradleArguments(text) {
+  if (text.trim() === "") return [];
+  const parts = [];
+  let start = 0;
+  let quote = null;
+  let escaped = false;
+  let depth = 0;
+  for (let index = 0; index < text.length; index += 1) {
+    const character = text[index];
+    if (quote) {
+      if (escaped) escaped = false;
+      else if (character === "\\") escaped = true;
+      else if (character === quote) quote = null;
+      continue;
+    }
+    if (character === "\"" || character === "'") {
+      quote = character;
+    } else if (character === "(" || character === "[" || character === "{") {
+      depth += 1;
+    } else if (character === ")" || character === "]" || character === "}") {
+      depth -= 1;
+      if (depth < 0) return null;
+    } else if (character === "," && depth === 0) {
+      parts.push(text.slice(start, index).trim());
+      start = index + 1;
+    }
+  }
+  if (quote || depth !== 0) return null;
+  parts.push(text.slice(start).trim());
+  return parts.filter(Boolean);
+}
+
+function gradleQuotedValue(value) {
+  const trimmed = value.trim();
+  if (trimmed.length < 2 || !["\"", "'"].includes(trimmed[0]) || trimmed.at(-1) !== trimmed[0]) return null;
+  const quote = trimmed[0];
+  let result = "";
+  let escaped = false;
+  for (let index = 1; index < trimmed.length; index += 1) {
+    const character = trimmed[index];
+    if (escaped) {
+      result += character;
+      escaped = false;
+    } else if (character === "\\") {
+      escaped = true;
+    } else if (character === quote) {
+      return index === trimmed.length - 1 ? result : null;
+    } else {
+      result += character;
+    }
+  }
+  return null;
+}
+
+function gradleParenthesisEnd(source, open) {
+  let depth = 1;
+  for (let index = open + 1; index < source.length; index += 1) {
+    if (source[index] === "(") depth += 1;
+    else if (source[index] === ")") {
+      depth -= 1;
+      if (depth === 0) return index;
+    }
+  }
+  return -1;
+}
+
+export function parseGradleSettings(text) {
+  const invalid = {
+    valid: false,
+    javaPlugin: false,
+    javaPlatform: false,
+    javaCompiler: false,
+    packaging: null,
+    modules: [],
+    includes: [],
+    gradleBuild: false,
+    gradleSettings: true,
+    gradleProperties: false,
+  };
+  if (typeof text !== "string" || text.length > 1024 * 1024 || /\r(?!\n)/u.test(text)) return invalid;
+  const source = maskGradleStringsAndComments(text);
+  if (source === null) return invalid;
+  const includes = [];
+  for (const match of source.matchAll(/\binclude\b/gu)) {
+    let cursor = match.index + match[0].length;
+    while (/\s/u.test(text[cursor] ?? "")) cursor += 1;
+    let body;
+    if (text[cursor] === "(") {
+      const close = gradleParenthesisEnd(source, cursor);
+      if (close < 0) return invalid;
+      body = text.slice(cursor + 1, close);
+    } else {
+      const end = text.indexOf("\n", cursor);
+      body = text.slice(cursor, end < 0 ? text.length : end);
+    }
+    const commentFreeBody = stripGradleComments(body);
+    const values = commentFreeBody === null ? null : splitGradleArguments(commentFreeBody);
+    if (values === null) return invalid;
+    for (const value of values) {
+      const literal = gradleQuotedValue(value);
+      if (literal === null || literal.trim() === "") return invalid;
+      includes.push(literal);
+    }
+  }
+  return { ...invalid, valid: true, includes: [...new Set(includes)] };
+}
+
+export function parseGradleProperties(text) {
+  if (typeof text !== "string" || text.length > 1024 * 1024 || /\r(?!\n)/u.test(text)) return invalidJava();
+  return { ...invalidJava(), valid: true, gradleProperties: true };
+}
+
 export function parseGradleBuild(text) {
   if (typeof text !== "string" || text.length > 1024 * 1024 || /\r(?!\n)/u.test(text)) return invalidJava();
   const source = maskGradleStringsAndComments(text);
@@ -137,6 +297,10 @@ export function parseGradleBuild(text) {
     javaCompiler: false,
     packaging: null,
     modules: [],
+    includes: [],
+    gradleBuild: true,
+    gradleSettings: false,
+    gradleProperties: false,
   };
 }
 
@@ -157,15 +321,23 @@ export function inspectJavaProject({ projectRoot, manifestRelative, manifestText
     ? parseMavenPom(manifestText)
     : manifestName === "build" || manifestName === "build.bazel"
       ? parseBazelJava(manifestText)
-      : parseGradleBuild(manifestText);
+      : manifestName === "settings.gradle" || manifestName === "settings.gradle.kts"
+        ? parseGradleSettings(manifestText)
+        : manifestName === "gradle.properties"
+          ? parseGradleProperties(manifestText)
+          : parseGradleBuild(manifestText);
   const javaSource = hasOwnedJavaSource(sourceFiles, targetRoot, projectRoot, projectRoots);
-  const primary = parsed.valid && (javaSource || parsed.javaPlugin || parsed.javaPlatform || parsed.javaCompiler);
+  const canProvideJavaEvidence = !parsed.gradleSettings && !parsed.gradleProperties;
+  const structurallyValid = parsed.valid || parsed.gradleBuild;
+  const primary = canProvideJavaEvidence && structurallyValid
+    && (javaSource || parsed.javaPlugin || parsed.javaPlatform || parsed.javaCompiler);
   const primarySignals = primary
     ? [`${manifestRelative}:${parsed.javaPlatform ? "java-platform" : manifestName === "pom.xml" ? "maven" : "build"}`]
     : [];
   const supportingSignals = [];
   if (javaSource) supportingSignals.push(`${projectRoot === "." ? "source" : `${projectRoot}/source`}:java`);
   for (const module of parsed.modules) supportingSignals.push(`${manifestRelative}:module=${module}`);
+  for (const include of parsed.includes ?? []) supportingSignals.push(`${manifestRelative}:include=${include}`);
   return createLanguageProject({
     kind: "java",
     root: projectRoot,

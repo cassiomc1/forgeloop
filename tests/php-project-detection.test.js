@@ -12,6 +12,14 @@ test("Composer parsing is strict and PHP source requires an executable tag", () 
   assert.equal(parseComposerJson("{\"require\": []}\n").valid, false);
 });
 
+test("PHP short echo tags provide executable source evidence", async () => {
+  await temporaryProject("forgeloop-php-short-echo-", async (target) => {
+    await writeFiles(target, { "public/index.php": "<?= htmlspecialchars($name) ?>\n" });
+    const evidence = await detectProjectEvidence(target, { claims: ["public/index.php"] });
+    assert.deepEqual(evidence.frameworks, ["php"]);
+  });
+});
+
 test("composer.json activates PHP while composer.lock and prose do not", async () => {
   await temporaryProject("forgeloop-php-detection-", async (target) => {
     await writeFiles(target, {

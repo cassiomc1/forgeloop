@@ -38,10 +38,11 @@ development work and is not an automatic migration target.
 
 Read bounded build metadata and claimed/owned implementation files. Treat
 `project(app LANGUAGES C)`, `project(app C)`, `enable_language(C)`, and
-`project('app', 'c')` as explicit language evidence. CMake's omitted language
-defaults are ambiguous to a static detector, so `project(app)` needs owned
-implementation source before it establishes C. A `cc_*` Bazel rule needs owned
-`.c` source because the rule may also build C++. A Makefile becomes meaningful
+`project('app', 'c')` as explicit language evidence; CMake command names are
+case-insensitive. CMake's omitted language defaults are ambiguous to a static
+detector, so `project(app)` needs owned implementation source before it
+establishes C. A `cc_*` Bazel rule needs owned `.c` source because the rule may
+also build C++. A Makefile becomes meaningful
 only with owned implementation source.
 
 Keep the language standard, compiler mode (`-std=c23` versus `-std=gnu23`),

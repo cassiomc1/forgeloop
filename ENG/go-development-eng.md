@@ -41,11 +41,14 @@ OS/architecture. A newer local toolchain does not change the supported module.
 ## Modules and workspaces
 
 Keep `module`, `go`, `toolchain`, `require`, `replace`, `exclude`, `retract`,
-`godebug`, and `use` semantics distinct. `go.work` membership is accepted only
-when `use` paths resolve to known discovered local `go.mod` files. `replace`
-and dependency metadata are context; ForgeLoop does not perform registry,
-VCS, version, or feature resolution. Preserve nested modules and independent
-workspace ownership in monorepos.
+`godebug`, `ignore`, and `use` semantics distinct. The bounded `go.mod`
+recognizer accepts valid single and block `ignore` directives as module
+metadata; they do not establish a module by themselves. `go.work` membership
+is accepted only when `use` paths resolve to known discovered local `go.mod`
+files, and `ignore` is not a workspace directive. `replace` and dependency
+metadata are context; ForgeLoop does not perform registry, VCS, version, or
+feature resolution. Preserve nested modules and independent workspace
+ownership in monorepos.
 
 ## Architecture and language semantics
 

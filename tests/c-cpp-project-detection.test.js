@@ -10,6 +10,7 @@ test("native build recognizers require explicit or owned C/C++ evidence", () => 
   assert.deepEqual(parseCMake("project(app LANGUAGES C CXX)"), { valid: true, c: true, cpp: true, make: false });
   assert.equal(parseCMake("project(app C)").c, true);
   assert.equal(parseCMake("enable_language(CXX)").cpp, true);
+  assert.deepEqual(parseCMake("PROJECT(app LANGUAGES CXX)"), { valid: true, c: false, cpp: true, make: false });
   assert.equal(parseCMake("enable_language(# fake CXX\n)").cpp, false);
   assert.deepEqual(parseMeson("project('app', 'c', 'cpp')"), { valid: true, c: true, cpp: true, make: false });
   assert.equal(parseMeson("add_languages('c')").c, true);
@@ -47,6 +48,7 @@ test("Makefiles and headers alone remain negative, while owned implementation so
     });
     const evidence = await detectProjectEvidence(target);
     assert.deepEqual(evidence.frameworks, []);
+    assert.deepEqual(evidence.projectRoots, []);
   });
 
   await temporaryProject("forgeloop-make-source-positive-", async (target) => {
@@ -66,6 +68,28 @@ test("default native build context needs owned implementation source", async () 
       "include/app.hpp": "class App {};\n",
     });
     assert.deepEqual((await detectProjectEvidence(target)).frameworks, []);
+  });
+
+  await temporaryProject("forgeloop-native-auxiliary-boundary-", async (target) => {
+    await writeFiles(target, {
+      "CMakeLists.txt": "project(app)\n",
+      "tools/Makefile": "all:\n\tcc main.c -o app\n",
+      "tools/main.c": "int main(void) { return 0; }\n",
+    });
+    const evidence = await detectProjectEvidence(target);
+    assert.deepEqual(evidence.frameworks, ["c"]);
+    assert.deepEqual(evidence.projectRoots, ["."]);
+  });
+
+  await temporaryProject("forgeloop-meson-auxiliary-boundary-", async (target) => {
+    await writeFiles(target, {
+      "meson.build": "project('app', 'c')\n",
+      "src/Makefile": "all:\n\tcc main.c -o app\n",
+      "src/main.c": "int main(void) { return 0; }\n",
+    });
+    const evidence = await detectProjectEvidence(target);
+    assert.deepEqual(evidence.frameworks, ["c"]);
+    assert.deepEqual(evidence.projectRoots, ["."]);
   });
 
   await temporaryProject("forgeloop-bazel-native-language-", async (target) => {

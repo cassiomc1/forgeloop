@@ -80,9 +80,9 @@ function callEnd(text, open) {
   return null;
 }
 
-export function extractBuildCalls(text, names) {
+export function extractBuildCalls(text, names, { caseInsensitive = false } = {}) {
   if (typeof text !== "string" || !Array.isArray(names)) return null;
-  const wanted = new Set(names);
+  const wanted = new Set(names.map((name) => caseInsensitive ? name.toLowerCase() : name));
   const calls = [];
   for (let index = 0; index < text.length;) {
     const step = skipBuildToken(text, index);
@@ -92,7 +92,7 @@ export function extractBuildCalls(text, names) {
       continue;
     }
     const name = text.slice(index).match(/^[A-Za-z_][A-Za-z0-9_]*/u)?.[0];
-    if (!name || !wanted.has(name)) {
+    if (!name || !wanted.has(caseInsensitive ? name.toLowerCase() : name)) {
       index += name?.length ?? 1;
       continue;
     }

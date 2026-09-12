@@ -375,9 +375,12 @@ strings, empty files, generated/vendor content, and database images are not
 evidence.
 
 The detector masks lexical noise and never connects to a database, executes
-queries, applies migrations, reads credentials, or introspects schemas.
-ISO/IEC 9075:2023 is a portability reference; the actual engine and version
-govern dialect behavior. See ENG/sql-development-eng.md.
+queries, applies migrations, reads credentials, or introspects schemas. It
+recognizes bounded statement families and common CTE shapes without claiming
+full dialect parsing; PostgreSQL JSON operators such as `#>` and `#>>` remain
+SQL tokens, not comments. ISO/IEC 9075:2023 is a portability reference; the
+actual engine and version govern dialect behavior. See
+ENG/sql-development-eng.md.
 
 ### `go` — Go development engineering
 
@@ -386,7 +389,10 @@ repository-local modules. A go.work without a usable module, .go source alone,
 go.sum, vendor metadata, Docker image, or setup-go CI step is insufficient.
 The go minimum-version and toolchain directives remain distinct. Detection
 resolves only known manifests and never runs Go, downloads modules, evaluates
-build tags, or executes generators. See ENG/go-development-eng.md.
+build tags, or executes generators. `ignore` directives in `go.mod` are
+retained as module metadata (including single and block forms); they do not
+change project identity, and `go.work` does not accept them. See
+ENG/go-development-eng.md.
 
 ### `typescript` — TypeScript development engineering
 

@@ -5,8 +5,14 @@ const SQL_STATEMENT_PATTERNS = Object.freeze([
   /(?:^|[;\n])\s*insert\s+into\b/imu,
   /(?:^|[;\n])\s*update\b[\s\S]{0,160}\bset\b/imu,
   /(?:^|[;\n])\s*delete\s+from\b/imu,
-  /(?:^|[;\n])\s*(?:create|alter|drop)\s+(?:table|view|index|schema|database)\b/imu,
+  /(?:^|[;\n])\s*merge\s+into\b/imu,
+  /(?:^|[;\n])\s*with\b[\s\S]{0,1024}\bas\s*\([\s\S]*\)\s*(?:select|insert|update|delete|merge)\b/imu,
+  /(?:^|[;\n])\s*create\s+(?:table|view|index|schema|database|function|procedure|trigger|type|sequence)\b/imu,
+  /(?:^|[;\n])\s*(?:alter|drop)\b/imu,
+  /(?:^|[;\n])\s*(?:grant|revoke)\b[\s\S]{0,240}\bon\b/imu,
   /(?:^|[;\n])\s*(?:begin|commit|rollback)(?:\s+transaction)?\s*;?(?:\s|$)/imu,
+  /(?:^|[;\n])\s*savepoint\b/imu,
+  /(?:^|[;\n])\s*release(?:\s+savepoint)?\b/imu,
 ]);
 
 function maskSqlComment(text, start, block) {
@@ -60,7 +66,7 @@ function maskSqlDollarQuote(text, start) {
 function maskSqlToken(text, index) {
   const character = text[index];
   const next = text[index + 1];
-  if ((character === "-" && next === "-") || character === "#") {
+  if (character === "-" && next === "-") {
     return maskSqlComment(text, index, false);
   }
   if (character === "/" && next === "*") return maskSqlComment(text, index, true);

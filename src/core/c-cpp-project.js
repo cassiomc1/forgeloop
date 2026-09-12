@@ -20,12 +20,12 @@ function nativeLanguageTokens(text) {
 
 function nativeLanguagesFromCMake(text) {
   const result = { c: false, cpp: false };
-  const calls = extractBuildCalls(text, ["project", "enable_language"]);
+  const calls = extractBuildCalls(text, ["project", "enable_language"], { caseInsensitive: true });
   if (!calls) return result;
   for (const call of calls) {
     const body = maskBuildScript(call.body);
     if (body === null) continue;
-    if (call.name === "enable_language") {
+    if (call.name.toLowerCase() === "enable_language") {
       const languages = nativeLanguageTokens(body);
       result.c ||= languages.c;
       result.cpp ||= languages.cpp;
