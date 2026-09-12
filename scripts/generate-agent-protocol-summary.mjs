@@ -109,7 +109,9 @@ Package version: ${packageJson.version}
   specialist has guide ID \`dotnet\` and resolves to
   \`ENG/dotnet-aspnetcore-development-eng.md\`.
 - Project evidence schema v${PROJECT_EVIDENCE_SCHEMA_VERSION} recognizes
-  structurally parsed Flutter and SDK-style .NET project roots. ASP.NET Core
+  structurally parsed Flutter, SDK-style .NET, Node.js, Rust, C, C++, Java,
+  SQL, Go, TypeScript, PHP, and Swift project evidence. SQL remains a bounded
+  owned-file overlay, while same-root language identities compose. ASP.NET Core
   and ABP are conditional overlays recorded as reasons on \`dotnet\`; they
   are not standalone guide IDs, and route validation requires each overlay to
   include \`dotnet\`.

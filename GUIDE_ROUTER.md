@@ -55,6 +55,14 @@ project commands.
 | `flutter` | [Flutter application engineering](./ENG/flutter-development-eng.md) | Architecture, implementation, testing, performance, accessibility, platform integration, and release of production Flutter applications |
 | `dotnet` | [.NET and ASP.NET Core development engineering](./ENG/dotnet-aspnetcore-development-eng.md) | Architecture, implementation, testing, performance, security, data access, hosting, observability, and release of production .NET applications |
 | `nodejs` | [Node.js backend development engineering](./ENG/nodejs-backend-development-eng.md) | Architecture, implementation, testing, security, performance, observability, and release of production Node.js services and workers |
+| `c` | [C development engineering](./ENG/c-development-eng.md) | Memory-safe-by-contract C libraries, services, native interfaces, security, testing, and reproducible toolchains |
+| `cpp` | [C++ development engineering](./ENG/cpp-development-eng.md) | Ownership, RAII, concurrency, ABI, native interoperability, testing, and reproducible C++ systems |
+| `java` | [Java development engineering](./ENG/java-development-eng.md) | JVM services, libraries, workers, build compatibility, concurrency, security, testing, and release |
+| `sql` | [SQL development engineering](./ENG/sql-development-eng.md) | Schemas, queries, migrations, transactions, database security, performance, and compatibility |
+| `go` | [Go development engineering](./ENG/go-development-eng.md) | Modules, services, workers, concurrency, cancellation, security, testing, and release |
+| `typescript` | [TypeScript development engineering](./ENG/typescript-development-eng.md) | Type-system/compiler contracts, runtime boundaries, module compatibility, testing, and release |
+| `php` | [PHP development engineering](./ENG/php-development-eng.md) | Composer applications, web services, workers, runtime constraints, security, testing, and deployment |
+| `swift` | [Swift development engineering](./ENG/swift-development-eng.md) | SwiftPM/Xcode applications, concurrency, platform boundaries, interoperability, testing, and release |
 | `rust` | [Rust development engineering](./ENG/rust-development-eng.md) | Architecture, implementation, testing, security, performance, reproducibility, and release of production Rust applications, services, libraries, and workers |
 
 ## Domain rules
@@ -316,6 +324,102 @@ validated inputs and configuration, bounded trust and resource controls,
 focused plus integration/adversarial checks, observable failure and shutdown
 behavior, and honest `NOT_VERIFIED` reporting for unavailable Node tooling.
 
+### `c` — C development engineering
+
+Activate for explicit C language declarations in CMake or Meson, a native
+Bazel rule with owned .c source, or a direct claim to owned .c source. Headers,
+Makefiles, compiler images, flags, generated trees, and prose are not enough.
+C and C++ may compose at one root. Detection is bounded and static; it never
+runs native build tools, compilers, linkers, generators, or tests. Repository
+flags, compiler mode, ABI, C library, and platform contracts decide the
+effective C standard; C23 is only the current published reference.
+
+Expected evidence is a confirmed affected root, scoped ownership, explicit
+memory/resource contracts, failure-path tests, and separately recorded
+toolchain checks. See ENG/c-development-eng.md for the specialist contract.
+
+### `cpp` — C++ development engineering
+
+Activate for explicit C++ language declarations in CMake or Meson, a native
+Bazel rule with owned .cc, .cpp, .cxx, or .c++ source, or a direct claim to
+owned C++ source. Headers remain ambiguous without explicit build context.
+Makefiles, compiler versions, flags, generated trees, and vendored code do not
+establish C++ identity. The detector never executes native build logic.
+
+C++23 is the published baseline reference; compiler support for C++26 is not
+permission to change the repository standard or ABI. See
+ENG/cpp-development-eng.md for ownership, RAII, ABI, concurrency, and testing
+guidance.
+
+### `java` — Java development engineering
+
+Activate for owned Java source with structural Maven, Gradle, or Bazel
+evidence, an unambiguous Java compiler/platform declaration, or a direct .java
+claim. A POM, Gradle wrapper/settings, generic aggregator, JDK image, or
+setup-java CI step alone is not an application; explicit recognized Java
+plugins/rules are structural evidence. Unsafe XML DTD/entity constructs fail
+closed; Maven, Gradle, Bazel, plugins, annotation processors, tests, and Java
+code are never executed.
+
+Keep source level, release/target, build JDK, runtime JDK, preview features,
+framework minimums, and vendor distribution separate. Repository configuration
+wins over current JDK availability. See ENG/java-development-eng.md.
+
+### `sql` — SQL development engineering
+
+Activate as an overlay for a directly claimed meaningful SQL artifact or a
+bounded statement in an owned db, database, migration, migrations, schema, or
+sql directory. SQL composes with its host language specialist and dialect is
+not a public framework value. Comments, strings, prose, drivers, connection
+strings, empty files, generated/vendor content, and database images are not
+evidence.
+
+The detector masks lexical noise and never connects to a database, executes
+queries, applies migrations, reads credentials, or introspects schemas.
+ISO/IEC 9075:2023 is a portability reference; the actual engine and version
+govern dialect behavior. See ENG/sql-development-eng.md.
+
+### `go` — Go development engineering
+
+Activate for a valid bounded go.mod module or a go.work connected to known
+repository-local modules. A go.work without a usable module, .go source alone,
+go.sum, vendor metadata, Docker image, or setup-go CI step is insufficient.
+The go minimum-version and toolchain directives remain distinct. Detection
+resolves only known manifests and never runs Go, downloads modules, evaluates
+build tags, or executes generators. See ENG/go-development-eng.md.
+
+### `typescript` — TypeScript development engineering
+
+Activate for a valid bounded JSONC tsconfig.json. A custom tsconfig.*.json is
+primary only when directly claimed or referenced by a confirmed config.
+jsconfig.json, .ts snippets, declaration files, compiler dependencies, and CI
+compiler setup are not TypeScript project identity. Local references are
+checked only against discovered configs; the compiler and config files are
+never executed.
+
+TypeScript is runtime-neutral, so a co-located Node package may select both
+typescript and nodejs. See ENG/typescript-development-eng.md.
+
+### `php` — PHP development engineering
+
+Activate for a valid bounded composer.json with package/require/autoload
+identity or a direct claim to executable PHP source. Composer lockfiles,
+vendor, PHP version strings, Docker/CI setup, static HTML, and README examples
+are not enough. Composer scripts/plugins, PHP, autoload generation, and
+network resolution are never run. PHP extension roots may compose with C.
+strict_types remains a per-file call-site rule. See ENG/php-development-eng.md.
+
+### `swift` — Swift development engineering
+
+Activate for a valid Package.swift tools-version/PackageDescription/Package
+structure with Swift target evidence, explicit Swift in CMake/Meson, bounded
+Xcode Swift markers, or a direct .swift claim. A direct Package.swift claim
+also selects Swift guidance for a native-only package manifest. Package.resolved,
+vendor/generated source, Docker/CI setup, and package execution are not
+evidence. SwiftPM may compose Swift with C or C++ at one root. Swift 6.3 is the
+stable reference snapshot; beta documentation is not an automatic target.
+See ENG/swift-development-eng.md.
+
 ### `rust` — Rust development engineering
 
 **Activate when:** a confirmed project root has a bounded, structurally parsed
@@ -391,6 +495,13 @@ workspace checks, explicit resource and trust controls, and honest
 | .NET / ASP.NET Core application | `dotnet` | `clean`, `test`; add `security`, `performance`, `documentation`, or UI guides as applicable | No supported SDK-style .NET project in the affected project scope |
 | Node.js backend, API, worker, or server runtime | `nodejs` | `clean`, `test`; add `security`, `performance`, or `documentation` as applicable | No primary Node.js backend/runtime evidence in the affected project scope |
 | Rust application, service, library, or worker | `rust` | `clean`, `test`; add `security`, `performance`, or `documentation` as applicable | No valid Cargo package/workspace in the affected project scope |
+| C or C++ native project | `c`, `cpp` | `clean`, `test`; add `security`, `performance`, or `documentation` as applicable | No explicit/owned native implementation evidence |
+| Java service, library, or worker | `java` | `clean`, `test`; add `security`, `performance`, or `documentation` as applicable | No structural Java build/source evidence |
+| Go module, service, or worker | `go` | `clean`, `test`; add `security`, `performance`, or `documentation` as applicable | No valid discovered Go module/workspace |
+| TypeScript project | `typescript` | `clean`, `test`; add `security`, `performance`, or `documentation` as applicable | No valid or referenced tsconfig project |
+| PHP application, package, or worker | `php` | `clean`, `test`; add `security`, `performance`, or `documentation` as applicable | No Composer or scoped executable PHP evidence |
+| Swift application, package, or service | `swift` | `clean`, `test`; add `security`, `performance`, or `documentation` as applicable | No SwiftPM/Xcode/build/source evidence |
+| SQL schema, query, or migration | `sql` | `clean`, `test`, `security`; add `performance` for measured query/migration risk | No meaningful owned SQL artifact |
 | Complete website | `premium` | `design`, `accessibility`, `clean`, `test`, `security`, `performance` | The deliverable is not a complete site |
 | Web game | `games` | `clean`, `test`, `security`, `performance`, `accessibility`; `design` with UI | The product is not a game |
 | HTML video or motion | `design` | `accessibility`, `performance`, `test`, `security` | There is no audiovisual composition |
@@ -425,14 +536,18 @@ The first routing contract is versioned as `schemaVersion: 1`. It accepts:
 - optional `projectEvidence` with a schema version, a scope result, detected
   framework IDs, affected project roots, primary signals, and supporting
   signals. The current framework IDs are `flutter`, `dotnet`, `aspnetcore`,
-  `abp`, `nodejs`, and `rust`. Flutter's primary signal is an affected
+  `abp`, `nodejs`, `rust`, `c`, `cpp`, `java`, `sql`, `go`, `typescript`,
+  `php`, and `swift`. Flutter's primary signal is an affected
   `dependencies.flutter.sdk: flutter` entry in `pubspec.yaml`. .NET's primary
   signal is a supported SDK-style project manifest; ASP.NET Core and ABP are
   structural overlays. Node.js primary signals are an allowlisted runtime
   dependency, direct Node runtime script, or narrow server-builtin source
-  import in a valid `package.json` project. Rust's primary signals are a valid
-  structural `[package]` and/or `[workspace]` table in `Cargo.toml`; Rust
-  source, lockfiles, toolchain files, and dependencies are supporting context.
+  import in a valid `package.json` project. The C/C++, Java, Go, TypeScript,
+  PHP, and Swift specialists use bounded structural build/config or owned
+  source evidence; SQL is a bounded owned-file overlay. Rust's primary
+  signals are a valid structural `[package]` and/or `[workspace]` table in
+  `Cargo.toml`; Rust source, lockfiles, toolchain files, and dependencies
+  are supporting context.
 
 Rule precedence is deterministic: the work type establishes the primary
 closure; affected surfaces add mandatory complements; risks add security,
@@ -535,6 +650,17 @@ Negative routing guarantees:
   directory scope, and a solution claim does not activate non-members;
 - a `.rs` file, `Cargo.lock`, Rust toolchain/configuration file, or Rust
   dependency name does not replace a valid Cargo package/workspace manifest;
+- a C/C++ header, Makefile, compiler image, or generic native build file does
+  not replace explicit language or owned implementation evidence;
+- a Java POM/Gradle wrapper, Go source or go.sum, jsconfig, Composer lockfile,
+  Package.resolved, or generic build metadata alone does not establish the
+  corresponding specialist;
+- SQL is selected only from a meaningful claimed or owned migration/schema
+  artifact and overlays the host project; comments, strings, and credentials
+  are never evidence;
+- build/package/compiler tools are never executed during project detection,
+  and all eight language specialists preserve bounded reads, traversal, and
+  same-root composition;
 - a virtual workspace root is not exposed as a public package root, excluded
   workspace members remain out of an explicit workspace claim, and nested
   Cargo workspaces remain ownership boundaries;

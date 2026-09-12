@@ -167,6 +167,24 @@ test("confirmed public Node.js framework evidence is authoritative without priva
   assert.deepEqual(result.reasons.test, ["PROJECT_NODEJS_BASELINE", "WORK_CODE"]);
 });
 
+test("public multi-language framework evidence is authoritative without private signals", () => {
+  for (const framework of ["c", "cpp", "java", "go", "typescript", "php", "swift", "sql"]) {
+    const result = evaluateRoute({
+      workType: "code",
+      projectEvidence: {
+        schemaVersion: 1,
+        scope: "MATCH",
+        frameworks: [framework],
+        projectRoots: [],
+        primarySignals: [],
+        supportingSignals: [],
+      },
+    });
+    assert.deepEqual(result.guides.slice(0, 3), [framework, "clean", "test"], framework);
+    assert.equal(result.primary, framework, framework);
+  }
+});
+
 test(".NET evidence is excluded from documentation-only work and no scope match", () => {
   const documentation = evaluateRoute({
     workType: "documentation",

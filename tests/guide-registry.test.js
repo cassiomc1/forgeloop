@@ -123,6 +123,14 @@ test("Rust specialist is registered with the canonical guide path", () => {
   assert.ok(GUIDE_IDS.includes("rust"));
 });
 
+test("multi-language specialists are registered with stable public IDs", () => {
+  for (const guideId of ["c", "cpp", "java", "sql", "go", "typescript", "php", "swift"]) {
+    assert.equal(GUIDE_REGISTRY[guideId].path, `ENG/${guideId === "cpp" ? "cpp" : guideId}-development-eng.md`, guideId);
+    assert.equal(GUIDE_REGISTRY[guideId].install, true, guideId);
+    assert.ok(GUIDE_IDS.includes(guideId), guideId);
+  }
+});
+
 test("ui-copy routes to design and accessibility, never documentation", () => {
   const result = evaluateRoute({
     workType: "ui-copy",

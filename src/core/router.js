@@ -62,7 +62,21 @@ const SIGNALS = Object.freeze({
   platforms: new Set(["web", "mobile", "desktop", "server", "ci", "cross-platform"]),
 });
 
-const PROJECT_FRAMEWORKS = new Set(["flutter", "dotnet", "aspnetcore", "abp", "nodejs", "rust"]);
+const PROJECT_FRAMEWORKS = new Set([
+  "flutter", "dotnet", "aspnetcore", "abp", "nodejs", "rust",
+  "c", "cpp", "java", "sql", "go", "typescript", "php", "swift",
+]);
+
+const LANGUAGE_PROJECT_GUIDES = Object.freeze([
+  ["c", "PROJECT_C_CONFIRMED"],
+  ["cpp", "PROJECT_CPP_CONFIRMED"],
+  ["java", "PROJECT_JAVA_CONFIRMED"],
+  ["go", "PROJECT_GO_CONFIRMED"],
+  ["typescript", "PROJECT_TYPESCRIPT_CONFIRMED"],
+  ["php", "PROJECT_PHP_CONFIRMED"],
+  ["swift", "PROJECT_SWIFT_CONFIRMED"],
+  ["sql", "PROJECT_SQL_CONFIRMED"],
+]);
 
 export const PLATFORM_SEMANTICS = Object.freeze({
   web: Object.freeze({
@@ -189,6 +203,19 @@ function addRustProjectGuides(input, add) {
   }
 }
 
+function hasLanguageWorkContext(workType) {
+  return !["documentation", "ui-copy", "mobile-ui"].includes(workType);
+}
+
+function addLanguageProjectGuides(input, add) {
+  const projectEvidence = input.projectEvidence;
+  if (!projectEvidence || !["MATCH", "UNSCOPED"].includes(projectEvidence.scope)
+    || !hasLanguageWorkContext(input.workType)) return;
+  for (const [guide, reason] of LANGUAGE_PROJECT_GUIDES) {
+    if (projectEvidence.frameworks.includes(guide)) add(guide, reason);
+  }
+}
+
 function addProjectBaselineGuides(input, add) {
   const projectEvidence = input.projectEvidence;
   if (!projectEvidence || !["MATCH", "UNSCOPED"].includes(projectEvidence.scope)) return;
@@ -207,6 +234,13 @@ function addProjectBaselineGuides(input, add) {
   if (projectEvidence.frameworks.includes("rust") && hasRustWorkContext(input.workType)) {
     add("clean", "PROJECT_RUST_BASELINE");
     add("test", "PROJECT_RUST_BASELINE");
+  }
+  if (hasLanguageWorkContext(input.workType)) {
+    for (const [language] of LANGUAGE_PROJECT_GUIDES) {
+      if (!projectEvidence.frameworks.includes(language)) continue;
+      add("clean", `PROJECT_${language.toUpperCase()}_BASELINE`);
+      add("test", `PROJECT_${language.toUpperCase()}_BASELINE`);
+    }
   }
 }
 
@@ -253,6 +287,13 @@ function exclusionReasonForGuide(guide, projectEvidence, workType) {
   if (guide === "dotnet") return dotNetExclusionReason(projectEvidence, workType);
   if (guide === "nodejs") return nodeJsExclusionReason(projectEvidence, workType);
   if (guide === "rust") return rustExclusionReason(projectEvidence, workType);
+  if (LANGUAGE_PROJECT_GUIDES.some(([language]) => language === guide)) {
+    if (!projectEvidence) return `NO_${guide.toUpperCase()}_PROJECT_EVIDENCE`;
+    if (projectEvidence.scope === "NO_MATCH") return `NO_${guide.toUpperCase()}_SCOPE_MATCH`;
+    if (!projectEvidence.frameworks.includes(guide)) return `NO_${guide.toUpperCase()}_PRIMARY_EVIDENCE`;
+    if (!hasLanguageWorkContext(workType)) return `NO_${guide.toUpperCase()}_EXECUTABLE_WORK`;
+    return `NO_${guide.toUpperCase()}_PRIMARY_EVIDENCE`;
+  }
   return "NO_BEHAVIOR_OR_EXECUTABLE_CHANGE";
 }
 
@@ -374,6 +415,7 @@ export function evaluateRoute(input = {}, profileOptions = {}) {
   addDotNetProjectGuides(normalized, add);
   addNodeJsProjectGuides(normalized, add);
   addRustProjectGuides(normalized, add);
+  addLanguageProjectGuides(normalized, add);
   addProjectBaselineGuides(normalized, add);
 
   const workReason = reasonForWorkType(normalized.workType);

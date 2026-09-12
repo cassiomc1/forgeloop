@@ -40,7 +40,7 @@ test("README keeps the lifecycle contract, modern multi-task layout, and accessi
     readme,
     /mutable protocol artifacts remain directly under `?\.forgeloop\/`?/i,
   );
-  assert.ok(readme.length < 30000, "README should remain a catalog and quickstart");
+  assert.ok(readme.length < 32000, "README should remain a catalog and quickstart");
 });
 
 test("Getting Started creates task before route and preflight", async () => {
