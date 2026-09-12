@@ -120,13 +120,38 @@ function localConfigReferences(configRelative, projectFiles) {
   });
 }
 
-export function resolveTypeScriptConfigGraph(projectFiles = [], directClaims = []) {
-  const candidates = projectFiles.filter(isConfigCandidate);
-  const parsedCandidates = candidates
+function configRelationships(projectFiles) {
+  const entries = projectFiles
+    .filter(isConfigCandidate)
     .map((file) => ({ file, parsed: parseTypeScriptConfig(file.text, file.name) }))
-    .filter((entry) => entry.parsed.valid);
-  const byRelative = new Map(parsedCandidates.map((entry) => [entry.file.relative.toLowerCase(), entry]));
-  const active = new Set(parsedCandidates
+    .filter(({ parsed }) => parsed.valid);
+  const forward = new Map();
+  const reverse = new Map();
+  for (const { file, parsed } of entries) {
+    const relations = [
+      ...parsed.references.map((value) => ({ value, kind: "reference", allowBare: true })),
+      ...parsed.extends.map((value) => ({ value, kind: "extends", allowBare: false })),
+    ];
+    for (const relation of relations) {
+      const target = entries.find(({ file: candidate }) => referenceMatchesConfig(
+        path.posix.dirname(file.relative), relation.value, candidate.relative, relation.allowBare,
+      ));
+      if (!target) continue;
+      const sourceRelative = file.relative.toLowerCase();
+      const targetRelative = target.file.relative.toLowerCase();
+      if (!forward.has(sourceRelative)) forward.set(sourceRelative, []);
+      if (!reverse.has(targetRelative)) reverse.set(targetRelative, []);
+      forward.get(sourceRelative).push({ relative: targetRelative, kind: relation.kind });
+      reverse.get(targetRelative).push({ relative: sourceRelative, kind: relation.kind });
+    }
+  }
+  return { entries, forward, reverse };
+}
+
+export function resolveTypeScriptConfigGraph(projectFiles = [], directClaims = []) {
+  const { entries, forward, reverse } = configRelationships(projectFiles);
+  const byRelative = new Map(entries.map((entry) => [entry.file.relative.toLowerCase(), entry]));
+  const active = new Set(entries
     .filter(({ file }) => file.name.toLowerCase() === "tsconfig.json")
     .map(({ file }) => file.relative.toLowerCase()));
   for (const claim of directClaims) {
@@ -138,19 +163,18 @@ export function resolveTypeScriptConfigGraph(projectFiles = [], directClaims = [
     const current = byRelative.get(queue[index]);
     const parsed = current?.parsed;
     if (!parsed) continue;
-    const references = parsed.references.map((reference) => ({ value: reference, allowBare: true }));
-    references.push(...parsed.extends.map((value) => ({ value, allowBare: false })));
-    for (const reference of references) {
-      const target = parsedCandidates.find(({ file }) => referenceMatchesConfig(
-        path.posix.dirname(current.file.relative),
-        reference.value,
-        file.relative,
-        reference.allowBare,
-      ));
-      const relative = target?.file.relative.toLowerCase();
-      if (relative && !active.has(relative)) {
-        active.add(relative);
-        queue.push(relative);
+    for (const relation of forward.get(queue[index]) ?? []) {
+      if (!active.has(relation.relative)) {
+        active.add(relation.relative);
+        queue.push(relation.relative);
+      }
+    }
+    if (directClaims.length > 0) {
+      for (const relation of reverse.get(queue[index]) ?? []) {
+        if (!active.has(relation.relative)) {
+          active.add(relation.relative);
+          queue.push(relation.relative);
+        }
       }
     }
   }
@@ -158,16 +182,29 @@ export function resolveTypeScriptConfigGraph(projectFiles = [], directClaims = [
 }
 
 export function resolveTypeScriptConfigOwnershipRoots(projectFiles = [], activeConfigRelatives = new Set(), directClaims = []) {
-  const candidates = projectFiles
-    .filter(isConfigCandidate)
-    .map((file) => ({ file, parsed: parseTypeScriptConfig(file.text, file.name) }))
-    .filter(({ file, parsed }) => parsed.valid && activeConfigRelatives.has(file.relative.toLowerCase()));
+  const { entries, reverse } = configRelationships(projectFiles);
+  const candidates = entries.filter(({ file }) => activeConfigRelatives.has(file.relative.toLowerCase()));
   const roots = new Set(candidates
     .filter(({ file }) => file.name.toLowerCase() === "tsconfig.json")
     .map(({ file }) => file.relative.toLowerCase()));
   for (const claim of directClaims) {
-    if (candidates.some(({ file }) => file.relative.toLowerCase() === claim.toLowerCase())) {
-      roots.add(claim.toLowerCase());
+    const relative = claim.toLowerCase();
+    const consumers = (reverse.get(relative) ?? [])
+      .filter((relation) => relation.kind === "extends")
+      .map((relation) => relation.relative);
+    if (consumers.length === 0 && candidates.some(({ file }) => file.relative.toLowerCase() === relative)) {
+      roots.add(relative);
+    }
+    const queue = [...consumers];
+    const seen = new Set(queue);
+    for (let index = 0; index < queue.length; index += 1) {
+      roots.add(queue[index]);
+      for (const relation of reverse.get(queue[index]) ?? []) {
+        if (relation.kind === "extends" && !seen.has(relation.relative)) {
+          seen.add(relation.relative);
+          queue.push(relation.relative);
+        }
+      }
     }
   }
   for (const { file, parsed } of candidates) {
@@ -278,6 +315,9 @@ export function inspectTypeScriptProject({
       true,
     ));
   });
+  const localExtends = parsed.extends.flatMap((reference) => projectFiles
+    .filter((file) => referenceMatchesConfig(path.posix.dirname(manifestRelative), reference, file.relative))
+    .map((file) => file.relative.toLowerCase()));
   for (const reference of localReferences) supportingSignals.push(`${manifestRelative}:local-reference=${reference}`);
   for (const reference of parsed.extends) {
     if (projectFiles.some((file) => referenceMatchesConfig(
@@ -294,7 +334,7 @@ export function inspectTypeScriptProject({
     primary,
     primarySignals,
     supportingSignals,
-    internal: { ...parsed, valid: parsed.valid, localReferences },
+    internal: { ...parsed, valid: parsed.valid, localReferences, localExtends },
   });
 }
 

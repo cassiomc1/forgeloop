@@ -46,6 +46,19 @@ test("Package.resolved alone does not activate Swift", async () => {
   });
 });
 
+test("invalid Package.swift cannot compose unclaimed native source", async () => {
+  await temporaryProject("forgeloop-swift-invalid-native-", async (target) => {
+    await writeFiles(target, {
+      "Package.swift": "not a valid package manifest\n",
+      "Sources/Native/main.c": "int main(void) { return 0; }\n",
+      "Sources/Native/main.cpp": "int main() { return 0; }\n",
+    });
+    const evidence = await detectProjectEvidence(target);
+    assert.deepEqual(evidence.frameworks, []);
+    assert.deepEqual(evidence.projectRoots, []);
+  });
+});
+
 test("Package.swift without a Swift target is only SwiftPM topology", async () => {
   await temporaryProject("forgeloop-swift-package-topology-only-", async (target) => {
     await writeFiles(target, {

@@ -23,6 +23,7 @@ import { inspectGoProject } from "./go-project.js";
 import {
   inspectTypeScriptProject,
   isDeclarationFile,
+  isTypeScriptConfigName,
   resolveTypeScriptConfigGraph,
   resolveTypeScriptConfigOwnershipRoots,
 } from "./typescript-project.js";
@@ -1295,6 +1296,19 @@ function claimMatchesProject(claim, project, projectRoots) {
   return projectOwnsPath(claim, root, projectRoots);
 }
 
+function typeScriptProjectConsumesClaim(claim, project, projects, visited = new Set()) {
+  if (project.manifest.toLowerCase() === claim) return true;
+  const identity = project.manifest.toLowerCase();
+  if (visited.has(identity)) return false;
+  visited.add(identity);
+  return (project.internal?.localExtends ?? []).some((reference) => {
+    if (reference === claim) return true;
+    const consumer = projects.find((candidate) => candidate.kind === "typescript"
+      && candidate.manifest.toLowerCase() === reference);
+    return consumer ? typeScriptProjectConsumesClaim(claim, consumer, projects, visited) : false;
+  });
+}
+
 function isSharedDotNetClaim(claim) {
   return SHARED_DOTNET_FILES.has(path.posix.basename(claim).toLowerCase());
 }
@@ -1998,6 +2012,8 @@ function hasKnownGradleChild(settingsProject, projects) {
     .map((root) => root.toLowerCase());
   return projects.some((candidate) => candidate !== settingsProject
     && candidate.internal?.gradleBuild
+    && candidate.primary
+    && candidate.validManifest
     && (candidate.root.toLowerCase() === settingsProject.root.toLowerCase()
       || includedRoots.includes(candidate.root.toLowerCase())));
 }
@@ -2014,7 +2030,7 @@ function isConfirmedProjectCandidate(project, projects) {
   if (project.kind === "typescript") return project.primary && project.validManifest;
   if (project.kind === "rust") return Boolean(project.rust);
   if (isAuxiliaryNativeProject(project)) return false;
-  if (project.internal?.gradleBuild) return true;
+  if (project.internal?.gradleBuild) return project.primary && project.validManifest;
   if (project.kind === "native") return Boolean(project.internal?.valid);
   if (project.kind === "sql") return Boolean(project.internal?.database);
   return project.validManifest;
@@ -2030,23 +2046,35 @@ function nativeSourceExistsUnderRoot(project, sourceFiles, targetRoot, boundaryR
   });
 }
 
+function hasConfirmedNativeAncestor(projects, root) {
+  return projects.some((ancestor) => {
+    const ancestorRoot = ancestor.root?.toLowerCase();
+    return ancestorRoot && isStrictRootAncestor(ancestorRoot, root)
+      && ancestor.kind === "native"
+      && !isAuxiliaryNativeProject(ancestor)
+      && ancestor.internal?.valid;
+  });
+}
+
 function confirmedProjectRoots(projects, sourceFiles, targetRoot) {
   const roots = new Set(projects
     .filter((project) => isConfirmedProjectCandidate(project, projects))
     .map((project) => project.root.toLowerCase()));
   for (const project of projects) {
     if (!isAuxiliaryNativeProject(project) || roots.has(project.root.toLowerCase())) continue;
-    if ([...roots].some((root) => isStrictRootAncestor(root, project.root.toLowerCase()))) continue;
+    if (hasConfirmedNativeAncestor(projects, project.root.toLowerCase())) continue;
     if (nativeSourceExistsUnderRoot(project, sourceFiles, targetRoot, [...roots])) roots.add(project.root.toLowerCase());
   }
   return uniqueSorted([...roots]);
 }
 
-function demoteNestedAuxiliaryProjects(projects, projectRoots) {
+function demoteNestedAuxiliaryProjects(projects, projectRoots, sourceFiles, targetRoot) {
   for (const project of projects) {
     if (!isAuxiliaryNativeProject(project)) continue;
     const root = project.root.toLowerCase();
     if (!projectRoots.some((candidate) => isStrictRootAncestor(candidate, root))) continue;
+    const independentSource = nativeSourceExistsUnderRoot(project, sourceFiles, targetRoot, projectRoots);
+    if (independentSource && !hasConfirmedNativeAncestor(projects, root)) continue;
     project.primary = false;
     project.frameworks = [];
     project.primarySignals = [];
@@ -2068,6 +2096,16 @@ async function readSolutionMembership(targetRoot, solutions) {
 
 function projectMatchesClaim(claim, project, { solutionClaims, solutionMembership, projectRoots, projects, sharedFiles, targetRoot }) {
   if (!project.root) return false;
+  if (project.kind === "typescript") {
+    const knownConfigClaim = isTypeScriptConfigName(path.posix.basename(claim))
+      || projects.some((candidate) => candidate.kind === "typescript"
+        && candidate.manifest.toLowerCase() === claim);
+    if (knownConfigClaim) {
+      return path.posix.basename(claim) === "tsconfig.json"
+        ? project.manifest.toLowerCase() === claim
+        : typeScriptProjectConsumesClaim(claim, project, projects);
+    }
+  }
   if (solutionClaims.includes(claim)) {
     return project.dotnet && solutionMembership.get(claim).includes(project.manifest.toLowerCase());
   }
@@ -2143,7 +2181,7 @@ export async function detectProjectEvidence(target, { claims = [], limits = {} }
     budget,
   });
   if (!projects) return null;
-  demoteNestedAuxiliaryProjects(projects, projectRoots);
+  demoteNestedAuxiliaryProjects(projects, projectRoots, discovered.sourceFiles, targetRoot);
   if (!hasClaims) {
     projects.push(...await addDiscoveredSqlProjects({
       targetRoot,

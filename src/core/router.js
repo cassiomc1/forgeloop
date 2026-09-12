@@ -204,7 +204,7 @@ function addRustProjectGuides(input, add) {
 }
 
 function hasLanguageWorkContext(workType) {
-  return !["documentation", "ui-copy", "mobile-ui"].includes(workType);
+  return !["documentation", "ui-copy"].includes(workType);
 }
 
 function addLanguageProjectGuides(input, add) {

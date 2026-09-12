@@ -136,16 +136,16 @@ export function inspectSwiftProject({ projectRoot, manifestRelative, manifestTex
     && (normalizedManifestName !== "package.swift" || source.swift || directClaim);
   const frameworks = [];
   if (swift) frameworks.push("swift");
-  if (normalizedManifestName === "package.swift" && source.c) frameworks.push("c");
-  if (normalizedManifestName === "package.swift" && source.cpp) frameworks.push("cpp");
+  if (normalizedManifestName === "package.swift" && parsed.valid && source.c) frameworks.push("c");
+  if (normalizedManifestName === "package.swift" && parsed.valid && source.cpp) frameworks.push("cpp");
   const primary = frameworks.length > 0;
   const primarySignals = [];
   const manifestSignal = normalizedManifestName === "package.swift"
     ? "package"
     : normalizedManifestName === "project.pbxproj" ? "xcode" : "build";
   if (swift) primarySignals.push(`${manifestRelative}:${manifestSignal}`);
-  if (normalizedManifestName === "package.swift" && source.c) primarySignals.push(`${projectRoot}/source:c`);
-  if (normalizedManifestName === "package.swift" && source.cpp) primarySignals.push(`${projectRoot}/source:cpp`);
+  if (normalizedManifestName === "package.swift" && parsed.valid && source.c) primarySignals.push(`${projectRoot}/source:c`);
+  if (normalizedManifestName === "package.swift" && parsed.valid && source.cpp) primarySignals.push(`${projectRoot}/source:cpp`);
   return createLanguageProject({
     kind: "swift",
     root: projectRoot,

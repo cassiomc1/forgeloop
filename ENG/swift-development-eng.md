@@ -49,6 +49,9 @@ available.
 `PackageDescription`/`Package(` structure. The manifest is executable code, so
 dynamic target declarations may remain unresolved. Use default SwiftPM source
 conventions and already discovered files without evaluating the manifest.
+Invalid `Package.swift` contributes no SwiftPM-derived Swift/C/C++ evidence;
+independently confirmed native build roots remain eligible. Swift `mobile-ui`
+work is executable language work for routing purposes.
 `project.pbxproj` and CMake/Meson declarations are static context; an
 `.xcworkspace` or package resolution file is aggregation/dependency context.
 

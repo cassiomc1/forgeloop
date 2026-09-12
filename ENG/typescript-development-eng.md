@@ -46,7 +46,10 @@ solution configs with `files: []` and local `references`; a reference may name
 a directory containing `tsconfig.json` or a specific discovered config. Local
 `extends` is shared configuration context, not permission to execute or walk
 arbitrary packages. External package resolution and cyclic/unbounded config
-graphs fail closed or remain unresolved.
+graphs fail closed or remain unresolved. `extends` may be a string or an
+array. A claimed shared base config maps back to its discovered direct and
+transitive consumers; the base file is not automatically an independent
+project root.
 
 Keep `include`/`exclude`, project references, `composite`, incremental state,
 path mapping, module resolution, `module`/`target`, `lib`, JSX, decorators,

@@ -12,6 +12,14 @@ test("SQL recognizer masks comments and quoted text and requires a statement sha
   assert.equal(looksLikeSql("database schema notes"), false);
   assert.equal(looksLikeSql("/* unterminated SELECT * FROM fake"), false);
   assert.equal(looksLikeSql("Please rollback these changes after reviewing the notes."), false);
+  assert.equal(looksLikeSql("Drop the old cache before restarting."), false);
+  assert.equal(looksLikeSql("Release the lock before retrying."), false);
+  assert.equal(looksLikeSql("Create a new cache before startup."), false);
+  assert.equal(looksLikeSql("Alter the service after deployment."), false);
+  assert.equal(looksLikeSql("Select the best option before continuing."), false);
+  assert.equal(looksLikeSql("SELECT 1;"), true);
+  assert.equal(looksLikeSql("DROP TABLE old_cache;"), true);
+  assert.equal(looksLikeSql("RELEASE SAVEPOINT retry_point;"), true);
   assert.equal(looksLikeSql("$$CREATE TABLE fake (id integer)$$"), false);
   assert.equal(looksLikeSql("$tag$\nSELECT * FROM fake"), false);
   assert.equal(looksLikeSql("`CREATE TABLE fake`"), false);

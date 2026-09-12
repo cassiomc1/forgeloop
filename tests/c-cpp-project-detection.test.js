@@ -101,6 +101,32 @@ test("default native build context needs owned implementation source", async () 
   });
 });
 
+test("a native child with owned implementation source remains separate from a Node parent", async () => {
+  await temporaryProject("forgeloop-native-nested-node-", async (target) => {
+    await writeFiles(target, {
+      "package.json": "{\"dependencies\":{\"express\":\"5\"}}\n",
+      "native/Makefile": "all:\n\tcc main.c -o app\n",
+      "native/main.c": "int main(void) { return 0; }\n",
+    });
+    const evidence = await detectProjectEvidence(target, { claims: ["native/Makefile"] });
+    assert.deepEqual(evidence.frameworks, ["c"]);
+    assert.deepEqual(evidence.projectRoots, ["native"]);
+  });
+});
+
+test("an auxiliary Makefile without native source does not create a child root", async () => {
+  await temporaryProject("forgeloop-native-nested-node-helper-", async (target) => {
+    await writeFiles(target, {
+      "package.json": "{}\n",
+      "src/Makefile": "all:\n\tnode server.js\n",
+      "src/server.js": "console.log('server');\n",
+    });
+    const evidence = await detectProjectEvidence(target);
+    assert.deepEqual(evidence.frameworks, []);
+    assert.deepEqual(evidence.projectRoots, ["."]);
+  });
+});
+
 test("direct C and C++ source claims provide distinct specialists", async () => {
   await temporaryProject("forgeloop-native-source-", async (target) => {
     await writeFiles(target, {

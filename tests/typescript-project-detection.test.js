@@ -97,7 +97,8 @@ test("TypeScript references and local extends are order-independent and bounded"
     assert.ok(sourceEvidence.projectRoots.includes("packages/core"));
     const baseEvidence = await detectProjectEvidence(target, { claims: ["configs/base.json"] });
     assert.deepEqual(baseEvidence.frameworks, ["typescript"]);
-    assert.ok(baseEvidence.primarySignals.includes("configs/base.json:tsconfig"));
+    assert.deepEqual(baseEvidence.projectRoots, ["app"]);
+    assert.ok(baseEvidence.primarySignals.includes("app/tsconfig.json:tsconfig"));
   });
 });
 
@@ -117,6 +118,20 @@ test("TypeScript extends arrays resolve conservatively without making shared con
     assert.deepEqual(claimedEvidence.frameworks, ["typescript"]);
     assert.deepEqual(claimedEvidence.projectRoots, ["app"]);
     assert.equal(claimedEvidence.projectRoots.includes("configs"), false);
+  });
+});
+
+test("a claimed shared TypeScript base selects every discovered consumer", async () => {
+  await temporaryProject("forgeloop-typescript-shared-base-", async (target) => {
+    await writeFiles(target, {
+      "configs/tsconfig.base.json": "{\"compilerOptions\":{\"strict\":true}}\n",
+      "apps/api/tsconfig.json": "{\"extends\":\"../../configs/tsconfig.base.json\"}\n",
+      "apps/web/tsconfig.json": "{\"extends\":[\"../../configs/tsconfig.base.json\"]}\n",
+    });
+    const evidence = await detectProjectEvidence(target, { claims: ["configs/tsconfig.base.json"] });
+    assert.deepEqual(evidence.frameworks, ["typescript"]);
+    assert.deepEqual(evidence.projectRoots, ["apps/api", "apps/web"]);
+    assert.equal(evidence.projectRoots.includes("configs"), false);
   });
 });
 

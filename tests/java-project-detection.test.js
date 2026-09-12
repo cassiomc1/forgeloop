@@ -24,6 +24,8 @@ test("Java build metadata is defensive and rejects external XML entities", () =>
   assert.equal(parseGradleBuild("plugins { id(\"java-library\") }\n").javaPlugin, true);
   assert.equal(parseGradleBuild("def example = \"id 'java'\"\n").valid, false);
   assert.equal(parseGradleBuild("plugins { id 'application' }\n").valid, true);
+  assert.equal(parseGradleBuild("plugins { id 'java-gradle-plugin' }\n").javaPlugin, true);
+  assert.equal(parseGradleBuild("plugins { `java-gradle-plugin` }\n").javaPlugin, true);
   assert.equal(parseGradleBuild("// plugins { id 'java-platform' }\n").valid, false);
   assert.deepEqual(parseGradleSettings("include(\"app\", ':services:api')\n"), {
     valid: true,
@@ -40,6 +42,8 @@ test("Java build metadata is defensive and rejects external XML entities", () =>
   assert.deepEqual(parseGradleSettings("include ':app', ':lib'\n").includes, [":app", ":lib"]);
   assert.deepEqual(parseGradleSettings("include(\"app\", // comment\n  \":lib\")\n").includes, ["app", ":lib"]);
   assert.equal(parseGradleSettings("include(projectNames)\n").valid, false);
+  assert.deepEqual(parseGradleSettings("if (false) { include(\"app\") }\n").includes, []);
+  assert.deepEqual(parseGradleSettings("include(\"${moduleName}\")\n").valid, false);
   assert.equal(parseGradleSettings("include(\"app\" + \"x\")\n").valid, false);
   assert.equal(parseGradleSettings("include(\"app\"\n").valid, false);
   assert.equal(parseGradleProperties("org.gradle.jvmargs=-Xmx1g\n").gradleProperties, true);
@@ -160,6 +164,32 @@ test("Gradle settings do not execute dynamic includes or cross independent build
     await writeFiles(target, {
       "settings.gradle": "include(System.getenv(\"MODULES\"))\n",
       "dynamic/build.gradle": "plugins { id 'java' }\n",
+    });
+    const evidence = await detectProjectEvidence(target, { claims: ["settings.gradle"] });
+    assert.deepEqual(evidence.frameworks, []);
+    assert.deepEqual(evidence.projectRoots, []);
+  });
+});
+
+test("comment-only Gradle files do not hide Node runtime source", async () => {
+  await temporaryProject("forgeloop-gradle-auxiliary-node-", async (target) => {
+    await writeFiles(target, {
+      "package.json": "{}\n",
+      "src/server.js": "import http from 'node:http';\n",
+      "src/build.gradle": "// build helper only\n",
+      "src/build.gradle.kts": "// Kotlin build helper only\n",
+    });
+    const evidence = await detectProjectEvidence(target);
+    assert.deepEqual(evidence.frameworks, ["nodejs"]);
+    assert.deepEqual(evidence.projectRoots, ["."]);
+  });
+});
+
+test("conditional Gradle includes do not create Java topology", async () => {
+  await temporaryProject("forgeloop-gradle-conditional-", async (target) => {
+    await writeFiles(target, {
+      "settings.gradle": "if (false) { include(\"app\") }\n",
+      "app/build.gradle": "plugins { id 'java' }\n",
     });
     const evidence = await detectProjectEvidence(target, { claims: ["settings.gradle"] });
     assert.deepEqual(evidence.frameworks, []);

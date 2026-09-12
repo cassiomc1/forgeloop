@@ -142,7 +142,7 @@ function stripGradleComments(text) {
   return state === "code" ? result : null;
 }
 
-const JAVA_PLUGIN_IDS = new Set(["java", "java-library", "java-platform", "application", "war"]);
+const JAVA_PLUGIN_IDS = new Set(["java", "java-library", "java-platform", "java-gradle-plugin", "application", "war"]);
 
 function quotedPluginId(rawBlock, start) {
   const plugin = rawBlock.slice(start).match(/^\s*(?:\(\s*)?["']([^"']+)["']/u)?.[1];
@@ -155,7 +155,7 @@ function pluginBlockHasJava(rawBlock) {
   for (const match of masked.matchAll(/\bid\b/gu)) {
     if (quotedPluginId(rawBlock, match.index + match[0].length)) return true;
   }
-  return /(?:^|[;{}\n])\s*(?:java|javaLibrary|javaPlatform|application|war)\s*(?:[;\n}]|$)/mu.test(masked);
+  return /(?:^|[;{}\n])\s*(?:`(?:java|javaLibrary|javaPlatform|java-gradle-plugin|application|war)`|java|javaLibrary|javaPlatform|java-gradle-plugin|application|war)\s*(?:[;\n}]|$)/mu.test(masked);
 }
 
 function hasJavaPlugin(text) {
@@ -167,7 +167,7 @@ function hasJavaPlugin(text) {
   }
   for (const match of masked.matchAll(/\bapply\s+plugin\s*:\s*/gu)) {
     const suffix = text.slice(match.index + match[0].length);
-    if (/^['"](?:java|java-library|java-platform|application|war)['"]/u.test(suffix)) return true;
+    if (/^['"](?:java|java-library|java-platform|java-gradle-plugin|application|war)['"]/u.test(suffix)) return true;
   }
   return false;
 }
@@ -208,6 +208,7 @@ function gradleQuotedValue(value) {
   const trimmed = value.trim();
   if (trimmed.length < 2 || !["\"", "'"].includes(trimmed[0]) || trimmed.at(-1) !== trimmed[0]) return null;
   const quote = trimmed[0];
+  if (trimmed.includes("$")) return null;
   let result = "";
   let escaped = false;
   for (let index = 1; index < trimmed.length; index += 1) {
@@ -238,6 +239,45 @@ function gradleParenthesisEnd(source, open) {
   return -1;
 }
 
+function topLevelGradleIncludeOffsets(source) {
+  const offsets = [];
+  const depths = { braces: 0, parentheses: 0, brackets: 0 };
+  for (let index = 0; index < source.length; index += 1) {
+    const character = source[index];
+    if (character === "{") depths.braces += 1;
+    else if (character === "}") depths.braces = Math.max(0, depths.braces - 1);
+    else if (character === "(") depths.parentheses += 1;
+    else if (character === ")") depths.parentheses = Math.max(0, depths.parentheses - 1);
+    else if (character === "[") depths.brackets += 1;
+    else if (character === "]") depths.brackets = Math.max(0, depths.brackets - 1);
+    if (Object.values(depths).some((depth) => depth !== 0)
+      || !source.startsWith("include", index)
+      || /[A-Za-z0-9_]/u.test(source[index - 1] ?? "")
+      || /[A-Za-z0-9_]/u.test(source[index + 7] ?? "")) continue;
+    offsets.push(index);
+  }
+  return offsets;
+}
+
+function parseGradleIncludeAt(text, source, index) {
+  let cursor = index + 7;
+  while (/\s/u.test(text[cursor] ?? "")) cursor += 1;
+  let body;
+  if (text[cursor] === "(") {
+    const close = gradleParenthesisEnd(source, cursor);
+    if (close < 0) return null;
+    body = text.slice(cursor + 1, close);
+  } else {
+    const end = text.indexOf("\n", cursor);
+    body = text.slice(cursor, end < 0 ? text.length : end);
+  }
+  const commentFreeBody = stripGradleComments(body);
+  const values = commentFreeBody === null ? null : splitGradleArguments(commentFreeBody);
+  if (values === null) return null;
+  const literals = values.map((value) => gradleQuotedValue(value));
+  return literals.some((literal) => literal === null || literal.trim() === "") ? null : literals;
+}
+
 export function parseGradleSettings(text) {
   const invalid = {
     valid: false,
@@ -255,26 +295,10 @@ export function parseGradleSettings(text) {
   const source = maskGradleStringsAndComments(text);
   if (source === null) return invalid;
   const includes = [];
-  for (const match of source.matchAll(/\binclude\b/gu)) {
-    let cursor = match.index + match[0].length;
-    while (/\s/u.test(text[cursor] ?? "")) cursor += 1;
-    let body;
-    if (text[cursor] === "(") {
-      const close = gradleParenthesisEnd(source, cursor);
-      if (close < 0) return invalid;
-      body = text.slice(cursor + 1, close);
-    } else {
-      const end = text.indexOf("\n", cursor);
-      body = text.slice(cursor, end < 0 ? text.length : end);
-    }
-    const commentFreeBody = stripGradleComments(body);
-    const values = commentFreeBody === null ? null : splitGradleArguments(commentFreeBody);
-    if (values === null) return invalid;
-    for (const value of values) {
-      const literal = gradleQuotedValue(value);
-      if (literal === null || literal.trim() === "") return invalid;
-      includes.push(literal);
-    }
+  for (const offset of topLevelGradleIncludeOffsets(source)) {
+    const literals = parseGradleIncludeAt(text, source, offset);
+    if (literals === null) return invalid;
+    includes.push(...literals);
   }
   return { ...invalid, valid: true, includes: [...new Set(includes)] };
 }

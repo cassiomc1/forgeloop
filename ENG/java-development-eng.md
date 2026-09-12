@@ -27,11 +27,13 @@ annotation processors, tests, Java code, and network resolution are never
 executed. XML DTDs and external entities fail closed.
 
 Gradle `settings.gradle` and `settings.gradle.kts` files contribute topology
-only when static, quoted `include` arguments connect to already discovered
-Gradle builds. Dynamic expressions are not evaluated. `gradle.properties` is a
-shared configuration surface, not an independent Java project; claims are
-scoped to Gradle builds in its directory while nested independent Gradle
-settings boundaries remain isolated.
+only when top-level, unconditional, quoted `include` arguments connect to
+already discovered Gradle builds. Conditional, interpolated, and dynamic
+expressions remain unresolved. `java-gradle-plugin` is Java evidence because
+it applies Gradle's Java Library plugin. `gradle.properties` is a shared
+configuration surface, not an independent Java project; claims are scoped to
+Gradle builds in its directory while nested independent Gradle settings
+boundaries remain isolated.
 
 ## Authority and precedence
 

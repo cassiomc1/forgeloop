@@ -357,9 +357,11 @@ Activate for owned Java source with structural Maven, Gradle, or Bazel
 evidence, an unambiguous Java compiler/platform declaration, or a direct .java
 claim. A POM, Gradle wrapper/settings, generic aggregator, JDK image, or
 setup-java CI step alone is not an application; explicit recognized Java
-plugins/rules are structural evidence. Unsafe XML DTD/entity constructs fail
-closed; Maven, Gradle, Bazel, plugins, annotation processors, tests, and Java
-code are never executed.
+plugins/rules are structural evidence, including `java-gradle-plugin`. Gradle
+topology uses only unconditional top-level literal includes; conditional,
+interpolated, or executable expressions remain unresolved. Unsafe XML
+DTD/entity constructs fail closed; Maven, Gradle, Bazel, plugins, annotation
+processors, tests, and Java code are never executed.
 
 Keep source level, release/target, build JDK, runtime JDK, preview features,
 framework minimums, and vendor distribution separate. Repository configuration
@@ -376,10 +378,11 @@ evidence.
 
 The detector masks lexical noise and never connects to a database, executes
 queries, applies migrations, reads credentials, or introspects schemas. It
-recognizes bounded statement families and common CTE shapes without claiming
-full dialect parsing; PostgreSQL JSON operators such as `#>` and `#>>` remain
-SQL tokens, not comments. ISO/IEC 9075:2023 is a portability reference; the
-actual engine and version govern dialect behavior. See
+recognizes bounded statement families only when structural tokens are present,
+and common CTE shapes, without claiming full dialect parsing; PostgreSQL JSON
+operators such as `#>` and `#>>` remain SQL tokens, not comments. ISO/IEC
+9075:2023 is a portability reference; the actual engine and version govern
+dialect behavior. See
 ENG/sql-development-eng.md.
 
 ### `go` — Go development engineering
@@ -399,9 +402,11 @@ ENG/go-development-eng.md.
 Activate for a valid bounded JSONC tsconfig.json. A custom tsconfig.*.json is
 primary only when directly claimed or referenced by a confirmed config.
 jsconfig.json, .ts snippets, declaration files, compiler dependencies, and CI
-compiler setup are not TypeScript project identity. Local references are
-checked only against discovered configs; the compiler and config files are
-never executed.
+compiler setup are not TypeScript project identity. `extends` may be a string
+or array; local shared configs route claims to their consuming configs and do
+not become independent roots merely because they are named as bases. Local
+references are checked only against discovered configs; the compiler and
+config files are never executed.
 
 TypeScript is runtime-neutral, so a co-located Node package may select both
 typescript and nodejs. See ENG/typescript-development-eng.md.
@@ -422,8 +427,10 @@ structure with Swift target evidence, explicit Swift in CMake/Meson, bounded
 Xcode Swift markers, or a direct .swift claim. A direct Package.swift claim
 also selects Swift guidance for a native-only package manifest. Package.resolved,
 vendor/generated source, Docker/CI setup, and package execution are not
-evidence. SwiftPM may compose Swift with C or C++ at one root. Swift 6.3 is the
-stable reference snapshot; beta documentation is not an automatic target.
+evidence. Invalid Package.swift files contribute no SwiftPM-derived C/C++
+composition. SwiftPM may compose Swift with C or C++ at one root. Swift
+`mobile-ui` work remains executable Swift work. Swift 6.3 is the stable
+reference snapshot; beta documentation is not an automatic target.
 See ENG/swift-development-eng.md.
 
 ### `rust` — Rust development engineering
