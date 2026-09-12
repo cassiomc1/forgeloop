@@ -321,11 +321,11 @@ behavior, and honest `NOT_VERIFIED` reporting for unavailable Node tooling.
 **Activate when:** a confirmed project root has a bounded, structurally parsed
 `Cargo.toml` with a valid `[package]` and/or `[workspace]` table, and the task
 scope intersects that root. A package workspace and a virtual workspace are
-both valid when the virtual workspace has at least one resolvable in-repository
-package member; an empty or unresolved virtual workspace fails closed. A
-virtual workspace contributes its confirmed package members as public project
-roots. A package that has both tables records both roles without creating a
-second specialist.
+both valid when the virtual workspace has at least one resolvable package
+member; an empty or unresolved virtual workspace fails closed. A virtual
+workspace contributes its confirmed package members as public project roots. A
+package workspace may contain both tables, but `package.workspace` is mutually
+exclusive with `[workspace]` and associates a package with another workspace.
 
 **Do not activate merely because:** a `.rs` file, `Cargo.lock`,
 `rust-toolchain`/`rust-toolchain.toml`, `.cargo/config.toml`, rustfmt or Clippy
@@ -339,9 +339,12 @@ Cargo inheritance such as `package.edition.workspace = true` and
 `[workspace.package]` may enrich supporting signals. Workspace membership uses
 only known discovered manifests and bounded `members`/`exclude` patterns: `*`
 and `?` stay within one path segment, `**` may cross segments, and absolute or
-parent-directory escape paths are rejected. `package.workspace` and local
-`path` dependencies can associate a known package with a workspace, but do not
-trigger additional traversal.
+parent-directory escape paths are rejected. Local package `path` dependencies
+and explicitly used inherited workspace dependencies can associate a known
+package with a workspace, while `[workspace.dependencies]` declarations alone
+do not create active dependency edges. A valid `package.workspace` association
+may point to a known workspace outside the package's directory subtree, but not
+outside the repository; no additional traversal is triggered.
 
 **Usually combine with:** `clean` and `test`; add `security` for unsafe/FFI,
 untrusted input, secrets, dependencies, external services, or publication;

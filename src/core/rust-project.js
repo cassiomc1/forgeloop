@@ -47,6 +47,8 @@ function invalidCargoManifest() {
     buildDependencies: [],
     targetDependencies: [],
     pathDependencies: [],
+    workspaceDependencyPaths: [],
+    workspaceDependencyUses: [],
     features: [],
     backendContexts: [],
   };
@@ -89,16 +91,26 @@ function pathDependenciesFromTable(value) {
   if (!isPlainObject(value)) return null;
   return Object.entries(value)
     .filter(([, specification]) => isPlainObject(specification)
+      && specification.workspace !== true
       && typeof specification.path === "string"
       && specification.path.trim() !== "")
     .map(([name, specification]) => ({ name, path: specification.path }));
 }
 
+function workspaceDependencyUsesFromTable(value) {
+  if (value === undefined) return [];
+  if (!isPlainObject(value)) return null;
+  return Object.entries(value)
+    .filter(([, specification]) => isPlainObject(specification) && specification.workspace === true)
+    .map(([name]) => name);
+}
+
 function dependencyMetadataFromTable(value) {
   const names = dependencyNamesFromTable(value);
   const pathDependencies = pathDependenciesFromTable(value);
-  if (names === null || pathDependencies === null) return null;
-  return { names, pathDependencies };
+  const workspaceDependencyUses = workspaceDependencyUsesFromTable(value);
+  if (names === null || pathDependencies === null || workspaceDependencyUses === null) return null;
+  return { names, pathDependencies, workspaceDependencyUses };
 }
 
 function uniquePathDependencies(values) {
@@ -117,10 +129,11 @@ function uniquePathDependencies(values) {
 }
 
 function dependencyMetadataFromTargets(value) {
-  if (value === undefined) return { names: [], pathDependencies: [] };
+  if (value === undefined) return { names: [], pathDependencies: [], workspaceDependencyUses: [] };
   if (!isPlainObject(value)) return null;
   const names = [];
   const pathDependencies = [];
+  const workspaceDependencyUses = [];
   for (const target of Object.values(value)) {
     if (!isPlainObject(target)) return null;
     for (const section of ["dependencies", "dev-dependencies", "build-dependencies"]) {
@@ -128,9 +141,10 @@ function dependencyMetadataFromTargets(value) {
       if (dependencies === null) return null;
       names.push(...dependencies.names);
       pathDependencies.push(...dependencies.pathDependencies);
+      workspaceDependencyUses.push(...dependencies.workspaceDependencyUses);
     }
   }
-  return { names: uniqueSorted(names), pathDependencies };
+  return { names: uniqueSorted(names), pathDependencies, workspaceDependencyUses };
 }
 
 function parseCargoSections(document) {
@@ -152,10 +166,16 @@ function parseCargoSections(document) {
     targetDependencies: targetDependencies.names,
     pathDependencies: uniquePathDependencies([
       ...dependencies.pathDependencies,
-      ...workspaceDependencies.pathDependencies,
       ...devDependencies.pathDependencies,
       ...buildDependencies.pathDependencies,
       ...targetDependencies.pathDependencies,
+    ]),
+    workspaceDependencyPaths: uniquePathDependencies(workspaceDependencies.pathDependencies),
+    workspaceDependencyUses: uniqueSorted([
+      ...dependencies.workspaceDependencyUses,
+      ...devDependencies.workspaceDependencyUses,
+      ...buildDependencies.workspaceDependencyUses,
+      ...targetDependencies.workspaceDependencyUses,
     ]),
     features: uniqueSorted(features),
   };
@@ -225,6 +245,9 @@ export function parseCargoManifest(text) {
   const packageMetadata = parseCargoPackage(document);
   const workspaceMetadata = parseCargoWorkspace(document);
   const sections = parseCargoSections(document);
+  if (packageMetadata?.present
+    && Object.prototype.hasOwnProperty.call(packageMetadata, "workspace")
+    && workspaceMetadata?.present) return invalid;
   if (!packageMetadata || !workspaceMetadata || !sections
     || (!packageMetadata.present && !workspaceMetadata.present)) return invalid;
 
@@ -315,26 +338,39 @@ function cargoPackageWorkspaceMatches(workspaceProject, candidateProject) {
     && normalizedCargoPath(candidateProject.root, association) === workspaceProject.root;
 }
 
-function cargoPathDependencyMatches(sourceProject, candidateProject) {
-  return (sourceProject.internal?.pathDependencies ?? [])
+function cargoPackageHasExplicitWorkspace(candidateProject) {
+  return typeof candidateProject.internal?.package?.workspace === "string";
+}
+
+function cargoWorkspaceDependencyMatches(workspaceProject, sourceProject, candidateProject) {
+  const definitions = workspaceProject.internal?.workspaceDependencyPaths ?? [];
+  const uses = sourceProject.internal?.workspaceDependencyUses ?? [];
+  return uses.some((name) => definitions.some((dependency) => dependency.name === name
+    && normalizedCargoPath(workspaceProject.root, dependency.path) === candidateProject.root));
+}
+
+function cargoPathDependencyMatches(sourceProject, candidateProject, workspaceProject) {
+  const packagePathMatch = (sourceProject.internal?.pathDependencies ?? [])
     .some((dependency) => normalizedCargoPath(sourceProject.root, dependency.path) === candidateProject.root);
+  return packagePathMatch || cargoWorkspaceDependencyMatches(workspaceProject, sourceProject, candidateProject);
 }
 
 function cargoWorkspaceContainsInternal(workspaceProject, candidateProject, projects, resolving) {
   if (!workspaceProject?.rust || !workspaceProject.workspaceRoot
     || !candidateProject?.rust || !candidateProject.packageRoot) return false;
   if (workspaceProject.root === candidateProject.root) return true;
+  if (candidateProject.workspaceRoot) return false;
+  if (cargoPackageHasExplicitWorkspace(candidateProject)) return cargoPackageWorkspaceMatches(workspaceProject, candidateProject);
   const relative = normalizedRelativePath(workspaceProject.root, candidateProject.root);
   if (!relative || hasNestedWorkspaceBetween(workspaceProject, candidateProject, projects)) return false;
   const workspace = workspaceProject.internal.workspace;
   if (workspace.exclude.some((pattern) => cargoPatternMatches([pattern], relative))) return false;
-  if (cargoPatternMatches(workspace.members, relative)
-    || cargoPackageWorkspaceMatches(workspaceProject, candidateProject)) return true;
+  if (cargoPatternMatches(workspace.members, relative)) return true;
   if (resolving.has(candidateProject.root)) return false;
   resolving.add(candidateProject.root);
   const contained = projects.some((project) => project !== candidateProject
     && cargoWorkspaceContainsInternal(workspaceProject, project, projects, resolving)
-    && cargoPathDependencyMatches(project, candidateProject));
+    && cargoPathDependencyMatches(project, candidateProject, workspaceProject));
   resolving.delete(candidateProject.root);
   return contained;
 }

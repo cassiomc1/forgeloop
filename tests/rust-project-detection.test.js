@@ -83,9 +83,6 @@ test("Cargo package metadata accepts type-safe workspace inheritance and path de
     "[dependencies]",
     "shared = { path = \"../shared\" }",
     "",
-    "[workspace]",
-    "dependencies = { shared = { path = \"crates/shared\" } }",
-    "",
   ].join("\n"));
 
   assert.equal(parsed.valid, true);
@@ -99,6 +96,17 @@ test("Cargo package metadata accepts type-safe workspace inheritance and path de
   });
   assert.deepEqual(parsed.pathDependencies, [
     { name: "shared", path: "../shared" },
+  ]);
+  assert.deepEqual(parsed.workspaceDependencyPaths, []);
+
+  const workspaceDeclaration = parseCargoManifest([
+    "[workspace]",
+    "dependencies = { shared = { path = \"crates/shared\" } }",
+    "",
+  ].join("\n"));
+  assert.equal(workspaceDeclaration.valid, true);
+  assert.deepEqual(workspaceDeclaration.pathDependencies, []);
+  assert.deepEqual(workspaceDeclaration.workspaceDependencyPaths, [
     { name: "shared", path: "crates/shared" },
   ]);
 
@@ -130,6 +138,60 @@ test("workspace.package metadata is retained as supporting Cargo context", () =>
     present: true,
     edition: "2024",
     rustVersion: "1.85",
+  });
+});
+
+test("Cargo package.workspace and workspace roles are mutually exclusive", () => {
+  const invalid = parseCargoManifest([
+    "[package]",
+    "name = \"member\"",
+    "workspace = \"../workspace\"",
+    "",
+    "[workspace]",
+    "members = [\"crates/*\"]",
+    "",
+  ].join("\n"));
+  assert.equal(invalid.valid, false);
+  assert.equal(invalid.rust, false);
+
+  const validRoot = parseCargoManifest([
+    "[package]",
+    "name = \"root\"",
+    "",
+    "[workspace]",
+    "members = [\"crates/*\"]",
+    "",
+  ].join("\n"));
+  assert.equal(validRoot.valid, true);
+  assert.equal(validRoot.package.present, true);
+  assert.equal(validRoot.workspace.present, true);
+
+  const validMember = parseCargoManifest([
+    "[package]",
+    "name = \"member\"",
+    "workspace = \"../workspace\"",
+    "",
+  ].join("\n"));
+  assert.equal(validMember.valid, true);
+  assert.equal(validMember.package.workspace, "../workspace");
+  assert.equal(validMember.workspace.present, false);
+});
+
+test("mutually exclusive Cargo workspace roles do not create Rust project evidence", async () => {
+  await temporaryProject("forgeloop-rust-invalid-workspace-roles-", async (target) => {
+    await writeText(target, "Cargo.toml", [
+      "[package]",
+      "name = \"member\"",
+      "workspace = \"../workspace\"",
+      "",
+      "[workspace]",
+      "members = [\"crates/*\"]",
+      "",
+    ].join("\n"));
+
+    const evidence = await detectProjectEvidence(target);
+    assert.deepEqual(evidence.frameworks, []);
+    assert.deepEqual(evidence.primarySignals, []);
   });
 });
 
@@ -316,6 +378,72 @@ test("implicit Cargo path members participate in workspace and shared lockfile c
   });
 });
 
+test("workspace dependency declarations are not active path edges without package use", async () => {
+  await temporaryProject("forgeloop-rust-workspace-dependency-use-", async (target) => {
+    await writeText(target, "Cargo.toml", [
+      "[package]",
+      "name = \"root\"",
+      "",
+      "[workspace]",
+      "",
+      "[workspace.dependencies]",
+      "shared = { path = \"crates/shared\" }",
+      "",
+    ].join("\n"));
+    await writeText(target, "crates/shared/Cargo.toml", "[package]\nname = \"shared\"\n");
+
+    const declarationOnly = await detectProjectEvidence(target, { claims: ["Cargo.toml"] });
+    assert.deepEqual(declarationOnly.projectRoots, ["."]);
+
+    await writeText(target, "Cargo.toml", [
+      "[package]",
+      "name = \"root\"",
+      "",
+      "[workspace]",
+      "",
+      "[workspace.dependencies]",
+      "shared = { path = \"crates/shared\" }",
+      "",
+      "[dependencies]",
+      "shared.workspace = true",
+      "",
+    ].join("\n"));
+    const inheritedUse = await detectProjectEvidence(target, { claims: ["Cargo.toml"] });
+    assert.deepEqual(inheritedUse.projectRoots, [".", "crates/shared"]);
+  });
+});
+
+test("Cargo path dependencies from dev, build, and target tables remain membership edges", async () => {
+  await temporaryProject("forgeloop-rust-path-dependency-kinds-", async (target) => {
+    await writeText(target, "Cargo.toml", "[workspace]\nmembers = [\"crates/api\"]\n");
+    await writeText(target, "crates/api/Cargo.toml", [
+      "[package]",
+      "name = \"api\"",
+      "",
+      "[dev-dependencies]",
+      "test-support = { path = \"../test-support\" }",
+      "",
+      "[build-dependencies]",
+      "codegen = { path = \"../codegen\" }",
+      "",
+      "[target.'cfg(unix)'.dependencies]",
+      "unix-support = { path = \"../unix-support\" }",
+      "",
+    ].join("\n"));
+    await writeText(target, "crates/test-support/Cargo.toml", "[package]\nname = \"test-support\"\n");
+    await writeText(target, "crates/codegen/Cargo.toml", "[package]\nname = \"codegen\"\n");
+    await writeText(target, "crates/unix-support/Cargo.toml", "[package]\nname = \"unix-support\"\n");
+
+    const evidence = await detectProjectEvidence(target, { claims: ["Cargo.toml"] });
+    assert.deepEqual(evidence.projectRoots, [
+      "crates/api",
+      "crates/codegen",
+      "crates/test-support",
+      "crates/unix-support",
+    ]);
+  });
+});
+
 test("Cargo package.workspace associates a known package with its in-repository workspace", async () => {
   await temporaryProject("forgeloop-rust-package-workspace-association-", async (target) => {
     await writeText(target, "Cargo.toml", "[workspace]\n\n");
@@ -330,6 +458,101 @@ test("Cargo package.workspace associates a known package with its in-repository 
     assert.deepEqual(evidence.frameworks, ["rust"]);
     assert.deepEqual(evidence.projectRoots, ["crates/member"]);
     assert.ok(evidence.primarySignals.includes("Cargo.toml:workspace"));
+  });
+});
+
+test("Cargo package.workspace associates an out-of-tree package with a known workspace", async () => {
+  await temporaryProject("forgeloop-rust-out-of-tree-workspace-", async (target) => {
+    await writeText(target, "workspaces/core/Cargo.toml", "[workspace]\nmembers = []\n");
+    await writeText(target, "packages/shared/Cargo.toml", [
+      "[package]",
+      "name = \"shared\"",
+      "workspace = \"../../workspaces/core\"",
+      "",
+    ].join("\n"));
+
+    const workspaceClaim = await detectProjectEvidence(target, {
+      claims: ["workspaces/core/Cargo.toml"],
+    });
+    assert.deepEqual(workspaceClaim.frameworks, ["rust"]);
+    assert.deepEqual(workspaceClaim.projectRoots, ["packages/shared"]);
+
+    const packageClaim = await detectProjectEvidence(target, {
+      claims: ["packages/shared/Cargo.toml"],
+    });
+    assert.deepEqual(packageClaim.projectRoots, ["packages/shared"]);
+  });
+});
+
+test("Cargo package.workspace cannot expand ownership outside the repository", async () => {
+  await temporaryProject("forgeloop-rust-external-workspace-", async (target) => {
+    await writeText(target, "Cargo.toml", "[package]\nname = \"root\"\n\n[workspace]\n");
+    await writeText(target, "packages/escape/Cargo.toml", [
+      "[package]",
+      "name = \"escape\"",
+      "workspace = \"../../../outside\"",
+      "",
+    ].join("\n"));
+
+    const rootClaim = await detectProjectEvidence(target, { claims: ["Cargo.toml"] });
+    assert.deepEqual(rootClaim.projectRoots, ["."]);
+
+    const packageClaim = await detectProjectEvidence(target, {
+      claims: ["packages/escape/Cargo.toml"],
+    });
+    assert.deepEqual(packageClaim.frameworks, ["rust"]);
+    assert.deepEqual(packageClaim.projectRoots, ["packages/escape"]);
+  });
+});
+
+test("explicit Cargo workspace associations win over competing workspace ancestry", async () => {
+  await temporaryProject("forgeloop-rust-competing-workspaces-", async (target) => {
+    await writeText(target, "Cargo.toml", [
+      "[package]",
+      "name = \"root\"",
+      "",
+      "[workspace]",
+      "members = [\"packages/*\"]",
+      "",
+    ].join("\n"));
+    await writeText(target, "nested/Cargo.toml", "[workspace]\nmembers = []\n");
+    await writeText(target, "packages/member/Cargo.toml", [
+      "[package]",
+      "name = \"member\"",
+      "workspace = \"../../nested\"",
+      "",
+    ].join("\n"));
+
+    const rootClaim = await detectProjectEvidence(target, { claims: ["Cargo.toml"] });
+    assert.deepEqual(rootClaim.projectRoots, ["."]);
+
+    const nestedClaim = await detectProjectEvidence(target, { claims: ["nested/Cargo.toml"] });
+    assert.deepEqual(nestedClaim.projectRoots, ["packages/member"]);
+  });
+});
+
+test("Cargo workspace membership remains deterministic for path dependency cycles", async () => {
+  await temporaryProject("forgeloop-rust-path-cycle-", async (target) => {
+    await writeText(target, "Cargo.toml", "[workspace]\nmembers = [\"crates/a\"]\n");
+    await writeText(target, "crates/a/Cargo.toml", [
+      "[package]",
+      "name = \"a\"",
+      "",
+      "[dependencies]",
+      "b = { path = \"../b\" }",
+      "",
+    ].join("\n"));
+    await writeText(target, "crates/b/Cargo.toml", [
+      "[package]",
+      "name = \"b\"",
+      "",
+      "[dependencies]",
+      "a = { path = \"../a\" }",
+      "",
+    ].join("\n"));
+
+    const evidence = await detectProjectEvidence(target, { claims: ["Cargo.toml"] });
+    assert.deepEqual(evidence.projectRoots, ["crates/a", "crates/b"]);
   });
 });
 

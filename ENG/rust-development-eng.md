@@ -69,11 +69,17 @@ The project detector treats these as primary identity signals:
    or unresolved virtual workspace fails closed; a package workspace remains
    valid through its `[package]` identity.
 
-A manifest can contain both tables. A virtual workspace has no package root of
-its own; its confirmed package members are the public project roots. Workspace
-`members`, `exclude`, `package.workspace`, known local `path` dependencies, and
-nested workspace boundaries are used conservatively for claims and shared-file
-ownership. Workspace globs are bounded path patterns: `*` and `?` do not cross
+A package workspace may contain both `[package]` and `[workspace]` tables. The
+`package.workspace` key is mutually exclusive with a `[workspace]` table; it is
+the association form for a package that belongs to another workspace. A virtual
+workspace has no package root of its own; its confirmed package members are the
+public project roots. Workspace `members`, `exclude`, `package.workspace`, known
+local package `path` dependencies, and explicitly used inherited workspace
+dependencies are used conservatively for claims and shared-file ownership.
+`[workspace.dependencies]` declarations alone do not create active package
+dependency edges. A valid `package.workspace` association may point to a known
+workspace outside the package's directory subtree, but never outside the
+repository. Workspace globs are bounded path patterns: `*` and `?` do not cross
 path separators, while `**` may; absolute paths and parent-directory escapes
 are rejected. Only already discovered manifests participate; the detector does
 not traverse dependency paths or execute Cargo to resolve workspace semantics.
