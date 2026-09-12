@@ -7,6 +7,7 @@ This guide provides symptom-first recovery procedures for common ForgeLoop proto
 ## Quick Symptom Index
 
 - [`preflight` is `BLOCKED`](#symptom-preflight-is-blocked)
+- [Project-aware .NET routing is missing](#symptom-project-aware-net-routing-is-missing)
 - [`forgeloop next` returns `RESOLVE_BLOCKER`](#symptom-forgeloop-next-returns-resolve_blocker)
 - [`forgeloop next` returns `RECORD_DIAGNOSIS`](#symptom-forgeloop-next-returns-record_diagnosis)
 - [Progress is `STALLED` or `forgeloop next` returns `CHANGE_STRATEGY`](#symptom-progress-is-stalled)
@@ -53,6 +54,48 @@ mismatch. This check does not create or mutate task state.
 forgeloop protocol-info --json
 ```
 <!-- END FORGELOOP EXAMPLE -->
+
+### Symptom: Project-aware .NET routing is missing
+
+#### What it means
+
+The route command did not find confirmed, affected SDK-style .NET project
+evidence, or the task scope does not reach the confirmed project root. ASP.NET
+Core and ABP are conditional overlays on the `dotnet` specialist; they are not
+standalone guides.
+
+#### Inspect
+
+```bash
+forgeloop route --task <task-id> --work code --surface backend --json
+forgeloop task-show --task <task-id> --json
+```
+
+Then inspect the affected scope for a structurally valid `*.csproj`, `*.fsproj`,
+or `*.vbproj` using the supported SDK allowlist. ASP.NET Core requires a web,
+Razor, or Blazor SDK or a `FrameworkReference Include="Microsoft.AspNetCore.App"`.
+ABP requires a structural `PackageReference Include="Volo.Abp..."` in the
+confirmed .NET project.
+
+#### Common causes
+
+- The repository contains only prose, source snippets, Dockerfiles, lockfiles,
+  package names, or a malformed/oversized/non-SDK-style project file.
+- A write claim points outside the project root, outside the applicable shared
+  `Directory.Build.*`/NuGet scope, or at a non-member of the named `.sln`/`.slnx`.
+- A mixed Flutter/.NET monorepo was treated as one root; nested project roots
+  remain isolated.
+- `projectEvidence.frameworks` contains `aspnetcore` or `abp` without
+  `dotnet`; route validation rejects that input.
+
+#### Safe recovery
+
+Do not add a manual `projectEvidence` claim to force specialist activation.
+Correct the task scope or project structure, rerun the canonical route command,
+and inspect its reason/exclusion codes. Project discovery is bounded and
+non-symlinked; budget exhaustion fails closed. See
+[`GUIDE_ROUTER.md`](../GUIDE_ROUTER.md) for the exact limits and reason-code
+contract.
 
 ### Symptom: `preflight` is `BLOCKED`
 
@@ -1332,7 +1375,7 @@ package/process recovery boundary. The relevant stable codes are
 | `E_RECONCILE_EVIDENCE_FAILED` | The executed objective-satisfaction evidence command did not pass. | Inspect the execution artifact; reconciliation is refused until evidence passes in the current repository. |
 | `E_RECONCILE_LEDGER_INVALID` | The append-only event ledger is not valid, so reconciliation cannot be recorded. | Inspect the ledger errors and repair before reconciling. |
 | `E_RECONCILE_NOT_STALE` | reconcile-closure was invoked for a work-state checkpoint that is already fresh. | No reconciliation is required; continue the normal lifecycle. |
-| `E_RECONCILE_PHASE_INVALID` | reconcile-closure was invoked for a task that is not EXECUTING or VERIFYING. | reconcile-closure supports EXECUTING or VERIFYING tasks whose objective is already satisfied. |
+| `E_RECONCILE_PHASE_INVALID` | reconcile-closure was invoked for a task that is not EXECUTING, VERIFYING, or REVIEWING. | reconcile-closure supports EXECUTING, VERIFYING, or REVIEWING tasks whose objective is already satisfied. |
 | `E_RECONCILE_REQUIREMENT_UNKNOWN` | The supplied check id and requirement text do not exactly match a contract verification item of type VERIFICATION. | Supply the exact id and requirement text of an existing contract verification item. |
 | `E_RECONCILE_UNSUPPORTED_DRIFT` | Work-state drift includes kinds other than REPOSITORY_CHANGED (contract or required-artifact drift). | Resolve contract or artifact drift through their dedicated recovery surfaces; reconcile-closure only refreshes repository fingerprint drift. |
 | `E_REPOSITORY_CHANGED` | The repository fingerprint (branch or HEAD) moved after the work-state checkpoint was recorded. | If the task objective is already satisfied in the current repository, run forgeloop reconcile-closure; otherwise resume from a checkpoint that matches the current repository. |
@@ -1372,7 +1415,7 @@ package/process recovery boundary. The relevant stable codes are
 | `E_STATE_LEDGER_DIVERGENCE` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
 | `E_STATE_MISSING` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
 | `E_STATE_MISSING_AFTER_PREFLIGHT_READY` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
-| `E_STATE_REVALIDATION_REQUIRED` | The work-state checkpoint must be revalidated before the lifecycle can continue. | Run forgeloop reconcile-closure for externally satisfied EXECUTING tasks, or inspect the freshness reasons for other drift. |
+| `E_STATE_REVALIDATION_REQUIRED` | The work-state checkpoint must be revalidated before the lifecycle can continue. | Run forgeloop reconcile-closure for externally satisfied EXECUTING, VERIFYING, or REVIEWING tasks, or inspect the freshness reasons for other drift. |
 | `E_STATE_TASK_MISMATCH` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
 | `E_STRATEGY_OSCILLATION` | Correction history oscillates between previously exhausted strategies without new information. | Gather a genuinely new observation or test a materially different falsifiable hypothesis. |
 | `E_STRUCTURAL_QUALITY_BASELINE_BINDING_MISMATCH` | Structural-quality evidence did not satisfy its provider, artifact, comparison, or lifecycle boundary. | Reconcile contract, route, policy, scope, provider, or rules drift before using the baseline. |

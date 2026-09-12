@@ -4,6 +4,12 @@
 
 ### Added
 
+- Documented structural .NET, ASP.NET Core, and conditional ABP routing,
+  including scoped mixed-stack discovery, supported SDK evidence, bounded
+  traversal, and overlay validation.
+- Documented Astra task previews, exhaustive ownership-aware discovery,
+  deterministic task-list filters and pagination, and bounded `next --explain`
+  projections.
 - Added the first-class Node.js backend engineering guide and registered it as
   the `nodejs` specialist in the canonical guide catalog.
 - Added bounded Node.js project detection for allowlisted runtime backend

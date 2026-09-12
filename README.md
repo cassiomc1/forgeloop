@@ -456,9 +456,9 @@ and [visual review](./docs/diagrams/reviews/forgeloop-code-attestation-flow.revi
 show exact content binding, optional signing, and separate revision-range
 coverage.
 
-Text-only fallback: discovery creates the contract and route; parsed
-`dependencies.flutter.sdk: flutter` selects Flutter for that root; routing is
-not verification/completion evidence. Gates and
+Text-only fallback: discovery creates the route; Flutter uses a parsed SDK
+dependency, .NET a supported SDK-style manifest, and ASP.NET Core/ABP are
+overlays. Routing is not evidence. Gates and
 `PREFLIGHT_READY` authorize execution; verification creates
 structured evidence; failures enter diagnosis and correction; review precedes
 validator-backed completion. Drift reopens verification, and migration keeps

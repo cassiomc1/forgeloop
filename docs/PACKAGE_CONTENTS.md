@@ -33,7 +33,9 @@ The published tarball includes the following consumer-facing groups:
   `ENG/nodejs-backend-development-eng.md`, ships with the guide registry and
   is resolved from a package-local path. Flutter, .NET, and Node.js
   specialists are selected only from their bounded structural primary
-  evidence; the package does not install or invoke framework tooling.
+  evidence. ASP.NET Core and ABP are conditional routing overlays on the
+  `dotnet` guide, not additional package guides. The package does not install
+  or invoke framework tooling.
 - **Initialization material:** the root protocol and integration documents,
   legal notices, the target profile template, and every path listed by
   `src/core/templates.js`. These files are read by `init` and `update`, so

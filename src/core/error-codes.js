@@ -788,8 +788,8 @@ export const PUBLIC_ERROR_CODES = Object.freeze({
     code: "E_RECONCILE_PHASE_INVALID",
     category: "lifecycle",
     classification: "PUBLIC_STABLE",
-    meaning: "reconcile-closure was invoked for a task that is not EXECUTING or VERIFYING.",
-    safeResolution: "reconcile-closure supports EXECUTING or VERIFYING tasks whose objective is already satisfied.",
+    meaning: "reconcile-closure was invoked for a task that is not EXECUTING, VERIFYING, or REVIEWING.",
+    safeResolution: "reconcile-closure supports EXECUTING, VERIFYING, or REVIEWING tasks whose objective is already satisfied.",
   }),
   E_RECONCILE_UNSUPPORTED_DRIFT: Object.freeze({
     code: "E_RECONCILE_UNSUPPORTED_DRIFT",
@@ -831,7 +831,7 @@ export const PUBLIC_ERROR_CODES = Object.freeze({
     category: "freshness",
     classification: "PUBLIC_STABLE",
     meaning: "The work-state checkpoint must be revalidated before the lifecycle can continue.",
-    safeResolution: "Run forgeloop reconcile-closure for externally satisfied EXECUTING tasks, or inspect the freshness reasons for other drift.",
+    safeResolution: "Run forgeloop reconcile-closure for externally satisfied EXECUTING, VERIFYING, or REVIEWING tasks, or inspect the freshness reasons for other drift.",
   }),
   E_DIAGNOSIS_REQUIRED: Object.freeze({
     code: "E_DIAGNOSIS_REQUIRED",

@@ -78,6 +78,25 @@ lifecycle phases, or validator-backed completion. Usage telemetry is optional,
 never estimated, and never verification evidence; `efficiency --task` compares
 only against a metadata-compatible local baseline.
 
+### Project-aware guide routing
+
+ForgeLoop selects specialist context from bounded structural evidence in the
+affected project scope. A parsed `pubspec.yaml` with
+`dependencies.flutter.sdk: flutter` selects `flutter`. A parsed SDK-style
+`*.csproj`, `*.fsproj`, or `*.vbproj` using the supported .NET SDK allowlist
+selects the single `dotnet` guide. Web/Razor/Blazor or
+`Microsoft.AspNetCore.App` evidence adds an ASP.NET Core routing reason, and a
+`Volo.Abp.*` package reference adds an ABP routing reason; neither overlay is a
+standalone guide ID, and each requires `dotnet` in project evidence.
+
+Mentions in prose, source snippets, Dockerfiles, lockfiles, package names,
+malformed manifests, and unrelated monorepo roots are insufficient. Mixed
+Flutter/.NET roots stay isolated. Shared MSBuild/NuGet files apply only to
+descendant confirmed .NET projects, and `.sln`/`.slnx` claims use exact
+membership. Discovery skips symlinks and is bounded; see
+[`GUIDE_ROUTER.md`](../GUIDE_ROUTER.md) for the exact allowlist, reason codes,
+and numeric limits.
+
 ---
 
 ## 2. Prerequisites
@@ -419,7 +438,16 @@ forgeloop complete --task auth-feature --json
 
 # Inspect active tasks
 forgeloop task-list --json
+
+# Filter and page the deterministic projection
+forgeloop task-list --phase EXECUTING --limit 20 --offset 0 --json
+forgeloop task-list --active --limit 20 --offset 20 --json
 ```
+
+Task discovery is exhaustive for ownership and conflict correctness. The
+`--phase` and `--active` options filter the presentation after validation;
+`--limit` and `--offset` page the sorted result and JSON includes `total` and
+`hasMore`. Listing is read-only and never removes ledger or recovery evidence.
 
 ---
 

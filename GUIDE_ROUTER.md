@@ -226,13 +226,36 @@ rg -n '^## |architecture|testing|performance|accessibility|platform|release|Flut
 
 ### `dotnet` — .NET and ASP.NET Core development engineering
 
-**Activate when:** a confirmed project root has a structurally parsed SDK-style `*.csproj`, `*.fsproj`, or `*.vbproj` using a supported `Microsoft.NET.Sdk` family, and the task scope intersects that root. Web, Razor, or Blazor SDKs, or `FrameworkReference Include="Microsoft.AspNetCore.App"`, confirm ASP.NET Core context. A `Volo.Abp.*` package reference adds the ABP overlay while retaining the single `dotnet` guide ID.
+**Activate when:** a confirmed project root has a structurally parsed SDK-style `*.csproj`, `*.fsproj`, or `*.vbproj` using one of the supported SDKs below, and the task scope intersects that root:
+
+- `Microsoft.NET.Sdk`, `Microsoft.NET.Sdk.Web`, `Microsoft.NET.Sdk.Worker`,
+  `Microsoft.NET.Sdk.Razor`, or `Microsoft.NET.Sdk.BlazorWebAssembly`;
+- `Aspire.AppHost.Sdk` or `MSTest.Sdk`;
+- the equivalent `<Sdk Name="..." />` declaration in the project XML.
+
+Web, Razor, or Blazor SDKs, or `FrameworkReference Include="Microsoft.AspNetCore.App"`, confirm ASP.NET Core context. A `Volo.Abp.*` package reference adds the ABP overlay while retaining the single `dotnet` guide ID.
 
 **Do not activate merely because:** prose, Markdown, source snippets, a Dockerfile, a lockfile, an arbitrary directory name, a package cache, or an unrelated monorepo project mentions .NET, ASP.NET Core, or ABP. A malformed, oversized, non-SDK-style, or unsupported project file fails closed. Shared `Directory.Build.*`, `Directory.Packages.props`, `global.json`, and NuGet files apply only to descendant .NET projects in their directory scope; `.sln`/`.slnx` claims use exact solution membership.
 
 **Usually combine with:** `clean` and `test`; add `security` for trust-boundary or dependency changes, `performance` for measured cost or critical paths, `documentation` for technical documentation, and the UI guides for Razor/Blazor or other user-facing changes.
 
-The route command obtains this evidence from `src/core/project-detection.js`. It walks bounded, non-symlinked project manifests, parses SDK/target/reference structure, and matches task claims against project roots, shared configuration scope, or exact solution membership. ASP.NET Core and ABP are routing reasons on the specialist guide, not additional guide IDs.
+The route command obtains this evidence from `src/core/project-detection.js`. It walks bounded, non-symlinked project manifests, parses direct XML SDK/target/reference structure without evaluating the full MSBuild graph, and matches task claims against project roots, shared configuration scope, or exact solution membership. ASP.NET Core and ABP are routing reasons on the specialist guide, not additional guide IDs.
+
+Project discovery is fail-closed and bounded by default: at most 256 project
+manifests, 64 solution files, 1 MiB per manifest, 256 supporting source files
+with 512 KiB per source file, 4,096 visited directories, and 20,000 visited
+entries. Symlinks and common generated/vendor directories are skipped. When a
+budget is exhausted, the detector does not claim reliable project evidence.
+These limits bound discovery work; they do not cap task ownership discovery.
+
+The .NET routing reasons are `PROJECT_DOTNET_SDK_PROJECT`,
+`PROJECT_DOTNET_BASELINE`, `PROJECT_ASPNETCORE_CONFIRMED`, and
+`PROJECT_ABP_CONFIRMED`. The corresponding exclusions are
+`NO_DOTNET_PROJECT_EVIDENCE`, `NO_DOTNET_SCOPE_MATCH`,
+`NO_DOTNET_PRIMARY_EVIDENCE`, and `NO_DOTNET_EXECUTABLE_WORK`. The route
+validator also requires `aspnetcore` and `abp` project-evidence overlays to be
+accompanied by `dotnet`; it rejects standalone overlays rather than creating a
+second specialist guide.
 
 ```bash
 rg -n '^## |architecture|dependency injection|middleware|endpoints|configuration|authentication|authorization|EF Core|testing|WebApplicationFactory|workers|Blazor|ABP|publish|troubleshooting' ENG/dotnet-aspnetcore-development-eng.md
@@ -374,6 +397,12 @@ Every selected guide has stable reason codes such as
   `PROJECT_NODEJS_BASELINE`, `NO_NODEJS_PRIMARY_EVIDENCE`,
   `NO_NODEJS_SCOPE_MATCH`, and `NO_NODEJS_EXECUTABLE_WORK`.
 
+The .NET specialist uses `PROJECT_DOTNET_SDK_PROJECT` and
+`PROJECT_DOTNET_BASELINE`; confirmed ASP.NET Core and ABP overlays add
+`PROJECT_ASPNETCORE_CONFIRMED` and `PROJECT_ABP_CONFIRMED`. Exclusions are
+`NO_DOTNET_PROJECT_EVIDENCE`, `NO_DOTNET_SCOPE_MATCH`,
+`NO_DOTNET_PRIMARY_EVIDENCE`, and `NO_DOTNET_EXECUTABLE_WORK`.
+
 Platform signals are contextual, not automatic guide activators:
 
 | Platform | Semantic effect | Stable reason |
@@ -421,9 +450,12 @@ Negative routing guarantees:
   not replace the primary Flutter SDK dependency signal;
 - a .NET word in documentation, a `Dockerfile`, `project.assets.json`, a
   package-lock file, or an arbitrary package name does not activate `dotnet`;
+- a standalone `aspnetcore` or `abp` project-evidence overlay is invalid;
 - a worker or library SDK selects the .NET specialist without claiming it is
   an ASP.NET Core application; web/Razor/Blazor SDK or framework-reference
   evidence is required for the ASP.NET Core reason;
+- a malformed, oversized, unsupported, or non-SDK-style project manifest does
+  not provide primary .NET evidence;
 - ABP guidance is not added for a plain ASP.NET Core project without a
   structural `Volo.Abp.*` package reference;
 - a shared MSBuild/NuGet file does not activate unrelated projects outside its

@@ -19,6 +19,30 @@ Package version: 1.12.0
 6. Run forgeloop complete; accept completion only when the validator returns VALID.
 7. Run forgeloop next again and follow the returned lifecycle action to a terminal state or an explicit blocker.
 
+## Project evidence and guide routing
+
+- The canonical guide registry is `src/config/guides.json`; the .NET
+  specialist has guide ID `dotnet` and resolves to
+  `ENG/dotnet-aspnetcore-development-eng.md`.
+- Project evidence schema v1 recognizes
+  structurally parsed Flutter and SDK-style .NET project roots. ASP.NET Core
+  and ABP are conditional overlays recorded as reasons on `dotnet`; they
+  are not standalone guide IDs, and route validation requires each overlay to
+  include `dotnet`.
+- Project detection is bounded by 256
+  manifests, 64 solution files,
+  1048576 bytes per manifest,
+  256 supporting source files,
+  524288 bytes per source file,
+  4096 visited directories, and
+  20000 visited entries. It skips
+  symlinks and configured generated/vendor directories; exhausted budgets fail
+  closed rather than producing unbounded discovery.
+- Task ownership discovery is a separate exhaustive operation. Task-list
+  filters and pagination project the validated discovery result and do not
+  remove ledger or recovery evidence. See `GUIDE_ROUTER.md` and
+  `docs/CLI_REFERENCE.md` for the operator-facing contracts.
+
 ## Adaptive execution profiles
 
 `complianceMode` controls how strongly project policy is enforced. The
@@ -241,7 +265,7 @@ capability-family versions.
 | complete | MUTATING | Evaluates verification receipt coverage, gates, and ledger integrity to authorize task completion. |
 | next | READ_ONLY | Returns deterministic next-action guidance and command recommendations based on active state. |
 | preflight | MUTATING | Evaluates pre-implementation contract, routing, and gates; synchronizes work state when READY. |
-| reconcile-closure | MUTATING | Refreshes the work-state checkpoint of an EXECUTING task whose objective is already satisfied in the current repository, after contract-bound executed evidence, so canonical completion can proceed. |
+| reconcile-closure | MUTATING | Refreshes the work-state checkpoint of an EXECUTING, VERIFYING, or REVIEWING task whose objective is already satisfied in the current repository, after contract-bound executed evidence, so canonical completion can proceed. |
 | record-decision-criterion | MUTATING | Records an append-only decision settlement criterion bound to the active contract fingerprint. |
 | record-diagnosis | MUTATING | Records an append-only diagnosis event or structured diagnostic case in the lifecycle event ledger. |
 | record-hypothesis-disposition | MUTATING | Records an evidence-bound hypothesis disposition update in the lifecycle event ledger. |

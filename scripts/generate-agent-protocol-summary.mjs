@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { ARTIFACT_REGISTRY } from "../src/core/artifact-registry.js";
 import { CLI_COMMAND_DEFINITIONS } from "../src/core/cli-command-definitions.js";
 import { PUBLIC_ERROR_REGISTRY } from "../src/core/error-codes.js";
+import { PROJECT_DETECTION_LIMITS, PROJECT_EVIDENCE_SCHEMA_VERSION } from "../src/core/project-detection.js";
 import { GUIDE_REGISTRY } from "../src/core/guide-registry.js";
 import { protocolInfo } from "../src/core/protocol-info.js";
 
@@ -101,6 +102,30 @@ Package version: ${packageJson.version}
 5. Reconcile continuity, inspect evidence, and advance through VERIFYING and REVIEWING.
 6. Run forgeloop complete; accept completion only when the validator returns VALID.
 7. Run forgeloop next again and follow the returned lifecycle action to a terminal state or an explicit blocker.
+
+## Project evidence and guide routing
+
+- The canonical guide registry is \`src/config/guides.json\`; the .NET
+  specialist has guide ID \`dotnet\` and resolves to
+  \`ENG/dotnet-aspnetcore-development-eng.md\`.
+- Project evidence schema v${PROJECT_EVIDENCE_SCHEMA_VERSION} recognizes
+  structurally parsed Flutter and SDK-style .NET project roots. ASP.NET Core
+  and ABP are conditional overlays recorded as reasons on \`dotnet\`; they
+  are not standalone guide IDs, and route validation requires each overlay to
+  include \`dotnet\`.
+- Project detection is bounded by ${PROJECT_DETECTION_LIMITS.maxManifests}
+  manifests, ${PROJECT_DETECTION_LIMITS.maxSolutionFiles} solution files,
+  ${PROJECT_DETECTION_LIMITS.maxManifestBytes} bytes per manifest,
+  ${PROJECT_DETECTION_LIMITS.maxSourceFiles} supporting source files,
+  ${PROJECT_DETECTION_LIMITS.maxSourceBytes} bytes per source file,
+  ${PROJECT_DETECTION_LIMITS.maxVisitedDirectories} visited directories, and
+  ${PROJECT_DETECTION_LIMITS.maxVisitedEntries} visited entries. It skips
+  symlinks and configured generated/vendor directories; exhausted budgets fail
+  closed rather than producing unbounded discovery.
+- Task ownership discovery is a separate exhaustive operation. Task-list
+  filters and pagination project the validated discovery result and do not
+  remove ledger or recovery evidence. See \`GUIDE_ROUTER.md\` and
+  \`docs/CLI_REFERENCE.md\` for the operator-facing contracts.
 
 ## Adaptive execution profiles
 
