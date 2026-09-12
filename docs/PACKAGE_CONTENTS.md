@@ -51,7 +51,8 @@ The published tarball includes the following consumer-facing groups:
   generated local repositories and measurements are not.
 - **User documentation:** the getting-started, integration, CLI, artifact,
   Repository Index, Persistent Search Transport, troubleshooting, release,
-  package-boundary, and related reference pages.
+  package-boundary, and related reference pages, together with the
+  machine-readable documentation and protocol indexes and `CONTRIBUTING.md`.
   The advisory-context and Ripwire adapter guides ship with the corresponding
   public integration surface.
   The typed diagram sources, generated HTML/SVG/receipt artifacts, and
@@ -79,13 +80,17 @@ The tarball intentionally omits repository-only material:
 - the repository README hero PNG, which is a GitHub-only asset. The packaged
   README remains intentionally text-first around that relative repository
   image reference.
+- the execution PoC, its audit, and its evidence package. Packaged README and
+  index links to this repository-only material use GitHub URLs so they remain
+  truthful for npm consumers.
 
 The package test checks all registered guide paths and these exclusion classes. It
 also enumerates `src/**/*.js` and fails if a maintained runtime module is
 missing from the candidate tarball or if a retired helper is reintroduced.
 The repository index remains a catalog: links from `DOCS_INDEX.md` to tests,
-proof-of-concept evidence, historical plans, and source trees may intentionally
-resolve only in the full repository and are not package dependencies.
+historical plans, and source trees may intentionally resolve only in the full
+repository and are not package dependencies. The canonical documentation and
+protocol indexes are included in the tarball.
 
 ## Verification and publication
 
@@ -98,8 +103,9 @@ npm run pack:smoke
 ```
 
 `pack:smoke` installs the candidate tarball into a temporary consumer and
-exercises the CLI, public Integration API, initialization, schemas, and
-packaged documentation references. The package-boundary tests also assert
+exercises the CLI, public Integration API, initialization, schemas, and the
+Structural Quality documentation's packaged diagram references. The
+package-boundary tests also assert
 that every registered guide path, including all language specialists, is
 present in the candidate. The tag-triggered publication
 workflow

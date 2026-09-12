@@ -26,7 +26,7 @@ Operational sources are indexed in [`DOCS_INDEX.md`](./DOCS_INDEX.md).
 ## Where should I start?
 
 - **New to ForgeLoop** → [`docs/GETTING_STARTED.md`](./docs/GETTING_STARTED.md)
-- **Inspect a real ForgeLoop execution** → [`poc/README.md`](./poc/README.md)
+- **Inspect a real ForgeLoop execution** → [repository PoC](https://github.com/cassiomc1/forgeloop/blob/main/poc/README.md)
 - **Full protocol specification** → [`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md)
 - **Integrating an AI harness** → [`PROTOCOL_INTEGRATION.md`](./PROTOCOL_INTEGRATION.md)
 - **Optional advisory context providers** → [`docs/ADVISORY_CONTEXT.md`](./docs/ADVISORY_CONTEXT.md)
@@ -43,13 +43,13 @@ Operational sources are indexed in [`DOCS_INDEX.md`](./DOCS_INDEX.md).
 
 ## Real execution proof
 
-Public [execution PoC](./poc/README.md) covers workload, protocol
+The repository-only [execution PoC](https://github.com/cassiomc1/forgeloop/blob/main/poc/README.md) covers workload, protocol
 artifacts, trusted provenance, receipts, evidence, and audit. It reached
 validator-backed `COMPLETE / VALID` and preserves a later
 `E_RECEIPT_PATH_MISMATCH` after publication changed the repository.
 
-- [Canonical technical audit](./poc/reports/poc-20260826-real-execution-technical-audit-v2.md)
-- [Evidence package](./poc/evidence/poc-20260826-real-execution/)
+- [Canonical technical audit](https://github.com/cassiomc1/forgeloop/blob/main/poc/reports/poc-20260826-real-execution-technical-audit-v2.md)
+- [Evidence package](https://github.com/cassiomc1/forgeloop/tree/main/poc/evidence/poc-20260826-real-execution/)
 
 ## Catalog
 

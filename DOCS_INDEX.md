@@ -1,10 +1,11 @@
 # Documentation index
 
-The machine-readable inventory is
+The repository's machine-readable documentation inventory is
 [`docs/documentation-manifest.json`](./docs/documentation-manifest.json). It
-classifies every package-shipped document, names canonical concept owners, and
-records generated/deprecated-document metadata. Normative requirements and
-their implementation/test mappings are in
+classifies maintained documentation, names canonical concept owners, and
+records generated/deprecated-document metadata. The package file list and
+guide registry additionally define the shipped consumer surface. Normative
+requirements and their implementation/test mappings are in
 [`docs/protocol-requirements.json`](./docs/protocol-requirements.json).
 
 ForgeLoop keeps one canonical process and separates protocol behavior from
