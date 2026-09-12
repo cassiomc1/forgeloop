@@ -1,16 +1,16 @@
 import { parseXmlStructure } from "./xml-structure.js";
 
 const SQL_STATEMENT_PATTERNS = Object.freeze([
-  /(?:^|[;\n])\s*select\b[\s\S]{0,240}\bfrom\b/imu,
+  /(?:^|[;\n])\s*select\b[\s\S]{0,240}\bfrom\s+[A-Za-z_][A-Za-z0-9_$]*(?:\s*\.\s*[A-Za-z_][A-Za-z0-9_$]*)*(?:\s*(?:;|$)|\s+(?:where|group|order|having|limit|offset|union|join|left|right|inner|outer|on)\b)/imu,
   /(?:^|[;\n])\s*select\s+(?:distinct\s+)?[-+]?\d+(?:\s*,\s*[-+]?\d+)*\s*;?\s*(?:$|[\n])/imu,
   /(?:^|[;\n])\s*insert\s+into\b/imu,
   /(?:^|[;\n])\s*update\b[\s\S]{0,160}\bset\b/imu,
   /(?:^|[;\n])\s*delete\s+from\b/imu,
   /(?:^|[;\n])\s*merge\s+into\b/imu,
   /(?:^|[;\n])\s*with\b[\s\S]{0,1024}\bas\s*\([\s\S]*\)\s*(?:select|insert|update|delete|merge)\b/imu,
-  /(?:^|[;\n])\s*create\s+(?:table|view|index|schema|database|function|procedure|trigger|type|sequence)\b/imu,
-  /(?:^|[;\n])\s*alter\s+(?:table|view|index|schema|database|function|procedure|trigger|type|sequence)\b/imu,
-  /(?:^|[;\n])\s*drop\s+(?:table|view|index|schema|database|function|procedure|trigger|type|sequence)\b/imu,
+  /(?:^|[;\n])\s*create\s+(?:table|view|index|schema|database|function|procedure|trigger|type|sequence)\s+(?:if\s+not\s+exists\s+)?[A-Za-z_][A-Za-z0-9_$]*(?:\s*\.\s*[A-Za-z_][A-Za-z0-9_$]*)*(?:\s*(?:\(|;|$)|\s+(?:as|like)\b)/imu,
+  /(?:^|[;\n])\s*alter\s+(?:table|view|index|schema|database|function|procedure|trigger|type|sequence)\s+(?:if\s+exists\s+)?[A-Za-z_][A-Za-z0-9_$]*(?:\s*\.\s*[A-Za-z_][A-Za-z0-9_$]*)*(?:\s*(?:;|$)|\s+(?:add|drop|alter|rename|set|owner|enable|disable)\b)/imu,
+  /(?:^|[;\n])\s*drop\s+(?:table|view|index|schema|database|function|procedure|trigger|type|sequence)\s+(?:if\s+exists\s+)?[A-Za-z_][A-Za-z0-9_$]*(?:\s*\.\s*[A-Za-z_][A-Za-z0-9_$]*)*(?:\s*(?:;|$)|\s+(?:cascade|restrict)\b)/imu,
   /(?:^|[;\n])\s*(?:grant|revoke)\b[\s\S]{0,240}\bon\b/imu,
   /(?:^|[;\n])\s*begin(?:\s+(?:transaction|work))?\s*;?\s*(?:$|[\n])/imu,
   /(?:^|[;\n])\s*(?:commit|rollback)(?:\s+(?:transaction|work))?\s*;?\s*(?:$|[\n])/imu,

@@ -135,6 +135,33 @@ test("a claimed shared TypeScript base selects every discovered consumer", async
   });
 });
 
+test("a claimed shared tsconfig.json selects direct and transitive consumers", async () => {
+  await temporaryProject("forgeloop-typescript-shared-tsconfig-", async (target) => {
+    await writeFiles(target, {
+      "configs/tsconfig.json": "{}\n",
+      "configs/service.json": "{\"extends\": \"./tsconfig.json\"}\n",
+      "apps/api/tsconfig.json": "{\"extends\": \"../../configs/service.json\"}\n",
+      "apps/web/tsconfig.json": "{\"extends\": \"../../configs/tsconfig.json\"}\n",
+    });
+    const evidence = await detectProjectEvidence(target, { claims: ["configs/tsconfig.json"] });
+    assert.deepEqual(evidence.frameworks, ["typescript"]);
+    assert.deepEqual(evidence.projectRoots, ["apps/api", "apps/web"]);
+    assert.equal(evidence.projectRoots.includes("configs"), false);
+  });
+});
+
+test("a claimed TypeScript project config includes its consumers", async () => {
+  await temporaryProject("forgeloop-typescript-config-consumers-", async (target) => {
+    await writeFiles(target, {
+      "apps/api/tsconfig.json": "{\"compilerOptions\":{\"composite\":true}}\n",
+      "apps/worker/tsconfig.json": "{\"extends\":\"../api/tsconfig.json\"}\n",
+    });
+    const evidence = await detectProjectEvidence(target, { claims: ["apps/api/tsconfig.json"] });
+    assert.deepEqual(evidence.frameworks, ["typescript"]);
+    assert.deepEqual(evidence.projectRoots, ["apps/api", "apps/worker"]);
+  });
+});
+
 test("TypeScript external extends remain unresolved without filesystem escape", async () => {
   await temporaryProject("forgeloop-typescript-external-extends-", async (target) => {
     await writeFiles(target, {

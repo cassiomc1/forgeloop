@@ -9,6 +9,7 @@ function stripSwiftComments(text) {
   let result = "";
   let state = "code";
   let escaped = false;
+  let blockDepth = 0;
   for (let index = 0; index < text.length; index += 1) {
     const character = text[index];
     const next = text[index + 1];
@@ -23,10 +24,15 @@ function stripSwiftComments(text) {
         state = "code";
       } else result += " ";
     } else if (state === "block-comment") {
-      if (character === "*" && next === "/") {
+      if (character === "/" && next === "*") {
+        blockDepth += 1;
         result += "  ";
         index += 1;
-        state = "code";
+      } else if (character === "*" && next === "/") {
+        blockDepth -= 1;
+        result += "  ";
+        index += 1;
+        if (blockDepth === 0) state = "code";
       } else result += character === "\n" ? "\n" : " ";
     } else if (character === '"') {
       result += character;
@@ -38,6 +44,7 @@ function stripSwiftComments(text) {
     } else if (character === "/" && next === "*") {
       result += "  ";
       index += 1;
+      blockDepth = 1;
       state = "block-comment";
     } else result += character;
   }
@@ -48,15 +55,31 @@ function maskSwiftStrings(text) {
   let result = "";
   let state = "code";
   let escaped = false;
-  for (const character of text) {
+  let delimiter = null;
+  for (let index = 0; index < text.length; index += 1) {
+    const character = text[index];
+    const rawMatch = character === "#" ? text.slice(index).match(/^(#+)("{1,3})/u) : null;
     if (state === "string") {
       if (escaped) escaped = false;
       else if (character === "\\") escaped = true;
-      else if (character === '"') state = "code";
-      result += " ";
+      else if (text.startsWith(delimiter, index)) {
+        result += " ".repeat(delimiter.length);
+        index += delimiter.length - 1;
+        state = "code";
+        delimiter = null;
+        continue;
+      }
+      result += character === "\n" ? "\n" : " ";
     } else if (character === '"') {
+      delimiter = text.startsWith('"""', index) ? '"""' : '"';
       state = "string";
-      result += " ";
+      result += " ".repeat(delimiter.length);
+      index += delimiter.length - 1;
+    } else if (rawMatch) {
+      delimiter = `${rawMatch[2]}${rawMatch[1]}`;
+      state = "string";
+      result += " ".repeat(rawMatch[0].length);
+      index += rawMatch[0].length - 1;
     } else {
       result += character;
     }
@@ -69,15 +92,33 @@ function maskSwiftLexicalNoise(text) {
   return withoutComments === null ? null : maskSwiftStrings(withoutComments);
 }
 
+function hasBalancedSwiftDelimiters(source) {
+  const expectedClosers = new Map([
+    ["(", ")"],
+    ["{", "}"],
+    ["[", "]"],
+  ]);
+  const stack = [];
+  for (const character of source) {
+    if (expectedClosers.has(character)) {
+      stack.push(expectedClosers.get(character));
+    } else if (")]}".includes(character) && stack.pop() !== character) {
+      return false;
+    }
+  }
+  return stack.length === 0;
+}
+
 export function parseSwiftPackage(text) {
   if (typeof text !== "string" || text.length > 1024 * 1024 || /\r(?!\n)/u.test(text)) return invalidSwift();
   const toolsVersion = /^\s*\/\/\s*swift-tools-version:\s*\d+(?:\.\d+){1,2}\s*$/mu.test(text);
   const source = maskSwiftLexicalNoise(text);
   const packageDescription = source !== null && /\bimport\s+PackageDescription\b/u.test(source);
+  const balanced = source !== null && hasBalancedSwiftDelimiters(source);
   const packageDeclaration = source !== null && /\bPackage\s*\(/u.test(source);
   return {
-    valid: toolsVersion && packageDescription && packageDeclaration,
-    swift: toolsVersion && packageDescription && packageDeclaration,
+    valid: toolsVersion && packageDescription && packageDeclaration && balanced,
+    swift: toolsVersion && packageDescription && packageDeclaration && balanced,
     c: false,
     cpp: false,
   };

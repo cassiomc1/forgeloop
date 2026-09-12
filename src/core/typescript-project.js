@@ -184,8 +184,13 @@ export function resolveTypeScriptConfigGraph(projectFiles = [], directClaims = [
 export function resolveTypeScriptConfigOwnershipRoots(projectFiles = [], activeConfigRelatives = new Set(), directClaims = []) {
   const { entries, reverse } = configRelationships(projectFiles);
   const candidates = entries.filter(({ file }) => activeConfigRelatives.has(file.relative.toLowerCase()));
+  const hasIndependentConfigSemantics = (parsed) => (parsed.compilerOptions
+    && Object.keys(parsed.compilerOptions).length > 0)
+    || parsed.references.length > 0
+    || parsed.extends.length > 0;
   const roots = new Set(candidates
-    .filter(({ file }) => file.name.toLowerCase() === "tsconfig.json")
+    .filter(({ file, parsed }) => file.name.toLowerCase() === "tsconfig.json"
+      && (directClaims.length === 0 || hasIndependentConfigSemantics(parsed)))
     .map(({ file }) => file.relative.toLowerCase()));
   for (const claim of directClaims) {
     const relative = claim.toLowerCase();
@@ -198,7 +203,8 @@ export function resolveTypeScriptConfigOwnershipRoots(projectFiles = [], activeC
     const queue = [...consumers];
     const seen = new Set(queue);
     for (let index = 0; index < queue.length; index += 1) {
-      roots.add(queue[index]);
+      const consumer = candidates.find(({ file }) => file.relative.toLowerCase() === queue[index]);
+      if (consumer?.file.name.toLowerCase() === "tsconfig.json") roots.add(queue[index]);
       for (const relation of reverse.get(queue[index]) ?? []) {
         if (relation.kind === "extends" && !seen.has(relation.relative)) {
           seen.add(relation.relative);

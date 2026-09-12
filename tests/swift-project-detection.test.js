@@ -15,6 +15,11 @@ test("Swift package and Xcode recognizers require static Swift markers", () => {
   assert.equal(parseSwiftMeson("project('app', 'c')").swift, false);
   assert.equal(parseSwiftCMake("# project(fake LANGUAGES Swift)\n").valid, false);
   assert.equal(parseSwiftMeson("# project('fake', 'swift')\n").valid, false);
+  assert.equal(parseSwiftPackage("// swift-tools-version: 6.0\nimport PackageDescription\nlet package = Package(\n").valid, false);
+  assert.equal(parseSwiftPackage("// swift-tools-version: 6.0\nimport PackageDescription\nlet package = Package(name: \"Example\", targets: [\n").valid, false);
+  assert.equal(parseSwiftPackage("// swift-tools-version: 6.0\nimport PackageDescription\n/* Package( /* nested */ ) */\nlet text = \"Package(\"\n").valid, false);
+  assert.equal(parseSwiftPackage("// swift-tools-version: 6.0\nimport PackageDescription\nlet text = \"\"\"Package(\n)\"\"\"\n").valid, false);
+  assert.equal(parseSwiftPackage("// swift-tools-version: 6.0\nimport PackageDescription\nlet text = #\"Package(\"#\n").valid, false);
 });
 
 test("Package.swift activates Swift and a C-only package composes only native evidence", async () => {

@@ -17,7 +17,16 @@ test("SQL recognizer masks comments and quoted text and requires a statement sha
   assert.equal(looksLikeSql("Create a new cache before startup."), false);
   assert.equal(looksLikeSql("Alter the service after deployment."), false);
   assert.equal(looksLikeSql("Select the best option before continuing."), false);
+  assert.equal(looksLikeSql("Drop table decorations before dinner."), false);
+  assert.equal(looksLikeSql("Create table decorations for the party."), false);
+  assert.equal(looksLikeSql("Select the best option from the menu."), false);
+  assert.equal(looksLikeSql("Alter table decorations before dinner."), false);
+  assert.equal(looksLikeSql("Grant access to the new employee."), false);
   assert.equal(looksLikeSql("SELECT 1;"), true);
+  assert.equal(looksLikeSql("SELECT * FROM users;"), true);
+  assert.equal(looksLikeSql("CREATE TABLE users (id INTEGER);"), true);
+  assert.equal(looksLikeSql("ALTER TABLE users ADD COLUMN active BOOLEAN;"), true);
+  assert.equal(looksLikeSql("GRANT SELECT ON TABLE users TO reporting;"), true);
   assert.equal(looksLikeSql("DROP TABLE old_cache;"), true);
   assert.equal(looksLikeSql("RELEASE SAVEPOINT retry_point;"), true);
   assert.equal(looksLikeSql("$$CREATE TABLE fake (id integer)$$"), false);

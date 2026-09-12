@@ -278,6 +278,15 @@ function parseGradleIncludeAt(text, source, index) {
   return literals.some((literal) => literal === null || literal.trim() === "") ? null : literals;
 }
 
+function isStandaloneGradleInclude(source, index) {
+  const statementStart = Math.max(
+    source.lastIndexOf("\n", index - 1),
+    source.lastIndexOf("\r", index - 1),
+    source.lastIndexOf(";", index - 1),
+  ) + 1;
+  return source.slice(statementStart, index).trim() === "";
+}
+
 export function parseGradleSettings(text) {
   const invalid = {
     valid: false,
@@ -296,6 +305,7 @@ export function parseGradleSettings(text) {
   if (source === null) return invalid;
   const includes = [];
   for (const offset of topLevelGradleIncludeOffsets(source)) {
+    if (!isStandaloneGradleInclude(source, offset)) continue;
     const literals = parseGradleIncludeAt(text, source, offset);
     if (literals === null) return invalid;
     includes.push(...literals);
