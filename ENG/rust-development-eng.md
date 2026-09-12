@@ -65,13 +65,24 @@ The project detector treats these as primary identity signals:
 1. A bounded, valid `Cargo.toml` containing a structurally valid `[package]`
    table.
 2. A bounded, valid `Cargo.toml` containing a structurally valid `[workspace]`
-   table.
+   table with at least one resolvable, in-repository package member. An empty
+   or unresolved virtual workspace fails closed; a package workspace remains
+   valid through its `[package]` identity.
 
 A manifest can contain both tables. A virtual workspace has no package root of
 its own; its confirmed package members are the public project roots. Workspace
-`members`, `exclude`, and nested workspace boundaries are used conservatively
-for claims and shared-file ownership. The detector does not implement every
-Cargo feature or execute Cargo to resolve workspace semantics.
+`members`, `exclude`, `package.workspace`, known local `path` dependencies, and
+nested workspace boundaries are used conservatively for claims and shared-file
+ownership. Workspace globs are bounded path patterns: `*` and `?` do not cross
+path separators, while `**` may; absolute paths and parent-directory escapes
+are rejected. Only already discovered manifests participate; the detector does
+not traverse dependency paths or execute Cargo to resolve workspace semantics.
+
+Cargo package metadata may inherit `edition` and `rust-version` through
+`edition.workspace = true` and `rust-version.workspace = true`. The detector
+records those inheritance flags as supporting context, and may retain direct
+`[workspace.package]` values for guidance. It does not require inherited values
+to classify a package.
 
 The following are supporting context only:
 

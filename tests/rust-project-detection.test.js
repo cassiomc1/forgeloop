@@ -72,6 +72,96 @@ test("parseCargoManifest uses structural TOML and separates Cargo metadata", () 
   assert.deepEqual(parsed.backendContexts, ["tokio"]);
 });
 
+test("Cargo package metadata accepts type-safe workspace inheritance and path dependencies", () => {
+  const parsed = parseCargoManifest([
+    "[package]",
+    "name = \"member\"",
+    "edition.workspace = true",
+    "rust-version = \"1.85\"",
+    "workspace = \"../..\"",
+    "",
+    "[dependencies]",
+    "shared = { path = \"../shared\" }",
+    "",
+    "[workspace]",
+    "dependencies = { shared = { path = \"crates/shared\" } }",
+    "",
+  ].join("\n"));
+
+  assert.equal(parsed.valid, true);
+  assert.deepEqual(parsed.package, {
+    present: true,
+    name: "member",
+    edition: null,
+    rustVersion: "1.85",
+    editionInherited: true,
+    workspace: "../..",
+  });
+  assert.deepEqual(parsed.pathDependencies, [
+    { name: "shared", path: "../shared" },
+    { name: "shared", path: "crates/shared" },
+  ]);
+
+  const inheritedMsrv = parseCargoManifest("[package]\nname = \"member\"\nedition = \"2024\"\nrust-version.workspace = true\n");
+  assert.equal(inheritedMsrv.valid, true);
+  assert.equal(inheritedMsrv.package.edition, "2024");
+  assert.equal(inheritedMsrv.package.rustVersionInherited, true);
+
+  const inheritedEdition = parseCargoManifest("[package]\nname = \"member\"\nedition.workspace = true\nrust-version = \"1.85\"\n");
+  assert.equal(inheritedEdition.valid, true);
+  assert.equal(inheritedEdition.package.editionInherited, true);
+  assert.equal(inheritedEdition.package.rustVersion, "1.85");
+});
+
+test("workspace.package metadata is retained as supporting Cargo context", () => {
+  const parsed = parseCargoManifest([
+    "[workspace]",
+    "members = [\"crates/*\"]",
+    "",
+    "[workspace.package]",
+    "edition = \"2024\"",
+    "rust-version = \"1.85\"",
+    "license = \"MIT\"",
+    "",
+  ].join("\n"));
+
+  assert.equal(parsed.valid, true);
+  assert.deepEqual(parsed.workspace.package, {
+    present: true,
+    edition: "2024",
+    rustVersion: "1.85",
+  });
+});
+
+test("workspace-inherited package fields remain confirmed in a known workspace", async () => {
+  await temporaryProject("forgeloop-rust-workspace-inheritance-", async (target) => {
+    await writeText(target, "Cargo.toml", [
+      "[workspace]",
+      "members = [\"crates/api\"]",
+      "",
+      "[workspace.package]",
+      "edition = \"2024\"",
+      "rust-version = \"1.85\"",
+      "",
+    ].join("\n"));
+    await writeText(target, "crates/api/Cargo.toml", [
+      "[package]",
+      "name = \"api\"",
+      "edition.workspace = true",
+      "rust-version.workspace = true",
+      "",
+    ].join("\n"));
+
+    const evidence = await detectProjectEvidence(target, { claims: ["Cargo.toml"] });
+    assert.deepEqual(evidence.frameworks, ["rust"]);
+    assert.deepEqual(evidence.projectRoots, ["crates/api"]);
+    assert.ok(evidence.supportingSignals.includes("crates/api/Cargo.toml:edition=workspace"));
+    assert.ok(evidence.supportingSignals.includes("crates/api/Cargo.toml:rust-version=workspace"));
+    assert.ok(evidence.supportingSignals.includes("Cargo.toml:workspace.package.edition=2024"));
+    assert.ok(evidence.supportingSignals.includes("Cargo.toml:workspace.package.rust-version=1.85"));
+  });
+});
+
 test("a Cargo package is primary Rust evidence and selects the Rust baseline", async () => {
   await temporaryProject("forgeloop-rust-package-", async (target) => {
     await writeText(target, "Cargo.toml", packageManifest);
@@ -162,6 +252,111 @@ test("a package plus workspace root records both roles without duplicate public 
     const rootClaim = await detectProjectEvidence(target, { claims: ["Cargo.toml"] });
     assert.deepEqual(rootClaim.projectRoots, [".", "crates/api"]);
     assert.deepEqual(rootClaim.frameworks, ["rust"]);
+  });
+});
+
+test("empty or unresolved virtual workspaces fail closed while package workspaces remain valid", async () => {
+  const cases = [
+    ["empty", "[workspace]\n", false],
+    ["missing-member", "[workspace]\nmembers = [\"crates/missing\"]\n", false],
+    ["package-root", "[package]\nname = \"root\"\n\n[workspace]\n", true],
+  ];
+  for (const [name, manifest, confirmed] of cases) {
+    await temporaryProject(`forgeloop-rust-workspace-${name}-`, async (target) => {
+      await writeText(target, "Cargo.toml", manifest);
+      const evidence = await detectProjectEvidence(target);
+      assert.equal(evidence.frameworks.includes("rust"), confirmed, name);
+      assert.equal(evidence.primarySignals.includes("Cargo.toml:package"), confirmed, name);
+      if (!confirmed) assert.deepEqual(evidence.primarySignals, [], name);
+    });
+  }
+
+  await temporaryProject("forgeloop-rust-workspace-resolved-member-", async (target) => {
+    await writeText(target, "Cargo.toml", "[workspace]\nmembers = [\"crates/api\"]\n");
+    await writeText(target, "crates/api/Cargo.toml", "[package]\nname = \"api\"\n");
+    const evidence = await detectProjectEvidence(target, { claims: ["Cargo.toml"] });
+    assert.deepEqual(evidence.frameworks, ["rust"]);
+    assert.deepEqual(evidence.projectRoots, ["crates/api"]);
+  });
+});
+
+test("implicit Cargo path members participate in workspace and shared lockfile claims", async () => {
+  await temporaryProject("forgeloop-rust-path-members-", async (target) => {
+    await writeText(target, "Cargo.toml", [
+      "[workspace]",
+      "members = [\"crates/api\"]",
+      "exclude = [\"crates/excluded\"]",
+      "",
+    ].join("\n"));
+    await writeText(target, "crates/api/Cargo.toml", [
+      "[package]",
+      "name = \"api\"",
+      "",
+      "[dependencies]",
+      "shared = { path = \"../shared\" }",
+      "excluded = { path = \"../excluded\" }",
+      "",
+    ].join("\n"));
+    await writeText(target, "crates/shared/Cargo.toml", "[package]\nname = \"shared\"\n");
+    await writeText(target, "crates/excluded/Cargo.toml", "[package]\nname = \"excluded\"\n");
+    await writeText(target, "Cargo.lock", "version = 4\n");
+    await writeText(target, ".cargo/config.toml", "[build]\ntarget-dir = \"target\"\n");
+
+    const workspace = await detectProjectEvidence(target, { claims: ["Cargo.toml"] });
+    assert.deepEqual(workspace.projectRoots, ["crates/api", "crates/shared"]);
+    assert.equal(workspace.projectRoots.includes("crates/excluded"), false);
+
+    const lockfile = await detectProjectEvidence(target, { claims: ["Cargo.lock"] });
+    assert.deepEqual(lockfile.projectRoots, ["crates/api", "crates/shared"]);
+    assert.equal(lockfile.projectRoots.includes("crates/excluded"), false);
+
+    const config = await detectProjectEvidence(target, { claims: [".cargo/config.toml"] });
+    assert.ok(config.projectRoots.includes("crates/shared"));
+    assert.equal(config.projectRoots.includes("crates/excluded"), false);
+  });
+});
+
+test("Cargo package.workspace associates a known package with its in-repository workspace", async () => {
+  await temporaryProject("forgeloop-rust-package-workspace-association-", async (target) => {
+    await writeText(target, "Cargo.toml", "[workspace]\n\n");
+    await writeText(target, "crates/member/Cargo.toml", [
+      "[package]",
+      "name = \"member\"",
+      "workspace = \"../..\"",
+      "",
+    ].join("\n"));
+
+    const evidence = await detectProjectEvidence(target, { claims: ["Cargo.toml"] });
+    assert.deepEqual(evidence.frameworks, ["rust"]);
+    assert.deepEqual(evidence.projectRoots, ["crates/member"]);
+    assert.ok(evidence.primarySignals.includes("Cargo.toml:workspace"));
+  });
+});
+
+test("Cargo workspace globs stay bounded and preserve segment semantics", async () => {
+  await temporaryProject("forgeloop-rust-workspace-globs-", async (target) => {
+    await writeText(target, "Cargo.toml", [
+      "[workspace]",
+      "members = [\"crates/*\", \"crates/**\", \"services/?pi\"]",
+      "exclude = [\"crates/skip\"]",
+      "",
+    ].join("\n"));
+    for (const member of ["crates/one", "crates/nested/two", "crates/skip", "services/api", "services/other"]) {
+      await writeText(target, `${member}/Cargo.toml`, `[package]\nname = \"${path.posix.basename(member)}\"\n`);
+    }
+
+    const evidence = await detectProjectEvidence(target, { claims: ["Cargo.toml"] });
+    assert.deepEqual(evidence.projectRoots, ["crates/nested/two", "crates/one", "services/api"]);
+    assert.equal(evidence.projectRoots.includes("crates/skip"), false);
+    assert.equal(evidence.projectRoots.includes("services/other"), false);
+  });
+
+  await temporaryProject("forgeloop-rust-workspace-escaped-glob-", async (target) => {
+    await writeText(target, "Cargo.toml", "[workspace]\nmembers = [\"../outside\"]\n");
+    await writeText(target, "inside/Cargo.toml", "[package]\nname = \"inside\"\n");
+    const evidence = await detectProjectEvidence(target, { claims: ["Cargo.toml"] });
+    assert.deepEqual(evidence.frameworks, []);
+    assert.deepEqual(evidence.primarySignals, []);
   });
 });
 

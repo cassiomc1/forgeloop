@@ -46,6 +46,7 @@ function invalidCargoManifest() {
     devDependencies: [],
     buildDependencies: [],
     targetDependencies: [],
+    pathDependencies: [],
     features: [],
     backendContexts: [],
   };
@@ -54,6 +55,19 @@ function invalidCargoManifest() {
 function optionalString(object, key) {
   if (object[key] === undefined) return null;
   return typeof object[key] === "string" && object[key].trim() !== "" ? object[key] : undefined;
+}
+
+function cargoPackageString(object, key) {
+  if (object[key] === undefined) return { value: null, inherited: false };
+  if (typeof object[key] === "string" && object[key].trim() !== "") {
+    return { value: object[key], inherited: false };
+  }
+  if (isPlainObject(object[key])
+    && object[key].workspace === true
+    && Object.keys(object[key]).every((property) => property === "workspace")) {
+    return { value: null, inherited: true };
+  }
+  return null;
 }
 
 function optionalStringArray(object, key) {
@@ -70,38 +84,79 @@ function dependencyNamesFromTable(value) {
   return Object.keys(value);
 }
 
-function dependencyNamesFromTargets(value) {
+function pathDependenciesFromTable(value) {
   if (value === undefined) return [];
   if (!isPlainObject(value)) return null;
+  return Object.entries(value)
+    .filter(([, specification]) => isPlainObject(specification)
+      && typeof specification.path === "string"
+      && specification.path.trim() !== "")
+    .map(([name, specification]) => ({ name, path: specification.path }));
+}
+
+function dependencyMetadataFromTable(value) {
+  const names = dependencyNamesFromTable(value);
+  const pathDependencies = pathDependenciesFromTable(value);
+  if (names === null || pathDependencies === null) return null;
+  return { names, pathDependencies };
+}
+
+function uniquePathDependencies(values) {
+  const entries = new Map();
+  for (const dependency of values) {
+    if (!dependency || typeof dependency.name !== "string" || typeof dependency.path !== "string") continue;
+    const name = dependency.name.trim();
+    const dependencyPath = dependency.path.trim();
+    if (name === "" || dependencyPath === "") continue;
+    entries.set(`${name}\u0000${dependencyPath}`, { name, path: dependencyPath });
+  }
+  return [...entries.values()].sort((left, right) => {
+    const byName = left.name.localeCompare(right.name);
+    return byName || left.path.localeCompare(right.path);
+  });
+}
+
+function dependencyMetadataFromTargets(value) {
+  if (value === undefined) return { names: [], pathDependencies: [] };
+  if (!isPlainObject(value)) return null;
   const names = [];
+  const pathDependencies = [];
   for (const target of Object.values(value)) {
     if (!isPlainObject(target)) return null;
     for (const section of ["dependencies", "dev-dependencies", "build-dependencies"]) {
-      const dependencies = dependencyNamesFromTable(target[section]);
+      const dependencies = dependencyMetadataFromTable(target[section]);
       if (dependencies === null) return null;
-      names.push(...dependencies);
+      names.push(...dependencies.names);
+      pathDependencies.push(...dependencies.pathDependencies);
     }
   }
-  return uniqueSorted(names);
+  return { names: uniqueSorted(names), pathDependencies };
 }
 
 function parseCargoSections(document) {
-  const dependencies = dependencyNamesFromTable(document.dependencies);
-  const workspaceDependencies = dependencyNamesFromTable(document.workspace?.dependencies);
-  const devDependencies = dependencyNamesFromTable(document["dev-dependencies"]);
-  const buildDependencies = dependencyNamesFromTable(document["build-dependencies"]);
-  const targetDependencies = dependencyNamesFromTargets(document.target);
+  const dependencies = dependencyMetadataFromTable(document.dependencies);
+  const workspaceDependencies = dependencyMetadataFromTable(document.workspace?.dependencies);
+  const devDependencies = dependencyMetadataFromTable(document["dev-dependencies"]);
+  const buildDependencies = dependencyMetadataFromTable(document["build-dependencies"]);
+  const targetDependencies = dependencyMetadataFromTargets(document.target);
   const features = document.features === undefined
     ? []
     : isPlainObject(document.features) ? Object.keys(document.features) : null;
   if ([dependencies, workspaceDependencies, devDependencies, buildDependencies, targetDependencies, features]
     .some((value) => value === null)) return null;
   return {
-    dependencies: uniqueSorted(dependencies),
-    workspaceDependencies: uniqueSorted(workspaceDependencies),
-    devDependencies: uniqueSorted(devDependencies),
-    buildDependencies: uniqueSorted(buildDependencies),
-    targetDependencies,
+    dependencies: uniqueSorted(dependencies.names),
+    workspaceDependencies: uniqueSorted(workspaceDependencies.names),
+    devDependencies: uniqueSorted(devDependencies.names),
+    buildDependencies: uniqueSorted(buildDependencies.names),
+    targetDependencies: targetDependencies.names,
+    pathDependencies: uniquePathDependencies([
+      ...dependencies.pathDependencies,
+      ...workspaceDependencies.pathDependencies,
+      ...devDependencies.pathDependencies,
+      ...buildDependencies.pathDependencies,
+      ...targetDependencies.pathDependencies,
+    ]),
     features: uniqueSorted(features),
   };
 }
@@ -112,10 +167,29 @@ function parseCargoPackage(document) {
   }
   if (!isPlainObject(document.package)) return null;
   const name = optionalString(document.package, "name");
-  const edition = optionalString(document.package, "edition");
-  const rustVersion = optionalString(document.package, "rust-version");
-  if (name === undefined || name === null || edition === undefined || rustVersion === undefined) return null;
-  return { present: true, name, edition, rustVersion };
+  const edition = cargoPackageString(document.package, "edition");
+  const rustVersion = cargoPackageString(document.package, "rust-version");
+  const workspace = optionalString(document.package, "workspace");
+  if (name === undefined || name === null || edition === null || rustVersion === null || workspace === undefined) return null;
+  const metadata = {
+    present: true,
+    name,
+    edition: edition.value,
+    rustVersion: rustVersion.value,
+  };
+  if (edition.inherited) metadata.editionInherited = true;
+  if (rustVersion.inherited) metadata.rustVersionInherited = true;
+  if (workspace !== null) metadata.workspace = workspace;
+  return metadata;
+}
+
+function parseCargoWorkspacePackage(workspace) {
+  if (workspace.package === undefined) return null;
+  if (!isPlainObject(workspace.package)) return undefined;
+  const edition = optionalString(workspace.package, "edition");
+  const rustVersion = optionalString(workspace.package, "rust-version");
+  if (edition === undefined || rustVersion === undefined) return undefined;
+  return { present: true, edition, rustVersion };
 }
 
 function parseCargoWorkspace(document) {
@@ -129,7 +203,11 @@ function parseCargoWorkspace(document) {
   const resolver = optionalString(document.workspace, "resolver");
   if (members === null || exclude === null || defaultMembers === null || resolver === undefined) return null;
   if (document.workspace.dependencies !== undefined && !isPlainObject(document.workspace.dependencies)) return null;
-  return { present: true, members, exclude, defaultMembers, resolver };
+  const workspacePackage = parseCargoWorkspacePackage(document.workspace);
+  if (workspacePackage === undefined) return null;
+  const metadata = { present: true, members, exclude, defaultMembers, resolver };
+  if (workspacePackage) metadata.package = workspacePackage;
+  return metadata;
 }
 
 export function parseCargoManifest(text) {
@@ -175,6 +253,15 @@ function normalizedRelativePath(root, candidate) {
   return candidate.slice(root.length + 1);
 }
 
+function normalizedCargoPath(root, relativePath) {
+  if (typeof root !== "string" || typeof relativePath !== "string" || relativePath.trim() === "") return null;
+  const portable = relativePath.trim().replaceAll("\\", "/");
+  if (portable.startsWith("/") || /^[A-Za-z]:\//u.test(portable)) return null;
+  const joined = path.posix.normalize(path.posix.join(root === "." ? "" : root, portable));
+  if (joined === ".." || joined.startsWith("../")) return null;
+  return joined.replace(/^\.\//u, "") || ".";
+}
+
 function normalizedCargoPattern(pattern) {
   if (typeof pattern !== "string" || pattern.trim() === "") return null;
   const portable = pattern.trim().replaceAll("\\", "/");
@@ -216,12 +303,24 @@ function hasNestedWorkspaceBetween(workspaceProject, candidateProject, projects)
   return projects.some((project) => project !== workspaceProject
     && project !== candidateProject
     && project.kind === "rust"
+    && project.rust
     && project.workspaceRoot
     && isDescendant(workspaceProject.root, project.root)
     && (project.root === candidateProject.root || isDescendant(project.root, candidateProject.root)));
 }
 
-export function cargoWorkspaceContains(workspaceProject, candidateProject, projects = []) {
+function cargoPackageWorkspaceMatches(workspaceProject, candidateProject) {
+  const association = candidateProject.internal?.package?.workspace;
+  return typeof association === "string"
+    && normalizedCargoPath(candidateProject.root, association) === workspaceProject.root;
+}
+
+function cargoPathDependencyMatches(sourceProject, candidateProject) {
+  return (sourceProject.internal?.pathDependencies ?? [])
+    .some((dependency) => normalizedCargoPath(sourceProject.root, dependency.path) === candidateProject.root);
+}
+
+function cargoWorkspaceContainsInternal(workspaceProject, candidateProject, projects, resolving) {
   if (!workspaceProject?.rust || !workspaceProject.workspaceRoot
     || !candidateProject?.rust || !candidateProject.packageRoot) return false;
   if (workspaceProject.root === candidateProject.root) return true;
@@ -229,7 +328,19 @@ export function cargoWorkspaceContains(workspaceProject, candidateProject, proje
   if (!relative || hasNestedWorkspaceBetween(workspaceProject, candidateProject, projects)) return false;
   const workspace = workspaceProject.internal.workspace;
   if (workspace.exclude.some((pattern) => cargoPatternMatches([pattern], relative))) return false;
-  return cargoPatternMatches(workspace.members, relative);
+  if (cargoPatternMatches(workspace.members, relative)
+    || cargoPackageWorkspaceMatches(workspaceProject, candidateProject)) return true;
+  if (resolving.has(candidateProject.root)) return false;
+  resolving.add(candidateProject.root);
+  const contained = projects.some((project) => project !== candidateProject
+    && cargoWorkspaceContainsInternal(workspaceProject, project, projects, resolving)
+    && cargoPathDependencyMatches(project, candidateProject));
+  resolving.delete(candidateProject.root);
+  return contained;
+}
+
+export function cargoWorkspaceContains(workspaceProject, candidateProject, projects = []) {
+  return cargoWorkspaceContainsInternal(workspaceProject, candidateProject, projects, new Set());
 }
 
 export function isRustSharedFile(relativePath) {

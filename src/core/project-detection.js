@@ -1259,6 +1259,12 @@ function claimMatchesSharedRustFile(claim, project, projects, projectRoots, shar
   if (!project.rust || !project.packageRoot || !isRustSharedFile(claim)) return false;
   if (rustSharedFileKind(claim) === "lockfile") return claimMatchesRustLockfile(claim, project, projects);
   if (hasCloserRustToolchain(claim, project.root.toLowerCase(), sharedFiles, targetRoot)) return false;
+  const scopeDirectory = rustSharedScopeDirectory(claim).toLowerCase();
+  const workspace = projects.find((candidate) => candidate.kind === "rust"
+    && candidate.rust
+    && candidate.workspaceRoot
+    && candidate.root.toLowerCase() === scopeDirectory);
+  if (workspace) return cargoWorkspaceContains(workspace, project, projects);
   return sharedRustSignalApplies(claim, project.root, projectRoots);
 }
 
@@ -1354,8 +1360,16 @@ function inspectRustProject({ projectRoot, manifestRelative, manifestText, targe
 
   const supportingSignals = [];
   if (parsed.package.edition) supportingSignals.push(`${manifestRelative}:edition=${parsed.package.edition}`);
+  if (parsed.package.editionInherited) supportingSignals.push(`${manifestRelative}:edition=workspace`);
   if (parsed.package.rustVersion) supportingSignals.push(`${manifestRelative}:rust-version=${parsed.package.rustVersion}`);
+  if (parsed.package.rustVersionInherited) supportingSignals.push(`${manifestRelative}:rust-version=workspace`);
   if (parsed.workspace.resolver) supportingSignals.push(`${manifestRelative}:resolver=${parsed.workspace.resolver}`);
+  if (parsed.workspace.package?.edition) {
+    supportingSignals.push(`${manifestRelative}:workspace.package.edition=${parsed.workspace.package.edition}`);
+  }
+  if (parsed.workspace.package?.rustVersion) {
+    supportingSignals.push(`${manifestRelative}:workspace.package.rust-version=${parsed.workspace.package.rustVersion}`);
+  }
   for (const dependency of uniqueSorted([...parsed.dependencies, ...parsed.workspaceDependencies])) {
     supportingSignals.push(`${manifestRelative}:dependency=${dependency}`);
   }
@@ -1386,6 +1400,26 @@ function inspectRustProject({ projectRoot, manifestRelative, manifestText, targe
     supportingSignals,
     internal: parsed,
   };
+}
+
+function invalidateRustVirtualWorkspace(project) {
+  project.rust = false;
+  project.primary = false;
+  project.frameworks = [];
+  project.primarySignals = [];
+  project.supportingSignals = [];
+}
+
+function resolveRustWorkspaceEvidence(projects) {
+  const workspaces = projects
+    .filter((project) => project.kind === "rust" && project.virtualWorkspace)
+    .sort((left, right) => right.root.split("/").length - left.root.split("/").length);
+  for (const workspace of workspaces) {
+    if (!workspace.rust) continue;
+    const hasConfirmedMember = projects.some((candidate) => candidate !== workspace
+      && cargoWorkspaceContains(workspace, candidate, projects));
+    if (!hasConfirmedMember) invalidateRustVirtualWorkspace(workspace);
+  }
 }
 
 async function inspectNodeProject({
@@ -1512,6 +1546,7 @@ export async function detectProjectEvidence(target, { claims = [], limits = {} }
     projects.push(await inspectProject(manifestInfo, targetRoot, budget, discovered.manifests, discovered.sharedFiles));
     if (budget.exhausted) return null;
   }
+  resolveRustWorkspaceEvidence(projects);
 
   const solutionMembership = new Map();
   for (const solutionPath of discovered.solutions) {
