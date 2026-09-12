@@ -4,6 +4,13 @@
 
 ### Added
 
+- Added first-class C, C++, Java, SQL, Go, TypeScript, PHP, and Swift
+  specialist guides with bounded structural project detection, conservative
+  source/build evidence, same-root composition, and nested ownership
+  boundaries.
+- Added regression coverage for malformed/adversarial language metadata,
+  generated/vendor exclusions, direct source claims, SQL overlays, and the
+  public framework routing contract while preserving projectEvidence schema v1.
 - Documented structural .NET, ASP.NET Core, and conditional ABP routing,
   including scoped mixed-stack discovery, supported SDK evidence, bounded
   traversal, and overlay validation.

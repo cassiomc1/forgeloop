@@ -42,7 +42,7 @@ test("protocol exposes stable versions, failure classes, phases, and guides", ()
   assert.equal(PROTOCOL_VERSION, 1);
   assert.equal(new Set(FAILURE_CLASSES).size, 13);
   assert.equal(new Set(WORK_PHASES).size, 13);
-  assert.equal(new Set(GUIDE_IDS).size, 14);
+  assert.equal(new Set(GUIDE_IDS).size, 22);
 });
 
 test("protocol exposes the unresolved-decision preflight failure code", () => {

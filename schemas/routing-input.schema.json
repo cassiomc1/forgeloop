@@ -18,7 +18,7 @@
       "properties": {
         "schemaVersion": { "const": 1 },
         "scope": { "enum": ["MATCH", "UNSCOPED", "NO_MATCH", "NONE"] },
-        "frameworks": { "type": "array", "items": { "enum": ["flutter", "dotnet", "aspnetcore", "abp", "nodejs", "rust"] } },
+        "frameworks": { "type": "array", "items": { "enum": ["flutter", "dotnet", "aspnetcore", "abp", "nodejs", "rust", "c", "cpp", "java", "sql", "go", "typescript", "php", "swift"] } },
         "projectRoots": { "type": "array", "items": { "type": "string", "minLength": 1 } },
         "primarySignals": { "type": "array", "items": { "type": "string", "minLength": 1 } },
         "supportingSignals": { "type": "array", "items": { "type": "string", "minLength": 1 } }

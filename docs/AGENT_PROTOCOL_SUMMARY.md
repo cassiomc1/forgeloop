@@ -25,7 +25,9 @@ Package version: 1.12.0
   specialist has guide ID `dotnet` and resolves to
   `ENG/dotnet-aspnetcore-development-eng.md`.
 - Project evidence schema v1 recognizes
-  structurally parsed Flutter and SDK-style .NET project roots. ASP.NET Core
+  structurally parsed Flutter, SDK-style .NET, Node.js, Rust, C, C++, Java,
+  SQL, Go, TypeScript, PHP, and Swift project evidence. SQL remains a bounded
+  owned-file overlay, while same-root language identities compose. ASP.NET Core
   and ABP are conditional overlays recorded as reasons on `dotnet`; they
   are not standalone guide IDs, and route validation requires each overlay to
   include `dotnet`.
@@ -159,6 +161,14 @@ capability-family versions.
 | dotnet | ENG/dotnet-aspnetcore-development-eng.md | yes |
 | nodejs | ENG/nodejs-backend-development-eng.md | yes |
 | rust | ENG/rust-development-eng.md | yes |
+| c | ENG/c-development-eng.md | yes |
+| cpp | ENG/cpp-development-eng.md | yes |
+| java | ENG/java-development-eng.md | yes |
+| sql | ENG/sql-development-eng.md | yes |
+| go | ENG/go-development-eng.md | yes |
+| typescript | ENG/typescript-development-eng.md | yes |
+| php | ENG/php-development-eng.md | yes |
+| swift | ENG/swift-development-eng.md | yes |
 
 ## Public artifact registry
 

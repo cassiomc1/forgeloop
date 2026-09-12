@@ -17,6 +17,9 @@ boundaries explicit:
       `ENG/rust-development-eng.md` and explain that the specialist is
       selected only from a structurally parsed `[package]` or `[workspace]`
       table in an affected `Cargo.toml`.
+- [ ] README catalog and architecture fallback identify the C, C++, Java, SQL,
+      Go, TypeScript, PHP, and Swift specialists and explain their bounded
+      structural evidence and same-root composition rules.
 - [ ] The canonical engineering-flow source and regenerated HTML/SVG diagram
       explain project detection as routing context, not verification or
       completion evidence.
@@ -51,8 +54,7 @@ actions.
 - [ ] [`docs/PACKAGE_CONTENTS.md`](./PACKAGE_CONTENTS.md) matches the current
       `package.json` file list and documents intentional inclusions and
       exclusions.
-- [ ] The candidate tarball includes the registered Flutter, Node.js, and Rust
-      guides and every
+- [ ] The candidate tarball includes every registered specialist guide and every
       other `src/config/guides.json` path; no repository-only guide state is
       packaged.
 - [ ] Every maintained `src/**/*.js` module is present in the candidate

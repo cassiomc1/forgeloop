@@ -26,6 +26,17 @@ class LoopSystemValidationTests(unittest.TestCase):
         self.assertIn("<!-- route:flutter-app-feature=flutter,clean,test -->", router)
         self.assertIn("ENG/rust-development-eng.md", router)
         self.assertIn("<!-- route:rust-app-feature=rust,clean,test -->", router)
+        for guide_path in (
+            "ENG/c-development-eng.md",
+            "ENG/cpp-development-eng.md",
+            "ENG/java-development-eng.md",
+            "ENG/sql-development-eng.md",
+            "ENG/go-development-eng.md",
+            "ENG/typescript-development-eng.md",
+            "ENG/php-development-eng.md",
+            "ENG/swift-development-eng.md",
+        ):
+            self.assertIn(guide_path, router)
         self.assertTrue((self.root / "ENG/flutter-development-eng.md").is_file())
         self.assertTrue((self.root / "ENG/rust-development-eng.md").is_file())
 

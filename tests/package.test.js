@@ -244,6 +244,16 @@ test("canonical guide registry resolves every consumer guide in the tarball", as
   assert.ok(listing.includes("ENG/flutter-development-eng.md"));
   assert.ok(listing.includes("ENG/nodejs-backend-development-eng.md"));
   assert.ok(listing.includes("ENG/rust-development-eng.md"));
+  for (const guidePath of [
+    "ENG/c-development-eng.md",
+    "ENG/cpp-development-eng.md",
+    "ENG/java-development-eng.md",
+    "ENG/sql-development-eng.md",
+    "ENG/go-development-eng.md",
+    "ENG/typescript-development-eng.md",
+    "ENG/php-development-eng.md",
+    "ENG/swift-development-eng.md",
+  ]) assert.ok(listing.includes(guidePath), guidePath);
 });
 
 test("CLI package entry is executable by Node-compatible shells", async () => {

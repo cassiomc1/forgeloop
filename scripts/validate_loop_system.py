@@ -682,6 +682,14 @@ def _fixture_guide_registry() -> dict[str, dict]:
         "flutter": {"path": "ENG/flutter-development-eng.md", "install": True},
         "dotnet": {"path": "ENG/dotnet-aspnetcore-development-eng.md", "install": True},
         "rust": {"path": "ENG/rust-development-eng.md", "install": True},
+        "c": {"path": "ENG/c-development-eng.md", "install": True},
+        "cpp": {"path": "ENG/cpp-development-eng.md", "install": True},
+        "java": {"path": "ENG/java-development-eng.md", "install": True},
+        "sql": {"path": "ENG/sql-development-eng.md", "install": True},
+        "go": {"path": "ENG/go-development-eng.md", "install": True},
+        "typescript": {"path": "ENG/typescript-development-eng.md", "install": True},
+        "php": {"path": "ENG/php-development-eng.md", "install": True},
+        "swift": {"path": "ENG/swift-development-eng.md", "install": True},
     }
 
 

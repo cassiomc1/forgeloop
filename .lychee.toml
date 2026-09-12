@@ -34,6 +34,10 @@ exclude = [
   # The official OWASP OAuth2 cheat sheet intermittently returns 503 to shared CI runners.
   # Keep the exact reference visible while continuing to validate every other OWASP URL.
   '^https://cheatsheetseries\.owasp\.org/cheatsheets/OAuth2_Cheat_Sheet\.html$',
+  # These established design references rate-limit or time out shared CI runners.
+  # Keep the references visible while checking every other URL normally.
+  '^https://uncut\.wtf/$',
+  '^https://gameaccessibilityguidelines\.com/$',
 ]
 
 [hosts."docs.ansible.com"]
