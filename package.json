@@ -149,6 +149,9 @@
     "typescript": "7.0.2",
     "yaml": "2.9.0"
   },
+  "dependencies": {
+    "smol-toml": "1.8.0"
+  },
   "exports": {
     ".": "./src/cli.js",
     "./integration": {

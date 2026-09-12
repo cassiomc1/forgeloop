@@ -24,7 +24,10 @@ class LoopSystemValidationTests(unittest.TestCase):
         router = (self.root / "GUIDE_ROUTER.md").read_text(encoding="utf-8")
         self.assertIn("ENG/flutter-development-eng.md", router)
         self.assertIn("<!-- route:flutter-app-feature=flutter,clean,test -->", router)
+        self.assertIn("ENG/rust-development-eng.md", router)
+        self.assertIn("<!-- route:rust-app-feature=rust,clean,test -->", router)
         self.assertTrue((self.root / "ENG/flutter-development-eng.md").is_file())
+        self.assertTrue((self.root / "ENG/rust-development-eng.md").is_file())
 
     def test_rejects_unknown_guide_id_in_additional_route(self) -> None:
         router = self.root / "GUIDE_ROUTER.md"

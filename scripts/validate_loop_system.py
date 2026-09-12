@@ -148,6 +148,7 @@ ROUTING_SCENARIOS = {
     "documentation": "documentation",
     "flutter-app-feature": "flutter,clean,test",
     "dotnet-app-feature": "dotnet,clean,test",
+    "rust-app-feature": "rust,clean,test",
 }
 
 REQUIRED_GUIDE_FRONTMATTER = {
@@ -680,6 +681,7 @@ def _fixture_guide_registry() -> dict[str, dict]:
         "documentation": {"path": "ENG/documentation-quality-eng.md", "install": True},
         "flutter": {"path": "ENG/flutter-development-eng.md", "install": True},
         "dotnet": {"path": "ENG/dotnet-aspnetcore-development-eng.md", "install": True},
+        "rust": {"path": "ENG/rust-development-eng.md", "install": True},
     }
 
 
@@ -760,6 +762,7 @@ def _valid_fixture(root: Path) -> None:
         "documentation": "documentation",
         "flutter-app-feature": "flutter,clean,test",
         "dotnet-app-feature": "dotnet,clean,test",
+        "rust-app-feature": "rust,clean,test",
     }
     markers = "\n".join(
         f"<!-- route:{scenario}={ids} -->" for scenario, ids in scenarios.items()

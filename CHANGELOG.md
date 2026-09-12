@@ -19,11 +19,23 @@
   positives, malformed or oversized manifests, nested workspaces, shared
   lockfiles, mixed Flutter/.NET/Node repositories, symlinks, and traversal
   budgets.
+- Added the first-class Rust development engineering guide and registered it as
+  the `rust` specialist in the canonical guide catalog.
+- Added bounded, Cargo-first Rust project detection using structural TOML
+  parsing for packages and virtual/package workspaces, with conservative
+  nested ownership and shared-file scope handling.
+- Added Rust regression coverage for workspace membership, toolchains, MSRV
+  and edition metadata, malformed/oversized manifests, target/vendor ignores,
+  symlinks, traversal budgets, cross-stack boundaries, and public routing.
 
 ### Changed
 
 - Extended the routing schema, package checks, router reference, README, and
   package-contents documentation for the Node.js specialist.
+- Extended the routing schema, package checks, router reference, README, and
+  package-contents documentation for the Rust specialist. The runtime uses the
+  approved exact `smol-toml` parser dependency; development tooling remains
+  separate and no framework-specific Rust guide IDs were added.
 
 ## 1.12.0 - 2026-09-09
 

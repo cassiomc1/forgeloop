@@ -117,6 +117,12 @@ test("Node.js specialist is registered with the canonical guide path", () => {
   assert.ok(GUIDE_IDS.includes("nodejs"));
 });
 
+test("Rust specialist is registered with the canonical guide path", () => {
+  assert.equal(GUIDE_REGISTRY.rust.path, "ENG/rust-development-eng.md");
+  assert.equal(GUIDE_REGISTRY.rust.install, true);
+  assert.ok(GUIDE_IDS.includes("rust"));
+});
+
 test("ui-copy routes to design and accessibility, never documentation", () => {
   const result = evaluateRoute({
     workType: "ui-copy",

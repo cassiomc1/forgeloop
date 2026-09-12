@@ -62,7 +62,7 @@ const SIGNALS = Object.freeze({
   platforms: new Set(["web", "mobile", "desktop", "server", "ci", "cross-platform"]),
 });
 
-const PROJECT_FRAMEWORKS = new Set(["flutter", "dotnet", "aspnetcore", "abp", "nodejs"]);
+const PROJECT_FRAMEWORKS = new Set(["flutter", "dotnet", "aspnetcore", "abp", "nodejs", "rust"]);
 
 export const PLATFORM_SEMANTICS = Object.freeze({
   web: Object.freeze({
@@ -171,6 +171,24 @@ function addNodeJsProjectGuides(input, add) {
   }
 }
 
+function hasRustWorkContext(workType) {
+  return !["documentation", "ui-copy", "mobile-ui"].includes(workType);
+}
+
+function addRustProjectGuides(input, add) {
+  const projectEvidence = input.projectEvidence;
+  if (!projectEvidence?.frameworks.includes("rust")
+    || !["MATCH", "UNSCOPED"].includes(projectEvidence.scope)
+    || !hasRustWorkContext(input.workType)) return;
+  add("rust", "PROJECT_RUST_CONFIRMED");
+  if (projectEvidence.primarySignals.some((signal) => signal.endsWith(":package"))) {
+    add("rust", "PROJECT_RUST_CARGO_PACKAGE");
+  }
+  if (projectEvidence.primarySignals.some((signal) => signal.endsWith(":workspace"))) {
+    add("rust", "PROJECT_RUST_CARGO_WORKSPACE");
+  }
+}
+
 function addProjectBaselineGuides(input, add) {
   const projectEvidence = input.projectEvidence;
   if (!projectEvidence || !["MATCH", "UNSCOPED"].includes(projectEvidence.scope)) return;
@@ -185,6 +203,10 @@ function addProjectBaselineGuides(input, add) {
   if (projectEvidence.frameworks.includes("nodejs") && hasNodeJsWorkContext(input.workType)) {
     add("clean", "PROJECT_NODEJS_BASELINE");
     add("test", "PROJECT_NODEJS_BASELINE");
+  }
+  if (projectEvidence.frameworks.includes("rust") && hasRustWorkContext(input.workType)) {
+    add("clean", "PROJECT_RUST_BASELINE");
+    add("test", "PROJECT_RUST_BASELINE");
   }
 }
 
@@ -212,6 +234,14 @@ function nodeJsExclusionReason(projectEvidence, workType) {
   return "NO_NODEJS_PRIMARY_EVIDENCE";
 }
 
+function rustExclusionReason(projectEvidence, workType) {
+  if (!projectEvidence) return "NO_RUST_PROJECT_EVIDENCE";
+  if (projectEvidence.scope === "NO_MATCH") return "NO_RUST_SCOPE_MATCH";
+  if (!projectEvidence.frameworks.includes("rust")) return "NO_RUST_PRIMARY_EVIDENCE";
+  if (!hasRustWorkContext(workType)) return "NO_RUST_EXECUTABLE_WORK";
+  return "NO_RUST_PRIMARY_EVIDENCE";
+}
+
 function exclusionReasonForGuide(guide, projectEvidence, workType) {
   if (guide === "security") return "NO_TRUST_BOUNDARY";
   if (guide === "performance") return "NO_MEASURABLE_PERFORMANCE_RISK";
@@ -222,6 +252,7 @@ function exclusionReasonForGuide(guide, projectEvidence, workType) {
   if (guide === "flutter") return flutterExclusionReason(projectEvidence, workType);
   if (guide === "dotnet") return dotNetExclusionReason(projectEvidence, workType);
   if (guide === "nodejs") return nodeJsExclusionReason(projectEvidence, workType);
+  if (guide === "rust") return rustExclusionReason(projectEvidence, workType);
   return "NO_BEHAVIOR_OR_EXECUTABLE_CHANGE";
 }
 
@@ -342,6 +373,7 @@ export function evaluateRoute(input = {}, profileOptions = {}) {
   addFlutterProjectGuides(normalized, add);
   addDotNetProjectGuides(normalized, add);
   addNodeJsProjectGuides(normalized, add);
+  addRustProjectGuides(normalized, add);
   addProjectBaselineGuides(normalized, add);
 
   const workReason = reasonForWorkType(normalized.workType);

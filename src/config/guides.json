@@ -50,5 +50,9 @@
   "nodejs": {
     "path": "ENG/nodejs-backend-development-eng.md",
     "install": true
+  },
+  "rust": {
+    "path": "ENG/rust-development-eng.md",
+    "install": true
   }
 }

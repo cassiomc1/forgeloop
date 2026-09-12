@@ -55,6 +55,7 @@ project commands.
 | `flutter` | [Flutter application engineering](./ENG/flutter-development-eng.md) | Architecture, implementation, testing, performance, accessibility, platform integration, and release of production Flutter applications |
 | `dotnet` | [.NET and ASP.NET Core development engineering](./ENG/dotnet-aspnetcore-development-eng.md) | Architecture, implementation, testing, performance, security, data access, hosting, observability, and release of production .NET applications |
 | `nodejs` | [Node.js backend development engineering](./ENG/nodejs-backend-development-eng.md) | Architecture, implementation, testing, security, performance, observability, and release of production Node.js services and workers |
+| `rust` | [Rust development engineering](./ENG/rust-development-eng.md) | Architecture, implementation, testing, security, performance, reproducibility, and release of production Rust applications, services, libraries, and workers |
 
 ## Domain rules
 
@@ -289,7 +290,8 @@ configuration, or operational contract changes.
 
 The route command obtains this evidence from
 `src/core/project-detection.js`. It walks bounded, non-symlinked manifests and
-source files, isolates nested project roots across Flutter, .NET, and Node.js,
+source files, isolates nested project roots across Flutter, .NET, Node.js, and
+Rust,
 recognizes workspace-root and shared lockfile scope, and preserves
 `projectEvidence.schemaVersion: 1`. Node source evidence ignores comments,
 template text, `import type`/`export type`, inline type-only specifiers,
@@ -314,6 +316,68 @@ validated inputs and configuration, bounded trust and resource controls,
 focused plus integration/adversarial checks, observable failure and shutdown
 behavior, and honest `NOT_VERIFIED` reporting for unavailable Node tooling.
 
+### `rust` — Rust development engineering
+
+**Activate when:** a confirmed project root has a bounded, structurally parsed
+`Cargo.toml` with a valid `[package]` and/or `[workspace]` table, and the task
+scope intersects that root. A package workspace and a virtual workspace are
+both valid when the virtual workspace has at least one resolvable package
+member; an empty or unresolved virtual workspace fails closed. A virtual
+workspace contributes its confirmed package members as public project roots. A
+package workspace may contain both tables, but `package.workspace` is mutually
+exclusive with `[workspace]` and associates a package with another workspace.
+
+**Do not activate merely because:** a `.rs` file, `Cargo.lock`,
+`rust-toolchain`/`rust-toolchain.toml`, `.cargo/config.toml`, rustfmt or Clippy
+configuration, a Tokio/Axum/Actix/other dependency name, a Dockerfile, CI
+toolchain setup, or repository prose exists. `target/` and `vendor/` are
+ignored. Build scripts, proc-macro crates, generated code, and native tooling
+remain runtime/build context rather than a replacement for Cargo identity.
+
+Cargo inheritance such as `package.edition.workspace = true` and
+`package.rust-version.workspace = true` is accepted as package metadata;
+`[workspace.package]` may enrich supporting signals. Workspace membership uses
+only known discovered manifests and bounded `members`/`exclude` patterns: `*`
+and `?` stay within one path segment, `**` may cross segments, and absolute or
+parent-directory escape paths are rejected. Local package `path` dependencies
+and explicitly used inherited workspace dependencies can associate a known
+package with a workspace, while `[workspace.dependencies]` declarations alone
+do not create active dependency edges. A valid `package.workspace` association
+may point to a known workspace outside the package's directory subtree, but not
+outside the repository; no additional traversal is triggered.
+
+**Usually combine with:** `clean` and `test`; add `security` for unsafe/FFI,
+untrusted input, secrets, dependencies, external services, or publication;
+add `performance` for measured CPU, memory, latency, allocation, executor,
+queue, or I/O work; add `documentation` when public APIs, configuration, or
+operational contracts change.
+
+The route command obtains this evidence from
+`src/core/project-detection.js` and the conservative TOML recognizer in
+`src/core/rust-project.js`. It performs bounded, non-symlinked discovery and
+manifest reads, never runs Cargo or source code, and treats `Cargo.toml` as
+primary evidence while edition, MSRV, resolver, features, dependencies,
+lockfiles, toolchains, and configuration are supporting signals. Explicit
+workspace members/excludes, nested workspaces, and confirmed Flutter, .NET,
+Node.js, and Rust roots constrain claims and shared-file ownership. `Cargo.lock`
+and configuration files apply only to their owning package/workspace scope; a
+parent cannot absorb a child's shared file merely because its path is a
+descendant.
+
+Rust has no Node-style LTS channel. Keep active toolchain, MSRV
+(`package.rust-version`), edition, and compilation target separate, and use
+version-matched official Rust and Cargo documentation. Current stable is a
+dated observation, not a universal migration target.
+
+```bash
+rg -n '^## |Cargo|toolchain|MSRV|edition|ownership|async|unsafe|FFI|security|testing|release|Definition of Done' ENG/rust-development-eng.md
+```
+
+**Expected evidence:** a confirmed affected Cargo package or workspace, a
+scoped route, compatible toolchain/MSRV/edition/target decisions, focused plus
+workspace checks, explicit resource and trust controls, and honest
+`NOT_VERIFIED` reporting for unavailable Rust targets or toolchains.
+
 ## Work-type matrix
 
 | Work | Primary guide | Common complements | Exclude when |
@@ -326,6 +390,7 @@ behavior, and honest `NOT_VERIFIED` reporting for unavailable Node tooling.
 | Flutter application | `flutter` | `clean`, `test`; add `design`, `accessibility`, `security`, or `performance` as applicable | No primary Flutter SDK dependency in the affected project scope |
 | .NET / ASP.NET Core application | `dotnet` | `clean`, `test`; add `security`, `performance`, `documentation`, or UI guides as applicable | No supported SDK-style .NET project in the affected project scope |
 | Node.js backend, API, worker, or server runtime | `nodejs` | `clean`, `test`; add `security`, `performance`, or `documentation` as applicable | No primary Node.js backend/runtime evidence in the affected project scope |
+| Rust application, service, library, or worker | `rust` | `clean`, `test`; add `security`, `performance`, or `documentation` as applicable | No valid Cargo package/workspace in the affected project scope |
 | Complete website | `premium` | `design`, `accessibility`, `clean`, `test`, `security`, `performance` | The deliverable is not a complete site |
 | Web game | `games` | `clean`, `test`, `security`, `performance`, `accessibility`; `design` with UI | The product is not a game |
 | HTML video or motion | `design` | `accessibility`, `performance`, `test`, `security` | There is no audiovisual composition |
@@ -360,12 +425,14 @@ The first routing contract is versioned as `schemaVersion: 1`. It accepts:
 - optional `projectEvidence` with a schema version, a scope result, detected
   framework IDs, affected project roots, primary signals, and supporting
   signals. The current framework IDs are `flutter`, `dotnet`, `aspnetcore`,
-  `abp`, and `nodejs`. Flutter's primary signal is an affected
+  `abp`, `nodejs`, and `rust`. Flutter's primary signal is an affected
   `dependencies.flutter.sdk: flutter` entry in `pubspec.yaml`. .NET's primary
   signal is a supported SDK-style project manifest; ASP.NET Core and ABP are
   structural overlays. Node.js primary signals are an allowlisted runtime
   dependency, direct Node runtime script, or narrow server-builtin source
-  import in a valid `package.json` project.
+  import in a valid `package.json` project. Rust's primary signals are a valid
+  structural `[package]` and/or `[workspace]` table in `Cargo.toml`; Rust
+  source, lockfiles, toolchain files, and dependencies are supporting context.
 
 Rule precedence is deterministic: the work type establishes the primary
 closure; affected surfaces add mandatory complements; risks add security,
@@ -378,7 +445,9 @@ canonical insertion order. A matching Flutter project adds `flutter` plus the
   on that guide. A matching Node.js project adds `nodejs` plus the `clean`/`test`
   baseline and records `PROJECT_NODEJS_CONFIRMED`; dependency, direct-script,
   and server-runtime reasons are optional enrichments when the corresponding
-  primary signals are present. The public `frameworks` field remains the
+  primary signals are present. A matching Rust project adds `rust` plus the
+  `clean`/`test` baseline and records `PROJECT_RUST_CONFIRMED`; package and
+  workspace roles are optional reason enrichments. The public `frameworks` field remains the
   authority for the confirmed framework; the router does not reverse-engineer
   Node selection from private signal substrings. Unknown or duplicate signals
   fail with a routing error.
@@ -395,7 +464,11 @@ Every selected guide has stable reason codes such as
   `PROJECT_NODEJS_BACKEND_FRAMEWORK`,
   `PROJECT_NODEJS_RUNTIME_SCRIPT`, `PROJECT_NODEJS_SERVER_RUNTIME`,
   `PROJECT_NODEJS_BASELINE`, `NO_NODEJS_PRIMARY_EVIDENCE`,
-  `NO_NODEJS_SCOPE_MATCH`, and `NO_NODEJS_EXECUTABLE_WORK`.
+  `NO_NODEJS_SCOPE_MATCH`, and `NO_NODEJS_EXECUTABLE_WORK`. Rust uses
+  `PROJECT_RUST_CONFIRMED`, `PROJECT_RUST_CARGO_PACKAGE`,
+  `PROJECT_RUST_CARGO_WORKSPACE`, `PROJECT_RUST_BASELINE`,
+  `NO_RUST_PRIMARY_EVIDENCE`, `NO_RUST_SCOPE_MATCH`, and
+  `NO_RUST_EXECUTABLE_WORK`.
 
 The .NET specialist uses `PROJECT_DOTNET_SDK_PROJECT` and
 `PROJECT_DOTNET_BASELINE`; confirmed ASP.NET Core and ABP overlays add
@@ -460,6 +533,18 @@ Negative routing guarantees:
   structural `Volo.Abp.*` package reference;
 - a shared MSBuild/NuGet file does not activate unrelated projects outside its
   directory scope, and a solution claim does not activate non-members;
+- a `.rs` file, `Cargo.lock`, Rust toolchain/configuration file, or Rust
+  dependency name does not replace a valid Cargo package/workspace manifest;
+- a virtual workspace root is not exposed as a public package root, excluded
+  workspace members remain out of an explicit workspace claim, and nested
+  Cargo workspaces remain ownership boundaries;
+- Rust shared files (`Cargo.lock`, toolchain, `.cargo/config*`, rustfmt, and
+  Clippy configuration) apply only to their owning package/workspace scope;
+- a `MATCH` or `UNSCOPED` public `projectEvidence` object whose frameworks
+  include `rust` selects the Rust guide for executable work even when its
+  primary signal list is empty; public framework identity is authoritative;
+- documentation and UI-copy work do not activate the Rust specialist even
+  when the repository contains a confirmed Cargo project;
 - an unrelated monorepo project does not activate Flutter when task claims do
   not intersect its confirmed project root; nested project roots remain isolated;
 - an explicit executable-change signal adds `clean` and `test` even when the
@@ -535,6 +620,17 @@ module-system compatibility, input/configuration validation, authentication and
 authorization, middleware order, timeouts/cancellation, persistence and
 external-service boundaries, observability, shutdown, and adversarial tests.
 Supporting package metadata and lockfiles alone must leave `nodejs` excluded.
+
+### Rust application feature
+
+<!-- route:rust-app-feature=rust,clean,test -->
+
+Verify the affected `Cargo.toml` contains a valid `[package]` or `[workspace]`
+table, confirm the claim reaches the correct package/workspace scope, and
+cover toolchain/MSRV/edition/target compatibility, ownership and cancellation,
+resource limits, unsafe/FFI/dependency boundaries, focused tests, and the
+workspace checks required by the repository. Cargo metadata and Rust tooling
+files alone must leave `rust` excluded.
 
 ## Route changes
 

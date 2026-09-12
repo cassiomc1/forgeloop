@@ -1,6 +1,14 @@
 import { open, readdir } from "node:fs/promises";
 import path from "node:path";
 
+import {
+  cargoWorkspaceContains,
+  isRustSharedFile,
+  parseCargoManifest,
+  rustSharedFileKind,
+  rustSharedScopeDirectory,
+} from "./rust-project.js";
+
 export const PROJECT_EVIDENCE_SCHEMA_VERSION = 1;
 
 export const PROJECT_EVIDENCE_SCOPES = Object.freeze([
@@ -40,6 +48,7 @@ const IGNORED_DIRECTORIES = new Set([
   "node_modules",
   "obj",
   "out",
+  "target",
   "TestResults",
   "vendor",
 ]);
@@ -949,6 +958,34 @@ async function findProjectFiles(root, budget) {
   const manifests = [];
   const solutions = [];
   const sharedFiles = [];
+
+  function addManifest(entry, absolutePath) {
+    if (manifests.length >= MAX_MANIFESTS) return;
+    const extension = path.extname(entry.name).toLowerCase();
+    const kind = entry.name === "pubspec.yaml"
+      ? "flutter"
+      : entry.name === "package.json"
+        ? "nodejs"
+        : entry.name === "Cargo.toml"
+          ? "rust"
+          : DOTNET_PROJECT_EXTENSIONS.has(extension) ? "dotnet" : null;
+    if (kind) manifests.push({ path: absolutePath, kind });
+  }
+
+  function addSolution(entry, absolutePath) {
+    if (solutions.length >= MAX_SOLUTION_FILES) return;
+    const extension = path.extname(entry.name).toLowerCase();
+    if (extension === ".sln" || extension === ".slnx") solutions.push(absolutePath);
+  }
+
+  function classifyFile(entry, absolutePath) {
+    addManifest(entry, absolutePath);
+    addSolution(entry, absolutePath);
+    const relative = portableRelative(root, absolutePath);
+    if (isRustSharedFile(relative)) sharedFiles.push({ path: absolutePath, kind: "rust" });
+    if (SHARED_NODE_FILES.has(entry.name.toLowerCase())) sharedFiles.push({ path: absolutePath, kind: "nodejs" });
+  }
+
   async function visit(directory) {
     if (manifests.length >= MAX_MANIFESTS && solutions.length >= MAX_SOLUTION_FILES) return;
     if (!consumeDirectory(budget)) return;
@@ -969,19 +1006,7 @@ async function findProjectFiles(root, budget) {
         continue;
       }
       if (!entry.isFile()) continue;
-      const extension = path.extname(entry.name).toLowerCase();
-      if (entry.name === "pubspec.yaml" && manifests.length < MAX_MANIFESTS) {
-        manifests.push({ path: absolutePath, kind: "flutter" });
-      } else if (entry.name === "package.json" && manifests.length < MAX_MANIFESTS) {
-        manifests.push({ path: absolutePath, kind: "nodejs" });
-      } else if (DOTNET_PROJECT_EXTENSIONS.has(extension) && manifests.length < MAX_MANIFESTS) {
-        manifests.push({ path: absolutePath, kind: "dotnet" });
-      } else if ((extension === ".sln" || extension === ".slnx") && solutions.length < MAX_SOLUTION_FILES) {
-        solutions.push(absolutePath);
-      }
-      if (SHARED_NODE_FILES.has(entry.name.toLowerCase())) {
-        sharedFiles.push({ path: absolutePath, kind: "nodejs" });
-      }
+      classifyFile(entry, absolutePath);
     }
   }
   await visit(root);
@@ -1187,6 +1212,62 @@ function claimMatchesSharedNodeFile(claim, project, projectRoots) {
   return sharedFileWithinProjectScope(directory, project.root, projectRoots);
 }
 
+function isRustToolchainFile(relativePath) {
+  return ["rust-toolchain", "rust-toolchain.toml"].includes(path.posix.basename(relativePath).toLowerCase());
+}
+
+function sharedRustSignalApplies(relativePath, projectRoot, projectRoots) {
+  if (!isRustSharedFile(relativePath)) return false;
+  const directory = rustSharedScopeDirectory(relativePath).toLowerCase();
+  return sharedFileWithinProjectScope(directory, projectRoot, projectRoots);
+}
+
+function hasCloserRustToolchain(claim, projectRoot, sharedFiles, targetRoot) {
+  if (!isRustToolchainFile(claim)) return false;
+  const claimDirectory = rustSharedScopeDirectory(claim).toLowerCase();
+  return sharedFiles.some((sharedFile) => {
+    const relative = portableRelative(targetRoot, sharedFile.path).toLowerCase();
+    if (!isRustToolchainFile(relative) || relative === claim) return false;
+    const otherDirectory = rustSharedScopeDirectory(relative).toLowerCase();
+    return otherDirectory !== claimDirectory
+      && (claimDirectory === "." || otherDirectory.startsWith(`${claimDirectory}/`))
+      && (projectRoot === otherDirectory || projectRoot.startsWith(`${otherDirectory}/`));
+  });
+}
+
+function claimMatchesRustWorkspaceManifest(claim, project, projects) {
+  if (path.posix.basename(claim) !== "cargo.toml") return false;
+  const workspace = projects.find((candidate) => candidate.kind === "rust"
+    && candidate.rust
+    && candidate.workspaceRoot
+    && candidate.manifest.toLowerCase() === claim);
+  if (!workspace) return false;
+  return project === workspace || cargoWorkspaceContains(workspace, project, projects);
+}
+
+function claimMatchesRustLockfile(claim, project, projects) {
+  const directory = rustSharedScopeDirectory(claim).toLowerCase();
+  const workspace = projects.find((candidate) => candidate.kind === "rust"
+    && candidate.rust
+    && candidate.workspaceRoot
+    && candidate.root.toLowerCase() === directory);
+  if (workspace) return cargoWorkspaceContains(workspace, project, projects);
+  return project.packageRoot && project.root.toLowerCase() === directory;
+}
+
+function claimMatchesSharedRustFile(claim, project, projects, projectRoots, sharedFiles, targetRoot) {
+  if (!project.rust || !project.packageRoot || !isRustSharedFile(claim)) return false;
+  if (rustSharedFileKind(claim) === "lockfile") return claimMatchesRustLockfile(claim, project, projects);
+  if (hasCloserRustToolchain(claim, project.root.toLowerCase(), sharedFiles, targetRoot)) return false;
+  const scopeDirectory = rustSharedScopeDirectory(claim).toLowerCase();
+  const workspace = projects.find((candidate) => candidate.kind === "rust"
+    && candidate.rust
+    && candidate.workspaceRoot
+    && candidate.root.toLowerCase() === scopeDirectory);
+  if (workspace) return cargoWorkspaceContains(workspace, project, projects);
+  return sharedRustSignalApplies(claim, project.root, projectRoots);
+}
+
 function claimMatchesNodeWorkspaceManifest(claim, project, projects) {
   if (path.posix.basename(claim) !== "package.json" || project.kind !== "nodejs" || !project.nodejs) return false;
   const workspace = projects.find((candidate) => candidate.kind === "nodejs"
@@ -1269,6 +1350,76 @@ function inspectDotNetProject({ projectRoot, manifestRelative, manifestText }) {
     primarySignals,
     supportingSignals,
   };
+}
+
+function inspectRustProject({ projectRoot, manifestRelative, manifestText, targetRoot, projectRoots, sharedFiles }) {
+  const parsed = parseCargoManifest(manifestText ?? "");
+  const primarySignals = [];
+  if (parsed.package.present) primarySignals.push(`${manifestRelative}:package`);
+  if (parsed.workspace.present) primarySignals.push(`${manifestRelative}:workspace`);
+
+  const supportingSignals = [];
+  if (parsed.package.edition) supportingSignals.push(`${manifestRelative}:edition=${parsed.package.edition}`);
+  if (parsed.package.editionInherited) supportingSignals.push(`${manifestRelative}:edition=workspace`);
+  if (parsed.package.rustVersion) supportingSignals.push(`${manifestRelative}:rust-version=${parsed.package.rustVersion}`);
+  if (parsed.package.rustVersionInherited) supportingSignals.push(`${manifestRelative}:rust-version=workspace`);
+  if (parsed.workspace.resolver) supportingSignals.push(`${manifestRelative}:resolver=${parsed.workspace.resolver}`);
+  if (parsed.workspace.package?.edition) {
+    supportingSignals.push(`${manifestRelative}:workspace.package.edition=${parsed.workspace.package.edition}`);
+  }
+  if (parsed.workspace.package?.rustVersion) {
+    supportingSignals.push(`${manifestRelative}:workspace.package.rust-version=${parsed.workspace.package.rustVersion}`);
+  }
+  for (const dependency of uniqueSorted([...parsed.dependencies, ...parsed.workspaceDependencies])) {
+    supportingSignals.push(`${manifestRelative}:dependency=${dependency}`);
+  }
+  for (const dependency of parsed.devDependencies) supportingSignals.push(`${manifestRelative}:devDependency=${dependency}`);
+  for (const dependency of parsed.buildDependencies) supportingSignals.push(`${manifestRelative}:buildDependency=${dependency}`);
+  for (const dependency of parsed.targetDependencies) supportingSignals.push(`${manifestRelative}:targetDependency=${dependency}`);
+  for (const feature of parsed.features) supportingSignals.push(`${manifestRelative}:feature=${feature}`);
+
+  for (const sharedFile of sharedFiles) {
+    const relative = portableRelative(targetRoot, sharedFile.path);
+    if (!parsed.rust || !parsed.package.present || !sharedRustSignalApplies(relative, projectRoot, projectRoots)) continue;
+    const kind = rustSharedFileKind(relative);
+    supportingSignals.push(`${relative}:${kind === "lockfile" ? "workspace-shared" : "rust-scope"}`);
+  }
+
+  return {
+    kind: "rust",
+    root: projectRoot,
+    manifest: manifestRelative,
+    validManifest: parsed.valid,
+    primary: parsed.rust,
+    rust: parsed.rust,
+    packageRoot: parsed.package.present,
+    workspaceRoot: parsed.workspace.present,
+    virtualWorkspace: parsed.workspace.present && !parsed.package.present,
+    frameworks: parsed.rust ? ["rust"] : [],
+    primarySignals,
+    supportingSignals,
+    internal: parsed,
+  };
+}
+
+function invalidateRustVirtualWorkspace(project) {
+  project.rust = false;
+  project.primary = false;
+  project.frameworks = [];
+  project.primarySignals = [];
+  project.supportingSignals = [];
+}
+
+function resolveRustWorkspaceEvidence(projects) {
+  const workspaces = projects
+    .filter((project) => project.kind === "rust" && project.virtualWorkspace)
+    .sort((left, right) => right.root.split("/").length - left.root.split("/").length);
+  for (const workspace of workspaces) {
+    if (!workspace.rust) continue;
+    const hasConfirmedMember = projects.some((candidate) => candidate !== workspace
+      && cargoWorkspaceContains(workspace, candidate, projects));
+    if (!hasConfirmedMember) invalidateRustVirtualWorkspace(workspace);
+  }
 }
 
 async function inspectNodeProject({
@@ -1370,6 +1521,14 @@ async function inspectProject(manifestInfo, targetRoot, budget, manifestInfos, s
   };
 
   if (manifestInfo.kind === "dotnet") return inspectDotNetProject(context);
+  if (manifestInfo.kind === "rust") {
+    return inspectRustProject({
+      ...context,
+      targetRoot,
+      projectRoots: manifestInfos.map((candidate) => portableRelative(targetRoot, path.dirname(candidate.path))),
+      sharedFiles,
+    });
+  }
   if (manifestInfo.kind === "nodejs") {
     return inspectNodeProject({ ...context, targetRoot, budget, manifestInfos, sharedFiles });
   }
@@ -1387,6 +1546,7 @@ export async function detectProjectEvidence(target, { claims = [], limits = {} }
     projects.push(await inspectProject(manifestInfo, targetRoot, budget, discovered.manifests, discovered.sharedFiles));
     if (budget.exhausted) return null;
   }
+  resolveRustWorkspaceEvidence(projects);
 
   const solutionMembership = new Map();
   for (const solutionPath of discovered.solutions) {
@@ -1400,7 +1560,8 @@ export async function detectProjectEvidence(target, { claims = [], limits = {} }
 
   const normalizedClaims = uniqueSorted((Array.isArray(claims) ? claims : []).map(normalizeClaim).filter(Boolean));
   const hasClaims = Array.isArray(claims) && claims.length > 0;
-  const projectRoots = projects.map((project) => project.root);
+  const projectRoots = discovered.manifests
+    .map((manifestInfo) => portableRelative(targetRoot, path.dirname(manifestInfo.path)));
   const solutionClaims = normalizedClaims.filter((claim) => solutionMembership.has(claim));
   const selectedProjects = hasClaims
     ? projects.filter((project) => normalizedClaims.some((claim) => {
@@ -1409,8 +1570,12 @@ export async function detectProjectEvidence(target, { claims = [], limits = {} }
       }
       if (isSharedDotNetClaim(claim)) return claimMatchesSharedDotNetFile(claim, project, projectRoots);
       if (isSharedNodeClaim(claim)) return claimMatchesSharedNodeFile(claim, project, projectRoots);
+      if (isRustSharedFile(claim)) {
+        return claimMatchesSharedRustFile(claim, project, projects, projectRoots, discovered.sharedFiles, targetRoot);
+      }
       return claimMatchesProject(claim, project, projectRoots)
-        || claimMatchesNodeWorkspaceManifest(claim, project, projects);
+        || claimMatchesNodeWorkspaceManifest(claim, project, projects)
+        || claimMatchesRustWorkspaceManifest(claim, project, projects);
     }))
     : projects;
   const scope = hasClaims
@@ -1420,7 +1585,9 @@ export async function detectProjectEvidence(target, { claims = [], limits = {} }
     schemaVersion: PROJECT_EVIDENCE_SCHEMA_VERSION,
     scope,
     frameworks: uniqueSorted(selectedProjects.flatMap((project) => project.frameworks)),
-    projectRoots: uniqueSorted(selectedProjects.map((project) => project.root)),
+    projectRoots: uniqueSorted(selectedProjects
+      .map((project) => project.virtualWorkspace ? null : project.root)
+      .filter(Boolean)),
     primarySignals: uniqueSorted(selectedProjects.flatMap((project) => project.primarySignals)),
     supportingSignals: uniqueSorted(selectedProjects.flatMap((project) => project.supportingSignals)),
   };

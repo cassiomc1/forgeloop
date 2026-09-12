@@ -243,6 +243,7 @@ test("canonical guide registry resolves every consumer guide in the tarball", as
 
   assert.ok(listing.includes("ENG/flutter-development-eng.md"));
   assert.ok(listing.includes("ENG/nodejs-backend-development-eng.md"));
+  assert.ok(listing.includes("ENG/rust-development-eng.md"));
 });
 
 test("CLI package entry is executable by Node-compatible shells", async () => {
