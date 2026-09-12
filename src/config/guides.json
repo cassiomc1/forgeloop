@@ -54,5 +54,37 @@
   "rust": {
     "path": "ENG/rust-development-eng.md",
     "install": true
+  },
+  "c": {
+    "path": "ENG/c-development-eng.md",
+    "install": true
+  },
+  "cpp": {
+    "path": "ENG/cpp-development-eng.md",
+    "install": true
+  },
+  "java": {
+    "path": "ENG/java-development-eng.md",
+    "install": true
+  },
+  "sql": {
+    "path": "ENG/sql-development-eng.md",
+    "install": true
+  },
+  "go": {
+    "path": "ENG/go-development-eng.md",
+    "install": true
+  },
+  "typescript": {
+    "path": "ENG/typescript-development-eng.md",
+    "install": true
+  },
+  "php": {
+    "path": "ENG/php-development-eng.md",
+    "install": true
+  },
+  "swift": {
+    "path": "ENG/swift-development-eng.md",
+    "install": true
   }
 }

@@ -8,6 +8,30 @@ import {
   rustSharedFileKind,
   rustSharedScopeDirectory,
 } from "./rust-project.js";
+import {
+  languageProjectKinds,
+  languageSourceExtension,
+  portablePath as languagePortablePath,
+  C_SOURCE_EXTENSIONS,
+  CPP_SOURCE_EXTENSIONS,
+  JAVA_SOURCE_EXTENSIONS,
+  PHP_SOURCE_EXTENSIONS,
+  SQL_SOURCE_EXTENSIONS,
+  SWIFT_SOURCE_EXTENSIONS,
+} from "./multi-language-project.js";
+import { inspectGoProject } from "./go-project.js";
+import {
+  inspectTypeScriptProject,
+  isDeclarationFile,
+  isTypeScriptConfigName,
+  resolveTypeScriptConfigGraph,
+  resolveTypeScriptConfigOwnershipRoots,
+} from "./typescript-project.js";
+import { inspectPhpProject, phpSourceLooksExecutable } from "./php-project.js";
+import { inspectJavaProject } from "./java-project.js";
+import { inspectNativeProject, nativeFrameworkForSource } from "./c-cpp-project.js";
+import { inspectSwiftProject, swiftSourceLooksExecutable } from "./swift-project.js";
+import { looksLikeSql, parseSqlProject } from "./sql-project.js";
 
 export const PROJECT_EVIDENCE_SCHEMA_VERSION = 1;
 
@@ -44,13 +68,20 @@ const IGNORED_DIRECTORIES = new Set([
   "bin",
   "build",
   "coverage",
+  "DerivedData",
+  "deriveddata",
   "dist",
+  "external",
+  "generated",
+  "gen",
+  ".gradle",
   "node_modules",
   "obj",
   "out",
   "target",
   "TestResults",
   "vendor",
+  "third_party",
 ]);
 const DOTNET_PROJECT_EXTENSIONS = new Set([".csproj", ".fsproj", ".vbproj"]);
 const DOTNET_SDKS = new Set([
@@ -82,6 +113,14 @@ const NODE_BACKEND_DEPENDENCIES = new Set([
   "@hapi/hapi",
 ]);
 const NODE_SOURCE_EXTENSIONS = new Set([".js", ".mjs", ".cjs", ".ts", ".mts", ".cts"]);
+const NON_TYPESCRIPT_JSON_FILES = new Set([
+  "composer.lock",
+  "global.json",
+  "launchsettings.json",
+  "npm-shrinkwrap.json",
+  "package-lock.json",
+  "packages.lock.json",
+]);
 const NODE_NON_RUNTIME_DIRECTORIES = new Set([
   "test",
   "tests",
@@ -138,6 +177,31 @@ const NODE_RUNTIME_ENTRY_NAMES = new Set([
   "service",
   "worker",
 ]);
+const SQL_RUNTIME_DIRECTORIES = new Set([
+  "database",
+  "db",
+  "migration",
+  "migrations",
+  "schema",
+  "schemas",
+  "sql",
+]);
+const SQL_NON_RUNTIME_DIRECTORIES = new Set([
+  "build",
+  "coverage",
+  "dist",
+  "docs",
+  "example",
+  "examples",
+  "fixtures",
+  "generated",
+  "gen",
+  "node_modules",
+  "target",
+  "test",
+  "tests",
+  "vendor",
+]);
 const NODE_SERVER_BUILTINS = Object.freeze([
   "node:http",
   "node:https",
@@ -163,6 +227,7 @@ const SHARED_NODE_FILES = new Set([
   ".nvmrc",
   ".node-version",
 ]);
+const SHARED_GRADLE_FILES = new Set(["gradle.properties"]);
 const PLATFORM_DIRECTORIES = Object.freeze([
   "android",
   "ios",
@@ -956,11 +1021,17 @@ function consumeEntry(budget) {
 
 async function findProjectFiles(root, budget) {
   const manifests = [];
+  const languageFiles = [];
+  const sourceFiles = [];
   const solutions = [];
   const sharedFiles = [];
 
+  function projectFileCapacityAvailable() {
+    return manifests.length + languageFiles.length < MAX_MANIFESTS;
+  }
+
   function addManifest(entry, absolutePath) {
-    if (manifests.length >= MAX_MANIFESTS) return;
+    if (!projectFileCapacityAvailable()) return;
     const extension = path.extname(entry.name).toLowerCase();
     const kind = entry.name === "pubspec.yaml"
       ? "flutter"
@@ -978,16 +1049,47 @@ async function findProjectFiles(root, budget) {
     if (extension === ".sln" || extension === ".slnx") solutions.push(absolutePath);
   }
 
+  function addLanguageFiles(entry, absolutePath) {
+    if (!projectFileCapacityAvailable()) return;
+    const kinds = languageProjectKinds(entry.name);
+    if (kinds.length === 0
+      && entry.name.toLowerCase().endsWith(".json")
+      && entry.name.toLowerCase() !== "package.json"
+      && !NON_TYPESCRIPT_JSON_FILES.has(entry.name.toLowerCase())) {
+      kinds.push("typescript-config");
+    }
+    for (const kind of kinds) {
+      if (!projectFileCapacityAvailable()) break;
+      languageFiles.push({
+        path: absolutePath,
+        kind,
+        name: entry.name,
+        relative: portableRelative(root, absolutePath).toLowerCase(),
+      });
+    }
+  }
+
+  function addSourceFile(entry, absolutePath) {
+    if (sourceFiles.length >= MAX_SOURCE_FILES) return;
+    if (languageProjectKinds(entry.name).length > 0) return;
+    const extension = languageSourceExtension(entry.name);
+    if (!extension || isDeclarationFile(entry.name)) return;
+    sourceFiles.push({ path: absolutePath, name: entry.name, extension });
+  }
+
   function classifyFile(entry, absolutePath) {
     addManifest(entry, absolutePath);
+    addLanguageFiles(entry, absolutePath);
+    addSourceFile(entry, absolutePath);
     addSolution(entry, absolutePath);
     const relative = portableRelative(root, absolutePath);
     if (isRustSharedFile(relative)) sharedFiles.push({ path: absolutePath, kind: "rust" });
     if (SHARED_NODE_FILES.has(entry.name.toLowerCase())) sharedFiles.push({ path: absolutePath, kind: "nodejs" });
+    if (SHARED_GRADLE_FILES.has(entry.name.toLowerCase())) sharedFiles.push({ path: absolutePath, kind: "gradle" });
   }
 
   async function visit(directory) {
-    if (manifests.length >= MAX_MANIFESTS && solutions.length >= MAX_SOLUTION_FILES) return;
+    if (!projectFileCapacityAvailable() && solutions.length >= MAX_SOLUTION_FILES) return;
     if (!consumeDirectory(budget)) return;
     let entries;
     try {
@@ -997,7 +1099,7 @@ async function findProjectFiles(root, budget) {
     }
     entries.sort((left, right) => left.name.localeCompare(right.name));
     for (const entry of entries) {
-      if (manifests.length >= MAX_MANIFESTS && solutions.length >= MAX_SOLUTION_FILES) return;
+      if (!projectFileCapacityAvailable() && solutions.length >= MAX_SOLUTION_FILES) return;
       if (!consumeEntry(budget)) return;
       const absolutePath = path.join(directory, entry.name);
       if (entry.isSymbolicLink()) continue;
@@ -1013,6 +1115,8 @@ async function findProjectFiles(root, budget) {
   const sortPaths = (left, right) => portableRelative(root, left.path ?? left).localeCompare(portableRelative(root, right.path ?? right));
   return {
     manifests: manifests.sort(sortPaths),
+    languageFiles: languageFiles.sort(sortPaths),
+    sourceFiles: sourceFiles.sort(sortPaths),
     solutions: solutions.sort(sortPaths),
     sharedFiles: sharedFiles.sort(sortPaths),
   };
@@ -1192,6 +1296,19 @@ function claimMatchesProject(claim, project, projectRoots) {
   return projectOwnsPath(claim, root, projectRoots);
 }
 
+function typeScriptProjectConsumesClaim(claim, project, projects, visited = new Set()) {
+  if (project.manifest.toLowerCase() === claim) return true;
+  const identity = project.manifest.toLowerCase();
+  if (visited.has(identity)) return false;
+  visited.add(identity);
+  return (project.internal?.localExtends ?? []).some((reference) => {
+    if (reference === claim) return true;
+    const consumer = projects.find((candidate) => candidate.kind === "typescript"
+      && candidate.manifest.toLowerCase() === reference);
+    return consumer ? typeScriptProjectConsumesClaim(claim, consumer, projects, visited) : false;
+  });
+}
+
 function isSharedDotNetClaim(claim) {
   return SHARED_DOTNET_FILES.has(path.posix.basename(claim).toLowerCase());
 }
@@ -1210,6 +1327,48 @@ function claimMatchesSharedNodeFile(claim, project, projectRoots) {
   if (!project.nodejs || !isSharedNodeClaim(claim)) return false;
   const directory = path.posix.dirname(claim).toLowerCase();
   return sharedFileWithinProjectScope(directory, project.root, projectRoots);
+}
+
+function isSharedGradleClaim(claim) {
+  return SHARED_GRADLE_FILES.has(path.posix.basename(claim).toLowerCase());
+}
+
+function isGradleBuildProject(project) {
+  return project?.kind === "java" && project.internal?.gradleBuild;
+}
+
+function gradlePropertiesWithinScope(claim, project, projects) {
+  if (!isGradleBuildProject(project) || !isSharedGradleClaim(claim)) return false;
+  const directory = path.posix.dirname(claim).toLowerCase();
+  const projectRoot = project.root.toLowerCase();
+  const withinDirectory = directory === "."
+    || projectRoot === directory
+    || projectRoot.startsWith(`${directory}/`);
+  if (!withinDirectory) return false;
+  return !projects.some((candidate) => {
+    if (!candidate.internal?.gradleSettings || !candidate.validManifest) return false;
+    const settingsRoot = candidate.root.toLowerCase();
+    if (settingsRoot === directory || !isStrictRootAncestor(directory, settingsRoot)) return false;
+    return projectRoot === settingsRoot || projectRoot.startsWith(`${settingsRoot}/`);
+  });
+}
+
+function claimMatchesSharedGradleFile(claim, project, projects) {
+  return gradlePropertiesWithinScope(claim, project, projects);
+}
+
+function claimMatchesGradleSettings(claim, project, projects) {
+  if (!isGradleBuildProject(project)) return false;
+  return projects.some((settingsProject) => {
+    if (settingsProject.kind !== "java"
+      || !settingsProject.validManifest
+      || !settingsProject.internal?.gradleSettings
+      || settingsProject.manifest.toLowerCase() !== claim) return false;
+    if (settingsProject.root.toLowerCase() === project.root.toLowerCase()) return true;
+    return (settingsProject.internal.includes ?? [])
+      .map((include) => normalizedGradleProjectRoot(settingsProject.root, include)?.toLowerCase())
+      .includes(project.root.toLowerCase());
+  });
 }
 
 function isRustToolchainFile(relativePath) {
@@ -1276,6 +1435,25 @@ function claimMatchesNodeWorkspaceManifest(claim, project, projects) {
   if (!workspace) return false;
   const workspacePrefix = workspace.root === "." ? "" : `${workspace.root}/`;
   return project.root === workspace.root || project.root.startsWith(workspacePrefix);
+}
+
+function normalizedJavaModuleRoot(aggregatorRoot, module) {
+  if (typeof module !== "string" || module.trim() === "") return null;
+  const portable = module.trim().replaceAll("\\", "/");
+  if (portable.startsWith("/") || /^[A-Za-z]:\//u.test(portable)) return null;
+  const normalized = path.posix.normalize(path.posix.join(aggregatorRoot === "." ? "" : aggregatorRoot, portable));
+  if (normalized === ".." || normalized.startsWith("../")) return null;
+  return normalized.replace(/^\.\//u, "") || ".";
+}
+
+function claimMatchesJavaAggregator(claim, project, projects) {
+  if (!project?.frameworks?.includes("java")) return false;
+  return projects.some((aggregator) => {
+    if (aggregator === project || aggregator.kind !== "java" || aggregator.manifest.toLowerCase() !== claim) return false;
+    return (aggregator.internal?.modules ?? []).some((module) => {
+      return normalizedJavaModuleRoot(aggregator.root, module)?.toLowerCase() === project.root.toLowerCase();
+    });
+  });
 }
 
 function normalizedSolutionMember(relativePath, solutionPath, targetRoot) {
@@ -1429,19 +1607,18 @@ async function inspectNodeProject({
   manifestText,
   targetRoot,
   budget,
-  manifestInfos,
+  projectRoots,
   sharedFiles,
+  includeSourceEvidence = true,
 }) {
   const parsed = parsePackageJson(manifestText ?? "");
-  const projectRoots = manifestInfos
-    .map((candidate) => portableRelative(targetRoot, path.dirname(candidate.path)));
   const nestedRoots = nestedProjectRoots(projectRoot, projectRoots)
     .map((candidate) => path.resolve(targetRoot, candidate));
   const primarySignals = [];
   for (const dependency of parsed.backendDependencySignals) primarySignals.push(`${manifestRelative}:${dependency}`);
   for (const script of parsed.runtimeScripts) primarySignals.push(`${manifestRelative}:scripts.${script}=node`);
 
-  const serverImports = parsed.valid && primarySignals.length === 0
+  const serverImports = parsed.valid && includeSourceEvidence && primarySignals.length === 0
     ? await findNodeServerImports(projectRootPath, targetRoot, budget, nestedRoots)
     : [];
   for (const serverImport of serverImports) {
@@ -1476,10 +1653,206 @@ async function inspectNodeProject({
   };
 }
 
-async function inspectFlutterProject({ projectRootPath, projectRoot, manifestRelative, manifestText, budget }) {
+function inspectGoLanguageProject(context) {
+  return inspectGoProject(context);
+}
+
+function inspectTypeScriptLanguageProject(context) {
+  return inspectTypeScriptProject(context);
+}
+
+function inspectSqlLanguageProject(context) {
+  const parsed = parseSqlProject(context.manifestText);
+  return {
+    kind: "sql",
+    root: context.projectRoot,
+    manifest: context.manifestRelative,
+    validManifest: parsed.valid,
+    primary: parsed.database,
+    frameworks: parsed.database ? ["sql"] : [],
+    primarySignals: parsed.database ? [`${context.manifestRelative}:database-project`] : [],
+    supportingSignals: [],
+    internal: parsed,
+  };
+}
+
+const LANGUAGE_PROJECT_INSPECTORS = new Map([
+  ["go", inspectGoLanguageProject],
+  ["go-work", inspectGoLanguageProject],
+  ["typescript", inspectTypeScriptLanguageProject],
+  ["javascript-config", inspectTypeScriptLanguageProject],
+  ["typescript-config", inspectTypeScriptLanguageProject],
+  ["php", inspectPhpProject],
+  ["java-maven", inspectJavaProject],
+  ["java-gradle", inspectJavaProject],
+  ["java-gradle-settings", inspectJavaProject],
+  ["java-gradle-properties", inspectJavaProject],
+  ["java-bazel", inspectJavaProject],
+  ["c-cpp-cmake", inspectNativeProject],
+  ["c-cpp-meson", inspectNativeProject],
+  ["c-cpp-meson-options", inspectNativeProject],
+  ["c-cpp-make", inspectNativeProject],
+  ["native-bazel", inspectNativeProject],
+  ["swift-package", inspectSwiftProject],
+  ["swift-xcode", inspectSwiftProject],
+  ["swift-cmake", inspectSwiftProject],
+  ["swift-meson", inspectSwiftProject],
+  ["sql-project", inspectSqlLanguageProject],
+]);
+
+function inspectLanguageProject(
+  languageFile,
+  targetRoot,
+  projectRoots,
+  sourceFiles,
+  languageFiles,
+  claims = [],
+  activeConfigRelatives = null,
+  ownershipConfigRelatives = null,
+) {
+  const projectRootPath = languageFile.kind === "swift-xcode"
+    ? path.dirname(path.dirname(languageFile.path))
+    : path.dirname(languageFile.path);
+  const manifestRelative = languagePortablePath(targetRoot, languageFile.path);
+  const context = {
+    projectRoot: languagePortablePath(targetRoot, projectRootPath),
+    manifestRelative,
+    manifestText: languageFile.text,
+    manifestName: languageFile.name.toLowerCase(),
+    targetRoot,
+    projectRoots,
+    sourceFiles,
+    projectFiles: languageFiles,
+    directClaim: claims.includes(manifestRelative.toLowerCase()),
+    configKind: languageFile.kind,
+    activeConfigRelatives,
+    ownershipConfigRelatives,
+  };
+  return LANGUAGE_PROJECT_INSPECTORS.get(languageFile.kind)?.(context) ?? null;
+}
+
+function directSourceFrameworks(sourceFile, text) {
+  if (!sourceFile || typeof text !== "string") return [];
+  if (SQL_SOURCE_EXTENSIONS.has(sourceFile.extension)) return looksLikeSql(text) ? ["sql"] : [];
+  if (PHP_SOURCE_EXTENSIONS.has(sourceFile.extension)) return phpSourceLooksExecutable(text) ? ["php"] : [];
+  if (JAVA_SOURCE_EXTENSIONS.has(sourceFile.extension)) return ["java"];
+  if (SWIFT_SOURCE_EXTENSIONS.has(sourceFile.extension)) return swiftSourceLooksExecutable(text) ? ["swift"] : [];
+  const nativeFramework = nativeFrameworkForSource(sourceFile.name);
+  if (nativeFramework && (C_SOURCE_EXTENSIONS.has(sourceFile.extension) || CPP_SOURCE_EXTENSIONS.has(sourceFile.extension))) {
+    return [nativeFramework];
+  }
+  return [];
+}
+
+function sourceProjectRoot(claim, projectRoots) {
+  const candidates = projectRoots
+    .filter((root) => root === "." || claim === root || claim.startsWith(`${root}/`))
+    .sort((left, right) => right.length - left.length);
+  return candidates.find((root) => !projectPathHasNestedBoundary(claim, root, projectRoots)) ?? null;
+}
+
+function isDiscoveredSqlArtifact(relativePath) {
+  const segments = relativePath.split("/");
+  if (segments.some((segment) => SQL_NON_RUNTIME_DIRECTORIES.has(segment))) return false;
+  return segments.slice(0, -1).some((segment) => SQL_RUNTIME_DIRECTORIES.has(segment));
+}
+
+function attachSourceFramework(project, relative, framework) {
+  if (!project.frameworks.includes(framework)) project.frameworks.push(framework);
+  project.primary = true;
+  project.primarySignals.push(relative + ":source=" + framework);
+}
+
+function createDirectSourceProject(relative, frameworks, root = null) {
+  return {
+    kind: "direct-source",
+    root,
+    manifest: relative,
+    validManifest: true,
+    primary: true,
+    frameworks,
+    primarySignals: [relative + ":source=" + frameworks.join(",")],
+    supportingSignals: [],
+    internal: { direct: true },
+  };
+}
+
+function directSourceProjectForClaim({ relative, frameworks, projects, projectRoots }) {
+  const hostRoot = sourceProjectRoot(relative, projectRoots);
+  const host = hostRoot ? projects.find((project) => project.root.toLowerCase() === hostRoot.toLowerCase()) : null;
+  if (host) {
+    for (const framework of frameworks) attachSourceFramework(host, relative, framework);
+    return null;
+  }
+  return createDirectSourceProject(relative, frameworks);
+}
+
+function sqlProjectRoot(relative, projectRoots) {
+  return sourceProjectRoot(relative, projectRoots) ?? path.posix.dirname(relative);
+}
+
+async function addDiscoveredSqlProjects({ targetRoot, sourceFiles, projects, projectRoots }) {
+  const directProjects = [];
+  for (const sourceFile of sourceFiles) {
+    if (!SQL_SOURCE_EXTENSIONS.has(sourceFile.extension)) continue;
+    const relative = languagePortablePath(targetRoot, sourceFile.path).toLowerCase();
+    if (!isDiscoveredSqlArtifact(relative)) continue;
+    const text = await readBounded(sourceFile.path, MAX_SOURCE_BYTES);
+    if (!looksLikeSql(text)) continue;
+    const root = sqlProjectRoot(relative, projectRoots);
+    const host = projects.find((project) => project.root.toLowerCase() === root.toLowerCase());
+    if (host) {
+      attachSourceFramework(host, relative, "sql");
+    } else {
+      directProjects.push(createDirectSourceProject(relative, ["sql"], root));
+    }
+  }
+  return directProjects;
+}
+
+async function addDirectSourceProjects({ targetRoot, claims, sourceFiles, projects, projectRoots }) {
+  const directProjects = [];
+  const handled = new Set();
+  for (const claim of claims) {
+    const claimedFiles = sourceFiles.filter((file) => {
+      const relative = languagePortablePath(targetRoot, file.path).toLowerCase();
+      return relative === claim || (SQL_SOURCE_EXTENSIONS.has(file.extension) && relative.startsWith(`${claim}/`));
+    });
+    for (const sourceFile of claimedFiles) {
+      const relativeLower = languagePortablePath(targetRoot, sourceFile.path).toLowerCase();
+      if (handled.has(relativeLower)) continue;
+      handled.add(relativeLower);
+      if (relativeLower !== claim && (!SQL_SOURCE_EXTENSIONS.has(sourceFile.extension)
+        || !isDiscoveredSqlArtifact(relativeLower))) continue;
+      const text = await readBounded(sourceFile.path, MAX_SOURCE_BYTES);
+      const frameworks = directSourceFrameworks(sourceFile, text);
+      if (frameworks.length === 0) continue;
+      const relative = languagePortablePath(targetRoot, sourceFile.path);
+      const directProject = directSourceProjectForClaim({ relative, frameworks, projects, projectRoots });
+      if (directProject) directProjects.push(directProject);
+    }
+  }
+  return directProjects;
+}
+
+async function inspectFlutterProject({ projectRootPath, projectRoot, manifestRelative, manifestText, budget, includeSupportingEvidence = true }) {
   const parsed = parsePubspec(manifestText ?? "");
   const primarySignals = parsed.primary ? [`${manifestRelative}:dependencies.flutter.sdk`] : [];
   const supportingSignals = [];
+  if (!includeSupportingEvidence) {
+    return {
+      kind: "flutter",
+      root: projectRoot,
+      manifest: manifestRelative,
+      validManifest: parsed.valid,
+      primary: parsed.primary,
+      nodejs: false,
+      dotnet: false,
+      frameworks: parsed.primary ? ["flutter"] : [],
+      primarySignals,
+      supportingSignals,
+    };
+  }
   if (parsed.flutterTest) supportingSignals.push(`${manifestRelative}:dev_dependencies.flutter_test.sdk`);
   if (parsed.override) supportingSignals.push(`${manifestRelative}:dependency_overrides.flutter.sdk`);
 
@@ -1510,14 +1883,21 @@ async function inspectFlutterProject({ projectRootPath, projectRoot, manifestRel
   };
 }
 
-async function inspectProject(manifestInfo, targetRoot, budget, manifestInfos, sharedFiles) {
+async function inspectProject(
+  manifestInfo,
+  targetRoot,
+  budget,
+  projectRoots,
+  sharedFiles,
+  includeSupportingEvidence = true,
+) {
   const manifestPath = manifestInfo.path;
   const projectRootPath = path.dirname(manifestPath);
   const context = {
     projectRootPath,
     projectRoot: portableRelative(targetRoot, projectRootPath),
     manifestRelative: portableRelative(targetRoot, manifestPath),
-    manifestText: await readBounded(manifestPath, MAX_MANIFEST_BYTES),
+    manifestText: manifestInfo.text ?? await readBounded(manifestPath, MAX_MANIFEST_BYTES),
   };
 
   if (manifestInfo.kind === "dotnet") return inspectDotNetProject(context);
@@ -1525,14 +1905,229 @@ async function inspectProject(manifestInfo, targetRoot, budget, manifestInfos, s
     return inspectRustProject({
       ...context,
       targetRoot,
-      projectRoots: manifestInfos.map((candidate) => portableRelative(targetRoot, path.dirname(candidate.path))),
+      projectRoots,
       sharedFiles,
     });
   }
   if (manifestInfo.kind === "nodejs") {
-    return inspectNodeProject({ ...context, targetRoot, budget, manifestInfos, sharedFiles });
+    return inspectNodeProject({
+      ...context,
+      targetRoot,
+      budget,
+      projectRoots,
+      sharedFiles,
+      includeSourceEvidence: includeSupportingEvidence,
+    });
   }
-  return inspectFlutterProject({ ...context, budget });
+  return inspectFlutterProject({ ...context, budget, includeSupportingEvidence });
+}
+
+function isSelectableProject(project) {
+  if (isAuxiliaryNativeProject(project)
+    || project.internal?.gradleSettings
+    || project.internal?.gradleProperties) return project.primary;
+  if (project.kind === "typescript") return project.primary;
+  if (project.kind === "rust" && !project.rust) return false;
+  return project.primary || project.validManifest;
+}
+
+async function readLanguageFiles(entries, budget) {
+  const languageFiles = entries.map((entry) => ({ ...entry, text: null }));
+  for (const languageFile of languageFiles) {
+    languageFile.text = await readBounded(languageFile.path, MAX_MANIFEST_BYTES);
+    if (budget.exhausted) return null;
+  }
+  return languageFiles;
+}
+
+async function readManifestFiles(entries, budget) {
+  const manifests = entries.map((entry) => ({ ...entry, text: null }));
+  for (const manifest of manifests) {
+    manifest.text = await readBounded(manifest.path, MAX_MANIFEST_BYTES);
+    if (budget.exhausted) return null;
+  }
+  return manifests;
+}
+
+async function inspectDiscoveredProjects({
+  targetRoot,
+  manifests,
+  languageFiles,
+  sourceFiles,
+  projectRoots,
+  claims,
+  activeConfigRelatives,
+  ownershipConfigRelatives,
+  sharedFiles,
+  budget,
+  includeSupportingEvidence = true,
+}) {
+  const projects = [];
+  for (const manifestInfo of manifests) {
+    projects.push(await inspectProject(
+      manifestInfo,
+      targetRoot,
+      budget,
+      projectRoots,
+      sharedFiles,
+      includeSupportingEvidence,
+    ));
+    if (budget.exhausted) return null;
+  }
+  for (const languageFile of languageFiles) {
+    const project = inspectLanguageProject(
+      languageFile,
+      targetRoot,
+      projectRoots,
+      sourceFiles,
+      languageFiles,
+      claims,
+      activeConfigRelatives,
+      ownershipConfigRelatives,
+    );
+    if (project) projects.push(project);
+    if (budget.exhausted) return null;
+  }
+  return projects;
+}
+
+function isStrictRootAncestor(parent, candidate) {
+  return parent !== candidate && (parent === "." ? candidate !== "." : candidate.startsWith(`${parent}/`));
+}
+
+function normalizedGradleProjectRoot(aggregatorRoot, include) {
+  if (typeof include !== "string" || include.trim() === "") return null;
+  const portable = include.trim().replaceAll("\\", "/").replace(/^:/u, "").replaceAll(":", "/");
+  if (portable.startsWith("/") || /^[A-Za-z]:\//u.test(portable)) return null;
+  const normalized = path.posix.normalize(path.posix.join(aggregatorRoot === "." ? "" : aggregatorRoot, portable));
+  if (normalized === ".." || normalized.startsWith("../")) return null;
+  return normalized.replace(/^\.\//u, "") || ".";
+}
+
+function hasKnownGradleChild(settingsProject, projects) {
+  const includes = settingsProject.internal?.includes ?? [];
+  const includedRoots = includes
+    .map((include) => normalizedGradleProjectRoot(settingsProject.root, include))
+    .filter(Boolean)
+    .map((root) => root.toLowerCase());
+  return projects.some((candidate) => candidate !== settingsProject
+    && candidate.internal?.gradleBuild
+    && candidate.primary
+    && candidate.validManifest
+    && (candidate.root.toLowerCase() === settingsProject.root.toLowerCase()
+      || includedRoots.includes(candidate.root.toLowerCase())));
+}
+
+function isAuxiliaryNativeProject(project) {
+  const name = path.posix.basename(project.manifest ?? "").toLowerCase();
+  return project.kind === "native" && ["makefile", "gnumakefile", "meson_options.txt"].includes(name);
+}
+
+function isConfirmedProjectCandidate(project, projects) {
+  if (!project?.root || project.root === "..") return false;
+  if (project.internal?.gradleProperties) return false;
+  if (project.internal?.gradleSettings) return project.validManifest && hasKnownGradleChild(project, projects);
+  if (project.kind === "typescript") return project.primary && project.validManifest;
+  if (project.kind === "rust") return Boolean(project.rust);
+  if (isAuxiliaryNativeProject(project)) return false;
+  if (project.internal?.gradleBuild) return project.primary && project.validManifest;
+  if (project.kind === "native") return Boolean(project.internal?.valid);
+  if (project.kind === "sql") return Boolean(project.internal?.database);
+  return project.validManifest;
+}
+
+function nativeSourceExistsUnderRoot(project, sourceFiles, targetRoot, boundaryRoots) {
+  return sourceFiles.some((file) => {
+    if (!C_SOURCE_EXTENSIONS.has(file.extension) && !CPP_SOURCE_EXTENSIONS.has(file.extension)) return false;
+    const relative = portableRelative(targetRoot, file.path).toLowerCase();
+    const root = project.root.toLowerCase();
+    const underRoot = root === "." || relative === root || relative.startsWith(`${root}/`);
+    return underRoot && !projectPathHasNestedBoundary(relative, root, boundaryRoots);
+  });
+}
+
+function hasConfirmedNativeAncestor(projects, root) {
+  return projects.some((ancestor) => {
+    const ancestorRoot = ancestor.root?.toLowerCase();
+    return ancestorRoot && isStrictRootAncestor(ancestorRoot, root)
+      && ancestor.kind === "native"
+      && !isAuxiliaryNativeProject(ancestor)
+      && ancestor.internal?.valid;
+  });
+}
+
+function confirmedProjectRoots(projects, sourceFiles, targetRoot) {
+  const roots = new Set(projects
+    .filter((project) => isConfirmedProjectCandidate(project, projects))
+    .map((project) => project.root.toLowerCase()));
+  for (const project of projects) {
+    if (!isAuxiliaryNativeProject(project) || roots.has(project.root.toLowerCase())) continue;
+    if (hasConfirmedNativeAncestor(projects, project.root.toLowerCase())) continue;
+    if (nativeSourceExistsUnderRoot(project, sourceFiles, targetRoot, [...roots])) roots.add(project.root.toLowerCase());
+  }
+  return uniqueSorted([...roots]);
+}
+
+function demoteNestedAuxiliaryProjects(projects, projectRoots, sourceFiles, targetRoot) {
+  for (const project of projects) {
+    if (!isAuxiliaryNativeProject(project)) continue;
+    const root = project.root.toLowerCase();
+    if (!projectRoots.some((candidate) => isStrictRootAncestor(candidate, root))) continue;
+    const independentSource = nativeSourceExistsUnderRoot(project, sourceFiles, targetRoot, projectRoots);
+    if (independentSource && !hasConfirmedNativeAncestor(projects, root)) continue;
+    project.primary = false;
+    project.frameworks = [];
+    project.primarySignals = [];
+  }
+}
+
+async function readSolutionMembership(targetRoot, solutions) {
+  const membership = new Map();
+  for (const solutionPath of solutions) {
+    const solutionRelative = portableRelative(targetRoot, solutionPath).toLowerCase();
+    const text = await readBounded(solutionPath, MAX_MANIFEST_BYTES);
+    membership.set(
+      solutionRelative,
+      parseSolutionMembership(text, path.extname(solutionPath).toLowerCase(), solutionPath, targetRoot) ?? [],
+    );
+  }
+  return membership;
+}
+
+function projectMatchesClaim(claim, project, { solutionClaims, solutionMembership, projectRoots, projects, sharedFiles, targetRoot }) {
+  if (!project.root) return false;
+  if (project.kind === "typescript") {
+    const knownConfigClaim = isTypeScriptConfigName(path.posix.basename(claim))
+      || projects.some((candidate) => candidate.kind === "typescript"
+        && candidate.manifest.toLowerCase() === claim);
+    if (knownConfigClaim) {
+      return path.posix.basename(claim) === "tsconfig.json"
+        ? project.manifest.toLowerCase() === claim
+        : typeScriptProjectConsumesClaim(claim, project, projects);
+    }
+  }
+  if (solutionClaims.includes(claim)) {
+    return project.dotnet && solutionMembership.get(claim).includes(project.manifest.toLowerCase());
+  }
+  if (isSharedDotNetClaim(claim)) return claimMatchesSharedDotNetFile(claim, project, projectRoots);
+  if (isSharedNodeClaim(claim)) return claimMatchesSharedNodeFile(claim, project, projectRoots);
+  if (isSharedGradleClaim(claim)) return claimMatchesSharedGradleFile(claim, project, projects);
+  if (isRustSharedFile(claim)) {
+    return claimMatchesSharedRustFile(claim, project, projects, projectRoots, sharedFiles, targetRoot);
+  }
+  return claimMatchesProject(claim, project, projectRoots)
+    || claimMatchesNodeWorkspaceManifest(claim, project, projects)
+    || claimMatchesGradleSettings(claim, project, projects)
+    || claimMatchesJavaAggregator(claim, project, projects)
+    || claimMatchesRustWorkspaceManifest(claim, project, projects);
+}
+
+function selectProjects(projects, claims, hasClaims, solutionMembership, projectRoots, sharedFiles, targetRoot) {
+  const selectableProjects = projects.filter(isSelectableProject);
+  if (!hasClaims) return selectableProjects;
+  const solutionClaims = claims.filter((claim) => solutionMembership.has(claim));
+  const context = { solutionClaims, solutionMembership, projectRoots, projects, sharedFiles, targetRoot };
+  return selectableProjects.filter((project) => claims.some((claim) => projectMatchesClaim(claim, project, context)));
 }
 
 export async function detectProjectEvidence(target, { claims = [], limits = {} } = {}) {
@@ -1540,44 +2135,84 @@ export async function detectProjectEvidence(target, { claims = [], limits = {} }
   const budget = createTraversalBudget(limits);
   const discovered = await findProjectFiles(targetRoot, budget);
   if (budget.exhausted) return null;
-  if (discovered.manifests.length === 0) return null;
-  const projects = [];
-  for (const manifestInfo of discovered.manifests) {
-    projects.push(await inspectProject(manifestInfo, targetRoot, budget, discovered.manifests, discovered.sharedFiles));
-    if (budget.exhausted) return null;
+  const projectFiles = [
+    ...discovered.manifests,
+    ...discovered.languageFiles,
+  ];
+  const normalizedClaims = uniqueSorted((Array.isArray(claims) ? claims : []).map(normalizeClaim).filter(Boolean));
+  const hasClaims = Array.isArray(claims) && claims.length > 0;
+  if (projectFiles.length === 0 && discovered.sourceFiles.length === 0 && !hasClaims) return null;
+  const languageFiles = await readLanguageFiles(discovered.languageFiles, budget);
+  if (!languageFiles) return null;
+  const activeConfigRelatives = resolveTypeScriptConfigGraph(languageFiles, normalizedClaims);
+  const manifestFiles = await readManifestFiles(discovered.manifests, budget);
+  if (!manifestFiles) return null;
+  const ownershipConfigRelatives = resolveTypeScriptConfigOwnershipRoots(
+    languageFiles,
+    activeConfigRelatives,
+    normalizedClaims,
+  );
+  const preliminaryProjects = await inspectDiscoveredProjects({
+    targetRoot,
+    manifests: manifestFiles,
+    languageFiles,
+    sourceFiles: [],
+    projectRoots: [],
+    claims: normalizedClaims,
+    activeConfigRelatives,
+    ownershipConfigRelatives,
+    sharedFiles: discovered.sharedFiles,
+    budget,
+    includeSupportingEvidence: false,
+  });
+  if (!preliminaryProjects) return null;
+  resolveRustWorkspaceEvidence(preliminaryProjects);
+  const projectRoots = confirmedProjectRoots(preliminaryProjects, discovered.sourceFiles, targetRoot);
+  const projects = await inspectDiscoveredProjects({
+    targetRoot,
+    manifests: manifestFiles,
+    languageFiles,
+    sourceFiles: discovered.sourceFiles,
+    projectRoots,
+    claims: normalizedClaims,
+    activeConfigRelatives,
+    ownershipConfigRelatives,
+    sharedFiles: discovered.sharedFiles,
+    budget,
+  });
+  if (!projects) return null;
+  demoteNestedAuxiliaryProjects(projects, projectRoots, discovered.sourceFiles, targetRoot);
+  if (!hasClaims) {
+    projects.push(...await addDiscoveredSqlProjects({
+      targetRoot,
+      sourceFiles: discovered.sourceFiles,
+      projects,
+      projectRoots,
+    }));
   }
   resolveRustWorkspaceEvidence(projects);
 
-  const solutionMembership = new Map();
-  for (const solutionPath of discovered.solutions) {
-    const solutionRelative = portableRelative(targetRoot, solutionPath).toLowerCase();
-    const text = await readBounded(solutionPath, MAX_MANIFEST_BYTES);
-    solutionMembership.set(
-      solutionRelative,
-      parseSolutionMembership(text, path.extname(solutionPath).toLowerCase(), solutionPath, targetRoot) ?? [],
-    );
+  const solutionMembership = await readSolutionMembership(targetRoot, discovered.solutions);
+  let selectedProjects = selectProjects(
+    projects,
+    normalizedClaims,
+    hasClaims,
+    solutionMembership,
+    projectRoots,
+    discovered.sharedFiles,
+    targetRoot,
+  );
+  if (hasClaims) {
+    const directProjects = await addDirectSourceProjects({
+      targetRoot,
+      claims: normalizedClaims,
+      sourceFiles: discovered.sourceFiles,
+      projects,
+      projectRoots,
+    });
+    selectedProjects = [...selectedProjects, ...directProjects];
   }
-
-  const normalizedClaims = uniqueSorted((Array.isArray(claims) ? claims : []).map(normalizeClaim).filter(Boolean));
-  const hasClaims = Array.isArray(claims) && claims.length > 0;
-  const projectRoots = discovered.manifests
-    .map((manifestInfo) => portableRelative(targetRoot, path.dirname(manifestInfo.path)));
-  const solutionClaims = normalizedClaims.filter((claim) => solutionMembership.has(claim));
-  const selectedProjects = hasClaims
-    ? projects.filter((project) => normalizedClaims.some((claim) => {
-      if (solutionClaims.includes(claim)) {
-        return project.dotnet && solutionMembership.get(claim).includes(project.manifest.toLowerCase());
-      }
-      if (isSharedDotNetClaim(claim)) return claimMatchesSharedDotNetFile(claim, project, projectRoots);
-      if (isSharedNodeClaim(claim)) return claimMatchesSharedNodeFile(claim, project, projectRoots);
-      if (isRustSharedFile(claim)) {
-        return claimMatchesSharedRustFile(claim, project, projects, projectRoots, discovered.sharedFiles, targetRoot);
-      }
-      return claimMatchesProject(claim, project, projectRoots)
-        || claimMatchesNodeWorkspaceManifest(claim, project, projects)
-        || claimMatchesRustWorkspaceManifest(claim, project, projects);
-    }))
-    : projects;
+  if (projects.length === 0 && selectedProjects.length === 0) return null;
   const scope = hasClaims
     ? (selectedProjects.length > 0 ? "MATCH" : "NO_MATCH")
     : "UNSCOPED";

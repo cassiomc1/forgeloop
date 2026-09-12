@@ -89,6 +89,13 @@ selects the single `dotnet` guide. Web/Razor/Blazor or
 `Volo.Abp.*` package reference adds an ABP routing reason; neither overlay is a
 standalone guide ID, and each requires `dotnet` in project evidence.
 
+Bounded structural inspectors also recognize Go modules/workspaces, valid
+TypeScript configs, Composer/PHP projects, Java Maven/Gradle/Bazel roots,
+SwiftPM/Xcode/native Swift roots, and explicit C/C++ build/source evidence.
+Meaningful SQL migrations and schemas are scoped overlays. Build, compiler,
+package-manager, database, lockfile, generated, and vendor artifacts are not
+executed or promoted beyond their documented evidence contract.
+
 Mentions in prose, source snippets, Dockerfiles, lockfiles, package names,
 malformed manifests, and unrelated monorepo roots are insufficient. Mixed
 Flutter/.NET roots stay isolated. Shared MSBuild/NuGet files apply only to

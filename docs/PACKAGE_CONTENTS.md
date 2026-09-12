@@ -31,13 +31,14 @@ The published tarball includes the following consumer-facing groups:
 - **Specialist guidance:** every registered consumer guide under `ENG/`,
   including `ENG/flutter-development-eng.md`,
   `ENG/dotnet-aspnetcore-development-eng.md`,
-  `ENG/nodejs-backend-development-eng.md`, and
-  `ENG/rust-development-eng.md`, ships with the guide registry and is resolved
-  from a package-local path. Flutter, .NET, Node.js, and Rust specialists are
-  selected only from their bounded structural primary evidence. ASP.NET Core
-  and ABP are conditional routing overlays on the `dotnet` guide, not
-  additional package guides. The package does not install or invoke framework
-  tooling.
+  `ENG/nodejs-backend-development-eng.md`,
+  `ENG/rust-development-eng.md`, and the C, C++, Java, SQL, Go, TypeScript,
+  PHP, and Swift specialists, ships with the guide registry and is resolved
+  from package-local paths. Specialists are selected only from their bounded
+  structural primary evidence; SQL remains a scoped host-project overlay.
+  ASP.NET Core and ABP are conditional routing overlays on the `dotnet` guide,
+  not additional package guides. The package does not install or invoke
+  framework, compiler, build, package-manager, or database tooling.
 - **Initialization material:** the root protocol and integration documents,
   legal notices, the target profile template, and every path listed by
   `src/core/templates.js`. These files are read by `init` and `update`, so
@@ -79,7 +80,7 @@ The tarball intentionally omits repository-only material:
   README remains intentionally text-first around that relative repository
   image reference.
 
-The package test checks both required paths and these exclusion classes. It
+The package test checks all registered guide paths and these exclusion classes. It
 also enumerates `src/**/*.js` and fails if a maintained runtime module is
 missing from the candidate tarball or if a retired helper is reintroduced.
 The repository index remains a catalog: links from `DOCS_INDEX.md` to tests,
@@ -99,8 +100,8 @@ npm run pack:smoke
 `pack:smoke` installs the candidate tarball into a temporary consumer and
 exercises the CLI, public Integration API, initialization, schemas, and
 packaged documentation references. The package-boundary tests also assert
-that every registered guide path, including the Flutter, .NET, Node.js, and
-Rust specialists, is present in the candidate. The tag-triggered publication
+that every registered guide path, including all language specialists, is
+present in the candidate. The tag-triggered publication
 workflow
 runs the same smoke gate before `npm publish --provenance --access public`.
 Publication therefore remains owned by the trusted GitHub Actions OIDC

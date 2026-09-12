@@ -69,10 +69,21 @@ validator-backed `COMPLETE / VALID` and preserves a later
 | .NET and ASP.NET Core | [guide](./ENG/dotnet-aspnetcore-development-eng.md) |
 | Node.js | [guide](./ENG/nodejs-backend-development-eng.md) |
 | Rust | [guide](./ENG/rust-development-eng.md) |
+| C | [guide](./ENG/c-development-eng.md) |
+| C++ | [guide](./ENG/cpp-development-eng.md) |
+| Java | [guide](./ENG/java-development-eng.md) |
+| SQL | [guide](./ENG/sql-development-eng.md) |
+| Go | [guide](./ENG/go-development-eng.md) |
+| TypeScript | [guide](./ENG/typescript-development-eng.md) |
+| PHP | [guide](./ENG/php-development-eng.md) |
+| Swift | [guide](./ENG/swift-development-eng.md) |
 | Structural quality feedback | [`docs/STRUCTURAL_QUALITY.md`](./docs/STRUCTURAL_QUALITY.md) |
 
-Routing requires Flutter SDK evidence, Node.js runtime evidence, or a valid Rust
-Cargo package/workspace manifest. Metadata alone fails.
+Routing uses bounded structural evidence for Flutter, .NET, Node.js, Rust, C,
+C++, Java, Go, TypeScript, PHP, and Swift; SQL is a scoped schema/query/
+migration overlay. Source extensions, build tooling, lockfiles, compiler/JDK/
+runtime images, and prose alone fail where the specialist contract requires
+stronger project identity. The public project-evidence schema remains v1.
 
 ## Quickstart
 
@@ -456,7 +467,9 @@ and [visual review](./docs/diagrams/reviews/forgeloop-code-attestation-flow.revi
 show exact content binding, optional signing, and separate revision-range
 coverage.
 
-Text-only fallback: discovery creates the contract and route; parsed
+Text-only fallback: discovery creates the contract and route; parsed project
+manifests/build metadata select the corresponding language specialist; owned
+SQL migrations overlay their host project; parsed
 `dependencies.flutter.sdk: flutter` selects Flutter for that root; a supported
 SDK-style manifest selects .NET; parsed `[package]` or `[workspace]` in
 `Cargo.toml` selects Rust for that root; ASP.NET Core and ABP remain .NET
