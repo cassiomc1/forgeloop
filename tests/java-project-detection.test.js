@@ -45,6 +45,12 @@ test("Java build metadata is defensive and rejects external XML entities", () =>
   assert.deepEqual(parseGradleSettings("if (false) { include(\"app\") }\n").includes, []);
   assert.deepEqual(parseGradleSettings("if (false) include 'app'\n").includes, []);
   assert.deepEqual(parseGradleSettings("if (true) include 'app'\n").includes, []);
+  assert.deepEqual(parseGradleSettings("if (false)\n    include 'app'\n").includes, []);
+  assert.deepEqual(parseGradleSettings("if (true)\n    include 'app'\n").includes, []);
+  assert.deepEqual(parseGradleSettings("if (false)\n    include(\"app\")\n").includes, []);
+  assert.deepEqual(parseGradleSettings("if (condition)\n    include(\"app\")\n").includes, []);
+  assert.deepEqual(parseGradleSettings("if (condition)\n    println 'x'\nelse\n    include 'app'\n").includes, []);
+  assert.deepEqual(parseGradleSettings("for (x in values)\n    include 'app'\n").includes, []);
   assert.deepEqual(parseGradleSettings("condition && include 'app'\n").includes, []);
   assert.deepEqual(parseGradleSettings("condition ? include('app') : null\n").includes, []);
   assert.deepEqual(parseGradleSettings("include('app')\n").includes, ["app"]);

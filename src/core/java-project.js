@@ -287,6 +287,24 @@ function isStandaloneGradleInclude(source, index) {
   return source.slice(statementStart, index).trim() === "";
 }
 
+function isUnbracedGradleControlBody(source, index) {
+  const lineStart = Math.max(source.lastIndexOf("\n", index - 1), source.lastIndexOf("\r", index - 1)) + 1;
+  let previousEnd = lineStart - 1;
+  while (previousEnd >= 0) {
+    const previousStart = Math.max(
+      source.lastIndexOf("\n", previousEnd - 1),
+      source.lastIndexOf("\r", previousEnd - 1),
+    ) + 1;
+    const previousLine = source.slice(previousStart, previousEnd).trim();
+    if (previousLine) {
+      if (previousLine.includes("{")) return false;
+      return /^(?:if|else|for|while|when|switch)\b/u.test(previousLine);
+    }
+    previousEnd = previousStart - 1;
+  }
+  return false;
+}
+
 export function parseGradleSettings(text) {
   const invalid = {
     valid: false,
@@ -305,7 +323,7 @@ export function parseGradleSettings(text) {
   if (source === null) return invalid;
   const includes = [];
   for (const offset of topLevelGradleIncludeOffsets(source)) {
-    if (!isStandaloneGradleInclude(source, offset)) continue;
+    if (!isStandaloneGradleInclude(source, offset) || isUnbracedGradleControlBody(source, offset)) continue;
     const literals = parseGradleIncludeAt(text, source, offset);
     if (literals === null) return invalid;
     includes.push(...literals);

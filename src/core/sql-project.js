@@ -44,13 +44,26 @@ function maskSqlQuoted(text, start, quote) {
   return null;
 }
 
+function maskSqlQuotedIdentifier(text, start, quote) {
+  for (let index = start + 1; index < text.length; index += 1) {
+    const character = text[index];
+    const next = text[index + 1];
+    if (character === quote && next === quote) {
+      index += 1;
+    } else if (character === quote) {
+      return { text: "__identifier__", next: index + 1 };
+    }
+  }
+  return null;
+}
+
 function maskSqlBracketIdentifier(text, start) {
   for (let index = start + 1; index < text.length; index += 1) {
     if (text[index] === "]") {
       if (text[index + 1] === "]") {
         index += 1;
       } else {
-        return { text: " ".repeat(index - start + 1), next: index + 1 };
+        return { text: "__identifier__", next: index + 1 };
       }
     }
   }
@@ -73,7 +86,8 @@ function maskSqlToken(text, index) {
     return maskSqlComment(text, index, false);
   }
   if (character === "/" && next === "*") return maskSqlComment(text, index, true);
-  if (character === "'" || character === '"' || character === "`") return maskSqlQuoted(text, index, character);
+  if (character === "'") return maskSqlQuoted(text, index, character);
+  if (character === '"' || character === "`") return maskSqlQuotedIdentifier(text, index, character);
   if (character === "[") return maskSqlBracketIdentifier(text, index);
   if (character === "$") {
     const dollarQuote = maskSqlDollarQuote(text, index);

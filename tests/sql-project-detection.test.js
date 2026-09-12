@@ -24,7 +24,13 @@ test("SQL recognizer masks comments and quoted text and requires a statement sha
   assert.equal(looksLikeSql("Grant access to the new employee."), false);
   assert.equal(looksLikeSql("SELECT 1;"), true);
   assert.equal(looksLikeSql("SELECT * FROM users;"), true);
+  assert.equal(looksLikeSql("SELECT * FROM \"users\";"), true);
+  assert.equal(looksLikeSql("SELECT * FROM `users`;"), true);
+  assert.equal(looksLikeSql("SELECT * FROM [users];"), true);
   assert.equal(looksLikeSql("CREATE TABLE users (id INTEGER);"), true);
+  assert.equal(looksLikeSql("CREATE TABLE \"users\" (id INTEGER);"), true);
+  assert.equal(looksLikeSql("CREATE TABLE `users` (`id` INTEGER);"), true);
+  assert.equal(looksLikeSql("CREATE TABLE [users] ([id] INTEGER);"), true);
   assert.equal(looksLikeSql("ALTER TABLE users ADD COLUMN active BOOLEAN;"), true);
   assert.equal(looksLikeSql("GRANT SELECT ON TABLE users TO reporting;"), true);
   assert.equal(looksLikeSql("DROP TABLE old_cache;"), true);
@@ -38,6 +44,8 @@ test("SQL recognizer masks comments and quoted text and requires a statement sha
   assert.equal(looksLikeSql("MERGE INTO accounts USING updates ON accounts.id = updates.id;"), true);
   assert.equal(looksLikeSql("CREATE FUNCTION refresh_cache() RETURNS void AS $$ BEGIN END; $$ LANGUAGE plpgsql;"), true);
   assert.equal(looksLikeSql("GRANT SELECT ON TABLE accounts TO analyst;"), true);
+  assert.equal(looksLikeSql("SELECT 'DROP TABLE users';"), false);
+  assert.equal(looksLikeSql("SELECT 'CREATE TABLE users (id INTEGER)';"), false);
   assert.equal(looksLikeSql("-- CREATE TABLE fake (id INTEGER);\n/* SELECT * FROM fake */"), false);
 });
 

@@ -1298,8 +1298,6 @@ function claimMatchesProject(claim, project, projectRoots) {
 
 function typeScriptProjectConsumesClaim(claim, project, projects, visited = new Set()) {
   if (project.manifest.toLowerCase() === claim) return true;
-  const root = project.root.toLowerCase();
-  if (root === "." && claim !== ".") return false;
   const identity = project.manifest.toLowerCase();
   if (visited.has(identity)) return false;
   visited.add(identity);

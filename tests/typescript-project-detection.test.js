@@ -116,7 +116,7 @@ test("TypeScript extends arrays resolve conservatively without making shared con
 
     const claimedEvidence = await detectProjectEvidence(target, { claims: ["app/tsconfig.json"] });
     assert.deepEqual(claimedEvidence.frameworks, ["typescript"]);
-    assert.deepEqual(claimedEvidence.projectRoots, ["app"]);
+    assert.deepEqual(claimedEvidence.projectRoots, [".", "app"]);
     assert.equal(claimedEvidence.projectRoots.includes("configs"), false);
   });
 });
@@ -159,6 +159,49 @@ test("a claimed TypeScript project config includes its consumers", async () => {
     const evidence = await detectProjectEvidence(target, { claims: ["apps/api/tsconfig.json"] });
     assert.deepEqual(evidence.frameworks, ["typescript"]);
     assert.deepEqual(evidence.projectRoots, ["apps/api", "apps/worker"]);
+  });
+});
+
+test("the repository-root TypeScript project is a reverse consumer of shared config", async () => {
+  await temporaryProject("forgeloop-typescript-root-consumer-", async (target) => {
+    await writeFiles(target, {
+      "tsconfig.json": "{\"extends\":\"./configs/tsconfig.json\"}\n",
+      "configs/tsconfig.json": "{}\n",
+    });
+    const evidence = await detectProjectEvidence(target, { claims: ["configs/tsconfig.json"] });
+    assert.deepEqual(evidence.projectRoots, ["."]);
+  });
+});
+
+test("a direct claim to the repository-root tsconfig selects the root project", async () => {
+  await temporaryProject("forgeloop-typescript-root-claim-", async (target) => {
+    await writeFiles(target, { "tsconfig.json": "{}\n" });
+    const evidence = await detectProjectEvidence(target, { claims: ["tsconfig.json"] });
+    assert.deepEqual(evidence.projectRoots, ["."]);
+  });
+});
+
+test("root and child TypeScript consumers form one reverse-config union", async () => {
+  await temporaryProject("forgeloop-typescript-root-child-consumers-", async (target) => {
+    await writeFiles(target, {
+      "tsconfig.json": "{\"extends\":\"./configs/base.json\"}\n",
+      "configs/base.json": "{}\n",
+      "apps/api/tsconfig.json": "{\"extends\":\"../../configs/base.json\"}\n",
+    });
+    const evidence = await detectProjectEvidence(target, { claims: ["configs/base.json"] });
+    assert.deepEqual(evidence.projectRoots, [".", "apps/api"]);
+  });
+});
+
+test("the repository-root TypeScript project is found through transitive config consumers", async () => {
+  await temporaryProject("forgeloop-typescript-root-transitive-consumer-", async (target) => {
+    await writeFiles(target, {
+      "configs/base.json": "{}\n",
+      "configs/service.json": "{\"extends\":\"./base.json\"}\n",
+      "tsconfig.json": "{\"extends\":\"./configs/service.json\"}\n",
+    });
+    const evidence = await detectProjectEvidence(target, { claims: ["configs/base.json"] });
+    assert.deepEqual(evidence.projectRoots, ["."]);
   });
 });
 
