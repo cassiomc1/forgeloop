@@ -1,4 +1,5 @@
 import { createLanguageProject, C_SOURCE_EXTENSIONS, CPP_SOURCE_EXTENSIONS, SWIFT_SOURCE_EXTENSIONS, pathBelongsToRoot, portablePath } from "./multi-language-project.js";
+import { extractBuildCalls, maskBuildScript, quotedBuildArguments } from "./build-script.js";
 
 function invalidSwift() {
   return { valid: false, swift: false, c: false, cpp: false };
@@ -91,16 +92,19 @@ export function parseXcodeProject(text) {
 
 export function parseSwiftCMake(text) {
   if (typeof text !== "string" || text.length > 1024 * 1024 || /\r(?!\n)/u.test(text)) return invalidSwift();
-  const source = stripSwiftComments(text);
+  const source = maskBuildScript(text);
   const swift = source !== null && /\b(?:LANGUAGES[^\n)]*\bSwift\b|enable_language\s*\(\s*Swift\b)/iu.test(source);
   return { valid: swift, swift, c: false, cpp: false };
 }
 
 export function parseSwiftMeson(text) {
   if (typeof text !== "string" || text.length > 1024 * 1024 || /\r(?!\n)/u.test(text)) return invalidSwift();
-  const source = stripSwiftComments(text);
-  const swift = source !== null
-    && /\b(?:project|add_languages)\s*\([^\n)]*["']swift["'][^\n)]*\)/iu.test(source);
+  const calls = extractBuildCalls(text, ["project", "add_languages"]);
+  const swift = Boolean(calls?.some((call) => {
+    const values = quotedBuildArguments(call.body) ?? [];
+    return (call.name === "project" ? values.slice(1) : values)
+      .some((value) => value.toLowerCase() === "swift");
+  }));
   return { valid: swift, swift, c: false, cpp: false };
 }
 

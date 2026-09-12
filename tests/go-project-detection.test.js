@@ -11,6 +11,7 @@ test("Go module parsing requires one valid module directive", () => {
   assert.equal(parseGoMod("module example.com/app\ngo 1.27\nrequire (\n  example.com/dependency v1.0.0\n)\ngodebug default=go1.27\ntool example.com/tool\n").valid, true);
   assert.equal(parseGoMod("go 1.27\n").valid, false);
   assert.equal(parseGoMod("module a\nmodule b\n").valid, false);
+  assert.equal(parseGoMod("module example.com/app\nrequire garbage\n").valid, false);
   assert.equal(parseGoWork("go 1.27\nuse ./app\n").valid, true);
   assert.equal(parseGoWork("go 1.27\ntoolchain go1.27.1\ngodebug default=go1.27\nuse ./app\n").valid, true);
 });
@@ -57,5 +58,16 @@ test("Go source and toolchain-only files remain negative", async () => {
       "rust-toolchain.toml": "channel = \"stable\"\n",
     });
     assert.equal(await detectProjectEvidence(target), null);
+  });
+});
+
+test("go.work fails closed when its discovered module is malformed", async () => {
+  await temporaryProject("forgeloop-go-invalid-workspace-", async (target) => {
+    await writeFiles(target, {
+      "go.work": "go 1.27\nuse ./broken\n",
+      "broken/go.mod": "not a module\n",
+    });
+    const evidence = await detectProjectEvidence(target);
+    assert.deepEqual(evidence.frameworks, []);
   });
 });

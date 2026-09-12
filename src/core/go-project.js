@@ -42,6 +42,16 @@ function collectGoBlock(lines, start) {
   return { values, end: lines.length, valid: false };
 }
 
+function validGoDirectiveValue(name, value) {
+  if (!value || /\s{2,}/u.test(value)) return false;
+  if (["require", "exclude"].includes(name)) return /^\S+\s+v\S+$/u.test(value);
+  if (name === "replace") return /^\S+(?:\s+v\S+)?\s+=>\s+\S+(?:\s+v\S+)?$/u.test(value);
+  if (name === "retract") return /^\S+(?:\s*,\s*\S+)?$/u.test(value);
+  if (name === "godebug") return /^\S+=\S+$/u.test(value);
+  if (name === "tool") return /^\S+(?:\s+v\S+)?$/u.test(value);
+  return true;
+}
+
 export function parseGoMod(text) {
   if (typeof text !== "string" || text.length > 1024 * 1024 || /\r(?!\n)/u.test(text)) return invalidGoResult();
   const lines = text.replaceAll("\r\n", "\n").split("\n");
@@ -68,8 +78,10 @@ export function parseGoMod(text) {
       else toolchain = directive.value;
     } else if (line.endsWith("(")) {
       const block = collectGoBlock(lines, index);
-      if (!block.valid) valid = false;
+      if (!block.valid || !block.values.every((value) => validGoDirectiveValue(directive.name, value))) valid = false;
       index = block.end;
+    } else if (!validGoDirectiveValue(directive.name, directive.value)) {
+      valid = false;
     }
   }
   return {
@@ -114,13 +126,14 @@ export function parseGoWork(text) {
     if (directive.name !== "use") {
       if (line.endsWith("(")) {
         const block = collectGoBlock(lines, index);
-        if (!block.valid) valid = false;
+        if (!block.valid || !block.values.every((value) => validGoDirectiveValue(directive.name, value))) valid = false;
         index = block.end;
       }
       continue;
     }
     const values = line.endsWith("(") ? collectGoBlock(lines, index) : { values: [directive.value], end: index, valid: true };
-    if (!values.valid || values.values.some((value) => value === "" || value.startsWith("/"))) {
+    if (!values.valid || values.values.some((value) => !validGoDirectiveValue("use", value)
+      || value.startsWith("/") || /^[A-Za-z]:/u.test(value))) {
       valid = false;
     } else {
       uses.push(...values.values);
@@ -133,7 +146,9 @@ export function parseGoWork(text) {
 export function inspectGoProject({ projectRoot, manifestRelative, manifestText, manifestName, targetRoot, projectFiles }) {
   const parsed = manifestName === "go.work" ? parseGoWork(manifestText) : parseGoMod(manifestText);
   const localUses = manifestName === "go.work"
-    ? parsed.uses.filter((use) => projectFiles.some((file) => file.kind === "go" && portablePath(targetRoot, path.dirname(file.path)) === path.posix.normalize(path.posix.join(projectRoot, use))))
+    ? parsed.uses.filter((use) => projectFiles.some((file) => file.kind === "go"
+      && parseGoMod(file.text).valid
+      && portablePath(targetRoot, path.dirname(file.path)) === path.posix.normalize(path.posix.join(projectRoot, use))))
     : [];
   const primary = parsed.valid && (manifestName === "go.mod" || localUses.length > 0);
   const primarySignals = primary

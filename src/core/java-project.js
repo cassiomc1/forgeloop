@@ -1,4 +1,6 @@
 import { createLanguageProject, JAVA_SOURCE_EXTENSIONS, pathBelongsToRoot, portablePath } from "./multi-language-project.js";
+import { maskBuildScript } from "./build-script.js";
+import { parseXmlStructure } from "./xml-structure.js";
 
 function invalidJava() {
   return {
@@ -11,79 +13,123 @@ function invalidJava() {
   };
 }
 
-function xmlTagValues(text, name) {
-  const values = [];
-  const pattern = new RegExp(`<${name}\\s*>([^<]{1,256})</${name}\\s*>`, "giu");
-  for (const match of text.matchAll(pattern)) values.push(match[1].trim());
-  return values.filter(Boolean);
+function childNodes(node, name) {
+  return node.children.filter((child) => child.name.toLowerCase() === name.toLowerCase());
 }
 
-function stripXmlComments(text) {
-  let result = "";
-  let cursor = 0;
-  while (cursor < text.length) {
-    const start = text.indexOf("<!--", cursor);
-    if (start < 0) return result + text.slice(cursor);
-    const end = text.indexOf("-->", start + 4);
-    if (end < 0) return null;
-    result += text.slice(cursor, start);
-    result += text.slice(start, end + 3).replace(/[^\n]/gu, " ");
-    cursor = end + 3;
-  }
-  return result;
+function nodesAtPath(root, names) {
+  return names.reduce((nodes, name) => nodes.flatMap((node) => childNodes(node, name)), [root]);
 }
 
-function xmlIsStructurallySafe(text) {
-  if (typeof text !== "string" || text.length > 1024 * 1024 || /\r(?!\n)/u.test(text)) return false;
-  const source = stripXmlComments(text);
-  if (source === null || /<!(?:DOCTYPE|ENTITY)\b/iu.test(source)) return false;
-  const tags = [];
-  for (const match of source.matchAll(/<\/?([A-Za-z_][\w:.-]*)(?:\s[^<>]*?)?\s*(\/?)>/gu)) {
-    const raw = match[0];
-    const name = match[1];
-    if (raw.startsWith("</")) {
-      if (tags.pop() !== name) return false;
-    } else if (!raw.endsWith("/>") && !raw.startsWith("<?")) {
-      tags.push(name);
-    }
-  }
-  return tags.length === 0 && /<project(?:\s|>)/iu.test(source);
-}
-
-function stripGradleComments(text) {
-  if (/\/\*[\s\S]*$/u.test(text) && !/\/\*[\s\S]*?\*\//u.test(text)) return null;
-  return text
-    .replace(/\/\*[\s\S]*?\*\//gu, " ")
-    .replace(/(^|[\s;{}])\/\/[^\r\n]*/gu, "$1");
-}
-
-function stripBazelComments(text) {
-  return text.replace(/#[^\n\r]*/gu, " ");
+function nodeValues(nodes) {
+  return nodes
+    .filter((node) => node.children.length === 0 && node.text.length <= 256)
+    .map((node) => node.text.trim())
+    .filter(Boolean);
 }
 
 export function parseMavenPom(text) {
-  if (!xmlIsStructurallySafe(text)) return invalidJava();
-  const source = stripXmlComments(text);
-  const packaging = xmlTagValues(source, "packaging")[0] ?? null;
-  const modules = xmlTagValues(source, "module");
-  const javaCompiler = /(?:maven\.compiler\.(?:release|source|target)|maven-compiler-plugin)/iu.test(source);
-  const valid = xmlTagValues(source, "artifactId").length > 0
+  const document = parseXmlStructure(text);
+  if (!document || document.root.name.toLowerCase() !== "project") return invalidJava();
+  const root = document.root;
+  const packaging = nodeValues(childNodes(root, "packaging"))[0] ?? null;
+  const modules = nodeValues(nodesAtPath(root, ["modules", "module"]));
+  const compilerProperties = ["release", "source", "target"]
+    .some((name) => nodeValues(nodesAtPath(root, ["properties", `maven.compiler.${name}`])).length > 0);
+  const compilerPlugin = [
+    ["build", "plugins", "plugin", "artifactId"],
+    ["build", "pluginManagement", "plugins", "plugin", "artifactId"],
+  ].some((path) => nodeValues(nodesAtPath(root, path)).some((value) => value === "maven-compiler-plugin"));
+  const javaCompiler = compilerProperties || compilerPlugin;
+  const valid = nodeValues(childNodes(root, "artifactId")).length > 0
     || packaging === "pom"
     || modules.length > 0
     || javaCompiler;
   return { valid, javaPlugin: false, javaPlatform: false, javaCompiler, packaging, modules };
 }
 
+function maskGradleStringsAndComments(text) {
+  let result = "";
+  let state = "code";
+  let quote = null;
+  let escaped = false;
+  for (let index = 0; index < text.length; index += 1) {
+    const character = text[index];
+    const next = text[index + 1];
+    if (state === "string") {
+      if (escaped) escaped = false;
+      else if (character === "\\") escaped = true;
+      else if (character === quote) {
+        state = "code";
+        quote = null;
+      }
+      result += character === "\n" || character === "\r" ? character : " ";
+    } else if (state === "line-comment") {
+      if (character === "\n" || character === "\r") {
+        result += character;
+        state = "code";
+      } else result += " ";
+    } else if (state === "block-comment") {
+      if (character === "*" && next === "/") {
+        result += "  ";
+        index += 1;
+        state = "code";
+      } else result += character === "\n" || character === "\r" ? character : " ";
+    } else if (character === "\"" || character === "'") {
+      result += " ";
+      quote = character;
+      state = "string";
+    } else if (character === "/" && next === "/") {
+      result += "  ";
+      index += 1;
+      state = "line-comment";
+    } else if (character === "/" && next === "*") {
+      result += "  ";
+      index += 1;
+      state = "block-comment";
+    } else {
+      result += character;
+    }
+  }
+  return state === "code" ? result : null;
+}
+
+const JAVA_PLUGIN_IDS = new Set(["java", "java-library", "java-platform", "application", "war"]);
+
+function quotedPluginId(rawBlock, start) {
+  const plugin = rawBlock.slice(start).match(/^\s*(?:\(\s*)?["']([^"']+)["']/u)?.[1];
+  return JAVA_PLUGIN_IDS.has(plugin);
+}
+
+function pluginBlockHasJava(rawBlock) {
+  const masked = maskGradleStringsAndComments(rawBlock);
+  if (masked === null) return false;
+  for (const match of masked.matchAll(/\bid\b/gu)) {
+    if (quotedPluginId(rawBlock, match.index + match[0].length)) return true;
+  }
+  return /(?:^|[;{}\n])\s*(?:java|javaLibrary|javaPlatform|application|war)\s*(?:[;\n}]|$)/mu.test(masked);
+}
+
 function hasJavaPlugin(text) {
-  return /(?:id\s*[('"](?:java(?:-library|-platform|-gradle-plugin)?|application|war)[)'" ]|apply\s+plugin\s*:\s*['"](?:java(?:-library|-gradle-plugin)?|application|war)['"])/u.test(text);
+  const masked = maskGradleStringsAndComments(text);
+  if (masked === null) return false;
+  for (const match of masked.matchAll(/\bplugins\s*\{([\s\S]*?)\}/gu)) {
+    const open = match[0].indexOf("{");
+    if (pluginBlockHasJava(text.slice(match.index + open + 1, match.index + match[0].length - 1))) return true;
+  }
+  for (const match of masked.matchAll(/\bapply\s+plugin\s*:\s*/gu)) {
+    const suffix = text.slice(match.index + match[0].length);
+    if (/^['"](?:java|java-library|java-platform|application|war)['"]/u.test(suffix)) return true;
+  }
+  return false;
 }
 
 export function parseGradleBuild(text) {
   if (typeof text !== "string" || text.length > 1024 * 1024 || /\r(?!\n)/u.test(text)) return invalidJava();
-  const source = stripGradleComments(text);
+  const source = maskGradleStringsAndComments(text);
   if (source === null) return invalidJava();
-  const javaPlugin = hasJavaPlugin(source);
-  const javaPlatform = /id\s*[('"]java-platform[)'" ]/u.test(source);
+  const javaPlugin = hasJavaPlugin(text);
+  const javaPlatform = javaPlugin && /(?:java-platform|javaPlatform)/u.test(text);
   return {
     valid: javaPlugin || javaPlatform,
     javaPlugin,
@@ -96,7 +142,8 @@ export function parseGradleBuild(text) {
 
 export function parseBazelJava(text) {
   if (typeof text !== "string" || text.length > 1024 * 1024 || /\r(?!\n)/u.test(text)) return invalidJava();
-  const javaPlugin = /\bjava_(?:binary|library|test|import|plugin)\s*\(/u.test(stripBazelComments(text));
+  const source = maskBuildScript(text);
+  const javaPlugin = source !== null && /\bjava_(?:binary|library|test|import|plugin)\s*\(/u.test(source);
   return { valid: javaPlugin, javaPlugin, javaPlatform: false, javaCompiler: false, packaging: null, modules: [] };
 }
 

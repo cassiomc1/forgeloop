@@ -101,7 +101,6 @@ execution.
 
 ## Official sources
 
-- [ISO C++ standards committee](https://isocpp.org/std/the-standard)
 - [WG21 committee documents](https://www.open-std.org/jtc1/sc22/wg21/)
 - [GCC C++ dialect options](https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html)
 - [Clang C++ language status](https://clang.llvm.org/cxx_status.html)

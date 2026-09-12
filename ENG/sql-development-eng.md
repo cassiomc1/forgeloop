@@ -72,6 +72,8 @@ rotation, TLS policy, audit controls, and data-retention rules. Bound query
 time, rows, result bytes, connections, concurrency, retries, and transaction
 duration. Measure query plans and representative workloads before adding
 indexes, hints, denormalization, caching, or batching.
+Treat `EXPLAIN ANALYZE` as potentially executing the statement; use a safe
+transaction or a representative read-only environment when the engine allows.
 
 ## Portability and dependencies
 
@@ -94,9 +96,8 @@ execution.
 
 ## Official sources
 
-- [ISO/IEC JTC 1/SC 32 database standards](https://www.iso.org/committee/45306.html)
+- [SQLite SQL language](https://www.sqlite.org/lang.html)
 - [PostgreSQL documentation](https://www.postgresql.org/docs/)
-- [MySQL reference manuals](https://dev.mysql.com/doc/)
+- [MySQL reference manuals](https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/)
 - [Microsoft T-SQL reference](https://learn.microsoft.com/sql/t-sql/)
 - [Oracle Database SQL Language Reference](https://docs.oracle.com/en/database/oracle/oracle-database/)
-- [SQLite SQL language](https://www.sqlite.org/lang.html)

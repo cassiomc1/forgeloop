@@ -25,7 +25,7 @@ export const LANGUAGE_PROJECT_FILE_KINDS = Object.freeze({
 
 export const LANGUAGE_SOURCE_EXTENSIONS = Object.freeze(new Set([
   ".c", ".cc", ".cpp", ".cxx", ".c++",
-  ".go", ".java", ".php", ".sql", ".swift",
+  ".go", ".java", ".php", ".sql", ".psql", ".pgsql", ".swift",
   ".ts", ".tsx", ".mts", ".cts", ".js", ".jsx", ".mjs", ".cjs",
 ]));
 
@@ -40,6 +40,7 @@ export function languageProjectKinds(fileName) {
   if (typeof fileName !== "string") return [];
   const lowerName = fileName.toLowerCase();
   if (/^tsconfig\.[^/]+\.json$/u.test(lowerName)) return ["typescript"];
+  if (/\.sqlproj$/u.test(lowerName)) return ["sql-project"];
   return LANGUAGE_PROJECT_FILE_KINDS[lowerName] ?? [];
 }
 
@@ -69,9 +70,11 @@ export function pathBelongsToRoot(relativePath, root, projectRoots = []) {
     && !normalizedPath.startsWith(`${normalizedRoot}/`)) return false;
   return !projectRoots.some((candidate) => {
     const normalizedCandidate = candidate.replaceAll("\\", "/").toLowerCase();
-    return normalizedCandidate !== normalizedRoot
-      && normalizedCandidate !== "."
-      && normalizedPath.startsWith(`${normalizedCandidate}/`);
+    const nested = normalizedRoot === "."
+      ? normalizedCandidate !== "."
+      : normalizedCandidate.startsWith(`${normalizedRoot}/`);
+    return nested
+      && (normalizedPath === normalizedCandidate || normalizedPath.startsWith(`${normalizedCandidate}/`));
   });
 }
 

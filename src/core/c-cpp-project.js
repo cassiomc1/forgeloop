@@ -1,4 +1,5 @@
 import { createLanguageProject, C_SOURCE_EXTENSIONS, CPP_SOURCE_EXTENSIONS, pathBelongsToRoot, portablePath } from "./multi-language-project.js";
+import { extractBuildCalls, maskBuildScript, quotedBuildArguments } from "./build-script.js";
 
 function invalidNative() {
   return {
@@ -7,10 +8,6 @@ function invalidNative() {
     cpp: false,
     make: false,
   };
-}
-
-function stripNativeComments(text) {
-  return text.replace(/#[^\n\r]*/gu, " ");
 }
 
 function nativeLanguageTokens(text) {
@@ -23,17 +20,21 @@ function nativeLanguageTokens(text) {
 
 function nativeLanguagesFromCMake(text) {
   const result = { c: false, cpp: false };
-  for (const match of text.matchAll(/\bproject\s*\(([^)]*)\)/giu)) {
-    const body = match[1];
+  const calls = extractBuildCalls(text, ["project", "enable_language"]);
+  if (!calls) return result;
+  for (const call of calls) {
+    const body = maskBuildScript(call.body);
+    if (body === null) continue;
+    if (call.name === "enable_language") {
+      const languages = nativeLanguageTokens(body);
+      result.c ||= languages.c;
+      result.cpp ||= languages.cpp;
+      continue;
+    }
     const explicit = body.match(/\blanguages?\b([\s\S]*)/iu)?.[1]
       ?? body.match(/^\s*[^\s]+\s+((?:C|CXX|CPP)\b[\s\S]*)/iu)?.[1]
       ?? "";
     const languages = nativeLanguageTokens(explicit);
-    result.c ||= languages.c;
-    result.cpp ||= languages.cpp;
-  }
-  for (const match of text.matchAll(/\benable_language\s*\(([^)]*)\)/giu)) {
-    const languages = nativeLanguageTokens(match[1]);
     result.c ||= languages.c;
     result.cpp ||= languages.cpp;
   }
@@ -42,8 +43,9 @@ function nativeLanguagesFromCMake(text) {
 
 export function parseCMake(text) {
   if (typeof text !== "string" || text.length > 1024 * 1024 || /\r(?!\n)/u.test(text)) return invalidNative();
-  const source = stripNativeComments(text);
-  const languages = nativeLanguagesFromCMake(source);
+  const source = maskBuildScript(text);
+  if (source === null) return invalidNative();
+  const languages = nativeLanguagesFromCMake(text);
   const hasProject = /\bproject\s*\(/iu.test(source);
   const hasLanguage = /\benable_language\s*\(/iu.test(source);
   return { valid: hasProject || hasLanguage, ...languages, make: false };
@@ -51,21 +53,24 @@ export function parseCMake(text) {
 
 export function parseMeson(text) {
   if (typeof text !== "string" || text.length > 1024 * 1024 || /\r(?!\n)/u.test(text)) return invalidNative();
-  const source = stripNativeComments(text);
-  const matches = [...source.matchAll(/\b(?:project|add_languages)\s*\(([^\n)]*)\)/giu)];
-  if (matches.length === 0) return invalidNative();
-  const languages = matches.map((match) => match[1]).join(" ").toLowerCase();
+  const calls = extractBuildCalls(text, ["project", "add_languages"]);
+  if (!calls || calls.length === 0) return invalidNative();
+  const languageValues = calls.flatMap((call) => {
+    const values = quotedBuildArguments(call.body) ?? [];
+    return call.name === "project" ? values.slice(1) : values;
+  });
   return {
     valid: true,
-    c: /['"]c['"]/u.test(languages),
-    cpp: /['"](?:cpp|cxx)['"]/u.test(languages),
+    c: languageValues.some((value) => value.toLowerCase() === "c"),
+    cpp: languageValues.some((value) => ["cpp", "cxx"].includes(value.toLowerCase())),
     make: false,
   };
 }
 
 export function parseBazelNative(text) {
   if (typeof text !== "string" || text.length > 1024 * 1024 || /\r(?!\n)/u.test(text)) return invalidNative();
-  const hasNativeRule = /\b(?:cc_|c_)(?:library|binary|test|shared_library|static_library)\s*\(/u.test(stripNativeComments(text));
+  const source = maskBuildScript(text);
+  const hasNativeRule = source !== null && /\b(?:cc_|c_)(?:library|binary|test|shared_library|static_library)\s*\(/u.test(source);
   return { valid: hasNativeRule, c: false, cpp: false, make: false };
 }
 

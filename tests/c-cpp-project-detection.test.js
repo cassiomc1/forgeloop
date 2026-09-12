@@ -10,9 +10,19 @@ test("native build recognizers require explicit or owned C/C++ evidence", () => 
   assert.deepEqual(parseCMake("project(app LANGUAGES C CXX)"), { valid: true, c: true, cpp: true, make: false });
   assert.equal(parseCMake("project(app C)").c, true);
   assert.equal(parseCMake("enable_language(CXX)").cpp, true);
+  assert.equal(parseCMake("enable_language(# fake CXX\n)").cpp, false);
   assert.deepEqual(parseMeson("project('app', 'c', 'cpp')"), { valid: true, c: true, cpp: true, make: false });
   assert.equal(parseMeson("add_languages('c')").c, true);
+  assert.deepEqual(parseCMake('message("project(fake LANGUAGES CXX)")'), {
+    valid: false,
+    c: false,
+    cpp: false,
+    make: false,
+  });
+  assert.deepEqual(parseMeson("project('c', 'rust')"), { valid: true, c: false, cpp: false, make: false });
   assert.equal(parseBazelNative("cc_library(name = 'app')").c, false);
+  assert.equal(parseBazelNative('example = "cc_library(name = \'fake\')"').valid, false);
+  assert.equal(parseCMake("# project(fake LANGUAGES CXX)\n").valid, false);
   assert.equal(parseCMake("project(app)").valid, true);
 });
 

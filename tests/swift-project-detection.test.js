@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import { detectProjectEvidence } from "../src/core/project-detection.js";
-import { parseSwiftMeson, parseSwiftPackage, parseXcodeProject } from "../src/core/swift-project.js";
+import { parseSwiftCMake, parseSwiftMeson, parseSwiftPackage, parseXcodeProject } from "../src/core/swift-project.js";
 import { evaluateRoute } from "../src/core/router.js";
 import { temporaryProject, writeFiles } from "./helpers/multi-language-project.js";
 
@@ -13,6 +13,8 @@ test("Swift package and Xcode recognizers require static Swift markers", () => {
   assert.equal(parseXcodeProject("SWIFT_VERSION = 6.0;").valid, false);
   assert.equal(parseSwiftMeson("project('app', 'swift')").swift, true);
   assert.equal(parseSwiftMeson("project('app', 'c')").swift, false);
+  assert.equal(parseSwiftCMake("# project(fake LANGUAGES Swift)\n").valid, false);
+  assert.equal(parseSwiftMeson("# project('fake', 'swift')\n").valid, false);
 });
 
 test("Package.swift activates Swift and a C-only package composes only native evidence", async () => {

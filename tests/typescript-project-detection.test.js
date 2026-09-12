@@ -10,6 +10,7 @@ test("TypeScript config parsing accepts bounded JSONC but fails closed for malfo
   assert.deepEqual(parseJsonc("{ // comment\n \"references\": [{\"path\": \"packages/core\"}],\n}\n").references, [{ path: "packages/core" }]);
   assert.equal(parseTypeScriptConfig("{\"references\":{}}", "tsconfig.json").valid, false);
   assert.equal(parseTypeScriptConfig("{\"extends\": 42}", "tsconfig.json").valid, false);
+  assert.equal(parseTypeScriptConfig("{\"files\": 42}", "tsconfig.json").valid, false);
   assert.equal(parseTypeScriptConfig("{/* unterminated", "tsconfig.json").valid, false);
   assert.equal(parseTypeScriptConfig("{}", "jsconfig.json").valid, true);
 });
@@ -74,5 +75,23 @@ test("Node and TypeScript co-locate without changing the public schema", async (
     assert.deepEqual(evidence.frameworks, ["nodejs", "typescript"]);
     assert.equal(evidence.schemaVersion, 1);
     assert.deepEqual(evaluateRoute({ workType: "code", projectEvidence: evidence }).guides.slice(0, 4), ["nodejs", "typescript", "clean", "test"]);
+  });
+});
+
+test("TypeScript references and local extends are order-independent and bounded", async () => {
+  await temporaryProject("forgeloop-typescript-cross-root-", async (target) => {
+    await writeFiles(target, {
+      "tsconfig.json": "{\"files\":[],\"references\":[{\"path\":\"packages/core/tsconfig.build.json\"}]}\n",
+      "packages/core/tsconfig.build.json": "{\"compilerOptions\":{\"composite\":true},\"include\":[\"src\"]}\n",
+      "packages/core/src/index.ts": "export {};\n",
+      "configs/base.json": "{}\n",
+      "app/tsconfig.json": "{\"extends\":\"../configs/base.json\"}\n",
+    });
+    const sourceEvidence = await detectProjectEvidence(target, { claims: ["packages/core/src/index.ts"] });
+    assert.deepEqual(sourceEvidence.frameworks, ["typescript"]);
+    assert.ok(sourceEvidence.projectRoots.includes("packages/core"));
+    const baseEvidence = await detectProjectEvidence(target, { claims: ["configs/base.json"] });
+    assert.deepEqual(baseEvidence.frameworks, ["typescript"]);
+    assert.ok(baseEvidence.primarySignals.includes("configs/base.json:tsconfig"));
   });
 });

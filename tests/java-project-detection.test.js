@@ -11,10 +11,16 @@ test("Java build metadata is defensive and rejects external XML entities", () =>
   assert.equal(parseMavenPom("<!DOCTYPE project [<!ENTITY x SYSTEM 'file:///tmp/x'>]><project><artifactId>app</artifactId></project>").valid, false);
   assert.equal(parseMavenPom("<!-- <artifactId>fake</artifactId> --><project></project>").valid, false);
   assert.equal(parseMavenPom("<project><artifactId>app</project>").valid, false);
+  assert.equal(parseMavenPom("<project><artifactId>docs</artifactId><description>maven-compiler-plugin</description></project>").javaCompiler, false);
+  assert.equal(parseMavenPom("<project><broken!><artifactId>maven-compiler-plugin</artifactId></project>").valid, false);
   assert.equal(parseGradleBuild("plugins { id 'java' }\n").javaPlugin, true);
+  assert.equal(parseGradleBuild("plugins { java }\n").javaPlugin, true);
+  assert.equal(parseGradleBuild("plugins { id(\"java-library\") }\n").javaPlugin, true);
+  assert.equal(parseGradleBuild("def example = \"id 'java'\"\n").valid, false);
   assert.equal(parseGradleBuild("plugins { id 'application' }\n").valid, true);
   assert.equal(parseGradleBuild("// plugins { id 'java-platform' }\n").valid, false);
   assert.equal(parseBazelJava("# java_library(name = 'fake')\n").valid, false);
+  assert.equal(parseBazelJava("example = \"java_library(name = 'fake')\"\n").valid, false);
   assert.equal(parseMavenPom("<project><properties><maven.compiler.release>21</maven.compiler.release></properties></project>").javaCompiler, true);
 });
 

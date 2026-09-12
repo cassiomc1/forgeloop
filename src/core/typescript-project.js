@@ -87,22 +87,82 @@ function normalizedReferencePath(projectRoot, reference) {
   return path.posix.normalize(path.posix.join(projectRoot, reference.replaceAll("\\", "/")));
 }
 
-function referenceMatchesConfig(projectRoot, reference, configRelative) {
-  const candidate = normalizedReferencePath(projectRoot, reference);
-  return configRelative === candidate
-    || configRelative === candidate + ".json"
-    || configRelative === candidate + "/tsconfig.json";
+function referenceMatchesConfig(projectRoot, reference, configRelative, allowBareReference = false) {
+  if (typeof reference !== "string" || reference.trim() === "") return false;
+  const normalizedReference = reference.replaceAll("\\", "/");
+  if ((!allowBareReference && !normalizedReference.startsWith("."))
+    || normalizedReference.startsWith("/")
+    || /^[A-Za-z]:\//u.test(normalizedReference)) return false;
+  const candidate = normalizedReferencePath(projectRoot, normalizedReference);
+  if (candidate === ".." || candidate.startsWith("../")) return false;
+  const normalizedConfig = configRelative.toLowerCase();
+  const normalizedCandidate = candidate.toLowerCase();
+  return normalizedConfig === normalizedCandidate
+    || normalizedConfig === normalizedCandidate + ".json"
+    || normalizedConfig === normalizedCandidate + "/tsconfig.json";
+}
+
+function isConfigCandidate(file) {
+  return file?.kind === "typescript" || file?.kind === "typescript-config";
 }
 
 function localConfigReferences(configRelative, projectFiles) {
-  return projectFiles.filter((file) => file.kind === "typescript"
-    && parseTypeScriptConfig(file.text, file.name).valid
-    && parseTypeScriptConfig(file.text, file.name).references
-      .some((reference) => referenceMatchesConfig(path.posix.dirname(file.relative), reference, configRelative)));
+  return projectFiles.filter((file) => {
+    if (!isConfigCandidate(file)) return false;
+    const parsed = parseTypeScriptConfig(file.text, file.name);
+    return parsed.valid && (parsed.references
+      .some((reference) => referenceMatchesConfig(path.posix.dirname(file.relative), reference, configRelative, true))
+      || referenceMatchesConfig(path.posix.dirname(file.relative), parsed.extends, configRelative));
+  });
 }
 
-export function shouldActivateTypeScriptConfig({ manifestName, manifestRelative, projectFiles = [], directClaim = false }) {
-  if (!isTypeScriptConfigName(manifestName)) return false;
+export function resolveTypeScriptConfigGraph(projectFiles = [], directClaims = []) {
+  const candidates = projectFiles.filter(isConfigCandidate);
+  const parsedCandidates = candidates
+    .map((file) => ({ file, parsed: parseTypeScriptConfig(file.text, file.name) }))
+    .filter((entry) => entry.parsed.valid);
+  const byRelative = new Map(parsedCandidates.map((entry) => [entry.file.relative.toLowerCase(), entry]));
+  const active = new Set(parsedCandidates
+    .filter(({ file }) => file.name.toLowerCase() === "tsconfig.json")
+    .map(({ file }) => file.relative.toLowerCase()));
+  for (const claim of directClaims) {
+    if (byRelative.has(claim.toLowerCase())) active.add(claim.toLowerCase());
+  }
+
+  const queue = [...active];
+  for (let index = 0; index < queue.length; index += 1) {
+    const current = byRelative.get(queue[index]);
+    const parsed = current?.parsed;
+    if (!parsed) continue;
+    const references = parsed.references.map((reference) => ({ value: reference, allowBare: true }));
+    if (parsed.extends) references.push({ value: parsed.extends, allowBare: false });
+    for (const reference of references) {
+      const target = parsedCandidates.find(({ file }) => referenceMatchesConfig(
+        path.posix.dirname(current.file.relative),
+        reference.value,
+        file.relative,
+        reference.allowBare,
+      ));
+      const relative = target?.file.relative.toLowerCase();
+      if (relative && !active.has(relative)) {
+        active.add(relative);
+        queue.push(relative);
+      }
+    }
+  }
+  return active;
+}
+
+export function shouldActivateTypeScriptConfig({
+  manifestName,
+  manifestRelative,
+  projectFiles = [],
+  directClaim = false,
+  configKind = "typescript",
+  activeConfigRelatives = null,
+}) {
+  if (!isConfigCandidate({ kind: configKind }) || manifestName.toLowerCase() === "jsconfig.json") return false;
+  if (activeConfigRelatives) return activeConfigRelatives.has(manifestRelative.toLowerCase());
   if (manifestName.toLowerCase() === "tsconfig.json" || directClaim) return true;
   return localConfigReferences(manifestRelative, projectFiles).length > 0;
 }
@@ -131,6 +191,10 @@ export function parseTypeScriptConfig(text, fileName = "tsconfig.json") {
     ? {}
     : isPlainObject(value.compilerOptions) ? value.compilerOptions : null;
   if (references === null || extendsValue === undefined || compilerOptions === null) return invalidConfig();
+  for (const key of ["files", "include", "exclude"]) {
+    if (value[key] !== undefined && (!Array.isArray(value[key])
+      || value[key].some((entry) => typeof entry !== "string" || entry.trim() === ""))) return invalidConfig();
+  }
   return {
     valid: true,
     references,
@@ -148,9 +212,18 @@ export function inspectTypeScriptProject({
   targetRoot,
   projectFiles,
   directClaim = false,
+  configKind = "typescript",
+  activeConfigRelatives = null,
 }) {
   const parsed = parseTypeScriptConfig(manifestText, manifestName);
-  const isConfig = shouldActivateTypeScriptConfig({ manifestName, manifestRelative, projectFiles, directClaim });
+  const isConfig = shouldActivateTypeScriptConfig({
+    manifestName,
+    manifestRelative,
+    projectFiles,
+    directClaim,
+    configKind,
+    activeConfigRelatives,
+  });
   const primary = parsed.valid && isConfig;
   const primarySignals = primary ? [`${manifestRelative}:tsconfig`] : [];
   const supportingSignals = [];
@@ -161,9 +234,15 @@ export function inspectTypeScriptProject({
       projectRoot,
       reference,
       path.posix.normalize(file.relative ?? ""),
+      true,
     ));
   });
   for (const reference of localReferences) supportingSignals.push(`${manifestRelative}:local-reference=${reference}`);
+  if (parsed.extends && projectFiles.some((file) => referenceMatchesConfig(
+    path.posix.dirname(manifestRelative),
+    parsed.extends,
+    file.relative,
+  ))) supportingSignals.push(`${manifestRelative}:local-extends=${parsed.extends}`);
   return createLanguageProject({
     kind: "typescript",
     root: projectRoot,
