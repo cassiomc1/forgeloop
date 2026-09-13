@@ -101,12 +101,13 @@ node scripts/ci-classify.mjs --all --json
 ```
 
 Documentation-only pull requests use quick core validation plus the
-documentation/diagram path. Runtime and package changes use Node 20 and Node
-24 unit validation, with the full no-coverage suite once on Node 24 and a
-separate coverage gate once on Node 24. Repository Index changes retain the
-native reusable workflow and its platform matrix. Package smoke is Ubuntu-only
-on ordinary PRs and expands to macOS/Windows through the explicit release
-matrix. The main branch retains dedicated documentation,
+documentation/diagram path; the Node 20 matrix steps do not install or run for
+docs-only changes. Runtime and package changes use Node 20 compatibility checks
+and four Node 24 unit shards wrapped by the coverage gate, followed by a
+coverage-only aggregation. Repository Index changes retain the native reusable
+workflow and its platform matrix. Package
+smoke is Ubuntu-only on ordinary PRs and expands to macOS/Windows through the
+explicit release matrix. The main branch retains dedicated documentation,
 Node compatibility, package smoke, audit, and Windows full-suite workflows;
 those workflows are the place for broader post-merge or release validation.
 

@@ -95,8 +95,11 @@ npm run coverage
 
 `npm test` remains the complete no-coverage suite. `test:ci` runs the same
 discovered files with a two-worker cap for small CI runners; it does not remove
-tests or change assertions. Coverage is a separate explicit command because
-instrumentation adds measurable overhead.
+tests or change assertions. Local coverage remains an explicit command because
+instrumentation adds measurable overhead; the PR unit lane wraps that same
+`test:ci` process across four deterministic shards, then aggregates coverage
+without running the suite again. Docs-only changes run the quick suite only on
+the first Node 24 shard; the other shards and the Node 20 lane do not install.
 
 #### Native Windows guidance
 

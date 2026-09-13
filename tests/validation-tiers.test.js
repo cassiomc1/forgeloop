@@ -19,6 +19,9 @@ test("package scripts expose a full coverage-free CI entry point", async () => {
   const packageJson = JSON.parse(await readFile("package.json", "utf8"));
   assert.equal(packageJson.scripts["test:ci"], "node scripts/run-tests.js --test-concurrency=2");
   assert.match(packageJson.scripts.coverage, /^c8 /u);
+  assert.match(packageJson.scripts.coverage, /npm run test:ci$/u);
+  assert.match(packageJson.scripts["coverage:shard"], /npm run test:ci$/u);
+  assert.match(packageJson.scripts["coverage:report"], / report$/u);
 });
 
 test("local tier owns deterministic source and documentation checks", () => {

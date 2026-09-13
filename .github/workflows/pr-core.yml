@@ -39,42 +39,98 @@ jobs:
         run: node scripts/ci-classify.mjs --github-output
 
   core:
-    name: Unit tests (Node ${{ matrix.node-version }})
+    name: Unit tests (Node ${{ matrix.node-version }}, shard ${{ matrix.shard }}/4)
     needs: classify
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
-        node-version: [20, 24]
+        include:
+          - node-version: 24
+            shard: 1
+          - node-version: 24
+            shard: 2
+          - node-version: 24
+            shard: 3
+          - node-version: 24
+            shard: 4
+          - node-version: 20
+            shard: 0
     steps:
       - name: Check out repository
+        if: ${{ (matrix.node-version == 24 && (needs.classify.outputs.docs_only != 'true' || matrix.shard == 1)) || (matrix.node-version == 20 && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true')) }}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - name: Set up Node.js
+        if: ${{ (matrix.node-version == 24 && (needs.classify.outputs.docs_only != 'true' || matrix.shard == 1)) || (matrix.node-version == 20 && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true')) }}
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
       - name: Install locked Node toolchain
+        if: ${{ (matrix.node-version == 24 && (needs.classify.outputs.docs_only != 'true' || matrix.shard == 1)) || (matrix.node-version == 20 && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true')) }}
         run: npm ci --ignore-scripts
-      - name: Run the full unit suite on Node 24 without coverage
-        if: ${{ matrix.node-version == 24 }}
+      - name: Run the Node 24 unit suite shard with coverage
+        if: ${{ matrix.node-version == 24 && (needs.classify.outputs.docs_only != 'true' || matrix.shard == 1) }}
         env:
           DOCS_ONLY: ${{ needs.classify.outputs.docs_only }}
         run: |
           if [ "$DOCS_ONLY" = "true" ]; then
             npm run test:quick
           else
-            npm run test:ci
+            export FORGELOOP_TEST_SHARD="${{ matrix.shard }}/4"
+            npm run coverage:shard
           fi
+      - name: Upload Node 24 coverage shard
+        if: ${{ matrix.node-version == 24 && needs.classify.outputs.docs_only != 'true' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: coverage-shard-${{ matrix.shard }}
+          path: coverage-data
+          if-no-files-found: error
       - name: Run targeted Node 20 CLI compatibility
-        if: ${{ matrix.node-version == 20 }}
+        if: ${{ matrix.node-version == 20 && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true') }}
         run: |
           npm run test:quick
           node src/cli.js --help
           node src/cli.js protocol-info --json
+      - name: Node 20 compatibility not applicable
+        if: ${{ matrix.node-version == 20 && needs.classify.outputs.source != 'true' && needs.classify.outputs.node_compat != 'true' }}
+        run: echo "Node 20 compatibility is not applicable for this change."
+      - name: Node 24 shard not applicable
+        if: ${{ matrix.node-version == 24 && needs.classify.outputs.docs_only == 'true' && matrix.shard != 1 }}
+        run: echo "Additional Node 24 shards are not applicable for documentation-only changes."
+
+  coverage-report:
+    name: Coverage report (Node 24)
+    needs: [classify, core]
+    if: ${{ needs.classify.outputs.source == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out source changes
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install locked Node toolchain
+        run: npm ci --ignore-scripts
+      - name: Download coverage shards
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: coverage-shard-*
+          path: coverage-data
+          merge-multiple: true
+      - name: Enforce aggregate coverage
+        run: |
+          npm run coverage:report
+          npm run critical-coverage:check
 
   lint:
     name: Lint and dependency policy
@@ -105,29 +161,6 @@ jobs:
       - name: Lint and dependency policy not applicable
         if: ${{ needs.classify.outputs.source != 'true' }}
         run: echo "Source lint and dependency policy are not applicable for this change."
-
-  coverage:
-    name: Coverage (Node 24)
-    needs: classify
-    if: ${{ needs.classify.outputs.source == 'true' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - name: Check out source changes
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - name: Set up Node.js
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-        with:
-          node-version: 24
-          cache: npm
-      - name: Install locked Node toolchain
-        run: npm ci --ignore-scripts
-      - name: Measure coverage
-        run: npm run coverage
-      - name: Enforce critical-module coverage
-        run: npm run critical-coverage:check
 
   docs-diagram:
     name: Verify generated Archify diagram
@@ -257,7 +290,7 @@ jobs:
 
   required-validation:
     name: validate (22)
-    needs: [classify, core, lint, coverage, docs-diagram, audit, tarball-smoke, repository-index]
+    needs: [classify, core, coverage-report, lint, docs-diagram, audit, tarball-smoke, repository-index]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     timeout-minutes: 2
@@ -275,11 +308,11 @@ jobs:
               throw new Error(`${name} did not succeed: ${needs[name]?.result ?? "missing"}`);
             }
           }
-          const coverageResult = needs.coverage?.result;
+          const coverageResult = needs["coverage-report"]?.result;
           if (process.env.COVERAGE_APPLICABLE === "true") {
-            if (coverageResult !== "success") throw new Error(`coverage did not succeed: ${coverageResult ?? "missing"}`);
+            if (coverageResult !== "success") throw new Error(`coverage-report did not succeed: ${coverageResult ?? "missing"}`);
           } else if (coverageResult !== "skipped") {
-            throw new Error(`coverage ran unexpectedly: ${coverageResult ?? "missing"}`);
+            throw new Error(`coverage-report ran unexpectedly: ${coverageResult ?? "missing"}`);
           }
           const indexResult = needs["repository-index"]?.result;
           if (process.env.REPOSITORY_INDEX_APPLICABLE === "true") {

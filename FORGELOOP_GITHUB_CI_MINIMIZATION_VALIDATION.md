@@ -33,6 +33,12 @@ start). The package version in that baseline is `1.11.0`.
   receipt auditing.
 - Reduced `windows-full-suite.yml` to its independent Windows full Node suite.
 - Removed the duplicated PR-oriented `docs-quality.yml` workflow.
+- The final PR-core correction removes the separate coverage job. Node 24 now
+  wraps `test:ci` with the existing coverage command once, while Node 20 setup
+  and compatibility steps are skipped for docs-only changes.
+- The final speed pass shards that coverage-wrapped execution across four
+  deterministic Node 24 jobs and aggregates their V8 data without rerunning
+  tests. The protected `validate (22)` context remains unchanged.
 
 All action references remain immutable commit SHAs. Checkouts retain
 `persist-credentials: false`, job timeouts remain bounded, and workflow
@@ -53,6 +59,24 @@ permission.
   `FORGELOOP_RELEASE_COMMIT` are supplied, then invokes the canonical
   identity validator with those exact values.
 
+## Final PR #173 speed-pass measurements
+
+The pre-change local baseline was `npm test` in approximately 482 seconds,
+coverage in approximately 503 seconds, and `test:quick` in approximately 24
+seconds. The bounded profile found 290 test files with no failures; the five
+slowest were `next-action-policy-guidance.test.js` (268.5s),
+`next-action.test.js` (254.2s), `policy-hardening.test.js` (217.4s),
+`task-recover.test.js` (169.2s), and `task-recovery-invariants.test.js`
+(135.7s). These files are process/filesystem-heavy and remain isolated.
+
+The final partitioned run completed in approximately 313 seconds wall-clock
+for the slowest of four concurrent shards: 1,768 tests, 1,758 passed, 10
+skipped, and 0 failed. Shard coverage is merged by `c8 report`; thresholds
+remain enforced only after aggregation. Expected source-PR CI is four Ubuntu
+Node 24 test jobs running in parallel, one coverage-only aggregation job, and
+the targeted Node 20 compatibility lane; exact hosted timing remains dependent
+on GitHub runner availability and was not claimed from local measurements.
+
 ## Local validation evidence
 
 | Validation | Result |
@@ -60,7 +84,7 @@ permission.
 | `npm run verify:fast` | PASS: 70 quick tests, lint, dependency policy, generated docs |
 | Focused workflow/classifier/package tests | PASS: 28 tests |
 | `node scripts/ci-scenario-check.mjs` | PASS: README-only, ordinary JavaScript, Repository Index, package export, release |
-| `npm test` through coverage | PASS: 1,613 passed, 0 failed, 10 native skips |
+| Historical implementation `npm test` through coverage | PASS: 1,613 passed, 0 failed, 10 native skips |
 | `npm run verify:prepush` | PASS on the final worktree; coverage and all local pre-push gates completed |
 | Coverage | PASS: lines/statements 85.63%, functions 83.78%, branches 76.19% |
 | `npm run docs:check` | PASS: diagrams, inventory, generated docs, conformance, examples, manifests, review matrix |
@@ -98,7 +122,7 @@ check, and the final report-only head above passed the same exact-head gate.
 | Scenario | Selected behavior |
 | --- | --- |
 | README-only | Quick Node checks, documentation/diagram validation, required no-op contexts; no native Repository Index or package execution |
-| Ordinary JavaScript | One Node 24 coverage execution, targeted Node 20 compatibility, required contexts, and only path-applicable package/audit steps |
+| Ordinary JavaScript | Four Node 24 coverage shards, coverage-only aggregation, targeted Node 20 compatibility, required contexts, and only path-applicable package/audit steps |
 | Repository Index | Ordinary core checks plus the reusable Linux/macOS/Windows native Repository Index matrix |
 | Package export | Core and Ubuntu package/MCP smoke; `src/integration.d.ts` does not spuriously select native Repository Index CI |
 | Release candidate | Explicit forced classification selects documentation, Repository Index, package, audit, compatibility, and release gates |
@@ -119,10 +143,10 @@ and unexpected skips fail the aggregator.
   PR Core jobs, two CodeQL check runs, and one Dependency Review check. Its
   wall-clock duration was 3.65 minutes and the sum of observed job elapsed
   time was 8.7 runner-minutes; billing multipliers and rounding are not
-  available. A normal source PR is designed to use seven PR-core runner jobs
-  plus CodeQL and Dependency Review (nine active jobs total, excluding the
-  conditional native workflow). A Repository Index PR adds the reusable
-  classifier, manifest, and three native jobs.
+  available. A normal source PR is designed to use four Node 24 test shards,
+  one coverage-only aggregation job, one Node 20 compatibility job, and the
+  path-applicable PR-core jobs plus CodeQL and Dependency Review. A Repository
+  Index PR adds the reusable classifier, manifest, and three native jobs.
 - Against the observed baseline, this exact run removed five check runs,
   15.20 wall-clock minutes, and 49.567 observed runner-minutes. The current
   implementation PR intentionally exercises the Repository Index matrix, so
@@ -140,11 +164,11 @@ replacement context is observed.
 
 ## Explicit answers
 
-1. Every ordinary code PR receives one independent full clean-room no-coverage
-   unit execution through Node 24 plus one separate Node 24 coverage job; the
-   exact implementation PR confirmed both paths on its current head.
-2. Coverage remains enforced separately by `npm run coverage` and the critical
-   coverage gate; the default unit job does not instrument the suite.
+1. Every ordinary code PR receives one Node 24 unit execution distributed over
+   four deterministic shards, with each shard wrapped by `npm run coverage:shard`
+   and a coverage-only aggregation job; no job reruns the complete suite.
+2. Coverage remains enforced by `npm run coverage` and the critical coverage
+   gate; the default local `npm test` command remains uninstrumented.
 3. CodeQL remains an independent required check.
 4. Dependency Review remains an independent required check.
 5. Repository Index native Linux/macOS/Windows tests remain conditional on
@@ -165,9 +189,10 @@ replacement context is observed.
 12. No workflow security permission became broader.
 13. No test was weakened, skipped, or made non-blocking solely for speed; only
     duplicate layers were removed and targeted compatibility was separated from
-    the single full-suite proof.
-14. The designed normal PR shape adds separate unit, lint, and coverage jobs
-    to the path-aware boundary, with CodeQL and Dependency Review remaining
+    the full-suite proof.
+14. The designed normal PR shape uses four Node 24 coverage-wrapped unit shards,
+    one coverage-only aggregation job, separate lint, and targeted Node 20
+    compatibility steps, with CodeQL and Dependency Review remaining
     independent; the exact broad implementation PR used 15 successful check
     runs because it also exercised the Repository Index native matrix.
 15. The observed old docs-quality portion used 52.45 runner-minutes and 18.85

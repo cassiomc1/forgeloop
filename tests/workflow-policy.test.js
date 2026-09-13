@@ -27,10 +27,14 @@ test("PR and release quality workflows enforce the intended validation boundary"
 
   assert.match(core, /npm ci --ignore-scripts/);
   assert.match(core, /npm run dependency:policy/);
-  assert.match(core, /npm run test:ci/);
-  assert.match(core, /name: Coverage \(Node 24\)/);
-  assert.match(core, /npm run coverage/);
+  assert.match(core, /npm run coverage:shard/);
+  assert.match(core, /npm run coverage:report/);
   assert.match(core, /npm run critical-coverage:check/);
+  assert.doesNotMatch(core, /name: Coverage \(Node 24\)/);
+  assert.match(core, /coverage-shard-\$\{\{ matrix\.shard \}\}/);
+  assert.match(core, /matrix\.node-version == 20/);
+  assert.match(core, /needs\.classify\.outputs\.source/);
+  assert.match(core, /needs\.classify\.outputs\.node_compat/);
   assert.match(core, /name: Lint and dependency policy/);
   assert.match(core, /name: validate \(22\)/);
   assert.match(core, /name: Verify generated Archify diagram/);

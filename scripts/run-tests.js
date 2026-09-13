@@ -11,7 +11,11 @@ const repositoryRoot = path.resolve(
 );
 const testDirectory = path.join(repositoryRoot, "tests");
 const testFiles = await discoverTests(testDirectory);
-const argv = selectTests(testFiles, process.argv.slice(2), repositoryRoot);
+const selectionArgs = process.argv.slice(2);
+if (process.env.FORGELOOP_TEST_SHARD && !selectionArgs.some((argument) => argument === "--shard" || argument.startsWith("--shard="))) {
+  selectionArgs.push("--shard", process.env.FORGELOOP_TEST_SHARD);
+}
+const argv = selectTests(testFiles, selectionArgs, repositoryRoot);
 
 const result = spawnSync(process.execPath, argv, {
   cwd: repositoryRoot,

@@ -4,11 +4,13 @@
 
 Run `npm run verify:prepush` before opening a pull request. For fast feedback,
 use `npm run test:quick` or `npm run verify:fast`; the full suite and coverage
-gate are run once by the local pre-push tier and by separate PR-core jobs. The
-default `npm test` command is the complete no-coverage suite. `npm run test:ci`
+gate are run once by the local pre-push tier and by one sharded PR-core lane.
+The default `npm test` command is the complete no-coverage suite. `npm run test:ci`
 uses the same discovered test files with two Node test workers for two-core CI
-runners, while `npm run test:watch` provides local watch mode. Run
-`npm run mcp:setup` explicitly when MCP checks are in scope. Keep CLI metadata, generated
+runners; PR Node 24 divides that same set into four deterministic shards and
+aggregates coverage without rerunning tests. `npm run test:watch` provides
+local watch mode. Run `npm run mcp:setup` explicitly when MCP checks are in
+scope. Keep CLI metadata, generated
 references, schemas, completions, summaries, and conformance scenarios
 aligned. Do not add vendor-specific runtime behavior: ForgeLoop remains a
 file-backed protocol and support CLI.
