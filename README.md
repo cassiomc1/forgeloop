@@ -457,8 +457,6 @@ The broader architecture and the CLI-only search boundary are in
 
 [Open the animated ForgeLoop evidence-first engineering flow](./docs/assets/diagrams/forgeloop-engineering-flow.html)
 
-![ForgeLoop evidence-first engineering flow (animated SVG fallback)](./docs/assets/diagrams/forgeloop-engineering-flow.svg)
-
 Two focused, source-bound workflow
 diagrams complement it. The [Verification Trust Flow source](./docs/diagrams/forgeloop-verification-trust-flow.workflow.json),
 [animated explorer](./docs/assets/diagrams/forgeloop-verification-trust-flow.html),

@@ -295,8 +295,8 @@ test("negative fixtures & mutation tests: validateDocumentationConformance detec
     // Mutation 8: Invalid diagram reference
     const mutReadme8 = mustReplace(
       readmeContent,
-      /!\[.*?\]\(\.\/docs\/assets\/diagrams\/forgeloop-engineering-flow\.svg\)/,
-      '<img src="./docs/assets/diagrams/forgeloop-engineering-flow.svg" />',
+      "forgeloop-lifecycle-animated.svg",
+      "forgeloop-lifecycle-animated-missing.svg",
       "readme diagram reference",
     );
     await writeFile(readmeFile, mutReadme8, "utf8");

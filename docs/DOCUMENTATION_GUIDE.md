@@ -219,6 +219,10 @@ The README hero is intentionally GitHub-repository-only:
 
 - `README.md` may reference `docs/assets/eng_readme_forgeloop.png`; GitHub
   renders it from the repository.
+- `README.md` also references `docs/assets/forgeloop-lifecycle-animated.svg`
+  as the looping Architecture-flow overview; it links to the governed
+  interactive explorer under `docs/assets/diagrams/` and is likewise
+  repository-only.
 - The hero PNG is excluded from the npm package (`package.json` `files`), and
   `tests/package.test.js` asserts that exclusion so it cannot be silently
   re-included.

@@ -26,9 +26,10 @@ test("README keeps the lifecycle contract, modern multi-task layout, and accessi
     assert.match(readme, new RegExp(marker.replaceAll(".", "\\.")), marker);
   }
   assert.match(readme, /\.forgeloop\/task-state\/<taskKey>\//);
-  assert.match(
+  assert.match(readme, /docs\/assets\/forgeloop-lifecycle-animated\.svg/);
+  assert.doesNotMatch(
     readme,
-    /!\[ForgeLoop evidence-first engineering flow \(animated SVG fallback\)\]\(\.\/docs\/assets\/diagrams\/forgeloop-engineering-flow\.svg\)/,
+    /!\[[^\]]*\]\([^)]*forgeloop-engineering-flow\.svg\)/,
   );
   assert.doesNotMatch(
     readme,
