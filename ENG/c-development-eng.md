@@ -106,7 +106,7 @@ or linker resolution.
 
 - [ISO/IEC JTC 1/SC 22/WG14](https://www.open-std.org/jtc1/sc22/wg14/)
 - [C23 project status](https://www.open-std.org/jtc1/sc22/wg14/www/projects)
-- [GNU C Library manual](https://www.gnu.org/software/libc/manual/)
+- [GNU C Library manual](https://sourceware.org/glibc/manual/latest/html_node/)
 - [CMake project languages](https://cmake.org/cmake/help/latest/command/project.html)
 - [Meson language reference](https://mesonbuild.com/Reference-manual_functions.html#project)
 - [Bazel C/C++ rules](https://bazel.build/reference/be/c-cpp)
