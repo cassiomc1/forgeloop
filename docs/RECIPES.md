@@ -35,6 +35,18 @@ Concise, copy-paste friendly recipes for common ForgeLoop tasks.
 
 ### Recipe 1 — Start a New Task
 
+When the task shape is known but the final contract has not been written, first
+request a read-only preset proposal:
+
+```bash
+forgeloop task-create --task task-001 --claim src --claim tests \
+  --preset feature --preview --json
+```
+
+Review the bounded proposal, then repeat without `--preview` before continuing
+with the task workflow below. Preview creates no task namespace and acquires no
+project claim lock.
+
 <!-- FORGELOOP EXAMPLE: recipes:create-task | exit=0 | json.taskId=task-001 -->
 ```bash
 forgeloop task-create --task task-001 --claim src --claim tests --json
@@ -243,6 +255,12 @@ forgeloop task-create --task billing-feature --claim src/billing --claim tests/b
 # 3. List active tasks
 forgeloop task-list --json
 
+# 3a. Filter and page the read-only ownership-aware projection
+forgeloop task-list --active --limit 20 --offset 0 --json
+
+# 3b. Ask for a bounded blocker/recovery explanation when needed
+forgeloop next --task auth-feature --explain --json
+
 # 4. Work on task-1
 forgeloop route --task auth-feature --work clean-code --surface backend
 forgeloop preflight --task auth-feature --json
@@ -255,6 +273,11 @@ forgeloop complete --task auth-feature --json
 # 5. Release any dead locks if needed
 forgeloop task-unlock --task auth-feature --force --json
 ```
+
+`task-list` discovers all valid task namespaces before applying filters and
+pagination. Its JSON response reports `total` and `hasMore`; filtering does not
+skip ownership or corruption checks, and listing never deletes ledger or
+recovery evidence.
 
 ---
 

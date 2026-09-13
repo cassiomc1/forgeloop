@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark" data-preset="signal-flow" data-present="true">
 <head>
-      <meta name="forgeloop-diagram-source-sha256" content="0bfd5bbf8d6bbeaec23db543deb1e99844321c77b3c7feb21ee0cc877bbba9a9">
+      <meta name="forgeloop-diagram-source-sha256" content="3c35fbe4e144cd7fb60632996839bcf32b0b503e8a4add2270f29c3bf3e8a658">
     <meta name="forgeloop-diagram-renderer" content="archify@2.15.0 (e1ac748f19cf805e44bf74fb93c796662152e273)">
 <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -4874,7 +4874,7 @@
         <div class="pulse-dot"></div>
         <h1>ForgeLoop Evidence-First Engineering Flow</h1>
       </div>
-      <p class="subtitle">Structured intent → project-bound work → observed evidence → valid closure</p>
+      <p class="subtitle">Structured intent → deterministic project scope → observed evidence → valid closure</p>
     </div>
 
     <script id="archify-guided-views-data" type="application/json">[{"id":"contract-to-work","label":"Contract to work","focus":["request","profile","contract","route","gates","preflight","work"],"note":"Structured obligations and explicit risks set the profile; exclusions do not create required actions."},{"id":"evidence-to-close","label":"Evidence to close","focus":["work","evidence","review","valid"],"note":"See the evidence and review boundary that makes completion trustworthy."},{"id":"recovery-loop","label":"Recovery loop","focus":["evidence","diagnose","correct","preflight","blocked"],"note":"Before execution, blocked refresh needs a valid ledger and revised route. Later failures use diagnosis and correction."}]</script>
@@ -4922,7 +4922,7 @@
     <div class="diagram-container" data-detail-level="read">
       <svg viewBox="0 0 850 900" role="img" aria-labelledby="archify-diagram-title archify-diagram-description" data-animation="trace" data-preset="signal-flow" data-quality-profile="showcase">
         <title id="archify-diagram-title">ForgeLoop Evidence-First Engineering Flow</title>
-        <desc id="archify-diagram-description">Structured intent → project-bound work → observed evidence → valid closure</desc>
+        <desc id="archify-diagram-description">Structured intent → deterministic project scope → observed evidence → valid closure</desc>
         <!-- Definitions -->
         <defs>
           <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
@@ -5012,15 +5012,15 @@
           <text data-detail="context" x="88" y="131" class="t-muted" font-size="8" text-anchor="middle">intent</text>
         </g>
 
-        <g id="node-profile" data-node-id="profile" data-node-label="Profile" tabindex="0" role="button" aria-label="Focus Profile, discover, Intent + Context › Discover + scope" aria-pressed="false" data-node-kind="backend" data-node-sublabel="discover" data-node-context="Intent + Context › Discover + scope">
-          <title>Profile · discover · Intent + Context › Discover + scope</title>
+        <g id="node-profile" data-node-id="profile" data-node-label="Profile" tabindex="0" role="button" aria-label="Focus Profile, scope, Intent + Context › Discover + scope" aria-pressed="false" data-node-kind="backend" data-node-sublabel="scope" data-node-context="Intent + Context › Discover + scope">
+          <title>Profile · scope · Intent + Context › Discover + scope</title>
           <rect x="195" y="93" width="50" height="52" rx="6" class="c-mask"/>
           <rect x="195" y="93" width="50" height="52" rx="6" class="c-backend" data-animate="node" style="--step:1" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(201 99) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
           <text data-detail-anchor x="220" y="114" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">Profile</text>
-          <text data-detail="context" x="220" y="131" class="t-muted" font-size="8" text-anchor="middle">discover</text>
+          <text data-detail="context" x="220" y="131" class="t-muted" font-size="8" text-anchor="middle">scope</text>
         </g>
 
         <g id="node-contract" data-node-id="contract" data-node-label="Contract" tabindex="0" role="button" aria-label="Focus Contract, scope, Intent + Context › Discover + scope" aria-pressed="false" data-node-kind="security" data-node-sublabel="scope" data-node-tag="saved" data-node-context="Intent + Context › Discover + scope">
@@ -5393,6 +5393,19 @@
           <li>&bull; Failures return to diagnosis before another claim</li>
           <li>&bull; Completion is validator-backed, not inferred from a screenshot</li>
           <li>&bull; Blocked pre-execution refresh requires a valid ledger and revised route</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot amber"></div>
+          <h3>Deterministic project routing</h3>
+        </div>
+        <ul>
+          <li>&bull; Repository evidence feeds bounded project and surface detection</li>
+          <li>&bull; A parsed dependencies.flutter.sdk: flutter entry proves Flutter project scope</li>
+          <li>&bull; The router selects the Flutter specialist only for an affected scoped root</li>
+          <li>&bull; Detection context is routing input, not verification or completion evidence</li>
         </ul>
       </div>
 

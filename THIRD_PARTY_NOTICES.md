@@ -1,8 +1,9 @@
 # Third-Party Notices
 
 This file records provenance and reuse boundaries for the external URLs cited
-by the README and guides. A citation is a reference, not a declaration that a
-resource is a dependency, bundled material, or available for reuse.
+by the README and guides. A citation is a reference, not by itself a
+declaration that a resource is a dependency, bundled material, or available
+for reuse.
 
 ## Collection license
 
@@ -100,11 +101,12 @@ dependencies, version, and distribution conditions before adoption.
 ### Runtime and validator boundary
 
 The distributed CLI and repository validators use Node.js and Python standard
-libraries plus the JSON Schema documents shipped in this repository. No
-third-party runtime package, agent, provider, plugin, remote trace service, or
-model is bundled or installed by `ForgeLoop`. A future host that adds one of
-those capabilities must review its own license, dependency tree, credentials,
-network behavior, and distribution terms separately.
+libraries plus the JSON Schema documents shipped in this repository. The core
+CLI has one approved runtime package, `smol-toml`, for structural Cargo
+manifest parsing; it is not used as an agent, provider, plugin, remote trace
+service, or model. Every future runtime capability must review its own license,
+dependency tree, credentials, network behavior, and distribution terms
+separately.
 
 ## Visual, gradient, and gallery references
 
@@ -212,6 +214,16 @@ It does not vendor upstream runtime code, depend on its repository at runtime,
 or make its prescriptive examples universal.
 
 ## Runtime dependencies with upstream notices
+
+### smol-toml 1.8.0
+
+- Project/source: [squirrelchat/smol-toml](https://github.com/squirrelchat/smol-toml).
+- License declared by the upstream package: BSD-3-Clause.
+- Use in this collection: bounded structural parsing of Rust `Cargo.toml`
+  manifests without executing Cargo or evaluating project code.
+- Boundary: the exact version is pinned in `package.json` and
+  `package-lock.json`; the dependency has no role in routing authority beyond
+  the parser result and is not exposed as a public ForgeLoop integration.
 
 ### Microsoft tgrep
 

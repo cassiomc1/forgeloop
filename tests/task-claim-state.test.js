@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { rm, writeFile } from "node:fs/promises";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import { test } from "node:test";
 
 import { runStatus } from "../src/commands/status.js";
@@ -12,7 +12,7 @@ import { resolveTaskClaimState } from "../src/core/task-claim-state.js";
 import { withTaskMutation } from "../src/core/task-command.js";
 import { ensureWithin } from "../src/core/filesystem.js";
 import { readTaskDescriptor } from "../src/core/task-descriptor.js";
-import { taskArtifactPath } from "../src/core/task-paths.js";
+import { TASK_STATE_ROOT, taskArtifactPath } from "../src/core/task-paths.js";
 import {
   createTaskRecovery,
   taskClaimProjection,
@@ -276,6 +276,25 @@ test("task-list, task-show, and status agree that forged COMPLETE is inconsisten
       assert.equal(result.mutationAllowed, false);
       assert.equal(result.ownershipValid, false);
     }
+    const active = await runTaskList({ target, packageRoot, active: true });
+    assert.equal(active.tasks.some((task) => task.taskId === taskId), false);
+  });
+});
+
+test("task-list phase filtering returns only the requested lifecycle phase", async () => {
+  await withRecoveryTarget(async (target) => {
+    const { taskId } = await setupAbandonedTask(target, { taskId: "phase-filter-task" });
+    const corruptKey = "b".repeat(64);
+    const corruptDirectory = ensureWithin(target, `${TASK_STATE_ROOT}/${corruptKey}`);
+    await mkdir(corruptDirectory, { recursive: true });
+    await writeFile(`${corruptDirectory}/events.ndjson`, "corrupt\n", "utf8");
+
+    const matching = await runTaskList({ target, packageRoot, phase: "VERIFYING" });
+    assert.deepEqual(matching.tasks.map((task) => task.taskId), [taskId]);
+    assert.equal(matching.tasks.some((task) => task.healthy === false), false);
+
+    const nonMatching = await runTaskList({ target, packageRoot, phase: "PLANNED" });
+    assert.deepEqual(nonMatching.tasks, []);
   });
 });
 

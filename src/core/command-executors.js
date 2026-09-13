@@ -170,7 +170,7 @@ export const COMMAND_EXECUTORS = {
     exitCode: 0,
   }),
   next: async ({ target, packageRoot, options, authorityContext, runtimeContext }) => ({
-    result: await runNext({ target, packageRoot, taskId: options.taskId, authorityContext, runtimeContext, compact: options.compact }),
+    result: await runNext({ target, packageRoot, taskId: options.taskId, authorityContext, runtimeContext, compact: options.compact, explain: options.explain }),
     exitCode: 0,
   }),
   continuity: async ({ target, packageRoot, options }) => ({
@@ -600,11 +600,13 @@ export const COMMAND_EXECUTORS = {
       taskId: options.taskId,
       claims: options.claims,
       contractFile: options.contractFile,
+      preset: options.preset,
+      preview: options.preview,
     }),
     exitCode: 0,
   }),
-  "task-list": async ({ target, packageRoot }) => ({
-    result: await runTaskList({ target, packageRoot }),
+  "task-list": async ({ target, packageRoot, options }) => ({
+    result: await runTaskList({ target, packageRoot, phase: options.phase, active: options.active, limit: options.limit, offset: options.offset }),
     exitCode: 0,
   }),
   "task-show": async ({ target, packageRoot, options }) => ({

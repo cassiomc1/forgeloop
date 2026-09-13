@@ -99,6 +99,38 @@ test("router only emits registered guide IDs across all work types", () => {
   }
 });
 
+test("Flutter specialist is registered with the canonical guide path", () => {
+  assert.equal(GUIDE_REGISTRY.flutter.path, "ENG/flutter-development-eng.md");
+  assert.equal(GUIDE_REGISTRY.flutter.install, true);
+  assert.ok(GUIDE_IDS.includes("flutter"));
+});
+
+test(".NET specialist is registered with the canonical guide path", () => {
+  assert.equal(GUIDE_REGISTRY.dotnet.path, "ENG/dotnet-aspnetcore-development-eng.md");
+  assert.equal(GUIDE_REGISTRY.dotnet.install, true);
+  assert.ok(GUIDE_IDS.includes("dotnet"));
+});
+
+test("Node.js specialist is registered with the canonical guide path", () => {
+  assert.equal(GUIDE_REGISTRY.nodejs.path, "ENG/nodejs-backend-development-eng.md");
+  assert.equal(GUIDE_REGISTRY.nodejs.install, true);
+  assert.ok(GUIDE_IDS.includes("nodejs"));
+});
+
+test("Rust specialist is registered with the canonical guide path", () => {
+  assert.equal(GUIDE_REGISTRY.rust.path, "ENG/rust-development-eng.md");
+  assert.equal(GUIDE_REGISTRY.rust.install, true);
+  assert.ok(GUIDE_IDS.includes("rust"));
+});
+
+test("multi-language specialists are registered with stable public IDs", () => {
+  for (const guideId of ["c", "cpp", "java", "sql", "go", "typescript", "php", "swift"]) {
+    assert.equal(GUIDE_REGISTRY[guideId].path, `ENG/${guideId === "cpp" ? "cpp" : guideId}-development-eng.md`, guideId);
+    assert.equal(GUIDE_REGISTRY[guideId].install, true, guideId);
+    assert.ok(GUIDE_IDS.includes(guideId), guideId);
+  }
+});
+
 test("ui-copy routes to design and accessibility, never documentation", () => {
   const result = evaluateRoute({
     workType: "ui-copy",

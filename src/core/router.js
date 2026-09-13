@@ -1,5 +1,6 @@
 import { GUIDE_IDS, PROTOCOL_VERSION } from "./protocol.js";
 import { assertExecutionProfile, resolveExecutionProfile } from "./execution-profile.js";
+import { PROJECT_EVIDENCE_SCOPES } from "./project-detection.js";
 
 export const ROUTING_SCHEMA_VERSION = 1;
 
@@ -61,6 +62,22 @@ const SIGNALS = Object.freeze({
   platforms: new Set(["web", "mobile", "desktop", "server", "ci", "cross-platform"]),
 });
 
+const PROJECT_FRAMEWORKS = new Set([
+  "flutter", "dotnet", "aspnetcore", "abp", "nodejs", "rust",
+  "c", "cpp", "java", "sql", "go", "typescript", "php", "swift",
+]);
+
+const LANGUAGE_PROJECT_GUIDES = Object.freeze([
+  ["c", "PROJECT_C_CONFIRMED"],
+  ["cpp", "PROJECT_CPP_CONFIRMED"],
+  ["java", "PROJECT_JAVA_CONFIRMED"],
+  ["go", "PROJECT_GO_CONFIRMED"],
+  ["typescript", "PROJECT_TYPESCRIPT_CONFIRMED"],
+  ["php", "PROJECT_PHP_CONFIRMED"],
+  ["swift", "PROJECT_SWIFT_CONFIRMED"],
+  ["sql", "PROJECT_SQL_CONFIRMED"],
+]);
+
 export const PLATFORM_SEMANTICS = Object.freeze({
   web: Object.freeze({
     mode: "informational-only",
@@ -121,6 +138,165 @@ const PRIMARY_GUIDES = Object.freeze({
   "ui-copy": "design",
 });
 
+function hasFlutterWorkContext(workType) {
+  return !["documentation", "ui-copy"].includes(workType);
+}
+
+function addFlutterProjectGuides(input, add) {
+  const projectEvidence = input.projectEvidence;
+  if (!projectEvidence?.frameworks.includes("flutter")
+    || !["MATCH", "UNSCOPED"].includes(projectEvidence.scope)
+    || !hasFlutterWorkContext(input.workType)) return;
+  add("flutter", "PROJECT_FLUTTER_SDK_DEPENDENCY");
+}
+
+function hasDotNetWorkContext(workType) {
+  return !["documentation", "ui-copy"].includes(workType);
+}
+
+function addDotNetProjectGuides(input, add) {
+  const projectEvidence = input.projectEvidence;
+  if (!projectEvidence?.frameworks.includes("dotnet")
+    || !["MATCH", "UNSCOPED"].includes(projectEvidence.scope)
+    || !hasDotNetWorkContext(input.workType)) return;
+  add("dotnet", "PROJECT_DOTNET_SDK_PROJECT");
+  if (projectEvidence.frameworks.includes("aspnetcore")) add("dotnet", "PROJECT_ASPNETCORE_CONFIRMED");
+  if (projectEvidence.frameworks.includes("abp")) add("dotnet", "PROJECT_ABP_CONFIRMED");
+}
+
+function hasNodeJsWorkContext(workType) {
+  return !["documentation", "ui-copy", "mobile-ui"].includes(workType);
+}
+
+function addNodeJsProjectGuides(input, add) {
+  const projectEvidence = input.projectEvidence;
+  if (!projectEvidence?.frameworks.includes("nodejs")
+    || !["MATCH", "UNSCOPED"].includes(projectEvidence.scope)
+    || !hasNodeJsWorkContext(input.workType)) return;
+  add("nodejs", "PROJECT_NODEJS_CONFIRMED");
+  if (projectEvidence.primarySignals.some((signal) => signal.includes(":dependencies.") || signal.includes(":optionalDependencies."))) {
+    add("nodejs", "PROJECT_NODEJS_BACKEND_FRAMEWORK");
+  }
+  if (projectEvidence.primarySignals.some((signal) => signal.includes(":scripts."))) {
+    add("nodejs", "PROJECT_NODEJS_RUNTIME_SCRIPT");
+  }
+  if (projectEvidence.primarySignals.some((signal) => signal.includes(":import="))) {
+    add("nodejs", "PROJECT_NODEJS_SERVER_RUNTIME");
+  }
+}
+
+function hasRustWorkContext(workType) {
+  return !["documentation", "ui-copy", "mobile-ui"].includes(workType);
+}
+
+function addRustProjectGuides(input, add) {
+  const projectEvidence = input.projectEvidence;
+  if (!projectEvidence?.frameworks.includes("rust")
+    || !["MATCH", "UNSCOPED"].includes(projectEvidence.scope)
+    || !hasRustWorkContext(input.workType)) return;
+  add("rust", "PROJECT_RUST_CONFIRMED");
+  if (projectEvidence.primarySignals.some((signal) => signal.endsWith(":package"))) {
+    add("rust", "PROJECT_RUST_CARGO_PACKAGE");
+  }
+  if (projectEvidence.primarySignals.some((signal) => signal.endsWith(":workspace"))) {
+    add("rust", "PROJECT_RUST_CARGO_WORKSPACE");
+  }
+}
+
+function hasLanguageWorkContext(workType) {
+  return !["documentation", "ui-copy"].includes(workType);
+}
+
+function addLanguageProjectGuides(input, add) {
+  const projectEvidence = input.projectEvidence;
+  if (!projectEvidence || !["MATCH", "UNSCOPED"].includes(projectEvidence.scope)
+    || !hasLanguageWorkContext(input.workType)) return;
+  for (const [guide, reason] of LANGUAGE_PROJECT_GUIDES) {
+    if (projectEvidence.frameworks.includes(guide)) add(guide, reason);
+  }
+}
+
+function addProjectBaselineGuides(input, add) {
+  const projectEvidence = input.projectEvidence;
+  if (!projectEvidence || !["MATCH", "UNSCOPED"].includes(projectEvidence.scope)) return;
+  if (projectEvidence.frameworks.includes("flutter") && hasFlutterWorkContext(input.workType)) {
+    add("clean", "PROJECT_FLUTTER_BASELINE");
+    add("test", "PROJECT_FLUTTER_BASELINE");
+  }
+  if (projectEvidence.frameworks.includes("dotnet") && hasDotNetWorkContext(input.workType)) {
+    add("clean", "PROJECT_DOTNET_BASELINE");
+    add("test", "PROJECT_DOTNET_BASELINE");
+  }
+  if (projectEvidence.frameworks.includes("nodejs") && hasNodeJsWorkContext(input.workType)) {
+    add("clean", "PROJECT_NODEJS_BASELINE");
+    add("test", "PROJECT_NODEJS_BASELINE");
+  }
+  if (projectEvidence.frameworks.includes("rust") && hasRustWorkContext(input.workType)) {
+    add("clean", "PROJECT_RUST_BASELINE");
+    add("test", "PROJECT_RUST_BASELINE");
+  }
+  if (hasLanguageWorkContext(input.workType)) {
+    for (const [language] of LANGUAGE_PROJECT_GUIDES) {
+      if (!projectEvidence.frameworks.includes(language)) continue;
+      add("clean", `PROJECT_${language.toUpperCase()}_BASELINE`);
+      add("test", `PROJECT_${language.toUpperCase()}_BASELINE`);
+    }
+  }
+}
+
+function flutterExclusionReason(projectEvidence, workType) {
+  if (!projectEvidence) return "NO_FLUTTER_PROJECT_EVIDENCE";
+  if (projectEvidence.scope === "NO_MATCH") return "NO_FLUTTER_SCOPE_MATCH";
+  if (!projectEvidence.frameworks.includes("flutter")) return "NO_FLUTTER_PRIMARY_EVIDENCE";
+  if (!hasFlutterWorkContext(workType)) return "NO_FLUTTER_EXECUTABLE_WORK";
+  return "NO_FLUTTER_PRIMARY_EVIDENCE";
+}
+
+function dotNetExclusionReason(projectEvidence, workType) {
+  if (!projectEvidence) return "NO_DOTNET_PROJECT_EVIDENCE";
+  if (projectEvidence.scope === "NO_MATCH") return "NO_DOTNET_SCOPE_MATCH";
+  if (!projectEvidence.frameworks.includes("dotnet")) return "NO_DOTNET_PRIMARY_EVIDENCE";
+  if (!hasDotNetWorkContext(workType)) return "NO_DOTNET_EXECUTABLE_WORK";
+  return "NO_DOTNET_PRIMARY_EVIDENCE";
+}
+
+function nodeJsExclusionReason(projectEvidence, workType) {
+  if (!projectEvidence) return "NO_NODEJS_PROJECT_EVIDENCE";
+  if (projectEvidence.scope === "NO_MATCH") return "NO_NODEJS_SCOPE_MATCH";
+  if (!projectEvidence.frameworks.includes("nodejs")) return "NO_NODEJS_PRIMARY_EVIDENCE";
+  if (!hasNodeJsWorkContext(workType)) return "NO_NODEJS_EXECUTABLE_WORK";
+  return "NO_NODEJS_PRIMARY_EVIDENCE";
+}
+
+function rustExclusionReason(projectEvidence, workType) {
+  if (!projectEvidence) return "NO_RUST_PROJECT_EVIDENCE";
+  if (projectEvidence.scope === "NO_MATCH") return "NO_RUST_SCOPE_MATCH";
+  if (!projectEvidence.frameworks.includes("rust")) return "NO_RUST_PRIMARY_EVIDENCE";
+  if (!hasRustWorkContext(workType)) return "NO_RUST_EXECUTABLE_WORK";
+  return "NO_RUST_PRIMARY_EVIDENCE";
+}
+
+function exclusionReasonForGuide(guide, projectEvidence, workType) {
+  if (guide === "security") return "NO_TRUST_BOUNDARY";
+  if (guide === "performance") return "NO_MEASURABLE_PERFORMANCE_RISK";
+  if (guide === "design" || guide === "accessibility") return "NO_UI_SURFACE";
+  if (guide === "premium" || guide === "games") return "NO_PRIMARY_WORK_TYPE";
+  if (guide === "taste") return "NO_TASTE_FRONTEND_CONTEXT";
+  if (guide === "documentation") return "NO_DOCUMENTATION_SURFACE";
+  if (guide === "flutter") return flutterExclusionReason(projectEvidence, workType);
+  if (guide === "dotnet") return dotNetExclusionReason(projectEvidence, workType);
+  if (guide === "nodejs") return nodeJsExclusionReason(projectEvidence, workType);
+  if (guide === "rust") return rustExclusionReason(projectEvidence, workType);
+  if (LANGUAGE_PROJECT_GUIDES.some(([language]) => language === guide)) {
+    if (!projectEvidence) return `NO_${guide.toUpperCase()}_PROJECT_EVIDENCE`;
+    if (projectEvidence.scope === "NO_MATCH") return `NO_${guide.toUpperCase()}_SCOPE_MATCH`;
+    if (!projectEvidence.frameworks.includes(guide)) return `NO_${guide.toUpperCase()}_PRIMARY_EVIDENCE`;
+    if (!hasLanguageWorkContext(workType)) return `NO_${guide.toUpperCase()}_EXECUTABLE_WORK`;
+    return `NO_${guide.toUpperCase()}_PRIMARY_EVIDENCE`;
+  }
+  return "NO_BEHAVIOR_OR_EXECUTABLE_CHANGE";
+}
+
 export class RouteInputError extends Error {
   constructor(message) {
     super(message);
@@ -151,6 +327,50 @@ function normalizeArray(value, name, allowed) {
   return [...seen].sort();
 }
 
+function normalizeStringList(value, name) {
+  if (value === undefined) return [];
+  if (!Array.isArray(value)) throw new RouteInputError(`${name} must be an array`);
+  const seen = new Set();
+  for (const item of value) {
+    if (typeof item !== "string" || item.trim() === "") {
+      throw new RouteInputError(`${name} must contain non-empty strings`);
+    }
+    if (seen.has(item)) throw new RouteInputError(`Duplicate ${name.slice(0, -1)}: ${item}`);
+    seen.add(item);
+  }
+  return [...seen].sort();
+}
+
+function normalizeProjectEvidence(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new RouteInputError("projectEvidence must be an object");
+  }
+  if (value.schemaVersion !== undefined && value.schemaVersion !== ROUTING_SCHEMA_VERSION) {
+    throw new RouteInputError(`Unsupported projectEvidence schema version: ${value.schemaVersion}`);
+  }
+  const frameworks = normalizeArray(value.frameworks, "frameworks", PROJECT_FRAMEWORKS);
+  const hasDotnet = frameworks.includes("dotnet");
+  const invalidOverlays = frameworks.filter((framework) => framework === "aspnetcore" || framework === "abp");
+  if (!hasDotnet && invalidOverlays.length > 0) {
+    const noun = invalidOverlays.length === 1 ? "framework" : "frameworks";
+    const verb = invalidOverlays.length === 1 ? "requires" : "require";
+    const labels = invalidOverlays.map((framework) => `"${framework}"`).join(", ");
+    throw new RouteInputError(`projectEvidence ${noun} ${labels} ${verb} "dotnet"`);
+  }
+  const scope = value.scope ?? (frameworks.length > 0 ? "UNSCOPED" : "NONE");
+  if (!PROJECT_EVIDENCE_SCOPES.includes(scope)) {
+    throw new RouteInputError(`Unknown project evidence scope: ${scope}`);
+  }
+  return {
+    schemaVersion: ROUTING_SCHEMA_VERSION,
+    scope,
+    frameworks,
+    projectRoots: normalizeStringList(value.projectRoots, "projectRoots"),
+    primarySignals: normalizeStringList(value.primarySignals, "primarySignals"),
+    supportingSignals: normalizeStringList(value.supportingSignals, "supportingSignals"),
+  };
+}
+
 export function normalizeRouteInput(input = {}) {
   if (!input || typeof input !== "object" || Array.isArray(input)) {
     throw new RouteInputError("Route input must be an object");
@@ -163,6 +383,9 @@ export function normalizeRouteInput(input = {}) {
       throw new RouteInputError(`${key} must be boolean`);
     }
   }
+  const projectEvidence = input.projectEvidence === undefined
+    ? undefined
+    : normalizeProjectEvidence(input.projectEvidence);
   return {
     schemaVersion: ROUTING_SCHEMA_VERSION,
     workType: input.workType,
@@ -171,6 +394,7 @@ export function normalizeRouteInput(input = {}) {
     platforms: normalizeArray(input.platforms, "platforms", SIGNALS.platforms),
     behaviorChange: input.behaviorChange ?? false,
     executableChange: input.executableChange ?? false,
+    ...(projectEvidence ? { projectEvidence } : {}),
   };
 }
 
@@ -185,6 +409,14 @@ export function evaluateRoute(input = {}, profileOptions = {}) {
     if (!reasons.includes(reason)) reasons.push(reason);
     selected.set(guide, reasons);
   }
+
+  const projectEvidence = normalized.projectEvidence;
+  addFlutterProjectGuides(normalized, add);
+  addDotNetProjectGuides(normalized, add);
+  addNodeJsProjectGuides(normalized, add);
+  addRustProjectGuides(normalized, add);
+  addLanguageProjectGuides(normalized, add);
+  addProjectBaselineGuides(normalized, add);
 
   const workReason = reasonForWorkType(normalized.workType);
   for (const guide of WORK_GUIDES[normalized.workType]) add(guide, workReason);
@@ -246,13 +478,7 @@ export function evaluateRoute(input = {}, profileOptions = {}) {
 
   for (const guide of GUIDE_IDS) {
     if (selected.has(guide)) continue;
-    if (guide === "security") excluded[guide] = ["NO_TRUST_BOUNDARY"];
-    else if (guide === "performance") excluded[guide] = ["NO_MEASURABLE_PERFORMANCE_RISK"];
-    else if (guide === "design" || guide === "accessibility") excluded[guide] = ["NO_UI_SURFACE"];
-    else if (guide === "premium" || guide === "games") excluded[guide] = ["NO_PRIMARY_WORK_TYPE"];
-    else if (guide === "taste") excluded[guide] = ["NO_TASTE_FRONTEND_CONTEXT"];
-    else if (guide === "documentation") excluded[guide] = ["NO_DOCUMENTATION_SURFACE"];
-    else excluded[guide] = ["NO_BEHAVIOR_OR_EXECUTABLE_CHANGE"];
+    excluded[guide] = [exclusionReasonForGuide(guide, projectEvidence, normalized.workType)];
   }
 
   const guides = [...selected.keys()];

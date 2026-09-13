@@ -49,10 +49,60 @@ forgeloop next --task task-contact-form-001 --compact --json
 forgeloop task-show --task task-contact-form-001 --compact --json
 ```
 
+When the task shape is known but a full contract has not been written yet,
+use a bounded preset preview. Preview is read-only and records unresolved
+decisions instead of guessing project facts:
+
+```bash
+forgeloop task-create --task task-contact-form-001 \
+  --claim src/components --claim tests \
+  --preset feature --preview --json
+```
+
+After reviewing the proposed contract, repeat the command without
+`--preview` to create the namespace and persist the same validated contract.
+The supported presets are `documentation`, `bug`, `feature`, and `release`.
+The release preset retains an independently verified publication requirement;
+it does not publish or deploy anything.
+
+For a bounded explanation of a blocked or recovery-sensitive next action, opt
+in with `--explain`. The explanation is read-only and derived from canonical
+reason codes and artifact references:
+
+```bash
+forgeloop next --task task-contact-form-001 --explain --json
+```
+
 These commands do not bypass contracts, gates, verification, provenance,
 lifecycle phases, or validator-backed completion. Usage telemetry is optional,
 never estimated, and never verification evidence; `efficiency --task` compares
 only against a metadata-compatible local baseline.
+
+### Project-aware guide routing
+
+ForgeLoop selects specialist context from bounded structural evidence in the
+affected project scope. A parsed `pubspec.yaml` with
+`dependencies.flutter.sdk: flutter` selects `flutter`. A parsed SDK-style
+`*.csproj`, `*.fsproj`, or `*.vbproj` using the supported .NET SDK allowlist
+selects the single `dotnet` guide. Web/Razor/Blazor or
+`Microsoft.AspNetCore.App` evidence adds an ASP.NET Core routing reason, and a
+`Volo.Abp.*` package reference adds an ABP routing reason; neither overlay is a
+standalone guide ID, and each requires `dotnet` in project evidence.
+
+Bounded structural inspectors also recognize Go modules/workspaces, valid
+TypeScript configs, Composer/PHP projects, Java Maven/Gradle/Bazel roots,
+SwiftPM/Xcode/native Swift roots, and explicit C/C++ build/source evidence.
+Meaningful SQL migrations and schemas are scoped overlays. Build, compiler,
+package-manager, database, lockfile, generated, and vendor artifacts are not
+executed or promoted beyond their documented evidence contract.
+
+Mentions in prose, source snippets, Dockerfiles, lockfiles, package names,
+malformed manifests, and unrelated monorepo roots are insufficient. Mixed
+Flutter/.NET roots stay isolated. Shared MSBuild/NuGet files apply only to
+descendant confirmed .NET projects, and `.sln`/`.slnx` claims use exact
+membership. Discovery skips symlinks and is bounded; see
+[`GUIDE_ROUTER.md`](../GUIDE_ROUTER.md) for the exact allowlist, reason codes,
+and numeric limits.
 
 ---
 
@@ -395,7 +445,16 @@ forgeloop complete --task auth-feature --json
 
 # Inspect active tasks
 forgeloop task-list --json
+
+# Filter and page the deterministic projection
+forgeloop task-list --phase EXECUTING --limit 20 --offset 0 --json
+forgeloop task-list --active --limit 20 --offset 20 --json
 ```
+
+Task discovery is exhaustive for ownership and conflict correctness. The
+`--phase` and `--active` options filter the presentation after validation;
+`--limit` and `--offset` page the sorted result and JSON includes `total` and
+`hasMore`. Listing is read-only and never removes ledger or recovery evidence.
 
 ---
 

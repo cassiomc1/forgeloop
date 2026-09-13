@@ -116,6 +116,14 @@ is not duplicated in every ordinary PR job.
 
 ## Receipts and infrastructure failures
 
+`npm run lint`, `npm run complexity:check`, and
+`npm run critical-coverage:check` retain independent purposes: syntax and
+usage correctness, hotspot growth, and coverage of critical modules. Packed
+TypeScript consumers validate the public declarations; YAML-based tests
+validate workflow semantics. The core runtime has the approved exact
+`smol-toml` dependency for bounded Cargo manifest parsing; dependency policy
+keeps all other runtime dependencies out.
+
 `scripts/audit-receipts.mjs` runs after checkout. It audits supplied scoped
 receipts with explicit task IDs, fails on an invalid audit, and reports
 `NOT_VERIFIED` when none are supplied. This repository job does not create

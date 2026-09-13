@@ -146,6 +146,9 @@ ROUTING_SCENARIOS = {
     "app-mobile-ui": "clean,test,design,accessibility,security,performance",
     "game-web-multiplayer": "games,clean,test,security,performance,accessibility,design",
     "documentation": "documentation",
+    "flutter-app-feature": "flutter,clean,test",
+    "dotnet-app-feature": "dotnet,clean,test",
+    "rust-app-feature": "rust,clean,test",
 }
 
 REQUIRED_GUIDE_FRONTMATTER = {
@@ -676,6 +679,17 @@ def _fixture_guide_registry() -> dict[str, dict]:
         "accessibility": {"path": "ENG/accessibility-eng.md", "install": True},
         "games": {"path": "ENG/games-code-design-web-eng.md", "install": True},
         "documentation": {"path": "ENG/documentation-quality-eng.md", "install": True},
+        "flutter": {"path": "ENG/flutter-development-eng.md", "install": True},
+        "dotnet": {"path": "ENG/dotnet-aspnetcore-development-eng.md", "install": True},
+        "rust": {"path": "ENG/rust-development-eng.md", "install": True},
+        "c": {"path": "ENG/c-development-eng.md", "install": True},
+        "cpp": {"path": "ENG/cpp-development-eng.md", "install": True},
+        "java": {"path": "ENG/java-development-eng.md", "install": True},
+        "sql": {"path": "ENG/sql-development-eng.md", "install": True},
+        "go": {"path": "ENG/go-development-eng.md", "install": True},
+        "typescript": {"path": "ENG/typescript-development-eng.md", "install": True},
+        "php": {"path": "ENG/php-development-eng.md", "install": True},
+        "swift": {"path": "ENG/swift-development-eng.md", "install": True},
     }
 
 
@@ -754,6 +768,9 @@ def _valid_fixture(root: Path) -> None:
         "app-mobile-ui": "clean,test,design,accessibility,security,performance",
         "game-web-multiplayer": "games,clean,test,security,performance,accessibility,design",
         "documentation": "documentation",
+        "flutter-app-feature": "flutter,clean,test",
+        "dotnet-app-feature": "dotnet,clean,test",
+        "rust-app-feature": "rust,clean,test",
     }
     markers = "\n".join(
         f"<!-- route:{scenario}={ids} -->" for scenario, ids in scenarios.items()

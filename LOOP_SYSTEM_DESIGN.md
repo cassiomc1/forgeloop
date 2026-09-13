@@ -242,7 +242,7 @@ presented as a completed protocol state.
 
 ### `ENG/*.md`
 
-Nine canonical guides cover:
+Eleven canonical guides cover:
 
 - clean code;
 - testing;
@@ -252,7 +252,9 @@ Nine canonical guides cover:
 - accessibility;
 - premium website production;
 - web games;
-- contextual frontend taste.
+- contextual frontend taste;
+- technical documentation quality;
+- Flutter application engineering.
 
 Each guide has exact English frontmatter and a stable guide ID.
 
@@ -265,6 +267,7 @@ Records external provenance, trademarks, licenses, and reuse boundaries. It is r
 | Work type | Guide set |
 | --- | --- |
 | Documentation | Related domain and documentation checks |
+| Flutter application | `flutter` with `clean` and `test`; add surface-specific guides as needed |
 | General code or bug fix | `clean`, `test`; add `security` or `performance` when the surface requires it |
 | Backend, API, authentication, or data | `clean`, `test`, `security`; add `performance` for critical paths |
 | Web, mobile, or desktop interface | `clean`, `test`, `design`, `accessibility`; add `security` and `performance` according to product risk |
@@ -418,7 +421,7 @@ The documentation workflow verifies:
 
 - every file referenced by an adapter exists;
 - repository-relative links resolve;
-- exactly nine canonical English guides exist;
+- exactly eleven canonical English guides exist;
 - guide IDs, filenames, frontmatter keys, and `language: en` match the catalog;
 - no legacy language tree or bilingual metadata remains;
 - all route contracts contain valid guide IDs;
@@ -428,14 +431,15 @@ The documentation workflow verifies:
 - secrets and credential-like assignments are absent;
 - `THIRD_PARTY_NOTICES.md` is present.
 
-The validator also exercises six routing scenarios:
+The validator also exercises seven routing scenarios:
 
 1. premium landing page;
 2. authenticated API;
 3. bug fix without UI;
 4. mobile app with UI;
 5. multiplayer web game;
-6. documentation-only change.
+6. documentation-only change;
+7. Flutter application feature with a primary SDK dependency signal.
 
 ## Distribution
 
@@ -527,7 +531,7 @@ is orthogonal to lifecycle phases and does not authorize the receiving harness.
 - The repository and its maintained content are English-only.
 - Common project instruction surfaces and generic bootstrap mechanisms have a
   documented entry into one canonical loop.
-- The router selects every relevant guide and excludes irrelevant guides in the six defined scenarios.
+- The router selects every relevant guide and excludes irrelevant guides in the seven defined scenarios.
 - The profile contains verifiable facts, sources, and real commands without secrets.
 - The loop requires evidence before completion claims and exits safely when blocked.
 - Structural, Markdown, link, and secret checks pass locally and in CI.

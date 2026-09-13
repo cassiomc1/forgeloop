@@ -11,8 +11,9 @@ part of the consumer tarball.
 
 The package exposes the `forgeloop` executable from `src/cli.js` and the
 `@cassiomc1/forgeloop/integration` subpath from `src/integration.js`, with its
-declaration file. The package has no runtime dependencies and requires Node.js
-20 or newer.
+declaration file. The package has the approved exact `smol-toml` runtime
+dependency for bounded Cargo manifest parsing and requires Node.js 20 or
+newer.
 
 ## Included files
 
@@ -27,6 +28,17 @@ The published tarball includes the following consumer-facing groups:
   This includes the provider-neutral Repository Index runtime and its pinned
   `src/repository-index/tgrep-manifest.json`; native engine binaries are
   provisioned outside the npm tarball.
+- **Specialist guidance:** every registered consumer guide under `ENG/`,
+  including `ENG/flutter-development-eng.md`,
+  `ENG/dotnet-aspnetcore-development-eng.md`,
+  `ENG/nodejs-backend-development-eng.md`,
+  `ENG/rust-development-eng.md`, and the C, C++, Java, SQL, Go, TypeScript,
+  PHP, and Swift specialists, ships with the guide registry and is resolved
+  from package-local paths. Specialists are selected only from their bounded
+  structural primary evidence; SQL remains a scoped host-project overlay.
+  ASP.NET Core and ABP are conditional routing overlays on the `dotnet` guide,
+  not additional package guides. The package does not install or invoke
+  framework, compiler, build, package-manager, or database tooling.
 - **Initialization material:** the root protocol and integration documents,
   legal notices, the target profile template, and every path listed by
   `src/core/templates.js`. These files are read by `init` and `update`, so
@@ -39,7 +51,8 @@ The published tarball includes the following consumer-facing groups:
   generated local repositories and measurements are not.
 - **User documentation:** the getting-started, integration, CLI, artifact,
   Repository Index, Persistent Search Transport, troubleshooting, release,
-  package-boundary, and related reference pages.
+  package-boundary, and related reference pages, together with the
+  machine-readable documentation and protocol indexes and `CONTRIBUTING.md`.
   The advisory-context and Ripwire adapter guides ship with the corresponding
   public integration surface.
   The typed diagram sources, generated HTML/SVG/receipt artifacts, and
@@ -67,13 +80,17 @@ The tarball intentionally omits repository-only material:
 - the repository README hero PNG, which is a GitHub-only asset. The packaged
   README remains intentionally text-first around that relative repository
   image reference.
+- the execution PoC, its audit, and its evidence package. Packaged README and
+  index links to this repository-only material use GitHub URLs so they remain
+  truthful for npm consumers.
 
-The package test checks both required paths and these exclusion classes. It
+The package test checks all registered guide paths and these exclusion classes. It
 also enumerates `src/**/*.js` and fails if a maintained runtime module is
 missing from the candidate tarball or if a retired helper is reintroduced.
 The repository index remains a catalog: links from `DOCS_INDEX.md` to tests,
-proof-of-concept evidence, historical plans, and source trees may intentionally
-resolve only in the full repository and are not package dependencies.
+historical plans, and source trees may intentionally resolve only in the full
+repository and are not package dependencies. The canonical documentation and
+protocol indexes are included in the tarball.
 
 ## Verification and publication
 
@@ -86,8 +103,12 @@ npm run pack:smoke
 ```
 
 `pack:smoke` installs the candidate tarball into a temporary consumer and
-exercises the CLI, public Integration API, initialization, schemas, and
-packaged documentation references. The tag-triggered publication workflow
+exercises the CLI, public Integration API, initialization, schemas, and the
+Structural Quality documentation's packaged diagram references. The
+package-boundary tests also assert
+that every registered guide path, including all language specialists, is
+present in the candidate. The tag-triggered publication
+workflow
 runs the same smoke gate before `npm publish --provenance --access public`.
 Publication therefore remains owned by the trusted GitHub Actions OIDC
 workflow; local package inspection proves the candidate boundary but does not

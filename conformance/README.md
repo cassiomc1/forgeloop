@@ -31,6 +31,37 @@ authority, provides recoverable stale receipt lifecycle in `prepare-completion`,
 and validates single-actor protocol runs. Repeat the complete identity
 check before starting a reproducible run.
 
+## Current source-checkout guidance
+
+The package identities and run results above are historical evidence. They are
+not a claim about the package or publication state of the current checkout.
+For a new local adapter check, read the current source package version and
+protocol metadata from the checkout, then use the public Integration API or the
+CLI command registry. Do not infer publication, deployment, or live-agent
+conformance from a local version or a successful deterministic check.
+
+The repeatable adapter-facing kit is [`adapter-test-kit.mjs`](./adapter-test-kit.mjs):
+
+```bash
+node conformance/adapter-test-kit.mjs
+```
+
+It emits bounded machine-readable JSON with the exact Node runtime, protocol
+version, scenario IDs, observed outcomes, and a summary. Its available public
+API scenarios cover cross-harness resume, bounded evidence-recovery guidance,
+and concurrent claims. Policy-drift and interrupted-transaction scenarios are
+reported `UNAVAILABLE` by the public adapter kit because fabricating their
+durable artifacts would bypass canonical lifecycle ownership; use their
+versioned fixtures for those cases. `FAIL` means the supported adapter
+behavior was observed and did not meet the scenario contract. `UNAVAILABLE`
+and `NOT_STARTED` are not passes and do not certify a live model run.
+
+To test a nonconforming adapter, import `runAdapterTestKit` and provide an
+executor with the same `executeForgeLoopCommand({ command, projectPath,
+input })` shape. The kit must report failures rather than converting malformed
+or missing envelopes into success. Keep that negative check separate from a
+live-agent conformance report.
+
 Run a scenario in a disposable target using the Standard profile first:
 
 ```bash

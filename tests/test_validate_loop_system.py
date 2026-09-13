@@ -20,6 +20,26 @@ class LoopSystemValidationTests(unittest.TestCase):
     def test_accepts_valid_fixture(self) -> None:
         validate_repository(self.root)
 
+    def test_valid_fixture_includes_flutter_catalog_and_route_scenario(self) -> None:
+        router = (self.root / "GUIDE_ROUTER.md").read_text(encoding="utf-8")
+        self.assertIn("ENG/flutter-development-eng.md", router)
+        self.assertIn("<!-- route:flutter-app-feature=flutter,clean,test -->", router)
+        self.assertIn("ENG/rust-development-eng.md", router)
+        self.assertIn("<!-- route:rust-app-feature=rust,clean,test -->", router)
+        for guide_path in (
+            "ENG/c-development-eng.md",
+            "ENG/cpp-development-eng.md",
+            "ENG/java-development-eng.md",
+            "ENG/sql-development-eng.md",
+            "ENG/go-development-eng.md",
+            "ENG/typescript-development-eng.md",
+            "ENG/php-development-eng.md",
+            "ENG/swift-development-eng.md",
+        ):
+            self.assertIn(guide_path, router)
+        self.assertTrue((self.root / "ENG/flutter-development-eng.md").is_file())
+        self.assertTrue((self.root / "ENG/rust-development-eng.md").is_file())
+
     def test_rejects_unknown_guide_id_in_additional_route(self) -> None:
         router = self.root / "GUIDE_ROUTER.md"
         router.write_text(

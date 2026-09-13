@@ -1,10 +1,11 @@
 # Documentation index
 
-The machine-readable inventory is
+The repository's machine-readable documentation inventory is
 [`docs/documentation-manifest.json`](./docs/documentation-manifest.json). It
-classifies every package-shipped document, names canonical concept owners, and
-records generated/deprecated-document metadata. Normative requirements and
-their implementation/test mappings are in
+classifies maintained documentation, names canonical concept owners, and
+records generated/deprecated-document metadata. The package file list and
+guide registry additionally define the shipped consumer surface. Normative
+requirements and their implementation/test mappings are in
 [`docs/protocol-requirements.json`](./docs/protocol-requirements.json).
 
 ForgeLoop keeps one canonical process and separates protocol behavior from
@@ -49,11 +50,11 @@ integration and guide context. Use this map before editing documentation.
 | Capability levels, discovery, and degradation | [`PROTOCOL_INTEGRATION.md`](./PROTOCOL_INTEGRATION.md) | Vendor-neutral harness contract |
 | Host/orchestrator integration | [`ORCHESTRATOR_INTEGRATION.md`](./ORCHESTRATOR_INTEGRATION.md) | Serializable phases, transition boundaries, host responsibilities, and no-runtime integration contract |
 | Durable project facts | [`PROJECT_PROFILE.md`](./PROJECT_PROFILE.md) | Target-specific facts only; no prompts or secrets |
-| Guide selection | [`GUIDE_ROUTER.md`](./GUIDE_ROUTER.md) | Deterministic routing and exclusions |
+| Guide selection | [`GUIDE_ROUTER.md`](./GUIDE_ROUTER.md) | Deterministic routing, project evidence, overlays, bounds, and exclusions |
 | Architecture and safety boundaries | [`LOOP_SYSTEM_DESIGN.md`](./LOOP_SYSTEM_DESIGN.md) and [`THREAT_MODEL.md`](./THREAT_MODEL.md) | Design rationale and residual risk |
 | Artifact and phase schemas | [`schemas/`](./schemas/) and [`CONTRACT_COVERAGE.md`](./CONTRACT_COVERAGE.md) | Versioned machine-readable contract |
 | CLI/package behavior | [`src/`](./src/) and [`tests/`](./tests/) | Executable implementation and regression evidence |
-| Guide content | [`ENG/`](./ENG/) | Context-specific, English-only operational guides |
+| Guide content | [`ENG/`](./ENG/) | Context-specific, English-only operational guides, including Flutter, .NET, Node.js, Rust, C, C++, Java, SQL, Go, TypeScript, PHP, and Swift specialists; ASP.NET Core and ABP remain .NET overlays |
 | Diagram governance | [`docs/diagrams/manifest.json`](./docs/diagrams/manifest.json) | Authoritative taxonomy, renderer mapping, canonical purposes, artifact ownership, and references |
 | Diagram maintainer entrypoint | [`docs/diagrams/README.md`](./docs/diagrams/README.md) | Typed Archify source, animated HTML explorer, animated SVG fallback, review, and regeneration workflow |
 | Engineering flow diagram | [`docs/assets/diagrams/forgeloop-engineering-flow.html`](./docs/assets/diagrams/forgeloop-engineering-flow.html) | Conceptual lifecycle from request through validator-backed completion |
@@ -151,11 +152,12 @@ loop, and secret-scanning contracts that have not been migrated to Node. Their
 scope, exact commands, and migration boundary are recorded in
 [`scripts/CI_VALIDATORS.md`](./scripts/CI_VALIDATORS.md).
 
-The package has no runtime dependencies. Development dependencies are limited
-to c8, ESLint, TypeScript, and YAML and are checked by
-`npm run dependency:policy`. GitHub Actions use `npm ci`, pinned action SHAs,
-CodeQL, dependency review, and generated-release notes; npm publication still
-uses trusted OIDC publishing and is not implied by local verification.
+The package uses the approved exact `smol-toml` runtime dependency for bounded
+Cargo manifest parsing. Development dependencies remain limited to c8, ESLint,
+TypeScript, and YAML and are checked by `npm run dependency:policy`. GitHub
+Actions use `npm ci`, pinned action SHAs, CodeQL, dependency review, and
+generated-release notes; npm publication still uses trusted OIDC publishing
+and is not implied by local verification.
 
 ## Editing rules
 

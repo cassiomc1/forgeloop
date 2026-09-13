@@ -11,23 +11,21 @@
 [![Package smoke](https://github.com/cassiomc1/forgeloop/actions/workflows/package-smoke.yml/badge.svg?branch=main)](https://github.com/cassiomc1/forgeloop/actions/workflows/package-smoke.yml)
 [![Release notes](https://github.com/cassiomc1/forgeloop/actions/workflows/release-notes.yml/badge.svg?branch=main)](https://github.com/cassiomc1/forgeloop/actions/workflows/release-notes.yml)
 
-ForgeLoop is a portable, vendor-neutral protocol for AI-assisted development
-and developer workflows. It turns outcomes into contracts, deterministic routing,
-resumable state, evidence-backed verification, recovery, cross-harness
-continuity, managed repository-wide discovery, and validator-backed completion.
-It is a protocol CLI, not an agent or LLM runtime, framework, or graph orchestrator.
+ForgeLoop is a protocol CLI for AI-assisted development.
+It turns outcomes into contracts, deterministic routing, resumable state,
+evidence-backed verification, recovery, cross-harness continuity, repository
+discovery, and validator-backed completion—not an agent or LLM runtime.
 
-The operational sources are indexed in [`DOCS_INDEX.md`](./DOCS_INDEX.md).
-[`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md) is the canonical process;
-[`PROTOCOL_INTEGRATION.md`](./PROTOCOL_INTEGRATION.md) defines capability
-levels and discovery; [`PROJECT_PROFILE.md`](./PROJECT_PROFILE.md) stores
-durable project facts; and [`GUIDE_ROUTER.md`](./GUIDE_ROUTER.md) selects only
-relevant guides.
+Operational sources are indexed in [`DOCS_INDEX.md`](./DOCS_INDEX.md).
+[`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md) is canonical;
+[`PROTOCOL_INTEGRATION.md`](./PROTOCOL_INTEGRATION.md) defines discovery,
+[`PROJECT_PROFILE.md`](./PROJECT_PROFILE.md) stores project facts, and
+[`GUIDE_ROUTER.md`](./GUIDE_ROUTER.md) selects relevant guides.
 
 ## Where should I start?
 
 - **New to ForgeLoop** → [`docs/GETTING_STARTED.md`](./docs/GETTING_STARTED.md)
-- **Inspect a real ForgeLoop execution** → [`poc/README.md`](./poc/README.md)
+- **Inspect a real ForgeLoop execution** → [repository PoC](https://github.com/cassiomc1/forgeloop/blob/main/poc/README.md)
 - **Full protocol specification** → [`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md)
 - **Integrating an AI harness** → [`PROTOCOL_INTEGRATION.md`](./PROTOCOL_INTEGRATION.md)
 - **Optional advisory context providers** → [`docs/ADVISORY_CONTEXT.md`](./docs/ADVISORY_CONTEXT.md)
@@ -44,18 +42,13 @@ relevant guides.
 
 ## Real execution proof
 
-ForgeLoop includes a public real-execution PoC with the workload,
-protocol artifacts, trusted command provenance, execution receipt,
-event history, cryptographic evidence manifest, and technical audit.
+The repository-only [execution PoC](https://github.com/cassiomc1/forgeloop/blob/main/poc/README.md) covers workload, protocol
+artifacts, trusted provenance, receipts, evidence, and audit. It reached
+validator-backed `COMPLETE / VALID` and preserves a later
+`E_RECEIPT_PATH_MISMATCH` after publication changed the repository.
 
-The original task reached validator-backed `COMPLETE / VALID`.
-The evidence package also preserves a later
-`E_RECEIPT_PATH_MISMATCH`, detected after evidence publication itself
-changed the repository.
-
-- [PoC overview](./poc/README.md)
-- [Canonical technical audit](./poc/reports/poc-20260826-real-execution-technical-audit-v2.md)
-- [Evidence package](./poc/evidence/poc-20260826-real-execution/)
+- [Canonical technical audit](https://github.com/cassiomc1/forgeloop/blob/main/poc/reports/poc-20260826-real-execution-technical-audit-v2.md)
+- [Evidence package](https://github.com/cassiomc1/forgeloop/tree/main/poc/evidence/poc-20260826-real-execution/)
 
 ## Catalog
 
@@ -71,10 +64,25 @@ changed the repository.
 | Accessibility | [`ENG/accessibility-eng.md`](./ENG/accessibility-eng.md) |
 | Web games | [`ENG/games-code-design-web-eng.md`](./ENG/games-code-design-web-eng.md) |
 | Documentation quality | [`ENG/documentation-quality-eng.md`](./ENG/documentation-quality-eng.md) |
+| Flutter | [guide](./ENG/flutter-development-eng.md) |
+| .NET and ASP.NET Core | [guide](./ENG/dotnet-aspnetcore-development-eng.md) |
+| Node.js | [guide](./ENG/nodejs-backend-development-eng.md) |
+| Rust | [guide](./ENG/rust-development-eng.md) |
+| C | [guide](./ENG/c-development-eng.md) |
+| C++ | [guide](./ENG/cpp-development-eng.md) |
+| Java | [guide](./ENG/java-development-eng.md) |
+| SQL | [guide](./ENG/sql-development-eng.md) |
+| Go | [guide](./ENG/go-development-eng.md) |
+| TypeScript | [guide](./ENG/typescript-development-eng.md) |
+| PHP | [guide](./ENG/php-development-eng.md) |
+| Swift | [guide](./ENG/swift-development-eng.md) |
 | Structural quality feedback | [`docs/STRUCTURAL_QUALITY.md`](./docs/STRUCTURAL_QUALITY.md) |
 
-Each guide declares its name, language, version, and review date in
-frontmatter. Repository validators keep the catalog and metadata synchronized.
+Routing uses bounded structural evidence for Flutter, .NET, Node.js, Rust, C,
+C++, Java, Go, TypeScript, PHP, and Swift; SQL is a scoped schema/query/
+migration overlay. Source extensions, build tooling, lockfiles, compiler/JDK/
+runtime images, and prose alone fail where the specialist contract requires
+stronger project identity. The public project-evidence schema remains v1.
 
 ## Quickstart
 
@@ -458,9 +466,15 @@ and [visual review](./docs/diagrams/reviews/forgeloop-code-attestation-flow.revi
 show exact content binding, optional signing, and separate revision-range
 coverage.
 
-Text-only fallback: discovery creates the contract and route; required gates
-and `PREFLIGHT_READY` authorize execution; verification creates structured
-evidence; failures enter diagnosis and correction; review precedes
+Text-only fallback: discovery creates the contract and route; parsed project
+manifests/build metadata select the corresponding language specialist; owned
+SQL migrations overlay their host project; parsed
+`dependencies.flutter.sdk: flutter` selects Flutter for that root; a supported
+SDK-style manifest selects .NET; parsed `[package]` or `[workspace]` in
+`Cargo.toml` selects Rust for that root; ASP.NET Core and ABP remain .NET
+overlays. Routing is not verification/completion evidence. Gates and
+`PREFLIGHT_READY` authorize execution; verification creates
+structured evidence; failures enter diagnosis and correction; review precedes
 validator-backed completion. Drift reopens verification, and migration keeps
 modified or unmanaged files for review. The terminal result is one of
 `VALID`, `INCOMPLETE`, `STALE`, `INCONSISTENT`, or `INVALID`.
@@ -502,16 +516,15 @@ it must not infer current ownership from `task.json` or `recovery.json` alone.
 
 ## Security and dependency boundary
 
-The runtime uses Node built-ins only and does not install agents, providers,
-plugins, remote services, or telemetry. Target paths and symlinks are bounded;
-JSON is size/depth limited; manifests, schemas, receipts, and secret-like
-values are checked; and install-capable verification requires trusted host
-authority. See [`THREAT_MODEL.md`](./THREAT_MODEL.md) for the full inventory.
+Runtime uses Node built-ins and approved exact `smol-toml`; it installs no
+agents, providers, plugins, services, or telemetry. Paths, symlinks, JSON,
+manifests, schemas, receipts, and secret-like values are bounded or checked.
+Install-capable verification requires trusted host authority; see
+[`THREAT_MODEL.md`](./THREAT_MODEL.md).
 
-Development tooling stays separate from runtime dependencies. The policy allows
-c8, ESLint, TypeScript, and YAML as development dependencies;
-`npm run dependency:policy` rejects runtime or unapproved dependencies. Archify
-is vendored at `vendor/archify/v2.15.0/` rather than installed as a package.
+c8, ESLint, TypeScript, and YAML remain development-only. The dependency
+policy rejects unapproved runtime or development dependencies. Archify is
+vendored at `vendor/archify/v2.15.0/` rather than installed as a package.
 
 To report vulnerabilities or contribute changes, see
 [`SECURITY.md`](./SECURITY.md) and [`CONTRIBUTING.md`](./CONTRIBUTING.md).

@@ -87,6 +87,179 @@ test("documentation work selects documentation as its primary guide", () => {
   assert.deepEqual(result.reasons.documentation, ["WORK_DOCUMENTATION"]);
 });
 
+test("confirmed Flutter project evidence adds the specialist and baseline checks", () => {
+  const result = evaluateRoute({
+    workType: "code",
+    projectEvidence: {
+      schemaVersion: 1,
+      scope: "MATCH",
+      frameworks: ["flutter"],
+      projectRoots: ["apps/mobile"],
+      primarySignals: ["apps/mobile/pubspec.yaml:dependencies.flutter.sdk"],
+      supportingSignals: [],
+    },
+  });
+
+  assert.deepEqual(result.guides, ["flutter", "clean", "test"]);
+  assert.equal(result.primary, "flutter");
+  assert.equal(result.excluded.flutter, undefined);
+});
+
+test("Flutter evidence does not activate for documentation-only work", () => {
+  const result = evaluateRoute({
+    workType: "documentation",
+    projectEvidence: {
+      schemaVersion: 1,
+      scope: "MATCH",
+      frameworks: ["flutter"],
+      projectRoots: ["."],
+      primarySignals: ["pubspec.yaml:dependencies.flutter.sdk"],
+      supportingSignals: [],
+    },
+  });
+
+  assert.deepEqual(result.guides, ["documentation"]);
+  assert.deepEqual(result.excluded.flutter, ["NO_FLUTTER_EXECUTABLE_WORK"]);
+});
+
+test("confirmed .NET evidence selects one specialist plus clean and test", () => {
+  const result = evaluateRoute({
+    workType: "code",
+    projectEvidence: {
+      schemaVersion: 1,
+      scope: "MATCH",
+      frameworks: ["dotnet", "aspnetcore", "abp"],
+      projectRoots: ["src/api"],
+      primarySignals: ["src/api/api.csproj:project.sdk=Microsoft.NET.Sdk.Web"],
+      supportingSignals: ["src/api/api.csproj:packageReference=Volo.Abp.AspNetCore.Mvc"],
+    },
+  });
+
+  assert.deepEqual(result.guides, ["dotnet", "clean", "test"]);
+  assert.equal(result.primary, "dotnet");
+  assert.deepEqual(result.reasons.dotnet, [
+    "PROJECT_DOTNET_SDK_PROJECT",
+    "PROJECT_ASPNETCORE_CONFIRMED",
+    "PROJECT_ABP_CONFIRMED",
+  ]);
+  assert.deepEqual(result.reasons.clean, ["PROJECT_DOTNET_BASELINE", "WORK_CODE"]);
+  assert.deepEqual(result.reasons.test, ["PROJECT_DOTNET_BASELINE", "WORK_CODE"]);
+  assert.deepEqual(result.excluded.flutter, ["NO_FLUTTER_PRIMARY_EVIDENCE"]);
+});
+
+test("confirmed public Node.js framework evidence is authoritative without private signals", () => {
+  const result = evaluateRoute({
+    workType: "code",
+    projectEvidence: {
+      schemaVersion: 1,
+      scope: "MATCH",
+      frameworks: ["nodejs"],
+      projectRoots: ["services/api"],
+      primarySignals: [],
+      supportingSignals: [],
+    },
+  });
+
+  assert.deepEqual(result.guides, ["nodejs", "clean", "test"]);
+  assert.equal(result.primary, "nodejs");
+  assert.deepEqual(result.reasons.nodejs, ["PROJECT_NODEJS_CONFIRMED"]);
+  assert.deepEqual(result.reasons.clean, ["PROJECT_NODEJS_BASELINE", "WORK_CODE"]);
+  assert.deepEqual(result.reasons.test, ["PROJECT_NODEJS_BASELINE", "WORK_CODE"]);
+});
+
+test("public multi-language framework evidence is authoritative without private signals", () => {
+  for (const framework of ["c", "cpp", "java", "go", "typescript", "php", "swift", "sql"]) {
+    const result = evaluateRoute({
+      workType: "code",
+      projectEvidence: {
+        schemaVersion: 1,
+        scope: "MATCH",
+        frameworks: [framework],
+        projectRoots: [],
+        primarySignals: [],
+        supportingSignals: [],
+      },
+    });
+    assert.deepEqual(result.guides.slice(0, 3), [framework, "clean", "test"], framework);
+    assert.equal(result.primary, framework, framework);
+  }
+});
+
+test("Swift mobile UI work selects the authoritative Swift specialist", () => {
+  const result = evaluateRoute({
+    workType: "mobile-ui",
+    projectEvidence: {
+      schemaVersion: 1,
+      scope: "MATCH",
+      frameworks: ["swift"],
+      projectRoots: ["apps/ios"],
+      primarySignals: [],
+      supportingSignals: [],
+    },
+  });
+  assert.deepEqual(result.guides.slice(0, 3), ["swift", "clean", "test"]);
+  assert.equal(result.excluded.swift, undefined);
+});
+
+test(".NET evidence is excluded from documentation-only work and no scope match", () => {
+  const documentation = evaluateRoute({
+    workType: "documentation",
+    projectEvidence: {
+      schemaVersion: 1,
+      scope: "MATCH",
+      frameworks: ["dotnet"],
+      projectRoots: ["."],
+      primarySignals: ["app.csproj:project.sdk=Microsoft.NET.Sdk"],
+      supportingSignals: [],
+    },
+  });
+  assert.deepEqual(documentation.guides, ["documentation"]);
+  assert.deepEqual(documentation.excluded.dotnet, ["NO_DOTNET_EXECUTABLE_WORK"]);
+
+  const noMatch = evaluateRoute({
+    workType: "code",
+    projectEvidence: {
+      schemaVersion: 1,
+      scope: "NO_MATCH",
+      frameworks: [],
+      projectRoots: [],
+      primarySignals: [],
+      supportingSignals: [],
+    },
+  });
+  assert.deepEqual(noMatch.excluded.dotnet, ["NO_DOTNET_SCOPE_MATCH"]);
+});
+
+test("invalid project framework values remain rejected", () => {
+  assert.throws(
+    () => evaluateRoute({ workType: "code", projectEvidence: { frameworks: ["unknown-dotnet-framework"] } }),
+    /unknown framework/i,
+  );
+});
+
+test("ASP.NET Core and ABP project evidence overlays report only invalid frameworks", () => {
+  const invalidCases = [
+    [["aspnetcore"], 'projectEvidence framework "aspnetcore" requires "dotnet"'],
+    [["abp"], 'projectEvidence framework "abp" requires "dotnet"'],
+    [["aspnetcore", "abp"], 'projectEvidence frameworks "abp", "aspnetcore" require "dotnet"'],
+  ];
+  for (const [frameworks, message] of invalidCases) {
+    assert.throws(
+      () => evaluateRoute({ workType: "code", projectEvidence: { frameworks } }),
+      (error) => error.message === message,
+    );
+  }
+});
+
+test("valid .NET framework overlays remain accepted", () => {
+  for (const frameworks of [["dotnet", "aspnetcore"], ["dotnet", "abp"], ["dotnet", "aspnetcore", "abp"]]) {
+    assert.doesNotThrow(() => evaluateRoute({
+      workType: "code",
+      projectEvidence: { frameworks },
+    }));
+  }
+});
+
 test("duplicate selection of documentation work and surface is deduplicated and retains both reasons", () => {
   const result = evaluateRoute({
     workType: "documentation",

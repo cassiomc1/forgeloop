@@ -2,8 +2,9 @@ import { getNextAction } from "../core/next-action.js";
 import { withResolvedTask } from "../core/task-command.js";
 import { readPersistedRoute } from "../core/route-artifact.js";
 import { projectExecutionProfile } from "../core/execution-profile.js";
+import { explainNextAction } from "../core/next-explanation.js";
 
-export async function runNext({ target, packageRoot, taskId, task, authorityContext, runtimeContext, compact = false }) {
+export async function runNext({ target, packageRoot, taskId, task, authorityContext, runtimeContext, compact = false, explain = false }) {
   return withResolvedTask(target, { taskId: taskId ?? task, packageRoot }, async (ctx) => {
     const result = await getNextAction({
       target,
@@ -12,7 +13,8 @@ export async function runNext({ target, packageRoot, taskId, task, authorityCont
       authorityContext,
       runtimeContext,
     });
-    if (!compact) return result;
+    const explained = explain ? { ...result, explanation: explainNextAction(result) } : result;
+    if (!compact) return explained;
     const compactTaskId = ctx?.taskId ?? (result.taskId && result.taskId !== "unknown" ? result.taskId : null);
     let profile = null;
     try {
@@ -23,12 +25,13 @@ export async function runNext({ target, packageRoot, taskId, task, authorityCont
     }
     return {
       taskId: compactTaskId ?? result.taskId,
-      phase: result.currentPhase,
+      phase: explained.currentPhase,
       profile,
-      nextAction: result.nextAction,
-      command: result.commandSpecs?.[0]?.argv ?? [],
-      terminal: result.terminal,
-      errors: result.reasonCodes ?? result.reasons?.map((reason) => reason.code) ?? [],
+      nextAction: explained.nextAction,
+      command: explained.commandSpecs?.[0]?.argv ?? [],
+      terminal: explained.terminal,
+      errors: explained.reasonCodes ?? explained.reasons?.map((reason) => reason.code) ?? [],
+      ...(explained.explanation ? { explanation: explained.explanation } : {}),
     };
   });
 }
@@ -68,6 +71,15 @@ export function formatNextActionResult(result) {
     lines.push(...result.missingArtifacts.map((artifact) => `- ${artifact}`));
   }
   if (result.terminal) lines.push("STATE: TERMINAL");
+  if (result.explanation) {
+    lines.push("EXPLANATION (BOUNDED, READ-ONLY):");
+    lines.push(`- ${result.explanation.summary}`);
+    for (const item of result.explanation.reasons) {
+      lines.push(`- ${item.code}: ${item.requiredChange}`);
+      if (item.safeArtifacts.length > 0) lines.push(`  ARTIFACTS: ${item.safeArtifacts.join(", ")}`);
+    }
+    lines.push(`- ACTION KIND: ${result.explanation.actionKind}`);
+  }
   return `${lines.join("\n")}\n`;
 }
 

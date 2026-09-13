@@ -132,6 +132,9 @@ test("npm tarball contains the CLI, templates, published scenarios, and license 
     "CONTRACT_COVERAGE.md",
     "PROTOCOL_INTEGRATION.md",
     "DOCS_INDEX.md",
+    "CONTRIBUTING.md",
+    "docs/documentation-manifest.json",
+    "docs/protocol-requirements.json",
     "docs/STRUCTURAL_QUALITY.md",
     "docs/ADVISORY_CONTEXT.md",
     "docs/RELEASE_CHECKLIST.md",
@@ -229,6 +232,31 @@ test("npm tarball ships every maintained runtime module", async () => {
         : `maintained runtime module is missing from the package: ${sourcePath}`,
     );
   }
+});
+
+test("canonical guide registry resolves every consumer guide in the tarball", async () => {
+  const registry = JSON.parse(await readFile("src/config/guides.json", "utf8"));
+  const listing = packageListing();
+
+  for (const [guideId, entry] of Object.entries(registry)) {
+    assert.equal(entry.install, true, `guide ${guideId} must be installable`);
+    assert.match(entry.path, /^ENG\/[A-Za-z0-9._-]+\.md$/u, `invalid package guide path for ${guideId}`);
+    assert.ok(listing.includes(entry.path), `guide ${guideId} is missing from the npm tarball: ${entry.path}`);
+  }
+
+  assert.ok(listing.includes("ENG/flutter-development-eng.md"));
+  assert.ok(listing.includes("ENG/nodejs-backend-development-eng.md"));
+  assert.ok(listing.includes("ENG/rust-development-eng.md"));
+  for (const guidePath of [
+    "ENG/c-development-eng.md",
+    "ENG/cpp-development-eng.md",
+    "ENG/java-development-eng.md",
+    "ENG/sql-development-eng.md",
+    "ENG/go-development-eng.md",
+    "ENG/typescript-development-eng.md",
+    "ENG/php-development-eng.md",
+    "ENG/swift-development-eng.md",
+  ]) assert.ok(listing.includes(guidePath), guidePath);
 });
 
 test("CLI package entry is executable by Node-compatible shells", async () => {

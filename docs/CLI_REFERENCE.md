@@ -838,7 +838,7 @@ Updates the managed instruction kit to match the current ForgeLoop package versi
 
 Calculates and persists deterministic engineering guide routing.
 
-- **Purpose**: Selects relevant technical guides (e.g. `clean`, `test`, `security`, `design`) based on declared work attributes.
+- **Purpose**: Selects relevant technical guides (e.g. `clean`, `test`, `security`, `design`) from declared work attributes and bounded structural project evidence such as an affected Flutter SDK dependency, supported .NET project, confirmed Node.js backend runtime, valid Rust Cargo package/workspace, recognized C/C++, Java, Go, TypeScript, PHP, or Swift project, or owned SQL artifact. ASP.NET Core and ABP are conditional reasons on the `dotnet` specialist, not standalone guides; SQL is a host-project overlay.
 - **When to use**: During discovery before preflight.
 - **Mutation**: Writes `.forgeloop/task-state/<taskKey>/routing-result.json`.
 - **Options**:
@@ -982,6 +982,7 @@ Computes the deterministic next action required by the protocol.
 - `--path <directory>`: target project directory (default: current directory)
 - `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
 - `--compact`: emit a bounded next-action projection
+- `--explain`: include bounded read-only blocker and recovery explanation
 - `--json`: emit structured output as JSON
 
 <!-- END FORGELOOP GENERATED: cli:next:options -->
@@ -1970,12 +1971,12 @@ Clears canonical work-state checkpoint for the current task.
 
 ### `reconcile-closure`
 
-Reconciles the checkpoint of an EXECUTING task whose objective is already satisfied in the current repository.
+Reconciles the checkpoint of an EXECUTING, VERIFYING, or REVIEWING task whose objective is already satisfied in the current repository.
 
-- **Purpose**: Refresh the work-state repository fingerprint of a stale EXECUTING task after repository movement, using executed contract-bound evidence that the objective is present, so the canonical completion pipeline can close it.
-- **When to use**: When a task is stuck in EXECUTING with `E_REPOSITORY_CHANGED` / `E_STATE_REVALIDATION_REQUIRED` and its objective was already satisfied by other changes in the current repository.
-- **Mutation**: Appends a `CHECKPOINT_RECONCILED` ledger event (previous/current repository fingerprints plus evidence) and refreshes the work-state repository fingerprint. Phase stays EXECUTING; claims release only through canonical `COMPLETE`.
-- **Safety Note**: Refuses non-EXECUTING tasks, fresh checkpoints, contract or artifact drift, invalid ledgers, unknown requirements, and failing evidence.
+- **Purpose**: Refresh the work-state repository fingerprint of a stale EXECUTING, VERIFYING, or REVIEWING task after repository movement, using executed contract-bound evidence that the objective is present, so the canonical completion pipeline can close it.
+- **When to use**: When a task is stuck in EXECUTING, VERIFYING, or REVIEWING with `E_REPOSITORY_CHANGED` / `E_STATE_REVALIDATION_REQUIRED` and its objective was already satisfied by other changes in the current repository. A REVIEWING task also needs authorized completion recovery.
+- **Mutation**: Appends a `CHECKPOINT_RECONCILED` ledger event (previous/current repository fingerprints plus evidence) and refreshes the work-state repository fingerprint. The phase stays unchanged until the canonical pipeline advances it; claims release only through canonical `COMPLETE`.
+- **Safety Note**: Refuses other phases, fresh checkpoints, contract or artifact drift, invalid ledgers, unknown requirements, and failing evidence.
 - **Options**:
 
 <!-- BEGIN FORGELOOP GENERATED: cli:reconcile-closure:options -->
@@ -2016,6 +2017,8 @@ Initializes a new isolated task namespace with write claims and contract.
 - `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
 - `--claim <path>`: scoped file path or directory prefix claimed for mutation (repeatable)
 - `--contract-file <path>`: path to initial contract file
+- `--preset <name>`: bounded contract preset: documentation, bug, feature, or release
+- `--preview`: preview the contract without creating lifecycle state
 - `--json`: emit structured output as JSON
 
 <!-- END FORGELOOP GENERATED: cli:task-create:options -->
@@ -2034,6 +2037,12 @@ Initializes a new isolated task namespace with write claims and contract.
 
   `--contract-file` points to a contract JSON that is validated and copied into the task namespace.
 
+  Use `--preset documentation|bug|feature|release --preview` for a bounded,
+  read-only contract proposal. Preview validates claims and creates no task
+  namespace or project-claims lock; repeat without `--preview` after reviewing
+  the proposal. Presets record unresolved decisions when concrete deliverables
+  are not supplied and do not publish or deploy release artifacts.
+
 ### `task-list`
 
 Lists all tasks discovered in `.forgeloop/task-state/`.
@@ -2045,14 +2054,27 @@ Lists all tasks discovered in `.forgeloop/task-state/`.
 <!-- BEGIN FORGELOOP GENERATED: cli:task-list:options -->
 
 - `--path <directory>`: target project directory (default: current directory)
+- `--phase <phase>`: only return tasks in this lifecycle phase
+- `--active`: only return healthy tasks with active ownership and a non-terminal phase
+- `--limit <number>`: maximum tasks to return
+- `--offset <number>`: number of sorted tasks to skip
 - `--json`: emit structured output as JSON
 
 <!-- END FORGELOOP GENERATED: cli:task-list:options -->
+
+  Results are sorted by task ID. `--phase` and `--active` filter the
+  presentation only; ownership and corruption checks still run for every
+  discovered task before filtering. `--limit` and `--offset` provide bounded
+  pagination and return `total` and `hasMore` in JSON. Listing never removes
+  ledger or recovery evidence. Discovery itself is exhaustive for valid task
+  namespaces because ownership and conflict correctness must not depend on a
+  page limit.
 
 - **Example**:
 
   ```bash
   forgeloop task-list --json
+  forgeloop task-list --active --limit 20 --offset 0 --json
   ```
 
 ### `task-show`

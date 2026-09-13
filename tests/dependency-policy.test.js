@@ -3,8 +3,9 @@ import { test } from "node:test";
 
 import { validateDependencyPolicy } from "../scripts/check-dependency-policy.mjs";
 
-test("dependency policy allows only approved development tooling", () => {
+test("dependency policy allows the approved runtime parser and development tooling", () => {
   const result = validateDependencyPolicy({
+    dependencies: { "smol-toml": "1.8.0" },
     devDependencies: {
       eslint: "^9.0.0",
       c8: "^12.0.0",
@@ -27,9 +28,9 @@ test("dependency policy rejects runtime and unapproved development dependencies"
   ]);
 });
 
-test("structural quality keeps the production dependency set empty", () => {
+test("dependency policy accepts the approved production parser dependency", () => {
   const packageJson = {
-    dependencies: {},
+    dependencies: { "smol-toml": "1.8.0" },
     devDependencies: { eslint: "^9.0.0", c8: "^12.0.0" },
   };
   const result = validateDependencyPolicy(packageJson);

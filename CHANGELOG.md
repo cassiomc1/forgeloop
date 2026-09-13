@@ -2,7 +2,82 @@
 
 ## Unreleased
 
-No changes yet.
+### Added
+
+- Added first-class C, C++, Java, SQL, Go, TypeScript, PHP, and Swift
+  specialist guides with bounded structural project detection, conservative
+  source/build evidence, same-root composition, and nested ownership
+  boundaries.
+- Added regression coverage for malformed/adversarial language metadata,
+  generated/vendor exclusions, direct source claims, SQL overlays, and the
+  public framework routing contract while preserving projectEvidence schema v1.
+- Documented structural .NET, ASP.NET Core, and conditional ABP routing,
+  including scoped mixed-stack discovery, supported SDK evidence, bounded
+  traversal, and overlay validation.
+- Documented Astra task previews, exhaustive ownership-aware discovery,
+  deterministic task-list filters and pagination, and bounded `next --explain`
+  projections.
+- Added the first-class Node.js backend engineering guide and registered it as
+  the `nodejs` specialist in the canonical guide catalog.
+- Added bounded Node.js project detection for allowlisted runtime backend
+  dependencies, direct Node runtime scripts, and narrow server-builtin source
+  imports while keeping supporting metadata non-authoritative.
+- Added adversarial detection and routing coverage for frontend/tooling false
+  positives, malformed or oversized manifests, nested workspaces, shared
+  lockfiles, mixed Flutter/.NET/Node repositories, symlinks, and traversal
+  budgets.
+- Added the first-class Rust development engineering guide and registered it as
+  the `rust` specialist in the canonical guide catalog.
+- Added bounded, Cargo-first Rust project detection using structural TOML
+  parsing for packages and virtual/package workspaces, with conservative
+  nested ownership and shared-file scope handling.
+- Added Rust regression coverage for workspace membership, toolchains, MSRV
+  and edition metadata, malformed/oversized manifests, target/vendor ignores,
+  symlinks, traversal budgets, cross-stack boundaries, and public routing.
+
+### Changed
+
+- Extended the routing schema, package checks, router reference, README, and
+  package-contents documentation for the Node.js specialist.
+- Extended the routing schema, package checks, router reference, README, and
+  package-contents documentation for the Rust specialist. The runtime uses the
+  approved exact `smol-toml` parser dependency; development tooling remains
+  separate and no framework-specific Rust guide IDs were added.
+
+## 1.12.0 - 2026-09-09
+
+### Added
+
+- Added the first-class Flutter application engineering guide and registered
+  it as the `flutter` specialist in the canonical guide catalog.
+- Added deterministic Flutter project detection from the structured
+  `dependencies.flutter.sdk: flutter` entry in an affected `pubspec.yaml`.
+- Added scope-aware routing so confirmed Flutter projects select the Flutter
+  specialist with the baseline clean-code and test guides, while unrelated
+  monorepo projects remain isolated.
+
+### Changed
+
+- Extended the routing documentation, package-boundary checks, and generated
+  architecture documentation to describe the Flutter detection and specialist
+  selection boundary.
+- Hardened detection against documentation-only mentions, lockfiles, hosted
+  packages named `flutter`, malformed YAML shapes, and symlink traversal.
+
+### Compatibility
+
+- Protocol v1, Schema v1, Integration API v1, and Node.js `>=20` support are
+  unchanged.
+- The runtime remains dependency-free; Flutter tooling is not installed or
+  invoked by ForgeLoop automatically.
+
+## 1.11.1 - 2026-09-09
+
+### Changed
+
+- Refreshed the README architecture image to reflect the current ForgeLoop
+  entry points, canonical protocol, managed Repository Index, persistent CLI
+  transport, and evidence boundary.
 
 ## 1.11.0 - 2026-09-08
 

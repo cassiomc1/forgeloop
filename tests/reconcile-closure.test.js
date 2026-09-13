@@ -63,6 +63,7 @@ async function setupStaleExecutingTask(target, options = {}) {
     taskId,
     writeClaims: ["package.json", "tests"],
   }), packageRoot);
+  const verificationType = options.omitVerificationType ? {} : { type: "VERIFICATION" };
   const contract = createContract({
     taskId,
     objective: "Make the README banner render only on GitHub, not in the npm package.",
@@ -70,8 +71,8 @@ async function setupStaleExecutingTask(target, options = {}) {
     constraints: [],
     risks: [],
     verification: [
-      { id: "regression-tests", text: "pack tarball test asserts the README image is excluded from the npm package", type: "VERIFICATION" },
-      { id: "native-suite", text: "npm test, dependency:policy, lint, coverage, pack:check, docs:generated:check, docs:conformance, and docs:check all exit 0", type: "VERIFICATION" },
+      { id: "regression-tests", text: "pack tarball test asserts the README image is excluded from the npm package", ...verificationType },
+      { id: "native-suite", text: "npm test, dependency:policy, lint, coverage, pack:check, docs:generated:check, docs:conformance, and docs:check all exit 0", ...verificationType },
     ],
     successCriteria: ["objective is present in the current repository"],
     stopConditions: [],
@@ -195,6 +196,21 @@ test("reconcile-closure refreshes a stale EXECUTING checkpoint after contract-bo
     assert.equal(completion.status, "VALID");
     const finalState = await readWorkState(target, { packageRoot, taskId });
     assert.equal(finalState.phase, "COMPLETE");
+  });
+});
+
+test("reconcile-closure infers omitted verification type from the contract requirement", async () => {
+  await withTarget(async (target) => {
+    const { taskId } = await setupStaleExecutingTask(target, { omitVerificationType: true });
+    const result = await runReconcileClosure({
+      target,
+      packageRoot,
+      taskId,
+      checkId: "regression-tests",
+      requirement: "pack tarball test asserts the README image is excluded from the npm package",
+      argv: ["node", "-e", "process.exit(0)"],
+    });
+    assert.equal(result.reconciled, true);
   });
 });
 
