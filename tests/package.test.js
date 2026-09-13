@@ -289,6 +289,8 @@ test("release workflow requires an OIDC-compatible provenance publishing step", 
 test("PR CI shards one covered Node execution and targets Node compatibility", async () => {
   const core = parseYaml(await readFile(".github/workflows/pr-core.yml", "utf8"));
   const coreJob = core.jobs.core;
+  assert.match(coreJob.if, /needs\.classify\.outputs\.source/);
+  assert.match(coreJob.if, /needs\.classify\.outputs\.node_compat/);
   const matrix = coreJob.strategy.matrix.include;
   assert.equal(matrix.filter(entry => entry["node-version"] === 24).length, 4);
   assert.equal(matrix.filter(entry => entry["node-version"] === 20).length, 1);
@@ -323,14 +325,17 @@ test("required validation context rejects failed, unexpected, or missing prerequ
   assert.ok(gate.needs.includes("repository-index"));
   const script = /node --input-type=module <<'NODE'\n([\s\S]+?)\nNODE/u.exec(gate.steps[0].run)?.[1];
   assert.ok(script);
-  const runGate = results => execFileSync(process.execPath, ["-e", script], {
-    env: { ...process.env, REQUIRED_RESULTS: JSON.stringify(results), REPOSITORY_INDEX_APPLICABLE: "false", COVERAGE_APPLICABLE: "false" }, stdio: "pipe",
+  const runGate = (results, { coreApplicable = "false", coverageApplicable = "false" } = {}) => execFileSync(process.execPath, ["-e", script], {
+    env: { ...process.env, REQUIRED_RESULTS: JSON.stringify(results), CORE_APPLICABLE: coreApplicable, REPOSITORY_INDEX_APPLICABLE: "false", COVERAGE_APPLICABLE: coverageApplicable }, stdio: "pipe",
   });
   const passed = Object.fromEntries(gate.needs.map(name => [name, {
-    result: ["repository-index", "coverage-report"].includes(name) ? "skipped" : "success",
+    result: ["core", "repository-index", "coverage-report"].includes(name) ? "skipped" : "success",
   }]));
   assert.doesNotThrow(() => runGate(passed));
-  for (const name of gate.needs.filter(name => !["repository-index", "coverage-report"].includes(name))) {
+  const sourcePassed = { ...passed, core: { result: "success" }, ["coverage-report"]: { result: "success" } };
+  assert.doesNotThrow(() => runGate(sourcePassed, { coreApplicable: "true", coverageApplicable: "true" }));
+  assert.throws(() => runGate({ ...passed, core: { result: "success" }}));
+  for (const name of gate.needs.filter(name => !["core", "repository-index", "coverage-report"].includes(name))) {
     for (const result of ["failure", "cancelled", "skipped"]) {
       assert.throws(() => runGate({ ...passed, [name]: { result } }));
     }
@@ -340,10 +345,10 @@ test("required validation context rejects failed, unexpected, or missing prerequ
   }
   assert.throws(() => runGate({ ...passed, ["repository-index"]: { result: "failure" } }));
   assert.doesNotThrow(() => execFileSync(process.execPath, ["-e", script], {
-    env: { ...process.env, REQUIRED_RESULTS: JSON.stringify({ ...passed, ["repository-index"]: { result: "success" } }), REPOSITORY_INDEX_APPLICABLE: "true", COVERAGE_APPLICABLE: "false" }, stdio: "pipe",
+    env: { ...process.env, REQUIRED_RESULTS: JSON.stringify({ ...passed, ["repository-index"]: { result: "success" } }), CORE_APPLICABLE: "false", REPOSITORY_INDEX_APPLICABLE: "true", COVERAGE_APPLICABLE: "false" }, stdio: "pipe",
   }));
   assert.throws(() => execFileSync(process.execPath, ["-e", script], {
-    env: { ...process.env, REQUIRED_RESULTS: JSON.stringify({ ...passed, ["coverage-report"]: { result: "failure" } }), REPOSITORY_INDEX_APPLICABLE: "false", COVERAGE_APPLICABLE: "true" }, stdio: "pipe",
+    env: { ...process.env, REQUIRED_RESULTS: JSON.stringify({ ...passed, ["coverage-report"]: { result: "failure" } }), CORE_APPLICABLE: "true", REPOSITORY_INDEX_APPLICABLE: "false", COVERAGE_APPLICABLE: "true" }, stdio: "pipe",
   }));
 });
 

@@ -41,6 +41,7 @@ jobs:
   core:
     name: Unit tests (Node ${{ matrix.node-version }}, shard ${{ matrix.shard }}/4)
     needs: classify
+    if: ${{ needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
@@ -298,12 +299,19 @@ jobs:
       - name: Require applicable validation jobs
         env:
           REQUIRED_RESULTS: ${{ toJSON(needs) }}
+          CORE_APPLICABLE: ${{ needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true' }}
           REPOSITORY_INDEX_APPLICABLE: ${{ needs.classify.outputs.repository_index }}
           COVERAGE_APPLICABLE: ${{ needs.classify.outputs.source }}
         run: |
           node --input-type=module <<'NODE'
           const needs = JSON.parse(process.env.REQUIRED_RESULTS);
-          for (const name of ["classify", "core", "lint", "docs-diagram", "audit", "tarball-smoke"]) {
+          const coreResult = needs.core?.result;
+          if (process.env.CORE_APPLICABLE === "true") {
+            if (coreResult !== "success") throw new Error(`core did not succeed: ${coreResult ?? "missing"}`);
+          } else if (coreResult !== "skipped") {
+            throw new Error(`core ran unexpectedly: ${coreResult ?? "missing"}`);
+          }
+          for (const name of ["classify", "lint", "docs-diagram", "audit", "tarball-smoke"]) {
             if (needs[name]?.result !== "success") {
               throw new Error(`${name} did not succeed: ${needs[name]?.result ?? "missing"}`);
             }

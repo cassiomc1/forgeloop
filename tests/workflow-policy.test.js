@@ -32,6 +32,9 @@ test("PR and release quality workflows enforce the intended validation boundary"
   assert.match(core, /npm run critical-coverage:check/);
   assert.doesNotMatch(core, /name: Coverage \(Node 24\)/);
   assert.match(core, /coverage-shard-\$\{\{ matrix\.shard \}\}/);
+  const coreJob = workflowJobBlocks(core).find((job) => job.startsWith("  core:"));
+  assert.ok(coreJob, "PR core must define the unit-test job");
+  assert.match(coreJob, /if: \$\{\{[^\n]*needs\.classify\.outputs\.source[^\n]*needs\.classify\.outputs\.node_compat[^\n]*\}\}/u);
   assert.match(core, /matrix\.node-version == 20/);
   assert.match(core, /needs\.classify\.outputs\.source/);
   assert.match(core, /needs\.classify\.outputs\.node_compat/);
