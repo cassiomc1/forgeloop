@@ -208,8 +208,8 @@
       "lane": "policy",
       "col": 3,
       "type": "security",
-      "label": "Claims",
-      "sublabel": "Task + gates",
+      "label": "Gates",
+      "sublabel": "claims + tasks",
       "width": 62
     },
     {
@@ -227,8 +227,8 @@
       "lane": "execution",
       "col": 4,
       "type": "backend",
-      "label": "Execution",
-      "sublabel": "root + task",
+      "label": "Execute",
+      "sublabel": "run task",
       "width": 62
     },
     {
@@ -244,21 +244,21 @@
     {
       "id": "review",
       "lane": "closure",
-      "col": 5,
+      "col": 4,
       "type": "backend",
       "label": "Review",
-      "sublabel": "drift",
-      "width": 50
+      "sublabel": "check drift",
+      "width": 62
     },
     {
       "id": "valid",
-      "lane": "evidence",
+      "lane": "closure",
       "col": 5,
       "type": "database",
       "label": "VALID",
       "sublabel": "completion",
-      "tag": "claim",
-      "width": 50
+      "tag": "verified",
+      "width": 62
     },
     {
       "id": "diagnose",
@@ -349,20 +349,15 @@
       "from": "evidence",
       "to": "review",
       "variant": "emphasis",
-      "fromSide": "left",
-      "toSide": "left",
-      "route": "return-left",
-      "channelX": 360
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "drop"
     },
     {
       "id": "review-valid",
       "from": "review",
       "to": "valid",
-      "variant": "emphasis",
-      "fromSide": "right",
-      "toSide": "right",
-      "route": "outside-right",
-      "channelX": 760
+      "variant": "emphasis"
     },
     {
       "id": "evidence-diagnose",

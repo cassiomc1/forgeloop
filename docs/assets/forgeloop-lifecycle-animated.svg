@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 440" role="img" aria-labelledby="fl-title fl-desc" data-theme="dark">
+  <title id="fl-title">ForgeLoop evidence-first engineering loop</title>
+  <desc id="fl-desc">Animated overview: Contract, Route, Preflight, Execute, Evidence, Review, and VALID completion, with an evidence-only correction loop.</desc>
+  <style>
+    .bg { fill: #030711; }
+    .frame { fill: rgba(6, 14, 28, 0.78); stroke: #1d3350; }
+    .title { fill: #f5fbff; font: 700 26px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .subtitle { fill: #9eb0c7; font: 400 15px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .node { fill: rgba(16, 185, 129, 0.12); stroke: #5eead4; stroke-width: 1.6; }
+    .node-gate { fill: rgba(244, 63, 94, 0.12); stroke: #fda4af; stroke-width: 1.6; }
+    .node-done { fill: rgba(139, 92, 246, 0.16); stroke: #c4b5fd; stroke-width: 2; }
+    .label { fill: #f5fbff; font: 700 17px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; }
+    .sub { fill: #9eb0c7; font: 400 12.5px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; }
+    .edge { fill: none; stroke: #2dd4bf; stroke-width: 2.4; stroke-linecap: round;
+      stroke-dasharray: 10 8; animation: fl-flow 1.2s linear infinite; }
+    .edge-return { fill: none; stroke: #fdba74; stroke-width: 2; stroke-dasharray: 7 7;
+      animation: fl-flow 1.6s linear infinite; }
+    .cap { fill: #7890ad; font: 600 12px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; }
+    .step { transform-box: fill-box; transform-origin: center; animation: fl-pulse 6s ease-in-out infinite; }
+    .s1 { animation-delay: 0s; } .s2 { animation-delay: 0.8s; } .s3 { animation-delay: 1.6s; }
+    .s4 { animation-delay: 2.4s; } .s5 { animation-delay: 3.2s; } .s6 { animation-delay: 4s; }
+    .s7 { animation-delay: 4.8s; }
+    @keyframes fl-flow { to { stroke-dashoffset: -18; } }
+    @keyframes fl-pulse {
+      0%, 70%, 100% { filter: none; opacity: 1; }
+      8%, 20% { filter: drop-shadow(0 0 10px rgba(45, 212, 191, 0.9)); opacity: 1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .edge, .edge-return, .step { animation: none !important; }
+    }
+  </style>
+
+  <rect class="bg" width="1200" height="440" rx="20"/>
+  <rect class="frame" x="10" y="10" width="1180" height="420" rx="14"/>
+
+  <text class="title" x="48" y="62">ForgeLoop — Evidence-First Loop</text>
+  <text class="subtitle" x="48" y="90">Contract &#8594; route &#8594; preflight &#8594; execute &#8594; evidence &#8594; review &#8594; VALID</text>
+  <text class="cap" x="1052" y="62">ANIMATED OVERVIEW</text>
+
+  <!-- main rail -->
+  <line class="edge" x1="176" y1="200" x2="240" y2="200"/>
+  <line class="edge" x1="344" y1="200" x2="408" y2="200"/>
+  <line class="edge" x1="512" y1="200" x2="576" y2="200"/>
+  <line class="edge" x1="680" y1="200" x2="744" y2="200"/>
+  <line class="edge" x1="848" y1="200" x2="912" y2="200"/>
+  <line class="edge" x1="1016" y1="200" x2="1060" y2="200"/>
+
+  <!-- correction loop: evidence back to execute -->
+  <path class="edge-return" d="M 796 236 L 796 330 L 624 330 L 624 238"/>
+  <text class="cap" x="710" y="322">evidence-only rejection / next cycle</text>
+  <text class="cap" x="710" y="356">diagnose &#8594; correct &#8594; verify again</text>
+
+  <g class="step s1">
+    <rect class="node-gate" x="56" y="164" width="120" height="72" rx="10"/>
+    <text class="label" x="116" y="194">Contract</text>
+    <text class="sub" x="116" y="214">scope</text>
+  </g>
+  <g class="step s2">
+    <rect class="node-gate" x="240" y="164" width="104" height="72" rx="10"/>
+    <text class="label" x="292" y="194">Route</text>
+    <text class="sub" x="292" y="214">guides</text>
+  </g>
+  <g class="step s3">
+    <rect class="node-gate" x="408" y="164" width="104" height="72" rx="10"/>
+    <text class="label" x="460" y="194">Preflight</text>
+    <text class="sub" x="460" y="214">READY</text>
+  </g>
+  <g class="step s4">
+    <rect class="node" x="576" y="164" width="104" height="72" rx="10"/>
+    <text class="label" x="628" y="194">Execute</text>
+    <text class="sub" x="628" y="214">run task</text>
+  </g>
+  <g class="step s5">
+    <rect class="node" x="744" y="164" width="104" height="72" rx="10"/>
+    <text class="label" x="796" y="194">Evidence</text>
+    <text class="sub" x="796" y="214">run-check</text>
+  </g>
+  <g class="step s6">
+    <rect class="node" x="912" y="164" width="104" height="72" rx="10"/>
+    <text class="label" x="964" y="194">Review</text>
+    <text class="sub" x="964" y="214">drift</text>
+  </g>
+  <g class="step s7">
+    <rect class="node-done" x="1060" y="164" width="88" height="72" rx="10"/>
+    <text class="label" x="1104" y="194">VALID</text>
+    <text class="sub" x="1104" y="214">done</text>
+  </g>
+
+  <text class="cap" x="600" y="404">Execution starts only after PREFLIGHT_READY &#183; completion is validator-backed, never inferred</text>
+</svg>
