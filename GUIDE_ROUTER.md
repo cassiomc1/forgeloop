@@ -377,10 +377,13 @@ strings, empty files, generated/vendor content, and database images are not
 evidence.
 
 The detector masks lexical noise and never connects to a database, executes
-queries, applies migrations, reads credentials, or introspects schemas. It
-recognizes bounded statement families only when structural tokens are present,
-and common CTE shapes, without claiming full dialect parsing; PostgreSQL JSON
-operators such as `#>` and `#>>` remain SQL tokens, not comments. ISO/IEC
+queries, applies migrations, reads credentials, or introspects schemas. Single-
+quoted string values are masked, while double-quoted, backtick-quoted, and
+bracket-quoted identifiers are preserved as internal neutral identifier tokens
+for structural matching. It recognizes bounded statement families only when
+structural tokens are present, and common CTE shapes, without claiming full
+dialect parsing; PostgreSQL JSON operators such as `#>` and `#>>` remain SQL
+tokens, not comments. ISO/IEC
 9075:2023 is a portability reference; the actual engine and version govern
 dialect behavior. See
 ENG/sql-development-eng.md.

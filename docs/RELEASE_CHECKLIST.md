@@ -17,6 +17,10 @@ boundaries explicit:
       `ENG/rust-development-eng.md` and explain that the specialist is
       selected only from a structurally parsed `[package]` or `[workspace]`
       table in an affected `Cargo.toml`.
+- [ ] README catalog and architecture fallback identify
+      `ENG/nodejs-backend-development-eng.md` and explain that Node.js
+      backend/runtime evidence is distinct from build, test, and configuration
+      tooling executed under Node.js.
 - [ ] README catalog and architecture fallback identify the C, C++, Java, SQL,
       Go, TypeScript, PHP, and Swift specialists and explain their bounded
       structural evidence and same-root composition rules.
