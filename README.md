@@ -431,12 +431,20 @@ See [`docs/CLI_REFERENCE.md`](./docs/CLI_REFERENCE.md) and [`LOOP_SYSTEM_DESIGN.
 
 ## Architecture flow
 
+<a href="./docs/assets/diagrams/forgeloop-engineering-flow.html">
+  <img src="./docs/assets/forgeloop-lifecycle-animated.svg" alt="Animated ForgeLoop evidence-first loop: Contract, Route, Preflight, Execute, Evidence, Review, VALID, with an evidence-only correction loop" width="100%">
+</a>
+
+*Animation: the rail pulses through each step in order. It loops forever and
+respects reduced-motion settings. Select the image to open the full animated
+interactive explorer.*
+
 The canonical source is the typed Archify workflow
 [`docs/diagrams/forgeloop-engineering-flow.workflow.json`](./docs/diagrams/forgeloop-engineering-flow.workflow.json).
 The committed animated interactive explorer is
 [`docs/assets/diagrams/forgeloop-engineering-flow.html`](./docs/assets/diagrams/forgeloop-engineering-flow.html),
 which traces it. The
-animated, self-contained SVG fallback is
+detailed, self-contained SVG fallback is
 [`docs/assets/diagrams/forgeloop-engineering-flow.svg`](./docs/assets/diagrams/forgeloop-engineering-flow.svg),
 and the deterministic hash receipt is
 [`docs/assets/diagrams/forgeloop-engineering-flow.receipt.json`](./docs/assets/diagrams/forgeloop-engineering-flow.receipt.json).

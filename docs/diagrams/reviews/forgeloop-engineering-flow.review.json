@@ -3,8 +3,8 @@
   "diagramId": "forgeloop-engineering-flow",
   "status": "approved",
   "binding": {
-    "sourceSha256": "3c35fbe4e144cd7fb60632996839bcf32b0b503e8a4add2270f29c3bf3e8a658",
-    "svgSha256": "040fc511d09be1532ff7173baf46a98503e89734460a516582426aa426eea888"
+    "sourceSha256": "24aa2ca3eeaeabceffd6c14db51d78ec6ad4519327ee79790dabd9acde96efc0",
+    "svgSha256": "7122a464ae463315563b3ebb81611ca14b99b6ea0e864c267d0c520fbc9dcfba"
   },
   "checks": {
     "darkThemeLegible": true,
@@ -15,6 +15,6 @@
     "textFallbackEquivalent": true,
     "accessibleMetadataPresent": true
   },
-  "reviewedBy": "Codex visual review",
-  "reviewedAt": "2026-09-09"
+  "reviewedBy": "Visual review after layout cleanup",
+  "reviewedAt": "2026-09-13"
 }
