@@ -166,9 +166,9 @@ Consequently, a normal clean source checkout has no receipt for either condition
 
 ### A08 — Eliminate overlapping full-suite executions before cutting useful tests
 
-**Locations:** [docs-quality.yml](.github/workflows/docs-quality.yml), [windows-full-suite.yml](.github/workflows/windows-full-suite.yml), [package.test.js](tests/package.test.js), and [run-tests.js](scripts/run-tests.js).
+**Historical locations:** the former `docs-quality.yml` workflow, [windows-full-suite.yml](.github/workflows/windows-full-suite.yml), [package.test.js](tests/package.test.js), and [run-tests.js](scripts/run-tests.js). The current PR boundary is defined by [pr-core.yml](.github/workflows/pr-core.yml), with documentation-only validation in [docs.yml](.github/workflows/docs.yml).
 
-On a pull request, the docs workflow runs three full suite equivalents in `validate` (Node 20, 22, and Node 24 with coverage) and six more in `cli-portability` (three operating systems × Node 20/24). That is **nine full core-suite executions**, including overlapping Ubuntu Node 20/24 combinations.
+Before the CI minimization, the docs workflow ran three full suite equivalents in `validate` (Node 20, 22, and Node 24 with coverage) and six more in `cli-portability` (three operating systems × Node 20/24). That was **nine full core-suite executions**, including overlapping Ubuntu Node 20/24 combinations.
 
 Each `npm test` already includes `tests/package.test.js`; these matrix jobs then run `pack:check` again. Within `package.test.js`, two tests independently execute `npm pack --dry-run --json`. Some repetition proves different things, but these repeated same-checkout listings can share one listing.
 

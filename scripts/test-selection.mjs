@@ -15,10 +15,23 @@ export async function discoverTests(directory) {
 export function selectTests(files, args, root) {
   const options = [];
   const selectors = [];
+  let shard = null;
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
     if (arg === "--") continue;
-    if (/^--test-(name-pattern|skip-pattern|concurrency|timeout)(=|$)/u.test(arg)) {
+    if (arg === "--watch" || arg === "--watch-preserve-output") {
+      options.push(arg);
+    } else if (arg === "--watch-path") {
+      const value = args[++index];
+      if (!value || value.startsWith("--")) throw new Error(`Missing value for ${arg}`);
+      options.push(arg, value);
+    } else if (arg === "--shard") {
+      const value = args[++index];
+      if (!value || value.startsWith("--")) throw new Error(`Missing value for ${arg}`);
+      shard = parseShard(value);
+    } else if (/^--shard=\d+\/\d+$/u.test(arg)) {
+      shard = parseShard(arg.slice("--shard=".length));
+    } else if (/^--test-(name-pattern|skip-pattern|concurrency|timeout)(=|$)/u.test(arg)) {
       options.push(arg);
       if (!arg.includes("=")) {
         const value = args[++index];
@@ -33,5 +46,19 @@ export function selectTests(files, args, root) {
     if (!selected.some((file) => file === selector || file.startsWith(`${selector}${path.sep}`))) throw new Error(`No tests match ${selector}`);
   }
   if (selected.length === 0) throw new Error("No test files found");
-  return ["--test", ...options, ...selected];
+  const sharded = shard
+    ? selected.filter((_, index) => index % shard.total === shard.index - 1)
+    : selected;
+  if (sharded.length === 0) throw new Error(`Shard ${shard.index}/${shard.total} has no selected test files`);
+  return ["--test", ...options, ...sharded];
+}
+
+function parseShard(value) {
+  const match = /^(\d+)\/(\d+)$/u.exec(value);
+  const index = Number(match?.[1]);
+  const total = Number(match?.[2]);
+  if (!match || !Number.isInteger(index) || !Number.isInteger(total) || index < 1 || index > total) {
+    throw new Error(`Invalid shard ${value}; expected 1/N through N/N`);
+  }
+  return { index, total };
 }

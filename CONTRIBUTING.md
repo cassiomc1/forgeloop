@@ -2,12 +2,26 @@
 
 ## Before opening a pull request
 
-Run `npm test`, `npm run docs:check`, `npm run pack:check`, and the Python
-repository validators. For fast feedback, use `npm run test:quick`; the full
-suite remains the release gate. Keep CLI metadata, generated references,
-schemas, completions, summaries, and conformance scenarios aligned. Do not add
-vendor-specific runtime behavior: ForgeLoop remains a file-backed protocol
-and support CLI.
+Run `npm run verify:prepush` before opening a pull request. For fast feedback,
+use `npm run test:quick` or `npm run verify:fast`; the full suite and coverage
+gate are run once by the local pre-push tier and by one sharded PR-core lane.
+The default `npm test` command is the complete no-coverage suite. `npm run test:ci`
+uses the same discovered test files with two Node test workers for two-core CI
+runners; PR Node 24 divides that same set into four deterministic shards and
+aggregates coverage without rerunning tests. `npm run test:watch` provides
+local watch mode. Run `npm run mcp:setup` explicitly when MCP checks are in
+scope. Keep CLI metadata, generated
+references, schemas, completions, summaries, and conformance scenarios
+aligned. Do not add vendor-specific runtime behavior: ForgeLoop remains a
+file-backed protocol and support CLI.
+
+The ordinary PR workflow is intentionally path-aware. `pr-core.yml` always
+publishes the ruleset contexts `audit`, `CodeQL`, `Verify generated Archify
+diagram`, `validate (22)`, `tarball smoke (ubuntu-latest)`, and
+`dependency-review`; `validate (22)` fails closed if an applicable job fails
+or is skipped unexpectedly. Broader main-branch and release workflows provide
+the explicit cross-platform, package, Windows, documentation, and audit
+coverage that is not duplicated on every pull request.
 
 ## Protocol changes
 
@@ -36,10 +50,20 @@ used by CI; they are not a replacement for the Node test suite.
 ## Release and performance checks
 
 Use `npm run coverage` followed by `npm run critical-coverage:check` for
-coverage gates. `npm run performance:check` measures the median startup time of
-the read-only `protocol-info` command using a broad shared-runner budget.
+coverage gates; coverage is intentionally not part of the default test command
+or the PR unit-test job. `npm run performance:check` measures the median
+startup time of the read-only `protocol-info` command using a broad
+shared-runner budget.
 Historical link exclusions in `.lychee.toml` are reviewed manually at least
 quarterly and must not be removed automatically.
+
+On native Windows, local antivirus scanning can dominate repeated Node process
+startup. If permitted by local security policy, ask IT to exclude the trusted
+`node.exe` executable, this repository root, and its `node_modules` directory
+from Windows Defender real-time scanning. Do not disable protection globally or
+apply exclusions to untrusted directories. If native Windows remains slow,
+WSL2 is a supported alternative for local development; retain native Windows
+CI for Windows-specific path and process behavior.
 
 ## Review expectations
 

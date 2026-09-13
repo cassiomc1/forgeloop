@@ -24,3 +24,28 @@ test("test selection forwards approved options and never silently broadens an em
   assert.throws(() => selectTests(files, ["--eval=bad"], root), /Unsupported/u);
   assert.throws(() => selectTests(files, ["--test-name-pattern"], root), /Missing value/u);
 });
+
+test("test selection supports watch mode without relaxing file boundaries", () => {
+  const root = path.resolve("tests");
+  const files = [path.join(root, "one.test.js"), path.join(root, "nested/two.test.js")];
+  assert.deepEqual(
+    selectTests(files, ["--watch", "--watch-path", "nested"], root),
+    ["--test", "--watch", "--watch-path", "nested", ...files],
+  );
+});
+
+test("test selection partitions the complete discovered set deterministically", () => {
+  const root = path.resolve("tests");
+  const files = [
+    path.join(root, "one.test.js"),
+    path.join(root, "nested/two.test.js"),
+    path.join(root, "three.test.js"),
+    path.join(root, "nested/four.test.js"),
+  ];
+  const shardOne = selectTests(files, ["--shard=1/2"], root).slice(1);
+  const shardTwo = selectTests(files, ["--shard", "2/2"], root).slice(1);
+  assert.deepEqual(shardOne, [files[0], files[2]]);
+  assert.deepEqual(shardTwo, [files[1], files[3]]);
+  assert.deepEqual([...shardOne, ...shardTwo].sort(), files.sort());
+  assert.throws(() => selectTests(files, ["--shard=3/2"], root), /Invalid shard/u);
+});

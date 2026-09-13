@@ -13,8 +13,10 @@ test("ForgeLoop receipt discovery runs after checkout without skipping absent ev
   const checkout = audit.steps.findIndex(step => step.uses?.startsWith("actions/checkout@"));
   const verify = audit.steps.findIndex(step => step.run === "node scripts/audit-receipts.mjs");
   assert.ok(checkout >= 0 && verify > checkout);
-  assert.equal(audit.steps[verify].if, undefined);
-  assert.ok(audit.steps.slice(checkout + 1, verify).some(step => step.run === "npm ci --ignore-scripts"));
+  assert.match(audit.steps[verify].if, /steps\.classify\.outputs\.audit/);
+  const install = audit.steps.findIndex(step => step.run === "npm ci --ignore-scripts");
+  assert.ok(install > checkout && install < verify);
+  assert.match(audit.steps[install].if, /steps\.classify\.outputs\.audit/);
 });
 
 test("Lychee excludes only documented unavailable references", async () => {

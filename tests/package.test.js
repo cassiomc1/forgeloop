@@ -286,33 +286,56 @@ test("release workflow requires an OIDC-compatible provenance publishing step", 
   assert.ok(job.steps.indexOf(smoke) < job.steps.indexOf(publish), "package smoke must run before npm publish");
 });
 
-test("CI covers supported versions and platforms without duplicate full-suite pairs", async () => {
-  const workflow = parseYaml(await readFile(".github/workflows/docs-quality.yml", "utf8"));
-  const pairs = [];
-  for (const job of Object.values(workflow.jobs)) {
-    if (!job.steps.some(step => /npm (?:test|run coverage)/u.test(step.run ?? ""))) continue;
-    const matrix = job.strategy?.matrix;
-    const entries = matrix?.include ?? matrix["node-version"].map(version => ({ os: job["runs-on"], "node-version": version }));
-    for (const entry of entries) pairs.push(`${entry.os}:${entry["node-version"]}`);
-  }
-  assert.equal(new Set(pairs).size, pairs.length);
-  for (const expected of ["ubuntu-latest:20", "ubuntu-latest:22", "ubuntu-latest:24", "macos-latest:20", "macos-latest:24", "windows-latest:20", "windows-latest:24"]) assert.ok(pairs.includes(expected), expected);
+test("PR CI shards one covered Node execution and targets Node compatibility", async () => {
+  const core = parseYaml(await readFile(".github/workflows/pr-core.yml", "utf8"));
+  const coreJob = core.jobs.core;
+  assert.match(coreJob.if, /needs\.classify\.outputs\.source/);
+  assert.match(coreJob.if, /needs\.classify\.outputs\.node_compat/);
+  const matrix = coreJob.strategy.matrix.include;
+  assert.equal(matrix.filter(entry => entry["node-version"] === 24).length, 4);
+  assert.equal(matrix.filter(entry => entry["node-version"] === 20).length, 1);
+  const unitStep = coreJob.steps.find(step => step.name.includes("unit suite shard"));
+  assert.match(unitStep.run, /npm run coverage:shard/);
+  assert.equal(core.jobs.coverage, undefined, "coverage must not rerun the full suite in a separate job");
+  assert.match(core.jobs["coverage-report"].steps.find(step => step.name === "Enforce aggregate coverage").run, /npm run coverage:report/);
+  const setupCondition = coreJob.steps.find(step => step.name === "Install locked Node toolchain").if;
+  assert.match(setupCondition, /needs\.classify\.outputs\.source/);
+  assert.match(setupCondition, /needs\.classify\.outputs\.node_compat/);
+  const node20Step = coreJob.steps.find(step => step.name.includes("targeted Node 20"));
+  assert.match(node20Step.if, /needs\.classify\.outputs\.source/);
+  assert.match(node20Step.if, /needs\.classify\.outputs\.node_compat/);
+  assert.match(core.jobs.lint.steps.find(step => step.name === "Run JavaScript lint").run, /npm run lint/);
+  const compatibility = parseYaml(await readFile(".github/workflows/node-compat.yml", "utf8"));
+  assert.match(compatibility.jobs.minimum.steps.at(-1).run, /test:quick/);
+  assert.doesNotMatch(JSON.stringify(compatibility.jobs), /npm test/u);
 });
 
-test("legacy required validation context rejects failed, skipped, or missing prerequisites", async () => {
-  const workflow = parseYaml(await readFile(".github/workflows/docs-quality.yml", "utf8"));
+test("required validation context rejects failed, unexpected, or missing prerequisites", async () => {
+  const workflow = parseYaml(await readFile(".github/workflows/pr-core.yml", "utf8"));
   const gate = workflow.jobs["required-validation"];
   assert.equal(gate.name, "validate (22)");
   assert.equal(gate.if, "${{ always() }}");
-  assert.deepEqual(gate.needs, ["validate", "cli-portability", "docs-diagram"]);
-  const script = /^node -e '([\s\S]+)'$/u.exec(gate.steps[0].run)?.[1];
+  assert.ok(gate.needs.includes("classify"));
+  assert.ok(gate.needs.includes("core"));
+  assert.ok(gate.needs.includes("coverage-report"));
+  assert.ok(gate.needs.includes("lint"));
+  assert.ok(gate.needs.includes("docs-diagram"));
+  assert.ok(gate.needs.includes("audit"));
+  assert.ok(gate.needs.includes("tarball-smoke"));
+  assert.ok(gate.needs.includes("repository-index"));
+  const script = /node --input-type=module <<'NODE'\n([\s\S]+?)\nNODE/u.exec(gate.steps[0].run)?.[1];
   assert.ok(script);
-  const runGate = results => execFileSync(process.execPath, ["-e", script], {
-    env: { ...process.env, REQUIRED_RESULTS: JSON.stringify(results) }, stdio: "pipe",
+  const runGate = (results, { coreApplicable = "false", coverageApplicable = "false" } = {}) => execFileSync(process.execPath, ["-e", script], {
+    env: { ...process.env, REQUIRED_RESULTS: JSON.stringify(results), CORE_APPLICABLE: coreApplicable, REPOSITORY_INDEX_APPLICABLE: "false", COVERAGE_APPLICABLE: coverageApplicable }, stdio: "pipe",
   });
-  const passed = Object.fromEntries(gate.needs.map(name => [name, { result: "success" }]));
+  const passed = Object.fromEntries(gate.needs.map(name => [name, {
+    result: ["core", "repository-index", "coverage-report"].includes(name) ? "skipped" : "success",
+  }]));
   assert.doesNotThrow(() => runGate(passed));
-  for (const name of gate.needs) {
+  const sourcePassed = { ...passed, core: { result: "success" }, ["coverage-report"]: { result: "success" } };
+  assert.doesNotThrow(() => runGate(sourcePassed, { coreApplicable: "true", coverageApplicable: "true" }));
+  assert.throws(() => runGate({ ...passed, core: { result: "success" }}));
+  for (const name of gate.needs.filter(name => !["core", "repository-index", "coverage-report"].includes(name))) {
     for (const result of ["failure", "cancelled", "skipped"]) {
       assert.throws(() => runGate({ ...passed, [name]: { result } }));
     }
@@ -320,6 +343,13 @@ test("legacy required validation context rejects failed, skipped, or missing pre
     delete missing[name];
     assert.throws(() => runGate(missing));
   }
+  assert.throws(() => runGate({ ...passed, ["repository-index"]: { result: "failure" } }));
+  assert.doesNotThrow(() => execFileSync(process.execPath, ["-e", script], {
+    env: { ...process.env, REQUIRED_RESULTS: JSON.stringify({ ...passed, ["repository-index"]: { result: "success" } }), CORE_APPLICABLE: "false", REPOSITORY_INDEX_APPLICABLE: "true", COVERAGE_APPLICABLE: "false" }, stdio: "pipe",
+  }));
+  assert.throws(() => execFileSync(process.execPath, ["-e", script], {
+    env: { ...process.env, REQUIRED_RESULTS: JSON.stringify({ ...passed, ["coverage-report"]: { result: "failure" } }), CORE_APPLICABLE: "true", REPOSITORY_INDEX_APPLICABLE: "false", COVERAGE_APPLICABLE: "true" }, stdio: "pipe",
+  }));
 });
 
 test("published package metadata declares the repository license and integration types", async () => {

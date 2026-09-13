@@ -79,7 +79,8 @@ generated Markdown regions (<!-- BEGIN FORGELOOP GENERATED: ... -->)
     ↓
 semantic conformance checks (scripts/validate_documentation_conformance.mjs)
     ↓
-cross-platform CI (.github/workflows/docs-quality.yml)
+documentation validation (.github/workflows/docs.yml) and the PR aggregator
+(.github/workflows/pr-core.yml)
 ```
 
 ### Provenance Mapping Table

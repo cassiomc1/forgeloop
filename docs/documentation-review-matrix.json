@@ -39,7 +39,7 @@
     { "path": "docs/DOCUMENTATION_GUIDE.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["docs/documentation-manifest.json", "docs/diagrams/manifest.json", "package.json"] },
     { "path": "docs/diagrams/README.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["docs/diagrams/manifest.json", "vendor/archify/v2.15.0/PIN.json", "docs/PERSISTENT_SEARCH_TRANSPORT.md"] },
     { "path": "docs/RELEASE_CHECKLIST_1_4.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["LOOP_ENGINEERING.md", "docs/CLI_REFERENCE.md"] },
-    { "path": "scripts/CI_VALIDATORS.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": [".github/workflows/docs-quality.yml", "scripts/"] },
+    { "path": "scripts/CI_VALIDATORS.md", "status": "reviewed", "action": "updated", "sourceOfTruth": [".github/workflows/docs.yml", ".github/workflows/pr-core.yml", "scripts/"] },
     { "path": "docs/MCP.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["integrations/mcp/src/", "integrations/mcp/package.json"] },
     { "path": "docs/UNIVERSAL_INTEGRATION.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["src/integration.js", "src/core/integration-resources.js", "src/persistent-transport/"] },
     { "path": "docs/RELEASE_CHECKLIST_1_5_MCP.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["docs/MCP.md", "docs/UNIVERSAL_INTEGRATION.md"] },

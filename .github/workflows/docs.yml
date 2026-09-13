@@ -1,0 +1,80 @@
+name: Documentation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "**/*.md"
+      - "**/*.markdown"
+      - "docs/**"
+      - "README.md"
+      - "DOCS_INDEX.md"
+      - "scripts/generate-documentation-diagrams.mjs"
+      - "scripts/check-documentation-diagrams.mjs"
+      - "scripts/documentation-diagram-inventory.mjs"
+      - "scripts/generate_documentation_reference.mjs"
+      - "scripts/validate_documentation_conformance.mjs"
+      - "scripts/validate_documentation_examples.mjs"
+      - "scripts/run-docs-check.js"
+      - ".lychee.toml"
+      - ".markdownlint*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: documentation-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docs:
+    name: Documentation validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install locked Node toolchain
+        run: npm ci --ignore-scripts
+      - name: Validate documentation and diagrams
+        run: npm run docs:check
+      - name: Lint Markdown
+        uses: DavidAnson/markdownlint-cli2-action@21c1be1b93ad9ed58fa840aacc3f279cde2a72ff # v24.2.0
+        with:
+          globs: |
+            --no-globs
+            **/*.{md,markdown}
+            #vendor/archify/**
+      - name: Check external documentation links
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: >-
+            --config .lychee.toml
+            --verbose
+            --no-progress
+            --exclude-path '(^|/)node_modules(/|$)'
+            --exclude-path '(^|/)coverage(/|$)'
+            --exclude-path '(^|/)\.worktrees(/|$)'
+            --exclude-path '(^|/)\.superpowers(/|$)'
+            --exclude-path '(^|/)docs/superpowers(/|$)'
+            './**/*.md'
+          fail: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Validate frozen Markdown and loop contracts
+        run: |
+          python3 -c 'import sys; assert sys.version_info >= (3, 9), "Python 3.9+ is required"'
+          python3 -m unittest tests.test_validate_markdown tests.test_validate_loop_system -v
+          python3 scripts/validate_markdown.py --self-test
+          python3 scripts/validate_markdown.py
+          python3 scripts/validate_loop_system.py --self-test
+          python3 scripts/validate_loop_system.py

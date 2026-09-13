@@ -11,7 +11,7 @@ Do not treat ForgeLoop as vendor-specific, optional, or to follow only "in spiri
 1. Inspect [`PROJECT_PROFILE.md`](./PROJECT_PROFILE.md). Confirm facts from sources; initialize if in `template` mode.
 1. Use [`GUIDE_ROUTER.md`](./GUIDE_ROUTER.md) to select relevant guides and report activated guide IDs.
 1. For repository-wide textual discovery, prefer `forgeloop search` and treat its results as discovery only; do not use them as verification evidence or scope authority.
-1. Make the smallest coherent change, run specific checks, and proportional regression checks.
+1. Make the smallest coherent change; use `npm run verify:fast` while editing and `npm run verify:prepush` before a PR, then run proportional regression checks.
 1. Diagnose failures before fixing; do not repeat attempts without new evidence.
 1. Do not install software, publish, delete, or migrate data without authority. Do not install a missing verification tool merely to satisfy a check. For missing Qwen-MM-Plugins, follow `LOOP_ENGINEERING.md`.
 1. Before creating or activating new lifecycle state: discover existing tasks first with `forgeloop task-list --json`; if an existing task is selected or identifiable, use `forgeloop next --task <id> --json` before creating another task, reconcile continuity when present, and inspect the checkout. A change of harness, model, provider, IDE, process, terminal, or session does not create a new task. Legacy singleton state such as `.forgeloop/work-state.json` is compatibility-only, not the primary modern discovery mechanism.

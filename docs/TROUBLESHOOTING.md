@@ -38,6 +38,7 @@ This guide provides symptom-first recovery procedures for common ForgeLoop proto
 - [Repository search fails](#symptom-repository-search-fails)
 - [Persistent search host is unavailable](#symptom-persistent-search-host-is-unavailable)
 - [Persistent search host ownership is unverified or stale](#symptom-persistent-search-host-ownership-is-unverified-or-stale)
+- [Local validation tier is unavailable or reports `NOT_VERIFIED`](#symptom-local-validation-tier-is-unavailable-or-reports-not_verified)
 - [Another harness cannot resume the task](#symptom-another-harness-cannot-resume)
 - [Task claim conflict or recovered task](#symptom-task-creation-blocked-by-a-write-claim-conflict-e_task_scope_conflict)
 - [Stable Error & Reason Code Reference](#stable-error-and-reason-codes)
@@ -54,6 +55,60 @@ mismatch. This check does not create or mutate task state.
 forgeloop protocol-info --json
 ```
 <!-- END FORGELOOP EXAMPLE -->
+
+### Symptom: local validation tier is unavailable or reports `NOT_VERIFIED`
+
+#### What it means
+
+The selected local validation tier could not run a required external validator
+or setup prerequisite. `NOT_VERIFIED` is an explicit limitation, not a test
+pass and not permission to install tools implicitly.
+
+#### Safe recovery
+
+1. Check the tier and its command list with `node scripts/run-validation.mjs
+   --tier <fast|local|prepush|release> --list`.
+2. Run `npm run mcp:setup` explicitly when MCP dependencies are in scope and
+   installation is authorized.
+3. Confirm Python 3.9 or newer is available for the frozen validators.
+4. Re-run the tier and record any still-unavailable check as `NOT_VERIFIED` in
+   the validation report.
+
+The ordinary PR workflow remains path-aware and always publishes the required
+status contexts; its `validate (22)` aggregator fails closed on an applicable
+job failure, cancellation, or unexpected skip. Local success cannot substitute
+for a required remote security or cross-platform check.
+
+### Symptom: the Node.js test suite is slow locally
+
+#### Inspect
+
+Use the fast, watch, and CI-specific entry points before running the full
+coverage gate:
+
+```bash
+npm run test:quick
+npm run test:watch
+npm run test:ci
+npm run coverage
+```
+
+`npm test` remains the complete no-coverage suite. `test:ci` runs the same
+discovered files with a two-worker cap for small CI runners; it does not remove
+tests or change assertions. Local coverage remains an explicit command because
+instrumentation adds measurable overhead; the PR unit lane wraps that same
+`test:ci` process across four deterministic shards, then aggregates coverage
+without running the suite again. Docs-only changes run the quick suite only on
+the first Node 24 shard; the other shards and the Node 20 lane do not install.
+
+#### Native Windows guidance
+
+Repeated Node process startup can be slowed by Windows Defender scanning the
+repository and dependency tree. If local policy permits, request narrowly
+scoped exclusions for the trusted `node.exe`, this repository root, and its
+`node_modules` directory. Never disable Defender globally or exclude an
+untrusted path. WSL2 can be used when native Windows remains slow, while
+Windows CI continues to cover native path and process behavior.
 
 ### Symptom: Project-aware .NET routing is missing
 
