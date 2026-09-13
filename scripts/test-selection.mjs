@@ -18,7 +18,13 @@ export function selectTests(files, args, root) {
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
     if (arg === "--") continue;
-    if (/^--test-(name-pattern|skip-pattern|concurrency|timeout)(=|$)/u.test(arg)) {
+    if (arg === "--watch" || arg === "--watch-preserve-output") {
+      options.push(arg);
+    } else if (arg === "--watch-path") {
+      const value = args[++index];
+      if (!value || value.startsWith("--")) throw new Error(`Missing value for ${arg}`);
+      options.push(arg, value);
+    } else if (/^--test-(name-pattern|skip-pattern|concurrency|timeout)(=|$)/u.test(arg)) {
       options.push(arg);
       if (!arg.includes("=")) {
         const value = args[++index];

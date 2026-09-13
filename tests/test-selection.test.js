@@ -24,3 +24,12 @@ test("test selection forwards approved options and never silently broadens an em
   assert.throws(() => selectTests(files, ["--eval=bad"], root), /Unsupported/u);
   assert.throws(() => selectTests(files, ["--test-name-pattern"], root), /Missing value/u);
 });
+
+test("test selection supports watch mode without relaxing file boundaries", () => {
+  const root = path.resolve("tests");
+  const files = [path.join(root, "one.test.js"), path.join(root, "nested/two.test.js")];
+  assert.deepEqual(
+    selectTests(files, ["--watch", "--watch-path", "nested"], root),
+    ["--test", "--watch", "--watch-path", "nested", ...files],
+  );
+});

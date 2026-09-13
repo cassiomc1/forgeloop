@@ -39,7 +39,7 @@ jobs:
         run: node scripts/ci-classify.mjs --github-output
 
   core:
-    name: Core validation (Node ${{ matrix.node-version }})
+    name: Unit tests (Node ${{ matrix.node-version }})
     needs: classify
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -59,10 +59,7 @@ jobs:
           cache: npm
       - name: Install locked Node toolchain
         run: npm ci --ignore-scripts
-      - name: Enforce dependency policy once
-        if: ${{ matrix.node-version == 24 }}
-        run: npm run dependency:policy
-      - name: Run the single full clean-room suite on Node 24
+      - name: Run the full unit suite on Node 24 without coverage
         if: ${{ matrix.node-version == 24 }}
         env:
           DOCS_ONLY: ${{ needs.classify.outputs.docs_only }}
@@ -70,8 +67,7 @@ jobs:
           if [ "$DOCS_ONLY" = "true" ]; then
             npm run test:quick
           else
-            npm run coverage
-            npm run critical-coverage:check
+            npm run test:ci
           fi
       - name: Run targeted Node 20 CLI compatibility
         if: ${{ matrix.node-version == 20 }}
@@ -79,6 +75,59 @@ jobs:
           npm run test:quick
           node src/cli.js --help
           node src/cli.js protocol-info --json
+
+  lint:
+    name: Lint and dependency policy
+    needs: classify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out source changes
+        if: ${{ needs.classify.outputs.source == 'true' }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        if: ${{ needs.classify.outputs.source == 'true' }}
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install locked Node toolchain
+        if: ${{ needs.classify.outputs.source == 'true' }}
+        run: npm ci --ignore-scripts
+      - name: Run JavaScript lint
+        if: ${{ needs.classify.outputs.source == 'true' }}
+        run: npm run lint
+      - name: Enforce dependency policy
+        if: ${{ needs.classify.outputs.package == 'true' }}
+        run: npm run dependency:policy
+      - name: Lint and dependency policy not applicable
+        if: ${{ needs.classify.outputs.source != 'true' }}
+        run: echo "Source lint and dependency policy are not applicable for this change."
+
+  coverage:
+    name: Coverage (Node 24)
+    needs: classify
+    if: ${{ needs.classify.outputs.source == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out source changes
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install locked Node toolchain
+        run: npm ci --ignore-scripts
+      - name: Measure coverage
+        run: npm run coverage
+      - name: Enforce critical-module coverage
+        run: npm run critical-coverage:check
 
   docs-diagram:
     name: Verify generated Archify diagram
@@ -208,7 +257,7 @@ jobs:
 
   required-validation:
     name: validate (22)
-    needs: [classify, core, docs-diagram, audit, tarball-smoke, repository-index]
+    needs: [classify, core, lint, coverage, docs-diagram, audit, tarball-smoke, repository-index]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     timeout-minutes: 2
@@ -217,13 +266,20 @@ jobs:
         env:
           REQUIRED_RESULTS: ${{ toJSON(needs) }}
           REPOSITORY_INDEX_APPLICABLE: ${{ needs.classify.outputs.repository_index }}
+          COVERAGE_APPLICABLE: ${{ needs.classify.outputs.source }}
         run: |
           node --input-type=module <<'NODE'
           const needs = JSON.parse(process.env.REQUIRED_RESULTS);
-          for (const name of ["classify", "core", "docs-diagram", "audit", "tarball-smoke"]) {
+          for (const name of ["classify", "core", "lint", "docs-diagram", "audit", "tarball-smoke"]) {
             if (needs[name]?.result !== "success") {
               throw new Error(`${name} did not succeed: ${needs[name]?.result ?? "missing"}`);
             }
+          }
+          const coverageResult = needs.coverage?.result;
+          if (process.env.COVERAGE_APPLICABLE === "true") {
+            if (coverageResult !== "success") throw new Error(`coverage did not succeed: ${coverageResult ?? "missing"}`);
+          } else if (coverageResult !== "skipped") {
+            throw new Error(`coverage ran unexpectedly: ${coverageResult ?? "missing"}`);
           }
           const indexResult = needs["repository-index"]?.result;
           if (process.env.REPOSITORY_INDEX_APPLICABLE === "true") {

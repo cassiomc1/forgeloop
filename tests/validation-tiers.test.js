@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import { test } from "node:test";
 
 import { getTierCommands } from "../scripts/run-validation.mjs";
@@ -12,6 +13,12 @@ test("fast tier is short and deterministic", () => {
   assert.deepEqual(fast, ["test:quick", "lint", "dependency:policy", "docs:generated:check"]);
   assert.equal(fast.includes("coverage"), false);
   assert.equal(fast.some((id) => id.startsWith("python-")), false);
+});
+
+test("package scripts expose a full coverage-free CI entry point", async () => {
+  const packageJson = JSON.parse(await readFile("package.json", "utf8"));
+  assert.equal(packageJson.scripts["test:ci"], "node scripts/run-tests.js --test-concurrency=2");
+  assert.match(packageJson.scripts.coverage, /^c8 /u);
 });
 
 test("local tier owns deterministic source and documentation checks", () => {

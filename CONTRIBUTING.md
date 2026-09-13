@@ -3,9 +3,12 @@
 ## Before opening a pull request
 
 Run `npm run verify:prepush` before opening a pull request. For fast feedback,
-use `npm run verify:fast`; the full suite and coverage gate are run once by
-the local pre-push tier and by the PR core workflow. Run `npm run mcp:setup`
-explicitly when MCP checks are in scope. Keep CLI metadata, generated
+use `npm run test:quick` or `npm run verify:fast`; the full suite and coverage
+gate are run once by the local pre-push tier and by separate PR-core jobs. The
+default `npm test` command is the complete no-coverage suite. `npm run test:ci`
+uses the same discovered test files with two Node test workers for two-core CI
+runners, while `npm run test:watch` provides local watch mode. Run
+`npm run mcp:setup` explicitly when MCP checks are in scope. Keep CLI metadata, generated
 references, schemas, completions, summaries, and conformance scenarios
 aligned. Do not add vendor-specific runtime behavior: ForgeLoop remains a
 file-backed protocol and support CLI.
@@ -45,10 +48,20 @@ used by CI; they are not a replacement for the Node test suite.
 ## Release and performance checks
 
 Use `npm run coverage` followed by `npm run critical-coverage:check` for
-coverage gates. `npm run performance:check` measures the median startup time of
-the read-only `protocol-info` command using a broad shared-runner budget.
+coverage gates; coverage is intentionally not part of the default test command
+or the PR unit-test job. `npm run performance:check` measures the median
+startup time of the read-only `protocol-info` command using a broad
+shared-runner budget.
 Historical link exclusions in `.lychee.toml` are reviewed manually at least
 quarterly and must not be removed automatically.
+
+On native Windows, local antivirus scanning can dominate repeated Node process
+startup. If permitted by local security policy, ask IT to exclude the trusted
+`node.exe` executable, this repository root, and its `node_modules` directory
+from Windows Defender real-time scanning. Do not disable protection globally or
+apply exclusions to untrusted directories. If native Windows remains slow,
+WSL2 is a supported alternative for local development; retain native Windows
+CI for Windows-specific path and process behavior.
 
 ## Review expectations
 

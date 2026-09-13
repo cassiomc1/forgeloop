@@ -286,12 +286,15 @@ test("release workflow requires an OIDC-compatible provenance publishing step", 
   assert.ok(job.steps.indexOf(smoke) < job.steps.indexOf(publish), "package smoke must run before npm publish");
 });
 
-test("PR CI has one full Node execution and targeted Node compatibility", async () => {
+test("PR CI has one full no-coverage Node execution and targeted Node compatibility", async () => {
   const core = parseYaml(await readFile(".github/workflows/pr-core.yml", "utf8"));
   const coreJob = core.jobs.core;
   assert.deepEqual(coreJob.strategy.matrix["node-version"], [20, 24]);
-  assert.match(coreJob.steps.find(step => step.name.includes("single full")).run, /npm run coverage/);
-  assert.doesNotMatch(coreJob.steps.find(step => step.name.includes("single full")).run, /npm test/u);
+  assert.match(coreJob.steps.find(step => step.name.includes("full unit suite")).run, /npm run test:ci/);
+  assert.doesNotMatch(coreJob.steps.find(step => step.name.includes("full unit suite")).run, /npm run coverage/u);
+  const coverageJob = core.jobs.coverage;
+  assert.match(coverageJob.steps.find(step => step.name === "Measure coverage").run, /npm run coverage/);
+  assert.match(core.jobs.lint.steps.find(step => step.name === "Run JavaScript lint").run, /npm run lint/);
   const compatibility = parseYaml(await readFile(".github/workflows/node-compat.yml", "utf8"));
   assert.match(compatibility.jobs.minimum.steps.at(-1).run, /test:quick/);
   assert.doesNotMatch(JSON.stringify(compatibility.jobs), /npm test/u);
@@ -302,15 +305,17 @@ test("required validation context rejects failed, unexpected, or missing prerequ
   const gate = workflow.jobs["required-validation"];
   assert.equal(gate.name, "validate (22)");
   assert.equal(gate.if, "${{ always() }}");
-  assert.deepEqual(gate.needs, ["classify", "core", "docs-diagram", "audit", "tarball-smoke", "repository-index"]);
+  assert.deepEqual(gate.needs, ["classify", "core", "lint", "coverage", "docs-diagram", "audit", "tarball-smoke", "repository-index"]);
   const script = /node --input-type=module <<'NODE'\n([\s\S]+?)\nNODE/u.exec(gate.steps[0].run)?.[1];
   assert.ok(script);
   const runGate = results => execFileSync(process.execPath, ["-e", script], {
-    env: { ...process.env, REQUIRED_RESULTS: JSON.stringify(results), REPOSITORY_INDEX_APPLICABLE: "false" }, stdio: "pipe",
+    env: { ...process.env, REQUIRED_RESULTS: JSON.stringify(results), REPOSITORY_INDEX_APPLICABLE: "false", COVERAGE_APPLICABLE: "false" }, stdio: "pipe",
   });
-  const passed = Object.fromEntries(gate.needs.map(name => [name, { result: name === "repository-index" ? "skipped" : "success" }]));
+  const passed = Object.fromEntries(gate.needs.map(name => [name, {
+    result: ["repository-index", "coverage"].includes(name) ? "skipped" : "success",
+  }]));
   assert.doesNotThrow(() => runGate(passed));
-  for (const name of gate.needs.filter(name => name !== "repository-index")) {
+  for (const name of gate.needs.filter(name => !["repository-index", "coverage"].includes(name))) {
     for (const result of ["failure", "cancelled", "skipped"]) {
       assert.throws(() => runGate({ ...passed, [name]: { result } }));
     }
@@ -320,7 +325,10 @@ test("required validation context rejects failed, unexpected, or missing prerequ
   }
   assert.throws(() => runGate({ ...passed, ["repository-index"]: { result: "failure" } }));
   assert.doesNotThrow(() => execFileSync(process.execPath, ["-e", script], {
-    env: { ...process.env, REQUIRED_RESULTS: JSON.stringify({ ...passed, ["repository-index"]: { result: "success" } }), REPOSITORY_INDEX_APPLICABLE: "true" }, stdio: "pipe",
+    env: { ...process.env, REQUIRED_RESULTS: JSON.stringify({ ...passed, ["repository-index"]: { result: "success" } }), REPOSITORY_INDEX_APPLICABLE: "true", COVERAGE_APPLICABLE: "false" }, stdio: "pipe",
+  }));
+  assert.throws(() => execFileSync(process.execPath, ["-e", script], {
+    env: { ...process.env, REQUIRED_RESULTS: JSON.stringify({ ...passed, coverage: { result: "failure" } }), REPOSITORY_INDEX_APPLICABLE: "false", COVERAGE_APPLICABLE: "true" }, stdio: "pipe",
   }));
 });
 

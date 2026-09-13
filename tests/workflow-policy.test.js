@@ -27,9 +27,11 @@ test("PR and release quality workflows enforce the intended validation boundary"
 
   assert.match(core, /npm ci --ignore-scripts/);
   assert.match(core, /npm run dependency:policy/);
+  assert.match(core, /npm run test:ci/);
+  assert.match(core, /name: Coverage \(Node 24\)/);
   assert.match(core, /npm run coverage/);
   assert.match(core, /npm run critical-coverage:check/);
-  assert.doesNotMatch(core, /(?:^|\s)npm test(?:\s|$)/u);
+  assert.match(core, /name: Lint and dependency policy/);
   assert.match(core, /name: validate \(22\)/);
   assert.match(core, /name: Verify generated Archify diagram/);
   assert.match(core, /name: tarball smoke \(ubuntu-latest\)/);

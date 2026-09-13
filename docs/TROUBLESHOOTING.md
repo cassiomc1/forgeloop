@@ -79,6 +79,34 @@ status contexts; its `validate (22)` aggregator fails closed on an applicable
 job failure, cancellation, or unexpected skip. Local success cannot substitute
 for a required remote security or cross-platform check.
 
+### Symptom: the Node.js test suite is slow locally
+
+#### Inspect
+
+Use the fast, watch, and CI-specific entry points before running the full
+coverage gate:
+
+```bash
+npm run test:quick
+npm run test:watch
+npm run test:ci
+npm run coverage
+```
+
+`npm test` remains the complete no-coverage suite. `test:ci` runs the same
+discovered files with a two-worker cap for small CI runners; it does not remove
+tests or change assertions. Coverage is a separate explicit command because
+instrumentation adds measurable overhead.
+
+#### Native Windows guidance
+
+Repeated Node process startup can be slowed by Windows Defender scanning the
+repository and dependency tree. If local policy permits, request narrowly
+scoped exclusions for the trusted `node.exe`, this repository root, and its
+`node_modules` directory. Never disable Defender globally or exclude an
+untrusted path. WSL2 can be used when native Windows remains slow, while
+Windows CI continues to cover native path and process behavior.
+
 ### Symptom: Project-aware .NET routing is missing
 
 #### What it means

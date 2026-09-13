@@ -140,11 +140,11 @@ replacement context is observed.
 
 ## Explicit answers
 
-1. Every ordinary code PR receives one independent full clean-room test
-   execution through Node 24 coverage; the exact implementation PR confirmed
-   that path on its current head.
-2. Coverage remains enforced by `npm run coverage` and the critical coverage
-   gate.
+1. Every ordinary code PR receives one independent full clean-room no-coverage
+   unit execution through Node 24 plus one separate Node 24 coverage job; the
+   exact implementation PR confirmed both paths on its current head.
+2. Coverage remains enforced separately by `npm run coverage` and the critical
+   coverage gate; the default unit job does not instrument the suite.
 3. CodeQL remains an independent required check.
 4. Dependency Review remains an independent required check.
 5. Repository Index native Linux/macOS/Windows tests remain conditional on
@@ -166,9 +166,10 @@ replacement context is observed.
 13. No test was weakened, skipped, or made non-blocking solely for speed; only
     duplicate layers were removed and targeted compatibility was separated from
     the single full-suite proof.
-14. The designed normal PR shape is nine active jobs including CodeQL and
-    Dependency Review; the exact broad implementation PR used 15 successful
-    check runs because it also exercised the Repository Index native matrix.
+14. The designed normal PR shape adds separate unit, lint, and coverage jobs
+    to the path-aware boundary, with CodeQL and Dependency Review remaining
+    independent; the exact broad implementation PR used 15 successful check
+    runs because it also exercised the Repository Index native matrix.
 15. The observed old docs-quality portion used 52.45 runner-minutes and 18.85
     minutes wall-clock. The comparable exact new run used 8.7 observed
     runner-minutes and 3.65 minutes wall-clock.
