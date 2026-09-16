@@ -8,6 +8,10 @@ retry_wait_time = 2
 timeout = 30
 no_progress = true
 
+# Legacy fixtures preserve historical package contents (frozen 0.1.6 state used
+# by migration tests) and are not subject to live third-party URL validation.
+exclude_path = ["tests/fixtures/legacy-0.1.6"]
+
 # Local examples and loopback addresses are not publishable targets.
 exclude_loopback = true
 exclude = [
