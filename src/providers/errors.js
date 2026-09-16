@@ -1,0 +1,15 @@
+export const E_PROVIDER_INVALID = "E_PROVIDER_INVALID";
+export const E_PROVIDER_UNAVAILABLE = "E_PROVIDER_UNAVAILABLE";
+export const E_PROVIDER_TIMEOUT = "E_PROVIDER_TIMEOUT";
+export const E_PROVIDER_OUTPUT_INVALID = "E_PROVIDER_OUTPUT_INVALID";
+export const E_PROVIDER_OUTPUT_LIMIT = "E_PROVIDER_OUTPUT_LIMIT";
+export const E_PROVIDER_CAPABILITY_UNSUPPORTED = "E_PROVIDER_CAPABILITY_UNSUPPORTED";
+export const E_PROVIDER_AUTHORITY_ESCALATION = "E_PROVIDER_AUTHORITY_ESCALATION";
+export const E_PROVIDER_EXECUTION_FAILED = "E_PROVIDER_EXECUTION_FAILED";
+
+export function providerError(code, message) {
+  const error = new Error(message);
+  error.name = "ProviderError";
+  error.code = code;
+  return error;
+}
