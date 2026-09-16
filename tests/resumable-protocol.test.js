@@ -116,6 +116,30 @@ test("rebuilt VERIFYING checkpoints preserve the verification cycle recorded by 
   });
 });
 
+test("rebuilt REVIEWING checkpoints restore the review phase instead of regressing to VERIFYING", async () => {
+  await withTarget(async (target) => {
+    await prepareTarget(target);
+    assert.equal((await runPreflight({ target, packageRoot })).status, "READY");
+    await advanceWorkState(target, "PLANNED", { packageRoot });
+    await advanceWorkState(target, "EXECUTING", { packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot });
+    await advanceWorkState(target, "REVIEWING", { packageRoot });
+
+    await clearWorkState(target);
+    const restoredPreflight = await runPreflight({ target, packageRoot });
+    const restored = await readWorkState(target, packageRoot);
+
+    assert.equal(restoredPreflight.status, "READY");
+    assert.equal(restored.phase, "REVIEWING");
+    assert.equal(restored.verificationCycle, 1);
+
+    const ledger = await validateEventLedger(target, packageRoot);
+    assert.equal(ledger.valid, true, JSON.stringify(ledger.errors ?? []));
+    const { validateStateLedgerCoherence } = await import("../src/core/events.js");
+    assert.deepEqual(validateStateLedgerCoherence(restored, ledger.events), []);
+  });
+});
+
 test("next reports a dedicated blocker when a persisted READY preflight loses its checkpoint", async () => {
   await withTarget(async (target) => {
     await prepareTarget(target);

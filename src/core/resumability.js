@@ -16,6 +16,7 @@ const RESUME_PHASE_BY_MILESTONE = Object.freeze({
   EXECUTION_STARTED: "EXECUTING",
   VERIFICATION_STARTED: "VERIFYING",
   VERIFICATION_RECORDED: "VERIFYING",
+  REVIEW_STARTED: "REVIEWING",
 });
 
 async function deriveResumePhaseFromLedger(target, packageRoot, taskId) {
@@ -32,12 +33,7 @@ async function deriveResumePhaseFromLedger(target, packageRoot, taskId) {
   let derived = null;
   for (const event of scoped) {
     const phase = positions[event.event];
-    if (!phase) continue;
-    if (!derived) {
-      derived = phase;
-      continue;
-    }
-    if (phase === "VERIFYING") derived = "VERIFYING";
+    if (phase) derived = phase;
   }
   return derived;
 }
@@ -57,6 +53,12 @@ function deriveVerificationCycleFromLedger(events) {
 }
 
 function resumeSteps(phase) {
+  if (phase === "REVIEWING") {
+    return {
+      completedSteps: ["contract", "route", "planning", "implementation", "verification"],
+      pendingSteps: [],
+    };
+  }
   if (phase === "EXECUTING" || phase === "VERIFYING") {
     return {
       completedSteps: ["contract", "route", "planning", "implementation"],
