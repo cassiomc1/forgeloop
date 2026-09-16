@@ -1,162 +1,152 @@
+import { performance } from "node:perf_hooks";
+import { types } from "node:util";
 import { capabilityFor } from "./capabilities.js";
+import { isPlainObject, normalizeProviderInput, normalizeProviderResult } from "./json-snapshot.js";
 import {
-  E_PROVIDER_AUTHORITY_ESCALATION,
   E_PROVIDER_EXECUTION_FAILED,
   E_PROVIDER_INVALID,
-  E_PROVIDER_OUTPUT_INVALID,
-  E_PROVIDER_OUTPUT_LIMIT,
   E_PROVIDER_TIMEOUT,
   E_PROVIDER_UNAVAILABLE,
   providerError,
 } from "./errors.js";
 
-const PROVIDER_ID_REGEX = /^[a-z0-9][a-z0-9_-]*$/;
+const PROVIDER_ID_REGEX = /^[a-z0-9][a-z0-9_-]{0,63}$/;
 const REGISTRY_MAX_PROVIDERS = 256;
-const DEFAULT_TIMEOUT_MS = 10_000;
-const DEFAULT_MAX_PAYLOAD_BYTES = 262_144;
-const AUTHORITY_KEYS = Object.freeze([
-  "lifecycleAuthority",
-  "completionAuthority",
-  "evidenceAuthority",
-  "executableAuthority",
-  "installAuthority",
-]);
 
 function assertEntry(entry, key) {
-  if (!entry || typeof entry !== "object" || Array.isArray(entry)) {
-    throw providerError(E_PROVIDER_INVALID, `Provider "${key}" must be an object`);
+  if (!isPlainObject(entry)) {
+    throw providerError(E_PROVIDER_INVALID, "Provider must be a plain object");
   }
-  if (typeof entry.id !== "string" || !PROVIDER_ID_REGEX.test(entry.id)) {
-    throw providerError(E_PROVIDER_INVALID, `Provider "${key}" has an invalid id`);
+  for (const descriptor of Object.values(Object.getOwnPropertyDescriptors(entry))) {
+    if (!("value" in descriptor)) throw providerError(E_PROVIDER_INVALID, "Provider accessors are not supported");
   }
-  if (entry.id !== key) {
-    throw providerError(E_PROVIDER_INVALID, `Provider id "${entry.id}" does not match registry key "${key}"`);
+  if (typeof entry.id !== "string" || !PROVIDER_ID_REGEX.test(entry.id) || entry.id !== key) {
+    throw providerError(E_PROVIDER_INVALID, "Provider identity does not match the registry key");
   }
   if (entry.version !== undefined && (typeof entry.version !== "string" || entry.version.trim() === "" || entry.version.length > 64)) {
-    throw providerError(E_PROVIDER_INVALID, `Provider "${key}" version must be a non-empty string of at most 64 characters`);
+    throw providerError(E_PROVIDER_INVALID, "Provider version must be a non-empty string of at most 64 characters");
   }
-  if (typeof entry.kind !== "string" || !capabilityFor(entry.kind)) {
-    throw providerError(E_PROVIDER_INVALID, `Provider "${key}" declares an unsupported kind`);
+  if (!capabilityFor(entry.kind)) {
+    throw providerError(E_PROVIDER_INVALID, "Provider declares an unsupported kind");
   }
   if (entry.capability !== undefined && entry.capability !== capabilityFor(entry.kind)) {
-    throw providerError(E_PROVIDER_INVALID, `Provider "${key}" capability metadata contradicts its kind`);
+    throw providerError(E_PROVIDER_INVALID, "Provider capability metadata contradicts its kind");
   }
   if (typeof entry.operation !== "function") {
-    throw providerError(E_PROVIDER_INVALID, `Provider "${key}" must implement operation(input)`);
+    throw providerError(E_PROVIDER_INVALID, "Provider must implement operation(input, context)");
   }
 }
 
-function assertSerializablePayload(value, maxBytes) {
-  let payload;
-  try {
-    payload = JSON.parse(JSON.stringify(value ?? {}));
-  } catch {
-    throw providerError(E_PROVIDER_INVALID, "Provider input must be JSON-serializable");
+function boundedInteger(value, fallback, maximum) {
+  const resolved = value === undefined ? fallback : value;
+  if (!Number.isInteger(resolved) || resolved <= 0 || resolved > maximum) {
+    throw providerError(E_PROVIDER_INVALID, "Provider limits must be positive bounded integers");
   }
-  if (Buffer.byteLength(JSON.stringify(payload), "utf8") > maxBytes) {
-    throw providerError(E_PROVIDER_OUTPUT_LIMIT, "Provider input exceeds the bounded payload size");
-  }
-  return payload;
-}
-
-function assertAuthorityFree(result) {
-  for (const key of AUTHORITY_KEYS) {
-    if (result[key] === true) {
-      throw providerError(E_PROVIDER_AUTHORITY_ESCALATION, `Provider result declared forbidden authority key "${key}"`);
-    }
-  }
-  if (result.status === "COMPLETE") {
-    throw providerError(E_PROVIDER_AUTHORITY_ESCALATION, "Provider result cannot assign lifecycle completion");
-  }
-  return result;
-}
-
-function assertBoundedResult(result, maxResultBytes) {
-  if (!result || typeof result !== "object" || Array.isArray(result)) {
-    throw providerError(E_PROVIDER_OUTPUT_INVALID, "Provider result must be a plain JSON object");
-  }
-  let serialized;
-  try {
-    serialized = JSON.stringify(result);
-  } catch {
-    throw providerError(E_PROVIDER_OUTPUT_INVALID, "Provider result must be JSON-serializable");
-  }
-  if (Buffer.byteLength(serialized, "utf8") > maxResultBytes) {
-    throw providerError(E_PROVIDER_OUTPUT_LIMIT, "Provider result exceeds the bounded result size");
-  }
-  return assertAuthorityFree(result);
-}
-
-async function resolveEntry(entry, id) {
-  if (typeof entry !== "function") return entry;
-  let resolved;
-  try {
-    resolved = await entry();
-  } catch {
-    throw providerError(E_PROVIDER_INVALID, `Provider "${id}" factory failed`);
-  }
-  assertEntry(resolved, id);
   return resolved;
 }
 
-export function createProviderRegistry({ providers = {} } = {}) {
-  if (!providers || typeof providers !== "object" || Array.isArray(providers)) {
-    throw providerError(E_PROVIDER_INVALID, "Provider registry must be an object map");
+function normalizeOptions(options) {
+  if (!isPlainObject(options)) throw providerError(E_PROVIDER_INVALID, "Provider options must be a plain object");
+  const descriptors = Object.getOwnPropertyDescriptors(options);
+  for (const [key, descriptor] of Object.entries(descriptors)) {
+    if (!["timeoutMs", "maxInputBytes", "maxResultBytes"].includes(key) || !("value" in descriptor)) {
+      throw providerError(E_PROVIDER_INVALID, "Unsupported provider option");
+    }
   }
+  for (const key of Reflect.ownKeys(descriptors)) {
+    if (typeof key !== "string") throw providerError(E_PROVIDER_INVALID, "Unsupported provider option");
+  }
+  return {
+    timeoutMs: boundedInteger(descriptors.timeoutMs?.value, 10_000, 300_000),
+    maxInputBytes: boundedInteger(descriptors.maxInputBytes?.value, 262_144, 4_194_304),
+    maxResultBytes: boundedInteger(descriptors.maxResultBytes?.value, 262_144, 4_194_304),
+  };
+}
 
+function callProvider(operation, normalize) {
+  let returned;
+  try {
+    returned = operation();
+  } catch {
+    throw providerError(E_PROVIDER_EXECUTION_FAILED, "Provider execution failed");
+  }
+  if (types.isPromise(returned) && !types.isProxy(returned)) {
+    return Promise.prototype.then.call(returned, normalize, () => {
+      throw providerError(E_PROVIDER_EXECUTION_FAILED, "Provider execution failed");
+    });
+  }
+  return normalize(returned);
+}
+
+async function withProviderDeadline(providerId, timeoutMs, operation) {
+  const controller = new AbortController();
+  const context = Object.freeze({ signal: controller.signal, timeoutMs, providerId });
+  const expires = performance.now() + timeoutMs;
+  const timeoutError = providerError(E_PROVIDER_TIMEOUT, "Provider invocation exceeded its deadline");
+  const checkpoint = () => {
+    if (controller.signal.aborted || performance.now() >= expires) {
+      controller.abort();
+      throw timeoutError;
+    }
+  };
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => {
+      reject(timeoutError);
+      controller.abort();
+    }, timeoutMs);
+  });
+  try {
+    return await Promise.race([
+      timeout,
+      Promise.resolve().then(() => operation(context, checkpoint)),
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+export function createProviderRegistry({ providers = {} } = {}) {
+  if (!isPlainObject(providers)) throw providerError(E_PROVIDER_INVALID, "Provider registry requires an object map");
   const map = new Map();
-  for (const [key, entry] of Object.entries(providers)) {
-    if (!PROVIDER_ID_REGEX.test(key)) {
-      throw providerError(E_PROVIDER_INVALID, `Invalid provider registry key "${key}"`);
+  for (const key of Reflect.ownKeys(providers)) {
+    if (typeof key !== "string" || !PROVIDER_ID_REGEX.test(key)) {
+      throw providerError(E_PROVIDER_INVALID, "Invalid provider registry key");
     }
-    if (map.has(key)) {
-      throw providerError(E_PROVIDER_INVALID, `Duplicate provider key "${key}"`);
-    }
-    if (map.size >= REGISTRY_MAX_PROVIDERS) {
-      throw providerError(E_PROVIDER_INVALID, "Provider registry exceeds the supported maximum size");
-    }
-    if (typeof entry !== "function") {
-      assertEntry(entry, key);
-    }
+    if (map.size >= REGISTRY_MAX_PROVIDERS) throw providerError(E_PROVIDER_INVALID, "Too many providers");
+    const descriptor = Object.getOwnPropertyDescriptor(providers, key);
+    if (!("value" in descriptor) || !descriptor.enumerable) throw providerError(E_PROVIDER_INVALID, "Invalid provider registry entry");
+    const entry = descriptor.value;
+    if (typeof entry !== "function") assertEntry(entry, key);
     map.set(key, entry);
   }
-
   return Object.freeze({
-    get(id) {
-      return map.get(id) ?? null;
-    },
-    has(id) {
-      return map.has(id);
-    },
-    list() {
-      return [...map.keys()].sort();
-    },
-    async invoke(id, input = {}, { timeoutMs = DEFAULT_TIMEOUT_MS, maxInputBytes, maxResultBytes } = {}) {
+    get(id) { return map.get(id) ?? null; },
+    has(id) { return map.has(id); },
+    list() { return [...map.keys()].sort(); },
+    async invoke(id, input = {}, options = {}) {
+      const { timeoutMs, maxInputBytes, maxResultBytes } = normalizeOptions(options);
+      if (!map.has(id)) throw providerError(E_PROVIDER_UNAVAILABLE, "Provider is not registered");
+      const payload = normalizeProviderInput(input, maxInputBytes);
       const entry = map.get(id);
-      if (!entry) {
-        throw providerError(E_PROVIDER_UNAVAILABLE, `Provider "${id}" is not registered`);
-      }
-
-      const provider = await resolveEntry(entry, id);
-      const payload = assertSerializablePayload(input, maxInputBytes ?? DEFAULT_MAX_PAYLOAD_BYTES);
-
-      let timer = null;
-      try {
-        const result = await Promise.race([
-          Promise.resolve().then(() => provider.operation(payload)),
-          new Promise((_, reject) => {
-            timer = setTimeout(() => {
-              reject(providerError(E_PROVIDER_TIMEOUT, `Provider "${id}" exceeded ${timeoutMs}ms`));
-            }, Math.max(1, timeoutMs));
-          }),
-        ]);
-        return assertBoundedResult(result, maxResultBytes ?? DEFAULT_MAX_PAYLOAD_BYTES);
-      } catch (error) {
-        if (error?.code?.startsWith("E_PROVIDER_")) throw error;
-        throw providerError(E_PROVIDER_EXECUTION_FAILED, `Provider "${id}" operation failed: ${error?.name ?? "Error"}`);
-      } finally {
-        if (timer) clearTimeout(timer);
-      }
+      return withProviderDeadline(id, timeoutMs, async (context, checkpoint) => {
+        checkpoint();
+        const validate = provider => {
+          checkpoint();
+          assertEntry(provider, id);
+          return Object.freeze({ provider });
+        };
+        const { provider } = typeof entry === "function"
+          ? await callProvider(() => entry(context), validate)
+          : validate(entry);
+        checkpoint();
+        return callProvider(() => provider.operation(payload, context), result => {
+          checkpoint();
+          const normalized = normalizeProviderResult(result, maxResultBytes);
+          checkpoint();
+          return normalized;
+        });
+      });
     },
   });
 }
