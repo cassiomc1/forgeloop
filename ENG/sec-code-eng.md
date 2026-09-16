@@ -677,11 +677,11 @@ data independently of that choice.
 
 ## Sources and References
 
-- OWASP ASVS 5.0.0: https://owasp.org/www-project-application-security-verification-standard/
+- OWASP ASVS 5.0.0: https://owasp.org/projects/asvs
 - Official OWASP ASVS 5.0.0 CSV: https://github.com/OWASP/ASVS/raw/v5.0.0/5.0/docs_en/OWASP_Application_Security_Verification_Standard_5.0.0_en.csv
 - OWASP Top 10:2025 (Web): https://owasp.org/Top10/2025/
 - OWASP Mobile Top 10:2024: https://owasp.org/www-project-mobile-top-10/
-- OWASP Mobile Application Security Verification Standard (MASVS) / MASTG: https://owasp.org/www-project-mobile-app-security/
+- OWASP Mobile Application Security Verification Standard (MASVS) / MASTG: https://owasp.org/projects/mobile-application-security
 - OWASP Cheat Sheet Series: https://cheatsheetseries.owasp.org/
 - OWASP SSRF Prevention: https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html
 - OWASP File Upload: https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html
