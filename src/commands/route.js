@@ -4,6 +4,8 @@ import { readContract } from "../core/contract.js";
 import { readConfig } from "../core/config.js";
 import { detectProjectEvidence } from "../core/project-detection.js";
 import { withTaskMutation } from "../core/task-command.js";
+import { advanceWorkState } from "../core/phase.js";
+import { mutateWorkState, readWorkState } from "../core/work-state.js";
 
 export async function runRoute({ target, packageRoot, workType, surfaces, risks, platforms, behaviorChange, executableChange, executionProfile = null, taskId, task }) {
   return withTaskMutation(target, { taskId: taskId ?? task, packageRoot }, "route", async (ctx) => {
@@ -44,7 +46,20 @@ export async function runRoute({ target, packageRoot, workType, surfaces, risks,
       } catch {
         contractFingerprint = undefined;
       }
-      await persistRoute(target, route, packageRoot, { contractFingerprint, taskId: effectiveTaskId });
+      const persistedRoute = await persistRoute(target, route, packageRoot, { contractFingerprint, taskId: effectiveTaskId });
+      const state = await readWorkState(target, { packageRoot, taskId: effectiveTaskId });
+      if (state?.phase === "CONTRACT_READY") {
+        await mutateWorkState(target, {
+          packageRoot,
+          taskId: effectiveTaskId,
+          expectedRevision: state.revision ?? 0,
+        }, () => ({
+          ...state,
+          routeFingerprint: persistedRoute.fingerprint,
+          selectedGuides: [...persistedRoute.value.guides],
+        }));
+        await advanceWorkState(target, "ROUTED", { packageRoot, taskId: effectiveTaskId });
+      }
     }
     return route;
   });

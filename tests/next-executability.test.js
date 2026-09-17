@@ -187,6 +187,16 @@ test("post-task-create discovery has an executable canonical transition", async 
     assert.equal(afterContract.artifacts.contract.exists, true);
     assert.equal(afterContract.artifacts.state.exists, true);
 
+    execFileSync(process.execPath, [cliPath, "route", "--task", "initial-discovery", "--path", target, "--work", "code", "--surface", "documentation", "--executable-change", "--json"], {
+      cwd: packageRoot,
+      encoding: "utf8",
+    });
+    const afterRoute = JSON.parse(execFileSync(process.execPath, [cliPath, "next", "--task", "initial-discovery", "--path", target, "--json"], {
+      cwd: packageRoot,
+      encoding: "utf8",
+    }));
+    assert.notEqual(afterRoute.nextAction, NEXT_ACTIONS.ROUTE);
+
     const repeatedDiscover = JSON.parse(execFileSync(process.execPath, [cliPath, "discover", "--task", "initial-discovery", "--path", target, "--json"], {
       cwd: packageRoot,
       encoding: "utf8",
