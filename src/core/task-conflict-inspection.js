@@ -64,6 +64,27 @@ function lastMeaningfulActivity(state, events) {
   return candidates.sort((left, right) => Date.parse(right.at) - Date.parse(left.at))[0] ?? null;
 }
 
+function isInitialTaskLedger(events, taskId) {
+  return events.length >= 2
+    && events[0]?.taskId === taskId
+    && events[0]?.event === "TASK_RECEIVED"
+    && events[1]?.taskId === taskId
+    && events[1]?.event === "TRANSACTION_COMMITTED"
+    && events[1]?.details?.operation === "task-create"
+    && !events.slice(2).some((event) => [
+      "CONTRACT_VALIDATED", "ROUTE_VALIDATED", "PREFLIGHT_READY", "EXECUTION_STARTED",
+      "VERIFICATION_STARTED", "VERIFICATION_RECORDED", "REVIEW_STARTED", "COMPLETION_VALIDATED",
+      "TASK_RECOVERY_RECORDED", "OPERATOR_RECOVERY_RECORDED", "TASK_RECOVERY_RESUMED",
+    ].includes(event.event));
+}
+
+function deriveEarlyPhase(events, taskId) {
+  if (!isInitialTaskLedger(events, taskId)) return null;
+  return events.some((event) => event.event === "DISCOVERY_STARTED")
+    ? "DISCOVERING"
+    : "RECEIVED";
+}
+
 /**
  * Deterministic classification of a potentially conflicting task from
  * machine-readable state only. REVIEWING plus an old timestamp alone is never
@@ -97,6 +118,7 @@ export function classifyConflictEvidence(evidence, {
     totalChecks,
     verificationEvidenceCount,
     recoveryStatus,
+    earlyPhase,
   } = evidence;
 
   if (!ledgerValid) {
@@ -110,7 +132,8 @@ export function classifyConflictEvidence(evidence, {
     "RECEIVED", "DISCOVERING", "CONTRACT_READY", "ROUTED", "DESIGNING", "PLANNED",
     ...POST_EXECUTION_PHASES,
   ]);
-  if (!phase || !KNOWN_PHASES.has(phase)) {
+  const effectivePhase = phase ?? earlyPhase;
+  if (!effectivePhase || !KNOWN_PHASES.has(effectivePhase)) {
     return {
       classification: "INCONSISTENT",
       reasonCodes: ["E_PHASE_UNKNOWN"],
@@ -151,7 +174,7 @@ export function classifyConflictEvidence(evidence, {
     };
   }
 
-  if (phase === "COMPLETE") {
+  if (effectivePhase === "COMPLETE") {
     return {
       classification: "COMPLETE",
       reasonCodes: ["TASK_COMPLETE"],
@@ -175,7 +198,7 @@ export function classifyConflictEvidence(evidence, {
     };
   }
 
-  if (POST_EXECUTION_PHASES.has(phase)) {
+  if (POST_EXECUTION_PHASES.has(effectivePhase)) {
     if (staleOnlyRepositoryDrift) {
       return {
         classification: "RECOVERABLE",
@@ -262,6 +285,9 @@ export async function inspectTaskConflictState(target, {
   const ledgerErrors = [...ownershipEvidence.ledger.errors, ...coherenceErrors];
 
   const repository = await currentRepositoryFingerprint(target);
+  const initialTask = !state && ledgerValid && ownershipEvidence.descriptor
+    && isInitialTaskLedger(ledgerEvents, taskId)
+    && !ownershipEvidence.recovery;
   const meaningfulActivity = lastMeaningfulActivity(state, ledgerEvents);
   const recoveryConsistencyErrors = claimProjection.ownershipErrors ?? claimProjection.errors ?? [];
   const healthReasonCodes = [
@@ -275,7 +301,8 @@ export async function inspectTaskConflictState(target, {
     healthy: healthReasonCodes.length === 0,
     healthReasonCodes,
     descriptorHealthy: true,
-    phase: state?.phase ?? null,
+    phase: state?.phase ?? (initialTask ? "RECEIVED" : null),
+    earlyPhase: initialTask ? deriveEarlyPhase(ledgerEvents, taskId) : null,
     lastUpdated: state?.lastUpdated ?? null,
     lastMeaningfulActivityAt: meaningfulActivity?.at ?? null,
     lastMeaningfulEventType: meaningfulActivity?.type ?? null,
@@ -283,7 +310,7 @@ export async function inspectTaskConflictState(target, {
     lockStatus: lockClassification.status,
     lockId: lockInfo?.lockId ?? null,
     lockExpiresAt: lockClassification.expiresAt ?? null,
-    freshnessStatus: freshness?.status ?? "UNKNOWN",
+    freshnessStatus: freshness?.status ?? (initialTask ? "FRESH" : "UNKNOWN"),
     freshnessReasons: freshness?.reasons ?? [],
     ledgerValid,
     ledgerLastSeq: ledgerEvents.at(-1)?.seq ?? 0,

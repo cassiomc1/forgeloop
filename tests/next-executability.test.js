@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -20,6 +21,7 @@ import { getPackageRoot } from "../src/core/templates.js";
 import { createWorkState, writeWorkState } from "../src/core/work-state.js";
 
 const packageRoot = getPackageRoot();
+const cliPath = path.join(packageRoot, "src", "cli.js");
 
 async function withTarget(run) {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-executability-"));
@@ -138,6 +140,58 @@ test("every lifecycle action recommended by next is executable and makes progres
     // In COMPLETE: next reports NONE
     next = await getNextAction(target, packageRoot);
     assert.equal(next.nextAction, NEXT_ACTIONS.NONE);
+  });
+});
+
+test("post-task-create discovery has an executable canonical transition", async () => {
+  await withTarget(async (target) => {
+    execFileSync(process.execPath, [cliPath, "task-create", "--task", "initial-discovery", "--claim", "src", "--path", target], {
+      cwd: packageRoot,
+      stdio: "pipe",
+    });
+
+    const next = JSON.parse(execFileSync(process.execPath, [cliPath, "next", "--task", "initial-discovery", "--path", target, "--json"], {
+      cwd: packageRoot,
+      encoding: "utf8",
+    }));
+
+    assert.equal(next.currentPhase, "RECEIVED");
+    assert.equal(next.nextAction, NEXT_ACTIONS.DISCOVER);
+    assert.equal(next.reasonCodes.includes("WORK_STATE_ABSENT"), true);
+    assert.ok(next.commandSpecs.length > 0, "DISCOVER must expose a supported transition");
+
+    const discover = JSON.parse(execFileSync(process.execPath, [cliPath, "discover", "--task", "initial-discovery", "--path", target, "--json"], {
+      cwd: packageRoot,
+      encoding: "utf8",
+    }));
+    assert.equal(discover.phase, "DISCOVERING");
+
+    const afterDiscovery = JSON.parse(execFileSync(process.execPath, [cliPath, "next", "--task", "initial-discovery", "--path", target, "--json"], {
+      cwd: packageRoot,
+      encoding: "utf8",
+    }));
+    assert.equal(afterDiscovery.currentPhase, "DISCOVERING");
+    assert.equal(afterDiscovery.nextAction, NEXT_ACTIONS.CREATE_CONTRACT);
+    assert.ok(afterDiscovery.commandSpecs.length > 0, "CREATE_CONTRACT must expose a supported transition");
+
+    const contract = JSON.parse(execFileSync(process.execPath, [cliPath, "contract-create", "--task", "initial-discovery", "--path", target, "--preset", "feature", "--json"], {
+      cwd: packageRoot,
+      encoding: "utf8",
+    }));
+    assert.equal(contract.phase, "CONTRACT_READY");
+
+    const afterContract = JSON.parse(execFileSync(process.execPath, [cliPath, "task-show", "--task", "initial-discovery", "--path", target, "--json"], {
+      cwd: packageRoot,
+      encoding: "utf8",
+    }));
+    assert.equal(afterContract.artifacts.contract.exists, true);
+    assert.equal(afterContract.artifacts.state.exists, true);
+
+    const repeatedDiscover = JSON.parse(execFileSync(process.execPath, [cliPath, "discover", "--task", "initial-discovery", "--path", target, "--json"], {
+      cwd: packageRoot,
+      encoding: "utf8",
+    }));
+    assert.equal(repeatedDiscover.idempotent, true);
   });
 });
 

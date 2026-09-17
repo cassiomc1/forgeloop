@@ -54,6 +54,8 @@ import { formatReflectResult } from "./commands/reflect.js";
 import { formatProgressResult } from "./commands/progress.js";
 import { formatRecordDecisionCriterionResult } from "./commands/record-decision-criterion.js";
 import { formatNextActionResult, formatCompactNextActionResult } from "./commands/next.js";
+import { formatDiscoverResult } from "./commands/discover.js";
+import { formatContractCreateResult } from "./commands/contract-create.js";
 import { formatContinuityResult } from "./commands/continuity.js";
 import { formatRecordContinuityResult } from "./commands/record-continuity.js";
 import { formatReconcileContinuityResult } from "./commands/reconcile-continuity.js";
@@ -349,6 +351,16 @@ function renderJsonOr(options, result, formatter) {
 }
 
 export const COMMAND_HANDLERS = Object.freeze({
+  discover: async ({ target, packageRoot, options }) => {
+    const { result } = await COMMAND_EXECUTORS.discover({ target, packageRoot, options });
+    renderJsonOr(options, result, formatDiscoverResult);
+    return 0;
+  },
+  "contract-create": async ({ target, packageRoot, options }) => {
+    const { result } = await COMMAND_EXECUTORS["contract-create"]({ target, packageRoot, options });
+    renderJsonOr(options, result, formatContractCreateResult);
+    return 0;
+  },
   "protocol-info": async ({ packageVersion, options }) => {
     const { result } = await COMMAND_EXECUTORS["protocol-info"]({ packageVersion, options });
     renderJsonOr(options, result, formatProtocolInfoResult);

@@ -277,6 +277,8 @@ capability-family versions.
 | advance | MUTATING | Transitions the canonical lifecycle work state to an allowed target phase. |
 | clear-state | MUTATING | Removes work-state.json for the active task only, preserving sibling contract, routing, and ledger files. |
 | complete | MUTATING | Evaluates verification receipt coverage, gates, and ledger integrity to authorize task completion. |
+| contract-create | MUTATING | Persists a validated contract and materializes the first real lifecycle checkpoint. |
+| discover | MUTATING | Records the canonical initial discovery milestone for a newly created task. |
 | next | READ_ONLY | Returns deterministic next-action guidance and command recommendations based on active state. |
 | preflight | MUTATING | Evaluates pre-implementation contract, routing, and gates; synchronizes work state when READY. |
 | reconcile-closure | MUTATING | Refreshes the work-state checkpoint of an EXECUTING, VERIFYING, or REVIEWING task whose objective is already satisfied in the current repository, after contract-bound executed evidence, so canonical completion can proceed. |

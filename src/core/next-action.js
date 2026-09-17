@@ -287,13 +287,41 @@ async function computeNextAction(targetOrOptions = {}, packageRootOption) {
         });
       }
     }
-    return decision(
-      {},
-      NEXT_ACTIONS.DISCOVER,
-      artifactError("WORK_STATE_ABSENT", "No work-state checkpoint is present", [stateRel]),
-      [stateRel],
-      [stateRel],
-    );
+    const events = await readEvents(target, packageRoot, { taskId: explicitTaskId });
+    if (events.some((event) => event.event === "DISCOVERY_STARTED")) {
+      return result({
+        taskId: explicitTaskId ?? "unknown",
+        currentPhase: "DISCOVERING",
+        nextAction: NEXT_ACTIONS.CREATE_CONTRACT,
+        reasons: [artifactError("PHASE_DISCOVERING", "Create and validate the task contract", [contractRel])],
+        commands: [`forgeloop contract-create --task ${explicitTaskId} --preset <documentation|bug|feature|release> --json`],
+        commandSpecs: [{
+          commandId: "contract-create",
+          executable: "forgeloop",
+          subcommand: "contract-create",
+          argv: ["contract-create", `--task=${explicitTaskId}`, "--json"],
+          requiredInputs: [{ name: "preset", option: "--preset=<documentation|bug|feature|release>" }],
+        }],
+        requiredArtifacts: [contractRel],
+        missingArtifacts: [contractRel, stateRel],
+      });
+    }
+    return result({
+      taskId: explicitTaskId ?? "unknown",
+      currentPhase: "RECEIVED",
+      nextAction: NEXT_ACTIONS.DISCOVER,
+      reasons: [artifactError("WORK_STATE_ABSENT", "No work-state checkpoint is present", [stateRel])],
+      commands: [`forgeloop discover --task ${explicitTaskId} --json`],
+      commandSpecs: [{
+        commandId: "discover",
+        executable: "forgeloop",
+        subcommand: "discover",
+        argv: ["discover", `--task=${explicitTaskId}`, "--json"],
+        requiredInputs: [],
+      }],
+      requiredArtifacts: [stateRel],
+      missingArtifacts: [stateRel],
+    });
   }
 
   return resolveNextActionPhase({
