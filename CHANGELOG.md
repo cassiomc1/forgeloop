@@ -4,6 +4,9 @@
 
 ### Added
 
+- Added a generated, deterministic, harness-neutral ForgeLoop Agent Skill with
+  bounded freshness checks, references, documentation, and npm package coverage.
+
 - Added the provider-neutral `providerExtensions` v1 capability contract,
   provider architecture and reference documentation, and package coverage.
   The generic provider registry remains internal and unexported.

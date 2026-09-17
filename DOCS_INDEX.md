@@ -18,6 +18,7 @@ integration and guide context. Use this map before editing documentation.
 | Getting started tutorial | [`docs/GETTING_STARTED.md`](./docs/GETTING_STARTED.md) | First-time walkthrough from init to completion |
 | Cross-harness continuity | [`docs/CROSS_HARNESS_CONTINUITY.md`](./docs/CROSS_HARNESS_CONTINUITY.md) | Operational resume guidance, immutable handoffs, and multi-tool resumption |
 | Agent bootstrap summary | [`docs/AGENT_PROTOCOL_SUMMARY.md`](./docs/AGENT_PROTOCOL_SUMMARY.md) | Generated concise navigation aid for protocol invariants and commands |
+| Agent Skill integration | [`docs/AGENT_SKILL.md`](./docs/AGENT_SKILL.md) | Generated portable, non-authoritative agent guidance and freshness contract |
 | CLI command reference | [`docs/CLI_REFERENCE.md`](./docs/CLI_REFERENCE.md) | Full syntax, options, and JSON examples for all commands |
 | Repository Index and Search | [`docs/REPOSITORY_INDEX.md`](./docs/REPOSITORY_INDEX.md) | Mandatory managed engine, indexed search contract, lifecycle, resource, security, and benchmark behavior |
 | Persistent CLI search transport | [`docs/PERSISTENT_SEARCH_TRANSPORT.md`](./docs/PERSISTENT_SEARCH_TRANSPORT.md) | CLI-only local IPC, host lifecycle, ownership, recovery, bounds, privacy, and direct API/MCP boundary |

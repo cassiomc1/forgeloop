@@ -56,6 +56,8 @@ The published tarball includes the following consumer-facing groups:
    The advisory-context and Ripwire adapter guides ship with the corresponding
    public integration surface.
    Provider architecture and provider reference documentation are also packaged.
+   The generated portable ForgeLoop Agent Skill and `docs/AGENT_SKILL.md` are
+   packaged as instruction/documentation content, not runtime authority.
    Provider implementation modules ship under `src/`, but packaged source file
    does not mean a supported public import path; the generic `./providers`
    subpath remains unexported.
@@ -71,6 +73,8 @@ The published tarball includes the following consumer-facing groups:
 The tarball intentionally omits repository-only material:
 
 - tests, conformance fixtures, coverage output, and secret-scanning helpers;
+  Harness-specific Agent Skill installation directories and Skill caches are
+  not packaged.
 - local `.forgeloop` state, task ledgers, locks, transactions, and execution
   receipts (the `.forgeloop/forgeloop.gitignore` template is the sole
   exception);

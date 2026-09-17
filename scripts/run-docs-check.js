@@ -29,6 +29,11 @@ const steps = [
     args: ["--check"],
   },
   {
+    name: "Generated ForgeLoop Agent Skill Freshness",
+    script: "scripts/generate-forgeloop-skill.mjs",
+    args: ["--check"],
+  },
+  {
     name: "Documentation Conformance Validation",
     script: "scripts/validate_documentation_conformance.mjs",
     args: [],

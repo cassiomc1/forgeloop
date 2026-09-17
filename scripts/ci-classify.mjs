@@ -4,9 +4,11 @@ import { execFileSync } from "node:child_process";
 import { appendFile, readFile } from "node:fs/promises";
 
 const DOCS_SCRIPT_PATH = /^scripts\/(?:check-documentation|generate-documentation|documentation-diagram|generate_documentation_reference|validate_documentation|run-docs-check|validate_markdown|CI_VALIDATORS)/u;
+const SKILL_GENERATOR_PATH = /^scripts\/generate-forgeloop-skill\.mjs$/u;
 const DOCS_PATHS = [
   /\.(?:md|markdown)$/u,
   /^docs\//u,
+  /^skills\/forgeloop\//u,
   /^\.lychee\.toml$/u,
   /^\.markdownlint/u,
   /^\.github\/copilot-instructions\.md$/u,
@@ -20,6 +22,7 @@ const PACKAGE_PATHS = [
   /^bin\//u,
   /^scripts\/(?:package_smoke|mcp-package-smoke|mcp-setup|mcp-locked-install)\.mjs$/u,
   /^tests\/(?:package|package-smoke|mcp)/u,
+  /^skills\/forgeloop\//u,
 ];
 const REPOSITORY_INDEX_PATHS = [
   /^src\/repository-index\//u,
@@ -88,7 +91,7 @@ export function classifyPaths(inputPaths = [], { forceAll = false } = {}) {
   }
 
   const docs = matchesAny(paths, [DOCS_PATHS[0], DOCS_PATHS[1], DOCS_PATHS[2], DOCS_PATHS[3], DOCS_PATHS[4]])
-    || paths.some((filePath) => DOCS_SCRIPT_PATH.test(filePath));
+    || paths.some((filePath) => DOCS_SCRIPT_PATH.test(filePath) || SKILL_GENERATOR_PATH.test(filePath));
   const packageImpact = matchesAny(paths, PACKAGE_PATHS);
   const repositoryIndex = matchesAny(paths, REPOSITORY_INDEX_PATHS);
   const audit = matchesAny(paths, AUDIT_PATHS);

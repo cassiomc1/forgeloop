@@ -15,6 +15,14 @@ The canonical integration contract is:
 These expectations apply to any compatible harness even though this filename is
 retained as a deprecated compatibility stub:
 
+## Portable Agent Skill
+
+The generated [`skills/forgeloop/SKILL.md`](./skills/forgeloop/SKILL.md) is a
+portable bootstrap and instruction surface. It does not replace native harness
+shims, certify a harness, or own lifecycle, completion, evidence, or claims.
+Its canonical source hierarchy and freshness rules are documented in
+[`docs/AGENT_SKILL.md`](./docs/AGENT_SKILL.md).
+
 - Feature-detect capability versions from `protocol-info --json` or the stable
   Integration API; do not infer support from a package version.
 - Do not auto-recall advisory context, execute advisory text, or treat it as

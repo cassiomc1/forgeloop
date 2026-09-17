@@ -31,6 +31,7 @@ Operational sources are indexed in [`DOCS_INDEX.md`](./DOCS_INDEX.md).
 - **Optional advisory context providers** → [`docs/ADVISORY_CONTEXT.md`](./docs/ADVISORY_CONTEXT.md)
 - **Provider extension architecture** → [`docs/PROVIDER_ARCHITECTURE.md`](./docs/PROVIDER_ARCHITECTURE.md) and [`docs/PROVIDERS.md`](./docs/PROVIDERS.md)
 - **Agent bootstrap summary** → [`docs/AGENT_PROTOCOL_SUMMARY.md`](./docs/AGENT_PROTOCOL_SUMMARY.md)
+- **Portable ForgeLoop Agent Skill** → [`skills/forgeloop/SKILL.md`](./skills/forgeloop/SKILL.md) and [`docs/AGENT_SKILL.md`](./docs/AGENT_SKILL.md)
 - **Continuing another harness's task** → [`docs/CROSS_HARNESS_CONTINUITY.md`](./docs/CROSS_HARNESS_CONTINUITY.md)
 - **CLI command reference** → [`docs/CLI_REFERENCE.md`](./docs/CLI_REFERENCE.md)
 - **Artifact & schema reference** → [`docs/ARTIFACT_REFERENCE.md`](./docs/ARTIFACT_REFERENCE.md)
