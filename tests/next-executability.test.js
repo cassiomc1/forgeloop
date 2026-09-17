@@ -202,6 +202,12 @@ test("post-task-create discovery has an executable canonical transition", async 
       encoding: "utf8",
     }));
     assert.equal(repeatedDiscover.idempotent, true);
+
+    const routed = JSON.parse(execFileSync(process.execPath, [cliPath, "task-show", "--task", "initial-discovery", "--path", target, "--json"], {
+      cwd: packageRoot,
+      encoding: "utf8",
+    }));
+    assert.equal(routed.phase, "ROUTED");
   });
 });
 
