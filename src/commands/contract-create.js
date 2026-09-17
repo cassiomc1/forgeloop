@@ -4,7 +4,7 @@ import { createPresetContract } from "../core/contract-presets.js";
 import { contractFingerprint, validateContract, writeContract } from "../core/contract.js";
 import { appendProtocolEvent, readEvents } from "../core/events.js";
 import { currentRepositoryFingerprint } from "../core/repository.js";
-import { createWorkState, readWorkState, writeWorkState } from "../core/work-state.js";
+import { createWorkState, initializeWorkState, readWorkState } from "../core/work-state.js";
 import { ensureWithin, fileExists } from "../core/filesystem.js";
 import { withTaskMutation } from "../core/task-command.js";
 
@@ -38,7 +38,7 @@ export async function runContractCreate({ target, packageRoot, taskId, task, con
     const fingerprint = contractFingerprint(contract);
     await writeContract(target, contract, packageRoot, { taskId: ctx.taskId });
     const repositoryFingerprint = await currentRepositoryFingerprint(target);
-    await writeWorkState(target, createWorkState({
+    await initializeWorkState(target, createWorkState({
       taskId: ctx.taskId,
       contractFingerprint: fingerprint,
       repositoryFingerprint,

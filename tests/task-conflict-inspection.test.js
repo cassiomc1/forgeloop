@@ -63,6 +63,18 @@ test("valid post-task-create ledger is an ACTIVE initial task", () => {
   assert.deepEqual(verdict.reasonCodes, ["STATE_FRESH"]);
 });
 
+test("discovered early ledger is projected as DISCOVERING", () => {
+  const verdict = classifyConflictEvidence(evidence({
+    phase: null,
+    earlyPhase: "DISCOVERING",
+    freshnessStatus: "FRESH",
+    recordedChecks: 0,
+    totalChecks: 0,
+  }), { now: NOW });
+  assert.equal(verdict.classification, "ACTIVE");
+  assert.deepEqual(verdict.reasonCodes, ["STATE_FRESH"]);
+});
+
 test("early lifecycle projection does not accept contradictory history", () => {
   const verdict = classifyConflictEvidence(evidence({
     phase: null,
