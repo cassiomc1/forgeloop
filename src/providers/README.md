@@ -1,8 +1,12 @@
 # Experimental internal provider modules
 
 `index.js` is an internal module entry point, not a supported package subpath.
-`@cassiomc1/forgeloop/providers` is deliberately not exported. No protocol-info,
-Integration API, public artifact, lifecycle, or dependency changes are included.
+`@cassiomc1/forgeloop/providers` is deliberately not exported. The public,
+provider-neutral capability vocabulary is advertised by `protocol-info`; the
+generic registry remains experimental and internal. See
+[`../../docs/PROVIDER_ARCHITECTURE.md`](../../docs/PROVIDER_ARCHITECTURE.md),
+[`../../docs/PROVIDERS.md`](../../docs/PROVIDERS.md), and
+[`../../PROTOCOL_INTEGRATION.md`](../../PROTOCOL_INTEGRATION.md).
 
 `createProviderRegistry({ providers })` accepts a plain object map from ID to
 provider or lazy factory. Object keys are already unique in JavaScript; there

@@ -35,6 +35,8 @@ integration and guide context. Use this map before editing documentation.
 | Platform adapters | [`docs/PLATFORM_ADAPTERS.md`](./docs/PLATFORM_ADAPTERS.md) | Generic CI boundary and platform mapping guidance |
 | Universal integration API | [`docs/UNIVERSAL_INTEGRATION.md`](./docs/UNIVERSAL_INTEGRATION.md) | Programmatic integration subpath, envelope semantics, and consumer map |
 | Advisory context providers | [`docs/ADVISORY_CONTEXT.md`](./docs/ADVISORY_CONTEXT.md) | Optional external host context, non-evidence trust boundary, allowlist normalization, and safety rules |
+| Provider extension architecture | [`docs/PROVIDER_ARCHITECTURE.md`](./docs/PROVIDER_ARCHITECTURE.md) | Provider-neutral architecture, invocation lifecycle, strict snapshots, cancellation, trust, and authority boundaries |
+| Provider extension reference | [`docs/PROVIDERS.md`](./docs/PROVIDERS.md) | Capability discovery, provider kinds, common contract, limits, errors, and maintainer checklist |
 | Ripwire advisory adapter | [`docs/RIPWIRE_ADAPTER.md`](./docs/RIPWIRE_ADAPTER.md) | Ripwire-specific registration, process contract, JSON mapping, limits, and verification |
 | Local-first MCP adapter | [`docs/MCP.md`](./docs/MCP.md) | stdio default, optional strict loopback HTTP; server modes/capabilities and canonical resources |
 | Adaptive execution-profile benchmarks | [`docs/EXECUTION_PROFILE_BENCHMARKS.md`](./docs/EXECUTION_PROFILE_BENCHMARKS.md) | Measured provider/host runs, robust statistics, paired/distribution deltas, tail status, outliers, and profile-aware host context |
@@ -86,6 +88,7 @@ is historical evidence and is not part of the published core package.
 | **Looking for quick recipes** | [`docs/RECIPES.md`](./docs/RECIPES.md) |
 | **Configuring structural quality feedback** | [`docs/STRUCTURAL_QUALITY.md`](./docs/STRUCTURAL_QUALITY.md) |
 | **Configuring Ripwire advisory context** | [`docs/RIPWIRE_ADAPTER.md`](./docs/RIPWIRE_ADAPTER.md) |
+| **Understanding provider extensions** | [`docs/PROVIDER_ARCHITECTURE.md`](./docs/PROVIDER_ARCHITECTURE.md) → [`docs/PROVIDERS.md`](./docs/PROVIDERS.md) |
 | **Understanding verification trust** | [`docs/REVISION_PROVIDERS.md`](./docs/REVISION_PROVIDERS.md#differential-verification-scope) |
 | **Understanding attestation trust** | [`docs/CODE_ATTESTATION.md`](./docs/CODE_ATTESTATION.md#trust-levels) |
 | **Maintaining generated diagrams** | [`docs/diagrams/README.md`](./docs/diagrams/README.md) |

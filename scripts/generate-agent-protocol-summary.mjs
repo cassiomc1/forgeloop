@@ -59,6 +59,7 @@ async function render() {
     .map(([name, feature]) => [name, feature.version ?? "n/a", feature.supported === false ? "no" : "yes"]);
   const handoffs = info.features.canonicalHandoffs;
   const advisory = info.features.advisoryContextProviders;
+  const providerExtensions = info.features.providerExtensions;
   const capabilityContracts = `## Capability contracts
 
 - \`canonicalHandoffs\` v${handoffs.version}: immutable, supported, and
@@ -70,6 +71,8 @@ async function render() {
   Integration-API-only, lazy, and opt-in. Provider results are not persisted by
   ForgeLoop and are never lifecycle state, evidence, authority, or executable
   instructions.
+- \`providerExtensions\` v${providerExtensions.version} is provider-neutral and
+  experimental. The generic provider registry remains internal and unexported.
 
 Protocol v1, schema v1, and Integration API v1 remain independent of these
 capability-family versions.`;

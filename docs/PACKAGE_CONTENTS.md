@@ -53,8 +53,12 @@ The published tarball includes the following consumer-facing groups:
   Repository Index, Persistent Search Transport, troubleshooting, release,
   package-boundary, and related reference pages, together with the
   machine-readable documentation and protocol indexes and `CONTRIBUTING.md`.
-  The advisory-context and Ripwire adapter guides ship with the corresponding
-  public integration surface.
+   The advisory-context and Ripwire adapter guides ship with the corresponding
+   public integration surface.
+   Provider architecture and provider reference documentation are also packaged.
+   Provider implementation modules ship under `src/`, but packaged source file
+   does not mean a supported public import path; the generic `./providers`
+   subpath remains unexported.
   The typed diagram sources, generated HTML/SVG/receipt artifacts, and
   source-bound review records under `docs/diagrams/` are included together so
   the packaged documentation keeps its visual provenance.

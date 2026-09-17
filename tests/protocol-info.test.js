@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 
 import { ALL_KNOWN_ERROR_CODES } from "../src/core/error-codes.js";
 import { protocolInfo } from "../src/core/protocol-info.js";
+import { PROVIDER_KINDS } from "../src/providers/capabilities.js";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -70,6 +71,21 @@ test("protocol-info exposes a complete public compatibility handshake", () => {
     evidenceAuthority: false,
     executable: false,
   });
+  assert.deepEqual(info.features.providerExtensions, {
+    version: 1,
+    supported: true,
+    providerNeutral: true,
+    maturity: "experimental",
+    publicRegistryApi: false,
+    packageSubpathExported: false,
+    autoInstall: false,
+    lifecycleAuthority: false,
+    completionAuthority: false,
+    evidenceAuthority: false,
+    providerKinds: [...PROVIDER_KINDS],
+    resultBoundary: "STRICT_JSON_SNAPSHOT",
+    cancellation: "COOPERATIVE_ABORT_SIGNAL",
+  });
   assert.ok(info.commands.some((command) => command.name === "protocol-info"));
   assert.ok(info.commands.some((command) => command.name === "task-resume"));
   assert.equal(info.errors.length, ALL_KNOWN_ERROR_CODES.size);
@@ -94,4 +110,19 @@ test("diagnostics capability advertising matches delivered runtime semantics", (
   assert.equal(info.features.observabilityStability?.informationGainV2, "stable");
   assert.equal(info.features.observabilityStability?.strategyOscillationDetection, "stable");
   assert.equal(info.protocolVersion, 1);
+});
+
+test("provider extension kinds remain synchronized with the capability catalog", () => {
+  assert.deepEqual(protocolInfo().features.providerExtensions.providerKinds, [...PROVIDER_KINDS]);
+});
+
+test("CLI advertises the provider extension boundary without a public registry", () => {
+  const json = spawnSync(process.execPath, [path.join(root, "src/cli.js"), "protocol-info", "--json"], { cwd: root, encoding: "utf8" });
+  assert.equal(json.status, 0, json.stderr);
+  const feature = JSON.parse(json.stdout).features.providerExtensions;
+  assert.equal(feature.version, 1);
+  assert.equal(feature.supported, true);
+  assert.deepEqual(feature.providerKinds, [...PROVIDER_KINDS]);
+  assert.equal(feature.publicRegistryApi, false);
+  assert.equal(feature.packageSubpathExported, false);
 });

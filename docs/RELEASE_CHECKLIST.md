@@ -86,6 +86,10 @@ actions.
 - [ ] `protocol-info` and the Integration API capability contracts agree.
 - [ ] `canonicalHandoffs` v2 is advertised consistently.
 - [ ] `advisoryContextProviders` v1 is advertised consistently.
+- [ ] `providerExtensions` v1 is consistent, provider-neutral, experimental,
+      and retains false lifecycle/completion/evidence authority.
+- [ ] Generic provider registry export remains absent and auto-install remains
+      false.
 - [ ] Advisory context remains Integration-API-only.
 - [ ] `next`, `status`, and `task/context` invoke zero advisory providers.
 - [ ] Advisory request budgets are normalized before provider invocation.

@@ -183,6 +183,12 @@ there is no stock `context-recall` command. A consumer that only understands
 `canonicalHandoffs` v1 may disable only the handoff-specific UI while retaining
 the rest of Protocol v1 functionality.
 
+`advisoryContextProviders` v1 is the existing dedicated, lazy, opt-in
+Integration API capability. `providerExtensions` v1 is the broader experimental
+architecture vocabulary advertised by `protocol-info`. Generic provider
+registry injection is not public yet; do not add a generic `providers` field
+to `createForgeLoopContext()`.
+
 ## Consumers
 
 | Surface | Entry |

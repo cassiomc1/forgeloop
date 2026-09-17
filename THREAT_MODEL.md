@@ -169,6 +169,30 @@ treated as trusted protocol input.
 ForgeLoop does not make advisory text trusted. It makes the boundary explicit,
 bounded, and fail-closed where protocol-owned interpretation is required.
 
+## Provider extension boundary
+
+Provider output is untrusted input and the generic provider registry is an
+internal experimental surface. The public `providerExtensions` capability does
+not grant lifecycle, completion, evidence, or installation authority.
+
+| Threat | Mitigation |
+| --- | --- |
+| Malicious provider output | Strict JSON snapshot |
+| Mutable result after validation | Detached deep-frozen copy |
+| Getter/accessor execution | Reject accessors |
+| Proxy behavior | Reject proxies |
+| Custom object semantics | Plain JSON boundary |
+| Authority escalation | Reserved authority validation |
+| Error spoofing | Normalize provider exceptions |
+| Hanging factory | Shared deadline |
+| Hanging operation | Shared deadline |
+| Resource leak after timeout | Cooperative abort cleanup |
+| Payload amplification | Byte, depth, and node budgets |
+| Auto-install surprise | No installation authority |
+| Public API confusion | No `./providers` export |
+| False completion | Completion authority false |
+| False evidence | ForgeLoop validation required |
+
 ## Structural-quality provider boundary
 
 Structural-quality observations are untrusted external data. The built-in

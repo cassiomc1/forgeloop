@@ -54,6 +54,15 @@ test("no capability grants lifecycle, completion, or evidence authority", () => 
   }
 });
 
+test("every provider kind has provider-neutral non-authoritative metadata", () => {
+  for (const kind of PROVIDER_KINDS) {
+    const capability = PROVIDER_CAPABILITIES[kind];
+    strictEqual(capability.lifecycleAuthority, false);
+    strictEqual(capability.completionAuthority, false);
+    strictEqual(capability.evidenceAuthority, false);
+  }
+});
+
 test("capability metadata cannot be escalated through provider declarations", () => {
   const escalationAttempts = [
     { capability: { ...PROVIDER_CAPABILITIES.ADVISORY_CONTEXT, lifecycleAuthority: true } },
