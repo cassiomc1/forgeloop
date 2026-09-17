@@ -10,7 +10,7 @@ import { completionRelationshipErrors } from "./completion-relationships.js";
 import { assertSafePath, ensureWithin, fileExists } from "./filesystem.js";
 import { evaluateStartExecutionPrerequisites, hasExecutionStarted } from "./execution-prerequisites.js";
 import { isRecoverableCompletionEvidenceCode } from "./completion-recovery.js";
-import { evaluateTerminalRequirements } from "./evidence-readiness.js";
+import { evaluateTerminalRequirements, terminalRequirementsForContract } from "./evidence-readiness.js";
 import { PROJECT_ARTIFACT_PATHS, taskArtifactPath, taskCodeManifestPath } from "./task-paths.js";
 import { detectPolicyCapability, evaluateTargetPolicy } from "./policy-engine.js";
 import { listActions } from "./actions.js";
@@ -500,12 +500,10 @@ export async function evaluateCompletion({
   const publication = receiptValue ? publicationStatus(receiptValue) : "not-published";
 
   if (contract) {
-    const allContractReqs = [
-      ...(contract.value.verification ?? []),
-      ...(contract.value.successCriteria ?? []),
-    ];
     const terminalEval = evaluateTerminalRequirements({
-      requirements: allContractReqs,
+      requirements: terminalRequirementsForContract(contract.value, {
+        additionalEvidence: preflight.policy?.requiredEvidence ?? [],
+      }),
       receipt: receiptValue,
     });
     for (const termErr of terminalEval.errors) {

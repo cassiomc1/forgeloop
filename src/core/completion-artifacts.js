@@ -18,7 +18,7 @@ import { readPersistedRoute } from "./route-artifact.js";
 import { createReceipt, validateReceipt } from "./receipt.js";
 import { readWorkState, mutateWorkState } from "./work-state.js";
 import { assertExecutionPrerequisites, hasExecutionStarted } from "./execution-prerequisites.js";
-import { normalizeRequirements } from "./evidence-readiness.js";
+import { normalizeRequirements, terminalRequirementsForContract } from "./evidence-readiness.js";
 import { classifyCommandResolution, validateVerificationAuthority } from "./verification-capability.js";
 import { readExecutionArtifact, validateExecutionBinding } from "./execution.js";
 import { taskArtifactPath, taskExecutionPath } from "./task-paths.js";
@@ -478,10 +478,15 @@ export async function assertRecordCheckPrerequisites({
   const requested = normalizeRequirements(requiredEvidence).find((item) => (
     item.id === requirement || item.text === requirement
   ));
-  if (requested?.terminalOwned && status === "passed" && evidenceKind === "OBSERVED") {
+  const terminalRequested = terminalRequirementsForContract(contract.value, {
+    additionalEvidence: preflight.policy?.requiredEvidence ?? [],
+  }).find((item) => (
+    item.id === requirement || item.text === requirement
+  ));
+  if ((requested?.terminalOwned || terminalRequested) && status === "passed" && evidenceKind === "OBSERVED") {
     throw artifactError(
       "E_FUTURE_LIFECYCLE_EVIDENCE",
-      `Terminal-owned requirement cannot be recorded before its authoritative result: ${requested.text}`,
+      `Terminal-owned requirement cannot be recorded before its authoritative result: ${(requested ?? terminalRequested).text}`,
       [stateRel, eventsRel],
     );
   }
@@ -827,8 +832,12 @@ export async function recordTerminalResult({
     additionalEvidence: preflight.policy?.requiredEvidence ?? [],
   });
 
-  const normalized = normalizeRequirements(requiredEvidence);
-  const requested = normalized.find((item) => (
+  const terminalRequirements = terminalRequirementsForContract(contract.value, {
+    additionalEvidence: preflight.policy?.requiredEvidence ?? [],
+  });
+  const requested = terminalRequirements.find((item) => (
+    item.id === requirement || item.text === requirement
+  )) ?? normalizeRequirements(requiredEvidence).find((item) => (
     item.id === requirement || item.text === requirement
   ));
 
