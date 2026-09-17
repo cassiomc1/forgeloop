@@ -22,7 +22,7 @@ function validatePolicyInput(command, options) {
 function validateTaskCreationInput(command, options) {
   if (command === "bundle" && !options.taskId) throw inputError("bundle requires --task");
   if (command === "task-create" && !options.taskId) throw inputError("task-create requires --task");
-  if (command !== "task-create" && (options.preset || options.preview)) {
+  if (!["task-create", "contract-create"].includes(command) && (options.preset || options.preview)) {
     throw inputError(`preset/preview options are not valid for ${command}`);
   }
   if (command === "task-create" && options.preview && !options.preset && !options.contractFile) {
@@ -31,6 +31,9 @@ function validateTaskCreationInput(command, options) {
   if (command === "task-create" && options.preset && options.contractFile) {
     throw inputError("task-create accepts either --preset or --contract-file, not both");
   }
+  if (command === "contract-create" && !options.taskId) throw inputError("contract-create requires --task");
+  if (command === "contract-create" && !options.preset && !options.contractFile) throw inputError("contract-create requires --preset or --contract-file");
+  if (command === "contract-create" && options.preset && options.contractFile) throw inputError("contract-create accepts either --preset or --contract-file, not both");
   const hasTaskListFilter = Boolean(
     options.phase
       || options.active

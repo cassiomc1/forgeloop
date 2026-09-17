@@ -57,6 +57,8 @@ import { runRecordContinuity } from "../commands/record-continuity.js";
 import { runReconcileContinuity } from "../commands/reconcile-continuity.js";
 import { runClearContinuity } from "../commands/clear-continuity.js";
 import { runTaskCreate } from "../commands/task-create.js";
+import { runDiscover } from "../commands/discover.js";
+import { runContractCreate } from "../commands/contract-create.js";
 import { runTaskList } from "../commands/task-list.js";
 import { runTaskShow } from "../commands/task-show.js";
 import { runTaskScope } from "../commands/task-scope.js";
@@ -103,6 +105,14 @@ import {
  * directly. No ownership, recovery, or lifecycle logic may live here.
  */
 export const COMMAND_EXECUTORS = {
+  discover: async ({ target, packageRoot, options }) => ({
+    result: await runDiscover({ target, packageRoot, taskId: options.taskId }),
+    exitCode: 0,
+  }),
+  "contract-create": async ({ target, packageRoot, options }) => ({
+    result: await runContractCreate({ target, packageRoot, taskId: options.taskId, preset: options.preset, contractFile: options.contractFile }),
+    exitCode: 0,
+  }),
   "protocol-info": async ({ packageVersion }) => ({
     result: await runProtocolInfo({ packageVersion }),
     exitCode: 0,

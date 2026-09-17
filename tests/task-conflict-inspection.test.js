@@ -51,6 +51,40 @@ test("fresh checkpoint implies ACTIVE", () => {
   assert.deepEqual(verdict.reasonCodes, ["STATE_FRESH"]);
 });
 
+test("valid post-task-create ledger is an ACTIVE initial task", () => {
+  const verdict = classifyConflictEvidence(evidence({
+    phase: null,
+    earlyPhase: "RECEIVED",
+    freshnessStatus: "FRESH",
+    recordedChecks: 0,
+    totalChecks: 0,
+  }), { now: NOW });
+  assert.equal(verdict.classification, "ACTIVE");
+  assert.deepEqual(verdict.reasonCodes, ["STATE_FRESH"]);
+});
+
+test("discovered early ledger is projected as DISCOVERING", () => {
+  const verdict = classifyConflictEvidence(evidence({
+    phase: null,
+    earlyPhase: "DISCOVERING",
+    freshnessStatus: "FRESH",
+    recordedChecks: 0,
+    totalChecks: 0,
+  }), { now: NOW });
+  assert.equal(verdict.classification, "ACTIVE");
+  assert.deepEqual(verdict.reasonCodes, ["STATE_FRESH"]);
+});
+
+test("early lifecycle projection does not accept contradictory history", () => {
+  const verdict = classifyConflictEvidence(evidence({
+    phase: null,
+    earlyPhase: null,
+    freshnessStatus: "FRESH",
+  }), { now: NOW });
+  assert.equal(verdict.classification, "INCONSISTENT");
+  assert.deepEqual(verdict.reasonCodes, ["E_PHASE_UNKNOWN"]);
+});
+
 test("post-execution REPOSITORY_CHANGED-only drift is RECOVERABLE even in REVIEWING", () => {
   const verdict = classifyConflictEvidence(evidence({
     phase: "REVIEWING",

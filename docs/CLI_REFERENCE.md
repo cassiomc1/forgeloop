@@ -59,8 +59,8 @@ error codes. Default output and default JSON remain unchanged.
 | Category | Commands |
 | --- | --- |
 | **Inspection & Diagnostics** | [`protocol-info`](#protocol-info), [`doctor`](#doctor), [`index-status`](#index-status), [`search`](#search), [`metrics`](#metrics), [`usage-record`](#usage-record), [`efficiency`](#efficiency), [`eval`](#eval), [`history`](#history), [`trace`](#trace), [`reflect`](#reflect), [`progress`](#progress), [`profile-interview`](#profile-interview), [`inspect`](#inspect), [`status`](#status), [`validate-state`](#validate-state), [`validate-protocol`](#validate-protocol) |
+| **Lifecycle & State** | [`discover`](#discover), [`contract-create`](#contract-create), [`activate`](#activate), [`route`](#route), [`preflight`](#preflight), [`advance`](#advance), [`next`](#next), [`record-diagnosis`](#record-diagnosis), [`record-intervention`](#record-intervention), [`record-hypothesis-disposition`](#record-hypothesis-disposition), [`record-decision-criterion`](#record-decision-criterion), [`complete`](#complete), [`clear-state`](#clear-state), [`reconcile-closure`](#reconcile-closure), [`task-create`](#task-create), [`task-list`](#task-list), [`task-show`](#task-show), [`task-lock-status`](#task-lock-status), [`task-scope`](#task-scope) |
 | **Setup & Maintenance** | [`init`](#init), [`index-setup`](#index-setup), [`index-start`](#index-start), [`index-stop`](#index-stop), [`index-rebuild`](#index-rebuild), [`update`](#update), [`task-migrate`](#task-migrate), [`migrate-protocol`](#migrate-protocol), [`task-unlock`](#task-unlock), [`task-recover`](#task-recover), [`task-repair-legacy-recovery`](#task-repair-legacy-recovery), [`task-resume`](#task-resume) |
-| **Lifecycle & State** | [`activate`](#activate), [`route`](#route), [`preflight`](#preflight), [`advance`](#advance), [`next`](#next), [`record-diagnosis`](#record-diagnosis), [`record-intervention`](#record-intervention), [`record-hypothesis-disposition`](#record-hypothesis-disposition), [`record-decision-criterion`](#record-decision-criterion), [`complete`](#complete), [`clear-state`](#clear-state), [`reconcile-closure`](#reconcile-closure), [`task-create`](#task-create), [`task-list`](#task-list), [`task-show`](#task-show), [`task-lock-status`](#task-lock-status), [`task-scope`](#task-scope) |
 | **Verification & Completion** | [`quality-baseline`](#quality-baseline), [`quality-verify`](#quality-verify), [`quality-status`](#quality-status), [`prepare-completion`](#prepare-completion), [`run-check`](#run-check), [`record-check`](#record-check), [`record-terminal-result`](#record-terminal-result), [`audit`](#audit), [`report`](#report), [`validate-receipt`](#validate-receipt), [`verify-scope`](#verify-scope) |
 | **Cross-Harness Continuity** | [`continuity`](#continuity), [`record-continuity`](#record-continuity), [`reconcile-continuity`](#reconcile-continuity), [`clear-continuity`](#clear-continuity), [`handoff-create`](#handoff-create), [`handoff-list`](#handoff-list), [`handoff-show`](#handoff-show) |
 | **Durable Actions & Approvals** | [`run-action`](#run-action), [`action-propose`](#action-propose), [`action-record`](#action-record), [`action-show`](#action-show), [`action-reconcile`](#action-reconcile), [`action-verify`](#action-verify), [`action-authorize`](#action-authorize), [`approval-request`](#approval-request), [`approval-resolve`](#approval-resolve) |
@@ -833,6 +833,42 @@ Updates the managed instruction kit to match the current ForgeLoop package versi
 ---
 
 ## 2. Activation & Planning
+
+### `discover`
+
+Records the canonical initial discovery milestone for a newly created task.
+
+- **Purpose**: Transitions a valid post-`task-create` task from `RECEIVED` to the derived `DISCOVERING` phase without creating synthetic work state.
+- **When to use**: When `next` returns `DISCOVER` for a task with no work-state checkpoint.
+- **Mutation**: Appends the task-scoped discovery milestone to the event ledger.
+- **Options**:
+
+<!-- BEGIN FORGELOOP GENERATED: cli:discover:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit structured discovery output as JSON
+
+<!-- END FORGELOOP GENERATED: cli:discover:options -->
+
+### `contract-create`
+
+Persists a validated contract and materializes the first real lifecycle checkpoint.
+
+- **Purpose**: Creates a real contract after discovery and writes `work-state.json` with its actual contract fingerprint.
+- **When to use**: When `next` returns `CREATE_CONTRACT` after discovery.
+- **Mutation**: Writes the task contract, task work state, and append-only lifecycle events transactionally.
+- **Options**:
+
+<!-- BEGIN FORGELOOP GENERATED: cli:contract-create:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--contract-file <path>`: validated JSON contract relative to the target
+- `--preset <name>`: bounded contract preset: documentation, bug, feature, or release
+- `--json`: emit structured contract output as JSON
+
+<!-- END FORGELOOP GENERATED: cli:contract-create:options -->
 
 ### `route`
 

@@ -37,7 +37,7 @@ const READ_ONLY_COMMANDS = Object.freeze(new Set([
 ]));
 
 const LOOP_MUTATION_COMMANDS = Object.freeze(new Set([
-  "route", "preflight", "advance", "task-create", "task-scope",
+  "discover", "contract-create", "route", "preflight", "advance", "task-create", "task-scope",
   "record-continuity", "clear-continuity", "prepare-completion",
   "record-check", "record-diagnosis", "record-decision-criterion",
   "record-terminal-result", "complete",

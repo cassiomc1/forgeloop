@@ -864,6 +864,15 @@ proportional phases, but:
 - `REVIEWING` cannot claim independent review when reviewer and implementer
   identities are equal.
 
+Immediately after `task-create`, a task may have a valid descriptor and
+hash-linked `TASK_RECEIVED`/transaction history without `work-state.json`.
+ForgeLoop derives `RECEIVED` from that canonical early artifact set. `next`
+returns `DISCOVER`, and `discover` appends the initial discovery milestone
+without creating synthetic work state. `next` then returns `CREATE_CONTRACT`;
+`contract-create` persists and validates the real contract and materializes the
+first work-state checkpoint with its actual contract fingerprint. Invalid,
+contradictory, or unexpected early history remains inconsistent.
+
 Resume rules are conservative: revalidate branch, HEAD, contract fingerprint,
 protocol version, and required artifacts before continuing; never rerun a
 completed destructive or publication action automatically; rerun cheap
