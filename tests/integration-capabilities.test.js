@@ -244,3 +244,13 @@ test("baseRiskClass fails closed and covers artifact/process metadata directions
   assert.equal(classifyForgeLoopInvocation("clear-continuity").removesArtifacts, true);
   assert.equal(classifyForgeLoopInvocation("status").removesArtifacts, false);
 });
+
+test("integration surface exposes the OpenSrc advisory provider factory", async () => {
+  const { createOpenSrcAdvisoryContextProvider } = await import("../src/integration.js");
+  assert.equal(typeof createOpenSrcAdvisoryContextProvider, "function");
+  const { protocolInfo: info } = await import("../src/core/protocol-info.js");
+  const protocol = info({ packageVersion: "1.5.0" });
+  assert.equal(protocol.protocolVersion, 1);
+  assert.equal(protocol.features.advisoryContextProviders.version, 1);
+  assert.equal(protocol.features.providerExtensions.version, 1);
+});

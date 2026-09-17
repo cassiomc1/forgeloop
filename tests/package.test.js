@@ -147,6 +147,7 @@ test("npm tarball contains the CLI, templates, published scenarios, and license 
     "docs/SIGNING_PROVIDERS.md",
     "docs/PLATFORM_ADAPTERS.md",
     "docs/RIPWIRE_ADAPTER.md",
+    "docs/OPENSRC_ADAPTER.md",
     "docs/AGENT_PROTOCOL_SUMMARY.md",
     "docs/AGENT_SKILL.md",
     "skills/forgeloop/SKILL.md",
@@ -391,6 +392,7 @@ test("public integration exports include advisory context, portable context, and
   const integration = await import("../src/integration.js");
   const expectedExports = [
     "recallAdvisoryContext",
+    "createOpenSrcAdvisoryContextProvider",
     "acceptCanonicalHandoff",
     "resolveHandoffAcceptance",
     "ADVISORY_CONTEXT_LIMITS",

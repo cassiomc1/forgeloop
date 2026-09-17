@@ -198,6 +198,18 @@ export interface ForgeLoopRipwireProviderOptions {
   expectedVersion: string;
 }
 
+/** Options for the optional, host-injected OpenSrc advisory adapter. */
+export interface ForgeLoopOpenSrcProviderOptions {
+  /** Absolute OpenSrc executable path selected by the host; ForgeLoop does not discover it. */
+  executablePath: string;
+  /** Exact version string qualified by the host and checked lazily at recall time. */
+  expectedVersion: string;
+  /** Absolute dedicated OpenSrc cache root passed through OPENSRC_HOME; must stay outside the project. */
+  cacheRoot: string;
+  /** Explicit allowlist of external package/repository specs eligible for advisory recall. */
+  sources: readonly string[];
+}
+
 export interface ForgeLoopNormalizedAdvisoryContextResult {
   provider: {
     id: string;
@@ -369,6 +381,9 @@ export declare function recallAdvisoryContext(input: {
 }): Promise<ForgeLoopNormalizedAdvisoryContextResult>;
 export declare function createRipwireAdvisoryContextProvider(
   options: ForgeLoopRipwireProviderOptions,
+): ForgeLoopAdvisoryContextProvider;
+export declare function createOpenSrcAdvisoryContextProvider(
+  options: ForgeLoopOpenSrcProviderOptions,
 ): ForgeLoopAdvisoryContextProvider;
 export declare const ADVISORY_CONTEXT_LIMITS: Readonly<Record<string, number>>;
 export declare const ADVISORY_CONTEXT_TRUST: Readonly<Record<string, unknown>>;
