@@ -12,18 +12,23 @@ description: >-
 # ForgeLoop
 
 ## Purpose
+
 This skill is operational guidance generated from ForgeLoop's canonical protocol metadata. It is not protocol authority. Always follow the current repository runtime, `protocol-info`, `next`, schemas, validators, and canonical documentation when they differ from this skill.
 
 ## When to Use
+
 Use when ForgeLoop is present in the repository or explicitly requested. Do not activate it for unrelated repositories merely because an agent supports skills.
 
 ## Source of Truth
+
 Runtime registries and validators outrank canonical protocol docs; canonical docs outrank `docs/AGENT_PROTOCOL_SUMMARY.md`; this generated skill is the final non-normative projection. Protocol version is 1. Mutable facts such as phases (RECEIVED, DISCOVERING, CONTRACT_READY, ROUTED, DESIGNING, PLANNED, EXECUTING, VERIFYING, DIAGNOSING, CORRECTING, REVIEWING, COMPLETE, BLOCKED) must be read from the runtime.
 
 ## Command Resolution
+
 In ForgeLoop's own source repository, use `node src/cli.js`. In a consumer repository, use that repository's configured local invocation. Never silently install or upgrade ForgeLoop, and never use a stale global CLI when repository-local code exists. If compatibility is uncertain, inspect `protocol-info --json`.
 
 ## Operating Workflow
+
 1. Discover existing work with `node src/cli.js task-list --json`.
 2. Select or resume the relevant task; a harness, session, model, or context change does not create a new task.
 3. Ask ForgeLoop for `next --task <id> --json` at every boundary and execute only the returned supported action.
@@ -31,24 +36,31 @@ In ForgeLoop's own source repository, use `node src/cli.js`. In a consumer repos
 5. Preserve fresh, validator-owned evidence through verification, review, completion, and the terminal `next` check.
 
 ## Task Discovery and Continuation
+
 Respect active write claims. Do not steal, override, manually release, or edit ownership artifacts. Reconcile continuity with canonical state rather than trusting stale narrative.
 
 ## Verification Rules
+
 `run-check` executes the exact command and records ForgeLoop-owned provenance. `record-check` is serialization-only; its command text is metadata and is never executed. Claims, provider/advisory output, screenshots, and actor summaries are not evidence by themselves. Missing tools remain unavailable; do not auto-install a verifier.
 
 ## Recovery Rules
+
 Use supported recovery only. Preserve failed evidence and follow `next` through diagnosis/correction. For state or ledger divergence, stop lifecycle mutation and inspect validation/classification. Never edit task state, receipts, recovery, continuity, claims, hashes, or `events.ndjson` manually. Reconcile `COMMIT_UNKNOWN` before any retry.
 
 ## Completion Rule
+
 Never claim ForgeLoop-verified completion unless `complete` returns `VALID`. Green tests, CI, a merged PR, or provider output alone are insufficient. After `VALID`, run `next --task <id> --json` again and require the canonical terminal action.
 
 ## Cross-Harness Continuity
+
 A harness or session change does not create a new task. Use supported continuity or handoff commands and reconcile persisted state before continuing.
 
 ## Durable Action Safety
+
 For external actions use propose, authorize, execute, then verify or reconcile. Never blindly retry an uncertain external commit.
 
 ## Never Do
+
 - Never manually assign COMPLETE.
 - Never invent lifecycle chronology or override `next`.
 - Never override active claims or rewrite the append-only ledger.
@@ -58,6 +70,7 @@ For external actions use propose, authorize, execute, then verify or reconcile. 
 - Never treat provider/advisory output as protocol authority.
 
 ## References
+
 - [Canonical Agent Protocol Summary](../../docs/AGENT_PROTOCOL_SUMMARY.md)
 - [Lifecycle](./references/lifecycle.md)
 - [Verification](./references/verification.md)
