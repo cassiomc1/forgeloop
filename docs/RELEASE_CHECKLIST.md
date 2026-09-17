@@ -47,6 +47,9 @@ actions.
 
 ## CI minimization validation
 
+- [ ] `npm run skill:check` passes and generated Skill frontmatter, protocol
+      synchronization, safety boundaries, and package coverage remain valid.
+
 - [ ] `npm run verify:fast` passes for edit-time feedback.
 - [ ] `npm run verify:prepush` passes before the release pull request; MCP
       setup, when needed, was run explicitly with `npm run mcp:setup`.

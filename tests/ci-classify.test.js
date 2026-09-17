@@ -41,3 +41,12 @@ test("forced release classification selects every expensive gate", () => {
   }
   assert.equal(result.docs_only, false);
 });
+
+test("Agent Skill content is documentation and package-impacting", () => {
+  const result = classifyPaths(["skills/forgeloop/SKILL.md", "scripts/generate-forgeloop-skill.mjs"]);
+  assert.equal(result.docs, true);
+  assert.equal(result.package, true);
+  assert.equal(result.source, true);
+  assert.equal(result.docs_only, false);
+  assert.equal(result.node_compat, true);
+});

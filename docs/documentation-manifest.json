@@ -565,6 +565,19 @@
       "generator": "scripts/generate-agent-protocol-summary.mjs"
     },
     {
+      "path": "docs/AGENT_SKILL.md",
+      "id": "agent-skill",
+      "class": "integration/reference",
+      "audience": [
+        "integrator",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "agent-skill-integration"
+      ],
+      "packaged": true
+    },
+    {
       "path": "docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md",
       "id": "knowledge-integration-gap-analysis",
       "class": "reference",
