@@ -151,13 +151,26 @@ export async function resolveNextActionPhase({
     });
   }
   if (state.phase === "CONTRACT_READY") {
-    return decision(
-      context,
-      NEXT_ACTIONS.ROUTE,
-      artifactError("PHASE_CONTRACT_READY", "Persist deterministic routing for the validated contract"),
-      contractArtifacts,
-      [routeRel],
-    );
+    return result({
+      ...context,
+      nextAction: NEXT_ACTIONS.ROUTE,
+      reasons: [artifactError("PHASE_CONTRACT_READY", "Persist deterministic routing for the validated contract")],
+      commands: [`forgeloop route --task ${explicitTaskId} --work <type> --json`],
+      commandSpecs: [{
+        commandId: "route",
+        executable: "forgeloop",
+        subcommand: "route",
+        argv: ["route", `--task=${explicitTaskId}`, "--json"],
+        requiredInputs: [
+          { name: "workType", option: "--work=<type>" },
+          { name: "surface", option: "--surface=<value>", repeatable: true, optional: true },
+          { name: "risk", option: "--risk=<value>", repeatable: true, optional: true },
+          { name: "platform", option: "--platform=<value>", repeatable: true, optional: true },
+        ],
+      }],
+      requiredArtifacts: contractArtifacts,
+      missingArtifacts: [routeRel],
+    });
   }
   const routeResult = await loadArtifact(
     () => readPersistedRoute(target, packageRoot, { taskId: explicitTaskId }),
