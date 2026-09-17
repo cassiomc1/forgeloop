@@ -164,6 +164,15 @@ export function terminalRequirements(requirements = []) {
   return normalizeRequirements(requirements).filter((requirement) => requirement.terminalOwned);
 }
 
+export function terminalRequirementsForContract(contractValue = {}, { additionalEvidence = [] } = {}) {
+  const pool = [
+    ...(contractValue.verification ?? []),
+    ...(contractValue.successCriteria ?? []),
+    ...additionalEvidence,
+  ];
+  return terminalRequirements(pool);
+}
+
 export function lifecycleRequirements(requirements = []) {
   return normalizeRequirements(requirements).filter((requirement) => requirement.type === "LIFECYCLE");
 }

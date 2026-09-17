@@ -2,7 +2,7 @@ import { readJsonArtifact } from "./artifacts.js";
 import { evaluateCompletion } from "./completion.js";
 import { validateReceipt } from "./receipt.js";
 import { completionRelationshipErrors } from "./completion-relationships.js";
-import { evaluateRequiredEvidence, classifyRequirement } from "./evidence-readiness.js";
+import { evaluateRequiredEvidence, classifyRequirement, terminalRequirementsForContract } from "./evidence-readiness.js";
 import { validateEventLedger, validateCompletionRecoveryAuthorization } from "./events.js";
 import { NEXT_ACTIONS, commandFor, decision, recordTerminalResultCommandSpec, result } from "./next-action-model.js";
 import { artifactError, checkListReasons, loadArtifact, requirementsAndCoverage } from "./next-action-artifacts.js";
@@ -153,9 +153,14 @@ export async function resolveReviewingPhase({ state, context, requiredArtifacts,
         err.code === "E_PUBLICATION_REQUIREMENT_PENDING" || err.code === "E_PRODUCTION_REQUIREMENT_PENDING"
       ));
       if (terminalPendingErrors.length > 0 && terminalPendingErrors.length === completion.errors.length) {
+        const canonicalTerminalRequirements = terminalRequirementsForContract(contract.value, {
+          additionalEvidence: preflight.policy?.requiredEvidence ?? [],
+        });
         const terminalPendingReqs = terminalPendingErrors.map((err) => {
           const reqId = err.requirementId;
-          const matchingReq = evidence.requirements.find((r) => r.id === reqId)
+          const matchingReq = canonicalTerminalRequirements.find((r) => r.id === reqId)
+            ?? canonicalTerminalRequirements.find((r) => r.text === reqId)
+            ?? evidence.requirements.find((r) => r.id === reqId)
             ?? evidence.requirements.find((r) => r.text === reqId)
             ?? classifyRequirement(reqId ?? err.message);
           return matchingReq;
