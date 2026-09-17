@@ -606,6 +606,32 @@
       "packaged": true
     },
     {
+      "path": "docs/PROVIDER_ARCHITECTURE.md",
+      "id": "provider-architecture",
+      "class": "architecture",
+      "audience": [
+        "integrator",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "provider-extensions"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "docs/PROVIDERS.md",
+      "id": "providers-reference",
+      "class": "reference",
+      "audience": [
+        "integrator",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "provider-extensions-reference"
+      ],
+      "packaged": true
+    },
+    {
       "path": "docs/RIPWIRE_ADAPTER.md",
       "id": "ripwire-adapter",
       "class": "reference",

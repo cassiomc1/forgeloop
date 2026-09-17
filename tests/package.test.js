@@ -140,6 +140,8 @@ test("npm tarball contains the CLI, templates, published scenarios, and license 
     "docs/RELEASE_CHECKLIST.md",
     "docs/MCP.md",
     "docs/UNIVERSAL_INTEGRATION.md",
+    "docs/PROVIDER_ARCHITECTURE.md",
+    "docs/PROVIDERS.md",
     "docs/CODE_ATTESTATION.md",
     "docs/REVISION_PROVIDERS.md",
     "docs/SIGNING_PROVIDERS.md",

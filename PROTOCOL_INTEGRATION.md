@@ -190,6 +190,7 @@ from Protocol v1, schema v1, and Integration API v1:
 | --- | --- | --- |
 | `canonicalHandoffs` | v2 | Immutable handoff snapshots with ledger-backed exactly-once operational acceptance |
 | `advisoryContextProviders` | v1 | Lazy, opt-in, provider-neutral Integration API injection only |
+| `providerExtensions` | v1 | Experimental provider-neutral capability vocabulary; generic registry remains internal and unexported |
 
 `repositoryIndex` v1 is a mandatory provider-neutral discovery capability for
 Git repositories. ForgeLoop currently implements it with a managed, pinned
@@ -222,6 +223,21 @@ evidence, authority, completion truth, next-action authority, or executable
 instructions. `protocol-info` may advertise the capability, but advisory
 recall remains a programmatic Integration API operation; there is no stock
 `context-recall` CLI command.
+
+<a id="FL-PROVIDER-001"></a> **FL-PROVIDER-001 — `providerExtensions` MUST remain provider-neutral and experimental and MUST NOT imply a public generic provider registry API.**
+
+<a id="FL-PROVIDER-002"></a> **FL-PROVIDER-002 — Every advertised provider kind MUST deny lifecycle, completion, and evidence authority.**
+
+<a id="FL-PROVIDER-003"></a> **FL-PROVIDER-003 — Provider results MUST cross a strict JSON snapshot boundary before consumer use.**
+
+<a id="FL-PROVIDER-004"></a> **FL-PROVIDER-004 — The generic provider registry MUST remain absent from public package subpath exports.**
+
+`providerExtensions` v1 is provider-neutral and experimental. It advertises
+five provider kinds, strict JSON result normalization, cooperative cancellation,
+and false lifecycle, completion, evidence, and auto-install authority. This
+capability advertisement does not imply a generic public provider registration
+API or a supported `./providers` package subpath. Protocol version remains 1,
+Schema version remains 1, and Integration API version remains 1.
 
 A consumer that understands `canonicalHandoffs` v1 but not v2 may disable the
 handoff-specific UI while keeping Protocol v1 core functionality available.

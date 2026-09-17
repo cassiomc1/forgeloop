@@ -68,6 +68,8 @@
     "docs/DOCUMENTATION_GUIDE.md",
     "docs/RELEASE_CHECKLIST.md",
     "docs/PACKAGE_CONTENTS.md",
+    "docs/PROVIDER_ARCHITECTURE.md",
+    "docs/PROVIDERS.md",
     "scripts/CI_VALIDATORS.md",
     "docs/MCP.md",
     "docs/UNIVERSAL_INTEGRATION.md",

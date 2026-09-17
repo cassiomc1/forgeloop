@@ -4,6 +4,10 @@
 
 ### Added
 
+- Added the provider-neutral `providerExtensions` v1 capability contract,
+  provider architecture and reference documentation, and package coverage.
+  The generic provider registry remains internal and unexported.
+
 - Added first-class C, C++, Java, SQL, Go, TypeScript, PHP, and Swift
   specialist guides with bounded structural project detection, conservative
   source/build evidence, same-root composition, and nested ownership

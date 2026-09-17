@@ -115,6 +115,7 @@ Phases: RECEIVED, DISCOVERING, CONTRACT_READY, ROUTED, DESIGNING, PLANNED, EXECU
 | executionProfileContext | 1 | yes |
 | integrationApi | 1 | yes |
 | observabilityStability | n/a | yes |
+| providerExtensions | 1 | yes |
 | reflection | 1 | yes |
 | repositoryIndex | 1 | yes |
 | responsibilityConstraints | 1 | yes |
@@ -139,6 +140,8 @@ Phases: RECEIVED, DISCOVERING, CONTRACT_READY, ROUTED, DESIGNING, PLANNED, EXECU
   Integration-API-only, lazy, and opt-in. Provider results are not persisted by
   ForgeLoop and are never lifecycle state, evidence, authority, or executable
   instructions.
+- `providerExtensions` v1 is provider-neutral and
+  experimental. The generic provider registry remains internal and unexported.
 
 Protocol v1, schema v1, and Integration API v1 remain independent of these
 capability-family versions.

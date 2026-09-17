@@ -29,6 +29,7 @@ Operational sources are indexed in [`DOCS_INDEX.md`](./DOCS_INDEX.md).
 - **Full protocol specification** → [`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md)
 - **Integrating an AI harness** → [`PROTOCOL_INTEGRATION.md`](./PROTOCOL_INTEGRATION.md)
 - **Optional advisory context providers** → [`docs/ADVISORY_CONTEXT.md`](./docs/ADVISORY_CONTEXT.md)
+- **Provider extension architecture** → [`docs/PROVIDER_ARCHITECTURE.md`](./docs/PROVIDER_ARCHITECTURE.md) and [`docs/PROVIDERS.md`](./docs/PROVIDERS.md)
 - **Agent bootstrap summary** → [`docs/AGENT_PROTOCOL_SUMMARY.md`](./docs/AGENT_PROTOCOL_SUMMARY.md)
 - **Continuing another harness's task** → [`docs/CROSS_HARNESS_CONTINUITY.md`](./docs/CROSS_HARNESS_CONTINUITY.md)
 - **CLI command reference** → [`docs/CLI_REFERENCE.md`](./docs/CLI_REFERENCE.md)

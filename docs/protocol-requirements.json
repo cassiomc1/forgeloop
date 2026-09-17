@@ -72,6 +72,30 @@
       "statement": "A structural-quality integration MUST preserve unavailable, malformed, stale, incomparable, and blocked provider results without promoting them to PASS.",
       "tests": ["tests/sentrux-structural-quality-provider.test.js", "tests/structural-quality-artifacts.test.js"],
       "validator": "src/core/structural-quality/provider.js"
+    },
+    "FL-PROVIDER-001": {
+      "source": "PROTOCOL_INTEGRATION.md",
+      "statement": "The providerExtensions capability MUST remain provider-neutral and experimental, and MUST NOT imply a public generic provider registry API.",
+      "tests": ["tests/protocol-info.test.js", "tests/provider-capabilities.test.js"],
+      "validator": "src/core/protocol-info.js"
+    },
+    "FL-PROVIDER-002": {
+      "source": "PROTOCOL_INTEGRATION.md",
+      "statement": "Every advertised provider kind MUST deny lifecycle, completion, and evidence authority.",
+      "tests": ["tests/provider-capabilities.test.js"],
+      "validator": "src/providers/capabilities.js"
+    },
+    "FL-PROVIDER-003": {
+      "source": "PROTOCOL_INTEGRATION.md",
+      "statement": "Provider results MUST cross a strict JSON snapshot boundary before consumer use.",
+      "tests": ["tests/provider-architecture.test.js"],
+      "validator": "src/providers/json-snapshot.js"
+    },
+    "FL-PROVIDER-004": {
+      "source": "PROTOCOL_INTEGRATION.md",
+      "statement": "The generic provider registry MUST remain absent from the public package subpath exports.",
+      "tests": ["tests/provider-architecture.test.js", "tests/package.test.js"],
+      "validator": "package.json"
     }
   }
 }
