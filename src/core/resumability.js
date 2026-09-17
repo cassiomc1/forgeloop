@@ -107,6 +107,61 @@ export async function ensureResumableState({ target, packageRoot, contract, rout
   return initializeWorkState(target, state, { packageRoot, taskId, statePath });
 }
 
+function routeSyncError(code, message) {
+  const error = new Error(message);
+  error.code = code;
+  return error;
+}
+
+function sameStringList(left, right) {
+  const a = [...(left ?? [])].sort();
+  const b = [...(right ?? [])].sort();
+  return a.length === b.length && a.every((value, index) => value === b[index]);
+}
+
+/**
+ * Rebinds an existing ROUTED checkpoint to an already-persisted route.
+ *
+ * Only the route-bound identity fields are updated; contract, repository,
+ * steps, checks, evidence, and phase are preserved. Same-identity reruns are
+ * a no-op. Every other situation fails closed.
+ */
+export async function synchronizePersistedRouteState({ target, packageRoot, taskId, route, contract = null, statePath } = {}) {
+  if (!route || !route.value || typeof route.fingerprint !== "string") {
+    throw routeSyncError("E_ROUTE_STALE", "A persisted route artifact is required to synchronize checkpoint identity");
+  }
+  const state = await readWorkState(target, { packageRoot, taskId, statePath });
+  if (!state) return null;
+  if (state.phase !== "ROUTED") {
+    throw routeSyncError(
+      "E_ROUTE_PHASE_UNSUPPORTED",
+      `Route checkpoint synchronization supports phase ROUTED, found ${state.phase}`,
+    );
+  }
+  if (taskId && state.taskId !== taskId) {
+    throw routeSyncError("E_ROUTE_STALE", "Work state does not belong to the current route task");
+  }
+  if (contract && state.contractFingerprint !== contract.fingerprint) {
+    throw routeSyncError("E_ROUTE_STALE", "Work state contract does not match the current contract");
+  }
+  if (route.value.contractFingerprint !== undefined && state.contractFingerprint !== route.value.contractFingerprint) {
+    throw routeSyncError("E_ROUTE_STALE", "Persisted route does not match the checkpoint contract");
+  }
+  if (state.routeFingerprint === route.fingerprint && sameStringList(state.selectedGuides, route.value.guides)) {
+    return state;
+  }
+  return mutateWorkState(target, {
+    expectedRevision: state.revision ?? 0,
+    packageRoot,
+    taskId,
+    statePath,
+  }, () => ({
+    ...state,
+    routeFingerprint: route.fingerprint,
+    selectedGuides: [...route.value.guides],
+  }));
+}
+
 export async function synchronizePreflightState({
   target,
   packageRoot,
