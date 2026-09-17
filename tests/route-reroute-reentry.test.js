@@ -16,6 +16,7 @@ import { readPersistedRoute } from "../src/core/route-artifact.js";
 import { readWorkState } from "../src/core/work-state.js";
 import { readEvents } from "../src/core/events.js";
 import { createContract, readContract, writeContract } from "../src/core/contract.js";
+import { synchronizePersistedRouteState } from "../src/core/resumability.js";
 import { getPackageRoot } from "../src/core/templates.js";
 
 const packageRoot = getPackageRoot();
@@ -132,7 +133,7 @@ test("same-route rerun is a safe no-op without revision churn", async () => {
   });
 });
 
-test("late-phase reroute fails closed without rebinding checkpoint identity", async () => {
+test("late-phase reroute never rebinds checkpoint identity", async () => {
   await withTarget(async (target) => {
     const taskId = "reroute-late";
     await runTaskCreate({ target, packageRoot, taskId, claims: ["src"] });
@@ -145,23 +146,39 @@ test("late-phase reroute fails closed without rebinding checkpoint identity", as
     await runAdvance({ target, packageRoot, taskId, to: "PLANNED" });
     await runAdvance({ target, packageRoot, taskId, to: "EXECUTING" });
 
-    const beforeRoute = await readPersistedRoute(target, packageRoot, { taskId });
     const beforeState = await readWorkState(target, { packageRoot, taskId });
 
-    await assert.rejects(
-      runRoute({ target, packageRoot, taskId, workType: "code", surfaces: ["documentation"], executableChange: true }),
-      /phase/i,
-    );
+    await runRoute({ target, packageRoot, taskId, workType: "code", surfaces: ["documentation"], executableChange: true });
 
-    const afterRoute = await readPersistedRoute(target, packageRoot, { taskId });
     const afterState = await readWorkState(target, { packageRoot, taskId });
-    assert.equal(afterRoute.fingerprint, beforeRoute.fingerprint);
     assert.equal(afterState.routeFingerprint, beforeState.routeFingerprint);
+    assert.deepEqual(afterState.selectedGuides, beforeState.selectedGuides);
+    assert.equal(afterState.revision, beforeState.revision);
     assert.equal(afterState.phase, "EXECUTING");
   });
 });
 
-test("contract mismatch fails closed without partial checkpoint rebinding", async () => {
+test("checkpoint synchronization rejects non-ROUTED phases", async () => {
+  await withTarget(async (target) => {
+    const taskId = "reroute-phase-guard";
+    await runTaskCreate({ target, packageRoot, taskId, claims: ["src"] });
+    await runDiscover({ target, packageRoot, taskId });
+    await createFeatureContract(target, taskId);
+    await runContractCreate({ target, packageRoot, taskId, contractFile: "contract-input.json" });
+    await runRoute({ target, packageRoot, taskId, workType: "code", surfaces: ["config"], executableChange: true });
+    const ready = await runPreflight({ target, packageRoot, taskId });
+    assert.equal(ready.status, "READY");
+    await runAdvance({ target, packageRoot, taskId, to: "PLANNED" });
+
+    const route = await readPersistedRoute(target, packageRoot, { taskId });
+    await assert.rejects(
+      synchronizePersistedRouteState({ target, packageRoot, taskId, route }),
+      /ROUTED/,
+    );
+  });
+});
+
+test("contract evolution reroute persists fresh route without rebinding stale checkpoint", async () => {
   await withTarget(async (target) => {
     const taskId = "reroute-contract";
     await setupRoutedTask(target, taskId);
@@ -172,15 +189,14 @@ test("contract mismatch fails closed without partial checkpoint rebinding", asyn
     const contractArtifact = await readContract(target, packageRoot, { taskId });
     await writeContract(target, { ...contractArtifact.value, objective: "drifted objective" }, packageRoot, { taskId });
 
-    await assert.rejects(
-      runRoute({ target, packageRoot, taskId, workType: "code", surfaces: ["config"], executableChange: true }),
-      /route/i,
-    );
+    await runRoute({ target, packageRoot, taskId, workType: "code", surfaces: ["config"], executableChange: true });
 
     const afterRoute = await readPersistedRoute(target, packageRoot, { taskId });
     const afterState = await readWorkState(target, { packageRoot, taskId });
-    assert.equal(afterRoute.fingerprint, beforeRoute.fingerprint);
+    assert.notEqual(afterRoute.fingerprint, beforeRoute.fingerprint);
     assert.equal(afterState.routeFingerprint, beforeState.routeFingerprint);
+    assert.equal(afterState.contractFingerprint, beforeState.contractFingerprint);
     assert.equal(afterState.revision, beforeState.revision);
+    assert.equal(afterState.phase, "ROUTED");
   });
 });

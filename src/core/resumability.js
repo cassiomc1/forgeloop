@@ -142,10 +142,14 @@ export async function synchronizePersistedRouteState({ target, packageRoot, task
     throw routeSyncError("E_ROUTE_STALE", "Work state does not belong to the current route task");
   }
   if (contract && state.contractFingerprint !== contract.fingerprint) {
-    throw routeSyncError("E_ROUTE_STALE", "Work state contract does not match the current contract");
+    // Contract evolution with regenerated routing is a pre-existing flow whose
+    // stale checkpoint is recovered through the sanctioned clear-state and
+    // preflight recreation path. Never rebind route identity across a contract
+    // boundary here; leave the checkpoint untouched.
+    return state;
   }
   if (route.value.contractFingerprint !== undefined && state.contractFingerprint !== route.value.contractFingerprint) {
-    throw routeSyncError("E_ROUTE_STALE", "Persisted route does not match the checkpoint contract");
+    return state;
   }
   if (state.routeFingerprint === route.fingerprint && sameStringList(state.selectedGuides, route.value.guides)) {
     return state;

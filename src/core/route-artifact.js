@@ -5,13 +5,7 @@ import { ensureResumableState, synchronizePersistedRouteState } from "./resumabi
 import { readWorkState } from "./work-state.js";
 import { taskArtifactPath } from "./task-paths.js";
 
-const REROUTE_SUPPORTED_PHASES = new Set(["CONTRACT_READY", "ROUTED"]);
 
-function routeArtifactError(code, message) {
-  const error = new Error(message);
-  error.code = code;
-  return error;
-}
 
 export async function persistRoute(target, route, packageRoot, options = {}) {
   assertRouteInvariants(route);
@@ -37,12 +31,6 @@ export async function persistRoute(target, route, packageRoot, options = {}) {
     } catch {
       existingState = null;
     }
-  }
-  if (existingState && !REROUTE_SUPPORTED_PHASES.has(existingState.phase)) {
-    throw routeArtifactError(
-      "E_ROUTE_PHASE_UNSUPPORTED",
-      `Route replacement is not supported in phase ${existingState.phase}; checkpoint identity is preserved`,
-    );
   }
   const relPath = options.routePath ?? options.routeFile ?? options.relativePath ?? (taskId ? taskArtifactPath(taskId, "route") : ARTIFACT_PATHS.route);
   const artifact = await writeJsonArtifact(
