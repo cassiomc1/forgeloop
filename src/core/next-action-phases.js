@@ -5,7 +5,7 @@ import { resolvePlannedPhase } from "./next-action-planned-phase.js";
 import { resolvePendingActionGuidance } from "./next-action-pending-actions.js";
 import { preExecutionRefreshGuidance } from "./next-action-refresh.js";
 import { ARTIFACT_PATHS, readJsonArtifact } from "./artifacts.js";
-import { taskArtifactPath } from "./task-paths.js";
+import { taskArtifactPath, taskGatePath } from "./task-paths.js";
 import { completionIdentityErrors, evaluateCompletion } from "./completion.js";
 import { readContract } from "./contract.js";
 import { evaluatePreflight, validatePersistedPreflight } from "./preflight.js";
@@ -251,11 +251,12 @@ export async function resolveNextActionPhase({
     : validatePersistedPreflight(preflightArtifact.value?.value, preflight);
 
   if (["ROUTED", "DESIGNING", "PLANNED"].includes(state.phase) && missingGates.length > 0) {
+    const missingGatePaths = missingGates.map((gate) => taskGatePath(state.taskId, gate));
     const gateRecordSpec = {
       commandId: "gate-record",
       executable: "forgeloop",
       subcommand: "gate-record",
-      argv: ["gate-record", `--task=${state.taskId}`, `--gate=<${missingGates[0]}>`, "--status=satisfied", "--json"],
+      argv: ["gate-record", `--task=${state.taskId}`, `--gate=${missingGates[0]}`, "--status=satisfied", "--json"],
       requiredInputs: [
         { name: "artifact", option: "--artifact=<project-relative-path>", repeatable: true },
         { name: "decision", option: "--decision=<text>", repeatable: true },
@@ -264,13 +265,13 @@ export async function resolveNextActionPhase({
     return result({
       ...context,
       nextAction: NEXT_ACTIONS.SATISFY_GATES,
-      reasons: missingGates.map((gate) => artifactError(
+      reasons: missingGates.map((gate, index) => artifactError(
         "E_GATE_UNVERIFIED",
         `Required gate is missing or unverified: ${gate}`,
-        [`${ARTIFACT_PATHS.gates}/${gate}.json`],
+        [missingGatePaths[index]],
       )),
-      requiredArtifacts: [...preflightArtifacts, ...missingGates.map((gate) => `${ARTIFACT_PATHS.gates}/${gate}.json`)],
-      missingArtifacts: missingGates.map((gate) => `${ARTIFACT_PATHS.gates}/${gate}.json`),
+      requiredArtifacts: [...preflightArtifacts, ...missingGatePaths],
+      missingArtifacts: missingGatePaths,
       commandSpecs: [gateRecordSpec],
     });
   }

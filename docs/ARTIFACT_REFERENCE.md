@@ -316,6 +316,14 @@ hashes for staleness, and gate mutation is available only before execution.
 Caller-recorded evidence is descriptive local input, not host attestation,
 ForgeLoop execution evidence, or remote authority.
 
+`requiredBy` records only the provenance that actually requires the gate:
+guides whose metadata declares it, plus the stable `config.requiredGates`
+marker when `config.requiredGates` requires it. Programmatic gate-record
+inputs are bounded (32 repeatable entries, 2000-character strings, 4 MiB
+per bound artifact, 64 KiB per evidence file) and refuse stale routes when
+the persisted route, work state, or current contract fingerprints no longer
+agree, before any gate is written.
+
 #### Canonical Fields
 
 <!-- BEGIN FORGELOOP GENERATED: schema:gate -->
