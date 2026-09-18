@@ -1,4 +1,18 @@
+import { CONTRACT_PRESET_IDS } from "./contract-presets.js";
 import { PROTOCOL_VERSION } from "./protocol.js";
+
+const CONTRACT_PRESET_PREFIX = "contract-preset:";
+const BUILTIN_CONTRACT_PRESET_REFS = new Set(
+  CONTRACT_PRESET_IDS.map((presetId) => `${CONTRACT_PRESET_PREFIX}${presetId}`),
+);
+
+export function isBuiltinContractPresetRef(ref) {
+  return typeof ref === "string" && BUILTIN_CONTRACT_PRESET_REFS.has(ref);
+}
+
+export function externalContractSourceRefs(refs = []) {
+  return refs.filter((ref) => !isBuiltinContractPresetRef(ref));
+}
 
 export const SOURCE_REGISTRY_SCHEMA_VERSION = 1;
 export const SOURCE_KINDS = Object.freeze([
@@ -83,4 +97,27 @@ export function assertSourceProvenance(registry, refs = [], { expectedKind } = {
     }
   }
   return true;
+}
+
+export function assertContractPresetRefs(refs = []) {
+  for (const ref of refs) {
+    if (typeof ref === "string" && ref.startsWith(CONTRACT_PRESET_PREFIX) && !isBuiltinContractPresetRef(ref)) {
+      const error = new Error(`Unknown built-in contract preset source: ${ref}`);
+      error.code = "E_PROFILE_SOURCE_UNKNOWN";
+      throw error;
+    }
+  }
+  return true;
+}
+
+export function assertContractSourceProvenance(registry, refs = []) {
+  assertContractPresetRefs(refs);
+  const externalRefs = externalContractSourceRefs(refs);
+  if (externalRefs.length === 0) return true;
+  if (!registry) {
+    const error = new Error("External contract source references require a source registry");
+    error.code = "E_PROFILE_SOURCE_MISSING";
+    throw error;
+  }
+  return assertSourceProvenance(registry, externalRefs);
 }

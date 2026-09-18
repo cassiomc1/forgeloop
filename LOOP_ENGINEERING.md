@@ -541,6 +541,21 @@ forgeloop preflight
 
 `preflight` validates local ForgeLoop artifacts only. It does not invoke the model, run project commands, or treat a prose declaration as evidence. A `READY` result is required before `EXECUTING` in standard and strict workflows. A non-empty `current-contract.unresolvedDecisions[]` causes `forgeloop preflight` to return `BLOCKED` with `E_CONTRACT_UNRESOLVED_DECISION`; a valid `current-contract.assumptions[]` list does not block preparation.
 
+Required gates are recorded only through `forgeloop gate-record`. The command
+accepts only gates required by the active route or policy, computes artifact
+hashes itself, rejects traversal and symlink escapes, and permits mutation only
+in `ROUTED`, `DESIGNING`, or `PLANNED`. It rejects gate writes after execution
+starts. A satisfied gate requires a meaningful decision and no unknowns.
+Caller-provided evidence remains descriptive local input and cannot assert
+`HOST_ATTESTED`, `FORGELOOP_EXECUTED`, or remote attestation.
+
+Built-in contract preset references are limited to the canonical
+`contract-preset:documentation`, `contract-preset:bug`,
+`contract-preset:feature`, and `contract-preset:release` values. These values
+do not require `.forgeloop/sources.json`; mixed contracts still validate every
+non-built-in reference against the source registry, and unknown preset names
+are rejected.
+
 ### Resumable activation and artifact reconciliation
 
 `PREFLIGHT_READY` is a durable checkpoint, not only a status value. A persisted

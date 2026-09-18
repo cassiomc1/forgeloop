@@ -45,6 +45,15 @@ function validateTaskCreationInput(command, options) {
   }
 }
 
+function validateGateRecordInput(command, options, help) {
+  if (command !== "gate-record" || help) return;
+  if (!options.taskId) throw inputError("gate-record requires --task");
+  if (!options.gate) throw inputError("gate-record requires --gate");
+  if (!["satisfied", "unverified", "blocked"].includes(options.gateStatus)) {
+    throw inputError("gate-record --status must be satisfied, unverified, or blocked");
+  }
+}
+
 function validateExecutionProfileInput(command, options) {
   if (options.executionProfile !== null && options.executionProfile !== undefined) {
     if (command !== "route") throw inputError(`executionProfile is not valid for ${command}`);
@@ -196,6 +205,13 @@ export function defaultCommandInputValues() {
     file: null,
     contractFile: null,
     preset: null,
+    gate: null,
+    gateStatus: null,
+    gateArtifacts: [],
+    gateDecisions: [],
+    gateUnknowns: [],
+    gateAssumptions: [],
+    gateEvidenceFile: null,
     preview: false,
     phase: null,
     active: false,
@@ -267,6 +283,7 @@ export function validateForgeLoopCommandInput({ command, input, help = false } =
 
   validatePolicyInput(command, options);
   validateTaskCreationInput(command, options);
+  validateGateRecordInput(command, options, help);
   validateSearchCommandInput(command, options, help);
   validateProfileAndUsageInput(command, options, help);
   validateOutputInput(command, options);
