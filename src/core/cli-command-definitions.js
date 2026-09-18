@@ -1215,6 +1215,21 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
     mayExecuteExternalProcess: false,
     description: "Caller-acknowledged recovery of a STALE or ABANDONED task; records durable state and releases effective write claims.",
   }),
+  "task-repair-contract-bootstrap": Object.freeze({
+    name: "task-repair-contract-bootstrap",
+    category: "project-maintenance",
+    mutation: "MUTATING",
+    options: Object.freeze({
+      ...CLI_COMMON_OPTIONS,
+      ...CLI_TASK_OPTION,
+      "--acknowledge-repair": Object.freeze({ targetKey: "acknowledgeRepair", parseType: "boolean", takesValue: false, description: "explicit caller acknowledgement of the exact append-only repair (required)" }),
+      "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit structured repair output as JSON" }),
+    }),
+    writes: [".forgeloop/task-state/<taskKey>/work-state.json", ".forgeloop/task-state/<taskKey>/events.ndjson"],
+    removes: [],
+    mayExecuteExternalProcess: false,
+    description: "Repairs the exact duplicate contract bootstrap defect without rewriting history; idempotent and append-only.",
+  }),
   "task-repair-legacy-recovery": Object.freeze({
     name: "task-repair-legacy-recovery",
     category: "project-maintenance",

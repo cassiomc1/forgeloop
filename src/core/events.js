@@ -9,6 +9,11 @@ import { assertSchema, readSchema } from "./schema-validation.js";
 import { assertSecretFree } from "./receipt.js";
 import { PROTOCOL_VERSION } from "./protocol.js";
 import { isRecoverableCompletionEvidenceCode } from "./completion-recovery.js";
+import {
+  CONTRACT_BOOTSTRAP_REPAIR_EVENT,
+  assertContractBootstrapRepairDetails,
+  repairMarkerErrors,
+} from "./contract-bootstrap-recovery.js";
 
 import { taskArtifactPath } from "./task-paths.js";
 import { getTaskTransaction, withTaskTransaction } from "./transaction.js";
@@ -137,6 +142,9 @@ export function validateKnownEventDetails(event) {
       return;
     case "LEGACY_RECOVERY_MIGRATION_RECORDED":
       assertLegacyMigrationDetails(event.details);
+      return;
+    case CONTRACT_BOOTSTRAP_REPAIR_EVENT:
+      assertContractBootstrapRepairDetails(event.details);
       return;
     case "TASK_RECOVERY_RESUMED":
       assertRecoveryResumedDetails(event.details);
@@ -620,7 +628,10 @@ export async function validateEventLedger(target, packageRoot, options = {}) {
   validateLegacyRecoveryMigrations(events, errors, {
     allowUnmigratedLegacyRecoveryEvents: options?.allowUnmigratedLegacyRecoveryEvents === true,
   });
-  return { valid: errors.length === 0, events, errors };
+  const markerCount = events.filter((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT).length;
+  if (markerCount > 1) errors.push({ code: "E_CONTRACT_BOOTSTRAP_REPAIR_INVALID", message: "contract bootstrap repair marker must occur at most once" });
+  const repairedErrors = repairMarkerErrors(events, errors);
+  return { valid: repairedErrors.length === 0, events, errors: repairedErrors };
 }
 
 export function validateStateLedgerCoherence(state, events) {

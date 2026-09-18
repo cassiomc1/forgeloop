@@ -47,6 +47,7 @@ export const NEXT_ACTIONS = Object.freeze({
   RECOVER_TASK: "RECOVER_TASK",
   RESUME_RECOVERED_TASK: "RESUME_RECOVERED_TASK",
   RESOLVE_RECOVERY_INCONSISTENCY: "RESOLVE_RECOVERY_INCONSISTENCY",
+  REPAIR_CONTRACT_BOOTSTRAP: "REPAIR_CONTRACT_BOOTSTRAP",
   NONE: "NONE",
 });
 
@@ -164,6 +165,18 @@ export function result({
       ? { reconciliationAuthorityRequired: structuredClone(reconciliationAuthorityRequired) }
       : {}),
     ...(optionalActions?.length ? { optionalActions: structuredClone(optionalActions) } : {}),
+  };
+}
+
+export function contractBootstrapRepairGuidance(taskId, reason = null) {
+  const command = `forgeloop task-repair-contract-bootstrap --task ${taskId} --acknowledge-repair --json`;
+  return {
+    nextAction: NEXT_ACTIONS.REPAIR_CONTRACT_BOOTSTRAP,
+    commands: [command],
+    commandSpecs: [directCommandSpec("task-repair-contract-bootstrap", taskId, [
+      { name: "acknowledgeRepair", option: "--acknowledge-repair", description: "Explicit caller acknowledgement of the exact repair signature." },
+    ])],
+    reason: reason ?? { code: "E_CONTRACT_BOOTSTRAP_REPAIR_AVAILABLE", message: "The exact duplicate contract bootstrap defect is repairable through the official append-only command." },
   };
 }
 

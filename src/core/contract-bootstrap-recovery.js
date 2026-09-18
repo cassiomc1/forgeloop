@@ -1,0 +1,205 @@
+import { canonicalFingerprint } from "./artifacts.js";
+
+export const CONTRACT_BOOTSTRAP_REPAIR_EVENT = "CONTRACT_BOOTSTRAP_REPAIR_RECORDED";
+export const CONTRACT_BOOTSTRAP_REPAIR_VERSION = 1;
+export const CONTRACT_BOOTSTRAP_REPAIR_DEFECT = "DUPLICATE_CONTRACT_VALIDATED_AFTER_CONTRACT_READY";
+export const CONTRACT_BOOTSTRAP_REPAIR_AUTHORITY = "CALLER_ACKNOWLEDGED";
+
+const FINGERPRINT = /^[a-f0-9]{64}$/;
+const REPAIR_ID = /^repair-[a-f0-9]{64}$/;
+const HISTORICAL_EVENTS = new Set([
+  "EXECUTION_STARTED",
+  "VERIFICATION_STARTED",
+  "VERIFICATION_RECORDED",
+  "REVIEW_STARTED",
+  "COMPLETION_VALIDATED",
+  "COMPLETION_REJECTED",
+  "TASK_RECOVERY_RECORDED",
+  "OPERATOR_RECOVERY_RECORDED",
+  "TASK_RECOVERY_RESUMED",
+  "LEGACY_RECOVERY_MIGRATION_RECORDED",
+]);
+const REPAIR_DETAIL_KEYS = new Set([
+  "repairVersion", "taskId", "repairId", "defect",
+  "canonicalContractEventSeq", "canonicalContractEventHash",
+  "duplicateContractEventSeq", "duplicateContractEventHash",
+  "contractCreateCommitSeq", "contractCreateCommitHash", "contractCreateTransactionId",
+  "contractFingerprint", "reconstructedPhase", "routeFingerprint",
+  "previousStateFingerprint", "reconstructedStateFingerprint", "repairedAt", "authorityKind",
+]);
+
+function invalid(message) {
+  const error = new Error(message);
+  error.code = "E_EVENT_INVALID";
+  return error;
+}
+
+function isFingerprint(value) {
+  return typeof value === "string" && FINGERPRINT.test(value);
+}
+
+function isCommitFor(event, operation) {
+  return event?.event === "TRANSACTION_COMMITTED"
+    && event.details?.operation === operation
+    && typeof event.details?.transactionId === "string"
+    && event.details.transactionId.length > 0;
+}
+
+function chronologyError(error) {
+  return error?.code === "E_PHASE_CHRONOLOGY_INVALID"
+    && typeof error.message === "string"
+    && error.message.includes("CONTRACT_VALIDATED");
+}
+
+export function eventHash(event) {
+  const { hash, ...body } = event;
+  return canonicalFingerprint(body);
+}
+
+export function assertContractBootstrapRepairDetails(details) {
+  if (!details || typeof details !== "object" || Array.isArray(details)) {
+    throw invalid("contract bootstrap repair requires structured details");
+  }
+  const unexpected = Object.keys(details).find((key) => !REPAIR_DETAIL_KEYS.has(key));
+  if (unexpected) throw invalid(`contract bootstrap repair details contains unknown property: ${unexpected}`);
+  for (const key of [
+    "taskId", "repairId", "defect", "contractCreateTransactionId", "repairedAt", "authorityKind",
+  ]) {
+    if (typeof details[key] !== "string" || !details[key].trim()) {
+      throw invalid(`contract bootstrap repair details.${key} must be a non-empty string`);
+    }
+  }
+  if (details.repairVersion !== CONTRACT_BOOTSTRAP_REPAIR_VERSION) {
+    throw invalid("contract bootstrap repair details.repairVersion is unsupported");
+  }
+  if (!REPAIR_ID.test(details.repairId)) throw invalid("contract bootstrap repair details.repairId is invalid");
+  if (details.defect !== CONTRACT_BOOTSTRAP_REPAIR_DEFECT) throw invalid("contract bootstrap repair details.defect is invalid");
+  if (details.authorityKind !== CONTRACT_BOOTSTRAP_REPAIR_AUTHORITY) throw invalid("contract bootstrap repair details.authorityKind is invalid");
+  for (const key of [
+    "canonicalContractEventHash", "duplicateContractEventHash", "contractCreateCommitHash",
+    "contractFingerprint", "reconstructedStateFingerprint",
+  ]) {
+    if (!isFingerprint(details[key])) throw invalid(`contract bootstrap repair details.${key} must be a lowercase SHA-256 fingerprint`);
+  }
+  for (const key of ["canonicalContractEventSeq", "duplicateContractEventSeq", "contractCreateCommitSeq"]) {
+    if (!Number.isInteger(details[key]) || details[key] < 1) throw invalid(`contract bootstrap repair details.${key} must be a positive integer`);
+  }
+  if (!["CONTRACT_READY", "ROUTED"].includes(details.reconstructedPhase)) {
+    throw invalid("contract bootstrap repair details.reconstructedPhase is invalid");
+  }
+  if (details.routeFingerprint !== null && !isFingerprint(details.routeFingerprint)) {
+    throw invalid("contract bootstrap repair details.routeFingerprint must be a fingerprint or null");
+  }
+  if (details.previousStateFingerprint !== null && !isFingerprint(details.previousStateFingerprint)) {
+    throw invalid("contract bootstrap repair details.previousStateFingerprint must be a fingerprint or null");
+  }
+  if (details.reconstructedPhase === "ROUTED" && details.routeFingerprint === null) {
+    throw invalid("ROUTED contract bootstrap repair requires routeFingerprint");
+  }
+  if (!Number.isFinite(Date.parse(details.repairedAt))) throw invalid("contract bootstrap repair details.repairedAt must be an ISO timestamp");
+  return details;
+}
+
+export function contractBootstrapRepairId(details) {
+  const identity = {
+    taskId: details.taskId,
+    defect: details.defect,
+    canonicalContractEventSeq: details.canonicalContractEventSeq,
+    canonicalContractEventHash: details.canonicalContractEventHash,
+    duplicateContractEventSeq: details.duplicateContractEventSeq,
+    duplicateContractEventHash: details.duplicateContractEventHash,
+    contractCreateCommitSeq: details.contractCreateCommitSeq,
+    contractCreateCommitHash: details.contractCreateCommitHash,
+    contractCreateTransactionId: details.contractCreateTransactionId,
+    contractFingerprint: details.contractFingerprint,
+    reconstructedPhase: details.reconstructedPhase,
+    routeFingerprint: details.routeFingerprint,
+  };
+  return `repair-${canonicalFingerprint(identity)}`;
+}
+
+export function isContractBootstrapRepairCandidate(events, ledgerErrors = [], taskId = null) {
+  if (!Array.isArray(events) || events.length < 4) return null;
+  const effectiveTaskId = taskId ?? events[0]?.taskId;
+  if (typeof effectiveTaskId !== "string" || !effectiveTaskId) return null;
+  if (events.some((event) => event.taskId !== effectiveTaskId)) return null;
+  if (events.some((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT)) return null;
+  if (events[0]?.event !== "TASK_RECEIVED" || events[1]?.event !== "TRANSACTION_COMMITTED"
+    || events[1]?.details?.operation !== "task-create") return null;
+  if (!events.some((event) => event.event === "DISCOVERY_STARTED")) return null;
+  const contractEvents = events.filter((event) => event.event === "CONTRACT_VALIDATED");
+  if (contractEvents.length !== 2) return null;
+  const [canonical, duplicate] = contractEvents;
+  if (!isFingerprint(canonical.details?.contractFingerprint)
+    || canonical.details.contractFingerprint !== duplicate.details?.contractFingerprint) return null;
+  if (canonical.hash !== eventHash(canonical) || duplicate.hash !== eventHash(duplicate)) return null;
+  const canonicalIndex = events.indexOf(canonical);
+  const duplicateIndex = events.indexOf(duplicate);
+  const canonicalCommit = events[canonicalIndex + 1];
+  const duplicateCommit = events[duplicateIndex + 1];
+  if (!isCommitFor(canonicalCommit, "contract-create") || !isCommitFor(duplicateCommit, "contract-create")) return null;
+  if (duplicateIndex !== events.length - 2 || events.at(-1) !== duplicateCommit) return null;
+  if (events.some((event) => HISTORICAL_EVENTS.has(event.event))) return null;
+  if (!Array.isArray(ledgerErrors) || ledgerErrors.some((error) => !chronologyError(error))) return null;
+  if (!ledgerErrors.some((error) => error.message.includes("milestone must not repeat: CONTRACT_VALIDATED"))
+    || !ledgerErrors.some((error) => error.message.includes("CONTRACT_VALIDATED is out of lifecycle order"))) return null;
+  return {
+    taskId: effectiveTaskId,
+    canonicalContractEvent: canonical,
+    duplicateContractEvent: duplicate,
+    canonicalContractCommit: canonicalCommit,
+    duplicateContractCommit: duplicateCommit,
+    contractFingerprint: canonical.details.contractFingerprint,
+  };
+}
+
+export function isContractBootstrapRepairMarkerValid(events, marker) {
+  try {
+    if (!marker || marker.event !== CONTRACT_BOOTSTRAP_REPAIR_EVENT) return false;
+    if (events.filter((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT).length !== 1) return false;
+    if (events.slice(marker.seq).some((event) => event.event === "CONTRACT_VALIDATED")) return false;
+    assertContractBootstrapRepairDetails(marker.details);
+    if (marker.taskId !== marker.details.taskId || marker.hash !== eventHash(marker)) return false;
+    if (marker.seq < 1 || events[marker.seq - 1] !== marker) return false;
+    const prefix = events.slice(0, marker.seq - 1);
+    const prefixErrors = [];
+    const candidate = isContractBootstrapRepairCandidate(prefix, prefixErrors, marker.taskId);
+    if (!candidate) {
+      const duplicateErrors = [
+        { code: "E_PHASE_CHRONOLOGY_INVALID", message: "lifecycle milestone must not repeat: CONTRACT_VALIDATED" },
+        { code: "E_PHASE_CHRONOLOGY_INVALID", message: "CONTRACT_VALIDATED is out of lifecycle order" },
+      ];
+      const recognized = isContractBootstrapRepairCandidate(prefix, duplicateErrors, marker.taskId);
+      if (!recognized) return false;
+      return isMarkerBound(marker, recognized);
+    }
+    return isMarkerBound(marker, candidate);
+  } catch {
+    return false;
+  }
+}
+
+function isMarkerBound(marker, candidate) {
+  const details = marker.details;
+  const expected = {
+    taskId: candidate.taskId,
+    defect: CONTRACT_BOOTSTRAP_REPAIR_DEFECT,
+    canonicalContractEventSeq: candidate.canonicalContractEvent.seq,
+    canonicalContractEventHash: candidate.canonicalContractEvent.hash,
+    duplicateContractEventSeq: candidate.duplicateContractEvent.seq,
+    duplicateContractEventHash: candidate.duplicateContractEvent.hash,
+    contractCreateCommitSeq: candidate.duplicateContractCommit.seq,
+    contractCreateCommitHash: candidate.duplicateContractCommit.hash,
+    contractCreateTransactionId: candidate.duplicateContractCommit.details.transactionId,
+    contractFingerprint: candidate.contractFingerprint,
+  };
+  for (const [key, value] of Object.entries(expected)) if (details[key] !== value) return false;
+  if (details.repairId !== contractBootstrapRepairId(details)) return false;
+  return true;
+}
+
+export function repairMarkerErrors(events, errors) {
+  const marker = events.find((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
+  if (!marker || !isContractBootstrapRepairMarkerValid(events, marker)) return errors;
+  return errors.filter((error) => !chronologyError(error));
+}

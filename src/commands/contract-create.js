@@ -1,8 +1,9 @@
 import { readFile } from "node:fs/promises";
 
 import { createPresetContract } from "../core/contract-presets.js";
-import { contractFingerprint, validateContract, writeContract } from "../core/contract.js";
-import { appendProtocolEvent, readEvents } from "../core/events.js";
+import { contractFingerprint, readContract, validateContract, writeContract } from "../core/contract.js";
+import { appendProtocolEvent, readEvents, validateEventLedger } from "../core/events.js";
+import { isContractBootstrapRepairCandidate } from "../core/contract-bootstrap-recovery.js";
 import { currentRepositoryFingerprint } from "../core/repository.js";
 import { createWorkState, initializeWorkState, readWorkState } from "../core/work-state.js";
 import { ensureWithin, fileExists } from "../core/filesystem.js";
@@ -22,7 +23,25 @@ export async function runContractCreate({ target, packageRoot, taskId, task, con
     const existingState = await readWorkState(target, { packageRoot, taskId: ctx.taskId });
     if (existingState) {
       if (existingState.phase !== "CONTRACT_READY") throw new Error("Contract already exists beyond the contract-ready phase");
-      return { taskId: ctx.taskId, phase: existingState.phase, idempotent: true };
+      const existingContract = await readContract(target, packageRoot, { taskId: ctx.taskId });
+      const existingLedger = await validateEventLedger(target, packageRoot, { taskId: ctx.taskId });
+      if (!existingLedger.valid) {
+        const candidate = isContractBootstrapRepairCandidate(existingLedger.events, existingLedger.errors, ctx.taskId);
+        const error = new Error(candidate
+          ? "The exact contract bootstrap defect requires task-repair-contract-bootstrap"
+          : "Existing contract checkpoint has an invalid event ledger");
+        error.code = candidate ? "E_CONTRACT_BOOTSTRAP_REPAIR_AVAILABLE" : "E_CONTRACT_BOOTSTRAP_INCONSISTENT";
+        error.next = candidate ? `forgeloop task-repair-contract-bootstrap --task ${ctx.taskId} --acknowledge-repair --json` : undefined;
+        throw error;
+      }
+      if (existingState.contractFingerprint !== existingContract.fingerprint
+        || !existingLedger.events.some((event) => event.event === "CONTRACT_VALIDATED"
+          && event.details?.contractFingerprint === existingContract.fingerprint)) {
+        const error = new Error("Existing contract checkpoint is not bound to its validated contract event");
+        error.code = "E_CONTRACT_BOOTSTRAP_INCONSISTENT";
+        throw error;
+      }
+      return { taskId: ctx.taskId, phase: existingState.phase, idempotent: true, contractFingerprint: existingContract.fingerprint };
     }
 
     let contract;

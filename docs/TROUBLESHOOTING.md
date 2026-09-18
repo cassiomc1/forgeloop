@@ -487,6 +487,20 @@ corrupt, or unreadable evidence fails closed as `INCONSISTENT`. A `REVIEWING`
 phase plus an old timestamp alone is never `STALE`; post-execution tasks whose
 only drift is `REPOSITORY_CHANGED` remain `RECOVERABLE`.
 
+#### Contract bootstrap repair
+
+When `next` reports `REPAIR_CONTRACT_BOOTSTRAP`, do not edit `events.ndjson` or
+`work-state.json`. Run the official, explicitly acknowledged repair:
+
+```bash
+forgeloop task-repair-contract-bootstrap --task <task-id> --acknowledge-repair --json
+```
+
+Only the exact duplicate `CONTRACT_VALIDATED` signature is accepted. The command
+preserves historical lines, reconstructs the proven `CONTRACT_READY` or `ROUTED`
+checkpoint, and records an append-only marker. Tampered artifacts, unrelated
+chronology errors, live locks, or later meaningful activity fail closed.
+
 #### Safe recovery
 
 Follow the classification:
@@ -1326,6 +1340,11 @@ package/process recovery boundary. The relevant stable codes are
 | `E_CONTINUITY_SCHEMA_UNSUPPORTED` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
 | `E_CONTINUITY_STATE_MISSING` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
 | `E_CONTINUITY_TASK_MISMATCH` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
+| `E_CONTRACT_BOOTSTRAP_INCONSISTENT` | Contract bootstrap evidence is inconsistent and cannot be treated as a normal idempotent checkpoint. | Inspect the task ledger and use the exact official contract bootstrap repair only when next recommends it. |
+| `E_CONTRACT_BOOTSTRAP_REPAIR_AUTHORIZATION_REQUIRED` | The official contract bootstrap repair requires explicit caller acknowledgement. | Re-run with --acknowledge-repair after reviewing next and the exact defect signature. |
+| `E_CONTRACT_BOOTSTRAP_REPAIR_AVAILABLE` | The exact recognized contract bootstrap defect has an official append-only repair path. | Run forgeloop task-repair-contract-bootstrap --task <id> --acknowledge-repair. |
+| `E_CONTRACT_BOOTSTRAP_REPAIR_INVALID` | The contract bootstrap repair marker or its bound artifacts are invalid or tampered. | Restore the original artifacts from trusted evidence; ForgeLoop refuses to guess or rewrite history. |
+| `E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE` | The historical contract bootstrap defect does not satisfy the narrow repair safety boundary. | Do not force repair; resolve the ledger inconsistency through a separately reviewed migration. |
 | `E_CONTRACT_INVALID` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
 | `E_CONTRACT_MISSING` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
 | `E_CONTRACT_STALE` | Contract modified after downstream artifacts were generated. | Re-run forgeloop route and forgeloop preflight. |
