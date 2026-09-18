@@ -103,8 +103,10 @@ Automatic dependency enumeration is out of scope.
 ## Cache Behavior
 
 `OPENSRC_HOME` is set to the configured `cacheRoot` for every OpenSrc child
-process. The cache root must be absolute and must not equal, contain, or sit
-inside the project root or `.forgeloop` (checked lexically and canonically).
+process. The cache root and the project root must be fully disjoint: neither
+may equal or contain the other, and the cache must not sit inside
+`.forgeloop`. Each relationship is checked both lexically and canonically
+(realpath), so symlinked prefixes cannot hide an overlap.
 Each printed path must canonicalize inside the cache root, exist, be a
 directory, and survive symlink-escape checks before any search runs.
 
@@ -163,12 +165,18 @@ never persisted or logged), timeouts and output overflow (shared deadline,
 ## Limits
 
 - Sources: at most 8 configured; one `path` call each.
-- Files per source: 2,000; per-file: 256 KiB; total reads: 8 MiB.
+- Files read per source: 2,000; examined entries per source: 5,000
+  (skipped, oversized, and binary entries count toward traversal, never
+  bypass it).
+- Per-file: 256 KiB; total reads: 8 MiB per advisory recall across all
+  configured sources through one shared budget.
 - Matches per source: 32; snippet window: 7 lines.
 - Process stdout/stderr: 64 KiB each; kill grace: 250 ms.
+- One shared recall deadline spans version qualification, path resolution,
+  traversal, reads, matching, and normalization.
 - Ranking: exact full-query match, then token overlap, then source order,
   relative path, and line number. Repeated runs over unchanged fixtures are
-  byte-identical.
+  byte-identical, including identical stopping points under budget pressure.
 
 ## Private Repositories
 

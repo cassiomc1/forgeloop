@@ -1,14 +1,30 @@
 import { lstat, readdir, readFile, realpath } from "node:fs/promises";
 import path from "node:path";
 
+import {
+  E_ADVISORY_CONTEXT_TIMEOUT,
+} from "../../core/error-codes.js";
+
 export const OPENSRC_SEARCH_LIMITS = Object.freeze({
   maxSources: 8,
   maxFilesPerSource: 2000,
+  maxEntriesPerSource: 5000,
   maxFileBytes: 256 * 1024,
   maxTotalReadBytes: 8 * 1024 * 1024,
   maxMatchesPerSource: 32,
   maxSnippetLines: 7,
 });
+
+function searchTimeoutError() {
+  const error = new Error("OpenSrc search exceeded the recall deadline");
+  error.code = E_ADVISORY_CONTEXT_TIMEOUT;
+  return error;
+}
+
+function assertDeadline(deadline, clockImpl) {
+  if (deadline === null || deadline === undefined) return;
+  if (clockImpl() >= deadline) throw searchTimeoutError();
+}
 
 const SKIPPED_DIRECTORIES = new Set([
   ".git",
@@ -90,7 +106,9 @@ async function resolveEntryTarget(resolvedRoot, absolutePath, stat, { lstatImpl,
 }
 
 async function processDirectoryEntry(resolvedRoot, relativePath, name, context) {
-  const { sourceSpec, sourceIndex, lowerQuery, queryTokens, limits, matches, state, lstatImpl, realpathImpl, readFileImpl } = context;
+  const { sourceSpec, sourceIndex, lowerQuery, queryTokens, limits, matches, state, budget,
+    lstatImpl, realpathImpl, readFileImpl, deadline, clockImpl } = context;
+  assertDeadline(deadline, clockImpl);
   const absolutePath = path.join(resolvedRoot, relativePath);
   let stat;
   try {
@@ -104,15 +122,17 @@ async function processDirectoryEntry(resolvedRoot, relativePath, name, context) 
   if (BINARY_EXTENSIONS.has(path.extname(name).toLowerCase())) return "skip";
   if (entry.stat.size > limits.maxFileBytes) return "skip";
   if (state.filesSeen >= limits.maxFilesPerSource) return "skip";
-  if (state.totalBytes + entry.stat.size > limits.maxTotalReadBytes) return "skip";
+  if (entry.stat.size > budget.remainingReadBytes) return "skip";
+  assertDeadline(deadline, clockImpl);
   let buffer;
   try {
     buffer = await readFileImpl(absolutePath);
   } catch {
     return "skip";
   }
+  assertDeadline(deadline, clockImpl);
   state.filesSeen += 1;
-  state.totalBytes += buffer.byteLength;
+  budget.remainingReadBytes -= buffer.byteLength;
   if (isProbablyBinary(buffer)) return "skip";
   const text = buffer.toString("utf8");
   if (/\u0000/u.test(text)) return "skip";
@@ -162,8 +182,11 @@ function compareMatches(left, right) {
  *
  * Traversal is lexicographically sorted, directory symlinks are never
  * followed, file symlinks must resolve inside the source root, and every
- * bound (file count, file size, total bytes, match count) is enforced before
- * further allocation or reads.
+ * bound (entry count, file count, file size, shared byte budget, match count,
+ * recall deadline) is enforced before further allocation or reads. Generated
+ * directory names are skipped at any depth; ordinary files are never skipped
+ * by name. Stopping points are deterministic for identical trees, queries,
+ * and budgets.
  */
 export async function searchSourceRoot({
   sourceRoot,
@@ -172,12 +195,18 @@ export async function searchSourceRoot({
   query,
   limits = OPENSRC_SEARCH_LIMITS,
   hooks = {},
+  budget = null,
+  deadline = null,
+  clockImpl = Date.now,
 } = {}) {
   if (typeof sourceRoot !== "string" || sourceRoot === "" || typeof sourceSpec !== "string" || sourceSpec === "") {
     throw new Error("OpenSrc search requires a source root and source spec");
   }
   if (typeof query !== "string" || query.trim() === "") {
     throw new Error("OpenSrc search requires a non-empty query");
+  }
+  if (deadline !== null && deadline !== undefined && typeof clockImpl !== "function") {
+    throw new Error("OpenSrc search requires a clock implementation when a deadline is set");
   }
   const { lstat: lstatImpl, readdir: readdirImpl, readFile: readFileImpl, realpath: realpathImpl } = {
     ...defaultHooks(),
@@ -192,32 +221,44 @@ export async function searchSourceRoot({
   const lowerQuery = query.toLowerCase();
   const queryTokens = tokenizeQuery(query);
   const matches = [];
-  const state = { filesSeen: 0, totalBytes: 0 };
+  const state = { filesSeen: 0, entriesVisited: 0 };
+  const sharedBudget = budget ?? { remainingReadBytes: limits.maxTotalReadBytes ?? OPENSRC_SEARCH_LIMITS.maxTotalReadBytes };
+  const maxEntries = limits.maxEntriesPerSource ?? OPENSRC_SEARCH_LIMITS.maxEntriesPerSource;
 
   const stack = ["."];
+  const context = {
+    resolvedRoot, sourceSpec, sourceIndex, lowerQuery, queryTokens, limits, matches, state,
+    budget: sharedBudget, deadline, clockImpl, maxEntries,
+    lstatImpl, realpathImpl, readdirImpl, readFileImpl,
+  };
   while (stack.length > 0) {
-    const relativeDir = stack.pop();
-    const absoluteDir = path.join(resolvedRoot, relativeDir);
-    let entries;
-    try {
-      entries = await readdirImpl(absoluteDir, { withFileTypes: true });
-    } catch {
-      continue;
-    }
-    const names = entries.map((entry) => entry.name).sort();
-    for (let index = names.length - 1; index >= 0; index -= 1) {
-      const name = names[index];
-      if (relativeDir === "." && SKIPPED_DIRECTORIES.has(name)) continue;
-      const relativePath = relativeDir === "." ? name : `${relativeDir}/${name}`;
-      const outcome = await processDirectoryEntry(resolvedRoot, relativePath, name, {
-        sourceSpec, sourceIndex, lowerQuery, queryTokens, limits, matches, state,
-        lstatImpl, realpathImpl, readFileImpl,
-      });
-      if (outcome === "directory") stack.push(relativePath);
-    }
-    if (matches.length >= limits.maxMatchesPerSource) break;
+    assertDeadline(deadline, clockImpl);
+    if (await scanDirectory(stack, context)) break;
   }
 
   matches.sort(compareMatches);
   return matches;
+}
+
+async function scanDirectory(stack, context) {
+  const { resolvedRoot, limits, matches, state, maxEntries, readdirImpl } = context;
+  const relativeDir = stack.pop();
+  const absoluteDir = path.join(resolvedRoot, relativeDir);
+  let entries;
+  try {
+    entries = await readdirImpl(absoluteDir, { withFileTypes: true });
+  } catch {
+    return false;
+  }
+  const names = entries.map((entry) => entry.name).sort();
+  for (let index = names.length - 1; index >= 0; index -= 1) {
+    if (matches.length >= limits.maxMatchesPerSource) return true;
+    if (state.entriesVisited >= maxEntries) return true;
+    state.entriesVisited += 1;
+    const name = names[index];
+    const relativePath = relativeDir === "." ? name : `${relativeDir}/${name}`;
+    const outcome = await processDirectoryEntry(resolvedRoot, relativePath, name, context);
+    if (outcome === "directory" && !SKIPPED_DIRECTORIES.has(name)) stack.push(relativePath);
+  }
+  return matches.length >= limits.maxMatchesPerSource || state.entriesVisited >= maxEntries;
 }

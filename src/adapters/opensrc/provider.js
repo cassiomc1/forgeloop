@@ -102,14 +102,15 @@ async function canonicalizeExisting(candidate) {
 async function assertCacheOutsideProject(cacheRoot, projectRoot) {
   // Compare both the lexical and the canonicalized spellings: either side may
   // traverse symlinked prefixes (for example /var versus /private/var), so a
-  // single spelling can miss a genuine containment relationship.
+  // single spelling can miss a genuine containment relationship. The roots
+  // must be disjoint in both directions: neither may contain the other.
   const spellings = [
     [path.resolve(cacheRoot), path.resolve(projectRoot)],
     [await canonicalizeExisting(cacheRoot), await canonicalizeExisting(projectRoot)],
   ];
   for (const [candidateCache, candidateProject] of spellings) {
-    if (isPathWithin(candidateProject, candidateCache)) {
-      throw providerError(E_ADVISORY_CONTEXT_PROVIDER_INVALID, "OpenSrc cacheRoot must be outside the project root");
+    if (isPathWithin(candidateProject, candidateCache) || isPathWithin(candidateCache, candidateProject)) {
+      throw providerError(E_ADVISORY_CONTEXT_PROVIDER_INVALID, "OpenSrc cacheRoot and project root must be disjoint");
     }
     if (isPathWithin(path.join(candidateProject, ".forgeloop"), candidateCache)) {
       throw providerError(E_ADVISORY_CONTEXT_PROVIDER_INVALID, "OpenSrc cacheRoot must be outside .forgeloop");
@@ -303,6 +304,7 @@ export function createOpenSrcAdvisoryContextProvider({
       }
 
       const matches = [];
+      const sharedBudget = { remainingReadBytes: OPENSRC_SEARCH_LIMITS.maxTotalReadBytes };
       const boundedSources = qualifiedSources.slice(0, MAX_SOURCES);
       for (let sourceIndex = 0; sourceIndex < boundedSources.length; sourceIndex += 1) {
         const source = boundedSources[sourceIndex];
@@ -322,6 +324,8 @@ export function createOpenSrcAdvisoryContextProvider({
           sourceSpec: source,
           sourceIndex,
           query,
+          budget: sharedBudget,
+          deadline,
         });
         matches.push(...sourceMatches);
       }

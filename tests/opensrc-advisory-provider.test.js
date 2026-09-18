@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { mkdir, mkdtemp, readdir, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readdir, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -284,6 +284,51 @@ test("cache inside project or .forgeloop is rejected", async () => {
       );
     }
   });
+});
+
+test("project nested inside cache is rejected", async () => {
+  const cacheRoot = await mkdtemp(path.join(os.tmpdir(), "forgeloop-opensrc-cache-"));
+  try {
+    const projectPath = path.join(cacheRoot, "nested-project");
+    await mkdir(projectPath, { recursive: true });
+    const provider = createOpenSrcAdvisoryContextProvider({
+      executablePath: "/opt/opensrc/bin/opensrc",
+      expectedVersion: EXPECTED_VERSION,
+      cacheRoot,
+      sources: ["zod"],
+      spawnImpl: scriptedSpawn({}),
+    });
+    const runtimeContext = createForgeLoopContext({ advisoryContextProviders: { opensrc: provider } });
+    await assert.rejects(
+      recallAdvisoryContext({ target: projectPath, taskId: "t", providerName: "opensrc", query: "x", runtimeContext }),
+      (error) => error.code === E_ADVISORY_CONTEXT_PROVIDER_INVALID,
+    );
+  } finally {
+    await removeTempTree(cacheRoot);
+  }
+});
+
+test("project inside symlinked cache ancestor is rejected", async () => {
+  const real = await mkdtemp(path.join(os.tmpdir(), "forgeloop-opensrc-real-"));
+  try {
+    await mkdir(path.join(real, "outer", "inner"), { recursive: true });
+    const link = path.join(real, "linked-cache");
+    await symlink(path.join(real, "outer"), link);
+    const provider = createOpenSrcAdvisoryContextProvider({
+      executablePath: "/opt/opensrc/bin/opensrc",
+      expectedVersion: EXPECTED_VERSION,
+      cacheRoot: link,
+      sources: ["zod"],
+      spawnImpl: scriptedSpawn({}),
+    });
+    const runtimeContext = createForgeLoopContext({ advisoryContextProviders: { opensrc: provider } });
+    await assert.rejects(
+      recallAdvisoryContext({ target: path.join(real, "outer", "inner"), taskId: "t", providerName: "opensrc", query: "x", runtimeContext }),
+      (error) => error.code === E_ADVISORY_CONTEXT_PROVIDER_INVALID,
+    );
+  } finally {
+    await removeTempTree(real);
+  }
 });
 
 test("prompt injection stays inert source text", async () => {
