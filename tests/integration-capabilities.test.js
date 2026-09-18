@@ -108,6 +108,21 @@ test("verification adapter and isolation policy are runtime-only context", () =>
   );
 });
 
+test("browser verification providers remain lazy runtime-only context", () => {
+  let factoryCalls = 0;
+  const context = createForgeLoopContext({
+    browserVerificationProviders: {
+      fake: () => {
+        factoryCalls += 1;
+        return { id: "fake", verify: async () => ({ assertions: [] }) };
+      },
+    },
+  });
+  assert.equal(factoryCalls, 0);
+  assert.equal(typeof context.browserVerificationProviders.fake, "function");
+  assert.equal(Object.prototype.hasOwnProperty.call(context, "browserVerificationProviders"), true);
+});
+
 test("usage providers are optional trusted runtime context and actor reports stay separate", async () => {
   const provider = { getTaskUsage: async () => null };
   const context = createForgeLoopContext({ usageProvider: provider });

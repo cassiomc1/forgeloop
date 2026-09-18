@@ -71,6 +71,7 @@
     "docs/PACKAGE_CONTENTS.md",
     "docs/PROVIDER_ARCHITECTURE.md",
     "docs/PROVIDERS.md",
+    "docs/BROWSER_VERIFICATION.md",
     "scripts/CI_VALIDATORS.md",
     "docs/MCP.md",
     "docs/UNIVERSAL_INTEGRATION.md",
