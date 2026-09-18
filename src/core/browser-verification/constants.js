@@ -33,6 +33,9 @@ export const BROWSER_VERIFICATION_LIMITS = Object.freeze({
   maxArtifacts: 16,
   maxArtifactRefChars: 1024,
   maxResultChars: 524288,
+  maxNavigations: 128,
+  maxSnapshots: 16,
+  maxArtifactBytes: 50_000_000,
   defaultTimeoutMs: 30_000,
   maxTimeoutMs: 120_000,
 });
@@ -100,6 +103,16 @@ export const BROWSER_VERIFICATION_TRUST = Object.freeze({
   completionAuthority: false,
   evidenceRequiresForgeLoopValidation: true,
 });
+
+export const BROWSER_VERIFICATION_RESULT_FIELDS = Object.freeze([
+  "status", "assertions", "finalUrl", "navigations", "diagnostics", "snapshots", "artifacts",
+]);
+
+export const BROWSER_VERIFICATION_BLOCKED_RESULT_FIELDS = Object.freeze([
+  "complete", "completed", "nextAction", "releaseClaims", "mutationAllowed", "taskPhase",
+  "lifecycleState", "receipt", "evidence", "evidenceKind", "provenance", "authority",
+  "lifecycleAuthority", "completionAuthority", "evidenceAuthority", "requiredForCompletion",
+]);
 
 function verificationError(message, details) {
   const error = new Error(message);

@@ -200,6 +200,23 @@ not grant lifecycle, completion, evidence, or installation authority.
 | False completion | Completion authority false |
 | False evidence | ForgeLoop validation required |
 
+## Browser verification boundary
+
+Browser verification is host-injected and explicit. It is not a browser
+sandbox, lifecycle adapter, or completion bridge.
+
+| Threat | Mitigation |
+| --- | --- |
+| Malicious provider or fake PASS/COMPLETE | Provider results cross a strict allowlist and authority-field rejection boundary; ForgeLoop derives status and stamps observation-only trust. |
+| Factory or verify hang | One ForgeLoop-owned deadline covers factory resolution, validation, verify, and normalization; expiry aborts the shared signal and applies bounded cleanup. |
+| Redirect escape or origin confusion | HTTP(S)-only, credential-free `finalUrl` and every reported navigation are checked against exact normalized allowed origins. |
+| Cookie, token, authorization, signed URL, or path leakage | Public provider failures are generic; portable observation fields and artifact refs reject sensitive patterns and absolute/file URLs. |
+| Prompt injection or malicious snapshots | Snapshot and diagnostic text is bounded portable observation only and has no executable or lifecycle semantics. |
+| Screenshot metadata abuse | Artifacts are bounded structured metadata with positive byte length, canonical SHA-256, portable refs, and no raw bytes. |
+| Oversized DOM or output | Bounded steps, assertions, snapshots, diagnostics, artifacts, URLs, and result size limits fail closed. |
+| Arbitrary JavaScript, file/data URLs, upload/download, or credentials | Strict request allowlists reject unsupported fields and non-HTTP(S)/credential-bearing URLs. |
+| Provider session reuse or browser network access | Providers own session cleanup and network behavior; ForgeLoop makes no sandbox claim and does not install or discover browsers. |
+
 ## Structural-quality provider boundary
 
 Structural-quality observations are untrusted external data. The built-in

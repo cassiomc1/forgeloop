@@ -239,6 +239,16 @@ capability advertisement does not imply a generic public provider registration
 API or a supported `./providers` package subpath. Protocol version remains 1,
 Schema version remains 1, and Integration API version remains 1.
 
+The dedicated `browserVerificationProviders` runtime-context option is a
+separate explicit Integration API boundary. It is host-injected, provider
+neutral, lazy, and inert during context construction. `runBrowserVerification`
+is the only public operation; it does not run from lifecycle commands and does
+not persist observations. ForgeLoop owns the shared deadline, cooperative
+cancellation, strict result snapshot, exact origin/redirect validation, and
+overall assertion-status derivation. Browser observations cannot directly
+create evidence, completion authority, claims, receipts, or next actions. The
+origin allowlist is not a network sandbox and no browser vendor is canonical.
+
 A consumer that understands `canonicalHandoffs` v1 but not v2 may disable the
 handoff-specific UI while keeping Protocol v1 core functionality available.
 Consumers must feature-detect the capability family and must not mark the

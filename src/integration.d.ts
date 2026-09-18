@@ -67,6 +67,8 @@ export interface ForgeLoopBrowserVerificationAssertion {
   expected?: string;
 }
 export interface ForgeLoopBrowserVerificationRequest {
+  taskId: string;
+  target: string;
   verificationId: string;
   requirement: string;
   startUrl: string;
@@ -80,24 +82,46 @@ export interface ForgeLoopBrowserVerificationRequest {
 export interface ForgeLoopBrowserVerificationProvider {
   id: string;
   version?: string;
-  verify(input: ForgeLoopBrowserVerificationRequest): Promise<unknown> | unknown;
+  verify(input: ForgeLoopBrowserVerificationProviderInput): Promise<unknown> | unknown;
 }
-export type ForgeLoopBrowserVerificationProviderFactory = () => ForgeLoopBrowserVerificationProvider | Promise<ForgeLoopBrowserVerificationProvider>;
+export interface ForgeLoopBrowserVerificationProviderInput extends ForgeLoopBrowserVerificationRequest {
+  signal: AbortSignal;
+  timeoutMs: number;
+}
+export type ForgeLoopBrowserVerificationProviderFactory = (input: Pick<ForgeLoopBrowserVerificationProviderInput, "signal" | "timeoutMs">) => ForgeLoopBrowserVerificationProvider | Promise<ForgeLoopBrowserVerificationProvider>;
+export interface ForgeLoopBrowserVerificationArtifact {
+  kind: "SCREENSHOT";
+  mimeType: "image/png" | "image/jpeg";
+  byteLength: number;
+  sha256: string;
+  ref: string;
+}
 export interface ForgeLoopBrowserVerificationResult {
+  taskId: string;
   verificationId: string;
+  requirement: string;
+  target: string;
   provider: { id: string; version?: string };
   status: ForgeLoopBrowserVerificationStatus;
   assertions: readonly { id: string; status: ForgeLoopBrowserVerificationStatus; actual?: string; snapshot?: string; message?: string }[];
   diagnostics: readonly string[];
-  artifacts: readonly string[];
+  finalUrl: string;
+  navigations: readonly { url: string; kind: "NAVIGATE" | "REDIRECT" }[];
+  snapshots: readonly { kind: "ACCESSIBILITY"; text: string }[];
+  artifacts: readonly ForgeLoopBrowserVerificationArtifact[];
   authority: "OBSERVATION";
   evidenceAuthority: "NONE";
   actionability: "NON_EXECUTABLE";
   lifecycleAuthority: false;
   completionAuthority: false;
+  persisted: false;
+  trustRole: "NON_EVIDENCE_BROWSER_VERIFICATION";
+  evidenceRequiresForgeLoopValidation: true;
 }
 
-export function runBrowserVerification(options: {
+export declare function runBrowserVerification(options: {
+  target: string;
+  taskId: string;
   providerName: string;
   verificationId: string;
   requirement: string;
@@ -110,7 +134,34 @@ export function runBrowserVerification(options: {
   timeoutMs?: number;
   runtimeContext?: { browserVerificationProviders?: object | Map<string, ForgeLoopBrowserVerificationProvider | ForgeLoopBrowserVerificationProviderFactory> };
 }): Promise<ForgeLoopBrowserVerificationResult>;
-export function verifyBrowserContext(options: Parameters<typeof runBrowserVerification>[0]): Promise<ForgeLoopBrowserVerificationResult>;
+export declare const BROWSER_VERIFICATION_ASSERTION_KINDS: readonly ForgeLoopBrowserVerificationAssertionKind[];
+export declare const BROWSER_VERIFICATION_ASSERTION_STATUSES: readonly ForgeLoopBrowserVerificationStatus[];
+export declare const BROWSER_VERIFICATION_CAPTURE_POLICIES: readonly ForgeLoopBrowserVerificationCapturePolicy[];
+export declare const BROWSER_VERIFICATION_LIMITS: Readonly<Record<string, number>>;
+export declare const BROWSER_VERIFICATION_LOCATOR_KINDS: readonly ForgeLoopBrowserVerificationLocator["kind"][];
+export declare const BROWSER_VERIFICATION_PROVIDER_ID_PATTERN: RegExp;
+export declare const BROWSER_VERIFICATION_STEP_KINDS: readonly ForgeLoopBrowserVerificationStepKind[];
+export declare const BROWSER_VERIFICATION_TRUST: Readonly<Record<string, unknown>>;
+export declare const BROWSER_VERIFICATION_WAIT_CONDITIONS: readonly string[];
+export declare function normalizeBrowserVerificationRequestOptions(input?: Record<string, unknown>): Record<string, unknown>;
+export declare function assertBrowserVerificationProvider(provider: unknown): ForgeLoopBrowserVerificationProvider;
+export declare function assertBrowserVerificationProviderIdentity(provider: unknown, expectedId: string): ForgeLoopBrowserVerificationProvider;
+export declare function assertBrowserVerificationProviderRegistration(provider: unknown, expectedId: string): ForgeLoopBrowserVerificationProvider;
+export declare function createBrowserVerificationProviderRegistry(options?: {
+  providers?: Record<string, ForgeLoopBrowserVerificationProvider | ForgeLoopBrowserVerificationProviderFactory> | Map<string, ForgeLoopBrowserVerificationProvider | ForgeLoopBrowserVerificationProviderFactory>;
+}): {
+  resolve(name: string, input: ForgeLoopBrowserVerificationProviderInput): Promise<ForgeLoopBrowserVerificationProvider>;
+};
+export declare function normalizeBrowserVerificationRequest(input: Record<string, unknown>): ForgeLoopBrowserVerificationRequest;
+export declare function resolveBrowserVerificationProvider(options: {
+  providers?: Record<string, ForgeLoopBrowserVerificationProvider | ForgeLoopBrowserVerificationProviderFactory> | Map<string, ForgeLoopBrowserVerificationProvider | ForgeLoopBrowserVerificationProviderFactory> | { get(id: string): unknown; has(id: string): boolean };
+  providerName: string;
+  input?: Pick<ForgeLoopBrowserVerificationProviderInput, "signal" | "timeoutMs">;
+}): Promise<ForgeLoopBrowserVerificationProvider | null>;
+export declare function normalizeBrowserVerificationResult(raw: unknown, options: {
+  request: ForgeLoopBrowserVerificationRequest;
+  provider: ForgeLoopBrowserVerificationProvider;
+}): ForgeLoopBrowserVerificationResult;
 
 export interface RepositorySearchSubmatch {
   start: number;

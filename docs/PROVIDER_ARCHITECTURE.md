@@ -9,7 +9,9 @@ provider registry is internal and is not a supported package API.
 ## Scope
 
 This document explains the common boundary around provider observations. It
-does not add generic provider registration to `createForgeLoopContext()`, CLI
+does not add generic provider registration to `createForgeLoopContext()`; the
+dedicated runtime-only `browserVerificationProviders` registration is the
+exception documented by the browser contract. It does not add CLI
 provider commands, automatic installation, lifecycle authority, or completion
 authority.
 
@@ -74,9 +76,9 @@ authority validation
  │
  ▼
 immutable observation
- │
- ▼
-ForgeLoop consumer
+  │
+  ▼
+  ForgeLoop consumer
 ```
 
 The result boundary is:
@@ -92,6 +94,12 @@ optional canonical evidence/use
 ```
 
 A provider must never bypass ForgeLoop-owned validation.
+
+Browser verification is an explicit Integration API operation, not a generic
+provider command. Its registry is inert during context construction, its
+factory and verify call share one deadline and cooperative `AbortSignal`, and
+its final status is derived by ForgeLoop from the requested assertion results.
+The origin allowlist validates observations but is not a network sandbox.
 
 ## Trust Boundary
 

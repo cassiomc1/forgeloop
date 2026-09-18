@@ -1,268 +1,230 @@
 import {
+  E_BROWSER_VERIFICATION_ORIGIN_DENIED,
   E_BROWSER_VERIFICATION_OUTPUT_LIMIT,
   E_BROWSER_VERIFICATION_RESULT_INVALID,
 } from "../error-codes.js";
-import {
-  assertPortableContextSafe,
-  deepFreeze,
-  normalizePortableText,
-} from "../portable-context.js";
+import { deepFreeze, normalizePortableText } from "../portable-context.js";
 import {
   BROWSER_VERIFICATION_ASSERTION_STATUSES,
+  BROWSER_VERIFICATION_BLOCKED_RESULT_FIELDS,
   BROWSER_VERIFICATION_LIMITS,
-  BROWSER_VERIFICATION_RESULT_STATUSES,
+  BROWSER_VERIFICATION_RESULT_FIELDS,
   BROWSER_VERIFICATION_TRUST,
 } from "./constants.js";
 
-const AUTHORITY_FIELDS = [
-  "authority",
-  "evidenceAuthority",
-  "actionability",
-  "trustRole",
-  "persisted",
-  "lifecycleAuthority",
-  "completionAuthority",
-  "evidenceRequiresForgeLoopValidation",
-];
-
-function resultError(message, details) {
+function resultError(message, details = null, code = E_BROWSER_VERIFICATION_RESULT_INVALID) {
   const error = new Error(message);
-  error.code = E_BROWSER_VERIFICATION_RESULT_INVALID;
-  error.details = details ?? null;
+  error.code = code;
+  error.details = details;
   return error;
 }
 
 function limitError(message, details) {
-  const error = new Error(message);
-  error.code = E_BROWSER_VERIFICATION_OUTPUT_LIMIT;
-  error.details = details ?? null;
-  return error;
+  return resultError(message, details, E_BROWSER_VERIFICATION_OUTPUT_LIMIT);
 }
 
-function toPortable(label, value, maxLength, { optional = false } = {}) {
+function portable(label, value, maxLength, optional = false) {
   try {
     return normalizePortableText(value, { label, maxLength, optional });
-  } catch (error) {
-    throw resultError(`${label} is invalid: ${error.message}`, { [label]: value });
+  } catch {
+    throw resultError(`${label} is invalid.`);
   }
 }
 
-function rejectAuthorityOverrides(raw) {
-  for (const field of AUTHORITY_FIELDS) {
-    if (raw[field] !== undefined) {
-      throw resultError(`browser verification result must not set ${field}.`, { [field]: raw[field] });
+function assertSafeObservationText(label, value) {
+  if (/(?:authorization\s*:\s*bearer|cookie\s*:|(?:token|secret|password)=|-----begin|file:\/\/|(?:^|\/)Users\/|(?:^|\/)home\/)/i.test(value)) {
+    throw resultError(`${label} contains sensitive or non-portable content.`);
+  }
+  return value;
+}
+
+function strictSnapshot(value, label = "browser verification result", seen = new Set()) {
+  if (value === null || typeof value === "string" || typeof value === "boolean") return value;
+  if (typeof value === "number") {
+    if (!Number.isFinite(value)) throw resultError(`${label} contains a non-finite number.`);
+    return value;
+  }
+  if (typeof value !== "object") throw resultError(`${label} contains an unsupported value.`);
+  if (seen.has(value)) throw resultError(`${label} contains a circular reference.`);
+  if (Array.isArray(value)) {
+    seen.add(value);
+    try {
+      const output = [];
+      for (let index = 0; index < value.length; index += 1) {
+        if (!Object.prototype.hasOwnProperty.call(value, index)) throw resultError(`${label} contains a sparse array.`);
+        const descriptor = Object.getOwnPropertyDescriptor(value, String(index));
+        if (!descriptor || descriptor.get || descriptor.set) throw resultError(`${label}[${index}] is an accessor.`);
+        output.push(strictSnapshot(value[index], `${label}[${index}]`, seen));
+      }
+      return output;
+    } finally {
+      seen.delete(value);
+    }
+  }
+  if (value instanceof Date || value instanceof Map || value instanceof Set || value instanceof Promise
+    || Object.getPrototypeOf(value) !== Object.prototype && Object.getPrototypeOf(value) !== null) {
+    throw resultError(`${label} contains a non-plain object.`);
+  }
+  seen.add(value);
+  try {
+    const output = {};
+    for (const key of Reflect.ownKeys(value)) {
+      if (typeof key !== "string") throw resultError(`${label} contains a symbol key.`);
+      if (key === "toJSON") throw resultError(`${label} contains a custom toJSON method.`);
+      const descriptor = Object.getOwnPropertyDescriptor(value, key);
+      if (!descriptor || descriptor.get || descriptor.set) throw resultError(`${label}.${key} is an accessor.`);
+      output[key] = strictSnapshot(value[key], `${label}.${key}`, seen);
+    }
+    return output;
+  } finally {
+    seen.delete(value);
+  }
+}
+
+function rejectAuthorityFields(raw) {
+  for (const field of BROWSER_VERIFICATION_BLOCKED_RESULT_FIELDS) {
+    if (Object.prototype.hasOwnProperty.call(raw, field)) {
+      throw resultError("browser verification result contains a reserved authority field.", { field });
     }
   }
 }
 
-function normalizeAssertion(raw, index, expectedAssertion) {
-  if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
-    throw resultError(`assertions[${index}] must be an object.`, { assertion: raw });
+function snapshotInput(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw resultError("browser verification result must be an object.");
+  for (const key of Reflect.ownKeys(raw)) {
+    if (typeof key !== "string") throw resultError("browser verification result contains a symbol key.");
+    const descriptor = Object.getOwnPropertyDescriptor(raw, key);
+    if (!descriptor || descriptor.get || descriptor.set) throw resultError("browser verification result contains an accessor.", { field: key });
   }
-  rejectAuthorityOverrides(raw);
-  const id = toPortable(
-    `assertions[${index}].id`,
-    raw.id,
-    BROWSER_VERIFICATION_LIMITS.maxAssertionIdChars,
-  );
-  if (expectedAssertion && id !== expectedAssertion.id) {
-    throw resultError(`assertions[${index}].id does not match the requested assertion.`, {
-      id,
-      expectedId: expectedAssertion.id,
-    });
+  rejectAuthorityFields(raw);
+  return strictSnapshot(raw);
+}
+
+function inspectResultShape(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw resultError("browser verification result must be an object.");
+  for (const key of Reflect.ownKeys(raw)) {
+    if (typeof key !== "string") throw resultError("browser verification result contains a symbol key.");
+    const descriptor = Object.getOwnPropertyDescriptor(raw, key);
+    if (!descriptor || descriptor.get || descriptor.set) throw resultError("browser verification result contains an accessor.");
   }
-  if (expectedAssertion && raw.kind !== expectedAssertion.kind) {
-    throw resultError(`assertions[${index}].kind does not match the requested assertion.`, {
-      kind: raw.kind,
-      expectedKind: expectedAssertion.kind,
-    });
+  rejectAuthorityFields(raw);
+}
+
+function assertOrigin(value, label, allowedOrigins) {
+  if (typeof value !== "string" || value.length > BROWSER_VERIFICATION_LIMITS.maxUrlChars) {
+    throw resultError(`${label} is invalid.`);
   }
-  if (!BROWSER_VERIFICATION_ASSERTION_STATUSES.includes(raw.status)) {
-    throw resultError(`assertions[${index}].status must be a supported assertion status.`, {
-      status: raw.status,
-    });
+  let url;
+  try { url = new URL(value); } catch { throw resultError(`${label} is invalid.`); }
+  if (!["http:", "https:"].includes(url.protocol) || url.username || url.password) {
+    throw resultError(`${label} is invalid.`);
   }
-  const normalized = { id, status: raw.status };
-  if (raw.actual !== undefined && raw.actual !== null) {
-    normalized.actual = toPortable(
-      `assertions[${index}].actual`,
-      raw.actual,
-      BROWSER_VERIFICATION_LIMITS.maxActualChars,
-    );
+  const origin = `${url.protocol}//${url.hostname.toLowerCase()}${url.port ? `:${url.port}` : ""}`;
+  if (!allowedOrigins.includes(origin)) {
+    throw resultError(`${label} origin is not allowed.`, { label }, E_BROWSER_VERIFICATION_ORIGIN_DENIED);
   }
-  if (raw.snapshot !== undefined && raw.snapshot !== null) {
-    normalized.snapshot = toPortable(
-      `assertions[${index}].snapshot`,
-      raw.snapshot,
-      BROWSER_VERIFICATION_LIMITS.maxSnapshotChars,
-    );
+  return value;
+}
+
+function normalizeAssertions(rawAssertions, expected) {
+  if (!Array.isArray(rawAssertions) || rawAssertions.length !== expected.length) {
+    throw resultError("browser verification result assertions must match the requested assertion set.");
   }
-  if (raw.message !== undefined && raw.message !== null) {
-    normalized.message = toPortable(
-      `assertions[${index}].message`,
-      raw.message,
-      BROWSER_VERIFICATION_LIMITS.maxDiagnosticChars,
-    );
-  }
-  return deepFreeze(normalized);
+  const ids = new Set();
+  return rawAssertions.map((raw, index) => {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw resultError(`assertions[${index}] is invalid.`);
+    const expectedAssertion = expected[index];
+    const id = portable(`assertions[${index}].id`, raw.id, BROWSER_VERIFICATION_LIMITS.maxAssertionIdChars);
+    if (id !== expectedAssertion.id || raw.kind !== expectedAssertion.kind || ids.has(id)) {
+      throw resultError("browser verification result assertions do not match the requested assertion set.");
+    }
+    ids.add(id);
+    if (!BROWSER_VERIFICATION_ASSERTION_STATUSES.includes(raw.status)) throw resultError(`assertions[${index}].status is invalid.`);
+    const output = { id, kind: raw.kind, status: raw.status };
+    if (raw.actual !== undefined) output.actual = assertSafeObservationText(`assertions[${index}].actual`, portable(`assertions[${index}].actual`, raw.actual, BROWSER_VERIFICATION_LIMITS.maxActualChars));
+    if (raw.message !== undefined) output.message = assertSafeObservationText(`assertions[${index}].message`, portable(`assertions[${index}].message`, raw.message, BROWSER_VERIFICATION_LIMITS.maxDiagnosticChars));
+    return deepFreeze(output);
+  });
 }
 
 function deriveStatus(assertions) {
-  if (assertions.some((assertion) => assertion.status === "FAIL")) return "FAIL";
-  if (assertions.some((assertion) => assertion.status === "BLOCKED")) return "BLOCKED";
+  if (assertions.some(({ status }) => status === "FAIL")) return "FAIL";
+  if (assertions.some(({ status }) => status === "BLOCKED")) return "BLOCKED";
   return "PASS";
 }
 
-/**
- * Normalize untrusted browser verification provider output.
- *
- * Fail-closed: invalid status, missing assertions, budget overflow,
- * authority overrides, or status inconsistent with assertions all throw
- * RESULT_INVALID (or OUTPUT_LIMIT for budget overflow).
- */
-export function normalizeBrowserVerificationResult(raw, { provider, verificationId, expectedAssertions } = {}) {
-  if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
-    throw resultError("browser verification result must be an object.", { result: raw });
-  }
-  rejectAuthorityOverrides(raw);
+function normalizeArtifacts(raw) {
+  if (raw === undefined) return [];
+  if (!Array.isArray(raw)) throw resultError("artifacts must be an array.");
+  if (raw.length > BROWSER_VERIFICATION_LIMITS.maxArtifacts) throw limitError("Too many artifacts.", { count: raw.length });
+  return raw.map((artifact, index) => {
+    if (!artifact || typeof artifact !== "object" || Array.isArray(artifact)) throw resultError(`artifacts[${index}] is invalid.`);
+    const allowed = ["kind", "mimeType", "byteLength", "sha256", "ref"];
+    if (Reflect.ownKeys(artifact).some((key) => !allowed.includes(key))) throw resultError(`artifacts[${index}] contains an unsupported field.`);
+    if (artifact.kind !== "SCREENSHOT" || !["image/png", "image/jpeg"].includes(artifact.mimeType)
+      || !Number.isInteger(artifact.byteLength) || artifact.byteLength <= 0 || artifact.byteLength > BROWSER_VERIFICATION_LIMITS.maxArtifactBytes
+      || typeof artifact.sha256 !== "string" || !/^[a-f0-9]{64}$/.test(artifact.sha256)
+      || typeof artifact.ref !== "string" || artifact.ref.length > BROWSER_VERIFICATION_LIMITS.maxArtifactRefChars
+      || artifact.ref.startsWith("/") || artifact.ref.startsWith("file:")
+      || /^(?:https?:\/\/|ftp:\/\/)/i.test(artifact.ref) && (() => {
+        try { return Boolean(new URL(artifact.ref).username || new URL(artifact.ref).password); } catch { return true; }
+      })()
+      || /(?:token|secret|password|authorization|cookie)=/i.test(artifact.ref)) {
+      throw resultError(`artifacts[${index}] is invalid.`);
+    }
+    return deepFreeze({ ...artifact });
+  });
+}
 
-  let serialized = "";
-  try {
-    serialized = JSON.stringify(raw) ?? "";
-  } catch {
-    throw resultError("browser verification result must be JSON-serializable.", {});
-  }
+function assertResultSize(value) {
+  const serialized = JSON.stringify(value);
   if (serialized.length > BROWSER_VERIFICATION_LIMITS.maxResultChars) {
-    throw limitError(
-      `browser verification result exceeds the ${BROWSER_VERIFICATION_LIMITS.maxResultChars}-character limit.`,
-      { chars: serialized.length },
-    );
-  }
-
-  if (!BROWSER_VERIFICATION_RESULT_STATUSES.includes(raw.status)) {
-    throw resultError("browser verification result status must be a supported result status.", {
-      status: raw.status,
+    throw limitError("Browser verification result exceeds its size limit.", {
+      chars: serialized.length,
     });
   }
-  if (!Array.isArray(raw.assertions) || raw.assertions.length === 0) {
-    throw resultError("browser verification result assertions must be a non-empty array.", {
-      assertions: raw.assertions,
-    });
-  }
-  if (raw.assertions.length > BROWSER_VERIFICATION_LIMITS.maxAssertions) {
-    throw limitError(
-      `browser verification result exceeds the ${BROWSER_VERIFICATION_LIMITS.maxAssertions}-assertion limit.`,
-      { count: raw.assertions.length },
-    );
-  }
-  const expected = Array.isArray(expectedAssertions) ? expectedAssertions : null;
-  if (expected && raw.assertions.length !== expected.length) {
-    throw resultError("browser verification result assertions must match the requested assertion set.", {
-      expected: expected.length,
-      actual: raw.assertions.length,
-    });
-  }
-  const assertions = raw.assertions.map((assertion, index) =>
-    normalizeAssertion(assertion, index, expected?.[index]),
-  );
-  const ids = assertions.map((assertion) => assertion.id);
-  if (new Set(ids).size !== ids.length) {
-    throw resultError("browser verification result assertions must not contain duplicate ids.", {});
-  }
+}
 
-  const derived = deriveStatus(assertions);
-  if (raw.status !== derived) {
-    throw resultError(
-      `browser verification result status ${raw.status} is inconsistent with assertions (${derived}).`,
-      { status: raw.status, derived },
-    );
+export function normalizeBrowserVerificationResult(raw, {
+  provider, verificationId, taskId, requirement, target, expectedAssertions, allowedOrigins = [],
+} = {}) {
+  inspectResultShape(raw);
+  const snapshot = snapshotInput(raw);
+  if (!snapshot || Array.isArray(snapshot)) throw resultError("browser verification result must be an object.");
+  for (const field of Object.keys(snapshot)) {
+    if (!BROWSER_VERIFICATION_RESULT_FIELDS.includes(field)) throw resultError("browser verification result contains an unsupported field.", { field });
   }
-
-  let diagnostics = [];
-  if (raw.diagnostics !== undefined && raw.diagnostics !== null) {
-    if (!Array.isArray(raw.diagnostics)) {
-      throw resultError("browser verification result diagnostics must be an array.", {
-        diagnostics: raw.diagnostics,
-      });
-    }
-    if (raw.diagnostics.length > BROWSER_VERIFICATION_LIMITS.maxDiagnostics) {
-      throw limitError(
-        `browser verification result exceeds the ${BROWSER_VERIFICATION_LIMITS.maxDiagnostics}-diagnostic limit.`,
-        { count: raw.diagnostics.length },
-      );
-    }
-    diagnostics = raw.diagnostics.map((entry, index) =>
-      toPortable(
-        `diagnostics[${index}]`,
-        entry,
-        BROWSER_VERIFICATION_LIMITS.maxDiagnosticChars,
-      ),
-    );
-  }
-
-  let artifacts = [];
-  if (raw.artifacts !== undefined && raw.artifacts !== null) {
-    if (!Array.isArray(raw.artifacts)) {
-      throw resultError("browser verification result artifacts must be an array.", {
-        artifacts: raw.artifacts,
-      });
-    }
-    if (raw.artifacts.length > BROWSER_VERIFICATION_LIMITS.maxArtifacts) {
-      throw limitError(
-        `browser verification result exceeds the ${BROWSER_VERIFICATION_LIMITS.maxArtifacts}-artifact limit.`,
-        { count: raw.artifacts.length },
-      );
-    }
-    artifacts = raw.artifacts.map((entry, index) =>
-      toPortable(
-        `artifacts[${index}]`,
-        entry,
-        BROWSER_VERIFICATION_LIMITS.maxArtifactRefChars,
-      ),
-    );
-  }
-
-  const providerId =
-    typeof provider === "string"
-      ? provider
-      : provider?.id;
-  if (typeof providerId !== "string" || providerId.trim() === "") {
-    throw resultError("browser verification result provider id is required.", { provider });
-  }
-  const providerVersion =
-    typeof provider === "object" && provider !== null && typeof provider.version === "string"
-      ? provider.version
-      : null;
-  const normalizedVerificationId =
-    verificationId === undefined || verificationId === null
-      ? toPortable("verificationId", raw.verificationId, BROWSER_VERIFICATION_LIMITS.maxVerificationIdChars)
-      : toPortable("verificationId", verificationId, BROWSER_VERIFICATION_LIMITS.maxVerificationIdChars);
-
+  const expected = Array.isArray(expectedAssertions) ? expectedAssertions : [];
+  const assertions = normalizeAssertions(snapshot.assertions, expected);
+  if (snapshot.status !== undefined && snapshot.status !== deriveStatus(assertions)) throw resultError("Provider status does not match derived status.");
   const normalized = {
-    verificationId: normalizedVerificationId,
-    provider: deepFreeze(
-      providerVersion === null ? { id: providerId } : { id: providerId, version: providerVersion },
-    ),
-    status: raw.status,
-    assertions: Object.freeze([...assertions]),
-    diagnostics: Object.freeze([...diagnostics]),
-    artifacts: Object.freeze([...artifacts]),
-    authority: BROWSER_VERIFICATION_TRUST.authority,
-    evidenceAuthority: BROWSER_VERIFICATION_TRUST.evidenceAuthority,
-    actionability: BROWSER_VERIFICATION_TRUST.actionability,
-    trustRole: BROWSER_VERIFICATION_TRUST.trustRole,
-    persisted: BROWSER_VERIFICATION_TRUST.persisted,
-    lifecycleAuthority: BROWSER_VERIFICATION_TRUST.lifecycleAuthority,
-    completionAuthority: BROWSER_VERIFICATION_TRUST.completionAuthority,
-    evidenceRequiresForgeLoopValidation:
-      BROWSER_VERIFICATION_TRUST.evidenceRequiresForgeLoopValidation,
+    taskId: portable("taskId", taskId, BROWSER_VERIFICATION_LIMITS.maxVerificationIdChars),
+    verificationId: portable("verificationId", verificationId, BROWSER_VERIFICATION_LIMITS.maxVerificationIdChars),
+    requirement: portable("requirement", requirement, BROWSER_VERIFICATION_LIMITS.maxRequirementChars),
+    target: portable("target", target, BROWSER_VERIFICATION_LIMITS.maxUrlChars),
+    provider: { id: provider?.id ?? provider },
+    status: deriveStatus(assertions),
+    assertions: Object.freeze(assertions),
+    diagnostics: Object.freeze((snapshot.diagnostics ?? []).map((value, index) => assertSafeObservationText(`diagnostics[${index}]`, portable(`diagnostics[${index}]`, value, BROWSER_VERIFICATION_LIMITS.maxDiagnosticChars)))),
+    snapshots: Object.freeze((snapshot.snapshots ?? []).map((value, index) => {
+      if (index >= BROWSER_VERIFICATION_LIMITS.maxSnapshots) throw limitError("Too many snapshots.", {
+        count: snapshot.snapshots.length,
+      });
+      if (!value || value.kind !== "ACCESSIBILITY") throw resultError(`snapshots[${index}] is invalid.`);
+      return deepFreeze({ kind: "ACCESSIBILITY", text: assertSafeObservationText(`snapshots[${index}].text`, portable(`snapshots[${index}].text`, value.text, BROWSER_VERIFICATION_LIMITS.maxSnapshotChars)) });
+    })),
+    artifacts: Object.freeze(normalizeArtifacts(snapshot.artifacts)),
+    ...BROWSER_VERIFICATION_TRUST,
   };
-  try {
-    assertPortableContextSafe(normalized, { label: "browser verification result" });
-  } catch (error) {
-    throw resultError(`browser verification result failed safety verification: ${error.message}`, {
-      cause: error.message,
-    });
-  }
+  if (snapshot.finalUrl !== undefined) normalized.finalUrl = assertOrigin(snapshot.finalUrl, "finalUrl", allowedOrigins);
+  else throw resultError("finalUrl is required when browser execution occurs.");
+  if (snapshot.navigations !== undefined) {
+    if (!Array.isArray(snapshot.navigations) || snapshot.navigations.length > BROWSER_VERIFICATION_LIMITS.maxNavigations) throw resultError("navigations is invalid.");
+    normalized.navigations = Object.freeze(snapshot.navigations.map((navigation, index) => {
+      if (!navigation || !["NAVIGATE", "REDIRECT"].includes(navigation.kind)) throw resultError(`navigations[${index}] is invalid.`);
+      return deepFreeze({ url: assertOrigin(navigation.url, `navigations[${index}].url`, allowedOrigins), kind: navigation.kind });
+  }));
+  } else normalized.navigations = Object.freeze([]);
+  assertResultSize(normalized);
   return deepFreeze(normalized);
 }

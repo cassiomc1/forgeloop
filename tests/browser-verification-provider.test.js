@@ -10,6 +10,8 @@ import {
 import { E_BROWSER_VERIFICATION_PROVIDER_INVALID, E_BROWSER_VERIFICATION_REQUEST_INVALID } from "../src/core/error-codes.js";
 
 const request = {
+  taskId: "task-1",
+  target: "/tmp/project",
   verificationId: "checkout",
   requirement: "The checkout page is usable.",
   startUrl: "https://app.example.test/checkout",

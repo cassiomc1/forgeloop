@@ -148,6 +148,7 @@ export const E_BROWSER_VERIFICATION_REQUEST_INVALID = "E_BROWSER_VERIFICATION_RE
 export const E_BROWSER_VERIFICATION_RESULT_INVALID = "E_BROWSER_VERIFICATION_RESULT_INVALID";
 export const E_BROWSER_VERIFICATION_TIMEOUT = "E_BROWSER_VERIFICATION_TIMEOUT";
 export const E_BROWSER_VERIFICATION_OUTPUT_LIMIT = "E_BROWSER_VERIFICATION_OUTPUT_LIMIT";
+export const E_BROWSER_VERIFICATION_ORIGIN_DENIED = "E_BROWSER_VERIFICATION_ORIGIN_DENIED";
 export const E_PORTABLE_CONTEXT_INVALID = "E_PORTABLE_CONTEXT_INVALID";
 export const E_HANDOFF_ACCEPTANCE_UNBOUND = "E_HANDOFF_ACCEPTANCE_UNBOUND";
 export const E_HANDOFF_STALE = "E_HANDOFF_STALE";
@@ -413,6 +414,13 @@ const ADVISORY_CONTEXT_AND_HANDOFF_ERROR_METADATA = Object.freeze(Object.fromEnt
     classification: "PUBLIC_STABLE",
     meaning: "Browser verification output exceeded the configured character or item limit.",
     safeResolution: "Reduce steps, assertions, snapshots, diagnostics, or artifacts at the provider.",
+  })],
+  [E_BROWSER_VERIFICATION_ORIGIN_DENIED, Object.freeze({
+    code: E_BROWSER_VERIFICATION_ORIGIN_DENIED,
+    category: "browser-verification",
+    classification: "PUBLIC_STABLE",
+    meaning: "Browser verification navigation left the request origin allowlist.",
+    safeResolution: "Add the intended origin to allowedOrigins or correct the provider navigation result.",
   })],
   [E_PORTABLE_CONTEXT_INVALID, Object.freeze({
     code: E_PORTABLE_CONTEXT_INVALID,
@@ -1561,7 +1569,8 @@ export const ALL_KNOWN_ERROR_CODES = Object.freeze(new Set([
   E_BROWSER_VERIFICATION_REQUEST_INVALID,
   E_BROWSER_VERIFICATION_RESULT_INVALID,
   E_BROWSER_VERIFICATION_TIMEOUT,
-  E_BROWSER_VERIFICATION_OUTPUT_LIMIT,
+   E_BROWSER_VERIFICATION_OUTPUT_LIMIT,
+   E_BROWSER_VERIFICATION_ORIGIN_DENIED,
   E_PORTABLE_CONTEXT_INVALID,
   E_HANDOFF_ACCEPTANCE_UNBOUND,
   E_HANDOFF_STALE,

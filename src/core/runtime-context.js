@@ -169,16 +169,15 @@ export function createForgeLoopContext(options = {}) {
     context.advisoryContextProviders = Object.freeze(providers);
   }
   if (options?.browserVerificationProviders !== undefined) {
-    const configured = options.browserVerificationProviders instanceof Map
-      ? Object.fromEntries(options.browserVerificationProviders.entries())
-      : options.browserVerificationProviders;
+    const configured = options.browserVerificationProviders;
     if (!configured || typeof configured !== "object" || Array.isArray(configured)) {
       const error = new Error("browserVerificationProviders must be an object or Map");
       error.code = E_BROWSER_VERIFICATION_PROVIDER_INVALID;
       throw error;
     }
     const providers = {};
-    for (const [id, provider] of Object.entries(configured)) {
+    const entries = configured instanceof Map ? [...configured.entries()] : Object.entries(configured);
+    for (const [id, provider] of entries) {
       if (!BROWSER_VERIFICATION_PROVIDER_ID_PATTERN.test(id)) {
         const error = new Error(`Invalid browser-verification provider ID: ${id}`);
         error.code = E_BROWSER_VERIFICATION_PROVIDER_INVALID;

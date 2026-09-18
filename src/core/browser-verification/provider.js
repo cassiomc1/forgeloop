@@ -51,10 +51,23 @@ function toPortable(label, value, maxLength, { optional = false } = {}) {
 }
 
 function assertPlainObject(value, label) {
-  if (!value || typeof value !== "object" || Array.isArray(value)) {
+  if (!value || typeof value !== "object" || Array.isArray(value)
+    || (Object.getPrototypeOf(value) !== Object.prototype && Object.getPrototypeOf(value) !== null)) {
     throw requestError(`${label} must be an object.`, { [label]: value });
   }
   return value;
+}
+
+function rejectUnknown(source, allowed, label) {
+  for (const key of Reflect.ownKeys(source)) {
+    if (typeof key !== "string" || !allowed.includes(key)) {
+      throw requestError(`${label}.${String(key)} is not supported.`, { field: String(key) });
+    }
+    const descriptor = Object.getOwnPropertyDescriptor(source, key);
+    if (!descriptor || descriptor.get || descriptor.set) {
+      throw requestError(`${label}.${key} must not be an accessor.`, { field: key });
+    }
+  }
 }
 
 function assertBoundedUrl(value, label) {
@@ -161,6 +174,7 @@ function assertHttpOrHttpsUrl(value, label, { allowedOrigins = null } = {}) {
 
 function normalizeLocator(locator, label) {
   const source = assertPlainObject(locator, label);
+  rejectUnknown(source, ["kind", "value"], label);
   if (!BROWSER_VERIFICATION_LOCATOR_KINDS.includes(source.kind)) {
     throw requestError(`${label}.kind must be a supported locator kind.`, { kind: source.kind });
   }
@@ -170,6 +184,7 @@ function normalizeLocator(locator, label) {
 
 function normalizeStep(step, index, allowedOrigins) {
   const source = assertPlainObject(step, `steps[${index}]`);
+  rejectUnknown(source, ["id", "kind", "url", "locator", "text", "key", "condition", "expected"], `steps[${index}]`);
   const id = toPortable(`steps[${index}].id`, source.id, BROWSER_VERIFICATION_LIMITS.maxStepIdChars);
   if (!BROWSER_VERIFICATION_STEP_KINDS.includes(source.kind)) {
     throw requestError(`steps[${index}].kind must be a supported step kind.`, { kind: source.kind });
@@ -223,6 +238,7 @@ function normalizeStep(step, index, allowedOrigins) {
 
 function normalizeAssertion(assertion, index, allowedOrigins) {
   const source = assertPlainObject(assertion, `assertions[${index}]`);
+  rejectUnknown(source, ["id", "kind", "locator", "attribute", "expected"], `assertions[${index}]`);
   const id = toPortable(
     `assertions[${index}].id`,
     source.id,
@@ -302,11 +318,17 @@ function normalizeAssertion(assertion, index, allowedOrigins) {
  */
 export function normalizeBrowserVerificationRequest(input) {
   const source = assertPlainObject(input, "browser verification request");
+  rejectUnknown(source, [
+    "verificationId", "taskId", "target", "projectPath", "requirement", "startUrl", "allowedOrigins",
+    "viewport", "steps", "assertions", "capture", "timeoutMs",
+  ], "browser verification request");
   const verificationId = toPortable(
     "verificationId",
     source.verificationId,
     BROWSER_VERIFICATION_LIMITS.maxVerificationIdChars,
   );
+  const taskId = toPortable("taskId", source.taskId, BROWSER_VERIFICATION_LIMITS.maxVerificationIdChars);
+  const target = toPortable("target", source.target ?? source.projectPath, BROWSER_VERIFICATION_LIMITS.maxUrlChars);
   const requirement = toPortable(
     "requirement",
     source.requirement,
@@ -318,6 +340,7 @@ export function normalizeBrowserVerificationRequest(input) {
   let viewport;
   if (source.viewport !== undefined && source.viewport !== null) {
     const candidate = assertPlainObject(source.viewport, "viewport");
+    rejectUnknown(candidate, ["width", "height"], "viewport");
     if (!Number.isInteger(candidate.width) || candidate.width <= 0 || candidate.width > BROWSER_VERIFICATION_LIMITS.maxViewportWidth
       || !Number.isInteger(candidate.height) || candidate.height <= 0 || candidate.height > BROWSER_VERIFICATION_LIMITS.maxViewportHeight) {
       throw requestError("viewport width and height must be positive integers within the viewport limits.", { viewport: candidate });
@@ -328,6 +351,7 @@ export function normalizeBrowserVerificationRequest(input) {
   let capture;
   if (source.capture !== undefined && source.capture !== null) {
     const candidate = assertPlainObject(source.capture, "capture");
+    rejectUnknown(candidate, ["screenshot"], "capture");
     if (!BROWSER_VERIFICATION_CAPTURE_POLICIES.includes(candidate.screenshot)) {
       throw requestError("capture.screenshot must be a supported capture policy.", { screenshot: candidate.screenshot });
     }
@@ -370,6 +394,8 @@ export function normalizeBrowserVerificationRequest(input) {
 
   const normalized = {
     verificationId,
+    taskId,
+    target,
     requirement,
     startUrl,
     allowedOrigins: Object.freeze([...allowedOrigins]),
@@ -463,7 +489,7 @@ export function createBrowserVerificationProviderRegistry(providers = {}) {
   return deepFreeze({ ...registry });
 }
 
-export async function resolveBrowserVerificationProvider(providers, name) {
+export async function resolveBrowserVerificationProvider(providers, name, input = {}) {
   if (typeof name !== "string" || name.trim() === "") {
     throw unavailableError("Browser verification provider name must be a non-empty string.", { name });
   }
@@ -472,7 +498,7 @@ export async function resolveBrowserVerificationProvider(providers, name) {
   if (!entry) {
     throw unavailableError(`Browser verification provider "${name}" is not registered.`, { name });
   }
-  const provider = typeof entry === "function" ? await entry() : entry;
+  const provider = typeof entry === "function" ? await entry(input) : entry;
   return assertBrowserVerificationProviderRegistration(provider, name, {
     label: `browser verification provider "${name}"`,
   });

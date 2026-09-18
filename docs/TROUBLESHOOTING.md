@@ -1298,6 +1298,7 @@ package/process recovery boundary. The relevant stable codes are
 | `E_AUTHORITY_UNTRUSTED_SOURCE` | Authority file placed inside untrusted project tree. | Place authority file in host-managed trusted location. |
 | `E_BASELINE_EXPANSION` | Attempted unauthorized addition of new violations to brownfield baseline. | Resolve new violations rather than expanding the baseline. |
 | `E_BASELINE_RECORD_DURING_ACTIVE_TASK` | Cannot re-record baseline during an active task with policy snapshot. | Resolve new violations or use monotonic baseline --update. |
+| `E_BROWSER_VERIFICATION_ORIGIN_DENIED` | Browser verification navigation left the request origin allowlist. | Add the intended origin to allowedOrigins or correct the provider navigation result. |
 | `E_BROWSER_VERIFICATION_OUTPUT_LIMIT` | Browser verification output exceeded the configured character or item limit. | Reduce steps, assertions, snapshots, diagnostics, or artifacts at the provider. |
 | `E_BROWSER_VERIFICATION_PROVIDER_INVALID` | Browser verification provider configuration or interface implementation is invalid. | Use a provider implementing id, verify(input) with the documented browser-verification contract; verification is optional. |
 | `E_BROWSER_VERIFICATION_PROVIDER_UNAVAILABLE` | Requested browser verification provider is not registered in runtime context. | Register the provider in runtime context before verify, or proceed without browser verification; provider failure never blocks canonical lifecycle. |

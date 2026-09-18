@@ -29,6 +29,14 @@ dedicated advisory-context Integration API (`createForgeLoopContext` with
 `advisoryContextProviders`, plus `recallAdvisoryContext`); they are not part
 of the generic internal provider registry described here.
 
+Browser verification is registered only through the runtime context option
+`browserVerificationProviders` and is invoked explicitly with
+`runBrowserVerification`. Registration is lazy and inert: it does not launch a
+browser, perform network I/O, or mutate protocol state. Its provider-neutral
+input includes task/target/requirement binding, a shared abort signal, and the
+remaining timeout. ForgeLoop validates redirects and derives overall status;
+provider output is observation only and cannot satisfy evidence or completion.
+
 ## Common Contract
 
 Providers are identified by an ID and kind, may resolve lazily, and receive a

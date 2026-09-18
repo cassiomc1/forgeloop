@@ -102,8 +102,7 @@ export {
   VERIFICATION_ISOLATION_MODES,
 } from "./core/verification-execution.js";
 export { recallAdvisoryContext } from "./core/advisory-context/service.js";
-export { verifyBrowserContext } from "./core/browser-verification/service.js";
-export { verifyBrowserContext as runBrowserVerification } from "./core/browser-verification/service.js";
+export { runBrowserVerification } from "./core/browser-verification/service.js";
 export {
   BROWSER_VERIFICATION_ASSERTION_KINDS,
   BROWSER_VERIFICATION_ASSERTION_STATUSES,
