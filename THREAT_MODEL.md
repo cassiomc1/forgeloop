@@ -264,6 +264,7 @@ secret material, attempt path traversal, or imply authority. Mitigations are a
 bounded strict schema, secret-free writes, relative safe paths, task/contract/
 work-state fingerprint binding, current-checkout reconciliation, explicit
 non-evidence semantics, and complete separation from authority grants.
+
 ## Bootstrap Gate And Contract Provenance
 
 Built-in contract preset references are limited to the canonical

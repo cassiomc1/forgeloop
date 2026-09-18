@@ -1398,7 +1398,7 @@ package/process recovery boundary. The relevant stable codes are
 | `E_PERSISTENT_TRANSPORT_TIMEOUT` | A persistent-search connection, handshake, or request exceeded its bounded timeout. | Retry once through the ownership-checked recovery path and inspect host/index health if it persists. |
 | `E_PERSISTENT_TRANSPORT_UNAVAILABLE` | The user-scoped persistent-search endpoint was not reachable. | ForgeLoop starts one verified local host and retries once; persistent failure is reported without an rg fallback. |
 | `E_PHASE_CHRONOLOGY_INVALID` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
-| `E_PHASE_FREEZE` | The requested mutation is forbidden after the lifecycle freeze boundary. | Record gates before execution begins; do not rewrite gate state later. |
+| `E_PHASE_FREEZE` | The requested gate mutation is forbidden after execution begins. | Record required gates before entering EXECUTING. |
 | `E_PHASE_PREREQUISITE_MISSING` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
 | `E_PHASE_TRANSITION_INVALID` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
 | `E_POLICY_DRIFT` | Active policy lock does not match the policy snapshot captured at task activation. | Re-verify affected checks or restore original policy. |
@@ -1566,6 +1566,7 @@ that order, satisfy any remaining gates, and require `READY` again.
 This recovery guidance is unavailable after execution has started, for an
 invalid ledger, or when the new route does not match the contract. Preserve
 those barriers and follow the task's canonical recovery guidance.
+
 ## Gate Recording
 
 When `preflight` reports `E_GATE_UNVERIFIED`, use the executable command returned

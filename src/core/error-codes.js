@@ -651,27 +651,6 @@ export const PUBLIC_ERROR_CODES = Object.freeze({
     meaning: "The requested gate mutation is forbidden after execution begins.",
     safeResolution: "Record required gates before entering EXECUTING.",
   }),
-  E_GATE_NOT_REQUIRED: Object.freeze({
-    code: "E_GATE_NOT_REQUIRED",
-    category: "preflight",
-    classification: "PUBLIC_STABLE",
-    meaning: "Requested gate is not required by the active route or policy.",
-    safeResolution: "Inspect the active route and record only a required gate.",
-  }),
-  E_GATE_INVALID: Object.freeze({
-    code: "E_GATE_INVALID",
-    category: "preflight",
-    classification: "PUBLIC_STABLE",
-    meaning: "Gate input or evidence artifact is invalid or unsafe.",
-    safeResolution: "Use project-relative regular artifact paths and valid gate evidence.",
-  }),
-  E_PHASE_FREEZE: Object.freeze({
-    code: "E_PHASE_FREEZE",
-    category: "lifecycle",
-    classification: "PUBLIC_STABLE",
-    meaning: "The requested mutation is forbidden after the lifecycle freeze boundary.",
-    safeResolution: "Record gates before execution begins; do not rewrite gate state later.",
-  }),
   E_VERIFICATION_TOOL_UNAVAILABLE: Object.freeze({
     code: "E_VERIFICATION_TOOL_UNAVAILABLE",
     category: "capability",
