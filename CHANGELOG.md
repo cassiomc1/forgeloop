@@ -4,6 +4,10 @@
 
 ### Added
 
+- Added an optional host-injected OpenSrc advisory context adapter for bounded,
+  version-qualified external package/repository source recall without lifecycle,
+  completion, evidence, or installation authority.
+
 - Added a generated, deterministic, harness-neutral ForgeLoop Agent Skill with
   bounded freshness checks, references, documentation, and npm package coverage.
 

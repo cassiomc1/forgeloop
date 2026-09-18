@@ -154,7 +154,9 @@ results. Provider output is never lifecycle state, evidence, authority,
 completion truth, or next-action authority, and it is never executable as a
 protocol command. The optional Ripwire adapter follows the same boundary; see
 [`docs/ADVISORY_CONTEXT.md`](./docs/ADVISORY_CONTEXT.md) and
-[`docs/RIPWIRE_ADAPTER.md`](./docs/RIPWIRE_ADAPTER.md).
+[`docs/RIPWIRE_ADAPTER.md`](./docs/RIPWIRE_ADAPTER.md). The optional OpenSrc
+adapter exposes external package source context through the same boundary; see
+[`docs/OPENSRC_ADAPTER.md`](./docs/OPENSRC_ADAPTER.md).
 
 ### Optional task boundaries and differential verification
 

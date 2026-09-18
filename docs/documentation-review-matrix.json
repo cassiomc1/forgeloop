@@ -62,6 +62,7 @@
     { "path": "docs/PROVIDER_ARCHITECTURE.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/core/protocol-info.js", "src/providers/capabilities.js", "src/providers/registry.js", "src/providers/json-snapshot.js", "PROTOCOL_INTEGRATION.md", "THREAT_MODEL.md"] },
     { "path": "docs/PROVIDERS.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/core/protocol-info.js", "src/providers/capabilities.js", "src/providers/errors.js", "tests/provider-architecture.test.js", "tests/provider-capabilities.test.js"] },
     { "path": "docs/RIPWIRE_ADAPTER.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/adapters/ripwire/", "src/integration.js", "tests/ripwire-advisory-provider.test.js", "docs/ADVISORY_CONTEXT.md"] },
+    { "path": "docs/OPENSRC_ADAPTER.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/adapters/opensrc/", "src/integration.js", "src/integration.d.ts", "tests/opensrc-advisory-provider.test.js", "docs/ADVISORY_CONTEXT.md"] },
     { "path": "docs/REPOSITORY_INDEX.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["src/repository-index/", "src/core/cli-command-definitions.js", "src/integration.js", "integrations/mcp/src/resource-registry.js", "tests/repository-index-cli.test.js"] },
     { "path": "docs/PERSISTENT_SEARCH_TRANSPORT.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/persistent-transport/", "src/commands/repository-index.js", "src/repository-index/search.js", "tests/persistent-transport.test.js", "tests/persistent-transport-native.test.js"] }
   ]

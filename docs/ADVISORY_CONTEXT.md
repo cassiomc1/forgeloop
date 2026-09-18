@@ -196,3 +196,28 @@ opt-in real-binary smoke test, and the retrieval benchmark. A real binary and
 its exact version must be qualified by the host; ForgeLoop does not install or
 discover Ripwire and does not treat an unavailable smoke test as proof of
 interoperability.
+
+## OpenSrc adapter
+
+ForgeLoop includes an optional host-injected adapter for
+[OpenSrc](https://github.com/vercel-labs/opensrc) external package and
+repository source context. The adapter is deliberately outside the default
+runtime: the host must provide an absolute executable path, an exact expected
+version, a dedicated absolute cache root outside the project, and an explicit
+source allowlist, then register the returned provider under the `opensrc` key
+and invoke `recallAdvisoryContext` explicitly. Creating the provider performs
+no discovery, network access, process start, cache write, or lifecycle write.
+
+The adapter qualifies `<absolute-opensrc> --version` before every recall,
+resolves each configured source once through `opensrc path <source> --cwd
+<projectRoot>` with `shell: false` and `OPENSRC_HOME` set to the dedicated
+cache root, canonicalizes every returned path inside that cache, and searches
+resolved sources locally with bounded deterministic Node.js traversal (no
+`rg`, embeddings, or network search). It never exposes absolute cache paths,
+raw stderr, environment, or credentials, and source text stays inert bounded
+context under the standard advisory trust projection.
+
+See [OPENSRC_ADAPTER.md](OPENSRC_ADAPTER.md) for registration, limits, cache
+and network behavior, tests, and troubleshooting. `opensrc path` may contact
+registries or remotes and populate its own cache on miss; ForgeLoop persists
+nothing and never auto-recalls.

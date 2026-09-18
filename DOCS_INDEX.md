@@ -39,6 +39,7 @@ integration and guide context. Use this map before editing documentation.
 | Provider extension architecture | [`docs/PROVIDER_ARCHITECTURE.md`](./docs/PROVIDER_ARCHITECTURE.md) | Provider-neutral architecture, invocation lifecycle, strict snapshots, cancellation, trust, and authority boundaries |
 | Provider extension reference | [`docs/PROVIDERS.md`](./docs/PROVIDERS.md) | Capability discovery, provider kinds, common contract, limits, errors, and maintainer checklist |
 | Ripwire advisory adapter | [`docs/RIPWIRE_ADAPTER.md`](./docs/RIPWIRE_ADAPTER.md) | Ripwire-specific registration, process contract, JSON mapping, limits, and verification |
+| OpenSrc advisory adapter | [`docs/OPENSRC_ADAPTER.md`](./docs/OPENSRC_ADAPTER.md) | OpenSrc-specific registration, version qualification, cache containment, deterministic search, limits, and verification |
 | Local-first MCP adapter | [`docs/MCP.md`](./docs/MCP.md) | stdio default, optional strict loopback HTTP; server modes/capabilities and canonical resources |
 | Adaptive execution-profile benchmarks | [`docs/EXECUTION_PROFILE_BENCHMARKS.md`](./docs/EXECUTION_PROFILE_BENCHMARKS.md) | Measured provider/host runs, robust statistics, paired/distribution deltas, tail status, outliers, and profile-aware host context |
 | Knowledge integration gap analysis | [`docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md`](./docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md) | Repository-only research audit of candidate coverage, proven gaps, canonical homes, context cost, and intentional skip/defer decisions |
@@ -89,6 +90,7 @@ is historical evidence and is not part of the published core package.
 | **Looking for quick recipes** | [`docs/RECIPES.md`](./docs/RECIPES.md) |
 | **Configuring structural quality feedback** | [`docs/STRUCTURAL_QUALITY.md`](./docs/STRUCTURAL_QUALITY.md) |
 | **Configuring Ripwire advisory context** | [`docs/RIPWIRE_ADAPTER.md`](./docs/RIPWIRE_ADAPTER.md) |
+| **Configuring OpenSrc advisory context** | [`docs/OPENSRC_ADAPTER.md`](./docs/OPENSRC_ADAPTER.md) |
 | **Understanding provider extensions** | [`docs/PROVIDER_ARCHITECTURE.md`](./docs/PROVIDER_ARCHITECTURE.md) → [`docs/PROVIDERS.md`](./docs/PROVIDERS.md) |
 | **Understanding verification trust** | [`docs/REVISION_PROVIDERS.md`](./docs/REVISION_PROVIDERS.md#differential-verification-scope) |
 | **Understanding attestation trust** | [`docs/CODE_ATTESTATION.md`](./docs/CODE_ATTESTATION.md#trust-levels) |

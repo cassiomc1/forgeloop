@@ -659,6 +659,20 @@
       "packaged": true
     },
     {
+      "path": "docs/OPENSRC_ADAPTER.md",
+      "id": "opensrc-adapter",
+      "class": "reference",
+      "audience": [
+        "harness",
+        "integrator",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "opensrc-adapter"
+      ],
+      "packaged": true
+    },
+    {
       "path": "docs/REPOSITORY_INDEX.md",
       "id": "repository-index",
       "class": "guide",

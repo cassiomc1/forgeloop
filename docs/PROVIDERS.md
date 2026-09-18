@@ -24,6 +24,11 @@ authority restrictions.
 The canonical list is exported internally as `PROVIDER_KINDS`; public metadata
 is synchronized from that source and must not duplicate its strings.
 
+Concrete `ADVISORY_CONTEXT` adapters (Ripwire, OpenSrc) plug into the
+dedicated advisory-context Integration API (`createForgeLoopContext` with
+`advisoryContextProviders`, plus `recallAdvisoryContext`); they are not part
+of the generic internal provider registry described here.
+
 ## Common Contract
 
 Providers are identified by an ID and kind, may resolve lazily, and receive a
