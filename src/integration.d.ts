@@ -39,6 +39,79 @@ export interface RepositorySearchRequest {
   assetPath?: string;
 }
 
+export type ForgeLoopBrowserVerificationStepKind = "NAVIGATE" | "CLICK" | "FILL" | "PRESS" | "WAIT_FOR";
+export type ForgeLoopBrowserVerificationAssertionKind =
+  | "VISIBLE" | "HIDDEN" | "TEXT_CONTAINS" | "TEXT_EQUALS" | "VALUE_EQUALS"
+  | "ATTRIBUTE_EQUALS" | "URL_IS" | "URL_PREFIX" | "TITLE_EQUALS";
+export type ForgeLoopBrowserVerificationStatus = "PASS" | "FAIL" | "BLOCKED";
+export type ForgeLoopBrowserVerificationCapturePolicy = "NEVER" | "ON_FAILURE" | "ALWAYS";
+export interface ForgeLoopBrowserVerificationLocator {
+  kind: "ROLE" | "LABEL" | "TEXT" | "CSS";
+  value: string;
+}
+export interface ForgeLoopBrowserVerificationStep {
+  id: string;
+  kind: ForgeLoopBrowserVerificationStepKind;
+  url?: string;
+  locator?: ForgeLoopBrowserVerificationLocator;
+  text?: string;
+  key?: string;
+  condition?: string;
+  expected?: string;
+}
+export interface ForgeLoopBrowserVerificationAssertion {
+  id: string;
+  kind: ForgeLoopBrowserVerificationAssertionKind;
+  locator?: ForgeLoopBrowserVerificationLocator;
+  attribute?: string;
+  expected?: string;
+}
+export interface ForgeLoopBrowserVerificationRequest {
+  verificationId: string;
+  requirement: string;
+  startUrl: string;
+  allowedOrigins: readonly string[];
+  viewport?: { width: number; height: number };
+  steps: readonly ForgeLoopBrowserVerificationStep[];
+  assertions: readonly ForgeLoopBrowserVerificationAssertion[];
+  capture?: { screenshot: ForgeLoopBrowserVerificationCapturePolicy };
+  timeoutMs?: number;
+}
+export interface ForgeLoopBrowserVerificationProvider {
+  id: string;
+  version?: string;
+  verify(input: ForgeLoopBrowserVerificationRequest): Promise<unknown> | unknown;
+}
+export type ForgeLoopBrowserVerificationProviderFactory = () => ForgeLoopBrowserVerificationProvider | Promise<ForgeLoopBrowserVerificationProvider>;
+export interface ForgeLoopBrowserVerificationResult {
+  verificationId: string;
+  provider: { id: string; version?: string };
+  status: ForgeLoopBrowserVerificationStatus;
+  assertions: readonly { id: string; status: ForgeLoopBrowserVerificationStatus; actual?: string; snapshot?: string; message?: string }[];
+  diagnostics: readonly string[];
+  artifacts: readonly string[];
+  authority: "OBSERVATION";
+  evidenceAuthority: "NONE";
+  actionability: "NON_EXECUTABLE";
+  lifecycleAuthority: false;
+  completionAuthority: false;
+}
+
+export function runBrowserVerification(options: {
+  providerName: string;
+  verificationId: string;
+  requirement: string;
+  startUrl: string;
+  allowedOrigins: readonly string[];
+  steps: readonly ForgeLoopBrowserVerificationStep[];
+  assertions: readonly ForgeLoopBrowserVerificationAssertion[];
+  viewport?: { width: number; height: number };
+  capture?: { screenshot: ForgeLoopBrowserVerificationCapturePolicy };
+  timeoutMs?: number;
+  runtimeContext?: { browserVerificationProviders?: object | Map<string, ForgeLoopBrowserVerificationProvider | ForgeLoopBrowserVerificationProviderFactory> };
+}): Promise<ForgeLoopBrowserVerificationResult>;
+export function verifyBrowserContext(options: Parameters<typeof runBrowserVerification>[0]): Promise<ForgeLoopBrowserVerificationResult>;
+
 export interface RepositorySearchSubmatch {
   start: number;
   end: number;
@@ -144,6 +217,7 @@ export interface ForgeLoopContext {
   usageProvider?: ForgeLoopUsageProvider;
   structuralQualityProviders?: Readonly<Record<string, ForgeLoopStructuralQualityProvider | ForgeLoopStructuralQualityProviderFactory>>;
   advisoryContextProviders?: Readonly<Record<string, ForgeLoopAdvisoryContextProvider | ForgeLoopAdvisoryContextProviderFactory>>;
+  browserVerificationProviders?: Readonly<Record<string, ForgeLoopBrowserVerificationProvider | ForgeLoopBrowserVerificationProviderFactory>> | Map<string, ForgeLoopBrowserVerificationProvider | ForgeLoopBrowserVerificationProviderFactory>;
 }
 
 export interface ForgeLoopAdvisoryContextItem {

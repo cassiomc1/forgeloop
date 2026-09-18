@@ -102,6 +102,29 @@ export {
   VERIFICATION_ISOLATION_MODES,
 } from "./core/verification-execution.js";
 export { recallAdvisoryContext } from "./core/advisory-context/service.js";
+export { verifyBrowserContext } from "./core/browser-verification/service.js";
+export { verifyBrowserContext as runBrowserVerification } from "./core/browser-verification/service.js";
+export {
+  BROWSER_VERIFICATION_ASSERTION_KINDS,
+  BROWSER_VERIFICATION_ASSERTION_STATUSES,
+  BROWSER_VERIFICATION_CAPTURE_POLICIES,
+  BROWSER_VERIFICATION_LIMITS,
+  BROWSER_VERIFICATION_LOCATOR_KINDS,
+  BROWSER_VERIFICATION_STEP_KINDS,
+  BROWSER_VERIFICATION_TRUST,
+  BROWSER_VERIFICATION_WAIT_CONDITIONS,
+  normalizeBrowserVerificationRequestOptions,
+} from "./core/browser-verification/constants.js";
+export {
+  assertBrowserVerificationProvider,
+  assertBrowserVerificationProviderIdentity,
+  assertBrowserVerificationProviderRegistration,
+  BROWSER_VERIFICATION_PROVIDER_ID_PATTERN,
+  createBrowserVerificationProviderRegistry,
+  normalizeBrowserVerificationRequest,
+  resolveBrowserVerificationProvider,
+} from "./core/browser-verification/provider.js";
+export { normalizeBrowserVerificationResult } from "./core/browser-verification/normalize.js";
 export { createRipwireAdvisoryContextProvider } from "./adapters/ripwire/provider.js";
 export { createOpenSrcAdvisoryContextProvider } from "./adapters/opensrc/provider.js";
 export {
