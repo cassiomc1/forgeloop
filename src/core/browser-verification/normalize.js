@@ -89,6 +89,14 @@ function rejectAuthorityFields(raw) {
   }
 }
 
+function rejectUnknownNestedFields(value, allowed, label) {
+  for (const key of Reflect.ownKeys(value)) {
+    if (typeof key !== "string" || !allowed.includes(key)) {
+      throw resultError(`${label} contains an unsupported field.`, { field: typeof key === "string" ? key : String(key) });
+    }
+  }
+}
+
 function snapshotInput(raw) {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw resultError("browser verification result must be an object.");
   for (const key of Reflect.ownKeys(raw)) {
@@ -133,6 +141,7 @@ function normalizeAssertions(rawAssertions, expected) {
   const ids = new Set();
   return rawAssertions.map((raw, index) => {
     if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw resultError(`assertions[${index}] is invalid.`);
+    rejectUnknownNestedFields(raw, ["id", "kind", "status", "actual", "message"], `assertions[${index}]`);
     const expectedAssertion = expected[index];
     const id = portable(`assertions[${index}].id`, raw.id, BROWSER_VERIFICATION_LIMITS.maxAssertionIdChars);
     if (id !== expectedAssertion.id || raw.kind !== expectedAssertion.kind || ids.has(id)) {
@@ -159,13 +168,16 @@ function normalizeArtifacts(raw) {
   if (raw.length > BROWSER_VERIFICATION_LIMITS.maxArtifacts) throw limitError("Too many artifacts.", { count: raw.length });
   return raw.map((artifact, index) => {
     if (!artifact || typeof artifact !== "object" || Array.isArray(artifact)) throw resultError(`artifacts[${index}] is invalid.`);
-    const allowed = ["kind", "mimeType", "byteLength", "sha256", "ref"];
-    if (Reflect.ownKeys(artifact).some((key) => !allowed.includes(key))) throw resultError(`artifacts[${index}] contains an unsupported field.`);
+    rejectUnknownNestedFields(artifact, ["kind", "mimeType", "byteLength", "sha256", "ref"], `artifacts[${index}]`);
+    const ref = artifact.ref;
+    const isWindowsDrivePath = /^[a-z]:[\\/]/i.test(ref);
+    const isUncPath = /^(?:\\\\|\/\/)/.test(ref);
+    const isFileUrl = /^file:/i.test(ref);
     if (artifact.kind !== "SCREENSHOT" || !["image/png", "image/jpeg"].includes(artifact.mimeType)
       || !Number.isInteger(artifact.byteLength) || artifact.byteLength <= 0 || artifact.byteLength > BROWSER_VERIFICATION_LIMITS.maxArtifactBytes
       || typeof artifact.sha256 !== "string" || !/^[a-f0-9]{64}$/.test(artifact.sha256)
       || typeof artifact.ref !== "string" || artifact.ref.length > BROWSER_VERIFICATION_LIMITS.maxArtifactRefChars
-      || artifact.ref.startsWith("/") || artifact.ref.startsWith("file:")
+       || artifact.ref.startsWith("/") || isWindowsDrivePath || isUncPath || isFileUrl
       || /^(?:https?:\/\/|ftp:\/\/)/i.test(artifact.ref) && (() => {
         try { return Boolean(new URL(artifact.ref).username || new URL(artifact.ref).password); } catch { return true; }
       })()
@@ -205,23 +217,35 @@ export function normalizeBrowserVerificationResult(raw, {
     provider: { id: provider?.id ?? provider },
     status: deriveStatus(assertions),
     assertions: Object.freeze(assertions),
-    diagnostics: Object.freeze((snapshot.diagnostics ?? []).map((value, index) => assertSafeObservationText(`diagnostics[${index}]`, portable(`diagnostics[${index}]`, value, BROWSER_VERIFICATION_LIMITS.maxDiagnosticChars)))),
-    snapshots: Object.freeze((snapshot.snapshots ?? []).map((value, index) => {
-      if (index >= BROWSER_VERIFICATION_LIMITS.maxSnapshots) throw limitError("Too many snapshots.", {
-        count: snapshot.snapshots.length,
-      });
-      if (!value || value.kind !== "ACCESSIBILITY") throw resultError(`snapshots[${index}] is invalid.`);
+    diagnostics: Object.freeze((() => {
+      if (snapshot.diagnostics === undefined) return [];
+      if (!Array.isArray(snapshot.diagnostics)) throw resultError("diagnostics must be an array.");
+      if (snapshot.diagnostics.length > BROWSER_VERIFICATION_LIMITS.maxDiagnostics) throw limitError("Too many diagnostics.", { count: snapshot.diagnostics.length });
+      return snapshot.diagnostics.map((value, index) => assertSafeObservationText(`diagnostics[${index}]`, portable(`diagnostics[${index}]`, value, BROWSER_VERIFICATION_LIMITS.maxDiagnosticChars)));
+    })()),
+    snapshots: Object.freeze((() => {
+      if (snapshot.snapshots === undefined) return [];
+      if (!Array.isArray(snapshot.snapshots)) throw resultError("snapshots must be an array.");
+      if (snapshot.snapshots.length > BROWSER_VERIFICATION_LIMITS.maxSnapshots) throw limitError("Too many snapshots.", { count: snapshot.snapshots.length });
+      return snapshot.snapshots.map((value, index) => {
+       if (!value || typeof value !== "object" || Array.isArray(value)) throw resultError(`snapshots[${index}] is invalid.`);
+       rejectUnknownNestedFields(value, ["kind", "text"], `snapshots[${index}]`);
+       if (value.kind !== "ACCESSIBILITY") throw resultError(`snapshots[${index}] is invalid.`);
       return deepFreeze({ kind: "ACCESSIBILITY", text: assertSafeObservationText(`snapshots[${index}].text`, portable(`snapshots[${index}].text`, value.text, BROWSER_VERIFICATION_LIMITS.maxSnapshotChars)) });
-    })),
+      });
+    })()),
     artifacts: Object.freeze(normalizeArtifacts(snapshot.artifacts)),
     ...BROWSER_VERIFICATION_TRUST,
   };
   if (snapshot.finalUrl !== undefined) normalized.finalUrl = assertOrigin(snapshot.finalUrl, "finalUrl", allowedOrigins);
   else throw resultError("finalUrl is required when browser execution occurs.");
   if (snapshot.navigations !== undefined) {
-    if (!Array.isArray(snapshot.navigations) || snapshot.navigations.length > BROWSER_VERIFICATION_LIMITS.maxNavigations) throw resultError("navigations is invalid.");
+    if (!Array.isArray(snapshot.navigations)) throw resultError("navigations must be an array.");
+    if (snapshot.navigations.length > BROWSER_VERIFICATION_LIMITS.maxNavigations) throw limitError("Too many navigations.", { count: snapshot.navigations.length });
     normalized.navigations = Object.freeze(snapshot.navigations.map((navigation, index) => {
-      if (!navigation || !["NAVIGATE", "REDIRECT"].includes(navigation.kind)) throw resultError(`navigations[${index}] is invalid.`);
+       if (!navigation || typeof navigation !== "object" || Array.isArray(navigation)) throw resultError(`navigations[${index}] is invalid.`);
+       rejectUnknownNestedFields(navigation, ["url", "kind"], `navigations[${index}]`);
+       if (!navigation || !["NAVIGATE", "REDIRECT"].includes(navigation.kind)) throw resultError(`navigations[${index}] is invalid.`);
       return deepFreeze({ url: assertOrigin(navigation.url, `navigations[${index}].url`, allowedOrigins), kind: navigation.kind });
   }));
   } else normalized.navigations = Object.freeze([]);

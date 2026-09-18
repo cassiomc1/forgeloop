@@ -88,7 +88,12 @@ export interface ForgeLoopBrowserVerificationProviderInput extends ForgeLoopBrow
   signal: AbortSignal;
   timeoutMs: number;
 }
-export type ForgeLoopBrowserVerificationProviderFactory = (input: Pick<ForgeLoopBrowserVerificationProviderInput, "signal" | "timeoutMs">) => ForgeLoopBrowserVerificationProvider | Promise<ForgeLoopBrowserVerificationProvider>;
+export interface ForgeLoopBrowserVerificationProviderFactoryInput {
+  signal: AbortSignal;
+  timeoutMs: number;
+  request: ForgeLoopBrowserVerificationRequest;
+}
+export type ForgeLoopBrowserVerificationProviderFactory = (input: ForgeLoopBrowserVerificationProviderFactoryInput) => ForgeLoopBrowserVerificationProvider | Promise<ForgeLoopBrowserVerificationProvider>;
 export interface ForgeLoopBrowserVerificationArtifact {
   kind: "SCREENSHOT";
   mimeType: "image/png" | "image/jpeg";
