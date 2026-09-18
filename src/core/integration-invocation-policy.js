@@ -87,6 +87,7 @@ const STATIC_RISK_CLASSES = Object.freeze({
   "profile-interview": INTEGRATION_RISK_CLASSES.MAINTENANCE,
   "task-recover": INTEGRATION_RISK_CLASSES.CLAIM_RELEASE_RECOVERY,
   "task-repair-legacy-recovery": INTEGRATION_RISK_CLASSES.LEGACY_MIGRATION,
+  "gate-record": INTEGRATION_RISK_CLASSES.MAINTENANCE,
 });
 
 // Sparse input-dependent refinements over the static table.

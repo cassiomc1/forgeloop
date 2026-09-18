@@ -2,7 +2,7 @@ import { ARTIFACT_PATHS, readJsonArtifact } from "./artifacts.js";
 import { readContract } from "./contract.js";
 import { readGateIfPresent, validateGateArtifacts } from "./gate-artifact.js";
 import { requiredGatesForGuides } from "./guide-metadata.js";
-import { assertSourceProvenance } from "./sources.js";
+import { assertContractPresetRefs, assertContractSourceProvenance } from "./sources.js";
 import { readPersistedRoute } from "./route-artifact.js";
 import { ensureWithin, readBytes } from "./filesystem.js";
 import { sha256 } from "./manifest.js";
@@ -62,15 +62,24 @@ export async function loadRoute(target, packageRoot, errors, options = {}) {
 
 export async function loadSources(target, contract, packageRoot, errors) {
   if (!contract?.value?.sourceRefs?.length) return null;
-  let registry;
   try {
-    registry = (await readJsonArtifact(target, ARTIFACT_PATHS.sources, "source-registry", packageRoot)).value;
+    assertContractPresetRefs(contract.value.sourceRefs);
   } catch (error) {
-    errors.push(issue(error.code === "ARTIFACT_MISSING" ? "E_PROFILE_SOURCE_MISSING" : "E_PROFILE_SOURCE_UNKNOWN", error.message, [ARTIFACT_PATHS.sources]));
+    errors.push(issue(error.code ?? "E_PROFILE_SOURCE_UNKNOWN", error.message, [ARTIFACT_PATHS.sources]));
     return null;
   }
+  const externalRefs = contract.value.sourceRefs.filter((ref) => !/^contract-preset:(documentation|bug|feature|release)$/.test(ref));
+  let registry;
+  if (externalRefs.length > 0) {
+    try {
+      registry = (await readJsonArtifact(target, ARTIFACT_PATHS.sources, "source-registry", packageRoot)).value;
+    } catch (error) {
+      errors.push(issue(error.code === "ARTIFACT_MISSING" ? "E_PROFILE_SOURCE_MISSING" : "E_PROFILE_SOURCE_UNKNOWN", error.message, [ARTIFACT_PATHS.sources]));
+      return null;
+    }
+  }
   try {
-    assertSourceProvenance(registry, contract.value.sourceRefs);
+    assertContractSourceProvenance(registry, contract.value.sourceRefs);
   } catch (error) {
     errors.push(issue(error.code ?? "E_PROFILE_SOURCE_UNKNOWN", error.message, [ARTIFACT_PATHS.sources]));
   }

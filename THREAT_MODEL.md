@@ -264,3 +264,21 @@ secret material, attempt path traversal, or imply authority. Mitigations are a
 bounded strict schema, secret-free writes, relative safe paths, task/contract/
 work-state fingerprint binding, current-checkout reconciliation, explicit
 non-evidence semantics, and complete separation from authority grants.
+## Bootstrap Gate And Contract Provenance
+
+Built-in contract preset references are limited to the canonical
+`contract-preset:documentation`, `contract-preset:bug`, `contract-preset:feature`,
+and `contract-preset:release` namespace. Unknown values in that namespace are
+rejected, while mixed contracts still require external source-registry entries.
+
+The `gate-record` command accepts only route- or policy-required gates before
+execution. ForgeLoop computes referenced artifact hashes and rejects absolute,
+traversal, missing, directory, and symlink-escaping paths. Gate decisions are
+caller-recorded observations and cannot claim host attestation or ForgeLoop
+execution provenance.
+
+The same boundary prevents fake caller digests, stale artifact approval,
+post-execution gate rewrites, and task substitution: digests are computed from
+bytes, preflight revalidates them, mutation freezes at execution, and persisted
+gate task IDs are checked against the active contract. Unknown preset names are
+rejected rather than becoming a spoofable built-in source namespace.

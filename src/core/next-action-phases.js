@@ -251,6 +251,16 @@ export async function resolveNextActionPhase({
     : validatePersistedPreflight(preflightArtifact.value?.value, preflight);
 
   if (["ROUTED", "DESIGNING", "PLANNED"].includes(state.phase) && missingGates.length > 0) {
+    const gateRecordSpec = {
+      commandId: "gate-record",
+      executable: "forgeloop",
+      subcommand: "gate-record",
+      argv: ["gate-record", `--task=${state.taskId}`, `--gate=<${missingGates[0]}>`, "--status=satisfied", "--json"],
+      requiredInputs: [
+        { name: "artifact", option: "--artifact=<project-relative-path>", repeatable: true },
+        { name: "decision", option: "--decision=<text>", repeatable: true },
+      ],
+    };
     return result({
       ...context,
       nextAction: NEXT_ACTIONS.SATISFY_GATES,
@@ -261,6 +271,7 @@ export async function resolveNextActionPhase({
       )),
       requiredArtifacts: [...preflightArtifacts, ...missingGates.map((gate) => `${ARTIFACT_PATHS.gates}/${gate}.json`)],
       missingArtifacts: missingGates.map((gate) => `${ARTIFACT_PATHS.gates}/${gate}.json`),
+      commandSpecs: [gateRecordSpec],
     });
   }
   if (state.phase === "ROUTED") {

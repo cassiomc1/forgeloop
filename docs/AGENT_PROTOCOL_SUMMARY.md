@@ -279,6 +279,7 @@ capability-family versions.
 | complete | MUTATING | Evaluates verification receipt coverage, gates, and ledger integrity to authorize task completion. |
 | contract-create | MUTATING | Persists a validated contract and materializes the first real lifecycle checkpoint. |
 | discover | MUTATING | Records the canonical initial discovery milestone for a newly created task. |
+| gate-record | MUTATING | Records a required pre-execution gate with ForgeLoop-owned artifact hashes. |
 | next | READ_ONLY | Returns deterministic next-action guidance and command recommendations based on active state. |
 | preflight | MUTATING | Evaluates pre-implementation contract, routing, and gates; synchronizes work state when READY. |
 | reconcile-closure | MUTATING | Refreshes the work-state checkpoint of an EXECUTING, VERIFYING, or REVIEWING task whose objective is already satisfied in the current repository, after contract-bound executed evidence, so canonical completion can proceed. |

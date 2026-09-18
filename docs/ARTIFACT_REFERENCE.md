@@ -178,6 +178,11 @@ Readiness attestation evaluated prior to implementation.
 
 Discovered repository facts, platforms, runtimes, and dependencies.
 
+Built-in `contract-preset:documentation`, `contract-preset:bug`,
+`contract-preset:feature`, and `contract-preset:release` references are
+ForgeLoop-owned provenance and do not require an entry in this registry. Every
+other contract source reference still requires a valid registry entry.
+
 #### Canonical Fields
 
 <!-- BEGIN FORGELOOP GENERATED: schema:source-registry -->
@@ -303,6 +308,13 @@ Local ForgeLoop configuration settings and policy bindings.
 <!-- forgeloop-doc: schema=gate artifact=.forgeloop/task-state/<task-key>/gates/<gate>.json -->
 
 Pre-implementation gate approval artifact recording decisions, bound artifact hashes, and evidence.
+
+Use `node src/cli.js gate-record` to create or replace this artifact. The
+command computes SHA-256 values from project-relative regular files; callers
+must not provide digests or edit gate JSON manually. Preflight checks these
+hashes for staleness, and gate mutation is available only before execution.
+Caller-recorded evidence is descriptive local input, not host attestation,
+ForgeLoop execution evidence, or remote authority.
 
 #### Canonical Fields
 

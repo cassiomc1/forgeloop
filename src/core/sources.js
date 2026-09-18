@@ -84,3 +84,27 @@ export function assertSourceProvenance(registry, refs = [], { expectedKind } = {
   }
   return true;
 }
+
+export function assertContractPresetRefs(refs = []) {
+  for (const ref of refs) {
+    if (typeof ref === "string" && ref.startsWith("contract-preset:")
+      && !/^contract-preset:(documentation|bug|feature|release)$/.test(ref)) {
+      const error = new Error(`Unknown built-in contract preset source: ${ref}`);
+      error.code = "E_PROFILE_SOURCE_UNKNOWN";
+      throw error;
+    }
+  }
+  return true;
+}
+
+export function assertContractSourceProvenance(registry, refs = []) {
+  assertContractPresetRefs(refs);
+  const externalRefs = refs.filter((ref) => !/^contract-preset:(documentation|bug|feature|release)$/.test(ref));
+  if (externalRefs.length === 0) return true;
+  if (!registry) {
+    const error = new Error("External contract source references require a source registry");
+    error.code = "E_PROFILE_SOURCE_MISSING";
+    throw error;
+  }
+  return assertSourceProvenance(registry, externalRefs);
+}

@@ -1357,6 +1357,8 @@ package/process recovery boundary. The relevant stable codes are
 | `E_FAILURE_SIGNATURE_INVALID` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
 | `E_FUTURE_LIFECYCLE_EVIDENCE` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
 | `E_FUTURE_TERMINAL_EVIDENCE` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
+| `E_GATE_INVALID` | Gate input or evidence artifact is invalid or unsafe. | Use project-relative regular artifact paths and valid gate evidence. |
+| `E_GATE_NOT_REQUIRED` | Requested gate is not required by the active route or policy. | Inspect the active route and record only a required gate. |
 | `E_GATE_REQUIRED` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
 | `E_GATE_STALE` | Referenced gate artifact changed after approval. | Update artifact SHA-256 in gate file. |
 | `E_GATE_UNVERIFIED` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
@@ -1396,6 +1398,7 @@ package/process recovery boundary. The relevant stable codes are
 | `E_PERSISTENT_TRANSPORT_TIMEOUT` | A persistent-search connection, handshake, or request exceeded its bounded timeout. | Retry once through the ownership-checked recovery path and inspect host/index health if it persists. |
 | `E_PERSISTENT_TRANSPORT_UNAVAILABLE` | The user-scoped persistent-search endpoint was not reachable. | ForgeLoop starts one verified local host and retries once; persistent failure is reported without an rg fallback. |
 | `E_PHASE_CHRONOLOGY_INVALID` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
+| `E_PHASE_FREEZE` | The requested mutation is forbidden after the lifecycle freeze boundary. | Record gates before execution begins; do not rewrite gate state later. |
 | `E_PHASE_PREREQUISITE_MISSING` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
 | `E_PHASE_TRANSITION_INVALID` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
 | `E_POLICY_DRIFT` | Active policy lock does not match the policy snapshot captured at task activation. | Re-verify affected checks or restore original policy. |
@@ -1563,3 +1566,22 @@ that order, satisfy any remaining gates, and require `READY` again.
 This recovery guidance is unavailable after execution has started, for an
 invalid ledger, or when the new route does not match the contract. Preserve
 those barriers and follow the task's canonical recovery guidance.
+## Gate Recording
+
+When `preflight` reports `E_GATE_UNVERIFIED`, use the executable command returned
+by `next` or record the required gate directly:
+
+```bash
+node src/cli.js gate-record \
+  --task <task-id> \
+  --gate threat-boundary \
+  --status satisfied \
+  --artifact THREAT_MODEL.md \
+  --decision "Threat boundary reviewed for this task" \
+  --json
+```
+
+ForgeLoop validates that the gate is required by the active route or policy,
+rejects traversal and symlink escapes, and computes artifact hashes itself.
+Changed referenced files produce `E_GATE_STALE`; manual gate JSON editing is not
+supported. Caller-recorded decisions are observations, not host attestation.
