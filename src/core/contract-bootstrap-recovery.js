@@ -266,11 +266,7 @@ export function resolveCanonicalRouteEvolution(events, {
     || (sourceRouteFingerprint !== null && !isFingerprint(sourceRouteFingerprint))
     || !isFingerprint(targetRouteFingerprint)
     || !isFingerprint(contractFingerprint)) return null;
-  if (sourceRouteFingerprint === targetRouteFingerprint) {
-    return { valid: true, reboundEvents: [], routeFingerprint: targetRouteFingerprint };
-  }
-
-  let previousFingerprint = sourceRouteFingerprint;
+  let currentFingerprint = sourceRouteFingerprint;
   const reboundEvents = [];
   for (let index = 0; index < events.length - 1; index += 1) {
     const reboundEvent = events[index];
@@ -279,15 +275,14 @@ export function resolveCanonicalRouteEvolution(events, {
     if (!isCanonicalRouteReboundBoundary(reboundEvent, routeCommit, {
       taskId,
       contractFingerprint,
-      previousRouteFingerprint: previousFingerprint,
+      previousRouteFingerprint: currentFingerprint,
     })) return null;
-    reboundEvents.push({ reboundEvent, routeCommit, previousFingerprint });
-    previousFingerprint = reboundEvent.details.routeFingerprint;
-    if (previousFingerprint === targetRouteFingerprint) {
-      return { valid: true, reboundEvents, routeFingerprint: targetRouteFingerprint };
-    }
+    reboundEvents.push({ reboundEvent, routeCommit, previousFingerprint: currentFingerprint });
+    currentFingerprint = reboundEvent.details.routeFingerprint;
   }
-  return null;
+  return currentFingerprint === targetRouteFingerprint
+    ? { valid: true, reboundEvents, routeFingerprint: currentFingerprint }
+    : null;
 }
 
 export function resolveCanonicalPostRepairRouteBinding(events, marker, currentRouteFingerprint) {

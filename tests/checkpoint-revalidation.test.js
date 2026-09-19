@@ -22,13 +22,16 @@ import {
 import { executeForgeLoopCommand } from "../src/core/command-runtime.js";
 import { getNextAction, NEXT_ACTIONS } from "../src/core/next-action.js";
 import { evaluateRoute } from "../src/core/router.js";
-import { writeJsonArtifact } from "../src/core/artifacts.js";
+import { readJsonArtifact, writeJsonArtifact } from "../src/core/artifacts.js";
 import { sha256 } from "../src/core/manifest.js";
 import { createTaskDescriptor, writeTaskDescriptor } from "../src/core/task-descriptor.js";
 import { taskArtifactPath } from "../src/core/task-paths.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { withTaskTransaction } from "../src/core/transaction.js";
-import { legacyContractBootstrapRepairId } from "../src/core/contract-bootstrap-recovery.js";
+import {
+  legacyContractBootstrapRepairId,
+  resolveCanonicalRouteEvolution,
+} from "../src/core/contract-bootstrap-recovery.js";
 import { resolveTaskClaimState } from "../src/core/task-claim-state.js";
 import { createWorkState, readWorkState, writeWorkState } from "../src/core/work-state.js";
 import { removeTempTree } from "./helpers/rm-safe.js";
@@ -68,6 +71,112 @@ async function commitChange(target, fileName, contents, message) {
   await git(target, ["add", fileName]);
   await git(target, ["commit", "-qm", message]);
 }
+
+function buildRouteEvolutionEvents({
+  hops,
+  contractFingerprint = sha256("resolver-contract"),
+  taskId = "route-evolution-resolver",
+  commitOperations = [],
+  nonAdjacentHop = null,
+} = {}) {
+  const events = [];
+  let seq = 2;
+  for (let index = 0; index < hops.length; index += 1) {
+    const [previousRouteFingerprint, routeFingerprint] = hops[index];
+    const reboundEvent = {
+      taskId,
+      seq,
+      previousHash: null,
+      event: "ROUTE_REBOUND",
+      details: { contractFingerprint, previousRouteFingerprint, routeFingerprint },
+    };
+    reboundEvent.hash = eventHash(reboundEvent);
+    events.push(reboundEvent);
+    const operation = commitOperations[index] ?? "route";
+    if (nonAdjacentHop === index) {
+      events.push({ taskId, seq: seq + 1, previousHash: reboundEvent.hash, event: "ROUTE_VALIDATED" });
+    }
+    const routeCommit = {
+      taskId,
+      seq: seq + (nonAdjacentHop === index ? 2 : 1),
+      previousHash: reboundEvent.hash,
+      event: "TRANSACTION_COMMITTED",
+      details: { operation, transactionId: `route-tx-${index + 1}` },
+    };
+    routeCommit.hash = eventHash(routeCommit);
+    events.push(routeCommit);
+    seq = routeCommit.seq + 1;
+  }
+  return { events, taskId, contractFingerprint, sourceSeq: 1 };
+}
+
+test("resolveCanonicalRouteEvolution requires the final continuous route target", () => {
+  const f1 = sha256("route-f1");
+  const f2 = sha256("route-f2");
+  const f3 = sha256("route-f3");
+  const f4 = sha256("route-f4");
+  const base = buildRouteEvolutionEvents({ hops: [[f1, f2]] });
+  const multiHop = buildRouteEvolutionEvents({ hops: [[f1, f2], [f2, f3]] });
+
+  assert.equal(resolveCanonicalRouteEvolution(base.events, {
+    ...base,
+    sourceRouteFingerprint: f1,
+    targetRouteFingerprint: f2,
+  }).valid, true);
+  assert.equal(resolveCanonicalRouteEvolution(multiHop.events, {
+    ...multiHop,
+    sourceRouteFingerprint: f1,
+    targetRouteFingerprint: f3,
+  }).reboundEvents.length, 2);
+  assert.equal(resolveCanonicalRouteEvolution(multiHop.events, {
+    ...multiHop,
+    sourceRouteFingerprint: f1,
+    targetRouteFingerprint: f2,
+  }), null);
+  assert.equal(resolveCanonicalRouteEvolution(multiHop.events, {
+    ...multiHop,
+    sourceRouteFingerprint: f1,
+    targetRouteFingerprint: f4,
+  }), null);
+
+  const brokenChain = buildRouteEvolutionEvents({ hops: [[f1, f2], [f4, f3]] });
+  assert.equal(resolveCanonicalRouteEvolution(brokenChain.events, {
+    ...brokenChain,
+    sourceRouteFingerprint: f1,
+    targetRouteFingerprint: f3,
+  }), null);
+
+  const wrongContract = buildRouteEvolutionEvents({ hops: [[f1, f2], [f2, f3]] });
+  wrongContract.events[2].details.contractFingerprint = sha256("wrong-contract");
+  wrongContract.events[2].hash = eventHash(wrongContract.events[2]);
+  wrongContract.events[3].previousHash = wrongContract.events[2].hash;
+  wrongContract.events[3].hash = eventHash(wrongContract.events[3]);
+  assert.equal(resolveCanonicalRouteEvolution(wrongContract.events, {
+    ...wrongContract,
+    sourceRouteFingerprint: f1,
+    targetRouteFingerprint: f3,
+  }), null);
+
+  const wrongOperation = buildRouteEvolutionEvents({
+    hops: [[f1, f2], [f2, f3]],
+    commitOperations: ["route", "checkpoint-revalidate"],
+  });
+  assert.equal(resolveCanonicalRouteEvolution(wrongOperation.events, {
+    ...wrongOperation,
+    sourceRouteFingerprint: f1,
+    targetRouteFingerprint: f3,
+  }), null);
+
+  const nonAdjacent = buildRouteEvolutionEvents({
+    hops: [[f1, f2]],
+    nonAdjacentHop: 0,
+  });
+  assert.equal(resolveCanonicalRouteEvolution(nonAdjacent.events, {
+    ...nonAdjacent,
+    sourceRouteFingerprint: f1,
+    targetRouteFingerprint: f2,
+  }), null);
+});
 
 async function fixture({ repositoryFingerprint = { branch: "old-branch", head: "0".repeat(40) } } = {}) {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-checkpoint-revalidate-"));
@@ -521,6 +630,77 @@ test("multi-hop route provenance reaches the exact current fingerprint", async (
     assert.equal(tamperedLedger.valid, true);
     assert.ok(validateStateLedgerCoherence(tamperedState, tamperedLedger.events)
       .some((error) => error.code === "E_CHECKPOINT_REVALIDATION_UNSAFE"));
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("intermediate canonical route rollback is rejected as inconsistent", async () => {
+  const { target, taskId } = await fixture();
+  try {
+    await runCheckpointRevalidate({ target, packageRoot, taskId });
+    await runRoute({
+      target,
+      packageRoot,
+      taskId,
+      workType: "documentation",
+      surfaces: [],
+      executableChange: false,
+    });
+    const f2Route = await readJsonArtifact(
+      target,
+      taskArtifactPath(taskId, "route"),
+      "routing-result",
+      packageRoot,
+    );
+    await runRoute({
+      target,
+      packageRoot,
+      taskId,
+      workType: "code",
+      surfaces: ["documentation"],
+      executableChange: true,
+    });
+    const stateF3 = await readWorkState(target, { packageRoot, taskId });
+    const eventsBeforeRewrite = await readEvents(target, packageRoot, { taskId });
+    const routeCommitCountBeforeRewrite = eventsBeforeRewrite.filter((event) => event.event === "TRANSACTION_COMMITTED"
+      && event.details.operation === "route").length;
+    const ledgerBeforeRewrite = await validateEventLedger(target, packageRoot, { taskId });
+    const claimBeforeRewrite = await resolveTaskClaimState(target, { packageRoot, taskId });
+    assert.equal(ledgerBeforeRewrite.valid, true);
+    assert.deepEqual(validateStateLedgerCoherence(stateF3, ledgerBeforeRewrite.events), []);
+    assert.equal(claimBeforeRewrite.claimState, "ACTIVE");
+    assert.equal(claimBeforeRewrite.ownershipValid, true);
+    assert.equal(claimBeforeRewrite.mutationAllowed, true);
+
+    await writeJsonArtifact(
+      target,
+      taskArtifactPath(taskId, "route"),
+      f2Route.value,
+      "routing-result",
+      packageRoot,
+      { taskId },
+    );
+    await writeWorkState(target, {
+      ...stateF3,
+      routeFingerprint: f2Route.fingerprint,
+      selectedGuides: [...f2Route.value.guides],
+      revision: stateF3.revision + 1,
+    }, { packageRoot, taskId });
+
+    const eventsAfterRewrite = await readEvents(target, packageRoot, { taskId });
+    const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    const state = await readWorkState(target, { packageRoot, taskId });
+    const coherence = validateStateLedgerCoherence(state, ledger.events);
+    const claim = await resolveTaskClaimState(target, { packageRoot, taskId });
+    assert.equal(eventsAfterRewrite.filter((event) => event.event === "ROUTE_REBOUND").length, 2);
+    assert.equal(eventsAfterRewrite.filter((event) => event.event === "TRANSACTION_COMMITTED"
+      && event.details.operation === "route").length, routeCommitCountBeforeRewrite);
+    assert.equal(ledger.valid, true);
+    assert.ok(coherence.some((error) => error.code === "E_CHECKPOINT_REVALIDATION_UNSAFE"));
+    assert.equal(claim.claimState, "INCONSISTENT");
+    assert.equal(claim.ownershipValid, false);
+    assert.equal(claim.mutationAllowed, false);
   } finally {
     await removeTempTree(target);
   }
