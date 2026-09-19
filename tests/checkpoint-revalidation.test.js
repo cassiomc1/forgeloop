@@ -394,11 +394,55 @@ test("canonical reroute after migrated checkpoint revalidation preserves histori
   }
 });
 
+test("canonical normal reroute binds the exact route evolution provenance", async () => {
+  const { target, taskId, contractHash } = await fixture();
+  try {
+    await runCheckpointRevalidate({ target, packageRoot, taskId });
+    const beforeState = await readWorkState(target, { packageRoot, taskId });
+    await runRoute({
+      target,
+      packageRoot,
+      taskId,
+      workType: "documentation",
+      surfaces: [],
+      executableChange: false,
+    });
+    const state = await readWorkState(target, { packageRoot, taskId });
+    const events = await readEvents(target, packageRoot, { taskId });
+    const rebound = events.find((event) => event.event === "ROUTE_REBOUND"
+      && event.details.previousRouteFingerprint === beforeState.routeFingerprint
+      && event.details.routeFingerprint === state.routeFingerprint);
+    assert.ok(rebound);
+    assert.equal(rebound.details.contractFingerprint, contractHash);
+    const reboundIndex = events.indexOf(rebound);
+    assert.equal(events[reboundIndex + 1].event, "TRANSACTION_COMMITTED");
+    assert.equal(events[reboundIndex + 1].details.operation, "route");
+    const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    const coherence = validateStateLedgerCoherence(state, ledger.events);
+    const claim = await resolveTaskClaimState(target, { packageRoot, taskId });
+    assert.equal(ledger.valid, true);
+    assert.deepEqual(coherence, []);
+    assert.equal(claim.claimState, "ACTIVE");
+    assert.equal(claim.ownershipValid, true);
+    assert.equal(claim.mutationAllowed, true);
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
 test("manual route and state rewrite without canonical route provenance remains inconsistent", async () => {
   const { target, taskId, contractHash } = await fixture();
   try {
     await runCheckpointRevalidate({ target, packageRoot, taskId });
     const stateBefore = await readWorkState(target, { packageRoot, taskId });
+    await runRoute({
+      target,
+      packageRoot,
+      taskId,
+      workType: "code",
+      surfaces: ["config"],
+      executableChange: true,
+    });
     const eventsBefore = await readEvents(target, packageRoot, { taskId });
     const routeCommitCount = eventsBefore.filter((event) => event.event === "TRANSACTION_COMMITTED"
       && event.details.operation === "route").length;
@@ -427,6 +471,95 @@ test("manual route and state rewrite without canonical route provenance remains 
       && event.details.operation === "route").length, routeCommitCount);
     assert.equal(ledger.valid, true);
     assert.ok(coherence.some((error) => error.code === "E_CHECKPOINT_REVALIDATION_UNSAFE"));
+    assert.equal(claim.claimState, "INCONSISTENT");
+    assert.equal(claim.ownershipValid, false);
+    assert.equal(claim.mutationAllowed, false);
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("multi-hop route provenance reaches the exact current fingerprint", async () => {
+  const { target, taskId } = await fixture();
+  try {
+    await runCheckpointRevalidate({ target, packageRoot, taskId });
+    await runRoute({
+      target,
+      packageRoot,
+      taskId,
+      workType: "documentation",
+      surfaces: [],
+      executableChange: false,
+    });
+    const afterFirstRoute = await readWorkState(target, { packageRoot, taskId });
+    await runRoute({
+      target,
+      packageRoot,
+      taskId,
+      workType: "code",
+      surfaces: ["documentation"],
+      executableChange: true,
+    });
+    const state = await readWorkState(target, { packageRoot, taskId });
+    assert.notEqual(afterFirstRoute.routeFingerprint, state.routeFingerprint);
+    const events = await readEvents(target, packageRoot, { taskId });
+    const rebounds = events.filter((event) => event.event === "ROUTE_REBOUND");
+    assert.equal(rebounds.length, 2);
+    assert.equal(rebounds[1].details.previousRouteFingerprint, rebounds[0].details.routeFingerprint);
+    assert.equal(events[events.indexOf(rebounds[0]) + 1].details.operation, "route");
+    assert.equal(events[events.indexOf(rebounds[1]) + 1].details.operation, "route");
+    const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assert.equal(ledger.valid, true);
+    assert.deepEqual(validateStateLedgerCoherence(state, ledger.events), []);
+
+    await rewriteEvents(target, taskId, (rewritten) => {
+      const middle = rewritten.filter((event) => event.event === "ROUTE_REBOUND")[1];
+      middle.details.previousRouteFingerprint = "0".repeat(64);
+    });
+    const tamperedLedger = await validateEventLedger(target, packageRoot, { taskId });
+    const tamperedState = await readWorkState(target, { packageRoot, taskId });
+    assert.equal(tamperedLedger.valid, true);
+    assert.ok(validateStateLedgerCoherence(tamperedState, tamperedLedger.events)
+      .some((error) => error.code === "E_CHECKPOINT_REVALIDATION_UNSAFE"));
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("route provenance rejects a current target without the final canonical hop", async () => {
+  const { target, taskId, contractHash } = await fixture();
+  try {
+    await runCheckpointRevalidate({ target, packageRoot, taskId });
+    await runRoute({
+      target,
+      packageRoot,
+      taskId,
+      workType: "documentation",
+      surfaces: [],
+      executableChange: false,
+    });
+    const stateBefore = await readWorkState(target, { packageRoot, taskId });
+    const forgedRoute = evaluateRoute({ workType: "code", surfaces: ["documentation"], executableChange: true });
+    const replacement = await writeJsonArtifact(
+      target,
+      taskArtifactPath(taskId, "route"),
+      { ...forgedRoute, contractFingerprint: contractHash },
+      "routing-result",
+      packageRoot,
+      { taskId },
+    );
+    await writeWorkState(target, {
+      ...stateBefore,
+      routeFingerprint: replacement.fingerprint,
+      selectedGuides: [...replacement.value.guides],
+      revision: stateBefore.revision + 1,
+    }, { packageRoot, taskId });
+    const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    const state = await readWorkState(target, { packageRoot, taskId });
+    assert.equal(ledger.valid, true);
+    assert.ok(validateStateLedgerCoherence(state, ledger.events)
+      .some((error) => error.code === "E_CHECKPOINT_REVALIDATION_UNSAFE"));
+    const claim = await resolveTaskClaimState(target, { packageRoot, taskId });
     assert.equal(claim.claimState, "INCONSISTENT");
     assert.equal(claim.ownershipValid, false);
     assert.equal(claim.mutationAllowed, false);

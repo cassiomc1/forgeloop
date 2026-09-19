@@ -21,17 +21,26 @@ function canAppendRepairedRouteWitness({ stateBefore, marker, previousPersistedR
     && persistedRoute.value.contractFingerprint === marker.details.contractFingerprint;
 }
 
-async function appendRepairedRouteWitness({ target, packageRoot, taskId, stateBefore, previousPersistedRouteFingerprint, persistedRoute }) {
+function canAppendCanonicalRouteWitness({ stateBefore, previousPersistedRouteFingerprint, persistedRoute }) {
+  return stateBefore?.phase === "ROUTED"
+    && previousPersistedRouteFingerprint !== null
+    && persistedRoute.fingerprint !== previousPersistedRouteFingerprint
+    && stateBefore.contractFingerprint === persistedRoute.value.contractFingerprint;
+}
+
+async function appendRouteWitness({ target, packageRoot, taskId, stateBefore, previousPersistedRouteFingerprint, persistedRoute }) {
   if (!stateBefore) return;
   const events = await readEvents(target, packageRoot, { taskId });
   const anchor = resolveEffectiveContractBootstrapRepairAnchor(events);
-  if (!anchor) return;
-  if (!canAppendRepairedRouteWitness({
-    stateBefore,
-    marker: anchor.sourceMarker,
-    previousPersistedRouteFingerprint,
-    persistedRoute,
-  })) return;
+  const canAppend = anchor
+    ? canAppendRepairedRouteWitness({
+      stateBefore,
+      marker: anchor.sourceMarker,
+      previousPersistedRouteFingerprint,
+      persistedRoute,
+    })
+    : canAppendCanonicalRouteWitness({ stateBefore, previousPersistedRouteFingerprint, persistedRoute });
+  if (!canAppend) return;
   await appendProtocolEvent(target, {
     taskId,
     event: "ROUTE_REBOUND",
@@ -72,7 +81,7 @@ async function persistRoutedState({ target, packageRoot, taskId, route, transact
     await advanceWorkState(target, "ROUTED", { packageRoot, taskId });
   }
   if (transaction?.operation === "route") {
-    await appendRepairedRouteWitness({
+    await appendRouteWitness({
       target,
       packageRoot,
       taskId,

@@ -1,5 +1,6 @@
 import { canonicalFingerprint } from "./artifacts.js";
 import {
+  resolveCanonicalRouteEvolution,
   resolveCanonicalPostRepairRouteBinding,
   resolveEffectiveContractBootstrapRepairAnchor,
 } from "./contract-bootstrap-recovery.js";
@@ -88,43 +89,34 @@ function eventHash(event) {
   return canonicalFingerprint(body);
 }
 
-function isTransactionCommitFor(event, taskId, operation) {
-  return event?.event === "TRANSACTION_COMMITTED"
-    && event.taskId === taskId
-    && event.details?.operation === operation
-    && typeof event.details?.transactionId === "string"
-    && event.details.transactionId.length > 0
-    && event.hash === eventHash(event);
-}
-
 function routeEvolutionAfter(events, sourceEvent, sourceRouteFingerprint, targetRouteFingerprint) {
   const sourceIndex = events.indexOf(sourceEvent);
   if (sourceIndex < 0 || !isFingerprint(sourceRouteFingerprint) || !isFingerprint(targetRouteFingerprint)) {
     return false;
   }
 
+  const contractFingerprint = sourceEvent.details?.contractFingerprint;
+  const canonical = resolveCanonicalRouteEvolution(events, {
+    taskId: sourceEvent.taskId,
+    sourceSeq: sourceEvent.seq,
+    sourceRouteFingerprint,
+    targetRouteFingerprint,
+    contractFingerprint,
+  });
+  if (!canonical) return false;
+
   const anchor = resolveEffectiveContractBootstrapRepairAnchor(events);
-  if (anchor?.details?.contractFingerprint === sourceEvent.details?.contractFingerprint) {
+  if (anchor?.details?.contractFingerprint === contractFingerprint) {
     const binding = resolveCanonicalPostRepairRouteBinding(
       events,
       anchor.sourceMarker,
       targetRouteFingerprint,
     );
-    if (binding?.reboundEvents?.some(({ reboundEvent, previousFingerprint }) =>
+    return Boolean(binding?.reboundEvents?.some(({ reboundEvent }) =>
       reboundEvent.seq > sourceEvent.seq
-      && previousFingerprint === sourceRouteFingerprint
-      && reboundEvent.details.routeFingerprint === targetRouteFingerprint)) {
-      return true;
-    }
+      && reboundEvent.details.routeFingerprint === targetRouteFingerprint));
   }
-
-  // Normal ROUTED rerouting is authorized by the canonical route mutation
-  // transaction and the synchronized state revision. The transaction is
-  // intentionally bounded after the historical checkpoint, so an earlier
-  // route mutation cannot authorize a later unexplained rewrite.
-  return events
-    .slice(sourceIndex + 1)
-    .some((event) => isTransactionCommitFor(event, sourceEvent.taskId, "route"));
+  return canonical.valid;
 }
 
 /**
