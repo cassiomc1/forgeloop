@@ -5,7 +5,7 @@ import { readPersistedRoute } from "../core/route-artifact.js";
 import { currentRepositoryFingerprint } from "../core/repository.js";
 import { resolveTaskContext } from "../core/task-context.js";
 import { taskArtifactPath } from "../core/task-paths.js";
-import { withProjectClaimsLock, readLockInfo, classifyLockStaleness } from "../core/task-lock.js";
+import { withProjectClaimsLock, readLockInfo, classifyLockStaleness, releaseStaleTaskLockIfUnchanged } from "../core/task-lock.js";
 import { withTaskTransaction } from "../core/transaction.js";
 import { createWorkState, mutateWorkState, readWorkState } from "../core/work-state.js";
 import {
@@ -31,8 +31,6 @@ function repairError(code, message, details = {}) {
   Object.assign(error, details);
   return error;
 }
-
-import { releaseStaleTaskLockIfUnchanged } from "../core/task-lock.js";
 
 async function readRouteIfProven(target, packageRoot, taskId, events, contractFingerprint) {
   const routePath = taskArtifactPath(taskId, "route");
