@@ -59,7 +59,7 @@ error codes. Default output and default JSON remain unchanged.
 | Category | Commands |
 | --- | --- |
 | **Inspection & Diagnostics** | [`protocol-info`](#protocol-info), [`doctor`](#doctor), [`index-status`](#index-status), [`search`](#search), [`metrics`](#metrics), [`usage-record`](#usage-record), [`efficiency`](#efficiency), [`eval`](#eval), [`history`](#history), [`trace`](#trace), [`reflect`](#reflect), [`progress`](#progress), [`profile-interview`](#profile-interview), [`inspect`](#inspect), [`status`](#status), [`validate-state`](#validate-state), [`validate-protocol`](#validate-protocol) |
-| **Lifecycle & State** | [`discover`](#discover), [`contract-create`](#contract-create), [`activate`](#activate), [`route`](#route), [`preflight`](#preflight), [`advance`](#advance), [`next`](#next), [`record-diagnosis`](#record-diagnosis), [`record-intervention`](#record-intervention), [`record-hypothesis-disposition`](#record-hypothesis-disposition), [`record-decision-criterion`](#record-decision-criterion), [`complete`](#complete), [`clear-state`](#clear-state), [`reconcile-closure`](#reconcile-closure), [`task-create`](#task-create), [`task-list`](#task-list), [`task-show`](#task-show), [`task-lock-status`](#task-lock-status), [`task-scope`](#task-scope) |
+| **Lifecycle & State** | [`discover`](#discover), [`contract-create`](#contract-create), [`gate-record`](#gate-record), [`activate`](#activate), [`route`](#route), [`preflight`](#preflight), [`advance`](#advance), [`next`](#next), [`record-diagnosis`](#record-diagnosis), [`record-intervention`](#record-intervention), [`record-hypothesis-disposition`](#record-hypothesis-disposition), [`record-decision-criterion`](#record-decision-criterion), [`complete`](#complete), [`clear-state`](#clear-state), [`reconcile-closure`](#reconcile-closure), [`task-create`](#task-create), [`task-list`](#task-list), [`task-show`](#task-show), [`task-lock-status`](#task-lock-status), [`task-scope`](#task-scope) |
 | **Setup & Maintenance** | [`init`](#init), [`index-setup`](#index-setup), [`index-start`](#index-start), [`index-stop`](#index-stop), [`index-rebuild`](#index-rebuild), [`update`](#update), [`task-migrate`](#task-migrate), [`migrate-protocol`](#migrate-protocol), [`task-unlock`](#task-unlock), [`task-recover`](#task-recover), [`task-repair-contract-bootstrap`](#task-repair-contract-bootstrap), [`task-repair-legacy-recovery`](#task-repair-legacy-recovery), [`task-resume`](#task-resume) |
 | **Verification & Completion** | [`quality-baseline`](#quality-baseline), [`quality-verify`](#quality-verify), [`quality-status`](#quality-status), [`prepare-completion`](#prepare-completion), [`run-check`](#run-check), [`record-check`](#record-check), [`record-terminal-result`](#record-terminal-result), [`audit`](#audit), [`report`](#report), [`validate-receipt`](#validate-receipt), [`verify-scope`](#verify-scope) |
 | **Cross-Harness Continuity** | [`continuity`](#continuity), [`record-continuity`](#record-continuity), [`reconcile-continuity`](#reconcile-continuity), [`clear-continuity`](#clear-continuity), [`handoff-create`](#handoff-create), [`handoff-list`](#handoff-list), [`handoff-show`](#handoff-show) |
@@ -869,6 +869,30 @@ Persists a validated contract and materializes the first real lifecycle checkpoi
 - `--json`: emit structured contract output as JSON
 
 <!-- END FORGELOOP GENERATED: cli:contract-create:options -->
+
+### `gate-record`
+
+Records a gate satisfaction or rejection decision for a task's preflight gate lifecycle.
+
+- **Purpose**: Records structured evidence that a named gate has been satisfied, rejected, or deferred, with optional artifact and decision evidence.
+- **When to use**: During the preflight gate lifecycle to progress gate status from pending to resolved.
+- **Mutation**: Writes a gate artifact under the task namespace and appends a `GATE_SATISFIED` or `GATE_REJECTED` protocol event.
+- **Options**:
+
+<!-- BEGIN FORGELOOP GENERATED: cli:gate-record:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--gate <name>`: required gate name
+- `--status <status>`: satisfied, unverified, or blocked
+- `--artifact <path>`: project-relative evidence artifact (repeatable)
+- `--decision <text>`: caller-recorded gate decision (repeatable)
+- `--unknown <text>`: known unresolved item (repeatable)
+- `--assumption <text>`: approved local assumption (repeatable)
+- `--evidence-file <path>`: bounded local descriptive evidence JSON
+- `--json`: emit structured gate output as JSON
+
+<!-- END FORGELOOP GENERATED: cli:gate-record:options -->
 
 ### `route`
 

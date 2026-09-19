@@ -15,6 +15,11 @@ import {
   validateTaskRecoveryConsistency,
 } from "./task-recovery.js";
 import { readWorkState } from "./work-state.js";
+import {
+  CONTRACT_BOOTSTRAP_REPAIR_EVENT,
+  isContractBootstrapRepairMarkerValid,
+} from "./contract-bootstrap-recovery.js";
+import { canonicalFingerprint } from "./artifacts.js";
 
 function ownershipError(message, cause = null) {
   return {
@@ -22,6 +27,44 @@ function ownershipError(message, cause = null) {
     message,
     ...(cause?.code ? { causeCode: cause.code } : {}),
   };
+}
+
+function validateContractBootstrapRepairConsistency(events, state, target, taskId) {
+  const marker = events.find((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
+  if (!marker) return [];
+  if (!isContractBootstrapRepairMarkerValid(events, marker)) {
+    return [ownershipError("Contract bootstrap repair marker is invalid")];
+  }
+  const errors = [];
+  if (state) {
+    if (state.phase !== marker.details.reconstructedPhase) {
+      errors.push(ownershipError(
+        `Work-state phase ${state.phase} does not match repair marker phase ${marker.details.reconstructedPhase}`,
+      ));
+    }
+    if (state.contractFingerprint !== marker.details.contractFingerprint) {
+      errors.push(ownershipError(
+        "Work-state contract fingerprint does not match repair marker contract fingerprint",
+      ));
+    }
+    if (canonicalFingerprint(state) !== marker.details.reconstructedStateFingerprint) {
+      errors.push(ownershipError(
+        "Work-state fingerprint does not match repair marker reconstructed state fingerprint",
+      ));
+    }
+    if (marker.details.routeFingerprint !== null) {
+      if (state.routeFingerprint !== marker.details.routeFingerprint) {
+        errors.push(ownershipError(
+          "Work-state route fingerprint does not match repair marker route fingerprint",
+        ));
+      }
+    } else if (state.routeFingerprint !== undefined) {
+      errors.push(ownershipError(
+        "Repair marker has no route but work-state claims a route",
+      ));
+    }
+  }
+  return errors;
 }
 
 function appendClaims(target, claims, errors, source) {
@@ -85,6 +128,9 @@ export async function collectTaskClaimEvidence(target, {
   if (ledger.events.some((event) => event.taskId !== taskId)) {
     errors.push(ownershipError(`Task event ledger contains an event for a different task`));
   }
+
+  const repairConsistencyErrors = validateContractBootstrapRepairConsistency(ledger.events, state, target, taskId);
+  errors.push(...repairConsistencyErrors);
 
   const history = classifyRecoveryHistory(ledger.events);
   const descriptorClaims = [];

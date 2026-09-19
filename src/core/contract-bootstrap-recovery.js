@@ -8,9 +8,14 @@ export const CONTRACT_BOOTSTRAP_REPAIR_AUTHORITY = "CALLER_ACKNOWLEDGED";
 const FINGERPRINT = /^[a-f0-9]{64}$/;
 const REPAIR_ID = /^repair-[a-f0-9]{64}$/;
 const HISTORICAL_EVENTS = new Set([
+  "DESIGN_GATE_STARTED",
+  "PLAN_RECORDED",
   "EXECUTION_STARTED",
   "VERIFICATION_STARTED",
   "VERIFICATION_RECORDED",
+  "DIAGNOSIS_RECORDED",
+  "DIAGNOSTIC_CASE_RECORDED",
+  "CORRECTION_STARTED",
   "REVIEW_STARTED",
   "COMPLETION_VALIDATED",
   "COMPLETION_REJECTED",
@@ -45,10 +50,15 @@ function isCommitFor(event, operation) {
     && event.details.transactionId.length > 0;
 }
 
-function chronologyError(error) {
+const EXACT_DUPLICATE_CONTRACT_ERRORS = Object.freeze([
+  "lifecycle milestone must not repeat: CONTRACT_VALIDATED",
+  "CONTRACT_VALIDATED is out of lifecycle order",
+]);
+export const EXACT_DUPLICATE_CONTRACT_ERRORS_FROZEN = EXACT_DUPLICATE_CONTRACT_ERRORS;
+
+export function isExactDuplicateContractChronologyError(error) {
   return error?.code === "E_PHASE_CHRONOLOGY_INVALID"
-    && typeof error.message === "string"
-    && error.message.includes("CONTRACT_VALIDATED");
+    && EXACT_DUPLICATE_CONTRACT_ERRORS.includes(error.message);
 }
 
 export function eventHash(event) {
@@ -140,9 +150,10 @@ export function isContractBootstrapRepairCandidate(events, ledgerErrors = [], ta
   if (!isCommitFor(canonicalCommit, "contract-create") || !isCommitFor(duplicateCommit, "contract-create")) return null;
   if (duplicateIndex !== events.length - 2 || events.at(-1) !== duplicateCommit) return null;
   if (events.some((event) => HISTORICAL_EVENTS.has(event.event))) return null;
-  if (!Array.isArray(ledgerErrors) || ledgerErrors.some((error) => !chronologyError(error))) return null;
-  if (!ledgerErrors.some((error) => error.message.includes("milestone must not repeat: CONTRACT_VALIDATED"))
-    || !ledgerErrors.some((error) => error.message.includes("CONTRACT_VALIDATED is out of lifecycle order"))) return null;
+  if (!Array.isArray(ledgerErrors) || ledgerErrors.length < 1) return null;
+  if (ledgerErrors.some((error) => !isExactDuplicateContractChronologyError(error))) return null;
+  if (!ledgerErrors.some((error) => error.message === "lifecycle milestone must not repeat: CONTRACT_VALIDATED")
+    || !ledgerErrors.some((error) => error.message === "CONTRACT_VALIDATED is out of lifecycle order")) return null;
   return {
     taskId: effectiveTaskId,
     canonicalContractEvent: canonical,
@@ -201,5 +212,5 @@ function isMarkerBound(marker, candidate) {
 export function repairMarkerErrors(events, errors) {
   const marker = events.find((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
   if (!marker || !isContractBootstrapRepairMarkerValid(events, marker)) return errors;
-  return errors.filter((error) => !chronologyError(error));
+  return errors.filter((error) => !isExactDuplicateContractChronologyError(error));
 }

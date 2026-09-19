@@ -8,6 +8,15 @@ import { currentRepositoryFingerprint } from "../core/repository.js";
 import { createWorkState, initializeWorkState, readWorkState } from "../core/work-state.js";
 import { ensureWithin, fileExists } from "../core/filesystem.js";
 import { withTaskMutation } from "../core/task-command.js";
+import { readPersistedRoute } from "../core/route-artifact.js";
+import { deriveResumePhaseFromLedger } from "../core/resumability.js";
+import { taskArtifactPath } from "../core/task-paths.js";
+
+function bootstrapInconsistent(message, candidate = false) {
+  const error = new Error(message);
+  error.code = candidate ? "E_CONTRACT_BOOTSTRAP_REPAIR_AVAILABLE" : "E_CONTRACT_BOOTSTRAP_INCONSISTENT";
+  return error;
+}
 
 export async function runContractCreate({ target, packageRoot, taskId, task, contractFile = null, preset = null } = {}) {
   if (!preset && !contractFile) throw new Error("contract-create requires --preset or --contract-file");
@@ -27,19 +36,19 @@ export async function runContractCreate({ target, packageRoot, taskId, task, con
       const existingLedger = await validateEventLedger(target, packageRoot, { taskId: ctx.taskId });
       if (!existingLedger.valid) {
         const candidate = isContractBootstrapRepairCandidate(existingLedger.events, existingLedger.errors, ctx.taskId);
-        const error = new Error(candidate
-          ? "The exact contract bootstrap defect requires task-repair-contract-bootstrap"
-          : "Existing contract checkpoint has an invalid event ledger");
-        error.code = candidate ? "E_CONTRACT_BOOTSTRAP_REPAIR_AVAILABLE" : "E_CONTRACT_BOOTSTRAP_INCONSISTENT";
+        const error = bootstrapInconsistent(
+          candidate
+            ? "The exact contract bootstrap defect requires task-repair-contract-bootstrap"
+            : "Existing contract checkpoint has an invalid event ledger",
+          !!candidate,
+        );
         error.next = candidate ? `forgeloop task-repair-contract-bootstrap --task ${ctx.taskId} --acknowledge-repair --json` : undefined;
         throw error;
       }
       if (existingState.contractFingerprint !== existingContract.fingerprint
         || !existingLedger.events.some((event) => event.event === "CONTRACT_VALIDATED"
           && event.details?.contractFingerprint === existingContract.fingerprint)) {
-        const error = new Error("Existing contract checkpoint is not bound to its validated contract event");
-        error.code = "E_CONTRACT_BOOTSTRAP_INCONSISTENT";
-        throw error;
+        throw bootstrapInconsistent("Existing contract checkpoint is not bound to its validated contract event");
       }
       return { taskId: ctx.taskId, phase: existingState.phase, idempotent: true, contractFingerprint: existingContract.fingerprint };
     }
@@ -55,6 +64,93 @@ export async function runContractCreate({ target, packageRoot, taskId, task, con
     }
     await validateContract(contract, packageRoot);
     const fingerprint = contractFingerprint(contract);
+
+    const existingContractPath = taskArtifactPath(ctx.taskId, "contract");
+    const existingContractExists = await fileExists(
+      ensureWithin(target, existingContractPath),
+    ).catch(() => false);
+
+    if (existingContractExists) {
+      const reconLedger = await validateEventLedger(target, packageRoot, { taskId: ctx.taskId });
+      const hasValidatedContract = reconLedger.events.some(
+        (event) => event.event === "CONTRACT_VALIDATED",
+      );
+      if (!hasValidatedContract) {
+        await writeContract(target, contract, packageRoot, { taskId: ctx.taskId });
+        const repositoryFingerprint = await currentRepositoryFingerprint(target);
+        await initializeWorkState(target, createWorkState({
+          taskId: ctx.taskId,
+          contractFingerprint: fingerprint,
+          repositoryFingerprint,
+          phase: "CONTRACT_READY",
+          selectedGuides: [],
+          requiredGates: [],
+          satisfiedGates: [],
+          completedSteps: ["contract"],
+          pendingSteps: ["route"],
+          requiredArtifacts: [],
+          checks: [],
+          failures: [],
+          blockers: [],
+          verificationEvidence: [],
+        }), { packageRoot, taskId: ctx.taskId });
+        await appendProtocolEvent(target, {
+          taskId: ctx.taskId,
+          event: "CONTRACT_VALIDATED",
+          details: { contractFingerprint: fingerprint },
+        }, packageRoot, { taskId: ctx.taskId });
+        return { taskId: ctx.taskId, phase: "CONTRACT_READY", idempotent: false, contractFingerprint: fingerprint };
+      }
+
+      if (!reconLedger.valid) {
+        const candidate = isContractBootstrapRepairCandidate(reconLedger.events, reconLedger.errors, ctx.taskId);
+        const error = bootstrapInconsistent(
+          candidate
+            ? "The exact contract bootstrap defect requires task-repair-contract-bootstrap"
+            : "Existing contract has an inconsistent ledger; cannot overwrite",
+          !!candidate,
+        );
+        error.next = candidate ? `forgeloop task-repair-contract-bootstrap --task ${ctx.taskId} --acknowledge-repair --json` : undefined;
+        throw error;
+      }
+
+      const existingContract = await readContract(target, packageRoot, { taskId: ctx.taskId });
+      if (!reconLedger.events.some((event) => event.event === "CONTRACT_VALIDATED"
+        && event.details?.contractFingerprint === existingContract.fingerprint)) {
+        throw bootstrapInconsistent("Existing contract is not bound to a valid CONTRACT_VALIDATED event");
+      }
+      if (existingContract.fingerprint !== fingerprint) {
+        throw bootstrapInconsistent("A different contract already exists for this task; contract-create is not contract-revise");
+      }
+
+      const route = await readPersistedRoute(target, packageRoot, { taskId: ctx.taskId }).catch(() => null);
+      const resumedPhase = route
+        ? (await deriveResumePhaseFromLedger(target, packageRoot, ctx.taskId) ?? "ROUTED")
+        : "CONTRACT_READY";
+      const repositoryFingerprint = await currentRepositoryFingerprint(target);
+      const reconstructedState = createWorkState({
+        taskId: ctx.taskId,
+        contractFingerprint: fingerprint,
+        ...(route ? { routeFingerprint: route.fingerprint } : {}),
+        repositoryFingerprint,
+        phase: resumedPhase,
+        selectedGuides: route ? [...route.value.guides] : [],
+        requiredGates: [],
+        satisfiedGates: [],
+        completedSteps: resumedPhase === "ROUTED" ? ["contract", "route"] : ["contract"],
+        pendingSteps: resumedPhase === "ROUTED"
+          ? ["planning", "implementation", "verification"]
+          : ["route", "planning", "implementation", "verification"],
+        requiredArtifacts: [],
+        checks: [],
+        failures: [],
+        blockers: [],
+        verificationEvidence: [],
+      });
+      await initializeWorkState(target, reconstructedState, { packageRoot, taskId: ctx.taskId });
+      return { taskId: ctx.taskId, phase: resumedPhase, idempotent: true, contractFingerprint: fingerprint, reconstructed: true };
+    }
+
     await writeContract(target, contract, packageRoot, { taskId: ctx.taskId });
     const repositoryFingerprint = await currentRepositoryFingerprint(target);
     await initializeWorkState(target, createWorkState({

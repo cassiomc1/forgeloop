@@ -19,7 +19,7 @@ const RESUME_PHASE_BY_MILESTONE = Object.freeze({
   REVIEW_STARTED: "REVIEWING",
 });
 
-async function deriveResumePhaseFromLedger(target, packageRoot, taskId) {
+export async function deriveResumePhaseFromLedger(target, packageRoot, taskId) {
   let ledger;
   try {
     ledger = await validateEventLedger(target, packageRoot, { taskId });

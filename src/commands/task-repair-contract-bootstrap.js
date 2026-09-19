@@ -32,6 +32,8 @@ function repairError(code, message, details = {}) {
   return error;
 }
 
+import { releaseStaleTaskLockIfUnchanged } from "../core/task-lock.js";
+
 async function readRouteIfProven(target, packageRoot, taskId, events, contractFingerprint) {
   const routePath = taskArtifactPath(taskId, "route");
   try {
@@ -105,6 +107,20 @@ function assertStateCompatible(state, taskId, contractFingerprint, route) {
   if (!route && state.routeFingerprint !== undefined) {
     throw repairError(E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE, "Existing work-state claims a route that cannot be proven from the artifacts");
   }
+  if (state.phase === "CONTRACT_READY") {
+    if (state.routeFingerprint !== undefined) {
+      throw repairError(E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE, "CONTRACT_READY work-state must not claim a route");
+    }
+    if (Array.isArray(state.selectedGuides) && state.selectedGuides.length > 0) {
+      throw repairError(E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE, "CONTRACT_READY work-state must not have selected guides");
+    }
+    if (Array.isArray(state.requiredGates) && state.requiredGates.length > 0) {
+      throw repairError(E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE, "CONTRACT_READY work-state must not have required gates");
+    }
+    if (Array.isArray(state.satisfiedGates) && state.satisfiedGates.length > 0) {
+      throw repairError(E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE, "CONTRACT_READY work-state must not have satisfied gates");
+    }
+  }
 }
 
 function markerResult(taskId, marker, state, alreadyRepaired) {
@@ -165,8 +181,15 @@ export async function runTaskRepairContractBootstrap({ target, packageRoot, task
     const lock = await readLockInfo(target, effectiveTaskId);
     const status = classifyLockStaleness(lock);
     if (status.status === "LIVE") throw repairError(E_TASK_LOCKED, `Task ${effectiveTaskId} has a live mutation lock`);
-    if (status.status !== "NONE" && status.status !== "STALE") {
+    if (status.status === "UNKNOWN" || status.status === "CORRUPT") {
       throw repairError(E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE, `Task ${effectiveTaskId} lock state is ${status.status}`);
+    }
+    if (status.status === "STALE") {
+      const released = await releaseStaleTaskLockIfUnchanged(target, effectiveTaskId, lock);
+      if (!released.released && released.reason !== "LOCK_MISSING") {
+        throw repairError(E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE,
+          `Task ${effectiveTaskId} stale lock could not be safely released: ${released.reason}`);
+      }
     }
     return withTaskTransaction({
       target,
