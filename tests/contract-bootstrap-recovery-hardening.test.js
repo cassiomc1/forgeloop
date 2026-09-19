@@ -5,6 +5,7 @@ import path from "node:path";
 import { test } from "node:test";
 
 import { runContractCreate } from "../src/commands/contract-create.js";
+import { runRoute } from "../src/commands/route.js";
 import { runTaskRepairContractBootstrap } from "../src/commands/task-repair-contract-bootstrap.js";
 import {
   createContract, contractFingerprint, writeContract,
@@ -1119,11 +1120,9 @@ test("post-repair route contractFingerprint rebound → ownership INCONSISTENT",
   }
 });
 
-test("repaired contract-only checkpoint with no route artifact keeps ownership ACTIVE", async () => {
+test("valid contract-only repair without ROUTE_VALIDATED keeps ownership ACTIVE", async () => {
   // Route artifact absent: repair reconstructs CONTRACT_READY, the marker has
   // routeFingerprint null, and ownership must not demand a route artifact.
-  // The duplicate CONTRACT_VALIDATED is separated by a ROUTE_VALIDATED
-  // milestone so the ledger reproduces the exact supported defect signature.
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-hardening-contractonly-"));
   try {
     const contract = createPresetContract({ taskId: "contract-only", preset: "feature" });
@@ -1134,7 +1133,6 @@ test("repaired contract-only checkpoint with no route artifact keeps ownership A
     await appendTransaction(target, "contract-only", "task-create", "TASK_RECEIVED", { createdAt: descriptor.createdAt });
     await appendTransaction(target, "contract-only", "discover", "DISCOVERY_STARTED", { source: "test" });
     await appendTransaction(target, "contract-only", "contract-create", "CONTRACT_VALIDATED", { contractFingerprint: contractHash });
-    await appendTransaction(target, "contract-only", "route", "ROUTE_VALIDATED");
     await appendTransaction(target, "contract-only", "contract-create", "CONTRACT_VALIDATED", { contractFingerprint: contractHash });
     await writeWorkState(target, createWorkState({
       taskId: "contract-only",
@@ -1160,6 +1158,138 @@ test("repaired contract-only checkpoint with no route artifact keeps ownership A
     assert.equal(claim.claimState, "ACTIVE");
     assert.equal(claim.mutationAllowed, true);
     assert.equal(claim.ownershipValid, true);
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("unsafe routed history without a route artifact does not repair", async () => {
+  const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-hardening-routed-missing-"));
+  try {
+    const contract = createPresetContract({ taskId: "routed-missing", preset: "feature" });
+    const contractHash = contractFingerprint(contract);
+    const descriptor = createTaskDescriptor({ taskId: "routed-missing", writeClaims: [] });
+    await writeTaskDescriptor(target, descriptor, packageRoot);
+    await writeContract(target, contract, packageRoot, { taskId: "routed-missing" });
+    await appendTransaction(target, "routed-missing", "task-create", "TASK_RECEIVED", { createdAt: descriptor.createdAt });
+    await appendTransaction(target, "routed-missing", "discover", "DISCOVERY_STARTED", { source: "test" });
+    await appendTransaction(target, "routed-missing", "contract-create", "CONTRACT_VALIDATED", { contractFingerprint: contractHash });
+    await appendTransaction(target, "routed-missing", "route", "ROUTE_VALIDATED");
+    await appendTransaction(target, "routed-missing", "contract-create", "CONTRACT_VALIDATED", { contractFingerprint: contractHash });
+    await writeWorkState(target, createWorkState({
+      taskId: "routed-missing",
+      contractFingerprint: contractHash,
+      repositoryFingerprint: { branch: null, head: null },
+      phase: "CONTRACT_READY",
+      selectedGuides: [],
+      requiredGates: [],
+      satisfiedGates: [],
+      completedSteps: ["contract"],
+      pendingSteps: ["route", "planning", "implementation", "verification"],
+      requiredArtifacts: [],
+      checks: [],
+      failures: [],
+      blockers: [],
+      verificationEvidence: [],
+    }), { packageRoot, taskId: "routed-missing" });
+    const stateBefore = await readFile(path.join(target, taskArtifactPath("routed-missing", "state")), "utf8");
+    await assert.rejects(
+      runTaskRepairContractBootstrap({ target, packageRoot, taskId: "routed-missing", acknowledgeRepair: true }),
+      (error) => error.code === "E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE",
+    );
+    const events = await readEvents(target, packageRoot, { taskId: "routed-missing" });
+    assert.equal(events.filter((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT).length, 0);
+    assert.equal(await readFile(path.join(target, taskArtifactPath("routed-missing", "state")), "utf8"), stateBefore);
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("unsafe routed history with a misbound route artifact does not repair", async () => {
+  const { target } = await buggyStateFixture();
+  try {
+    const routePath = path.join(target, taskArtifactPath(taskId, "route"));
+    const route = JSON.parse(await readFile(routePath, "utf8"));
+    route.contractFingerprint = "a".repeat(64);
+    await writeFile(routePath, `${JSON.stringify(route, null, 2)}\n`, "utf8");
+    await assert.rejects(
+      runTaskRepairContractBootstrap({ target, packageRoot, taskId, acknowledgeRepair: true }),
+      (error) => error.code === "E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE",
+    );
+    const events = await readEvents(target, packageRoot, { taskId });
+    assert.equal(events.filter((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT).length, 0);
+    assert.equal((await readWorkState(target, { packageRoot, taskId })).phase, "CONTRACT_READY");
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("unsafe routed history with a malformed route artifact does not repair", async () => {
+  const { target } = await buggyStateFixture();
+  try {
+    const routePath = path.join(target, taskArtifactPath(taskId, "route"));
+    await writeFile(routePath, "{ malformed route", "utf8");
+    await assert.rejects(
+      runTaskRepairContractBootstrap({ target, packageRoot, taskId, acknowledgeRepair: true }),
+      (error) => error.code === "E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE",
+    );
+    const events = await readEvents(target, packageRoot, { taskId });
+    assert.equal(events.filter((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT).length, 0);
+    assert.equal((await readWorkState(target, { packageRoot, taskId })).phase, "CONTRACT_READY");
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("canonical post-repair reroute proves changed route identity", async () => {
+  const { target } = await repairedRoutedFixture();
+  try {
+    const before = await readPersistedRoute(target, packageRoot, { taskId });
+    await runRoute({
+      target,
+      packageRoot,
+      taskId,
+      workType: "documentation",
+      surfaces: [],
+      executableChange: false,
+    });
+    const after = await readPersistedRoute(target, packageRoot, { taskId });
+    const state = await readWorkState(target, { packageRoot, taskId });
+    const events = await readEvents(target, packageRoot, { taskId });
+    const markerIndex = events.findIndex((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
+    assert.notEqual(after.fingerprint, before.fingerprint);
+    assert.equal(state.routeFingerprint, after.fingerprint);
+    assert.deepEqual(state.selectedGuides, after.value.guides);
+    assert.ok(events.slice(markerIndex + 2).some((event) => event.event === "TRANSACTION_COMMITTED"
+      && event.details?.operation === "route"));
+    const claim = await resolveTaskClaimState(target, { taskId, packageRoot });
+    assert.equal(claim.claimState, "ACTIVE");
+    assert.equal(claim.mutationAllowed, true);
+    assert.equal(claim.ownershipValid, true);
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("coherent route substitution without a post-repair route transaction is inconsistent", async () => {
+  const { target } = await repairedRoutedFixture();
+  try {
+    const contract = await (await import("../src/core/contract.js")).readContract(target, packageRoot, { taskId });
+    const differentRoute = evaluateRoute({ workType: "documentation", surfaces: [], executableChange: false });
+    const replacement = await writeJsonArtifact(target, taskArtifactPath(taskId, "route"),
+      { ...differentRoute, contractFingerprint: contract.fingerprint }, "routing-result", packageRoot, { taskId });
+    const state = await readWorkState(target, { packageRoot, taskId });
+    await writeWorkState(target, {
+      ...state,
+      routeFingerprint: replacement.fingerprint,
+      selectedGuides: [...replacement.value.guides],
+      revision: state.revision + 1,
+    }, { packageRoot, taskId });
+    const claim = await resolveTaskClaimState(target, { taskId, packageRoot });
+    assert.equal(claim.claimState, "INCONSISTENT");
+    assert.equal(claim.mutationAllowed, false);
+    assert.equal(claim.ownershipValid, false);
+    assert.ok(claim.errors.some((error) => error.causeCode === "E_CONTRACT_BOOTSTRAP_REPAIR_INVALID"));
   } finally {
     await removeTempTree(target);
   }

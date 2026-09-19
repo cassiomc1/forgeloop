@@ -167,6 +167,14 @@ export function resolveContractBootstrapRepairBoundary(events, marker = null) {
   };
 }
 
+export function hasCanonicalPostRepairRouteTransaction(events, marker) {
+  const boundary = resolveContractBootstrapRepairBoundary(events, marker);
+  if (!boundary) return false;
+  return boundary.postRepairEvents.some((event) => isCommitFor(event, "route")
+    && event.taskId === boundary.marker.taskId
+    && event.hash === eventHash(event));
+}
+
 export function isContractBootstrapRepairCandidate(events, ledgerErrors = [], taskId = null) {
   if (!Array.isArray(events) || events.length < 4) return null;
   const effectiveTaskId = taskId ?? events[0]?.taskId;
@@ -191,8 +199,7 @@ export function isContractBootstrapRepairCandidate(events, ledgerErrors = [], ta
   if (events.some((event) => HISTORICAL_EVENTS.has(event.event))) return null;
   if (!Array.isArray(ledgerErrors) || ledgerErrors.length < 1) return null;
   if (ledgerErrors.some((error) => !isExactDuplicateContractChronologyError(error))) return null;
-  if (!ledgerErrors.some((error) => error.message === "lifecycle milestone must not repeat: CONTRACT_VALIDATED")
-    || !ledgerErrors.some((error) => error.message === "CONTRACT_VALIDATED is out of lifecycle order")) return null;
+  if (!ledgerErrors.some((error) => error.message === "lifecycle milestone must not repeat: CONTRACT_VALIDATED")) return null;
   return {
     taskId: effectiveTaskId,
     canonicalContractEvent: canonical,

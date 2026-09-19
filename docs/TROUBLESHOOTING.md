@@ -500,6 +500,11 @@ Only the exact duplicate `CONTRACT_VALIDATED` signature is accepted. The command
 preserves historical lines, reconstructs the proven `CONTRACT_READY` or `ROUTED`
 checkpoint, and records an append-only marker. Tampered artifacts, unrelated
 chronology errors, live locks, or later meaningful activity fail closed.
+If the ledger already contains `ROUTE_VALIDATED`, the route artifact is
+required and must remain valid and contract-bound; ForgeLoop never downgrades
+that history to `CONTRACT_READY`. After repair, a changed route identity is
+accepted only when the route/state pair is canonical and a later
+`TRANSACTION_COMMITTED` event has `operation: "route"`.
 
 #### Safe recovery
 

@@ -35,17 +35,18 @@ function repairError(code, message, details = {}) {
 
 async function readRouteIfProven(target, packageRoot, taskId, events, contractFingerprint) {
   const routePath = taskArtifactPath(taskId, "route");
+  const hasRouteValidated = events.some((event) => event.event === "ROUTE_VALIDATED");
+  if (!hasRouteValidated) return null;
   try {
     const route = await readPersistedRoute(target, packageRoot, { taskId });
-    if (route.value.contractFingerprint !== undefined && route.value.contractFingerprint !== contractFingerprint) {
+    if (route.value.contractFingerprint !== contractFingerprint) {
       throw repairError(E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE, "Persisted route does not bind to the canonical contract fingerprint");
-    }
-    if (!events.some((event) => event.event === "ROUTE_VALIDATED")) {
-      throw repairError(E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE, "Persisted route exists without a ROUTE_VALIDATED proof");
     }
     return route;
   } catch (error) {
-    if (error.code === "ARTIFACT_MISSING") return null;
+    if (error.code === "ARTIFACT_MISSING") {
+      throw repairError(E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE, "ROUTE_VALIDATED history requires a persisted route artifact", { artifacts: [routePath] });
+    }
     if (error.code === E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE) throw error;
     throw repairError(E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE, `Persisted route cannot be proven safe: ${error.message}`, { artifacts: [routePath] });
   }

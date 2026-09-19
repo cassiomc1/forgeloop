@@ -2343,6 +2343,13 @@ The marker must be immediately followed by its
 After the anchor revision, normal canonical lifecycle evolution is allowed, but
 state rollback, missing state, invalid current contract/route identity, or
 ledger/state incoherence fails closed with `E_CONTRACT_BOOTSTRAP_REPAIR_INVALID`.
+If a later route fingerprint differs from the marker, the current route and
+state must be canonically coherent and the ledger must contain a later
+`TRANSACTION_COMMITTED(operation=route)`; a route artifact and state fields
+changed together without that transaction are not accepted. A proven
+`ROUTE_VALIDATED` milestone also requires a present, valid route artifact bound
+to the current contract, while a history without `ROUTE_VALIDATED` may repair
+to `CONTRACT_READY` without a route artifact.
 
 ### `task-resume`
 

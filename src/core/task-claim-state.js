@@ -19,6 +19,7 @@ import { readContract } from "./contract.js";
 import { readPersistedRoute } from "./route-artifact.js";
 import {
   CONTRACT_BOOTSTRAP_REPAIR_EVENT,
+  hasCanonicalPostRepairRouteTransaction,
   isContractBootstrapRepairMarkerValid,
 } from "./contract-bootstrap-recovery.js";
 import { canonicalFingerprint } from "./artifacts.js";
@@ -82,7 +83,7 @@ function repairAnchorErrors(marker, state, artifacts) {
   return errors;
 }
 
-function evolvedRepairErrors(events, state, artifacts) {
+function evolvedRepairErrors(marker, events, state, artifacts) {
   const errors = [];
   const contract = artifacts?.contract ?? null;
   const route = artifacts?.route ?? null;
@@ -93,6 +94,11 @@ function evolvedRepairErrors(events, state, artifacts) {
   }
   if (contract) {
     errors.push(...stateIdentityErrors({ contract, route, state }).map((error) => repairInvalid(error.message)));
+  }
+  const currentRouteFingerprint = route?.fingerprint ?? null;
+  if (currentRouteFingerprint !== marker.details.routeFingerprint
+    && !hasCanonicalPostRepairRouteTransaction(events, marker)) {
+    errors.push(repairInvalid("Changed route identity lacks a canonical post-repair route transaction"));
   }
   errors.push(...validateStateLedgerCoherence(state, events).map((error) => repairInvalid(error.message)));
   const requiredEvent = REPAIR_PHASE_EVENTS[state.phase];
@@ -124,7 +130,7 @@ function validateContractBootstrapRepairConsistency(taskId, events, state, artif
   errors.push(...repairArtifactErrors(artifacts));
   return state.revision === anchorRevision
     ? [...errors, ...repairAnchorErrors(marker, state, artifacts)]
-    : [...errors, ...evolvedRepairErrors(events, state, artifacts)];
+    : [...errors, ...evolvedRepairErrors(marker, events, state, artifacts)];
 }
 
 /**
