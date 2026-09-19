@@ -302,6 +302,7 @@ export const E_RECONCILE_REQUIREMENT_UNKNOWN = "E_RECONCILE_REQUIREMENT_UNKNOWN"
 export const E_RECONCILE_EVIDENCE_FAILED = "E_RECONCILE_EVIDENCE_FAILED";
 export const E_REPOSITORY_CHANGED = "E_REPOSITORY_CHANGED";
 export const E_STATE_REVALIDATION_REQUIRED = "E_STATE_REVALIDATION_REQUIRED";
+export const E_CHECKPOINT_REVALIDATION_UNSAFE = "E_CHECKPOINT_REVALIDATION_UNSAFE";
 
 export const E_ACTION_INVALID = "E_ACTION_INVALID";
 export const E_ACTION_NOT_FOUND = "E_ACTION_NOT_FOUND";
@@ -926,6 +927,13 @@ export const PUBLIC_ERROR_CODES = Object.freeze({
     meaning: "The work-state checkpoint must be revalidated before the lifecycle can continue.",
     safeResolution: "Run forgeloop reconcile-closure for externally satisfied EXECUTING, VERIFYING, or REVIEWING tasks, or inspect the freshness reasons for other drift.",
   }),
+  E_CHECKPOINT_REVALIDATION_UNSAFE: Object.freeze({
+    code: "E_CHECKPOINT_REVALIDATION_UNSAFE",
+    category: "freshness",
+    classification: "PUBLIC_STABLE",
+    meaning: "A pre-execution checkpoint could not be safely rebound to the current repository without changing lifecycle identity.",
+    safeResolution: "Preserve the checkpoint and resolve the reported contract, route, ownership, artifact, or lifecycle boundary through its canonical command.",
+  }),
   E_DIAGNOSIS_REQUIRED: Object.freeze({
     code: "E_DIAGNOSIS_REQUIRED",
     category: "diagnosis",
@@ -1485,6 +1493,7 @@ export const ALL_KNOWN_ERROR_CODES = Object.freeze(new Set([
   E_RECONCILE_EVIDENCE_FAILED,
   E_REPOSITORY_CHANGED,
   E_STATE_REVALIDATION_REQUIRED,
+  E_CHECKPOINT_REVALIDATION_UNSAFE,
   E_TASK_CHANGE_ATTRIBUTION_UNAVAILABLE,
   E_TASK_LAYOUT_LEGACY,
   E_TASK_MIGRATION_INVALID,

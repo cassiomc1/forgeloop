@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { formatStatusResult } from "./commands/status.js";
 import { formatValidateStateResult } from "./commands/validate-state.js";
 import { formatClearStateResult } from "./commands/clear-state.js";
+import { formatCheckpointRevalidateResult } from "./commands/checkpoint-revalidate.js";
 import { formatInspectResult } from "./commands/inspect.js";
 import { formatRouteResult } from "./commands/route.js";
 import { formatValidateProtocolResult } from "./commands/validate-protocol.js";
@@ -817,6 +818,11 @@ export const COMMAND_HANDLERS = Object.freeze({
   "task-migrate-contract-bootstrap-repair": async ({ target, packageRoot, options }) => {
     const { result } = await COMMAND_EXECUTORS["task-migrate-contract-bootstrap-repair"]({ target, packageRoot, options });
     renderJsonOr(options, result, formatTaskMigrateContractBootstrapRepairResult);
+    return 0;
+  },
+  "checkpoint-revalidate": async ({ target, packageRoot, options }) => {
+    const { result } = await COMMAND_EXECUTORS["checkpoint-revalidate"]({ target, packageRoot, options });
+    renderJsonOr(options, result, formatCheckpointRevalidateResult);
     return 0;
   },
   "task-repair-legacy-recovery": async ({ target, packageRoot, options }) => {

@@ -8,8 +8,7 @@ import { withTaskMutation } from "../core/task-command.js";
 import { advanceWorkState } from "../core/phase.js";
 import { mutateWorkState, readWorkState } from "../core/work-state.js";
 import {
-  CONTRACT_BOOTSTRAP_REPAIR_EVENT,
-  isContractBootstrapRepairMarkerValid,
+  resolveEffectiveContractBootstrapRepairAnchor,
 } from "../core/contract-bootstrap-recovery.js";
 
 function canAppendRepairedRouteWitness({ stateBefore, marker, previousPersistedRouteFingerprint, persistedRoute }) {
@@ -22,12 +21,26 @@ function canAppendRepairedRouteWitness({ stateBefore, marker, previousPersistedR
     && persistedRoute.value.contractFingerprint === marker.details.contractFingerprint;
 }
 
-async function appendRepairedRouteWitness({ target, packageRoot, taskId, stateBefore, previousPersistedRouteFingerprint, persistedRoute }) {
+function canAppendCanonicalRouteWitness({ stateBefore, previousPersistedRouteFingerprint, persistedRoute }) {
+  return stateBefore?.phase === "ROUTED"
+    && previousPersistedRouteFingerprint !== null
+    && persistedRoute.fingerprint !== previousPersistedRouteFingerprint
+    && stateBefore.contractFingerprint === persistedRoute.value.contractFingerprint;
+}
+
+async function appendRouteWitness({ target, packageRoot, taskId, stateBefore, previousPersistedRouteFingerprint, persistedRoute }) {
   if (!stateBefore) return;
   const events = await readEvents(target, packageRoot, { taskId });
-  const marker = events.find((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
-  if (!marker || !isContractBootstrapRepairMarkerValid(events, marker)) return;
-  if (!canAppendRepairedRouteWitness({ stateBefore, marker, previousPersistedRouteFingerprint, persistedRoute })) return;
+  const anchor = resolveEffectiveContractBootstrapRepairAnchor(events);
+  const canAppend = anchor
+    ? canAppendRepairedRouteWitness({
+      stateBefore,
+      marker: anchor.sourceMarker,
+      previousPersistedRouteFingerprint,
+      persistedRoute,
+    })
+    : canAppendCanonicalRouteWitness({ stateBefore, previousPersistedRouteFingerprint, persistedRoute });
+  if (!canAppend) return;
   await appendProtocolEvent(target, {
     taskId,
     event: "ROUTE_REBOUND",
@@ -68,7 +81,7 @@ async function persistRoutedState({ target, packageRoot, taskId, route, transact
     await advanceWorkState(target, "ROUTED", { packageRoot, taskId });
   }
   if (transaction?.operation === "route") {
-    await appendRepairedRouteWitness({
+    await appendRouteWitness({
       target,
       packageRoot,
       taskId,

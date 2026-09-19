@@ -4,6 +4,13 @@
 
 ### Added
 
+- Added the canonical `checkpoint-revalidate` mutation and
+  `REVALIDATE_CHECKPOINT` next action for safe, repository-only drift of a
+  valid pre-execution `ROUTED` checkpoint. Revalidation preserves contract and
+  route identity, binds an append-only audit event to the state revision, and
+  fails closed for contract, route, artifact, ownership, or post-execution
+  changes.
+
 - Added an optional host-injected OpenSrc advisory context adapter for bounded,
   version-qualified external package/repository source recall without lifecycle,
   completion, evidence, or installation authority.

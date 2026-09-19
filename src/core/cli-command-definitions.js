@@ -1021,6 +1021,20 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
     mayExecuteExternalProcess: false,
     description: "Removes work-state.json for the active task only, preserving sibling contract, routing, and ledger files.",
   }),
+  "checkpoint-revalidate": Object.freeze({
+    name: "checkpoint-revalidate",
+    category: "project-maintenance",
+    mutation: "MUTATING",
+    options: Object.freeze({
+      ...CLI_COMMON_OPTIONS,
+      ...CLI_TASK_OPTION,
+      "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit structured revalidation output as JSON" }),
+    }),
+    writes: [".forgeloop/task-state/<taskKey>/work-state.json", ".forgeloop/task-state/<taskKey>/events.ndjson"],
+    removes: [],
+    mayExecuteExternalProcess: false,
+    description: "Revalidates a safe ROUTED checkpoint after repository-only drift without changing contract or route identity.",
+  }),
   "reconcile-closure": Object.freeze({
     name: "reconcile-closure",
     category: "lifecycle",

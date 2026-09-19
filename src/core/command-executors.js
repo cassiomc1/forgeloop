@@ -2,6 +2,7 @@ import { runDoctor } from "../commands/doctor.js";
 import { runStatus } from "../commands/status.js";
 import { runValidateState } from "../commands/validate-state.js";
 import { runClearState } from "../commands/clear-state.js";
+import { runCheckpointRevalidate } from "../commands/checkpoint-revalidate.js";
 import { inspectTarget } from "../commands/inspect.js";
 import { runInit } from "../commands/init.js";
 import { runRoute } from "../commands/route.js";
@@ -608,6 +609,10 @@ export const COMMAND_EXECUTORS = {
   },
   "clear-state": async ({ target, options }) => ({
     result: await runClearState({ target, taskId: options.taskId }),
+    exitCode: 0,
+  }),
+  "checkpoint-revalidate": async ({ target, packageRoot, options }) => ({
+    result: await runCheckpointRevalidate({ target, packageRoot, taskId: options.taskId }),
     exitCode: 0,
   }),
   "task-create": async ({ target, packageRoot, options }) => ({

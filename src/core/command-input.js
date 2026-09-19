@@ -112,25 +112,63 @@ function validateOutputInput(command, options) {
   if (command !== "next" && options.explain === true) throw inputError(`explain output is not valid for ${command}`);
 }
 
-function validateTaskSelectorsInput(command, options, help) {
-  const taskCommands = ["workspace-bind", "workspace-status", "handoff-create", "handoff-list", "handoff-show", "handoff-accept", "responsibility-set", "responsibility-status", "verify-scope", "attestation-create", "attestation-status", "attestation-verify"];
-  if (taskCommands.includes(command) && !options.taskId) throw inputError(`${command} requires --task`);
-  if (command === "handoff-show" && !help && !options.handoffId) throw inputError("handoff-show requires --id");
-  if (command === "handoff-accept" && !help) {
-    if (!options.handoffId) throw inputError("handoff-accept requires --handoff");
-    if (!options.consumerId) throw inputError("handoff-accept requires --consumer-id");
+const TASK_SELECTOR_COMMANDS = new Set([
+  "checkpoint-revalidate",
+  "workspace-bind",
+  "workspace-status",
+  "handoff-create",
+  "handoff-list",
+  "handoff-show",
+  "handoff-accept",
+  "responsibility-set",
+  "responsibility-status",
+  "verify-scope",
+  "attestation-create",
+  "attestation-status",
+  "attestation-verify",
+]);
+
+function validateRequiredTaskSelector(command, options, help) {
+  if (TASK_SELECTOR_COMMANDS.has(command) && !help && !options.taskId) {
+    throw inputError(`${command} requires --task`);
   }
+}
+
+function validateHandoffShowInput(command, options, help) {
+  if (command === "handoff-show" && !help && !options.handoffId) throw inputError("handoff-show requires --id");
+}
+
+function validateHandoffAcceptInput(command, options, help) {
+  if (command !== "handoff-accept" || help) return;
+  if (!options.handoffId) throw inputError("handoff-accept requires --handoff");
+  if (!options.consumerId) throw inputError("handoff-accept requires --consumer-id");
+}
+
+function validateResponsibilityInput(command, options, help) {
   if (command === "responsibility-set" && !help && !options.responsibilityLabel) {
     throw inputError("responsibility-set requires --label");
   }
-  if (command === "verify-scope" && !help) {
-    const mode = String(options.verificationScopeMode ?? "AUTO").toUpperCase();
-    if (!["AUTO", "CHANGED", "CLAIMED", "FULL"].includes(mode)) throw inputError("verify-scope --mode must be AUTO, CHANGED, CLAIMED, or FULL");
-  }
-  if (command === "attestation-verify-range" && !help) {
-    if (!options.baseRevision) throw inputError("attestation-verify-range requires --base");
-    if (!options.headRevision) throw inputError("attestation-verify-range requires --head");
-  }
+}
+
+function validateVerificationScopeInput(command, options, help) {
+  if (command !== "verify-scope" || help) return;
+  const mode = String(options.verificationScopeMode ?? "AUTO").toUpperCase();
+  if (!["AUTO", "CHANGED", "CLAIMED", "FULL"].includes(mode)) throw inputError("verify-scope --mode must be AUTO, CHANGED, CLAIMED, or FULL");
+}
+
+function validateAttestationRangeInput(command, options, help) {
+  if (command !== "attestation-verify-range" || help) return;
+  if (!options.baseRevision) throw inputError("attestation-verify-range requires --base");
+  if (!options.headRevision) throw inputError("attestation-verify-range requires --head");
+}
+
+function validateTaskSelectorsInput(command, options, help) {
+  validateRequiredTaskSelector(command, options, help);
+  validateHandoffShowInput(command, options, help);
+  validateHandoffAcceptInput(command, options, help);
+  validateResponsibilityInput(command, options, help);
+  validateVerificationScopeInput(command, options, help);
+  validateAttestationRangeInput(command, options, help);
 }
 
 function validateCheckInput(command, options, help) {

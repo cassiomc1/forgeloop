@@ -60,7 +60,7 @@ error codes. Default output and default JSON remain unchanged.
 | --- | --- |
 | **Inspection & Diagnostics** | [`protocol-info`](#protocol-info), [`doctor`](#doctor), [`index-status`](#index-status), [`search`](#search), [`metrics`](#metrics), [`usage-record`](#usage-record), [`efficiency`](#efficiency), [`eval`](#eval), [`history`](#history), [`trace`](#trace), [`reflect`](#reflect), [`progress`](#progress), [`profile-interview`](#profile-interview), [`inspect`](#inspect), [`status`](#status), [`validate-state`](#validate-state), [`validate-protocol`](#validate-protocol) |
 | **Lifecycle & State** | [`discover`](#discover), [`contract-create`](#contract-create), [`gate-record`](#gate-record), [`activate`](#activate), [`route`](#route), [`preflight`](#preflight), [`advance`](#advance), [`next`](#next), [`record-diagnosis`](#record-diagnosis), [`record-intervention`](#record-intervention), [`record-hypothesis-disposition`](#record-hypothesis-disposition), [`record-decision-criterion`](#record-decision-criterion), [`complete`](#complete), [`clear-state`](#clear-state), [`reconcile-closure`](#reconcile-closure), [`task-create`](#task-create), [`task-list`](#task-list), [`task-show`](#task-show), [`task-lock-status`](#task-lock-status), [`task-scope`](#task-scope) |
-| **Setup & Maintenance** | [`init`](#init), [`index-setup`](#index-setup), [`index-start`](#index-start), [`index-stop`](#index-stop), [`index-rebuild`](#index-rebuild), [`update`](#update), [`task-migrate`](#task-migrate), [`migrate-protocol`](#migrate-protocol), [`task-unlock`](#task-unlock), [`task-recover`](#task-recover), [`task-repair-contract-bootstrap`](#task-repair-contract-bootstrap), [`task-migrate-contract-bootstrap-repair`](#task-migrate-contract-bootstrap-repair), [`task-repair-legacy-recovery`](#task-repair-legacy-recovery), [`task-resume`](#task-resume) |
+| **Setup & Maintenance** | [`init`](#init), [`index-setup`](#index-setup), [`index-start`](#index-start), [`index-stop`](#index-stop), [`index-rebuild`](#index-rebuild), [`update`](#update), [`checkpoint-revalidate`](#checkpoint-revalidate), [`task-migrate`](#task-migrate), [`migrate-protocol`](#migrate-protocol), [`task-unlock`](#task-unlock), [`task-recover`](#task-recover), [`task-repair-contract-bootstrap`](#task-repair-contract-bootstrap), [`task-migrate-contract-bootstrap-repair`](#task-migrate-contract-bootstrap-repair), [`task-repair-legacy-recovery`](#task-repair-legacy-recovery), [`task-resume`](#task-resume) |
 | **Verification & Completion** | [`quality-baseline`](#quality-baseline), [`quality-verify`](#quality-verify), [`quality-status`](#quality-status), [`prepare-completion`](#prepare-completion), [`run-check`](#run-check), [`record-check`](#record-check), [`record-terminal-result`](#record-terminal-result), [`audit`](#audit), [`report`](#report), [`validate-receipt`](#validate-receipt), [`verify-scope`](#verify-scope) |
 | **Cross-Harness Continuity** | [`continuity`](#continuity), [`record-continuity`](#record-continuity), [`reconcile-continuity`](#reconcile-continuity), [`clear-continuity`](#clear-continuity), [`handoff-create`](#handoff-create), [`handoff-list`](#handoff-list), [`handoff-show`](#handoff-show) |
 | **Durable Actions & Approvals** | [`run-action`](#run-action), [`action-propose`](#action-propose), [`action-record`](#action-record), [`action-show`](#action-show), [`action-reconcile`](#action-reconcile), [`action-verify`](#action-verify), [`action-authorize`](#action-authorize), [`approval-request`](#approval-request), [`approval-resolve`](#approval-resolve) |
@@ -2025,6 +2025,31 @@ Clears canonical work-state checkpoint for the current task.
 
   ```bash
   forgeloop clear-state
+  ```
+
+### `checkpoint-revalidate`
+
+Revalidates a safe pre-execution `ROUTED` checkpoint after repository-only
+drift.
+
+- **Purpose**: Rebinds the checkpoint to ForgeLoop's current repository fingerprint while preserving lifecycle, contract, route, guide, gate, check, and evidence identity.
+- **When to use**: When `next` returns `REVALIDATE_CHECKPOINT` with only `E_REPOSITORY_CHANGED` / `E_STATE_REVALIDATION_REQUIRED`.
+- **Mutation**: Advances the state revision and appends a transaction-bound `CHECKPOINT_REVALIDATED` event.
+- **Safety Note**: It does not accept caller-supplied repository identity, revise contracts, reroute, fabricate evidence, or operate after execution starts. Unsupported drift fails closed with `E_CHECKPOINT_REVALIDATION_UNSAFE`.
+- **Options**:
+
+<!-- BEGIN FORGELOOP GENERATED: cli:checkpoint-revalidate:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit structured revalidation output as JSON
+
+<!-- END FORGELOOP GENERATED: cli:checkpoint-revalidate:options -->
+
+- **Example**:
+
+  ```bash
+  forgeloop checkpoint-revalidate --task <id> --json
   ```
 
 ---

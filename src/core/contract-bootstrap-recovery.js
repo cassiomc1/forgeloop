@@ -229,33 +229,80 @@ export function resolveContractBootstrapRepairBoundary(events, marker = null) {
   };
 }
 
+function isCanonicalRouteReboundBoundary(reboundEvent, routeCommit, {
+  taskId,
+  contractFingerprint,
+  previousRouteFingerprint,
+}) {
+  return reboundEvent?.event === "ROUTE_REBOUND"
+    && reboundEvent.taskId === taskId
+    && reboundEvent.hash === eventHash(reboundEvent)
+    && reboundEvent.details?.contractFingerprint === contractFingerprint
+    && reboundEvent.details?.previousRouteFingerprint === previousRouteFingerprint
+    && isFingerprint(reboundEvent.details?.routeFingerprint)
+    && reboundEvent.details.routeFingerprint !== previousRouteFingerprint
+    && isCommitFor(routeCommit, "route")
+    && routeCommit.taskId === taskId
+    && routeCommit.seq === reboundEvent.seq + 1
+    && routeCommit.previousHash === reboundEvent.hash
+    && routeCommit.hash === eventHash(routeCommit);
+}
+
+/**
+ * Resolves an explicit, fingerprint-bound route evolution chain. A route
+ * transaction alone is never sufficient provenance: every hop must be a
+ * ROUTE_REBOUND immediately followed by its route transaction commit.
+ */
+export function resolveCanonicalRouteEvolution(events, {
+  taskId,
+  sourceSeq = 0,
+  sourceRouteFingerprint,
+  targetRouteFingerprint,
+  contractFingerprint,
+} = {}) {
+  if (!Array.isArray(events)
+    || typeof taskId !== "string" || !taskId
+    || !Number.isInteger(sourceSeq) || sourceSeq < 0
+    || (sourceRouteFingerprint !== null && !isFingerprint(sourceRouteFingerprint))
+    || !isFingerprint(targetRouteFingerprint)
+    || !isFingerprint(contractFingerprint)) return null;
+  let currentFingerprint = sourceRouteFingerprint;
+  const reboundEvents = [];
+  for (let index = 0; index < events.length - 1; index += 1) {
+    const reboundEvent = events[index];
+    if (reboundEvent?.seq <= sourceSeq || reboundEvent?.event !== "ROUTE_REBOUND") continue;
+    const routeCommit = events[index + 1];
+    if (!isCanonicalRouteReboundBoundary(reboundEvent, routeCommit, {
+      taskId,
+      contractFingerprint,
+      previousRouteFingerprint: currentFingerprint,
+    })) return null;
+    reboundEvents.push({ reboundEvent, routeCommit, previousFingerprint: currentFingerprint });
+    currentFingerprint = reboundEvent.details.routeFingerprint;
+  }
+  return currentFingerprint === targetRouteFingerprint
+    ? { valid: true, reboundEvents, routeFingerprint: currentFingerprint }
+    : null;
+}
+
 export function resolveCanonicalPostRepairRouteBinding(events, marker, currentRouteFingerprint) {
   const boundary = resolveContractBootstrapRepairBoundary(events, marker);
   if (!boundary || !isFingerprint(currentRouteFingerprint)) return null;
-  let previousFingerprint = boundary.marker.details.routeFingerprint;
-  let binding = null;
-  const reboundEvents = [];
-  for (let index = 0; index < boundary.postRepairEvents.length; index += 1) {
-    const reboundEvent = boundary.postRepairEvents[index];
-    if (reboundEvent.event !== "ROUTE_REBOUND") continue;
-    const routeCommit = boundary.postRepairEvents[index + 1];
-    if (reboundEvent.taskId !== boundary.marker.taskId
-      || reboundEvent.hash !== eventHash(reboundEvent)
-      || reboundEvent.details?.contractFingerprint !== boundary.marker.details.contractFingerprint
-      || reboundEvent.details?.previousRouteFingerprint !== previousFingerprint
-      || !isFingerprint(reboundEvent.details?.routeFingerprint)
-      || !isCommitFor(routeCommit, "route")
-      || routeCommit.taskId !== boundary.marker.taskId
-      || routeCommit.hash !== eventHash(routeCommit)) {
-      return null;
-    }
-    reboundEvents.push({ reboundEvent, routeCommit, previousFingerprint });
-    previousFingerprint = reboundEvent.details.routeFingerprint;
-    binding = { valid: true, reboundEvent, routeCommit };
-  }
-  return binding?.reboundEvent.details.routeFingerprint === currentRouteFingerprint
-    ? { ...binding, reboundEvents }
-    : null;
+  const binding = resolveCanonicalRouteEvolution(boundary.postRepairEvents, {
+    taskId: boundary.marker.taskId,
+    sourceSeq: boundary.repairCommit.seq,
+    sourceRouteFingerprint: boundary.marker.details.routeFingerprint,
+    targetRouteFingerprint: currentRouteFingerprint,
+    contractFingerprint: boundary.marker.details.contractFingerprint,
+  });
+  if (!binding?.reboundEvents?.length) return null;
+  const last = binding.reboundEvents.at(-1);
+  return {
+    valid: true,
+    reboundEvent: last.reboundEvent,
+    routeCommit: last.routeCommit,
+    reboundEvents: binding.reboundEvents,
+  };
 }
 
 const CHECKPOINT_PHASE_EVENTS = new Set(["DESIGN_GATE_STARTED", "PLAN_RECORDED"]);
