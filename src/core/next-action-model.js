@@ -48,6 +48,7 @@ export const NEXT_ACTIONS = Object.freeze({
   RESUME_RECOVERED_TASK: "RESUME_RECOVERED_TASK",
   RESOLVE_RECOVERY_INCONSISTENCY: "RESOLVE_RECOVERY_INCONSISTENCY",
   REPAIR_CONTRACT_BOOTSTRAP: "REPAIR_CONTRACT_BOOTSTRAP",
+  MIGRATE_CONTRACT_BOOTSTRAP_REPAIR: "MIGRATE_CONTRACT_BOOTSTRAP_REPAIR",
   NONE: "NONE",
 });
 
@@ -177,6 +178,18 @@ export function contractBootstrapRepairGuidance(taskId, reason = null) {
       { name: "acknowledgeRepair", option: "--acknowledge-repair", description: "Explicit caller acknowledgement of the exact repair signature." },
     ])],
     reason: reason ?? { code: "E_CONTRACT_BOOTSTRAP_REPAIR_AVAILABLE", message: "The exact duplicate contract bootstrap defect is repairable through the official append-only command." },
+  };
+}
+
+export function contractBootstrapRepairMigrationGuidance(taskId, reason = null) {
+  const command = `forgeloop task-migrate-contract-bootstrap-repair --task ${taskId} --acknowledge-migration --json`;
+  return {
+    nextAction: NEXT_ACTIONS.MIGRATE_CONTRACT_BOOTSTRAP_REPAIR,
+    commands: [command],
+    commandSpecs: [directCommandSpec("task-migrate-contract-bootstrap-repair", taskId, [
+      { name: "acknowledgeMigration", option: "--acknowledge-migration", description: "Fresh explicit caller acknowledgement of the exact legacy marker migration." },
+    ])],
+    reason: reason ?? { code: "E_CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_AVAILABLE", message: "The exact legacy contract bootstrap repair marker can be migrated through the official append-only command." },
   };
 }
 

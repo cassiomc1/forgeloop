@@ -1230,6 +1230,21 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
     mayExecuteExternalProcess: false,
     description: "Repairs the exact duplicate contract bootstrap defect without rewriting history; idempotent and append-only.",
   }),
+  "task-migrate-contract-bootstrap-repair": Object.freeze({
+    name: "task-migrate-contract-bootstrap-repair",
+    category: "project-maintenance",
+    mutation: "MUTATING",
+    options: Object.freeze({
+      ...CLI_COMMON_OPTIONS,
+      ...CLI_TASK_OPTION,
+      "--acknowledge-migration": Object.freeze({ targetKey: "acknowledgeMigration", parseType: "boolean", takesValue: false, description: "fresh explicit caller acknowledgement of the exact legacy marker migration (required)" }),
+      "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit structured migration output as JSON" }),
+    }),
+    writes: [".forgeloop/task-state/<taskKey>/events.ndjson"],
+    removes: [],
+    mayExecuteExternalProcess: false,
+    description: "Migrates the exact legacy contract bootstrap repair marker by appending a bound migration event; the original marker and artifacts remain unchanged.",
+  }),
   "task-repair-legacy-recovery": Object.freeze({
     name: "task-repair-legacy-recovery",
     category: "project-maintenance",

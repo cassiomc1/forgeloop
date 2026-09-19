@@ -506,6 +506,19 @@ that history to `CONTRACT_READY`. After repair, a changed route identity is
 accepted only when the route/state pair is canonical and a later
 `TRANSACTION_COMMITTED` event has `operation: "route"`.
 
+When `next` reports `MIGRATE_CONTRACT_BOOTSTRAP_REPAIR`, run the official
+caller-acknowledged migration:
+
+```bash
+forgeloop task-migrate-contract-bootstrap-repair --task <task-id> --acknowledge-migration --json
+```
+
+This path is limited to the legacy marker schema that predates
+`reconstructedStateRevision`. It proves the current state and route against the
+recorded reconstruction, appends a bound migration witness, and preserves the
+legacy marker byte-for-byte. It does not accept progressed ledgers, ambiguous
+markers, or unknown/corrupt lock ownership.
+
 #### Safe recovery
 
 Follow the classification:
@@ -1349,6 +1362,9 @@ package/process recovery boundary. The relevant stable codes are
 | `E_CONTRACT_BOOTSTRAP_REPAIR_AUTHORIZATION_REQUIRED` | The official contract bootstrap repair requires explicit caller acknowledgement. | Re-run with --acknowledge-repair after reviewing next and the exact defect signature. |
 | `E_CONTRACT_BOOTSTRAP_REPAIR_AVAILABLE` | The exact recognized contract bootstrap defect has an official append-only repair path. | Run forgeloop task-repair-contract-bootstrap --task <id> --acknowledge-repair. |
 | `E_CONTRACT_BOOTSTRAP_REPAIR_INVALID` | The contract bootstrap repair marker or its bound artifacts are invalid or tampered. | Restore the original artifacts from trusted evidence; ForgeLoop refuses to guess or rewrite history. |
+| `E_CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_AUTHORIZATION_REQUIRED` | The legacy contract bootstrap repair migration requires fresh explicit caller acknowledgement. | Re-run with --acknowledge-migration after reviewing next and the exact legacy marker boundary. |
+| `E_CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_AVAILABLE` | The exact legacy contract bootstrap repair marker has an official append-only migration path. | Run forgeloop task-migrate-contract-bootstrap-repair --task <id> --acknowledge-migration. |
+| `E_CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_INVALID` | Legacy contract bootstrap repair migration was refused because its exact marker, state, route, lock, or ledger boundary could not be proven. | Inspect the structured migration errors; ambiguous or progressed historical ledgers remain inconsistent and are never rewritten. |
 | `E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE` | The historical contract bootstrap defect does not satisfy the narrow repair safety boundary. | Do not force repair; resolve the ledger inconsistency through a separately reviewed migration. |
 | `E_CONTRACT_INVALID` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
 | `E_CONTRACT_MISSING` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |

@@ -70,6 +70,7 @@ import { runTaskRecover } from "../commands/task-recover.js";
 import { runTaskResume } from "../commands/task-resume.js";
 import { runTaskRepairLegacyRecovery } from "../commands/task-repair-legacy-recovery.js";
 import { runTaskRepairContractBootstrap } from "../commands/task-repair-contract-bootstrap.js";
+import { runTaskMigrateContractBootstrapRepair } from "../commands/task-migrate-contract-bootstrap-repair.js";
 import { runTaskLockStatus } from "../commands/task-lock-status.js";
 import { runProtocolInfo } from "../commands/protocol-info.js";
 import { runWorkspaceBind } from "../commands/workspace-bind.js";
@@ -670,6 +671,10 @@ export const COMMAND_EXECUTORS = {
   }),
   "task-repair-contract-bootstrap": async ({ target, packageRoot, options }) => ({
     result: await runTaskRepairContractBootstrap({ target, packageRoot, taskId: options.taskId, acknowledgeRepair: options.acknowledgeRepair }),
+    exitCode: 0,
+  }),
+  "task-migrate-contract-bootstrap-repair": async ({ target, packageRoot, options }) => ({
+    result: await runTaskMigrateContractBootstrapRepair({ target, packageRoot, taskId: options.taskId, acknowledgeMigration: options.acknowledgeMigration }),
     exitCode: 0,
   }),
   "task-repair-legacy-recovery": async ({ target, packageRoot, options }) => ({

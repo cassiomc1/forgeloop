@@ -73,6 +73,7 @@ import {
   formatTaskRepairLegacyRecoveryResult,
 } from "./commands/task-repair-legacy-recovery.js";
 import { formatTaskRepairContractBootstrapResult } from "./commands/task-repair-contract-bootstrap.js";
+import { formatTaskMigrateContractBootstrapRepairResult } from "./commands/task-migrate-contract-bootstrap-repair.js";
 import { formatTaskLockStatusResult } from "./commands/task-lock-status.js";
 import { formatProtocolInfoResult } from "./commands/protocol-info.js";
 import { formatWorkspaceBindResult } from "./commands/workspace-bind.js";
@@ -811,6 +812,11 @@ export const COMMAND_HANDLERS = Object.freeze({
   "task-repair-contract-bootstrap": async ({ target, packageRoot, options }) => {
     const { result } = await COMMAND_EXECUTORS["task-repair-contract-bootstrap"]({ target, packageRoot, options });
     renderJsonOr(options, result, formatTaskRepairContractBootstrapResult);
+    return 0;
+  },
+  "task-migrate-contract-bootstrap-repair": async ({ target, packageRoot, options }) => {
+    const { result } = await COMMAND_EXECUTORS["task-migrate-contract-bootstrap-repair"]({ target, packageRoot, options });
+    renderJsonOr(options, result, formatTaskMigrateContractBootstrapRepairResult);
     return 0;
   },
   "task-repair-legacy-recovery": async ({ target, packageRoot, options }) => {
