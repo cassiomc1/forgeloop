@@ -11,6 +11,7 @@ import { PROTOCOL_VERSION } from "./protocol.js";
 import { isRecoverableCompletionEvidenceCode } from "./completion-recovery.js";
 import {
   CONTRACT_BOOTSTRAP_REPAIR_EVENT,
+  ROUTE_CHECKPOINT_BOUND_EVENT,
   assertContractBootstrapRepairDetails,
   repairMarkerErrors,
 } from "./contract-bootstrap-recovery.js";
@@ -149,15 +150,14 @@ export function validateKnownEventDetails(event) {
     case "ROUTE_REBOUND":
       assertRouteReboundDetails(event.details);
       return;
+    case ROUTE_CHECKPOINT_BOUND_EVENT:
+      assertRouteCheckpointBoundDetails(event.details);
+      return;
     case "TASK_RECOVERY_RESUMED":
       assertRecoveryResumedDetails(event.details);
       return;
     case "TRAJECTORY_EVALUATED":
-      if (!event.details || !/^eval-[A-Za-z0-9_-]+$/.test(event.details.evaluationId ?? "")
-        || typeof event.details.scenarioId !== "string" || !/^[a-f0-9]{64}$/.test(event.details.evaluationFingerprint ?? "")
-        || event.fingerprint !== event.details.evaluationFingerprint) {
-        throw protocolError("E_EVENT_INVALID", "TRAJECTORY_EVALUATED requires a bound evaluationId, scenarioId, and fingerprint");
-      }
+      assertTrajectoryEvaluatedDetails(event);
       return;
     case "WORKSPACE_BOUND":
       assertStructuredArtifactEvent(event, ["workspaceFingerprint"], "WORKSPACE_BOUND");
@@ -172,14 +172,7 @@ export function validateKnownEventDetails(event) {
       assertFingerprint(event.details.digest, "HANDOFF_CREATED details.digest");
       return;
     case "HANDOFF_ACCEPTED":
-      if (!event.details || typeof event.details !== "object" || Array.isArray(event.details)
-        || typeof event.details.handoffId !== "string" || !/^handoff-[A-Za-z0-9_-]+$/.test(event.details.handoffId)
-        || typeof event.details.handoffDigest !== "string"
-        || typeof event.details.consumerId !== "string" || !event.details.consumerId.trim()
-        || (event.details.harness !== undefined && (typeof event.details.harness !== "string" || !event.details.harness.trim()))) {
-        throw protocolError("E_EVENT_INVALID", "HANDOFF_ACCEPTED requires a valid handoffId, handoffDigest, and consumerId");
-      }
-      assertFingerprint(event.details.handoffDigest, "HANDOFF_ACCEPTED details.handoffDigest");
+      assertHandoffAcceptedDetails(event);
       return;
     case "RESPONSIBILITY_SET":
       assertStructuredArtifactEvent(event, ["responsibilityFingerprint"], "RESPONSIBILITY_SET");
@@ -216,6 +209,25 @@ export function validateKnownEventDetails(event) {
       }
       return;
   }
+}
+
+function assertTrajectoryEvaluatedDetails(event) {
+  if (!event.details || !/^eval-[A-Za-z0-9_-]+$/.test(event.details.evaluationId ?? "")
+    || typeof event.details.scenarioId !== "string" || !/^[a-f0-9]{64}$/.test(event.details.evaluationFingerprint ?? "")
+    || event.fingerprint !== event.details.evaluationFingerprint) {
+    throw protocolError("E_EVENT_INVALID", "TRAJECTORY_EVALUATED requires a bound evaluationId, scenarioId, and fingerprint");
+  }
+}
+
+function assertHandoffAcceptedDetails(event) {
+  if (!event.details || typeof event.details !== "object" || Array.isArray(event.details)
+    || typeof event.details.handoffId !== "string" || !/^handoff-[A-Za-z0-9_-]+$/.test(event.details.handoffId)
+    || typeof event.details.handoffDigest !== "string"
+    || typeof event.details.consumerId !== "string" || !event.details.consumerId.trim()
+    || (event.details.harness !== undefined && (typeof event.details.harness !== "string" || !event.details.harness.trim()))) {
+    throw protocolError("E_EVENT_INVALID", "HANDOFF_ACCEPTED requires a valid handoffId, handoffDigest, and consumerId");
+  }
+  assertFingerprint(event.details.handoffDigest, "HANDOFF_ACCEPTED details.handoffDigest");
 }
 
 function assertStringList(value, label) {
@@ -256,6 +268,21 @@ function assertRouteReboundDetails(details) {
   assertFingerprint(details.contractFingerprint, "ROUTE_REBOUND details.contractFingerprint");
   if (details.previousRouteFingerprint !== null) {
     assertFingerprint(details.previousRouteFingerprint, "ROUTE_REBOUND details.previousRouteFingerprint");
+  }
+}
+
+function assertRouteCheckpointBoundDetails(details) {
+  const keys = ["routeFingerprint", "contractFingerprint", "selectedGuides"];
+  if (!details || typeof details !== "object" || Array.isArray(details)
+    || Object.keys(details).length !== keys.length
+    || keys.some((key) => !Object.prototype.hasOwnProperty.call(details, key))) {
+    throw protocolError("E_EVENT_INVALID", "ROUTE_CHECKPOINT_BOUND requires exactly route, contract, and selected guide identity");
+  }
+  assertFingerprint(details.routeFingerprint, "ROUTE_CHECKPOINT_BOUND details.routeFingerprint");
+  assertFingerprint(details.contractFingerprint, "ROUTE_CHECKPOINT_BOUND details.contractFingerprint");
+  assertStringList(details.selectedGuides, "ROUTE_CHECKPOINT_BOUND details.selectedGuides");
+  if (new Set(details.selectedGuides).size !== details.selectedGuides.length) {
+    throw protocolError("E_EVENT_INVALID", "ROUTE_CHECKPOINT_BOUND details.selectedGuides must not contain duplicates");
   }
 }
 

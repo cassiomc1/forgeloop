@@ -1,6 +1,7 @@
 import { canonicalFingerprint } from "./artifacts.js";
 
 export const CONTRACT_BOOTSTRAP_REPAIR_EVENT = "CONTRACT_BOOTSTRAP_REPAIR_RECORDED";
+export const ROUTE_CHECKPOINT_BOUND_EVENT = "ROUTE_CHECKPOINT_BOUND";
 export const CONTRACT_BOOTSTRAP_REPAIR_VERSION = 1;
 export const CONTRACT_BOOTSTRAP_REPAIR_DEFECT = "DUPLICATE_CONTRACT_VALIDATED_AFTER_CONTRACT_READY";
 export const CONTRACT_BOOTSTRAP_REPAIR_AUTHORITY = "CALLER_ACKNOWLEDGED";
@@ -49,6 +50,18 @@ function isCommitFor(event, operation) {
     && event.details?.operation === operation
     && typeof event.details?.transactionId === "string"
     && event.details.transactionId.length > 0;
+}
+
+function canonicalGuideList(value) {
+  if (!Array.isArray(value) || value.some((guide) => typeof guide !== "string" || !guide)) return null;
+  const guides = [...value].sort();
+  return new Set(guides).size === guides.length ? guides : null;
+}
+
+export function sameCanonicalGuideList(left, right) {
+  const a = canonicalGuideList(left);
+  const b = canonicalGuideList(right);
+  return a !== null && b !== null && a.length === b.length && a.every((guide, index) => guide === b[index]);
 }
 
 const EXACT_DUPLICATE_CONTRACT_ERRORS = Object.freeze([
@@ -194,6 +207,42 @@ export function resolveCanonicalPostRepairRouteBinding(events, marker, currentRo
   return binding?.reboundEvent.details.routeFingerprint === currentRouteFingerprint
     ? { ...binding, reboundEvents }
     : null;
+}
+
+const CHECKPOINT_PHASE_EVENTS = new Set(["DESIGN_GATE_STARTED", "PLAN_RECORDED"]);
+
+export function resolveCanonicalPostRepairCheckpointBinding(events, marker) {
+  const boundary = resolveContractBootstrapRepairBoundary(events, marker);
+  if (!boundary) return null;
+  const checkpointEvents = boundary.postRepairEvents.filter((event) => event.event === ROUTE_CHECKPOINT_BOUND_EVENT);
+  if (checkpointEvents.length !== 1) return null;
+  const checkpointEvent = checkpointEvents[0];
+  const checkpointIndex = boundary.postRepairEvents.indexOf(checkpointEvent);
+  const phaseEvent = boundary.postRepairEvents[checkpointIndex + 1];
+  const transactionCommit = boundary.postRepairEvents[checkpointIndex + 2];
+  const details = checkpointEvent.details;
+  if (checkpointEvent.taskId !== boundary.marker.taskId
+    || checkpointEvent.hash !== eventHash(checkpointEvent)
+    || details?.contractFingerprint !== boundary.marker.details.contractFingerprint
+    || !isFingerprint(details?.routeFingerprint)
+    || canonicalGuideList(details?.selectedGuides) === null
+    || !CHECKPOINT_PHASE_EVENTS.has(phaseEvent?.event)
+    || phaseEvent.taskId !== boundary.marker.taskId
+    || phaseEvent.hash !== eventHash(phaseEvent)
+    || !isCommitFor(transactionCommit, "advance")
+    || transactionCommit.taskId !== boundary.marker.taskId
+    || transactionCommit.hash !== eventHash(transactionCommit)) {
+    return null;
+  }
+  return {
+    valid: true,
+    checkpointEvent,
+    phaseEvent,
+    transactionCommit,
+    routeFingerprint: details.routeFingerprint,
+    contractFingerprint: details.contractFingerprint,
+    selectedGuides: [...details.selectedGuides],
+  };
 }
 
 export function isContractBootstrapRepairCandidate(events, ledgerErrors = [], taskId = null) {

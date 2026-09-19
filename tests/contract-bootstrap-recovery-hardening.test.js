@@ -17,6 +17,7 @@ import {
 } from "../src/core/contract-presets.js";
 import {
   CONTRACT_BOOTSTRAP_REPAIR_EVENT,
+  ROUTE_CHECKPOINT_BOUND_EVENT,
   isContractBootstrapRepairCandidate,
   isContractBootstrapRepairMarkerValid,
   isExactDuplicateContractChronologyError,
@@ -919,19 +920,8 @@ test("repair marker records the reconstructed state revision as an immutable anc
 test("post-repair canonical lifecycle evolution remains owned and idempotent", async () => {
   const { target } = await repairedRoutedFixture();
   try {
-    await appendTransaction(target, taskId, "plan", "PLAN_RECORDED");
-    const state = await readWorkState(target, { packageRoot, taskId });
-    await mutateWorkState(target, {
-      expectedRevision: state.revision,
-      packageRoot,
-      taskId,
-    }, () => ({
-      ...state,
-      phase: "PLANNED",
-      previousPhase: "ROUTED",
-      completedSteps: ["contract", "route", "planning"],
-      pendingSteps: ["implementation", "verification"],
-    }));
+    await runAdvance({ target, packageRoot, taskId, to: "DESIGNING" });
+    await runAdvance({ target, packageRoot, taskId, to: "PLANNED" });
     const claim = await resolveTaskClaimState(target, { taskId, packageRoot });
     assert.equal(claim.claimState, "ACTIVE");
     assert.equal(claim.mutationAllowed, true);
@@ -1465,6 +1455,74 @@ test("post-repair preflight, DESIGNING, PLANNED, and EXECUTING retain ownership 
     assert.equal(claim.claimState, "ACTIVE");
     assert.equal(claim.mutationAllowed, true);
     assert.equal(claim.ownershipValid, true);
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("repaired ROUTED transition binds one immutable checkpoint identity", async () => {
+  const { target } = await repairedRoutedFixture();
+  try {
+    const beforeState = await readWorkState(target, { packageRoot, taskId });
+    const beforeEvents = await readEvents(target, packageRoot, { taskId });
+    assert.equal(beforeEvents.filter((event) => event.event === ROUTE_CHECKPOINT_BOUND_EVENT).length, 0);
+
+    await runAdvance({ target, packageRoot, taskId, to: "DESIGNING" });
+    await runAdvance({ target, packageRoot, taskId, to: "PLANNED" });
+
+    const state = await readWorkState(target, { packageRoot, taskId });
+    const events = await readEvents(target, packageRoot, { taskId });
+    const checkpoints = events.filter((event) => event.event === ROUTE_CHECKPOINT_BOUND_EVENT);
+    assert.equal(checkpoints.length, 1);
+    assert.deepEqual(checkpoints[0].details, {
+      routeFingerprint: beforeState.routeFingerprint,
+      contractFingerprint: beforeState.contractFingerprint,
+      selectedGuides: [...beforeState.selectedGuides].sort(),
+    });
+    const checkpointIndex = events.indexOf(checkpoints[0]);
+    assert.equal(events[checkpointIndex + 1].event, "DESIGN_GATE_STARTED");
+    assert.equal(events[checkpointIndex + 2].event, "TRANSACTION_COMMITTED");
+    assert.equal(events[checkpointIndex + 2].details.operation, "advance");
+    assert.equal(state.routeFingerprint, beforeState.routeFingerprint);
+    assert.deepEqual(state.selectedGuides, beforeState.selectedGuides);
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("late reroute cannot authorize a rewritten checkpoint identity after EXECUTING", async () => {
+  const { target } = await repairedRoutedFixture();
+  try {
+    const preflight = await runPreflight({ target, packageRoot, taskId });
+    assert.equal(preflight.status, "READY", JSON.stringify(preflight.errors));
+    await runAdvance({ target, packageRoot, taskId, to: "DESIGNING" });
+    await runAdvance({ target, packageRoot, taskId, to: "PLANNED" });
+    await runAdvance({ target, packageRoot, taskId, to: "EXECUTING" });
+
+    const beforeState = await readWorkState(target, { packageRoot, taskId });
+    await runRoute({
+      target,
+      packageRoot,
+      taskId,
+      workType: "documentation",
+      surfaces: [],
+      executableChange: false,
+    });
+    const lateRoute = await readPersistedRoute(target, packageRoot, { taskId });
+    assert.notEqual(lateRoute.fingerprint, beforeState.routeFingerprint);
+
+    await writeWorkState(target, {
+      ...beforeState,
+      routeFingerprint: lateRoute.fingerprint,
+      selectedGuides: [...lateRoute.value.guides],
+      revision: beforeState.revision + 1,
+    }, { packageRoot, taskId });
+
+    const claim = await resolveTaskClaimState(target, { taskId, packageRoot });
+    assert.equal(claim.claimState, "INCONSISTENT");
+    assert.equal(claim.mutationAllowed, false);
+    assert.equal(claim.ownershipValid, false);
+    assert.ok(claim.errors.some((error) => error.message.includes("checkpoint")));
   } finally {
     await removeTempTree(target);
   }
