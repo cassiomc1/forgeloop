@@ -19,6 +19,12 @@ function validatePolicyInput(command, options) {
   if (command !== "policy" && options.policy) throw inputError(`Policy name is not valid for ${command}`);
 }
 
+function validateContractBootstrapRepairMigrationInput(command, options) {
+  if (command !== "task-migrate-contract-bootstrap-repair") return;
+  if (!options.taskId) throw inputError("task-migrate-contract-bootstrap-repair requires --task");
+  if (!options.acknowledgeMigration) throw inputError("task-migrate-contract-bootstrap-repair requires --acknowledge-migration");
+}
+
 function validateTaskCreationInput(command, options) {
   if (command === "bundle" && !options.taskId) throw inputError("bundle requires --task");
   if (command === "task-create" && !options.taskId) throw inputError("task-create requires --task");
@@ -36,6 +42,7 @@ function validateTaskCreationInput(command, options) {
   if (command === "contract-create" && options.preset && options.contractFile) throw inputError("contract-create accepts either --preset or --contract-file, not both");
   if (command === "task-repair-contract-bootstrap" && !options.taskId) throw inputError("task-repair-contract-bootstrap requires --task");
   if (command === "task-repair-contract-bootstrap" && !options.acknowledgeRepair) throw inputError("task-repair-contract-bootstrap requires --acknowledge-repair");
+  validateContractBootstrapRepairMigrationInput(command, options);
   const hasTaskListFilter = Boolean(
     options.phase
       || options.active
@@ -186,6 +193,8 @@ export function defaultCommandInputValues() {
     assetPath: null,
     binaryPath: null,
     force: false,
+    acknowledgeRepair: false,
+    acknowledgeMigration: false,
     workType: null,
     surfaces: [],
     risks: [],

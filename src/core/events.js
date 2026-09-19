@@ -13,6 +13,9 @@ import {
   CONTRACT_BOOTSTRAP_REPAIR_EVENT,
   ROUTE_CHECKPOINT_BOUND_EVENT,
   assertContractBootstrapRepairDetails,
+  assertContractBootstrapRepairMigrationDetails,
+  isLegacyContractBootstrapRepairMarkerShape,
+  validateContractBootstrapRepairMigrations,
   repairMarkerErrors,
 } from "./contract-bootstrap-recovery.js";
 
@@ -145,7 +148,8 @@ export function validateKnownEventDetails(event) {
       assertLegacyMigrationDetails(event.details);
       return;
     case CONTRACT_BOOTSTRAP_REPAIR_EVENT:
-      assertContractBootstrapRepairDetails(event.details);
+    case "CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_RECORDED":
+      validateKnownContractBootstrapEvent(event);
       return;
     case "ROUTE_REBOUND":
       assertRouteReboundDetails(event.details);
@@ -209,6 +213,15 @@ export function validateKnownEventDetails(event) {
       }
       return;
   }
+}
+
+function validateKnownContractBootstrapEvent(event) {
+  if (event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT) {
+    if (isLegacyContractBootstrapRepairMarkerShape(event)) return;
+    assertContractBootstrapRepairDetails(event.details);
+    return;
+  }
+  assertContractBootstrapRepairMigrationDetails(event.details);
 }
 
 function assertTrajectoryEvaluatedDetails(event) {
@@ -672,10 +685,18 @@ export async function validateEventLedger(target, packageRoot, options = {}) {
   validateLegacyRecoveryMigrations(events, errors, {
     allowUnmigratedLegacyRecoveryEvents: options?.allowUnmigratedLegacyRecoveryEvents === true,
   });
-  const markerCount = events.filter((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT).length;
-  if (markerCount > 1) errors.push({ code: "E_CONTRACT_BOOTSTRAP_REPAIR_INVALID", message: "contract bootstrap repair marker must occur at most once" });
-  const repairedErrors = repairMarkerErrors(events, errors);
+  const repairedErrors = validateContractBootstrapRepairLedger(events, errors, options);
   return { valid: repairedErrors.length === 0, events, errors: repairedErrors };
+}
+
+function validateContractBootstrapRepairLedger(events, errors, options) {
+  const allowUnmigrated = options?.allowUnmigratedLegacyContractBootstrapRepairMarkers === true;
+  validateContractBootstrapRepairMigrations(events, errors, {
+    allowUnmigratedLegacyContractBootstrapRepairMarkers: allowUnmigrated,
+  });
+  return repairMarkerErrors(events, errors, {
+    allowUnmigratedLegacyContractBootstrapRepairMarkers: allowUnmigrated,
+  });
 }
 
 export function validateStateLedgerCoherence(state, events) {

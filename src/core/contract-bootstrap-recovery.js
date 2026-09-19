@@ -1,10 +1,13 @@
 import { canonicalFingerprint } from "./artifacts.js";
 
 export const CONTRACT_BOOTSTRAP_REPAIR_EVENT = "CONTRACT_BOOTSTRAP_REPAIR_RECORDED";
+export const CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_EVENT = "CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_RECORDED";
 export const ROUTE_CHECKPOINT_BOUND_EVENT = "ROUTE_CHECKPOINT_BOUND";
 export const CONTRACT_BOOTSTRAP_REPAIR_VERSION = 1;
+export const CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_VERSION = 1;
 export const CONTRACT_BOOTSTRAP_REPAIR_DEFECT = "DUPLICATE_CONTRACT_VALIDATED_AFTER_CONTRACT_READY";
 export const CONTRACT_BOOTSTRAP_REPAIR_AUTHORITY = "CALLER_ACKNOWLEDGED";
+export const CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_DEFECT = "CONTRACT_BOOTSTRAP_REPAIR_MARKER_MISSING_RECONSTRUCTED_STATE_REVISION";
 
 const FINGERPRINT = /^[a-f0-9]{64}$/;
 const REPAIR_ID = /^repair-[a-f0-9]{64}$/;
@@ -33,6 +36,13 @@ const REPAIR_DETAIL_KEYS = new Set([
   "contractFingerprint", "reconstructedPhase", "routeFingerprint",
   "previousStateFingerprint", "reconstructedStateFingerprint", "reconstructedStateRevision",
   "repairedAt", "authorityKind",
+]);
+const LEGACY_REPAIR_DETAIL_KEYS = new Set([...REPAIR_DETAIL_KEYS].filter((key) => key !== "reconstructedStateRevision"));
+const MIGRATION_DETAIL_KEYS = new Set([
+  "migrationVersion", "defect", "legacyMarkerSeq", "legacyMarkerHash", "legacyRepairId",
+  "legacyRepairCommitSeq", "legacyRepairCommitHash", "legacyRepairTransactionId", "taskId",
+  "contractFingerprint", "reconstructedPhase", "routeFingerprint", "reconstructedStateFingerprint",
+  "reconstructedStateRevision", "migratedAt", "authorityKind",
 ]);
 
 function invalid(message) {
@@ -80,12 +90,11 @@ export function eventHash(event) {
   return canonicalFingerprint(body);
 }
 
-export function assertContractBootstrapRepairDetails(details) {
+function assertContractBootstrapRepairDetailsInternal(details, { legacy = false } = {}) {
   if (!details || typeof details !== "object" || Array.isArray(details)) {
     throw invalid("contract bootstrap repair requires structured details");
   }
-  const unexpected = Object.keys(details).find((key) => !REPAIR_DETAIL_KEYS.has(key));
-  if (unexpected) throw invalid(`contract bootstrap repair details contains unknown property: ${unexpected}`);
+  assertRepairDetailKeys(details, legacy);
   for (const key of [
     "taskId", "repairId", "defect", "contractCreateTransactionId", "repairedAt", "authorityKind",
   ]) {
@@ -108,23 +117,45 @@ export function assertContractBootstrapRepairDetails(details) {
   for (const key of ["canonicalContractEventSeq", "duplicateContractEventSeq", "contractCreateCommitSeq"]) {
     if (!Number.isInteger(details[key]) || details[key] < 1) throw invalid(`contract bootstrap repair details.${key} must be a positive integer`);
   }
-  if (!Number.isInteger(details.reconstructedStateRevision) || details.reconstructedStateRevision < 0) {
-    throw invalid("contract bootstrap repair details.reconstructedStateRevision must be a non-negative integer");
-  }
-  if (!["CONTRACT_READY", "ROUTED"].includes(details.reconstructedPhase)) {
-    throw invalid("contract bootstrap repair details.reconstructedPhase is invalid");
-  }
+  assertRepairDetailRevision(details, legacy);
+  assertRepairDetailPhase(details);
   if (details.routeFingerprint !== null && !isFingerprint(details.routeFingerprint)) {
     throw invalid("contract bootstrap repair details.routeFingerprint must be a fingerprint or null");
   }
   if (details.previousStateFingerprint !== null && !isFingerprint(details.previousStateFingerprint)) {
     throw invalid("contract bootstrap repair details.previousStateFingerprint must be a fingerprint or null");
   }
+  if (!Number.isFinite(Date.parse(details.repairedAt))) throw invalid("contract bootstrap repair details.repairedAt must be an ISO timestamp");
+  return details;
+}
+
+function assertRepairDetailKeys(details, legacy) {
+  const allowedKeys = legacy ? LEGACY_REPAIR_DETAIL_KEYS : REPAIR_DETAIL_KEYS;
+  const unexpected = Object.keys(details).find((key) => !allowedKeys.has(key));
+  if (unexpected) throw invalid(`contract bootstrap repair details contains unknown property: ${unexpected}`);
+}
+
+function assertRepairDetailRevision(details, legacy) {
+  if (!legacy && (!Number.isInteger(details.reconstructedStateRevision) || details.reconstructedStateRevision < 0)) {
+    throw invalid("contract bootstrap repair details.reconstructedStateRevision must be a non-negative integer");
+  }
+}
+
+function assertRepairDetailPhase(details) {
+  if (!["CONTRACT_READY", "ROUTED"].includes(details.reconstructedPhase)) {
+    throw invalid("contract bootstrap repair details.reconstructedPhase is invalid");
+  }
   if (details.reconstructedPhase === "ROUTED" && details.routeFingerprint === null) {
     throw invalid("ROUTED contract bootstrap repair requires routeFingerprint");
   }
-  if (!Number.isFinite(Date.parse(details.repairedAt))) throw invalid("contract bootstrap repair details.repairedAt must be an ISO timestamp");
-  return details;
+}
+
+export function assertContractBootstrapRepairDetails(details) {
+  return assertContractBootstrapRepairDetailsInternal(details);
+}
+
+export function assertLegacyContractBootstrapRepairDetails(details) {
+  return assertContractBootstrapRepairDetailsInternal(details, { legacy: true });
 }
 
 export function contractBootstrapRepairId(details) {
@@ -142,6 +173,24 @@ export function contractBootstrapRepairId(details) {
     reconstructedPhase: details.reconstructedPhase,
     routeFingerprint: details.routeFingerprint,
     reconstructedStateRevision: details.reconstructedStateRevision,
+  };
+  return `repair-${canonicalFingerprint(identity)}`;
+}
+
+export function legacyContractBootstrapRepairId(details) {
+  const identity = {
+    taskId: details.taskId,
+    defect: details.defect,
+    canonicalContractEventSeq: details.canonicalContractEventSeq,
+    canonicalContractEventHash: details.canonicalContractEventHash,
+    duplicateContractEventSeq: details.duplicateContractEventSeq,
+    duplicateContractEventHash: details.duplicateContractEventHash,
+    contractCreateCommitSeq: details.contractCreateCommitSeq,
+    contractCreateCommitHash: details.contractCreateCommitHash,
+    contractCreateTransactionId: details.contractCreateTransactionId,
+    contractFingerprint: details.contractFingerprint,
+    reconstructedPhase: details.reconstructedPhase,
+    routeFingerprint: details.routeFingerprint,
   };
   return `repair-${canonicalFingerprint(identity)}`;
 }
@@ -324,10 +373,218 @@ function isMarkerBound(marker, candidate) {
   return true;
 }
 
-export function repairMarkerErrors(events, errors) {
+export function isLegacyContractBootstrapRepairMarkerShape(event) {
+  try {
+    if (!event || event.event !== CONTRACT_BOOTSTRAP_REPAIR_EVENT) return false;
+    assertLegacyContractBootstrapRepairDetails(event.details);
+    if (typeof event.taskId !== "string" || !event.taskId
+      || event.taskId !== event.details.taskId
+      || !Number.isInteger(event.seq) || event.seq < 1
+      || !isFingerprint(event.hash)
+      || event.hash !== eventHash(event)
+      || event.details.repairId !== legacyContractBootstrapRepairId(event.details)) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function migrationInvalid(message) {
+  const error = new Error(message);
+  error.code = "E_EVENT_INVALID";
+  return error;
+}
+
+export function assertContractBootstrapRepairMigrationDetails(details) {
+  if (!details || typeof details !== "object" || Array.isArray(details)) {
+    throw migrationInvalid("contract bootstrap repair migration requires structured details");
+  }
+  const unexpected = Object.keys(details).find((key) => !MIGRATION_DETAIL_KEYS.has(key));
+  if (unexpected) throw migrationInvalid(`contract bootstrap repair migration details contains unknown property: ${unexpected}`);
+  for (const key of ["defect", "legacyRepairId", "legacyRepairTransactionId", "taskId", "migratedAt", "authorityKind"]) {
+    if (typeof details[key] !== "string" || !details[key].trim()) {
+      throw migrationInvalid(`contract bootstrap repair migration details.${key} must be a non-empty string`);
+    }
+  }
+  if (details.migrationVersion !== CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_VERSION) {
+    throw migrationInvalid("contract bootstrap repair migration details.migrationVersion is unsupported");
+  }
+  if (details.defect !== CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_DEFECT) {
+    throw migrationInvalid("contract bootstrap repair migration details.defect is invalid");
+  }
+  if (details.authorityKind !== CONTRACT_BOOTSTRAP_REPAIR_AUTHORITY) {
+    throw migrationInvalid("contract bootstrap repair migration details.authorityKind is invalid");
+  }
+  for (const key of ["legacyMarkerHash", "legacyRepairCommitHash", "contractFingerprint", "reconstructedStateFingerprint"]) {
+    if (!isFingerprint(details[key])) throw migrationInvalid(`contract bootstrap repair migration details.${key} must be a lowercase SHA-256 fingerprint`);
+  }
+  if (!/^repair-[a-f0-9]{64}$/.test(details.legacyRepairId)) {
+    throw migrationInvalid("contract bootstrap repair migration details.legacyRepairId is invalid");
+  }
+  for (const key of ["legacyMarkerSeq", "legacyRepairCommitSeq", "reconstructedStateRevision"]) {
+    if (!Number.isInteger(details[key]) || details[key] < 0) {
+      throw migrationInvalid(`contract bootstrap repair migration details.${key} must be a non-negative integer`);
+    }
+  }
+  assertMigrationSourceSequence(details);
+  if (!isFingerprint(details.routeFingerprint) && details.routeFingerprint !== null) {
+    throw migrationInvalid("contract bootstrap repair migration details.routeFingerprint must be a fingerprint or null");
+  }
+  if (!isFingerprint(details.reconstructedStateFingerprint)) {
+    throw migrationInvalid("contract bootstrap repair migration details.reconstructedStateFingerprint must be a fingerprint");
+  }
+  if (!Number.isFinite(Date.parse(details.migratedAt))) {
+    throw migrationInvalid("contract bootstrap repair migration details.migratedAt must be an ISO timestamp");
+  }
+  return details;
+}
+
+function assertMigrationSourceSequence(details) {
+  if (details.legacyMarkerSeq < 1 || details.legacyRepairCommitSeq <= details.legacyMarkerSeq) {
+    throw migrationInvalid("contract bootstrap repair migration source sequence boundary is invalid");
+  }
+  if (!["CONTRACT_READY", "ROUTED"].includes(details.reconstructedPhase)) {
+    throw migrationInvalid("contract bootstrap repair migration details.reconstructedPhase is invalid");
+  }
+  if (details.reconstructedPhase === "ROUTED" && details.routeFingerprint === null) {
+    throw migrationInvalid("ROUTED contract bootstrap repair migration requires routeFingerprint");
+  }
+}
+
+function migrationCommitFor(event, taskId) {
+  return event?.event === "TRANSACTION_COMMITTED"
+    && event.taskId === taskId
+    && event.details?.operation === "task-migrate-contract-bootstrap-repair"
+    && typeof event.details?.transactionId === "string"
+    && event.details.transactionId.length > 0
+    && event.hash === eventHash(event);
+}
+
+function resolveContractBootstrapRepairMigration(events, migration) {
+  if (!Array.isArray(events) || !migration || migration.event !== CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_EVENT) return null;
+  const marker = events.find((event) => event.seq === migration.details?.legacyMarkerSeq);
+  const markerIndex = marker ? events.indexOf(marker) : -1;
+  const commit = events[events.indexOf(migration) + 1];
+  if (!marker || !isLegacyContractBootstrapRepairMarkerShape(marker)
+    || markerIndex < 0 || !resolveContractBootstrapRepairBoundary(events, marker)
+    || migration.seq <= marker.seq
+    || migration.taskId !== marker.taskId
+    || migration.details?.legacyMarkerHash !== marker.hash
+    || migration.details?.legacyRepairId !== marker.details.repairId
+    || migration.details?.taskId !== marker.taskId
+    || migration.details?.legacyRepairCommitSeq !== marker.seq + 1
+    || migration.details?.legacyRepairCommitHash !== events[markerIndex + 1]?.hash
+    || !migrationCommitFor(commit, migration.taskId)
+    || commit.seq !== migration.seq + 1) return null;
+  return { marker, migration, migrationCommit: commit };
+}
+
+export function validateContractBootstrapRepairMigrations(events, errors, { allowUnmigratedLegacyContractBootstrapRepairMarkers = false } = {}) {
+  const markers = events.filter((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
+  const migrations = events.filter((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_EVENT);
+  const migrationBySeq = new Map();
+  for (const migration of migrations) {
+    try {
+      assertContractBootstrapRepairMigrationDetails(migration.details);
+    } catch (error) {
+      errors.push({ code: error.code ?? "E_EVENT_INVALID", message: `event ${migration.seq} (${migration.event}): ${error.message}` });
+      continue;
+    }
+    if (typeof migration.taskId !== "string" || migration.taskId !== migration.details.taskId) {
+      errors.push({
+        code: "E_EVENT_INVALID",
+        message: `event ${migration.seq} (${migration.event}): migration taskId must match details.taskId`,
+      });
+      continue;
+    }
+    if (migrationBySeq.has(migration.details.legacyMarkerSeq)) {
+      errors.push({
+        code: "E_EVENT_INVALID",
+        message: `event ${migration.seq} (${migration.event}): duplicate migration for legacy marker seq ${migration.details.legacyMarkerSeq}`,
+      });
+      continue;
+    }
+    migrationBySeq.set(migration.details.legacyMarkerSeq, migration);
+  }
+  if (markers.length > 1) {
+    errors.push({ code: "E_CONTRACT_BOOTSTRAP_REPAIR_INVALID", message: "contract bootstrap repair marker must occur at most once" });
+  }
+  for (const marker of markers) {
+    if (!isLegacyContractBootstrapRepairMarkerShape(marker)) continue;
+    const migration = migrationBySeq.get(marker.seq);
+    if (!migration) {
+      if (!allowUnmigratedLegacyContractBootstrapRepairMarkers) {
+        errors.push({
+          code: "E_EVENT_INVALID",
+          message: `legacy contract bootstrap repair marker ${marker.seq} is not officially migrated (run forgeloop task-migrate-contract-bootstrap-repair)`,
+        });
+      }
+      continue;
+    }
+    migrationBySeq.delete(marker.seq);
+    const binding = resolveContractBootstrapRepairMigration(events, migration);
+    if (!binding) {
+      errors.push({
+        code: "E_LEDGER_HASH_INVALID",
+        message: `migration event ${migration.seq} does not bind legacy contract bootstrap repair marker ${marker.seq}`,
+      });
+    }
+  }
+  for (const [legacySeq, migration] of migrationBySeq) {
+    errors.push({
+      code: "E_EVENT_INVALID",
+      message: `migration event ${migration.seq} references unknown legacy contract bootstrap repair marker seq ${legacySeq}`,
+    });
+  }
+}
+
+export function isLegacyContractBootstrapRepairMigrationCandidate(events, taskId = null) {
+  if (!Array.isArray(events)) return null;
+  const markers = events.filter((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
+  if (markers.length !== 1) return null;
+  const marker = markers[0];
+  if (!isLegacyContractBootstrapRepairMarkerShape(marker)) return null;
+  const effectiveTaskId = taskId ?? marker.taskId;
+  if (marker.taskId !== effectiveTaskId || events.some((event) => event.taskId !== effectiveTaskId)) return null;
+  if (events.some((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_EVENT)) return null;
+  const boundary = resolveContractBootstrapRepairBoundary(events, marker);
+  if (!boundary || boundary.postRepairEvents.length > 0) return null;
+  return { taskId: effectiveTaskId, marker, repairCommit: boundary.repairCommit };
+}
+
+export function resolveEffectiveContractBootstrapRepairAnchor(events) {
+  if (!Array.isArray(events)) return null;
+  const markers = events.filter((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
+  if (markers.length !== 1) return null;
+  const sourceMarker = markers[0];
+  if (isContractBootstrapRepairMarkerValid(events, sourceMarker)) {
+    return { kind: "MODERN", sourceMarker, details: sourceMarker.details };
+  }
+  if (!isLegacyContractBootstrapRepairMarkerShape(sourceMarker)) return null;
+  const migration = events
+    .filter((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_EVENT)
+    .find((event) => event.details?.legacyMarkerSeq === sourceMarker.seq);
+  const binding = resolveContractBootstrapRepairMigration(events, migration);
+  if (!binding) return null;
+  return {
+    kind: "MIGRATED_LEGACY",
+    sourceMarker,
+    migrationEvent: migration,
+    details: {
+      ...sourceMarker.details,
+      reconstructedStateRevision: migration.details.reconstructedStateRevision,
+    },
+  };
+}
+
+export function repairMarkerErrors(events, errors, { allowUnmigratedLegacyContractBootstrapRepairMarkers = false } = {}) {
   const marker = events.find((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
   const boundary = resolveContractBootstrapRepairBoundary(events, marker);
-  if (!boundary || !isContractBootstrapRepairMarkerValid(events, marker)) return errors;
+  const migratedLegacy = resolveEffectiveContractBootstrapRepairAnchor(events)?.kind === "MIGRATED_LEGACY";
+  const recognized = isContractBootstrapRepairMarkerValid(events, marker)
+    || migratedLegacy
+    || (allowUnmigratedLegacyContractBootstrapRepairMarkers && isLegacyContractBootstrapRepairMarkerShape(marker));
+  if (!boundary || !recognized) return errors;
   if (boundary.postRepairEvents.some((event) => event.event === "CONTRACT_VALIDATED")) return errors;
   return errors.filter((error) => !isExactDuplicateContractChronologyError(error));
 }

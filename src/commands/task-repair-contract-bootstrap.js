@@ -17,7 +17,7 @@ import {
   assertContractBootstrapRepairDetails,
   contractBootstrapRepairId,
   isContractBootstrapRepairCandidate,
-  isContractBootstrapRepairMarkerValid,
+  resolveEffectiveContractBootstrapRepairAnchor,
 } from "../core/contract-bootstrap-recovery.js";
 import {
   E_CONTRACT_BOOTSTRAP_REPAIR_AUTHORIZATION_REQUIRED,
@@ -136,12 +136,12 @@ function markerResult(taskId, marker, state, alreadyRepaired) {
 }
 
 async function verifyExistingRepair(target, packageRoot, taskId, ledger) {
-  const marker = ledger.events.find((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
-  if (!marker || !isContractBootstrapRepairMarkerValid(ledger.events, marker) || !ledger.valid) {
+  const anchor = resolveEffectiveContractBootstrapRepairAnchor(ledger.events);
+  if (!anchor || !ledger.valid) {
     throw repairError(E_CONTRACT_BOOTSTRAP_REPAIR_INVALID, "Existing contract bootstrap repair marker is invalid or the repaired ledger is no longer strict");
   }
   const contract = await readContract(target, packageRoot, { taskId });
-  if (contract.fingerprint !== marker.details.contractFingerprint) {
+  if (contract.fingerprint !== anchor.details.contractFingerprint) {
     throw repairError(E_CONTRACT_BOOTSTRAP_REPAIR_INVALID, "Contract fingerprint no longer matches the repair marker");
   }
   const state = await readWorkState(target, { packageRoot, taskId });
@@ -151,7 +151,7 @@ async function verifyExistingRepair(target, packageRoot, taskId, ledger) {
       errors: ownership.errors,
     });
   }
-  return markerResult(taskId, marker, state, true);
+  return markerResult(taskId, { ...anchor.sourceMarker, details: anchor.details }, state, true);
 }
 
 export async function runTaskRepairContractBootstrap({ target, packageRoot, taskId, acknowledgeRepair } = {}) {

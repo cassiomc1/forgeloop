@@ -19,7 +19,7 @@ import { readContract } from "./contract.js";
 import { readPersistedRoute } from "./route-artifact.js";
 import {
   CONTRACT_BOOTSTRAP_REPAIR_EVENT,
-  isContractBootstrapRepairMarkerValid,
+  resolveEffectiveContractBootstrapRepairAnchor,
   resolveCanonicalPostRepairCheckpointBinding,
   resolveCanonicalPostRepairRouteBinding,
   sameCanonicalGuideList,
@@ -81,26 +81,26 @@ function repairArtifactErrors(artifacts) {
   ];
 }
 
-function repairAnchorErrors(marker, state, artifacts) {
+function repairAnchorErrors(details, state, artifacts) {
   const errors = [];
-  if (state.phase !== marker.details.reconstructedPhase) {
+  if (state.phase !== details.reconstructedPhase) {
     errors.push(repairInvalid(
-      `Work-state phase ${state.phase} does not match repair anchor phase ${marker.details.reconstructedPhase}`,
+      `Work-state phase ${state.phase} does not match repair anchor phase ${details.reconstructedPhase}`,
     ));
   }
-  if (canonicalFingerprint(state) !== marker.details.reconstructedStateFingerprint) {
+  if (canonicalFingerprint(state) !== details.reconstructedStateFingerprint) {
     errors.push(repairInvalid("Work-state fingerprint does not match the repair anchor"));
   }
   const stateRouteFingerprint = state.routeFingerprint ?? null;
   const currentRouteFingerprint = artifacts?.route?.fingerprint ?? null;
-  if (stateRouteFingerprint !== marker.details.routeFingerprint
-    || currentRouteFingerprint !== marker.details.routeFingerprint) {
+  if (stateRouteFingerprint !== details.routeFingerprint
+    || currentRouteFingerprint !== details.routeFingerprint) {
     errors.push(repairInvalid("Current route identity does not match the repair anchor"));
   }
   return errors;
 }
 
-function evolvedRepairErrors(marker, events, state, artifacts) {
+function evolvedRepairErrors(anchor, events, state, artifacts) {
   const errors = [];
   const contract = artifacts?.contract ?? null;
   const route = artifacts?.route ?? null;
@@ -117,13 +117,13 @@ function evolvedRepairErrors(marker, events, state, artifacts) {
       .map((error) => repairInvalid(error.message)));
   }
   const currentRouteFingerprint = route?.fingerprint ?? null;
-  const binding = currentRouteFingerprint !== marker.details.routeFingerprint
-    ? resolveCanonicalPostRepairRouteBinding(events, marker, currentRouteFingerprint)
+  const binding = currentRouteFingerprint !== anchor.details.routeFingerprint
+    ? resolveCanonicalPostRepairRouteBinding(events, anchor.sourceMarker, currentRouteFingerprint)
     : null;
-  if (currentRouteFingerprint !== marker.details.routeFingerprint && !binding) {
+  if (currentRouteFingerprint !== anchor.details.routeFingerprint && !binding) {
     errors.push(repairInvalid("Changed route identity lacks a canonical post-repair route binding"));
   }
-  errors.push(...lateRouteCheckpointErrors(events, state, marker));
+  errors.push(...lateRouteCheckpointErrors(events, state, anchor.sourceMarker));
   errors.push(...validateStateLedgerCoherence(state, events).map((error) => repairInvalid(error.message)));
   const requiredEvent = REPAIR_PHASE_EVENTS[state.phase];
   if (requiredEvent && !events.some((event) => event.event === requiredEvent)) {
@@ -133,28 +133,29 @@ function evolvedRepairErrors(marker, events, state, artifacts) {
 }
 
 function validateContractBootstrapRepairConsistency(taskId, events, state, artifacts) {
-  const marker = events.find((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
-  if (!marker) return [];
-  if (!isContractBootstrapRepairMarkerValid(events, marker)) {
+  const anchor = resolveEffectiveContractBootstrapRepairAnchor(events);
+  if (!anchor) {
+    if (!events.some((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT)) return [];
     return [repairInvalid("Contract bootstrap repair marker is invalid")];
   }
   if (!state) return [repairInvalid("Work-state is missing after a recorded contract bootstrap repair")];
+  const details = anchor.details;
   const errors = [];
   if (state.taskId !== taskId) errors.push(repairInvalid("Work-state taskId does not match the repaired task"));
   if (!Number.isInteger(state.revision) || state.revision < 0) {
     return [...errors, repairInvalid("Work-state revision is missing or invalid after a recorded repair")];
   }
-  const anchorRevision = marker.details.reconstructedStateRevision;
+  const anchorRevision = details.reconstructedStateRevision;
   if (state.revision < anchorRevision) {
     return [...errors, repairInvalid("Work-state revision rolled back behind the repair anchor")];
   }
-  if (state.contractFingerprint !== marker.details.contractFingerprint) {
+  if (state.contractFingerprint !== details.contractFingerprint) {
     errors.push(repairInvalid("Work-state contract fingerprint does not match repair-time contract identity"));
   }
   errors.push(...repairArtifactErrors(artifacts));
   return state.revision === anchorRevision
-    ? [...errors, ...repairAnchorErrors(marker, state, artifacts)]
-    : [...errors, ...evolvedRepairErrors(marker, events, state, artifacts)];
+    ? [...errors, ...repairAnchorErrors(details, state, artifacts)]
+    : [...errors, ...evolvedRepairErrors(anchor, events, state, artifacts)];
 }
 
 /**
@@ -167,8 +168,9 @@ function validateContractBootstrapRepairConsistency(taskId, events, state, artif
  * With no repair marker this performs no extra work.
  */
 async function collectContractBootstrapRepairConsistency(target, packageRoot, taskId, events, state) {
-  const marker = events.find((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
-  if (!marker) return null;
+  const anchor = resolveEffectiveContractBootstrapRepairAnchor(events);
+  if (!anchor) return null;
+  const details = anchor.details;
   const artifacts = { contract: null, route: null, contractError: null, routeError: null };
 
   // Contract binding: the current contract must exist, validate, and bind to
@@ -176,9 +178,9 @@ async function collectContractBootstrapRepairConsistency(target, packageRoot, ta
   try {
     const contract = await readContract(target, packageRoot, { taskId });
     artifacts.contract = contract;
-    if (contract.fingerprint !== marker.details.contractFingerprint) {
-      artifacts.contractError = `contract fingerprint ${contract.fingerprint} does not match marker contract fingerprint ${marker.details.contractFingerprint}`;
-    } else if (state && state.contractFingerprint !== marker.details.contractFingerprint) {
+    if (contract.fingerprint !== details.contractFingerprint) {
+      artifacts.contractError = `contract fingerprint ${contract.fingerprint} does not match marker contract fingerprint ${details.contractFingerprint}`;
+    } else if (state && state.contractFingerprint !== details.contractFingerprint) {
       artifacts.contractError = "work-state contract fingerprint does not match marker contract fingerprint";
     }
   } catch (error) {
@@ -191,13 +193,13 @@ async function collectContractBootstrapRepairConsistency(target, packageRoot, ta
   // current state/route identity after the checkpoint advances.
   const routeRequired = state && (REPAIR_ROUTE_PHASES.has(state.phase)
     || state.routeFingerprint !== undefined);
-  if (routeRequired || marker.details.routeFingerprint !== null) {
+  if (routeRequired || details.routeFingerprint !== null) {
     try {
       const route = await readPersistedRoute(target, packageRoot, { taskId });
       artifacts.route = route;
       if (route.value?.contractFingerprint !== undefined
-        && route.value.contractFingerprint !== marker.details.contractFingerprint) {
-        artifacts.routeError = "route artifact contract binding does not match marker contract fingerprint";
+        && route.value.contractFingerprint !== details.contractFingerprint) {
+        artifacts.routeError = "route artifact contract binding does not match repair anchor contract fingerprint";
       }
     } catch (error) {
       artifacts.routeError = error.code === "ARTIFACT_MISSING"
