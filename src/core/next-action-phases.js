@@ -74,6 +74,43 @@ async function contractBootstrapRepairGuidanceForExplicitTask({ target, packageR
   });
 }
 
+async function explicitTaskConflictGuidance({ target, packageRoot, explicitTaskId, context, eventsRel, stateRel }) {
+  try {
+    const migrationGuidance = await contractBootstrapRepairGuidanceForExplicitTask({
+      target, packageRoot, explicitTaskId, context, eventsRel, stateRel,
+    });
+    if (migrationGuidance) return migrationGuidance;
+  } catch {
+    // The regular conflict inspection below remains the fail-closed path.
+  }
+  let inspection;
+  try {
+    inspection = await inspectTaskConflictState(target, {
+      taskId: explicitTaskId,
+      packageRoot,
+    });
+  } catch (error) {
+    inspection = {
+      classification: "INCONSISTENT",
+      reasonCodes: [error.code ?? "E_TASK_RECOVERY_INCONSISTENT"],
+    };
+  }
+  if (["ACTIVE", "COMPLETE"].includes(inspection.classification)) return null;
+  const guidance = recoveryGuidanceForClassification(inspection.classification, explicitTaskId);
+  return result({
+    ...context,
+    nextAction: guidance.nextAction,
+    commands: guidance.commands,
+    commandSpecs: guidance.commandSpecs,
+    reasons: inspection.reasonCodes.map((code) => artifactError(
+      code,
+      `Task conflict state is ${inspection.classification}; follow the structured recovery guidance.`,
+      [stateRel, eventsRel, taskArtifactPath(explicitTaskId, "recovery")],
+    )),
+    requiredArtifacts: [stateRel, eventsRel],
+  });
+}
+
 export async function resolveNextActionPhase({
   target,
   packageRoot,
@@ -93,41 +130,10 @@ export async function resolveNextActionPhase({
 } = {}) {
   const { policyRecoveryAction } = helpers;
   if (explicitTaskId) {
-    try {
-      const migrationGuidance = await contractBootstrapRepairGuidanceForExplicitTask({
-        target, packageRoot, explicitTaskId, context, eventsRel, stateRel,
-      });
-      if (migrationGuidance) return migrationGuidance;
-    } catch {
-      // The regular conflict inspection below remains the fail-closed path.
-    }
-    let inspection;
-    try {
-      inspection = await inspectTaskConflictState(target, {
-        taskId: explicitTaskId,
-        packageRoot,
-      });
-    } catch (error) {
-      inspection = {
-        classification: "INCONSISTENT",
-        reasonCodes: [error.code ?? "E_TASK_RECOVERY_INCONSISTENT"],
-      };
-    }
-    if (!["ACTIVE", "COMPLETE"].includes(inspection.classification)) {
-      const guidance = recoveryGuidanceForClassification(inspection.classification, explicitTaskId);
-      return result({
-        ...context,
-        nextAction: guidance.nextAction,
-        commands: guidance.commands,
-        commandSpecs: guidance.commandSpecs,
-        reasons: inspection.reasonCodes.map((code) => artifactError(
-          code,
-          `Task conflict state is ${inspection.classification}; follow the structured recovery guidance.`,
-          [stateRel, eventsRel, taskArtifactPath(explicitTaskId, "recovery")],
-        )),
-        requiredArtifacts: [stateRel, eventsRel],
-      });
-    }
+    const taskConflictGuidance = await explicitTaskConflictGuidance({
+      target, packageRoot, explicitTaskId, context, eventsRel, stateRel,
+    });
+    if (taskConflictGuidance) return taskConflictGuidance;
   }
   const actionGuidance = await resolvePendingActionGuidance({ target, packageRoot, state, context, eventsRel, authorityContext, runtimeContext, helpers });
   if (actionGuidance) return actionGuidance;
@@ -183,11 +189,11 @@ export async function resolveNextActionPhase({
     contractFile: contractRel,
   });
   if (freshness.status === "REVALIDATION_REQUIRED") {
-    const refreshGuidance = await preExecutionRefreshGuidance({ target, packageRoot, state, contract });
+    const refreshGuidance = await preExecutionRefreshGuidance({ target, packageRoot, state, contract, freshness });
     return result({
       ...context,
       ...refreshGuidance,
-      nextAction: NEXT_ACTIONS.RESOLVE_BLOCKER,
+      nextAction: refreshGuidance.nextAction,
       reasons: freshnessReasons(state, freshness),
       requiredArtifacts: uniqueSorted([
         stateRel,

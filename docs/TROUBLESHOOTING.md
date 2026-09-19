@@ -12,6 +12,7 @@ This guide provides symptom-first recovery procedures for common ForgeLoop proto
 - [`forgeloop next` returns `RECORD_DIAGNOSIS`](#symptom-forgeloop-next-returns-record_diagnosis)
 - [Progress is `STALLED` or `forgeloop next` returns `CHANGE_STRATEGY`](#symptom-progress-is-stalled)
 - [Protocol state or contract is `STALE`](#symptom-state-or-contract-is-stale)
+- [A pre-execution checkpoint is stale because the repository moved](#symptom-a-pre-execution-checkpoint-is-stale-because-the-repository-moved)
 - [Execution continuity is `STALE`](#symptom-continuity-is-stale)
 - [Multiple tasks ambiguous (`E_TASK_AMBIGUOUS`)](#symptom-multiple-tasks-ambiguous)
 - [Verification tool is missing (`E_VERIFICATION_TOOL_UNAVAILABLE`)](#symptom-verification-tool-is-missing)
@@ -328,6 +329,35 @@ the blocked preflight is resolved, `preflight` appends a fresh
 `PREFLIGHT_READY` bound to the current contract and route. A READY refresh whose
 details differ *without* an intervening BLOCKED outcome is still refused with
 `E_PHASE_CHRONOLOGY_INVALID`.
+
+### Symptom: A pre-execution checkpoint is stale because the repository moved
+
+#### What it means
+
+A `ROUTED` checkpoint has valid ownership, contract identity, route identity,
+and no execution history, but its recorded repository branch or HEAD differs
+from the current checkout. `next` returns `REVALIDATE_CHECKPOINT` with
+`E_REPOSITORY_CHANGED` and `E_STATE_REVALIDATION_REQUIRED`.
+
+#### Safe recovery
+
+Run the canonical mutation:
+
+```bash
+forgeloop checkpoint-revalidate --task <id> --json
+forgeloop next --task <id> --explain --json
+```
+
+The command derives the repository fingerprint from ForgeLoop while holding
+the task mutation boundary. It preserves the phase, contract fingerprint,
+route fingerprint, selected guides, gates, checks, and evidence. It does not
+revise the contract, reroute the task, fabricate continuity or receipt
+artifacts, or operate after `EXECUTION_STARTED`.
+
+If the command fails with `E_CHECKPOINT_REVALIDATION_UNSAFE`, follow the named
+contract, route, artifact, ownership, or lifecycle boundary. Do not edit
+`work-state.json`, pass a caller-supplied branch or HEAD, or use
+`reconcile-closure` for a `ROUTED` task.
 
 ---
 
@@ -1337,6 +1367,7 @@ package/process recovery boundary. The relevant stable codes are
 | `E_BROWSER_VERIFICATION_REQUEST_INVALID` | Browser verification request failed validation or exceeded budget. | Provide a bounded request with 1-8 https origins, 1-64 steps, 1-64 assertions, and timeoutMs within limits. |
 | `E_BROWSER_VERIFICATION_RESULT_INVALID` | Browser verification provider returned an invalid result structure. | Ensure provider returns a status with bounded assertions, diagnostics, and artifacts, and no authority fields. |
 | `E_BROWSER_VERIFICATION_TIMEOUT` | Browser verification exceeded its execution timeout. | Use a responsive provider or increase timeout within limits; verification is optional. |
+| `E_CHECKPOINT_REVALIDATION_UNSAFE` | A pre-execution checkpoint could not be safely rebound to the current repository without changing lifecycle identity. | Preserve the checkpoint and resolve the reported contract, route, ownership, artifact, or lifecycle boundary through its canonical command. |
 | `E_CHECK_INERT` | An enabled check has no effective scope or target files. | Provide an applicable target scope, configure matching files, or mark the rule unsupported. |
 | `E_CHECK_INVALID` | Check structure or required parameters are invalid. | Provide valid check ID, requirement, and parameters. |
 | `E_CHECK_MUTATION_EXECUTION_ERROR` | A policy checker threw an unhandled exception while evaluating its mutation fixture. | Repair the checker execution path and rerun rule verification. |

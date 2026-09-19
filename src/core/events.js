@@ -42,6 +42,11 @@ import {
   isLegacyRecoveryEventShape,
   legacyRecoveryMigrationId,
 } from "./task-recovery-migration.js";
+import {
+  CHECKPOINT_REVALIDATED_EVENT,
+  assertCheckpointRevalidatedDetails,
+  validateCheckpointRevalidationBindings,
+} from "./checkpoint-revalidation.js";
 
 const EVENT_SCHEMA_VERSION = 1;
 export const LIFECYCLE_MILESTONES = Object.freeze([
@@ -133,6 +138,9 @@ export function validateKnownEventDetails(event) {
       return;
     case "CHECKPOINT_RECONCILED":
       assertReconcileClosureDetails(event.details);
+      return;
+    case CHECKPOINT_REVALIDATED_EVENT:
+      assertCheckpointRevalidatedDetails(event.details);
       return;
     case "TASK_RECOVERY_RECORDED":
       assertRecoveryRecordedDetails(event.details);
@@ -700,7 +708,7 @@ function validateContractBootstrapRepairLedger(events, errors, options) {
 }
 
 export function validateStateLedgerCoherence(state, events) {
-  const errors = [];
+  const errors = [...validateCheckpointRevalidationBindings(state, events)];
   if (!Number.isInteger(state.verificationCycle)) return errors;
   const taskEvents = events.filter((event) => event.taskId === state.taskId);
   const observed = new Set(taskEvents.map((event) => event.event));
