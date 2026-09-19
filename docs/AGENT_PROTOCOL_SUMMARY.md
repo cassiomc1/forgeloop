@@ -317,6 +317,7 @@ capability-family versions.
 | init | MUTATING | Initializes a target project directory with ForgeLoop discovery adapters, schemas, and templates. |
 | migrate-protocol | MUTATING | Safely migrates explicitly supported protocol state; unknown target versions fail without rewriting artifacts. |
 | task-migrate | MUTATING | Migrates a legacy 1.0 singleton task state layout into a task-namespaced layout. |
+| task-migrate-contract-bootstrap-repair | MUTATING | Migrates the exact legacy contract bootstrap repair marker by appending a bound migration event; the original marker and artifacts remain unchanged. |
 | task-recover | MUTATING | Caller-acknowledged recovery of a STALE or ABANDONED task; records durable state and releases effective write claims. |
 | task-repair-contract-bootstrap | MUTATING | Repairs the exact duplicate contract bootstrap defect without rewriting history; idempotent and append-only. |
 | task-repair-legacy-recovery | MUTATING | Migrates one recognized legacy OPERATOR_RECOVERY_RECORDED boundary event into the modern durable recovery representation (append-only; original event unchanged). |

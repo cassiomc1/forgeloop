@@ -21,8 +21,11 @@ import { artifactError, freshnessReasons, loadArtifact, staleReasons } from "./n
 
 import { inspectTaskConflictState } from "./task-conflict-inspection.js";
 import { validateEventLedger } from "./events.js";
-import { isContractBootstrapRepairCandidate } from "./contract-bootstrap-recovery.js";
-import { contractBootstrapRepairGuidance } from "./next-action-model.js";
+import {
+  isContractBootstrapRepairCandidate,
+  isLegacyContractBootstrapRepairMigrationCandidate,
+} from "./contract-bootstrap-recovery.js";
+import { contractBootstrapRepairGuidance, contractBootstrapRepairMigrationGuidance } from "./next-action-model.js";
 
 import { evaluateContinuityNextAction } from "./next-action-continuity.js";
 
@@ -37,6 +40,38 @@ export const PHASES_REQUIRING_EXECUTION_CHRONOLOGY = new Set([
 
 export function phaseRequiresExecutionChronology(phase) {
   return PHASES_REQUIRING_EXECUTION_CHRONOLOGY.has(phase);
+}
+
+async function contractBootstrapRepairGuidanceForExplicitTask({ target, packageRoot, explicitTaskId, context, eventsRel, stateRel }) {
+  const ledger = await validateEventLedger(target, packageRoot, { taskId: explicitTaskId });
+  const candidate = isContractBootstrapRepairCandidate(ledger.events, ledger.errors, explicitTaskId);
+  if (candidate) {
+    const guidance = contractBootstrapRepairGuidance(explicitTaskId);
+    return result({
+      ...context,
+      nextAction: guidance.nextAction,
+      commands: guidance.commands,
+      commandSpecs: guidance.commandSpecs,
+      reasons: [artifactError(guidance.reason.code, guidance.reason.message, [eventsRel, taskArtifactPath(explicitTaskId, "state")])],
+      requiredArtifacts: [eventsRel, taskArtifactPath(explicitTaskId, "contract")],
+    });
+  }
+  const tolerantLedger = await validateEventLedger(target, packageRoot, {
+    taskId: explicitTaskId,
+    allowUnmigratedLegacyContractBootstrapRepairMarkers: true,
+  });
+  if (!tolerantLedger.valid || !isLegacyContractBootstrapRepairMigrationCandidate(tolerantLedger.events, explicitTaskId)) {
+    return null;
+  }
+  const guidance = contractBootstrapRepairMigrationGuidance(explicitTaskId);
+  return result({
+    ...context,
+    nextAction: guidance.nextAction,
+    commands: guidance.commands,
+    commandSpecs: guidance.commandSpecs,
+    reasons: [artifactError(guidance.reason.code, guidance.reason.message, [eventsRel, stateRel])],
+    requiredArtifacts: [eventsRel, taskArtifactPath(explicitTaskId, "contract"), stateRel],
+  });
 }
 
 export async function resolveNextActionPhase({
@@ -59,19 +94,10 @@ export async function resolveNextActionPhase({
   const { policyRecoveryAction } = helpers;
   if (explicitTaskId) {
     try {
-      const ledger = await validateEventLedger(target, packageRoot, { taskId: explicitTaskId });
-      const candidate = isContractBootstrapRepairCandidate(ledger.events, ledger.errors, explicitTaskId);
-      if (candidate) {
-        const guidance = contractBootstrapRepairGuidance(explicitTaskId);
-        return result({
-          ...context,
-          nextAction: guidance.nextAction,
-          commands: guidance.commands,
-          commandSpecs: guidance.commandSpecs,
-          reasons: [artifactError(guidance.reason.code, guidance.reason.message, [eventsRel, taskArtifactPath(explicitTaskId, "state")])],
-          requiredArtifacts: [eventsRel, taskArtifactPath(explicitTaskId, "contract")],
-        });
-      }
+      const migrationGuidance = await contractBootstrapRepairGuidanceForExplicitTask({
+        target, packageRoot, explicitTaskId, context, eventsRel, stateRel,
+      });
+      if (migrationGuidance) return migrationGuidance;
     } catch {
       // The regular conflict inspection below remains the fail-closed path.
     }

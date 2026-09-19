@@ -255,6 +255,9 @@ export const E_CONTRACT_BOOTSTRAP_REPAIR_AVAILABLE = "E_CONTRACT_BOOTSTRAP_REPAI
 export const E_CONTRACT_BOOTSTRAP_REPAIR_INVALID = "E_CONTRACT_BOOTSTRAP_REPAIR_INVALID";
 export const E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE = "E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE";
 export const E_CONTRACT_BOOTSTRAP_REPAIR_AUTHORIZATION_REQUIRED = "E_CONTRACT_BOOTSTRAP_REPAIR_AUTHORIZATION_REQUIRED";
+export const E_CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_AVAILABLE = "E_CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_AVAILABLE";
+export const E_CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_INVALID = "E_CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_INVALID";
+export const E_CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_AUTHORIZATION_REQUIRED = "E_CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_AUTHORIZATION_REQUIRED";
 export const E_COMPLETION_OWNERSHIP_UNPROVEN = "E_COMPLETION_OWNERSHIP_UNPROVEN";
 export const E_TASK_CLAIM_OWNERSHIP_INCONSISTENT = "E_TASK_CLAIM_OWNERSHIP_INCONSISTENT";
 export const E_TASK_RECOVERY_AUTHORIZATION_REQUIRED = "E_TASK_RECOVERY_AUTHORIZATION_REQUIRED";
@@ -787,6 +790,9 @@ export const PUBLIC_ERROR_CODES = Object.freeze({
   E_CONTRACT_BOOTSTRAP_REPAIR_INVALID: Object.freeze({ code: "E_CONTRACT_BOOTSTRAP_REPAIR_INVALID", category: "recovery", classification: "PUBLIC_STABLE", meaning: "The contract bootstrap repair marker or its bound artifacts are invalid or tampered.", safeResolution: "Restore the original artifacts from trusted evidence; ForgeLoop refuses to guess or rewrite history." }),
   E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE: Object.freeze({ code: "E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE", category: "recovery", classification: "PUBLIC_STABLE", meaning: "The historical contract bootstrap defect does not satisfy the narrow repair safety boundary.", safeResolution: "Do not force repair; resolve the ledger inconsistency through a separately reviewed migration." }),
   E_CONTRACT_BOOTSTRAP_REPAIR_AUTHORIZATION_REQUIRED: Object.freeze({ code: "E_CONTRACT_BOOTSTRAP_REPAIR_AUTHORIZATION_REQUIRED", category: "authority", classification: "PUBLIC_STABLE", meaning: "The official contract bootstrap repair requires explicit caller acknowledgement.", safeResolution: "Re-run with --acknowledge-repair after reviewing next and the exact defect signature." }),
+  E_CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_AVAILABLE: Object.freeze({ code: "E_CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_AVAILABLE", category: "recovery", classification: "PUBLIC_STABLE", meaning: "The exact legacy contract bootstrap repair marker has an official append-only migration path.", safeResolution: "Run forgeloop task-migrate-contract-bootstrap-repair --task <id> --acknowledge-migration." }),
+  E_CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_INVALID: Object.freeze({ code: "E_CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_INVALID", category: "recovery", classification: "PUBLIC_STABLE", meaning: "Legacy contract bootstrap repair migration was refused because its exact marker, state, route, lock, or ledger boundary could not be proven.", safeResolution: "Inspect the structured migration errors; ambiguous or progressed historical ledgers remain inconsistent and are never rewritten." }),
+  E_CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_AUTHORIZATION_REQUIRED: Object.freeze({ code: "E_CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_AUTHORIZATION_REQUIRED", category: "authority", classification: "PUBLIC_STABLE", meaning: "The legacy contract bootstrap repair migration requires fresh explicit caller acknowledgement.", safeResolution: "Re-run with --acknowledge-migration after reviewing next and the exact legacy marker boundary." }),
   E_LEGACY_RECOVERY_MIGRATION_INVALID: Object.freeze({
     code: "E_LEGACY_RECOVERY_MIGRATION_INVALID",
     category: "recovery",
@@ -1490,6 +1496,9 @@ export const ALL_KNOWN_ERROR_CODES = Object.freeze(new Set([
   E_CONTRACT_BOOTSTRAP_REPAIR_INVALID,
   E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE,
   E_CONTRACT_BOOTSTRAP_REPAIR_AUTHORIZATION_REQUIRED,
+  E_CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_AVAILABLE,
+  E_CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_INVALID,
+  E_CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_AUTHORIZATION_REQUIRED,
   E_COMPLETION_OWNERSHIP_UNPROVEN,
   E_TASK_CLAIM_OWNERSHIP_INCONSISTENT,
   E_TASK_RECOVERY_AUTHORIZATION_REQUIRED,

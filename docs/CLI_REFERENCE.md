@@ -60,7 +60,7 @@ error codes. Default output and default JSON remain unchanged.
 | --- | --- |
 | **Inspection & Diagnostics** | [`protocol-info`](#protocol-info), [`doctor`](#doctor), [`index-status`](#index-status), [`search`](#search), [`metrics`](#metrics), [`usage-record`](#usage-record), [`efficiency`](#efficiency), [`eval`](#eval), [`history`](#history), [`trace`](#trace), [`reflect`](#reflect), [`progress`](#progress), [`profile-interview`](#profile-interview), [`inspect`](#inspect), [`status`](#status), [`validate-state`](#validate-state), [`validate-protocol`](#validate-protocol) |
 | **Lifecycle & State** | [`discover`](#discover), [`contract-create`](#contract-create), [`gate-record`](#gate-record), [`activate`](#activate), [`route`](#route), [`preflight`](#preflight), [`advance`](#advance), [`next`](#next), [`record-diagnosis`](#record-diagnosis), [`record-intervention`](#record-intervention), [`record-hypothesis-disposition`](#record-hypothesis-disposition), [`record-decision-criterion`](#record-decision-criterion), [`complete`](#complete), [`clear-state`](#clear-state), [`reconcile-closure`](#reconcile-closure), [`task-create`](#task-create), [`task-list`](#task-list), [`task-show`](#task-show), [`task-lock-status`](#task-lock-status), [`task-scope`](#task-scope) |
-| **Setup & Maintenance** | [`init`](#init), [`index-setup`](#index-setup), [`index-start`](#index-start), [`index-stop`](#index-stop), [`index-rebuild`](#index-rebuild), [`update`](#update), [`task-migrate`](#task-migrate), [`migrate-protocol`](#migrate-protocol), [`task-unlock`](#task-unlock), [`task-recover`](#task-recover), [`task-repair-contract-bootstrap`](#task-repair-contract-bootstrap), [`task-repair-legacy-recovery`](#task-repair-legacy-recovery), [`task-resume`](#task-resume) |
+| **Setup & Maintenance** | [`init`](#init), [`index-setup`](#index-setup), [`index-start`](#index-start), [`index-stop`](#index-stop), [`index-rebuild`](#index-rebuild), [`update`](#update), [`task-migrate`](#task-migrate), [`migrate-protocol`](#migrate-protocol), [`task-unlock`](#task-unlock), [`task-recover`](#task-recover), [`task-repair-contract-bootstrap`](#task-repair-contract-bootstrap), [`task-migrate-contract-bootstrap-repair`](#task-migrate-contract-bootstrap-repair), [`task-repair-legacy-recovery`](#task-repair-legacy-recovery), [`task-resume`](#task-resume) |
 | **Verification & Completion** | [`quality-baseline`](#quality-baseline), [`quality-verify`](#quality-verify), [`quality-status`](#quality-status), [`prepare-completion`](#prepare-completion), [`run-check`](#run-check), [`record-check`](#record-check), [`record-terminal-result`](#record-terminal-result), [`audit`](#audit), [`report`](#report), [`validate-receipt`](#validate-receipt), [`verify-scope`](#verify-scope) |
 | **Cross-Harness Continuity** | [`continuity`](#continuity), [`record-continuity`](#record-continuity), [`reconcile-continuity`](#reconcile-continuity), [`clear-continuity`](#clear-continuity), [`handoff-create`](#handoff-create), [`handoff-list`](#handoff-list), [`handoff-show`](#handoff-show) |
 | **Durable Actions & Approvals** | [`run-action`](#run-action), [`action-propose`](#action-propose), [`action-record`](#action-record), [`action-show`](#action-show), [`action-reconcile`](#action-reconcile), [`action-verify`](#action-verify), [`action-authorize`](#action-authorize), [`approval-request`](#approval-request), [`approval-resolve`](#approval-resolve) |
@@ -2356,6 +2356,36 @@ requires a present, valid route artifact bound to the current contract, while a
 history without `ROUTE_VALIDATED` may repair to `CONTRACT_READY` without a
 route artifact. After repair, entering `DESIGNING` additionally requires the
 canonical `DESIGN_GATE_STARTED` event.
+
+### `task-migrate-contract-bootstrap-repair`
+
+Migrates the exact legacy contract bootstrap repair marker produced before
+`reconstructedStateRevision` was required.
+
+- **Purpose**: Proves the legacy marker, its immediate repair transaction, the current contract, the reconstructed work-state, and (for `ROUTED`) the persisted route. Strict validation remains fail-closed until the migration witness is appended.
+- **Mutation**: Appends `CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_RECORDED` plus `TRANSACTION_COMMITTED(operation=task-migrate-contract-bootstrap-repair)`; it never rewrites the legacy marker or state/contract/route artifacts.
+- **Options**:
+
+<!-- BEGIN FORGELOOP GENERATED: cli:task-migrate-contract-bootstrap-repair:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--acknowledge-migration`: fresh explicit caller acknowledgement of the exact legacy marker migration (required)
+- `--json`: emit structured migration output as JSON
+
+<!-- END FORGELOOP GENERATED: cli:task-migrate-contract-bootstrap-repair:options -->
+
+- **Example**:
+
+  ```bash
+  forgeloop task-migrate-contract-bootstrap-repair --task task-001 --acknowledge-migration --json
+  ```
+
+Only the exact legacy schema and immediate repair boundary are eligible. Any
+near-miss, later lifecycle activity, state/route drift, live lock, unknown lock,
+or corrupt lock fails closed with
+`E_CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_INVALID`/`E_TASK_LOCKED`. The operation
+is idempotent only when the complete migrated relationship remains valid.
 
 ### `task-resume`
 
