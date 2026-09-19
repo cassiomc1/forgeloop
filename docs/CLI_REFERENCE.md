@@ -2334,10 +2334,15 @@ Repairs only the exact historical duplicate contract bootstrap defect.
   forgeloop task-repair-contract-bootstrap --task task-001 --acknowledge-repair --json
   ```
 
-The command requires fresh caller acknowledgement. It is idempotent: a valid marker
-returns `alreadyRepaired: true` without appending another event. Tampered marker,
-contract, route, state, hash, or later execution activity fails closed with
-`E_CONTRACT_BOOTSTRAP_REPAIR_INVALID` or `E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE`.
+The command requires fresh caller acknowledgement. The marker records the
+repair-time checkpoint as an immutable anchor, including `reconstructedPhase`,
+`reconstructedStateFingerprint`, `reconstructedStateRevision`, and the
+repair-time `routeFingerprint`; it does not freeze the task at that checkpoint.
+The marker must be immediately followed by its
+`TRANSACTION_COMMITTED(operation=task-repair-contract-bootstrap)` witness.
+After the anchor revision, normal canonical lifecycle evolution is allowed, but
+state rollback, missing state, invalid current contract/route identity, or
+ledger/state incoherence fails closed with `E_CONTRACT_BOOTSTRAP_REPAIR_INVALID`.
 
 ### `task-resume`
 

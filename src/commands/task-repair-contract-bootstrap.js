@@ -8,6 +8,7 @@ import { taskArtifactPath } from "../core/task-paths.js";
 import { withProjectClaimsLock, readLockInfo, classifyLockStaleness, releaseStaleTaskLockIfUnchanged } from "../core/task-lock.js";
 import { withTaskTransaction } from "../core/transaction.js";
 import { createWorkState, mutateWorkState, readWorkState } from "../core/work-state.js";
+import { resolveTaskClaimState } from "../core/task-claim-state.js";
 import {
   CONTRACT_BOOTSTRAP_REPAIR_AUTHORITY,
   CONTRACT_BOOTSTRAP_REPAIR_DEFECT,
@@ -142,20 +143,12 @@ async function verifyExistingRepair(target, packageRoot, taskId, ledger) {
   if (contract.fingerprint !== marker.details.contractFingerprint) {
     throw repairError(E_CONTRACT_BOOTSTRAP_REPAIR_INVALID, "Contract fingerprint no longer matches the repair marker");
   }
-  const route = marker.details.routeFingerprint
-    ? await readPersistedRoute(target, packageRoot, { taskId })
-    : null;
-  if (route && route.fingerprint !== marker.details.routeFingerprint) {
-    throw repairError(E_CONTRACT_BOOTSTRAP_REPAIR_INVALID, "Route fingerprint no longer matches the repair marker");
-  }
   const state = await readWorkState(target, { packageRoot, taskId });
-  if (!state || state.phase !== marker.details.reconstructedPhase
-    || state.contractFingerprint !== marker.details.contractFingerprint
-    || canonicalFingerprint(state) !== marker.details.reconstructedStateFingerprint) {
-    throw repairError(E_CONTRACT_BOOTSTRAP_REPAIR_INVALID, "Work-state no longer matches the repair marker");
-  }
-  if ((route && state.routeFingerprint !== route.fingerprint) || (!route && state.routeFingerprint !== undefined)) {
-    throw repairError(E_CONTRACT_BOOTSTRAP_REPAIR_INVALID, "Work-state route binding no longer matches the repair marker");
+  const ownership = await resolveTaskClaimState(target, { taskId, packageRoot });
+  if (!ownership.ownershipValid) {
+    throw repairError(E_CONTRACT_BOOTSTRAP_REPAIR_INVALID, "Current task state no longer satisfies the repaired-task invariants", {
+      errors: ownership.errors,
+    });
   }
   return markerResult(taskId, marker, state, true);
 }
@@ -247,6 +240,7 @@ export async function runTaskRepairContractBootstrap({ target, packageRoot, task
         routeFingerprint: route?.fingerprint ?? null,
         previousStateFingerprint: canonicalFingerprint(state),
         reconstructedStateFingerprint: canonicalFingerprint(reconstructed),
+        reconstructedStateRevision: reconstructed.revision,
         repairedAt,
         authorityKind: CONTRACT_BOOTSTRAP_REPAIR_AUTHORITY,
       };

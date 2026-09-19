@@ -30,7 +30,8 @@ const REPAIR_DETAIL_KEYS = new Set([
   "duplicateContractEventSeq", "duplicateContractEventHash",
   "contractCreateCommitSeq", "contractCreateCommitHash", "contractCreateTransactionId",
   "contractFingerprint", "reconstructedPhase", "routeFingerprint",
-  "previousStateFingerprint", "reconstructedStateFingerprint", "repairedAt", "authorityKind",
+  "previousStateFingerprint", "reconstructedStateFingerprint", "reconstructedStateRevision",
+  "repairedAt", "authorityKind",
 ]);
 
 function invalid(message) {
@@ -94,6 +95,9 @@ export function assertContractBootstrapRepairDetails(details) {
   for (const key of ["canonicalContractEventSeq", "duplicateContractEventSeq", "contractCreateCommitSeq"]) {
     if (!Number.isInteger(details[key]) || details[key] < 1) throw invalid(`contract bootstrap repair details.${key} must be a positive integer`);
   }
+  if (!Number.isInteger(details.reconstructedStateRevision) || details.reconstructedStateRevision < 0) {
+    throw invalid("contract bootstrap repair details.reconstructedStateRevision must be a non-negative integer");
+  }
   if (!["CONTRACT_READY", "ROUTED"].includes(details.reconstructedPhase)) {
     throw invalid("contract bootstrap repair details.reconstructedPhase is invalid");
   }
@@ -124,8 +128,43 @@ export function contractBootstrapRepairId(details) {
     contractFingerprint: details.contractFingerprint,
     reconstructedPhase: details.reconstructedPhase,
     routeFingerprint: details.routeFingerprint,
+    reconstructedStateRevision: details.reconstructedStateRevision,
   };
   return `repair-${canonicalFingerprint(identity)}`;
+}
+
+function isRepairTransactionCommit(event, taskId) {
+  if (!event || event.taskId !== taskId || event.event !== "TRANSACTION_COMMITTED") return false;
+  const details = event.details;
+  return details && typeof details === "object" && !Array.isArray(details)
+    && Object.keys(details).length === 2
+    && typeof details.transactionId === "string" && details.transactionId.length > 0
+    && details.operation === "task-repair-contract-bootstrap"
+    && event.hash === eventHash(event);
+}
+
+/**
+ * Resolves the immutable repair marker and its transaction boundary. Events
+ * after the commit are normal lifecycle history and never become part of the
+ * repair transaction merely because they follow the marker.
+ */
+export function resolveContractBootstrapRepairBoundary(events, marker = null) {
+  if (!Array.isArray(events)) return null;
+  const markers = events.filter((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
+  if (markers.length !== 1) return null;
+  const resolvedMarker = marker ?? markers[0];
+  const markerIndex = events.indexOf(resolvedMarker);
+  if (markerIndex < 0 || resolvedMarker.seq !== markerIndex + 1) return null;
+  const repairCommit = events[markerIndex + 1];
+  if (!isRepairTransactionCommit(repairCommit, resolvedMarker.taskId)
+    || repairCommit.seq !== resolvedMarker.seq + 1) return null;
+  return {
+    marker: resolvedMarker,
+    markerIndex,
+    repairCommit,
+    repairCommitIndex: markerIndex + 1,
+    postRepairEvents: events.slice(markerIndex + 2),
+  };
 }
 
 export function isContractBootstrapRepairCandidate(events, ledgerErrors = [], taskId = null) {
@@ -167,8 +206,7 @@ export function isContractBootstrapRepairCandidate(events, ledgerErrors = [], ta
 export function isContractBootstrapRepairMarkerValid(events, marker) {
   try {
     if (!marker || marker.event !== CONTRACT_BOOTSTRAP_REPAIR_EVENT) return false;
-    if (events.filter((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT).length !== 1) return false;
-    if (events.slice(marker.seq).some((event) => event.event === "CONTRACT_VALIDATED")) return false;
+    if (!resolveContractBootstrapRepairBoundary(events, marker)) return false;
     assertContractBootstrapRepairDetails(marker.details);
     if (marker.taskId !== marker.details.taskId || marker.hash !== eventHash(marker)) return false;
     if (marker.seq < 1 || events[marker.seq - 1] !== marker) return false;
@@ -211,6 +249,8 @@ function isMarkerBound(marker, candidate) {
 
 export function repairMarkerErrors(events, errors) {
   const marker = events.find((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
-  if (!marker || !isContractBootstrapRepairMarkerValid(events, marker)) return errors;
+  const boundary = resolveContractBootstrapRepairBoundary(events, marker);
+  if (!boundary || !isContractBootstrapRepairMarkerValid(events, marker)) return errors;
+  if (boundary.postRepairEvents.some((event) => event.event === "CONTRACT_VALIDATED")) return errors;
   return errors.filter((error) => !isExactDuplicateContractChronologyError(error));
 }

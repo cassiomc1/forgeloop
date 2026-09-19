@@ -26,7 +26,7 @@ import { taskArtifactPath, taskLockPath } from "../src/core/task-paths.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { withTaskTransaction } from "../src/core/transaction.js";
 import {
-  createWorkState, readWorkState, writeWorkState,
+  createWorkState, mutateWorkState, readWorkState, writeWorkState,
 } from "../src/core/work-state.js";
 import { writeJsonArtifact } from "../src/core/artifacts.js";
 import { resolveTaskClaimState } from "../src/core/task-claim-state.js";
@@ -861,6 +861,7 @@ test("multiple repair markers → ledger invalid", async () => {
           contractFingerprint: "a".repeat(64),
           reconstructedPhase: "ROUTED", routeFingerprint: "a".repeat(64),
           previousStateFingerprint: null, reconstructedStateFingerprint: "a".repeat(64),
+          reconstructedStateRevision: 1,
           repairedAt: new Date().toISOString(), authorityKind: "CALLER_ACKNOWLEDGED",
         },
       }, packageRoot, { taskId });
@@ -893,6 +894,95 @@ test("after repair: ownership ACTIVE, mutationAllowed true", async () => {
     assert.equal(claim.claimState, "ACTIVE");
     assert.equal(claim.mutationAllowed, true);
     assert.equal(claim.ownershipValid, true);
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("repair marker records the reconstructed state revision as an immutable anchor", async () => {
+  const { target } = await repairedFixture();
+  try {
+    const events = await readEvents(target, packageRoot, { taskId });
+    const marker = events.find((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
+    const state = await readWorkState(target, { packageRoot, taskId });
+    assert.equal(marker.details.reconstructedStateRevision, state.revision);
+    assert.equal(isContractBootstrapRepairMarkerValid(events, marker), true);
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("post-repair canonical lifecycle evolution remains owned and idempotent", async () => {
+  const { target } = await repairedRoutedFixture();
+  try {
+    await appendTransaction(target, taskId, "plan", "PLAN_RECORDED");
+    const state = await readWorkState(target, { packageRoot, taskId });
+    await mutateWorkState(target, {
+      expectedRevision: state.revision,
+      packageRoot,
+      taskId,
+    }, () => ({
+      ...state,
+      phase: "PLANNED",
+      previousPhase: "ROUTED",
+      completedSteps: ["contract", "route", "planning"],
+      pendingSteps: ["implementation", "verification"],
+    }));
+    const claim = await resolveTaskClaimState(target, { taskId, packageRoot });
+    assert.equal(claim.claimState, "ACTIVE");
+    assert.equal(claim.mutationAllowed, true);
+    const rerun = await runTaskRepairContractBootstrap({ target, packageRoot, taskId, acknowledgeRepair: true });
+    assert.equal(rerun.alreadyRepaired, true);
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("repair state revision rollback fails closed", async () => {
+  const { target } = await repairedFixture();
+  try {
+    const state = await readWorkState(target, { packageRoot, taskId });
+    await writeWorkState(target, { ...state, revision: 0 }, { packageRoot, taskId });
+    const claim = await resolveTaskClaimState(target, { taskId, packageRoot });
+    assert.equal(claim.claimState, "INCONSISTENT");
+    assert.equal(claim.mutationAllowed, false);
+    assert.equal(claim.ownershipValid, false);
+    assert.ok(claim.errors.some((error) => error.causeCode === "E_CONTRACT_BOOTSTRAP_REPAIR_INVALID"));
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("missing work-state after repair fails closed", async () => {
+  const { target } = await repairedFixture();
+  try {
+    await rm(path.join(target, taskArtifactPath(taskId, "state")), { force: true });
+    const claim = await resolveTaskClaimState(target, { taskId, packageRoot });
+    assert.equal(claim.claimState, "INCONSISTENT");
+    assert.equal(claim.mutationAllowed, false);
+    assert.equal(claim.ownershipValid, false);
+    assert.ok(claim.errors.some((error) => error.causeCode === "E_CONTRACT_BOOTSTRAP_REPAIR_INVALID"));
+    await assert.rejects(
+      runTaskRepairContractBootstrap({ target, packageRoot, taskId, acknowledgeRepair: true }),
+      (error) => error.code === "E_CONTRACT_BOOTSTRAP_REPAIR_INVALID",
+    );
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("post-repair events remain outside the repair transaction boundary", async () => {
+  const { target } = await repairedFixture();
+  try {
+    await appendTransaction(target, taskId, "plan", "PLAN_RECORDED");
+    const events = await readEvents(target, packageRoot, { taskId });
+    const markerIndex = events.findIndex((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
+    assert.equal(events[markerIndex + 1].event, "TRANSACTION_COMMITTED");
+    assert.equal(events[markerIndex + 1].details.operation, "task-repair-contract-bootstrap");
+    assert.equal(isContractBootstrapRepairMarkerValid(events, events[markerIndex]), true);
+    assert.equal(events.at(-2).event, "PLAN_RECORDED");
+    const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assert.equal(ledger.valid, true);
   } finally {
     await removeTempTree(target);
   }
