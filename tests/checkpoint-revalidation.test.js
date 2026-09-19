@@ -1,12 +1,15 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
 
 import { runCheckpointRevalidate } from "../src/commands/checkpoint-revalidate.js";
+import { runPreflight } from "../src/commands/preflight.js";
+import { runTaskMigrateContractBootstrapRepair } from "../src/commands/task-migrate-contract-bootstrap-repair.js";
+import { runTaskRepairContractBootstrap } from "../src/commands/task-repair-contract-bootstrap.js";
 import { createContract, contractFingerprint, writeContract } from "../src/core/contract.js";
 import {
   appendProtocolEvent,
@@ -19,10 +22,13 @@ import { executeForgeLoopCommand } from "../src/core/command-runtime.js";
 import { getNextAction, NEXT_ACTIONS } from "../src/core/next-action.js";
 import { evaluateRoute } from "../src/core/router.js";
 import { writeJsonArtifact } from "../src/core/artifacts.js";
+import { sha256 } from "../src/core/manifest.js";
 import { createTaskDescriptor, writeTaskDescriptor } from "../src/core/task-descriptor.js";
 import { taskArtifactPath } from "../src/core/task-paths.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { withTaskTransaction } from "../src/core/transaction.js";
+import { legacyContractBootstrapRepairId } from "../src/core/contract-bootstrap-recovery.js";
+import { resolveTaskClaimState } from "../src/core/task-claim-state.js";
 import { createWorkState, readWorkState, writeWorkState } from "../src/core/work-state.js";
 import { removeTempTree } from "./helpers/rm-safe.js";
 
@@ -42,6 +48,24 @@ async function appendTransaction(target, taskId, operation, event, details = und
       ...(fingerprint ? { fingerprint } : {}),
     }, packageRoot, { taskId });
   });
+}
+
+async function rewriteEvents(target, taskId, transform) {
+  const eventsPath = path.join(target, taskArtifactPath(taskId, "events"));
+  const events = (await readEvents(target, packageRoot, { taskId })).map((event) => structuredClone(event));
+  const transformed = transform(events) ?? events;
+  for (let index = 0; index < transformed.length; index += 1) {
+    transformed[index].seq = index + 1;
+    transformed[index].previousHash = index === 0 ? null : transformed[index - 1].hash;
+    transformed[index].hash = eventHash(transformed[index]);
+  }
+  await writeFile(eventsPath, `${transformed.map((event) => JSON.stringify(event)).join("\n")}\n`);
+}
+
+async function commitChange(target, fileName, contents, message) {
+  await writeFile(path.join(target, fileName), contents);
+  await git(target, ["add", fileName]);
+  await git(target, ["commit", "-qm", message]);
 }
 
 async function fixture({ repositoryFingerprint = { branch: "old-branch", head: "0".repeat(40) } } = {}) {
@@ -221,5 +245,214 @@ test("rehashing a semantically altered revalidation event remains invalid", asyn
     assert.ok(coherence.some((error) => error.code === "E_CHECKPOINT_REVALIDATION_UNSAFE"));
   } finally {
     await removeTempTree(target);
+  }
+});
+
+test("each checkpoint revalidation has an adjacent canonical transaction witness", async () => {
+  for (const mutation of [
+    (events, index) => events.splice(index + 1, 1),
+    (events, index) => { events[index + 1].details.operation = "other-operation"; },
+    (events, index) => {
+      events.splice(index + 1, 0, {
+        ...events[index + 1],
+        details: { transactionId: "txn-unrelated", operation: "other-operation" },
+      });
+    },
+    (events, index) => { events[index + 1].taskId = "different-task"; },
+  ]) {
+    const { target, taskId } = await fixture();
+    try {
+      await runCheckpointRevalidate({ target, packageRoot, taskId });
+      await rewriteEvents(target, taskId, (events) => {
+        const index = events.findIndex((event) => event.event === "CHECKPOINT_REVALIDATED");
+        mutation(events, index);
+      });
+      const ledger = await validateEventLedger(target, packageRoot, { taskId });
+      assert.equal(ledger.valid, false);
+      assert.ok(ledger.errors.some((error) => error.code === "E_CHECKPOINT_REVALIDATION_UNSAFE"));
+    } finally {
+      await removeTempTree(target);
+    }
+  }
+});
+
+test("multiple repository-only revalidations preserve repository and revision continuity", async () => {
+  const { target, taskId } = await fixture();
+  try {
+    const first = await runCheckpointRevalidate({ target, packageRoot, taskId });
+    await runPreflight({ target, packageRoot, taskId });
+    await commitChange(target, "tracked.txt", "second\n", "second repository checkpoint");
+    const beforeSecond = await getNextAction({ target, packageRoot, taskId });
+    assert.equal(beforeSecond.nextAction, NEXT_ACTIONS.REVALIDATE_CHECKPOINT);
+    const second = await runCheckpointRevalidate({ target, packageRoot, taskId });
+    const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    const revalidations = ledger.events.filter((event) => event.event === "CHECKPOINT_REVALIDATED");
+    assert.equal(ledger.valid, true);
+    assert.equal(revalidations.length, 2);
+    assert.equal(ledger.events.filter((event) => event.event === "TRANSACTION_COMMITTED"
+      && event.details.operation === "checkpoint-revalidate").length, 2);
+    assert.ok(second.previousRevision >= first.revalidatedRevision);
+    assert.deepEqual(revalidations[1].details.previousRepositoryFingerprint, revalidations[0].details.repositoryFingerprint);
+    assert.notDeepEqual(revalidations[1].details.repositoryFingerprint, revalidations[0].details.repositoryFingerprint);
+    assert.notEqual((await getNextAction({ target, packageRoot, taskId })).nextAction, NEXT_ACTIONS.REVALIDATE_CHECKPOINT);
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("a migrated repair anchor survives two later checkpoint revalidations", async () => {
+  const { target, taskId } = await fixture();
+  try {
+    await appendTransaction(target, taskId, "contract-create", "CONTRACT_VALIDATED", {
+      contractFingerprint: (await readWorkState(target, { packageRoot, taskId })).contractFingerprint,
+    });
+    await runTaskRepairContractBootstrap({ target, packageRoot, taskId, acknowledgeRepair: true });
+    const events = await readEvents(target, packageRoot, { taskId });
+    const marker = events.find((event) => event.event === "CONTRACT_BOOTSTRAP_REPAIR_RECORDED");
+    delete marker.details.reconstructedStateRevision;
+    marker.details.repairId = legacyContractBootstrapRepairId(marker.details);
+    let previousHash = null;
+    for (let index = 0; index < events.length; index += 1) {
+      events[index].seq = index + 1;
+      events[index].previousHash = previousHash;
+      events[index].hash = eventHash(events[index]);
+      previousHash = events[index].hash;
+    }
+    await writeFile(path.join(target, taskArtifactPath(taskId, "events")), `${events.map((event) => JSON.stringify(event)).join("\n")}\n`);
+    await runTaskMigrateContractBootstrapRepair({ target, packageRoot, taskId, acknowledgeMigration: true });
+    await commitChange(target, "tracked.txt", "repaired-first-drift\n", "repaired checkpoint drift");
+    await runCheckpointRevalidate({ target, packageRoot, taskId });
+    await runPreflight({ target, packageRoot, taskId });
+    await commitChange(target, "tracked.txt", "repaired-second-drift\n", "repaired second checkpoint drift");
+    await runCheckpointRevalidate({ target, packageRoot, taskId });
+    const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    const claim = await resolveTaskClaimState(target, { packageRoot, taskId });
+    assert.equal(ledger.valid, true);
+    assert.equal(ledger.events.filter((event) => event.event === "CHECKPOINT_REVALIDATED").length, 2);
+    assert.equal(ledger.events.filter((event) => event.event === "CONTRACT_BOOTSTRAP_REPAIR_RECORDED").length, 1);
+    assert.equal(ledger.events.filter((event) => event.event === "CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_RECORDED").length, 1);
+    assert.equal(claim.claimState, "ACTIVE");
+    assert.equal(claim.ownershipValid, true);
+    assert.equal(claim.mutationAllowed, true);
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("a second revalidation without an intermediate mutation preserves the exact prior state fingerprint", async () => {
+  const { target, taskId } = await fixture();
+  try {
+    await runCheckpointRevalidate({ target, packageRoot, taskId });
+    await commitChange(target, "tracked.txt", "second\n", "second repository checkpoint");
+    await runCheckpointRevalidate({ target, packageRoot, taskId });
+    const revalidations = (await readEvents(target, packageRoot, { taskId }))
+      .filter((event) => event.event === "CHECKPOINT_REVALIDATED");
+    assert.equal(revalidations[1].details.previousStateRevision, revalidations[0].details.revalidatedStateRevision);
+    assert.equal(revalidations[1].details.previousStateFingerprint, revalidations[0].details.revalidatedStateFingerprint);
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("a revalidation revision rollback remains invalid after hash-chain repair", async () => {
+  const { target, taskId } = await fixture();
+  try {
+    await runCheckpointRevalidate({ target, packageRoot, taskId });
+    await commitChange(target, "tracked.txt", "second\n", "second repository checkpoint");
+    await runCheckpointRevalidate({ target, packageRoot, taskId });
+    await rewriteEvents(target, taskId, (events) => {
+      const indexes = events
+        .map((event, eventIndex) => event.event === "CHECKPOINT_REVALIDATED" ? eventIndex : -1)
+        .filter((eventIndex) => eventIndex >= 0);
+      const index = indexes.at(-1);
+      events[index].details.previousStateRevision = 0;
+      events[index].details.revalidatedStateRevision = 1;
+    });
+    const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assert.equal(ledger.valid, false);
+    assert.ok(ledger.errors.some((error) => error.code === "E_CHECKPOINT_REVALIDATION_UNSAFE"));
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("historical identity tampering remains visible after later checkpoint progression", async () => {
+  const { target, taskId } = await fixture();
+  try {
+    await runCheckpointRevalidate({ target, packageRoot, taskId });
+    await runPreflight({ target, packageRoot, taskId });
+    await commitChange(target, "tracked.txt", "second\n", "second repository checkpoint");
+    await runCheckpointRevalidate({ target, packageRoot, taskId });
+    await rewriteEvents(target, taskId, (events) => {
+      const index = events.findIndex((event) => event.event === "CHECKPOINT_REVALIDATED");
+      events[index].details.routeFingerprint = "0".repeat(64);
+    });
+    const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    const state = await readWorkState(target, { packageRoot, taskId });
+    assert.equal(ledger.valid, false);
+    assert.ok(validateStateLedgerCoherence(state, ledger.events)
+      .some((error) => error.code === "E_CHECKPOINT_REVALIDATION_UNSAFE"));
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("required-artifact drift, execution start, and invalid ownership never downgrade to revalidation", async () => {
+  const artifactFixture = await fixture();
+  try {
+    const artifactPath = path.join(artifactFixture.target, "required.txt");
+    const contents = "required\n";
+    await writeFile(artifactPath, contents);
+    const state = await readWorkState(artifactFixture.target, { packageRoot, taskId: artifactFixture.taskId });
+    await writeWorkState(artifactFixture.target, createWorkState({
+      ...state,
+      requiredArtifacts: [{ path: "required.txt", sha256: sha256(Buffer.from(contents)) }],
+    }), { packageRoot, taskId: artifactFixture.taskId });
+    await writeFile(artifactPath, "changed\n");
+    const next = await getNextAction({ target: artifactFixture.target, packageRoot, taskId: artifactFixture.taskId });
+    assert.notEqual(next.nextAction, NEXT_ACTIONS.REVALIDATE_CHECKPOINT);
+    await assert.rejects(
+      runCheckpointRevalidate({ target: artifactFixture.target, packageRoot, taskId: artifactFixture.taskId }),
+      (error) => error.code === "E_CHECKPOINT_REVALIDATION_UNSAFE",
+    );
+    await rm(artifactPath);
+    const missing = await getNextAction({ target: artifactFixture.target, packageRoot, taskId: artifactFixture.taskId });
+    assert.notEqual(missing.nextAction, NEXT_ACTIONS.REVALIDATE_CHECKPOINT);
+    await assert.rejects(
+      runCheckpointRevalidate({ target: artifactFixture.target, packageRoot, taskId: artifactFixture.taskId }),
+      (error) => error.code === "E_CHECKPOINT_REVALIDATION_UNSAFE",
+    );
+  } finally {
+    await removeTempTree(artifactFixture.target);
+  }
+
+  const executionFixture = await fixture();
+  try {
+    await runPreflight({ target: executionFixture.target, packageRoot, taskId: executionFixture.taskId });
+    await appendTransaction(executionFixture.target, executionFixture.taskId, "execute", "EXECUTION_STARTED", {
+      executionId: "execution-checkpoint-test",
+    });
+    const next = await getNextAction({ target: executionFixture.target, packageRoot, taskId: executionFixture.taskId });
+    assert.notEqual(next.nextAction, NEXT_ACTIONS.REVALIDATE_CHECKPOINT);
+    await assert.rejects(
+      runCheckpointRevalidate({ target: executionFixture.target, packageRoot, taskId: executionFixture.taskId }),
+      (error) => error.code === "E_CHECKPOINT_REVALIDATION_UNSAFE",
+    );
+  } finally {
+    await removeTempTree(executionFixture.target);
+  }
+
+  const ownershipFixture = await fixture();
+  try {
+    const descriptorPath = path.join(ownershipFixture.target, taskArtifactPath(ownershipFixture.taskId, "descriptor"));
+    const descriptor = JSON.parse(await readFile(descriptorPath, "utf8"));
+    descriptor.writeClaims = ["../outside"];
+    await writeFile(descriptorPath, `${JSON.stringify(descriptor, null, 2)}\n`);
+    await assert.rejects(
+      runCheckpointRevalidate({ target: ownershipFixture.target, packageRoot, taskId: ownershipFixture.taskId }),
+      (error) => error.code === "E_CHECKPOINT_REVALIDATION_UNSAFE",
+    );
+  } finally {
+    await removeTempTree(ownershipFixture.target);
   }
 });

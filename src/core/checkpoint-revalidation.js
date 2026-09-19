@@ -80,12 +80,40 @@ function bindingError(message) {
   return { code: "E_CHECKPOINT_REVALIDATION_UNSAFE", message };
 }
 
+function eventHash(event) {
+  const { hash, ...body } = event ?? {};
+  return canonicalFingerprint(body);
+}
+
 /**
- * Validates the semantic chain of checkpoint-revalidation events. The event
- * hash proves bytes were not changed accidentally; these checks prove that a
- * rehashed event still describes a valid state transition.
+ * Resolves the only valid transaction witness for a checkpoint revalidation.
+ * The witness is intentionally positional: a later transaction commit cannot
+ * retroactively authorize an earlier revalidation event.
  */
-export function validateCheckpointRevalidationBindings(state, events = []) {
+export function resolveCheckpointRevalidationBoundary(events = [], revalidationEvent) {
+  const index = events.findIndex((candidate) => candidate === revalidationEvent
+    || (candidate?.seq === revalidationEvent?.seq
+      && candidate?.taskId === revalidationEvent?.taskId
+      && candidate?.event === CHECKPOINT_REVALIDATED_EVENT));
+  if (index < 0) return null;
+  const commitEvent = events[index + 1];
+  if (!commitEvent
+    || revalidationEvent?.event !== CHECKPOINT_REVALIDATED_EVENT
+    || commitEvent.event !== "TRANSACTION_COMMITTED"
+    || commitEvent.seq !== revalidationEvent.seq + 1
+    || commitEvent.previousHash !== revalidationEvent.hash
+    || revalidationEvent.hash !== eventHash(revalidationEvent)
+    || commitEvent.hash !== eventHash(commitEvent)
+    || commitEvent.taskId !== revalidationEvent.taskId
+    || typeof commitEvent.details?.transactionId !== "string"
+    || !commitEvent.details.transactionId
+    || commitEvent.details.operation !== "checkpoint-revalidate") {
+    return null;
+  }
+  return { revalidationEvent, transactionCommitEvent: commitEvent };
+}
+
+export function validateCheckpointRevalidationEventBindings(events = []) {
   const errors = [];
   const revalidations = events.filter((event) => event.event === CHECKPOINT_REVALIDATED_EVENT);
   for (let index = 0; index < revalidations.length; index += 1) {
@@ -97,16 +125,26 @@ export function validateCheckpointRevalidationBindings(state, events = []) {
       errors.push(bindingError(`event ${event.seq}: ${error.message}`));
       continue;
     }
+    if (!resolveCheckpointRevalidationBoundary(events, event)) {
+      errors.push(bindingError(`event ${event.seq} must be immediately followed by its checkpoint-revalidate transaction commit`));
+    }
     const previous = revalidations[index - 1]?.details;
     if (previous) {
       if (!sameRepositoryFingerprint(details.previousRepositoryFingerprint, previous.repositoryFingerprint)) {
         errors.push(bindingError(`event ${event.seq} is disconnected from the previous checkpoint revalidation repository`));
       }
-      if (details.previousStateRevision !== previous.revalidatedStateRevision) {
-        errors.push(bindingError(`event ${event.seq} does not continue the previous checkpoint revalidation revision`));
+      if (details.previousStateRevision < previous.revalidatedStateRevision) {
+        errors.push(bindingError(`event ${event.seq} rolls back the previous checkpoint revalidation revision`));
       }
-      if (details.previousStateFingerprint !== previous.revalidatedStateFingerprint) {
+      if (details.previousStateRevision === previous.revalidatedStateRevision
+        && details.previousStateFingerprint !== previous.revalidatedStateFingerprint) {
         errors.push(bindingError(`event ${event.seq} does not continue the previous checkpoint revalidation state fingerprint`));
+      }
+      if (details.contractFingerprint !== previous.contractFingerprint) {
+        errors.push(bindingError(`event ${event.seq} changes the checkpoint revalidation contract identity`));
+      }
+      if (details.routeFingerprint !== previous.routeFingerprint) {
+        errors.push(bindingError(`event ${event.seq} changes the checkpoint revalidation route identity`));
       }
     } else {
       const anchor = resolveEffectiveContractBootstrapRepairAnchor(events);
@@ -115,17 +153,43 @@ export function validateCheckpointRevalidationBindings(state, events = []) {
         errors.push(bindingError(`event ${event.seq} does not bind the repaired checkpoint state fingerprint`));
       }
     }
-    if (state && index === revalidations.length - 1 && state.revision === details.revalidatedStateRevision) {
-      if (!sameRepositoryFingerprint(state.repositoryFingerprint, details.repositoryFingerprint)) {
-        errors.push(bindingError(`event ${event.seq} does not bind the current repository fingerprint`));
-      }
-      if (state.phase !== details.phase
-        || state.contractFingerprint !== details.contractFingerprint
-        || state.routeFingerprint !== details.routeFingerprint
-        || canonicalFingerprint(state) !== details.revalidatedStateFingerprint) {
-        errors.push(bindingError(`event ${event.seq} does not bind the current checkpoint state`));
-      }
+  }
+  return errors;
+}
+
+export function validateCheckpointRevalidationCurrentBinding(state, events = []) {
+  const errors = [];
+  const revalidations = events.filter((event) => event.event === CHECKPOINT_REVALIDATED_EVENT);
+  for (const event of revalidations) {
+    const details = event.details;
+    if (state?.contractFingerprint && details?.contractFingerprint !== state.contractFingerprint) {
+      errors.push(bindingError(`event ${event.seq} does not bind the current contract identity`));
+    }
+    if (state?.routeFingerprint && details?.routeFingerprint !== state.routeFingerprint) {
+      errors.push(bindingError(`event ${event.seq} does not bind the current route identity`));
+    }
+  }
+  const latest = revalidations.at(-1);
+  if (state && latest && state.revision === latest.details.revalidatedStateRevision) {
+    const details = latest.details;
+    if (!sameRepositoryFingerprint(state.repositoryFingerprint, details.repositoryFingerprint)) {
+      errors.push(bindingError(`event ${latest.seq} does not bind the current repository fingerprint`));
+    }
+    if (state.phase !== details.phase || canonicalFingerprint(state) !== details.revalidatedStateFingerprint) {
+      errors.push(bindingError(`event ${latest.seq} does not bind the current checkpoint state`));
     }
   }
   return errors;
+}
+
+/**
+ * Validates the semantic chain of checkpoint-revalidation events. The event
+ * hash proves bytes were not changed accidentally; these checks prove that a
+ * rehashed event still describes a valid state transition.
+ */
+export function validateCheckpointRevalidationBindings(state, events = []) {
+  return [
+    ...validateCheckpointRevalidationEventBindings(events),
+    ...validateCheckpointRevalidationCurrentBinding(state, events),
+  ];
 }
