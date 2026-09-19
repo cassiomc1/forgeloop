@@ -8,6 +8,7 @@ import { test } from "node:test";
 
 import { runCheckpointRevalidate } from "../src/commands/checkpoint-revalidate.js";
 import { runPreflight } from "../src/commands/preflight.js";
+import { runRoute } from "../src/commands/route.js";
 import { runTaskMigrateContractBootstrapRepair } from "../src/commands/task-migrate-contract-bootstrap-repair.js";
 import { runTaskRepairContractBootstrap } from "../src/commands/task-repair-contract-bootstrap.js";
 import { createContract, contractFingerprint, writeContract } from "../src/core/contract.js";
@@ -124,6 +125,32 @@ async function fixture({ repositoryFingerprint = { branch: "old-branch", head: "
     verificationEvidence: [],
   }), { packageRoot, taskId });
   return { target, taskId, contractHash, routeFingerprint: routeArtifact.fingerprint };
+}
+
+async function migratedRepairFixture() {
+  const result = await fixture();
+  const { target, taskId } = result;
+  await appendTransaction(target, taskId, "contract-create", "CONTRACT_VALIDATED", {
+    contractFingerprint: (await readWorkState(target, { packageRoot, taskId })).contractFingerprint,
+  });
+  await runTaskRepairContractBootstrap({ target, packageRoot, taskId, acknowledgeRepair: true });
+  const events = await readEvents(target, packageRoot, { taskId });
+  const marker = events.find((event) => event.event === "CONTRACT_BOOTSTRAP_REPAIR_RECORDED");
+  delete marker.details.reconstructedStateRevision;
+  marker.details.repairId = legacyContractBootstrapRepairId(marker.details);
+  let previousHash = null;
+  for (let index = 0; index < events.length; index += 1) {
+    events[index].seq = index + 1;
+    events[index].previousHash = previousHash;
+    events[index].hash = eventHash(events[index]);
+    previousHash = events[index].hash;
+  }
+  await writeFile(
+    path.join(target, taskArtifactPath(taskId, "events")),
+    `${events.map((event) => JSON.stringify(event)).join("\n")}\n`,
+  );
+  await runTaskMigrateContractBootstrapRepair({ target, packageRoot, taskId, acknowledgeMigration: true });
+  return result;
 }
 
 test("next exposes and the real executor revalidates repository-only ROUTED drift", async () => {
@@ -281,6 +308,16 @@ test("multiple repository-only revalidations preserve repository and revision co
   try {
     const first = await runCheckpointRevalidate({ target, packageRoot, taskId });
     await runPreflight({ target, packageRoot, taskId });
+    await runRoute({
+      target,
+      packageRoot,
+      taskId,
+      workType: "documentation",
+      surfaces: [],
+      executableChange: false,
+    });
+    const intermediateState = await readWorkState(target, { packageRoot, taskId });
+    assert.ok(intermediateState.revision > first.revalidatedRevision);
     await commitChange(target, "tracked.txt", "second\n", "second repository checkpoint");
     const beforeSecond = await getNextAction({ target, packageRoot, taskId });
     assert.equal(beforeSecond.nextAction, NEXT_ACTIONS.REVALIDATE_CHECKPOINT);
@@ -291,7 +328,7 @@ test("multiple repository-only revalidations preserve repository and revision co
     assert.equal(revalidations.length, 2);
     assert.equal(ledger.events.filter((event) => event.event === "TRANSACTION_COMMITTED"
       && event.details.operation === "checkpoint-revalidate").length, 2);
-    assert.ok(second.previousRevision >= first.revalidatedRevision);
+    assert.equal(second.previousRevision, intermediateState.revision);
     assert.deepEqual(revalidations[1].details.previousRepositoryFingerprint, revalidations[0].details.repositoryFingerprint);
     assert.notDeepEqual(revalidations[1].details.repositoryFingerprint, revalidations[0].details.repositoryFingerprint);
     assert.notEqual((await getNextAction({ target, packageRoot, taskId })).nextAction, NEXT_ACTIONS.REVALIDATE_CHECKPOINT);
@@ -301,25 +338,8 @@ test("multiple repository-only revalidations preserve repository and revision co
 });
 
 test("a migrated repair anchor survives two later checkpoint revalidations", async () => {
-  const { target, taskId } = await fixture();
+  const { target, taskId } = await migratedRepairFixture();
   try {
-    await appendTransaction(target, taskId, "contract-create", "CONTRACT_VALIDATED", {
-      contractFingerprint: (await readWorkState(target, { packageRoot, taskId })).contractFingerprint,
-    });
-    await runTaskRepairContractBootstrap({ target, packageRoot, taskId, acknowledgeRepair: true });
-    const events = await readEvents(target, packageRoot, { taskId });
-    const marker = events.find((event) => event.event === "CONTRACT_BOOTSTRAP_REPAIR_RECORDED");
-    delete marker.details.reconstructedStateRevision;
-    marker.details.repairId = legacyContractBootstrapRepairId(marker.details);
-    let previousHash = null;
-    for (let index = 0; index < events.length; index += 1) {
-      events[index].seq = index + 1;
-      events[index].previousHash = previousHash;
-      events[index].hash = eventHash(events[index]);
-      previousHash = events[index].hash;
-    }
-    await writeFile(path.join(target, taskArtifactPath(taskId, "events")), `${events.map((event) => JSON.stringify(event)).join("\n")}\n`);
-    await runTaskMigrateContractBootstrapRepair({ target, packageRoot, taskId, acknowledgeMigration: true });
     await commitChange(target, "tracked.txt", "repaired-first-drift\n", "repaired checkpoint drift");
     await runCheckpointRevalidate({ target, packageRoot, taskId });
     await runPreflight({ target, packageRoot, taskId });
@@ -334,6 +354,82 @@ test("a migrated repair anchor survives two later checkpoint revalidations", asy
     assert.equal(claim.claimState, "ACTIVE");
     assert.equal(claim.ownershipValid, true);
     assert.equal(claim.mutationAllowed, true);
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("canonical reroute after migrated checkpoint revalidation preserves historical route identity", async () => {
+  const { target, taskId } = await migratedRepairFixture();
+  try {
+    await runCheckpointRevalidate({ target, packageRoot, taskId });
+    const beforeState = await readWorkState(target, { packageRoot, taskId });
+    await runRoute({
+      target,
+      packageRoot,
+      taskId,
+      workType: "documentation",
+      surfaces: [],
+      executableChange: false,
+    });
+    const state = await readWorkState(target, { packageRoot, taskId });
+    const events = await readEvents(target, packageRoot, { taskId });
+    const rebound = events.find((event) => event.event === "ROUTE_REBOUND"
+      && event.details.previousRouteFingerprint === beforeState.routeFingerprint
+      && event.details.routeFingerprint === state.routeFingerprint);
+    assert.ok(rebound);
+    const reboundIndex = events.indexOf(rebound);
+    assert.equal(events[reboundIndex + 1].event, "TRANSACTION_COMMITTED");
+    assert.equal(events[reboundIndex + 1].details.operation, "route");
+    const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    const coherence = validateStateLedgerCoherence(state, ledger.events);
+    const claim = await resolveTaskClaimState(target, { packageRoot, taskId });
+    assert.equal(ledger.valid, true);
+    assert.deepEqual(coherence, []);
+    assert.equal(claim.claimState, "ACTIVE");
+    assert.equal(claim.ownershipValid, true);
+    assert.equal(claim.mutationAllowed, true);
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("manual route and state rewrite without canonical route provenance remains inconsistent", async () => {
+  const { target, taskId, contractHash } = await fixture();
+  try {
+    await runCheckpointRevalidate({ target, packageRoot, taskId });
+    const stateBefore = await readWorkState(target, { packageRoot, taskId });
+    const eventsBefore = await readEvents(target, packageRoot, { taskId });
+    const routeCommitCount = eventsBefore.filter((event) => event.event === "TRANSACTION_COMMITTED"
+      && event.details.operation === "route").length;
+    const forgedRoute = evaluateRoute({ workType: "documentation", surfaces: [], executableChange: false });
+    const replacement = await writeJsonArtifact(
+      target,
+      taskArtifactPath(taskId, "route"),
+      { ...forgedRoute, contractFingerprint: contractHash },
+      "routing-result",
+      packageRoot,
+      { taskId },
+    );
+    await writeWorkState(target, {
+      ...stateBefore,
+      routeFingerprint: replacement.fingerprint,
+      selectedGuides: [...replacement.value.guides],
+      revision: stateBefore.revision + 1,
+    }, { packageRoot, taskId });
+    const events = await readEvents(target, packageRoot, { taskId });
+    const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    const state = await readWorkState(target, { packageRoot, taskId });
+    const coherence = validateStateLedgerCoherence(state, ledger.events);
+    const claim = await resolveTaskClaimState(target, { packageRoot, taskId });
+    assert.equal(events.filter((event) => event.event === "ROUTE_REBOUND").length, 0);
+    assert.equal(events.filter((event) => event.event === "TRANSACTION_COMMITTED"
+      && event.details.operation === "route").length, routeCommitCount);
+    assert.equal(ledger.valid, true);
+    assert.ok(coherence.some((error) => error.code === "E_CHECKPOINT_REVALIDATION_UNSAFE"));
+    assert.equal(claim.claimState, "INCONSISTENT");
+    assert.equal(claim.ownershipValid, false);
+    assert.equal(claim.mutationAllowed, false);
   } finally {
     await removeTempTree(target);
   }

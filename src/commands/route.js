@@ -8,8 +8,7 @@ import { withTaskMutation } from "../core/task-command.js";
 import { advanceWorkState } from "../core/phase.js";
 import { mutateWorkState, readWorkState } from "../core/work-state.js";
 import {
-  CONTRACT_BOOTSTRAP_REPAIR_EVENT,
-  isContractBootstrapRepairMarkerValid,
+  resolveEffectiveContractBootstrapRepairAnchor,
 } from "../core/contract-bootstrap-recovery.js";
 
 function canAppendRepairedRouteWitness({ stateBefore, marker, previousPersistedRouteFingerprint, persistedRoute }) {
@@ -25,9 +24,14 @@ function canAppendRepairedRouteWitness({ stateBefore, marker, previousPersistedR
 async function appendRepairedRouteWitness({ target, packageRoot, taskId, stateBefore, previousPersistedRouteFingerprint, persistedRoute }) {
   if (!stateBefore) return;
   const events = await readEvents(target, packageRoot, { taskId });
-  const marker = events.find((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
-  if (!marker || !isContractBootstrapRepairMarkerValid(events, marker)) return;
-  if (!canAppendRepairedRouteWitness({ stateBefore, marker, previousPersistedRouteFingerprint, persistedRoute })) return;
+  const anchor = resolveEffectiveContractBootstrapRepairAnchor(events);
+  if (!anchor) return;
+  if (!canAppendRepairedRouteWitness({
+    stateBefore,
+    marker: anchor.sourceMarker,
+    previousPersistedRouteFingerprint,
+    persistedRoute,
+  })) return;
   await appendProtocolEvent(target, {
     taskId,
     event: "ROUTE_REBOUND",

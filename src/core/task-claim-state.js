@@ -272,6 +272,12 @@ export async function collectTaskClaimEvidence(target, {
   if (ledger.events.some((event) => event.taskId !== taskId)) {
     errors.push(ownershipError(`Task event ledger contains an event for a different task`));
   }
+  if (state) {
+    for (const error of validateStateLedgerCoherence(state, ledger.events)) {
+      if (error.code !== "E_CHECKPOINT_REVALIDATION_UNSAFE") continue;
+      errors.push(ownershipError(`Task state and event ledger are incoherent: ${error.message}`, error));
+    }
+  }
 
   const repairArtifacts = await collectContractBootstrapRepairConsistency(target, packageRoot, taskId, ledger.events, state);
   const repairConsistencyErrors = validateContractBootstrapRepairConsistency(taskId, ledger.events, state, repairArtifacts);
