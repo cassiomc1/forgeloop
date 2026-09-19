@@ -11,6 +11,7 @@ import {
   withProjectClaimsLock,
 } from "../core/task-lock.js";
 import { withTaskTransaction } from "../core/transaction.js";
+import { resolveTaskClaimState } from "../core/task-claim-state.js";
 import { readWorkState } from "../core/work-state.js";
 import {
   CONTRACT_BOOTSTRAP_REPAIR_AUTHORITY,
@@ -127,13 +128,12 @@ async function inspectAlreadyMigrated(target, packageRoot, taskId, ledger) {
       "Existing contract bootstrap migration is invalid or the ledger is not strict",
     );
   }
-  const proof = await proveLegacyRepairState(target, packageRoot, taskId, anchor.sourceMarker);
-  const coherenceErrors = validateStateLedgerCoherence(proof.state, ledger.events);
-  if (coherenceErrors.length > 0) {
+  const ownership = await resolveTaskClaimState(target, { taskId, packageRoot });
+  if (!ownership.ownershipValid) {
     throw migrationError(
       E_CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_INVALID,
-      "Current work-state no longer satisfies the migrated ledger boundary",
-      { errors: coherenceErrors },
+      "Current task state no longer satisfies the migrated task ownership invariants",
+      { errors: ownership.errors },
     );
   }
   return migrationResult(taskId, { marker: anchor.sourceMarker, repairCommit: ledger.events[anchor.sourceMarker.seq] }, anchor.migrationEvent, true);

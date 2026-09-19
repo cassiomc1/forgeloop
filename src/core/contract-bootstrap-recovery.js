@@ -460,20 +460,37 @@ function migrationCommitFor(event, taskId) {
     && event.hash === eventHash(event);
 }
 
+function migrationMatchesLegacyRepairBoundary({ migration, marker, repairCommit }) {
+  const { details } = migration;
+  const bindings = [
+    [migration.taskId, marker.taskId],
+    [details.taskId, marker.taskId],
+    [details.legacyMarkerSeq, marker.seq],
+    [details.legacyMarkerHash, marker.hash],
+    [details.legacyRepairId, marker.details.repairId],
+    [details.legacyRepairCommitSeq, repairCommit.seq],
+    [details.legacyRepairCommitHash, repairCommit.hash],
+    [details.legacyRepairTransactionId, repairCommit.details.transactionId],
+    [details.contractFingerprint, marker.details.contractFingerprint],
+    [details.reconstructedPhase, marker.details.reconstructedPhase],
+    [details.routeFingerprint, marker.details.routeFingerprint],
+    [details.reconstructedStateFingerprint, marker.details.reconstructedStateFingerprint],
+  ];
+  return bindings.every(([actual, expected]) => actual === expected);
+}
+
 function resolveContractBootstrapRepairMigration(events, migration) {
   if (!Array.isArray(events) || !migration || migration.event !== CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_EVENT) return null;
   const marker = events.find((event) => event.seq === migration.details?.legacyMarkerSeq);
   const markerIndex = marker ? events.indexOf(marker) : -1;
-  const commit = events[events.indexOf(migration) + 1];
+  const migrationIndex = events.indexOf(migration);
+  const commit = events[migrationIndex + 1];
+  const boundary = marker ? resolveContractBootstrapRepairBoundary(events, marker) : null;
   if (!marker || !isLegacyContractBootstrapRepairMarkerShape(marker)
-    || markerIndex < 0 || !resolveContractBootstrapRepairBoundary(events, marker)
+    || markerIndex < 0 || !boundary
+    || migrationIndex < 0 || migration.seq !== migrationIndex + 1
     || migration.seq <= marker.seq
-    || migration.taskId !== marker.taskId
-    || migration.details?.legacyMarkerHash !== marker.hash
-    || migration.details?.legacyRepairId !== marker.details.repairId
-    || migration.details?.taskId !== marker.taskId
-    || migration.details?.legacyRepairCommitSeq !== marker.seq + 1
-    || migration.details?.legacyRepairCommitHash !== events[markerIndex + 1]?.hash
+    || !migrationMatchesLegacyRepairBoundary({ migration, marker, repairCommit: boundary.repairCommit })
     || !migrationCommitFor(commit, migration.taskId)
     || commit.seq !== migration.seq + 1) return null;
   return { marker, migration, migrationCommit: commit };
