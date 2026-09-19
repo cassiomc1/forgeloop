@@ -24,6 +24,7 @@ import {
 } from "./contract-bootstrap-recovery.js";
 import { canonicalFingerprint } from "./artifacts.js";
 import { stateIdentityErrors } from "./completion-relationships.js";
+import { routeCheckpointMustMatchCurrentRoute } from "./resumability.js";
 
 const REPAIR_PHASE_EVENTS = Object.freeze({
   CONTRACT_READY: "CONTRACT_VALIDATED",
@@ -52,6 +53,19 @@ function ownershipError(message, cause = null) {
 
 function repairInvalid(message) {
   return ownershipError(message, { code: "E_CONTRACT_BOOTSTRAP_REPAIR_INVALID" });
+}
+
+function lateRouteCheckpointErrors(events, state, binding) {
+  if (routeCheckpointMustMatchCurrentRoute(state.phase) || !binding) return [];
+  const phaseEvent = REPAIR_PHASE_EVENTS[state.phase];
+  if (!phaseEvent) return [];
+  const phaseEventIndex = events.findLastIndex((event) => event.event === phaseEvent);
+  const firstLateRebound = binding.reboundEvents.find(({ reboundEvent }) => reboundEvent.seq > (phaseEventIndex + 1));
+  if (!firstLateRebound) return [];
+  if (state.routeFingerprint !== firstLateRebound.previousFingerprint) {
+    return [repairInvalid("Late-phase checkpoint route identity was rebound without a canonical checkpoint transition")];
+  }
+  return [];
 }
 
 function repairArtifactErrors(artifacts) {
@@ -94,13 +108,20 @@ function evolvedRepairErrors(marker, events, state, artifacts) {
     errors.push(repairInvalid("Current route is required by the evolved task state but is unavailable"));
   }
   if (contract) {
-    errors.push(...stateIdentityErrors({ contract, route, state }).map((error) => repairInvalid(error.message)));
+    const routeErrors = stateIdentityErrors({ contract, route, state });
+    const checkpointMustMatch = routeCheckpointMustMatchCurrentRoute(state.phase);
+    errors.push(...routeErrors
+      .filter((error) => checkpointMustMatch || error.code !== "E_ROUTE_GUIDE_MISMATCH")
+      .map((error) => repairInvalid(error.message)));
   }
   const currentRouteFingerprint = route?.fingerprint ?? null;
-  if (currentRouteFingerprint !== marker.details.routeFingerprint
-    && !resolveCanonicalPostRepairRouteBinding(events, marker, currentRouteFingerprint)) {
+  const binding = currentRouteFingerprint !== marker.details.routeFingerprint
+    ? resolveCanonicalPostRepairRouteBinding(events, marker, currentRouteFingerprint)
+    : null;
+  if (currentRouteFingerprint !== marker.details.routeFingerprint && !binding) {
     errors.push(repairInvalid("Changed route identity lacks a canonical post-repair route binding"));
   }
+  errors.push(...lateRouteCheckpointErrors(events, state, binding));
   errors.push(...validateStateLedgerCoherence(state, events).map((error) => repairInvalid(error.message)));
   const requiredEvent = REPAIR_PHASE_EVENTS[state.phase];
   if (requiredEvent && !events.some((event) => event.event === requiredEvent)) {

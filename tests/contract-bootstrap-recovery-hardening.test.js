@@ -20,6 +20,7 @@ import {
   isContractBootstrapRepairCandidate,
   isContractBootstrapRepairMarkerValid,
   isExactDuplicateContractChronologyError,
+  resolveCanonicalPostRepairRouteBinding,
 } from "../src/core/contract-bootstrap-recovery.js";
 import { appendProtocolEvent, validateEventLedger, readEvents } from "../src/core/events.js";
 import { getNextAction, NEXT_ACTIONS } from "../src/core/next-action.js";
@@ -1329,20 +1330,188 @@ test("canonical post-repair reroute proves changed route identity", async () => 
   }
 });
 
-test("post-repair preflight and advance to DESIGNING retain ownership and proof", async () => {
+test("post-repair route witness chain accepts canonical F1 to F2 to F3 reroutes", async () => {
+  const { target, contractHash } = await repairedRoutedFixture();
+  try {
+    const first = await readPersistedRoute(target, packageRoot, { taskId });
+    await runRoute({
+      target,
+      packageRoot,
+      taskId,
+      workType: "documentation",
+      surfaces: [],
+      executableChange: false,
+    });
+    const second = await readPersistedRoute(target, packageRoot, { taskId });
+    await runRoute({
+      target,
+      packageRoot,
+      taskId,
+      workType: "code",
+      surfaces: ["config"],
+      executableChange: true,
+    });
+    const third = await readPersistedRoute(target, packageRoot, { taskId });
+    const events = await readEvents(target, packageRoot, { taskId });
+    const marker = events.find((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
+    const reboundEvents = events.filter((event) => event.event === "ROUTE_REBOUND");
+    assert.notEqual(first.fingerprint, second.fingerprint);
+    assert.notEqual(second.fingerprint, third.fingerprint);
+    assert.deepEqual(reboundEvents.map((event) => event.details), [
+      {
+        routeFingerprint: second.fingerprint,
+        contractFingerprint: contractHash,
+        previousRouteFingerprint: first.fingerprint,
+      },
+      {
+        routeFingerprint: third.fingerprint,
+        contractFingerprint: contractHash,
+        previousRouteFingerprint: second.fingerprint,
+      },
+    ]);
+    for (const rebound of reboundEvents) {
+      const index = events.indexOf(rebound);
+      assert.equal(events[index + 1].event, "TRANSACTION_COMMITTED");
+      assert.equal(events[index + 1].details.operation, "route");
+    }
+    assert.ok(resolveCanonicalPostRepairRouteBinding(events, marker, third.fingerprint));
+    const claim = await resolveTaskClaimState(target, { taskId, packageRoot });
+    assert.equal(claim.claimState, "ACTIVE");
+    assert.equal(claim.mutationAllowed, true);
+    assert.equal(claim.ownershipValid, true);
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("repaired same-route rerun emits no new witness or revision", async () => {
+  const { target } = await repairedRoutedFixture();
+  try {
+    const routeInput = {
+      target,
+      packageRoot,
+      taskId,
+      workType: "documentation",
+      surfaces: [],
+      executableChange: false,
+    };
+    await runRoute(routeInput);
+    const stateBefore = await readWorkState(target, { packageRoot, taskId });
+    const eventsBefore = await readEvents(target, packageRoot, { taskId });
+    await runRoute(routeInput);
+    const stateAfter = await readWorkState(target, { packageRoot, taskId });
+    const eventsAfter = await readEvents(target, packageRoot, { taskId });
+    assert.equal(stateAfter.revision, stateBefore.revision);
+    assert.equal(eventsAfter.filter((event) => event.event === "ROUTE_REBOUND").length,
+      eventsBefore.filter((event) => event.event === "ROUTE_REBOUND").length);
+    const claim = await resolveTaskClaimState(target, { taskId, packageRoot });
+    assert.equal(claim.claimState, "ACTIVE");
+    assert.equal(claim.mutationAllowed, true);
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("repaired F1 to canonical F2 cannot authorize forged F3", async () => {
+  const { target, contractHash } = await repairedRoutedFixture();
+  try {
+    await runRoute({
+      target,
+      packageRoot,
+      taskId,
+      workType: "documentation",
+      surfaces: [],
+      executableChange: false,
+    });
+    const second = await readPersistedRoute(target, packageRoot, { taskId });
+    const forgedRoute = evaluateRoute({ workType: "code", surfaces: ["config"], executableChange: true });
+    const replacement = await writeJsonArtifact(target, taskArtifactPath(taskId, "route"),
+      { ...forgedRoute, contractFingerprint: contractHash }, "routing-result", packageRoot, { taskId });
+    const state = await readWorkState(target, { packageRoot, taskId });
+    await writeWorkState(target, {
+      ...state,
+      routeFingerprint: replacement.fingerprint,
+      selectedGuides: [...replacement.value.guides],
+      revision: state.revision + 1,
+    }, { packageRoot, taskId });
+    assert.notEqual(second.fingerprint, replacement.fingerprint);
+    const claim = await resolveTaskClaimState(target, { taskId, packageRoot });
+    assert.equal(claim.claimState, "INCONSISTENT");
+    assert.equal(claim.mutationAllowed, false);
+    assert.equal(claim.ownershipValid, false);
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("post-repair preflight, DESIGNING, PLANNED, and EXECUTING retain ownership proof", async () => {
   const { target } = await repairedRoutedFixture();
   try {
     const preflight = await runPreflight({ target, packageRoot, taskId });
     assert.equal(preflight.status, "READY", JSON.stringify(preflight.errors));
     await runAdvance({ target, packageRoot, taskId, to: "DESIGNING" });
+    await runAdvance({ target, packageRoot, taskId, to: "PLANNED" });
     const state = await readWorkState(target, { packageRoot, taskId });
     const events = await readEvents(target, packageRoot, { taskId });
-    assert.equal(state.phase, "DESIGNING");
+    assert.equal(state.phase, "PLANNED");
     assert.ok(events.some((event) => event.event === "DESIGN_GATE_STARTED"));
+    assert.ok(events.some((event) => event.event === "PLAN_RECORDED"));
+    await runAdvance({ target, packageRoot, taskId, to: "EXECUTING" });
+    const executingState = await readWorkState(target, { packageRoot, taskId });
+    const executingEvents = await readEvents(target, packageRoot, { taskId });
+    assert.equal(executingState.phase, "EXECUTING");
+    assert.ok(executingEvents.some((event) => event.event === "EXECUTION_STARTED"));
     const claim = await resolveTaskClaimState(target, { taskId, packageRoot });
     assert.equal(claim.claimState, "ACTIVE");
     assert.equal(claim.mutationAllowed, true);
     assert.equal(claim.ownershipValid, true);
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("repaired late-phase reroute preserves checkpoint identity and ownership", async () => {
+  const { target } = await repairedRoutedFixture();
+  try {
+    const preflight = await runPreflight({ target, packageRoot, taskId });
+    assert.equal(preflight.status, "READY", JSON.stringify(preflight.errors));
+    await runAdvance({ target, packageRoot, taskId, to: "DESIGNING" });
+    await runAdvance({ target, packageRoot, taskId, to: "PLANNED" });
+    const beforeRoute = await readPersistedRoute(target, packageRoot, { taskId });
+    const beforeState = await readWorkState(target, { packageRoot, taskId });
+    await runRoute({
+      target,
+      packageRoot,
+      taskId,
+      workType: "documentation",
+      surfaces: [],
+      executableChange: false,
+    });
+    const afterRoute = await readPersistedRoute(target, packageRoot, { taskId });
+    const afterState = await readWorkState(target, { packageRoot, taskId });
+    const events = await readEvents(target, packageRoot, { taskId });
+    assert.notEqual(afterRoute.fingerprint, beforeRoute.fingerprint);
+    assert.equal(afterState.phase, "PLANNED");
+    assert.equal(afterState.routeFingerprint, beforeState.routeFingerprint);
+    assert.deepEqual(afterState.selectedGuides, beforeState.selectedGuides);
+    assert.equal(afterState.revision, beforeState.revision);
+    const rebound = events.find((event) => event.event === "ROUTE_REBOUND"
+      && event.details.routeFingerprint === afterRoute.fingerprint);
+    assert.equal(rebound.details.previousRouteFingerprint, beforeRoute.fingerprint);
+    const reboundIndex = events.indexOf(rebound);
+    assert.equal(events[reboundIndex + 1].event, "TRANSACTION_COMMITTED");
+    assert.equal(events[reboundIndex + 1].details.operation, "route");
+    const claim = await resolveTaskClaimState(target, { taskId, packageRoot });
+    assert.equal(claim.claimState, "ACTIVE");
+    assert.equal(claim.mutationAllowed, true);
+    assert.equal(claim.ownershipValid, true);
+    const stateBeforeRepairRerun = await readFile(path.join(target, taskArtifactPath(taskId, "state")), "utf8");
+    const eventsBeforeRepairRerun = await readFile(path.join(target, taskArtifactPath(taskId, "events")), "utf8");
+    const rerun = await runTaskRepairContractBootstrap({ target, packageRoot, taskId, acknowledgeRepair: true });
+    assert.equal(rerun.alreadyRepaired, true);
+    assert.equal(rerun.phase, "PLANNED");
+    assert.equal(await readFile(path.join(target, taskArtifactPath(taskId, "state")), "utf8"), stateBeforeRepairRerun);
+    assert.equal(await readFile(path.join(target, taskArtifactPath(taskId, "events")), "utf8"), eventsBeforeRepairRerun);
   } finally {
     await removeTempTree(target);
   }

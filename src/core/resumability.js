@@ -4,6 +4,12 @@ import { createWorkState, initializeWorkState, readWorkState, mutateWorkState } 
 
 const DEFAULT_PENDING_STEPS = ["planning", "implementation", "verification"];
 
+const CURRENT_ROUTE_CHECKPOINT_PHASES = new Set(["ROUTED"]);
+
+export function routeCheckpointMustMatchCurrentRoute(phase) {
+  return CURRENT_ROUTE_CHECKPOINT_PHASES.has(phase);
+}
+
 /**
  * Resume phase derived from the highest lifecycle milestone already recorded in
  * a validated ledger. Recreating a checkpoint at ROUTED for a task whose ledger
