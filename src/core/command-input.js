@@ -34,6 +34,8 @@ function validateTaskCreationInput(command, options) {
   if (command === "contract-create" && !options.taskId) throw inputError("contract-create requires --task");
   if (command === "contract-create" && !options.preset && !options.contractFile) throw inputError("contract-create requires --preset or --contract-file");
   if (command === "contract-create" && options.preset && options.contractFile) throw inputError("contract-create accepts either --preset or --contract-file, not both");
+  if (command === "task-repair-contract-bootstrap" && !options.taskId) throw inputError("task-repair-contract-bootstrap requires --task");
+  if (command === "task-repair-contract-bootstrap" && !options.acknowledgeRepair) throw inputError("task-repair-contract-bootstrap requires --acknowledge-repair");
   const hasTaskListFilter = Boolean(
     options.phase
       || options.active

@@ -13,7 +13,7 @@ import { authorizeCompletionRecoveryOrRebind } from "./completion-recovery-rebin
 import { evaluateCompletion, runComplete as persistCompletion } from "./completion.js";
 import { evaluatePreflight } from "./preflight.js";
 import { requiredEvidenceForTarget } from "./completion-artifacts.js";
-import { assertCompletionRelationships, assertStateIdentity } from "./completion-relationships.js";
+import { assertCompletionRelationships, assertStateIdentity, stateIdentityErrors } from "./completion-relationships.js";
 import { createReceipt, validateReceipt } from "./receipt.js";
 import { assertExecutionPrerequisites, hasExecutionStarted } from "./execution-prerequisites.js";
 import { taskArtifactPath } from "./task-paths.js";
@@ -27,6 +27,13 @@ import {
   evaluateStructuredDiagnosticStall,
 } from "./information-gain-projection.js";
 import { assertStructuralQualityExecutionReady } from "./structural-quality/service.js";
+import { getTaskTransaction, withTaskTransaction } from "./transaction.js";
+import {
+  CONTRACT_BOOTSTRAP_REPAIR_EVENT,
+  ROUTE_CHECKPOINT_BOUND_EVENT,
+  resolveCanonicalPostRepairCheckpointBinding,
+  sameCanonicalGuideList,
+} from "./contract-bootstrap-recovery.js";
 
 function phaseError(code, message, artifacts = []) {
   const error = new Error(message);
@@ -55,15 +62,13 @@ const LATE_PHASES = new Set([
   "COMPLETE",
 ]);
 
-async function assertPersistedStateIdentity(target, state, toPhase, packageRoot, options = {}) {
+async function readPhaseIdentityArtifacts(target, state, toPhase, packageRoot, options, paths) {
   const scopedTaskId = options.taskId ?? null;
   const requireContract = LATE_PHASES.has(state.phase)
     || ["CONTRACT_READY", "ROUTED", "EXECUTING"].includes(toPhase);
-  const requireRoute = LATE_PHASES.has(state.phase)
+  const requireRoute = state.phase === "ROUTED"
+    || LATE_PHASES.has(state.phase)
     || ["ROUTED", "EXECUTING"].includes(toPhase);
-  const contractRel = options.contractPath ?? (scopedTaskId ? taskArtifactPath(scopedTaskId, "contract") : ARTIFACT_PATHS.contract);
-  const routeRel = options.routePath ?? (scopedTaskId ? taskArtifactPath(scopedTaskId, "route") : ARTIFACT_PATHS.route);
-
   let contract = null;
   let route = null;
   try {
@@ -75,7 +80,7 @@ async function assertPersistedStateIdentity(target, state, toPhase, packageRoot,
       throw phaseError(
         requireContract ? "E_PHASE_PREREQUISITE_MISSING" : error.code ?? "E_CONTRACT_INVALID",
         `${requireContract ? `Phase ${toPhase} requires current contract` : "Unable to validate current contract"}: ${error.message}`,
-        [contractRel],
+        [paths.contractRel],
       );
     }
   }
@@ -88,11 +93,69 @@ async function assertPersistedStateIdentity(target, state, toPhase, packageRoot,
       throw phaseError(
         requireRoute ? "E_PHASE_PREREQUISITE_MISSING" : error.code ?? "E_ROUTE_INVALID",
         `${requireRoute ? `Phase ${toPhase} requires persisted route` : "Unable to validate persisted route"}: ${error.message}`,
-        [routeRel],
+        [paths.routeRel],
       );
     }
   }
+  return { contract, route };
+}
+
+function assertRepairedCheckpointIdentity({ contract, route, state, events, contractRel, routeRel, stateRel }) {
+  const repairMarker = events.find((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
+  if (!repairMarker || state.phase === "ROUTED") return false;
+  const checkpoint = resolveCanonicalPostRepairCheckpointBinding(events, repairMarker);
+  if (!checkpoint) {
+    throw phaseError(
+      "E_PHASE_CHRONOLOGY_INVALID",
+      "Repaired late-phase state requires a canonical route checkpoint binding",
+      [contractRel, routeRel],
+    );
+  }
+  const identityErrors = [
+    ...stateIdentityErrors({ contract, state }),
+    ...stateIdentityErrors({ contract, route }),
+  ];
+  if (state.routeFingerprint !== checkpoint.routeFingerprint
+    || !sameCanonicalGuideList(state.selectedGuides, checkpoint.selectedGuides)) {
+    identityErrors.push({
+      code: "E_ROUTE_GUIDE_MISMATCH",
+      message: "Work state does not match the immutable route checkpoint identity",
+      artifacts: [routeRel, stateRel],
+    });
+  }
+  if (identityErrors.length > 0) {
+    const first = identityErrors[0];
+    throw phaseError(first.code, first.message, first.artifacts);
+  }
+  return true;
+}
+
+async function assertPersistedStateIdentity(target, state, toPhase, packageRoot, options = {}) {
+  const scopedTaskId = options.taskId ?? null;
+  const events = options.events ?? [];
+  const contractRel = options.contractPath ?? (scopedTaskId ? taskArtifactPath(scopedTaskId, "contract") : ARTIFACT_PATHS.contract);
+  const routeRel = options.routePath ?? (scopedTaskId ? taskArtifactPath(scopedTaskId, "route") : ARTIFACT_PATHS.route);
+  const stateRel = options.statePath ?? (scopedTaskId ? taskArtifactPath(scopedTaskId, "state") : ARTIFACT_PATHS.state);
+  const { contract, route } = await readPhaseIdentityArtifacts(
+    target,
+    state,
+    toPhase,
+    packageRoot,
+    options,
+    { contractRel, routeRel },
+  );
   if (!contract && !route) return;
+  if (toPhase !== "ROUTED" && assertRepairedCheckpointIdentity({
+    contract,
+    route,
+    state,
+    events,
+    contractRel,
+    routeRel,
+    stateRel,
+  })) {
+    return;
+  }
   try {
     assertStateIdentity({ contract, route, state });
   } catch (error) {
@@ -160,8 +223,39 @@ async function assertPhasePrerequisites(target, state, toPhase, packageRoot, aut
   }
 }
 
+async function appendRepairRouteCheckpoint({ target, packageRoot, taskId, state, events, stateRel, eventsRel }) {
+  const repairMarker = events.find((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
+  const checkpointAlreadyBound = events.some((event) => event.event === ROUTE_CHECKPOINT_BOUND_EVENT);
+  if (!repairMarker || state.phase !== "ROUTED" || checkpointAlreadyBound) return;
+  if (typeof state.routeFingerprint !== "string") {
+    throw phaseError("E_ROUTE_GUIDE_MISMATCH", "ROUTED state requires a route fingerprint before checkpoint binding", [stateRel, eventsRel]);
+  }
+  await appendProtocolEvent(target, {
+    taskId: state.taskId,
+    event: ROUTE_CHECKPOINT_BOUND_EVENT,
+    details: {
+      routeFingerprint: state.routeFingerprint,
+      contractFingerprint: state.contractFingerprint,
+      selectedGuides: [...state.selectedGuides].sort(),
+    },
+  }, packageRoot, { taskId, eventsPath: eventsRel });
+}
+
 export async function advanceWorkState(target, toPhase, options = {}) {
   const normalizedOptions = typeof options === "string" ? { packageRoot: options } : options;
+  if (!normalizedOptions.taskId || await getTaskTransaction(target)) {
+    return advanceWorkStateInternal(target, toPhase, normalizedOptions);
+  }
+  return withTaskTransaction({
+    target,
+    taskId: normalizedOptions.taskId,
+    operation: "advance",
+    packageRoot: normalizedOptions.packageRoot,
+    recordCommitEvent: true,
+  }, async () => advanceWorkStateInternal(target, toPhase, normalizedOptions));
+}
+
+async function advanceWorkStateInternal(target, toPhase, normalizedOptions) {
   const {
     packageRoot,
     now = new Date().toISOString(),
@@ -211,7 +305,6 @@ export async function advanceWorkState(target, toPhase, options = {}) {
   }
 
   await assertPhasePrerequisites(target, state, toPhase, packageRoot, authorityContext, runtimeContext, { taskId, statePath, contractPath, routePath, receiptPath, eventsPath });
-  await assertPersistedStateIdentity(target, state, toPhase, packageRoot, { taskId, contractPath, routePath });
 
   if (toPhase === "EXECUTING" && taskId) {
     // Multi-task checkout scope checks
@@ -259,6 +352,12 @@ export async function advanceWorkState(target, toPhase, options = {}) {
   if (coherenceErrors.length > 0) {
     throw phaseError(coherenceErrors[0].code, coherenceErrors[0].message, [stateRel, eventsRel]);
   }
+  await assertPersistedStateIdentity(target, state, toPhase, packageRoot, {
+    taskId,
+    contractPath,
+    routePath,
+    events: ledger.events,
+  });
   const eventType = PHASE_EVENTS[toPhase];
   const reenteringVerification = toPhase === "VERIFYING" && ["CORRECTING", "REVIEWING"].includes(state.phase);
   if (toPhase === "VERIFYING" && state.phase === "REVIEWING") {
@@ -361,6 +460,15 @@ export async function advanceWorkState(target, toPhase, options = {}) {
   }
   if (reenteringVerification) delete next.lastCompletionAttempt;
   next.revision = (state.revision ?? 0) + 1;
+  await appendRepairRouteCheckpoint({
+    target,
+    packageRoot,
+    taskId,
+    state,
+    events: ledger.events,
+    stateRel,
+    eventsRel,
+  });
   let nextReceipt = null;
   try {
     const receipt = await readJsonArtifact(target, receiptRel, "execution-receipt", packageRoot);

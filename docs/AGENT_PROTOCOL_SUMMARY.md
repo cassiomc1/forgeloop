@@ -318,6 +318,7 @@ capability-family versions.
 | migrate-protocol | MUTATING | Safely migrates explicitly supported protocol state; unknown target versions fail without rewriting artifacts. |
 | task-migrate | MUTATING | Migrates a legacy 1.0 singleton task state layout into a task-namespaced layout. |
 | task-recover | MUTATING | Caller-acknowledged recovery of a STALE or ABANDONED task; records durable state and releases effective write claims. |
+| task-repair-contract-bootstrap | MUTATING | Repairs the exact duplicate contract bootstrap defect without rewriting history; idempotent and append-only. |
 | task-repair-legacy-recovery | MUTATING | Migrates one recognized legacy OPERATOR_RECOVERY_RECORDED boundary event into the modern durable recovery representation (append-only; original event unchanged). |
 | task-resume | MUTATING | Reacquires a recovered task's write claims under project serialization and restores ordinary mutation authority. |
 | task-unlock | MUTATING | Removes an orphaned task lock file to recover an interrupted task. |

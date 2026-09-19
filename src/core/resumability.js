@@ -4,6 +4,12 @@ import { createWorkState, initializeWorkState, readWorkState, mutateWorkState } 
 
 const DEFAULT_PENDING_STEPS = ["planning", "implementation", "verification"];
 
+const CURRENT_ROUTE_CHECKPOINT_PHASES = new Set(["ROUTED"]);
+
+export function routeCheckpointMustMatchCurrentRoute(phase) {
+  return CURRENT_ROUTE_CHECKPOINT_PHASES.has(phase);
+}
+
 /**
  * Resume phase derived from the highest lifecycle milestone already recorded in
  * a validated ledger. Recreating a checkpoint at ROUTED for a task whose ledger
@@ -19,7 +25,85 @@ const RESUME_PHASE_BY_MILESTONE = Object.freeze({
   REVIEW_STARTED: "REVIEWING",
 });
 
-async function deriveResumePhaseFromLedger(target, packageRoot, taskId) {
+const RESUME_STEPS_BY_PHASE = Object.freeze({
+  CONTRACT_READY: {
+    completedSteps: ["contract"],
+    pendingSteps: ["route", ...DEFAULT_PENDING_STEPS],
+  },
+  ROUTED: {
+    completedSteps: ["contract", "route"],
+    pendingSteps: [...DEFAULT_PENDING_STEPS],
+  },
+  PLANNED: {
+    completedSteps: ["contract", "route", "planning"],
+    pendingSteps: [...DEFAULT_PENDING_STEPS.filter((step) => step !== "planning")],
+  },
+  EXECUTING: {
+    completedSteps: ["contract", "route", "planning", "implementation"],
+    pendingSteps: ["verification"],
+  },
+  VERIFYING: {
+    completedSteps: ["contract", "route", "planning", "implementation"],
+    pendingSteps: ["verification"],
+  },
+  REVIEWING: {
+    completedSteps: ["contract", "route", "planning", "implementation", "verification"],
+    pendingSteps: [],
+  },
+});
+
+function cycleEvents(events) {
+  const CYCLE_EVENT_NAMES = new Set([
+    "VERIFICATION_STARTED",
+    "VERIFICATION_RECORDED",
+    "DIAGNOSIS_RECORDED",
+    "DIAGNOSTIC_CASE_RECORDED",
+  ]);
+  const cycles = events
+    .filter((event) => CYCLE_EVENT_NAMES.has(event.event))
+    .map((event) => event.details?.verificationCycle)
+    .filter((cycle) => Number.isInteger(cycle) && cycle >= 1);
+  return cycles.at(-1);
+}
+
+/**
+ * Canonical reconstruction projection: for a resumed phase derived from a
+ * validated ledger, returns the single source of truth for completedSteps and
+ * pendingSteps. Unknown phases fall back to the ROUTED projection, matching the
+ * historical default resume checkpoint.
+ */
+export function resumeStepsForPhase(phase) {
+  return RESUME_STEPS_BY_PHASE[phase] ?? RESUME_STEPS_BY_PHASE.ROUTED;
+}
+
+/**
+ * Canonical verification cycle derived from the ledger when history proves
+ * verification has started; undefined when the ledger has no cycle metadata.
+ */
+export function resumeVerificationCycleForPhase(events) {
+  return cycleEvents(events);
+}
+
+/**
+ * Canonical work-state identity fields for reconstruction from a validated
+ * ledger: resumed phase, completedSteps, pendingSteps, and verificationCycle.
+ * This is the one projection shared by ensureResumableState and
+ * contract-create reconstruction so later phases cannot be reconstructed with
+ * contradictory steps.
+ */
+export function buildResumableWorkStateFields({ events, resumedPhase }) {
+  const steps = resumeStepsForPhase(resumedPhase);
+  return {
+    phase: resumedPhase,
+    completedSteps: [...steps.completedSteps],
+    pendingSteps: [...steps.pendingSteps],
+    ...(events && events.length > 0 && cycleEvents(events) !== undefined
+      ? { verificationCycle: cycleEvents(events) }
+      : {}),
+  };
+}
+
+export async function deriveResumePhaseFromLedger(target, packageRoot, taskId) {
   let ledger;
   try {
     ledger = await validateEventLedger(target, packageRoot, { taskId });
@@ -38,67 +122,32 @@ async function deriveResumePhaseFromLedger(target, packageRoot, taskId) {
   return derived;
 }
 
-function deriveVerificationCycleFromLedger(events) {
-  const cycleEvents = new Set([
-    "VERIFICATION_STARTED",
-    "VERIFICATION_RECORDED",
-    "DIAGNOSIS_RECORDED",
-    "DIAGNOSTIC_CASE_RECORDED",
-  ]);
-  const cycles = events
-    .filter((event) => cycleEvents.has(event.event))
-    .map((event) => event.details?.verificationCycle)
-    .filter((cycle) => Number.isInteger(cycle) && cycle >= 1);
-  return cycles.at(-1);
-}
-
-function resumeSteps(phase) {
-  if (phase === "REVIEWING") {
-    return {
-      completedSteps: ["contract", "route", "planning", "implementation", "verification"],
-      pendingSteps: [],
-    };
-  }
-  if (phase === "EXECUTING" || phase === "VERIFYING") {
-    return {
-      completedSteps: ["contract", "route", "planning", "implementation"],
-      pendingSteps: ["verification"],
-    };
-  }
-  return {
-    completedSteps: ["contract", "route"],
-    pendingSteps: [...DEFAULT_PENDING_STEPS],
-  };
-}
-
 export async function ensureResumableState({ target, packageRoot, contract, route, taskId, statePath }) {
   if (!contract || !route) return null;
   const existing = await readWorkState(target, { packageRoot, taskId, statePath });
   if (existing) return existing;
 
   const resumedPhase = await deriveResumePhaseFromLedger(target, packageRoot, taskId) ?? "ROUTED";
-  let verificationCycle;
+  let events = [];
   try {
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
     if (ledger.valid) {
-      verificationCycle = deriveVerificationCycleFromLedger(
-        (ledger.events ?? []).filter((event) => !taskId || event.taskId === taskId),
-      );
+      events = (ledger.events ?? []).filter((event) => !taskId || event.taskId === taskId);
     }
   } catch {
-    verificationCycle = undefined;
+    events = [];
   }
-  const steps = resumeSteps(resumedPhase);
+  const projection = buildResumableWorkStateFields({ events, resumedPhase });
   const state = createWorkState({
     taskId: contract.value.taskId,
     contractFingerprint: contract.fingerprint,
     routeFingerprint: route.fingerprint,
     repositoryFingerprint: await currentRepositoryFingerprint(target),
-    phase: resumedPhase,
+    phase: projection.phase,
     selectedGuides: route.value.guides,
-    completedSteps: steps.completedSteps,
-    pendingSteps: steps.pendingSteps,
-    ...(verificationCycle !== undefined ? { verificationCycle } : {}),
+    completedSteps: projection.completedSteps,
+    pendingSteps: projection.pendingSteps,
+    ...(projection.verificationCycle !== undefined ? { verificationCycle: projection.verificationCycle } : {}),
     checks: [],
     failures: [],
     blockers: [],

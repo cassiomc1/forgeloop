@@ -60,7 +60,7 @@ error codes. Default output and default JSON remain unchanged.
 | --- | --- |
 | **Inspection & Diagnostics** | [`protocol-info`](#protocol-info), [`doctor`](#doctor), [`index-status`](#index-status), [`search`](#search), [`metrics`](#metrics), [`usage-record`](#usage-record), [`efficiency`](#efficiency), [`eval`](#eval), [`history`](#history), [`trace`](#trace), [`reflect`](#reflect), [`progress`](#progress), [`profile-interview`](#profile-interview), [`inspect`](#inspect), [`status`](#status), [`validate-state`](#validate-state), [`validate-protocol`](#validate-protocol) |
 | **Lifecycle & State** | [`discover`](#discover), [`contract-create`](#contract-create), [`gate-record`](#gate-record), [`activate`](#activate), [`route`](#route), [`preflight`](#preflight), [`advance`](#advance), [`next`](#next), [`record-diagnosis`](#record-diagnosis), [`record-intervention`](#record-intervention), [`record-hypothesis-disposition`](#record-hypothesis-disposition), [`record-decision-criterion`](#record-decision-criterion), [`complete`](#complete), [`clear-state`](#clear-state), [`reconcile-closure`](#reconcile-closure), [`task-create`](#task-create), [`task-list`](#task-list), [`task-show`](#task-show), [`task-lock-status`](#task-lock-status), [`task-scope`](#task-scope) |
-| **Setup & Maintenance** | [`init`](#init), [`index-setup`](#index-setup), [`index-start`](#index-start), [`index-stop`](#index-stop), [`index-rebuild`](#index-rebuild), [`update`](#update), [`task-migrate`](#task-migrate), [`migrate-protocol`](#migrate-protocol), [`task-unlock`](#task-unlock), [`task-recover`](#task-recover), [`task-repair-legacy-recovery`](#task-repair-legacy-recovery), [`task-resume`](#task-resume) |
+| **Setup & Maintenance** | [`init`](#init), [`index-setup`](#index-setup), [`index-start`](#index-start), [`index-stop`](#index-stop), [`index-rebuild`](#index-rebuild), [`update`](#update), [`task-migrate`](#task-migrate), [`migrate-protocol`](#migrate-protocol), [`task-unlock`](#task-unlock), [`task-recover`](#task-recover), [`task-repair-contract-bootstrap`](#task-repair-contract-bootstrap), [`task-repair-legacy-recovery`](#task-repair-legacy-recovery), [`task-resume`](#task-resume) |
 | **Verification & Completion** | [`quality-baseline`](#quality-baseline), [`quality-verify`](#quality-verify), [`quality-status`](#quality-status), [`prepare-completion`](#prepare-completion), [`run-check`](#run-check), [`record-check`](#record-check), [`record-terminal-result`](#record-terminal-result), [`audit`](#audit), [`report`](#report), [`validate-receipt`](#validate-receipt), [`verify-scope`](#verify-scope) |
 | **Cross-Harness Continuity** | [`continuity`](#continuity), [`record-continuity`](#record-continuity), [`reconcile-continuity`](#reconcile-continuity), [`clear-continuity`](#clear-continuity), [`handoff-create`](#handoff-create), [`handoff-list`](#handoff-list), [`handoff-show`](#handoff-show) |
 | **Durable Actions & Approvals** | [`run-action`](#run-action), [`action-propose`](#action-propose), [`action-record`](#action-record), [`action-show`](#action-show), [`action-reconcile`](#action-reconcile), [`action-verify`](#action-verify), [`action-authorize`](#action-authorize), [`approval-request`](#approval-request), [`approval-resolve`](#approval-resolve) |
@@ -872,11 +872,11 @@ Persists a validated contract and materializes the first real lifecycle checkpoi
 
 ### `gate-record`
 
-Records a required pre-execution gate and computes hashes for referenced project artifacts.
+Records a gate satisfaction or rejection decision for a task's preflight gate lifecycle.
 
-- **Purpose**: Creates or replaces a task-scoped gate artifact through the supported CLI.
-- **When to use**: When preflight reports a required gate as unverified before execution.
-- **Mutation**: Writes the task-scoped gate artifact transactionally.
+- **Purpose**: Records structured evidence that a named gate has been satisfied, rejected, or deferred, with optional artifact and decision evidence.
+- **When to use**: During the preflight gate lifecycle to progress gate status from pending to resolved.
+- **Mutation**: Writes a gate artifact under the task namespace and appends a `GATE_SATISFIED` or `GATE_REJECTED` protocol event.
 - **Options**:
 
 <!-- BEGIN FORGELOOP GENERATED: cli:gate-record:options -->
@@ -893,11 +893,6 @@ Records a required pre-execution gate and computes hashes for referenced project
 - `--json`: emit structured gate output as JSON
 
 <!-- END FORGELOOP GENERATED: cli:gate-record:options -->
-
-`gate-record` is the supported pre-execution path for task-scoped required gates. It
-accepts project-relative artifact paths and computes their SHA-256 digests inside
-ForgeLoop; callers cannot supply trusted hashes. Satisfied gates require at least
-one decision and no unknowns. Gate recording is rejected after execution begins.
 
 ### `route`
 
@@ -2315,6 +2310,52 @@ Suspends mutation and releases effective claims for a task deterministically cla
 Fake, missing, corrupt, or mismatched recovery state is
 `E_TASK_CLAIM_OWNERSHIP_INCONSISTENT`/`E_TASK_RECOVERY_INCONSISTENT`; historical
 claims remain reserved.
+
+### `task-repair-contract-bootstrap`
+
+Repairs only the exact historical duplicate contract bootstrap defect.
+
+- **Purpose**: Recognizes the narrow append-only signature of a duplicate `CONTRACT_VALIDATED` followed by a duplicate `contract-create` commit, verifies the current contract and route/state bindings, and reconstructs the earliest proven checkpoint without rewriting existing events.
+- **Mutation**: Under project/task serialization, writes the reconciled work-state and appends `CONTRACT_BOOTSTRAP_REPAIR_RECORDED` plus `TRANSACTION_COMMITTED` in one transaction.
+- **Options**:
+
+<!-- BEGIN FORGELOOP GENERATED: cli:task-repair-contract-bootstrap:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--acknowledge-repair`: explicit caller acknowledgement of the exact append-only repair (required)
+- `--json`: emit structured repair output as JSON
+
+<!-- END FORGELOOP GENERATED: cli:task-repair-contract-bootstrap:options -->
+
+- **Example**:
+
+  ```bash
+  forgeloop task-repair-contract-bootstrap --task task-001 --acknowledge-repair --json
+  ```
+
+The command requires fresh caller acknowledgement. The marker records the
+repair-time checkpoint as an immutable anchor, including `reconstructedPhase`,
+`reconstructedStateFingerprint`, `reconstructedStateRevision`, and the
+repair-time `routeFingerprint`; it does not freeze the task at that checkpoint.
+The marker must be immediately followed by its
+`TRANSACTION_COMMITTED(operation=task-repair-contract-bootstrap)` witness.
+After the anchor revision, normal canonical lifecycle evolution is allowed, but
+state rollback, missing state, invalid current contract/route identity, or
+ledger/state incoherence fails closed with `E_CONTRACT_BOOTSTRAP_REPAIR_INVALID`.
+If a later route fingerprint differs from the marker, the current route and
+state must be canonically coherent and the ledger must contain a ForgeLoop-
+generated `ROUTE_REBOUND` witness immediately followed by the matching
+`TRANSACTION_COMMITTED(operation=route)`. The witness binds the current route
+fingerprint, the repair-time contract fingerprint, and the previous route
+fingerprint; a historical route transaction, or route and state fields changed
+together without this identity witness, is not authorization. A contract-only
+repair may establish its first route through canonical `runRoute`, recording a
+null previous route fingerprint. A proven `ROUTE_VALIDATED` milestone also
+requires a present, valid route artifact bound to the current contract, while a
+history without `ROUTE_VALIDATED` may repair to `CONTRACT_READY` without a
+route artifact. After repair, entering `DESIGNING` additionally requires the
+canonical `DESIGN_GATE_STARTED` event.
 
 ### `task-resume`
 

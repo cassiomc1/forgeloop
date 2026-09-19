@@ -250,6 +250,11 @@ export const E_TASK_MIGRATION_INVALID = "E_TASK_MIGRATION_INVALID";
 export const E_TASK_RECOVERY_UNSAFE = "E_TASK_RECOVERY_UNSAFE";
 export const E_TASK_RECOVERY_INCONSISTENT = "E_TASK_RECOVERY_INCONSISTENT";
 export const E_LEGACY_RECOVERY_MIGRATION_INVALID = "E_LEGACY_RECOVERY_MIGRATION_INVALID";
+export const E_CONTRACT_BOOTSTRAP_INCONSISTENT = "E_CONTRACT_BOOTSTRAP_INCONSISTENT";
+export const E_CONTRACT_BOOTSTRAP_REPAIR_AVAILABLE = "E_CONTRACT_BOOTSTRAP_REPAIR_AVAILABLE";
+export const E_CONTRACT_BOOTSTRAP_REPAIR_INVALID = "E_CONTRACT_BOOTSTRAP_REPAIR_INVALID";
+export const E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE = "E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE";
+export const E_CONTRACT_BOOTSTRAP_REPAIR_AUTHORIZATION_REQUIRED = "E_CONTRACT_BOOTSTRAP_REPAIR_AUTHORIZATION_REQUIRED";
 export const E_COMPLETION_OWNERSHIP_UNPROVEN = "E_COMPLETION_OWNERSHIP_UNPROVEN";
 export const E_TASK_CLAIM_OWNERSHIP_INCONSISTENT = "E_TASK_CLAIM_OWNERSHIP_INCONSISTENT";
 export const E_TASK_RECOVERY_AUTHORIZATION_REQUIRED = "E_TASK_RECOVERY_AUTHORIZATION_REQUIRED";
@@ -777,6 +782,11 @@ export const PUBLIC_ERROR_CODES = Object.freeze({
     meaning: "Claim-release recovery was refused because the task state, recovery artifact, lock, or event ledger is inconsistent.",
     safeResolution: "Repair the underlying artifact through its dedicated recovery surface; do not force-complete an unreadable task.",
   }),
+  E_CONTRACT_BOOTSTRAP_INCONSISTENT: Object.freeze({ code: "E_CONTRACT_BOOTSTRAP_INCONSISTENT", category: "recovery", classification: "PUBLIC_STABLE", meaning: "Contract bootstrap evidence is inconsistent and cannot be treated as a normal idempotent checkpoint.", safeResolution: "Inspect the task ledger and use the exact official contract bootstrap repair only when next recommends it." }),
+  E_CONTRACT_BOOTSTRAP_REPAIR_AVAILABLE: Object.freeze({ code: "E_CONTRACT_BOOTSTRAP_REPAIR_AVAILABLE", category: "recovery", classification: "PUBLIC_STABLE", meaning: "The exact recognized contract bootstrap defect has an official append-only repair path.", safeResolution: "Run forgeloop task-repair-contract-bootstrap --task <id> --acknowledge-repair." }),
+  E_CONTRACT_BOOTSTRAP_REPAIR_INVALID: Object.freeze({ code: "E_CONTRACT_BOOTSTRAP_REPAIR_INVALID", category: "recovery", classification: "PUBLIC_STABLE", meaning: "The contract bootstrap repair marker or its bound artifacts are invalid or tampered.", safeResolution: "Restore the original artifacts from trusted evidence; ForgeLoop refuses to guess or rewrite history." }),
+  E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE: Object.freeze({ code: "E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE", category: "recovery", classification: "PUBLIC_STABLE", meaning: "The historical contract bootstrap defect does not satisfy the narrow repair safety boundary.", safeResolution: "Do not force repair; resolve the ledger inconsistency through a separately reviewed migration." }),
+  E_CONTRACT_BOOTSTRAP_REPAIR_AUTHORIZATION_REQUIRED: Object.freeze({ code: "E_CONTRACT_BOOTSTRAP_REPAIR_AUTHORIZATION_REQUIRED", category: "authority", classification: "PUBLIC_STABLE", meaning: "The official contract bootstrap repair requires explicit caller acknowledgement.", safeResolution: "Re-run with --acknowledge-repair after reviewing next and the exact defect signature." }),
   E_LEGACY_RECOVERY_MIGRATION_INVALID: Object.freeze({
     code: "E_LEGACY_RECOVERY_MIGRATION_INVALID",
     category: "recovery",
@@ -1475,6 +1485,11 @@ export const ALL_KNOWN_ERROR_CODES = Object.freeze(new Set([
   E_TASK_RECOVERY_UNSAFE,
   E_TASK_RECOVERY_INCONSISTENT,
   E_LEGACY_RECOVERY_MIGRATION_INVALID,
+  E_CONTRACT_BOOTSTRAP_INCONSISTENT,
+  E_CONTRACT_BOOTSTRAP_REPAIR_AVAILABLE,
+  E_CONTRACT_BOOTSTRAP_REPAIR_INVALID,
+  E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE,
+  E_CONTRACT_BOOTSTRAP_REPAIR_AUTHORIZATION_REQUIRED,
   E_COMPLETION_OWNERSHIP_UNPROVEN,
   E_TASK_CLAIM_OWNERSHIP_INCONSISTENT,
   E_TASK_RECOVERY_AUTHORIZATION_REQUIRED,

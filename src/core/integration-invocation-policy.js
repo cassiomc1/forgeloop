@@ -88,6 +88,7 @@ const STATIC_RISK_CLASSES = Object.freeze({
   "task-recover": INTEGRATION_RISK_CLASSES.CLAIM_RELEASE_RECOVERY,
   "task-repair-legacy-recovery": INTEGRATION_RISK_CLASSES.LEGACY_MIGRATION,
   "gate-record": INTEGRATION_RISK_CLASSES.MAINTENANCE,
+  "task-repair-contract-bootstrap": INTEGRATION_RISK_CLASSES.LEGACY_MIGRATION,
 });
 
 // Sparse input-dependent refinements over the static table.
@@ -353,7 +354,7 @@ export function classifyForgeLoopInvocation(command, input = {}) {
     removesArtifacts: definition.removes.length > 0,
     executesExternalProcess: definition.mayExecuteExternalProcess === true,
     affectsClaimAuthority: [
-      "task-resume", "task-recover", "task-repair-legacy-recovery",
+      "task-resume", "task-recover", "task-repair-legacy-recovery", "task-repair-contract-bootstrap",
       "task-create", "task-scope", "complete",
     ].includes(command),
     destructive: [
