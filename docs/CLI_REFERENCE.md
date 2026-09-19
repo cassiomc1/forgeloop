@@ -2344,12 +2344,18 @@ After the anchor revision, normal canonical lifecycle evolution is allowed, but
 state rollback, missing state, invalid current contract/route identity, or
 ledger/state incoherence fails closed with `E_CONTRACT_BOOTSTRAP_REPAIR_INVALID`.
 If a later route fingerprint differs from the marker, the current route and
-state must be canonically coherent and the ledger must contain a later
-`TRANSACTION_COMMITTED(operation=route)`; a route artifact and state fields
-changed together without that transaction are not accepted. A proven
-`ROUTE_VALIDATED` milestone also requires a present, valid route artifact bound
-to the current contract, while a history without `ROUTE_VALIDATED` may repair
-to `CONTRACT_READY` without a route artifact.
+state must be canonically coherent and the ledger must contain a ForgeLoop-
+generated `ROUTE_REBOUND` witness immediately followed by the matching
+`TRANSACTION_COMMITTED(operation=route)`. The witness binds the current route
+fingerprint, the repair-time contract fingerprint, and the previous route
+fingerprint; a historical route transaction, or route and state fields changed
+together without this identity witness, is not authorization. A contract-only
+repair may establish its first route through canonical `runRoute`, recording a
+null previous route fingerprint. A proven `ROUTE_VALIDATED` milestone also
+requires a present, valid route artifact bound to the current contract, while a
+history without `ROUTE_VALIDATED` may repair to `CONTRACT_READY` without a
+route artifact. After repair, entering `DESIGNING` additionally requires the
+canonical `DESIGN_GATE_STARTED` event.
 
 ### `task-resume`
 

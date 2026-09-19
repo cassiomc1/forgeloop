@@ -142,6 +142,7 @@ export async function withTaskTransaction({
       target,
       transactionId,
       taskId,
+      operation,
       lock,
       async readText(relativePath) {
         await assertSafePath(target, relativePath);

@@ -19,8 +19,8 @@ import { readContract } from "./contract.js";
 import { readPersistedRoute } from "./route-artifact.js";
 import {
   CONTRACT_BOOTSTRAP_REPAIR_EVENT,
-  hasCanonicalPostRepairRouteTransaction,
   isContractBootstrapRepairMarkerValid,
+  resolveCanonicalPostRepairRouteBinding,
 } from "./contract-bootstrap-recovery.js";
 import { canonicalFingerprint } from "./artifacts.js";
 import { stateIdentityErrors } from "./completion-relationships.js";
@@ -28,6 +28,7 @@ import { stateIdentityErrors } from "./completion-relationships.js";
 const REPAIR_PHASE_EVENTS = Object.freeze({
   CONTRACT_READY: "CONTRACT_VALIDATED",
   ROUTED: "ROUTE_VALIDATED",
+  DESIGNING: "DESIGN_GATE_STARTED",
   PLANNED: "PLAN_RECORDED",
   EXECUTING: "EXECUTION_STARTED",
   VERIFYING: "VERIFICATION_STARTED",
@@ -38,7 +39,7 @@ const REPAIR_PHASE_EVENTS = Object.freeze({
 });
 
 const REPAIR_ROUTE_PHASES = new Set([
-  "ROUTED", "PLANNED", "EXECUTING", "VERIFYING", "DIAGNOSING", "CORRECTING", "REVIEWING", "COMPLETE",
+  "ROUTED", "DESIGNING", "PLANNED", "EXECUTING", "VERIFYING", "DIAGNOSING", "CORRECTING", "REVIEWING", "COMPLETE",
 ]);
 
 function ownershipError(message, cause = null) {
@@ -97,8 +98,8 @@ function evolvedRepairErrors(marker, events, state, artifacts) {
   }
   const currentRouteFingerprint = route?.fingerprint ?? null;
   if (currentRouteFingerprint !== marker.details.routeFingerprint
-    && !hasCanonicalPostRepairRouteTransaction(events, marker)) {
-    errors.push(repairInvalid("Changed route identity lacks a canonical post-repair route transaction"));
+    && !resolveCanonicalPostRepairRouteBinding(events, marker, currentRouteFingerprint)) {
+    errors.push(repairInvalid("Changed route identity lacks a canonical post-repair route binding"));
   }
   errors.push(...validateStateLedgerCoherence(state, events).map((error) => repairInvalid(error.message)));
   const requiredEvent = REPAIR_PHASE_EVENTS[state.phase];

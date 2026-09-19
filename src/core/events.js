@@ -146,6 +146,9 @@ export function validateKnownEventDetails(event) {
     case CONTRACT_BOOTSTRAP_REPAIR_EVENT:
       assertContractBootstrapRepairDetails(event.details);
       return;
+    case "ROUTE_REBOUND":
+      assertRouteReboundDetails(event.details);
+      return;
     case "TASK_RECOVERY_RESUMED":
       assertRecoveryResumedDetails(event.details);
       return;
@@ -239,6 +242,20 @@ function assertStructuredArtifactEvent(event, requiredDetails, label) {
   }
   if (event.fingerprint !== event.details[requiredDetails[0]]) {
     throw protocolError("E_EVENT_INVALID", `${label} fingerprint must match details.${requiredDetails[0]}`);
+  }
+}
+
+function assertRouteReboundDetails(details) {
+  const keys = ["routeFingerprint", "contractFingerprint", "previousRouteFingerprint"];
+  if (!details || typeof details !== "object" || Array.isArray(details)
+    || Object.keys(details).length !== keys.length
+    || keys.some((key) => !Object.prototype.hasOwnProperty.call(details, key))) {
+    throw protocolError("E_EVENT_INVALID", "ROUTE_REBOUND requires exactly route, contract, and previous route fingerprints");
+  }
+  assertFingerprint(details.routeFingerprint, "ROUTE_REBOUND details.routeFingerprint");
+  assertFingerprint(details.contractFingerprint, "ROUTE_REBOUND details.contractFingerprint");
+  if (details.previousRouteFingerprint !== null) {
+    assertFingerprint(details.previousRouteFingerprint, "ROUTE_REBOUND details.previousRouteFingerprint");
   }
 }
 
