@@ -6,6 +6,7 @@ export const NEXT_ACTIONS = Object.freeze({
   CREATE_CONTRACT: "CREATE_CONTRACT",
   ROUTE: "ROUTE",
   SATISFY_GATES: "SATISFY_GATES",
+  REVALIDATE_GATES: "REVALIDATE_GATES",
   RUN_PREFLIGHT: "RUN_PREFLIGHT",
   PLAN: "PLAN",
   START_EXECUTION: "START_EXECUTION",
@@ -74,6 +75,18 @@ export function routeCommandSpec(taskId) {
       { name: "surface", option: "--surface=<value>", repeatable: true, optional: true },
       { name: "risk", option: "--risk=<value>", repeatable: true, optional: true },
       { name: "platform", option: "--platform=<value>", repeatable: true, optional: true },
+    ],
+  };
+}
+
+export function gateRevalidationCommandSpec(taskId, gate) {
+  return {
+    commandId: "gate-revalidate",
+    executable: "forgeloop",
+    subcommand: "gate-revalidate",
+    argv: ["gate-revalidate", `--task=${taskId}`, `--gate=${gate}`, "--acknowledge-stale", "--json"],
+    requiredInputs: [
+      { name: "acknowledgeStale", option: "--acknowledge-stale" },
     ],
   };
 }
@@ -213,6 +226,7 @@ export function commandFor(action) {
   return {
     [NEXT_ACTIONS.ROUTE]: "forgeloop route --task <id> --work <type> --json",
     [NEXT_ACTIONS.RESOLVE_STALE_ROUTE]: "forgeloop route --task <id> --work <type> --json",
+    [NEXT_ACTIONS.REVALIDATE_GATES]: "forgeloop gate-revalidate --task <id> --gate <name> --acknowledge-stale --json",
     [NEXT_ACTIONS.PLAN]: "forgeloop advance --to PLANNED",
     [NEXT_ACTIONS.RUN_PREFLIGHT]: "forgeloop preflight --json",
     [NEXT_ACTIONS.START_EXECUTION]: "forgeloop advance --to EXECUTING",

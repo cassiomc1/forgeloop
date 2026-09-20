@@ -88,6 +88,7 @@ const STATIC_RISK_CLASSES = Object.freeze({
   "task-recover": INTEGRATION_RISK_CLASSES.CLAIM_RELEASE_RECOVERY,
   "task-repair-legacy-recovery": INTEGRATION_RISK_CLASSES.LEGACY_MIGRATION,
   "gate-record": INTEGRATION_RISK_CLASSES.MAINTENANCE,
+  "gate-revalidate": INTEGRATION_RISK_CLASSES.MAINTENANCE,
   "task-repair-contract-bootstrap": INTEGRATION_RISK_CLASSES.LEGACY_MIGRATION,
   "task-migrate-contract-bootstrap-repair": INTEGRATION_RISK_CLASSES.LEGACY_MIGRATION,
   "checkpoint-revalidate": INTEGRATION_RISK_CLASSES.MAINTENANCE,

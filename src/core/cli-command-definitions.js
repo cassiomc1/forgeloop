@@ -132,6 +132,16 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
     writes: [".forgeloop/task-state/<taskKey>/gates/<gate>.json"], removes: [], mayExecuteExternalProcess: false,
     description: "Records a required pre-execution gate with ForgeLoop-owned artifact hashes.",
   }),
+  "gate-revalidate": Object.freeze({
+    name: "gate-revalidate", category: "lifecycle", mutation: "MUTATING",
+    options: Object.freeze({ ...CLI_COMMON_OPTIONS, ...CLI_TASK_OPTION,
+      "--gate": Object.freeze({ targetKey: "gate", parseType: "string", takesValue: true, valueName: "name", missingValueMessage: "--gate requires a name", description: "satisfied gate to refresh after safe artifact drift" }),
+      "--acknowledge-stale": Object.freeze({ targetKey: "acknowledgeStale", parseType: "boolean", takesValue: false, description: "explicitly acknowledge refresh of stale gate artifacts inside active task claims" }),
+      "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit structured gate revalidation output as JSON" }),
+    }),
+    writes: [".forgeloop/task-state/<taskKey>/gates/<gate>.json", ".forgeloop/task-state/<taskKey>/events.ndjson"], removes: [], mayExecuteExternalProcess: false,
+    description: "Refreshes a stale satisfied gate after execution only when current identity and active claims prove the change is safe.",
+  }),
   init: Object.freeze({
     name: "init",
     category: "project-maintenance",

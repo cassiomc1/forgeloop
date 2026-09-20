@@ -6,6 +6,7 @@ import { readPersistedRoute } from "./route-artifact.js";
 import { stateIdentityErrors } from "./completion-relationships.js";
 import { classifyLoadedWorkState } from "./work-state.js";
 import { taskArtifactPath } from "./task-paths.js";
+import { hasCurrentGateEvidence } from "./gate-provenance.js";
 
 const START_EXECUTION_EVENTS = Object.freeze([
   "CONTRACT_VALIDATED",
@@ -130,9 +131,9 @@ function prerequisiteLedgerErrors(ledger, taskId, preflight, route) {
     ));
   }
   const latestContractRevisionSeq = currentEvents.findLast((event) => event.event === "CONTRACT_REVISED")?.seq ?? 0;
-  const currentEpochSatisfiedGates = new Set(currentEvents
-    .filter((event) => event.event === "GATE_SATISFIED" && event.seq > latestContractRevisionSeq)
-    .map((event) => event.details?.gate));
+  const currentEpochSatisfiedGates = new Set(preflight.requiredGates.filter((gate) => (
+    hasCurrentGateEvidence(currentEvents, taskId, gate, latestContractRevisionSeq)
+  )));
   for (const gate of preflight.requiredGates) {
     if (!currentEpochSatisfiedGates.has(gate)) {
       errors.push(issue(

@@ -16,7 +16,7 @@ import { classifyLoadedWorkState } from "./work-state.js";
 
 import { evaluateStartExecutionPrerequisites } from "./execution-prerequisites.js";
 
-import { NEXT_ACTIONS, commandFor, decision, recoveryGuidanceForClassification, result, routeCommandSpec, uniqueSorted } from "./next-action-model.js";
+import { NEXT_ACTIONS, commandFor, decision, gateRevalidationCommandSpec, recoveryGuidanceForClassification, result, routeCommandSpec, uniqueSorted } from "./next-action-model.js";
 import { artifactError, freshnessReasons, loadArtifact, staleReasons } from "./next-action-artifacts.js";
 
 import { inspectTaskConflictState } from "./task-conflict-inspection.js";
@@ -36,6 +36,10 @@ export const PHASES_REQUIRING_EXECUTION_CHRONOLOGY = new Set([
   "CORRECTING",
   "REVIEWING",
   "COMPLETE",
+]);
+
+const PHASES_ALLOWING_GATE_REVALIDATION = new Set([
+  "EXECUTING", "VERIFYING", "DIAGNOSING", "CORRECTING", "REVIEWING",
 ]);
 
 export function phaseRequiresExecutionChronology(phase) {
@@ -74,7 +78,7 @@ async function contractBootstrapRepairGuidanceForExplicitTask({ target, packageR
   });
 }
 
-async function explicitTaskConflictGuidance({ target, packageRoot, explicitTaskId, context, eventsRel, stateRel }) {
+async function explicitTaskConflictGuidance({ target, packageRoot, explicitTaskId, context, eventsRel, stateRel, state }) {
   try {
     const migrationGuidance = await contractBootstrapRepairGuidanceForExplicitTask({
       target, packageRoot, explicitTaskId, context, eventsRel, stateRel,
@@ -96,6 +100,8 @@ async function explicitTaskConflictGuidance({ target, packageRoot, explicitTaskI
     };
   }
   if (["ACTIVE", "COMPLETE"].includes(inspection.classification)) return null;
+  if (PHASES_ALLOWING_GATE_REVALIDATION.has(state?.phase)
+    && inspection.reasonCodes?.includes("E_GATE_STALE")) return null;
   const guidance = recoveryGuidanceForClassification(inspection.classification, explicitTaskId);
   return result({
     ...context,
@@ -131,7 +137,7 @@ export async function resolveNextActionPhase({
   const { policyRecoveryAction } = helpers;
   if (explicitTaskId) {
     const taskConflictGuidance = await explicitTaskConflictGuidance({
-      target, packageRoot, explicitTaskId, context, eventsRel, stateRel,
+      target, packageRoot, explicitTaskId, context, eventsRel, stateRel, state,
     });
     if (taskConflictGuidance) return taskConflictGuidance;
   }
@@ -268,6 +274,20 @@ export async function resolveNextActionPhase({
           preflightRel,
           eventsRel,
         ],
+      });
+    }
+    const staleGateErrors = PHASES_ALLOWING_GATE_REVALIDATION.has(state.phase)
+      ? (executionPrerequisites.preflight?.errors ?? []).filter((error) => error.code === "E_GATE_STALE")
+      : [];
+    if (staleGateErrors.length > 0) {
+      const gates = [...new Set(staleGateErrors.map((error) => error.gate).filter(Boolean))].sort();
+      return result({
+        ...context,
+        nextAction: NEXT_ACTIONS.REVALIDATE_GATES,
+        reasons: staleGateErrors,
+        commands: gates.map((gate) => `forgeloop gate-revalidate --task ${explicitTaskId} --gate ${gate} --acknowledge-stale --json`),
+        commandSpecs: gates.map((gate) => gateRevalidationCommandSpec(explicitTaskId, gate)),
+        requiredArtifacts: executionPrerequisites.requiredArtifacts,
       });
     }
     if (executionPrerequisites.errors.length > 0) {

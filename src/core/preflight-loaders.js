@@ -10,6 +10,7 @@ import { findProfilePath } from "./profile.js";
 import { issue } from "./preflight-model.js";
 import { taskGatePath, taskArtifactPath } from "./task-paths.js";
 import { readEvents } from "./events.js";
+import { hasCurrentGateEvidence } from "./gate-provenance.js";
 
 export async function readProfile(target) {
   const relativePath = await findProfilePath(target);
@@ -132,10 +133,7 @@ export async function inspectGates(target, contract, route, packageRoot, errors,
       continue;
     }
     const currentEpochSatisfied = latestContractRevisionSeq === 0
-      || events.some((event) => event.event === "GATE_SATISFIED"
-        && event.taskId === taskId
-        && event.details?.gate === gate
-        && event.seq > latestContractRevisionSeq);
+      || hasCurrentGateEvidence(events, taskId, gate, latestContractRevisionSeq);
     if (!currentEpochSatisfied) {
       errors.push(issue(
         "E_GATE_UNVERIFIED",

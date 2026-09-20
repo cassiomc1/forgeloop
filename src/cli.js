@@ -99,6 +99,7 @@ import {
 import { defaultCommandInputValues, validateForgeLoopCommandInput } from "./core/command-input.js";
 import { COMMAND_EXECUTORS } from "./core/command-executors.js";
 import { formatGateRecordResult } from "./commands/gate-record.js";
+import { formatGateRevalidateResult } from "./commands/gate-revalidate.js";
 import { resolveTarget } from "./core/filesystem.js";
 import { getPackageRoot } from "./core/templates.js";
 import { CLI_COMMAND_DEFINITIONS, buildOptionLookup, getPositionalDefinitions } from "./core/cli-command-definitions.js";
@@ -374,6 +375,11 @@ export const COMMAND_HANDLERS = Object.freeze({
   "gate-record": async ({ target, packageRoot, options }) => {
     const { result } = await COMMAND_EXECUTORS["gate-record"]({ target, packageRoot, options });
     renderJsonOr(options, result, formatGateRecordResult);
+    return 0;
+  },
+  "gate-revalidate": async ({ target, packageRoot, options }) => {
+    const { result } = await COMMAND_EXECUTORS["gate-revalidate"]({ target, packageRoot, options });
+    renderJsonOr(options, result, formatGateRevalidateResult);
     return 0;
   },
   "protocol-info": async ({ packageVersion, options }) => {

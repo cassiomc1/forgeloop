@@ -56,7 +56,10 @@ import {
 } from "./contract-revision.js";
 import {
   GATE_SATISFIED_EVENT,
+  GATE_REVALIDATED_EVENT,
   assertGateSatisfiedDetails,
+  assertGateRevalidatedDetails,
+  hasCurrentGateEvidence,
   validateGateSatisfactionBindings,
 } from "./gate-provenance.js";
 
@@ -120,11 +123,11 @@ function validateExecutionGateChronology(events, index, seen, errors) {
   const preflight = events.slice(0, index).findLast((candidate) => candidate.event === "PREFLIGHT_READY");
   const requiredGates = preflight?.details?.requiredGates ?? [];
   const latestContractRevisionSeq = events.slice(0, index).findLast((candidate) => candidate.event === CONTRACT_REVISED_EVENT)?.seq ?? 0;
-  const satisfiedGates = new Set(events.slice(0, index)
-    .filter((candidate) => candidate.event === "GATE_SATISFIED" && candidate.seq > latestContractRevisionSeq)
-    .map((candidate) => candidate.details?.gate));
+  const beforeExecution = events.slice(0, index);
   for (const gate of requiredGates) {
-    if (!satisfiedGates.has(gate)) errors.push({ code: "E_PHASE_CHRONOLOGY_INVALID", message: `execution started before gate satisfaction: ${gate}` });
+    if (!hasCurrentGateEvidence(beforeExecution, events[index]?.taskId, gate, latestContractRevisionSeq)) {
+      errors.push({ code: "E_PHASE_CHRONOLOGY_INVALID", message: `execution started before gate satisfaction: ${gate}` });
+    }
   }
 }
 
@@ -201,6 +204,9 @@ export function validateKnownEventDetails(event) {
       return;
     case GATE_SATISFIED_EVENT:
       assertGateSatisfiedDetails(event.details);
+      return;
+    case GATE_REVALIDATED_EVENT:
+      assertGateRevalidatedDetails(event.details);
       return;
     case "TASK_RECOVERY_RECORDED":
       assertRecoveryRecordedDetails(event.details);
