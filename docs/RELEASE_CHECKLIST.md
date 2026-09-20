@@ -98,6 +98,8 @@ actions.
 - [ ] OpenSrc cache remains outside the target project and returned source paths are containment-validated.
 - [ ] OpenSrc recall remains advisory, non-evidence, and non-persisted by ForgeLoop.
 - [ ] No OpenSrc binary or cache ships in npm.
+- [ ] Optional Agent Browser uses a host-supplied absolute executable, has no
+      runtime dependency, and keeps browser observations non-authoritative.
 - [ ] `next`, `status`, and `task/context` invoke zero advisory providers.
 - [ ] Advisory request budgets are normalized before provider invocation.
 - [ ] Advisory results are never persisted by ForgeLoop.

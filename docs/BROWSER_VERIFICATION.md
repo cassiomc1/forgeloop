@@ -116,10 +116,14 @@ executable discovery, browser adapter, or auto-invocation is provided.
 
 ## Future Adapters and Troubleshooting
 
-A future Agent Browser or other vendor adapter may implement this provider
-contract, but no vendor is canonical and no adapter is included here. For
-malformed requests, invalid results, origin escapes, provider failures, and
-timeouts, use the stable error codes in `docs/TROUBLESHOOTING.md`.
+The optional Agent Browser adapter implements this provider contract through
+`createAgentBrowserVerificationProvider`. It requires a host-supplied absolute
+executable and never installs Agent Browser or Chrome. No vendor is canonical,
+and no lifecycle command invokes the adapter. See
+[`AGENT_BROWSER_ADAPTER.md`](./AGENT_BROWSER_ADAPTER.md) for its process,
+session, screenshot, and troubleshooting boundaries. For malformed requests,
+invalid results, origin escapes, provider failures, and timeouts, use the
+stable error codes in `docs/TROUBLESHOOTING.md`.
 
 ## Compatibility
 

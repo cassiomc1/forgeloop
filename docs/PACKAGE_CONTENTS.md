@@ -53,7 +53,7 @@ The published tarball includes the following consumer-facing groups:
   Repository Index, Persistent Search Transport, troubleshooting, release,
   package-boundary, and related reference pages, together with the
   machine-readable documentation and protocol indexes and `CONTRIBUTING.md`.
-   The advisory-context, Ripwire adapter, and OpenSrc adapter guides ship with
+   The advisory-context, Ripwire, OpenSrc, and Agent Browser adapter guides ship with
    the corresponding public integration surface.
    Provider architecture and provider reference documentation are also packaged.
    The generated portable ForgeLoop Agent Skill and `docs/AGENT_SKILL.md` are

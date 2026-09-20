@@ -340,6 +340,20 @@ export interface ForgeLoopOpenSrcProviderOptions {
   sources: readonly string[];
 }
 
+/** Options for the optional, host-injected Agent Browser verification adapter. */
+export interface ForgeLoopAgentBrowserProviderOptions {
+  /** Absolute host-selected Agent Browser executable; ForgeLoop never discovers or installs it. */
+  executablePath: string;
+  /** Optional exact version token checked lazily at invocation time. */
+  expectedVersion?: string;
+  /** Optional absolute host-selected browser executable. It is never request-controlled. */
+  browserExecutablePath?: string;
+}
+
+export declare function createAgentBrowserVerificationProvider(
+  options: ForgeLoopAgentBrowserProviderOptions,
+): ForgeLoopBrowserVerificationProvider;
+
 export interface ForgeLoopNormalizedAdvisoryContextResult {
   provider: {
     id: string;

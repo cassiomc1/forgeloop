@@ -406,6 +406,7 @@ test("public integration exports include advisory context, portable context, and
     "normalizeAdvisoryContextResult",
     "normalizePortableText",
     "assertPortableContextSafe",
+    "createAgentBrowserVerificationProvider",
   ];
 
   for (const exp of expectedExports) {

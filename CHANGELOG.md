@@ -4,6 +4,11 @@
 
 ### Added
 
+- Added an optional host-injected Agent Browser verification adapter. It uses a
+  host-supplied executable, never auto-installs Agent Browser or Chrome, runs a
+  fresh isolated session with exact-origin validation, and returns only bounded
+  observation metadata.
+
 - Added the canonical `contract-revise` mutation for safe pre-execution
   contract replacement in `CONTRACT_READY`, `ROUTED`, and `PLANNED`. Revisions
   are append-only and transaction-witnessed, invalidate derived route,
