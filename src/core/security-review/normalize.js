@@ -31,29 +31,23 @@ function text(label, value, maxLength, { optional = false } = {}) {
   }
 }
 
-function strictSnapshot(value, label = "security review result", seen = new Set()) {
-  if (value === null || typeof value === "string" || typeof value === "boolean") return value;
-  if (typeof value === "number") {
-    if (!Number.isFinite(value)) throw resultError(`${label} contains a non-finite number.`);
-    return value;
-  }
-  if (typeof value !== "object") throw resultError(`${label} contains an unsupported value.`);
-  if (seen.has(value)) throw resultError(`${label} contains a circular reference.`);
-  if (Array.isArray(value)) {
-    seen.add(value);
-    try {
-      const output = [];
-      for (let index = 0; index < value.length; index += 1) {
-        if (!Object.prototype.hasOwnProperty.call(value, index)) throw resultError(`${label} contains a sparse array.`);
-        const descriptor = Object.getOwnPropertyDescriptor(value, String(index));
-        if (!descriptor || descriptor.get || descriptor.set) throw resultError(`${label}[${index}] is an accessor.`);
-        output.push(strictSnapshot(value[index], `${label}[${index}]`, seen));
-      }
-      return output;
-    } finally {
-      seen.delete(value);
+function strictSnapshotArray(value, label, seen) {
+  seen.add(value);
+  try {
+    const output = [];
+    for (let index = 0; index < value.length; index += 1) {
+      if (!Object.prototype.hasOwnProperty.call(value, index)) throw resultError(`${label} contains a sparse array.`);
+      const descriptor = Object.getOwnPropertyDescriptor(value, String(index));
+      if (!descriptor || descriptor.get || descriptor.set) throw resultError(`${label}[${index}] is an accessor.`);
+      output.push(strictSnapshot(value[index], `${label}[${index}]`, seen));
     }
+    return output;
+  } finally {
+    seen.delete(value);
   }
+}
+
+function strictSnapshotObject(value, label, seen) {
   const prototype = Object.getPrototypeOf(value);
   if (value instanceof Date || value instanceof Map || value instanceof Set || value instanceof Promise
     || (prototype !== Object.prototype && prototype !== null)) {
@@ -73,6 +67,19 @@ function strictSnapshot(value, label = "security review result", seen = new Set(
   } finally {
     seen.delete(value);
   }
+}
+
+function strictSnapshot(value, label = "security review result", seen = new Set()) {
+  if (value === null || typeof value === "string" || typeof value === "boolean") return value;
+  if (typeof value === "number") {
+    if (!Number.isFinite(value)) throw resultError(`${label} contains a non-finite number.`);
+    return value;
+  }
+  if (typeof value !== "object") throw resultError(`${label} contains an unsupported value.`);
+  if (seen.has(value)) throw resultError(`${label} contains a circular reference.`);
+  return Array.isArray(value)
+    ? strictSnapshotArray(value, label, seen)
+    : strictSnapshotObject(value, label, seen);
 }
 
 function rejectUnknown(source, allowed, label) {

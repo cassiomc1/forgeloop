@@ -1427,14 +1427,6 @@ canonical task state.
 | `E_BROWSER_VERIFICATION_RESULT_INVALID` | Browser verification provider returned an invalid result structure. | Ensure provider returns a status with bounded assertions, diagnostics, and artifacts, and no authority fields. |
 | `E_BROWSER_VERIFICATION_TIMEOUT` | Browser verification exceeded its execution timeout. | Use a responsive provider or increase timeout within limits; verification is optional. |
 | `E_BROWSER_VERIFICATION_VERSION_UNSUPPORTED` | The configured Agent Browser version does not satisfy the provider's exact version contract. | Provide the expected host-qualified Agent Browser version or update the explicit executable selection. |
-| `E_SECURITY_REVIEW_CANCELLED` | Security Review was cancelled by its caller before a valid observation completed. | Retry only when the optional observation is still needed. |
-| `E_SECURITY_REVIEW_EXECUTION_FAILED` | The optional Security Review provider failed without establishing a valid observation. | Inspect the host provider implementation; provider failures never become lifecycle evidence. |
-| `E_SECURITY_REVIEW_OUTPUT_LIMIT` | Security Review output exceeded the configured bounded result limits. | Reduce findings or diagnostics at the provider. |
-| `E_SECURITY_REVIEW_PROVIDER_INVALID` | Security Review provider configuration or interface implementation is invalid. | Register a provider with a matching ID and `review(request)` implementation. |
-| `E_SECURITY_REVIEW_PROVIDER_UNAVAILABLE` | Requested Security Review provider is not registered in runtime context. | Register the optional provider or proceed without the observation. |
-| `E_SECURITY_REVIEW_REQUEST_INVALID` | Security Review request failed validation or exceeded a request budget. | Use a bounded scope, relative paths, categories, requirements, and timeout. |
-| `E_SECURITY_REVIEW_RESULT_INVALID` | Security Review provider returned an invalid observation structure. | Return bounded findings and diagnostics without authority fields. |
-| `E_SECURITY_REVIEW_TIMEOUT` | Security Review exceeded its shared execution timeout. | Use a responsive provider or a timeout within the configured maximum. |
 | `E_CHECKPOINT_REVALIDATION_UNSAFE` | A pre-execution checkpoint could not be safely rebound to the current repository without changing lifecycle identity. | Preserve the checkpoint and resolve the reported contract, route, ownership, artifact, or lifecycle boundary through its canonical command. |
 | `E_CHECK_INERT` | An enabled check has no effective scope or target files. | Provide an applicable target scope, configure matching files, or mark the rule unsupported. |
 | `E_CHECK_INVALID` | Check structure or required parameters are invalid. | Provide valid check ID, requirement, and parameters. |
@@ -1616,6 +1608,14 @@ canonical task state.
 | `E_ROUTE_MISSING` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
 | `E_ROUTE_REASON_MISSING` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
 | `E_ROUTE_STALE` | Routing result does not match the active contract fingerprint. | Re-run forgeloop route. |
+| `E_SECURITY_REVIEW_CANCELLED` | Security review provider execution was cancelled before a valid observation completed. | Retry only when the caller still requires the optional observation. |
+| `E_SECURITY_REVIEW_EXECUTION_FAILED` | The optional security review provider failed without producing a valid observation. | Inspect the host-provided provider and retry explicitly; provider failure never changes ForgeLoop state. |
+| `E_SECURITY_REVIEW_OUTPUT_LIMIT` | Security review provider output exceeded the bounded result limits. | Reduce findings, diagnostics, strings, or result size at the provider. |
+| `E_SECURITY_REVIEW_PROVIDER_INVALID` | Security review provider configuration or interface implementation is invalid. | Use a provider implementing id and review(input) through the explicit host-injected Integration API. |
+| `E_SECURITY_REVIEW_PROVIDER_UNAVAILABLE` | The requested security review provider is not registered in runtime context. | Register an optional host-owned provider before explicit invocation; ForgeLoop never installs one. |
+| `E_SECURITY_REVIEW_REQUEST_INVALID` | The bounded security review request failed validation. | Provide explicit scope, bounded project-relative paths, categories, requirements, identities, and timeout. |
+| `E_SECURITY_REVIEW_RESULT_INVALID` | The security review provider returned malformed or contradictory findings. | Return only bounded findings and diagnostics without authority, lifecycle, evidence, or executable fields. |
+| `E_SECURITY_REVIEW_TIMEOUT` | Security review provider execution exceeded the shared deadline. | Use a responsive provider or a bounded timeout within the supported limit; timed-out output is discarded. |
 | `E_STATE_LEDGER_DIVERGENCE` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
 | `E_STATE_MISSING` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
 | `E_STATE_MISSING_AFTER_PREFLIGHT_READY` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |

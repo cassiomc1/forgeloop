@@ -97,6 +97,100 @@ export function resolveAuthorityContext(options = {}) {
   return hasDirectAuthority ? createAuthorityContext({ ...source, trustMode: "NONE" }) : createAuthorityContext();
 }
 
+function isProviderObject(value) {
+  return value && typeof value === "object" && !Array.isArray(value);
+}
+
+function providerEntries(configured, label, code) {
+  if (!configured || typeof configured !== "object" || Array.isArray(configured)) {
+    const error = new Error(`${label} must be an object or Map`);
+    error.code = code;
+    throw error;
+  }
+  return configured instanceof Map ? [...configured.entries()] : Object.entries(configured);
+}
+
+function registerProviders(configured, { label, code, idError, validateId, providerError, validateProvider }) {
+  const providers = {};
+  for (const [id, provider] of providerEntries(configured, label, code)) {
+    if (!validateId(id)) {
+      const error = new Error(idError(id));
+      error.code = code;
+      throw error;
+    }
+    if (typeof provider !== "function" && !isProviderObject(provider)) {
+      const error = new Error(providerError(id));
+      error.code = code;
+      throw error;
+    }
+    if (typeof provider !== "function") validateProvider(provider, id);
+    providers[id] = provider;
+  }
+  return Object.freeze(providers);
+}
+
+function configureUsageProvider(context, provider) {
+  if (!provider
+    || typeof provider !== "object"
+    || Array.isArray(provider)
+    || typeof provider.getTaskUsage !== "function") {
+    const error = new Error("Usage provider must expose getTaskUsage({ projectPath, taskId })");
+    error.code = "E_USAGE_INVALID";
+    throw error;
+  }
+  context.usageProvider = provider;
+}
+
+function configureStructuralQualityProviders(context, configured) {
+  context.structuralQualityProviders = registerProviders(configured, {
+    label: "structuralQualityProviders",
+    code: "E_STRUCTURAL_QUALITY_PROVIDER_INVALID",
+    idError: id => `Invalid or reserved structural-quality provider ID: ${id}`,
+    validateId: id => STRUCTURAL_QUALITY_PROVIDER_ID_PATTERN.test(id) && id !== "sentrux",
+    providerError: id => `Structural-quality provider ${id} must be an object or factory`,
+    validateProvider: (provider, id) => {},
+  });
+}
+
+function configureAdvisoryContextProviders(context, configured) {
+  context.advisoryContextProviders = registerProviders(configured, {
+    label: "advisoryContextProviders",
+    code: E_ADVISORY_CONTEXT_PROVIDER_INVALID,
+    idError: id => `Invalid advisory-context provider ID: ${id}`,
+    validateId: id => /^[a-z0-9][a-z0-9_-]*$/.test(id),
+    providerError: id => `Advisory-context provider ${id} must be an object or factory`,
+    validateProvider: assertAdvisoryContextProviderIdentity,
+  });
+}
+
+function configureBrowserVerificationProviders(context, configured) {
+  context.browserVerificationProviders = registerProviders(configured, {
+    label: "browserVerificationProviders",
+    code: E_BROWSER_VERIFICATION_PROVIDER_INVALID,
+    idError: id => `Invalid browser-verification provider ID: ${id}`,
+    validateId: id => BROWSER_VERIFICATION_PROVIDER_ID_PATTERN.test(id),
+    providerError: id => `Browser-verification provider ${id} must be an object with verify() or a factory`,
+    validateProvider: (provider, id) => {
+      assertBrowserVerificationProviderIdentity(provider, { expectedId: id });
+      assertBrowserVerificationProvider(provider, { label: `browser-verification provider "${id}"` });
+    },
+  });
+}
+
+function configureSecurityReviewProviders(context, configured) {
+  context.securityReviewProviders = registerProviders(configured, {
+    label: "securityReviewProviders",
+    code: E_SECURITY_REVIEW_PROVIDER_INVALID,
+    idError: id => `Invalid security-review provider ID: ${id}`,
+    validateId: id => SECURITY_REVIEW_PROVIDER_ID_PATTERN.test(id),
+    providerError: id => `Security-review provider ${id} must be an object with review() or a factory`,
+    validateProvider: (provider, id) => {
+      assertSecurityReviewProviderIdentity(provider, { expectedId: id });
+      assertSecurityReviewProvider(provider, { label: `security-review provider "${id}"` });
+    },
+  });
+}
+
 export function createForgeLoopContext(options = {}) {
   const authorityContext = createAuthorityContext(options);
   const context = { authorityContext };
@@ -112,128 +206,19 @@ export function createForgeLoopContext(options = {}) {
     context.verificationExecutionPolicy = normalizeVerificationExecutionPolicy(options.verificationExecutionPolicy);
   }
   if (options?.usageProvider !== undefined) {
-    if (!options.usageProvider
-      || typeof options.usageProvider !== "object"
-      || Array.isArray(options.usageProvider)
-      || typeof options.usageProvider.getTaskUsage !== "function") {
-      const error = new Error("Usage provider must expose getTaskUsage({ projectPath, taskId })");
-      error.code = "E_USAGE_INVALID";
-      throw error;
-    }
-    context.usageProvider = options.usageProvider;
+    configureUsageProvider(context, options.usageProvider);
   }
   if (options?.structuralQualityProviders !== undefined) {
-    const configured = options.structuralQualityProviders instanceof Map
-      ? Object.fromEntries(options.structuralQualityProviders.entries())
-      : options.structuralQualityProviders;
-    if (!configured || typeof configured !== "object" || Array.isArray(configured)) {
-      const error = new Error("structuralQualityProviders must be an object or Map");
-      error.code = "E_STRUCTURAL_QUALITY_PROVIDER_INVALID";
-      throw error;
-    }
-    const providers = {};
-    for (const [id, provider] of Object.entries(configured)) {
-      if (!STRUCTURAL_QUALITY_PROVIDER_ID_PATTERN.test(id) || id === "sentrux") {
-        const error = new Error(`Invalid or reserved structural-quality provider ID: ${id}`);
-        error.code = "E_STRUCTURAL_QUALITY_PROVIDER_INVALID";
-        throw error;
-      }
-      if (typeof provider !== "function"
-        && (!provider || typeof provider !== "object" || Array.isArray(provider))) {
-        const error = new Error(`Structural-quality provider ${id} must be an object or factory`);
-        error.code = "E_STRUCTURAL_QUALITY_PROVIDER_INVALID";
-        throw error;
-      }
-      providers[id] = provider;
-    }
-    context.structuralQualityProviders = Object.freeze(providers);
+    configureStructuralQualityProviders(context, options.structuralQualityProviders);
   }
   if (options?.advisoryContextProviders !== undefined) {
-    const configured = options.advisoryContextProviders instanceof Map
-      ? Object.fromEntries(options.advisoryContextProviders.entries())
-      : options.advisoryContextProviders;
-    if (!configured || typeof configured !== "object" || Array.isArray(configured)) {
-      const error = new Error("advisoryContextProviders must be an object or Map");
-      error.code = E_ADVISORY_CONTEXT_PROVIDER_INVALID;
-      throw error;
-    }
-    const providers = {};
-    for (const [id, provider] of Object.entries(configured)) {
-      if (!/^[a-z0-9][a-z0-9_-]*$/.test(id)) {
-        const error = new Error(`Invalid advisory-context provider ID: ${id}`);
-        error.code = E_ADVISORY_CONTEXT_PROVIDER_INVALID;
-        throw error;
-      }
-      if (typeof provider !== "function"
-        && (!provider || typeof provider !== "object" || Array.isArray(provider))) {
-        const error = new Error(`Advisory-context provider ${id} must be an object or factory`);
-        error.code = E_ADVISORY_CONTEXT_PROVIDER_INVALID;
-        throw error;
-      }
-      if (typeof provider !== "function") {
-        assertAdvisoryContextProviderIdentity(provider, id);
-      }
-      providers[id] = provider;
-    }
-    context.advisoryContextProviders = Object.freeze(providers);
+    configureAdvisoryContextProviders(context, options.advisoryContextProviders);
   }
   if (options?.browserVerificationProviders !== undefined) {
-    const configured = options.browserVerificationProviders;
-    if (!configured || typeof configured !== "object" || Array.isArray(configured)) {
-      const error = new Error("browserVerificationProviders must be an object or Map");
-      error.code = E_BROWSER_VERIFICATION_PROVIDER_INVALID;
-      throw error;
-    }
-    const providers = {};
-    const entries = configured instanceof Map ? [...configured.entries()] : Object.entries(configured);
-    for (const [id, provider] of entries) {
-      if (!BROWSER_VERIFICATION_PROVIDER_ID_PATTERN.test(id)) {
-        const error = new Error(`Invalid browser-verification provider ID: ${id}`);
-        error.code = E_BROWSER_VERIFICATION_PROVIDER_INVALID;
-        throw error;
-      }
-       if (typeof provider !== "function"
-         && (!provider || typeof provider !== "object" || Array.isArray(provider))) {
-        const error = new Error(`Browser-verification provider ${id} must be an object with verify() or a factory`);
-        error.code = E_BROWSER_VERIFICATION_PROVIDER_INVALID;
-        throw error;
-      }
-      if (typeof provider !== "function") {
-        assertBrowserVerificationProviderIdentity(provider, { expectedId: id });
-        assertBrowserVerificationProvider(provider, { label: `browser-verification provider "${id}"` });
-      }
-      providers[id] = provider;
-    }
-    context.browserVerificationProviders = Object.freeze(providers);
+    configureBrowserVerificationProviders(context, options.browserVerificationProviders);
   }
   if (options?.securityReviewProviders !== undefined) {
-    const configured = options.securityReviewProviders;
-    if (!configured || typeof configured !== "object" || Array.isArray(configured)) {
-      const error = new Error("securityReviewProviders must be an object or Map");
-      error.code = E_SECURITY_REVIEW_PROVIDER_INVALID;
-      throw error;
-    }
-    const providers = {};
-    const entries = configured instanceof Map ? [...configured.entries()] : Object.entries(configured);
-    for (const [id, provider] of entries) {
-      if (!SECURITY_REVIEW_PROVIDER_ID_PATTERN.test(id)) {
-        const error = new Error(`Invalid security-review provider ID: ${id}`);
-        error.code = E_SECURITY_REVIEW_PROVIDER_INVALID;
-        throw error;
-      }
-      if (typeof provider !== "function"
-        && (!provider || typeof provider !== "object" || Array.isArray(provider))) {
-        const error = new Error(`Security-review provider ${id} must be an object with review() or a factory`);
-        error.code = E_SECURITY_REVIEW_PROVIDER_INVALID;
-        throw error;
-      }
-      if (typeof provider !== "function") {
-        assertSecurityReviewProviderIdentity(provider, { expectedId: id });
-        assertSecurityReviewProvider(provider, { label: `security-review provider "${id}"` });
-      }
-      providers[id] = provider;
-    }
-    context.securityReviewProviders = Object.freeze(providers);
+    configureSecurityReviewProviders(context, options.securityReviewProviders);
   }
   return Object.freeze(context);
 }
