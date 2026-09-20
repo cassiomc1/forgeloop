@@ -16,7 +16,7 @@ import { classifyLoadedWorkState } from "./work-state.js";
 
 import { evaluateStartExecutionPrerequisites } from "./execution-prerequisites.js";
 
-import { NEXT_ACTIONS, commandFor, decision, recoveryGuidanceForClassification, result, uniqueSorted } from "./next-action-model.js";
+import { NEXT_ACTIONS, commandFor, decision, recoveryGuidanceForClassification, result, routeCommandSpec, uniqueSorted } from "./next-action-model.js";
 import { artifactError, freshnessReasons, loadArtifact, staleReasons } from "./next-action-artifacts.js";
 
 import { inspectTaskConflictState } from "./task-conflict-inspection.js";
@@ -208,18 +208,7 @@ export async function resolveNextActionPhase({
       nextAction: NEXT_ACTIONS.ROUTE,
       reasons: [artifactError("PHASE_CONTRACT_READY", "Persist deterministic routing for the validated contract")],
       commands: [`forgeloop route --task ${explicitTaskId} --work <type> --json`],
-      commandSpecs: [{
-        commandId: "route",
-        executable: "forgeloop",
-        subcommand: "route",
-        argv: ["route", `--task=${explicitTaskId}`, "--json"],
-        requiredInputs: [
-          { name: "workType", option: "--work=<type>" },
-          { name: "surface", option: "--surface=<value>", repeatable: true, optional: true },
-          { name: "risk", option: "--risk=<value>", repeatable: true, optional: true },
-          { name: "platform", option: "--platform=<value>", repeatable: true, optional: true },
-        ],
-      }],
+      commandSpecs: [routeCommandSpec(explicitTaskId)],
       requiredArtifacts: contractArtifacts,
       missingArtifacts: [routeRel],
     });
@@ -252,6 +241,8 @@ export async function resolveNextActionPhase({
       ...context,
       nextAction: NEXT_ACTIONS.RESOLVE_STALE_ROUTE,
       reasons: stale,
+      commands: [`forgeloop route --task ${explicitTaskId} --work <type> --json`],
+      commandSpecs: [routeCommandSpec(explicitTaskId)],
       requiredArtifacts,
     });
   }

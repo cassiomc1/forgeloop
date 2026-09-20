@@ -21,6 +21,8 @@ import { assertTaskMutationAllowed, resolveTaskClaimState } from "../core/task-c
 import { assertWorkspaceBinding } from "../core/workspace-binding.js";
 import { withTaskTransaction } from "../core/transaction.js";
 import { mutateWorkState, readWorkState } from "../core/work-state.js";
+import { readPersistedRoute } from "../core/route-artifact.js";
+import { assertStateIdentity } from "../core/completion-relationships.js";
 
 const REVISION_PHASES = new Set(["CONTRACT_READY", "ROUTED", "PLANNED"]);
 
@@ -109,6 +111,19 @@ async function inspectRevisionEligibility({ target, packageRoot, taskId, context
   return { state, contract, ledger, ownership };
 }
 
+async function assertPreRevisionRouteIdentity({ target, packageRoot, taskId, state, contract }) {
+  if (state.phase === "CONTRACT_READY") return;
+  try {
+    const route = await readPersistedRoute(target, packageRoot, { taskId });
+    assertStateIdentity({ contract, route, state });
+  } catch (error) {
+    throw revisionError(
+      `Contract revision requires a valid current route: ${error.message}`,
+      error.artifacts ?? [],
+    );
+  }
+}
+
 async function reviseLocked({ target, packageRoot, taskId, context, contractFile, preset, transaction }) {
   await assertTaskMutationAllowed(target, { taskId, packageRoot });
   await assertWorkspaceBinding(target, { taskId, packageRoot, operation: "contract-revise" });
@@ -133,6 +148,14 @@ async function reviseLocked({ target, packageRoot, taskId, context, contractFile
       revision: inspected.state.revision,
     };
   }
+
+  await assertPreRevisionRouteIdentity({
+    target,
+    packageRoot,
+    taskId,
+    state: inspected.state,
+    contract: inspected.contract,
+  });
 
   const before = inspected.state;
   const nextPhase = before.phase === "PLANNED" ? "ROUTED" : before.phase;
