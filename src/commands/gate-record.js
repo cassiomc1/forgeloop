@@ -14,6 +14,7 @@ import { withTaskMutation } from "../core/task-command.js";
 import { PROTOCOL_VERSION } from "../core/protocol.js";
 import { staleReasons } from "../core/next-action-artifacts.js";
 import { ARTIFACT_PATHS } from "../core/artifacts.js";
+import { appendProtocolEvent, validateEventLedger } from "../core/events.js";
 
 const STATUSES = new Set(["satisfied", "unverified", "blocked"]);
 const PRE_EXECUTION_PHASES = new Set(["ROUTED", "DESIGNING", "PLANNED"]);
@@ -126,6 +127,14 @@ async function assertCurrentRoute(target, packageRoot, taskId, state, route) {
   });
 }
 
+function hasCurrentEpochGateEvent(events, taskId, gate) {
+  const latestRevisionSeq = events.findLast((event) => event.event === "CONTRACT_REVISED")?.seq ?? 0;
+  return events.some((event) => event.event === "GATE_SATISFIED"
+    && event.taskId === taskId
+    && event.details?.gate === gate
+    && event.seq > latestRevisionSeq);
+}
+
 export async function runGateRecord({ target, packageRoot, taskId, gate, status, artifacts = [], decisions = [], unknowns = [], assumptions = [], evidenceFile = null } = {}) {
   if (!STATUSES.has(status)) {
     throw gateError(`Invalid gate status: ${status}`);
@@ -174,6 +183,19 @@ export async function runGateRecord({ target, packageRoot, taskId, gate, status,
       ],
     };
     const persisted = await persistGate(target, value, packageRoot, { taskId: ctx.taskId });
+    if (status === "satisfied") {
+      const ledger = await validateEventLedger(target, packageRoot, { taskId: ctx.taskId });
+      if (!ledger.valid) {
+        throw gateError("gate-record requires a valid event ledger", { code: "E_EVENT_INVALID", artifacts: ledger.errors });
+      }
+      if (!hasCurrentEpochGateEvent(ledger.events, ctx.taskId, gate)) {
+        await appendProtocolEvent(target, {
+          taskId: ctx.taskId,
+          event: "GATE_SATISFIED",
+          details: { gate },
+        }, packageRoot, { taskId: ctx.taskId });
+      }
+    }
     return { taskId: ctx.taskId, gate, status, path: persisted.path ?? persisted.relativePath ?? taskGatePath(ctx.taskId, gate), artifacts: hashedArtifacts };
   });
 }

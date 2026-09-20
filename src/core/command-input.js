@@ -25,10 +25,11 @@ function validateContractBootstrapRepairMigrationInput(command, options) {
   if (!options.acknowledgeMigration) throw inputError("task-migrate-contract-bootstrap-repair requires --acknowledge-migration");
 }
 
-function validateTaskCreationInput(command, options) {
+function validateTaskCreationInput(command, options, help = false) {
+  if (help) return;
   if (command === "bundle" && !options.taskId) throw inputError("bundle requires --task");
   if (command === "task-create" && !options.taskId) throw inputError("task-create requires --task");
-  if (!["task-create", "contract-create"].includes(command) && (options.preset || options.preview)) {
+  if (!["task-create", "contract-create", "contract-revise"].includes(command) && (options.preset || options.preview)) {
     throw inputError(`preset/preview options are not valid for ${command}`);
   }
   if (command === "task-create" && options.preview && !options.preset && !options.contractFile) {
@@ -40,6 +41,9 @@ function validateTaskCreationInput(command, options) {
   if (command === "contract-create" && !options.taskId) throw inputError("contract-create requires --task");
   if (command === "contract-create" && !options.preset && !options.contractFile) throw inputError("contract-create requires --preset or --contract-file");
   if (command === "contract-create" && options.preset && options.contractFile) throw inputError("contract-create accepts either --preset or --contract-file, not both");
+  if (command === "contract-revise" && !options.taskId) throw inputError("contract-revise requires --task");
+  if (command === "contract-revise" && !options.preset && !options.contractFile) throw inputError("contract-revise requires --preset or --contract-file");
+  if (command === "contract-revise" && options.preset && options.contractFile) throw inputError("contract-revise accepts either --preset or --contract-file, not both");
   if (command === "task-repair-contract-bootstrap" && !options.taskId) throw inputError("task-repair-contract-bootstrap requires --task");
   if (command === "task-repair-contract-bootstrap" && !options.acknowledgeRepair) throw inputError("task-repair-contract-bootstrap requires --acknowledge-repair");
   validateContractBootstrapRepairMigrationInput(command, options);
@@ -171,33 +175,28 @@ function validateTaskSelectorsInput(command, options, help) {
   validateAttestationRangeInput(command, options, help);
 }
 
+function validateRecordCheckInput(options) {
+  if (!options.checkId) throw inputError("record-check requires --id");
+  if (!options.checkRequirement) throw inputError("record-check requires --requirement");
+  if (!options.checkStatus) throw inputError("record-check requires --status");
+  if (!options.checkEvidenceKind) throw inputError("record-check requires --evidence-kind");
+  if (!options.checkCommand && !options.checkResult) throw inputError("record-check requires --command or --result");
+}
+
+function validateCommandCheckInput(options, command) {
+  if (!options.checkId) throw inputError(`${command} requires --id`);
+  if (!options.checkRequirement) throw inputError(`${command} requires --requirement`);
+  if (options.checkKind || options.checkStatus || options.checkEvidenceKind || options.checkCommand
+    || options.checkResult || options.checkExitCode !== null || options.checkExecutionRef || options.checkProvenance) {
+    throw inputError(`${command} accepts only --id, --requirement, --details,${command === "run-check" ? " --timeout-ms, --scope-ref," : ""} and -- <argv>`);
+  }
+  if (!Array.isArray(options.commandArgv) || options.commandArgv.length === 0) throw inputError(`${command} requires -- followed by an exact command argv`);
+}
+
 function validateCheckInput(command, options, help) {
-  if (command === "record-check" && !help) {
-    if (!options.checkId) throw inputError("record-check requires --id");
-    if (!options.checkRequirement) throw inputError("record-check requires --requirement");
-    if (!options.checkStatus) throw inputError("record-check requires --status");
-    if (!options.checkEvidenceKind) throw inputError("record-check requires --evidence-kind");
-    if (!options.checkCommand && !options.checkResult) throw inputError("record-check requires --command or --result");
-  }
-  if (command === "run-check" && !help) {
-    if (!options.checkId) throw inputError("run-check requires --id");
-    if (!options.checkRequirement) throw inputError("run-check requires --requirement");
-    if (options.checkKind || options.checkStatus || options.checkEvidenceKind || options.checkCommand
-      || options.checkResult || options.checkExitCode !== null || options.checkExecutionRef || options.checkProvenance) {
-      throw inputError("run-check accepts only --id, --requirement, --details, --timeout-ms, --scope-ref, and -- <argv>");
-    }
-    if (!Array.isArray(options.commandArgv) || options.commandArgv.length === 0) throw inputError("run-check requires -- followed by an exact command argv");
-  }
-  if (command === "reconcile-closure" && !help) {
-    if (!options.taskId) throw inputError("reconcile-closure requires --task");
-    if (!options.checkId) throw inputError("reconcile-closure requires --id");
-    if (!options.checkRequirement) throw inputError("reconcile-closure requires --requirement");
-    if (options.checkKind || options.checkStatus || options.checkEvidenceKind || options.checkCommand
-      || options.checkResult || options.checkExitCode !== null || options.checkExecutionRef || options.checkProvenance) {
-      throw inputError("reconcile-closure accepts only --id, --requirement, --details, and -- <argv>");
-    }
-    if (!Array.isArray(options.commandArgv) || options.commandArgv.length === 0) throw inputError("reconcile-closure requires -- followed by an exact command argv");
-  }
+  if (help) return;
+  if (command === "record-check") validateRecordCheckInput(options);
+  if (command === "run-check" || command === "reconcile-closure") validateCommandCheckInput(options, command);
 }
 
 /**
@@ -331,7 +330,7 @@ export function validateForgeLoopCommandInput({ command, input, help = false } =
   if (!command) return;
 
   validatePolicyInput(command, options);
-  validateTaskCreationInput(command, options);
+  validateTaskCreationInput(command, options, help);
   validateGateRecordInput(command, options, help);
   validateSearchCommandInput(command, options, help);
   validateProfileAndUsageInput(command, options, help);

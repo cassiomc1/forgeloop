@@ -4,6 +4,7 @@ import {
   resolveCanonicalPostRepairRouteBinding,
   resolveEffectiveContractBootstrapRepairAnchor,
 } from "./contract-bootstrap-recovery.js";
+import { resolveCanonicalContractEvolution } from "./contract-revision.js";
 
 export const CHECKPOINT_REVALIDATED_EVENT = "CHECKPOINT_REVALIDATED";
 export const CHECKPOINT_REVALIDATION_PHASES = Object.freeze(["ROUTED"]);
@@ -89,13 +90,57 @@ function eventHash(event) {
   return canonicalFingerprint(body);
 }
 
-function routeEvolutionAfter(events, sourceEvent, sourceRouteFingerprint, targetRouteFingerprint) {
+function routeEvolutionAfter(
+  events,
+  sourceEvent,
+  sourceRouteFingerprint,
+  targetRouteFingerprint,
+  targetContractFingerprint = sourceEvent.details?.contractFingerprint,
+) {
   const sourceIndex = events.indexOf(sourceEvent);
   if (sourceIndex < 0 || !isFingerprint(sourceRouteFingerprint) || !isFingerprint(targetRouteFingerprint)) {
     return false;
   }
 
   const contractFingerprint = sourceEvent.details?.contractFingerprint;
+  if (targetContractFingerprint !== contractFingerprint) {
+    const contractEvolution = resolveCanonicalContractEvolution(events, {
+      taskId: sourceEvent.taskId,
+      sourceSeq: sourceEvent.seq,
+      sourceContractFingerprint: contractFingerprint,
+      targetContractFingerprint,
+    });
+    if (!contractEvolution?.revisionEvents?.length) return false;
+
+    let currentRouteFingerprint = sourceRouteFingerprint;
+    let currentContractFingerprint = contractFingerprint;
+    let currentSeq = sourceEvent.seq;
+    for (const revisionEvent of contractEvolution.revisionEvents) {
+      const boundaryRouteFingerprint = revisionEvent.details.previousRouteFingerprint;
+      if (!isFingerprint(boundaryRouteFingerprint)) return false;
+      const preRevisionEvents = events.filter((event) => event.seq <= revisionEvent.seq);
+      const preRevisionRoute = resolveCanonicalRouteEvolution(preRevisionEvents, {
+        taskId: sourceEvent.taskId,
+        sourceSeq: currentSeq,
+        sourceRouteFingerprint: currentRouteFingerprint,
+        targetRouteFingerprint: boundaryRouteFingerprint,
+        contractFingerprint: currentContractFingerprint,
+      });
+      if (!preRevisionRoute) return false;
+      currentRouteFingerprint = boundaryRouteFingerprint;
+      currentContractFingerprint = revisionEvent.details.contractFingerprint;
+      currentSeq = revisionEvent.seq;
+    }
+    const postRevisionRoute = resolveCanonicalRouteEvolution(events, {
+      taskId: sourceEvent.taskId,
+      sourceSeq: currentSeq,
+      sourceRouteFingerprint: currentRouteFingerprint,
+      targetRouteFingerprint,
+      contractFingerprint: currentContractFingerprint,
+    });
+    return Boolean(postRevisionRoute);
+  }
+
   const canonical = resolveCanonicalRouteEvolution(events, {
     taskId: sourceEvent.taskId,
     sourceSeq: sourceEvent.seq,
@@ -174,12 +219,25 @@ export function validateCheckpointRevalidationEventBindings(events = []) {
         && details.previousStateFingerprint !== previous.revalidatedStateFingerprint) {
         errors.push(bindingError(`event ${event.seq} does not continue the previous checkpoint revalidation state fingerprint`));
       }
-      if (details.contractFingerprint !== previous.contractFingerprint) {
-        errors.push(bindingError(`event ${event.seq} changes the checkpoint revalidation contract identity`));
+      const contractEvolved = details.contractFingerprint !== previous.contractFingerprint
+        && resolveCanonicalContractEvolution(events, {
+          taskId: event.taskId,
+          sourceSeq: revalidations[index - 1].seq,
+          sourceContractFingerprint: previous.contractFingerprint,
+          targetContractFingerprint: details.contractFingerprint,
+        });
+      if (details.contractFingerprint !== previous.contractFingerprint && !contractEvolved) {
+        errors.push(bindingError(`event ${event.seq} changes the checkpoint revalidation contract identity without canonical contract provenance`));
       }
       if (details.routeFingerprint !== previous.routeFingerprint) {
         const evolved = details.previousStateRevision > previous.revalidatedStateRevision
-          && routeEvolutionAfter(events, revalidations[index - 1], previous.routeFingerprint, details.routeFingerprint);
+          && routeEvolutionAfter(
+            events,
+            revalidations[index - 1],
+            previous.routeFingerprint,
+            details.routeFingerprint,
+            details.contractFingerprint,
+          );
         if (!evolved) {
           errors.push(bindingError(`event ${event.seq} changes the checkpoint revalidation route identity without canonical route provenance`));
         }
@@ -195,35 +253,56 @@ export function validateCheckpointRevalidationEventBindings(events = []) {
   return errors;
 }
 
+function validateCurrentContractBinding(state, events, event) {
+  const details = event.details;
+  if (!state?.contractFingerprint || details?.contractFingerprint === state.contractFingerprint) return null;
+  const evolved = Number.isInteger(state.revision)
+    && Number.isInteger(details?.revalidatedStateRevision)
+    && state.revision > details.revalidatedStateRevision
+    && resolveCanonicalContractEvolution(events, {
+      taskId: event.taskId,
+      sourceSeq: event.seq,
+      sourceContractFingerprint: details.contractFingerprint,
+      targetContractFingerprint: state.contractFingerprint,
+    });
+  return evolved ? null : bindingError(`event ${event.seq} does not bind the current contract identity through canonical contract provenance`);
+}
+
+function validateCurrentRouteBinding(state, events, event) {
+  const details = event.details;
+  if (!state?.routeFingerprint || details?.routeFingerprint === state.routeFingerprint) return null;
+  const routeChangedAfterCheckpoint = Number.isInteger(state.revision)
+    && Number.isInteger(details?.revalidatedStateRevision)
+    && state.revision > details.revalidatedStateRevision;
+  const evolved = routeChangedAfterCheckpoint
+    && routeEvolutionAfter(events, event, details.routeFingerprint, state.routeFingerprint, state.contractFingerprint);
+  return evolved ? null : bindingError(`event ${event.seq} does not bind the current route identity through canonical route provenance`);
+}
+
+function validateLatestCheckpointBinding(state, latest) {
+  if (!state || !latest || state.revision !== latest.details.revalidatedStateRevision) return [];
+  const details = latest.details;
+  const errors = [];
+  if (!sameRepositoryFingerprint(state.repositoryFingerprint, details.repositoryFingerprint)) {
+    errors.push(bindingError(`event ${latest.seq} does not bind the current repository fingerprint`));
+  }
+  if (state.phase !== details.phase || canonicalFingerprint(state) !== details.revalidatedStateFingerprint) {
+    errors.push(bindingError(`event ${latest.seq} does not bind the current checkpoint state`));
+  }
+  return errors;
+}
+
 export function validateCheckpointRevalidationCurrentBinding(state, events = []) {
   const errors = [];
   const revalidations = events.filter((event) => event.event === CHECKPOINT_REVALIDATED_EVENT);
   const latest = revalidations.at(-1);
   for (const event of revalidations) {
-    const details = event.details;
-    if (state?.contractFingerprint && details?.contractFingerprint !== state.contractFingerprint) {
-      errors.push(bindingError(`event ${event.seq} does not bind the current contract identity`));
-    }
-    if (state?.routeFingerprint && details?.routeFingerprint !== state.routeFingerprint) {
-      const routeChangedAfterCheckpoint = Number.isInteger(state.revision)
-        && Number.isInteger(details?.revalidatedStateRevision)
-        && state.revision > details.revalidatedStateRevision;
-      const evolved = routeChangedAfterCheckpoint
-        && routeEvolutionAfter(events, event, details.routeFingerprint, state.routeFingerprint);
-      if (!evolved) {
-        errors.push(bindingError(`event ${event.seq} does not bind the current route identity through canonical route provenance`));
-      }
-    }
+    const contractError = validateCurrentContractBinding(state, events, event);
+    if (contractError) errors.push(contractError);
+    const routeError = validateCurrentRouteBinding(state, events, event);
+    if (routeError) errors.push(routeError);
   }
-  if (state && latest && state.revision === latest.details.revalidatedStateRevision) {
-    const details = latest.details;
-    if (!sameRepositoryFingerprint(state.repositoryFingerprint, details.repositoryFingerprint)) {
-      errors.push(bindingError(`event ${latest.seq} does not bind the current repository fingerprint`));
-    }
-    if (state.phase !== details.phase || canonicalFingerprint(state) !== details.revalidatedStateFingerprint) {
-      errors.push(bindingError(`event ${latest.seq} does not bind the current checkpoint state`));
-    }
-  }
+  errors.push(...validateLatestCheckpointBinding(state, latest));
   return errors;
 }
 

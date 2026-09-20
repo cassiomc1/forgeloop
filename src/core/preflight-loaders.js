@@ -9,6 +9,7 @@ import { sha256 } from "./manifest.js";
 import { findProfilePath } from "./profile.js";
 import { issue } from "./preflight-model.js";
 import { taskGatePath, taskArtifactPath } from "./task-paths.js";
+import { readEvents } from "./events.js";
 
 export async function readProfile(target) {
   const relativePath = await findProfilePath(target);
@@ -94,6 +95,15 @@ export async function inspectGates(target, contract, route, packageRoot, errors,
   const satisfied = [];
   const records = {};
   const taskId = options.taskId ?? null;
+  let events = [];
+  if (taskId) {
+    try {
+      events = await readEvents(target, packageRoot, { taskId });
+    } catch {
+      events = [];
+    }
+  }
+  const latestContractRevisionSeq = events.findLast((event) => event.event === "CONTRACT_REVISED")?.seq ?? 0;
   for (const gate of required) {
     let artifact;
     const defaultGateRel = taskId ? taskGatePath(taskId, gate) : `${ARTIFACT_PATHS.gates}/${gate}.json`;
@@ -119,6 +129,20 @@ export async function inspectGates(target, contract, route, packageRoot, errors,
     const stale = await validateGateArtifacts(target, artifact.value, packageRoot);
     if (stale.length > 0) {
       errors.push(issue("E_GATE_STALE", `Gate ${gate} references stale artifacts`, [artifact.path], { gate, stale }));
+      continue;
+    }
+    const currentEpochSatisfied = latestContractRevisionSeq === 0
+      || events.some((event) => event.event === "GATE_SATISFIED"
+        && event.taskId === taskId
+        && event.details?.gate === gate
+        && event.seq > latestContractRevisionSeq);
+    if (!currentEpochSatisfied) {
+      errors.push(issue(
+        "E_GATE_UNVERIFIED",
+        `Required gate ${gate} was satisfied before the current contract revision`,
+        [defaultGateRel],
+        { gate },
+      ));
       continue;
     }
     satisfied.push(gate);

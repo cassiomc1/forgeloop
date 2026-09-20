@@ -361,6 +361,44 @@ contract, route, artifact, ownership, or lifecycle boundary. Do not edit
 
 ---
 
+### Symptom: The task contract must change before execution
+
+#### What it means
+
+The task is still before execution, but its objective, deliverables, or
+constraints have changed. Existing route, preflight, gate, and plan evidence
+must not authorize the new contract.
+
+#### Safe recovery
+
+Use exactly one bounded replacement source:
+
+```bash
+forgeloop contract-revise --task <id> --preset <documentation|bug|feature|release> --json
+forgeloop contract-revise --task <id> --contract-file <path> --json
+```
+
+The command appends `CONTRACT_REVISED` followed immediately by
+`TRANSACTION_COMMITTED(operation=contract-revise)`, resets derived evidence,
+and preserves the task descriptor claims. A `ROUTED` task must be routed and
+preflighted again; a `PLANNED` task is rewound to `ROUTED` and must receive a
+fresh canonical route, preflight, and plan. Historical checkpoint identity
+remains valid only when later contract and route evolution is proven by the
+canonical append-only provenance chain.
+
+`previousStateFingerprint` and `revisedStateFingerprint` on `CONTRACT_REVISED`
+are transition-time audit bindings. They are checked when the revision is the
+current state transition and participate in append-only event integrity; they
+are not treated as permanently frozen current-state identity after later
+canonical mutations.
+
+Contract revision is unavailable after `EXECUTION_STARTED` and for active
+contract-bootstrap repair or migration anchors. Do not rewrite the contract,
+state, route, or ledger files manually. If `next` reports a stale route,
+reroute it with the normal `route` command before running preflight.
+
+---
+
 ### Symptom: `EXECUTING`/`VERIFYING` task is stale because the repository moved (`E_REPOSITORY_CHANGED`)
 
 #### What it means

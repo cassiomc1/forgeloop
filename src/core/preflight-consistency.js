@@ -80,6 +80,18 @@ function sameReadyPreflightEvent(event, result) {
     && sameStringSet(event.details?.satisfiedGates, result.satisfiedGates);
 }
 
+function latestContractRevisionSeq(events) {
+  return events.findLast((event) => event.event === "CONTRACT_REVISED")?.seq ?? 0;
+}
+
+function hasCurrentRevisionGate(events, taskId, gate) {
+  const revisionSeq = latestContractRevisionSeq(events);
+  return events.some((event) => event.event === "GATE_SATISFIED"
+    && event.taskId === taskId
+    && event.details?.gate === gate
+    && event.seq > revisionSeq);
+}
+
 export async function validateReadyProtocolConsistency({
   target,
   packageRoot,
@@ -141,9 +153,7 @@ export async function validateReadyProtocolConsistency({
     }
   }
   for (const gate of persisted.satisfiedGates ?? []) {
-    if (!events.some((event) => event.event === "GATE_SATISFIED"
-      && event.taskId === persisted.taskId
-      && event.details?.gate === gate)) {
+    if (!hasCurrentRevisionGate(events, persisted.taskId, gate)) {
       errors.push(issue("E_PREFLIGHT_GATE_EVENT_MISSING", `READY preflight is missing lifecycle gate event: ${gate}`, [eventsRel, `${gatesRel}/${gate}.json`]));
     }
   }
@@ -189,9 +199,12 @@ export function assertExistingReadyLifecycleCompatibility(ledger, result) {
   const existingReady = events.findLast((event) => event.event === "PREFLIGHT_READY" && event.taskId === result.taskId);
   if (!existingReady) return;
   const latestOutcome = latestPreflightOutcomeEvent(events, result.taskId);
+  const revisedAfterReady = events.some((event) => event.event === "CONTRACT_REVISED"
+    && event.taskId === result.taskId
+    && event.seq > existingReady.seq);
   // A READY outcome superseded by a later BLOCKED outcome may be replaced by a
   // fresh READY with different details once the blocked preflight is resolved.
-  if (latestOutcome?.event === "PREFLIGHT_BLOCKED") return;
+  if (latestOutcome?.event === "PREFLIGHT_BLOCKED" || revisedAfterReady) return;
   if (!sameReadyPreflightEvent(existingReady, result)) {
     throw preflightError(
       "E_PHASE_CHRONOLOGY_INVALID",
@@ -217,9 +230,7 @@ export async function appendActivationEvents(target, packageRoot, ledger, result
     await append({ taskId: result.taskId, event: "ROUTE_VALIDATED", fingerprint: result.fingerprints.routing });
   }
   for (const gate of result.satisfiedGates) {
-    if (!events.some((event) => event.event === "GATE_SATISFIED"
-      && event.taskId === result.taskId
-      && event.details?.gate === gate)) {
+    if (!hasCurrentRevisionGate(events, result.taskId, gate)) {
       await append({ taskId: result.taskId, event: "GATE_SATISFIED", details: { gate } });
     }
   }
@@ -227,15 +238,18 @@ export async function appendActivationEvents(target, packageRoot, ledger, result
   const existingReady = events.findLast((event) => event.event === "PREFLIGHT_READY" && event.taskId === result.taskId);
   const latestOutcome = latestPreflightOutcomeEvent(events, result.taskId);
   const readySupersededByBlocked = existingReady && latestOutcome?.event === "PREFLIGHT_BLOCKED";
+  const readySupersededByContractRevision = existingReady && events.some((event) => event.event === "CONTRACT_REVISED"
+    && event.taskId === result.taskId
+    && event.seq > existingReady.seq);
   if (result.status === "READY") {
-    if (existingReady && !readySupersededByBlocked && !sameReadyPreflightEvent(existingReady, result)) {
+    if (existingReady && !readySupersededByBlocked && !readySupersededByContractRevision && !sameReadyPreflightEvent(existingReady, result)) {
       throw preflightError(
         "E_PHASE_CHRONOLOGY_INVALID",
         "PREFLIGHT_READY already exists with different READY preflight details; repair the contract, route, or gate lifecycle before refreshing preflight",
         [ARTIFACT_PATHS.preflight, ARTIFACT_PATHS.events, ARTIFACT_PATHS.contract, ARTIFACT_PATHS.route, ARTIFACT_PATHS.gates],
       );
     }
-    if (!existingReady || readySupersededByBlocked) {
+    if (!existingReady || readySupersededByBlocked || readySupersededByContractRevision) {
       await append({
         taskId: result.taskId,
         event: "PREFLIGHT_READY",

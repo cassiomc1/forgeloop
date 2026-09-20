@@ -311,6 +311,7 @@ capability-family versions.
 | Command | Mutation | Purpose |
 | --- | --- | --- |
 | checkpoint-revalidate | MUTATING | Revalidates a safe ROUTED checkpoint after repository-only drift without changing contract or route identity. |
+| contract-revise | MUTATING | Replaces an existing contract canonically before execution while preserving task identity and invalidating derived evidence. |
 | index-rebuild | MUTATING | Atomically rebuilds the repository index and restarts its owned watcher. |
 | index-setup | MUTATING | Provisions the pinned tgrep engine, builds the repository index, and starts its owned watcher. |
 | index-start | MUTATING | Starts the owned tgrep repository-index watcher after an index has been built. |

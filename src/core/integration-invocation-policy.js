@@ -91,6 +91,7 @@ const STATIC_RISK_CLASSES = Object.freeze({
   "task-repair-contract-bootstrap": INTEGRATION_RISK_CLASSES.LEGACY_MIGRATION,
   "task-migrate-contract-bootstrap-repair": INTEGRATION_RISK_CLASSES.LEGACY_MIGRATION,
   "checkpoint-revalidate": INTEGRATION_RISK_CLASSES.MAINTENANCE,
+  "contract-revise": INTEGRATION_RISK_CLASSES.MAINTENANCE,
 });
 
 // Sparse input-dependent refinements over the static table.

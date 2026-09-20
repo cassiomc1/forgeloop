@@ -4,6 +4,15 @@
 
 ### Added
 
+- Added the canonical `contract-revise` mutation for safe pre-execution
+  contract replacement in `CONTRACT_READY`, `ROUTED`, and `PLANNED`. Revisions
+  are append-only and transaction-witnessed, invalidate derived route,
+  preflight, gate, and plan evidence, preserve descriptor claims, and reject
+  execution-started or contract-bootstrap repair/migration tasks.
+- Added contract-revision regression coverage for idempotency, concurrent
+  callers, PLANNED-to-ROUTED rewind, canonical checkpoint/route evolution,
+  historical contract identity, and forged rollback rejection.
+
 - Added the canonical `checkpoint-revalidate` mutation and
   `REVALIDATE_CHECKPOINT` next action for safe, repository-only drift of a
   valid pre-execution `ROUTED` checkpoint. Revalidation preserves contract and

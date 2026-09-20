@@ -60,7 +60,7 @@ error codes. Default output and default JSON remain unchanged.
 | --- | --- |
 | **Inspection & Diagnostics** | [`protocol-info`](#protocol-info), [`doctor`](#doctor), [`index-status`](#index-status), [`search`](#search), [`metrics`](#metrics), [`usage-record`](#usage-record), [`efficiency`](#efficiency), [`eval`](#eval), [`history`](#history), [`trace`](#trace), [`reflect`](#reflect), [`progress`](#progress), [`profile-interview`](#profile-interview), [`inspect`](#inspect), [`status`](#status), [`validate-state`](#validate-state), [`validate-protocol`](#validate-protocol) |
 | **Lifecycle & State** | [`discover`](#discover), [`contract-create`](#contract-create), [`gate-record`](#gate-record), [`activate`](#activate), [`route`](#route), [`preflight`](#preflight), [`advance`](#advance), [`next`](#next), [`record-diagnosis`](#record-diagnosis), [`record-intervention`](#record-intervention), [`record-hypothesis-disposition`](#record-hypothesis-disposition), [`record-decision-criterion`](#record-decision-criterion), [`complete`](#complete), [`clear-state`](#clear-state), [`reconcile-closure`](#reconcile-closure), [`task-create`](#task-create), [`task-list`](#task-list), [`task-show`](#task-show), [`task-lock-status`](#task-lock-status), [`task-scope`](#task-scope) |
-| **Setup & Maintenance** | [`init`](#init), [`index-setup`](#index-setup), [`index-start`](#index-start), [`index-stop`](#index-stop), [`index-rebuild`](#index-rebuild), [`update`](#update), [`checkpoint-revalidate`](#checkpoint-revalidate), [`task-migrate`](#task-migrate), [`migrate-protocol`](#migrate-protocol), [`task-unlock`](#task-unlock), [`task-recover`](#task-recover), [`task-repair-contract-bootstrap`](#task-repair-contract-bootstrap), [`task-migrate-contract-bootstrap-repair`](#task-migrate-contract-bootstrap-repair), [`task-repair-legacy-recovery`](#task-repair-legacy-recovery), [`task-resume`](#task-resume) |
+| **Setup & Maintenance** | [`contract-revise`](#contract-revise), [`init`](#init), [`index-setup`](#index-setup), [`index-start`](#index-start), [`index-stop`](#index-stop), [`index-rebuild`](#index-rebuild), [`update`](#update), [`checkpoint-revalidate`](#checkpoint-revalidate), [`task-migrate`](#task-migrate), [`migrate-protocol`](#migrate-protocol), [`task-unlock`](#task-unlock), [`task-recover`](#task-recover), [`task-repair-contract-bootstrap`](#task-repair-contract-bootstrap), [`task-migrate-contract-bootstrap-repair`](#task-migrate-contract-bootstrap-repair), [`task-repair-legacy-recovery`](#task-repair-legacy-recovery), [`task-resume`](#task-resume) |
 | **Verification & Completion** | [`quality-baseline`](#quality-baseline), [`quality-verify`](#quality-verify), [`quality-status`](#quality-status), [`prepare-completion`](#prepare-completion), [`run-check`](#run-check), [`record-check`](#record-check), [`record-terminal-result`](#record-terminal-result), [`audit`](#audit), [`report`](#report), [`validate-receipt`](#validate-receipt), [`verify-scope`](#verify-scope) |
 | **Cross-Harness Continuity** | [`continuity`](#continuity), [`record-continuity`](#record-continuity), [`reconcile-continuity`](#reconcile-continuity), [`clear-continuity`](#clear-continuity), [`handoff-create`](#handoff-create), [`handoff-list`](#handoff-list), [`handoff-show`](#handoff-show) |
 | **Durable Actions & Approvals** | [`run-action`](#run-action), [`action-propose`](#action-propose), [`action-record`](#action-record), [`action-show`](#action-show), [`action-reconcile`](#action-reconcile), [`action-verify`](#action-verify), [`action-authorize`](#action-authorize), [`approval-request`](#approval-request), [`approval-resolve`](#approval-resolve) |
@@ -870,13 +870,33 @@ Persists a validated contract and materializes the first real lifecycle checkpoi
 
 <!-- END FORGELOOP GENERATED: cli:contract-create:options -->
 
+### `contract-revise`
+
+Replaces a validated pre-execution contract through an append-only, transaction-witnessed revision.
+
+- **Purpose**: Canonically revise a contract in `CONTRACT_READY`, `ROUTED`, or `PLANNED` before execution starts.
+- **When to use**: When the task objective or scope changes and the existing derived route, preflight, gates, or plan must no longer authorize the work.
+- **Mutation**: Writes the replacement contract, resets derived authorization, appends `CONTRACT_REVISED`, and appends an adjacent `TRANSACTION_COMMITTED(operation=contract-revise)` witness.
+- **Restrictions**: Requires exactly one of `--preset` or `--contract-file`; a `PLANNED` task rewinds to `ROUTED`, and old route/preflight/plan evidence must be regenerated.
+- **Options**:
+
+<!-- BEGIN FORGELOOP GENERATED: cli:contract-revise:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--contract-file <path>`: validated replacement JSON contract relative to the target
+- `--preset <name>`: bounded replacement contract preset: documentation, bug, feature, or release
+- `--json`: emit structured contract revision output as JSON
+
+<!-- END FORGELOOP GENERATED: cli:contract-revise:options -->
+
 ### `gate-record`
 
 Records a gate satisfaction or rejection decision for a task's preflight gate lifecycle.
 
 - **Purpose**: Records structured evidence that a named gate has been satisfied, rejected, or deferred, with optional artifact and decision evidence.
 - **When to use**: During the preflight gate lifecycle to progress gate status from pending to resolved.
-- **Mutation**: Writes a gate artifact under the task namespace and appends a `GATE_SATISFIED` or `GATE_REJECTED` protocol event.
+- **Mutation**: Writes a gate artifact under the task namespace and appends a `GATE_SATISFIED` or `GATE_REJECTED` protocol event. A `GATE_SATISFIED` event after `CONTRACT_REVISED` must be immediately followed by the canonical `TRANSACTION_COMMITTED(operation=gate-record)` witness; pre-revision historical gate events remain backward compatible. Repeated satisfied recording is event-idempotent within the current contract epoch, even if the gate artifact is refreshed.
 - **Options**:
 
 <!-- BEGIN FORGELOOP GENERATED: cli:gate-record:options -->

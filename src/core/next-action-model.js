@@ -63,6 +63,21 @@ export function directCommandSpec(commandId, taskId, requiredInputs = []) {
   };
 }
 
+export function routeCommandSpec(taskId) {
+  return {
+    commandId: "route",
+    executable: "forgeloop",
+    subcommand: "route",
+    argv: ["route", `--task=${taskId}`, "--json"],
+    requiredInputs: [
+      { name: "workType", option: "--work=<type>" },
+      { name: "surface", option: "--surface=<value>", repeatable: true, optional: true },
+      { name: "risk", option: "--risk=<value>", repeatable: true, optional: true },
+      { name: "platform", option: "--platform=<value>", repeatable: true, optional: true },
+    ],
+  };
+}
+
 export function recoveryGuidanceForClassification(classification, taskId) {
   if (classification === "RECOVERABLE") {
     return {
@@ -196,6 +211,8 @@ export function contractBootstrapRepairMigrationGuidance(taskId, reason = null) 
 
 export function commandFor(action) {
   return {
+    [NEXT_ACTIONS.ROUTE]: "forgeloop route --task <id> --work <type> --json",
+    [NEXT_ACTIONS.RESOLVE_STALE_ROUTE]: "forgeloop route --task <id> --work <type> --json",
     [NEXT_ACTIONS.PLAN]: "forgeloop advance --to PLANNED",
     [NEXT_ACTIONS.RUN_PREFLIGHT]: "forgeloop preflight --json",
     [NEXT_ACTIONS.START_EXECUTION]: "forgeloop advance --to EXECUTING",
