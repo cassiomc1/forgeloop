@@ -163,7 +163,7 @@ export declare function resolveBrowserVerificationProvider(
     | Map<string, ForgeLoopBrowserVerificationProvider | ForgeLoopBrowserVerificationProviderFactory>
     | undefined,
   name: string,
-  input?: Pick<ForgeLoopBrowserVerificationProviderInput, "signal" | "timeoutMs" | "request">,
+  input?: Partial<ForgeLoopBrowserVerificationProviderFactoryInput>,
 ): Promise<ForgeLoopBrowserVerificationProvider>;
 export declare function normalizeBrowserVerificationResult(raw: unknown, options: {
   provider: ForgeLoopBrowserVerificationProvider;
