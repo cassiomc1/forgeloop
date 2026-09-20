@@ -152,6 +152,14 @@ export const E_BROWSER_VERIFICATION_ORIGIN_DENIED = "E_BROWSER_VERIFICATION_ORIG
 export const E_BROWSER_VERIFICATION_EXECUTION_FAILED = "E_BROWSER_VERIFICATION_EXECUTION_FAILED";
 export const E_BROWSER_VERIFICATION_CANCELLED = "E_BROWSER_VERIFICATION_CANCELLED";
 export const E_BROWSER_VERIFICATION_VERSION_UNSUPPORTED = "E_BROWSER_VERIFICATION_VERSION_UNSUPPORTED";
+export const E_SECURITY_REVIEW_PROVIDER_INVALID = "E_SECURITY_REVIEW_PROVIDER_INVALID";
+export const E_SECURITY_REVIEW_PROVIDER_UNAVAILABLE = "E_SECURITY_REVIEW_PROVIDER_UNAVAILABLE";
+export const E_SECURITY_REVIEW_REQUEST_INVALID = "E_SECURITY_REVIEW_REQUEST_INVALID";
+export const E_SECURITY_REVIEW_RESULT_INVALID = "E_SECURITY_REVIEW_RESULT_INVALID";
+export const E_SECURITY_REVIEW_TIMEOUT = "E_SECURITY_REVIEW_TIMEOUT";
+export const E_SECURITY_REVIEW_CANCELLED = "E_SECURITY_REVIEW_CANCELLED";
+export const E_SECURITY_REVIEW_OUTPUT_LIMIT = "E_SECURITY_REVIEW_OUTPUT_LIMIT";
+export const E_SECURITY_REVIEW_EXECUTION_FAILED = "E_SECURITY_REVIEW_EXECUTION_FAILED";
 export const E_PORTABLE_CONTEXT_INVALID = "E_PORTABLE_CONTEXT_INVALID";
 export const E_HANDOFF_ACCEPTANCE_UNBOUND = "E_HANDOFF_ACCEPTANCE_UNBOUND";
 export const E_HANDOFF_STALE = "E_HANDOFF_STALE";
@@ -454,6 +462,62 @@ const ADVISORY_CONTEXT_AND_HANDOFF_ERROR_METADATA = Object.freeze(Object.fromEnt
     classification: "PUBLIC_STABLE",
     meaning: "The configured Agent Browser version does not satisfy the provider's exact version contract.",
     safeResolution: "Provide the expected host-qualified Agent Browser version or update the explicit executable selection.",
+  })],
+  [E_SECURITY_REVIEW_PROVIDER_INVALID, Object.freeze({
+    code: E_SECURITY_REVIEW_PROVIDER_INVALID,
+    category: "security-review",
+    classification: "PUBLIC_STABLE",
+    meaning: "Security review provider configuration or interface implementation is invalid.",
+    safeResolution: "Use a provider implementing id and review(input) through the explicit host-injected Integration API.",
+  })],
+  [E_SECURITY_REVIEW_PROVIDER_UNAVAILABLE, Object.freeze({
+    code: E_SECURITY_REVIEW_PROVIDER_UNAVAILABLE,
+    category: "security-review",
+    classification: "PUBLIC_STABLE",
+    meaning: "The requested security review provider is not registered in runtime context.",
+    safeResolution: "Register an optional host-owned provider before explicit invocation; ForgeLoop never installs one.",
+  })],
+  [E_SECURITY_REVIEW_REQUEST_INVALID, Object.freeze({
+    code: E_SECURITY_REVIEW_REQUEST_INVALID,
+    category: "security-review",
+    classification: "PUBLIC_STABLE",
+    meaning: "The bounded security review request failed validation.",
+    safeResolution: "Provide explicit scope, bounded project-relative paths, categories, requirements, identities, and timeout.",
+  })],
+  [E_SECURITY_REVIEW_RESULT_INVALID, Object.freeze({
+    code: E_SECURITY_REVIEW_RESULT_INVALID,
+    category: "security-review",
+    classification: "PUBLIC_STABLE",
+    meaning: "The security review provider returned malformed or contradictory findings.",
+    safeResolution: "Return only bounded findings and diagnostics without authority, lifecycle, evidence, or executable fields.",
+  })],
+  [E_SECURITY_REVIEW_TIMEOUT, Object.freeze({
+    code: E_SECURITY_REVIEW_TIMEOUT,
+    category: "security-review",
+    classification: "PUBLIC_STABLE",
+    meaning: "Security review provider execution exceeded the shared deadline.",
+    safeResolution: "Use a responsive provider or a bounded timeout within the supported limit; timed-out output is discarded.",
+  })],
+  [E_SECURITY_REVIEW_CANCELLED, Object.freeze({
+    code: E_SECURITY_REVIEW_CANCELLED,
+    category: "security-review",
+    classification: "PUBLIC_STABLE",
+    meaning: "Security review provider execution was cancelled before a valid observation completed.",
+    safeResolution: "Retry only when the caller still requires the optional observation.",
+  })],
+  [E_SECURITY_REVIEW_OUTPUT_LIMIT, Object.freeze({
+    code: E_SECURITY_REVIEW_OUTPUT_LIMIT,
+    category: "security-review",
+    classification: "PUBLIC_STABLE",
+    meaning: "Security review provider output exceeded the bounded result limits.",
+    safeResolution: "Reduce findings, diagnostics, strings, or result size at the provider.",
+  })],
+  [E_SECURITY_REVIEW_EXECUTION_FAILED, Object.freeze({
+    code: E_SECURITY_REVIEW_EXECUTION_FAILED,
+    category: "security-review",
+    classification: "PUBLIC_STABLE",
+    meaning: "The optional security review provider failed without producing a valid observation.",
+    safeResolution: "Inspect the host-provided provider and retry explicitly; provider failure never changes ForgeLoop state.",
   })],
   [E_PORTABLE_CONTEXT_INVALID, Object.freeze({
     code: E_PORTABLE_CONTEXT_INVALID,
@@ -1652,6 +1716,14 @@ export const ALL_KNOWN_ERROR_CODES = Object.freeze(new Set([
   E_BROWSER_VERIFICATION_EXECUTION_FAILED,
   E_BROWSER_VERIFICATION_CANCELLED,
   E_BROWSER_VERIFICATION_VERSION_UNSUPPORTED,
+  E_SECURITY_REVIEW_PROVIDER_INVALID,
+  E_SECURITY_REVIEW_PROVIDER_UNAVAILABLE,
+  E_SECURITY_REVIEW_REQUEST_INVALID,
+  E_SECURITY_REVIEW_RESULT_INVALID,
+  E_SECURITY_REVIEW_TIMEOUT,
+  E_SECURITY_REVIEW_CANCELLED,
+  E_SECURITY_REVIEW_OUTPUT_LIMIT,
+  E_SECURITY_REVIEW_EXECUTION_FAILED,
   E_PORTABLE_CONTEXT_INVALID,
   E_HANDOFF_ACCEPTANCE_UNBOUND,
   E_HANDOFF_STALE,

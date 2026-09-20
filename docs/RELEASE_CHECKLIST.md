@@ -104,6 +104,12 @@ actions.
       executable, has no runtime dependency or PATH discovery, bounds argv
       execution/readiness/output/cleanup, keeps state outside the target, and
       returns observation-only loopback results.
+- [ ] Optional Security Review is host-injected through `securityReviewProviders`,
+      has no auto-install or scanner discovery, and keeps findings
+      observation-only, non-evidence, non-lifecycle, and non-completion.
+- [ ] Security Review request/result bounds, strict snapshot validation,
+      shared timeout, and cooperative cancellation are covered by focused tests
+      and the public TypeScript declarations.
 - [ ] `next`, `status`, and `task/context` invoke zero advisory providers.
 - [ ] Advisory request budgets are normalized before provider invocation.
 - [ ] Advisory results are never persisted by ForgeLoop.

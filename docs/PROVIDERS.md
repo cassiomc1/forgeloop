@@ -54,6 +54,15 @@ qualified version, starts with argv-only execution, observes loopback
 readiness, returns a detached observation, and cleans up its temporary state
 and child process.
 
+Security review is registered through `securityReviewProviders` and invoked
+explicitly with `runSecurityReview`. Registration is lazy and inert. The
+request accepts bounded scope, relative paths, categories, requirements, and a
+revision binding; factory resolution and review share one deadline and abort
+signal. Results are strict immutable observations with bounded findings and
+summary counts. They cannot establish evidence, lifecycle, completion,
+ownership, claims, commands, installation, or transaction authority. See
+[`SECURITY_REVIEW.md`](./SECURITY_REVIEW.md) for the complete contract.
+
 ## Common Contract
 
 Providers are identified by an ID and kind, may resolve lazily, and receive a

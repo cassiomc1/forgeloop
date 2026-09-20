@@ -4,13 +4,22 @@ import {
   normalizeVerificationExecutionPolicy,
 } from "./verification-execution.js";
 import { STRUCTURAL_QUALITY_PROVIDER_ID_PATTERN } from "./structural-quality/constants.js";
-import { E_ADVISORY_CONTEXT_PROVIDER_INVALID, E_BROWSER_VERIFICATION_PROVIDER_INVALID } from "./error-codes.js";
+import {
+  E_ADVISORY_CONTEXT_PROVIDER_INVALID,
+  E_BROWSER_VERIFICATION_PROVIDER_INVALID,
+  E_SECURITY_REVIEW_PROVIDER_INVALID,
+} from "./error-codes.js";
 import { assertAdvisoryContextProviderIdentity } from "./advisory-context/provider.js";
 import {
   BROWSER_VERIFICATION_PROVIDER_ID_PATTERN,
   assertBrowserVerificationProvider,
   assertBrowserVerificationProviderIdentity,
 } from "./browser-verification/provider.js";
+import {
+  SECURITY_REVIEW_PROVIDER_ID_PATTERN,
+  assertSecurityReviewProvider,
+  assertSecurityReviewProviderIdentity,
+} from "./security-review/provider.js";
 
 export const AUTHORITY_TRUST_MODES = Object.freeze(["NONE", "HOST_ATTESTED"]);
 
@@ -196,6 +205,35 @@ export function createForgeLoopContext(options = {}) {
       providers[id] = provider;
     }
     context.browserVerificationProviders = Object.freeze(providers);
+  }
+  if (options?.securityReviewProviders !== undefined) {
+    const configured = options.securityReviewProviders;
+    if (!configured || typeof configured !== "object" || Array.isArray(configured)) {
+      const error = new Error("securityReviewProviders must be an object or Map");
+      error.code = E_SECURITY_REVIEW_PROVIDER_INVALID;
+      throw error;
+    }
+    const providers = {};
+    const entries = configured instanceof Map ? [...configured.entries()] : Object.entries(configured);
+    for (const [id, provider] of entries) {
+      if (!SECURITY_REVIEW_PROVIDER_ID_PATTERN.test(id)) {
+        const error = new Error(`Invalid security-review provider ID: ${id}`);
+        error.code = E_SECURITY_REVIEW_PROVIDER_INVALID;
+        throw error;
+      }
+      if (typeof provider !== "function"
+        && (!provider || typeof provider !== "object" || Array.isArray(provider))) {
+        const error = new Error(`Security-review provider ${id} must be an object with review() or a factory`);
+        error.code = E_SECURITY_REVIEW_PROVIDER_INVALID;
+        throw error;
+      }
+      if (typeof provider !== "function") {
+        assertSecurityReviewProviderIdentity(provider, { expectedId: id });
+        assertSecurityReviewProvider(provider, { label: `security-review provider "${id}"` });
+      }
+      providers[id] = provider;
+    }
+    context.securityReviewProviders = Object.freeze(providers);
   }
   return Object.freeze(context);
 }

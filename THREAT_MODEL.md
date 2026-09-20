@@ -200,6 +200,22 @@ not grant lifecycle, completion, evidence, or installation authority.
 | False completion | Completion authority false |
 | False evidence | ForgeLoop validation required |
 
+## Security Review provider boundary
+
+Security Review is an optional host-injected observation surface. It does not
+install or discover scanners, execute provider text, persist task state, or
+grant lifecycle, evidence, completion, claim, ownership, command, or
+transaction authority. Requests and results are bounded strict snapshots and
+the factory/review pair shares one deadline and cooperative cancellation.
+
+| Threat | Mitigation |
+| --- | --- |
+| Malicious finding or fake completion claim | Reserved authority fields are rejected and trust metadata is stamped as observation-only, non-evidence, and non-executable. |
+| Oversized or mutable request/result | Relative-path, string, finding, diagnostic, byte, depth, node, and result-size limits plus detached deep-frozen snapshots fail closed. |
+| Provider hang or late completion | One shared deadline and `AbortSignal` cover lazy factory and review; late results cannot become observations. |
+| Scanner auto-install or ambient execution | Registration is explicit and lazy; ForgeLoop does not discover `PATH`, install tools, invoke shells, or own provider credentials. |
+| Sensitive output or path escape | Findings require bounded project-relative paths and reject secret-like content and absolute/file URLs. |
+
 ## Browser verification boundary
 
 Browser verification is host-injected and explicit. It is not a browser

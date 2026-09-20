@@ -124,6 +124,25 @@ export {
   resolveBrowserVerificationProvider,
 } from "./core/browser-verification/provider.js";
 export { normalizeBrowserVerificationResult } from "./core/browser-verification/normalize.js";
+export { runSecurityReview } from "./core/security-review/service.js";
+export {
+  SECURITY_REVIEW_CATEGORIES,
+  SECURITY_REVIEW_CONFIDENCE,
+  SECURITY_REVIEW_LIMITS,
+  SECURITY_REVIEW_SCOPES,
+  SECURITY_REVIEW_SEVERITIES,
+  SECURITY_REVIEW_TRUST,
+} from "./core/security-review/constants.js";
+export {
+  SECURITY_REVIEW_PROVIDER_ID_PATTERN,
+  assertSecurityReviewProvider,
+  assertSecurityReviewProviderIdentity,
+  assertSecurityReviewProviderRegistration,
+  createSecurityReviewProviderRegistry,
+  normalizeSecurityReviewRequest,
+  resolveSecurityReviewProvider,
+} from "./core/security-review/provider.js";
+export { normalizeSecurityReviewResult } from "./core/security-review/normalize.js";
 export { createRipwireAdvisoryContextProvider } from "./adapters/ripwire/provider.js";
 export { createOpenSrcAdvisoryContextProvider } from "./adapters/opensrc/provider.js";
 export { createAgentBrowserVerificationProvider } from "./adapters/agent-browser/provider.js";

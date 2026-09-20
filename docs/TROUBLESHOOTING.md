@@ -1332,6 +1332,25 @@ package/process recovery boundary. The relevant stable codes are
 `E_PERSISTENT_TRANSPORT_HOST_STALE`, and
 `E_PERSISTENT_TRANSPORT_PROTOCOL_MISMATCH`.
 
+### Symptom: Security Review provider is unavailable or rejected
+
+#### Error Codes: `E_SECURITY_REVIEW_PROVIDER_INVALID`, `E_SECURITY_REVIEW_PROVIDER_UNAVAILABLE`, `E_SECURITY_REVIEW_REQUEST_INVALID`, `E_SECURITY_REVIEW_RESULT_INVALID`, `E_SECURITY_REVIEW_TIMEOUT`, `E_SECURITY_REVIEW_CANCELLED`, `E_SECURITY_REVIEW_OUTPUT_LIMIT`, `E_SECURITY_REVIEW_EXECUTION_FAILED`
+
+#### What it means
+
+The optional Security Review Integration API provider was not registered,
+failed the strict provider/request/result contract, exceeded its shared
+deadline or output budget, was cancelled, or threw during observation. This
+surface is advisory and never blocks or authorizes ForgeLoop lifecycle.
+
+#### Safe recovery
+
+Register an explicit host-owned provider with a matching portable ID, use
+bounded project-relative request paths and limits, and make the provider honor
+the supplied `AbortSignal`. Do not install or discover a scanner through
+ForgeLoop, and do not treat findings as evidence, completion, commands, or
+canonical task state.
+
 ## Stable Error and Reason Codes
 
 <!-- BEGIN FORGELOOP GENERATED: public-error-codes -->
@@ -1408,6 +1427,14 @@ package/process recovery boundary. The relevant stable codes are
 | `E_BROWSER_VERIFICATION_RESULT_INVALID` | Browser verification provider returned an invalid result structure. | Ensure provider returns a status with bounded assertions, diagnostics, and artifacts, and no authority fields. |
 | `E_BROWSER_VERIFICATION_TIMEOUT` | Browser verification exceeded its execution timeout. | Use a responsive provider or increase timeout within limits; verification is optional. |
 | `E_BROWSER_VERIFICATION_VERSION_UNSUPPORTED` | The configured Agent Browser version does not satisfy the provider's exact version contract. | Provide the expected host-qualified Agent Browser version or update the explicit executable selection. |
+| `E_SECURITY_REVIEW_CANCELLED` | Security Review was cancelled by its caller before a valid observation completed. | Retry only when the optional observation is still needed. |
+| `E_SECURITY_REVIEW_EXECUTION_FAILED` | The optional Security Review provider failed without establishing a valid observation. | Inspect the host provider implementation; provider failures never become lifecycle evidence. |
+| `E_SECURITY_REVIEW_OUTPUT_LIMIT` | Security Review output exceeded the configured bounded result limits. | Reduce findings or diagnostics at the provider. |
+| `E_SECURITY_REVIEW_PROVIDER_INVALID` | Security Review provider configuration or interface implementation is invalid. | Register a provider with a matching ID and `review(request)` implementation. |
+| `E_SECURITY_REVIEW_PROVIDER_UNAVAILABLE` | Requested Security Review provider is not registered in runtime context. | Register the optional provider or proceed without the observation. |
+| `E_SECURITY_REVIEW_REQUEST_INVALID` | Security Review request failed validation or exceeded a request budget. | Use a bounded scope, relative paths, categories, requirements, and timeout. |
+| `E_SECURITY_REVIEW_RESULT_INVALID` | Security Review provider returned an invalid observation structure. | Return bounded findings and diagnostics without authority fields. |
+| `E_SECURITY_REVIEW_TIMEOUT` | Security Review exceeded its shared execution timeout. | Use a responsive provider or a timeout within the configured maximum. |
 | `E_CHECKPOINT_REVALIDATION_UNSAFE` | A pre-execution checkpoint could not be safely rebound to the current repository without changing lifecycle identity. | Preserve the checkpoint and resolve the reported contract, route, ownership, artifact, or lifecycle boundary through its canonical command. |
 | `E_CHECK_INERT` | An enabled check has no effective scope or target files. | Provide an applicable target scope, configure matching files, or mark the rule unsupported. |
 | `E_CHECK_INVALID` | Check structure or required parameters are invalid. | Provide valid check ID, requirement, and parameters. |

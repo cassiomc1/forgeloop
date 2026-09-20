@@ -71,6 +71,7 @@
     "docs/PACKAGE_CONTENTS.md",
     "docs/PROVIDER_ARCHITECTURE.md",
     "docs/PROVIDERS.md",
+    "docs/SECURITY_REVIEW.md",
     "docs/BROWSER_VERIFICATION.md",
     "docs/AGENT_BROWSER_ADAPTER.md",
     "docs/AGENT_BROWSER_VERIFICATION.md",
