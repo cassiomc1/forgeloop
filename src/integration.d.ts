@@ -763,7 +763,12 @@ export interface ForgeLoopAuditUxResult {
     items: readonly ForgeLoopAuditUxTimelineItem[];
     totalAvailable: number;
     truncated: boolean;
-    cursor: { beforeSequence: number | null; afterSequence: number | null; nextBeforeSequence: number | null };
+    cursor: {
+      beforeSequence: number | null;
+      afterSequence: number | null;
+      nextBeforeSequence: number | null;
+      nextAfterSequence: number | null;
+    };
   };
   verification: ForgeLoopAuditUxVerification;
   ownership: ForgeLoopAuditUxOwnership;

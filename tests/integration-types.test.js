@@ -47,6 +47,7 @@ const auditProjection = [
   auditView.authority.readOnly,
   auditView.lifecycle.nextAction,
   auditView.timeline.items[0]?.sequence,
+  auditView.timeline.cursor.nextAfterSequence,
   auditView.ownership.claimState,
   auditView.completion.valid,
 ];

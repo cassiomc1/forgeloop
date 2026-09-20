@@ -92,12 +92,34 @@ function boundedText(value, fallback = null) {
     : normalized;
 }
 
+const URL_USERINFO_PATTERN = /\b([A-Za-z][A-Za-z0-9+.-]*):\/\/[^/\s@?#]+@/gu;
+const CREDENTIAL_HEADER_PATTERN = /\b(Authorization|Proxy-Authorization|Cookie|Set-Cookie)\s*:\s*(?:(?:Bearer|Basic)\s+)?[^\s,;]+/giu;
+const CREDENTIAL_ASSIGNMENT_PATTERN = /\b(password|passwd|token|access_token|refresh_token|secret|client_secret|api_key|apikey)\s*=\s*[^\s,;]+/giu;
+const ENVIRONMENT_PATTERN = /\b(?!(?:PASSWORD|PASSWD|TOKEN|ACCESS_TOKEN|REFRESH_TOKEN|SECRET|CLIENT_SECRET|API_KEY|APIKEY)\b)[A-Z_][A-Z0-9_]{2,}=[^\s,;]+/gu;
+const FILE_URL_PATTERN = /\bfile:\/\/[^\s,;)]*/giu;
+const WINDOWS_PATH_PATTERN = /(?:\b[A-Za-z]:[\\/]|\\\\)[^\s,;)]*/gu;
+const POSIX_PATH_PATTERN = /(^|[^\w])\/(?:[A-Za-z0-9._~-]+\/)+[A-Za-z0-9._~-]*/gu;
+const URL_PATTERN = /\b[A-Za-z][A-Za-z0-9+.-]*:\/\/[^\s,;)]*/gu;
+
 function safeText(value, fallback = null) {
   const text = boundedText(value, fallback);
   if (!text) return text;
-  return text
-    .replace(/(?:[A-Za-z]:[\\/]|\/(?:Users|home|private|tmp|var)\/)[^\s,;)]*/gu, "<path>")
-    .replace(/\b[A-Z_][A-Z0-9_]{2,}=[^\s]+/gu, "<environment>");
+  let redacted = text
+    .replace(URL_USERINFO_PATTERN, "$1://<credential>@")
+    .replace(CREDENTIAL_HEADER_PATTERN, "$1: <credential>")
+    .replace(CREDENTIAL_ASSIGNMENT_PATTERN, "$1=<credential>")
+    .replace(ENVIRONMENT_PATTERN, "<environment>")
+    .replace(FILE_URL_PATTERN, "<path>")
+    .replace(WINDOWS_PATH_PATTERN, "<path>");
+
+  const urls = [];
+  redacted = redacted.replace(URL_PATTERN, (url) => {
+    const token = `__AUDIT_UX_URL_${urls.length}__`;
+    urls.push(url);
+    return token;
+  });
+  redacted = redacted.replace(POSIX_PATH_PATTERN, "$1<path>");
+  return redacted.replace(/__AUDIT_UX_URL_(\d+)__/gu, (_, index) => urls[Number(index)]);
 }
 
 function safeIdentifier(value) {
@@ -190,6 +212,9 @@ function normalizeOptions(options = {}) {
       throw auditUxError("E_AUDIT_UX_INPUT_INVALID", `${key} must be a non-negative integer`);
     }
   }
+  if (options.beforeSequence !== undefined && options.afterSequence !== undefined) {
+    throw auditUxError("E_AUDIT_UX_INPUT_INVALID", "beforeSequence and afterSequence cannot be combined");
+  }
   let categories = options.categories ?? [];
   if (typeof categories === "string") categories = categories.split(",").map((value) => value.trim()).filter(Boolean);
   if (!Array.isArray(categories) || categories.length > AUDIT_UX_CATEGORIES.length) {
@@ -214,7 +239,10 @@ function projectTimeline(events, options) {
     .filter((event) => options.categories.length === 0 || options.categories.includes(categoryForEvent(event)))
     .sort((left, right) => left.sequence - right.sequence);
   const hasMore = filtered.length > options.limit;
-  const items = (hasMore ? filtered.slice(-options.limit) : filtered).map(timelineItem);
+  const page = hasMore && options.afterSequence === undefined
+    ? filtered.slice(-options.limit)
+    : filtered.slice(0, options.limit);
+  const items = page.map(timelineItem);
   return {
     items,
     totalAvailable: filtered.length,
@@ -222,8 +250,31 @@ function projectTimeline(events, options) {
     cursor: {
       beforeSequence: options.beforeSequence ?? null,
       afterSequence: options.afterSequence ?? null,
-      nextBeforeSequence: hasMore ? items[0]?.sequence ?? null : null,
+      nextBeforeSequence: hasMore && options.afterSequence === undefined ? items[0]?.sequence ?? null : null,
+      nextAfterSequence: hasMore && options.afterSequence !== undefined ? items.at(-1)?.sequence ?? null : null,
     },
+  };
+}
+
+function safeCountMap(value) {
+  return Object.fromEntries(Object.entries(value ?? {})
+    .map(([key, count]) => [safeIdentifier(key) ?? "UNKNOWN", Number.isInteger(count) ? count : 0]));
+}
+
+function projectActions(actions) {
+  return {
+    total: Number.isInteger(actions.total) ? actions.total : 0,
+    byState: safeCountMap(actions.byState),
+    byCapability: safeCountMap(actions.byCapability),
+    required: Number.isInteger(actions.required) ? actions.required : 0,
+    ambiguous: Number.isInteger(actions.ambiguous) ? actions.ambiguous : 0,
+    failed: Number.isInteger(actions.failed) ? actions.failed : 0,
+    verified: Number.isInteger(actions.verified) ? actions.verified : 0,
+    trustedSatisfied: Number.isInteger(actions.trustedSatisfied) ? actions.trustedSatisfied : 0,
+    untrustedRequired: Number.isInteger(actions.untrustedRequired) ? actions.untrustedRequired : 0,
+    repeatedIdempotencyAttempts: Number.isInteger(actions.repeatedIdempotencyAttempts) ? actions.repeatedIdempotencyAttempts : 0,
+    reconciliationCount: Number.isInteger(actions.reconciliationCount) ? actions.reconciliationCount : 0,
+    eventCount: Number.isInteger(actions.eventCount) ? actions.eventCount : 0,
   };
 }
 
@@ -302,7 +353,7 @@ function projectReasonCodes(...collections) {
   return uniqueStrings(collections.flat().map((value) => {
     if (typeof value === "string") return value;
     return value?.code;
-  }).filter((value) => typeof value === "string"));
+  }).map((value) => safeIdentifier(value)).filter(Boolean));
 }
 
 function buildProjection({ status, audit, report, history, trace, ownership, next, approvals, timeline }) {
@@ -394,7 +445,7 @@ function buildProjection({ status, audit, report, history, trace, ownership, nex
       truncated: timeline.truncated,
     },
     actions: {
-      ...trace.actions,
+      ...projectActions(trace.actions),
       bounded: trace.actions.total > AUDIT_UX_LIMITS.maxActions,
     },
     approvals: projectApprovals(approvals),

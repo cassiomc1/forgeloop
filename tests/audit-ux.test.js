@@ -59,12 +59,140 @@ test("task/audit-view is a deterministic bounded read-only projection", async ()
     assert.deepEqual(checksOnly.data.timeline.items, []);
     const after = await resource(target, taskId, { afterSequence: 12, limit: 10 });
     assert.ok(after.data.timeline.items.every((item) => item.sequence > 12));
+    assert.equal(after.data.timeline.cursor.nextAfterSequence, null);
     const before = await resource(target, taskId, { beforeSequence: 13, limit: 10 });
     assert.ok(before.data.timeline.items.every((item) => item.sequence < 13));
+    assert.equal(before.data.timeline.cursor.nextBeforeSequence, 3);
+    await assert.rejects(
+      () => resource(target, taskId, { beforeSequence: 13, afterSequence: 12 }),
+      (error) => error.code === "E_AUDIT_UX_INPUT_INVALID",
+    );
     await assert.rejects(
       () => resource(target, taskId, { categories: ["../etc"] }),
       (error) => error.code === "E_AUDIT_UX_INPUT_INVALID",
     );
+  });
+});
+
+test("task/audit-view pagination is gap-free in both directions", async () => {
+  await withRecoveryTarget(async (target) => {
+    const taskId = "audit-ux-pagination";
+    await setupVerifyingTask(target, packageRoot, { taskId, requirement: "pagination" });
+    for (let index = 0; index < 20; index += 1) {
+      await recordCheck({
+        target,
+        packageRoot,
+        taskId,
+        id: `pagination-${index}`,
+        kind: "manual-review",
+        requirement: "pagination",
+        status: "passed",
+        evidenceKind: "OBSERVED",
+        result: "pagination passed",
+        exitCode: 0,
+      });
+    }
+
+    const complete = await resource(target, taskId, { limit: 200 });
+    const sequences = complete.data.timeline.items.map((item) => item.sequence);
+    assert.ok(sequences.length > 30);
+
+    const forwardStart = sequences[4];
+    const firstForward = await resource(target, taskId, { afterSequence: forwardStart, limit: 5 });
+    assert.deepEqual(firstForward.data.timeline.items.map((item) => item.sequence), sequences.slice(5, 10));
+    assert.equal(firstForward.data.timeline.cursor.nextAfterSequence, sequences[9]);
+    const secondForward = await resource(target, taskId, {
+      afterSequence: firstForward.data.timeline.cursor.nextAfterSequence,
+      limit: 5,
+    });
+    assert.deepEqual(secondForward.data.timeline.items.map((item) => item.sequence), sequences.slice(10, 15));
+
+    const collectedForward = [];
+    let afterSequence = forwardStart;
+    for (let page = 0; page < 100; page += 1) {
+      const result = await resource(target, taskId, { afterSequence, limit: 5 });
+      collectedForward.push(...result.data.timeline.items.map((item) => item.sequence));
+      const next = result.data.timeline.cursor.nextAfterSequence;
+      if (next === null) break;
+      afterSequence = next;
+    }
+    assert.deepEqual(collectedForward, sequences.slice(5));
+    assert.equal(new Set(collectedForward).size, collectedForward.length);
+
+    const backwardPages = [];
+    let beforeSequence = Number.MAX_SAFE_INTEGER;
+    for (let page = 0; page < 100; page += 1) {
+      const result = await resource(target, taskId, { beforeSequence, limit: 5 });
+      backwardPages.unshift(result.data.timeline.items.map((item) => item.sequence));
+      const next = result.data.timeline.cursor.nextBeforeSequence;
+      if (next === null) break;
+      beforeSequence = next;
+    }
+    const collectedBackward = backwardPages.flat();
+    assert.deepEqual(collectedBackward, sequences);
+    assert.equal(new Set(collectedBackward).size, sequences.length);
+
+    const checks = await resource(target, taskId, { categories: ["CHECK"], limit: 200 });
+    const checkSequences = checks.data.timeline.items.map((item) => item.sequence);
+    assert.ok(checkSequences.length >= 20);
+    const collectedChecks = [];
+    let checkCursor = checkSequences[0];
+    for (let page = 0; page < 100; page += 1) {
+      const result = await resource(target, taskId, {
+        categories: ["CHECK"],
+        afterSequence: checkCursor,
+        limit: 3,
+      });
+      collectedChecks.push(...result.data.timeline.items.map((item) => item.sequence));
+      const next = result.data.timeline.cursor.nextAfterSequence;
+      if (next === null) break;
+      checkCursor = next;
+    }
+    assert.deepEqual(collectedChecks, checkSequences.slice(1));
+    assert.equal(new Set(collectedChecks).size, collectedChecks.length);
+  });
+});
+
+test("task/audit-view redacts adversarial paths, credentials, and URL userinfo", async () => {
+  await withRecoveryTarget(async (target) => {
+    const taskId = "audit-ux-privacy";
+    const sensitive = [
+      "/etc/passwd",
+      "/root/.ssh/id_rsa",
+      "C:\\Users\\cassio\\secret.txt",
+      "\\\\server\\share\\private.txt",
+      "file:///etc/passwd",
+      "Authorization: Bearer super-secret-token",
+      "Cookie: session=abc123",
+      "password=hunter2",
+      "token=abc123",
+      "client_secret=secret-value",
+      "api_key=my-key",
+      "FORGELOOP_SECRET=environment-value",
+      "https://user:password@example.com/private",
+      "postgres://admin:password@localhost/db",
+    ];
+    const payload = sensitive.join(" | ");
+    await setupVerifyingTask(target, packageRoot, { taskId, requirement: payload });
+    await recordCheck({
+      target,
+      packageRoot,
+      taskId,
+      id: "privacy-check",
+      kind: "manual-review",
+      requirement: payload,
+      status: "passed",
+      evidenceKind: "OBSERVED",
+      result: payload,
+      exitCode: 0,
+    });
+
+    const view = await resource(target, taskId, { limit: 200 });
+    const serialized = JSON.stringify(view.data);
+    for (const value of sensitive) assert.equal(serialized.includes(value), false, value);
+    assert.match(serialized, /<path>/u);
+    assert.match(serialized, /<credential>/u);
+    assert.match(serialized, /<environment>/u);
   });
 });
 

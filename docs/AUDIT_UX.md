@@ -22,9 +22,21 @@ integrity and reason-code summaries that remain fail-closed when source
 projections are inconsistent.
 
 Timeline pagination accepts `limit`, `beforeSequence`, `afterSequence`, and a
-bounded category allowlist. The resource does not return raw event payloads,
-absolute filesystem paths, commands, environment values, credentials, or
-provider output. It never invokes a provider, executes a command, writes an
+bounded category allowlist. Without a cursor, the latest bounded page is
+returned. `beforeSequence` performs backward pagination and returns the
+nearest earlier matching events; its `nextBeforeSequence` cursor is the first
+returned sequence when another page exists. `afterSequence` performs forward
+pagination and returns the earliest later matching events; its
+`nextAfterSequence` cursor is the last returned sequence when another page
+exists. Pages never skip matching sequence numbers within the filtered event
+stream, and combining the two cursors is rejected.
+
+The projection redacts general POSIX, Windows, UNC, and local `file://`
+absolute paths; environment assignments; common credential assignments;
+authorization and cookie headers; and URL userinfo credentials. It does not
+return raw event payloads, commands, or provider output. These are presentation
+boundary redactions, not a replacement for secret-handling controls at the
+source. The resource never invokes a provider, executes a command, writes an
 artifact, changes lifecycle state, or releases claims.
 
 `auditUx` is advertised during capability discovery with version `1` and
