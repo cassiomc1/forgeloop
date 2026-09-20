@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { mkdtemp, readFile, readdir } from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import test from "node:test";
 
 import {
@@ -16,8 +18,11 @@ import {
   E_SECURITY_REVIEW_PROVIDER_UNAVAILABLE,
   E_SECURITY_REVIEW_REQUEST_INVALID,
   E_SECURITY_REVIEW_RESULT_INVALID,
+  E_SECURITY_REVIEW_OUTPUT_LIMIT,
   E_SECURITY_REVIEW_TIMEOUT,
 } from "../src/core/error-codes.js";
+import { SECURITY_REVIEW_LIMITS } from "../src/core/security-review/constants.js";
+import { removeTempTree } from "./helpers/rm-safe.js";
 
 const request = {
   projectPath: "/tmp/forge-project",
@@ -38,6 +43,30 @@ function provider(overrides = {}) {
     review: async () => ({ findings: [] }),
     ...overrides,
   };
+}
+
+async function snapshotTree(root) {
+  const snapshot = [];
+  async function visit(directory, relative = "") {
+    const entries = (await readdir(directory, { withFileTypes: true })).sort((left, right) => left.name.localeCompare(right.name));
+    for (const entry of entries) {
+      const entryRelative = relative ? path.join(relative, entry.name) : entry.name;
+      const entryPath = path.join(directory, entry.name);
+      if (entry.isDirectory()) {
+        await visit(entryPath, entryRelative);
+      } else {
+        snapshot.push([entryRelative, (await readFile(entryPath)).toString("base64")]);
+      }
+    }
+  }
+  await visit(root);
+  return snapshot;
+}
+
+function nestedValue(kind, depth) {
+  let value = "leaf";
+  for (let index = 0; index < depth; index += 1) value = kind === "array" ? [value] : { nested: value };
+  return value;
 }
 
 test("security-review registration supports object and Map entries without invoking factories", () => {
@@ -106,14 +135,51 @@ test("security-review result rejects malformed, duplicate, escaping, and authori
   assert.throws(() => normalizeSecurityReviewResult(accessor, options), (error) => error.code === E_SECURITY_REVIEW_RESULT_INVALID);
 });
 
-test("security-review is explicit, lazy, and does not mutate ForgeLoop artifacts", async () => {
+test("security-review enforces bounded snapshot depth, nodes, and unknown payload size", () => {
+  const options = { provider: provider(), taskId: request.taskId, reviewId: request.reviewId, scope: "FULL", requestedPaths: [] };
+  assert.throws(() => normalizeSecurityReviewResult({ findings: [], unknown: nestedValue("array", SECURITY_REVIEW_LIMITS.maxSnapshotDepth + 1) }, options),
+    (error) => error.code === E_SECURITY_REVIEW_OUTPUT_LIMIT);
+  assert.throws(() => normalizeSecurityReviewResult({ findings: [], unknown: nestedValue("object", SECURITY_REVIEW_LIMITS.maxSnapshotDepth + 1) }, options),
+    (error) => error.code === E_SECURITY_REVIEW_OUTPUT_LIMIT);
+  assert.throws(() => normalizeSecurityReviewResult({ findings: [], unknown: Array.from({ length: SECURITY_REVIEW_LIMITS.maxSnapshotNodes }, () => 0) }, options),
+    (error) => error.code === E_SECURITY_REVIEW_OUTPUT_LIMIT);
+  assert.throws(() => normalizeSecurityReviewResult({ findings: [], unknown: "x".repeat(SECURITY_REVIEW_LIMITS.maxSnapshotChars + 1) }, options),
+    (error) => error.code === E_SECURITY_REVIEW_OUTPUT_LIMIT);
+  const valid = normalizeSecurityReviewResult({
+    findings: [],
+    diagnostics: Array.from({ length: SECURITY_REVIEW_LIMITS.maxDiagnostics }, () => "d".repeat(SECURITY_REVIEW_LIMITS.maxDiagnosticChars)),
+  }, options);
+  assert.equal(valid.summary.total, 0);
+});
+
+test("security-review enforces selected and changed finding scope without prefix collisions", () => {
+  const selected = (requestedPaths, findingPath) => normalizeSecurityReviewResult({ findings: [{
+    id: "SEC-1", category: "SECRETS", severity: "HIGH", title: "Secret", summary: "Bounded observation.", path: findingPath,
+  }] }, { provider: provider(), taskId: request.taskId, reviewId: request.reviewId, scope: "SELECTED", requestedPaths });
+  assert.equal(selected(["src/auth.js"], "src/auth.js").findings[0].path, "src/auth.js");
+  assert.equal(selected(["src/auth.js"], "src/auth.js/helpers.js").findings[0].path, "src/auth.js/helpers.js");
+  assert.equal(selected(["src\\auth.js"], "src\\auth.js\\helpers.js").findings[0].path, "src/auth.js/helpers.js");
+  assert.throws(() => selected(["src/auth.js"], "src/payments.js"), (error) => error.code === E_SECURITY_REVIEW_RESULT_INVALID);
+  assert.throws(() => selected(["src/auth.js"], "src/authentication.js"), (error) => error.code === E_SECURITY_REVIEW_RESULT_INVALID);
+  assert.throws(() => normalizeSecurityReviewResult({ findings: [{
+    id: "SEC-1", category: "SECRETS", severity: "HIGH", title: "Secret", summary: "Bounded observation.", path: "src/payments.js",
+  }] }, { provider: provider(), taskId: request.taskId, reviewId: request.reviewId, scope: "CHANGED", requestedPaths: ["src/auth.js"] }),
+  (error) => error.code === E_SECURITY_REVIEW_RESULT_INVALID);
+  const full = normalizeSecurityReviewResult({ findings: [{
+    id: "SEC-1", category: "SECRETS", severity: "HIGH", title: "Secret", summary: "Bounded observation.", path: "src/payments.js",
+  }] }, { provider: provider(), taskId: request.taskId, reviewId: request.reviewId, scope: "FULL", requestedPaths: [] });
+  assert.equal(full.findings[0].path, "src/payments.js");
+});
+
+test("security-review is explicit, lazy, and does not mutate ForgeLoop artifacts", async (t) => {
+  const projectPath = await mkdtemp(path.join(os.tmpdir(), "forgeloop-security-review-"));
+  t.after(() => removeTempTree(projectPath));
   const context = createForgeLoopContext({ securityReviewProviders: { "test-review": provider() } });
   assert.equal(typeof context.securityReviewProviders["test-review"].review, "function");
-  const ledgerPath = ".forgeloop/task-state/a15772a08e04e8d441d09c142d349b144b392f7211517578158e0112381460c2/events.ndjson";
-  const before = readFileSync(ledgerPath, "utf8");
-  const result = await runSecurityReview({ ...request, runtimeContext: context });
+  const before = await snapshotTree(projectPath);
+  const result = await runSecurityReview({ ...request, projectPath, runtimeContext: context });
   assert.equal(result.summary.total, 0);
-  assert.deepEqual(readFileSync(ledgerPath, "utf8"), before);
+  assert.deepEqual(await snapshotTree(projectPath), before);
 });
 
 test("security-review provider failures are normalized without leaking provider data", async () => {

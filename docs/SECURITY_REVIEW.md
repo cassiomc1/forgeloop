@@ -35,10 +35,19 @@ exceptions are normalized so provider code cannot spoof ForgeLoop errors.
 ## Result contract
 
 Results are detached, deeply frozen JSON observations with bounded findings,
-diagnostics, and summary counts. Each finding has a portable relative path,
-bounded title/summary/rule/category/severity/confidence fields, and no secret-
-like content. Results carry trust metadata stating that they are observation-
-only and non-evidence.
+diagnostics, and summary counts. The raw provider snapshot is also bounded
+before schema projection: nesting is limited to 32 levels, traversal to 4096
+nodes, and snapshot strings/keys to 524288 characters. Exceeding any bound
+fails closed with `E_SECURITY_REVIEW_OUTPUT_LIMIT`.
+
+Each finding has a portable relative path, bounded title/summary/rule/category/
+severity/confidence fields, and no secret-like content. For `SELECTED` scope,
+each finding path must equal or be a descendant of one of the requested paths;
+`CHANGED` applies the same rule when an explicit changed-path set is supplied.
+Containment uses normalized `/` separators and path-component boundaries, so
+`src/auth.js` does not authorize `src/authentication.js`. `FULL` scope has no
+requested-path restriction beyond normal safe-path validation. Results carry
+trust metadata stating that they are observation-only and non-evidence.
 
 Provider output is not a pass/fail lifecycle decision. It cannot create or
 modify contracts, routes, gates, events, transactions, receipts, claims,

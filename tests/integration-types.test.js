@@ -23,10 +23,24 @@ test("published integration declarations match runtime values and compile for a 
   await writeFile(path.join(root, "package.json"), JSON.stringify({ type: "module" }));
   await writeFile(path.join(root, "consumer.ts"), `
 import { ${Object.keys(integration).join(", ")} } from "@cassiomc1/forgeloop/integration";
-import type { ForgeLoopStructuralQualityProvider } from "@cassiomc1/forgeloop/integration";
+import type { ForgeLoopSecurityReviewResult, ForgeLoopStructuralQualityProvider } from "@cassiomc1/forgeloop/integration";
 const provider: ForgeLoopStructuralQualityProvider = { id: "custom", observe: async input => ({ taskId: input.taskId }) };
 const registry = createStructuralQualityProviderRegistry({ providers: { custom: provider } });
 void registry.resolve("custom", { projectPath: ".", taskId: "example", timeoutMs: 1000, maxOutputBytes: 4096 });
+declare const securityReview: ForgeLoopSecurityReviewResult;
+const securityFindingPath: string | undefined = securityReview.findings[0]?.path;
+const securityTrust = [
+  securityReview.authority,
+  securityReview.evidenceAuthority,
+  securityReview.actionability,
+  securityReview.trustRole,
+  securityReview.persisted,
+  securityReview.lifecycleAuthority,
+  securityReview.completionAuthority,
+  securityReview.evidenceRequiresForgeLoopValidation,
+];
+void securityFindingPath;
+void securityTrust;
 // @ts-expect-error a provider must expose an observation implementation
 const invalid: ForgeLoopStructuralQualityProvider = { id: "invalid" };
 void invalid;
