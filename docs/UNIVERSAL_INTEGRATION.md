@@ -67,6 +67,31 @@ may be absent only when the canonical protocol marks it not applicable;
 presentation depth cannot change evidence, verification truth, authority,
 provenance, safety-floor, or validator-backed completion requirements.
 
+### Audit UX read model
+
+The read-only `task/audit-view` resource provides a bounded operator-facing
+projection of canonical status, audit, report, history, trace, ownership, next
+action, approvals, diagnostics, recovery, and completion data. It is suitable
+for timelines and audit panels, but it is not a lifecycle or evidence
+authority:
+
+```js
+const view = await readForgeLoopIntegrationResource("task/audit-view", {
+  taskId: "task-1",
+  limit: 50,
+  categories: ["LIFECYCLE", "CHECK", "DIAGNOSTIC"],
+});
+```
+
+Timeline items use deterministic sequence-backed IDs and explicit `null`
+timestamps when the ledger lacks an authoritative timestamp. `limit`,
+`beforeSequence`, `afterSequence`, and category filters are bounded. Raw event
+payloads, commands, environment values, credentials, absolute paths, and
+provider output are not exposed. Reading the resource performs no command,
+provider, artifact, claim, or lifecycle mutation. Use the canonical CLI/API
+commands for every state-changing operation. See [`AUDIT_UX.md`](./AUDIT_UX.md)
+for the complete projection contract.
+
 ### Repository Search boundary
 
 The Integration API exposes direct, transport-neutral repository operations:

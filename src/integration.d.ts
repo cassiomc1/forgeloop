@@ -633,10 +633,165 @@ export declare function buildExecutionProfileContext(input: {
   runtimeContext?: Record<string, unknown>;
 }): Promise<ForgeLoopExecutionProfileContext>;
 
+export type ForgeLoopAuditUxCategory =
+  | "LIFECYCLE" | "CONTRACT" | "ROUTING" | "GATE" | "CHECK" | "DIAGNOSTIC"
+  | "ACTION" | "APPROVAL" | "OWNERSHIP" | "COMPLETION" | "RECOVERY" | "INTEGRITY";
+export interface ForgeLoopAuditUxTimelineItem {
+  id: string;
+  sequence: number;
+  timestamp: string | null;
+  timestampQuality: "authoritative" | "unknown";
+  kind: string;
+  phase: string | null;
+  phaseQuality?: string;
+  status: string | null;
+  title: string;
+  summary: string;
+  category: ForgeLoopAuditUxCategory;
+}
+export interface ForgeLoopAuditUxCheckAttempt {
+  sequence: number | null;
+  timestamp: string | null;
+  status: string;
+  exitCode: number | null;
+  requirement: string | null;
+  verificationCycle: number | null;
+  provenance: string | null;
+  executionMode: string | null;
+}
+export interface ForgeLoopAuditUxCheck {
+  id: string;
+  requirement: string | null;
+  attemptCount: number;
+  failedAttempts: number;
+  currentResult: string | null;
+  attempts: readonly ForgeLoopAuditUxCheckAttempt[];
+}
+export interface ForgeLoopAuditUxOwnership {
+  claimState: string | null;
+  ownershipValid: boolean;
+  mutationAllowed: boolean;
+  recoveryStatus: string | null;
+  historicalWriteClaims: readonly string[];
+  effectiveWriteClaims: readonly string[];
+  reasonCodes: readonly string[];
+}
+export interface ForgeLoopAuditUxVerification {
+  checks: readonly ForgeLoopAuditUxCheck[];
+  checkCount: number;
+  totalAttempts: number;
+  failedAttempts: number;
+  coverage: readonly { requirement: string | null; status: string }[];
+}
+export interface ForgeLoopAuditUxCompletion {
+  state: "COMPLETE" | "INCOMPLETE";
+  valid: boolean;
+  requirementsSatisfied: boolean;
+  claimsReleased: boolean;
+  publicationStatus: string | null;
+  productionReadiness: string | null;
+  reasonCodes: readonly string[];
+  coverage: readonly { requirement: string | null; status: string }[];
+}
+export interface ForgeLoopAuditUxDiagnosticSummary {
+  legacyDiagnosisCount: number;
+  cases: readonly {
+    sequence: number;
+    timestamp: string | null;
+    verificationCycle: number | null;
+    diagnosticRevision: number | null;
+    failureClass: string | null;
+    informationGain: string | null;
+  }[];
+  caseCount: number;
+  interventionCount: number;
+  dispositionCount: number;
+  invalidRevisionCount: number;
+}
+export interface ForgeLoopAuditUxActions {
+  total: number;
+  byState: Readonly<Record<string, number>>;
+  byCapability: Readonly<Record<string, number>>;
+  required: number;
+  ambiguous: number;
+  failed: number;
+  verified: number;
+  trustedSatisfied: number;
+  untrustedRequired: number;
+  repeatedIdempotencyAttempts: number;
+  reconciliationCount: number;
+  eventCount: number;
+  bounded: boolean;
+}
+export interface ForgeLoopAuditUxResult {
+  schemaVersion: 1;
+  protocolVersion: number;
+  taskId: string | null;
+  readOnly: true;
+  authority: {
+    readOnly: true;
+    lifecycleAuthority: false;
+    evidenceAuthority: false;
+    completionAuthority: false;
+    mutationAuthority: false;
+    externalExecution: false;
+  };
+  health: {
+    phase: string | null;
+    protocolValid: boolean;
+    auditStatus: string;
+    reportVerdict: string | null;
+    completionStatus: string;
+    ownershipValid: boolean;
+    claimState: string | null;
+    mutationAllowed: boolean;
+    recoveryStatus: string | null;
+    currentNextAction: string | null;
+    historyQuality: string | null;
+    traceIntegrity: boolean;
+    reasonCodes: readonly string[];
+  };
+  lifecycle: {
+    phase: string | null;
+    status: string | null;
+    revision: number | null;
+    verificationCycle: number | null;
+    nextAction: string | null;
+    terminal: boolean;
+  };
+  timeline: {
+    items: readonly ForgeLoopAuditUxTimelineItem[];
+    totalAvailable: number;
+    truncated: boolean;
+    cursor: { beforeSequence: number | null; afterSequence: number | null; nextBeforeSequence: number | null };
+  };
+  verification: ForgeLoopAuditUxVerification;
+  ownership: ForgeLoopAuditUxOwnership;
+  diagnostics: ForgeLoopAuditUxDiagnosticSummary;
+  completion: ForgeLoopAuditUxCompletion;
+  integrity: { valid: boolean; auditStatus: string; traceValid: boolean; historyValid: boolean; reasonCodes: readonly string[] };
+  history: { quality: string | null; totalEventCount: number; returnedEventCount: number; truncated: boolean };
+  actions: ForgeLoopAuditUxActions;
+  approvals: readonly {
+    approvalId: string;
+    actionId: string | null;
+    status: string;
+    decision: string | null;
+    requestedAt: string | null;
+    resolvedAt: string | null;
+    authorityKind: string | null;
+  }[];
+  recovery: { active: boolean; status: string | null; events: readonly { sequence: number; timestamp: string | null; kind: string | null }[] };
+  links: { status: "task/status"; ownership: "task/ownership"; contract: "task/contract"; auditView: "task/audit-view" };
+}
+
 export declare const FORGELOOP_INTEGRATION_API_VERSION: number;
 export declare const FORGELOOP_INTEGRATION_RUNTIME_VERSION: number;
 export declare const CLI_COMMAND_DEFINITIONS: Readonly<Record<string, ForgeLoopCommandDefinition>>;
 export declare const INTEGRATION_LIMITS: Readonly<Record<string, number>>;
+export declare const AUDIT_UX_CATEGORIES: readonly ForgeLoopAuditUxCategory[];
+export declare const AUDIT_UX_LIMITS: Readonly<Record<string, number>>;
+export declare const AUDIT_UX_SCHEMA_VERSION: 1;
 export declare const INTEGRATION_RISK_CLASSES: Readonly<Record<string, ForgeLoopRiskClass>>;
 export declare const INTEGRATION_RESOURCE_DEFINITIONS: Readonly<Record<string, { scope: string; description: string }>>;
 export declare const VERIFICATION_EXECUTION_POLICY_MODES: readonly string[];
@@ -662,6 +817,18 @@ export declare function executeForgeLoopCommand<T = unknown>(input: {
 }): Promise<ForgeLoopCommandEnvelope<T>>;
 export declare function getForgeLoopCapabilities(input?: { packageVersion?: string | null }): Record<string, unknown>;
 export declare function classifyForgeLoopInvocation(command: string, input?: ForgeLoopCommandInput): ForgeLoopInvocationClassification;
+export declare function readForgeLoopIntegrationResource(
+  uri: "task/audit-view",
+  input: {
+    projectPath?: string;
+    packageRoot?: string;
+    taskId: string;
+    limit?: number;
+    beforeSequence?: number;
+    afterSequence?: number;
+    categories?: readonly ForgeLoopAuditUxCategory[];
+  },
+): Promise<{ uri: "task/audit-view"; taskId: string; data: ForgeLoopAuditUxResult }>;
 export declare function readForgeLoopIntegrationResource(uri: string, input?: Record<string, unknown>): Promise<Record<string, unknown>>;
 export declare function resolveForgeLoopProjectRoot(projectPath?: string, input?: { cwd?: string }): Promise<string>;
 export declare function searchRepository(request: RepositorySearchRequest & { repoRoot: string }): Promise<RepositorySearchResult>;

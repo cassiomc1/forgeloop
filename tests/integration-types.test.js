@@ -23,7 +23,7 @@ test("published integration declarations match runtime values and compile for a 
   await writeFile(path.join(root, "package.json"), JSON.stringify({ type: "module" }));
   await writeFile(path.join(root, "consumer.ts"), `
 import { ${Object.keys(integration).join(", ")} } from "@cassiomc1/forgeloop/integration";
-import type { ForgeLoopSecurityReviewResult, ForgeLoopStructuralQualityProvider } from "@cassiomc1/forgeloop/integration";
+import type { ForgeLoopAuditUxCategory, ForgeLoopAuditUxResult, ForgeLoopSecurityReviewResult, ForgeLoopStructuralQualityProvider } from "@cassiomc1/forgeloop/integration";
 const provider: ForgeLoopStructuralQualityProvider = { id: "custom", observe: async input => ({ taskId: input.taskId }) };
 const registry = createStructuralQualityProviderRegistry({ providers: { custom: provider } });
 void registry.resolve("custom", { projectPath: ".", taskId: "example", timeoutMs: 1000, maxOutputBytes: 4096 });
@@ -41,6 +41,22 @@ const securityTrust = [
 ];
 void securityFindingPath;
 void securityTrust;
+declare const auditView: ForgeLoopAuditUxResult;
+const auditCategory: ForgeLoopAuditUxCategory = "LIFECYCLE";
+const auditProjection = [
+  auditView.authority.readOnly,
+  auditView.lifecycle.nextAction,
+  auditView.timeline.items[0]?.sequence,
+  auditView.ownership.claimState,
+  auditView.completion.valid,
+];
+void auditCategory;
+void auditProjection;
+void readForgeLoopIntegrationResource("task/audit-view", {
+  taskId: "example",
+  limit: 10,
+  categories: [auditCategory],
+}).then(result => result.data.integrity.valid);
 // @ts-expect-error a provider must expose an observation implementation
 const invalid: ForgeLoopStructuralQualityProvider = { id: "invalid" };
 void invalid;

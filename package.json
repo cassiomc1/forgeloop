@@ -78,6 +78,7 @@
     "scripts/CI_VALIDATORS.md",
     "docs/MCP.md",
     "docs/UNIVERSAL_INTEGRATION.md",
+    "docs/AUDIT_UX.md",
     "docs/DIAGNOSTIC_MODEL.md",
     "docs/EXECUTION_TRACE.md",
     "docs/CODE_ATTESTATION.md",

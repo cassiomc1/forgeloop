@@ -53,7 +53,7 @@ The published tarball includes the following consumer-facing groups:
   Repository Index, Persistent Search Transport, troubleshooting, release,
   package-boundary, and related reference pages, together with the
   machine-readable documentation and protocol indexes and `CONTRIBUTING.md`.
-   The advisory-context, Ripwire, OpenSrc, and Agent Browser adapter guides ship with
+   The advisory-context, Ripwire, OpenSrc, Agent Browser, and Audit UX guides ship with
    the corresponding public integration surface.
    Provider architecture, provider reference, and Security Review provider
    documentation are also packaged.

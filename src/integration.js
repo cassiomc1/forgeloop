@@ -12,6 +12,7 @@ import {
 import { readForgeLoopIntegrationResource, INTEGRATION_RESOURCE_DEFINITIONS } from "./core/integration-resources.js";
 import { resolveForgeLoopProjectRoot } from "./core/project-root.js";
 import { INTEGRATION_LIMITS } from "./core/integration-limits.js";
+import { AUDIT_UX_CATEGORIES, AUDIT_UX_LIMITS, AUDIT_UX_SCHEMA_VERSION } from "./core/audit-ux.js";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -40,6 +41,9 @@ export {
   readForgeLoopIntegrationResource,
   resolveForgeLoopProjectRoot,
   INTEGRATION_LIMITS,
+  AUDIT_UX_CATEGORIES,
+  AUDIT_UX_LIMITS,
+  AUDIT_UX_SCHEMA_VERSION,
   INTEGRATION_RISK_CLASSES,
   INTEGRATION_RESOURCE_DEFINITIONS,
   CLI_COMMAND_DEFINITIONS,

@@ -260,6 +260,19 @@
       "packaged": true
     },
     {
+      "path": "docs/AUDIT_UX.md",
+      "id": "audit-ux",
+      "class": "reference",
+      "audience": [
+        "integrator",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "audit-ux-resource"
+      ],
+      "packaged": true
+    },
+    {
       "path": "docs/CROSS_HARNESS_CONTINUITY.md",
       "id": "cross-harness-continuity",
       "class": "guide",
