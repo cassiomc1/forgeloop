@@ -896,7 +896,7 @@ Records a gate satisfaction or rejection decision for a task's preflight gate li
 
 - **Purpose**: Records structured evidence that a named gate has been satisfied, rejected, or deferred, with optional artifact and decision evidence.
 - **When to use**: During the preflight gate lifecycle to progress gate status from pending to resolved.
-- **Mutation**: Writes a gate artifact under the task namespace and appends a `GATE_SATISFIED` or `GATE_REJECTED` protocol event.
+- **Mutation**: Writes a gate artifact under the task namespace and appends a `GATE_SATISFIED` or `GATE_REJECTED` protocol event. A `GATE_SATISFIED` event after `CONTRACT_REVISED` must be immediately followed by the canonical `TRANSACTION_COMMITTED(operation=gate-record)` witness; pre-revision historical gate events remain backward compatible. Repeated satisfied recording is event-idempotent within the current contract epoch, even if the gate artifact is refreshed.
 - **Options**:
 
 <!-- BEGIN FORGELOOP GENERATED: cli:gate-record:options -->

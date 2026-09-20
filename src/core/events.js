@@ -54,6 +54,11 @@ import {
   validateContractRevisionCurrentBinding,
   validateContractRevisionEventBindings,
 } from "./contract-revision.js";
+import {
+  GATE_SATISFIED_EVENT,
+  assertGateSatisfiedDetails,
+  validateGateSatisfactionBindings,
+} from "./gate-provenance.js";
 
 const EVENT_SCHEMA_VERSION = 1;
 export const LIFECYCLE_MILESTONES = Object.freeze([
@@ -193,6 +198,9 @@ export function validateKnownEventDetails(event) {
       return;
     case CONTRACT_REVISED_EVENT:
       assertContractRevisedDetails(event.details);
+      return;
+    case GATE_SATISFIED_EVENT:
+      assertGateSatisfiedDetails(event.details);
       return;
     case "TASK_RECOVERY_RECORDED":
       assertRecoveryRecordedDetails(event.details);
@@ -707,6 +715,7 @@ export async function validateEventLedger(target, packageRoot, options = {}) {
   });
   errors.push(...validateCheckpointRevalidationEventBindings(events));
   errors.push(...validateContractRevisionEventBindings(events));
+  errors.push(...validateGateSatisfactionBindings(events));
   const repairedErrors = validateContractBootstrapRepairLedger(events, errors, options);
   return { valid: repairedErrors.length === 0, events, errors: repairedErrors };
 }

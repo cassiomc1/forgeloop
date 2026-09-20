@@ -386,6 +386,12 @@ fresh canonical route, preflight, and plan. Historical checkpoint identity
 remains valid only when later contract and route evolution is proven by the
 canonical append-only provenance chain.
 
+`previousStateFingerprint` and `revisedStateFingerprint` on `CONTRACT_REVISED`
+are transition-time audit bindings. They are checked when the revision is the
+current state transition and participate in append-only event integrity; they
+are not treated as permanently frozen current-state identity after later
+canonical mutations.
+
 Contract revision is unavailable after `EXECUTION_STARTED` and for active
 contract-bootstrap repair or migration anchors. Do not rewrite the contract,
 state, route, or ledger files manually. If `next` reports a stale route,

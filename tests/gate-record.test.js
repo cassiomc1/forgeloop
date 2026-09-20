@@ -12,10 +12,11 @@ import { runGateRecord } from "../src/commands/gate-record.js";
 import { runPreflight } from "../src/commands/preflight.js";
 import { runRoute } from "../src/commands/route.js";
 import { runTaskCreate } from "../src/commands/task-create.js";
-import { readEvents, validateEventLedger } from "../src/core/events.js";
+import { eventHash, readEvents, validateEventLedger } from "../src/core/events.js";
 import { getNextAction, NEXT_ACTIONS } from "../src/core/next-action.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { readWorkState } from "../src/core/work-state.js";
+import { taskArtifactPath } from "../src/core/task-paths.js";
 
 const packageRoot = getPackageRoot();
 const ROUTE = Object.freeze({
@@ -54,6 +55,39 @@ async function satisfySecurityGate(target, taskId) {
     artifacts: ["THREAT_MODEL.md"],
     decisions: ["Threat boundary reviewed for this task"],
   });
+}
+
+async function prepareRevisedGateTask(target, taskId) {
+  await setupTask(target, taskId);
+  await satisfySecurityGate(target, taskId);
+  assert.equal((await runPreflight({ target, packageRoot, taskId })).status, "READY");
+  await runAdvance({ target, packageRoot, taskId, to: "PLANNED" });
+  await runContractRevise({ target, packageRoot, taskId, preset: "bug" });
+  await runRoute({ target, packageRoot, taskId, ...ROUTE });
+  await satisfySecurityGate(target, taskId);
+}
+
+async function rewriteEvents(target, taskId, transform) {
+  const eventsPath = path.join(target, taskArtifactPath(taskId, "events"));
+  const events = (await readEvents(target, packageRoot, { taskId })).map((event) => structuredClone(event));
+  const transformed = transform(events) ?? events;
+  let previousHash = null;
+  for (let index = 0; index < transformed.length; index += 1) {
+    transformed[index].seq = index + 1;
+    transformed[index].previousHash = previousHash;
+    const wrongPreviousHash = transformed[index].__wrongPreviousHash === true;
+    delete transformed[index].__wrongPreviousHash;
+    if (wrongPreviousHash) transformed[index].previousHash = "0".repeat(64);
+    transformed[index].hash = eventHash(transformed[index]);
+    previousHash = transformed[index].hash;
+  }
+  await writeFile(eventsPath, `${transformed.map((event) => JSON.stringify(event)).join("\n")}\n`);
+}
+
+function revisedGateIndexes(events) {
+  const revisionIndex = events.findIndex((event) => event.event === "CONTRACT_REVISED");
+  const gateIndex = events.findIndex((event, index) => index > revisionIndex && event.event === "GATE_SATISFIED");
+  return { revisionIndex, gateIndex };
 }
 
 test("gate-record writes current-epoch provenance and a transaction witness", async () => {
@@ -124,7 +158,14 @@ test("revised tasks can re-satisfy a gate and complete the planned execution han
     const gateCommit = events[events.indexOf(newGate) + 1];
     assert.ok(newGate.seq > revision.seq);
     assert.ok(oldGate.seq < revision.seq);
+    assert.equal(newGate.details.gate, "threat-boundary");
+    assert.equal(gateCommit.taskId, taskId);
+    assert.equal(gateCommit.seq, newGate.seq + 1);
+    assert.equal(gateCommit.previousHash, newGate.hash);
     assert.equal(gateCommit.details.operation, "gate-record");
+    assert.equal(typeof gateCommit.details.transactionId, "string");
+    assert.equal(gateCommit.hash, eventHash(gateCommit));
+    assert.equal((await validateEventLedger(target, packageRoot, { taskId })).valid, true);
 
     assert.equal((await runPreflight({ target, packageRoot, taskId })).status, "READY");
     await runAdvance({ target, packageRoot, taskId, to: "PLANNED" });
@@ -136,5 +177,48 @@ test("revised tasks can re-satisfy a gate and complete the planned execution han
     assert.equal((await getNextAction({ target, packageRoot, taskId })).nextAction, NEXT_ACTIONS.START_EXECUTION);
     await runAdvance({ target, packageRoot, taskId, to: "EXECUTING" });
     assert.equal((await readWorkState(target, { packageRoot, taskId })).phase, "EXECUTING");
+  });
+});
+
+test("post-revision gate satisfaction requires an adjacent gate-record witness", async () => {
+  const cases = [
+    ["missing commit", (events, { gateIndex }) => { events.splice(gateIndex + 1, 1); }],
+    ["wrong operation", (events, { gateIndex }) => { events[gateIndex + 1].details.operation = "route"; }],
+    ["non-adjacent commit", (events, { gateIndex }) => {
+      const commit = structuredClone(events[gateIndex + 1]);
+      commit.details = { transactionId: "unrelated-transaction", operation: "route" };
+      events.splice(gateIndex + 1, 0, commit);
+    }],
+    ["wrong task", (events, { gateIndex }) => { events[gateIndex + 1].taskId = "another-task"; }],
+    ["wrong previousHash", (events, { gateIndex }) => { events[gateIndex + 1].__wrongPreviousHash = true; }],
+  ];
+  for (const [name, mutate] of cases) {
+    await withTarget(async (target) => {
+      const taskId = `gate-provenance-${name.replaceAll(" ", "-")}`;
+      await prepareRevisedGateTask(target, taskId);
+      await rewriteEvents(target, taskId, (events) => {
+        const indexes = revisedGateIndexes(events);
+        mutate(events, indexes);
+        return events;
+      });
+      const ledger = await validateEventLedger(target, packageRoot, { taskId });
+      assert.equal(ledger.valid, false, name);
+      assert.ok(ledger.errors.some((error) => error.code === "E_EVENT_INVALID"), name);
+    });
+  }
+});
+
+test("historical pre-revision gate satisfaction remains backward compatible without a witness", async () => {
+  await withTarget(async (target) => {
+    const taskId = "gate-provenance-historical";
+    await setupTask(target, taskId);
+    await satisfySecurityGate(target, taskId);
+    await rewriteEvents(target, taskId, (events) => {
+      const gateIndex = events.findIndex((event) => event.event === "GATE_SATISFIED");
+      events.splice(gateIndex + 1, 1);
+      return events;
+    });
+    const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assert.equal(ledger.valid, true);
   });
 });
