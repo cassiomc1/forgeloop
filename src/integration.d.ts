@@ -175,6 +175,113 @@ export declare function normalizeBrowserVerificationResult(raw: unknown, options
   allowedOrigins: readonly string[];
 }): ForgeLoopBrowserVerificationResult;
 
+export type ForgeLoopSecurityReviewScope = "FULL" | "CHANGED" | "SELECTED";
+export type ForgeLoopSecurityReviewSeverity = "INFO" | "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+export type ForgeLoopSecurityReviewConfidence = "LOW" | "MEDIUM" | "HIGH";
+export type ForgeLoopSecurityReviewCategory =
+  | "DEPENDENCY" | "SECRETS" | "INJECTION" | "AUTHENTICATION" | "AUTHORIZATION"
+  | "CRYPTOGRAPHY" | "CONFIGURATION" | "NETWORK" | "FILESYSTEM" | "SUPPLY_CHAIN"
+  | "UNSAFE_EXECUTION" | "OTHER";
+export interface ForgeLoopSecurityReviewRevision {
+  base?: string;
+  head?: string;
+}
+export interface ForgeLoopSecurityReviewRequest {
+  projectPath: string;
+  taskId: string;
+  reviewId: string;
+  scope: ForgeLoopSecurityReviewScope;
+  paths?: readonly string[];
+  categories?: readonly ForgeLoopSecurityReviewCategory[];
+  requirements?: readonly string[];
+  revision?: ForgeLoopSecurityReviewRevision;
+  timeoutMs?: number;
+}
+export interface ForgeLoopSecurityReviewProvider {
+  id: string;
+  version?: string;
+  review(input: ForgeLoopSecurityReviewProviderInput): Promise<unknown> | unknown;
+}
+export interface ForgeLoopSecurityReviewProviderInput extends ForgeLoopSecurityReviewRequest {
+  signal: AbortSignal;
+  timeoutMs: number;
+}
+export interface ForgeLoopSecurityReviewProviderFactoryInput {
+  signal: AbortSignal;
+  timeoutMs: number;
+  request: ForgeLoopSecurityReviewRequest;
+}
+export type ForgeLoopSecurityReviewProviderFactory = (input: ForgeLoopSecurityReviewProviderFactoryInput) => ForgeLoopSecurityReviewProvider | Promise<ForgeLoopSecurityReviewProvider>;
+export interface ForgeLoopSecurityReviewFinding {
+  id: string;
+  category: ForgeLoopSecurityReviewCategory;
+  severity: ForgeLoopSecurityReviewSeverity;
+  title: string;
+  summary: string;
+  path?: string;
+  line?: number;
+  ruleId?: string;
+  confidence?: ForgeLoopSecurityReviewConfidence;
+}
+export interface ForgeLoopSecurityReviewSummary {
+  total: number;
+  bySeverity: Readonly<Record<ForgeLoopSecurityReviewSeverity, number>>;
+  byCategory: Readonly<Record<ForgeLoopSecurityReviewCategory, number>>;
+}
+export interface ForgeLoopSecurityReviewResult {
+  taskId: string;
+  reviewId: string;
+  scope: ForgeLoopSecurityReviewScope;
+  requestedPaths: readonly string[];
+  provider: { id: string; version?: string };
+  findings: readonly ForgeLoopSecurityReviewFinding[];
+  summary: ForgeLoopSecurityReviewSummary;
+  diagnostics: readonly string[];
+  durationMs?: number;
+  authority: "OBSERVATION";
+  evidenceAuthority: "NONE";
+  actionability: "NON_EXECUTABLE";
+  lifecycleAuthority: false;
+  completionAuthority: false;
+  persisted: false;
+  trustRole: "NON_EVIDENCE_SECURITY_REVIEW";
+  evidenceRequiresForgeLoopValidation: true;
+}
+export declare function runSecurityReview(options: ForgeLoopSecurityReviewRequest & {
+  providerName: string;
+  signal?: AbortSignal;
+  runtimeContext?: { securityReviewProviders?: object | Map<string, ForgeLoopSecurityReviewProvider | ForgeLoopSecurityReviewProviderFactory> };
+}): Promise<ForgeLoopSecurityReviewResult>;
+export declare const SECURITY_REVIEW_CATEGORIES: readonly ForgeLoopSecurityReviewCategory[];
+export declare const SECURITY_REVIEW_CONFIDENCE: readonly ForgeLoopSecurityReviewConfidence[];
+export declare const SECURITY_REVIEW_LIMITS: Readonly<Record<string, number>>;
+export declare const SECURITY_REVIEW_PROVIDER_ID_PATTERN: RegExp;
+export declare const SECURITY_REVIEW_SCOPES: readonly ForgeLoopSecurityReviewScope[];
+export declare const SECURITY_REVIEW_SEVERITIES: readonly ForgeLoopSecurityReviewSeverity[];
+export declare const SECURITY_REVIEW_TRUST: Readonly<Record<string, unknown>>;
+export declare function assertSecurityReviewProvider(provider: unknown): ForgeLoopSecurityReviewProvider;
+export declare function assertSecurityReviewProviderIdentity(provider: unknown, options?: { expectedId?: string }): { id: string; version?: string };
+export declare function assertSecurityReviewProviderRegistration(provider: unknown, expectedId: string): ForgeLoopSecurityReviewProvider;
+export declare function createSecurityReviewProviderRegistry(
+  providers?: Record<string, ForgeLoopSecurityReviewProvider | ForgeLoopSecurityReviewProviderFactory>
+    | Map<string, ForgeLoopSecurityReviewProvider | ForgeLoopSecurityReviewProviderFactory>,
+): Readonly<Record<string, ForgeLoopSecurityReviewProvider | ForgeLoopSecurityReviewProviderFactory>>;
+export declare function normalizeSecurityReviewRequest(input: Record<string, unknown>): ForgeLoopSecurityReviewRequest;
+export declare function resolveSecurityReviewProvider(
+  providers: Record<string, ForgeLoopSecurityReviewProvider | ForgeLoopSecurityReviewProviderFactory>
+    | Map<string, ForgeLoopSecurityReviewProvider | ForgeLoopSecurityReviewProviderFactory>
+    | undefined,
+  name: string,
+  input?: Partial<ForgeLoopSecurityReviewProviderFactoryInput>,
+): Promise<ForgeLoopSecurityReviewProvider>;
+export declare function normalizeSecurityReviewResult(raw: unknown, options: {
+  provider: ForgeLoopSecurityReviewProvider;
+  taskId: string;
+  reviewId: string;
+  scope: ForgeLoopSecurityReviewScope;
+  requestedPaths?: readonly string[];
+}): ForgeLoopSecurityReviewResult;
+
 export interface RepositorySearchSubmatch {
   start: number;
   end: number;
@@ -281,6 +388,7 @@ export interface ForgeLoopContext {
   structuralQualityProviders?: Readonly<Record<string, ForgeLoopStructuralQualityProvider | ForgeLoopStructuralQualityProviderFactory>>;
   advisoryContextProviders?: Readonly<Record<string, ForgeLoopAdvisoryContextProvider | ForgeLoopAdvisoryContextProviderFactory>>;
   browserVerificationProviders?: Readonly<Record<string, ForgeLoopBrowserVerificationProvider | ForgeLoopBrowserVerificationProviderFactory>> | Map<string, ForgeLoopBrowserVerificationProvider | ForgeLoopBrowserVerificationProviderFactory>;
+  securityReviewProviders?: Readonly<Record<string, ForgeLoopSecurityReviewProvider | ForgeLoopSecurityReviewProviderFactory>> | Map<string, ForgeLoopSecurityReviewProvider | ForgeLoopSecurityReviewProviderFactory>;
 }
 
 export interface ForgeLoopAdvisoryContextItem {

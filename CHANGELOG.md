@@ -1,5 +1,10 @@
 # Changelog
 
+- Added the optional host-injected Security Review provider API. It provides
+  bounded, cancellable observation-only findings with strict request/result
+  snapshots and no lifecycle, evidence, completion, claim, ownership,
+  installation, or command authority.
+
 ## Unreleased
 
 ### Added

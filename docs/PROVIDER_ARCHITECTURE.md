@@ -10,8 +10,9 @@ provider registry is internal and is not a supported package API.
 
 This document explains the common boundary around provider observations. It
 does not add generic provider registration to `createForgeLoopContext()`; the
-dedicated runtime-only `browserVerificationProviders` registration is the
-exception documented by the browser contract. It does not add CLI
+dedicated runtime-only `browserVerificationProviders` and
+`securityReviewProviders` registrations are the exceptions documented by
+their dedicated contracts. They do not add CLI
 provider commands, automatic installation, lifecycle authority, or completion
 authority.
 
@@ -100,6 +101,11 @@ provider command. Its registry is inert during context construction, its
 factory and verify call share one deadline and cooperative `AbortSignal`, and
 its final status is derived by ForgeLoop from the requested assertion results.
 The origin allowlist validates observations but is not a network sandbox.
+
+Security review is likewise an explicit Integration API operation through
+`runSecurityReview`. Its host-injected registry is inert during context
+construction. Requests and results are bounded strict snapshots, and provider
+findings remain observation-only, non-evidence, and non-executable.
 
 ## Trust Boundary
 

@@ -249,6 +249,15 @@ overall assertion-status derivation. Browser observations cannot directly
 create evidence, completion authority, claims, receipts, or next actions. The
 origin allowlist is not a network sandbox and no browser vendor is canonical.
 
+The dedicated `securityReviewProviders` runtime-context option is another
+explicit, host-injected Integration API boundary. `runSecurityReview` is
+lazy, inert during context construction, and observation-only: it does not
+install or discover scanners, mutate lifecycle artifacts, create evidence,
+authorize completion, or issue commands. ForgeLoop bounds and freezes the
+request, shares one deadline and cooperative abort signal across factory and
+review, and normalizes the result into a strict immutable observation. Findings
+must not be treated as canonical evidence or lifecycle authority.
+
 A consumer that understands `canonicalHandoffs` v1 but not v2 may disable the
 handoff-specific UI while keeping Protocol v1 core functionality available.
 Consumers must feature-detect the capability family and must not mark the

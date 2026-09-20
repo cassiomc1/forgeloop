@@ -645,6 +645,14 @@
       "packaged": true
     },
     {
+      "path": "docs/SECURITY_REVIEW.md",
+      "id": "security-review",
+      "class": "guide",
+      "audience": ["integrator", "maintainer"],
+      "canonicalFor": ["security-review-provider"],
+      "packaged": true
+    },
+    {
       "path": "docs/RIPWIRE_ADAPTER.md",
       "id": "ripwire-adapter",
       "class": "reference",

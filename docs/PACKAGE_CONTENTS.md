@@ -55,7 +55,8 @@ The published tarball includes the following consumer-facing groups:
   machine-readable documentation and protocol indexes and `CONTRIBUTING.md`.
    The advisory-context, Ripwire, OpenSrc, and Agent Browser adapter guides ship with
    the corresponding public integration surface.
-   Provider architecture and provider reference documentation are also packaged.
+   Provider architecture, provider reference, and Security Review provider
+   documentation are also packaged.
    The generated portable ForgeLoop Agent Skill and `docs/AGENT_SKILL.md` are
    packaged as instruction/documentation content, not runtime authority.
    Provider implementation modules ship under `src/`, but packaged source file

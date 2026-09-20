@@ -1332,6 +1332,25 @@ package/process recovery boundary. The relevant stable codes are
 `E_PERSISTENT_TRANSPORT_HOST_STALE`, and
 `E_PERSISTENT_TRANSPORT_PROTOCOL_MISMATCH`.
 
+### Symptom: Security Review provider is unavailable or rejected
+
+#### Error Codes: `E_SECURITY_REVIEW_PROVIDER_INVALID`, `E_SECURITY_REVIEW_PROVIDER_UNAVAILABLE`, `E_SECURITY_REVIEW_REQUEST_INVALID`, `E_SECURITY_REVIEW_RESULT_INVALID`, `E_SECURITY_REVIEW_TIMEOUT`, `E_SECURITY_REVIEW_CANCELLED`, `E_SECURITY_REVIEW_OUTPUT_LIMIT`, `E_SECURITY_REVIEW_EXECUTION_FAILED`
+
+#### What it means
+
+The optional Security Review Integration API provider was not registered,
+failed the strict provider/request/result contract, exceeded its shared
+deadline or output budget, was cancelled, or threw during observation. This
+surface is advisory and never blocks or authorizes ForgeLoop lifecycle.
+
+#### Safe recovery
+
+Register an explicit host-owned provider with a matching portable ID, use
+bounded project-relative request paths and limits, and make the provider honor
+the supplied `AbortSignal`. Do not install or discover a scanner through
+ForgeLoop, and do not treat findings as evidence, completion, commands, or
+canonical task state.
+
 ## Stable Error and Reason Codes
 
 <!-- BEGIN FORGELOOP GENERATED: public-error-codes -->
@@ -1589,6 +1608,14 @@ package/process recovery boundary. The relevant stable codes are
 | `E_ROUTE_MISSING` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
 | `E_ROUTE_REASON_MISSING` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
 | `E_ROUTE_STALE` | Routing result does not match the active contract fingerprint. | Re-run forgeloop route. |
+| `E_SECURITY_REVIEW_CANCELLED` | Security review provider execution was cancelled before a valid observation completed. | Retry only when the caller still requires the optional observation. |
+| `E_SECURITY_REVIEW_EXECUTION_FAILED` | The optional security review provider failed without producing a valid observation. | Inspect the host-provided provider and retry explicitly; provider failure never changes ForgeLoop state. |
+| `E_SECURITY_REVIEW_OUTPUT_LIMIT` | Security review provider output exceeded the bounded result limits. | Reduce findings, diagnostics, strings, or result size at the provider. |
+| `E_SECURITY_REVIEW_PROVIDER_INVALID` | Security review provider configuration or interface implementation is invalid. | Use a provider implementing id and review(input) through the explicit host-injected Integration API. |
+| `E_SECURITY_REVIEW_PROVIDER_UNAVAILABLE` | The requested security review provider is not registered in runtime context. | Register an optional host-owned provider before explicit invocation; ForgeLoop never installs one. |
+| `E_SECURITY_REVIEW_REQUEST_INVALID` | The bounded security review request failed validation. | Provide explicit scope, bounded project-relative paths, categories, requirements, identities, and timeout. |
+| `E_SECURITY_REVIEW_RESULT_INVALID` | The security review provider returned malformed or contradictory findings. | Return only bounded findings and diagnostics without authority, lifecycle, evidence, or executable fields. |
+| `E_SECURITY_REVIEW_TIMEOUT` | Security review provider execution exceeded the shared deadline. | Use a responsive provider or a bounded timeout within the supported limit; timed-out output is discarded. |
 | `E_STATE_LEDGER_DIVERGENCE` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
 | `E_STATE_MISSING` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
 | `E_STATE_MISSING_AFTER_PREFLIGHT_READY` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
