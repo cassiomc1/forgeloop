@@ -128,6 +128,13 @@ export { createRipwireAdvisoryContextProvider } from "./adapters/ripwire/provide
 export { createOpenSrcAdvisoryContextProvider } from "./adapters/opensrc/provider.js";
 export { createAgentBrowserVerificationProvider } from "./adapters/agent-browser/provider.js";
 export {
+  createEmulatedServicesProvider,
+  EMULATED_SERVICES_ERROR_CODES,
+  EMULATED_SERVICES_ID,
+  EMULATED_SERVICES_PROCESS_LIMITS,
+  EMULATED_SERVICES_SUPPORTED_VERSION,
+} from "./adapters/emulated-services/index.js";
+export {
   ADVISORY_CONTEXT_LIMITS,
   ADVISORY_CONTEXT_TRUST,
   normalizeAdvisoryRecallOptions,

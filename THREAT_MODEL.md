@@ -229,6 +229,21 @@ changing those claims:
 | Incomplete or spoofed command observations | Strict `{success:true,data}` envelopes, typed scalar observations, derived assertion status, and observation-only normalization | A real browser remains an external host capability | `tests/agent-browser-process.test.js`, `tests/agent-browser-provider.test.js` |
 | Temporary workspace overlap | Adapter-owned cwd and rejection of a configured temp root inside the verification target | Symlink and host filesystem policy remain host responsibilities | `tests/agent-browser-provider.test.js` |
 
+## Emulated Services provider boundary
+
+The optional Emulated Services adapter is a host-owned observation boundary for
+`vercel-labs/emulate` `0.11.2`. It is explicit and lazy: ForgeLoop neither
+installs nor discovers the executable and never grants the provider lifecycle,
+evidence, installation, or completion authority.
+
+| Threat | Mitigation | Residual limitation | Test evidence |
+| --- | --- | --- | --- |
+| Executable substitution or shell injection | Absolute regular executable, exact version qualification, argv-only spawn with `shell:false`, and no PATH discovery | A privileged host can replace its executable between checks | `tests/emulated-services.test.js` |
+| Ambient credential or secret leakage | Minimal environment allowlist, no raw stdout/stderr in public results, and no provider-controlled environment fields | Host process policy remains host responsibility | `tests/emulated-services.test.js` |
+| State overlap or project mutation | Random adapter-owned temporary cwd, target-root separation, and forced recursive cleanup | Host filesystem policy and symlink races remain host responsibilities | `tests/emulated-services.test.js` |
+| Unbounded child, output, or readiness | Bounded timeout, cancellation, stdout/stderr ceilings, readiness polling, SIGTERM/SIGKILL escalation, and fail-closed cleanup | A hostile child may consume resources until the OS releases it | `tests/emulated-services.test.js` |
+| Remote endpoint or authority confusion | Adapter constructs and validates loopback-only HTTP endpoints and returns detached observation-only results | The host controls the local service implementation | `tests/emulated-services.test.js` |
+
 ## Structural-quality provider boundary
 
 Structural-quality observations are untrusted external data. The built-in
