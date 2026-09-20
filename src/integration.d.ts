@@ -357,9 +357,51 @@ export interface ForgeLoopAgentBrowserProviderOptions {
   browserExecutablePath?: string;
 }
 
+/** Options for the optional, host-injected Vercel Emulated Services adapter. */
+export interface ForgeLoopEmulatedServicesProviderOptions {
+  /** Absolute host-selected executable; ForgeLoop never discovers or installs it. */
+  executablePath: string;
+  /** Exact supported version. Defaults to 0.11.2. */
+  expectedVersion?: "0.11.2";
+  /** Optional absolute host-owned temporary root, outside the target project. */
+  tempRoot?: string;
+  /** Optional absolute target root used to enforce temporary-state separation. */
+  targetRoot?: string;
+}
+
+export interface ForgeLoopEmulatedServicesStartRequest {
+  services: readonly string[];
+  basePort?: number;
+  seedPath?: string;
+  timeoutMs?: number;
+  signal?: AbortSignal;
+}
+
+export interface ForgeLoopEmulatedServicesObservation {
+  provider: { id: "emulated-services"; version: "0.11.2" };
+  services: readonly { id: string; endpoint: string }[];
+  status: "READY";
+  diagnostics: readonly string[];
+  authority: "OBSERVATION";
+  evidenceAuthority: "NONE";
+  lifecycleAuthority: false;
+  completionAuthority: false;
+  persisted: false;
+  cleanup: { status: "COMPLETED" };
+}
+
+export interface ForgeLoopEmulatedServicesProvider {
+  id: "emulated-services";
+  version: "0.11.2";
+  start(input: ForgeLoopEmulatedServicesStartRequest): Promise<ForgeLoopEmulatedServicesObservation>;
+}
+
 export declare function createAgentBrowserVerificationProvider(
   options: ForgeLoopAgentBrowserProviderOptions,
 ): ForgeLoopBrowserVerificationProvider;
+export declare function createEmulatedServicesProvider(
+  options: ForgeLoopEmulatedServicesProviderOptions,
+): ForgeLoopEmulatedServicesProvider;
 
 export interface ForgeLoopNormalizedAdvisoryContextResult {
   provider: {
@@ -491,6 +533,10 @@ export declare const INTEGRATION_RISK_CLASSES: Readonly<Record<string, ForgeLoop
 export declare const INTEGRATION_RESOURCE_DEFINITIONS: Readonly<Record<string, { scope: string; description: string }>>;
 export declare const VERIFICATION_EXECUTION_POLICY_MODES: readonly string[];
 export declare const VERIFICATION_ISOLATION_MODES: readonly string[];
+export declare const EMULATED_SERVICES_ID: "emulated-services";
+export declare const EMULATED_SERVICES_SUPPORTED_VERSION: "0.11.2";
+export declare const EMULATED_SERVICES_PROCESS_LIMITS: Readonly<Record<string, number>>;
+export declare const EMULATED_SERVICES_ERROR_CODES: Readonly<Record<string, string>>;
 
 export declare function getForgeLoopPackageVersion(): string;
 export declare function defaultCommandInputValues(): ForgeLoopCommandInput;

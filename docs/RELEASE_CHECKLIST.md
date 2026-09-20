@@ -100,6 +100,10 @@ actions.
 - [ ] No OpenSrc binary or cache ships in npm.
 - [ ] Optional Agent Browser uses a host-supplied absolute executable, has no
       runtime dependency, and keeps browser observations non-authoritative.
+- [ ] Optional Emulated Services uses a host-supplied absolute `0.11.2`
+      executable, has no runtime dependency or PATH discovery, bounds argv
+      execution/readiness/output/cleanup, keeps state outside the target, and
+      returns observation-only loopback results.
 - [ ] `next`, `status`, and `task/context` invoke zero advisory providers.
 - [ ] Advisory request budgets are normalized before provider invocation.
 - [ ] Advisory results are never persisted by ForgeLoop.

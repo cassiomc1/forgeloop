@@ -42,6 +42,18 @@ with `createAgentBrowserVerificationProvider({ executablePath, expectedVersion }
 The executable is host-owned and absolute; no package dependency or automatic
 installation is added. The adapter returns browser observations only.
 
+The optional `vercel-labs/emulate` adapter is host-injected through
+`createEmulatedServicesProvider({ executablePath, expectedVersion })`. The
+host must provide an absolute regular executable and explicitly choose the
+services and loopback port range. ForgeLoop does not install the tool, search
+`PATH`, invoke a shell, persist service state in the target project, or treat
+service output as lifecycle, evidence, installation, or completion authority.
+The supported host tool is pinned to `0.11.2`; invocation is lazy and inert
+until `provider.start(...)` is called. Each bounded operation verifies the
+qualified version, starts with argv-only execution, observes loopback
+readiness, returns a detached observation, and cleans up its temporary state
+and child process.
+
 ## Common Contract
 
 Providers are identified by an ID and kind, may resolve lazily, and receive a
