@@ -62,6 +62,7 @@ import { runDiscover } from "../commands/discover.js";
 import { runContractCreate } from "../commands/contract-create.js";
 import { runContractRevise } from "../commands/contract-revise.js";
 import { runGateRecord } from "../commands/gate-record.js";
+import { runGateRevalidate } from "../commands/gate-revalidate.js";
 import { runTaskList } from "../commands/task-list.js";
 import { runTaskShow } from "../commands/task-show.js";
 import { runTaskScope } from "../commands/task-scope.js";
@@ -124,6 +125,10 @@ export const COMMAND_EXECUTORS = {
   }),
   "gate-record": async ({ target, packageRoot, options }) => ({
     result: await runGateRecord({ target, packageRoot, taskId: options.taskId, gate: options.gate, status: options.gateStatus, artifacts: options.gateArtifacts, decisions: options.gateDecisions, unknowns: options.gateUnknowns, assumptions: options.gateAssumptions, evidenceFile: options.gateEvidenceFile }),
+    exitCode: 0,
+  }),
+  "gate-revalidate": async ({ target, packageRoot, options }) => ({
+    result: await runGateRevalidate({ target, packageRoot, taskId: options.taskId, gate: options.gate, acknowledgeStale: options.acknowledgeStale }),
     exitCode: 0,
   }),
   "protocol-info": async ({ packageVersion }) => ({
