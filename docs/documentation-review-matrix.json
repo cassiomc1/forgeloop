@@ -64,6 +64,8 @@
     { "path": "docs/RIPWIRE_ADAPTER.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/adapters/ripwire/", "src/integration.js", "tests/ripwire-advisory-provider.test.js", "docs/ADVISORY_CONTEXT.md"] },
     { "path": "docs/OPENSRC_ADAPTER.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/adapters/opensrc/", "src/integration.js", "src/integration.d.ts", "tests/opensrc-advisory-provider.test.js", "docs/ADVISORY_CONTEXT.md"] },
     { "path": "docs/REPOSITORY_INDEX.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["src/repository-index/", "src/core/cli-command-definitions.js", "src/integration.js", "integrations/mcp/src/resource-registry.js", "tests/repository-index-cli.test.js"] },
-    { "path": "docs/PERSISTENT_SEARCH_TRANSPORT.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/persistent-transport/", "src/commands/repository-index.js", "src/repository-index/search.js", "tests/persistent-transport.test.js", "tests/persistent-transport-native.test.js"] }
+    { "path": "docs/PERSISTENT_SEARCH_TRANSPORT.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/persistent-transport/", "src/commands/repository-index.js", "src/repository-index/search.js", "tests/persistent-transport.test.js", "tests/persistent-transport-native.test.js"] },
+    { "path": "docs/AGENT_BROWSER_ADAPTER.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/adapters/agent-browser/", "src/integration.js", "tests/agent-browser-provider.test.js"] },
+    { "path": "docs/AGENT_BROWSER_VERIFICATION.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["docs/AGENT_BROWSER_ADAPTER.md"] }
   ]
 }

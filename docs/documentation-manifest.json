@@ -700,6 +700,22 @@
         "persistent-search-transport"
       ],
       "packaged": true
+    },
+    {
+      "path": "docs/AGENT_BROWSER_ADAPTER.md",
+      "id": "agent-browser-adapter",
+      "class": "guide",
+      "audience": ["integrator", "maintainer"],
+      "canonicalFor": ["agent-browser-adapter"],
+      "packaged": true
+    },
+    {
+      "path": "docs/AGENT_BROWSER_VERIFICATION.md",
+      "id": "agent-browser-verification",
+      "class": "guide",
+      "audience": ["integrator", "maintainer"],
+      "canonicalFor": [],
+      "packaged": true
     }
   ]
 }

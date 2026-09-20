@@ -217,6 +217,18 @@ sandbox, lifecycle adapter, or completion bridge.
 | Arbitrary JavaScript, file/data URLs, upload/download, or credentials | Strict request allowlists reject unsupported fields and non-HTTP(S)/credential-bearing URLs. |
 | Provider session reuse or browser network access | Providers own session cleanup and network behavior; ForgeLoop makes no sandbox claim and does not install or discover browsers. |
 
+The optional Agent Browser adapter adds a concrete process boundary without
+changing those claims:
+
+| Threat | Mitigation | Residual limitation | Test evidence |
+| --- | --- | --- | --- |
+| Executable substitution or shell injection | Absolute regular executable, `shell:false`, argv arrays, lazy exact-version check, and no PATH discovery | A privileged host can replace its executable between checks | `tests/agent-browser-process.test.js`, `tests/agent-browser-provider.test.js` |
+| Session/profile or ambient credential reuse | Fresh random session, adapter-owned cwd, filtered profile/restore/state/CDP/auto-connect/plugin/auth variables, and close in `finally` | Host-level browser state outside the adapter remains host responsibility | `tests/agent-browser-provider.test.js` |
+| Origin escape or malicious redirect | ForgeLoop exact-origin validation plus Agent Browser hostname allowlist | Host/browser networking is not a general sandbox | `tests/agent-browser-provider.test.js` |
+| Screenshot or process-output leakage | Temporary screenshot bytes, portable digest refs, bounded stdout/stderr, and generic errors | Host process and filesystem policy remain outside ForgeLoop | `tests/agent-browser-process.test.js`, core normalization tests |
+| Incomplete or spoofed command observations | Strict `{success:true,data}` envelopes, typed scalar observations, derived assertion status, and observation-only normalization | A real browser remains an external host capability | `tests/agent-browser-process.test.js`, `tests/agent-browser-provider.test.js` |
+| Temporary workspace overlap | Adapter-owned cwd and rejection of a configured temp root inside the verification target | Symlink and host filesystem policy remain host responsibilities | `tests/agent-browser-provider.test.js` |
+
 ## Structural-quality provider boundary
 
 Structural-quality observations are untrusted external data. The built-in

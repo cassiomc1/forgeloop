@@ -126,6 +126,7 @@ export {
 export { normalizeBrowserVerificationResult } from "./core/browser-verification/normalize.js";
 export { createRipwireAdvisoryContextProvider } from "./adapters/ripwire/provider.js";
 export { createOpenSrcAdvisoryContextProvider } from "./adapters/opensrc/provider.js";
+export { createAgentBrowserVerificationProvider } from "./adapters/agent-browser/provider.js";
 export {
   ADVISORY_CONTEXT_LIMITS,
   ADVISORY_CONTEXT_TRUST,

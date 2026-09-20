@@ -40,6 +40,7 @@ integration and guide context. Use this map before editing documentation.
 | Provider extension reference | [`docs/PROVIDERS.md`](./docs/PROVIDERS.md) | Capability discovery, provider kinds, common contract, limits, errors, and maintainer checklist |
 | Ripwire advisory adapter | [`docs/RIPWIRE_ADAPTER.md`](./docs/RIPWIRE_ADAPTER.md) | Ripwire-specific registration, process contract, JSON mapping, limits, and verification |
 | OpenSrc advisory adapter | [`docs/OPENSRC_ADAPTER.md`](./docs/OPENSRC_ADAPTER.md) | OpenSrc-specific registration, version qualification, cache containment, deterministic search, limits, and verification |
+| Agent Browser verification adapter | [`docs/AGENT_BROWSER_ADAPTER.md`](./docs/AGENT_BROWSER_ADAPTER.md) | Optional host-owned browser executable, bounded observation mapping, isolation, exact origins, screenshots, and trust boundary |
 | Local-first MCP adapter | [`docs/MCP.md`](./docs/MCP.md) | stdio default, optional strict loopback HTTP; server modes/capabilities and canonical resources |
 | Adaptive execution-profile benchmarks | [`docs/EXECUTION_PROFILE_BENCHMARKS.md`](./docs/EXECUTION_PROFILE_BENCHMARKS.md) | Measured provider/host runs, robust statistics, paired/distribution deltas, tail status, outliers, and profile-aware host context |
 | Knowledge integration gap analysis | [`docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md`](./docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md) | Repository-only research audit of candidate coverage, proven gaps, canonical homes, context cost, and intentional skip/defer decisions |

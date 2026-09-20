@@ -182,6 +182,40 @@ function normalizeLocator(locator, label) {
   return deepFreeze({ kind: source.kind, value });
 }
 
+function normalizeWaitStep(source, index, allowedOrigins) {
+  if (source.condition === undefined || source.condition === null) {
+    throw requestError(`steps[${index}].condition is required for WAIT_FOR.`, { step: source });
+  }
+  if (!BROWSER_VERIFICATION_WAIT_CONDITIONS.includes(source.condition)) {
+    throw requestError(`steps[${index}].condition must be a supported wait condition.`, {
+      condition: source.condition,
+    });
+  }
+  const needsLocator = ["VISIBLE", "HIDDEN", "TEXT_CONTAINS"].includes(source.condition);
+  const needsExpected = ["TEXT_CONTAINS", "URL_IS", "URL_PREFIX"].includes(source.condition);
+  if (needsLocator && (source.locator === undefined || source.locator === null)) {
+    throw requestError(`steps[${index}].locator is required for ${source.condition}.`, { step: source });
+  }
+  if (needsExpected && (source.expected === undefined || source.expected === null)) {
+    throw requestError(`steps[${index}].expected is required for ${source.condition}.`, { step: source });
+  }
+  const normalized = { condition: source.condition };
+  if (source.locator !== undefined && source.locator !== null) {
+    normalized.locator = normalizeLocator(source.locator, `steps[${index}].locator`);
+  }
+  if (source.expected !== undefined && source.expected !== null) {
+    normalized.expected = toPortable(
+      `steps[${index}].expected`,
+      source.expected,
+      BROWSER_VERIFICATION_LIMITS.maxExpectedChars,
+    );
+    if (["URL_IS", "URL_PREFIX"].includes(source.condition)) {
+      assertHttpOrHttpsUrl(normalized.expected, `steps[${index}].expected`, { allowedOrigins });
+    }
+  }
+  return normalized;
+}
+
 function normalizeStep(step, index, allowedOrigins) {
   const source = assertPlainObject(step, `steps[${index}]`);
   rejectUnknown(source, ["id", "kind", "url", "locator", "text", "key", "condition", "expected"], `steps[${index}]`);
@@ -212,27 +246,7 @@ function normalizeStep(step, index, allowedOrigins) {
     }
     normalized.locator = normalizeLocator(source.locator, `steps[${index}].locator`);
     normalized.key = toPortable(`steps[${index}].key`, source.key, BROWSER_VERIFICATION_LIMITS.maxInputChars);
-  } else if (source.kind === "WAIT_FOR") {
-    if (source.condition === undefined || source.condition === null) {
-      throw requestError(`steps[${index}].condition is required for WAIT_FOR.`, { step: source });
-    }
-    if (!BROWSER_VERIFICATION_WAIT_CONDITIONS.includes(source.condition)) {
-      throw requestError(`steps[${index}].condition must be a supported wait condition.`, {
-        condition: source.condition,
-      });
-    }
-    normalized.condition = source.condition;
-    if (source.locator !== undefined && source.locator !== null) {
-      normalized.locator = normalizeLocator(source.locator, `steps[${index}].locator`);
-    }
-    if (source.expected !== undefined && source.expected !== null) {
-      normalized.expected = toPortable(
-        `steps[${index}].expected`,
-        source.expected,
-        BROWSER_VERIFICATION_LIMITS.maxExpectedChars,
-      );
-    }
-  }
+  } else if (source.kind === "WAIT_FOR") Object.assign(normalized, normalizeWaitStep(source, index, allowedOrigins));
   return deepFreeze(normalized);
 }
 

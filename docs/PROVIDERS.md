@@ -37,6 +37,11 @@ input includes task/target/requirement binding, a shared abort signal, and the
 remaining timeout. ForgeLoop validates redirects and derives overall status;
 provider output is observation only and cannot satisfy evidence or completion.
 
+The optional `agent-browser` adapter is registered through the same boundary
+with `createAgentBrowserVerificationProvider({ executablePath, expectedVersion })`.
+The executable is host-owned and absolute; no package dependency or automatic
+installation is added. The adapter returns browser observations only.
+
 ## Common Contract
 
 Providers are identified by an ID and kind, may resolve lazily, and receive a
