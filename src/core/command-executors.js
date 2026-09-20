@@ -60,6 +60,7 @@ import { runClearContinuity } from "../commands/clear-continuity.js";
 import { runTaskCreate } from "../commands/task-create.js";
 import { runDiscover } from "../commands/discover.js";
 import { runContractCreate } from "../commands/contract-create.js";
+import { runContractRevise } from "../commands/contract-revise.js";
 import { runGateRecord } from "../commands/gate-record.js";
 import { runTaskList } from "../commands/task-list.js";
 import { runTaskShow } from "../commands/task-show.js";
@@ -115,6 +116,10 @@ export const COMMAND_EXECUTORS = {
   }),
   "contract-create": async ({ target, packageRoot, options }) => ({
     result: await runContractCreate({ target, packageRoot, taskId: options.taskId, preset: options.preset, contractFile: options.contractFile }),
+    exitCode: 0,
+  }),
+  "contract-revise": async ({ target, packageRoot, options }) => ({
+    result: await runContractRevise({ target, packageRoot, taskId: options.taskId, preset: options.preset, contractFile: options.contractFile }),
     exitCode: 0,
   }),
   "gate-record": async ({ target, packageRoot, options }) => ({

@@ -129,6 +129,19 @@ function prerequisiteLedgerErrors(ledger, taskId, preflight, route) {
       [ARTIFACT_PATHS.events, ARTIFACT_PATHS.preflight, ARTIFACT_PATHS.route],
     ));
   }
+  const latestContractRevisionSeq = currentEvents.findLast((event) => event.event === "CONTRACT_REVISED")?.seq ?? 0;
+  const currentEpochSatisfiedGates = new Set(currentEvents
+    .filter((event) => event.event === "GATE_SATISFIED" && event.seq > latestContractRevisionSeq)
+    .map((event) => event.details?.gate));
+  for (const gate of preflight.requiredGates) {
+    if (!currentEpochSatisfiedGates.has(gate)) {
+      errors.push(issue(
+        "E_PHASE_CHRONOLOGY_INVALID",
+        `execution started before current-contract gate satisfaction: ${gate}`,
+        [ARTIFACT_PATHS.events, ARTIFACT_PATHS.preflight],
+      ));
+    }
+  }
   return errors;
 }
 

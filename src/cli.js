@@ -57,6 +57,7 @@ import { formatRecordDecisionCriterionResult } from "./commands/record-decision-
 import { formatNextActionResult, formatCompactNextActionResult } from "./commands/next.js";
 import { formatDiscoverResult } from "./commands/discover.js";
 import { formatContractCreateResult } from "./commands/contract-create.js";
+import { formatContractReviseResult } from "./commands/contract-revise.js";
 import { formatContinuityResult } from "./commands/continuity.js";
 import { formatRecordContinuityResult } from "./commands/record-continuity.js";
 import { formatReconcileContinuityResult } from "./commands/reconcile-continuity.js";
@@ -363,6 +364,11 @@ export const COMMAND_HANDLERS = Object.freeze({
   "contract-create": async ({ target, packageRoot, options }) => {
     const { result } = await COMMAND_EXECUTORS["contract-create"]({ target, packageRoot, options });
     renderJsonOr(options, result, formatContractCreateResult);
+    return 0;
+  },
+  "contract-revise": async ({ target, packageRoot, options }) => {
+    const { result } = await COMMAND_EXECUTORS["contract-revise"]({ target, packageRoot, options });
+    renderJsonOr(options, result, formatContractReviseResult);
     return 0;
   },
   "gate-record": async ({ target, packageRoot, options }) => {

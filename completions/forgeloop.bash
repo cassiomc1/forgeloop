@@ -29,6 +29,7 @@ _forgeloop() {
       complete) command="complete" ;;
       continuity) command="continuity" ;;
       contract-create) command="contract-create" ;;
+      contract-revise) command="contract-revise" ;;
       discover) command="discover" ;;
       doctor) command="doctor" ;;
       efficiency) command="efficiency" ;;
@@ -104,7 +105,7 @@ _forgeloop() {
     esac
   done
   if [[ -z "\${command}" && "\${cur}" != -* ]]; then
-    COMPREPLY=( $(compgen -W 'action-authorize action-propose action-reconcile action-record action-show action-verify activate advance approval-request approval-resolve attestation-create attestation-status attestation-verify attestation-verify-range audit baseline bundle checkpoint-revalidate clear-continuity clear-state complete continuity contract-create discover doctor efficiency eval gate-record handoff-accept handoff-create handoff-list handoff-show history index-rebuild index-setup index-start index-status index-stop init inspect metrics migrate-protocol next policy policy-diff policy-discover policy-status preflight prepare-completion profile-interview progress protocol-info quality-baseline quality-status quality-verify reconcile-closure reconcile-continuity record-check record-continuity record-decision-criterion record-diagnosis record-hypothesis-disposition record-intervention record-terminal-result reflect report responsibility-set responsibility-status route rule-verify run-action run-check search status task-create task-list task-lock-status task-migrate task-migrate-contract-bootstrap-repair task-recover task-repair-contract-bootstrap task-repair-legacy-recovery task-resume task-scope task-show task-unlock trace update usage-record validate-protocol validate-receipt validate-state verify-scope workspace-bind workspace-status' -- "$cur") )
+    COMPREPLY=( $(compgen -W 'action-authorize action-propose action-reconcile action-record action-show action-verify activate advance approval-request approval-resolve attestation-create attestation-status attestation-verify attestation-verify-range audit baseline bundle checkpoint-revalidate clear-continuity clear-state complete continuity contract-create contract-revise discover doctor efficiency eval gate-record handoff-accept handoff-create handoff-list handoff-show history index-rebuild index-setup index-start index-status index-stop init inspect metrics migrate-protocol next policy policy-diff policy-discover policy-status preflight prepare-completion profile-interview progress protocol-info quality-baseline quality-status quality-verify reconcile-closure reconcile-continuity record-check record-continuity record-decision-criterion record-diagnosis record-hypothesis-disposition record-intervention record-terminal-result reflect report responsibility-set responsibility-status route rule-verify run-action run-check search status task-create task-list task-lock-status task-migrate task-migrate-contract-bootstrap-repair task-recover task-repair-contract-bootstrap task-repair-legacy-recovery task-resume task-scope task-show task-unlock trace update usage-record validate-protocol validate-receipt validate-state verify-scope workspace-bind workspace-status' -- "$cur") )
     return
   fi
   case "\${command}" in
@@ -131,6 +132,7 @@ _forgeloop() {
     complete) COMPREPLY=( $(compgen -W '--help --json --path --strict --task --version' -- "$cur") );;
     continuity) COMPREPLY=( $(compgen -W '--help --json --path --task --version' -- "$cur") );;
     contract-create) COMPREPLY=( $(compgen -W '--contract-file --help --json --path --preset --task --version' -- "$cur") );;
+    contract-revise) COMPREPLY=( $(compgen -W '--contract-file --help --json --path --preset --task --version' -- "$cur") );;
     discover) COMPREPLY=( $(compgen -W '--help --json --path --task --version' -- "$cur") );;
     doctor) COMPREPLY=( $(compgen -W '--adopt --fix --help --json --path --strict --version' -- "$cur") );;
     efficiency) COMPREPLY=( $(compgen -W '--baseline --help --json --path --task --version' -- "$cur") );;

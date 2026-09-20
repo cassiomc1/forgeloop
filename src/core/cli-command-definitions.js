@@ -101,6 +101,22 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
     mayExecuteExternalProcess: false,
     description: "Persists a validated contract and materializes the first real lifecycle checkpoint.",
   }),
+  "contract-revise": Object.freeze({
+    name: "contract-revise",
+    category: "project-maintenance",
+    mutation: "MUTATING",
+    options: Object.freeze({
+      ...CLI_COMMON_OPTIONS,
+      ...CLI_TASK_OPTION,
+      "--contract-file": Object.freeze({ targetKey: "contractFile", parseType: "string", takesValue: true, valueName: "path", missingValueMessage: "--contract-file requires a path", description: "validated replacement JSON contract relative to the target" }),
+      "--preset": Object.freeze({ targetKey: "preset", parseType: "string", takesValue: true, valueName: "name", missingValueMessage: "--preset requires a name", description: "bounded replacement contract preset: documentation, bug, feature, or release" }),
+      "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit structured contract revision output as JSON" }),
+    }),
+    writes: [".forgeloop/task-state/<taskKey>/contract.json", ".forgeloop/task-state/<taskKey>/work-state.json", ".forgeloop/task-state/<taskKey>/events.ndjson"],
+    removes: [],
+    mayExecuteExternalProcess: false,
+    description: "Replaces an existing contract canonically before execution while preserving task identity and invalidating derived evidence.",
+  }),
   "gate-record": Object.freeze({
     name: "gate-record", category: "lifecycle", mutation: "MUTATING",
     options: Object.freeze({ ...CLI_COMMON_OPTIONS, ...CLI_TASK_OPTION,

@@ -48,6 +48,12 @@ import {
   validateCheckpointRevalidationCurrentBinding,
   validateCheckpointRevalidationEventBindings,
 } from "./checkpoint-revalidation.js";
+import {
+  CONTRACT_REVISED_EVENT,
+  assertContractRevisedDetails,
+  validateContractRevisionCurrentBinding,
+  validateContractRevisionEventBindings,
+} from "./contract-revision.js";
 
 const EVENT_SCHEMA_VERSION = 1;
 export const LIFECYCLE_MILESTONES = Object.freeze([
@@ -74,6 +80,48 @@ const REPEATABLE_MILESTONES = new Set([
   "TERMINAL_RESULT_RECORDED",
   "PREFLIGHT_READY",
 ]);
+
+export function isRevisionEpochPlanRepeat(events = [], index = 0, event = null) {
+  if (event?.event !== "PLAN_RECORDED") return false;
+  const previousPlan = events.slice(0, index).findLast((candidate) => candidate.event === "PLAN_RECORDED");
+  const revision = events.slice(0, index).findLast((candidate) => candidate.event === CONTRACT_REVISED_EVENT);
+  return Boolean(previousPlan && revision && previousPlan.seq < revision.seq);
+}
+
+function validateMilestoneChronology(events, index, event, milestoneCounts, lastMilestone, errors) {
+  const milestoneIndex = LIFECYCLE_MILESTONES.indexOf(event.event);
+  if (milestoneIndex < 0) return lastMilestone;
+  const count = (milestoneCounts.get(event.event) ?? 0) + 1;
+  milestoneCounts.set(event.event, count);
+  const revisionPlanRepeat = isRevisionEpochPlanRepeat(events, index, event);
+  if (count > 1 && !REPEATABLE_MILESTONES.has(event.event) && !revisionPlanRepeat) {
+    errors.push({ code: "E_PHASE_CHRONOLOGY_INVALID", message: `lifecycle milestone must not repeat: ${event.event}` });
+  }
+  if (milestoneIndex > lastMilestone + 1) {
+    errors.push({ code: "E_PHASE_CHRONOLOGY_INVALID", message: `${event.event} is missing prerequisite milestone: ${LIFECYCLE_MILESTONES[lastMilestone + 1]}` });
+  } else if (milestoneIndex < lastMilestone && event.event !== "VERIFICATION_STARTED" && event.event !== "PREFLIGHT_READY") {
+    errors.push({ code: "E_PHASE_CHRONOLOGY_INVALID", message: `${event.event} is out of lifecycle order` });
+  } else if (milestoneIndex === lastMilestone && !REPEATABLE_MILESTONES.has(event.event) && !revisionPlanRepeat) {
+    errors.push({ code: "E_PHASE_CHRONOLOGY_INVALID", message: `lifecycle milestone must not repeat: ${event.event}` });
+  }
+  if (milestoneIndex > lastMilestone) return milestoneIndex;
+  return lastMilestone;
+}
+
+function validateExecutionGateChronology(events, index, seen, errors) {
+  if (!seen.has("ROUTE_VALIDATED")) errors.push({ code: "E_PHASE_CHRONOLOGY_INVALID", message: "execution started before route validation" });
+  if (!seen.has("CONTRACT_VALIDATED")) errors.push({ code: "E_PHASE_CHRONOLOGY_INVALID", message: "execution started before contract validation" });
+  if (!seen.has("PREFLIGHT_READY")) errors.push({ code: "E_PHASE_CHRONOLOGY_INVALID", message: "execution started before preflight readiness" });
+  const preflight = events.slice(0, index).findLast((candidate) => candidate.event === "PREFLIGHT_READY");
+  const requiredGates = preflight?.details?.requiredGates ?? [];
+  const latestContractRevisionSeq = events.slice(0, index).findLast((candidate) => candidate.event === CONTRACT_REVISED_EVENT)?.seq ?? 0;
+  const satisfiedGates = new Set(events.slice(0, index)
+    .filter((candidate) => candidate.event === "GATE_SATISFIED" && candidate.seq > latestContractRevisionSeq)
+    .map((candidate) => candidate.details?.gate));
+  for (const gate of requiredGates) {
+    if (!satisfiedGates.has(gate)) errors.push({ code: "E_PHASE_CHRONOLOGY_INVALID", message: `execution started before gate satisfaction: ${gate}` });
+  }
+}
 
 function eventIndexPath(eventsPath) {
   return `${eventsPath}.index.json`;
@@ -142,6 +190,9 @@ export function validateKnownEventDetails(event) {
       return;
     case CHECKPOINT_REVALIDATED_EVENT:
       assertCheckpointRevalidatedDetails(event.details);
+      return;
+    case CONTRACT_REVISED_EVENT:
+      assertContractRevisedDetails(event.details);
       return;
     case "TASK_RECOVERY_RECORDED":
       assertRecoveryRecordedDetails(event.details);
@@ -616,50 +667,10 @@ export async function validateEventLedger(target, packageRoot, options = {}) {
     } catch (err) {
       errors.push({ code: err.code ?? "E_EVENT_INVALID", message: `event ${event.seq} (${event.event}): ${err.message}` });
     }
-    const milestoneIndex = LIFECYCLE_MILESTONES.indexOf(event.event);
-    if (milestoneIndex >= 0) {
-      const count = (milestoneCounts.get(event.event) ?? 0) + 1;
-      milestoneCounts.set(event.event, count);
-      if (count > 1 && !REPEATABLE_MILESTONES.has(event.event)) {
-        errors.push({ code: "E_PHASE_CHRONOLOGY_INVALID", message: `lifecycle milestone must not repeat: ${event.event}` });
-      }
-      if (milestoneIndex > lastMilestone + 1) {
-        errors.push({
-          code: "E_PHASE_CHRONOLOGY_INVALID",
-          message: `${event.event} is missing prerequisite milestone: ${LIFECYCLE_MILESTONES[lastMilestone + 1]}`,
-        });
-      } else if (milestoneIndex < lastMilestone && event.event !== "VERIFICATION_STARTED"
-        && event.event !== "PREFLIGHT_READY") {
-        // VERIFICATION_STARTED re-enters per verification cycle; PREFLIGHT_READY
-        // may be refreshed mid-lifecycle (policy/contract evolution) after its
-        // prerequisites were already satisfied by the earlier occurrence.
-        errors.push({ code: "E_PHASE_CHRONOLOGY_INVALID", message: `${event.event} is out of lifecycle order` });
-      } else if (milestoneIndex === lastMilestone && !REPEATABLE_MILESTONES.has(event.event)) {
-        errors.push({ code: "E_PHASE_CHRONOLOGY_INVALID", message: `lifecycle milestone must not repeat: ${event.event}` });
-      }
-      if (milestoneIndex > lastMilestone) lastMilestone = milestoneIndex;
-    }
+    lastMilestone = validateMilestoneChronology(events, index, event, milestoneCounts, lastMilestone, errors);
     seen.add(event.event);
-    if (event.event === "EXECUTION_STARTED" && !seen.has("ROUTE_VALIDATED")) {
-      errors.push({ code: "E_PHASE_CHRONOLOGY_INVALID", message: "execution started before route validation" });
-    }
-    if (event.event === "EXECUTION_STARTED" && !seen.has("CONTRACT_VALIDATED")) {
-      errors.push({ code: "E_PHASE_CHRONOLOGY_INVALID", message: "execution started before contract validation" });
-    }
-    if (event.event === "EXECUTION_STARTED" && !seen.has("PREFLIGHT_READY")) {
-      errors.push({ code: "E_PHASE_CHRONOLOGY_INVALID", message: "execution started before preflight readiness" });
-    }
     if (event.event === "EXECUTION_STARTED") {
-      const preflight = events.slice(0, index).findLast((candidate) => candidate.event === "PREFLIGHT_READY");
-      const requiredGates = preflight?.details?.requiredGates ?? [];
-      const satisfiedGates = new Set(events.slice(0, index)
-        .filter((candidate) => candidate.event === "GATE_SATISFIED")
-        .map((candidate) => candidate.details?.gate));
-      for (const gate of requiredGates) {
-        if (!satisfiedGates.has(gate)) {
-          errors.push({ code: "E_PHASE_CHRONOLOGY_INVALID", message: `execution started before gate satisfaction: ${gate}` });
-        }
-      }
+      validateExecutionGateChronology(events, index, seen, errors);
     }
     if (event.event === "VERIFICATION_RECORDED" && !seen.has("VERIFICATION_STARTED")) {
       errors.push({ code: "E_PHASE_CHRONOLOGY_INVALID", message: "verification evidence recorded before verification started" });
@@ -695,6 +706,7 @@ export async function validateEventLedger(target, packageRoot, options = {}) {
     allowUnmigratedLegacyRecoveryEvents: options?.allowUnmigratedLegacyRecoveryEvents === true,
   });
   errors.push(...validateCheckpointRevalidationEventBindings(events));
+  errors.push(...validateContractRevisionEventBindings(events));
   const repairedErrors = validateContractBootstrapRepairLedger(events, errors, options);
   return { valid: repairedErrors.length === 0, events, errors: repairedErrors };
 }
@@ -710,7 +722,10 @@ function validateContractBootstrapRepairLedger(events, errors, options) {
 }
 
 export function validateStateLedgerCoherence(state, events) {
-  const errors = [...validateCheckpointRevalidationCurrentBinding(state, events)];
+  const errors = [
+    ...validateCheckpointRevalidationCurrentBinding(state, events),
+    ...validateContractRevisionCurrentBinding(state, events),
+  ];
   if (!Number.isInteger(state.verificationCycle)) return errors;
   const taskEvents = events.filter((event) => event.taskId === state.taskId);
   const observed = new Set(taskEvents.map((event) => event.event));

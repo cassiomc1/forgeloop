@@ -274,7 +274,10 @@ export async function collectTaskClaimEvidence(target, {
   }
   if (state) {
     for (const error of validateStateLedgerCoherence(state, ledger.events)) {
-      if (error.code !== "E_CHECKPOINT_REVALIDATION_UNSAFE") continue;
+      if (![
+        "E_CHECKPOINT_REVALIDATION_UNSAFE",
+        "E_CONTRACT_REVISION_UNSAFE",
+      ].includes(error.code)) continue;
       errors.push(ownershipError(`Task state and event ledger are incoherent: ${error.message}`, error));
     }
   }

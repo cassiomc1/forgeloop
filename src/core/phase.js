@@ -5,6 +5,7 @@ import {
   LIFECYCLE_MILESTONES,
   validateEventLedger,
   validateStateLedgerCoherence,
+  isRevisionEpochPlanRepeat,
 } from "./events.js";
 import { readPersistedRoute } from "./route-artifact.js";
 import { assertWorkPhase, isValidTransition } from "./protocol.js";
@@ -177,6 +178,11 @@ function reconcileImplementationStep(state, toPhase) {
       : [...state.completedSteps, "implementation"],
     pendingSteps: state.pendingSteps.filter((step) => step !== "implementation"),
   };
+}
+
+function isRevisionPlanRepeat(events, eventType) {
+  return eventType === "PLAN_RECORDED"
+    && isRevisionEpochPlanRepeat(events, events.length, { event: eventType });
 }
 
 async function assertPhasePrerequisites(target, state, toPhase, packageRoot, authorityContext, runtimeContext, options = {}) {
@@ -437,11 +443,15 @@ async function advanceWorkStateInternal(target, toPhase, normalizedOptions) {
   }
   const repeatedReview = state.phase === "VERIFYING" && toPhase === "REVIEWING"
     && ledger.events.some((event) => event.taskId === state.taskId && event.event === "REVIEW_STARTED");
+  const revisionPlanRepeat = isRevisionPlanRepeat(ledger.events, eventType);
   if (eventType && !reenteringVerification && !repeatedReview
+    && !revisionPlanRepeat
     && ledger.events.some((event) => event.taskId === state.taskId && event.event === eventType)) {
     throw phaseError("E_PHASE_CHRONOLOGY_INVALID", `Lifecycle milestone already exists: ${eventType}`, [eventsRel]);
   }
-  const milestoneIndex = reenteringVerification || repeatedReview ? -1 : LIFECYCLE_MILESTONES.indexOf(eventType);
+  const milestoneIndex = reenteringVerification || repeatedReview || revisionPlanRepeat
+    ? -1
+    : LIFECYCLE_MILESTONES.indexOf(eventType);
   if (milestoneIndex >= 0) {
     const lastMilestone = ledger.events.reduce((last, event) => Math.max(last, LIFECYCLE_MILESTONES.indexOf(event.event)), -1);
     if (lastMilestone !== milestoneIndex - 1) {
