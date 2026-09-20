@@ -125,7 +125,8 @@ export interface ForgeLoopBrowserVerificationResult {
 }
 
 export declare function runBrowserVerification(options: {
-  target: string;
+  target?: string;
+  projectPath?: string;
   taskId: string;
   providerName: string;
   verificationId: string;
@@ -152,20 +153,26 @@ export declare function normalizeBrowserVerificationRequestOptions(input?: Recor
 export declare function assertBrowserVerificationProvider(provider: unknown): ForgeLoopBrowserVerificationProvider;
 export declare function assertBrowserVerificationProviderIdentity(provider: unknown, expectedId: string): ForgeLoopBrowserVerificationProvider;
 export declare function assertBrowserVerificationProviderRegistration(provider: unknown, expectedId: string): ForgeLoopBrowserVerificationProvider;
-export declare function createBrowserVerificationProviderRegistry(options?: {
-  providers?: Record<string, ForgeLoopBrowserVerificationProvider | ForgeLoopBrowserVerificationProviderFactory> | Map<string, ForgeLoopBrowserVerificationProvider | ForgeLoopBrowserVerificationProviderFactory>;
-}): {
-  resolve(name: string, input: ForgeLoopBrowserVerificationProviderInput): Promise<ForgeLoopBrowserVerificationProvider>;
-};
+export declare function createBrowserVerificationProviderRegistry(
+  providers?: Record<string, ForgeLoopBrowserVerificationProvider | ForgeLoopBrowserVerificationProviderFactory>
+    | Map<string, ForgeLoopBrowserVerificationProvider | ForgeLoopBrowserVerificationProviderFactory>,
+): Readonly<Record<string, ForgeLoopBrowserVerificationProvider | ForgeLoopBrowserVerificationProviderFactory>>;
 export declare function normalizeBrowserVerificationRequest(input: Record<string, unknown>): ForgeLoopBrowserVerificationRequest;
-export declare function resolveBrowserVerificationProvider(options: {
-  providers?: Record<string, ForgeLoopBrowserVerificationProvider | ForgeLoopBrowserVerificationProviderFactory> | Map<string, ForgeLoopBrowserVerificationProvider | ForgeLoopBrowserVerificationProviderFactory> | { get(id: string): unknown; has(id: string): boolean };
-  providerName: string;
-  input?: Pick<ForgeLoopBrowserVerificationProviderInput, "signal" | "timeoutMs">;
-}): Promise<ForgeLoopBrowserVerificationProvider | null>;
+export declare function resolveBrowserVerificationProvider(
+  providers: Record<string, ForgeLoopBrowserVerificationProvider | ForgeLoopBrowserVerificationProviderFactory>
+    | Map<string, ForgeLoopBrowserVerificationProvider | ForgeLoopBrowserVerificationProviderFactory>
+    | undefined,
+  name: string,
+  input?: Pick<ForgeLoopBrowserVerificationProviderInput, "signal" | "timeoutMs" | "request">,
+): Promise<ForgeLoopBrowserVerificationProvider>;
 export declare function normalizeBrowserVerificationResult(raw: unknown, options: {
-  request: ForgeLoopBrowserVerificationRequest;
   provider: ForgeLoopBrowserVerificationProvider;
+  verificationId: string;
+  taskId: string;
+  requirement: string;
+  target: string;
+  expectedAssertions: readonly ForgeLoopBrowserVerificationAssertion[];
+  allowedOrigins: readonly string[];
 }): ForgeLoopBrowserVerificationResult;
 
 export interface RepositorySearchSubmatch {

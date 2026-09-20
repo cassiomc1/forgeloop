@@ -62,6 +62,14 @@ and no lifecycle, claim, completion, evidence, or next-action fields. Calling
 `runBrowserVerification` does not mutate ForgeLoop artifacts and a PASS is never
 auto-promoted to a check or completion.
 
+Command responses must use the complete `{success: true, data}` envelope and
+scalar observations are type-checked before assertions run. Missing or extra
+envelope fields, malformed observations, non-zero exits, unsupported versions,
+cancellation, timeout, and output overflow fail closed; process success alone
+never produces a PASS. Any internal test-only temporary-root override must stay
+outside the verification target; the public TypeScript API exposes only the
+host-selected executables.
+
 ## Troubleshooting and limitations
 
 Use an absolute regular executable path and, when desired, set

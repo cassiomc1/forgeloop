@@ -52,6 +52,10 @@ Supported assertions include visibility, text, value, attribute, URL, title,
 and their documented bounded variants. Assertion results must match the
 requested IDs, kinds, cardinality, and order exactly.
 
+`WAIT_FOR` is strict: visibility, hidden-state, and text waits require a
+locator; text and URL waits require an expected value, and URL wait values must
+also be in the exact origin allowlist.
+
 ## Origins and Navigation
 
 Authored URLs and provider-reported `finalUrl` and `navigations` must use

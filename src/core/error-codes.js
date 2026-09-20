@@ -149,6 +149,9 @@ export const E_BROWSER_VERIFICATION_RESULT_INVALID = "E_BROWSER_VERIFICATION_RES
 export const E_BROWSER_VERIFICATION_TIMEOUT = "E_BROWSER_VERIFICATION_TIMEOUT";
 export const E_BROWSER_VERIFICATION_OUTPUT_LIMIT = "E_BROWSER_VERIFICATION_OUTPUT_LIMIT";
 export const E_BROWSER_VERIFICATION_ORIGIN_DENIED = "E_BROWSER_VERIFICATION_ORIGIN_DENIED";
+export const E_BROWSER_VERIFICATION_EXECUTION_FAILED = "E_BROWSER_VERIFICATION_EXECUTION_FAILED";
+export const E_BROWSER_VERIFICATION_CANCELLED = "E_BROWSER_VERIFICATION_CANCELLED";
+export const E_BROWSER_VERIFICATION_VERSION_UNSUPPORTED = "E_BROWSER_VERIFICATION_VERSION_UNSUPPORTED";
 export const E_PORTABLE_CONTEXT_INVALID = "E_PORTABLE_CONTEXT_INVALID";
 export const E_HANDOFF_ACCEPTANCE_UNBOUND = "E_HANDOFF_ACCEPTANCE_UNBOUND";
 export const E_HANDOFF_STALE = "E_HANDOFF_STALE";
@@ -430,6 +433,27 @@ const ADVISORY_CONTEXT_AND_HANDOFF_ERROR_METADATA = Object.freeze(Object.fromEnt
     classification: "PUBLIC_STABLE",
     meaning: "Browser verification navigation left the request origin allowlist.",
     safeResolution: "Add the intended origin to allowedOrigins or correct the provider navigation result.",
+  })],
+  [E_BROWSER_VERIFICATION_EXECUTION_FAILED, Object.freeze({
+    code: E_BROWSER_VERIFICATION_EXECUTION_FAILED,
+    category: "browser-verification",
+    classification: "PUBLIC_STABLE",
+    meaning: "The optional browser provider process failed without establishing a valid observation.",
+    safeResolution: "Inspect the host-provided browser executable and retry; process success is not verification success.",
+  })],
+  [E_BROWSER_VERIFICATION_CANCELLED, Object.freeze({
+    code: E_BROWSER_VERIFICATION_CANCELLED,
+    category: "browser-verification",
+    classification: "PUBLIC_STABLE",
+    meaning: "Browser verification was cancelled by its caller before a valid observation completed.",
+    safeResolution: "Retry only when the caller still requires the optional observation.",
+  })],
+  [E_BROWSER_VERIFICATION_VERSION_UNSUPPORTED, Object.freeze({
+    code: E_BROWSER_VERIFICATION_VERSION_UNSUPPORTED,
+    category: "browser-verification",
+    classification: "PUBLIC_STABLE",
+    meaning: "The configured Agent Browser version does not satisfy the provider's exact version contract.",
+    safeResolution: "Provide the expected host-qualified Agent Browser version or update the explicit executable selection.",
   })],
   [E_PORTABLE_CONTEXT_INVALID, Object.freeze({
     code: E_PORTABLE_CONTEXT_INVALID,
@@ -1623,8 +1647,11 @@ export const ALL_KNOWN_ERROR_CODES = Object.freeze(new Set([
   E_BROWSER_VERIFICATION_REQUEST_INVALID,
   E_BROWSER_VERIFICATION_RESULT_INVALID,
   E_BROWSER_VERIFICATION_TIMEOUT,
-   E_BROWSER_VERIFICATION_OUTPUT_LIMIT,
-   E_BROWSER_VERIFICATION_ORIGIN_DENIED,
+  E_BROWSER_VERIFICATION_OUTPUT_LIMIT,
+  E_BROWSER_VERIFICATION_ORIGIN_DENIED,
+  E_BROWSER_VERIFICATION_EXECUTION_FAILED,
+  E_BROWSER_VERIFICATION_CANCELLED,
+  E_BROWSER_VERIFICATION_VERSION_UNSUPPORTED,
   E_PORTABLE_CONTEXT_INVALID,
   E_HANDOFF_ACCEPTANCE_UNBOUND,
   E_HANDOFF_STALE,

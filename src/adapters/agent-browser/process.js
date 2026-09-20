@@ -4,6 +4,8 @@ import path from "node:path";
 
 import {
   E_BROWSER_VERIFICATION_OUTPUT_LIMIT,
+  E_BROWSER_VERIFICATION_CANCELLED,
+  E_BROWSER_VERIFICATION_EXECUTION_FAILED,
   E_BROWSER_VERIFICATION_PROVIDER_INVALID,
   E_BROWSER_VERIFICATION_PROVIDER_UNAVAILABLE,
   E_BROWSER_VERIFICATION_RESULT_INVALID,
@@ -117,7 +119,7 @@ export async function runAgentBrowserCommand(executablePath, args, {
   if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1) {
     throw processError(E_BROWSER_VERIFICATION_PROVIDER_INVALID, "Agent Browser timeout must be a positive integer");
   }
-  if (signal?.aborted) throw processError(E_BROWSER_VERIFICATION_TIMEOUT, "Agent Browser verification was aborted");
+  if (signal?.aborted) throw processError(E_BROWSER_VERIFICATION_CANCELLED, "Agent Browser verification was cancelled");
 
   let child;
   try {
@@ -164,7 +166,7 @@ export async function runAgentBrowserCommand(executablePath, args, {
       settled = true;
       cleanup();
       if (code !== 0) {
-        reject(processError(E_BROWSER_VERIFICATION_RESULT_INVALID, `Agent Browser command failed (${code ?? "null"}/${signalName ?? "none"})`));
+        reject(processError(E_BROWSER_VERIFICATION_EXECUTION_FAILED, `Agent Browser command failed (${code ?? "null"}/${signalName ?? "none"})`));
         return;
       }
       resolve({
@@ -173,7 +175,7 @@ export async function runAgentBrowserCommand(executablePath, args, {
         stderrBytes,
       });
     };
-    const abortListener = () => fail(processError(E_BROWSER_VERIFICATION_TIMEOUT, "Agent Browser verification was aborted"));
+    const abortListener = () => fail(processError(E_BROWSER_VERIFICATION_CANCELLED, "Agent Browser verification was cancelled"));
     child.stdout.on("data", (chunk) => {
       stdoutBytes += bytes(chunk);
       if (stdoutBytes > maxStdoutBytes) {
@@ -203,7 +205,10 @@ export function parseAgentBrowserJson(stdout, label = "Agent Browser response") 
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     throw processError(E_BROWSER_VERIFICATION_RESULT_INVALID, `${label} must be a JSON object`);
   }
-  if (value.success === false) throw processError(E_BROWSER_VERIFICATION_RESULT_INVALID, `${label} reported failure`);
+  if (value.success !== true || !Object.prototype.hasOwnProperty.call(value, "data")
+    || Object.keys(value).some((key) => !["success", "data"].includes(key))) {
+    throw processError(E_BROWSER_VERIFICATION_RESULT_INVALID, `${label} had an unsupported response envelope`);
+  }
   return value.data === undefined ? value : value.data;
 }
 

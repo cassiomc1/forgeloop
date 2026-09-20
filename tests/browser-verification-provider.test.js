@@ -58,4 +58,16 @@ test("request normalization enforces origins and freezes bounded options", () =>
     error.code === E_BROWSER_VERIFICATION_REQUEST_INVALID);
   assert.throws(() => normalizeBrowserVerificationRequest({ ...request, steps: [{ ...request.steps[0], url: "file:///tmp/test" }] }), (error) =>
     error.code === E_BROWSER_VERIFICATION_REQUEST_INVALID);
+  assert.throws(() => normalizeBrowserVerificationRequest({
+    ...request,
+    steps: [{ id: "wait", kind: "WAIT_FOR", condition: "VISIBLE" }],
+  }), (error) => error.code === E_BROWSER_VERIFICATION_REQUEST_INVALID);
+  assert.throws(() => normalizeBrowserVerificationRequest({
+    ...request,
+    steps: [{ id: "wait", kind: "WAIT_FOR", condition: "URL_PREFIX", expected: "https://other.example.test" }],
+  }), (error) => error.code === E_BROWSER_VERIFICATION_REQUEST_INVALID);
+  assert.doesNotThrow(() => normalizeBrowserVerificationRequest({
+    ...request,
+    steps: [{ id: "wait", kind: "WAIT_FOR", condition: "URL_PREFIX", expected: "https://app.example.test" }],
+  }));
 });

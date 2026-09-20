@@ -10,6 +10,7 @@ import { createAgentBrowserVerificationProvider } from "../src/adapters/agent-br
 import { createForgeLoopContext } from "../src/core/runtime-context.js";
 import { runBrowserVerification } from "../src/core/browser-verification/service.js";
 import {
+  E_BROWSER_VERIFICATION_VERSION_UNSUPPORTED,
   E_BROWSER_VERIFICATION_ORIGIN_DENIED,
 } from "../src/core/error-codes.js";
 
@@ -83,7 +84,7 @@ test("Agent Browser provider rejects version mismatch and exact-origin escape", 
   try {
     const mismatch = createAgentBrowserVerificationProvider({ executablePath: executable, expectedVersion: "9.9.9", spawnImpl: scriptedSpawn([]) });
     const context = createForgeLoopContext({ browserVerificationProviders: { "agent-browser": mismatch } });
-    await assert.rejects(() => runBrowserVerification({ ...request(), runtimeContext: context }), (error) => error.code === "E_BROWSER_VERIFICATION_PROVIDER_UNAVAILABLE");
+    await assert.rejects(() => runBrowserVerification({ ...request(), runtimeContext: context }), (error) => error.code === E_BROWSER_VERIFICATION_VERSION_UNSUPPORTED);
 
     const calls = [];
     const provider = createAgentBrowserVerificationProvider({
@@ -132,6 +133,43 @@ test("Agent Browser provider supports snapshot locators, wait, assertion order, 
     assert.equal(result.artifacts.length, 1);
     assert.equal(result.artifacts[0].kind, "SCREENSHOT");
     assert.match(result.artifacts[0].ref, /^agent-browser\/checkout\/[a-f0-9]{64}\.png$/u);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("Agent Browser malformed command envelopes and scalar observations fail closed", async () => {
+  const { root, executable } = await setup();
+  try {
+    const provider = createAgentBrowserVerificationProvider({
+      executablePath: executable,
+      spawnImpl: (file, args, options) => {
+        const output = args.includes("--version")
+          ? "process.stdout.write('agent-browser 0.38.1\\n')"
+          : "process.stdout.write(JSON.stringify({success:true}))";
+        return spawn(process.execPath, ["-e", output], options);
+      },
+    });
+    const result = await runBrowserVerification({
+      ...request(),
+      runtimeContext: createForgeLoopContext({ browserVerificationProviders: { "agent-browser": provider } }),
+    });
+    assert.equal(result.status, "BLOCKED");
+    assert.equal(result.assertions.every((item) => item.status === "BLOCKED"), true);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("Agent Browser temporary roots cannot overlap the verification target", async () => {
+  const { root, executable } = await setup();
+  try {
+    const provider = createAgentBrowserVerificationProvider({ executablePath: executable, tempRoot: root, spawnImpl: scriptedSpawn([]) });
+    await assert.rejects(() => runBrowserVerification({
+      ...request(),
+      target: root,
+      runtimeContext: createForgeLoopContext({ browserVerificationProviders: { "agent-browser": provider } }),
+    }), (error) => error.code === "E_BROWSER_VERIFICATION_PROVIDER_INVALID");
   } finally {
     await rm(root, { recursive: true, force: true });
   }

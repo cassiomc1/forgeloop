@@ -6,10 +6,13 @@ import path from "node:path";
 
 import {
   E_BROWSER_VERIFICATION_ORIGIN_DENIED,
+  E_BROWSER_VERIFICATION_CANCELLED,
+  E_BROWSER_VERIFICATION_EXECUTION_FAILED,
   E_BROWSER_VERIFICATION_PROVIDER_INVALID,
   E_BROWSER_VERIFICATION_PROVIDER_UNAVAILABLE,
   E_BROWSER_VERIFICATION_RESULT_INVALID,
   E_BROWSER_VERIFICATION_TIMEOUT,
+  E_BROWSER_VERIFICATION_VERSION_UNSUPPORTED,
 } from "../../core/error-codes.js";
 import { assertAbsoluteRegularFile, parseAgentBrowserJson, runAgentBrowserCommand, AGENT_BROWSER_PROCESS_LIMITS } from "./process.js";
 import {
@@ -18,7 +21,7 @@ import {
   versionCommand, visibleCommand,
 } from "./commands.js";
 import { resolveSnapshotLocator } from "./locator.js";
-import { actualValue, assertionResult, matchesAssertion } from "./assertions.js";
+import { observedScalar, assertionResult, matchesAssertion } from "./assertions.js";
 
 function providerError(code, message) {
   const error = new Error(message);
@@ -59,7 +62,27 @@ function verifyOrigin(value, allowedOrigins) {
   return value;
 }
 
-function dataValue(data) { return actualValue(data); }
+function dataValue(data, label) { return observedScalar(data, label); }
+
+function assertBooleanObservation(data, label) {
+  const value = dataValue(data, label);
+  if (value !== "true" && value !== "false") {
+    throw providerError(E_BROWSER_VERIFICATION_RESULT_INVALID, `${label} was not boolean`);
+  }
+  return value;
+}
+
+function isWithin(parent, child) {
+  const relative = path.relative(path.resolve(parent), path.resolve(child));
+  return relative === "" || (!relative.startsWith(`..${path.sep}`) && relative !== "..");
+}
+
+function assertTempRootOutsideTarget(root, target) {
+  if (typeof target !== "string" || !path.isAbsolute(target)) return;
+  if (isWithin(target, root)) {
+    throw providerError(E_BROWSER_VERIFICATION_PROVIDER_INVALID, "Agent Browser tempRoot must be outside the verification target");
+  }
+}
 
 function resultWithAssertions(assertions, finalUrl, navigations, diagnostics = [], snapshots = [], artifacts = []) {
   return { assertions, finalUrl, navigations, diagnostics, snapshots, artifacts };
@@ -69,11 +92,22 @@ function blockedAssertions(request, message) {
   return request.assertions.map((assertion) => assertionResult(assertion, "BLOCKED", undefined, message));
 }
 
-async function createCwd(tempRoot, fsImpl) {
+async function createCwd(tempRoot, fsImpl, target) {
   const root = tempRoot ?? os.tmpdir();
   if (typeof root !== "string" || !path.isAbsolute(root)) throw providerError(E_BROWSER_VERIFICATION_PROVIDER_INVALID, "Agent Browser tempRoot must be absolute");
+  assertTempRootOutsideTarget(root, target);
   const make = fsImpl?.mkdtemp ?? mkdtemp;
-  return make(path.join(root, "forgeloop-agent-browser-"));
+  const cwd = await make(path.join(root, "forgeloop-agent-browser-"));
+  try {
+    if (typeof cwd !== "string" || !path.isAbsolute(cwd)) {
+      throw providerError(E_BROWSER_VERIFICATION_PROVIDER_INVALID, "Agent Browser temporary cwd is invalid");
+    }
+    assertTempRootOutsideTarget(cwd, target);
+  } catch (error) {
+    try { await fsImpl?.rm?.(cwd, { recursive: true, force: true }); } catch { /* preserve the boundary failure */ }
+    throw error;
+  }
+  return cwd;
 }
 
 function screenshotRef(verificationId, digest) { return `agent-browser/${verificationId}/${digest}.png`; }
@@ -84,10 +118,13 @@ async function executeWait(step, { invoke, resolve, readUrl, deadline, clock }) 
   while (!satisfied) {
     if (clock.now() >= waitDeadline) throw providerError(E_BROWSER_VERIFICATION_TIMEOUT, "Agent Browser wait condition timed out");
     if (step.condition === "VISIBLE" || step.condition === "HIDDEN") {
-      const visible = dataValue(await invoke(visibleCommand, { selector: await resolve(step.locator) })) === "true";
+      const visible = assertBooleanObservation(
+        await invoke(visibleCommand, { selector: await resolve(step.locator) }),
+        "Agent Browser visibility",
+      ) === "true";
       satisfied = step.condition === "VISIBLE" ? visible : !visible;
     } else if (step.condition === "TEXT_CONTAINS") {
-      const text = dataValue(await invoke(textCommand, { selector: await resolve(step.locator) }));
+      const text = dataValue(await invoke(textCommand, { selector: await resolve(step.locator) }), "Agent Browser wait text");
       satisfied = text.includes(step.expected ?? "");
     } else {
       const url = await readUrl();
@@ -125,17 +162,17 @@ async function executeSteps(request, helpers, navigations) {
 
 async function readAssertionValue(assertion, { invoke, resolve, readUrl }) {
   if (assertion.kind === "VISIBLE" || assertion.kind === "HIDDEN") {
-    return dataValue(await invoke(visibleCommand, { selector: await resolve(assertion.locator) }));
+    return assertBooleanObservation(await invoke(visibleCommand, { selector: await resolve(assertion.locator) }), "Agent Browser visibility");
   }
   if (assertion.kind === "TEXT_CONTAINS" || assertion.kind === "TEXT_EQUALS") {
-    return dataValue(await invoke(textCommand, { selector: await resolve(assertion.locator) }));
+    return dataValue(await invoke(textCommand, { selector: await resolve(assertion.locator) }), "Agent Browser text");
   }
-  if (assertion.kind === "VALUE_EQUALS") return dataValue(await invoke(valueCommand, { selector: await resolve(assertion.locator) }));
+  if (assertion.kind === "VALUE_EQUALS") return dataValue(await invoke(valueCommand, { selector: await resolve(assertion.locator) }), "Agent Browser value");
   if (assertion.kind === "ATTRIBUTE_EQUALS") {
-    return dataValue(await invoke(attributeCommand, { selector: await resolve(assertion.locator), attribute: assertion.attribute }));
+    return dataValue(await invoke(attributeCommand, { selector: await resolve(assertion.locator), attribute: assertion.attribute }), "Agent Browser attribute");
   }
   if (assertion.kind === "URL_IS" || assertion.kind === "URL_PREFIX") return readUrl();
-  return dataValue(await invoke(titleCommand));
+  return dataValue(await invoke(titleCommand), "Agent Browser title");
 }
 
 async function executeAssertions(request, helpers) {
@@ -217,7 +254,7 @@ export function createAgentBrowserVerificationProvider({
       const artifacts = [];
       let currentUrl = request.startUrl;
       try {
-        cwd = await createCwd(tempRoot, fileSystem);
+        cwd = await createCwd(tempRoot, fileSystem, request.target);
         const versionOutput = await runAgentBrowserCommand(executable, versionCommand(), {
           cwd, timeoutMs: remaining(deadline), signal: request.signal, spawnImpl, env,
           maxStdoutBytes: AGENT_BROWSER_PROCESS_LIMITS.maxVersionBytes,
@@ -225,11 +262,11 @@ export function createAgentBrowserVerificationProvider({
         });
         const version = parseVersion(versionOutput.stdout);
         if (expectedVersionValue !== undefined && version !== expectedVersionValue) {
-          throw providerError(E_BROWSER_VERIFICATION_PROVIDER_INVALID, "Agent Browser version does not match expectedVersion");
+          throw providerError(E_BROWSER_VERIFICATION_VERSION_UNSUPPORTED, "Agent Browser version does not match expectedVersion");
         }
 
         const readUrl = async () => {
-          const value = dataValue(await invoke(urlCommand));
+          const value = dataValue(await invoke(urlCommand), "Agent Browser URL");
           currentUrl = verifyOrigin(value, request.allowedOrigins);
           return currentUrl;
         };
@@ -250,8 +287,10 @@ export function createAgentBrowserVerificationProvider({
         currentUrl = await readUrl();
         return resultWithAssertions(results, currentUrl, navigations, diagnostics, snapshots, artifacts);
       } catch (error) {
-        if ([E_BROWSER_VERIFICATION_TIMEOUT, E_BROWSER_VERIFICATION_ORIGIN_DENIED, E_BROWSER_VERIFICATION_PROVIDER_INVALID].includes(error.code)) throw error;
+        if ([E_BROWSER_VERIFICATION_TIMEOUT, E_BROWSER_VERIFICATION_CANCELLED, E_BROWSER_VERIFICATION_ORIGIN_DENIED,
+          E_BROWSER_VERIFICATION_PROVIDER_INVALID, E_BROWSER_VERIFICATION_VERSION_UNSUPPORTED].includes(error.code)) throw error;
         if (error.code === E_BROWSER_VERIFICATION_PROVIDER_UNAVAILABLE) throw error;
+        if (error.code === E_BROWSER_VERIFICATION_EXECUTION_FAILED) throw error;
         return { assertions: blockedAssertions(request, "Browser verification could not complete"), finalUrl: currentUrl, navigations, diagnostics, snapshots, artifacts };
       } finally {
         if (cwd && !closed) {
