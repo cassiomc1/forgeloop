@@ -157,13 +157,27 @@ test("task/audit-view redacts adversarial paths, credentials, and URL userinfo",
   await withRecoveryTarget(async (target) => {
     const taskId = "audit-ux-privacy";
     const sensitive = [
+      "Cookie: session=abc123; csrf=xyz789; preference=dark",
+      "token=private-token",
+      "file=/secret",
+      "Authorization: Bearer bearer-secret",
+      "https://user:password@example.com/private",
+      "/secret",
+      "/config",
+      "/root",
+      "/token",
       "/etc/passwd",
       "/root/.ssh/id_rsa",
+      "/opt/service/config.json",
       "C:\\Users\\cassio\\secret.txt",
       "\\\\server\\share\\private.txt",
       "file:///etc/passwd",
       "Authorization: Bearer super-secret-token",
-      "Cookie: session=abc123",
+      "Authorization: Basic basic-secret",
+      "Set-Cookie: session=secret-token; Path=/; HttpOnly; Secure",
+      "Set-Cookie: auth=secret-token; SameSite=None; Secure",
+      "cookie: session=abc123; csrf=xyz789",
+      "SET-COOKIE: auth=secret-token; Secure",
       "password=hunter2",
       "token=abc123",
       "client_secret=secret-value",
@@ -172,24 +186,55 @@ test("task/audit-view redacts adversarial paths, credentials, and URL userinfo",
       "https://user:password@example.com/private",
       "postgres://admin:password@localhost/db",
     ];
-    const payload = sensitive.join(" | ");
-    await setupVerifyingTask(target, packageRoot, { taskId, requirement: payload });
+    const ordinaryUrls = [
+      "https://example.com/api/v1",
+      "http://127.0.0.1:3000/health",
+      "postgres://host/database",
+    ];
+    await setupVerifyingTask(target, packageRoot, { taskId, requirement: "privacy" });
+    const payloads = [];
+    for (let index = 0; index < sensitive.length; index += 5) {
+      payloads.push(sensitive.slice(index, index + 5).join("\n"));
+    }
+    for (const [index, payload] of payloads.entries()) {
+      await recordCheck({
+        target,
+        packageRoot,
+        taskId,
+        id: `privacy-check-${index}`,
+        kind: "manual-review",
+        requirement: payload,
+        status: "passed",
+        evidenceKind: "OBSERVED",
+        result: payload,
+        exitCode: 0,
+      });
+    }
+    const ordinaryPayload = ordinaryUrls.join("\n");
     await recordCheck({
       target,
       packageRoot,
       taskId,
-      id: "privacy-check",
+      id: "ordinary-urls",
       kind: "manual-review",
-      requirement: payload,
+      requirement: ordinaryPayload,
       status: "passed",
       evidenceKind: "OBSERVED",
-      result: payload,
+      result: ordinaryPayload,
       exitCode: 0,
     });
 
     const view = await resource(target, taskId, { limit: 200 });
     const serialized = JSON.stringify(view.data);
     for (const value of sensitive) assert.equal(serialized.includes(value), false, value);
+    for (const value of ["abc123", "xyz789", "dark", "secret-token", "private-token", "bearer-secret", "/secret", "user:password"]) {
+      assert.equal(serialized.includes(value), false, value);
+    }
+    for (const value of ordinaryUrls) assert.ok(serialized.includes(value), value);
+    assert.match(serialized, /Cookie: <credential>/u);
+    assert.match(serialized, /Set-Cookie: <credential>/u);
+    assert.match(serialized, /cookie: <credential>/u);
+    assert.match(serialized, /SET-COOKIE: <credential>/u);
     assert.match(serialized, /<path>/u);
     assert.match(serialized, /<credential>/u);
     assert.match(serialized, /<environment>/u);

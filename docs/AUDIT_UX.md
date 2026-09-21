@@ -31,13 +31,14 @@ pagination and returns the earliest later matching events; its
 exists. Pages never skip matching sequence numbers within the filtered event
 stream, and combining the two cursors is rejected.
 
-The projection redacts general POSIX, Windows, UNC, and local `file://`
-absolute paths; environment assignments; common credential assignments;
-authorization and cookie headers; and URL userinfo credentials. It does not
-return raw event payloads, commands, or provider output. These are presentation
-boundary redactions, not a replacement for secret-handling controls at the
-source. The resource never invokes a provider, executes a command, writes an
-artifact, changes lifecycle state, or releases claims.
+The projection redacts general POSIX (including single-segment), Windows, UNC,
+and local `file://` absolute paths; environment assignments; common credential
+assignments; authorization headers; complete `Cookie` and `Set-Cookie` header
+values; and URL userinfo credentials. It does not return raw event payloads,
+commands, or provider output. These are presentation-boundary redactions, not a
+replacement for secret-handling controls at the source. The resource never
+invokes a provider, executes a command, writes an artifact, changes lifecycle
+state, or releases claims.
 
 `auditUx` is advertised during capability discovery with version `1` and
 `readOnly: true`. Hosts must use the canonical CLI/API lifecycle commands for

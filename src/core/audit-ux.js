@@ -93,19 +93,25 @@ function boundedText(value, fallback = null) {
 }
 
 const URL_USERINFO_PATTERN = /\b([A-Za-z][A-Za-z0-9+.-]*):\/\/[^/\s@?#]+@/gu;
-const CREDENTIAL_HEADER_PATTERN = /\b(Authorization|Proxy-Authorization|Cookie|Set-Cookie)\s*:\s*(?:(?:Bearer|Basic)\s+)?[^\s,;]+/giu;
+const COOKIE_HEADER_PATTERN = /\b(Cookie|Set-Cookie)\s*:\s*[^\r\n]*/giu;
+const CREDENTIAL_HEADER_PATTERN = /\b(Authorization|Proxy-Authorization)\s*:\s*(?:(?:Bearer|Basic)\s+)?[^\s,;]+/giu;
 const CREDENTIAL_ASSIGNMENT_PATTERN = /\b(password|passwd|token|access_token|refresh_token|secret|client_secret|api_key|apikey)\s*=\s*[^\s,;]+/giu;
 const ENVIRONMENT_PATTERN = /\b(?!(?:PASSWORD|PASSWD|TOKEN|ACCESS_TOKEN|REFRESH_TOKEN|SECRET|CLIENT_SECRET|API_KEY|APIKEY)\b)[A-Z_][A-Z0-9_]{2,}=[^\s,;]+/gu;
 const FILE_URL_PATTERN = /\bfile:\/\/[^\s,;)]*/giu;
 const WINDOWS_PATH_PATTERN = /(?:\b[A-Za-z]:[\\/]|\\\\)[^\s,;)]*/gu;
-const POSIX_PATH_PATTERN = /(^|[^\w])\/(?:[A-Za-z0-9._~-]+\/)+[A-Za-z0-9._~-]*/gu;
+const POSIX_PATH_PATTERN = /(^|[^\w])\/(?:[A-Za-z0-9._~-]+(?:\/[A-Za-z0-9._~-]+)*)/gu;
 const URL_PATTERN = /\b[A-Za-z][A-Za-z0-9+.-]*:\/\/[^\s,;)]*/gu;
 
 function safeText(value, fallback = null) {
-  const text = boundedText(value, fallback);
-  if (!text) return text;
+  if (typeof value !== "string") return fallback;
+  const bounded = value.length > AUDIT_UX_LIMITS.maxStringLength
+    ? `${value.slice(0, AUDIT_UX_LIMITS.maxStringLength - 1)}…`
+    : value;
+  const text = bounded.trim();
+  if (!text) return fallback;
   let redacted = text
     .replace(URL_USERINFO_PATTERN, "$1://<credential>@")
+    .replace(COOKIE_HEADER_PATTERN, "$1: <credential>")
     .replace(CREDENTIAL_HEADER_PATTERN, "$1: <credential>")
     .replace(CREDENTIAL_ASSIGNMENT_PATTERN, "$1=<credential>")
     .replace(ENVIRONMENT_PATTERN, "<environment>")
@@ -119,7 +125,10 @@ function safeText(value, fallback = null) {
     return token;
   });
   redacted = redacted.replace(POSIX_PATH_PATTERN, "$1<path>");
-  return redacted.replace(/__AUDIT_UX_URL_(\d+)__/gu, (_, index) => urls[Number(index)]);
+  return boundedText(
+    redacted.replace(/__AUDIT_UX_URL_(\d+)__/gu, (_, index) => urls[Number(index)]),
+    fallback,
+  );
 }
 
 function safeIdentifier(value) {
