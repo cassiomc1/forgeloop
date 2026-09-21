@@ -89,6 +89,7 @@ export const INTEGRATION_RESOURCE_DEFINITIONS = Object.freeze({
   "task/context": Object.freeze({ scope: "TASK", description: "Read-only profile-aware task context with bounded presentation policy." }),
   "task/audit-view": Object.freeze({ scope: "TASK", description: "Bounded read-only Audit UX projection composed from canonical task resolvers." }),
   "task/evaluations": Object.freeze({ scope: "TASK", description: "Persisted trajectory evaluations for one task." }),
+  "task/decisions": Object.freeze({ scope: "TASK", description: "Persisted, fingerprint-bound semantic decisions without lifecycle or evidence authority." }),
   "project/capability-policy": Object.freeze({ scope: "PROJECT", description: "Project capability policy, never host authority." }),
   "repository/index-status": Object.freeze({ scope: "PROJECT", description: "Provider-neutral repository-index health and owned-server status." }),
 });
@@ -183,6 +184,12 @@ async function readForgeLoopIntegrationResourceCore(uri, {
       }
       break;
     }
+    case "task/decisions": {
+      if (typeof taskId !== "string" || !taskId) {
+        const error = new Error(`Resource ${uri} requires a taskId`); error.code = "E_TASK_REQUIRED"; throw error;
+      }
+      break;
+    }
   }
 
   if (uri === "task/ownership") {
@@ -271,6 +278,15 @@ async function readForgeLoopIntegrationResourceCore(uri, {
       evaluations.push((await readJsonArtifact(projectPath, `${taskDirectory(taskId)}/evaluations/${name}`, "trajectory-evaluation", packageRoot)).value);
     }
     return { uri, taskId, data: { evaluations } };
+  }
+  if (uri === "task/decisions") {
+    const dir = path.join(projectPath, taskDirectory(taskId), "decisions");
+    let names = []; try { names = await readdir(dir); } catch { /* absent is an empty projection */ }
+    const decisions = [];
+    for (const name of names.filter((entry) => /^[A-Za-z0-9][A-Za-z0-9_-]{0,127}\.json$/.test(entry)).sort()) {
+      decisions.push((await readJsonArtifact(projectPath, `${taskDirectory(taskId)}/decisions/${name}`, "semantic-decision", packageRoot)).value);
+    }
+    return { uri, taskId, data: { taskId, decisions } };
   }
   if (uri === "project/capability-policy") {
     return { uri, data: await loadCapabilityPolicy(projectPath, packageRoot) };

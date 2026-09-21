@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/semantic-decision.schema.json",
+  "title": "ForgeLoop semantic decision",
+  "type": "object",
+  "required": ["schemaVersion", "protocolVersion", "taskId", "decisionKind", "engine", "model", "questionSetId", "questionSetVersion", "questionSetFingerprint", "policyVersion", "stateFingerprint", "policyFingerprint", "answers", "confidence", "decision", "usage", "authority", "evidenceAuthority", "lifecycleAuthority", "completionAuthority", "ownershipAuthority", "installationAuthority", "recordedAt"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "protocolVersion": { "const": 1 },
+    "taskId": { "type": "string", "minLength": 1 },
+    "decisionKind": { "type": "string", "minLength": 1 },
+    "engine": { "const": "typesafe-jev" },
+    "model": { "const": "jev-1.13.0" },
+    "questionSetId": { "type": "string", "minLength": 1 },
+    "questionSetVersion": { "type": "integer", "minimum": 1 },
+    "questionSetFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "policyVersion": { "const": 1 },
+    "stateFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "policyFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "repositoryFingerprint": { "oneOf": [{ "type": "string", "pattern": "^[a-f0-9]{64}$" }, { "type": "object" }, { "type": "null" }] },
+    "contractFingerprint": { "oneOf": [{ "type": "string", "pattern": "^[a-f0-9]{64}$" }, { "type": "null" }] },
+    "routeFingerprint": { "oneOf": [{ "type": "string", "pattern": "^[a-f0-9]{64}$" }, { "type": "null" }] },
+    "verificationCycle": { "oneOf": [{ "type": "integer", "minimum": 1 }, { "type": "null" }] },
+    "candidateSetFingerprint": { "oneOf": [{ "type": "string", "pattern": "^[a-f0-9]{64}$" }, { "type": "null" }] },
+    "answers": { "type": "object" },
+    "confidence": { "type": "object" },
+    "decision": { "type": "object" },
+    "usage": {
+      "type": "object", "required": ["inputTokens", "outputTokens", "reportedBy"], "additionalProperties": false,
+      "properties": { "inputTokens": { "oneOf": [{ "type": "integer", "minimum": 0 }, { "type": "null" }] }, "outputTokens": { "oneOf": [{ "type": "integer", "minimum": 0 }, { "type": "null" }] }, "reportedBy": { "enum": ["PROVIDER", "HOST", "UNKNOWN"] } }
+    },
+    "latencyMs": { "oneOf": [{ "type": "integer", "minimum": 0 }, { "type": "null" }] },
+    "authority": { "const": "SEMANTIC_DECISION" },
+    "evidenceAuthority": { "const": "NONE" },
+    "lifecycleAuthority": { "const": false },
+    "completionAuthority": { "const": false },
+    "ownershipAuthority": { "const": false },
+    "installationAuthority": { "const": false },
+    "recordedAt": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": false
+}

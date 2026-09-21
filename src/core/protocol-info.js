@@ -5,6 +5,7 @@ import { GUIDE_REGISTRY } from "./guide-registry.js";
 import { PROTOCOL_VERSION, WORK_PHASES, WORK_TRANSITIONS } from "./protocol.js";
 import { VERIFICATION_ISOLATION_MODES } from "./verification-execution.js";
 import { PROVIDER_KINDS } from "../providers/capabilities.js";
+import { DECISION_DEFAULT_POLICY, DECISION_ENGINE_ID, PINNED_JEV_MODEL } from "./decision/constants.js";
 
 export const SCHEMA_COMPATIBILITY_POLICY = Object.freeze({
   protocolVersion: PROTOCOL_VERSION,
@@ -37,6 +38,24 @@ export function protocolInfo({ packageVersion = null } = {}) {
     writesSchemaVersions: schemaVersions,
     compatibility: SCHEMA_COMPATIBILITY_POLICY,
     features: {
+      semanticDecisionPlane: {
+        version: 1,
+        supported: true,
+        requiredForNewSemanticDecisions: true,
+        engine: DECISION_ENGINE_ID,
+        model: PINNED_JEV_MODEL,
+        policyVersion: DECISION_DEFAULT_POLICY.policyVersion,
+        authority: "SEMANTIC_DECISION",
+        evidenceAuthority: "NONE",
+        lifecycleAuthority: false,
+        completionAuthority: false,
+        ownershipAuthority: false,
+        installationAuthority: false,
+        commands: ["decision-status", "decision-show"],
+        resource: "task/decisions",
+        offlineInspection: true,
+        completePerformsLiveRequest: false,
+      },
       taskClaimRecovery: {
         version: 1,
         durableRecoveryState: true,

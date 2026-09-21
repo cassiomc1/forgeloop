@@ -101,6 +101,8 @@ import { defaultCommandInputValues, validateForgeLoopCommandInput } from "./core
 import { COMMAND_EXECUTORS } from "./core/command-executors.js";
 import { formatGateRecordResult } from "./commands/gate-record.js";
 import { formatGateRevalidateResult } from "./commands/gate-revalidate.js";
+import { formatDecisionStatusResult } from "./commands/decision-status.js";
+import { formatDecisionShowResult } from "./commands/decision-show.js";
 import { resolveTarget } from "./core/filesystem.js";
 import { getPackageRoot } from "./core/templates.js";
 import { CLI_COMMAND_DEFINITIONS, buildOptionLookup, getPositionalDefinitions } from "./core/cli-command-definitions.js";
@@ -386,6 +388,16 @@ export const COMMAND_HANDLERS = Object.freeze({
   "protocol-info": async ({ packageVersion, options }) => {
     const { result } = await COMMAND_EXECUTORS["protocol-info"]({ packageVersion, options });
     renderJsonOr(options, result, formatProtocolInfoResult);
+    return 0;
+  },
+  "decision-status": async ({ target, packageRoot, options }) => {
+    const { result } = await COMMAND_EXECUTORS["decision-status"]({ target, packageRoot, options });
+    renderJsonOr(options, result, formatDecisionStatusResult);
+    return 0;
+  },
+  "decision-show": async ({ target, packageRoot, options }) => {
+    const { result } = await COMMAND_EXECUTORS["decision-show"]({ target, packageRoot, options });
+    renderJsonOr(options, result, formatDecisionShowResult);
     return 0;
   },
   init: async ({ target, packageRoot, packageVersion, options }) => {

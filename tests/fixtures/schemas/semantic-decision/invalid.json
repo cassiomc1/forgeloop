@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "fixture-task",
+  "decisionKind": "CONTEXT_PLAN",
+  "engine": "typesafe-jev",
+  "model": "jev-latest"
+}

@@ -77,6 +77,8 @@ import { runTaskRepairContractBootstrap } from "../commands/task-repair-contract
 import { runTaskMigrateContractBootstrapRepair } from "../commands/task-migrate-contract-bootstrap-repair.js";
 import { runTaskLockStatus } from "../commands/task-lock-status.js";
 import { runProtocolInfo } from "../commands/protocol-info.js";
+import { runDecisionStatus } from "../commands/decision-status.js";
+import { runDecisionShow } from "../commands/decision-show.js";
 import { runWorkspaceBind } from "../commands/workspace-bind.js";
 import { runWorkspaceStatus } from "../commands/workspace-status.js";
 import { runHandoffCreate } from "../commands/handoff-create.js";
@@ -134,6 +136,14 @@ export const COMMAND_EXECUTORS = {
   }),
   "protocol-info": async ({ packageVersion }) => ({
     result: await runProtocolInfo({ packageVersion }),
+    exitCode: 0,
+  }),
+  "decision-status": async ({ target, packageRoot, options }) => ({
+    result: await runDecisionStatus({ target, packageRoot, health: options.health }),
+    exitCode: 0,
+  }),
+  "decision-show": async ({ target, packageRoot, options }) => ({
+    result: await runDecisionShow({ target, packageRoot, taskId: options.taskId, decisionId: options.decisionId }),
     exitCode: 0,
   }),
   init: async ({ target, packageRoot, packageVersion, options }) => ({

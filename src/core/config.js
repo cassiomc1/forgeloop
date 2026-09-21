@@ -4,6 +4,8 @@ import { E_ATTESTATION_CONFIGURATION_INVALID } from "./error-codes.js";
 import { normalizeVerificationConfiguration } from "./verification-scope-capability.js";
 import { EXECUTION_PROFILE_REQUESTS } from "./execution-profile.js";
 import { normalizeStructuralQualityConfig } from "./structural-quality/policy.js";
+import { DECISION_DEFAULT_POLICY } from "./decision/constants.js";
+import { normalizeDecisionPolicy } from "./decision/policy.js";
 
 export const CONFIG_SCHEMA_VERSION = 1;
 export const COMPLIANCE_MODES = Object.freeze(["advisory", "standard", "strict"]);
@@ -82,6 +84,7 @@ export function createConfig(input = {}) {
     executionProfile = input.executionProfile;
   }
   const structuralQuality = normalizeStructuralQualityConfig(input.structuralQuality);
+  const decisionEngine = normalizeDecisionPolicy(input.decisionEngine ?? DECISION_DEFAULT_POLICY);
   return {
     schemaVersion: CONFIG_SCHEMA_VERSION,
     protocolVersion: PROTOCOL_VERSION,
@@ -93,6 +96,7 @@ export function createConfig(input = {}) {
     ...(attestation ? { attestation } : {}),
     ...(executionProfile ? { executionProfile } : {}),
     ...(structuralQuality !== undefined ? { structuralQuality } : {}),
+    decisionEngine,
   };
 }
 

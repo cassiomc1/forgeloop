@@ -71,6 +71,31 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
     mayExecuteExternalProcess: false,
     description: "Reports versioning, lifecycle, command, guide, and public error compatibility metadata for external harnesses.",
   }),
+  "decision-status": Object.freeze({
+    name: "decision-status",
+    category: "diagnostics",
+    mutation: "READ_ONLY",
+    options: Object.freeze({
+      ...CLI_COMMON_OPTIONS,
+      "--health": Object.freeze({ targetKey: "health", parseType: "boolean", takesValue: false, description: "perform a bounded live Jev health check when credentials are configured" }),
+      "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit decision-plane status as JSON" }),
+    }),
+    writes: [], removes: [], mayExecuteExternalProcess: true,
+    description: "Reports the pinned semantic decision-plane configuration without exposing credentials.",
+  }),
+  "decision-show": Object.freeze({
+    name: "decision-show",
+    category: "diagnostics",
+    mutation: "READ_ONLY",
+    options: Object.freeze({
+      ...CLI_COMMON_OPTIONS,
+      ...CLI_TASK_OPTION,
+      "--decision": Object.freeze({ targetKey: "decisionId", parseType: "string", takesValue: true, valueName: "id", missingValueMessage: "--decision requires an ID", description: "decision artifact ID" }),
+      "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit the decision artifact as JSON" }),
+    }),
+    writes: [], removes: [], mayExecuteExternalProcess: false,
+    description: "Shows one persisted semantic decision artifact without performing a live request.",
+  }),
   discover: Object.freeze({
     name: "discover",
     category: "lifecycle",

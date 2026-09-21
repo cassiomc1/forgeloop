@@ -9,6 +9,8 @@ import { isRepositoryCandidate } from "../repository-index/lifecycle.js";
 import { getRepositoryIndexStatus, sanitizeRepositoryIndexStatus } from "../repository-index/status.js";
 import { searchRepository } from "../repository-index/search.js";
 import { getPersistentTransportStatus } from "../persistent-transport/client.js";
+import { hasTypesafeCredentials } from "../adapters/typesafe/client.js";
+import { PINNED_JEV_MODEL } from "../core/decision/constants.js";
 
 function finding(code, severity, relativePath, message, remediation = null, evidence = null) {
   const evidenceRecord = evidence && typeof evidence === "object"
@@ -391,6 +393,14 @@ export async function runDoctor({ target, packageRoot, adoptPaths = [], strict =
     repositoryIndexOptions,
     findings,
   });
+
+  findings.push(finding(
+    "semantic-decision-plane",
+    "info",
+    ".forgeloop/config.json",
+    `Semantic decision plane: ${hasTypesafeCredentials() ? "credentials configured" : "credentials missing"}; pinned model ${PINNED_JEV_MODEL}.`,
+    "Set TYPESAFE_API_KEY in the host environment before invoking a new semantic decision; recovery and inspection remain local.",
+  ));
 
   const ok = findings.every((item) => item.severity !== "error")
     && (!strict || findings.every((item) => item.severity !== "warning"));

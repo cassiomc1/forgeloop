@@ -12,6 +12,20 @@
     "policy": { "type": "string", "minLength": 1 },
     "requiredGates": { "type": "array", "items": { "type": "string", "minLength": 1 } },
     "requiredEvidence": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "decisionEngine": {
+      "type": "object",
+      "required": ["required", "provider", "model", "policyVersion", "requestTimeoutMs", "maxRetries", "cache"],
+      "additionalProperties": false,
+      "properties": {
+        "required": { "const": true },
+        "provider": { "const": "typesafe-jev" },
+        "model": { "const": "jev-1.13.0" },
+        "policyVersion": { "const": 1 },
+        "requestTimeoutMs": { "type": "integer", "minimum": 500, "maximum": 60000 },
+        "maxRetries": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "cache": { "type": "boolean" }
+      }
+    },
     "structuralQuality": {
       "type": "object",
       "additionalProperties": false,

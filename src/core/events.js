@@ -62,6 +62,11 @@ import {
   hasCurrentGateEvidence,
   validateGateSatisfactionBindings,
 } from "./gate-provenance.js";
+import {
+  assertSemanticDecisionDetails,
+  validateSemanticDecisionEventBindings,
+} from "./decision/events.js";
+import { SEMANTIC_DECISION_RECORDED_EVENT, SEMANTIC_DECISION_SUPERSEDED_EVENT } from "./decision/constants.js";
 
 const EVENT_SCHEMA_VERSION = 1;
 export const LIFECYCLE_MILESTONES = Object.freeze([
@@ -207,6 +212,10 @@ export function validateKnownEventDetails(event) {
       return;
     case GATE_REVALIDATED_EVENT:
       assertGateRevalidatedDetails(event.details);
+      return;
+    case SEMANTIC_DECISION_RECORDED_EVENT:
+    case SEMANTIC_DECISION_SUPERSEDED_EVENT:
+      assertSemanticDecisionDetails(event.details, event.event);
       return;
     case "TASK_RECOVERY_RECORDED":
       assertRecoveryRecordedDetails(event.details);
@@ -763,6 +772,7 @@ export async function validateEventLedger(target, packageRoot, options = {}) {
   errors.push(...validateCheckpointRevalidationEventBindings(events));
   errors.push(...validateContractRevisionEventBindings(events));
   errors.push(...validateGateSatisfactionBindings(events));
+  errors.push(...validateSemanticDecisionEventBindings(events));
   const repairedErrors = validateContractBootstrapRepairLedger(events, errors, options);
   return { valid: repairedErrors.length === 0, events, errors: repairedErrors };
 }
