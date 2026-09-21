@@ -12,6 +12,7 @@ export const APPROVED_DEV_DEPENDENCIES = Object.freeze([
 ]);
 
 export const APPROVED_RUNTIME_DEPENDENCIES = Object.freeze([
+  "@typesafe-ai/sdk",
   "smol-toml",
 ]);
 

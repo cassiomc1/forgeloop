@@ -80,6 +80,7 @@ import { runProtocolInfo } from "../commands/protocol-info.js";
 import { runDecisionStatus } from "../commands/decision-status.js";
 import { runDecisionShow } from "../commands/decision-show.js";
 import { runContextPlan } from "../commands/context-plan.js";
+import { runModelRoute } from "../commands/model-route.js";
 import { runWorkspaceBind } from "../commands/workspace-bind.js";
 import { runWorkspaceStatus } from "../commands/workspace-status.js";
 import { runHandoffCreate } from "../commands/handoff-create.js";
@@ -149,6 +150,23 @@ export const COMMAND_EXECUTORS = {
   }),
   "context-plan": async ({ options }) => ({
     result: await runContextPlan({ profile: options.profile ?? "balanced" }),
+    exitCode: 0,
+  }),
+  "model-route": async ({ options }) => ({
+    result: await runModelRoute({
+      workType: options.workType,
+      surfaces: options.surfaces,
+      risks: options.risks,
+      platforms: options.platforms,
+      behaviorChange: options.behaviorChange,
+      executableChange: options.executableChange,
+      generationRequired: options.generationRequired,
+      architectureChange: options.architectureChange,
+      ambiguity: options.ambiguity,
+      semanticRecommendation: options.semanticTier
+        ? { tier: options.semanticTier, confidence: options.semanticConfidence === undefined ? null : Number(options.semanticConfidence), requiresEscalation: options.semanticEscalation === true }
+        : null,
+    }),
     exitCode: 0,
   }),
   init: async ({ target, packageRoot, packageVersion, options }) => ({

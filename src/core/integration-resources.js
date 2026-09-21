@@ -23,6 +23,9 @@ import { projectStructuralQualityStatus } from "./structural-quality/service.js"
 import { getRepositoryIndexStatus } from "../repository-index/status.js";
 import { buildAuditUxView } from "./audit-ux.js";
 import { runContextPlan } from "../commands/context-plan.js";
+import { runModelRoute } from "../commands/model-route.js";
+import { readPersistedRoute } from "./route-artifact.js";
+import { readWorkState } from "./work-state.js";
 
 /**
  * Canonical integration resource allowlist.
@@ -92,6 +95,7 @@ export const INTEGRATION_RESOURCE_DEFINITIONS = Object.freeze({
   "task/evaluations": Object.freeze({ scope: "TASK", description: "Persisted trajectory evaluations for one task." }),
   "task/decisions": Object.freeze({ scope: "TASK", description: "Persisted, fingerprint-bound semantic decisions without lifecycle or evidence authority." }),
   "task/context-plan": Object.freeze({ scope: "TASK", description: "Bounded non-authoritative semantic context-plan projection." }),
+  "task/model-route": Object.freeze({ scope: "TASK", description: "Deterministic model-routing floor with advisory semantic escalation." }),
   "project/capability-policy": Object.freeze({ scope: "PROJECT", description: "Project capability policy, never host authority." }),
   "repository/index-status": Object.freeze({ scope: "PROJECT", description: "Provider-neutral repository-index health and owned-server status." }),
 });
@@ -198,6 +202,12 @@ async function readForgeLoopIntegrationResourceCore(uri, {
       }
       break;
     }
+    case "task/model-route": {
+      if (typeof taskId !== "string" || !taskId) {
+        const error = new Error(`Resource ${uri} requires a taskId`); error.code = "E_TASK_REQUIRED"; throw error;
+      }
+      break;
+    }
   }
 
   if (uri === "task/ownership") {
@@ -298,6 +308,26 @@ async function readForgeLoopIntegrationResourceCore(uri, {
   }
   if (uri === "task/context-plan") {
     return { uri, taskId, data: await runContextPlan({ profile: runtimeContext?.contextProfile ?? "balanced" }) };
+  }
+  if (uri === "task/model-route") {
+    const state = await readWorkState(projectPath, { packageRoot, taskId });
+    const route = await readPersistedRoute(projectPath, packageRoot, { taskId });
+    return {
+      uri,
+      taskId,
+      data: await runModelRoute({
+        workType: route.value.input?.workType,
+        surfaces: route.value.input?.surfaces,
+        risks: route.value.input?.risks,
+        platforms: route.value.input?.platforms,
+        behaviorChange: route.value.input?.behaviorChange,
+        executableChange: route.value.input?.executableChange,
+        generationRequired: route.value.input?.generationRequired,
+        architectureChange: route.value.input?.architectureChange,
+        ambiguity: route.value.input?.ambiguity,
+        contract: { phase: state.phase },
+      }),
+    };
   }
   if (uri === "project/capability-policy") {
     return { uri, data: await loadCapabilityPolicy(projectPath, packageRoot) };

@@ -44,12 +44,56 @@ All artifact schemas are defined in `schemas/*.schema.json`. Persisted artifact 
 | `task-state/<task-key>/attestations/code-manifest.json` | `code-manifest` | Protocol Generated | Immutable Once Written | Content Integrity Snapshot |
 | `task-state/<task-key>/attestations/statement.json` | `in-toto-statement` | Protocol Compiled | Immutable Once Written | Code Attestation Statement |
 | `task-state/<task-key>/attestations/statement.sigstore.json` | `null` | External Signing Provider | External Immutable | External Signature Bundle |
+| `task-state/<task-key>/decisions/<decision-id>.json` | `semantic-decision` | Protocol Compiled | Immutable Once Written | Semantic Decision |
 
 <!-- END FORGELOOP GENERATED: artifact-registry -->
 
 ---
 
 ## 2. Canonical Artifact Specifications
+
+### 2.0 `semantic-decision`
+
+Semantic decisions are advisory, fingerprint-bound projections. They do not
+authorize lifecycle transitions, evidence, ownership, installation, or
+completion.
+
+<!-- BEGIN FORGELOOP GENERATED: schema:semantic-decision -->
+
+- `schemaVersion` *(number, required, const: 1)*
+- `protocolVersion` *(number, required, const: 1)*
+- `taskId` *(string, required, minLength: 1)*
+- `decisionKind` *(string, required, minLength: 1)*
+- `engine` *(string, required, const: `typesafe-jev`)*
+- `model` *(string, required, const: `jev-1.13.0`)*
+- `questionSetId` *(string, required, minLength: 1)*
+- `questionSetVersion` *(integer, required, minimum: 1)*
+- `questionSetFingerprint` *(string, required, pattern: `^[a-f0-9]{64}$`)*
+- `policyVersion` *(number, required, const: 1)*
+- `stateFingerprint` *(string, required, pattern: `^[a-f0-9]{64}$`)*
+- `policyFingerprint` *(string, required, pattern: `^[a-f0-9]{64}$`)*
+- `repositoryFingerprint` *(string or object or null, optional)*
+- `contractFingerprint` *(string or null, optional)*
+- `routeFingerprint` *(string or null, optional)*
+- `verificationCycle` *(integer or null, optional)*
+- `candidateSetFingerprint` *(string or null, optional)*
+- `answers` *(object, required)*
+- `confidence` *(object, required)*
+- `decision` *(object, required)*
+- `usage` *(object, required)*
+  - `inputTokens` *(integer or null, required)*
+  - `outputTokens` *(integer or null, required)*
+  - `reportedBy` *(string, required, enum: `PROVIDER`, `HOST`, `UNKNOWN`)*
+- `latencyMs` *(integer or null, optional)*
+- `authority` *(string, required, const: `SEMANTIC_DECISION`)*
+- `evidenceAuthority` *(string, required, const: `NONE`)*
+- `lifecycleAuthority` *(boolean, required, const: false)*
+- `completionAuthority` *(boolean, required, const: false)*
+- `ownershipAuthority` *(boolean, required, const: false)*
+- `installationAuthority` *(boolean, required, const: false)*
+- `recordedAt` *(string, required, minLength: 1)*
+
+<!-- END FORGELOOP GENERATED: schema:semantic-decision -->
 
 ### 2.1 `task-state/<taskKey>/contract.json`
 
@@ -257,6 +301,14 @@ Local ForgeLoop configuration settings and policy bindings.
 - `policy` *(string, optional, minLength: 1)*
 - `requiredGates` *(array<string>, optional)*
 - `requiredEvidence` *(array<string>, optional)*
+- `decisionEngine` *(object, optional)*
+  - `required` *(boolean, required, const: true)*
+  - `provider` *(string, required, const: `typesafe-jev`)*
+  - `model` *(string, required, const: `jev-1.13.0`)*
+  - `policyVersion` *(number, required, const: 1)*
+  - `requestTimeoutMs` *(integer, required, minimum: 500, maximum: 60000)*
+  - `maxRetries` *(integer, required, minimum: 0, maximum: 3)*
+  - `cache` *(boolean, required)*
 - `structuralQuality` *(object, optional)*
   - `mode` *(string, optional, enum: `off`, `observe`, `gate`)*
   - `provider` *(string, optional, pattern: `^[a-z][a-z0-9-]{0,63}$`)*
