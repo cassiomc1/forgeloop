@@ -393,11 +393,17 @@ test("documentation manifest packaged:true entries always ship in the core tarba
   }
 });
 
-test("public integration exports include advisory context, portable context, and handoff acceptance", async () => {
+test("public integration exports cover the completed provider roadmap", async () => {
   const integration = await import("../src/integration.js");
   const expectedExports = [
     "recallAdvisoryContext",
     "createOpenSrcAdvisoryContextProvider",
+    "runBrowserVerification",
+    "createAgentBrowserVerificationProvider",
+    "createEmulatedServicesProvider",
+    "runSecurityReview",
+    "readForgeLoopIntegrationResource",
+    "getForgeLoopCapabilities",
     "acceptCanonicalHandoff",
     "resolveHandoffAcceptance",
     "ADVISORY_CONTEXT_LIMITS",
