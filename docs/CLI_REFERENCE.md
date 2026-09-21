@@ -60,7 +60,7 @@ error codes. Default output and default JSON remain unchanged.
 | --- | --- |
 | **Inspection & Diagnostics** | [`protocol-info`](#protocol-info), [`doctor`](#doctor), [`index-status`](#index-status), [`search`](#search), [`metrics`](#metrics), [`usage-record`](#usage-record), [`efficiency`](#efficiency), [`eval`](#eval), [`history`](#history), [`trace`](#trace), [`reflect`](#reflect), [`progress`](#progress), [`profile-interview`](#profile-interview), [`inspect`](#inspect), [`status`](#status), [`validate-state`](#validate-state), [`validate-protocol`](#validate-protocol) |
 | **Lifecycle & State** | [`discover`](#discover), [`contract-create`](#contract-create), [`gate-record`](#gate-record), [`gate-revalidate`](#gate-revalidate), [`activate`](#activate), [`route`](#route), [`preflight`](#preflight), [`advance`](#advance), [`next`](#next), [`record-diagnosis`](#record-diagnosis), [`record-intervention`](#record-intervention), [`record-hypothesis-disposition`](#record-hypothesis-disposition), [`record-decision-criterion`](#record-decision-criterion), [`complete`](#complete), [`clear-state`](#clear-state), [`reconcile-closure`](#reconcile-closure), [`task-create`](#task-create), [`task-list`](#task-list), [`task-show`](#task-show), [`task-lock-status`](#task-lock-status), [`task-scope`](#task-scope) |
-| **Setup & Maintenance** | [`contract-revise`](#contract-revise), [`init`](#init), [`index-setup`](#index-setup), [`index-start`](#index-start), [`index-stop`](#index-stop), [`index-rebuild`](#index-rebuild), [`update`](#update), [`checkpoint-revalidate`](#checkpoint-revalidate), [`task-migrate`](#task-migrate), [`migrate-protocol`](#migrate-protocol), [`task-unlock`](#task-unlock), [`task-recover`](#task-recover), [`task-repair-contract-bootstrap`](#task-repair-contract-bootstrap), [`task-migrate-contract-bootstrap-repair`](#task-migrate-contract-bootstrap-repair), [`task-repair-legacy-recovery`](#task-repair-legacy-recovery), [`task-resume`](#task-resume) |
+| **Setup & Maintenance** | [`contract-revise`](#contract-revise), [`init`](#init), [`index-setup`](#index-setup), [`index-start`](#index-start), [`index-stop`](#index-stop), [`index-rebuild`](#index-rebuild), [`update`](#update), [`checkpoint-revalidate`](#checkpoint-revalidate), [`task-migrate`](#task-migrate), [`migrate-protocol`](#migrate-protocol), [`task-unlock`](#task-unlock), [`task-recover`](#task-recover), [`task-abandon`](#task-abandon), [`task-repair-contract-bootstrap`](#task-repair-contract-bootstrap), [`task-migrate-contract-bootstrap-repair`](#task-migrate-contract-bootstrap-repair), [`task-repair-legacy-recovery`](#task-repair-legacy-recovery), [`task-resume`](#task-resume) |
 | **Verification & Completion** | [`quality-baseline`](#quality-baseline), [`quality-verify`](#quality-verify), [`quality-status`](#quality-status), [`prepare-completion`](#prepare-completion), [`run-check`](#run-check), [`record-check`](#record-check), [`record-terminal-result`](#record-terminal-result), [`audit`](#audit), [`report`](#report), [`validate-receipt`](#validate-receipt), [`verify-scope`](#verify-scope) |
 | **Cross-Harness Continuity** | [`continuity`](#continuity), [`record-continuity`](#record-continuity), [`reconcile-continuity`](#reconcile-continuity), [`clear-continuity`](#clear-continuity), [`handoff-create`](#handoff-create), [`handoff-list`](#handoff-list), [`handoff-show`](#handoff-show) |
 | **Durable Actions & Approvals** | [`run-action`](#run-action), [`action-propose`](#action-propose), [`action-record`](#action-record), [`action-show`](#action-show), [`action-reconcile`](#action-reconcile), [`action-verify`](#action-verify), [`action-authorize`](#action-authorize), [`approval-request`](#approval-request), [`approval-resolve`](#approval-resolve) |
@@ -2376,6 +2376,35 @@ Suspends mutation and releases effective claims for a task deterministically cla
 Fake, missing, corrupt, or mismatched recovery state is
 `E_TASK_CLAIM_OWNERSHIP_INCONSISTENT`/`E_TASK_RECOVERY_INCONSISTENT`; historical
 claims remain reserved.
+
+### `task-abandon`
+
+Explicitly abandons an active non-terminal task without fabricating completion.
+
+- **Purpose**: Releases validated write claims for a deliberately abandoned task while preserving its current lifecycle phase, append-only history, and durable recovery boundary. This is the canonical escape from an active-task claim deadlock; it is not a completion or publication operation.
+- **When to use**: Only when the exact task ID is known and the caller has deliberately acknowledged abandonment. Use `task-recover` only for tasks already classified `STALE` or `ABANDONED`.
+- **Mutation**: Appends `TASK_ABANDONED` and its `TRANSACTION_COMMITTED(operation=task-abandon)` witness, then writes `recovery.json` with classification `ABANDONED` and authority `CALLER_ACKNOWLEDGED`. Work state remains unchanged and claims resolve to `RELEASED_BY_RECOVERY`.
+- **Options**:
+
+<!-- BEGIN FORGELOOP GENERATED: cli:task-abandon:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--acknowledge-abandonment`: explicitly acknowledge abandonment of an active task (required; not completion authority)
+- `--json`: emit structured abandonment output as JSON
+
+<!-- END FORGELOOP GENERATED: cli:task-abandon:options -->
+
+- **Example**:
+
+  ```bash
+  forgeloop task-abandon --task task-001 --acknowledge-abandonment --json
+  ```
+
+The command requires an explicit task ID and acknowledgement. It refuses
+`COMPLETE`, already recovered, inconsistent, or non-active ownership states
+and never writes `COMPLETION_VALIDATED`. Use `task-resume` to reacquire claims
+through the normal lifecycle when work should continue.
 
 ### `task-repair-contract-bootstrap`
 

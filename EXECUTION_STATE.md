@@ -31,6 +31,18 @@ task-bound `COMPLETION_VALIDATED` event and coherent state) is required, and a
 forged or unproven COMPLETE state is `INCONSISTENT` with historical claims
 retained.
 
+For an intentional active-task stop, use the explicit canonical command:
+
+```bash
+forgeloop task-abandon --task <id> --acknowledge-abandonment --json
+```
+
+It appends `TASK_ABANDONED`, writes a matching recovery boundary classified
+`ABANDONED`, keeps the current phase unchanged, and resolves ownership to
+`RELEASED_BY_RECOVERY`. It never emits `COMPLETION_VALIDATED` and never grants
+publication authority. `clear-state` only clears a checkpoint and must not be
+used to release claims.
+
 The file is local, ignored by Git, schema-versioned, and never a replacement
 for the manifest or the target project profile (installed as
 `.forgeloop/kit/PROJECT_PROFILE.md`). It contains no secrets and is untrusted

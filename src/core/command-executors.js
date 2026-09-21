@@ -70,6 +70,7 @@ import { runTaskMigrate } from "../commands/task-migrate.js";
 import { runMigrateProtocol } from "../commands/migrate-protocol.js";
 import { runTaskUnlock } from "../commands/task-unlock.js";
 import { runTaskRecover } from "../commands/task-recover.js";
+import { runTaskAbandon } from "../commands/task-abandon.js";
 import { runTaskResume } from "../commands/task-resume.js";
 import { runTaskRepairLegacyRecovery } from "../commands/task-repair-legacy-recovery.js";
 import { runTaskRepairContractBootstrap } from "../commands/task-repair-contract-bootstrap.js";
@@ -677,6 +678,15 @@ export const COMMAND_EXECUTORS = {
       taskId: options.taskId,
       acknowledgeRecovery: options.acknowledgeRecovery,
       operatorAuthorized: options.operatorAuthorized,
+    }),
+    exitCode: 0,
+  }),
+  "task-abandon": async ({ target, packageRoot, options }) => ({
+    result: await runTaskAbandon({
+      target,
+      packageRoot,
+      taskId: options.taskId,
+      acknowledgeAbandonment: options.acknowledgeAbandonment,
     }),
     exitCode: 0,
   }),

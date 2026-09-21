@@ -376,6 +376,10 @@ forgeloop next --task auth-feature --json
 # Only for a task classified STALE or ABANDONED: release effective claims
 forgeloop task-recover --task auth-feature --acknowledge-recovery --json
 
+# Explicitly abandon an active non-terminal task when its objective is no
+# longer valid; this is not completion and requires caller acknowledgement
+forgeloop task-abandon --task auth-feature --acknowledge-abandonment --json
+
 # Reacquire conflict-free claims before mutating a recovered task again
 forgeloop task-resume --task auth-feature --json
 
@@ -398,6 +402,12 @@ disabled. The standalone acknowledgement flag is not host-attested authority.
 `task-resume` removes recovery state only after validated ownership, stale-lock
 settlement, normal claim-overlap, and clean-checkout checks succeed. Never
 create, edit, or delete `recovery.json` manually.
+
+`task-recover` is reserved for canonical `STALE`/`ABANDONED` classification.
+`task-abandon` is the separate explicit path for an active non-terminal task:
+it records `TASK_ABANDONED`, releases claims as `RELEASED_BY_RECOVERY`, keeps
+the phase unchanged, and never implies completion or publication. `clear-state`
+only removes a checkpoint and is not a claim-release or abandonment mechanism.
 
 ### Executable policy verification & brownfield baselines
 

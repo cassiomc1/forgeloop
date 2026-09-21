@@ -353,6 +353,10 @@ forgeloop baseline --record --policy-reset-authorized --json
 # 1. Inspect deterministic classification and structured next action
 forgeloop next --task task-001 --json
 
+# 1a. If the active task is intentionally no longer valid, explicitly abandon
+#     it; do not use clear-state or task-recover to bypass ownership
+forgeloop task-abandon --task task-001 --acknowledge-abandonment --json
+
 # 2. RECOVERABLE must use reconcile-closure; do not use task-recover
 forgeloop reconcile-closure --task task-001 --id <verification-id> \
   --requirement "<exact verification text>" -- <verification-command>
@@ -377,6 +381,11 @@ work resumes. Claims are released only after ForgeLoop validates the recovery
 artifact against the complete ledger history. If `next` returns
 `RESOLVE_RECOVERY_INCONSISTENCY`, run `validate-protocol`; do not create, edit,
 or delete `recovery.json` manually.
+
+`task-abandon` is only for an explicit active non-terminal abandonment. It
+records `TASK_ABANDONED`, leaves the phase unchanged, and releases claims as
+`RELEASED_BY_RECOVERY`; it never proves completion. `clear-state` removes only
+the checkpoint and is not a claim-release mechanism.
 
 ---
 

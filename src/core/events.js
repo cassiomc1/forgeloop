@@ -218,6 +218,9 @@ export function validateKnownEventDetails(event) {
       if (!event.details?.recoveryId && isLegacyRecoveryDetailsShape(event.details)) return;
       assertRecoveryRecordedDetails(event.details);
       return;
+    case "TASK_ABANDONED":
+      assertTaskAbandonedDetails(event.details);
+      return;
     case "LEGACY_RECOVERY_MIGRATION_RECORDED":
       assertLegacyMigrationDetails(event.details);
       return;
@@ -393,6 +396,44 @@ function assertRecoveryRecordedDetails(details) {
   }
   assertStringList(details.reasonCodes, "recovery event details.reasonCodes");
   assertStringList(details.releasedClaims, "recovery event details.releasedClaims");
+}
+
+function assertTaskAbandonedDetails(details) {
+  const keys = [
+    "recoveryId", "classification", "reasonCodes", "previousPhase", "previousRevision",
+    "previousHead", "previousBranch", "currentHead", "currentBranch",
+    "releasedClaims", "authorityKind",
+  ];
+  if (!details || typeof details !== "object" || Array.isArray(details)
+    || Object.keys(details).length !== keys.length
+    || keys.some((key) => !Object.prototype.hasOwnProperty.call(details, key))) {
+    throw protocolError("E_EVENT_INVALID", "TASK_ABANDONED requires the exact abandonment boundary details");
+  }
+  if (typeof details.recoveryId !== "string" || details.recoveryId.length === 0) {
+    throw protocolError("E_EVENT_INVALID", "TASK_ABANDONED details.recoveryId must be a non-empty string");
+  }
+  if (details.classification !== "ABANDONED") {
+    throw protocolError("E_EVENT_INVALID", "TASK_ABANDONED details.classification must be ABANDONED");
+  }
+  assertStringList(details.reasonCodes, "TASK_ABANDONED details.reasonCodes");
+  if (details.reasonCodes.length !== 1 || details.reasonCodes[0] !== "CALLER_ABANDONED") {
+    throw protocolError("E_EVENT_INVALID", "TASK_ABANDONED details.reasonCodes must be [CALLER_ABANDONED]");
+  }
+  if (typeof details.previousPhase !== "string" || details.previousPhase.length === 0) {
+    throw protocolError("E_EVENT_INVALID", "TASK_ABANDONED details.previousPhase must be a non-empty string");
+  }
+  if (!Number.isInteger(details.previousRevision) || details.previousRevision < 0) {
+    throw protocolError("E_EVENT_INVALID", "TASK_ABANDONED details.previousRevision must be a non-negative integer");
+  }
+  for (const key of ["previousHead", "previousBranch", "currentHead", "currentBranch"]) {
+    if (typeof details[key] !== "string" && details[key] !== null) {
+      throw protocolError("E_EVENT_INVALID", `TASK_ABANDONED details.${key} must be a string or null`);
+    }
+  }
+  assertStringList(details.releasedClaims, "TASK_ABANDONED details.releasedClaims");
+  if (details.authorityKind !== "CALLER_ACKNOWLEDGED") {
+    throw protocolError("E_EVENT_INVALID", "TASK_ABANDONED details.authorityKind must be CALLER_ACKNOWLEDGED");
+  }
 }
 
 function assertRecoveryResumedDetails(details) {

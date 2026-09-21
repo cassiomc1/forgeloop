@@ -70,6 +70,7 @@ import { formatTaskMigrateResult } from "./commands/task-migrate.js";
 import { formatMigrateProtocolResult } from "./commands/migrate-protocol.js";
 import { formatTaskUnlockResult } from "./commands/task-unlock.js";
 import { formatTaskRecoverResult } from "./commands/task-recover.js";
+import { formatTaskAbandonResult } from "./commands/task-abandon.js";
 import { formatTaskResumeResult } from "./commands/task-resume.js";
 import {
   formatTaskRepairLegacyRecoveryResult,
@@ -815,6 +816,11 @@ export const COMMAND_HANDLERS = Object.freeze({
     }
     const { result } = await COMMAND_EXECUTORS["task-recover"]({ target, packageRoot, options });
     renderJsonOr(options, result, formatTaskRecoverResult);
+    return 0;
+  },
+  "task-abandon": async ({ target, packageRoot, options }) => {
+    const { result } = await COMMAND_EXECUTORS["task-abandon"]({ target, packageRoot, options });
+    renderJsonOr(options, result, formatTaskAbandonResult);
     return 0;
   },
   "task-resume": async ({ target, packageRoot, options }) => {

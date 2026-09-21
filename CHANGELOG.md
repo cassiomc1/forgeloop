@@ -9,6 +9,11 @@
 
 ### Added
 
+- Added explicit `task-abandon` for caller-acknowledged abandonment of active
+  non-terminal tasks. It records an append-only `TASK_ABANDONED` boundary,
+  releases claims through the validated recovery ownership model, preserves the
+  current phase, and never fabricates completion or publication.
+
 - Added an optional host-injected Agent Browser verification adapter. It uses a
   host-supplied executable, never auto-installs Agent Browser or Chrome, runs a
   fresh isolated session with exact-origin validation, and returns only bounded

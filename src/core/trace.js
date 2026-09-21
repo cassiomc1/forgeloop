@@ -51,6 +51,7 @@ const EVENT_CATEGORY_MAP = Object.freeze({
   TASK_RECOVERY_RECORDED: "recovery",
   TASK_RECOVERY_RESUMED: "recovery",
   OPERATOR_RECOVERY_RECORDED: "recovery",
+  TASK_ABANDONED: "recovery",
   LEGACY_RECOVERY_MIGRATION_RECORDED: "recovery",
   GATE_SATISFIED: "policy",
   COMPLETION_VALIDATED: "completion",
@@ -136,6 +137,8 @@ function eventSummary(event) {
       return "Task resumed after recovery";
     case "OPERATOR_RECOVERY_RECORDED":
       return "Operator recovery recorded";
+    case "TASK_ABANDONED":
+      return "Task explicitly abandoned";
     case "LEGACY_RECOVERY_MIGRATION_RECORDED":
       return "Legacy recovery migration recorded";
     case "COMPLETION_VALIDATED":
@@ -451,7 +454,7 @@ export async function buildTaskTrace({ target, packageRoot, taskId = null, event
   const evidence = [...evidenceSources.values()].sort((a, b) => a.ref.localeCompare(b.ref));
 
   const recovery = taskEvents
-    .filter((event) => ["TASK_RECOVERY_RECORDED", "TASK_RECOVERY_RESUMED", "OPERATOR_RECOVERY_RECORDED", "LEGACY_RECOVERY_MIGRATION_RECORDED"].includes(event.event))
+    .filter((event) => ["TASK_RECOVERY_RECORDED", "TASK_RECOVERY_RESUMED", "OPERATOR_RECOVERY_RECORDED", "TASK_ABANDONED", "LEGACY_RECOVERY_MIGRATION_RECORDED"].includes(event.event))
     .map((event) => ({ sequence: event.seq, at: event.at, type: event.event, details: event.details ?? {} }));
 
   const completionEvents = taskEvents.filter((event) => ["COMPLETION_VALIDATED", "COMPLETION_REJECTED"].includes(event.event));
