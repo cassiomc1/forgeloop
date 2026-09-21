@@ -83,6 +83,13 @@ const LIFECYCLE_TRANSITIONS = Object.freeze([
   "COMPLETION_REJECTED",
 ]);
 
+const STATIC_EVENT_SUMMARIES = Object.freeze({
+  TASK_RECOVERY_RESUMED: "Task resumed after recovery",
+  OPERATOR_RECOVERY_RECORDED: "Operator recovery recorded",
+  TASK_ABANDONED: "Task explicitly abandoned",
+  LEGACY_RECOVERY_MIGRATION_RECORDED: "Legacy recovery migration recorded",
+});
+
 export function eventCategory(eventType) {
   return EVENT_CATEGORY_MAP[eventType] ?? "integrity";
 }
@@ -94,6 +101,8 @@ export function timestampQuality(event) {
 
 function eventSummary(event) {
   const d = event.details ?? {};
+  const staticSummary = STATIC_EVENT_SUMMARIES[event.event];
+  if (staticSummary) return staticSummary;
   switch (event.event) {
     case "TASK_RECEIVED":
       return `Task received${d.taskId ? ` (${d.taskId})` : ""}`;
@@ -133,14 +142,6 @@ function eventSummary(event) {
       return "Continuity checkpoint recorded";
     case "TASK_RECOVERY_RECORDED":
       return `Task recovery recorded (${d.classification ?? "unknown"})`;
-    case "TASK_RECOVERY_RESUMED":
-      return "Task resumed after recovery";
-    case "OPERATOR_RECOVERY_RECORDED":
-      return "Operator recovery recorded";
-    case "TASK_ABANDONED":
-      return "Task explicitly abandoned";
-    case "LEGACY_RECOVERY_MIGRATION_RECORDED":
-      return "Legacy recovery migration recorded";
     case "COMPLETION_VALIDATED":
       return "Completion validated";
     case "COMPLETION_REJECTED":
