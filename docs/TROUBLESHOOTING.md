@@ -414,7 +414,7 @@ forgeloop reconcile-closure --task <id> --id <verification-id> \
 
 `reconcile-closure` requires:
 
-1. The task is `EXECUTING`, `VERIFYING`, or `REVIEWING`. A `REVIEWING` task additionally requires authorized completion recovery (a persisted evidence-only rejection bound to the current checkpoint), or a rejection snapshot that can be rebound (see below).
+1. The task is `EXECUTING`, `VERIFYING`, or `REVIEWING`. A `REVIEWING` task may use authorized completion recovery (a persisted evidence-only rejection bound to the current checkpoint), or, when no completion rejection exists, the narrow bootstrap path for repository-only drift. The bootstrap path does not change phase, append completion events, or release claims.
 2. The only drift is `REPOSITORY_CHANGED` (contract or required-artifact drift stays blocked).
 3. The append-only event ledger is valid.
 4. `--id` and `--requirement` exactly match a `VERIFICATION` item of the task contract, and the executed command exits 0, proving the objective is present in the current repository.
@@ -428,6 +428,12 @@ forgeloop run-check --task <id> --id <id> --requirement "<text>" -- <command>
 forgeloop advance --task <id> --to REVIEWING
 forgeloop complete --task <id>
 ```
+
+The bootstrap path is intentionally narrower than completion recovery: contract
+identity, required artifacts, ledger validity, and active claim ownership must
+already be valid, and the freshness classifier must report exactly
+`REPOSITORY_CHANGED`. Contract or artifact drift remains blocked and must use
+its dedicated canonical recovery surface.
 
 #### Drifted completion-rejection snapshots (`E_COMPLETION_REJECTION_STATE_FINGERPRINT_MISMATCH`)
 
