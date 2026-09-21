@@ -18,6 +18,9 @@ import { createWorkState, writeWorkState, readWorkState } from "../src/core/work
 import { prepareCompletion, recordCheck as recordCheckArtifact } from "../src/core/completion-artifacts.js";
 import { taskArtifactPath } from "../src/core/task-paths.js";
 import { createTaskDescriptor, writeTaskDescriptor } from "../src/core/task-descriptor.js";
+import { currentRepositoryFingerprint } from "../src/core/repository.js";
+import { resolveTaskClaimState } from "../src/core/task-claim-state.js";
+import { sha256 } from "../src/core/manifest.js";
 
 const root = path.resolve(".");
 const cliPath = path.join(root, "src", "cli.js");
@@ -93,6 +96,7 @@ async function setupStaleExecutingTask(target, options = {}) {
     selectedGuides: route.guides,
     requiredGates: [],
     satisfiedGates: [],
+    requiredArtifacts: options.requiredArtifacts ?? [],
     completedSteps: ["implementation"],
     pendingSteps: ["verification"],
     checks: [],
@@ -277,9 +281,20 @@ test("reconcile-closure refuses tasks outside EXECUTING/VERIFYING/REVIEWING", as
   });
 });
 
-test("reconcile-closure refuses REVIEWING without authorized completion recovery", async () => {
+test("reconcile-closure does not bypass a persisted but unauthorized completion rejection", async () => {
   await withTarget(async (target) => {
     const { taskId } = await setupStaleExecutingTask(target, { phase: "REVIEWING", previousPhase: "VERIFYING" });
+    const state = await readWorkState(target, { packageRoot, taskId });
+    await writeWorkState(target, {
+      ...state,
+      lastCompletionAttempt: {
+        status: "REJECTED",
+        reasonCodes: ["E_EVIDENCE_REQUIRED"],
+        missingRequirementIds: ["missing-evidence"],
+        verificationCycle: 1,
+        timestamp: new Date().toISOString(),
+      },
+    }, { packageRoot, taskId });
     await assert.rejects(
       () => runReconcileClosure({
         target,
@@ -293,6 +308,76 @@ test("reconcile-closure refuses REVIEWING without authorized completion recovery
         || error.code === "E_COMPLETION_REJECTION_LEDGER_MISMATCH"
         || error.code === "E_COMPLETION_REJECTION_STATE_FINGERPRINT_MISMATCH",
     );
+  });
+});
+
+test("reconcile-closure bootstraps stale REVIEWING with repository-only drift and preserves canonical closure", async () => {
+  await withTarget(async (target) => {
+    const { taskId } = await setupStaleExecutingTask(target, {
+      phase: "VERIFYING",
+      previousPhase: "EXECUTING",
+      repositoryFingerprint: await currentRepositoryFingerprint(target),
+    });
+    const requirement = "pack tarball test asserts the README image is excluded from the npm package";
+    await appendProtocolEvent(target, { taskId, event: "VERIFICATION_STARTED", details: { verificationCycle: 1 } }, packageRoot, { taskId });
+    await prepareCompletion({ target, packageRoot, taskId });
+    await recordCheckArtifact({
+      target,
+      packageRoot,
+      taskId,
+      id: "regression-tests",
+      kind: "manual-review",
+      requirement,
+      status: "passed",
+      evidenceKind: "OBSERVED",
+      result: "contract-bound verification evidence passed",
+    });
+    await recordCheckArtifact({
+      target,
+      packageRoot,
+      taskId,
+      id: "objective-present",
+      kind: "manual-review",
+      requirement: "objective is present in the current repository",
+      status: "passed",
+      evidenceKind: "OBSERVED",
+      result: "the requested objective is present in the current repository",
+    });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId });
+    const freshState = await readWorkState(target, { packageRoot, taskId });
+    await writeWorkState(target, {
+      ...freshState,
+      repositoryFingerprint: { branch: "main", head: STALE_HEAD },
+    }, { packageRoot, taskId });
+
+    const result = await runReconcileClosure({
+      target,
+      packageRoot,
+      taskId,
+      checkId: "regression-tests",
+      requirement,
+      argv: ["node", "-e", "process.exit(0)"],
+    });
+    assert.equal(result.reconciled, true);
+
+    let state = await readWorkState(target, { packageRoot, taskId });
+    assert.equal(state.phase, "REVIEWING");
+    assert.equal(state.lastCompletionAttempt, undefined);
+    const ownership = await resolveTaskClaimState(target, { packageRoot, taskId });
+    assert.equal(ownership.claimState, "ACTIVE");
+    assert.equal(ownership.ownershipValid, true);
+    assert.equal(ownership.mutationAllowed, true);
+    let events = await readEvents(target, packageRoot, { taskId });
+    assert.ok(events.some((event) => event.event === "CHECKPOINT_RECONCILED"));
+    assert.equal(events.some((event) => event.event === "COMPLETION_REJECTED"), false);
+    assert.equal(events.some((event) => event.event === "COMPLETION_VALIDATED"), false);
+
+    const completion = await runComplete({ target, packageRoot, taskId });
+    assert.equal(completion.status, "VALID", JSON.stringify(completion.errors ?? []).slice(0, 500));
+    state = await readWorkState(target, { packageRoot, taskId });
+    assert.equal(state.phase, "COMPLETE");
+    events = await readEvents(target, packageRoot, { taskId });
+    assert.ok(events.some((event) => event.event === "COMPLETION_VALIDATED"));
   });
 });
 
@@ -397,6 +482,38 @@ test("reconcile-closure refuses unsupported drift kinds", async () => {
       (error) => error.code === "E_RECONCILE_UNSUPPORTED_DRIFT"
         && error.message.includes("CONTRACT_CHANGED"),
     );
+  });
+});
+
+test("reconcile-closure refuses repository plus required-artifact drift without mutation", async () => {
+  await withTarget(async (target) => {
+    const artifactPath = "tracked-output.txt";
+    const original = "original\n";
+    await writeFile(path.join(target, artifactPath), original, "utf8");
+    const { taskId } = await setupStaleExecutingTask(target, {
+      requiredArtifacts: [{
+        path: artifactPath,
+        sha256: sha256(Buffer.from(original)),
+      }],
+    });
+    const beforeState = await readWorkState(target, { packageRoot, taskId });
+    const beforeEvents = await readEvents(target, packageRoot, { taskId });
+    await writeFile(path.join(target, artifactPath), "changed\n", "utf8");
+
+    await assert.rejects(
+      () => runReconcileClosure({
+        target,
+        packageRoot,
+        taskId,
+        checkId: "regression-tests",
+        requirement: "pack tarball test asserts the README image is excluded from the npm package",
+        argv: ["node", "-e", "process.exit(0)"],
+      }),
+      (error) => error.code === "E_RECONCILE_UNSUPPORTED_DRIFT"
+        && error.message.includes("REQUIRED_ARTIFACT_CHANGED"),
+    );
+    assert.deepEqual(await readWorkState(target, { packageRoot, taskId }), beforeState);
+    assert.deepEqual(await readEvents(target, packageRoot, { taskId }), beforeEvents);
   });
 });
 

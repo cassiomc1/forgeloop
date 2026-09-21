@@ -9,6 +9,12 @@
 
 ### Added
 
+- Added the narrow `REVIEWING` repository-only bootstrap path to
+  `reconcile-closure`, resolving the no-rejection completion dead-end without
+  changing phase, fabricating completion events, or releasing active claims.
+  Optional continuity absence is now reported as `NOT_APPLICABLE`, while
+  present invalid continuity remains fail-closed.
+
 - Added an optional host-injected Agent Browser verification adapter. It uses a
   host-supplied executable, never auto-installs Agent Browser or Chrome, runs a
   fresh isolated session with exact-origin validation, and returns only bounded

@@ -307,7 +307,10 @@ point at misleading files, claim verification/publication occurred, encode
 secret material, attempt path traversal, or imply authority. Mitigations are a
 bounded strict schema, secret-free writes, relative safe paths, task/contract/
 work-state fingerprint binding, current-checkout reconciliation, explicit
-non-evidence semantics, and complete separation from authority grants.
+non-evidence semantics, optional absence handling, and complete separation from
+authority grants. A missing continuity artifact is `NOT_APPLICABLE`; a present
+but malformed artifact remains fail-closed and continuity never supplies
+completion evidence.
 
 ## Bootstrap Gate And Contract Provenance
 
