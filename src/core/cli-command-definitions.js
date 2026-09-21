@@ -169,6 +169,18 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
     writes: [".forgeloop/task-state/<taskKey>/test-utility.json"], removes: [], mayExecuteExternalProcess: false,
     description: "Persists non-evidence test utility analysis; never deletes tests or authorizes pruning.",
   }),
+  "test-prune-plan": Object.freeze({
+    name: "test-prune-plan", category: "diagnostics", mutation: "READ_ONLY",
+    options: Object.freeze({ ...CLI_COMMON_OPTIONS, ...CLI_TASK_OPTION, "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit test prune plan as JSON" }) }),
+    writes: [], removes: [], mayExecuteExternalProcess: false,
+    description: "Projects KEEP, REWRITE, PROBE_REMOVAL, or BLOCKED without deleting tests.",
+  }),
+  "test-prune-probe": Object.freeze({
+    name: "test-prune-probe", category: "verification", mutation: "EXTERNAL_EXECUTION",
+    options: Object.freeze({ ...CLI_COMMON_OPTIONS, ...CLI_TASK_OPTION, "--test": Object.freeze({ targetKey: "testId", parseType: "string", takesValue: true, valueName: "id", missingValueMessage: "--test requires a test ID", description: "stable test ID to probe in isolation" }), "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit test prune probe as JSON" }) }),
+    writes: [], removes: [], mayExecuteExternalProcess: true,
+    description: "Runs only an isolated, fail-closed removal probe; never modifies the live worktree.",
+  }),
   discover: Object.freeze({
     name: "discover",
     category: "lifecycle",

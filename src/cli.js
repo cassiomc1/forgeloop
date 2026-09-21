@@ -108,6 +108,8 @@ import { formatModelRouteResult } from "./commands/model-route.js";
 import { formatSemanticPlanResult } from "./commands/semantic-plan.js";
 import { formatTestInventoryResult } from "./commands/test-inventory.js";
 import { formatTestUtilityResult } from "./commands/test-utility.js";
+import { formatTestPrunePlanResult } from "./commands/test-prune-plan.js";
+import { formatTestPruneProbeResult } from "./commands/test-prune-probe.js";
 import { resolveTarget } from "./core/filesystem.js";
 import { getPackageRoot } from "./core/templates.js";
 import { CLI_COMMAND_DEFINITIONS, buildOptionLookup, getPositionalDefinitions } from "./core/cli-command-definitions.js";
@@ -428,6 +430,16 @@ export const COMMAND_HANDLERS = Object.freeze({
   "test-utility": async ({ target, packageRoot, options }) => {
     const { result } = await COMMAND_EXECUTORS["test-utility"]({ target, packageRoot, options });
     renderJsonOr(options, result, formatTestUtilityResult);
+    return 0;
+  },
+  "test-prune-plan": async ({ target, packageRoot, options }) => {
+    const { result } = await COMMAND_EXECUTORS["test-prune-plan"]({ target, packageRoot, options });
+    renderJsonOr(options, result, formatTestPrunePlanResult);
+    return 0;
+  },
+  "test-prune-probe": async ({ target, packageRoot, options }) => {
+    const { result } = await COMMAND_EXECUTORS["test-prune-probe"]({ target, packageRoot, options });
+    renderJsonOr(options, result, formatTestPruneProbeResult);
     return 0;
   },
   init: async ({ target, packageRoot, packageVersion, options }) => {

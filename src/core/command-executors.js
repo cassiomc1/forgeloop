@@ -84,6 +84,8 @@ import { runModelRoute } from "../commands/model-route.js";
 import { runSemanticPlan } from "../commands/semantic-plan.js";
 import { runTestInventory } from "../commands/test-inventory.js";
 import { runTestUtility } from "../commands/test-utility.js";
+import { runTestPrunePlan } from "../commands/test-prune-plan.js";
+import { runTestPruneProbe } from "../commands/test-prune-probe.js";
 import { runWorkspaceBind } from "../commands/workspace-bind.js";
 import { runWorkspaceStatus } from "../commands/workspace-status.js";
 import { runHandoffCreate } from "../commands/handoff-create.js";
@@ -186,6 +188,14 @@ export const COMMAND_EXECUTORS = {
   }),
   "test-utility": async ({ target, packageRoot, options }) => ({
     result: await runTestUtility({ target, packageRoot, taskId: options.taskId, semanticStatus: options.semanticStatus ?? "NOT_REQUESTED" }),
+    exitCode: 0,
+  }),
+  "test-prune-plan": async ({ target, packageRoot, options }) => ({
+    result: await runTestPrunePlan({ target, packageRoot, taskId: options.taskId }),
+    exitCode: 0,
+  }),
+  "test-prune-probe": async ({ target, packageRoot, options }) => ({
+    result: await runTestPruneProbe({ target, packageRoot, taskId: options.taskId, testId: options.testId }),
     exitCode: 0,
   }),
   init: async ({ target, packageRoot, packageVersion, options }) => ({

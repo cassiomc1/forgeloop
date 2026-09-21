@@ -51,11 +51,12 @@ export function protocolInfo({ packageVersion = null } = {}) {
         completionAuthority: false,
         ownershipAuthority: false,
         installationAuthority: false,
-        commands: ["decision-status", "decision-show", "context-plan", "model-route", "semantic-plan", "test-inventory", "test-utility"],
+        commands: ["decision-status", "decision-show", "context-plan", "model-route", "semantic-plan", "test-inventory", "test-utility", "test-prune-plan", "test-prune-probe"],
         resource: "task/decisions",
         contextPlanResource: "task/context-plan",
         modelRouteResource: "task/model-route",
         testUtilityResource: "task/test-utility",
+        testPruneResource: "task/test-utility",
         offlineInspection: true,
         completePerformsLiveRequest: false,
         modelRouting: {
