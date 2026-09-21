@@ -3,6 +3,14 @@ import { DECISION_QUESTION_SETS } from "./constants.js";
 import { DECISION_ERROR_CODES, decisionError } from "./errors.js";
 
 const QUESTION_SET_DEFINITIONS = Object.freeze({
+  "contract-v1": Object.freeze({
+    id: "contract-v1", version: 1, decisionKind: "CONTRACT_APPLICABILITY",
+    questions: Object.freeze({ applicable: { type: "noul", criteria: { yes: "Contract applies to the requested work", no: "Contract scope is not applicable" } } }),
+  }),
+  "route-v1": Object.freeze({
+    id: "route-v1", version: 1, decisionKind: "ROUTE",
+    questions: Object.freeze({ relevant_guides: { type: "choice", criteria: { clean: "General engineering hygiene", test: "Testing context", security: "Security context", unknown: "Insufficient information" } } }),
+  }),
   "intake-v1": Object.freeze({
     id: "intake-v1", version: 1, decisionKind: "INTAKE",
     questions: Object.freeze({ work_type: { type: "choice", criteria: { documentation: "Documentation or prose change", code: "Executable code change", security: "Security-sensitive change", unknown: "Insufficient information" } } }),
@@ -30,6 +38,14 @@ const QUESTION_SET_DEFINITIONS = Object.freeze({
   "test-utility-v1": Object.freeze({
     id: "test-utility-v1", version: 1, decisionKind: "TEST_UTILITY",
     questions: Object.freeze({ required_behavior: { type: "noul", criteria: { yes: "Test protects required behavior", no: "No direct required-behavior linkage" } }, unique_intent: { type: "noul", criteria: { yes: "Test has unique semantic intent", no: "Test overlaps another behavior" } }, risk_guard: { type: "noul", criteria: { yes: "Test guards a security, public, or protocol boundary", no: "No protected boundary" } } }),
+  }),
+  "task-overlap-v1": Object.freeze({
+    id: "task-overlap-v1", version: 1, decisionKind: "TASK_OVERLAP",
+    questions: Object.freeze({ relationship: { type: "choice", criteria: { SAME_PROBLEM: "Same problem", RELATED: "Related problem", INDEPENDENT: "Independent problem", UNKNOWN: "Insufficient information" } } }),
+  }),
+  "test-prune-v1": Object.freeze({
+    id: "test-prune-v1", version: 1, decisionKind: "TEST_PRUNE",
+    questions: Object.freeze({ redundancy: { type: "choice", criteria: { DISTINCT_BEHAVIOR: "Distinct behavior", PARTIALLY_OVERLAPPING: "Partially overlapping", SEMANTIC_DUPLICATE: "Semantic duplicate", UNKNOWN: "Insufficient information" } } }),
   }),
 });
 

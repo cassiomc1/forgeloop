@@ -18,3 +18,9 @@ utility is blocked and no command performs deletion.
 Context plans are bounded, fingerprinted, and non-authoritative. Deterministic mandatory candidates remain selected even when a semantic ranker is unavailable; suspicious instruction-like text is marked as prompt-injection content and is never treated as an instruction. Token values are `UNKNOWN` unless the provider or host reports them.
 
 `npm run jev:smoke` performs only a tiny health request when credentials are configured. A missing credential reports `NOT_RUN`; an unavailable or rate-limited service is a failed live check, never a fabricated success. Inspection, recovery, and completion validation do not require a live Jev call.
+
+Semantic-required operations use fail-closed cutover semantics: an unavailable,
+stale, malformed, or unsupported decision cannot silently authorize a mutation.
+Offline inspection, recovery, and deterministic completion validation remain
+usable without a live Jev request. Cached decisions may be used only when their
+existing fingerprint/freshness validators accept them.
