@@ -15,6 +15,18 @@ const QUESTION_SET_DEFINITIONS = Object.freeze({
     id: "model-route-v1", version: 1, decisionKind: "MODEL_ROUTE",
     questions: Object.freeze({ generation_required: { type: "noul", criteria: { yes: "Generation is required", no: "A deterministic or semantic-only decision is sufficient" } }, reasoning_depth: { type: "choice", criteria: { NONE: "No generation or deep reasoning", FAST: "Small bounded reasoning", STANDARD: "Cross-file reasoning", PRIMARY: "Architecture or high ambiguity reasoning" } } }),
   }),
+  "failure-v1": Object.freeze({
+    id: "failure-v1", version: 1, decisionKind: "FAILURE_TRIAGE",
+    questions: Object.freeze({ failure_class: { type: "choice", criteria: { implementation: "Incorrect implementation", expectation: "Stale expectation", state: "State divergence", dependency: "Dependency incompatibility", environment: "Network or environment issue", unknown: "Insufficient information" } } }),
+  }),
+  "diagnosis-v1": Object.freeze({
+    id: "diagnosis-v1", version: 1, decisionKind: "DIAGNOSIS_PRIORITY",
+    questions: Object.freeze({ priority: { type: "choice", criteria: { inspect_state: "Inspect state transition", inspect_caller: "Inspect caller", inspect_dependency: "Inspect dependency behavior", narrow_experiment: "Run a narrower experiment", unknown: "Insufficient information" } } }),
+  }),
+  "review-v1": Object.freeze({
+    id: "review-v1", version: 1, decisionKind: "REVIEW_PLAN",
+    questions: Object.freeze({ review_focus: { type: "choice", criteria: { security: "Security review", api: "API compatibility review", concurrency: "Concurrency review", package: "Package/release review", docs: "Documentation review", migration: "Migration review", performance: "Performance review", full_diff: "Full diff context" } } }),
+  }),
 });
 
 export function getQuestionSet(id) {

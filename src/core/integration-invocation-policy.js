@@ -24,7 +24,7 @@ export const INTEGRATION_RISK_CLASSES = Object.freeze({
 });
 
 const READ_ONLY_COMMANDS = Object.freeze(new Set([
-  "protocol-info", "decision-status", "decision-show", "context-plan", "model-route", "status", "next", "continuity", "reconcile-continuity",
+  "protocol-info", "decision-status", "decision-show", "context-plan", "model-route", "semantic-plan", "status", "next", "continuity", "reconcile-continuity",
   "task-list", "task-show", "task-lock-status", "progress", "audit", "report",
   "inspect", "validate-state", "validate-protocol", "validate-receipt",
   "policy-status", "policy-diff", "rule-verify", "policy",

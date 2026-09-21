@@ -105,6 +105,7 @@ import { formatDecisionStatusResult } from "./commands/decision-status.js";
 import { formatDecisionShowResult } from "./commands/decision-show.js";
 import { formatContextPlanResult } from "./commands/context-plan.js";
 import { formatModelRouteResult } from "./commands/model-route.js";
+import { formatSemanticPlanResult } from "./commands/semantic-plan.js";
 import { resolveTarget } from "./core/filesystem.js";
 import { getPackageRoot } from "./core/templates.js";
 import { CLI_COMMAND_DEFINITIONS, buildOptionLookup, getPositionalDefinitions } from "./core/cli-command-definitions.js";
@@ -410,6 +411,11 @@ export const COMMAND_HANDLERS = Object.freeze({
   "model-route": async ({ options }) => {
     const { result } = await COMMAND_EXECUTORS["model-route"]({ options });
     renderJsonOr(options, result, formatModelRouteResult);
+    return 0;
+  },
+  "semantic-plan": async ({ options }) => {
+    const { result } = await COMMAND_EXECUTORS["semantic-plan"]({ options });
+    renderJsonOr(options, result, formatSemanticPlanResult);
     return 0;
   },
   init: async ({ target, packageRoot, packageVersion, options }) => {

@@ -81,6 +81,7 @@ import { runDecisionStatus } from "../commands/decision-status.js";
 import { runDecisionShow } from "../commands/decision-show.js";
 import { runContextPlan } from "../commands/context-plan.js";
 import { runModelRoute } from "../commands/model-route.js";
+import { runSemanticPlan } from "../commands/semantic-plan.js";
 import { runWorkspaceBind } from "../commands/workspace-bind.js";
 import { runWorkspaceStatus } from "../commands/workspace-status.js";
 import { runHandoffCreate } from "../commands/handoff-create.js";
@@ -166,6 +167,14 @@ export const COMMAND_EXECUTORS = {
       semanticRecommendation: options.semanticTier
         ? { tier: options.semanticTier, confidence: options.semanticConfidence === undefined ? null : Number(options.semanticConfidence), requiresEscalation: options.semanticEscalation === true }
         : null,
+    }),
+    exitCode: 0,
+  }),
+  "semantic-plan": async ({ options }) => ({
+    result: await runSemanticPlan({
+      kind: options.semanticPlanKind,
+      input: options.semanticPlanInput ?? {},
+      semanticRecommendation: options.semanticRecommendation,
     }),
     exitCode: 0,
   }),

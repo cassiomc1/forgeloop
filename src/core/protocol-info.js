@@ -51,7 +51,7 @@ export function protocolInfo({ packageVersion = null } = {}) {
         completionAuthority: false,
         ownershipAuthority: false,
         installationAuthority: false,
-        commands: ["decision-status", "decision-show", "model-route"],
+        commands: ["decision-status", "decision-show", "context-plan", "model-route", "semantic-plan"],
         resource: "task/decisions",
         contextPlanResource: "task/context-plan",
         offlineInspection: true,
@@ -62,6 +62,13 @@ export function protocolInfo({ packageVersion = null } = {}) {
           deterministicFloor: true,
           advisoryEscalationOnly: true,
           vendorSelection: false,
+        },
+        semanticPlanning: {
+          version: 1,
+          questionSets: ["failure-v1", "diagnosis-v1", "review-v1"],
+          authority: "SEMANTIC_DECISION",
+          evidenceAuthority: "NONE",
+          lifecycleAuthority: false,
         },
       },
       taskClaimRecovery: {

@@ -131,6 +131,20 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
     writes: [], removes: [], mayExecuteExternalProcess: false,
     description: "Projects a deterministic model-routing floor with advisory Jev escalation only.",
   }),
+  "semantic-plan": Object.freeze({
+    name: "semantic-plan",
+    category: "diagnostics",
+    mutation: "READ_ONLY",
+    options: Object.freeze({
+      ...CLI_COMMON_OPTIONS,
+      "--kind": Object.freeze({ targetKey: "semanticPlanKind", parseType: "string", takesValue: true, valueName: "failure|diagnosis|review", missingValueMessage: "--kind requires failure, diagnosis, or review", description: "bounded semantic planning projection" }),
+      "--input": Object.freeze({ targetKey: "semanticPlanInput", parseType: "json-object", takesValue: true, valueName: "json", missingValueMessage: "--input requires a JSON object", description: "bounded failure, diagnosis, or review context" }),
+      "--recommendation": Object.freeze({ targetKey: "semanticRecommendation", parseType: "string", takesValue: true, repeatable: true, valueName: "value", missingValueMessage: "--recommendation requires a value", description: "bounded semantic recommendation; repeatable" }),
+      "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit semantic plan projection as JSON" }),
+    }),
+    writes: [], removes: [], mayExecuteExternalProcess: false,
+    description: "Projects fail-closed failure triage, diagnosis priority, or review planning without authority.",
+  }),
   discover: Object.freeze({
     name: "discover",
     category: "lifecycle",
