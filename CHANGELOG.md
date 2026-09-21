@@ -1,18 +1,38 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Added the provider-neutral `providerExtensions` architecture and reference
+  contract. Provider output remains bounded observation data without lifecycle,
+  evidence, completion, claim, ownership, installation, or command authority.
+
+- Added the generated, deterministic, harness-neutral ForgeLoop Agent Skill
+  with bounded freshness checks, references, documentation, and npm package
+  coverage.
+
+- Added optional OpenSrc advisory context for bounded, version-qualified
+  external package and repository source recall without lifecycle, completion,
+  evidence, or installation authority.
+
+- Added the provider-neutral Browser Verification contract and the optional
+  host-injected Agent Browser adapter. Both remain observation-only, use exact
+  origin and process boundaries, and never auto-install browser tooling.
+
+- Added the optional host-injected Emulated Services adapter for bounded
+  loopback observations with explicit executable/version selection, argv-only
+  process execution, temporary-state isolation, and fail-closed cleanup.
+
 - Added the optional host-injected Security Review provider API. It provides
   bounded, cancellable observation-only findings with strict request/result
   snapshots and no lifecycle, evidence, completion, claim, ownership,
   installation, or command authority.
 
-## Unreleased
-
-### Added
-
-- Added an optional host-injected Agent Browser verification adapter. It uses a
-  host-supplied executable, never auto-installs Agent Browser or Chrome, runs a
-  fresh isolated session with exact-origin validation, and returns only bounded
-  observation metadata.
+- Added the bounded, deterministic Audit UX read model as a read-only
+  Integration API projection. It composes canonical lifecycle, health,
+  verification, ownership, recovery, and completion data without becoming a
+  mutation or lifecycle authority.
 
 - Added the canonical `contract-revise` mutation for safe pre-execution
   contract replacement in `CONTRACT_READY`, `ROUTED`, and `PLANNED`. Revisions
@@ -29,17 +49,6 @@
   route identity, binds an append-only audit event to the state revision, and
   fails closed for contract, route, artifact, ownership, or post-execution
   changes.
-
-- Added an optional host-injected OpenSrc advisory context adapter for bounded,
-  version-qualified external package/repository source recall without lifecycle,
-  completion, evidence, or installation authority.
-
-- Added a generated, deterministic, harness-neutral ForgeLoop Agent Skill with
-  bounded freshness checks, references, documentation, and npm package coverage.
-
-- Added the provider-neutral `providerExtensions` v1 capability contract,
-  provider architecture and reference documentation, and package coverage.
-  The generic provider registry remains internal and unexported.
 
 - Added first-class C, C++, Java, SQL, Go, TypeScript, PHP, and Swift
   specialist guides with bounded structural project detection, conservative

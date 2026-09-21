@@ -49,6 +49,16 @@ The five kinds are derived from the canonical `PROVIDER_KINDS` source:
 Every kind denies lifecycle, completion, and evidence authority. Providers do
 not acquire installation authority.
 
+### Presentation vocabulary and Audit UX
+
+`PRESENTATION` remains a provider-kind vocabulary slot for future bounded
+renderers; it does not require a concrete provider in the completed roadmap.
+The current Audit UX need is already served by `task/audit-view`, a canonical
+read-only Integration API projection composed from ForgeLoop-owned resolvers.
+Audit UX is not a provider, does not register through the provider boundary,
+and cannot mutate protocol state, establish evidence, release claims, or
+authorize completion.
+
 ## Invocation Lifecycle
 
 ```text
