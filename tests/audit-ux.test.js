@@ -161,7 +161,7 @@ test("task/audit-view redacts adversarial paths, credentials, and URL userinfo",
       "token=private-token",
       "file=/secret",
       "Authorization: Bearer bearer-secret",
-      "https://user:password@example.com/private",
+      "https://user:password@example.com/resource",
       "/secret",
       "/config",
       "/root",
@@ -174,6 +174,13 @@ test("task/audit-view redacts adversarial paths, credentials, and URL userinfo",
       "file:///etc/passwd",
       "Authorization: Bearer super-secret-token",
       "Authorization: Basic basic-secret",
+      "Authorization: Digest username=\"admin\", realm=\"private\", nonce=\"abc123\"",
+      "Authorization: AWS4-HMAC-SHA256 Credential=AKIAEXAMPLE/20260920/us-east-1/s3/aws4_request, SignedHeaders=host;x-amz-date, Signature=deadbeef",
+      "Proxy-Authorization: Bearer proxy-secret",
+      "Proxy-Authorization: Digest username=\"proxy\", realm=\"internal\"",
+      "authorization: Digest username=\"admin\", realm=\"private\"",
+      "PROXY-AUTHORIZATION: Bearer proxy-secret",
+      "Authorization: Digest username=\"admin\", realm=\"private\", nonce=\"abc123\"\nCookie: session=secret-session; csrf=secret-csrf\nProxy-Authorization: AWS4-HMAC-SHA256 Credential=AKIAEXAMPLE, Signature=deadbeef",
       "Set-Cookie: session=secret-token; Path=/; HttpOnly; Secure",
       "Set-Cookie: auth=secret-token; SameSite=None; Secure",
       "cookie: session=abc123; csrf=xyz789",
@@ -183,7 +190,7 @@ test("task/audit-view redacts adversarial paths, credentials, and URL userinfo",
       "client_secret=secret-value",
       "api_key=my-key",
       "FORGELOOP_SECRET=environment-value",
-      "https://user:password@example.com/private",
+      "https://user:password@example.com/resource",
       "postgres://admin:password@localhost/db",
     ];
     const ordinaryUrls = [
@@ -227,7 +234,11 @@ test("task/audit-view redacts adversarial paths, credentials, and URL userinfo",
     const view = await resource(target, taskId, { limit: 200 });
     const serialized = JSON.stringify(view.data);
     for (const value of sensitive) assert.equal(serialized.includes(value), false, value);
-    for (const value of ["abc123", "xyz789", "dark", "secret-token", "private-token", "bearer-secret", "/secret", "user:password"]) {
+    for (const value of [
+      "abc123", "xyz789", "dark", "secret-token", "private-token", "bearer-secret", "/secret", "user:password",
+      "dXNlcjpwYXNzd29yZA==", "admin", "private", "AKIAEXAMPLE", "deadbeef", "proxy-secret", "proxy", "internal",
+      "secret-session", "secret-csrf",
+    ]) {
       assert.equal(serialized.includes(value), false, value);
     }
     for (const value of ordinaryUrls) assert.ok(serialized.includes(value), value);
@@ -235,6 +246,10 @@ test("task/audit-view redacts adversarial paths, credentials, and URL userinfo",
     assert.match(serialized, /Set-Cookie: <credential>/u);
     assert.match(serialized, /cookie: <credential>/u);
     assert.match(serialized, /SET-COOKIE: <credential>/u);
+    assert.match(serialized, /Authorization: <credential>/u);
+    assert.match(serialized, /authorization: <credential>/u);
+    assert.match(serialized, /Proxy-Authorization: <credential>/u);
+    assert.match(serialized, /PROXY-AUTHORIZATION: <credential>/u);
     assert.match(serialized, /<path>/u);
     assert.match(serialized, /<credential>/u);
     assert.match(serialized, /<environment>/u);
