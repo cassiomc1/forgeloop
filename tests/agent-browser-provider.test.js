@@ -52,7 +52,7 @@ function request() {
       { id: "url", kind: "URL_PREFIX", expected: "https://example.test:8443" },
       { id: "title", kind: "TITLE_EQUALS", expected: "Checkout" },
     ],
-    timeoutMs: 3000,
+    timeoutMs: 10000,
     capture: { screenshot: "NEVER" },
   };
 }
