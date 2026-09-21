@@ -24,6 +24,7 @@ test("resource allowlist is closed and ownership is canonical", async () => {
     (error) => error.code === "E_INTEGRATION_RESOURCE_UNKNOWN",
   );
   assert.ok(INTEGRATION_RESOURCE_DEFINITIONS["task/ownership"]);
+  assert.equal(INTEGRATION_RESOURCE_DEFINITIONS["task/audit-view"].scope, "TASK");
 });
 
 test("ownership resource uses the canonical resolver across all states", async () => {
@@ -247,7 +248,7 @@ test("task/context projects the resolved profile into bounded host context", asy
 
 test("task-scoped resources refuse missing taskId", async () => {
   await withRecoveryTarget(async (target) => {
-    for (const uri of ["task/status", "task/ownership", "task/contract", "task/continuity", "task/context"]) {
+    for (const uri of ["task/status", "task/ownership", "task/contract", "task/continuity", "task/context", "task/audit-view"]) {
       await assert.rejects(
         () => readForgeLoopIntegrationResource(uri, { projectPath: target, packageRoot }),
         (error) => error.code === "E_TASK_REQUIRED",

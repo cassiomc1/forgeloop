@@ -154,6 +154,18 @@ export function protocolInfo({ packageVersion = null } = {}) {
         commands: ["next", "task-show"],
         preservesDefaultOutput: true,
       },
+      auditUx: {
+        version: 1,
+        supported: true,
+        readOnly: true,
+        resource: "task/audit-view",
+        timeline: true,
+        lifecycleAuthority: false,
+        evidenceAuthority: false,
+        completionAuthority: false,
+        mutationAuthority: false,
+        externalExecution: false,
+      },
       usageTelemetry: {
         version: 1,
         supported: true,

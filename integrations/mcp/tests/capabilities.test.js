@@ -68,6 +68,7 @@ test("forgeloop_capabilities exists and reports versions, features, policy, and 
         "task/approvals",
         "task/metrics",
         "task/context",
+        "task/audit-view",
         "task/evaluations",
         "project/capability-policy",
         "repository/index-status",

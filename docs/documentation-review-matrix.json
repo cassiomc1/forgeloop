@@ -42,6 +42,7 @@
     { "path": "scripts/CI_VALIDATORS.md", "status": "reviewed", "action": "updated", "sourceOfTruth": [".github/workflows/docs.yml", ".github/workflows/pr-core.yml", "scripts/"] },
     { "path": "docs/MCP.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["integrations/mcp/src/", "integrations/mcp/package.json"] },
     { "path": "docs/UNIVERSAL_INTEGRATION.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["src/integration.js", "src/core/integration-resources.js", "src/persistent-transport/"] },
+    { "path": "docs/AUDIT_UX.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/core/audit-ux.js", "src/core/integration-resources.js", "src/integration.d.ts", "tests/audit-ux.test.js"] },
     { "path": "docs/RELEASE_CHECKLIST_1_5_MCP.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["docs/MCP.md", "docs/UNIVERSAL_INTEGRATION.md"] },
     { "path": "docs/RELEASE_CHECKLIST_1_6_1.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["package.json", "src/core/verification-execution.js", "src/core/protocol-info.js", ".github/workflows/npm-publish.yml", "scripts/verify_release_identity.mjs"] },
     { "path": "docs/RELEASE_CHECKLIST.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["package.json", ".github/workflows/", "scripts/", "docs/EXECUTION_PROFILE_BENCHMARKS.md"] },

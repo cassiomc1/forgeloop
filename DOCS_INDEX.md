@@ -35,6 +35,7 @@ integration and guide context. Use this map before editing documentation.
 | Revision and signing providers | [`docs/REVISION_PROVIDERS.md`](./docs/REVISION_PROVIDERS.md) and [`docs/SIGNING_PROVIDERS.md`](./docs/SIGNING_PROVIDERS.md) | Provider-neutral extension contracts |
 | Platform adapters | [`docs/PLATFORM_ADAPTERS.md`](./docs/PLATFORM_ADAPTERS.md) | Generic CI boundary and platform mapping guidance |
 | Universal integration API | [`docs/UNIVERSAL_INTEGRATION.md`](./docs/UNIVERSAL_INTEGRATION.md) | Programmatic integration subpath, envelope semantics, and consumer map |
+| Audit UX read model | [`docs/AUDIT_UX.md`](./docs/AUDIT_UX.md) | Bounded read-only task timeline, health, verification, ownership, and completion projection |
 | Advisory context providers | [`docs/ADVISORY_CONTEXT.md`](./docs/ADVISORY_CONTEXT.md) | Optional external host context, non-evidence trust boundary, allowlist normalization, and safety rules |
 | Provider extension architecture | [`docs/PROVIDER_ARCHITECTURE.md`](./docs/PROVIDER_ARCHITECTURE.md) | Provider-neutral architecture, invocation lifecycle, strict snapshots, cancellation, trust, and authority boundaries |
 | Provider extension reference | [`docs/PROVIDERS.md`](./docs/PROVIDERS.md) | Capability discovery, provider kinds, common contract, limits, errors, and maintainer checklist |
@@ -83,6 +84,7 @@ is historical evidence and is not part of the published core package.
 | **AI coding agent / harness** | [`docs/AGENT_PROTOCOL_SUMMARY.md`](./docs/AGENT_PROTOCOL_SUMMARY.md) → [`AGENTS.md`](./AGENTS.md) → [`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md) |
 | **Technical auditor / Evaluator** | [`poc/README.md`](./poc/README.md) → [`poc/reports/poc-20260826-real-execution-technical-audit-v2.md`](./poc/reports/poc-20260826-real-execution-technical-audit-v2.md) |
 | **Harness integrator** | [`PROTOCOL_INTEGRATION.md`](./PROTOCOL_INTEGRATION.md) |
+| **Audit or operator UI integrator** | [`docs/AUDIT_UX.md`](./docs/AUDIT_UX.md) |
 | **External runtime / orchestrator integrator** | [`ORCHESTRATOR_INTEGRATION.md`](./ORCHESTRATOR_INTEGRATION.md) |
 | **Resuming another tool / session** | [`docs/CROSS_HARNESS_CONTINUITY.md`](./docs/CROSS_HARNESS_CONTINUITY.md) |
 | **Looking up CLI commands** | [`docs/CLI_REFERENCE.md`](./docs/CLI_REFERENCE.md) |
@@ -120,6 +122,7 @@ is historical evidence and is not part of the published core package.
 - **Measure structural quality without replacing tests**: [`docs/STRUCTURAL_QUALITY.md`](./docs/STRUCTURAL_QUALITY.md)
 - **Read the normative protocol specification**: [`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md)
 - **Integrate a new AI environment**: [`PROTOCOL_INTEGRATION.md`](./PROTOCOL_INTEGRATION.md)
+- **Build a task audit view**: [`docs/AUDIT_UX.md`](./docs/AUDIT_UX.md)
 - **Map ForgeLoop state into an external runtime/orchestrator**: [`ORCHESTRATOR_INTEGRATION.md`](./ORCHESTRATOR_INTEGRATION.md)
 - **Edit documentation safely**: [`docs/DOCUMENTATION_GUIDE.md`](./docs/DOCUMENTATION_GUIDE.md)
 - **Audit the npm package boundary**: [`docs/PACKAGE_CONTENTS.md`](./docs/PACKAGE_CONTENTS.md)

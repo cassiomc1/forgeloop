@@ -22,6 +22,18 @@ test("capabilities report versions, features, commands, and resources", () => {
   assert.equal(capabilities.packageVersion, "1.5.0");
   assert.equal(capabilities.integrationApiVersion, 1);
   assert.equal(capabilities.features.taskClaimRecovery.validatedClaimProjection, true);
+  assert.deepEqual(capabilities.features.auditUx, {
+    version: 1,
+    supported: true,
+    readOnly: true,
+    resource: "task/audit-view",
+    timeline: true,
+    lifecycleAuthority: false,
+    evidenceAuthority: false,
+    completionAuthority: false,
+    mutationAuthority: false,
+    externalExecution: false,
+  });
   assert.deepEqual(capabilities.features.verificationExecutionIsolation, {
     version: 1,
     supported: true,
@@ -60,6 +72,7 @@ test("capabilities report versions, features, commands, and resources", () => {
   assert.ok(resourceNames.includes("task/ownership"));
   assert.ok(resourceNames.includes("task/context"));
   assert.ok(resourceNames.includes("repository/index-status"));
+  assert.ok(resourceNames.includes("task/audit-view"));
 });
 
 test("protocol-info and Integration API expose matching advisory and handoff contracts", () => {
@@ -91,6 +104,7 @@ test("protocol-info and Integration API expose matching advisory and handoff con
   assert.equal(capabilities.features.advisoryContextProviders.evidenceAuthority, false);
   assert.equal(protocol.features.advisoryContextProviders.executable, false);
   assert.equal(capabilities.features.advisoryContextProviders.executable, false);
+  assert.deepEqual(protocol.features.auditUx, capabilities.features.auditUx);
 });
 
 test("verification adapter and isolation policy are runtime-only context", () => {

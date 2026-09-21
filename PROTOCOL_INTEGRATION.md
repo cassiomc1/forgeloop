@@ -181,6 +181,16 @@ authority, provenance, and safety-floor decisions remain unchanged.
 validator-backed completion remains unchanged.
 ```
 
+The capability handshake also advertises the versioned, read-only `auditUx`
+resource feature. `task/audit-view` is a bounded presentation projection
+composed from canonical status, audit, report, history, trace, ownership,
+next-action, approval, and recovery resolvers. It exposes no lifecycle,
+evidence, completion, mutation, or external-execution authority; hosts must
+use the canonical command/API path for mutations. Timeline pagination is
+sequence-based and bounded, and the projection omits raw event payloads,
+commands, environment values, credentials, provider output, and absolute
+paths. See [`docs/AUDIT_UX.md`](./docs/AUDIT_UX.md).
+
 ## Capability negotiation
 
 The public capability handshake exposes additive capability families separately

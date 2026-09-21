@@ -21,6 +21,7 @@ import { resolveAttestationStatus } from "./attestation.js";
 import { buildExecutionProfileContext } from "./execution-profile-context.js";
 import { projectStructuralQualityStatus } from "./structural-quality/service.js";
 import { getRepositoryIndexStatus } from "../repository-index/status.js";
+import { buildAuditUxView } from "./audit-ux.js";
 
 /**
  * Canonical integration resource allowlist.
@@ -86,6 +87,7 @@ export const INTEGRATION_RESOURCE_DEFINITIONS = Object.freeze({
   "task/approvals": Object.freeze({ scope: "TASK", description: "Durable approval artifacts for one task." }),
   "task/metrics": Object.freeze({ scope: "TASK", description: "Read-only trajectory metrics for one task." }),
   "task/context": Object.freeze({ scope: "TASK", description: "Read-only profile-aware task context with bounded presentation policy." }),
+  "task/audit-view": Object.freeze({ scope: "TASK", description: "Bounded read-only Audit UX projection composed from canonical task resolvers." }),
   "task/evaluations": Object.freeze({ scope: "TASK", description: "Persisted trajectory evaluations for one task." }),
   "project/capability-policy": Object.freeze({ scope: "PROJECT", description: "Project capability policy, never host authority." }),
   "repository/index-status": Object.freeze({ scope: "PROJECT", description: "Provider-neutral repository-index health and owned-server status." }),
@@ -292,6 +294,26 @@ async function readForgeLoopIntegrationResourceCore(uri, {
 }
 
 export async function readForgeLoopIntegrationResource(uri, options = {}) {
+  if (uri === "task/audit-view") {
+    if (typeof options.taskId !== "string" || !options.taskId) {
+      const error = new Error("Resource task/audit-view requires a taskId"); error.code = "E_TASK_REQUIRED"; throw error;
+    }
+    return {
+      uri,
+      taskId: options.taskId,
+      data: await buildAuditUxView({
+        target: options.projectPath ?? ".",
+        packageRoot: options.packageRoot,
+        taskId: options.taskId,
+        limit: options.limit,
+        beforeSequence: options.beforeSequence,
+        afterSequence: options.afterSequence,
+        categories: options.categories,
+        authorityContext: options.runtimeContext?.authorityContext,
+        runtimeContext: options.runtimeContext,
+      }),
+    };
+  }
   if (uri === "repository/index-status") {
     return {
       uri,

@@ -101,6 +101,7 @@ Phases: RECEIVED, DISCOVERING, CONTRACT_READY, ROUTED, DESIGNING, PLANNED, EXECU
 | --- | --- | --- |
 | adaptiveExecutionProfiles | 1 | yes |
 | advisoryContextProviders | 1 | yes |
+| auditUx | 1 | yes |
 | canonicalHandoffs | 2 | yes |
 | capabilityPolicy | 1 | yes |
 | codeAttestation | 1 | yes |
