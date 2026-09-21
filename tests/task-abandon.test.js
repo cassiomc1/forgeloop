@@ -6,6 +6,15 @@ import { runTaskAbandon } from "../src/commands/task-abandon.js";
 import { runTaskResume } from "../src/commands/task-resume.js";
 import { runTaskRecover } from "../src/commands/task-recover.js";
 import { runTaskCreate } from "../src/commands/task-create.js";
+import { runActivate } from "../src/commands/activate.js";
+import { runAdvance } from "../src/commands/advance.js";
+import { runContractCreate } from "../src/commands/contract-create.js";
+import { runDiscover } from "../src/commands/discover.js";
+import { runPreflight } from "../src/commands/preflight.js";
+import { runRoute } from "../src/commands/route.js";
+import { runComplete } from "../src/commands/complete.js";
+import { runGateRecord } from "../src/commands/gate-record.js";
+import { prepareCompletion, recordCheck } from "../src/core/completion-artifacts.js";
 import { readEvents, validateEventLedger } from "../src/core/events.js";
 import { resolveTaskClaimState } from "../src/core/task-claim-state.js";
 import { readTaskRecovery } from "../src/core/task-recovery.js";
@@ -189,5 +198,87 @@ test("task-recover remains unavailable for a fresh active task", async () => {
       () => runTaskRecover({ target, packageRoot, taskId, acknowledgeRecovery: true }),
       (error) => error.code === "E_TASK_RECOVERY_UNSAFE" || error.code === "E_TASK_RECOVERY_OFFICIAL_PATH_AVAILABLE",
     );
+  });
+});
+
+test("task-abandon resolves the active release-review publication deadlock", async () => {
+  await withRecoveryTarget(async (target) => {
+    const taskId = "release-publication-deadlock";
+    await writeFile(ensureWithin(target, "THREAT_MODEL.md"), "release gate evidence\n", "utf8");
+    await runTaskCreate({ target, packageRoot, taskId, preset: "release", claims: ["package.json", "THREAT_MODEL.md"] });
+    await runDiscover({ target, packageRoot, taskId });
+    await runContractCreate({ target, packageRoot, taskId, preset: "release" });
+    await runRoute({
+      target,
+      packageRoot,
+      taskId,
+      workType: "code",
+      surfaces: ["config"],
+      risks: ["publication"],
+      executableChange: true,
+    });
+    await runGateRecord({
+      target,
+      packageRoot,
+      taskId,
+      gate: "threat-boundary",
+      status: "satisfied",
+      artifacts: ["THREAT_MODEL.md"],
+      decisions: ["Reviewed the release threat boundary"],
+    });
+    assert.equal((await runPreflight({ target, packageRoot, taskId })).status, "READY");
+    await runActivate({ target, packageRoot, taskId });
+    await runAdvance({ target, packageRoot, taskId, to: "PLANNED" });
+    await runAdvance({ target, packageRoot, taskId, to: "EXECUTING" });
+    await runAdvance({ target, packageRoot, taskId, to: "VERIFYING" });
+    await prepareCompletion({ target, packageRoot, taskId });
+    await recordCheck({
+      target,
+      packageRoot,
+      taskId,
+      kind: "manual-review",
+      id: "verify-release",
+      requirement: "Release identity, package/artifact integrity, and required checks are independently verified.",
+      status: "passed",
+      evidenceKind: "OBSERVED",
+      command: "npm test",
+      result: "Release checks passed locally",
+    });
+    await runAdvance({ target, packageRoot, taskId, to: "REVIEWING" });
+
+    const completion = await runComplete({ target, packageRoot, taskId });
+    assert.equal(completion.status, "REJECTED");
+    assert.equal(completion.taskStatus, "INCOMPLETE");
+    assert.ok(completion.errors.some((error) => error.code === "E_PUBLICATION_REQUIREMENT_PENDING"));
+
+    await assert.rejects(
+      () => runTaskRecover({ target, packageRoot, taskId, acknowledgeRecovery: true }),
+      (error) => error.code === "E_TASK_RECOVERY_UNSAFE" || error.code === "E_TASK_RECOVERY_OFFICIAL_PATH_AVAILABLE",
+    );
+
+    const abandoned = await runTaskAbandon({ target, packageRoot, taskId, acknowledgeAbandonment: true });
+    assert.equal(abandoned.abandoned, true);
+    assert.equal(abandoned.claimState, "RELEASED_BY_RECOVERY");
+    assert.equal(abandoned.mutationAllowed, false);
+    assert.deepEqual(abandoned.effectiveWriteClaims, []);
+    assert.equal(abandoned.classification, "ABANDONED");
+    assert.deepEqual(abandoned.reasonCodes, ["CALLER_ABANDONED"]);
+
+    const events = await readEvents(target, packageRoot, { taskId });
+    const abandonedEvent = events.find((event) => event.event === "TASK_ABANDONED");
+    const commit = events.find((event) => event.seq === abandonedEvent.seq + 1);
+    assert.ok(abandonedEvent);
+    assert.equal(commit.event, "TRANSACTION_COMMITTED");
+    assert.equal(commit.details.operation, "task-abandon");
+    assert.equal(events.filter((event) => event.event === "COMPLETION_VALIDATED").length, 0);
+    assert.equal((await validateEventLedger(target, packageRoot, { taskId })).valid, true);
+
+    const state = await readWorkState(target, { packageRoot, taskId });
+    assert.equal(state.phase, "REVIEWING");
+    assert.equal(completion.publicationStatus, "local-only");
+    const projection = await resolveTaskClaimState(target, { taskId, packageRoot });
+    assert.equal(projection.claimState, "RELEASED_BY_RECOVERY");
+    assert.equal(projection.ownershipValid, true);
+    assert.equal(projection.mutationAllowed, false);
   });
 });

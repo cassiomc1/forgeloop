@@ -596,7 +596,7 @@ Useful primary references include:
   [NestJS](https://docs.nestjs.com/), [Koa](https://koajs.com/), and
   [hapi](https://hapi.dev/)
 - [TypeScript handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
-- [OWASP API Security Top 10](https://owasp.org/API-Security/editions/2023/en/0x11-t10/)
+- [OWASP API Security Top 10](https://api-security.owasp.org/editions/2023/en/0x11-t10)
 - [OWASP SSRF prevention](https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html)
 - [OWASP Node.js security guidance](https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html)
 - [RFC 9110 HTTP semantics](https://www.rfc-editor.org/rfc/rfc9110)
