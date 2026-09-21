@@ -90,6 +90,7 @@ export const TEMPLATE_PATHS = [
   "schemas/structural-quality.schema.json",
   "schemas/semantic-decision.schema.json",
   "schemas/context-plan.schema.json",
+  "schemas/test-utility.schema.json",
 ];
 
 export function getPackageRoot() {

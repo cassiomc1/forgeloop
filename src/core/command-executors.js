@@ -82,6 +82,8 @@ import { runDecisionShow } from "../commands/decision-show.js";
 import { runContextPlan } from "../commands/context-plan.js";
 import { runModelRoute } from "../commands/model-route.js";
 import { runSemanticPlan } from "../commands/semantic-plan.js";
+import { runTestInventory } from "../commands/test-inventory.js";
+import { runTestUtility } from "../commands/test-utility.js";
 import { runWorkspaceBind } from "../commands/workspace-bind.js";
 import { runWorkspaceStatus } from "../commands/workspace-status.js";
 import { runHandoffCreate } from "../commands/handoff-create.js";
@@ -176,6 +178,14 @@ export const COMMAND_EXECUTORS = {
       input: options.semanticPlanInput ?? {},
       semanticRecommendation: options.semanticRecommendation,
     }),
+    exitCode: 0,
+  }),
+  "test-inventory": async ({ target }) => ({
+    result: await runTestInventory({ target }),
+    exitCode: 0,
+  }),
+  "test-utility": async ({ target, packageRoot, options }) => ({
+    result: await runTestUtility({ target, packageRoot, taskId: options.taskId, semanticStatus: options.semanticStatus ?? "NOT_REQUESTED" }),
     exitCode: 0,
   }),
   init: async ({ target, packageRoot, packageVersion, options }) => ({

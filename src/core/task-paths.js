@@ -28,6 +28,7 @@ export const TASK_ARTIFACT_FILES = Object.freeze({
   attestations: "attestations",
   structuralQuality: "structural-quality",
   decisions: "decisions",
+  testUtility: "test-utility.json",
 });
 
 export const POLICY_ROOT = ".forgeloop/policy";
@@ -228,6 +229,7 @@ export function buildTaskArtifactPaths(taskId) {
     approvals: `${dir}/${TASK_ARTIFACT_FILES.approvals}`,
     evaluations: `${dir}/${TASK_ARTIFACT_FILES.evaluations}`,
     decisions: `${dir}/${TASK_ARTIFACT_FILES.decisions}`,
+    testUtility: `${dir}/${TASK_ARTIFACT_FILES.testUtility}`,
     usage: `${dir}/${TASK_ARTIFACT_FILES.usage}`,
     lock: taskLockPath(taskId),
     policySnapshot: `${dir}/${TASK_ARTIFACT_FILES.policySnapshot}`,

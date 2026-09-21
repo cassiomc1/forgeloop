@@ -57,6 +57,7 @@ export const SHIPPED_SCHEMA_NAMES = Object.freeze([
   "structural-quality",
   "semantic-decision",
   "context-plan",
+  "test-utility",
 ]);
 
 export class SchemaValidationError extends Error {

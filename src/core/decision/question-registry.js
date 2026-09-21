@@ -27,6 +27,10 @@ const QUESTION_SET_DEFINITIONS = Object.freeze({
     id: "review-v1", version: 1, decisionKind: "REVIEW_PLAN",
     questions: Object.freeze({ review_focus: { type: "choice", criteria: { security: "Security review", api: "API compatibility review", concurrency: "Concurrency review", package: "Package/release review", docs: "Documentation review", migration: "Migration review", performance: "Performance review", full_diff: "Full diff context" } } }),
   }),
+  "test-utility-v1": Object.freeze({
+    id: "test-utility-v1", version: 1, decisionKind: "TEST_UTILITY",
+    questions: Object.freeze({ required_behavior: { type: "noul", criteria: { yes: "Test protects required behavior", no: "No direct required-behavior linkage" } }, unique_intent: { type: "noul", criteria: { yes: "Test has unique semantic intent", no: "Test overlaps another behavior" } }, risk_guard: { type: "noul", criteria: { yes: "Test guards a security, public, or protocol boundary", no: "No protected boundary" } } }),
+  }),
 });
 
 export function getQuestionSet(id) {

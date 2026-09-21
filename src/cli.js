@@ -106,6 +106,8 @@ import { formatDecisionShowResult } from "./commands/decision-show.js";
 import { formatContextPlanResult } from "./commands/context-plan.js";
 import { formatModelRouteResult } from "./commands/model-route.js";
 import { formatSemanticPlanResult } from "./commands/semantic-plan.js";
+import { formatTestInventoryResult } from "./commands/test-inventory.js";
+import { formatTestUtilityResult } from "./commands/test-utility.js";
 import { resolveTarget } from "./core/filesystem.js";
 import { getPackageRoot } from "./core/templates.js";
 import { CLI_COMMAND_DEFINITIONS, buildOptionLookup, getPositionalDefinitions } from "./core/cli-command-definitions.js";
@@ -416,6 +418,16 @@ export const COMMAND_HANDLERS = Object.freeze({
   "semantic-plan": async ({ options }) => {
     const { result } = await COMMAND_EXECUTORS["semantic-plan"]({ options });
     renderJsonOr(options, result, formatSemanticPlanResult);
+    return 0;
+  },
+  "test-inventory": async ({ target, options }) => {
+    const { result } = await COMMAND_EXECUTORS["test-inventory"]({ target, options });
+    renderJsonOr(options, result, formatTestInventoryResult);
+    return 0;
+  },
+  "test-utility": async ({ target, packageRoot, options }) => {
+    const { result } = await COMMAND_EXECUTORS["test-utility"]({ target, packageRoot, options });
+    renderJsonOr(options, result, formatTestUtilityResult);
     return 0;
   },
   init: async ({ target, packageRoot, packageVersion, options }) => {

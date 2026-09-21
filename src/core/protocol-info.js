@@ -51,9 +51,11 @@ export function protocolInfo({ packageVersion = null } = {}) {
         completionAuthority: false,
         ownershipAuthority: false,
         installationAuthority: false,
-        commands: ["decision-status", "decision-show", "context-plan", "model-route", "semantic-plan"],
+        commands: ["decision-status", "decision-show", "context-plan", "model-route", "semantic-plan", "test-inventory", "test-utility"],
         resource: "task/decisions",
         contextPlanResource: "task/context-plan",
+        modelRouteResource: "task/model-route",
+        testUtilityResource: "task/test-utility",
         offlineInspection: true,
         completePerformsLiveRequest: false,
         modelRouting: {
@@ -65,7 +67,7 @@ export function protocolInfo({ packageVersion = null } = {}) {
         },
         semanticPlanning: {
           version: 1,
-          questionSets: ["failure-v1", "diagnosis-v1", "review-v1"],
+          questionSets: ["failure-v1", "diagnosis-v1", "review-v1", "test-utility-v1"],
           authority: "SEMANTIC_DECISION",
           evidenceAuthority: "NONE",
           lifecycleAuthority: false,

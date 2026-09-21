@@ -45,6 +45,7 @@ All artifact schemas are defined in `schemas/*.schema.json`. Persisted artifact 
 | `task-state/<task-key>/attestations/statement.json` | `in-toto-statement` | Protocol Compiled | Immutable Once Written | Code Attestation Statement |
 | `task-state/<task-key>/attestations/statement.sigstore.json` | `null` | External Signing Provider | External Immutable | External Signature Bundle |
 | `task-state/<task-key>/decisions/<decision-id>.json` | `semantic-decision` | Protocol Compiled | Immutable Once Written | Semantic Decision |
+| `task-state/<task-key>/test-utility.json` | `test-utility` | Protocol Compiled | Overwritten On Analysis | Non Evidence Test Analysis |
 
 <!-- END FORGELOOP GENERATED: artifact-registry -->
 
@@ -94,6 +95,33 @@ completion.
 - `recordedAt` *(string, required, minLength: 1)*
 
 <!-- END FORGELOOP GENERATED: schema:semantic-decision -->
+
+### 2.0.1 `test-utility`
+
+Non-evidence test inventory and utility analysis. It never authorizes deletion
+or completion.
+
+<!-- BEGIN FORGELOOP GENERATED: schema:test-utility -->
+
+- `schemaVersion` *(number, required, const: 1)*
+- `protocolVersion` *(number, required, const: 1)*
+- `taskId` *(string, required, minLength: 1)*
+- `generatedAt` *(string, required, minLength: 1)*
+- `inventoryFingerprint` *(string, required, pattern: `^[a-f0-9]{64}$`)*
+- `semanticStatus` *(string, required, enum: `PROVIDER_REPORTED`, `UNAVAILABLE`, `NOT_REQUESTED`)*
+- `tests` *(array<object>, required)*
+  - `testId` *(string, required, pattern: `^test-[a-f0-9]{24}$`)*
+  - `file` *(string, required, minLength: 1)*
+  - `framework` *(string, required, minLength: 1)*
+  - `suite` *(string, optional)*
+  - `name` *(string, required, minLength: 1)*
+  - `line` *(integer, optional, minimum: 1)*
+  - `classification` *(string, required, enum: `KEEP_REQUIRED`, `KEEP_UNIQUE`, `KEEP_RISK_GUARD`, `KEEP_DOCUMENTATION_VALUE`, `UNKNOWN`, `REDUNDANT_CANDIDATE`)*
+  - `recommendation` *(string, required, enum: `KEEP`, `REWRITE`, `PROBE_REMOVAL`, `BLOCKED`)*
+  - `protected` *(boolean, required)*
+  - `signals` *(object, optional)*
+
+<!-- END FORGELOOP GENERATED: schema:test-utility -->
 
 ### 2.1 `task-state/<taskKey>/contract.json`
 

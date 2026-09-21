@@ -403,4 +403,16 @@ export const ARTIFACT_REGISTRY = Object.freeze({
     isPersisted: true,
     description: "Fingerprint-bound, normalized Jev semantic decision; never lifecycle, evidence, ownership, installation, or completion authority.",
   }),
+  testUtility: Object.freeze({
+    key: "testUtility",
+    scope: "TASK",
+    path: `${TASK_STATE_ROOT}/<task-key>/${TASK_ARTIFACT_FILES.testUtility}`,
+    schema: "test-utility",
+    owner: "PROTOCOL_COMPILED",
+    mutability: "OVERWRITTEN_ON_ANALYSIS",
+    trustRole: "NON_EVIDENCE_TEST_ANALYSIS",
+    isPublic: true,
+    isPersisted: true,
+    description: "Deterministic test inventory and bounded utility analysis; never completion evidence or deletion authority.",
+  }),
 });

@@ -24,7 +24,7 @@ export const INTEGRATION_RISK_CLASSES = Object.freeze({
 });
 
 const READ_ONLY_COMMANDS = Object.freeze(new Set([
-  "protocol-info", "decision-status", "decision-show", "context-plan", "model-route", "semantic-plan", "status", "next", "continuity", "reconcile-continuity",
+  "protocol-info", "decision-status", "decision-show", "context-plan", "model-route", "semantic-plan", "test-inventory", "status", "next", "continuity", "reconcile-continuity",
   "task-list", "task-show", "task-lock-status", "progress", "audit", "report",
   "inspect", "validate-state", "validate-protocol", "validate-receipt",
   "policy-status", "policy-diff", "rule-verify", "policy",
@@ -90,6 +90,7 @@ const STATIC_RISK_CLASSES = Object.freeze({
   "task-repair-legacy-recovery": INTEGRATION_RISK_CLASSES.LEGACY_MIGRATION,
   "gate-record": INTEGRATION_RISK_CLASSES.MAINTENANCE,
   "gate-revalidate": INTEGRATION_RISK_CLASSES.MAINTENANCE,
+  "test-utility": INTEGRATION_RISK_CLASSES.MAINTENANCE,
   "task-repair-contract-bootstrap": INTEGRATION_RISK_CLASSES.LEGACY_MIGRATION,
   "task-migrate-contract-bootstrap-repair": INTEGRATION_RISK_CLASSES.LEGACY_MIGRATION,
   "checkpoint-revalidate": INTEGRATION_RISK_CLASSES.MAINTENANCE,

@@ -26,6 +26,7 @@ import { runContextPlan } from "../commands/context-plan.js";
 import { runModelRoute } from "../commands/model-route.js";
 import { readPersistedRoute } from "./route-artifact.js";
 import { readWorkState } from "./work-state.js";
+import { readTestUtility } from "./test-intelligence/service.js";
 
 /**
  * Canonical integration resource allowlist.
@@ -96,6 +97,7 @@ export const INTEGRATION_RESOURCE_DEFINITIONS = Object.freeze({
   "task/decisions": Object.freeze({ scope: "TASK", description: "Persisted, fingerprint-bound semantic decisions without lifecycle or evidence authority." }),
   "task/context-plan": Object.freeze({ scope: "TASK", description: "Bounded non-authoritative semantic context-plan projection." }),
   "task/model-route": Object.freeze({ scope: "TASK", description: "Deterministic model-routing floor with advisory semantic escalation." }),
+  "task/test-utility": Object.freeze({ scope: "TASK", description: "Non-evidence test inventory and utility analysis; never deletion authority." }),
   "project/capability-policy": Object.freeze({ scope: "PROJECT", description: "Project capability policy, never host authority." }),
   "repository/index-status": Object.freeze({ scope: "PROJECT", description: "Provider-neutral repository-index health and owned-server status." }),
 });
@@ -203,6 +205,12 @@ async function readForgeLoopIntegrationResourceCore(uri, {
       break;
     }
     case "task/model-route": {
+      if (typeof taskId !== "string" || !taskId) {
+        const error = new Error(`Resource ${uri} requires a taskId`); error.code = "E_TASK_REQUIRED"; throw error;
+      }
+      break;
+    }
+    case "task/test-utility": {
       if (typeof taskId !== "string" || !taskId) {
         const error = new Error(`Resource ${uri} requires a taskId`); error.code = "E_TASK_REQUIRED"; throw error;
       }
@@ -328,6 +336,10 @@ async function readForgeLoopIntegrationResourceCore(uri, {
         contract: { phase: state.phase },
       }),
     };
+  }
+  if (uri === "task/test-utility") {
+    const artifact = await readTestUtility({ target: projectPath, packageRoot, taskId });
+    return { uri, taskId, data: artifact.value };
   }
   if (uri === "project/capability-policy") {
     return { uri, data: await loadCapabilityPolicy(projectPath, packageRoot) };

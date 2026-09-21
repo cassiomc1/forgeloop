@@ -145,6 +145,30 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
     writes: [], removes: [], mayExecuteExternalProcess: false,
     description: "Projects fail-closed failure triage, diagnosis priority, or review planning without authority.",
   }),
+  "test-inventory": Object.freeze({
+    name: "test-inventory",
+    category: "diagnostics",
+    mutation: "READ_ONLY",
+    options: Object.freeze({
+      ...CLI_COMMON_OPTIONS,
+      "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit deterministic test inventory as JSON" }),
+    }),
+    writes: [], removes: [], mayExecuteExternalProcess: false,
+    description: "Discovers tests deterministically and assigns stable semantic test IDs without pruning authority.",
+  }),
+  "test-utility": Object.freeze({
+    name: "test-utility",
+    category: "diagnostics",
+    mutation: "MUTATING",
+    options: Object.freeze({
+      ...CLI_COMMON_OPTIONS,
+      ...CLI_TASK_OPTION,
+      "--semantic-status": Object.freeze({ targetKey: "semanticStatus", parseType: "string", takesValue: true, valueName: "status", missingValueMessage: "--semantic-status requires a status", description: "provider status for bounded utility analysis" }),
+      "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit test utility analysis as JSON" }),
+    }),
+    writes: [".forgeloop/task-state/<taskKey>/test-utility.json"], removes: [], mayExecuteExternalProcess: false,
+    description: "Persists non-evidence test utility analysis; never deletes tests or authorizes pruning.",
+  }),
   discover: Object.freeze({
     name: "discover",
     category: "lifecycle",

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/test-utility.schema.json",
+  "title": "ForgeLoop test utility analysis",
+  "type": "object",
+  "required": ["schemaVersion", "protocolVersion", "taskId", "generatedAt", "inventoryFingerprint", "semanticStatus", "tests"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "protocolVersion": { "const": 1 },
+    "taskId": { "type": "string", "minLength": 1 },
+    "generatedAt": { "type": "string", "minLength": 1 },
+    "inventoryFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "semanticStatus": { "enum": ["PROVIDER_REPORTED", "UNAVAILABLE", "NOT_REQUESTED"] },
+    "tests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["testId", "file", "framework", "name", "classification", "recommendation", "protected"],
+        "properties": {
+          "testId": { "type": "string", "pattern": "^test-[a-f0-9]{24}$" },
+          "file": { "type": "string", "minLength": 1 },
+          "framework": { "type": "string", "minLength": 1 },
+          "suite": { "type": "string" },
+          "name": { "type": "string", "minLength": 1 },
+          "line": { "type": "integer", "minimum": 1 },
+          "classification": { "enum": ["KEEP_REQUIRED", "KEEP_UNIQUE", "KEEP_RISK_GUARD", "KEEP_DOCUMENTATION_VALUE", "UNKNOWN", "REDUNDANT_CANDIDATE"] },
+          "recommendation": { "enum": ["KEEP", "REWRITE", "PROBE_REMOVAL", "BLOCKED"] },
+          "protected": { "type": "boolean" },
+          "signals": { "type": "object", "additionalProperties": true }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
