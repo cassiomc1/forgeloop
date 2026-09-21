@@ -320,6 +320,7 @@ capability-family versions.
 | index-stop | MUTATING | Stops only a tgrep server whose process identity is provably owned by ForgeLoop. |
 | init | MUTATING | Initializes a target project directory with ForgeLoop discovery adapters, schemas, and templates. |
 | migrate-protocol | MUTATING | Safely migrates explicitly supported protocol state; unknown target versions fail without rewriting artifacts. |
+| task-abandon | MUTATING | Explicitly abandons an active non-terminal task; records append-only evidence and releases claims without completion authority. |
 | task-migrate | MUTATING | Migrates a legacy 1.0 singleton task state layout into a task-namespaced layout. |
 | task-migrate-contract-bootstrap-repair | MUTATING | Migrates the exact legacy contract bootstrap repair marker by appending a bound migration event; the original marker and artifacts remain unchanged. |
 | task-recover | MUTATING | Caller-acknowledged recovery of a STALE or ABANDONED task; records durable state and releases effective write claims. |

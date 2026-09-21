@@ -59,9 +59,11 @@ The published tarball includes the following consumer-facing groups:
    documentation are also packaged.
    The generated portable ForgeLoop Agent Skill and `docs/AGENT_SKILL.md` are
    packaged as instruction/documentation content, not runtime authority.
-   Provider implementation modules ship under `src/`, but packaged source file
-   does not mean a supported public import path; the generic `./providers`
-   subpath remains unexported.
+  Provider implementation modules ship under `src/`, but packaged source file
+  does not mean a supported public import path; the generic `./providers`
+  subpath remains unexported.
+  The lifecycle recovery surface includes the explicit `task-abandon` command;
+  it releases validated claims without asserting completion or publication.
   The typed diagram sources, generated HTML/SVG/receipt artifacts, and
   source-bound review records under `docs/diagrams/` are included together so
   the packaged documentation keeps its visual provenance.

@@ -44,6 +44,10 @@ async function readArtifact(target, relativePath, label) {
   }
 }
 
+function isOptionalContinuityAbsence(item) {
+  return item.label === "continuity" && item.error?.code === "ARTIFACT_MISSING";
+}
+
 import { taskArtifactPath } from "../core/task-paths.js";
 import { withResolvedTask } from "../core/task-command.js";
 
@@ -84,7 +88,12 @@ export async function runValidateProtocol({
     loaded.push({ label, relativePath, ...artifact });
   }
 
-  const readErrors = loaded.filter((item) => item.error).map((item) => item.error);
+  // Continuity is an optional operational-context artifact. Its absence is
+  // represented by evaluateContinuityConformance as NOT_APPLICABLE; only a
+  // present but malformed continuity artifact is a validation failure.
+  const readErrors = loaded
+    .filter((item) => item.error && !isOptionalContinuityAbsence(item))
+    .map((item) => item.error);
   const route = loaded.find((item) => item.label === "route")?.value ?? null;
   const state = loaded.find((item) => item.label === "state")?.value ?? null;
   const receipt = loaded.find((item) => item.label === "receipt")?.value ?? null;

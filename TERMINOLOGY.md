@@ -33,6 +33,8 @@
 | Integration level | The capability tier of an execution environment (`INSTRUCTION_DISCOVERED`, `PROTOCOL_CAPABLE`, `PROTOCOL_LIMITED`, `CONFORMANCE_VERIFIED`). |
 | Recovered task | A non-terminal task whose ordinary mutation authority is suspended and whose effective write claims are released by durable `recovery.json` state. |
 | Recovery acknowledgement | A caller declaration that it intends to recover a task classified `STALE` or `ABANDONED`; it is not a host-attested authority grant. |
+| Active-task abandonment | An explicit caller-acknowledged `task-abandon` operation that releases validated claims for a non-terminal active task without changing its phase or asserting completion. |
+| Abandonment event | The append-only `TASK_ABANDONED` recovery boundary and its transaction witness; it is distinct from automatic stale-task recovery and from completion. |
 | Historical claims | The write claims retained in `task.json` as task history, including while recovery releases their active ownership. |
 | Effective claims | The claims currently enforced for ownership conflicts: descriptor claims for an active task, or an empty set after validator-backed completion or active recovery. |
 | Claim reacquisition | The serialized `task-resume` operation that rechecks conflicts and checkout cleanliness before removing recovery state and restoring mutation authority. |

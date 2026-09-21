@@ -414,7 +414,7 @@ forgeloop reconcile-closure --task <id> --id <verification-id> \
 
 `reconcile-closure` requires:
 
-1. The task is `EXECUTING`, `VERIFYING`, or `REVIEWING`. A `REVIEWING` task additionally requires authorized completion recovery (a persisted evidence-only rejection bound to the current checkpoint), or a rejection snapshot that can be rebound (see below).
+1. The task is `EXECUTING`, `VERIFYING`, or `REVIEWING`. A `REVIEWING` task may use authorized completion recovery (a persisted evidence-only rejection bound to the current checkpoint), or, when no completion rejection exists, the narrow bootstrap path for repository-only drift. The bootstrap path does not change phase, append completion events, or release claims.
 2. The only drift is `REPOSITORY_CHANGED` (contract or required-artifact drift stays blocked).
 3. The append-only event ledger is valid.
 4. `--id` and `--requirement` exactly match a `VERIFICATION` item of the task contract, and the executed command exits 0, proving the objective is present in the current repository.
@@ -428,6 +428,12 @@ forgeloop run-check --task <id> --id <id> --requirement "<text>" -- <command>
 forgeloop advance --task <id> --to REVIEWING
 forgeloop complete --task <id>
 ```
+
+The bootstrap path is intentionally narrower than completion recovery: contract
+identity, required artifacts, ledger validity, and active claim ownership must
+already be valid, and the freshness classifier must report exactly
+`REPOSITORY_CHANGED`. Contract or artifact drift remains blocked and must use
+its dedicated canonical recovery surface.
 
 #### Drifted completion-rejection snapshots (`E_COMPLETION_REJECTION_STATE_FINGERPRINT_MISMATCH`)
 
@@ -1643,6 +1649,11 @@ canonical task state.
 | `E_STRUCTURAL_QUALITY_SOURCE_DRIFT` | Structural-quality evidence did not satisfy its provider, artifact, comparison, or lifecycle boundary. | Ensure the worktree is not mutated during provider observation and rerun quality-baseline or quality-verify. |
 | `E_STRUCTURAL_QUALITY_SOURCE_FINGERPRINT_UNAVAILABLE` | Structural-quality evidence did not satisfy its provider, artifact, comparison, or lifecycle boundary. | Repair unreadable or unsafe source material before structural-quality evidence can be trusted. |
 | `E_STRUCTURAL_QUALITY_TIMEOUT` | Structural-quality evidence did not satisfy its provider, artifact, comparison, or lifecycle boundary. | Use a responsive provider or a bounded timeout within the supported limit; never promote a timed-out scan. |
+| `E_TASK_ABANDON_AUTHORIZATION_REQUIRED` | task-abandon requires explicit caller acknowledgement and never grants completion or publication authority. | Re-run task-abandon with --acknowledge-abandonment after confirming the explicit task identity and intended claim release. |
+| `E_TASK_ABANDON_INCONSISTENT` | Explicit abandonment was refused because canonical ownership or append-only ledger evidence is inconsistent. | Repair and validate the task descriptor, recovery artifact, and ledger through their dedicated protocol paths before retrying. |
+| `E_TASK_ABANDON_INVALID_STATE` | The selected task is terminal or otherwise not eligible for explicit active-task abandonment. | Inspect task-show and next; only a valid non-terminal active task may be explicitly abandoned. |
+| `E_TASK_ABANDON_UNSAFE` | Task identity, lifecycle revision, ledger boundary, or claim ownership changed during explicit abandonment. | Re-inspect the task and retry only after the competing mutation has settled; never force claim release. |
+| `E_TASK_ALREADY_ABANDONED` | The task already has an active explicit-abandonment recovery boundary. | Inspect the existing recovery state; use task-resume only when explicit reacquisition is intended. |
 | `E_TASK_ALREADY_EXISTS` | A ForgeLoop protocol validation or lifecycle condition was not satisfied. | Inspect the structured command result, correct the named artifact or prerequisite, then run forgeloop next --json. |
 | `E_TASK_ALREADY_RECOVERED` | The task already has active durable recovered state. | Inspect the existing recovery metadata; use task-resume to reacquire claims or leave the task recovered. |
 | `E_TASK_AMBIGUOUS` | Multiple tasks exist in the project but no task selector was provided. | Select a task explicitly using --task <id> or FORGELOOP_TASK=<id>. |

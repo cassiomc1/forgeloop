@@ -34,6 +34,22 @@
   verification, ownership, recovery, and completion data without becoming a
   mutation or lifecycle authority.
 
+- Added explicit `task-abandon` for caller-acknowledged abandonment of active
+  non-terminal tasks. It records an append-only `TASK_ABANDONED` boundary,
+  releases claims through the validated recovery ownership model, preserves the
+  current phase, and never fabricates completion or publication.
+
+- Added the narrow `REVIEWING` repository-only bootstrap path to
+  `reconcile-closure`, resolving the no-rejection completion dead-end without
+  changing phase, fabricating completion events, or releasing active claims.
+  Optional continuity absence is now reported as `NOT_APPLICABLE`, while
+  present invalid continuity remains fail-closed.
+
+- Added an optional host-injected Agent Browser verification adapter. It uses a
+  host-supplied executable, never auto-installs Agent Browser or Chrome, runs a
+  fresh isolated session with exact-origin validation, and returns only bounded
+  observation metadata.
+
 - Added the canonical `contract-revise` mutation for safe pre-execution
   contract replacement in `CONTRACT_READY`, `ROUTED`, and `PLANNED`. Revisions
   are append-only and transaction-witnessed, invalidate derived route,
