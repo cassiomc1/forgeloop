@@ -120,6 +120,7 @@ Phases: RECEIVED, DISCOVERING, CONTRACT_READY, ROUTED, DESIGNING, PLANNED, EXECU
 | reflection | 1 | yes |
 | repositoryIndex | 1 | yes |
 | responsibilityConstraints | 1 | yes |
+| semanticDecisionPlane | 1 | yes |
 | structuralQuality | 1 | yes |
 | structuredTrace | 1 | yes |
 | taskClaimRecovery | 1 | yes |
@@ -203,10 +204,12 @@ capability-family versions.
 | recovery | TASK | .forgeloop/task-state/<task-key>/recovery.json | task-recovery | TASK_RECOVERY_STATE |
 | responsibility | TASK | .forgeloop/task-state/<task-key>/responsibility.json | responsibility | RESPONSIBILITY_CONSTRAINT |
 | route | TASK | .forgeloop/task-state/<task-key>/routing-result.json | routing-result | GUIDE_ROUTING_SPECIFICATION |
+| semanticDecisions | TASK | .forgeloop/task-state/<task-key>/decisions/<decision-id>.json | semantic-decision | SEMANTIC_DECISION |
 | session | SESSION | .forgeloop/sessions/<session-id>.json | activation | SESSION_MARKER |
 | sources | PROJECT | .forgeloop/sources.json | source-registry | SOURCE_ATTESTATION |
 | state | TASK | .forgeloop/task-state/<task-key>/work-state.json | work-state | CANONICAL_LIFECYCLE_STATE |
 | structuralQuality | TASK | .forgeloop/task-state/<task-key>/structural-quality/baseline.json | structural-quality | STRUCTURAL_QUALITY_EVIDENCE |
+| testUtility | TASK | .forgeloop/task-state/<task-key>/test-utility.json | test-utility | NON_EVIDENCE_TEST_ANALYSIS |
 | usage | TASK | .forgeloop/task-state/<task-key>/usage.json | usage | INFORMATIONAL_USAGE_TELEMETRY |
 | verificationScope | TASK | .forgeloop/task-state/<task-key>/verification-scope.json | verification-scope | VERIFICATION_SCOPE_PLAN |
 | workspaceBinding | TASK | .forgeloop/task-state/<task-key>/workspace-binding.json | workspace-binding | WORKSPACE_IDENTITY_BINDING |
@@ -252,6 +255,9 @@ capability-family versions.
 
 | Command | Mutation | Purpose |
 | --- | --- | --- |
+| context-plan | READ_ONLY | Compiles a bounded non-authoritative context plan from deterministic candidates. |
+| decision-show | READ_ONLY | Shows one persisted semantic decision artifact without performing a live request. |
+| decision-status | READ_ONLY | Reports the pinned semantic decision-plane configuration without exposing credentials. |
 | doctor | MUTATING | Diagnoses project health, discovers adapters, and optionally repairs missing template files. |
 | efficiency | READ_ONLY | Projects usage and timing efficiency, comparing only against a metadata-compatible local baseline. |
 | eval | MUTATING | Evaluates the current trajectory against a validated project-local reference scenario. |
@@ -259,12 +265,17 @@ capability-family versions.
 | index-status | READ_ONLY | Reports provider-neutral repository-index health, metadata, and owned-server status. |
 | inspect | READ_ONLY | Inspects target repository health, dirty files, active branch, and artifact freshness. |
 | metrics | READ_ONLY | Projects trajectory, action, execution, timing, and known usage metrics without mutating state. |
+| model-route | READ_ONLY | Projects a deterministic model-routing floor with advisory Jev escalation only. |
 | profile-interview | READ_ONLY | Optional interactive or dry-run interview to refine project profile facts. |
 | progress | READ_ONLY | Evaluates task progress across verification cycles and detects stalls deterministically. |
 | protocol-info | READ_ONLY | Reports versioning, lifecycle, command, guide, and public error compatibility metadata for external harnesses. |
 | reflect | READ_ONLY | Analyzes diagnostic and correction history deterministically for information gain, repeated failures, ineffective interventions, and oscillation. |
 | search | READ_ONLY | Searches the ForgeLoop repository index through the provider-neutral search contract. |
+| semantic-plan | READ_ONLY | Projects fail-closed failure triage, diagnosis priority, or review planning without authority. |
 | status | READ_ONLY | Displays current lifecycle phase, active checks, blockers, and artifact freshness bindings. |
+| test-inventory | READ_ONLY | Discovers tests deterministically and assigns stable semantic test IDs without pruning authority. |
+| test-prune-plan | READ_ONLY | Projects KEEP, REWRITE, PROBE_REMOVAL, or BLOCKED without deleting tests. |
+| test-utility | MUTATING | Persists non-evidence test utility analysis; never deletes tests or authorizes pruning. |
 | trace | READ_ONLY | Emits detailed structured task trace with provenance and artifact relationships. |
 | usage-record | MUTATING | Records actor-reported usage telemetry without treating it as verification evidence. |
 | validate-protocol | READ_ONLY | Validates end-to-end cryptographic freshness, fingerprint bindings, and ledger integrity. |
@@ -356,6 +367,7 @@ capability-family versions.
 | record-terminal-result | MUTATING | Records external terminal result evidence (PUBLICATION or PRODUCTION_READINESS) into receipt. |
 | report | READ_ONLY | Emits a human-readable or structured JSON summary report of protocol state. |
 | run-check | EXTERNAL_EXECUTION | Runs an exact command, records the execution provenance artifact, and binds observed check evidence. |
+| test-prune-probe | EXTERNAL_EXECUTION | Runs only an isolated, fail-closed removal probe; never modifies the live worktree. |
 | validate-receipt | READ_ONLY | Validates schema conformance and cryptographic bounds of an execution receipt file. |
 | verify-scope | MUTATING | Resolves a provable changed, claimed, full, or unresolved verification boundary without launching checks. |
 

@@ -139,7 +139,7 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
       ...CLI_COMMON_OPTIONS,
       "--kind": Object.freeze({ targetKey: "semanticPlanKind", parseType: "string", takesValue: true, valueName: "failure|diagnosis|review", missingValueMessage: "--kind requires failure, diagnosis, or review", description: "bounded semantic planning projection" }),
       "--input": Object.freeze({ targetKey: "semanticPlanInput", parseType: "json-object", takesValue: true, valueName: "json", missingValueMessage: "--input requires a JSON object", description: "bounded failure, diagnosis, or review context" }),
-      "--recommendation": Object.freeze({ targetKey: "semanticRecommendation", parseType: "string", takesValue: true, repeatable: true, valueName: "value", missingValueMessage: "--recommendation requires a value", description: "bounded semantic recommendation; repeatable" }),
+      "--recommendation": Object.freeze({ targetKey: "semanticRecommendation", parseType: "string", takesValue: true, repeatable: true, valueName: "value", missingValueMessage: "--recommendation requires a value", description: "bounded semantic recommendation" }),
       "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit semantic plan projection as JSON" }),
     }),
     writes: [], removes: [], mayExecuteExternalProcess: false,

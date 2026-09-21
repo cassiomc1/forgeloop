@@ -55,6 +55,8 @@ All artifact schemas are defined in `schemas/*.schema.json`. Persisted artifact 
 
 ### 2.0 `semantic-decision`
 
+<!-- forgeloop-doc: schema=semantic-decision artifact=.forgeloop/task-state/<task-key>/decisions/<decision-id>.json -->
+
 Semantic decisions are advisory, fingerprint-bound projections. They do not
 authorize lifecycle transitions, evidence, ownership, installation, or
 completion.
@@ -97,6 +99,8 @@ completion.
 <!-- END FORGELOOP GENERATED: schema:semantic-decision -->
 
 ### 2.0.1 `test-utility`
+
+<!-- forgeloop-doc: schema=test-utility artifact=.forgeloop/task-state/<task-key>/test-utility.json -->
 
 Non-evidence test inventory and utility analysis. It never authorizes deletion
 or completion.

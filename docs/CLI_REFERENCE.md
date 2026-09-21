@@ -92,7 +92,7 @@ question-set categories.
 - `--path <directory>`: target project directory (default: current directory)
 - `--kind <failure|diagnosis|review>`: bounded semantic planning projection
 - `--input <json>`: bounded failure, diagnosis, or review context
-- `--recommendation <value>`: bounded semantic recommendation; repeatable (repeatable)
+- `--recommendation <value>`: bounded semantic recommendation (repeatable)
 - `--json`: emit semantic plan projection as JSON
 
 <!-- END FORGELOOP GENERATED: cli:semantic-plan:options -->
