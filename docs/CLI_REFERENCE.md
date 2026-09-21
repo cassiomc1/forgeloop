@@ -2100,9 +2100,9 @@ drift.
 Reconciles the checkpoint of an EXECUTING, VERIFYING, or REVIEWING task whose objective is already satisfied in the current repository.
 
 - **Purpose**: Refresh the work-state repository fingerprint of a stale EXECUTING, VERIFYING, or REVIEWING task after repository movement, using executed contract-bound evidence that the objective is present, so the canonical completion pipeline can close it.
-- **When to use**: When a task is stuck in EXECUTING, VERIFYING, or REVIEWING with `E_REPOSITORY_CHANGED` / `E_STATE_REVALIDATION_REQUIRED` and its objective was already satisfied by other changes in the current repository. A REVIEWING task also needs authorized completion recovery.
+- **When to use**: When a task is stuck in EXECUTING, VERIFYING, or REVIEWING with `E_REPOSITORY_CHANGED` / `E_STATE_REVALIDATION_REQUIRED` and its objective was already satisfied by other changes in the current repository. A REVIEWING task may use an existing authorized completion-recovery snapshot, or the narrow bootstrap path when the only drift is repository movement and no completion rejection has been persisted.
 - **Mutation**: Appends a `CHECKPOINT_RECONCILED` ledger event (previous/current repository fingerprints plus evidence) and refreshes the work-state repository fingerprint. The phase stays unchanged until the canonical pipeline advances it; claims release only through canonical `COMPLETE`.
-- **Safety Note**: Refuses other phases, fresh checkpoints, contract or artifact drift, invalid ledgers, unknown requirements, and failing evidence.
+- **Safety Note**: Refuses other phases, fresh checkpoints, contract or required-artifact drift, invalid ledgers, invalid claim ownership, unauthorized persisted completion rejection, unknown requirements, and failing evidence. It never appends completion events or releases claims.
 - **Options**:
 
 <!-- BEGIN FORGELOOP GENERATED: cli:reconcile-closure:options -->
