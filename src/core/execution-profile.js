@@ -168,6 +168,7 @@ export function resolveExecutionProfile({
   taskDescriptor = null,
   configuredProfile = "auto",
   requestedProfile = null,
+  semanticRecommendation = null,
 } = {}) {
   const normalizedRoute = normalizedRouteInput(routeInput);
   const configured = normalizeRequestedProfile(configuredProfile, "configuredProfile");
@@ -247,7 +248,12 @@ export function resolveExecutionProfile({
   }
 
   const requestedRank = requested === "auto" ? PROFILE_RANK[floor] : PROFILE_RANK[requested];
-  const resolved = EXECUTION_PROFILES.find((profile) => PROFILE_RANK[profile] === Math.max(requestedRank, PROFILE_RANK[floor]));
+  let resolved = EXECUTION_PROFILES.find((profile) => PROFILE_RANK[profile] === Math.max(requestedRank, PROFILE_RANK[floor]));
+  if (["light", "balanced", "full"].includes(semanticRecommendation)
+    && PROFILE_RANK[semanticRecommendation] > PROFILE_RANK[resolved]) {
+    resolved = semanticRecommendation;
+    reasons.push("PROFILE_ESCALATED_BY_JEV");
+  }
   const escalated = requested !== "auto" && PROFILE_RANK[requested] < PROFILE_RANK[floor];
   if (escalated) reasons.push("PROFILE_ESCALATED_BY_SAFETY");
 

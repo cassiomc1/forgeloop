@@ -99,3 +99,22 @@ test("benchmark scenarios resolve to their documented profiles without token est
     }
   }
 });
+
+test("semantic profile recommendation may raise but never lower the deterministic safety floor", () => {
+  const raised = resolveExecutionProfile({
+    routeInput: { workType: "documentation" },
+    semanticRecommendation: "full",
+  });
+  assert.equal(raised.floor, "light");
+  assert.equal(raised.resolved, "full");
+  assert.ok(raised.reasons.includes("PROFILE_ESCALATED_BY_JEV"));
+
+  const protectedFloor = resolveExecutionProfile({
+    routeInput: { workType: "code", risks: ["secrets"], executableChange: true },
+    requestedProfile: "light",
+    semanticRecommendation: "light",
+  });
+  assert.equal(protectedFloor.floor, "full");
+  assert.equal(protectedFloor.resolved, "full");
+  assert.equal(protectedFloor.reasons.includes("PROFILE_ESCALATED_BY_JEV"), false);
+});
