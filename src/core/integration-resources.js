@@ -22,6 +22,7 @@ import { buildExecutionProfileContext } from "./execution-profile-context.js";
 import { projectStructuralQualityStatus } from "./structural-quality/service.js";
 import { getRepositoryIndexStatus } from "../repository-index/status.js";
 import { buildAuditUxView } from "./audit-ux.js";
+import { runContextPlan } from "../commands/context-plan.js";
 
 /**
  * Canonical integration resource allowlist.
@@ -90,6 +91,7 @@ export const INTEGRATION_RESOURCE_DEFINITIONS = Object.freeze({
   "task/audit-view": Object.freeze({ scope: "TASK", description: "Bounded read-only Audit UX projection composed from canonical task resolvers." }),
   "task/evaluations": Object.freeze({ scope: "TASK", description: "Persisted trajectory evaluations for one task." }),
   "task/decisions": Object.freeze({ scope: "TASK", description: "Persisted, fingerprint-bound semantic decisions without lifecycle or evidence authority." }),
+  "task/context-plan": Object.freeze({ scope: "TASK", description: "Bounded non-authoritative semantic context-plan projection." }),
   "project/capability-policy": Object.freeze({ scope: "PROJECT", description: "Project capability policy, never host authority." }),
   "repository/index-status": Object.freeze({ scope: "PROJECT", description: "Provider-neutral repository-index health and owned-server status." }),
 });
@@ -185,6 +187,12 @@ async function readForgeLoopIntegrationResourceCore(uri, {
       break;
     }
     case "task/decisions": {
+      if (typeof taskId !== "string" || !taskId) {
+        const error = new Error(`Resource ${uri} requires a taskId`); error.code = "E_TASK_REQUIRED"; throw error;
+      }
+      break;
+    }
+    case "task/context-plan": {
       if (typeof taskId !== "string" || !taskId) {
         const error = new Error(`Resource ${uri} requires a taskId`); error.code = "E_TASK_REQUIRED"; throw error;
       }
@@ -287,6 +295,9 @@ async function readForgeLoopIntegrationResourceCore(uri, {
       decisions.push((await readJsonArtifact(projectPath, `${taskDirectory(taskId)}/decisions/${name}`, "semantic-decision", packageRoot)).value);
     }
     return { uri, taskId, data: { taskId, decisions } };
+  }
+  if (uri === "task/context-plan") {
+    return { uri, taskId, data: await runContextPlan({ profile: runtimeContext?.contextProfile ?? "balanced" }) };
   }
   if (uri === "project/capability-policy") {
     return { uri, data: await loadCapabilityPolicy(projectPath, packageRoot) };

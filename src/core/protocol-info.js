@@ -53,6 +53,7 @@ export function protocolInfo({ packageVersion = null } = {}) {
         installationAuthority: false,
         commands: ["decision-status", "decision-show"],
         resource: "task/decisions",
+        contextPlanResource: "task/context-plan",
         offlineInspection: true,
         completePerformsLiveRequest: false,
       },

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/context-plan.schema.json",
+  "title": "ForgeLoop bounded context plan",
+  "type": "object",
+  "required": ["schemaVersion", "protocolVersion", "profile", "budget", "candidateItems", "selectedItems", "candidateChars", "selectedChars", "selected", "omitted", "mandatoryIds", "promptInjectionIds", "tokenUsage", "decisionFingerprint", "authority", "evidenceAuthority", "lifecycleAuthority", "completionAuthority"],
+  "properties": {
+    "schemaVersion": { "const": 1 }, "protocolVersion": { "const": 1 },
+    "profile": { "enum": ["light", "balanced", "full"] },
+    "budget": { "type": "object", "required": ["maxItems", "maxChars"], "properties": { "maxItems": { "type": "integer", "minimum": 1 }, "maxChars": { "type": "integer", "minimum": 1 } }, "additionalProperties": false },
+    "candidateItems": { "type": "integer", "minimum": 0 }, "selectedItems": { "type": "integer", "minimum": 0 }, "candidateChars": { "type": "integer", "minimum": 0 }, "selectedChars": { "type": "integer", "minimum": 0 },
+    "selected": { "type": "array", "items": { "type": "object" } }, "omitted": { "type": "array", "items": { "type": "object" } },
+    "mandatoryIds": { "type": "array", "items": { "type": "string", "minLength": 1 } }, "promptInjectionIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "tokenUsage": { "type": "object", "required": ["inputTokens", "outputTokens", "reportedBy"], "properties": { "inputTokens": { "type": ["integer", "null"] }, "outputTokens": { "type": ["integer", "null"] }, "reportedBy": { "enum": ["PROVIDER", "HOST", "UNKNOWN"] } }, "additionalProperties": false },
+    "decisionFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" }, "authority": { "const": "SEMANTIC_DECISION" }, "evidenceAuthority": { "const": "NONE" }, "lifecycleAuthority": { "const": false }, "completionAuthority": { "const": false }
+  },
+  "additionalProperties": false
+}

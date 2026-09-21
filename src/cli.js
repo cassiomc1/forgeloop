@@ -103,6 +103,7 @@ import { formatGateRecordResult } from "./commands/gate-record.js";
 import { formatGateRevalidateResult } from "./commands/gate-revalidate.js";
 import { formatDecisionStatusResult } from "./commands/decision-status.js";
 import { formatDecisionShowResult } from "./commands/decision-show.js";
+import { formatContextPlanResult } from "./commands/context-plan.js";
 import { resolveTarget } from "./core/filesystem.js";
 import { getPackageRoot } from "./core/templates.js";
 import { CLI_COMMAND_DEFINITIONS, buildOptionLookup, getPositionalDefinitions } from "./core/cli-command-definitions.js";
@@ -398,6 +399,11 @@ export const COMMAND_HANDLERS = Object.freeze({
   "decision-show": async ({ target, packageRoot, options }) => {
     const { result } = await COMMAND_EXECUTORS["decision-show"]({ target, packageRoot, options });
     renderJsonOr(options, result, formatDecisionShowResult);
+    return 0;
+  },
+  "context-plan": async ({ options }) => {
+    const { result } = await COMMAND_EXECUTORS["context-plan"]({ options });
+    renderJsonOr(options, result, formatContextPlanResult);
     return 0;
   },
   init: async ({ target, packageRoot, packageVersion, options }) => {

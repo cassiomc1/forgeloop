@@ -96,6 +96,18 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
     writes: [], removes: [], mayExecuteExternalProcess: false,
     description: "Shows one persisted semantic decision artifact without performing a live request.",
   }),
+  "context-plan": Object.freeze({
+    name: "context-plan",
+    category: "diagnostics",
+    mutation: "READ_ONLY",
+    options: Object.freeze({
+      ...CLI_COMMON_OPTIONS,
+      "--profile": Object.freeze({ targetKey: "profile", parseType: "string", takesValue: true, valueName: "profile", missingValueMessage: "--profile requires light, balanced, or full", description: "bounded context budget profile" }),
+      "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit the bounded context plan as JSON" }),
+    }),
+    writes: [], removes: [], mayExecuteExternalProcess: false,
+    description: "Compiles a bounded non-authoritative context plan from deterministic candidates.",
+  }),
   discover: Object.freeze({
     name: "discover",
     category: "lifecycle",

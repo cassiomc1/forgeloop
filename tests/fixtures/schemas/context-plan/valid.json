@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "profile": "balanced",
+  "budget": { "maxItems": 32, "maxChars": 64000 },
+  "candidateItems": 0,
+  "selectedItems": 0,
+  "candidateChars": 0,
+  "selectedChars": 0,
+  "selected": [],
+  "omitted": [],
+  "mandatoryIds": [],
+  "promptInjectionIds": [],
+  "tokenUsage": { "inputTokens": null, "outputTokens": null, "reportedBy": "UNKNOWN" },
+  "decisionFingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "authority": "SEMANTIC_DECISION",
+  "evidenceAuthority": "NONE",
+  "lifecycleAuthority": false,
+  "completionAuthority": false
+}
