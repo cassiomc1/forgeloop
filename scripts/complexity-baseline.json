@@ -45,6 +45,9 @@
   "src/core/audit.js": [
     65
   ],
+  "src/core/browser-verification/normalize.js": [
+    28
+  ],
   "src/core/bundles.js": [
     55,
     43,
@@ -65,9 +68,10 @@
   ],
   "src/core/completion-artifacts.js": [
     78,
-    58,
+    61,
     57,
-    39
+    39,
+    27
   ],
   "src/core/completion-recovery-rebind.js": [
     26
@@ -82,6 +86,9 @@
   ],
   "src/core/config.js": [
     41
+  ],
+  "src/core/contract-bootstrap-recovery.js": [
+    35
   ],
   "src/core/conformance.js": [
     84
@@ -147,11 +154,14 @@
   "src/core/integration-resources.js": [
     56
   ],
+  "src/core/next-action.js": [
+    27
+  ],
   "src/core/next-action-phases.js": [
-    51
+    53
   ],
   "src/core/next-action-review-phase.js": [
-    28
+    30
   ],
   "src/core/next-action-verification-phase.js": [
     27
@@ -235,8 +245,8 @@
     27
   ],
   "src/core/task-conflict-inspection.js": [
-    46,
-    37
+    52,
+    38
   ],
   "src/core/task-context.js": [
     32
