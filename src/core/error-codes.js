@@ -277,6 +277,11 @@ export const E_TASK_RECOVERED = "E_TASK_RECOVERED";
 export const E_TASK_NOT_RECOVERED = "E_TASK_NOT_RECOVERED";
 export const E_TASK_RECOVERY_OFFICIAL_PATH_AVAILABLE = "E_TASK_RECOVERY_OFFICIAL_PATH_AVAILABLE";
 export const E_TASK_ALREADY_RECOVERED = "E_TASK_ALREADY_RECOVERED";
+export const E_TASK_ABANDON_AUTHORIZATION_REQUIRED = "E_TASK_ABANDON_AUTHORIZATION_REQUIRED";
+export const E_TASK_ABANDON_INVALID_STATE = "E_TASK_ABANDON_INVALID_STATE";
+export const E_TASK_ABANDON_INCONSISTENT = "E_TASK_ABANDON_INCONSISTENT";
+export const E_TASK_ALREADY_ABANDONED = "E_TASK_ALREADY_ABANDONED";
+export const E_TASK_ABANDON_UNSAFE = "E_TASK_ABANDON_UNSAFE";
 export const E_TASK_MIGRATION_IDENTITY_MISMATCH = "E_TASK_MIGRATION_IDENTITY_MISMATCH";
 export const E_PROTOCOL_MIGRATION_TARGET_UNSUPPORTED = "E_PROTOCOL_MIGRATION_TARGET_UNSUPPORTED";
 
@@ -945,6 +950,41 @@ export const PUBLIC_ERROR_CODES = Object.freeze({
     meaning: "The task already has active durable recovered state.",
     safeResolution: "Inspect the existing recovery metadata; use task-resume to reacquire claims or leave the task recovered.",
   }),
+  E_TASK_ABANDON_AUTHORIZATION_REQUIRED: Object.freeze({
+    code: "E_TASK_ABANDON_AUTHORIZATION_REQUIRED",
+    category: "recovery",
+    classification: "PUBLIC_STABLE",
+    meaning: "task-abandon requires explicit caller acknowledgement and never grants completion or publication authority.",
+    safeResolution: "Re-run task-abandon with --acknowledge-abandonment after confirming the explicit task identity and intended claim release.",
+  }),
+  E_TASK_ABANDON_INVALID_STATE: Object.freeze({
+    code: "E_TASK_ABANDON_INVALID_STATE",
+    category: "recovery",
+    classification: "PUBLIC_STABLE",
+    meaning: "The selected task is terminal or otherwise not eligible for explicit active-task abandonment.",
+    safeResolution: "Inspect task-show and next; only a valid non-terminal active task may be explicitly abandoned.",
+  }),
+  E_TASK_ABANDON_INCONSISTENT: Object.freeze({
+    code: "E_TASK_ABANDON_INCONSISTENT",
+    category: "recovery",
+    classification: "PUBLIC_STABLE",
+    meaning: "Explicit abandonment was refused because canonical ownership or append-only ledger evidence is inconsistent.",
+    safeResolution: "Repair and validate the task descriptor, recovery artifact, and ledger through their dedicated protocol paths before retrying.",
+  }),
+  E_TASK_ALREADY_ABANDONED: Object.freeze({
+    code: "E_TASK_ALREADY_ABANDONED",
+    category: "recovery",
+    classification: "PUBLIC_STABLE",
+    meaning: "The task already has an active explicit-abandonment recovery boundary.",
+    safeResolution: "Inspect the existing recovery state; use task-resume only when explicit reacquisition is intended.",
+  }),
+  E_TASK_ABANDON_UNSAFE: Object.freeze({
+    code: "E_TASK_ABANDON_UNSAFE",
+    category: "concurrency",
+    classification: "PUBLIC_STABLE",
+    meaning: "Task identity, lifecycle revision, ledger boundary, or claim ownership changed during explicit abandonment.",
+    safeResolution: "Re-inspect the task and retry only after the competing mutation has settled; never force claim release.",
+  }),
   E_TASK_SCOPE_DIRTY: Object.freeze({
     code: "E_TASK_SCOPE_DIRTY",
     category: "scope",
@@ -1604,6 +1644,11 @@ export const ALL_KNOWN_ERROR_CODES = Object.freeze(new Set([
   E_TASK_NOT_RECOVERED,
   E_TASK_RECOVERY_OFFICIAL_PATH_AVAILABLE,
   E_TASK_ALREADY_RECOVERED,
+  E_TASK_ABANDON_AUTHORIZATION_REQUIRED,
+  E_TASK_ABANDON_INVALID_STATE,
+  E_TASK_ABANDON_INCONSISTENT,
+  E_TASK_ALREADY_ABANDONED,
+  E_TASK_ABANDON_UNSAFE,
   E_TASK_MIGRATION_IDENTITY_MISMATCH,
   E_PROTOCOL_MIGRATION_TARGET_UNSUPPORTED,
   E_CHECK_INERT,

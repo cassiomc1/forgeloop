@@ -51,6 +51,7 @@ const EVENT_CATEGORY_MAP = Object.freeze({
   TASK_RECOVERY_RECORDED: "recovery",
   TASK_RECOVERY_RESUMED: "recovery",
   OPERATOR_RECOVERY_RECORDED: "recovery",
+  TASK_ABANDONED: "recovery",
   LEGACY_RECOVERY_MIGRATION_RECORDED: "recovery",
   GATE_SATISFIED: "policy",
   COMPLETION_VALIDATED: "completion",
@@ -82,6 +83,13 @@ const LIFECYCLE_TRANSITIONS = Object.freeze([
   "COMPLETION_REJECTED",
 ]);
 
+const STATIC_EVENT_SUMMARIES = Object.freeze({
+  TASK_RECOVERY_RESUMED: "Task resumed after recovery",
+  OPERATOR_RECOVERY_RECORDED: "Operator recovery recorded",
+  TASK_ABANDONED: "Task explicitly abandoned",
+  LEGACY_RECOVERY_MIGRATION_RECORDED: "Legacy recovery migration recorded",
+});
+
 export function eventCategory(eventType) {
   return EVENT_CATEGORY_MAP[eventType] ?? "integrity";
 }
@@ -93,6 +101,8 @@ export function timestampQuality(event) {
 
 function eventSummary(event) {
   const d = event.details ?? {};
+  const staticSummary = STATIC_EVENT_SUMMARIES[event.event];
+  if (staticSummary) return staticSummary;
   switch (event.event) {
     case "TASK_RECEIVED":
       return `Task received${d.taskId ? ` (${d.taskId})` : ""}`;
@@ -132,12 +142,6 @@ function eventSummary(event) {
       return "Continuity checkpoint recorded";
     case "TASK_RECOVERY_RECORDED":
       return `Task recovery recorded (${d.classification ?? "unknown"})`;
-    case "TASK_RECOVERY_RESUMED":
-      return "Task resumed after recovery";
-    case "OPERATOR_RECOVERY_RECORDED":
-      return "Operator recovery recorded";
-    case "LEGACY_RECOVERY_MIGRATION_RECORDED":
-      return "Legacy recovery migration recorded";
     case "COMPLETION_VALIDATED":
       return "Completion validated";
     case "COMPLETION_REJECTED":
@@ -451,7 +455,7 @@ export async function buildTaskTrace({ target, packageRoot, taskId = null, event
   const evidence = [...evidenceSources.values()].sort((a, b) => a.ref.localeCompare(b.ref));
 
   const recovery = taskEvents
-    .filter((event) => ["TASK_RECOVERY_RECORDED", "TASK_RECOVERY_RESUMED", "OPERATOR_RECOVERY_RECORDED", "LEGACY_RECOVERY_MIGRATION_RECORDED"].includes(event.event))
+    .filter((event) => ["TASK_RECOVERY_RECORDED", "TASK_RECOVERY_RESUMED", "OPERATOR_RECOVERY_RECORDED", "TASK_ABANDONED", "LEGACY_RECOVERY_MIGRATION_RECORDED"].includes(event.event))
     .map((event) => ({ sequence: event.seq, at: event.at, type: event.event, details: event.details ?? {} }));
 
   const completionEvents = taskEvents.filter((event) => ["COMPLETION_VALIDATED", "COMPLETION_REJECTED"].includes(event.event));

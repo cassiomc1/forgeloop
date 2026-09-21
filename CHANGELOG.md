@@ -9,6 +9,11 @@
 
 ### Added
 
+- Added explicit `task-abandon` for caller-acknowledged abandonment of active
+  non-terminal tasks. It records an append-only `TASK_ABANDONED` boundary,
+  releases claims through the validated recovery ownership model, preserves the
+  current phase, and never fabricates completion or publication.
+
 - Added the narrow `REVIEWING` repository-only bootstrap path to
   `reconcile-closure`, resolving the no-rejection completion dead-end without
   changing phase, fabricating completion events, or releasing active claims.

@@ -439,6 +439,12 @@ only a compatibility alias and has identical caller-acknowledgement semantics.
 a trusted grant reference through a boundary the active actor cannot mint or
 replace. The standalone CLI does not expose such a self-attestation option.
 
+Explicit active-task abandonment is a distinct caller-acknowledged operation:
+`task-abandon --task <id> --acknowledge-abandonment` releases validated claims
+through the same canonical ownership resolver, project/task serialization, and
+append-only recovery history. It does not change the phase or create completion,
+publication, or host authority. `clear-state` is not an abandonment substitute.
+
 Claim ownership is a validated relationship, not an artifact preference.
 <a id="FL-CLAIM-001"></a> **FL-CLAIM-001 — Every harness MUST consume the canonical claim-state resolver**
 over the descriptor, work state, recovery artifact, and complete validated
