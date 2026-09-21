@@ -367,23 +367,19 @@ ForgeLoop supports isolated, concurrent tasks within the same repository via det
 # Create an isolated task claiming specific directories
 forgeloop task-create --task auth-feature --claim src/auth --claim tests/auth --json
 
-# List active and completed tasks
 forgeloop task-list --json
 
-# Ask for deterministic conflict/recovery guidance
 forgeloop next --task auth-feature --json
 
-# Only for a task classified STALE or ABANDONED: release effective claims
+# Release claims only for a STALE or ABANDONED task
 forgeloop task-recover --task auth-feature --acknowledge-recovery --json
 
-# Explicitly abandon an active non-terminal task when its objective is no
-# longer valid; this is not completion and requires caller acknowledgement
+# Explicitly abandon an active non-terminal task when its objective is no longer valid
 forgeloop task-abandon --task auth-feature --acknowledge-abandonment --json
 
-# Reacquire conflict-free claims before mutating a recovered task again
+# Reacquire conflict-free claims before mutating a recovered task
 forgeloop task-resume --task auth-feature --json
 
-# Run standard lifecycle commands targeting the task
 forgeloop route --task auth-feature --work clean-code --surface backend
 forgeloop preflight --task auth-feature --json
 forgeloop advance --task auth-feature --to EXECUTING
