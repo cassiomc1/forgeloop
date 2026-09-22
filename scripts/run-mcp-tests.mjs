@@ -41,7 +41,7 @@ export async function runMcpTests({ root = mcpRoot, spawnProcess = spawn } = {})
     return 1;
   }
   const files = await resolveMcpTestFiles(root);
-  const child = spawnProcess(process.execPath, ["--test", ...files], {
+  const child = spawnProcess(process.execPath, ["--test", "--test-concurrency=2", ...files], {
     cwd: root,
     stdio: "inherit",
     shell: false,
