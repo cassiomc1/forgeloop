@@ -9,6 +9,8 @@ test("Jev benchmark baseline is deterministic and does not invent telemetry", ()
   assert.equal(first.status, "OFFLINE_DETERMINISTIC_BASELINE");
   assert.equal(first.metrics.inputTokens, null);
   assert.equal(first.metrics.outputTokens, null);
+  assert.equal(first.metrics.jevCalls, 0);
+  assert.equal(first.metrics.jevCacheHits, 0);
+  assert.equal(first.metrics.verification, "NOT_MEASURED");
   assert.equal(first.scenarios.length, 3);
 });
-

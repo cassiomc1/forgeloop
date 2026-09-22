@@ -53,6 +53,8 @@ Compiles a bounded, non-authoritative context plan.
 <!-- BEGIN FORGELOOP GENERATED: cli:context-plan:options -->
 
 - `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--decision <id>`: persisted Jev decision artifact ID
 - `--profile <profile>`: bounded context budget profile
 - `--json`: emit the bounded context plan as JSON
 
@@ -66,6 +68,8 @@ lower the floor or select vendor-specific models.
 <!-- BEGIN FORGELOOP GENERATED: cli:model-route:options -->
 
 - `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--decision <id>`: persisted Jev decision artifact ID
 - `--work <type>`: declared work type
 - `--surface <value>`: affected surface (repeatable)
 - `--risk <value>`: task risk (repeatable)
@@ -75,9 +79,6 @@ lower the floor or select vendor-specific models.
 - `--generation-required`: declare that generation is required
 - `--architecture-change`: declare an architectural change
 - `--ambiguous`: declare unresolved ambiguity
-- `--jev-tier <tier>`: bounded Jev recommendation for testing/integration
-- `--jev-confidence <number>`: reported Jev confidence
-- `--jev-escalate`: mark the Jev recommendation as requiring escalation
 - `--json`: emit model-route projection as JSON
 
 <!-- END FORGELOOP GENERATED: cli:model-route:options -->
@@ -90,9 +91,10 @@ question-set categories.
 <!-- BEGIN FORGELOOP GENERATED: cli:semantic-plan:options -->
 
 - `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--decision <id>`: persisted Jev decision artifact ID
 - `--kind <failure|diagnosis|review>`: bounded semantic planning projection
 - `--input <json>`: bounded failure, diagnosis, or review context
-- `--recommendation <value>`: bounded semantic recommendation (repeatable)
 - `--json`: emit semantic plan projection as JSON
 
 <!-- END FORGELOOP GENERATED: cli:semantic-plan:options -->
@@ -116,7 +118,6 @@ Persists non-evidence test utility analysis. It never removes tests.
 
 - `--path <directory>`: target project directory (default: current directory)
 - `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
-- `--semantic-status <status>`: provider status for bounded utility analysis
 - `--json`: emit test utility analysis as JSON
 
 <!-- END FORGELOOP GENERATED: cli:test-utility:options -->

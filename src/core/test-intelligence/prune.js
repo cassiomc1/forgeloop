@@ -1,6 +1,16 @@
 import { readTestUtility } from "./service.js";
+import { cp, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
 
-const PROTECTED_CLASSES = new Set(["KEEP_REQUIRED", "KEEP_RISK_GUARD", "KEEP_UNIQUE"]);
+const execFileAsync = promisify(execFile);
+const PROTECTED_CLASSES = new Set([
+  "KEEP_REQUIRED", "KEEP_RISK_GUARD", "KEEP_UNIQUE", "KEEP_AUTHORITY_BOUNDARY",
+  "KEEP_RECOVERY_INVARIANT", "KEEP_RELEASE_SMOKE", "KEEP_MIGRATION_COMPATIBILITY",
+  "KEEP_PLATFORM_BEHAVIOR",
+]);
 
 function planFor(test) {
   if (test.protected || PROTECTED_CLASSES.has(test.classification)) return { action: "KEEP", reason: "PROTECTED_TEST" };
@@ -26,6 +36,55 @@ export async function runPruneProbe({ target, packageRoot, taskId, testId } = {}
     error.code = "E_TEST_PRUNE_BLOCKED";
     throw error;
   }
-  return { status: "BLOCKED", reason: "ISOLATED_PROBE_NOT_AUTHORIZED", testId, liveWorktreeModified: false };
+  const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "forgeloop-prune-probe-"));
+  try {
+    await cp(target, temporaryRoot, {
+      recursive: true,
+      dereference: false,
+      filter(source) {
+        const relative = path.relative(target, source);
+        return relative !== ".forgeloop" && relative !== ".git" && !relative.startsWith(`${path.sep}.forgeloop${path.sep}`) && !relative.startsWith(`${path.sep}.git${path.sep}`) && relative !== "node_modules";
+      },
+    });
+    const dependencies = path.join(target, "node_modules");
+    try { await symlink(dependencies, path.join(temporaryRoot, "node_modules"), "junction"); } catch { /* dependencies are optional for static probes */ }
+    if (item.file.endsWith(".mjs") || item.file.endsWith(".js")) {
+      const candidatePath = path.join(temporaryRoot, item.file);
+      const source = await readFile(candidatePath, "utf8");
+      const escapedName = item.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const pattern = new RegExp(`\\b(test|it)\\s*\\(\\s*([\\"'])${escapedName}\\2`);
+      if (!pattern.test(source)) {
+        return { status: "INCONCLUSIVE", reason: "TEST_UNIT_NOT_LOCATED", testId, liveWorktreeModified: false, temporaryWorkspaceCleaned: true };
+      }
+      const disabled = source.replace(pattern, (_, keyword, quote) => `${keyword}.skip(${quote}${item.name}${quote}`);
+      await writeFile(candidatePath, disabled, "utf8");
+      const result = await execFileAsync(process.execPath, ["--test", item.file], {
+        cwd: temporaryRoot,
+        timeout: 120_000,
+        maxBuffer: 2_000_000,
+        windowsHide: true,
+      });
+      return {
+        status: "INCONCLUSIVE",
+        reason: "COVERAGE_OR_MUTATION_EVIDENCE_UNAVAILABLE",
+        testId,
+        affectedTestExitCode: 0,
+        affectedTestOutput: `${result.stdout ?? ""}${result.stderr ?? ""}`.slice(-8_000),
+        liveWorktreeModified: false,
+        temporaryWorkspaceCleaned: true,
+      };
+    }
+    return { status: "INCONCLUSIVE", reason: "FRAMEWORK_PROBE_UNSUPPORTED", testId, liveWorktreeModified: false, temporaryWorkspaceCleaned: true };
+  } catch (error) {
+    return {
+      status: "BLOCKED",
+      reason: error.code === "ETIMEDOUT" ? "AFFECTED_TEST_TIMEOUT" : "AFFECTED_TEST_FAILED",
+      testId,
+      error: error.message,
+      liveWorktreeModified: false,
+      temporaryWorkspaceCleaned: true,
+    };
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+  }
 }
-

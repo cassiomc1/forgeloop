@@ -46,6 +46,9 @@ function signals(file, name) {
     publicApi: /api|compat|public|cli|protocol/.test(text),
     criticalPath: /critical|transaction|lock|concurr|race|recovery/.test(text),
     integration: /integration|e2e|browser|provider|package|release/.test(text),
+    migration: /migration|schema|upgrade|downgrade/.test(text),
+    release: /package|release|publish|smoke/.test(text),
+    platformSpecific: /windows|win32|macos|darwin|linux|platform|native/.test(text),
   };
 }
 
@@ -67,4 +70,3 @@ export async function inventoryTests(projectRoot = process.cwd()) {
   tests.sort((a, b) => a.testId.localeCompare(b.testId));
   return { schemaVersion: 1, source: "DETERMINISTIC", tests };
 }
-

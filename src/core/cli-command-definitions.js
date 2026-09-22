@@ -102,6 +102,8 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
     mutation: "READ_ONLY",
     options: Object.freeze({
       ...CLI_COMMON_OPTIONS,
+      ...CLI_TASK_OPTION,
+      "--decision": Object.freeze({ targetKey: "decisionId", parseType: "string", takesValue: true, valueName: "id", missingValueMessage: "--decision requires an ID", description: "persisted Jev decision artifact ID" }),
       "--profile": Object.freeze({ targetKey: "profile", parseType: "string", takesValue: true, valueName: "profile", missingValueMessage: "--profile requires light, balanced, or full", description: "bounded context budget profile" }),
       "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit the bounded context plan as JSON" }),
     }),
@@ -114,6 +116,8 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
     mutation: "READ_ONLY",
     options: Object.freeze({
       ...CLI_COMMON_OPTIONS,
+      ...CLI_TASK_OPTION,
+      "--decision": Object.freeze({ targetKey: "decisionId", parseType: "string", takesValue: true, valueName: "id", missingValueMessage: "--decision requires an ID", description: "persisted Jev decision artifact ID" }),
       "--work": Object.freeze({ targetKey: "workType", parseType: "string", takesValue: true, valueName: "type", missingValueMessage: "--work requires a type", description: "declared work type" }),
       "--surface": Object.freeze({ targetKey: "surfaces", parseType: "string", takesValue: true, valueName: "value", repeatable: true, missingValueMessage: "--surface requires a value", description: "affected surface" }),
       "--risk": Object.freeze({ targetKey: "risks", parseType: "string", takesValue: true, valueName: "value", repeatable: true, missingValueMessage: "--risk requires a value", description: "task risk" }),
@@ -123,9 +127,6 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
       "--generation-required": Object.freeze({ targetKey: "generationRequired", parseType: "boolean", takesValue: false, description: "declare that generation is required" }),
       "--architecture-change": Object.freeze({ targetKey: "architectureChange", parseType: "boolean", takesValue: false, description: "declare an architectural change" }),
       "--ambiguous": Object.freeze({ targetKey: "ambiguity", parseType: "boolean", takesValue: false, description: "declare unresolved ambiguity" }),
-      "--jev-tier": Object.freeze({ targetKey: "semanticTier", parseType: "string", takesValue: true, valueName: "tier", missingValueMessage: "--jev-tier requires NONE, FAST, STANDARD, or PRIMARY", description: "bounded Jev recommendation for testing/integration" }),
-      "--jev-confidence": Object.freeze({ targetKey: "semanticConfidence", parseType: "string", takesValue: true, valueName: "number", missingValueMessage: "--jev-confidence requires a number", description: "reported Jev confidence" }),
-      "--jev-escalate": Object.freeze({ targetKey: "semanticEscalation", parseType: "boolean", takesValue: false, description: "mark the Jev recommendation as requiring escalation" }),
       "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit model-route projection as JSON" }),
     }),
     writes: [], removes: [], mayExecuteExternalProcess: false,
@@ -137,9 +138,10 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
     mutation: "READ_ONLY",
     options: Object.freeze({
       ...CLI_COMMON_OPTIONS,
+      ...CLI_TASK_OPTION,
+      "--decision": Object.freeze({ targetKey: "decisionId", parseType: "string", takesValue: true, valueName: "id", missingValueMessage: "--decision requires an ID", description: "persisted Jev decision artifact ID" }),
       "--kind": Object.freeze({ targetKey: "semanticPlanKind", parseType: "string", takesValue: true, valueName: "failure|diagnosis|review", missingValueMessage: "--kind requires failure, diagnosis, or review", description: "bounded semantic planning projection" }),
       "--input": Object.freeze({ targetKey: "semanticPlanInput", parseType: "json-object", takesValue: true, valueName: "json", missingValueMessage: "--input requires a JSON object", description: "bounded failure, diagnosis, or review context" }),
-      "--recommendation": Object.freeze({ targetKey: "semanticRecommendation", parseType: "string", takesValue: true, repeatable: true, valueName: "value", missingValueMessage: "--recommendation requires a value", description: "bounded semantic recommendation" }),
       "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit semantic plan projection as JSON" }),
     }),
     writes: [], removes: [], mayExecuteExternalProcess: false,
@@ -163,7 +165,6 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
     options: Object.freeze({
       ...CLI_COMMON_OPTIONS,
       ...CLI_TASK_OPTION,
-      "--semantic-status": Object.freeze({ targetKey: "semanticStatus", parseType: "string", takesValue: true, valueName: "status", missingValueMessage: "--semantic-status requires a status", description: "provider status for bounded utility analysis" }),
       "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit test utility analysis as JSON" }),
     }),
     writes: [".forgeloop/task-state/<taskKey>/test-utility.json"], removes: [], mayExecuteExternalProcess: false,

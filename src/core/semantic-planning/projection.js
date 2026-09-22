@@ -13,7 +13,10 @@ function unique(values) { return [...new Set(values)]; }
 
 function validateRecommendation(recommendation, allowed, label) {
   if (recommendation === undefined || recommendation === null) return null;
-  const values = typeof recommendation === "string" ? [recommendation] : strings(recommendation);
+  const values = typeof recommendation === "string" ? [recommendation]
+    : recommendation && typeof recommendation === "object" && !Array.isArray(recommendation)
+      ? Object.entries(recommendation).filter(([, value]) => value === true).map(([key]) => key)
+      : strings(recommendation);
   const unknown = values.filter((value) => !allowed.includes(value));
   if (unknown.length > 0) {
     const error = new Error(`${label} contains unknown semantic values: ${unknown.join(", ")}`);
@@ -24,7 +27,8 @@ function validateRecommendation(recommendation, allowed, label) {
 }
 
 export function projectFailureTriage({ input = {}, semanticRecommendation = null } = {}) {
-  const value = validateRecommendation(semanticRecommendation, FAILURE_CLASSES, "failure recommendation");
+  const candidate = semanticRecommendation?.failureClass ?? semanticRecommendation;
+  const value = validateRecommendation(candidate, FAILURE_CLASSES, "failure recommendation");
   const inferred = /timeout|timed out/.test(text(input)) ? "timeout"
     : /network|dns|connection|environment/.test(text(input)) ? "network/environment"
       : /ownership|protocol|ledger|phase/.test(text(input)) ? "ownership/protocol mismatch"
@@ -42,7 +46,8 @@ export function projectFailureTriage({ input = {}, semanticRecommendation = null
 }
 
 export function projectDiagnosisPriority({ input = {}, semanticRecommendation = null } = {}) {
-  const value = validateRecommendation(semanticRecommendation, DIAGNOSIS_STRATEGIES, "diagnosis recommendation");
+  const candidate = semanticRecommendation?.priority ?? semanticRecommendation;
+  const value = validateRecommendation(candidate, DIAGNOSIS_STRATEGIES, "diagnosis recommendation");
   const inferred = /race|concurr|lock/.test(text(input)) ? "inspect concurrency path"
     : /state|ledger|phase|fingerprint/.test(text(input)) ? "inspect state transition"
       : /depend|package|module/.test(text(input)) ? "inspect dependency behavior"
@@ -61,7 +66,8 @@ export function projectDiagnosisPriority({ input = {}, semanticRecommendation = 
 }
 
 export function projectReviewPlan({ input = {}, semanticRecommendation = null } = {}) {
-  const value = validateRecommendation(semanticRecommendation, REVIEW_FOCUSES, "review recommendation");
+  const candidate = semanticRecommendation?.reviewFocus ?? semanticRecommendation;
+  const value = validateRecommendation(candidate, REVIEW_FOCUSES, "review recommendation");
   const body = text(input);
   const mandatory = ["needs_full_diff_context"];
   if (/security|secret|credential|auth|permission/.test(body)) mandatory.push("needs_security_review");

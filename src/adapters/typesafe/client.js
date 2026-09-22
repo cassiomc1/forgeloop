@@ -6,8 +6,18 @@ export function hasTypesafeCredentials(env = process.env) {
   return typeof env?.TYPESAFE_API_KEY === "string" && env.TYPESAFE_API_KEY.trim().length > 0;
 }
 
+export function validateTypesafeCredential(value) {
+  if (typeof value !== "string" || value.trim().length === 0) {
+    throw decisionError(DECISION_ERROR_CODES.AUTH_REQUIRED, "TYPESAFE_API_KEY is required for a semantic decision.");
+  }
+  if (value !== value.trim() || /[\r\n\u0000-\u001F\u007F]/u.test(value) || value.length > 4096) {
+    throw decisionError(DECISION_ERROR_CODES.AUTH_INVALID, "TYPESAFE_API_KEY has an invalid format.");
+  }
+  return true;
+}
+
 export function createTypesafeClient(policy, { env = process.env } = {}) {
-  if (!hasTypesafeCredentials(env)) throw decisionError(DECISION_ERROR_CODES.AUTH_REQUIRED, "TYPESAFE_API_KEY is required for a semantic decision.");
+  validateTypesafeCredential(env?.TYPESAFE_API_KEY);
   if (policy?.model !== PINNED_JEV_MODEL) throw decisionError(DECISION_ERROR_CODES.MODEL_UNSUPPORTED, "ForgeLoop requires the pinned Jev model.");
   return new TypeSafeClient({
     defaultModel: PINNED_JEV_MODEL,

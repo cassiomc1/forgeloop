@@ -1,25 +1,42 @@
 import { canonicalFingerprint } from "../artifacts.js";
 import { readConfig } from "../config.js";
-import { appendProtocolEvent } from "../events.js";
-import { withTaskTransaction } from "../transaction.js";
+import { appendProtocolEvent, readEvents } from "../events.js";
+import { withTaskMutation } from "../task-command.js";
 import { DECISION_DEFAULT_POLICY, PINNED_JEV_MODEL, SEMANTIC_DECISION_RECORDED_EVENT } from "./constants.js";
-import { buildDecisionArtifact, decisionArtifactFingerprint, writeDecisionArtifact } from "./artifact.js";
-import { decisionEventDetails } from "./events.js";
+import { buildDecisionArtifact, decisionArtifactFingerprint, readDecisionArtifact, writeDecisionArtifact } from "./artifact.js";
+import { decisionEventDetails, decisionSupersededEventDetails } from "./events.js";
 import { createTypesafeEngine } from "../../adapters/typesafe/engine.js";
 import { normalizeDecisionPolicy, decisionPolicyFingerprint } from "./policy.js";
 import { validateDecisionRequest } from "./request.js";
+import { normalizeDecisionResult } from "./result.js";
+import { randomUUID } from "node:crypto";
+import { readCurrentDecisionBindings } from "./task-bindings.js";
+import { resolveRequiredSemanticDecision } from "./resolver.js";
+import { DECISION_ERROR_CODES, decisionError } from "./errors.js";
 
 async function loadPolicy(target, packageRoot) {
-  try { return normalizeDecisionPolicy((await readConfig(target, packageRoot)).decisionEngine); } catch { return normalizeDecisionPolicy(DECISION_DEFAULT_POLICY); }
+  try {
+    const config = await readConfig(target, packageRoot);
+    return normalizeDecisionPolicy(config.decisionEngine ?? DECISION_DEFAULT_POLICY);
+  } catch (error) {
+    if (error.code === "ARTIFACT_MISSING") return normalizeDecisionPolicy(DECISION_DEFAULT_POLICY);
+    throw error;
+  }
 }
 
-export async function recordSemanticDecision({ target, packageRoot, taskId, decisionId, request, provider = null } = {}) {
-  const policy = await loadPolicy(target, packageRoot);
-  const validated = validateDecisionRequest({ ...request, taskId });
-  const engine = provider ?? createTypesafeEngine({ policy });
-  const result = await engine.evaluate(validated);
-  const artifact = buildDecisionArtifact({
+async function readCachedDecision({ target, packageRoot, taskId, decisionKind, currentBindings }) {
+  try {
+    return await resolveRequiredSemanticDecision({ target, packageRoot, taskId, decisionKind, currentBindings });
+  } catch (error) {
+    if (["E_DECISION_REQUIRED", "E_DECISION_STALE", "E_DECISION_BINDING_INVALID"].includes(error.code)) return null;
+    throw error;
+  }
+}
+
+function buildArtifact({ taskId, decisionId, policy, validated, result, request, taskBindings }) {
+  return buildDecisionArtifact({
     taskId,
+    decisionId,
     decisionKind: validated.decisionKind,
     model: result.model ?? PINNED_JEV_MODEL,
     questionSetId: validated.questionSet.id,
@@ -28,20 +45,67 @@ export async function recordSemanticDecision({ target, packageRoot, taskId, deci
     stateFingerprint: canonicalFingerprint(validated.state),
     policyVersion: policy.policyVersion,
     policyFingerprint: decisionPolicyFingerprint(policy),
-    repositoryFingerprint: request.repositoryFingerprint,
-    contractFingerprint: request.contractFingerprint,
-    routeFingerprint: request.routeFingerprint,
-    verificationCycle: request.verificationCycle,
+    repositoryFingerprint: request.repositoryFingerprint ?? taskBindings.repositoryFingerprint,
+    contractFingerprint: request.contractFingerprint ?? taskBindings.contractFingerprint,
+    routeFingerprint: request.routeFingerprint ?? taskBindings.routeFingerprint,
+    verificationCycle: request.verificationCycle ?? taskBindings.verificationCycle,
     candidateSetFingerprint: request.candidateSetFingerprint,
     answers: result.answers,
     confidence: result.confidence ?? {},
-    decision: request.decision ?? {},
+    decision: result.decision,
     usage: result.usage,
     latencyMs: result.latencyMs ?? null,
   });
-  return withTaskTransaction({ target, taskId, packageRoot, operation: "semantic-decision", recordCommitEvent: true }, async () => {
-    await writeDecisionArtifact(target, taskId, decisionId, artifact, packageRoot, { taskId, operation: "semantic-decision" });
-    const event = await appendProtocolEvent(target, { taskId, event: SEMANTIC_DECISION_RECORDED_EVENT, details: decisionEventDetails(artifact) }, packageRoot, { taskId });
-    return { artifact, artifactFingerprint: decisionArtifactFingerprint(artifact), event, policy };
+}
+
+async function persistDecision(target, packageRoot, resolvedDecisionId, artifact, ctx) {
+  await writeDecisionArtifact(target, ctx.taskId, resolvedDecisionId, artifact, packageRoot, { taskId: ctx.taskId, operation: "semantic-decision" });
+  const priorEvents = await readEvents(target, packageRoot, { taskId: ctx.taskId });
+  const event = await appendProtocolEvent(target, { taskId: ctx.taskId, event: SEMANTIC_DECISION_RECORDED_EVENT, details: decisionEventDetails(artifact) }, packageRoot, { taskId: ctx.taskId });
+  const previous = priorEvents.findLast((candidate) => candidate.event === SEMANTIC_DECISION_RECORDED_EVENT
+    && candidate.taskId === ctx.taskId
+    && candidate.details?.decisionKind === artifact.decisionKind
+    && !priorEvents.some((superseded) => superseded.event === "SEMANTIC_DECISION_SUPERSEDED"
+      && superseded.details?.decisionId === candidate.details?.decisionId));
+  if (!previous) return { artifact, artifactFingerprint: decisionArtifactFingerprint(artifact), event, supersededEvent: null };
+  const previousArtifact = await readDecisionArtifact(target, ctx.taskId, previous.details.decisionId, packageRoot);
+  const supersededEvent = await appendProtocolEvent(target, {
+    taskId: ctx.taskId,
+    event: "SEMANTIC_DECISION_SUPERSEDED",
+    details: decisionSupersededEventDetails(previousArtifact.value, resolvedDecisionId),
+  }, packageRoot, { taskId: ctx.taskId });
+  return { artifact, artifactFingerprint: decisionArtifactFingerprint(artifact), event, supersededEvent };
+}
+
+export async function recordSemanticDecision({ target, packageRoot, taskId, decisionId, request, provider = null } = {}) {
+  const resolvedDecisionId = decisionId ?? `${String(request?.decisionKind ?? "decision").toLowerCase()}-${Date.now()}-${randomUUID().slice(0, 8)}`;
+  const policy = await loadPolicy(target, packageRoot);
+  const taskBindings = target && taskId ? await readCurrentDecisionBindings(target, packageRoot, taskId) : {};
+  const validated = validateDecisionRequest({
+    ...request,
+    taskId,
+    state: taskBindings.state ?? request?.state,
   });
+  if (policy.cache && !decisionId && target && taskId) {
+    const cached = await readCachedDecision({
+      target,
+      packageRoot,
+      taskId,
+      decisionKind: validated.decisionKind,
+      currentBindings: {
+        ...taskBindings,
+        ...(request?.candidateSetFingerprint !== undefined ? { candidateSetFingerprint: request.candidateSetFingerprint } : {}),
+        ...(request?.policyFingerprint !== undefined ? { policyFingerprint: request.policyFingerprint } : {}),
+      },
+    });
+    if (cached) return { artifact: cached, artifactFingerprint: decisionArtifactFingerprint(cached), event: null, supersededEvent: null, cached: true, policy };
+  }
+  const engine = provider ?? createTypesafeEngine({ policy });
+  if (provider && (provider.id !== "typesafe-jev" || provider.model !== PINNED_JEV_MODEL || typeof provider.evaluate !== "function")) {
+    throw decisionError(DECISION_ERROR_CODES.MODEL_UNSUPPORTED, "Semantic decision provider must be the pinned ForgeLoop Jev engine.");
+  }
+  const result = normalizeDecisionResult(await engine.evaluate(validated), { questionSet: validated.questionSet });
+  const artifact = buildArtifact({ taskId, decisionId: resolvedDecisionId, policy, validated, result, request, taskBindings });
+  const persisted = await withTaskMutation(target, { taskId, packageRoot }, "semantic-decision", (ctx) => persistDecision(target, packageRoot, resolvedDecisionId, artifact, ctx), { explicitRequired: true });
+  return { ...persisted, policy };
 }

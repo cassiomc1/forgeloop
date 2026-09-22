@@ -66,6 +66,7 @@ completion.
 - `schemaVersion` *(number, required, const: 1)*
 - `protocolVersion` *(number, required, const: 1)*
 - `taskId` *(string, required, minLength: 1)*
+- `decisionId` *(string, required, pattern: `^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$`)*
 - `decisionKind` *(string, required, minLength: 1)*
 - `engine` *(string, required, const: `typesafe-jev`)*
 - `model` *(string, required, const: `jev-1.13.0`)*
@@ -113,6 +114,8 @@ or completion.
 - `generatedAt` *(string, required, minLength: 1)*
 - `inventoryFingerprint` *(string, required, pattern: `^[a-f0-9]{64}$`)*
 - `semanticStatus` *(string, required, enum: `PROVIDER_REPORTED`, `UNAVAILABLE`, `NOT_REQUESTED`)*
+- `decisionId` *(string, optional, pattern: `^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$`)*
+- `semanticDecisionFingerprint` *(string, optional, pattern: `^[a-f0-9]{64}$`)*
 - `tests` *(array<object>, required)*
   - `testId` *(string, required, pattern: `^test-[a-f0-9]{24}$`)*
   - `file` *(string, required, minLength: 1)*
@@ -120,7 +123,7 @@ or completion.
   - `suite` *(string, optional)*
   - `name` *(string, required, minLength: 1)*
   - `line` *(integer, optional, minimum: 1)*
-  - `classification` *(string, required, enum: `KEEP_REQUIRED`, `KEEP_UNIQUE`, `KEEP_RISK_GUARD`, `KEEP_DOCUMENTATION_VALUE`, `UNKNOWN`, `REDUNDANT_CANDIDATE`)*
+  - `classification` *(string, required, enum: `KEEP_REQUIRED`, `KEEP_UNIQUE`, `KEEP_RISK_GUARD`, `KEEP_AUTHORITY_BOUNDARY`, `KEEP_RECOVERY_INVARIANT`, `KEEP_RELEASE_SMOKE`, `KEEP_MIGRATION_COMPATIBILITY`, `KEEP_PLATFORM_BEHAVIOR`, `KEEP_DOCUMENTATION_VALUE`, `UNKNOWN`, `REDUNDANT_CANDIDATE`)*
   - `recommendation` *(string, required, enum: `KEEP`, `REWRITE`, `PROBE_REMOVAL`, `BLOCKED`)*
   - `protected` *(boolean, required)*
   - `signals` *(object, optional)*

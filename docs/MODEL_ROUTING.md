@@ -14,7 +14,7 @@ select a vendor-specific model, execute a command, change lifecycle state,
 authorize ownership, or weaken verification requirements. ForgeLoop remains the
 authority for all lifecycle, evidence, safety, and completion decisions.
 
-The live Jev provider is optional at runtime for inspection and bounded
-projections. If it is unavailable, callers must use the deterministic policy or
-fail closed; no fabricated semantic result is accepted.
-
+The live Jev provider is not an authority substitute. Semantic-required
+model-routing operations consume a fresh persisted `MODEL_ROUTE` decision and
+fail closed when it is unavailable or stale; offline inspection may still
+project deterministic policy without making a network request.

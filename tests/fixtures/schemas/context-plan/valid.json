@@ -9,6 +9,7 @@
   "selectedChars": 0,
   "selected": [],
   "omitted": [],
+  "candidateSetFingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
   "mandatoryIds": [],
   "promptInjectionIds": [],
   "tokenUsage": { "inputTokens": null, "outputTokens": null, "reportedBy": "UNKNOWN" },

@@ -75,6 +75,11 @@
     "docs/BROWSER_VERIFICATION.md",
     "docs/AGENT_BROWSER_ADAPTER.md",
     "docs/AGENT_BROWSER_VERIFICATION.md",
+    "docs/JEV_BENCHMARKS.md",
+    "docs/MODEL_ROUTING.md",
+    "docs/SEMANTIC_DECISION_PLANE.md",
+    "docs/TEST_INTELLIGENCE.md",
+    "docs/TEST_PRUNING.md",
     "scripts/CI_VALIDATORS.md",
     "docs/MCP.md",
     "docs/UNIVERSAL_INTEGRATION.md",
@@ -94,6 +99,9 @@
     "scripts/generate-shell-completions.mjs",
     "scripts/generate-agent-protocol-summary.mjs",
     "scripts/generate-forgeloop-skill.mjs",
+    "scripts/jev-smoke.mjs",
+    "scripts/benchmark-jev.mjs",
+    "scripts/benchmark-test-intelligence.mjs",
     "skills/forgeloop",
     "scripts/run-execution-profile-benchmarks.mjs",
     "scripts/summarize-execution-profile-benchmarks.mjs",
@@ -167,7 +175,8 @@
     "verify:prepush": "node scripts/run-validation.mjs --tier prepush",
     "verify:release": "node scripts/run-validation.mjs --tier release",
     "jev:smoke": "node scripts/jev-smoke.mjs",
-    "benchmark:jev": "node scripts/benchmark-jev.mjs"
+    "benchmark:jev": "node scripts/benchmark-jev.mjs",
+    "benchmark:test-intelligence": "node scripts/benchmark-test-intelligence.mjs"
   },
   "devDependencies": {
     "c8": "^12.0.0",

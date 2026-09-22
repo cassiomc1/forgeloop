@@ -1,14 +1,17 @@
 import { canonicalFingerprint, readJsonArtifact, writeJsonArtifact } from "../artifacts.js";
+import { ensureWithin, fileExists } from "../filesystem.js";
 import { taskDecisionPath } from "../task-paths.js";
 import { assertSecretFree } from "../receipt.js";
 import { DECISION_AUTHORITY, DECISION_EVIDENCE_AUTHORITY, DECISION_POLICY_VERSION, PINNED_JEV_MODEL } from "./constants.js";
 import { DECISION_ERROR_CODES, decisionError } from "./errors.js";
+import { getTaskTransaction, withTaskTransaction } from "../transaction.js";
 
 export function buildDecisionArtifact(input = {}) {
   const artifact = {
     schemaVersion: 1,
     protocolVersion: 1,
     taskId: input.taskId,
+    decisionId: input.decisionId,
     decisionKind: input.decisionKind,
     engine: "typesafe-jev",
     model: input.model ?? PINNED_JEV_MODEL,
@@ -46,7 +49,16 @@ export async function readDecisionArtifact(target, taskId, decisionId, packageRo
 }
 
 export async function writeDecisionArtifact(target, taskId, decisionId, artifact, packageRoot, options = {}) {
-  return writeJsonArtifact(target, taskDecisionPath(taskId, decisionId), artifact, "semantic-decision", packageRoot, { ...options, taskId, operation: "semantic-decision" });
+  if (!(await getTaskTransaction(target))) {
+    return withTaskTransaction({ target, taskId, packageRoot, operation: "semantic-decision" }, async () => (
+      writeDecisionArtifact(target, taskId, decisionId, artifact, packageRoot, options)
+    ));
+  }
+  const relativePath = taskDecisionPath(taskId, decisionId);
+  if (await fileExists(ensureWithin(target, relativePath))) {
+    throw decisionError(DECISION_ERROR_CODES.IMMUTABLE, `Semantic decision artifact already exists: ${decisionId}`);
+  }
+  return writeJsonArtifact(target, relativePath, artifact, "semantic-decision", packageRoot, { ...options, taskId, operation: "semantic-decision" });
 }
 
 export function decisionArtifactFingerprint(artifact) {

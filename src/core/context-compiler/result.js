@@ -1,4 +1,4 @@
-export function contextPlanResult({ profile, candidates, selected, omitted, mandatoryIds, promptInjectionIds, fingerprint, budget }) {
+export function contextPlanResult({ profile, candidates, selected, omitted, mandatoryIds, promptInjectionIds, fingerprint, budget, candidateSetFingerprint }) {
   return {
     schemaVersion: 1,
     protocolVersion: 1,
@@ -12,6 +12,7 @@ export function contextPlanResult({ profile, candidates, selected, omitted, mand
     omitted,
     mandatoryIds,
     promptInjectionIds,
+    candidateSetFingerprint,
     tokenUsage: { inputTokens: null, outputTokens: null, reportedBy: "UNKNOWN" },
     decisionFingerprint: fingerprint,
     authority: "SEMANTIC_DECISION",

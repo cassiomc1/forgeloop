@@ -68,7 +68,7 @@ export function protocolInfo({ packageVersion = null } = {}) {
         },
         semanticPlanning: {
           version: 1,
-          questionSets: ["failure-v1", "diagnosis-v1", "review-v1", "test-utility-v1"],
+          questionSets: ["intake-v1", "contract-v1", "route-v1", "context-v1", "model-route-v1", "failure-v1", "diagnosis-v1", "review-v1", "task-overlap-v1", "test-utility-v1", "test-prune-v1"],
           authority: "SEMANTIC_DECISION",
           evidenceAuthority: "NONE",
           lifecycleAuthority: false,

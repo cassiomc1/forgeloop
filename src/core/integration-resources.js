@@ -102,6 +102,8 @@ export const INTEGRATION_RESOURCE_DEFINITIONS = Object.freeze({
   "repository/index-status": Object.freeze({ scope: "PROJECT", description: "Provider-neutral repository-index health and owned-server status." }),
 });
 
+const TASK_RESOURCE_URIS = new Set(Object.keys(INTEGRATION_RESOURCE_DEFINITIONS).filter((uri) => uri.startsWith("task/")));
+
 function ownershipProjection(projection) {
   return {
     taskId: projection.taskId,
@@ -131,91 +133,20 @@ async function readForgeLoopIntegrationResourceCore(uri, {
     throw error;
   }
 
-  switch (uri) {
-    case "protocol/info": {
-      return { uri, data: await runProtocolInfo({ packageVersion }) };
-    }
-    case "project/tasks": {
-      const tasks = await discoverTasks(projectPath, packageRoot);
-      return {
-        uri,
-        data: {
-          count: tasks.length,
-          tasks: tasks.map((task) => ({
-            taskId: task.taskId,
-            healthy: task.healthy !== false,
-            phase: task.phase ?? null,
-            mutationAllowed: task.mutationAllowed !== false,
-          })),
-        },
-      };
-    }
-    case "task/status":
-    case "task/ownership":
-    case "task/contract":
-    case "task/continuity": {
-      if (typeof taskId !== "string" || !taskId) {
-        const error = new Error(`Resource ${uri} requires a taskId`);
-        error.code = "E_TASK_REQUIRED";
-        throw error;
-      }
-      break;
-    }
-    case "task/workspace-binding":
-    case "task/handoffs":
-    case "task/responsibility":
-    case "task/verification-scope":
-    case "task/attestation": {
-      if (typeof taskId !== "string" || !taskId) {
-        const error = new Error(`Resource ${uri} requires a taskId`);
-        error.code = "E_TASK_REQUIRED";
-        throw error;
-      }
-      break;
-    }
-    case "task/structural-quality": {
-      if (typeof taskId !== "string" || !taskId) {
-        const error = new Error(`Resource ${uri} requires a taskId`);
-        error.code = "E_TASK_REQUIRED";
-        throw error;
-      }
-      break;
-    }
-    case "task/actions":
-    case "task/action":
-    case "task/approvals":
-    case "task/metrics":
-    case "task/context":
-    case "task/evaluations": {
-      if (typeof taskId !== "string" || !taskId) {
-        const error = new Error(`Resource ${uri} requires a taskId`); error.code = "E_TASK_REQUIRED"; throw error;
-      }
-      break;
-    }
-    case "task/decisions": {
-      if (typeof taskId !== "string" || !taskId) {
-        const error = new Error(`Resource ${uri} requires a taskId`); error.code = "E_TASK_REQUIRED"; throw error;
-      }
-      break;
-    }
-    case "task/context-plan": {
-      if (typeof taskId !== "string" || !taskId) {
-        const error = new Error(`Resource ${uri} requires a taskId`); error.code = "E_TASK_REQUIRED"; throw error;
-      }
-      break;
-    }
-    case "task/model-route": {
-      if (typeof taskId !== "string" || !taskId) {
-        const error = new Error(`Resource ${uri} requires a taskId`); error.code = "E_TASK_REQUIRED"; throw error;
-      }
-      break;
-    }
-    case "task/test-utility": {
-      if (typeof taskId !== "string" || !taskId) {
-        const error = new Error(`Resource ${uri} requires a taskId`); error.code = "E_TASK_REQUIRED"; throw error;
-      }
-      break;
-    }
+  if (uri === "protocol/info") return { uri, data: await runProtocolInfo({ packageVersion }) };
+  if (uri === "project/tasks") {
+    const tasks = await discoverTasks(projectPath, packageRoot);
+    return { uri, data: { count: tasks.length, tasks: tasks.map((task) => ({
+      taskId: task.taskId,
+      healthy: task.healthy !== false,
+      phase: task.phase ?? null,
+      mutationAllowed: task.mutationAllowed !== false,
+    })) } };
+  }
+  if (TASK_RESOURCE_URIS.has(uri) && (typeof taskId !== "string" || !taskId)) {
+    const error = new Error(`Resource ${uri} requires a taskId`);
+    error.code = "E_TASK_REQUIRED";
+    throw error;
   }
 
   if (uri === "task/ownership") {
@@ -315,7 +246,7 @@ async function readForgeLoopIntegrationResourceCore(uri, {
     return { uri, taskId, data: { taskId, decisions } };
   }
   if (uri === "task/context-plan") {
-    return { uri, taskId, data: await runContextPlan({ profile: runtimeContext?.contextProfile ?? "balanced" }) };
+    return { uri, taskId, data: await runContextPlan({ target: projectPath, packageRoot, taskId, profile: runtimeContext?.contextProfile ?? "balanced" }) };
   }
   if (uri === "task/model-route") {
     const state = await readWorkState(projectPath, { packageRoot, taskId });
@@ -324,6 +255,9 @@ async function readForgeLoopIntegrationResourceCore(uri, {
       uri,
       taskId,
       data: await runModelRoute({
+        target: projectPath,
+        packageRoot,
+        taskId,
         workType: route.value.input?.workType,
         surfaces: route.value.input?.surfaces,
         risks: route.value.input?.risks,

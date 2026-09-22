@@ -1,6 +1,7 @@
 import { contextBudget } from "./budget.js";
 import { normalizeContextCandidates } from "./candidates.js";
 import { contextPlanFingerprint } from "./fingerprint.js";
+import { canonicalFingerprint } from "../artifacts.js";
 import { assertContextCompilerPolicy, candidatePriority } from "./policy.js";
 import { contextPlanResult } from "./result.js";
 
@@ -16,6 +17,13 @@ function orderCandidates(candidates, rankedIds = []) {
 export function compileContext({ candidates = [], profile = "balanced", mandatoryIds = [], semanticRanker = null } = {}) {
   const policy = assertContextCompilerPolicy({ profile, mandatoryIds });
   const normalized = normalizeContextCandidates(candidates);
+  const candidateSetFingerprint = canonicalFingerprint(normalized.map((candidate) => ({
+    id: candidate.id,
+    sourceRef: candidate.sourceRef,
+    summary: candidate.summary,
+    required: candidate.required,
+    mandatory: candidate.mandatory,
+  })));
   const mandatory = new Set(policy.mandatoryIds);
   const marked = normalized.map((candidate) => ({ ...candidate, mandatory: candidate.mandatory || mandatory.has(candidate.id) }));
   const rankedIds = typeof semanticRanker === "function" ? semanticRanker(marked.filter((item) => !item.promptInjection).map((item) => ({ id: item.id, summary: item.summary }))) : [];
@@ -42,6 +50,7 @@ export function compileContext({ candidates = [], profile = "balanced", mandator
     promptInjectionIds,
     fingerprint: null,
     budget,
+    candidateSetFingerprint,
   });
   result.decisionFingerprint = contextPlanFingerprint(result);
   return result;

@@ -14,6 +14,7 @@ import { validateEventLedger } from "../src/core/events.js";
 import { readDecisionArtifact } from "../src/core/decision/artifact.js";
 import { createTypesafeClient } from "../src/adapters/typesafe/client.js";
 import { taskArtifactPath } from "../src/core/task-paths.js";
+import { runTaskCreate } from "../src/commands/task-create.js";
 
 test("decision state builder strips secret-like fields and bounds user paths", () => {
   const result = buildDecisionState({
@@ -44,6 +45,7 @@ test("question registry returns versioned fingerprints", () => {
 test("mock semantic decision is persisted as a non-authoritative artifact and ledger event", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-jev-"));
   const packageRoot = getPackageRoot();
+  await runTaskCreate({ target, packageRoot, taskId: "jev-foundation-test" });
   const result = await recordSemanticDecision({
     target,
     packageRoot,
@@ -60,8 +62,28 @@ test("mock semantic decision is persisted as a non-authoritative artifact and le
       async evaluate() {
         return {
           model: "jev-1.13.0",
-          answers: { need_history: { noul: "no" }, need_security: { noul: "yes" } },
-          confidence: { need_history: 0.9, need_security: 0.8 },
+          answers: {
+            need_task_history: { noul: "no" },
+            need_relevant_artifacts: { noul: "yes" },
+            need_dependency_context: { noul: "no" },
+            need_security_context: { noul: "yes" },
+            need_review_context: { noul: "no" },
+            need_verification_context: { noul: "yes" },
+            need_advisory_context: { noul: "no" },
+            need_repository_snippets: { noul: "yes" },
+            need_external_docs: { noul: "no" },
+          },
+          confidence: {
+            need_task_history: 0.9,
+            need_relevant_artifacts: 0.8,
+            need_dependency_context: 0.9,
+            need_security_context: 0.8,
+            need_review_context: 0.9,
+            need_verification_context: 0.8,
+            need_advisory_context: 0.9,
+            need_repository_snippets: 0.8,
+            need_external_docs: 0.9,
+          },
           usage: { inputTokens: 5, outputTokens: 3, reportedBy: "PROVIDER" },
         };
       },
@@ -81,4 +103,43 @@ test("mock semantic decision is persisted as a non-authoritative artifact and le
 
 test("typesafe client fails closed when credentials are absent", () => {
   assert.throws(() => createTypesafeClient(normalizeDecisionPolicy(), { env: {} }), (error) => error.code === DECISION_ERROR_CODES.AUTH_REQUIRED);
+});
+
+test("noul probabilities are bounded and projected to canonical booleans", async () => {
+  const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-jev-noul-"));
+  const packageRoot = getPackageRoot();
+  await runTaskCreate({ target, packageRoot, taskId: "jev-noul-test" });
+  const result = await recordSemanticDecision({
+    target,
+    packageRoot,
+    taskId: "jev-noul-test",
+    decisionId: "context-noul",
+    request: { decisionKind: "CONTEXT_PLAN", questionSetId: "context-v1", state: { objective: "bounded context selection" } },
+    provider: {
+      id: "typesafe-jev",
+      model: "jev-1.13.0",
+      async evaluate() {
+        const answers = Object.fromEntries(Object.keys(getQuestionSet("context-v1").questions).map((key, index) => [key, { noul: index % 2 ? 0.8 : 0.2 }]));
+        const confidence = Object.fromEntries(Object.keys(answers).map((key) => [key, 0.9]));
+        return { model: "jev-1.13.0", answers, confidence, usage: { inputTokens: 1, outputTokens: 1 } };
+      },
+    },
+  });
+  assert.equal(result.artifact.decision.needs.need_task_history, false);
+  assert.equal(result.artifact.decision.needs.need_relevant_artifacts, true);
+  await assert.rejects(() => recordSemanticDecision({
+    target,
+    packageRoot,
+    taskId: "jev-noul-test",
+    decisionId: "context-invalid-probability",
+    request: { decisionKind: "CONTEXT_PLAN", questionSetId: "context-v1", state: { objective: "bounded context selection" } },
+    provider: {
+      id: "typesafe-jev",
+      model: "jev-1.13.0",
+      async evaluate() {
+        const answers = Object.fromEntries(Object.keys(getQuestionSet("context-v1").questions).map((key) => [key, { noul: 1.5 }]));
+        return { model: "jev-1.13.0", answers, confidence: {}, usage: { inputTokens: 1, outputTokens: 1 } };
+      },
+    },
+  }), (error) => error.code === DECISION_ERROR_CODES.RESULT_INVALID);
 });

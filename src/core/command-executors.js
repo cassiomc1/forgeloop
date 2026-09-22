@@ -153,12 +153,13 @@ export const COMMAND_EXECUTORS = {
     result: await runDecisionShow({ target, packageRoot, taskId: options.taskId, decisionId: options.decisionId }),
     exitCode: 0,
   }),
-  "context-plan": async ({ options }) => ({
-    result: await runContextPlan({ profile: options.profile ?? "balanced" }),
+  "context-plan": async ({ target, packageRoot, options }) => ({
+    result: await runContextPlan({ target, packageRoot, taskId: options.taskId, decisionId: options.decisionId, profile: options.profile ?? "balanced" }),
     exitCode: 0,
   }),
-  "model-route": async ({ options }) => ({
+  "model-route": async ({ target, packageRoot, options }) => ({
     result: await runModelRoute({
+      target, packageRoot, taskId: options.taskId, decisionId: options.decisionId,
       workType: options.workType,
       surfaces: options.surfaces,
       risks: options.risks,
@@ -168,17 +169,14 @@ export const COMMAND_EXECUTORS = {
       generationRequired: options.generationRequired,
       architectureChange: options.architectureChange,
       ambiguity: options.ambiguity,
-      semanticRecommendation: options.semanticTier
-        ? { tier: options.semanticTier, confidence: options.semanticConfidence === undefined ? null : Number(options.semanticConfidence), requiresEscalation: options.semanticEscalation === true }
-        : null,
     }),
     exitCode: 0,
   }),
-  "semantic-plan": async ({ options }) => ({
+  "semantic-plan": async ({ target, packageRoot, options }) => ({
     result: await runSemanticPlan({
+      target, packageRoot, taskId: options.taskId, decisionId: options.decisionId,
       kind: options.semanticPlanKind,
       input: options.semanticPlanInput ?? {},
-      semanticRecommendation: options.semanticRecommendation,
     }),
     exitCode: 0,
   }),
@@ -187,7 +185,7 @@ export const COMMAND_EXECUTORS = {
     exitCode: 0,
   }),
   "test-utility": async ({ target, packageRoot, options }) => ({
-    result: await runTestUtility({ target, packageRoot, taskId: options.taskId, semanticStatus: options.semanticStatus ?? "NOT_REQUESTED" }),
+    result: await runTestUtility({ target, packageRoot, taskId: options.taskId }),
     exitCode: 0,
   }),
   "test-prune-plan": async ({ target, packageRoot, options }) => ({

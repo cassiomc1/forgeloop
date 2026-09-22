@@ -64,6 +64,7 @@ import {
 } from "./gate-provenance.js";
 import {
   assertSemanticDecisionDetails,
+  validateSemanticDecisionArtifactBindings,
   validateSemanticDecisionEventBindings,
 } from "./decision/events.js";
 import { SEMANTIC_DECISION_RECORDED_EVENT, SEMANTIC_DECISION_SUPERSEDED_EVENT } from "./decision/constants.js";
@@ -773,6 +774,7 @@ export async function validateEventLedger(target, packageRoot, options = {}) {
   errors.push(...validateContractRevisionEventBindings(events));
   errors.push(...validateGateSatisfactionBindings(events));
   errors.push(...validateSemanticDecisionEventBindings(events));
+  errors.push(...await validateSemanticDecisionArtifactBindings(target, packageRoot, events));
   const repairedErrors = validateContractBootstrapRepairLedger(events, errors, options);
   return { valid: repairedErrors.length === 0, events, errors: repairedErrors };
 }

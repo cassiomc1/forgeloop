@@ -3,11 +3,12 @@
   "$id": "forgeloop://schemas/semantic-decision.schema.json",
   "title": "ForgeLoop semantic decision",
   "type": "object",
-  "required": ["schemaVersion", "protocolVersion", "taskId", "decisionKind", "engine", "model", "questionSetId", "questionSetVersion", "questionSetFingerprint", "policyVersion", "stateFingerprint", "policyFingerprint", "answers", "confidence", "decision", "usage", "authority", "evidenceAuthority", "lifecycleAuthority", "completionAuthority", "ownershipAuthority", "installationAuthority", "recordedAt"],
+  "required": ["schemaVersion", "protocolVersion", "taskId", "decisionId", "decisionKind", "engine", "model", "questionSetId", "questionSetVersion", "questionSetFingerprint", "policyVersion", "stateFingerprint", "policyFingerprint", "answers", "confidence", "decision", "usage", "authority", "evidenceAuthority", "lifecycleAuthority", "completionAuthority", "ownershipAuthority", "installationAuthority", "recordedAt"],
   "properties": {
     "schemaVersion": { "const": 1 },
     "protocolVersion": { "const": 1 },
     "taskId": { "type": "string", "minLength": 1 },
+    "decisionId": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$" },
     "decisionKind": { "type": "string", "minLength": 1 },
     "engine": { "const": "typesafe-jev" },
     "model": { "const": "jev-1.13.0" },
