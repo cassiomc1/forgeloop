@@ -60,7 +60,7 @@ test("MCP test wrapper launches the discovered suite with literal argv and prese
       },
     });
     assert.equal(exitCode, 7);
-    assert.deepEqual(invocation.args, ["--test", fixturePath]);
+    assert.deepEqual(invocation.args, ["--test", "--test-concurrency=2", fixturePath]);
     assert.equal(invocation.command, process.execPath);
     assert.equal(invocation.options.cwd, root);
     assert.equal(invocation.options.shell, false);
