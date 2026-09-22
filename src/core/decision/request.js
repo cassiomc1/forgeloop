@@ -1,4 +1,4 @@
-import { buildDecisionState } from "./state-builder.js";
+import { buildCombinedDecisionState } from "./state-builder.js";
 import { DECISION_KINDS, PINNED_JEV_MODEL } from "./constants.js";
 import { DECISION_ERROR_CODES, decisionError } from "./errors.js";
 import { getQuestionSet } from "./question-registry.js";
@@ -12,10 +12,15 @@ export function validateDecisionRequest(input = {}) {
   if (typeof questionSet.id !== "string" || typeof questionSet.fingerprint !== "string") throw decisionError(DECISION_ERROR_CODES.REQUEST_INVALID, "Decision request question set is not canonical.");
   if (questionSet.decisionKind !== input.decisionKind) throw decisionError(DECISION_ERROR_CODES.REQUEST_INVALID, "Question set does not match decision kind.");
   if (input.model !== undefined && input.model !== PINNED_JEV_MODEL) throw decisionError(DECISION_ERROR_CODES.MODEL_UNSUPPORTED, "Only the pinned ForgeLoop Jev model is supported.");
+  const state = input.state && typeof input.state === "object"
+    && (Object.prototype.hasOwnProperty.call(input.state, "lifecycle")
+      || Object.prototype.hasOwnProperty.call(input.state, "semantic"))
+    ? buildCombinedDecisionState(input.state)
+    : buildCombinedDecisionState({ semantic: input.state ?? {} });
   return {
     ...input,
     model: PINNED_JEV_MODEL,
     questionSet,
-    state: buildDecisionState(input.state ?? {}),
+    state,
   };
 }

@@ -21,19 +21,31 @@ const CASES = Object.freeze([
   { id: "flaky-low-signal", expected: "FLAKY_LOW_SIGNAL", protected: false },
 ]);
 
-function precision(label) {
-  const positives = CASES.filter((item) => item.expected === label);
-  if (positives.length === 0) return null;
-  return positives.filter((item) => item.observed === label).length / positives.length;
+function precision(cases, label) {
+  const predicted = cases.filter((item) => item.observed === label);
+  if (predicted.length === 0) return null;
+  return predicted.filter((item) => item.expected === label).length / predicted.length;
+}
+
+function recall(cases, label) {
+  const expected = cases.filter((item) => item.expected === label);
+  if (expected.length === 0) return null;
+  return expected.filter((item) => item.observed === label).length / expected.length;
 }
 
 export function runTestIntelligenceBenchmark() {
-  const decisions = { tests: {
+  const candidateIds = ["semantic-duplicate", "obsolete-test", "flaky-low-signal"];
+  const decisions = { candidateIds, tests: {
     "semantic-duplicate": { semantic_duplicate: true },
     "obsolete-test": { likely_obsolete: true },
     "flaky-low-signal": { likely_flaky_low_signal: true },
   } };
-  const observedTests = buildTestUtilityArtifact({ taskId: "benchmark", inventory: { schemaVersion: 1, source: "FIXTURE", tests: FIXTURE_TESTS }, semanticDecision: { decisionId: "benchmark-decision", decision: decisions, confidence: {} } }).tests;
+  const confidence = Object.fromEntries(
+    candidateIds.flatMap((id, index) => (
+      Object.keys(decisions.tests[id]).map((dimension) => [`test_${index}_${dimension}`, 0.95])
+    )),
+  );
+  const observedTests = buildTestUtilityArtifact({ taskId: "benchmark", inventory: { schemaVersion: 1, source: "FIXTURE", tests: FIXTURE_TESTS }, semanticDecision: { decisionId: "benchmark-decision", decision: decisions, confidence } }).tests;
   const cases = CASES.map((item) => ({ ...item, observed: observedTests.find((test) => test.testId === item.id)?.classification ?? "UNKNOWN" }));
   const protectedFalsePositives = cases.filter((item) => item.protected && ["REDUNDANT_CANDIDATE", "OBSOLETE_CANDIDATE", "SAFE_TO_REMOVE"].includes(item.observed)).length;
   const summary = {
@@ -41,10 +53,12 @@ export function runTestIntelligenceBenchmark() {
     status: "OFFLINE_DETERMINISTIC_FIXTURE",
     caseCount: CASES.length,
     metrics: {
-      redundantCandidatePrecision: precision("REDUNDANT_CANDIDATE"),
-      obsoleteCandidatePrecision: precision("OBSOLETE_CANDIDATE"),
+      redundantCandidatePrecision: precision(cases, "REDUNDANT_CANDIDATE"),
+      redundantCandidateRecall: recall(cases, "REDUNDANT_CANDIDATE"),
+      obsoleteCandidatePrecision: precision(cases, "OBSOLETE_CANDIDATE"),
+      obsoleteCandidateRecall: recall(cases, "OBSOLETE_CANDIDATE"),
       protectedTestFalsePositiveRate: protectedFalsePositives / CASES.filter((item) => item.protected).length,
-      safeToRemoveFalsePositiveRate: 0,
+      safeToRemoveFalsePositiveRate: precision(cases, "SAFE_TO_REMOVE") === null ? null : 1 - precision(cases, "SAFE_TO_REMOVE"),
       rewriteRecommendationPrecision: null,
     },
     deletionAuthority: false,

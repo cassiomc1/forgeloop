@@ -58,16 +58,29 @@ function normalizeModelRouteDecision(answers, confidence) {
   };
 }
 
+function normalizeExecutionProfileDecision(answers, confidence) {
+  return {
+    recommendedProfile: answers.recommended_depth,
+    confidence: confidence.recommended_depth,
+    needsBroadContext: answers.needs_broad_context,
+    needsDeepReview: answers.needs_deep_review,
+    highAmbiguity: answers.high_ambiguity,
+    crossComponentReasoning: answers.cross_component_reasoning,
+  };
+}
+
 function candidateProjection(questionSet, answers, confidence, ids, prefix) {
   const rankedIds = [];
   const excludedIds = [];
+  const confidenceById = {};
   for (const [index, id] of ids.entries()) {
     const key = `${prefix}${index}_relevant`;
+    confidenceById[id] = confidence[key];
     if (answers[key] === true) rankedIds.push(id);
     else if (answers[key] === false) excludedIds.push(id);
   }
   rankedIds.sort((a, b) => (confidence[`${prefix}${ids.indexOf(a)}_relevant`] ?? 0) - (confidence[`${prefix}${ids.indexOf(b)}_relevant`] ?? 0));
-  return { rankedIds: rankedIds.reverse(), excludedIds };
+  return { rankedIds: rankedIds.reverse(), excludedIds, confidenceById };
 }
 
 function projectDecision(questionSet, answers, confidence, input) {
@@ -77,6 +90,7 @@ function projectDecision(questionSet, answers, confidence, input) {
     ROUTE: () => (questionSet.metadata?.candidateQuestionPrefix
       ? candidateProjection(questionSet, answers, confidence, questionSet.candidateIds ?? [], questionSet.metadata.candidateQuestionPrefix)
       : { relevantGuides: unique([answers.relevant_guides]) }),
+    EXECUTION_PROFILE: () => normalizeExecutionProfileDecision(answers, confidence),
     CONTEXT_PLAN: () => (questionSet.metadata?.candidateQuestionPrefix
       ? { needs: answers, ...candidateProjection(questionSet, answers, confidence, questionSet.candidateIds ?? [], questionSet.metadata.candidateQuestionPrefix) }
       : { needs: answers }),

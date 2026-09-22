@@ -45,6 +45,21 @@ export function buildDecisionState(value) {
   return sanitized;
 }
 
+export function buildLifecycleDecisionState(value = {}) {
+  return buildDecisionState(value ?? {});
+}
+
+export function buildSemanticDecisionState(value = {}) {
+  return buildDecisionState(value ?? {});
+}
+
+export function buildCombinedDecisionState({ lifecycle = {}, semantic = {} } = {}) {
+  return {
+    lifecycle: buildLifecycleDecisionState(lifecycle),
+    semantic: buildSemanticDecisionState(semantic),
+  };
+}
+
 export function decisionStateFingerprint(value, canonicalFingerprint) {
   return canonicalFingerprint(buildDecisionState(value));
 }

@@ -22,6 +22,12 @@ function bootstrapInconsistent(message, candidate = false) {
   return error;
 }
 
+async function hasValidatedContractHistory(target, packageRoot, taskId) {
+  if (!target || !packageRoot || !taskId) return false;
+  const events = await readEvents(target, packageRoot, { taskId });
+  return events.some((event) => event.event === "CONTRACT_VALIDATED");
+}
+
 /**
  * Resolves the reconstruction projection for a task with a validated ledger
  * whose work-state checkpoint is missing.
@@ -123,8 +129,8 @@ export async function runContractCreate({ target, packageRoot, taskId, task, con
   if (preset && contractFile) throw new Error("contract-create accepts either --preset or --contract-file, not both");
 
   const effectiveTaskId = taskId ?? task;
-  const testFixtureWithoutExplicitProvider = process.env.FORGELOOP_TEST_SEMANTIC_PROVIDER === "1" && !semanticProvider;
-  if (target && packageRoot && effectiveTaskId && !testFixtureWithoutExplicitProvider) {
+  const hasCanonicalContract = await hasValidatedContractHistory(target, packageRoot, effectiveTaskId);
+  if (target && packageRoot && effectiveTaskId && !hasCanonicalContract) {
     await ensureSemanticDecision({
       target, packageRoot, taskId: effectiveTaskId, provider: semanticProvider,
       request: {

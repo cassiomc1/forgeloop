@@ -19,6 +19,16 @@ const QUESTION_SET_DEFINITIONS = Object.freeze({
     id: "route-v1", version: 1, decisionKind: "ROUTE",
     questions: Object.freeze({ relevant_guides: { type: "choice", criteria: { clean: "General engineering hygiene", test: "Testing context", security: "Security context", unknown: "Insufficient information" } } }),
   }),
+  "execution-profile-v1": Object.freeze({
+    id: "execution-profile-v1", version: 1, decisionKind: "EXECUTION_PROFILE",
+    questions: Object.freeze({
+      recommended_depth: { type: "choice", criteria: { light: "Light bounded context", balanced: "Normal engineering context", full: "Deep broad context" } },
+      needs_broad_context: { type: "noul", criteria: { yes: "Broad context is needed", no: "Broad context is not needed" } },
+      needs_deep_review: { type: "noul", criteria: { yes: "Deep review is needed", no: "Deep review is not needed" } },
+      high_ambiguity: { type: "noul", criteria: { yes: "The task is highly ambiguous", no: "The task is not highly ambiguous" } },
+      cross_component_reasoning: { type: "noul", criteria: { yes: "Cross-component reasoning is needed", no: "Cross-component reasoning is not needed" } },
+    }),
+  }),
   "intake-v1": Object.freeze({
     id: "intake-v1", version: 1, decisionKind: "INTAKE",
     questions: Object.freeze({
@@ -164,6 +174,10 @@ export function buildRouteQuestionSet(guides = []) {
     candidateIds: bounded,
     metadata: { candidateQuestionPrefix: "guide_", relevanceSuffix: "_relevant" },
   });
+}
+
+export function buildExecutionProfileQuestionSet() {
+  return getQuestionSet("execution-profile-v1");
 }
 
 export function buildTestUtilityQuestionSet(tests = []) {

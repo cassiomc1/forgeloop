@@ -11,7 +11,14 @@ function classify(test, judgment = null, confidence = 1) {
   if (signal.platformSpecific) return { classification: "KEEP_PLATFORM_BEHAVIOR", recommendation: "KEEP", protected: true };
   if (signal.integration) return { classification: "KEEP_INTEGRATION_GUARD", recommendation: "KEEP", protected: true };
   if (!judgment || confidence < 0.75) return { classification: "UNKNOWN", recommendation: "BLOCKED", protected: false };
-  if (judgment.semantic_duplicate) return { classification: "REDUNDANT_CANDIDATE", recommendation: "BLOCKED", protected: false };
+  if (judgment.protocol_invariant) return { classification: "KEEP_RECOVERY_INVARIANT", recommendation: "KEEP", protected: true };
+  if (judgment.semantic_duplicate) {
+    return {
+      classification: "REDUNDANT_CANDIDATE",
+      recommendation: judgment.requires_system_two_review ? "BLOCKED" : "PROBE_REMOVAL",
+      protected: false,
+    };
+  }
   if (judgment.likely_obsolete) return { classification: "OBSOLETE_CANDIDATE", recommendation: "BLOCKED", protected: false };
   if (judgment.likely_flaky_low_signal) return { classification: "FLAKY_LOW_SIGNAL", recommendation: "BLOCKED", protected: false };
   if (judgment.expensive_relative_to_signal) return { classification: "EXPENSIVE_LOW_SIGNAL", recommendation: "BLOCKED", protected: false };
@@ -24,7 +31,7 @@ function classify(test, judgment = null, confidence = 1) {
 export function buildTestUtilityArtifact({ taskId, inventory, semanticStatus = "NOT_REQUESTED", semanticDecision = null, semanticDecisions = [] } = {}) {
   const decisions = semanticDecisions.length > 0 ? semanticDecisions : (semanticDecision ? [semanticDecision] : []);
   const byTest = new Map(decisions.flatMap((decision) => Object.entries(decision.decision?.tests ?? {}).map(([testId, judgment]) => [testId, {
-    judgment, confidence: Math.min(...Object.keys(judgment).map((key) => decision.confidence?.[`test_${(decision.decision.candidateIds ?? []).indexOf(testId)}_${key}`] ?? 1)),
+    judgment, confidence: Math.min(...Object.keys(judgment).map((key) => decision.confidence?.[`test_${(decision.decision.candidateIds ?? []).indexOf(testId)}_${key}`] ?? 0)),
   }])));
   return {
     schemaVersion: 1,

@@ -83,6 +83,8 @@ completion.
   - `metadata` *(object, optional)*
 - `policyVersion` *(number, required, const: 1)*
 - `stateFingerprint` *(string, required, pattern: `^[a-f0-9]{64}$`)*
+- `taskStateFingerprint` *(string or null, optional)*
+- `semanticStateFingerprint` *(string or null, optional)*
 - `policyFingerprint` *(string, required, pattern: `^[a-f0-9]{64}$`)*
 - `repositoryFingerprint` *(string or object or null, optional)*
 - `contractFingerprint` *(string or null, optional)*

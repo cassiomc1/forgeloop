@@ -163,7 +163,6 @@ function run(command, tier) {
       env: {
         ...process.env,
         FORGELOOP_VALIDATION_TIER: tier,
-        ...(command.id === "test:quick" ? { FORGELOOP_TEST_SEMANTIC_PROVIDER: "1" } : {}),
       },
       shell: false,
       stdio: "inherit",

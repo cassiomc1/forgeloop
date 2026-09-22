@@ -313,6 +313,52 @@ function reasonForSignal(prefix, signal) {
   return `${prefix}_${signal.toUpperCase().replaceAll("-", "_")}`;
 }
 
+function mandatoryGuidesForRoute(normalized) {
+  const mandatory = new Set();
+  if (normalized.surfaces.includes("auth")
+    || normalized.risks.some((risk) => ["untrusted-input", "personal-data", "secrets", "publication"].includes(risk))) {
+    mandatory.add("security");
+  }
+  return mandatory;
+}
+
+function applySemanticGuideRecommendation(selected, excluded, normalized, recommendation) {
+  const guideDecision = recommendation?.guideRelevance
+    ?? (recommendation?.rankedIds || recommendation?.excludedIds ? recommendation : null);
+  if (!guideDecision) return;
+  const mandatory = mandatoryGuidesForRoute(normalized);
+  const excludedIds = new Set(Array.isArray(guideDecision.excludedIds) ? guideDecision.excludedIds : []);
+  const confidenceById = guideDecision.confidenceById ?? {};
+  for (const guide of [...selected.keys()]) {
+    if (mandatory.has(guide)) {
+      const reasons = selected.get(guide);
+      if (!reasons.includes("MANDATORY_SAFETY_GUIDE")) reasons.push("MANDATORY_SAFETY_GUIDE");
+      continue;
+    }
+    if (!excludedIds.has(guide)) {
+      const reasons = selected.get(guide);
+      if (!reasons.includes("JEV_RELEVANT")) reasons.push("JEV_RELEVANT");
+      continue;
+    }
+    if ((confidenceById[guide] ?? 0) < 0.75) {
+      const reasons = selected.get(guide);
+      if (!reasons.includes("JEV_LOW_CONFIDENCE_RETAINED")) reasons.push("JEV_LOW_CONFIDENCE_RETAINED");
+      continue;
+    }
+    selected.delete(guide);
+    excluded[guide] = ["JEV_EXCLUDED"];
+  }
+  const ranked = Array.isArray(guideDecision.rankedIds) ? guideDecision.rankedIds : [];
+  const order = new Map(ranked.map((guide, index) => [guide, index]));
+  const entries = [...selected.entries()].sort((left, right) => {
+    const leftRank = order.has(left[0]) ? order.get(left[0]) : ranked.length + [...selected.keys()].indexOf(left[0]);
+    const rightRank = order.has(right[0]) ? order.get(right[0]) : ranked.length + [...selected.keys()].indexOf(right[0]);
+    return leftRank - rightRank;
+  });
+  selected.clear();
+  for (const [guide, reasons] of entries) selected.set(guide, reasons);
+}
+
 function normalizeArray(value, name, allowed) {
   if (value === undefined) return [];
   if (!Array.isArray(value)) throw new RouteInputError(`${name} must be an array`);
@@ -481,12 +527,20 @@ export function evaluateRoute(input = {}, profileOptions = {}) {
     excluded[guide] = [exclusionReasonForGuide(guide, projectEvidence, normalized.workType)];
   }
 
+  applySemanticGuideRecommendation(
+    selected,
+    excluded,
+    normalized,
+    profileOptions.semanticRecommendation ?? null,
+  );
+
   const guides = [...selected.keys()];
   const result = {
     schemaVersion: ROUTING_SCHEMA_VERSION,
     protocolVersion: PROTOCOL_VERSION,
     input: normalized,
     primary: Object.prototype.hasOwnProperty.call(PRIMARY_GUIDES, normalized.workType)
+      && guides.includes(PRIMARY_GUIDES[normalized.workType])
       ? PRIMARY_GUIDES[normalized.workType]
       : guides[0] ?? null,
     guides,

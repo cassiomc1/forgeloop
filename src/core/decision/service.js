@@ -14,11 +14,10 @@ import { readCurrentDecisionBindings } from "./task-bindings.js";
 import { resolveRequiredSemanticDecision } from "./resolver.js";
 import { DECISION_ERROR_CODES, decisionError } from "./errors.js";
 import { getTaskTransaction } from "../transaction.js";
-import { testSemanticProvider } from "./test-provider.js";
+import { getTestSemanticProvider } from "./test-provider.js";
 
 function resolveProvider(provider) {
-  if (provider) return provider;
-  return process.env.FORGELOOP_TEST_SEMANTIC_PROVIDER === "1" ? testSemanticProvider : null;
+  return provider ?? getTestSemanticProvider();
 }
 
 async function loadPolicy(target, packageRoot) {
@@ -51,6 +50,8 @@ function buildArtifact({ taskId, decisionId, policy, validated, result, request,
     questionSetFingerprint: validated.questionSet.fingerprint,
     questionSet: validated.questionSet,
     stateFingerprint: canonicalFingerprint(validated.state),
+    taskStateFingerprint: canonicalFingerprint(validated.state.lifecycle),
+    semanticStateFingerprint: canonicalFingerprint(validated.state.semantic),
     policyVersion: policy.policyVersion,
     policyFingerprint: decisionPolicyFingerprint(policy),
     repositoryFingerprint: request.repositoryFingerprint ?? taskBindings.repositoryFingerprint,
@@ -63,6 +64,27 @@ function buildArtifact({ taskId, decisionId, policy, validated, result, request,
     decision: result.decision,
     usage: result.usage,
     latencyMs: result.latencyMs ?? null,
+  });
+}
+
+async function readCachedSemanticDecision({ policy, decisionId, target, taskId, packageRoot, validated, taskBindings, request }) {
+  if (!policy.cache || decisionId || !target || !taskId || await getTaskTransaction(target)) return null;
+  return readCachedDecision({
+    target,
+    packageRoot,
+    taskId,
+    decisionKind: validated.decisionKind,
+    currentBindings: {
+      ...taskBindings,
+      stateFingerprint: canonicalFingerprint(validated.state),
+      taskStateFingerprint: canonicalFingerprint(validated.state.lifecycle),
+      semanticStateFingerprint: canonicalFingerprint(validated.state.semantic),
+      questionSetFingerprint: validated.questionSet.fingerprint,
+      policyFingerprint: decisionPolicyFingerprint(policy),
+      model: PINNED_JEV_MODEL,
+      ...(request?.candidateSetFingerprint !== undefined ? { candidateSetFingerprint: request.candidateSetFingerprint } : {}),
+      ...(request?.policyFingerprint !== undefined ? { policyFingerprint: request.policyFingerprint } : {}),
+    },
   });
 }
 
@@ -92,22 +114,10 @@ export async function recordSemanticDecision({ target, packageRoot, taskId, deci
   const validated = validateDecisionRequest({
     ...request,
     taskId,
-    state: taskBindings.state ?? request?.state,
+    state: { lifecycle: taskBindings.state ?? {}, semantic: request?.state ?? {} },
   });
-  if (policy.cache && !decisionId && target && taskId && !(await getTaskTransaction(target))) {
-    const cached = await readCachedDecision({
-      target,
-      packageRoot,
-      taskId,
-      decisionKind: validated.decisionKind,
-      currentBindings: {
-        ...taskBindings,
-        ...(request?.candidateSetFingerprint !== undefined ? { candidateSetFingerprint: request.candidateSetFingerprint } : {}),
-        ...(request?.policyFingerprint !== undefined ? { policyFingerprint: request.policyFingerprint } : {}),
-      },
-    });
-    if (cached) return { artifact: cached, artifactFingerprint: decisionArtifactFingerprint(cached), event: null, supersededEvent: null, cached: true, policy };
-  }
+  const cached = await readCachedSemanticDecision({ policy, decisionId, target, taskId, packageRoot, validated, taskBindings, request });
+  if (cached) return { artifact: cached, artifactFingerprint: decisionArtifactFingerprint(cached), event: null, supersededEvent: null, cached: true, policy };
   const engine = resolveProvider(provider) ?? createTypesafeEngine({ policy });
   if (provider && (provider.id !== "typesafe-jev" || provider.model !== PINNED_JEV_MODEL || typeof provider.evaluate !== "function")) {
     throw decisionError(DECISION_ERROR_CODES.MODEL_UNSUPPORTED, "Semantic decision provider must be the pinned ForgeLoop Jev engine.");
@@ -124,11 +134,21 @@ export async function ensureSemanticDecision({ target, packageRoot, taskId, deci
   const validated = validateDecisionRequest({
     ...request,
     taskId,
-    state: taskBindings.state ?? request?.state,
+    state: { lifecycle: taskBindings.state ?? {}, semantic: request?.state ?? {} },
   });
+  const currentBindings = {
+    ...taskBindings,
+    stateFingerprint: canonicalFingerprint(validated.state),
+    taskStateFingerprint: canonicalFingerprint(validated.state.lifecycle),
+    semanticStateFingerprint: canonicalFingerprint(validated.state.semantic),
+    questionSetFingerprint: validated.questionSet.fingerprint,
+    policyFingerprint: decisionPolicyFingerprint(policy),
+    model: PINNED_JEV_MODEL,
+    ...(request?.candidateSetFingerprint !== undefined ? { candidateSetFingerprint: request.candidateSetFingerprint } : {}),
+  };
   const cached = await getTaskTransaction(target) ? null : await readCachedDecision({
     target, packageRoot, taskId, decisionKind: validated.decisionKind,
-    currentBindings: { ...taskBindings, ...(request?.candidateSetFingerprint !== undefined ? { candidateSetFingerprint: request.candidateSetFingerprint } : {}) },
+    currentBindings,
   });
   if (cached) return { artifact: cached, artifactFingerprint: decisionArtifactFingerprint(cached), cached: true, policy };
   if (!allowNetwork && !provider) throw decisionError(DECISION_ERROR_CODES.REQUIRED, `A current ${validated.decisionKind} decision is required.`);

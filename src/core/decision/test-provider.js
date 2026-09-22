@@ -1,4 +1,4 @@
-// This provider is deliberately reachable only from the repository test runner.
+// This provider is deliberately reachable only through repository test injection.
 // Production commands always use the pinned TypeSafe Jev engine or fail closed.
 export const testSemanticProvider = Object.freeze({
   id: "typesafe-jev",
@@ -16,3 +16,17 @@ export const testSemanticProvider = Object.freeze({
     };
   },
 });
+
+let activeTestSemanticProvider = null;
+
+export function installTestSemanticProvider(provider = testSemanticProvider) {
+  activeTestSemanticProvider = provider;
+}
+
+export function clearTestSemanticProvider() {
+  activeTestSemanticProvider = null;
+}
+
+export function getTestSemanticProvider() {
+  return activeTestSemanticProvider;
+}

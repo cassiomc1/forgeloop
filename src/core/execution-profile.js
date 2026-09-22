@@ -162,6 +162,56 @@ export function projectExecutionProfile(route) {
   return route.executionProfile?.resolved ?? LEGACY_EXECUTION_PROFILE;
 }
 
+function routeProfileSignals(normalizedRoute) {
+  const fullReasons = [];
+  const balancedReasons = [];
+  if (FULL_WORK_TYPES.has(normalizedRoute.workType)) fullReasons.push(`WORK_${normalizedRoute.workType.toUpperCase().replaceAll("-", "_")}`);
+  if (BALANCED_WORK_TYPES.has(normalizedRoute.workType)) balancedReasons.push(`WORK_${normalizedRoute.workType.toUpperCase().replaceAll("-", "_")}`);
+  for (const surface of normalizedRoute.surfaces) {
+    if (FULL_SURFACES.has(surface)) fullReasons.push(`SURFACE_${surface.toUpperCase().replaceAll("-", "_")}`);
+    else if (BALANCED_SURFACES.has(surface)) balancedReasons.push(`SURFACE_${surface.toUpperCase().replaceAll("-", "_")}`);
+  }
+  for (const risk of normalizedRoute.risks) {
+    if (FULL_RISKS.has(risk)) fullReasons.push(`RISK_${risk.toUpperCase().replaceAll("-", "_")}`);
+    else if (BALANCED_RISKS.has(risk)) balancedReasons.push(`RISK_${risk.toUpperCase().replaceAll("-", "_")}`);
+  }
+  if (normalizedRoute.behaviorChange) balancedReasons.push("WORK_BEHAVIOR_CHANGE");
+  if (normalizedRoute.executableChange) balancedReasons.push("WORK_EXECUTABLE_CHANGE");
+  return { fullReasons, balancedReasons };
+}
+
+function contractProfileSignals(textSignals, normalizedRoute) {
+  const fullReasons = [];
+  if (textSignals.secrets) fullReasons.push("RISK_SECRETS");
+  if (textSignals.personalData) fullReasons.push("RISK_PERSONAL_DATA");
+  if (textSignals.publication) fullReasons.push("RISK_PUBLICATION");
+  if (textSignals.destructive) fullReasons.push("RISK_DESTRUCTIVE");
+  if (textSignals.migration && normalizedRoute.surfaces.includes("database")) fullReasons.push("RISK_MIGRATION");
+  if (textSignals.payment) fullReasons.push("RISK_PAYMENT");
+  if (textSignals.externalMutation) fullReasons.push("RISK_EXTERNAL_MUTATION");
+  if (textSignals.authoritySensitiveExternalMutation) fullReasons.push("RISK_AUTHORITY_SENSITIVE_EXTERNAL_MUTATION");
+  if (textSignals.broadProductionValidation) fullReasons.push("RISK_PRODUCTION_VALIDATION");
+  return fullReasons;
+}
+
+function scopeProfileSignals(scope) {
+  const balancedReasons = [];
+  if (scope.multiDeliverable) balancedReasons.push("SCOPE_MULTI_DELIVERABLE");
+  if (scope.multiClaim) balancedReasons.push("SCOPE_MULTI_CLAIM");
+  if (scope.broad || scope.multiSurfaceExecutableChange) balancedReasons.push("SCOPE_BROAD");
+  return balancedReasons;
+}
+
+function profileSignals({ normalizedRoute, contract, taskDescriptor }) {
+  const route = routeProfileSignals(normalizedRoute);
+  const scope = scopeSignals({ routeInput: normalizedRoute, contract, taskDescriptor });
+  return {
+    fullReasons: [...route.fullReasons, ...contractProfileSignals(contractSignals(contract), normalizedRoute)],
+    balancedReasons: [...route.balancedReasons, ...scopeProfileSignals(scope)],
+    scope,
+  };
+}
+
 export function resolveExecutionProfile({
   routeInput = {},
   contract = null,
@@ -182,43 +232,7 @@ export function resolveExecutionProfile({
   else reasons.push("PROFILE_DEFAULT_AUTO");
 
   let floor = "light";
-  const fullReasons = [];
-  const balancedReasons = [];
-  const addFull = (reason) => fullReasons.push(reason);
-  const addBalanced = (reason) => balancedReasons.push(reason);
-
-  if (FULL_WORK_TYPES.has(normalizedRoute.workType)) {
-    addFull(`WORK_${normalizedRoute.workType.toUpperCase().replaceAll("-", "_")}`);
-  }
-  if (BALANCED_WORK_TYPES.has(normalizedRoute.workType)) {
-    addBalanced(`WORK_${normalizedRoute.workType.toUpperCase().replaceAll("-", "_")}`);
-  }
-  for (const surface of normalizedRoute.surfaces) {
-    if (FULL_SURFACES.has(surface)) addFull(`SURFACE_${surface.toUpperCase().replaceAll("-", "_")}`);
-    else if (BALANCED_SURFACES.has(surface)) addBalanced(`SURFACE_${surface.toUpperCase().replaceAll("-", "_")}`);
-  }
-  for (const risk of normalizedRoute.risks) {
-    if (FULL_RISKS.has(risk)) addFull(`RISK_${risk.toUpperCase().replaceAll("-", "_")}`);
-    else if (BALANCED_RISKS.has(risk)) addBalanced(`RISK_${risk.toUpperCase().replaceAll("-", "_")}`);
-  }
-  if (normalizedRoute.behaviorChange) addBalanced("WORK_BEHAVIOR_CHANGE");
-  if (normalizedRoute.executableChange) addBalanced("WORK_EXECUTABLE_CHANGE");
-
-  const textSignals = contractSignals(contract);
-  if (textSignals.secrets) addFull("RISK_SECRETS");
-  if (textSignals.personalData) addFull("RISK_PERSONAL_DATA");
-  if (textSignals.publication) addFull("RISK_PUBLICATION");
-  if (textSignals.destructive) addFull("RISK_DESTRUCTIVE");
-  if (textSignals.migration && normalizedRoute.surfaces.includes("database")) addFull("RISK_MIGRATION");
-  if (textSignals.payment) addFull("RISK_PAYMENT");
-  if (textSignals.externalMutation) addFull("RISK_EXTERNAL_MUTATION");
-  if (textSignals.authoritySensitiveExternalMutation) addFull("RISK_AUTHORITY_SENSITIVE_EXTERNAL_MUTATION");
-  if (textSignals.broadProductionValidation) addFull("RISK_PRODUCTION_VALIDATION");
-
-  const scope = scopeSignals({ routeInput: normalizedRoute, contract, taskDescriptor });
-  if (scope.multiDeliverable) addBalanced("SCOPE_MULTI_DELIVERABLE");
-  if (scope.multiClaim) addBalanced("SCOPE_MULTI_CLAIM");
-  if (scope.broad || scope.multiSurfaceExecutableChange) addBalanced("SCOPE_BROAD");
+  const { fullReasons, balancedReasons, scope } = profileSignals({ normalizedRoute, contract, taskDescriptor });
 
   if (fullReasons.length > 0) {
     floor = "full";
@@ -249,9 +263,14 @@ export function resolveExecutionProfile({
 
   const requestedRank = requested === "auto" ? PROFILE_RANK[floor] : PROFILE_RANK[requested];
   let resolved = EXECUTION_PROFILES.find((profile) => PROFILE_RANK[profile] === Math.max(requestedRank, PROFILE_RANK[floor]));
-  if (["light", "balanced", "full"].includes(semanticRecommendation)
-    && PROFILE_RANK[semanticRecommendation] > PROFILE_RANK[resolved]) {
-    resolved = semanticRecommendation;
+  const semanticProfile = typeof semanticRecommendation === "string"
+    ? semanticRecommendation
+    : semanticRecommendation?.executionProfile?.recommendedProfile
+      ?? semanticRecommendation?.recommendedProfile
+      ?? null;
+  if (["light", "balanced", "full"].includes(semanticProfile)
+    && PROFILE_RANK[semanticProfile] > PROFILE_RANK[resolved]) {
+    resolved = semanticProfile;
     reasons.push("PROFILE_ESCALATED_BY_JEV");
   }
   const escalated = requested !== "auto" && PROFILE_RANK[requested] < PROFILE_RANK[floor];

@@ -7,7 +7,7 @@ import { detectProjectEvidence } from "../core/project-detection.js";
 import { withResolvedTask, withTaskMutation } from "../core/task-command.js";
 import { advanceWorkState } from "../core/phase.js";
 import { mutateWorkState, readWorkState } from "../core/work-state.js";
-import { buildRouteQuestionSet } from "../core/decision/question-registry.js";
+import { buildExecutionProfileQuestionSet, buildRouteQuestionSet } from "../core/decision/question-registry.js";
 import { ensureSemanticDecision } from "../core/decision/service.js";
 import { canonicalFingerprint } from "../core/artifacts.js";
 import {
@@ -95,9 +95,10 @@ async function persistRoutedState({ target, packageRoot, taskId, route, transact
   }
 }
 
-export async function runRoute({ target, packageRoot, workType, surfaces, risks, platforms, behaviorChange, executableChange, executionProfile = null, taskId, task, semanticProvider = null }) {
+export async function runRoute({ target, packageRoot, workType, surfaces, risks, platforms, behaviorChange, executableChange, executionProfile = null, taskId, task, semanticProvider = null, provider = null }) {
   return withResolvedTask(target, { taskId: taskId ?? task, packageRoot }, async (context) => {
     const effectiveTaskId = context?.taskId ?? null;
+    const effectiveSemanticProvider = semanticProvider ?? provider;
     let contract = null;
     try {
       contract = (await readContract(target, packageRoot, { taskId: effectiveTaskId })).value;
@@ -129,15 +130,14 @@ export async function runRoute({ target, packageRoot, workType, surfaces, risks,
       requestedProfile: executionProfile,
     });
     let semanticRecommendation = null;
-    const testFixtureWithoutExplicitProvider = process.env.FORGELOOP_TEST_SEMANTIC_PROVIDER === "1" && !semanticProvider;
-    if (target && packageRoot && effectiveTaskId && !testFixtureWithoutExplicitProvider) {
+    if (target && packageRoot && effectiveTaskId) {
       await ensureSemanticDecision({
-        target, packageRoot, taskId: effectiveTaskId, provider: semanticProvider,
+        target, packageRoot, taskId: effectiveTaskId, provider: effectiveSemanticProvider,
         request: { decisionKind: "INTAKE", questionSetId: "intake-v1", state: { routeInput: deterministicRoute.input } },
       });
       const questionSet = buildRouteQuestionSet(deterministicRoute.guides);
-      const decision = await ensureSemanticDecision({
-        target, packageRoot, taskId: effectiveTaskId, provider: semanticProvider,
+      const routeDecision = await ensureSemanticDecision({
+        target, packageRoot, taskId: effectiveTaskId, provider: effectiveSemanticProvider,
         request: {
           decisionKind: "ROUTE", questionSetId: questionSet.id, questionSet,
           state: { routeInput: deterministicRoute.input, eligibleGuides: deterministicRoute.guides.map((guide) => ({ id: guide, reasons: deterministicRoute.reasons[guide] })) },
@@ -145,7 +145,22 @@ export async function runRoute({ target, packageRoot, workType, surfaces, risks,
           candidateSetFingerprint: canonicalFingerprint(deterministicRoute.guides),
         },
       });
-      semanticRecommendation = decision.artifact.decision;
+      const profileQuestionSet = buildExecutionProfileQuestionSet();
+      const profileDecision = await ensureSemanticDecision({
+        target, packageRoot, taskId: effectiveTaskId, provider: effectiveSemanticProvider,
+        request: {
+          decisionKind: "EXECUTION_PROFILE", questionSetId: profileQuestionSet.id, questionSet: profileQuestionSet,
+          state: {
+            routeInput: deterministicRoute.input,
+            deterministicFloor: deterministicRoute.executionProfile.floor,
+            requestedProfile: deterministicRoute.executionProfile.requested,
+          },
+        },
+      });
+      semanticRecommendation = {
+        guideRelevance: routeDecision.artifact.decision,
+        executionProfile: profileDecision.artifact.decision,
+      };
     }
     const route = evaluateRoute(routeInput, {
       contract,

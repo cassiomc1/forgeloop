@@ -21,6 +21,8 @@ export function buildDecisionArtifact(input = {}) {
     ...(input.questionSet ? { questionSet: input.questionSet } : {}),
     policyVersion: input.policyVersion ?? DECISION_POLICY_VERSION,
     stateFingerprint: input.stateFingerprint,
+    taskStateFingerprint: input.taskStateFingerprint ?? null,
+    semanticStateFingerprint: input.semanticStateFingerprint ?? null,
     policyFingerprint: input.policyFingerprint,
     repositoryFingerprint: input.repositoryFingerprint ?? null,
     contractFingerprint: input.contractFingerprint ?? null,

@@ -18,6 +18,8 @@ function fixture() {
     questionSetVersion: questionSet.version,
     questionSetFingerprint: questionSet.fingerprint,
     stateFingerprint: canonicalFingerprint(state),
+    taskStateFingerprint: canonicalFingerprint(state),
+    semanticStateFingerprint: canonicalFingerprint({ objective: "bounded context" }),
     policyFingerprint: "a".repeat(64),
     repositoryFingerprint: { branch: "main", head: "b".repeat(64) },
     contractFingerprint: "c".repeat(64),
@@ -40,6 +42,8 @@ test("fresh semantic decisions require the canonical ledger record and exact bin
     expectedDecisionKind: artifact.decisionKind,
     currentBindings: {
       stateFingerprint: canonicalFingerprint(state),
+      taskStateFingerprint: canonicalFingerprint(state),
+      semanticStateFingerprint: canonicalFingerprint({ objective: "bounded context" }),
       repositoryFingerprint: artifact.repositoryFingerprint,
       contractFingerprint: artifact.contractFingerprint,
       routeFingerprint: artifact.routeFingerprint,
@@ -51,7 +55,7 @@ test("fresh semantic decisions require the canonical ledger record and exact bin
     ledger: events,
   }), artifact);
   assert.throws(() => assertRequiredFreshDecision({ artifact, expectedTaskId: artifact.taskId, currentBindings: { stateFingerprint: "e".repeat(64) }, ledger: events }), (error) => error.code === "E_DECISION_STALE");
+  assert.throws(() => assertRequiredFreshDecision({ artifact, expectedTaskId: artifact.taskId, currentBindings: { semanticStateFingerprint: "f".repeat(64) }, ledger: events }), (error) => error.code === "E_DECISION_STALE");
   assert.throws(() => assertRequiredFreshDecision({ artifact: { ...artifact, engine: "caller" }, expectedTaskId: artifact.taskId, ledger: events }), (error) => error.code === "E_DECISION_MODEL_UNSUPPORTED");
   assert.throws(() => assertRequiredFreshDecision({ artifact, expectedTaskId: artifact.taskId, ledger: [] }), (error) => error.code === "E_DECISION_LEDGER_INVALID");
 });
-

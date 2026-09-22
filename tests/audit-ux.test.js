@@ -46,7 +46,7 @@ test("task/audit-view is a deterministic bounded read-only projection", async ()
     assert.equal(first.data.lifecycle.phase, "VERIFYING");
     assert.equal(first.data.timeline.items.length, 3);
     assert.equal(first.data.timeline.truncated, true);
-    assert.deepEqual(first.data.timeline.items.map((item) => item.id), ["event-12", "event-13", "event-14"]);
+    assert.deepEqual(first.data.timeline.items.map((item) => item.id), ["event-18", "event-19", "event-20"]);
     assert.ok(first.data.timeline.items.every((item) => item.timestamp === null || typeof item.timestamp === "string"));
     assert.equal(Object.prototype.hasOwnProperty.call(first.data.timeline.items[0], "data"), false);
     assert.equal(Object.prototype.hasOwnProperty.call(first.data.timeline.items[0], "source"), false);

@@ -118,3 +118,52 @@ test("semantic profile recommendation may raise but never lower the deterministi
   assert.equal(protectedFloor.resolved, "full");
   assert.equal(protectedFloor.reasons.includes("PROFILE_ESCALATED_BY_JEV"), false);
 });
+
+test("Jev execution-profile recommendation raises depth without lowering the floor", () => {
+  const raised = resolveExecutionProfile({
+    routeInput: { workType: "documentation" },
+    semanticRecommendation: { recommendedProfile: "full", confidence: 0.94 },
+  });
+  assert.equal(raised.resolved, "full");
+
+  const protectedFloor = resolveExecutionProfile({
+    routeInput: { workType: "code", risks: ["secrets"], executableChange: true },
+    semanticRecommendation: { recommendedProfile: "light", confidence: 0.99 },
+  });
+  assert.equal(protectedFloor.floor, "full");
+  assert.equal(protectedFloor.resolved, "full");
+});
+
+test("Jev guide exclusion affects non-mandatory route guides but cannot remove safety", () => {
+  const route = evaluateRoute({
+    workType: "code",
+    risks: ["external-service"],
+    behaviorChange: true,
+  }, {
+    semanticRecommendation: {
+      guideRelevance: {
+        rankedIds: ["test", "clean"],
+        excludedIds: ["security"],
+        confidenceById: { security: 0.95 },
+      },
+    },
+  });
+  assert.equal(route.guides.includes("security"), false);
+  assert.equal(route.excluded.security[0], "JEV_EXCLUDED");
+
+  const protectedRoute = evaluateRoute({
+    workType: "code",
+    risks: ["secrets"],
+    behaviorChange: true,
+  }, {
+    semanticRecommendation: {
+      guideRelevance: {
+        rankedIds: ["test", "clean"],
+        excludedIds: ["security"],
+        confidenceById: { security: 0.99 },
+      },
+    },
+  });
+  assert.equal(protectedRoute.guides.includes("security"), true);
+  assert.ok(protectedRoute.reasons.security.includes("MANDATORY_SAFETY_GUIDE"));
+});

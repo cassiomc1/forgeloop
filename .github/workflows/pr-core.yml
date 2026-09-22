@@ -93,8 +93,6 @@ jobs:
           if-no-files-found: error
       - name: Run targeted Node 20 CLI compatibility
         if: ${{ matrix.node-version == 20 && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true') }}
-        env:
-          FORGELOOP_TEST_SEMANTIC_PROVIDER: "1"
         run: |
           npm run test:quick
           node src/cli.js --help
