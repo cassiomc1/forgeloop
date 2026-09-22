@@ -2,6 +2,14 @@ import { canonicalFingerprint } from "../artifacts.js";
 import { DECISION_QUESTION_SETS } from "./constants.js";
 import { DECISION_ERROR_CODES, decisionError } from "./errors.js";
 
+function freezeQuestionSet(definition) {
+  return Object.freeze({
+    ...definition,
+    questions: Object.freeze({ ...definition.questions }),
+    fingerprint: canonicalFingerprint(definition.questions),
+  });
+}
+
 const QUESTION_SET_DEFINITIONS = Object.freeze({
   "contract-v1": Object.freeze({
     id: "contract-v1", version: 1, decisionKind: "CONTRACT_APPLICABILITY",
@@ -112,7 +120,66 @@ const QUESTION_SET_DEFINITIONS = Object.freeze({
 export function getQuestionSet(id) {
   const definition = QUESTION_SET_DEFINITIONS[id];
   if (!definition || !DECISION_QUESTION_SETS[id]) throw decisionError(DECISION_ERROR_CODES.QUESTION_SET_UNKNOWN, `Unknown semantic decision question set: ${id}`);
-  return Object.freeze({ ...definition, fingerprint: canonicalFingerprint(definition.questions) });
+  return freezeQuestionSet(definition);
+}
+
+export function buildDynamicQuestionSet({ id, version = 1, decisionKind, questions, candidateIds = [], metadata = {} } = {}) {
+  if (typeof id !== "string" || !id || !Number.isInteger(version) || version < 1
+    || typeof decisionKind !== "string" || !questions || typeof questions !== "object"
+    || Array.isArray(questions)) {
+    throw decisionError(DECISION_ERROR_CODES.REQUEST_INVALID, "Dynamic semantic question set is invalid.");
+  }
+  const names = Object.keys(questions);
+  if (names.length === 0 || names.length > 128 || names.some((name) => !/^[a-z][a-z0-9_]{0,95}$/.test(name))) {
+    throw decisionError(DECISION_ERROR_CODES.REQUEST_INVALID, "Dynamic semantic question set has invalid bounded questions.");
+  }
+  return freezeQuestionSet({ id, version, decisionKind, questions, candidateIds: [...candidateIds].slice(0, 64), metadata });
+}
+
+export function buildContextQuestionSet(candidates = []) {
+  const bounded = candidates.slice(0, 64);
+  const questions = Object.fromEntries(bounded.map((candidate, index) => [
+    `candidate_${index}_relevant`, {
+      type: "noul",
+      criteria: { yes: `Candidate ${candidate.id} is relevant to the bounded task context`, no: `Candidate ${candidate.id} is not relevant to the bounded task context` },
+    },
+  ]));
+  return buildDynamicQuestionSet({
+    id: "context-candidates-v1", decisionKind: "CONTEXT_PLAN", questions,
+    candidateIds: bounded.map((candidate) => candidate.id),
+    metadata: { candidateQuestionPrefix: "candidate_", relevanceSuffix: "_relevant" },
+  });
+}
+
+export function buildRouteQuestionSet(guides = []) {
+  const bounded = guides.slice(0, 64);
+  const questions = Object.fromEntries(bounded.map((guide, index) => [
+    `guide_${index}_relevant`, {
+      type: "noul",
+      criteria: { yes: `Guide ${guide} is relevant to the bounded route`, no: `Guide ${guide} is not relevant to the bounded route` },
+    },
+  ]));
+  return buildDynamicQuestionSet({
+    id: "route-candidates-v1", decisionKind: "ROUTE", questions,
+    candidateIds: bounded,
+    metadata: { candidateQuestionPrefix: "guide_", relevanceSuffix: "_relevant" },
+  });
+}
+
+export function buildTestUtilityQuestionSet(tests = []) {
+  const dimensions = ["unique_semantic_intent", "semantic_duplicate", "likely_obsolete", "likely_flaky_low_signal", "expensive_relative_to_signal", "documentation_value", "integration_value", "guards_regression_prone_behavior", "requires_system_two_review"];
+  const bounded = tests.slice(0, 16);
+  const questions = {};
+  for (let index = 0; index < bounded.length; index += 1) {
+    for (const dimension of dimensions) questions[`test_${index}_${dimension}`] = {
+      type: "noul", criteria: { yes: `${dimension} applies to test ${bounded[index].testId}`, no: `${dimension} does not apply to test ${bounded[index].testId}` },
+    };
+  }
+  return buildDynamicQuestionSet({
+    id: "test-utility-candidates-v1", decisionKind: "TEST_UTILITY", questions,
+    candidateIds: bounded.map((test) => test.testId),
+    metadata: { dimensions, candidateQuestionPrefix: "test_", testCount: bounded.length },
+  });
 }
 
 export function listQuestionSets() {

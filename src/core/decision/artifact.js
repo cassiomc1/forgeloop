@@ -18,6 +18,7 @@ export function buildDecisionArtifact(input = {}) {
     questionSetId: input.questionSetId,
     questionSetVersion: input.questionSetVersion ?? 1,
     questionSetFingerprint: input.questionSetFingerprint,
+    ...(input.questionSet ? { questionSet: input.questionSet } : {}),
     policyVersion: input.policyVersion ?? DECISION_POLICY_VERSION,
     stateFingerprint: input.stateFingerprint,
     policyFingerprint: input.policyFingerprint,

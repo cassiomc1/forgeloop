@@ -499,6 +499,7 @@ export function evaluateRoute(input = {}, profileOptions = {}) {
       configuredProfile: profileOptions.configuredProfile ?? input.configuredProfile ?? "auto",
       requestedProfile: profileOptions.requestedProfile
         ?? (Object.prototype.hasOwnProperty.call(input, "executionProfile") ? input.executionProfile : null),
+      semanticRecommendation: profileOptions.semanticRecommendation ?? null,
     }),
   };
   return assertRouteInvariants(result);

@@ -58,18 +58,36 @@ function normalizeModelRouteDecision(answers, confidence) {
   };
 }
 
+function candidateProjection(questionSet, answers, confidence, ids, prefix) {
+  const rankedIds = [];
+  const excludedIds = [];
+  for (const [index, id] of ids.entries()) {
+    const key = `${prefix}${index}_relevant`;
+    if (answers[key] === true) rankedIds.push(id);
+    else if (answers[key] === false) excludedIds.push(id);
+  }
+  rankedIds.sort((a, b) => (confidence[`${prefix}${ids.indexOf(a)}_relevant`] ?? 0) - (confidence[`${prefix}${ids.indexOf(b)}_relevant`] ?? 0));
+  return { rankedIds: rankedIds.reverse(), excludedIds };
+}
+
 function projectDecision(questionSet, answers, confidence, input) {
   const projections = {
     INTAKE: () => ({ dimensions: answers }),
     CONTRACT_APPLICABILITY: () => ({ applicable: answers.applicable }),
-    ROUTE: () => ({ relevantGuides: unique([answers.relevant_guides]) }),
-    CONTEXT_PLAN: () => ({ needs: answers }),
+    ROUTE: () => (questionSet.metadata?.candidateQuestionPrefix
+      ? candidateProjection(questionSet, answers, confidence, questionSet.candidateIds ?? [], questionSet.metadata.candidateQuestionPrefix)
+      : { relevantGuides: unique([answers.relevant_guides]) }),
+    CONTEXT_PLAN: () => (questionSet.metadata?.candidateQuestionPrefix
+      ? { needs: answers, ...candidateProjection(questionSet, answers, confidence, questionSet.candidateIds ?? [], questionSet.metadata.candidateQuestionPrefix) }
+      : { needs: answers }),
     MODEL_ROUTE: () => normalizeModelRouteDecision(answers, confidence),
     FAILURE_TRIAGE: () => ({ failureClass: answers.failure_class }),
     DIAGNOSIS_PRIORITY: () => ({ priority: answers.priority }),
     REVIEW_PLAN: () => ({ reviewFocus: answers }),
     TASK_OVERLAP: () => ({ relationship: answers.relationship }),
-    TEST_UTILITY: () => ({ judgments: answers, candidateIds: unique(input.candidateIds ?? []) }),
+    TEST_UTILITY: () => (questionSet.metadata?.testCount
+      ? { judgments: answers, candidateIds: unique(questionSet.candidateIds ?? input.candidateIds ?? []), tests: Object.fromEntries((questionSet.candidateIds ?? []).map((id, index) => [id, Object.fromEntries((questionSet.metadata.dimensions ?? []).map((dimension) => [dimension, answers[`test_${index}_${dimension}`]]))])) }
+      : { judgments: answers, candidateIds: unique(input.candidateIds ?? []) }),
     TEST_PRUNE: () => ({ redundancy: answers.redundancy }),
   };
   const project = projections[questionSet.decisionKind];

@@ -63,7 +63,8 @@ export async function inventoryTests(projectRoot = process.cwd()) {
       const file = relativeFile.replaceAll(path.sep, "/");
       tests.push({
         testId: stableId(framework, file, "", unit.name), file, framework, suite: "", name: unit.name,
-        line: unit.line, signals: signals(file, unit.name),
+        line: unit.line, sourceSummary: `${file}:${unit.line} ${unit.name}`.slice(0, 500),
+        targets: [file], runtimeMs: null, uniqueBranches: null, signals: signals(file, unit.name),
       });
     }
   }

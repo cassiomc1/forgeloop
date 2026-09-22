@@ -246,7 +246,7 @@ async function readForgeLoopIntegrationResourceCore(uri, {
     return { uri, taskId, data: { taskId, decisions } };
   }
   if (uri === "task/context-plan") {
-    return { uri, taskId, data: await runContextPlan({ target: projectPath, packageRoot, taskId, profile: runtimeContext?.contextProfile ?? "balanced" }) };
+    return { uri, taskId, data: await runContextPlan({ target: projectPath, packageRoot, taskId, profile: runtimeContext?.contextProfile ?? "balanced", readOnly: true }) };
   }
   if (uri === "task/model-route") {
     const state = await readWorkState(projectPath, { packageRoot, taskId });

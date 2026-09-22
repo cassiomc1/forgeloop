@@ -12,6 +12,11 @@ Provider-backed calibration requires a live TypeSafe organization with credits;
 an unavailable provider is reported as unavailable rather than treated as a
 successful benchmark.
 
+`npm run benchmark:jev:live` runs bounded intake, route, and context requests
+through the pinned Jev provider and reports provider usage/latency only when the
+provider supplies it. It requires `TYPESAFE_API_KEY`, never prints that key,
+and is intentionally separate from the offline benchmark.
+
 Dependency audit attribution for the current base and PR head is unchanged:
 one high-severity `js-yaml` advisory (`GHSA-2883-xcg3-v3hh`, CVSS 7.5, CWE-400
 and CWE-407) arrives transitively through `eslint` → `@eslint/eslintrc` →

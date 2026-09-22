@@ -14,6 +14,7 @@ import {
   deriveResumePhaseFromLedger,
 } from "../core/resumability.js";
 import { taskArtifactPath } from "../core/task-paths.js";
+import { ensureSemanticDecision } from "../core/decision/service.js";
 
 function bootstrapInconsistent(message, candidate = false) {
   const error = new Error(message);
@@ -117,11 +118,22 @@ async function reconstructFromExistingContract(target, packageRoot, taskId, requ
   };
 }
 
-export async function runContractCreate({ target, packageRoot, taskId, task, contractFile = null, preset = null } = {}) {
+export async function runContractCreate({ target, packageRoot, taskId, task, contractFile = null, preset = null, semanticProvider = null } = {}) {
   if (!preset && !contractFile) throw new Error("contract-create requires --preset or --contract-file");
   if (preset && contractFile) throw new Error("contract-create accepts either --preset or --contract-file, not both");
 
-  return withTaskMutation(target, { taskId: taskId ?? task, packageRoot }, "contract-create", async (ctx) => {
+  const effectiveTaskId = taskId ?? task;
+  const testFixtureWithoutExplicitProvider = process.env.FORGELOOP_TEST_SEMANTIC_PROVIDER === "1" && !semanticProvider;
+  if (target && packageRoot && effectiveTaskId && !testFixtureWithoutExplicitProvider) {
+    await ensureSemanticDecision({
+      target, packageRoot, taskId: effectiveTaskId, provider: semanticProvider,
+      request: {
+        decisionKind: "CONTRACT_APPLICABILITY", questionSetId: "contract-v1",
+        state: { source: preset ? "preset" : "contract-file", preset: preset ?? null },
+      },
+    });
+  }
+  return withTaskMutation(target, { taskId: effectiveTaskId, packageRoot }, "contract-create", async (ctx) => {
     const events = await readEvents(target, packageRoot, { taskId: ctx.taskId });
     if (!events.some((event) => event.event === "DISCOVERY_STARTED")) {
       const error = new Error("Contract creation requires completed discovery");

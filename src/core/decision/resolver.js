@@ -41,7 +41,8 @@ function assertArtifactAuthority(artifact) {
 }
 
 function assertArtifactQuestionSet(artifact) {
-  const questionSet = getQuestionSet(artifact.questionSetId);
+  const questionSet = artifact.questionSet ?? getQuestionSet(artifact.questionSetId);
+  if (questionSet.id !== artifact.questionSetId || questionSet.decisionKind === undefined) throw invalid("Semantic decision question-set identity is invalid.");
   if (artifact.questionSetVersion !== questionSet.version || artifact.questionSetFingerprint !== questionSet.fingerprint) {
     throw invalid("Semantic decision question-set fingerprint is stale.");
   }

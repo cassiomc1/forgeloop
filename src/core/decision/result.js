@@ -40,7 +40,7 @@ function normalizeUsage(raw) {
   return { inputTokens, outputTokens, reportedBy: "PROVIDER" };
 }
 
-export function normalizeDecisionResult(raw, { questionSet, model = PINNED_JEV_MODEL } = {}) {
+export function normalizeDecisionResult(raw, { questionSet, input = {}, model = PINNED_JEV_MODEL } = {}) {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw decisionError(DECISION_ERROR_CODES.RESULT_INVALID, "Semantic decision result must be an object.");
   if (raw.model !== model || raw.model !== PINNED_JEV_MODEL) throw decisionError(DECISION_ERROR_CODES.MODEL_UNSUPPORTED, "Semantic decision result used an unsupported model.");
   if (!raw.answers || typeof raw.answers !== "object" || Array.isArray(raw.answers)) throw decisionError(DECISION_ERROR_CODES.RESULT_INVALID, "Semantic decision result is missing answers.");
@@ -52,7 +52,7 @@ export function normalizeDecisionResult(raw, { questionSet, model = PINNED_JEV_M
     questionSetId: questionSet?.id ?? null,
     answers,
     confidence: Object.fromEntries(Object.keys(questionSet.questions).map((key) => [key, confidence[key] ?? null])),
-    decision: normalizeCanonicalDecision({ questionSet, answers, confidence }),
+    decision: normalizeCanonicalDecision({ questionSet, answers, confidence, input }),
     usage,
   };
 }

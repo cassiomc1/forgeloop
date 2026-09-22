@@ -176,6 +176,7 @@
     "verify:release": "node scripts/run-validation.mjs --tier release",
     "jev:smoke": "node scripts/jev-smoke.mjs",
     "benchmark:jev": "node scripts/benchmark-jev.mjs",
+    "benchmark:jev:live": "node scripts/benchmark-jev.mjs --live",
     "benchmark:test-intelligence": "node scripts/benchmark-test-intelligence.mjs"
   },
   "devDependencies": {

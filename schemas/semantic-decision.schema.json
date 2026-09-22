@@ -15,6 +15,7 @@
     "questionSetId": { "type": "string", "minLength": 1 },
     "questionSetVersion": { "type": "integer", "minimum": 1 },
     "questionSetFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "questionSet": { "type": "object", "required": ["id", "version", "decisionKind", "questions", "fingerprint"], "properties": { "id": { "type": "string", "minLength": 1 }, "version": { "type": "integer", "minimum": 1 }, "decisionKind": { "type": "string", "minLength": 1 }, "questions": { "type": "object" }, "fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" }, "candidateIds": { "type": "array", "items": { "type": "string" } }, "metadata": { "type": "object" } }, "additionalProperties": true },
     "policyVersion": { "const": 1 },
     "stateFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
     "policyFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },

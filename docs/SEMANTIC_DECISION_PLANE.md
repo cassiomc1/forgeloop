@@ -17,7 +17,16 @@ completion evidence. Protected, contract-linked, public-API, security, and
 protocol tests remain keep-required or keep-risk-guard candidates; unknown
 utility is blocked and no command performs deletion.
 
-Context plans are bounded, fingerprinted, and non-authoritative. Deterministic mandatory candidates remain selected even when a semantic ranker is unavailable; suspicious instruction-like text is marked as prompt-injection content and is never treated as an instruction. Token values are `UNKNOWN` unless the provider or host reports them.
+Context plans send bounded, sanitized actual candidates to Jev. The candidate-set
+fingerprint is bound to the persisted decision, and Jev returns candidate ranking
+and exclusion judgments consumed by the context compiler. Deterministic required
+and mandatory candidates remain selected; prompt-injection candidates are never
+given semantic authority. Token values are `UNKNOWN` unless the provider or host
+reports them.
+
+Route execution records intake and route decisions before persisting the route.
+The deterministic router remains the eligibility and safety floor; Jev can only
+enrich eligible route/profile choices. A missing live decision fails closed.
 
 `npm run jev:smoke` performs only a tiny health request when credentials are configured. A missing credential reports `NOT_RUN`; an unavailable or rate-limited service is a failed live check, never a fabricated success. Inspection, recovery, and completion validation do not require a live Jev call, but a semantic-required mutation fails closed when its canonical decision is missing or stale.
 

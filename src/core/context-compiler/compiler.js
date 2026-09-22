@@ -26,7 +26,9 @@ export function compileContext({ candidates = [], profile = "balanced", mandator
   })));
   const mandatory = new Set(policy.mandatoryIds);
   const marked = normalized.map((candidate) => ({ ...candidate, mandatory: candidate.mandatory || mandatory.has(candidate.id) }));
-  const rankedIds = typeof semanticRanker === "function" ? semanticRanker(marked.filter((item) => !item.promptInjection).map((item) => ({ id: item.id, summary: item.summary }))) : [];
+  const semantic = typeof semanticRanker === "function" ? semanticRanker(marked.filter((item) => !item.promptInjection).map((item) => ({ id: item.id, summary: item.summary }))) : [];
+  const rankedIds = Array.isArray(semantic) ? semantic : (semantic?.rankedIds ?? []);
+  const excludedIds = new Set(Array.isArray(semantic) ? [] : (semantic?.excludedIds ?? []));
   const ordered = orderCandidates(marked, Array.isArray(rankedIds) ? rankedIds : []);
   const budget = contextBudget(profile);
   const selected = [];
@@ -34,6 +36,10 @@ export function compileContext({ candidates = [], profile = "balanced", mandator
   let chars = 0;
   for (const candidate of ordered) {
     const mustKeep = candidate.mandatory || candidate.required;
+    if (excludedIds.has(candidate.id) && !mustKeep) {
+      omitted.push(candidate);
+      continue;
+    }
     const fits = selected.length < budget.maxItems && chars + candidate.chars <= budget.maxChars;
     if (fits || mustKeep) {
       selected.push(candidate);

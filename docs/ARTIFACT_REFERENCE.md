@@ -73,6 +73,14 @@ completion.
 - `questionSetId` *(string, required, minLength: 1)*
 - `questionSetVersion` *(integer, required, minimum: 1)*
 - `questionSetFingerprint` *(string, required, pattern: `^[a-f0-9]{64}$`)*
+- `questionSet` *(object, optional)*
+  - `id` *(string, required, minLength: 1)*
+  - `version` *(integer, required, minimum: 1)*
+  - `decisionKind` *(string, required, minLength: 1)*
+  - `questions` *(object, required)*
+  - `fingerprint` *(string, required, pattern: `^[a-f0-9]{64}$`)*
+  - `candidateIds` *(array<string>, optional)*
+  - `metadata` *(object, optional)*
 - `policyVersion` *(number, required, const: 1)*
 - `stateFingerprint` *(string, required, pattern: `^[a-f0-9]{64}$`)*
 - `policyFingerprint` *(string, required, pattern: `^[a-f0-9]{64}$`)*
@@ -116,6 +124,8 @@ or completion.
 - `semanticStatus` *(string, required, enum: `PROVIDER_REPORTED`, `UNAVAILABLE`, `NOT_REQUESTED`)*
 - `decisionId` *(string, optional, pattern: `^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$`)*
 - `semanticDecisionFingerprint` *(string, optional, pattern: `^[a-f0-9]{64}$`)*
+- `decisionIds` *(array<string>, optional)*
+- `semanticDecisionFingerprints` *(array<string>, optional)*
 - `tests` *(array<object>, required)*
   - `testId` *(string, required, pattern: `^test-[a-f0-9]{24}$`)*
   - `file` *(string, required, minLength: 1)*
@@ -123,8 +133,12 @@ or completion.
   - `suite` *(string, optional)*
   - `name` *(string, required, minLength: 1)*
   - `line` *(integer, optional, minimum: 1)*
-  - `classification` *(string, required, enum: `KEEP_REQUIRED`, `KEEP_UNIQUE`, `KEEP_RISK_GUARD`, `KEEP_AUTHORITY_BOUNDARY`, `KEEP_RECOVERY_INVARIANT`, `KEEP_RELEASE_SMOKE`, `KEEP_MIGRATION_COMPATIBILITY`, `KEEP_PLATFORM_BEHAVIOR`, `KEEP_DOCUMENTATION_VALUE`, `UNKNOWN`, `REDUNDANT_CANDIDATE`)*
-  - `recommendation` *(string, required, enum: `KEEP`, `REWRITE`, `PROBE_REMOVAL`, `BLOCKED`)*
+  - `sourceSummary` *(string, optional)*
+  - `targets` *(array<string>, optional)*
+  - `runtimeMs` *(number,null, optional, minimum: 0)*
+  - `uniqueBranches` *(integer,null, optional, minimum: 0)*
+  - `classification` *(string, required, enum: `KEEP_REQUIRED`, `KEEP_UNIQUE`, `KEEP_RISK_GUARD`, `KEEP_AUTHORITY_BOUNDARY`, `KEEP_RECOVERY_INVARIANT`, `KEEP_RELEASE_SMOKE`, `KEEP_MIGRATION_COMPATIBILITY`, `KEEP_PLATFORM_BEHAVIOR`, `KEEP_DOCUMENTATION_VALUE`, `KEEP_INTEGRATION_GUARD`, `OBSOLETE_CANDIDATE`, `FLAKY_LOW_SIGNAL`, `EXPENSIVE_LOW_SIGNAL`, `UNKNOWN`, `REDUNDANT_CANDIDATE`)*
+  - `recommendation` *(string, required, enum: `KEEP`, `REWRITE`, `PROBE_REMOVAL`, `BLOCKED`, `REVIEW`)*
   - `protected` *(boolean, required)*
   - `signals` *(object, optional)*
 

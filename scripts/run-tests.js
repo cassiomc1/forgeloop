@@ -19,6 +19,7 @@ const argv = selectTests(testFiles, selectionArgs, repositoryRoot);
 
 const result = spawnSync(process.execPath, argv, {
   cwd: repositoryRoot,
+  env: { ...process.env, FORGELOOP_TEST_SEMANTIC_PROVIDER: "1" },
   stdio: "inherit",
 });
 

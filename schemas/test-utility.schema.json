@@ -13,6 +13,8 @@
     "semanticStatus": { "enum": ["PROVIDER_REPORTED", "UNAVAILABLE", "NOT_REQUESTED"] },
     "decisionId": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$" },
     "semanticDecisionFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "decisionIds": { "type": "array", "items": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$" } },
+    "semanticDecisionFingerprints": { "type": "array", "items": { "type": "string", "pattern": "^[a-f0-9]{64}$" } },
     "tests": {
       "type": "array",
       "items": {
@@ -25,8 +27,12 @@
           "suite": { "type": "string" },
           "name": { "type": "string", "minLength": 1 },
           "line": { "type": "integer", "minimum": 1 },
-          "classification": { "enum": ["KEEP_REQUIRED", "KEEP_UNIQUE", "KEEP_RISK_GUARD", "KEEP_AUTHORITY_BOUNDARY", "KEEP_RECOVERY_INVARIANT", "KEEP_RELEASE_SMOKE", "KEEP_MIGRATION_COMPATIBILITY", "KEEP_PLATFORM_BEHAVIOR", "KEEP_DOCUMENTATION_VALUE", "UNKNOWN", "REDUNDANT_CANDIDATE"] },
-          "recommendation": { "enum": ["KEEP", "REWRITE", "PROBE_REMOVAL", "BLOCKED"] },
+          "sourceSummary": { "type": "string" },
+          "targets": { "type": "array", "items": { "type": "string" } },
+          "runtimeMs": { "type": ["number", "null"], "minimum": 0 },
+          "uniqueBranches": { "type": ["integer", "null"], "minimum": 0 },
+          "classification": { "enum": ["KEEP_REQUIRED", "KEEP_UNIQUE", "KEEP_RISK_GUARD", "KEEP_AUTHORITY_BOUNDARY", "KEEP_RECOVERY_INVARIANT", "KEEP_RELEASE_SMOKE", "KEEP_MIGRATION_COMPATIBILITY", "KEEP_PLATFORM_BEHAVIOR", "KEEP_DOCUMENTATION_VALUE", "KEEP_INTEGRATION_GUARD", "OBSOLETE_CANDIDATE", "FLAKY_LOW_SIGNAL", "EXPENSIVE_LOW_SIGNAL", "UNKNOWN", "REDUNDANT_CANDIDATE"] },
+          "recommendation": { "enum": ["KEEP", "REWRITE", "PROBE_REMOVAL", "BLOCKED", "REVIEW"] },
           "protected": { "type": "boolean" },
           "signals": { "type": "object", "additionalProperties": true }
         },
