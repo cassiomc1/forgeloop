@@ -61,7 +61,7 @@
     28
   ],
   "src/core/command-input.js": [
-    99
+    45
   ],
   "src/core/command-resolution.js": [
     42
@@ -87,9 +87,6 @@
   "src/core/config.js": [
     41
   ],
-  "src/core/contract-bootstrap-recovery.js": [
-    35
-  ],
   "src/core/conformance.js": [
     84
   ],
@@ -98,6 +95,9 @@
   ],
   "src/core/continuity.js": [
     34
+  ],
+  "src/core/contract-bootstrap-recovery.js": [
+    35
   ],
   "src/core/delegation.js": [
     32
@@ -119,8 +119,8 @@
     26
   ],
   "src/core/events.js": [
-    59,
-    59,
+    52,
+    37,
     27
   ],
   "src/core/evidence-readiness.js": [
@@ -134,7 +134,7 @@
     35
   ],
   "src/core/execution-profile.js": [
-    54
+    39
   ],
   "src/core/failure-surface.js": [
     31
@@ -152,10 +152,7 @@
     26
   ],
   "src/core/integration-resources.js": [
-    56
-  ],
-  "src/core/next-action.js": [
-    27
+    52
   ],
   "src/core/next-action-phases.js": [
     53
@@ -164,6 +161,9 @@
     30
   ],
   "src/core/next-action-verification-phase.js": [
+    27
+  ],
+  "src/core/next-action.js": [
     27
   ],
   "src/core/npm-classifier.js": [
@@ -201,9 +201,6 @@
   "src/core/receipt.js": [
     33
   ],
-  "src/core/reconcile-closure.js": [
-    39
-  ],
   "src/core/recovery-history.js": [
     31
   ],
@@ -214,10 +211,7 @@
     30
   ],
   "src/core/router.js": [
-    47
-  ],
-  "src/core/runtime-context.js": [
-    39
+    42
   ],
   "src/core/schema-validation.js": [
     41
@@ -258,7 +252,7 @@
     32
   ],
   "src/core/trace.js": [
-    61,
+    59,
     47,
     41
   ],
