@@ -19,7 +19,7 @@ function providerError(name, { status, code, requestId, errorType } = {}) {
   return error;
 }
 
-const SECRETISH = "sk-supersecretkeymaterial000000";
+const SECRETISH = "not-a-credential-test-data-0123456789";
 
 test("authentication and outage failures remain distinguishable from a generic path", () => {
   assert.equal(safeDecisionError(providerError("APIError", { status: 401 })).code, DECISION_ERROR_CODES.AUTH_INVALID);
