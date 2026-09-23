@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "test-utility-fixture",
+  "generatedAt": "2026-09-21T00:00:00.000Z",
+  "inventoryFingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "semanticStatus": "NOT_REQUESTED",
+  "tests": [
+    {
+      "testId": "test-bbbbbbbbbbbbbbbbbbbbbbbb",
+      "file": "tests/example.test.js",
+      "framework": "node:test",
+      "suite": "",
+      "name": "protects protocol state",
+      "line": 1,
+      "classification": "KEEP_REQUIRED",
+      "recommendation": "KEEP",
+      "protected": true,
+      "signals": { "requiredBehavior": true }
+    }
+  ]
+}

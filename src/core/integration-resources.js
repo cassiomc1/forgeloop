@@ -22,6 +22,11 @@ import { buildExecutionProfileContext } from "./execution-profile-context.js";
 import { projectStructuralQualityStatus } from "./structural-quality/service.js";
 import { getRepositoryIndexStatus } from "../repository-index/status.js";
 import { buildAuditUxView } from "./audit-ux.js";
+import { runContextPlan } from "../commands/context-plan.js";
+import { runModelRoute } from "../commands/model-route.js";
+import { readPersistedRoute } from "./route-artifact.js";
+import { readWorkState } from "./work-state.js";
+import { readTestUtility } from "./test-intelligence/service.js";
 
 /**
  * Canonical integration resource allowlist.
@@ -89,9 +94,15 @@ export const INTEGRATION_RESOURCE_DEFINITIONS = Object.freeze({
   "task/context": Object.freeze({ scope: "TASK", description: "Read-only profile-aware task context with bounded presentation policy." }),
   "task/audit-view": Object.freeze({ scope: "TASK", description: "Bounded read-only Audit UX projection composed from canonical task resolvers." }),
   "task/evaluations": Object.freeze({ scope: "TASK", description: "Persisted trajectory evaluations for one task." }),
+  "task/decisions": Object.freeze({ scope: "TASK", description: "Persisted, fingerprint-bound semantic decisions without lifecycle or evidence authority." }),
+  "task/context-plan": Object.freeze({ scope: "TASK", description: "Bounded non-authoritative semantic context-plan projection." }),
+  "task/model-route": Object.freeze({ scope: "TASK", description: "Deterministic model-routing floor with advisory semantic escalation." }),
+  "task/test-utility": Object.freeze({ scope: "TASK", description: "Non-evidence test inventory and utility analysis; never deletion authority." }),
   "project/capability-policy": Object.freeze({ scope: "PROJECT", description: "Project capability policy, never host authority." }),
   "repository/index-status": Object.freeze({ scope: "PROJECT", description: "Provider-neutral repository-index health and owned-server status." }),
 });
+
+const TASK_RESOURCE_URIS = new Set(Object.keys(INTEGRATION_RESOURCE_DEFINITIONS).filter((uri) => uri.startsWith("task/")));
 
 function ownershipProjection(projection) {
   return {
@@ -122,67 +133,20 @@ async function readForgeLoopIntegrationResourceCore(uri, {
     throw error;
   }
 
-  switch (uri) {
-    case "protocol/info": {
-      return { uri, data: await runProtocolInfo({ packageVersion }) };
-    }
-    case "project/tasks": {
-      const tasks = await discoverTasks(projectPath, packageRoot);
-      return {
-        uri,
-        data: {
-          count: tasks.length,
-          tasks: tasks.map((task) => ({
-            taskId: task.taskId,
-            healthy: task.healthy !== false,
-            phase: task.phase ?? null,
-            mutationAllowed: task.mutationAllowed !== false,
-          })),
-        },
-      };
-    }
-    case "task/status":
-    case "task/ownership":
-    case "task/contract":
-    case "task/continuity": {
-      if (typeof taskId !== "string" || !taskId) {
-        const error = new Error(`Resource ${uri} requires a taskId`);
-        error.code = "E_TASK_REQUIRED";
-        throw error;
-      }
-      break;
-    }
-    case "task/workspace-binding":
-    case "task/handoffs":
-    case "task/responsibility":
-    case "task/verification-scope":
-    case "task/attestation": {
-      if (typeof taskId !== "string" || !taskId) {
-        const error = new Error(`Resource ${uri} requires a taskId`);
-        error.code = "E_TASK_REQUIRED";
-        throw error;
-      }
-      break;
-    }
-    case "task/structural-quality": {
-      if (typeof taskId !== "string" || !taskId) {
-        const error = new Error(`Resource ${uri} requires a taskId`);
-        error.code = "E_TASK_REQUIRED";
-        throw error;
-      }
-      break;
-    }
-    case "task/actions":
-    case "task/action":
-    case "task/approvals":
-    case "task/metrics":
-    case "task/context":
-    case "task/evaluations": {
-      if (typeof taskId !== "string" || !taskId) {
-        const error = new Error(`Resource ${uri} requires a taskId`); error.code = "E_TASK_REQUIRED"; throw error;
-      }
-      break;
-    }
+  if (uri === "protocol/info") return { uri, data: await runProtocolInfo({ packageVersion }) };
+  if (uri === "project/tasks") {
+    const tasks = await discoverTasks(projectPath, packageRoot);
+    return { uri, data: { count: tasks.length, tasks: tasks.map((task) => ({
+      taskId: task.taskId,
+      healthy: task.healthy !== false,
+      phase: task.phase ?? null,
+      mutationAllowed: task.mutationAllowed !== false,
+    })) } };
+  }
+  if (TASK_RESOURCE_URIS.has(uri) && (typeof taskId !== "string" || !taskId)) {
+    const error = new Error(`Resource ${uri} requires a taskId`);
+    error.code = "E_TASK_REQUIRED";
+    throw error;
   }
 
   if (uri === "task/ownership") {
@@ -271,6 +235,45 @@ async function readForgeLoopIntegrationResourceCore(uri, {
       evaluations.push((await readJsonArtifact(projectPath, `${taskDirectory(taskId)}/evaluations/${name}`, "trajectory-evaluation", packageRoot)).value);
     }
     return { uri, taskId, data: { evaluations } };
+  }
+  if (uri === "task/decisions") {
+    const dir = path.join(projectPath, taskDirectory(taskId), "decisions");
+    let names = []; try { names = await readdir(dir); } catch { /* absent is an empty projection */ }
+    const decisions = [];
+    for (const name of names.filter((entry) => /^[A-Za-z0-9][A-Za-z0-9_-]{0,127}\.json$/.test(entry)).sort()) {
+      decisions.push((await readJsonArtifact(projectPath, `${taskDirectory(taskId)}/decisions/${name}`, "semantic-decision", packageRoot)).value);
+    }
+    return { uri, taskId, data: { taskId, decisions } };
+  }
+  if (uri === "task/context-plan") {
+    return { uri, taskId, data: await runContextPlan({ target: projectPath, packageRoot, taskId, profile: runtimeContext?.contextProfile ?? "balanced", readOnly: true }) };
+  }
+  if (uri === "task/model-route") {
+    const state = await readWorkState(projectPath, { packageRoot, taskId });
+    const route = await readPersistedRoute(projectPath, packageRoot, { taskId });
+    return {
+      uri,
+      taskId,
+      data: await runModelRoute({
+        target: projectPath,
+        packageRoot,
+        taskId,
+        workType: route.value.input?.workType,
+        surfaces: route.value.input?.surfaces,
+        risks: route.value.input?.risks,
+        platforms: route.value.input?.platforms,
+        behaviorChange: route.value.input?.behaviorChange,
+        executableChange: route.value.input?.executableChange,
+        generationRequired: route.value.input?.generationRequired,
+        architectureChange: route.value.input?.architectureChange,
+        ambiguity: route.value.input?.ambiguity,
+        contract: { phase: state.phase },
+      }),
+    };
+  }
+  if (uri === "task/test-utility") {
+    const artifact = await readTestUtility({ target: projectPath, packageRoot, taskId });
+    return { uri, taskId, data: artifact.value };
   }
   if (uri === "project/capability-policy") {
     return { uri, data: await loadCapabilityPolicy(projectPath, packageRoot) };

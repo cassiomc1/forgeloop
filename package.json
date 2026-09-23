@@ -75,6 +75,11 @@
     "docs/BROWSER_VERIFICATION.md",
     "docs/AGENT_BROWSER_ADAPTER.md",
     "docs/AGENT_BROWSER_VERIFICATION.md",
+    "docs/JEV_BENCHMARKS.md",
+    "docs/MODEL_ROUTING.md",
+    "docs/SEMANTIC_DECISION_PLANE.md",
+    "docs/TEST_INTELLIGENCE.md",
+    "docs/TEST_PRUNING.md",
     "scripts/CI_VALIDATORS.md",
     "docs/MCP.md",
     "docs/UNIVERSAL_INTEGRATION.md",
@@ -94,6 +99,9 @@
     "scripts/generate-shell-completions.mjs",
     "scripts/generate-agent-protocol-summary.mjs",
     "scripts/generate-forgeloop-skill.mjs",
+    "scripts/jev-smoke.mjs",
+    "scripts/benchmark-jev.mjs",
+    "scripts/benchmark-test-intelligence.mjs",
     "skills/forgeloop",
     "scripts/run-execution-profile-benchmarks.mjs",
     "scripts/summarize-execution-profile-benchmarks.mjs",
@@ -139,7 +147,7 @@
     "mcp:test": "node scripts/run-mcp-tests.mjs",
     "completions:generate": "node scripts/generate-shell-completions.mjs --write",
     "completions:check": "node scripts/generate-shell-completions.mjs --check",
-    "test:quick": "node --test tests/cli.test.js tests/schema-health.test.js tests/schema-golden.test.js tests/protocol-info.test.js tests/integration-capabilities.test.js tests/ci-classify.test.js tests/validation-tiers.test.js",
+    "test:quick": "node --import=./scripts/test-semantic-provider-loader.mjs --test tests/cli.test.js tests/schema-health.test.js tests/schema-golden.test.js tests/protocol-info.test.js tests/integration-capabilities.test.js tests/ci-classify.test.js tests/validation-tiers.test.js",
     "performance:check": "node scripts/benchmark-cli-startup.mjs",
     "critical-coverage:check": "node scripts/check-critical-coverage.mjs",
     "changelog:check": "node scripts/check-changelog-freshness.mjs",
@@ -165,7 +173,11 @@
     "verify:fast": "node scripts/run-validation.mjs --tier fast",
     "verify:local": "node scripts/run-validation.mjs --tier local",
     "verify:prepush": "node scripts/run-validation.mjs --tier prepush",
-    "verify:release": "node scripts/run-validation.mjs --tier release"
+    "verify:release": "node scripts/run-validation.mjs --tier release",
+    "jev:smoke": "node scripts/jev-smoke.mjs",
+    "benchmark:jev": "node scripts/benchmark-jev.mjs",
+    "benchmark:jev:live": "node scripts/benchmark-jev.mjs --live",
+    "benchmark:test-intelligence": "node scripts/benchmark-test-intelligence.mjs"
   },
   "devDependencies": {
     "c8": "^12.0.0",
@@ -174,6 +186,7 @@
     "yaml": "2.9.0"
   },
   "dependencies": {
+    "@typesafe-ai/sdk": "0.6.0",
     "smol-toml": "1.8.0"
   },
   "exports": {

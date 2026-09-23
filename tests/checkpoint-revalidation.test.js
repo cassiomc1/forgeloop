@@ -555,6 +555,7 @@ test("manual route and state rewrite without canonical route provenance remains 
     const eventsBefore = await readEvents(target, packageRoot, { taskId });
     const routeCommitCount = eventsBefore.filter((event) => event.event === "TRANSACTION_COMMITTED"
       && event.details.operation === "route").length;
+    const routeReboundCount = eventsBefore.filter((event) => event.event === "ROUTE_REBOUND").length;
     const forgedRoute = evaluateRoute({ workType: "documentation", surfaces: [], executableChange: false });
     const replacement = await writeJsonArtifact(
       target,
@@ -575,7 +576,7 @@ test("manual route and state rewrite without canonical route provenance remains 
     const state = await readWorkState(target, { packageRoot, taskId });
     const coherence = validateStateLedgerCoherence(state, ledger.events);
     const claim = await resolveTaskClaimState(target, { packageRoot, taskId });
-    assert.equal(events.filter((event) => event.event === "ROUTE_REBOUND").length, 0);
+    assert.equal(events.filter((event) => event.event === "ROUTE_REBOUND").length, routeReboundCount);
     assert.equal(events.filter((event) => event.event === "TRANSACTION_COMMITTED"
       && event.details.operation === "route").length, routeCommitCount);
     assert.equal(ledger.valid, true);

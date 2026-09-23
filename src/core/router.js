@@ -313,6 +313,64 @@ function reasonForSignal(prefix, signal) {
   return `${prefix}_${signal.toUpperCase().replaceAll("-", "_")}`;
 }
 
+const SECURITY_TRUST_BOUNDARY_RISKS = Object.freeze([
+  "untrusted-input", "personal-data", "secrets", "external-service", "publication",
+]);
+
+// Canonical deterministic safety floor. These are the route reason codes the
+// router assigns when a trust-boundary signal selects the security guide. The
+// semantic exclusion policy reads protection from this same source, so a
+// mandatory safety guide can never drift out of protection (for example the
+// previously missing external-service boundary).
+const MANDATORY_SAFETY_REASONS = Object.freeze(new Set([
+  "SURFACE_AUTH",
+  ...SECURITY_TRUST_BOUNDARY_RISKS.map((risk) => reasonForSignal("RISK", risk)),
+]));
+
+export function isMandatorySafetyReason(reason) {
+  return MANDATORY_SAFETY_REASONS.has(reason);
+}
+
+export function isMandatorySafetyGuide(guide, reasons) {
+  return guide === "security"
+    && Array.isArray(reasons)
+    && reasons.some((reason) => isMandatorySafetyReason(reason));
+}
+
+function applySemanticGuideRecommendation(selected, excluded, recommendation) {
+  const guideDecision = recommendation?.guideRelevance
+    ?? (recommendation?.rankedIds || recommendation?.excludedIds ? recommendation : null);
+  if (!guideDecision) return;
+  const excludedIds = new Set(Array.isArray(guideDecision.excludedIds) ? guideDecision.excludedIds : []);
+  const confidenceById = guideDecision.confidenceById ?? {};
+  for (const guide of [...selected.keys()]) {
+    const reasons = selected.get(guide);
+    if (isMandatorySafetyGuide(guide, reasons)) {
+      if (!reasons.includes("MANDATORY_SAFETY_GUIDE")) reasons.push("MANDATORY_SAFETY_GUIDE");
+      continue;
+    }
+    if (!excludedIds.has(guide)) {
+      if (!reasons.includes("JEV_RELEVANT")) reasons.push("JEV_RELEVANT");
+      continue;
+    }
+    if ((confidenceById[guide] ?? 0) < 0.75) {
+      if (!reasons.includes("JEV_LOW_CONFIDENCE_RETAINED")) reasons.push("JEV_LOW_CONFIDENCE_RETAINED");
+      continue;
+    }
+    selected.delete(guide);
+    excluded[guide] = ["JEV_EXCLUDED"];
+  }
+  const ranked = Array.isArray(guideDecision.rankedIds) ? guideDecision.rankedIds : [];
+  const order = new Map(ranked.map((guide, index) => [guide, index]));
+  const entries = [...selected.entries()].sort((left, right) => {
+    const leftRank = order.has(left[0]) ? order.get(left[0]) : ranked.length + [...selected.keys()].indexOf(left[0]);
+    const rightRank = order.has(right[0]) ? order.get(right[0]) : ranked.length + [...selected.keys()].indexOf(right[0]);
+    return leftRank - rightRank;
+  });
+  selected.clear();
+  for (const [guide, reasons] of entries) selected.set(guide, reasons);
+}
+
 function normalizeArray(value, name, allowed) {
   if (value === undefined) return [];
   if (!Array.isArray(value)) throw new RouteInputError(`${name} must be an array`);
@@ -440,7 +498,7 @@ export function evaluateRoute(input = {}, profileOptions = {}) {
   }
 
   for (const risk of normalized.risks) {
-    if (["untrusted-input", "personal-data", "secrets", "external-service", "publication"].includes(risk)) {
+    if (SECURITY_TRUST_BOUNDARY_RISKS.includes(risk)) {
       add("security", reasonForSignal("RISK", risk));
     }
     if (["critical-path", "performance"].includes(risk)) {
@@ -481,12 +539,19 @@ export function evaluateRoute(input = {}, profileOptions = {}) {
     excluded[guide] = [exclusionReasonForGuide(guide, projectEvidence, normalized.workType)];
   }
 
+  applySemanticGuideRecommendation(
+    selected,
+    excluded,
+    profileOptions.semanticRecommendation ?? null,
+  );
+
   const guides = [...selected.keys()];
   const result = {
     schemaVersion: ROUTING_SCHEMA_VERSION,
     protocolVersion: PROTOCOL_VERSION,
     input: normalized,
     primary: Object.prototype.hasOwnProperty.call(PRIMARY_GUIDES, normalized.workType)
+      && guides.includes(PRIMARY_GUIDES[normalized.workType])
       ? PRIMARY_GUIDES[normalized.workType]
       : guides[0] ?? null,
     guides,
@@ -499,6 +564,7 @@ export function evaluateRoute(input = {}, profileOptions = {}) {
       configuredProfile: profileOptions.configuredProfile ?? input.configuredProfile ?? "auto",
       requestedProfile: profileOptions.requestedProfile
         ?? (Object.prototype.hasOwnProperty.call(input, "executionProfile") ? input.executionProfile : null),
+      semanticRecommendation: profileOptions.semanticRecommendation ?? null,
     }),
   };
   return assertRouteInvariants(result);

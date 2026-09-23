@@ -55,6 +55,9 @@ export const SHIPPED_SCHEMA_NAMES = Object.freeze([
   "execution-profile-benchmark-run",
   "execution-profile-benchmark-aggregate",
   "structural-quality",
+  "semantic-decision",
+  "context-plan",
+  "test-utility",
 ]);
 
 export class SchemaValidationError extends Error {

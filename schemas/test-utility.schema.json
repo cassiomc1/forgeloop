@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/test-utility.schema.json",
+  "title": "ForgeLoop test utility analysis",
+  "type": "object",
+  "required": ["schemaVersion", "protocolVersion", "taskId", "generatedAt", "inventoryFingerprint", "semanticStatus", "tests"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "protocolVersion": { "const": 1 },
+    "taskId": { "type": "string", "minLength": 1 },
+    "generatedAt": { "type": "string", "minLength": 1 },
+    "inventoryFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "semanticStatus": { "enum": ["PROVIDER_REPORTED", "UNAVAILABLE", "NOT_REQUESTED"] },
+    "decisionId": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$" },
+    "semanticDecisionFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "decisionIds": { "type": "array", "items": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$" } },
+    "semanticDecisionFingerprints": { "type": "array", "items": { "type": "string", "pattern": "^[a-f0-9]{64}$" } },
+    "tests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["testId", "file", "framework", "name", "classification", "recommendation", "protected"],
+        "properties": {
+          "testId": { "type": "string", "pattern": "^test-[a-f0-9]{24}$" },
+          "file": { "type": "string", "minLength": 1 },
+          "framework": { "type": "string", "minLength": 1 },
+          "suite": { "type": "string" },
+          "name": { "type": "string", "minLength": 1 },
+          "line": { "type": "integer", "minimum": 1 },
+          "sourceSummary": { "type": "string" },
+          "targets": { "type": "array", "items": { "type": "string" } },
+          "runtimeMs": { "type": ["number", "null"], "minimum": 0 },
+          "uniqueBranches": { "type": ["integer", "null"], "minimum": 0 },
+          "classification": { "enum": ["KEEP_REQUIRED", "KEEP_UNIQUE", "KEEP_RISK_GUARD", "KEEP_AUTHORITY_BOUNDARY", "KEEP_RECOVERY_INVARIANT", "KEEP_RELEASE_SMOKE", "KEEP_MIGRATION_COMPATIBILITY", "KEEP_PLATFORM_BEHAVIOR", "KEEP_DOCUMENTATION_VALUE", "KEEP_INTEGRATION_GUARD", "OBSOLETE_CANDIDATE", "FLAKY_LOW_SIGNAL", "EXPENSIVE_LOW_SIGNAL", "UNKNOWN", "REDUNDANT_CANDIDATE"] },
+          "recommendation": { "enum": ["KEEP", "REWRITE", "PROBE_REMOVAL", "BLOCKED", "REVIEW"] },
+          "protected": { "type": "boolean" },
+          "signals": { "type": "object", "additionalProperties": true }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

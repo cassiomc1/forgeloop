@@ -160,7 +160,10 @@ function run(command, tier) {
   return new Promise((resolve) => {
     const child = spawn(command.command, command.args, {
       cwd: process.cwd(),
-      env: { ...process.env, FORGELOOP_VALIDATION_TIER: tier },
+      env: {
+        ...process.env,
+        FORGELOOP_VALIDATION_TIER: tier,
+      },
       shell: false,
       stdio: "inherit",
     });

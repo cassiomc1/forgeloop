@@ -99,3 +99,121 @@ test("benchmark scenarios resolve to their documented profiles without token est
     }
   }
 });
+
+test("semantic profile recommendation may raise but never lower the deterministic safety floor", () => {
+  const raised = resolveExecutionProfile({
+    routeInput: { workType: "documentation" },
+    semanticRecommendation: "full",
+  });
+  assert.equal(raised.floor, "light");
+  assert.equal(raised.resolved, "full");
+  assert.ok(raised.reasons.includes("PROFILE_ESCALATED_BY_JEV"));
+
+  const protectedFloor = resolveExecutionProfile({
+    routeInput: { workType: "code", risks: ["secrets"], executableChange: true },
+    requestedProfile: "light",
+    semanticRecommendation: "light",
+  });
+  assert.equal(protectedFloor.floor, "full");
+  assert.equal(protectedFloor.resolved, "full");
+  assert.equal(protectedFloor.reasons.includes("PROFILE_ESCALATED_BY_JEV"), false);
+});
+
+test("Jev execution-profile recommendation raises depth without lowering the floor", () => {
+  const raised = resolveExecutionProfile({
+    routeInput: { workType: "documentation" },
+    semanticRecommendation: { recommendedProfile: "full", confidence: 0.94 },
+  });
+  assert.equal(raised.resolved, "full");
+
+  const protectedFloor = resolveExecutionProfile({
+    routeInput: { workType: "code", risks: ["secrets"], executableChange: true },
+    semanticRecommendation: { recommendedProfile: "light", confidence: 0.99 },
+  });
+  assert.equal(protectedFloor.floor, "full");
+  assert.equal(protectedFloor.resolved, "full");
+});
+
+const MANDATORY_EXCLUSION = {
+  guideRelevance: {
+    rankedIds: ["test", "clean"],
+    excludedIds: ["security"],
+    confidenceById: { security: 0.99 },
+  },
+};
+
+for (const risk of ["external-service", "secrets", "personal-data", "untrusted-input", "publication"]) {
+  test(`mandatory security guide is retained despite high-confidence Jev exclusion for ${risk} risk`, () => {
+    const route = evaluateRoute(
+      { workType: "code", risks: [risk], behaviorChange: true },
+      { semanticRecommendation: MANDATORY_EXCLUSION },
+    );
+    assert.equal(route.guides.includes("security"), true);
+    assert.ok(route.reasons.security.includes(`RISK_${risk.toUpperCase().replaceAll("-", "_")}`));
+    assert.ok(route.reasons.security.includes("MANDATORY_SAFETY_GUIDE"));
+    assert.equal(route.excluded.security, undefined);
+  });
+}
+
+test("mandatory security guide is retained despite high-confidence Jev exclusion for auth surface", () => {
+  const route = evaluateRoute(
+    { workType: "code", surfaces: ["auth"], behaviorChange: true },
+    { semanticRecommendation: MANDATORY_EXCLUSION },
+  );
+  assert.equal(route.guides.includes("security"), true);
+  assert.ok(route.reasons.security.includes("SURFACE_AUTH"));
+  assert.ok(route.reasons.security.includes("MANDATORY_SAFETY_GUIDE"));
+});
+
+test("Jev guide exclusion removes non-mandatory guides at high confidence", () => {
+  const route = evaluateRoute(
+    { workType: "code", surfaces: ["ui"], behaviorChange: true },
+    {
+      semanticRecommendation: {
+        guideRelevance: {
+          rankedIds: ["clean", "test"],
+          excludedIds: ["design"],
+          confidenceById: { design: 0.99 },
+        },
+      },
+    },
+  );
+  assert.equal(route.guides.includes("design"), false);
+  assert.deepEqual(route.excluded.design, ["JEV_EXCLUDED"]);
+});
+
+test("Jev guide exclusion retains non-mandatory guides at low confidence", () => {
+  const route = evaluateRoute(
+    { workType: "code", surfaces: ["ui"], behaviorChange: true },
+    {
+      semanticRecommendation: {
+        guideRelevance: {
+          rankedIds: ["clean", "test"],
+          excludedIds: ["design"],
+          confidenceById: { design: 0.6 },
+        },
+      },
+    },
+  );
+  assert.equal(route.guides.includes("design"), true);
+  assert.ok(route.reasons.design.includes("JEV_LOW_CONFIDENCE_RETAINED"));
+});
+
+test("Jev reorders eligible non-mandatory guides deterministically", () => {
+  const route = evaluateRoute(
+    { workType: "code", surfaces: ["ui"], behaviorChange: true },
+    {
+      semanticRecommendation: {
+        guideRelevance: {
+          rankedIds: ["test", "clean", "design", "accessibility"],
+          excludedIds: [],
+          confidenceById: {},
+        },
+      },
+    },
+  );
+  assert.deepEqual(
+    route.guides.filter((guide) => ["test", "clean", "design", "accessibility"].includes(guide)),
+    ["test", "clean", "design", "accessibility"],
+  );
+});

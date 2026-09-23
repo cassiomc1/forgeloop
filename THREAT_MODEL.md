@@ -286,6 +286,30 @@ context.
 ForgeLoop never changes Sentrux analytics preferences, installs the provider,
 or treats Sentrux Free diagnostics as necessary for score correctness.
 
+## Semantic decision safety floor
+
+Jev (the pinned TypeSafe `jev-1.13.0` model) is a non-authoritative semantic
+plane: it may rank or exclude only deterministically eligible, non-mandatory
+route guides, and it may raise but never lower the execution-profile safety
+floor. Mandatory safety protection is derived from canonical deterministic route
+reasons (`MANDATORY_SAFETY_REASONS` in `src/core/router.js`: auth surface plus
+the untrusted-input, personal-data, secrets, external-service, and publication
+trust-boundary risks), so a high-confidence semantic exclusion can never remove
+the `security` guide the router selected for a trust boundary; retained
+mandatory guides carry an explicit `MANDATORY_SAFETY_GUIDE` reason and
+low-confidence exclusions are retained as `JEV_LOW_CONFIDENCE_RETAINED`.
+Semantic decisions consume only sanitized bounded state, and credential material
+is excluded from state, artifacts, diagnostics, and logs. A semantic decision
+that cannot be obtained fails closed rather than silently weakening routing.
+
+| Threat | Mitigation |
+| --- | --- |
+| High-confidence Jev exclusion removes a deterministic mandatory safety guide | Protection derives from the router's own canonical safety reason set; `external-service` and other trust-boundary reasons retain `security` with `MANDATORY_SAFETY_GUIDE` |
+| Semantic plane drifts from deterministic eligibility | Jev operates only on deterministically eligible guides; it never creates eligibility, lowers the profile floor, or bypasses fail-closed cutover |
+
+`tests/execution-profile.test.js`, `tests/jev-decision-enforcement.test.js`,
+`tests/decision-cutover.test.js`.
+
 ## Boundary rules
 
 - Safe paths are checked before reading or writing; no protocol field is a

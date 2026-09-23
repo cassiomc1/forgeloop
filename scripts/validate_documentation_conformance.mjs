@@ -607,7 +607,10 @@ export async function validateDocumentationConformance({ rootDir = repositoryRoo
     // Extract section for this command
     const sectionStart = cliDocContent.indexOf(`### \`${command}\``);
     if (sectionStart !== -1) {
-      const nextHeadingIndex = cliDocContent.indexOf("\n### `", sectionStart + 5);
+      const nextHeadingMatch = cliDocContent.slice(sectionStart + 5).match(/\n(?:##(?!#)|###) /u);
+      const nextHeadingIndex = nextHeadingMatch
+        ? sectionStart + 5 + nextHeadingMatch.index
+        : -1;
       const commandSection = nextHeadingIndex !== -1
         ? cliDocContent.slice(sectionStart, nextHeadingIndex)
         : cliDocContent.slice(sectionStart);

@@ -44,12 +44,107 @@ All artifact schemas are defined in `schemas/*.schema.json`. Persisted artifact 
 | `task-state/<task-key>/attestations/code-manifest.json` | `code-manifest` | Protocol Generated | Immutable Once Written | Content Integrity Snapshot |
 | `task-state/<task-key>/attestations/statement.json` | `in-toto-statement` | Protocol Compiled | Immutable Once Written | Code Attestation Statement |
 | `task-state/<task-key>/attestations/statement.sigstore.json` | `null` | External Signing Provider | External Immutable | External Signature Bundle |
+| `task-state/<task-key>/decisions/<decision-id>.json` | `semantic-decision` | Protocol Compiled | Immutable Once Written | Semantic Decision |
+| `task-state/<task-key>/test-utility.json` | `test-utility` | Protocol Compiled | Overwritten On Analysis | Non Evidence Test Analysis |
 
 <!-- END FORGELOOP GENERATED: artifact-registry -->
 
 ---
 
 ## 2. Canonical Artifact Specifications
+
+### 2.0 `semantic-decision`
+
+<!-- forgeloop-doc: schema=semantic-decision artifact=.forgeloop/task-state/<task-key>/decisions/<decision-id>.json -->
+
+Semantic decisions are advisory, fingerprint-bound projections. They do not
+authorize lifecycle transitions, evidence, ownership, installation, or
+completion.
+
+<!-- BEGIN FORGELOOP GENERATED: schema:semantic-decision -->
+
+- `schemaVersion` *(number, required, const: 1)*
+- `protocolVersion` *(number, required, const: 1)*
+- `taskId` *(string, required, minLength: 1)*
+- `decisionId` *(string, required, pattern: `^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$`)*
+- `decisionKind` *(string, required, minLength: 1)*
+- `engine` *(string, required, const: `typesafe-jev`)*
+- `model` *(string, required, const: `jev-1.13.0`)*
+- `questionSetId` *(string, required, minLength: 1)*
+- `questionSetVersion` *(integer, required, minimum: 1)*
+- `questionSetFingerprint` *(string, required, pattern: `^[a-f0-9]{64}$`)*
+- `questionSet` *(object, optional)*
+  - `id` *(string, required, minLength: 1)*
+  - `version` *(integer, required, minimum: 1)*
+  - `decisionKind` *(string, required, minLength: 1)*
+  - `questions` *(object, required)*
+  - `fingerprint` *(string, required, pattern: `^[a-f0-9]{64}$`)*
+  - `candidateIds` *(array<string>, optional)*
+  - `metadata` *(object, optional)*
+- `policyVersion` *(number, required, const: 1)*
+- `stateFingerprint` *(string, required, pattern: `^[a-f0-9]{64}$`)*
+- `taskStateFingerprint` *(string or null, optional)*
+- `semanticStateFingerprint` *(string or null, optional)*
+- `policyFingerprint` *(string, required, pattern: `^[a-f0-9]{64}$`)*
+- `repositoryFingerprint` *(string or object or null, optional)*
+- `contractFingerprint` *(string or null, optional)*
+- `routeFingerprint` *(string or null, optional)*
+- `verificationCycle` *(integer or null, optional)*
+- `candidateSetFingerprint` *(string or null, optional)*
+- `answers` *(object, required)*
+- `confidence` *(object, required)*
+- `decision` *(object, required)*
+- `usage` *(object, required)*
+  - `inputTokens` *(integer or null, required)*
+  - `outputTokens` *(integer or null, required)*
+  - `reportedBy` *(string, required, enum: `PROVIDER`, `HOST`, `UNKNOWN`)*
+- `latencyMs` *(integer or null, optional)*
+- `authority` *(string, required, const: `SEMANTIC_DECISION`)*
+- `evidenceAuthority` *(string, required, const: `NONE`)*
+- `lifecycleAuthority` *(boolean, required, const: false)*
+- `completionAuthority` *(boolean, required, const: false)*
+- `ownershipAuthority` *(boolean, required, const: false)*
+- `installationAuthority` *(boolean, required, const: false)*
+- `recordedAt` *(string, required, minLength: 1)*
+
+<!-- END FORGELOOP GENERATED: schema:semantic-decision -->
+
+### 2.0.1 `test-utility`
+
+<!-- forgeloop-doc: schema=test-utility artifact=.forgeloop/task-state/<task-key>/test-utility.json -->
+
+Non-evidence test inventory and utility analysis. It never authorizes deletion
+or completion.
+
+<!-- BEGIN FORGELOOP GENERATED: schema:test-utility -->
+
+- `schemaVersion` *(number, required, const: 1)*
+- `protocolVersion` *(number, required, const: 1)*
+- `taskId` *(string, required, minLength: 1)*
+- `generatedAt` *(string, required, minLength: 1)*
+- `inventoryFingerprint` *(string, required, pattern: `^[a-f0-9]{64}$`)*
+- `semanticStatus` *(string, required, enum: `PROVIDER_REPORTED`, `UNAVAILABLE`, `NOT_REQUESTED`)*
+- `decisionId` *(string, optional, pattern: `^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$`)*
+- `semanticDecisionFingerprint` *(string, optional, pattern: `^[a-f0-9]{64}$`)*
+- `decisionIds` *(array<string>, optional)*
+- `semanticDecisionFingerprints` *(array<string>, optional)*
+- `tests` *(array<object>, required)*
+  - `testId` *(string, required, pattern: `^test-[a-f0-9]{24}$`)*
+  - `file` *(string, required, minLength: 1)*
+  - `framework` *(string, required, minLength: 1)*
+  - `suite` *(string, optional)*
+  - `name` *(string, required, minLength: 1)*
+  - `line` *(integer, optional, minimum: 1)*
+  - `sourceSummary` *(string, optional)*
+  - `targets` *(array<string>, optional)*
+  - `runtimeMs` *(number,null, optional, minimum: 0)*
+  - `uniqueBranches` *(integer,null, optional, minimum: 0)*
+  - `classification` *(string, required, enum: `KEEP_REQUIRED`, `KEEP_UNIQUE`, `KEEP_RISK_GUARD`, `KEEP_AUTHORITY_BOUNDARY`, `KEEP_RECOVERY_INVARIANT`, `KEEP_RELEASE_SMOKE`, `KEEP_MIGRATION_COMPATIBILITY`, `KEEP_PLATFORM_BEHAVIOR`, `KEEP_DOCUMENTATION_VALUE`, `KEEP_INTEGRATION_GUARD`, `OBSOLETE_CANDIDATE`, `FLAKY_LOW_SIGNAL`, `EXPENSIVE_LOW_SIGNAL`, `UNKNOWN`, `REDUNDANT_CANDIDATE`)*
+  - `recommendation` *(string, required, enum: `KEEP`, `REWRITE`, `PROBE_REMOVAL`, `BLOCKED`, `REVIEW`)*
+  - `protected` *(boolean, required)*
+  - `signals` *(object, optional)*
+
+<!-- END FORGELOOP GENERATED: schema:test-utility -->
 
 ### 2.1 `task-state/<taskKey>/contract.json`
 
@@ -257,6 +352,14 @@ Local ForgeLoop configuration settings and policy bindings.
 - `policy` *(string, optional, minLength: 1)*
 - `requiredGates` *(array<string>, optional)*
 - `requiredEvidence` *(array<string>, optional)*
+- `decisionEngine` *(object, optional)*
+  - `required` *(boolean, required, const: true)*
+  - `provider` *(string, required, const: `typesafe-jev`)*
+  - `model` *(string, required, const: `jev-1.13.0`)*
+  - `policyVersion` *(number, required, const: 1)*
+  - `requestTimeoutMs` *(integer, required, minimum: 500, maximum: 60000)*
+  - `maxRetries` *(integer, required, minimum: 0, maximum: 3)*
+  - `cache` *(boolean, required)*
 - `structuralQuality` *(object, optional)*
   - `mode` *(string, optional, enum: `off`, `observe`, `gate`)*
   - `provider` *(string, optional, pattern: `^[a-z][a-z0-9-]{0,63}$`)*

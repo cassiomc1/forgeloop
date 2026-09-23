@@ -99,6 +99,12 @@
 
 ### Changed
 
+- Derived mandatory semantic safety-guide protection from the canonical
+  deterministic route reasons in the router, so an `external-service` trust
+  boundary can no longer lose its `security` guide to a high-confidence Jev
+  exclusion; retained guides record `MANDATORY_SAFETY_GUIDE`. Live provider
+  failures keep stable normalized codes while the smoke check reports only safe
+  diagnostics (HTTP status, provider error type, request id, network class).
 - Extended the routing schema, package checks, router reference, README, and
   package-contents documentation for the Node.js specialist.
 - Extended the routing schema, package checks, router reference, README, and

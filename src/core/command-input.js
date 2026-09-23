@@ -117,6 +117,10 @@ function validateOutputInput(command, options) {
 }
 
 const TASK_SELECTOR_COMMANDS = new Set([
+  "context-plan",
+  "model-route",
+  "semantic-plan",
+  "test-utility",
   "checkpoint-revalidate",
   "workspace-bind",
   "workspace-status",

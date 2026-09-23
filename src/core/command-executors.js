@@ -77,6 +77,15 @@ import { runTaskRepairContractBootstrap } from "../commands/task-repair-contract
 import { runTaskMigrateContractBootstrapRepair } from "../commands/task-migrate-contract-bootstrap-repair.js";
 import { runTaskLockStatus } from "../commands/task-lock-status.js";
 import { runProtocolInfo } from "../commands/protocol-info.js";
+import { runDecisionStatus } from "../commands/decision-status.js";
+import { runDecisionShow } from "../commands/decision-show.js";
+import { runContextPlan } from "../commands/context-plan.js";
+import { runModelRoute } from "../commands/model-route.js";
+import { runSemanticPlan } from "../commands/semantic-plan.js";
+import { runTestInventory } from "../commands/test-inventory.js";
+import { runTestUtility } from "../commands/test-utility.js";
+import { runTestPrunePlan } from "../commands/test-prune-plan.js";
+import { runTestPruneProbe } from "../commands/test-prune-probe.js";
 import { runWorkspaceBind } from "../commands/workspace-bind.js";
 import { runWorkspaceStatus } from "../commands/workspace-status.js";
 import { runHandoffCreate } from "../commands/handoff-create.js";
@@ -134,6 +143,57 @@ export const COMMAND_EXECUTORS = {
   }),
   "protocol-info": async ({ packageVersion }) => ({
     result: await runProtocolInfo({ packageVersion }),
+    exitCode: 0,
+  }),
+  "decision-status": async ({ target, packageRoot, options }) => ({
+    result: await runDecisionStatus({ target, packageRoot, health: options.health }),
+    exitCode: 0,
+  }),
+  "decision-show": async ({ target, packageRoot, options }) => ({
+    result: await runDecisionShow({ target, packageRoot, taskId: options.taskId, decisionId: options.decisionId }),
+    exitCode: 0,
+  }),
+  "context-plan": async ({ target, packageRoot, options }) => ({
+    result: await runContextPlan({ target, packageRoot, taskId: options.taskId, decisionId: options.decisionId, profile: options.profile ?? "balanced" }),
+    exitCode: 0,
+  }),
+  "model-route": async ({ target, packageRoot, options }) => ({
+    result: await runModelRoute({
+      target, packageRoot, taskId: options.taskId, decisionId: options.decisionId,
+      workType: options.workType,
+      surfaces: options.surfaces,
+      risks: options.risks,
+      platforms: options.platforms,
+      behaviorChange: options.behaviorChange,
+      executableChange: options.executableChange,
+      generationRequired: options.generationRequired,
+      architectureChange: options.architectureChange,
+      ambiguity: options.ambiguity,
+    }),
+    exitCode: 0,
+  }),
+  "semantic-plan": async ({ target, packageRoot, options }) => ({
+    result: await runSemanticPlan({
+      target, packageRoot, taskId: options.taskId, decisionId: options.decisionId,
+      kind: options.semanticPlanKind,
+      input: options.semanticPlanInput ?? {},
+    }),
+    exitCode: 0,
+  }),
+  "test-inventory": async ({ target }) => ({
+    result: await runTestInventory({ target }),
+    exitCode: 0,
+  }),
+  "test-utility": async ({ target, packageRoot, options }) => ({
+    result: await runTestUtility({ target, packageRoot, taskId: options.taskId }),
+    exitCode: 0,
+  }),
+  "test-prune-plan": async ({ target, packageRoot, options }) => ({
+    result: await runTestPrunePlan({ target, packageRoot, taskId: options.taskId }),
+    exitCode: 0,
+  }),
+  "test-prune-probe": async ({ target, packageRoot, options }) => ({
+    result: await runTestPruneProbe({ target, packageRoot, taskId: options.taskId, testId: options.testId }),
     exitCode: 0,
   }),
   init: async ({ target, packageRoot, packageVersion, options }) => ({

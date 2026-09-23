@@ -14,11 +14,18 @@ import {
   deriveResumePhaseFromLedger,
 } from "../core/resumability.js";
 import { taskArtifactPath } from "../core/task-paths.js";
+import { ensureSemanticDecision } from "../core/decision/service.js";
 
 function bootstrapInconsistent(message, candidate = false) {
   const error = new Error(message);
   error.code = candidate ? "E_CONTRACT_BOOTSTRAP_REPAIR_AVAILABLE" : "E_CONTRACT_BOOTSTRAP_INCONSISTENT";
   return error;
+}
+
+async function hasValidatedContractHistory(target, packageRoot, taskId) {
+  if (!target || !packageRoot || !taskId) return false;
+  const events = await readEvents(target, packageRoot, { taskId });
+  return events.some((event) => event.event === "CONTRACT_VALIDATED");
 }
 
 /**
@@ -117,11 +124,22 @@ async function reconstructFromExistingContract(target, packageRoot, taskId, requ
   };
 }
 
-export async function runContractCreate({ target, packageRoot, taskId, task, contractFile = null, preset = null } = {}) {
+export async function runContractCreate({ target, packageRoot, taskId, task, contractFile = null, preset = null, semanticProvider = null } = {}) {
   if (!preset && !contractFile) throw new Error("contract-create requires --preset or --contract-file");
   if (preset && contractFile) throw new Error("contract-create accepts either --preset or --contract-file, not both");
 
-  return withTaskMutation(target, { taskId: taskId ?? task, packageRoot }, "contract-create", async (ctx) => {
+  const effectiveTaskId = taskId ?? task;
+  const hasCanonicalContract = await hasValidatedContractHistory(target, packageRoot, effectiveTaskId);
+  if (target && packageRoot && effectiveTaskId && !hasCanonicalContract) {
+    await ensureSemanticDecision({
+      target, packageRoot, taskId: effectiveTaskId, provider: semanticProvider,
+      request: {
+        decisionKind: "CONTRACT_APPLICABILITY", questionSetId: "contract-v1",
+        state: { source: preset ? "preset" : "contract-file", preset: preset ?? null },
+      },
+    });
+  }
+  return withTaskMutation(target, { taskId: effectiveTaskId, packageRoot }, "contract-create", async (ctx) => {
     const events = await readEvents(target, packageRoot, { taskId: ctx.taskId });
     if (!events.some((event) => event.event === "DISCOVERY_STARTED")) {
       const error = new Error("Contract creation requires completed discovery");

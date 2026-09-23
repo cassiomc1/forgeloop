@@ -182,8 +182,8 @@ raising `VERIFIED` to `ATTESTED`. See [`docs/REVISION_PROVIDERS.md`](./docs/REVI
 
 Generic CI provides a platform-neutral revision-range boundary; thin GitHub,
 GitLab, local, or enterprise adapters may translate revisions without adding
-trust rules to the protocol core. The CLI and integration API remain usable
-across supported platforms, with MCP as an optional local adapter.
+trust rules to the protocol core. CLI and Integration API remain cross-platform;
+MCP is optional.
 
 ### Durable external actions
 

@@ -27,6 +27,8 @@ export const TASK_ARTIFACT_FILES = Object.freeze({
   verificationScope: "verification-scope.json",
   attestations: "attestations",
   structuralQuality: "structural-quality",
+  decisions: "decisions",
+  testUtility: "test-utility.json",
 });
 
 export const POLICY_ROOT = ".forgeloop/policy";
@@ -104,6 +106,15 @@ export function taskEvaluationPath(taskId, evaluationId) {
     throw new Error(`Invalid evaluation ID: ${evaluationId}`);
   }
   return `${taskDirectory(taskId)}/${TASK_ARTIFACT_FILES.evaluations}/${evaluationId}.json`;
+}
+
+export function taskDecisionDirectory(taskId) {
+  return taskArtifactPath(taskId, "decisions");
+}
+
+export function taskDecisionPath(taskId, decisionId) {
+  assertArtifactId(decisionId, /^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$/, "decision ID");
+  return `${taskDecisionDirectory(taskId)}/${decisionId}.json`;
 }
 
 function assertArtifactId(value, pattern, label) {
@@ -217,6 +228,8 @@ export function buildTaskArtifactPaths(taskId) {
     actions: `${dir}/${TASK_ARTIFACT_FILES.actions}`,
     approvals: `${dir}/${TASK_ARTIFACT_FILES.approvals}`,
     evaluations: `${dir}/${TASK_ARTIFACT_FILES.evaluations}`,
+    decisions: `${dir}/${TASK_ARTIFACT_FILES.decisions}`,
+    testUtility: `${dir}/${TASK_ARTIFACT_FILES.testUtility}`,
     usage: `${dir}/${TASK_ARTIFACT_FILES.usage}`,
     lock: taskLockPath(taskId),
     policySnapshot: `${dir}/${TASK_ARTIFACT_FILES.policySnapshot}`,

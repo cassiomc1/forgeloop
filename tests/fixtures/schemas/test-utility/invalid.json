@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "test-utility-fixture",
+  "generatedAt": "2026-09-21T00:00:00.000Z",
+  "inventoryFingerprint": "not-a-fingerprint",
+  "semanticStatus": "NOT_REQUESTED",
+  "tests": []
+}

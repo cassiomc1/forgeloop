@@ -71,6 +71,14 @@ test("npm tarball contains the CLI, templates, published scenarios, and license 
     "benchmarks/execution-profiles/static-landing-page.json",
     "benchmarks/execution-profiles/novatask-saas-landing-page.json",
     "docs/EXECUTION_PROFILE_BENCHMARKS.md",
+    "docs/JEV_BENCHMARKS.md",
+    "docs/MODEL_ROUTING.md",
+    "docs/SEMANTIC_DECISION_PLANE.md",
+    "docs/TEST_INTELLIGENCE.md",
+    "docs/TEST_PRUNING.md",
+    "scripts/jev-smoke.mjs",
+    "scripts/benchmark-jev.mjs",
+    "scripts/benchmark-test-intelligence.mjs",
     "benchmarks/repository-index/queries.json",
     "benchmarks/repository-index/README.md",
     "benchmarks/repository-index/run-persistent-transport.mjs",
@@ -418,4 +426,19 @@ test("public integration exports cover the completed provider roadmap", async ()
   for (const exp of expectedExports) {
     assert.ok(exp in integration, `missing public integration export: ${exp}`);
   }
+});
+
+test("packed consumer cannot activate the repository-test semantic provider", async () => {
+  const listing = packageListing();
+  assert.equal(
+    listing.includes("scripts/test-semantic-provider-loader.mjs"),
+    false,
+    "the repository-test semantic provider loader must not ship in the package",
+  );
+  const cli = await readFile("src/cli.js", "utf8");
+  const config = await readFile("src/core/config.js", "utf8");
+  const service = await readFile("src/core/decision/service.js", "utf8");
+  const commandInput = await readFile("src/core/command-input.js", "utf8");
+  assert.doesNotMatch(cli + config + service + commandInput, /FORGELOOP_TEST_SEMANTIC_PROVIDER/u);
+  assert.doesNotMatch(commandInput, /semanticProvider/u, "CLI input must not accept a semantic provider");
 });

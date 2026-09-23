@@ -101,6 +101,15 @@ import { defaultCommandInputValues, validateForgeLoopCommandInput } from "./core
 import { COMMAND_EXECUTORS } from "./core/command-executors.js";
 import { formatGateRecordResult } from "./commands/gate-record.js";
 import { formatGateRevalidateResult } from "./commands/gate-revalidate.js";
+import { formatDecisionStatusResult } from "./commands/decision-status.js";
+import { formatDecisionShowResult } from "./commands/decision-show.js";
+import { formatContextPlanResult } from "./commands/context-plan.js";
+import { formatModelRouteResult } from "./commands/model-route.js";
+import { formatSemanticPlanResult } from "./commands/semantic-plan.js";
+import { formatTestInventoryResult } from "./commands/test-inventory.js";
+import { formatTestUtilityResult } from "./commands/test-utility.js";
+import { formatTestPrunePlanResult } from "./commands/test-prune-plan.js";
+import { formatTestPruneProbeResult } from "./commands/test-prune-probe.js";
 import { resolveTarget } from "./core/filesystem.js";
 import { getPackageRoot } from "./core/templates.js";
 import { CLI_COMMAND_DEFINITIONS, buildOptionLookup, getPositionalDefinitions } from "./core/cli-command-definitions.js";
@@ -386,6 +395,51 @@ export const COMMAND_HANDLERS = Object.freeze({
   "protocol-info": async ({ packageVersion, options }) => {
     const { result } = await COMMAND_EXECUTORS["protocol-info"]({ packageVersion, options });
     renderJsonOr(options, result, formatProtocolInfoResult);
+    return 0;
+  },
+  "decision-status": async ({ target, packageRoot, options }) => {
+    const { result } = await COMMAND_EXECUTORS["decision-status"]({ target, packageRoot, options });
+    renderJsonOr(options, result, formatDecisionStatusResult);
+    return 0;
+  },
+  "decision-show": async ({ target, packageRoot, options }) => {
+    const { result } = await COMMAND_EXECUTORS["decision-show"]({ target, packageRoot, options });
+    renderJsonOr(options, result, formatDecisionShowResult);
+    return 0;
+  },
+  "context-plan": async ({ options }) => {
+    const { result } = await COMMAND_EXECUTORS["context-plan"]({ options });
+    renderJsonOr(options, result, formatContextPlanResult);
+    return 0;
+  },
+  "model-route": async ({ options }) => {
+    const { result } = await COMMAND_EXECUTORS["model-route"]({ options });
+    renderJsonOr(options, result, formatModelRouteResult);
+    return 0;
+  },
+  "semantic-plan": async ({ options }) => {
+    const { result } = await COMMAND_EXECUTORS["semantic-plan"]({ options });
+    renderJsonOr(options, result, formatSemanticPlanResult);
+    return 0;
+  },
+  "test-inventory": async ({ target, options }) => {
+    const { result } = await COMMAND_EXECUTORS["test-inventory"]({ target, options });
+    renderJsonOr(options, result, formatTestInventoryResult);
+    return 0;
+  },
+  "test-utility": async ({ target, packageRoot, options }) => {
+    const { result } = await COMMAND_EXECUTORS["test-utility"]({ target, packageRoot, options });
+    renderJsonOr(options, result, formatTestUtilityResult);
+    return 0;
+  },
+  "test-prune-plan": async ({ target, packageRoot, options }) => {
+    const { result } = await COMMAND_EXECUTORS["test-prune-plan"]({ target, packageRoot, options });
+    renderJsonOr(options, result, formatTestPrunePlanResult);
+    return 0;
+  },
+  "test-prune-probe": async ({ target, packageRoot, options }) => {
+    const { result } = await COMMAND_EXECUTORS["test-prune-probe"]({ target, packageRoot, options });
+    renderJsonOr(options, result, formatTestPruneProbeResult);
     return 0;
   },
   init: async ({ target, packageRoot, packageVersion, options }) => {

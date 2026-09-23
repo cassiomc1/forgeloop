@@ -17,6 +17,21 @@ newer.
 
 ## Included files
 
+The public package includes the Jev decision-plane documentation and bounded
+diagnostic scripts:
+
+- `docs/JEV_BENCHMARKS.md`
+- `docs/MODEL_ROUTING.md`
+- `docs/SEMANTIC_DECISION_PLANE.md`
+- `docs/TEST_INTELLIGENCE.md`
+- `docs/TEST_PRUNING.md`
+- `scripts/jev-smoke.mjs`
+- `scripts/benchmark-jev.mjs`
+- `scripts/benchmark-test-intelligence.mjs`
+- `schemas/context-plan.schema.json`
+- `schemas/semantic-decision.schema.json`
+- `schemas/test-utility.schema.json`
+
 The published tarball includes the following consumer-facing groups:
 
 - **Runtime and protocol:** every maintained JavaScript module under `src/`,
