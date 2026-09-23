@@ -313,35 +313,47 @@ function reasonForSignal(prefix, signal) {
   return `${prefix}_${signal.toUpperCase().replaceAll("-", "_")}`;
 }
 
-function mandatoryGuidesForRoute(normalized) {
-  const mandatory = new Set();
-  if (normalized.surfaces.includes("auth")
-    || normalized.risks.some((risk) => ["untrusted-input", "personal-data", "secrets", "publication"].includes(risk))) {
-    mandatory.add("security");
-  }
-  return mandatory;
+const SECURITY_TRUST_BOUNDARY_RISKS = Object.freeze([
+  "untrusted-input", "personal-data", "secrets", "external-service", "publication",
+]);
+
+// Canonical deterministic safety floor. These are the route reason codes the
+// router assigns when a trust-boundary signal selects the security guide. The
+// semantic exclusion policy reads protection from this same source, so a
+// mandatory safety guide can never drift out of protection (for example the
+// previously missing external-service boundary).
+const MANDATORY_SAFETY_REASONS = Object.freeze(new Set([
+  "SURFACE_AUTH",
+  ...SECURITY_TRUST_BOUNDARY_RISKS.map((risk) => reasonForSignal("RISK", risk)),
+]));
+
+export function isMandatorySafetyReason(reason) {
+  return MANDATORY_SAFETY_REASONS.has(reason);
 }
 
-function applySemanticGuideRecommendation(selected, excluded, normalized, recommendation) {
+export function isMandatorySafetyGuide(guide, reasons) {
+  return guide === "security"
+    && Array.isArray(reasons)
+    && reasons.some((reason) => isMandatorySafetyReason(reason));
+}
+
+function applySemanticGuideRecommendation(selected, excluded, recommendation) {
   const guideDecision = recommendation?.guideRelevance
     ?? (recommendation?.rankedIds || recommendation?.excludedIds ? recommendation : null);
   if (!guideDecision) return;
-  const mandatory = mandatoryGuidesForRoute(normalized);
   const excludedIds = new Set(Array.isArray(guideDecision.excludedIds) ? guideDecision.excludedIds : []);
   const confidenceById = guideDecision.confidenceById ?? {};
   for (const guide of [...selected.keys()]) {
-    if (mandatory.has(guide)) {
-      const reasons = selected.get(guide);
+    const reasons = selected.get(guide);
+    if (isMandatorySafetyGuide(guide, reasons)) {
       if (!reasons.includes("MANDATORY_SAFETY_GUIDE")) reasons.push("MANDATORY_SAFETY_GUIDE");
       continue;
     }
     if (!excludedIds.has(guide)) {
-      const reasons = selected.get(guide);
       if (!reasons.includes("JEV_RELEVANT")) reasons.push("JEV_RELEVANT");
       continue;
     }
     if ((confidenceById[guide] ?? 0) < 0.75) {
-      const reasons = selected.get(guide);
       if (!reasons.includes("JEV_LOW_CONFIDENCE_RETAINED")) reasons.push("JEV_LOW_CONFIDENCE_RETAINED");
       continue;
     }
@@ -486,7 +498,7 @@ export function evaluateRoute(input = {}, profileOptions = {}) {
   }
 
   for (const risk of normalized.risks) {
-    if (["untrusted-input", "personal-data", "secrets", "external-service", "publication"].includes(risk)) {
+    if (SECURITY_TRUST_BOUNDARY_RISKS.includes(risk)) {
       add("security", reasonForSignal("RISK", risk));
     }
     if (["critical-path", "performance"].includes(risk)) {
@@ -530,7 +542,6 @@ export function evaluateRoute(input = {}, profileOptions = {}) {
   applySemanticGuideRecommendation(
     selected,
     excluded,
-    normalized,
     profileOptions.semanticRecommendation ?? null,
   );
 

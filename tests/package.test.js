@@ -427,3 +427,18 @@ test("public integration exports cover the completed provider roadmap", async ()
     assert.ok(exp in integration, `missing public integration export: ${exp}`);
   }
 });
+
+test("packed consumer cannot activate the repository-test semantic provider", async () => {
+  const listing = packageListing();
+  assert.equal(
+    listing.includes("scripts/test-semantic-provider-loader.mjs"),
+    false,
+    "the repository-test semantic provider loader must not ship in the package",
+  );
+  const cli = await readFile("src/cli.js", "utf8");
+  const config = await readFile("src/core/config.js", "utf8");
+  const service = await readFile("src/core/decision/service.js", "utf8");
+  const commandInput = await readFile("src/core/command-input.js", "utf8");
+  assert.doesNotMatch(cli + config + service + commandInput, /FORGELOOP_TEST_SEMANTIC_PROVIDER/u);
+  assert.doesNotMatch(commandInput, /semanticProvider/u, "CLI input must not accept a semantic provider");
+});

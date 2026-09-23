@@ -63,7 +63,7 @@ test("route Jev relevance and execution depth materially affect canonical routin
         const answers = Object.fromEntries(Object.entries(request.questionSet.questions).map(([name, question], index) => {
           if (request.decisionKind === "ROUTE" && name.startsWith("guide_")) {
             const guide = request.questionSet.candidateIds[Number(name.match(/guide_(\d+)_/u)?.[1] ?? index)];
-            return [name, { noul: guide !== "security" ? "yes" : "no" }];
+            return [name, { noul: guide !== "clean" ? "yes" : "no" }];
           }
           if (request.decisionKind === "EXECUTION_PROFILE" && name === "recommended_depth") return [name, "full"];
           return [name, question.type === "choice" ? Object.keys(question.criteria)[0] : { noul: true }];
@@ -79,12 +79,42 @@ test("route Jev relevance and execution depth materially affect canonical routin
       target, packageRoot, taskId: "jev-task", provider,
       workType: "code", risks: ["external-service"], behaviorChange: true,
     });
-    assert.equal(route.guides.includes("security"), false);
-    assert.equal(route.excluded.security[0], "JEV_EXCLUDED");
+    assert.equal(route.guides.includes("clean"), false);
+    assert.equal(route.excluded.clean[0], "JEV_EXCLUDED");
     assert.equal(route.executionProfile.resolved, "full");
     const routeRequest = requests.find((request) => request.decisionKind === "ROUTE");
     assert.ok(routeRequest.state.semantic.eligibleGuides.some((guide) => guide.id === "security"));
     assert.ok(Array.isArray(routeRequest.state.semantic.eligibleGuides.find((guide) => guide.id === "security").reasons));
+  });
+});
+
+test("route keeps mandatory security guide despite high-confidence Jev exclusion", async () => {
+  await withTask(async (target) => {
+    const provider = {
+      id: "typesafe-jev", model: "jev-1.13.0",
+      async evaluate(request) {
+        const answers = Object.fromEntries(Object.entries(request.questionSet.questions).map(([name, question], index) => {
+          if (request.decisionKind === "ROUTE" && name.startsWith("guide_")) {
+            const guide = request.questionSet.candidateIds[Number(name.match(/guide_(\d+)_/u)?.[1] ?? index)];
+            return [name, { noul: guide !== "security" ? "yes" : "no" }];
+          }
+          return [name, question.type === "choice" ? Object.keys(question.criteria)[0] : { noul: true }];
+        }));
+        return {
+          model: "jev-1.13.0", answers,
+          confidence: Object.fromEntries(Object.keys(answers).map((name) => [name, 0.99])),
+          usage: { inputTokens: 1, outputTokens: 1 },
+        };
+      },
+    };
+    const route = await runRoute({
+      target, packageRoot, taskId: "jev-task", provider,
+      workType: "code", risks: ["external-service"], behaviorChange: true,
+    });
+    assert.equal(route.guides.includes("security"), true);
+    assert.equal(route.excluded.security, undefined);
+    assert.ok(route.reasons.security.includes("RISK_EXTERNAL_SERVICE"));
+    assert.ok(route.reasons.security.includes("MANDATORY_SAFETY_GUIDE"));
   });
 });
 

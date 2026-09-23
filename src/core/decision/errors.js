@@ -34,12 +34,35 @@ export function decisionError(code, message, artifacts = []) {
   return new DecisionError(code, message, artifacts);
 }
 
+const NETWORK_ERROR_CODES = new Set(["ENOTFOUND", "EAI_AGAIN", "ECONNREFUSED", "ECONNRESET", "EPIPE", "EHOSTUNREACH", "ENETUNREACH"]);
+
+export function classifyProviderFailure(error) {
+  const status = Number(error?.status);
+  const detail = error?.body?.detail;
+  const providerErrorType = typeof detail?.error_type === "string" ? detail.error_type : null;
+  const requestId = typeof error?.requestId === "string" && /^[A-Za-z0-9_-]{1,64}$/u.test(error.requestId) ? error.requestId : null;
+  let networkClass = null;
+  if (error?.name === "APITimeoutError" || error?.code === "ETIMEDOUT") networkClass = "timeout";
+  else if (error?.name === "APIConnectionError" || NETWORK_ERROR_CODES.has(error?.code)) networkClass = "connection";
+  return {
+    httpStatus: Number.isFinite(status) ? status : null,
+    providerErrorType,
+    requestId,
+    networkClass,
+  };
+}
+
 export function safeDecisionError(error, fallbackCode = DECISION_ERROR_CODES.ENGINE_UNAVAILABLE) {
   if (error instanceof DecisionError) return error;
-  const status = Number(error?.status);
-  if (status === 401 || status === 403) return decisionError(DECISION_ERROR_CODES.AUTH_INVALID, "The semantic decision service rejected authentication.");
-  if (status === 429) return decisionError(DECISION_ERROR_CODES.RATE_LIMITED, "The semantic decision service rate limit was reached.");
-  if (error?.name === "APITimeoutError" || error?.code === "ETIMEDOUT") return decisionError(DECISION_ERROR_CODES.TIMEOUT, "The semantic decision request timed out.");
-  if (error?.name === "AuthenticationError") return decisionError(DECISION_ERROR_CODES.AUTH_INVALID, "The semantic decision service rejected authentication.");
-  return decisionError(fallbackCode, "The semantic decision service is unavailable.");
+  const diagnostics = classifyProviderFailure(error);
+  const build = (code, message) => {
+    const normalized = decisionError(code, message);
+    normalized.diagnostics = diagnostics;
+    return normalized;
+  };
+  if (diagnostics.httpStatus === 401 || diagnostics.httpStatus === 403) return build(DECISION_ERROR_CODES.AUTH_INVALID, "The semantic decision service rejected authentication.");
+  if (diagnostics.httpStatus === 429) return build(DECISION_ERROR_CODES.RATE_LIMITED, "The semantic decision service rate limit was reached.");
+  if (diagnostics.networkClass === "timeout") return build(DECISION_ERROR_CODES.TIMEOUT, "The semantic decision request timed out.");
+  if (error?.name === "AuthenticationError") return build(DECISION_ERROR_CODES.AUTH_INVALID, "The semantic decision service rejected authentication.");
+  return build(fallbackCode, "The semantic decision service is unavailable.");
 }

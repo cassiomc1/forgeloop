@@ -16,7 +16,11 @@ authority for all lifecycle, evidence, safety, and completion decisions.
 
 For route execution, the same boundary applies to guide relevance: Jev can
 reorder or remove a selected non-mandatory guide only with sufficient
-confidence. Mandatory safety guides are retained and low-confidence removal
+confidence. Mandatory safety protection is derived from the canonical
+deterministic route reasons the router already produced (auth surface and the
+trust-boundary risks untrusted-input, personal-data, secrets, external-service,
+publication), so a `security` guide selected by `external-service` risk cannot be
+removed. Mandatory safety guides are retained and low-confidence removal
 recommendations are retained rather than treated as authority. The resulting
 guide set and profile are persisted in the route artifact, so the semantic
 recommendation materially affects routing without becoming lifecycle authority.
