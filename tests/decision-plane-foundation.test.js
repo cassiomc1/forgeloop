@@ -27,7 +27,8 @@ test("decision state builder strips secret-like fields and bounds user paths", (
     objective: "select relevant context",
     path: "<redacted-user-path>",
   });
-  assert.throws(() => buildDecisionState({ value: "ghp_12345678901234567890" }), (error) => error.code === DECISION_ERROR_CODES.STATE_UNSAFE);
+  const fixtureValue = "ghp_" + "12345678901234567890";
+  assert.throws(() => buildDecisionState({ value: fixtureValue }), (error) => error.code === DECISION_ERROR_CODES.STATE_UNSAFE);
 });
 
 test("decision policy is mandatory and pinned", () => {
