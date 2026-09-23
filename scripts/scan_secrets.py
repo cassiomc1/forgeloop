@@ -96,6 +96,20 @@ SAFE_PLACEHOLDERS = {
     "unknown",
 }
 
+SENSITIVE_TABLE_LABELS = {
+    "password",
+    "passwd",
+    "token",
+    "api token",
+    "api key",
+    "access token",
+    "auth token",
+    "credential",
+    "credentials",
+    "client secret",
+    "private key",
+}
+
 
 @dataclass(frozen=True)
 class Finding:
@@ -138,6 +152,20 @@ def is_placeholder(raw_value: str) -> bool:
     if len(value) >= 4 and not value.strip("*xX•.-"):
         return True
     return False
+
+
+def is_sensitive_table_label(value: str) -> bool:
+    """Return whether a Markdown first-column cell is a sensitive field label.
+
+    The scanner treats a table row as a sensitive-value field only when its
+    first cell is a concise field label, not descriptive threat prose that
+    merely contains a sensitive term. Matching is against an exact normalized
+    label vocabulary so real labels stay detected while sentences such as
+    "Credential or path leakage in errors and results" are not.
+    """
+
+    normalized = re.sub(r"\s+", " ", value.strip().strip("`\"'")).casefold()
+    return normalized in SENSITIVE_TABLE_LABELS
 
 
 def is_github_actions_permission(label: str, value: str, path: Path) -> bool:
@@ -197,7 +225,7 @@ def scan_text(text: str, path: Path) -> list[Finding]:
         stripped = line.strip()
         if stripped.startswith("|") and stripped.endswith("|"):
             cells = [cell.strip() for cell in stripped[1:-1].split("|")]
-            if len(cells) >= 2 and SENSITIVE_LABEL.search(cells[0]):
+            if len(cells) >= 2 and is_sensitive_table_label(cells[0]):
                 if not is_placeholder(cells[1]):
                     _add_finding(
                         findings,

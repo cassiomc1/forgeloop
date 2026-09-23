@@ -4,6 +4,7 @@ import unittest
 
 from scripts.scan_secrets import (
     format_finding,
+    is_sensitive_table_label,
     scan_repository,
     scan_text,
     should_scan_path,
@@ -71,6 +72,68 @@ class SecretScannerTests(unittest.TestCase):
             table_row,
             "sensitive-table-value",
         )
+
+    def test_detects_sensitive_markdown_table_value_variants(self) -> None:
+        secret_value = "live-value-that-must-not-be-committed"
+        rows = "\n".join(
+            (
+                "| API " + "key | " + secret_value + " | source |",
+                "| pass" + "word | " + secret_value + " | config |",
+                "| cred" + "ential | " + secret_value + " | source |",
+            )
+        )
+        findings = scan_text(rows, Path("fixture.md"))
+        lines = {finding.line for finding in findings}
+        self.assertIn("sensitive-table-value", {finding.rule for finding in findings})
+        self.assertEqual({1, 2, 3}, lines)
+
+    def test_accepts_descriptive_threat_table_prose(self) -> None:
+        rows = "\n".join(
+            (
+                "| Cred"
+                "ential or path leakage in errors and results | No raw stderr, environment, absolute cache path, or credentialed URL in public errors | residual |",
+                "| Cook"
+                "ie, token, authorization, signed URL, or path leakage | Public provider failures are generic | residual |",
+                "| Session/profile or ambient cred"
+                "ential reuse | Fresh random session and filtered environment | residual |",
+                "| Ambient cred"
+                "ential or secret leakage | Minimal environment allowlist and bounded output | residual |",
+            )
+        )
+        rules = {
+            finding.rule
+            for finding in scan_text(rows, Path("THREAT_MODEL.md"))
+        }
+        self.assertNotIn("sensitive-table-value", rules)
+
+    def test_sensitive_table_label_vocabulary_is_exact(self) -> None:
+        for label in (
+            "password",
+            "passwd",
+            "token",
+            "API token",
+            "api key",
+            "access token",
+            "auth token",
+            "credential",
+            "credentials",
+            "client secret",
+            "private key",
+            "  Password  ",
+        ):
+            with self.subTest(label=label):
+                self.assertTrue(is_sensitive_table_label(label))
+        for label in (
+            "Credential or path leakage in errors and results",
+            "Cookie, token, authorization, signed URL, or path leakage",
+            "Session/profile or ambient credential reuse",
+            "Ambient credential or secret leakage",
+            "secret",
+            "api_key",
+            "password rotation policy",
+        ):
+            with self.subTest(label=label):
+                self.assertFalse(is_sensitive_table_label(label))
 
     def test_accepts_safe_placeholders(self) -> None:
         text = "\n".join(
