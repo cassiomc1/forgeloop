@@ -120,9 +120,9 @@ function safeText(value, fallback = null) {
 
   const urls = [];
   redacted = redacted.replace(URL_PATTERN, (url) => {
-    const token = `__AUDIT_UX_URL_${urls.length}__`;
+    const marker = `__AUDIT_UX_URL_${urls.length}__`;
     urls.push(url);
-    return token;
+    return marker;
   });
   redacted = redacted.replace(POSIX_PATH_PATTERN, "$1<path>");
   return boundedText(
