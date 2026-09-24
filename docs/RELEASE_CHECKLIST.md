@@ -3,10 +3,10 @@
 This is the current release checklist for `@cassiomc1/forgeloop`. It is a
 preparation and verification checklist; it does not authorize publication.
 
-## ForgeLoop 1.12.0 candidate scope
+## ForgeLoop 1.14.0 candidate scope
 
-The 1.12.0 candidate carries the first-class Flutter guide and deterministic,
-scope-aware project routing added by PR #165. The candidate must keep these
+The 1.14.0 candidate carries the protocol, routing, provider, documentation,
+and package changes present in current `main`. The candidate must keep these
 boundaries explicit:
 
 - [ ] README catalog and architecture fallback identify

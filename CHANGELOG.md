@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Changes for the next release will be recorded here.
+
+## 1.14.0 - 2026-09-24
+
 ### Added
 
 - Added the provider-neutral `providerExtensions` architecture and reference
