@@ -174,7 +174,7 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
     name: "test-prune-plan", category: "diagnostics", mutation: "READ_ONLY",
     options: Object.freeze({ ...CLI_COMMON_OPTIONS, ...CLI_TASK_OPTION, "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit test prune plan as JSON" }) }),
     writes: [], removes: [], mayExecuteExternalProcess: false,
-    description: "Projects KEEP, REWRITE, PROBE_REMOVAL, or BLOCKED without deleting tests.",
+    description: "Projects KEEP, PROBE_REMOVAL, or BLOCKED without deleting tests.",
   }),
   "test-prune-probe": Object.freeze({
     name: "test-prune-probe", category: "verification", mutation: "EXTERNAL_EXECUTION",

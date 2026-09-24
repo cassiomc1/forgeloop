@@ -116,6 +116,7 @@ test("documentation manifest rejects an unmapped normative requirement", async (
     await cp("docs", path.join(tempDir, "docs"), { recursive: true });
     await cp("src", path.join(tempDir, "src"), { recursive: true });
     await cp("tests", path.join(tempDir, "tests"), { recursive: true });
+    await cp("package.json", path.join(tempDir, "package.json"));
     await cp("LOOP_ENGINEERING.md", path.join(tempDir, "LOOP_ENGINEERING.md"));
     await cp("GUIDE_ROUTER.md", path.join(tempDir, "GUIDE_ROUTER.md"));
     await cp("TERMINOLOGY.md", path.join(tempDir, "TERMINOLOGY.md"));
@@ -125,6 +126,28 @@ test("documentation manifest rejects an unmapped normative requirement", async (
     const result = await validateDocumentationManifest({ rootDir: tempDir });
     assert.equal(result.valid, false);
     assert.ok(result.errors.some((error) => error.includes("DOC_REQUIREMENT_MAPPING_MISSING: FL-CONT-001")));
+  } finally {
+    await rm(tempDir, { recursive: true, force: true });
+  }
+});
+
+test("documentation manifest rejects an omitted packaged document", async () => {
+  const tempDir = await mkdtemp(path.join(os.tmpdir(), "forgeloop-packaged-doc-test-"));
+  try {
+    await cp("docs", path.join(tempDir, "docs"), { recursive: true });
+    await cp("src", path.join(tempDir, "src"), { recursive: true });
+    await cp("tests", path.join(tempDir, "tests"), { recursive: true });
+    await cp("package.json", path.join(tempDir, "package.json"));
+    for (const file of ["LOOP_ENGINEERING.md", "GUIDE_ROUTER.md", "TERMINOLOGY.md", "THREAT_MODEL.md"]) {
+      await cp(file, path.join(tempDir, file));
+    }
+    const manifestPath = path.join(tempDir, "docs", "documentation-manifest.json");
+    const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+    manifest.documents = manifest.documents.filter((entry) => entry.path !== "docs/JEV_BENCHMARKS.md");
+    await writeFile(manifestPath, JSON.stringify(manifest, null, 2));
+    const result = await validateDocumentationManifest({ rootDir: tempDir });
+    assert.equal(result.valid, false);
+    assert.ok(result.errors.includes("DOC_MANIFEST_PACKAGED_DOCUMENT_MISSING: docs/JEV_BENCHMARKS.md"));
   } finally {
     await rm(tempDir, { recursive: true, force: true });
   }

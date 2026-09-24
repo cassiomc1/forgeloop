@@ -67,6 +67,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install locked Node toolchain
         run: npm ci --ignore-scripts
+      - name: Enforce repository hygiene
+        run: npm run repository:hygiene
       - name: Enforce dependency policy
         run: npm run dependency:policy
       - name: Lint JavaScript

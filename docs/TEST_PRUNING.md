@@ -1,6 +1,6 @@
 # Test pruning safety
 
-`test-prune-plan` can return `KEEP`, `REWRITE`, `PROBE_REMOVAL`, or `BLOCKED`.
+`test-prune-plan` can return `KEEP`, `PROBE_REMOVAL`, or `BLOCKED`.
 `PROBE_REMOVAL` requires both protected-test policy and sufficient deterministic
 and semantic evidence. Unknown utility is `BLOCKED`.
 

@@ -77,14 +77,14 @@ The project already has these components:
 
 | Existing file | Existing responsibility | How to use it |
 | --- | --- | --- |
-| [src/integration.js](src/integration.js) | Public Integration API exports | Export the new adapter factory here. |
-| [src/integration.d.ts](src/integration.d.ts) | Public TypeScript declarations | Add matching declarations for the new factory. |
-| [src/core/runtime-context.js](src/core/runtime-context.js) | Host runtime context and provider registration | Reuse registration; do not add automatic registration. |
-| [src/core/advisory-context/service.js](src/core/advisory-context/service.js) | Explicit recall, provider resolution, limits, timeout | Call through this service; keep its existing contract. |
-| [src/core/advisory-context/provider.js](src/core/advisory-context/provider.js) | Provider validation and allowlisted result normalization | Return compatible items; do not bypass normalization. |
-| [src/core/advisory-context/constants.js](src/core/advisory-context/constants.js) | Canonical recall budgets and trust labels | Import these limits instead of creating a competing policy. |
-| [src/core/execution-profile-context.js](src/core/execution-profile-context.js) | Read-only task context projection | Preserve its lazy behavior. Reading context must not launch Ripwire. |
-| [docs/ADVISORY_CONTEXT.md](docs/ADVISORY_CONTEXT.md) | Advisory integration documentation | Add a short registration example and link to the adapter guide. |
+| [src/integration.js](../../../src/integration.js) | Public Integration API exports | Export the new adapter factory here. |
+| [src/integration.d.ts](../../../src/integration.d.ts) | Public TypeScript declarations | Add matching declarations for the new factory. |
+| [src/core/runtime-context.js](../../../src/core/runtime-context.js) | Host runtime context and provider registration | Reuse registration; do not add automatic registration. |
+| [src/core/advisory-context/service.js](../../../src/core/advisory-context/service.js) | Explicit recall, provider resolution, limits, timeout | Call through this service; keep its existing contract. |
+| [src/core/advisory-context/provider.js](../../../src/core/advisory-context/provider.js) | Provider validation and allowlisted result normalization | Return compatible items; do not bypass normalization. |
+| [src/core/advisory-context/constants.js](../../../src/core/advisory-context/constants.js) | Canonical recall budgets and trust labels | Import these limits instead of creating a competing policy. |
+| [src/core/execution-profile-context.js](../../../src/core/execution-profile-context.js) | Read-only task context projection | Preserve its lazy behavior. Reading context must not launch Ripwire. |
+| [docs/ADVISORY_CONTEXT.md](../../ADVISORY_CONTEXT.md) | Advisory integration documentation | Add a short registration example and link to the adapter guide. |
 
 The existing item fields are `title`, `summary`, `sourceRef`, `observedAt`, and numeric `confidence`. The core adds `itemFingerprint` after normalization. Unknown fields are discarded.
 
@@ -495,7 +495,7 @@ These links pin the inspected upstream source revision:
 - [Ripwire command reference](https://github.com/redhat-et/ripwire/blob/93c8edaafdb5499e89939cc2cebd0429e278e86f/docs/COMMANDS.md): query modes, output-format restrictions, caps, and cache controls.
 - [Ripwire architecture](https://github.com/redhat-et/ripwire/blob/93c8edaafdb5499e89939cc2cebd0429e278e86f/docs/ARCHITECTURE.md): approximate reference resolution and deterministic output design.
 - [Ripwire evaluations](https://github.com/redhat-et/ripwire/blob/93c8edaafdb5499e89939cc2cebd0429e278e86f/docs/EVALS.md): upstream experimental methods and counterexamples; not a measured ForgeLoop benefit.
-- [ForgeLoop advisory boundary](docs/ADVISORY_CONTEXT.md): existing API, normalization, and trust guarantees.
-- [ForgeLoop protocol integration](PROTOCOL_INTEGRATION.md): host ownership and canonical evidence boundaries.
+- [ForgeLoop advisory boundary](../../ADVISORY_CONTEXT.md): existing API, normalization, and trust guarantees.
+- [ForgeLoop protocol integration](../../../PROTOCOL_INTEGRATION.md): host ownership and canonical evidence boundaries.
 
 All adapter filenames, factory names, transport defaults, and benchmark design in this plan are proposed implementation decisions. They are not claims that those features already exist. No Ripwire binary was installed or executed while this plan was written.

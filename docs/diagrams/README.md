@@ -39,19 +39,23 @@ dark presentation so it remains legible in repository previews; the adjacent tex
 [`README.md`](../../README.md#architecture-flow) carries the same lifecycle
 semantics for text-only readers.
 
-Advisory context, including the optional Ripwire adapter, is intentionally not
-drawn as a lifecycle node or transition. It is a host-injected, explicit,
-non-evidence input that can guide inspection while remaining outside state,
-authority, verification, completion, and next-action decisions. Its boundary
-is documented in [`ADVISORY_CONTEXT.md`](../ADVISORY_CONTEXT.md) and
-[`RIPWIRE_ADAPTER.md`](../RIPWIRE_ADAPTER.md); keeping it out of these P0
-visuals prevents an optional side channel from being mistaken for protocol
-control flow.
+Jev is shown only as a bounded semantic checkpoint outside lifecycle authority.
+Its invocation is mandatory where required, but its typed result cannot advance
+state, release claims, satisfy gates, create evidence, complete a task, or
+authorize publication. Advisory context, including the optional Ripwire adapter,
+is intentionally not drawn as a lifecycle node or transition. It is a
+host-injected, explicit, non-evidence input that can guide inspection while
+remaining outside state, authority, verification, completion, and next-action
+decisions. Its boundary is documented in
+[`ADVISORY_CONTEXT.md`](../ADVISORY_CONTEXT.md) and
+[`RIPWIRE_ADAPTER.md`](../RIPWIRE_ADAPTER.md).
 
 Archify is vendored at `vendor/archify/v2.15.0/archify` under its MIT license.
 The exact source commit and cryptographic vendor-tree hash are recorded in
 `vendor/archify/v2.15.0/PIN.json`; generated-file hashes are recorded in the
-receipt and the visual approval binds the current source and SVG fingerprints.
+receipt. A review file binds the current source and SVG fingerprints as a
+review assertion; the checker does not independently authenticate the reviewer
+or prove that a person inspected the rendered artifact.
 
 `PIN.json` uses ForgeLoop Archify PIN `schemaVersion: 2`. This version describes
 the metadata and integrity-declaration format and is independent of Archify's

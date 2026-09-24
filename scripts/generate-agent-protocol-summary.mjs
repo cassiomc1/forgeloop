@@ -176,7 +176,7 @@ or \`NOT_COMPARABLE\` when evidence is absent or incompatible. See
 - Responsibility contracts constrain paths, checks, and frozen inputs; they do not prove identity or authorship.
 - Verification scope describes planned verification breadth. Attestation coverage proves content for a concrete revision. These are separate claims.
 - Attestation manifests exclude ForgeLoop protocol metadata and bind to the completion receipt and append-only ledger without circular references.
-- Verification commands are read-only. Signing is external; private keys and credentials are never persisted by ForgeLoop.
+- Verification command execution is external and provenance-bearing; ForgeLoop records the exact argv and result, while the authorized command may perform its declared effects. Signing is external; private keys and credentials are never persisted by ForgeLoop.
 
 ## Lifecycle
 

@@ -1,12 +1,18 @@
 # Model routing
 
-ForgeLoop exposes model routing as a bounded, non-authoritative projection. The
-deterministic policy establishes the safety floor:
+ForgeLoop exposes model routing as a bounded semantic-decision projection. It
+has `SEMANTIC_DECISION` authority only within the declared decision contract;
+it has no lifecycle, completion, evidence, ownership, installation, command, or
+publication authority. The deterministic policy establishes the safety floor:
 
 - `NONE` when no generation is required;
 - `STANDARD` for ordinary executable generation;
 - `PRIMARY` for security, architecture, migration, ambiguity, and other
   high-risk signals.
+
+The deterministic floor currently emits `NONE`, `STANDARD`, or `PRIMARY`. The
+public vocabulary also includes `FAST`, which is available only as an advisory
+escalation and cannot lower the deterministic floor.
 
 The pinned Jev model (`jev-1.13.0`) may recommend an escalation or request an
 escalation when confidence is low. It can never lower the deterministic floor,

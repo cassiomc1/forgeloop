@@ -369,6 +369,7 @@
       "title": "Fail-Closed Narrowing",
       "items": [
         "AUTO uses CHANGED or CLAIMED only with a trusted scoped checker",
+        "AUTO falls back to CLAIMED when changed paths cannot be safely narrowed and claims are valid; otherwise it falls back to FULL",
         "Without that capability, AUTO resolves safely to FULL",
         "Explicit CHANGED or CLAIMED without a checker returns unresolved",
         "A test name or file filter is not a canonical scope boundary"

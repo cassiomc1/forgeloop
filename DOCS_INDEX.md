@@ -47,6 +47,18 @@ integration and guide context. Use this map before editing documentation.
 | Adaptive execution-profile benchmarks | [`docs/EXECUTION_PROFILE_BENCHMARKS.md`](./docs/EXECUTION_PROFILE_BENCHMARKS.md) | Measured provider/host runs, robust statistics, paired/distribution deltas, tail status, outliers, and profile-aware host context |
 | Knowledge integration gap analysis | [`docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md`](./docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md) | Repository-only research audit of candidate coverage, proven gaps, canonical homes, context cost, and intentional skip/defer decisions |
 | Knowledge sources and provenance | [`docs/KNOWLEDGE_SOURCES.md`](./docs/KNOWLEDGE_SOURCES.md) | Snapshot, licensing observations, source roles, accepted/skipped concepts, and reuse boundaries |
+| Semantic decision plane | [`docs/SEMANTIC_DECISION_PLANE.md`](./docs/SEMANTIC_DECISION_PLANE.md) | Mandatory bounded Jev/TypeSafe System One decisions, typed non-authoritative results, freshness, and fail-closed boundaries |
+| Model routing | [`docs/MODEL_ROUTING.md`](./docs/MODEL_ROUTING.md) | Model-route tiers, host-model selection, deterministic safety floors, and ForgeLoop authority boundaries |
+| Jev benchmarks | [`docs/JEV_BENCHMARKS.md`](./docs/JEV_BENCHMARKS.md) | Offline fixtures, live interoperability smoke, live benchmark calls, usage, latency, and non-generalized claims |
+| Test intelligence | [`docs/TEST_INTELLIGENCE.md`](./docs/TEST_INTELLIGENCE.md) | Bounded test utility analysis, protected-test rules, semantic classification, and non-evidence status |
+| Test pruning | [`docs/TEST_PRUNING.md`](./docs/TEST_PRUNING.md) | Keep/probe/block planning, isolated probes, and deterministic proof before any removal or rewrite |
+| Repository Index | [`docs/REPOSITORY_INDEX.md`](./docs/REPOSITORY_INDEX.md) | Managed engine, index lifecycle, CLI/API/MCP behavior, privacy, recovery, and search boundaries |
+| Persistent search transport | [`docs/PERSISTENT_SEARCH_TRANSPORT.md`](./docs/PERSISTENT_SEARCH_TRANSPORT.md) | CLI-only local IPC, host ownership, recovery, limits, and direct API/MCP differences |
+| Provider architecture | [`docs/PROVIDER_ARCHITECTURE.md`](./docs/PROVIDER_ARCHITECTURE.md) and [`docs/PROVIDERS.md`](./docs/PROVIDERS.md) | Provider-neutral invocation, strict normalization, cancellation, trust, and non-authority boundaries |
+| Structural quality | [`docs/STRUCTURAL_QUALITY.md`](./docs/STRUCTURAL_QUALITY.md) | Optional provider-neutral baseline, delta policy, and evidence boundaries |
+| Security review | [`docs/SECURITY_REVIEW.md`](./docs/SECURITY_REVIEW.md) | Host-injected bounded security observations and non-authoritative findings |
+| Agent Browser verification | [`docs/AGENT_BROWSER_ADAPTER.md`](./docs/AGENT_BROWSER_ADAPTER.md) and [`docs/AGENT_BROWSER_VERIFICATION.md`](./docs/AGENT_BROWSER_VERIFICATION.md) | Optional browser adapter, exact-origin observations, screenshots, and non-evidence limits |
+| Documentation history | [`docs/history/README.md`](./docs/history/README.md) | Archived audits, release evidence, and completed validation records with current-owner links |
 | Documentation guide | [`docs/DOCUMENTATION_GUIDE.md`](./docs/DOCUMENTATION_GUIDE.md) | Rules and checklist for modifying documentation |
 | Current release checklist | [`docs/RELEASE_CHECKLIST.md`](./docs/RELEASE_CHECKLIST.md) | Package, protocol, attestation, integration, and publication gates |
 | Core npm package contents | [`docs/PACKAGE_CONTENTS.md`](./docs/PACKAGE_CONTENTS.md) | Published consumer surface, intentional inclusions, exclusions, and clean-room verification |
@@ -82,6 +94,10 @@ is historical evidence and is not part of the published core package.
 | --- | --- |
 | **First-time user or developer** | [`docs/GETTING_STARTED.md`](./docs/GETTING_STARTED.md) |
 | **AI coding agent / harness** | [`docs/AGENT_PROTOCOL_SUMMARY.md`](./docs/AGENT_PROTOCOL_SUMMARY.md) → [`AGENTS.md`](./AGENTS.md) → [`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md) |
+| **Understanding mandatory semantic decisions** | [`docs/SEMANTIC_DECISION_PLANE.md`](./docs/SEMANTIC_DECISION_PLANE.md) |
+| **Selecting a model route** | [`docs/MODEL_ROUTING.md`](./docs/MODEL_ROUTING.md) |
+| **Evaluating test utility or pruning** | [`docs/TEST_INTELLIGENCE.md`](./docs/TEST_INTELLIGENCE.md) → [`docs/TEST_PRUNING.md`](./docs/TEST_PRUNING.md) |
+| **Reviewing historical repository evidence** | [`docs/history/README.md`](./docs/history/README.md) |
 | **Technical auditor / Evaluator** | [`poc/README.md`](./poc/README.md) → [`poc/reports/poc-20260826-real-execution-technical-audit-v2.md`](./poc/reports/poc-20260826-real-execution-technical-audit-v2.md) |
 | **Harness integrator** | [`PROTOCOL_INTEGRATION.md`](./PROTOCOL_INTEGRATION.md) |
 | **Audit or operator UI integrator** | [`docs/AUDIT_UX.md`](./docs/AUDIT_UX.md) |
@@ -129,6 +145,10 @@ is historical evidence and is not part of the published core package.
 - **Verify source-content attestations**: [`docs/CODE_ATTESTATION.md`](./docs/CODE_ATTESTATION.md)
 - **Understand narrow verification and checker binding**: [`docs/REVISION_PROVIDERS.md`](./docs/REVISION_PROVIDERS.md#differential-verification-scope)
 - **Inspect the governed diagrams**: [`docs/diagrams/README.md`](./docs/diagrams/README.md)
+- **Understand mandatory Jev semantics**: [`docs/SEMANTIC_DECISION_PLANE.md`](./docs/SEMANTIC_DECISION_PLANE.md)
+- **Understand model routing**: [`docs/MODEL_ROUTING.md`](./docs/MODEL_ROUTING.md)
+- **Review test utility and pruning safety**: [`docs/TEST_INTELLIGENCE.md`](./docs/TEST_INTELLIGENCE.md) and [`docs/TEST_PRUNING.md`](./docs/TEST_PRUNING.md)
+- **Review historical validation evidence**: [`docs/history/README.md`](./docs/history/README.md)
 
 `README.md` is intentionally a catalog and quickstart. Do not copy the full
 process into adapters or README sections; link to the canonical source.
@@ -136,7 +156,7 @@ process into adapters or README sections; link to the canonical source.
 ## Lifecycle reading order
 
 1. Read [`README.md`](./README.md) for scope and quickstart.
-2. Read [`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md) for the process gates.
+2. Read [`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md) for the process gates and [`docs/SEMANTIC_DECISION_PLANE.md`](./docs/SEMANTIC_DECISION_PLANE.md) for mandatory bounded semantic checkpoints.
 3. Read [`PROTOCOL_INTEGRATION.md`](./PROTOCOL_INTEGRATION.md) for the active
    runtime or harness boundary.
 4. Inspect [`PROJECT_PROFILE.md`](./PROJECT_PROFILE.md) and confirm facts from
@@ -163,8 +183,9 @@ loop, and secret-scanning contracts that have not been migrated to Node. Their
 scope, exact commands, and migration boundary are recorded in
 [`scripts/CI_VALIDATORS.md`](./scripts/CI_VALIDATORS.md).
 
-The package uses the approved exact `smol-toml` runtime dependency for bounded
-Cargo manifest parsing. Development dependencies remain limited to c8, ESLint,
+The package uses the approved exact `@typesafe-ai/sdk` dependency for the pinned
+semantic decision plane and `smol-toml` for bounded Cargo manifest parsing.
+Development dependencies remain limited to c8, ESLint,
 TypeScript, and YAML and are checked by `npm run dependency:policy`. GitHub
 Actions use `npm ci`, pinned action SHAs, CodeQL, dependency review, and
 generated-release notes; npm publication still uses trusted OIDC publishing

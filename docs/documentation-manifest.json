@@ -171,7 +171,7 @@
         "harness"
       ],
       "canonicalFor": [],
-      "packaged": false,
+      "packaged": true,
       "replacement": "PROTOCOL_INTEGRATION.md",
       "removalPolicy": "Remove in the next compatibility-breaking package release."
     },
@@ -185,7 +185,7 @@
       "canonicalFor": [
         "project-profile"
       ],
-      "packaged": false
+      "packaged": true
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
@@ -197,7 +197,7 @@
       "canonicalFor": [
         "third-party-notices"
       ],
-      "packaged": false
+      "packaged": true
     },
     {
       "path": "LICENSE-DOCS.md",
@@ -209,7 +209,7 @@
       "canonicalFor": [
         "documentation-license"
       ],
-      "packaged": false
+      "packaged": true
     },
     {
       "path": ".github/copilot-instructions.md",
@@ -219,7 +219,7 @@
         "harness"
       ],
       "canonicalFor": [],
-      "packaged": false
+      "packaged": true
     },
     {
       "path": "README.md",
@@ -580,7 +580,7 @@
     {
       "path": "docs/AGENT_SKILL.md",
       "id": "agent-skill",
-      "class": "integration/reference",
+      "class": "reference",
       "audience": [
         "integrator",
         "maintainer"
@@ -661,8 +661,13 @@
       "path": "docs/SECURITY_REVIEW.md",
       "id": "security-review",
       "class": "guide",
-      "audience": ["integrator", "maintainer"],
-      "canonicalFor": ["security-review-provider"],
+      "audience": [
+        "integrator",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "security-review-provider"
+      ],
       "packaged": true
     },
     {
@@ -726,16 +731,666 @@
       "path": "docs/AGENT_BROWSER_ADAPTER.md",
       "id": "agent-browser-adapter",
       "class": "guide",
-      "audience": ["integrator", "maintainer"],
-      "canonicalFor": ["agent-browser-adapter"],
+      "audience": [
+        "integrator",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "agent-browser-adapter"
+      ],
       "packaged": true
     },
     {
       "path": "docs/AGENT_BROWSER_VERIFICATION.md",
       "id": "agent-browser-verification",
       "class": "guide",
-      "audience": ["integrator", "maintainer"],
+      "audience": [
+        "integrator",
+        "maintainer"
+      ],
       "canonicalFor": [],
+      "packaged": true
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "id": "contributing",
+      "class": "guide",
+      "audience": [
+        "maintainer",
+        "contributor"
+      ],
+      "canonicalFor": [
+        "contribution-workflow"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "benchmarks/execution-profiles/README.md",
+      "id": "execution-profile-benchmark-guide",
+      "class": "guide",
+      "audience": [
+        "maintainer",
+        "integrator"
+      ],
+      "canonicalFor": [
+        "execution-profile-benchmark-reproduction"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "benchmarks/repository-index/README.md",
+      "id": "repository-index-benchmark-guide",
+      "class": "guide",
+      "audience": [
+        "maintainer",
+        "integrator"
+      ],
+      "canonicalFor": [
+        "repository-index-benchmark-reproduction"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "docs/JEV_BENCHMARKS.md",
+      "id": "jev-benchmarks",
+      "class": "reference",
+      "audience": [
+        "maintainer",
+        "integrator"
+      ],
+      "canonicalFor": [
+        "jev-benchmark-boundaries"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "docs/MODEL_ROUTING.md",
+      "id": "model-routing",
+      "class": "reference",
+      "audience": [
+        "maintainer",
+        "integrator"
+      ],
+      "canonicalFor": [
+        "model-routing"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "docs/SEMANTIC_DECISION_PLANE.md",
+      "id": "semantic-decision-plane",
+      "class": "reference",
+      "audience": [
+        "maintainer",
+        "integrator",
+        "harness"
+      ],
+      "canonicalFor": [
+        "semantic-decision-plane"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "docs/TEST_INTELLIGENCE.md",
+      "id": "test-intelligence",
+      "class": "reference",
+      "audience": [
+        "maintainer",
+        "integrator"
+      ],
+      "canonicalFor": [
+        "test-intelligence"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "docs/TEST_PRUNING.md",
+      "id": "test-pruning",
+      "class": "reference",
+      "audience": [
+        "maintainer",
+        "integrator"
+      ],
+      "canonicalFor": [
+        "test-pruning"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "docs/BROWSER_VERIFICATION.md",
+      "id": "browser-verification",
+      "class": "reference",
+      "audience": [
+        "integrator",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "browser-verification"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "docs/ASTRA_IMPLEMENTATION.md",
+      "id": "astra-implementation",
+      "class": "historical",
+      "audience": [
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "astra-implementation-history"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "docs/STALE_GATE_REVALIDATION.md",
+      "id": "stale-gate-revalidation",
+      "class": "guide",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "stale-gate-revalidation"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "docs/history/README.md",
+      "id": "documentation-history-index",
+      "class": "index",
+      "audience": [
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "documentation-history"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "docs/history/astra-code-audit-20260904.md",
+      "id": "astra-code-audit-20260904",
+      "class": "historical",
+      "audience": [
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "astra-code-audit-history"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "docs/history/releases/RELEASE_EVIDENCE_1_10_ECOSYSTEM.md",
+      "id": "release-evidence-1-10-ecosystem",
+      "class": "historical",
+      "audience": [
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "release-evidence-1-10-ecosystem"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "docs/history/validation/FORGELOOP_1_11_0_RELEASE_VALIDATION.md",
+      "id": "release-validation-1-11",
+      "class": "historical",
+      "audience": [
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "release-validation-1-11"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "docs/history/validation/FORGELOOP_1_11_0_POST_RELEASE_VALIDATION.md",
+      "id": "post-release-validation-1-11",
+      "class": "historical",
+      "audience": [
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "post-release-validation-1-11"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "docs/history/validation/FORGELOOP_GITHUB_CI_MINIMIZATION_VALIDATION.md",
+      "id": "github-ci-minimization-validation",
+      "class": "historical",
+      "audience": [
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "github-ci-minimization-history"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "docs/history/validation/FORGELOOP_PERSISTENT_SEARCH_TRANSPORT_VALIDATION_REPORT.md",
+      "id": "persistent-search-transport-validation",
+      "class": "historical",
+      "audience": [
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "persistent-search-transport-validation-history"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "docs/history/validation/FORGELOOP_REPOSITORY_INDEX_DOCTOR_PRIVACY_FIX_VALIDATION.md",
+      "id": "repository-index-privacy-validation",
+      "class": "historical",
+      "audience": [
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "repository-index-privacy-validation-history"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "docs/history/validation/FORGELOOP_RIPWIRE_IMPLEMENTATION_PLAN.md",
+      "id": "ripwire-implementation-plan",
+      "class": "historical",
+      "audience": [
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "ripwire-implementation-history"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "benchmarks/execution-profiles/adaptive-efficiency-benchmark-20260831.md",
+      "id": "adaptive-efficiency-benchmark-20260831",
+      "class": "historical",
+      "audience": [
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "adaptive-efficiency-benchmark-20260831"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "ENG/premium-sites-studio-eng.md",
+      "id": "guide-premium",
+      "class": "guide",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "guide-premium"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "ENG/clean-code-eng.md",
+      "id": "guide-clean",
+      "class": "guide",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "guide-clean"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "ENG/test-code-eng.md",
+      "id": "guide-test",
+      "class": "guide",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "guide-test"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "ENG/sec-code-eng.md",
+      "id": "guide-security",
+      "class": "guide",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "guide-security"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "ENG/design-code-eng.md",
+      "id": "guide-design",
+      "class": "guide",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "guide-design"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "ENG/taste-frontend-eng.md",
+      "id": "guide-taste",
+      "class": "guide",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "guide-taste"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "ENG/perf-code-eng.md",
+      "id": "guide-performance",
+      "class": "guide",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "guide-performance"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "ENG/accessibility-eng.md",
+      "id": "guide-accessibility",
+      "class": "guide",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "guide-accessibility"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "ENG/games-code-design-web-eng.md",
+      "id": "guide-games",
+      "class": "guide",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "guide-games"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "ENG/documentation-quality-eng.md",
+      "id": "guide-documentation",
+      "class": "guide",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "guide-documentation"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "ENG/flutter-development-eng.md",
+      "id": "guide-flutter",
+      "class": "guide",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "guide-flutter"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "ENG/dotnet-aspnetcore-development-eng.md",
+      "id": "guide-dotnet",
+      "class": "guide",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "guide-dotnet"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "ENG/nodejs-backend-development-eng.md",
+      "id": "guide-nodejs",
+      "class": "guide",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "guide-nodejs"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "ENG/rust-development-eng.md",
+      "id": "guide-rust",
+      "class": "guide",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "guide-rust"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "ENG/c-development-eng.md",
+      "id": "guide-c",
+      "class": "guide",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "guide-c"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "ENG/cpp-development-eng.md",
+      "id": "guide-cpp",
+      "class": "guide",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "guide-cpp"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "ENG/java-development-eng.md",
+      "id": "guide-java",
+      "class": "guide",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "guide-java"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "ENG/sql-development-eng.md",
+      "id": "guide-sql",
+      "class": "guide",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "guide-sql"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "ENG/go-development-eng.md",
+      "id": "guide-go",
+      "class": "guide",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "guide-go"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "ENG/typescript-development-eng.md",
+      "id": "guide-typescript",
+      "class": "guide",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "guide-typescript"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "ENG/php-development-eng.md",
+      "id": "guide-php",
+      "class": "guide",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "guide-php"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "ENG/swift-development-eng.md",
+      "id": "guide-swift",
+      "class": "guide",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "guide-swift"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "skills/forgeloop/SKILL.md",
+      "id": "forge-loop-skill",
+      "class": "generated",
+      "audience": [
+        "harness",
+        "integrator"
+      ],
+      "canonicalFor": [
+        "forge-loop-skill"
+      ],
+      "packaged": true,
+      "generator": "scripts/generate-forgeloop-skill.mjs"
+    },
+    {
+      "path": "skills/forgeloop/README.md",
+      "id": "forge-loop-skill-readme",
+      "class": "generated",
+      "audience": [
+        "harness",
+        "integrator"
+      ],
+      "canonicalFor": [
+        "forge-loop-skill-readme"
+      ],
+      "packaged": true,
+      "generator": "scripts/generate-forgeloop-skill.mjs"
+    },
+    {
+      "path": "skills/forgeloop/references/lifecycle.md",
+      "id": "forge-loop-skill-lifecycle",
+      "class": "generated",
+      "audience": [
+        "harness",
+        "integrator"
+      ],
+      "canonicalFor": [
+        "forge-loop-skill-lifecycle"
+      ],
+      "packaged": true,
+      "generator": "scripts/generate-forgeloop-skill.mjs"
+    },
+    {
+      "path": "skills/forgeloop/references/verification.md",
+      "id": "forge-loop-skill-verification",
+      "class": "generated",
+      "audience": [
+        "harness",
+        "integrator"
+      ],
+      "canonicalFor": [
+        "forge-loop-skill-verification"
+      ],
+      "packaged": true,
+      "generator": "scripts/generate-forgeloop-skill.mjs"
+    },
+    {
+      "path": "skills/forgeloop/references/recovery.md",
+      "id": "forge-loop-skill-recovery",
+      "class": "generated",
+      "audience": [
+        "harness",
+        "integrator"
+      ],
+      "canonicalFor": [
+        "forge-loop-skill-recovery"
+      ],
+      "packaged": true,
+      "generator": "scripts/generate-forgeloop-skill.mjs"
+    },
+    {
+      "path": ".cursor/rules/project-loop.mdc",
+      "id": "cursor-adapter",
+      "class": "adapter",
+      "audience": [
+        "harness"
+      ],
+      "canonicalFor": [],
+      "packaged": true
+    },
+    {
+      "path": "src/providers/README.md",
+      "id": "provider-source-readme",
+      "class": "reference",
+      "audience": [
+        "maintainer",
+        "integrator"
+      ],
+      "canonicalFor": [
+        "provider-source-boundary"
+      ],
       "packaged": true
     }
   ]

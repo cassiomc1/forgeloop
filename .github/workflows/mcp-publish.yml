@@ -39,7 +39,7 @@ jobs:
           actual="$(node -p "JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version")"
           test "$expected" = "$actual"
       - name: Install MCP release dependencies
-        run: npm install --ignore-scripts --no-audit --no-fund
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Run MCP tests
         run: npm test
       - name: Publish with trusted publishing

@@ -10,7 +10,7 @@ function ids(tier) {
 
 test("fast tier is short and deterministic", () => {
   const fast = ids("fast");
-  assert.deepEqual(fast, ["test:quick", "lint", "dependency:policy", "docs:generated:check"]);
+  assert.deepEqual(fast, ["test:quick", "lint", "dependency:policy", "docs:generated:check", "repository:hygiene"]);
   assert.equal(fast.includes("coverage"), false);
   assert.equal(fast.some((id) => id.startsWith("python-")), false);
 });
@@ -38,6 +38,7 @@ test("local tier owns deterministic source and documentation checks", () => {
     "summary:check",
     "changelog:check",
     "repository-index:manifest",
+    "repository:hygiene",
     "python-unittest",
     "markdown-validator",
     "loop-validator",

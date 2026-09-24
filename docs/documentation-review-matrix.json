@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "purpose": "Record the source-of-truth review performed during the Archify documentation diagram migration.",
+  "purpose": "Record the current repository-wide source-of-truth documentation review; diagramMigration preserves the historical Archify migration context.",
   "diagramMigration": {
     "activeMermaidArtifacts": [],
     "canonicalSource": "docs/diagrams/forgeloop-engineering-flow.workflow.json",
@@ -10,64 +10,1607 @@
     "textFallback": "README.md#architecture-flow"
   },
   "documents": [
-    { "path": "AGENTS.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["LOOP_ENGINEERING.md", "PROTOCOL_INTEGRATION.md", "docs/REPOSITORY_INDEX.md"] },
-    { "path": "CLAUDE.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["AGENTS.md", "docs/REPOSITORY_INDEX.md"] },
-    { "path": "GUIDE_ROUTER.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["src/config/guides.json"] },
-    { "path": "LOOP_ENGINEERING.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["src/core/protocol.js", "src/core/verification-execution.js", "schemas/"] },
-    { "path": "PROTOCOL_INTEGRATION.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["src/integration.js", "src/core/verification-execution.js", "src/core/runtime-context.js"] },
-    { "path": "LOOP_SYSTEM_DESIGN.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["src/core/protocol.js", "THREAT_MODEL.md"] },
-    { "path": "QUALITY_SCORECARD.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["ENG/", "CONTRACT_COVERAGE.md"] },
-    { "path": "TERMINOLOGY.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["LOOP_ENGINEERING.md", "PROTOCOL_INTEGRATION.md"] },
-    { "path": "EXECUTION_STATE.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["schemas/", "src/core/artifact-registry.js"] },
-    { "path": "DELEGATION_PROTOCOL.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["src/core/task-claim-state.js", "src/core/recovery-history.js"] },
-    { "path": "ORCHESTRATOR_INTEGRATION.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["src/core/protocol.js", "src/core/cli-command-definitions.js"] },
-    { "path": "THREAT_MODEL.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["src/core/verification-execution.js", "src/core/command-input.js", "package.json"] },
-    { "path": "CONTRACT_COVERAGE.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["tests/", "scripts/"] },
-    { "path": "AGENT_COMPATIBILITY.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["PROTOCOL_INTEGRATION.md"] },
-    { "path": "PROJECT_PROFILE.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["PROJECT_PROFILE.md"] },
-    { "path": "THIRD_PARTY_NOTICES.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["LICENSE", "LICENSE-DOCS.md", "vendor/archify/v2.15.0/PIN.json"] },
-    { "path": "LICENSE-DOCS.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["LICENSE-DOCS.md", "THIRD_PARTY_NOTICES.md"] },
-    { "path": ".github/copilot-instructions.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["AGENTS.md", "LOOP_ENGINEERING.md", "docs/REPOSITORY_INDEX.md"] },
-    { "path": "README.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["DOCS_INDEX.md", "LOOP_ENGINEERING.md", "docs/diagrams/forgeloop-engineering-flow.workflow.json"] },
-    { "path": "DOCS_INDEX.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["docs/documentation-manifest.json", "docs/diagrams/manifest.json"] },
-    { "path": "docs/GETTING_STARTED.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["src/cli.js", "LOOP_ENGINEERING.md", "docs/REPOSITORY_INDEX.md"] },
-    { "path": "docs/CROSS_HARNESS_CONTINUITY.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["PROTOCOL_INTEGRATION.md", "src/core/discovery-surfaces.js"] },
-    { "path": "docs/CLI_REFERENCE.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["src/core/cli-command-definitions.js"] },
-    { "path": "docs/ARTIFACT_REFERENCE.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["src/core/artifact-registry.js", "schemas/"] },
-    { "path": "docs/TROUBLESHOOTING.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["src/core/error-codes.js", "src/core/protocol.js", "src/repository-index/errors.js"] },
-    { "path": "docs/RECIPES.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["docs/CLI_REFERENCE.md", "LOOP_ENGINEERING.md"] },
-    { "path": "docs/DOCUMENTATION_GUIDE.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["docs/documentation-manifest.json", "docs/diagrams/manifest.json", "package.json"] },
-    { "path": "docs/diagrams/README.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["docs/diagrams/manifest.json", "vendor/archify/v2.15.0/PIN.json", "docs/PERSISTENT_SEARCH_TRANSPORT.md"] },
-    { "path": "docs/RELEASE_CHECKLIST_1_4.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["LOOP_ENGINEERING.md", "docs/CLI_REFERENCE.md"] },
-    { "path": "scripts/CI_VALIDATORS.md", "status": "reviewed", "action": "updated", "sourceOfTruth": [".github/workflows/docs.yml", ".github/workflows/pr-core.yml", "scripts/"] },
-    { "path": "docs/MCP.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["integrations/mcp/src/", "integrations/mcp/package.json"] },
-    { "path": "docs/UNIVERSAL_INTEGRATION.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["src/integration.js", "src/core/integration-resources.js", "src/persistent-transport/"] },
-    { "path": "docs/AUDIT_UX.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/core/audit-ux.js", "src/core/integration-resources.js", "src/integration.d.ts", "tests/audit-ux.test.js"] },
-    { "path": "docs/RELEASE_CHECKLIST_1_5_MCP.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["docs/MCP.md", "docs/UNIVERSAL_INTEGRATION.md"] },
-    { "path": "docs/RELEASE_CHECKLIST_1_6_1.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["package.json", "src/core/verification-execution.js", "src/core/protocol-info.js", ".github/workflows/npm-publish.yml", "scripts/verify_release_identity.mjs"] },
-    { "path": "docs/RELEASE_CHECKLIST.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["package.json", ".github/workflows/", "scripts/", "docs/EXECUTION_PROFILE_BENCHMARKS.md"] },
-    { "path": "docs/PACKAGE_CONTENTS.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["package.json", "tests/package.test.js", "scripts/package_smoke.mjs", "docs/RELEASE_CHECKLIST.md"] },
-    { "path": "docs/CODE_ATTESTATION.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/core/attestation.js", "src/core/attestation-verifier.js", "schemas/code-attestation.schema.json", "schemas/in-toto-statement.schema.json"] },
-    { "path": "docs/REVISION_PROVIDERS.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/core/revision/", "src/core/code-manifest.js"] },
-    { "path": "docs/SIGNING_PROVIDERS.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/core/signing/", "src/core/attestation-verifier.js"] },
-    { "path": "docs/PLATFORM_ADAPTERS.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["integrations/", "src/integration.js", "src/core/integration-resources.js"] },
-    { "path": "docs/AGENT_PROTOCOL_SUMMARY.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["scripts/generate-agent-protocol-summary.mjs", "src/core/protocol-info.js", "src/core/artifact-registry.js", "src/core/cli-command-definitions.js"] },
-    { "path": "docs/AGENT_SKILL.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["docs/AGENT_PROTOCOL_SUMMARY.md", "scripts/generate-forgeloop-skill.mjs", "src/core/protocol-info.js", "AGENT_COMPATIBILITY.md"] },
-    { "path": "docs/DIAGNOSTIC_MODEL.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["src/core/diagnostic-model.js", "docs/CLI_REFERENCE.md"] },
-    { "path": "docs/EXECUTION_TRACE.md", "status": "reviewed", "action": "unchanged", "sourceOfTruth": ["src/core/history.js", "src/core/trace.js", "src/core/trajectory-evaluation.js"] },
-    { "path": "docs/EXECUTION_PROFILE_BENCHMARKS.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/core/execution-profile-benchmarks.js", "scripts/run-execution-profile-benchmarks.mjs", "schemas/execution-profile-benchmark-scenario.schema.json", "schemas/execution-profile-benchmark-run.schema.json", "schemas/execution-profile-benchmark-aggregate.schema.json"] },
-    { "path": "docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["docs/KNOWLEDGE_SOURCES.md", "ENG/accessibility-eng.md", "ENG/design-code-eng.md", "GUIDE_ROUTER.md", "LOOP_ENGINEERING.md", "LOOP_SYSTEM_DESIGN.md", "QUALITY_SCORECARD.md", "docs/EXECUTION_PROFILE_BENCHMARKS.md"] },
-    { "path": "docs/KNOWLEDGE_SOURCES.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md", "DOCS_INDEX.md", "docs/DOCUMENTATION_GUIDE.md"] },
-    { "path": "docs/STRUCTURAL_QUALITY.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/core/structural-quality/", "schemas/structural-quality.schema.json", "LOOP_ENGINEERING.md", "PROTOCOL_INTEGRATION.md"] },
-    { "path": "docs/ADVISORY_CONTEXT.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/core/advisory-context/", "src/core/portable-context.js", "src/integration.js", "LOOP_ENGINEERING.md"] },
-    { "path": "docs/PROVIDER_ARCHITECTURE.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/core/protocol-info.js", "src/providers/capabilities.js", "src/providers/registry.js", "src/providers/json-snapshot.js", "PROTOCOL_INTEGRATION.md", "THREAT_MODEL.md"] },
-    { "path": "docs/PROVIDERS.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/core/protocol-info.js", "src/providers/capabilities.js", "src/providers/errors.js", "tests/provider-architecture.test.js", "tests/provider-capabilities.test.js"] },
-    { "path": "docs/SECURITY_REVIEW.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/core/security-review/", "src/core/runtime-context.js", "src/integration.js", "src/integration.d.ts", "tests/security-review-provider.test.js"] },
-    { "path": "docs/RIPWIRE_ADAPTER.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/adapters/ripwire/", "src/integration.js", "tests/ripwire-advisory-provider.test.js", "docs/ADVISORY_CONTEXT.md"] },
-    { "path": "docs/OPENSRC_ADAPTER.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/adapters/opensrc/", "src/integration.js", "src/integration.d.ts", "tests/opensrc-advisory-provider.test.js", "docs/ADVISORY_CONTEXT.md"] },
-    { "path": "docs/REPOSITORY_INDEX.md", "status": "reviewed", "action": "updated", "sourceOfTruth": ["src/repository-index/", "src/core/cli-command-definitions.js", "src/integration.js", "integrations/mcp/src/resource-registry.js", "tests/repository-index-cli.test.js"] },
-    { "path": "docs/PERSISTENT_SEARCH_TRANSPORT.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/persistent-transport/", "src/commands/repository-index.js", "src/repository-index/search.js", "tests/persistent-transport.test.js", "tests/persistent-transport-native.test.js"] },
-    { "path": "docs/AGENT_BROWSER_ADAPTER.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["src/adapters/agent-browser/", "src/integration.js", "tests/agent-browser-provider.test.js"] },
-    { "path": "docs/AGENT_BROWSER_VERIFICATION.md", "status": "reviewed", "action": "new", "sourceOfTruth": ["docs/AGENT_BROWSER_ADAPTER.md"] }
+    {
+      "path": "AGENTS.md",
+      "status": "reviewed",
+      "action": "updated",
+      "sourceOfTruth": [
+        "AGENTS.md"
+      ],
+      "canonicalSources": [
+        "AGENTS.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "CLAUDE.md",
+      "status": "reviewed",
+      "action": "updated",
+      "sourceOfTruth": [
+        "CLAUDE.md"
+      ],
+      "canonicalSources": [
+        "CLAUDE.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "GUIDE_ROUTER.md",
+      "status": "reviewed",
+      "action": "unchanged",
+      "sourceOfTruth": [
+        "GUIDE_ROUTER.md"
+      ],
+      "canonicalSources": [
+        "GUIDE_ROUTER.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "LOOP_ENGINEERING.md",
+      "status": "reviewed",
+      "action": "updated",
+      "sourceOfTruth": [
+        "LOOP_ENGINEERING.md"
+      ],
+      "canonicalSources": [
+        "LOOP_ENGINEERING.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "PROTOCOL_INTEGRATION.md",
+      "status": "reviewed",
+      "action": "updated",
+      "sourceOfTruth": [
+        "PROTOCOL_INTEGRATION.md"
+      ],
+      "canonicalSources": [
+        "PROTOCOL_INTEGRATION.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "LOOP_SYSTEM_DESIGN.md",
+      "status": "reviewed",
+      "action": "unchanged",
+      "sourceOfTruth": [
+        "LOOP_SYSTEM_DESIGN.md"
+      ],
+      "canonicalSources": [
+        "LOOP_SYSTEM_DESIGN.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "QUALITY_SCORECARD.md",
+      "status": "reviewed",
+      "action": "unchanged",
+      "sourceOfTruth": [
+        "QUALITY_SCORECARD.md"
+      ],
+      "canonicalSources": [
+        "QUALITY_SCORECARD.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "TERMINOLOGY.md",
+      "status": "reviewed",
+      "action": "unchanged",
+      "sourceOfTruth": [
+        "TERMINOLOGY.md"
+      ],
+      "canonicalSources": [
+        "TERMINOLOGY.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "EXECUTION_STATE.md",
+      "status": "reviewed",
+      "action": "unchanged",
+      "sourceOfTruth": [
+        "EXECUTION_STATE.md"
+      ],
+      "canonicalSources": [
+        "EXECUTION_STATE.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "DELEGATION_PROTOCOL.md",
+      "status": "reviewed",
+      "action": "unchanged",
+      "sourceOfTruth": [
+        "DELEGATION_PROTOCOL.md"
+      ],
+      "canonicalSources": [
+        "DELEGATION_PROTOCOL.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "ORCHESTRATOR_INTEGRATION.md",
+      "status": "reviewed",
+      "action": "unchanged",
+      "sourceOfTruth": [
+        "ORCHESTRATOR_INTEGRATION.md"
+      ],
+      "canonicalSources": [
+        "ORCHESTRATOR_INTEGRATION.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "THREAT_MODEL.md",
+      "status": "reviewed",
+      "action": "updated",
+      "sourceOfTruth": [
+        "THREAT_MODEL.md"
+      ],
+      "canonicalSources": [
+        "THREAT_MODEL.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "CONTRACT_COVERAGE.md",
+      "status": "reviewed",
+      "action": "updated",
+      "sourceOfTruth": [
+        "CONTRACT_COVERAGE.md"
+      ],
+      "canonicalSources": [
+        "CONTRACT_COVERAGE.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "AGENT_COMPATIBILITY.md",
+      "status": "reviewed",
+      "action": "unchanged",
+      "sourceOfTruth": [
+        "AGENT_COMPATIBILITY.md"
+      ],
+      "canonicalSources": [
+        "AGENT_COMPATIBILITY.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "PROJECT_PROFILE.md",
+      "status": "reviewed",
+      "action": "unchanged",
+      "sourceOfTruth": [
+        "PROJECT_PROFILE.md"
+      ],
+      "canonicalSources": [
+        "PROJECT_PROFILE.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "status": "reviewed",
+      "action": "updated",
+      "sourceOfTruth": [
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "canonicalSources": [
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "LICENSE-DOCS.md",
+      "status": "reviewed",
+      "action": "unchanged",
+      "sourceOfTruth": [
+        "LICENSE-DOCS.md"
+      ],
+      "canonicalSources": [
+        "LICENSE-DOCS.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": ".github/copilot-instructions.md",
+      "status": "reviewed",
+      "action": "updated",
+      "sourceOfTruth": [
+        ".github/copilot-instructions.md"
+      ],
+      "canonicalSources": [
+        ".github/copilot-instructions.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "README.md",
+      "status": "reviewed",
+      "action": "updated",
+      "sourceOfTruth": [
+        "README.md"
+      ],
+      "canonicalSources": [
+        "README.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "DOCS_INDEX.md",
+      "status": "reviewed",
+      "action": "updated",
+      "sourceOfTruth": [
+        "DOCS_INDEX.md"
+      ],
+      "canonicalSources": [
+        "DOCS_INDEX.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/GETTING_STARTED.md",
+      "status": "reviewed",
+      "action": "updated",
+      "sourceOfTruth": [
+        "docs/GETTING_STARTED.md"
+      ],
+      "canonicalSources": [
+        "docs/GETTING_STARTED.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/AUDIT_UX.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/AUDIT_UX.md"
+      ],
+      "canonicalSources": [
+        "docs/AUDIT_UX.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/CROSS_HARNESS_CONTINUITY.md",
+      "status": "reviewed",
+      "action": "unchanged",
+      "sourceOfTruth": [
+        "docs/CROSS_HARNESS_CONTINUITY.md"
+      ],
+      "canonicalSources": [
+        "docs/CROSS_HARNESS_CONTINUITY.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/CLI_REFERENCE.md",
+      "status": "reviewed",
+      "action": "updated",
+      "sourceOfTruth": [
+        "docs/CLI_REFERENCE.md"
+      ],
+      "canonicalSources": [
+        "docs/CLI_REFERENCE.md"
+      ],
+      "origin": "generated",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/ARTIFACT_REFERENCE.md",
+      "status": "reviewed",
+      "action": "unchanged",
+      "sourceOfTruth": [
+        "docs/ARTIFACT_REFERENCE.md"
+      ],
+      "canonicalSources": [
+        "docs/ARTIFACT_REFERENCE.md"
+      ],
+      "origin": "generated",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/TROUBLESHOOTING.md",
+      "status": "reviewed",
+      "action": "updated",
+      "sourceOfTruth": [
+        "docs/TROUBLESHOOTING.md"
+      ],
+      "canonicalSources": [
+        "docs/TROUBLESHOOTING.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/RECIPES.md",
+      "status": "reviewed",
+      "action": "updated",
+      "sourceOfTruth": [
+        "docs/RECIPES.md"
+      ],
+      "canonicalSources": [
+        "docs/RECIPES.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/STRUCTURAL_QUALITY.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/STRUCTURAL_QUALITY.md"
+      ],
+      "canonicalSources": [
+        "docs/STRUCTURAL_QUALITY.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/DOCUMENTATION_GUIDE.md",
+      "status": "reviewed",
+      "action": "updated",
+      "sourceOfTruth": [
+        "docs/DOCUMENTATION_GUIDE.md"
+      ],
+      "canonicalSources": [
+        "docs/DOCUMENTATION_GUIDE.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/diagrams/README.md",
+      "status": "reviewed",
+      "action": "updated",
+      "sourceOfTruth": [
+        "docs/diagrams/README.md"
+      ],
+      "canonicalSources": [
+        "docs/diagrams/README.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/RELEASE_CHECKLIST_1_4.md",
+      "status": "reviewed",
+      "action": "unchanged",
+      "sourceOfTruth": [
+        "docs/RELEASE_CHECKLIST_1_4.md"
+      ],
+      "canonicalSources": [
+        "docs/RELEASE_CHECKLIST_1_4.md"
+      ],
+      "origin": "handwritten",
+      "currency": "historical",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "scripts/CI_VALIDATORS.md",
+      "status": "reviewed",
+      "action": "updated",
+      "sourceOfTruth": [
+        "scripts/CI_VALIDATORS.md"
+      ],
+      "canonicalSources": [
+        "scripts/CI_VALIDATORS.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/MCP.md",
+      "status": "reviewed",
+      "action": "updated",
+      "sourceOfTruth": [
+        "docs/MCP.md"
+      ],
+      "canonicalSources": [
+        "docs/MCP.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/UNIVERSAL_INTEGRATION.md",
+      "status": "reviewed",
+      "action": "updated",
+      "sourceOfTruth": [
+        "docs/UNIVERSAL_INTEGRATION.md"
+      ],
+      "canonicalSources": [
+        "docs/UNIVERSAL_INTEGRATION.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/RELEASE_CHECKLIST_1_5_MCP.md",
+      "status": "reviewed",
+      "action": "unchanged",
+      "sourceOfTruth": [
+        "docs/RELEASE_CHECKLIST_1_5_MCP.md"
+      ],
+      "canonicalSources": [
+        "docs/RELEASE_CHECKLIST_1_5_MCP.md"
+      ],
+      "origin": "handwritten",
+      "currency": "historical",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/RELEASE_CHECKLIST_1_6_1.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/RELEASE_CHECKLIST_1_6_1.md"
+      ],
+      "canonicalSources": [
+        "docs/RELEASE_CHECKLIST_1_6_1.md"
+      ],
+      "origin": "handwritten",
+      "currency": "historical",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/DIAGNOSTIC_MODEL.md",
+      "status": "reviewed",
+      "action": "unchanged",
+      "sourceOfTruth": [
+        "docs/DIAGNOSTIC_MODEL.md"
+      ],
+      "canonicalSources": [
+        "docs/DIAGNOSTIC_MODEL.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/EXECUTION_TRACE.md",
+      "status": "reviewed",
+      "action": "unchanged",
+      "sourceOfTruth": [
+        "docs/EXECUTION_TRACE.md"
+      ],
+      "canonicalSources": [
+        "docs/EXECUTION_TRACE.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/RELEASE_CHECKLIST.md",
+      "status": "reviewed",
+      "action": "updated",
+      "sourceOfTruth": [
+        "docs/RELEASE_CHECKLIST.md"
+      ],
+      "canonicalSources": [
+        "docs/RELEASE_CHECKLIST.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/PACKAGE_CONTENTS.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/PACKAGE_CONTENTS.md"
+      ],
+      "canonicalSources": [
+        "docs/PACKAGE_CONTENTS.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/CODE_ATTESTATION.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/CODE_ATTESTATION.md"
+      ],
+      "canonicalSources": [
+        "docs/CODE_ATTESTATION.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/REVISION_PROVIDERS.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/REVISION_PROVIDERS.md"
+      ],
+      "canonicalSources": [
+        "docs/REVISION_PROVIDERS.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/SIGNING_PROVIDERS.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/SIGNING_PROVIDERS.md"
+      ],
+      "canonicalSources": [
+        "docs/SIGNING_PROVIDERS.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/PLATFORM_ADAPTERS.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/PLATFORM_ADAPTERS.md"
+      ],
+      "canonicalSources": [
+        "docs/PLATFORM_ADAPTERS.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/EXECUTION_PROFILE_BENCHMARKS.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/EXECUTION_PROFILE_BENCHMARKS.md"
+      ],
+      "canonicalSources": [
+        "docs/EXECUTION_PROFILE_BENCHMARKS.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/AGENT_PROTOCOL_SUMMARY.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/AGENT_PROTOCOL_SUMMARY.md"
+      ],
+      "canonicalSources": [
+        "docs/AGENT_PROTOCOL_SUMMARY.md"
+      ],
+      "origin": "generated",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/AGENT_SKILL.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/AGENT_PROTOCOL_SUMMARY.md",
+        "scripts/generate-forgeloop-skill.mjs",
+        "docs/AGENT_SKILL.md"
+      ],
+      "canonicalSources": [
+        "docs/AGENT_PROTOCOL_SUMMARY.md",
+        "scripts/generate-forgeloop-skill.mjs",
+        "docs/AGENT_SKILL.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md"
+      ],
+      "canonicalSources": [
+        "docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/KNOWLEDGE_SOURCES.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/KNOWLEDGE_SOURCES.md"
+      ],
+      "canonicalSources": [
+        "docs/KNOWLEDGE_SOURCES.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/ADVISORY_CONTEXT.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/ADVISORY_CONTEXT.md"
+      ],
+      "canonicalSources": [
+        "docs/ADVISORY_CONTEXT.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/PROVIDER_ARCHITECTURE.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/PROVIDER_ARCHITECTURE.md"
+      ],
+      "canonicalSources": [
+        "docs/PROVIDER_ARCHITECTURE.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/PROVIDERS.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/PROVIDERS.md"
+      ],
+      "canonicalSources": [
+        "docs/PROVIDERS.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/SECURITY_REVIEW.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/SECURITY_REVIEW.md"
+      ],
+      "canonicalSources": [
+        "docs/SECURITY_REVIEW.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/RIPWIRE_ADAPTER.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/RIPWIRE_ADAPTER.md"
+      ],
+      "canonicalSources": [
+        "docs/RIPWIRE_ADAPTER.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/OPENSRC_ADAPTER.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/OPENSRC_ADAPTER.md"
+      ],
+      "canonicalSources": [
+        "docs/OPENSRC_ADAPTER.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/REPOSITORY_INDEX.md",
+      "status": "reviewed",
+      "action": "updated",
+      "sourceOfTruth": [
+        "docs/REPOSITORY_INDEX.md"
+      ],
+      "canonicalSources": [
+        "docs/REPOSITORY_INDEX.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/PERSISTENT_SEARCH_TRANSPORT.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/PERSISTENT_SEARCH_TRANSPORT.md"
+      ],
+      "canonicalSources": [
+        "docs/PERSISTENT_SEARCH_TRANSPORT.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/AGENT_BROWSER_ADAPTER.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/AGENT_BROWSER_ADAPTER.md"
+      ],
+      "canonicalSources": [
+        "docs/AGENT_BROWSER_ADAPTER.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/AGENT_BROWSER_VERIFICATION.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/AGENT_BROWSER_VERIFICATION.md"
+      ],
+      "canonicalSources": [
+        "docs/AGENT_BROWSER_VERIFICATION.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "CONTRIBUTING.md"
+      ],
+      "canonicalSources": [
+        "CONTRIBUTING.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "benchmarks/execution-profiles/README.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "benchmarks/execution-profiles/README.md"
+      ],
+      "canonicalSources": [
+        "benchmarks/execution-profiles/README.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "benchmarks/repository-index/README.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "benchmarks/repository-index/README.md"
+      ],
+      "canonicalSources": [
+        "benchmarks/repository-index/README.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/JEV_BENCHMARKS.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/JEV_BENCHMARKS.md"
+      ],
+      "canonicalSources": [
+        "docs/JEV_BENCHMARKS.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/MODEL_ROUTING.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/MODEL_ROUTING.md"
+      ],
+      "canonicalSources": [
+        "docs/MODEL_ROUTING.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/SEMANTIC_DECISION_PLANE.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/SEMANTIC_DECISION_PLANE.md"
+      ],
+      "canonicalSources": [
+        "docs/SEMANTIC_DECISION_PLANE.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/TEST_INTELLIGENCE.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/TEST_INTELLIGENCE.md"
+      ],
+      "canonicalSources": [
+        "docs/TEST_INTELLIGENCE.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/TEST_PRUNING.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/TEST_PRUNING.md"
+      ],
+      "canonicalSources": [
+        "docs/TEST_PRUNING.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/BROWSER_VERIFICATION.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/BROWSER_VERIFICATION.md"
+      ],
+      "canonicalSources": [
+        "docs/BROWSER_VERIFICATION.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/ASTRA_IMPLEMENTATION.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/ASTRA_IMPLEMENTATION.md"
+      ],
+      "canonicalSources": [
+        "docs/ASTRA_IMPLEMENTATION.md"
+      ],
+      "origin": "handwritten",
+      "currency": "historical",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/STALE_GATE_REVALIDATION.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/STALE_GATE_REVALIDATION.md"
+      ],
+      "canonicalSources": [
+        "docs/STALE_GATE_REVALIDATION.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/history/README.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/history/README.md"
+      ],
+      "canonicalSources": [
+        "docs/history/README.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/history/astra-code-audit-20260904.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/history/astra-code-audit-20260904.md"
+      ],
+      "canonicalSources": [
+        "docs/history/astra-code-audit-20260904.md"
+      ],
+      "origin": "handwritten",
+      "currency": "historical",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/history/releases/RELEASE_EVIDENCE_1_10_ECOSYSTEM.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/history/releases/RELEASE_EVIDENCE_1_10_ECOSYSTEM.md"
+      ],
+      "canonicalSources": [
+        "docs/history/releases/RELEASE_EVIDENCE_1_10_ECOSYSTEM.md"
+      ],
+      "origin": "handwritten",
+      "currency": "historical",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/history/validation/FORGELOOP_1_11_0_RELEASE_VALIDATION.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/history/validation/FORGELOOP_1_11_0_RELEASE_VALIDATION.md"
+      ],
+      "canonicalSources": [
+        "docs/history/validation/FORGELOOP_1_11_0_RELEASE_VALIDATION.md"
+      ],
+      "origin": "handwritten",
+      "currency": "historical",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/history/validation/FORGELOOP_1_11_0_POST_RELEASE_VALIDATION.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/history/validation/FORGELOOP_1_11_0_POST_RELEASE_VALIDATION.md"
+      ],
+      "canonicalSources": [
+        "docs/history/validation/FORGELOOP_1_11_0_POST_RELEASE_VALIDATION.md"
+      ],
+      "origin": "handwritten",
+      "currency": "historical",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/history/validation/FORGELOOP_GITHUB_CI_MINIMIZATION_VALIDATION.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/history/validation/FORGELOOP_GITHUB_CI_MINIMIZATION_VALIDATION.md"
+      ],
+      "canonicalSources": [
+        "docs/history/validation/FORGELOOP_GITHUB_CI_MINIMIZATION_VALIDATION.md"
+      ],
+      "origin": "handwritten",
+      "currency": "historical",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/history/validation/FORGELOOP_PERSISTENT_SEARCH_TRANSPORT_VALIDATION_REPORT.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/history/validation/FORGELOOP_PERSISTENT_SEARCH_TRANSPORT_VALIDATION_REPORT.md"
+      ],
+      "canonicalSources": [
+        "docs/history/validation/FORGELOOP_PERSISTENT_SEARCH_TRANSPORT_VALIDATION_REPORT.md"
+      ],
+      "origin": "handwritten",
+      "currency": "historical",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/history/validation/FORGELOOP_REPOSITORY_INDEX_DOCTOR_PRIVACY_FIX_VALIDATION.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/history/validation/FORGELOOP_REPOSITORY_INDEX_DOCTOR_PRIVACY_FIX_VALIDATION.md"
+      ],
+      "canonicalSources": [
+        "docs/history/validation/FORGELOOP_REPOSITORY_INDEX_DOCTOR_PRIVACY_FIX_VALIDATION.md"
+      ],
+      "origin": "handwritten",
+      "currency": "historical",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/history/validation/FORGELOOP_RIPWIRE_IMPLEMENTATION_PLAN.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/history/validation/FORGELOOP_RIPWIRE_IMPLEMENTATION_PLAN.md"
+      ],
+      "canonicalSources": [
+        "docs/history/validation/FORGELOOP_RIPWIRE_IMPLEMENTATION_PLAN.md"
+      ],
+      "origin": "handwritten",
+      "currency": "historical",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "benchmarks/execution-profiles/adaptive-efficiency-benchmark-20260831.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "benchmarks/execution-profiles/adaptive-efficiency-benchmark-20260831.md"
+      ],
+      "canonicalSources": [
+        "benchmarks/execution-profiles/adaptive-efficiency-benchmark-20260831.md"
+      ],
+      "origin": "handwritten",
+      "currency": "historical",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "ENG/premium-sites-studio-eng.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "src/config/guides.json",
+        "ENG/premium-sites-studio-eng.md"
+      ],
+      "canonicalSources": [
+        "src/config/guides.json",
+        "ENG/premium-sites-studio-eng.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "ENG/clean-code-eng.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "src/config/guides.json",
+        "ENG/clean-code-eng.md"
+      ],
+      "canonicalSources": [
+        "src/config/guides.json",
+        "ENG/clean-code-eng.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "ENG/test-code-eng.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "src/config/guides.json",
+        "ENG/test-code-eng.md"
+      ],
+      "canonicalSources": [
+        "src/config/guides.json",
+        "ENG/test-code-eng.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "ENG/sec-code-eng.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "src/config/guides.json",
+        "ENG/sec-code-eng.md"
+      ],
+      "canonicalSources": [
+        "src/config/guides.json",
+        "ENG/sec-code-eng.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "ENG/design-code-eng.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "src/config/guides.json",
+        "ENG/design-code-eng.md"
+      ],
+      "canonicalSources": [
+        "src/config/guides.json",
+        "ENG/design-code-eng.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "ENG/taste-frontend-eng.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "src/config/guides.json",
+        "ENG/taste-frontend-eng.md"
+      ],
+      "canonicalSources": [
+        "src/config/guides.json",
+        "ENG/taste-frontend-eng.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "ENG/perf-code-eng.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "src/config/guides.json",
+        "ENG/perf-code-eng.md"
+      ],
+      "canonicalSources": [
+        "src/config/guides.json",
+        "ENG/perf-code-eng.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "ENG/accessibility-eng.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "src/config/guides.json",
+        "ENG/accessibility-eng.md"
+      ],
+      "canonicalSources": [
+        "src/config/guides.json",
+        "ENG/accessibility-eng.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "ENG/games-code-design-web-eng.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "src/config/guides.json",
+        "ENG/games-code-design-web-eng.md"
+      ],
+      "canonicalSources": [
+        "src/config/guides.json",
+        "ENG/games-code-design-web-eng.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "ENG/documentation-quality-eng.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "src/config/guides.json",
+        "ENG/documentation-quality-eng.md"
+      ],
+      "canonicalSources": [
+        "src/config/guides.json",
+        "ENG/documentation-quality-eng.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "ENG/flutter-development-eng.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "src/config/guides.json",
+        "ENG/flutter-development-eng.md"
+      ],
+      "canonicalSources": [
+        "src/config/guides.json",
+        "ENG/flutter-development-eng.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "ENG/dotnet-aspnetcore-development-eng.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "src/config/guides.json",
+        "ENG/dotnet-aspnetcore-development-eng.md"
+      ],
+      "canonicalSources": [
+        "src/config/guides.json",
+        "ENG/dotnet-aspnetcore-development-eng.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "ENG/nodejs-backend-development-eng.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "src/config/guides.json",
+        "ENG/nodejs-backend-development-eng.md"
+      ],
+      "canonicalSources": [
+        "src/config/guides.json",
+        "ENG/nodejs-backend-development-eng.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "ENG/rust-development-eng.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "src/config/guides.json",
+        "ENG/rust-development-eng.md"
+      ],
+      "canonicalSources": [
+        "src/config/guides.json",
+        "ENG/rust-development-eng.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "ENG/c-development-eng.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "src/config/guides.json",
+        "ENG/c-development-eng.md"
+      ],
+      "canonicalSources": [
+        "src/config/guides.json",
+        "ENG/c-development-eng.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "ENG/cpp-development-eng.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "src/config/guides.json",
+        "ENG/cpp-development-eng.md"
+      ],
+      "canonicalSources": [
+        "src/config/guides.json",
+        "ENG/cpp-development-eng.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "ENG/java-development-eng.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "src/config/guides.json",
+        "ENG/java-development-eng.md"
+      ],
+      "canonicalSources": [
+        "src/config/guides.json",
+        "ENG/java-development-eng.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "ENG/sql-development-eng.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "src/config/guides.json",
+        "ENG/sql-development-eng.md"
+      ],
+      "canonicalSources": [
+        "src/config/guides.json",
+        "ENG/sql-development-eng.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "ENG/go-development-eng.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "src/config/guides.json",
+        "ENG/go-development-eng.md"
+      ],
+      "canonicalSources": [
+        "src/config/guides.json",
+        "ENG/go-development-eng.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "ENG/typescript-development-eng.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "src/config/guides.json",
+        "ENG/typescript-development-eng.md"
+      ],
+      "canonicalSources": [
+        "src/config/guides.json",
+        "ENG/typescript-development-eng.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "ENG/php-development-eng.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "src/config/guides.json",
+        "ENG/php-development-eng.md"
+      ],
+      "canonicalSources": [
+        "src/config/guides.json",
+        "ENG/php-development-eng.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "ENG/swift-development-eng.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "src/config/guides.json",
+        "ENG/swift-development-eng.md"
+      ],
+      "canonicalSources": [
+        "src/config/guides.json",
+        "ENG/swift-development-eng.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "skills/forgeloop/SKILL.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/AGENT_PROTOCOL_SUMMARY.md",
+        "scripts/generate-forgeloop-skill.mjs",
+        "skills/forgeloop/SKILL.md"
+      ],
+      "canonicalSources": [
+        "docs/AGENT_PROTOCOL_SUMMARY.md",
+        "scripts/generate-forgeloop-skill.mjs",
+        "skills/forgeloop/SKILL.md"
+      ],
+      "origin": "generated",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "skills/forgeloop/README.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/AGENT_PROTOCOL_SUMMARY.md",
+        "scripts/generate-forgeloop-skill.mjs",
+        "skills/forgeloop/README.md"
+      ],
+      "canonicalSources": [
+        "docs/AGENT_PROTOCOL_SUMMARY.md",
+        "scripts/generate-forgeloop-skill.mjs",
+        "skills/forgeloop/README.md"
+      ],
+      "origin": "generated",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "skills/forgeloop/references/lifecycle.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/AGENT_PROTOCOL_SUMMARY.md",
+        "scripts/generate-forgeloop-skill.mjs",
+        "skills/forgeloop/references/lifecycle.md"
+      ],
+      "canonicalSources": [
+        "docs/AGENT_PROTOCOL_SUMMARY.md",
+        "scripts/generate-forgeloop-skill.mjs",
+        "skills/forgeloop/references/lifecycle.md"
+      ],
+      "origin": "generated",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "skills/forgeloop/references/verification.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/AGENT_PROTOCOL_SUMMARY.md",
+        "scripts/generate-forgeloop-skill.mjs",
+        "skills/forgeloop/references/verification.md"
+      ],
+      "canonicalSources": [
+        "docs/AGENT_PROTOCOL_SUMMARY.md",
+        "scripts/generate-forgeloop-skill.mjs",
+        "skills/forgeloop/references/verification.md"
+      ],
+      "origin": "generated",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "skills/forgeloop/references/recovery.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/AGENT_PROTOCOL_SUMMARY.md",
+        "scripts/generate-forgeloop-skill.mjs",
+        "skills/forgeloop/references/recovery.md"
+      ],
+      "canonicalSources": [
+        "docs/AGENT_PROTOCOL_SUMMARY.md",
+        "scripts/generate-forgeloop-skill.mjs",
+        "skills/forgeloop/references/recovery.md"
+      ],
+      "origin": "generated",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": ".cursor/rules/project-loop.mdc",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "AGENTS.md",
+        "LOOP_ENGINEERING.md",
+        ".cursor/rules/project-loop.mdc"
+      ],
+      "canonicalSources": [
+        "AGENTS.md",
+        "LOOP_ENGINEERING.md",
+        ".cursor/rules/project-loop.mdc"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "src/providers/README.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "src/providers/README.md",
+        "src/providers/capabilities.js",
+        "src/providers/registry.js"
+      ],
+      "canonicalSources": [
+        "src/providers/README.md",
+        "src/providers/capabilities.js",
+        "src/providers/registry.js"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    }
   ]
 }

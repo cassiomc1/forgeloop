@@ -35,7 +35,7 @@ Counts below use tracked files at the reviewed revision; line counts include com
 | Tracked vendor files | 155 | About 5.93 MB of file contents. |
 | Lint result | 0 errors, 114 warnings | Complexity warnings are advisory rather than a passing quality score. |
 
-Sources: [package.json](package.json), [CLI definitions](src/core/cli-command-definitions.js), [test runner](scripts/run-tests.js), [schema inventory](src/core/schema-validation.js), and `git ls-files` with file/line counts.
+Sources: [package.json](../../package.json), [CLI definitions](../../src/core/cli-command-definitions.js), [test runner](../../scripts/run-tests.js), [schema inventory](../../src/core/schema-validation.js), and `git ls-files` with file/line counts.
 
 ## Prioritized findings
 
@@ -65,7 +65,7 @@ Priority meanings: **P1** can place data in the wrong project under the stated t
 
 ### A01 — Bind nested transactions to the project as well as the task
 
-**Location:** [transaction.js](src/core/transaction.js#L103), especially the active-transaction reuse branch at lines 107–113 and the transaction object created below it.
+**Location:** [transaction.js](../../src/core/transaction.js#L103), especially the active-transaction reuse branch at lines 107–113 and the transaction object created below it.
 
 `withTaskTransaction` reuses its `AsyncLocalStorage` transaction when the task IDs match. It does not compare the requested target with the active transaction's target. The transaction object contains the task ID but no project identity, and its file operations close over the outer target.
 
@@ -75,11 +75,11 @@ Priority meanings: **P1** can place data in the wrong project under the stated t
 
 **Recommended fix:** bind transaction identity to the canonical target and task ID, and reject cross-target nesting before invoking the inner callback. Check how symlink aliases of the same project should normalize. Preserve legal same-project nesting.
 
-**Missing regression:** two projects with the same task ID must never share a transaction; neither project should receive an unintended write. Existing [transaction tests](tests/transaction.test.js#L13) cover same-task reuse and different-task rejection, but not same-task cross-project nesting.
+**Missing regression:** two projects with the same task ID must never share a transaction; neither project should receive an unintended write. Existing [transaction tests](../../tests/transaction.test.js#L13) cover same-task reuse and different-task rejection, but not same-task cross-project nesting.
 
 ### A02 — Replace lossy contract text scanning with normalized requirement signals
 
-**Location:** [execution-profile.js](src/core/execution-profile.js#L56), especially `contractSignals` at lines 67–89.
+**Location:** [execution-profile.js](../../src/core/execution-profile.js#L56), especially `contractSignals` at lines 67–89.
 
 The resolver joins `successCriteria` directly into text. The contract schema permits structured requirement objects, which become `[object Object]` when joined. It also scans constraints for risk words without distinguishing a prohibition from a required action.
 
@@ -95,11 +95,11 @@ The first case also occurred in this audit's local-only contract. These are both
 
 **Recommended fix:** normalize string and object requirements, traverse nested requirements, and use declared requirement types and route risks for the safety floor. Keep exclusions separate from affirmative requirements. Avoid expanding the regular expressions into a larger informal language parser.
 
-**Missing regressions:** equivalent string/object requirements; nested `ALL` requirements; explicit publication versus prohibited publication; conflicts between declared risks and exclusions. Existing [profile tests](tests/execution-profile.test.js) test explicit route risks, but do not catch these equivalence failures.
+**Missing regressions:** equivalent string/object requirements; nested `ALL` requirements; explicit publication versus prohibited publication; conflicts between declared risks and exclusions. Existing [profile tests](../../tests/execution-profile.test.js) test explicit route risks, but do not catch these equivalence failures.
 
 ### A03 — A recovered transaction should stop appearing as incomplete
 
-**Locations:** [transaction.js](src/core/transaction.js#L27) and [doctor.js](src/commands/doctor.js#L117).
+**Locations:** [transaction.js](../../src/core/transaction.js#L27) and [doctor.js](../../src/commands/doctor.js#L117).
 
 `findIncompleteTransactions` treats every status other than `COMMITTED` as incomplete. Successful recovery writes `ROLLED_BACK`. `recoverIncompleteTransactions` only processes `COMMITTING`, so subsequent `doctor --fix` calls cannot settle the resulting error.
 
@@ -107,11 +107,11 @@ The first case also occurred in this audit's local-only contract. These are both
 
 **Recommended fix:** define successful rollback as a terminal recovered state, retain its history, and rebuild doctor findings after recovery. Distinguish a failed staging callback with no published writes from a partially published transaction requiring recovery.
 
-**Test weakness:** [doctor-transaction.test.js](tests/doctor-transaction.test.js#L10) checks that `TRANSACTION_RECOVERED` appears. It does not check that a subsequent doctor invocation is free of that transaction error. Extend the existing test rather than adding another shallow status test.
+**Test weakness:** [doctor-transaction.test.js](../../tests/doctor-transaction.test.js#L10) checks that `TRANSACTION_RECOVERED` appears. It does not check that a subsequent doctor invocation is free of that transaction error. Extend the existing test rather than adding another shallow status test.
 
 ### A04 — Fix the public JavaScript/TypeScript export contract
 
-**Locations:** [integration.d.ts](src/integration.d.ts#L233), [integration.js](src/integration.js), and the `./integration` export in [package.json](package.json).
+**Locations:** [integration.d.ts](../../src/integration.d.ts#L233), [integration.js](../../src/integration.js), and the `./integration` export in [package.json](../../package.json).
 
 The declaration file advertises `FORGELOOP_INTEGRATION_RUNTIME_VERSION`, but the JavaScript module only imports that name internally and exports `FORGELOOP_INTEGRATION_API_VERSION`. A consumer can rely on a declared named export that is absent at runtime.
 
@@ -124,11 +124,11 @@ The opposite mismatch also exists: runtime exports lack declarations for:
 
 **Recommended fix:** reconcile the intended public API, then add a declaration/runtime parity check and a small TypeScript consumer fixture. Prefer command-specific input/result types over a permanently broad `[key: string]: unknown` interface when evolving the API; introduce stronger types incrementally.
 
-**Why existing tests miss it:** [package.test.js](tests/package.test.js#L191) checks that the declaration path is advertised and verifies selected runtime names. It does not compile a consumer or compare the complete declared value-export surface. No TypeScript compiler check was found in the inspected scripts/workflows. No compiler was installed during this audit.
+**Why existing tests miss it:** [package.test.js](../../tests/package.test.js#L191) checks that the declaration path is advertised and verifies selected runtime names. It does not compile a consumer or compare the complete declared value-export surface. No TypeScript compiler check was found in the inspected scripts/workflows. No compiler was installed during this audit.
 
 ### A05 — Make preflight recovery executable from the documented state
 
-**Locations:** [troubleshooting recovery instructions](docs/TROUBLESHOOTING.md#L201), [preflight.js](src/core/preflight.js#L103), and [preflight-reactivation.test.js](tests/preflight-reactivation.test.js#L100).
+**Locations:** [troubleshooting recovery instructions](../TROUBLESHOOTING.md#L201), [preflight.js](../../src/core/preflight.js#L103), and [preflight-reactivation.test.js](../../tests/preflight-reactivation.test.js#L100).
 
 During preparation, correcting a contract source reference after blocked preflight and rerunning `route` followed by `preflight` produced `E_CONTRACT_STALE`. The documented route/preflight sequence alone did not repair the existing checkpoint. `next` reported `RESOLVE_BLOCKER` without an executable recovery command.
 
@@ -140,15 +140,15 @@ Using the documented CLI-owned `clear-state` checkpoint-recreation mechanism, th
 
 ### A06 — Extend lint to the implementation that currently receives zero rules
 
-**Location:** [eslint.config.js](eslint.config.js#L25).
+**Location:** [eslint.config.js](../../eslint.config.js#L25).
 
 The rules apply to `src/**/*.js`, `scripts/**/*.mjs`, and `tests/**/*.js`. They omit `scripts/*.js` and the separate MCP implementation.
 
 Calling the installed ESLint API's `calculateConfigForFile` confirmed **zero configured rules** for:
 
-- [scripts/run-tests.js](scripts/run-tests.js);
-- [scripts/run-docs-check.js](scripts/run-docs-check.js);
-- [integrations/mcp/src/server.js](integrations/mcp/src/server.js).
+- [scripts/run-tests.js](../../scripts/run-tests.js);
+- [scripts/run-docs-check.js](../../scripts/run-docs-check.js);
+- [integrations/mcp/src/server.js](../../integrations/mcp/src/server.js).
 
 By comparison, `src/cli.js` and `scripts/benchmark-cli-startup.mjs` receive 24 rules. Running `eslint .` successfully therefore does not establish comparable lint coverage across the repository.
 
@@ -156,7 +156,7 @@ By comparison, `src/cli.js` and `scripts/benchmark-cli-startup.mjs` receive 24 r
 
 ### A07 — Give the CI receipt audit an actual evidence input
 
-**Locations:** [forgeloop-audit.yml](.github/workflows/forgeloop-audit.yml#L26) and [.gitignore](.gitignore#L12).
+**Locations:** [forgeloop-audit.yml](../../.github/workflows/forgeloop-audit.yml#L26) and [.gitignore](../../.gitignore#L12).
 
 The workflow only audits receipts already present in the checkout. Task state is ignored, and the tracked-file inventory contains no execution receipt. The workflow has no step producing or downloading a task-bound receipt bundle.
 
@@ -166,7 +166,7 @@ Consequently, a normal clean source checkout has no receipt for either condition
 
 ### A08 — Eliminate overlapping full-suite executions before cutting useful tests
 
-**Historical locations:** the former `docs-quality.yml` workflow, [windows-full-suite.yml](.github/workflows/windows-full-suite.yml), [package.test.js](tests/package.test.js), and [run-tests.js](scripts/run-tests.js). The current PR boundary is defined by [pr-core.yml](.github/workflows/pr-core.yml), with documentation-only validation in [docs.yml](.github/workflows/docs.yml).
+**Historical locations:** the former `docs-quality.yml` workflow, [windows-full-suite.yml](../../.github/workflows/windows-full-suite.yml), [package.test.js](../../tests/package.test.js), and [run-tests.js](../../scripts/run-tests.js). The current PR boundary is defined by [pr-core.yml](../../.github/workflows/pr-core.yml), with documentation-only validation in [docs.yml](../../.github/workflows/docs.yml).
 
 Before the CI minimization, the docs workflow ran three full suite equivalents in `validate` (Node 20, 22, and Node 24 with coverage) and six more in `cli-portability` (three operating systems × Node 20/24). That was **nine full core-suite executions**, including overlapping Ubuntu Node 20/24 combinations.
 
@@ -182,11 +182,11 @@ Each `npm test` already includes `tests/package.test.js`; these matrix jobs then
 
 | Function | Location | Physical lines | ESLint complexity |
 | --- | --- | ---: | ---: |
-| `resolveNextActionPhase` | [next-action-phases.js](src/core/next-action-phases.js#L56) | 1,004 | 148 |
-| `evaluateCompletion` | [completion.js](src/core/completion.js#L276) | 357 | 161 |
-| `migrateLegacyLayout` | [task-migration.js](src/core/task-migration.js#L70) | 315 | 51 |
-| `evaluateTargetPolicy` | [policy-engine.js](src/core/policy-engine.js#L374) | 267 | 45 |
-| `evaluateStructuralQuality` | [structural-quality/service.js](src/core/structural-quality/service.js#L531) | 267 | 37 |
+| `resolveNextActionPhase` | [next-action-phases.js](../../src/core/next-action-phases.js#L56) | 1,004 | 148 |
+| `evaluateCompletion` | [completion.js](../../src/core/completion.js#L276) | 357 | 161 |
+| `migrateLegacyLayout` | [task-migration.js](../../src/core/task-migration.js#L70) | 315 | 51 |
+| `evaluateTargetPolicy` | [policy-engine.js](../../src/core/policy-engine.js#L374) | 267 | 45 |
+| `evaluateStructuralQuality` | [structural-quality/service.js](../../src/core/structural-quality/service.js#L531) | 267 | 37 |
 
 These functions combine several decisions and error/recovery paths. The project has already introduced useful facades, but moving a large function into a differently named file does not reduce its reasoning burden.
 
@@ -200,8 +200,8 @@ The 1,351-line command-definition table and 1,337-line error-code catalog are mo
 
 | Candidate | Evidence | Suggested action |
 | --- | --- | --- |
-| `requiredChecksSatisfied`, `requiredChecksSatisfiedForRequirements`, and private `requiredChecksSatisfiedBy` | [checks.js](src/core/checks.js#L138); symbol searches found only these definitions/internal calls | Remove the unused block after confirming no supported external import commitment. |
-| `requiredGatePaths` | [gates.js](src/core/gates.js#L55); no consumers found | Remove this unused export. |
+| `requiredChecksSatisfied`, `requiredChecksSatisfiedForRequirements`, and private `requiredChecksSatisfiedBy` | [checks.js](../../src/core/checks.js#L138); symbol searches found only these definitions/internal calls | Remove the unused block after confirming no supported external import commitment. |
+| `requiredGatePaths` | [gates.js](../../src/core/gates.js#L55); no consumers found | Remove this unused export. |
 
 These names are not re-exported by `src/integration.js`. The first block is about 32 lines of inactive alternative check-selection logic, so removing it also avoids maintaining a second interpretation of evidence satisfaction.
 
@@ -211,20 +211,20 @@ Do not infer that all of `checks.js` is unused: its validation functions have re
 
 Literal import/re-export/dynamic-import analysis, followed by repository symbol searches, found four `src/` modules with no production caller from the CLI, integration, commands, or scripts:
 
-- [cli-metadata.js](src/core/cli-metadata.js): constructs a projection of `CLI_COMMAND_DEFINITIONS`, consumed by a documentation-conformance test;
-- [decision-classification.js](src/core/decision-classification.js): consumed by its tests and the next module;
-- [workflow-compatibility.js](src/core/workflow-compatibility.js): consumed by its tests;
-- [gates.js](src/core/gates.js): `createGate` is used by test setup; `requiredGatePaths` has no caller.
+- [cli-metadata.js](../../src/core/cli-metadata.js): constructs a projection of `CLI_COMMAND_DEFINITIONS`, consumed by a documentation-conformance test;
+- [decision-classification.js](../../src/core/decision-classification.js): consumed by its tests and the next module;
+- [workflow-compatibility.js](../../src/core/workflow-compatibility.js): consumed by its tests;
+- [gates.js](../../src/core/gates.js): `createGate` is used by test setup; `requiredGatePaths` has no caller.
 
 **Recommended decision:** keep useful fixture builders under test helpers unless they are an intentionally supported API. For decision/workflow classification, either expose and integrate a supported advisory feature with real consumers, or stop shipping the unused implementation and keep the normative policy/examples where they belong. Moving helpers requires updating imports; this is not a recommendation to delete their tests without preserving their purpose.
 
-For CLI metadata, use the actual definition source in the existing test or make a real shared projection if one is needed. The module's comment still says “all 43” commands although the current table contains 83. [DOCUMENTATION_GUIDE.md](docs/DOCUMENTATION_GUIDE.md#L122) also identifies this unused projection as the command authority. Correct that source map.
+For CLI metadata, use the actual definition source in the existing test or make a real shared projection if one is needed. The module's comment still says “all 43” commands although the current table contains 83. [DOCUMENTATION_GUIDE.md](../DOCUMENTATION_GUIDE.md#L122) also identifies this unused projection as the command authority. Correct that source map.
 
 **False positives deliberately excluded:** action readiness, action ledger projection, and the Sentrux adapter are loaded through dynamic imports and have real runtime consumers. They are not dead code.
 
 ### A12 — Consolidate identical decision-test inputs
 
-**Location:** [decision-classification.test.js](tests/decision-classification.test.js#L10).
+**Location:** [decision-classification.test.js](../../tests/decision-classification.test.js#L10).
 
 Seven non-blocking test rows all pass exactly `{ local: true, reversible: true }` to the same function and make the same assertions. Their titles describe different business examples, but those descriptions are never input to the classifier. Six rows therefore add no distinct executable behavior coverage.
 
@@ -236,7 +236,7 @@ This is a concrete redundant-test finding, not an argument that testing decision
 
 ### A13 — Replace implementation-shape assertions where they do not protect a contract
 
-**Locations:** [core-module-boundaries.test.js](tests/core-module-boundaries.test.js#L24) and [package.test.js](tests/package.test.js#L161).
+**Locations:** [core-module-boundaries.test.js](../../tests/core-module-boundaries.test.js#L24) and [package.test.js](../../tests/package.test.js#L161).
 
 Two boundary tests only check that particular internal filenames exist. A file can exist while every responsibility remains in one large function. These tests add rename friction without demonstrating the stated responsibility boundaries.
 
@@ -248,19 +248,19 @@ The CLI dispatch-table test is not automatically useless: uniqueness and missing
 
 ### A14 — Make manual versus executed test evidence explicit
 
-**Location:** [record-check-compat.js](tests/helpers/record-check-compat.js#L19), used by multiple lifecycle test files, including [next-action.test.js](tests/next-action.test.js#L16).
+**Location:** [record-check-compat.js](../../tests/helpers/record-check-compat.js#L19), used by multiple lifecycle test files, including [next-action.test.js](../../tests/next-action.test.js#L16).
 
 The compatibility helper silently converts some `kind: "command"` checks into `manual-review`. For installation-looking command text, it creates a fake local executable that exits successfully and records that synthetic execution.
 
 This is understandable migration support, but it means a green test whose fixture mentions an executed command may actually exercise manual evidence or a fake command. It cannot establish the behavior of the real execution/provenance boundary.
 
-**Recommended fix:** replace implicit conversion at call sites with clearly named manual-evidence and executed-evidence fixture helpers. Keep fake binaries for deterministic process-boundary tests, but make their role explicit. Migrate in small groups and retain direct [run-check tests](tests/run-check.test.js), [verification-capability tests](tests/verification-capability.test.js), and [integration authority tests](tests/integration-authority-context.test.js).
+**Recommended fix:** replace implicit conversion at call sites with clearly named manual-evidence and executed-evidence fixture helpers. Keep fake binaries for deterministic process-boundary tests, but make their role explicit. Migrate in small groups and retain direct [run-check tests](../../tests/run-check.test.js), [verification-capability tests](../../tests/verification-capability.test.js), and [integration authority tests](../../tests/integration-authority-context.test.js).
 
 Do not mechanically remove this helper first: that could invalidate many fixtures without improving the intended behavioral coverage.
 
 ### A15 — Reuse existing test cleanup utilities
 
-**Locations:** `rimrafWithRetry` in [completion-recovery-rebind.test.js](tests/completion-recovery-rebind.test.js#L23), [preflight-reactivation.test.js](tests/preflight-reactivation.test.js#L19), and [receipt-epoch.test.js](tests/receipt-epoch.test.js#L21); existing [rm-safe.js](tests/helpers/rm-safe.js).
+**Locations:** `rimrafWithRetry` in [completion-recovery-rebind.test.js](../../tests/completion-recovery-rebind.test.js#L23), [preflight-reactivation.test.js](../../tests/preflight-reactivation.test.js#L19), and [receipt-epoch.test.js](../../tests/receipt-epoch.test.js#L21); existing [rm-safe.js](../../tests/helpers/rm-safe.js).
 
 The three cleanup functions have identical bodies, while the repository already contains a centralized Windows-tolerant removal helper. This creates multiple retry policies to maintain.
 
@@ -270,7 +270,7 @@ Other exact duplicates include argument parsers in the benchmark reporting scrip
 
 ### A16 — Make the test runner support focused work and safe discovery
 
-**Location:** [run-tests.js](scripts/run-tests.js#L12).
+**Location:** [run-tests.js](../../scripts/run-tests.js#L12).
 
 The runner only reads immediate children of `tests/` and launches all `.test.js` files it finds. It never forwards `process.argv.slice(2)` to Node. Thus `npm test -- --test-name-pattern=...` cannot narrow the test run, and moving tests into subdirectories would silently drop them from this entry point.
 
@@ -282,7 +282,7 @@ Useful immediate focused checks remain possible through direct `node --test <fil
 
 ### A17 — Expand critical verification by behavior and risk
 
-**Location:** [check-critical-coverage.mjs](scripts/check-critical-coverage.mjs#L10).
+**Location:** [check-critical-coverage.mjs](../../scripts/check-critical-coverage.mjs#L10).
 
 The explicit critical coverage list contains five modules: repository, policy discovery, policy adapters, task identity, and task migration validation. It omits central completion, transaction, phase, action authorization/readiness, and command-execution modules.
 
@@ -294,7 +294,7 @@ An existing `coverage/coverage-summary.json` predates this audit. Its percentage
 
 ### A18 — Bound retained transaction staging and backup data
 
-**Locations:** [transaction.js](src/core/transaction.js#L116) and its successful commit branch at line 260.
+**Locations:** [transaction.js](../../src/core/transaction.js#L116) and its successful commit branch at line 260.
 
 Every transaction creates a directory under `.forgeloop/.txn`. The successful path writes `COMMITTED` and returns without removing staging, append payloads, or backup files. Discovery reads every transaction manifest.
 
@@ -304,7 +304,7 @@ At the inspection point, this checkout retained 119 transaction manifests: 101 `
 
 ### A19 — Make MCP verification dependency resolution reproducible
 
-**Locations:** [mcp-setup.mjs](scripts/mcp-setup.mjs#L17), [MCP package manifest](integrations/mcp/package.json), [.gitignore](.gitignore#L15), and [package-smoke.yml](.github/workflows/package-smoke.yml#L29).
+**Locations:** [mcp-setup.mjs](../../scripts/mcp-setup.mjs#L17), [MCP package manifest](../../integrations/mcp/package.json), [.gitignore](../../.gitignore#L15), and [package-smoke.yml](../../.github/workflows/package-smoke.yml#L29).
 
 The setup script installs the local core tarball plus MCP server/client packages using `^2.0.0` ranges. The MCP lockfile is explicitly ignored, and the client package is supplied by the setup command rather than declared as a test dependency in its package manifest.
 
@@ -318,9 +318,9 @@ The MCP dependencies were absent locally during this audit. MCP transport tests 
 
 The following are valuable, even when they make the repository larger:
 
-- Task conflict, lock, claim, and recovery tests: different invalid ownership states are not interchangeable. See [task-claim-ownership-integration.test.js](tests/task-claim-ownership-integration.test.js) and [task-lock.test.js](tests/task-lock.test.js).
-- Completion freshness, receipt binding, evidence provenance, and negative authorization tests: these protect the product's core promise. See [completion-claim-ownership.test.js](tests/completion-claim-ownership.test.js), [receipt-epoch.test.js](tests/receipt-epoch.test.js), and [action-ledger-replay.test.js](tests/action-ledger-replay.test.js).
-- CLI versus structured-integration parity and task-context propagation: adapters can fail even when the core function passes. See [cli-parser-parity.test.js](tests/cli-parser-parity.test.js) and [integration-context-propagation.test.js](tests/integration-context-propagation.test.js).
+- Task conflict, lock, claim, and recovery tests: different invalid ownership states are not interchangeable. See [task-claim-ownership-integration.test.js](../../tests/task-claim-ownership-integration.test.js) and [task-lock.test.js](../../tests/task-lock.test.js).
+- Completion freshness, receipt binding, evidence provenance, and negative authorization tests: these protect the product's core promise. See [completion-claim-ownership.test.js](../../tests/completion-claim-ownership.test.js), [receipt-epoch.test.js](../../tests/receipt-epoch.test.js), and [action-ledger-replay.test.js](../../tests/action-ledger-replay.test.js).
+- CLI versus structured-integration parity and task-context propagation: adapters can fail even when the core function passes. See [cli-parser-parity.test.js](../../tests/cli-parser-parity.test.js) and [integration-context-propagation.test.js](../../tests/integration-context-propagation.test.js).
 - Real package installation smoke, platform-specific filesystem tests, schema inventory, and generated-document freshness: they observe deployment artifacts and compatibility surfaces that unit tests cannot.
 - Dynamic provider adapters, legacy layout migration fixtures, and the source-kit `PROJECT_PROFILE.md` template: these have explicit compatibility or distribution purposes. The template is intentionally uninitialized in this repository.
 - Historical benchmark evidence, PoC artifacts, and pinned vendored diagram tooling: keep traceability and integrity unless their consumers are deliberately retired. Historical benchmark measurements are already excluded from the core tarball; removing them will not automatically shrink that package.
@@ -340,7 +340,7 @@ The following are valuable, even when they make the repository larger:
 | Later | Large task/transaction history | Measure `next`, `doctor`, and discovery latency and retained bytes at fixed dataset sizes. |
 | Later | Controlled real-provider interoperability lane | Keep fake-provider determinism and separately verify the supported real provider/version. |
 
-The real Sentrux test already exists in [real-sentrux-structural-quality.test.js](tests/real-sentrux-structural-quality.test.js#L22). It conditionally skips when the binary is unavailable and asserts version `0.5.7` when present. A dedicated lane should make the required provider/version explicit; a generic suite passing with that test skipped is not real-provider verification.
+The real Sentrux test already exists in [real-sentrux-structural-quality.test.js](../../tests/real-sentrux-structural-quality.test.js#L22). It conditionally skips when the binary is unavailable and asserts version `0.5.7` when present. A dedicated lane should make the required provider/version explicit; a generic suite passing with that test skipped is not real-provider verification.
 
 In this local run, that real Sentrux test **passed** as part of the 1,515-test suite. Its presence and result are strengths, not missing coverage.
 

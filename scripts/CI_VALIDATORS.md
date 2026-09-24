@@ -48,7 +48,7 @@ missing tool implicitly:
 
 | Tier | Command | Intended use |
 | --- | --- | --- |
-| Fast | `npm run verify:fast` | feedback while editing; quick Node, lint, dependency-policy, and generated-doc checks |
+| Fast | `npm run verify:fast` | feedback while editing; quick Node, lint, dependency-policy, generated-doc, and repository-hygiene checks |
 | Local | `npm run verify:local` | full deterministic source, documentation, manifest, and frozen Python checks |
 | Pre-push | `npm run verify:prepush` | coverage, critical coverage, package/MCP checks, PoC checks, and the local suite expected before a PR |
 | Release | `npm run verify:release` | pre-push checks plus package smoke, benchmark/profile checks, performance, release-identity prerequisites, and `npm pack --dry-run --json` |
@@ -69,8 +69,8 @@ the full suite as a second `npm test`. `npm run lint`,
 `npm run complexity:check`, and `npm run critical-coverage:check` retain
 independent purposes: syntax and usage correctness, hotspot growth, and
 coverage of critical modules. Packed TypeScript consumers validate the public
-declarations; YAML-based tests validate workflow semantics. The core runtime
-remains dependency-free.
+declarations; YAML-based tests validate workflow semantics. The approved exact
+runtime dependencies are `@typesafe-ai/sdk` and `smol-toml`.
 
 ## GitHub Actions boundary
 
@@ -122,9 +122,9 @@ is not duplicated in every ordinary PR job.
 `npm run critical-coverage:check` retain independent purposes: syntax and
 usage correctness, hotspot growth, and coverage of critical modules. Packed
 TypeScript consumers validate the public declarations; YAML-based tests
-validate workflow semantics. The core runtime has the approved exact
-`smol-toml` dependency for bounded Cargo manifest parsing; dependency policy
-keeps all other runtime dependencies out.
+validate workflow semantics. The approved exact runtime dependencies are
+`@typesafe-ai/sdk` and `smol-toml`; dependency policy keeps all other runtime
+dependencies out.
 
 `scripts/audit-receipts.mjs` runs after checkout. It audits supplied scoped
 receipts with explicit task IDs, fails on an invalid audit, and reports

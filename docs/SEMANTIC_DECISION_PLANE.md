@@ -4,10 +4,12 @@ ForgeLoop uses the pinned TypeSafe Jev model `jev-1.13.0` for bounded semantic d
 
 Jev output has `SEMANTIC_DECISION` authority and `NONE` evidence authority. It cannot advance lifecycle, change ownership, satisfy gates, record verification, mark completion, install dependencies, execute commands, or delete tests. ForgeLoop remains the deterministic authority for state, claims, locks, schemas, event chronology, evidence, recovery, and completion.
 
-Every semantic checkpoint uses a versioned question set: intake, contract
-applicability, route enrichment, context planning, model routing, failure
-triage, diagnosis prioritization, review planning, task overlap, test utility,
-and test pruning. Failure triage, diagnosis prioritization, and review planning
+The decision registry contains versioned question sets for intake, contract
+applicability, route, execution profile, context, model routing, failure triage,
+diagnosis, review, task overlap, test utility, and test pruning. Current route,
+context, and test-utility mutations also use bounded dynamic candidate question
+sets: `route-candidates-v1`, `context-candidates-v1`, and
+`test-utility-candidates-v1`. Failure triage, diagnosis prioritization, and review planning
 remain advisory projections: deterministic mandatory review signals are always
 unioned into the plan, unknown semantic output escalates, and no projection can
 record evidence or authorize an action.
@@ -18,7 +20,9 @@ fingerprint, so lifecycle mutations cannot be mistaken for semantic changes
 and semantic changes cannot be hidden by a stable lifecycle revision. The
 lifecycle, event ledger, claims, and artifact validators remain authoritative.
 
-Test utility analysis uses `test-utility-v1` and is persisted separately from
+Test utility analysis uses the bounded `test-utility-candidates-v1` question set
+for the current command path; `test-utility-v1` remains a registered base
+question set. The analysis is persisted separately from
 completion evidence. Protected, contract-linked, public-API, security, and
 protocol tests remain keep-required or keep-risk-guard candidates; unknown
 utility is blocked and no command performs deletion.

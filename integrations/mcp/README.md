@@ -5,13 +5,10 @@ programmatic integration API (`@cassiomc1/forgeloop/integration`).
 
 `@cassiomc1/forgeloop-mcp` is a separately published adapter with its own
 `0.1.x` version line. It supports ForgeLoop core versions `>=1.5.0 <2`; the
-compatibility range is tested by the package smoke flow. The package has no
-committed lockfile by deliberate policy: its dependency ranges follow the
-published MCP SDK and ForgeLoop core compatibility contract, while release
-verification installs from a clean temporary project and checks the packed
-package. Reproducible release inputs are the package manifest, the lockfile of
-the ForgeLoop core repository, immutable workflow action pins, and the exact
-packed tarballs.
+compatibility range is tested by the package smoke flow. Its committed
+`package-lock.json` is the reproducible dependency graph used by setup, tests,
+and publication. Release verification uses `npm ci --ignore-scripts`; the
+packed package is still checked independently from a clean temporary project.
 
 ForgeLoop MCP is an **adapter over ForgeLoop, never another implementation of
 ForgeLoop**: every tool call executes a canonical ForgeLoop command through the

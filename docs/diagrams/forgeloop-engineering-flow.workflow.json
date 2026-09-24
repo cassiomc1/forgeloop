@@ -410,6 +410,7 @@
         "Execution starts only after PREFLIGHT_READY",
         "Workspace binding is optional but blocks mismatched execution",
         "Failures return to diagnosis before another claim",
+        "Evidence-only completion rejection reopens verification from review",
         "Completion is validator-backed, not inferred from a screenshot",
         "Blocked pre-execution refresh requires a valid ledger and revised route"
       ]
@@ -433,6 +434,15 @@
         "record-check covers manual observations",
         "Drift reopens verification instead of being hidden",
         "Matching task IDs never authorize cross-project transaction reuse"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Semantic checkpoint",
+      "items": [
+        "Jev is mandatory at required semantic checkpoints",
+        "Typed Jev output is bounded non-authoritative input",
+        "Jev cannot advance lifecycle, release claims, create evidence, or complete"
       ]
     },
     {

@@ -25,6 +25,7 @@ export async function validateDocumentationReviewMatrix({ rootDir = repositoryRo
     errors.push("DOC_REVIEW_MATRIX_DIAGRAM_MIGRATION_INVALID: activeMermaidArtifacts must be an empty array");
   }
   const manifestPaths = new Set((manifest.documents ?? []).map((document) => document.path));
+  const manifestByPath = new Map((manifest.documents ?? []).map((document) => [document.path, document]));
   const matrixEntries = matrix.documents ?? [];
   const matrixPaths = new Set();
   for (const entry of matrixEntries) {
@@ -33,6 +34,13 @@ export async function validateDocumentationReviewMatrix({ rootDir = repositoryRo
     if (entry.status !== "reviewed") errors.push(`DOC_REVIEW_MATRIX_STATUS_INVALID: ${entry.path}`);
     if (!['unchanged', 'updated', 'new'].includes(entry.action)) errors.push(`DOC_REVIEW_MATRIX_ACTION_INVALID: ${entry.path}`);
     if (!Array.isArray(entry.sourceOfTruth) || entry.sourceOfTruth.length === 0) errors.push(`DOC_REVIEW_MATRIX_SOURCE_MISSING: ${entry.path}`);
+    if (!Array.isArray(entry.canonicalSources) || entry.canonicalSources.length === 0) errors.push(`DOC_REVIEW_MATRIX_CANONICAL_SOURCES_MISSING: ${entry.path}`);
+    if (!['generated', 'handwritten'].includes(entry.origin)) errors.push(`DOC_REVIEW_MATRIX_ORIGIN_INVALID: ${entry.path}`);
+    if (!['current', 'historical'].includes(entry.currency)) errors.push(`DOC_REVIEW_MATRIX_CURRENCY_INVALID: ${entry.path}`);
+    if (!['npm', 'repository-only'].includes(entry.packageInclusion)) errors.push(`DOC_REVIEW_MATRIX_PACKAGE_INCLUSION_INVALID: ${entry.path}`);
+    const source = manifestByPath.get(entry.path);
+    if (source && entry.origin !== (source.class === "generated" ? "generated" : "handwritten")) errors.push(`DOC_REVIEW_MATRIX_ORIGIN_MISMATCH: ${entry.path}`);
+    if (source && entry.packageInclusion !== (source.packaged ? "npm" : "repository-only")) errors.push(`DOC_REVIEW_MATRIX_PACKAGE_INCLUSION_MISMATCH: ${entry.path}`);
     try { await access(path.join(root, entry.path)); } catch { errors.push(`DOC_REVIEW_MATRIX_DOCUMENT_MISSING: ${entry.path}`); }
     for (const source of entry.sourceOfTruth ?? []) {
       try { await access(path.join(root, source)); } catch { errors.push(`DOC_REVIEW_MATRIX_SOURCE_INVALID: ${entry.path} -> ${source}`); }

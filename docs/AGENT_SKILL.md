@@ -9,15 +9,17 @@ harness.
 
 ## Purpose and Architecture
 
-The projection direction is strictly:
+The documented precedence direction is:
 
 ```text
 runtime protocol registries and validators
         -> canonical protocol documentation
         -> docs/AGENT_PROTOCOL_SUMMARY.md
-        -> scripts/generate-forgeloop-skill.mjs
-        -> skills/forgeloop/
+        -> generated Skill
 ```
+
+The Skill generator itself reads the generated summary and runtime protocol
+metadata. It does not parse the canonical Markdown protocol documents.
 
 The Skill never becomes lifecycle, completion, evidence, claim, scheduler,
 provider, or installation authority.

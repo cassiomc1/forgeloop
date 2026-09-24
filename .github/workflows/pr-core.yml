@@ -37,6 +37,8 @@ jobs:
       - name: Classify changed paths
         id: classify
         run: node scripts/ci-classify.mjs --github-output
+      - name: Check repository hygiene
+        run: npm run repository:hygiene
 
   core:
     name: Unit tests (Node ${{ matrix.node-version }}, shard ${{ matrix.shard }}/4)

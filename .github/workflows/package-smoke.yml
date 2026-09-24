@@ -46,6 +46,7 @@ jobs:
           else
             node scripts/ci-classify.mjs --github-output
           fi
+          npm run repository:hygiene
 
   tarball-smoke:
     name: tarball smoke (ubuntu-latest)

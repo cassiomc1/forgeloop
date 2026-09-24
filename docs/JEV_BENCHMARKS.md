@@ -17,10 +17,12 @@ through the pinned Jev provider and reports provider usage/latency only when the
 provider supplies it. It requires `TYPESAFE_API_KEY`, never prints that key,
 and is intentionally separate from the offline benchmark.
 
-Release-readiness validation requires both `npm run jev:smoke` and
-`npm run benchmark:jev -- --live` to succeed on the exact candidate head.
-Offline benchmark output, a missing credential, or a provider-unavailable
-result is not a substitute for that live evidence.
+An optional maintainer release check is available through
+`npm run jev:smoke` and `npm run benchmark:jev:live`. The current repository does
+not enforce either live command in CI or the release workflow, and the CLI does
+not bind either command to an exact candidate commit. Offline output, a missing
+credential, or a provider-unavailable result is never a substitute for live
+interoperability evidence.
 
 Dependency audit attribution for the current base and PR head is unchanged:
 one high-severity `js-yaml` advisory (`GHSA-2883-xcg3-v3hh`, CVSS 7.5, CWE-400
