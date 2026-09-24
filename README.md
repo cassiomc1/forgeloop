@@ -127,7 +127,6 @@ forgeloop preflight --task demo --json
 forgeloop next --task demo --json
 ```
 
-
 ### Optional code attestation
 
 Projects may opt into source-content attestation after a valid completion. The
