@@ -1,6 +1,6 @@
 # Core npm package contents
 
-This page describes the intentional boundary of the published
+This page describes the intentional boundary of the privately delivered
 `@cassiomc1/forgeloop` package. The [`files`](../package.json) list in
 `package.json` is the packaging source of truth, while the repository's
 `tests/package.test.js` and clean-room `scripts/package_smoke.mjs` checks keep
@@ -134,9 +134,8 @@ exercises the CLI, public Integration API, initialization, schemas, and the
 Structural Quality documentation's packaged diagram references. The
 package-boundary tests also assert
 that every registered guide path, including all language specialists, is
-present in the candidate. The tag-triggered publication
-workflow
-runs the same smoke gate before `npm publish --provenance --access public`.
-Publication therefore remains owned by the trusted GitHub Actions OIDC
-workflow; local package inspection proves the candidate boundary but does not
-publish it.
+present in the candidate. The manual, explicitly authorized publication workflow runs the same smoke
+gate before `npm publish --provenance --access restricted`.
+Publication therefore remains owned by the authorized manual GitHub Actions
+workflow and uses restricted npm access; local package inspection proves the
+candidate boundary but does not publish it.

@@ -118,7 +118,6 @@ test("npm tarball contains the CLI, templates, published scenarios, and license 
     "scripts/check-efficiency-regression.mjs",
     "scripts/lib/execution-profile-benchmark-io.mjs",
     ...TEMPLATE_PATHS.filter((relativePath) => relativePath !== ".forgeloop/.gitignore"),
-    ".forgeloop/forgeloop.gitignore",
     "QUALITY_SCORECARD.md",
     "TERMINOLOGY.md",
     "EXECUTION_STATE.md",
@@ -217,7 +216,7 @@ test("npm tarball contains the CLI, templates, published scenarios, and license 
     ...listing.filter((entry) => entry.startsWith("benchmarks/execution-profiles/results")),
     ...listing.filter((entry) => entry.startsWith("benchmarks/ripwire-context/")),
     ...listing.filter((entry) => entry === "scripts/benchmark-ripwire-context.mjs"),
-    ...listing.filter((entry) => entry.startsWith(".forgeloop/") && entry !== ".forgeloop/forgeloop.gitignore"),
+    ...listing.filter((entry) => entry.startsWith(".forgeloop/")),
     // The MCP package ships separately, never inside the core tarball.
     ...listing.filter((entry) => entry.startsWith("integrations/mcp/")),
     ...listing.filter((entry) => entry.includes("package-dry-run")),
@@ -295,6 +294,8 @@ test("CLI package entry is executable by Node-compatible shells", async () => {
 
 test("release workflow requires an OIDC-compatible provenance publishing step", async () => {
   const workflow = parseYaml(await readFile(".github/workflows/npm-publish.yml", "utf8"));
+  assert.ok(workflow.on.workflow_dispatch);
+  assert.equal(workflow.on.push, undefined);
   const publishingJobs = Object.values(workflow.jobs).filter(job => job.steps.some(step => step.run?.includes("npm publish")));
   assert.equal(publishingJobs.length, 1);
   const job = publishingJobs[0];
@@ -304,7 +305,7 @@ test("release workflow requires an OIDC-compatible provenance publishing step", 
   assert.ok(Number(setup.with["node-version"]) >= 24);
   const publish = job.steps.find(step => step.run?.includes("npm publish"));
   assert.match(publish.run, /npm publish[^\n]*--provenance/u);
-  assert.match(publish.run, /--access public/u);
+  assert.match(publish.run, /--access restricted/u);
   const smoke = job.steps.find(step => step.run?.includes("npm run pack:smoke"));
   assert.ok(smoke, "publication must smoke-test the packed package before publishing");
   assert.ok(job.steps.indexOf(smoke) < job.steps.indexOf(publish), "package smoke must run before npm publish");
@@ -376,11 +377,21 @@ test("required validation context rejects failed, unexpected, or missing prerequ
   }));
 });
 
-test("published package metadata declares the repository license and integration types", async () => {
+test("private package metadata declares the repository license and integration types", async () => {
   const packageJson = JSON.parse(await readFile("package.json", "utf8"));
   const mcpPackageJson = JSON.parse(await readFile("integrations/mcp/package.json", "utf8"));
-  assert.equal(packageJson.license, "MIT");
-  assert.equal(mcpPackageJson.license, "MIT");
+  assert.equal(packageJson.license, "UNLICENSED");
+  assert.equal(mcpPackageJson.license, "UNLICENSED");
+  assert.equal(packageJson.publishConfig.access, "restricted");
+  assert.equal(mcpPackageJson.publishConfig.access, "restricted");
+  assert.equal(packageJson.private, undefined);
+  assert.equal(mcpPackageJson.private, undefined);
+  const rootLicense = await readFile("LICENSE", "utf8");
+  const mcpLicense = await readFile("integrations/mcp/LICENSE", "utf8");
+  assert.match(rootLicense, /proprietary/iu);
+  assert.match(mcpLicense, /proprietary/iu);
+  assert.doesNotMatch(rootLicense, /MIT License/iu);
+  assert.doesNotMatch(mcpLicense, /MIT License/iu);
   assert.equal(packageJson.exports?.["./integration"]?.types, "./src/integration.d.ts");
   assert.ok(packageJson.files.includes("src"));
   assert.deepEqual(Object.keys(packageJson.dependencies).sort(), [...APPROVED_RUNTIME_DEPENDENCIES].sort());

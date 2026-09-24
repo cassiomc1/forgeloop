@@ -11,10 +11,7 @@
 [![Package smoke](https://github.com/cassiomc1/forgeloop/actions/workflows/package-smoke.yml/badge.svg?branch=main)](https://github.com/cassiomc1/forgeloop/actions/workflows/package-smoke.yml)
 [![Release notes](https://github.com/cassiomc1/forgeloop/actions/workflows/release-notes.yml/badge.svg?branch=main)](https://github.com/cassiomc1/forgeloop/actions/workflows/release-notes.yml)
 
-ForgeLoop is the deterministic governor for AI-assisted engineering. Jev is the
-mandatory bounded System One semantic input; the host coding model is System Two
-implementation. ForgeLoop alone owns lifecycle, claims, gates, evidence,
-completion, recovery, and publication truth.
+ForgeLoop is the proprietary deterministic governor for AI-assisted engineering. Jev is the mandatory bounded System One semantic input; the host coding model is System Two implementation. ForgeLoop alone owns lifecycle, claims, gates, evidence, completion, recovery, and publication truth.
 
 Operational sources are indexed in [`DOCS_INDEX.md`](./DOCS_INDEX.md).
 [`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md) is canonical;
@@ -86,31 +83,29 @@ migration overlay. Source extensions, build tooling, lockfiles, compiler/JDK/
 runtime images, and prose alone fail where the specialist contract requires
 stronger project identity. The public project-evidence schema remains v1.
 
+## Distribution and license
+
+GitHub is the public source and issue surface; npm is private licensed delivery
+for authorized users. Browsing the repository grants no rights. See
+[`LICENSE`](./LICENSE) and [`LICENSE-DOCS.md`](./LICENSE-DOCS.md).
+
 ## Quickstart
 
 ### Installation
 
-Install the ForgeLoop CLI globally to make the `forgeloop` command available
-in your terminal:
+After your organization grants access, configure npm authentication and install:
 
 ```bash
 npm install --global @cassiomc1/forgeloop
 forgeloop --version
 ```
 
-Then, inside your project repository:
+Inside your project:
 
 ```bash
 forgeloop init
 forgeloop doctor
 forgeloop search "example"
-```
-
-If you prefer not to install globally, use `npx`:
-
-```bash
-npx @cassiomc1/forgeloop init
-npx @cassiomc1/forgeloop doctor
 ```
 
 ### 60-second demonstration
@@ -214,7 +209,7 @@ forgeloop protocol-info --json
 For a concrete exchange between tools, see
 [cross-harness continuity](./docs/CROSS_HARNESS_CONTINUITY.md).
 
-From a published package, initialize a target project with:
+From the privately delivered package, initialize a target project with:
 
 ```bash
 npx @cassiomc1/forgeloop init
@@ -256,8 +251,7 @@ host-reported or `UNKNOWN`; values are never estimated.
 capability, but advisory recall remains Integration API only. The stock CLI
 does not auto-recall providers and does not expose a `context-recall` command.
 
-Before npm publication, the same source checkout can be exercised without a
-network or package lookup:
+Validate the source checkout offline before any private release:
 
 ```bash
 node src/cli.js init

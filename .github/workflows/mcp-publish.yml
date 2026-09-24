@@ -1,9 +1,16 @@
 name: Publish ForgeLoop MCP package
 
 on:
-  push:
-    tags:
-      - "mcp-v*.*.*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Exact MCP package version to publish"
+        required: true
+        type: string
+      confirm:
+        description: "Type PUBLISH PRIVATE PACKAGE to authorize this manual release"
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -14,6 +21,7 @@ concurrency:
 
 jobs:
   publish:
+    if: github.event_name == 'workflow_dispatch' && inputs.confirm == 'PUBLISH PRIVATE PACKAGE'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -35,7 +43,7 @@ jobs:
           package-manager-cache: false
       - name: Verify MCP tag and package version
         run: |
-          expected="${GITHUB_REF_NAME#mcp-v}"
+          expected="${{ inputs.version }}"
           actual="$(node -p "JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version")"
           test "$expected" = "$actual"
       - name: Install MCP release dependencies
@@ -43,4 +51,4 @@ jobs:
       - name: Run MCP tests
         run: npm test
       - name: Publish with trusted publishing
-        run: npm publish --provenance --access public
+        run: npm publish --provenance --access restricted

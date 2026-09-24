@@ -3,8 +3,8 @@
 Local **stdio** Model Context Protocol server exposing the canonical ForgeLoop
 programmatic integration API (`@cassiomc1/forgeloop/integration`).
 
-`@cassiomc1/forgeloop-mcp` is a separately published adapter with its own
-`0.1.x` version line. It supports ForgeLoop core versions `>=1.5.0 <2`; the
+`@cassiomc1/forgeloop-mcp` is a proprietary adapter delivered through the
+private, licensed npm channel. It has its own `0.1.x` version line. It supports ForgeLoop core versions `>=1.5.0 <2`; the
 compatibility range is tested by the package smoke flow. Its committed
 `package-lock.json` is the reproducible dependency graph used by setup, tests,
 and publication. Release verification uses `npm ci --ignore-scripts`; the
@@ -90,4 +90,5 @@ Run: npm run mcp:setup
 Run `npm run mcp:setup` explicitly when installation is authorized, then use
 `npm run mcp:test`. `npm run mcp:pack:check` performs the clean packed-package
 smoke test used before publishing this adapter. Publication is separate from
-core ForgeLoop publication and requires its own authorized release workflow.
+core ForgeLoop publication and requires its own authorized manual release
+workflow.

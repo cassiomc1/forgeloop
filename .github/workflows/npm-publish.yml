@@ -1,9 +1,12 @@
 name: Publish npm package
 
 on:
-  push:
-    tags:
-      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Type PUBLISH PRIVATE PACKAGE to authorize this manual release"
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -14,6 +17,7 @@ concurrency:
 
 jobs:
   publish:
+    if: github.event_name == 'workflow_dispatch' && inputs.confirm == 'PUBLISH PRIVATE PACKAGE'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -123,4 +127,4 @@ jobs:
           python3 scripts/validate_loop_system.py
           python3 scripts/scan_secrets.py
       - name: Publish with trusted publishing
-        run: npm publish --provenance --access public
+        run: npm publish --provenance --access restricted

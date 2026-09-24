@@ -1,13 +1,30 @@
-# Documentation license
+# Proprietary License Documentation
 
-Original documentation in this repository is offered under the Creative
-Commons Attribution 4.0 International license (CC BY 4.0):
+ForgeLoop is proprietary. The public repository is provided for technical
+review and source transparency; viewing it does not grant a license to use,
+copy, modify, distribute, sublicense, or create derivative works.
 
-<https://creativecommons.org/licenses/by/4.0/>
+Authorized use is provided only under a separate written agreement. The
+package is distributed through a private, licensed npm channel and is not
+published as an open-source or public npm package.
 
-That license permits sharing, adaptation, and commercial use when appropriate
-credit, a link to the license, and an indication of changes are provided.
+## Applicable terms
 
-This notice applies only to documentation for which the repository owner has
-the necessary rights. Adapted or externally sourced material remains subject
-to the terms and attribution recorded in `THIRD_PARTY_NOTICES.md`.
+- [`LICENSE`](./LICENSE): proprietary notice for first-party ForgeLoop code,
+  documentation, templates, schemas, and package metadata.
+- [`THIRD_PARTY_NOTICES.md`](./THIRD_PARTY_NOTICES.md): provenance and
+  attribution for adapted or editorial sources, including their applicable
+  terms.
+
+## Third-party material
+
+Third-party citations, dependencies, and adapted material are not relicensed
+by ForgeLoop. Each referenced project remains subject to the terms stated in
+its own source or notice. Consult the upstream project before redistributing
+adapted material.
+
+## Scope
+
+These terms apply to first-party material authored for this repository and
+its privately delivered package. They do not modify third-party terms,
+generated outputs, or external services.

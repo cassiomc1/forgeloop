@@ -10,4 +10,5 @@ that permission.
 
 Authorized users receive access through the private licensed npm channel.
 Third-party components, dependencies, and adapted material remain subject to
-their own licenses and notices. See THIRD_PARTY_NOTICES.md for provenance.
+their own licenses and notices. See the repository's THIRD_PARTY_NOTICES.md
+for provenance.
