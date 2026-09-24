@@ -183,7 +183,8 @@ Attestation Chain](./docs/CODE_ATTESTATION.md#completion-flow).
 
 ## Serializable interfaces
 
-The following JSON Schemas define the boundaries a host may implement:
+The following core lifecycle JSON Schemas define boundaries a host may implement;
+the complete current inventory is generated in `docs/ARTIFACT_REFERENCE.md`:
 
 - `schemas/routing-input.schema.json` and
   `schemas/routing-result.schema.json` define deterministic guide selection
@@ -203,6 +204,9 @@ The following JSON Schemas define the boundaries a host may implement:
   `schemas/config.schema.json`, `schemas/policy.schema.json`, and
   `schemas/task-bundle.schema.json` define chronology, mode, policy, and
   handoff boundaries.
+- `schemas/semantic-decision.schema.json`, `schemas/context-plan.schema.json`,
+  and `schemas/test-utility.schema.json` define bounded semantic inputs and
+  test-intelligence projections without lifecycle or evidence authority.
 
 `src/core/conformance.js` validates relationships that individual schemas
 cannot express: route/state protocol versions, route/state guide sets,
@@ -224,10 +228,10 @@ tool objects, credentials, hidden prompts, or remote database references.
 ## Host responsibilities
 
 The compatible harness owns model execution, tool execution, scheduling,
-parallelism, lifecycle, isolation, and any remote services. It must pass
-validated inputs to the protocol, preserve file ownership, report unavailable
-capabilities, and never turn local success into an unverified publication
-claim.
+parallelism, verification isolation, and any remote services. It must invoke
+lifecycle transitions through ForgeLoop, pass validated inputs, preserve file
+ownership, report unavailable capabilities, and never turn local success into an
+unverified publication claim.
 
 ## No-runtime boundary
 

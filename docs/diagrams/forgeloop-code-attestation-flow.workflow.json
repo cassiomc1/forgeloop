@@ -422,7 +422,7 @@
       "dot": "rose",
       "title": "Trust Levels",
       "items": [
-        "PROCESSED means artifacts exist and parse",
+        "PROCESSED is a minimum reported level; MISSING, DISABLED, and INVALID remain separate statuses",
         "VERIFIED means completion, evidence, manifest, and content bindings validate",
         "ATTESTED additionally requires a valid external signature policy",
         "No supplied CI receipt means NOT_VERIFIED, not a trust level"

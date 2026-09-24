@@ -539,8 +539,10 @@ installing a package.
 
 The installed loop directs the active actor to inspect native model and harness
 capabilities. When a task requires a missing capability (e.g. multimodal vision),
-the actor may install the smallest task-scoped capability (such as `Qwen-MM-Plugins`)
-through native mechanisms or upstream installers, then verify it before use.
+a host or operator may provision the smallest task-scoped capability (such as
+`Qwen-MM-Plugins`) only when installation authority has been explicitly
+granted. Use native mechanisms or upstream installers, then verify it before
+use. Without that authority, keep it unavailable and report the limitation.
 
 API credentials, system packages, and unrelated environment changes remain
 separately gated.

@@ -3,8 +3,8 @@
   "diagramId": "forgeloop-code-attestation-flow",
   "status": "approved",
   "binding": {
-    "sourceSha256": "33bb9c3c4f3fb4a793febeab34b2d07ca7bf2c058d4f5e7575dba3a6065eedeb",
-    "svgSha256": "3a768148886ffdfcce75221c11e51ee77a3702510e90917bf6e8ba0581ebdb44"
+    "sourceSha256": "eb8ca8fdfceb9e50cf7cd07be8622dcac127cfee80c8e2929d604c40138cc594",
+    "svgSha256": "876c6400a34f9fe9773e61d968ddf773669cc14153933de2b2ceccd4386506a7"
   },
   "checks": {
     "darkThemeLegible": true,
@@ -15,6 +15,6 @@
     "textFallbackEquivalent": true,
     "accessibleMetadataPresent": true
   },
-  "reviewedBy": "Codex visual review",
-  "reviewedAt": "2026-09-05"
+  "reviewedBy": "Visual review of desktop and narrow SVG previews",
+  "reviewedAt": "2026-09-24"
 }

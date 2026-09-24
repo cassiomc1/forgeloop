@@ -9,11 +9,11 @@ bug-free or secure.
 
 | Level | Meaning |
 | --- | --- |
-| `PROCESSED` | Protocol artifacts exist but verification is not complete. |
+| `PROCESSED` | Minimum reported level; verification is not complete. `MISSING`, `DISABLED`, and `INVALID` remain separate status results. |
 | `VERIFIED` | Completion, evidence bindings, manifest, and current content validate. |
 | `ATTESTED` | `VERIFIED` plus a cryptographically valid signature and trusted signer policy. |
 
-`PROCESSED` is an existence/parsing result, not a trust claim. A manifest or
+`PROCESSED` is a lower-bound reported level, not a trust claim. A manifest or
 statement that merely exists never becomes `ATTESTED`; the signature must be
 verified against the configured signer identity, issuer, and trust policy.
 Attestation binds bounded source/evidence relationships. It does not prove

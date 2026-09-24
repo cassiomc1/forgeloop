@@ -51,6 +51,15 @@ actions.
       synchronization, safety boundaries, and package coverage remain valid.
 
 - [ ] `npm run verify:fast` passes for edit-time feedback.
+- [ ] `npm run repository:hygiene` passes: no tracked mutable ForgeLoop state,
+      unexpected root reports, orphan visual assets, unapproved benchmark run
+      sets, or scratch outputs.
+- [ ] The documentation manifest and review matrix cover every maintained and
+      packaged document with origin, currency, package, action, and canonical
+      source metadata.
+- [ ] Diagram source, generated output, receipts, and review bindings are
+      current; a changed source is not approved until its visual review is
+      renewed.
 - [ ] `npm run verify:prepush` passes before the release pull request; MCP
       setup, when needed, was run explicitly with `npm run mcp:setup`.
 - [ ] Ordinary PR validation uses `.github/workflows/pr-core.yml` with the
@@ -120,8 +129,9 @@ actions.
 - [ ] Stale contract/route identity rejects handoff creation or acceptance.
 - [ ] An invalid event ledger projects `INCONSISTENT`.
 - [ ] Continuity lint remains non-authoritative and non-evidence.
-- [ ] `npm run dependency:policy` passes with only the approved exact runtime
-      parser dependency and approved development dependencies.
+- [ ] `npm run dependency:policy` passes with only the approved exact
+      `@typesafe-ai/sdk` and `smol-toml` runtime dependencies and approved
+      development dependencies.
 - [ ] `npm run lint` passes.
 - [ ] `npm test` passes.
 - [ ] `npm run benchmark:profiles:check` passes; absent provider/host history

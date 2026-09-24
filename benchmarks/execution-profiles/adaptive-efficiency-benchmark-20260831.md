@@ -94,7 +94,7 @@ that closes the product-quality decision.
 
 ## Host-consumption evidence
 
-[`benchmarks/adapters/codex-cli-real-host.mjs`](../benchmarks/adapters/codex-cli-real-host.mjs)
+[`benchmarks/adapters/codex-cli-real-host.mjs`](../adapters/codex-cli-real-host.mjs)
 is the provider-specific host adapter used for this run. It:
 
 - creates a fresh local fixture for each run and invokes the authenticated Codex

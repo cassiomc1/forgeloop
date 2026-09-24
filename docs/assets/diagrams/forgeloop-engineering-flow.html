@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark" data-preset="signal-flow" data-present="true">
 <head>
-      <meta name="forgeloop-diagram-source-sha256" content="24aa2ca3eeaeabceffd6c14db51d78ec6ad4519327ee79790dabd9acde96efc0">
+      <meta name="forgeloop-diagram-source-sha256" content="3eb4ed7dc7566cf786311b230336b88ff214889ec5a86bb8f2cf0b629a50ae95">
     <meta name="forgeloop-diagram-renderer" content="archify@2.15.0 (e1ac748f19cf805e44bf74fb93c796662152e273)">
 <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -5391,6 +5391,7 @@
           <li>&bull; Execution starts only after PREFLIGHT_READY</li>
           <li>&bull; Workspace binding is optional but blocks mismatched execution</li>
           <li>&bull; Failures return to diagnosis before another claim</li>
+          <li>&bull; Evidence-only completion rejection reopens verification from review</li>
           <li>&bull; Completion is validator-backed, not inferred from a screenshot</li>
           <li>&bull; Blocked pre-execution refresh requires a valid ledger and revised route</li>
         </ul>
@@ -5420,6 +5421,18 @@
           <li>&bull; record-check covers manual observations</li>
           <li>&bull; Drift reopens verification instead of being hidden</li>
           <li>&bull; Matching task IDs never authorize cross-project transaction reuse</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot violet"></div>
+          <h3>Semantic checkpoint</h3>
+        </div>
+        <ul>
+          <li>&bull; Jev is mandatory at required semantic checkpoints</li>
+          <li>&bull; Typed Jev output is bounded non-authoritative input</li>
+          <li>&bull; Jev cannot advance lifecycle, release claims, create evidence, or complete</li>
         </ul>
       </div>
 

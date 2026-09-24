@@ -2,6 +2,15 @@
 .worktrees/
 node_modules/
 coverage/
+coverage-data/
+package-dry-run.json
+*.tgz
+.mcp-smoke-*/
+integrations/mcp/.core-tarball-*/
+*.forgeloop-tmp-*
+docs/assets/diagrams/.archify-*/
+benchmarks/execution-profiles/results/raw/scratch/
+benchmarks/execution-profiles/results/aggregate/scratch/
 .forgeloop/.txn/
 npm-debug.log*
 yarn-debug.log*

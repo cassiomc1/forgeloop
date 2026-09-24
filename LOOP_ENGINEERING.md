@@ -1013,8 +1013,10 @@ tooling, the agent must verify the capability boundary before using it:
 3. Reuse an existing callable capability when it is sufficient for the task.
 4. If the required capability is missing and a keyless Qwen path exists,
    install only the smallest matching capability, normally
-   `qwen-mm-plugins-core` for multimodal reading. Use the active harness's
-   native installation mechanism or the official
+   `qwen-mm-plugins-core` for multimodal reading, when the host or operator has
+   explicitly granted task-scoped installation authority. Without that
+   authority, keep the capability unavailable and report the limitation. Use
+   the active harness's native installation mechanism or the official
    [Qwen-MM-Plugins](https://github.com/QwenLM/Qwen-MM-Plugins) instructions.
 5. If the operation is API-backed, check the required environment variable or
    configured service endpoint before enabling it. Without that prerequisite,

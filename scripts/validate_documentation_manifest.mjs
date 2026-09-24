@@ -1,20 +1,46 @@
 #!/usr/bin/env node
 
-import { access, readFile } from "node:fs/promises";
+import { access, readFile, readdir, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const REQUIRED_DOCUMENT_FIELDS = ["path", "id", "class", "audience", "canonicalFor", "packaged"];
-const PACKAGE_DOCUMENTS = [
-  "AGENTS.md", "CLAUDE.md", "GUIDE_ROUTER.md", "LOOP_ENGINEERING.md", "PROTOCOL_INTEGRATION.md",
-  "LOOP_SYSTEM_DESIGN.md", "QUALITY_SCORECARD.md", "TERMINOLOGY.md", "EXECUTION_STATE.md",
-  "DELEGATION_PROTOCOL.md", "ORCHESTRATOR_INTEGRATION.md", "THREAT_MODEL.md", "CONTRACT_COVERAGE.md",
-  "AGENT_COMPATIBILITY.md", "PROJECT_PROFILE.md", "THIRD_PARTY_NOTICES.md", "LICENSE-DOCS.md",
-  ".github/copilot-instructions.md", "README.md", "DOCS_INDEX.md", "docs/GETTING_STARTED.md",
-  "docs/CROSS_HARNESS_CONTINUITY.md", "docs/CLI_REFERENCE.md", "docs/ARTIFACT_REFERENCE.md", "docs/EXECUTION_PROFILE_BENCHMARKS.md",
-  "docs/TROUBLESHOOTING.md", "docs/RECIPES.md", "docs/DOCUMENTATION_GUIDE.md", "docs/diagrams/README.md", "scripts/CI_VALIDATORS.md",
-];
+const DOCUMENT_EXTENSIONS = new Set([".md", ".mdc"]);
+
+function toPosix(value) {
+  return value.split(path.sep).join("/");
+}
+
+async function collectPackageDocuments(rootDir, currentDir, documents) {
+  for (const entry of await readdir(currentDir, { withFileTypes: true })) {
+    const absolutePath = path.join(currentDir, entry.name);
+    if (entry.isDirectory()) {
+      await collectPackageDocuments(rootDir, absolutePath, documents);
+    } else if (entry.isFile() && DOCUMENT_EXTENSIONS.has(path.extname(entry.name).toLowerCase())) {
+      documents.add(toPosix(path.relative(rootDir, absolutePath)));
+    }
+  }
+}
+
+async function packageDocuments(rootDir) {
+  const packageJson = await readJson(path.join(rootDir, "package.json"));
+  const documents = new Set();
+  for (const entry of packageJson.files ?? []) {
+    if (/[*?[\]]/u.test(entry)) continue;
+    const relative = entry.replace(/^\.\//u, "");
+    const absolutePath = path.join(rootDir, relative);
+    let metadata;
+    try {
+      metadata = await stat(absolutePath);
+    } catch {
+      continue;
+    }
+    if (metadata.isFile() && DOCUMENT_EXTENSIONS.has(path.extname(relative).toLowerCase())) documents.add(relative);
+    if (metadata.isDirectory()) await collectPackageDocuments(rootDir, absolutePath, documents);
+  }
+  return documents;
+}
 
 async function readJson(file) {
   return JSON.parse(await readFile(file, "utf8"));
@@ -24,6 +50,7 @@ export async function validateDocumentationManifest({ rootDir = repositoryRoot }
   const errors = [];
   const manifest = await readJson(path.join(rootDir, "docs", "documentation-manifest.json"));
   const requirementMap = await readJson(path.join(rootDir, "docs", "protocol-requirements.json"));
+  const packageDocs = await packageDocuments(rootDir);
   if (manifest.version !== 1 || !Array.isArray(manifest.documents)) errors.push("DOC_MANIFEST_INVALID: version 1 documents array is required");
   const documents = Array.isArray(manifest.documents) ? manifest.documents : [];
   const paths = new Set(); const ids = new Set(); const canonicalOwners = new Map();
@@ -40,7 +67,10 @@ export async function validateDocumentationManifest({ rootDir = repositoryRoot }
     }
     try { await access(path.join(rootDir, doc.path)); } catch { errors.push(`DOC_MANIFEST_DOCUMENT_MISSING: ${doc.path}`); }
   }
-  for (const document of PACKAGE_DOCUMENTS) if (!paths.has(document)) errors.push(`DOC_MANIFEST_PACKAGED_DOCUMENT_MISSING: ${document}`);
+  for (const document of await packageDocuments(rootDir)) if (!paths.has(document)) errors.push(`DOC_MANIFEST_PACKAGED_DOCUMENT_MISSING: ${document}`);
+  for (const document of documents) {
+    if (document.packaged && !packageDocs.has(document.path)) errors.push(`DOC_MANIFEST_PACKAGE_FLAG_INVALID: ${document.path}`);
+  }
   const mappedRequirements = new Map(Object.entries(requirementMap.requirements ?? {}));
   const discoveredRequirementIds = new Map();
   for (const doc of documents.filter((item) => item.class === "normative")) {

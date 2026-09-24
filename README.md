@@ -11,10 +11,10 @@
 [![Package smoke](https://github.com/cassiomc1/forgeloop/actions/workflows/package-smoke.yml/badge.svg?branch=main)](https://github.com/cassiomc1/forgeloop/actions/workflows/package-smoke.yml)
 [![Release notes](https://github.com/cassiomc1/forgeloop/actions/workflows/release-notes.yml/badge.svg?branch=main)](https://github.com/cassiomc1/forgeloop/actions/workflows/release-notes.yml)
 
-ForgeLoop is a protocol CLI for AI-assisted development.
-It turns outcomes into contracts, deterministic routing, resumable state,
-evidence-backed verification, recovery, cross-harness continuity, repository
-discovery, and validator-backed completion—not an agent or LLM runtime.
+ForgeLoop is the deterministic governor for AI-assisted engineering. Jev is the
+mandatory bounded System One semantic input; the host coding model is System Two
+implementation. ForgeLoop alone owns lifecycle, claims, gates, evidence,
+completion, recovery, and publication truth.
 
 Operational sources are indexed in [`DOCS_INDEX.md`](./DOCS_INDEX.md).
 [`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md) is canonical;
@@ -115,19 +115,18 @@ npx @cassiomc1/forgeloop doctor
 
 ### 60-second demonstration
 
-In a disposable directory, initialize the kit and create an isolated task. The
-result is deterministic and can be inspected by any compatible harness:
+In a disposable directory, initialize the kit and create an isolated task.
+Semantic checkpoints require a host-configured `TYPESAFE_API_KEY`; ForgeLoop never persists it.
 
 ```bash
 npx @cassiomc1/forgeloop init
 forgeloop task-create --task demo --claim src --json
-forgeloop route --task demo --work clean-code --json
+forgeloop contract-create --task demo --preset documentation --json
+forgeloop route --task demo --work code --json
 forgeloop preflight --task demo --json
 forgeloop next --task demo --json
 ```
 
-The last command reports the next safe action; it does not execute code or
-schedule agents.
 
 ### Optional code attestation
 
@@ -380,7 +379,7 @@ forgeloop task-abandon --task auth-feature --acknowledge-abandonment --json
 # Reacquire conflict-free claims before mutating a recovered task
 forgeloop task-resume --task auth-feature --json
 
-forgeloop route --task auth-feature --work clean-code --surface backend
+forgeloop route --task auth-feature --work code --surface backend
 forgeloop preflight --task auth-feature --json
 forgeloop advance --task auth-feature --to EXECUTING
 forgeloop complete --task auth-feature --json
@@ -532,8 +531,9 @@ it must not infer current ownership from `task.json` or `recovery.json` alone.
 
 ## Security and dependency boundary
 
-Runtime uses Node built-ins and approved exact `smol-toml`; it installs no
-agents, providers, plugins, services, or telemetry. Paths, symlinks, JSON,
+Runtime uses Node built-ins and the approved exact `@typesafe-ai/sdk` and
+`smol-toml` dependencies; it installs no agents, providers, plugins, services,
+or telemetry. Paths, symlinks, JSON,
 manifests, schemas, receipts, and secret-like values are bounded or checked.
 Install-capable verification requires trusted host authority; see
 [`THREAT_MODEL.md`](./THREAT_MODEL.md).

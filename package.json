@@ -169,6 +169,7 @@
     "transactions:compact": "node scripts/compact-transactions.mjs",
     "complexity:check": "node scripts/check-complexity.mjs",
     "repository-index:manifest": "node scripts/verify-tgrep-manifest.mjs",
+    "repository:hygiene": "node scripts/check-repository-hygiene.mjs",
     "task-discovery:benchmark": "node scripts/benchmark-task-discovery.mjs",
     "verify:fast": "node scripts/run-validation.mjs --tier fast",
     "verify:local": "node scripts/run-validation.mjs --tier local",

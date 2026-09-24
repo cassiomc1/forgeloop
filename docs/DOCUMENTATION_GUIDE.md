@@ -54,11 +54,30 @@ Documentation-impact questions for integration/MCP changes:
 - Did an adapter error code change?
 - Did an integration limit or resource list change?
 
-Anti-drift invariant: every `documentation-manifest.json` entry marked
-`packaged: true` is mechanically checked against the core npm tarball
-contents (`tests/package.test.js`).
+Anti-drift invariant: every packaged Markdown or harness-adapter document in
+`package.json.files` is registered in `documentation-manifest.json`, and every
+`packaged: true` manifest entry is mechanically checked against the core npm
+tarball contents (`tests/package.test.js`). The review matrix records generated
+or handwritten origin, current or historical status, package inclusion, action,
+and canonical sources for every registered document.
 
-Canonical phase and transition inventories must be derived from `WORK_PHASES`
+### Documentation retention and repository hygiene
+
+Use one canonical owner for each maintained concept. Generated documentation
+must name its source, generator, freshness check, and reason for being tracked.
+Historical audits, release evidence, and completed validation records belong
+under `docs/history/`; current operating instructions must not leave those
+records loose in the repository root. One-off plans and validation reports are
+either consolidated into a canonical document and deleted or moved to the
+history index with their current owner links.
+
+Repository and npm decisions are separate. GitHub may retain reproducible
+benchmarks, PoC evidence, source-bound diagram artifacts, vendored renderer
+sources, and historical records that consumers do not need. The npm package
+ships only intentional runtime, integration, legal, harness, and canonical user
+documentation surfaces. `npm run repository:hygiene` enforces explicit root,
+tracked-state, visual-ownership, benchmark-run-set, and scratch-output policy;
+it does not guess whether an arbitrary document is useful.
 and `WORK_TRANSITIONS`; do not maintain independent hand-written transition
 enums when a generated or mechanically validated representation is available.
 
@@ -195,7 +214,7 @@ migration, or security-sensitive require `npm run docs:check` before merge.
 2. **Pinned local renderer**: Generation uses only the vendored Archify v2.15.0 source at the reviewed commit recorded in `docs/diagrams/manifest.json` and `vendor/archify/v2.15.0/PIN.json`.
 3. **Animated committed outputs**: Every active source uses `meta.animation: "trace"`. Each interactive HTML is the primary animated explorer, and each self-contained SVG fallback carries trace-capable edge/node animation while remaining usable in repository previews. Deterministic receipts are committed under `docs/assets/diagrams/`.
 4. **GitHub-safe SVG**: The SVG must not embed `<script>` or `<foreignObject>`, must expose accessible title/description metadata, and must remain visible through standard Markdown image syntax.
-5. **Fingerprint and review verification**: The generated SVG embeds a `data-forgeloop-source-sha256` attribute, the outputs expose trace markers, and the receipt binds the source, HTML, and SVG hashes. The human-owned review at `docs/diagrams/reviews/` binds the current source and SVG hashes and is never generated or overwritten. Run `npm run docs:diagrams:check` before review.
+5. **Fingerprint and review verification**: The generated SVG embeds a `data-forgeloop-source-sha256` attribute, the outputs expose trace markers, and the receipt binds the source, HTML, and SVG hashes. The review at `docs/diagrams/reviews/` binds the current source and SVG hashes as a review assertion and is never generated or overwritten; the checker does not independently authenticate the reviewer. Run `npm run docs:diagrams:check` before review.
 6. **Scoped wrapper**: The ForgeLoop Archify wrapper is intentionally documentation-scoped. It reads canonical inputs only from `docs/diagrams/` and permits deliver outputs only under `docs/assets/diagrams/`.
 
 ForgeLoop governs five documentation-diagram categories: workflow,
@@ -213,18 +232,16 @@ README hero assets are branding/conceptual architecture illustrations. They are
 not the canonical protocol diagram. The typed Archify workflow under
 `docs/diagrams/` remains the canonical lifecycle architecture source, with
 generated outputs under `docs/assets/diagrams/`; the CLI-only persistent search
-transport is explained by `docs/PERSISTENT_SEARCH_TRANSPORT.md`.
+transport is explained by `docs/PERSISTENT_SEARCH_TRANSPORT.md`. The current
+repository-only assets are `docs/assets/forgeloop-architecture.svg` and
+`docs/assets/forgeloop-lifecycle-animated.svg`; neither is a package file.
 
 The README hero is intentionally GitHub-repository-only:
 
-- `README.md` may reference `docs/assets/eng_readme_forgeloop.png`; GitHub
-  renders it from the repository.
-- `README.md` also references `docs/assets/forgeloop-lifecycle-animated.svg`
-  as the looping Architecture-flow overview; it links to the governed
-  interactive explorer under `docs/assets/diagrams/` and is likewise
-  repository-only.
-- The hero PNG is excluded from the npm package (`package.json` `files`), and
-  `tests/package.test.js` asserts that exclusion so it cannot be silently
+- `README.md` references `docs/assets/forgeloop-architecture.svg` for the hero
+  and `docs/assets/forgeloop-lifecycle-animated.svg` for the looping overview;
+  both are repository-only and excluded from the npm package.
+- `tests/package.test.js` asserts those exclusions so they cannot be silently
   re-included.
 - The packaged README is therefore not self-contained for that relative hero
   path; do not claim otherwise.

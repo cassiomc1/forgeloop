@@ -6,6 +6,7 @@ import path from "node:path";
 import { test } from "node:test";
 
 import { TEMPLATE_PATHS } from "../src/core/templates.js";
+import { APPROVED_DEV_DEPENDENCIES, APPROVED_RUNTIME_DEPENDENCIES } from "../scripts/check-dependency-policy.mjs";
 
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const RETIRED_RUNTIME_SOURCES = new Set([
@@ -202,7 +203,8 @@ test("npm tarball contains the CLI, templates, published scenarios, and license 
     "tests/cli.test.js",
     "scripts/scan_secrets.py",
     ".forgeloop/work-state.json",
-    "docs/assets/eng_readme_forgeloop.png",
+    "docs/assets/forgeloop-architecture.svg",
+    "docs/assets/forgeloop-lifecycle-animated.svg",
     "docs/superpowers/plans/2026-08-11-10-of-10-roadmap-implementation.md",
     "docs/RELEASE_CHECKLIST_1_4.md",
     "docs/RELEASE_CHECKLIST_1_5_MCP.md",
@@ -381,9 +383,14 @@ test("published package metadata declares the repository license and integration
   assert.equal(mcpPackageJson.license, "MIT");
   assert.equal(packageJson.exports?.["./integration"]?.types, "./src/integration.d.ts");
   assert.ok(packageJson.files.includes("src"));
+  assert.deepEqual(Object.keys(packageJson.dependencies).sort(), [...APPROVED_RUNTIME_DEPENDENCIES].sort());
+  assert.deepEqual(Object.keys(packageJson.devDependencies).sort(), [...APPROVED_DEV_DEPENDENCIES].sort());
+  const mcpLock = JSON.parse(await readFile("integrations/mcp/package-lock.json", "utf8"));
+  assert.equal(mcpLock.name, mcpPackageJson.name);
+  assert.equal(mcpLock.version, mcpPackageJson.version);
 });
 
-test("documentation manifest packaged:true entries always ship in the core tarball", async () => {
+test("documentation manifest package flags match the core tarball", async () => {
   const manifest = JSON.parse(await readFile("docs/documentation-manifest.json", "utf8"));
   const expectedDocs = manifest.documents
     .filter((entry) => entry.packaged === true)
@@ -398,6 +405,9 @@ test("documentation manifest packaged:true entries always ship in the core tarba
       listing.includes(docPath),
       `documentation manifest marks ${docPath} packaged:true but the core tarball omits it`,
     );
+  }
+  for (const entry of manifest.documents.filter((document) => document.packaged === false)) {
+    assert.equal(listing.includes(entry.path), false, `repository-only document unexpectedly packaged: ${entry.path}`);
   }
 });
 

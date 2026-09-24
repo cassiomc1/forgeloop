@@ -45,6 +45,7 @@ const FAST_COMMANDS = [
   ["lint"],
   ["dependency:policy"],
   ["docs:generated:check"],
+  ["repository:hygiene"],
 ];
 
 const LOCAL_COMMANDS = [
@@ -53,6 +54,7 @@ const LOCAL_COMMANDS = [
   ["dependency:policy"],
   ["complexity:check"],
   ["docs:generated:check"],
+  ["repository:hygiene"],
   ["docs:conformance"],
   ["docs:examples:check"],
   ["completions:check"],
@@ -72,6 +74,7 @@ const PREPUSH_COMMANDS = [
   ["summary:check"],
   ["changelog:check"],
   ["repository-index:manifest"],
+  ["repository:hygiene"],
   ["poc:evidence:verify"],
   ["poc:evidence:test"],
   ["mcp:test"],

@@ -11,9 +11,9 @@ part of the consumer tarball.
 
 The package exposes the `forgeloop` executable from `src/cli.js` and the
 `@cassiomc1/forgeloop/integration` subpath from `src/integration.js`, with its
-declaration file. The package has the approved exact `smol-toml` runtime
-dependency for bounded Cargo manifest parsing and requires Node.js 20 or
-newer.
+declaration file. The package has the approved exact `@typesafe-ai/sdk`
+dependency for the pinned semantic decision plane and `smol-toml` for bounded
+Cargo manifest parsing. It requires Node.js 20 or newer.
 
 ## Included files
 
@@ -103,9 +103,10 @@ The tarball intentionally omits repository-only material:
   the consumer adapter surface;
 - historical release plans and retired MCP adapter sources; the MCP adapter
   is published as its own package;
-- the repository README hero PNG, which is a GitHub-only asset. The packaged
-  README remains intentionally text-first around that relative repository
-  image reference.
+- the repository-only README hero assets
+  `docs/assets/forgeloop-architecture.svg` and
+  `docs/assets/forgeloop-lifecycle-animated.svg`. They are referenced by the
+  repository README and are intentionally outside the core tarball.
 - the execution PoC, its audit, and its evidence package. Packaged README and
   index links to this repository-only material use GitHub URLs so they remain
   truthful for npm consumers.

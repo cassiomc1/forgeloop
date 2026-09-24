@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark" data-preset="signal-flow" data-present="true">
 <head>
-      <meta name="forgeloop-diagram-source-sha256" content="ba0016d705a7d89be0cdff7529b29112e844ef806ae9f87a1bbff8db8c109043">
+      <meta name="forgeloop-diagram-source-sha256" content="86b11945f1ec4325f244c034d81f137646b508ceda5b11fce6729d4242365269">
     <meta name="forgeloop-diagram-renderer" content="archify@2.15.0 (e1ac748f19cf805e44bf74fb93c796662152e273)">
 <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -5375,6 +5375,7 @@
         </div>
         <ul>
           <li>&bull; AUTO uses CHANGED or CLAIMED only with a trusted scoped checker</li>
+          <li>&bull; AUTO falls back to CLAIMED when changed paths cannot be safely narrowed and claims are valid; otherwise it falls back to FULL</li>
           <li>&bull; Without that capability, AUTO resolves safely to FULL</li>
           <li>&bull; Explicit CHANGED or CLAIMED without a checker returns unresolved</li>
           <li>&bull; A test name or file filter is not a canonical scope boundary</li>
