@@ -599,7 +599,7 @@ Useful primary references include:
 - [OWASP API Security Top 10](https://owasp.org/projects/api-security-project)
 - [OWASP SSRF prevention](https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html)
 - [OWASP Node.js security guidance](https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html)
-- [RFC 9110 HTTP semantics](https://www.rfc-editor.org/rfc/rfc9110)
+- [RFC 9110 HTTP semantics](https://datatracker.ietf.org/doc/html/rfc9110)
 
 These sources inform implementation decisions; they do not replace the
 repository's pinned runtime, local policy, tests, or ForgeLoop evidence.

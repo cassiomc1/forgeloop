@@ -700,9 +700,9 @@ data independently of that choice.
 - Android Network Security Config and Certificate Transparency: https://developer.android.com/privacy-and-security/security-config
 - Android cryptography and Keystore: https://developer.android.com/privacy-and-security/cryptography
 - Android `EncryptedSharedPreferences` (deprecated): https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences
-- OAuth 2.0 Security Best Current Practice, RFC 9700: https://www.rfc-editor.org/rfc/rfc9700
+- OAuth 2.0 Security Best Current Practice, RFC 9700: https://datatracker.ietf.org/doc/html/rfc9700
 - JWT Best Current Practices, RFC 8725: https://datatracker.ietf.org/doc/html/rfc8725
-- Web Origin, RFC 6454: https://www.rfc-editor.org/rfc/rfc6454
+- Web Origin, RFC 6454: https://datatracker.ietf.org/doc/html/rfc6454
 - OAuth 2.0 Token Introspection, RFC 7662: https://datatracker.ietf.org/doc/html/rfc7662
 - ChaCha20-Poly1305, RFC 8439: https://datatracker.ietf.org/doc/html/rfc8439
 - GitHub Actions: use full-length commit SHA: https://docs.github.com/en/actions/reference/security/secure-use
