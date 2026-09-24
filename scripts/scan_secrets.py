@@ -100,6 +100,7 @@ SENSITIVE_TABLE_LABELS = {
     "password",
     "passwd",
     "token",
+    "secret",
     "api token",
     "api key",
     "access token",
@@ -160,11 +161,15 @@ def is_sensitive_table_label(value: str) -> bool:
     The scanner treats a table row as a sensitive-value field only when its
     first cell is a concise field label, not descriptive threat prose that
     merely contains a sensitive term. Matching is against an exact normalized
-    label vocabulary so real labels stay detected while sentences such as
-    "Credential or path leakage in errors and results" are not.
+    label vocabulary, with underscores and hyphens folded to spaces so
+    variants such as "api_key" or "private-key" stay detected, while
+    sentences such as "Credential or path leakage in errors and results"
+    are not.
     """
 
-    normalized = re.sub(r"\s+", " ", value.strip().strip("`\"'")).casefold()
+    normalized = value.strip().strip("`\"'").casefold()
+    normalized = re.sub(r"[_-]+", " ", normalized)
+    normalized = re.sub(r"\s+", " ", normalized).strip()
     return normalized in SENSITIVE_TABLE_LABELS
 
 

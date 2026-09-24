@@ -80,12 +80,16 @@ class SecretScannerTests(unittest.TestCase):
                 "| API " + "key | " + secret_value + " | source |",
                 "| pass" + "word | " + secret_value + " | config |",
                 "| cred" + "ential | " + secret_value + " | source |",
+                "| " + "secret" + " | " + secret_value + " | source |",
+                "| api" + "_key | " + secret_value + " | source |",
+                "| api" + "-key | " + secret_value + " | source |",
+                "| private" + "_key | " + secret_value + " | source |",
+                "| private" + "-key | " + secret_value + " | source |",
             )
         )
         findings = scan_text(rows, Path("fixture.md"))
-        lines = {finding.line for finding in findings}
-        self.assertIn("sensitive-table-value", {finding.rule for finding in findings})
-        self.assertEqual({1, 2, 3}, lines)
+        lines = {finding.line for finding in findings if finding.rule == "sensitive-table-value"}
+        self.assertEqual({1, 2, 3, 4, 5, 6, 7, 8}, lines)
 
     def test_accepts_descriptive_threat_table_prose(self) -> None:
         rows = "\n".join(
@@ -111,15 +115,28 @@ class SecretScannerTests(unittest.TestCase):
             "password",
             "passwd",
             "token",
+            "secret",
             "API token",
             "api key",
+            "api_key",
+            "api-key",
             "access token",
+            "access_token",
+            "access-token",
             "auth token",
+            "auth_token",
+            "auth-token",
             "credential",
             "credentials",
             "client secret",
+            "client_secret",
+            "client-secret",
             "private key",
+            "private_key",
+            "private-key",
             "  Password  ",
+            "`api_key`",
+            "PRIVATE-KEY",
         ):
             with self.subTest(label=label):
                 self.assertTrue(is_sensitive_table_label(label))
@@ -128,9 +145,10 @@ class SecretScannerTests(unittest.TestCase):
             "Cookie, token, authorization, signed URL, or path leakage",
             "Session/profile or ambient credential reuse",
             "Ambient credential or secret leakage",
-            "secret",
-            "api_key",
             "password rotation policy",
+            "secret management policy",
+            "token handling guidance",
+            "api key leakage threat",
         ):
             with self.subTest(label=label):
                 self.assertFalse(is_sensitive_table_label(label))
