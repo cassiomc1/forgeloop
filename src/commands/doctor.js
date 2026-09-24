@@ -12,6 +12,17 @@ import { getPersistentTransportStatus } from "../persistent-transport/client.js"
 import { hasTypesafeCredentials } from "../adapters/typesafe/client.js";
 import { PINNED_JEV_MODEL } from "../core/decision/constants.js";
 
+function semanticDecisionPlaneFinding() {
+  const credentialState = hasTypesafeCredentials() ? "credentials configured" : "credentials missing";
+  return finding(
+    "semantic-decision-plane",
+    "info",
+    ".forgeloop/config.json",
+    `Semantic decision plane: ${credentialState}; pinned model ${PINNED_JEV_MODEL}.`,
+    "Set TYPESAFE_API_KEY in the host environment before invoking a new semantic decision; recovery and inspection remain local.",
+  );
+}
+
 function finding(code, severity, relativePath, message, remediation = null, evidence = null) {
   const evidenceRecord = evidence && typeof evidence === "object"
     ? evidence
@@ -394,13 +405,7 @@ export async function runDoctor({ target, packageRoot, adoptPaths = [], strict =
     findings,
   });
 
-  findings.push(finding(
-    "semantic-decision-plane",
-    "info",
-    ".forgeloop/config.json",
-    `Semantic decision plane: ${hasTypesafeCredentials() ? "credentials configured" : "credentials missing"}; pinned model ${PINNED_JEV_MODEL}.`,
-    "Set TYPESAFE_API_KEY in the host environment before invoking a new semantic decision; recovery and inspection remain local.",
-  ));
+  findings.push(semanticDecisionPlaneFinding());
 
   const ok = findings.every((item) => item.severity !== "error")
     && (!strict || findings.every((item) => item.severity !== "warning"));
