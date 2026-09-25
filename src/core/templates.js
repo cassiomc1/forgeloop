@@ -42,8 +42,6 @@ export const TEMPLATE_PATHS = [
   "PROTOCOL_INTEGRATION.md",
   "AGENT_COMPATIBILITY.md",
   "THIRD_PARTY_NOTICES.md",
-  "LICENSE",
-  "LICENSE-DOCS.md",
   ...GUIDE_TEMPLATE_PATHS,
   "schemas/routing-input.schema.json",
   "schemas/routing-result.schema.json",

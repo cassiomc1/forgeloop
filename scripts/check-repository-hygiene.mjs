@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { execFileSync, spawnSync } from "node:child_process";
-import { readFile } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -10,7 +10,7 @@ const VISUAL_EXTENSIONS = new Set([".gif", ".html", ".jpeg", ".jpg", ".png", ".s
 export const ROOT_MARKDOWN = new Set([
   "AGENTS.md", "AGENT_COMPATIBILITY.md", "CHANGELOG.md", "CLAUDE.md", "CODE_OF_CONDUCT.md",
   "CONTRACT_COVERAGE.md", "CONTRIBUTING.md", "DELEGATION_PROTOCOL.md", "DOCS_INDEX.md", "EXECUTION_STATE.md",
-  "GUIDE_ROUTER.md", "LICENSE-DOCS.md", "LOOP_ENGINEERING.md", "LOOP_SYSTEM_DESIGN.md", "ORCHESTRATOR_INTEGRATION.md",
+  "GUIDE_ROUTER.md", "LOOP_ENGINEERING.md", "LOOP_SYSTEM_DESIGN.md", "ORCHESTRATOR_INTEGRATION.md",
   "PROJECT_PROFILE.md", "PROTOCOL_INTEGRATION.md", "QUALITY_SCORECARD.md", "README.md", "SECURITY.md",
   "TERMINOLOGY.md", "THIRD_PARTY_NOTICES.md", "THREAT_MODEL.md",
 ]);
@@ -22,6 +22,15 @@ export const BENCHMARK_RUN_SETS = new Set([
   "codex-quality-repeat5-20260831",
   "codex-repeat5-20260831",
   "codex-tail-repeat20-20260831",
+]);
+export const FORGELOOP_OWNED_LICENSE_PATHS = Object.freeze([
+  "LICENSE",
+  "LICENSE-DOCS.md",
+  "integrations/mcp/LICENSE",
+]);
+export const REQUIRED_THIRD_PARTY_PATHS = Object.freeze([
+  "THIRD_PARTY_NOTICES.md",
+  "vendor/archify/v2.15.0/archify/LICENSE",
 ]);
 export const IGNORE_SENTINELS = [
   "coverage-data/example.json",
@@ -64,6 +73,9 @@ export function validateRepositoryHygiene({ trackedPaths, manifest, ignoredSenti
   const ignored = new Set(ignoredSentinels);
 
   for (const trackedPath of tracked) {
+    if (FORGELOOP_OWNED_LICENSE_PATHS.includes(trackedPath)) {
+      errors.push(`REPOSITORY_HYGIENE_FORGELOOP_OWNED_LICENSE_PRESENT: ${trackedPath}`);
+    }
     if (trackedPath.startsWith(".forgeloop/")) {
       errors.push(`REPOSITORY_HYGIENE_TRACKED_FORGELOOP_STATE: ${trackedPath}`);
     }
@@ -102,6 +114,21 @@ export async function checkRepositoryHygiene({ rootDir = repositoryRoot } = {}) 
   const errors = [];
   const root = path.resolve(rootDir);
   const manifest = JSON.parse(await readFile(path.join(root, "docs", "diagrams", "manifest.json"), "utf8"));
+  for (const requiredPath of REQUIRED_THIRD_PARTY_PATHS) {
+    try {
+      await access(path.join(root, requiredPath));
+    } catch {
+      errors.push(`REPOSITORY_HYGIENE_REQUIRED_THIRD_PARTY_PATH_MISSING: ${requiredPath}`);
+    }
+  }
+  for (const forbiddenPath of FORGELOOP_OWNED_LICENSE_PATHS) {
+    try {
+      await access(path.join(root, forbiddenPath));
+      errors.push(`REPOSITORY_HYGIENE_FORGELOOP_OWNED_LICENSE_PRESENT: ${forbiddenPath}`);
+    } catch {
+      continue;
+    }
+  }
   const result = validateRepositoryHygiene({
     trackedPaths: trackedFiles(root),
     manifest,

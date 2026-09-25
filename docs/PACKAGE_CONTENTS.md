@@ -55,7 +55,7 @@ The published tarball includes the following consumer-facing groups:
   not additional package guides. The package does not install or invoke
   framework, compiler, build, package-manager, or database tooling.
 - **Initialization material:** the root protocol and integration documents,
-  legal notices, the target profile template, and every path listed by
+  third-party notices, the target profile template, and every path listed by
   `src/core/templates.js`. These files are read by `init` and `update`, so
   they are part of the executable consumer contract even when a document is
   marked deprecated in the documentation manifest.

@@ -44,8 +44,6 @@
     "CONTRACT_COVERAGE.md",
     "PROJECT_PROFILE.md",
     "THIRD_PARTY_NOTICES.md",
-    "LICENSE",
-    "LICENSE-DOCS.md",
     ".cursor",
     ".github/copilot-instructions.md",
     "README.md",
@@ -195,5 +193,15 @@
       "types": "./src/integration.d.ts",
       "default": "./src/integration.js"
     }
+  },
+  "main": "eslint.config.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "keywords": [],
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/cassiomc1/forgeloop/issues"
   }
 }

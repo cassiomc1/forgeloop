@@ -235,20 +235,6 @@
       "packageInclusion": "npm"
     },
     {
-      "path": "LICENSE-DOCS.md",
-      "status": "reviewed",
-      "action": "unchanged",
-      "sourceOfTruth": [
-        "LICENSE-DOCS.md"
-      ],
-      "canonicalSources": [
-        "LICENSE-DOCS.md"
-      ],
-      "origin": "handwritten",
-      "currency": "current",
-      "packageInclusion": "npm"
-    },
-    {
       "path": ".github/copilot-instructions.md",
       "status": "reviewed",
       "action": "updated",

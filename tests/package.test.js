@@ -183,8 +183,6 @@ test("npm tarball contains the CLI, templates, published scenarios, and license 
     "docs/assets/diagrams/forgeloop-verification-trust-flow.svg",
     "docs/assets/diagrams/forgeloop-verification-trust-flow.receipt.json",
     "scripts/CI_VALIDATORS.md",
-    "LICENSE",
-    "LICENSE-DOCS.md",
     "completions/forgeloop.bash",
     "completions/_forgeloop",
     "completions/forgeloop.fish",
@@ -228,6 +226,9 @@ test("npm tarball contains the CLI, templates, published scenarios, and license 
     listing.some((entry) => entry.startsWith(".forgeloop/")),
     false,
   );
+  assert.equal(listing.includes("LICENSE"), false);
+  assert.equal(listing.includes("LICENSE-DOCS.md"), false);
+  assert.equal(listing.includes("THIRD_PARTY_NOTICES.md"), true);
 
   const forbiddenOraclePatterns = [
     /EXPECTED_ROUTE/i,
@@ -390,12 +391,9 @@ test("private package metadata declares the repository license and integration t
   assert.equal(mcpPackageJson.publishConfig.access, "restricted");
   assert.equal(packageJson.private, undefined);
   assert.equal(mcpPackageJson.private, undefined);
-  const rootLicense = await readFile("LICENSE", "utf8");
-  const mcpLicense = await readFile("integrations/mcp/LICENSE", "utf8");
-  assert.match(rootLicense, /proprietary/iu);
-  assert.match(mcpLicense, /proprietary/iu);
-  assert.doesNotMatch(rootLicense, /MIT License/iu);
-  assert.doesNotMatch(mcpLicense, /MIT License/iu);
+  await assert.rejects(() => readFile("LICENSE", "utf8"));
+  await assert.rejects(() => readFile("LICENSE-DOCS.md", "utf8"));
+  await assert.rejects(() => readFile("integrations/mcp/LICENSE", "utf8"));
   assert.equal(packageJson.exports?.["./integration"]?.types, "./src/integration.d.ts");
   assert.ok(packageJson.files.includes("src"));
   assert.deepEqual(Object.keys(packageJson.dependencies).sort(), [...APPROVED_RUNTIME_DEPENDENCIES].sort());

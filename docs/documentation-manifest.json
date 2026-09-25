@@ -200,18 +200,6 @@
       "packaged": true
     },
     {
-      "path": "LICENSE-DOCS.md",
-      "id": "documentation-license",
-      "class": "legal",
-      "audience": [
-        "maintainer"
-      ],
-      "canonicalFor": [
-        "documentation-license"
-      ],
-      "packaged": true
-    },
-    {
       "path": ".github/copilot-instructions.md",
       "id": "copilot-adapter",
       "class": "adapter",

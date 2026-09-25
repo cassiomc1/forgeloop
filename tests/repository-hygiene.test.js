@@ -3,6 +3,7 @@ import { test } from "node:test";
 
 import {
   BENCHMARK_RUN_SETS,
+  FORGELOOP_OWNED_LICENSE_PATHS,
   IGNORE_SENTINELS,
   REPOSITORY_ONLY_VISUALS,
   validateRepositoryHygiene,
@@ -31,6 +32,13 @@ function validInput(overrides = {}) {
 test("repository hygiene accepts the explicit repository policy", () => {
   const result = validateRepositoryHygiene(validInput());
   assert.deepEqual(result.errors, []);
+});
+
+test("repository hygiene rejects ForgeLoop-owned license files", () => {
+  const result = validateRepositoryHygiene(validInput({ trackedPaths: [...FORGELOOP_OWNED_LICENSE_PATHS] }));
+  for (const licensePath of FORGELOOP_OWNED_LICENSE_PATHS) {
+    assert.ok(result.errors.includes(`REPOSITORY_HYGIENE_FORGELOOP_OWNED_LICENSE_PRESENT: ${licensePath}`));
+  }
 });
 
 test("repository hygiene rejects tracked ForgeLoop state", () => {

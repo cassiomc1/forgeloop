@@ -86,8 +86,9 @@ stronger project identity. The public project-evidence schema remains v1.
 ## Distribution and license
 
 GitHub is the public source and issue surface; npm is private licensed delivery
-for authorized users. Browsing the repository grants no rights. See
-[`LICENSE`](./LICENSE) and [`LICENSE-DOCS.md`](./LICENSE-DOCS.md).
+for authorized users. Browsing the repository grants no rights. First-party
+ForgeLoop material is proprietary; third-party notices remain in
+[`THIRD_PARTY_NOTICES.md`](./THIRD_PARTY_NOTICES.md).
 
 ## Quickstart
 

@@ -7,10 +7,9 @@ for reuse.
 
 ## Collection license
 
-ForgeLoop is proprietary. No permission to use, copy, modify, distribute,
-sublicense, or create derivative works is granted by the public repository
-unless a separate written agreement provides that permission. Third-party
-components and adapted material remain subject to their own notices and terms.
+ForgeLoop-owned source and documentation are proprietary and are not offered
+under a public reuse license. The notices below apply only to third-party
+components, adapted sources, vendored tools, and external references.
 
 ## Adapted and editorial sources
 
