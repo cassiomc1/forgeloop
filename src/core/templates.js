@@ -12,8 +12,14 @@ import { GUIDE_TEMPLATE_PATHS } from "./guide-registry.js";
 
 const PACKAGE_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
-const TEMPLATE_SOURCE_PATHS = Object.freeze({
-  ".forgeloop/.gitignore": ".forgeloop/forgeloop.gitignore",
+const INLINE_TEMPLATE_CONTENT = Object.freeze({
+  ".forgeloop/.gitignore": [
+    "# Local resumable task state is untrusted, target-specific data.",
+    "work-state.json",
+    "executions/",
+    "repository-index/",
+    "",
+  ].join("\n"),
 });
 
 export const TEMPLATE_PATHS = [
@@ -100,14 +106,19 @@ export function getPackageRoot() {
 export async function readTemplateEntries(packageRoot = PACKAGE_ROOT) {
   return Promise.all(
     TEMPLATE_PATHS.map(async (relativePath) => {
-      const sourcePath = TEMPLATE_SOURCE_PATHS[relativePath] ?? relativePath;
+      const sourcePath = relativePath;
+      const inlineContent = INLINE_TEMPLATE_CONTENT[relativePath];
       return {
         relativePath: targetPathForSource(relativePath),
         sourcePath,
         legacyRelativePath: legacyPathForSource(sourcePath),
-        bytes: Buffer.from(isNativeAdapterPath(relativePath)
-          ? nativeShim(relativePath)
-          : await readFile(path.join(packageRoot, sourcePath))),
+        bytes: Buffer.from(
+          inlineContent !== undefined
+            ? inlineContent
+            : isNativeAdapterPath(relativePath)
+              ? nativeShim(relativePath)
+              : await readFile(path.join(packageRoot, sourcePath)),
+        ),
       };
     }),
   );

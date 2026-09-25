@@ -96,7 +96,7 @@ test("init installs canonical kit under .forgeloop/kit and leaves only native sh
     await assert.rejects(() => readFile(path.join(target, "LOOP_ENGINEERING.md")));
     await assert.rejects(() => readFile(path.join(target, "ENG/clean-code-eng.md")));
     for (const entry of await readTemplateEntries(packageRoot)) {
-      if (entry.relativePath !== entry.sourcePath && entry.sourcePath !== ".forgeloop/forgeloop.gitignore") {
+      if (entry.relativePath !== entry.sourcePath) {
         await assert.rejects(() => readFile(path.join(target, entry.sourcePath)));
       }
     }

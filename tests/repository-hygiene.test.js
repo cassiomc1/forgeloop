@@ -17,7 +17,6 @@ const manifest = {
 function validInput(overrides = {}) {
   return {
     trackedPaths: [
-      ".forgeloop/forgeloop.gitignore",
       "README.md",
       "docs/assets/diagrams/example.html",
       "docs/assets/diagrams/example.svg",
@@ -35,8 +34,9 @@ test("repository hygiene accepts the explicit repository policy", () => {
 });
 
 test("repository hygiene rejects tracked ForgeLoop state", () => {
-  const result = validateRepositoryHygiene(validInput({ trackedPaths: [".forgeloop/task-state/task/work-state.json"] }));
+  const result = validateRepositoryHygiene(validInput({ trackedPaths: [".forgeloop/task-state/task/work-state.json", ".forgeloop/forgeloop.gitignore"] }));
   assert.ok(result.errors.includes("REPOSITORY_HYGIENE_TRACKED_FORGELOOP_STATE: .forgeloop/task-state/task/work-state.json"));
+  assert.ok(result.errors.includes("REPOSITORY_HYGIENE_TRACKED_FORGELOOP_STATE: .forgeloop/forgeloop.gitignore"));
 });
 
 test("repository hygiene rejects unexpected root documents", () => {

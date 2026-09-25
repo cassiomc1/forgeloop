@@ -97,7 +97,7 @@ jobs:
             || path.startsWith("coverage/")
             || path.startsWith(".git/")
             || path.startsWith(".forgeloop/task-state/")
-            || (path.startsWith(".forgeloop/") && path !== ".forgeloop/forgeloop.gitignore")
+            || path.startsWith(".forgeloop/")
             || path.endsWith(".tgz")
             || (path.startsWith(".github/") && path !== ".github/copilot-instructions.md"));
           if (forbidden.length > 0) {

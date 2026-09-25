@@ -224,6 +224,10 @@ test("npm tarball contains the CLI, templates, published scenarios, and license 
   ]) {
     assert.equal(listing.includes(excluded), false, `unexpected ${excluded}`);
   }
+  assert.equal(
+    listing.some((entry) => entry.startsWith(".forgeloop/")),
+    false,
+  );
 
   const forbiddenOraclePatterns = [
     /EXPECTED_ROUTE/i,

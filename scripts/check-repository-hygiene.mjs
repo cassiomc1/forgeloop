@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { execFileSync, spawnSync } from "node:child_process";
-import { access, readFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -23,7 +23,6 @@ export const BENCHMARK_RUN_SETS = new Set([
   "codex-repeat5-20260831",
   "codex-tail-repeat20-20260831",
 ]);
-const REQUIRED_TRACKED_PATHS = [".forgeloop/forgeloop.gitignore"];
 export const IGNORE_SENTINELS = [
   "coverage-data/example.json",
   "package-dry-run.json",
@@ -64,11 +63,8 @@ export function validateRepositoryHygiene({ trackedPaths, manifest, ignoredSenti
   const declaredVisuals = manifestVisuals(manifest);
   const ignored = new Set(ignoredSentinels);
 
-  for (const requiredPath of REQUIRED_TRACKED_PATHS) {
-    if (!tracked.has(requiredPath)) errors.push(`REPOSITORY_HYGIENE_REQUIRED_TRACKED_PATH_MISSING: ${requiredPath}`);
-  }
   for (const trackedPath of tracked) {
-    if (trackedPath.startsWith(".forgeloop/") && trackedPath !== ".forgeloop/forgeloop.gitignore") {
+    if (trackedPath.startsWith(".forgeloop/")) {
       errors.push(`REPOSITORY_HYGIENE_TRACKED_FORGELOOP_STATE: ${trackedPath}`);
     }
     if (trackedPath.endsWith(".md") && !trackedPath.includes("/") && !ROOT_MARKDOWN.has(trackedPath)) {
@@ -106,13 +102,6 @@ export async function checkRepositoryHygiene({ rootDir = repositoryRoot } = {}) 
   const errors = [];
   const root = path.resolve(rootDir);
   const manifest = JSON.parse(await readFile(path.join(root, "docs", "diagrams", "manifest.json"), "utf8"));
-  for (const requiredPath of REQUIRED_TRACKED_PATHS) {
-    try {
-      await access(path.join(root, requiredPath));
-    } catch {
-      errors.push(`REPOSITORY_HYGIENE_REQUIRED_PATH_UNREADABLE: ${requiredPath}`);
-    }
-  }
   const result = validateRepositoryHygiene({
     trackedPaths: trackedFiles(root),
     manifest,

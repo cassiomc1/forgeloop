@@ -99,11 +99,7 @@ test("active shipped surfaces use the ForgeLoop identity", async () => {
   const files = [
     "package.json",
     "README.md",
-    ...TEMPLATE_PATHS.map((relativePath) =>
-      relativePath === ".forgeloop/.gitignore"
-        ? ".forgeloop/forgeloop.gitignore"
-        : relativePath,
-    ),
+    ...TEMPLATE_PATHS,
     ...runtimeFiles.map((relativePath) => `src/${relativePath}`),
   ];
 

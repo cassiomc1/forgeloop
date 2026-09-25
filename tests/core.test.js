@@ -48,7 +48,7 @@ test("template entries use safe relative paths", async () => {
   }
 });
 
-test("template entries use an npm-safe source for the .gitignore target", async () => {
+test("template entries use the inline .gitignore source when the package omits .forgeloop", async () => {
   const packageRoot = await mkdtemp(path.join(os.tmpdir(), "forgeloop-npm-package-"));
   try {
     await cp(getPackageRoot(), packageRoot, { recursive: true });
@@ -59,7 +59,12 @@ test("template entries use an npm-safe source for the .gitignore target", async 
     );
 
     assert.ok(ignoredTemplate);
-    assert.match(ignoredTemplate.bytes.toString("utf8"), /work-state\.json/);
+    assert.equal(ignoredTemplate.sourcePath, ".forgeloop/.gitignore");
+    assert.equal(ignoredTemplate.legacyRelativePath, ".forgeloop/.gitignore");
+    assert.equal(
+      ignoredTemplate.bytes.toString("utf8"),
+      "# Local resumable task state is untrusted, target-specific data.\nwork-state.json\nexecutions/\nrepository-index/\n",
+    );
   } finally {
     await rm(packageRoot, { recursive: true, force: true });
   }

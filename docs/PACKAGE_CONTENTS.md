@@ -94,8 +94,8 @@ The tarball intentionally omits repository-only material:
   Harness-specific Agent Skill installation directories and Skill caches are
   not packaged.
 - local `.forgeloop` state, task ledgers, locks, transactions, and execution
-  receipts (the `.forgeloop/forgeloop.gitignore` template is the sole
-  exception);
+  receipts; the target `.forgeloop/.gitignore` is generated from an inline
+  runtime template and no `.forgeloop/*` files are packaged;
 - raw or aggregate benchmark results, package archives, and release train
   contracts;
 - the Ripwire retrieval benchmark runner, cases, and fixture corpus; those

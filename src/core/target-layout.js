@@ -26,7 +26,7 @@ export function targetPathForSource(sourcePath) {
 }
 
 export function legacyPathForSource(sourcePath) {
-  return sourcePath === ".forgeloop/forgeloop.gitignore" ? ".forgeloop/.gitignore" : sourcePath;
+  return sourcePath;
 }
 
 export function isKitPath(relativePath) {
