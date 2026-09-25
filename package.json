@@ -1,15 +1,15 @@
 {
   "name": "@cassiomc1/forgeloop",
   "version": "1.14.0",
-  "description": "Portable, verifiable engineering protocol for AI coding environments and developer workflows",
+  "description": "Proprietary evidence-first engineering protocol for AI coding environments and developer workflows",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cassiomc1/forgeloop.git"
   },
   "homepage": "https://github.com/cassiomc1/forgeloop#readme",
-  "license": "MIT",
+  "license": "UNLICENSED",
   "publishConfig": {
-    "access": "public"
+    "access": "restricted"
   },
   "type": "module",
   "engines": {
@@ -28,7 +28,6 @@
     "benchmarks/repository-index/README.md",
     "benchmarks/repository-index/run-hot-path.mjs",
     "benchmarks/repository-index/run-persistent-transport.mjs",
-    ".forgeloop/forgeloop.gitignore",
     "AGENTS.md",
     "CLAUDE.md",
     "GUIDE_ROUTER.md",
@@ -45,8 +44,6 @@
     "CONTRACT_COVERAGE.md",
     "PROJECT_PROFILE.md",
     "THIRD_PARTY_NOTICES.md",
-    "LICENSE",
-    "LICENSE-DOCS.md",
     ".cursor",
     ".github/copilot-instructions.md",
     "README.md",

@@ -1,11 +1,11 @@
 {
   "name": "@cassiomc1/forgeloop-mcp",
   "version": "0.1.0",
-  "description": "Local-first MCP server exposing the canonical ForgeLoop programmatic integration API over stdio and optional loopback-only HTTP.",
+  "description": "Proprietary local-first MCP server exposing the canonical ForgeLoop programmatic integration API over stdio and optional loopback-only HTTP.",
   "type": "module",
-  "license": "MIT",
+  "license": "UNLICENSED",
   "publishConfig": {
-    "access": "public"
+    "access": "restricted"
   },
   "engines": {
     "node": ">=20"

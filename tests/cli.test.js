@@ -127,8 +127,8 @@ test("init copies canonical files and creates a manifest", async () => {
     assert.equal(manifest.layoutVersion, 2);
     assert.equal(manifest.files[".forgeloop/kit/PROJECT_PROFILE.md"].preserve, true);
     assert.ok(manifest.files["AGENTS.md"].sha256);
-    await readFile(path.join(target, ".forgeloop/kit/LICENSE"), "utf8");
-    await readFile(path.join(target, ".forgeloop/kit/LICENSE-DOCS.md"), "utf8");
+    await assert.rejects(() => readFile(path.join(target, ".forgeloop/kit/LICENSE"), "utf8"));
+    await assert.rejects(() => readFile(path.join(target, ".forgeloop/kit/LICENSE-DOCS.md"), "utf8"));
     assert.match(
       await readFile(path.join(target, ".forgeloop/kit/PROTOCOL_INTEGRATION.md"), "utf8"),
       /Protocol Integration/i,

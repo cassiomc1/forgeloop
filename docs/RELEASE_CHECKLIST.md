@@ -1,7 +1,8 @@
 # ForgeLoop Release Checklist
 
-This is the current release checklist for `@cassiomc1/forgeloop`. It is a
-preparation and verification checklist; it does not authorize publication.
+This is the current release checklist for the proprietary
+`@cassiomc1/forgeloop` package. It is a preparation and verification checklist;
+it does not authorize publication.
 
 ## ForgeLoop 1.14.0 candidate scope
 
@@ -76,7 +77,8 @@ actions.
 ## Contract and package identity
 
 - [ ] `package.json` and `package-lock.json` contain the same package version.
-- [ ] The package metadata declares the intended SPDX license (`MIT`).
+- [ ] The package metadata declares the intended proprietary license state
+      (`UNLICENSED`) and private publication access.
 - [ ] `PROTOCOL_VERSION` and the integration API version remain compatible.
 - [ ] `npm run release:identity` passes for the candidate version.
 - [ ] No release tag or registry version collision exists.

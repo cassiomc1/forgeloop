@@ -7,10 +7,9 @@ for reuse.
 
 ## Collection license
 
-The CLI and validator code are licensed under the MIT License in `LICENSE`.
-Original documentation is offered under CC BY 4.0 as described in
-`LICENSE-DOCS.md`. Those notices do not apply to adapted or external material;
-review the applicable source terms before redistributing such material.
+ForgeLoop-owned source and documentation are proprietary and are not offered
+under a public reuse license. The notices below apply only to third-party
+components, adapted sources, vendored tools, and external references.
 
 ## Adapted and editorial sources
 

@@ -19,7 +19,7 @@ test("doctor reports the semantic decision plane from the live credential state"
     assert.ok(missing, "expected a semantic-decision-plane finding");
     assert.match(missing.message, /credentials missing; pinned model jev-1\.13\.0/u);
     assert.equal(missing.severity, "info");
-    process.env.TYPESAFE_API_KEY = "test-credential-value";
+    process.env.TYPESAFE_API_KEY = "local-placeholder";
     const configured = (await runDoctor({ target, packageRoot: getPackageRoot() }))
       .findings.find((item) => item.code === "semantic-decision-plane");
     assert.match(configured.message, /credentials configured; pinned model jev-1\.13\.0/u);

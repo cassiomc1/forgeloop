@@ -896,7 +896,7 @@ Initializes ForgeLoop in a target repository.
 
 - **Purpose**: Installs canonical instruction templates under `.forgeloop/kit/`, creates discovery shims at root, and prepares `.forgeloop/`.
 - **When to use**: Once when onboarding a new repository to ForgeLoop.
-- **Mutation**: Writes `.forgeloop/kit/`, `.forgeloop/forgeloop.gitignore`, `AGENTS.md`, `CLAUDE.md`, `.cursor/rules/project-loop.mdc`, `.github/copilot-instructions.md`.
+- **Mutation**: Writes `.forgeloop/kit/`, `.forgeloop/.gitignore`, `AGENTS.md`, `CLAUDE.md`, `.cursor/rules/project-loop.mdc`, `.github/copilot-instructions.md`.
 - **Options**:
 
 <!-- BEGIN FORGELOOP GENERATED: cli:init:options -->

@@ -71,6 +71,9 @@ try {
   await runInstalledCli(installedRoot, ["init"], projectTarget);
   const managedManifest = path.join(projectTarget, ".forgeloop", "manifest.json");
   if (!(await stat(managedManifest)).isFile()) throw new Error("Installed init did not create a ForgeLoop manifest");
+  const generatedGitignore = await readFile(path.join(projectTarget, ".forgeloop", ".gitignore"), "utf8");
+  const expectedGitignore = "# Local resumable task state is untrusted, target-specific data.\nwork-state.json\nexecutions/\nrepository-index/\n";
+  if (generatedGitignore !== expectedGitignore) throw new Error("Installed init generated an unexpected .forgeloop/.gitignore");
   await runInstalledCli(installedRoot, ["doctor", "--json"], projectTarget);
   await runInstalledCli(installedRoot, ["route", "--work", "documentation", "--surface", "documentation", "--json"], projectTarget);
   await runInstalledCli(installedRoot, ["task-create", "--task", "package-smoke-task", "--json"], projectTarget);

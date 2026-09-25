@@ -11,16 +11,9 @@
 [![Package smoke](https://github.com/cassiomc1/forgeloop/actions/workflows/package-smoke.yml/badge.svg?branch=main)](https://github.com/cassiomc1/forgeloop/actions/workflows/package-smoke.yml)
 [![Release notes](https://github.com/cassiomc1/forgeloop/actions/workflows/release-notes.yml/badge.svg?branch=main)](https://github.com/cassiomc1/forgeloop/actions/workflows/release-notes.yml)
 
-ForgeLoop is the deterministic governor for AI-assisted engineering. Jev is the
-mandatory bounded System One semantic input; the host coding model is System Two
-implementation. ForgeLoop alone owns lifecycle, claims, gates, evidence,
-completion, recovery, and publication truth.
+ForgeLoop is the proprietary deterministic governor for AI-assisted engineering. Jev provides bounded System One semantic input; the host coding model provides System Two implementation. ForgeLoop owns lifecycle, claims, gates, evidence, completion, recovery, and publication truth.
 
-Operational sources are indexed in [`DOCS_INDEX.md`](./DOCS_INDEX.md).
-[`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md) is canonical;
-[`PROTOCOL_INTEGRATION.md`](./PROTOCOL_INTEGRATION.md) defines discovery,
-[`PROJECT_PROFILE.md`](./PROJECT_PROFILE.md) stores project facts, and
-[`GUIDE_ROUTER.md`](./GUIDE_ROUTER.md) selects relevant guides.
+Operational sources: [`DOCS_INDEX.md`](./DOCS_INDEX.md); [`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md) is canonical; [`PROTOCOL_INTEGRATION.md`](./PROTOCOL_INTEGRATION.md) defines discovery; [`PROJECT_PROFILE.md`](./PROJECT_PROFILE.md) stores project facts; [`GUIDE_ROUTER.md`](./GUIDE_ROUTER.md) selects guides.
 
 ## Where should I start?
 
@@ -44,10 +37,7 @@ Operational sources are indexed in [`DOCS_INDEX.md`](./DOCS_INDEX.md).
 
 ## Real execution proof
 
-The repository-only [execution PoC](https://github.com/cassiomc1/forgeloop/blob/main/poc/README.md) covers workload, protocol
-artifacts, trusted provenance, receipts, evidence, and audit. It reached
-validator-backed `COMPLETE / VALID` and preserves a later
-`E_RECEIPT_PATH_MISMATCH` after publication changed the repository.
+The repository-only [execution PoC](https://github.com/cassiomc1/forgeloop/blob/main/poc/README.md) demonstrates workload, protocol artifacts, trusted provenance, receipts, evidence, audit, and validator-backed `COMPLETE / VALID`.
 
 - [Canonical technical audit](https://github.com/cassiomc1/forgeloop/blob/main/poc/reports/poc-20260826-real-execution-technical-audit-v2.md)
 - [Evidence package](https://github.com/cassiomc1/forgeloop/tree/main/poc/evidence/poc-20260826-real-execution/)
@@ -80,37 +70,34 @@ validator-backed `COMPLETE / VALID` and preserves a later
 | Swift | [guide](./ENG/swift-development-eng.md) |
 | Structural quality feedback | [`docs/STRUCTURAL_QUALITY.md`](./docs/STRUCTURAL_QUALITY.md) |
 
-Routing uses bounded structural evidence for Flutter, .NET, Node.js, Rust, C,
-C++, Java, Go, TypeScript, PHP, and Swift; SQL is a scoped schema/query/
-migration overlay. Source extensions, build tooling, lockfiles, compiler/JDK/
-runtime images, and prose alone fail where the specialist contract requires
-stronger project identity. The public project-evidence schema remains v1.
+Routing uses bounded structural evidence for supported frameworks and languages.
+SQL remains a scoped schema/query/migration overlay. Extensions, tool files,
+lockfiles, runtime images, and prose alone are insufficient where stronger
+project identity is required. The public project-evidence schema remains v1.
+
+## Distribution and license
+
+GitHub hosts source and issues; npm delivery is restricted to authorized users.
+ForgeLoop-owned material is proprietary. Third-party notices are documented in
+[`THIRD_PARTY_NOTICES.md`](./THIRD_PARTY_NOTICES.md).
 
 ## Quickstart
 
 ### Installation
 
-Install the ForgeLoop CLI globally to make the `forgeloop` command available
-in your terminal:
+After your organization grants access, configure npm authentication and install:
 
 ```bash
 npm install --global @cassiomc1/forgeloop
 forgeloop --version
 ```
 
-Then, inside your project repository:
+Inside your project:
 
 ```bash
 forgeloop init
 forgeloop doctor
 forgeloop search "example"
-```
-
-If you prefer not to install globally, use `npx`:
-
-```bash
-npx @cassiomc1/forgeloop init
-npx @cassiomc1/forgeloop doctor
 ```
 
 ### 60-second demonstration
@@ -214,7 +201,7 @@ forgeloop protocol-info --json
 For a concrete exchange between tools, see
 [cross-harness continuity](./docs/CROSS_HARNESS_CONTINUITY.md).
 
-From a published package, initialize a target project with:
+From the privately delivered package, initialize a target project with:
 
 ```bash
 npx @cassiomc1/forgeloop init
@@ -256,8 +243,7 @@ host-reported or `UNKNOWN`; values are never estimated.
 capability, but advisory recall remains Integration API only. The stock CLI
 does not auto-recall providers and does not expose a `context-recall` command.
 
-Before npm publication, the same source checkout can be exercised without a
-network or package lookup:
+Validate the source checkout offline before any private release:
 
 ```bash
 node src/cli.js init

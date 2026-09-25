@@ -3,6 +3,7 @@ import { test } from "node:test";
 
 import {
   BENCHMARK_RUN_SETS,
+  FORGELOOP_OWNED_LICENSE_PATHS,
   IGNORE_SENTINELS,
   REPOSITORY_ONLY_VISUALS,
   validateRepositoryHygiene,
@@ -17,7 +18,6 @@ const manifest = {
 function validInput(overrides = {}) {
   return {
     trackedPaths: [
-      ".forgeloop/forgeloop.gitignore",
       "README.md",
       "docs/assets/diagrams/example.html",
       "docs/assets/diagrams/example.svg",
@@ -34,9 +34,17 @@ test("repository hygiene accepts the explicit repository policy", () => {
   assert.deepEqual(result.errors, []);
 });
 
+test("repository hygiene rejects ForgeLoop-owned license files", () => {
+  const result = validateRepositoryHygiene(validInput({ trackedPaths: [...FORGELOOP_OWNED_LICENSE_PATHS] }));
+  for (const licensePath of FORGELOOP_OWNED_LICENSE_PATHS) {
+    assert.ok(result.errors.includes(`REPOSITORY_HYGIENE_FORGELOOP_OWNED_LICENSE_PRESENT: ${licensePath}`));
+  }
+});
+
 test("repository hygiene rejects tracked ForgeLoop state", () => {
-  const result = validateRepositoryHygiene(validInput({ trackedPaths: [".forgeloop/task-state/task/work-state.json"] }));
+  const result = validateRepositoryHygiene(validInput({ trackedPaths: [".forgeloop/task-state/task/work-state.json", ".forgeloop/forgeloop.gitignore"] }));
   assert.ok(result.errors.includes("REPOSITORY_HYGIENE_TRACKED_FORGELOOP_STATE: .forgeloop/task-state/task/work-state.json"));
+  assert.ok(result.errors.includes("REPOSITORY_HYGIENE_TRACKED_FORGELOOP_STATE: .forgeloop/forgeloop.gitignore"));
 });
 
 test("repository hygiene rejects unexpected root documents", () => {
