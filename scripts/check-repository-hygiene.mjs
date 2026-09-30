@@ -23,10 +23,8 @@ export const BENCHMARK_RUN_SETS = new Set([
   "codex-repeat5-20260831",
   "codex-tail-repeat20-20260831",
 ]);
-export const FORGELOOP_OWNED_LICENSE_PATHS = Object.freeze([
-  "LICENSE",
+export const OBSOLETE_LICENSE_PATHS = Object.freeze([
   "LICENSE-DOCS.md",
-  "integrations/mcp/LICENSE",
 ]);
 export const REQUIRED_THIRD_PARTY_PATHS = Object.freeze([
   "THIRD_PARTY_NOTICES.md",
@@ -73,8 +71,8 @@ export function validateRepositoryHygiene({ trackedPaths, manifest, ignoredSenti
   const ignored = new Set(ignoredSentinels);
 
   for (const trackedPath of tracked) {
-    if (FORGELOOP_OWNED_LICENSE_PATHS.includes(trackedPath)) {
-      errors.push(`REPOSITORY_HYGIENE_FORGELOOP_OWNED_LICENSE_PRESENT: ${trackedPath}`);
+    if (OBSOLETE_LICENSE_PATHS.includes(trackedPath)) {
+      errors.push(`REPOSITORY_HYGIENE_OBSOLETE_LICENSE_PRESENT: ${trackedPath}`);
     }
     if (trackedPath.startsWith(".forgeloop/")) {
       errors.push(`REPOSITORY_HYGIENE_TRACKED_FORGELOOP_STATE: ${trackedPath}`);
@@ -121,10 +119,10 @@ export async function checkRepositoryHygiene({ rootDir = repositoryRoot } = {}) 
       errors.push(`REPOSITORY_HYGIENE_REQUIRED_THIRD_PARTY_PATH_MISSING: ${requiredPath}`);
     }
   }
-  for (const forbiddenPath of FORGELOOP_OWNED_LICENSE_PATHS) {
+  for (const forbiddenPath of OBSOLETE_LICENSE_PATHS) {
     try {
       await access(path.join(root, forbiddenPath));
-      errors.push(`REPOSITORY_HYGIENE_FORGELOOP_OWNED_LICENSE_PRESENT: ${forbiddenPath}`);
+      errors.push(`REPOSITORY_HYGIENE_OBSOLETE_LICENSE_PRESENT: ${forbiddenPath}`);
     } catch {
       continue;
     }

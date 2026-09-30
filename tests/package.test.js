@@ -226,7 +226,7 @@ test("npm tarball contains the CLI, templates, published scenarios, and license 
     listing.some((entry) => entry.startsWith(".forgeloop/")),
     false,
   );
-  assert.equal(listing.includes("LICENSE"), false);
+  assert.equal(listing.includes("LICENSE"), true);
   assert.equal(listing.includes("LICENSE-DOCS.md"), false);
   assert.equal(listing.includes("THIRD_PARTY_NOTICES.md"), true);
 
@@ -385,15 +385,15 @@ test("required validation context rejects failed, unexpected, or missing prerequ
 test("private package metadata declares the repository license and integration types", async () => {
   const packageJson = JSON.parse(await readFile("package.json", "utf8"));
   const mcpPackageJson = JSON.parse(await readFile("integrations/mcp/package.json", "utf8"));
-  assert.equal(packageJson.license, "UNLICENSED");
-  assert.equal(mcpPackageJson.license, "UNLICENSED");
+  assert.equal(packageJson.license, "PolyForm-Noncommercial-1.0.0");
+  assert.equal(mcpPackageJson.license, "PolyForm-Noncommercial-1.0.0");
   assert.equal(packageJson.publishConfig.access, "restricted");
   assert.equal(mcpPackageJson.publishConfig.access, "restricted");
   assert.equal(packageJson.private, undefined);
   assert.equal(mcpPackageJson.private, undefined);
-  await assert.rejects(() => readFile("LICENSE", "utf8"));
+  assert.match(await readFile("LICENSE", "utf8"), /PolyForm Noncommercial License 1\.0\.0/);
   await assert.rejects(() => readFile("LICENSE-DOCS.md", "utf8"));
-  await assert.rejects(() => readFile("integrations/mcp/LICENSE", "utf8"));
+  assert.equal(await readFile("integrations/mcp/LICENSE", "utf8"), await readFile("LICENSE", "utf8"));
   assert.equal(packageJson.exports?.["./integration"]?.types, "./src/integration.d.ts");
   assert.ok(packageJson.files.includes("src"));
   assert.deepEqual(Object.keys(packageJson.dependencies).sort(), [...APPROVED_RUNTIME_DEPENDENCIES].sort());

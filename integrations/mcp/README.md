@@ -3,7 +3,8 @@
 Local **stdio** Model Context Protocol server exposing the canonical ForgeLoop
 programmatic integration API (`@cassiomc1/forgeloop/integration`).
 
-`@cassiomc1/forgeloop-mcp` is a proprietary adapter delivered through the
+`@cassiomc1/forgeloop-mcp` is an adapter licensed under the
+[PolyForm Noncommercial License 1.0.0](./LICENSE) and delivered through the
 private, licensed npm channel. It has its own `0.1.x` version line. It supports ForgeLoop core versions `>=1.5.0 <2`; the
 compatibility range is tested by the package smoke flow. Its committed
 `package-lock.json` is the reproducible dependency graph used by setup, tests,

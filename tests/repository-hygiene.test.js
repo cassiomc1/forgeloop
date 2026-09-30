@@ -3,7 +3,7 @@ import { test } from "node:test";
 
 import {
   BENCHMARK_RUN_SETS,
-  FORGELOOP_OWNED_LICENSE_PATHS,
+  OBSOLETE_LICENSE_PATHS,
   IGNORE_SENTINELS,
   REPOSITORY_ONLY_VISUALS,
   validateRepositoryHygiene,
@@ -34,10 +34,10 @@ test("repository hygiene accepts the explicit repository policy", () => {
   assert.deepEqual(result.errors, []);
 });
 
-test("repository hygiene rejects ForgeLoop-owned license files", () => {
-  const result = validateRepositoryHygiene(validInput({ trackedPaths: [...FORGELOOP_OWNED_LICENSE_PATHS] }));
-  for (const licensePath of FORGELOOP_OWNED_LICENSE_PATHS) {
-    assert.ok(result.errors.includes(`REPOSITORY_HYGIENE_FORGELOOP_OWNED_LICENSE_PRESENT: ${licensePath}`));
+test("repository hygiene rejects the obsolete documentation license", () => {
+  const result = validateRepositoryHygiene(validInput({ trackedPaths: [...OBSOLETE_LICENSE_PATHS] }));
+  for (const licensePath of OBSOLETE_LICENSE_PATHS) {
+    assert.ok(result.errors.includes(`REPOSITORY_HYGIENE_OBSOLETE_LICENSE_PRESENT: ${licensePath}`));
   }
 });
 

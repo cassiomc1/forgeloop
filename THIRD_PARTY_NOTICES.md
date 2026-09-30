@@ -7,8 +7,8 @@ for reuse.
 
 ## Collection license
 
-ForgeLoop-owned source and documentation are proprietary and are not offered
-under a public reuse license. The notices below apply only to third-party
+ForgeLoop-owned source and documentation are licensed under the
+[PolyForm Noncommercial License 1.0.0](./LICENSE). The notices below apply only to third-party
 components, adapted sources, vendored tools, and external references.
 
 ## Adapted and editorial sources
