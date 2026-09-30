@@ -6,7 +6,7 @@ This guide walks through your first complete task with ForgeLoop from initializa
 
 ## 1. What is ForgeLoop?
 
-ForgeLoop is a proprietary, vendor-neutral engineering protocol for AI-assisted coding and automated workflows. It turns a task outcome into:
+ForgeLoop is a vendor-neutral engineering protocol for AI-assisted coding and automated workflows. It turns a task outcome into:
 
 - **A structured contract** (`.forgeloop/task-state/<taskKey>/contract.json`);
 - **Deterministic guide routing** based on declared work type, surfaces, and risks;

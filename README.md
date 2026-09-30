@@ -11,7 +11,7 @@
 [![Package smoke](https://github.com/cassiomc1/forgeloop/actions/workflows/package-smoke.yml/badge.svg?branch=main)](https://github.com/cassiomc1/forgeloop/actions/workflows/package-smoke.yml)
 [![Release notes](https://github.com/cassiomc1/forgeloop/actions/workflows/release-notes.yml/badge.svg?branch=main)](https://github.com/cassiomc1/forgeloop/actions/workflows/release-notes.yml)
 
-ForgeLoop is the proprietary deterministic governor for AI-assisted engineering. Jev provides bounded System One semantic input; the host coding model provides System Two implementation. ForgeLoop owns lifecycle, claims, gates, evidence, completion, recovery, and publication truth.
+ForgeLoop is the deterministic governor for AI-assisted engineering. Jev provides bounded System One semantic input; the host coding model provides System Two implementation. ForgeLoop owns lifecycle, claims, gates, evidence, completion, recovery, and publication truth.
 
 Operational sources: [`DOCS_INDEX.md`](./DOCS_INDEX.md); [`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md) is canonical; [`PROTOCOL_INTEGRATION.md`](./PROTOCOL_INTEGRATION.md) defines discovery; [`PROJECT_PROFILE.md`](./PROJECT_PROFILE.md) stores project facts; [`GUIDE_ROUTER.md`](./GUIDE_ROUTER.md) selects guides.
 
@@ -78,7 +78,9 @@ project identity is required. The public project-evidence schema remains v1.
 ## Distribution and license
 
 GitHub hosts source and issues; npm delivery is restricted to authorized users.
-ForgeLoop-owned material is proprietary. Third-party notices are documented in
+ForgeLoop-owned source and documentation are licensed under the
+[PolyForm Noncommercial License 1.0.0](./LICENSE). Commercial use is not granted
+by this license. Third-party notices are documented in
 [`THIRD_PARTY_NOTICES.md`](./THIRD_PARTY_NOTICES.md).
 
 ## Quickstart

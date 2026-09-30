@@ -1,6 +1,6 @@
 # ForgeLoop Release Checklist
 
-This is the current release checklist for the proprietary
+This is the current release checklist for the PolyForm Noncommercial-licensed
 `@cassiomc1/forgeloop` package. It is a preparation and verification checklist;
 it does not authorize publication.
 
@@ -77,8 +77,9 @@ actions.
 ## Contract and package identity
 
 - [ ] `package.json` and `package-lock.json` contain the same package version.
-- [ ] The package metadata declares the intended proprietary license state
-      (`UNLICENSED`) and private publication access.
+- [ ] The package metadata declares the intended license
+      (`PolyForm-Noncommercial-1.0.0`), includes the official license text,
+      and retains restricted publication access.
 - [ ] `PROTOCOL_VERSION` and the integration API version remain compatible.
 - [ ] `npm run release:identity` passes for the candidate version.
 - [ ] No release tag or registry version collision exists.

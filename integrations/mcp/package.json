@@ -1,9 +1,9 @@
 {
   "name": "@cassiomc1/forgeloop-mcp",
   "version": "0.1.0",
-  "description": "Proprietary local-first MCP server exposing the canonical ForgeLoop programmatic integration API over stdio and optional loopback-only HTTP.",
+  "description": "Local-first MCP server exposing the canonical ForgeLoop programmatic integration API over stdio and optional loopback-only HTTP.",
   "type": "module",
-  "license": "UNLICENSED",
+  "license": "PolyForm-Noncommercial-1.0.0",
   "publishConfig": {
     "access": "restricted"
   },
@@ -18,7 +18,8 @@
   "files": [
     "bin/",
     "src/",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "dependencies": {
     "@cassiomc1/forgeloop": ">=1.5.0 <2",
