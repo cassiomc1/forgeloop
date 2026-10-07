@@ -8,7 +8,7 @@ import { taskStorageKey } from "../core/task-identity.js";
 import { TASK_ARTIFACT_FILES } from "../core/task-paths.js";
 import { artifactByteDigest } from "./artifact-bytes.js";
 import { runInTransaction } from "./transaction.js";
-import { decodeIndexedEvent, appendEvent, putArtifact, putAction, putApproval, putExecution, putSession, upsertTask } from "./repository.js";
+import { assertArtifactTaskIdentity, decodeIndexedEvent, appendEvent, putArtifact, putAction, putApproval, putExecution, putSession, upsertTask } from "./repository.js";
 import { resolveStoreReservationState } from "./task-guards.js";
 
 const SINGLE = Object.fromEntries(Object.entries(TASK_ARTIFACT_FILES)
@@ -241,11 +241,13 @@ class OperationalStore {
     const artifact = this.artifactRow(location, taskId);
     if (!artifact) return null;
     if (RECORD_TABLES[location.kind]) return serialized(recordPayload(artifact, location.kind));
-    if (artifact.fingerprint !== undefined && artifact.fingerprint !== canonicalFingerprint(JSON.parse(artifact.payload_json))) throw storageError("E_STORAGE_PAYLOAD_MISMATCH", "Stored artifact fingerprint disagrees with its payload");
+    const payload = JSON.parse(artifact.payload_json);
+    assertArtifactTaskIdentity(payload, taskId);
+    if (artifact.fingerprint !== undefined && artifact.fingerprint !== canonicalFingerprint(payload)) throw storageError("E_STORAGE_PAYLOAD_MISMATCH", "Stored artifact fingerprint disagrees with its payload");
     if (artifact.source_json !== undefined && (artifact.source_json !== null || artifact.byte_digest !== null)) {
-      artifactByteDigest({ sourceText: artifact.source_json, byteDigest: artifact.byte_digest, payload: JSON.parse(artifact.payload_json) });
+      artifactByteDigest({ sourceText: artifact.source_json, byteDigest: artifact.byte_digest, payload });
     }
-    return artifact.source_json ?? serialized(JSON.parse(artifact.payload_json));
+    return artifact.source_json ?? serialized(payload);
   }
 
   readEvents(relativePath, limit = null) {
@@ -420,10 +422,7 @@ class OperationalStore {
       if (payload.taskId !== taskId || payload[`${location.kind}Id`] !== location.artifactId) throw storageError("E_STORAGE_PAYLOAD_MISMATCH", "Proposed operational record has a mismatched identity");
       table[2](this.db, { taskId, [location.kind]: payload });
     }
-    else {
-      if (payload.taskId !== undefined && payload.taskId !== taskId) throw storageError("E_STORAGE_PAYLOAD_MISMATCH", "Proposed artifact belongs to another task");
-      putArtifact(this.db, { taskId, kind: location.kind, artifactId: location.artifactId, payload, sourceText: text });
-    }
+    else putArtifact(this.db, { taskId, kind: location.kind, artifactId: location.artifactId, payload, sourceText: text });
   }
 }
 

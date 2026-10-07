@@ -9,10 +9,10 @@ import { appendProtocolEvent, readEvents } from "../src/core/events.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { runTaskCreate } from "../src/commands/task-create.js";
 import { createWorkState, readWorkState, writeWorkState } from "../src/core/work-state.js";
-import { writeJsonArtifact } from "../src/core/artifacts.js";
+import { readJsonArtifact, writeJsonArtifact } from "../src/core/artifacts.js";
 import { taskGatePath } from "../src/core/task-paths.js";
 import { taskArtifactPath } from "../src/core/task-paths.js";
-import { openStorageDatabase } from "../src/storage/index.js";
+import { findArtifact, listArtifacts, openStorageDatabase } from "../src/storage/index.js";
 
 const taskId = "native-transaction";
 const packageRoot = getPackageRoot();
@@ -132,5 +132,22 @@ test("native generic artifact writes reject a payload belonging to another task"
     finally { db.close(); }
     assert.deepEqual(await readEvents(target, packageRoot, { taskId }), before);
     await writeJsonArtifact(target, taskGatePath(taskId, "test"), { ...gate, taskId }, "gate", packageRoot, { taskId });
+  });
+});
+
+
+test("generic artifact readers reject a rebound indexed task owner", async () => {
+  await project(async target => {
+    const otherTaskId = "rebound-artifact-owner";
+    await runTaskCreate({ target, taskId: otherTaskId, packageRoot, claims: [] });
+    const gate = { schemaVersion: 1, protocolVersion: 1, taskId, gate: "test", status: "satisfied", requiredBy: [], artifacts: [], decisions: [], unknowns: [], approvedAssumptions: [], evidence: [] };
+    await writeJsonArtifact(target, taskGatePath(taskId, "test"), gate, "gate", packageRoot, { taskId });
+    const db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+    try {
+      assert.equal(db.prepare("UPDATE task_artifacts SET task_id = ? WHERE task_id = ? AND kind = 'gate'").run(otherTaskId, taskId).changes, 1);
+      assert.throws(() => findArtifact(db, otherTaskId, "gate", "test"), { code: "E_STORAGE_PAYLOAD_MISMATCH" });
+      assert.throws(() => listArtifacts(db, otherTaskId, "gate"), { code: "E_STORAGE_PAYLOAD_MISMATCH" });
+    } finally { db.close(); }
+    await assert.rejects(readJsonArtifact(target, taskGatePath(otherTaskId, "test"), "gate", packageRoot), { code: "E_STORAGE_PAYLOAD_MISMATCH" });
   });
 });

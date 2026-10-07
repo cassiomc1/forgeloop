@@ -1,0 +1,19 @@
+{
+  "increment": 758,
+  "cwd": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop",
+  "exitCode": 1,
+  "elapsedSeconds": 495.1605679988861,
+  "manifestFiles": 2816,
+  "admittedSourceUnchanged": true,
+  "status": "FAILED",
+  "scope": "Full verify:prepush on working checkout, source manifest checked before and after; not frozen clone.",
+  "head": "da347e8406c39b91b58b37f6dbbc1159baa6fa23",
+  "core": {
+    "tests": 2866,
+    "passed": 2853,
+    "failed": 2,
+    "skipped": 11
+  },
+  "logSha256": "73b56578215f36ec6910f779a617266dd1ede859128509924b450b2c07c9f9e9",
+  "diagnosis": "Two tests attempted invalid foreign-task fixture publication through public writers; strengthened writer admission now rejects their setup. Tests retain original downstream error codes and unchanged-data assertions through direct test-only corruption injection."
+}

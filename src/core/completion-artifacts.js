@@ -81,10 +81,18 @@ function requiredString(value, label) {
   return value;
 }
 
+async function readBoundReceiptArtifact(target, receiptRel, packageRoot) {
+  try { return await readJsonArtifact(target, receiptRel, "execution-receipt", packageRoot); }
+  catch (error) {
+    if (error.code === "E_STORAGE_PAYLOAD_MISMATCH" && error.taskIdentityMismatch) throw artifactError("E_RECEIPT_TASK_MISMATCH", "Execution receipt does not belong to the current contract task", [receiptRel]);
+    throw error;
+  }
+}
+
 async function readCurrentReceipt(target, packageRoot, options = {}) {
   const receiptRel = options.receiptPath ?? (options.taskId ? taskArtifactPath(options.taskId, "receipt") : ARTIFACT_PATHS.receipt);
   try {
-    return await readJsonArtifact(target, receiptRel, "execution-receipt", packageRoot);
+    return await readBoundReceiptArtifact(target, receiptRel, packageRoot);
   } catch (error) {
     if (error.code === "ARTIFACT_MISSING") {
       throw artifactError(
@@ -279,7 +287,7 @@ async function prepareSelectedCompletion({
 
   let existing = null;
   try {
-    existing = await readJsonArtifact(target, receiptRel, "execution-receipt", packageRoot);
+    existing = await readBoundReceiptArtifact(target, receiptRel, packageRoot);
     await validateReceipt(existing.value, packageRoot, {
       target,
       taskId: contract.value.taskId,

@@ -18,7 +18,7 @@ import { getPackageRoot } from "../src/core/templates.js";
 import { createWorkState, writeWorkState } from "../src/core/work-state.js";
 
 import { buildTaskArtifactPaths } from "../src/core/task-paths.js";
-import { ensureFixtureTask, readRawFixtureText, overwriteFixtureText, overwriteFixtureStateBytes } from "./helpers/native-storage-fixture.js";
+import { ensureFixtureTask, overwriteFixtureArtifactPayload, readRawFixtureText, overwriteFixtureText, overwriteFixtureStateBytes } from "./helpers/native-storage-fixture.js";
 
 const packageRoot = getPackageRoot();
 const taskId = "website-001";
@@ -255,7 +255,7 @@ test("preflight rejects foreign gate task identities before persisting artifacts
   await withTarget(async (target) => {
     await prepareWebsite(target);
     for (const gate of ["design", "quality", "threat-boundary"]) {
-      await persistGate(target, createGate({
+      await overwriteFixtureArtifactPayload(target, { taskId, kind: "gate", artifactId: gate }, createGate({
         taskId: "foreign-task",
         gate,
         status: "satisfied",
@@ -265,7 +265,7 @@ test("preflight rejects foreign gate task identities before persisting artifacts
         unknowns: [],
         approvedAssumptions: [],
         evidence: [],
-      }), packageRoot, { taskId });
+      }));
     }
     const before = await artifactHashes(target);
 

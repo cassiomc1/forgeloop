@@ -22,7 +22,7 @@ import { createWorkState, writeWorkState } from "../src/core/work-state.js";
 import { getPackageRoot } from "../src/core/templates.js";
 
 import { buildTaskArtifactPaths } from "../src/core/task-paths.js";
-import { ensureFixtureTask, readRawFixtureText, overwriteFixtureText, deleteFixtureArtifact } from "./helpers/native-storage-fixture.js";
+import { ensureFixtureTask, overwriteFixtureArtifactPayload, readRawFixtureText, overwriteFixtureText, deleteFixtureArtifact } from "./helpers/native-storage-fixture.js";
 
 const packageRoot = getPackageRoot();
 const taskId = "task-complete";
@@ -219,7 +219,7 @@ test("prepare-completion rejects a foreign receipt without rebinding its evidenc
     const receiptPath = path.join(target, ARTIFACT_PATHS.receipt);
     const receipt = JSON.parse(await readRawFixtureText(target, receiptPath));
     receipt.taskId = "foreign-task";
-    await writeJsonArtifact(target, ARTIFACT_PATHS.receipt, receipt, "execution-receipt", packageRoot, { taskId });
+    await overwriteFixtureArtifactPayload(target, { taskId, kind: "receipt" }, receipt);
     const before = await artifactHashes(target);
 
     await assert.rejects(

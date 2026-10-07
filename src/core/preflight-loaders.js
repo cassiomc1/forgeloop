@@ -116,7 +116,9 @@ export async function inspectGates(target, contract, route, packageRoot, errors,
     try {
       artifact = await (options.readers?.readGate ?? readGateIfPresent)(target, gate, packageRoot, { ...options, taskId });
     } catch (error) {
-      errors.push(issue(error.code === "ARTIFACT_MISSING" ? "E_GATE_UNVERIFIED" : "E_GATE_INVALID", error.message, [defaultGateRel], { gate }));
+      const code = error.code === "E_STORAGE_PAYLOAD_MISMATCH" && error.taskIdentityMismatch ? "E_GATE_TASK_MISMATCH"
+        : error.code === "ARTIFACT_MISSING" ? "E_GATE_UNVERIFIED" : "E_GATE_INVALID";
+      errors.push(issue(code, error.message, [defaultGateRel], { gate }));
       continue;
     }
     if (!artifact) {

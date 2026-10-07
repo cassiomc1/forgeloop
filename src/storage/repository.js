@@ -31,6 +31,11 @@ function decode(text) {
   catch { throw Object.assign(new Error("Stored operational payload is not valid JSON"), { code: "E_STORAGE_PAYLOAD_MISMATCH" }); }
 }
 
+/** Payload task identity, when present, must agree with its canonical owner. */
+export function assertArtifactTaskIdentity(payload, taskId) {
+  if (payload?.taskId !== undefined && payload.taskId !== taskId) throw Object.assign(new Error("Artifact payload belongs to another task"), { code: "E_STORAGE_PAYLOAD_MISMATCH", taskIdentityMismatch: true });
+}
+
 /* ------------------------------------------------------------------ tasks */
 
 /**
@@ -381,6 +386,7 @@ export const CURRENT_ARTIFACT_ID = "current";
 
 export function putArtifact(db, { taskId, kind, artifactId = CURRENT_ARTIFACT_ID, payload, sourceText = `${JSON.stringify(payload, null, 2)}\n` }) {
   guard(db);
+  assertArtifactTaskIdentity(payload, taskId);
   if (canonicalFingerprint(JSON.parse(sourceText)) !== canonicalFingerprint(payload)) {
     const error = new Error("Artifact source bytes do not represent its canonical payload");
     error.code = "E_STORAGE_ARTIFACT_INVALID";
@@ -402,7 +408,10 @@ export function findArtifact(db, taskId, kind, artifactId = CURRENT_ARTIFACT_ID)
   const row = db
     .prepare("SELECT payload_json FROM task_artifacts WHERE task_id = ? AND kind = ? AND artifact_id = ?")
     .get(taskId, kind, artifactId);
-  return row ? decode(row.payload_json) : null;
+  if (!row) return null;
+  const payload = decode(row.payload_json);
+  assertArtifactTaskIdentity(payload, taskId);
+  return payload;
 }
 
 export function listArtifacts(db, taskId, kind = null) {
@@ -413,14 +422,18 @@ export function* iterateArtifacts(db, taskId, kind = null) {
   const rows = kind
     ? db.prepare("SELECT kind, artifact_id, payload_json, fingerprint, source_json, byte_digest FROM task_artifacts WHERE task_id = ? AND kind = ? ORDER BY artifact_id").iterate(taskId, kind)
     : db.prepare("SELECT kind, artifact_id, payload_json, fingerprint, source_json, byte_digest FROM task_artifacts WHERE task_id = ? ORDER BY kind, artifact_id").iterate(taskId);
-  for (const row of rows) yield {
-    kind: row.kind,
-    artifactId: row.artifact_id,
-    payload: decode(row.payload_json),
-    fingerprint: row.fingerprint,
-    sourceText: row.source_json,
-    byteDigest: row.byte_digest,
-  };
+  for (const row of rows) {
+    const payload = decode(row.payload_json);
+    assertArtifactTaskIdentity(payload, taskId);
+    yield {
+      kind: row.kind,
+      artifactId: row.artifact_id,
+      payload,
+      fingerprint: row.fingerprint,
+      sourceText: row.source_json,
+      byteDigest: row.byte_digest,
+    };
+  }
 }
 
 /* --------------------------------------------------------------- sessions */

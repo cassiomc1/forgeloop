@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+import { canonicalFingerprint } from "../../src/core/artifacts.js";
 import { createTaskDescriptor, readTaskDescriptor, writeTaskDescriptor } from "../../src/core/task-descriptor.js";
 import path from "node:path";
 import { TASK_ARTIFACT_FILES } from "../../src/core/task-paths.js";
@@ -154,4 +156,16 @@ export async function overwriteFixtureRecordBytes(target, filename, text) {
         .run(row.task_id, id, payload?.actionId ?? null, payload?.decision ?? null, text);
     }
   }));
+}
+
+// Deliberately inject an inconsistent owner binding while retaining byte/fingerprint
+// consistency. Production writers must refuse this; downstream rejection tests
+// use direct SQL so they still exercise corruption admission, not fixture setup.
+export async function overwriteFixtureArtifactPayload(target, { taskId, kind, artifactId = "current" }, payload) {
+  const text = `${JSON.stringify(payload, null, 2)}\n`;
+  await withFixtureStore(target, store => {
+    const result = store.db.prepare("UPDATE task_artifacts SET payload_json = ?, fingerprint = ?, source_json = ?, byte_digest = ? WHERE task_id = ? AND kind = ? AND artifact_id = ?")
+      .run(JSON.stringify(payload), canonicalFingerprint(payload), text, createHash("sha256").update(text).digest("hex"), taskId, kind, artifactId);
+    if (result.changes !== 1) throw new Error("Fixture artifact does not exist");
+  });
 }
