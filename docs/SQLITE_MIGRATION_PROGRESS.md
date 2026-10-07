@@ -3342,3 +3342,7 @@ Theindependent-contract control nowexercises both explicit taskID andcanonical c
 ### Acceptance summary reconciliation806
 
 Themain progress table nowreflects retainedcurrent platform/performance/LOC evidence insteadof older checkpoint summaries. Allnine workflow definitions changed fromthepinned baseline havehashed source-role dispositions. Expanded nodecompatibility andstandalone fullpackage/MCP matrix execution remainpending aftercurrentremoteCI terminates;publication workflows areseparate release actions andarenotdispatched asverification. Evidence: `benchmarks/storage-sqlite/workflow-acceptance806.json`. Currentcore37701918510 completes shard3 successfully;actualcounts arein `linux-shard3-806-terminal.json`,whiletheparent remainslive. Progress55%;alloriginal release/resource/code-reduction andprotocolclosure boundaries remainunchanged.
+
+### Package and repository file boundaries807
+
+Eight additional modules havehashed raw-file role review: shipped guide registry/metadata/templates;project-root identity;bounded repository project detection;structural source fingerprints;package version metadata;andpolicy-engine project rules/discovery/lock inputs. Task policy snapshots select native artifact presence/reads before explicitlegacy fallback. Theseareintentional file boundaries fromtheoriginal plan;thissource-only review isnot complete transitive consumer proof. Evidence: `benchmarks/storage-sqlite/public-file-boundary807.json`. Currentcore37701918510 remainslive;progress55%;noPR orpublication.
