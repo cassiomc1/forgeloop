@@ -77,11 +77,12 @@ jobs:
 
   release-tarball-smoke:
     name: release package smoke (${{ matrix.os }})
-    needs: classify
+    needs: [classify, tarball-smoke]
     if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (inputs.full_matrix == true) }}
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     strategy:
+      max-parallel: 1
       fail-fast: false
       matrix:
         include:

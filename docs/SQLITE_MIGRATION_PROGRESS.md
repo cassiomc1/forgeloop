@@ -3370,3 +3370,11 @@ Classified the remaining ten migration, rollback and restore caller modules from
 Validation: source review, focused storage boundary tests, documentation checks and `git diff --check`; results are recorded in `benchmarks/storage-sqlite/public-file-boundary811.json`. No production behavior changed. The 11/20 completed-step count and publication state remain unchanged; no PR or package publication.
 
 Increment 811 validation completed: 32 focused storage boundary tests passed with zero failures/skips; documentation checks and diff checks passed. Current core CI source `f1f8f95` additionally completed Linux shard 2 (710/710 passed) and Linux MCP/package smoke (73/73 MCP tests, both tarball smokes passed). The parent run remains nonterminal; this is not full current-platform acceptance.
+
+### Increment 812: direct publication paths and serial package validation
+
+Extended the file-write review beyond the named atomic helper to direct writes, renames, stream output and hard-link publication. Maintenance ownership, immutable attachments, independent SQLite backup, auxiliary repository-index installation/locks and disposable prune probes have source-bound dispositions in `benchmarks/storage-sqlite/public-file-boundary812.json`. Twenty focused maintenance, attachment and backup tests passed without failures or skips. Complete transitive consumer closure remains open.
+
+Found and corrected a host-serialization gap in `.github/workflows/package-smoke.yml`: release-platform package smoke now depends on Linux tarball smoke and uses one matrix job at a time. This prevents the workflow from scheduling Linux and Windows package workloads together. Preflight returned READY. Static YAML dependency validation and existing workflow policy checks passed; actual expanded workflow execution remains pending until the current core run reaches a terminal state. The 11/20 completed-step count is unchanged; no PR or package publication.
+
+Increment 812 local validation completed: `verify:fast`, documentation checks, YAML dependency inspection, 6/6 workflow policy checks and diff checks passed. `benchmarks/storage-sqlite/workflow-serialization812.json` records the serialized package-workflow change and explicitly leaves actual expanded workflow acceptance pending.
