@@ -1,0 +1,127 @@
+{
+  "jobs": [
+    {
+      "conclusion": "success",
+      "id": 112923526313,
+      "name": "Classify changed paths",
+      "runner_name": "GitHub Actions 1000017249",
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "id": 112923597545,
+      "name": "Verify generated Archify diagram",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112923597569,
+      "name": "tarball smoke (ubuntu-latest)",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112923597615,
+      "name": "Unit tests (Node 24.19.0, shard 0/4)",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112923597679,
+      "name": "Unit tests (Node 24, shard 2/4)",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112923597697,
+      "name": "audit",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112923597705,
+      "name": "Lint and dependency policy",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112923597707,
+      "name": "Unit tests (Node 24, shard 3/4)",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112923597760,
+      "name": "Unit tests (Node 24, shard 1/4)",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112923597822,
+      "name": "Unit tests (Node 24, shard 4/4)",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112934267714,
+      "name": "Coverage report (Node 24)",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112934545610,
+      "name": "Repository Index native matrix / Classify Repository Index paths",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112934652212,
+      "name": "Repository Index native matrix / Verify Repository Index manifest",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112934764671,
+      "name": "Repository Index native matrix / Native Repository Index (Linux)",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112934764722,
+      "name": "Repository Index native matrix / Native Repository Index (macOS)",
+      "runner_name": "forgeloop-macos-local",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112934764871,
+      "name": "Repository Index native matrix / Native Repository Index (Windows)",
+      "runner_name": "forgeloop-windows-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "id": 112935810557,
+      "name": "validate (22)",
+      "runner_name": "GitHub Actions 1000017250",
+      "status": "completed"
+    }
+  ],
+  "head": "993e0cb0073887a55d2d85494b09a5e2c06f33f2",
+  "run": 37659627713,
+  "conclusion": "failure",
+  "scope": "All17jobs terminal;all Linux core/coverage/package/audit/lint and native Linux/Mac/Windows jobs pass. Documentation fails Lychee PATH;aggregate validation fails accordingly. Current corrected workflow remains unverified."
+}
