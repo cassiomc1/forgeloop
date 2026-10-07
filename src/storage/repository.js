@@ -33,7 +33,7 @@ function decode(text) {
 
 /** Payload task identity, when present, must agree with its canonical owner. */
 export function assertArtifactTaskIdentity(payload, taskId) {
-  if (payload?.taskId !== undefined && payload.taskId !== taskId) throw Object.assign(new Error("Artifact payload belongs to another task"), { code: "E_STORAGE_PAYLOAD_MISMATCH", taskIdentityMismatch: true });
+  if (payload?.taskId !== undefined && payload.taskId !== taskId) throw Object.assign(new Error("Artifact payload has a mismatched task identity"), { code: "E_STORAGE_PAYLOAD_MISMATCH", taskIdentityMismatch: true });
 }
 
 /* ------------------------------------------------------------------ tasks */

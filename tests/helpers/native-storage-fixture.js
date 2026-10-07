@@ -5,7 +5,14 @@ import path from "node:path";
 import { TASK_ARTIFACT_FILES } from "../../src/core/task-paths.js";
 import { withProjectStorage } from "../../src/storage/project-boundary.js";
 import { getOperationalStore } from "../../src/storage/operational-context.js";
-import { appendEvent, findTaskById, putArtifact, runInTransaction, upsertTask } from "../../src/storage/index.js";
+import { appendEvent, findTaskById, runInTransaction, upsertTask } from "../../src/storage/index.js";
+
+// Deliberate corruption injection, bypassing production writer admission only
+// in test fixtures. Byte/fingerprint consistency leaves domain checks observable.
+export function putFixtureArtifact(db, { taskId, kind, artifactId = "current", payload, sourceText = `${JSON.stringify(payload, null, 2)}\n` }) {
+  db.prepare("INSERT INTO task_artifacts (task_id, kind, artifact_id, payload_json, fingerprint, source_json, byte_digest) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT (task_id, kind, artifact_id) DO UPDATE SET payload_json = excluded.payload_json, fingerprint = excluded.fingerprint, source_json = excluded.source_json, byte_digest = excluded.byte_digest")
+    .run(taskId, kind, artifactId, JSON.stringify(payload), canonicalFingerprint(payload), sourceText, createHash("sha256").update(sourceText).digest("hex"));
+}
 
 async function withFixtureStore(target, callback, options) {
   const selected = getOperationalStore(target);
@@ -65,9 +72,9 @@ export async function overwriteFixtureArtifactBytes(target, filename, text) {
 
 export async function overwriteFixtureLease(target, taskId, value) {
   await withFixtureStore(target, store => {
-    if (typeof value !== "string") putArtifact(store.db, { taskId, kind: "operationLease", payload: value });
+    if (typeof value !== "string") putFixtureArtifact(store.db, { taskId, kind: "operationLease", payload: value });
     else {
-      putArtifact(store.db, { taskId, kind: "operationLease", payload: { taskId } });
+      putFixtureArtifact(store.db, { taskId, kind: "operationLease", payload: { taskId } });
       store.db.prepare("UPDATE task_artifacts SET payload_json = ? WHERE task_id = ? AND kind = 'operationLease' AND artifact_id = 'current'").run(value, taskId);
     }
   });
@@ -87,7 +94,7 @@ export async function overwriteFixtureText(target, filename, text) {
     return withFixtureStore(target, store => runInTransaction(store.db, () => {
       const row = store.db.prepare("SELECT task_id FROM tasks WHERE task_key = ?").get(parts[2]);
       if (!row) throw new Error("Fixture task does not exist");
-      putArtifact(store.db, { taskId: row.task_id, kind: "handoff", artifactId: parts[4].slice(0, -5), payload: JSON.parse(text), sourceText: text });
+      putFixtureArtifact(store.db, { taskId: row.task_id, kind: "handoff", artifactId: parts[4].slice(0, -5), payload: JSON.parse(text), sourceText: text });
     }));
   }
   if (parts.length !== 4 || parts[0] !== ".forgeloop" || parts[1] !== "task-state") throw new Error(`Not a canonical fixture artifact: ${relative}`);
@@ -104,7 +111,7 @@ export async function overwriteFixtureText(target, filename, text) {
       const payload = JSON.parse(text);
       if (kind === "state" || kind === "descriptor") {
         upsertTask(store.db, { ...findTaskById(store.db, row.task_id), [kind]: payload });
-      } else putArtifact(store.db, { taskId: row.task_id, kind, payload, sourceText: text });
+      } else putFixtureArtifact(store.db, { taskId: row.task_id, kind, payload, sourceText: text });
     }
   }));
 }

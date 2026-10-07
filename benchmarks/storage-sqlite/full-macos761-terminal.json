@@ -1,0 +1,19 @@
+{
+  "increment": 761,
+  "cwd": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop",
+  "exitCode": 1,
+  "elapsedSeconds": 510.7077548503876,
+  "manifestFiles": 2820,
+  "admittedSourceUnchanged": true,
+  "status": "FAILED",
+  "scope": "Full verify:prepush on working checkout, source manifest checked before and after; not frozen clone.",
+  "head": "aedbc26b203993417503499306c226948ff8a007",
+  "core": {
+    "tests": 2867,
+    "passed": 2846,
+    "failed": 10,
+    "skipped": 11
+  },
+  "logSha256": "7aa156a760f7c2a28ddad2aaa50da1ec6fa2cfc20833e716cf4fbdf12d1c6412",
+  "diagnosis": "Foreign-artifact fixture injection used guarded production repository writer; subsequent targeted controls exposed domain-code translation gaps. Test-only injection now bypasses production writer and original receipt/preflight rejection semantics are retained. Corrected full suite pending."
+}

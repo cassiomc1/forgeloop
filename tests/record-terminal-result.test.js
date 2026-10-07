@@ -1,3 +1,4 @@
+import { openStorageDatabase } from "../src/storage/index.js";
 import assert from "node:assert/strict";
 import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
@@ -12,7 +13,7 @@ import { removeTempTree } from "./helpers/rm-safe.js";
 import { runComplete } from "../src/commands/complete.js";
 import { runPreflight } from "../src/commands/preflight.js";
 import { runRecordTerminalResult } from "../src/commands/record-terminal-result.js";
-import { prepareCompletion, recordCheck } from "../src/core/completion-artifacts.js";
+import { prepareCompletion, recordCheck, recordTerminalResult } from "../src/core/completion-artifacts.js";
 
 import { readJsonArtifact } from "../src/core/artifacts.js";
 import { createContract, contractFingerprint, writeContract } from "../src/core/contract.js";
@@ -740,3 +741,35 @@ test("observation A event does not satisfy observation B during retry reconcilia
   });
 });
 
+
+
+test("direct terminal result rolls back state and receipt when its event fails", async () => {
+  await withTarget(async target => {
+    const taskId = "task-terminal-record";
+    await setupTarget(target, { verification: ["tests"], successCriteria: ["tests", "Package is published to npm registry"] });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId });
+    await prepareCompletion({ target, packageRoot, taskId });
+    const before = {
+      state: await readRawFixtureText(target, taskArtifactPath(taskId, "state")),
+      receipt: await readRawFixtureText(target, taskArtifactPath(taskId, "receipt")),
+      events: await readRawFixtureText(target, taskArtifactPath(taskId, "events")),
+    };
+    const db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+    try { db.exec("CREATE TRIGGER fail_direct_terminal BEFORE INSERT ON events WHEN NEW.event_type = 'TERMINAL_RESULT_RECORDED' BEGIN SELECT RAISE(ABORT, 'injected terminal event failure'); END"); }
+    finally { db.close(); }
+    await assert.rejects(() => recordTerminalResult({ target, packageRoot, taskId,
+      requirement: "Package is published to npm registry", type: "PUBLICATION", status: "published",
+      source: "offline fixture observation", result: "fixture publication assertion" }), /injected terminal event failure/);
+    assert.deepEqual({
+      state: await readRawFixtureText(target, taskArtifactPath(taskId, "state")),
+      receipt: await readRawFixtureText(target, taskArtifactPath(taskId, "receipt")),
+      events: await readRawFixtureText(target, taskArtifactPath(taskId, "events")),
+    }, before);
+    const recovered = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+    try { recovered.exec("DROP TRIGGER fail_direct_terminal"); } finally { recovered.close(); }
+    const accepted = await recordTerminalResult({ target, packageRoot, taskId,
+      requirement: "Package is published to npm registry", type: "PUBLICATION", status: "published",
+      source: "offline fixture observation", result: "fixture publication assertion" });
+    assert.equal(accepted.status, "published");
+  });
+});

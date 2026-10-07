@@ -1,0 +1,47 @@
+{
+  "increment": 763,
+  "parentHead": "aedbc26b203993417503499306c226948ff8a007",
+  "scope": "Four named direct exported core writers plus identity rejection compatibility",
+  "preflight": "READY",
+  "findings": [
+    "Direct scope/handoff artifact commits survived failed event insertion",
+    "Direct terminal state/receipt commits survived failed terminal event insertion",
+    "Direct manifest writer without ambient store skipped existence checks and accepted same-cycle replacement"
+  ],
+  "change": "Create/join task transactions around unchanged bodies; preserve original domain rejection codes when lower-level binding checks reject reads; use explicit test-only corruption injection",
+  "discovery": {
+    "exportsWithNamedWrites": 36,
+    "candidates": 4,
+    "wholeTransitiveClosure": false,
+    "jevgrep": "Exit0;89 relevant files; byte-truncated excerpts followed by direct reads"
+  },
+  "candidateTests": {
+    "tests": 20,
+    "passed": 20,
+    "failed": 0
+  },
+  "correctedRegression": {
+    "tests": 147,
+    "passed": 147,
+    "failed": 0
+  },
+  "callerRegression": {
+    "files": 11,
+    "tests": 27,
+    "passed": 27,
+    "failed": 0
+  },
+  "missingTargetErrorContract": "E_CHECK_INVALID preserved",
+  "fastVerification": "PASS",
+  "complexity": "PASS no regressions",
+  "fullCorrectedPlatforms": "PENDING",
+  "logs": {
+    "direct-domain762-red.log": "7da10a3a0ade7cefa351d29fcf16642a4b9a293967c15d72324979e996fea018",
+    "direct-terminal762-red.log": "e53633edc03a292f03a37fe58a65a114e065a38ff654e6d717c00d04a9dbcaa2",
+    "direct-domain762-green.log": "2e5f8ee087427795f0fc62dffb241d67e43978442bed89dd618863c51a65a395",
+    "direct-domain763-regression.log": "b71382db973737b37d2073c0297650529706885551c54891068d4458ac9358d4",
+    "direct-domain763-callers.log": "d59b4854dbe3e9090d8bf5f3f18665c81dd734565299739d21d769f5b2699c22",
+    "fast763.log": "b5ecc46b9f0356bfb8b0887fd8cd6af05811d3cf39ac0e93eaa633301a278927",
+    "complexity763.log": "32111f472b37a8b8941d21c72e18a3815643453328562aed2fd87e8a2f0417f2"
+  }
+}

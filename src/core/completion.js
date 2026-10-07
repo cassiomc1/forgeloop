@@ -81,6 +81,12 @@ function issue(code, message, artifacts = [], details = {}) {
   return { code, message, artifacts, ...details };
 }
 
+export function receiptReadFailure(error, relativePath) {
+  return error.taskIdentityMismatch
+    ? issue("E_RECEIPT_TASK_MISMATCH", "Execution receipt does not belong to the current contract task", [relativePath])
+    : issue("E_RECEIPT_INVALID", `Repair or remove the invalid execution receipt before continuing: ${error.message}`, [relativePath]);
+}
+
 export function completionIdentityErrors({ contract, state, receipt } = {}) {
   return completionRelationshipErrors({ contract, state, receipt })
     .filter((error) => ["E_STATE_TASK_MISMATCH", "E_RECEIPT_TASK_MISMATCH"].includes(error.code));
@@ -228,6 +234,10 @@ async function loadRequired(readArtifact, errorCode, errorMessage, artifacts, er
   try {
     return await readArtifact();
   } catch (error) {
+    if (errorCode === "E_RECEIPT_MISSING" && error.taskIdentityMismatch) {
+      errors.push(receiptReadFailure(error, artifacts[0]));
+      return null;
+    }
     if (error.code === "ARTIFACT_MISSING") {
       errors.push(issue(errorCode, errorMessage, artifacts));
       return null;

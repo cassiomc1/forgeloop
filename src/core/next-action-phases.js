@@ -311,7 +311,7 @@ export async function resolveNextActionPhase({
   const preflightArtifacts = [...requiredArtifacts, preflightRel];
   const persistedPreflightErrors = phaseNeedsChronology
     ? []
-    : validatePersistedPreflight(preflightArtifact.value?.value, preflight);
+    : validatePersistedPreflight(preflightArtifact.value?.value, preflight, preflightArtifact.error);
 
   if (["ROUTED", "DESIGNING", "PLANNED"].includes(state.phase) && missingGates.length > 0) {
     const missingGatePaths = missingGates.map((gate) => taskGatePath(state.taskId, gate));

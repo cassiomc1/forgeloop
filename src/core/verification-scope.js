@@ -254,7 +254,11 @@ export async function resolveVerificationScope(target, {
   return { scope, inputs };
 }
 
-export async function persistVerificationScope(target, scope, { taskId, packageRoot = getPackageRoot() } = {}) {
+export async function persistVerificationScope(target, scope, options = {}) {
+  return withTaskTransaction({ target, taskId: options.taskId, packageRoot: options.packageRoot, operation: "verify-scope" }, () => persistVerificationScopeInTransaction(target, scope, options));
+}
+
+async function persistVerificationScopeInTransaction(target, scope, { taskId, packageRoot = getPackageRoot() } = {}) {
   const relativePath = taskVerificationScopePath(taskId);
   const artifact = await writeJsonArtifact(target, relativePath, scope, "verification-scope", packageRoot, { taskId, operation: "verify-scope" });
   await appendProtocolEvent(target, {

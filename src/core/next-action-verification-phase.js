@@ -1,3 +1,4 @@
+import { receiptReadFailure } from "./completion.js";
 import { readJsonArtifact } from "./artifacts.js";
 import { taskArtifactPath, taskStructuralQualityDirectory } from "./task-paths.js";
 import { validateReceipt } from "./receipt.js";
@@ -100,7 +101,7 @@ export async function resolveVerifyingPhase({ target, packageRoot, explicitTaskI
       return decision(
         context,
         NEXT_ACTIONS.RESOLVE_BLOCKER,
-        artifactError("E_RECEIPT_INVALID", `Repair or remove the invalid execution receipt before continuing: ${receipt.error.message}`, [receiptRel]),
+        receiptReadFailure(receipt.error, receiptRel),
         [...requiredArtifacts, receiptRel],
       );
     }

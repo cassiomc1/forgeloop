@@ -1,5 +1,5 @@
 import path from "node:path";
-import { withTaskTransaction } from "./transaction.js";
+import { getTaskTransaction, withTaskTransaction } from "./transaction.js";
 import {
   ARTIFACT_PATHS,
   canonicalFingerprint,
@@ -805,7 +805,15 @@ async function recordValidatedCheck({
   };
 }
 
-export async function recordTerminalResult({
+export async function recordTerminalResult(options = {}) {
+  if (!options.target) return recordTerminalResultInTransaction(options);
+  if (await getTaskTransaction(options.target)) return recordTerminalResultInTransaction(options);
+  const state = await readWorkState(options.target, { packageRoot: options.packageRoot, taskId: options.taskId, statePath: options.statePath });
+  if (!state) return recordTerminalResultInTransaction(options);
+  return withTaskTransaction({ target: options.target, taskId: state.taskId, packageRoot: options.packageRoot, operation: "record-terminal-result" }, () => recordTerminalResultInTransaction({ ...options, taskId: options.taskId ?? state.taskId }));
+}
+
+async function recordTerminalResultInTransaction({
   target,
   packageRoot,
   requirement,

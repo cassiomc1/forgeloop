@@ -1,3 +1,4 @@
+import { withTaskTransaction } from "./transaction.js";
 import { createHash } from "node:crypto";
 import path from "node:path";
 
@@ -218,7 +219,11 @@ export async function readCodeManifest({ target, packageRoot = getPackageRoot(),
   }
 }
 
-export async function writeCodeManifest({ target, packageRoot = getPackageRoot(), taskId, manifest } = {}) {
+export async function writeCodeManifest(options = {}) {
+  return withTaskTransaction({ target: options.target, taskId: options.taskId, packageRoot: options.packageRoot, operation: "code-manifest-capture" }, () => writeCodeManifestInTransaction(options));
+}
+
+async function writeCodeManifestInTransaction({ target, packageRoot = getPackageRoot(), taskId, manifest } = {}) {
   const value = await validateCodeManifest(manifest, packageRoot);
   const relativePath = taskCodeManifestPath(taskId);
   if (operationalArtifactExists(target, relativePath) ?? await fileExists(ensureWithin(target, relativePath))) {

@@ -219,13 +219,15 @@ export async function evaluateStartExecutionPrerequisites({
 
   const preflight = await evaluatePreflight({ target, packageRoot, taskId: effectiveTaskId, contractPath, routePath, statePath, readers });
   let persistedPreflight = null;
+  let persistedPreflightReadError = null;
   try {
     persistedPreflight = await (readers?.readPreflight ?? readJsonArtifact)(target, preflightRel, "preflight", packageRoot);
   } catch (error) {
     if (error.code === "E_STATE_REVISION_CONFLICT") throw error;
+    persistedPreflightReadError = error;
     // validatePersistedPreflight reports the stable, actionable preflight reason.
   }
-  const persistedPreflightErrors = validatePersistedPreflight(persistedPreflight?.value, preflight);
+  const persistedPreflightErrors = validatePersistedPreflight(persistedPreflight?.value, preflight, persistedPreflightReadError);
   if (!sameStringSet(state.requiredGates, preflight.requiredGates)
     || !sameStringSet(state.satisfiedGates, preflight.satisfiedGates)) {
     errors.push(issue(

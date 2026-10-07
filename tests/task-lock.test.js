@@ -1,3 +1,4 @@
+import { putFixtureArtifact } from "./helpers/native-storage-fixture.js";
 import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { mkdtemp } from "node:fs/promises";
@@ -18,7 +19,7 @@ import { taskLockPath } from "../src/core/task-paths.js";
 import { fileExists } from "../src/core/filesystem.js";
 import { runTaskCreate } from "../src/commands/task-create.js";
 import { getPackageRoot } from "../src/core/templates.js";
-import { openStorageDatabase, putArtifact } from "../src/storage/index.js";
+import { openStorageDatabase } from "../src/storage/index.js";
 
 const handles = new Map();
 const seeded = new Map();
@@ -37,7 +38,7 @@ async function acquireTaskLock(target, taskId, operation) {
 }
 function writeLease(target, taskId, payload) {
   const db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
-  try { putArtifact(db, { taskId, kind: "operationLease", payload }); }
+  try { putFixtureArtifact(db, { taskId, kind: "operationLease", payload }); }
   finally { db.close(); }
 }
 

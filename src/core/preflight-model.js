@@ -31,7 +31,12 @@ export function sameStringSet(left, right) {
     && [...leftSet].every((value) => rightSet.has(value));
 }
 
-export function validatePersistedPreflight(persisted, current) {
+export function validatePersistedPreflight(persisted, current, readError = null) {
+  if (readError?.taskIdentityMismatch) return [issue("E_PREFLIGHT_TASK_MISMATCH", "Persisted preflight does not belong to the current task", [ARTIFACT_PATHS.preflight, ARTIFACT_PATHS.contract])];
+  return validatePersistedPreflightPayload(persisted, current);
+}
+
+function validatePersistedPreflightPayload(persisted, current) {
   const errors = [];
   if (persisted?.status !== "READY") {
     if (Array.isArray(persisted?.errors) && persisted.errors.length > 0) {

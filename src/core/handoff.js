@@ -167,7 +167,11 @@ export async function validateCanonicalHandoff(target, handoff, {
   return validateHandoffDigest(handoff);
 }
 
-export async function writeCanonicalHandoff(target, handoff, {
+export async function writeCanonicalHandoff(target, handoff, options = {}) {
+  return withTaskTransaction({ target, taskId: options.taskId ?? handoff?.taskId, packageRoot: options.packageRoot, operation: "handoff-create" }, () => writeCanonicalHandoffInTransaction(target, handoff, options));
+}
+
+async function writeCanonicalHandoffInTransaction(target, handoff, {
   packageRoot = getPackageRoot(),
   taskId = handoff?.taskId,
 } = {}) {
