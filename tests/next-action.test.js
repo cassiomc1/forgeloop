@@ -1196,7 +1196,7 @@ test("unsafe artifacts return repair guidance without writes and results are det
 });
 
 test("next never recommends CALLER_ACKNOWLEDGED for a required host approval", async () => {
-  const { mkdtemp, rm } = await import("node:fs/promises");
+  const { mkdtemp } = await import("node:fs/promises");
   const os = await import("node:os");
   const path = await import("node:path");
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-next-approval-"));
@@ -1232,7 +1232,7 @@ test("next never recommends CALLER_ACKNOWLEDGED for a required host approval", a
     assert.ok(result.authorityRequired, "structured authority requirement is surfaced");
     assert.equal(result.authorityRequired.kind, "HOST_ATTESTED");
     assert.equal(result.authorityRequired.approvalId, "approval-next");
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("next explanations bound every variable-length reason and artifact field", () => {

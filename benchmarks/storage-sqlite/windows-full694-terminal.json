@@ -1,0 +1,16 @@
+{
+  "runId": 37649176352,
+  "head": "fd234584ce3481d142ff626da8fbbe74bcca7d73",
+  "status": "FAILED",
+  "tests": 2853,
+  "passed": 2838,
+  "failed": 1,
+  "skipped": 14,
+  "failure": "tests/next-action.test.js host approval test teardown EBUSY",
+  "observedCorrectionsPassed": [
+    "tar archive and destination relative paths",
+    "completion-guidance cleanup"
+  ],
+  "replacementCheckpoint": "passed this run; earlier intermittent failure remains unexplained",
+  "originalPlanComplete": false
+}

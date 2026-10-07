@@ -1,0 +1,16 @@
+{
+  "artifact": ".forgeloop/task-state/2f9164d86234fc2ddd0952df4bfe5132d279b805e6b8e44e16a2b34f095b9eec/task.json",
+  "result": {
+    "status": "WARN",
+    "findings": [
+      {
+        "code": "CONTINUITY_INSPECT_PATH_MISSING",
+        "severity": "WARN",
+        "field": "inspectFirst[0]",
+        "itemId": null
+      }
+    ]
+  },
+  "expected": "No missing-path warning for existing canonical task descriptor",
+  "status": "REPRODUCED"
+}

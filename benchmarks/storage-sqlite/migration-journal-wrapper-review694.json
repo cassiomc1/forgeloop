@@ -1,0 +1,22 @@
+{
+  "rows": [
+    {
+      "file": "src/storage/migration-activate.js",
+      "sha256": "12b11a733f5a615ee1becbc8e3780fadfc7e55c92146cd07e82718c588871267",
+      "writeRole": "publication-journal PUBLISHED after quiescence, live owner, archived stage, copied attachment parity, database integrity/logical parity and exact marker binding"
+    },
+    {
+      "file": "src/storage/migration-archive.js",
+      "sha256": "38848cc8ab285a2ce37ef7b7b3405cf51e024d023670f7dfbf46eac01bdda37a",
+      "writeRole": "publication-journal ARCHIVING/ARCHIVED under live owner; source partition rechecked before each rename; retained object namespace excluded; directory sync and final stage verification"
+    },
+    {
+      "file": "src/storage/migration-publication.js",
+      "sha256": "6e60f541f53f977bc1670d2c2f7577e5e718b1e1fff80ba49d4e7c026d8b38ed",
+      "writeRole": "publication-journal STAGING/STAGED/FAILED inside owned maintenance; fresh exclusive stage directory; closed independent backup and candidate/attachment parity; journal alone insufficient authority"
+    }
+  ],
+  "classification": "retained cutover evidence and maintenance publication boundary",
+  "wholeScopeVerified": false,
+  "limitations": "Direct current source role review; no new runtime assertion, arbitrary hostile filesystem concurrency, or external legacy writer exclusion proof."
+}

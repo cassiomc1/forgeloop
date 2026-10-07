@@ -12,8 +12,21 @@ import { setupVerifyingTask } from "./helpers/durable-lifecycle.js";
 import { createGitRepository } from "./helpers/git-fixture.js";
 import { removeTempTree } from "./helpers/rm-safe.js";
 import { getPackageRoot } from "../src/core/templates.js";
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
+import { taskArtifactPath } from "../src/core/task-paths.js";
 
 const packageRoot = getPackageRoot();
+
+test("continuity inspect hints recognize canonical SQLite artifacts without file mirrors", async (t) => {
+  const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-continuity-native-lint-"));
+  t.after(() => removeTempTree(target));
+  const taskId = "task-lint-1";
+  await ensureFixtureTask(target, taskId, packageRoot);
+  const present = taskArtifactPath(taskId, "descriptor");
+  const missing = taskArtifactPath(taskId, "state");
+  const result = await lintContinuity({ target, continuity: continuity({ inspectFirst: [present, missing] }) });
+  assert.deepEqual(result.findings.map(item => [item.code, item.field]), [["CONTINUITY_INSPECT_PATH_MISSING", "inspectFirst[1]"]]);
+});
 
 function continuity(overrides = {}) {
   return createContinuity({

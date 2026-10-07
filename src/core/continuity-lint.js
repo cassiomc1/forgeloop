@@ -1,4 +1,6 @@
 import { assertSafePath, ensureWithin, fileExists } from "./filesystem.js";
+import { operationalArtifactExists } from "../storage/operational-context.js";
+import { withProjectReadSnapshot } from "../storage/project-read-snapshot.js";
 
 function finding(code, severity, field, itemId = null) {
   return { code, severity, field, itemId };
@@ -15,7 +17,16 @@ function hasOperationalHints(continuity) {
   );
 }
 
-export async function lintContinuity({ target, continuity, state } = {}) {
+async function inspectPathExists(target, relativePath) {
+  return operationalArtifactExists(target, relativePath) ?? await fileExists(ensureWithin(target, relativePath));
+}
+
+export async function lintContinuity(options = {}) {
+  if (typeof options.target !== "string" || options.target.trim() === "") return lintSelectedContinuity(options);
+  return withProjectReadSnapshot(options.target, () => lintSelectedContinuity(options));
+}
+
+async function lintSelectedContinuity({ target, continuity, state } = {}) {
   const findings = [];
   if (!continuity || typeof continuity !== "object" || Array.isArray(continuity)) {
     return { status: "PASS", findings };
@@ -64,7 +75,7 @@ export async function lintContinuity({ target, continuity, state } = {}) {
     for (const [index, inspectPath] of (continuity.inspectFirst ?? []).entries()) {
       try {
         await assertSafePath(target, inspectPath);
-        if (!(await fileExists(ensureWithin(target, inspectPath)))) {
+        if (!(await inspectPathExists(target, inspectPath))) {
           findings.push(finding(
             "CONTINUITY_INSPECT_PATH_MISSING",
             "WARN",

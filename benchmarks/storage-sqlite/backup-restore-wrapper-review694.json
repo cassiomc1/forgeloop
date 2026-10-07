@@ -1,0 +1,49 @@
+{
+  "files": [
+    {
+      "file": "src/storage/project-backup.js",
+      "sha256": "66dffeb2ca6fa6f6c90a3eb19fafad8e5fd69596f2794c23ef95669fce5f1370"
+    },
+    {
+      "file": "src/storage/restore-preparation.js",
+      "sha256": "70c2db1ac984643434a5e1986028efc39f79b9d2f2576a4cbe35f39bd0161347"
+    },
+    {
+      "file": "src/storage/restore-replacement-owner.js",
+      "sha256": "9d3bd4fa498f1f42befe30d1d5d01d1e420996b2887006cecadfdc2011553cbc"
+    }
+  ],
+  "roles": [
+    {
+      "site": "project-backup persist backup-manifest.json",
+      "classification": "retained backup publication journal",
+      "guards": "fresh mkdir refuses reuse; database backup plus attachment references; READY digest binding; failed/preparing not restoreable"
+    },
+    {
+      "site": "project-backup attachments.ndjson",
+      "classification": "retained backup inventory",
+      "guards": "selected snapshot canonical references; source and destination attachment digest/size; verified manifest counts and SHA"
+    },
+    {
+      "site": "restore-preparation temporary snapshot-intents publication",
+      "classification": "immutable retained recovery intent",
+      "guards": "fixed snapshot-intents child; random temp; hard-link no replace; existing exact canonical fingerprint required; cleanup and supported directory sync"
+    },
+    {
+      "site": "restore-preparation persist restore/replacement journal",
+      "classification": "maintenance handoff metadata",
+      "guards": "journal filename two-entry allow-list; active maintenance owner reasserted; source manifest fingerprint; interrupted snapshots retained before rebuilding"
+    },
+    {
+      "site": "restore-replacement-owner owner-journal",
+      "classification": "maintenance ownership adoption evidence",
+      "guards": "verified retained outgoing fingerprint; exact recorded owner continuity; live maintenance ownership reasserted before fixed safe path write"
+    }
+  ],
+  "method": "Current source role review; no broad transitive proof",
+  "limitations": [
+    "Backup copy safety against concurrent hostile path replacement is not established by this static review.",
+    "Maintenance journals are filesystem boundaries intentionally retained by original plan, not second operational writer."
+  ],
+  "wholeScopeVerified": false
+}
