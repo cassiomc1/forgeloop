@@ -3362,3 +3362,11 @@ Validation: direct source review, documentation checks and `git diff --check`; n
 Reviewed nine additional named atomic-write caller modules, covering explicit export, independent backup, migration publication/archive/activation, storage markers, restore preparation, replacement ownership and rollback target validation. Source hashes and per-module admission details are in `benchmarks/storage-sqlite/public-file-boundary810.json`. The reviewed writes are explicit interchange or maintenance/bootstrap checkpoints supported by the original plan; they do not establish complete consumer closure. Eighteen of 28 named caller modules are now classified, with ten remaining paths listed in the evidence.
 
 Validation: direct source review, documentation checks and `git diff --check`. Production behavior and the 11/20 completed-step count are unchanged. No PR or package publication.
+
+### Increment 811: complete named atomic-write role inventory
+
+Classified the remaining ten migration, rollback and restore caller modules from increment 808. All 28 named `writeFileAtomic` caller modules now have source-bound role dispositions across increments 809-811. Their remaining file writes are explicit portable output, installation/configuration, attachment publication or bootstrap/maintenance checkpoints. The current reference inventory has 83 matched source lines and no observed named import aliases or namespace exports. This is a bounded source-role inventory, not complete public/transitive writer closure; other write primitives and external/dynamic callers remain separate work.
+
+Validation: source review, focused storage boundary tests, documentation checks and `git diff --check`; results are recorded in `benchmarks/storage-sqlite/public-file-boundary811.json`. No production behavior changed. The 11/20 completed-step count and publication state remain unchanged; no PR or package publication.
+
+Increment 811 validation completed: 32 focused storage boundary tests passed with zero failures/skips; documentation checks and diff checks passed. Current core CI source `f1f8f95` additionally completed Linux shard 2 (710/710 passed) and Linux MCP/package smoke (73/73 MCP tests, both tarball smokes passed). The parent run remains nonterminal; this is not full current-platform acceptance.
