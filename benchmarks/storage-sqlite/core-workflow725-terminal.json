@@ -1,0 +1,144 @@
+{
+  "increment": 726,
+  "run": 37664407297,
+  "head": "ffc91ca0211e5daae60da1ce62a93e5722b19ff8",
+  "conclusion": "failure",
+  "jobs": [
+    {
+      "id": 112939823605,
+      "name": "Classify changed paths",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_name": "GitHub Actions 1000017251"
+    },
+    {
+      "id": 112939906863,
+      "name": "Verify generated Archify diagram",
+      "status": "completed",
+      "conclusion": "failure",
+      "runner_name": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112939906886,
+      "name": "tarball smoke (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_name": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112939906966,
+      "name": "Unit tests (Node 24, shard 1/4)",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_name": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112939906983,
+      "name": "audit",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_name": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112939906991,
+      "name": "Unit tests (Node 24, shard 3/4)",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_name": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112939907012,
+      "name": "Lint and dependency policy",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_name": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112939907032,
+      "name": "Unit tests (Node 24.19.0, shard 0/4)",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_name": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112939907057,
+      "name": "Unit tests (Node 24, shard 4/4)",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_name": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112939907095,
+      "name": "Unit tests (Node 24, shard 2/4)",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_name": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112950576029,
+      "name": "Coverage report (Node 24)",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_name": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112951272981,
+      "name": "Repository Index native matrix / Classify Repository Index paths",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_name": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112951376447,
+      "name": "Repository Index native matrix / Verify Repository Index manifest",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_name": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112951485569,
+      "name": "Repository Index native matrix / Native Repository Index (Linux)",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_name": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112951485571,
+      "name": "Repository Index native matrix / Native Repository Index (Windows)",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_name": "forgeloop-windows-remote"
+    },
+    {
+      "id": 112951485776,
+      "name": "Repository Index native matrix / Native Repository Index (macOS)",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_name": "forgeloop-macos-local"
+    },
+    {
+      "id": 112952053687,
+      "name": "validate (22)",
+      "status": "completed",
+      "conclusion": "failure",
+      "runner_name": "GitHub Actions 1000017252"
+    }
+  ],
+  "linuxCoverage": {
+    "tests": 2859,
+    "pass": 2847,
+    "skip": 12,
+    "fail": 0
+  },
+  "minimumCompatibility": {
+    "quickPass": 80,
+    "storagePass": 72,
+    "fail": 0
+  },
+  "docs": {
+    "lintFiles": 170,
+    "lintIssues": 0,
+    "failure": "Lychee not found; preceding GITHUB_PATH step ineffective before pinned login-shell entrypoint"
+  },
+  "correctedExecution": "Local pinned action explicit bash invocation2700c4e not covered; subsequent diagnosis correction69e92ff not covered."
+}
