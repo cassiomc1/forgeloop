@@ -390,6 +390,10 @@ export async function clearWorkState(target, options = {}) {
 }
 
 export async function readRequiredArtifactFingerprints(target, artifacts) {
+  return withProjectReadSnapshot(target, () => readSelectedRequiredArtifactFingerprints(target, artifacts));
+}
+
+async function readSelectedRequiredArtifactFingerprints(target, artifacts) {
   const normalized = normalizeRequiredArtifacts(artifacts);
   const current = [];
   for (const artifact of normalized) {

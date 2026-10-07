@@ -6,10 +6,11 @@ import os from "node:os";
 import path from "node:path";
 import { executeForgeLoopCommand } from "../src/core/command-runtime.js";
 import { readTaskDescriptor, writeTaskDescriptor } from "../src/core/task-descriptor.js";
-import { createWorkState, readWorkState, writeWorkState, clearWorkState } from "../src/core/work-state.js";
+import { createWorkState, readWorkState, writeWorkState, clearWorkState, readRequiredArtifactFingerprints } from "../src/core/work-state.js";
 import { readJsonArtifact, readPortableJsonArtifact, writeJsonArtifact, ARTIFACT_PATHS } from "../src/core/artifacts.js";
 import { clearContinuity } from "../src/core/continuity.js";
 import { taskArtifactPath } from "../src/core/task-paths.js";
+import { withProjectReadSnapshot } from "../src/storage/project-read-snapshot.js";
 import { getPackageRoot } from "../src/core/templates.js";
 
 const taskId = "direct-artifacts";
@@ -44,6 +45,21 @@ test("direct native artifact reads and writes resolve canonical authority withou
   });
 });
 
+test("direct required-artifact fingerprints select canonical SQLite bytes without mirrors", async () => {
+  await project(async target => {
+    const artifacts = [
+      { path: taskArtifactPath(taskId, "descriptor"), sha256: "0".repeat(64) },
+      { path: taskArtifactPath(taskId, "state"), sha256: "0".repeat(64) },
+    ];
+    const expected = await withProjectReadSnapshot(target, () => readRequiredArtifactFingerprints(target, artifacts));
+    assert.equal(expected[0].status, "present");
+    assert.match(expected[0].sha256, /^[a-f0-9]{64}$/);
+    assert.equal(expected[1].status, "missing");
+    assert.deepEqual(await readRequiredArtifactFingerprints(target, artifacts), expected);
+    await assert.rejects(readdir(path.join(target, ".forgeloop/task-state")), { code: "ENOENT" });
+  });
+});
+
 test("native persistence refuses singleton aliases while project configuration stays filesystem-owned", async () => {
   await project(async target => {
     await assert.rejects(writeWorkState(target, state(), { packageRoot, statePath: ARTIFACT_PATHS.state }), { code: "E_STORAGE_OPERATION_UNSUPPORTED" });
@@ -67,6 +83,7 @@ test("direct native artifact entry points refuse missing databases rather than r
     await rm(path.join(target, ".forgeloop/state.sqlite"));
     for (const operation of [
       () => readTaskDescriptor(target, taskId, packageRoot),
+      () => readRequiredArtifactFingerprints(target, [{ path: taskArtifactPath(taskId, "descriptor"), sha256: "0".repeat(64) }]),
       () => readWorkState(target, { packageRoot, taskId }),
       () => writeWorkState(target, state(), { packageRoot }),
       () => writeJsonArtifact(target, taskArtifactPath(taskId, "state"), state(), "work-state", packageRoot),
@@ -88,6 +105,7 @@ for (const sidecar of ["state.sqlite-wal", "state.sqlite-shm"]) {
       await writeFile(filename, "retained sidecar evidence");
       await assert.rejects(writeWorkState(target, state(), { packageRoot }), { code: "E_STORAGE_MIGRATION_REQUIRED" });
       await assert.rejects(readWorkState(target, { packageRoot, taskId }), { code: "E_STORAGE_MIGRATION_REQUIRED" });
+      await assert.rejects(readRequiredArtifactFingerprints(target, [{ path: taskArtifactPath(taskId, "descriptor"), sha256: "0".repeat(64) }]), { code: "E_STORAGE_MIGRATION_REQUIRED" });
       assert.equal(await readFile(filename, "utf8"), "retained sidecar evidence");
       assert.deepEqual(await readdir(path.join(target, ".forgeloop")), [sidecar]);
     } finally { await removeTempTree(target); }

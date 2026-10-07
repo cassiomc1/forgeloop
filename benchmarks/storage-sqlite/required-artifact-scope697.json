@@ -1,0 +1,43 @@
+{
+  "increment": 697,
+  "finding": "Direct required-artifact fingerprint helper returned missing for an existing canonical descriptor without an enclosing native scope.",
+  "before": {
+    "taskCreated": true,
+    "canonicalDescriptorExists": true,
+    "result": [
+      {
+        "path": ".forgeloop/task-state/af9ea090a03ff53edc3934799c34c3566df7aa8fe1685e32e2e24fc1d96e4147/task.json",
+        "sha256": null,
+        "status": "missing"
+      }
+    ],
+    "bug": true
+  },
+  "correction": "Select existing canonical authority and capture native bytes using withProjectReadSnapshot; preserve original fingerprint loop and external material-file reads.",
+  "checks": {
+    "regressionBefore": "FAIL_EXPECTED",
+    "selectedMacNode2419": {
+      "total": 23,
+      "pass": 23,
+      "fail": 0
+    },
+    "lint": "PASS",
+    "unchangedComplexityLimits": "PASS",
+    "verifyFast": "PASS"
+  },
+  "sources": [
+    {
+      "file": "src/core/work-state.js",
+      "sha256": "e8370604edc6cdde5e832fd8014de4d2628d1dd8bd30856d64cdf0dc908d7b83"
+    },
+    {
+      "file": "tests/storage-direct-artifacts.test.js",
+      "sha256": "1bda140017617492e04baadc9042fa18b0360f3b6585259291882d88a8a6d507"
+    }
+  ],
+  "limitations": [
+    "Full core Mac result697 predates this production correction.",
+    "Current Windows/Linux candidate validation and whole transitive consumer closure remain pending.",
+    "No benchmark or original acceptance waiver."
+  ]
+}
