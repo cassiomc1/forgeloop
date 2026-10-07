@@ -1,0 +1,13 @@
+{
+  "increment": 805,
+  "productionChanged": false,
+  "coverage": "Explicit task ID and canonical contract/events paths without taskId both reject independent contract change with E_STATE_REVISION_CONFLICT, preserve exact independent task/artifact/event records and reject retry through E_DECISION_NOT_UNRESOLVED.",
+  "tests": 10,
+  "passed": 10,
+  "failed": 0,
+  "skipped": 0,
+  "logSha256": "effeba2101cea8e03aea06098ace845c68239bca1606a25e58368dc3b5226d69",
+  "fullPlatformScope": "FullMac802 covers production settlement801; added canonical-path test requires platform execution.",
+  "progressPercent": 55,
+  "protocolComplete": false
+}
