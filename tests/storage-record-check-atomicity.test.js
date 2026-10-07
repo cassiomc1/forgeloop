@@ -19,7 +19,7 @@ function taskRecords(db, taskId) {
   };
 }
 
-for (const entry of ["command", "direct API"]) for (const point of ["receipt", "event"]) {
+for (const entry of ["command", "direct API", "direct canonical paths"]) for (const point of ["receipt", "event"]) {
   test(`record-check ${entry} rolls back state, receipt and ledger after ${point} staging failure`, async () => {
     const target = await createGitRepository("forgeloop-record-check-atomic-");
     const packageRoot = getPackageRoot();
@@ -31,6 +31,10 @@ for (const entry of ["command", "direct API"]) for (const point of ["receipt", "
       const before = taskRecords(db, taskId);
       const input = { target, packageRoot, taskId, id: "manual-check", kind: "manual-review",
         requirement: "tests", status: "not-run", evidenceKind: "NOT_VERIFIED", result: "not observed" };
+      if (entry === "direct canonical paths") {
+        delete input.taskId;
+        for (const kind of ["contract", "route", "state", "receipt", "events"]) input[`${kind}Path`] = taskArtifactPath(taskId, kind);
+      }
       const record = entry === "command" ? runRecordCheck : recordCheck;
       await withOperationalStore({ db, target }, async source => {
         const prototype = Object.getPrototypeOf(source);

@@ -1,0 +1,34 @@
+{
+  "increment": 775,
+  "parentHead": "fe955d418df4e1e86ee48a9dff13942549ea17eb",
+  "defect": "Direct recordCheck with canonical paths and no taskId refuses a valid lifecycle because execution prerequisite admission omits supplied eventsPath. The unselected direct branch also lacks the shared task transaction.",
+  "change": "Resolve canonical state taskId before delegating to existing transaction wrapper; forward eventsPath to record-check execution prerequisites. Terminal-result code unchanged.",
+  "controls": "Existing receipt/event staging failures now also execute direct canonical-path calls without taskId; exact task/artifact/event rows unchanged on refusal, and retry records check and commit witness.",
+  "checks": {
+    "candidateTests": 46,
+    "mainTests": 47,
+    "failed": 0,
+    "skipped": 0,
+    "complexity": "PASS",
+    "verifyFast": "PASS",
+    "fullCurrentPlatforms": "PENDING"
+  },
+  "retrieval": {
+    "tool": "jevgrep0.8.0",
+    "exitCode": 0,
+    "relevantFiles": 58,
+    "logSha256": "22a879590b18f5b64e0d865ea97fab553771f6dfeba14a24a964e8842fdde412",
+    "limitation": "Retrieval and static call inventory are discovery only, not exhaustive scope proof."
+  },
+  "logHashes": {
+    "direct-check-path773-refusal.log": "b122407bff3850fa9eb89290650f72f9a7898f0fe1037fff588db031d1ea4bea",
+    "direct-check-path774-final.log": "2cbcbd264045ee7ca108650c9970d196a8212dd7561f4ab30852a0b2b25a4533",
+    "direct-check775-main-tests.log": "847c4a1f37ac2d26c0c48637926a61c9b2d6d4c5dcfada34b083f21d24dd8c31",
+    "complexity775-main.log": "32111f472b37a8b8941d21c72e18a3815643453328562aed2fd87e8a2f0417f2",
+    "fast775.log": "e9942a389eb543abb09dbfe93af0528183f5f8c00647601e771be97bfc5a7f4f"
+  },
+  "productionSha256": "a25943b4257429e0c7852eef29011356b176aebc73e17b74407cf9ad8041a7d9",
+  "testSha256": "a69ce11141097eda4db46766df0151e82ea694a81d20151777f9b8dd8fa809a9",
+  "progressPercent": 55,
+  "protocolComplete": false
+}

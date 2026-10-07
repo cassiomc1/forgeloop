@@ -479,7 +479,7 @@ export async function assertRecordCheckPrerequisites({
       [stateRel],
     );
   }
-  await assertExecutionPrerequisites({ target, state, packageRoot, taskId, statePath, contractPath, routePath });
+  await assertExecutionPrerequisites({ target, state, packageRoot, taskId, statePath, contractPath, routePath, eventsPath });
 
   const contract = await readContract(target, packageRoot, { taskId, contractPath });
   const route = await readPersistedRoute(target, packageRoot, { taskId, routePath });
@@ -539,7 +539,11 @@ export async function assertRecordCheckPrerequisites({
 
 export async function recordCheck(options) {
   validateRecordCheckInput(options);
-  if (!options.taskId) return recordValidatedCheck(options);
+  if (!options.taskId) {
+    const state = await readWorkState(options.target, { packageRoot: options.packageRoot, statePath: options.statePath });
+    if (!state) return recordValidatedCheck(options);
+    return recordCheck({ ...options, taskId: state.taskId });
+  }
   return withTaskTransaction({ target: options.target, packageRoot: options.packageRoot,
     taskId: options.taskId, operation: "record-check", recordCommitEvent: true }, () => recordValidatedCheck(options));
 }
