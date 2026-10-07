@@ -4,12 +4,19 @@ import { readContract } from "./contract.js";
 import { ensureResumableState, synchronizePersistedRouteState } from "./resumability.js";
 import { readWorkState } from "./work-state.js";
 import { taskArtifactPath } from "./task-paths.js";
+import { getTaskTransaction, withTaskTransaction } from "./transaction.js";
 
 
 
 export async function persistRoute(target, route, packageRoot, options = {}) {
+  if (!options.taskId) return persistRouteInTransaction(target, route, packageRoot, options);
+  return withTaskTransaction({ target, taskId: options.taskId, packageRoot, operation: "route" }, () => persistRouteInTransaction(target, route, packageRoot, options));
+}
+
+async function persistRouteInTransaction(target, route, packageRoot, options) {
   assertRouteInvariants(route);
-  const { contractFingerprint, ...writeOptions } = options;
+  const { contractFingerprint: suppliedFingerprint, ...writeOptions } = options;
+  let contractFingerprint = suppliedFingerprint;
   let contractArtifact = null;
   if (contractFingerprint === undefined) {
     try {
@@ -24,6 +31,9 @@ export async function persistRoute(target, route, packageRoot, options = {}) {
     : { ...route, contractFingerprint };
   assertRouteInvariants(value);
   const taskId = options.taskId ?? contractArtifact?.value?.taskId ?? null;
+  if (taskId && !(await getTaskTransaction(target))) {
+    return withTaskTransaction({ target, taskId, packageRoot, operation: "route" }, () => persistRouteInTransaction(target, route, packageRoot, { ...options, taskId }));
+  }
   let existingState = null;
   if (taskId) {
     try {
