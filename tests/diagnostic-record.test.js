@@ -10,8 +10,28 @@ import { getPackageRoot } from "../src/core/templates.js";
 import { createWorkState, writeWorkState } from "../src/core/work-state.js";
 import { appendProtocolEvent, validateEventLedger } from "../src/core/events.js";
 import { recordStructuredDiagnosticCase, recordIntervention, recordHypothesisDisposition } from "../src/core/diagnostic-record.js";
+import { openStorageDatabase } from "../src/storage/index.js";
+import { recordDiagnosis } from "../src/core/diagnosis.js";
 
 const packageRoot = getPackageRoot();
+
+for (const structured of [true, false]) test(`direct ${structured ? "structured" : "legacy"} diagnosis rolls back its event when state publication fails`, async () => {
+  const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-diag-atomic-"));
+  let db;
+  try {
+    const { taskId } = await seedDiagnosingTask({ target });
+    db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+    const before = db.prepare("SELECT state_json FROM tasks WHERE task_id = ?").get(taskId).state_json;
+    const count = db.prepare("SELECT COUNT(*) AS n FROM events WHERE task_id = ?").get(taskId).n;
+    db.exec("CREATE TRIGGER refuse_diagnosis_state BEFORE UPDATE OF state_json ON tasks WHEN NEW.state_json <> OLD.state_json BEGIN SELECT RAISE(ABORT, 'injected state publication failure'); END");
+    const operation = structured
+      ? recordStructuredDiagnosticCase({ target, packageRoot, taskId, caseInput: caseFileContent({}) })
+      : recordDiagnosis({ target, packageRoot, taskId, hypothesis: "Unused import causes lint failure", failureClass: "VERIFICATION_FAILURE", evidenceRefs: ["check-lint"], settledBy: "Lint passes after correction", nextSafeAction: "Remove unused import" });
+    await assert.rejects(operation, /injected state publication failure/);
+    assert.equal(db.prepare("SELECT state_json FROM tasks WHERE task_id = ?").get(taskId).state_json, before);
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM events WHERE task_id = ?").get(taskId).n, count, "Related diagnosis event must roll back with state");
+  } finally { db?.close(); await removeTempTree(target); }
+});
 
 async function seedDiagnosingTask({ target, cycle = 1 }) {
   const taskId = "task-structured-diag";

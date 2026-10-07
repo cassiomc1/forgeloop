@@ -1,0 +1,43 @@
+{
+  "increment": 712,
+  "parentHead": "0eb3b7c",
+  "defect": "Direct structured and legacy diagnosis append events and mutate state in separate transactions without an outer command scope; SQLite state-publication ABORT leaves event committed.",
+  "reproduction": "BEFORE UPDATE OF state_json trigger aborts only changed task state; old direct paths increase event count7 versus6 while original state bytes remain.",
+  "correction": "Direct entrypoints join active transaction or create one encompassing original validation,event publication,state update and idempotent projection repair. Canonical source reread/CAS and original phase/evidence checks retained.",
+  "checks": {
+    "diagnosisCompatibilityHistoryLifecycleTests": 26,
+    "fail": 0,
+    "lint": "PASS",
+    "complexity": "PASS unchanged limits",
+    "diffCheck": "PASS",
+    "priorStructuredFast": "PASS; final full prepush pending"
+  },
+  "logs": [
+    {
+      "name": "diagnosis-atomic-red711.log",
+      "sha256": "097a721236cae783eeb5aad4720e949f3a0d196d264e41bfee2f687168f15c92"
+    },
+    {
+      "name": "diagnosis-legacy-red712.log",
+      "sha256": "4c33d37eaaf8c17896604efbf13f2638de4b326309acc101b500477ce7a0e025"
+    },
+    {
+      "name": "diagnosis-atomic-green712.log",
+      "sha256": "a410ba943e713f571be22c923d962f15357f49c0f9a770f03214230b71eea387"
+    },
+    {
+      "name": "diagnosis-lint712.log",
+      "sha256": "f228668fa5129b1e18149e8240acf8faf8cfba58595f8dcab127a602d3d9c1a0"
+    },
+    {
+      "name": "diagnosis-complexity712.log",
+      "sha256": "32111f472b37a8b8941d21c72e18a3815643453328562aed2fd87e8a2f0417f2"
+    }
+  ],
+  "limitations": [
+    "Whole direct/public consumer closure remains open.",
+    "Current full Mac/Windows/Linux evidence predates this correction.",
+    "Current CI continues on parent source; do not replace live run.",
+    "No original performance/LOC/maintenance/protocol acceptance claim."
+  ]
+}

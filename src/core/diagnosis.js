@@ -1,5 +1,6 @@
 import { appendProtocolEvent, validateEventLedger } from "./events.js";
 import { readWorkState, mutateWorkState } from "./work-state.js";
+import { getTaskTransaction, withTaskTransaction } from "./transaction.js";
 import {
   DIAGNOSIS_INFORMATION_GAIN,
   assertDiagnosisDetails,
@@ -22,7 +23,15 @@ export {
   normalizeDiagnosisText,
 };
 
-export async function recordDiagnosis({
+export async function recordDiagnosis(options) {
+  if (await getTaskTransaction(options.target)) return recordDiagnosisInTransaction(options);
+  const state = await readWorkState(options.target, { packageRoot: options.packageRoot, taskId: options.taskId, statePath: options.statePath });
+  if (!state) return recordDiagnosisInTransaction(options);
+  return withTaskTransaction({ target: options.target, taskId: options.taskId ?? state.taskId,
+    packageRoot: options.packageRoot, operation: "record-diagnosis" }, () => recordDiagnosisInTransaction(options));
+}
+
+async function recordDiagnosisInTransaction({
   target,
   packageRoot,
   hypothesis,
