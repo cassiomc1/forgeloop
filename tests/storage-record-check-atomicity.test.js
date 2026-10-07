@@ -65,7 +65,7 @@ for (const entry of ["command", "direct API", "direct canonical paths"]) for (co
 }
 
 
-for (const entry of ["command", "direct API"]) {
+for (const entry of ["command", "direct API", "direct canonical paths"]) {
   test(`prepare-completion ${entry} rolls back receipt when commit witness staging fails`, async () => {
     const { runPrepareCompletion } = await import("../src/commands/prepare-completion.js");
     const target = await createGitRepository("forgeloop-prepare-atomic-");
@@ -77,6 +77,11 @@ for (const entry of ["command", "direct API"]) {
       db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
       const before = taskRecords(db, taskId);
       const prepare = entry === "command" ? runPrepareCompletion : prepareCompletion;
+      const options = { target, packageRoot, taskId };
+      if (entry === "direct canonical paths") {
+        delete options.taskId;
+        for (const kind of ["contract", "route", "state", "receipt", "events"]) options[`${kind}Path`] = taskArtifactPath(taskId, kind);
+      }
       await withOperationalStore({ db, target }, async source => {
         const prototype = Object.getPrototypeOf(source);
         const append = prototype.appendText;
@@ -89,12 +94,12 @@ for (const entry of ["command", "direct API"]) {
           }
           return value;
         };
-        try { await assert.rejects(prepare({ target, packageRoot, taskId }), /injected preparation witness failure/); }
+        try { await assert.rejects(prepare(options), /injected preparation witness failure/); }
         finally { prototype.appendText = append; }
         assert.equal(reached, true);
       });
       assert.deepEqual(taskRecords(db, taskId), before);
-      const result = await prepare({ target, packageRoot, taskId });
+      const result = await prepare(options);
       assert.equal(result.receipt.taskId, taskId);
       assert.equal(taskRecords(db, taskId).events.at(-1).event_type, "TRANSACTION_COMMITTED");
     } finally { db?.close(); await removeTempTree(target); }

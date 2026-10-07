@@ -254,7 +254,14 @@ export async function requiredEvidenceForTarget({
   ])].sort();
 }
 
+async function resolveCompletionTaskOptions(options) {
+  if (options.taskId) return options;
+  const state = await readWorkState(options.target, { packageRoot: options.packageRoot, statePath: options.statePath });
+  return { ...options, taskId: state?.taskId };
+}
+
 export async function prepareCompletion(options = {}) {
+  options = await resolveCompletionTaskOptions(options);
   if (!options.taskId) return prepareSelectedCompletion(options);
   return withTaskTransaction({ target: options.target, packageRoot: options.packageRoot,
     taskId: options.taskId, operation: "prepare-completion", recordCommitEvent: true },
@@ -271,6 +278,7 @@ async function prepareSelectedCompletion({
   routePath = null,
   statePath = null,
   receiptPath = null,
+  eventsPath,
 }) {
   const contract = await readContract(target, packageRoot, { taskId, contractPath });
   const route = await readPersistedRoute(target, packageRoot, { taskId, routePath });
@@ -282,7 +290,7 @@ async function prepareSelectedCompletion({
     throw artifactError("E_STATE_MISSING", "Work state is required before preparing completion", [stateRel]);
   }
   if (hasExecutionStarted(state.phase)) {
-    await assertExecutionPrerequisites({ target, state, packageRoot, taskId, statePath, contractPath, routePath });
+    await assertExecutionPrerequisites({ target, state, packageRoot, taskId, statePath, contractPath, routePath, eventsPath });
   }
 
   let existing = null;
@@ -539,11 +547,8 @@ export async function assertRecordCheckPrerequisites({
 
 export async function recordCheck(options) {
   validateRecordCheckInput(options);
-  if (!options.taskId) {
-    const state = await readWorkState(options.target, { packageRoot: options.packageRoot, statePath: options.statePath });
-    if (!state) return recordValidatedCheck(options);
-    return recordCheck({ ...options, taskId: state.taskId });
-  }
+  options = await resolveCompletionTaskOptions(options);
+  if (!options.taskId) return recordValidatedCheck(options);
   return withTaskTransaction({ target: options.target, packageRoot: options.packageRoot,
     taskId: options.taskId, operation: "record-check", recordCommitEvent: true }, () => recordValidatedCheck(options));
 }
