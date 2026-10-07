@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, rm, symlink } from "node:fs/promises";
+import { mkdtemp, mkdir, rm, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
 
-import { createContract, writeContract } from "../src/core/contract.js";
+import { createContract } from "../src/core/contract.js";
 import { validateMigrationSnapshot } from "../src/core/task-migration-validation.js";
 import {
   E_TASK_MIGRATION_IDENTITY_MISMATCH,
@@ -40,7 +40,8 @@ function contract(taskId) {
 
 test("migration snapshot validation fingerprints valid task artifacts", async () => {
   await withTarget(async (target) => {
-    await writeContract(target, contract("migration-valid"), packageRoot);
+    await mkdir(path.join(target, ".forgeloop"), { recursive: true });
+    await writeFile(path.join(target, ".forgeloop/current-contract.json"), JSON.stringify(contract("migration-valid")));
 
     const result = await validateMigrationSnapshot(target, {
       taskId: "migration-valid",
@@ -56,7 +57,8 @@ test("migration snapshot validation fingerprints valid task artifacts", async ()
 
 test("migration snapshot validation rejects an artifact with another task identity", async () => {
   await withTarget(async (target) => {
-    await writeContract(target, contract("other-task"), packageRoot);
+    await mkdir(path.join(target, ".forgeloop"), { recursive: true });
+    await writeFile(path.join(target, ".forgeloop/current-contract.json"), JSON.stringify(contract("other-task")));
 
     await assert.rejects(
       () => validateMigrationSnapshot(target, {

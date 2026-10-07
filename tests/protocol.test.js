@@ -70,7 +70,8 @@ test("shipped protocol schemas are object schemas with version metadata", async 
       await readFile(path.join(repositoryRoot, "schemas", `${name}.schema.json`), "utf8"),
     );
     assert.equal(schema.type, "object", name);
-    assert.equal(schema.properties.schemaVersion.const, 1, name);
+    if (name === "task-bundle") assert.deepEqual(schema.properties.schemaVersion.enum, [1, 2], name);
+    else assert.equal(schema.properties.schemaVersion.const, 1, name);
     assert.ok(Array.isArray(schema.required), name);
     assert.doesNotThrow(() => assertSchema({}, { type: "object" }, name));
   }

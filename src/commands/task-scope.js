@@ -1,3 +1,6 @@
+import { withEventLedgerAudit } from "../core/events.js";
+import { getOperationalStore } from "../storage/operational-context.js";
+import { needsExistingProjectScope, withExistingProjectScope } from "../storage/existing-project-scope.js";
 import { resolveTaskContext } from "../core/task-context.js";
 import { readTaskDescriptor, writeTaskDescriptor } from "../core/task-descriptor.js";
 import { normalizeWriteClaims, assertScopeClean, assertScopeNotFrozen } from "../core/task-scope.js";
@@ -18,8 +21,20 @@ function taskError(code, message, artifacts = []) {
   return error;
 }
 
-export async function runTaskScope({ target, packageRoot, taskId, claims } = {}) {
+export async function runTaskScope(options = {}) {
+  const { target, packageRoot, taskId, claims } = options;
+  const readOnly = claims === undefined || claims === null;
+  if (readOnly && await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => runTaskScope(options), { readOnly: true });
+  }
   const context = await resolveTaskContext(target, { taskId, packageRoot, explicitRequired: true });
+  if (readOnly && getOperationalStore(target)) {
+    return withEventLedgerAudit(target, packageRoot, { taskId: context.taskId }, () => runResolvedTaskScope(options, context));
+  }
+  return runResolvedTaskScope(options, context);
+}
+
+async function runResolvedTaskScope({ target, packageRoot, claims }, context) {
   const effectiveTaskId = context.taskId;
 
   let descriptorArtifact;
@@ -38,6 +53,7 @@ export async function runTaskScope({ target, packageRoot, taskId, claims } = {})
     return withProjectClaimsLock(target, async () => {
       return withTaskLock(target, effectiveTaskId, "task-scope", async () => {
         await assertTaskNotRecovered(target, { taskId: effectiveTaskId, packageRoot });
+        const lockedDescriptor = (await readTaskDescriptor(target, effectiveTaskId, packageRoot)).value;
         const state = await readWorkState(target, { packageRoot, taskId: effectiveTaskId });
         if (state?.phase) {
           assertScopeNotFrozen(state.phase);
@@ -51,7 +67,7 @@ export async function runTaskScope({ target, packageRoot, taskId, claims } = {})
         }
 
         const updatedDescriptor = {
-          ...descriptor,
+          ...lockedDescriptor,
           writeClaims: normalizedClaims,
           updatedAt: new Date().toISOString(),
         };

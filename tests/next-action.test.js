@@ -1,17 +1,20 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdtemp, readdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readdir, readFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 
+import { withProjectStorage } from "../src/storage/project-boundary.js";
+import { executeForgeLoopCommand } from "../src/core/command-runtime.js";
 import { removeTempTree } from "./helpers/rm-safe.js";
 import { runComplete } from "../src/commands/complete.js";
 import { formatNextActionResult } from "../src/commands/next.js";
 import { runPreflight } from "../src/commands/preflight.js";
-import { ARTIFACT_PATHS } from "../src/core/artifacts.js";
+import { buildTaskArtifactPaths } from "../src/core/task-paths.js";
+import { deleteFixtureArtifact, ensureFixtureTask, readRawFixtureText, overwriteFixtureStateBytes, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
 import { createCheck } from "../src/core/checks.js";
 import { prepareCompletion, recordCheck } from "../src/core/completion-artifacts.js";
 
@@ -32,6 +35,8 @@ import { NEXT_ACTIONS, getNextAction } from "../src/core/next-action.js";
 import { explainNextAction } from "../src/core/next-explanation.js";
 
 const packageRoot = getPackageRoot();
+const taskId = "task-next-action";
+const ARTIFACT_PATHS = buildTaskArtifactPaths(taskId);
 const cliPath = path.join(packageRoot, "src", "cli.js");
 const fixtureRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), "fixtures", "states");
 
@@ -108,12 +113,18 @@ async function setupTarget(target, {
     unresolvedDecisions: [],
     sourceRefs: [],
   });
+  const taskOptions = { taskId: contract.taskId };
+  {
+    const created = await executeForgeLoopCommand({ command: "task-create", projectPath: target, input: { taskId: contract.taskId, claims: [] } });
+    assert.equal(created.ok, true, JSON.stringify(created));
+  }
   const contractHash = contractFingerprint(contract);
-  await writeContract(target, contract, packageRoot);
+  await writeContract(target, contract, packageRoot, taskOptions);
 
   const route = evaluateRoute(routeInput);
   const persistedRoute = await persistRoute(target, route, packageRoot, {
     contractFingerprint: contractHash,
+    ...taskOptions,
   });
 
   const requiredGates = await requiredGatesForRoute(route.guides);
@@ -129,7 +140,7 @@ async function setupTarget(target, {
         unknowns: [],
         approvedAssumptions: [],
         evidence: [],
-      }), packageRoot);
+      }), packageRoot, taskOptions);
     }
   }
 
@@ -148,7 +159,7 @@ async function setupTarget(target, {
     contractFingerprint: contractHash,
     routeFingerprint: persistedRoute.fingerprint,
     repositoryFingerprint: { branch: null, head: null },
-    phase,
+    phase: phase === "BLOCKED" ? "EXECUTING" : phase,
     ...(previousPhaseFor(phase) ? { previousPhase: previousPhaseFor(phase) } : {}),
     selectedGuides: route.guides,
     requiredGates: [...requiredGates],
@@ -166,18 +177,18 @@ async function setupTarget(target, {
       : { evidenceCoverage }),
     ...(diagnosedHypothesis ? { diagnosedHypothesis } : {}),
   });
-  await writeWorkState(target, state, { packageRoot });
+  await writeWorkState(target, state, { packageRoot, ...taskOptions });
 
-  await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot);
-  await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot);
-  const preflight = await runPreflight({ target, packageRoot });
+  await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot, taskOptions);
+  await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot, taskOptions);
+  const preflight = await runPreflight({ target, packageRoot, ...taskOptions });
   if (preflightReady) assert.equal(preflight.status, "READY");
-  else await rm(path.join(target, ARTIFACT_PATHS.preflight));
+  else await deleteFixtureArtifact(target, path.join(target, ARTIFACT_PATHS.preflight));
   if (executionStarted) {
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "EXECUTION_STARTED" }, packageRoot);
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "EXECUTION_STARTED" }, packageRoot, taskOptions);
   }
   if (["VERIFYING", "DIAGNOSING", "CORRECTING", "REVIEWING", "COMPLETE"].includes(phase)) {
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "VERIFICATION_STARTED", details: { verificationCycle: 1 } }, packageRoot);
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "VERIFICATION_STARTED", details: { verificationCycle: 1 } }, packageRoot, taskOptions);
     if (diagnosedHypothesis) {
       await appendProtocolEvent(target, {
         taskId: contract.taskId,
@@ -197,13 +208,13 @@ async function setupTarget(target, {
           }),
           previousDiagnosisFingerprint: null,
         },
-      }, packageRoot);
+      }, packageRoot, taskOptions);
     }
   }
 
   if (staleRoute) {
     const stale = createContract({ ...contract, objective: "Changed after route persistence" });
-    await writeContract(target, stale, packageRoot);
+    await writeContract(target, stale, packageRoot, taskOptions);
   }
   if (staleContract) {
     const staleState = createWorkState({
@@ -211,9 +222,13 @@ async function setupTarget(target, {
       contractFingerprint: "a".repeat(64),
       lastUpdated: state.lastUpdated,
     });
-    await writeWorkState(target, staleState, { packageRoot });
+    await writeWorkState(target, staleState, { packageRoot, ...taskOptions });
   }
-  if (receipt) await prepareCompletion({ target, packageRoot });
+  if (receipt) await prepareCompletion({ target, packageRoot, ...taskOptions });
+  if (phase === "BLOCKED") {
+    state.phase = phase;
+    await overwriteFixtureText(target, ARTIFACT_PATHS.state, JSON.stringify(state));
+  }
 
   return { contract, route, state, preflight, requiredGates };
 }
@@ -225,11 +240,12 @@ async function requiredGatesForRoute(guides) {
 
 async function setupCompletedTarget(target) {
   await setupTarget(target, { phase: "EXECUTING" });
-  await advanceWorkState(target, "VERIFYING", { packageRoot });
-  await prepareCompletion({ target, packageRoot });
+  await advanceWorkState(target, "VERIFYING", { packageRoot, taskId });
+  await prepareCompletion({ target, packageRoot, taskId });
   await recordCheck({
     target,
     packageRoot,
+    taskId,
     id: "tests",
     kind: "manual-review",
     requirement: "tests",
@@ -238,8 +254,8 @@ async function setupCompletedTarget(target) {
     result: "tests passed",
     exitCode: 0,
   });
-  await advanceWorkState(target, "REVIEWING", { packageRoot });
-  const completion = await runComplete({ target, packageRoot });
+  await advanceWorkState(target, "REVIEWING", { packageRoot, taskId });
+  const completion = await runComplete({ target, packageRoot, taskId });
   assert.equal(completion.status, "VALID");
   assert.equal(completion.taskStatus, "COMPLETE");
   return completion;
@@ -258,8 +274,9 @@ async function setupEarlyPhaseTarget(target, phase) {
     unresolvedDecisions: [],
     sourceRefs: [],
   });
+  await ensureFixtureTask(target, contract.taskId, packageRoot);
   const hasContract = phase === "CONTRACT_READY";
-  if (hasContract) await writeContract(target, contract, packageRoot);
+  if (hasContract) await writeContract(target, contract, packageRoot, { taskId: contract.taskId });
   await writeWorkState(target, createWorkState({
     taskId: contract.taskId,
     contractFingerprint: contractFingerprint(contract),
@@ -273,7 +290,7 @@ async function setupEarlyPhaseTarget(target, phase) {
     failures: [],
     blockers: [],
     verificationEvidence: [],
-  }), { packageRoot });
+  }), { packageRoot, taskId: contract.taskId });
 }
 
 function assertStableAction(result, action) {
@@ -295,7 +312,7 @@ async function forgeLoopArtifactHashes(target) {
     for (const entry of entries.sort((left, right) => left.name.localeCompare(right.name))) {
       const file = path.join(directory, entry.name);
       if (entry.isDirectory()) await visit(file);
-      else if (entry.isFile()) {
+      else if (entry.isFile() && !["state.sqlite-wal", "state.sqlite-shm"].includes(entry.name)) {
         const relative = path.relative(target, file);
         hashes[relative] = createHash("sha256").update(await readFile(file)).digest("hex");
       }
@@ -349,7 +366,7 @@ test("phase matrix returns the legal next action", async (t) => {
     await t.test(name, async () => {
       await withTarget(async (target) => {
         await setupTarget(target, setup);
-        const result = await getNextAction({ target, packageRoot });
+        const result = await getNextAction({ target, packageRoot, taskId });
         assertStableAction(result, action);
         if (action === NEXT_ACTIONS.NONE) assert.equal(result.terminal, true);
         else assert.equal(result.terminal, false);
@@ -360,7 +377,7 @@ test("phase matrix returns the legal next action", async (t) => {
   await t.test("validator-backed complete state is terminal", async () => {
     await withTarget(async (target) => {
       await setupCompletedTarget(target);
-      const result = await getNextAction({ target, packageRoot });
+      const result = await getNextAction({ target, packageRoot, taskId });
       assertStableAction(result, NEXT_ACTIONS.NONE);
       assert.equal(result.terminal, true);
     });
@@ -389,9 +406,9 @@ test("early phases load only artifacts that already are prerequisites", async (t
       const next = await getNextAction({ target, packageRoot });
 
       assertStableAction(next, NEXT_ACTIONS.ROUTE);
-      assert.ok(next.missingArtifacts.includes(ARTIFACT_PATHS.route));
-      assert.ok(next.requiredArtifacts.includes(ARTIFACT_PATHS.contract));
-      assert.equal(next.requiredArtifacts.includes(ARTIFACT_PATHS.route), false);
+      assert.ok(next.missingArtifacts.includes(buildTaskArtifactPaths("task-early-phase").route));
+      assert.ok(next.requiredArtifacts.includes(buildTaskArtifactPaths("task-early-phase").contract));
+      assert.equal(next.requiredArtifacts.includes(buildTaskArtifactPaths("task-early-phase").route), false);
     });
   });
 });
@@ -400,7 +417,7 @@ test("verification decisions require observed evidence and surface failed checks
   await t.test("no receipt prepares completion before verification recording", async () => {
     await withTarget(async (target) => {
       await setupTarget(target, { phase: "VERIFYING" });
-      const result = await getNextAction({ target, packageRoot });
+      const result = await getNextAction({ target, packageRoot, taskId });
       assertStableAction(result, NEXT_ACTIONS.PREPARE_COMPLETION);
       assert.deepEqual(result.commands, ["forgeloop prepare-completion --json"]);
     });
@@ -409,7 +426,7 @@ test("verification decisions require observed evidence and surface failed checks
   await t.test("valid receipt requests verification recording", async () => {
     await withTarget(async (target) => {
       await setupTarget(target, { phase: "VERIFYING", receipt: true });
-      const result = await getNextAction({ target, packageRoot });
+      const result = await getNextAction({ target, packageRoot, taskId });
       assertStableAction(result, NEXT_ACTIONS.RECORD_VERIFICATION);
       assert.deepEqual(result.commands, ["forgeloop record-check"]);
       assert.deepEqual(result.commandSpecs, [{
@@ -445,9 +462,9 @@ test("verification decisions require observed evidence and surface failed checks
         "spaces are data",
         "verificacao-unicode-á",
       ];
-      await setupTarget(target, { phase: "VERIFYING", successCriteria: requirements, receipt: true });
+      await withProjectStorage(target, () => setupTarget(target, { phase: "VERIFYING", successCriteria: requirements, receipt: true }));
 
-      const result = await getNextAction({ target, packageRoot });
+      const result = await withProjectStorage(target, () => getNextAction({ target, packageRoot, taskId: "task-next-action" }), { readOnly: true });
       const human = formatNextActionResult(result);
 
       assertStableAction(result, NEXT_ACTIONS.RECORD_VERIFICATION);
@@ -512,6 +529,7 @@ test("verification decisions require observed evidence and surface failed checks
       await recordCheck({
         target,
         packageRoot,
+        taskId,
         id: "tests",
         kind: "manual-review",
         requirement: "tests",
@@ -533,6 +551,7 @@ test("verification decisions require observed evidence and surface failed checks
       await recordCheck({
         target,
         packageRoot,
+        taskId,
         id: "tests",
         kind: "manual-review",
         requirement: "tests",
@@ -542,7 +561,7 @@ test("verification decisions require observed evidence and surface failed checks
         exitCode: 0,
       });
 
-      const stored = JSON.parse(await readFile(path.join(target, ARTIFACT_PATHS.state), "utf8"));
+      const stored = JSON.parse(await readRawFixtureText(target, path.join(target, ARTIFACT_PATHS.state)));
       assert.equal(stored.checks[0].status, "passed");
       assert.equal(stored.checks[0].evidenceKind, "OBSERVED");
       assert.equal(stored.checks[0].exitCode, 0);
@@ -558,6 +577,7 @@ test("verification decisions require observed evidence and surface failed checks
       await recordCheck({
         target,
         packageRoot,
+        taskId,
         id: "tests",
         kind: "manual-review",
         requirement: "tests",
@@ -567,7 +587,7 @@ test("verification decisions require observed evidence and surface failed checks
         exitCode: 1,
       });
 
-      const stored = JSON.parse(await readFile(path.join(target, ARTIFACT_PATHS.state), "utf8"));
+      const stored = JSON.parse(await readRawFixtureText(target, path.join(target, ARTIFACT_PATHS.state)));
       assert.equal(stored.checks[0].status, "failed");
       assert.equal(stored.checks[0].evidenceKind, "OBSERVED");
       assert.equal(stored.checks[0].exitCode, 1);
@@ -579,13 +599,13 @@ test("verification decisions require observed evidence and surface failed checks
     await withTarget(async (target) => {
       await setupTarget(target, { phase: "VERIFYING", receipt: true });
       const receiptPath = path.join(target, ARTIFACT_PATHS.receipt);
-      const receipt = JSON.parse(await readFile(receiptPath, "utf8"));
+      const receipt = JSON.parse(await readRawFixtureText(target, receiptPath));
       receipt.schemaVersion = 99;
-      await writeFile(receiptPath, `${JSON.stringify(receipt, null, 2)}\n`);
+      await overwriteFixtureText(target, receiptPath, `${JSON.stringify(receipt, null, 2)}\n`);
 
-      const result = await getNextAction({ target, packageRoot });
+      const result = await getNextAction({ target, packageRoot, taskId });
       assertStableAction(result, NEXT_ACTIONS.RESOLVE_BLOCKER);
-      assert.ok(result.reasonCodes.includes("E_RECEIPT_INVALID"));
+      assert.ok(result.reasonCodes.includes("E_RECEIPT_INVALID"), JSON.stringify(result));
       assert.equal(result.commands.includes("forgeloop prepare-completion --json"), false);
       assert.ok(result.requiredArtifacts.includes(ARTIFACT_PATHS.receipt));
     });
@@ -597,14 +617,15 @@ test("normal next-driven success path prepares the receipt before record-check",
     await setupTarget(target, { phase: "EXECUTING" });
 
     assertStableAction(await getNextAction({ target, packageRoot }), NEXT_ACTIONS.ENTER_VERIFYING);
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId });
     assertStableAction(await getNextAction({ target, packageRoot }), NEXT_ACTIONS.PREPARE_COMPLETION);
 
-    await prepareCompletion({ target, packageRoot });
+    await prepareCompletion({ target, packageRoot, taskId });
     assertStableAction(await getNextAction({ target, packageRoot }), NEXT_ACTIONS.RECORD_VERIFICATION);
     await recordCheck({
       target,
       packageRoot,
+      taskId,
       id: "tests",
       kind: "manual-review",
       requirement: "tests",
@@ -615,9 +636,9 @@ test("normal next-driven success path prepares the receipt before record-check",
     });
     assertStableAction(await getNextAction({ target, packageRoot }), NEXT_ACTIONS.ENTER_REVIEWING);
 
-    await advanceWorkState(target, "REVIEWING", { packageRoot });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId });
     assertStableAction(await getNextAction({ target, packageRoot }), NEXT_ACTIONS.RUN_COMPLETE);
-    const completion = await runComplete({ target, packageRoot });
+    const completion = await runComplete({ target, packageRoot, taskId });
     assert.equal(completion.status, "VALID");
   });
 });
@@ -626,10 +647,10 @@ test("diagnosis guidance is executable only after a diagnosis is recorded", asyn
   await t.test("missing diagnosis returns RECORD_DIAGNOSIS and command spec", async () => {
     await withTarget(async (target) => {
       await setupTarget(target, { phase: "DIAGNOSING" });
-      const next = await getNextAction({ target, packageRoot });
+      const next = await getNextAction({ target, packageRoot, taskId });
 
       assertStableAction(next, NEXT_ACTIONS.RECORD_DIAGNOSIS);
-      assert.ok(next.reasonCodes.includes("E_DIAGNOSIS_REQUIRED"));
+      assert.ok(next.reasonCodes.includes("E_DIAGNOSIS_REQUIRED"), JSON.stringify(next));
       assert.equal(next.commands.includes("forgeloop advance --to CORRECTING"), false);
       assert.equal(next.commandSpecs.some((s) => s.commandId === "record-diagnosis"), true);
       assert.ok(next.requiredArtifacts.includes(ARTIFACT_PATHS.events));
@@ -639,7 +660,7 @@ test("diagnosis guidance is executable only after a diagnosis is recorded", asyn
   await t.test("persisted diagnosis retains the correction action and legal phase command", async () => {
     await withTarget(async (target) => {
       await setupTarget(target, { phase: "DIAGNOSING", diagnosedHypothesis: "fixture diagnosis" });
-      const next = await getNextAction({ target, packageRoot });
+      const next = await getNextAction({ target, packageRoot, taskId });
 
       assertStableAction(next, NEXT_ACTIONS.CORRECT);
       assert.deepEqual(next.commands, ["forgeloop advance --to CORRECTING"]);
@@ -653,6 +674,7 @@ test("review decisions require coverage before receipt or completion", async (t)
     await recordCheck({
       target,
       packageRoot,
+      taskId,
       id: "tests",
       kind: "manual-review",
       requirement: "tests",
@@ -661,13 +683,13 @@ test("review decisions require coverage before receipt or completion", async (t)
       result: "tests passed",
       exitCode: 0,
     });
-    await advanceWorkState(target, "REVIEWING", { packageRoot });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId });
   }
 
   await t.test("valid coverage without receipt prepares completion", async () => {
     await withTarget(async (target) => {
       await setupReviewedTarget(target);
-      await rm(path.join(target, ARTIFACT_PATHS.receipt));
+      await deleteFixtureArtifact(target, path.join(target, ARTIFACT_PATHS.receipt));
       assertStableAction(await getNextAction({ target, packageRoot }), NEXT_ACTIONS.PREPARE_COMPLETION);
     });
   });
@@ -683,11 +705,11 @@ test("review decisions require coverage before receipt or completion", async (t)
     await withTarget(async (target) => {
       await setupReviewedTarget(target);
       const statePath = path.join(target, ARTIFACT_PATHS.state);
-      const before = JSON.parse(await readFile(statePath, "utf8"));
-      await rm(path.join(target, ARTIFACT_PATHS.receipt));
+      const before = JSON.parse(await readRawFixtureText(target, statePath));
+      await deleteFixtureArtifact(target, path.join(target, ARTIFACT_PATHS.receipt));
 
       assertStableAction(await getNextAction({ target, packageRoot }), NEXT_ACTIONS.PREPARE_COMPLETION);
-      const recovered = await prepareCompletion({ target, packageRoot });
+      const recovered = await prepareCompletion({ target, packageRoot, taskId });
       assert.deepEqual(recovered.receipt.checks, before.checks);
       assert.deepEqual(recovered.receipt.evidence, before.verificationEvidence);
       assert.deepEqual(recovered.receipt.evidenceCoverage, before.evidenceCoverage);
@@ -704,6 +726,7 @@ test("completion identity rejects foreign receipt or state without mutation", as
     await recordCheck({
       target,
       packageRoot,
+      taskId,
       id: "tests",
       kind: "manual-review",
       requirement: "tests",
@@ -712,7 +735,7 @@ test("completion identity rejects foreign receipt or state without mutation", as
       result: "tests passed",
       exitCode: 0,
     });
-    await advanceWorkState(target, "REVIEWING", { packageRoot });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId });
   }
 
   for (const [name, mutate, code] of [
@@ -720,9 +743,9 @@ test("completion identity rejects foreign receipt or state without mutation", as
       "receipt task ID",
       async (target) => {
         const receiptPath = path.join(target, ARTIFACT_PATHS.receipt);
-        const receipt = JSON.parse(await readFile(receiptPath, "utf8"));
+        const receipt = JSON.parse(await readRawFixtureText(target, receiptPath));
         receipt.taskId = "foreign-task";
-        await writeFile(receiptPath, `${JSON.stringify(receipt, null, 2)}\n`);
+        await overwriteFixtureText(target, receiptPath, `${JSON.stringify(receipt, null, 2)}\n`);
       },
       "E_RECEIPT_TASK_MISMATCH",
     ],
@@ -730,9 +753,9 @@ test("completion identity rejects foreign receipt or state without mutation", as
       "work-state task ID",
       async (target) => {
         const statePath = path.join(target, ARTIFACT_PATHS.state);
-        const state = JSON.parse(await readFile(statePath, "utf8"));
+        const state = JSON.parse(await readRawFixtureText(target, statePath));
         state.taskId = "foreign-task";
-        await writeFile(statePath, `${JSON.stringify(state, null, 2)}\n`);
+        await overwriteFixtureText(target, statePath, `${JSON.stringify(state, null, 2)}\n`);
       },
       "E_STATE_TASK_MISMATCH",
     ],
@@ -743,21 +766,32 @@ test("completion identity rejects foreign receipt or state without mutation", as
         await mutate(target);
         const statePath = path.join(target, ARTIFACT_PATHS.state);
         const eventsPath = path.join(target, ARTIFACT_PATHS.events);
-        const stateBefore = await readFile(statePath, "utf8");
-        const eventsBefore = await readFile(eventsPath, "utf8");
+        const stateBefore = await readRawFixtureText(target, statePath);
+        const eventsBefore = await readRawFixtureText(target, eventsPath);
 
-        const next = await getNextAction({ target, packageRoot });
-        const evaluation = await evaluateCompletion({ target, packageRoot });
-        const completion = await runComplete({ target, packageRoot });
+        if (name === "work-state task ID") {
+          await assert.rejects(getNextAction({ target, packageRoot, taskId }), { code: "E_STORAGE_PAYLOAD_MISMATCH" });
+          const evaluation = await evaluateCompletion({ target, packageRoot, taskId });
+          assert.equal(evaluation.status, "REJECTED");
+          assert.ok(evaluation.errors.some(error => error.code === "E_STORAGE_PAYLOAD_MISMATCH"), JSON.stringify(evaluation));
+          await assert.rejects(runComplete({ target, packageRoot, taskId }), { code: "E_STORAGE_PAYLOAD_MISMATCH" });
+          assert.equal(await readRawFixtureText(target, statePath), stateBefore);
+          assert.equal(await readRawFixtureText(target, eventsPath), eventsBefore);
+          return;
+        }
+
+        const next = await getNextAction({ target, packageRoot, taskId });
+        const evaluation = await evaluateCompletion({ target, packageRoot, taskId });
+        const completion = await runComplete({ target, packageRoot, taskId });
 
         assertStableAction(next, NEXT_ACTIONS.RESOLVE_BLOCKER);
-        assert.ok(next.reasonCodes.includes(code));
+        assert.ok(next.reasonCodes.includes(code), JSON.stringify(next));
         assert.equal(evaluation.status, "REJECTED");
         assert.ok(evaluation.errors.some((error) => error.code === code));
         assert.equal(completion.status, "REJECTED");
         assert.ok(completion.errors.some((error) => error.code === code));
-        assert.equal(await readFile(statePath, "utf8"), stateBefore);
-        assert.equal(await readFile(eventsPath, "utf8"), eventsBefore);
+        assert.equal(await readRawFixtureText(target, statePath), stateBefore);
+        assert.equal(await readRawFixtureText(target, eventsPath), eventsBefore);
       });
     });
   }
@@ -768,14 +802,14 @@ test("freshness and persisted preflight identity cannot authorize forward lifecy
     await withTarget(async (target) => {
       await setupTarget(target, { phase: "EXECUTING" });
       const statePath = path.join(target, ARTIFACT_PATHS.state);
-      const state = JSON.parse(await readFile(statePath, "utf8"));
+      const state = JSON.parse(await readRawFixtureText(target, statePath));
       state.repositoryFingerprint = { branch: "main", head: "a".repeat(40) };
-      await writeFile(statePath, `${JSON.stringify(state, null, 2)}\n`);
+      await overwriteFixtureText(target, statePath, `${JSON.stringify(state, null, 2)}\n`);
 
-      const next = await getNextAction({ target, packageRoot });
+      const next = await getNextAction({ target, packageRoot, taskId });
 
-      assertStableAction(next, NEXT_ACTIONS.RESOLVE_BLOCKER);
-      assert.ok(next.reasonCodes.includes("E_STATE_REVALIDATION_REQUIRED"));
+      assertStableAction(next, NEXT_ACTIONS.RECONCILE_CLOSURE);
+      assert.ok(next.reasonCodes.includes("E_REPOSITORY_CHANGED"), JSON.stringify(next));
       assert.ok(next.requiredArtifacts.includes(ARTIFACT_PATHS.state));
       assert.equal(next.commands.includes("forgeloop advance --to VERIFYING"), false);
     });
@@ -786,18 +820,18 @@ test("freshness and persisted preflight identity cannot authorize forward lifecy
       await setupTarget(target, { phase: "PLANNED" });
       const statePath = path.join(target, ARTIFACT_PATHS.state);
       const eventsPath = path.join(target, ARTIFACT_PATHS.events);
-      const state = JSON.parse(await readFile(statePath, "utf8"));
+      const state = JSON.parse(await readRawFixtureText(target, statePath));
       state.repositoryFingerprint = { branch: "main", head: "a".repeat(40) };
-      await writeFile(statePath, `${JSON.stringify(state, null, 2)}\n`);
-      const stateBefore = await readFile(statePath, "utf8");
-      const eventsBefore = await readFile(eventsPath, "utf8");
+      await overwriteFixtureText(target, statePath, `${JSON.stringify(state, null, 2)}\n`);
+      const stateBefore = await readRawFixtureText(target, statePath);
+      const eventsBefore = await readRawFixtureText(target, eventsPath);
 
       await assert.rejects(
-        () => advanceWorkState(target, "EXECUTING", { packageRoot }),
+        () => advanceWorkState(target, "EXECUTING", { packageRoot, taskId }),
         (error) => error.code === "E_STATE_REVALIDATION_REQUIRED",
       );
-      assert.equal(await readFile(statePath, "utf8"), stateBefore);
-      assert.equal(await readFile(eventsPath, "utf8"), eventsBefore);
+      assert.equal(await readRawFixtureText(target, statePath), stateBefore);
+      assert.equal(await readRawFixtureText(target, eventsPath), eventsBefore);
     });
   });
 
@@ -807,23 +841,23 @@ test("freshness and persisted preflight identity cannot authorize forward lifecy
       const preflightPath = path.join(target, ARTIFACT_PATHS.preflight);
       const statePath = path.join(target, ARTIFACT_PATHS.state);
       const eventsPath = path.join(target, ARTIFACT_PATHS.events);
-      const preflight = JSON.parse(await readFile(preflightPath, "utf8"));
+      const preflight = JSON.parse(await readRawFixtureText(target, preflightPath));
       preflight.taskId = "foreign-task";
-      await writeFile(preflightPath, `${JSON.stringify(preflight, null, 2)}\n`);
-      const beforeState = await readFile(statePath, "utf8");
-      const beforeEvents = await readFile(eventsPath, "utf8");
+      await overwriteFixtureText(target, preflightPath, `${JSON.stringify(preflight, null, 2)}\n`);
+      const beforeState = await readRawFixtureText(target, statePath);
+      const beforeEvents = await readRawFixtureText(target, eventsPath);
 
-      const next = await getNextAction({ target, packageRoot });
+      const next = await getNextAction({ target, packageRoot, taskId });
 
       assertStableAction(next, NEXT_ACTIONS.RUN_PREFLIGHT);
-      assert.ok(next.reasonCodes.includes("E_PREFLIGHT_TASK_MISMATCH"));
+      assert.ok(next.reasonCodes.includes("E_PREFLIGHT_TASK_MISMATCH"), JSON.stringify(next));
       assert.equal(next.commands.includes("forgeloop advance --to EXECUTING"), false);
       await assert.rejects(
-        () => advanceWorkState(target, "EXECUTING", { packageRoot }),
+        () => advanceWorkState(target, "EXECUTING", { packageRoot, taskId }),
         (error) => error.code === "E_PREFLIGHT_TASK_MISMATCH",
       );
-      assert.equal(await readFile(statePath, "utf8"), beforeState);
-      assert.equal(await readFile(eventsPath, "utf8"), beforeEvents);
+      assert.equal(await readRawFixtureText(target, statePath), beforeState);
+      assert.equal(await readRawFixtureText(target, eventsPath), beforeEvents);
     });
   });
 
@@ -849,23 +883,23 @@ test("freshness and persisted preflight identity cannot authorize forward lifecy
         const preflightPath = path.join(target, ARTIFACT_PATHS.preflight);
         const statePath = path.join(target, ARTIFACT_PATHS.state);
         const eventsPath = path.join(target, ARTIFACT_PATHS.events);
-        const preflight = JSON.parse(await readFile(preflightPath, "utf8"));
+        const preflight = JSON.parse(await readRawFixtureText(target, preflightPath));
         mutate(preflight);
-        await writeFile(preflightPath, `${JSON.stringify(preflight, null, 2)}\n`);
-        const beforeState = await readFile(statePath, "utf8");
-        const beforeEvents = await readFile(eventsPath, "utf8");
+        await overwriteFixtureText(target, preflightPath, `${JSON.stringify(preflight, null, 2)}\n`);
+        const beforeState = await readRawFixtureText(target, statePath);
+        const beforeEvents = await readRawFixtureText(target, eventsPath);
 
-        const next = await getNextAction({ target, packageRoot });
+        const next = await getNextAction({ target, packageRoot, taskId });
 
         assertStableAction(next, NEXT_ACTIONS.RUN_PREFLIGHT);
-        assert.ok(next.reasonCodes.includes(code));
+        assert.ok(next.reasonCodes.includes(code), JSON.stringify(next));
         assert.equal(next.commands.includes("forgeloop advance --to EXECUTING"), false);
         await assert.rejects(
-          () => advanceWorkState(target, "EXECUTING", { packageRoot }),
+          () => advanceWorkState(target, "EXECUTING", { packageRoot, taskId }),
           (error) => error.code === code,
         );
-        assert.equal(await readFile(statePath, "utf8"), beforeState);
-        assert.equal(await readFile(eventsPath, "utf8"), beforeEvents);
+        assert.equal(await readRawFixtureText(target, statePath), beforeState);
+        assert.equal(await readRawFixtureText(target, eventsPath), beforeEvents);
       });
     });
   }
@@ -874,17 +908,17 @@ test("freshness and persisted preflight identity cannot authorize forward lifecy
     await withTarget(async (target) => {
       await setupTarget(target, { phase: "PLANNED" });
       const preflightPath = path.join(target, ARTIFACT_PATHS.preflight);
-      const preflight = JSON.parse(await readFile(preflightPath, "utf8"));
+      const preflight = JSON.parse(await readRawFixtureText(target, preflightPath));
       preflight.fingerprints.contract = "a".repeat(64);
-      await writeFile(preflightPath, `${JSON.stringify(preflight, null, 2)}\n`);
+      await overwriteFixtureText(target, preflightPath, `${JSON.stringify(preflight, null, 2)}\n`);
 
-      const next = await getNextAction({ target, packageRoot });
+      const next = await getNextAction({ target, packageRoot, taskId });
       assertStableAction(next, NEXT_ACTIONS.RUN_PREFLIGHT);
-      assert.ok(next.reasonCodes.includes("E_PREFLIGHT_CONTRACT_STALE"));
+      assert.ok(next.reasonCodes.includes("E_PREFLIGHT_CONTRACT_STALE"), JSON.stringify(next));
 
-      assert.equal((await runPreflight({ target, packageRoot })).status, "READY");
+      assert.equal((await runPreflight({ target, packageRoot, taskId })).status, "READY");
 
-      const ledger = await validateEventLedger(target, packageRoot);
+      const ledger = await validateEventLedger(target, packageRoot, { taskId });
       assert.equal(ledger.valid, true);
       assert.equal(ledger.events.filter((event) => event.event === "PREFLIGHT_READY").length, 1);
     });
@@ -898,49 +932,50 @@ test("freshness and persisted preflight identity cannot authorize forward lifecy
       const eventsPath = path.join(target, ARTIFACT_PATHS.events);
       const replacementRoute = evaluateRoute({ workType: "bug", surfaces: [], platforms: [] });
       const persistedReplacement = await persistRoute(target, replacementRoute, packageRoot, {
+        taskId,
         contractFingerprint: contractFingerprint(contract),
       });
-      const state = JSON.parse(await readFile(statePath, "utf8"));
+      const state = JSON.parse(await readRawFixtureText(target, statePath));
       state.routeFingerprint = persistedReplacement.fingerprint;
       state.selectedGuides = [...replacementRoute.guides];
-      await writeFile(statePath, `${JSON.stringify(state, null, 2)}\n`);
+      await overwriteFixtureText(target, statePath, `${JSON.stringify(state, null, 2)}\n`);
 
-      const stateBefore = await readFile(statePath, "utf8");
-      const preflightBefore = await readFile(preflightPath, "utf8");
-      const eventsBefore = await readFile(eventsPath, "utf8");
+      const stateBefore = await readRawFixtureText(target, statePath);
+      const preflightBefore = await readRawFixtureText(target, preflightPath);
+      const eventsBefore = await readRawFixtureText(target, eventsPath);
 
-      const next = await getNextAction({ target, packageRoot });
+      const next = await getNextAction({ target, packageRoot, taskId });
       assertStableAction(next, NEXT_ACTIONS.RUN_PREFLIGHT);
-      assert.ok(next.reasonCodes.includes("E_PREFLIGHT_ROUTE_STALE"));
+      assert.ok(next.reasonCodes.includes("E_PREFLIGHT_ROUTE_STALE"), JSON.stringify(next));
       assert.equal(next.commands.includes("forgeloop advance --to EXECUTING"), false);
 
       await assert.rejects(
-        () => runPreflight({ target, packageRoot }),
+        () => runPreflight({ target, packageRoot, taskId }),
         (error) => error.code === "E_PHASE_CHRONOLOGY_INVALID",
       );
-      assert.equal(await readFile(preflightPath, "utf8"), preflightBefore);
-      assert.equal(await readFile(eventsPath, "utf8"), eventsBefore);
+      assert.equal(await readRawFixtureText(target, preflightPath), preflightBefore);
+      assert.equal(await readRawFixtureText(target, eventsPath), eventsBefore);
 
       await assert.rejects(
-        () => advanceWorkState(target, "EXECUTING", { packageRoot }),
+        () => advanceWorkState(target, "EXECUTING", { packageRoot, taskId }),
         (error) => error.code === "E_PHASE_CHRONOLOGY_INVALID",
       );
-      assert.equal(await readFile(statePath, "utf8"), stateBefore);
-      assert.equal(await readFile(eventsPath, "utf8"), eventsBefore);
+      assert.equal(await readRawFixtureText(target, statePath), stateBefore);
+      assert.equal(await readRawFixtureText(target, eventsPath), eventsBefore);
     });
   });
 
   await t.test("same-route ready lifecycle serializes route identity and starts execution", async () => {
     await withTarget(async (target) => {
       await setupTarget(target, { phase: "PLANNED" });
-      const preflight = JSON.parse(await readFile(path.join(target, ARTIFACT_PATHS.preflight), "utf8"));
-      const ledger = await validateEventLedger(target, packageRoot);
+      const preflight = JSON.parse(await readRawFixtureText(target, path.join(target, ARTIFACT_PATHS.preflight)));
+      const ledger = await validateEventLedger(target, packageRoot, { taskId });
       const ready = ledger.events.find((event) => event.event === "PREFLIGHT_READY");
 
       assert.equal(ready.details.routingFingerprint, preflight.fingerprints.routing);
       assert.deepEqual(Object.keys(ready.details), ["requiredGates", "satisfiedGates", "routingFingerprint"]);
       assertStableAction(await getNextAction({ target, packageRoot }), NEXT_ACTIONS.START_EXECUTION);
-      await advanceWorkState(target, "EXECUTING", { packageRoot });
+      await advanceWorkState(target, "EXECUTING", { packageRoot, taskId });
     });
   });
 
@@ -949,23 +984,16 @@ test("freshness and persisted preflight identity cannot authorize forward lifecy
       await setupTarget(target, { phase: "PLANNED" });
       const statePath = path.join(target, ARTIFACT_PATHS.state);
       const eventsPath = path.join(target, ARTIFACT_PATHS.events);
-      const state = JSON.parse(await readFile(statePath, "utf8"));
+      const state = JSON.parse(await readRawFixtureText(target, statePath));
       state.taskId = "foreign-task";
-      await writeFile(statePath, `${JSON.stringify(state, null, 2)}\n`);
-      const stateBefore = await readFile(statePath, "utf8");
-      const eventsBefore = await readFile(eventsPath, "utf8");
+      await overwriteFixtureText(target, statePath, `${JSON.stringify(state, null, 2)}\n`);
+      const stateBefore = await readRawFixtureText(target, statePath);
+      const eventsBefore = await readRawFixtureText(target, eventsPath);
 
-      const next = await getNextAction({ target, packageRoot });
-
-      assertStableAction(next, NEXT_ACTIONS.RESOLVE_BLOCKER);
-      assert.ok(next.reasonCodes.includes("E_STATE_TASK_MISMATCH"));
-      assert.equal(next.commands.includes("forgeloop advance --to EXECUTING"), false);
-      await assert.rejects(
-        () => advanceWorkState(target, "EXECUTING", { packageRoot }),
-        (error) => error.code === "E_STATE_TASK_MISMATCH",
-      );
-      assert.equal(await readFile(statePath, "utf8"), stateBefore);
-      assert.equal(await readFile(eventsPath, "utf8"), eventsBefore);
+      await assert.rejects(getNextAction({ target, packageRoot, taskId }), { code: "E_STORAGE_PAYLOAD_MISMATCH" });
+      await assert.rejects(advanceWorkState(target, "EXECUTING", { packageRoot, taskId }), { code: "E_STORAGE_PAYLOAD_MISMATCH" });
+      assert.equal(await readRawFixtureText(target, statePath), stateBefore);
+      assert.equal(await readRawFixtureText(target, eventsPath), eventsBefore);
     });
   });
 
@@ -974,19 +1002,18 @@ test("freshness and persisted preflight identity cannot authorize forward lifecy
       await setupTarget(target, { phase: "PLANNED" });
       const statePath = path.join(target, ARTIFACT_PATHS.state);
       const eventsPath = path.join(target, ARTIFACT_PATHS.events);
-      await rm(eventsPath);
-      for (const event of ["CONTRACT_VALIDATED", "ROUTE_VALIDATED", "PREFLIGHT_READY"]) {
-        await appendProtocolEvent(target, { taskId: "foreign-task", event }, packageRoot);
-      }
-      const stateHashBefore = createHash("sha256").update(await readFile(statePath)).digest("hex");
-      const eventsHashBefore = createHash("sha256").update(await readFile(eventsPath)).digest("hex");
+      const foreignEvents = (await readRawFixtureText(target, eventsPath)).trim().split("\n")
+        .map(line => ({ ...JSON.parse(line), taskId: "foreign-task" }));
+      await overwriteFixtureText(target, eventsPath, foreignEvents.map(event => JSON.stringify(event)).join("\n") + "\n");
+      const stateHashBefore = createHash("sha256").update(await readRawFixtureText(target, statePath)).digest("hex");
+      const eventsHashBefore = createHash("sha256").update(await readRawFixtureText(target, eventsPath)).digest("hex");
 
       await assert.rejects(
-        () => advanceWorkState(target, "EXECUTING", { packageRoot }),
-        (error) => error.code === "E_PHASE_CHRONOLOGY_INVALID",
+        () => advanceWorkState(target, "EXECUTING", { packageRoot, taskId }),
+        (error) => error.code === "E_STORAGE_PAYLOAD_MISMATCH",
       );
-      assert.equal(createHash("sha256").update(await readFile(statePath)).digest("hex"), stateHashBefore);
-      assert.equal(createHash("sha256").update(await readFile(eventsPath)).digest("hex"), eventsHashBefore);
+      assert.equal(createHash("sha256").update(await readRawFixtureText(target, statePath)).digest("hex"), stateHashBefore);
+      assert.equal(createHash("sha256").update(await readRawFixtureText(target, eventsPath)).digest("hex"), eventsHashBefore);
     });
   });
 
@@ -995,21 +1022,21 @@ test("freshness and persisted preflight identity cannot authorize forward lifecy
       await setupTarget(target, { phase: "PLANNED" });
       const statePath = path.join(target, ARTIFACT_PATHS.state);
       const eventsPath = path.join(target, ARTIFACT_PATHS.events);
-      const state = JSON.parse(await readFile(statePath, "utf8"));
+      const state = JSON.parse(await readRawFixtureText(target, statePath));
       delete state.routeFingerprint;
-      await writeFile(statePath, `${JSON.stringify(state, null, 2)}\n`);
-      const beforeState = await readFile(statePath, "utf8");
-      const beforeEvents = await readFile(eventsPath, "utf8");
+      await overwriteFixtureText(target, statePath, `${JSON.stringify(state, null, 2)}\n`);
+      const beforeState = await readRawFixtureText(target, statePath);
+      const beforeEvents = await readRawFixtureText(target, eventsPath);
 
-      const next = await getNextAction({ target, packageRoot });
+      const next = await getNextAction({ target, packageRoot, taskId });
       assertStableAction(next, NEXT_ACTIONS.RESOLVE_STALE_ROUTE);
-      assert.ok(next.reasonCodes.includes("E_ROUTE_STALE"));
+      assert.ok(next.reasonCodes.includes("E_ROUTE_STALE"), JSON.stringify(next));
       await assert.rejects(
-        () => advanceWorkState(target, "EXECUTING", { packageRoot }),
+        () => advanceWorkState(target, "EXECUTING", { packageRoot, taskId }),
         (error) => error.code === "E_ROUTE_STALE",
       );
-      assert.equal(await readFile(statePath, "utf8"), beforeState);
-      assert.equal(await readFile(eventsPath, "utf8"), beforeEvents);
+      assert.equal(await readRawFixtureText(target, statePath), beforeState);
+      assert.equal(await readRawFixtureText(target, eventsPath), beforeEvents);
     });
   });
 
@@ -1018,23 +1045,23 @@ test("freshness and persisted preflight identity cannot authorize forward lifecy
       await setupTarget(target, { phase: "PLANNED" });
       const statePath = path.join(target, ARTIFACT_PATHS.state);
       const eventsPath = path.join(target, ARTIFACT_PATHS.events);
-      const lines = (await readFile(eventsPath, "utf8")).trim().split("\n");
+      const lines = (await readRawFixtureText(target, eventsPath)).trim().split("\n");
       const tampered = JSON.parse(lines[0]);
       tampered.hash = "a".repeat(64);
       lines[0] = JSON.stringify(tampered);
-      await writeFile(eventsPath, `${lines.join("\n")}\n`);
-      const beforeState = await readFile(statePath, "utf8");
-      const beforeEvents = await readFile(eventsPath, "utf8");
+      await overwriteFixtureText(target, eventsPath, `${lines.join("\n")}\n`);
+      const beforeState = await readRawFixtureText(target, statePath);
+      const beforeEvents = await readRawFixtureText(target, eventsPath);
 
-      const next = await getNextAction({ target, packageRoot });
-      assertStableAction(next, NEXT_ACTIONS.RESOLVE_BLOCKER);
-      assert.ok(next.reasonCodes.includes("E_LEDGER_HASH_INVALID"));
+      const next = await getNextAction({ target, packageRoot, taskId });
+      assertStableAction(next, NEXT_ACTIONS.RESOLVE_RECOVERY_INCONSISTENCY);
+      assert.ok(next.reasonCodes.includes("E_LEDGER_HASH_INVALID"), JSON.stringify(next));
       await assert.rejects(
-        () => advanceWorkState(target, "EXECUTING", { packageRoot }),
+        () => advanceWorkState(target, "EXECUTING", { packageRoot, taskId }),
         (error) => error.code === "E_LEDGER_HASH_INVALID",
       );
-      assert.equal(await readFile(statePath, "utf8"), beforeState);
-      assert.equal(await readFile(eventsPath, "utf8"), beforeEvents);
+      assert.equal(await readRawFixtureText(target, statePath), beforeState);
+      assert.equal(await readRawFixtureText(target, eventsPath), beforeEvents);
     });
   });
 });
@@ -1055,14 +1082,14 @@ test("malformed checks block verifying and reviewing before evidence branching",
         await withTarget(async (target) => {
           await setupTarget(target, { phase, checks: [checkFor()], receipt: true });
           const statePath = path.join(target, ARTIFACT_PATHS.state);
-          const state = JSON.parse(await readFile(statePath, "utf8"));
+          const state = JSON.parse(await readRawFixtureText(target, statePath));
           state.checks = Array.isArray(invalid) ? invalid : [invalid];
-          await writeFile(statePath, `${JSON.stringify(state, null, 2)}\n`);
+          await overwriteFixtureText(target, statePath, `${JSON.stringify(state, null, 2)}\n`);
 
-          const next = await getNextAction({ target, packageRoot });
+          const next = await getNextAction({ target, packageRoot, taskId });
 
           assertStableAction(next, NEXT_ACTIONS.RESOLVE_BLOCKER);
-          assert.ok(next.reasonCodes.includes(code));
+          assert.ok(next.reasonCodes.includes(code), JSON.stringify(next));
           assert.equal(next.commands.length, 0);
           assert.equal(next.requiredArtifacts.includes(ARTIFACT_PATHS.state), true);
         });
@@ -1076,7 +1103,7 @@ test("third live execution run enters verification without claiming completion",
     const fixture = JSON.parse(await readFile(path.join(fixtureRoot, "third-live-executing.json"), "utf8"));
     await setupTarget(target, fixture);
 
-    const result = await getNextAction({ target, packageRoot });
+    const result = await getNextAction({ target, packageRoot, taskId });
 
     assertStableAction(result, NEXT_ACTIONS.ENTER_VERIFYING);
     assert.match(JSON.stringify(result.commands), /advance --to VERIFYING/);
@@ -1090,38 +1117,33 @@ test("unsafe artifacts return repair guidance without writes and results are det
   await t.test("stale route or contract requires checkpoint revalidation", async () => {
     await withTarget(async (target) => {
       await setupTarget(target, { staleRoute: true });
-      const result = await getNextAction({ target, packageRoot });
+      const result = await getNextAction({ target, packageRoot, taskId });
       assertStableAction(result, NEXT_ACTIONS.RESOLVE_BLOCKER);
-      assert.ok(result.reasonCodes.includes("E_ROUTE_STALE") || result.reasonCodes.includes("E_CONTRACT_STALE"));
+      assert.ok(result.reasonCodes.includes("E_ROUTE_STALE") || result.reasonCodes.includes("E_CONTRACT_STALE"), JSON.stringify(result));
     });
   });
 
   await t.test("executing without a READY preflight resolves a blocker", async () => {
     await withTarget(async (target) => {
       await setupTarget(target, { phase: "EXECUTING", preflightReady: false });
-      const result = await getNextAction({ target, packageRoot });
+      const result = await getNextAction({ target, packageRoot, taskId });
       assertStableAction(result, NEXT_ACTIONS.RESOLVE_BLOCKER);
-      assert.ok(result.reasonCodes.includes("E_PREFLIGHT_NOT_READY"));
+      assert.ok(result.reasonCodes.includes("E_PREFLIGHT_NOT_READY"), JSON.stringify(result));
     });
   });
 
   await t.test("foreign-task execution ledger cannot authorize verification", async () => {
     await withTarget(async (target) => {
       await setupTarget(target, { phase: "EXECUTING" });
-      await rm(path.join(target, ARTIFACT_PATHS.events));
-      for (const event of [
-        "CONTRACT_VALIDATED",
-        "ROUTE_VALIDATED",
-        "PREFLIGHT_READY",
-        "EXECUTION_STARTED",
-      ]) {
-        await appendProtocolEvent(target, { taskId: "foreign-task", event }, packageRoot);
-      }
+      const eventsPath = path.join(target, ARTIFACT_PATHS.events);
+      const foreignEvents = (await readRawFixtureText(target, eventsPath)).trim().split("\n")
+        .map(line => ({ ...JSON.parse(line), taskId: "foreign-task" }));
+      await overwriteFixtureText(target, eventsPath, foreignEvents.map(event => JSON.stringify(event)).join("\n") + "\n");
 
-      const result = await getNextAction({ target, packageRoot });
+      const result = await getNextAction({ target, packageRoot, taskId });
 
-      assertStableAction(result, NEXT_ACTIONS.RESOLVE_BLOCKER);
-      assert.ok(result.reasonCodes.includes("E_PHASE_CHRONOLOGY_INVALID"));
+      assertStableAction(result, NEXT_ACTIONS.RESOLVE_RECOVERY_INCONSISTENCY);
+      assert.ok(result.reasonCodes.includes("E_STORAGE_PAYLOAD_MISMATCH"), JSON.stringify(result));
       assert.ok(result.requiredArtifacts.includes(ARTIFACT_PATHS.events));
       assert.notEqual(result.nextAction, NEXT_ACTIONS.ENTER_VERIFYING);
     });
@@ -1130,7 +1152,7 @@ test("unsafe artifacts return repair guidance without writes and results are det
   await t.test("premature review without coverage never runs completion", async () => {
     await withTarget(async (target) => {
       await setupTarget(target, { phase: "REVIEWING" });
-      const result = await getNextAction({ target, packageRoot });
+      const result = await getNextAction({ target, packageRoot, taskId });
       assertStableAction(result, NEXT_ACTIONS.RESOLVE_BLOCKER);
       assert.notEqual(result.nextAction, NEXT_ACTIONS.RUN_COMPLETE);
     });
@@ -1138,22 +1160,25 @@ test("unsafe artifacts return repair guidance without writes and results are det
 
   await t.test("premature complete state returns repair guidance", async () => {
     await withTarget(async (target) => {
-      await setupTarget(target, { phase: "COMPLETE" });
-      const result = await getNextAction({ target, packageRoot });
+      await setupTarget(target, { phase: "EXECUTING" });
+      const state = JSON.parse(await readRawFixtureText(target, ARTIFACT_PATHS.state));
+      state.phase = "COMPLETE";
+      await overwriteFixtureText(target, ARTIFACT_PATHS.state, JSON.stringify(state));
+      const result = await getNextAction({ target, packageRoot, taskId });
       assertStableAction(result, NEXT_ACTIONS.RESOLVE_BLOCKER);
       assert.notEqual(result.nextAction, NEXT_ACTIONS.NONE);
-      assert.ok(result.reasonCodes.includes("E_RECEIPT_MISSING")
-        || result.reasonCodes.includes("E_PHASE_CHRONOLOGY_INVALID"));
+      assert.ok(result.reasonCodes.includes("WORK_STATE_INVALID"), JSON.stringify(result));
+      assert.match(result.reasons[0].message, /COMPLETE requires verification evidence/);
     });
   });
 
-  await t.test("malformed work state resolves a blocker", async () => {
+  await t.test("malformed native work state fails closed without changing bytes", async () => {
     await withTarget(async (target) => {
       await setupTarget(target);
-      await writeFile(path.join(target, ".forgeloop", "work-state.json"), "{ invalid json\n");
-      const result = await getNextAction({ target, packageRoot });
-      assertStableAction(result, NEXT_ACTIONS.RESOLVE_BLOCKER);
-      assert.ok(result.reasonCodes.includes("WORK_STATE_INVALID"));
+      await overwriteFixtureStateBytes(target, taskId, "{ invalid json\n");
+      const before = await readRawFixtureText(target, ARTIFACT_PATHS.state);
+      await assert.rejects(getNextAction({ target, packageRoot, taskId }), { code: "E_STORAGE_PAYLOAD_MISMATCH" });
+      assert.equal(await readRawFixtureText(target, ARTIFACT_PATHS.state), before);
     });
   });
 
@@ -1161,8 +1186,8 @@ test("unsafe artifacts return repair guidance without writes and results are det
     await withTarget(async (target) => {
       await setupTarget(target, { phase: "EXECUTING" });
       const before = await forgeLoopArtifactHashes(target);
-      const first = await getNextAction({ target, packageRoot });
-      const second = await getNextAction({ target, packageRoot });
+      const first = await getNextAction({ target, packageRoot, taskId });
+      const second = await getNextAction({ target, packageRoot, taskId });
 
       assert.equal(JSON.stringify(first), JSON.stringify(second));
       assert.deepEqual(await forgeLoopArtifactHashes(target), before);

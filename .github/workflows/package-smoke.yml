@@ -21,8 +21,9 @@ concurrency:
 
 jobs:
   classify:
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
     name: Classify package paths
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
     timeout-minutes: 5
     outputs:
       package: ${{ steps.classify.outputs.package }}
@@ -51,8 +52,8 @@ jobs:
   tarball-smoke:
     name: tarball smoke (ubuntu-latest)
     needs: classify
-    if: ${{ needs.classify.outputs.package == 'true' }}
-    runs-on: ubuntu-latest
+    if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (needs.classify.outputs.package == 'true') }}
+    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
     timeout-minutes: 30
     steps:
       - name: Check out repository
@@ -68,7 +69,7 @@ jobs:
         run: npm ci --ignore-scripts
       - name: Install MCP test dependencies
         run: npm run mcp:setup
-      - name: Run Ubuntu package and MCP smoke
+      - name: Run Linux package and MCP smoke
         run: |
           npm run mcp:test
           npm run mcp:pack:check
@@ -77,15 +78,15 @@ jobs:
   release-tarball-smoke:
     name: release package smoke (${{ matrix.os }})
     needs: classify
-    if: ${{ inputs.full_matrix == true }}
-    runs-on: ${{ matrix.os }}
+    if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (inputs.full_matrix == true) }}
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - macos-latest
-          - windows-latest
+        include:
+          - { os: macOS, runner: [self-hosted, macOS, ARM64, forgeloop-macos-local] }
+          - { os: Windows, runner: [self-hosted, Windows, X64, forgeloop-windows-remote] }
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

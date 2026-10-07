@@ -82,6 +82,31 @@ class LoopSystemValidationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValidationError, "schemaVersion"):
             validate_repository(self.root)
 
+    def test_accepts_supported_portable_bundle_versions(self) -> None:
+        schema = self.root / "schemas/task-bundle.schema.json"
+        data = json.loads(schema.read_text(encoding="utf-8"))
+        data["properties"]["schemaVersion"] = {"enum": [1, 2]}
+        schema.write_text(json.dumps(data), encoding="utf-8")
+        validate_repository(self.root)
+
+    def test_rejects_unsupported_bundle_version_and_unrelated_enum(self) -> None:
+        for relative, version in (
+            ("task-bundle.schema.json", {"enum": [1, 3]}),
+            ("task-bundle.schema.json", {"const": 2}),
+            ("routing-input.schema.json", {"enum": [1, 2]}),
+        ):
+            with self.subTest(relative=relative, version=version):
+                schema = self.root / "schemas" / relative
+                original = schema.read_text(encoding="utf-8")
+                data = json.loads(original)
+                data["properties"]["schemaVersion"] = version
+                schema.write_text(json.dumps(data), encoding="utf-8")
+                try:
+                    with self.assertRaisesRegex(ValidationError, "schemaVersion"):
+                        validate_repository(self.root)
+                finally:
+                    schema.write_text(original, encoding="utf-8")
+
     def test_rejects_missing_loop_invariant_marker(self) -> None:
         loop = self.root / "LOOP_ENGINEERING.md"
         loop.write_text(

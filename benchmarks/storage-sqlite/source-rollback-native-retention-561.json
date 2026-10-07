@@ -1,0 +1,36 @@
+{
+  "checkpoint": 561,
+  "scope": "Mac owner-bound rollback preparation with verified native snapshot retention and binary attachments; no source switch",
+  "sourceHashes": {
+    "src/storage/migration-rollback-preparation.js": "b9457447ad95abdd5015997230fdd855807f0cec9b4d45d05513d8518a5cd0d7",
+    "tests/storage-migration-rollback-preparation.test.js": "6d11a99163709313474df23b32fb863fff4edb793b1fee6bd247a8b0dc3c0a65"
+  },
+  "preparationTests": {
+    "passed": 5,
+    "failed": 0,
+    "rawLog": "\u2714 rollback native retention validates ready without switching active authority (2231.152125ms)\n\u2714 rollback native retention validates backup-tamper without switching active authority (2261.5885ms)\n\u2714 rollback native retention validates owner-tamper without switching active authority (2221.639542ms)\n\u2714 rollback native retention validates new-native-task without switching active authority (1569.496ms)\n\u2714 rollback native retention validates attachments without switching active authority (2427.041959ms)\n\u2139 tests 5\n\u2139 suites 0\n\u2139 pass 5\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 10922.287375\n"
+  },
+  "combinedAdmissionRegression": {
+    "passed": 11,
+    "failed": 0,
+    "rawLog": "\u2714 source rollback admission unchanged preserves existing authority (2115.662292ms)\n\u2714 source rollback admission new-task preserves existing authority (1963.203708ms)\n\u2714 source rollback admission orphan-bytes preserves existing authority (1911.922125ms)\n\u2714 source rollback admission altered-source preserves existing authority (1735.932917ms)\n\u2714 source rollback admission retained-reader preserves existing authority (1751.646334ms)\n\u2714 source rollback admission refuses an independent busy writer without changing authority (7294.047ms)\n\u2714 rollback native retention validates ready without switching active authority (2786.869459ms)\n\u2714 rollback native retention validates backup-tamper without switching active authority (2820.360458ms)\n\u2714 rollback native retention validates owner-tamper without switching active authority (2864.557917ms)\n\u2714 rollback native retention validates new-native-task without switching active authority (2035.054083ms)\n\u2714 rollback native retention validates attachments without switching active authority (2535.902667ms)\n\u2139 tests 11\n\u2139 suites 0\n\u2139 pass 11\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 16881.2045\n"
+  },
+  "fastExit": 0,
+  "lintExit": 0,
+  "controls": [
+    "Verified independent native backup before READY",
+    "Exact binary attachment retained",
+    "Source and active state revalidated after backup",
+    "Backup corruption and owner substitution refused",
+    "New native task refused before allocating rollback preparation",
+    "Active native bytes unchanged",
+    "READY outside live owner refused",
+    "Ordinary commands stay excluded"
+  ],
+  "limitations": [
+    "Current Windows/Linux native retention checks pending",
+    "Existing or partial preparation requires reconciliation; resume not implemented",
+    "Historical-write exclusion not proven",
+    "No source restoration or whole-plan completion claim"
+  ]
+}

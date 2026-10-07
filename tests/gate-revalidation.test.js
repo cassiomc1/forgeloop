@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -15,6 +15,11 @@ import { runTaskCreate } from "../src/commands/task-create.js";
 import { eventHash, readEvents, validateEventLedger } from "../src/core/events.js";
 import { getNextAction, NEXT_ACTIONS } from "../src/core/next-action.js";
 import { getPackageRoot } from "../src/core/templates.js";
+import { readGateIfPresent, validateGateArtifacts } from "../src/core/gate-artifact.js";
+import { readTaskDescriptor, writeTaskDescriptor } from "../src/core/task-descriptor.js";
+import { taskArtifactPath } from "../src/core/task-paths.js";
+import { sha256 } from "../src/core/manifest.js";
+import { readFixtureText } from "./helpers/native-storage-fixture.js";
 
 const packageRoot = getPackageRoot();
 const ROUTE = Object.freeze({
@@ -36,7 +41,7 @@ async function withTarget(run) {
   }
 }
 
-async function setupExecutingTask(target, taskId, claims = ["THREAT_MODEL.md"]) {
+async function setupExecutingTask(target, taskId, claims = ["THREAT_MODEL.md"], artifacts = ["THREAT_MODEL.md"]) {
   await runTaskCreate({ target, packageRoot, taskId, preset: "feature", claims });
   await runDiscover({ target, packageRoot, taskId });
   await runContractCreate({ target, packageRoot, taskId, preset: "feature" });
@@ -47,13 +52,34 @@ async function setupExecutingTask(target, taskId, claims = ["THREAT_MODEL.md"]) 
     taskId,
     gate: "threat-boundary",
     status: "satisfied",
-    artifacts: ["THREAT_MODEL.md"],
+    artifacts,
     decisions: ["Reviewed the current threat boundary"],
   });
   assert.equal((await runPreflight({ target, packageRoot, taskId })).status, "READY");
   await runAdvance({ target, packageRoot, taskId, to: "PLANNED" });
   await runAdvance({ target, packageRoot, taskId, to: "EXECUTING" });
 }
+
+test("record and revalidate bind canonical gate evidence without operational filesystem mirrors", async () => {
+  await withTarget(async target => {
+    const taskId = "canonical-gate-lifecycle";
+    const descriptorPath = taskArtifactPath(taskId, "descriptor");
+    await setupExecutingTask(target, taskId, ["THREAT_MODEL.md"], [descriptorPath]);
+    const gate = await readGateIfPresent(target, "threat-boundary", packageRoot, { taskId });
+    assert.equal(gate.value.artifacts[0].sha256, sha256(await readFixtureText(target, descriptorPath)));
+    assert.deepEqual(await validateGateArtifacts(target, gate.value, packageRoot), []);
+    const { value: descriptor } = await readTaskDescriptor(target, taskId, packageRoot);
+    await writeTaskDescriptor(target, { ...descriptor, updatedAt: new Date(Date.parse(descriptor.updatedAt) + 1000).toISOString() }, packageRoot);
+    assert.deepEqual(await validateGateArtifacts(target, gate.value, packageRoot), [{ path: descriptorPath, status: "changed" }]);
+    const result = await runGateRevalidate({ target, packageRoot, taskId, gate: "threat-boundary", acknowledgeStale: true });
+    assert.deepEqual(result.stalePaths, [descriptorPath]);
+    const refreshed = await readGateIfPresent(target, "threat-boundary", packageRoot, { taskId });
+    assert.equal(refreshed.value.artifacts[0].sha256, sha256(await readFixtureText(target, descriptorPath)));
+    assert.deepEqual(await validateGateArtifacts(target, refreshed.value, packageRoot), []);
+    assert.equal((await validateEventLedger(target, packageRoot, { taskId })).valid, true);
+    await assert.rejects(readFile(path.join(target, descriptorPath)), { code: "ENOENT" });
+  });
+});
 
 test("stale gate dead-end exposes and executes canonical post-execution revalidation", async () => {
   await withTarget(async (target) => {

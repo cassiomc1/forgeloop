@@ -1,8 +1,8 @@
-import { diagnosisEventsForTask } from "./diagnosis-model.js";
+import { isLedgerEventCollection, ledgerEventsOfTypes } from "./ledger-event-collection.js";
+import { latestDiagnosisForTask } from "./diagnosis-model.js";
 import { resolveCurrentCycleDiagnostic } from "./diagnostic-projection.js";
 import {
-  buildInformationGainProjection,
-  evaluateStructuredDiagnosticStall,
+  summarizeInformationGain,
 } from "./information-gain-projection.js";
 
 export const PROGRESS_STATUS = Object.freeze({
@@ -27,6 +27,17 @@ export function diagnosisRequirements(diagnosis, checksById) {
   )].sort();
 }
 
+function progressTaskEvents(events, taskId) {
+  if (Array.isArray(events)) return events.filter(event => !taskId || event.taskId === taskId);
+  return isLedgerEventCollection(events) ? events : [];
+}
+
+function* progressVerificationEvents(events, taskId) {
+  for (const event of ledgerEventsOfTypes(events, ["VERIFICATION_RECORDED"])) {
+    if (!taskId || event.taskId === taskId) yield event;
+  }
+}
+
 export function evaluateProgress({ state, events = [] } = {}) {
   const signals = [];
   let status = PROGRESS_STATUS.ADVANCING;
@@ -35,10 +46,10 @@ export function evaluateProgress({ state, events = [] } = {}) {
     return { status, signals };
   }
 
-  const taskEvents = Array.isArray(events) ? events.filter((e) => !state.taskId || e.taskId === state.taskId) : [];
-  const diagEvents = diagnosisEventsForTask(taskEvents, state.taskId);
+  const taskEvents = progressTaskEvents(events, state.taskId);
+  const latestLegacy = latestDiagnosisForTask(taskEvents, state.taskId);
   const resolvedDiagnostic = resolveCurrentCycleDiagnostic(taskEvents, state.taskId, state.verificationCycle ?? null);
-  const latestDiag = resolvedDiagnostic?.details ?? diagEvents.at(-1)?.details ?? null;
+  const latestDiag = resolvedDiagnostic?.details ?? latestLegacy?.details ?? null;
 
   let latestGainClassification = latestDiag?.informationGain ?? null;
   let structuredStall = null;
@@ -49,8 +60,8 @@ export function evaluateProgress({ state, events = [] } = {}) {
       )];
     }
     // Canonical structured-stall truth; compatibility classification is presentation only.
-    structuredStall = evaluateStructuredDiagnosticStall(
-      buildInformationGainProjection(taskEvents, state.taskId),
+    structuredStall = summarizeInformationGain(
+      taskEvents, state.taskId,
       { verificationCycle: state.verificationCycle ?? null },
     );
     latestDiag.effectiveInformationGain = !(structuredStall.stalled);
@@ -63,7 +74,7 @@ export function evaluateProgress({ state, events = [] } = {}) {
     if (check.id) checksById.set(check.id, check);
     if (check.checkId) checksById.set(check.checkId, check);
   }
-  for (const event of taskEvents) {
+  for (const event of progressVerificationEvents(taskEvents, state.taskId)) {
     if (event.event === "VERIFICATION_RECORDED" && event.details) {
       if (event.details.id) checksById.set(event.details.id, event.details);
       if (event.details.checkId) checksById.set(event.details.checkId, event.details);
@@ -108,7 +119,7 @@ export function evaluateProgress({ state, events = [] } = {}) {
   }
 
   // Also extract from VERIFICATION_RECORDED events
-  for (const event of taskEvents) {
+  for (const event of progressVerificationEvents(taskEvents, state.taskId)) {
     if (event.event === "VERIFICATION_RECORDED") {
       const details = event.details ?? {};
       if (details.status === "failed" || details.status === "blocked") {

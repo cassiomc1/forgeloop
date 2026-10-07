@@ -1,0 +1,28 @@
+{
+  "checkpoint": 553,
+  "scope": "Mac internal read-only rollback content admission under owned maintenance",
+  "sourceHashes": {
+    "src/storage/migration-rollback-admission.js": "d934d5254a2180c29d0cff5ab24e03ec03c2c954045236e4679b9ca9e3645aaf",
+    "tests/storage-migration-rollback-admission.test.js": "6a1b9e50c764225c2be974e9397a6ff62f917f8e82d4047b3dc02c9243dbb605"
+  },
+  "tests": 5,
+  "passed": 5,
+  "rawLog": "\u2714 validated archival activates an independent SQLite copy and releases public dispatch (5094.755875ms)\n\u2714 source rollback admission unchanged preserves existing authority (4018.555ms)\n\u2714 source rollback admission new-task preserves existing authority (2734.5295ms)\n\u2714 source rollback admission orphan-bytes preserves existing authority (2444.510583ms)\n\u2714 source rollback admission altered-source preserves existing authority (1583.494625ms)\n\u2139 tests 5\n\u2139 suites 0\n\u2139 pass 5\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 10971.778167\n",
+  "fastVerificationExit": 0,
+  "lintExit": 0,
+  "controls": [
+    "Explicit writer exclusion required",
+    "Live owner required",
+    "New native task refused",
+    "Extra immutable orphan bytes refused and retained",
+    "Altered captured source refused",
+    "Active database bytes unchanged"
+  ],
+  "limitations": [
+    "Internal content-admission helper only; not public rollback command",
+    "No absence-of-historical-write proof",
+    "No restoration token or destructive switch",
+    "Windows/Linux current helper tests pending",
+    "Full original-plan acceptance incomplete"
+  ]
+}

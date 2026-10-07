@@ -1,3 +1,4 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { mkdtemp } from "node:fs/promises";
@@ -14,6 +15,7 @@ const packageRoot = getPackageRoot();
 
 async function seedDiagnosingTask({ target, cycle = 1 }) {
   const taskId = "task-structured-diag";
+  await ensureFixtureTask(target, taskId, packageRoot);
   await appendProtocolEvent(target, { taskId, event: "TASK_RECEIVED" }, packageRoot, { taskId });
   await appendProtocolEvent(target, { taskId, event: "CONTRACT_VALIDATED" }, packageRoot, { taskId });
   await appendProtocolEvent(target, { taskId, event: "ROUTE_VALIDATED" }, packageRoot, { taskId });

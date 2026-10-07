@@ -1,5 +1,6 @@
+import { withProjectReadSnapshot } from "../storage/project-read-snapshot.js";
+import { needsExistingProjectScope, withExistingProjectScope } from "../storage/existing-project-scope.js";
 import { createHash } from "node:crypto";
-import { unlink } from "node:fs/promises";
 import path from "node:path";
 
 import {
@@ -7,7 +8,6 @@ import {
   ensureWithin,
   fileExists,
   readBytes,
-  writeFileAtomic,
 } from "./filesystem.js";
 import { GUIDE_IDS, PROTOCOL_VERSION, assertFailureClass, assertWorkPhase, isValidTransition } from "./protocol.js";
 import { assertSchema, readSchema } from "./schema-validation.js";
@@ -20,6 +20,7 @@ import { assertCoverageList } from "./coverage.js";
 import { canonicalFingerprint } from "./artifacts.js";
 import { taskArtifactPath } from "./task-paths.js";
 import { getTaskTransaction, withTaskTransaction } from "./transaction.js";
+import { readOperationalText, getOperationalStore } from "../storage/operational-context.js";
 
 export const WORK_STATE_PATH = ".forgeloop/work-state.json";
 
@@ -236,11 +237,20 @@ async function validateStoredState(state, packageRoot = getPackageRoot()) {
 }
 
 export async function readWorkState(target, options = {}) {
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => readWorkState(target, options), { readOnly: true });
+  }
   const packageRoot = typeof options === "string" ? options : (options?.packageRoot ?? getPackageRoot());
   const relPath = typeof options === "object" && options !== null
     ? (options.statePath ?? options.relativePath ?? (options.taskId ? taskArtifactPath(options.taskId, "state") : (options.taskContext ? options.taskContext.paths.state : WORK_STATE_PATH)))
     : WORK_STATE_PATH;
 
+  const operational = readOperationalText(target, relPath);
+  if (operational.selected) {
+    if (operational.text === null) return null;
+    assertJsonBytes(operational.text, relPath);
+    return validateStoredState(JSON.parse(operational.text), packageRoot);
+  }
   await assertSafePath(target, relPath);
   const statePath = ensureWithin(target, relPath);
   let state;
@@ -269,6 +279,15 @@ export async function readWorkState(target, options = {}) {
 }
 
 export async function readContractFingerprint(target, contractFile) {
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => readContractFingerprint(target, contractFile), { readOnly: true });
+  }
+  const operational = readOperationalText(target, contractFile);
+  if (operational.selected) {
+    if (operational.text === null) throw new WorkStateError(`Unable to parse contract ${contractFile}: artifact missing`);
+    assertJsonBytes(operational.text, contractFile);
+    return { path: contractFile, fingerprint: contractFingerprint(JSON.parse(operational.text)) };
+  }
   await assertSafePath(target, contractFile);
   const contractPath = ensureWithin(target, contractFile);
   let contract;
@@ -285,18 +304,18 @@ export async function readContractFingerprint(target, contractFile) {
 export async function writeWorkState(target, state, options = {}) {
   const packageRoot = options?.packageRoot ?? getPackageRoot();
   const dryRun = options?.dryRun ?? false;
-  const relPath = options?.statePath ?? options?.relativePath ?? (options?.taskId ? taskArtifactPath(options.taskId, "state") : WORK_STATE_PATH);
-
   await validateStoredState(state, packageRoot);
-  await assertSafePath(target, relPath);
-  const serialized = `${JSON.stringify(state, null, 2)}\n`;
-  const transaction = (await getTaskTransaction(target));
-  if (!dryRun && transaction) {
-    await transaction.stageText(relPath, serialized);
-  } else {
-    const statePath = ensureWithin(target, relPath);
-    await writeFileAtomic(statePath, serialized, { dryRun });
+  const canonicalPath = taskArtifactPath(state.taskId, "state");
+  const relativePath = options?.statePath ?? options?.relativePath ?? canonicalPath;
+  if ((options?.taskId && options.taskId !== state.taskId) || relativePath !== canonicalPath) {
+    throw Object.assign(new Error("Work-state writes require their canonical task-scoped SQLite identity; use explicit export for portable files"), { code: "E_STORAGE_OPERATION_UNSUPPORTED", artifacts: [relativePath] });
   }
+  if (dryRun) return state;
+  if (!getOperationalStore(target)) {
+    const { withProjectStorage } = await import("../storage/project-boundary.js");
+    return withProjectStorage(target, () => writeWorkState(target, state, options));
+  }
+  await withTaskTransaction({ target, taskId: state.taskId, operation: "write-state", packageRoot }, tx => tx.stageText(canonicalPath, `${JSON.stringify(state, null, 2)}\n`));
   return state;
 }
 
@@ -355,18 +374,30 @@ export async function initializeWorkState(target, state, { packageRoot = getPack
 }
 
 export async function clearWorkState(target, options = {}) {
-  const relPath = options?.statePath ?? options?.relativePath ?? (options?.taskId ? taskArtifactPath(options.taskId, "state") : WORK_STATE_PATH);
-  await assertSafePath(target, relPath);
-  const statePath = ensureWithin(target, relPath);
-  if (!(await fileExists(statePath))) return { removed: false, path: relPath };
-  await unlink(statePath);
-  return { removed: true, path: relPath };
+  if (!options.taskId) throw Object.assign(new Error("Canonical artifact clearing requires a task identity"), { code: "E_STORAGE_OPERATION_UNSUPPORTED" });
+  const relPath = taskArtifactPath(options.taskId, "state");
+  const requested = options.statePath ?? options.relativePath ?? relPath;
+  if (requested !== relPath) throw Object.assign(new Error("Artifact clearing requires the canonical task path; portable exports are independent files"), { code: "E_STORAGE_OPERATION_UNSUPPORTED", artifacts: [requested] });
+  if (!getOperationalStore(target)) {
+    return withExistingProjectScope(target, () => clearWorkState(target, options));
+  }
+  const operational = readOperationalText(target, relPath);
+  if (operational.text === null) return { removed: false, path: relPath };
+  return withTaskTransaction({ target, taskId: options.taskId, operation: "clear-work-state", packageRoot: options.packageRoot }, async transaction => {
+    transaction.stageDelete(relPath);
+    return { removed: true, path: relPath };
+  });
 }
 
 export async function readRequiredArtifactFingerprints(target, artifacts) {
   const normalized = normalizeRequiredArtifacts(artifacts);
   const current = [];
   for (const artifact of normalized) {
+    const operational = readOperationalText(target, artifact.path);
+    if (operational.selected) {
+      current.push({ path: artifact.path, sha256: operational.text === null ? null : createHash("sha256").update(operational.text).digest("hex"), status: operational.text === null ? "missing" : "present" });
+      continue;
+    }
     await assertSafePath(target, artifact.path);
     const artifactPath = ensureWithin(target, artifact.path);
     if (!(await fileExists(artifactPath))) {
@@ -485,6 +516,7 @@ export async function classifyLoadedWorkState({ target, state, contractFile = nu
     try {
       contract = await readContractFingerprint(target, contractFile);
     } catch (error) {
+      if (error?.code === "E_STATE_REVISION_CONFLICT") throw error;
       contractError = error.message;
     }
   }
@@ -495,6 +527,7 @@ export async function classifyLoadedWorkState({ target, state, contractFile = nu
     try {
       currentArtifacts = await readRequiredArtifactFingerprints(target, state.requiredArtifacts);
     } catch (error) {
+      if (error?.code === "E_STATE_REVISION_CONFLICT") throw error;
       artifactError = error.message;
     }
   } else {
@@ -547,7 +580,11 @@ export async function classifyLoadedWorkState({ target, state, contractFile = nu
   };
 }
 
-export async function readAndClassifyWorkState({ target, packageRoot = getPackageRoot(), contractFile = null, maxAgeMs, taskId = null, stateFile = null, statePath = null } = {}) {
+export async function readAndClassifyWorkState(options = {}) {
+  return withProjectReadSnapshot(options.target, () => readAndClassifySelectedWorkState(options));
+}
+
+async function readAndClassifySelectedWorkState({ target, packageRoot = getPackageRoot(), contractFile = null, maxAgeMs, taskId = null, stateFile = null, statePath = null } = {}) {
   const effectiveStateRel = stateFile ?? statePath ?? (taskId ? taskArtifactPath(taskId, "state") : WORK_STATE_PATH);
   let state = null;
   try {
@@ -557,6 +594,7 @@ export async function readAndClassifyWorkState({ target, packageRoot = getPackag
       ...(stateFile || statePath ? { statePath: effectiveStateRel } : {}),
     });
   } catch (error) {
+    if (error?.code === "E_STATE_REVISION_CONFLICT") throw error;
     return {
       path: effectiveStateRel,
       present: true,

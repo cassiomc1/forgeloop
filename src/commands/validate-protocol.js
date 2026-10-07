@@ -8,17 +8,20 @@ import { validateReceipt } from "../core/receipt.js";
 import { validateTaskBrief, validateDelegatedResult } from "../core/delegation.js";
 import { ARTIFACT_PATHS, readJsonArtifact } from "../core/artifacts.js";
 import { evaluatePreflight, validateReadyProtocolConsistency } from "../core/preflight.js";
-import { validateEventLedger, validateStateLedgerCoherence } from "../core/events.js";
+import { withEventLedgerAudit, validateStateLedgerCoherence } from "../core/events.js";
 import { validateChecksExecutionProvenance } from "../core/completion-artifacts.js";
 import { assertContinuitySemantics } from "../core/continuity.js";
 import { currentChangedPaths, currentRepositoryFingerprint } from "../core/repository.js";
 import { resolveTaskClaimState } from "../core/task-claim-state.js";
+import { getOperationalStore, readOperationalText } from "../storage/operational-context.js";
+import { withProjectReadSnapshot } from "../storage/project-read-snapshot.js";
 
 async function readArtifact(target, relativePath, label) {
   if (!relativePath) return null;
   await assertSafePath(target, relativePath);
   const artifactPath = ensureWithin(target, relativePath);
-  if (!(await fileExists(artifactPath))) {
+  const operational = readOperationalText(target, relativePath);
+  if (operational.selected ? operational.text === null : !(await fileExists(artifactPath))) {
     return {
       error: {
         code: "ARTIFACT_MISSING",
@@ -27,7 +30,7 @@ async function readArtifact(target, relativePath, label) {
       },
     };
   }
-  const bytes = await readBytes(artifactPath);
+  const bytes = operational.selected ? Buffer.from(operational.text, "utf8") : await readBytes(artifactPath);
   try {
     assertJsonBytes(bytes, label);
     const value = JSON.parse(bytes.toString("utf8"));
@@ -51,7 +54,11 @@ function isOptionalContinuityAbsence(item) {
 import { taskArtifactPath } from "../core/task-paths.js";
 import { withResolvedTask } from "../core/task-command.js";
 
-export async function runValidateProtocol({
+export async function runValidateProtocol(options) {
+  return withProjectReadSnapshot(options.target, () => validateSelectedProtocol(options));
+}
+
+async function validateSelectedProtocol({
   target,
   packageRoot,
   routeFile = null,
@@ -63,9 +70,17 @@ export async function runValidateProtocol({
   delegatedResultFiles = [],
   taskId = null,
   task = null,
-}) {
+}, ownedLedger = null) {
   return withResolvedTask(target, { taskId: taskId ?? task, packageRoot }, async (ctx) => {
     const effectiveTaskId = ctx?.taskId ?? null;
+    if (effectiveTaskId && getOperationalStore(target) && !ownedLedger) {
+      // Keep the complete final proof local to this immutable projection.
+      // Nested preflight audits retain their own rules and share its source.
+      return withEventLedgerAudit(target, packageRoot, { taskId: effectiveTaskId }, ledger => validateSelectedProtocol({
+        target, packageRoot, routeFile, stateFile, receiptFile, contractFile, continuityFile,
+        taskBriefFiles, delegatedResultFiles, taskId: effectiveTaskId,
+      }, ledger));
+    }
     const effectiveRouteFile = routeFile ?? (effectiveTaskId ? taskArtifactPath(effectiveTaskId, "route") : ARTIFACT_PATHS.route);
     const effectiveStateFile = stateFile ?? (effectiveTaskId ? taskArtifactPath(effectiveTaskId, "state") : ARTIFACT_PATHS.state);
     const effectiveReceiptFile = receiptFile ?? (effectiveTaskId ? taskArtifactPath(effectiveTaskId, "receipt") : ARTIFACT_PATHS.receipt);
@@ -169,19 +184,15 @@ export async function runValidateProtocol({
   } catch {
     // A missing or invalid preflight is already outside the optional protocol set.
   }
-  let ledgerEvents = [];
-  let ledgerErrors = [];
-  if (state && !stateValidationError) {
-    const ledger = await validateEventLedger(target, packageRoot, { taskId: effectiveTaskId, eventsPath: effectiveEventsFile });
-    ledgerEvents = ledger.events ?? [];
-    ledgerErrors = [
+  const finish = async (ledger) => {
+    const ledgerEvents = ledger.events ?? [];
+    const ledgerErrors = state && !stateValidationError ? [
       ...ledger.errors.map((error) => ({ ...error, artifacts: [effectiveEventsFile] })),
-      ...validateStateLedgerCoherence(state, ledger.events).map((error) => ({
+      ...validateStateLedgerCoherence(state, ledgerEvents).map((error) => ({
         ...error,
         artifacts: [effectiveStateFile, effectiveEventsFile],
       })),
-    ];
-  }
+    ] : [];
   const recoveryErrors = [];
   if (effectiveTaskId) {
     try {
@@ -225,6 +236,10 @@ export async function runValidateProtocol({
       };
     }
     return result;
+  };
+  return state && !stateValidationError
+    ? ownedLedger ? finish(ownedLedger) : withEventLedgerAudit(target, packageRoot, { taskId: effectiveTaskId, eventsPath: effectiveEventsFile }, finish)
+    : finish({ events: [], errors: [] });
   });
 }
 

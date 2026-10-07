@@ -2,8 +2,9 @@ import { classifyLoadedWorkState, readWorkState } from "./work-state.js";
 import { taskArtifactPath } from "./task-paths.js";
 import { readLockInfo, classifyLockStaleness } from "./task-lock.js";
 import { validateStateLedgerCoherence } from "./events.js";
+import { ledgerEventAt, ledgerEventsOfTypes } from "./ledger-event-collection.js";
 import { currentRepositoryFingerprint } from "./repository.js";
-import { collectTaskClaimEvidence, classifyTaskClaimState } from "./task-claim-state.js";
+import { withTaskClaimEvidence, classifyTaskClaimState } from "./task-claim-state.js";
 
 export const TASK_CONFLICT_CLASSIFICATIONS = Object.freeze([
   "ACTIVE",
@@ -55,22 +56,25 @@ function checkCount(state, status) {
 }
 
 function lastMeaningfulActivity(state, events) {
-  const candidates = [
-    ...(state?.lastUpdated ? [{ at: state.lastUpdated, type: "WORK_STATE_UPDATED" }] : []),
-    ...events
-      .filter((event) => MEANINGFUL_ACTIVITY_EVENTS.has(event.event))
-      .map((event) => ({ at: event.at, type: event.event })),
-  ].filter((candidate) => Number.isFinite(Date.parse(candidate.at)));
-  return candidates.sort((left, right) => Date.parse(right.at) - Date.parse(left.at))[0] ?? null;
+  let latest = state?.lastUpdated && Number.isFinite(Date.parse(state.lastUpdated))
+    ? { at: state.lastUpdated, type: "WORK_STATE_UPDATED" }
+    : null;
+  for (const event of ledgerEventsOfTypes(events, [...MEANINGFUL_ACTIVITY_EVENTS])) {
+    const timestamp = Date.parse(event.at);
+    if (Number.isFinite(timestamp) && (!latest || timestamp > Date.parse(latest.at))) {
+      latest = { at: event.at, type: event.event };
+    }
+  }
+  return latest;
 }
 
 function isInitialTaskLedger(events, taskId) {
   return events.length >= 2
-    && events[0]?.taskId === taskId
-    && events[0]?.event === "TASK_RECEIVED"
-    && events[1]?.taskId === taskId
-    && events[1]?.event === "TRANSACTION_COMMITTED"
-    && events[1]?.details?.operation === "task-create"
+    && ledgerEventAt(events, 0)?.taskId === taskId
+    && ledgerEventAt(events, 0)?.event === "TASK_RECEIVED"
+    && ledgerEventAt(events, 1)?.taskId === taskId
+    && ledgerEventAt(events, 1)?.event === "TRANSACTION_COMMITTED"
+    && ledgerEventAt(events, 1)?.details?.operation === "task-create"
     && !events.slice(2).some((event) => [
       "CONTRACT_VALIDATED", "ROUTE_VALIDATED", "PREFLIGHT_READY", "EXECUTION_STARTED",
       "VERIFICATION_STARTED", "VERIFICATION_RECORDED", "REVIEW_STARTED", "COMPLETION_VALIDATED",
@@ -129,7 +133,7 @@ export function classifyConflictEvidence(evidence, {
     };
   }
   const KNOWN_PHASES = new Set([
-    "RECEIVED", "DISCOVERING", "CONTRACT_READY", "ROUTED", "DESIGNING", "PLANNED",
+    "RECEIVED", "DISCOVERING", "CONTRACT_READY", "ROUTED", "DESIGNING", "PLANNED", "BLOCKED",
     ...POST_EXECUTION_PHASES,
   ]);
   const effectivePhase = phase ?? earlyPhase;
@@ -247,101 +251,102 @@ export async function inspectTaskConflictState(target, {
   now = Date.now(),
   ignoredLockId = null,
 } = {}) {
-  const [lockInfo, stateResult, ownershipEvidence] = await Promise.all([
-    readLockInfo(target, taskId),
-    readWorkState(target, { packageRoot, taskId })
-      .then((value) => ({ value, error: null }))
-      .catch((error) => ({ value: null, error })),
-    collectTaskClaimEvidence(target, { packageRoot, taskId }),
-  ]);
-  const claimProjection = classifyTaskClaimState(ownershipEvidence);
-  const state = stateResult.value;
-  const recovery = claimProjection.recovery;
+  return withTaskClaimEvidence(target, { packageRoot, taskId }, async ownershipEvidence => {
+    const [lockInfo, stateResult] = await Promise.all([
+      readLockInfo(target, taskId),
+      readWorkState(target, { packageRoot, taskId })
+        .then((value) => ({ value, error: null }))
+        .catch((error) => ({ value: null, error })),
+    ]);
+    const claimProjection = classifyTaskClaimState(ownershipEvidence);
+    const state = stateResult.value;
+    const recovery = claimProjection.recovery;
 
-  const lockClassification = ignoredLockId && lockInfo?.lockId === ignoredLockId
-    ? { status: "NONE", stale: false }
-    : classifyLockStaleness(lockInfo, now);
+    const lockClassification = ignoredLockId && lockInfo?.lockId === ignoredLockId
+      ? { status: "NONE", stale: false }
+      : classifyLockStaleness(lockInfo, now);
 
-  let freshness = null;
-  if (state) {
-    try {
-      freshness = await classifyLoadedWorkState({
-        target,
-        state,
-        contractFile: taskArtifactPath(taskId, "contract"),
-      });
-    } catch {
-      freshness = { status: "UNKNOWN", reasons: ["E_STATE_UNREADABLE"] };
+    let freshness = null;
+    if (state) {
+      try {
+        freshness = await classifyLoadedWorkState({
+          target,
+          state,
+          contractFile: taskArtifactPath(taskId, "contract"),
+        });
+      } catch {
+        freshness = { status: "UNKNOWN", reasons: ["E_STATE_UNREADABLE"] };
+      }
     }
-  }
 
-  // Reuse the ownership snapshot's already-validated ledger; no second full
-  // ledger parse inside this immutable inspection.
-  const coherenceErrors = ownershipEvidence.state && ownershipEvidence.ledger
-    ? validateStateLedgerCoherence(ownershipEvidence.state, ownershipEvidence.ledger.events)
-    : [];
-  const ledgerValid = ownershipEvidence.ledger.valid && coherenceErrors.length === 0;
-  const ledgerEvents = ownershipEvidence.ledger.events;
-  const ledgerErrors = [...ownershipEvidence.ledger.errors, ...coherenceErrors];
+    // Reuse the ownership snapshot's already-validated ledger; no second full
+    // ledger parse inside this immutable inspection.
+    const coherenceErrors = ownershipEvidence.state && ownershipEvidence.ledger
+      ? validateStateLedgerCoherence(ownershipEvidence.state, ownershipEvidence.ledger.events)
+      : [];
+    const ledgerValid = ownershipEvidence.ledger.valid && coherenceErrors.length === 0;
+    const ledgerEvents = ownershipEvidence.ledger.events;
+    const ledgerErrors = [...ownershipEvidence.ledger.errors, ...coherenceErrors];
 
-  const repository = await currentRepositoryFingerprint(target);
-  const initialTask = !state && ledgerValid && ownershipEvidence.descriptor
-    && isInitialTaskLedger(ledgerEvents, taskId)
-    && !ownershipEvidence.recovery;
-  const meaningfulActivity = lastMeaningfulActivity(state, ledgerEvents);
-  const recoveryConsistencyErrors = claimProjection.ownershipErrors ?? claimProjection.errors ?? [];
-  const healthReasonCodes = [
-    ...(stateResult.error ? ["E_STATE_UNREADABLE"] : []),
-    ...(claimProjection.ownershipValid === false
-      ? claimProjection.reasonCodes
-      : []),
-  ];
+    const repository = await currentRepositoryFingerprint(target);
+    const initialTask = !state && ledgerValid && ownershipEvidence.descriptor
+      && isInitialTaskLedger(ledgerEvents, taskId)
+      && !ownershipEvidence.recovery;
+    const meaningfulActivity = lastMeaningfulActivity(state, ledgerEvents);
+    const recoveryConsistencyErrors = claimProjection.ownershipErrors ?? claimProjection.errors ?? [];
+    const healthReasonCodes = [
+      ...(stateResult.error ? ["E_STATE_UNREADABLE"] : []),
+      ...(claimProjection.ownershipValid === false
+        ? claimProjection.reasonCodes
+        : []),
+    ];
 
-  const evidence = {
-    healthy: healthReasonCodes.length === 0,
-    healthReasonCodes,
-    descriptorHealthy: true,
-    phase: state?.phase ?? (initialTask ? deriveEarlyPhase(ledgerEvents, taskId) : null),
-    lastUpdated: state?.lastUpdated ?? null,
-    lastMeaningfulActivityAt: meaningfulActivity?.at ?? null,
-    lastMeaningfulEventType: meaningfulActivity?.type ?? null,
-    workStateRevision: state?.revision ?? 0,
-    lockStatus: lockClassification.status,
-    lockId: lockInfo?.lockId ?? null,
-    lockExpiresAt: lockClassification.expiresAt ?? null,
-    freshnessStatus: freshness?.status ?? (initialTask ? "FRESH" : "UNKNOWN"),
-    freshnessReasons: freshness?.reasons ?? [],
-    ledgerValid,
-    ledgerLastSeq: ledgerEvents.at(-1)?.seq ?? 0,
-    ledgerErrors,
-    recordedChecks: passedCheckCount(state),
-    passedCheckCount: passedCheckCount(state),
-    failedCheckCount: checkCount(state, "failed"),
-    blockedCheckCount: checkCount(state, "blocked"),
-    totalChecks: state?.checks?.length ?? 0,
-    verificationEvidenceCount: state?.verificationEvidence?.length ?? 0,
-    recoveryStatus: claimProjection.claimState === "RELEASED_BY_RECOVERY"
-      ? "RECOVERED"
-      : recovery?.status ?? null,
-    recoveryConsistencyErrors,
-    claimState: claimProjection.claimState,
-    historicalWriteClaims: claimProjection.historicalWriteClaims,
-    effectiveWriteClaims: claimProjection.effectiveWriteClaims,
-    mutationAllowed: claimProjection.mutationAllowed,
-    ownershipValid: claimProjection.ownershipValid,
-    ownershipErrors: recoveryConsistencyErrors,
-    repositoryBranch: repository.branch,
-    repositoryHead: repository.head,
-  };
+    const evidence = {
+      healthy: healthReasonCodes.length === 0,
+      healthReasonCodes,
+      descriptorHealthy: true,
+      phase: state?.phase ?? (initialTask ? deriveEarlyPhase(ledgerEvents, taskId) : null),
+      lastUpdated: state?.lastUpdated ?? null,
+      lastMeaningfulActivityAt: meaningfulActivity?.at ?? null,
+      lastMeaningfulEventType: meaningfulActivity?.type ?? null,
+      workStateRevision: state?.revision ?? 0,
+      lockStatus: lockClassification.status,
+      lockId: lockInfo?.lockId ?? null,
+      lockExpiresAt: lockClassification.expiresAt ?? null,
+      freshnessStatus: freshness?.status ?? (initialTask ? "FRESH" : "UNKNOWN"),
+      freshnessReasons: freshness?.reasons ?? [],
+      ledgerValid,
+      ledgerLastSeq: ledgerEvents.at(-1)?.seq ?? 0,
+      ledgerErrors,
+      recordedChecks: passedCheckCount(state),
+      passedCheckCount: passedCheckCount(state),
+      failedCheckCount: checkCount(state, "failed"),
+      blockedCheckCount: checkCount(state, "blocked"),
+      totalChecks: state?.checks?.length ?? 0,
+      verificationEvidenceCount: state?.verificationEvidence?.length ?? 0,
+      recoveryStatus: claimProjection.claimState === "RELEASED_BY_RECOVERY"
+        ? "RECOVERED"
+        : recovery?.status ?? null,
+      recoveryConsistencyErrors,
+      claimState: claimProjection.claimState,
+      historicalWriteClaims: claimProjection.historicalWriteClaims,
+      effectiveWriteClaims: claimProjection.effectiveWriteClaims,
+      mutationAllowed: claimProjection.mutationAllowed,
+      ownershipValid: claimProjection.ownershipValid,
+      ownershipErrors: recoveryConsistencyErrors,
+      repositoryBranch: repository.branch,
+      repositoryHead: repository.head,
+    };
 
-  const verdict = classifyConflictEvidence(evidence, { now });
+    const verdict = classifyConflictEvidence(evidence, { now });
 
-  return {
-    taskId,
-    classification: verdict.classification,
-    reasonCodes: verdict.reasonCodes,
-    recoverable: verdict.recoverable ?? false,
-    ...(verdict.recoveredBy ? { recoveredBy: verdict.recoveredBy } : {}),
-    evidence,
-  };
+    return {
+      taskId,
+      classification: verdict.classification,
+      reasonCodes: verdict.reasonCodes,
+      recoverable: verdict.recoverable ?? false,
+      ...(verdict.recoveredBy ? { recoveredBy: verdict.recoveredBy } : {}),
+      evidence,
+    };
+  });
 }

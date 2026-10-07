@@ -1,6 +1,10 @@
+import { ledgerRelationMap, ledgerRelationSet } from "./ledger-relations.js";
+import { ledgerEventAt, ledgerEventsOfTypes } from "./ledger-event-collection.js";
+import { needsExistingProjectScope, withExistingProjectScope, isOperationalArtifactPath } from "../storage/existing-project-scope.js";
 
-import { appendFile, mkdir, open, readFile, stat } from "node:fs/promises";
-import path from "node:path";
+import { open, readFile, stat } from "node:fs/promises";
+import { closeSync, lstatSync, openSync, readSync } from "node:fs";
+import { createHash } from "node:crypto";
 
 import { assertSafePath, ensureWithin, fileExists } from "./filesystem.js";
 import { ARTIFACT_PATHS, canonicalFingerprint } from "./artifacts.js";
@@ -21,6 +25,7 @@ import {
 
 import { taskArtifactPath } from "./task-paths.js";
 import { getTaskTransaction, withTaskTransaction } from "./transaction.js";
+import { getOperationalStore } from "../storage/operational-context.js";
 
 import { assertDiagnosisDetails } from "./diagnosis-model.js";
 import {
@@ -131,25 +136,9 @@ function validateExecutionGateChronology(events, index, seen, errors) {
   const latestContractRevisionSeq = events.slice(0, index).findLast((candidate) => candidate.event === CONTRACT_REVISED_EVENT)?.seq ?? 0;
   const beforeExecution = events.slice(0, index);
   for (const gate of requiredGates) {
-    if (!hasCurrentGateEvidence(beforeExecution, events[index]?.taskId, gate, latestContractRevisionSeq)) {
+    if (!hasCurrentGateEvidence(beforeExecution, ledgerEventAt(events, index)?.taskId, gate, latestContractRevisionSeq)) {
       errors.push({ code: "E_PHASE_CHRONOLOGY_INVALID", message: `execution started before gate satisfaction: ${gate}` });
     }
-  }
-}
-
-function eventIndexPath(eventsPath) {
-  return `${eventsPath}.index.json`;
-}
-
-function parseEventIndex(text, relativePath) {
-  if (typeof text !== "string") return null;
-  try {
-    const value = JSON.parse(text);
-    if (!value || value.schemaVersion !== 1 || !Number.isInteger(value.seq) || value.seq < 0
-      || (value.lastHash !== null && !/^[a-f0-9]{64}$/.test(value.lastHash))) return null;
-    return value;
-  } catch {
-    return null;
   }
 }
 
@@ -166,17 +155,7 @@ async function readEventCheckpoint(target, packageRoot, relPath, options, transa
   if (!transaction.eventCheckpoints) transaction.eventCheckpoints = new Map();
   const cached = transaction.eventCheckpoints.get(relPath);
   if (cached) return cached;
-
-  const indexPath = eventIndexPath(relPath);
-  const indexed = parseEventIndex(await transaction.readText(indexPath), indexPath);
-  const tail = await readEventTail(target, packageRoot, { ...options, eventsPath: relPath, limit: 1 });
-  const last = tail.at(-1) ?? null;
-  let checkpoint;
-  if (indexed && indexed.seq === (last?.seq ?? 0) && indexed.lastHash === (last?.hash ?? null)) {
-    checkpoint = indexed;
-  } else {
-    checkpoint = checkpointFromEvents(await readEvents(target, packageRoot, { ...options, eventsPath: relPath }));
-  }
+  const checkpoint = checkpointFromEvents(await readEventTail(target, packageRoot, { ...options, eventsPath: relPath, limit: 1 }));
   transaction.eventCheckpoints.set(relPath, checkpoint);
   return checkpoint;
 }
@@ -524,35 +503,79 @@ function protocolError(code, message, artifacts = [ARTIFACT_PATHS.events]) {
 }
 
 export async function readEvents(target, packageRoot, options = {}) {
-  const relPath = options?.eventsPath ?? options?.relativePath ?? (options?.taskId ? taskArtifactPath(options.taskId, "events") : ARTIFACT_PATHS.events);
-  await assertSafePath(target, relPath);
-  const eventsPath = ensureWithin(target, relPath);
-  const transaction = (await getTaskTransaction(target));
-  if (transaction) {
-    const stagedText = await transaction.readText(relPath);
-    if (stagedText !== null) return parseEventsText(stagedText, relPath, packageRoot);
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => readEvents(target, packageRoot, options), { readOnly: true });
   }
-  if (!(await fileExists(eventsPath))) return [];
-  const text = await readFile(eventsPath, "utf8");
-  return parseEventsText(text, relPath, packageRoot);
+  const relPath = options?.eventsPath ?? options?.relativePath ?? (options?.taskId ? taskArtifactPath(options.taskId, "events") : ARTIFACT_PATHS.events);
+  const store = getOperationalStore(target);
+  if (store?.recognizes(relPath)) {
+    const schema = await readSchema("event", packageRoot);
+    const events = [];
+    // Array callers consume the synchronous cursor directly. Streaming callers
+    // retain iterateEvents; both paths validate and fully bind observed rows.
+    for (const event of store.iterateEvents(relPath)) {
+      validateStoredEvent(event, schema, `${relPath}[${events.length}]`);
+      events.push(event);
+    }
+    return events;
+  }
+  if (await assertOperationalLedgerAbsent(target, relPath)) return [];
+  return readPortableEvents(target, packageRoot, { ...options, eventsPath: relPath });
+}
+
+async function assertOperationalLedgerAbsent(target, relativePath) {
+  await assertSafePath(target, relativePath);
+  if (isOperationalArtifactPath(relativePath) && await fileExists(ensureWithin(target, relativePath))) {
+    throw protocolError("E_STORAGE_MIGRATION_REQUIRED", "Operational ledger reads require canonical SQLite; inspect legacy exports explicitly", [relativePath]);
+  }
+  return isOperationalArtifactPath(relativePath);
+}
+
+/** Explicit read-only inspection of an import/export ledger; never selects native authority. */
+export async function readPortableEvents(target, packageRoot, options = {}) {
+  const relPath = options.eventsPath ?? options.relativePath ?? (options.taskId ? taskArtifactPath(options.taskId, "events") : ARTIFACT_PATHS.events);
+  const filename = await assertSafePath(target, relPath);
+  if (!(await fileExists(filename))) return [];
+  return parseEventsText(await readFile(filename, "utf8"), relPath, packageRoot);
+}
+
+/** Stream schema-validated canonical rows within the captured operational scope. */
+export function iterateEvents(target, packageRoot, options = {}) {
+  const relPath = options?.eventsPath ?? options?.relativePath ?? (options?.taskId ? taskArtifactPath(options.taskId, "events") : ARTIFACT_PATHS.events);
+  const store = getOperationalStore(target);
+  return (async function* validatedEvents() {
+    if (!store?.recognizes(relPath)) { yield* await readEvents(target, packageRoot, options); return; }
+    const schema = await readSchema("event", packageRoot);
+    let index = 0;
+    for (const event of store.iterateEvents(relPath)) {
+      validateStoredEvent(event, schema, `${relPath}[${index}]`);
+      index += 1;
+      yield event;
+    }
+  })();
 }
 
 export async function readEventTail(target, packageRoot, options = {}) {
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => readEventTail(target, packageRoot, options), { readOnly: true });
+  }
   const limit = options.limit ?? 50;
   if (!Number.isInteger(limit) || limit < 1) {
     throw protocolError("E_EVENT_INVALID", "ledger tail limit must be a positive integer");
   }
   const relPath = options?.eventsPath ?? options?.relativePath ?? (options?.taskId ? taskArtifactPath(options.taskId, "events") : ARTIFACT_PATHS.events);
-  await assertSafePath(target, relPath);
-  const eventsPath = ensureWithin(target, relPath);
-  const transaction = (await getTaskTransaction(target));
-  if (transaction) {
-    const stagedText = await transaction.readText(relPath);
-    if (stagedText !== null) {
-      const lines = stagedText.split(/\r?\n/).filter((line) => line.trim() !== "");
-      return parseEventsText(lines.slice(-limit).join("\n"), relPath, packageRoot);
-    }
-  }
+  const store = getOperationalStore(target);
+  if (store?.recognizes(relPath)) return validateStoredEvents(store.readEvents(relPath, limit), relPath, packageRoot);
+  if (await assertOperationalLedgerAbsent(target, relPath)) return [];
+  return readPortableEventTail(target, packageRoot, { ...options, eventsPath: relPath });
+}
+
+/** Bounded tail inspection for explicit legacy/import/export tooling. */
+export async function readPortableEventTail(target, packageRoot, options = {}) {
+  const limit = options.limit ?? 50;
+  if (!Number.isInteger(limit) || limit < 1) throw protocolError("E_EVENT_INVALID", "ledger tail limit must be a positive integer");
+  const relPath = options.eventsPath ?? options.relativePath ?? (options.taskId ? taskArtifactPath(options.taskId, "events") : ARTIFACT_PATHS.events);
+  const eventsPath = await assertSafePath(target, relPath);
   if (!(await fileExists(eventsPath))) return [];
   const size = (await stat(eventsPath)).size;
   let window = Math.min(size, 64 * 1024);
@@ -600,18 +623,41 @@ async function parseEventsText(text, relPath, packageRoot) {
   });
 }
 
+async function validateStoredEvents(events, relativePath, packageRoot) {
+  const schema = await readSchema("event", packageRoot);
+  for (const [index, event] of events.entries()) {
+    validateStoredEvent(event, schema, `${relativePath}[${index}]`);
+  }
+  return events;
+}
+
+function validateStoredEvent(event, schema, label) {
+  assertJsonBytes(JSON.stringify(event), label);
+  assertJsonLimits(event, label);
+  assertSchema(event, schema, label);
+  validateKnownEventDetails(event);
+}
+
 export async function appendProtocolEvent(target, input, packageRoot, options = {}) {
   const activeTransaction = (await getTaskTransaction(target));
   if (typeof input?.taskId !== "string" || !input.taskId) throw protocolError("E_EVENT_INVALID", "event taskId is required");
   if (typeof input?.event !== "string" || !input.event) throw protocolError("E_EVENT_INVALID", "event type is required");
   const relPath = options?.eventsPath ?? options?.relativePath ?? (options?.taskId ? taskArtifactPath(options.taskId, "events") : ARTIFACT_PATHS.events);
   if (!activeTransaction) {
-    return withTaskTransaction({
-      target,
-      taskId: options.taskId ?? input.taskId,
-      lockTaskId: relPath === ARTIFACT_PATHS.events ? "__legacy-events__" : (options.taskId ?? input.taskId),
-      operation: "append-event",
-    }, async () => appendProtocolEvent(target, input, packageRoot, options));
+    // Only a standalone append is replayable: nested domain mutations and
+    // external observations never enter this retry boundary.
+    const capturedInput = structuredClone(input);
+    for (let attempt = 0; ; attempt += 1) {
+      try {
+        return await withTaskTransaction({
+          target,
+          taskId: options.taskId ?? capturedInput.taskId,
+          operation: "append-event",
+        }, () => appendProtocolEvent(target, capturedInput, packageRoot, options));
+      } catch (error) {
+        if (error.code !== "E_STATE_REVISION_CONFLICT" || attempt >= 2) throw error;
+      }
+    }
   }
   const checkpoint = await readEventCheckpoint(target, packageRoot, relPath, options, activeTransaction);
   const event = buildProtocolEvent(input, { checkpoint });
@@ -619,16 +665,8 @@ export async function appendProtocolEvent(target, input, packageRoot, options = 
   assertSchema(event, schema, relPath);
   event.hash = eventHash(event);
   if (!options.dryRun) {
-    if (activeTransaction) {
-      await activeTransaction.appendText(relPath, `${JSON.stringify(event)}\n`);
-      const nextCheckpoint = { schemaVersion: 1, seq: event.seq, lastHash: event.hash };
-      await activeTransaction.stageText(eventIndexPath(relPath), `${JSON.stringify(nextCheckpoint)}\n`);
-      activeTransaction.eventCheckpoints.set(relPath, nextCheckpoint);
-    } else {
-      const eventsPath = ensureWithin(target, relPath);
-      await mkdir(path.dirname(eventsPath), { recursive: true });
-      await appendFile(eventsPath, `${JSON.stringify(event)}\n`, { encoding: "utf8" });
-    }
+    await activeTransaction.appendText(relPath, `${JSON.stringify(event)}\n`);
+    activeTransaction.eventCheckpoints.set(relPath, { schemaVersion: 1, seq: event.seq, lastHash: event.hash });
   }
   return event;
 }
@@ -640,8 +678,8 @@ export async function appendProtocolEvent(target, input, packageRoot, options = 
  * before appending the migration events.
  */
 function validateLegacyRecoveryMigrations(events, errors, { allowUnmigratedLegacyRecoveryEvents = false } = {}) {
-  const migrationBySeq = new Map();
-  for (const event of events) {
+  const migrationBySeq = ledgerRelationMap();
+  for (const event of ledgerEventsOfTypes(events, [LEGACY_RECOVERY_MIGRATION_EVENT])) {
     if (event.event !== LEGACY_RECOVERY_MIGRATION_EVENT) continue;
     try {
       assertLegacyMigrationDetails(event.details);
@@ -656,11 +694,12 @@ function validateLegacyRecoveryMigrations(events, errors, { allowUnmigratedLegac
       });
       continue;
     }
-    migrationBySeq.set(event.details.legacyEventSeq, event);
+    migrationBySeq.set(event.details.legacyEventSeq, events.indexOf(event));
   }
-  for (const event of events) {
+  for (const event of ledgerEventsOfTypes(events, ["OPERATOR_RECOVERY_RECORDED"])) {
     if (!isLegacyRecoveryEventShape(event)) continue;
-    const migration = migrationBySeq.get(event.seq);
+    const migrationPosition = migrationBySeq.get(event.seq);
+    const migration = migrationPosition === undefined ? undefined : ledgerEventAt(events, migrationPosition);
     if (!migration) {
       if (!allowUnmigratedLegacyRecoveryEvents) {
         errors.push({
@@ -692,7 +731,8 @@ function validateLegacyRecoveryMigrations(events, errors, { allowUnmigratedLegac
       });
     }
   }
-  for (const [legacySeq, migration] of migrationBySeq) {
+  for (const [legacySeq, position] of migrationBySeq) {
+    const migration = ledgerEventAt(events, position);
     errors.push({
       code: "E_EVENT_INVALID",
       message: `migration event ${migration.seq} references unknown legacy recovery event seq ${legacySeq}`,
@@ -700,30 +740,37 @@ function validateLegacyRecoveryMigrations(events, errors, { allowUnmigratedLegac
   }
 }
 
-export async function validateEventLedger(target, packageRoot, options = {}) {
-  const relPath = options?.eventsPath ?? options?.relativePath ?? (options?.taskId ? taskArtifactPath(options.taskId, "events") : ARTIFACT_PATHS.events);
-  let events;
-  try {
-    events = await readEvents(target, packageRoot, { ...options, eventsPath: relPath });
-  } catch (error) {
-    return { valid: false, events: [], errors: [{ code: error.code ?? "E_EVENT_INVALID", message: error.message, artifacts: [relPath] }] };
-  }
+/**
+ * Pure ledger validation over an already-loaded event array.
+ *
+ * This is the smallest reusable seam between the filesystem path and a
+ * database-backed reader: every rule below is computed from the events alone,
+ * with no filesystem access. `validateEventLedger` keeps its existing signature
+ * and delegates here after reading events, so behavior is unchanged for every
+ * existing caller.
+ *
+ * Callers that already hold events (for example a database reader) can obtain
+ * exactly the same guarantees without materializing files first.
+ */
+export function validateLedgerEvents(events, options = {}) {
   const errors = [];
   let taskId = null;
+  let previousHash = null;
   const seen = new Set();
   let lastMilestone = -1;
   const milestoneCounts = new Map();
-  const createdHandoffs = new Map();
-  const acceptedHandoffs = new Set();
+  const createdHandoffs = ledgerRelationMap();
+  const acceptedHandoffs = ledgerRelationSet();
   for (const [index, event] of events.entries()) {
     if (event.seq !== index + 1) {
       errors.push({ code: "E_EVENT_INVALID", message: `event sequence must be ${index + 1}` });
     }
     if (taskId === null) taskId = event.taskId;
     if (event.taskId !== taskId) errors.push({ code: "E_EVENT_INVALID", message: "event task IDs must remain stable" });
-    if (event.previousHash !== (index === 0 ? null : events[index - 1].hash)) {
+    if (event.previousHash !== previousHash) {
       errors.push({ code: "E_LEDGER_HASH_INVALID", message: `event ${event.seq} previousHash does not match` });
     }
+    previousHash = event.hash;
     if (event.hash !== eventHash(event)) {
       errors.push({ code: "E_LEDGER_HASH_INVALID", message: `event ${event.seq} hash does not match its content` });
     }
@@ -774,9 +821,132 @@ export async function validateEventLedger(target, packageRoot, options = {}) {
   errors.push(...validateContractRevisionEventBindings(events));
   errors.push(...validateGateSatisfactionBindings(events));
   errors.push(...validateSemanticDecisionEventBindings(events));
-  errors.push(...await validateSemanticDecisionArtifactBindings(target, packageRoot, events));
   const repairedErrors = validateContractBootstrapRepairLedger(events, errors, options);
   return { valid: repairedErrors.length === 0, events, errors: repairedErrors };
+}
+
+/** Validate canonical native or non-operational interchange ledger with all domain bindings. */
+export async function validateEventLedger(target, packageRoot, options = {}) {
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => validateEventLedger(target, packageRoot, options), { readOnly: true });
+  }
+  return validateReadLedger(target, packageRoot, options, readEvents);
+}
+
+/** Explicit legacy source validation; never makes the source writable authority. */
+export async function validatePortableEventLedger(target, packageRoot, options = {}) {
+  return validateReadLedger(target, packageRoot, options, readPortableEvents);
+}
+
+async function validateReadLedger(target, packageRoot, options, reader) {
+  const relPath = options?.eventsPath ?? options?.relativePath ?? (options?.taskId ? taskArtifactPath(options.taskId, "events") : ARTIFACT_PATHS.events);
+  let events;
+  try {
+    events = await reader(target, packageRoot, { ...options, eventsPath: relPath });
+  } catch (error) {
+    return { valid: false, events: [], errors: [{ code: error.code ?? "E_EVENT_INVALID", message: error.message, artifacts: [relPath] }] };
+  }
+  const result = validateLedgerEvents(events, options);
+  const bindingErrors = await validateSemanticDecisionArtifactBindings(target, packageRoot, events);
+  if (bindingErrors.length === 0) return result;
+  return { valid: false, events, errors: [...result.errors, ...bindingErrors] };
+}
+
+// Proof reuse is minted only for one owned read-only backup callback. Public
+// collections and caller-supplied auditSource metadata cannot opt into it.
+const ownedLedgerProofs = new WeakMap();
+
+function ownedSnapshotFileIdentity(filename) {
+  const file = lstatSync(filename, { bigint: true });
+  if (!file.isFile()) throw protocolError("E_STATE_REVISION_CONFLICT", "Owned ledger snapshot file changed during its audit");
+  const identity = [file.dev, file.ino, file.size, file.mtimeNs, file.ctimeNs].join(":");
+  if (process.platform !== "win32") return identity;
+  // Windows may defer file timestamps until SQLite's open handle closes.
+  // Hash readable bytes with bounded memory so raw writes cannot reuse a proof.
+  const fd = openSync(filename, "r");
+  try {
+    const hash = createHash("sha256");
+    const buffer = Buffer.allocUnsafe(64 * 1024);
+    let count;
+    while ((count = readSync(fd, buffer, 0, buffer.length, null)) !== 0) hash.update(buffer.subarray(0, count));
+    return `${identity}:${hash.digest("hex")}`;
+  } finally { closeSync(fd); }
+}
+
+function assertOwnedLedgerUnchanged(events) {
+  const owned = ownedLedgerProofs.get(events);
+  if (owned && (owned.db.prepare("PRAGMA data_version").get().data_version !== owned.version
+    || ownedSnapshotFileIdentity(owned.filename) !== owned.fileIdentity)) {
+    throw protocolError("E_STATE_REVISION_CONFLICT", "Owned ledger snapshot changed during its audit");
+  }
+  return owned;
+}
+
+function validateOwnedLedgerEvents(events, options) {
+  const owned = assertOwnedLedgerUnchanged(events);
+  if (!owned) return validateLedgerEvents(events, options);
+  const flags = {
+    allowUnmigratedLegacyRecoveryEvents: options?.allowUnmigratedLegacyRecoveryEvents === true,
+    allowUnmigratedLegacyContractBootstrapRepairMarkers: options?.allowUnmigratedLegacyContractBootstrapRepairMarkers === true,
+  };
+  const key = JSON.stringify(flags);
+  if (owned.successes.has(key)) return { valid: true, events, errors: [] };
+  const result = validateLedgerEvents(events, flags);
+  assertOwnedLedgerUnchanged(events);
+  if (result.valid) owned.successes.add(key);
+  return result;
+}
+
+async function evaluateCallbackLedgerAudit(target, packageRoot, options, callback, events, relPath) {
+  let result;
+  try {
+    result = validateOwnedLedgerEvents(events, options);
+    const bindingErrors = await validateSemanticDecisionArtifactBindings(target, packageRoot, events);
+    assertOwnedLedgerUnchanged(events);
+    if (bindingErrors.length) result = { valid: false, events, errors: [...result.errors, ...bindingErrors] };
+  } catch (error) {
+    result = { valid: false, events: [], errors: [{ code: error.code ?? "E_EVENT_INVALID", message: error.message, artifacts: [relPath] }] };
+  }
+  const initiallyValid = result.valid;
+  const callbackResult = await callback(result);
+  // The caller may await other work or mutate its result object. Keep the
+  // private snapshot proof valid for the entire successful observation.
+  if (initiallyValid) assertOwnedLedgerUnchanged(events);
+  return callbackResult;
+}
+
+/** Internal callback audit: events remain owned by one immutable native snapshot. */
+export async function withEventLedgerAudit(target, packageRoot, options, callback) {
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => withEventLedgerAudit(target, packageRoot, options, callback), { readOnly: true });
+  }
+  const relPath = options?.eventsPath ?? options?.relativePath ?? (options?.taskId ? taskArtifactPath(options.taskId, "events") : ARTIFACT_PATHS.events);
+  const store = getOperationalStore(target);
+  // Prepared mutations retain their existing read-set/CAS and staged-overlay semantics.
+  if (!store?.recognizes(relPath) || !relPath.endsWith("/events.ndjson") || store.transaction || store.writes.size || store.events.size || store.attachments.size) {
+    return callback(await validateEventLedger(target, packageRoot, options));
+  }
+  const taskId = store.taskId({ taskKey: relPath.split("/")[2] });
+  if (!taskId) return callback(await validateEventLedger(target, packageRoot, options));
+  if (store.auditSource?.taskId === taskId && store.auditSource.packageRoot === packageRoot) {
+    return evaluateCallbackLedgerAudit(target, packageRoot, options, callback, store.auditSource.events, relPath);
+  }
+  const schema = await readSchema("event", packageRoot);
+  const { withDetachedLedgerSnapshot } = await import("../storage/ledger-event-snapshot.js");
+  const { withOperationalReadSnapshot } = await import("../storage/unit-of-work.js");
+  let completeObservation;
+  return withDetachedLedgerSnapshot(store.db, taskId, (events, db) => withOperationalReadSnapshot({ db, target }, async snapshotStore => {
+    completeObservation = snapshotStore.beginEventSnapshotObservation(relPath);
+    snapshotStore.auditSource = { taskId, packageRoot, events };
+    const filename = db.prepare("PRAGMA database_list").all().find(row => row.name === "main").file;
+    ownedLedgerProofs.set(events, { db, filename, fileIdentity: ownedSnapshotFileIdentity(filename),
+      version: db.prepare("PRAGMA data_version").get().data_version, successes: new Set() });
+    try { return await evaluateCallbackLedgerAudit(target, packageRoot, options, callback, events, relPath); }
+    finally { ownedLedgerProofs.delete(events); }
+  }), {
+    validate(event, index) { validateStoredEvent(event, schema, `${relPath}[${index}]`); return event; },
+    onFullScan(digest) { completeObservation(digest); },
+  });
 }
 
 function validateContractBootstrapRepairLedger(events, errors, options) {
@@ -789,16 +959,36 @@ function validateContractBootstrapRepairLedger(events, errors, options) {
   });
 }
 
+function summarizeStateEvents(state, events) {
+  const milestones = ["EXECUTION_STARTED", "VERIFICATION_STARTED", "REVIEW_STARTED", "COMPLETION_VALIDATED"];
+  const observed = new Set();
+  let supportsReviewEvents = false;
+  let latestVerification;
+  let latestReview;
+  let index = 0;
+  for (const event of ledgerEventsOfTypes(events, milestones)) {
+    if (event.taskId !== state.taskId) continue;
+    observed.add(event.event);
+    if (event.event === "VERIFICATION_STARTED") {
+      latestVerification = { event, index };
+      if (Number.isInteger(event.details?.verificationCycle)) supportsReviewEvents = true;
+    }
+    if (event.event === "REVIEW_STARTED") {
+      supportsReviewEvents = true;
+      latestReview = { event, index };
+    }
+    index += 1;
+  }
+  return { observed, supportsReviewEvents, latestVerification, latestReview };
+}
+
 export function validateStateLedgerCoherence(state, events) {
   const errors = [
     ...validateCheckpointRevalidationCurrentBinding(state, events),
     ...validateContractRevisionCurrentBinding(state, events),
   ];
   if (!Number.isInteger(state.verificationCycle)) return errors;
-  const taskEvents = events.filter((event) => event.taskId === state.taskId);
-  const observed = new Set(taskEvents.map((event) => event.event));
-  const supportsReviewEvents = taskEvents.some((event) => event.event === "REVIEW_STARTED"
-    || (event.event === "VERIFICATION_STARTED" && Number.isInteger(event.details?.verificationCycle)));
+  const { observed, supportsReviewEvents, latestVerification, latestReview } = summarizeStateEvents(state, events);
   const phaseRequirements = {
     EXECUTING: ["EXECUTION_STARTED"],
     VERIFYING: ["EXECUTION_STARTED", "VERIFICATION_STARTED"],
@@ -816,21 +1006,12 @@ export function validateStateLedgerCoherence(state, events) {
     }
   }
   if (Number.isInteger(state.verificationCycle)) {
-    const verificationEvents = taskEvents
-      .map((event, index) => ({ event, index }))
-      .filter(({ event }) => event.event === "VERIFICATION_STARTED");
-    const cycles = verificationEvents.map(({ event }) => event.details?.verificationCycle ?? 1);
-    if (cycles.at(-1) !== state.verificationCycle) {
+    if ((latestVerification ? latestVerification.event.details?.verificationCycle ?? 1 : undefined) !== state.verificationCycle) {
       errors.push({
         code: "E_STATE_LEDGER_DIVERGENCE",
         message: "Work-state verification cycle does not match the lifecycle ledger",
       });
     }
-    const latestVerification = verificationEvents.at(-1);
-    const latestReview = taskEvents
-      .map((event, index) => ({ event, index }))
-      .filter(({ event }) => event.event === "REVIEW_STARTED")
-      .at(-1);
     const latestReviewCycle = latestReview?.event.details?.verificationCycle;
     if (state.phase === "VERIFYING"
       && latestReviewCycle === state.verificationCycle

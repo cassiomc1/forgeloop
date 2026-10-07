@@ -4,13 +4,17 @@ import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
 
+import { createTaskDescriptor, writeTaskDescriptor } from "../src/core/task-descriptor.js";
+import { taskArtifactPath } from "../src/core/task-paths.js";
+import { readRawFixtureText, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
+
 import { removeTempTree } from "./helpers/rm-safe.js";
 import { runComplete } from "../src/commands/complete.js";
 import { runPreflight } from "../src/commands/preflight.js";
 import { runRecordTerminalResult } from "../src/commands/record-terminal-result.js";
 import { prepareCompletion, recordCheck } from "../src/core/completion-artifacts.js";
 
-import { ARTIFACT_PATHS, readJsonArtifact } from "../src/core/artifacts.js";
+import { readJsonArtifact } from "../src/core/artifacts.js";
 import { createContract, contractFingerprint, writeContract } from "../src/core/contract.js";
 import { appendProtocolEvent, validateEventLedger } from "../src/core/events.js";
 import { advanceWorkState } from "../src/core/phase.js";
@@ -46,10 +50,12 @@ async function setupTarget(target, { verification = ["tests"], successCriteria =
     sourceRefs: [],
   });
   const contractHash = contractFingerprint(contract);
-  await writeContract(target, contract, packageRoot);
+  await writeTaskDescriptor(target, createTaskDescriptor({ taskId: contract.taskId, writeClaims: [] }), packageRoot);
+  await writeContract(target, contract, packageRoot, { taskId: contract.taskId });
   const route = evaluateRoute({ workType: "code", surfaces: ["config"], platforms: [] });
   const persistedRoute = await persistRoute(target, route, packageRoot, {
     contractFingerprint: contractHash,
+    taskId: contract.taskId,
   });
   const state = createWorkState({
     taskId: contract.taskId,
@@ -68,12 +74,12 @@ async function setupTarget(target, { verification = ["tests"], successCriteria =
     blockers: [],
     verificationEvidence: [],
   });
-  await writeWorkState(target, state, { packageRoot });
-  await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot);
-  await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot);
-  const preflight = await runPreflight({ target, packageRoot });
+  await writeWorkState(target, state, { packageRoot, taskId: "task-terminal-record" });
+  await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot, { taskId: "task-terminal-record" });
+  await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot, { taskId: "task-terminal-record" });
+  const preflight = await runPreflight({ target, packageRoot, taskId: "task-terminal-record" });
   assert.equal(preflight.status, "READY");
-  await advanceWorkState(target, "EXECUTING", { packageRoot });
+  await advanceWorkState(target, "EXECUTING", { packageRoot, taskId: "task-terminal-record" });
 }
 
 test("publication precision levels and satisfaction logic", () => {
@@ -105,11 +111,12 @@ test("recording PUBLICATION terminal result satisfies explicit publication requi
       successCriteria: ["tests", "Package is published to npm registry"],
     });
 
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-terminal-record" });
+    await prepareCompletion({ target, packageRoot, taskId: "task-terminal-record" });
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: "task-terminal-record",
       id: "tests-check",
       requirement: "tests",
       status: "passed",
@@ -118,7 +125,7 @@ test("recording PUBLICATION terminal result satisfies explicit publication requi
       result: "Passed",
     });
 
-    await advanceWorkState(target, "REVIEWING", { packageRoot });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId: "task-terminal-record" });
 
     // nextAction in REVIEWING should direct RECORD_TERMINAL_RESULT
     const nextBefore = await getNextAction(target, packageRoot);
@@ -127,7 +134,7 @@ test("recording PUBLICATION terminal result satisfies explicit publication requi
     assert.ok(nextBefore.commandSpecs.some((s) => s.commandId === "record-terminal-result"));
 
     // Attempt complete before recording publication -> REJECTED
-    const compBefore = await runComplete({ target, packageRoot });
+    const compBefore = await runComplete({ target, packageRoot, taskId: "task-terminal-record" });
     assert.equal(compBefore.status, "REJECTED");
     assert.ok(compBefore.errors.some((e) => e.code === "E_PUBLICATION_REQUIREMENT_PENDING"));
 
@@ -135,6 +142,7 @@ test("recording PUBLICATION terminal result satisfies explicit publication requi
     const recResult = await runRecordTerminalResult({
       target,
       packageRoot,
+      taskId: "task-terminal-record",
       requirement: "Package is published to npm registry",
       type: "PUBLICATION",
       status: "published",
@@ -148,6 +156,7 @@ test("recording PUBLICATION terminal result satisfies explicit publication requi
     const recIdempotent = await runRecordTerminalResult({
       target,
       packageRoot,
+      taskId: "task-terminal-record",
       requirement: "Package is published to npm registry",
       type: "PUBLICATION",
       status: "published",
@@ -157,7 +166,7 @@ test("recording PUBLICATION terminal result satisfies explicit publication requi
     assert.equal(recIdempotent.idempotent, true);
 
     // Verify ledger has TERMINAL_RESULT_RECORDED
-    const ledger = await validateEventLedger(target, packageRoot);
+    const ledger = await validateEventLedger(target, packageRoot, { taskId: "task-terminal-record" });
     const terminalEvents = ledger.events.filter((e) => e.event === "TERMINAL_RESULT_RECORDED");
     assert.equal(terminalEvents.length, 1);
 
@@ -166,7 +175,7 @@ test("recording PUBLICATION terminal result satisfies explicit publication requi
     assert.equal(nextAfter.nextAction, NEXT_ACTIONS.RUN_COMPLETE);
 
     // Complete should now be VALID
-    const compAfter = await runComplete({ target, packageRoot });
+    const compAfter = await runComplete({ target, packageRoot, taskId: "task-terminal-record" });
     assert.equal(compAfter.status, "VALID");
     assert.equal(compAfter.taskStatus, "COMPLETE");
     assert.equal(compAfter.publicationStatus, "published");
@@ -180,11 +189,12 @@ test("recording PRODUCTION_READINESS terminal result satisfies explicit producti
       successCriteria: ["tests", "Production smoke validation succeeds"],
     });
 
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-terminal-record" });
+    await prepareCompletion({ target, packageRoot, taskId: "task-terminal-record" });
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: "task-terminal-record",
       id: "tests-check",
       requirement: "tests",
       status: "passed",
@@ -193,12 +203,13 @@ test("recording PRODUCTION_READINESS terminal result satisfies explicit producti
       result: "Passed",
     });
 
-    await advanceWorkState(target, "REVIEWING", { packageRoot });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId: "task-terminal-record" });
 
     // Record production readiness terminal result
     const recResult = await runRecordTerminalResult({
       target,
       packageRoot,
+      taskId: "task-terminal-record",
       requirement: "Production smoke validation succeeds",
       type: "PRODUCTION_READINESS",
       status: "ready",
@@ -209,7 +220,7 @@ test("recording PRODUCTION_READINESS terminal result satisfies explicit producti
     assert.equal(recResult.type, "PRODUCTION_READINESS");
 
     // Complete should now be VALID
-    const compAfter = await runComplete({ target, packageRoot });
+    const compAfter = await runComplete({ target, packageRoot, taskId: "task-terminal-record" });
     assert.equal(compAfter.status, "VALID");
     assert.equal(compAfter.taskStatus, "COMPLETE");
     assert.equal(compAfter.productionReadiness, "ready");
@@ -222,8 +233,8 @@ test("record-terminal-result rejects unsupported types and invalid statuses", as
       verification: ["tests"],
       successCriteria: ["tests", "Package is published to npm registry"],
     });
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-terminal-record" });
+    await prepareCompletion({ target, packageRoot, taskId: "task-terminal-record" });
 
     // Rejects LIFECYCLE
     await assert.rejects(
@@ -262,12 +273,12 @@ test("T-P0-01 & T-P0-02 & T-P0-03: rejects unknown, ordinary, and mismatched ter
       verification: ["tests"],
       successCriteria: ["tests", "Package is published to npm registry"],
     });
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-terminal-record" });
+    await prepareCompletion({ target, packageRoot, taskId: "task-terminal-record" });
 
-    const stateBefore = await readWorkState(target, packageRoot);
-    const receiptBefore = (await readJsonArtifact(target, ARTIFACT_PATHS.receipt, "execution-receipt", packageRoot)).value;
-    const ledgerBefore = await validateEventLedger(target, packageRoot);
+    const stateBefore = await readWorkState(target, { packageRoot, taskId: "task-terminal-record" });
+    const receiptBefore = (await readJsonArtifact(target, taskArtifactPath("task-terminal-record", "receipt"), "execution-receipt", packageRoot)).value;
+    const ledgerBefore = await validateEventLedger(target, packageRoot, { taskId: "task-terminal-record" });
 
     const stateHashBefore = canonicalFingerprint(stateBefore);
     const receiptHashBefore = canonicalFingerprint(receiptBefore);
@@ -316,9 +327,9 @@ test("T-P0-01 & T-P0-02 & T-P0-03: rejects unknown, ordinary, and mismatched ter
     );
 
     // Assert zero partial mutation on failure
-    const stateAfter = await readWorkState(target, packageRoot);
-    const receiptAfter = (await readJsonArtifact(target, ARTIFACT_PATHS.receipt, "execution-receipt", packageRoot)).value;
-    const ledgerAfter = await validateEventLedger(target, packageRoot);
+    const stateAfter = await readWorkState(target, { packageRoot, taskId: "task-terminal-record" });
+    const receiptAfter = (await readJsonArtifact(target, taskArtifactPath("task-terminal-record", "receipt"), "execution-receipt", packageRoot)).value;
+    const ledgerAfter = await validateEventLedger(target, packageRoot, { taskId: "task-terminal-record" });
 
     assert.equal(canonicalFingerprint(stateAfter), stateHashBefore);
     assert.equal(canonicalFingerprint(receiptAfter), receiptHashBefore);
@@ -336,11 +347,12 @@ test("T-P0-04 & T-P0-05: requirement-specific evidence binding and multi-termina
         { id: "REQ_RELEASE", text: "GitHub release is published", type: "PUBLICATION", requiredPublicationStatus: "published" },
       ],
     });
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-terminal-record" });
+    await prepareCompletion({ target, packageRoot, taskId: "task-terminal-record" });
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: "task-terminal-record",
       id: "tests-check",
       requirement: "tests",
       status: "passed",
@@ -348,12 +360,13 @@ test("T-P0-04 & T-P0-05: requirement-specific evidence binding and multi-termina
       command: "npm test",
       result: "Passed",
     });
-    await advanceWorkState(target, "REVIEWING", { packageRoot });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId: "task-terminal-record" });
 
     // Record only REQ_NPM
     await runRecordTerminalResult({
       target,
       packageRoot,
+      taskId: "task-terminal-record",
       requirement: "REQ_NPM",
       type: "PUBLICATION",
       status: "published",
@@ -362,7 +375,7 @@ test("T-P0-04 & T-P0-05: requirement-specific evidence binding and multi-termina
     });
 
     // Complete must be REJECTED because REQ_RELEASE is still pending
-    const comp1 = await runComplete({ target, packageRoot });
+    const comp1 = await runComplete({ target, packageRoot, taskId: "task-terminal-record" });
     assert.equal(comp1.status, "REJECTED");
     assert.ok(comp1.errors.some((e) => e.requirementId === "REQ_RELEASE" && e.code === "E_PUBLICATION_REQUIREMENT_PENDING"));
 
@@ -370,6 +383,7 @@ test("T-P0-04 & T-P0-05: requirement-specific evidence binding and multi-termina
     await runRecordTerminalResult({
       target,
       packageRoot,
+      taskId: "task-terminal-record",
       requirement: "REQ_RELEASE",
       type: "PUBLICATION",
       status: "published",
@@ -378,7 +392,7 @@ test("T-P0-04 & T-P0-05: requirement-specific evidence binding and multi-termina
     });
 
     // Complete must now be VALID
-    const comp2 = await runComplete({ target, packageRoot });
+    const comp2 = await runComplete({ target, packageRoot, taskId: "task-terminal-record" });
     assert.equal(comp2.status, "VALID");
     assert.equal(comp2.taskStatus, "COMPLETE");
   });
@@ -393,11 +407,12 @@ test("T-P0-06: global publication status without matching requirement evidence i
         { id: "REQ_NPM", text: "Package is published to npm", type: "PUBLICATION", requiredPublicationStatus: "published" },
       ],
     });
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-terminal-record" });
+    await prepareCompletion({ target, packageRoot, taskId: "task-terminal-record" });
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: "task-terminal-record",
       id: "tests-check",
       requirement: "tests",
       status: "passed",
@@ -405,34 +420,35 @@ test("T-P0-06: global publication status without matching requirement evidence i
       command: "npm test",
       result: "Passed",
     });
-    await advanceWorkState(target, "REVIEWING", { packageRoot });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId: "task-terminal-record" });
 
     // Forged receipt with publicationStatus = "published", but no matching requirement-bound evidence in evidence[]
-    const receipt = (await readJsonArtifact(target, ARTIFACT_PATHS.receipt, "execution-receipt", packageRoot)).value;
+    const receipt = (await readJsonArtifact(target, taskArtifactPath("task-terminal-record", "receipt"), "execution-receipt", packageRoot)).value;
     receipt.publicationStatus = "published";
     receipt.publication = { ...receipt.publication, pushed: true, deployed: false };
     const { writeJsonArtifact } = await import("../src/core/artifacts.js");
-    await writeJsonArtifact(target, ARTIFACT_PATHS.receipt, receipt, "execution-receipt", packageRoot);
+    await writeJsonArtifact(target, taskArtifactPath("task-terminal-record", "receipt"), receipt, "execution-receipt", packageRoot);
 
-    const comp = await runComplete({ target, packageRoot });
+    const comp = await runComplete({ target, packageRoot, taskId: "task-terminal-record" });
     assert.equal(comp.status, "REJECTED");
     assert.ok(comp.errors.some((e) => e.code === "E_PUBLICATION_REQUIREMENT_PENDING"));
   });
 });
 
-test("T-P1-01: fault-injection interrupted terminal recording repairs missing ledger event on retry", async () => {
+test("T-P1-01: simulated valid ledger-tail loss repairs missing terminal event on retry", async () => {
   await withTarget(async (target) => {
     await setupTarget(target, {
       verification: ["tests"],
       successCriteria: ["tests", "Package is published to npm registry"],
     });
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-terminal-record" });
+    await prepareCompletion({ target, packageRoot, taskId: "task-terminal-record" });
 
     // Record terminal result normally
     const result1 = await runRecordTerminalResult({
       target,
       packageRoot,
+      taskId: "task-terminal-record",
       requirement: "Package is published to npm registry",
       type: "PUBLICATION",
       status: "published",
@@ -441,17 +457,20 @@ test("T-P1-01: fault-injection interrupted terminal recording repairs missing le
     });
     assert.equal(result1.idempotent, undefined);
 
-    // Simulate interruption: rewrite events ledger removing the TERMINAL_RESULT_RECORDED event
-    const { readFile, writeFile } = await import("node:fs/promises");
-    const eventsPath = path.join(target, ARTIFACT_PATHS.events);
-    const lines = (await readFile(eventsPath, "utf8")).trim().split("\n");
-    const filteredLines = lines.filter((line) => !line.includes("TERMINAL_RESULT_RECORDED"));
-    await writeFile(eventsPath, `${filteredLines.join("\n")}\n`, "utf8");
+    // Deliberately truncate disposable authority before the terminal event and
+    // its commit witness. Native commits are atomic; this models imported damage.
+
+    const lines = (await readRawFixtureText(target, taskArtifactPath("task-terminal-record", "events"))).trim().split("\n");
+    const terminalIndex = lines.findIndex(line => JSON.parse(line).event === "TERMINAL_RESULT_RECORDED");
+    assert.ok(terminalIndex >= 0);
+    const filteredLines = lines.slice(0, terminalIndex);
+    await overwriteFixtureText(target, taskArtifactPath("task-terminal-record", "events"), `${filteredLines.join("\n")}\n`);
 
     // Retry recording same terminal result
     const result2 = await runRecordTerminalResult({
       target,
       packageRoot,
+      taskId: "task-terminal-record",
       requirement: "Package is published to npm registry",
       type: "PUBLICATION",
       status: "published",
@@ -462,11 +481,11 @@ test("T-P1-01: fault-injection interrupted terminal recording repairs missing le
     assert.equal(result2.repaired, true);
 
     // Verify ledger has exactly 1 repaired event and evidence is not duplicated
-    const ledger = await validateEventLedger(target, packageRoot);
+    const ledger = await validateEventLedger(target, packageRoot, { taskId: "task-terminal-record" });
     const termEvents = ledger.events.filter((e) => e.event === "TERMINAL_RESULT_RECORDED");
     assert.equal(termEvents.length, 1);
 
-    const receipt = (await readJsonArtifact(target, ARTIFACT_PATHS.receipt, "execution-receipt", packageRoot)).value;
+    const receipt = (await readJsonArtifact(target, taskArtifactPath("task-terminal-record", "receipt"), "execution-receipt", packageRoot)).value;
     const termEv = receipt.evidence.filter((e) => e.details?.terminalType === "PUBLICATION");
     assert.equal(termEv.length, 1);
   });
@@ -478,13 +497,14 @@ test("T-P1-03: publication status regression is rejected with E_TERMINAL_STATUS_
       verification: ["tests"],
       successCriteria: ["tests", "Package is published to npm registry"],
     });
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-terminal-record" });
+    await prepareCompletion({ target, packageRoot, taskId: "task-terminal-record" });
 
     // Step 1: published
     await runRecordTerminalResult({
       target,
       packageRoot,
+      taskId: "task-terminal-record",
       requirement: "Package is published to npm registry",
       type: "PUBLICATION",
       status: "published",
@@ -518,11 +538,12 @@ test("duplicate requirement text with distinct IDs requires independent evidence
         { id: "PUB_B", text: "Release is published", type: "PUBLICATION", requiredPublicationStatus: "published" },
       ],
     });
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-terminal-record" });
+    await prepareCompletion({ target, packageRoot, taskId: "task-terminal-record" });
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: "task-terminal-record",
       id: "tests-check",
       requirement: "tests",
       status: "passed",
@@ -530,12 +551,13 @@ test("duplicate requirement text with distinct IDs requires independent evidence
       command: "npm test",
       result: "Passed",
     });
-    await advanceWorkState(target, "REVIEWING", { packageRoot });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId: "task-terminal-record" });
 
     // Record only PUB_A
     await runRecordTerminalResult({
       target,
       packageRoot,
+      taskId: "task-terminal-record",
       requirement: "PUB_A",
       type: "PUBLICATION",
       status: "published",
@@ -544,7 +566,7 @@ test("duplicate requirement text with distinct IDs requires independent evidence
     });
 
     // Complete must be REJECTED because PUB_B is still pending, despite sharing identical text
-    const comp1 = await runComplete({ target, packageRoot });
+    const comp1 = await runComplete({ target, packageRoot, taskId: "task-terminal-record" });
     assert.equal(comp1.status, "REJECTED");
     assert.ok(comp1.errors.some((e) => e.requirementId === "PUB_B" && e.code === "E_PUBLICATION_REQUIREMENT_PENDING"));
 
@@ -558,6 +580,7 @@ test("duplicate requirement text with distinct IDs requires independent evidence
     await runRecordTerminalResult({
       target,
       packageRoot,
+      taskId: "task-terminal-record",
       requirement: "PUB_B",
       type: "PUBLICATION",
       status: "published",
@@ -566,7 +589,7 @@ test("duplicate requirement text with distinct IDs requires independent evidence
     });
 
     // Complete must now be VALID
-    const comp2 = await runComplete({ target, packageRoot });
+    const comp2 = await runComplete({ target, packageRoot, taskId: "task-terminal-record" });
     assert.equal(comp2.status, "VALID");
     assert.equal(comp2.taskStatus, "COMPLETE");
   });
@@ -582,11 +605,12 @@ test("duplicate production readiness text with distinct IDs requires independent
         { id: "PROD_B", text: "Production readiness verified", type: "PRODUCTION_READINESS" },
       ],
     });
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-terminal-record" });
+    await prepareCompletion({ target, packageRoot, taskId: "task-terminal-record" });
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: "task-terminal-record",
       id: "tests-check",
       requirement: "tests",
       status: "passed",
@@ -594,12 +618,13 @@ test("duplicate production readiness text with distinct IDs requires independent
       command: "npm test",
       result: "Passed",
     });
-    await advanceWorkState(target, "REVIEWING", { packageRoot });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId: "task-terminal-record" });
 
     // Record only PROD_A
     await runRecordTerminalResult({
       target,
       packageRoot,
+      taskId: "task-terminal-record",
       requirement: "PROD_A",
       type: "PRODUCTION_READINESS",
       status: "ready",
@@ -608,7 +633,7 @@ test("duplicate production readiness text with distinct IDs requires independent
     });
 
     // Complete must be REJECTED because PROD_B is still pending
-    const comp1 = await runComplete({ target, packageRoot });
+    const comp1 = await runComplete({ target, packageRoot, taskId: "task-terminal-record" });
     assert.equal(comp1.status, "REJECTED");
     assert.ok(comp1.errors.some((e) => e.requirementId === "PROD_B" && e.code === "E_PRODUCTION_REQUIREMENT_PENDING"));
 
@@ -616,6 +641,7 @@ test("duplicate production readiness text with distinct IDs requires independent
     await runRecordTerminalResult({
       target,
       packageRoot,
+      taskId: "task-terminal-record",
       requirement: "PROD_B",
       type: "PRODUCTION_READINESS",
       status: "ready",
@@ -624,7 +650,7 @@ test("duplicate production readiness text with distinct IDs requires independent
     });
 
     // Complete must now be VALID
-    const comp2 = await runComplete({ target, packageRoot });
+    const comp2 = await runComplete({ target, packageRoot, taskId: "task-terminal-record" });
     assert.equal(comp2.status, "VALID");
     assert.equal(comp2.taskStatus, "COMPLETE");
   });
@@ -636,13 +662,14 @@ test("observation A event does not satisfy observation B during retry reconcilia
       verification: ["tests"],
       successCriteria: ["tests", "Package is published to npm registry"],
     });
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-terminal-record" });
+    await prepareCompletion({ target, packageRoot, taskId: "task-terminal-record" });
 
     // Observation A recorded normally with event A
     const resA = await runRecordTerminalResult({
       target,
       packageRoot,
+      taskId: "task-terminal-record",
       requirement: "Package is published to npm registry",
       type: "PUBLICATION",
       status: "published",
@@ -652,8 +679,8 @@ test("observation A event does not satisfy observation B during retry reconcilia
     assert.ok(resA.event);
 
     // Now record observation B into state and receipt manually (simulating interrupted write where event B was omitted)
-    const state = await readWorkState(target, packageRoot);
-    const receipt = (await readJsonArtifact(target, ARTIFACT_PATHS.receipt, "execution-receipt", packageRoot)).value;
+    const state = await readWorkState(target, { packageRoot, taskId: "task-terminal-record" });
+    const receipt = (await readJsonArtifact(target, taskArtifactPath("task-terminal-record", "receipt"), "execution-receipt", packageRoot)).value;
     const { createEvidence } = await import("../src/core/evidence.js");
     const { createReceipt } = await import("../src/core/receipt.js");
     const { canonicalFingerprint, writeJsonArtifact } = await import("../src/core/artifacts.js");
@@ -688,13 +715,14 @@ test("observation A event does not satisfy observation B during retry reconcilia
       stateFingerprint: canonicalFingerprint(nextState),
     }, packageRoot);
 
-    await writeWorkState(target, nextState, { packageRoot });
-    await writeJsonArtifact(target, ARTIFACT_PATHS.receipt, nextReceipt, "execution-receipt", packageRoot);
+    await writeWorkState(target, nextState, { packageRoot, taskId: "task-terminal-record" });
+    await writeJsonArtifact(target, taskArtifactPath("task-terminal-record", "receipt"), nextReceipt, "execution-receipt", packageRoot);
 
     // Retrying observation B must detect evidence B and append event B specifically (not satisfied by event A)
     const retryB = await runRecordTerminalResult({
       target,
       packageRoot,
+      taskId: "task-terminal-record",
       requirement: "Package is published to npm registry",
       type: "PUBLICATION",
       status: "published",
@@ -704,7 +732,7 @@ test("observation A event does not satisfy observation B during retry reconcilia
     assert.equal(retryB.idempotent, true);
     assert.equal(retryB.repaired, true);
 
-    const ledger = await validateEventLedger(target, packageRoot);
+    const ledger = await validateEventLedger(target, packageRoot, { taskId: "task-terminal-record" });
     const termEvents = ledger.events.filter((e) => e.event === "TERMINAL_RESULT_RECORDED");
     assert.equal(termEvents.length, 2);
     assert.equal(termEvents[0].details.source, "source-A");

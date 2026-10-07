@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "validationOnly": true,
+  "harnessSha256": "434c9af4d3bc8c60e5a1cb2926c65a2ce339b431c80ea6a36380802f51b3954b",
+  "profiles": [
+    {
+      "operation": "paginated-task-list",
+      "tasks": 10,
+      "eventsPerOtherTask": 10,
+      "selectedTaskEvents": 1000,
+      "events": 1090,
+      "sqliteVersion": "3.53.3",
+      "outputContractVerified": true,
+      "outputSha256": "f650631af7ae4067186529336dd5e3a59789a568d123099df0bf3febe1b6eb3a"
+    },
+    {
+      "operation": "history-tail",
+      "tasks": 10,
+      "eventsPerOtherTask": 10,
+      "selectedTaskEvents": 1000,
+      "events": 1090,
+      "sqliteVersion": "3.53.3",
+      "outputContractVerified": true,
+      "outputSha256": "473e034d5097b1807e7a2bfc16ed54b1271019e847b76446e13c9b3235990b55"
+    },
+    {
+      "operation": "paginated-task-list",
+      "tasks": 100,
+      "eventsPerOtherTask": 10,
+      "selectedTaskEvents": 1000,
+      "events": 1990,
+      "sqliteVersion": "3.53.3",
+      "outputContractVerified": true,
+      "outputSha256": "85eaf68af8f41de1b94005b652bd5a0e129486137c301360e929069fe09ded4c"
+    },
+    {
+      "operation": "history-tail",
+      "tasks": 100,
+      "eventsPerOtherTask": 10,
+      "selectedTaskEvents": 1000,
+      "events": 1990,
+      "sqliteVersion": "3.53.3",
+      "outputContractVerified": true,
+      "outputSha256": "473e034d5097b1807e7a2bfc16ed54b1271019e847b76446e13c9b3235990b55"
+    },
+    {
+      "operation": "paginated-task-list",
+      "tasks": 1000,
+      "eventsPerOtherTask": 10,
+      "selectedTaskEvents": 1000,
+      "events": 10990,
+      "sqliteVersion": "3.53.3",
+      "outputContractVerified": true,
+      "outputSha256": "7f0973d5e67106c5cbbcb35eaf12dd4cc1703096f4b34b3a1552d8301fbbe2a8"
+    },
+    {
+      "operation": "history-tail",
+      "tasks": 1000,
+      "eventsPerOtherTask": 10,
+      "selectedTaskEvents": 1000,
+      "events": 10990,
+      "sqliteVersion": "3.53.3",
+      "outputContractVerified": true,
+      "outputSha256": "473e034d5097b1807e7a2bfc16ed54b1271019e847b76446e13c9b3235990b55"
+    }
+  ],
+  "normalizedFields": [
+    "history.snapshot.capturedAt: validated timestamp, omitted only from equality"
+  ],
+  "releaseThresholdsVerified": false,
+  "limitations": [
+    "Validation-only outputs contain no latency/resource measurement."
+  ]
+}

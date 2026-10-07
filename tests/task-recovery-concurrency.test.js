@@ -57,7 +57,7 @@ test("concurrent task-recover attempts produce one recovery without duplicate st
     const rejected = outcomes.find((outcome) => outcome.status === "rejected");
     assert.ok(
       ["E_TASK_ALREADY_RECOVERED", "E_TASK_LOCKED"].includes(rejected.reason.code),
-      `unexpected concurrent recovery error: ${rejected.reason.code}`,
+      `unexpected concurrent recovery error: ${rejected.reason.stack}`,
     );
     const recoveryEvents = (await readEvents(target, packageRoot, { taskId }))
       .filter((event) => event.event === "OPERATOR_RECOVERY_RECORDED");

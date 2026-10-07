@@ -35,13 +35,17 @@ const PREVIEW_DECISION_MAX_LENGTH = 240;
 
 export { validatePersistedPreflight } from "./preflight-model.js";
 
-export async function evaluatePreflight({ target, packageRoot, strict = false, taskId = null, contractPath = null, routePath = null, statePath = null } = {}) {
+function preflightArtifactPath(explicitPath, taskId, kind) {
+  return explicitPath ?? (taskId ? taskArtifactPath(taskId, kind) : ARTIFACT_PATHS[kind]);
+}
+
+export async function evaluatePreflight({ target, packageRoot, strict = false, taskId = null, contractPath = null, routePath = null, statePath = null, readers = null } = {}) {
   const errors = [];
   const profile = await readProfile(target);
   const profileProvenance = await validateProfileSources(target, packageRoot);
   errors.push(...(profileProvenance.errors ?? []));
-  const contract = await loadContract(target, packageRoot, errors, { taskId, contractPath });
-  const route = await loadRoute(target, packageRoot, errors, { taskId, routePath });
+  const contract = await loadContract(target, packageRoot, errors, { taskId, contractPath, readers });
+  const route = await loadRoute(target, packageRoot, errors, { taskId, routePath, readers });
   const config = await optionalConfig(target, packageRoot, errors);
   if (config.structuralQuality !== undefined) {
     try {
@@ -59,9 +63,9 @@ export async function evaluatePreflight({ target, packageRoot, strict = false, t
     errors.push(issue("E_PROFILE_UNVERIFIED", "Strict preflight requires a verified project profile", [PROFILE_PATH]));
   }
 
-  const contractRelPath = contractPath ?? (taskId ? taskArtifactPath(taskId, "contract") : ARTIFACT_PATHS.contract);
-  const routeRelPath = routePath ?? (taskId ? taskArtifactPath(taskId, "route") : ARTIFACT_PATHS.route);
-  const stateRelPath = statePath ?? (taskId ? taskArtifactPath(taskId, "state") : ARTIFACT_PATHS.state);
+  const contractRelPath = preflightArtifactPath(contractPath, taskId, "contract");
+  const routeRelPath = preflightArtifactPath(routePath, taskId, "route");
+  const stateRelPath = preflightArtifactPath(statePath, taskId, "state");
 
   const unresolvedDecisions = contract?.value?.unresolvedDecisions ?? [];
   if (unresolvedDecisions.length > 0) {
@@ -88,11 +92,11 @@ export async function evaluatePreflight({ target, packageRoot, strict = false, t
   }
 
   const sources = await loadSources(target, contract, packageRoot, errors);
-  const gates = await inspectGates(target, contract, route, packageRoot, errors, config, { taskId });
+  const gates = await inspectGates(target, contract, route, packageRoot, errors, config, { taskId, readers });
 
   let state = null;
   try {
-    state = await readWorkState(target, { packageRoot, taskId, statePath });
+    state = await (readers?.readState ?? readWorkState)(target, { packageRoot, taskId, statePath });
   } catch (error) {
     errors.push(issue("E_STATE_INVALID", error.message, [stateRelPath]));
   }
@@ -135,7 +139,7 @@ export async function evaluatePreflight({ target, packageRoot, strict = false, t
     reasonCodes: [],
     next: config.structuralQuality?.mode === "gate" ? "CAPTURE_STRUCTURAL_QUALITY_BASELINE" : null,
   };
-  if (effectiveTaskId !== "unknown") {
+  if (effectiveTaskId !== "unknown" && (!readers || structuralQuality.mode !== "off")) {
     try {
       const { projectStructuralQualityStatus } = await import("./structural-quality/service.js");
       structuralQuality = await projectStructuralQualityStatus({ target, packageRoot, taskId: effectiveTaskId });

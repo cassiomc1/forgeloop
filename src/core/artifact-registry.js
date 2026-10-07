@@ -1,12 +1,12 @@
 import { TASK_STATE_ROOT, TASK_ARTIFACT_FILES, PROJECT_ARTIFACT_PATHS, SESSIONS_ROOT } from "./task-paths.js";
 
 /**
- * Canonical registry of ForgeLoop artifacts, defining filesystem paths,
+ * Canonical registry of ForgeLoop artifacts, defining logical identities,
  * schema bindings, ownership, mutability, trust classifications, and scopes.
  *
  * Schema field shapes remain strictly owned by JSON schemas in `schemas/`.
  */
-export const ARTIFACT_REGISTRY = Object.freeze({
+const ARTIFACT_DEFINITIONS = Object.freeze({
   descriptor: Object.freeze({
     key: "descriptor",
     scope: "TASK",
@@ -416,3 +416,32 @@ export const ARTIFACT_REGISTRY = Object.freeze({
     description: "Deterministic test inventory and bounded utility analysis; never completion evidence or deletion authority.",
   }),
 });
+
+const DATABASE_PATH = ".forgeloop/state.sqlite";
+const RECORD_TABLES = Object.freeze({ descriptor: "tasks", state: "tasks", events: "events", actions: "actions", approvals: "approvals", executions: "executions", session: "sessions" });
+const ARTIFACT_KINDS = Object.freeze({ gates: "gate", evaluations: "evaluation", handoffs: "handoff", semanticDecisions: "decision", codeManifest: "attestation", attestationStatement: "attestation" });
+
+function canonicalStorage(artifact) {
+  if (artifact.scope === "PROJECT") return Object.freeze({ backend: "FILE", path: artifact.path });
+  if (artifact.key === "attestationBundle") {
+    return Object.freeze({ backend: "SQLITE_REFERENCED_FILE", path: DATABASE_PATH, table: "attachment_references", attachmentPath: ".forgeloop/attachments/objects/<sha256>" });
+  }
+  const table = RECORD_TABLES[artifact.key] ?? "task_artifacts";
+  return Object.freeze({ backend: "SQLITE", path: DATABASE_PATH, table,
+    ...(table === "task_artifacts" ? { kind: ARTIFACT_KINDS[artifact.key] ?? artifact.key } : {}),
+    ...(artifact.key === "descriptor" ? { column: "descriptor_json" } : {}),
+    ...(artifact.key === "state" ? { column: "state_json" } : {}),
+  });
+}
+
+/** `path` stays a historical logical alias; it is never a live-file guarantee. */
+export const ARTIFACT_REGISTRY = Object.freeze(Object.fromEntries(
+  Object.entries(ARTIFACT_DEFINITIONS).map(([key, artifact]) => [key, Object.freeze({
+    ...artifact,
+    logicalPath: artifact.path,
+    canonicalStorage: canonicalStorage(artifact),
+    // Configuration and policy inputs are copied separately from database export.
+    exportPath: artifact.scope === "PROJECT" ? null : artifact.key === "attestationBundle" ? ".forgeloop/attachments/objects/<sha256>" : artifact.path,
+    ...(artifact.key === "attestationBundle" ? { exportBindingPath: "export-index.json#attachments" } : {}),
+  })]),
+));

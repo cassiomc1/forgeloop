@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile, writeFile } from "node:fs/promises";
+import { readFixtureText, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
 import { test } from "node:test";
 
 import { createCanonicalHandoff, listCanonicalHandoffs, readCanonicalHandoff } from "../src/core/handoff.js";
@@ -37,9 +37,9 @@ test("canonical handoffs are protocol-derived, immutable, and tamper-evident", a
     );
 
     const relativePath = taskHandoffPath(taskId, handoffId);
-    const tampered = JSON.parse(await readFile(`${target}/${relativePath}`, "utf8"));
+    const tampered = JSON.parse(await readFixtureText(target, relativePath));
     tampered.state.phase = "COMPLETE";
-    await writeFile(`${target}/${relativePath}`, `${JSON.stringify(tampered)}\n`, "utf8");
+    await overwriteFixtureText(target, relativePath, `${JSON.stringify(tampered)}\n`);
     await assert.rejects(
       () => readCanonicalHandoff(target, { taskId, handoffId, packageRoot }),
       (error) => error.code === "E_HANDOFF_TAMPERED",

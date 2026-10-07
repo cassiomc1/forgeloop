@@ -79,7 +79,7 @@ capability-family versions.`;
   const artifacts = Object.values(ARTIFACT_REGISTRY)
     .filter((artifact) => artifact.isPublic)
     .sort((left, right) => left.key.localeCompare(right.key))
-    .map((artifact) => [artifact.key, artifact.scope, artifact.path, artifact.schema, artifact.trustRole]);
+    .map((artifact) => [artifact.key, artifact.scope, artifact.logicalPath, `${artifact.canonicalStorage.path}${artifact.canonicalStorage.table ? ` :: ${artifact.canonicalStorage.table}` : ""}`, artifact.exportPath ?? "Copied separately", artifact.schema, artifact.trustRole]);
   const errors = Object.values(PUBLIC_ERROR_REGISTRY)
     .filter((error) => /^(E_(CLI|WORKSPACE|HANDOFF|RESPONSIBILITY|VERIFICATION_SCOPE|REVISION|ATTESTATION)_)/u.test(error.code))
     .sort((left, right) => left.code.localeCompare(right.code))
@@ -192,7 +192,7 @@ ${guideCatalog()}
 
 ## Public artifact registry
 
-${table(["Key", "Scope", "Path", "Schema", "Trust role"], artifacts)}
+${table(["Key", "Scope", "Logical identity", "Canonical storage", "Export path", "Schema", "Trust role"], artifacts)}
 
 ## Command catalog
 

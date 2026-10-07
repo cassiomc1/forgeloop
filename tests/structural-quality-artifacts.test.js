@@ -1,3 +1,4 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
@@ -109,6 +110,7 @@ function evaluationValue(baselineFingerprint, overrides = {}) {
 test("quality artifacts are task-scoped, schema-validated, and numerically listed", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-structural-artifacts-"));
   try {
+    await ensureFixtureTask(target, taskId, packageRoot);
     const baseline = await writeStructuralQualityBaseline(target, taskId, baselineValue(), packageRoot, { phase: "PLANNED", taskId });
     const evaluation = await writeStructuralQualityEvaluation(
       target,
@@ -133,6 +135,7 @@ test("quality artifacts are task-scoped, schema-validated, and numerically liste
 test("baseline capture is idempotent, replaceable only before execution, and records bindings", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-structural-baseline-"));
   try {
+    await ensureFixtureTask(target, taskId, packageRoot);
     const first = await writeStructuralQualityBaseline(target, taskId, baselineValue(), packageRoot, { phase: "PLANNED", taskId });
     const identical = await writeStructuralQualityBaseline(target, taskId, baselineValue(), packageRoot, { phase: "PLANNED", taskId });
     assert.equal(identical.identical, true);
@@ -165,6 +168,7 @@ test("baseline capture is idempotent, replaceable only before execution, and rec
 test("semantic tampering is rejected even when the JSON schema still matches", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-structural-tamper-"));
   try {
+    await ensureFixtureTask(target, taskId, packageRoot);
     const baseline = await writeStructuralQualityBaseline(target, taskId, baselineValue(), packageRoot, { phase: "PLANNED", taskId });
     const invalid = evaluationValue(baseline.fingerprint, {
       status: "PASS",

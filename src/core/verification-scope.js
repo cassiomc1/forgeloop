@@ -1,3 +1,5 @@
+import { needsExistingProjectScope, withExistingProjectScope } from "../storage/existing-project-scope.js";
+import { operationalArtifactExists } from "../storage/operational-context.js";
 import { canonicalFingerprint, readJsonArtifact, writeJsonArtifact } from "./artifacts.js";
 import { assertSchema, readSchema } from "./schema-validation.js";
 import { getPackageRoot } from "./templates.js";
@@ -123,8 +125,11 @@ export async function validateVerificationScope(scope, packageRoot = getPackageR
 }
 
 export async function readVerificationScope(target, { taskId, packageRoot = getPackageRoot(), scopePath = null } = {}) {
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => readVerificationScope(target, { taskId, packageRoot, scopePath }), { readOnly: true });
+  }
   const relativePath = scopePath ?? taskVerificationScopePath(taskId);
-  if (!(await fileExists(ensureWithin(target, relativePath)))) {
+  if (!(operationalArtifactExists(target, relativePath) ?? await fileExists(ensureWithin(target, relativePath)))) {
     throw scopeError("E_VERIFICATION_SCOPE_INVALID", `Verification scope is missing: ${relativePath}`, [relativePath]);
   }
   try {

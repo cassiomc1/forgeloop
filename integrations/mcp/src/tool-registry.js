@@ -26,7 +26,7 @@ export function commandToToolName(command) {
  * arguments can never mint HOST_ATTESTED; the registry strips any
  * actor-supplied `authorityContext` property from args before dispatch.
  */
-export function buildToolRegistrations({ projectRoot, policy, authorityContextProvider }) {
+export function buildToolRegistrations({ projectRoot, policy, authorityContextProvider, runtimeContext }) {
   const registrations = [];
 
   const commandNames = Object.keys(CLI_COMMAND_DEFINITIONS).sort();
@@ -93,6 +93,7 @@ export function buildToolRegistrations({ projectRoot, policy, authorityContextPr
           projectPath: projectRoot,
           input: effectiveArgs,
           authorityContext,
+          runtimeContext,
         });
         const result = envelopeToToolResult(envelope);
         result._diagnostics = { tool: commandToToolName(command), durationMs: Date.now() - startedAt };

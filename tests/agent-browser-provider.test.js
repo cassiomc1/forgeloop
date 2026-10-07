@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readdir, rm, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -173,4 +173,37 @@ test("Agent Browser temporary roots cannot overlap the verification target", asy
   } finally {
     await rm(root, { recursive: true, force: true });
   }
+});
+
+test("Agent Browser rejects temporary roots physically inside the target before creating or spawning", async () => {
+  const { root, executable } = await setup();
+  try {
+    const target = path.join(root, "project");
+    await mkdir(target);
+    const alias = path.join(root, "outside-alias");
+    await symlink(target, alias, "junction");
+    const calls = [];
+    const provider = createAgentBrowserVerificationProvider({ executablePath: executable, tempRoot: alias, spawnImpl: scriptedSpawn(calls) });
+    await assert.rejects(() => provider.verify({ ...request(), target }), { code: "E_BROWSER_VERIFICATION_PROVIDER_INVALID" });
+    assert.equal(calls.length, 0);
+    assert.deepEqual(await readdir(target), []);
+  } finally { await rm(root, { recursive: true, force: true }); }
+});
+
+test("Agent Browser rejects returned target directories without deleting them", async () => {
+  const { root, executable } = await setup();
+  try {
+    const target = path.join(root, "project");
+    await mkdir(target);
+    await writeFile(path.join(target, "retained"), "keep");
+    const calls = [], removed = [];
+    const provider = createAgentBrowserVerificationProvider({
+      executablePath: executable, tempRoot: os.tmpdir(), spawnImpl: scriptedSpawn(calls),
+      fsImpl: { lstatSync: () => ({ isSymbolicLink: () => false }), statSync: () => ({ isFile: () => true }), mkdtemp: async () => target, rm: async name => removed.push(name) },
+    });
+    await assert.rejects(() => provider.verify({ ...request(), target }), { code: "E_BROWSER_VERIFICATION_PROVIDER_INVALID" });
+    assert.equal(calls.length, 0);
+    assert.deepEqual(removed, []);
+    assert.deepEqual(await readdir(target), ["retained"]);
+  } finally { await rm(root, { recursive: true, force: true }); }
 });

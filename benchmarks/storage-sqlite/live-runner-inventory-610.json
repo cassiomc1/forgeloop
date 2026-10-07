@@ -1,0 +1,313 @@
+{
+  "increment": 610,
+  "github": {
+    "runners": [
+      {
+        "busy": false,
+        "id": 23,
+        "labels": [
+          "self-hosted",
+          "X64",
+          "Linux",
+          "forgeloop-linux-remote"
+        ],
+        "name": "forgeloop-linux-remote",
+        "os": "Linux",
+        "status": "online"
+      },
+      {
+        "busy": false,
+        "id": 21,
+        "labels": [
+          "self-hosted",
+          "macOS",
+          "ARM64",
+          "forgeloop-macos-local"
+        ],
+        "name": "forgeloop-macos-local",
+        "os": "macOS",
+        "status": "online"
+      },
+      {
+        "busy": false,
+        "id": 22,
+        "labels": [
+          "self-hosted",
+          "Windows",
+          "X64",
+          "forgeloop-windows-remote"
+        ],
+        "name": "forgeloop-windows-remote",
+        "os": "Windows",
+        "status": "online"
+      }
+    ],
+    "total_count": 3
+  },
+  "remoteDocker": {
+    "containers": [
+      {
+        "id": "fe2fd89eb37b",
+        "name": "forgeloop-linux-full607",
+        "image": "node:24.19.0-bookworm",
+        "status": "Up 16 minutes"
+      },
+      {
+        "id": "51abbe357f3e",
+        "name": "forgeloop-linux-remote",
+        "image": "forgeloop-actions-linux:2.337.0",
+        "status": "Up 4 days"
+      }
+    ]
+  },
+  "changedWorkflowExecutionVerified": false,
+  "declaredSelfHostedLabelListsMatchRegisteredRunners": true,
+  "checkedStaticLabelLists": [
+    {
+      "workflow": ".github/workflows/docs.yml",
+      "labels": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/forgeloop-audit.yml",
+      "labels": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/mcp-publish.yml",
+      "labels": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/node-compat.yml",
+      "labels": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/node-compat.yml",
+      "labels": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/node-compat.yml",
+      "labels": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/node-compat.yml",
+      "labels": [
+        "self-hosted",
+        "macOS",
+        "ARM64",
+        "forgeloop-macos-local"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/node-compat.yml",
+      "labels": [
+        "self-hosted",
+        "macOS",
+        "ARM64",
+        "forgeloop-macos-local"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/node-compat.yml",
+      "labels": [
+        "self-hosted",
+        "Windows",
+        "X64",
+        "forgeloop-windows-remote"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/node-compat.yml",
+      "labels": [
+        "self-hosted",
+        "Windows",
+        "X64",
+        "forgeloop-windows-remote"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/npm-publish.yml",
+      "labels": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/package-smoke.yml",
+      "labels": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/package-smoke.yml",
+      "labels": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/package-smoke.yml",
+      "labels": [
+        "self-hosted",
+        "macOS",
+        "ARM64",
+        "forgeloop-macos-local"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/package-smoke.yml",
+      "labels": [
+        "self-hosted",
+        "Windows",
+        "X64",
+        "forgeloop-windows-remote"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/pr-core.yml",
+      "labels": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/pr-core.yml",
+      "labels": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/pr-core.yml",
+      "labels": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/pr-core.yml",
+      "labels": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/pr-core.yml",
+      "labels": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/pr-core.yml",
+      "labels": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/repository-index.yml",
+      "labels": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/repository-index.yml",
+      "labels": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/repository-index.yml",
+      "labels": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/repository-index.yml",
+      "labels": [
+        "self-hosted",
+        "macOS",
+        "ARM64",
+        "forgeloop-macos-local"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/repository-index.yml",
+      "labels": [
+        "self-hosted",
+        "Windows",
+        "X64",
+        "forgeloop-windows-remote"
+      ]
+    },
+    {
+      "workflow": ".github/workflows/windows-full-suite.yml",
+      "labels": [
+        "self-hosted",
+        "Windows",
+        "X64",
+        "forgeloop-windows-remote"
+      ]
+    }
+  ],
+  "limitations": [
+    "Static label matching and live runner state do not prove execution of changed workflow jobs"
+  ]
+}

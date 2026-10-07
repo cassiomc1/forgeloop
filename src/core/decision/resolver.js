@@ -2,12 +2,14 @@ import { readdir } from "node:fs/promises";
 
 import { canonicalFingerprint, readJsonArtifact } from "../artifacts.js";
 import { fileExists, ensureWithin } from "../filesystem.js";
-import { readEvents, validateEventLedger } from "../events.js";
+import { validateEventLedger } from "../events.js";
 import { taskDecisionDirectory } from "../task-paths.js";
 import { getQuestionSet } from "./question-registry.js";
 import { DECISION_ERROR_CODES, decisionError } from "./errors.js";
 import { DECISION_ENGINE_ID, DECISION_POLICY_VERSION, PINNED_JEV_MODEL, SEMANTIC_DECISION_RECORDED_EVENT, SEMANTIC_DECISION_SUPERSEDED_EVENT } from "./constants.js";
 import { assertDecisionFresh } from "./freshness.js";
+import { listOperationalArtifactNames } from "../../storage/operational-context.js";
+import { withProjectReadSnapshot } from "../../storage/project-read-snapshot.js";
 
 function invalid(message, code = DECISION_ERROR_CODES.BINDING_INVALID) {
   return decisionError(code, message);
@@ -89,14 +91,16 @@ export function assertRequiredFreshDecision({ artifact, currentBindings = {}, ex
 
 async function decisionArtifacts(target, taskId, packageRoot) {
   const directory = taskDecisionDirectory(taskId);
-  const absolute = ensureWithin(target, directory);
-  if (!(await fileExists(absolute))) return [];
-  const names = (await readdir(absolute, { withFileTypes: true }))
-    .filter((entry) => entry.isFile() && entry.name.endsWith(".json"))
-    .map((entry) => entry.name.slice(0, -5))
-    .sort();
+  let names = listOperationalArtifactNames(target, taskId, "decisions");
+  if (names === null) {
+    const absolute = ensureWithin(target, directory);
+    if (!(await fileExists(absolute))) return [];
+    names = (await readdir(absolute, { withFileTypes: true }))
+      .filter(entry => entry.isFile()).map(entry => entry.name);
+  }
+  const ids = names.filter(name => name.endsWith(".json")).map(name => name.slice(0, -5)).sort();
   const artifacts = [];
-  for (const decisionId of names) {
+  for (const decisionId of ids) {
     try {
       artifacts.push((await readJsonArtifact(target, `${directory}/${decisionId}.json`, "semantic-decision", packageRoot)).value);
     } catch {
@@ -106,11 +110,15 @@ async function decisionArtifacts(target, taskId, packageRoot) {
   return artifacts;
 }
 
-export async function resolveRequiredSemanticDecision({ target, packageRoot, taskId, decisionKind, decisionId = null, currentBindings = {} } = {}) {
-  if (typeof taskId !== "string" || !taskId) throw decisionError(DECISION_ERROR_CODES.REQUIRED, "A task-bound semantic decision is required.");
+export async function resolveRequiredSemanticDecision(options = {}) {
+  if (typeof options.taskId !== "string" || !options.taskId) throw decisionError(DECISION_ERROR_CODES.REQUIRED, "A task-bound semantic decision is required.");
+  return withProjectReadSnapshot(options.target, () => resolveSelectedSemanticDecision(options));
+}
+
+async function resolveSelectedSemanticDecision({ target, packageRoot, taskId, decisionKind, decisionId = null, currentBindings = {} }) {
   const ledgerResult = await validateEventLedger(target, packageRoot, { taskId });
   if (!ledgerResult.valid) throw decisionError(DECISION_ERROR_CODES.LEDGER_INVALID, "The task ledger is invalid for semantic decision resolution.", ledgerResult.errors);
-  const events = await readEvents(target, packageRoot, { taskId });
+  const events = ledgerResult.events;
   const candidates = decisionId
     ? [(await readJsonArtifact(target, `${taskDecisionDirectory(taskId)}/${decisionId}.json`, "semantic-decision", packageRoot)).value]
     : await decisionArtifacts(target, taskId, packageRoot);

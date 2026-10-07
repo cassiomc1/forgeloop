@@ -1,3 +1,4 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
@@ -28,6 +29,7 @@ function actionInput(overrides = {}) {
 test("action lifecycle events keep a valid hash-chained ledger", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-action-ledger-"));
   try {
+    await ensureFixtureTask(target, "chain-task", packageRoot);
     const { action } = await proposeAction(target, { packageRoot, taskId: "chain-task", input: actionInput() });
     await transitionAuthorizedAction(target, {
       packageRoot, taskId: "chain-task", actionId: "action-publish",
@@ -61,6 +63,7 @@ test("action lifecycle events keep a valid hash-chained ledger", async () => {
 test("event detail validators reject malformed action event details", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-action-details-"));
   try {
+    await ensureFixtureTask(target, "details-task", packageRoot);
     await proposeAction(target, { packageRoot, taskId: "details-task", input: actionInput() });
 
     // A malformed ACTION_STARTED event (missing actionId) must be rejected.
@@ -70,7 +73,7 @@ test("event detail validators reject malformed action event details", async () =
         taskId: "details-task",
         event: "ACTION_STARTED",
         details: { actionFingerprint: "a".repeat(64) },
-      }, packageRoot),
+      }, packageRoot, { taskId: "details-task" }),
       (error) => error.code === "E_EVENT_INVALID" || error.code === "E_ACTION_EVIDENCE_INVALID",
     );
   } finally {
@@ -81,6 +84,7 @@ test("event detail validators reject malformed action event details", async () =
 test("transition persists fingerprint binding and refuses foreign fingerprints", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-action-fp-"));
   try {
+    await ensureFixtureTask(target, "fp-task", packageRoot);
     const { action } = await proposeAction(target, { packageRoot, taskId: "fp-task", input: actionInput() });
 
     await assert.rejects(

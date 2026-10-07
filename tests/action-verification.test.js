@@ -1,3 +1,4 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
@@ -137,6 +138,7 @@ test("new required proposals cannot omit a requirement", async () => {
       } }),
       (error) => error.code === "E_ACTION_INVALID",
     );
+    await ensureFixtureTask(target, "verify-noreq", packageRoot);
     // Non-required actions without a requirement remain allowed.
     const { action } = await proposeAction(target, { packageRoot, taskId: "verify-noreq", input: {
       actionId: "action-optional", effectClass: "REVERSIBLE_WRITE", capability: "filesystem.write",

@@ -153,7 +153,7 @@ export async function runTaskAbandon({
       const inspection = await inspectTaskConflictState(target, {
         taskId: effectiveTaskId,
         packageRoot,
-        ignoredLockId: transaction.lock.lockId,
+        ignoredLockId: transaction.lock?.lockId ?? null,
       });
       assertInspectionAbandonable(effectiveTaskId, inspection);
       assertSnapshotUnchanged(before, snapshot(inspection), effectiveTaskId);

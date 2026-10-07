@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile, writeFile } from "node:fs/promises";
+import { readFixtureText, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
 import { test } from "node:test";
 
 import { runTaskRecover } from "../src/commands/task-recover.js";
@@ -27,9 +27,9 @@ test("validate-protocol verifies recovery artifact and ledger consistency", asyn
     assert.deepEqual(recoveryErrors(valid), []);
 
     const recoveryPath = ensureWithin(target, taskArtifactPath(taskId, "recovery"));
-    const tampered = JSON.parse(await readFile(recoveryPath, "utf8"));
+    const tampered = JSON.parse(await readFixtureText(target, recoveryPath));
     tampered.recoveryEventSeq += 1;
-    await writeFile(recoveryPath, `${JSON.stringify(tampered, null, 2)}\n`, "utf8");
+    await overwriteFixtureText(target, recoveryPath, `${JSON.stringify(tampered, null, 2)}\n`);
 
     const invalid = await runValidateProtocol({ target, packageRoot, taskId });
     assert.equal(invalid.status, "INVALID");

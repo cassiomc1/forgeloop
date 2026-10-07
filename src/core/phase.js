@@ -63,6 +63,39 @@ const LATE_PHASES = new Set([
   "COMPLETE",
 ]);
 
+/**
+ * Pure prerequisite for the `DIAGNOSING -> CORRECTING` edge.
+ *
+ * Extracted so the filesystem advance and the SQLite store advance enforce the
+ * identical rule through one owner. The store implementation must not restate
+ * this; it calls this function with its own loaded evidence.
+ *
+ * Throws `E_DIAGNOSIS_REQUIRED` when no append-only diagnosis exists for the
+ * active verification cycle, and `E_DIAGNOSIS_NO_NEW_INFORMATION` when the
+ * diagnosis carries no new information.
+ */
+export function assertDiagnosingToCorrectingTransition({ state, events, resolveDiagnosis }) {
+  const cycle = state?.verificationCycle ?? 1;
+  const diagEvent = resolveDiagnosis(events, state?.taskId, cycle);
+  if (!diagEvent) {
+    throw phaseError(
+      "E_DIAGNOSIS_REQUIRED",
+      "DIAGNOSING -> CORRECTING requires an append-only diagnosis record for the active verification cycle",
+      [],
+    );
+  }
+  const structured = diagEvent.sourceModel === "STRUCTURED_DIAGNOSTIC_CASE_V1";
+  const gainClassification = structured ? null : diagEvent.details?.informationGain;
+  if (!diagEvent.details || (structured ? false : gainClassification === "NONE")) {
+    throw phaseError(
+      "E_DIAGNOSIS_NO_NEW_INFORMATION",
+      "The proposed retry repeats the previous hypothesis with the same evidence without new information",
+      [],
+    );
+  }
+  return diagEvent;
+}
+
 async function readPhaseIdentityArtifacts(target, state, toPhase, packageRoot, options, paths) {
   const scopedTaskId = options.taskId ?? null;
   const requireContract = LATE_PHASES.has(state.phase)
@@ -75,6 +108,7 @@ async function readPhaseIdentityArtifacts(target, state, toPhase, packageRoot, o
   try {
     contract = await readContract(target, packageRoot, { taskId: scopedTaskId, contractPath: options.contractPath });
   } catch (error) {
+    if (error.code === "E_STATE_REVISION_CONFLICT") throw error;
     if (error.code === "ARTIFACT_MISSING" && !requireContract) {
       contract = null;
     } else {
@@ -88,6 +122,7 @@ async function readPhaseIdentityArtifacts(target, state, toPhase, packageRoot, o
   try {
     route = await readPersistedRoute(target, packageRoot, { taskId: scopedTaskId, routePath: options.routePath });
   } catch (error) {
+    if (error.code === "E_STATE_REVISION_CONFLICT") throw error;
     if (error.code === "ARTIFACT_MISSING" && !requireRoute) {
       route = null;
     } else {
@@ -185,24 +220,24 @@ function isRevisionPlanRepeat(events, eventType) {
     && isRevisionEpochPlanRepeat(events, events.length, { event: eventType });
 }
 
+async function assertRequiredPhaseArtifact(read, toPhase, relativePath) {
+  try { await read(); }
+  catch (error) {
+    if (error.code === "E_STATE_REVISION_CONFLICT") throw error;
+    throw phaseError("E_PHASE_PREREQUISITE_MISSING", `Phase ${toPhase} requires ${relativePath}: ${error.message}`, [relativePath]);
+  }
+}
+
 async function assertPhasePrerequisites(target, state, toPhase, packageRoot, authorityContext, runtimeContext, options = {}) {
   const scopedTaskId = options.taskId ?? null;
   const contractRel = options.contractPath ?? (scopedTaskId ? taskArtifactPath(scopedTaskId, "contract") : ARTIFACT_PATHS.contract);
   const routeRel = options.routePath ?? (scopedTaskId ? taskArtifactPath(scopedTaskId, "route") : ARTIFACT_PATHS.route);
 
   if (toPhase === "CONTRACT_READY" || toPhase === "ROUTED" || toPhase === "EXECUTING") {
-    try {
-      await readContract(target, packageRoot, { taskId: scopedTaskId, contractPath: options.contractPath });
-    } catch (error) {
-      throw phaseError("E_PHASE_PREREQUISITE_MISSING", `Phase ${toPhase} requires ${contractRel}: ${error.message}`, [contractRel]);
-    }
+    await assertRequiredPhaseArtifact(() => readContract(target, packageRoot, { taskId: scopedTaskId, contractPath: options.contractPath }), toPhase, contractRel);
   }
   if (toPhase === "ROUTED" || toPhase === "EXECUTING") {
-    try {
-      await readPersistedRoute(target, packageRoot, { taskId: scopedTaskId, routePath: options.routePath });
-    } catch (error) {
-      throw phaseError("E_PHASE_PREREQUISITE_MISSING", `Phase ${toPhase} requires ${routeRel}: ${error.message}`, [routeRel]);
-    }
+    await assertRequiredPhaseArtifact(() => readPersistedRoute(target, packageRoot, { taskId: scopedTaskId, routePath: options.routePath }), toPhase, routeRel);
   }
   if (toPhase === "EXECUTING" && scopedTaskId) {
     try {
@@ -215,6 +250,7 @@ async function assertPhasePrerequisites(target, state, toPhase, packageRoot, aut
     try {
       await assertExecutionPrerequisites({ target, state, packageRoot, ...options, taskId: scopedTaskId, runtimeContext });
     } catch (error) {
+      if (error.code === "E_STATE_REVISION_CONFLICT") throw error;
       throw phaseError(error.code, error.message, error.artifacts);
     }
   }
@@ -245,6 +281,68 @@ async function appendRepairRouteCheckpoint({ target, packageRoot, taskId, state,
       selectedGuides: [...state.selectedGuides].sort(),
     },
   }, packageRoot, { taskId, eventsPath: eventsRel });
+}
+
+/** Shared receipt refresh used by phase advancement on either storage source. */
+export async function preparePhaseReceipt({ target, packageRoot, taskId, state, next, receiptRel, contractPath = null, routePath = null, statePath = null, authorityContext, runtimeContext, readers = null }) {
+  let nextReceipt = null;
+  try {
+    const receipt = await (readers?.readReceipt ?? readJsonArtifact)(target, receiptRel, "execution-receipt", packageRoot);
+    const contract = await (readers?.readContract ?? readContract)(target, packageRoot, { taskId, contractPath });
+    const route = await (readers?.readRoute ?? readPersistedRoute)(target, packageRoot, { taskId, routePath });
+    const preflight = await evaluatePreflight({ target, packageRoot, taskId, contractPath, routePath, statePath, readers });
+    const requiredEvidence = await requiredEvidenceForTarget({
+      target,
+      contract,
+      route,
+      packageRoot,
+      additionalEvidence: preflight.policy?.requiredEvidence ?? [],
+    });
+    await validateReceipt(receipt.value, packageRoot, {
+      target,
+      taskId: contract?.value?.taskId,
+      authorityContext,
+      runtimeContext,
+    });
+    assertCompletionRelationships({
+      contract,
+      route,
+      state,
+      receipt: receipt.value,
+      requiredEvidence,
+      requireRequiredChecks: false,
+      requireReceiptStateFingerprint: false,
+      target,
+      taskId: contract?.value?.taskId,
+      authorityContext,
+      runtimeContext,
+    });
+    nextReceipt = await createReceipt({
+      ...receipt.value,
+      stateFingerprint: canonicalFingerprint(next),
+      verificationCycle: next.verificationCycle ?? receipt.value.verificationCycle ?? 1,
+    }, packageRoot, {
+      target,
+      taskId: contract?.value?.taskId,
+      authorityContext,
+      runtimeContext,
+    });
+    assertCompletionRelationships({
+      contract,
+      route,
+      state: next,
+      receipt: nextReceipt,
+      requiredEvidence,
+      requireRequiredChecks: false,
+      target,
+      taskId: contract?.value?.taskId,
+      authorityContext,
+      runtimeContext,
+    });
+  } catch (error) {
+    if (error.code !== "ARTIFACT_MISSING") throw error;
+  }
+  return nextReceipt;
 }
 
 export async function advanceWorkState(target, toPhase, options = {}) {
@@ -392,35 +490,35 @@ async function advanceWorkStateInternal(target, toPhase, normalizedOptions) {
     }
   }
   if (toPhase === "CORRECTING" && state.phase === "DIAGNOSING") {
-    const cycle = state.verificationCycle ?? 1;
-    const diagEvent = resolveCurrentCycleDiagnostic(ledger.events, state.taskId, cycle);
-    if (!diagEvent) {
-      throw phaseError(
-        "E_DIAGNOSIS_REQUIRED",
-        "DIAGNOSING -> CORRECTING requires an append-only diagnosis record for the active verification cycle",
-        [eventsRel],
-      );
+    // Shared rule owner: the same pure prerequisite used by the SQLite store
+    // advance, so the two backends cannot drift on this edge.
+    let cycle = state.verificationCycle ?? 1;
+    let diagEvent;
+    try {
+      diagEvent = assertDiagnosingToCorrectingTransition({
+        state,
+        events: ledger.events,
+        resolveDiagnosis: resolveCurrentCycleDiagnostic,
+      });
+    } catch (error) {
+      throw phaseError(error.code, error.message, [eventsRel]);
     }
-    let stalledNoGain = false;
+    cycle = state.verificationCycle ?? 1;
     if (diagEvent.sourceModel === "STRUCTURED_DIAGNOSTIC_CASE_V1") {
-      // One canonical structured-stall truth, shared with progress/reflect.
+      // The shared rule intentionally omits the structured-stall evaluation,
+      // which depends on progress/reflect projections. Re-check it here so the
+      // filesystem behavior is unchanged.
       const stall = evaluateStructuredDiagnosticStall(
         buildInformationGainProjection(ledger.events, state.taskId),
         { verificationCycle: cycle },
       );
-      stalledNoGain = stall.stalled;
-    }
-    const gainClassification = diagEvent.sourceModel === "STRUCTURED_DIAGNOSTIC_CASE_V1"
-      ? null
-      : diagEvent.details?.informationGain;
-    if (!diagEvent.details
-      || stalledNoGain
-      || (diagEvent.sourceModel !== "STRUCTURED_DIAGNOSTIC_CASE_V1" && gainClassification === "NONE")) {
-      throw phaseError(
-        "E_DIAGNOSIS_NO_NEW_INFORMATION",
-        "The proposed retry repeats the previous hypothesis with the same evidence without new information",
-        [eventsRel],
-      );
+      if (stall.stalled) {
+        throw phaseError(
+          "E_DIAGNOSIS_NO_NEW_INFORMATION",
+          "The proposed retry repeats the previous hypothesis with the same evidence without new information",
+          [eventsRel],
+        );
+      }
     }
   }
   if (toPhase === "VERIFYING" && state.phase === "CORRECTING") {
@@ -479,63 +577,7 @@ async function advanceWorkStateInternal(target, toPhase, normalizedOptions) {
     stateRel,
     eventsRel,
   });
-  let nextReceipt = null;
-  try {
-    const receipt = await readJsonArtifact(target, receiptRel, "execution-receipt", packageRoot);
-    const contract = await readContract(target, packageRoot, { taskId, contractPath });
-    const route = await readPersistedRoute(target, packageRoot, { taskId, routePath });
-    const preflight = await evaluatePreflight({ target, packageRoot, taskId, contractPath, routePath, statePath });
-    const requiredEvidence = await requiredEvidenceForTarget({
-      target,
-      contract,
-      route,
-      packageRoot,
-      additionalEvidence: preflight.policy?.requiredEvidence ?? [],
-    });
-    await validateReceipt(receipt.value, packageRoot, {
-      target,
-      taskId: contract?.value?.taskId,
-      authorityContext,
-      runtimeContext,
-    });
-    assertCompletionRelationships({
-      contract,
-      route,
-      state,
-      receipt: receipt.value,
-      requiredEvidence,
-      requireRequiredChecks: false,
-      requireReceiptStateFingerprint: false,
-      target,
-      taskId: contract?.value?.taskId,
-      authorityContext,
-      runtimeContext,
-    });
-    nextReceipt = await createReceipt({
-      ...receipt.value,
-      stateFingerprint: canonicalFingerprint(next),
-      verificationCycle: next.verificationCycle ?? receipt.value.verificationCycle ?? 1,
-    }, packageRoot, {
-      target,
-      taskId: contract?.value?.taskId,
-      authorityContext,
-      runtimeContext,
-    });
-    assertCompletionRelationships({
-      contract,
-      route,
-      state: next,
-      receipt: nextReceipt,
-      requiredEvidence,
-      requireRequiredChecks: false,
-      target,
-      taskId: contract?.value?.taskId,
-      authorityContext,
-      runtimeContext,
-    });
-  } catch (error) {
-    if (error.code !== "ARTIFACT_MISSING") throw error;
-  }
+  const nextReceipt = await preparePhaseReceipt({ target, packageRoot, taskId, state, next, receiptRel, contractPath, routePath, statePath, authorityContext, runtimeContext });
   await mutateWorkState(target, {
     expectedRevision: state.revision ?? 0,
     packageRoot,

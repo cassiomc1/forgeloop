@@ -1,3 +1,5 @@
+import { ledgerRelationMap } from "./ledger-relations.js";
+import { isLedgerEventCollection, ledgerEventAt, ledgerEventAtIs, ledgerEventsOfTypes, ledgerTypeSummary } from "./ledger-event-collection.js";
 import { canonicalFingerprint } from "./artifacts.js";
 
 export const CONTRACT_BOOTSTRAP_REPAIR_EVENT = "CONTRACT_BOOTSTRAP_REPAIR_RECORDED";
@@ -212,13 +214,13 @@ function isRepairTransactionCommit(event, taskId) {
  * repair transaction merely because they follow the marker.
  */
 export function resolveContractBootstrapRepairBoundary(events, marker = null) {
-  if (!Array.isArray(events)) return null;
-  const markers = events.filter((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
-  if (markers.length !== 1) return null;
-  const resolvedMarker = marker ?? markers[0];
+  if (!isLedgerEventCollection(events)) return null;
+  const { count, first } = ledgerTypeSummary(events, CONTRACT_BOOTSTRAP_REPAIR_EVENT);
+  if (count !== 1) return null;
+  const resolvedMarker = marker ?? first;
   const markerIndex = events.indexOf(resolvedMarker);
   if (markerIndex < 0 || resolvedMarker.seq !== markerIndex + 1) return null;
-  const repairCommit = events[markerIndex + 1];
+  const repairCommit = ledgerEventAt(events, markerIndex + 1);
   if (!isRepairTransactionCommit(repairCommit, resolvedMarker.taskId)
     || repairCommit.seq !== resolvedMarker.seq + 1) return null;
   return {
@@ -261,7 +263,7 @@ export function resolveCanonicalRouteEvolution(events, {
   targetRouteFingerprint,
   contractFingerprint,
 } = {}) {
-  if (!Array.isArray(events)
+  if (!isLedgerEventCollection(events)
     || typeof taskId !== "string" || !taskId
     || !Number.isInteger(sourceSeq) || sourceSeq < 0
     || (sourceRouteFingerprint !== null && !isFingerprint(sourceRouteFingerprint))
@@ -270,9 +272,9 @@ export function resolveCanonicalRouteEvolution(events, {
   let currentFingerprint = sourceRouteFingerprint;
   const reboundEvents = [];
   for (let index = 0; index < events.length - 1; index += 1) {
-    const reboundEvent = events[index];
+    const reboundEvent = ledgerEventAt(events, index);
     if (reboundEvent?.seq <= sourceSeq || reboundEvent?.event !== "ROUTE_REBOUND") continue;
-    const routeCommit = events[index + 1];
+    const routeCommit = ledgerEventAt(events, index + 1);
     if (!isCanonicalRouteReboundBoundary(reboundEvent, routeCommit, {
       taskId,
       contractFingerprint,
@@ -315,8 +317,8 @@ export function resolveCanonicalPostRepairCheckpointBinding(events, marker) {
   if (checkpointEvents.length !== 1) return null;
   const checkpointEvent = checkpointEvents[0];
   const checkpointIndex = boundary.postRepairEvents.indexOf(checkpointEvent);
-  const phaseEvent = boundary.postRepairEvents[checkpointIndex + 1];
-  const transactionCommit = boundary.postRepairEvents[checkpointIndex + 2];
+  const phaseEvent = ledgerEventAt(boundary.postRepairEvents, checkpointIndex + 1);
+  const transactionCommit = ledgerEventAt(boundary.postRepairEvents, checkpointIndex + 2);
   const details = checkpointEvent.details;
   if (checkpointEvent.taskId !== boundary.marker.taskId
     || checkpointEvent.hash !== eventHash(checkpointEvent)
@@ -343,26 +345,25 @@ export function resolveCanonicalPostRepairCheckpointBinding(events, marker) {
 }
 
 export function isContractBootstrapRepairCandidate(events, ledgerErrors = [], taskId = null) {
-  if (!Array.isArray(events) || events.length < 4) return null;
-  const effectiveTaskId = taskId ?? events[0]?.taskId;
+  if (!isLedgerEventCollection(events) || events.length < 4) return null;
+  const effectiveTaskId = taskId ?? ledgerEventAt(events, 0)?.taskId;
   if (typeof effectiveTaskId !== "string" || !effectiveTaskId) return null;
   if (events.some((event) => event.taskId !== effectiveTaskId)) return null;
-  if (events.some((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT)) return null;
-  if (events[0]?.event !== "TASK_RECEIVED" || events[1]?.event !== "TRANSACTION_COMMITTED"
-    || events[1]?.details?.operation !== "task-create") return null;
+  if (ledgerTypeSummary(events, CONTRACT_BOOTSTRAP_REPAIR_EVENT).count) return null;
+  if (ledgerEventAt(events, 0)?.event !== "TASK_RECEIVED" || ledgerEventAt(events, 1)?.event !== "TRANSACTION_COMMITTED"
+    || ledgerEventAt(events, 1)?.details?.operation !== "task-create") return null;
   if (!events.some((event) => event.event === "DISCOVERY_STARTED")) return null;
-  const contractEvents = events.filter((event) => event.event === "CONTRACT_VALIDATED");
-  if (contractEvents.length !== 2) return null;
-  const [canonical, duplicate] = contractEvents;
+  const { count: contractCount, first: canonical, latest: duplicate } = ledgerTypeSummary(events, "CONTRACT_VALIDATED");
+  if (contractCount !== 2) return null;
   if (!isFingerprint(canonical.details?.contractFingerprint)
     || canonical.details.contractFingerprint !== duplicate.details?.contractFingerprint) return null;
   if (canonical.hash !== eventHash(canonical) || duplicate.hash !== eventHash(duplicate)) return null;
   const canonicalIndex = events.indexOf(canonical);
   const duplicateIndex = events.indexOf(duplicate);
-  const canonicalCommit = events[canonicalIndex + 1];
-  const duplicateCommit = events[duplicateIndex + 1];
+  const canonicalCommit = ledgerEventAt(events, canonicalIndex + 1);
+  const duplicateCommit = ledgerEventAt(events, duplicateIndex + 1);
   if (!isCommitFor(canonicalCommit, "contract-create") || !isCommitFor(duplicateCommit, "contract-create")) return null;
-  if (duplicateIndex !== events.length - 2 || events.at(-1) !== duplicateCommit) return null;
+  if (duplicateIndex !== events.length - 2 || !ledgerEventAtIs(events, events.length - 1, duplicateCommit)) return null;
   if (events.some((event) => HISTORICAL_EVENTS.has(event.event))) return null;
   if (!Array.isArray(ledgerErrors) || ledgerErrors.length < 1) return null;
   if (ledgerErrors.some((error) => !isExactDuplicateContractChronologyError(error))) return null;
@@ -383,7 +384,7 @@ export function isContractBootstrapRepairMarkerValid(events, marker) {
     if (!resolveContractBootstrapRepairBoundary(events, marker)) return false;
     assertContractBootstrapRepairDetails(marker.details);
     if (marker.taskId !== marker.details.taskId || marker.hash !== eventHash(marker)) return false;
-    if (marker.seq < 1 || events[marker.seq - 1] !== marker) return false;
+    if (marker.seq < 1 || !ledgerEventAtIs(events, marker.seq - 1, marker)) return false;
     const prefix = events.slice(0, marker.seq - 1);
     const prefixErrors = [];
     const candidate = isContractBootstrapRepairCandidate(prefix, prefixErrors, marker.taskId);
@@ -528,11 +529,11 @@ function migrationMatchesLegacyRepairBoundary({ migration, marker, repairCommit 
 }
 
 function resolveContractBootstrapRepairMigration(events, migration) {
-  if (!Array.isArray(events) || !migration || migration.event !== CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_EVENT) return null;
+  if (!isLedgerEventCollection(events) || !migration || migration.event !== CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_EVENT) return null;
   const marker = events.find((event) => event.seq === migration.details?.legacyMarkerSeq);
   const markerIndex = marker ? events.indexOf(marker) : -1;
   const migrationIndex = events.indexOf(migration);
-  const commit = events[migrationIndex + 1];
+  const commit = ledgerEventAt(events, migrationIndex + 1);
   const boundary = marker ? resolveContractBootstrapRepairBoundary(events, marker) : null;
   if (!marker || !isLegacyContractBootstrapRepairMarkerShape(marker)
     || markerIndex < 0 || !boundary
@@ -545,9 +546,9 @@ function resolveContractBootstrapRepairMigration(events, migration) {
 }
 
 export function validateContractBootstrapRepairMigrations(events, errors, { allowUnmigratedLegacyContractBootstrapRepairMarkers = false } = {}) {
-  const markers = events.filter((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
-  const migrations = events.filter((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_EVENT);
-  const migrationBySeq = new Map();
+  const markers = ledgerEventsOfTypes(events, [CONTRACT_BOOTSTRAP_REPAIR_EVENT]);
+  const migrations = ledgerEventsOfTypes(events, [CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_EVENT]);
+  const migrationBySeq = ledgerRelationMap();
   for (const migration of migrations) {
     try {
       assertContractBootstrapRepairMigrationDetails(migration.details);
@@ -569,14 +570,15 @@ export function validateContractBootstrapRepairMigrations(events, errors, { allo
       });
       continue;
     }
-    migrationBySeq.set(migration.details.legacyMarkerSeq, migration);
+    migrationBySeq.set(migration.details.legacyMarkerSeq, events.indexOf(migration));
   }
-  if (markers.length > 1) {
+  if (ledgerTypeSummary(events, CONTRACT_BOOTSTRAP_REPAIR_EVENT).count > 1) {
     errors.push({ code: "E_CONTRACT_BOOTSTRAP_REPAIR_INVALID", message: "contract bootstrap repair marker must occur at most once" });
   }
   for (const marker of markers) {
     if (!isLegacyContractBootstrapRepairMarkerShape(marker)) continue;
-    const migration = migrationBySeq.get(marker.seq);
+    const migrationPosition = migrationBySeq.get(marker.seq);
+    const migration = migrationPosition === undefined ? undefined : ledgerEventAt(events, migrationPosition);
     if (!migration) {
       if (!allowUnmigratedLegacyContractBootstrapRepairMarkers) {
         errors.push({
@@ -595,7 +597,8 @@ export function validateContractBootstrapRepairMigrations(events, errors, { allo
       });
     }
   }
-  for (const [legacySeq, migration] of migrationBySeq) {
+  for (const [legacySeq, position] of migrationBySeq) {
+    const migration = ledgerEventAt(events, position);
     errors.push({
       code: "E_EVENT_INVALID",
       message: `migration event ${migration.seq} references unknown legacy contract bootstrap repair marker seq ${legacySeq}`,
@@ -604,24 +607,22 @@ export function validateContractBootstrapRepairMigrations(events, errors, { allo
 }
 
 export function isLegacyContractBootstrapRepairMigrationCandidate(events, taskId = null) {
-  if (!Array.isArray(events)) return null;
-  const markers = events.filter((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
-  if (markers.length !== 1) return null;
-  const marker = markers[0];
+  if (!isLedgerEventCollection(events)) return null;
+  const { count, first: marker } = ledgerTypeSummary(events, CONTRACT_BOOTSTRAP_REPAIR_EVENT);
+  if (count !== 1) return null;
   if (!isLegacyContractBootstrapRepairMarkerShape(marker)) return null;
   const effectiveTaskId = taskId ?? marker.taskId;
   if (marker.taskId !== effectiveTaskId || events.some((event) => event.taskId !== effectiveTaskId)) return null;
-  if (events.some((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_EVENT)) return null;
+  if (ledgerTypeSummary(events, CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_EVENT).count) return null;
   const boundary = resolveContractBootstrapRepairBoundary(events, marker);
   if (!boundary || boundary.postRepairEvents.length > 0) return null;
   return { taskId: effectiveTaskId, marker, repairCommit: boundary.repairCommit };
 }
 
 export function resolveEffectiveContractBootstrapRepairAnchor(events) {
-  if (!Array.isArray(events)) return null;
-  const markers = events.filter((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
-  if (markers.length !== 1) return null;
-  const sourceMarker = markers[0];
+  if (!isLedgerEventCollection(events)) return null;
+  const { count, first: sourceMarker } = ledgerTypeSummary(events, CONTRACT_BOOTSTRAP_REPAIR_EVENT);
+  if (count !== 1) return null;
   if (isContractBootstrapRepairMarkerValid(events, sourceMarker)) {
     return { kind: "MODERN", sourceMarker, details: sourceMarker.details };
   }
@@ -643,7 +644,7 @@ export function resolveEffectiveContractBootstrapRepairAnchor(events) {
 }
 
 export function repairMarkerErrors(events, errors, { allowUnmigratedLegacyContractBootstrapRepairMarkers = false } = {}) {
-  const marker = events.find((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
+  const marker = ledgerTypeSummary(events, CONTRACT_BOOTSTRAP_REPAIR_EVENT).first;
   const boundary = resolveContractBootstrapRepairBoundary(events, marker);
   const migratedLegacy = resolveEffectiveContractBootstrapRepairAnchor(events)?.kind === "MIGRATED_LEGACY";
   const recognized = isContractBootstrapRepairMarkerValid(events, marker)

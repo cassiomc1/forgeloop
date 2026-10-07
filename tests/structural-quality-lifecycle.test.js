@@ -1,3 +1,4 @@
+import { withProjectStorage } from "../src/storage/project-boundary.js";
 import assert from "node:assert/strict";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
@@ -62,7 +63,7 @@ async function setupTask(target, selectedTaskId = taskId, qualityConfig = { mode
   await runAdvance({ target, packageRoot, taskId: selectedTaskId, to: "PLANNED" });
 }
 
-function fakeContext(sequence, scopeBinding = null) {
+function fakeContext(sequence, scopeBinding = null, onScan = null) {
   let index = 0;
   const provider = {
     id: "fake",
@@ -70,6 +71,7 @@ function fakeContext(sequence, scopeBinding = null) {
       return { available: true, providerId: "fake", providerVersion: "1.0.0", transport: "test", reasonCode: null };
     },
     async scan() {
+      await onScan?.();
       const value = sequence[Math.min(index, sequence.length - 1)];
       index += 1;
       return { snapshot: snapshot(value), provider: { id: "fake", version: "1.0.0", transport: "test", executionMode: "test" } };
@@ -247,6 +249,60 @@ test("concurrent quality evaluations allocate unique attempts under the task loc
     const optional = await runQualityVerify({ target, packageRoot, taskId: selectedTaskId, runtimeContext });
     assert.equal(optional.evaluation.status, "PASS");
     const converged = await runQualityVerify({ target, packageRoot, taskId: selectedTaskId, runtimeContext });
+    assert.equal(converged.status, "CONVERGED");
+    assert.equal(converged.evaluation.status, "PASS");
+  } finally {
+    await rm(target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
+  }
+});
+
+test("native SQLite concurrent quality evaluations preserve attempt allocation and checks", { timeout: 60_000 }, async () => {
+  const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-structural-native-concurrent-"));
+  const selectedTaskId = `${taskId}-native-concurrent`;
+  try {
+    await setupTask(target, selectedTaskId, {
+      mode: "gate",
+      provider: "fake",
+      optimization: { mode: "bounded", maxExtraEvaluations: 2, minGainPoints: 25 },
+    });
+    let providerCalls = 0;
+    let releaseObservations;
+    const overlappingObservations = new Promise(resolve => { releaseObservations = resolve; });
+    const runtimeContext = fakeContext([9000, 9000], null, () => {
+      providerCalls += 1;
+      if (providerCalls === 1) return; // Baseline is captured before verification.
+      if (providerCalls === 3) releaseObservations();
+      // Both observations must precede persistence. A later caller may instead
+      // reconcile an existing unprojected evaluation without taking a new scan.
+      return overlappingObservations;
+    });
+    await runQualityBaseline({ target, packageRoot, taskId: selectedTaskId, runtimeContext });
+    await runAdvance({ target, packageRoot, taskId: selectedTaskId, to: "EXECUTING" });
+    await runAdvance({ target, packageRoot, taskId: selectedTaskId, to: "VERIFYING" });
+
+    await withProjectStorage(target, store => {
+      assert.equal(store.db.prepare("PRAGMA integrity_check").get().integrity_check, "ok");
+    }, { readOnly: true });
+    const verify = () => withProjectStorage(target, () => runQualityVerify({ target, packageRoot, taskId: selectedTaskId, runtimeContext }), { runtimeContext });
+    const results = await Promise.all([
+      verify(),
+      verify(),
+    ]);
+    assert.deepEqual(results.map((result) => result.evaluation.attempt).sort((a, b) => a - b), [1, 2]);
+    assert.ok(results.every((result) => result.evaluation.status === "PASS"));
+    assert.equal(providerCalls, 3, "one baseline and two observations; persistence retries must not call the provider");
+    const status = await withProjectStorage(target, () => runQualityStatus({ target, packageRoot, taskId: selectedTaskId }), { readOnly: true, runtimeContext });
+    assert.equal(status.current.attempt, 2);
+    assert.equal(status.optimization.attempts, 2);
+    assert.equal(status.optimization.gain, 0);
+    assert.equal(status.optimization.converged, true);
+    const state = await withProjectStorage(target, () => readWorkState(target, { packageRoot, taskId: selectedTaskId }), { readOnly: true, runtimeContext });
+    const qualityCheck = state.checks.find((check) => check.id === "structural-quality");
+    assert.equal(qualityCheck.details.attempt, 2);
+    assert.equal(qualityCheck.status, "passed");
+    const optional = await verify();
+    assert.equal(optional.evaluation.status, "PASS");
+    const converged = await verify();
     assert.equal(converged.status, "CONVERGED");
     assert.equal(converged.evaluation.status, "PASS");
   } finally {

@@ -7,7 +7,6 @@ import path from "node:path";
 import { test } from "node:test";
 
 import { runPreflight } from "../src/commands/preflight.js";
-import { ARTIFACT_PATHS } from "../src/core/artifacts.js";
 import { createContract, contractFingerprint, writeContract } from "../src/core/contract.js";
 import { appendProtocolEvent } from "../src/core/events.js";
 import { advanceWorkState } from "../src/core/phase.js";
@@ -17,10 +16,23 @@ import { evaluateRoute } from "../src/core/router.js";
 import { persistRoute } from "../src/core/route-artifact.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { createWorkState, writeWorkState } from "../src/core/work-state.js";
+import { taskArtifactPath } from "../src/core/task-paths.js";
+import { withProjectStorage } from "../src/storage/project-boundary.js";
+import { readOperationalText } from "../src/storage/operational-context.js";
 
 const root = path.resolve(".");
 const cliPath = path.join(root, "src", "cli.js");
 const packageRoot = getPackageRoot();
+const TASK_ID = "task-cli-ergonomics";
+
+async function readReceipt(target) {
+  return withProjectStorage(target, () => {
+    const artifact = readOperationalText(target, taskArtifactPath(TASK_ID, "receipt"));
+    assert.equal(artifact.selected, true);
+    assert.notEqual(artifact.text, null);
+    return artifact.text;
+  }, { readOnly: true });
+}
 
 function runCli(target, ...args) {
   return spawnSync(process.execPath, [cliPath, ...args, "--path", target], {
@@ -47,6 +59,9 @@ async function withTarget(run) {
 }
 
 async function setupTarget(target) {
+  const created = runCli(target, "task-create", "--task", TASK_ID, "--claim", "src/example.js");
+  assert.equal(created.status, 0, created.stderr);
+  return withProjectStorage(target, async () => {
   const contract = createContract({
     taskId: "task-cli-ergonomics",
     objective: "Exercise completion CLI",
@@ -60,9 +75,9 @@ async function setupTarget(target) {
     sourceRefs: [],
   });
   const contractHash = contractFingerprint(contract);
-  await writeContract(target, contract, packageRoot);
+  await writeContract(target, contract, packageRoot, { taskId: TASK_ID });
   const route = evaluateRoute({ workType: "api", surfaces: ["api"], platforms: [] });
-  const persistedRoute = await persistRoute(target, route, packageRoot, { contractFingerprint: contractHash });
+  const persistedRoute = await persistRoute(target, route, packageRoot, { contractFingerprint: contractHash, taskId: TASK_ID });
   await writeWorkState(target, createWorkState({
     taskId: contract.taskId,
     contractFingerprint: contractHash,
@@ -79,12 +94,13 @@ async function setupTarget(target) {
     failures: [],
     blockers: [],
     verificationEvidence: [],
-  }), { packageRoot });
-  await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot);
-  await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot);
-  assert.equal((await runPreflight({ target, packageRoot })).status, "READY");
-  await appendProtocolEvent(target, { taskId: contract.taskId, event: "EXECUTION_STARTED" }, packageRoot);
-  await advanceWorkState(target, "VERIFYING", { packageRoot });
+  }), { packageRoot, taskId: TASK_ID });
+  await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot, { taskId: TASK_ID });
+  await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot, { taskId: TASK_ID });
+  assert.equal((await runPreflight({ target, packageRoot, taskId: TASK_ID })).status, "READY");
+  await appendProtocolEvent(target, { taskId: contract.taskId, event: "EXECUTION_STARTED" }, packageRoot, { taskId: TASK_ID });
+  await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: TASK_ID });
+  });
 }
 
 test("completion CLI exposes scoped preparation and recording commands", () => {
@@ -130,7 +146,7 @@ test("completion CLI records supplied evidence without executing command text", 
     assert.equal(report.check.id, "tests");
     assert.equal(report.coverage[0].status, "COVERED");
     await assert.rejects(() => readFile(sentinel));
-    await readFile(path.join(target, ARTIFACT_PATHS.receipt), "utf8");
+    JSON.parse(await readReceipt(target));
   });
 });
 
@@ -139,7 +155,7 @@ test("record-check rejects friendly command descriptions without execution prove
     await setupTarget(target);
     const prepared = runCli(target, "prepare-completion", "--json");
     assert.equal(prepared.status, 0, prepared.stderr);
-    const before = await readFile(path.join(target, ARTIFACT_PATHS.receipt), "utf8");
+    const before = await readReceipt(target);
     const rejected = runCli(
       target,
       "record-check",
@@ -154,7 +170,7 @@ test("record-check rejects friendly command descriptions without execution prove
     );
     assert.equal(rejected.status, 1);
     assert.match(`${rejected.stdout}\n${rejected.stderr}`, /E_COMMAND_PROVENANCE_UNATTESTED/);
-    assert.equal(await readFile(path.join(target, ARTIFACT_PATHS.receipt), "utf8"), before);
+    assert.equal(await readReceipt(target), before);
   });
 });
 
@@ -251,9 +267,11 @@ test("standalone completion CLI rejects actor-selected authority sources", async
         trustMode: "HOST_ATTESTED",
         trustedAuthorityFile: authorityFile,
       };
+      await withProjectStorage(target, async () => {
       await recordExecutedFakeCheck(recordCheck, {
         target,
         packageRoot,
+        taskId: TASK_ID,
         id: "install-check",
         kind: "command",
         requirement: "tests",
@@ -263,8 +281,16 @@ test("standalone completion CLI rejects actor-selected authority sources", async
         details: { installationAuthorityRef: "auth-cli" },
         authorityContext,
       });
-      await advanceWorkState(target, "REVIEWING", { packageRoot, authorityContext });
-      const hostedComplete = await runComplete({ target, packageRoot, authorityContext });
+      await advanceWorkState(target, "REVIEWING", { packageRoot, authorityContext, taskId: TASK_ID });
+      });
+
+      const complete = runCliWithEnv(target, { FORGELOOP_AUTHORITY_FILE: actorFakeFile }, "complete", "--task", TASK_ID, "--json");
+      assert.equal(complete.status, 1);
+      const completeReport = JSON.parse(complete.stdout);
+      assert.equal(completeReport.status, "REJECTED", JSON.stringify(completeReport));
+      assert.ok(completeReport.errors.some((error) => error.code === "E_AUTHORITY_UNTRUSTED_SOURCE"));
+
+      const hostedComplete = await withProjectStorage(target, () => runComplete({ target, packageRoot, authorityContext, taskId: TASK_ID }));
       assert.equal(hostedComplete.status, "VALID", JSON.stringify(hostedComplete.errors));
 
       const audit = runCliWithEnv(target, { FORGELOOP_AUTHORITY_FILE: actorFakeFile }, "audit", "--json");
@@ -273,11 +299,6 @@ test("standalone completion CLI rejects actor-selected authority sources", async
       assert.equal(auditReport.status, "INVALID");
       assert.ok(auditReport.errors.some((error) => error.code === "E_AUTHORITY_UNTRUSTED_SOURCE"));
 
-      const complete = runCliWithEnv(target, { FORGELOOP_AUTHORITY_FILE: actorFakeFile }, "complete", "--json");
-      assert.equal(complete.status, 1);
-      const completeReport = JSON.parse(complete.stdout);
-      assert.equal(completeReport.status, "REJECTED");
-      assert.ok(completeReport.errors.some((error) => error.code === "E_AUTHORITY_UNTRUSTED_SOURCE"));
     });
   } finally {
     await rm(authorityRoot, { recursive: true, force: true });

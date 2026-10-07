@@ -1,3 +1,5 @@
+import { deleteFixtureArtifact } from "./helpers/native-storage-fixture.js";
+import { withProjectStorage } from "../src/storage/project-boundary.js";
 import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { mkdtemp } from "node:fs/promises";
@@ -127,9 +129,8 @@ test("preflight derives the PLANNED resume phase from a recorded PLAN_RECORDED m
     const { taskId } = await setupTaskThroughReady(target);
     await appendProtocolEvent(target, { taskId, event: "PLAN_RECORDED" }, packageRoot, { taskId });
 
-    const { unlink } = await import("node:fs/promises");
     const { taskDirectory } = await import("../src/core/task-paths.js");
-    await unlink(path.join(target, taskDirectory(taskId), "work-state.json"));
+    await deleteFixtureArtifact(target, path.join(taskDirectory(taskId), "work-state.json"));
 
     const preflight = await runPreflight({ target, packageRoot, taskId });
     assert.equal(preflight.status, "READY");
@@ -166,9 +167,8 @@ test("execution prerequisites bind to the latest PREFLIGHT_READY after re-readin
         routingFingerprint: revisedRoute.fingerprint,
       },
     }, packageRoot, { taskId });
-    const { unlink } = await import("node:fs/promises");
     const { taskDirectory } = await import("../src/core/task-paths.js");
-    await unlink(path.join(target, taskDirectory(taskId), "work-state.json"));
+    await deleteFixtureArtifact(target, path.join(taskDirectory(taskId), "work-state.json"));
 
     const preflight = await runPreflight({ target, packageRoot, taskId });
     assert.equal(preflight.status, "READY");
@@ -227,9 +227,8 @@ test("a PREFLIGHT_READY refresh after execution milestones keeps the ledger vali
         routingFingerprint: revisedRoute.fingerprint,
       },
     }, packageRoot, { taskId });
-    const { unlink } = await import("node:fs/promises");
     const { taskDirectory } = await import("../src/core/task-paths.js");
-    await unlink(path.join(target, taskDirectory(taskId), "work-state.json"));
+    await deleteFixtureArtifact(target, path.join(taskDirectory(taskId), "work-state.json"));
 
     const preflight = await runPreflight({ target, packageRoot, taskId });
     assert.equal(preflight.status, "READY");
@@ -242,7 +241,7 @@ test("a PREFLIGHT_READY refresh after execution milestones keeps the ledger vali
 });
 
 test("public routing and next guidance recover a pre-execution blocked checkpoint", async () => {
-  await withTarget(async (target) => {
+  await withTarget(async (target) => withProjectStorage(target, async () => {
     const { executeForgeLoopCommand } = await import("../src/integration.js");
     const taskId = "public-reactivation";
     await writeTaskDescriptor(target, createTaskDescriptor({ taskId, writeClaims: ["package.json"] }), packageRoot);
@@ -261,5 +260,5 @@ test("public routing and next guidance recover a pre-execution blocked checkpoin
     assert.equal(cleared.ok, true, JSON.stringify(cleared));
     const ready = await invoke("preflight");
     assert.equal(ready.result?.status, "READY", JSON.stringify(ready));
-  });
+  }));
 });

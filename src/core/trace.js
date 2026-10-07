@@ -1,5 +1,5 @@
-import { buildTaskSnapshot } from "./task-snapshot.js";
-import { diagnosisEventsForTask } from "./diagnosis-model.js";
+import { withTaskSnapshot } from "./task-snapshot.js";
+import { ledgerEventsOfTypes } from "./ledger-event-collection.js";
 import {
   assertDiagnosticCaseDetails,
   assertInterventionDetails,
@@ -289,7 +289,8 @@ function projectChecks(snapshot) {
 }
 
 function legacyDiagnoses(events, taskId) {
-  return diagnosisEventsForTask(events, taskId).map((event) => ({
+  return [...ledgerEventsOfTypes(events, ["DIAGNOSIS_RECORDED"])]
+    .filter(event => !taskId || event.taskId === taskId).map((event) => ({
     sequence: event.seq,
     at: event.at,
     sourceModel: "LEGACY_DIAGNOSIS_V1",
@@ -357,28 +358,41 @@ const PHASE_DERIVATIONS = Object.freeze({
   INTERVENTION_RECORDED: () => "CORRECTING",
 });
 
-function reconstructPhaseChronology(events) {
+function phaseStep(event, currentPhase) {
+  const milestone = PHASE_MILESTONES[event.event];
+  if (milestone) return { phase: milestone.phase, quality: milestone.quality };
+  const derive = PHASE_DERIVATIONS[event.event];
+  const derived = derive ? derive(event.details ?? {}) : null;
+  return { phase: derived ?? currentPhase, quality: derived || currentPhase ? "derived" : "unknown" };
+}
+
+function orderedSequences(events) {
+  let previous = -Infinity;
+  return events.every(event => {
+    if (!Number.isFinite(event.seq) || event.seq <= previous) return false;
+    previous = event.seq;
+    return true;
+  });
+}
+
+function* phasedEvents(events) {
   let currentPhase = null;
-  const phaseBySequence = new Map();
-  const qualityBySequence = new Map();
-  for (const event of events) {
-    const milestone = PHASE_MILESTONES[event.event];
-    if (milestone) {
-      currentPhase = milestone.phase;
-      qualityBySequence.set(event.seq, milestone.quality);
-    } else {
-      const derive = PHASE_DERIVATIONS[event.event];
-      const derived = derive ? derive(event.details ?? {}) : null;
-      if (derived) {
-        currentPhase = derived;
-        qualityBySequence.set(event.seq, "derived");
-      } else {
-        qualityBySequence.set(event.seq, currentPhase ? "derived" : "unknown");
-      }
+  if (orderedSequences(events)) {
+    for (const event of events) {
+      const step = phaseStep(event, currentPhase);
+      currentPhase = step.phase;
+      yield { event, ...step };
     }
-    phaseBySequence.set(event.seq, currentPhase);
+    return;
   }
-  return { phaseBySequence, qualityBySequence };
+  // Legacy duplicate sequence keys retain the original last-write projection.
+  const phases = new Map();
+  for (const event of events) {
+    const step = phaseStep(event, currentPhase);
+    currentPhase = step.phase;
+    phases.set(event.seq, step);
+  }
+  for (const event of events) yield { event, ...phases.get(event.seq) };
 }
 
 export function historyQualityFor({ snapshot, normalizedEvents }) {
@@ -397,17 +411,22 @@ export function historyQualityFor({ snapshot, normalizedEvents }) {
 }
 
 export async function buildTaskTrace({ target, packageRoot, taskId = null, eventsPath = null } = {}) {
-  const snapshot = await buildTaskSnapshot({ target, packageRoot, taskId, eventsPath });
+  return withTaskSnapshot({ target, packageRoot, taskId, eventsPath }, snapshot =>
+    buildTraceFromSnapshot({ target, packageRoot, taskId, eventsPath, snapshot }));
+}
+
+async function buildTraceFromSnapshot({ target, packageRoot, taskId, eventsPath, snapshot }) {
   const artifactPath = eventsPath ?? ".forgeloop/task-state/<task-key>/events.ndjson";
 
-  const taskEvents = taskId ? snapshot.events.filter((event) => !event.taskId || event.taskId === taskId) : snapshot.events;
-  const { phaseBySequence, qualityBySequence } = reconstructPhaseChronology(taskEvents);
+  const belongsToTask = event => !event.taskId || event.taskId === taskId;
+  const taskEvents = taskId && !snapshot.events.every(belongsToTask)
+    ? snapshot.events.filter(belongsToTask) : snapshot.events;
   const normalizedEvents = [];
-  for (const event of taskEvents) {
+  for (const { event, phase, quality } of phasedEvents(taskEvents)) {
     normalizedEvents.push(normalizeProtocolEvent(event, {
-      phase: phaseBySequence.get(event.seq) ?? null,
+      phase: phase ?? null,
       artifactPath,
-      phaseQuality: qualityBySequence.get(event.seq) ?? "unknown",
+      phaseQuality: quality ?? "unknown",
     }));
   }
 

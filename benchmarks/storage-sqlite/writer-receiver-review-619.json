@@ -1,0 +1,204 @@
+{
+  "schemaVersion": 1,
+  "scope": "Resolve the 22 receiver-write discovery leads in binding inventory612",
+  "sourceInventoryFiles": 504,
+  "sourceDrift": [],
+  "reviewedReceiverLeads": [
+    {
+      "file": "src/core/filesystem.js",
+      "line": 198,
+      "kind": "unresolved-receiver-write",
+      "expression": "temporaryHandle.writeFile(bytes)",
+      "reviewedCategory": "ATOMIC_FILE_PRIMITIVE",
+      "reason": "temporaryHandle is opened with w in writeFileAtomic; callers still require namespace review"
+    },
+    {
+      "file": "src/core/structural-quality/sentrux-mcp.js",
+      "line": 217,
+      "kind": "unresolved-receiver-write",
+      "expression": "this.child.stdin.write(message)",
+      "reviewedCategory": "PROCESS_STDIN_TRANSPORT",
+      "reason": "this.child.stdin.write sends JSON-RPC to a spawned provider"
+    },
+    {
+      "file": "src/core/structural-quality/sentrux-mcp.js",
+      "line": 228,
+      "kind": "unresolved-receiver-write",
+      "expression": "this.child.stdin.write(`${JSON.stringify({ jsonrpc: \"2.0\", method, params })}\\n`)",
+      "reviewedCategory": "PROCESS_STDIN_TRANSPORT",
+      "reason": "this.child.stdin.write sends JSON-RPC to a spawned provider"
+    },
+    {
+      "file": "src/persistent-transport/client.js",
+      "line": 101,
+      "kind": "unresolved-receiver-write",
+      "expression": "socket.write(encodeFrame(request, { maxFrameBytes: requestMaxFrameBytes }))",
+      "reviewedCategory": "SOCKET_TRANSPORT",
+      "reason": "socket.write sends framed request"
+    },
+    {
+      "file": "src/persistent-transport/ownership.js",
+      "line": 42,
+      "kind": "unresolved-receiver-write",
+      "expression": "socket.write(encodeFrame(request, { maxFrameBytes: PERSISTENT_TRANSPORT_DEFAULTS.maxRequestFrameBytes }))",
+      "reviewedCategory": "SOCKET_TRANSPORT",
+      "reason": "socket.write sends framed ownership request"
+    },
+    {
+      "file": "src/persistent-transport/server.js",
+      "line": 127,
+      "kind": "unresolved-receiver-write",
+      "expression": "this.#write(socket, createErrorResponse(null, safeError(error)))",
+      "reviewedCategory": "SOCKET_OR_DIAGNOSTIC_TRANSPORT",
+      "reason": "private write delegates socket.write; process.stderr.write is diagnostic output"
+    },
+    {
+      "file": "src/persistent-transport/server.js",
+      "line": 139,
+      "kind": "unresolved-receiver-write",
+      "expression": "this.#write(socket, createSuccessResponse(request.id, result))",
+      "reviewedCategory": "SOCKET_OR_DIAGNOSTIC_TRANSPORT",
+      "reason": "private write delegates socket.write; process.stderr.write is diagnostic output"
+    },
+    {
+      "file": "src/persistent-transport/server.js",
+      "line": 141,
+      "kind": "unresolved-receiver-write",
+      "expression": "this.#write(socket, createErrorResponse(typeof raw?.id === \"string\" ? raw.id : null, safeError(error)))",
+      "reviewedCategory": "SOCKET_OR_DIAGNOSTIC_TRANSPORT",
+      "reason": "private write delegates socket.write; process.stderr.write is diagnostic output"
+    },
+    {
+      "file": "src/persistent-transport/server.js",
+      "line": 149,
+      "kind": "unresolved-receiver-write",
+      "expression": "this.#write(socket, createErrorResponse(null, safeError(error)))",
+      "reviewedCategory": "SOCKET_OR_DIAGNOSTIC_TRANSPORT",
+      "reason": "private write delegates socket.write; process.stderr.write is diagnostic output"
+    },
+    {
+      "file": "src/persistent-transport/server.js",
+      "line": 160,
+      "kind": "unresolved-receiver-write",
+      "expression": "socket.write(encodeFrame(value))",
+      "reviewedCategory": "SOCKET_OR_DIAGNOSTIC_TRANSPORT",
+      "reason": "private write delegates socket.write; process.stderr.write is diagnostic output"
+    },
+    {
+      "file": "src/persistent-transport/server.js",
+      "line": 253,
+      "kind": "unresolved-receiver-write",
+      "expression": "process.stderr.write(`${error.message}\\n`)",
+      "reviewedCategory": "SOCKET_OR_DIAGNOSTIC_TRANSPORT",
+      "reason": "private write delegates socket.write; process.stderr.write is diagnostic output"
+    },
+    {
+      "file": "src/repository-index/lock.js",
+      "line": 75,
+      "kind": "unresolved-receiver-write",
+      "expression": "handle.writeFile(`${JSON.stringify(lock)}\\n`, \"utf8\")",
+      "reviewedCategory": "EXCLUDED_INDEX_LIFECYCLE",
+      "reason": "handle opened wx at repository index lockPath; first migration excludes tgrep lifecycle"
+    },
+    {
+      "file": "src/storage/ledger-relations.js",
+      "line": 41,
+      "kind": "unresolved-receiver-write",
+      "expression": "this.#write(key, value)",
+      "reviewedCategory": "DISPOSABLE_VALIDATION_SQLITE",
+      "reason": "private write inserts into owned relations/grouped_relations scratch DB under os.tmpdir, not canonical operational files"
+    },
+    {
+      "file": "src/storage/ledger-relations.js",
+      "line": 72,
+      "kind": "unresolved-receiver-write",
+      "expression": "this.#write(key, value)",
+      "reviewedCategory": "DISPOSABLE_VALIDATION_SQLITE",
+      "reason": "private write inserts into owned relations/grouped_relations scratch DB under os.tmpdir, not canonical operational files"
+    },
+    {
+      "file": "src/storage/ledger-relations.js",
+      "line": 76,
+      "kind": "unresolved-receiver-write",
+      "expression": "this.#write(key, value)",
+      "reviewedCategory": "DISPOSABLE_VALIDATION_SQLITE",
+      "reason": "private write inserts into owned relations/grouped_relations scratch DB under os.tmpdir, not canonical operational files"
+    },
+    {
+      "file": "src/storage/ledger-relations.js",
+      "line": 130,
+      "kind": "unresolved-receiver-write",
+      "expression": "this.#write(group, value)",
+      "reviewedCategory": "DISPOSABLE_VALIDATION_SQLITE",
+      "reason": "private write inserts into owned relations/grouped_relations scratch DB under os.tmpdir, not canonical operational files"
+    },
+    {
+      "file": "src/storage/ledger-relations.js",
+      "line": 134,
+      "kind": "unresolved-receiver-write",
+      "expression": "this.#write(residentGroup, member)",
+      "reviewedCategory": "DISPOSABLE_VALIDATION_SQLITE",
+      "reason": "private write inserts into owned relations/grouped_relations scratch DB under os.tmpdir, not canonical operational files"
+    },
+    {
+      "file": "src/storage/ledger-relations.js",
+      "line": 138,
+      "kind": "unresolved-receiver-write",
+      "expression": "this.#write(group, value)",
+      "reviewedCategory": "DISPOSABLE_VALIDATION_SQLITE",
+      "reason": "private write inserts into owned relations/grouped_relations scratch DB under os.tmpdir, not canonical operational files"
+    },
+    {
+      "file": "src/storage/maintenance-handoff.js",
+      "line": 31,
+      "kind": "unresolved-receiver-write",
+      "expression": "handle.writeFile(`${JSON.stringify(claimedOwner)}\\n`)",
+      "reviewedCategory": "PRE_DATABASE_COORDINATION_MARKER",
+      "reason": "handle opened wx for owner-bound handoff intent; maintenance marker exception"
+    },
+    {
+      "file": "src/storage/maintenance.js",
+      "line": 81,
+      "kind": "unresolved-receiver-write",
+      "expression": "owner.writeFile(`${JSON.stringify(ownerData)}\\n`)",
+      "reviewedCategory": "PRE_DATABASE_COORDINATION_MARKER",
+      "reason": "owner opened wx at storage-maintenance/owner.json"
+    },
+    {
+      "file": "src/storage/storage-marker.js",
+      "line": 46,
+      "kind": "unresolved-receiver-write",
+      "expression": "file.writeFile(`${JSON.stringify(expected)}\\n`)",
+      "reviewedCategory": "CUTOVER_COORDINATION_MARKER",
+      "reason": "file opened wx after assertOwnedStorageMaintenance; cutover publication marker"
+    },
+    {
+      "file": "integrations/mcp/src/logging.js",
+      "line": 6,
+      "kind": "unresolved-receiver-write",
+      "expression": "process.stderr.write(`${JSON.stringify({ level, event, ...fields })}\\n`)",
+      "reviewedCategory": "STDERR_DIAGNOSTIC_TRANSPORT",
+      "reason": "process.stderr.write; stdout reserved for MCP frames"
+    }
+  ],
+  "counts": {
+    "ATOMIC_FILE_PRIMITIVE": 1,
+    "PROCESS_STDIN_TRANSPORT": 2,
+    "SOCKET_TRANSPORT": 2,
+    "SOCKET_OR_DIAGNOSTIC_TRANSPORT": 6,
+    "EXCLUDED_INDEX_LIFECYCLE": 1,
+    "DISPOSABLE_VALIDATION_SQLITE": 6,
+    "PRE_DATABASE_COORDINATION_MARKER": 2,
+    "CUTOVER_COORDINATION_MARKER": 1,
+    "STDERR_DIAGNOSTIC_TRANSPORT": 1
+  },
+  "allReceiverLeadsClassified": true,
+  "soleWriterVerified": false,
+  "remaining": [
+    "Assigned aliases and file-handle provenance beyond these recorded leads",
+    "Full caller/path namespace closure of atomic filesystem primitive",
+    "Transitive dynamic imports, external providers and dependencies",
+    "Current remote execution evidence for changed tests"
+  ],
+  "sourceInventory": "writer-binding-discovery-612.json"
+}

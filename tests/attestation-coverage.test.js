@@ -18,6 +18,12 @@ import { createTaskDescriptor, writeTaskDescriptor } from "../src/core/task-desc
 import { taskArtifactPath } from "../src/core/task-paths.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { createWorkState, writeWorkState } from "../src/core/work-state.js";
+import { resolveAttestationStatus } from "../src/core/attestation.js";
+import { verifyAttestation } from "../src/core/attestation-verifier.js";
+import { createConfig, writeConfig } from "../src/core/config.js";
+import { openStorageDatabase } from "../src/storage/index.js";
+import { withOperationalStore } from "../src/storage/unit-of-work.js";
+import { taskAttestationStatementPath } from "../src/core/task-paths.js";
 
 const packageRoot = getPackageRoot();
 
@@ -47,6 +53,7 @@ function providerFor(entries, contents) {
 }
 
 async function createAttestedTask(target, taskId, entries) {
+  await writeTaskDescriptor(target, createTaskDescriptor({ taskId, writeClaims: ["src"] }), packageRoot);
   const contract = createContract({
     taskId,
     objective: "Exercise revision range coverage",
@@ -65,7 +72,6 @@ async function createAttestedTask(target, taskId, entries) {
     taskId,
     contractFingerprint: contractArtifact.fingerprint,
   });
-  await writeTaskDescriptor(target, createTaskDescriptor({ taskId, writeClaims: ["src"] }), packageRoot);
 
   const evidence = [{ kind: "OBSERVED", source: "fixture", result: "passed" }];
   const state = createWorkState({
@@ -183,6 +189,47 @@ async function withTarget(fn) {
   } finally {
     await rm(target, { recursive: true, force: true });
   }
+}
+
+for (const operation of ["status", "verify", "range"]) {
+  test(`native attestation ${operation} retains bound artifacts across a concurrent deletion`, async () => {
+    await withTarget(async target => {
+      const taskId = "coverage-snapshot";
+      const bytes = Buffer.from("snapshot coverage\n");
+      const entries = [{ path: "src/covered.js", operation: "MODIFIED", kind: "FILE", sha256: digest(bytes), providerMetadata: {} }];
+      await createAttestedTask(target, taskId, entries);
+      await writeConfig(target, createConfig({ attestation: { mode: "required", revisionProvider: "git" } }), packageRoot);
+      const provider = providerFor(entries, new Map([["src/covered.js", bytes]]));
+      const read = () => operation === "range"
+        ? evaluateAttestationCoverage({ target, packageRoot, revisionProvider: provider, baseRevision: "base", headRevision: "head" })
+        : operation === "status" ? resolveAttestationStatus({ target, packageRoot, taskId, revisionProvider: provider })
+          : verifyAttestation({ target, packageRoot, taskId, revisionProvider: provider });
+      assert.equal((await read()).status, "VALID");
+      const filename = path.join(target, ".forgeloop/state.sqlite");
+      const db = openStorageDatabase(filename);
+      const writer = openStorageDatabase(filename);
+      try {
+        await withOperationalStore({ db, target }, async source => {
+          const prototype = Object.getPrototypeOf(source);
+          const originalRead = prototype.readText;
+          let changed = false;
+          prototype.readText = function(relativePath) {
+            if (!changed && this.target === target && relativePath === taskAttestationStatementPath(taskId)) {
+              changed = true;
+              writer.prepare("DELETE FROM task_artifacts WHERE task_id = ?").run(taskId);
+            }
+            return originalRead.call(this, relativePath);
+          };
+          try {
+            assert.equal((await read()).status, "VALID");
+            assert.equal(changed, true);
+            assert.throws(() => source.commit(), { code: "E_STATE_REVISION_CONFLICT" });
+          } finally { prototype.readText = originalRead; }
+        });
+        assert.notEqual((await read()).status, "VALID");
+      } finally { writer.close(); db.close(); }
+    });
+  });
 }
 
 test("coverage ignores protocol metadata and reports a valid empty source range", async () => {

@@ -1,0 +1,43 @@
+{
+  "checkpoint": 575,
+  "scope": "Mac source publication and owner-death recovery including binary object and restored catalog preservation",
+  "sourceHashes": {
+    "src/storage/migration-rollback-publication.js": "c935b76285e0a64a64ed8913e6ee39e3ffd677eab9a644ae11c9206b72eceea5",
+    "tests/storage-migration-rollback-publication.test.js": "0fc0a8222f4abc06143147c55597b09382f63a68c9e4802100b1f3d8a6d63a9d",
+    "tests/storage-migration-rollback-publication-resume.test.js": "80768b393a62f94fa60fec8fdf7b4e61aaff21ffff748ee36671bc170facdf04",
+    "tests/helpers/storage-rollback-publication-worker.mjs": "c9ee614eaae40a4aea11e9d04d75d81d30cb8c47a1dcd78498f7e0b2bf7bd7b8",
+    "tests/helpers/storage-binary-source-fixture.js": "b95ae18f24e737549c1719e939afb6a833eef76294f3410c07a6f2e5a8dd7e88"
+  },
+  "mac": {
+    "passed": 13,
+    "failed": 0,
+    "rawLog": "\u2714 dead source publication owner SWITCHING resumes only verified locations (4169.593625ms)\n\u2714 dead source publication owner DATABASE_RETAINED resumes only verified locations (3954.394ms)\n\u2714 dead source publication owner NATIVE_RETAINED resumes only verified locations (3953.491166ms)\n\u2714 dead source publication owner PARTIAL_SOURCE resumes only verified locations (3942.141042ms)\n\u2714 dead source publication owner RESTORED resumes only verified locations (3049.784959ms)\n\u2714 dead source publication owner BINARY_PARTIAL_SOURCE resumes only verified locations (3510.198583ms)\n\u2714 dead source publication owner duplicate-native resumes only verified locations (2906.934209ms)\n\u2714 dead source publication owner corrupt-source resumes only verified locations (2952.498292ms)\n\u2714 dead source publication owner substituted-owner resumes only verified locations (2933.668625ms)\n\u2714 owned source rollback publication restored preserves native authority (4083.728917ms)\n\u2714 owned source rollback publication source-tamper preserves native authority (3820.841792ms)\n\u2714 owned source rollback publication native-tamper preserves native authority (3865.392834ms)\n\u2714 owned source rollback publication binary-attachment preserves native authority (4613.19225ms)\n\u2139 tests 13\n\u2139 suites 0\n\u2139 pass 13\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 31506.715084\n"
+  },
+  "fastExit": 0,
+  "lintExit": 0,
+  "binaryBytes": [
+    0,
+    255,
+    128,
+    13,
+    10,
+    0,
+    65
+  ],
+  "binaryComparisons": [
+    "active restored source",
+    "retained original native layout",
+    "preserved captured source",
+    "independent native backup"
+  ],
+  "restoredCatalogReferenceVerified": true,
+  "limitations": [
+    "Constructed persisted interruption states before actual owner kill; no syscall-level power-loss proof",
+    "Canonical legacy validator after killed-owner recovery not yet exercised",
+    "Current Windows/Linux publication/recovery pending",
+    "Partial source-stage and stage-owner recovery pending",
+    "Public operator command and release procedure pending",
+    "Operator write exclusion required, not inferred historical-write proof",
+    "Full original plan acceptance incomplete"
+  ]
+}

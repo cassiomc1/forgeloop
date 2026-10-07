@@ -5,6 +5,7 @@ import { access, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises
 import os from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
+import { pathToFileURL } from "node:url";
 
 const run = promisify(execFile);
 const npm = process.platform === "win32" ? "npm.cmd" : "npm";
@@ -37,7 +38,8 @@ try {
   const installedPackage = JSON.parse(await readFile(path.join(installedRoot, "package.json"), "utf8"));
   if (installedPackage.name !== "@cassiomc1/forgeloop"
     || installedPackage.version !== expectedPackage.version
-    || installedPackage.engines?.node !== ">=20") {
+    || installedPackage.engines?.node !== expectedPackage.engines?.node
+    || installedPackage.engines?.node !== ">=24.19.0") {
     throw new Error("Installed package identity or Node engine did not match the release manifest");
   }
   const { stdout: version } = await runInstalledCli(installedRoot, ["--version"]);
@@ -72,11 +74,17 @@ try {
   const managedManifest = path.join(projectTarget, ".forgeloop", "manifest.json");
   if (!(await stat(managedManifest)).isFile()) throw new Error("Installed init did not create a ForgeLoop manifest");
   const generatedGitignore = await readFile(path.join(projectTarget, ".forgeloop", ".gitignore"), "utf8");
-  const expectedGitignore = "# Local resumable task state is untrusted, target-specific data.\nwork-state.json\nexecutions/\nrepository-index/\n";
+  const expectedGitignore = "# Local resumable task state is untrusted, target-specific data.\nwork-state.json\nstate.sqlite\nstate.sqlite-*\nstorage-version.json\nexecutions/\nrepository-index/\n";
   if (generatedGitignore !== expectedGitignore) throw new Error("Installed init generated an unexpected .forgeloop/.gitignore");
   await runInstalledCli(installedRoot, ["doctor", "--json"], projectTarget);
-  await runInstalledCli(installedRoot, ["route", "--work", "documentation", "--surface", "documentation", "--json"], projectTarget);
   await runInstalledCli(installedRoot, ["task-create", "--task", "package-smoke-task", "--json"], projectTarget);
+  // Package smoke exercises deterministic local provider injection, never an
+  // optional paid network request. This fixture is not model certification.
+  const providerLoader = path.join(target, "package-smoke-provider.mjs");
+  await writeFile(providerLoader, `import { installTestSemanticProvider } from ${JSON.stringify(pathToFileURL(path.join(installedRoot, "src/core/decision/test-provider.js")).href)}; installTestSemanticProvider();`);
+  await run(process.execPath, ["--import", pathToFileURL(providerLoader).href, path.join(installedRoot, "src", "cli.js"),
+    "route", "--task", "package-smoke-task", "--work", "documentation", "--surface", "documentation", "--json", "--path", projectTarget],
+  { cwd: projectTarget, env: { ...process.env, PATH: path.dirname(process.execPath) } });
   await runInstalledCli(installedRoot, ["status", "--task", "package-smoke-task", "--json"], projectTarget);
   const { stdout: qualityStatus } = await runInstalledCli(installedRoot, ["quality-status", "--task", "package-smoke-task", "--json"], projectTarget);
   const quality = JSON.parse(qualityStatus);

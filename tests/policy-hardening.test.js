@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtemp, rm, writeFile, mkdir } from "node:fs/promises";
+import { mkdtemp, rm, writeFile, mkdir, readFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -405,7 +405,7 @@ test("PF6: discovery.json malformed -> preflight throws E_POLICY_INVALID", async
 // SNAP-1: Snapshot Write Failure Test
 // --------------------------------------------------------------------------
 
-test("SNAP-1: task policy snapshot destination conflict causes snapshot write failure -> E_POLICY_SNAPSHOT_WRITE_FAILED", async () => {
+test("SNAP-1: legacy snapshot destination conflict is refused before native preflight mutation", async () => {
   await withTarget(async (target) => {
     await runInit({ target, packageRoot, packageVersion: "1.2.1" });
     await runTaskCreate({ target, taskId: "task-snap1", packageRoot });
@@ -424,6 +424,8 @@ test("SNAP-1: task policy snapshot destination conflict causes snapshot write fa
     await writeContract(target, contract, packageRoot, { taskId: "task-snap1" });
     await runRoute({ target, taskId: "task-snap1", workType: "code", surfaces: ["config"], packageRoot });
 
+    const database = path.join(target, ".forgeloop/state.sqlite");
+    const before = await readFile(database);
     // Create conflict where snapshot file is expected to be written
     const snapRel = taskArtifactPath("task-snap1", "policySnapshot");
     const snapshotPath = path.join(target, snapRel);
@@ -434,10 +436,11 @@ test("SNAP-1: task policy snapshot destination conflict causes snapshot write fa
         await runPreflight({ target, taskId: "task-snap1", packageRoot });
       },
       (err) => {
-        assert.equal(err.code, "E_POLICY_SNAPSHOT_WRITE_FAILED");
+        assert.equal(err.code, "E_STORAGE_MIGRATION_REQUIRED");
         return true;
       },
     );
+    assert.deepEqual(await readFile(database), before);
   });
 });
 
@@ -878,7 +881,8 @@ test("CLI-B1 to CLI-B3: real CLI processes --policy-reset-authorized flag correc
       unresolvedDecisions: [],
       sourceRefs: [],
     });
-    await writeContract(target, contract, packageRoot, { taskId: "cli-b-task" });
+    const { withProjectStorage } = await import("../src/storage/project-boundary.js");
+    await withProjectStorage(target, () => writeContract(target, contract, packageRoot, { taskId: "cli-b-task" }));
     runCli(target, "route", "--task=cli-b-task", "--work=code", "--surface=config");
     runCli(target, "activate", "--task=cli-b-task");
     runCli(target, "preflight", "--task=cli-b-task");
@@ -889,7 +893,7 @@ test("CLI-B1 to CLI-B3: real CLI processes --policy-reset-authorized flag correc
 
     // CLI-B3: with --policy-reset-authorized, baseline --record succeeds
     const allowedRes = runCli(target, "baseline", "--record", "--policy-reset-authorized");
-    assert.equal(allowedRes.status, 0);
+    assert.equal(allowedRes.status, 0, allowedRes.stderr || allowedRes.stdout);
   });
 });
 
@@ -1093,5 +1097,56 @@ test("End-to-End Autonomy Invariant: complete unattended execution works without
     // 9. complete
     const compRes = await runComplete({ target, taskId: "autonomy-hardened", packageRoot });
     assert.equal(compRes.status, "VALID");
+  });
+});
+
+test("native baseline guard retains task policy proof across concurrent snapshot deletion", async () => {
+  await withTarget(async (target) => {
+    await runInit({ target, packageRoot, packageVersion: "1.2.1" });
+    await runTaskCreate({ target, taskId: "active-task", packageRoot });
+    const contract = createContract({
+      taskId: "active-task",
+      objective: "Active task for baseline protection test",
+      deliverables: ["src/app.js"],
+      constraints: ["offline"],
+      risks: [],
+      verification: ["tests"],
+      successCriteria: ["tests"],
+      stopConditions: ["blocked"],
+      unresolvedDecisions: [],
+      sourceRefs: [],
+    });
+    await writeContract(target, contract, packageRoot, { taskId: "active-task" });
+    await runRoute({ target, taskId: "active-task", workType: "code", surfaces: ["config"], packageRoot });
+    await runActivate({ target, taskId: "active-task", packageRoot });
+    await runPreflight({ target, taskId: "active-task", packageRoot });
+    await runAdvance({ target, taskId: "active-task", to: "PLANNED", packageRoot });
+    await runAdvance({ target, taskId: "active-task", to: "EXECUTING", packageRoot });
+
+    const { openStorageDatabase } = await import("../src/storage/index.js");
+    const { withOperationalStore } = await import("../src/storage/unit-of-work.js");
+    const filename = path.join(target, ".forgeloop/state.sqlite");
+    const db = openStorageDatabase(filename);
+    const writer = openStorageDatabase(filename);
+    try {
+      await withOperationalStore({ db, target }, async source => {
+        const prototype = Object.getPrototypeOf(source);
+        const read = prototype.readText;
+        let changed = false;
+        prototype.readText = function(relativePath) {
+          const value = read.call(this, relativePath);
+          if (!changed && this.target === target && relativePath === taskArtifactPath("active-task", "state")) {
+            changed = true;
+            assert.equal(writer.prepare("DELETE FROM task_artifacts WHERE task_id = ? AND kind = 'policySnapshot'").run("active-task").changes, 1);
+          }
+          return value;
+        };
+        try {
+          await assert.rejects(runBaseline({ target, packageRoot, record: true }), { code: "E_BASELINE_RECORD_DURING_ACTIVE_TASK" });
+          assert.equal(changed, true);
+          assert.throws(() => source.commit(), { code: "E_STATE_REVISION_CONFLICT" });
+        } finally { prototype.readText = read; }
+      });
+    } finally { writer.close(); db.close(); }
   });
 });

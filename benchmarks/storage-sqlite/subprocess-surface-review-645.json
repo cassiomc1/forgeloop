@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "increment": 645,
+  "method": "Exact child_process import/call discovery and direct selected caller review; no sandbox claim or universal external-effect proof.",
+  "planBoundary": "Original plan explicitly allows external processes outside short SQLite transactions and requires recorded intent/outcome. Sole authoritative operational writer is not a universal prohibition on external process filesystem effects.",
+  "files": [
+    {
+      "file": "src/adapters/agent-browser/process.js",
+      "sha256": "847c26235795e56099178810945737c00f5d22cbbc52cbade33efd0fc38641e3",
+      "review": "Browser child runs in physical validated temporary cwd after644; observation metadata is returned, not direct lifecycle authority."
+    },
+    {
+      "file": "src/adapters/emulated-services/process.js",
+      "sha256": "297b0338d659b55fb50c1d539d456048c00a328b8fb7f05ffebab63b5d7a10de",
+      "review": "Emulation child runs in physical validated temporary state after644; returned observations do not grant lifecycle/completion authority."
+    },
+    {
+      "file": "src/adapters/opensrc/process.js",
+      "sha256": "375aab1d94b9286886702f79de5fd3c985208e601b9687226dd5db208d2e425b",
+      "review": "Advisory source lookup; provider configures OPENSRC_HOME outside project, resolves bounded source roots; source cache is not authoritative operational state."
+    },
+    {
+      "file": "src/adapters/ripwire/process.js",
+      "sha256": "ff55d7e4954d5c1ab53d31a445a38c946dc3c4770149c624748ca5bcaf622522",
+      "review": "Advisory retrieval process; exact argv transport. Third-party runtime effects require tool qualification rather than a claimed sandbox."
+    },
+    {
+      "file": "src/core/prepared-execution.js",
+      "sha256": "0f55ef32a22ecc312faaae75eeec32196c89a1039b217330a1aa9f75eece615d",
+      "review": "External verification/action process; plan explicitly separates external work from short SQLite transactions. Its execution artifact enters writeJsonArtifact; native project action mode is explicitly not sandboxed."
+    },
+    {
+      "file": "src/core/repository.js",
+      "sha256": "d58060afdea41fd9e4373b64956632d9b7b54cec14f71c5d5b5641c80b4218b5",
+      "review": "Git observational calls (revision/status/tree/diff/hash-object without write flag). Git metadata is outside migrated operational storage."
+    },
+    {
+      "file": "src/core/signing/sigstore.js",
+      "sha256": "535578aec42e6e71ba77c17762d5de230daa8c2e8ab7bf6d7fa5da7b3ea2752c",
+      "review": "Cosign receives private statement and bundle filenames in native mode; selected bundle bytes enter transaction.stageAttachment through withSigningBundleFile; external execution occurs outside db.isTransaction."
+    },
+    {
+      "file": "src/core/structural-quality/sentrux-mcp.js",
+      "sha256": "fea4ef10c25efa80b67f8ab2fcd25e4c0f8fe935ff51698bef52fc98042befaf",
+      "review": "Optional externally configured MCP structural-analysis process; evaluation evidence is advisory and external tool behavior is not an operational-storage authority."
+    },
+    {
+      "file": "src/core/test-intelligence/prune.js",
+      "sha256": "35589fb442033e16ddfeb28af2ea6a5f91aa31a2b2f1ad4719544def6bcb60f4",
+      "review": "Child test runner uses copied temporary workspace; persisted candidate paths are contained as corrected642. Arbitrary test side effects are not a sandbox guarantee."
+    },
+    {
+      "file": "src/persistent-transport/lifecycle.js",
+      "sha256": "e6ce0e846153b3fb46cbda0d8af404340945d6051ce62ef17012d66b5e83f491",
+      "review": "Starts preexisting search-host transport; endpoint/discovery/bootstrap metadata and excluded repository index, not a new SQLite background service."
+    },
+    {
+      "file": "src/repository-index/binary-manager.js",
+      "sha256": "99c6fd6917fd2a49d1ce7416dbe49e1642b20c8e643926d938843f489d9c103e",
+      "review": "Excluded tgrep setup/extraction/download process per original plan."
+    },
+    {
+      "file": "src/repository-index/process.js",
+      "sha256": "f2724c45b786bb2de9583aee48f3ebca76c556fc30af0cb33a49024eee24307b",
+      "review": "Excluded tgrep index process per original plan."
+    },
+    {
+      "file": "src/repository-index/status.js",
+      "sha256": "0e37e3796bc412c581d19f44090f85bcd215965285e907851009e6b5bc8f274f",
+      "review": "Owned process inspection via PowerShell CIM/ps; excluded repository-index diagnostics."
+    },
+    {
+      "file": "src/storage/migration-rollback-release.js",
+      "sha256": "6838a25238dd71cd2b2c6d740fb32c3f1914bfd06ed376f154bd4dd7cb0b5cfb",
+      "review": "Explicit maintenance downgrade validation by clean exact supported legacy commit; named task-list/validate-protocol commands; receipt and maintenance release remain guarded. Not an ordinary native operational writer."
+    }
+  ],
+  "limitations": [
+    "Direct dependency import scan is not transitive effect proof",
+    "Function-parameter/public namespace and maintenance closure still incomplete",
+    "Current full Mac644 live; source unchanged until terminal reconciliation"
+  ],
+  "soleWriterVerified": false
+}

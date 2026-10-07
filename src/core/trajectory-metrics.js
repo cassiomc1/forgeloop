@@ -1,3 +1,6 @@
+import { withEventLedgerAudit } from "./events.js";
+import { getOperationalStore } from "../storage/operational-context.js";
+import { needsExistingProjectScope, withExistingProjectScope } from "../storage/existing-project-scope.js";
 import { buildTaskTrace } from "./trace.js";
 import { buildTaskReflection } from "./reflection.js";
 import { readPersistedRoute } from "./route-artifact.js";
@@ -9,7 +12,45 @@ export const COMPARABLE_WORK_EVENTS = new Set([
   "INTERVENTION_RECORDED", "ACTION_STARTED", "ACTION_RECONCILED", "REVIEW_STARTED",
 ]);
 
-export async function buildTrajectoryMetrics({ target, packageRoot, taskId, runtimeContext = null }) {
+export async function buildTrajectoryMetrics(options) {
+  const { target, packageRoot, taskId } = options;
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => buildTrajectoryMetrics(options), { readOnly: true });
+  }
+  if (getOperationalStore(target)) {
+    return withEventLedgerAudit(target, packageRoot, { taskId }, () => projectTrajectoryMetrics(options));
+  }
+  return projectTrajectoryMetrics(options);
+}
+
+async function readActionReadiness(options) {
+  try {
+    const { evaluateRequiredActionReadiness } = await import("./action-readiness.js");
+    const readiness = await evaluateRequiredActionReadiness(options);
+    return { satisfied: readiness.satisfied, unresolved: readiness.unresolved };
+  } catch { return null; }
+}
+
+async function readExecutionProfile(target, packageRoot, taskId) {
+  try {
+    const route = await readPersistedRoute(target, packageRoot, { taskId });
+    return projectExecutionProfile(route.value);
+  } catch {
+    // Legacy tasks and incomplete task namespaces may not have a route.
+    return null;
+  }
+}
+
+async function readMetricsUsage(target, packageRoot, taskId, runtimeContext) {
+  const usage = await readTaskUsage(target, packageRoot, taskId);
+  const usageProvider = runtimeContext?.usageProvider;
+  if (usageProvider && typeof usageProvider.getTaskUsage === "function") {
+    return providerUsage(await usageProvider.getTaskUsage({ projectPath: target, taskId }));
+  }
+  return usage;
+}
+
+async function projectTrajectoryMetrics({ target, packageRoot, taskId, runtimeContext = null }) {
   const trace = await buildTaskTrace({ target, packageRoot, taskId });
   const reflection = await buildTaskReflection({ target, packageRoot, taskId });
   const events = trace.events;
@@ -17,22 +58,13 @@ export async function buildTrajectoryMetrics({ target, packageRoot, taskId, runt
     .map((event) => event.data?.verificationCycle).filter(Number.isInteger));
   const diagnosticCycles = new Set(trace.diagnostics.cases.map((item) => item.verificationCycle));
   const firstEventAt = events.find((event) => event.timestampQuality === "authoritative")?.timestamp ?? null;
-  const lastEventAt = [...events].reverse().find((event) => event.timestampQuality === "authoritative")?.timestamp ?? null;
+  const lastEventAt = events.findLast((event) => event.timestampQuality === "authoritative")?.timestamp ?? null;
   const firstMs = firstEventAt ? Date.parse(firstEventAt) : NaN;
   const lastMs = lastEventAt ? Date.parse(lastEventAt) : NaN;
   const interventions = reflection.interventions ?? { count: 0, informative: 0, nonInformative: 0 };
-  let executionProfile = null;
-  try {
-    const route = await readPersistedRoute(target, packageRoot, { taskId });
-    executionProfile = projectExecutionProfile(route.value);
-  } catch {
-    // Legacy tasks and incomplete task namespaces may not have a route.
-  }
-  let usage = await readTaskUsage(target, packageRoot, taskId);
-  const usageProvider = runtimeContext?.usageProvider;
-  if (usageProvider && typeof usageProvider.getTaskUsage === "function") {
-    usage = providerUsage(await usageProvider.getTaskUsage({ projectPath: target, taskId }));
-  }
+  const executionProfile = await readExecutionProfile(target, packageRoot, taskId);
+  const usage = await readMetricsUsage(target, packageRoot, taskId, runtimeContext);
+  const readiness = await readActionReadiness({ target, packageRoot, taskId });
   return {
     schemaVersion: 1,
     taskId,
@@ -58,24 +90,8 @@ export async function buildTrajectoryMetrics({ target, packageRoot, taskId, runt
       verified: trace.actions?.verified ?? 0,
       // Canonical trust counts come from the action-readiness projection;
       // raw VERIFIED labels are observability only.
-      trustedSatisfied: await (async () => {
-        try {
-          const { evaluateRequiredActionReadiness } = await import("./action-readiness.js");
-          const readiness = await evaluateRequiredActionReadiness({ target, packageRoot, taskId });
-          return readiness.satisfied;
-        } catch {
-          return null;
-        }
-      })(),
-      unresolvedRequired: await (async () => {
-        try {
-          const { evaluateRequiredActionReadiness } = await import("./action-readiness.js");
-          const readiness = await evaluateRequiredActionReadiness({ target, packageRoot, taskId });
-          return readiness.unresolved;
-        } catch {
-          return null;
-        }
-      })(),
+      trustedSatisfied: readiness ? readiness.satisfied : null,
+      unresolvedRequired: readiness ? readiness.unresolved : null,
       failed: trace.actions?.failed ?? 0,
       ambiguous: trace.actions?.ambiguous ?? 0,
       reconciliations: trace.actions?.reconciliationCount ?? 0,

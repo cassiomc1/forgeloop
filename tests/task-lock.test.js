@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
 
 import {
-  acquireTaskLock,
+  acquireTaskLock as acquireNativeTaskLock,
   readLockInfo,
   releaseStaleTaskLockIfUnchanged,
   forceUnlockTask,
@@ -15,12 +15,41 @@ import {
 } from "../src/core/task-lock.js";
 import { taskLockPath } from "../src/core/task-paths.js";
 import { fileExists } from "../src/core/filesystem.js";
+import { runTaskCreate } from "../src/commands/task-create.js";
+import { getPackageRoot } from "../src/core/templates.js";
+import { openStorageDatabase, putArtifact } from "../src/storage/index.js";
+
+const handles = new Map();
+const seeded = new Map();
+async function seedTask(target, taskId) {
+  const ids = seeded.get(target);
+  if (!ids.has(taskId)) {
+    await runTaskCreate({ target, packageRoot: getPackageRoot(), taskId, claims: [] });
+    ids.add(taskId);
+  }
+}
+async function acquireTaskLock(target, taskId, operation) {
+  await seedTask(target, taskId);
+  const handle = await acquireNativeTaskLock(target, taskId, operation);
+  handles.get(target).push(handle);
+  return handle;
+}
+function writeLease(target, taskId, payload) {
+  const db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+  try { putArtifact(db, { taskId, kind: "operationLease", payload }); }
+  finally { db.close(); }
+}
 
 async function withTarget(fn) {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-task-lock-"));
+  handles.set(target, []);
+  seeded.set(target, new Set());
   try {
     await fn(target);
   } finally {
+    await Promise.all(handles.get(target).map(handle => handle.release()));
+    handles.delete(target);
+    seeded.delete(target);
     await rm(target, { recursive: true, force: true });
   }
 }
@@ -40,7 +69,7 @@ test("acquireTaskLock acquires exclusive lock and release removes it", async () 
     assert.equal(typeof lockHandle.release, "function");
 
     const fullLockPath = path.join(target, taskLockPath(taskId));
-    assert.equal(await fileExists(fullLockPath), true);
+    assert.equal(await fileExists(fullLockPath), false, "native reservation creates no filesystem lock");
 
     const info = await readLockInfo(target, taskId);
     assert.ok(info);
@@ -108,16 +137,15 @@ test("CAS stale release never removes an UNKNOWN malformed expected lock", async
   await withTarget(async (target) => {
     const taskId = "task-cas-unknown-lock";
     const handle = await acquireTaskLock(target, taskId, "crashed-cmd");
-    const lockFile = path.join(target, taskLockPath(taskId));
     const malformed = { ...handle.lockData };
     delete malformed.lockId;
-    await writeFile(lockFile, `${JSON.stringify(malformed)}\n`, "utf8");
+    writeLease(target, taskId, malformed);
 
     const released = await releaseStaleTaskLockIfUnchanged(target, taskId, malformed);
     assert.equal(released.released, false);
     assert.equal(released.reason, "EXPECTED_LOCK_NOT_STALE");
     assert.equal(released.classification.status, "UNKNOWN");
-    assert.ok(await fileExists(lockFile));
+    assert.ok(await readLockInfo(target, taskId));
   });
 });
 
@@ -130,6 +158,7 @@ test("classifyLockStaleness distinguishes absence, corruption, and incomplete me
 test("withTaskLock runs mutation under lock and releases cleanly on complete or error", async () => {
   await withTarget(async (target) => {
     const taskId = "task-with-lock";
+    await seedTask(target, taskId);
 
     let executed = false;
     const res = await withTaskLock(target, taskId, "mutate", async (lockData) => {
@@ -181,7 +210,6 @@ test("CAS stale release refuses a lock bound to a different taskId", async () =>
   await withTarget(async (target) => {
     const taskId = "task-cas-wrong-id";
     const handle = await acquireTaskLock(target, taskId, "crashed-cmd");
-    const lockFile = path.join(target, taskLockPath(taskId));
     const stale = {
       ...handle.lockData,
       taskId: "a-different-task",
@@ -189,12 +217,12 @@ test("CAS stale release refuses a lock bound to a different taskId", async () =>
       heartbeatAt: "2020-01-01T00:00:00.000Z",
       leaseMs: 1,
     };
-    await writeFile(lockFile, `${JSON.stringify(stale)}\n`, "utf8");
+    writeLease(target, taskId, stale);
 
     const released = await releaseStaleTaskLockIfUnchanged(target, taskId, stale);
     assert.equal(released.released, false);
     assert.equal(released.reason, "LOCK_CHANGED");
-    assert.ok(await fileExists(lockFile));
+    assert.ok(await readLockInfo(target, taskId));
   });
 });
 
@@ -202,14 +230,13 @@ test("stale-lock release removes only the unchanged observed lease", async () =>
   await withTarget(async (target) => {
     const taskId = "task-cas-stale-lock";
     const handle = await acquireTaskLock(target, taskId, "crashed-cmd");
-    const lockFile = path.join(target, taskLockPath(taskId));
     const stale = {
       ...handle.lockData,
       acquiredAt: "2020-01-01T00:00:00.000Z",
       heartbeatAt: "2020-01-01T00:00:00.000Z",
       leaseMs: 1,
     };
-    await writeFile(lockFile, `${JSON.stringify(stale)}\n`, "utf8");
+    writeLease(target, taskId, stale);
 
     const released = await releaseStaleTaskLockIfUnchanged(target, taskId, stale);
     assert.equal(released.released, true);
@@ -221,14 +248,13 @@ test("stale-lock release preserves a replacement owner", async () => {
   await withTarget(async (target) => {
     const taskId = "task-cas-replaced-lock";
     const handle = await acquireTaskLock(target, taskId, "crashed-cmd");
-    const lockFile = path.join(target, taskLockPath(taskId));
     const stale = {
       ...handle.lockData,
       acquiredAt: "2020-01-01T00:00:00.000Z",
       heartbeatAt: "2020-01-01T00:00:00.000Z",
       leaseMs: 1,
     };
-    await writeFile(lockFile, `${JSON.stringify(stale)}\n`, "utf8");
+    writeLease(target, taskId, stale);
     const expected = await readLockInfo(target, taskId);
     const replacement = {
       ...stale,
@@ -238,11 +264,11 @@ test("stale-lock release preserves a replacement owner", async () => {
       heartbeatAt: new Date().toISOString(),
       leaseMs: 300000,
     };
-    await writeFile(lockFile, `${JSON.stringify(replacement)}\n`, "utf8");
+    writeLease(target, taskId, replacement);
 
     const released = await releaseStaleTaskLockIfUnchanged(target, taskId, expected);
     assert.equal(released.released, false);
     assert.equal(released.reason, "LOCK_CHANGED");
-    assert.deepEqual(JSON.parse(await readFile(lockFile, "utf8")), replacement);
+    assert.deepEqual(await readLockInfo(target, taskId), replacement);
   });
 });

@@ -1,3 +1,4 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { mkdtemp } from "node:fs/promises";
@@ -34,6 +35,7 @@ async function withTarget(run) {
 }
 
 async function setupToVerifyingThenFail(target) {
+  await ensureFixtureTask(target, TASK_ID, packageRoot);
   const contract = createContract({
     taskId: TASK_ID,
     objective: "Exercise structured-diagnostic correction lifecycle",
@@ -47,9 +49,9 @@ async function setupToVerifyingThenFail(target) {
     sourceRefs: [],
   });
   const contractHash = contractFingerprint(contract);
-  await writeContract(target, contract, packageRoot);
+  await writeContract(target, contract, packageRoot, { taskId: TASK_ID });
   const route = evaluateRoute({ workType: "code", surfaces: ["config"], platforms: [] });
-  const persistedRoute = await persistRoute(target, route, packageRoot, { contractFingerprint: contractHash });
+  const persistedRoute = await persistRoute(target, route, packageRoot, { contractFingerprint: contractHash, taskId: TASK_ID });
   const state = createWorkState({
     taskId: TASK_ID,
     contractFingerprint: contractHash,
@@ -67,17 +69,18 @@ async function setupToVerifyingThenFail(target) {
     blockers: [],
     verificationEvidence: [],
   });
-  await writeWorkState(target, state, { packageRoot });
-  await appendProtocolEvent(target, { taskId: TASK_ID, event: "CONTRACT_VALIDATED" }, packageRoot);
-  await appendProtocolEvent(target, { taskId: TASK_ID, event: "ROUTE_VALIDATED" }, packageRoot);
-  const preflight = await runPreflight({ target, packageRoot });
+  await writeWorkState(target, state, { packageRoot, taskId: TASK_ID });
+  await appendProtocolEvent(target, { taskId: TASK_ID, event: "CONTRACT_VALIDATED" }, packageRoot, { taskId: TASK_ID });
+  await appendProtocolEvent(target, { taskId: TASK_ID, event: "ROUTE_VALIDATED" }, packageRoot, { taskId: TASK_ID });
+  const preflight = await runPreflight({ target, packageRoot, taskId: TASK_ID });
   assert.equal(preflight.status, "READY");
-  await advanceWorkState(target, "EXECUTING", { packageRoot });
-  await advanceWorkState(target, "VERIFYING", { packageRoot });
-  await prepareCompletion({ target, packageRoot });
+  await advanceWorkState(target, "EXECUTING", { packageRoot, taskId: TASK_ID });
+  await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: TASK_ID });
+  await prepareCompletion({ target, packageRoot, taskId: TASK_ID });
   await recordCheck({ kind: "manual-review",
     target,
     packageRoot,
+    taskId: TASK_ID,
     id: "check-lint",
     requirement: "lint",
     status: "failed",
@@ -86,7 +89,7 @@ async function setupToVerifyingThenFail(target) {
     result: "no-unused-vars in app.js",
     exitCode: 1,
   });
-  await advanceWorkState(target, "DIAGNOSING", { packageRoot });
+  await advanceWorkState(target, "DIAGNOSING", { packageRoot, taskId: TASK_ID });
 }
 
 function caseFileContent({ statement = "Unused import triggers lint rule.", revision } = {}) {
@@ -120,30 +123,31 @@ test("C0/P0 safety net: structured-only diagnosis completes DIAGNOSING -> CORREC
 
     const filePath = path.join(target, "diagnostic-case.json");
     await writeFile(filePath, JSON.stringify(caseFileContent({})));
-    const recorded = await recordStructuredDiagnosticCase({ target, packageRoot, caseFile: "diagnostic-case.json" });
+    const recorded = await recordStructuredDiagnosticCase({ target, packageRoot, taskId: TASK_ID, caseFile: "diagnostic-case.json" });
     assert.equal(recorded.event.event, "DIAGNOSTIC_CASE_RECORDED");
 
-    const next = await getNextAction(target, packageRoot);
+    const next = await getNextAction({ target, packageRoot, taskId: TASK_ID });
     assert.equal(next.nextAction, NEXT_ACTIONS.CORRECT);
     assert.ok(
       !next.reasons?.some((reason) => reason.code === "E_DIAGNOSIS_REQUIRED"),
       "next must not return E_DIAGNOSIS_REQUIRED when a valid structured case exists",
     );
 
-    const correcting = await advanceWorkState(target, "CORRECTING", { packageRoot });
+    const correcting = await advanceWorkState(target, "CORRECTING", { packageRoot, taskId: TASK_ID });
     assert.equal(correcting.phase, "CORRECTING");
     assert.equal(correcting.diagnosedHypothesis, "Unused import triggers lint rule.");
 
     await recordIntervention({
       target,
       packageRoot,
+    taskId: TASK_ID,
       interventionInput: { id: "int-remove-import", kind: "CODE_CHANGE", reversible: true, hypothesisRefs: ["h-unused-import"], statement: "Remove unused import." },
     });
 
-    const verifying = await advanceWorkState(target, "VERIFYING", { packageRoot });
+    const verifying = await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: TASK_ID });
     assert.equal(verifying.phase, "VERIFYING");
 
-    const ledger = await validateEventLedger(target, packageRoot);
+    const ledger = await validateEventLedger(target, packageRoot, { taskId: TASK_ID });
     assert.equal(ledger.valid, true);
     assert.ok(
       !ledger.events.some((event) => event.event === "DIAGNOSIS_RECORDED"),
@@ -175,15 +179,15 @@ test("C0/P0 safety net: resolver prefers latest valid structured case over legac
         diagnosisFingerprint: diagnosisFingerprint(legacyDetails),
         informationGain: "FIRST_DIAGNOSIS",
       },
-    }, packageRoot);
+    }, packageRoot, { taskId: TASK_ID });
 
-    const legacyResolved = resolveCurrentCycleDiagnostic(await readEvents(target, packageRoot), TASK_ID, 1);
+    const legacyResolved = resolveCurrentCycleDiagnostic(await readEvents(target, packageRoot, { taskId: TASK_ID }), TASK_ID, 1);
     assert.equal(legacyResolved.sourceModel, "LEGACY_DIAGNOSIS_V1");
 
     await writeFile(path.join(target, "case.json"), JSON.stringify(caseFileContent({ statement: "Structured runner hypothesis." })));
-    await recordStructuredDiagnosticCase({ target, packageRoot, caseFile: "case.json" });
+    await recordStructuredDiagnosticCase({ target, packageRoot, taskId: TASK_ID, caseFile: "case.json" });
 
-    const events = await readEvents(target, packageRoot);
+    const events = await readEvents(target, packageRoot, { taskId: TASK_ID });
     const resolved = resolveCurrentCycleDiagnostic(events, TASK_ID, 1);
     assert.equal(resolved.sourceModel, "STRUCTURED_DIAGNOSTIC_CASE_V1");
     assert.equal(resolved.diagnosticCase.hypotheses[0].statement, "Structured runner hypothesis.");

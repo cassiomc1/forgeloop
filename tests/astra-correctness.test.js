@@ -32,19 +32,26 @@ test("nested aliases of the same physical project retain transaction identity", 
     await withTaskTransaction({ target, taskId: "same-id" }, async (outer) => {
       await withTaskTransaction({ target: alias, taskId: "same-id" }, async (inner) => assert.equal(inner, outer));
     });
+    await mkdir(path.join(target, ".forgeloop"), { recursive: true });
+    const database = path.join(target, ".forgeloop/state.sqlite");
+    await writeFile(database, "retained canonical storage");
+    await assert.rejects(withTaskTransaction({ target: alias, taskId: "same-id" }, () => assert.fail("A new operation must not bypass root symlink refusal")), /must not be a symlink/);
+    assert.equal(await readFile(database, "utf8"), "retained canonical storage");
   } finally { await rm(root, { recursive: true, force: true }); }
 });
 
-test("successful rollback is terminal for recovery and subsequent doctor invocations", async () => {
+test("retired filesystem rollback refuses mutation and doctor keeps the incomplete transaction visible", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-recovered-health-"));
   try {
     const root = path.join(target, ".forgeloop/.txn/probe");
     await mkdir(root, { recursive: true });
     await writeFile(path.join(root, "manifest.json"), JSON.stringify({ transactionId: "probe", status: "COMMITTING", writes: [] }));
-    assert.equal((await recoverIncompleteTransactions(target))[0].status, "ROLLED_BACK");
-    assert.deepEqual(await findIncompleteTransactions(target), []);
+    const before = await readFile(path.join(root, "manifest.json"), "utf8");
+    await assert.rejects(recoverIncompleteTransactions(target), { code: "E_STORAGE_OPERATION_UNSUPPORTED" });
+    assert.equal(await readFile(path.join(root, "manifest.json"), "utf8"), before);
+    assert.equal((await findIncompleteTransactions(target))[0].status, "COMMITTING");
     const doctor = await runDoctor({ target, packageRoot: getPackageRoot(), fix: true });
-    assert.equal(doctor.findings.some((f) => f.code === "E_TRANSACTION_INCOMPLETE"), false);
+    assert.equal(doctor.findings.some((f) => f.code === "E_TRANSACTION_INCOMPLETE"), true);
   } finally { await rm(target, { recursive: true, force: true }); }
 });
 

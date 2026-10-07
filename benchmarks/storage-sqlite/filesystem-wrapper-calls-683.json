@@ -1,0 +1,646 @@
+{
+  "increment": 683,
+  "method": "AST named-import identifier calls to filesystem.js readBytes/writeFileAtomic across current src JS; namespace/dynamic/assigned alias/transitive calls excluded; identifier shadowing is not resolved",
+  "callCount": 79,
+  "files": 37,
+  "wholeScopeVerified": false,
+  "rows": [
+    {
+      "file": "src/commands/doctor.js",
+      "line": 117,
+      "wrapper": "readBytes",
+      "argument": "destination",
+      "sourceSha256": "1ea77fd088a1277b03bc2edeb034462f8f56df5ce3eb95dd7b68000dd5a983d1",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/commands/doctor.js",
+      "line": 313,
+      "wrapper": "writeFileAtomic",
+      "argument": "destination",
+      "sourceSha256": "1ea77fd088a1277b03bc2edeb034462f8f56df5ce3eb95dd7b68000dd5a983d1",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/commands/doctor.js",
+      "line": 326,
+      "wrapper": "readBytes",
+      "argument": "destination",
+      "sourceSha256": "1ea77fd088a1277b03bc2edeb034462f8f56df5ce3eb95dd7b68000dd5a983d1",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/commands/gate-revalidate.js",
+      "line": 42,
+      "wrapper": "readBytes",
+      "argument": "artifactReal",
+      "sourceSha256": "b53d444543eaec7a07d0f58bd44f3f81ff9f56893ba25f4852b3da76de2cdaf2",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/commands/init.js",
+      "line": 205,
+      "wrapper": "readBytes",
+      "argument": "destination",
+      "sourceSha256": "dbd6aff6b7e27d3fa26e06921ad54c7e569413ee5717f20111c639c77d073dde",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/commands/init.js",
+      "line": 306,
+      "wrapper": "writeFileAtomic",
+      "argument": "destination",
+      "sourceSha256": "dbd6aff6b7e27d3fa26e06921ad54c7e569413ee5717f20111c639c77d073dde",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/commands/update.js",
+      "line": 27,
+      "wrapper": "readBytes",
+      "argument": "filePath",
+      "sourceSha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/commands/update.js",
+      "line": 78,
+      "wrapper": "readBytes",
+      "argument": "legacyPath",
+      "sourceSha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/commands/update.js",
+      "line": 133,
+      "wrapper": "readBytes",
+      "argument": "destination",
+      "sourceSha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/commands/update.js",
+      "line": 166,
+      "wrapper": "readBytes",
+      "argument": "destination",
+      "sourceSha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/commands/update.js",
+      "line": 169,
+      "wrapper": "readBytes",
+      "argument": "legacyDestination",
+      "sourceSha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/commands/update.js",
+      "line": 232,
+      "wrapper": "readBytes",
+      "argument": "legacyDestination",
+      "sourceSha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/commands/update.js",
+      "line": 284,
+      "wrapper": "writeFileAtomic",
+      "argument": "plan.destination",
+      "sourceSha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/commands/update.js",
+      "line": 372,
+      "wrapper": "readBytes",
+      "argument": "legacyDestination",
+      "sourceSha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/commands/update.js",
+      "line": 411,
+      "wrapper": "readBytes",
+      "argument": "destination",
+      "sourceSha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/commands/update.js",
+      "line": 446,
+      "wrapper": "writeFileAtomic",
+      "argument": "plan.destination",
+      "sourceSha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/commands/validate-protocol.js",
+      "line": 33,
+      "wrapper": "readBytes",
+      "argument": "artifactPath",
+      "sourceSha256": "7890edf1f54a84eef70a5fea1fa90e65d86ad93b61b85891caef7e34c4938ba7",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/commands/validate-receipt.js",
+      "line": 17,
+      "wrapper": "readBytes",
+      "argument": "receiptPath",
+      "sourceSha256": "6f90636670ded6b747f70638c7084681b07c4b6213341feb811b7f8e864e9a6b",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/core/artifacts.js",
+      "line": 128,
+      "wrapper": "readBytes",
+      "argument": "artifactPath",
+      "sourceSha256": "4667bc01b1f6416ee22e0de6788bb8ae21ce238b5ce9724961c92c06d0e92db2",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/core/artifacts.js",
+      "line": 210,
+      "wrapper": "writeFileAtomic",
+      "argument": "artifactPath",
+      "sourceSha256": "4667bc01b1f6416ee22e0de6788bb8ae21ce238b5ce9724961c92c06d0e92db2",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/core/bundles.js",
+      "line": 229,
+      "wrapper": "writeFileAtomic",
+      "argument": "destination",
+      "sourceSha256": "8d74bf947d73e3a9ae5b4149da78e6ff8584d48d6c04f12bf296fcaa487e1991",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/core/bundles.js",
+      "line": 506,
+      "wrapper": "readBytes",
+      "argument": "ensureWithin(target, `${directory}/${artifact}`)",
+      "sourceSha256": "8d74bf947d73e3a9ae5b4149da78e6ff8584d48d6c04f12bf296fcaa487e1991",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/core/bundles.js",
+      "line": 617,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(target, `${directory}/events.ndjson`)",
+      "sourceSha256": "8d74bf947d73e3a9ae5b4149da78e6ff8584d48d6c04f12bf296fcaa487e1991",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/core/bundles.js",
+      "line": 626,
+      "wrapper": "writeFileAtomic",
+      "argument": "ensureWithin(target, `${directory}/events.ndjson`)",
+      "sourceSha256": "8d74bf947d73e3a9ae5b4149da78e6ff8584d48d6c04f12bf296fcaa487e1991",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/core/bundles.js",
+      "line": 626,
+      "wrapper": "readBytes",
+      "argument": "eventsPath",
+      "sourceSha256": "8d74bf947d73e3a9ae5b4149da78e6ff8584d48d6c04f12bf296fcaa487e1991",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/core/gate-artifact.js",
+      "line": 60,
+      "wrapper": "readBytes",
+      "argument": "artifactPath",
+      "sourceSha256": "21477b4ff6e832d6831db156361def23d9c17cc7e146eea4eae253105193ee83",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/core/inspect.js",
+      "line": 184,
+      "wrapper": "readBytes",
+      "argument": "profilePath",
+      "sourceSha256": "0e04a43b05d59d2cef6064181c56ab471da43c7b78aa7d8c25f7782b64088ed5",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/core/manifest.js",
+      "line": 80,
+      "wrapper": "writeFileAtomic",
+      "argument": "manifestPath",
+      "sourceSha256": "9e29e1c9466bb0fc6a2ae9371a4f8bec995a01f11377684f0d66bcfa58221f4f",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/core/preflight-loaders.js",
+      "line": 19,
+      "wrapper": "readBytes",
+      "argument": "filePath",
+      "sourceSha256": "785f690c5fcb95c6789f4c757bbb8218befaae467213211bd9340ebaaf3027ae",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/core/signing/statement-file.js",
+      "line": 22,
+      "wrapper": "writeFileAtomic",
+      "argument": "filename",
+      "sourceSha256": "4b0db680c034bd21497e5fa96c01ea79a7faa14f6424c85965f4c9183304880b",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/core/structural-quality/sentrux-mcp.js",
+      "line": 359,
+      "wrapper": "readBytes",
+      "argument": "rulesAbsolute",
+      "sourceSha256": "fea4ef10c25efa80b67f8ab2fcd25e4c0f8fe935ff51698bef52fc98042befaf",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/core/structural-quality/source-fingerprint.js",
+      "line": 37,
+      "wrapper": "readBytes",
+      "argument": "fullPath",
+      "sourceSha256": "de166c936a7c4246fbd014f2ea9eee1faba98a586287aae0286d0a2515774735",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/core/work-state.js",
+      "line": 262,
+      "wrapper": "readBytes",
+      "argument": "statePath",
+      "sourceSha256": "fae79a89d33d170159195d3b3d6448a5ad45422df952422cd2dd18e722052ff9",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/core/work-state.js",
+      "line": 295,
+      "wrapper": "readBytes",
+      "argument": "contractPath",
+      "sourceSha256": "fae79a89d33d170159195d3b3d6448a5ad45422df952422cd2dd18e722052ff9",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/core/work-state.js",
+      "line": 409,
+      "wrapper": "readBytes",
+      "argument": "artifactPath",
+      "sourceSha256": "fae79a89d33d170159195d3b3d6448a5ad45422df952422cd2dd18e722052ff9",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/persistent-transport/state.js",
+      "line": 33,
+      "wrapper": "writeFileAtomic",
+      "argument": "statePath",
+      "sourceSha256": "a877435a1b4a7f5c7d4b6310538451f81079b70d4486d0ed990ed61819ccb86d",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/repository-index/server.js",
+      "line": 32,
+      "wrapper": "writeFileAtomic",
+      "argument": "filePath",
+      "sourceSha256": "4e18bcd059920281616a7ae0a368571ae5bb8c71c6f59929ded044cafcad4ef1",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/exporter.js",
+      "line": 137,
+      "wrapper": "writeFileAtomic",
+      "argument": "filename",
+      "sourceSha256": "1360717c60d12a8959dc209781699483d562e22e496d461624df7f90aba30076",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/exporter.js",
+      "line": 268,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(destination, relativePath)",
+      "sourceSha256": "1360717c60d12a8959dc209781699483d562e22e496d461624df7f90aba30076",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/exporter.js",
+      "line": 274,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(destination, \".forgeloop/session.json\")",
+      "sourceSha256": "1360717c60d12a8959dc209781699483d562e22e496d461624df7f90aba30076",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/exporter.js",
+      "line": 279,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(destination, \"export-index.json\")",
+      "sourceSha256": "1360717c60d12a8959dc209781699483d562e22e496d461624df7f90aba30076",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/exporter.js",
+      "line": 301,
+      "wrapper": "writeFileAtomic",
+      "argument": "filename",
+      "sourceSha256": "1360717c60d12a8959dc209781699483d562e22e496d461624df7f90aba30076",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/migration-activate.js",
+      "line": 56,
+      "wrapper": "writeFileAtomic",
+      "argument": "journalPath",
+      "sourceSha256": "12b11a733f5a615ee1becbc8e3780fadfc7e55c92146cd07e82718c588871267",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/migration-archive.js",
+      "line": 31,
+      "wrapper": "writeFileAtomic",
+      "argument": "journalPath",
+      "sourceSha256": "38848cc8ab285a2ce37ef7b7b3405cf51e024d023670f7dfbf46eac01bdda37a",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/migration-candidate.js",
+      "line": 44,
+      "wrapper": "writeFileAtomic",
+      "argument": "filename",
+      "sourceSha256": "41f01d20be6caac40ef541a8d6175e429bd595f5bd3a7a9f046571c880e88ecb",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/migration-candidate.js",
+      "line": 216,
+      "wrapper": "writeFileAtomic",
+      "argument": "manifestPath",
+      "sourceSha256": "41f01d20be6caac40ef541a8d6175e429bd595f5bd3a7a9f046571c880e88ecb",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/migration-candidate.js",
+      "line": 363,
+      "wrapper": "writeFileAtomic",
+      "argument": "intentPath",
+      "sourceSha256": "41f01d20be6caac40ef541a8d6175e429bd595f5bd3a7a9f046571c880e88ecb",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/migration-publication.js",
+      "line": 71,
+      "wrapper": "writeFileAtomic",
+      "argument": "journalPath",
+      "sourceSha256": "6e60f541f53f977bc1670d2c2f7577e5e718b1e1fff80ba49d4e7c026d8b38ed",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/migration-rollback-preparation.js",
+      "line": 29,
+      "wrapper": "writeFileAtomic",
+      "argument": "journalPath",
+      "sourceSha256": "1152bbb354970c43c8530d681790c08941408328e59654eb6e62044b2dcd9bfe",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/migration-rollback-preparation.js",
+      "line": 87,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(verified.root,\"rollback-journal.json\")",
+      "sourceSha256": "1152bbb354970c43c8530d681790c08941408328e59654eb6e62044b2dcd9bfe",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/migration-rollback-preparation.js",
+      "line": 109,
+      "wrapper": "writeFileAtomic",
+      "argument": "journalPath",
+      "sourceSha256": "1152bbb354970c43c8530d681790c08941408328e59654eb6e62044b2dcd9bfe",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/migration-rollback-publication.js",
+      "line": 45,
+      "wrapper": "writeFileAtomic",
+      "argument": "filename",
+      "sourceSha256": "81ca1f7c72e57f885a137e33d428c4303db0f1bb859ac19c67372d9826553417",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/migration-rollback-publication.js",
+      "line": 63,
+      "wrapper": "writeFileAtomic",
+      "argument": "filename",
+      "sourceSha256": "81ca1f7c72e57f885a137e33d428c4303db0f1bb859ac19c67372d9826553417",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/migration-rollback-publication.js",
+      "line": 161,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(recordRoot,filename)",
+      "sourceSha256": "81ca1f7c72e57f885a137e33d428c4303db0f1bb859ac19c67372d9826553417",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/migration-rollback-release.js",
+      "line": 62,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(published.root,\"target-validation.json\")",
+      "sourceSha256": "6838a25238dd71cd2b2c6d740fb32c3f1914bfd06ed376f154bd4dd7cb0b5cfb",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/migration-rollback-source-stage.js",
+      "line": 27,
+      "wrapper": "writeFileAtomic",
+      "argument": "filename",
+      "sourceSha256": "6bfbf8e0ad81644596fff0f055593082e7627bbac66de070986f81aa4f8b2211",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/migration-rollback-source-stage.js",
+      "line": 90,
+      "wrapper": "writeFileAtomic",
+      "argument": "filename",
+      "sourceSha256": "6bfbf8e0ad81644596fff0f055593082e7627bbac66de070986f81aa4f8b2211",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/migration-source.js",
+      "line": 161,
+      "wrapper": "writeFileAtomic",
+      "argument": "manifestPath",
+      "sourceSha256": "4e2b78e7be7b1641883b28d0b33fe34fd1264b047ce88e00e617e5607aa9ffdb",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/migration-source.js",
+      "line": 239,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(attempt, \"source-manifest.json\")",
+      "sourceSha256": "4e2b78e7be7b1641883b28d0b33fe34fd1264b047ce88e00e617e5607aa9ffdb",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/migration-source.js",
+      "line": 251,
+      "wrapper": "writeFileAtomic",
+      "argument": "manifestPath",
+      "sourceSha256": "4e2b78e7be7b1641883b28d0b33fe34fd1264b047ce88e00e617e5607aa9ffdb",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/project-backup.js",
+      "line": 35,
+      "wrapper": "writeFileAtomic",
+      "argument": "manifestPath",
+      "sourceSha256": "66dffeb2ca6fa6f6c90a3eb19fafad8e5fd69596f2794c23ef95669fce5f1370",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/project-backup.js",
+      "line": 51,
+      "wrapper": "writeFileAtomic",
+      "argument": "inventoryPath",
+      "sourceSha256": "66dffeb2ca6fa6f6c90a3eb19fafad8e5fd69596f2794c23ef95669fce5f1370",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/project-replacement.js",
+      "line": 72,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(current.root, \"replacement-intent.json\")",
+      "sourceSha256": "8edb1daa7f5a50a56c2762488db647d1e441d1f421d8dd6b2f1fbc5a813efa59",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/project-replacement.js",
+      "line": 115,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(operationRoot, \"replacement-intent.json\")",
+      "sourceSha256": "8edb1daa7f5a50a56c2762488db647d1e441d1f421d8dd6b2f1fbc5a813efa59",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/project-restore.js",
+      "line": 44,
+      "wrapper": "writeFileAtomic",
+      "argument": "journalPath",
+      "sourceSha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/project-restore.js",
+      "line": 86,
+      "wrapper": "writeFileAtomic",
+      "argument": "journalPath",
+      "sourceSha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/project-restore.js",
+      "line": 111,
+      "wrapper": "writeFileAtomic",
+      "argument": "journalPath",
+      "sourceSha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/project-restore.js",
+      "line": 169,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(current.root, \"restore-journal.json\")",
+      "sourceSha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/project-restore.js",
+      "line": 195,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(root, \"restore-journal.json\")",
+      "sourceSha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/restore-preparation.js",
+      "line": 21,
+      "wrapper": "writeFileAtomic",
+      "argument": "temporary",
+      "sourceSha256": "70c2db1ac984643434a5e1986028efc39f79b9d2f2576a4cbe35f39bd0161347",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/restore-preparation.js",
+      "line": 45,
+      "wrapper": "writeFileAtomic",
+      "argument": "journalPath",
+      "sourceSha256": "70c2db1ac984643434a5e1986028efc39f79b9d2f2576a4cbe35f39bd0161347",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/restore-replacement-archive.js",
+      "line": 132,
+      "wrapper": "writeFileAtomic",
+      "argument": "filename",
+      "sourceSha256": "fbd0347cb136200ab4cdf848c47c1948f226913a3714c347b71d8fb541c4dd36",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/restore-replacement-archive.js",
+      "line": 139,
+      "wrapper": "writeFileAtomic",
+      "argument": "filename",
+      "sourceSha256": "fbd0347cb136200ab4cdf848c47c1948f226913a3714c347b71d8fb541c4dd36",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/restore-replacement-archive.js",
+      "line": 167,
+      "wrapper": "writeFileAtomic",
+      "argument": "filename",
+      "sourceSha256": "fbd0347cb136200ab4cdf848c47c1948f226913a3714c347b71d8fb541c4dd36",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/restore-replacement-owner.js",
+      "line": 29,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(retained.root, \"owner-journal.json\")",
+      "sourceSha256": "9d3bd4fa498f1f42befe30d1d5d01d1e420996b2887006cecadfdc2011553cbc",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/restore-replacement-preparation.js",
+      "line": 78,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(outgoing, \"replacement-manifest.json\")",
+      "sourceSha256": "07c55045508317bb70d20c7b4b687da662d9ab1f41e209d1972a3c7e06180014",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/restore-replacement-preparation.js",
+      "line": 89,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(root, \"replacement-intent.json\")",
+      "sourceSha256": "07c55045508317bb70d20c7b4b687da662d9ab1f41e209d1972a3c7e06180014",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/restore-replacement.js",
+      "line": 59,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(root, \"replacement-manifest.json\")",
+      "sourceSha256": "f7b7aed1fe54c4feb71a192a5c2aed9ff92bdb80f26d053ba1498d433cc1f138",
+      "roleReview": "PENDING_PER_CALL"
+    },
+    {
+      "file": "src/storage/storage-marker.js",
+      "line": 62,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(target, MARKER)",
+      "sourceSha256": "be4744869306bfba37f02f2ab58152761c12d079360eb4220917019e5d8ad79d",
+      "roleReview": "PENDING_PER_CALL"
+    }
+  ],
+  "retrieval": {
+    "jevgrepExit": 1,
+    "reason": "Search root was a file rather than directory; continued exact searches/direct source reads",
+    "astInitialFailure": "Installed TypeScript package exposes version metadata only; used existing Espree parser, no installation"
+  }
+}

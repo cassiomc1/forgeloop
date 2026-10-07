@@ -3,8 +3,15 @@ import assert from "node:assert/strict";
 import {
   PROGRESS_STATUS,
   PROGRESS_SIGNAL,
-  evaluateProgress,
+  evaluateProgress as projectProgress,
 } from "../src/core/progress.js";
+import { decodedLedgerSource } from "./helpers/ledger-event-collection.js";
+
+function evaluateProgress(input) {
+  const expected = projectProgress(structuredClone(input));
+  assert.deepEqual(projectProgress({ ...structuredClone(input), events: decodedLedgerSource(input.events ?? []) }), expected);
+  return expected;
+}
 
 test("evaluateProgress - one failed cycle -> ADVANCING", () => {
   const state = {

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, unlink, writeFile } from "node:fs/promises";
+import { access, mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -12,6 +12,7 @@ import {
   appendProtocolEvent,
   readEvents,
   validateEventLedger,
+  withEventLedgerAudit,
 } from "../src/core/events.js";
 import {
   legacyContractBootstrapRepairId,
@@ -29,11 +30,12 @@ import { withTaskTransaction } from "../src/core/transaction.js";
 import { acquireTaskLock } from "../src/core/task-lock.js";
 import { createWorkState, readWorkState, writeWorkState } from "../src/core/work-state.js";
 import { writeJsonArtifact } from "../src/core/artifacts.js";
-import { taskLockPath } from "../src/core/task-paths.js";
 import { resolveTaskClaimState } from "../src/core/task-claim-state.js";
 import { COMMAND_EXECUTORS } from "../src/core/command-executors.js";
 import { parseArgs } from "../src/cli.js";
+import { withProjectStorage } from "../src/storage/project-boundary.js";
 import { removeTempTree } from "./helpers/rm-safe.js";
+import { readRawFixtureText, overwriteFixtureText, deleteFixtureArtifact, overwriteFixtureLease } from "./helpers/native-storage-fixture.js";
 
 const packageRoot = getPackageRoot();
 const taskId = "contract-bootstrap-migration-fixture";
@@ -59,8 +61,8 @@ function rewriteEventChain(events, { preserveHashAt = new Set() } = {}) {
   }
 }
 
-async function fixture({ phase = "CONTRACT_READY", mutateEvents = null, preserveHashAt = new Set() } = {}) {
-  const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-contract-bootstrap-migration-"));
+async function fixture({ target = null, phase = "CONTRACT_READY", mutateEvents = null, preserveHashAt = new Set() } = {}) {
+  target ??= await mkdtemp(path.join(os.tmpdir(), "forgeloop-contract-bootstrap-migration-"));
   const contract = createContract({
     taskId,
     objective: "Migrate a legacy contract bootstrap repair marker",
@@ -114,7 +116,7 @@ async function fixture({ phase = "CONTRACT_READY", mutateEvents = null, preserve
   rewriteEventChain(events, {
     preserveHashAt,
   });
-  await writeFile(eventsPath, `${events.map((event) => JSON.stringify(event)).join("\n")}\n`);
+  await overwriteFixtureText(target, eventsPath, `${events.map(event => JSON.stringify(event)).join("\n")}\n`);
   return { target, eventsPath, markerLine: JSON.stringify(marker) };
 }
 
@@ -131,12 +133,31 @@ test("strict validation fails closed, then official migration preserves history 
     assert.equal(tolerantBefore.valid, true);
     assert.ok(isLegacyContractBootstrapRepairMigrationCandidate(tolerantBefore.events, taskId));
 
+    await withEventLedgerAudit(target, packageRoot, { taskId }, async strict => {
+      assert.equal(strict.valid, false);
+      await withEventLedgerAudit(target, packageRoot, {
+        taskId, allowUnmigratedLegacyContractBootstrapRepairMarkers: true,
+      }, async tolerant => {
+        assert.equal(tolerant.valid, true, JSON.stringify(tolerant.errors));
+        assert.equal(tolerant.events, strict.events);
+        await withEventLedgerAudit(target, packageRoot, {
+          taskId, allowUnmigratedLegacyRecoveryEvents: true,
+        }, unrelatedTolerance => {
+          assert.equal(unrelatedTolerance.valid, false);
+          assert.match(unrelatedTolerance.errors.map(error => error.message).join("\n"), /not officially migrated/);
+        });
+      });
+      await withEventLedgerAudit(target, packageRoot, {
+        taskId, allowUnmigratedLegacyContractBootstrapRepairMarkers: true,
+      }, repeated => assert.equal(repeated.valid, true, JSON.stringify(repeated.errors)));
+    });
+
     const statePath = path.join(target, taskArtifactPath(taskId, "state"));
     const contractPath = path.join(target, taskArtifactPath(taskId, "contract"));
     const routePath = path.join(target, taskArtifactPath(taskId, "route"));
-    const beforeState = await readFile(statePath, "utf8");
-    const beforeContract = await readFile(contractPath, "utf8");
-    const beforeRoute = await readFile(routePath, "utf8");
+    const beforeState = await readRawFixtureText(target, statePath);
+    const beforeContract = await readRawFixtureText(target, contractPath);
+    const beforeRoute = await readRawFixtureText(target, routePath);
 
     const next = await getNextAction({ target, packageRoot, taskId });
     assert.equal(next.nextAction, NEXT_ACTIONS.MIGRATE_CONTRACT_BOOTSTRAP_REPAIR);
@@ -145,20 +166,20 @@ test("strict validation fails closed, then official migration preserves history 
     const migrated = await runTaskMigrateContractBootstrapRepair({ target, packageRoot, taskId, acknowledgeMigration: true });
     assert.equal(migrated.migrated, true);
     assert.equal(migrated.alreadyMigrated, false);
-    assert.equal(await readFile(statePath, "utf8"), beforeState);
-    assert.equal(await readFile(contractPath, "utf8"), beforeContract);
-    assert.equal(await readFile(routePath, "utf8"), beforeRoute);
-    const afterText = await readFile(eventsPath, "utf8");
+    assert.equal(await readRawFixtureText(target, statePath), beforeState);
+    assert.equal(await readRawFixtureText(target, contractPath), beforeContract);
+    assert.equal(await readRawFixtureText(target, routePath), beforeRoute);
+    const afterText = await readRawFixtureText(target, eventsPath);
     assert.equal(afterText.split("\n").find((line) => line === markerLine), markerLine);
     const strictAfter = await validateEventLedger(target, packageRoot, { taskId });
     assert.equal(strictAfter.valid, true);
     assert.equal(strictAfter.events.filter((event) => event.event === "CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_RECORDED").length, 1);
 
-    const eventText = await readFile(eventsPath, "utf8");
+    const eventText = await readRawFixtureText(target, eventsPath);
     const second = await runTaskMigrateContractBootstrapRepair({ target, packageRoot, taskId, acknowledgeMigration: true });
     assert.equal(second.migrated, false);
     assert.equal(second.alreadyMigrated, true);
-    assert.equal(await readFile(eventsPath, "utf8"), eventText);
+    assert.equal(await readRawFixtureText(target, eventsPath), eventText);
 
     const repairRerun = await runTaskRepairContractBootstrap({ target, packageRoot, taskId, acknowledgeRepair: true });
     assert.equal(repairRerun.alreadyRepaired, true);
@@ -177,7 +198,7 @@ test("near-miss or progressed legacy boundaries are refused", async () => {
     events[markerIndex].hash = eventHash(events[markerIndex]);
     events[markerIndex + 1].previousHash = events[markerIndex].hash;
     events[markerIndex + 1].hash = eventHash(events[markerIndex + 1]);
-    await writeFile(eventsPath, `${events.map((event) => JSON.stringify(event)).join("\n")}\n`);
+    await overwriteFixtureText(target, eventsPath, `${events.map((event) => JSON.stringify(event)).join("\n")}\n`);
     await assert.rejects(
       runTaskMigrateContractBootstrapRepair({ target, packageRoot, taskId, acknowledgeMigration: true }),
       (error) => error.code === "E_CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_INVALID",
@@ -240,7 +261,7 @@ test("malformed markers and repair boundaries are never migration candidates", a
         const markerIndex = events.findIndex((event) => event.event === "CONTRACT_BOOTSTRAP_REPAIR_RECORDED");
         preserveHashAt.add(markerIndex);
         events[markerIndex].hash = "0".repeat(64);
-        await writeFile(fixtureResult.eventsPath, `${events.map((event) => JSON.stringify(event)).join("\n")}\n`);
+        await overwriteFixtureText(fixtureResult.target, fixtureResult.eventsPath, `${events.map((event) => JSON.stringify(event)).join("\n")}\n`);
       }
       await assert.rejects(
         runTaskMigrateContractBootstrapRepair({
@@ -262,7 +283,7 @@ test("migration proves unchanged state, contract, and routed artifacts", async (
   const cases = [
     {
       name: "current state missing",
-      mutate: async ({ target }) => unlink(path.join(target, taskArtifactPath(taskId, "state"))),
+      mutate: async ({ target }) => deleteFixtureArtifact(target, path.join(target, taskArtifactPath(taskId, "state"))),
     },
     {
       name: "current state fingerprint mismatch",
@@ -286,24 +307,24 @@ test("migration proves unchanged state, contract, and routed artifacts", async (
       name: "current contract fingerprint mismatch",
       mutate: async ({ target }) => {
         const contractPath = path.join(target, taskArtifactPath(taskId, "contract"));
-        const contract = JSON.parse(await readFile(contractPath, "utf8"));
+        const contract = JSON.parse(await readRawFixtureText(target, contractPath));
         contract.objective = "different current contract";
-        await writeFile(contractPath, `${JSON.stringify(contract, null, 2)}\n`);
+        await overwriteFixtureText(target, contractPath, `${JSON.stringify(contract, null, 2)}\n`);
       },
     },
     {
       name: "routed route missing",
       phase: "ROUTED",
-      mutate: async ({ target }) => unlink(path.join(target, taskArtifactPath(taskId, "route"))),
+      mutate: async ({ target }) => deleteFixtureArtifact(target, path.join(target, taskArtifactPath(taskId, "route"))),
     },
     {
       name: "routed route fingerprint mismatch",
       phase: "ROUTED",
       mutate: async ({ target }) => {
         const routePath = path.join(target, taskArtifactPath(taskId, "route"));
-        const route = JSON.parse(await readFile(routePath, "utf8"));
+        const route = JSON.parse(await readRawFixtureText(target, routePath));
         route.fingerprint = "0".repeat(64);
-        await writeFile(routePath, `${JSON.stringify(route, null, 2)}\n`);
+        await overwriteFixtureText(target, routePath, `${JSON.stringify(route, null, 2)}\n`);
       },
     },
     {
@@ -311,9 +332,9 @@ test("migration proves unchanged state, contract, and routed artifacts", async (
       phase: "ROUTED",
       mutate: async ({ target }) => {
         const routePath = path.join(target, taskArtifactPath(taskId, "route"));
-        const route = JSON.parse(await readFile(routePath, "utf8"));
+        const route = JSON.parse(await readRawFixtureText(target, routePath));
         route.contractFingerprint = "f".repeat(64);
-        await writeFile(routePath, `${JSON.stringify(route, null, 2)}\n`);
+        await overwriteFixtureText(target, routePath, `${JSON.stringify(route, null, 2)}\n`);
       },
     },
   ];
@@ -356,7 +377,7 @@ test("strict migration pairing rejects duplicate and misbound migration events",
       const secondMigration = secondEvents.find((event) => event.event === "CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_RECORDED");
       secondMigration.details.legacyMarkerSeq += 1;
       rewriteEventChain(secondEvents);
-      await writeFile(second.eventsPath, `${secondEvents.map((event) => JSON.stringify(event)).join("\n")}\n`);
+      await overwriteFixtureText(second.target, second.eventsPath, `${secondEvents.map((event) => JSON.stringify(event)).join("\n")}\n`);
       const misboundLedger = await validateEventLedger(second.target, packageRoot, { taskId });
       assert.equal(misboundLedger.valid, false);
     } finally {
@@ -383,7 +404,7 @@ test("migration semantic fields remain bound even when the tampered chain is reh
       const migration = events.find((event) => event.event === "CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_RECORDED");
       migration.details[field] = value;
       rewriteEventChain(events);
-      await writeFile(fixtureResult.eventsPath, `${events.map((event) => JSON.stringify(event)).join("\n")}\n`);
+      await overwriteFixtureText(fixtureResult.target, fixtureResult.eventsPath, `${events.map((event) => JSON.stringify(event)).join("\n")}\n`);
 
       const ledger = await validateEventLedger(fixtureResult.target, packageRoot, { taskId });
       assert.equal(ledger.valid, false, field);
@@ -404,17 +425,17 @@ test("already-migrated invocation remains idempotent after canonical lifecycle p
     await runAdvance({ target: fixtureResult.target, packageRoot, taskId, to: "DESIGNING" });
     await runAdvance({ target: fixtureResult.target, packageRoot, taskId, to: "PLANNED" });
 
-    const stateBefore = await readFile(path.join(fixtureResult.target, taskArtifactPath(taskId, "state")), "utf8");
-    const routeBefore = await readFile(path.join(fixtureResult.target, taskArtifactPath(taskId, "route")), "utf8");
-    const contractBefore = await readFile(path.join(fixtureResult.target, taskArtifactPath(taskId, "contract")), "utf8");
-    const eventsBefore = await readFile(fixtureResult.eventsPath, "utf8");
+    const stateBefore = await readRawFixtureText(fixtureResult.target, path.join(fixtureResult.target, taskArtifactPath(taskId, "state")));
+    const routeBefore = await readRawFixtureText(fixtureResult.target, path.join(fixtureResult.target, taskArtifactPath(taskId, "route")));
+    const contractBefore = await readRawFixtureText(fixtureResult.target, path.join(fixtureResult.target, taskArtifactPath(taskId, "contract")));
+    const eventsBefore = await readRawFixtureText(fixtureResult.target, fixtureResult.eventsPath);
     const second = await runTaskMigrateContractBootstrapRepair({ target: fixtureResult.target, packageRoot, taskId, acknowledgeMigration: true });
     assert.equal(second.migrated, false);
     assert.equal(second.alreadyMigrated, true);
-    assert.equal(await readFile(path.join(fixtureResult.target, taskArtifactPath(taskId, "state")), "utf8"), stateBefore);
-    assert.equal(await readFile(path.join(fixtureResult.target, taskArtifactPath(taskId, "route")), "utf8"), routeBefore);
-    assert.equal(await readFile(path.join(fixtureResult.target, taskArtifactPath(taskId, "contract")), "utf8"), contractBefore);
-    assert.equal(await readFile(fixtureResult.eventsPath, "utf8"), eventsBefore);
+    assert.equal(await readRawFixtureText(fixtureResult.target, path.join(fixtureResult.target, taskArtifactPath(taskId, "state"))), stateBefore);
+    assert.equal(await readRawFixtureText(fixtureResult.target, path.join(fixtureResult.target, taskArtifactPath(taskId, "route"))), routeBefore);
+    assert.equal(await readRawFixtureText(fixtureResult.target, path.join(fixtureResult.target, taskArtifactPath(taskId, "contract"))), contractBefore);
+    assert.equal(await readRawFixtureText(fixtureResult.target, fixtureResult.eventsPath), eventsBefore);
 
     const ownership = await resolveTaskClaimState(fixtureResult.target, { taskId, packageRoot });
     assert.equal(ownership.claimState, "ACTIVE");
@@ -427,25 +448,29 @@ test("already-migrated invocation remains idempotent after canonical lifecycle p
 });
 
 test("next migration guidance executes through parser and COMMAND_EXECUTORS", async () => {
-  const fixtureResult = await fixture();
+  const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-bootstrap-migration-command-spec-"));
+  const fixtureResult = { target };
   try {
-    const nextBefore = await getNextAction({ target: fixtureResult.target, packageRoot, taskId });
-    assert.equal(nextBefore.nextAction, NEXT_ACTIONS.MIGRATE_CONTRACT_BOOTSTRAP_REPAIR);
-    const spec = nextBefore.commandSpecs.find((candidate) => candidate.commandId === "task-migrate-contract-bootstrap-repair");
-    assert.ok(spec);
-    assert.ok(spec.argv.includes(`--task=${taskId}`));
-    assert.ok(spec.argv.includes("--json"));
-    assert.ok(spec.requiredInputs.some((input) => input.option === "--acknowledge-migration"));
-    assert.equal(typeof COMMAND_EXECUTORS[spec.commandId], "function");
+    await withProjectStorage(target, () => fixture({ target }));
+    await withProjectStorage(target, async () => {
+      const historical = await readEvents(target, packageRoot, { taskId });
+      const nextBefore = await getNextAction({ target: fixtureResult.target, packageRoot, taskId });
+      assert.equal(nextBefore.nextAction, NEXT_ACTIONS.MIGRATE_CONTRACT_BOOTSTRAP_REPAIR);
+      const spec = nextBefore.commandSpecs.find((candidate) => candidate.commandId === "task-migrate-contract-bootstrap-repair");
+      assert.ok(spec);
+      assert.ok(spec.argv.includes(`--task=${taskId}`));
+      assert.ok(spec.argv.includes("--json"));
+      assert.ok(spec.requiredInputs.some((input) => input.option === "--acknowledge-migration"));
+      assert.equal(typeof COMMAND_EXECUTORS[spec.commandId], "function");
 
-    const parsed = parseArgs([
-      ...spec.argv,
-      ...spec.requiredInputs.map((input) => input.option),
-    ]);
-    const execution = await COMMAND_EXECUTORS[spec.commandId]({
-      target: fixtureResult.target,
-      packageRoot,
-      options: parsed.options,
+      const parsed = parseArgs([
+        ...spec.argv,
+        ...spec.requiredInputs.map((input) => input.option),
+      ]);
+      const execution = await COMMAND_EXECUTORS[spec.commandId]({
+        target: fixtureResult.target,
+        packageRoot,
+        options: parsed.options,
     });
     assert.equal(execution.exitCode, 0);
     assert.equal(execution.result.migrated, true);
@@ -459,6 +484,10 @@ test("next migration guidance executes through parser and COMMAND_EXECUTORS", as
     assert.equal(ownership.claimState, "ACTIVE");
     assert.equal(ownership.ownershipValid, true);
     assert.equal(ownership.mutationAllowed, true);
+    assert.deepEqual((await readEvents(target, packageRoot, { taskId })).slice(0, historical.length), historical);
+    });
+    await access(path.join(target, ".forgeloop/state.sqlite"));
+    await assert.rejects(access(path.join(target, ".forgeloop/task-state")), { code: "ENOENT" });
   } finally {
     await removeTempTree(fixtureResult.target);
   }
@@ -497,7 +526,7 @@ test("migration refuses live and corrupt task locks", async () => {
 
   const corruptFixture = await fixture();
   try {
-    await writeFile(path.join(corruptFixture.target, taskLockPath(taskId)), "{}\n");
+    await overwriteFixtureLease(corruptFixture.target, taskId, "{}\n");
     await assert.rejects(
       runTaskMigrateContractBootstrapRepair({ target: corruptFixture.target, packageRoot, taskId, acknowledgeMigration: true }),
       (error) => error.code === "E_CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_INVALID",

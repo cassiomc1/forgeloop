@@ -1,3 +1,4 @@
+import { withTaskTransaction } from "./transaction.js";
 import { readContract } from "./contract.js";
 import { canonicalFingerprint, readJsonArtifact, writeJsonArtifact } from "./artifacts.js";
 import { appendProtocolEvent, validateCompletionRecoveryAuthorization, validateEventLedger } from "./events.js";
@@ -152,7 +153,14 @@ async function validateReconciliationCheckpoint({
  * VERIFYING, prepare-completion, record-check, complete); claims are
  * released only by canonical COMPLETE.
  */
-export async function runReconcileClosure({
+export async function runReconcileClosure(options = {}) {
+  if (typeof options.taskId !== "string" || !options.taskId.trim()) return reconcileSelectedClosure(options);
+  return withTaskTransaction({ target: options.target, packageRoot: options.packageRoot,
+    taskId: options.taskId, operation: "reconcile-closure", recordCommitEvent: true },
+  () => reconcileSelectedClosure(options));
+}
+
+async function reconcileSelectedClosure({
   target,
   packageRoot,
   taskId,

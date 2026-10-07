@@ -1,0 +1,7 @@
+**
+!.github/
+!.github/runner/
+!.github/runner/Dockerfile
+!.github/runner/linux-admission.sh
+!scripts/
+!scripts/ci-runner-admission.mjs

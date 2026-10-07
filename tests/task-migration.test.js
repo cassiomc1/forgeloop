@@ -11,17 +11,33 @@ import {
 import { taskStorageKey } from "../src/core/task-identity.js";
 import { fileExists } from "../src/core/filesystem.js";
 import { getPackageRoot } from "../src/core/templates.js";
-import { createWorkState, writeWorkState } from "../src/core/work-state.js";
-import { createContract, writeContract } from "../src/core/contract.js";
-import { readTaskDescriptor } from "../src/core/task-descriptor.js";
+import { createWorkState } from "../src/core/work-state.js";
+import { createContract, contractFingerprint } from "../src/core/contract.js";
+import { migrateLegacyTaskStorage } from "../src/core/task-storage-migration.js";
+import { openStorageDatabase, findTaskById } from "../src/storage/index.js";
+import { inventoryLegacySource } from "../src/storage/migration-source.js";
 import { createGate } from "./helpers/gates.js";
-import { writeJsonArtifact } from "../src/core/artifacts.js";
 import {
   E_TASK_MIGRATION_IDENTITY_MISMATCH,
   E_TASK_MIGRATION_INVALID,
 } from "../src/core/error-codes.js";
 
 const packageRoot = getPackageRoot();
+
+// Explicit pre-cutover source fixtures; these are migration inputs, not
+// production operational writers or native authority mirrors.
+async function writeJsonArtifact(target, relativePath, value) {
+  const filename = path.join(target, relativePath);
+  await mkdir(path.dirname(filename), { recursive: true });
+  await writeFile(filename, JSON.stringify(value) + "\n", "utf8");
+}
+function writeContract(target, contract) {
+  return writeJsonArtifact(target, ".forgeloop/current-contract.json", contract);
+}
+function writeWorkState(target, state) {
+  return writeJsonArtifact(target, ".forgeloop/work-state.json", state);
+}
+
 
 async function withTarget(fn) {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-task-migration-"));
@@ -55,7 +71,7 @@ test("detectLegacySingletonLayout detects presence of legacy root artifacts", as
 
     const state = createWorkState({
       taskId: "legacy-task-001",
-      contractFingerprint: "0".repeat(64),
+      contractFingerprint: contractFingerprint(contract),
       repositoryFingerprint: { branch: null, head: null },
       phase: "PLANNED",
       completedSteps: [],
@@ -72,7 +88,7 @@ test("detectLegacySingletonLayout detects presence of legacy root artifacts", as
   });
 });
 
-test("migrateLegacyLayout moves legacy artifacts into namespaced directory and creates task.json", async () => {
+test("explicit migration publishes legacy artifacts into canonical SQLite storage", async () => {
   await withTarget(async (target) => {
     const contract = createContract({
       taskId: "migrating-task",
@@ -90,7 +106,7 @@ test("migrateLegacyLayout moves legacy artifacts into namespaced directory and c
 
     const state = createWorkState({
       taskId: "migrating-task",
-      contractFingerprint: "0".repeat(64),
+      contractFingerprint: contractFingerprint(contract),
       repositoryFingerprint: { branch: null, head: null },
       phase: "PLANNED",
       completedSteps: [],
@@ -108,7 +124,7 @@ test("migrateLegacyLayout moves legacy artifacts into namespaced directory and c
     assert.equal(dryRunResult.taskId, "migrating-task");
 
     // Perform actual migration
-    const result = await migrateLegacyLayout(target, { packageRoot });
+    const result = await migrateLegacyTaskStorage(target, { packageRoot, destination: "retained", writersQuiesced: true });
     assert.equal(result.migrated, true);
     assert.equal(result.taskId, "migrating-task");
     assert.equal(result.taskKey, taskStorageKey("migrating-task"));
@@ -117,16 +133,16 @@ test("migrateLegacyLayout moves legacy artifacts into namespaced directory and c
     assert.equal(await fileExists(path.join(target, ".forgeloop", "current-contract.json")), false);
     assert.equal(await fileExists(path.join(target, ".forgeloop", "work-state.json")), false);
 
-    // New namespaced files exist
-    const taskDir = path.join(target, ".forgeloop", "task-state", result.taskKey);
-    assert.equal(await fileExists(path.join(taskDir, "task.json")), true);
-    assert.equal(await fileExists(path.join(taskDir, "contract.json")), true);
-    assert.equal(await fileExists(path.join(taskDir, "work-state.json")), true);
-    assert.equal(await fileExists(path.join(taskDir, "migration-receipt.json")), true);
+    // Canonical storage replaces the writable namespace and has a real receipt.
+    assert.equal(await fileExists(path.join(target, ".forgeloop", "task-state")), false);
+    assert.equal(await fileExists(path.join(target, result.migrationReceipt)), true);
+    const db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+    try {
+      const descriptor = findTaskById(db, "migrating-task").descriptor;
+      assert.equal(descriptor.taskId, "migrating-task");
+      assert.equal(descriptor.taskKey, result.taskKey);
+    } finally { db.close(); }
 
-    const descriptor = await readTaskDescriptor(target, "migrating-task", packageRoot);
-    assert.equal(descriptor.taskId, "migrating-task");
-    assert.equal(descriptor.taskKey, result.taskKey);
   });
 });
 
@@ -148,7 +164,7 @@ test("migration rejects malformed event line and preserves legacy files", async 
 
     const state = createWorkState({
       taskId: "event-corrupt-task",
-      contractFingerprint: "0".repeat(64),
+      contractFingerprint: contractFingerprint(contract),
       repositoryFingerprint: { branch: null, head: null },
       phase: "PLANNED",
       completedSteps: [],
@@ -196,7 +212,7 @@ test("migration rejects gate or execution with mismatched taskId and preserves l
 
     const state = createWorkState({
       taskId: "mismatch-task",
-      contractFingerprint: "0".repeat(64),
+      contractFingerprint: contractFingerprint(contract),
       repositoryFingerprint: { branch: null, head: null },
       phase: "PLANNED",
       completedSteps: [],
@@ -257,7 +273,7 @@ test("migration rejects execution with mismatched taskId and preserves legacy fi
 
     const state = createWorkState({
       taskId: "exec-mismatch-task",
-      contractFingerprint: "0".repeat(64),
+      contractFingerprint: contractFingerprint(contract),
       repositoryFingerprint: { branch: null, head: null },
       phase: "PLANNED",
       completedSteps: [],
@@ -310,185 +326,17 @@ test("migration rejects execution with mismatched taskId and preserves legacy fi
   });
 });
 
-test("migration rejects temp-copy corruption and rolls back cleanly", async () => {
-  await withTarget(async (target) => {
-    const contract = createContract({
-      taskId: "rollback-task",
-      objective: "Test rollback on temp corruption",
-      deliverables: ["src/index.js"],
-      constraints: ["none"],
-      risks: ["low"],
-      verification: ["tests"],
-      successCriteria: ["tests pass"],
-      stopConditions: ["error"],
-      unresolvedDecisions: [],
-      sourceRefs: ["src"],
-    });
+test("retired filesystem migration refuses copy, publication and cleanup hooks without changing source", async () => {
+  await withTarget(async target => {
+    const contract = createContract({ taskId: "retired-legacy-writer", objective: "Preserve source", deliverables: ["src"], constraints: [], risks: [], verification: ["tests"], successCriteria: ["pass"], stopConditions: ["error"], unresolvedDecisions: [], sourceRefs: [] });
     await writeContract(target, contract, packageRoot);
-
-    const state = createWorkState({
-      taskId: "rollback-task",
-      contractFingerprint: "0".repeat(64),
-      repositoryFingerprint: { branch: null, head: null },
-      phase: "PLANNED",
-      completedSteps: [],
-      pendingSteps: [],
-      checks: [],
-      failures: [],
-      blockers: [],
-    });
-    await writeWorkState(target, state, { packageRoot });
-
-    // Inject corruption in temp directory via afterCopyForTest
-    await assert.rejects(
-      () =>
-        migrateLegacyLayout(target, {
-          packageRoot,
-          afterCopyForTest: async ({ tempDirAbs }) => {
-            await writeFile(path.join(tempDirAbs, "events.ndjson"), "{broken\n", "utf8");
-          },
-        }),
-      (error) => error.code === E_TASK_MIGRATION_INVALID,
-    );
-
-    const taskKey = taskStorageKey("rollback-task");
-    const finalDir = path.join(target, ".forgeloop", "task-state", taskKey);
-    const tempDir = path.join(target, ".forgeloop", "task-state", `.tmp-${taskKey}`);
-
-    assert.equal(await fileExists(finalDir), false, "Final task directory must not exist");
-    assert.equal(await fileExists(tempDir), false, "Temp directory must be cleaned up");
-    assert.equal(await fileExists(path.join(target, ".forgeloop", "current-contract.json")), true, "Legacy source must remain");
-  });
-});
-
-test("migration rejects post-publish corruption when published namespace fingerprints diverge from source", async () => {
-  await withTarget(async (target) => {
-    const contract = createContract({
-      taskId: "post-publish-corrupt-task",
-      objective: "Test post-publish validation",
-      deliverables: ["src/index.js"],
-      constraints: ["none"],
-      risks: ["low"],
-      verification: ["tests"],
-      successCriteria: ["tests pass"],
-      stopConditions: ["error"],
-      unresolvedDecisions: [],
-      sourceRefs: ["src"],
-    });
-    await writeContract(target, contract, packageRoot);
-
-    const state = createWorkState({
-      taskId: "post-publish-corrupt-task",
-      contractFingerprint: "0".repeat(64),
-      repositoryFingerprint: { branch: null, head: null },
-      phase: "PLANNED",
-      completedSteps: [],
-      pendingSteps: [],
-      checks: [],
-      failures: [],
-      blockers: [],
-    });
-    await writeWorkState(target, state, { packageRoot });
-
-    // In afterPublishForTest, corrupt contract.json in the published final directory
-    await assert.rejects(
-      () =>
-        migrateLegacyLayout(target, {
-          packageRoot,
-          afterPublishForTest: async ({ finalDirAbs }) => {
-            await writeFile(path.join(finalDirAbs, "contract.json"), '{"corrupted":true}\n', "utf8");
-          },
-        }),
-      (error) => error.code === E_TASK_MIGRATION_INVALID,
-    );
-
-    const taskKey = taskStorageKey("post-publish-corrupt-task");
-    const finalDir = path.join(target, ".forgeloop", "task-state", taskKey);
-
-    // Assert invalid published namespace was rolled back before cleanup started
-    assert.equal(
-      await fileExists(finalDir),
-      false,
-      "Invalid published namespace must be rolled back before legacy cleanup begins",
-    );
-
-    // Assert legacy source files remain intact
-    assert.equal(
-      await fileExists(path.join(target, ".forgeloop", "current-contract.json")),
-      true,
-      "Legacy contract must remain intact",
-    );
-    assert.equal(
-      await fileExists(path.join(target, ".forgeloop", "work-state.json")),
-      true,
-      "Legacy state must remain intact",
-    );
-
-    // Assert retry succeeds cleanly
-    const retry = await migrateLegacyLayout(target, { packageRoot });
-    assert.equal(retry.migrated, true);
-    assert.equal(retry.taskId, "post-publish-corrupt-task");
-    assert.equal(
-      await fileExists(finalDir),
-      true,
-      "Final task directory must exist after successful retry",
-    );
-    assert.equal(
-      await fileExists(path.join(target, ".forgeloop", "current-contract.json")),
-      false,
-      "Legacy contract must be cleaned up after successful retry",
-    );
-  });
-});
-
-test("migration preserves valid published namespace if legacy cleanup fails after publication", async () => {
-  await withTarget(async (target) => {
-    const contract = createContract({
-      taskId: "cleanup-fail-task",
-      objective: "Test cleanup failure preservation",
-      deliverables: ["src/index.js"],
-      constraints: ["none"],
-      risks: ["low"],
-      verification: ["tests"],
-      successCriteria: ["tests pass"],
-      stopConditions: ["error"],
-      unresolvedDecisions: [],
-      sourceRefs: ["src"],
-    });
-    await writeContract(target, contract, packageRoot);
-
-    const state = createWorkState({
-      taskId: "cleanup-fail-task",
-      contractFingerprint: "0".repeat(64),
-      repositoryFingerprint: { branch: null, head: null },
-      phase: "PLANNED",
-      completedSteps: [],
-      pendingSteps: [],
-      checks: [],
-      failures: [],
-      blockers: [],
-    });
-    await writeWorkState(target, state, { packageRoot });
-
-    // In removeLegacyArtifactForTest, throw to simulate failure during cleanup
-    await assert.rejects(
-      () =>
-        migrateLegacyLayout(target, {
-          packageRoot,
-          removeLegacyArtifactForTest: async () => {
-            throw new Error("Simulated filesystem cleanup failure");
-          },
-        }),
-      (error) => error.code === E_TASK_MIGRATION_INVALID && error.message.includes("legacy cleanup failed"),
-    );
-
-    const taskKey = taskStorageKey("cleanup-fail-task");
-    const finalDir = path.join(target, ".forgeloop", "task-state", taskKey);
-    assert.equal(
-      await fileExists(finalDir),
-      true,
-      "Valid published namespace must be preserved if cleanup fails",
-    );
+    const before = await inventoryLegacySource(target);
+    for (const hook of ["afterCopyForTest", "afterPublishForTest", "beforeLegacyCleanupForTest", "removeLegacyArtifactForTest"]) {
+      await assert.rejects(migrateLegacyLayout(target, { packageRoot, [hook]: () => assert.fail("Retired filesystem lifecycle must not execute") }), { code: "E_STORAGE_OPERATION_UNSUPPORTED" });
+      assert.deepEqual(await inventoryLegacySource(target), before);
+      assert.equal(await fileExists(path.join(target, ".forgeloop/task-state")), false);
+      assert.equal(await fileExists(path.join(target, ".forgeloop/state.sqlite")), false);
+    }
   });
 });
 
@@ -517,7 +365,7 @@ test("migration result contract matches exact required keys for success, dry-run
 
     const state = createWorkState({
       taskId: "shape-test-task",
-      contractFingerprint: "0".repeat(64),
+      contractFingerprint: contractFingerprint(contract),
       repositoryFingerprint: { branch: null, head: null },
       phase: "PLANNED",
       completedSteps: [],
@@ -540,10 +388,10 @@ test("migration result contract matches exact required keys for success, dry-run
     assert.ok(Array.isArray(dryRes.legacyFiles));
 
     // 3. Success result shape
-    const successRes = await migrateLegacyLayout(target, { packageRoot, dryRun: false });
+    const successRes = await migrateLegacyTaskStorage(target, { packageRoot, destination: "retained", writersQuiesced: true });
     assert.deepEqual(
       Object.keys(successRes).sort(),
-      ["migrated", "migratedArtifacts", "targetDirectory", "taskId", "taskKey"].sort(),
+      ["migrated", "migratedArtifacts", "targetDirectory", "taskId", "taskKey", "storage", "migrationReceipt"].sort(),
     );
     assert.equal(successRes.migrated, true);
     assert.equal(successRes.taskId, "shape-test-task");

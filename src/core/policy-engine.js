@@ -1,10 +1,12 @@
+import { needsExistingProjectScope, withExistingProjectScope } from "../storage/existing-project-scope.js";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileExists } from "./filesystem.js";
 import { PROJECT_ARTIFACT_PATHS, taskArtifactPath } from "./task-paths.js";
 import { assertJsonLimits } from "./json-safety.js";
 import { assertSchema, readSchema } from "./schema-validation.js";
-import { canonicalFingerprint, writeJsonArtifact } from "./artifacts.js";
+import { canonicalFingerprint, readJsonArtifact, writeJsonArtifact } from "./artifacts.js";
+import { operationalArtifactExists } from "../storage/operational-context.js";
 import { sha256 } from "./manifest.js";
 import { BUILTIN_POLICY_RULES, discoverPolicy } from "./policy-discovery.js";
 import { getPolicyAdapter } from "./policy-adapters.js";
@@ -82,7 +84,12 @@ export async function writePolicyLock(target, lock, packageRoot) {
 }
 
 export async function readTaskPolicySnapshot(target, taskId, packageRoot) {
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => readTaskPolicySnapshot(target, taskId, packageRoot), { readOnly: true });
+  }
   const relPath = taskArtifactPath(taskId, "policySnapshot");
+  const selected = operationalArtifactExists(target, relPath);
+  if (selected !== null) return selected ? (await readJsonArtifact(target, relPath, "policy-snapshot", packageRoot)).value : null;
   const fullPath = path.join(target, relPath);
   if (!(await fileExists(fullPath))) {
     return null;
@@ -99,7 +106,7 @@ export async function writeTaskPolicySnapshot(target, taskId, snapshot, packageR
   const relPath = taskArtifactPath(taskId, "policySnapshot");
   const schema = await readSchema("policy-snapshot", packageRoot);
   assertSchema(snapshot, schema, "policy-snapshot");
-  await writeJsonArtifact(target, relPath, snapshot, "policy-snapshot", packageRoot);
+  await writeJsonArtifact(target, relPath, snapshot, "policy-snapshot", packageRoot, { taskId });
   return snapshot;
 }
 

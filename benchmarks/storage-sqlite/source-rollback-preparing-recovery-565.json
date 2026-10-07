@@ -1,0 +1,40 @@
+{
+  "checkpoint": 565,
+  "scope": "Mac PREPARING rollback backup recovery with retained incomplete attempts; no source switch",
+  "sourceHashes": {
+    "src/storage/migration-rollback-preparation.js": "a0f1bbda2978f1563d4f2de2ce9a52d775989e4765d1cb52a4200bc01cda5396",
+    "tests/storage-migration-rollback-ready-resume.test.js": "3dac8cb5964923216e4d93a9da97e8b5f2d34818aa04f22a5d78e17108543a1a",
+    "tests/helpers/storage-rollback-ready-worker.mjs": "2e0475c73b508b7e9447d5b2385cc0e5649f48061906c2b002dfd12f445638ff",
+    "tests/storage-migration-rollback-preparation.test.js": "6d11a99163709313474df23b32fb863fff4edb793b1fee6bd247a8b0dc3c0a65"
+  },
+  "initialFailure": {
+    "passed": 9,
+    "failed": 2,
+    "rawLog": "\u2714 rollback native retention validates ready without switching active authority (2838.756583ms)\n\u2714 rollback native retention validates backup-tamper without switching active authority (2885.962625ms)\n\u2714 rollback native retention validates owner-tamper without switching active authority (2895.174833ms)\n\u2714 rollback native retention validates new-native-task without switching active authority (1961.984ms)\n\u2714 rollback native retention validates attachments without switching active authority (3046.751583ms)\n\u2714 dead rollback preparation owner ready resumes only verified native retention (3485.089875ms)\n\u2714 dead rollback preparation owner backup-tamper resumes only verified native retention (2934.821791ms)\n\u2714 dead rollback preparation owner owner-tamper resumes only verified native retention (2999.739417ms)\n\u2714 dead rollback preparation owner preparing-ready resumes only verified native retention (3806.003959ms)\n\u2716 dead rollback preparation owner preparing-partial resumes only verified native retention (3025.413334ms)\n\u2716 dead rollback preparation owner preparing-missing resumes only verified native retention (2967.438041ms)\n\u2139 tests 11\n\u2139 suites 0\n\u2139 pass 9\n\u2139 fail 2\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 19384.159375\n\n\u2716 failing tests:\n\ntest at tests/storage-migration-rollback-ready-resume.test.js:10:119\n\u2716 dead rollback preparation owner preparing-partial resumes only verified native retention (3025.413334ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n  + actual - expected\n  \n  + '14b30e4a-bd52-46bd-aa88-230dd597320a'\n  - '8630a624-757b-48c6-9d51-6216f85209ac'\n  \n      at TestContext.<anonymous> (file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/tests/storage-migration-rollback-ready-resume.test.js:28:65)\n      at async Test.run (node:internal/test_runner/test:1389:7)\n      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {\n    generatedMessage: true,\n    code: 'ERR_ASSERTION',\n    actual: '14b30e4a-bd52-46bd-aa88-230dd597320a',\n    expected: '8630a624-757b-48c6-9d51-6216f85209ac',\n    operator: 'strictEqual',\n    diff: 'simple'\n  }\n\ntest at tests/storage-migration-rollback-ready-resume.test.js:10:119\n\u2716 dead rollback preparation owner preparing-missing resumes only verified native retention (2967.438041ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n  + actual - expected\n  \n  + '81c3909e-011e-4296-aac2-9ea46441a075'\n  - '2dec2dbf-ebed-4614-aa9d-2385c8b53195'\n  \n      at TestContext.<anonymous> (file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/tests/storage-migration-rollback-ready-resume.test.js:28:65)\n      at async Test.run (node:internal/test_runner/test:1389:7)\n      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {\n    generatedMessage: true,\n    code: 'ERR_ASSERTION',\n    actual: '81c3909e-011e-4296-aac2-9ea46441a075',\n    expected: '2dec2dbf-ebed-4614-aa9d-2385c8b53195',\n    operator: 'strictEqual',\n    diff: 'simple'\n  }\n",
+    "diagnosis": "Final READY adoption replaced original previousOwnerId after PREPARING had already adopted current owner."
+  },
+  "tests": {
+    "passed": 11,
+    "failed": 0,
+    "rawLog": "\u2714 rollback native retention validates ready without switching active authority (2646.798083ms)\n\u2714 rollback native retention validates backup-tamper without switching active authority (2757.812458ms)\n\u2714 rollback native retention validates owner-tamper without switching active authority (2800.814375ms)\n\u2714 rollback native retention validates new-native-task without switching active authority (1935.609792ms)\n\u2714 rollback native retention validates attachments without switching active authority (3031.428458ms)\n\u2714 dead rollback preparation owner ready resumes only verified native retention (3351.661167ms)\n\u2714 dead rollback preparation owner backup-tamper resumes only verified native retention (2871.926459ms)\n\u2714 dead rollback preparation owner owner-tamper resumes only verified native retention (2911.0975ms)\n\u2714 dead rollback preparation owner preparing-ready resumes only verified native retention (3822.17525ms)\n\u2714 dead rollback preparation owner preparing-partial resumes only verified native retention (5686.403209ms)\n\u2714 dead rollback preparation owner preparing-missing resumes only verified native retention (2903.261041ms)\n\u2139 tests 11\n\u2139 suites 0\n\u2139 pass 11\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 21652.858375\n"
+  },
+  "controls": [
+    "Actual live owner refused and killed owner adopted",
+    "PREPARING with completed backup revalidated",
+    "PREPARING partial backup retained byte-for-byte; fresh distinct backup validated",
+    "PREPARING missing backup created exclusively",
+    "Original owner history preserved",
+    "Backup corruption and substituted owner refused",
+    "Active native database bytes preserved",
+    "Ordinary command exclusion retained"
+  ],
+  "limitations": [
+    "Interrupted states constructed before actual owner kill; not syscall-level power-loss proof",
+    "Current Windows/Linux recovery tests pending",
+    "Source restoration and interrupted source publication unimplemented",
+    "Historical-write exclusion not proven",
+    "Whole original plan incomplete"
+  ],
+  "fastExit": 0,
+  "lintExit": 0
+}

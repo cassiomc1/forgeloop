@@ -1,3 +1,5 @@
+import { testSemanticProvider } from "../src/core/decision/test-provider.js";
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
@@ -73,8 +75,22 @@ test("structural Flutter SDK dependency selects flutter with the baseline guides
 test("route command feeds repository evidence into the deterministic evaluator", async () => {
   await temporaryProject("forgeloop-flutter-route-command-", async (target) => {
     await writeFile(path.join(target, "pubspec.yaml"), flutterPubspec);
+    await ensureFixtureTask(target, "project-detection-route", packageRoot);
     const route = await runRoute({
       target,
+      taskId: "project-detection-route",
+      // Pin relevance ranking: this test verifies repository evidence, while
+      // the suite loader's equal-confidence provider intentionally reverses ties.
+      semanticProvider: {
+        ...testSemanticProvider,
+        async evaluate(request) {
+          const response = await testSemanticProvider.evaluate(request);
+          if (request.decisionKind === "ROUTE") {
+            for (const [index, key] of Object.keys(response.confidence).entries()) response.confidence[key] = 0.99 - index * 0.01;
+          }
+          return response;
+        },
+      },
       packageRoot,
       workType: "code",
       surfaces: [],

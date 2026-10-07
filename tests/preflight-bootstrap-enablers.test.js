@@ -1,3 +1,5 @@
+import { discoverTasks } from "../src/core/task-discovery.js";
+import { withProjectStorage } from "../src/storage/project-boundary.js";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { access, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
@@ -127,7 +129,9 @@ test("gate-record rejects path traversal before writing", async () => {
       }),
       (error) => error.code === "E_TASK_NOT_FOUND" || error.code === "E_GATE_INVALID",
     );
-    await assert.rejects(access(path.join(target, ".forgeloop")));
+    assert.deepEqual(await discoverTasks(target, packageRoot), []);
+    await assert.rejects(access(path.join(target, ".forgeloop", "task-state")));
+    await assert.rejects(access(path.join(target, "outside.txt")));
   } finally {
     await rm(target, { recursive: true, force: true });
   }
@@ -209,7 +213,7 @@ test("built-in plus missing external source refs are rejected by preflight", asy
 });
 
 test("next emits an executable concrete gate-record commandSpec", async () => {
-  await withTarget("forgeloop-next-command-spec-", async (target) => {
+  await withTarget("forgeloop-next-command-spec-", async (target) => withProjectStorage(target, async () => {
     const taskId = "next-command-spec";
     await setupRoutedTask(target, taskId);
     const blocked = await runPreflight({ target, packageRoot, taskId });
@@ -236,11 +240,13 @@ test("next emits an executable concrete gate-record commandSpec", async () => {
     const parsed = parseArgs([...spec.argv, ...propagatedInputs]);
     const execution = await COMMAND_EXECUTORS[spec.commandId]({ target, packageRoot, options: parsed.options });
     assert.equal(execution.result.status, "satisfied");
-    await access(path.join(target, gatePath));
+    const recorded = await readGateArtifact(target, taskId, "threat-boundary");
+    assert.equal(recorded.status, "satisfied");
+    await assert.rejects(access(path.join(target, gatePath)), { code: "ENOENT" });
 
     const ready = await runPreflight({ target, packageRoot, taskId });
     assert.equal(ready.status, "READY");
-  });
+  }));
 });
 
 test("gate-record rejects a stale route and writes no gate artifact", async () => {

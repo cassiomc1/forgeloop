@@ -2,6 +2,7 @@ name: PR Core
 
 on:
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -36,15 +37,20 @@ jobs:
           node-version: 24
       - name: Classify changed paths
         id: classify
-        run: node scripts/ci-classify.mjs --github-output
-      - name: Check repository hygiene
-        run: npm run repository:hygiene
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            node scripts/ci-classify.mjs --all --github-output
+          else
+            node scripts/ci-classify.mjs --github-output
+          fi
 
   core:
     name: Unit tests (Node ${{ matrix.node-version }}, shard ${{ matrix.shard }}/4)
     needs: classify
-    if: ${{ needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true' }}
-    runs-on: ubuntu-latest
+    if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true') }}
+    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
     timeout-minutes: 30
     strategy:
       fail-fast: false
@@ -58,23 +64,27 @@ jobs:
             shard: 3
           - node-version: 24
             shard: 4
-          - node-version: 20
+          - node-version: "24.19.0"
             shard: 0
     steps:
       - name: Check out repository
-        if: ${{ (matrix.node-version == 24 && (needs.classify.outputs.docs_only != 'true' || matrix.shard == 1)) || (matrix.node-version == 20 && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true')) }}
+        if: ${{ (matrix.node-version == 24 && (needs.classify.outputs.docs_only != 'true' || matrix.shard == 1)) || (matrix.node-version == '24.19.0' && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true')) }}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          fetch-depth: 0
           persist-credentials: false
       - name: Set up Node.js
-        if: ${{ (matrix.node-version == 24 && (needs.classify.outputs.docs_only != 'true' || matrix.shard == 1)) || (matrix.node-version == 20 && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true')) }}
+        if: ${{ (matrix.node-version == 24 && (needs.classify.outputs.docs_only != 'true' || matrix.shard == 1)) || (matrix.node-version == '24.19.0' && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true')) }}
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
       - name: Install locked Node toolchain
-        if: ${{ (matrix.node-version == 24 && (needs.classify.outputs.docs_only != 'true' || matrix.shard == 1)) || (matrix.node-version == 20 && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true')) }}
+        if: ${{ (matrix.node-version == 24 && (needs.classify.outputs.docs_only != 'true' || matrix.shard == 1)) || (matrix.node-version == '24.19.0' && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true')) }}
         run: npm ci --ignore-scripts
+      - name: Record Linux runner identity
+        if: ${{ (matrix.node-version == 24 && (needs.classify.outputs.docs_only != 'true' || matrix.shard == 1)) || (matrix.node-version == '24.19.0' && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true')) }}
+        run: node --input-type=module -e 'import os from "node:os"; console.log(JSON.stringify({ platform:process.platform, architecture:process.arch, hostname:os.hostname(), revision:process.env.GITHUB_SHA }));'
       - name: Run the Node 24 unit suite shard with coverage
         if: ${{ matrix.node-version == 24 && (needs.classify.outputs.docs_only != 'true' || matrix.shard == 1) }}
         env:
@@ -93,15 +103,16 @@ jobs:
           name: coverage-shard-${{ matrix.shard }}
           path: coverage-data
           if-no-files-found: error
-      - name: Run targeted Node 20 CLI compatibility
-        if: ${{ matrix.node-version == 20 && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true') }}
+      - name: Run targeted Minimum Node 24.19.0 CLI compatibility
+        if: ${{ matrix.node-version == '24.19.0' && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true') }}
         run: |
           npm run test:quick
           node src/cli.js --help
           node src/cli.js protocol-info --json
-      - name: Node 20 compatibility not applicable
-        if: ${{ matrix.node-version == 20 && needs.classify.outputs.source != 'true' && needs.classify.outputs.node_compat != 'true' }}
-        run: echo "Node 20 compatibility is not applicable for this change."
+          node --test tests/storage-runtime.test.js tests/storage-store.test.js tests/storage-operational-bootstrap.test.js
+      - name: Minimum Node 24.19.0 compatibility not applicable
+        if: ${{ matrix.node-version == '24.19.0' && needs.classify.outputs.source != 'true' && needs.classify.outputs.node_compat != 'true' }}
+        run: echo "Minimum Node 24.19.0 compatibility is not applicable for this change."
       - name: Node 24 shard not applicable
         if: ${{ matrix.node-version == 24 && needs.classify.outputs.docs_only == 'true' && matrix.shard != 1 }}
         run: echo "Additional Node 24 shards are not applicable for documentation-only changes."
@@ -109,8 +120,8 @@ jobs:
   coverage-report:
     name: Coverage report (Node 24)
     needs: [classify, core]
-    if: ${{ needs.classify.outputs.source == 'true' }}
-    runs-on: ubuntu-latest
+    if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (needs.classify.outputs.source == 'true') }}
+    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
     timeout-minutes: 15
     steps:
       - name: Check out source changes
@@ -136,22 +147,23 @@ jobs:
           npm run critical-coverage:check
 
   lint:
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
     name: Lint and dependency policy
     needs: classify
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
     timeout-minutes: 15
     steps:
       - name: Check out source changes
-        if: ${{ needs.classify.outputs.source == 'true' }}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - name: Set up Node.js
-        if: ${{ needs.classify.outputs.source == 'true' }}
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24
           cache: npm
+      - name: Check repository hygiene
+        run: npm run repository:hygiene
       - name: Install locked Node toolchain
         if: ${{ needs.classify.outputs.source == 'true' }}
         run: npm ci --ignore-scripts
@@ -166,9 +178,10 @@ jobs:
         run: echo "Source lint and dependency policy are not applicable for this change."
 
   docs-diagram:
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
     name: Verify generated Archify diagram
     needs: classify
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
     timeout-minutes: 30
     steps:
       - name: Check out repository for documentation changes
@@ -227,9 +240,10 @@ jobs:
         run: echo "Documentation and diagram validation not applicable for this change."
 
   audit:
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
     name: audit
     needs: classify
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
     timeout-minutes: 15
     steps:
       - name: Check out repository for audit changes
@@ -241,7 +255,7 @@ jobs:
         if: ${{ needs.classify.outputs.audit == 'true' }}
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 20
+          node-version: "24.19.0"
       - name: Install locked Node toolchain
         if: ${{ needs.classify.outputs.audit == 'true' }}
         run: npm ci --ignore-scripts
@@ -253,9 +267,10 @@ jobs:
         run: echo "Receipt audit not applicable for this change."
 
   tarball-smoke:
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
     name: tarball smoke (ubuntu-latest)
     needs: classify
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
     timeout-minutes: 30
     steps:
       - name: Check out repository for package changes
@@ -275,7 +290,7 @@ jobs:
       - name: Install MCP test dependencies
         if: ${{ needs.classify.outputs.package == 'true' }}
         run: npm run mcp:setup
-      - name: Run Ubuntu package and MCP smoke
+      - name: Run Linux package and MCP smoke
         if: ${{ needs.classify.outputs.package == 'true' }}
         run: |
           npm run mcp:test
@@ -287,8 +302,8 @@ jobs:
 
   repository-index:
     name: Repository Index native matrix
-    needs: classify
-    if: ${{ needs.classify.outputs.repository_index == 'true' }}
+    needs: [classify, core, coverage-report, lint, docs-diagram, audit, tarball-smoke]
+    if: ${{ always() && needs.classify.result == 'success' && needs.classify.outputs.repository_index == 'true' }}
     uses: ./.github/workflows/repository-index.yml
 
   required-validation:

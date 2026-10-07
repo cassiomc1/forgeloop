@@ -1,4 +1,4 @@
-import { readEvents } from "./events.js";
+import { iterateEvents } from "./events.js";
 import { assertActionTransition, assertActionAuthorizationDetails } from "./action-model.js";
 import { E_ACTION_EVIDENCE_INVALID } from "./error-codes.js";
 
@@ -27,6 +27,14 @@ function hasCanonicalVerificationEvidence(details) {
   );
 }
 
+async function readActionChronology(target, packageRoot, taskId, actionId) {
+  const chronology = [];
+  for await (const event of iterateEvents(target, packageRoot, { taskId })) {
+    if (event.details?.actionId === actionId) chronology.push(event);
+  }
+  return chronology;
+}
+
 function issue(code, message) {
   return { code, message };
 }
@@ -49,8 +57,7 @@ export async function projectActionLedger({
   actionId,
   artifact = null,
 }) {
-  const events = await readEvents(target, packageRoot, { taskId });
-  const chronology = events.filter((event) => event.details?.actionId === actionId);
+  const chronology = await readActionChronology(target, packageRoot, taskId, actionId);
   const errors = [];
 
   const proposed = chronology.find((event) => event.event === "ACTION_PROPOSED");

@@ -1,15 +1,21 @@
+import { needsExistingProjectScope, withExistingProjectScope } from "../storage/existing-project-scope.js";
 import { randomUUID } from "node:crypto";
-import { link, mkdir, open, readFile, rename, unlink } from "node:fs/promises";
-import path from "node:path";
+import { readFile } from "node:fs/promises";
 import os from "node:os";
 import { assertSafePath, ensureWithin, fileExists } from "./filesystem.js";
 import { taskLockPath } from "./task-paths.js";
-import {
-  E_PROJECT_CLAIMS_LOCK_INCONSISTENT,
-  E_TASK_LOCKED,
-} from "./error-codes.js";
+import { getOperationalStore } from "../storage/operational-context.js";
+import { assertStorageMaintenanceInactive } from "../storage/maintenance.js";
 
 export async function readLockInfo(target, taskId) {
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => readLockInfo(target, taskId), { readOnly: true });
+  }
+  const store = getOperationalStore(target);
+  if (store) {
+    const { readOperationalLease } = await import("../storage/leases.js");
+    return readOperationalLease(store, taskId);
+  }
   const relativePath = taskLockPath(taskId);
   await assertSafePath(target, relativePath);
   const fullPath = ensureWithin(target, relativePath);
@@ -84,6 +90,7 @@ export function currentProcessStartToken(now = Date.now(), uptimeSeconds = proce
 export const CLAIMS_LOCK_REL_PATH = ".forgeloop/.claims.lock";
 
 export async function readProjectClaimsLockInfo(target) {
+  if (getOperationalStore(target)) return null;
   await assertSafePath(target, CLAIMS_LOCK_REL_PATH);
   const fullPath = ensureWithin(target, CLAIMS_LOCK_REL_PATH);
 
@@ -106,166 +113,34 @@ export function classifyProjectClaimsLock(lock, now = Date.now()) {
   return classifyLeaseWindow(lock, now);
 }
 
-function projectClaimsLockError(classification, lockInfo, reason = null) {
-  if (classification.status === "LIVE") {
-    const error = new Error(
-      `Project write claims reservation is locked by operation "${lockInfo?.operation ?? "unknown"}" (pid: ${lockInfo?.pid ?? "unknown"}, acquired: ${lockInfo?.acquiredAt ?? "unknown"}).`,
-    );
-    error.code = E_TASK_LOCKED;
-    error.lockInfo = lockInfo;
-    error.classification = classification;
-    return error;
-  }
-  const error = new Error(
-    `Project write claims lock ownership is ${classification.status}${reason ? ` (${reason})` : ""}; refusing unsafe claim mutation`,
-  );
-  error.code = E_PROJECT_CLAIMS_LOCK_INCONSISTENT;
-  error.lockInfo = lockInfo;
-  error.classification = classification;
-  if (reason) error.reason = reason;
-  return error;
+export async function releaseStaleProjectClaimsLockIfUnchanged(target) {
+  await assertStorageMaintenanceInactive(target);
+  throw Object.assign(new Error("Filesystem claims-lock mutation is retired; preserve legacy evidence for explicit migration"), { code: "E_STORAGE_OPERATION_UNSUPPORTED" });
 }
 
-export async function releaseStaleProjectClaimsLockIfUnchanged(target, expectedLock, { now = Date.now() } = {}) {
-  await assertSafePath(target, CLAIMS_LOCK_REL_PATH);
-  const fullPath = ensureWithin(target, CLAIMS_LOCK_REL_PATH);
-  const expectedClassification = classifyProjectClaimsLock(expectedLock, now);
-  if (expectedClassification.status !== "STALE") {
-    return { released: false, reason: "EXPECTED_LOCK_NOT_STALE", classification: expectedClassification };
-  }
-
-  const quarantinePath = `${fullPath}.releasing-${randomUUID()}`;
-  try {
-    await rename(fullPath, quarantinePath);
-  } catch (error) {
-    if (error.code === "ENOENT") return { released: false, reason: "LOCK_MISSING" };
-    throw error;
-  }
-
-  let observed;
-  try {
-    observed = JSON.parse(await readFile(quarantinePath, "utf8"));
-  } catch {
-    await restoreQuarantinedLock(quarantinePath, fullPath);
-    return { released: false, reason: "LOCK_CORRUPT", classification: { status: "CORRUPT", stale: false } };
-  }
-
-  const observedClassification = classifyProjectClaimsLock(observed, now);
-  if (!sameObservedLock(observed, expectedLock, { identityIsValid: isValidProjectClaimsLockIdentity })
-    || observedClassification.status !== "STALE") {
-    await restoreQuarantinedLock(quarantinePath, fullPath);
-    return {
-      released: false,
-      reason: sameObservedLock(observed, expectedLock, { identityIsValid: isValidProjectClaimsLockIdentity })
-        ? "LOCK_NOT_STALE"
-        : "LOCK_CHANGED",
-      currentLock: observed,
-      classification: observedClassification,
-    };
-  }
-
-  await unlink(quarantinePath);
-  return { released: true, previousLock: observed, classification: observedClassification };
-}
-
-export async function acquireProjectClaimsLock(target, operation = "claim-reservation") {
-  await assertSafePath(target, CLAIMS_LOCK_REL_PATH);
-  const fullPath = ensureWithin(target, CLAIMS_LOCK_REL_PATH);
-
-  await mkdir(path.dirname(fullPath), { recursive: true });
-
-  const acquiredAt = new Date().toISOString();
-  const lockData = {
-    lockId: randomUUID(),
-    scope: "claims-reservation",
-    operation,
-    pid: process.pid,
-    hostname: os.hostname(),
-    processStartToken: currentProcessStartToken(),
-    ownerInstanceId: randomUUID(),
-    acquiredAt,
-    heartbeatAt: acquiredAt,
-    leaseMs: 300000,
-  };
-
-  let fileHandle = null;
-  for (let attempt = 0; attempt < 2; attempt += 1) {
-    try {
-      fileHandle = await open(fullPath, "wx");
-      break;
-    } catch (error) {
-      if (error.code !== "EEXIST") throw error;
-      const existing = await readProjectClaimsLockInfo(target);
-      const classification = classifyProjectClaimsLock(existing);
-      if (classification.status === "STALE" && attempt === 0) {
-        const released = await releaseStaleProjectClaimsLockIfUnchanged(target, existing);
-        if (released.released || released.reason === "LOCK_MISSING") continue;
-        throw projectClaimsLockError(
-          released.classification ?? { status: "UNKNOWN", stale: false },
-          released.currentLock ?? existing,
-          released.reason,
-        );
-      }
-      throw projectClaimsLockError(classification, existing);
-    }
-  }
-  if (!fileHandle) {
-    throw projectClaimsLockError({ status: "UNKNOWN", stale: false }, null, "ACQUISITION_RETRY_EXHAUSTED");
-  }
-
-  try {
-    await fileHandle.writeFile(`${JSON.stringify(lockData, null, 2)}\n`, "utf8");
-    await fileHandle.close();
-    return {
-      lockData,
-      release: async () => {
-        try {
-          const current = await readProjectClaimsLockInfo(target);
-          if (current && current.lockId === lockData.lockId) {
-            await unlink(fullPath);
-          }
-        } catch {
-          // ignore
-        }
-      },
-    };
-  } catch (error) {
-    try {
-      await fileHandle.close();
-    } catch {
-      // ignore
-    }
-    try {
-      await unlink(fullPath);
-    } catch {
-      // ignore
-    }
-    throw error;
-  }
+export async function acquireProjectClaimsLock(target) {
+  await assertStorageMaintenanceInactive(target);
+  throw Object.assign(new Error("Standalone filesystem claims locks are retired; use canonical withProjectClaimsLock"), { code: "E_STORAGE_OPERATION_UNSUPPORTED" });
 }
 
 export async function withProjectClaimsLock(target, operationOrCallback, callback) {
+  if (!getOperationalStore(target)) {
+    const { withProjectStorage } = await import("../storage/project-boundary.js");
+    return withProjectStorage(target, () => withProjectClaimsLock(target, operationOrCallback, callback));
+  }
   let operation = operationOrCallback;
   let fn = callback;
   if (typeof operationOrCallback === "function" && callback === undefined) {
     fn = operationOrCallback;
     operation = "claim-reservation";
   }
-  const lock = await acquireProjectClaimsLock(target, operation);
-  try {
-    return await fn(lock.lockData);
-  } finally {
-    await lock.release();
-  }
+  // The preparation scope records the authoritative claim inputs; its short
+  // BEGIN IMMEDIATE commit rechecks those inputs and reserves claims atomically.
+  return fn({ kind: "sqlite-claim-reservation", operation });
 }
 
 export async function acquireTaskLock(target, taskId, operation = "mutation") {
-  const relativePath = taskLockPath(taskId);
-  await assertSafePath(target, relativePath);
-  const fullPath = ensureWithin(target, relativePath);
-
-  await mkdir(path.dirname(fullPath), { recursive: true });
-
+  await assertStorageMaintenanceInactive(target);
   const acquiredAt = new Date().toISOString();
   const lockData = {
     lockId: randomUUID(),
@@ -279,80 +154,46 @@ export async function acquireTaskLock(target, taskId, operation = "mutation") {
     heartbeatAt: acquiredAt,
     leaseMs: 300000,
   };
-
-  let fileHandle;
-  try {
-    fileHandle = await open(fullPath, "wx");
-  } catch (error) {
-    if (error.code === "EEXIST") {
-      const existing = await readLockInfo(target, taskId);
-      const err = new Error(
-        `Task "${taskId}" is locked by operation "${existing?.operation ?? "unknown"}" (pid: ${existing?.pid ?? "unknown"}, acquired: ${existing?.acquiredAt ?? "unknown"}). Use 'forgeloop task-unlock --task ${taskId} --force' if the process died.`,
-      );
-      err.code = E_TASK_LOCKED;
-      err.lockInfo = existing;
-      err.taskId = taskId;
-      throw err;
-    }
-    throw error;
+  const store = getOperationalStore(target);
+  if (store) {
+    const { acquireOperationalLease } = await import("../storage/leases.js");
+    return acquireOperationalLease(store, taskId, lockData);
   }
+  return acquireStandaloneOperationalLease(target, taskId, operation);
+}
 
-  try {
-    await fileHandle.writeFile(`${JSON.stringify(lockData, null, 2)}\n`, "utf8");
-    await fileHandle.close();
-    return {
-      lockData,
-      release: async () => {
-        try {
-          const current = await readLockInfo(target, taskId);
-          if (current && current.lockId === lockData.lockId) {
-            await unlink(fullPath);
-          }
-        } catch {
-          // ignore already unlinked or overwritten
-        }
-      },
-    };
-  } catch (error) {
-    try {
-      await fileHandle.close();
-    } catch {
-      // ignore
-    }
-    try {
-      await unlink(fullPath);
-    } catch {
-      // ignore
-    }
-    throw error;
-  }
+/** Keep only the connection scope alive; acquisition/release hold no SQL transaction. */
+async function acquireStandaloneOperationalLease(target, taskId, operation) {
+  let resolveReady;
+  let rejectReady;
+  let releaseScope;
+  const ready = new Promise((resolve, reject) => { resolveReady = resolve; rejectReady = reject; });
+  const released = new Promise(resolve => { releaseScope = resolve; });
+  const { withProjectStorage } = await import("../storage/project-boundary.js");
+  const completion = withProjectStorage(target, async () => {
+    const handle = await acquireTaskLock(target, taskId, operation);
+    resolveReady(handle.lockData);
+    await released;
+    return handle.release();
+  }, { existingOnly: true });
+  completion.catch(rejectReady);
+  const lockData = await ready;
+  return { lockData, release: () => { releaseScope(); return completion; } };
 }
 
 export async function forceUnlockTask(target, taskId, { staleOnly = false } = {}) {
-  const relativePath = taskLockPath(taskId);
-  await assertSafePath(target, relativePath);
-  const fullPath = ensureWithin(target, relativePath);
-
-  if (!(await fileExists(fullPath))) {
-    return { unlocked: false, message: "No active lock found" };
+  if (!getOperationalStore(target)) {
+    const { withProjectStorage } = await import("../storage/project-boundary.js");
+    return withProjectStorage(target, () => forceUnlockTask(target, taskId, { staleOnly }), { existingOnly: true });
   }
-
+  const store = getOperationalStore(target);
   const existing = await readLockInfo(target, taskId);
+  if (!existing) return { unlocked: false, message: "No active lock found" };
   const classification = classifyLockStaleness(existing);
-  if (staleOnly) {
-    if (!classification.stale) {
-      return { unlocked: false, previousLock: existing, classification };
-    }
-    const released = await releaseStaleTaskLockIfUnchanged(target, taskId, existing);
-    return {
-      unlocked: released.released,
-      previousLock: released.previousLock ?? existing,
-      classification: released.classification ?? classification,
-      ...(released.reason ? { reason: released.reason } : {}),
-    };
-  }
-  await unlink(fullPath);
-  return { unlocked: true, previousLock: existing, classification };
+  if (staleOnly && !classification.stale) return { unlocked: false, previousLock: existing, classification };
+  const { releaseOperationalLeaseIfUnchanged } = await import("../storage/leases.js");
+  const released = releaseOperationalLeaseIfUnchanged(store, taskId, existing, { force: !staleOnly, classify: classifyLockStaleness, sameIdentity: sameObservedTaskLock });
+  return { unlocked: released.released, previousLock: released.previousLock ?? existing, classification: released.classification ?? classification, ...(released.reason ? { reason: released.reason } : {}) };
 }
 
 function sameObservedLock(left, right, { identityIsValid = isValidTaskLockIdentity } = {}) {
@@ -369,61 +210,23 @@ function sameObservedTaskLock(left, right, taskId) {
     && right.taskId === taskId;
 }
 
-async function restoreQuarantinedLock(quarantinePath, fullPath) {
-  try {
-    await link(quarantinePath, fullPath);
-  } catch (error) {
-    if (error.code !== "EEXIST") throw error;
-  } finally {
-    try {
-      await unlink(quarantinePath);
-    } catch {
-      // ignore an already-consumed quarantine entry
-    }
-  }
-}
-
 export async function releaseStaleTaskLockIfUnchanged(target, taskId, expectedLock, { now = Date.now() } = {}) {
-  const relativePath = taskLockPath(taskId);
-  await assertSafePath(target, relativePath);
-  const fullPath = ensureWithin(target, relativePath);
+  if (!getOperationalStore(target)) {
+    const { withProjectStorage } = await import("../storage/project-boundary.js");
+    return withProjectStorage(target, () => releaseStaleTaskLockIfUnchanged(target, taskId, expectedLock, { now }), { existingOnly: true });
+  }
+  const store = getOperationalStore(target);
   const expectedClassification = classifyLockStaleness(expectedLock, now);
-  if (expectedClassification.status !== "STALE") {
-    return { released: false, reason: "EXPECTED_LOCK_NOT_STALE", classification: expectedClassification };
-  }
-
-  const quarantinePath = `${fullPath}.releasing-${randomUUID()}`;
-  try {
-    await rename(fullPath, quarantinePath);
-  } catch (error) {
-    if (error.code === "ENOENT") return { released: false, reason: "LOCK_MISSING" };
-    throw error;
-  }
-
-  let observed;
-  try {
-    observed = JSON.parse(await readFile(quarantinePath, "utf8"));
-  } catch {
-    await restoreQuarantinedLock(quarantinePath, fullPath);
-    return { released: false, reason: "LOCK_CORRUPT" };
-  }
-
-  const observedClassification = classifyLockStaleness(observed, now);
-  if (!sameObservedTaskLock(observed, expectedLock, taskId) || observedClassification.status !== "STALE") {
-    await restoreQuarantinedLock(quarantinePath, fullPath);
-    return {
-      released: false,
-      reason: sameObservedTaskLock(observed, expectedLock, taskId) ? "LOCK_NOT_STALE" : "LOCK_CHANGED",
-      currentLock: observed,
-      classification: observedClassification,
-    };
-  }
-
-  await unlink(quarantinePath);
-  return { released: true, previousLock: observed, classification: observedClassification };
+  if (expectedClassification.status !== "STALE") return { released: false, reason: "EXPECTED_LOCK_NOT_STALE", classification: expectedClassification };
+  const { releaseOperationalLeaseIfUnchanged } = await import("../storage/leases.js");
+  return releaseOperationalLeaseIfUnchanged(store, taskId, expectedLock, { now, classify: classifyLockStaleness, sameIdentity: sameObservedTaskLock });
 }
 
 export async function withTaskLock(target, taskId, operationOrCallback, callback) {
+  if (!getOperationalStore(target)) {
+    const { withProjectStorage } = await import("../storage/project-boundary.js");
+    return withProjectStorage(target, () => withTaskLock(target, taskId, operationOrCallback, callback));
+  }
   let operation = operationOrCallback;
   let fn = callback;
   if (typeof operationOrCallback === "function" && callback === undefined) {

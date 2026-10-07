@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "scope": "Full immutable Mac601 verification, followed by scoped complexity correction603",
+  "exitCode": 1,
+  "counts": {
+    "tests": 2794,
+    "pass": 2783,
+    "fail": 0,
+    "skipped": 11
+  },
+  "sourceFiles": 2607,
+  "sourceDrift": [],
+  "rawLogSha256": "6007c1310ca42052c84bd19ea08a2cb475a48841bbb8a25afab38118fa81aa26",
+  "passedGates": [
+    "coverage",
+    "critical-coverage:check",
+    "lint",
+    "dependency:policy"
+  ],
+  "failedGate": {
+    "name": "complexity:check",
+    "regressions": [
+      {
+        "file": "src/storage/migration-candidate.js",
+        "score": 33,
+        "limit": 25
+      },
+      {
+        "file": "src/storage/migration-rollback-publication.js",
+        "score": 35,
+        "limit": 25
+      }
+    ]
+  },
+  "correction": "Extract unchanged historical manifest file binding and recovery journal binding checks into smaller helpers; retain all predicates and owner checks.",
+  "correctedSourceSha256": {
+    "src/storage/migration-candidate.js": "41f01d20be6caac40ef541a8d6175e429bd595f5bd3a7a9f046571c880e88ecb",
+    "src/storage/migration-rollback-publication.js": "81ca1f7c72e57f885a137e33d428c4303db0f1bb859ac19c67372d9826553417"
+  },
+  "limitations": [
+    "Full prepush did not pass; later stages including MCP/packages were not reached.",
+    "Fresh full verification of corrected source remains required.",
+    "Windows602 is running the preceding immutable601 production source."
+  ],
+  "correctedChecks": {
+    "focusedRollback": {
+      "pass": 21,
+      "fail": 0
+    },
+    "complexity": "PASS",
+    "verifyFast": "PASS",
+    "lintErrors": 0
+  }
+}

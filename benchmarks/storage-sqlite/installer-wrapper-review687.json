@@ -1,0 +1,111 @@
+{
+  "increment": 687,
+  "status": "SOURCE_REVIEW_COMPLETE_FOR_LISTED_CALLS",
+  "wholeScopeVerified": false,
+  "rows": [
+    {
+      "file": "src/commands/doctor.js",
+      "inventoryLine": 117,
+      "wrapper": "readBytes",
+      "role": "Read/repair shipped managed template files or adopt allow-listed adapter bytes; destinations from current/legacy layout catalog with safe-path admission. Writes installer manifest separately."
+    },
+    {
+      "file": "src/commands/doctor.js",
+      "inventoryLine": 313,
+      "wrapper": "writeFileAtomic",
+      "role": "Read/repair shipped managed template files or adopt allow-listed adapter bytes; destinations from current/legacy layout catalog with safe-path admission. Writes installer manifest separately."
+    },
+    {
+      "file": "src/commands/doctor.js",
+      "inventoryLine": 326,
+      "wrapper": "readBytes",
+      "role": "Read/repair shipped managed template files or adopt allow-listed adapter bytes; destinations from current/legacy layout catalog with safe-path admission. Writes installer manifest separately."
+    },
+    {
+      "file": "src/commands/init.js",
+      "inventoryLine": 205,
+      "wrapper": "readBytes",
+      "role": "Read existing template destinations for conflict planning and publish shipped kit/adapter bytes; template and policy paths checked before writes."
+    },
+    {
+      "file": "src/commands/init.js",
+      "inventoryLine": 306,
+      "wrapper": "writeFileAtomic",
+      "role": "Read existing template destinations for conflict planning and publish shipped kit/adapter bytes; template and policy paths checked before writes."
+    },
+    {
+      "file": "src/commands/update.js",
+      "inventoryLine": 27,
+      "wrapper": "readBytes",
+      "role": "Read managed template/adapter bytes and verify ownership hashes; publish planned template bytes and verify writes before installer manifest switch; legacy cleanup rechecks hashes and preserves changed files."
+    },
+    {
+      "file": "src/commands/update.js",
+      "inventoryLine": 78,
+      "wrapper": "readBytes",
+      "role": "Read managed template/adapter bytes and verify ownership hashes; publish planned template bytes and verify writes before installer manifest switch; legacy cleanup rechecks hashes and preserves changed files."
+    },
+    {
+      "file": "src/commands/update.js",
+      "inventoryLine": 133,
+      "wrapper": "readBytes",
+      "role": "Read managed template/adapter bytes and verify ownership hashes; publish planned template bytes and verify writes before installer manifest switch; legacy cleanup rechecks hashes and preserves changed files."
+    },
+    {
+      "file": "src/commands/update.js",
+      "inventoryLine": 166,
+      "wrapper": "readBytes",
+      "role": "Read managed template/adapter bytes and verify ownership hashes; publish planned template bytes and verify writes before installer manifest switch; legacy cleanup rechecks hashes and preserves changed files."
+    },
+    {
+      "file": "src/commands/update.js",
+      "inventoryLine": 169,
+      "wrapper": "readBytes",
+      "role": "Read managed template/adapter bytes and verify ownership hashes; publish planned template bytes and verify writes before installer manifest switch; legacy cleanup rechecks hashes and preserves changed files."
+    },
+    {
+      "file": "src/commands/update.js",
+      "inventoryLine": 232,
+      "wrapper": "readBytes",
+      "role": "Read managed template/adapter bytes and verify ownership hashes; publish planned template bytes and verify writes before installer manifest switch; legacy cleanup rechecks hashes and preserves changed files."
+    },
+    {
+      "file": "src/commands/update.js",
+      "inventoryLine": 284,
+      "wrapper": "writeFileAtomic",
+      "role": "Read managed template/adapter bytes and verify ownership hashes; publish planned template bytes and verify writes before installer manifest switch; legacy cleanup rechecks hashes and preserves changed files."
+    },
+    {
+      "file": "src/commands/update.js",
+      "inventoryLine": 372,
+      "wrapper": "readBytes",
+      "role": "Read managed template/adapter bytes and verify ownership hashes; publish planned template bytes and verify writes before installer manifest switch; legacy cleanup rechecks hashes and preserves changed files."
+    },
+    {
+      "file": "src/commands/update.js",
+      "inventoryLine": 411,
+      "wrapper": "readBytes",
+      "role": "Read managed template/adapter bytes and verify ownership hashes; publish planned template bytes and verify writes before installer manifest switch; legacy cleanup rechecks hashes and preserves changed files."
+    },
+    {
+      "file": "src/commands/update.js",
+      "inventoryLine": 446,
+      "wrapper": "writeFileAtomic",
+      "role": "Read managed template/adapter bytes and verify ownership hashes; publish planned template bytes and verify writes before installer manifest switch; legacy cleanup rechecks hashes and preserves changed files."
+    }
+  ],
+  "reviewedCallCount": 15,
+  "sourceSha256": {
+    "src/commands/doctor.js": "1ea77fd088a1277b03bc2edeb034462f8f56df5ce3eb95dd7b68000dd5a983d1",
+    "src/commands/init.js": "dbd6aff6b7e27d3fa26e06921ad54c7e569413ee5717f20111c639c77d073dde",
+    "src/commands/update.js": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+    "src/core/templates.js": "20e92251bc83f699890533fd397536755226b93b74ca04766f94212128faf8f8",
+    "src/core/target-layout.js": "ac10350a7f9729eccc4d332b87fbd466e2a11c9c8d170c8bd784035fa2effdf9"
+  },
+  "catalogBoundary": "Normal shipped template catalog maps documentation/guides/schemas to .forgeloop/kit; native adapter paths and .forgeloop/.gitignore retain explicit destinations. Arbitrary mutation of module exports or host-controlled package roots/hooks is not sandboxed or covered.",
+  "limitations": [
+    "Filesystem path check/use replacement remains unproven.",
+    "This review classifies listed direct wrapper sites; it does not establish all imported effects or maintenance/authority closure."
+  ],
+  "runningVerification": "Full Mac686 terminal PASS; owned session91524 closed."
+}

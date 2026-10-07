@@ -1,0 +1,19 @@
+{
+  "exit": "0",
+  "sourceFiles": 2618,
+  "sourceDrift": [],
+  "snapshot": "606",
+  "collectedIncrement": 607,
+  "testSummaries": [
+    "\u2139 tests 2798",
+    "\u2139 pass 2785",
+    "\u2139 fail 0",
+    "\u2139 skipped 13",
+    "\u2139 tests 73",
+    "\u2139 pass 73",
+    "\u2139 fail 0",
+    "\u2139 skipped 0"
+  ],
+  "packageSmokePassed": true,
+  "mcpPackageSmokePassed": true
+}

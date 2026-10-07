@@ -1597,6 +1597,24 @@
       "origin": "handwritten",
       "currency": "current",
       "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/SELF_HOSTED_TESTS.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        ".github/workflows/node-compat.yml",
+        ".github/runner/Dockerfile",
+        "scripts/ci-runner-admission.mjs"
+      ],
+      "canonicalSources": [
+        ".github/workflows/node-compat.yml",
+        ".github/runner/Dockerfile",
+        "scripts/ci-runner-admission.mjs"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
     }
   ]
 }

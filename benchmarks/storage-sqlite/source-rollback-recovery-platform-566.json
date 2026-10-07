@@ -1,0 +1,78 @@
+{
+  "checkpoint": 566,
+  "scope": "Current PREPARING/READY rollback recovery, backup retention, connection admission and activation regression; not final full-source acceptance",
+  "mac": {
+    "status": 0,
+    "passed": 18,
+    "failed": 0,
+    "rawLog": "\u2714 validated archival activates an independent SQLite copy and releases public dispatch (4344.646875ms)\n\u2714 source rollback admission unchanged preserves existing authority (3495.021709ms)\n\u2714 source rollback admission new-task preserves existing authority (2698.109875ms)\n\u2714 source rollback admission orphan-bytes preserves existing authority (2474.18575ms)\n\u2714 source rollback admission altered-source preserves existing authority (2154.24825ms)\n\u2714 source rollback admission retained-reader preserves existing authority (2166.070625ms)\n\u2714 source rollback admission refuses an independent busy writer without changing authority (7682.497ms)\n\u2714 rollback native retention validates ready without switching active authority (4372.149292ms)\n\u2714 rollback native retention validates backup-tamper without switching active authority (3619.211833ms)\n\u2714 rollback native retention validates owner-tamper without switching active authority (3666.494375ms)\n\u2714 rollback native retention validates new-native-task without switching active authority (2509.720792ms)\n\u2714 rollback native retention validates attachments without switching active authority (3373.4295ms)\n\u2714 dead rollback preparation owner ready resumes only verified native retention (5292.311042ms)\n\u2714 dead rollback preparation owner backup-tamper resumes only verified native retention (3762.144166ms)\n\u2714 dead rollback preparation owner owner-tamper resumes only verified native retention (3919.444292ms)\n\u2714 dead rollback preparation owner preparing-ready resumes only verified native retention (4345.283958ms)\n\u2714 dead rollback preparation owner preparing-partial resumes only verified native retention (2967.596792ms)\n\u2714 dead rollback preparation owner preparing-missing resumes only verified native retention (2927.074709ms)\n\u2139 tests 18\n\u2139 suites 0\n\u2139 pass 18\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 23390.875167\n"
+  },
+  "windows": {
+    "sourceBefore": 2512,
+    "sourceAfter": 2512,
+    "patches": {
+      "src/core/work-state.js": "fae79a89d33d170159195d3b3d6448a5ad45422df952422cd2dd18e722052ff9",
+      "tests/checkpoint-revalidation.test.js": "9d6aafb3b96b03525d29ab9bef133f62af1612d56b9710c3293738d22070cd32",
+      "src/core/structural-quality/service.js": "38981b46ae61b4ca173fd37d5855ac4ce6580719dcc51b429474a2f44417b363",
+      "tests/storage-quality-context.test.js": "1deb0efe1f37b09829eb3b46d47cedd9e51e5ef0a921fc86e56c0e4e22195bce",
+      "src/storage/task-guards.js": "0ff2d6a4b1109e47d97a772c19b54ba68dbae6c739e43d3253b399b244eafff4",
+      "src/commands/status.js": "826d0f912630f5df52f6d696780cd9a4cc77493dad072f3ebd3c5a2e432e118f",
+      "tests/storage-state-classification-snapshot.test.js": "d5e2a6efe3ab48be4fda5a85f27c0fc6becdcdf7d07e7f76dfe350f9bc6ea86a",
+      "scripts/drill-storage-reverse-export-compatibility.mjs": "ef4978e694207059fa27dc9cb701539dfc5b828558e6afba875e1020756e2008",
+      "tests/helpers/canonical-diagnosis-fixture.js": "add6d2df4664967e203ae93061e649fb3b16f132ee39626c151018679383769f",
+      "scripts/drill-storage-prewrite-source-rollback.mjs": "95ddf7088f39cefb5cc78d22d6636e898d83fb8914414cc58eed90090edf1b90",
+      "tests/storage-migration-resume.test.js": "2b5942e27dfcc28de5561fbbe1eba3bb5b1ef723bb9dad9e855f57f1583aa511",
+      "tests/helpers/storage-migration-crash-worker.mjs": "7b647e308e324f857e6d279eff7b011dfc854c7a84afa89c35e0032279ccc75b",
+      "src/storage/migration-candidate.js": "bfe9de59e88e05eb61d70eca35f6f5540a766ba8155f6b26b5707f211dc7e94f",
+      "tests/storage-historical-export-manifest.test.js": "76c97421ec3b81e911da35c565cdcd6c062f9081534ed93edb3c356219576b4d",
+      "src/storage/migration-rollback-admission.js": "f1601a8cc6db9597526eeb61e8d73ca279e5141c8fd4a5c548e8a85a4cbc0099",
+      "tests/storage-migration-rollback-admission.test.js": "d25d257c2d8ef26bf1acca99b12c64ed524b56eaba1a93cdb2dbc26ba88734a6",
+      "tests/helpers/storage-rollback-busy-worker.mjs": "2b9976b168ab0101c05ed9823c9588d321332f59d718cda3f4d855c9fc13394e",
+      "src/storage/migration-rollback-preparation.js": "a0f1bbda2978f1563d4f2de2ce9a52d775989e4765d1cb52a4200bc01cda5396",
+      "tests/storage-migration-rollback-preparation.test.js": "6d11a99163709313474df23b32fb863fff4edb793b1fee6bd247a8b0dc3c0a65",
+      "tests/storage-migration-rollback-ready-resume.test.js": "3dac8cb5964923216e4d93a9da97e8b5f2d34818aa04f22a5d78e17108543a1a",
+      "tests/helpers/storage-rollback-ready-worker.mjs": "2e0475c73b508b7e9447d5b2385cc0e5649f48061906c2b002dfd12f445638ff"
+    },
+    "status": 0,
+    "stdout": "\u2714 validated archival activates an independent SQLite copy and releases public dispatch (6916.6819ms)\n\u2714 source rollback admission unchanged preserves existing authority (5296.1579ms)\n\u2714 source rollback admission new-task preserves existing authority (4631.9934ms)\n\u2714 source rollback admission orphan-bytes preserves existing authority (4679.5266ms)\n\u2714 source rollback admission altered-source preserves existing authority (3848.1965ms)\n\u2714 source rollback admission retained-reader preserves existing authority (3992.0369ms)\n\u2714 source rollback admission refuses an independent busy writer without changing authority (10226.5026ms)\n\u2714 rollback native retention validates ready without switching active authority (6981.0205ms)\n\u2714 rollback native retention validates backup-tamper without switching active authority (7038.3654ms)\n\u2714 rollback native retention validates owner-tamper without switching active authority (6926.0878ms)\n\u2714 rollback native retention validates new-native-task without switching active authority (4775.7869ms)\n\u2714 rollback native retention validates attachments without switching active authority (6990.3145ms)\n\u2714 dead rollback preparation owner ready resumes only verified native retention (8665.288ms)\n\u2714 dead rollback preparation owner backup-tamper resumes only verified native retention (7103.9307ms)\n\u2714 dead rollback preparation owner owner-tamper resumes only verified native retention (7328.6671ms)\n\u2714 dead rollback preparation owner preparing-ready resumes only verified native retention (9150.3689ms)\n\u2714 dead rollback preparation owner preparing-partial resumes only verified native retention (8033.8993ms)\n\u2714 dead rollback preparation owner preparing-missing resumes only verified native retention (8470.0241ms)\n\u2139 tests 18\n\u2139 suites 0\n\u2139 pass 18\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 49046.9271\n",
+    "stderr": ""
+  },
+  "linux": {
+    "sourceBefore": 2512,
+    "sourceAfter": 2512,
+    "patches": {
+      "src/core/work-state.js": "fae79a89d33d170159195d3b3d6448a5ad45422df952422cd2dd18e722052ff9",
+      "tests/checkpoint-revalidation.test.js": "9d6aafb3b96b03525d29ab9bef133f62af1612d56b9710c3293738d22070cd32",
+      "src/core/structural-quality/service.js": "38981b46ae61b4ca173fd37d5855ac4ce6580719dcc51b429474a2f44417b363",
+      "tests/storage-quality-context.test.js": "1deb0efe1f37b09829eb3b46d47cedd9e51e5ef0a921fc86e56c0e4e22195bce",
+      "src/storage/task-guards.js": "0ff2d6a4b1109e47d97a772c19b54ba68dbae6c739e43d3253b399b244eafff4",
+      "src/commands/status.js": "826d0f912630f5df52f6d696780cd9a4cc77493dad072f3ebd3c5a2e432e118f",
+      "tests/storage-state-classification-snapshot.test.js": "d5e2a6efe3ab48be4fda5a85f27c0fc6becdcdf7d07e7f76dfe350f9bc6ea86a",
+      "scripts/drill-storage-reverse-export-compatibility.mjs": "ef4978e694207059fa27dc9cb701539dfc5b828558e6afba875e1020756e2008",
+      "tests/helpers/canonical-diagnosis-fixture.js": "add6d2df4664967e203ae93061e649fb3b16f132ee39626c151018679383769f",
+      "scripts/drill-storage-prewrite-source-rollback.mjs": "95ddf7088f39cefb5cc78d22d6636e898d83fb8914414cc58eed90090edf1b90",
+      "tests/storage-migration-resume.test.js": "2b5942e27dfcc28de5561fbbe1eba3bb5b1ef723bb9dad9e855f57f1583aa511",
+      "tests/helpers/storage-migration-crash-worker.mjs": "7b647e308e324f857e6d279eff7b011dfc854c7a84afa89c35e0032279ccc75b",
+      "src/storage/migration-candidate.js": "bfe9de59e88e05eb61d70eca35f6f5540a766ba8155f6b26b5707f211dc7e94f",
+      "tests/storage-historical-export-manifest.test.js": "76c97421ec3b81e911da35c565cdcd6c062f9081534ed93edb3c356219576b4d",
+      "src/storage/migration-rollback-admission.js": "f1601a8cc6db9597526eeb61e8d73ca279e5141c8fd4a5c548e8a85a4cbc0099",
+      "tests/storage-migration-rollback-admission.test.js": "d25d257c2d8ef26bf1acca99b12c64ed524b56eaba1a93cdb2dbc26ba88734a6",
+      "tests/helpers/storage-rollback-busy-worker.mjs": "2b9976b168ab0101c05ed9823c9588d321332f59d718cda3f4d855c9fc13394e",
+      "src/storage/migration-rollback-preparation.js": "a0f1bbda2978f1563d4f2de2ce9a52d775989e4765d1cb52a4200bc01cda5396",
+      "tests/storage-migration-rollback-preparation.test.js": "6d11a99163709313474df23b32fb863fff4edb793b1fee6bd247a8b0dc3c0a65",
+      "tests/storage-migration-rollback-ready-resume.test.js": "3dac8cb5964923216e4d93a9da97e8b5f2d34818aa04f22a5d78e17108543a1a",
+      "tests/helpers/storage-rollback-ready-worker.mjs": "2e0475c73b508b7e9447d5b2385cc0e5649f48061906c2b002dfd12f445638ff"
+    },
+    "status": 0,
+    "stdout": "\u2714 validated archival activates an independent SQLite copy and releases public dispatch (7168.602023ms)\n\u2714 source rollback admission unchanged preserves existing authority (5180.471964ms)\n\u2714 source rollback admission new-task preserves existing authority (5516.887892ms)\n\u2714 source rollback admission orphan-bytes preserves existing authority (4959.917802ms)\n\u2714 source rollback admission altered-source preserves existing authority (4555.103524ms)\n\u2714 source rollback admission retained-reader preserves existing authority (4592.855205ms)\n\u2714 source rollback admission refuses an independent busy writer without changing authority (10440.236774ms)\n\u2714 rollback native retention validates ready without switching active authority (7273.9985ms)\n\u2714 rollback native retention validates backup-tamper without switching active authority (7386.840646ms)\n\u2714 rollback native retention validates owner-tamper without switching active authority (7727.798481ms)\n\u2714 rollback native retention validates new-native-task without switching active authority (5052.572345ms)\n\u2714 rollback native retention validates attachments without switching active authority (7406.357077ms)\n\u2714 dead rollback preparation owner ready resumes only verified native retention (8836.142242ms)\n\u2714 dead rollback preparation owner backup-tamper resumes only verified native retention (7455.262653ms)\n\u2714 dead rollback preparation owner owner-tamper resumes only verified native retention (8286.608421ms)\n\u2714 dead rollback preparation owner preparing-ready resumes only verified native retention (9884.817756ms)\n\u2714 dead rollback preparation owner preparing-partial resumes only verified native retention (8535.042497ms)\n\u2714 dead rollback preparation owner preparing-missing resumes only verified native retention (8488.986864ms)\n\u2139 tests 18\n\u2139 suites 0\n\u2139 pass 18\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 51722.608047\n",
+    "stderr": "",
+    "image": "sha256:3eb82b4adaad45a9f16375f08428dfaf7fbde815a02e5c9c38b3dec7a6da493f"
+  },
+  "limitations": [
+    "No source restoration or publication recovery",
+    "Constructed interruption states before actual owner kill; no syscall-level power-loss claim",
+    "Historical-write exclusion not proven",
+    "Admitted base snapshot plus scoped patches; final whole-current-source suites remain separate",
+    "Original plan acceptance incomplete"
+  ]
+}

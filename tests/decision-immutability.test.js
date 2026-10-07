@@ -1,3 +1,4 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
@@ -29,6 +30,7 @@ function artifact(decisionId) {
 test("semantic decision IDs are immutable and supersession must use a new ID", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-decision-immutable-"));
   const packageRoot = getPackageRoot();
+  await ensureFixtureTask(target, "decision-immutable-task", packageRoot);
   await writeDecisionArtifact(target, "decision-immutable-task", "context-plan-0001", artifact("context-plan-0001"), packageRoot, { taskId: "decision-immutable-task" });
   await assert.rejects(
     () => writeDecisionArtifact(target, "decision-immutable-task", "context-plan-0001", artifact("context-plan-0001"), packageRoot, { taskId: "decision-immutable-task" }),

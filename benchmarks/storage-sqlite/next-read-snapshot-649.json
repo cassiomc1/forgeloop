@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "increment": 649,
+  "problem": "Direct next projection assembled state, contract, route and further observations across separate reads; command compact profile was read afterward.",
+  "correction": "Direct getNextAction and complete runNext projection use the existing project snapshot helper. Nested owned readonly copies are reused; prepared observations are retained. Existing project-scope selection branch is subsumed by snapshot admission.",
+  "files": [
+    {
+      "file": "src/core/next-action.js",
+      "sha256": "6f9aa5796c4a58c3707c9e5ef77a9a19113c215871aa0ff3c2e12ac8000104ef"
+    },
+    {
+      "file": "src/commands/next.js",
+      "sha256": "c3237ede7c810ca399bb8c4589affb75de63afd5e8d2ab0096ab3e1ea7d277fd"
+    },
+    {
+      "file": "tests/storage-next-read-snapshot.test.js",
+      "sha256": "1858eee68d1e725cc492df567244c44c001a28f56d6ea8644f51c108b93b980c"
+    }
+  ],
+  "tests": {
+    "initialSelected": 13,
+    "broadNextRecovery": {
+      "tests": 124,
+      "pass": 124,
+      "fail": 0,
+      "skipped": 0
+    },
+    "mcpClean": {
+      "tests": 73,
+      "passed": 73,
+      "failed": 0
+    },
+    "verifyFast": "PASS",
+    "regression": "Independent writable connection changes the route payload after work-state read; direct API, ordinary command and compact command preserve full original response including profile.",
+    "docsCheck": "PASS",
+    "diffCheck": "PASS"
+  },
+  "readOnlyDispatchReview": {
+    "taskOptionCommands": 34,
+    "finding": "Do not infer a uniform pure-read contract from mutation metadata alone: context-plan can call ensureSemanticDecision; model-route/semantic-plan have their own scoped behavior. No blanket dispatcher change made.",
+    "progress": "Existing withEventLedgerAudit already owns state/ledger projection; no change required."
+  },
+  "jevgrep": {
+    "exitCode": 0,
+    "log": "/Users/cassio/.codex/verification/jevgrep649.log"
+  },
+  "limitations": [
+    "Other public consumer compositions remain under review",
+    "Full current platform checks and proportional snapshot overhead after647-649 pending",
+    "Whole performance/LOC/workflow/authority gates remain open"
+  ],
+  "soleWriterVerified": false
+}

@@ -15,6 +15,9 @@ import { resolveNextActionPhase } from "./next-action-phases.js";
 import { criterionForDecision } from "./settlement-model.js";
 import { validateApprovalForAction } from "./approvals.js";
 import { evaluateActionCapability } from "./capability-policy.js";
+import { resolveTaskContext, TASK_SELECTION_MODES } from "./task-context.js";
+import { getOperationalStore } from "../storage/operational-context.js";
+import { withProjectReadSnapshot } from "../storage/project-read-snapshot.js";
 
 export { NEXT_ACTIONS } from "./next-action-model.js";
 
@@ -355,9 +358,25 @@ async function computeNextAction(targetOrOptions = {}, packageRootOption) {
 }
 
 export async function getNextAction(targetOrOptions = {}, packageRootOption) {
-  const res = await computeNextAction(targetOrOptions, packageRootOption);
+  const target = typeof targetOrOptions === "string" ? targetOrOptions : targetOrOptions?.target;
+  const read = () => getSelectedNextAction(targetOrOptions, packageRootOption);
+  return target ? withProjectReadSnapshot(target, read) : read();
+}
+
+async function getSelectedNextAction(targetOrOptions, packageRootOption) {
+  let normalized = typeof targetOrOptions === "string"
+    ? { target: targetOrOptions, packageRoot: packageRootOption }
+    : { ...targetOrOptions };
+  if (getOperationalStore(normalized.target)) {
+    const context = await resolveTaskContext(normalized.target, {
+      taskId: normalized.taskId,
+      packageRoot: normalized.packageRoot,
+      selectionMode: TASK_SELECTION_MODES.READ,
+    });
+    if (context) normalized = { ...normalized, taskId: context.taskId };
+  }
+  const res = await computeNextAction(normalized);
   if (res && res.reasons && res.reasons.some((r) => r.code === "E_CONTRACT_UNRESOLVED_DECISION" || r.code === "E_UNRESOLVED_DECISION")) {
-    const normalized = typeof targetOrOptions === "string" ? { target: targetOrOptions, packageRoot: packageRootOption } : targetOrOptions;
     const { target, packageRoot, taskId } = normalized ?? {};
     try {
       const explicitTaskId = taskId ?? null;

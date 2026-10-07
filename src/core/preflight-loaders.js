@@ -41,7 +41,7 @@ export async function optionalConfig(target, packageRoot, errors) {
 
 export async function loadContract(target, packageRoot, errors, options = {}) {
   try {
-    return await readContract(target, packageRoot, options);
+    return await (options.readers?.readContract ?? readContract)(target, packageRoot, options);
   } catch (error) {
     const path = options.contractPath ?? (options.taskId ? taskArtifactPath(options.taskId, "contract") : ARTIFACT_PATHS.contract);
     errors.push(issue(error.code === "ARTIFACT_MISSING" ? "E_CONTRACT_MISSING" : "E_CONTRACT_INVALID", error.message, [path]));
@@ -51,7 +51,7 @@ export async function loadContract(target, packageRoot, errors, options = {}) {
 
 export async function loadRoute(target, packageRoot, errors, options = {}) {
   try {
-    return await readPersistedRoute(target, packageRoot, options);
+    return await (options.readers?.readRoute ?? readPersistedRoute)(target, packageRoot, options);
   } catch (error) {
     const path = options.routePath ?? (options.taskId ? taskArtifactPath(options.taskId, "route") : ARTIFACT_PATHS.route);
     const code = error.code === "ARTIFACT_MISSING"
@@ -89,6 +89,18 @@ export async function loadSources(target, contract, packageRoot, errors) {
   return registry;
 }
 
+async function readGateEvents(target, packageRoot, taskId, options) {
+  let events = [];
+  if (taskId) {
+    try {
+      events = await (options.readers?.readEvents ?? readEvents)(target, packageRoot, { taskId });
+    } catch {
+      events = [];
+    }
+  }
+  return events;
+}
+
 export async function inspectGates(target, contract, route, packageRoot, errors, config = {}, options = {}) {
   if (!route) return { required: [], satisfied: [], records: {} };
   const guideGates = await requiredGatesForGuides(route.value.guides, packageRoot);
@@ -96,20 +108,13 @@ export async function inspectGates(target, contract, route, packageRoot, errors,
   const satisfied = [];
   const records = {};
   const taskId = options.taskId ?? null;
-  let events = [];
-  if (taskId) {
-    try {
-      events = await readEvents(target, packageRoot, { taskId });
-    } catch {
-      events = [];
-    }
-  }
+  const events = await readGateEvents(target, packageRoot, taskId, options);
   const latestContractRevisionSeq = events.findLast((event) => event.event === "CONTRACT_REVISED")?.seq ?? 0;
   for (const gate of required) {
     let artifact;
     const defaultGateRel = taskId ? taskGatePath(taskId, gate) : `${ARTIFACT_PATHS.gates}/${gate}.json`;
     try {
-      artifact = await readGateIfPresent(target, gate, packageRoot, { ...options, taskId });
+      artifact = await (options.readers?.readGate ?? readGateIfPresent)(target, gate, packageRoot, { ...options, taskId });
     } catch (error) {
       errors.push(issue(error.code === "ARTIFACT_MISSING" ? "E_GATE_UNVERIFIED" : "E_GATE_INVALID", error.message, [defaultGateRel], { gate }));
       continue;

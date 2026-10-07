@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "problem": "Portable JSON could recreate retired .forgeloop/.txn files and make native admission refuse coexistence",
+  "fix": "Reserve .txn alongside operational namespaces before portable JSON output",
+  "productionFile": "src/storage/existing-project-scope.js",
+  "productionSha256": "9d4e8d5154865048a17075e388155f18bdea26b8a5a6e0e883d015683221e6e2",
+  "tests": {
+    "before": {
+      "exitCode": 1,
+      "evidence": "\u2714 direct descriptor and state writers create only canonical SQLite authority (174.022167ms)\n\u2716 portable output cannot recreate retired transaction staging or block native admission (7.89925ms)\n\u2714 direct operational writers refuse legacy authority without converting or altering it (2.766333ms)\n\u2714 direct action APIs read native records outside command dispatch without legacy directories (166.835791ms)\n\u2714 standalone task reservation remains durable across independent readers and releases without a filesystem lock (164.375875ms)\n\u2714 releasing an old standalone reservation cannot delete a replacement owner (168.768958ms)\n\u2714 bootstrap and restore preserve retained legacy owners before allocating native authority (4.132167ms)\n\u2714 state writes reject portable paths before allocating SQLite or producing a second authority (0.506916ms)\n\u2714 canonical clearing preserves unconverted legacy state and continuity (3.498875ms)\n\u2714 canonical clearing cannot delete an independent portable file or its native checkpoint (231.098917ms)\n\u2714 explicit portable JSON output cannot become canonical authority or overwrite storage metadata (10.505292ms)\n\u2139 tests 11\n\u2139 suites 0\n\u2139 pass 10\n\u2139 fail 1\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 1032.839\n\n\u2716 failing tests:\n\ntest at tests/storage-sole-writer-boundary.test.js:36:1\n\u2716 portable output cannot recreate retired transaction staging or block native admission (7.89925ms)\n  AssertionError [ERR_ASSERTION]: Missing expected rejection.\n      at async file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/tests/storage-sole-writer-boundary.test.js:43:9\n      at async project (file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/tests/storage-sole-writer-boundary.test.js:19:9)\n      at async TestContext.<anonymous> (file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/tests/storage-sole-writer-boundary.test.js:37:3)\n      at async Test.run (node:internal/test_runner/test:1389:7)\n      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {\n    generatedMessage: false,\n    code: 'ERR_ASSERTION',\n    actual: undefined,\n    expected: { code: 'E_STORAGE_OPERATION_UNSUPPORTED' },\n    operator: 'rejects',\n    diff: 'simple'\n  }\n"
+    },
+    "after": {
+      "exitCode": 0,
+      "tests": 22,
+      "evidence": "\u2714 fresh handoff can be accepted once; same consumer retry is idempotent; different consumer rejected (840.87225ms)\n\u2714 legacy unbound handoff cannot be accepted (598.163333ms)\n\u2714 stale handoff with drifted work state or changed paths fails acceptance (510.978625ms)\n\u2714 acceptance rejects incoherent canonical artifacts without appending HANDOFF_ACCEPTED (505.113875ms)\n\u2714 acceptance rejects clean repository HEAD drift independently of changed paths (527.885083ms)\nSwitched to a new branch 'handoff-branch-drift'\n\u2714 acceptance rejects branch drift even when the repository HEAD is unchanged (521.360959ms)\n\u2714 resolveHandoffAcceptance accurately projects acceptance status (0.531958ms)\n\u2714 concurrent different consumers produce one acceptance event (515.838667ms)\n\u2714 concurrent same-consumer retries are idempotent with one acceptance event (516.908333ms)\n\u2714 validateEventLedger catches duplicate HANDOFF_ACCEPTED and inconsistent creation (522.004541ms)\n\u2714 every ordinary command executor refuses retained maintenance before changing project files (464.690209ms)\n\u2714 direct descriptor and state writers create only canonical SQLite authority (277.415291ms)\n\u2714 portable output cannot recreate retired transaction staging or block native admission (220.652209ms)\n\u2714 direct operational writers refuse legacy authority without converting or altering it (3.057833ms)\n\u2714 direct action APIs read native records outside command dispatch without legacy directories (170.156ms)\n\u2714 standalone task reservation remains durable across independent readers and releases without a filesystem lock (170.529042ms)\n\u2714 releasing an old standalone reservation cannot delete a replacement owner (202.9135ms)\n\u2714 bootstrap and restore preserve retained legacy owners before allocating native authority (4.059833ms)\n\u2714 state writes reject portable paths before allocating SQLite or producing a second authority (2.797208ms)\n\u2714 canonical clearing preserves unconverted legacy state and continuity (4.123625ms)\n\u2714 canonical clearing cannot delete an independent portable file or its native checkpoint (205.138792ms)\n\u2714 explicit portable JSON output cannot become canonical authority or overwrite storage metadata (9.480292ms)\n\u2139 tests 22\n\u2139 suites 0\n\u2139 pass 22\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 5232.318458\n"
+    }
+  },
+  "checks": {
+    "fast": "PASS",
+    "lint": "PASS",
+    "docs": "PASS"
+  },
+  "remote": "NOT_VERIFIED;client restoration authority pending",
+  "wholeAcceptance": false,
+  "fullMac": {
+    "status": "PASS",
+    "sessionId": 92384,
+    "candidate": "/Users/cassio/.codex/verification/sqlite-candidate620",
+    "manifestFiles": 2661,
+    "log": "/Users/cassio/.codex/verification/sqlite-candidate620-prepush.log",
+    "limitation": "Clone retained deleted baseline scripts/benchmark-transaction-maintenance.mjs outside admitted manifest;not current-source evidence for that retired script. Runtime source hashes are bound separately.",
+    "terminalEvidence": "full-macos-snapshot620-terminal-623.json"
+  }
+}

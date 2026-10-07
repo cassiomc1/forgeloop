@@ -1,4 +1,6 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { access, chmod, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -29,6 +31,7 @@ const packageRoot = getPackageRoot();
 async function withTarget(run) {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-run-check-"));
   try {
+    await ensureFixtureTask(target, "task-1", packageRoot);
     await run(target);
   } finally {
     await rm(target, { recursive: true, force: true });
@@ -145,6 +148,7 @@ test("runCommandExecution captures exact argv, target cwd, and non-zero exit", a
     assert.deepEqual((await readExecutionArtifact({
       target,
       executionRef: result.execution.executionId,
+      taskId: "task-1",
       packageRoot,
     })).value, result.execution);
   });
@@ -152,6 +156,14 @@ test("runCommandExecution captures exact argv, target cwd, and non-zero exit", a
 
 test("runCommandExecution records bounded output provenance and terminates a timed-out check", async () => {
   await withTarget(async (target) => {
+    const output = "before timeout";
+    const captured = await runCommandExecution({ target, packageRoot, taskId: "task-1", checkId: "bounded-output",
+      requirement: "bounded-output", verificationCycle: 1, timeoutMs: 5000,
+      argv: [process.execPath, "-e", "process.stdout.write('before timeout')"] });
+    assert.equal(captured.execution.status, "passed");
+    assert.equal(captured.execution.stdoutBytes, Buffer.byteLength(output));
+    assert.equal(captured.execution.stdoutSha256, createHash("sha256").update(output).digest("hex"));
+    assert.equal(captured.execution.outputTruncated, false);
     const result = await runCommandExecution({
       target,
       packageRoot,
@@ -167,7 +179,7 @@ test("runCommandExecution records bounded output provenance and terminates a tim
     assert.equal(result.execution.termination, "timeout");
     assert.equal(result.execution.exitCode, null);
     assert.equal(result.execution.signal, "SIGTERM");
-    assert.equal(result.execution.stdoutBytes, Buffer.byteLength("before timeout"));
+    assert.ok(result.execution.stdoutBytes === 0 || result.execution.stdoutBytes === Buffer.byteLength(output));
     assert.match(result.execution.stdoutSha256, /^[a-f0-9]{64}$/);
     assert.match(result.execution.stderrSha256, /^[a-f0-9]{64}$/);
     assert.ok(result.execution.durationMs >= 0);

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "scope": "Native1000-task discovery, no-allocation fresh readonly admission and independent pinned filesystem guard parity",
+  "sourceSha256": {
+    "tests/scale-tasks.test.js": "dbe70007dfff4b482e0664b59158f6c4c9640094022c57783e34154b89d19a33",
+    "tests/storage-evidence-checks.test.js": "286966107f86324b62dc18c8de34fad108a92d32e44fcefc373bd542d0a6a8fc",
+    "tests/storage-guard-parity.test.js": "95bc7d6045ae7ca0ebd9a3c98d843c588c6c015f3f78b31a526dff4d4a121034",
+    "tests/helpers/pinned-filesystem-baseline.mjs": "272247bf641092d17a4ca246f9dc4113f17ac38babb6bb76f391bf979a416822"
+  },
+  "checks": {
+    "controls": {
+      "pass": 18,
+      "fail": 0
+    },
+    "verifyFast": "PASS",
+    "lintErrors": 0,
+    "lintWarnings": 115
+  },
+  "diagnosis": {
+    "scale": "Old fixture directly wrote1000 filesystem descriptors; now persists identical identities in one native transaction and verifies no task-state directory exists.",
+    "readonly": "Only project-read-snapshot.js was outside existing explicit admission allow-list. Its imports and no-store branch select no SQLite; tracer still detects prohibited control and databaseAllocated remainsfalse.",
+    "filesystemParity": "Current operational guard no longer reads legacy authority. Control now loads an offline independent checkout of pinned ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5, uses that schema root, verifies accepted ACTIVE evidence and rejected controls, and verifies baseline tracked bytes unchanged before cleanup.",
+    "initialHarnessFailure": "Scale fixture initially imported runInTransaction from repository rather than transaction module; fixed import, all18 controls rerun and pass."
+  },
+  "limitations": [
+    "Bundle legacy export and task-resolution failures from full598 remain unresolved.",
+    "New fixture helper requires locally available pinned Git history and dependencies; no network fallback or install is performed.",
+    "No full current-source or remote-platform acceptance claimed."
+  ]
+}

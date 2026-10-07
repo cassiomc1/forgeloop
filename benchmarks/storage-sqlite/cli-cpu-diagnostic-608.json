@@ -1,0 +1,465 @@
+{
+  "diagnosticOnly": true,
+  "sourceReference": "receipt606 production",
+  "validationProfiles": [
+    {
+      "operation": "paginated-task-list",
+      "tasks": 1000,
+      "eventsPerOtherTask": 10,
+      "selectedTaskEvents": 1000,
+      "events": 10990,
+      "sqliteVersion": "3.53.3",
+      "outputContractVerified": true,
+      "outputSha256": "7f0973d5e67106c5cbbcb35eaf12dd4cc1703096f4b34b3a1552d8301fbbe2a8"
+    },
+    {
+      "operation": "history-tail",
+      "tasks": 1000,
+      "eventsPerOtherTask": 10,
+      "selectedTaskEvents": 1000,
+      "events": 10990,
+      "sqliteVersion": "3.53.3",
+      "outputContractVerified": true,
+      "outputSha256": "473e034d5097b1807e7a2bfc16ed54b1271019e847b76446e13c9b3235990b55"
+    }
+  ],
+  "profiles": [
+    {
+      "cli": "/tmp/forgeloop-storage-baseline322/src/cli.js",
+      "operation": "task-list",
+      "sampledElapsedMs": 1643.6250000000011,
+      "rawProfileSha256": "781a1327bc17b2f0b5cf09ddec66a5f9bc8395f232356b9a02b28073283d71e8",
+      "topSampledFrames": [
+        {
+          "function": "(idle)",
+          "url": "",
+          "sampledMs": 946.999
+        },
+        {
+          "function": "read",
+          "url": "",
+          "sampledMs": 77.377
+        },
+        {
+          "function": "(program)",
+          "url": "",
+          "sampledMs": 67.29
+        },
+        {
+          "function": "lstat",
+          "url": "",
+          "sampledMs": 63.871
+        },
+        {
+          "function": "compileSourceTextModule",
+          "url": "node:internal/modules/esm/utils",
+          "sampledMs": 38.249
+        },
+        {
+          "function": "validate",
+          "url": "file:///private/tmp/forgeloop-storage-baseline322/src/core/schema-validation.js",
+          "sampledMs": 34.999
+        },
+        {
+          "function": "lstat",
+          "url": "node:internal/fs/promises",
+          "sampledMs": 28.501
+        },
+        {
+          "function": "realpath",
+          "url": "",
+          "sampledMs": 17.874
+        },
+        {
+          "function": "handleErrorFromBinding",
+          "url": "node:internal/fs/promises",
+          "sampledMs": 17.25
+        },
+        {
+          "function": "",
+          "url": "file:///private/tmp/forgeloop-storage-baseline322/src/core/events.js",
+          "sampledMs": 16.166
+        },
+        {
+          "function": "join",
+          "url": "node:path",
+          "sampledMs": 15.293
+        },
+        {
+          "function": "normalizeString",
+          "url": "node:path",
+          "sampledMs": 14.126
+        },
+        {
+          "function": "(garbage collector)",
+          "url": "",
+          "sampledMs": 12.458
+        },
+        {
+          "function": "update",
+          "url": "node:internal/crypto/hash",
+          "sampledMs": 11.333
+        },
+        {
+          "function": "Hash",
+          "url": "node:internal/crypto/hash",
+          "sampledMs": 11.251
+        },
+        {
+          "function": "access",
+          "url": "node:internal/fs/promises",
+          "sampledMs": 10.876
+        },
+        {
+          "function": "canonicalFingerprint",
+          "url": "file:///private/tmp/forgeloop-storage-baseline322/src/core/artifacts.js",
+          "sampledMs": 10.418
+        },
+        {
+          "function": "readFileHandle",
+          "url": "node:internal/fs/promises",
+          "sampledMs": 9.668
+        },
+        {
+          "function": "canonicalize",
+          "url": "file:///private/tmp/forgeloop-storage-baseline322/src/core/artifacts.js",
+          "sampledMs": 9.542
+        },
+        {
+          "function": "close",
+          "url": "",
+          "sampledMs": 9.334
+        }
+      ]
+    },
+    {
+      "cli": "/tmp/forgeloop-storage-baseline322/src/cli.js",
+      "operation": "history",
+      "sampledElapsedMs": 140.042,
+      "rawProfileSha256": "64303add83474b86fbbe323d47d7cc285eea550801799eb280fa3301f552325f",
+      "topSampledFrames": [
+        {
+          "function": "compileSourceTextModule",
+          "url": "node:internal/modules/esm/utils",
+          "sampledMs": 23.666
+        },
+        {
+          "function": "post",
+          "url": "node:inspector",
+          "sampledMs": 7.75
+        },
+        {
+          "function": "parse",
+          "url": "",
+          "sampledMs": 7.458
+        },
+        {
+          "function": "internalModuleStat",
+          "url": "",
+          "sampledMs": 6.333
+        },
+        {
+          "function": "getPackageScopeConfig",
+          "url": "",
+          "sampledMs": 6.292
+        },
+        {
+          "function": "finalizeResolution",
+          "url": "node:internal/modules/esm/resolve",
+          "sampledMs": 6.25
+        },
+        {
+          "function": "validate",
+          "url": "file:///private/tmp/forgeloop-storage-baseline322/src/core/schema-validation.js",
+          "sampledMs": 6.041
+        },
+        {
+          "function": "(garbage collector)",
+          "url": "",
+          "sampledMs": 5.625
+        },
+        {
+          "function": "realpathSync",
+          "url": "node:fs",
+          "sampledMs": 5.083
+        },
+        {
+          "function": "",
+          "url": "file:///private/tmp/forgeloop-storage-baseline322/src/core/events.js",
+          "sampledMs": 5.042
+        },
+        {
+          "function": "canonicalize",
+          "url": "file:///private/tmp/forgeloop-storage-baseline322/src/core/artifacts.js",
+          "sampledMs": 4.626
+        },
+        {
+          "function": "resolveSync",
+          "url": "node:internal/modules/esm/loader",
+          "sampledMs": 3.792
+        },
+        {
+          "function": "lstat",
+          "url": "",
+          "sampledMs": 2.542
+        },
+        {
+          "function": "#getOrCreateModuleJobAfterResolve",
+          "url": "node:internal/modules/esm/loader",
+          "sampledMs": 2.541
+        },
+        {
+          "function": "compileForInternalLoader",
+          "url": "node:internal/bootstrap/realm",
+          "sampledMs": 2.5
+        },
+        {
+          "function": "defaultLoadSync",
+          "url": "node:internal/modules/esm/load",
+          "sampledMs": 2.5
+        },
+        {
+          "function": "getFileProtocolModuleFormat",
+          "url": "node:internal/modules/esm/get_format",
+          "sampledMs": 2.5
+        },
+        {
+          "function": "open",
+          "url": "",
+          "sampledMs": 2.459
+        },
+        {
+          "function": "(idle)",
+          "url": "",
+          "sampledMs": 2.208
+        },
+        {
+          "function": "ModuleJobBase",
+          "url": "node:internal/modules/esm/module_job",
+          "sampledMs": 1.334
+        }
+      ]
+    },
+    {
+      "cli": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+      "operation": "history",
+      "sampledElapsedMs": 163.917,
+      "rawProfileSha256": "df0f76f31996141cd556d8d4260bb4977b90b467490ba275a5bc9a0464259843",
+      "topSampledFrames": [
+        {
+          "function": "(idle)",
+          "url": "",
+          "sampledMs": 28.209
+        },
+        {
+          "function": "decodeIndexedEvent",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/repository.js",
+          "sampledMs": 17.875
+        },
+        {
+          "function": "compileSourceTextModule",
+          "url": "node:internal/modules/esm/utils",
+          "sampledMs": 15.332
+        },
+        {
+          "function": "iterateRange",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/ledger-event-snapshot.js",
+          "sampledMs": 12.542
+        },
+        {
+          "function": "post",
+          "url": "node:inspector",
+          "sampledMs": 7.834
+        },
+        {
+          "function": "decode",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/repository.js",
+          "sampledMs": 7.501
+        },
+        {
+          "function": "(garbage collector)",
+          "url": "",
+          "sampledMs": 4.166
+        },
+        {
+          "function": "compileForInternalLoader",
+          "url": "node:internal/bootstrap/realm",
+          "sampledMs": 3.75
+        },
+        {
+          "function": "buildTraceFromSnapshot",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/trace.js",
+          "sampledMs": 3.666
+        },
+        {
+          "function": "findIndex",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/ledger-event-collection.js",
+          "sampledMs": 2.792
+        },
+        {
+          "function": "open",
+          "url": "",
+          "sampledMs": 2.541
+        },
+        {
+          "function": "wrappedFn",
+          "url": "node:internal/errors",
+          "sampledMs": 2.5
+        },
+        {
+          "function": "getPackageScopeConfig",
+          "url": "node:internal/modules/package_json_reader",
+          "sampledMs": 2.5
+        },
+        {
+          "function": "canonicalFingerprint",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/artifacts.js",
+          "sampledMs": 2.5
+        },
+        {
+          "function": "validateLedgerEvents",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/events.js",
+          "sampledMs": 2.5
+        },
+        {
+          "function": "get",
+          "url": "node:internal/modules/package_json_reader",
+          "sampledMs": 2.459
+        },
+        {
+          "function": "canonicalize",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/artifacts.js",
+          "sampledMs": 2.209
+        },
+        {
+          "function": "visit",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/json-safety.js",
+          "sampledMs": 1.709
+        },
+        {
+          "function": "getPackageScopeConfig",
+          "url": "",
+          "sampledMs": 1.292
+        },
+        {
+          "function": "parseArgs",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+          "sampledMs": 1.292
+        }
+      ]
+    },
+    {
+      "cli": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+      "operation": "task-list",
+      "sampledElapsedMs": 1067.125,
+      "rawProfileSha256": "6801f37edbbbcb9b78be164d174dc3ea5d30099f227387554b549c2828cede21",
+      "topSampledFrames": [
+        {
+          "function": "iterateTypes",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/ledger-event-snapshot.js",
+          "sampledMs": 243.166
+        },
+        {
+          "function": "",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/unit-of-work.js",
+          "sampledMs": 135.584
+        },
+        {
+          "function": "(garbage collector)",
+          "url": "",
+          "sampledMs": 70.209
+        },
+        {
+          "function": "iterateRange",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/ledger-event-snapshot.js",
+          "sampledMs": 67.249
+        },
+        {
+          "function": "taskRow",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/unit-of-work.js",
+          "sampledMs": 35.706
+        },
+        {
+          "function": "(idle)",
+          "url": "",
+          "sampledMs": 30.833
+        },
+        {
+          "function": "validate",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/schema-validation.js",
+          "sampledMs": 29.0
+        },
+        {
+          "function": "ownCollection",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/ledger-event-snapshot.js",
+          "sampledMs": 23.958
+        },
+        {
+          "function": "decodeIndexedEvent",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/repository.js",
+          "sampledMs": 19.499
+        },
+        {
+          "function": "assertOwnedLedgerUnchanged",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/events.js",
+          "sampledMs": 18.708
+        },
+        {
+          "function": "canonicalize",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/artifacts.js",
+          "sampledMs": 18.581
+        },
+        {
+          "function": "compileSourceTextModule",
+          "url": "node:internal/modules/esm/utils",
+          "sampledMs": 18.125
+        },
+        {
+          "function": "canonicalFingerprint",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/artifacts.js",
+          "sampledMs": 16.292
+        },
+        {
+          "function": "lstat",
+          "url": "",
+          "sampledMs": 15.709
+        },
+        {
+          "function": "validateLedgerEvents",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/events.js",
+          "sampledMs": 14.916
+        },
+        {
+          "function": "(program)",
+          "url": "",
+          "sampledMs": 13.335
+        },
+        {
+          "function": "decode",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/repository.js",
+          "sampledMs": 11.958
+        },
+        {
+          "function": "Hash",
+          "url": "node:internal/crypto/hash",
+          "sampledMs": 11.292
+        },
+        {
+          "function": "RegExp: ^[a-f0-9]{64}$",
+          "url": "",
+          "sampledMs": 10.0
+        },
+        {
+          "function": "withOperationalReadSnapshot",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/unit-of-work.js",
+          "sampledMs": 9.708
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Single instrumented process per operation/backend, no release latency claim",
+    "Sampled leaf-frame attribution includes waiting and profiler overhead; not a complete causal decomposition"
+  ],
+  "discoveryRetrieval": "Jevgrep completed exit0;40 relevant core files; discovery only"
+}

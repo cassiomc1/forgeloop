@@ -1,3 +1,4 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import { recordExecutedFakeCheck } from "./helpers/executed-fake-check.js";
 import assert from "node:assert/strict";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
@@ -156,12 +157,14 @@ test("audit and complete revalidate installation authority from the external hos
       unresolvedDecisions: [],
       sourceRefs: [],
     });
+    await ensureFixtureTask(target, contract.taskId, packageRoot);
     const contractHash = contractFingerprint(contract);
-    await writeContract(target, contract, packageRoot);
+    await writeContract(target, contract, packageRoot, { taskId: contract.taskId });
 
     const route = evaluateRoute({ workType: "code", surfaces: ["config"], platforms: [] });
     const persistedRoute = await persistRoute(target, route, packageRoot, {
       contractFingerprint: contractHash,
+      taskId: contract.taskId,
     });
 
     const state = createWorkState({
@@ -171,17 +174,17 @@ test("audit and complete revalidate installation authority from the external hos
       selectedGuides: persistedRoute.value.guides,
       phase: "ROUTED",
     });
-    await writeWorkState(target, state, packageRoot);
+    await writeWorkState(target, state, { packageRoot, taskId: contract.taskId });
 
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "TASK_RECEIVED" }, packageRoot);
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot);
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot);
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "TASK_RECEIVED" }, packageRoot, { taskId: contract.taskId });
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot, { taskId: contract.taskId });
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot, { taskId: contract.taskId });
 
-    await runPreflight({ target, packageRoot });
+    await runPreflight({ target, packageRoot, taskId: contract.taskId });
 
-    await advanceWorkState(target, "PLANNED", packageRoot);
-    await advanceWorkState(target, "EXECUTING", packageRoot);
-    await advanceWorkState(target, "VERIFYING", packageRoot);
+    await advanceWorkState(target, "PLANNED", { packageRoot, taskId: contract.taskId });
+    await advanceWorkState(target, "EXECUTING", { packageRoot, taskId: contract.taskId });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: contract.taskId });
 
     // Write valid authority grant
     await writeFile(
@@ -207,12 +210,13 @@ test("audit and complete revalidate installation authority from the external hos
     };
     delete process.env.FORGELOOP_AUTHORITY_FILE;
 
-    const prepared = await prepareCompletion({ target, packageRoot, authorityContext });
+    const prepared = await prepareCompletion({ target, packageRoot, taskId: contract.taskId, authorityContext });
 
     // Record check for visual-check with authorityRef
     await recordExecutedFakeCheck(recordCheck, {
       target,
       packageRoot,
+      taskId: contract.taskId,
       id: "check-visual",
       kind: "command",
       requirement: "visual-check",
@@ -230,6 +234,7 @@ test("audit and complete revalidate installation authority from the external hos
       await recordCheck({
         target,
         packageRoot,
+        taskId: contract.taskId,
         id: `check-${req}`,
         kind: "manual-review",
         requirement: req,
@@ -240,13 +245,13 @@ test("audit and complete revalidate installation authority from the external hos
       });
     }
 
-    await advanceWorkState(target, "REVIEWING", { packageRoot, authorityContext });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId: contract.taskId, authorityContext });
 
     // Audit and complete should be VALID
-    const auditBefore = await evaluateAudit({ target, packageRoot, authorityContext });
+    const auditBefore = await evaluateAudit({ target, packageRoot, taskId: contract.taskId, authorityContext });
     assert.equal(auditBefore.status, "VALID", JSON.stringify(auditBefore.errors));
 
-    const completeBefore = await evaluateCompletion({ target, packageRoot, authorityContext });
+    const completeBefore = await evaluateCompletion({ target, packageRoot, taskId: contract.taskId, authorityContext });
     assert.equal(completeBefore.status, "VALID", JSON.stringify(completeBefore.errors));
 
     const actorFakeFile = path.join(path.dirname(authFile), "actor-fake.json");
@@ -263,20 +268,20 @@ test("audit and complete revalidate installation authority from the external hos
       }],
     }), "utf8");
     process.env.FORGELOOP_AUTHORITY_FILE = actorFakeFile;
-    const standaloneAudit = await evaluateAudit({ target, packageRoot });
+    const standaloneAudit = await evaluateAudit({ target, packageRoot, taskId: contract.taskId });
     assert.equal(standaloneAudit.status, "INVALID");
     assert.ok(standaloneAudit.errors.some((e) => e.code === E_AUTHORITY_UNTRUSTED_SOURCE));
-    const standaloneComplete = await evaluateCompletion({ target, packageRoot });
+    const standaloneComplete = await evaluateCompletion({ target, packageRoot, taskId: contract.taskId });
     assert.equal(standaloneComplete.status, "REJECTED");
     assert.ok(standaloneComplete.errors.some((e) => e.code === E_AUTHORITY_UNTRUSTED_SOURCE));
     delete process.env.FORGELOOP_AUTHORITY_FILE;
 
     // Removing the trusted source after recording invalidates both validators.
     await rm(authFile, { force: true });
-    const auditAfterRemoval = await evaluateAudit({ target, packageRoot, authorityContext });
+    const auditAfterRemoval = await evaluateAudit({ target, packageRoot, taskId: contract.taskId, authorityContext });
     assert.equal(auditAfterRemoval.status, "INVALID");
     assert.ok(auditAfterRemoval.errors.some((e) => e.code === E_AUTHORITY_INVALID));
-    const completeAfterRemoval = await evaluateCompletion({ target, packageRoot, authorityContext });
+    const completeAfterRemoval = await evaluateCompletion({ target, packageRoot, taskId: contract.taskId, authorityContext });
     assert.equal(completeAfterRemoval.status, "REJECTED");
     assert.ok(completeAfterRemoval.errors.some((e) => e.code === E_AUTHORITY_INVALID));
 
@@ -299,11 +304,11 @@ test("audit and complete revalidate installation authority from the external hos
     );
 
     // Audit and complete MUST REJECT due to revoked authority
-    const auditAfterRevoke = await evaluateAudit({ target, packageRoot, authorityContext });
+    const auditAfterRevoke = await evaluateAudit({ target, packageRoot, taskId: contract.taskId, authorityContext });
     assert.equal(auditAfterRevoke.status, "INVALID");
     assert.ok(auditAfterRevoke.errors.some((e) => e.code === E_AUTHORITY_INVALID));
 
-    const completeAfterRevoke = await evaluateCompletion({ target, packageRoot, authorityContext });
+    const completeAfterRevoke = await evaluateCompletion({ target, packageRoot, taskId: contract.taskId, authorityContext });
     assert.equal(completeAfterRevoke.status, "REJECTED");
     assert.ok(completeAfterRevoke.errors.some((e) => e.code === E_AUTHORITY_INVALID));
   });

@@ -1,3 +1,4 @@
+import { overwriteFixtureText } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
@@ -81,7 +82,7 @@ async function rewriteEvents(target, taskId, transform) {
     transformed[index].hash = eventHash(transformed[index]);
     previousHash = transformed[index].hash;
   }
-  await writeFile(eventsPath, `${transformed.map((event) => JSON.stringify(event)).join("\n")}\n`);
+  await overwriteFixtureText(target, eventsPath, `${transformed.map((event) => JSON.stringify(event)).join("\n")}\n`);
 }
 
 function revisedGateIndexes(events) {
@@ -203,7 +204,7 @@ test("post-revision gate satisfaction requires an adjacent gate-record witness",
       });
       const ledger = await validateEventLedger(target, packageRoot, { taskId });
       assert.equal(ledger.valid, false, name);
-      assert.ok(ledger.errors.some((error) => error.code === "E_EVENT_INVALID"), name);
+      assert.ok(ledger.errors.some((error) => error.code === (name === "wrong task" ? "E_STORAGE_PAYLOAD_MISMATCH" : "E_EVENT_INVALID")), `${name}: ${JSON.stringify(ledger.errors)}`);
     });
   }
 });

@@ -94,6 +94,8 @@ npm install --global @cassiomc1/forgeloop
 forgeloop --version
 ```
 
+Requires Node 24.19.0+ with `node:sqlite`. Migrate legacy state explicitly.
+
 Inside your project:
 
 ```bash

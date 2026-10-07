@@ -1,8 +1,7 @@
-import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
-import path from "node:path";
+import { needsExistingProjectScope, withExistingProjectScope } from "../storage/existing-project-scope.js";
 
 import { getTaskTransaction, withTaskTransaction } from "./transaction.js";
-import { appendProtocolEvent, readEvents } from "./events.js";
+import { appendProtocolEvent, iterateEvents } from "./events.js";
 import {
   canonicalActionFingerprint,
   actionRequiresIdempotency,
@@ -22,8 +21,8 @@ import {
   E_ACTION_STATE_MISMATCH,
   E_ACTION_VERIFICATION_REQUIRED,
 } from "./error-codes.js";
-import { assertSafePath, ensureWithin } from "./filesystem.js";
-import { taskActionPath, taskDirectory, TASK_ARTIFACT_FILES } from "./task-paths.js";
+import { taskActionPath } from "./task-paths.js";
+import { getOperationalStore, readOperationalText } from "../storage/operational-context.js";
 
 const STATE_EVENT_NAMES = Object.freeze({
   AUTHORIZED: "ACTION_AUTHORIZED",
@@ -42,60 +41,28 @@ function actionError(code, message) {
 }
 
 async function readActionFile(target, packageRoot, taskId, actionId) {
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => readActionFile(target, packageRoot, taskId, actionId), { readOnly: true });
+  }
   const relPath = taskActionPath(taskId, actionId);
-  await assertSafePath(target, relPath);
-  const absolute = ensureWithin(target, relPath);
-  let text;
-  try {
-    text = await readFile(absolute, "utf8");
-  } catch (error) {
-    if (error?.code === "ENOENT") return null;
-    throw error;
-  }
-  try {
-    return JSON.parse(text);
-  } catch (error) {
-    throw actionError(E_ACTION_INVALID, `durable action artifact is not valid JSON: ${relPath}`);
-  }
+  const operational = readOperationalText(target, relPath);
+  if (operational.selected) return operational.text === null ? null : JSON.parse(operational.text);
+  throw actionError("E_STORAGE_MIGRATION_REQUIRED", "Actions require canonical SQLite storage; migrate legacy operational state explicitly");
 }
 
-async function writeActionFile(target, packageRoot, taskId, action) {
-  const relPath = taskActionPath(taskId, action.actionId);
-  await assertSafePath(target, relPath);
-  const serialized = `${JSON.stringify(action, null, 2)}\n`;
-  const activeTransaction = (await getTaskTransaction(target));
-  if (activeTransaction) {
-    await activeTransaction.stageText(relPath, serialized);
-  } else {
-    const absolute = ensureWithin(target, relPath);
-    await mkdir(path.dirname(absolute), { recursive: true });
-    await writeFile(absolute, serialized, "utf8");
-  }
-}
-
-function taskActionsDirectory(taskId) {
-  return `${taskDirectory(taskId)}/${TASK_ARTIFACT_FILES.actions}`;
+async function writeActionFile(target, taskId, action) {
+  const transaction = await getTaskTransaction(target);
+  if (!transaction) throw actionError("E_STORAGE_TRANSACTION_INVALID", "Action persistence requires an active task transaction");
+  return transaction.stageText(taskActionPath(taskId, action.actionId), `${JSON.stringify(action, null, 2)}\n`);
 }
 
 async function listActionFiles(target, packageRoot, taskId) {
-  const relDir = taskActionsDirectory(taskId);
-  await assertSafePath(target, relDir);
-  const absoluteDir = ensureWithin(target, relDir);
-  let entries;
-  try {
-    entries = await readdir(absoluteDir);
-  } catch (error) {
-    if (error?.code === "ENOENT") return [];
-    throw error;
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => listActionFiles(target, packageRoot, taskId), { readOnly: true });
   }
-  const actions = [];
-  for (const entry of entries) {
-    if (!entry.endsWith(".json")) continue;
-    const parsed = await readActionFile(target, packageRoot, taskId, entry.replace(/\.json$/, ""));
-    if (parsed) actions.push(parsed);
-  }
-  actions.sort((left, right) => String(left.createdAt).localeCompare(String(right.createdAt)));
-  return actions;
+  const store = getOperationalStore(target);
+  if (store) return store.listRecords(taskId, "action").sort((left, right) => String(left.createdAt).localeCompare(String(right.createdAt)));
+  throw actionError("E_STORAGE_MIGRATION_REQUIRED", "Action listing requires canonical SQLite storage; migrate legacy operational state explicitly");
 }
 
 function assertProposeInput(input) {
@@ -185,7 +152,7 @@ export async function proposeAction(target, { packageRoot, taskId, input }) {
       };
       validateActionArtifact(action);
 
-      await writeActionFile(target, packageRoot, taskId, action);
+      await writeActionFile(target, taskId, action);
       await appendProtocolEvent(target, {
         taskId,
         event: "ACTION_PROPOSED",
@@ -221,8 +188,16 @@ export async function listActions(target, { packageRoot, taskId }) {
 }
 
 export async function findActionByIdempotencyKey(target, { packageRoot, taskId, idempotencyKey }) {
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => findActionByIdempotencyKey(target, { packageRoot, taskId, idempotencyKey }), { readOnly: true });
+  }
   if (typeof idempotencyKey !== "string" || !idempotencyKey) {
     throw actionError(E_ACTION_INVALID, "idempotencyKey must be a non-empty string");
+  }
+  const store = getOperationalStore(target);
+  if (store) {
+    const found = store.actionByIdempotencyKey(taskId, idempotencyKey);
+    return found ? validateActionArtifact(found) : null;
   }
   const actions = await listActionFiles(target, packageRoot, taskId);
   const found = actions.find((action) => action.idempotencyKey === idempotencyKey);
@@ -289,7 +264,7 @@ async function applyTransition(target, {
         next.commitResultCode = details.commitResultCode;
       }
       validateActionArtifact(next);
-      await writeActionFile(target, packageRoot, taskId, next);
+      await writeActionFile(target, taskId, next);
 
       const baseDetails = {
         actionId: next.actionId,
@@ -414,12 +389,11 @@ export async function transitionVerifiedAction(target, {
 
 export async function detectOrphanActions(target, { packageRoot, taskId }) {
   const actions = await listActionFiles(target, packageRoot, taskId);
-  const events = await readEvents(target, packageRoot, { taskId });
-  const proposedFingerprints = new Set(
-    events
-      .filter((event) => event.event === "ACTION_PROPOSED")
-      .map((event) => event.details?.actionFingerprint),
-  );
+  const candidates = new Set(actions.map(action => action.actionFingerprint));
+  const proposedFingerprints = new Set();
+  for await (const event of iterateEvents(target, packageRoot, { taskId })) {
+    if (event.event === "ACTION_PROPOSED" && candidates.has(event.details?.actionFingerprint)) proposedFingerprints.add(event.details?.actionFingerprint);
+  }
   return actions
     .filter((action) => !proposedFingerprints.has(action.actionFingerprint))
     .map((action) => action.actionId);

@@ -1,4 +1,6 @@
 import path from "node:path";
+import { withProjectStorage } from "../storage/project-boundary.js";
+import { withProjectReadSnapshot } from "../storage/project-read-snapshot.js";
 import { runProtocolInfo } from "../commands/protocol-info.js";
 import { readContract } from "./contract.js";
 import { discoverTasks } from "./task-discovery.js";
@@ -10,11 +12,11 @@ import { listApprovals } from "./approvals.js";
 import { buildTrajectoryMetrics } from "./trajectory-metrics.js";
 import { loadCapabilityPolicy } from "./capability-policy.js";
 import { readdir } from "node:fs/promises";
-import { readJsonArtifact } from "./artifacts.js";
+import { getOperationalStore, listOperationalArtifactNames } from "../storage/operational-context.js";
+import { readJsonArtifact, parseCapturedJsonArtifact } from "./artifacts.js";
 import { taskDirectory } from "./task-paths.js";
 import { resolveWorkspaceBindingStatus } from "./workspace-binding.js";
-import { listCanonicalHandoffs } from "./handoff.js";
-import { readHandoffAcceptanceLedger, resolveHandoffAcceptance } from "./handoff-acceptance.js";
+import { runHandoffList } from "../commands/handoff-list.js";
 import { resolveResponsibilityStatus } from "./responsibility.js";
 import { readVerificationScope } from "./verification-scope.js";
 import { resolveAttestationStatus } from "./attestation.js";
@@ -118,6 +120,12 @@ function ownershipProjection(projection) {
   };
 }
 
+async function resourceArtifactNames(projectPath, taskId, kind, directory) {
+  const names = listOperationalArtifactNames(projectPath, taskId, kind);
+  if (names !== null) return names;
+  try { return await readdir(directory); } catch { return []; }
+}
+
 async function readForgeLoopIntegrationResourceCore(uri, {
   projectPath = ".",
   packageRoot = undefined,
@@ -164,27 +172,7 @@ async function readForgeLoopIntegrationResourceCore(uri, {
     return { uri, taskId, data: await resolveWorkspaceBindingStatus(projectPath, { packageRoot, taskId }) };
   }
   if (uri === "task/handoffs") {
-    const handoffs = await listCanonicalHandoffs(projectPath, { packageRoot, taskId });
-    const ledger = await readHandoffAcceptanceLedger(projectPath, packageRoot, { taskId });
-    const projectedHandoffs = handoffs.map((handoff) => {
-      const resolved = resolveHandoffAcceptance({
-        events: ledger.events,
-        handoff,
-        ledgerValid: ledger.valid,
-        ledgerErrors: ledger.errors,
-      });
-      return {
-        ...handoff,
-        acceptance: {
-          status: resolved.status,
-          consumerId: resolved.consumerId ?? null,
-          harness: resolved.harness ?? null,
-          acceptedAt: resolved.acceptedAt ?? null,
-          ...(resolved.reasonCodes ? { reasonCodes: [...resolved.reasonCodes] } : {}),
-        },
-      };
-    });
-    return { uri, taskId, data: { taskId, count: projectedHandoffs.length, handoffs: projectedHandoffs } };
+    return { uri, taskId, data: await runHandoffList({ target: projectPath, packageRoot, taskId }) };
   }
   if (uri === "task/responsibility") {
     return { uri, taskId, data: await resolveResponsibilityStatus(projectPath, { packageRoot, taskId }) };
@@ -229,7 +217,7 @@ async function readForgeLoopIntegrationResourceCore(uri, {
   }
   if (uri === "task/evaluations") {
     const dir = path.join(projectPath, taskDirectory(taskId), "evaluations");
-    let names = []; try { names = await readdir(dir); } catch { /* absent is an empty projection */ }
+    const names = await resourceArtifactNames(projectPath, taskId, "evaluations", dir);
     const evaluations = [];
     for (const name of names.filter((entry) => /^eval-[A-Za-z0-9_-]+\.json$/.test(entry)).sort()) {
       evaluations.push((await readJsonArtifact(projectPath, `${taskDirectory(taskId)}/evaluations/${name}`, "trajectory-evaluation", packageRoot)).value);
@@ -237,8 +225,13 @@ async function readForgeLoopIntegrationResourceCore(uri, {
     return { uri, taskId, data: { evaluations } };
   }
   if (uri === "task/decisions") {
+    const store = getOperationalStore(projectPath);
+    if (store) {
+      const decisions = await readCapturedDecisions(store, taskId, packageRoot);
+      return { uri, taskId, data: { taskId, decisions } };
+    }
     const dir = path.join(projectPath, taskDirectory(taskId), "decisions");
-    let names = []; try { names = await readdir(dir); } catch { /* absent is an empty projection */ }
+    const names = await resourceArtifactNames(projectPath, taskId, "decisions", dir);
     const decisions = [];
     for (const name of names.filter((entry) => /^[A-Za-z0-9][A-Za-z0-9_-]{0,127}\.json$/.test(entry)).sort()) {
       decisions.push((await readJsonArtifact(projectPath, `${taskDirectory(taskId)}/decisions/${name}`, "semantic-decision", packageRoot)).value);
@@ -297,6 +290,15 @@ async function readForgeLoopIntegrationResourceCore(uri, {
 }
 
 export async function readForgeLoopIntegrationResource(uri, options = {}) {
+  const target = options.projectPath ?? ".";
+  const read = () => readSelectedIntegrationResource(uri, options);
+  // Decisions capture their finite catalog and bytes synchronously; other
+  // task projections retain the complete committed project snapshot.
+  return withProjectStorage(target, () => TASK_RESOURCE_URIS.has(uri) && uri !== "task/decisions"
+    ? withProjectReadSnapshot(target, read) : read(), { readOnly: true, runtimeContext: options.runtimeContext });
+}
+
+async function readSelectedIntegrationResource(uri, options) {
   if (uri === "task/audit-view") {
     if (typeof options.taskId !== "string" || !options.taskId) {
       const error = new Error("Resource task/audit-view requires a taskId"); error.code = "E_TASK_REQUIRED"; throw error;
@@ -327,4 +329,14 @@ export async function readForgeLoopIntegrationResource(uri, options = {}) {
     };
   }
   return readForgeLoopIntegrationResourceCore(uri, options);
+}
+
+
+async function readCapturedDecisions(store, taskId, packageRoot) {
+  const decisions = [];
+  for (const entry of store.captureDecisionTexts(taskId)) {
+    if (entry.error) throw entry.error;
+    decisions.push((await parseCapturedJsonArtifact(entry.text, entry.relativePath, "semantic-decision", packageRoot)).value);
+  }
+  return decisions;
 }

@@ -1,3 +1,4 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
@@ -226,6 +227,7 @@ test("validate-protocol accepts task-scoped observed command provenance", async 
       blockers: [],
       verificationEvidence: [],
     });
+    await ensureFixtureTask(target, state.taskId, repositoryRoot);
     const execution = await runCommandExecution({
       target,
       packageRoot: repositoryRoot,

@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 2,
+  "node": "v24.19.0",
+  "fixtureTimestamp": "2026-09-11T00:00:00.000Z",
+  "fixturePhase": "RECEIVED",
+  "platform": "darwin",
+  "architecture": "arm64",
+  "cpu": "Apple M2",
+  "comparator": "pinned-pre-migration-release",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "runtime": "warm-cache API with per-call native connection",
+  "releaseThresholdsVerified": false,
+  "repeats": 5,
+  "results": [
+    {
+      "size": 10,
+      "outputParity": true,
+      "nativeDiscoveryP50Ms": 161.747,
+      "nativeDiscoveryP95Ms": 976.843,
+      "discoverySpeedupP95": 0.601,
+      "filesystemDiscoveryP50Ms": 108.379,
+      "filesystemDiscoveryP95Ms": 586.636,
+      "storeLookupP50Ms": 6.456,
+      "storeLookupP95Ms": 13.129,
+      "sqliteVersion": "3.53.3",
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      }
+    },
+    {
+      "size": 100,
+      "outputParity": true,
+      "nativeDiscoveryP50Ms": 527.728,
+      "nativeDiscoveryP95Ms": 1073.527,
+      "discoverySpeedupP95": 0.222,
+      "filesystemDiscoveryP50Ms": 201.606,
+      "filesystemDiscoveryP95Ms": 238.769,
+      "storeLookupP50Ms": 1.213,
+      "storeLookupP95Ms": 1.671,
+      "sqliteVersion": "3.53.3",
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      }
+    },
+    {
+      "size": 250,
+      "outputParity": true,
+      "nativeDiscoveryP50Ms": 712.597,
+      "nativeDiscoveryP95Ms": 787.805,
+      "discoverySpeedupP95": 0.403,
+      "filesystemDiscoveryP50Ms": 316.291,
+      "filesystemDiscoveryP95Ms": 317.339,
+      "storeLookupP50Ms": 2.72,
+      "storeLookupP95Ms": 2.776,
+      "sqliteVersion": "3.53.3",
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      }
+    },
+    {
+      "size": 1000,
+      "outputParity": true,
+      "nativeDiscoveryP50Ms": 4993.155,
+      "nativeDiscoveryP95Ms": 6814.438,
+      "discoverySpeedupP95": 0.196,
+      "filesystemDiscoveryP50Ms": 1282.463,
+      "filesystemDiscoveryP95Ms": 1338.299,
+      "storeLookupP50Ms": 11.422,
+      "storeLookupP95Ms": 13.257,
+      "sqliteVersion": "3.53.3",
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      }
+    }
+  ],
+  "measurementContext": {
+    "completedAt": "2026-10-04T20:08:35.139933+00:00",
+    "nativeFrozenRoot": "/tmp/forgeloop-trace382",
+    "nativeSourceManifestSha256": "03aae26a66a29c23359eb8f56f1a09eb7427781db399a2c7adbc0984d453b28f",
+    "nativeSourceFiles": 2455,
+    "postMeasurementSourceHashesUnchanged": true,
+    "samplesPerVariantPerSize": 5,
+    "acceptance": "Preliminary regression diagnosis; release thresholds remain unverified",
+    "data": "Deterministic indexed task IDs, RECEIVED states, empty logical ledgers; no action/approval/recovery history acceptance"
+  }
+}

@@ -1,5 +1,4 @@
-import { readdir } from "node:fs/promises";
-import path from "node:path";
+import { needsExistingProjectScope, withExistingProjectScope } from "../storage/existing-project-scope.js";
 import { ensureWithin, fileExists } from "./filesystem.js";
 import {
   ARTIFACT_PATHS,
@@ -7,6 +6,7 @@ import {
   readJsonArtifact,
 } from "./artifacts.js";
 import { taskArtifactPath, taskExecutionPath } from "./task-paths.js";
+import { getOperationalStore, operationalArtifactExists } from "../storage/operational-context.js";
 
 export { E_COMMAND_RESOLUTION_AMBIGUOUS } from "./verification-capability.js";
 import {
@@ -26,18 +26,14 @@ function executionError(code, message, artifacts = []) {
   return error;
 }
 
-/**
- * Resolves where a new execution artifact should be written. Task-scoped
- * execution artifacts require a real modern task namespace (a task.json
- * descriptor). A descriptor-less task is legacy: writing task-scoped here
- * would create a phantom `.forgeloop/task-state/<key>/executions/` namespace
- * that corrupts task discovery. Reads already fall back across both
- * locations, so a legacy execution stays resolvable.
- */
+/** Resolve an execution identity; persistence separately requires canonical SQLite authority. */
 export async function resolveExecutionArtifactPath(target, taskId, executionId) {
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => resolveExecutionArtifactPath(target, taskId, executionId), { readOnly: true });
+  }
   if (!taskId) return executionArtifactPath(executionId);
   const descriptorRel = taskArtifactPath(taskId, "descriptor");
-  if (await fileExists(ensureWithin(target, descriptorRel))) {
+  if (operationalArtifactExists(target, descriptorRel) ?? await fileExists(ensureWithin(target, descriptorRel))) {
     return taskExecutionPath(taskId, executionId);
   }
   return executionArtifactPath(executionId);
@@ -87,42 +83,22 @@ export async function runCommandExecution({
 }
 
 export async function readExecutionArtifact({ target, executionRef, packageRoot, taskId } = {}) {
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => readExecutionArtifact({ target, executionRef, packageRoot, taskId }), { readOnly: true });
+  }
   let relativePath;
   try {
+    const store = getOperationalStore(target);
+    if (store && !taskId) {
+      // Validate the public reference before using it as a canonical identity.
+      executionArtifactPath(executionRef);
+      taskId = store.executionTaskId(executionRef);
+    }
     relativePath = taskId ? taskExecutionPath(taskId, executionRef) : executionArtifactPath(executionRef);
     const artifact = await readJsonArtifact(target, relativePath, "execution", packageRoot);
     return artifact;
   } catch (error) {
     if (error.code === "E_EXECUTION_REF_INVALID") throw error;
-    if (error.code === "ARTIFACT_MISSING") {
-      if (taskId) {
-        try {
-          const fallbackPath = executionArtifactPath(executionRef);
-          const artifact = await readJsonArtifact(target, fallbackPath, "execution", packageRoot);
-          return artifact;
-        } catch {
-          // ignore fallback failure
-        }
-      } else {
-        try {
-          const taskStateDir = path.join(target, ".forgeloop", "task-state");
-          if (await fileExists(taskStateDir)) {
-            const entries = await readdir(taskStateDir, { withFileTypes: true });
-            for (const entry of entries) {
-              if (entry.isDirectory()) {
-                const execFile = path.join(taskStateDir, entry.name, "executions", `${executionRef}.json`);
-                if (await fileExists(execFile)) {
-                  const rel = path.relative(target, execFile).replaceAll("\\", "/");
-                  return await readJsonArtifact(target, rel, "execution", packageRoot);
-                }
-              }
-            }
-          }
-        } catch {
-          // ignore scan failure
-        }
-      }
-    }
     throw executionError("E_EXECUTION_REF_INVALID", "Execution reference does not resolve to a valid ForgeLoop artifact", [relativePath ?? ARTIFACT_PATHS.executionDirectory]);
   }
 }

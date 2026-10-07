@@ -1,3 +1,4 @@
+import { deleteFixtureArtifact } from "./helpers/native-storage-fixture.js";
 import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { mkdtemp } from "node:fs/promises";
@@ -262,10 +263,8 @@ test("preflight recreates a resumable checkpoint at the ledger-derived phase", a
     const { taskId } = await setupFreshTask(target, { taskId: "resume-task", phase: "EXECUTING" });
     await appendProtocolEvent(target, { taskId, event: "VERIFICATION_STARTED", details: { verificationCycle: 1 } }, packageRoot, { taskId });
 
-    const { unlink } = await import("node:fs/promises");
-    const pathMod = await import("node:path");
     const { taskDirectory } = await import("../src/core/task-paths.js");
-    await unlink(pathMod.join(target, taskDirectory(taskId), "work-state.json"));
+    await deleteFixtureArtifact(target, path.join(taskDirectory(taskId), "work-state.json"));
 
     const preflight = await runPreflight({ target, packageRoot, taskId });
     assert.equal(preflight.status, "READY");
@@ -288,10 +287,8 @@ test("preflight keeps ROUTED resume for a ledger without execution milestones", 
   await withTarget(async (target) => {
     const { taskId } = await setupFreshTask(target, { taskId: "early-task", phase: "ROUTED", previousPhase: "CONTRACT_READY", appendExecution: false });
 
-    const { unlink } = await import("node:fs/promises");
-    const pathMod = await import("node:path");
     const { taskDirectory } = await import("../src/core/task-paths.js");
-    await unlink(pathMod.join(target, taskDirectory(taskId), "work-state.json"));
+    await deleteFixtureArtifact(target, path.join(taskDirectory(taskId), "work-state.json"));
 
     const preflight = await runPreflight({ target, packageRoot, taskId });
     assert.equal(preflight.status, "READY");

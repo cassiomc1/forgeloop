@@ -1,5 +1,6 @@
+import { ensureFixtureTask, overwriteFixtureRecordBytes } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -21,6 +22,8 @@ async function verifiedFixture(taskId) {
   const target = await mkdtemp(path.join(os.tmpdir(), `forgeloop-ready-${taskId}-`));
   if (taskId !== "ready-forged") {
     await setupVerifyingTask(target, packageRoot, { taskId });
+  } else {
+    await ensureFixtureTask(target, taskId, packageRoot);
   }
   return { target };
 }
@@ -56,10 +59,9 @@ test("raw forged VERIFIED state without trusted evidence is UNTRUSTED", async ()
       target: "file", operation: "write", idempotencyKey: "forged:v1",
       requiredForCompletion: true, requirement: "forged-postcondition", provenance: "CALLER_REPORTED",
     } });
-    const { writeFile } = await import("node:fs/promises");
     const { taskActionPath } = await import("../src/core/task-paths.js");
     const forged = { ...action, state: "VERIFIED", revision: 4, lastEvidenceRef: "external:forged" };
-    await writeFile(path.join(target, taskActionPath(taskId, action.actionId)), JSON.stringify(forged, null, 2) + "\n", "utf8");
+    await overwriteFixtureRecordBytes(target, taskActionPath(taskId, action.actionId), JSON.stringify(forged, null, 2) + "\n");
 
     // readAction validates; bypass by passing the artifact directly.
     const readiness = await evaluateActionReadiness({ target, packageRoot, taskId, action: forged });
@@ -92,10 +94,10 @@ test("legacy required action without a requirement is readable but never trusted
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-ready-legacy-noreq-"));
   const taskId = "ready-legacy-noreq";
   try {
-    // Simulate a historical 1.6.0 artifact by writing it directly.
+    // Retain the historical payload in native storage without minting trusted chronology.
+    await ensureFixtureTask(target, taskId, packageRoot);
     const { canonicalActionFingerprint } = await import("../src/core/action-model.js");
     const { taskActionPath } = await import("../src/core/task-paths.js");
-    const { writeFile } = await import("node:fs/promises");
     const now = "2026-01-01T00:00:00.000Z";
     const identityInput = {
       taskId, actionId: "action-legacy-noreq", effectClass: "REVERSIBLE_WRITE",
@@ -113,8 +115,7 @@ test("legacy required action without a requirement is readable but never trusted
       createdAt: now,
       updatedAt: now,
     };
-    await mkdir(path.join(target, path.dirname(taskActionPath(taskId, legacy.actionId))), { recursive: true });
-    await writeFile(path.join(target, taskActionPath(taskId, legacy.actionId)), JSON.stringify(legacy, null, 2) + "\n", "utf8");
+    await overwriteFixtureRecordBytes(target, taskActionPath(taskId, legacy.actionId), JSON.stringify(legacy, null, 2) + "\n");
 
     const readiness = await evaluateActionReadiness({ target, packageRoot, taskId, action: legacy });
     // The artifact is readable; it is untrusted both because its label has no

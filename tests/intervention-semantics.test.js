@@ -1,3 +1,4 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { mkdtemp } from "node:fs/promises";
@@ -14,6 +15,7 @@ const packageRoot = getPackageRoot();
 const TASK = "t-intervention-semantics";
 
 async function seedCorrectingTask(target) {
+  await ensureFixtureTask(target, TASK, packageRoot);
   for (const milestone of ["TASK_RECEIVED", "CONTRACT_VALIDATED", "ROUTE_VALIDATED", "PREFLIGHT_READY", "EXECUTION_STARTED"]) {
     await appendProtocolEvent(target, { taskId: TASK, event: milestone }, packageRoot, { taskId: TASK });
   }

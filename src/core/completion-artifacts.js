@@ -1,4 +1,5 @@
 import path from "node:path";
+import { withTaskTransaction } from "./transaction.js";
 import {
   ARTIFACT_PATHS,
   canonicalFingerprint,
@@ -245,7 +246,14 @@ export async function requiredEvidenceForTarget({
   ])].sort();
 }
 
-export async function prepareCompletion({
+export async function prepareCompletion(options = {}) {
+  if (!options.taskId) return prepareSelectedCompletion(options);
+  return withTaskTransaction({ target: options.target, packageRoot: options.packageRoot,
+    taskId: options.taskId, operation: "prepare-completion", recordCommitEvent: true },
+  () => prepareSelectedCompletion(options));
+}
+
+async function prepareSelectedCompletion({
   target,
   packageRoot,
   authorityContext,
@@ -521,29 +529,14 @@ export async function assertRecordCheckPrerequisites({
   };
 }
 
-export async function recordCheck({
-  target,
-  packageRoot,
-  id,
-  kind = "command",
-  requirement,
-  status,
-  evidenceKind,
-  command,
-  result,
-  exitCode,
-  details,
-  executionRef,
-  provenance,
-  authorityContext,
-  runtimeContext,
-  taskId = null,
-  contractPath = null,
-  routePath = null,
-  statePath = null,
-  receiptPath = null,
-  eventsPath = null,
-}) {
+export async function recordCheck(options) {
+  validateRecordCheckInput(options);
+  if (!options.taskId) return recordValidatedCheck(options);
+  return withTaskTransaction({ target: options.target, packageRoot: options.packageRoot,
+    taskId: options.taskId, operation: "record-check", recordCommitEvent: true }, () => recordValidatedCheck(options));
+}
+
+function validateRecordCheckInput({ id, kind = "command", requirement, status, evidenceKind, command, result, details, executionRef, provenance }) {
   requiredString(id, "check id");
   requiredString(kind, "check kind");
   requiredString(requirement, "check requirement");
@@ -568,7 +561,31 @@ export async function recordCheck({
     && (typeof result !== "string" || result.trim() === "")) {
     throw artifactError("E_CHECK_INVALID", "record-check requires --command or --result");
   }
+}
 
+async function recordValidatedCheck({
+  target,
+  packageRoot,
+  id,
+  kind = "command",
+  requirement,
+  status,
+  evidenceKind,
+  command,
+  result,
+  exitCode,
+  details,
+  executionRef,
+  provenance,
+  authorityContext,
+  runtimeContext,
+  taskId = null,
+  contractPath = null,
+  routePath = null,
+  statePath = null,
+  receiptPath = null,
+  eventsPath = null,
+}) {
   const context = await assertRecordCheckPrerequisites({
     target,
     packageRoot,

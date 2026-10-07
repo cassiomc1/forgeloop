@@ -1,3 +1,4 @@
+import { getStorageCapabilities } from "../storage/capabilities.js";
 import { CLI_COMMAND_DEFINITIONS } from "./cli-command-definitions.js";
 import { COMMAND_EXECUTORS } from "./command-executors.js";
 import { PROTOCOL_VERSION } from "./protocol.js";
@@ -24,6 +25,7 @@ export const INTEGRATION_RISK_CLASSES = Object.freeze({
 });
 
 const READ_ONLY_COMMANDS = Object.freeze(new Set([
+  "storage-migration-status",
   "protocol-info", "decision-status", "decision-show", "context-plan", "model-route", "semantic-plan", "test-inventory", "status", "next", "continuity", "reconcile-continuity",
   "task-list", "task-show", "task-lock-status", "progress", "audit", "report",
   "inspect", "validate-state", "validate-protocol", "validate-receipt",
@@ -69,6 +71,13 @@ const STATIC_RISK_CLASSES = Object.freeze({
   "usage-record": INTEGRATION_RISK_CLASSES.LOOP_MUTATION,
   init: INTEGRATION_RISK_CLASSES.MAINTENANCE,
   update: INTEGRATION_RISK_CLASSES.MAINTENANCE,
+  "storage-migration-resume": INTEGRATION_RISK_CLASSES.MAINTENANCE,
+  "storage-rollback-resume": INTEGRATION_RISK_CLASSES.MAINTENANCE,
+  "storage-rollback": INTEGRATION_RISK_CLASSES.MAINTENANCE,
+  "storage-migrate": INTEGRATION_RISK_CLASSES.MAINTENANCE,
+  "storage-backup": INTEGRATION_RISK_CLASSES.MAINTENANCE,
+  "storage-restore": INTEGRATION_RISK_CLASSES.MAINTENANCE,
+  "storage-restore-resume": INTEGRATION_RISK_CLASSES.MAINTENANCE,
   activate: INTEGRATION_RISK_CLASSES.MAINTENANCE,
   "task-migrate": INTEGRATION_RISK_CLASSES.MAINTENANCE,
   "migrate-protocol": INTEGRATION_RISK_CLASSES.MAINTENANCE,
@@ -143,6 +152,7 @@ export function getForgeLoopCapabilities({ packageVersion = null } = {}) {
     integrationApiVersion: FORGELOOP_INTEGRATION_RUNTIME_VERSION,
     executorParity: Object.keys(COMMAND_EXECUTORS).length === Object.keys(CLI_COMMAND_DEFINITIONS).length,
     features: {
+      operationalStorage: getStorageCapabilities(),
       taskClaimRecovery: {
         version: 1,
         durableRecoveryState: true,

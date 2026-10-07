@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "increment": 644,
+  "problem": "Lexically external temporary paths could resolve through symlinks into the verification target; rejected returned paths previously reached recursive cleanup.",
+  "correction": "Resolve existing ancestors for configured roots and targets before temporary creation; validate physical returned paths before assigning process/cleanup authority; use canonical validated paths for process cwd and cleanup. Reject absolute cross-drive containment anomalies.",
+  "files": [
+    {
+      "file": "src/adapters/temporary-paths.js",
+      "sha256": "1c0f0943ab923ecfab76c46660b8f9024c465a3a8a9e3d1d0b2a2d9189d0132b"
+    },
+    {
+      "file": "src/adapters/agent-browser/provider.js",
+      "sha256": "5c98d7eebbc24f8db8bb29853a4c6eddf4e3d5dd827d6c7d74b3ba63511abc66"
+    },
+    {
+      "file": "src/adapters/emulated-services/provider.js",
+      "sha256": "adbe1bdde4616a412a177bf33653f6cce770fcf3732c98b64ceb8276961f5170"
+    },
+    {
+      "file": "tests/agent-browser-provider.test.js",
+      "sha256": "bcfc5b6477a0e7d3739f1886804cf3c5776bb5bdb6062f72330e0e77177fc4c1"
+    },
+    {
+      "file": "tests/emulated-services.test.js",
+      "sha256": "6730d739aa204efff7f20c619aad0cac77c2ab2f7ec2e305e0714574b00eb054"
+    }
+  ],
+  "checks": {
+    "selectedAdapterTests": {
+      "tests": 18,
+      "passed": 18,
+      "failed": 0
+    },
+    "initialRun": "12/13 passed; emulated-services fixture expected macOS lexical /var path rather than canonical /private/var. Corrected expectation using realpath(os.tmpdir()).",
+    "verifyFast": "PASS",
+    "docsCheck": "PASS",
+    "diffCheck": "PASS"
+  },
+  "regressionScope": [
+    "Browser symlink temp root rejected before creation/spawn",
+    "Browser injected returned target rejected without recursive cleanup",
+    "Emulated symlink root rejected before creation/spawn",
+    "Emulated injected symlink returned cwd rejected without recursive cleanup",
+    "Retained target entries unchanged"
+  ],
+  "limitations": [
+    "Existing path-resolution observation does not exclude concurrent hostile directory replacement",
+    "Third-party subprocess effects outside its configured cwd remain separate authority review",
+    "Current Windows/Linux and whole Mac suite after production correction pending"
+  ],
+  "soleWriterVerified": false
+}

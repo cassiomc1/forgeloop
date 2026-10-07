@@ -188,17 +188,17 @@ test("semantic requests preserve lifecycle bindings alongside decision-specific 
 
 test("semantic-required context planning fails closed without a current decision or provider", async () => {
   await withTask(async (target) => {
-    const priorEnv = process.env.FORGELOOP_TEST_SEMANTIC_PROVIDER;
+    const priorCredential = process.env.TYPESAFE_API_KEY;
     clearTestSemanticProvider();
-    process.env.FORGELOOP_TEST_SEMANTIC_PROVIDER = "1";
+    delete process.env.TYPESAFE_API_KEY;
     try {
       await assert.rejects(
         () => runContextPlan({ target, packageRoot, taskId: "jev-task", candidates: [{ id: "candidate", summary: "bounded" }] }),
         (error) => ["E_DECISION_ENGINE_AUTH_REQUIRED", "E_DECISION_REQUIRED", "E_DECISION_ENGINE_UNAVAILABLE", "E_DECISION_ENGINE_AUTH_INVALID"].includes(error.code),
       );
     } finally {
-      if (priorEnv === undefined) delete process.env.FORGELOOP_TEST_SEMANTIC_PROVIDER;
-      else process.env.FORGELOOP_TEST_SEMANTIC_PROVIDER = priorEnv;
+      if (priorCredential === undefined) delete process.env.TYPESAFE_API_KEY;
+      else process.env.TYPESAFE_API_KEY = priorCredential;
       installTestSemanticProvider(provider);
     }
   });

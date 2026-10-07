@@ -5,6 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { ALL_KNOWN_ERROR_CODES } from "../src/core/error-codes.js";
+import { getForgeLoopCapabilities } from "../src/integration.js";
 import { protocolInfo } from "../src/core/protocol-info.js";
 import { PROVIDER_KINDS } from "../src/providers/capabilities.js";
 
@@ -97,6 +98,7 @@ test("protocol-info CLI supports human and JSON output", () => {
   assert.equal(json.status, 0, json.stderr);
   const parsed = JSON.parse(json.stdout);
   assert.equal(parsed.protocolVersion, 1);
+  assert.deepEqual(parsed.features.operationalStorage, getForgeLoopCapabilities().features.operationalStorage);
   assert.match(parsed.packageVersion, /^\d+\.\d+\.\d+/);
   const human = spawnSync(process.execPath, [path.join(root, "src/cli.js"), "protocol-info"], { cwd: root, encoding: "utf8" });
   assert.equal(human.status, 0, human.stderr);
@@ -125,4 +127,38 @@ test("CLI advertises the provider extension boundary without a public registry",
   assert.deepEqual(feature.providerKinds, [...PROVIDER_KINDS]);
   assert.equal(feature.publicRegistryApi, false);
   assert.equal(feature.packageSubpathExported, false);
+});
+
+test("storage handshake describes implemented selection without claiming sole-writer completion", () => {
+  const info = protocolInfo();
+  const storage = info.features.operationalStorage;
+  assert.equal(storage.version, 1);
+  assert.equal(storage.defaultBackend, "sqlite");
+  assert.equal(storage.soleSQLiteWriter, false);
+  assert.equal(storage.sqlite.format, "sqlite");
+  assert.equal(storage.sqlite.formatVersion, 1);
+  assert.equal(storage.sqlite.schemaVersion, 5);
+  assert.equal(storage.sqlite.path, ".forgeloop/state.sqlite");
+  assert.equal(storage.sqlite.minimumNode, "24.19.0");
+  assert.equal(storage.migration.requiresWritersQuiesced, true);
+  assert.equal(storage.migration.automaticDowngrade, false);
+  for (const name of [...storage.migration.commands, storage.backup.command]) assert.ok(info.commands.some(command => command.name === name));
+  assert.equal(storage.backup.referencedAttachments, true);
+  assert.deepEqual(getForgeLoopCapabilities().features.operationalStorage, storage);
+  storage.sqlite.minimumNode = "mutated by caller";
+  assert.equal(protocolInfo().features.operationalStorage.sqlite.minimumNode, "24.19.0");
+});
+
+test("public storage handshake does not load a native SQLite driver", () => {
+  const script = `
+    import { registerHooks } from 'node:module';
+    registerHooks({ resolve(specifier, context, next) {
+      if (specifier === 'node:sqlite') throw new Error('unexpected native driver load');
+      return next(specifier, context);
+    }});
+    const { protocolInfo } = await import('./src/core/protocol-info.js');
+    if (protocolInfo().features.operationalStorage.sqlite.minimumNode !== '24.19.0') process.exitCode = 1;
+  `;
+  const child = spawnSync(process.execPath, ["--input-type=module", "-e", script], { cwd: root, encoding: "utf8" });
+  assert.equal(child.status, 0, child.stderr);
 });

@@ -6,9 +6,29 @@ import path from "node:path";
 import { test } from "node:test";
 
 import { TEMPLATE_PATHS } from "../src/core/templates.js";
+import { STORAGE_MINIMUM_NODE } from "../src/storage/runtime.js";
 import { APPROVED_DEV_DEPENDENCIES, APPROVED_RUNTIME_DEPENDENCIES } from "../scripts/check-dependency-policy.mjs";
 
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
+
+test("package engine and minimum platform CI agree with SQLite runtime admission", async () => {
+  for (const root of [".", "integrations/mcp"]) {
+    const metadata = JSON.parse(await readFile(path.join(root, "package.json"), "utf8"));
+    const lock = JSON.parse(await readFile(path.join(root, "package-lock.json"), "utf8"));
+    assert.equal(metadata.engines.node, `>=${STORAGE_MINIMUM_NODE}`);
+    assert.deepEqual(lock.packages[""].engines, metadata.engines);
+  }
+  const workflow = parseYaml(await readFile(".github/workflows/node-compat.yml", "utf8"));
+  const setup = workflow.jobs.minimum.steps.find(step => step.uses?.startsWith("actions/setup-node@"));
+  assert.equal(setup.with["node-version"], STORAGE_MINIMUM_NODE);
+  const matrix = workflow.jobs.expanded.strategy.matrix.include;
+  for (const os of ["Linux", "macOS", "Windows"]) {
+    assert.ok(matrix.some(entry => entry.os === os && entry["node-version"] === STORAGE_MINIMUM_NODE));
+  }
+  for (const job of [workflow.jobs.minimum, workflow.jobs.expanded]) {
+    assert.match(job.steps.at(-1).run, /tests\/storage-operational-bootstrap\.test\.js/);
+  }
+});
 const RETIRED_RUNTIME_SOURCES = new Set([
   "src/core/cli-metadata.js",
   "src/core/decision-classification.js",
@@ -311,9 +331,11 @@ test("release workflow requires an OIDC-compatible provenance publishing step", 
   const publish = job.steps.find(step => step.run?.includes("npm publish"));
   assert.match(publish.run, /npm publish[^\n]*--provenance/u);
   assert.match(publish.run, /--access restricted/u);
-  const smoke = job.steps.find(step => step.run?.includes("npm run pack:smoke"));
-  assert.ok(smoke, "publication must smoke-test the packed package before publishing");
-  assert.ok(job.steps.indexOf(smoke) < job.steps.indexOf(publish), "package smoke must run before npm publish");
+  assert.deepEqual(job.needs, "verify", "publication must depend on completed verification");
+  const verification = workflow.jobs.verify;
+  assert.ok(verification.steps.some(step => step.run?.includes("npm run pack:smoke")), "verification must smoke-test the packed package before publishing");
+  assert.equal(verification.permissions?.["id-token"], undefined);
+  assert.ok(verification.steps.every(step => !step.run?.includes("npm publish")));
 });
 
 test("PR CI shards one covered Node execution and targets Node compatibility", async () => {
@@ -323,7 +345,7 @@ test("PR CI shards one covered Node execution and targets Node compatibility", a
   assert.match(coreJob.if, /needs\.classify\.outputs\.node_compat/);
   const matrix = coreJob.strategy.matrix.include;
   assert.equal(matrix.filter(entry => entry["node-version"] === 24).length, 4);
-  assert.equal(matrix.filter(entry => entry["node-version"] === 20).length, 1);
+  assert.equal(matrix.filter(entry => entry["node-version"] === "24.19.0").length, 1);
   const unitStep = coreJob.steps.find(step => step.name.includes("unit suite shard"));
   assert.match(unitStep.run, /npm run coverage:shard/);
   assert.equal(core.jobs.coverage, undefined, "coverage must not rerun the full suite in a separate job");
@@ -331,9 +353,9 @@ test("PR CI shards one covered Node execution and targets Node compatibility", a
   const setupCondition = coreJob.steps.find(step => step.name === "Install locked Node toolchain").if;
   assert.match(setupCondition, /needs\.classify\.outputs\.source/);
   assert.match(setupCondition, /needs\.classify\.outputs\.node_compat/);
-  const node20Step = coreJob.steps.find(step => step.name.includes("targeted Node 20"));
-  assert.match(node20Step.if, /needs\.classify\.outputs\.source/);
-  assert.match(node20Step.if, /needs\.classify\.outputs\.node_compat/);
+  const minimumNodeStep = coreJob.steps.find(step => step.name.includes("targeted Minimum Node 24.19.0"));
+  assert.match(minimumNodeStep.if, /needs\.classify\.outputs\.source/);
+  assert.match(minimumNodeStep.if, /needs\.classify\.outputs\.node_compat/);
   assert.match(core.jobs.lint.steps.find(step => step.name === "Run JavaScript lint").run, /npm run lint/);
   const compatibility = parseYaml(await readFile(".github/workflows/node-compat.yml", "utf8"));
   assert.match(compatibility.jobs.minimum.steps.at(-1).run, /test:quick/);

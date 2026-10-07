@@ -1,0 +1,22 @@
+{
+  "id": "dfe48c1ce8b28be2e6e13a40359a872c20124f71123584940321ec646bdd9da1",
+  "state": {
+    "Status": "running",
+    "Running": true,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "Dead": false,
+    "Pid": 66367,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "2026-10-07T01:49:03.821947316Z",
+    "FinishedAt": "0001-01-01T00:00:00Z"
+  },
+  "image": "node:24.19.0-bookworm",
+  "snapshot": "2b7893aef6fabe01c72fb6bb1cefb93cf9cde193acdc5c286bcd977e7ad77928",
+  "logTail": "\u2714 marked writable dispatch refuses schema disagreement without upgrading database bytes (120.214152ms)\n\u2714 storage catalog reads reject oversized files, invalid encoding and excessive structure (22.105191ms)\n\u2714 portable import rejects an oversized sparse catalog before creating a native database (13.285418ms)\n\u2714 backup restore refuses an oversized manifest without allocating a destination (3.285575ms)\n\u2714 public migration requires quiescence, publishes retained state, and permits subsequent commands (4747.300186ms)\n\u2714 public migration failure retains exclusion and preserves an existing destination (1423.605531ms)\n\u2714 validated archival activates an independent SQLite copy and releases public dispatch (6618.95274ms)\n\u2714 owner-bound archival recognizes a rename before journal update and retains exclusion until activation (4817.442118ms)\n",
+  "errorTail": "",
+  "collectedIncrement": 615,
+  "terminalVerified": false
+}

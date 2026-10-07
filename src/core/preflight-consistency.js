@@ -1,7 +1,7 @@
 import { ARTIFACT_PATHS } from "./artifacts.js";
 import { readContract } from "./contract.js";
 import { readPersistedRoute } from "./route-artifact.js";
-import { appendProtocolEvent, validateEventLedger } from "./events.js";
+import { appendProtocolEvent, validateEventLedger, withEventLedgerAudit } from "./events.js";
 import { readWorkState } from "./work-state.js";
 import { assertStateIdentity } from "./completion-relationships.js";
 import { ensureResumableState, synchronizePreflightState } from "./resumability.js";
@@ -14,6 +14,7 @@ import {
   validatePersistedPreflight,
 } from "./preflight-model.js";
 
+import { ledgerEventsOfTypes, ledgerTypeSummary } from "./ledger-event-collection.js";
 import { taskArtifactPath } from "./task-paths.js";
 
 async function readOptionalIdentityArtifact(readArtifact, invalidCode, artifactPath) {
@@ -81,15 +82,15 @@ function sameReadyPreflightEvent(event, result) {
 }
 
 function latestContractRevisionSeq(events) {
-  return events.findLast((event) => event.event === "CONTRACT_REVISED")?.seq ?? 0;
+  return ledgerTypeSummary(events, "CONTRACT_REVISED").latest?.seq ?? 0;
 }
 
 function hasCurrentRevisionGate(events, taskId, gate) {
   const revisionSeq = latestContractRevisionSeq(events);
-  return events.some((event) => event.event === "GATE_SATISFIED"
-    && event.taskId === taskId
-    && event.details?.gate === gate
-    && event.seq > revisionSeq);
+  for (const event of ledgerEventsOfTypes(events, ["GATE_SATISFIED"])) {
+    if (event.taskId === taskId && event.details?.gate === gate && event.seq > revisionSeq) return true;
+  }
+  return false;
 }
 
 export async function validateReadyProtocolConsistency({
@@ -102,68 +103,80 @@ export async function validateReadyProtocolConsistency({
 } = {}) {
   if (persisted?.status !== "READY") return [];
   const result = current ?? await evaluateCurrentPreflight({ target, packageRoot, taskId });
-  const errors = [...validatePersistedPreflight(persisted, result)];
+  return withEventLedgerAudit(target, packageRoot, { taskId }, async ledger => {
+    const errors = [...validatePersistedPreflight(persisted, result)];
 
-  const stateRel = taskId ? taskArtifactPath(taskId, "state") : ARTIFACT_PATHS.state;
-  const eventsRel = taskId ? taskArtifactPath(taskId, "events") : ARTIFACT_PATHS.events;
-  const preflightRel = taskId ? taskArtifactPath(taskId, "preflight") : ARTIFACT_PATHS.preflight;
-  const contractRel = taskId ? taskArtifactPath(taskId, "contract") : ARTIFACT_PATHS.contract;
-  const routeRel = taskId ? taskArtifactPath(taskId, "route") : ARTIFACT_PATHS.route;
-  const gatesRel = taskId ? taskArtifactPath(taskId, "gates") : ARTIFACT_PATHS.gates;
+    const stateRel = taskId ? taskArtifactPath(taskId, "state") : ARTIFACT_PATHS.state;
+    const eventsRel = taskId ? taskArtifactPath(taskId, "events") : ARTIFACT_PATHS.events;
+    const preflightRel = taskId ? taskArtifactPath(taskId, "preflight") : ARTIFACT_PATHS.preflight;
+    const contractRel = taskId ? taskArtifactPath(taskId, "contract") : ARTIFACT_PATHS.contract;
+    const routeRel = taskId ? taskArtifactPath(taskId, "route") : ARTIFACT_PATHS.route;
+    const gatesRel = taskId ? taskArtifactPath(taskId, "gates") : ARTIFACT_PATHS.gates;
 
-  let state = null;
-  try {
-    state = await readWorkState(target, { packageRoot, taskId });
-  } catch (error) {
-    errors.push(issue("E_STATE_INVALID", error.message, [stateRel]));
-  }
-  if (!state) {
-    errors.push(issue(
-      "E_STATE_MISSING_AFTER_PREFLIGHT_READY",
-      "A persisted READY preflight must have a resumable work-state checkpoint",
-      [preflightRel, stateRel],
-    ));
-  } else {
-    if (state.taskId !== persisted.taskId) {
-      errors.push(issue("E_STATE_TASK_MISMATCH", "The resumable checkpoint does not belong to the READY preflight task", [stateRel, preflightRel]));
+    let state = null;
+    try {
+      state = await readWorkState(target, { packageRoot, taskId });
+    } catch (error) {
+      errors.push(issue("E_STATE_INVALID", error.message, [stateRel]));
     }
-    if (state.contractFingerprint !== result.fingerprints.contract) {
-      errors.push(issue("E_CONTRACT_STALE", "The resumable checkpoint does not match the READY contract fingerprint", [stateRel, contractRel]));
+    if (!state) {
+      errors.push(issue(
+        "E_STATE_MISSING_AFTER_PREFLIGHT_READY",
+        "A persisted READY preflight must have a resumable work-state checkpoint",
+        [preflightRel, stateRel],
+      ));
+    } else {
+      if (state.taskId !== persisted.taskId) {
+        errors.push(issue("E_STATE_TASK_MISMATCH", "The resumable checkpoint does not belong to the READY preflight task", [stateRel, preflightRel]));
+      }
+      if (state.contractFingerprint !== result.fingerprints.contract) {
+        errors.push(issue("E_CONTRACT_STALE", "The resumable checkpoint does not match the READY contract fingerprint", [stateRel, contractRel]));
+      }
+      if (state.routeFingerprint !== result.fingerprints.routing) {
+        errors.push(issue("E_ROUTE_STALE", "The resumable checkpoint does not match the READY routing fingerprint", [stateRel, routeRel]));
+      }
+      if (JSON.stringify(state.selectedGuides) !== JSON.stringify(result.routing.guides)) {
+        errors.push(issue("E_ROUTE_GUIDE_MISMATCH", "The resumable checkpoint guides do not match the READY routing result", [stateRel, routeRel]));
+      }
+      if (!sameStringSet(state.requiredGates ?? [], persisted.requiredGates)
+        || !sameStringSet(state.satisfiedGates ?? [], persisted.satisfiedGates)) {
+        errors.push(issue("E_PREFLIGHT_GATES_STALE", "The resumable checkpoint gate sets do not match the READY preflight", [stateRel, preflightRel, gatesRel]));
+      }
     }
-    if (state.routeFingerprint !== result.fingerprints.routing) {
-      errors.push(issue("E_ROUTE_STALE", "The resumable checkpoint does not match the READY routing fingerprint", [stateRel, routeRel]));
-    }
-    if (JSON.stringify(state.selectedGuides) !== JSON.stringify(result.routing.guides)) {
-      errors.push(issue("E_ROUTE_GUIDE_MISMATCH", "The resumable checkpoint guides do not match the READY routing result", [stateRel, routeRel]));
-    }
-    if (!sameStringSet(state.requiredGates ?? [], persisted.requiredGates)
-      || !sameStringSet(state.satisfiedGates ?? [], persisted.satisfiedGates)) {
-      errors.push(issue("E_PREFLIGHT_GATES_STALE", "The resumable checkpoint gate sets do not match the READY preflight", [stateRel, preflightRel, gatesRel]));
-    }
-  }
 
-  const ledger = await validateEventLedger(target, packageRoot, { taskId });
-  if (!ledger.valid) {
-    errors.push(...ledger.errors.map((error) => issue(error.code ?? "E_EVENT_INVALID", error.message, [eventsRel])));
-  }
-  const events = ledger.events ?? [];
-  for (const requiredEvent of ["CONTRACT_VALIDATED", "ROUTE_VALIDATED"]) {
-    if (!events.some((event) => event.event === requiredEvent && event.taskId === persisted.taskId)) {
-      errors.push(issue("E_PREFLIGHT_EVENT_MISSING", `READY preflight is missing lifecycle event: ${requiredEvent}`, [eventsRel, preflightRel]));
+    if (!ledger.valid) {
+      errors.push(...ledger.errors.map((error) => issue(error.code ?? "E_EVENT_INVALID", error.message, [eventsRel])));
     }
-  }
-  for (const gate of persisted.satisfiedGates ?? []) {
-    if (!hasCurrentRevisionGate(events, persisted.taskId, gate)) {
-      errors.push(issue("E_PREFLIGHT_GATE_EVENT_MISSING", `READY preflight is missing lifecycle gate event: ${gate}`, [eventsRel, `${gatesRel}/${gate}.json`]));
+    const events = ledger.events ?? [];
+    const requiredEvents = ["CONTRACT_VALIDATED", "ROUTE_VALIDATED"];
+    const observedEvents = new Set();
+    for (const event of ledgerEventsOfTypes(events, requiredEvents)) {
+      if (event.taskId === persisted.taskId) observedEvents.add(event.event);
     }
-  }
-  const readyEvents = events.filter((event) => event.event === "PREFLIGHT_READY" && event.taskId === persisted.taskId);
-  if (readyEvents.length === 0) {
-    errors.push(issue("E_PREFLIGHT_READY_EVENT_MISSING", "Persisted READY preflight is missing the matching PREFLIGHT_READY lifecycle event", [preflightRel, eventsRel]));
-  } else if (!readyEvents.some((event) => sameReadyPreflightEvent(event, result))) {
-    errors.push(issue("E_PREFLIGHT_READY_EVENT_MISMATCH", "PREFLIGHT_READY lifecycle details do not match the persisted READY preflight", [preflightRel, eventsRel]));
-  }
-  return sortIssues(errors);
+    for (const requiredEvent of requiredEvents) {
+      if (!observedEvents.has(requiredEvent)) {
+        errors.push(issue("E_PREFLIGHT_EVENT_MISSING", `READY preflight is missing lifecycle event: ${requiredEvent}`, [eventsRel, preflightRel]));
+      }
+    }
+    for (const gate of persisted.satisfiedGates ?? []) {
+      if (!hasCurrentRevisionGate(events, persisted.taskId, gate)) {
+        errors.push(issue("E_PREFLIGHT_GATE_EVENT_MISSING", `READY preflight is missing lifecycle gate event: ${gate}`, [eventsRel, `${gatesRel}/${gate}.json`]));
+      }
+    }
+    let readyCount = 0;
+    let readyMatches = false;
+    for (const event of ledgerEventsOfTypes(events, ["PREFLIGHT_READY"])) {
+      if (event.taskId !== persisted.taskId) continue;
+      readyCount++;
+      if (sameReadyPreflightEvent(event, result)) readyMatches = true;
+    }
+    if (readyCount === 0) {
+      errors.push(issue("E_PREFLIGHT_READY_EVENT_MISSING", "Persisted READY preflight is missing the matching PREFLIGHT_READY lifecycle event", [preflightRel, eventsRel]));
+    } else if (!readyMatches) {
+      errors.push(issue("E_PREFLIGHT_READY_EVENT_MISMATCH", "PREFLIGHT_READY lifecycle details do not match the persisted READY preflight", [preflightRel, eventsRel]));
+    }
+    return sortIssues(errors);
+  });
 }
 
 function sameBlockedPreflightEvent(event, result) {

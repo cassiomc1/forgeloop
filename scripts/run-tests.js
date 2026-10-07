@@ -16,7 +16,7 @@ if (process.env.FORGELOOP_TEST_SHARD && !selectionArgs.some((argument) => argume
   selectionArgs.push("--shard", process.env.FORGELOOP_TEST_SHARD);
 }
 const argv = selectTests(testFiles, selectionArgs, repositoryRoot);
-const semanticLoader = new URL("./test-semantic-provider-loader.mjs", import.meta.url).pathname;
+const semanticLoader = new URL("./test-semantic-provider-loader.mjs", import.meta.url).href;
 const nodeOptions = process.env.NODE_OPTIONS?.split(/\s+/u).filter(Boolean) ?? [];
 const loaderFlag = `--import=${semanticLoader}`;
 if (!nodeOptions.includes(loaderFlag)) nodeOptions.push(loaderFlag);

@@ -1,3 +1,4 @@
+import { deleteFixtureArtifact } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
@@ -169,11 +170,10 @@ test("contract and continuity resources resolve for an existing task", async () 
 test("task/contract failures surface a resource-scoped message", async () => {
   await withRecoveryTarget(async (target) => {
     await setupAbandonedTask(target, { taskId: "resource-contract-missing" });
-    const { rm } = await import("node:fs/promises");
     const { taskArtifactPath, taskDirectory } = await import("../src/core/task-paths.js");
     const { ensureWithin } = await import("../src/core/filesystem.js");
     void taskDirectory;
-    await rm(ensureWithin(target, taskArtifactPath("resource-contract-missing", "contract")));
+    await deleteFixtureArtifact(target, ensureWithin(target, taskArtifactPath("resource-contract-missing", "contract")));
     await assert.rejects(
       () => readForgeLoopIntegrationResource("task/contract", {
         projectPath: target,

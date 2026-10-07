@@ -1,0 +1,35 @@
+{
+  "increment": 613,
+  "surface": "Public integration executeForgeLoopCommand bundle",
+  "productionChanged": false,
+  "controls": [
+    "Successful native export preserves primary database bytes and produces a task-bound portable manifest and ledger without a singleton contract mirror.",
+    "Symlinked task bundle destination returns a refusal, preserving primary database bytes and creating no redirected bundle manifest."
+  ],
+  "testFile": "tests/storage-bundle-authority-boundary.test.js",
+  "testSha256": "095c803354f51ab5871a70c4d80964144f05ba445c9c74b873b7d99ccacc810d",
+  "focusedTests": {
+    "total": 2,
+    "passed": 2,
+    "failed": 0
+  },
+  "regressionTests": {
+    "total": 7,
+    "passed": 7,
+    "failed": 0
+  },
+  "rawLogs": [
+    "/tmp/sqlite-bundle-authority613.log",
+    "/tmp/sqlite-bundle-regression613.log"
+  ],
+  "jevgrep": {
+    "exitCode": 0,
+    "relevantFiles": 32,
+    "rawLog": "/tmp/sqlite-bundle-destination613-discovery.log"
+  },
+  "limitations": [
+    "Mac scoped proof; new controls not yet exercised on Windows or Docker Linux.",
+    "Database byte identity and named path refusals do not constitute whole transitive writer or power-loss proof.",
+    "Candidate611b Windows full run continues unchanged; Linux612 remains queued."
+  ]
+}

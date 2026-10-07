@@ -1,12 +1,14 @@
+import { readEvents } from "../src/core/events.js";
+import { ensureFixtureTask, readFixtureText } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { access, mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
 
 import { validateAttestationPredicate, validateAttestationStatement, writeAttestationStatement } from "../src/core/attestation.js";
 import { getPackageRoot } from "../src/core/templates.js";
-import { taskAttestationStatementHistoryPath } from "../src/core/task-paths.js";
+import { taskAttestationStatementPath, taskAttestationStatementHistoryPath } from "../src/core/task-paths.js";
 
 const packageRoot = getPackageRoot();
 const zero = "0".repeat(64);
@@ -53,11 +55,20 @@ test("ForgeLoop attestation statements validate subject, predicate, and evidence
 test("attestation statements are versioned by verification cycle without overwriting history", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-attestation-"));
   try {
+    await ensureFixtureTask(target, "attestation-001", packageRoot);
     await writeAttestationStatement({ target, packageRoot, taskId: "attestation-001", statement: statement(1) });
     await writeAttestationStatement({ target, packageRoot, taskId: "attestation-001", statement: statement(2) });
-    await access(path.join(target, taskAttestationStatementHistoryPath("attestation-001", 1)));
-    const history = JSON.parse(await readFile(path.join(target, taskAttestationStatementHistoryPath("attestation-001", 1)), "utf8"));
+    const history = JSON.parse(await readFixtureText(target, taskAttestationStatementHistoryPath("attestation-001", 1)));
     assert.equal(history.predicate.task.verificationCycle, 1);
+    const currentPath = taskAttestationStatementPath("attestation-001");
+    const current = await readFixtureText(target, currentPath);
+    assert.equal(JSON.parse(current).predicate.task.verificationCycle, 2);
+    const events = await readEvents(target, packageRoot, { taskId: "attestation-001" });
+    assert.equal(events.filter(event => event.event === "ATTESTATION_STATEMENT_CREATED").length, 2);
+    await assert.rejects(writeAttestationStatement({ target, packageRoot, taskId: "attestation-001", statement: statement(2) }), { code: "E_ATTESTATION_STATEMENT_INVALID" });
+    assert.equal(await readFixtureText(target, currentPath), current);
+    assert.deepEqual(await readEvents(target, packageRoot, { taskId: "attestation-001" }), events);
+    assert.equal(await readFixtureText(target, taskAttestationStatementHistoryPath("attestation-001", 2)), null);
   } finally {
     await rm(target, { recursive: true, force: true });
   }

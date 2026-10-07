@@ -1,0 +1,60 @@
+{
+  "increment": 685,
+  "productionChanged": false,
+  "testChanged": "tests/storage-marker.test.js",
+  "wholeScopeVerified": false,
+  "reviewedWrapperSites": [
+    {
+      "file": "src/core/artifacts.js",
+      "line": 210,
+      "role": "explicit portable JSON/configuration output",
+      "boundary": "Rejects operational paths, database/sidecar/marker paths, active operational transactions and unsafe contained destinations before atomic output."
+    },
+    {
+      "file": "src/core/manifest.js",
+      "line": 80,
+      "role": "installer manifest",
+      "boundary": "Fixed .forgeloop/manifest.json destination; schema/hash/layout validation and assertSafePath."
+    },
+    {
+      "file": "src/core/signing/statement-file.js",
+      "line": 22,
+      "role": "temporary selected statement bytes for external signing",
+      "boundary": "Private mkdtemp destination; rejects native write transactions, checks canonical statement unchanged after signer, removes directory in finally. Does not sandbox signer effects."
+    },
+    {
+      "file": "src/storage/storage-marker.js",
+      "line": 62,
+      "role": "maintenance-owned activation marker",
+      "boundary": "Fixed safe marker path; live owner context and exact pending operation/schema/inventory binding required."
+    }
+  ],
+  "relatedBundleReview": "Raw attachment/event outputs use fixed .forgeloop/tasks/<validated-task-id> export directories; this is not complete bundle artifact/source validation or all alias closure.",
+  "regression": "Expired maintenance Promise continuation cannot adopt a later owner; absent-owner and mismatched-operation activation preserve marker bytes. Matching live owner activates successfully.",
+  "checks": {
+    "selectedBoundaryTests": {
+      "total": 27,
+      "passed": 27,
+      "failed": 0,
+      "log": "/Users/cassio/.codex/verification/boundaries685.log"
+    },
+    "verifyFast": "PASS",
+    "docsCheck": "PASS",
+    "gitDiffCheck": "PASS"
+  },
+  "sourceSha256": {
+    "src/core/artifacts.js": "4667bc01b1f6416ee22e0de6788bb8ae21ce238b5ce9724961c92c06d0e92db2",
+    "src/storage/existing-project-scope.js": "9d4e8d5154865048a17075e388155f18bdea26b8a5a6e0e883d015683221e6e2",
+    "src/core/manifest.js": "9e29e1c9466bb0fc6a2ae9371a4f8bec995a01f11377684f0d66bcfa58221f4f",
+    "src/core/signing/statement-file.js": "4b0db680c034bd21497e5fa96c01ea79a7faa14f6424c85965f4c9183304880b",
+    "src/core/bundles.js": "8d74bf947d73e3a9ae5b4149da78e6ff8584d48d6c04f12bf296fcaa487e1991",
+    "src/storage/storage-marker.js": "be4744869306bfba37f02f2ab58152761c12d079360eb4220917019e5d8ad79d",
+    "src/storage/maintenance.js": "ce19d71c8507b70bd56b022667d63064c2b0b76f5722d8a304d27ec2e681478f",
+    "tests/storage-marker.test.js": "c054a0c2f0ba8002019d860b299b88c5c16be47f86f3fd56943dc7424d277b19"
+  },
+  "limitations": [
+    "Physical concurrent replacement remains unproven.",
+    "Deep internal helpers and external process effects are not a filesystem sandbox.",
+    "Remaining73 inventory sites require review; whole public authority, maintenance, platform and release acceptance remains open."
+  ]
+}

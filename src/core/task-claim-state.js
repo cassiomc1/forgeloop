@@ -1,3 +1,6 @@
+import { needsExistingProjectScope } from "../storage/existing-project-scope.js";
+import { getOperationalStore } from "../storage/operational-context.js";
+import { ledgerTypeSummary } from "./ledger-event-collection.js";
 import {
   E_COMPLETION_OWNERSHIP_UNPROVEN,
   E_TASK_CLAIM_OWNERSHIP_INCONSISTENT,
@@ -6,8 +9,8 @@ import {
   E_TASK_RECOVERY_INCONSISTENT,
 } from "./error-codes.js";
 import { validateCompletionOwnershipProof } from "./completion-ownership.js";
-import { validateEventLedger, validateStateLedgerCoherence } from "./events.js";
-import { classifyRecoveryHistory } from "./recovery-history.js";
+import { validateEventLedger, validatePortableEventLedger, validateStateLedgerCoherence, withEventLedgerAudit } from "./events.js";
+import { classifyRecoveryHistory, summarizeRecoveryHistory } from "./recovery-history.js";
 import { readTaskDescriptor } from "./task-descriptor.js";
 import { normalizeWriteClaims } from "./task-scope.js";
 import {
@@ -126,7 +129,7 @@ function evolvedRepairErrors(anchor, events, state, artifacts) {
   errors.push(...lateRouteCheckpointErrors(events, state, anchor.sourceMarker));
   errors.push(...validateStateLedgerCoherence(state, events).map((error) => repairInvalid(error.message)));
   const requiredEvent = REPAIR_PHASE_EVENTS[state.phase];
-  if (requiredEvent && !events.some((event) => event.event === requiredEvent)) {
+  if (requiredEvent && !ledgerTypeSummary(events, requiredEvent).count) {
     errors.push(repairInvalid(`Current work-state phase ${state.phase} is not supported by the repair ledger history`));
   }
   return errors;
@@ -135,7 +138,7 @@ function evolvedRepairErrors(anchor, events, state, artifacts) {
 function validateContractBootstrapRepairConsistency(taskId, events, state, artifacts) {
   const anchor = resolveEffectiveContractBootstrapRepairAnchor(events);
   if (!anchor) {
-    if (!events.some((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT)) return [];
+    if (!ledgerTypeSummary(events, CONTRACT_BOOTSTRAP_REPAIR_EVENT).count) return [];
     return [repairInvalid("Contract bootstrap repair marker is invalid")];
   }
   if (!state) return [repairInvalid("Work-state is missing after a recorded contract bootstrap repair")];
@@ -184,6 +187,7 @@ async function collectContractBootstrapRepairConsistency(target, packageRoot, ta
       artifacts.contractError = "work-state contract fingerprint does not match marker contract fingerprint";
     }
   } catch (error) {
+    if (error.code === "E_STATE_REVISION_CONFLICT") throw error;
     artifacts.contractError = error.code === "ARTIFACT_MISSING"
       ? "contract artifact is missing after a recorded repair"
       : `contract artifact is invalid after a recorded repair: ${error.message}`;
@@ -202,6 +206,7 @@ async function collectContractBootstrapRepairConsistency(target, packageRoot, ta
         artifacts.routeError = "route artifact contract binding does not match repair anchor contract fingerprint";
       }
     } catch (error) {
+      if (error.code === "E_STATE_REVISION_CONFLICT") throw error;
       artifacts.routeError = error.code === "ARTIFACT_MISSING"
         ? "route artifact is missing after a routed repair"
         : `route artifact is invalid after a routed repair: ${error.message}`;
@@ -214,7 +219,10 @@ async function collectContractBootstrapRepairConsistency(target, packageRoot, ta
 function appendClaims(target, claims, errors, source) {
   if (claims === undefined || claims === null) return;
   try {
-    target.push(...normalizeWriteClaims(claims));
+    const normalized = normalizeWriteClaims(claims);
+    if (target instanceof Set || typeof target.add === "function") {
+      for (const claim of normalized) target.add(claim);
+    } else target.push(...normalized);
   } catch (error) {
     errors.push(ownershipError(`Invalid ${source} write claims: ${error.message}`, error));
   }
@@ -226,12 +234,12 @@ function appendClaims(target, claims, errors, source) {
  * classified recovery history. Classification is a pure function of this
  * evidence, so conflict inspection can reuse it without rereading artifacts.
  */
-export async function collectTaskClaimEvidence(target, {
+async function collectClaimEvidence(target, {
   taskId,
   packageRoot,
   descriptor: suppliedDescriptor = null,
   state: suppliedState = null,
-} = {}) {
+} = {}, suppliedLedger = null) {
   const errors = [];
   let descriptor = suppliedDescriptor;
   let state = suppliedState;
@@ -242,6 +250,7 @@ export async function collectTaskClaimEvidence(target, {
     try {
       descriptor = (await readTaskDescriptor(target, taskId, packageRoot)).value;
     } catch (error) {
+      if (error.code === "E_STATE_REVISION_CONFLICT") throw error;
       errors.push(ownershipError(`Task descriptor cannot establish claim ownership: ${error.message}`, error));
     }
   }
@@ -249,6 +258,7 @@ export async function collectTaskClaimEvidence(target, {
     try {
       state = await readWorkState(target, { taskId, packageRoot });
     } catch (error) {
+      if (error.code === "E_STATE_REVISION_CONFLICT") throw error;
       errors.push(ownershipError(`Task work state cannot establish claim ownership: ${error.message}`, error));
     }
   }
@@ -256,14 +266,27 @@ export async function collectTaskClaimEvidence(target, {
   try {
     recovery = (await readTaskRecovery(target, { taskId, packageRoot }))?.value ?? null;
   } catch (error) {
+    if (error.code === "E_STATE_REVISION_CONFLICT") throw error;
     errors.push(ownershipError(`Task recovery artifact cannot establish claim ownership: ${error.message}`, error));
   }
 
   try {
-    ledger = await validateEventLedger(target, packageRoot, { taskId });
+    ledger = suppliedLedger ?? await (getOperationalStore(target) || await needsExistingProjectScope(target) ? validateEventLedger : validatePortableEventLedger)(target, packageRoot, { taskId });
   } catch (error) {
+    if (error.code === "E_STATE_REVISION_CONFLICT") throw error;
     errors.push(ownershipError(`Task event ledger cannot establish claim ownership: ${error.message}`, error));
   }
+  const repairArtifacts = await collectContractBootstrapRepairConsistency(target, packageRoot, taskId, ledger.events, state);
+  return buildTaskClaimEvidence({ taskId, descriptor, state, recovery, ledger, repairArtifacts, initialErrors: errors });
+}
+
+export async function collectTaskClaimEvidence(target, options = {}) {
+  return collectClaimEvidence(target, options);
+}
+
+/** Shared pure ownership evidence projection for filesystem and store snapshots. */
+export function buildTaskClaimEvidence({ taskId, descriptor, state, recovery, ledger, repairArtifacts = null, initialErrors = [] }) {
+  const errors = [...initialErrors];
   if (!ledger.valid) {
     for (const error of ledger.errors) {
       errors.push(ownershipError(`Task event ledger is invalid: ${error.message}`, error));
@@ -282,19 +305,19 @@ export async function collectTaskClaimEvidence(target, {
     }
   }
 
-  const repairArtifacts = await collectContractBootstrapRepairConsistency(target, packageRoot, taskId, ledger.events, state);
   const repairConsistencyErrors = validateContractBootstrapRepairConsistency(taskId, ledger.events, state, repairArtifacts);
   errors.push(...repairConsistencyErrors);
 
-  const history = classifyRecoveryHistory(ledger.events);
   const descriptorClaims = [];
   appendClaims(descriptorClaims, descriptor?.writeClaims, errors, "descriptor");
   const normalizedDescriptorClaims = normalizeWriteClaims(descriptorClaims);
 
-  const historicalClaims = [...normalizedDescriptorClaims];
-  for (const cycle of history.recoveries) {
-    appendClaims(historicalClaims, cycle.event?.details?.releasedClaims, errors, "recovery ledger");
-  }
+  const historicalClaims = new Set(normalizedDescriptorClaims);
+  const observeRecovery = cycle => appendClaims(historicalClaims, cycle.event?.details?.releasedClaims, errors, "recovery ledger");
+  const history = Array.isArray(ledger.events)
+    ? classifyRecoveryHistory(ledger.events)
+    : summarizeRecoveryHistory(ledger.events, observeRecovery);
+  if (Array.isArray(ledger.events)) for (const cycle of history.recoveries) observeRecovery(cycle);
   appendClaims(historicalClaims, recovery?.releasedClaims, errors, "recovery artifact");
 
   return {
@@ -306,7 +329,7 @@ export async function collectTaskClaimEvidence(target, {
     ledger,
     history,
     normalizedDescriptorClaims,
-    historicalWriteClaims: normalizeWriteClaims(historicalClaims),
+    historicalWriteClaims: normalizeWriteClaims([...historicalClaims]),
     errors,
   };
 }
@@ -429,7 +452,7 @@ export function classifyTaskClaimState(evidence) {
     claimState: "ACTIVE",
     mutationAllowed: true,
     recovery: null,
-    recoveryStatus: history.completedRecoveries.length > 0 ? "COMPLETED" : "ABSENT",
+    recoveryStatus: (history.completedRecoveryCount ?? history.completedRecoveries.length) > 0 ? "COMPLETED" : "ABSENT",
     valid: true,
     ownershipValid: true,
     reasonCodes: [],
@@ -443,9 +466,20 @@ export function classifyTaskClaimState(evidence) {
  * tombstone, and the complete validated task ledger. Any disagreement retains
  * every claim that can be recovered from validated inputs and fails closed.
  */
+export async function withTaskClaimEvidence(target, options, callback) {
+  let store;
+  try { store = getOperationalStore(target); } catch { /* Preserve collected fail-closed evidence for invalid contexts. */ }
+  if (store && !store.transaction && !store.writes.size && !store.events.size && !store.attachments.size
+    && typeof options.taskId === "string" && options.taskId) {
+    return withEventLedgerAudit(target, options.packageRoot, { taskId: options.taskId }, async ledger => (
+      callback(await collectClaimEvidence(target, options, ledger))
+    ));
+  }
+  return callback(await collectTaskClaimEvidence(target, options));
+}
+
 export async function resolveTaskClaimState(target, options = {}) {
-  const evidence = await collectTaskClaimEvidence(target, options);
-  return classifyTaskClaimState(evidence);
+  return withTaskClaimEvidence(target, options, classifyTaskClaimState);
 }
 
 export async function assertTaskMutationAllowed(target, options = {}) {

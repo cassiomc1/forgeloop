@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 2,
+  "node": "v24.19.0",
+  "fixtureTimestamp": "2026-09-11T00:00:00.000Z",
+  "fixturePhase": "RECEIVED",
+  "platform": "darwin",
+  "architecture": "arm64",
+  "cpu": "Apple M2",
+  "comparator": "pinned-pre-migration-release",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "runtime": "warm-cache API with per-call native connection",
+  "releaseThresholdsVerified": false,
+  "repeats": 20,
+  "results": [
+    {
+      "size": 10,
+      "outputParity": true,
+      "nativeDiscoveryP50Ms": 4.683,
+      "nativeDiscoveryP95Ms": 5.06,
+      "discoverySpeedupP95": 2.63,
+      "filesystemDiscoveryP50Ms": 12.678,
+      "filesystemDiscoveryP95Ms": 13.31,
+      "storeLookupP50Ms": 0.098,
+      "storeLookupP95Ms": 0.144,
+      "sqliteVersion": "3.53.3",
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      }
+    },
+    {
+      "size": 100,
+      "outputParity": true,
+      "nativeDiscoveryP50Ms": 26.377,
+      "nativeDiscoveryP95Ms": 28.599,
+      "discoverySpeedupP95": 4.275,
+      "filesystemDiscoveryP50Ms": 119.089,
+      "filesystemDiscoveryP95Ms": 122.244,
+      "storeLookupP50Ms": 0.955,
+      "storeLookupP95Ms": 1.036,
+      "sqliteVersion": "3.53.3",
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      }
+    },
+    {
+      "size": 250,
+      "outputParity": true,
+      "nativeDiscoveryP50Ms": 66.758,
+      "nativeDiscoveryP95Ms": 76.776,
+      "discoverySpeedupP95": 4.045,
+      "filesystemDiscoveryP50Ms": 297.262,
+      "filesystemDiscoveryP95Ms": 310.572,
+      "storeLookupP50Ms": 2.414,
+      "storeLookupP95Ms": 2.721,
+      "sqliteVersion": "3.53.3",
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      }
+    },
+    {
+      "size": 1000,
+      "outputParity": true,
+      "nativeDiscoveryP50Ms": 280.948,
+      "nativeDiscoveryP95Ms": 312.391,
+      "discoverySpeedupP95": 4.622,
+      "filesystemDiscoveryP50Ms": 1323.895,
+      "filesystemDiscoveryP95Ms": 1443.917,
+      "storeLookupP50Ms": 10.688,
+      "storeLookupP95Ms": 11.549,
+      "sqliteVersion": "3.53.3",
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      }
+    },
+    {
+      "size": 5000,
+      "outputParity": true,
+      "nativeDiscoveryP50Ms": 1342.9,
+      "nativeDiscoveryP95Ms": 1391.746,
+      "discoverySpeedupP95": 4.922,
+      "filesystemDiscoveryP50Ms": 6389.481,
+      "filesystemDiscoveryP95Ms": 6850.547,
+      "storeLookupP50Ms": 52.634,
+      "storeLookupP95Ms": 77.218,
+      "sqliteVersion": "3.53.3",
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      }
+    }
+  ],
+  "scope": "Complete discovery API parity for fixed-timestamp RECEIVED tasks; no event/action load, cold CLI, persistent integration, concurrency, commit or full-audit measurement.",
+  "sourceEvidence": {
+    "frozenCoreManifest": "/tmp/sqlite-macos-full321-source.json",
+    "note": "Core sources unchanged since green frozen321; benchmark harness refined afterward. Only header documentation changed after this measurement started."
+  }
+}

@@ -1,0 +1,407 @@
+{
+  "schemaVersion": 1,
+  "operation": "canonical runtime validate-protocol",
+  "actions": 1000,
+  "approvals": 1000,
+  "events": 3029,
+  "samplesPerBackend": 2,
+  "fixtureExcludedFromProfiles": true,
+  "resultParity": true,
+  "runtime": "Node24.19.0 macOS ARM64 Apple M2",
+  "profiles": [
+    {
+      "profile": "protocol-1000-baseline-0.cpuprofile",
+      "sha256": "1dfd02d826a45ca77d2f229b706a462caba14cfa480fd44268991c49430e8eac",
+      "sampledMicros": 198250,
+      "topSelfSamples": [
+        {
+          "function": "post",
+          "source": "node:inspector",
+          "line": 115,
+          "micros": 40167
+        },
+        {
+          "function": "validate",
+          "source": "file:///private/tmp/forgeloop-storage-baseline322/src/core/schema-validation.js",
+          "line": 99,
+          "micros": 33833
+        },
+        {
+          "function": "(idle)",
+          "source": "",
+          "line": 0,
+          "micros": 17251
+        },
+        {
+          "function": "",
+          "source": "file:///private/tmp/forgeloop-storage-baseline322/src/core/events.js",
+          "line": 589,
+          "micros": 16125
+        },
+        {
+          "function": "visit",
+          "source": "file:///private/tmp/forgeloop-storage-baseline322/src/core/json-safety.js",
+          "line": 28,
+          "micros": 11499
+        },
+        {
+          "function": "canonicalize",
+          "source": "file:///private/tmp/forgeloop-storage-baseline322/src/core/artifacts.js",
+          "line": 41,
+          "micros": 11292
+        },
+        {
+          "function": "validateEventLedger",
+          "source": "file:///private/tmp/forgeloop-storage-baseline322/src/core/events.js",
+          "line": 703,
+          "micros": 11249
+        },
+        {
+          "function": "(garbage collector)",
+          "source": "",
+          "line": 0,
+          "micros": 8834
+        },
+        {
+          "function": "Hash",
+          "source": "",
+          "line": 0,
+          "micros": 5000
+        },
+        {
+          "function": "",
+          "source": "file:///private/tmp/forgeloop-storage-baseline322/src/core/artifacts.js",
+          "line": 45,
+          "micros": 3875
+        },
+        {
+          "function": "assertApprovalEventDetails",
+          "source": "file:///private/tmp/forgeloop-storage-baseline322/src/core/action-model.js",
+          "line": 539,
+          "micros": 3750
+        },
+        {
+          "function": "(program)",
+          "source": "",
+          "line": 0,
+          "micros": 3584
+        },
+        {
+          "function": "realpath",
+          "source": "",
+          "line": 0,
+          "micros": 3499
+        },
+        {
+          "function": "validateStateLedgerCoherence",
+          "source": "file:///private/tmp/forgeloop-storage-baseline322/src/core/events.js",
+          "line": 792,
+          "micros": 2542
+        },
+        {
+          "function": "",
+          "source": "",
+          "line": 0,
+          "micros": 2542
+        }
+      ]
+    },
+    {
+      "profile": "protocol-1000-baseline-1.cpuprofile",
+      "sha256": "794bfb43897241dbcc3c0c718c6806abfef634150906d16abc10b121e6379976",
+      "sampledMicros": 178708,
+      "topSelfSamples": [
+        {
+          "function": "post",
+          "source": "node:inspector",
+          "line": 115,
+          "micros": 29125
+        },
+        {
+          "function": "validate",
+          "source": "file:///private/tmp/forgeloop-storage-baseline322/src/core/schema-validation.js",
+          "line": 99,
+          "micros": 26540
+        },
+        {
+          "function": "(idle)",
+          "source": "",
+          "line": 0,
+          "micros": 21708
+        },
+        {
+          "function": "canonicalize",
+          "source": "file:///private/tmp/forgeloop-storage-baseline322/src/core/artifacts.js",
+          "line": 41,
+          "micros": 21374
+        },
+        {
+          "function": "",
+          "source": "file:///private/tmp/forgeloop-storage-baseline322/src/core/events.js",
+          "line": 589,
+          "micros": 17543
+        },
+        {
+          "function": "visit",
+          "source": "file:///private/tmp/forgeloop-storage-baseline322/src/core/json-safety.js",
+          "line": 28,
+          "micros": 16291
+        },
+        {
+          "function": "assertJsonLimits",
+          "source": "file:///private/tmp/forgeloop-storage-baseline322/src/core/json-safety.js",
+          "line": 25,
+          "micros": 6334
+        },
+        {
+          "function": "validateEventLedger",
+          "source": "file:///private/tmp/forgeloop-storage-baseline322/src/core/events.js",
+          "line": 703,
+          "micros": 6293
+        },
+        {
+          "function": "assertApprovalEventDetails",
+          "source": "file:///private/tmp/forgeloop-storage-baseline322/src/core/action-model.js",
+          "line": 539,
+          "micros": 6166
+        },
+        {
+          "function": "(garbage collector)",
+          "source": "",
+          "line": 0,
+          "micros": 3750
+        },
+        {
+          "function": "",
+          "source": "",
+          "line": 0,
+          "micros": 2500
+        },
+        {
+          "function": "update",
+          "source": "",
+          "line": 0,
+          "micros": 2500
+        },
+        {
+          "function": "Hash",
+          "source": "",
+          "line": 0,
+          "micros": 2459
+        },
+        {
+          "function": "",
+          "source": "file:///private/tmp/forgeloop-storage-baseline322/src/core/artifacts.js",
+          "line": 45,
+          "micros": 2458
+        },
+        {
+          "function": "lstat",
+          "source": "",
+          "line": 0,
+          "micros": 1292
+        }
+      ]
+    },
+    {
+      "profile": "protocol-1000-native-0.cpuprofile",
+      "sha256": "51e3b43c8913a637d6fe84c1670c7a93930f83d028ef9092d3a114ee79c59bf8",
+      "sampledMicros": 420125,
+      "topSelfSamples": [
+        {
+          "function": "post",
+          "source": "node:inspector",
+          "line": 115,
+          "micros": 55291
+        },
+        {
+          "function": "next",
+          "source": "",
+          "line": 0,
+          "micros": 53543
+        },
+        {
+          "function": "decode",
+          "source": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/repository.js",
+          "line": 28,
+          "micros": 48835
+        },
+        {
+          "function": "iterateRange",
+          "source": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/ledger-event-snapshot.js",
+          "line": 34,
+          "micros": 28832
+        },
+        {
+          "function": "canonicalize",
+          "source": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/artifacts.js",
+          "line": 48,
+          "micros": 26376
+        },
+        {
+          "function": "validate",
+          "source": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/schema-validation.js",
+          "line": 99,
+          "micros": 25085
+        },
+        {
+          "function": "(idle)",
+          "source": "",
+          "line": 0,
+          "micros": 23626
+        },
+        {
+          "function": "canonicalFingerprint",
+          "source": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/artifacts.js",
+          "line": 58,
+          "micros": 20292
+        },
+        {
+          "function": "decodeIndexedEvent",
+          "source": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/repository.js",
+          "line": 224,
+          "micros": 18750
+        },
+        {
+          "function": "update",
+          "source": "",
+          "line": 0,
+          "micros": 12958
+        },
+        {
+          "function": "(garbage collector)",
+          "source": "",
+          "line": 0,
+          "micros": 11457
+        },
+        {
+          "function": "visit",
+          "source": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/json-safety.js",
+          "line": 28,
+          "micros": 8750
+        },
+        {
+          "function": "Hash",
+          "source": "",
+          "line": 0,
+          "micros": 7583
+        },
+        {
+          "function": "iterateEvents",
+          "source": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/unit-of-work.js",
+          "line": 256,
+          "micros": 7583
+        },
+        {
+          "function": "entries",
+          "source": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/ledger-event-collection.js",
+          "line": 88,
+          "micros": 6249
+        }
+      ]
+    },
+    {
+      "profile": "protocol-1000-native-1.cpuprofile",
+      "sha256": "76b863fbaaa7c90f81db147f9b5bb2b6b907174794f2362ed62022f8fb62acde",
+      "sampledMicros": 396167,
+      "topSelfSamples": [
+        {
+          "function": "next",
+          "source": "",
+          "line": 0,
+          "micros": 60666
+        },
+        {
+          "function": "decode",
+          "source": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/repository.js",
+          "line": 28,
+          "micros": 60042
+        },
+        {
+          "function": "post",
+          "source": "node:inspector",
+          "line": 115,
+          "micros": 32542
+        },
+        {
+          "function": "canonicalize",
+          "source": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/artifacts.js",
+          "line": 48,
+          "micros": 29165
+        },
+        {
+          "function": "validate",
+          "source": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/schema-validation.js",
+          "line": 99,
+          "micros": 28708
+        },
+        {
+          "function": "(idle)",
+          "source": "",
+          "line": 0,
+          "micros": 23834
+        },
+        {
+          "function": "decodeIndexedEvent",
+          "source": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/repository.js",
+          "line": 224,
+          "micros": 22164
+        },
+        {
+          "function": "iterateRange",
+          "source": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/ledger-event-snapshot.js",
+          "line": 34,
+          "micros": 20042
+        },
+        {
+          "function": "update",
+          "source": "",
+          "line": 0,
+          "micros": 16375
+        },
+        {
+          "function": "canonicalFingerprint",
+          "source": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/artifacts.js",
+          "line": 58,
+          "micros": 12459
+        },
+        {
+          "function": "validateStoredEvent",
+          "source": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/events.js",
+          "line": 630,
+          "micros": 10000
+        },
+        {
+          "function": "(garbage collector)",
+          "source": "",
+          "line": 0,
+          "micros": 8834
+        },
+        {
+          "function": "visit",
+          "source": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/json-safety.js",
+          "line": 28,
+          "micros": 8709
+        },
+        {
+          "function": "iterateEvents",
+          "source": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/unit-of-work.js",
+          "line": 256,
+          "micros": 5999
+        },
+        {
+          "function": "validateSchema",
+          "source": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/schema-validation.js",
+          "line": 184,
+          "micros": 5000
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Inspector startup/stop appear in profiles; these diagnostic timings are not release comparisons",
+    "Self sampled CPU is approximate, not total inclusive call cost",
+    "No validation is bypassed; same-path execution provenance retained"
+  ],
+  "finding": "Repeated native row iteration and JSON decode are prominent self-sampled costs; schema validation and canonical hashing remain substantial in both backends."
+}

@@ -1,3 +1,5 @@
+import { withExistingProjectScope } from "../src/storage/existing-project-scope.js";
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { mkdtemp, writeFile, readdir } from "node:fs/promises";
@@ -18,6 +20,7 @@ const packageRoot = getPackageRoot();
 
 async function seedFullDiagnosticRun({ target }) {
   const taskId = "task-observability";
+  await ensureFixtureTask(target, taskId, packageRoot);
   const cycle = (value) => ({ verificationCycle: value });
   const events = () => ({ taskId });
 
@@ -104,12 +107,21 @@ async function hashTaskDirectory(target) {
     for (const entry of entries) {
       const entryPath = path.join(directory, entry.name);
       if (entry.isDirectory()) await walk(entryPath);
-      else hash.update(entry.name).update(await readFileBytes(entryPath));
+      else if (!["state.sqlite-wal", "state.sqlite-shm"].includes(entry.name)) hash.update(entry.name).update(await readFileBytes(entryPath));
     }
   };
   const { readFile } = await import("node:fs/promises");
   const readFileBytes = readFile;
   if (await exists(root)) await walk(root);
+  const records = await withExistingProjectScope(target, store => {
+    const tables = store.db.prepare("SELECT name FROM sqlite_schema WHERE type = 'table' ORDER BY name").all();
+    return tables.map(({ name }) => {
+      assert.match(name, /^[a-z_]+$/u);
+      const rows = store.db.prepare(`SELECT * FROM "${name}"`).all();
+      return { name, rows: rows.map(row => JSON.stringify(row)).sort() };
+    });
+  }, { readOnly: true });
+  hash.update(JSON.stringify(records));
   return hash.digest("hex");
 }
 

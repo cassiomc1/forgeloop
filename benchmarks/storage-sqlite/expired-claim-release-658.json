@@ -1,0 +1,21 @@
+{
+  "increment": 658,
+  "releaseThresholdsVerified": false,
+  "before": {
+    "directLateRelease": "persisted after rollback",
+    "reopenedLateRelease": "persisted after reopening a native transaction"
+  },
+  "after": {
+    "targetedTests": 63,
+    "failures": 0,
+    "fastVerificationExit": 0,
+    "rejectedCode": "E_STORAGE_TRANSACTION_EXPIRED",
+    "validSynchronousReleasesPreserved": true
+  },
+  "scope": "repository releaseClaims and native transaction entry; not universal persistence-authority proof",
+  "sourceHashes": {
+    "src/storage/repository.js": "0bad203dd593ea548a584ae19d6e858bf1c274c2d72e831589f5a280aca46b74",
+    "src/storage/transaction.js": "f7d1bd86fc1391eaf1c125722d2ff602f1a60c3f3230dd2021fe5e2cb0d8142f",
+    "tests/storage-store.test.js": "9f57750d35e61b776abc38b83c6abf1dfe079e2a3bd401a2cc65b4daf06fdb8b"
+  }
+}

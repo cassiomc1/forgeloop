@@ -1,0 +1,58 @@
+{
+  "increment": 611,
+  "failure": "Linux607 correction contention returned E_PHASE_PREREQUISITE_MISSING for a canonical revision conflict",
+  "prechangeControl": {
+    "tests": 6,
+    "passed": 4,
+    "failed": 2,
+    "raw": "/tmp/sqlite-phase-conflict611-before.log"
+  },
+  "firstCorrectionDiagnosis": "Phase guards alone left the readiness loader wrapping conflicts. Diagnostic stack located execution-prerequisites.load and persisted preflight suppression; fixed those and phase readiness forwarding.",
+  "finalFocusedTests": {
+    "tests": 41,
+    "passed": 41,
+    "failed": 0,
+    "raw": "/tmp/sqlite-phase-conflict611b-final.log"
+  },
+  "controls": [
+    "Contract and route revision conflicts retain exact original error/code/artifacts at readiness and later phase identity boundaries",
+    "Missing and invalid contract/route data retain E_PHASE_PREREQUISITE_MISSING",
+    "Persisted preflight conflict is never suppressed as missing preflight",
+    "Every injected refusal retains identical logical task snapshot",
+    "Independent correction writers accept exactly one transition with loser conflict code"
+  ],
+  "files": [
+    {
+      "path": "src/core/phase.js",
+      "sha256": "71686f626c414ad0c7302e6e96fe8b797e05fcca8ddf04502ad494528936daaf"
+    },
+    {
+      "path": "src/core/execution-prerequisites.js",
+      "sha256": "e6c73a1f6a67198d3e89d53551e8f7213e4bf00f84e5ef301556c1e684ecf144"
+    },
+    {
+      "path": "tests/storage-phase-conflict.test.js",
+      "sha256": "62c78fc2dc4a17f0992ca298bb0f33933a0612e6fcb37f7e0f2b2405a71d440d"
+    }
+  ],
+  "fullCurrentPlatformAcceptance": false,
+  "limitations": [
+    "Source611 full Mac/Windows/Linux acceptance pending",
+    "Startup,commit,resource,persistentMCP,inclusiveLOC,wholeconsumer/maintenance andchangedworkflow/PR requirements remain"
+  ],
+  "complexityCorrection": "Initial final611 complexity score26 exceeded25. Extracted shared required-artifact reader preserving raw conflicts and original missing/invalid artifact errors. No remote transfer or run of that candidate.",
+  "finalFastVerification": "PASS",
+  "changedFileLint": "PASS",
+  "complexity": {
+    "status": "PASS",
+    "regressions": []
+  },
+  "finalFullMacSnapshot": {
+    "root": "/tmp/forgeloop-phase-conflict611b",
+    "sourceFiles": 2638,
+    "status": "PASS",
+    "rawLog": "/tmp/sqlite-phase-conflict611b-prepush.log",
+    "terminalEvidence": "full-macos-snapshot611b-terminal-612.json",
+    "sourceDrift": []
+  }
+}

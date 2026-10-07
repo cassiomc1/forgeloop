@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { mkdir, mkdtemp, readFile, readdir, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { createTaskDescriptor, writeTaskDescriptor } from "../src/core/task-descriptor.js";
 import { test } from "node:test";
 
 import {
@@ -112,17 +113,18 @@ test("invalid or secret-like state is rejected on read and write", async () => {
 test("state writes are atomic and clear preserves sibling files", async () => {
   await withTarget(async (target) => {
     const state = createWorkState(input());
+    await writeTaskDescriptor(target, createTaskDescriptor({ taskId: state.taskId, writeClaims: [] }));
     await writeWorkState(target, state);
     await writeFile(path.join(target, ".forgeloop", "manifest.json"), "{}\n");
 
-    const stored = JSON.parse(await readFile(path.join(target, ".forgeloop", "work-state.json"), "utf8"));
+    const stored = await readWorkState(target, { taskId: state.taskId });
     assert.deepEqual(stored, state);
-    assert.deepEqual((await readdir(path.join(target, ".forgeloop"))).sort(), ["manifest.json", "work-state.json"]);
+    assert.equal((await readdir(path.join(target, ".forgeloop"))).includes("work-state.json"), false);
 
-    const result = await clearWorkState(target);
+    const result = await clearWorkState(target, { taskId: state.taskId });
     assert.equal(result.removed, true);
     assert.equal(await readFile(path.join(target, ".forgeloop", "manifest.json"), "utf8"), "{}\n");
-    assert.equal((await clearWorkState(target)).removed, false);
+    assert.equal((await clearWorkState(target, { taskId: state.taskId })).removed, false);
   });
 });
 

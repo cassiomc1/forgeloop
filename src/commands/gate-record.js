@@ -2,12 +2,12 @@ import { lstat, readFile as readBytesFromFile } from "node:fs/promises";
 import path from "node:path";
 
 import { sha256 } from "../core/manifest.js";
-import { ensureWithin, isPathWithin, realpathWithTransientWindowsRetry } from "../core/filesystem.js";
+import { assertSafePath, ensureWithin, isPathWithin, realpathWithTransientWindowsRetry } from "../core/filesystem.js";
 import { readPersistedRoute } from "../core/route-artifact.js";
 import { readContract } from "../core/contract.js";
 import { readGuideMetadata, requiredGatesForGuides } from "../core/guide-metadata.js";
 import { optionalConfig } from "../core/preflight-loaders.js";
-import { persistGate } from "../core/gate-artifact.js";
+import { persistGate, readCanonicalGateArtifactBinding } from "../core/gate-artifact.js";
 import { readWorkState } from "../core/work-state.js";
 import { taskArtifactPath, taskGatePath } from "../core/task-paths.js";
 import { withTaskMutation } from "../core/task-command.js";
@@ -66,6 +66,13 @@ async function hashArtifact(target, artifactPath) {
     candidate = ensureWithin(target, artifactPath);
   } catch (cause) {
     throw gateError(`Gate artifact escapes the project: ${artifactPath}`, { cause });
+  }
+  const canonical = readCanonicalGateArtifactBinding(target, artifactPath);
+  if (canonical) {
+    await assertSafePath(target, artifactPath);
+    if (canonical.sha256 === null) throw gateError(`Gate artifact is unavailable: ${artifactPath}`);
+    if (canonical.byteLength > MAX_GATE_ARTIFACT_BYTES) throw gateError(`Gate artifact exceeds the maximum size of ${MAX_GATE_ARTIFACT_BYTES} bytes: ${artifactPath}`);
+    return { path: artifactPath, sha256: canonical.sha256 };
   }
   let stat;
   try {

@@ -1,3 +1,4 @@
+import { assertCanonicalPersistence } from "../storage/operational-context.js";
 import { recordDiagnosis } from "../core/diagnosis.js";
 import { recordStructuredDiagnosticCase } from "../core/diagnostic-record.js";
 import { withTaskMutation } from "../core/task-command.js";
@@ -16,7 +17,9 @@ export async function runRecordDiagnosis({
   nextSafeAction,
   taskId,
   task,
+  persistence = null,
 }) {
+  assertCanonicalPersistence(persistence);
   if (file) {
     const legacyFields = [hypothesis, failureClass, settledBy, nextSafeAction].some((value) => value !== undefined && value !== null)
       || (Array.isArray(evidenceRefs) && evidenceRefs.length > 0)

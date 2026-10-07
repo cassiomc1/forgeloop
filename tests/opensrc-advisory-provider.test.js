@@ -51,11 +51,19 @@ function scriptedSpawn({ calls = [], version = `opensrc ${EXPECTED_VERSION}`, pa
       env: options.env ? { ...options.env } : undefined,
     });
     const output = args.includes("--version") ? version : pathOutput;
-    const script = [
-      stderrOutput ? `process.stderr.write(${JSON.stringify(stderrOutput)});` : "",
-      `process.stdout.write(${JSON.stringify(output)});`,
-    ].join("");
-    return spawn(process.execPath, ["-e", script], options);
+    // Keep fixture payloads off argv: Windows limits command-line length before
+    // the child can exercise the adapter's real stdout/stderr byte limits.
+    const script = "let input = ''; process.stdin.setEncoding('utf8'); "
+      + "process.stdin.on('data', chunk => { input += chunk; }); "
+      + "process.stdin.on('end', () => { const data = JSON.parse(input); "
+      + "process.stderr.write(data.stderr); process.stdout.write(data.stdout); });";
+    const child = spawn(process.execPath, ["-e", script], {
+      ...options,
+      stdio: ["pipe", "pipe", "pipe"],
+    });
+    child.stdin.on("error", () => {}); // The adapter may terminate an oversized child.
+    child.stdin.end(JSON.stringify({ stdout: output, stderr: stderrOutput }));
+    return child;
   };
 }
 

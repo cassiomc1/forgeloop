@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "increment": 647,
+  "problem": "Handoff artifact/catalog and acceptance ledger were projected with separate component reads, allowing concurrent committed writes to mix histories.",
+  "correction": "Wrap handoff-show and handoff-list projections in withProjectReadSnapshot; task/handoffs resource delegates to the same list projection. Prepared operations retain staged observations via existing snapshot helper policy.",
+  "productionChangesSinceFullMac644": [
+    {
+      "file": "src/commands/handoff-list.js",
+      "beforeSha256": "c817a0c2f849781b6f9cbc2ceeff3607180fae89611e4503852801799ad78fae",
+      "afterSha256": "4aaeb4a8127b9647b3a88b38dc349f6bc9c64c6a92adc1d26c0d4cd618ea6af6"
+    },
+    {
+      "file": "src/commands/handoff-show.js",
+      "beforeSha256": "bd8f3e977037333788de393284b48599b2331f9824120d3bbbb85f6072f7617c",
+      "afterSha256": "23fad13aeca8087e2aa1cd69087aeb28e58e766bd0cf442ca342da5b3689ef90"
+    },
+    {
+      "file": "src/core/integration-resources.js",
+      "beforeSha256": "47e3c62c3d0fdfded06c6b7883bd13f1ddf1264c6bbdcf01e9f730fa2904f00b",
+      "afterSha256": "47964d9101126d349aba144661ca17a89487650ea14b8975c67e3227833dfe6f"
+    }
+  ],
+  "tests": {
+    "focused": 7,
+    "passed": 7,
+    "failed": 0,
+    "regressions": "Independent writable connection updates a ledger row after envelope bytes are read; each show/list/public resource projection owns a readonly copy and retains OPEN from its committed snapshot while live bytes are changed.",
+    "mcpClean": {
+      "tests": 73,
+      "passed": 73,
+      "failed": 0
+    },
+    "verifyFast": "PASS",
+    "docsCheck": "PASS",
+    "diffCheck": "PASS"
+  },
+  "limitations": [
+    "Scoped read consistency does not finish every public path or sole writer authority",
+    "Full Mac644 predates this production correction; current full platforms pending"
+  ],
+  "soleWriterVerified": false,
+  "discovery": {
+    "jevgrepExitCode": 0,
+    "log": "/Users/cassio/.codex/verification/jevgrep647.log"
+  }
+}

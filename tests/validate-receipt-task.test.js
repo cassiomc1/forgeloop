@@ -1,3 +1,8 @@
+import { exportLegacyFixture } from "./helpers/storage-fixtures.js";
+import { runTaskCreate } from "../src/commands/task-create.js";
+import { runValidateReceipt } from "../src/commands/validate-receipt.js";
+import { openStorageDatabase, putArtifact } from "../src/storage/index.js";
+import { access } from "node:fs/promises";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
@@ -10,6 +15,47 @@ import { taskStorageKey } from "../src/core/task-identity.js";
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const cliPath = path.join(repositoryRoot, "src", "cli.js");
+
+test("direct receipt command selects native authority without an ambient dispatcher", async () => {
+  await withTarget(async target => {
+    const taskId = "direct-native-receipt";
+    await runTaskCreate({ target, taskId, packageRoot: repositoryRoot, claims: [] });
+    const receipt = receiptFixture(taskId);
+    await writeTaskReceipt(target, taskId, receipt);
+    assert.equal((await runValidateReceipt({ target, taskId, packageRoot: repositoryRoot })).taskId, taskId);
+    const relativeFile = `.forgeloop/task-state/${taskStorageKey(taskId)}/execution-receipt.json`;
+    await mkdir(path.dirname(path.join(target, relativeFile)), { recursive: true });
+    await writeFile(path.join(target, relativeFile), JSON.stringify(receiptFixture("contradictory-file")));
+    await assert.rejects(runValidateReceipt({ target, file: relativeFile, packageRoot: repositoryRoot }), { code: "E_STORAGE_MIGRATION_REQUIRED" });
+    await writeFile(path.join(target, "portable-receipt.json"), JSON.stringify(receiptFixture("explicit-portable")));
+    assert.equal((await runValidateReceipt({ target, file: "portable-receipt.json", packageRoot: repositoryRoot })).taskId, "explicit-portable");
+    await rm(path.join(target, ".forgeloop/task-state"), { recursive: true, force: true });
+    assert.equal((await runValidateReceipt({ target, file: relativeFile, packageRoot: repositoryRoot })).taskId, taskId);
+    const db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+    try { db.prepare("UPDATE task_artifacts SET fingerprint = ? WHERE task_id = ? AND kind = 'receipt'").run("0".repeat(64), taskId); }
+    finally { db.close(); }
+    await assert.rejects(runValidateReceipt({ target, taskId, packageRoot: repositoryRoot }), /fingerprint disagrees/);
+  });
+});
+
+test("canonical receipt validation rejects missing and fingerprint-tampered records", async () => {
+  await withTarget(async target => {
+    const created = runCli(target, "task-create", "--task", "receipt-integrity", "--json");
+    assert.equal(created.status, 0, created.stderr);
+    const missing = runCli(target, "validate-receipt", "--task", "receipt-integrity", "--json");
+    assert.equal(missing.status, 1);
+    assert.match(missing.stderr, /missing from canonical storage/);
+    await writeTaskReceipt(target, "receipt-integrity", receiptFixture("receipt-integrity"));
+    const db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+    try {
+      db.prepare("UPDATE task_artifacts SET fingerprint = ? WHERE task_id = ? AND kind = 'receipt'").run("0".repeat(64), "receipt-integrity");
+    } finally { db.close(); }
+    const tampered = runCli(target, "validate-receipt", "--task", "receipt-integrity", "--json");
+    assert.equal(tampered.status, 1);
+    assert.match(tampered.stderr, /fingerprint disagrees/);
+    await assert.rejects(access(path.join(target, ".forgeloop/task-state")), { code: "ENOENT" });
+  });
+});
 
 async function withTarget(run) {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-vr-task-"));
@@ -43,6 +89,15 @@ function receiptFixture(taskId, overrides = {}) {
 }
 
 async function writeTaskReceipt(target, taskId, receipt) {
+  try {
+    await access(path.join(target, ".forgeloop/state.sqlite"));
+    const db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+    try { putArtifact(db, { taskId, kind: "receipt", payload: receipt }); }
+    finally { db.close(); }
+    return;
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+  }
   const directory = path.join(target, ".forgeloop", "task-state", taskStorageKey(taskId));
   await mkdir(directory, { recursive: true });
   await writeFile(
@@ -201,9 +256,10 @@ test("TASK-RESOLVE-CORRUPT-3: no task namespaces plus legacy receipt remains com
 
 test("TASK-RESOLVE-CORRUPT-4: one healthy task plus one corrupt namespace resolves the healthy task", async () => {
   await withTarget(async (target) => {
-    const created = runCli(target, "task-create", "--task", "healthy-a", "--json");
-    assert.equal(created.status, 0, created.stderr);
+    // Legacy read-only compatibility control; public writable creation uses SQLite.
+    await runTaskCreate({ target, packageRoot: repositoryRoot, taskId: "healthy-a" });
     await writeTaskReceipt(target, "healthy-a", receiptFixture("healthy-a"));
+    await exportLegacyFixture(target);
     await writeCorruptNamespace(target, "a".repeat(64), "corrupt-task");
 
     const result = runCli(target, "validate-receipt", "--json");
@@ -294,9 +350,10 @@ test("TASK-DESCRIPTOR-MISSING-4: empty 64-hex directory fails closed", async () 
 
 test("TASK-DESCRIPTOR-MISSING-5: one healthy task plus one descriptor-less corrupt namespace resolves the healthy task (deliberate)", async () => {
   await withTarget(async (target) => {
-    const created = runCli(target, "task-create", "--task", "healthy-b", "--json");
-    assert.equal(created.status, 0, created.stderr);
+    // Legacy read-only compatibility control; public writable creation uses SQLite.
+    await runTaskCreate({ target, packageRoot: repositoryRoot, taskId: "healthy-b" });
     await writeTaskReceipt(target, "healthy-b", receiptFixture("healthy-b"));
+    await exportLegacyFixture(target);
     const dir = path.join(target, ".forgeloop", "task-state", "f".repeat(64));
     await mkdir(dir, { recursive: true });
     await writeFile(path.join(dir, "work-state.json"), `${JSON.stringify({ schemaVersion: 1, taskId: "orphan" })}\n`, "utf8");

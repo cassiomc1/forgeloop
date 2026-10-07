@@ -1,0 +1,217 @@
+{
+  "checkpoint": 584,
+  "scope": "Mac public storage-rollback transport and canonical CLI restoration/refusal drills; resume transport pending",
+  "sourceHashes": {
+    "src/cli.js": "51c1a6e0b988aed2caf4d88aee195eda332e577ddd898f1d187b13c11bc036c3",
+    "src/core/cli-command-definitions.js": "f9e62b55a0d990c1bd8a9506d16cafb0adc3840c2fa696e82dba6d6c7c445a84",
+    "src/core/command-input.js": "4692d1e8fd8d887de872f86db3c3f13468dc02a6f7e2bd6370b3a154cf8bcf70",
+    "src/core/command-executors.js": "1b5d2a2e707ad59f4ebea7ec035437aac556d44c57a12a188c431cbee071f495",
+    "src/core/integration-invocation-policy.js": "eaf631ecc3132828642c4715f7a91fa57d0545756ba4a3582401bfb31b5c926b",
+    "src/storage/capabilities.js": "3e392a6e52967aa914f20520a4f3d7b220a122815a4204ef9978813d3ab1ae75",
+    "tests/storage-rollback-command.test.js": "f3cb1bebdbf209c6cc276ee556edb6b9d47de2f11787ef2de320e5268f0ccc2d",
+    "scripts/drill-storage-prewrite-source-rollback.mjs": "24b018a059d3be806a9ad5e102b78ff7f57982e8e2842f9c761530008e6535c2",
+    "docs/CLI_REFERENCE.md": "979b03ec10347373fc2a16d42807e7df259f805cf326e5af07a60c3b6f18c396"
+  },
+  "tests": {
+    "passed": 10,
+    "failed": 0,
+    "rawLog": "\u2714 rollback operator no-quiescence refuses before allocating storage (3120.998833ms)\n\u2714 rollback operator no-write-exclusion refuses before allocating storage (3225.998667ms)\n\u2714 rollback operator unsupported-target refuses before allocating storage (3274.557416ms)\n\u2714 rollback release refuses missing validator checkout (212.384ms)\n\u2714 rollback release refuses unsupported validator checkout (128.706667ms)\n\u2714 rollback release refuses modified validator checkout (2583.020917ms)\n\u2714 public rollback missing-native-exclusion refuses without storage changes (3200.712875ms)\n\u2714 public rollback missing-target refuses without storage changes (3240.307042ms)\n\u2714 public rollback unsupported-target refuses without storage changes (3176.039292ms)\n\u2714 public rollback help explains conditional native-write exclusion (258.067542ms)\n\u2139 tests 10\n\u2139 suites 0\n\u2139 pass 10\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 10106.039625\n"
+  },
+  "cliRestorationDrill": {
+    "scope": "Owned linked-worktree conditional pre-write source publication with exact-target legacy validation; no public command or interrupted recovery claim",
+    "operator": true,
+    "operatorCli": true,
+    "publication": {
+      "root": "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-PnBR9r-linked/rollback-migration-retained/publication/source-rollback/source-publication",
+      "native": "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-PnBR9r-linked/rollback-migration-retained/publication/source-rollback/source-publication/retained-native",
+      "source": "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-PnBR9r-linked",
+      "journal": {
+        "schemaVersion": 1,
+        "kind": "MIGRATION_SOURCE_ROLLBACK_PUBLICATION",
+        "phase": "RESTORED",
+        "ownerId": "37178a92-e45a-4db4-a6ec-982efc62aa9d",
+        "operationId": "aeded092-d10a-421c-8c69-15f950f3c482",
+        "sourceInventoryFingerprint": "c428bbef2e42900585634c0d738c45fb1afbd19e7fb3fefbb1f301729435efb2",
+        "nativeFingerprint": "5107dea51707f029e73c87bb10ec84f53f961f62442d66369cc33c41ec67bee6",
+        "nativeBackupFingerprint": "fc640fcd05cb6187d5b2159d6856797e7912298591015c45568236dcc718f47b",
+        "nativeWritesExcludedByOperator": true,
+        "nativeInventory": {
+          "files": [
+            {
+              "path": ".forgeloop/state.sqlite",
+              "size": 217088,
+              "sha256": "9aa398732dd4bfd1792e0a11f87d76c1b6da5c752924243b93ad8e53b808bbb3"
+            },
+            {
+              "path": ".forgeloop/storage-version.json",
+              "size": 256,
+              "sha256": "e59fed1d2d116de4724a8505b6064f51a678869089624ed777df764fff9e1e3d"
+            }
+          ],
+          "directories": []
+        }
+      },
+      "restored": true,
+      "nativeAuthorityRetained": true,
+      "historicalWritesExcluded": false,
+      "nativeWritesExcludedByOperator": true,
+      "targetVersionValidated": true,
+      "validation": {
+        "schemaVersion": 1,
+        "kind": "MIGRATION_SOURCE_ROLLBACK_VALIDATION",
+        "status": "VALID",
+        "ownerId": "37178a92-e45a-4db4-a6ec-982efc62aa9d",
+        "operationId": "aeded092-d10a-421c-8c69-15f950f3c482",
+        "sourceInventoryFingerprint": "c428bbef2e42900585634c0d738c45fb1afbd19e7fb3fefbb1f301729435efb2",
+        "nativeFingerprint": "5107dea51707f029e73c87bb10ec84f53f961f62442d66369cc33c41ec67bee6",
+        "target": {
+          "commit": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+          "version": "1.14.0"
+        },
+        "tasks": [
+          {
+            "taskId": "phase2a-closure-task",
+            "status": "VALID"
+          }
+        ]
+      },
+      "maintenanceReleaseAllowed": true
+    },
+    "before": {
+      "exit": 0,
+      "stdout": "{\n  \"status\": \"VALID\",\n  \"errors\": [],\n  \"incomplete\": [],\n  \"stale\": null,\n  \"delegation\": {\n    \"status\": \"NOT_APPLICABLE\",\n    \"required\": false,\n    \"errors\": []\n  },\n  \"continuity\": {\n    \"required\": false,\n    \"status\": \"NOT_APPLICABLE\",\n    \"classification\": \"ABSENT\",\n    \"errors\": [],\n    \"reasonCodes\": [],\n    \"reasons\": [\n      \"CONTINUITY_ABSENT\"\n    ],\n    \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n    \"evidenceAuthority\": \"NONE\"\n  },\n  \"evidence\": [\n    {\n      \"kind\": \"OBSERVED\",\n      \"source\": \"ForgeLoop protocol conformance\",\n      \"result\": \"VALID\"\n    }\n  ]\n}\n",
+      "stderr": ""
+    },
+    "migrated": {
+      "phase": "PUBLISHED",
+      "operationId": "aeded092-d10a-421c-8c69-15f950f3c482",
+      "taskCount": 1,
+      "attachments": 0,
+      "currentStateVerified": true,
+      "restored": false,
+      "path": "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-PnBR9r-linked/.forgeloop/state.sqlite",
+      "destination": "rollback-migration-retained"
+    },
+    "nativeValidation": {
+      "ok": true,
+      "command": "validate-protocol",
+      "exitCode": 0,
+      "result": {
+        "status": "VALID",
+        "errors": [],
+        "incomplete": [],
+        "stale": null,
+        "delegation": {
+          "status": "NOT_APPLICABLE",
+          "required": false,
+          "errors": []
+        },
+        "continuity": {
+          "required": false,
+          "status": "NOT_APPLICABLE",
+          "classification": "ABSENT",
+          "errors": [],
+          "reasonCodes": [],
+          "reasons": [
+            "CONTINUITY_ABSENT"
+          ],
+          "authority": "OPERATIONAL_CONTEXT_ONLY",
+          "evidenceAuthority": "NONE"
+        },
+        "evidence": [
+          {
+            "kind": "OBSERVED",
+            "source": "ForgeLoop protocol conformance",
+            "result": "VALID"
+          }
+        ]
+      },
+      "error": null,
+      "metadata": {
+        "protocolVersion": 1,
+        "integrationApiVersion": 1,
+        "packageVersion": "2.0.0"
+      }
+    },
+    "after": {
+      "exit": 0,
+      "stdout": "{\n  \"status\": \"VALID\",\n  \"errors\": [],\n  \"incomplete\": [],\n  \"stale\": null,\n  \"delegation\": {\n    \"status\": \"NOT_APPLICABLE\",\n    \"required\": false,\n    \"errors\": []\n  },\n  \"continuity\": {\n    \"required\": false,\n    \"status\": \"NOT_APPLICABLE\",\n    \"classification\": \"ABSENT\",\n    \"errors\": [],\n    \"reasonCodes\": [],\n    \"reasons\": [\n      \"CONTINUITY_ABSENT\"\n    ],\n    \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n    \"evidenceAuthority\": \"NONE\"\n  },\n  \"evidence\": [\n    {\n      \"kind\": \"OBSERVED\",\n      \"source\": \"ForgeLoop protocol conformance\",\n      \"result\": \"VALID\"\n    }\n  ]\n}\n",
+      "stderr": ""
+    },
+    "nativeSnapshotUnchanged": true,
+    "retainedNativeLayout": true,
+    "preservedSourceRetained": true,
+    "sourceManifestPresent": true,
+    "fingerprint": "5107dea51707f029e73c87bb10ec84f53f961f62442d66369cc33c41ec67bee6"
+  },
+  "cliAcceptedNativeTaskControl": {
+    "scope": "Disposable post-write negative control",
+    "sourceRestorationRefused": true,
+    "productionAdmissionRefusal": true,
+    "restored": false,
+    "newNativeTaskPreserved": true,
+    "nativeValidation": {
+      "ok": true,
+      "command": "validate-protocol",
+      "exitCode": 0,
+      "result": {
+        "status": "VALID",
+        "errors": [],
+        "incomplete": [],
+        "stale": null,
+        "delegation": {
+          "status": "NOT_APPLICABLE",
+          "required": false,
+          "errors": []
+        },
+        "continuity": {
+          "required": false,
+          "status": "NOT_APPLICABLE",
+          "classification": "ABSENT",
+          "errors": [],
+          "reasonCodes": [],
+          "reasons": [
+            "CONTINUITY_ABSENT"
+          ],
+          "authority": "OPERATIONAL_CONTEXT_ONLY",
+          "evidenceAuthority": "NONE"
+        },
+        "evidence": [
+          {
+            "kind": "OBSERVED",
+            "source": "ForgeLoop protocol conformance",
+            "result": "VALID"
+          }
+        ]
+      },
+      "error": null,
+      "metadata": {
+        "protocolVersion": 1,
+        "integrationApiVersion": 1,
+        "packageVersion": "2.0.0"
+      }
+    },
+    "migrated": {
+      "phase": "PUBLISHED",
+      "operationId": "9d566898-7a59-4fe3-ada2-aa8d2a7d1855",
+      "taskCount": 1,
+      "attachments": 0,
+      "currentStateVerified": true,
+      "restored": false,
+      "path": "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-P1S13P-linked/.forgeloop/state.sqlite",
+      "destination": "rollback-migration-retained"
+    }
+  },
+  "initialDocumentationFailure": "\n> @cassiomc1/forgeloop@2.0.0 docs:generate\n> node scripts/generate_documentation_reference.mjs --write\n\n\n\u274c DOCUMENTATION GENERATION / FRESHNESS FAILURES:\n  - DOC_GENERATED_REGION_MISSING: Missing begin marker for region cli:storage-rollback:options in docs/CLI_REFERENCE.md\n",
+  "docsGenerationExit": 0,
+  "completionsGenerationExit": 0,
+  "limitations": [
+    "Public rollback resume routing pending",
+    "Current Windows/Linux operator/release and CLI tests pending",
+    "Exact supported target commit only; other versions refused",
+    "Operator write exclusion assertion required; no automatic historical-write proof",
+    "Whole original plan incomplete"
+  ],
+  "fastExit": 0,
+  "lintExit": 0
+}

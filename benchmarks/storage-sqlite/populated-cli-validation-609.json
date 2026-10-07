@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "node": "v24.19.0",
+  "platform": "darwin",
+  "architecture": "arm64",
+  "cpu": "Apple M2",
+  "totalMemoryBytes": 8589934592,
+  "code": {
+    "baseline": {
+      "packageVersion": "1.14.0",
+      "cliSha256": "bc312d0ff7194720feeec49b295d9fdd4acd11bbe80cf97b3c661e0fc7ed181a"
+    },
+    "native": {
+      "packageVersion": "2.0.0",
+      "cliSha256": "30e8cf93ec2cf24061b58dc35e15a172836847b987229dd6e9d4a5436e3dfec3"
+    }
+  },
+  "validationOnly": true,
+  "releaseThresholdsVerified": false,
+  "normalizedFields": [
+    "history.snapshot.capturedAt: validated timestamp, omitted only from equality"
+  ],
+  "runtime": "Fresh CLI per sample, alternating backend order, warm filesystem caches; synthetic valid RECEIVED tasks with disjoint claims and hash-chained observations",
+  "durability": "SQLite WAL/FULL; read-only benchmark does not measure commit durability",
+  "limitations": [
+    "No filesystem-cold, persistent MCP, filesystem operation count, lock-wait, peak RSS, event-loop or WAL-peak claim",
+    "CLI hashes identify entrypoints, not a complete source manifest; bind final measurements to an immutable checkout",
+    "Validation-only mode emits no timing samples or latency acceptance claim"
+  ],
+  "results": [
+    {
+      "operation": "paginated-task-list",
+      "tasks": 10,
+      "eventsPerOtherTask": 10,
+      "selectedTaskEvents": 1000,
+      "events": 1090,
+      "sqliteVersion": "3.53.3",
+      "outputContractVerified": true,
+      "outputSha256": "f650631af7ae4067186529336dd5e3a59789a568d123099df0bf3febe1b6eb3a"
+    },
+    {
+      "operation": "history-tail",
+      "tasks": 10,
+      "eventsPerOtherTask": 10,
+      "selectedTaskEvents": 1000,
+      "events": 1090,
+      "sqliteVersion": "3.53.3",
+      "outputContractVerified": true,
+      "outputSha256": "473e034d5097b1807e7a2bfc16ed54b1271019e847b76446e13c9b3235990b55"
+    },
+    {
+      "operation": "paginated-task-list",
+      "tasks": 1000,
+      "eventsPerOtherTask": 10,
+      "selectedTaskEvents": 1000,
+      "events": 10990,
+      "sqliteVersion": "3.53.3",
+      "outputContractVerified": true,
+      "outputSha256": "7f0973d5e67106c5cbbcb35eaf12dd4cc1703096f4b34b3a1552d8301fbbe2a8"
+    },
+    {
+      "operation": "history-tail",
+      "tasks": 1000,
+      "eventsPerOtherTask": 10,
+      "selectedTaskEvents": 1000,
+      "events": 10990,
+      "sqliteVersion": "3.53.3",
+      "outputContractVerified": true,
+      "outputSha256": "473e034d5097b1807e7a2bfc16ed54b1271019e847b76446e13c9b3235990b55"
+    }
+  ],
+  "sourceManifestSha256": "5838f0859a8f33ab0a9aec9e5c55bd0e85fd1a42b51d9e68da529b9bc6a90d23",
+  "sourceFiles": 2629,
+  "sourceDrift": [],
+  "latencyAcceptance": "NOT_VERIFIED"
+}

@@ -1,5 +1,6 @@
+import { ensureFixtureTask, readFixtureText, overwriteFixtureRecordBytes } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -23,6 +24,7 @@ async function setup() {
     rules: [{ capability: "repository.push", decision: "REQUIRE_APPROVAL" }],
   }), "utf8");
   const taskId = "approval-authority-task";
+  await ensureFixtureTask(target, taskId, packageRoot);
   await writeWorkState(target, createWorkState({
     taskId,
     contractFingerprint: fingerprint,
@@ -127,9 +129,9 @@ test("replaced approval content after authorization is detectable via the bound 
     // Mutate the resolved approval artifact behind the protocol's back.
     const approvalPath = taskApprovalPath(fixture.taskId, "approval-push");
     const absolute = path.join(fixture.target, approvalPath);
-    const approval = JSON.parse(await readFile(absolute, "utf8"));
+    const approval = JSON.parse(await readFixtureText(fixture.target, absolute));
     approval.hostGrantRef = "tampered-grant";
-    await writeFile(absolute, JSON.stringify(approval, null, 2) + "\n", "utf8");
+    await overwriteFixtureRecordBytes(fixture.target, absolute, JSON.stringify(approval, null, 2) + "\n");
 
     const { readApproval, approvalFingerprint } = await import("../src/core/approvals.js");
     const current = await readApproval(fixture.target, { packageRoot, taskId: fixture.taskId, approvalId: "approval-push" });

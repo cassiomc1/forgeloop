@@ -372,3 +372,19 @@ test("INIT-POLICY-9: dry-run reports reuse for canonical policy artifacts left b
     await rm(target, { recursive: true, force: true });
   }
 });
+
+
+test("init excludes native SQLite runtime files from Git while retaining reviewable policy inputs", async () => {
+  const { createGitRepository } = await import("./helpers/git-fixture.js");
+  const { execFile } = await import("node:child_process");
+  const { promisify } = await import("node:util");
+  const execute = promisify(execFile);
+  const target = await createGitRepository("forgeloop-init-native-ignore-");
+  try {
+    await runInit({ target, packageRoot, packageVersion: PACKAGE_VERSION });
+    const ignored = ["state.sqlite", "state.sqlite-wal", "state.sqlite-shm", "storage-version.json"].map(name => `.forgeloop/${name}`);
+    const result = await execute("git", ["-C", target, "check-ignore", "--no-index", ...ignored]);
+    assert.deepEqual(result.stdout.trim().split(/\r?\n/), ignored);
+    await assert.rejects(execute("git", ["-C", target, "check-ignore", "--no-index", ".forgeloop/policy/baseline.json", ".forgeloop/policy/policy.lock", ".forgeloop/manifest.json"]), error => error.code === 1 && error.stdout === "");
+  } finally { await rm(target, { recursive: true, force: true }); }
+});

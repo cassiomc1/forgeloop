@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile, rm, writeFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import { test } from "node:test";
 
 import { runTaskRecover } from "../src/commands/task-recover.js";
@@ -16,6 +16,8 @@ import {
   withRecoveryTarget,
 } from "./helpers/task-recovery-fixture.js";
 
+import { readRawFixtureText, overwriteFixtureText, deleteFixtureArtifact, overwriteFixtureArtifactBytes } from "./helpers/native-storage-fixture.js";
+
 const corpus = JSON.parse(await readFile(
   new URL("./fixtures/task-recovery/corpus.json", import.meta.url),
   "utf8",
@@ -23,9 +25,9 @@ const corpus = JSON.parse(await readFile(
 
 async function rewriteRecovery(target, taskId, mutate) {
   const recoveryPath = ensureWithin(target, taskArtifactPath(taskId, "recovery"));
-  const recovery = JSON.parse(await readFile(recoveryPath, "utf8"));
+  const recovery = JSON.parse(await readRawFixtureText(target, recoveryPath));
   mutate(recovery);
-  await writeFile(recoveryPath, `${JSON.stringify(recovery, null, 2)}\n`, "utf8");
+  await overwriteFixtureText(target, recoveryPath, `${JSON.stringify(recovery, null, 2)}\n`, "utf8");
 }
 
 async function appendResume(target, taskId, recovery) {
@@ -49,7 +51,7 @@ async function applyCorpusAction(target, taskId, entry, recovered) {
     return;
   }
   if (entry.action === "two-recovery-cycles") {
-    const firstRecovery = JSON.parse(await readFile(recoveryPath, "utf8"));
+    const firstRecovery = JSON.parse(await readRawFixtureText(target, recoveryPath));
     const firstRecoveryEvent = (await readEvents(target, packageRoot, { taskId }))
       .find((event) => event.seq === firstRecovery.recoveryEventSeq);
     await runTaskResume({ target, packageRoot, taskId });
@@ -62,7 +64,7 @@ async function applyCorpusAction(target, taskId, entry, recovered) {
       at: recoveredAt,
       details: { ...firstRecoveryEvent.details, recoveryId },
     }, packageRoot, { taskId });
-    await writeFile(recoveryPath, `${JSON.stringify({
+    await overwriteFixtureText(target, recoveryPath, `${JSON.stringify({
       ...firstRecovery,
       recoveredAt,
       recoveryId,
@@ -72,7 +74,7 @@ async function applyCorpusAction(target, taskId, entry, recovered) {
     return;
   }
   if (entry.action === "delete-tombstone") {
-    await rm(recoveryPath);
+    await deleteFixtureArtifact(target, recoveryPath);
     return;
   }
   if (entry.action === "artifact-field") {
@@ -82,21 +84,21 @@ async function applyCorpusAction(target, taskId, entry, recovered) {
     return;
   }
   if (entry.action === "corrupt-recovery") {
-    await writeFile(recoveryPath, "{\"status\":", "utf8");
+    await overwriteFixtureArtifactBytes(target, recoveryPath, "{\"status\":");
     return;
   }
   if (entry.action === "corrupt-ledger") {
-    const lines = (await readFile(eventsPath, "utf8")).trimEnd().split("\n");
+    const lines = (await readRawFixtureText(target, eventsPath)).trimEnd().split("\n");
     const first = JSON.parse(lines[0]);
     first.hash = "f".repeat(64);
     lines[0] = JSON.stringify(first);
-    await writeFile(eventsPath, `${lines.join("\n")}\n`, "utf8");
+    await overwriteFixtureText(target, eventsPath, `${lines.join("\n")}\n`, "utf8");
     return;
   }
   if (entry.action === "remove-recovery-event") {
-    const lines = (await readFile(eventsPath, "utf8")).trimEnd().split("\n")
+    const lines = (await readRawFixtureText(target, eventsPath)).trimEnd().split("\n")
       .filter((line) => JSON.parse(line).event !== "OPERATOR_RECOVERY_RECORDED");
-    await writeFile(eventsPath, `${lines.join("\n")}\n`, "utf8");
+    await overwriteFixtureText(target, eventsPath, `${lines.join("\n")}\n`, "utf8");
     return;
   }
   if (entry.action === "resume-with-tombstone") {
@@ -132,9 +134,9 @@ async function applyCorpusAction(target, taskId, entry, recovered) {
     return;
   }
   if (entry.action === "fake-tombstone") {
-    const lines = (await readFile(eventsPath, "utf8")).trimEnd().split("\n")
+    const lines = (await readRawFixtureText(target, eventsPath)).trimEnd().split("\n")
       .filter((line) => JSON.parse(line).event !== "OPERATOR_RECOVERY_RECORDED");
-    await writeFile(eventsPath, `${lines.join("\n")}\n`, "utf8");
+    await overwriteFixtureText(target, eventsPath, `${lines.join("\n")}\n`, "utf8");
     return;
   }
   throw new Error(`Unsupported recovery corpus action: ${entry.action}`);

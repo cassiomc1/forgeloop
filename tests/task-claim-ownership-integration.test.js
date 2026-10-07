@@ -1,12 +1,13 @@
 import assert from "node:assert/strict";
-import { mkdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import { test } from "node:test";
 
+import { readRawFixtureText, overwriteFixtureText, overwriteFixtureArtifactBytes, deleteFixtureArtifact } from "./helpers/native-storage-fixture.js";
 import { runTaskCreate } from "../src/commands/task-create.js";
 import { runTaskRecover } from "../src/commands/task-recover.js";
 import { withTaskMutation } from "../src/core/task-command.js";
 import { discoverTasks } from "../src/core/task-discovery.js";
-import { ensureWithin } from "../src/core/filesystem.js";
+import { ensureWithin, fileExists } from "../src/core/filesystem.js";
 import { taskArtifactPath, taskDirectory } from "../src/core/task-paths.js";
 import { createTaskRecovery, writeTaskRecovery } from "../src/core/task-recovery.js";
 import { readWorkState } from "../src/core/work-state.js";
@@ -55,7 +56,7 @@ test("deleting an active recovery tombstone cannot restore mutation authority", 
   await withRecoveryTarget(async (target) => {
     const { taskId } = await setupAbandonedTask(target, { taskId: "deleted-recovery-owner" });
     await runTaskRecover({ target, packageRoot, taskId, acknowledgeRecovery: true });
-    await rm(ensureWithin(target, taskArtifactPath(taskId, "recovery")));
+    await deleteFixtureArtifact(target, taskArtifactPath(taskId, "recovery"));
 
     let callbackRan = false;
     await assert.rejects(
@@ -71,11 +72,8 @@ test("deleting an active recovery tombstone cannot restore mutation authority", 
 test("a corrupt recovery artifact blocks overlapping claim acquisition", async () => {
   await withRecoveryTarget(async (target) => {
     const { taskId } = await setupAbandonedTask(target, { taskId: "corrupt-recovery-owner" });
-    await writeFile(
-      ensureWithin(target, taskArtifactPath(taskId, "recovery")),
-      "{\"status\":",
-      "utf8",
-    );
+    await writeUnattestedRecovery(target, taskId);
+    await overwriteFixtureArtifactBytes(target, taskArtifactPath(taskId, "recovery"), "{\"status\":");
 
     await assert.rejects(
       () => runTaskCreate({ target, packageRoot, taskId: "blocked-by-corruption", claims: ["tests"] }),
@@ -84,7 +82,7 @@ test("a corrupt recovery artifact blocks overlapping claim acquisition", async (
   });
 });
 
-test("an unhealthy task namespace blocks all new claim acquisition", async () => {
+test("an unmigrated unhealthy task namespace blocks native claim acquisition", async () => {
   await withRecoveryTarget(async (target) => {
     const corruptTaskId = "descriptorless-owner";
     const directory = ensureWithin(target, taskDirectory(corruptTaskId));
@@ -93,18 +91,18 @@ test("an unhealthy task namespace blocks all new claim acquisition", async () =>
 
     await assert.rejects(
       () => runTaskCreate({ target, packageRoot, taskId: "blocked-by-namespace", claims: ["src"] }),
-      (error) => error.code === "E_TASK_CLAIM_OWNERSHIP_INCONSISTENT",
+      (error) => error.code === "E_STORAGE_MIGRATION_REQUIRED",
     );
+    assert.equal(await fileExists(ensureWithin(target, ".forgeloop/state.sqlite")), false);
   });
 });
 
 test("ownership surfaces remain deterministic on a large append-only ledger", async () => {
   await withRecoveryTarget(async (target) => {
     const { taskId } = await setupAbandonedTask(target, { taskId: "large-ledger-task" });
-    const { readFile: rf, writeFile: wf } = await import("node:fs/promises");
     const { eventHash } = await import("../src/core/events.js");
     const eventsPath = ensureWithin(target, taskArtifactPath(taskId, "events"));
-    const lines = (await rf(eventsPath, "utf8")).trim().split("\n").map((line) => JSON.parse(line));
+    const lines = (await readRawFixtureText(target, eventsPath)).trim().split("\n").map((line) => JSON.parse(line));
     let previousHash = lines.at(-1).hash;
     const baseSeq = lines.length;
     const baseAt = Date.parse(lines[0].at);
@@ -124,7 +122,7 @@ test("ownership surfaces remain deterministic on a large append-only ledger", as
       previousHash = event.hash;
       lines.push(event);
     }
-    await wf(eventsPath, `${lines.map((line) => JSON.stringify(line)).join("\n")}\n`, "utf8");
+    await overwriteFixtureText(target, eventsPath, `${lines.map((line) => JSON.stringify(line)).join("\n")}\n`, "utf8");
 
     const startedAt = Date.now();
     const projection = await resolveTaskClaimState(target, { taskId, packageRoot });

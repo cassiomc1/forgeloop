@@ -1,3 +1,4 @@
+import { needsExistingProjectScope, withExistingProjectScope } from "../storage/existing-project-scope.js";
 import { ARTIFACT_PATHS, canonicalFingerprint, readJsonArtifact, writeJsonArtifact } from "./artifacts.js";
 import { requiredEvidenceForTarget, validateChecksExecutionProvenance } from "./completion-artifacts.js";
 import { appendProtocolEvent, previewProtocolEvent, LIFECYCLE_MILESTONES, validateEventLedger, validateStateLedgerCoherence } from "./events.js";
@@ -18,6 +19,7 @@ import { readConfig } from "./config.js";
 import { resolveResponsibilityStatus } from "./responsibility.js";
 import { createCodeManifest, readCodeManifest, validateCodeManifestBindings, writeCodeManifest } from "./code-manifest.js";
 import { getTaskTransaction, withTaskTransaction } from "./transaction.js";
+import { operationalArtifactExists } from "../storage/operational-context.js";
 import { validateStructuralQualityCheckProvenance } from "./structural-quality/service.js";
 
 async function attestationConfiguration(target, packageRoot, errors) {
@@ -246,9 +248,10 @@ function publicationStatus(receipt) {
 async function validateLedger(target, scopedTaskId, contractTaskId, state, errors, packageRoot, options = {}) {
   const eventsRel = options.eventsPath ?? (scopedTaskId ? taskArtifactPath(scopedTaskId, "events") : ARTIFACT_PATHS.events);
   const stateRel = options.statePath ?? (scopedTaskId ? taskArtifactPath(scopedTaskId, "state") : ARTIFACT_PATHS.state);
-  await assertSafePath(target, eventsRel);
+  const operationalExists = operationalArtifactExists(target, eventsRel);
+  if (operationalExists === null) await assertSafePath(target, eventsRel);
   const eventsFilePath = ensureWithin(target, eventsRel);
-  if (!(await fileExists(eventsFilePath))) {
+  if (operationalExists === false || (operationalExists === null && !(await fileExists(eventsFilePath)))) {
     errors.push(issue("E_PHASE_CHRONOLOGY_INVALID", "Protocol event ledger is required before completion", [eventsRel]));
     return { valid: false, events: [], errors: [] };
   }
@@ -274,6 +277,27 @@ async function validateLedger(target, scopedTaskId, contractTaskId, state, error
 }
 
 export async function evaluateCompletion({
+  target,
+  packageRoot,
+  strict = false,
+  authorityContext,
+  runtimeContext,
+  taskId = null,
+  contractPath = null,
+  routePath = null,
+  statePath = null,
+  receiptPath = null,
+  eventsPath = null,
+  preflightPath = null,
+} = {}) {
+  const options = { target, packageRoot, strict, authorityContext, runtimeContext, taskId, contractPath, routePath, statePath, receiptPath, eventsPath, preflightPath };
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => evaluateSelectedCompletion(options), { readOnly: true });
+  }
+  return evaluateSelectedCompletion(options);
+}
+
+async function evaluateSelectedCompletion({
   target,
   packageRoot,
   strict = false,

@@ -1,10 +1,15 @@
+import { withProjectReadSnapshot } from "../storage/project-read-snapshot.js";
 import { readAndClassifyWorkState } from "../core/work-state.js";
 import { inspectSchemaHealth } from "../core/schema-validation.js";
 import { reconcileContinuity } from "../core/continuity-reconciliation.js";
 import { withResolvedTask } from "../core/task-command.js";
 import { findTaskById } from "../core/task-discovery.js";
 
-export async function runStatus({ target, packageRoot, contractFile = null, taskId, task } = {}) {
+export async function runStatus(options = {}) {
+  return withProjectReadSnapshot(options.target, () => runSelectedStatus(options));
+}
+
+async function runSelectedStatus({ target, packageRoot, contractFile = null, taskId, task } = {}) {
   return withResolvedTask(target, { taskId: taskId ?? task, packageRoot }, async (ctx) => {
     const effectiveTaskId = ctx?.taskId ?? null;
     const state = await readAndClassifyWorkState({ target, packageRoot, contractFile, taskId: effectiveTaskId });

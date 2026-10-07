@@ -6,6 +6,7 @@ import { resolveRevisionProvider } from "./revision/provider.js";
 import { REVISION_PROVIDERS } from "./revision/registry.js";
 import { assertAttestationStatementBindings, verifyCodeManifestContent } from "./attestation-verifier.js";
 import { taskAttestationBundlePath } from "./task-paths.js";
+import { withProjectReadSnapshot } from "../storage/project-read-snapshot.js";
 
 function pathMatchesExclusion(pathValue, exclusions) {
   return exclusions.some((pattern) => {
@@ -24,7 +25,11 @@ function isProtocolMetadataPath(value) {
   return normalized === ".forgeloop" || normalized.startsWith(".forgeloop/");
 }
 
-export async function evaluateAttestationCoverage({
+export async function evaluateAttestationCoverage(options = {}) {
+  return withProjectReadSnapshot(options.target, () => evaluateSelectedAttestationCoverage(options));
+}
+
+async function evaluateSelectedAttestationCoverage({
   target,
   packageRoot = getPackageRoot(),
   revisionProvider = "git",

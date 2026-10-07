@@ -39,6 +39,12 @@ test("forgeloop_capabilities exists and reports versions, features, policy, and 
     assert.notEqual(result.isError, true);
     const data = result.structuredContent;
     assert.equal(data.integrationApiVersion, 1);
+    assert.equal(data.features.operationalStorage.sqlite.format, "sqlite");
+    assert.equal(data.features.operationalStorage.sqlite.schemaVersion, 5);
+    assert.equal(data.features.operationalStorage.sqlite.minimumNode, "24.19.0");
+    assert.equal(data.features.operationalStorage.soleSQLiteWriter, false);
+    assert.equal(data.features.operationalStorage.migration.requiresWritersQuiesced, true);
+    assert.equal(data.features.operationalStorage.backup.referencedAttachments, true);
     assert.equal(data.features.taskClaimRecovery.validatedClaimProjection, true);
     assert.equal(data.features.repositoryIndex.required, true);
     assert.equal(data.features.repositoryIndex.engineVersion, "1.0.3");
@@ -78,6 +84,10 @@ test("forgeloop_capabilities exists and reports versions, features, policy, and 
         "repository/index-status",
       ],
     );
+    const templates = (await client.listResourceTemplates()).resourceTemplates.map(value => value.uriTemplate).sort();
+    const expectedTemplates = data.resources.filter(uri => uri.startsWith("task/")).map(uri => uri === "task/action"
+      ? "forgeloop://task/{taskId}/action/{actionId}" : `forgeloop://task/{taskId}/${uri.slice("task/".length)}`).sort();
+    assert.deepEqual(templates, expectedTemplates, "Every advertised task resource must be exposed over the transport");
   } finally {
     await cleanup();
   }
@@ -102,7 +112,7 @@ test("mcpServerVersion reads the package manifest as single source of truth (§2
   const expected = JSON.parse(readFileSync(manifestPath, "utf8")).version;
   assert.equal(mcpServerVersion(), expected);
   // The registered product uses the same version (§22 serverInfo parity).
-  assert.equal(mcpServerVersion(), "0.1.0");
+  assert.equal(mcpServerVersion(), "1.0.0");
 });
 
 test("capabilities report the installed core version and never leak projectRoot", async () => {

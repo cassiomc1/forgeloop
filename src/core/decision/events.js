@@ -1,3 +1,5 @@
+import { ledgerRelationSet } from "../ledger-relations.js";
+import { ledgerEventsOfTypes } from "../ledger-event-collection.js";
 import { canonicalFingerprint } from "../artifacts.js";
 import { readDecisionArtifact } from "./artifact.js";
 import { DECISION_KINDS, DECISION_STATUS, SEMANTIC_DECISION_RECORDED_EVENT, SEMANTIC_DECISION_SUPERSEDED_EVENT } from "./constants.js";
@@ -42,8 +44,8 @@ export function decisionSupersededEventDetails(previousArtifact, supersededBy) {
 
 export function validateSemanticDecisionEventBindings(events = []) {
   const errors = [];
-  const recorded = new Map();
-  for (const event of events) {
+  const recorded = ledgerRelationSet();
+  for (const event of ledgerEventsOfTypes(events, [SEMANTIC_DECISION_RECORDED_EVENT, SEMANTIC_DECISION_SUPERSEDED_EVENT])) {
     if (![SEMANTIC_DECISION_RECORDED_EVENT, SEMANTIC_DECISION_SUPERSEDED_EVENT].includes(event.event)) continue;
     try { assertSemanticDecisionDetails(event.details, event.event); } catch (error) {
       errors.push({ code: error.code ?? DECISION_ERROR_CODES.RESULT_INVALID, message: `event ${event.seq} (${event.event}): ${error.message}` });
@@ -54,7 +56,7 @@ export function validateSemanticDecisionEventBindings(events = []) {
       if (recorded.has(key)) {
         errors.push({ code: DECISION_ERROR_CODES.RESULT_INVALID, message: `event ${event.seq} records duplicate decision ID ${event.details.decisionId}` });
       }
-      recorded.set(key, event);
+      recorded.add(key);
     }
     if (event.event === SEMANTIC_DECISION_SUPERSEDED_EVENT) {
       const key = `${event.taskId}:${event.details.decisionId}`;
@@ -79,12 +81,12 @@ export function validateSemanticDecisionEventBindings(events = []) {
   return errors;
 }
 
-export async function validateSemanticDecisionArtifactBindings(target, packageRoot, events = []) {
+export async function validateSemanticDecisionArtifactBindings(target, packageRoot, events = [], { reader = readDecisionArtifact } = {}) {
   const errors = [];
-  for (const event of events) {
+  for (const event of ledgerEventsOfTypes(events, [SEMANTIC_DECISION_RECORDED_EVENT])) {
     if (event.event !== SEMANTIC_DECISION_RECORDED_EVENT) continue;
     try {
-      const artifact = (await readDecisionArtifact(target, event.taskId, event.details.decisionId, packageRoot)).value;
+      const artifact = (await reader(target, event.taskId, event.details.decisionId, packageRoot)).value;
       if (artifact.taskId !== event.taskId
         || artifact.decisionId !== event.details.decisionId
         || canonicalFingerprint(artifact) !== event.details.artifactFingerprint

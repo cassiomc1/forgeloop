@@ -1,3 +1,5 @@
+import { ARTIFACT_REGISTRY } from "./artifact-registry.js";
+import { needsExistingProjectScope, withExistingProjectScope, assertNativeWritePath, isOperationalArtifactPath } from "../storage/existing-project-scope.js";
 import { createHash } from "node:crypto";
 
 import { assertSafePath, ensureWithin, fileExists, readBytes, writeFileAtomic } from "./filesystem.js";
@@ -6,6 +8,11 @@ import { assertJsonBytes, assertJsonLimits } from "./json-safety.js";
 import { assertSchema, readSchema } from "./schema-validation.js";
 import { getPackageRoot } from "./templates.js";
 import { getTaskTransaction, withTaskTransaction } from "./transaction.js";
+import { getOperationalStore, readOperationalText } from "../storage/operational-context.js";
+
+const OPERATIONAL_SCHEMAS = new Set(Object.values(ARTIFACT_REGISTRY)
+  .filter(artifact => artifact.scope !== "PROJECT" && artifact.schema)
+  .map(artifact => artifact.schema));
 
 export const ARTIFACT_PATHS = Object.freeze({
   contract: ".forgeloop/current-contract.json",
@@ -63,12 +70,44 @@ function artifactError(code, relativePath, error) {
   );
 }
 
+/** Validate already captured canonical bytes after their native read scope closes. */
+export async function parseCapturedJsonArtifact(text, relativePath, schemaName, packageRoot = getPackageRoot()) {
+  if (text === null) throw new ArtifactError("ARTIFACT_MISSING", `Artifact is missing: ${relativePath}`, [relativePath]);
+  try {
+    assertJsonBytes(text, relativePath);
+    const value = JSON.parse(text);
+    assertJsonLimits(value, relativePath);
+    assertSchema(value, await readSchema(schemaName, packageRoot), relativePath);
+    return { value, path: relativePath, fingerprint: canonicalFingerprint(value) };
+  } catch (error) { throw artifactError(error.code === "JSON_LIMIT_EXCEEDED" ? error.code : "ARTIFACT_INVALID", relativePath, error); }
+}
+
 export async function readJsonArtifact(
   target,
   relativePath,
   schemaName,
   packageRoot = getPackageRoot(),
 ) {
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => readJsonArtifact(target, relativePath, schemaName, packageRoot), { readOnly: true });
+  }
+  const operational = readOperationalText(target, relativePath);
+  if (operational.selected) {
+    return parseCapturedJsonArtifact(operational.text, relativePath, schemaName, packageRoot);
+  }
+  if (isOperationalArtifactPath(relativePath)) {
+    try { await assertSafePath(target, relativePath); }
+    catch (error) { throw artifactError("ARTIFACT_PATH_INVALID", relativePath, error); }
+    if (!(await fileExists(ensureWithin(target, relativePath)))) {
+      throw new ArtifactError("ARTIFACT_MISSING", `Artifact is missing: ${relativePath}`, [relativePath]);
+    }
+    throw new ArtifactError("E_STORAGE_MIGRATION_REQUIRED", "Operational JSON reads require canonical SQLite storage; migrate legacy state explicitly", [relativePath]);
+  }
+  return readPortableJsonArtifact(target, relativePath, schemaName, packageRoot);
+}
+
+/** Explicit file inspection for migration inputs, portable exports and configuration. */
+export async function readPortableJsonArtifact(target, relativePath, schemaName, packageRoot = getPackageRoot()) {
   try {
     await assertSafePath(target, relativePath);
   } catch (error) {
@@ -76,9 +115,7 @@ export async function readJsonArtifact(
   }
 
   const artifactPath = ensureWithin(target, relativePath);
-  const transaction = (await getTaskTransaction(target));
-  const stagedText = transaction ? await transaction.readText(relativePath) : null;
-  if (stagedText === null && !(await fileExists(artifactPath))) {
+  if (!(await fileExists(artifactPath))) {
     throw new ArtifactError(
       "ARTIFACT_MISSING",
       `Artifact is missing: ${relativePath}`,
@@ -88,7 +125,7 @@ export async function readJsonArtifact(
 
   let value;
   try {
-    const bytes = stagedText === null ? await readBytes(artifactPath) : Buffer.from(stagedText, "utf8");
+    const bytes = await readBytes(artifactPath);
     assertJsonBytes(bytes, relativePath);
     value = JSON.parse(bytes.toString("utf8"));
     assertJsonLimits(value, relativePath);
@@ -119,16 +156,48 @@ export async function writeJsonArtifact(
   packageRoot = getPackageRoot(),
   { dryRun = false, taskId = null, operation = "write-artifact" } = {},
 ) {
+  if (OPERATIONAL_SCHEMAS.has(schemaName) && !isOperationalArtifactPath(relativePath)) {
+    throw new ArtifactError("E_STORAGE_OPERATION_UNSUPPORTED", "Operational artifacts require canonical SQLite identities; use explicit portable export", [relativePath]);
+  }
+  if (!getOperationalStore(target) && isOperationalArtifactPath(relativePath)) {
+    await assertSafePath(target, relativePath);
+    assertSecretFree(value);
+    assertSchema(value, await readSchema(schemaName, packageRoot), relativePath);
+    assertJsonLimits(value, relativePath);
+    assertJsonBytes(`${JSON.stringify(value, null, 2)}\n`, relativePath);
+    const { withProjectStorage } = await import("../storage/project-boundary.js");
+    return withProjectStorage(target, () => writeJsonArtifact(target, relativePath, value, schemaName, packageRoot, { dryRun, taskId, operation }), { readOnly: dryRun });
+  }
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => writeJsonArtifact(target, relativePath, value, schemaName, packageRoot, { dryRun, taskId, operation }), { readOnly: dryRun });
+  }
+  assertNativeWritePath(target, relativePath);
+  const store = getOperationalStore(target);
+  if (store?.recognizes(relativePath)) {
+    assertSecretFree(value);
+    assertSchema(value, await readSchema(schemaName, packageRoot), relativePath);
+    assertJsonLimits(value, relativePath);
+    const text = `${JSON.stringify(value, null, 2)}\n`;
+    assertJsonBytes(text, relativePath);
+    if (!dryRun) {
+      const scopedTaskId = taskId ?? value.taskId ?? store.transaction?.taskId;
+      if (!scopedTaskId) throw new ArtifactError("E_TASK_REQUIRED", "Operational artifact requires a task identity", [relativePath]);
+      await withTaskTransaction({ target, taskId: scopedTaskId, operation, packageRoot }, tx => tx.stageText(relativePath, text));
+    }
+    return { path: relativePath, fingerprint: canonicalFingerprint(value), value };
+  }
+  return writePortableJsonArtifact(target, relativePath, value, schemaName, packageRoot, { dryRun });
+}
+
+/** Explicit interchange/configuration output; never canonical operational persistence. */
+export async function writePortableJsonArtifact(target, relativePath, value, schemaName, packageRoot = getPackageRoot(), { dryRun = false } = {}) {
+  if (isOperationalArtifactPath(relativePath)) throw new ArtifactError("E_STORAGE_OPERATION_UNSUPPORTED", "Portable output cannot replace a canonical operational namespace", [relativePath]);
+  assertNativeWritePath(target, relativePath);
+  if (!dryRun && await getTaskTransaction(target)) throw new ArtifactError("E_STORAGE_TRANSACTION_INVALID", "Portable output requires no active operational transaction", [relativePath]);
   try {
     await assertSafePath(target, relativePath);
   } catch (error) {
     throw artifactError("ARTIFACT_PATH_INVALID", relativePath, error);
-  }
-  const activeTransaction = (await getTaskTransaction(target));
-  if (!activeTransaction && taskId && !dryRun) {
-    return withTaskTransaction({ target, taskId, operation, packageRoot }, async () => (
-      writeJsonArtifact(target, relativePath, value, schemaName, packageRoot, { dryRun, taskId, operation })
-    ));
   }
   try {
     const artifactPath = ensureWithin(target, relativePath);
@@ -138,11 +207,7 @@ export async function writeJsonArtifact(
     assertJsonLimits(value, relativePath);
     const serialized = `${JSON.stringify(value, null, 2)}\n`;
     assertJsonBytes(serialized, relativePath);
-    if (activeTransaction && !dryRun) {
-      await activeTransaction.stageText(relativePath, serialized);
-    } else {
-      await writeFileAtomic(artifactPath, serialized, { dryRun });
-    }
+    await writeFileAtomic(artifactPath, serialized, { dryRun });
     return { path: relativePath, fingerprint: canonicalFingerprint(value), value };
   } catch (error) {
     throw artifactError(

@@ -1,0 +1,774 @@
+{
+  "diagnosticOnly": true,
+  "releaseThresholdsVerified": false,
+  "sourceControlFiles": 2682,
+  "sourceControlMismatches": [],
+  "stages": {
+    "schemaVersion": 1,
+    "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+    "node": "v24.19.0",
+    "platform": "darwin",
+    "architecture": "arm64",
+    "cpu": "Apple M2",
+    "repeats": 20,
+    "claimCount": 3,
+    "timestamp": "2026-09-11T00:00:00.000Z",
+    "runtime": "warm-cache public transaction API with per-call native connection",
+    "syntheticSeedOutsideMeasurement": true,
+    "durabilityQualification": "Native WAL/FULL and unchanged pinned filesystem fsync transaction implementation; power-loss equivalence requires separate evidence.",
+    "diagnosticOnly": true,
+    "releaseThresholdsVerified": false,
+    "results": [
+      {
+        "stageSamples": {
+          "native": [
+            {
+              "entryMs": 4.20575000000008,
+              "stateMutationMs": 1.4183340000008684,
+              "eventAppendMs": 0.8142909999996846,
+              "commitMs": 152.11841600000025,
+              "totalMs": 158.5664999999999
+            },
+            {
+              "entryMs": 3.235834000000068,
+              "stateMutationMs": 0.6728750000002037,
+              "eventAppendMs": 0.4084579999998823,
+              "commitMs": 161.82191599999987,
+              "totalMs": 166.14187500000025
+            },
+            {
+              "entryMs": 2.45929199999955,
+              "stateMutationMs": 0.3092080000005808,
+              "eventAppendMs": 0.2570830000004207,
+              "commitMs": 149.62679200000002,
+              "totalMs": 152.65429200000017
+            },
+            {
+              "entryMs": 3.0901670000002923,
+              "stateMutationMs": 0.46120799999971496,
+              "eventAppendMs": 0.3827499999997599,
+              "commitMs": 161.1175000000003,
+              "totalMs": 165.0540000000001
+            },
+            {
+              "entryMs": 2.1785420000005615,
+              "stateMutationMs": 0.3116250000002765,
+              "eventAppendMs": 0.24162500000056752,
+              "commitMs": 150.49474999999984,
+              "totalMs": 153.22812500000055
+            },
+            {
+              "entryMs": 2.995249999999942,
+              "stateMutationMs": 0.49487499999941065,
+              "eventAppendMs": 0.39508399999976973,
+              "commitMs": 162.22804199999973,
+              "totalMs": 166.1152919999995
+            },
+            {
+              "entryMs": 2.3566250000003492,
+              "stateMutationMs": 0.3259589999997843,
+              "eventAppendMs": 0.2625420000003942,
+              "commitMs": 150.6694580000003,
+              "totalMs": 153.61654200000066
+            },
+            {
+              "entryMs": 3.269416999999521,
+              "stateMutationMs": 0.6517499999999927,
+              "eventAppendMs": 0.7755829999996422,
+              "commitMs": 161.78300000000036,
+              "totalMs": 166.48333399999956
+            },
+            {
+              "entryMs": 2.645292000000154,
+              "stateMutationMs": 0.29095799999959127,
+              "eventAppendMs": 0.23816700000043056,
+              "commitMs": 150.97362500000054,
+              "totalMs": 154.1498330000004
+            },
+            {
+              "entryMs": 2.931666999999834,
+              "stateMutationMs": 0.489875000000211,
+              "eventAppendMs": 0.4017920000005688,
+              "commitMs": 159.07416699999976,
+              "totalMs": 162.90008300000045
+            },
+            {
+              "entryMs": 2.622457999999824,
+              "stateMutationMs": 0.2516670000004524,
+              "eventAppendMs": 0.20749999999952706,
+              "commitMs": 151.4262090000002,
+              "totalMs": 154.50987499999974
+            },
+            {
+              "entryMs": 3.055500000000393,
+              "stateMutationMs": 0.4891669999997248,
+              "eventAppendMs": 0.39633299999968585,
+              "commitMs": 161.95308300000033,
+              "totalMs": 165.8966250000003
+            },
+            {
+              "entryMs": 2.2692500000002838,
+              "stateMutationMs": 0.23258399999940593,
+              "eventAppendMs": 0.19437500000003638,
+              "commitMs": 150.73591699999997,
+              "totalMs": 153.43387500000063
+            },
+            {
+              "entryMs": 3.1228330000003552,
+              "stateMutationMs": 0.47537499999998545,
+              "eventAppendMs": 0.39320800000041345,
+              "commitMs": 161.83729200000016,
+              "totalMs": 165.83075000000008
+            },
+            {
+              "entryMs": 2.5884580000001733,
+              "stateMutationMs": 0.23474999999962165,
+              "eventAppendMs": 0.19354099999873142,
+              "commitMs": 151.05516700000044,
+              "totalMs": 154.07333300000028
+            },
+            {
+              "entryMs": 3.229750000000422,
+              "stateMutationMs": 0.5115420000001905,
+              "eventAppendMs": 0.4637089999996533,
+              "commitMs": 162.9986659999995,
+              "totalMs": 167.2061249999988
+            },
+            {
+              "entryMs": 2.43762500000048,
+              "stateMutationMs": 0.25274999999965075,
+              "eventAppendMs": 0.19662500000049477,
+              "commitMs": 150.43754199999967,
+              "totalMs": 153.3270420000008
+            },
+            {
+              "entryMs": 3.173124999999345,
+              "stateMutationMs": 0.47383300000001327,
+              "eventAppendMs": 0.3947500000012951,
+              "commitMs": 160.55825000000004,
+              "totalMs": 164.60220900000058
+            },
+            {
+              "entryMs": 2.0354999999999563,
+              "stateMutationMs": 0.23366700000042329,
+              "eventAppendMs": 0.18716700000004494,
+              "commitMs": 149.8384160000005,
+              "totalMs": 152.29654200000004
+            },
+            {
+              "entryMs": 3.230790999999954,
+              "stateMutationMs": 0.4875000000010914,
+              "eventAppendMs": 0.404500000000553,
+              "commitMs": 161.79116600000089,
+              "totalMs": 165.91608300000007
+            }
+          ],
+          "baseline": [
+            {
+              "entryMs": 14.869832999999744,
+              "stateMutationMs": 33.947040999999444,
+              "eventAppendMs": 57.987708000000566,
+              "commitMs": 59.23008299999947,
+              "totalMs": 166.04233300000033
+            },
+            {
+              "entryMs": 4.41570799999954,
+              "stateMutationMs": 13.162333999999646,
+              "eventAppendMs": 54.08012500000041,
+              "commitMs": 56.25762500000019,
+              "totalMs": 127.91933299999982
+            },
+            {
+              "entryMs": 6.728375000000597,
+              "stateMutationMs": 14.081333000000086,
+              "eventAppendMs": 56.031833000000006,
+              "commitMs": 60.055083999999624,
+              "totalMs": 136.89979200000016
+            },
+            {
+              "entryMs": 5.4291250000005675,
+              "stateMutationMs": 13.447416999999405,
+              "eventAppendMs": 63.76033300000017,
+              "commitMs": 55.39220900000055,
+              "totalMs": 138.0322500000002
+            },
+            {
+              "entryMs": 7.934374999999818,
+              "stateMutationMs": 11.11645899999985,
+              "eventAppendMs": 59.85954099999981,
+              "commitMs": 62.379917000000205,
+              "totalMs": 141.29899999999998
+            },
+            {
+              "entryMs": 6.191041000000041,
+              "stateMutationMs": 14.395583000000443,
+              "eventAppendMs": 55.97937499999989,
+              "commitMs": 58.450832999999875,
+              "totalMs": 135.01858300000004
+            },
+            {
+              "entryMs": 5.128292000000329,
+              "stateMutationMs": 12.788708000000042,
+              "eventAppendMs": 53.76866700000028,
+              "commitMs": 55.35716700000012,
+              "totalMs": 127.05054199999995
+            },
+            {
+              "entryMs": 5.545125000000553,
+              "stateMutationMs": 13.094834000000446,
+              "eventAppendMs": 54.18745800000033,
+              "commitMs": 58.893708999999944,
+              "totalMs": 131.72320800000034
+            },
+            {
+              "entryMs": 7.293915999999626,
+              "stateMutationMs": 12.122000000000298,
+              "eventAppendMs": 56.00762500000019,
+              "commitMs": 58.22770800000035,
+              "totalMs": 133.65929099999994
+            },
+            {
+              "entryMs": 4.163249999999607,
+              "stateMutationMs": 11.524791000000732,
+              "eventAppendMs": 49.66225000000031,
+              "commitMs": 55.41254200000003,
+              "totalMs": 120.76500000000033
+            },
+            {
+              "entryMs": 4.952750000000378,
+              "stateMutationMs": 12.859165999999277,
+              "eventAppendMs": 53.52124999999978,
+              "commitMs": 51.8579579999996,
+              "totalMs": 123.19937500000015
+            },
+            {
+              "entryMs": 4.02508299999954,
+              "stateMutationMs": 13.506875000000036,
+              "eventAppendMs": 52.98304200000075,
+              "commitMs": 60.40825000000041,
+              "totalMs": 130.9249579999996
+            },
+            {
+              "entryMs": 5.820959000000585,
+              "stateMutationMs": 12.119208000000071,
+              "eventAppendMs": 53.3779999999997,
+              "commitMs": 56.793541999999434,
+              "totalMs": 128.12187500000073
+            },
+            {
+              "entryMs": 5.815832999999657,
+              "stateMutationMs": 12.933250000000044,
+              "eventAppendMs": 52.493249999999534,
+              "commitMs": 68.00612499999988,
+              "totalMs": 139.25087499999972
+            },
+            {
+              "entryMs": 7.879249999999956,
+              "stateMutationMs": 12.966207999999824,
+              "eventAppendMs": 53.627291999999215,
+              "commitMs": 59.73970899999949,
+              "totalMs": 134.2208750000009
+            },
+            {
+              "entryMs": 5.589041999999608,
+              "stateMutationMs": 12.921833000000333,
+              "eventAppendMs": 54.06070799999907,
+              "commitMs": 68.38883299999907,
+              "totalMs": 140.96199999999953
+            },
+            {
+              "entryMs": 6.727332999998907,
+              "stateMutationMs": 12.289750000001732,
+              "eventAppendMs": 52.05066700000134,
+              "commitMs": 61.91145800000049,
+              "totalMs": 132.98766699999942
+            },
+            {
+              "entryMs": 4.208832999998776,
+              "stateMutationMs": 12.809124999999767,
+              "eventAppendMs": 53.99645800000144,
+              "commitMs": 60.417208000000755,
+              "totalMs": 131.43345799999952
+            },
+            {
+              "entryMs": 8.010167000000365,
+              "stateMutationMs": 12.934374999998909,
+              "eventAppendMs": 52.190333999998984,
+              "commitMs": 57.10454100000061,
+              "totalMs": 130.2671250000003
+            },
+            {
+              "entryMs": 5.5896669999983715,
+              "stateMutationMs": 14.034999999999854,
+              "eventAppendMs": 53.97187499999927,
+              "commitMs": 63.594584000000395,
+              "totalMs": 137.19304199999897
+            }
+          ]
+        },
+        "initialEvents": 100000,
+        "claimCount": 3,
+        "committedResultParity": true,
+        "persistedStateAndTailParity": true,
+        "ownershipClassificationParity": false,
+        "baselineOwnershipAudit": {
+          "status": "REFUSED",
+          "causeCode": "JSON_LIMIT_EXCEEDED",
+          "claimsRetained": true
+        },
+        "nativeOwnershipValid": true,
+        "nativeReservationsVerified": true,
+        "durability": {
+          "journalMode": "wal",
+          "synchronous": 2
+        },
+        "nativeSamplesMs": [
+          158.62412500000028,
+          166.15479199999936,
+          152.66341700000066,
+          165.0645000000004,
+          153.2401659999996,
+          166.13104099999964,
+          153.62512500000048,
+          166.4979169999997,
+          154.1593329999996,
+          162.91312500000004,
+          154.52095800000006,
+          165.91362500000014,
+          153.44679199999973,
+          165.84608299999945,
+          154.08479199999965,
+          167.2222499999989,
+          153.34070799999972,
+          164.61858399999983,
+          152.30729200000133,
+          165.93012500000077
+        ],
+        "baselineSamplesMs": [
+          166.05116699999962,
+          127.93404100000043,
+          136.90862500000003,
+          138.04133399999955,
+          141.31991599999947,
+          135.03162500000053,
+          127.06004200000007,
+          131.7387920000001,
+          133.66924999999992,
+          120.77941700000065,
+          123.20941599999969,
+          130.94241599999987,
+          128.13287500000024,
+          139.2671250000003,
+          134.2325839999994,
+          140.9779580000013,
+          132.997374999999,
+          131.44820900000013,
+          130.27791699999943,
+          137.20937499999854
+        ],
+        "nativeP95Ms": 166.4979169999997,
+        "baselineP95Ms": 141.31991599999947,
+        "reductionP95": -0.17816314722406368
+      }
+    ]
+  },
+  "guardProbe": {
+    "schemaVersion": 1,
+    "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+    "node": "v24.19.0",
+    "platform": "darwin",
+    "architecture": "arm64",
+    "cpu": "Apple M2",
+    "repeats": 20,
+    "claimCount": 3,
+    "timestamp": "2026-09-11T00:00:00.000Z",
+    "runtime": "warm-cache public transaction API with per-call native connection",
+    "syntheticSeedOutsideMeasurement": true,
+    "durabilityQualification": "Native WAL/FULL and unchanged pinned filesystem fsync transaction implementation; power-loss equivalence requires separate evidence.",
+    "diagnosticOnly": true,
+    "releaseThresholdsVerified": false,
+    "results": [
+      {
+        "scanSamples": [
+          150.35541600000033,
+          175.11904199999935,
+          148.60041600000022,
+          173.6312909999997,
+          149.10608299999967,
+          159.47633300000052,
+          148.02908299999945,
+          160.11370800000077,
+          149.60799999999836,
+          161.6095830000013,
+          150.68074999999953,
+          159.5650829999995,
+          151.48558400000002,
+          158.92979100000048,
+          150.5270419999997,
+          166.5246670000015,
+          164.4413339999992,
+          170.47962499999994,
+          164.41908300000068,
+          167.88433299999997
+        ],
+        "stageSamples": {
+          "native": [
+            {
+              "entryMs": 11.313916000000063,
+              "stateMutationMs": 5.95837500000016,
+              "eventAppendMs": 3.5342090000003736,
+              "commitMs": 151.90191700000014,
+              "totalMs": 172.72179099999994
+            },
+            {
+              "entryMs": 8.953542000000198,
+              "stateMutationMs": 1.822374999999738,
+              "eventAppendMs": 1.2846250000002328,
+              "commitMs": 176.59995900000013,
+              "totalMs": 188.66654199999994
+            },
+            {
+              "entryMs": 2.2328749999996944,
+              "stateMutationMs": 0.2989159999997355,
+              "eventAppendMs": 0.2398749999993015,
+              "commitMs": 149.76245800000015,
+              "totalMs": 152.53620800000044
+            },
+            {
+              "entryMs": 6.1345830000000205,
+              "stateMutationMs": 0.9038330000003043,
+              "eventAppendMs": 0.7415419999997539,
+              "commitMs": 175.054666,
+              "totalMs": 182.83879199999956
+            },
+            {
+              "entryMs": 2.2939580000002024,
+              "stateMutationMs": 0.33849999999983993,
+              "eventAppendMs": 0.2558339999995951,
+              "commitMs": 150.145125,
+              "totalMs": 153.0354159999997
+            },
+            {
+              "entryMs": 2.9575000000004366,
+              "stateMutationMs": 0.5427500000005239,
+              "eventAppendMs": 0.41600000000016735,
+              "commitMs": 160.76195800000005,
+              "totalMs": 164.6806660000002
+            },
+            {
+              "entryMs": 2.484207999999853,
+              "stateMutationMs": 0.2992500000000291,
+              "eventAppendMs": 0.21466599999985192,
+              "commitMs": 149.30304199999955,
+              "totalMs": 152.3034579999994
+            },
+            {
+              "entryMs": 2.973582999999053,
+              "stateMutationMs": 0.551792000000205,
+              "eventAppendMs": 0.3972090000006574,
+              "commitMs": 161.63587499999994,
+              "totalMs": 165.5609999999997
+            },
+            {
+              "entryMs": 2.666584000000512,
+              "stateMutationMs": 0.30349999999998545,
+              "eventAppendMs": 0.2475830000003043,
+              "commitMs": 151.3574580000004,
+              "totalMs": 154.57766700000138
+            },
+            {
+              "entryMs": 2.9764169999998558,
+              "stateMutationMs": 0.4909169999991718,
+              "eventAppendMs": 0.4095000000015716,
+              "commitMs": 162.87212499999987,
+              "totalMs": 166.75112499999886
+            },
+            {
+              "entryMs": 2.629666000000725,
+              "stateMutationMs": 0.2334579999987909,
+              "eventAppendMs": 0.19549999999981083,
+              "commitMs": 152.21949999999924,
+              "totalMs": 155.27970800000003
+            },
+            {
+              "entryMs": 2.9415420000004815,
+              "stateMutationMs": 0.4962500000001455,
+              "eventAppendMs": 0.42687499999919964,
+              "commitMs": 161.33766600000126,
+              "totalMs": 165.20449999999983
+            },
+            {
+              "entryMs": 2.4325840000001335,
+              "stateMutationMs": 0.22375000000101863,
+              "eventAppendMs": 0.19074999999975262,
+              "commitMs": 152.7515829999993,
+              "totalMs": 155.60025000000132
+            },
+            {
+              "entryMs": 2.8074169999999867,
+              "stateMutationMs": 0.47683300000062445,
+              "eventAppendMs": 0.38941699999850243,
+              "commitMs": 160.09604200000103,
+              "totalMs": 163.77141699999993
+            },
+            {
+              "entryMs": 2.0137500000000728,
+              "stateMutationMs": 0.23704200000065612,
+              "eventAppendMs": 0.19995799999924202,
+              "commitMs": 151.95091599999978,
+              "totalMs": 154.40329200000087
+            },
+            {
+              "entryMs": 2.9216249999990396,
+              "stateMutationMs": 0.4129590000011376,
+              "eventAppendMs": 0.34054200000173296,
+              "commitMs": 167.60850000000028,
+              "totalMs": 171.28566599999976
+            },
+            {
+              "entryMs": 2.4304579999989073,
+              "stateMutationMs": 0.26404099999854225,
+              "eventAppendMs": 0.21424999999908323,
+              "commitMs": 165.43895799999882,
+              "totalMs": 168.3492499999993
+            },
+            {
+              "entryMs": 2.514458999999988,
+              "stateMutationMs": 0.4055000000007567,
+              "eventAppendMs": 0.3236250000009022,
+              "commitMs": 171.5581660000007,
+              "totalMs": 174.80341699999917
+            },
+            {
+              "entryMs": 2.2335000000002765,
+              "stateMutationMs": 0.26179100000081235,
+              "eventAppendMs": 0.20837500000016007,
+              "commitMs": 165.4655419999999,
+              "totalMs": 168.1707920000008
+            },
+            {
+              "entryMs": 2.18737499999952,
+              "stateMutationMs": 0.38133399999969697,
+              "eventAppendMs": 0.28087500000037835,
+              "commitMs": 168.88950000000114,
+              "totalMs": 171.7408749999995
+            }
+          ],
+          "baseline": [
+            {
+              "entryMs": 37.168249999999716,
+              "stateMutationMs": 77.9066670000002,
+              "eventAppendMs": 147.25641600000017,
+              "commitMs": 191.71804100000008,
+              "totalMs": 454.0731660000001
+            },
+            {
+              "entryMs": 16.14862499999981,
+              "stateMutationMs": 28.96745800000008,
+              "eventAppendMs": 101.2017079999996,
+              "commitMs": 203.79100000000017,
+              "totalMs": 350.12262499999997
+            },
+            {
+              "entryMs": 27.77366600000005,
+              "stateMutationMs": 53.667625000000044,
+              "eventAppendMs": 141.10716700000012,
+              "commitMs": 307.6339169999992,
+              "totalMs": 530.1916249999995
+            },
+            {
+              "entryMs": 29.920374999999694,
+              "stateMutationMs": 62.86633400000028,
+              "eventAppendMs": 102.71441700000014,
+              "commitMs": 128.9561249999997,
+              "totalMs": 324.4715839999999
+            },
+            {
+              "entryMs": 7.986207999999351,
+              "stateMutationMs": 15.071917000000212,
+              "eventAppendMs": 63.88416600000073,
+              "commitMs": 57.167458000000806,
+              "totalMs": 144.12112499999967
+            },
+            {
+              "entryMs": 5.428750000000036,
+              "stateMutationMs": 14.338999999999942,
+              "eventAppendMs": 51.45170800000051,
+              "commitMs": 52.81516699999975,
+              "totalMs": 124.03679199999988
+            },
+            {
+              "entryMs": 5.74462499999936,
+              "stateMutationMs": 12.243499999999585,
+              "eventAppendMs": 56.9848750000001,
+              "commitMs": 58.84458300000006,
+              "totalMs": 133.8257079999994
+            },
+            {
+              "entryMs": 6.0555420000000595,
+              "stateMutationMs": 14.045457999999599,
+              "eventAppendMs": 51.97966699999961,
+              "commitMs": 56.39137499999924,
+              "totalMs": 128.47441699999945
+            },
+            {
+              "entryMs": 7.6099169999997684,
+              "stateMutationMs": 11.953583999998955,
+              "eventAppendMs": 59.01729200000045,
+              "commitMs": 61.09133400000064,
+              "totalMs": 139.67941699999938
+            },
+            {
+              "entryMs": 5.443083000000115,
+              "stateMutationMs": 12.176958000000013,
+              "eventAppendMs": 57.16533300000083,
+              "commitMs": 56.24825000000055,
+              "totalMs": 131.03554199999962
+            },
+            {
+              "entryMs": 6.5795840000009775,
+              "stateMutationMs": 14.163500000000568,
+              "eventAppendMs": 58.00312500000109,
+              "commitMs": 57.08812500000022,
+              "totalMs": 135.8422499999997
+            },
+            {
+              "entryMs": 6.860125000001062,
+              "stateMutationMs": 12.96179200000006,
+              "eventAppendMs": 52.81841700000041,
+              "commitMs": 64.58329100000083,
+              "totalMs": 137.225292000001
+            },
+            {
+              "entryMs": 8.018582999999126,
+              "stateMutationMs": 13.913915999999517,
+              "eventAppendMs": 55.83995800000048,
+              "commitMs": 57.640541999999186,
+              "totalMs": 135.42216599999847
+            },
+            {
+              "entryMs": 6.522374999998647,
+              "stateMutationMs": 10.963208000001032,
+              "eventAppendMs": 54.07258300000103,
+              "commitMs": 59.493500000000495,
+              "totalMs": 131.05329099999835
+            },
+            {
+              "entryMs": 7.797582999999577,
+              "stateMutationMs": 10.693875000000844,
+              "eventAppendMs": 54.35120800000004,
+              "commitMs": 57.29095799999959,
+              "totalMs": 130.14287499999955
+            },
+            {
+              "entryMs": 6.632290999999896,
+              "stateMutationMs": 14.989083000000392,
+              "eventAppendMs": 54.6320829999986,
+              "commitMs": 61.769542,
+              "totalMs": 138.0248329999995
+            },
+            {
+              "entryMs": 9.617541999999958,
+              "stateMutationMs": 13.370249999999942,
+              "eventAppendMs": 54.097499999999854,
+              "commitMs": 61.43145800000093,
+              "totalMs": 138.52895799999897
+            },
+            {
+              "entryMs": 8.570792000000438,
+              "stateMutationMs": 13.930207999999766,
+              "eventAppendMs": 49.97549999999865,
+              "commitMs": 62.154334000000745,
+              "totalMs": 134.63241700000071
+            },
+            {
+              "entryMs": 5.524999999999636,
+              "stateMutationMs": 15.20037500000035,
+              "eventAppendMs": 54.491665999999896,
+              "commitMs": 61.96349999999984,
+              "totalMs": 137.19195800000125
+            },
+            {
+              "entryMs": 6.441791999999623,
+              "stateMutationMs": 15.953624999998283,
+              "eventAppendMs": 53.970500000001266,
+              "commitMs": 68.48795799999971,
+              "totalMs": 144.8557499999988
+            }
+          ]
+        },
+        "initialEvents": 100000,
+        "claimCount": 3,
+        "committedResultParity": true,
+        "persistedStateAndTailParity": true,
+        "ownershipClassificationParity": false,
+        "baselineOwnershipAudit": {
+          "status": "REFUSED",
+          "causeCode": "JSON_LIMIT_EXCEEDED",
+          "claimsRetained": true
+        },
+        "nativeOwnershipValid": true,
+        "nativeReservationsVerified": true,
+        "durability": {
+          "journalMode": "wal",
+          "synchronous": 2
+        },
+        "nativeSamplesMs": [
+          172.78158299999996,
+          188.6803749999999,
+          152.54591700000037,
+          182.84879199999978,
+          153.04866700000002,
+          164.69658300000083,
+          152.31245899999976,
+          165.57874999999876,
+          154.58712500000001,
+          166.7654590000002,
+          155.29112499999974,
+          165.2183330000007,
+          155.61166700000103,
+          163.7854580000003,
+          154.41416600000048,
+          171.30279100000007,
+          168.36149999999907,
+          174.82054199999948,
+          168.1827919999996,
+          171.75845800000025
+        ],
+        "baselineSamplesMs": [
+          454.1192920000003,
+          350.16116599999987,
+          530.2343339999998,
+          324.4995829999998,
+          144.1438330000001,
+          124.05062499999985,
+          133.8358330000001,
+          128.48929100000078,
+          139.68920900000012,
+          131.04908299999988,
+          135.85462499999994,
+          137.24054200000137,
+          135.43220800000017,
+          131.06791599999997,
+          130.15495799999917,
+          138.04008299999987,
+          138.5392499999998,
+          134.64891699999862,
+          137.20300000000134,
+          144.87062499999956
+        ],
+        "nativeP95Ms": 182.84879199999978,
+        "baselineP95Ms": 454.1192920000003,
+        "reductionP95": 0.597355154865344
+      }
+    ]
+  },
+  "guardMedianMs": 159.520708,
+  "nativeCommitMedianMs": 161.04981200000066,
+  "jevgrep": {
+    "initialUsageError": "Installed CLI expects jg question root;corrected invocation completed0",
+    "relevantFiles": 75,
+    "log": "/Users/cassio/.codex/verification/sqlite-commit-stage638/jevgrep-fixed.log"
+  },
+  "conclusion": "Full reservation indexed-payload comparison query dominates final nativecommit. Do not weaken corruption/error parity or cache mutable historical proofs."
+}

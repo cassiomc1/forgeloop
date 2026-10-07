@@ -1,3 +1,4 @@
+import { withProjectStorage } from "../src/storage/project-boundary.js";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import path from "node:path";
@@ -21,7 +22,7 @@ function runCli(target, ...args) {
 
 test("task-recover and task-resume expose the durable recovery lifecycle through CLI JSON", async () => {
   await withRecoveryTarget(async (target) => {
-    const { taskId } = await setupAbandonedTask(target, { taskId: "cli-recovery" });
+    const { taskId } = await withProjectStorage(target, () => setupAbandonedTask(target, { taskId: "cli-recovery" }));
     const recovered = runCli(
       target,
       "task-recover",
@@ -41,7 +42,7 @@ test("task-recover and task-resume expose the durable recovery lifecycle through
 
 test("deprecated operator authorization is only a caller-acknowledgement alias", async () => {
   await withRecoveryTarget(async (target) => {
-    const { taskId } = await setupAbandonedTask(target, { taskId: "cli-recovery-alias" });
+    const { taskId } = await withProjectStorage(target, () => setupAbandonedTask(target, { taskId: "cli-recovery-alias" }));
     const recovered = runCli(
       target,
       "task-recover",

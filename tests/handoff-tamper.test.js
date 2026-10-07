@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile, writeFile } from "node:fs/promises";
+import { readFixtureText, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
 import { test } from "node:test";
 
 import { createCanonicalHandoff, readCanonicalHandoff } from "../src/core/handoff.js";
@@ -19,14 +19,14 @@ test("handoff tampering is rejected without repairing the artifact implicitly", 
     await setupVerifyingTask(target, packageRoot, { taskId });
     await createCanonicalHandoff(target, { target, packageRoot, taskId, handoffId, note: "Read-only snapshot" });
     const relativePath = taskHandoffPath(taskId, handoffId);
-    const value = JSON.parse(await readFile(`${target}/${relativePath}`, "utf8"));
+    const value = JSON.parse(await readFixtureText(target, relativePath));
     value.intent.note = "Changed outside the protocol";
-    await writeFile(`${target}/${relativePath}`, `${JSON.stringify(value)}\n`, "utf8");
+    await overwriteFixtureText(target, relativePath, `${JSON.stringify(value)}\n`);
     await assert.rejects(
       () => readCanonicalHandoff(target, { taskId, handoffId, packageRoot }),
       (error) => error.code === "E_HANDOFF_TAMPERED",
     );
-    assert.equal((await readFile(`${target}/${relativePath}`, "utf8")).includes("Changed outside"), true);
+    assert.equal((await readFixtureText(target, relativePath)).includes("Changed outside"), true);
   } finally {
     await removeTempTree(target);
   }

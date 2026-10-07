@@ -1,5 +1,6 @@
+import { readFixtureText, overwriteFixtureText, overwriteFixtureRecordBytes } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { mkdtemp, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -226,8 +227,7 @@ test("non-approval policy decisions do not inspect malformed approval artifacts"
   for (const decision of ["ALLOW", "DENY", "REQUIRE_AUTHORITY"]) {
     await withProposedAction(async ({ target, taskId }) => {
       const approvalPath = path.join(target, taskApprovalPath(taskId, "approval-malformed"));
-      await mkdir(path.dirname(approvalPath), { recursive: true });
-      await writeFile(
+      await overwriteFixtureRecordBytes(target,
         approvalPath,
         "{ invalid approval json\n",
       );
@@ -392,9 +392,9 @@ test("next blocks denied and unknown capabilities without authorization guidance
 
   await withProposedAction(async ({ target, taskId, action }) => {
     const actionPath = path.join(target, taskActionPath(taskId, action.actionId));
-    const artifact = JSON.parse(await readFile(actionPath, "utf8"));
+    const artifact = JSON.parse(await readFixtureText(target, actionPath));
     artifact.capability = "unknown.capability";
-    await writeFile(actionPath, `${JSON.stringify(artifact)}\n`, "utf8");
+    await overwriteFixtureText(target, actionPath, `${JSON.stringify(artifact)}\n`, "utf8");
     const result = await getNextAction({ target, packageRoot, taskId });
     assert.equal(result.nextAction, NEXT_ACTIONS.RESOLVE_BLOCKER);
     assert.deepEqual(result.commands, []);

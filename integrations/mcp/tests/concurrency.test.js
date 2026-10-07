@@ -28,7 +28,7 @@ test("concurrent task-resume invocations yield one winner and no duplicate owner
     // The loser fails closed with a canonical error (locked or already resumed).
     const loser = [first, second].find((envelope) => envelope !== winners[0]);
     assert.equal(loser.ok, false);
-    assert.match(loser.error.code ?? "", /E_TASK_LOCKED|E_TASK_NOT_RECOVERED|E_TASK_RECOVERY_INCONSISTENT|E_TASK_REQUIRED/);
+    assert.match(loser.error.code ?? "", /E_TASK_LOCKED|E_TASK_NOT_RECOVERED|E_TASK_RECOVERY_INCONSISTENT|E_TASK_REQUIRED|E_STATE_REVISION_CONFLICT/);
 
     // Ownership ends ACTIVE exactly once with claims reacquired.
     const ownership = await executeForgeLoopCommand({

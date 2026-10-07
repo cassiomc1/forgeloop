@@ -1,0 +1,37 @@
+{
+  "increment": 687,
+  "productionChanged": false,
+  "discovery": {
+    "canonicalGateReference": {
+      "canonicalBytesPresent": true,
+      "stale": [
+        {
+          "path": ".forgeloop/task-state/055464b4b08c5d3fce2ad4b3e10841cad4d5ee1d97b435c00498c500dd63e7ef/task.json",
+          "status": "missing"
+        }
+      ]
+    },
+    "conclusion": "Canonical gate artifact byte binding is present, but direct validation reports missing because it checks physical files. Gate recording and revalidation hashing also use physical files; correction needs all three paths, preserved external-file checks and canonical observations."
+  },
+  "remoteVerificationRoute": {
+    "observed": "All three registered runners online and idle at API read; availability is not execution or host-location proof.",
+    "nextAction": "After current source corrections and prepush pass, publish candidate branch and manually dispatch existing Windows and Node compatibility workflows on that branch; serialize remote Windows/Linux workloads. Preserve user instruction to open PR only after original completion.",
+    "limits": [
+      "Current workflows are local candidate definitions; branch-specific dispatch needs pushed commit.",
+      "PR-only core workflow still cannot be executed before a PR unless an equivalent supported dispatch entry is added.",
+      "No dispatch, push, commit or PR in this turn."
+    ]
+  },
+  "sourceSha256": {
+    ".github/workflows/windows-full-suite.yml": "b776ecb1fb5781ea57375f539e0b0cb9a86aa279dfb97709ab8b1286be9fe33f",
+    ".github/workflows/node-compat.yml": "1579035734dc0714fb6e8aebb80eafedef11521550d7cd8189af7c88daeadcce",
+    "docs/SELF_HOSTED_TESTS.md": "b4f0323c2b294a4e287e77a2325869bd27ba14972106a79bf408f95a15796505",
+    "src/core/gate-artifact.js": "21477b4ff6e832d6831db156361def23d9c17cc7e146eea4eae253105193ee83",
+    "src/commands/gate-record.js": "96a7695fa71828527334e876ea0a2dd94c435bdb0d5cfe236370617c16175d28",
+    "src/commands/gate-revalidate.js": "b53d444543eaec7a07d0f58bd44f3f81ff9f56893ba25f4852b3da76de2cdaf2"
+  },
+  "verification": {
+    "fullMac686": "Terminal PASS; all22 gates,2729 unchanged admitted files,516.84 seconds."
+  },
+  "runningVerification": "Full Mac686 terminal PASS; owned session91524 closed."
+}

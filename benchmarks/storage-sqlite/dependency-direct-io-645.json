@@ -1,0 +1,23 @@
+[
+  {
+    "package": "@typesafe-ai/sdk",
+    "version": "0.6.0",
+    "files": 2,
+    "directFilesystemOrChildProcessImports": [],
+    "limitation": "Direct import scan only; transitive packages, network and runtime-dependent effects not excluded."
+  },
+  {
+    "package": "smol-toml",
+    "version": "1.8.0",
+    "files": 10,
+    "directFilesystemOrChildProcessImports": [],
+    "limitation": "Direct import scan only; transitive packages, network and runtime-dependent effects not excluded."
+  },
+  {
+    "package": "@modelcontextprotocol/server",
+    "version": "2.0.0",
+    "files": 26,
+    "directFilesystemOrChildProcessImports": [],
+    "limitation": "Direct import scan only; transitive packages, network and runtime-dependent effects not excluded."
+  }
+]

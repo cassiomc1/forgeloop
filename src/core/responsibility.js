@@ -10,7 +10,9 @@ import { resolveTaskClaimState } from "./task-claim-state.js";
 import { normalizeWriteClaims } from "./task-scope.js";
 import { taskResponsibilityPath } from "./task-paths.js";
 import { ensureWithin, fileExists } from "./filesystem.js";
-import { appendProtocolEvent } from "./events.js";
+import { getOperationalStore, operationalArtifactExists } from "../storage/operational-context.js";
+import { needsExistingProjectScope, withExistingProjectScope } from "../storage/existing-project-scope.js";
+import { appendProtocolEvent, withEventLedgerAudit } from "./events.js";
 import { withTaskTransaction } from "./transaction.js";
 import { assertTaskMutationAllowed } from "./task-claim-state.js";
 import { assertWorkspaceBinding } from "./workspace-binding.js";
@@ -118,8 +120,11 @@ export async function validateResponsibilityContract(value, packageRoot = getPac
 }
 
 export async function readResponsibility(target, { taskId, packageRoot = getPackageRoot() } = {}) {
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => readResponsibility(target, { taskId, packageRoot }), { readOnly: true });
+  }
   const relativePath = taskResponsibilityPath(taskId);
-  if (!(await fileExists(ensureWithin(target, relativePath)))) return null;
+  if (!(operationalArtifactExists(target, relativePath) ?? await fileExists(ensureWithin(target, relativePath)))) return null;
   try {
     const artifact = await readJsonArtifact(target, relativePath, "responsibility", packageRoot);
     const value = await validateResponsibilityContract(artifact.value, packageRoot);
@@ -173,6 +178,15 @@ export function validateResponsibilityChecks(responsibility, state) {
 }
 
 export async function resolveResponsibilityStatus(target, { taskId, packageRoot = getPackageRoot() } = {}) {
+  const read = () => resolveLoadedResponsibilityStatus(target, { taskId, packageRoot });
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => resolveResponsibilityStatus(target, { taskId, packageRoot }), { readOnly: true });
+  }
+  if (getOperationalStore(target)) return withEventLedgerAudit(target, packageRoot, { taskId }, read);
+  return read();
+}
+
+async function resolveLoadedResponsibilityStatus(target, { taskId, packageRoot }) {
   const artifact = await readResponsibility(target, { taskId, packageRoot });
   if (!artifact) return { status: "NOT_APPLICABLE", taskId, path: taskResponsibilityPath(taskId), responsibility: null, errors: [] };
   let inputs;
@@ -245,7 +259,7 @@ export async function setResponsibilityContract(target, options = {}) {
   return withTaskTransaction({ target, taskId, packageRoot, operation: "responsibility-set", recordCommitEvent: true }, async () => {
     await assertTaskMutationAllowed(target, { taskId, packageRoot });
     await assertWorkspaceBinding(target, { taskId, packageRoot, operation: "responsibility-set" });
-    if (await fileExists(ensureWithin(target, relativePath))) {
+    if (operationalArtifactExists(target, relativePath) ?? await fileExists(ensureWithin(target, relativePath))) {
       throw responsibilityError("E_RESPONSIBILITY_INVALID", "Responsibility contract is immutable during a pass", [relativePath]);
     }
     const state = await readWorkState(target, { packageRoot, taskId });

@@ -1,3 +1,4 @@
+import { needsExistingProjectScope, withExistingProjectScope } from "../../storage/existing-project-scope.js";
 import { canonicalFingerprint, readJsonArtifact } from "../artifacts.js";
 import { readConfig } from "../config.js";
 import { readContract } from "../contract.js";
@@ -36,6 +37,34 @@ import {
 import { appendProtocolEvent } from "../events.js";
 import { getPackageRoot } from "../templates.js";
 import { withTaskMutation } from "../task-command.js";
+import { getOperationalStore } from "../../storage/operational-context.js";
+
+async function withQualityReadObservation(target, callback) {
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => withQualityReadObservation(target, callback), { readOnly: true });
+  }
+  const store = getOperationalStore(target);
+  // Prepared mutations must observe their own staged values and retain CAS.
+  if (!store || store.transaction || store.writes.size || store.events.size || store.attachments.size) return callback();
+  const [{ withStorageSnapshot }, { withOperationalReadSnapshot }] = await Promise.all([
+    import("../../storage/snapshot.js"), import("../../storage/unit-of-work.js"),
+  ]);
+  return withStorageSnapshot(store.db, db => withOperationalReadSnapshot({ db, target }, callback));
+}
+
+async function withQualityMutation(target, options, operation, callback) {
+  const native = Boolean(getOperationalStore(target)) || await needsExistingProjectScope(target);
+  for (let retry = 0; ; retry += 1) {
+    try {
+      return await withTaskMutation(target, options, operation, callback);
+    } catch (error) {
+      // These callbacks persist an already captured observation. A native
+      // conflict discards their staged writes; rerun admission and bindings
+      // against current records without invoking the provider again.
+      if (!native || error.code !== "E_STATE_REVISION_CONFLICT" || retry >= 2) throw error;
+    }
+  }
+}
 import { findTaskById } from "../task-discovery.js";
 import { currentChangedPaths } from "../repository.js";
 import { assertClaimsCoverChangedPaths } from "../task-scope.js";
@@ -142,7 +171,11 @@ function normalizeScanResult(result, provider, detection, projectPath) {
   };
 }
 
-export async function resolveStructuralQualityContext({
+export async function resolveStructuralQualityContext(options = {}) {
+  return withQualityReadObservation(options.target, () => resolveStructuralQualityContextObservation(options));
+}
+
+async function resolveStructuralQualityContextObservation({
   target,
   packageRoot = getPackageRoot(),
   taskId,
@@ -443,7 +476,7 @@ async function persistEvaluationAndCheck({ target, packageRoot, taskId, inputs, 
     runtimeContext,
     taskId: context?.taskId ?? taskId,
   });
-  const recorded = await withTaskMutation(target, { taskId, packageRoot }, "quality-verify-check", async (context) => {
+  const recorded = await withQualityMutation(target, { taskId, packageRoot }, "quality-verify-check", async (context) => {
     const effectiveTaskId = context?.taskId ?? taskId;
     const evaluations = await listStructuralQualityEvaluations(target, effectiveTaskId, packageRoot);
     const latest = evaluations
@@ -718,7 +751,7 @@ export async function evaluateStructuralQuality({ target, packageRoot = getPacka
   }
 
   // Commit under task mutation lock
-  const captured = await withTaskMutation(target, { taskId, packageRoot }, "quality-verify-evaluation", async (context) => {
+  const captured = await withQualityMutation(target, { taskId, packageRoot }, "quality-verify-evaluation", async (context) => {
     const lockedTaskId = context?.taskId ?? taskId;
     const inputs = await taskInputs(target, packageRoot, lockedTaskId, { runtimeContext, timeoutMs, maxOutputBytes });
     if (inputs.state.phase !== "VERIFYING") {
@@ -908,7 +941,11 @@ function projectionFromArtifacts(policy, baseline, current, state, evaluations =
   return projection;
 }
 
-export async function projectStructuralQualityStatus({ target, packageRoot = getPackageRoot(), taskId, runtimeContext } = {}) {
+export async function projectStructuralQualityStatus(options = {}) {
+  return withQualityReadObservation(options.target, () => projectStructuralQualityStatusObservation(options));
+}
+
+async function projectStructuralQualityStatusObservation({ target, packageRoot = getPackageRoot(), taskId, runtimeContext } = {}) {
   const config = await loadOptionalConfig(target, packageRoot);
   const policy = configuredPolicy(config);
   if (!policy || policy.mode === "off") return emptyProjection(null);

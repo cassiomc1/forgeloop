@@ -18,6 +18,147 @@ Commands that support structured machine-readable output document `--json` in th
 
 <!-- END FORGELOOP GENERATED: cli-common-options -->
 
+## Storage maintenance
+
+### `storage-migration-status`
+
+Inspects the bootstrap storage layout and retained maintenance ownership even
+when ordinary commands are excluded. It neither opens nor validates the
+database, removes an exclusion, nor proves that its owner is alive or dead.
+
+<!-- BEGIN FORGELOOP GENERATED: cli:storage-migration-status:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--json`: emit bootstrap storage layout and retained maintenance ownership
+
+<!-- END FORGELOOP GENERATED: cli:storage-migration-status:options -->
+
+### `storage-migration-resume`
+
+Requires externally excluded writers and the exact retained dead local owner UUID reported by `storage-migration-status`. Continues verified STAGED, ARCHIVING or ARCHIVED publication, or verifies PUBLISHED current state without restoration. Verified unpublished staging can be retained and rebuilt. Unrecorded capture, unbound candidate files and interrupted owner handoffs remain refused.
+
+<!-- BEGIN FORGELOOP GENERATED: cli:storage-migration-resume:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--destination <path>`: retained migration directory relative to the project
+- `--expected-owner <uuid>`: exact retained maintenance owner reported by storage-migration-status
+- `--writers-quiesced`: assert that all writers, including older clients, have been externally stopped
+- `--json`: emit recovery verification metadata
+
+<!-- END FORGELOOP GENERATED: cli:storage-migration-resume:options -->
+
+
+### `storage-rollback-resume`
+
+Resume a recorded source rollback publication under an exact dead local maintenance owner. Stop and exclude all writers; keep native writes excluded. The clean supported legacy target is validated before owner adoption. Actual source/native locations, captured bytes, independent backup and owner history are revalidated before operation journals change. Target validation must pass for every task before maintenance release.
+
+```bash
+forgeloop storage-rollback-resume --path <project> --destination <retained-migration> --expected-owner <uuid> --legacy-root <clean-supported-checkout> --writers-quiesced --native-writes-excluded --json
+```
+
+Recorded `PREPARING`/`READY` preparation and staging journals, and `SWITCHING`, `NATIVE_RETAINED` and `RESTORED` publication journals are supported. Incomplete staging copies are retained before rebuilding from verified captured source. Unrecorded directories, remote/live owners and ambiguous bytes are refused and retained for reconciliation. No deletion or replacement of retained source/native backups is authorized by failure.
+
+<!-- BEGIN FORGELOOP GENERATED: cli:storage-rollback-resume:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--expected-owner <uuid>`: exact retained dead local owner reported by storage-migration-status
+- `--destination <path>`: retained migration with recorded rollback preparation, staging or publication
+- `--legacy-root <path>`: clean supported pinned legacy checkout used for actual target validation
+- `--writers-quiesced`: assert that all writers, including older clients, have been externally stopped and excluded
+- `--native-writes-excluded`: assert that native writes have been excluded since migration; snapshot equality alone does not prove this
+- `--json`: emit restoration and target-validation metadata
+
+<!-- END FORGELOOP GENERATED: cli:storage-rollback-resume:options -->
+
+### `storage-rollback`
+
+Conditionally restore the preserved legacy source before any native writes have been accepted. Stop and exclude every writer, including old clients and background integrations. Inventory the clients and retain their exclusion throughout validation. Snapshot equality does not prove that no native writes occurred: `--native-writes-excluded` is an explicit operator assertion about the entire interval since migration. If native writes occurred, use a verified reverse export for the exact target version or forward repair instead.
+
+```bash
+forgeloop storage-rollback --path <project> --destination <retained-migration> --legacy-root <clean-supported-checkout> --writers-quiesced --native-writes-excluded --json
+```
+
+The supported validator checkout is the clean tracked Git commit `ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5`. Other target commits are refused. The command validates that target before acquiring maintenance, revalidates retained source and unchanged native authority, backs up native database and referenced attachment bytes, stages captured source, retains original native files by rename, and publishes exact source roots. It runs the pinned legacy CLI against every retained task and checks the task catalog before allowing maintenance release. The command executes Git and the explicitly supplied target CLI locally.
+
+Original native files, independent backups, captured source, inventories and validation receipts are retained. No automatic disposal occurs. On failure, keep all writers excluded and inspect maintenance owner and retained operation state. A failed attempt is not authorization to delete exclusion or retry over retained paths. Use `storage-rollback-resume` only for recorded preparation, staging or publication states. Unbound attempts remain refused; the original migration resume command must not be used to recover rollback operations.
+
+<!-- BEGIN FORGELOOP GENERATED: cli:storage-rollback:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--destination <path>`: retained published migration directory relative to the project
+- `--legacy-root <path>`: clean supported pinned legacy checkout used for actual target validation
+- `--writers-quiesced`: assert that all writers, including older clients, have been externally stopped and excluded
+- `--native-writes-excluded`: assert that native writes have been excluded since migration; snapshot equality alone does not prove this
+- `--json`: emit restoration and target-validation metadata
+
+<!-- END FORGELOOP GENERATED: cli:storage-rollback:options -->
+
+
+### `storage-migrate`
+
+Initial migration requires a new retained destination and externally stopped writers, including older clients. It validates and retains legacy sources, archives operational files, activates SQLite, and verifies current state. Failed attempts retain maintenance exclusion and evidence. Resume supports verified publication stages and identified unpublished staging; unrecorded capture and unbound candidate files remain refused.
+
+<!-- BEGIN FORGELOOP GENERATED: cli:storage-migrate:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--destination <path>`: new retained migration directory relative to the project; missing parent directories are created
+- `--writers-quiesced`: assert that all writers, including older clients, have been externally stopped
+- `--json`: emit migration publication and verification metadata
+
+<!-- END FORGELOOP GENERATED: cli:storage-migrate:options -->
+
+### `storage-restore-resume`
+
+Resumes restore after confirming that its exact retained local owner is dead. Requires externally excluded writers. Partial snapshots and prior rebuild intents are retained before rebuilding from verified source; completed preparation must pass source parity and domain validation. Conflicting intent records, unbound objects and changed preterminal databases remain refused. Terminal verification preserves accepted later work.
+
+```bash
+forgeloop storage-restore-resume --path /path/to/project --operation <restore-uuid> --expected-owner <owner-uuid> --writers-quiesced --json
+```
+
+<!-- BEGIN FORGELOOP GENERATED: cli:storage-restore-resume:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--operation <uuid>`: exact retained restore journal operation UUID
+- `--expected-owner <uuid>`: exact retained maintenance owner UUID
+- `--replace-active`: explicitly select active replacement with retained outgoing authority
+- `--writers-quiesced`: assert that all writers have been externally stopped
+- `--json`: emit restore recovery metadata
+
+<!-- END FORGELOOP GENERATED: cli:storage-restore-resume:options -->
+
+### `storage-restore`
+
+Restores an attachment-inclusive backup into a project with no existing operational state. Requires explicit exclusion of all writers. Retains an independent snapshot and restore journal; failed operations keep maintenance exclusion. Active-project replacement is not supported yet.
+
+```bash
+forgeloop storage-restore --path /path/to/fresh-project --source /path/to/verified-backup --writers-quiesced --json
+```
+
+<!-- BEGIN FORGELOOP GENERATED: cli:storage-restore:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--source <path>`: verified attachment-inclusive backup directory; absolute or relative to the target project
+- `--replace-active`: explicitly select active replacement with retained outgoing authority
+- `--writers-quiesced`: assert that all writers have been externally stopped
+- `--json`: emit restore activation metadata
+
+<!-- END FORGELOOP GENERATED: cli:storage-restore:options -->
+
+### `storage-backup`
+
+Creates a database-only backup of an existing canonical SQLite project. The
+destination is relative to the project, its parent must exist, and an existing
+destination is never replaced. External attachments are not included.
+
+<!-- BEGIN FORGELOOP GENERATED: cli:storage-backup:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--destination <path>`: new backup file or attachment-inclusive directory relative to the project; parent directory must exist
+- `--include-attachments`: create a new backup directory including all canonically referenced attachment bytes
+- `--json`: emit backup metadata
+
+<!-- END FORGELOOP GENERATED: cli:storage-backup:options -->
+
 ## Semantic decision projections
 
 ### `decision-status`
@@ -187,10 +328,10 @@ error codes. Default output and default JSON remain unchanged.
 
 | Category | Commands |
 | --- | --- |
+| **Setup & Maintenance** | [`storage-restore-resume`](#storage-restore-resume), [`storage-restore`](#storage-restore), [`storage-migration-status`](#storage-migration-status), [`storage-migration-resume`](#storage-migration-resume), [`storage-rollback`](#storage-rollback), [`storage-rollback-resume`](#storage-rollback-resume), [`storage-migrate`](#storage-migrate), [`storage-backup`](#storage-backup), [`contract-revise`](#contract-revise), [`init`](#init), [`index-setup`](#index-setup), [`index-start`](#index-start), [`index-stop`](#index-stop), [`index-rebuild`](#index-rebuild), [`update`](#update), [`checkpoint-revalidate`](#checkpoint-revalidate), [`task-migrate`](#task-migrate), [`migrate-protocol`](#migrate-protocol), [`task-unlock`](#task-unlock), [`task-recover`](#task-recover), [`task-abandon`](#task-abandon), [`task-repair-contract-bootstrap`](#task-repair-contract-bootstrap), [`task-migrate-contract-bootstrap-repair`](#task-migrate-contract-bootstrap-repair), [`task-repair-legacy-recovery`](#task-repair-legacy-recovery), [`task-resume`](#task-resume) |
 | **Inspection & Diagnostics** | [`protocol-info`](#protocol-info), [`decision-status`](#decision-status), [`decision-show`](#decision-show), [`context-plan`](#context-plan), [`model-route`](#model-route), [`semantic-plan`](#semantic-plan), [`test-inventory`](#test-inventory), [`test-utility`](#test-utility), [`test-prune-plan`](#test-prune-plan), [`doctor`](#doctor), [`index-status`](#index-status), [`search`](#search), [`metrics`](#metrics), [`usage-record`](#usage-record), [`efficiency`](#efficiency), [`eval`](#eval), [`history`](#history), [`trace`](#trace), [`reflect`](#reflect), [`progress`](#progress), [`profile-interview`](#profile-interview), [`inspect`](#inspect), [`status`](#status), [`validate-state`](#validate-state), [`validate-protocol`](#validate-protocol) |
 | **Verification & Completion** | [`test-prune-probe`](#test-prune-probe), [`quality-baseline`](#quality-baseline), [`quality-verify`](#quality-verify), [`quality-status`](#quality-status), [`prepare-completion`](#prepare-completion), [`run-check`](#run-check), [`record-check`](#record-check), [`record-terminal-result`](#record-terminal-result), [`audit`](#audit), [`report`](#report), [`validate-receipt`](#validate-receipt), [`verify-scope`](#verify-scope) |
 | **Lifecycle & State** | [`discover`](#discover), [`contract-create`](#contract-create), [`gate-record`](#gate-record), [`gate-revalidate`](#gate-revalidate), [`activate`](#activate), [`route`](#route), [`preflight`](#preflight), [`advance`](#advance), [`next`](#next), [`record-diagnosis`](#record-diagnosis), [`record-intervention`](#record-intervention), [`record-hypothesis-disposition`](#record-hypothesis-disposition), [`record-decision-criterion`](#record-decision-criterion), [`complete`](#complete), [`clear-state`](#clear-state), [`reconcile-closure`](#reconcile-closure), [`task-create`](#task-create), [`task-list`](#task-list), [`task-show`](#task-show), [`task-lock-status`](#task-lock-status), [`task-scope`](#task-scope) |
-| **Setup & Maintenance** | [`contract-revise`](#contract-revise), [`init`](#init), [`index-setup`](#index-setup), [`index-start`](#index-start), [`index-stop`](#index-stop), [`index-rebuild`](#index-rebuild), [`update`](#update), [`checkpoint-revalidate`](#checkpoint-revalidate), [`task-migrate`](#task-migrate), [`migrate-protocol`](#migrate-protocol), [`task-unlock`](#task-unlock), [`task-recover`](#task-recover), [`task-abandon`](#task-abandon), [`task-repair-contract-bootstrap`](#task-repair-contract-bootstrap), [`task-migrate-contract-bootstrap-repair`](#task-migrate-contract-bootstrap-repair), [`task-repair-legacy-recovery`](#task-repair-legacy-recovery), [`task-resume`](#task-resume) |
 | **Cross-Harness Continuity** | [`continuity`](#continuity), [`record-continuity`](#record-continuity), [`reconcile-continuity`](#reconcile-continuity), [`clear-continuity`](#clear-continuity), [`handoff-create`](#handoff-create), [`handoff-list`](#handoff-list), [`handoff-show`](#handoff-show) |
 | **Durable Actions & Approvals** | [`run-action`](#run-action), [`action-propose`](#action-propose), [`action-record`](#action-record), [`action-show`](#action-show), [`action-reconcile`](#action-reconcile), [`action-verify`](#action-verify), [`action-authorize`](#action-authorize), [`approval-request`](#approval-request), [`approval-resolve`](#approval-resolve) |
 | **Policy & Auditing** | [`policy`](#policy), [`policy-discover`](#policy-discover), [`policy-status`](#policy-status), [`policy-diff`](#policy-diff), [`rule-verify`](#rule-verify), [`baseline`](#baseline), [`bundle`](#bundle) |
@@ -884,7 +1025,7 @@ Reports the public compatibility handshake required by external ForgeLoop harnes
 
 - **Example**:
 
-  <!-- FORGELOOP EXAMPLE: cli-reference:protocol-info | exit=0 | json.commands.0.name=protocol-info -->
+  <!-- FORGELOOP EXAMPLE: cli-reference:protocol-info | exit=0 | json.protocolVersion=1 | json.features.operationalStorage.sqlite.format=sqlite -->
   ```bash
   forgeloop protocol-info --json
   ```
@@ -2410,6 +2551,8 @@ Migrates a legacy 1.0 single-task `.forgeloop/` layout into a namespaced task di
 <!-- BEGIN FORGELOOP GENERATED: cli:task-migrate:options -->
 
 - `--path <directory>`: target project directory (default: current directory)
+- `--destination <path>`: retained source and publication evidence destination
+- `--writers-quiesced`: confirm all legacy writers are stopped and excluded
 - `--dry-run`: show planned migration actions without moving files
 - `--json`: emit structured output as JSON
 
@@ -2440,6 +2583,8 @@ protocol version.
 <!-- BEGIN FORGELOOP GENERATED: cli:migrate-protocol:options -->
 
 - `--path <directory>`: target project directory (default: current directory)
+- `--destination <path>`: retained source and publication evidence destination
+- `--writers-quiesced`: confirm all legacy writers are stopped and excluded
 - `--to <protocolVersion>`: target supported protocol version
 - `--dry-run`: show migration actions without writing or deleting artifacts
 - `--json`: emit structured migration result as JSON

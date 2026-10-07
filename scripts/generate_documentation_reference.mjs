@@ -22,19 +22,22 @@ const packageRoot = getPackageRoot();
  */
 export function generateArtifactRegistryTable() {
   const rows = [
-    "| Artifact File | Schema | Ownership | Mutability | Trust Role |",
-    "| --- | --- | --- | --- | --- |",
+    "| Logical Identity | Canonical Storage | Export Path | Schema | Ownership | Mutability | Trust Role |",
+    "| --- | --- | --- | --- | --- | --- | --- |",
   ];
 
   for (const artifact of Object.values(ARTIFACT_REGISTRY)) {
     if (!artifact.isPublic) continue;
-    const fileCol = artifact.path.replace(".forgeloop/", "");
+    const fileCol = artifact.logicalPath;
     const schemaCol = `\`${artifact.schema}\``;
     const ownerCol = artifact.owner.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
     const mutabilityCol = artifact.mutability.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
     const trustRoleCol = artifact.trustRole.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 
-    rows.push(`| \`${fileCol}\` | ${schemaCol} | ${ownerCol} | ${mutabilityCol} | ${trustRoleCol} |`);
+    const storage = artifact.canonicalStorage;
+    const storageCol = `${storage.path}${storage.table ? ` :: ${storage.table}${storage.kind ? ` (${storage.kind})` : ""}${storage.column ? `.${storage.column}` : ""}` : ""}`;
+    const exportCol = artifact.exportPath ?? "Copied separately";
+    rows.push(`| \`${fileCol}\` | \`${storageCol}\` | \`${exportCol}\` | ${schemaCol} | ${ownerCol} | ${mutabilityCol} | ${trustRoleCol} |`);
   }
 
   return rows.join("\n");

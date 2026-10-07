@@ -1,5 +1,6 @@
+import { readFixtureText, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { readFile, writeFile } from "node:fs/promises";
+
 import { test } from "node:test";
 
 import { bindTaskWorkspace, resolveWorkspaceBindingStatus, assertWorkspaceBinding, validateWorkspaceBinding } from "../src/core/workspace-binding.js";
@@ -25,9 +26,9 @@ test("workspace binding is immutable and matches the current Git worktree", asyn
     assert.equal((await resolveWorkspaceBindingStatus(target, { taskId, packageRoot })).status, "MATCH");
 
     const relativePath = taskWorkspaceBindingPath(taskId);
-    const stored = JSON.parse(await readFile(`${target}/${relativePath}`, "utf8"));
+    const stored = JSON.parse(await readFixtureText(target, relativePath));
     stored.workspaceIdentity = "f".repeat(64);
-    await writeFile(`${target}/${relativePath}`, `${JSON.stringify(stored)}\n`, "utf8");
+    await overwriteFixtureText(target, relativePath, `${JSON.stringify(stored)}\n`);
     const status = await resolveWorkspaceBindingStatus(target, { taskId, packageRoot });
     assert.equal(status.status, "MISMATCH");
     await assert.rejects(

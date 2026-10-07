@@ -1,0 +1,28 @@
+{
+  "archive": "/tmp/forgeloop-platform-source606.zip",
+  "sha256": "b4fd54e6b108fb411c2d2f1b1bf1c834e4bb88d65444a82de84833cb0cf5421d",
+  "files": 2613,
+  "bytes": 13231988,
+  "frozenRoot": "/tmp/forgeloop-execution605",
+  "schemaVersion": 1,
+  "scope": "Stage immutable605 source for queued Windows/Linux606 verification",
+  "transferAndExtraction": [
+    {
+      "label": "isolated workspace admission",
+      "status": 0
+    },
+    {
+      "label": "source transfer over existing private tunnel",
+      "status": 0
+    },
+    {
+      "label": "verified source extraction",
+      "status": 0
+    }
+  ],
+  "limitations": [
+    "Staging alone is not setup or execution verification.",
+    "Do not launch Windows606 while Linux602 full job occupies host.",
+    "New receipt audit consumer606 correction is not included in immutable605 candidate;future current-source acceptance still required."
+  ]
+}

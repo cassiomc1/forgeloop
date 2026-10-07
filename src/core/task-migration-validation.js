@@ -2,8 +2,8 @@ import { createHash } from "node:crypto";
 import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { ensureWithin, fileExists } from "./filesystem.js";
-import { readJsonArtifact } from "./artifacts.js";
-import { validateEventLedger } from "./events.js";
+import { readPortableJsonArtifact } from "./artifacts.js";
+import { validatePortableEventLedger } from "./events.js";
 import {
   E_TASK_MIGRATION_IDENTITY_MISMATCH,
   E_TASK_MIGRATION_INVALID,
@@ -42,7 +42,7 @@ export async function validateMigrationSnapshot(target, { taskId, packageRoot, p
       const absPath = ensureWithin(target, relPath);
       if (await fileExists(absPath)) {
         try {
-          const { value } = await readJsonArtifact(target, relPath, schemaName, packageRoot);
+          const { value } = await readPortableJsonArtifact(target, relPath, schemaName, packageRoot);
           checkIdentity(value, relPath);
           artifactFingerprints[key] = await fingerprintFile(absPath);
         } catch (err) {
@@ -59,7 +59,7 @@ export async function validateMigrationSnapshot(target, { taskId, packageRoot, p
   if (paths.events) {
     const absPath = ensureWithin(target, paths.events);
     if (await fileExists(absPath)) {
-      const ledger = await validateEventLedger(target, packageRoot, { eventsPath: paths.events });
+      const ledger = await validatePortableEventLedger(target, packageRoot, { eventsPath: paths.events });
       if (!ledger.valid) {
         const error = new Error(`Event ledger validation failed for ${paths.events}: ${ledger.errors?.[0]?.message ?? "invalid ledger"}`);
         error.code = E_TASK_MIGRATION_INVALID;
@@ -103,7 +103,7 @@ export async function validateMigrationSnapshot(target, { taskId, packageRoot, p
       const fileAbsPath = path.join(absPath, entry.name);
 
       try {
-        const { value } = await readJsonArtifact(target, fileRelPath, schemaName, packageRoot);
+        const { value } = await readPortableJsonArtifact(target, fileRelPath, schemaName, packageRoot);
         checkIdentity(value, fileRelPath);
         const hash = await fingerprintFile(fileAbsPath);
         fileHashes.push({ relPath: entry.name, hash });

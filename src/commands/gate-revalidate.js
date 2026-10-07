@@ -3,7 +3,7 @@ import { lstat } from "node:fs/promises";
 import { optionalConfig } from "../core/preflight-loaders.js";
 import { readContract } from "../core/contract.js";
 import { appendProtocolEvent, validateEventLedger, validateStateLedgerCoherence } from "../core/events.js";
-import { ensureWithin, isPathWithin, readBytes, realpathWithTransientWindowsRetry } from "../core/filesystem.js";
+import { assertSafePath, ensureWithin, isPathWithin, readBytes, realpathWithTransientWindowsRetry } from "../core/filesystem.js";
 import { sha256 } from "../core/manifest.js";
 import { requiredGatesForGuides } from "../core/guide-metadata.js";
 import { readPersistedRoute } from "../core/route-artifact.js";
@@ -13,7 +13,7 @@ import { taskGatePath, taskArtifactPath } from "../core/task-paths.js";
 import { withTaskMutation } from "../core/task-command.js";
 import { readWorkState } from "../core/work-state.js";
 import { stateIdentityErrors } from "../core/completion-relationships.js";
-import { persistGate, readGateIfPresent, validateGateArtifacts } from "../core/gate-artifact.js";
+import { persistGate, readCanonicalGateArtifactBinding, readGateIfPresent, validateGateArtifacts } from "../core/gate-artifact.js";
 import {
   GATE_REVALIDATED_EVENT,
   assertGateRevalidatedDetails,
@@ -34,6 +34,12 @@ async function hashGateArtifact(target, relativePath) {
   let artifactPath;
   try {
     artifactPath = ensureWithin(target, relativePath);
+    const canonical = readCanonicalGateArtifactBinding(target, relativePath);
+    if (canonical) {
+      await assertSafePath(target, relativePath);
+      if (canonical.sha256 === null) throw new Error("artifact is missing from canonical storage");
+      return { path: relativePath, sha256: canonical.sha256 };
+    }
     const stat = await lstat(artifactPath);
     if (!stat.isFile() || stat.isSymbolicLink()) throw new Error("artifact must be a regular file");
     const rootReal = await realpathWithTransientWindowsRetry(target);

@@ -1,5 +1,7 @@
+import { withProjectStorage } from "../src/storage/project-boundary.js";
+import { ensureFixtureTask, overwriteFixtureRecordBytes } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -16,19 +18,25 @@ test("action, approval, and evaluation IDs reject traversal", () => {
   assert.throws(() => taskEvaluationPath("task", "eval-../../x"));
 });
 
-test("forged action artifact without a matching proposal is audit-visible", async () => {
+test("forged action identity is rejected by native indexed authority", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-action-security-"));
   try {
     const taskId = "security-task";
+    await ensureFixtureTask(target, taskId, packageRoot);
     const { action } = await proposeAction(target, { packageRoot, taskId, input: {
       actionId: "action-safe", effectClass: "REVERSIBLE_WRITE", capability: "filesystem.write",
       target: "file", operation: "write", idempotencyKey: "security:file:v1", requiredForCompletion: false,
       requirement: null, provenance: "HOST_REPORTED",
     } });
     const actionPath = taskActionPath(taskId, action.actionId);
-    await writeFile(path.join(target, actionPath), JSON.stringify({ ...action, actionId: "action-forged" }), "utf8");
-    const issues = await validateActionLedgerConsistency(target, { packageRoot, taskId });
-    assert.ok(issues.some((issue) => issue.code === "E_ACTION_EVIDENCE_INVALID"));
+    await overwriteFixtureRecordBytes(target, actionPath, JSON.stringify({ ...action, actionId: "action-forged" }));
+    const authority = () => withProjectStorage(target, store => ({
+      actions: store.db.prepare("SELECT * FROM actions WHERE task_id = ? ORDER BY action_id").all(taskId),
+      events: store.db.prepare("SELECT * FROM events WHERE task_id = ? ORDER BY seq").all(taskId),
+    }), { readOnly: true });
+    const before = await authority();
+    await assert.rejects(validateActionLedgerConsistency(target, { packageRoot, taskId }), { code: "E_STORAGE_PAYLOAD_MISMATCH" });
+    assert.deepEqual(await authority(), before);
   } finally { await rm(target, { recursive: true, force: true }); }
 });
 
@@ -36,6 +44,7 @@ test("CALLER_REPORTED cannot manufacture authorization", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-action-security-authz-"));
   try {
     const taskId = "security-task-2";
+    await ensureFixtureTask(target, taskId, packageRoot);
     const { action } = await proposeAction(target, { packageRoot, taskId, input: {
       actionId: "action-caller-authz", effectClass: "REVERSIBLE_WRITE", capability: "filesystem.write",
       target: "file", operation: "write", idempotencyKey: "security:authz:v1",
@@ -55,6 +64,7 @@ test("CALLER_REPORTED cannot manufacture verification", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-action-security-ver-"));
   try {
     const taskId = "security-task-3";
+    await ensureFixtureTask(target, taskId, packageRoot);
     const { action } = await proposeAction(target, { packageRoot, taskId, input: {
       actionId: "action-caller-ver", effectClass: "REVERSIBLE_WRITE", capability: "filesystem.write",
       target: "file", operation: "write", idempotencyKey: "security:ver:v1",

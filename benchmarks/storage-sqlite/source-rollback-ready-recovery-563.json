@@ -1,0 +1,32 @@
+{
+  "checkpoint": 563,
+  "scope": "Mac READY rollback preparation dead-owner recovery; no source restoration",
+  "sourceHashes": {
+    "src/storage/migration-rollback-preparation.js": "71ae089085b7c15dcfdb1cad9ad137a035b0c5dcb423287d64a4420d9abe7e7f",
+    "tests/storage-migration-rollback-ready-resume.test.js": "83bc0c85f434067242892c1045305d4afe7654959f18ea7efe075ea2ac8b20dc",
+    "tests/helpers/storage-rollback-ready-worker.mjs": "f1f4c872aece43b42e1d7d22a0130fb962fc537e7027402810c6ed3dc0c76644",
+    "tests/storage-migration-rollback-preparation.test.js": "6d11a99163709313474df23b32fb863fff4edb793b1fee6bd247a8b0dc3c0a65"
+  },
+  "tests": {
+    "passed": 8,
+    "failed": 0,
+    "rawLog": "\u2714 rollback native retention validates ready without switching active authority (2717.568584ms)\n\u2714 rollback native retention validates backup-tamper without switching active authority (2921.887625ms)\n\u2714 rollback native retention validates owner-tamper without switching active authority (2859.18825ms)\n\u2714 rollback native retention validates new-native-task without switching active authority (1609.278541ms)\n\u2714 rollback native retention validates attachments without switching active authority (2336.269208ms)\n\u2714 dead rollback preparation owner ready resumes only verified native retention (3441.285334ms)\n\u2714 dead rollback preparation owner backup-tamper resumes only verified native retention (3032.876166ms)\n\u2714 dead rollback preparation owner owner-tamper resumes only verified native retention (2843.558459ms)\n\u2139 tests 8\n\u2139 suites 0\n\u2139 pass 8\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 12604.268834\n"
+  },
+  "fastExit": 0,
+  "lintExit": 0,
+  "controls": [
+    "Actual live owner recovery refused",
+    "Actual killed owner READY recovery accepted",
+    "Maintenance owner history verified before journal adoption",
+    "Corrupt backup and substituted owner refused",
+    "Native database and backup bytes preserved",
+    "Ordinary command exclusion retained"
+  ],
+  "limitations": [
+    "Windows and Docker Linux current recovery checks pending",
+    "PREPARING partial backup recovery unimplemented",
+    "Source switch and interrupted restoration unimplemented",
+    "Historical write exclusion not proven",
+    "Full original plan acceptance remains incomplete"
+  ]
+}

@@ -1,13 +1,14 @@
 import assert from "node:assert/strict";
-import { access, mkdtemp, rm } from "node:fs/promises";
+import { access, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { test } from "node:test";
 
+import { COMMAND_EXECUTORS } from "../src/core/command-executors.js";
 import { getPackageRoot } from "../src/core/templates.js";
-import { createContract, writeContract } from "../src/core/contract.js";
-import { createWorkState, writeWorkState } from "../src/core/work-state.js";
+import { createContract, contractFingerprint } from "../src/core/contract.js";
+import { createWorkState } from "../src/core/work-state.js";
 
 const packageRoot = getPackageRoot();
 const cliPath = path.join(packageRoot, "src", "cli.js");
@@ -99,11 +100,12 @@ test("forgeloop task-migrate converts 1.0 layout via CLI with human and json out
       unresolvedDecisions: [],
       sourceRefs: ["src"],
     });
-    await writeContract(target, contract, packageRoot);
+    await mkdir(path.join(target, ".forgeloop"), { recursive: true });
+    await writeFile(path.join(target, ".forgeloop/current-contract.json"), JSON.stringify(contract));
 
     const state = createWorkState({
       taskId: "cli-migrated-task",
-      contractFingerprint: "0".repeat(64),
+      contractFingerprint: contractFingerprint(contract),
       repositoryFingerprint: { branch: null, head: null },
       phase: "PLANNED",
       completedSteps: [],
@@ -112,16 +114,21 @@ test("forgeloop task-migrate converts 1.0 layout via CLI with human and json out
       failures: [],
       blockers: [],
     });
-    await writeWorkState(target, state, { packageRoot });
+    await writeFile(path.join(target, ".forgeloop/work-state.json"), JSON.stringify(state));
 
-    const result = runCli(target, "task-migrate");
+    const result = runCli(target, "task-migrate", "--destination", "retained", "--writers-quiesced");
     assert.equal(result.status, 0, `task-migrate human failed: ${result.stderr}`);
     assert.match(result.stdout, /migrated task:\s+cli-migrated-task/);
-    assert.match(result.stdout, /destination:\s+\.forgeloop\/task-state\//);
+    assert.match(result.stdout, /destination:\s+\.forgeloop\/state\.sqlite/);
     assert.match(result.stdout, /migrated artifacts:/);
-    assert.match(result.stdout, /- contract\.json/);
-    assert.match(result.stdout, /- work-state\.json/);
+    assert.match(result.stdout, /- \.forgeloop\/current-contract\.json/);
+    assert.match(result.stdout, /- \.forgeloop\/work-state\.json/);
     assert.doesNotMatch(result.stdout, /undefined|null|\[object Object\]/);
+    assert.equal(JSON.parse(await readFile(path.join(target, ".forgeloop/storage-version.json"), "utf8")).phase, "ACTIVE");
+    await assert.rejects(access(path.join(target, ".forgeloop/task-state")), { code: "ENOENT" });
+    const shown = runCli(target, "task-show", "--task", "cli-migrated-task", "--json");
+    assert.equal(shown.status, 0, shown.stderr);
+    assert.match(shown.stdout, /cli-migrated-task/);
   });
 
   // Test B: Dry run human output
@@ -138,15 +145,18 @@ test("forgeloop task-migrate converts 1.0 layout via CLI with human and json out
       unresolvedDecisions: [],
       sourceRefs: ["src"],
     });
-    await writeContract(target, contract, packageRoot);
+    await mkdir(path.join(target, ".forgeloop"), { recursive: true });
+    await writeFile(path.join(target, ".forgeloop/current-contract.json"), JSON.stringify(contract));
 
     const dryRes = runCli(target, "task-migrate", "--dry-run");
     assert.equal(dryRes.status, 0, `task-migrate --dry-run failed: ${dryRes.stderr}`);
     assert.match(dryRes.stdout, /\[dry-run\] task:\s+cli-dryrun-task/);
-    assert.match(dryRes.stdout, /destination:\s+\.forgeloop\/task-state\//);
+    assert.match(dryRes.stdout, /destination:\s+\.forgeloop\/state\.sqlite/);
     assert.match(dryRes.stdout, /legacy artifacts:/);
     assert.match(dryRes.stdout, /- \.forgeloop\/current-contract\.json/);
     assert.doesNotMatch(dryRes.stdout, /undefined|null|\[object Object\]/);
+    await assert.rejects(access(path.join(target, ".forgeloop/state.sqlite")), { code: "ENOENT" });
+    await assert.rejects(access(path.join(target, ".forgeloop/task-state")), { code: "ENOENT" });
   });
 
   // Test C: No legacy state
@@ -171,9 +181,10 @@ test("forgeloop task-migrate converts 1.0 layout via CLI with human and json out
       unresolvedDecisions: [],
       sourceRefs: ["src"],
     });
-    await writeContract(target, contract, packageRoot);
+    await mkdir(path.join(target, ".forgeloop"), { recursive: true });
+    await writeFile(path.join(target, ".forgeloop/current-contract.json"), JSON.stringify(contract));
 
-    const migrateRes = runCli(target, "task-migrate", "--json");
+    const migrateRes = runCli(target, "task-migrate", "--destination", "retained", "--writers-quiesced", "--json");
     assert.equal(migrateRes.status, 0, `task-migrate --json failed: ${migrateRes.stderr}`);
     const migrated = JSON.parse(migrateRes.stdout);
     assert.equal(migrated.migrated, true);
@@ -181,11 +192,11 @@ test("forgeloop task-migrate converts 1.0 layout via CLI with human and json out
     assert.ok(migrated.taskKey);
     assert.ok(migrated.targetDirectory);
     assert.ok(Array.isArray(migrated.migratedArtifacts));
-    assert.ok(migrated.migratedArtifacts.includes("contract.json"));
+    assert.ok(migrated.migratedArtifacts.includes(".forgeloop/current-contract.json"));
   });
 });
 
-test("forgeloop migrate-protocol plans safely, rejects unsupported targets, and reuses receipt-backed legacy migration", async () => {
+test("forgeloop migrate-protocol plans safely and rejects unsupported targets without allocating storage", async () => {
   await withTarget(async (target) => {
     const dryRun = runCli(target, "migrate-protocol", "--to", "1", "--dry-run", "--json");
     assert.equal(dryRun.status, 0, `migrate-protocol dry-run failed: ${dryRun.stderr}`);
@@ -199,8 +210,52 @@ test("forgeloop migrate-protocol plans safely, rejects unsupported targets, and 
     assert.equal(unsupported.status, 1);
     assert.match(unsupported.stderr, /E_PROTOCOL_MIGRATION_TARGET_UNSUPPORTED/);
     await assert.rejects(access(path.join(target, ".forgeloop")));
-  });
 
+    for (const to of [undefined, "", "2"]) {
+      await assert.rejects(COMMAND_EXECUTORS["migrate-protocol"]({
+        target, packageRoot, options: { to },
+      }), { code: "E_PROTOCOL_MIGRATION_TARGET_UNSUPPORTED" });
+      await assert.rejects(access(path.join(target, ".forgeloop")));
+    }
+  });
+});
+
+test("unsupported protocol migration preserves legacy source and its protocol error", async () => {
+  await withTarget(async target => {
+    const directory = path.join(target, ".forgeloop");
+    await mkdir(directory);
+    const source = path.join(directory, "work-state.json");
+    const retained = "retained malformed legacy evidence\n";
+    await writeFile(source, retained);
+    const unsupported = runCli(target, "migrate-protocol", "--to", "2", "--json");
+    assert.equal(unsupported.status, 1);
+    assert.match(unsupported.stderr, /E_PROTOCOL_MIGRATION_TARGET_UNSUPPORTED/);
+    assert.doesNotMatch(unsupported.stderr, /E_STORAGE_MIGRATION_REQUIRED/);
+    await assert.rejects(access(path.join(directory, "state.sqlite")));
+    assert.equal(await readFile(source, "utf8"), retained);
+  });
+});
+
+test("legacy public migration refuses missing exclusion acknowledgement before allocating storage", async () => {
+  await withTarget(async target => {
+    const directory = path.join(target, ".forgeloop");
+    await mkdir(directory);
+    const source = path.join(directory, "work-state.json");
+    const text = "retained legacy source\n";
+    await writeFile(source, text);
+    for (const args of [["task-migrate"], ["task-migrate", "--destination", "retained"], ["migrate-protocol", "--to", "1", "--destination", "retained"]]) {
+      const result = runCli(target, ...args, "--json");
+      assert.equal(result.status, 2);
+      assert.match(result.stderr, /E_CLI_INVOCATION_INVALID/);
+      assert.equal(await readFile(source, "utf8"), text);
+      await assert.rejects(access(path.join(directory, "state.sqlite")), { code: "ENOENT" });
+      await assert.rejects(access(path.join(directory, ".storage-maintenance")), { code: "ENOENT" });
+      await assert.rejects(access(path.join(target, "retained")), { code: "ENOENT" });
+    }
+  });
+});
+
+test("forgeloop migrate-protocol reuses receipt-backed legacy migration", async () => {
   await withTarget(async (target) => {
     const contract = createContract({
       taskId: "protocol-migration-task",
@@ -214,21 +269,24 @@ test("forgeloop migrate-protocol plans safely, rejects unsupported targets, and 
       unresolvedDecisions: [],
       sourceRefs: ["src"],
     });
-    await writeContract(target, contract, packageRoot);
+    await mkdir(path.join(target, ".forgeloop"), { recursive: true });
+    await writeFile(path.join(target, ".forgeloop/current-contract.json"), JSON.stringify(contract));
 
     const plan = runCli(target, "migrate-protocol", "--to=1", "--dry-run", "--json");
     assert.equal(plan.status, 0, `legacy protocol dry-run failed: ${plan.stderr}`);
     const planned = JSON.parse(plan.stdout);
     assert.equal(planned.status, "PLANNED_LEGACY_LAYOUT_MIGRATION");
     assert.equal(planned.migrated, false);
+    assert.equal(planned.targetDirectory, ".forgeloop/state.sqlite");
     assert.deepEqual(planned.actions.map((action) => action.kind), ["LEGACY_LAYOUT_MIGRATION"]);
 
-    const migrated = runCli(target, "migrate-protocol", "--to", "1", "--json");
+    const migrated = runCli(target, "migrate-protocol", "--to", "1", "--destination", "retained", "--writers-quiesced", "--json");
     assert.equal(migrated.status, 0, `legacy protocol migration failed: ${migrated.stderr}`);
     const result = JSON.parse(migrated.stdout);
     assert.equal(result.status, "MIGRATED_LEGACY_LAYOUT");
     assert.equal(result.migrated, true);
     assert.equal(result.taskId, "protocol-migration-task");
-    assert.ok(result.migratedArtifacts.includes("migration-receipt.json"));
+    assert.equal(result.migrationReceipt, "retained/publication/publication-journal.json");
+    assert.equal(JSON.parse(await readFile(path.join(target, result.migrationReceipt), "utf8")).phase, "PUBLISHED");
   });
 });

@@ -1,0 +1,583 @@
+{
+  "checkpoint": 580,
+  "scope": "All-host canonical linked-worktree pinned legacy validation after owner-death publication recovery at five constructed persisted states, with binary attachments",
+  "mac": {
+    "checkpoint": 579,
+    "scope": "Mac canonical linked-worktree pinned legacy validation after owner-death publication recovery at five constructed persisted states, all with binary attachments",
+    "sourceHashes": {
+      "scripts/drill-storage-source-rollback-recovery.mjs": "1f2fba81c38e164f9d3d3251bd00f28d72e3c53b55f39e812072973b7079bcae",
+      "tests/helpers/canonical-diagnosis-fixture.js": "add6d2df4664967e203ae93061e649fb3b16f132ee39626c151018679383769f",
+      "tests/helpers/storage-rollback-publication-worker.mjs": "c9ee614eaae40a4aea11e9d04d75d81d30cb8c47a1dcd78498f7e0b2bf7bd7b8",
+      "tests/helpers/storage-binary-source-fixture.js": "b95ae18f24e737549c1719e939afb6a833eef76294f3410c07a6f2e5a8dd7e88",
+      "src/storage/migration-rollback-publication.js": "c935b76285e0a64a64ed8913e6ee39e3ffd677eab9a644ae11c9206b72eceea5"
+    },
+    "phases": {
+      "SWITCHING": {
+        "scope": "Canonical linked-worktree legacy VALID after actual owner-death source publication recovery; constructed persisted boundaries, not syscall power loss",
+        "phase": "SWITCHING",
+        "binary": true,
+        "before": {
+          "exit": 0,
+          "validation": {
+            "status": "VALID",
+            "errors": [],
+            "incomplete": [],
+            "stale": null,
+            "delegation": {
+              "status": "NOT_APPLICABLE",
+              "required": false,
+              "errors": []
+            },
+            "continuity": {
+              "required": false,
+              "status": "NOT_APPLICABLE",
+              "classification": "ABSENT",
+              "errors": [],
+              "reasonCodes": [],
+              "reasons": [
+                "CONTINUITY_ABSENT"
+              ],
+              "authority": "OPERATIONAL_CONTEXT_ONLY",
+              "evidenceAuthority": "NONE"
+            },
+            "evidence": [
+              {
+                "kind": "OBSERVED",
+                "source": "ForgeLoop protocol conformance",
+                "result": "VALID"
+              }
+            ]
+          }
+        },
+        "after": {
+          "exit": 0,
+          "validation": {
+            "status": "VALID",
+            "errors": [],
+            "incomplete": [],
+            "stale": null,
+            "delegation": {
+              "status": "NOT_APPLICABLE",
+              "required": false,
+              "errors": []
+            },
+            "continuity": {
+              "required": false,
+              "status": "NOT_APPLICABLE",
+              "classification": "ABSENT",
+              "errors": [],
+              "reasonCodes": [],
+              "reasons": [
+                "CONTINUITY_ABSENT"
+              ],
+              "authority": "OPERATIONAL_CONTEXT_ONLY",
+              "evidenceAuthority": "NONE"
+            },
+            "evidence": [
+              {
+                "kind": "OBSERVED",
+                "source": "ForgeLoop protocol conformance",
+                "result": "VALID"
+              }
+            ]
+          }
+        },
+        "restored": true,
+        "nativeBytesUnchanged": true,
+        "referencePreserved": {
+          "taskId": "phase2a-closure-task",
+          "referenceId": "recovery-binary",
+          "path": ".forgeloop/attachments/objects/3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5",
+          "size": 7,
+          "sha256": "3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5"
+        },
+        "maintenanceExclusionRetained": true,
+        "targetVersionValidatedInDrill": true
+      },
+      "DATABASE_RETAINED": {
+        "scope": "Canonical linked-worktree legacy VALID after actual owner-death source publication recovery; constructed persisted boundaries, not syscall power loss",
+        "phase": "DATABASE_RETAINED",
+        "binary": true,
+        "before": {
+          "exit": 0,
+          "validation": {
+            "status": "VALID",
+            "errors": [],
+            "incomplete": [],
+            "stale": null,
+            "delegation": {
+              "status": "NOT_APPLICABLE",
+              "required": false,
+              "errors": []
+            },
+            "continuity": {
+              "required": false,
+              "status": "NOT_APPLICABLE",
+              "classification": "ABSENT",
+              "errors": [],
+              "reasonCodes": [],
+              "reasons": [
+                "CONTINUITY_ABSENT"
+              ],
+              "authority": "OPERATIONAL_CONTEXT_ONLY",
+              "evidenceAuthority": "NONE"
+            },
+            "evidence": [
+              {
+                "kind": "OBSERVED",
+                "source": "ForgeLoop protocol conformance",
+                "result": "VALID"
+              }
+            ]
+          }
+        },
+        "after": {
+          "exit": 0,
+          "validation": {
+            "status": "VALID",
+            "errors": [],
+            "incomplete": [],
+            "stale": null,
+            "delegation": {
+              "status": "NOT_APPLICABLE",
+              "required": false,
+              "errors": []
+            },
+            "continuity": {
+              "required": false,
+              "status": "NOT_APPLICABLE",
+              "classification": "ABSENT",
+              "errors": [],
+              "reasonCodes": [],
+              "reasons": [
+                "CONTINUITY_ABSENT"
+              ],
+              "authority": "OPERATIONAL_CONTEXT_ONLY",
+              "evidenceAuthority": "NONE"
+            },
+            "evidence": [
+              {
+                "kind": "OBSERVED",
+                "source": "ForgeLoop protocol conformance",
+                "result": "VALID"
+              }
+            ]
+          }
+        },
+        "restored": true,
+        "nativeBytesUnchanged": true,
+        "referencePreserved": {
+          "taskId": "phase2a-closure-task",
+          "referenceId": "recovery-binary",
+          "path": ".forgeloop/attachments/objects/3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5",
+          "size": 7,
+          "sha256": "3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5"
+        },
+        "maintenanceExclusionRetained": true,
+        "targetVersionValidatedInDrill": true
+      },
+      "NATIVE_RETAINED": {
+        "scope": "Canonical linked-worktree legacy VALID after actual owner-death source publication recovery; constructed persisted boundaries, not syscall power loss",
+        "phase": "NATIVE_RETAINED",
+        "binary": true,
+        "before": {
+          "exit": 0,
+          "validation": {
+            "status": "VALID",
+            "errors": [],
+            "incomplete": [],
+            "stale": null,
+            "delegation": {
+              "status": "NOT_APPLICABLE",
+              "required": false,
+              "errors": []
+            },
+            "continuity": {
+              "required": false,
+              "status": "NOT_APPLICABLE",
+              "classification": "ABSENT",
+              "errors": [],
+              "reasonCodes": [],
+              "reasons": [
+                "CONTINUITY_ABSENT"
+              ],
+              "authority": "OPERATIONAL_CONTEXT_ONLY",
+              "evidenceAuthority": "NONE"
+            },
+            "evidence": [
+              {
+                "kind": "OBSERVED",
+                "source": "ForgeLoop protocol conformance",
+                "result": "VALID"
+              }
+            ]
+          }
+        },
+        "after": {
+          "exit": 0,
+          "validation": {
+            "status": "VALID",
+            "errors": [],
+            "incomplete": [],
+            "stale": null,
+            "delegation": {
+              "status": "NOT_APPLICABLE",
+              "required": false,
+              "errors": []
+            },
+            "continuity": {
+              "required": false,
+              "status": "NOT_APPLICABLE",
+              "classification": "ABSENT",
+              "errors": [],
+              "reasonCodes": [],
+              "reasons": [
+                "CONTINUITY_ABSENT"
+              ],
+              "authority": "OPERATIONAL_CONTEXT_ONLY",
+              "evidenceAuthority": "NONE"
+            },
+            "evidence": [
+              {
+                "kind": "OBSERVED",
+                "source": "ForgeLoop protocol conformance",
+                "result": "VALID"
+              }
+            ]
+          }
+        },
+        "restored": true,
+        "nativeBytesUnchanged": true,
+        "referencePreserved": {
+          "taskId": "phase2a-closure-task",
+          "referenceId": "recovery-binary",
+          "path": ".forgeloop/attachments/objects/3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5",
+          "size": 7,
+          "sha256": "3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5"
+        },
+        "maintenanceExclusionRetained": true,
+        "targetVersionValidatedInDrill": true
+      },
+      "PARTIAL_SOURCE": {
+        "scope": "Canonical linked-worktree legacy VALID after actual owner-death source publication recovery; constructed persisted boundaries, not syscall power loss",
+        "phase": "PARTIAL_SOURCE",
+        "binary": true,
+        "before": {
+          "exit": 0,
+          "validation": {
+            "status": "VALID",
+            "errors": [],
+            "incomplete": [],
+            "stale": null,
+            "delegation": {
+              "status": "NOT_APPLICABLE",
+              "required": false,
+              "errors": []
+            },
+            "continuity": {
+              "required": false,
+              "status": "NOT_APPLICABLE",
+              "classification": "ABSENT",
+              "errors": [],
+              "reasonCodes": [],
+              "reasons": [
+                "CONTINUITY_ABSENT"
+              ],
+              "authority": "OPERATIONAL_CONTEXT_ONLY",
+              "evidenceAuthority": "NONE"
+            },
+            "evidence": [
+              {
+                "kind": "OBSERVED",
+                "source": "ForgeLoop protocol conformance",
+                "result": "VALID"
+              }
+            ]
+          }
+        },
+        "after": {
+          "exit": 0,
+          "validation": {
+            "status": "VALID",
+            "errors": [],
+            "incomplete": [],
+            "stale": null,
+            "delegation": {
+              "status": "NOT_APPLICABLE",
+              "required": false,
+              "errors": []
+            },
+            "continuity": {
+              "required": false,
+              "status": "NOT_APPLICABLE",
+              "classification": "ABSENT",
+              "errors": [],
+              "reasonCodes": [],
+              "reasons": [
+                "CONTINUITY_ABSENT"
+              ],
+              "authority": "OPERATIONAL_CONTEXT_ONLY",
+              "evidenceAuthority": "NONE"
+            },
+            "evidence": [
+              {
+                "kind": "OBSERVED",
+                "source": "ForgeLoop protocol conformance",
+                "result": "VALID"
+              }
+            ]
+          }
+        },
+        "restored": true,
+        "nativeBytesUnchanged": true,
+        "referencePreserved": {
+          "taskId": "phase2a-closure-task",
+          "referenceId": "recovery-binary",
+          "path": ".forgeloop/attachments/objects/3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5",
+          "size": 7,
+          "sha256": "3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5"
+        },
+        "maintenanceExclusionRetained": true,
+        "targetVersionValidatedInDrill": true
+      },
+      "RESTORED": {
+        "scope": "Canonical linked-worktree legacy VALID after actual owner-death source publication recovery; constructed persisted boundaries, not syscall power loss",
+        "phase": "RESTORED",
+        "binary": true,
+        "before": {
+          "exit": 0,
+          "validation": {
+            "status": "VALID",
+            "errors": [],
+            "incomplete": [],
+            "stale": null,
+            "delegation": {
+              "status": "NOT_APPLICABLE",
+              "required": false,
+              "errors": []
+            },
+            "continuity": {
+              "required": false,
+              "status": "NOT_APPLICABLE",
+              "classification": "ABSENT",
+              "errors": [],
+              "reasonCodes": [],
+              "reasons": [
+                "CONTINUITY_ABSENT"
+              ],
+              "authority": "OPERATIONAL_CONTEXT_ONLY",
+              "evidenceAuthority": "NONE"
+            },
+            "evidence": [
+              {
+                "kind": "OBSERVED",
+                "source": "ForgeLoop protocol conformance",
+                "result": "VALID"
+              }
+            ]
+          }
+        },
+        "after": {
+          "exit": 0,
+          "validation": {
+            "status": "VALID",
+            "errors": [],
+            "incomplete": [],
+            "stale": null,
+            "delegation": {
+              "status": "NOT_APPLICABLE",
+              "required": false,
+              "errors": []
+            },
+            "continuity": {
+              "required": false,
+              "status": "NOT_APPLICABLE",
+              "classification": "ABSENT",
+              "errors": [],
+              "reasonCodes": [],
+              "reasons": [
+                "CONTINUITY_ABSENT"
+              ],
+              "authority": "OPERATIONAL_CONTEXT_ONLY",
+              "evidenceAuthority": "NONE"
+            },
+            "evidence": [
+              {
+                "kind": "OBSERVED",
+                "source": "ForgeLoop protocol conformance",
+                "result": "VALID"
+              }
+            ]
+          }
+        },
+        "restored": true,
+        "nativeBytesUnchanged": true,
+        "referencePreserved": {
+          "taskId": "phase2a-closure-task",
+          "referenceId": "recovery-binary",
+          "path": ".forgeloop/attachments/objects/3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5",
+          "size": 7,
+          "sha256": "3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5"
+        },
+        "maintenanceExclusionRetained": true,
+        "targetVersionValidatedInDrill": true
+      }
+    },
+    "fastExit": 0,
+    "lintExit": 0,
+    "limitations": [
+      "Constructed persisted states before actual owner kill, not syscall-level power-loss proof",
+      "Current canonical recovery drill Windows/Linux pending",
+      "Operator command/release procedure incomplete",
+      "Explicit operator write exclusion, not inferred historical-write absence",
+      "Original plan acceptance incomplete"
+    ]
+  },
+  "windows": {
+    "sourceBefore": 2522,
+    "sourceAfter": 2522,
+    "patches": {
+      "src/core/work-state.js": "fae79a89d33d170159195d3b3d6448a5ad45422df952422cd2dd18e722052ff9",
+      "tests/checkpoint-revalidation.test.js": "9d6aafb3b96b03525d29ab9bef133f62af1612d56b9710c3293738d22070cd32",
+      "src/core/structural-quality/service.js": "38981b46ae61b4ca173fd37d5855ac4ce6580719dcc51b429474a2f44417b363",
+      "tests/storage-quality-context.test.js": "1deb0efe1f37b09829eb3b46d47cedd9e51e5ef0a921fc86e56c0e4e22195bce",
+      "src/storage/task-guards.js": "0ff2d6a4b1109e47d97a772c19b54ba68dbae6c739e43d3253b399b244eafff4",
+      "src/commands/status.js": "826d0f912630f5df52f6d696780cd9a4cc77493dad072f3ebd3c5a2e432e118f",
+      "tests/storage-state-classification-snapshot.test.js": "d5e2a6efe3ab48be4fda5a85f27c0fc6becdcdf7d07e7f76dfe350f9bc6ea86a",
+      "scripts/drill-storage-reverse-export-compatibility.mjs": "ef4978e694207059fa27dc9cb701539dfc5b828558e6afba875e1020756e2008",
+      "tests/helpers/canonical-diagnosis-fixture.js": "add6d2df4664967e203ae93061e649fb3b16f132ee39626c151018679383769f",
+      "scripts/drill-storage-prewrite-source-rollback.mjs": "167807b6e7880d8bde708d9e38f04bac94acf639f37be7444617634f4571da79",
+      "tests/storage-migration-resume.test.js": "2b5942e27dfcc28de5561fbbe1eba3bb5b1ef723bb9dad9e855f57f1583aa511",
+      "tests/helpers/storage-migration-crash-worker.mjs": "7b647e308e324f857e6d279eff7b011dfc854c7a84afa89c35e0032279ccc75b",
+      "src/storage/migration-candidate.js": "bfe9de59e88e05eb61d70eca35f6f5540a766ba8155f6b26b5707f211dc7e94f",
+      "tests/storage-historical-export-manifest.test.js": "76c97421ec3b81e911da35c565cdcd6c062f9081534ed93edb3c356219576b4d",
+      "src/storage/migration-rollback-admission.js": "da43ae3a2930f7adf3370898ff1e9a9689df8319f6c861e23f6aa52ce2cf5c73",
+      "tests/storage-migration-rollback-admission.test.js": "d25d257c2d8ef26bf1acca99b12c64ed524b56eaba1a93cdb2dbc26ba88734a6",
+      "tests/helpers/storage-rollback-busy-worker.mjs": "2b9976b168ab0101c05ed9823c9588d321332f59d718cda3f4d855c9fc13394e",
+      "src/storage/migration-rollback-preparation.js": "1152bbb354970c43c8530d681790c08941408328e59654eb6e62044b2dcd9bfe",
+      "tests/storage-migration-rollback-preparation.test.js": "6d11a99163709313474df23b32fb863fff4edb793b1fee6bd247a8b0dc3c0a65",
+      "tests/storage-migration-rollback-ready-resume.test.js": "3dac8cb5964923216e4d93a9da97e8b5f2d34818aa04f22a5d78e17108543a1a",
+      "tests/helpers/storage-rollback-ready-worker.mjs": "2e0475c73b508b7e9447d5b2385cc0e5649f48061906c2b002dfd12f445638ff",
+      "src/storage/migration-rollback-source-stage.js": "8794462fa72663fe0cbded9284225d770352ad06e88b46d124e1bd2ddd1d2792",
+      "tests/storage-migration-rollback-source-stage.test.js": "986f3cc62934521ec7be54d7efd6e7136911f21792fd770ddf4ab0fd0a4d4356",
+      "src/storage/migration-rollback-publication.js": "c935b76285e0a64a64ed8913e6ee39e3ffd677eab9a644ae11c9206b72eceea5",
+      "tests/storage-migration-rollback-publication.test.js": "a3d32a796726e3cfe9d3f94c8659f62bd7a97eeb43dafb4fa0606dbf8bb0bcda",
+      "tests/storage-migration-rollback-publication-resume.test.js": "80768b393a62f94fa60fec8fdf7b4e61aaff21ffff748ee36671bc170facdf04",
+      "tests/helpers/storage-rollback-publication-worker.mjs": "c9ee614eaae40a4aea11e9d04d75d81d30cb8c47a1dcd78498f7e0b2bf7bd7b8",
+      "tests/helpers/storage-binary-source-fixture.js": "b95ae18f24e737549c1719e939afb6a833eef76294f3410c07a6f2e5a8dd7e88",
+      "tests/storage-migration-rollback-stage-resume.test.js": "e9564135ccd416a164a1c04c9b3e224bb8aa228a20565781557ff7050d5b9a29",
+      "tests/helpers/storage-rollback-stage-worker.mjs": "b030746f71f62bf4a6189412daf3d7370d6c0193164384475eb42a974a491280",
+      "scripts/drill-storage-source-rollback-recovery.mjs": "1f2fba81c38e164f9d3d3251bd00f28d72e3c53b55f39e812072973b7079bcae"
+    },
+    "results": [
+      {
+        "phase": "SWITCHING",
+        "status": 0,
+        "stdout": "{\n  \"scope\": \"Canonical linked-worktree legacy VALID after actual owner-death source publication recovery; constructed persisted boundaries, not syscall power loss\",\n  \"phase\": \"SWITCHING\",\n  \"binary\": true,\n  \"before\": {\n    \"exit\": 0,\n    \"validation\": {\n      \"status\": \"VALID\",\n      \"errors\": [],\n      \"incomplete\": [],\n      \"stale\": null,\n      \"delegation\": {\n        \"status\": \"NOT_APPLICABLE\",\n        \"required\": false,\n        \"errors\": []\n      },\n      \"continuity\": {\n        \"required\": false,\n        \"status\": \"NOT_APPLICABLE\",\n        \"classification\": \"ABSENT\",\n        \"errors\": [],\n        \"reasonCodes\": [],\n        \"reasons\": [\n          \"CONTINUITY_ABSENT\"\n        ],\n        \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n        \"evidenceAuthority\": \"NONE\"\n      },\n      \"evidence\": [\n        {\n          \"kind\": \"OBSERVED\",\n          \"source\": \"ForgeLoop protocol conformance\",\n          \"result\": \"VALID\"\n        }\n      ]\n    }\n  },\n  \"after\": {\n    \"exit\": 0,\n    \"validation\": {\n      \"status\": \"VALID\",\n      \"errors\": [],\n      \"incomplete\": [],\n      \"stale\": null,\n      \"delegation\": {\n        \"status\": \"NOT_APPLICABLE\",\n        \"required\": false,\n        \"errors\": []\n      },\n      \"continuity\": {\n        \"required\": false,\n        \"status\": \"NOT_APPLICABLE\",\n        \"classification\": \"ABSENT\",\n        \"errors\": [],\n        \"reasonCodes\": [],\n        \"reasons\": [\n          \"CONTINUITY_ABSENT\"\n        ],\n        \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n        \"evidenceAuthority\": \"NONE\"\n      },\n      \"evidence\": [\n        {\n          \"kind\": \"OBSERVED\",\n          \"source\": \"ForgeLoop protocol conformance\",\n          \"result\": \"VALID\"\n        }\n      ]\n    }\n  },\n  \"restored\": true,\n  \"nativeBytesUnchanged\": true,\n  \"referencePreserved\": {\n    \"taskId\": \"phase2a-closure-task\",\n    \"referenceId\": \"recovery-binary\",\n    \"path\": \".forgeloop/attachments/objects/3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5\",\n    \"size\": 7,\n    \"sha256\": \"3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5\"\n  },\n  \"maintenanceExclusionRetained\": true,\n  \"targetVersionValidatedInDrill\": true\n}\n",
+        "stderr": ""
+      },
+      {
+        "phase": "DATABASE_RETAINED",
+        "status": 0,
+        "stdout": "{\n  \"scope\": \"Canonical linked-worktree legacy VALID after actual owner-death source publication recovery; constructed persisted boundaries, not syscall power loss\",\n  \"phase\": \"DATABASE_RETAINED\",\n  \"binary\": true,\n  \"before\": {\n    \"exit\": 0,\n    \"validation\": {\n      \"status\": \"VALID\",\n      \"errors\": [],\n      \"incomplete\": [],\n      \"stale\": null,\n      \"delegation\": {\n        \"status\": \"NOT_APPLICABLE\",\n        \"required\": false,\n        \"errors\": []\n      },\n      \"continuity\": {\n        \"required\": false,\n        \"status\": \"NOT_APPLICABLE\",\n        \"classification\": \"ABSENT\",\n        \"errors\": [],\n        \"reasonCodes\": [],\n        \"reasons\": [\n          \"CONTINUITY_ABSENT\"\n        ],\n        \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n        \"evidenceAuthority\": \"NONE\"\n      },\n      \"evidence\": [\n        {\n          \"kind\": \"OBSERVED\",\n          \"source\": \"ForgeLoop protocol conformance\",\n          \"result\": \"VALID\"\n        }\n      ]\n    }\n  },\n  \"after\": {\n    \"exit\": 0,\n    \"validation\": {\n      \"status\": \"VALID\",\n      \"errors\": [],\n      \"incomplete\": [],\n      \"stale\": null,\n      \"delegation\": {\n        \"status\": \"NOT_APPLICABLE\",\n        \"required\": false,\n        \"errors\": []\n      },\n      \"continuity\": {\n        \"required\": false,\n        \"status\": \"NOT_APPLICABLE\",\n        \"classification\": \"ABSENT\",\n        \"errors\": [],\n        \"reasonCodes\": [],\n        \"reasons\": [\n          \"CONTINUITY_ABSENT\"\n        ],\n        \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n        \"evidenceAuthority\": \"NONE\"\n      },\n      \"evidence\": [\n        {\n          \"kind\": \"OBSERVED\",\n          \"source\": \"ForgeLoop protocol conformance\",\n          \"result\": \"VALID\"\n        }\n      ]\n    }\n  },\n  \"restored\": true,\n  \"nativeBytesUnchanged\": true,\n  \"referencePreserved\": {\n    \"taskId\": \"phase2a-closure-task\",\n    \"referenceId\": \"recovery-binary\",\n    \"path\": \".forgeloop/attachments/objects/3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5\",\n    \"size\": 7,\n    \"sha256\": \"3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5\"\n  },\n  \"maintenanceExclusionRetained\": true,\n  \"targetVersionValidatedInDrill\": true\n}\n",
+        "stderr": ""
+      },
+      {
+        "phase": "NATIVE_RETAINED",
+        "status": 0,
+        "stdout": "{\n  \"scope\": \"Canonical linked-worktree legacy VALID after actual owner-death source publication recovery; constructed persisted boundaries, not syscall power loss\",\n  \"phase\": \"NATIVE_RETAINED\",\n  \"binary\": true,\n  \"before\": {\n    \"exit\": 0,\n    \"validation\": {\n      \"status\": \"VALID\",\n      \"errors\": [],\n      \"incomplete\": [],\n      \"stale\": null,\n      \"delegation\": {\n        \"status\": \"NOT_APPLICABLE\",\n        \"required\": false,\n        \"errors\": []\n      },\n      \"continuity\": {\n        \"required\": false,\n        \"status\": \"NOT_APPLICABLE\",\n        \"classification\": \"ABSENT\",\n        \"errors\": [],\n        \"reasonCodes\": [],\n        \"reasons\": [\n          \"CONTINUITY_ABSENT\"\n        ],\n        \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n        \"evidenceAuthority\": \"NONE\"\n      },\n      \"evidence\": [\n        {\n          \"kind\": \"OBSERVED\",\n          \"source\": \"ForgeLoop protocol conformance\",\n          \"result\": \"VALID\"\n        }\n      ]\n    }\n  },\n  \"after\": {\n    \"exit\": 0,\n    \"validation\": {\n      \"status\": \"VALID\",\n      \"errors\": [],\n      \"incomplete\": [],\n      \"stale\": null,\n      \"delegation\": {\n        \"status\": \"NOT_APPLICABLE\",\n        \"required\": false,\n        \"errors\": []\n      },\n      \"continuity\": {\n        \"required\": false,\n        \"status\": \"NOT_APPLICABLE\",\n        \"classification\": \"ABSENT\",\n        \"errors\": [],\n        \"reasonCodes\": [],\n        \"reasons\": [\n          \"CONTINUITY_ABSENT\"\n        ],\n        \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n        \"evidenceAuthority\": \"NONE\"\n      },\n      \"evidence\": [\n        {\n          \"kind\": \"OBSERVED\",\n          \"source\": \"ForgeLoop protocol conformance\",\n          \"result\": \"VALID\"\n        }\n      ]\n    }\n  },\n  \"restored\": true,\n  \"nativeBytesUnchanged\": true,\n  \"referencePreserved\": {\n    \"taskId\": \"phase2a-closure-task\",\n    \"referenceId\": \"recovery-binary\",\n    \"path\": \".forgeloop/attachments/objects/3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5\",\n    \"size\": 7,\n    \"sha256\": \"3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5\"\n  },\n  \"maintenanceExclusionRetained\": true,\n  \"targetVersionValidatedInDrill\": true\n}\n",
+        "stderr": ""
+      },
+      {
+        "phase": "PARTIAL_SOURCE",
+        "status": 0,
+        "stdout": "{\n  \"scope\": \"Canonical linked-worktree legacy VALID after actual owner-death source publication recovery; constructed persisted boundaries, not syscall power loss\",\n  \"phase\": \"PARTIAL_SOURCE\",\n  \"binary\": true,\n  \"before\": {\n    \"exit\": 0,\n    \"validation\": {\n      \"status\": \"VALID\",\n      \"errors\": [],\n      \"incomplete\": [],\n      \"stale\": null,\n      \"delegation\": {\n        \"status\": \"NOT_APPLICABLE\",\n        \"required\": false,\n        \"errors\": []\n      },\n      \"continuity\": {\n        \"required\": false,\n        \"status\": \"NOT_APPLICABLE\",\n        \"classification\": \"ABSENT\",\n        \"errors\": [],\n        \"reasonCodes\": [],\n        \"reasons\": [\n          \"CONTINUITY_ABSENT\"\n        ],\n        \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n        \"evidenceAuthority\": \"NONE\"\n      },\n      \"evidence\": [\n        {\n          \"kind\": \"OBSERVED\",\n          \"source\": \"ForgeLoop protocol conformance\",\n          \"result\": \"VALID\"\n        }\n      ]\n    }\n  },\n  \"after\": {\n    \"exit\": 0,\n    \"validation\": {\n      \"status\": \"VALID\",\n      \"errors\": [],\n      \"incomplete\": [],\n      \"stale\": null,\n      \"delegation\": {\n        \"status\": \"NOT_APPLICABLE\",\n        \"required\": false,\n        \"errors\": []\n      },\n      \"continuity\": {\n        \"required\": false,\n        \"status\": \"NOT_APPLICABLE\",\n        \"classification\": \"ABSENT\",\n        \"errors\": [],\n        \"reasonCodes\": [],\n        \"reasons\": [\n          \"CONTINUITY_ABSENT\"\n        ],\n        \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n        \"evidenceAuthority\": \"NONE\"\n      },\n      \"evidence\": [\n        {\n          \"kind\": \"OBSERVED\",\n          \"source\": \"ForgeLoop protocol conformance\",\n          \"result\": \"VALID\"\n        }\n      ]\n    }\n  },\n  \"restored\": true,\n  \"nativeBytesUnchanged\": true,\n  \"referencePreserved\": {\n    \"taskId\": \"phase2a-closure-task\",\n    \"referenceId\": \"recovery-binary\",\n    \"path\": \".forgeloop/attachments/objects/3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5\",\n    \"size\": 7,\n    \"sha256\": \"3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5\"\n  },\n  \"maintenanceExclusionRetained\": true,\n  \"targetVersionValidatedInDrill\": true\n}\n",
+        "stderr": ""
+      },
+      {
+        "phase": "RESTORED",
+        "status": 0,
+        "stdout": "{\n  \"scope\": \"Canonical linked-worktree legacy VALID after actual owner-death source publication recovery; constructed persisted boundaries, not syscall power loss\",\n  \"phase\": \"RESTORED\",\n  \"binary\": true,\n  \"before\": {\n    \"exit\": 0,\n    \"validation\": {\n      \"status\": \"VALID\",\n      \"errors\": [],\n      \"incomplete\": [],\n      \"stale\": null,\n      \"delegation\": {\n        \"status\": \"NOT_APPLICABLE\",\n        \"required\": false,\n        \"errors\": []\n      },\n      \"continuity\": {\n        \"required\": false,\n        \"status\": \"NOT_APPLICABLE\",\n        \"classification\": \"ABSENT\",\n        \"errors\": [],\n        \"reasonCodes\": [],\n        \"reasons\": [\n          \"CONTINUITY_ABSENT\"\n        ],\n        \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n        \"evidenceAuthority\": \"NONE\"\n      },\n      \"evidence\": [\n        {\n          \"kind\": \"OBSERVED\",\n          \"source\": \"ForgeLoop protocol conformance\",\n          \"result\": \"VALID\"\n        }\n      ]\n    }\n  },\n  \"after\": {\n    \"exit\": 0,\n    \"validation\": {\n      \"status\": \"VALID\",\n      \"errors\": [],\n      \"incomplete\": [],\n      \"stale\": null,\n      \"delegation\": {\n        \"status\": \"NOT_APPLICABLE\",\n        \"required\": false,\n        \"errors\": []\n      },\n      \"continuity\": {\n        \"required\": false,\n        \"status\": \"NOT_APPLICABLE\",\n        \"classification\": \"ABSENT\",\n        \"errors\": [],\n        \"reasonCodes\": [],\n        \"reasons\": [\n          \"CONTINUITY_ABSENT\"\n        ],\n        \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n        \"evidenceAuthority\": \"NONE\"\n      },\n      \"evidence\": [\n        {\n          \"kind\": \"OBSERVED\",\n          \"source\": \"ForgeLoop protocol conformance\",\n          \"result\": \"VALID\"\n        }\n      ]\n    }\n  },\n  \"restored\": true,\n  \"nativeBytesUnchanged\": true,\n  \"referencePreserved\": {\n    \"taskId\": \"phase2a-closure-task\",\n    \"referenceId\": \"recovery-binary\",\n    \"path\": \".forgeloop/attachments/objects/3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5\",\n    \"size\": 7,\n    \"sha256\": \"3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5\"\n  },\n  \"maintenanceExclusionRetained\": true,\n  \"targetVersionValidatedInDrill\": true\n}\n",
+        "stderr": ""
+      }
+    ],
+    "status": 0
+  },
+  "linux": {
+    "sourceBefore": 2522,
+    "sourceAfter": 2522,
+    "patches": {
+      "src/core/work-state.js": "fae79a89d33d170159195d3b3d6448a5ad45422df952422cd2dd18e722052ff9",
+      "tests/checkpoint-revalidation.test.js": "9d6aafb3b96b03525d29ab9bef133f62af1612d56b9710c3293738d22070cd32",
+      "src/core/structural-quality/service.js": "38981b46ae61b4ca173fd37d5855ac4ce6580719dcc51b429474a2f44417b363",
+      "tests/storage-quality-context.test.js": "1deb0efe1f37b09829eb3b46d47cedd9e51e5ef0a921fc86e56c0e4e22195bce",
+      "src/storage/task-guards.js": "0ff2d6a4b1109e47d97a772c19b54ba68dbae6c739e43d3253b399b244eafff4",
+      "src/commands/status.js": "826d0f912630f5df52f6d696780cd9a4cc77493dad072f3ebd3c5a2e432e118f",
+      "tests/storage-state-classification-snapshot.test.js": "d5e2a6efe3ab48be4fda5a85f27c0fc6becdcdf7d07e7f76dfe350f9bc6ea86a",
+      "scripts/drill-storage-reverse-export-compatibility.mjs": "ef4978e694207059fa27dc9cb701539dfc5b828558e6afba875e1020756e2008",
+      "tests/helpers/canonical-diagnosis-fixture.js": "add6d2df4664967e203ae93061e649fb3b16f132ee39626c151018679383769f",
+      "scripts/drill-storage-prewrite-source-rollback.mjs": "167807b6e7880d8bde708d9e38f04bac94acf639f37be7444617634f4571da79",
+      "tests/storage-migration-resume.test.js": "2b5942e27dfcc28de5561fbbe1eba3bb5b1ef723bb9dad9e855f57f1583aa511",
+      "tests/helpers/storage-migration-crash-worker.mjs": "7b647e308e324f857e6d279eff7b011dfc854c7a84afa89c35e0032279ccc75b",
+      "src/storage/migration-candidate.js": "bfe9de59e88e05eb61d70eca35f6f5540a766ba8155f6b26b5707f211dc7e94f",
+      "tests/storage-historical-export-manifest.test.js": "76c97421ec3b81e911da35c565cdcd6c062f9081534ed93edb3c356219576b4d",
+      "src/storage/migration-rollback-admission.js": "da43ae3a2930f7adf3370898ff1e9a9689df8319f6c861e23f6aa52ce2cf5c73",
+      "tests/storage-migration-rollback-admission.test.js": "d25d257c2d8ef26bf1acca99b12c64ed524b56eaba1a93cdb2dbc26ba88734a6",
+      "tests/helpers/storage-rollback-busy-worker.mjs": "2b9976b168ab0101c05ed9823c9588d321332f59d718cda3f4d855c9fc13394e",
+      "src/storage/migration-rollback-preparation.js": "1152bbb354970c43c8530d681790c08941408328e59654eb6e62044b2dcd9bfe",
+      "tests/storage-migration-rollback-preparation.test.js": "6d11a99163709313474df23b32fb863fff4edb793b1fee6bd247a8b0dc3c0a65",
+      "tests/storage-migration-rollback-ready-resume.test.js": "3dac8cb5964923216e4d93a9da97e8b5f2d34818aa04f22a5d78e17108543a1a",
+      "tests/helpers/storage-rollback-ready-worker.mjs": "2e0475c73b508b7e9447d5b2385cc0e5649f48061906c2b002dfd12f445638ff",
+      "src/storage/migration-rollback-source-stage.js": "8794462fa72663fe0cbded9284225d770352ad06e88b46d124e1bd2ddd1d2792",
+      "tests/storage-migration-rollback-source-stage.test.js": "986f3cc62934521ec7be54d7efd6e7136911f21792fd770ddf4ab0fd0a4d4356",
+      "src/storage/migration-rollback-publication.js": "c935b76285e0a64a64ed8913e6ee39e3ffd677eab9a644ae11c9206b72eceea5",
+      "tests/storage-migration-rollback-publication.test.js": "a3d32a796726e3cfe9d3f94c8659f62bd7a97eeb43dafb4fa0606dbf8bb0bcda",
+      "tests/storage-migration-rollback-publication-resume.test.js": "80768b393a62f94fa60fec8fdf7b4e61aaff21ffff748ee36671bc170facdf04",
+      "tests/helpers/storage-rollback-publication-worker.mjs": "c9ee614eaae40a4aea11e9d04d75d81d30cb8c47a1dcd78498f7e0b2bf7bd7b8",
+      "tests/helpers/storage-binary-source-fixture.js": "b95ae18f24e737549c1719e939afb6a833eef76294f3410c07a6f2e5a8dd7e88",
+      "tests/storage-migration-rollback-stage-resume.test.js": "e9564135ccd416a164a1c04c9b3e224bb8aa228a20565781557ff7050d5b9a29",
+      "tests/helpers/storage-rollback-stage-worker.mjs": "b030746f71f62bf4a6189412daf3d7370d6c0193164384475eb42a974a491280",
+      "scripts/drill-storage-source-rollback-recovery.mjs": "1f2fba81c38e164f9d3d3251bd00f28d72e3c53b55f39e812072973b7079bcae"
+    },
+    "results": [
+      {
+        "phase": "SWITCHING",
+        "status": 0,
+        "stdout": "{\n  \"scope\": \"Canonical linked-worktree legacy VALID after actual owner-death source publication recovery; constructed persisted boundaries, not syscall power loss\",\n  \"phase\": \"SWITCHING\",\n  \"binary\": true,\n  \"before\": {\n    \"exit\": 0,\n    \"validation\": {\n      \"status\": \"VALID\",\n      \"errors\": [],\n      \"incomplete\": [],\n      \"stale\": null,\n      \"delegation\": {\n        \"status\": \"NOT_APPLICABLE\",\n        \"required\": false,\n        \"errors\": []\n      },\n      \"continuity\": {\n        \"required\": false,\n        \"status\": \"NOT_APPLICABLE\",\n        \"classification\": \"ABSENT\",\n        \"errors\": [],\n        \"reasonCodes\": [],\n        \"reasons\": [\n          \"CONTINUITY_ABSENT\"\n        ],\n        \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n        \"evidenceAuthority\": \"NONE\"\n      },\n      \"evidence\": [\n        {\n          \"kind\": \"OBSERVED\",\n          \"source\": \"ForgeLoop protocol conformance\",\n          \"result\": \"VALID\"\n        }\n      ]\n    }\n  },\n  \"after\": {\n    \"exit\": 0,\n    \"validation\": {\n      \"status\": \"VALID\",\n      \"errors\": [],\n      \"incomplete\": [],\n      \"stale\": null,\n      \"delegation\": {\n        \"status\": \"NOT_APPLICABLE\",\n        \"required\": false,\n        \"errors\": []\n      },\n      \"continuity\": {\n        \"required\": false,\n        \"status\": \"NOT_APPLICABLE\",\n        \"classification\": \"ABSENT\",\n        \"errors\": [],\n        \"reasonCodes\": [],\n        \"reasons\": [\n          \"CONTINUITY_ABSENT\"\n        ],\n        \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n        \"evidenceAuthority\": \"NONE\"\n      },\n      \"evidence\": [\n        {\n          \"kind\": \"OBSERVED\",\n          \"source\": \"ForgeLoop protocol conformance\",\n          \"result\": \"VALID\"\n        }\n      ]\n    }\n  },\n  \"restored\": true,\n  \"nativeBytesUnchanged\": true,\n  \"referencePreserved\": {\n    \"taskId\": \"phase2a-closure-task\",\n    \"referenceId\": \"recovery-binary\",\n    \"path\": \".forgeloop/attachments/objects/3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5\",\n    \"size\": 7,\n    \"sha256\": \"3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5\"\n  },\n  \"maintenanceExclusionRetained\": true,\n  \"targetVersionValidatedInDrill\": true\n}\n",
+        "stderr": ""
+      },
+      {
+        "phase": "DATABASE_RETAINED",
+        "status": 0,
+        "stdout": "{\n  \"scope\": \"Canonical linked-worktree legacy VALID after actual owner-death source publication recovery; constructed persisted boundaries, not syscall power loss\",\n  \"phase\": \"DATABASE_RETAINED\",\n  \"binary\": true,\n  \"before\": {\n    \"exit\": 0,\n    \"validation\": {\n      \"status\": \"VALID\",\n      \"errors\": [],\n      \"incomplete\": [],\n      \"stale\": null,\n      \"delegation\": {\n        \"status\": \"NOT_APPLICABLE\",\n        \"required\": false,\n        \"errors\": []\n      },\n      \"continuity\": {\n        \"required\": false,\n        \"status\": \"NOT_APPLICABLE\",\n        \"classification\": \"ABSENT\",\n        \"errors\": [],\n        \"reasonCodes\": [],\n        \"reasons\": [\n          \"CONTINUITY_ABSENT\"\n        ],\n        \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n        \"evidenceAuthority\": \"NONE\"\n      },\n      \"evidence\": [\n        {\n          \"kind\": \"OBSERVED\",\n          \"source\": \"ForgeLoop protocol conformance\",\n          \"result\": \"VALID\"\n        }\n      ]\n    }\n  },\n  \"after\": {\n    \"exit\": 0,\n    \"validation\": {\n      \"status\": \"VALID\",\n      \"errors\": [],\n      \"incomplete\": [],\n      \"stale\": null,\n      \"delegation\": {\n        \"status\": \"NOT_APPLICABLE\",\n        \"required\": false,\n        \"errors\": []\n      },\n      \"continuity\": {\n        \"required\": false,\n        \"status\": \"NOT_APPLICABLE\",\n        \"classification\": \"ABSENT\",\n        \"errors\": [],\n        \"reasonCodes\": [],\n        \"reasons\": [\n          \"CONTINUITY_ABSENT\"\n        ],\n        \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n        \"evidenceAuthority\": \"NONE\"\n      },\n      \"evidence\": [\n        {\n          \"kind\": \"OBSERVED\",\n          \"source\": \"ForgeLoop protocol conformance\",\n          \"result\": \"VALID\"\n        }\n      ]\n    }\n  },\n  \"restored\": true,\n  \"nativeBytesUnchanged\": true,\n  \"referencePreserved\": {\n    \"taskId\": \"phase2a-closure-task\",\n    \"referenceId\": \"recovery-binary\",\n    \"path\": \".forgeloop/attachments/objects/3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5\",\n    \"size\": 7,\n    \"sha256\": \"3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5\"\n  },\n  \"maintenanceExclusionRetained\": true,\n  \"targetVersionValidatedInDrill\": true\n}\n",
+        "stderr": ""
+      },
+      {
+        "phase": "NATIVE_RETAINED",
+        "status": 0,
+        "stdout": "{\n  \"scope\": \"Canonical linked-worktree legacy VALID after actual owner-death source publication recovery; constructed persisted boundaries, not syscall power loss\",\n  \"phase\": \"NATIVE_RETAINED\",\n  \"binary\": true,\n  \"before\": {\n    \"exit\": 0,\n    \"validation\": {\n      \"status\": \"VALID\",\n      \"errors\": [],\n      \"incomplete\": [],\n      \"stale\": null,\n      \"delegation\": {\n        \"status\": \"NOT_APPLICABLE\",\n        \"required\": false,\n        \"errors\": []\n      },\n      \"continuity\": {\n        \"required\": false,\n        \"status\": \"NOT_APPLICABLE\",\n        \"classification\": \"ABSENT\",\n        \"errors\": [],\n        \"reasonCodes\": [],\n        \"reasons\": [\n          \"CONTINUITY_ABSENT\"\n        ],\n        \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n        \"evidenceAuthority\": \"NONE\"\n      },\n      \"evidence\": [\n        {\n          \"kind\": \"OBSERVED\",\n          \"source\": \"ForgeLoop protocol conformance\",\n          \"result\": \"VALID\"\n        }\n      ]\n    }\n  },\n  \"after\": {\n    \"exit\": 0,\n    \"validation\": {\n      \"status\": \"VALID\",\n      \"errors\": [],\n      \"incomplete\": [],\n      \"stale\": null,\n      \"delegation\": {\n        \"status\": \"NOT_APPLICABLE\",\n        \"required\": false,\n        \"errors\": []\n      },\n      \"continuity\": {\n        \"required\": false,\n        \"status\": \"NOT_APPLICABLE\",\n        \"classification\": \"ABSENT\",\n        \"errors\": [],\n        \"reasonCodes\": [],\n        \"reasons\": [\n          \"CONTINUITY_ABSENT\"\n        ],\n        \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n        \"evidenceAuthority\": \"NONE\"\n      },\n      \"evidence\": [\n        {\n          \"kind\": \"OBSERVED\",\n          \"source\": \"ForgeLoop protocol conformance\",\n          \"result\": \"VALID\"\n        }\n      ]\n    }\n  },\n  \"restored\": true,\n  \"nativeBytesUnchanged\": true,\n  \"referencePreserved\": {\n    \"taskId\": \"phase2a-closure-task\",\n    \"referenceId\": \"recovery-binary\",\n    \"path\": \".forgeloop/attachments/objects/3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5\",\n    \"size\": 7,\n    \"sha256\": \"3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5\"\n  },\n  \"maintenanceExclusionRetained\": true,\n  \"targetVersionValidatedInDrill\": true\n}\n",
+        "stderr": ""
+      },
+      {
+        "phase": "PARTIAL_SOURCE",
+        "status": 0,
+        "stdout": "{\n  \"scope\": \"Canonical linked-worktree legacy VALID after actual owner-death source publication recovery; constructed persisted boundaries, not syscall power loss\",\n  \"phase\": \"PARTIAL_SOURCE\",\n  \"binary\": true,\n  \"before\": {\n    \"exit\": 0,\n    \"validation\": {\n      \"status\": \"VALID\",\n      \"errors\": [],\n      \"incomplete\": [],\n      \"stale\": null,\n      \"delegation\": {\n        \"status\": \"NOT_APPLICABLE\",\n        \"required\": false,\n        \"errors\": []\n      },\n      \"continuity\": {\n        \"required\": false,\n        \"status\": \"NOT_APPLICABLE\",\n        \"classification\": \"ABSENT\",\n        \"errors\": [],\n        \"reasonCodes\": [],\n        \"reasons\": [\n          \"CONTINUITY_ABSENT\"\n        ],\n        \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n        \"evidenceAuthority\": \"NONE\"\n      },\n      \"evidence\": [\n        {\n          \"kind\": \"OBSERVED\",\n          \"source\": \"ForgeLoop protocol conformance\",\n          \"result\": \"VALID\"\n        }\n      ]\n    }\n  },\n  \"after\": {\n    \"exit\": 0,\n    \"validation\": {\n      \"status\": \"VALID\",\n      \"errors\": [],\n      \"incomplete\": [],\n      \"stale\": null,\n      \"delegation\": {\n        \"status\": \"NOT_APPLICABLE\",\n        \"required\": false,\n        \"errors\": []\n      },\n      \"continuity\": {\n        \"required\": false,\n        \"status\": \"NOT_APPLICABLE\",\n        \"classification\": \"ABSENT\",\n        \"errors\": [],\n        \"reasonCodes\": [],\n        \"reasons\": [\n          \"CONTINUITY_ABSENT\"\n        ],\n        \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n        \"evidenceAuthority\": \"NONE\"\n      },\n      \"evidence\": [\n        {\n          \"kind\": \"OBSERVED\",\n          \"source\": \"ForgeLoop protocol conformance\",\n          \"result\": \"VALID\"\n        }\n      ]\n    }\n  },\n  \"restored\": true,\n  \"nativeBytesUnchanged\": true,\n  \"referencePreserved\": {\n    \"taskId\": \"phase2a-closure-task\",\n    \"referenceId\": \"recovery-binary\",\n    \"path\": \".forgeloop/attachments/objects/3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5\",\n    \"size\": 7,\n    \"sha256\": \"3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5\"\n  },\n  \"maintenanceExclusionRetained\": true,\n  \"targetVersionValidatedInDrill\": true\n}\n",
+        "stderr": ""
+      },
+      {
+        "phase": "RESTORED",
+        "status": 0,
+        "stdout": "{\n  \"scope\": \"Canonical linked-worktree legacy VALID after actual owner-death source publication recovery; constructed persisted boundaries, not syscall power loss\",\n  \"phase\": \"RESTORED\",\n  \"binary\": true,\n  \"before\": {\n    \"exit\": 0,\n    \"validation\": {\n      \"status\": \"VALID\",\n      \"errors\": [],\n      \"incomplete\": [],\n      \"stale\": null,\n      \"delegation\": {\n        \"status\": \"NOT_APPLICABLE\",\n        \"required\": false,\n        \"errors\": []\n      },\n      \"continuity\": {\n        \"required\": false,\n        \"status\": \"NOT_APPLICABLE\",\n        \"classification\": \"ABSENT\",\n        \"errors\": [],\n        \"reasonCodes\": [],\n        \"reasons\": [\n          \"CONTINUITY_ABSENT\"\n        ],\n        \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n        \"evidenceAuthority\": \"NONE\"\n      },\n      \"evidence\": [\n        {\n          \"kind\": \"OBSERVED\",\n          \"source\": \"ForgeLoop protocol conformance\",\n          \"result\": \"VALID\"\n        }\n      ]\n    }\n  },\n  \"after\": {\n    \"exit\": 0,\n    \"validation\": {\n      \"status\": \"VALID\",\n      \"errors\": [],\n      \"incomplete\": [],\n      \"stale\": null,\n      \"delegation\": {\n        \"status\": \"NOT_APPLICABLE\",\n        \"required\": false,\n        \"errors\": []\n      },\n      \"continuity\": {\n        \"required\": false,\n        \"status\": \"NOT_APPLICABLE\",\n        \"classification\": \"ABSENT\",\n        \"errors\": [],\n        \"reasonCodes\": [],\n        \"reasons\": [\n          \"CONTINUITY_ABSENT\"\n        ],\n        \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n        \"evidenceAuthority\": \"NONE\"\n      },\n      \"evidence\": [\n        {\n          \"kind\": \"OBSERVED\",\n          \"source\": \"ForgeLoop protocol conformance\",\n          \"result\": \"VALID\"\n        }\n      ]\n    }\n  },\n  \"restored\": true,\n  \"nativeBytesUnchanged\": true,\n  \"referencePreserved\": {\n    \"taskId\": \"phase2a-closure-task\",\n    \"referenceId\": \"recovery-binary\",\n    \"path\": \".forgeloop/attachments/objects/3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5\",\n    \"size\": 7,\n    \"sha256\": \"3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5\"\n  },\n  \"maintenanceExclusionRetained\": true,\n  \"targetVersionValidatedInDrill\": true\n}\n",
+        "stderr": ""
+      }
+    ],
+    "status": 0
+  },
+  "limitations": [
+    "Constructed persisted states before actual owner kill, not syscall-level power-loss proof",
+    "Public operator command/release procedure incomplete",
+    "Explicit operator write exclusion, not inferred historical-write absence",
+    "Admitted baseline plus scoped patches, not final whole-current-source acceptance",
+    "Original whole-plan acceptance incomplete"
+  ]
+}

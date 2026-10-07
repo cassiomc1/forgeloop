@@ -1,3 +1,4 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
@@ -69,8 +70,9 @@ test("state APIs preserve a CRLF target file and validate a checkpoint on a port
       blockers: [],
       verificationEvidence: [],
     });
-    await writeWorkState(target, state);
-    assert.deepEqual(await readWorkState(target), state);
+    await ensureFixtureTask(target, state.taskId, path.resolve("."));
+    await writeWorkState(target, state, { taskId: state.taskId });
+    assert.deepEqual(await readWorkState(target, { taskId: state.taskId }), state);
 
     const profilePath = path.join(target, "profile-crlf.txt");
     const crlf = "profile-mode: project\r\nlanguage: en\r\n";

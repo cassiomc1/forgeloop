@@ -34,8 +34,30 @@ test("schema health parses every shipped schema and reports valid status", async
   assert.equal(report.schemas.length, SHIPPED_SCHEMA_NAMES.length);
   for (const schema of report.schemas) {
     assert.equal(schema.status, "valid", schema.name);
-    assert.equal(schema.version, 1, schema.name);
+    assert.equal(schema.version, schema.name === "task-bundle" ? 2 : 1, schema.name);
   }
+});
+
+test("version two task bundles require byte bindings while legacy bundles remain valid", async () => {
+  const schema = await readSchema("task-bundle", getPackageRoot());
+  const legacy = { schemaVersion: 1, protocolVersion: 1, taskId: "portable", artifacts: [] };
+  assert.doesNotThrow(() => assertSchema(legacy, schema));
+  assert.throws(() => assertSchema({ ...legacy, schemaVersion: 2 }, schema));
+  assert.doesNotThrow(() => assertSchema({ ...legacy, schemaVersion: 2, files: [] }, schema));
+});
+
+test("oneOf does not bypass sibling required fields or object boundaries", () => {
+  const schema = {
+    type: "object",
+    required: ["value", "mode"],
+    properties: { value: { type: "string" }, mode: { enum: ["A", "B"] } },
+    additionalProperties: false,
+    oneOf: [{ properties: { mode: { const: "A" } } }, { properties: { mode: { const: "B" } } }],
+  };
+  assert.doesNotThrow(() => assertSchema({ value: "accepted", mode: "A" }, schema));
+  assert.throws(() => assertSchema({ mode: "A" }, schema));
+  assert.throws(() => assertSchema({ value: 42, mode: "A" }, schema));
+  assert.throws(() => assertSchema({ value: "accepted", mode: "A", unexpected: true }, schema));
 });
 
 test("readSchema caches parsed schemas in memory and clearSchemaCache resets the cache", async () => {

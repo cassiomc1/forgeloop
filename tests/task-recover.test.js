@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile, writeFile } from "node:fs/promises";
+import { readRawFixtureText, overwriteFixtureLease, readRawFixtureLease } from "./helpers/native-storage-fixture.js";
 import { test } from "node:test";
 
 import { runTaskRecover, formatTaskRecoverResult } from "../src/commands/task-recover.js";
@@ -10,10 +10,9 @@ import { runTaskList } from "../src/commands/task-list.js";
 import { discoverTasks } from "../src/core/task-discovery.js";
 import { readEvents } from "../src/core/events.js";
 import { readWorkState } from "../src/core/work-state.js";
-import { taskArtifactPath, taskLockPath } from "../src/core/task-paths.js";
+import { taskArtifactPath } from "../src/core/task-paths.js";
 import { createWorkState, writeWorkState } from "../src/core/work-state.js";
 import { appendProtocolEvent } from "../src/core/events.js";
-import { ensureWithin, fileExists } from "../src/core/filesystem.js";
 import { withTaskTransaction } from "../src/core/transaction.js";
 import { acquireTaskLock, readLockInfo } from "../src/core/task-lock.js";
 import { exportTaskBundle, readTaskBundle } from "../src/core/bundles.js";
@@ -52,8 +51,8 @@ test("task-recover releases claims of a deadlocked task without fabricating comp
     assert.deepEqual(result.releasedClaims, ["tests"]);
 
     const recoveryPath = `${taskArtifactPath(taskId, "state").replace(/work-state\.json$/, "")}recovery.json`;
-    assert.equal(await fileExists(ensureWithin(target, recoveryPath)), true, "recovery state must be durable outside the event tail");
-    const recoveryState = JSON.parse(await readFile(ensureWithin(target, recoveryPath), "utf8"));
+    assert.ok(await readRawFixtureText(target, recoveryPath), "recovery state must be durable outside the event tail");
+    const recoveryState = JSON.parse(await readRawFixtureText(target, recoveryPath));
     assert.equal(recoveryState.status, "RECOVERED");
     assert.deepEqual(recoveryState.releasedClaims, ["tests"]);
     assert.deepEqual(recoveryState.authority, { kind: "CALLER_ACKNOWLEDGED" });
@@ -186,7 +185,7 @@ test("repeated task-recover is rejected without replacing recovery state or dupl
     );
 
     const recoveryPath = taskArtifactPath(taskId, "recovery");
-    const persisted = JSON.parse(await readFile(ensureWithin(target, recoveryPath), "utf8"));
+    const persisted = JSON.parse(await readRawFixtureText(target, recoveryPath));
     assert.equal(persisted.recoveryId, first.recoveryId);
     const recoveryEvents = (await readEvents(target, packageRoot, { taskId }))
       .filter((event) => event.event === "OPERATOR_RECOVERY_RECORDED");
@@ -204,7 +203,7 @@ test("task-recover CAS-releases an unchanged stale task lock before recovery", a
       heartbeatAt: "2020-01-01T00:00:00.000Z",
       leaseMs: 1,
     };
-    await writeFile(ensureWithin(target, taskLockPath(taskId)), `${JSON.stringify(staleLock)}\n`, "utf8");
+    await overwriteFixtureLease(target, taskId, staleLock);
 
     const result = await runTaskRecover({ target, packageRoot, taskId, acknowledgeRecovery: true });
     assert.equal(result.recovered, true);
@@ -215,14 +214,13 @@ test("task-recover CAS-releases an unchanged stale task lock before recovery", a
 test("task-recover fails closed when the task lock is corrupt", async () => {
   await withRecoveryTarget(async (target) => {
     const { taskId } = await setupAbandonedTask(target, { taskId: "corrupt-lock-recovery" });
-    const lockPath = ensureWithin(target, taskLockPath(taskId));
-    await writeFile(lockPath, "{broken", "utf8");
+    await overwriteFixtureLease(target, taskId, "{broken");
 
     await assert.rejects(
       () => runTaskRecover({ target, packageRoot, taskId, acknowledgeRecovery: true }),
       (error) => error.code === "E_TASK_RECOVERY_INCONSISTENT",
     );
-    assert.equal(await readFile(lockPath, "utf8"), "{broken");
+    assert.equal(await readRawFixtureLease(target, taskId), "{broken");
   });
 });
 

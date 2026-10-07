@@ -1,5 +1,7 @@
+import { ensureFixtureTask, readFixtureText, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
+import { taskArtifactPath } from "../src/core/task-paths.js";
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -10,6 +12,7 @@ import {
   canonicalFingerprint,
   readJsonArtifact,
   writeJsonArtifact,
+  writePortableJsonArtifact,
 } from "../src/core/artifacts.js";
 import { contractFingerprint, createContract, readContract, writeContract } from "../src/core/contract.js";
 import { createConfig } from "../src/core/config.js";
@@ -55,11 +58,12 @@ test("current contracts are schema-valid, persisted, and fingerprinted", async (
   assert.equal(contractFingerprint(contract), canonicalFingerprint(contract));
 
   await withTarget(async (target) => {
-    const written = await writeContract(target, contract, repositoryRoot);
-    const loaded = await readContract(target, repositoryRoot);
+    await ensureFixtureTask(target, contract.taskId, repositoryRoot);
+    const written = await writeContract(target, contract, repositoryRoot, { taskId: contract.taskId });
+    const loaded = await readContract(target, repositoryRoot, { taskId: contract.taskId });
     assert.equal(written.fingerprint, loaded.fingerprint);
     assert.deepEqual(loaded.value, contract);
-    assert.match(await readFile(path.join(target, ARTIFACT_PATHS.contract), "utf8"), /task-001/);
+    assert.match(await readFixtureText(target, taskArtifactPath(contract.taskId, "contract")), /task-001/);
   });
 });
 
@@ -70,7 +74,7 @@ test("generic artifact reads reject missing and unsafe paths with stable codes",
       (error) => error.code === "ARTIFACT_MISSING",
     );
     await assert.rejects(
-      () => writeJsonArtifact(target, "../escape.json", {}, "current-contract", repositoryRoot),
+      () => writePortableJsonArtifact(target, "../escape.json", {}, "current-contract", repositoryRoot),
       /inside target|escapes target/i,
     );
   });
@@ -115,12 +119,13 @@ test("route persistence rejects a manually persisted invalid current contract", 
       unresolvedDecisions: [],
       sourceRefs: [],
     };
-    const contractPath = path.join(target, ARTIFACT_PATHS.contract);
-    await mkdir(path.dirname(contractPath), { recursive: true });
-    await writeFile(contractPath, `${JSON.stringify(contract, null, 2)}\n`, "utf8");
+    await ensureFixtureTask(target, contract.taskId, repositoryRoot);
+    await writeContract(target, { ...contract, assumptions: [] }, repositoryRoot, { taskId: contract.taskId });
+    const contractPath = taskArtifactPath(contract.taskId, "contract");
+    await overwriteFixtureText(target, contractPath, JSON.stringify(contract));
 
     await assert.rejects(
-      () => persistRoute(target, evaluateRoute({ workType: "bug" }), repositoryRoot),
+      () => persistRoute(target, evaluateRoute({ workType: "bug" }), repositoryRoot, { taskId: contract.taskId }),
       (error) => {
         assert.match(error.message, /secret-like/i);
         assert.equal(error.message.includes(sensitiveValue), false);

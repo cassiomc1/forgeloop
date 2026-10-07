@@ -1,10 +1,15 @@
+import { withProjectReadSnapshot } from "../storage/project-read-snapshot.js";
 import { readCanonicalHandoff } from "../core/handoff.js";
 import {
   readHandoffAcceptanceLedger,
   resolveHandoffAcceptance,
 } from "../core/handoff-acceptance.js";
 
-export async function runHandoffShow({ target, packageRoot, taskId, handoffId } = {}) {
+export async function runHandoffShow(options = {}) {
+  return withProjectReadSnapshot(options.target, () => projectHandoffShow(options));
+}
+
+async function projectHandoffShow({ target, packageRoot, taskId, handoffId } = {}) {
   const artifact = await readCanonicalHandoff(target, { packageRoot, taskId, handoffId });
   const ledger = await readHandoffAcceptanceLedger(target, packageRoot, { taskId });
   const resolved = resolveHandoffAcceptance({

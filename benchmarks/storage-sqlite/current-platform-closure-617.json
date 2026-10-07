@@ -1,0 +1,134 @@
+{
+  "collectedIncrement": 616,
+  "scopeIncrement": 617,
+  "checkpoint": 15,
+  "checkpointStatus": "DONE",
+  "acceptedProductionSnapshot": "611b",
+  "baseFullEvidence": {
+    "macos": "full-macos-snapshot611b-terminal-612.json",
+    "windows": "full-windows-snapshot612-terminal-614.json",
+    "linux": "full-linux-snapshot612-terminal-616.json"
+  },
+  "currentSourceContinuity": {
+    "baseSnapshot": "611b",
+    "baseSourceFiles": 2638,
+    "changedExistingFiles": [
+      "benchmarks/storage-sqlite/phase-read-conflict-propagation-611.json",
+      "docs/SQLITE_MIGRATION_MATRIX.md",
+      "docs/SQLITE_MIGRATION_PROGRESS.md",
+      "docs/SQLITE_PROGRESS.md",
+      "tests/storage-reservation-projection.test.js"
+    ],
+    "addedFiles": [
+      "benchmarks/storage-sqlite/current-platform-staging-612.json",
+      "benchmarks/storage-sqlite/full-linux-snapshot612-live-614.json",
+      "benchmarks/storage-sqlite/full-linux-snapshot612-live-615.json",
+      "benchmarks/storage-sqlite/full-linux-snapshot612-terminal-616.json",
+      "benchmarks/storage-sqlite/full-macos-snapshot611b-terminal-612.json",
+      "benchmarks/storage-sqlite/full-windows-snapshot612-terminal-614.json",
+      "benchmarks/storage-sqlite/macos-cli-startup-614.json",
+      "benchmarks/storage-sqlite/macos-idempotency-614.json",
+      "benchmarks/storage-sqlite/macos-idempotency-resources-614.json",
+      "benchmarks/storage-sqlite/macos-state-event-commit-614.json",
+      "benchmarks/storage-sqlite/populated-cli-macos-612.json",
+      "benchmarks/storage-sqlite/public-bundle-authority-boundary-613.json",
+      "benchmarks/storage-sqlite/rejected-grouped-query-commit-616.json",
+      "benchmarks/storage-sqlite/reservation-query-error-parity-616.json",
+      "benchmarks/storage-sqlite/state-event-commit-cpu-diagnostic-615.json",
+      "benchmarks/storage-sqlite/writer-binding-discovery-612.json",
+      "tests/storage-bundle-authority-boundary.test.js"
+    ],
+    "acceptedProductionChanged": false
+  },
+  "macosScoped": {
+    "exitCode": 0,
+    "testSummaries": [
+      "\u2139 tests 26",
+      "\u2139 pass 26",
+      "\u2139 fail 0",
+      "\u2139 skipped 0"
+    ],
+    "rawLog": "/tmp/sqlite-scope617-macos.log"
+  },
+  "windowsScoped": {
+    "sourceFiles": 2639,
+    "sourceDriftBefore": [],
+    "sourceDriftAfter": [],
+    "exitCode": 0,
+    "signal": null,
+    "testFiles": [
+      "tests/storage-reservation-projection.test.js",
+      "tests/storage-guard-parity.test.js",
+      "tests/storage-multiprocess.test.js",
+      "tests/storage-state-classification-snapshot.test.js",
+      "tests/storage-bundle-authority-boundary.test.js",
+      "tests/bundle.test.js",
+      "tests/storage-event-export-validation.test.js"
+    ],
+    "testSummaries": [
+      "\u2139 tests 26",
+      "\u2139 pass 26",
+      "\u2139 fail 0",
+      "\u2139 skipped 0"
+    ]
+  },
+  "linuxScoped": {
+    "id": "67c63ca88648cd5aad3a3582936fdf44d397c459935a14c4aff46cc9b70e11d3",
+    "state": {
+      "Status": "exited",
+      "Running": false,
+      "Paused": false,
+      "Restarting": false,
+      "OOMKilled": false,
+      "Dead": false,
+      "Pid": 0,
+      "ExitCode": 0,
+      "Error": "",
+      "StartedAt": "2026-10-07T02:13:25.69165165Z",
+      "FinishedAt": "2026-10-07T02:13:51.479851757Z"
+    },
+    "image": "node:24.19.0-bookworm",
+    "snapshot": "f86219c0da82b76f08a760dfc23abfdb132f52a12eb2af77a9f7f391a5bf67fd",
+    "sourceFiles": 2639,
+    "sourceDrift": [],
+    "actualTerminalWorkingLayerCopiedTo": "C:/forgeloop-tests/terminal617-scope-copy",
+    "testSummaries": [
+      "\u2139 tests 26",
+      "\u2139 pass 26",
+      "\u2139 fail 0",
+      "\u2139 skipped 0"
+    ],
+    "rawLog": "/tmp/sqlite-linux-scope617-terminal.stdout.log"
+  },
+  "testFiles": [
+    "tests/storage-reservation-projection.test.js",
+    "tests/storage-guard-parity.test.js",
+    "tests/storage-multiprocess.test.js",
+    "tests/storage-state-classification-snapshot.test.js",
+    "tests/storage-bundle-authority-boundary.test.js",
+    "tests/bundle.test.js",
+    "tests/storage-event-export-validation.test.js"
+  ],
+  "currentTests": [
+    {
+      "path": "tests/storage-reservation-projection.test.js",
+      "sha256": "870bb99a6af27604e49b26959a2addaeca6149c54def6e19b92bc0272bce82b7"
+    },
+    {
+      "path": "tests/storage-bundle-authority-boundary.test.js",
+      "sha256": "095c803354f51ab5871a70c4d80964144f05ba445c9c74b873b7d99ccacc810d"
+    }
+  ],
+  "commandAdmissionFailure": {
+    "status": 1,
+    "error": "The command line is too long.",
+    "remoteExecutionOccurred": false,
+    "correctedCompressedArgumentLength": 5797
+  },
+  "wholeMigrationAcceptanceVerified": false,
+  "limitations": [
+    "Full2814-test source611b suites and current26-test scoped runs overlap;do not sum counts.",
+    "Accepted production/schema/package/workflow bytes unchanged;remaining differences are documentation,benchmark evidence and the two test controls.",
+    "Whole transitive authority,maintenance,performance/resources,inclusiveLOC and changedGitHubworkflow execution remain separate gates."
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "name": "@cassiomc1/forgeloop",
-  "version": "1.14.0",
+  "version": "2.0.0",
   "description": "Evidence-first engineering protocol for AI coding environments and developer workflows",
   "repository": {
     "type": "git",
@@ -13,7 +13,7 @@
   },
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": ">=24.19.0"
   },
   "bin": {
     "forgeloop": "src/cli.js"
@@ -65,6 +65,7 @@
     "docs/STRUCTURAL_QUALITY.md",
     "docs/DOCUMENTATION_GUIDE.md",
     "docs/RELEASE_CHECKLIST.md",
+    "docs/SELF_HOSTED_TESTS.md",
     "docs/PACKAGE_CONTENTS.md",
     "docs/PROVIDER_ARCHITECTURE.md",
     "docs/PROVIDERS.md",
@@ -119,7 +120,8 @@
     "!src/core/decision-classification.js",
     "!src/core/workflow-compatibility.js",
     "!src/core/cli-metadata.js",
-    "LICENSE"
+    "LICENSE",
+    "scripts/run-mcp-clean-tests.mjs"
   ],
   "scripts": {
     "test": "node scripts/run-tests.js",
@@ -169,6 +171,8 @@
     "repository-index:manifest": "node scripts/verify-tgrep-manifest.mjs",
     "repository:hygiene": "node scripts/check-repository-hygiene.mjs",
     "task-discovery:benchmark": "node scripts/benchmark-task-discovery.mjs",
+    "storage:benchmark": "node scripts/benchmark-storage-sqlite.mjs",
+    "storage:benchmark:diagnosis": "node scripts/benchmark-diagnosis-parity.mjs",
     "verify:fast": "node scripts/run-validation.mjs --tier fast",
     "verify:local": "node scripts/run-validation.mjs --tier local",
     "verify:prepush": "node scripts/run-validation.mjs --tier prepush",
@@ -176,7 +180,8 @@
     "jev:smoke": "node scripts/jev-smoke.mjs",
     "benchmark:jev": "node scripts/benchmark-jev.mjs",
     "benchmark:jev:live": "node scripts/benchmark-jev.mjs --live",
-    "benchmark:test-intelligence": "node scripts/benchmark-test-intelligence.mjs"
+    "benchmark:test-intelligence": "node scripts/benchmark-test-intelligence.mjs",
+    "mcp:test:clean": "node scripts/run-mcp-clean-tests.mjs"
   },
   "devDependencies": {
     "c8": "^12.0.0",

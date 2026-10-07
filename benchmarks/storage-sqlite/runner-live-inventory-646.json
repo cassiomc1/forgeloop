@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "increment": 646,
+  "runners": [
+    {
+      "busy": false,
+      "id": 23,
+      "labels": [
+        "self-hosted",
+        "X64",
+        "Linux",
+        "forgeloop-linux-remote"
+      ],
+      "name": "forgeloop-linux-remote",
+      "os": "Linux",
+      "status": "online"
+    },
+    {
+      "busy": false,
+      "id": 21,
+      "labels": [
+        "self-hosted",
+        "macOS",
+        "ARM64",
+        "forgeloop-macos-local"
+      ],
+      "name": "forgeloop-macos-local",
+      "os": "macOS",
+      "status": "online"
+    },
+    {
+      "busy": false,
+      "id": 22,
+      "labels": [
+        "self-hosted",
+        "Windows",
+        "X64",
+        "forgeloop-windows-remote"
+      ],
+      "name": "forgeloop-windows-remote",
+      "os": "Windows",
+      "status": "online"
+    }
+  ],
+  "recentRuns": [
+    {
+      "conclusion": "success",
+      "event": "dynamic",
+      "head_branch": "main",
+      "head_sha": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+      "id": 36768960868,
+      "name": "CodeQL Setup",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "event": "pull_request",
+      "head_branch": "dependabot/npm_and_yarn/brace-expansion-1.1.21",
+      "head_sha": "78b1186a13ad16c017ce3cdf6edf9d715749ef46",
+      "id": 36768782614,
+      "name": "PR Core",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "event": "pull_request",
+      "head_branch": "dependabot/npm_and_yarn/brace-expansion-1.1.21",
+      "head_sha": "78b1186a13ad16c017ce3cdf6edf9d715749ef46",
+      "id": 36768782351,
+      "name": "Dependency review",
+      "status": "completed"
+    }
+  ],
+  "changedWorkflowExecutionVerified": false,
+  "limitation": "Online idle registration is not execution of the current candidate. Recent inspected workflow heads are baseline or dependabot, not the local migration branch."
+}

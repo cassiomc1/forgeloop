@@ -1,3 +1,4 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { mkdtemp } from "node:fs/promises";
@@ -21,6 +22,7 @@ async function withTarget(run) {
 }
 
 async function seedTask(target, { taskId, cycle, checks, phase }) {
+  await ensureFixtureTask(target, taskId, packageRoot);
   await appendProtocolEvent(target, {
     taskId,
     event: "VERIFICATION_RECORDED",

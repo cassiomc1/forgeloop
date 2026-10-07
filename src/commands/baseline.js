@@ -1,3 +1,4 @@
+import { withProjectReadSnapshot } from "../storage/project-read-snapshot.js";
 import {
   computePersistedPolicyLockData,
   evaluateTargetPolicy,
@@ -18,6 +19,17 @@ function baselineError(code, message) {
   return err;
 }
 
+async function hasActivePolicySnapshot(target, packageRoot) {
+  return withProjectReadSnapshot(target, async () => {
+    const tasks = await discoverTasks(target, packageRoot);
+    for (const task of tasks) {
+      if (task.healthy && task.phase && task.phase !== "COMPLETE" && task.phase !== "BLOCKED"
+        && await readTaskPolicySnapshot(target, task.taskId, packageRoot)) return true;
+    }
+    return false;
+  });
+}
+
 export async function runBaseline({
   target = process.cwd(),
   packageRoot,
@@ -28,17 +40,7 @@ export async function runBaseline({
   const policyEval = await evaluateTargetPolicy({ target, packageRoot });
   let baseline = await readBaseline(target, packageRoot);
 
-  const tasks = await discoverTasks(target, packageRoot);
-  let hasActivePolicyTask = false;
-  for (const t of tasks) {
-    if (t.healthy && t.phase && t.phase !== "COMPLETE" && t.phase !== "BLOCKED") {
-      const snap = await readTaskPolicySnapshot(target, t.taskId, packageRoot);
-      if (snap) {
-        hasActivePolicyTask = true;
-        break;
-      }
-    }
-  }
+  const hasActivePolicyTask = await hasActivePolicySnapshot(target, packageRoot);
 
   if (record) {
     if (hasActivePolicyTask && !policyResetAuthorized) {

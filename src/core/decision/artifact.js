@@ -5,6 +5,7 @@ import { assertSecretFree } from "../receipt.js";
 import { DECISION_AUTHORITY, DECISION_EVIDENCE_AUTHORITY, DECISION_POLICY_VERSION, PINNED_JEV_MODEL } from "./constants.js";
 import { DECISION_ERROR_CODES, decisionError } from "./errors.js";
 import { getTaskTransaction, withTaskTransaction } from "../transaction.js";
+import { operationalArtifactExists } from "../../storage/operational-context.js";
 
 export function buildDecisionArtifact(input = {}) {
   const artifact = {
@@ -58,7 +59,7 @@ export async function writeDecisionArtifact(target, taskId, decisionId, artifact
     ));
   }
   const relativePath = taskDecisionPath(taskId, decisionId);
-  if (await fileExists(ensureWithin(target, relativePath))) {
+  if (operationalArtifactExists(target, relativePath) ?? await fileExists(ensureWithin(target, relativePath))) {
     throw decisionError(DECISION_ERROR_CODES.IMMUTABLE, `Semantic decision artifact already exists: ${decisionId}`);
   }
   return writeJsonArtifact(target, relativePath, artifact, "semantic-decision", packageRoot, { ...options, taskId, operation: "semantic-decision" });

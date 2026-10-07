@@ -1,0 +1,200 @@
+{
+  "checkpoint": 546,
+  "scope": "Mac disposable linked-worktree reverse export followed by legacy workspace binding/task write and actual migration reimport",
+  "exit": 1,
+  "diagnostic": {
+    "code": "E_STORAGE_MIGRATION_PARITY_INVALID",
+    "message": "Source/export payload differs: .forgeloop/task-state/d64bc038a23c20c820d91a0b4ea357176fcb05f2ea113b1f10c5325b5f2c5d62/export-manifest.json",
+    "manifests": {
+      "source": {
+        "schemaVersion": 1,
+        "taskId": "phase2a-closure-task",
+        "taskKey": "d64bc038a23c20c820d91a0b4ea357176fcb05f2ea113b1f10c5325b5f2c5d62",
+        "events": 31,
+        "claims": [
+          "src"
+        ],
+        "included": [
+          "contract.json",
+          "decisions/contract_applicability-1791224032724-eab69d8c.json",
+          "decisions/execution_profile-1791224032919-73130cd3.json",
+          "decisions/intake-1791224032837-a767c94a.json",
+          "decisions/route-1791224032877-2f905c84.json",
+          "events.ndjson",
+          "execution-receipt.json",
+          "executions/exec-e63f8682-b617-4afa-9982-883b8f233985.json",
+          "preflight.json",
+          "routing-result.json",
+          "task.json",
+          "work-state.json",
+          "workspace-binding.json"
+        ],
+        "files": [
+          {
+            "path": "contract.json",
+            "size": 579,
+            "sha256": "c716c3d2352376b1b1f582534778c5abbe3f8dd9e84bcde2a9975bce9e071a9e"
+          },
+          {
+            "path": "decisions/contract_applicability-1791224032724-eab69d8c.json",
+            "size": 1883,
+            "sha256": "dea3a01de40415cbc0f4c332dcd3ac0cf2e5a8590840599f732fbe9708ffd84d"
+          },
+          {
+            "path": "decisions/execution_profile-1791224032919-73130cd3.json",
+            "size": 3361,
+            "sha256": "9493ee42696e22d4403183a052863894b3c21ee31552e6f938bf7479c8fe4146"
+          },
+          {
+            "path": "decisions/intake-1791224032837-a767c94a.json",
+            "size": 8098,
+            "sha256": "2133f2907de0955c257f7bb74e53a60a2d17617b652aaeab33c5a0f1847ab405"
+          },
+          {
+            "path": "decisions/route-1791224032877-2f905c84.json",
+            "size": 2705,
+            "sha256": "974802633e7dd4c43e81d846fe200ca68d0ca0eaf28f4689eb44e1f2d0da9076"
+          },
+          {
+            "path": "events.ndjson",
+            "size": 13279,
+            "sha256": "735096be31e05da254ca1e09d759f07c58e94a7a54b135e79dd331b6502187b7"
+          },
+          {
+            "path": "execution-receipt.json",
+            "size": 3388,
+            "sha256": "cf8117ccfc03bb6522b3255b491e163b08630f73c5d500ea81267a03193e6578"
+          },
+          {
+            "path": "executions/exec-e63f8682-b617-4afa-9982-883b8f233985.json",
+            "size": 1471,
+            "sha256": "2fea32537119ddc57e4eef78cd6264f9c0c1772d76ef493b718a80085e2fbf21"
+          },
+          {
+            "path": "preflight.json",
+            "size": 1337,
+            "sha256": "728ce66089a79784747bbdeff69e36afdfa491f55bbecd9e09be54fd5c6d20af"
+          },
+          {
+            "path": "routing-result.json",
+            "size": 2127,
+            "sha256": "04dc8f95deb1032e1b159e7f25d851f5137a3fa78c3825f1d8e7bbeeab944415"
+          },
+          {
+            "path": "task.json",
+            "size": 286,
+            "sha256": "cfa1d15a327e1255d37b002576850cb67c8fec59cef4c0624073251096608994"
+          },
+          {
+            "path": "work-state.json",
+            "size": 3257,
+            "sha256": "f79e61295804e24d07c46303661ed1809a17a664085ca2a69c7f939754eff7b0"
+          },
+          {
+            "path": "workspace-binding.json",
+            "size": 493,
+            "sha256": "1ac3161bc8bc22451704408c4cc8cc64c480bec2b1a21034388df21286508e12"
+          }
+        ]
+      },
+      "parity-export": {
+        "schemaVersion": 1,
+        "taskId": "phase2a-closure-task",
+        "taskKey": "d64bc038a23c20c820d91a0b4ea357176fcb05f2ea113b1f10c5325b5f2c5d62",
+        "events": 32,
+        "claims": [
+          "src"
+        ],
+        "included": [
+          "contract.json",
+          "decisions/contract_applicability-1791224032724-eab69d8c.json",
+          "decisions/execution_profile-1791224032919-73130cd3.json",
+          "decisions/intake-1791224032837-a767c94a.json",
+          "decisions/route-1791224032877-2f905c84.json",
+          "events.ndjson",
+          "execution-receipt.json",
+          "executions/exec-e63f8682-b617-4afa-9982-883b8f233985.json",
+          "preflight.json",
+          "routing-result.json",
+          "task.json",
+          "work-state.json",
+          "workspace-binding.json"
+        ],
+        "files": [
+          {
+            "path": "contract.json",
+            "size": 579,
+            "sha256": "c716c3d2352376b1b1f582534778c5abbe3f8dd9e84bcde2a9975bce9e071a9e"
+          },
+          {
+            "path": "decisions/contract_applicability-1791224032724-eab69d8c.json",
+            "size": 1883,
+            "sha256": "dea3a01de40415cbc0f4c332dcd3ac0cf2e5a8590840599f732fbe9708ffd84d"
+          },
+          {
+            "path": "decisions/execution_profile-1791224032919-73130cd3.json",
+            "size": 3361,
+            "sha256": "9493ee42696e22d4403183a052863894b3c21ee31552e6f938bf7479c8fe4146"
+          },
+          {
+            "path": "decisions/intake-1791224032837-a767c94a.json",
+            "size": 8098,
+            "sha256": "2133f2907de0955c257f7bb74e53a60a2d17617b652aaeab33c5a0f1847ab405"
+          },
+          {
+            "path": "decisions/route-1791224032877-2f905c84.json",
+            "size": 2705,
+            "sha256": "974802633e7dd4c43e81d846fe200ca68d0ca0eaf28f4689eb44e1f2d0da9076"
+          },
+          {
+            "path": "events.ndjson",
+            "size": 13680,
+            "sha256": "875ed2f868988846e7b3748708de946a50fdc425c91a4e74d9ffa1aa4c11b07d"
+          },
+          {
+            "path": "execution-receipt.json",
+            "size": 3388,
+            "sha256": "cf8117ccfc03bb6522b3255b491e163b08630f73c5d500ea81267a03193e6578"
+          },
+          {
+            "path": "executions/exec-e63f8682-b617-4afa-9982-883b8f233985.json",
+            "size": 1471,
+            "sha256": "2fea32537119ddc57e4eef78cd6264f9c0c1772d76ef493b718a80085e2fbf21"
+          },
+          {
+            "path": "preflight.json",
+            "size": 1337,
+            "sha256": "728ce66089a79784747bbdeff69e36afdfa491f55bbecd9e09be54fd5c6d20af"
+          },
+          {
+            "path": "routing-result.json",
+            "size": 2127,
+            "sha256": "04dc8f95deb1032e1b159e7f25d851f5137a3fa78c3825f1d8e7bbeeab944415"
+          },
+          {
+            "path": "task.json",
+            "size": 286,
+            "sha256": "cfa1d15a327e1255d37b002576850cb67c8fec59cef4c0624073251096608994"
+          },
+          {
+            "path": "work-state.json",
+            "size": 3257,
+            "sha256": "f79e61295804e24d07c46303661ed1809a17a664085ca2a69c7f939754eff7b0"
+          },
+          {
+            "path": "workspace-binding.json",
+            "size": 493,
+            "sha256": "1ac3161bc8bc22451704408c4cc8cc64c480bec2b1a21034388df21286508e12"
+          }
+        ]
+      }
+    }
+  },
+  "driverSha256": "ef4978e694207059fa27dc9cb701539dfc5b828558e6afba875e1020756e2008",
+  "finding": "Legacy workspace-bind appends an event while retaining the historical export-manifest; source/export summary parity rejects 31 versus32 events and changed ledger digest",
+  "limits": [
+    "No successful reimport claim",
+    "No production changes yet",
+    "Historical source metadata must remain retained while complete current canonical ledger parity remains authoritative"
+  ]
+}

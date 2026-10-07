@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
 
-import { ARTIFACT_PATHS } from "../src/core/artifacts.js";
+
 import { createContract, contractFingerprint, writeContract } from "../src/core/contract.js";
 import { appendProtocolEvent, validateEventLedger } from "../src/core/events.js";
 import { createGate } from "./helpers/gates.js";
@@ -16,11 +16,18 @@ import { persistRoute } from "../src/core/route-artifact.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { createWorkState, writeWorkState } from "../src/core/work-state.js";
 
+import { buildTaskArtifactPaths } from "../src/core/task-paths.js";
+import { ensureFixtureTask, readRawFixtureText, overwriteFixtureText, overwriteFixtureStateBytes } from "./helpers/native-storage-fixture.js";
+
 const packageRoot = getPackageRoot();
+const taskId = "website-001";
+const ARTIFACT_PATHS = buildTaskArtifactPaths(taskId);
 
 async function withTarget(run) {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-preflight-"));
   try {
+    await ensureFixtureTask(target, taskId, packageRoot);
+    await appendProtocolEvent(target, { taskId, event: "TASK_RECEIVED" }, packageRoot, { taskId });
     await run(target);
   } finally {
     await rm(target, { recursive: true, force: true });
@@ -46,9 +53,9 @@ async function prepareWebsite(target, options = {}) {
     unresolvedDecisions,
     sourceRefs: [],
   });
-  await writeContract(target, contract, packageRoot);
+  await writeContract(target, contract, packageRoot, { taskId });
   const route = evaluateRoute({ workType: "complete-website", surfaces: ["ui"], platforms: ["web"] });
-  const persistedRoute = await persistRoute(target, route, packageRoot, { contractFingerprint: contractFingerprint(contract) });
+  const persistedRoute = await persistRoute(target, route, packageRoot, { contractFingerprint: contractFingerprint(contract), taskId });
   for (const gate of ["design", "quality", "threat-boundary"]) {
     await persistGate(target, createGate({
       taskId: contract.taskId,
@@ -60,7 +67,7 @@ async function prepareWebsite(target, options = {}) {
       unknowns: [],
       approvedAssumptions: [],
       evidence: [],
-    }), packageRoot);
+    }), packageRoot, { taskId });
   }
   return { contract, route, persistedRoute };
 }
@@ -78,8 +85,8 @@ async function artifactHashes(target) {
     `${ARTIFACT_PATHS.gates}/threat-boundary.json`,
   ]) {
     try {
-      const bytes = await readFile(path.join(target, relativePath));
-      hashes[relativePath] = createHash("sha256").update(bytes).digest("hex");
+      const bytes = await readRawFixtureText(target, path.join(target, relativePath));
+      hashes[relativePath] = bytes === null ? null : createHash("sha256").update(bytes).digest("hex");
     } catch (error) {
       if (error.code !== "ENOENT") throw error;
       hashes[relativePath] = null;
@@ -108,10 +115,9 @@ function manualWebsiteContract({ assumptions = [], unresolvedDecisions = [] } = 
 
 async function prepareManualWebsite(target, contract) {
   const contractPath = path.join(target, ARTIFACT_PATHS.contract);
-  await mkdir(path.dirname(contractPath), { recursive: true });
-  await writeFile(contractPath, `${JSON.stringify(contract, null, 2)}\n`, "utf8");
+  await overwriteFixtureText(target, contractPath, `${JSON.stringify(contract, null, 2)}\n`);
   const route = evaluateRoute({ workType: "complete-website", surfaces: ["ui"], platforms: ["web"] });
-  await persistRoute(target, route, packageRoot, { contractFingerprint: contractFingerprint(contract) });
+  await persistRoute(target, route, packageRoot, { contractFingerprint: contractFingerprint(contract), taskId });
   for (const gate of ["design", "quality", "threat-boundary"]) {
     await persistGate(target, createGate({
       taskId: contract.taskId,
@@ -123,13 +129,13 @@ async function prepareManualWebsite(target, contract) {
       unknowns: [],
       approvedAssumptions: [],
       evidence: [],
-    }), packageRoot);
+    }), packageRoot, { taskId });
   }
 }
 
 test("preflight blocks missing contract and route with stable codes", async () => {
   await withTarget(async (target) => {
-    const result = await runPreflight({ target, packageRoot });
+    const result = await runPreflight({ target, packageRoot, taskId });
     assert.equal(result.status, "BLOCKED");
     assert.ok(result.errors.some((error) => error.code === "E_CONTRACT_MISSING"));
     assert.ok(result.errors.some((error) => error.code === "E_ROUTE_MISSING"));
@@ -139,7 +145,7 @@ test("preflight blocks missing contract and route with stable codes", async () =
 test("complete website preflight is ready only after required gates", async () => {
   await withTarget(async (target) => {
     await prepareWebsite(target);
-    const result = await runPreflight({ target, packageRoot });
+    const result = await runPreflight({ target, packageRoot, taskId });
     assert.equal(result.status, "READY");
     assert.ok(result.requiredGates.includes("design"));
     assert.deepEqual(result.requiredGates, result.satisfiedGates);
@@ -150,12 +156,12 @@ test("ready preflight persists its resumable checkpoint and lifecycle events", a
   await withTarget(async (target) => {
     await prepareWebsite(target);
 
-    const result = await runPreflight({ target, packageRoot });
-    const ledger = await validateEventLedger(target, packageRoot);
+    const result = await runPreflight({ target, packageRoot, taskId });
+    const ledger = await validateEventLedger(target, packageRoot, { taskId });
 
     assert.equal(result.status, "READY");
     assert.equal(ledger.valid, true);
-    assert.equal((await readFile(path.join(target, ARTIFACT_PATHS.state), "utf8")).length > 0, true);
+    assert.equal((await readRawFixtureText(target, path.join(target, ARTIFACT_PATHS.state))).length > 0, true);
     assert.deepEqual(ledger.events.map((event) => event.event), [
       "TASK_RECEIVED",
       "CONTRACT_VALIDATED",
@@ -164,32 +170,38 @@ test("ready preflight persists its resumable checkpoint and lifecycle events", a
       "GATE_SATISFIED",
       "GATE_SATISFIED",
       "PREFLIGHT_READY",
+      "TRANSACTION_COMMITTED",
     ]);
-    assert.equal(await readFile(path.join(target, ARTIFACT_PATHS.preflight), "utf8").then(Boolean), true);
+    assert.equal(await readRawFixtureText(target, path.join(target, ARTIFACT_PATHS.preflight)).then(Boolean), true);
   });
 });
 
 test("equivalent ready preflight rerun does not repeat lifecycle events", async () => {
   await withTarget(async (target) => {
     const { contract } = await prepareWebsite(target);
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot);
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot);
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot, { taskId });
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot, { taskId });
 
-    assert.equal((await runPreflight({ target, packageRoot })).status, "READY");
-    const eventsBefore = await readFile(path.join(target, ARTIFACT_PATHS.events), "utf8");
+    assert.equal((await runPreflight({ target, packageRoot, taskId })).status, "READY");
+    const eventsBefore = await readRawFixtureText(target, path.join(target, ARTIFACT_PATHS.events));
 
-    assert.equal((await runPreflight({ target, packageRoot })).status, "READY");
+    assert.equal((await runPreflight({ target, packageRoot, taskId })).status, "READY");
 
-    assert.equal(await readFile(path.join(target, ARTIFACT_PATHS.events), "utf8"), eventsBefore);
-    assert.equal((await validateEventLedger(target, packageRoot)).valid, true);
+    const eventsAfter = await readRawFixtureText(target, ARTIFACT_PATHS.events);
+    assert.ok(eventsAfter.startsWith(eventsBefore));
+    const appended = eventsAfter.slice(eventsBefore.length).trim().split("\n").map(line => JSON.parse(line));
+    assert.equal(appended.length, 1);
+    assert.equal(appended[0].event, "TRANSACTION_COMMITTED");
+    assert.equal(appended[0].details.operation, "preflight");
+    assert.equal((await validateEventLedger(target, packageRoot, { taskId })).valid, true);
   });
 });
 
 test("preflight rejects a conflicting ready lifecycle refresh before artifact mutation", async () => {
   await withTarget(async (target) => {
     const { contract } = await prepareWebsite(target);
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot);
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot);
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot, { taskId });
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot, { taskId });
     await appendProtocolEvent(target, {
       taskId: contract.taskId,
       event: "PREFLIGHT_READY",
@@ -198,17 +210,17 @@ test("preflight rejects a conflicting ready lifecycle refresh before artifact mu
         requiredGates: ["design", "quality", "threat-boundary"],
         satisfiedGates: ["design", "quality", "threat-boundary"],
       },
-    }, packageRoot);
+    }, packageRoot, { taskId });
     const before = await artifactHashes(target);
 
     await assert.rejects(
-      () => runPreflight({ target, packageRoot }),
+      () => runPreflight({ target, packageRoot, taskId }),
       (error) => error.code === "E_PHASE_CHRONOLOGY_INVALID"
         && error.message.includes("PREFLIGHT_READY already exists with different READY preflight details"),
     );
 
     assert.deepEqual(await artifactHashes(target), before);
-    assert.equal((await validateEventLedger(target, packageRoot)).valid, true);
+    assert.equal((await validateEventLedger(target, packageRoot, { taskId })).valid, true);
   });
 });
 
@@ -226,11 +238,11 @@ test("preflight rejects a stale route without state before persisting artifacts"
       stopConditions: ["missing evidence"],
       unresolvedDecisions: [],
       sourceRefs: [],
-    }), packageRoot);
+    }), packageRoot, { taskId });
     const before = await artifactHashes(target);
 
     await assert.rejects(
-      () => runPreflight({ target, packageRoot }),
+      () => runPreflight({ target, packageRoot, taskId }),
       (error) => error.code === "E_ROUTE_STALE",
     );
 
@@ -252,12 +264,12 @@ test("preflight rejects foreign gate task identities before persisting artifacts
         unknowns: [],
         approvedAssumptions: [],
         evidence: [],
-      }), packageRoot);
+      }), packageRoot, { taskId });
     }
     const before = await artifactHashes(target);
 
     await assert.rejects(
-      () => runPreflight({ target, packageRoot }),
+      () => runPreflight({ target, packageRoot, taskId }),
       (error) => error.code === "E_GATE_TASK_MISMATCH",
     );
 
@@ -282,14 +294,17 @@ test("preflight rejects a mixed-task ledger before persisting artifacts", async 
       failures: [],
       blockers: [],
       verificationEvidence: [],
-    }), { packageRoot });
-    await appendProtocolEvent(target, { taskId: "foreign-task", event: "CONTRACT_VALIDATED" }, packageRoot);
-    await appendProtocolEvent(target, { taskId: "foreign-task", event: "ROUTE_VALIDATED" }, packageRoot);
+    }), { packageRoot, taskId });
+    const eventsPath = ARTIFACT_PATHS.events;
+    const events = (await readRawFixtureText(target, eventsPath)).trim().split("\n").map(line => JSON.parse(line));
+    events[0].taskId = "foreign-task";
+    await overwriteFixtureText(target, eventsPath, events.map(event => JSON.stringify(event)).join("\n") + "\n");
     const before = await artifactHashes(target);
 
     await assert.rejects(
-      () => runPreflight({ target, packageRoot }),
-      (error) => error.code === "E_PHASE_CHRONOLOGY_INVALID",
+      () => runPreflight({ target, packageRoot, taskId }),
+      (error) => error.code === "E_TASK_CLAIM_OWNERSHIP_INCONSISTENT"
+        && error.reasonCodes.includes("E_STORAGE_PAYLOAD_MISMATCH"),
     );
 
     assert.deepEqual(await artifactHashes(target), before);
@@ -299,12 +314,12 @@ test("preflight rejects a mixed-task ledger before persisting artifacts", async 
 test("preflight rejects a malformed work state before persisting artifacts", async () => {
   await withTarget(async (target) => {
     await prepareWebsite(target);
-    await writeFile(path.join(target, ARTIFACT_PATHS.state), "{ malformed");
+    await overwriteFixtureStateBytes(target, taskId, "{ malformed");
     const before = await artifactHashes(target);
 
     await assert.rejects(
-      () => runPreflight({ target, packageRoot }),
-      (error) => error.code === "E_STATE_INVALID",
+      () => runPreflight({ target, packageRoot, taskId }),
+      (error) => error.code === "E_STORAGE_PAYLOAD_MISMATCH",
     );
 
     assert.deepEqual(await artifactHashes(target), before);
@@ -317,7 +332,7 @@ test("preflight blocks unresolved contract decisions with stable guidance", asyn
       unresolvedDecisions: ["Need the real production domain"],
     });
 
-    const result = await runPreflight({ target, packageRoot });
+    const result = await runPreflight({ target, packageRoot, taskId });
     const issue = result.errors.find((error) => error.code === "E_CONTRACT_UNRESOLVED_DECISION");
 
     assert.equal(result.status, "BLOCKED");
@@ -326,7 +341,7 @@ test("preflight blocks unresolved contract decisions with stable guidance", asyn
     assert.match(issue?.next ?? "", /Resolve the blocking decision/);
     assert.match(formatPreflightResult(result), /NEXT: Resolve the blocking decision/);
 
-    const events = (await readFile(path.join(target, ".forgeloop/events.ndjson"), "utf8"))
+    const events = (await readRawFixtureText(target, ARTIFACT_PATHS.events))
       .trim()
       .split("\n")
       .map((line) => JSON.parse(line));
@@ -343,7 +358,7 @@ test("preflight bounds decision diagnostics and keeps human guidance generic", a
     );
     await prepareWebsite(target, { unresolvedDecisions: decisions });
 
-    const result = await runPreflight({ target, packageRoot, persist: false });
+    const result = await runPreflight({ target, packageRoot, taskId, persist: false });
     const issue = result.errors.find((error) => error.code === "E_CONTRACT_UNRESOLVED_DECISION");
     const human = formatPreflightResult(result);
 
@@ -378,7 +393,7 @@ test("preflight rejects a manually persisted secret-like assumption without disc
     });
     await prepareManualWebsite(target, contract);
 
-    const result = await runPreflight({ target, packageRoot, persist: false });
+    const result = await runPreflight({ target, packageRoot, taskId, persist: false });
     const json = JSON.stringify(result);
     const human = formatPreflightResult(result);
 
@@ -397,7 +412,7 @@ test("secret-like unresolved decisions are rejected before diagnostic preview", 
     const contract = manualWebsiteContract({ unresolvedDecisions: [sensitiveValue] });
     await prepareManualWebsite(target, contract);
 
-    const result = await runPreflight({ target, packageRoot, persist: false });
+    const result = await runPreflight({ target, packageRoot, taskId, persist: false });
     const json = JSON.stringify(result);
     const human = formatPreflightResult(result);
 
@@ -422,7 +437,7 @@ test("safe assumptions do not block an otherwise valid preflight", async () => {
       unresolvedDecisions: [],
     });
 
-    const result = await runPreflight({ target, packageRoot });
+    const result = await runPreflight({ target, packageRoot, taskId });
     assert.equal(result.status, "READY");
     assert.equal(result.errors.some((error) => error.code === "E_CONTRACT_UNRESOLVED_DECISION"), false);
   });

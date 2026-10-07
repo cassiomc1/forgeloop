@@ -1,6 +1,8 @@
+import { ensureFixtureTask, readFixtureText } from "./helpers/native-storage-fixture.js";
+import { taskArtifactPath } from "../src/core/task-paths.js";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -34,6 +36,7 @@ test("a fresh process resumes the same task from persisted continuity", async ()
     await writeFile(path.join(target, "state.json"), JSON.stringify(state));
     await writeFile(path.join(target, "contract.json"), JSON.stringify(contract));
 
+    await ensureFixtureTask(target, "task-cross", root);
     runModule(`
       import { readFile } from "node:fs/promises";
       import { runRecordContinuity } from "./src/commands/record-continuity.js";
@@ -42,7 +45,7 @@ test("a fresh process resumes the same task from persisted continuity", async ()
       const state=JSON.parse(await readFile(target+"/state.json","utf8"));
       const contract=JSON.parse(await readFile(target+"/contract.json","utf8"));
       const result=await runRecordContinuity({
-        target, packageRoot:process.cwd(), state,
+        target, taskId:"task-cross", packageRoot:process.cwd(), state,
         contract:{value:contract,fingerprint:canonicalFingerprint(contract)},
         repositoryFingerprint:{branch:"main",head:"abc"},
         now:"2026-08-16T17:05:00.000Z",
@@ -60,7 +63,7 @@ test("a fresh process resumes the same task from persisted continuity", async ()
       import { canonicalFingerprint } from "./src/core/artifacts.js";
       const target=process.env.TARGET;
       const state=JSON.parse(await readFile(target+"/state.json","utf8"));
-      const artifact=await readContinuity(target,process.cwd());
+      const artifact=await readContinuity(target,{packageRoot:process.cwd(),taskId:"task-cross"});
       const classified=classifyContinuity({
         continuity:artifact.value,state,contractFingerprint:state.contractFingerprint,
         repositoryFingerprint:{branch:"main",head:"abc"},changedPaths:[]
@@ -73,7 +76,7 @@ test("a fresh process resumes the same task from persisted continuity", async ()
       taskId:"task-cross", phase:"EXECUTING", nextAction:"CONTINUE_IMPLEMENTATION", remaining:["contact"],
     });
 
-    const persisted=JSON.parse(await readFile(path.join(target,".forgeloop/continuity.json"),"utf8"));
+    const persisted=JSON.parse(await readFixtureText(target, taskArtifactPath("task-cross", "continuity")));
     assert.equal(persisted.workStateFingerprint,canonicalFingerprint(state));
   } finally {
     await rm(target,{recursive:true,force:true});

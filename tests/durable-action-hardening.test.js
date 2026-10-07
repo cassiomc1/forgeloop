@@ -1,3 +1,4 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { access, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
@@ -109,6 +110,7 @@ test("HOST_ATTESTED approval cannot be minted without a trusted host boundary", 
   const target = await makeTarget();
   const taskId = "task-approval-boundary";
   try {
+    await ensureFixtureTask(target, taskId, packageRoot);
     await writeWorkState(target, createWorkState({
       taskId,
       contractFingerprint: fingerprint,
@@ -191,7 +193,7 @@ test("durable action writes reject a symlinked actions directory", { skip: proce
         ...writeActionInput({ actionId: "action-escape", idempotencyKey: "escape:v1" }),
         provenance: "HOST_REPORTED",
       }}),
-      /symlink|inside target|safe path/i,
+      (error) => error.code === "E_STORAGE_MIGRATION_REQUIRED",
     );
     await assert.rejects(access(path.join(outside, "action-escape.json")));
   } finally {

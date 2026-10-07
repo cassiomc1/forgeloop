@@ -51,6 +51,8 @@ async function runCrossHarnessResume(executor) {
 async function runConcurrentClaims(executor) {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-adapter-claims-"));
   try {
+    const initialized = await invoke(executor, target, "init");
+    if (!initialized.ok) return fail("concurrent-claims", new Error("project initialization failed before concurrent claim admission"));
     const results = await Promise.all([
       invoke(executor, target, "task-create", { taskId: "adapter-claim-a", claims: ["shared"], preset: "bug" }),
       invoke(executor, target, "task-create", { taskId: "adapter-claim-b", claims: ["shared"], preset: "bug" }),

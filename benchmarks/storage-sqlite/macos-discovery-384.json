@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 2,
+  "node": "v24.19.0",
+  "fixtureTimestamp": "2026-09-11T00:00:00.000Z",
+  "fixturePhase": "RECEIVED",
+  "platform": "darwin",
+  "architecture": "arm64",
+  "cpu": "Apple M2",
+  "comparator": "pinned-pre-migration-release",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "runtime": "warm-cache API with per-call native connection",
+  "releaseThresholdsVerified": false,
+  "repeats": 20,
+  "results": [
+    {
+      "size": 10,
+      "outputParity": true,
+      "nativeDiscoveryP50Ms": 15.623,
+      "nativeDiscoveryP95Ms": 31.608,
+      "discoverySpeedupP95": 0.511,
+      "filesystemDiscoveryP50Ms": 14.527,
+      "filesystemDiscoveryP95Ms": 16.14,
+      "storeLookupP50Ms": 0.107,
+      "storeLookupP95Ms": 0.148,
+      "sqliteVersion": "3.53.3",
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      }
+    },
+    {
+      "size": 100,
+      "outputParity": true,
+      "nativeDiscoveryP50Ms": 87.711,
+      "nativeDiscoveryP95Ms": 119.223,
+      "discoverySpeedupP95": 1.46,
+      "filesystemDiscoveryP50Ms": 127.201,
+      "filesystemDiscoveryP95Ms": 174.109,
+      "storeLookupP50Ms": 1,
+      "storeLookupP95Ms": 1.218,
+      "sqliteVersion": "3.53.3",
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      }
+    },
+    {
+      "size": 250,
+      "outputParity": true,
+      "nativeDiscoveryP50Ms": 235.061,
+      "nativeDiscoveryP95Ms": 283.533,
+      "discoverySpeedupP95": 1.468,
+      "filesystemDiscoveryP50Ms": 360.275,
+      "filesystemDiscoveryP95Ms": 416.267,
+      "storeLookupP50Ms": 2.699,
+      "storeLookupP95Ms": 4.851,
+      "sqliteVersion": "3.53.3",
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      }
+    },
+    {
+      "size": 1000,
+      "outputParity": true,
+      "nativeDiscoveryP50Ms": 808.339,
+      "nativeDiscoveryP95Ms": 911.554,
+      "discoverySpeedupP95": 1.56,
+      "filesystemDiscoveryP50Ms": 1243.135,
+      "filesystemDiscoveryP95Ms": 1421.918,
+      "storeLookupP50Ms": 10.312,
+      "storeLookupP95Ms": 11.413,
+      "sqliteVersion": "3.53.3",
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      }
+    },
+    {
+      "size": 5000,
+      "outputParity": true,
+      "nativeDiscoveryP50Ms": 4010.402,
+      "nativeDiscoveryP95Ms": 4686.786,
+      "discoverySpeedupP95": 1.393,
+      "filesystemDiscoveryP50Ms": 6463.872,
+      "filesystemDiscoveryP95Ms": 6528.505,
+      "storeLookupP50Ms": 53.15,
+      "storeLookupP95Ms": 78.214,
+      "sqliteVersion": "3.53.3",
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      }
+    }
+  ],
+  "measurementContext": {
+    "completedAt": "2026-10-04T20:26:04.460846+00:00",
+    "nativeFrozenRoot": "/tmp/forgeloop-discovery384-candidate",
+    "nativeSourceManifestSha256": "cb70823bdfdb4f84d521192b6f6c5fc33ba14f7766647e2cc40ad0a485729272",
+    "nativeSourceFiles": 2458,
+    "postMeasurementSourceHashesUnchanged": true,
+    "data": "Deterministic RECEIVED tasks and empty logical ledgers; no action/approval/recovery scale acceptance",
+    "limitations": "Candidate predates the separate direct findTaskById admission fix. Timed discovery and indexed storage lookup implementations are the measured source; final current-source acceptance remains open."
+  }
+}

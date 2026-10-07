@@ -1,9 +1,10 @@
 import { E_PROTOCOL_MIGRATION_TARGET_UNSUPPORTED } from "./error-codes.js";
 import { PROTOCOL_VERSION } from "./protocol.js";
-import { detectLegacySingletonLayout, migrateLegacyLayout } from "./task-migration.js";
+import { detectLegacySingletonLayout } from "./task-migration.js";
+import { migrateLegacyTaskStorage } from "./task-storage-migration.js";
 import { getPackageRoot } from "./templates.js";
 
-function assertSupportedTarget(to) {
+export function assertSupportedProtocolMigrationTarget(to) {
   if (to === undefined || to === null || to === "") {
     const error = new Error("migrate-protocol requires --to <protocolVersion>");
     error.code = E_PROTOCOL_MIGRATION_TARGET_UNSUPPORTED;
@@ -26,9 +27,9 @@ function assertSupportedTarget(to) {
  */
 export async function migrateProtocol(
   target,
-  { to, dryRun = false, packageRoot = getPackageRoot() } = {},
+  { to, dryRun = false, packageRoot = getPackageRoot(), destination, writersQuiesced = false } = {},
 ) {
-  assertSupportedTarget(to);
+  assertSupportedProtocolMigrationTarget(to);
   const legacy = await detectLegacySingletonLayout(target);
 
   if (!legacy.hasLegacy) {
@@ -43,7 +44,7 @@ export async function migrateProtocol(
     };
   }
 
-  const result = await migrateLegacyLayout(target, { dryRun, packageRoot });
+  const result = await migrateLegacyTaskStorage(target, { dryRun, packageRoot, destination, writersQuiesced });
   return {
     ...result,
     fromProtocol: PROTOCOL_VERSION,
@@ -52,7 +53,7 @@ export async function migrateProtocol(
     actions: [{
       kind: "LEGACY_LAYOUT_MIGRATION",
       command: "task-migrate",
-      receipt: ".forgeloop/task-state/<taskKey>/migration-receipt.json",
+      receipt: result.migrationReceipt ?? "<destination>/publication/publication-journal.json",
       artifacts: legacy.legacyFiles.map((item) => item.path),
     }],
   };

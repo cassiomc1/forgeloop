@@ -482,7 +482,12 @@ def validate_protocol_assets(root: Path) -> None:
         if schema.get("type") != "object":
             raise ValidationError(f"schemas/{relative}: top-level type must be object")
         properties = schema.get("properties")
-        if not isinstance(properties, dict) or properties.get("schemaVersion", {}).get("const") != 1:
+        version = properties.get("schemaVersion", {}) if isinstance(properties, dict) else {}
+        portable_bundle_versions = (
+            relative == "task-bundle.schema.json"
+            and version == {"enum": [1, 2]}
+        )
+        if not isinstance(version, dict) or (version.get("const") != 1 and not portable_bundle_versions):
             raise ValidationError(f"schemas/{relative}: schemaVersion const 1 is required")
         required = schema.get("required")
         if not isinstance(required, list) or "schemaVersion" not in required:

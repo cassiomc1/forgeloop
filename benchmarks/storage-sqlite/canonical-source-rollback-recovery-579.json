@@ -1,0 +1,432 @@
+{
+  "checkpoint": 579,
+  "scope": "Mac canonical linked-worktree pinned legacy validation after owner-death publication recovery at five constructed persisted states, all with binary attachments",
+  "sourceHashes": {
+    "scripts/drill-storage-source-rollback-recovery.mjs": "1f2fba81c38e164f9d3d3251bd00f28d72e3c53b55f39e812072973b7079bcae",
+    "tests/helpers/canonical-diagnosis-fixture.js": "add6d2df4664967e203ae93061e649fb3b16f132ee39626c151018679383769f",
+    "tests/helpers/storage-rollback-publication-worker.mjs": "c9ee614eaae40a4aea11e9d04d75d81d30cb8c47a1dcd78498f7e0b2bf7bd7b8",
+    "tests/helpers/storage-binary-source-fixture.js": "b95ae18f24e737549c1719e939afb6a833eef76294f3410c07a6f2e5a8dd7e88",
+    "src/storage/migration-rollback-publication.js": "c935b76285e0a64a64ed8913e6ee39e3ffd677eab9a644ae11c9206b72eceea5"
+  },
+  "phases": {
+    "SWITCHING": {
+      "scope": "Canonical linked-worktree legacy VALID after actual owner-death source publication recovery; constructed persisted boundaries, not syscall power loss",
+      "phase": "SWITCHING",
+      "binary": true,
+      "before": {
+        "exit": 0,
+        "validation": {
+          "status": "VALID",
+          "errors": [],
+          "incomplete": [],
+          "stale": null,
+          "delegation": {
+            "status": "NOT_APPLICABLE",
+            "required": false,
+            "errors": []
+          },
+          "continuity": {
+            "required": false,
+            "status": "NOT_APPLICABLE",
+            "classification": "ABSENT",
+            "errors": [],
+            "reasonCodes": [],
+            "reasons": [
+              "CONTINUITY_ABSENT"
+            ],
+            "authority": "OPERATIONAL_CONTEXT_ONLY",
+            "evidenceAuthority": "NONE"
+          },
+          "evidence": [
+            {
+              "kind": "OBSERVED",
+              "source": "ForgeLoop protocol conformance",
+              "result": "VALID"
+            }
+          ]
+        }
+      },
+      "after": {
+        "exit": 0,
+        "validation": {
+          "status": "VALID",
+          "errors": [],
+          "incomplete": [],
+          "stale": null,
+          "delegation": {
+            "status": "NOT_APPLICABLE",
+            "required": false,
+            "errors": []
+          },
+          "continuity": {
+            "required": false,
+            "status": "NOT_APPLICABLE",
+            "classification": "ABSENT",
+            "errors": [],
+            "reasonCodes": [],
+            "reasons": [
+              "CONTINUITY_ABSENT"
+            ],
+            "authority": "OPERATIONAL_CONTEXT_ONLY",
+            "evidenceAuthority": "NONE"
+          },
+          "evidence": [
+            {
+              "kind": "OBSERVED",
+              "source": "ForgeLoop protocol conformance",
+              "result": "VALID"
+            }
+          ]
+        }
+      },
+      "restored": true,
+      "nativeBytesUnchanged": true,
+      "referencePreserved": {
+        "taskId": "phase2a-closure-task",
+        "referenceId": "recovery-binary",
+        "path": ".forgeloop/attachments/objects/3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5",
+        "size": 7,
+        "sha256": "3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5"
+      },
+      "maintenanceExclusionRetained": true,
+      "targetVersionValidatedInDrill": true
+    },
+    "DATABASE_RETAINED": {
+      "scope": "Canonical linked-worktree legacy VALID after actual owner-death source publication recovery; constructed persisted boundaries, not syscall power loss",
+      "phase": "DATABASE_RETAINED",
+      "binary": true,
+      "before": {
+        "exit": 0,
+        "validation": {
+          "status": "VALID",
+          "errors": [],
+          "incomplete": [],
+          "stale": null,
+          "delegation": {
+            "status": "NOT_APPLICABLE",
+            "required": false,
+            "errors": []
+          },
+          "continuity": {
+            "required": false,
+            "status": "NOT_APPLICABLE",
+            "classification": "ABSENT",
+            "errors": [],
+            "reasonCodes": [],
+            "reasons": [
+              "CONTINUITY_ABSENT"
+            ],
+            "authority": "OPERATIONAL_CONTEXT_ONLY",
+            "evidenceAuthority": "NONE"
+          },
+          "evidence": [
+            {
+              "kind": "OBSERVED",
+              "source": "ForgeLoop protocol conformance",
+              "result": "VALID"
+            }
+          ]
+        }
+      },
+      "after": {
+        "exit": 0,
+        "validation": {
+          "status": "VALID",
+          "errors": [],
+          "incomplete": [],
+          "stale": null,
+          "delegation": {
+            "status": "NOT_APPLICABLE",
+            "required": false,
+            "errors": []
+          },
+          "continuity": {
+            "required": false,
+            "status": "NOT_APPLICABLE",
+            "classification": "ABSENT",
+            "errors": [],
+            "reasonCodes": [],
+            "reasons": [
+              "CONTINUITY_ABSENT"
+            ],
+            "authority": "OPERATIONAL_CONTEXT_ONLY",
+            "evidenceAuthority": "NONE"
+          },
+          "evidence": [
+            {
+              "kind": "OBSERVED",
+              "source": "ForgeLoop protocol conformance",
+              "result": "VALID"
+            }
+          ]
+        }
+      },
+      "restored": true,
+      "nativeBytesUnchanged": true,
+      "referencePreserved": {
+        "taskId": "phase2a-closure-task",
+        "referenceId": "recovery-binary",
+        "path": ".forgeloop/attachments/objects/3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5",
+        "size": 7,
+        "sha256": "3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5"
+      },
+      "maintenanceExclusionRetained": true,
+      "targetVersionValidatedInDrill": true
+    },
+    "NATIVE_RETAINED": {
+      "scope": "Canonical linked-worktree legacy VALID after actual owner-death source publication recovery; constructed persisted boundaries, not syscall power loss",
+      "phase": "NATIVE_RETAINED",
+      "binary": true,
+      "before": {
+        "exit": 0,
+        "validation": {
+          "status": "VALID",
+          "errors": [],
+          "incomplete": [],
+          "stale": null,
+          "delegation": {
+            "status": "NOT_APPLICABLE",
+            "required": false,
+            "errors": []
+          },
+          "continuity": {
+            "required": false,
+            "status": "NOT_APPLICABLE",
+            "classification": "ABSENT",
+            "errors": [],
+            "reasonCodes": [],
+            "reasons": [
+              "CONTINUITY_ABSENT"
+            ],
+            "authority": "OPERATIONAL_CONTEXT_ONLY",
+            "evidenceAuthority": "NONE"
+          },
+          "evidence": [
+            {
+              "kind": "OBSERVED",
+              "source": "ForgeLoop protocol conformance",
+              "result": "VALID"
+            }
+          ]
+        }
+      },
+      "after": {
+        "exit": 0,
+        "validation": {
+          "status": "VALID",
+          "errors": [],
+          "incomplete": [],
+          "stale": null,
+          "delegation": {
+            "status": "NOT_APPLICABLE",
+            "required": false,
+            "errors": []
+          },
+          "continuity": {
+            "required": false,
+            "status": "NOT_APPLICABLE",
+            "classification": "ABSENT",
+            "errors": [],
+            "reasonCodes": [],
+            "reasons": [
+              "CONTINUITY_ABSENT"
+            ],
+            "authority": "OPERATIONAL_CONTEXT_ONLY",
+            "evidenceAuthority": "NONE"
+          },
+          "evidence": [
+            {
+              "kind": "OBSERVED",
+              "source": "ForgeLoop protocol conformance",
+              "result": "VALID"
+            }
+          ]
+        }
+      },
+      "restored": true,
+      "nativeBytesUnchanged": true,
+      "referencePreserved": {
+        "taskId": "phase2a-closure-task",
+        "referenceId": "recovery-binary",
+        "path": ".forgeloop/attachments/objects/3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5",
+        "size": 7,
+        "sha256": "3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5"
+      },
+      "maintenanceExclusionRetained": true,
+      "targetVersionValidatedInDrill": true
+    },
+    "PARTIAL_SOURCE": {
+      "scope": "Canonical linked-worktree legacy VALID after actual owner-death source publication recovery; constructed persisted boundaries, not syscall power loss",
+      "phase": "PARTIAL_SOURCE",
+      "binary": true,
+      "before": {
+        "exit": 0,
+        "validation": {
+          "status": "VALID",
+          "errors": [],
+          "incomplete": [],
+          "stale": null,
+          "delegation": {
+            "status": "NOT_APPLICABLE",
+            "required": false,
+            "errors": []
+          },
+          "continuity": {
+            "required": false,
+            "status": "NOT_APPLICABLE",
+            "classification": "ABSENT",
+            "errors": [],
+            "reasonCodes": [],
+            "reasons": [
+              "CONTINUITY_ABSENT"
+            ],
+            "authority": "OPERATIONAL_CONTEXT_ONLY",
+            "evidenceAuthority": "NONE"
+          },
+          "evidence": [
+            {
+              "kind": "OBSERVED",
+              "source": "ForgeLoop protocol conformance",
+              "result": "VALID"
+            }
+          ]
+        }
+      },
+      "after": {
+        "exit": 0,
+        "validation": {
+          "status": "VALID",
+          "errors": [],
+          "incomplete": [],
+          "stale": null,
+          "delegation": {
+            "status": "NOT_APPLICABLE",
+            "required": false,
+            "errors": []
+          },
+          "continuity": {
+            "required": false,
+            "status": "NOT_APPLICABLE",
+            "classification": "ABSENT",
+            "errors": [],
+            "reasonCodes": [],
+            "reasons": [
+              "CONTINUITY_ABSENT"
+            ],
+            "authority": "OPERATIONAL_CONTEXT_ONLY",
+            "evidenceAuthority": "NONE"
+          },
+          "evidence": [
+            {
+              "kind": "OBSERVED",
+              "source": "ForgeLoop protocol conformance",
+              "result": "VALID"
+            }
+          ]
+        }
+      },
+      "restored": true,
+      "nativeBytesUnchanged": true,
+      "referencePreserved": {
+        "taskId": "phase2a-closure-task",
+        "referenceId": "recovery-binary",
+        "path": ".forgeloop/attachments/objects/3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5",
+        "size": 7,
+        "sha256": "3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5"
+      },
+      "maintenanceExclusionRetained": true,
+      "targetVersionValidatedInDrill": true
+    },
+    "RESTORED": {
+      "scope": "Canonical linked-worktree legacy VALID after actual owner-death source publication recovery; constructed persisted boundaries, not syscall power loss",
+      "phase": "RESTORED",
+      "binary": true,
+      "before": {
+        "exit": 0,
+        "validation": {
+          "status": "VALID",
+          "errors": [],
+          "incomplete": [],
+          "stale": null,
+          "delegation": {
+            "status": "NOT_APPLICABLE",
+            "required": false,
+            "errors": []
+          },
+          "continuity": {
+            "required": false,
+            "status": "NOT_APPLICABLE",
+            "classification": "ABSENT",
+            "errors": [],
+            "reasonCodes": [],
+            "reasons": [
+              "CONTINUITY_ABSENT"
+            ],
+            "authority": "OPERATIONAL_CONTEXT_ONLY",
+            "evidenceAuthority": "NONE"
+          },
+          "evidence": [
+            {
+              "kind": "OBSERVED",
+              "source": "ForgeLoop protocol conformance",
+              "result": "VALID"
+            }
+          ]
+        }
+      },
+      "after": {
+        "exit": 0,
+        "validation": {
+          "status": "VALID",
+          "errors": [],
+          "incomplete": [],
+          "stale": null,
+          "delegation": {
+            "status": "NOT_APPLICABLE",
+            "required": false,
+            "errors": []
+          },
+          "continuity": {
+            "required": false,
+            "status": "NOT_APPLICABLE",
+            "classification": "ABSENT",
+            "errors": [],
+            "reasonCodes": [],
+            "reasons": [
+              "CONTINUITY_ABSENT"
+            ],
+            "authority": "OPERATIONAL_CONTEXT_ONLY",
+            "evidenceAuthority": "NONE"
+          },
+          "evidence": [
+            {
+              "kind": "OBSERVED",
+              "source": "ForgeLoop protocol conformance",
+              "result": "VALID"
+            }
+          ]
+        }
+      },
+      "restored": true,
+      "nativeBytesUnchanged": true,
+      "referencePreserved": {
+        "taskId": "phase2a-closure-task",
+        "referenceId": "recovery-binary",
+        "path": ".forgeloop/attachments/objects/3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5",
+        "size": 7,
+        "sha256": "3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5"
+      },
+      "maintenanceExclusionRetained": true,
+      "targetVersionValidatedInDrill": true
+    }
+  },
+  "fastExit": 0,
+  "lintExit": 0,
+  "limitations": [
+    "Constructed persisted states before actual owner kill, not syscall-level power-loss proof",
+    "Current canonical recovery drill Windows/Linux pending",
+    "Operator command/release procedure incomplete",
+    "Explicit operator write exclusion, not inferred historical-write absence",
+    "Original plan acceptance incomplete"
+  ]
+}

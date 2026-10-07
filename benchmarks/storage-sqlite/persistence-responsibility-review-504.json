@@ -1,0 +1,93 @@
+{
+  "scope": "Four explicitly read compatibility/installation/native-facade modules; not complete267included/499total semantic review",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "reviewedModules": [
+    {
+      "path": "src/core/transaction.js",
+      "baseline": {
+        "nonblankPhysicalLines": 303,
+        "bytes": 13871,
+        "sha256": "29514f6f3bf1a4225060b69650fdefbb8f5d9c9f558d7373b0740e925ff6b8b3",
+        "persistenceSignal": true
+      },
+      "current": {
+        "nonblankPhysicalLines": 37,
+        "bytes": 2076,
+        "sha256": "cf12f75b0ab3c0f4a83021ee7de9035d5bf180c041bcade455c1b0ddf12b090f",
+        "persistenceSignal": true
+      },
+      "included": true,
+      "reviewStatus": "RESPONSIBILITY_REVIEWED_RETAIN_COUNTED",
+      "wholeConsumerAcceptance": "PENDING",
+      "responsibility": "Canonical native mutation facade plus read-only retained legacy incomplete-manifest inspector and old recovery refusal.",
+      "callers": "withTaskTransaction delegates to withOperationalTransaction; findIncompleteTransactions used only migration-source assertLegacyIdle and doctor when no selected store.",
+      "decision": "Retain counted module; no normal filesystem writer. Moving legacy inspector to another counted module would not reduce total."
+    },
+    {
+      "path": "src/core/transaction-maintenance.js",
+      "baseline": {
+        "nonblankPhysicalLines": 67,
+        "bytes": 3554,
+        "sha256": "90804a893d1a0aea1a8778ac4a18863d1b28049fa898a01ffc639f2c39313e93",
+        "persistenceSignal": true
+      },
+      "current": {
+        "nonblankPhysicalLines": 5,
+        "bytes": 445,
+        "sha256": "bf7da409cb63b288daca24a7205552506e31091a3f60bdb6446b0008e11df7e8",
+        "persistenceSignal": false
+      },
+      "included": true,
+      "reviewStatus": "RESPONSIBILITY_REVIEWED_RETAIN_COUNTED",
+      "wholeConsumerAcceptance": "PENDING",
+      "responsibility": "Compatibility refusal for retired filesystem compaction; validates option then throws E_STORAGE_OPERATION_UNSUPPORTED.",
+      "callers": "Compatibility tests directly import public helper; no operational compaction writer.",
+      "decision": "Retain counted compatibility boundary. Do not remove explicit refusal and silently admit old compaction."
+    },
+    {
+      "path": "src/core/task-migration.js",
+      "baseline": {
+        "nonblankPhysicalLines": 348,
+        "bytes": 13564,
+        "sha256": "c0b9c33daa3b7cba181bfdc6f5788a2a94a52755544292395443d9bc97de8396",
+        "persistenceSignal": true
+      },
+      "current": {
+        "nonblankPhysicalLines": 102,
+        "bytes": 3770,
+        "sha256": "0554708ae5f6bd784f94787edf3208f0eb064bf4c5d0ea03de966e9a138afcb4",
+        "persistenceSignal": true
+      },
+      "included": true,
+      "reviewStatus": "RESPONSIBILITY_REVIEWED_RETAIN_COUNTED",
+      "wholeConsumerAcceptance": "PENDING",
+      "responsibility": "Legacy singleton detection, identity/schema/snapshot validation and dry-run projection. Non-dry-run filesystem apply refuses.",
+      "callers": "Task migration compatibility surface; SQLite initial cutover uses dedicated migration modules.",
+      "decision": "Retain counted dry-run/import boundary pending final API retirement review; no writable filesystem apply to delete."
+    },
+    {
+      "path": "src/commands/doctor.js",
+      "baseline": {
+        "nonblankPhysicalLines": 398,
+        "bytes": 16441,
+        "sha256": "824b0b1c421453cae437fe2b637a3e3200945b708eef027012bf25c9550929ca",
+        "persistenceSignal": true
+      },
+      "current": {
+        "nonblankPhysicalLines": 417,
+        "bytes": 17699,
+        "sha256": "1ea77fd088a1277b03bc2edeb034462f8f56df5ce3eb95dd7b68000dd5a983d1",
+        "persistenceSignal": true
+      },
+      "included": true,
+      "reviewStatus": "RESPONSIBILITY_REVIEWED_RETAIN_COUNTED",
+      "wholeConsumerAcceptance": "PENDING",
+      "responsibility": "Native integrity and installation/template diagnostics; explicit fix restores owned shipped templates/manifests. Legacy inspection is read-only.",
+      "callers": "Canonical executor routes project store, native doctor skips .txn. Direct diagnostic template APIs remain installation-owned.",
+      "decision": "Count whole module conservatively. No operational filesystem state/event writer; do not remove legitimate template restore or conflate installation manifest with task authority."
+    }
+  ],
+  "reviewComplete": false,
+  "denominatorChanged": false,
+  "releaseAccepted": false
+}

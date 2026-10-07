@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "scope": "Retire execution reference legacy fallback and project-wide directory scan",
+  "sourceSha256": {
+    "src/core/execution.js": "f31fa3a1efee6314c800f87808d7d1d18a87a76f173fee728a424decda709dcc",
+    "tests/storage-direct-artifacts.test.js": "9145bb4abf9a2c71404f26688aced4a545bec06ceb4f5e865b398d4a60591f88"
+  },
+  "checks": {
+    "directArtifactRunCheckRunActionIsolation": {
+      "tests": 45,
+      "pass": 45,
+      "fail": 0
+    },
+    "verifyFast": "PASS",
+    "lint": {
+      "errors": 0,
+      "warnings": 113
+    },
+    "complexity": "PASS"
+  },
+  "behavior": [
+    "Execution reference lookup uses canonical SQLite task ownership and rejects ambiguous cross-task execution IDs. Explicit task selector remains deterministic.",
+    "Removed singleton fallback and task-state filesystem scan after missing execution reference; legacy operational files are refused without database creation or mutation.",
+    "Canonical reference validation, execution schema/binding checks and E_EXECUTION_REF_INVALID public refusal remain.",
+    "Execution path construction still retains portable singleton identity for descriptor-less contexts;actual persistence separately admits canonical authority."
+  ],
+  "limitations": [
+    "No complete consumer or sole-writer proof inferred.",
+    "Latest production retirement requires fresh full platform acceptance.",
+    "Windows602 still running;DockerLinux602 sequential launch pending."
+  ]
+}

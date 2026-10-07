@@ -1,0 +1,36 @@
+{
+  "scope": "Operator-directed native rebuild from latest verified snapshot after accepted native writes",
+  "testSha256": "a3d21025a6610f711c5d1c0a15091b8406c306664c45a41ed1bbd79fc203efdf",
+  "publicCommands": [
+    "storage-backup --include-attachments",
+    "task-create",
+    "storage-restore --replace-active --writers-quiesced",
+    "task-list"
+  ],
+  "latestSnapshotLogicalEquality": true,
+  "staleSnapshotDetectedBeforeRestore": true,
+  "postRebuildLogicalEquality": true,
+  "binaryBytesPreserved": true,
+  "outgoingNativeDigestPreserved": true,
+  "test": {
+    "exitCode": 0,
+    "raw": "\u2714 native rebuild from a verified latest snapshot retains post-native-write tasks, events and attachments (757.326541ms)\n\u2139 tests 1\n\u2139 suites 0\n\u2139 pass 1\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 880.519708\n"
+  },
+  "initialFixtureFailure": "\u2716 native rebuild from a verified latest snapshot retains post-native-write tasks, events and attachments (243.389416ms)\n\u2139 tests 1\n\u2139 suites 0\n\u2139 pass 0\n\u2139 fail 1\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 466.775208\n\n\u2716 failing tests:\n\ntest at tests/storage-forward-rebuild.test.js:25:1\n\u2716 native rebuild from a verified latest snapshot retains post-native-write tasks, events and attachments (243.389416ms)\n  AssertionError [ERR_ASSERTION]: {\"code\":\"ENOENT\",\"message\":\"ENOENT: no such file or directory, lstat '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-closure-hOv3OI/retained'\"}\n  \n  false !== true\n  \n      at command (file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/tests/storage-forward-rebuild.test.js:21:10)\n      at async TestContext.<anonymous> (file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/tests/storage-forward-rebuild.test.js:29:5)\n      at async Test.run (node:internal/test_runner/test:1389:7)\n      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {\n    generatedMessage: false,\n    code: 'ERR_ASSERTION',\n    actual: false,\n    expected: true,\n    operator: 'strictEqual',\n    diff: 'simple'\n  }\n",
+  "limitations": [
+    "Manual latest-snapshot equality and writer exclusion are required;general restore does not refuse stale snapshots automatically",
+    "Healthy native authority rebuilt;not arbitrary corruption repair",
+    "Remote current-source drill notyetverified",
+    "Whole maintenance andmigration acceptance remain open"
+  ],
+  "regression": {
+    "exitCode": 0,
+    "summaries": [
+      "\u2139 tests 12",
+      "\u2139 pass 12",
+      "\u2139 fail 0",
+      "\u2139 skipped 0"
+    ],
+    "raw": "\u2714 active replacement preparation retains outgoing authority and independent attachments without replacing state (516.925583ms)\n\u2714 active replacement requires explicit quiescence, exact operation and live maintenance ownership (485.978ms)\n\u2714 active replacement refuses marker conflicts and preserves outgoing state (433.549333ms)\n\u2714 active replacement refuses database conflicts and preserves outgoing state (343.441584ms)\n\u2714 active replacement refuses reservation conflicts and preserves outgoing state (265.727708ms)\n\u2714 active replacement refuses legacy conflicts and preserves outgoing state (274.154459ms)\n\u2714 active replacement refuses a retained SQLite connection and preserves its failed backup evidence (301.05475ms)\n\u2714 native rebuild from a verified latest snapshot retains post-native-write tasks, events and attachments (1370.930291ms)\n\u2714 replacement admission rejects missing quiescence and nonboolean selection without allocating evidence (646.536083ms)\n\u2714 explicit api replacement retains outgoing state and activates incoming authority (1269.807916ms)\n\u2714 explicit cli replacement retains outgoing state and activates incoming authority (1052.822041ms)\n\u2714 restore CLI and shared command API activate verified backups and reject missing writer exclusion (692.116291ms)\n\u2139 tests 12\n\u2139 suites 0\n\u2139 pass 12\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 3764.169959\n"
+  }
+}

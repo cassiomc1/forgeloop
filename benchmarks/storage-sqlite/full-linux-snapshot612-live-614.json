@@ -1,0 +1,22 @@
+{
+  "id": "dfe48c1ce8b28be2e6e13a40359a872c20124f71123584940321ec646bdd9da1",
+  "state": {
+    "Status": "running",
+    "Running": true,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "Dead": false,
+    "Pid": 66367,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "2026-10-07T01:49:03.821947316Z",
+    "FinishedAt": "0001-01-01T00:00:00Z"
+  },
+  "image": "node:24.19.0-bookworm",
+  "snapshot": "2b7893aef6fabe01c72fb6bb1cefb93cf9cde193acdc5c286bcd977e7ad77928",
+  "logTail": "\u2714 execution candidate rejected in repair v1 (472.880091ms)\n\u2714 exact buggy CONTRACT_READY state accepted by repair (594.464193ms)\n\u2714 state task mismatch rejected by repair (590.794543ms)\n\u2714 state contract mismatch rejected by repair (535.649287ms)\n\u2714 unexpected routeFingerprint in CONTRACT_READY state rejected (560.852661ms)\n\u2714 repair marker appended and original duplicate remains physically present (599.438337ms)\n\u2714 repair ID is deterministic for the same fixture (795.553496ms)\n\u2714 multiple repair markers \u2192 ledger invalid (748.095992ms)\n",
+  "errorTail": "",
+  "collectedIncrement": 614,
+  "terminalVerified": false
+}

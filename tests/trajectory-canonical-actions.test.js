@@ -1,3 +1,4 @@
+import { ensureFixtureTask, overwriteFixtureRecordBytes } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
@@ -15,6 +16,7 @@ test("metrics expose trusted action readiness and one comparable-step owner", as
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-traj-metrics-"));
   const taskId = "traj-metrics-task";
   try {
+    await ensureFixtureTask(target, taskId, packageRoot);
     await proposeAction(target, { packageRoot, taskId, input: {
       actionId: "action-traj", effectClass: "REVERSIBLE_WRITE", capability: "filesystem.write",
       target: "f", operation: "op", idempotencyKey: "traj:v1",
@@ -25,7 +27,7 @@ test("metrics expose trusted action readiness and one comparable-step owner", as
     const { taskActionPath } = await import("../src/core/task-paths.js");
     const action = await readAction(target, { packageRoot, taskId, actionId: "action-traj" });
     const forged = { ...action, state: "VERIFIED", revision: 2, lastEvidenceRef: "external:forged" };
-    await writeFile(path.join(target, taskActionPath(taskId, action.actionId)), JSON.stringify(forged, null, 2) + "\n", "utf8");
+    await overwriteFixtureRecordBytes(target, taskActionPath(taskId, action.actionId), JSON.stringify(forged));
 
     const metrics = await buildTrajectoryMetrics({ target, packageRoot, taskId });
     assert.equal(metrics.actions.verified, 1);

@@ -1,0 +1,239 @@
+{
+  "increment": 652,
+  "diagnosticOnly": true,
+  "productionChanged": false,
+  "releaseThresholdsVerified": false,
+  "node": "v24.19.0",
+  "results": [
+    {
+      "events": 10,
+      "repeats": 20,
+      "indexBuildMs": 0.15633299999996098,
+      "originalPlan": [
+        {
+          "id": 4,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH events USING INDEX events_type_idx (task_id=?)"
+        }
+      ],
+      "indexedPlan": [
+        {
+          "id": 4,
+          "parent": 0,
+          "notused": 61,
+          "detail": "SEARCH events USING INDEX reservation_candidate_probe (task_id=?)"
+        }
+      ],
+      "scanSamplesMs": [
+        0.08320800000001327,
+        0.019749999999987722,
+        0.016625000000033197,
+        0.016084000000034848,
+        0.022499999999979536,
+        0.01687499999997044,
+        0.017583000000001903,
+        0.016707999999994172,
+        0.016708000000051015,
+        0.016250000000013642,
+        0.015833999999983916,
+        0.015750000000025466,
+        0.016999999999995907,
+        0.01583299999998644,
+        0.015749999999968622,
+        0.015499999999974534,
+        0.015582999999992353,
+        0.015542000000039025,
+        0.015541999999982181,
+        0.015625
+      ],
+      "indexedSamplesMs": [
+        0.004332999999974163,
+        0.002750000000048658,
+        0.001416000000006079,
+        0.0013749999999959073,
+        0.0012910000000374566,
+        0.0013339999999857355,
+        0.0012499999999704414,
+        0.0013749999999959073,
+        0.0012499999999704414,
+        0.0012499999999704414,
+        0.0012499999999704414,
+        0.0012080000000196378,
+        0.0012500000000272848,
+        0.0012500000000272848,
+        0.0012080000000196378,
+        0.001167000000009466,
+        0.0012500000000272848,
+        0.0012500000000272848,
+        0.001209000000017113,
+        0.0012080000000196378
+      ],
+      "scanP95Ms": 0.022499999999979536,
+      "indexedP95Ms": 0.002750000000048658,
+      "independentMutation": {
+        "mismatchDetected": true
+      }
+    },
+    {
+      "events": 1000,
+      "repeats": 20,
+      "indexBuildMs": 1.49675000000002,
+      "originalPlan": [
+        {
+          "id": 4,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH events USING INDEX events_type_idx (task_id=?)"
+        }
+      ],
+      "indexedPlan": [
+        {
+          "id": 4,
+          "parent": 0,
+          "notused": 61,
+          "detail": "SEARCH events USING INDEX reservation_candidate_probe (task_id=?)"
+        }
+      ],
+      "scanSamplesMs": [
+        1.332208000000037,
+        1.325458000000026,
+        1.3172500000000014,
+        1.316459000000009,
+        1.3199159999999779,
+        1.4844160000000102,
+        1.5609170000000177,
+        1.379624999999976,
+        1.302665999999988,
+        1.4375420000000076,
+        1.335999999999956,
+        1.32650000000001,
+        1.3126250000000255,
+        1.3218330000000265,
+        1.3595000000000255,
+        1.3415829999999573,
+        1.3251249999999573,
+        1.3244169999999826,
+        1.3625000000000114,
+        1.3460420000000113
+      ],
+      "indexedSamplesMs": [
+        0.00466599999998607,
+        0.0017500000000154614,
+        0.0014170000000035543,
+        0.0013329999999882602,
+        0.0012920000000349319,
+        0.001416000000006079,
+        0.0013329999999882602,
+        0.0013329999999882602,
+        0.0013329999999882602,
+        0.0013339999999857355,
+        0.0012910000000374566,
+        0.001334000000042579,
+        0.0012920000000349319,
+        0.0012500000000272848,
+        0.0012910000000374566,
+        0.0012910000000374566,
+        0.0012500000000272848,
+        0.0012920000000349319,
+        0.0012500000000272848,
+        0.0012910000000374566
+      ],
+      "scanP95Ms": 1.4844160000000102,
+      "indexedP95Ms": 0.0017500000000154614
+    },
+    {
+      "events": 100000,
+      "repeats": 20,
+      "indexBuildMs": 159.1765830000004,
+      "originalPlan": [
+        {
+          "id": 4,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH events USING INDEX events_type_idx (task_id=?)"
+        }
+      ],
+      "indexedPlan": [
+        {
+          "id": 4,
+          "parent": 0,
+          "notused": 61,
+          "detail": "SEARCH events USING INDEX reservation_candidate_probe (task_id=?)"
+        }
+      ],
+      "scanSamplesMs": [
+        163.04599999999982,
+        155.34908300000006,
+        158.1914999999999,
+        152.20804099999987,
+        152.096,
+        149.91416600000002,
+        148.74612499999967,
+        165.29029199999968,
+        167.19895899999983,
+        171.7475830000003,
+        157.2823330000001,
+        156.84104200000002,
+        199.17362500000036,
+        172.8375420000002,
+        168.24491600000056,
+        192.9828749999997,
+        202.44104199999947,
+        203.29200000000037,
+        197.95133400000032,
+        187.0726250000007
+      ],
+      "indexedSamplesMs": [
+        0.00837500000034197,
+        0.0018749999999272404,
+        0.001457999999729509,
+        0.0014590000000680448,
+        0.001374999999825377,
+        0.0013750000007348717,
+        0.0013330000001587905,
+        0.001291999999921245,
+        0.001291999999921245,
+        0.001291000000492204,
+        0.0013330000001587905,
+        0.0013340000004973263,
+        0.001291999999921245,
+        0.0012500000002546585,
+        0.0012909999995827093,
+        0.0013330000001587905,
+        0.0012499999993451638,
+        0.0012500000002546585,
+        0.0012920000008307397,
+        0.001291999999921245
+      ],
+      "scanP95Ms": 202.44104199999947,
+      "indexedP95Ms": 0.0018749999999272404
+    }
+  ],
+  "limits": [
+    "Guard query microbenchmark only; excludes full transaction, index write amplification, schema upgrade and resource acceptance.",
+    "Disposable index uses the unchanged canonical CASE predicate; 87-case oracle compares against forced unindexed historical scan.",
+    "No current platform or whole migration closure claim."
+  ],
+  "oracle": {
+    "testGroupsPassed": 3,
+    "scalarAndBlobCases": 87,
+    "independentOracle": "Historical predicate forced NOT INDEXED; production projection uses disposable partial index.",
+    "log": "/Users/cassio/.codex/verification/reservation-index-oracle652.log"
+  },
+  "predicate": "CASE WHEN json_valid(event_json) = 0 THEN 1\n        ELSE json_type(event_json) <> 'object'\n          OR json_extract(event_json, '$.taskId') IS NOT task_id\n          OR json_extract(event_json, '$.seq') IS NOT seq\n          OR json_extract(event_json, '$.hash') IS NOT hash\n          OR json_extract(event_json, '$.previousHash') IS NOT previous_hash\n          OR json_extract(event_json, '$.at') IS NOT at\n          OR json_extract(event_json, '$.event') IS NOT event_type\n          OR json_extract(event_json, '$.event') IN\n            ('CONTRACT_BOOTSTRAP_REPAIR_RECORDED', 'CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_RECORDED')\n        END",
+  "documentation": [
+    "https://www.sqlite.org/partialindex.html",
+    "https://www.sqlite.org/expridx.html"
+  ],
+  "diagnosticSources": [
+    {
+      "path": "/Users/cassio/.codex/verification/reservation-index-probe652.mjs",
+      "sha256": "e1d58df1c8328aa85c98f461513d19c761daa0d4d3ab218ee1c14545cf61425a"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/reservation-index-oracle652.test.mjs",
+      "sha256": "15710db3d3ce977761984efa21abd83f61c0c9d191a04d033d3075dc3d50e684"
+    }
+  ]
+}

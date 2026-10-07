@@ -1,5 +1,6 @@
+import { readFixtureText, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -63,9 +64,9 @@ test("post-authorization approval mutation makes readiness UNTRUSTED with an app
 
     // Mutate the resolved approval artifact behind the protocol's back.
     const approvalPath = path.join(fixture.target, taskApprovalPath(fixture.taskId, "approval-push"));
-    const approval = JSON.parse(await readFile(approvalPath, "utf8"));
+    const approval = JSON.parse(await readFixtureText(fixture.target, approvalPath));
     approval.hostGrantRef = "tampered-grant";
-    await writeFile(approvalPath, JSON.stringify(approval, null, 2) + "\n", "utf8");
+    await overwriteFixtureText(fixture.target, approvalPath, JSON.stringify(approval, null, 2) + "\n", "utf8");
 
     const after = await evaluateActionReadiness({ target: fixture.target, packageRoot,
       taskId: fixture.taskId, action: fixture.action });
@@ -98,9 +99,9 @@ test("post-authorization approval mutation is audit-visible", async () => {
     );
 
     const approvalPath = path.join(fixture.target, taskApprovalPath(fixture.taskId, "approval-push"));
-    const approval = JSON.parse(await readFile(approvalPath, "utf8"));
+    const approval = JSON.parse(await readFixtureText(fixture.target, approvalPath));
     approval.hostGrantRef = "tampered-grant";
-    await writeFile(approvalPath, JSON.stringify(approval, null, 2) + "\n", "utf8");
+    await overwriteFixtureText(fixture.target, approvalPath, JSON.stringify(approval, null, 2) + "\n", "utf8");
 
     const after = await evaluateAudit({ target: fixture.target, packageRoot, taskId: fixture.taskId });
     assert.notEqual(after.status, "VALID");

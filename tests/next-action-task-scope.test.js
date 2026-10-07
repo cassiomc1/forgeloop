@@ -1,5 +1,6 @@
+import { deleteFixtureArtifact } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -104,7 +105,7 @@ test("NEXT-TASK-1: PLANNED next-action for an explicitly selected task uses only
     // Task B is PLANNED with its PREFLIGHT_READY ledger event but without the
     // task-scoped preflight artifact.
     await setupTaskTo(target, "task-b", "PLANNED", { preflight: true });
-    await rm(path.join(target, taskArtifactPath("task-b", "preflight")));
+    await deleteFixtureArtifact(target, taskArtifactPath("task-b", "preflight"));
 
     const nextB = await getNextAction({ target, packageRoot, taskId: "task-b" });
     assert.equal(nextB.nextAction, NEXT_ACTIONS.RUN_PREFLIGHT);

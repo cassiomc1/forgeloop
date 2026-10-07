@@ -7,7 +7,7 @@
 ForgeLoop is a portable protocol and support CLI for verifiable engineering workflows. It records and validates task state, contracts, routing, checks, evidence, continuity, and optional code attestations. It does not become an agent scheduler, delegation service, source-control authority, or secret manager.
 
 Protocol version: 1
-Package version: 1.14.0
+Package version: 2.0.0
 
 ## Canonical loop
 
@@ -116,6 +116,7 @@ Phases: RECEIVED, DISCOVERING, CONTRACT_READY, ROUTED, DESIGNING, PLANNED, EXECU
 | executionProfileContext | 1 | yes |
 | integrationApi | 1 | yes |
 | observabilityStability | n/a | yes |
+| operationalStorage | 1 | yes |
 | providerExtensions | 1 | yes |
 | reflection | 1 | yes |
 | repositoryIndex | 1 | yes |
@@ -177,42 +178,42 @@ capability-family versions.
 
 ## Public artifact registry
 
-| Key | Scope | Path | Schema | Trust role |
-| --- | --- | --- | --- | --- |
-| actions | TASK | .forgeloop/task-state/<task-key>/actions/action-<id>.json | action | EXTERNAL_ACTION_PROVENANCE |
-| approvals | TASK | .forgeloop/task-state/<task-key>/approvals/approval-<id>.json | approval | ACTION_APPROVAL_ATTESTATION |
-| attestationBundle | TASK | .forgeloop/task-state/<task-key>/attestations/statement.sigstore.json | n/a | EXTERNAL_SIGNATURE_BUNDLE |
-| attestationStatement | TASK | .forgeloop/task-state/<task-key>/attestations/statement.json | in-toto-statement | CODE_ATTESTATION_STATEMENT |
-| capabilityPolicy | PROJECT | .forgeloop/policy/capabilities.json | capability-policy | CAPABILITY_POLICY_SPECIFICATION |
-| codeManifest | TASK | .forgeloop/task-state/<task-key>/attestations/code-manifest.json | code-manifest | CONTENT_INTEGRITY_SNAPSHOT |
-| config | PROJECT | .forgeloop/config.json | config | PROJECT_CONFIGURATION |
-| continuity | TASK | .forgeloop/task-state/<task-key>/continuity.json | continuity | NON_EVIDENCE_HANDOFF |
-| contract | TASK | .forgeloop/task-state/<task-key>/contract.json | current-contract | OPERATIONAL_SPECIFICATION |
-| descriptor | TASK | .forgeloop/task-state/<task-key>/task.json | task-descriptor | TASK_DESCRIPTOR |
-| evaluations | TASK | .forgeloop/task-state/<task-key>/evaluations/eval-<id>.json | trajectory-evaluation | TRAJECTORY_EVALUATION |
-| events | TASK | .forgeloop/task-state/<task-key>/events.ndjson | event | AUDIT_LEDGER |
-| executions | TASK | .forgeloop/task-state/<task-key>/executions/exec-<id>.json | execution | EXECUTION_PROVENANCE |
-| gates | TASK | .forgeloop/task-state/<task-key>/gates/<gate>.json | gate | GATE_APPROVAL_ATTESTATION |
-| handoffs | TASK | .forgeloop/task-state/<task-key>/handoffs/handoff-<id>.json | handoff-envelope | CANONICAL_HANDOFF_SNAPSHOT |
-| policyBaseline | PROJECT | .forgeloop/policy/baseline.json | policy-baseline | BROWNFIELD_BASELINE |
-| policyDiscovery | PROJECT | .forgeloop/policy/discovery.json | policy-discovery | DISCOVERED_POLICY_SPECIFICATION |
-| policyLock | PROJECT | .forgeloop/policy/policy.lock | policy-lock | POLICY_INTEGRITY_LOCK |
-| policyRules | PROJECT | .forgeloop/policy/rules.json | policy-rules | POLICY_SPECIFICATION |
-| policySnapshot | TASK | .forgeloop/task-state/<task-key>/policy-snapshot.json | policy-snapshot | TASK_POLICY_ATTESTATION |
-| preflight | TASK | .forgeloop/task-state/<task-key>/preflight.json | preflight | READINESS_ATTESTATION |
-| receipt | TASK | .forgeloop/task-state/<task-key>/execution-receipt.json | execution-receipt | EVIDENCE_COMPILATION |
-| recovery | TASK | .forgeloop/task-state/<task-key>/recovery.json | task-recovery | TASK_RECOVERY_STATE |
-| responsibility | TASK | .forgeloop/task-state/<task-key>/responsibility.json | responsibility | RESPONSIBILITY_CONSTRAINT |
-| route | TASK | .forgeloop/task-state/<task-key>/routing-result.json | routing-result | GUIDE_ROUTING_SPECIFICATION |
-| semanticDecisions | TASK | .forgeloop/task-state/<task-key>/decisions/<decision-id>.json | semantic-decision | SEMANTIC_DECISION |
-| session | SESSION | .forgeloop/sessions/<session-id>.json | activation | SESSION_MARKER |
-| sources | PROJECT | .forgeloop/sources.json | source-registry | SOURCE_ATTESTATION |
-| state | TASK | .forgeloop/task-state/<task-key>/work-state.json | work-state | CANONICAL_LIFECYCLE_STATE |
-| structuralQuality | TASK | .forgeloop/task-state/<task-key>/structural-quality/baseline.json | structural-quality | STRUCTURAL_QUALITY_EVIDENCE |
-| testUtility | TASK | .forgeloop/task-state/<task-key>/test-utility.json | test-utility | NON_EVIDENCE_TEST_ANALYSIS |
-| usage | TASK | .forgeloop/task-state/<task-key>/usage.json | usage | INFORMATIONAL_USAGE_TELEMETRY |
-| verificationScope | TASK | .forgeloop/task-state/<task-key>/verification-scope.json | verification-scope | VERIFICATION_SCOPE_PLAN |
-| workspaceBinding | TASK | .forgeloop/task-state/<task-key>/workspace-binding.json | workspace-binding | WORKSPACE_IDENTITY_BINDING |
+| Key | Scope | Logical identity | Canonical storage | Export path | Schema | Trust role |
+| --- | --- | --- | --- | --- | --- | --- |
+| actions | TASK | .forgeloop/task-state/<task-key>/actions/action-<id>.json | .forgeloop/state.sqlite :: actions | .forgeloop/task-state/<task-key>/actions/action-<id>.json | action | EXTERNAL_ACTION_PROVENANCE |
+| approvals | TASK | .forgeloop/task-state/<task-key>/approvals/approval-<id>.json | .forgeloop/state.sqlite :: approvals | .forgeloop/task-state/<task-key>/approvals/approval-<id>.json | approval | ACTION_APPROVAL_ATTESTATION |
+| attestationBundle | TASK | .forgeloop/task-state/<task-key>/attestations/statement.sigstore.json | .forgeloop/state.sqlite :: attachment_references | .forgeloop/attachments/objects/<sha256> | n/a | EXTERNAL_SIGNATURE_BUNDLE |
+| attestationStatement | TASK | .forgeloop/task-state/<task-key>/attestations/statement.json | .forgeloop/state.sqlite :: task_artifacts | .forgeloop/task-state/<task-key>/attestations/statement.json | in-toto-statement | CODE_ATTESTATION_STATEMENT |
+| capabilityPolicy | PROJECT | .forgeloop/policy/capabilities.json | .forgeloop/policy/capabilities.json | Copied separately | capability-policy | CAPABILITY_POLICY_SPECIFICATION |
+| codeManifest | TASK | .forgeloop/task-state/<task-key>/attestations/code-manifest.json | .forgeloop/state.sqlite :: task_artifacts | .forgeloop/task-state/<task-key>/attestations/code-manifest.json | code-manifest | CONTENT_INTEGRITY_SNAPSHOT |
+| config | PROJECT | .forgeloop/config.json | .forgeloop/config.json | Copied separately | config | PROJECT_CONFIGURATION |
+| continuity | TASK | .forgeloop/task-state/<task-key>/continuity.json | .forgeloop/state.sqlite :: task_artifacts | .forgeloop/task-state/<task-key>/continuity.json | continuity | NON_EVIDENCE_HANDOFF |
+| contract | TASK | .forgeloop/task-state/<task-key>/contract.json | .forgeloop/state.sqlite :: task_artifacts | .forgeloop/task-state/<task-key>/contract.json | current-contract | OPERATIONAL_SPECIFICATION |
+| descriptor | TASK | .forgeloop/task-state/<task-key>/task.json | .forgeloop/state.sqlite :: tasks | .forgeloop/task-state/<task-key>/task.json | task-descriptor | TASK_DESCRIPTOR |
+| evaluations | TASK | .forgeloop/task-state/<task-key>/evaluations/eval-<id>.json | .forgeloop/state.sqlite :: task_artifacts | .forgeloop/task-state/<task-key>/evaluations/eval-<id>.json | trajectory-evaluation | TRAJECTORY_EVALUATION |
+| events | TASK | .forgeloop/task-state/<task-key>/events.ndjson | .forgeloop/state.sqlite :: events | .forgeloop/task-state/<task-key>/events.ndjson | event | AUDIT_LEDGER |
+| executions | TASK | .forgeloop/task-state/<task-key>/executions/exec-<id>.json | .forgeloop/state.sqlite :: executions | .forgeloop/task-state/<task-key>/executions/exec-<id>.json | execution | EXECUTION_PROVENANCE |
+| gates | TASK | .forgeloop/task-state/<task-key>/gates/<gate>.json | .forgeloop/state.sqlite :: task_artifacts | .forgeloop/task-state/<task-key>/gates/<gate>.json | gate | GATE_APPROVAL_ATTESTATION |
+| handoffs | TASK | .forgeloop/task-state/<task-key>/handoffs/handoff-<id>.json | .forgeloop/state.sqlite :: task_artifacts | .forgeloop/task-state/<task-key>/handoffs/handoff-<id>.json | handoff-envelope | CANONICAL_HANDOFF_SNAPSHOT |
+| policyBaseline | PROJECT | .forgeloop/policy/baseline.json | .forgeloop/policy/baseline.json | Copied separately | policy-baseline | BROWNFIELD_BASELINE |
+| policyDiscovery | PROJECT | .forgeloop/policy/discovery.json | .forgeloop/policy/discovery.json | Copied separately | policy-discovery | DISCOVERED_POLICY_SPECIFICATION |
+| policyLock | PROJECT | .forgeloop/policy/policy.lock | .forgeloop/policy/policy.lock | Copied separately | policy-lock | POLICY_INTEGRITY_LOCK |
+| policyRules | PROJECT | .forgeloop/policy/rules.json | .forgeloop/policy/rules.json | Copied separately | policy-rules | POLICY_SPECIFICATION |
+| policySnapshot | TASK | .forgeloop/task-state/<task-key>/policy-snapshot.json | .forgeloop/state.sqlite :: task_artifacts | .forgeloop/task-state/<task-key>/policy-snapshot.json | policy-snapshot | TASK_POLICY_ATTESTATION |
+| preflight | TASK | .forgeloop/task-state/<task-key>/preflight.json | .forgeloop/state.sqlite :: task_artifacts | .forgeloop/task-state/<task-key>/preflight.json | preflight | READINESS_ATTESTATION |
+| receipt | TASK | .forgeloop/task-state/<task-key>/execution-receipt.json | .forgeloop/state.sqlite :: task_artifacts | .forgeloop/task-state/<task-key>/execution-receipt.json | execution-receipt | EVIDENCE_COMPILATION |
+| recovery | TASK | .forgeloop/task-state/<task-key>/recovery.json | .forgeloop/state.sqlite :: task_artifacts | .forgeloop/task-state/<task-key>/recovery.json | task-recovery | TASK_RECOVERY_STATE |
+| responsibility | TASK | .forgeloop/task-state/<task-key>/responsibility.json | .forgeloop/state.sqlite :: task_artifacts | .forgeloop/task-state/<task-key>/responsibility.json | responsibility | RESPONSIBILITY_CONSTRAINT |
+| route | TASK | .forgeloop/task-state/<task-key>/routing-result.json | .forgeloop/state.sqlite :: task_artifacts | .forgeloop/task-state/<task-key>/routing-result.json | routing-result | GUIDE_ROUTING_SPECIFICATION |
+| semanticDecisions | TASK | .forgeloop/task-state/<task-key>/decisions/<decision-id>.json | .forgeloop/state.sqlite :: task_artifacts | .forgeloop/task-state/<task-key>/decisions/<decision-id>.json | semantic-decision | SEMANTIC_DECISION |
+| session | SESSION | .forgeloop/sessions/<session-id>.json | .forgeloop/state.sqlite :: sessions | .forgeloop/sessions/<session-id>.json | activation | SESSION_MARKER |
+| sources | PROJECT | .forgeloop/sources.json | .forgeloop/sources.json | Copied separately | source-registry | SOURCE_ATTESTATION |
+| state | TASK | .forgeloop/task-state/<task-key>/work-state.json | .forgeloop/state.sqlite :: tasks | .forgeloop/task-state/<task-key>/work-state.json | work-state | CANONICAL_LIFECYCLE_STATE |
+| structuralQuality | TASK | .forgeloop/task-state/<task-key>/structural-quality/baseline.json | .forgeloop/state.sqlite :: task_artifacts | .forgeloop/task-state/<task-key>/structural-quality/baseline.json | structural-quality | STRUCTURAL_QUALITY_EVIDENCE |
+| testUtility | TASK | .forgeloop/task-state/<task-key>/test-utility.json | .forgeloop/state.sqlite :: task_artifacts | .forgeloop/task-state/<task-key>/test-utility.json | test-utility | NON_EVIDENCE_TEST_ANALYSIS |
+| usage | TASK | .forgeloop/task-state/<task-key>/usage.json | .forgeloop/state.sqlite :: task_artifacts | .forgeloop/task-state/<task-key>/usage.json | usage | INFORMATIONAL_USAGE_TELEMETRY |
+| verificationScope | TASK | .forgeloop/task-state/<task-key>/verification-scope.json | .forgeloop/state.sqlite :: task_artifacts | .forgeloop/task-state/<task-key>/verification-scope.json | verification-scope | VERIFICATION_SCOPE_PLAN |
+| workspaceBinding | TASK | .forgeloop/task-state/<task-key>/workspace-binding.json | .forgeloop/state.sqlite :: task_artifacts | .forgeloop/task-state/<task-key>/workspace-binding.json | workspace-binding | WORKSPACE_IDENTITY_BINDING |
 
 ## Command catalog
 
@@ -331,8 +332,16 @@ capability-family versions.
 | index-stop | MUTATING | Stops only a tgrep server whose process identity is provably owned by ForgeLoop. |
 | init | MUTATING | Initializes a target project directory with ForgeLoop discovery adapters, schemas, and templates. |
 | migrate-protocol | MUTATING | Safely migrates explicitly supported protocol state; unknown target versions fail without rewriting artifacts. |
+| storage-backup | MUTATING | Creates an exclusive native SQLite backup, optionally including canonically referenced attachments in a retained directory. |
+| storage-migrate | MUTATING | Validates, retains and archives legacy state before activating SQLite. Failed attempts retain maintenance exclusion; resume requires the exact retained owner and a verified candidate. |
+| storage-migration-resume | MUTATING | Adopts an exact dead local owner and continues verified publication stages. Unrecorded capture, unbound candidate files and interrupted owner handoffs remain refused; identified unpublished staging can be retained and rebuilt. |
+| storage-migration-status | READ_ONLY | Inspects storage layout and maintenance exclusion without opening or repairing a database. |
+| storage-restore | MUTATING | Verifies and retains a backup before activating it in an operationally fresh project. Existing operational state requires explicit --replace-active, which independently retains and archives outgoing authority before activation; failed restore evidence and maintenance exclusion are retained. |
+| storage-restore-resume | MUTATING | Adopts an exact dead local maintenance owner and resumes restore. Incomplete snapshots and prior rebuild intents are retained before rebuilding from bound source; completed preparation requires source parity/domain validation. Use --replace-active for preparation or publication replacement recovery. Conflicting intents and retained handoff locks remain refused. |
+| storage-rollback | MUTATING | Conditionally restores preserved source before native writes, retaining original native bytes and validating every task with the supported pinned legacy target before release. Failures retain exclusion; post-write restoration is refused. |
+| storage-rollback-resume | MUTATING | Resumes recorded rollback preparation, staging or publication under exact dead-owner adoption, revalidates native/source locations, and validates every task with the pinned target before release. Unbound attempts remain refused. |
 | task-abandon | MUTATING | Explicitly abandons an active non-terminal task; records append-only evidence and releases claims without completion authority. |
-| task-migrate | MUTATING | Migrates a legacy 1.0 singleton task state layout into a task-namespaced layout. |
+| task-migrate | MUTATING | Migrates legacy singleton task state into SQLite with retained source and verified publication evidence. |
 | task-migrate-contract-bootstrap-repair | MUTATING | Migrates the exact legacy contract bootstrap repair marker by appending a bound migration event; the original marker and artifacts remain unchanged. |
 | task-recover | MUTATING | Caller-acknowledged recovery of a STALE or ABANDONED task; records durable state and releases effective write claims. |
 | task-repair-contract-bootstrap | MUTATING | Repairs the exact duplicate contract bootstrap defect without rewriting history; idempotent and append-only. |

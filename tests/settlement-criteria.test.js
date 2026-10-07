@@ -1,3 +1,4 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import path from "node:path";
@@ -53,6 +54,7 @@ test("recordDecisionCriterion persists in event ledger and respects contract bin
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-settlement-test-"));
   try {
     const taskId = "task-settlement-1";
+    await ensureFixtureTask(target, taskId, packageRoot);
     const decisionText = "Which authentication provider should be used?";
 
     const contract = createContract({
@@ -141,6 +143,7 @@ test("forgeloop next surfaces multiple settlement criteria without fabricating m
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-settlement-multi-"));
   try {
     const taskId = "task-multi-criteria";
+    await ensureFixtureTask(target, taskId, packageRoot);
     const unresolvedDecisions = [
       "Which cache store to use?",
       "Which queue driver to use?",
@@ -161,16 +164,17 @@ test("forgeloop next surfaces multiple settlement criteria without fabricating m
     });
 
     const contractHash = contractFingerprint(contract);
-    await writeContract(target, contract, packageRoot);
+    await writeContract(target, contract, packageRoot, { taskId });
 
-    await appendProtocolEvent(target, { taskId, event: "TASK_RECEIVED" }, packageRoot);
-    await appendProtocolEvent(target, { taskId, event: "CONTRACT_VALIDATED" }, packageRoot);
+    await appendProtocolEvent(target, { taskId, event: "TASK_RECEIVED" }, packageRoot, { taskId });
+    await appendProtocolEvent(target, { taskId, event: "CONTRACT_VALIDATED" }, packageRoot, { taskId });
 
     const route = evaluateRoute({ workType: "code", surfaces: ["config"], platforms: [] });
     const persistedRoute = await persistRoute(target, route, packageRoot, {
       contractFingerprint: contractHash,
+      taskId,
     });
-    await appendProtocolEvent(target, { taskId, event: "ROUTE_VALIDATED" }, packageRoot);
+    await appendProtocolEvent(target, { taskId, event: "ROUTE_VALIDATED" }, packageRoot, { taskId });
 
     const state = createWorkState({
       taskId,
@@ -188,13 +192,14 @@ test("forgeloop next surfaces multiple settlement criteria without fabricating m
       blockers: [],
       verificationEvidence: [],
     });
-    await writeWorkState(target, state, { packageRoot });
-    await runPreflight({ target, packageRoot });
+    await writeWorkState(target, state, { packageRoot, taskId });
+    await runPreflight({ target, packageRoot, taskId });
 
     // Record criteria for 2 of the 3 decisions
     await recordDecisionCriterion({
       target,
       packageRoot,
+      taskId,
       decision: "Which cache store to use?",
       settledBy: "Use Redis in-memory cache",
     });
@@ -202,11 +207,12 @@ test("forgeloop next surfaces multiple settlement criteria without fabricating m
     await recordDecisionCriterion({
       target,
       packageRoot,
+      taskId,
       decision: "Which queue driver to use?",
       settledBy: "Use SQS or local in-memory emitter",
     });
 
-    const next = await getNextAction({ target, packageRoot });
+    const next = await getNextAction({ target, packageRoot, taskId });
     const decisionReason = next.reasons.find((r) => r.code === "E_CONTRACT_UNRESOLVED_DECISION" || r.code === "E_UNRESOLVED_DECISION");
     assert.ok(decisionReason);
     assert.equal(decisionReason.resolution.kind, "SETTLEMENT_CRITERIA");

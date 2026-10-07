@@ -1,5 +1,7 @@
+import { ensureFixtureTask, readFixtureText } from "./helpers/native-storage-fixture.js";
+import { taskArtifactPath } from "../src/core/task-paths.js";
 import assert from "node:assert/strict";
-import { access, mkdtemp, readFile, rm } from "node:fs/promises";
+import { access, mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -83,6 +85,7 @@ test("recording continuity derives canonical bindings and ignores actor identity
       lastUpdated: "2026-08-16T16:00:00.000Z",
     };
 
+    await ensureFixtureTask(target, "task-real", path.resolve("."));
     await writeContinuity(target, {
       taskId: "actor-cannot-replace-task",
       phase: "COMPLETE",
@@ -95,13 +98,14 @@ test("recording continuity derives canonical bindings and ignores actor identity
       inspectFirst: ["src/header.js"],
     }, {
       packageRoot: path.resolve("."),
+      taskId: "task-real",
       state,
       contract: { value: contract, fingerprint: contractFingerprint },
       repositoryFingerprint: { branch: "main", head: "new" },
       now: "2026-08-16T17:00:00.000Z",
     });
 
-    const stored = JSON.parse(await readFile(path.join(target, ".forgeloop/continuity.json"), "utf8"));
+    const stored = JSON.parse(await readFixtureText(target, taskArtifactPath("task-real", "continuity")));
     assert.equal(stored.taskId, "task-real");
     assert.equal(stored.phase, "EXECUTING");
     assert.equal(stored.contractFingerprint, contractFingerprint);

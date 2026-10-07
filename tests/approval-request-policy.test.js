@@ -1,5 +1,6 @@
+import { readFixtureText, readRawFixtureText, deleteFixtureArtifact } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { access, mkdtemp, readFile, unlink, writeFile } from "node:fs/promises";
+import { mkdtemp, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -79,10 +80,7 @@ test("approval-request is policy-aware and never mints an unnecessary approval",
         (error) => error.code === expectedCode,
       );
 
-      await assert.rejects(
-        access(path.join(target, taskApprovalPath(taskId, "approval-not-created"))),
-        (error) => error.code === "ENOENT",
-      );
+      assert.equal(await readFixtureText(target, taskApprovalPath(taskId, "approval-not-created")), null);
     });
   }
 });
@@ -99,14 +97,14 @@ test("approval-request creates a pending approval only when policy requires it",
     });
 
     assert.equal(result.created, true);
-    await access(path.join(target, taskApprovalPath(taskId, "approval-required")));
+    assert.ok(await readFixtureText(target, taskApprovalPath(taskId, "approval-required")));
   });
 });
 
 test("approval-request rejects a tampered epoch before creating an approval or ledger event", async () => {
   await withApprovalRequestPolicy("ALLOW", async ({ target, taskId, action }) => {
     const eventsPath = path.join(target, taskArtifactPath(taskId, "events"));
-    const eventsBefore = await readFile(eventsPath, "utf8");
+    const eventsBefore = await readRawFixtureText(target, eventsPath);
     await overwriteCapabilityPolicy(target, "REQUIRE_APPROVAL");
 
     await assert.rejects(
@@ -121,19 +119,16 @@ test("approval-request rejects a tampered epoch before creating an approval or l
       (error) => error.code === "E_ACTION_POLICY_DRIFT",
     );
 
-    await assert.rejects(
-      access(path.join(target, taskApprovalPath(taskId, "approval-drifted"))),
-      (error) => error.code === "ENOENT",
-    );
-    assert.equal(await readFile(eventsPath, "utf8"), eventsBefore);
+    assert.equal(await readFixtureText(target, taskApprovalPath(taskId, "approval-drifted")), null);
+    assert.equal(await readRawFixtureText(target, eventsPath), eventsBefore);
   });
 });
 
 test("approval-request rejects a missing task policy snapshot before persistence", async () => {
   await withApprovalRequestPolicy("REQUIRE_APPROVAL", async ({ target, taskId, action }) => {
     const eventsPath = path.join(target, taskArtifactPath(taskId, "events"));
-    const eventsBefore = await readFile(eventsPath, "utf8");
-    await unlink(path.join(target, taskArtifactPath(taskId, "policySnapshot")));
+    const eventsBefore = await readRawFixtureText(target, eventsPath);
+    await deleteFixtureArtifact(target, taskArtifactPath(taskId, "policySnapshot"));
 
     await assert.rejects(
       runApprovalRequest({
@@ -147,10 +142,7 @@ test("approval-request rejects a missing task policy snapshot before persistence
       (error) => error.code === "E_ACTION_POLICY_LOCK_REQUIRED",
     );
 
-    await assert.rejects(
-      access(path.join(target, taskApprovalPath(taskId, "approval-no-snapshot"))),
-      (error) => error.code === "ENOENT",
-    );
-    assert.equal(await readFile(eventsPath, "utf8"), eventsBefore);
+    assert.equal(await readFixtureText(target, taskApprovalPath(taskId, "approval-no-snapshot")), null);
+    assert.equal(await readRawFixtureText(target, eventsPath), eventsBefore);
   });
 });

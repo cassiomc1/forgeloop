@@ -1,0 +1,81 @@
+{
+  "diagnosticOnly": true,
+  "productionChanged": false,
+  "forcedGC": false,
+  "crossBackendParityMeasured": false,
+  "controlHashesChecked": 2669,
+  "controlMismatches": [],
+  "results": [
+    {
+      "operation": "taskListTool",
+      "requests": 100,
+      "withinBackendStable": true,
+      "metrics": {
+        "rss": {
+          "firstMiB": 291.0625,
+          "lastMiB": 440.28125,
+          "maximumMiB": 442.15625,
+          "first20MeanMiB": 394.546875,
+          "last20MeanMiB": 437.56640625,
+          "last20MinimumMiB": 431.703125,
+          "last20MaximumMiB": 442.15625
+        },
+        "heapUsed": {
+          "firstMiB": 115.85352325439453,
+          "lastMiB": 184.8995132446289,
+          "maximumMiB": 259.39488220214844,
+          "first20MeanMiB": 159.73907089233398,
+          "last20MeanMiB": 161.80130500793456,
+          "last20MinimumMiB": 110.14605712890625,
+          "last20MaximumMiB": 257.05728912353516
+        },
+        "heapTotal": {
+          "firstMiB": 199.0625,
+          "lastMiB": 288.75,
+          "maximumMiB": 342.140625,
+          "first20MeanMiB": 270.8796875,
+          "last20MeanMiB": 296.746875,
+          "last20MinimumMiB": 281.5,
+          "last20MaximumMiB": 340.75
+        }
+      }
+    },
+    {
+      "operation": "projectTasksResource",
+      "requests": 100,
+      "withinBackendStable": true,
+      "metrics": {
+        "rss": {
+          "firstMiB": 440.546875,
+          "lastMiB": 433.703125,
+          "maximumMiB": 440.546875,
+          "first20MeanMiB": 434.67109375,
+          "last20MeanMiB": 434.5390625,
+          "last20MinimumMiB": 432.0,
+          "last20MaximumMiB": 437.96875
+        },
+        "heapUsed": {
+          "firstMiB": 235.27228546142578,
+          "lastMiB": 100.63838195800781,
+          "maximumMiB": 235.27228546142578,
+          "first20MeanMiB": 153.8123752593994,
+          "last20MeanMiB": 145.8127868652344,
+          "last20MinimumMiB": 96.72312927246094,
+          "last20MaximumMiB": 204.67095184326172
+        },
+        "heapTotal": {
+          "firstMiB": 317.0625,
+          "lastMiB": 307.6875,
+          "maximumMiB": 324.953125,
+          "first20MeanMiB": 295.12109375,
+          "last20MeanMiB": 308.70234375,
+          "last20MinimumMiB": 303.828125,
+          "last20MaximumMiB": 324.703125
+        }
+      }
+    }
+  ],
+  "conclusion": "Observed natural RSS plateau in this 200-request synthetic MCP workload weakens sustained per-request leak hypothesis. Higher footprint remains. Does not establish universal boundedness, concurrency, larger data or release acceptance.",
+  "setupFailure": "Path assertion stopped setup before worker launch;corrected using actual root declaration.",
+  "rawResult": "/Users/cassio/.codex/verification/sqlite-memory-lifetime628/result.json"
+}

@@ -1,6 +1,12 @@
+import { needsExistingProjectScope, withExistingProjectScope } from "../storage/existing-project-scope.js";
 import { readdir } from "node:fs/promises";
+import { createReadStream } from "node:fs";
+import { createHash } from "node:crypto";
+import { resolveAttestationBundlePath } from "./attachment-paths.js";
+import { withOperationalAttachmentFile } from "../storage/operational-attachments.js";
+import { getOperationalStore, operationalArtifactExists, listOperationalArtifactNames } from "../storage/operational-context.js";
 
-import { ARTIFACT_PATHS, canonicalFingerprint, readJsonArtifact, writeJsonArtifact } from "./artifacts.js";
+import { ARTIFACT_PATHS, canonicalFingerprint, readJsonArtifact, readPortableJsonArtifact, writePortableJsonArtifact } from "./artifacts.js";
 import { validateContract } from "./contract.js";
 import { assertSafePath, ensureWithin, fileExists, readBytes, writeFileAtomic } from "./filesystem.js";
 import { PROTOCOL_VERSION } from "./protocol.js";
@@ -12,6 +18,7 @@ import { taskArtifactPath, taskDirectory, taskStructuralQualityDirectory } from 
 import { resolveTaskClaimState } from "./task-claim-state.js";
 import { E_TASK_CLAIM_OWNERSHIP_INCONSISTENT } from "./error-codes.js";
 import { listActions } from "./actions.js";
+import { validateActionArtifact } from "./action-model.js";
 import { validateCanonicalHandoff } from "./handoff.js";
 import { validateVerificationScope } from "./verification-scope.js";
 import { validateResponsibilityContract } from "./responsibility.js";
@@ -27,7 +34,16 @@ import {
 } from "./structural-quality/artifacts.js";
 import { normalizeStructuralQualityConfig, structuralQualityPolicyFingerprint } from "./structural-quality/policy.js";
 
-export const BUNDLE_SCHEMA_VERSION = 1;
+export const BUNDLE_SCHEMA_VERSION = 2;
+
+async function bundleFileBinding(target, relativePath, name) {
+  if (typeof name !== "string" || name.includes("\\") || name.includes("\u0000") || name.split("/").some(part => !part || part === "." || part === "..")) throw Object.assign(new Error("Invalid portable bundle artifact path"), { code: "E_BUNDLE_PATH_INVALID" });
+  const filename = await assertSafePath(target, relativePath);
+  const hash = createHash("sha256");
+  let size = 0;
+  for await (const bytes of createReadStream(filename)) { hash.update(bytes); size += bytes.length; }
+  return { path: name, size, sha256: hash.digest("hex") };
+}
 const BUNDLE_ROOT = ".forgeloop/tasks";
 
 function safeTaskId(taskId) {
@@ -161,10 +177,32 @@ function assertBundledCodeManifestBindings({ loaded, ledger, taskId }) {
   }
 }
 
+/** Export sources may be explicit legacy inputs; selected native authority never falls back. */
+function readBundleSourceJson(target,sourcePath,schemaName,packageRoot){
+ const reader=getOperationalStore(target)?readJsonArtifact:readPortableJsonArtifact;
+ return reader(target,sourcePath,schemaName,packageRoot);
+}
+
+/** Read-only legacy export inspection; operational action listing remains SQLite-only. */
+async function readBundleSourceActions(target,taskId,packageRoot){
+ if(getOperationalStore(target))return listActions(target,{taskId,packageRoot});
+ const directory=`${taskDirectory(taskId)}/actions`;
+ const absolute=await assertSafePath(target,directory);
+ if(!(await fileExists(absolute)))return [];
+ const actions=[];
+ for(const name of (await readdir(absolute)).filter(name=>name.endsWith(".json")).sort()){
+  const artifact=await readPortableJsonArtifact(target,`${directory}/${name}`,"action",packageRoot);
+  const action=validateActionArtifact(artifact.value);
+  if(action.taskId!==taskId || `${action.actionId}.json`!==name)throw bundleBindingError("E_BUNDLE_TASK_MISMATCH","Legacy export action identity differs from its source path");
+  actions.push(action);
+ }
+ return actions.sort((left,right)=>String(left.createdAt).localeCompare(String(right.createdAt)));
+}
+
 async function copyJson(target, sourcePath, destinationPath, schemaName, packageRoot, artifacts, relativeName) {
   try {
-    const value = await readJsonArtifact(target, sourcePath, schemaName, packageRoot);
-    await writeJsonArtifact(target, destinationPath, value.value, schemaName, packageRoot);
+    const value = await readBundleSourceJson(target, sourcePath, schemaName, packageRoot);
+    await writePortableJsonArtifact(target, destinationPath, value.value, schemaName, packageRoot);
     artifacts.push(relativeName);
     return value;
   } catch (error) {
@@ -176,37 +214,53 @@ async function copyJson(target, sourcePath, destinationPath, schemaName, package
 async function copyOptionalJson(target, taskPath, legacyPath, destinationPath, schemaName, packageRoot, artifacts, relativeName) {
   const candidates = [taskPath, legacyPath].filter(Boolean);
   for (const sourcePath of candidates) {
-    if (!(await fileExists(ensureWithin(target, sourcePath)))) continue;
+    if (getOperationalStore(target) && sourcePath === legacyPath) continue;
+    if (!(operationalArtifactExists(target, sourcePath) ?? await fileExists(ensureWithin(target, sourcePath)))) continue;
     return copyJson(target, sourcePath, destinationPath, schemaName, packageRoot, artifacts, relativeName);
   }
   return null;
 }
 
-async function copyRawFile(target, sourcePath, destinationPath, artifacts, relativeName) {
-  if (!(await fileExists(ensureWithin(target, sourcePath)))) return false;
-  await assertSafePath(target, destinationPath);
-  await writeFileAtomic(ensureWithin(target, destinationPath), await readBytes(ensureWithin(target, sourcePath)));
+async function copyRawFile(target, sourcePath, destinationPath, artifacts, relativeName, taskId) {
+  const canonical = getOperationalStore(target) && sourcePath.startsWith(".forgeloop/attachments/objects/");
+  if (!canonical && !(await fileExists(ensureWithin(target, sourcePath)))) return false;
+  await assertSafePath(target, sourcePath);
+  const destination = await assertSafePath(target, destinationPath);
+  await withOperationalAttachmentFile(target, sourcePath, taskId, source => writeFileAtomic(destination, createReadStream(source)));
   artifacts.push(relativeName);
   return true;
 }
 
 async function tryReadJson(target, taskPath, legacyPath, schemaName, packageRoot) {
   try {
-    return await readJsonArtifact(target, taskPath, schemaName, packageRoot);
+    return await readBundleSourceJson(target, taskPath, schemaName, packageRoot);
   } catch (error) {
-    if (error.code === "ARTIFACT_MISSING" && legacyPath) {
-      return await readJsonArtifact(target, legacyPath, schemaName, packageRoot);
+    if (error.code === "ARTIFACT_MISSING" && legacyPath && !getOperationalStore(target)) {
+      return await readBundleSourceJson(target, legacyPath, schemaName, packageRoot);
     }
     throw error;
   }
 }
 
 export async function exportTaskBundle(target, taskId, packageRoot) {
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => exportTaskBundle(target, taskId, packageRoot), { readOnly: true });
+  }
+  const store = getOperationalStore(target);
+  if (!store) return exportSelectedTaskBundle(target, taskId, packageRoot);
+  const [{ withStorageSnapshot }, { withOperationalStore }, { operationalContext }] = await Promise.all([
+    import("../storage/snapshot.js"), import("../storage/unit-of-work.js"), import("../storage/operational-context.js"),
+  ]);
+  return withStorageSnapshot(store.db, snapshot => operationalContext.run(null,
+    () => withOperationalStore({ db: snapshot, target }, () => exportSelectedTaskBundle(target, taskId, packageRoot))));
+}
+
+async function exportSelectedTaskBundle(target, taskId, packageRoot) {
   safeTaskId(taskId);
   const directory = bundleDirectory(taskId);
   const artifacts = [];
 
-  if (await fileExists(ensureWithin(target, taskArtifactPath(taskId, "descriptor")))) {
+  if (operationalArtifactExists(target, taskArtifactPath(taskId, "descriptor")) ?? await fileExists(ensureWithin(target, taskArtifactPath(taskId, "descriptor")))) {
     const claimProjection = await resolveTaskClaimState(target, { taskId, packageRoot });
     if (!claimProjection.valid) {
       const error = new Error(`Task ${taskId} claim ownership is inconsistent and cannot be exported safely`);
@@ -255,7 +309,7 @@ export async function exportTaskBundle(target, taskId, packageRoot) {
       error.code = "E_BUNDLE_TASK_MISMATCH";
       throw error;
     }
-    await writeJsonArtifact(target, `${directory}/${destinationName}`, source.value, schemaName, packageRoot);
+    await writePortableJsonArtifact(target, `${directory}/${destinationName}`, source.value, schemaName, packageRoot);
     artifacts.push(destinationName);
   }
 
@@ -295,12 +349,12 @@ export async function exportTaskBundle(target, taskId, packageRoot) {
   const qualityBaseline = await readStructuralQualityBaseline(target, taskId, packageRoot);
   const qualityEvaluations = await listStructuralQualityEvaluations(target, taskId, packageRoot);
   if (qualityBaseline) {
-    await writeJsonArtifact(target, `${directory}/structural-quality/baseline.json`, qualityBaseline.value, "structural-quality", packageRoot);
+    await writePortableJsonArtifact(target, `${directory}/structural-quality/baseline.json`, qualityBaseline.value, "structural-quality", packageRoot);
     artifacts.push("structural-quality/baseline.json");
   }
   for (const evaluation of qualityEvaluations) {
     const destination = `structural-quality/evaluations/cycle-${evaluation.value.verificationCycle}-attempt-${evaluation.value.attempt}.json`;
-    await writeJsonArtifact(target, `${directory}/${destination}`, evaluation.value, "structural-quality", packageRoot);
+    await writePortableJsonArtifact(target, `${directory}/${destination}`, evaluation.value, "structural-quality", packageRoot);
     artifacts.push(destination);
   }
 
@@ -330,22 +384,23 @@ export async function exportTaskBundle(target, taskId, packageRoot) {
   }
 
   const handoffDirectory = taskArtifactPath(taskId, "handoffs");
-  if (await fileExists(ensureWithin(target, handoffDirectory))) {
-    const handoffEntries = await readdir(ensureWithin(target, handoffDirectory), { withFileTypes: true });
+  const selectedHandoffs = listOperationalArtifactNames(target, taskId, "handoffs");
+  if (selectedHandoffs !== null || await fileExists(ensureWithin(target, handoffDirectory))) {
+    const handoffEntries = selectedHandoffs !== null ? selectedHandoffs.map(name => ({ name, isFile: () => true })) : await readdir(ensureWithin(target, handoffDirectory), { withFileTypes: true });
     for (const entry of handoffEntries
       .filter((item) => item.isFile() && /^handoff-[A-Za-z0-9_-]+\.json$/u.test(item.name))
       .sort((left, right) => left.name.localeCompare(right.name))) {
       const sourcePath = `${handoffDirectory}/${entry.name}`;
-      const handoff = await readJsonArtifact(target, sourcePath, "handoff-envelope", packageRoot);
+      const handoff = await readBundleSourceJson(target, sourcePath, "handoff-envelope", packageRoot);
       await validateCanonicalHandoff(target, handoff.value, { taskId, packageRoot });
       const destination = `handoffs/${entry.name}`;
-      await writeJsonArtifact(target, `${directory}/${destination}`, handoff.value, "handoff-envelope", packageRoot);
+      await writePortableJsonArtifact(target, `${directory}/${destination}`, handoff.value, "handoff-envelope", packageRoot);
       artifacts.push(destination);
     }
   }
 
-  const rawAttestationBundle = `${taskArtifactPath(taskId, "attestations")}/statement.sigstore.json`;
-  await copyRawFile(target, rawAttestationBundle, `${directory}/attestations/statement.sigstore.json`, artifacts, "attestations/statement.sigstore.json");
+  const rawAttestationBundle = resolveAttestationBundlePath(target, taskId);
+  await copyRawFile(target, rawAttestationBundle, `${directory}/attestations/statement.sigstore.json`, artifacts, "attestations/statement.sigstore.json", taskId);
   if (exportedManifest?.value) {
     exportedManifest.value = await validateCodeManifest(exportedManifest.value, packageRoot);
     if (exportedManifest.value.taskId !== taskId) {
@@ -366,10 +421,10 @@ export async function exportTaskBundle(target, taskId, packageRoot) {
   if (exportedManifest?.value && exportedStatement?.value) {
     assertAttestationStatementBindings(exportedStatement.value, exportedManifest.value, taskId, canonicalFingerprint(exportedManifest.value));
   }
-  const actionArtifacts = await listActions(target, { packageRoot, taskId });
+  const actionArtifacts = await readBundleSourceActions(target,taskId,packageRoot);
   for (const action of actionArtifacts) {
     const destination = `${directory}/actions/${action.actionId}.json`;
-    await writeJsonArtifact(target, destination, action, "action", packageRoot);
+    await writePortableJsonArtifact(target, destination, action, "action", packageRoot);
     artifacts.push(`actions/${action.actionId}.json`);
   }
 
@@ -380,38 +435,11 @@ export async function exportTaskBundle(target, taskId, packageRoot) {
   for (const executionRef of executionRefs) {
     const execution = await readExecutionArtifact({ target, executionRef, packageRoot, taskId });
     const destination = `${directory}/executions/${execution.value.executionId}.json`;
-    await writeJsonArtifact(target, destination, execution.value, "execution", packageRoot);
+    await writePortableJsonArtifact(target, destination, execution.value, "execution", packageRoot);
     artifacts.push(`executions/${execution.value.executionId}.json`);
   }
 
-  // Events
-  let eventsPath = ensureWithin(target, taskArtifactPath(taskId, "events"));
-  if (!(await fileExists(eventsPath))) {
-    eventsPath = ensureWithin(target, ARTIFACT_PATHS.events);
-  }
-  if (await fileExists(eventsPath)) {
-    await assertSafePath(target, `${directory}/events.ndjson`);
-    await writeFileAtomic(ensureWithin(target, `${directory}/events.ndjson`), await readBytes(eventsPath));
-    artifacts.push("events.ndjson");
-  }
-
-  // Gates
-  let gateDirectory = ensureWithin(target, `${taskDirectory(taskId)}/gates`);
-  if (!(await fileExists(gateDirectory))) {
-    gateDirectory = ensureWithin(target, ARTIFACT_PATHS.gates);
-  }
-  if (await fileExists(gateDirectory)) {
-    const entries = await readdir(gateDirectory, { withFileTypes: true });
-    for (const entry of entries.filter((item) => item.isFile() && item.name.endsWith(".json")).sort((left, right) => left.name.localeCompare(right.name))) {
-      const gateName = entry.name.slice(0, -5);
-      const sourcePath = `${gateDirectory.replace(target + "/", "")}/${entry.name}`;
-      const destinationPath = `${directory}/gates/${entry.name}`;
-      const gate = await readJsonArtifact(target, sourcePath, "gate", packageRoot);
-      if (gate.value.taskId !== taskId) continue;
-      await writeJsonArtifact(target, destinationPath, gate.value, "gate", packageRoot);
-      artifacts.push(`gates/${gateName}.json`);
-    }
-  }
+  await exportBundleLedgerAndGates(target, taskId, packageRoot, directory, artifacts);
 
   artifacts.sort();
   const manifest = {
@@ -419,14 +447,17 @@ export async function exportTaskBundle(target, taskId, packageRoot) {
     protocolVersion: PROTOCOL_VERSION,
     taskId,
     artifacts,
+    files: [],
   };
-  await writeJsonArtifact(target, `${directory}/bundle.json`, manifest, "task-bundle", packageRoot);
+  for (const artifact of artifacts) manifest.files.push(await bundleFileBinding(target, `${directory}/${artifact}`, artifact));
+  await writePortableJsonArtifact(target, `${directory}/bundle.json`, manifest, "task-bundle", packageRoot);
   return { ...manifest, path: `${directory}/bundle.json` };
 }
 
 export async function readTaskBundle(target, taskId, packageRoot) {
   const directory = bundleDirectory(taskId);
   const manifest = await readJsonArtifact(target, `${directory}/bundle.json`, "task-bundle", packageRoot);
+  await verifyBundleFileBindings(target, directory, manifest);
   const loaded = {};
   const mappings = {
     "contract.json": ["contract", "current-contract"],
@@ -450,18 +481,7 @@ export async function readTaskBundle(target, taskId, packageRoot) {
   for (const artifact of manifest.value.artifacts) {
     const qualityKind = structuralQualityBundleKind(artifact);
     if (qualityKind) {
-      const qualityArtifact = await readJsonArtifact(target, `${directory}/${artifact}`, "structural-quality", packageRoot);
-      validateStructuralQualityArtifact(qualityArtifact.value, artifact);
-      if (qualityArtifact.value.taskId !== taskId) {
-        throw bundleBindingError("E_BUNDLE_TASK_MISMATCH", `Structural-quality ${qualityKind} taskId does not match its bundle task`);
-      }
-      loaded.structuralQuality ??= { baseline: null, evaluations: [] };
-      if (qualityKind === "baseline") {
-        if (loaded.structuralQuality.baseline) throw bundleBindingError("E_STRUCTURAL_QUALITY_EVIDENCE_STALE", "A bundle cannot contain more than one structural-quality baseline");
-        loaded.structuralQuality.baseline = qualityArtifact.value;
-      } else {
-        loaded.structuralQuality.evaluations.push(qualityArtifact.value);
-      }
+      await loadBundleQualityArtifact(target, directory, artifact, packageRoot, taskId, loaded, qualityKind);
       continue;
     }
     if (artifact.startsWith("executions/") && artifact.endsWith(".json")) {
@@ -585,4 +605,74 @@ export async function readTaskBundle(target, taskId, packageRoot) {
     });
   }
   return { manifest: manifest.value, artifacts: loaded };
+}
+
+async function exportBundleLedgerAndGates(target, taskId, packageRoot, directory, artifacts) {
+  // Events
+  const selectedStore = getOperationalStore(target);
+  if (selectedStore) {
+    async function* ledgerBytes() {
+      for (const row of selectedStore.db.prepare("SELECT event_json FROM events WHERE task_id = ? ORDER BY seq").iterate(taskId)) yield `${JSON.stringify(JSON.parse(row.event_json))}\n`;
+    }
+    await writeFileAtomic(await assertSafePath(target, `${directory}/events.ndjson`), ledgerBytes());
+    artifacts.push("events.ndjson");
+  } else {
+  let eventsPath = ensureWithin(target, taskArtifactPath(taskId, "events"));
+  if (!(await fileExists(eventsPath))) {
+    eventsPath = ensureWithin(target, ARTIFACT_PATHS.events);
+  }
+  if (await fileExists(eventsPath)) {
+    await assertSafePath(target, `${directory}/events.ndjson`);
+    await writeFileAtomic(ensureWithin(target, `${directory}/events.ndjson`), await readBytes(eventsPath));
+    artifacts.push("events.ndjson");
+  }
+  }
+
+  // Gates
+  let gateDirectory = ensureWithin(target, `${taskDirectory(taskId)}/gates`);
+  const selectedGates = listOperationalArtifactNames(target, taskId, "gates");
+  if (selectedGates === null && !(await fileExists(gateDirectory))) {
+    gateDirectory = ensureWithin(target, ARTIFACT_PATHS.gates);
+  }
+  if (selectedGates !== null || await fileExists(gateDirectory)) {
+    const entries = selectedGates !== null ? selectedGates.map(name => ({ name, isFile: () => true })) : await readdir(gateDirectory, { withFileTypes: true });
+    for (const entry of entries.filter((item) => item.isFile() && item.name.endsWith(".json")).sort((left, right) => left.name.localeCompare(right.name))) {
+      const gateName = entry.name.slice(0, -5);
+      const sourcePath = `${gateDirectory.replace(target + "/", "")}/${entry.name}`;
+      const destinationPath = `${directory}/gates/${entry.name}`;
+      const gate = await readBundleSourceJson(target, sourcePath, "gate", packageRoot);
+      if (gate.value.taskId !== taskId) continue;
+      await writePortableJsonArtifact(target, destinationPath, gate.value, "gate", packageRoot);
+      artifacts.push(`gates/${gateName}.json`);
+    }
+  }
+
+}
+
+async function verifyBundleFileBindings(target, directory, manifest) {
+  if (manifest.value.schemaVersion === 2) {
+    const listed = manifest.value.files.map(file => file.path);
+    if (new Set(listed).size !== listed.length || canonicalFingerprint([...listed].sort()) !== canonicalFingerprint([...manifest.value.artifacts].sort())) {
+      throw Object.assign(new Error("Bundle file bindings disagree with included artifacts"), { code: "E_BUNDLE_DIGEST_INVALID" });
+    }
+    for (const binding of manifest.value.files) {
+      const actual = await bundleFileBinding(target, `${directory}/${binding.path}`, binding.path);
+      if (actual.size !== binding.size || actual.sha256 !== binding.sha256) throw Object.assign(new Error(`Bundle bytes disagree with manifest: ${binding.path}`), { code: "E_BUNDLE_DIGEST_INVALID" });
+    }
+  }
+}
+
+async function loadBundleQualityArtifact(target, directory, artifact, packageRoot, taskId, loaded, qualityKind) {
+  const qualityArtifact = await readJsonArtifact(target, `${directory}/${artifact}`, "structural-quality", packageRoot);
+  validateStructuralQualityArtifact(qualityArtifact.value, artifact);
+  if (qualityArtifact.value.taskId !== taskId) {
+    throw bundleBindingError("E_BUNDLE_TASK_MISMATCH", `Structural-quality ${qualityKind} taskId does not match its bundle task`);
+  }
+  loaded.structuralQuality ??= { baseline: null, evaluations: [] };
+  if (qualityKind === "baseline") {
+    if (loaded.structuralQuality.baseline) throw bundleBindingError("E_STRUCTURAL_QUALITY_EVIDENCE_STALE", "A bundle cannot contain more than one structural-quality baseline");
+    loaded.structuralQuality.baseline = qualityArtifact.value;
+  } else {
+    loaded.structuralQuality.evaluations.push(qualityArtifact.value);
+  }
 }

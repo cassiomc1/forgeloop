@@ -1,3 +1,4 @@
+import { overwriteFixtureDescriptorBytes } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { writeFile } from "node:fs/promises";
 import { test } from "node:test";
@@ -21,7 +22,6 @@ import { readTaskRecovery } from "../src/core/task-recovery.js";
 import { readWorkState, createWorkState, writeWorkState } from "../src/core/work-state.js";
 import { readTaskDescriptor } from "../src/core/task-descriptor.js";
 import { ensureWithin } from "../src/core/filesystem.js";
-import { taskArtifactPath } from "../src/core/task-paths.js";
 import { appendProtocolEvent } from "../src/core/events.js";
 import {
   packageRoot,
@@ -121,7 +121,7 @@ test("task-abandon refuses inconsistent ownership and COMPLETE tasks", async () 
   await withRecoveryTarget(async (target) => {
     const { taskId } = await prepareActiveReviewingTask(target, "abandon-corrupt");
     await readTaskDescriptor(target, taskId, packageRoot);
-    await writeFile(ensureWithin(target, taskArtifactPath(taskId, "descriptor")), "{\"taskId\":", "utf8");
+    await overwriteFixtureDescriptorBytes(target, taskId, "{\"taskId\":");
     await assert.rejects(
       () => runTaskAbandon({ target, packageRoot, taskId, acknowledgeAbandonment: true }),
       (error) => error.code === "E_TASK_ABANDON_INCONSISTENT",
@@ -154,11 +154,14 @@ test("task-abandon serializes concurrent callers to one abandonment event", asyn
     ]);
     assert.equal(results.filter((item) => item.status === "fulfilled").length, 1);
     assert.equal(results.filter((item) => item.status === "rejected").length, 1);
-    assert.ok(["E_TASK_ALREADY_ABANDONED", "E_TASK_LOCKED", "E_TASK_ABANDON_UNSAFE"].includes(
+    assert.ok(["E_TASK_ALREADY_ABANDONED", "E_TASK_LOCKED", "E_TASK_ABANDON_UNSAFE", "E_STATE_REVISION_CONFLICT"].includes(
       results.find((item) => item.status === "rejected").reason.code,
-    ));
+    ), results.find((item) => item.status === "rejected").reason.stack);
     const events = await readEvents(target, packageRoot, { taskId });
     assert.equal(events.filter((event) => event.event === "TASK_ABANDONED").length, 1);
+    assert.equal((await validateEventLedger(target, packageRoot, { taskId })).valid, true);
+    const recovery = await readTaskRecovery(target, { packageRoot, taskId });
+    assert.equal(recovery.value.recoveryId, events.find(event => event.event === "TASK_ABANDONED").details.recoveryId);
   });
 });
 

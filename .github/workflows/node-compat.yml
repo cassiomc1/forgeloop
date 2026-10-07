@@ -21,8 +21,9 @@ concurrency:
 
 jobs:
   minimum:
-    name: Node 20 compatibility
-    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+    name: Minimum Node 24.19.0 compatibility
+    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
     timeout-minutes: 15
     steps:
       - name: Check out repository
@@ -32,7 +33,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 20
+          node-version: "24.19.0"
           cache: npm
       - name: Install locked Node toolchain
         run: npm ci --ignore-scripts
@@ -41,22 +42,25 @@ jobs:
           npm run test:quick
           node src/cli.js --help
           node src/cli.js protocol-info --json
+          node --test tests/storage-runtime.test.js tests/storage-store.test.js tests/storage-operational-bootstrap.test.js
 
   expanded:
     name: Node compatibility (${{ matrix.os }}, Node ${{ matrix.node-version }})
-    if: ${{ inputs.expanded == true }}
-    runs-on: ${{ matrix.os }}
+    needs: minimum
+    if: ${{ always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (inputs.expanded == true) }}
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 20
     strategy:
+      max-parallel: 1
       fail-fast: false
       matrix:
         include:
-          - { os: ubuntu-latest, node-version: 20 }
-          - { os: ubuntu-latest, node-version: 22 }
-          - { os: macos-latest, node-version: 20 }
-          - { os: macos-latest, node-version: 24 }
-          - { os: windows-latest, node-version: 20 }
-          - { os: windows-latest, node-version: 24 }
+          - { os: Linux, runner: [self-hosted, Linux, X64, forgeloop-linux-remote], node-version: "24.19.0" }
+          - { os: Linux, runner: [self-hosted, Linux, X64, forgeloop-linux-remote], node-version: 26 }
+          - { os: macOS, runner: [self-hosted, macOS, ARM64, forgeloop-macos-local], node-version: "24.19.0" }
+          - { os: macOS, runner: [self-hosted, macOS, ARM64, forgeloop-macos-local], node-version: 24 }
+          - { os: Windows, runner: [self-hosted, Windows, X64, forgeloop-windows-remote], node-version: "24.19.0" }
+          - { os: Windows, runner: [self-hosted, Windows, X64, forgeloop-windows-remote], node-version: 24 }
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -74,3 +78,4 @@ jobs:
           npm run test:quick
           node src/cli.js --help
           node src/cli.js protocol-info --json
+          node --test tests/storage-runtime.test.js tests/storage-store.test.js tests/storage-operational-bootstrap.test.js

@@ -1380,6 +1380,18 @@
         "provider-source-boundary"
       ],
       "packaged": true
+    },
+    {
+      "path": "docs/SELF_HOSTED_TESTS.md",
+      "id": "self-hosted-tests",
+      "class": "operational",
+      "audience": [
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "self-hosted-node-validation"
+      ],
+      "packaged": true
     }
   ]
 }

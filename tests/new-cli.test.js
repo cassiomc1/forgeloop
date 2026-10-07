@@ -20,6 +20,8 @@ test("preflight, audit, report, and policy expose deterministic local CLI contra
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-new-cli-"));
   try {
     assert.equal(run(target, "init").status, 0);
+    const created = run(target, "task-create", "--task", "local-cli-contract", "--json");
+    assert.equal(created.status, 0, created.stderr);
     const first = run(target, "preflight", "--json");
     const second = run(target, "preflight", "--json");
     assert.equal(first.status, 1);

@@ -19,6 +19,10 @@ async function connectServer(projectPath) {
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
   await server.connect(serverTransport);
   await client.connect(clientTransport);
+  const closeClient = client.close.bind(client);
+  client.close = async () => {
+    try { await closeClient(); } finally { await server.close(); }
+  };
   return client;
 }
 

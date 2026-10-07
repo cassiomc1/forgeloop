@@ -1,14 +1,17 @@
 # ForgeLoop MCP
 
+Requires Node 24.19.0 or newer with built-in `node:sqlite` for this migration candidate.
+
 Local **stdio** Model Context Protocol server exposing the canonical ForgeLoop
 programmatic integration API (`@cassiomc1/forgeloop/integration`).
 
 `@cassiomc1/forgeloop-mcp` is an adapter licensed under the
 [PolyForm Noncommercial License 1.0.0](./LICENSE) and delivered through the
-private, licensed npm channel. It has its own `0.1.x` version line. It supports ForgeLoop core versions `>=1.5.0 <2`; the
-compatibility range is tested by the package smoke flow. Its committed
+private, licensed npm channel. The staged `1.0.0` release requires ForgeLoop core
+`>=2.0.0 <3` as a peer. Development uses the local core through `file:../..`;
+consumer installation requires the released core 2.x package. Its committed
 `package-lock.json` is the reproducible dependency graph used by setup, tests,
-and publication. Release verification uses `npm ci --ignore-scripts`; the
+and publication. Release verification uses `npm ci --install-links --ignore-scripts`; the
 packed package is still checked independently from a clean temporary project.
 
 ForgeLoop MCP is an **adapter over ForgeLoop, never another implementation of

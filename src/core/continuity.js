@@ -1,4 +1,4 @@
-import { unlink } from "node:fs/promises";
+import { withExistingProjectScope } from "../storage/existing-project-scope.js";
 import path from "node:path";
 
 import {
@@ -7,11 +7,12 @@ import {
   readJsonArtifact,
   writeJsonArtifact,
 } from "./artifacts.js";
-import { assertSafePath, ensureWithin, fileExists } from "./filesystem.js";
 import { PROTOCOL_VERSION, WORK_PHASES } from "./protocol.js";
 import { normalizePortableText, assertPortableContextSafe } from "./portable-context.js";
 import { getPackageRoot } from "./templates.js";
 import { taskArtifactPath } from "./task-paths.js";
+import { getOperationalStore, readOperationalText } from "../storage/operational-context.js";
+import { withTaskTransaction } from "./transaction.js";
 
 export const CONTINUITY_PATH = ARTIFACT_PATHS.continuity;
 export const CONTINUITY_SCHEMA_VERSION = 1;
@@ -242,10 +243,17 @@ export async function writeContinuity(target, operationalInput = {}, options = {
 }
 
 export async function clearContinuity(target, options = {}) {
-  const relPath = options.continuityPath ?? options.relativePath ?? (options.taskId ? taskArtifactPath(options.taskId, "continuity") : CONTINUITY_PATH);
-  await assertSafePath(target, relPath);
-  const artifactPath = ensureWithin(target, relPath);
-  if (!(await fileExists(artifactPath))) return { removed: false, path: relPath };
-  await unlink(artifactPath);
-  return { removed: true, path: relPath };
+  if (!options.taskId) throw Object.assign(new Error("Canonical artifact clearing requires a task identity"), { code: "E_STORAGE_OPERATION_UNSUPPORTED" });
+  const relPath = taskArtifactPath(options.taskId, "continuity");
+  const requested = options.continuityPath ?? options.relativePath ?? relPath;
+  if (requested !== relPath) throw Object.assign(new Error("Artifact clearing requires the canonical task path; portable exports are independent files"), { code: "E_STORAGE_OPERATION_UNSUPPORTED", artifacts: [requested] });
+  if (!getOperationalStore(target)) {
+    return withExistingProjectScope(target, () => clearContinuity(target, options));
+  }
+  const operational = readOperationalText(target, relPath);
+  if (operational.text === null) return { removed: false, path: relPath };
+  return withTaskTransaction({ target, taskId: options.taskId, operation: "clear-continuity", packageRoot: options.packageRoot }, async transaction => {
+    transaction.stageDelete(relPath);
+    return { removed: true, path: relPath };
+  });
 }

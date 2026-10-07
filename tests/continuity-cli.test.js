@@ -1,5 +1,7 @@
+import { ensureFixtureTask, readFixtureText, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
+import { taskArtifactPath } from "../src/core/task-paths.js";
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -59,9 +61,11 @@ test("record-continuity parses work-item flags and writes only operational conte
       checks: [], failures: [], blockers: [], verificationEvidence: [],
       lastUpdated: "2026-08-16T16:00:00.000Z",
     };
+    await ensureFixtureTask(target, "task-1", path.resolve("."));
     const result = await runRecordContinuity({
       target,
       packageRoot: path.resolve("."),
+      taskId: "task-1",
       focusId: "mobile-nav",
       focusSummary: "Finish mobile navigation",
       remaining: ["contact:Finish contact form"],
@@ -77,7 +81,7 @@ test("record-continuity parses work-item flags and writes only operational conte
     assert.equal(result.value.currentFocus.id, "mobile-nav");
     assert.equal(result.value.remainingWork[0].id, "contact");
     assert.equal(result.value.knownIssues[0].id, "overflow");
-    const stored = JSON.parse(await readFile(path.join(target, ".forgeloop/continuity.json"), "utf8"));
+    const stored = JSON.parse(await readFixtureText(target, taskArtifactPath("task-1", "continuity")));
     assert.equal(stored.taskId, "task-1");
     assert.equal(stored.phase, "EXECUTING");
   } finally {
@@ -86,17 +90,24 @@ test("record-continuity parses work-item flags and writes only operational conte
 });
 
 test("clear-continuity removes only the continuity artifact", async () => {
-  const { writeFile, mkdir } = await import("node:fs/promises");
+  const { createContinuity } = await import("../src/core/continuity.js");
+  const { createWorkState, writeWorkState } = await import("../src/core/work-state.js");
   const { runClearContinuity } = await import("../src/commands/clear-continuity.js");
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-clear-continuity-"));
+  const taskId = "clear-continuity-task";
   try {
-    await mkdir(path.join(target, ".forgeloop"), { recursive: true });
-    await writeFile(path.join(target, ".forgeloop/continuity.json"), "{}\n");
-    await writeFile(path.join(target, ".forgeloop/work-state.json"), "{}\n");
-    const result = await runClearContinuity({ target });
+    await ensureFixtureTask(target, taskId, path.resolve("."));
+    const state = createWorkState({ taskId, phase: "PLANNED", contractFingerprint: "a".repeat(64) });
+    await writeWorkState(target, state, { taskId });
+    const continuity = createContinuity({ taskId, phase: state.phase, updatedAt: "2026-08-16T17:00:00.000Z",
+      workStateFingerprint: canonicalFingerprint(state), contractFingerprint: state.contractFingerprint,
+      repositoryFingerprint: { branch: null, head: null }, remainingWork: [], knownIssues: [], changedAreas: [], inspectFirst: [] });
+    await overwriteFixtureText(target, taskArtifactPath(taskId, "continuity"), JSON.stringify(continuity));
+    const stateBefore = await readFixtureText(target, taskArtifactPath(taskId, "state"));
+    const result = await runClearContinuity({ target, taskId });
     assert.equal(result.removed, true);
-    await assert.rejects(readFile(path.join(target, ".forgeloop/continuity.json")), /ENOENT/);
-    assert.equal(await readFile(path.join(target, ".forgeloop/work-state.json"), "utf8"), "{}\n");
+    assert.equal(await readFixtureText(target, taskArtifactPath(taskId, "continuity")), null);
+    assert.equal(await readFixtureText(target, taskArtifactPath(taskId, "state")), stateBefore);
   } finally {
     await rm(target, { recursive: true, force: true });
   }

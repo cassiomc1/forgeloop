@@ -1,6 +1,7 @@
+import { assertCollectionValidationParity } from "./helpers/ledger-event-collection.js";
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { mkdtemp, writeFile } from "node:fs/promises";
 import { promisify } from "node:util";
 import os from "node:os";
 import path from "node:path";
@@ -28,6 +29,8 @@ import { taskArtifactPath } from "../src/core/task-paths.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { readWorkState } from "../src/core/work-state.js";
 import { removeTempTree } from "./helpers/rm-safe.js";
+import { withProjectStorage } from "../src/storage/project-boundary.js";
+import { findTaskById, upsertTask, putArtifact, runInTransaction } from "../src/storage/index.js";
 
 const execFileAsync = promisify(execFile);
 const packageRoot = getPackageRoot();
@@ -60,11 +63,38 @@ async function setupTask(target, taskId, route = { workType: "documentation", su
   await runRoute({ target, packageRoot, taskId, ...route });
 }
 
+async function nativeFixtureReader(target) {
+  return callback => withProjectStorage(target, callback, { readOnly: true });
+}
+
+async function readFixtureText(target, filename) {
+  const relative = (path.isAbsolute(filename) ? path.relative(target, filename) : filename).replaceAll("\\", "/");
+  return withProjectStorage(target, store => store.readText(relative), { readOnly: true });
+}
+
+// Deliberate corruption of disposable native authority, preserving indexed
+// projections so domain rules, rather than unrelated index drift, reject it.
+async function overwriteFixtureText(target, filename, text) {
+  const relative = (path.isAbsolute(filename) ? path.relative(target, filename) : filename).replaceAll("\\", "/");
+  await withProjectStorage(target, store => {
+    const task = store.db.prepare("SELECT task_id FROM tasks WHERE task_key = ?").get(relative.split("/")[2]);
+    const payload = JSON.parse(text);
+    runInTransaction(store.db, () => {
+      if (relative.endsWith("work-state.json")) {
+        const current = findTaskById(store.db, task.task_id);
+        upsertTask(store.db, { ...current, state: payload });
+      } else if (relative.endsWith("contract.json")) {
+        putArtifact(store.db, { taskId: task.task_id, kind: "contract", payload, sourceText: text });
+      } else throw new Error(`Unsupported fixture corruption: ${relative}`);
+    });
+  });
+}
+
 async function rewriteStateContractFingerprint(target, taskId, fingerprint) {
   const statePath = path.join(target, taskArtifactPath(taskId, "state"));
-  const state = JSON.parse(await readFile(statePath, "utf8"));
+  const state = JSON.parse(await readFixtureText(target, statePath));
   state.contractFingerprint = fingerprint;
-  await writeFile(statePath, `${JSON.stringify(state, null, 2)}\n`);
+  await overwriteFixtureText(target, statePath, `${JSON.stringify(state, null, 2)}\n`);
 }
 
 async function rehashEvents(target, taskId, events) {
@@ -76,10 +106,10 @@ async function rehashEvents(target, taskId, events) {
     previousHash = next.hash;
     return next;
   });
-  await writeFile(
-    path.join(target, taskArtifactPath(taskId, "events")),
-    `${rebuilt.map((event) => JSON.stringify(event)).join("\n")}\n`,
-  );
+  await withProjectStorage(target, store => runInTransaction(store.db, () => {
+    const update = store.db.prepare("UPDATE events SET event_type = ?, at = ?, previous_hash = ?, hash = ?, event_json = ? WHERE task_id = ? AND seq = ?");
+    for (const event of rebuilt) update.run(event.event, event.at, event.previousHash, event.hash, JSON.stringify(event), taskId, event.seq);
+  }));
 }
 
 test("contract-revise exposes the bounded CLI and MAINTENANCE executor path", () => {
@@ -112,17 +142,18 @@ test("ROUTED contract revision uses the real command path and resets derived aut
   await withTarget(async (target) => {
     const taskId = "revise-routed";
     await setupTask(target, taskId, { workType: "code", surfaces: ["api"], executableChange: true });
-    const before = await readWorkState(target, { packageRoot, taskId });
+    const read = await nativeFixtureReader(target);
+    const before = await read(() => readWorkState(target, { packageRoot, taskId }));
     const execution = await executeForgeLoopCommand({
       projectPath: target,
       command: "contract-revise",
       input: { taskId, preset: "documentation" },
     });
-    assert.equal(execution.ok, true);
+    assert.equal(execution.ok, true, JSON.stringify(execution));
     assert.equal(execution.result.revised, true);
-    const after = await readWorkState(target, { packageRoot, taskId });
-    const contract = await readContract(target, packageRoot, { taskId });
-    const events = await readEvents(target, packageRoot, { taskId });
+    const after = await read(() => readWorkState(target, { packageRoot, taskId }));
+    const contract = await read(() => readContract(target, packageRoot, { taskId }));
+    const events = await read(() => readEvents(target, packageRoot, { taskId }));
     const revision = events.find((event) => event.event === "CONTRACT_REVISED");
     const commit = events[events.indexOf(revision) + 1];
     assert.equal(after.phase, "ROUTED");
@@ -134,11 +165,11 @@ test("ROUTED contract revision uses the real command path and resets derived aut
     assert.equal(revision.details.revisedStateRevision, after.revision);
     assert.equal(commit.event, "TRANSACTION_COMMITTED");
     assert.equal(commit.details.operation, "contract-revise");
-    const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    const ledger = await read(() => validateEventLedger(target, packageRoot, { taskId }));
     assert.equal(ledger.valid, true);
     assert.deepEqual(validateStateLedgerCoherence(after, ledger.events), []);
-    assert.equal((await getNextAction({ target, packageRoot, taskId })).nextAction, NEXT_ACTIONS.RESOLVE_STALE_ROUTE);
-    const claim = await resolveTaskClaimState(target, { packageRoot, taskId });
+    assert.equal((await read(() => getNextAction({ target, packageRoot, taskId }))).nextAction, NEXT_ACTIONS.RESOLVE_STALE_ROUTE);
+    const claim = await read(() => resolveTaskClaimState(target, { packageRoot, taskId }));
     assert.equal(claim.claimState, "ACTIVE");
     assert.equal(claim.ownershipValid, true);
     assert.equal(claim.mutationAllowed, true);
@@ -151,13 +182,13 @@ test("identical contract revision is idempotent and concurrent callers commit ex
     await setupTask(target, taskId);
     const first = await runContractRevise({ target, packageRoot, taskId, preset: "bug" });
     await runRoute({ target, packageRoot, taskId, workType: "documentation", surfaces: ["config"], executableChange: false });
-    const eventsAfterFirst = await readFile(path.join(target, taskArtifactPath(taskId, "events")), "utf8");
+    const eventsAfterFirst = await readFixtureText(target, taskArtifactPath(taskId, "events"));
     const stateAfterFirst = await readWorkState(target, { packageRoot, taskId });
     const second = await runContractRevise({ target, packageRoot, taskId, preset: "bug" });
     assert.equal(first.revised, true);
     assert.equal(second.revised, false);
     assert.equal(second.alreadyCurrent, true);
-    assert.equal(await readFile(path.join(target, taskArtifactPath(taskId, "events")), "utf8"), eventsAfterFirst);
+    assert.equal(await readFixtureText(target, taskArtifactPath(taskId, "events")), eventsAfterFirst);
     assert.deepEqual(await readWorkState(target, { packageRoot, taskId }), stateAfterFirst);
 
     const concurrentTaskId = "revise-concurrent";
@@ -168,6 +199,7 @@ test("identical contract revision is idempotent and concurrent callers commit ex
     ]);
     assert.deepEqual(results.map((result) => result.revised).sort(), [false, true]);
     const ledger = await validateEventLedger(target, packageRoot, { taskId: concurrentTaskId });
+    assertCollectionValidationParity(ledger.events);
     assert.equal(ledger.valid, true);
     assert.equal(ledger.events.filter((event) => event.event === "CONTRACT_REVISED").length, 1);
     assert.equal(ledger.events.filter((event) => event.event === "TRANSACTION_COMMITTED"
@@ -196,9 +228,11 @@ test("stale-route recovery exposes and executes the canonical route commandSpec"
   await withTarget(async (target) => {
     const taskId = "revise-stale-route-executable";
     await setupTask(target, taskId, { workType: "code", surfaces: ["api"], executableChange: true });
-    await runContractRevise({ target, packageRoot, taskId, preset: "documentation" });
+    const read = await nativeFixtureReader(target);
+    const revised = await executeForgeLoopCommand({ projectPath: target, command: "contract-revise", input: { taskId, preset: "documentation" } });
+    assert.equal(revised.ok, true, JSON.stringify(revised));
 
-    const next = await getNextAction({ target, packageRoot, taskId });
+    const next = await read(() => getNextAction({ target, packageRoot, taskId }));
     assert.equal(next.nextAction, NEXT_ACTIONS.RESOLVE_STALE_ROUTE);
     assert.equal(next.commandSpecs.length > 0, true);
     const spec = next.commandSpecs[0];
@@ -212,12 +246,12 @@ test("stale-route recovery exposes and executes the canonical route commandSpec"
     ]);
     const execution = await COMMAND_EXECUTORS.route({ target, packageRoot, options: parsed.options });
     assert.ok(execution.result);
-    const state = await readWorkState(target, { packageRoot, taskId });
-    const contract = await readContract(target, packageRoot, { taskId });
-    const route = await readPersistedRoute(target, packageRoot, { taskId });
+    const state = await read(() => readWorkState(target, { packageRoot, taskId }));
+    const contract = await read(() => readContract(target, packageRoot, { taskId }));
+    const route = await read(() => readPersistedRoute(target, packageRoot, { taskId }));
     assert.equal(route.value.contractFingerprint, contract.fingerprint);
     assert.equal(state.routeFingerprint, route.fingerprint);
-    assert.notEqual((await getNextAction({ target, packageRoot, taskId })).nextAction, NEXT_ACTIONS.RESOLVE_STALE_ROUTE);
+    assert.notEqual((await read(() => getNextAction({ target, packageRoot, taskId }))).nextAction, NEXT_ACTIONS.RESOLVE_STALE_ROUTE);
   });
 });
 
@@ -226,18 +260,18 @@ test("contract revision fails closed when the pre-revision route identity is cor
     const taskId = "revise-route-corruption";
     await setupTask(target, taskId);
     const statePath = path.join(target, taskArtifactPath(taskId, "state"));
-    const beforeContract = await readFile(path.join(target, taskArtifactPath(taskId, "contract")), "utf8");
-    const beforeEvents = await readFile(path.join(target, taskArtifactPath(taskId, "events")), "utf8");
-    const state = JSON.parse(await readFile(statePath, "utf8"));
+    const beforeContract = await readFixtureText(target, taskArtifactPath(taskId, "contract"));
+    const beforeEvents = await readFixtureText(target, taskArtifactPath(taskId, "events"));
+    const state = JSON.parse(await readFixtureText(target, statePath));
     state.routeFingerprint = "f".repeat(64);
-    await writeFile(statePath, `${JSON.stringify(state, null, 2)}\n`);
+    await overwriteFixtureText(target, statePath, `${JSON.stringify(state, null, 2)}\n`);
 
     await assert.rejects(
       runContractRevise({ target, packageRoot, taskId, preset: "bug" }),
       (error) => error.code === "E_CONTRACT_REVISION_UNSAFE" || /ownership is inconsistent/.test(error.message),
     );
-    assert.equal(await readFile(path.join(target, taskArtifactPath(taskId, "contract")), "utf8"), beforeContract);
-    assert.equal(await readFile(path.join(target, taskArtifactPath(taskId, "events")), "utf8"), beforeEvents);
+    assert.equal(await readFixtureText(target, taskArtifactPath(taskId, "contract")), beforeContract);
+    assert.equal(await readFixtureText(target, taskArtifactPath(taskId, "events")), beforeEvents);
   });
 });
 
@@ -287,6 +321,7 @@ test("historical checkpoint revalidation remains valid through canonical contrac
       && event.details.previousRouteFingerprint === checkpoint.details.routeFingerprint);
     const reboundIndex = events.indexOf(rebound);
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
     const claim = await resolveTaskClaimState(target, { packageRoot, taskId });
     assert.ok(rebound);
     assert.equal(events[reboundIndex + 1].event, "TRANSACTION_COMMITTED");
@@ -314,9 +349,10 @@ test("manual rollback to an intermediate contract revision remains inconsistent"
     assert.equal(rollback.revised, true);
     const finalState = await readWorkState(target, { packageRoot, taskId });
     const contractPath = path.join(target, taskArtifactPath(taskId, "contract"));
-    await writeFile(contractPath, `${JSON.stringify(initial.value, null, 2)}\n`);
+    await overwriteFixtureText(target, contractPath, `${JSON.stringify(initial.value, null, 2)}\n`);
     await rewriteStateContractFingerprint(target, taskId, contractFingerprint(initial.value));
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
     const state = await readWorkState(target, { packageRoot, taskId });
     const coherence = validateStateLedgerCoherence(state, ledger.events);
     const claim = await resolveTaskClaimState(target, { packageRoot, taskId });
@@ -334,9 +370,9 @@ test("current contract descriptor claims survive a revision", async () => {
     const taskId = "revise-claims";
     await setupTask(target, taskId, undefined, ["README.md"]);
     const descriptorPath = path.join(target, taskArtifactPath(taskId, "descriptor"));
-    const before = await readFile(descriptorPath, "utf8");
+    const before = await readFixtureText(target, descriptorPath);
     await runContractRevise({ target, packageRoot, taskId, preset: "bug" });
-    assert.equal(await readFile(descriptorPath, "utf8"), before);
+    assert.equal(await readFixtureText(target, descriptorPath), before);
     assert.deepEqual((await readContract(target, packageRoot, { taskId })).value.deliverables, ["README.md"]);
   });
 });
@@ -348,16 +384,16 @@ test("schema-invalid candidates leave contract, state, and ledger unchanged", as
     const candidate = createPresetContract({ taskId, preset: "bug", claims: [] });
     delete candidate.objective;
     await writeFile(path.join(target, "invalid.json"), `${JSON.stringify(candidate)}\n`);
-    const beforeContract = await readFile(path.join(target, taskArtifactPath(taskId, "contract")), "utf8");
-    const beforeState = await readFile(path.join(target, taskArtifactPath(taskId, "state")), "utf8");
-    const beforeEvents = await readFile(path.join(target, taskArtifactPath(taskId, "events")), "utf8");
+    const beforeContract = await readFixtureText(target, taskArtifactPath(taskId, "contract"));
+    const beforeState = await readFixtureText(target, taskArtifactPath(taskId, "state"));
+    const beforeEvents = await readFixtureText(target, taskArtifactPath(taskId, "events"));
     await assert.rejects(
       runContractRevise({ target, packageRoot, taskId, contractFile: "invalid.json" }),
       (error) => error.code === "E_CONTRACT_REVISION_UNSAFE",
     );
-    assert.equal(await readFile(path.join(target, taskArtifactPath(taskId, "contract")), "utf8"), beforeContract);
-    assert.equal(await readFile(path.join(target, taskArtifactPath(taskId, "state")), "utf8"), beforeState);
-    assert.equal(await readFile(path.join(target, taskArtifactPath(taskId, "events")), "utf8"), beforeEvents);
+    assert.equal(await readFixtureText(target, taskArtifactPath(taskId, "contract")), beforeContract);
+    assert.equal(await readFixtureText(target, taskArtifactPath(taskId, "state")), beforeState);
+    assert.equal(await readFixtureText(target, taskArtifactPath(taskId, "events")), beforeEvents);
   });
 });
 
@@ -367,15 +403,15 @@ test("late phases and an execution-started ROUTED spoof refuse contract revision
       const taskId = `revise-late-${phase.toLowerCase()}`;
       await setupTask(target, taskId);
       const statePath = path.join(target, taskArtifactPath(taskId, "state"));
-      const state = JSON.parse(await readFile(statePath, "utf8"));
+      const state = JSON.parse(await readFixtureText(target, statePath));
       state.phase = phase;
-      await writeFile(statePath, `${JSON.stringify(state, null, 2)}\n`);
+      await overwriteFixtureText(target, statePath, `${JSON.stringify(state, null, 2)}\n`);
       await assert.rejects(
         runContractRevise({ target, packageRoot, taskId, preset: "bug" }),
         (error) => error.code === "E_CONTRACT_REVISION_UNSAFE" || /ownership is inconsistent/.test(error.message),
       );
       state.phase = "ROUTED";
-      await writeFile(statePath, `${JSON.stringify(state, null, 2)}\n`);
+      await overwriteFixtureText(target, statePath, `${JSON.stringify(state, null, 2)}\n`);
     }
 
     const taskId = "revise-execution-started-spoof";
@@ -384,9 +420,9 @@ test("late phases and an execution-started ROUTED spoof refuse contract revision
     await runAdvance({ target, packageRoot, taskId, to: "PLANNED" });
     await runAdvance({ target, packageRoot, taskId, to: "EXECUTING" });
     const statePath = path.join(target, taskArtifactPath(taskId, "state"));
-    const state = JSON.parse(await readFile(statePath, "utf8"));
+    const state = JSON.parse(await readFixtureText(target, statePath));
     state.phase = "ROUTED";
-    await writeFile(statePath, `${JSON.stringify(state, null, 2)}\n`);
+    await overwriteFixtureText(target, statePath, `${JSON.stringify(state, null, 2)}\n`);
     await assert.rejects(
       runContractRevise({ target, packageRoot, taskId, preset: "bug" }),
       (error) => error.code === "E_CONTRACT_REVISION_UNSAFE" || /ownership is inconsistent/.test(error.message),
@@ -409,6 +445,7 @@ test("tampering a historical CONTRACT_REVISED detail fails after canonical progr
     revision.details.previousStateRevision = revision.details.revisedStateRevision + 4;
     await rehashEvents(target, taskId, events);
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
     assert.equal(ledger.valid, false);
     assert.ok(ledger.errors.some((error) => error.code === "E_CONTRACT_REVISION_UNSAFE"));
     const claim = await resolveTaskClaimState(target, { packageRoot, taskId });
@@ -434,6 +471,7 @@ test("competing candidate revisions serialize without a lost update and can form
     const loser = results.findIndex((result) => result.status === "rejected");
     await runContractRevise({ target, packageRoot, taskId, contractFile: loser === 0 ? "candidate-c2.json" : "candidate-c3.json" });
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
     assert.equal(ledger.valid, true);
     assert.equal(ledger.events.filter((event) => event.event === "CONTRACT_REVISED").length, 2);
     assert.deepEqual(validateStateLedgerCoherence(await readWorkState(target, { packageRoot, taskId }), ledger.events), []);

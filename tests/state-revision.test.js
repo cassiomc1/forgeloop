@@ -1,3 +1,4 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
@@ -35,11 +36,12 @@ function deferred() {
 test("mutateWorkState rejects a stale expected revision without overwriting newer state", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-state-revision-"));
   try {
-    await writeWorkState(target, state(), { packageRoot });
-    const first = await mutateWorkState(target, { packageRoot, expectedRevision: 0 }, (current) => ({ ...current, pendingSteps: ["first"] }));
+    await ensureFixtureTask(target, "revision-task", packageRoot);
+    await writeWorkState(target, state(), { packageRoot, taskId: "revision-task" });
+    const first = await mutateWorkState(target, { packageRoot, taskId: "revision-task", expectedRevision: 0 }, (current) => ({ ...current, pendingSteps: ["first"] }));
     assert.equal(first.revision, 1);
     await assert.rejects(
-      () => mutateWorkState(target, { packageRoot, expectedRevision: 0 }, (current) => ({ ...current, pendingSteps: ["stale"] })),
+      () => mutateWorkState(target, { packageRoot, taskId: "revision-task", expectedRevision: 0 }, (current) => ({ ...current, pendingSteps: ["stale"] })),
       (error) => error.code === "E_STATE_REVISION_CONFLICT",
     );
   } finally {
@@ -50,12 +52,13 @@ test("mutateWorkState rejects a stale expected revision without overwriting newe
 test("concurrent mutations cannot both commit from the same work-state revision", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-state-revision-"));
   try {
-    await writeWorkState(target, state(), { packageRoot });
+    await ensureFixtureTask(target, "revision-task", packageRoot);
+    await writeWorkState(target, state(), { packageRoot, taskId: "revision-task" });
     const firstUpdaterEntered = deferred();
     const releaseFirstUpdater = deferred();
     const first = mutateWorkState(
       target,
-      { packageRoot, expectedRevision: 0 },
+      { packageRoot, taskId: "revision-task", expectedRevision: 0 },
       async (current) => {
         firstUpdaterEntered.resolve();
         await releaseFirstUpdater.promise;
@@ -63,7 +66,7 @@ test("concurrent mutations cannot both commit from the same work-state revision"
       },
     );
     await firstUpdaterEntered.promise;
-    const second = mutateWorkState(target, { packageRoot, expectedRevision: 0 }, (current) => ({ ...current, pendingSteps: ["second"] }));
+    const second = mutateWorkState(target, { packageRoot, taskId: "revision-task", expectedRevision: 0 }, (current) => ({ ...current, pendingSteps: ["second"] }));
     releaseFirstUpdater.resolve();
     const results = await Promise.allSettled([first, second]);
     assert.equal(results.filter((result) => result.status === "fulfilled").length, 1);

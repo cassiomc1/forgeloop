@@ -1,3 +1,4 @@
+import { isLedgerEventCollection, ledgerEventAt, ledgerEntriesOfTypes } from "./ledger-event-collection.js";
 import { canonicalFingerprint } from "./artifacts.js";
 
 export const GATE_SATISFIED_EVENT = "GATE_SATISFIED";
@@ -68,20 +69,20 @@ function isValidGateCommit(gateEvent, commitEvent, operation) {
 }
 
 export function resolveGateRecordBoundary(events, gateEvent) {
-  if (!Array.isArray(events) || !gateEvent || gateEvent.event !== GATE_SATISFIED_EVENT) return null;
+  if (!isLedgerEventCollection(events) || !gateEvent || gateEvent.event !== GATE_SATISFIED_EVENT) return null;
   const index = gateIndex(events, gateEvent, GATE_SATISFIED_EVENT);
   if (index < 0) return null;
-  const commitEvent = events[index + 1];
+  const commitEvent = ledgerEventAt(events, index + 1);
   return isValidGateCommit(gateEvent, commitEvent, "gate-record")
     ? { gateEvent, transactionCommitEvent: commitEvent }
     : null;
 }
 
 export function resolveGateRevalidationBoundary(events, gateEvent) {
-  if (!Array.isArray(events) || !gateEvent || gateEvent.event !== GATE_REVALIDATED_EVENT) return null;
+  if (!isLedgerEventCollection(events) || !gateEvent || gateEvent.event !== GATE_REVALIDATED_EVENT) return null;
   const index = gateIndex(events, gateEvent, GATE_REVALIDATED_EVENT);
   if (index < 0) return null;
-  const commitEvent = events[index + 1];
+  const commitEvent = ledgerEventAt(events, index + 1);
   return isValidGateCommit(gateEvent, commitEvent, "gate-revalidate")
     ? { gateEvent, transactionCommitEvent: commitEvent }
     : null;
@@ -96,7 +97,7 @@ export function hasCurrentGateEvidence(events, taskId, gate, latestContractRevis
 
 export function validateGateSatisfactionBindings(events = []) {
   const errors = [];
-  for (const [index, event] of events.entries()) {
+  for (const [index, event] of ledgerEntriesOfTypes(events, [GATE_SATISFIED_EVENT, GATE_REVALIDATED_EVENT])) {
     if (![GATE_SATISFIED_EVENT, GATE_REVALIDATED_EVENT].includes(event.event)) continue;
     const revalidated = event.event === GATE_REVALIDATED_EVENT;
     try {

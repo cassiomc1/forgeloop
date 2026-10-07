@@ -62,7 +62,7 @@ test("template entries use the inline .gitignore source when the package omits .
     assert.equal(ignoredTemplate.legacyRelativePath, ".forgeloop/.gitignore");
     assert.equal(
       ignoredTemplate.bytes.toString("utf8"),
-      "# Local resumable task state is untrusted, target-specific data.\nwork-state.json\nexecutions/\nrepository-index/\n",
+      "# Local resumable task state is untrusted, target-specific data.\nwork-state.json\nstate.sqlite\nstate.sqlite-*\nstorage-version.json\nexecutions/\nrepository-index/\n",
     );
   } finally {
     await rm(packageRoot, { recursive: true, force: true });

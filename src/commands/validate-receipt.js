@@ -4,13 +4,17 @@ import { assertJsonBytes, assertJsonLimits } from "../core/json-safety.js";
 import { ARTIFACT_PATHS } from "../core/artifacts.js";
 import { taskArtifactPath } from "../core/task-paths.js";
 import { withResolvedTask } from "../core/task-command.js";
+import { readOperationalText } from "../storage/operational-context.js";
+import { isOperationalArtifactPath, needsExistingProjectScope, withExistingProjectScope } from "../storage/existing-project-scope.js";
 
 async function validateReceiptFile(target, packageRoot, relativeFile) {
   await assertSafePath(target, relativeFile);
   const receiptPath = ensureWithin(target, relativeFile);
   let receipt;
   try {
-    const bytes = await readBytes(receiptPath);
+    const operational = readOperationalText(target, relativeFile);
+    if (operational.selected && operational.text === null) throw new Error("Receipt is missing from canonical storage");
+    const bytes = operational.selected ? Buffer.from(operational.text, "utf8") : await readBytes(receiptPath);
     assertJsonBytes(bytes, relativeFile);
     receipt = JSON.parse(bytes.toString("utf8"));
     assertJsonLimits(receipt, relativeFile);
@@ -43,6 +47,9 @@ export async function runValidateReceipt({
   file = null,
   taskId = null,
 } = {}) {
+  if ((!file || isOperationalArtifactPath(file)) && await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => runValidateReceipt({ target, packageRoot, file, taskId }), { readOnly: true });
+  }
   if (file) {
     return validateReceiptFile(target, packageRoot, file);
   }

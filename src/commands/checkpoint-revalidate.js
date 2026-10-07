@@ -1,3 +1,4 @@
+import { withProjectReadSnapshot } from "../storage/project-read-snapshot.js";
 import { canonicalFingerprint } from "../core/artifacts.js";
 import { readContract } from "../core/contract.js";
 import {
@@ -10,7 +11,7 @@ import { currentRepositoryFingerprint } from "../core/repository.js";
 import { resolveTaskContext } from "../core/task-context.js";
 import { taskArtifactPath } from "../core/task-paths.js";
 import { assertTaskMutationAllowed } from "../core/task-claim-state.js";
-import { withTaskTransaction } from "../core/transaction.js";
+import { getTaskTransaction, withTaskTransaction } from "../core/transaction.js";
 import {
   CHECKPOINT_REVALIDATED_EVENT,
   assertCheckpointRevalidatedDetails,
@@ -47,6 +48,10 @@ function assertRouteIdentity(state, contract, route) {
 }
 
 async function inspectEligibility(target, packageRoot, taskId) {
+  return withProjectReadSnapshot(target, () => inspectSelectedEligibility(target, packageRoot, taskId));
+}
+
+async function inspectSelectedEligibility(target, packageRoot, taskId) {
   const state = await readWorkState(target, { packageRoot, taskId });
   if (!state) throw revalidationError("A persisted work-state checkpoint is required");
   if (state.phase !== "ROUTED") throw revalidationError(`Checkpoint revalidation supports phase ROUTED, found ${state.phase}`);
@@ -162,13 +167,24 @@ export async function runCheckpointRevalidate({ target, packageRoot, taskId } = 
   const effectiveTaskId = context.taskId;
   const initial = await inspectEligibility(target, packageRoot, effectiveTaskId);
   if (initial.alreadyFresh) return resultFor(effectiveTaskId, initial.state, initial.repository, null, null, true);
-  return withTaskTransaction({
-    target,
-    taskId: effectiveTaskId,
-    operation: "checkpoint-revalidate",
-    packageRoot,
-    recordCommitEvent: false,
-  }, async (transaction) => revalidateLocked(target, packageRoot, effectiveTaskId, transaction));
+  const nested = Boolean(await getTaskTransaction(target));
+  try {
+    return await withTaskTransaction({
+      target,
+      taskId: effectiveTaskId,
+      operation: "checkpoint-revalidate",
+      packageRoot,
+      recordCommitEvent: false,
+    }, async (transaction) => revalidateLocked(target, packageRoot, effectiveTaskId, transaction));
+  } catch (error) {
+    if (nested || error?.code !== "E_STATE_REVISION_CONFLICT") throw error;
+    // A competing writer may have completed this exact revalidation. Recheck
+    // all eligibility and history after our preparation rolled back; never
+    // replay mutation or convert an unrelated conflict into success.
+    const current = await inspectEligibility(target, packageRoot, effectiveTaskId);
+    if (!current.alreadyFresh) throw error;
+    return resultFor(effectiveTaskId, current.state, current.repository, null, null, true);
+  }
 }
 
 export function formatCheckpointRevalidateResult(result) {

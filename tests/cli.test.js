@@ -18,7 +18,9 @@ import { createContract, writeContract } from "../src/core/contract.js";
 import { appendProtocolEvent } from "../src/core/events.js";
 import { runPreflight } from "../src/commands/preflight.js";
 import { evaluateRoute } from "../src/core/router.js";
-import { persistRoute } from "../src/core/route-artifact.js";
+import { persistRoute, readPersistedRoute } from "../src/core/route-artifact.js";
+import { withProjectStorage } from "../src/storage/project-boundary.js";
+import { readOperationalText } from "../src/storage/operational-context.js";
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const cliPath = path.join(repositoryRoot, "src", "cli.js");
@@ -52,6 +54,9 @@ function runCliDirect(cwd, ...args) {
 }
 
 async function setupExecutingTarget(target) {
+  const created = runCli(target, "task-create", "--task", "task-cli-next", "--claim", "src/commands/next.js");
+  assert.equal(created.status, 0, created.stderr);
+  return withProjectStorage(target, async () => {
   const contract = createContract({
     taskId: "task-cli-next",
     objective: "Expose deterministic lifecycle navigation through the CLI",
@@ -65,12 +70,12 @@ async function setupExecutingTarget(target) {
     sourceRefs: [],
   });
   const fingerprint = contractFingerprint(contract);
-  await writeContract(target, contract, repositoryRoot);
+  await writeContract(target, contract, repositoryRoot, { taskId: contract.taskId });
   const route = await persistRoute(
     target,
     evaluateRoute({ workType: "code", behaviorChange: true }),
     repositoryRoot,
-    { contractFingerprint: fingerprint },
+    { contractFingerprint: fingerprint, taskId: contract.taskId },
   );
   await writeWorkState(target, createWorkState({
     taskId: contract.taskId,
@@ -88,11 +93,12 @@ async function setupExecutingTarget(target) {
     failures: [],
     blockers: [],
     verificationEvidence: [],
-  }), { packageRoot: repositoryRoot });
-  await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, repositoryRoot);
-  await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, repositoryRoot);
-  await runPreflight({ target, packageRoot: repositoryRoot });
-  await appendProtocolEvent(target, { taskId: contract.taskId, event: "EXECUTION_STARTED" }, repositoryRoot);
+  }), { packageRoot: repositoryRoot, taskId: contract.taskId });
+  await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, repositoryRoot, { taskId: contract.taskId });
+  await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, repositoryRoot, { taskId: contract.taskId });
+  await runPreflight({ target, packageRoot: repositoryRoot, taskId: contract.taskId });
+  await appendProtocolEvent(target, { taskId: contract.taskId, event: "EXECUTION_STARTED" }, repositoryRoot, { taskId: contract.taskId });
+  });
 }
 
 test("next renders shared lifecycle guidance in human and JSON formats", async () => {
@@ -481,9 +487,13 @@ test("reports an existing adapter that was not managed by init", async () => {
 
 test("route emits stable JSON and reason codes", async () => {
   await withTarget(async (target) => {
+    const created = runCli(target, "task-create", "--task", "route-json", "--json");
+    assert.equal(created.status, 0, created.stderr);
     const result = runCli(
       target,
       "route",
+      "--task",
+      "route-json",
       "--work",
       "api-auth",
       "--surface",
@@ -495,16 +505,24 @@ test("route emits stable JSON and reason codes", async () => {
 
     assert.equal(result.status, 0, result.stderr);
     const report = JSON.parse(result.stdout);
-    assert.deepEqual(report.guides, ["clean", "test", "security", "performance"]);
+    assert.deepEqual([...report.guides].sort(), ["clean", "performance", "security", "test"]);
     assert.ok(report.reasons.security.includes("WORK_API_AUTH"));
+    const repeated = runCli(target, "route", "--task", "route-json", "--work", "api-auth", "--surface", "api", "--surface", "auth", "--json");
+    assert.equal(repeated.status, 0, repeated.stderr);
+    assert.deepEqual(JSON.parse(repeated.stdout).guides, report.guides);
+    assert.deepEqual((await readPersistedRoute(target, repositoryRoot, { taskId: "route-json" })).value.guides, report.guides);
   });
 });
 
 test("route human output explains selected guides", async () => {
   await withTarget(async (target) => {
+    const created = runCli(target, "task-create", "--task", "route-human", "--json");
+    assert.equal(created.status, 0, created.stderr);
     const result = runCli(
       target,
       "route",
+      "--task",
+      "route-human",
       "--work",
       "complete-website",
       "--surface",
@@ -614,12 +632,13 @@ test("status reports absent and fresh work state", async () => {
     assert.equal(absent.status, 0, absent.stderr);
     assert.equal(JSON.parse(absent.stdout).status, "ABSENT");
 
-    await writeWorkState(target, makeState());
+    assert.equal(runCli(target, "task-create", "--task", "cli-state", "--claim", "src").status, 0);
+    await withProjectStorage(target, () => writeWorkState(target, makeState(), { taskId: "cli-state" }));
     await writeFile(
-      path.join(target, ".forgeloop", "current-contract.json"),
+      path.join(target, "status-contract.json"),
       `${JSON.stringify({ objective: "cli state" })}\n`,
     );
-    const fresh = runCli(target, "status", "--contract-file", ".forgeloop/current-contract.json", "--json");
+    const fresh = runCli(target, "status", "--contract-file", "status-contract.json", "--json");
     assert.equal(fresh.status, 0, fresh.stderr);
     const report = JSON.parse(fresh.stdout);
     assert.equal(report.status, "FRESH");
@@ -629,6 +648,8 @@ test("status reports absent and fresh work state", async () => {
 
 test("status refuses to claim freshness when the current contract is not verified", async () => {
   await withTarget(async (target) => {
+    assert.equal(runCli(target, "init").status, 0);
+    assert.equal(runCli(target, "task-create", "--task", "cli-state", "--claim", "src").status, 0);
     await writeWorkState(target, makeState());
     const result = runCli(target, "status", "--json");
     const report = JSON.parse(result.stdout);
@@ -642,6 +663,8 @@ test("status refuses to claim freshness when the current contract is not verifie
 
 test("status reports repository revalidation when checkpoint fingerprint drifts", async () => {
   await withTarget(async (target) => {
+    assert.equal(runCli(target, "init").status, 0);
+    assert.equal(runCli(target, "task-create", "--task", "cli-state", "--claim", "src").status, 0);
     await writeWorkState(target, makeState({ repositoryFingerprint: { branch: "main", head: "old" } }));
     const result = runCli(target, "status", "--json");
     const report = JSON.parse(result.stdout);
@@ -655,7 +678,8 @@ test("status reports repository revalidation when checkpoint fingerprint drifts"
 test("validate-state validates without mutation and clear-state removes only checkpoint", async () => {
   await withTarget(async (target) => {
     assert.equal(runCli(target, "init").status, 0);
-    await writeWorkState(target, makeState());
+    assert.equal(runCli(target, "task-create", "--task", "cli-state", "--claim", "src").status, 0);
+    await withProjectStorage(target, () => writeWorkState(target, makeState(), { taskId: "cli-state" }));
     await mkdir(path.join(target, ".mdfiles"), { recursive: true });
     await writeFile(path.join(target, ".mdfiles", "legacy-marker.txt"), "preserve legacy data\n");
 
@@ -725,7 +749,9 @@ test("usage-record persists actor telemetry and metrics preserve its provenance"
     const usageResult = JSON.parse(recorded.stdout);
     assert.equal(usageResult.usage.source, "ACTOR_REPORTED");
     assert.equal(usageResult.usage.totalTokens, 16);
-    await readFile(path.join(target, usageResult.path), "utf8");
+    const retainedUsage = await withProjectStorage(target, () => readOperationalText(target, usageResult.path), { readOnly: true });
+    assert.equal(retainedUsage.selected, true);
+    assert.equal(JSON.parse(retainedUsage.text).usage.totalTokens, 16);
 
     const metrics = runCli(target, "metrics", "--task", "usage-cli", "--json");
     assert.equal(metrics.status, 0, metrics.stderr);

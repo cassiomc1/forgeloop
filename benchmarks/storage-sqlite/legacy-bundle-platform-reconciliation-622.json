@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "scope": "Reconcile historical remote legacy bundle inspection evidence601 against selected all-platform execution617",
+  "sourceSha256": {
+    "tests/bundle.test.js": "9b02b37955ebed548d75894059c7f63f9bf6e6d23fc8b0d86b98149024a3ed55",
+    "src/core/bundles.js": "8d74bf947d73e3a9ae5b4149da78e6ff8584d48d6c04f12bf296fcaa487e1991"
+  },
+  "evidence": "current-platform-closure-617.json",
+  "acceptedSnapshot": "611b",
+  "legacyBundleControls": [
+    "2MiB attachment bytes and size preserved",
+    "nonempty action payload identical",
+    "renamed action source identity refused",
+    "linked signature bytes refused"
+  ],
+  "hostEvidence": {
+    "macos": {
+      "exitCode": 0,
+      "testSummaries": [
+        "\u2139 tests 26",
+        "\u2139 pass 26",
+        "\u2139 fail 0",
+        "\u2139 skipped 0"
+      ],
+      "rawLog": "/tmp/sqlite-scope617-macos.log"
+    },
+    "windows": {
+      "sourceFiles": 2639,
+      "sourceDriftBefore": [],
+      "sourceDriftAfter": [],
+      "exitCode": 0,
+      "signal": null,
+      "testFiles": [
+        "tests/storage-reservation-projection.test.js",
+        "tests/storage-guard-parity.test.js",
+        "tests/storage-multiprocess.test.js",
+        "tests/storage-state-classification-snapshot.test.js",
+        "tests/storage-bundle-authority-boundary.test.js",
+        "tests/bundle.test.js",
+        "tests/storage-event-export-validation.test.js"
+      ],
+      "testSummaries": [
+        "\u2139 tests 26",
+        "\u2139 pass 26",
+        "\u2139 fail 0",
+        "\u2139 skipped 0"
+      ]
+    },
+    "linux": {
+      "id": "67c63ca88648cd5aad3a3582936fdf44d397c459935a14c4aff46cc9b70e11d3",
+      "state": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-07T02:13:25.69165165Z",
+        "FinishedAt": "2026-10-07T02:13:51.479851757Z"
+      },
+      "image": "node:24.19.0-bookworm",
+      "snapshot": "f86219c0da82b76f08a760dfc23abfdb132f52a12eb2af77a9f7f391a5bf67fd",
+      "sourceFiles": 2639,
+      "sourceDrift": [],
+      "actualTerminalWorkingLayerCopiedTo": "C:/forgeloop-tests/terminal617-scope-copy",
+      "testSummaries": [
+        "\u2139 tests 26",
+        "\u2139 pass 26",
+        "\u2139 fail 0",
+        "\u2139 skipped 0"
+      ],
+      "rawLog": "/tmp/sqlite-linux-scope617-terminal.stdout.log"
+    }
+  },
+  "conclusion": "Legacy bundle API compatibility controls for accepted611b are verified on all requested hosts;historical remote gap is closed",
+  "current620CorrectionRemoteVerified": false,
+  "currentWholeMaintenanceAcceptanceVerified": false,
+  "remaining": [
+    "Reverify current620 correction on remote hosts",
+    "Forward-repair acceptance mapping and per-call ownership/transitive maintenance closure",
+    "Other whole-plan performance/LOC/workflow/VALID/PR requirements"
+  ]
+}

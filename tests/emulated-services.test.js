@@ -4,6 +4,7 @@ import { PassThrough } from "node:stream";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { mkdir, mkdtemp, readdir, realpath, rm, symlink, writeFile } from "node:fs/promises";
 
 import {
   createEmulatedServicesProvider,
@@ -63,6 +64,31 @@ test("provider construction is lazy and does not discover PATH or spawn", () => 
   assert.equal(calls.length, 0);
 });
 
+test("emulated temporary paths cannot resolve into the target or grant rejected cleanup authority", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "forgeloop-emulated-boundary-"));
+  try {
+    const target = path.join(root, "project");
+    await mkdir(target);
+    await writeFile(path.join(target, "retained"), "keep");
+    const alias = path.join(root, "external-alias");
+    await symlink(target, alias, "junction");
+    const calls = [], removed = [];
+    let creations = 0;
+    const options = {
+      executablePath: process.execPath, targetRoot: target, spawnImpl: fakeSpawn(calls),
+      rmImpl: async filename => removed.push(filename),
+    };
+    const aliased = createEmulatedServicesProvider({ ...options, tempRoot: alias, mkdtempImpl: async () => { creations += 1; return target; } });
+    await assert.rejects(() => aliased.start({ services: ["github"], basePort: 4100, timeoutMs: 1000 }), { code: EMULATED_SERVICES_ERROR_CODES.CONFIG_INVALID });
+    assert.equal(creations, 0);
+    const returned = createEmulatedServicesProvider({ ...options, tempRoot: path.join(root, "safe"), mkdtempImpl: async () => alias });
+    await assert.rejects(() => returned.start({ services: ["github"], basePort: 4100, timeoutMs: 1000 }), { code: EMULATED_SERVICES_ERROR_CODES.CONFIG_INVALID });
+    assert.equal(calls.length, 0);
+    assert.deepEqual(removed, []);
+    assert.deepEqual(await readdir(target), ["retained"]);
+  } finally { await rm(root, { recursive: true, force: true }); }
+});
+
 test("provider qualifies the host executable, uses argv-only execution, observes loopback, and cleans up", async () => {
   const calls = [];
   const removed = [];
@@ -106,7 +132,7 @@ test("provider qualifies the host executable, uses argv-only execution, observes
   assert.ok(path.isAbsolute(calls[1].options.cwd));
   assert.equal(Object.hasOwn(calls[1].options.env, "AWS_ACCESS_KEY_ID"), false);
   assert.deepEqual(removed, [{
-    value: path.join(os.tmpdir(), "forgeloop-emulated-services-test-state"),
+    value: path.join(await realpath(os.tmpdir()), "forgeloop-emulated-services-test-state"),
     options: { recursive: true, force: true },
   }]);
 });

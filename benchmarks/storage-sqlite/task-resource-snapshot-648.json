@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "increment": 648,
+  "method": "Direct shared-dispatch boundary review, configured URI enumeration and independent SQLite writer regression. Not exhaustive per-resource domain verification.",
+  "source": {
+    "file": "src/core/integration-resources.js",
+    "sha256": "05a26a14aa537885101d9703b0727ea4cc4654e9685799aa87340165f9f96cc3"
+  },
+  "taskResourceUris": [
+    "task/status",
+    "task/ownership",
+    "task/contract",
+    "task/continuity",
+    "task/workspace-binding",
+    "task/handoffs",
+    "task/responsibility",
+    "task/verification-scope",
+    "task/attestation",
+    "task/structural-quality",
+    "task/actions",
+    "task/action",
+    "task/approvals",
+    "task/metrics",
+    "task/context",
+    "task/audit-view",
+    "task/evaluations",
+    "task/decisions",
+    "task/context-plan",
+    "task/model-route",
+    "task/test-utility"
+  ],
+  "correction": "Task-resource dispatch establishes withProjectReadSnapshot around the selected resource projection inside readonly project admission. Nested owned snapshots reuse their copy; prepared operations preserve staged records.",
+  "tests": {
+    "selected": 16,
+    "passed": 16,
+    "failed": 0,
+    "cases": [
+      "Independent writer deletes listed decision after catalog enumeration; response preserves complete pre-deletion committed payload set",
+      "Prepared decision is visible to resource while independent DB observer sees no row until outer operation commits",
+      "Three prior handoff cross-read regressions and existing integration-resource tests"
+    ],
+    "mcpClean": {
+      "tests": 73,
+      "passed": 73,
+      "failed": 0
+    },
+    "verifyFast": "PASS",
+    "docsCheck": "PASS",
+    "diffCheck": "PASS"
+  },
+  "initialTestFailure": "Fixture expectation omitted profile decisions created by lifecycle setup; corrected to independently query the complete original SQLite payload set. No product correction was needed for that assertion.",
+  "retrieval": {
+    "jevgrepExitCode": 2,
+    "status": "INCOMPLETE",
+    "log": "/Users/cassio/.codex/verification/jevgrep648.log",
+    "fallback": "Exact source review and focused runtime tests"
+  },
+  "limitations": [
+    "Full current Mac/Windows/Linux run after647/648 pending",
+    "No exhaustive domain validation or full public file-path/writer closure claim",
+    "Per-resource full database snapshot overhead requires proportional performance verification"
+  ],
+  "soleWriterVerified": false
+}

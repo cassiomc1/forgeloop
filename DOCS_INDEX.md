@@ -61,6 +61,7 @@ integration and guide context. Use this map before editing documentation.
 | Documentation history | [`docs/history/README.md`](./docs/history/README.md) | Archived audits, release evidence, and completed validation records with current-owner links |
 | Documentation guide | [`docs/DOCUMENTATION_GUIDE.md`](./docs/DOCUMENTATION_GUIDE.md) | Rules and checklist for modifying documentation |
 | Current release checklist | [`docs/RELEASE_CHECKLIST.md`](./docs/RELEASE_CHECKLIST.md) | Package, protocol, attestation, integration, and publication gates |
+| Self-hosted Node tests | [`docs/SELF_HOSTED_TESTS.md`](./docs/SELF_HOSTED_TESTS.md) | Local macOS, remote Windows/Linux Docker runners, event admission and verification boundaries |
 | Core npm package contents | [`docs/PACKAGE_CONTENTS.md`](./docs/PACKAGE_CONTENTS.md) | Published consumer surface, intentional inclusions, exclusions, and clean-room verification |
 | ForgeLoop 1.6.1 release checklist (historical) | [`docs/RELEASE_CHECKLIST_1_6_1.md`](./docs/RELEASE_CHECKLIST_1_6_1.md) | Verification adapter boundary, isolation invariants, and publication gates |
 | ForgeLoop 1.5/MCP release checklist (historical) | [`docs/RELEASE_CHECKLIST_1_5_MCP.md`](./docs/RELEASE_CHECKLIST_1_5_MCP.md) | Integration API v1, MCP package, and publication gates |

@@ -1,3 +1,4 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
@@ -22,6 +23,7 @@ test("host-reported transitions cannot skip states or claim ForgeLoop execution"
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-action-cli-"));
   const taskId = "host-task";
   try {
+    await ensureFixtureTask(target, taskId, packageRoot);
     const { action } = await proposeAction(target, { packageRoot, taskId, input: {
       actionId: "action-host", effectClass: "REVERSIBLE_WRITE", capability: "network.write",
       target: "service/item", operation: "update item", idempotencyKey: "host:update:v1",

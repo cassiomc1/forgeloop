@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "operation": "canonical runtime validate-protocol",
+  "actions": 1000,
+  "approvals": 1000,
+  "events": 3029,
+  "samplesPerBackend": 2,
+  "fixtureExcludedFromProfiles": true,
+  "resultParity": true,
+  "runtime": "Node24.19.0 macOS ARM64 Apple M2",
+  "profiles": [
+    {
+      "profile": "protocol-1000-baseline-0.cpuprofile",
+      "sha256": "782adf18e93ec0eca45cdff01178ef6905a5cb6b6532e6f1fac531236916697f",
+      "iterationCallersSampledMicros": {}
+    },
+    {
+      "profile": "protocol-1000-baseline-1.cpuprofile",
+      "sha256": "a7acef612cdbc8a3c6dfa16ae6d7fd3bc3461332778a39c24c38258f98ec46fb",
+      "iterationCallersSampledMicros": {}
+    },
+    {
+      "profile": "protocol-1000-native-0.cpuprofile",
+      "sha256": "643a34040e1baae8b5b96197719dad3bb09268fb965a34d0b17f48b96df01479",
+      "iterationCallersSampledMicros": {
+        "values > entries > validateLedgerEvents > evaluateCallbackLedgerAudit >  >  > run > withOperationalReadSnapshot": 61499,
+        "values > entries > validateLedgerEvents > evaluateCallbackLedgerAudit > withEventLedgerAudit > (root)": 21417,
+        "values > entries > find > repairMarkerErrors > validateContractBootstrapRepairLedger > validateLedgerEvents > evaluateCallbackLedgerAudit > withEventLedgerAudit": 21083,
+        "values > entries > findIndex > some > buildTaskClaimEvidence > collectClaimEvidence > (root)": 16668,
+        "values > entries > findIndex > some > validateContractBootstrapRepairConsistency > buildTaskClaimEvidence > collectClaimEvidence > (root)": 16375,
+        "values > entries > find > repairMarkerErrors > validateContractBootstrapRepairLedger > validateLedgerEvents > evaluateCallbackLedgerAudit > ": 14167,
+        "values > entries > findIndex > some > delegationIsInScope > validateTaskArtifactSet > finish > (root)": 6291
+      }
+    },
+    {
+      "profile": "protocol-1000-native-1.cpuprofile",
+      "sha256": "dc54f43ff59e697a76f05ffe8fc2718be62928d1d3579f39928fcc37a4b1af38",
+      "iterationCallersSampledMicros": {
+        "values > entries > evaluateCallbackLedgerAudit >  >  > run > withOperationalReadSnapshot > withDetachedLedgerSnapshot.validate": 81415,
+        "values > entries > evaluateCallbackLedgerAudit > withEventLedgerAudit > (root)": 49125,
+        "values > entries > some > buildTaskClaimEvidence > collectClaimEvidence > (root)": 15082,
+        "values > entries > some > validateContractBootstrapRepairConsistency > buildTaskClaimEvidence > collectClaimEvidence > (root)": 13710,
+        "values > entries > some > delegationIsInScope > validateTaskArtifactSet > finish > (root)": 6250,
+        "values > entries > find > evaluateCallbackLedgerAudit > withEventLedgerAudit > (root)": 1250,
+        "values > entries > validateLedgerEvents > evaluateCallbackLedgerAudit >  >  > run > withOperationalReadSnapshot": 42
+      }
+    }
+  ],
+  "limits": [
+    "Diagnostic sampling includes inspector overhead; not a release comparison",
+    "Call stack attribution is approximate",
+    "Working source was profiled before the449 marker changes; no final full-source hash claim"
+  ],
+  "finding": "Native full iterations include claim task-ID eligibility, legacy repair-marker eligibility, and repairMarkerErrors first-marker lookup. Typed marker selectors preserve predicates; foreign-task scan retained because pure callers may supply mixed task IDs."
+}

@@ -1,0 +1,15 @@
+{
+  "checkpoint": 589,
+  "scope": "Canonical public CLI runner refused before tests",
+  "status": 1,
+  "errorTail": "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       \r\n\r\nError: Source drift src/cli.js\r\n    at verify (eval at <anonymous> (C:\\forgeloop-tests\\public589-windows.js:1:4384), <anonymous>:1:383662)\r\n    at eval (eval at <anonymous> (C:\\forgeloop-tests\\public589-windows.js:1:4384), <anonymous>:1:383714)\r\n    at Object.<anonymous> (C:\\forgeloop-tests\\public589-windows.js:1:4384)\r\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\r\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\r\n    at node:internal/main/run_main_module:33:47\r\n\r\nNode.js v24.19.0\r\n",
+  "diagnosis": "Initial runner verification used579 patch map rather than current588 admission map",
+  "remoteMutations": false,
+  "correction": "Directly rebuilt runner591; local node --check passed; exact current588 map used",
+  "secondRunnerFailure": {
+    "status": 1,
+    "errorTail": "                                                                                                                                                                                                                                                                                                                                                                                                                            \r\n\r\nSyntaxError: Unexpected identifier 'verify'\r\n    at wrapSafe (node:internal/modules/cjs/loader:1804:18)\r\n    at Module._compile (node:internal/modules/cjs/loader:1846:20)\r\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\r\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\r\n    at node:internal/main/run_main_module:33:47\r\n\r\nNode.js v24.19.0\r\n",
+    "testsStarted": false,
+    "remoteMutations": false
+  }
+}

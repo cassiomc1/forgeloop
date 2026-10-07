@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "scope": "Preserve semantic invalid-assumption controls under native authority and correct CLI command documentation headings",
+  "diagnosis": {
+    "documentation": "New rollback command headings used level2; conformance requires level3 command headings. Corrected both; retained descriptions/options.",
+    "contractFixtures": "Manual invalid historical contract bytes were persisted as singleton operational files. Fixture now inserts unchanged invalid payload in canonical SQLite and reads by task identity; semantic validation remains the rejection reason."
+  },
+  "sourceSha256": {
+    "docs/CLI_REFERENCE.md": "7792f589f76295b9ea3bfd671f907107ed7d8b9044cc6b9af1a037d578e2d453",
+    "tests/contract-assumptions.test.js": "4eb5686f4dd00305c3592986f9eddca38afbd58cbed1be001f8c020d02ca8ffa"
+  },
+  "checks": {
+    "contractAndDocumentation": {
+      "pass": 55,
+      "fail": 0
+    },
+    "generatedSummaryReportPortability": {
+      "pass": 6,
+      "fail": 0
+    },
+    "docsGenerate": "PASS",
+    "summaryGenerate": "PASS",
+    "verifyFast": "PASS",
+    "lintErrors": 0,
+    "lintWarnings": 115
+  },
+  "limitations": [
+    "Full immutable598 prepush still running with observed failures; terminal/source integrity collection pending.",
+    "Portable bundle legacy export, large discovery fixture, fresh readonly admission and filesystem guard controls remain to diagnose.",
+    "No full platform acceptance or complete migration claim."
+  ]
+}

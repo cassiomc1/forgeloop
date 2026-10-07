@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm, stat } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile, readFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -13,13 +13,16 @@ import {
   findActionByIdempotencyKey,
 } from "../src/core/actions.js";
 import { readEvents } from "../src/core/events.js";
-import { taskActionPath } from "../src/core/task-paths.js";
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
+import { withProjectStorage } from "../src/storage/project-boundary.js";
 import { getPackageRoot } from "../src/core/templates.js";
 
 const packageRoot = getPackageRoot();
 
-async function makeTarget() {
-  return mkdtemp(path.join(os.tmpdir(), "forgeloop-actions-"));
+async function makeTarget(taskId) {
+  const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-actions-"));
+  await ensureFixtureTask(target, taskId, packageRoot);
+  return target;
 }
 
 function actionInput(overrides = {}) {
@@ -38,7 +41,7 @@ function actionInput(overrides = {}) {
 }
 
 test("proposeAction atomically creates the artifact and appends ACTION_PROPOSED", async () => {
-  const target = await makeTarget();
+  const target = await makeTarget("ledger-task");
   try {
     const result = await proposeAction(target, { packageRoot, taskId: "ledger-task", input: actionInput() });
 
@@ -61,7 +64,7 @@ test("proposeAction atomically creates the artifact and appends ACTION_PROPOSED"
 });
 
 test("proposeAction is idempotent per key and conflicts on fingerprint drift", async () => {
-  const target = await makeTarget();
+  const target = await makeTarget("idem-task");
   try {
     const first = await proposeAction(target, { packageRoot, taskId: "idem-task", input: actionInput() });
     assert.equal(first.created, true);
@@ -97,7 +100,7 @@ test("proposeAction is idempotent per key and conflicts on fingerprint drift", a
 });
 
 test("READ_ONLY actions do not require an idempotency key", async () => {
-  const target = await makeTarget();
+  const target = await makeTarget("readonly-task");
   try {
     const result = await proposeAction(target, {
       packageRoot,
@@ -117,7 +120,7 @@ test("READ_ONLY actions do not require an idempotency key", async () => {
 });
 
 test("transitionAction enforces the state machine, revision, and ledger pairing", async () => {
-  const target = await makeTarget();
+  const target = await makeTarget("transition-task");
   try {
     const { action } = await proposeAction(target, { packageRoot, taskId: "transition-task", input: actionInput({ provenance: "FORGELOOP_EXECUTED" }) });
 
@@ -190,7 +193,7 @@ test("transitionAction enforces the state machine, revision, and ledger pairing"
 });
 
 test("listActions and findActionByIdempotencyKey project canonical artifacts", async () => {
-  const target = await makeTarget();
+  const target = await makeTarget("list-task");
   try {
     await proposeAction(target, { packageRoot, taskId: "list-task", input: actionInput() });
     await proposeAction(target, {
@@ -212,14 +215,13 @@ test("listActions and findActionByIdempotencyKey project canonical artifacts", a
   }
 });
 
-test("a crash between artifact staging and commit cannot expose an action without its event pairing", async () => {
-  const target = await makeTarget();
+test("an action without its matching proposal event is reported as an orphan", async () => {
+  const target = await makeTarget("crash-task");
   try {
-    // Simulate a torn write: the action artifact exists but no ACTION_PROPOSED
-    // event was committed. Detection must report the divergence.
+    // Deliberately remove proposal history from disposable native authority.
+    // Detection must report the surviving action as a divergence.
     const { action } = await proposeAction(target, { packageRoot, taskId: "crash-task", input: actionInput() });
-    const artifactPath = path.join(target, taskActionPath("crash-task", action.actionId));
-    await stat(artifactPath);
+    assert.equal((await readAction(target, { packageRoot, taskId: "crash-task", actionId: action.actionId })).actionId, action.actionId);
 
     // Remove the ledger entirely to simulate loss of the event record.
     const events = await readEvents(target, packageRoot, { taskId: "crash-task" });
@@ -229,14 +231,28 @@ test("a crash between artifact staging and commit cannot expose an action withou
     const orphans = await detectOrphanActions(target, { packageRoot, taskId: "crash-task" });
     assert.deepEqual(orphans, [], "healthy task has no orphan actions");
 
-    const fs = await import("node:fs/promises");
-    await fs.rm(path.join(target, ".forgeloop/task-state"), { recursive: true, force: false }).catch(() => {});
-    // Recreate only the action file without its ledger.
-    await fs.mkdir(path.dirname(artifactPath), { recursive: true });
-    await fs.writeFile(artifactPath, JSON.stringify(action));
+    // Deliberately tear disposable SQLite authority to exercise orphan
+    // detection; production crash atomicity is covered by process-kill tests.
+    await withProjectStorage(target, store => store.db.prepare("DELETE FROM events WHERE task_id = ?").run("crash-task"));
     const orphaned = await detectOrphanActions(target, { packageRoot, taskId: "crash-task" });
     assert.deepEqual(orphaned, [action.actionId]);
   } finally {
     await rm(target, { recursive: true, force: true });
   }
+});
+
+
+test("action listing and idempotency refuse legacy directory scans without creating native authority", async () => {
+ const target=await mkdtemp(path.join(os.tmpdir(),"forgeloop-actions-retired-scan-"));
+ try {
+  const {taskActionPath}=await import("../src/core/task-paths.js");
+  const filename=path.join(target,taskActionPath("legacy-scan","action-retained"));
+  const bytes=Buffer.from('{"idempotencyKey":"retained"}');
+  await mkdir(path.dirname(filename),{recursive:true});await writeFile(filename,bytes);
+  await assert.rejects(listActions(target,{packageRoot,taskId:"legacy-scan"}),{code:"E_STORAGE_MIGRATION_REQUIRED"});
+  await assert.rejects(findActionByIdempotencyKey(target,{packageRoot,taskId:"legacy-scan",idempotencyKey:"retained"}),{code:"E_STORAGE_MIGRATION_REQUIRED"});
+  await assert.rejects(readAction(target,{packageRoot,taskId:"legacy-scan",actionId:"action-retained"}),{code:"E_STORAGE_MIGRATION_REQUIRED"});
+  assert.deepEqual(await readFile(filename),bytes);
+  await assert.rejects(readFile(path.join(target,".forgeloop/state.sqlite")),{code:"ENOENT"});
+ } finally {await rm(target,{recursive:true,force:true});}
 });

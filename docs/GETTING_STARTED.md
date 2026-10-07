@@ -108,7 +108,7 @@ and numeric limits.
 
 ## 2. Prerequisites
 
-- **Node.js**: version 20 or higher (`node -v`)
+- **Node.js**: version 24.19.0 or higher (`node -v`), with built-in `node:sqlite`
 - **npm**: standard npm toolchain
 
 ---
@@ -281,7 +281,7 @@ forgeloop route \
   --json
 ```
 
-This writes `.forgeloop/task-state/<taskKey>/routing-result.json` referencing selected guides (e.g. `clean`, `test`, `security`, `design`, `accessibility`).
+This records selected guides (e.g. `clean`, `test`, `security`, `design`, `accessibility`) in SQLite. `.forgeloop/task-state/<taskKey>/routing-result.json` is the logical artifact identity and explicit export path. Native mutations require a selected task; create one first or select an existing task.
 
 ---
 

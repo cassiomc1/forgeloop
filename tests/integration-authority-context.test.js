@@ -11,6 +11,8 @@ import { seedPolicyEpoch } from "./helpers/durable-policy.js";
 import { createWorkState, writeWorkState } from "../src/core/work-state.js";
 import { createTaskDescriptor, writeTaskDescriptor } from "../src/core/task-descriptor.js";
 import { getPackageRoot } from "../src/core/templates.js";
+import { withProjectStorage } from "../src/storage/project-boundary.js";
+import { readTaskPolicySnapshot } from "../src/core/policy-engine.js";
 
 const packageRoot = getPackageRoot();
 const fingerprint = "a".repeat(64);
@@ -18,6 +20,7 @@ const fingerprint = "a".repeat(64);
 async function setup() {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-integration-authority-"));
   const taskId = "authority-context-task";
+  return withProjectStorage(target, async () => {
   await writeTaskDescriptor(target, createTaskDescriptor({ taskId, writeClaims: [".forgeloop"] }), packageRoot);
   await writeWorkState(target, createWorkState({
     taskId,
@@ -45,6 +48,7 @@ async function setup() {
     capability: action.capability,
   } });
   return { target, taskId };
+  });
 }
 
 test("trusted out-of-band authority context resolves a HOST_ATTESTED approval", async () => {
@@ -114,11 +118,13 @@ test("actor-supplied authorityContext inside input cannot self-mint host authori
 });
 
 async function setupAmbiguousAction(target, taskId) {
+  return withProjectStorage(target, async () => {
   const { proposeAction, transitionAction, transitionAuthorizedAction } = await import("../src/core/actions.js");
   await writeTaskDescriptor(target, createTaskDescriptor({ taskId, writeClaims: [".forgeloop"] }), packageRoot);
   await seedPolicyEpoch(target, packageRoot, taskId, {
     schemaVersion: 1, defaultDecision: "ALLOW", rules: [],
   });
+  assert.ok((await readTaskPolicySnapshot(target, taskId, packageRoot)).policyDigest);
   const { action } = await proposeAction(target, { packageRoot, taskId, input: {
     actionId: "action-publish", effectClass: "EXTERNAL_PUBLICATION", capability: "external.publish",
     target: "registry/release", operation: "publish release",
@@ -138,6 +144,7 @@ async function setupAmbiguousAction(target, taskId) {
   await transitionAction(target, { packageRoot, taskId, actionId: action.actionId, to: "COMMIT_UNKNOWN",
     details: { commitResultCode: "AMBIGUOUS", reason: "external outcome lost" } });
   return action;
+  });
 }
 
 test("trusted top-level authority reaches reconciliation through the programmatic runtime", async () => {
@@ -201,6 +208,7 @@ test("action-authorize through the programmatic runtime: input cannot mint autho
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-authorize-runtime-"));
   const taskId = "authorize-runtime-task";
   try {
+    await withProjectStorage(target, async () => {
     await writeTaskDescriptor(target, createTaskDescriptor({ taskId, writeClaims: [".forgeloop"] }), packageRoot);
     await seedPolicyEpoch(target, packageRoot, taskId, {
       schemaVersion: 1, defaultDecision: "DENY",
@@ -212,6 +220,7 @@ test("action-authorize through the programmatic runtime: input cannot mint autho
       target: "origin/main", operation: "push", idempotencyKey: "runtime:push:v1",
       requiredForCompletion: false, requirement: null, provenance: "CALLER_REPORTED",
     } });
+    });
 
     // Actor tries to smuggle trust via command input.
     const smuggled = await executeForgeLoopCommand({

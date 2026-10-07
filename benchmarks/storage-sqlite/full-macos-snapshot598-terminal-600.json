@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "scope": "Full Mac immutable598 prepush before corrections599/600",
+  "exitCode": 1,
+  "counts": {
+    "tests": 2794,
+    "pass": 2762,
+    "fail": 21,
+    "skipped": 11
+  },
+  "sourceFiles": 2601,
+  "sourceDrift": [],
+  "failedTests": [
+    "portable task bundles copy only canonical protocol artifacts",
+    "readContract rejects manually persisted secret-like assumption values",
+    "readContract rejects manually persisted whitespace-only assumption values",
+    "readContract rejects manually persisted whitespace-only assumption reasons",
+    "readContract rejects manually persisted whitespace-only assumption scopes",
+    "validateDocumentationConformance passes on repository docs",
+    "negative fixtures & mutation tests: validateDocumentationConformance detects doc drift across LF and CRLF",
+    "CLI example, mutation-claim, and legacy-path conformance regressions (DOC-CLI-*/DOC-MUT-*/DOC-PATH-*/DOC-COMP-*)",
+    "DOC-LAYOUT-ARCH / DOC-TRANSITION / DOC-ADVANCE: architecture layout, canonical transitions, and advance prose conformance",
+    "documentation generation and validation succeed in directory paths containing spaces",
+    "docs:report emits documentation health metrics",
+    "generated agent protocol summary is current and clearly non-authoritative",
+    "task discovery retains 1,000 independent task namespaces",
+    "C1: fresh readonly dispatch resolves only admission modules without allocating SQLite",
+    "D-control-1: a known-valid fixture is accepted by the filesystem guard",
+    "D-case-1: valid active ownership",
+    "D-case-2: stripped claims do not grant ownership optimistically",
+    "TASK-RESOLVE-CORRUPT-1: corrupt namespace plus legacy receipt fails closed (no singleton fallback)",
+    "TASK-RESOLVE-CORRUPT-2: corrupt namespace without legacy state fails with the corruption error",
+    "TASK-RESOLVE-CORRUPT-4: one healthy task plus one corrupt namespace resolves the healthy task",
+    "TASK-DESCRIPTOR-MISSING-5: one healthy task plus one descriptor-less corrupt namespace resolves the healthy task (deliberate)"
+  ],
+  "rawLogSha256": "7b778e128444b4a5559b8f5278dccdc50ca960021fcac7bc3e5bea60c826d4fc",
+  "limitations": [
+    "Full verification failed; current later corrections are separately scoped.",
+    "MCP/package stages not reached after coverage-stage failure.",
+    "Final fresh current-source platform acceptance remains required."
+  ]
+}

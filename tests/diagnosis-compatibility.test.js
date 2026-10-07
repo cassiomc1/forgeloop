@@ -1,3 +1,4 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import path from "node:path";
@@ -28,6 +29,7 @@ test("protocol compatibility - contract unresolvedDecisions remains array of str
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-compat-test-"));
   try {
     const taskId = "task-compat-1";
+    await ensureFixtureTask(target, taskId, packageRoot);
     const unresolved = ["Which caching provider to use?", "Should we support HTTP/2?"];
 
     const contract = createContract({
@@ -50,8 +52,8 @@ test("protocol compatibility - contract unresolvedDecisions remains array of str
 
     await writeContract(target, contract, packageRoot, { taskId });
 
-    await appendProtocolEvent(target, { taskId, event: "TASK_RECEIVED" }, packageRoot);
-    await appendProtocolEvent(target, { taskId, event: "CONTRACT_VALIDATED" }, packageRoot);
+    await appendProtocolEvent(target, { taskId, event: "TASK_RECEIVED" }, packageRoot, { taskId });
+    await appendProtocolEvent(target, { taskId, event: "CONTRACT_VALIDATED" }, packageRoot, { taskId });
 
     // Record decision settlement criterion
     const res = await recordDecisionCriterion({
@@ -66,7 +68,7 @@ test("protocol compatibility - contract unresolvedDecisions remains array of str
     assert.equal(res.event.schemaVersion, 1);
 
     // Next action surfaces settlement criterion in reasons resolution without modifying contract schema
-    const next = await getNextAction({ target, packageRoot });
+    const next = await getNextAction({ target, packageRoot, taskId });
     const decisionReason = next.reasons.find((r) => r.code === "E_CONTRACT_UNRESOLVED_DECISION" || r.code === "E_UNRESOLVED_DECISION");
     if (decisionReason) {
       assert.equal(decisionReason.resolution?.kind, "SETTLEMENT_CRITERION");
@@ -82,6 +84,7 @@ test("protocol compatibility - work-state.diagnosedHypothesis is maintained as p
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-compat-diag-"));
   try {
     const taskId = "task-compat-diag";
+    await ensureFixtureTask(target, taskId, packageRoot);
     const contract = createContract({
       taskId,
       objective: "Test diagnosis ledger compatibility",
@@ -95,11 +98,12 @@ test("protocol compatibility - work-state.diagnosedHypothesis is maintained as p
       sourceRefs: [],
     });
     const contractHash = contractFingerprint(contract);
-    await writeContract(target, contract, packageRoot);
+    await writeContract(target, contract, packageRoot, { taskId });
 
     const route = evaluateRoute({ workType: "code", surfaces: ["config"], platforms: [] });
     const persistedRoute = await persistRoute(target, route, packageRoot, {
       contractFingerprint: contractHash,
+      taskId,
     });
 
     const state = createWorkState({
@@ -118,18 +122,19 @@ test("protocol compatibility - work-state.diagnosedHypothesis is maintained as p
       blockers: [],
       verificationEvidence: [],
     });
-    await writeWorkState(target, state, { packageRoot });
+    await writeWorkState(target, state, { packageRoot, taskId });
 
-    await appendProtocolEvent(target, { taskId, event: "CONTRACT_VALIDATED" }, packageRoot);
-    await appendProtocolEvent(target, { taskId, event: "ROUTE_VALIDATED" }, packageRoot);
-    await runPreflight({ target, packageRoot });
-    await advanceWorkState(target, "EXECUTING", packageRoot);
-    await advanceWorkState(target, "VERIFYING", packageRoot);
-    await prepareCompletion({ target, packageRoot });
+    await appendProtocolEvent(target, { taskId, event: "CONTRACT_VALIDATED" }, packageRoot, { taskId });
+    await appendProtocolEvent(target, { taskId, event: "ROUTE_VALIDATED" }, packageRoot, { taskId });
+    await runPreflight({ target, packageRoot, taskId });
+    await advanceWorkState(target, "EXECUTING", { packageRoot, taskId });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId });
+    await prepareCompletion({ target, packageRoot, taskId });
 
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId,
       id: "check-failing",
       requirement: "tests",
       status: "failed",
@@ -138,12 +143,13 @@ test("protocol compatibility - work-state.diagnosedHypothesis is maintained as p
       result: "Assertion failed",
     });
 
-    await advanceWorkState(target, "DIAGNOSING", packageRoot);
+    await advanceWorkState(target, "DIAGNOSING", { packageRoot, taskId });
 
     // Record diagnosis
     const diagRes = await recordDiagnosis({
       target,
       packageRoot,
+      taskId,
       hypothesis: "Off-by-one index calculation in array slicer",
       failureClass: "VERIFICATION_FAILURE",
       evidenceRefs: ["check-failing"],
@@ -153,11 +159,11 @@ test("protocol compatibility - work-state.diagnosedHypothesis is maintained as p
     assert.equal(diagRes.event.protocolVersion, 1);
 
     // Work state projection must be populated
-    const updatedState = await readWorkState(target, { packageRoot });
+    const updatedState = await readWorkState(target, { packageRoot, taskId });
     assert.equal(updatedState.diagnosedHypothesis, "Off-by-one index calculation in array slicer");
 
     // Events ledger contains DIAGNOSIS_RECORDED with valid hash chain
-    const ledger = await validateEventLedger(target, packageRoot);
+    const ledger = await validateEventLedger(target, packageRoot, { taskId });
     assert.equal(ledger.valid, true);
 
     const diagEvents = ledger.events.filter((e) => e.event === "DIAGNOSIS_RECORDED");
@@ -165,8 +171,8 @@ test("protocol compatibility - work-state.diagnosedHypothesis is maintained as p
     assert.equal(diagEvents[0].details.informationGain, "FIRST_DIAGNOSIS");
 
     // Advance to CORRECTING is permitted
-    await advanceWorkState(target, "CORRECTING", packageRoot);
-    const correctingState = await readWorkState(target, { packageRoot });
+    await advanceWorkState(target, "CORRECTING", { packageRoot, taskId });
+    const correctingState = await readWorkState(target, { packageRoot, taskId });
     assert.equal(correctingState.phase, "CORRECTING");
 
   } finally {
@@ -178,6 +184,7 @@ test("protocol compatibility - legacy DIAGNOSING state with only mutable diagnos
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-compat-legacy-"));
   try {
     const taskId = "task-compat-legacy";
+    await ensureFixtureTask(target, taskId, packageRoot);
     const contract = createContract({
       taskId,
       objective: "Test legacy task upgrade",
@@ -191,11 +198,12 @@ test("protocol compatibility - legacy DIAGNOSING state with only mutable diagnos
       sourceRefs: [],
     });
     const contractHash = contractFingerprint(contract);
-    await writeContract(target, contract, packageRoot);
+    await writeContract(target, contract, packageRoot, { taskId });
 
     const route = evaluateRoute({ workType: "code", surfaces: ["config"], platforms: [] });
     const persistedRoute = await persistRoute(target, route, packageRoot, {
       contractFingerprint: contractHash,
+      taskId,
     });
 
     const state = createWorkState({
@@ -214,18 +222,19 @@ test("protocol compatibility - legacy DIAGNOSING state with only mutable diagnos
       blockers: [],
       verificationEvidence: [],
     });
-    await writeWorkState(target, state, { packageRoot });
+    await writeWorkState(target, state, { packageRoot, taskId });
 
-    await appendProtocolEvent(target, { taskId, event: "CONTRACT_VALIDATED" }, packageRoot);
-    await appendProtocolEvent(target, { taskId, event: "ROUTE_VALIDATED" }, packageRoot);
-    await runPreflight({ target, packageRoot });
-    await advanceWorkState(target, "EXECUTING", packageRoot);
-    await advanceWorkState(target, "VERIFYING", packageRoot);
-    await prepareCompletion({ target, packageRoot });
+    await appendProtocolEvent(target, { taskId, event: "CONTRACT_VALIDATED" }, packageRoot, { taskId });
+    await appendProtocolEvent(target, { taskId, event: "ROUTE_VALIDATED" }, packageRoot, { taskId });
+    await runPreflight({ target, packageRoot, taskId });
+    await advanceWorkState(target, "EXECUTING", { packageRoot, taskId });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId });
+    await prepareCompletion({ target, packageRoot, taskId });
 
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId,
       id: "check-auth",
       requirement: "auth",
       status: "failed",
@@ -234,27 +243,27 @@ test("protocol compatibility - legacy DIAGNOSING state with only mutable diagnos
       result: "Assertion failed",
     });
 
-    await advanceWorkState(target, "DIAGNOSING", packageRoot);
+    await advanceWorkState(target, "DIAGNOSING", { packageRoot, taskId });
 
     // Simulate old protocol-v1 task by injecting mutable diagnosedHypothesis without DIAGNOSIS_RECORDED event
     const legacyState = {
-      ...(await readWorkState(target, { packageRoot })),
+      ...(await readWorkState(target, { packageRoot, taskId })),
       diagnosedHypothesis: "Legacy mutable hypothesis from older version",
     };
-    await writeWorkState(target, legacyState, { packageRoot });
+    await writeWorkState(target, legacyState, { packageRoot, taskId });
 
     // Old task is readable
-    const loadedState = await readWorkState(target, { packageRoot });
+    const loadedState = await readWorkState(target, { packageRoot, taskId });
     assert.equal(loadedState.phase, "DIAGNOSING");
     assert.equal(loadedState.diagnosedHypothesis, "Legacy mutable hypothesis from older version");
 
     // forgeloop next returns RECORD_DIAGNOSIS because ledger has no DIAGNOSIS_RECORDED event
-    const nextBefore = await getNextAction({ target, packageRoot });
+    const nextBefore = await getNextAction({ target, packageRoot, taskId });
     assert.equal(nextBefore.nextAction, "RECORD_DIAGNOSIS");
 
     // Attempting to advance to CORRECTING is blocked with E_DIAGNOSIS_REQUIRED
     await assert.rejects(
-      () => advanceWorkState(target, "CORRECTING", packageRoot),
+      () => advanceWorkState(target, "CORRECTING", { packageRoot, taskId }),
       { code: "E_DIAGNOSIS_REQUIRED" }
     );
 
@@ -262,6 +271,7 @@ test("protocol compatibility - legacy DIAGNOSING state with only mutable diagnos
     const diagRes = await recordDiagnosis({
       target,
       packageRoot,
+      taskId,
       hypothesis: "Updated authoritative hypothesis",
       failureClass: "VERIFICATION_FAILURE",
       evidenceRefs: ["check-auth"],
@@ -272,12 +282,12 @@ test("protocol compatibility - legacy DIAGNOSING state with only mutable diagnos
     assert.equal(diagRes.diagnosis.informationGain, "FIRST_DIAGNOSIS");
 
     // forgeloop next now returns CORRECT
-    const nextAfter = await getNextAction({ target, packageRoot });
+    const nextAfter = await getNextAction({ target, packageRoot, taskId });
     assert.equal(nextAfter.nextAction, "CORRECT");
 
     // advance to CORRECTING now succeeds
-    await advanceWorkState(target, "CORRECTING", packageRoot);
-    const finalState = await readWorkState(target, { packageRoot });
+    await advanceWorkState(target, "CORRECTING", { packageRoot, taskId });
+    const finalState = await readWorkState(target, { packageRoot, taskId });
     assert.equal(finalState.phase, "CORRECTING");
 
   } finally {

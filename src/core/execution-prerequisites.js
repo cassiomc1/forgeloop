@@ -60,6 +60,7 @@ async function load(loadArtifact, code, message, artifacts, errors) {
   try {
     return await loadArtifact();
   } catch (error) {
+    if (error.code === "E_STATE_REVISION_CONFLICT") throw error;
     errors.push(issue(code, `${message}: ${error.message}`, artifacts));
     return null;
   }
@@ -146,6 +147,10 @@ function prerequisiteLedgerErrors(ledger, taskId, preflight, route) {
   return errors;
 }
 
+function prerequisiteArtifactPath(explicitPath, taskId, kind) {
+  return explicitPath ?? (taskId ? taskArtifactPath(taskId, kind) : ARTIFACT_PATHS[kind]);
+}
+
 export async function evaluateStartExecutionPrerequisites({
   target,
   state,
@@ -156,13 +161,14 @@ export async function evaluateStartExecutionPrerequisites({
   statePath = null,
   preflightPath = null,
   eventsPath = null,
+  readers = null,
 } = {}) {
   const effectiveTaskId = taskId ?? null;
-  const contractRel = contractPath ?? (effectiveTaskId ? taskArtifactPath(effectiveTaskId, "contract") : ARTIFACT_PATHS.contract);
-  const routeRel = routePath ?? (effectiveTaskId ? taskArtifactPath(effectiveTaskId, "route") : ARTIFACT_PATHS.route);
-  const stateRel = statePath ?? (effectiveTaskId ? taskArtifactPath(effectiveTaskId, "state") : ARTIFACT_PATHS.state);
-  const preflightRel = preflightPath ?? (effectiveTaskId ? taskArtifactPath(effectiveTaskId, "preflight") : ARTIFACT_PATHS.preflight);
-  const eventsRel = eventsPath ?? (effectiveTaskId ? taskArtifactPath(effectiveTaskId, "events") : ARTIFACT_PATHS.events);
+  const contractRel = prerequisiteArtifactPath(contractPath, effectiveTaskId, "contract");
+  const routeRel = prerequisiteArtifactPath(routePath, effectiveTaskId, "route");
+  const stateRel = prerequisiteArtifactPath(statePath, effectiveTaskId, "state");
+  const preflightRel = prerequisiteArtifactPath(preflightPath, effectiveTaskId, "preflight");
+  const eventsRel = prerequisiteArtifactPath(eventsPath, effectiveTaskId, "events");
 
   const errors = [];
   const requiredArtifacts = [
@@ -180,14 +186,14 @@ export async function evaluateStartExecutionPrerequisites({
   }
 
   const contract = await load(
-    () => readContract(target, packageRoot, { taskId: effectiveTaskId, contractPath }),
+    () => (readers?.readContract ?? readContract)(target, packageRoot, { taskId: effectiveTaskId, contractPath }),
     "E_PHASE_PREREQUISITE_MISSING",
     `EXECUTING requires ${contractRel}`,
     [contractRel],
     errors,
   );
   const route = await load(
-    () => readPersistedRoute(target, packageRoot, { taskId: effectiveTaskId, routePath }),
+    () => (readers?.readRoute ?? readPersistedRoute)(target, packageRoot, { taskId: effectiveTaskId, routePath }),
     "E_PHASE_PREREQUISITE_MISSING",
     `EXECUTING requires ${routeRel}`,
     [routeRel],
@@ -204,18 +210,19 @@ export async function evaluateStartExecutionPrerequisites({
   }
   errors.push(...stateIdentityErrors({ contract, route, state }));
 
-  const freshness = await classifyLoadedWorkState({
+  const freshness = await (readers?.classifyState ?? classifyLoadedWorkState)({
     target,
     state,
     contractFile: contractRel,
   });
   errors.push(...freshnessErrors(state, freshness));
 
-  const preflight = await evaluatePreflight({ target, packageRoot, taskId: effectiveTaskId, contractPath, routePath, statePath });
+  const preflight = await evaluatePreflight({ target, packageRoot, taskId: effectiveTaskId, contractPath, routePath, statePath, readers });
   let persistedPreflight = null;
   try {
-    persistedPreflight = await readJsonArtifact(target, preflightRel, "preflight", packageRoot);
-  } catch {
+    persistedPreflight = await (readers?.readPreflight ?? readJsonArtifact)(target, preflightRel, "preflight", packageRoot);
+  } catch (error) {
+    if (error.code === "E_STATE_REVISION_CONFLICT") throw error;
     // validatePersistedPreflight reports the stable, actionable preflight reason.
   }
   const persistedPreflightErrors = validatePersistedPreflight(persistedPreflight?.value, preflight);
@@ -228,7 +235,7 @@ export async function evaluateStartExecutionPrerequisites({
     ));
   }
 
-  const ledger = await validateEventLedger(target, packageRoot, { taskId: effectiveTaskId, eventsPath });
+  const ledger = await (readers?.validateLedger ?? validateEventLedger)(target, packageRoot, { taskId: effectiveTaskId, eventsPath });
   errors.push(...prerequisiteLedgerErrors(ledger, contract.value.taskId, preflight, route));
   errors.push(...validateStateLedgerCoherence(state, ledger.events).map((error) => issue(
     error.code,

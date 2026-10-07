@@ -1,3 +1,4 @@
+import { ledgerEventAt, ledgerEventsOfTypes } from "./ledger-event-collection.js";
 import { canonicalFingerprint } from "./artifacts.js";
 import {
   resolveCanonicalRouteEvolution,
@@ -175,7 +176,7 @@ export function resolveCheckpointRevalidationBoundary(events = [], revalidationE
       && candidate?.taskId === revalidationEvent?.taskId
       && candidate?.event === CHECKPOINT_REVALIDATED_EVENT));
   if (index < 0) return null;
-  const commitEvent = events[index + 1];
+  const commitEvent = ledgerEventAt(events, index + 1);
   if (!commitEvent
     || revalidationEvent?.event !== CHECKPOINT_REVALIDATED_EVENT
     || commitEvent.event !== "TRANSACTION_COMMITTED"
@@ -194,9 +195,10 @@ export function resolveCheckpointRevalidationBoundary(events = [], revalidationE
 
 export function validateCheckpointRevalidationEventBindings(events = []) {
   const errors = [];
-  const revalidations = events.filter((event) => event.event === CHECKPOINT_REVALIDATED_EVENT);
-  for (let index = 0; index < revalidations.length; index += 1) {
-    const event = revalidations[index];
+  let previousEvent;
+  for (const event of ledgerEventsOfTypes(events, [CHECKPOINT_REVALIDATED_EVENT])) {
+    const prior = previousEvent;
+    previousEvent = event;
     let details;
     try {
       details = assertCheckpointRevalidatedDetails(event.details);
@@ -207,7 +209,7 @@ export function validateCheckpointRevalidationEventBindings(events = []) {
     if (!resolveCheckpointRevalidationBoundary(events, event)) {
       errors.push(bindingError(`event ${event.seq} must be immediately followed by its checkpoint-revalidate transaction commit`));
     }
-    const previous = revalidations[index - 1]?.details;
+    const previous = prior?.details;
     if (previous) {
       if (!sameRepositoryFingerprint(details.previousRepositoryFingerprint, previous.repositoryFingerprint)) {
         errors.push(bindingError(`event ${event.seq} is disconnected from the previous checkpoint revalidation repository`));
@@ -222,7 +224,7 @@ export function validateCheckpointRevalidationEventBindings(events = []) {
       const contractEvolved = details.contractFingerprint !== previous.contractFingerprint
         && resolveCanonicalContractEvolution(events, {
           taskId: event.taskId,
-          sourceSeq: revalidations[index - 1].seq,
+          sourceSeq: prior.seq,
           sourceContractFingerprint: previous.contractFingerprint,
           targetContractFingerprint: details.contractFingerprint,
         });
@@ -233,7 +235,7 @@ export function validateCheckpointRevalidationEventBindings(events = []) {
         const evolved = details.previousStateRevision > previous.revalidatedStateRevision
           && routeEvolutionAfter(
             events,
-            revalidations[index - 1],
+            prior,
             previous.routeFingerprint,
             details.routeFingerprint,
             details.contractFingerprint,
@@ -294,9 +296,9 @@ function validateLatestCheckpointBinding(state, latest) {
 
 export function validateCheckpointRevalidationCurrentBinding(state, events = []) {
   const errors = [];
-  const revalidations = events.filter((event) => event.event === CHECKPOINT_REVALIDATED_EVENT);
-  const latest = revalidations.at(-1);
-  for (const event of revalidations) {
+  let latest;
+  for (const event of ledgerEventsOfTypes(events, [CHECKPOINT_REVALIDATED_EVENT])) {
+    latest = event;
     const contractError = validateCurrentContractBinding(state, events, event);
     if (contractError) errors.push(contractError);
     const routeError = validateCurrentRouteBinding(state, events, event);
