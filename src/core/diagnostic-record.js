@@ -312,7 +312,15 @@ export async function recordIntervention({
   };
 }
 
-export async function recordHypothesisDisposition({
+export async function recordHypothesisDisposition(options) {
+  if (await getTaskTransaction(options.target)) return recordDisposition(options);
+  const state = await readWorkState(options.target, { packageRoot: options.packageRoot, taskId: options.taskId });
+  if (!state) return recordDisposition(options);
+  return withTaskTransaction({ target: options.target, taskId: options.taskId ?? state.taskId,
+    packageRoot: options.packageRoot, operation: "record-hypothesis-disposition" }, () => recordDisposition(options));
+}
+
+async function recordDisposition({
   target,
   packageRoot,
   hypothesisRef,
