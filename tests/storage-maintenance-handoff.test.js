@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { spawn, execFile } from "node:child_process";
 import { once } from "node:events";
-import { mkdtemp, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, link, readFile, readdir, rename, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
@@ -15,7 +15,7 @@ import { executeForgeLoopCommand } from "../src/core/command-runtime.js";
 const worker = fileURLToPath(new URL("./helpers/storage-maintenance-handoff-worker.mjs", import.meta.url));
 const ownerPath = target => path.join(target, ".forgeloop/.storage-maintenance/owner.json");
 async function start(target, mode, expectedOwnerId = "") {
-  const child = spawn(process.execPath, [worker, target, mode, expectedOwnerId], { stdio: ["ignore", "pipe", "pipe"] });
+  const child = spawn(process.execPath, [worker, target, mode, expectedOwnerId], { stdio: ["pipe", "pipe", "pipe"] });
   await new Promise((resolve, reject) => {
     let output = "";
     const timeout = setTimeout(() => reject(new Error("Handoff worker did not reach checkpoint")), 10000);
@@ -98,6 +98,69 @@ test("two independent maintenance resumers accept exactly one callback and retai
   });
 });
 
+
+test("a delayed contender cannot occupy the promoted owner's next handoff identity", async () => {
+  await withDeadOwner(async (target, owner, _original, children) => {
+    const contender = await start(target, "LATE_CONTENDER", owner.ownerId);
+    children.push(contender);
+    const winner = await promisify(execFile)(process.execPath, [worker, target, "ONCE", owner.ownerId], { encoding: "utf8" });
+    assert.equal(JSON.parse(winner.stdout.trim()).ok, true);
+    const promotedBytes = await readFile(ownerPath(target));
+    const promoted = JSON.parse(promotedBytes);
+    assert.equal(promoted.resumedFrom, owner.ownerId);
+    let output = "";
+    contender.stdout.on("data", bytes => { output += bytes; });
+    const exited = once(contender, "exit");
+    contender.stdin.end("continue\n");
+    await exited;
+    const rejected = JSON.parse(output.trim());
+    assert.equal(rejected.ok, false);
+    assert.equal(rejected.code, "E_STORAGE_MAINTENANCE_IN_PROGRESS");
+    assert.deepEqual(await readFile(ownerPath(target)), promotedBytes);
+    await resumeStorageMaintenance(target, { expectedOwnerId: promoted.ownerId, writersQuiesced: true }, () => undefined);
+    assert.equal((await executeForgeLoopCommand({ command: "task-list", projectPath: target })).ok, true);
+  });
+});
+
+test("retained flat continuation claims still block live owners and permit exact dead-owner recovery", async () => {
+  await withDeadOwner(async (target, owner, original, children) => {
+    const first = await start(target, "CLAIM", owner.ownerId); children.push(first);
+    await kill(first);
+    const history = path.join(target, ".forgeloop/storage-maintenance-history/handoffs");
+    const firstClaim = JSON.parse(await readFile(path.join(history, `${owner.ownerId}.json`)));
+    const second = await start(target, "CLAIM", owner.ownerId); children.push(second);
+    const scoped = path.join(history, `${owner.ownerId}--${firstClaim.ownerId}.json`);
+    const legacy = path.join(history, `${firstClaim.ownerId}.json`);
+    await rename(scoped, legacy);
+    const retained = await readFile(legacy);
+    await assert.rejects(resumeStorageMaintenance(target, { expectedOwnerId: owner.ownerId, writersQuiesced: true }, () => assert.fail("live legacy claimant cannot be bypassed")), { code: "E_STORAGE_MAINTENANCE_IN_PROGRESS" });
+    assert.deepEqual(await readFile(ownerPath(target)), original);
+    assert.deepEqual(await readFile(legacy), retained);
+    await kill(second);
+    await resumeStorageMaintenance(target, { expectedOwnerId: owner.ownerId, writersQuiesced: true }, () => undefined);
+    assert.deepEqual(await readFile(legacy), retained);
+    assert.equal((await executeForgeLoopCommand({ command: "task-list", projectPath: target })).ok, true);
+  });
+});
+
+test("coexisting flat and scoped continuation identities refuse recovery and retain both records", async () => {
+  await withDeadOwner(async (target, owner, original, children) => {
+    const first = await start(target, "CLAIM", owner.ownerId); children.push(first);
+    await kill(first);
+    const history = path.join(target, ".forgeloop/storage-maintenance-history/handoffs");
+    const firstClaim = JSON.parse(await readFile(path.join(history, `${owner.ownerId}.json`)));
+    const second = await start(target, "CLAIM", owner.ownerId); children.push(second);
+    await kill(second);
+    const scoped = path.join(history, `${owner.ownerId}--${firstClaim.ownerId}.json`);
+    const legacy = path.join(history, `${firstClaim.ownerId}.json`);
+    const bytes = await readFile(scoped);
+    await link(scoped, legacy);
+    await assert.rejects(resumeStorageMaintenance(target, { expectedOwnerId: owner.ownerId, writersQuiesced: true }, () => assert.fail("ambiguous continuation cannot authorize recovery")), { code: "E_STORAGE_MAINTENANCE_IN_PROGRESS" });
+    assert.deepEqual(await readFile(ownerPath(target)), original);
+    assert.deepEqual(await readFile(scoped), bytes);
+    assert.deepEqual(await readFile(legacy), bytes);
+  });
+});
 
 test("tampered, foreign and cyclic handoff claims refuse recovery without replacing owner or evidence", async () => {
   await withDeadOwner(async (target, owner, original, children) => {

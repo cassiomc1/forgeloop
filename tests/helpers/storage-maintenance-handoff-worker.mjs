@@ -6,7 +6,13 @@ const wait = () => new Promise(() => setInterval(() => {}, 1000));
 const ready = async () => { process.stdout.write("READY\n"); await wait(); };
 const originalLink = fs.promises.link;
 const originalRename = fs.promises.rename;
+let pausedContender = false;
 fs.promises.link = async (...args) => {
+  if (mode === "LATE_CONTENDER" && !pausedContender && args[1].replaceAll("\\", "/").includes("/storage-maintenance-history/handoffs/")) {
+    pausedContender = true;
+    process.stdout.write("READY\n");
+    await new Promise(resolve => process.stdin.once("data", resolve));
+  }
   const result = await originalLink(...args);
   if (mode === "CLAIM" && args[1].replaceAll("\\", "/").includes("/storage-maintenance-history/handoffs/")) await ready();
   return result;
@@ -25,7 +31,7 @@ try {
   if (mode === "OWNER") await withStorageMaintenance(target, ready);
   else {
     await resumeStorageMaintenance(target, { expectedOwnerId, writersQuiesced: true }, async () => {
-      if (mode === "ONCE") await retainStorageMaintenance(target);
+      if (["ONCE", "LATE_CONTENDER"].includes(mode)) await retainStorageMaintenance(target);
       else await ready();
     });
     process.stdout.write(JSON.stringify({ ok: true }) + "\n");

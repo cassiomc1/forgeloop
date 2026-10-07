@@ -1,0 +1,261 @@
+{
+  "increment": 699,
+  "sourceInventory": "benchmarks/storage-sqlite/persistence-loc698.json",
+  "sameScopeBothSides": true,
+  "scopeReviewComplete": false,
+  "baseline": 43592,
+  "current": 51657,
+  "targetReduction": 0.25,
+  "targetMaximumLines": 32694,
+  "newModules": 80,
+  "newLines": 7488,
+  "existingNetDelta": 577,
+  "removedWholeModules": 0,
+  "additionalNetLinesToRemove": 18963,
+  "largestAdditions": [
+    {
+      "file": "src/storage/unit-of-work.js",
+      "baseline": 0,
+      "current": 484,
+      "delta": 484
+    },
+    {
+      "file": "src/storage/importer.js",
+      "baseline": 0,
+      "current": 444,
+      "delta": 444
+    },
+    {
+      "file": "src/storage/repository.js",
+      "baseline": 0,
+      "current": 410,
+      "delta": 410
+    },
+    {
+      "file": "src/storage/migration-candidate.js",
+      "baseline": 0,
+      "current": 383,
+      "delta": 383
+    },
+    {
+      "file": "src/storage/connection.js",
+      "baseline": 0,
+      "current": 324,
+      "delta": 324
+    },
+    {
+      "file": "src/storage/exporter.js",
+      "baseline": 0,
+      "current": 287,
+      "delta": 287
+    },
+    {
+      "file": "src/storage/migration-source.js",
+      "baseline": 0,
+      "current": 249,
+      "delta": 249
+    },
+    {
+      "file": "src/storage/task-guards.js",
+      "baseline": 0,
+      "current": 226,
+      "delta": 226
+    },
+    {
+      "file": "src/storage/ledger-relations.js",
+      "baseline": 0,
+      "current": 200,
+      "delta": 200
+    },
+    {
+      "file": "src/storage/schema.js",
+      "baseline": 0,
+      "current": 199,
+      "delta": 199
+    },
+    {
+      "file": "src/storage/project-restore.js",
+      "baseline": 0,
+      "current": 195,
+      "delta": 195
+    },
+    {
+      "file": "src/storage/migration-rollback-publication.js",
+      "baseline": 0,
+      "current": 179,
+      "delta": 179
+    },
+    {
+      "file": "src/core/events.js",
+      "baseline": 914,
+      "current": 1082,
+      "delta": 168
+    },
+    {
+      "file": "src/core/ledger-event-collection.js",
+      "baseline": 0,
+      "current": 163,
+      "delta": 163
+    },
+    {
+      "file": "src/storage/transaction.js",
+      "baseline": 0,
+      "current": 163,
+      "delta": 163
+    },
+    {
+      "file": "src/storage/restore-replacement-archive.js",
+      "baseline": 0,
+      "current": 159,
+      "delta": 159
+    },
+    {
+      "file": "src/storage/migration-publication.js",
+      "baseline": 0,
+      "current": 141,
+      "delta": 141
+    },
+    {
+      "file": "src/storage/restore-replacement.js",
+      "baseline": 0,
+      "current": 140,
+      "delta": 140
+    },
+    {
+      "file": "src/storage/project-replacement.js",
+      "baseline": 0,
+      "current": 131,
+      "delta": 131
+    },
+    {
+      "file": "src/storage/maintenance.js",
+      "baseline": 0,
+      "current": 126,
+      "delta": 126
+    },
+    {
+      "file": "src/storage/migration-rollback-preparation.js",
+      "baseline": 0,
+      "current": 125,
+      "delta": 125
+    },
+    {
+      "file": "src/storage/restore-replacement-preparation.js",
+      "baseline": 0,
+      "current": 125,
+      "delta": 125
+    },
+    {
+      "file": "src/storage/ledger-event-snapshot.js",
+      "baseline": 0,
+      "current": 114,
+      "delta": 114
+    },
+    {
+      "file": "src/storage/connection-owner.js",
+      "baseline": 0,
+      "current": 112,
+      "delta": 112
+    },
+    {
+      "file": "src/storage/legacy-signature.js",
+      "baseline": 0,
+      "current": 109,
+      "delta": 109
+    }
+  ],
+  "largestReductions": [
+    {
+      "file": "src/core/transaction.js",
+      "baseline": 303,
+      "current": 38,
+      "delta": -265
+    },
+    {
+      "file": "src/core/task-migration.js",
+      "baseline": 348,
+      "current": 102,
+      "delta": -246
+    },
+    {
+      "file": "src/core/task-lock.js",
+      "baseline": 396,
+      "current": 218,
+      "delta": -178
+    },
+    {
+      "file": "src/cli.js",
+      "baseline": 963,
+      "current": 899,
+      "delta": -64
+    },
+    {
+      "file": "src/core/transaction-maintenance.js",
+      "baseline": 67,
+      "current": 5,
+      "delta": -62
+    },
+    {
+      "file": "src/core/approvals.js",
+      "baseline": 377,
+      "current": 349,
+      "delta": -28
+    },
+    {
+      "file": "src/core/actions.js",
+      "baseline": 432,
+      "current": 407,
+      "delta": -25
+    },
+    {
+      "file": "src/core/execution.js",
+      "baseline": 133,
+      "current": 109,
+      "delta": -24
+    },
+    {
+      "file": "src/core/reflection.js",
+      "baseline": 275,
+      "current": 273,
+      "delta": -2
+    },
+    {
+      "file": "src/core/contract-revision.js",
+      "baseline": 197,
+      "current": 196,
+      "delta": -1
+    },
+    {
+      "file": "src/adapters/opensrc/search.js",
+      "baseline": 245,
+      "current": 245,
+      "delta": 0
+    },
+    {
+      "file": "src/commands/action-authorize.js",
+      "baseline": 39,
+      "current": 39,
+      "delta": 0
+    },
+    {
+      "file": "src/commands/action-propose.js",
+      "baseline": 9,
+      "current": 9,
+      "delta": 0
+    },
+    {
+      "file": "src/commands/action-reconcile.js",
+      "baseline": 10,
+      "current": 10,
+      "delta": 0
+    },
+    {
+      "file": "src/commands/action-record.js",
+      "baseline": 45,
+      "current": 45,
+      "delta": 0
+    }
+  ],
+  "conclusion": "The conservative union fails net reduction. Native storage/import/export/maintenance additions dominate growth; retained existing module changes are net positive. No target waiver, denominator exclusion, integrity weakening or formatting compression is applied.",
+  "releaseThresholdsVerified": false
+}

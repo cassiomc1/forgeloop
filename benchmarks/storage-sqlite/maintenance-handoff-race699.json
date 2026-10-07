@@ -1,0 +1,55 @@
+{
+  "increment": 699,
+  "finding": "A late contender follows a promoted dead winner from its original handoff chain and occupies the winner owner ID root path, preventing later exact resume.",
+  "sourceFailure": {
+    "runId": 37655212232,
+    "head": "ed54b969c1af545a92b54b8ba08012bf90f00b1b",
+    "counts": {
+      "tests": 2855,
+      "pass": 2840,
+      "fail": 1,
+      "skipped": 14
+    },
+    "artifact": "windows-full699-terminal.json"
+  },
+  "reproduction": "Pause a contender before its first hard-link claim; let an independent winner promote, retain exclusion and exit; release contender; resume the promoted owner. Original code fails deterministically with the same handoff binding error.",
+  "correction": "Root claim stays keyed by original owner; dead-claim continuations use original-owner--claimant filenames. Existing flat continuations retain source-byte binding/liveness validation. Coexisting formats refuse ambiguous recovery; all history retained.",
+  "checks": {
+    "deterministicBefore": "FAIL_EXPECTED",
+    "expandedFinal": {
+      "tests": 104,
+      "pass": 104,
+      "fail": 0,
+      "logSha256": "34ee4889d5ccffb0b5a0476f079c102452901585bc185496c312b76dc5f6d6c2"
+    },
+    "verifyFast": "PASS",
+    "lint": "PASS",
+    "docs": "PASS",
+    "unchangedComplexityLimits": "PASS"
+  },
+  "sources": [
+    {
+      "file": "src/storage/maintenance-handoff.js",
+      "sha256": "79113b4f2c706ae35c0ffa775b433fbd085fd95d4d23d0d25072151f4c3887f5"
+    },
+    {
+      "file": "tests/storage-maintenance-handoff.test.js",
+      "sha256": "7d99a51fd9cd8f5f492681bad9fc5d83211fcbd075810cf7751ae3699558dec4"
+    },
+    {
+      "file": "tests/helpers/storage-maintenance-handoff-worker.mjs",
+      "sha256": "b0e870c40cd09e72dd6655d2d9348150198eda7731736fb254182206521c50cf"
+    }
+  ],
+  "jevgrep": {
+    "status": "COMPLETE",
+    "exitCode": 0,
+    "logSha256": "0ae492879d2889465f7ef4a9a16c3d7c81ca6ffcdc54a2d9b809fc109d0b65e4"
+  },
+  "limitations": [
+    "Full Mac698 and Windows699 terminal runs predate this correction.",
+    "Final current Windows/Linux/full prepush verification remains pending.",
+    "Existing mismatched historical claims remain fail-closed; no automatic repair/deletion.",
+    "Resource benchmark remains prepared but unexecuted while tests run."
+  ]
+}

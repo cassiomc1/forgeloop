@@ -15,7 +15,19 @@ async function syncDirectory(filename) {
   }
 }
 
-/** Never recycle a contested path: each dead claimant has one immutable successor. */
+async function optionalClaim(target, relative) {
+  try { return (await readMaintenanceOwner(target, relative)).value; }
+  catch (error) { if (error.code === "ENOENT") return null; throw error; }
+}
+
+async function retainedSuccessor(target, predecessor, relative) {
+  const scoped = await optionalClaim(target, relative);
+  const legacy = await optionalClaim(target, `${HISTORY}/handoffs/${predecessor}.json`);
+  if (scoped && legacy) throw busy("Maintenance continuation has conflicting path identities");
+  return scoped ?? legacy;
+}
+
+/** Each original owner has an isolated immutable dead-claimant chain. */
 export async function claimMaintenanceHandoff(target, previous, ownerData, assertDead) {
   const sourceSha256 = createHash("sha256").update(previous.text).digest("hex");
   const claimedOwner = { ...ownerData, handoffSourceSha256: sourceSha256 };
@@ -36,16 +48,23 @@ export async function claimMaintenanceHandoff(target, previous, ownerData, asser
   for (let depth = 0; depth < 64; depth += 1) {
     if (visited.has(predecessor)) throw busy("Maintenance handoff history is cyclic");
     visited.add(predecessor);
-    const relative = `${HISTORY}/handoffs/${predecessor}.json`;
-    const destination = await assertSafePath(target, relative);
-    try {
-      await link(intent, destination);
-      await syncDirectory(roots.handoffs);
-      return claimedOwner;
-    } catch (error) {
-      if (error.code !== "EEXIST") throw error;
+    const relative = depth === 0
+      ? `${HISTORY}/handoffs/${predecessor}.json`
+      : `${HISTORY}/handoffs/${previous.value.ownerId}--${predecessor}.json`;
+    // Honor existing flat continuation records, including live claimants, but
+    // never create a continuation at another owner's future root pathname.
+    let claimant = depth === 0 ? null : await retainedSuccessor(target, predecessor, relative);
+    if (!claimant) {
+      const destination = await assertSafePath(target, relative);
+      try {
+        await link(intent, destination);
+        await syncDirectory(roots.handoffs);
+        return claimedOwner;
+      } catch (error) {
+        if (error.code !== "EEXIST") throw error;
+      }
+      claimant = (await readMaintenanceOwner(target, relative)).value;
     }
-    const claimant = (await readMaintenanceOwner(target, relative)).value;
     if (!MAINTENANCE_OWNER_ID.test(claimant.ownerId) || claimant.resumedFrom !== previous.value.ownerId || claimant.handoffSourceSha256 !== sourceSha256) {
       throw busy("Maintenance handoff differs from the requested owner");
     }

@@ -1006,11 +1006,19 @@ handoff-lock, power-loss and hosted platform acceptance remain incomplete.
 A resume archives the already durable owner marker by a non-replacing hard link.
 It writes and syncs a complete new owner intent under
 `.forgeloop/storage-maintenance-history/handoff-intents/<owner-id>.json`, then
-atomically links that intent to `handoffs/<predecessor-owner-id>.json`. The claim
+atomically links that intent to `handoffs/<original-owner-id>.json`. The claim
 binds the exact original owner bytes by SHA-256. Two contenders cannot create
 that same immutable successor. A live claimant blocks adoption; a dead local
 claimant permits following its exact successor identity, bounded to64 entries.
 Claims are never removed and recycled during contention.
+
+Dead-claimant continuations use
+`handoffs/<original-owner-id>--<dead-claimant-owner-id>.json`. This keeps a delayed
+contender in its original recovery chain instead of occupying a promoted owner's
+future root claim. Existing flat continuation records retain their exact source
+binding and liveness checks; they are never overwritten or discarded. Coexisting
+flat and scoped continuation identities refuse recovery as ambiguous, and
+mismatched historical bindings remain fail-closed.
 
 Owner promotion is staged under the history's `handoff-promotions/` directory
 and renamed into `.forgeloop/.storage-maintenance/owner.json`. A process kill
