@@ -1,0 +1,16 @@
+{
+  "runId": 37647439935,
+  "head": "72896695c269476c41636cd917047cff53d9f7e1",
+  "tests": 2853,
+  "passed": 2836,
+  "failed": 3,
+  "skipped": 14,
+  "status": "FAILED",
+  "failures": [
+    "integration-types absolute tar -C path",
+    "binary-manager absolute tar -C path",
+    "PARTIAL_OUTGOING recovery worker returned error before REBUILD_DATABASE; diagnostic incomplete"
+  ],
+  "cleanupCorrectionConfirmed": true,
+  "originalPlanComplete": false
+}

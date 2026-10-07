@@ -119,7 +119,7 @@ for (const checkpoint of ["PREPARING", "OUTGOING_BASELINE", "OUTGOING_ALLOCATED"
         await writeFile(orphan, bytes);
         worker = fork(new URL("./helpers/storage-replacement-failed-resume-worker.mjs", import.meta.url), [fixture.target, ready.operationId, options.expectedOwnerId, "REBUILD_DATABASE"], { stdio: ["ignore", "ignore", "pipe", "ipc"] });
         const rebuilt = await Promise.race([once(worker, "message").then(([message]) => message), once(worker, "exit").then(([code]) => { throw new Error(`Rebuild worker exited ${code}`); })]);
-        assert.equal(rebuilt.checkpoint, "REBUILD_DATABASE");
+        assert.equal(rebuilt.checkpoint, "REBUILD_DATABASE", JSON.stringify(rebuilt));
         const rebuiltExit = once(worker, "exit");
         assert.equal(worker.kill("SIGKILL"), true);
         assert.equal((await rebuiltExit)[1], "SIGKILL");

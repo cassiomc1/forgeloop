@@ -16,7 +16,7 @@ test("published integration declarations match runtime values and compile for a 
   const packed = JSON.parse(runNpm(["pack", "--json", "--pack-destination", root], { cwd: repositoryRoot, encoding: "utf8" }))[0];
   const packageDirectory = path.join(root, "node_modules/@cassiomc1/forgeloop");
   await mkdir(packageDirectory, { recursive: true });
-  execFileSync("tar", ["-xzf", packed.filename, "--strip-components=1", "-C", packageDirectory], { cwd: root });
+  execFileSync("tar", ["-xzf", packed.filename, "--strip-components=1", "-C", path.relative(root, packageDirectory).replaceAll("\\", "/")], { cwd: root });
   const declaration = await readFile(path.join(packageDirectory, "src/integration.d.ts"), "utf8");
   const declaredValues = [...declaration.matchAll(/^export declare (?:const|function|class) (\w+)/gmu)].map(match => match[1]);
   assert.deepEqual([...new Set(declaredValues)].sort(), Object.keys(integration).sort());

@@ -196,9 +196,10 @@ async function listArchiveEntries(archivePath, { archive = "tar.gz", execFileImp
 async function extractArchive(archivePath, extractionDirectory, { archive = "tar.gz", execFileImpl = nodeExecFile } = {}) {
   await listArchiveEntries(archivePath, { archive, execFileImpl });
   const extractCommand = archive === "zip" && process.platform !== "win32" ? "unzip" : "tar";
+  const destination = path.relative(path.dirname(archivePath), extractionDirectory).replaceAll("\\", "/") || ".";
   const extractArgs = extractCommand === "unzip"
-    ? ["-q", path.basename(archivePath), "-d", extractionDirectory]
-    : ["-xf", path.basename(archivePath), "-C", extractionDirectory];
+    ? ["-q", path.basename(archivePath), "-d", destination]
+    : ["-xf", path.basename(archivePath), "-C", destination];
   try {
     await execFileAsync(execFileImpl, extractCommand, extractArgs, { cwd: path.dirname(archivePath), maxBuffer: 2 * 1024 * 1024 });
   } catch (cause) {

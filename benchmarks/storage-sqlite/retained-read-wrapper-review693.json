@@ -1,0 +1,32 @@
+{
+  "rows": [
+    {
+      "file": "src/core/preflight-loaders.js",
+      "sha256": "785f690c5fcb95c6789f4c757bbb8218befaae467213211bd9340ebaaf3027ae",
+      "review": "readProfile reads human-maintained project profile; config/source registry are retained inputs. Canonical contract, route and gates use their selected readers."
+    },
+    {
+      "file": "src/core/structural-quality/sentrux-mcp.js",
+      "sha256": "fea4ef10c25efa80b67f8ab2fcd25e4c0f8fe935ff51698bef52fc98042befaf",
+      "review": "readBytes fingerprints retained provider rules after safe-path inspection, not operational state."
+    },
+    {
+      "file": "src/core/structural-quality/source-fingerprint.js",
+      "sha256": "de166c936a7c4246fbd014f2ea9eee1faba98a586287aae0286d0a2515774735",
+      "review": "readBytes fingerprints project source; crawler excludes .forgeloop/.git/node_modules and refuses symlinks."
+    },
+    {
+      "file": "src/core/bundles.js",
+      "sha256": "8d74bf947d73e3a9ae5b4149da78e6ff8584d48d6c04f12bf296fcaa487e1991",
+      "review": "Five wrapper sites concern portable bundle attachment/event/signature output/input under fixed .forgeloop/tasks/<safeTaskId>; native export uses immutable snapshot and selected store; legacy source fallback only absent selected store."
+    },
+    {
+      "file": "src/core/work-state.js",
+      "sha256": "fae79a89d33d170159195d3b3d6448a5ad45422df952422cd2dd18e722052ff9",
+      "review": "Canonical state and contract reads select existing native scope and return missing without filesystem fallback; required artifact binding uses selected canonical bytes when context supplied. Direct required-binding helper scope remains caller-owned and reviewed separately."
+    }
+  ],
+  "method": "Direct current source reads, scoped static role review",
+  "wholeScopeVerified": false,
+  "newFinding": "inspect state.present still reads filesystem; isolated regression fails; fix pending"
+}

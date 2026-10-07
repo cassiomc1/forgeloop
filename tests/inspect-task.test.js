@@ -59,6 +59,7 @@ test("C0/P2 safety net: inspect --task is isolated per task and progress receive
 
     for (const [selected, other] of [["task-a", "task-b"], ["task-b", "task-a"]]) {
       const inspection = await inspectTarget({ target, packageRoot, taskId: selected });
+      assert.equal(inspection.state.present, true, "canonical native state must be reported present");
       const taskInspection = inspection.taskInspection;
       assert.ok(taskInspection, "task inspection present");
 

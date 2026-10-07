@@ -1,0 +1,12 @@
+{
+  "file": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/inspect.js",
+  "sha256": "0e04a43b05d59d2cef6064181c56ab471da43c7b78aa7d8c25f7782b64088ed5",
+  "finding": "inspectTarget computes report.state.present from filesystem existence even though classifiedState reads canonical SQLite; a valid native state without a physical mirror can be reported absent.",
+  "sourceLines": [
+    187,
+    188,
+    312
+  ],
+  "status": "SOURCE_CONFIRMED_REGRESSION_TEST_PENDING",
+  "wholeScopeVerified": false
+}

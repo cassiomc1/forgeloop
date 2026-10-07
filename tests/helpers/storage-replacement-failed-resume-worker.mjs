@@ -48,5 +48,5 @@ try {
   }
   throw new Error("Expected corrupt source rejection");
 } catch (error) {
-  process.send({ code: error.code, ownerId: (await readMaintenanceOwner(target)).value.ownerId });
+  process.send({ code: error.code, message: error.message, ownerId: (await readMaintenanceOwner(target)).value.ownerId });
 }

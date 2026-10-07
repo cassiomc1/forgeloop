@@ -107,7 +107,7 @@ test("setup repairs a tampered managed binary only after verifying the replaceme
     const replacementPath = path.join(sourceDirectory, "tgrep");
     await writeFile(replacementPath, replacement);
     await chmod(replacementPath, 0o755);
-    await execFileAsync("tar", ["-czf", path.basename(archivePath), "-C", sourceDirectory, "tgrep"], { cwd: directory });
+    await execFileAsync("tar", ["-czf", path.basename(archivePath), "-C", "asset", "tgrep"], { cwd: directory });
     const archiveSha = createHash("sha256").update(await readFile(archivePath)).digest("hex");
 
     const manifest = JSON.parse(await readFile(path.join(packageRoot, "src", "repository-index", "tgrep-manifest.json"), "utf8"));
@@ -138,6 +138,7 @@ test("setup repairs a tampered managed binary only after verifying the replaceme
         assert.equal(path.isAbsolute(args[1]), false);
         assert.equal(args[1].includes(":"), false);
         assert.equal(path.isAbsolute(options.cwd), true);
+        if (args.includes("-C")) assert.equal(path.isAbsolute(args[args.indexOf("-C") + 1]), false);
         return execFile(command, args, options, callback);
       },
     });
