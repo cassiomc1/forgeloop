@@ -1,0 +1,123 @@
+{
+  "increment": 700,
+  "metadata": {
+    "head": "e5c362ed2732cda5725a38978019862beb7f21fa",
+    "hardware": {
+      "hw.model": "Mac14,2",
+      "machdep.cpu.brand_string": "Apple M2",
+      "hw.memsize": "8589934592"
+    },
+    "macOS": "27.0.1",
+    "repetitionsPerOperationBackend": 100,
+    "tasks": 1000,
+    "validObservationEventsPerTask": 10,
+    "forcedGC": false,
+    "scope": "Actual in-memory MCP tool/resource lifetime resource comparison; not stdio/HTTP or whole memory acceptance."
+  },
+  "terminal": {
+    "increment": 699,
+    "cwd": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop",
+    "exitCode": 0,
+    "elapsedSeconds": 416.1417438983917,
+    "manifestFiles": 2766,
+    "admittedSourceUnchanged": true,
+    "status": "PASS",
+    "scope": "Actual in-memory MCP client/server, 1000 tasks with ten valid events each, 100 natural-GC measured requests per tool/resource and backend; current versus pinned baseline, instrumented resources; source hashes before/after; not full resource acceptance."
+  },
+  "rawSha256": "4b63ae64eed0bebe16288e4a82fd310519703bd8f1c008c33a09b3492d37443a",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "node": "v24.19.0",
+  "platform": "darwin",
+  "results": [
+    {
+      "operation": "taskListTool",
+      "tasks": 1000,
+      "events": 10000,
+      "outputParity": true,
+      "native": {
+        "samples": 100,
+        "rssFirstBeforeMiB": 285.812,
+        "rssLastAfterMiB": 362.406,
+        "rssMaximumEndpointMiB": 443.109,
+        "workerLifetimePeakMiB": 443.125,
+        "rssQuarterMedianMiB": [
+          396.125,
+          436.0,
+          427.844,
+          383.25
+        ],
+        "medianCpuMicros": 593517.5,
+        "maximumAsyncFilesystemRequests": 101,
+        "maximumScheduledTimerLatenessMs": 705.0156659999993,
+        "maximumWalEndpointBytes": 0
+      },
+      "baseline": {
+        "samples": 100,
+        "rssFirstBeforeMiB": 165.516,
+        "rssLastAfterMiB": 184.594,
+        "rssMaximumEndpointMiB": 251.969,
+        "workerLifetimePeakMiB": 253.094,
+        "rssQuarterMedianMiB": [
+          239.344,
+          222.797,
+          213.312,
+          185.656
+        ],
+        "medianCpuMicros": 1342479.0,
+        "maximumAsyncFilesystemRequests": 66006,
+        "maximumScheduledTimerLatenessMs": 10.483332999996492,
+        "maximumWalEndpointBytes": 0
+      }
+    },
+    {
+      "operation": "projectTasksResource",
+      "tasks": 1000,
+      "events": 10000,
+      "outputParity": true,
+      "native": {
+        "samples": 100,
+        "rssFirstBeforeMiB": 373.172,
+        "rssLastAfterMiB": 383.703,
+        "rssMaximumEndpointMiB": 389.875,
+        "workerLifetimePeakMiB": 443.125,
+        "rssQuarterMedianMiB": [
+          382.391,
+          357.859,
+          369.969,
+          383.906
+        ],
+        "medianCpuMicros": 586497.0,
+        "maximumAsyncFilesystemRequests": 97,
+        "maximumScheduledTimerLatenessMs": 657.5113749999873,
+        "maximumWalEndpointBytes": 0
+      },
+      "baseline": {
+        "samples": 100,
+        "rssFirstBeforeMiB": 184.469,
+        "rssLastAfterMiB": 159.828,
+        "rssMaximumEndpointMiB": 185.781,
+        "workerLifetimePeakMiB": 253.094,
+        "rssQuarterMedianMiB": [
+          183.703,
+          180.062,
+          179.656,
+          164.359
+        ],
+        "medianCpuMicros": 1321631.0,
+        "maximumAsyncFilesystemRequests": 66002,
+        "maximumScheduledTimerLatenessMs": 46.36525000000256,
+        "maximumWalEndpointBytes": 0
+      }
+    }
+  ],
+  "releaseThresholdsVerified": false,
+  "limits": [
+    "Transport serialization/stdio/HTTP not measured",
+    "Synthetic valid tasks/claims and ten observation events per task",
+    "Resource samples are separately instrumented;RSS endpoints are not operation peak",
+    "Not complete MCP throughput/contention/resource acceptance",
+    "Finite natural-GC RSS observations are not a universal bound or an accepted memory budget.",
+    "Worker lifetime peak includes imports, startup and prior operations; endpoint quarters are descriptive only.",
+    "Instrumented timing is not substituted for uninstrumented release p95."
+  ]
+}
