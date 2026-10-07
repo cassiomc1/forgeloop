@@ -1,0 +1,16 @@
+{
+  "runId": 37676307490,
+  "jobId": 112980692078,
+  "head": "6b98c9273afbd1b028c83d3b6e94e10b20a32361",
+  "runner": "forgeloop-linux-remote",
+  "conclusion": "success",
+  "markdownFilesLinted": 171,
+  "markdownIssues": 0,
+  "links": {
+    "total": 1431,
+    "successful": 1410,
+    "errors": 0
+  },
+  "logSha256": "6b272a015380f46be8bb9cd20f9a75bedefffaa5a3ffe89d066581dd76d4f94b",
+  "scope": "Actual documentation job validates pinned musl Lychee execution and corrected official Node24 API links; full workflow still running."
+}
