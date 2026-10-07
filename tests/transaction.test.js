@@ -9,6 +9,8 @@ import { appendProtocolEvent, readEvents } from "../src/core/events.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { runTaskCreate } from "../src/commands/task-create.js";
 import { createWorkState, readWorkState, writeWorkState } from "../src/core/work-state.js";
+import { writeJsonArtifact } from "../src/core/artifacts.js";
+import { taskGatePath } from "../src/core/task-paths.js";
 import { taskArtifactPath } from "../src/core/task-paths.js";
 import { openStorageDatabase } from "../src/storage/index.js";
 
@@ -116,5 +118,19 @@ for (const operation of ["replace", "delete"]) test(`a task transaction cannot $
       return operation === "delete" ? tx.stageDelete(filename) : tx.stageText(filename, JSON.stringify({ ...otherState, revision: 1 }));
     }), { code: "E_TASK_CONTEXT_MISMATCH" });
     assert.deepEqual(await readWorkState(target, { packageRoot, taskId: otherTaskId }), before);
+  });
+});
+
+
+test("native generic artifact writes reject a payload belonging to another task", async () => {
+  await project(async target => {
+    const gate = { schemaVersion: 1, protocolVersion: 1, taskId: "another-payload-owner", gate: "test", status: "satisfied", requiredBy: [], artifacts: [], decisions: [], unknowns: [], approvedAssumptions: [], evidence: [] };
+    const before = await readEvents(target, packageRoot, { taskId });
+    await assert.rejects(writeJsonArtifact(target, taskGatePath(taskId, "test"), gate, "gate", packageRoot, { taskId }), { code: "E_STORAGE_PAYLOAD_MISMATCH" });
+    const db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"), { readOnly: true });
+    try { assert.equal(db.prepare("SELECT COUNT(*) AS count FROM task_artifacts WHERE task_id = ? AND kind = 'gate'").get(taskId).count, 0); }
+    finally { db.close(); }
+    assert.deepEqual(await readEvents(target, packageRoot, { taskId }), before);
+    await writeJsonArtifact(target, taskGatePath(taskId, "test"), { ...gate, taskId }, "gate", packageRoot, { taskId });
   });
 });

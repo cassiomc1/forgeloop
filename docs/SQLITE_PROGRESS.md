@@ -147,3 +147,8 @@ Core37664407297 onffc91ca isterminal:17jobs,15pass,documentation/link-check fail
 ### Current Linux shard and inclusive inventory756
 
 Current core37676307490 on6b98c92 completes coverage shard4 with842 tests:839pass,3skip,zero failures onDocker hostname51abbe357f3e. This is one coverage shard, not whole workflow acceptance. The reproducible unchanged279-module union counts43592 baseline and51711 current nonblank production lines, including comments andmaintenance/import/export. The25% maximum remains32694;19017 lines would still need removal under this conservative inventory. No scope exclusions, formatting compression or target waiver. Evidence: `benchmarks/storage-sqlite/linux-shard4-756-terminal.json` and `persistence-loc756-update.json`. Progress remains55%.
+
+
+### Artifact payload identity757
+
+Public writeJsonArtifact accepted a gate payload belonging toanother task when the destination taskId was supplied explicitly. The new regression fails againstthe previous implementation. Generic native artifact publication now rejects a present payload.taskId that differsfrom its canonical destination, matching migration validation while preserving payloads without that field. Selected transaction/bootstrap/import coverage passes46 tests, fast verification passes andcomplexity reports no regressions. Full corrected platforms remainpending;current core37676307490 predates this correction. ItsLinux coverage shard3 passes608 tests:604pass,4skip,zero failures. Evidence: `benchmarks/storage-sqlite/artifact-identity757.json` and `linux-shard3-757-terminal.json`. Overall55%;consumer/performance/code-reduction/protocol acceptance remainopen. No PR orpublication.

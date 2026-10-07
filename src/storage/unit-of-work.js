@@ -420,7 +420,10 @@ class OperationalStore {
       if (payload.taskId !== taskId || payload[`${location.kind}Id`] !== location.artifactId) throw storageError("E_STORAGE_PAYLOAD_MISMATCH", "Proposed operational record has a mismatched identity");
       table[2](this.db, { taskId, [location.kind]: payload });
     }
-    else putArtifact(this.db, { taskId, kind: location.kind, artifactId: location.artifactId, payload, sourceText: text });
+    else {
+      if (payload.taskId !== undefined && payload.taskId !== taskId) throw storageError("E_STORAGE_PAYLOAD_MISMATCH", "Proposed artifact belongs to another task");
+      putArtifact(this.db, { taskId, kind: location.kind, artifactId: location.artifactId, payload, sourceText: text });
+    }
   }
 }
 

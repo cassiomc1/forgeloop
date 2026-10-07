@@ -1,0 +1,14 @@
+{
+  "runId": 37676307490,
+  "jobId": 112980692260,
+  "head": "6b98c9273afbd1b028c83d3b6e94e10b20a32361",
+  "platform": "Linux Docker",
+  "conclusion": "success",
+  "tests": 608,
+  "passed": 604,
+  "failed": 0,
+  "skipped": 4,
+  "log": "linux-shard3-757.log",
+  "logSha256": "f7038b5c11137e2735fa0e3c16e9b28f96a428e97d4b02c6aecc0dca8280113c",
+  "scope": "Coverage shard 3/4 only; predates artifact identity757"
+}
