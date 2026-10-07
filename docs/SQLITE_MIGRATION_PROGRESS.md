@@ -3166,3 +3166,9 @@ Core37659627713 onparent993e0cb completes all17jobs. Linux fourcoverage shards,c
 ## Increment712: direct diagnosis state/event atomicity
 
 Independent direct structured andlegacy diagnosis calls lacked anouter domain transaction. Injected SQLite state-update ABORT reproduces anextra committed diagnosis event while state remainsunchanged. Both entrypoints nowjoin existing command transactions orcreate one aroundoriginal validation,event andstate publication. Fault regressions and26diagnosis/compatibility/history/correction-cycle tests pass,asdo lint,unchanged complexity limits anddiffcheck. Original phase/evidence/CAS semantics remaininside theboundary. Full corrected platforms andall other direct-consumer closure remainpending;liveCI retainsparent sourceidentity. Evidence:`benchmarks/storage-sqlite/diagnosis-atomicity712.json`. Progress55%;noPR/publication orVALIDclosure.
+
+## Increment729: current Windows full pass and refreshed code-size evidence
+
+Windows run37668036690 ondd7b4de completes successfully on100.83.46.210/VM-CASSIO:2861tests,2847pass,14skip,zero failures orcancellations. This includes the current diagnosis atomicity anddiscovery fairness corrections. Terminal counts,source identity andlog fingerprint are retained in `benchmarks/storage-sqlite/windows-full729-terminal.json`. Renewed core37669039007 on58857c6 is dispatched onlyafter Windows completes;current Linux andlocal pinned link-check action verification remainpending.
+
+The same279-module conservative inventory nowcounts43592baseline versus51694current nonblank production lines:18.59%growth and19000lines above the original25%reduction maximum32694. The compact delta reconstructs both whole-module totals exactly against the retained698inventory. Evidence:`benchmarks/storage-sqlite/persistence-loc728-update.json`. Scope review andoriginal release acceptance remainunverified;no denominator changes orwaivers. Progress55%;noPR,publication orVALIDclosure.
