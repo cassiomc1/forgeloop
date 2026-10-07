@@ -1,0 +1,84 @@
+{
+  "increment": 797,
+  "sourceRevision": "89a295909fa492c10c0c5b85a0bdbcd5e7291991",
+  "status": "SOURCE_REVIEWED_SUBSET",
+  "wholeConsumerClosure": false,
+  "reviewed": [
+    {
+      "path": "src/core/report.js",
+      "sha256": "c2cb300de2b1ebe0a88cee80a426371ef49b78b3f6949bc9f5095d91a82b4287",
+      "disposition": "Raw read is selected human-maintained PROJECT_PROFILE.md; operational completion and audit delegate to evaluateAudit."
+    },
+    {
+      "path": "src/core/trajectory-evaluation.js",
+      "sha256": "0126cca076bebabbaac8c68c6355554871eab5a7c146ebc6476c64948386fcae",
+      "disposition": "scenarioPath is explicit validated project-local reference input; trace/metrics use a project read snapshot; evaluation and audit event publish through a task transaction."
+    },
+    {
+      "path": "src/core/efficiency.js",
+      "sha256": "8bcdcd327cf898cb0a4b807d44518f11554ca27980ae5e34023057dd5dc774f3",
+      "disposition": "baselinePath is explicit project-local comparison input with containment/schema checks; operational metrics and contract are read through the project snapshot."
+    },
+    {
+      "path": "src/core/test-intelligence/inventory.js",
+      "sha256": "11325818eaf83a522818e25ef3e75b10d0be39d485e0e8ffd94861a2632357d8",
+      "disposition": "Enumerates repository test source directories; source code remains file-owned by the plan."
+    },
+    {
+      "path": "src/core/test-intelligence/prune.js",
+      "sha256": "35589fb442033e16ddfeb28af2ea6a5f91aa31a2b2f1ad4719544def6bcb60f4",
+      "disposition": "Utility is read canonically; probe copies repository source excluding .forgeloop/.git and modifies only a disposable temporary copy. No operational mirror writer."
+    },
+    {
+      "path": "src/core/profile.js",
+      "sha256": "88877cee83dd29b9aa06aa0bc2db148799bfb660a6b45ec6609b4e5b923f1f30",
+      "disposition": "Reads selected human-maintained profile; source registry uses artifact reader and is intentionally file-owned input."
+    },
+    {
+      "path": "src/core/policy-adapters.js",
+      "sha256": "981d9975e5b961806289f4901a14dc807d6533fa1c473f9808e728be804cfb25",
+      "disposition": "Scans repository source for policy checks; excludes .forgeloop from recursive scans. Explicit source-file arrays remain policy inputs."
+    },
+    {
+      "path": "src/core/trusted-authority.js",
+      "sha256": "b8134ec73d784eaf7611f7adacab9ada9ecd42793d1d8ee9b6f3d1f86b92fe34",
+      "disposition": "Host-owned authority files are external to the target; target-contained sources refuse trusted admission. No task operational storage writer."
+    },
+    {
+      "path": "src/core/workspace-binding.js",
+      "sha256": "5a0aef7cb4c14a6ab29f4bf368ffb75e392ac72d1e39763e26ad75542c0c6be5",
+      "disposition": "Raw filesystem realpath resolves Git/worktree identity; operational workspace binding uses canonical artifacts and task transactions."
+    },
+    {
+      "path": "src/core/command-resolution.js",
+      "sha256": "1b6f3ae671a1a2fcd4dc04604c2f67c4fcd1c8fe82dc094659d1847988b520c0",
+      "disposition": "Reads project package.json for command resolution; package manifests remain repository inputs."
+    },
+    {
+      "path": "src/core/signing/statement-file.js",
+      "sha256": "4b0db680c034bd21497e5fa96c01ea79a7faa14f6424c85965f4c9183304880b",
+      "disposition": "Selected canonical statement bytes are materialized in an isolated temporary directory for the external signer; statement freshness rechecked; temporary output cleaned. Native write transaction forbidden during signer callback."
+    },
+    {
+      "path": "src/core/signing/bundle-file.js",
+      "sha256": "055a6031cbd72bde093816b9da6c2fe1cbd5737cd63340ecb87851498711d5f3",
+      "disposition": "External signer writes temporary bundle; immutable attachment is staged through active preparation, with statement freshness and regular-file/no-symlink checks; canonical output without native preparation refuses."
+    }
+  ],
+  "limitations": [
+    "Bounded source review; does not prove all dynamic/transitive consumers.",
+    "Evidence does not upgrade pending platform runs or validate every external-input safety property."
+  ],
+  "retrieval": {
+    "tool": "jevgrep0.8.0",
+    "exitCode": 2,
+    "relevantFiles": 756,
+    "status": "INCOMPLETE",
+    "issues": {
+      "resource_limit": 4,
+      "request-limit": 53
+    },
+    "logSha256": "c6c5ec1d32211e204e75f7c3554a3ac5ff5ce183e0fb5ada325f8dd3e992a3a2",
+    "fallback": "Exact searches and direct source reads for the12 bounded reviewed modules."
+  }
+}

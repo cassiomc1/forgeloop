@@ -23,6 +23,9 @@ const eventsPerTask = Number(argument("events") ?? 10);
 const selectedEvents = Number(argument("selected-events") ?? 1000);
 const repeats = Number(argument("repeats") ?? 20);
 const validationOnly = process.argv.includes("--validate-only");
+const cpuProfileDirectory = argument("cpu-profile-dir");
+assert.ok(!cpuProfileDirectory || validationOnly, "CPU profiling requires --validate-only; instrumented samples are not release latency");
+if (cpuProfileDirectory) await mkdir(path.resolve(cpuProfileDirectory), { recursive: true });
 assert.ok(sizes.every(size => Number.isInteger(size) && size >= 1 && size <= 5000));
 assert.ok([eventsPerTask, selectedEvents].every(count => Number.isInteger(count) && count >= 1 && count <= 100000));
 assert.ok(Number.isInteger(repeats) && repeats >= 10 && repeats <= 200);
@@ -65,7 +68,10 @@ async function seed(nativeRoot, portableRoot, size) {
 function invoke(backend, target, operation) {
   const root = backend === "native" ? currentRoot : baselineRoot;
   const args = operation === "paginated-task-list" ? ["task-list", "--limit", "5"] : ["history", "--task", taskIdAt(0), "--limit", "5"];
-  const result = spawnSync(process.execPath, [path.join(root, "src/cli.js"), ...args, "--path", target, "--json"], {
+  const profilingArgs = cpuProfileDirectory
+    ? ["--cpu-prof", `--cpu-prof-dir=${path.resolve(cpuProfileDirectory)}`, `--cpu-prof-name=${backend}-${path.basename(target)}-${operation}.cpuprofile`]
+    : [];
+  const result = spawnSync(process.execPath, [...profilingArgs, path.join(root, "src/cli.js"), ...args, "--path", target, "--json"], {
     cwd: target, encoding: "utf8", timeout: 120000, maxBuffer: 8 * 1024 * 1024, env: { ...process.env, FORGELOOP_TASK: "" },
   });
   assert.equal(result.status, 0, result.stderr || result.stdout);

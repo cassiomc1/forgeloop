@@ -1,0 +1,25 @@
+{
+  "increment": 796,
+  "runId": 37699563447,
+  "jobId": 113059506281,
+  "sourceRevision": "89a295909fa492c10c0c5b85a0bdbcd5e7291991",
+  "status": "completed",
+  "conclusion": "failure",
+  "node": "24.21.0",
+  "host": "100.83.46.210",
+  "computer": "VM-CASSIO",
+  "counts": {
+    "tests": 2892,
+    "pass": 2877,
+    "fail": 1,
+    "skipped": 14
+  },
+  "failure": {
+    "test": "initial replacement resumes SIGKILL at PUBLICATION_READY",
+    "code": "E_STORAGE_MAINTENANCE_IN_PROGRESS",
+    "message": "Maintenance owner process is still present; resume refused",
+    "cause": "UNCONFIRMED: recorded owner PID and resume CLI PID were not both captured."
+  },
+  "logSha256": "b58b4a95c295abbd4548d8c8e61c2ffe6b1b91b7c434332ad051f100b9d443ed",
+  "scope": "Full Windows suite failed; no current Windows acceptance claim."
+}

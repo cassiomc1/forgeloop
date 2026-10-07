@@ -1,0 +1,1039 @@
+{
+  "increment": 798,
+  "kind": "diagnostic-cpu-profile",
+  "sourceRevision": "89a295909fa492c10c0c5b85a0bdbcd5e7291991",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "node": "v24.19.0",
+  "tasks": 1000,
+  "eventsPerOtherTask": 10,
+  "selectedTaskEvents": 1000,
+  "invocationsPerBackendPerOperation": 1,
+  "outputParity": true,
+  "sourceFiles": 2889,
+  "admittedSourceUnchanged": true,
+  "sourceManifestSha256": "958d08565f5572be5bc31a0a0101cc19f3347aca9891ab586f46c035fa75a8b0",
+  "profileScriptSha256": "e0b31a381ee11f6408fcdc44b04c589a81fff0aa3368b6871f8c83191cf20b5f",
+  "outputSha256": "e8ca99b8c2c263cbc92d580eb6e79272007f57f9f9e447986b029499cd89249d",
+  "profiles": [
+    {
+      "backend": "baseline",
+      "operation": "paginated-task-list",
+      "profileSha256": "2aaaf40a9461dadf373a9f1a7f40621721c1a988c9fcf792e31cb6ad05022293",
+      "profileBytes": 199209,
+      "sampledMs": 1808.375,
+      "topSelfSamples": [
+        {
+          "function": "(idle)",
+          "source": "",
+          "line": 0,
+          "sampledMs": 973.711
+        },
+        {
+          "function": "(program)",
+          "source": "",
+          "line": 0,
+          "sampledMs": 101.332
+        },
+        {
+          "function": "lstat",
+          "source": "",
+          "line": 0,
+          "sampledMs": 67.544
+        },
+        {
+          "function": "realpath",
+          "source": "node:internal/fs/promises",
+          "line": 1239,
+          "sampledMs": 25.416
+        },
+        {
+          "function": "realpath",
+          "source": "",
+          "line": 0,
+          "sampledMs": 23.917
+        },
+        {
+          "function": "",
+          "source": "file://BASELINE/src/core/events.js",
+          "line": 589,
+          "sampledMs": 23.792
+        },
+        {
+          "function": "(garbage collector)",
+          "source": "",
+          "line": 0,
+          "sampledMs": 16.918
+        },
+        {
+          "function": "read",
+          "source": "",
+          "line": 0,
+          "sampledMs": 16.289
+        },
+        {
+          "function": "",
+          "source": "file://BASELINE/src/core/task-discovery.js",
+          "line": 188,
+          "sampledMs": 16.125
+        },
+        {
+          "function": "assertSafePath",
+          "source": "file://BASELINE/src/core/filesystem.js",
+          "line": 108,
+          "sampledMs": 15.209
+        },
+        {
+          "function": "lstat",
+          "source": "node:internal/fs/promises",
+          "line": 1080,
+          "sampledMs": 14.918
+        },
+        {
+          "function": "validate",
+          "source": "file://BASELINE/src/core/schema-validation.js",
+          "line": 99,
+          "sampledMs": 14.666
+        },
+        {
+          "function": "handleErrorFromBinding",
+          "source": "node:internal/fs/promises",
+          "line": 153,
+          "sampledMs": 14.499
+        },
+        {
+          "function": "validate",
+          "source": "file://BASELINE/src/core/schema-validation.js",
+          "line": 99,
+          "sampledMs": 11.208
+        },
+        {
+          "function": "canonicalFingerprint",
+          "source": "file://BASELINE/src/core/artifacts.js",
+          "line": 51,
+          "sampledMs": 9.041
+        },
+        {
+          "function": "validate",
+          "source": "file://BASELINE/src/core/schema-validation.js",
+          "line": 99,
+          "sampledMs": 8.249
+        },
+        {
+          "function": "canonicalize",
+          "source": "file://BASELINE/src/core/artifacts.js",
+          "line": 41,
+          "sampledMs": 7.666
+        },
+        {
+          "function": "validate",
+          "source": "file://BASELINE/src/core/schema-validation.js",
+          "line": 99,
+          "sampledMs": 7.043
+        },
+        {
+          "function": "readJsonArtifact",
+          "source": "file://BASELINE/src/core/artifacts.js",
+          "line": 66,
+          "sampledMs": 7.04
+        },
+        {
+          "function": "close",
+          "source": "",
+          "line": 0,
+          "sampledMs": 6.875
+        }
+      ],
+      "topInclusiveSamples": [
+        {
+          "function": "(root)",
+          "source": "",
+          "line": 0,
+          "sampledMs": 1808.375
+        },
+        {
+          "function": "(idle)",
+          "source": "",
+          "line": 0,
+          "sampledMs": 973.711
+        },
+        {
+          "function": "",
+          "source": "node:internal/main/run_main_module",
+          "line": 1,
+          "sampledMs": 185.083
+        },
+        {
+          "function": "executeUserEntryPoint",
+          "source": "node:internal/modules/run_main",
+          "line": 140,
+          "sampledMs": 183.875
+        },
+        {
+          "function": "assertSafePath",
+          "source": "file://BASELINE/src/core/filesystem.js",
+          "line": 108,
+          "sampledMs": 183.087
+        },
+        {
+          "function": "#getOrCreateModuleJobAfterResolve",
+          "source": "node:internal/modules/esm/loader",
+          "line": 522,
+          "sampledMs": 181.375
+        },
+        {
+          "function": "afterResolve",
+          "source": "node:internal/modules/esm/loader",
+          "line": 606,
+          "sampledMs": 181.375
+        },
+        {
+          "function": "getOrCreateModuleJob",
+          "source": "node:internal/modules/esm/loader",
+          "line": 596,
+          "sampledMs": 181.375
+        },
+        {
+          "function": "",
+          "source": "node:internal/modules/esm/loader",
+          "line": 628,
+          "sampledMs": 181.375
+        },
+        {
+          "function": "tracePromise",
+          "source": "node:diagnostics_channel",
+          "line": 360,
+          "sampledMs": 181.375
+        },
+        {
+          "function": "import",
+          "source": "node:internal/modules/esm/loader",
+          "line": 627,
+          "sampledMs": 181.375
+        },
+        {
+          "function": "",
+          "source": "node:internal/modules/run_main",
+          "line": 159,
+          "sampledMs": 181.375
+        },
+        {
+          "function": "asyncRunEntryPointWithESMLoader",
+          "source": "node:internal/modules/run_main",
+          "line": 89,
+          "sampledMs": 181.375
+        },
+        {
+          "function": "runEntryPointWithESMLoader",
+          "source": "node:internal/modules/run_main",
+          "line": 122,
+          "sampledMs": 181.375
+        },
+        {
+          "function": "getOrCreateModuleJob",
+          "source": "node:internal/modules/esm/loader",
+          "line": 596,
+          "sampledMs": 178.875
+        },
+        {
+          "function": "syncLink",
+          "source": "node:internal/modules/esm/module_job",
+          "line": 147,
+          "sampledMs": 178.875
+        },
+        {
+          "function": "link",
+          "source": "node:internal/modules/esm/module_job",
+          "line": 249,
+          "sampledMs": 178.875
+        },
+        {
+          "function": "ModuleJob",
+          "source": "node:internal/modules/esm/module_job",
+          "line": 218,
+          "sampledMs": 178.875
+        },
+        {
+          "function": "(program)",
+          "source": "",
+          "line": 0,
+          "sampledMs": 101.332
+        },
+        {
+          "function": "readJsonArtifact",
+          "source": "file://BASELINE/src/core/artifacts.js",
+          "line": 66,
+          "sampledMs": 95.118
+        }
+      ]
+    },
+    {
+      "backend": "baseline",
+      "operation": "history-tail",
+      "profileSha256": "56b8eaf8d0b761c5990005d916757497e0eaca2fc5440380cf591c2ef1c5cd16",
+      "profileBytes": 121636,
+      "sampledMs": 217.709,
+      "topSelfSamples": [
+        {
+          "function": "(garbage collector)",
+          "source": "",
+          "line": 0,
+          "sampledMs": 14.293
+        },
+        {
+          "function": "(program)",
+          "source": "",
+          "line": 0,
+          "sampledMs": 9.792
+        },
+        {
+          "function": "compileSourceTextModule",
+          "source": "node:internal/modules/esm/utils",
+          "line": 316,
+          "sampledMs": 5.0
+        },
+        {
+          "function": "",
+          "source": "file://BASELINE/src/core/events.js",
+          "line": 589,
+          "sampledMs": 4.959
+        },
+        {
+          "function": "validate",
+          "source": "file://BASELINE/src/core/schema-validation.js",
+          "line": 99,
+          "sampledMs": 3.875
+        },
+        {
+          "function": "(idle)",
+          "source": "",
+          "line": 0,
+          "sampledMs": 3.834
+        },
+        {
+          "function": "compileSourceTextModule",
+          "source": "node:internal/modules/esm/utils",
+          "line": 316,
+          "sampledMs": 3.75
+        },
+        {
+          "function": "evaluate",
+          "source": "",
+          "line": 0,
+          "sampledMs": 3.542
+        },
+        {
+          "function": "readFileSync",
+          "source": "node:fs",
+          "line": 474,
+          "sampledMs": 3.0
+        },
+        {
+          "function": "",
+          "source": "file://BASELINE/src/core/error-codes.js",
+          "line": 658,
+          "sampledMs": 2.958
+        },
+        {
+          "function": "",
+          "source": "file://BASELINE/src/core/error-codes.js",
+          "line": 1,
+          "sampledMs": 2.583
+        },
+        {
+          "function": "compileSourceTextModule",
+          "source": "node:internal/modules/esm/utils",
+          "line": 316,
+          "sampledMs": 2.542
+        },
+        {
+          "function": "internalModuleStat",
+          "source": "",
+          "line": 0,
+          "sampledMs": 2.542
+        },
+        {
+          "function": "pathToFileURL",
+          "source": "",
+          "line": 0,
+          "sampledMs": 2.542
+        },
+        {
+          "function": "visit",
+          "source": "file://BASELINE/src/core/json-safety.js",
+          "line": 28,
+          "sampledMs": 2.541
+        },
+        {
+          "function": "compileSourceTextModule",
+          "source": "node:internal/modules/esm/utils",
+          "line": 316,
+          "sampledMs": 2.5
+        },
+        {
+          "function": "compileSourceTextModule",
+          "source": "node:internal/modules/esm/utils",
+          "line": 316,
+          "sampledMs": 2.5
+        },
+        {
+          "function": "Hash",
+          "source": "node:internal/crypto/hash",
+          "line": 97,
+          "sampledMs": 2.417
+        },
+        {
+          "function": "compileSourceTextModule",
+          "source": "node:internal/modules/esm/utils",
+          "line": 316,
+          "sampledMs": 2.291
+        },
+        {
+          "function": "realpathSync",
+          "source": "node:fs",
+          "line": 2772,
+          "sampledMs": 1.958
+        }
+      ],
+      "topInclusiveSamples": [
+        {
+          "function": "(root)",
+          "source": "",
+          "line": 0,
+          "sampledMs": 217.709
+        },
+        {
+          "function": "executeUserEntryPoint",
+          "source": "node:internal/modules/run_main",
+          "line": 140,
+          "sampledMs": 130.916
+        },
+        {
+          "function": "",
+          "source": "node:internal/main/run_main_module",
+          "line": 1,
+          "sampledMs": 130.916
+        },
+        {
+          "function": "#getOrCreateModuleJobAfterResolve",
+          "source": "node:internal/modules/esm/loader",
+          "line": 522,
+          "sampledMs": 129.499
+        },
+        {
+          "function": "afterResolve",
+          "source": "node:internal/modules/esm/loader",
+          "line": 606,
+          "sampledMs": 129.499
+        },
+        {
+          "function": "getOrCreateModuleJob",
+          "source": "node:internal/modules/esm/loader",
+          "line": 596,
+          "sampledMs": 129.499
+        },
+        {
+          "function": "",
+          "source": "node:internal/modules/esm/loader",
+          "line": 628,
+          "sampledMs": 129.499
+        },
+        {
+          "function": "tracePromise",
+          "source": "node:diagnostics_channel",
+          "line": 360,
+          "sampledMs": 129.499
+        },
+        {
+          "function": "import",
+          "source": "node:internal/modules/esm/loader",
+          "line": 627,
+          "sampledMs": 129.499
+        },
+        {
+          "function": "",
+          "source": "node:internal/modules/run_main",
+          "line": 159,
+          "sampledMs": 129.499
+        },
+        {
+          "function": "asyncRunEntryPointWithESMLoader",
+          "source": "node:internal/modules/run_main",
+          "line": 89,
+          "sampledMs": 129.499
+        },
+        {
+          "function": "runEntryPointWithESMLoader",
+          "source": "node:internal/modules/run_main",
+          "line": 122,
+          "sampledMs": 129.499
+        },
+        {
+          "function": "getOrCreateModuleJob",
+          "source": "node:internal/modules/esm/loader",
+          "line": 596,
+          "sampledMs": 128.249
+        },
+        {
+          "function": "syncLink",
+          "source": "node:internal/modules/esm/module_job",
+          "line": 147,
+          "sampledMs": 128.249
+        },
+        {
+          "function": "link",
+          "source": "node:internal/modules/esm/module_job",
+          "line": 249,
+          "sampledMs": 128.249
+        },
+        {
+          "function": "ModuleJob",
+          "source": "node:internal/modules/esm/module_job",
+          "line": 218,
+          "sampledMs": 128.249
+        },
+        {
+          "function": "#getOrCreateModuleJobAfterResolve",
+          "source": "node:internal/modules/esm/loader",
+          "line": 522,
+          "sampledMs": 60.626
+        },
+        {
+          "function": "#getOrCreateModuleJobAfterResolve",
+          "source": "node:internal/modules/esm/loader",
+          "line": 522,
+          "sampledMs": 60.583
+        },
+        {
+          "function": "afterResolve",
+          "source": "node:internal/modules/esm/loader",
+          "line": 606,
+          "sampledMs": 60.583
+        },
+        {
+          "function": "getOrCreateModuleJob",
+          "source": "node:internal/modules/esm/loader",
+          "line": 596,
+          "sampledMs": 56.791
+        }
+      ]
+    },
+    {
+      "backend": "native",
+      "operation": "paginated-task-list",
+      "profileSha256": "204d2048cd7c2f0bf82a3309c2b756e7fa4c157b254319e13e2205975f20cc02",
+      "profileBytes": 216982,
+      "sampledMs": 999.667,
+      "topSelfSamples": [
+        {
+          "function": "(idle)",
+          "source": "",
+          "line": 0,
+          "sampledMs": 189.874
+        },
+        {
+          "function": "(garbage collector)",
+          "source": "",
+          "line": 0,
+          "sampledMs": 52.374
+        },
+        {
+          "function": "iterateRange",
+          "source": "file://CURRENT/src/storage/ledger-event-snapshot.js",
+          "line": 51,
+          "sampledMs": 35.042
+        },
+        {
+          "function": "(program)",
+          "source": "",
+          "line": 0,
+          "sampledMs": 20.376
+        },
+        {
+          "function": "ownCollection",
+          "source": "file://CURRENT/src/storage/ledger-event-snapshot.js",
+          "line": 26,
+          "sampledMs": 17.5
+        },
+        {
+          "function": "iterateRange",
+          "source": "file://CURRENT/src/storage/ledger-event-snapshot.js",
+          "line": 51,
+          "sampledMs": 17.208
+        },
+        {
+          "function": "",
+          "source": "file://CURRENT/src/storage/unit-of-work.js",
+          "line": 158,
+          "sampledMs": 14.917
+        },
+        {
+          "function": "canonicalFingerprint",
+          "source": "file://CURRENT/src/core/artifacts.js",
+          "line": 58,
+          "sampledMs": 11.209
+        },
+        {
+          "function": "",
+          "source": "file://CURRENT/src/storage/unit-of-work.js",
+          "line": 158,
+          "sampledMs": 11.209
+        },
+        {
+          "function": "assertOwnedLedgerUnchanged",
+          "source": "file://CURRENT/src/core/events.js",
+          "line": 876,
+          "sampledMs": 10.291
+        },
+        {
+          "function": "iterateRange",
+          "source": "file://CURRENT/src/storage/ledger-event-snapshot.js",
+          "line": 51,
+          "sampledMs": 8.75
+        },
+        {
+          "function": "ArtifactError",
+          "source": "file://CURRENT/src/core/artifacts.js",
+          "line": 40,
+          "sampledMs": 7.665
+        },
+        {
+          "function": "canonicalize",
+          "source": "file://CURRENT/src/core/artifacts.js",
+          "line": 48,
+          "sampledMs": 7.583
+        },
+        {
+          "function": "iterateTypedRows",
+          "source": "file://CURRENT/src/storage/ledger-event-snapshot.js",
+          "line": 12,
+          "sampledMs": 7.542
+        },
+        {
+          "function": "iterateTypedRows",
+          "source": "file://CURRENT/src/storage/ledger-event-snapshot.js",
+          "line": 12,
+          "sampledMs": 7.542
+        },
+        {
+          "function": "taskRow",
+          "source": "file://CURRENT/src/storage/unit-of-work.js",
+          "line": 117,
+          "sampledMs": 7.542
+        },
+        {
+          "function": "taskRow",
+          "source": "file://CURRENT/src/storage/unit-of-work.js",
+          "line": 117,
+          "sampledMs": 7.501
+        },
+        {
+          "function": "iterateTypedRows",
+          "source": "file://CURRENT/src/storage/ledger-event-snapshot.js",
+          "line": 12,
+          "sampledMs": 7.5
+        },
+        {
+          "function": "",
+          "source": "file://CURRENT/src/storage/unit-of-work.js",
+          "line": 119,
+          "sampledMs": 7.5
+        },
+        {
+          "function": "validateLedgerEvents",
+          "source": "file://CURRENT/src/core/events.js",
+          "line": 755,
+          "sampledMs": 7.416
+        }
+      ],
+      "topInclusiveSamples": [
+        {
+          "function": "(root)",
+          "source": "",
+          "line": 0,
+          "sampledMs": 999.667
+        },
+        {
+          "function": "withEventLedgerAudit",
+          "source": "file://CURRENT/src/core/events.js",
+          "line": 919,
+          "sampledMs": 306.46
+        },
+        {
+          "function": "",
+          "source": "file://CURRENT/src/storage/ledger-event-snapshot.js",
+          "line": 114,
+          "sampledMs": 257.75
+        },
+        {
+          "function": "withStorageSnapshot",
+          "source": "file://CURRENT/src/storage/snapshot.js",
+          "line": 13,
+          "sampledMs": 257.75
+        },
+        {
+          "function": "withDetachedLedgerSnapshot",
+          "source": "file://CURRENT/src/storage/ledger-event-snapshot.js",
+          "line": 113,
+          "sampledMs": 257.75
+        },
+        {
+          "function": "run",
+          "source": "node:internal/async_local_storage/async_context_frame",
+          "line": 56,
+          "sampledMs": 239.0
+        },
+        {
+          "function": "withLedgerRelationOwner",
+          "source": "file://CURRENT/src/core/ledger-relations.js",
+          "line": 6,
+          "sampledMs": 239.0
+        },
+        {
+          "function": "withSpilledLedgerRelations",
+          "source": "file://CURRENT/src/storage/ledger-relations.js",
+          "line": 206,
+          "sampledMs": 239.0
+        },
+        {
+          "function": "run",
+          "source": "node:internal/async_local_storage/async_context_frame",
+          "line": 56,
+          "sampledMs": 237.75
+        },
+        {
+          "function": "withOperationalReadSnapshot",
+          "source": "file://CURRENT/src/storage/unit-of-work.js",
+          "line": 460,
+          "sampledMs": 237.75
+        },
+        {
+          "function": "withDetachedLedgerSnapshot.validate",
+          "source": "file://CURRENT/src/core/events.js",
+          "line": 938,
+          "sampledMs": 237.75
+        },
+        {
+          "function": "",
+          "source": "file://CURRENT/src/storage/ledger-event-snapshot.js",
+          "line": 116,
+          "sampledMs": 237.75
+        },
+        {
+          "function": "",
+          "source": "file://CURRENT/src/storage/ledger-relations.js",
+          "line": 208,
+          "sampledMs": 237.75
+        },
+        {
+          "function": "",
+          "source": "file://CURRENT/src/storage/unit-of-work.js",
+          "line": 469,
+          "sampledMs": 236.5
+        },
+        {
+          "function": "",
+          "source": "file://CURRENT/src/core/events.js",
+          "line": 938,
+          "sampledMs": 235.25
+        },
+        {
+          "function": "evaluateCallbackLedgerAudit",
+          "source": "file://CURRENT/src/core/events.js",
+          "line": 900,
+          "sampledMs": 211.665
+        },
+        {
+          "function": "validateOwnedLedgerEvents",
+          "source": "file://CURRENT/src/core/events.js",
+          "line": 885,
+          "sampledMs": 210.415
+        },
+        {
+          "function": "validateLedgerEvents",
+          "source": "file://CURRENT/src/core/events.js",
+          "line": 755,
+          "sampledMs": 205.498
+        },
+        {
+          "function": "(idle)",
+          "source": "",
+          "line": 0,
+          "sampledMs": 189.874
+        },
+        {
+          "function": "entries",
+          "source": "file://CURRENT/src/core/ledger-event-collection.js",
+          "line": 88,
+          "sampledMs": 117.96
+        }
+      ]
+    },
+    {
+      "backend": "native",
+      "operation": "history-tail",
+      "profileSha256": "aa73a164eb41daf91e6d400446625dd045af33fdb09f8e8f408cbabb1b926db0",
+      "profileBytes": 109279,
+      "sampledMs": 180.291,
+      "topSelfSamples": [
+        {
+          "function": "(idle)",
+          "source": "",
+          "line": 0,
+          "sampledMs": 34.916
+        },
+        {
+          "function": "(program)",
+          "source": "",
+          "line": 0,
+          "sampledMs": 8.291
+        },
+        {
+          "function": "iterateRange",
+          "source": "file://CURRENT/src/storage/ledger-event-snapshot.js",
+          "line": 51,
+          "sampledMs": 5.75
+        },
+        {
+          "function": "iterateRange",
+          "source": "file://CURRENT/src/storage/ledger-event-snapshot.js",
+          "line": 51,
+          "sampledMs": 5.042
+        },
+        {
+          "function": "(garbage collector)",
+          "source": "",
+          "line": 0,
+          "sampledMs": 4.125
+        },
+        {
+          "function": "read",
+          "source": "",
+          "line": 0,
+          "sampledMs": 3.0
+        },
+        {
+          "function": "compileSourceTextModule",
+          "source": "node:internal/modules/esm/utils",
+          "line": 316,
+          "sampledMs": 2.584
+        },
+        {
+          "function": "compileSourceTextModule",
+          "source": "node:internal/modules/esm/utils",
+          "line": 316,
+          "sampledMs": 2.583
+        },
+        {
+          "function": "compileSourceTextModule",
+          "source": "node:internal/modules/esm/utils",
+          "line": 316,
+          "sampledMs": 2.542
+        },
+        {
+          "function": "iterateRange",
+          "source": "file://CURRENT/src/storage/ledger-event-snapshot.js",
+          "line": 51,
+          "sampledMs": 2.542
+        },
+        {
+          "function": "iterateRange",
+          "source": "file://CURRENT/src/storage/ledger-event-snapshot.js",
+          "line": 51,
+          "sampledMs": 2.542
+        },
+        {
+          "function": "iterateRange",
+          "source": "file://CURRENT/src/storage/ledger-event-snapshot.js",
+          "line": 51,
+          "sampledMs": 2.541
+        },
+        {
+          "function": "compileSourceTextModule",
+          "source": "node:internal/modules/esm/utils",
+          "line": 316,
+          "sampledMs": 2.5
+        },
+        {
+          "function": "open",
+          "source": "",
+          "line": 0,
+          "sampledMs": 2.5
+        },
+        {
+          "function": "compileSourceTextModule",
+          "source": "node:internal/modules/esm/utils",
+          "line": 316,
+          "sampledMs": 2.5
+        },
+        {
+          "function": "withStorageSnapshot",
+          "source": "file://CURRENT/src/storage/snapshot.js",
+          "line": 13,
+          "sampledMs": 2.5
+        },
+        {
+          "function": "canonicalFingerprint",
+          "source": "file://CURRENT/src/core/artifacts.js",
+          "line": 58,
+          "sampledMs": 2.5
+        },
+        {
+          "function": "visit",
+          "source": "file://CURRENT/src/core/json-safety.js",
+          "line": 28,
+          "sampledMs": 2.5
+        },
+        {
+          "function": "#observe",
+          "source": "file://CURRENT/src/core/ledger-event-collection.js",
+          "line": 52,
+          "sampledMs": 2.5
+        },
+        {
+          "function": "decodeIndexedEvent",
+          "source": "file://CURRENT/src/storage/repository.js",
+          "line": 230,
+          "sampledMs": 2.124
+        }
+      ],
+      "topInclusiveSamples": [
+        {
+          "function": "(root)",
+          "source": "",
+          "line": 0,
+          "sampledMs": 180.291
+        },
+        {
+          "function": "(idle)",
+          "source": "",
+          "line": 0,
+          "sampledMs": 34.916
+        },
+        {
+          "function": "",
+          "source": "file://CURRENT/src/core/task-snapshot.js",
+          "line": 81,
+          "sampledMs": 34.041
+        },
+        {
+          "function": "withProjectStorage",
+          "source": "file://CURRENT/src/storage/project-boundary.js",
+          "line": 30,
+          "sampledMs": 32.916
+        },
+        {
+          "function": "buildTraceFromSnapshot",
+          "source": "file://CURRENT/src/core/trace.js",
+          "line": 418,
+          "sampledMs": 30.291
+        },
+        {
+          "function": "",
+          "source": "file://CURRENT/src/core/trace.js",
+          "line": 414,
+          "sampledMs": 30.291
+        },
+        {
+          "function": "#getOrCreateModuleJobAfterResolve",
+          "source": "node:internal/modules/esm/loader",
+          "line": 522,
+          "sampledMs": 26.459
+        },
+        {
+          "function": "afterResolve",
+          "source": "node:internal/modules/esm/loader",
+          "line": 606,
+          "sampledMs": 26.459
+        },
+        {
+          "function": "getOrCreateModuleJob",
+          "source": "node:internal/modules/esm/loader",
+          "line": 596,
+          "sampledMs": 26.459
+        },
+        {
+          "function": "syncLink",
+          "source": "node:internal/modules/esm/module_job",
+          "line": 147,
+          "sampledMs": 26.459
+        },
+        {
+          "function": "link",
+          "source": "node:internal/modules/esm/module_job",
+          "line": 249,
+          "sampledMs": 26.459
+        },
+        {
+          "function": "ModuleJob",
+          "source": "node:internal/modules/esm/module_job",
+          "line": 218,
+          "sampledMs": 26.459
+        },
+        {
+          "function": "#getOrCreateModuleJobAfterResolve",
+          "source": "node:internal/modules/esm/loader",
+          "line": 522,
+          "sampledMs": 26.459
+        },
+        {
+          "function": "afterResolve",
+          "source": "node:internal/modules/esm/loader",
+          "line": 606,
+          "sampledMs": 26.459
+        },
+        {
+          "function": "getOrCreateModuleJob",
+          "source": "node:internal/modules/esm/loader",
+          "line": 596,
+          "sampledMs": 26.459
+        },
+        {
+          "function": "",
+          "source": "node:internal/modules/esm/loader",
+          "line": 628,
+          "sampledMs": 26.459
+        },
+        {
+          "function": "tracePromise",
+          "source": "node:diagnostics_channel",
+          "line": 360,
+          "sampledMs": 26.459
+        },
+        {
+          "function": "import",
+          "source": "node:internal/modules/esm/loader",
+          "line": 627,
+          "sampledMs": 26.459
+        },
+        {
+          "function": "defaultImportModuleDynamicallyForModule",
+          "source": "node:internal/modules/esm/utils",
+          "line": 223,
+          "sampledMs": 26.459
+        },
+        {
+          "function": "importModuleDynamicallyCallback",
+          "source": "node:internal/modules/esm/utils",
+          "line": 252,
+          "sampledMs": 26.459
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "One CPU-sampled invocation per backend/operation; diagnostic attribution only, not release latency or memory acceptance.",
+    "Profile operation identities follow the checked harness invocation order: task-list then history for each backend.",
+    "Inclusive samples overlap across stack frames and must not be added as disjoint costs.",
+    "Source manifest verifies existing admitted files; no claim of physical cold filesystem caches."
+  ],
+  "analysis": {
+    "taskList": "Current runTaskList calls discoverTasks before applying pagination. Discovery selects native task keys but validates each returned task descriptor/state/claims and canonical ledger before projecting public ownership fields. In this1000-task fixture,5 output tasks do not reduce the1000-task validation scope.",
+    "samples": "Native discovery has306.460ms inclusive samples under withEventLedgerAudit; overlapping detached-ledger snapshot/validation frames account for257.750/237.750ms. Idle189.874ms andGC52.374ms are separate self samples. These are one-run diagnostics, not p95 attribution.",
+    "history": "One native history sample includes ledger iteration and trace/snapshot construction; this profile does not establish why the earlier repeated latency comparison regressed.",
+    "release": "Remaining validation cost is documented; original786 p95 values and unaccepted resource/code-size gates remain unchanged. No integrity checks, pagination semantics or ownership fields were removed."
+  },
+  "reproduction": {
+    "command": "node scripts/benchmark-storage-populated-cli.mjs --baseline-root=<clean-ee9ce111-checkout> --sizes=1000 --validate-only --cpu-profile-dir=<output-directory>",
+    "note": "Portable profiling mode added after this diagnostic; executes the same parity-checked invocations with explicit profile filenames. Original diagnostic used an external derived harness whose hash is retained."
+  }
+}

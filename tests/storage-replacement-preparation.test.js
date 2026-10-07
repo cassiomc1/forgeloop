@@ -146,7 +146,13 @@ for (const checkpoint of ["PREPARING", "OUTGOING_BASELINE", "OUTGOING_ALLOCATED"
         assert.equal(response.ok, true, JSON.stringify(response));
         resumed = response.result;
       } else if (checkpoint === "PUBLICATION_READY") {
-        resumed = JSON.parse(execFileSync(process.execPath, ["src/cli.js", "storage-restore-resume", "--path", fixture.target, "--operation", options.operationId, "--expected-owner", options.expectedOwnerId, "--replace-active", "--writers-quiesced", "--json"], { encoding: "utf8" }));
+        const ownerBeforeCli = JSON.parse(await readFile(path.join(fixture.target, ".forgeloop/.storage-maintenance/owner.json")));
+        try {
+          resumed = JSON.parse(execFileSync(process.execPath, ["src/cli.js", "storage-restore-resume", "--path", fixture.target, "--operation", options.operationId, "--expected-owner", options.expectedOwnerId, "--replace-active", "--writers-quiesced", "--json"], { encoding: "utf8" }));
+        } catch (error) {
+          error.message += `\nRecovery process identities: ${JSON.stringify({ recordedOwnerPid: ownerBeforeCli.pid, killedWorkerPid: worker.pid, resumeCliPid: error.pid, testPid: process.pid })}`;
+          throw error;
+        }
       } else resumed = await resumeActiveProjectReplacement(fixture.target, options);
       assert.equal(resumed.replaced, true);
       assert.equal((await verifyActiveProjectRestore(fixture.target, ready.operationId)).active, true);

@@ -1,0 +1,21 @@
+{
+  "increment": 799,
+  "productionChanged": false,
+  "change": "Failure-only replacement recovery PID diagnostics and reproducible validation-only CPU profiling mode.",
+  "checks": {
+    "replacementPreparationTests": 18,
+    "failures": 0,
+    "skipped": 0,
+    "profileSmoke": "Exact output parity and4 profile files",
+    "instrumentedLatencyMode": "REFUSED before fixture allocation",
+    "verifyFast": "PASS",
+    "documentation": "PASS"
+  },
+  "replacementTestLogSha256": "b450e4f9692a7fb70fa4801a5044355a8eecfdc3e15c7b85053a4676a2b603d4",
+  "windowsCause": "UNCONFIRMED; renewed execution with PID diagnostics required.",
+  "logHashes": {
+    "review799-fast.log": "1abb0ea04d6d05647c3841da34170ae2035fc2de3e3ec604a8bc5c614ee98b10",
+    "review799-docs.log": "dbe93d88cf10bdc2a49ded7643ba81cec73a29648abbdd8b7fee0755760c51ca",
+    "replacement799-tests.log": "b450e4f9692a7fb70fa4801a5044355a8eecfdc3e15c7b85053a4676a2b603d4"
+  }
+}
