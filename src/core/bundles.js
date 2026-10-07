@@ -629,16 +629,18 @@ async function exportBundleLedgerAndGates(target, taskId, packageRoot, directory
   }
 
   // Gates
-  let gateDirectory = ensureWithin(target, `${taskDirectory(taskId)}/gates`);
+  let gateRelativePath = `${taskDirectory(taskId)}/gates`;
+  let gateDirectory = ensureWithin(target, gateRelativePath);
   const selectedGates = listOperationalArtifactNames(target, taskId, "gates");
   if (selectedGates === null && !(await fileExists(gateDirectory))) {
-    gateDirectory = ensureWithin(target, ARTIFACT_PATHS.gates);
+    gateRelativePath = ARTIFACT_PATHS.gates;
+    gateDirectory = ensureWithin(target, gateRelativePath);
   }
   if (selectedGates !== null || await fileExists(gateDirectory)) {
     const entries = selectedGates !== null ? selectedGates.map(name => ({ name, isFile: () => true })) : await readdir(gateDirectory, { withFileTypes: true });
     for (const entry of entries.filter((item) => item.isFile() && item.name.endsWith(".json")).sort((left, right) => left.name.localeCompare(right.name))) {
       const gateName = entry.name.slice(0, -5);
-      const sourcePath = `${gateDirectory.replace(target + "/", "")}/${entry.name}`;
+      const sourcePath = `${gateRelativePath}/${entry.name}`;
       const destinationPath = `${directory}/gates/${entry.name}`;
       const gate = await readBundleSourceJson(target, sourcePath, "gate", packageRoot);
       if (gate.value.taskId !== taskId) continue;

@@ -1,0 +1,34 @@
+{
+  "increment": 783,
+  "parentHead": "0e4812b",
+  "problem": "Native gate bundle export converts a canonical logical gate path to an absolute path when target has a trailing separator. Path prefix stripping also depends on POSIX separators.",
+  "reproduction": {
+    "tests": 4,
+    "passed": 3,
+    "failed": 1,
+    "code": "ARTIFACT_PATH_INVALID"
+  },
+  "change": "Retain relative gate directory for both native and portable fallback; absolute directory used only for filesystem operations.",
+  "checks": {
+    "tests": 17,
+    "passed": 17,
+    "failed": 0,
+    "skipped": 0,
+    "verifyFast": "PASS",
+    "complexity": "PASS",
+    "lint": "PASS with three existing complexity warnings",
+    "fullCurrentPlatforms": "PENDING"
+  },
+  "controls": "Normal and trailing roots preserve exact native gate payload, unchanged native database bytes and absence of filesystem mirror. Portable singleton gate export preserves source bytes and creates no database.",
+  "logHashes": {
+    "bundle-gate783-before.log": "aaec21ed0a5d63299519a8cafaa3e540f3236f4be2a30e223649a8d9821aa81b",
+    "bundle-gate783-final-tests.log": "1aa883f6ee187fa2fa4e8bcd45898ffdc582c9a2e2be28a32fdf3dde82b502c1",
+    "bundle-gate783-fast.log": "6a4938a0ccbd201659d4558ae42f5a0bf0deb4820388d7022162217c8472f1e6",
+    "bundle-gate783-complexity.log": "32111f472b37a8b8941d21c72e18a3815643453328562aed2fd87e8a2f0417f2",
+    "bundle-gate783-lint.log": "e6e5feab60d58757900890a998c1459d0751ab5cfd45c42ead768ee426aa7922"
+  },
+  "productionSha256": "9867a424d43b5301b5fcfab49b807e2334415f2839804c6cbaffccf9a3b08928",
+  "testSha256": "53ea47715849189a4c96971e7bc35aaf3663c0ddbd127145eedbf8c1726cef1b",
+  "progressPercent": 55,
+  "protocolComplete": false
+}
