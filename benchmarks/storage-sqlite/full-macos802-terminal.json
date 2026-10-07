@@ -1,0 +1,24 @@
+{
+  "increment": 802,
+  "cwd": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop",
+  "exitCode": 0,
+  "elapsedSeconds": 606.5119190216064,
+  "manifestFiles": 2897,
+  "admittedSourceUnchanged": true,
+  "status": "PASS",
+  "scope": "Full verify:prepush on working checkout, source manifest checked before and after; not frozen clone.",
+  "sourceRevision": "f1f8f95effab5c13bb83fb0e62e06ac220719b87",
+  "core": {
+    "tests": 2893,
+    "pass": 2882,
+    "fail": 0,
+    "skipped": 11
+  },
+  "otherPassingSuites": {
+    "MCP": 73,
+    "PoC": 67,
+    "package": 12
+  },
+  "logSha256": "09b0632641065941ca96f4fe99d9aa26b1f52782aa582aeafc4b0471dd8db732",
+  "sourceManifestSha256": "afc0d268843a499ccbf689f85c956c5bdb7c3b014c4e684666059596304036f2"
+}

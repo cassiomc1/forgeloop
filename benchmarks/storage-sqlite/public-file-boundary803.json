@@ -1,0 +1,52 @@
+{
+  "increment": 803,
+  "sourceRevision": "f1f8f95effab5c13bb83fb0e62e06ac220719b87",
+  "status": "SOURCE_REVIEWED_SUBSET",
+  "wholeConsumerClosure": false,
+  "reviewed": [
+    {
+      "path": "src/commands/policy-diff.js",
+      "sha256": "113d2e4375eddb2f2ae551c880cff285115dd88d134da71824456d398bd97160",
+      "disposition": "Native logical input paths select readOperationalText; unsupported canonical paths refuse. Non-operational --before/--after files are explicit comparison inputs. Default task policy snapshot uses canonical policy reader."
+    },
+    {
+      "path": "src/commands/task-create.js",
+      "sha256": "dee1a85f88aee619a38ff53fe624e3f392aa3a1a2f932bad2305c16ee8aca768",
+      "disposition": "contractFile is explicit validated proposed contract input. Descriptor/claim/state publication uses canonical task creation; file input is not retained writable operational authority."
+    },
+    {
+      "path": "src/commands/contract-create.js",
+      "sha256": "6ef3eca71f6ab51c39747447dfb5270972dec84d814b0cf6b074dfb277f91898",
+      "disposition": "contractFile is explicit creation/import input or fingerprint-equivalence check during recovery; validated historical canonical contract and ledger remain authoritative. writeContract/state/events use task mutation."
+    },
+    {
+      "path": "src/commands/storage-migration-status.js",
+      "sha256": "3d013e83b241d278d0eed4c52b192a3df4cfd482502bcc2fe64b01efafc87830",
+      "disposition": "Read-only bootstrap layout and exclusion-marker inspection works before database admission; database/publication validation explicitly NOT_RUN/NOT_VERIFIED. No operational write authority."
+    },
+    {
+      "path": "src/commands/update.js",
+      "sha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+      "disposition": "Raw unlink/rmdir clean managed installation legacy template files after hash match; changed legacy files preserved. Installation templates/manifests remain file-owned by plan; no SQLite task deletion."
+    },
+    {
+      "path": "src/core/capability-policy.js",
+      "sha256": "e9dee892353f8565e6ac34e11a449a6f4c5dc945a0a805cb79b927eedf64eb31",
+      "disposition": "Project capability policy remains human-edited file; containment, schema/property allow-list and fingerprint preserved. Cannot declare authority/trust metadata."
+    },
+    {
+      "path": "src/core/policy-baseline.js",
+      "sha256": "6b9bfa592f2529c64442466e8f609f219a65666a6d3085c402c009bca9a05424",
+      "disposition": "Baseline is human-reviewable policy input retained as file by original plan. Read schema/JSON validation and explicit artifact write retained; not task policy snapshot."
+    },
+    {
+      "path": "src/core/policy-discovery.js",
+      "sha256": "1d0a8af04f773bc95439207670a9aa5b606e04e777b8e454aedb2d47dd380f74",
+      "disposition": "Reads repository package/language/configuration files and source directory structure as project observations. No canonical task artifact reader or writer."
+    }
+  ],
+  "limitations": [
+    "Source-reviewed raw filesystem roles only; aliases and transitive helper behavior require separate evidence.",
+    "No claim that this subset closes all public consumers or verifies all external-input safety properties."
+  ]
+}
