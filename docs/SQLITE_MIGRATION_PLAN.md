@@ -310,7 +310,7 @@ Repository sources are pinned to the analyzed commit:
 
 Primary technical references:
 
-- [Node.js SQLite API and version history](https://nodejs.org/api/sqlite.html): built-in API availability and synchronous execution model. Pin implementation decisions to the selected runtime version.
+- [Node.js SQLite API and version history](https://nodejs.org/docs/latest-v24.x/api/sqlite.html): built-in API availability and synchronous execution model. Pin implementation decisions to the selected runtime version.
 - [SQLite WAL](https://www.sqlite.org/wal.html): reader/writer behavior, filesystem limitations, checkpointing, and durability tradeoffs.
 - [SQLite pragmas](https://www.sqlite.org/pragma.html): connection settings, integrity checks, foreign keys, and synchronization.
 - [SQLite backup API](https://www.sqlite.org/backup.html): consistent database backup mechanisms.

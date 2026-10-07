@@ -1,0 +1,49 @@
+{
+  "sourceFailure": "Lychee documentation job112968254954 found seven unversioned Node API links returning404.",
+  "replacement": "Official Node24 documentation URLs; all seven verified HTTP200 using curl with normal TLS verification.",
+  "checks": [
+    {
+      "name": "sqlite",
+      "url": "https://nodejs.org/docs/latest-v24.x/api/sqlite.html",
+      "status": "200",
+      "exitCode": 0
+    },
+    {
+      "name": "http",
+      "url": "https://nodejs.org/docs/latest-v24.x/api/http.html",
+      "status": "200",
+      "exitCode": 0
+    },
+    {
+      "name": "http2",
+      "url": "https://nodejs.org/docs/latest-v24.x/api/http2.html",
+      "status": "200",
+      "exitCode": 0
+    },
+    {
+      "name": "net",
+      "url": "https://nodejs.org/docs/latest-v24.x/api/net.html",
+      "status": "200",
+      "exitCode": 0
+    },
+    {
+      "name": "packages",
+      "url": "https://nodejs.org/docs/latest-v24.x/api/packages.html",
+      "status": "200",
+      "exitCode": 0
+    },
+    {
+      "name": "tls",
+      "url": "https://nodejs.org/docs/latest-v24.x/api/tls.html",
+      "status": "200",
+      "exitCode": 0
+    },
+    {
+      "name": "test",
+      "url": "https://nodejs.org/docs/latest-v24.x/api/test.html",
+      "status": "200",
+      "exitCode": 0
+    }
+  ],
+  "limitation": "Renewed CI link check still required; original Downloads plan untouched."
+}

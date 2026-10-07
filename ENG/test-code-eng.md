@@ -57,7 +57,7 @@ A tool is a candidate, not a ranking winner. Record the decision in the reposito
 
 | Context | Candidates with official documentation | Reproducible decision basis |
 | --- | --- | --- |
-| Node.js/TypeScript | [`node:test`](https://nodejs.org/api/test.html), [Vitest](https://vitest.dev/guide/), [Jest](https://jestjs.io/docs/getting-started) | existing framework/build, ESM/CJS, TypeScript, mocks, watch, coverage, and CI runtime |
+| Node.js/TypeScript | [`node:test`](https://nodejs.org/docs/latest-v24.x/api/test.html), [Vitest](https://vitest.dev/guide/), [Jest](https://jestjs.io/docs/getting-started) | existing framework/build, ESM/CJS, TypeScript, mocks, watch, coverage, and CI runtime |
 | Components and browser | [Testing Library](https://testing-library.com/docs/), [Playwright](https://playwright.dev/docs/intro), [Cypress](https://docs.cypress.io/) | required browsers, isolation, failure artifacts, parallelism, accessibility, and app compatibility |
 | Python | [pytest](https://docs.pytest.org/), [`unittest`](https://docs.python.org/3/library/unittest.html) | dependency policy, fixtures/plugins, Python versions, and existing integration |
 | .NET | [xUnit.net](https://xunit.net/), [NUnit](https://docs.nunit.org/), [MSTest](https://learn.microsoft.com/dotnet/core/testing/unit-testing-mstest-intro) | .NET version, runner/IDE, fixture model, assertions, and existing projects |
