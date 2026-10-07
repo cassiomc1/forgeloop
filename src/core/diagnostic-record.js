@@ -227,7 +227,15 @@ async function recordDiagnosticCase({
   return { event, state: updatedState, diagnosticCase: details, idempotent: false };
 }
 
-export async function recordIntervention({
+export async function recordIntervention(options) {
+  if (await getTaskTransaction(options.target)) return recordInterventionInternal(options);
+  const state = await readWorkState(options.target, { packageRoot: options.packageRoot, taskId: options.taskId });
+  if (!state) return recordInterventionInternal(options);
+  return withTaskTransaction({ target: options.target, taskId: options.taskId ?? state.taskId,
+    packageRoot: options.packageRoot, operation: "record-intervention" }, () => recordInterventionInternal(options));
+}
+
+async function recordInterventionInternal({
   target,
   packageRoot,
   interventionFile = null,
