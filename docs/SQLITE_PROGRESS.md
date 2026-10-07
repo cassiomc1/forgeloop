@@ -302,3 +302,7 @@ Themain progress table nowreflects retainedcurrent platform/performance/LOC evid
 ### Package and repository file boundaries807
 
 Eight additional modules havehashed raw-file role review: shipped guide registry/metadata/templates;project-root identity;bounded repository project detection;structural source fingerprints;package version metadata;andpolicy-engine project rules/discovery/lock inputs. Task policy snapshots select native artifact presence/reads before explicitlegacy fallback. Theseareintentional file boundaries fromtheoriginal plan;thissource-only review isnot complete transitive consumer proof. Evidence: `benchmarks/storage-sqlite/public-file-boundary807.json`. Currentcore37701918510 remainslive;progress55%;noPR orpublication.
+
+### Remaining raw core file roles808
+
+Thefour remaining raw-node:fs core modules ininventory785 nowhavehashed role dispositions: shipped schema loading,Git/source revision material,explicitdiagnostic input imports,andgeneric filesystem primitives. Thegeneric atomic writer doesnotselect task authority;itsnamed production callers areinventoried asPENDING fordomain/storage admission review. Raw-module role coverage isnot exhaustive public/transitive consumer closure,andaliases/dynamic calls remainoutside thisnamed scan. Evidence: `benchmarks/storage-sqlite/public-file-boundary808.json`. Currentcore37701918510 remainslive. Progress55%;resource/code-reduction,workflow andprotocolclosure remainopen;noPR orpublication.

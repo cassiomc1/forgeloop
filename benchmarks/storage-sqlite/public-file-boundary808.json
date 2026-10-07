@@ -1,0 +1,203 @@
+{
+  "increment": 808,
+  "sourceRevision": "dc67e24d0135175dedb3aab90cc070e4563e04e1",
+  "status": "SOURCE_REVIEWED_SUBSET",
+  "reviewed": [
+    {
+      "path": "src/core/schema-validation.js",
+      "sha256": "670d4436e7b1b223ace35bbef99beb98e6928b8d2e5de265cc62369530a1ef7b",
+      "disposition": "Reads shipped schemas under packageRoot, caches parsed schema values and exposes schema health; schemas remain package assets."
+    },
+    {
+      "path": "src/core/revision/git.js",
+      "sha256": "7c424f9cd2606fee9e8f601744820075ebd4ec0e22947fed0fde9b602fcf555c",
+      "disposition": "Reads Git worktree material and explicit revision-provider content; source code and Git metadata remain file-owned. No operational artifact writer."
+    },
+    {
+      "path": "src/core/diagnostic-record.js",
+      "sha256": "9d472e4d87a8a7c7fa6fdaeb473f60c7904b15357ec203c690e4bea589982240",
+      "disposition": "Raw readFile handles explicit diagnostic/intervention import inputs after containment/safe-path validation; canonical case/intervention/disposition publication uses native task transactions."
+    },
+    {
+      "path": "src/core/filesystem.js",
+      "sha256": "daef6207f2bf5676414f81a635b054cb0cd06d01a2cfaa900f677683d53d00a4",
+      "disposition": "Generic containment, identity, readBytes and durable writeFileAtomic primitives; does not itself select operational authority. Every write caller still needs domain/storage admission review."
+    }
+  ],
+  "namedAtomicWriteCallers": [
+    {
+      "path": "src/core/bundles.js",
+      "sha256": "9867a424d43b5301b5fcfab49b807e2334415f2839804c6cbaffccf9a3b08928",
+      "review": "PENDING",
+      "namedCalls": 3
+    },
+    {
+      "path": "src/core/manifest.js",
+      "sha256": "9e29e1c9466bb0fc6a2ae9371a4f8bec995a01f11377684f0d66bcfa58221f4f",
+      "review": "PENDING",
+      "namedCalls": 1
+    },
+    {
+      "path": "src/core/artifacts.js",
+      "sha256": "4667bc01b1f6416ee22e0de6788bb8ae21ce238b5ce9724961c92c06d0e92db2",
+      "review": "PENDING",
+      "namedCalls": 1
+    },
+    {
+      "path": "src/repository-index/server.js",
+      "sha256": "4e18bcd059920281616a7ae0a368571ae5bb8c71c6f59929ded044cafcad4ef1",
+      "review": "PENDING",
+      "namedCalls": 1
+    },
+    {
+      "path": "src/storage/exporter.js",
+      "sha256": "2e005a6784c73f42e53831a800b09b50730f901dd358d7463009f776b55a2a4b",
+      "review": "PENDING",
+      "namedCalls": 5
+    },
+    {
+      "path": "src/storage/migration-rollback-publication.js",
+      "sha256": "81ca1f7c72e57f885a137e33d428c4303db0f1bb859ac19c67372d9826553417",
+      "review": "PENDING",
+      "namedCalls": 3
+    },
+    {
+      "path": "src/storage/project-backup.js",
+      "sha256": "66dffeb2ca6fa6f6c90a3eb19fafad8e5fd69596f2794c23ef95669fce5f1370",
+      "review": "PENDING",
+      "namedCalls": 2
+    },
+    {
+      "path": "src/storage/migration-activate.js",
+      "sha256": "12b11a733f5a615ee1becbc8e3780fadfc7e55c92146cd07e82718c588871267",
+      "review": "PENDING",
+      "namedCalls": 1
+    },
+    {
+      "path": "src/storage/migration-source.js",
+      "sha256": "4e2b78e7be7b1641883b28d0b33fe34fd1264b047ce88e00e617e5607aa9ffdb",
+      "review": "PENDING",
+      "namedCalls": 3
+    },
+    {
+      "path": "src/storage/migration-rollback-preparation.js",
+      "sha256": "1152bbb354970c43c8530d681790c08941408328e59654eb6e62044b2dcd9bfe",
+      "review": "PENDING",
+      "namedCalls": 3
+    },
+    {
+      "path": "src/storage/migration-rollback-release.js",
+      "sha256": "6838a25238dd71cd2b2c6d740fb32c3f1914bfd06ed376f154bd4dd7cb0b5cfb",
+      "review": "PENDING",
+      "namedCalls": 1
+    },
+    {
+      "path": "src/storage/migration-publication.js",
+      "sha256": "6e60f541f53f977bc1670d2c2f7577e5e718b1e1fff80ba49d4e7c026d8b38ed",
+      "review": "PENDING",
+      "namedCalls": 1
+    },
+    {
+      "path": "src/storage/project-replacement.js",
+      "sha256": "8edb1daa7f5a50a56c2762488db647d1e441d1f421d8dd6b2f1fbc5a813efa59",
+      "review": "PENDING",
+      "namedCalls": 2
+    },
+    {
+      "path": "src/storage/project-restore.js",
+      "sha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+      "review": "PENDING",
+      "namedCalls": 5
+    },
+    {
+      "path": "src/storage/restore-replacement-archive.js",
+      "sha256": "fbd0347cb136200ab4cdf848c47c1948f226913a3714c347b71d8fb541c4dd36",
+      "review": "PENDING",
+      "namedCalls": 3
+    },
+    {
+      "path": "src/storage/migration-rollback-source-stage.js",
+      "sha256": "6bfbf8e0ad81644596fff0f055593082e7627bbac66de070986f81aa4f8b2211",
+      "review": "PENDING",
+      "namedCalls": 2
+    },
+    {
+      "path": "src/storage/restore-replacement-preparation.js",
+      "sha256": "07c55045508317bb70d20c7b4b687da662d9ab1f41e209d1972a3c7e06180014",
+      "review": "PENDING",
+      "namedCalls": 2
+    },
+    {
+      "path": "src/storage/restore-preparation.js",
+      "sha256": "70c2db1ac984643434a5e1986028efc39f79b9d2f2576a4cbe35f39bd0161347",
+      "review": "PENDING",
+      "namedCalls": 2
+    },
+    {
+      "path": "src/storage/storage-marker.js",
+      "sha256": "be4744869306bfba37f02f2ab58152761c12d079360eb4220917019e5d8ad79d",
+      "review": "PENDING",
+      "namedCalls": 1
+    },
+    {
+      "path": "src/storage/restore-replacement.js",
+      "sha256": "f7b7aed1fe54c4feb71a192a5c2aed9ff92bdb80f26d053ba1498d433cc1f138",
+      "review": "PENDING",
+      "namedCalls": 1
+    },
+    {
+      "path": "src/storage/restore-replacement-owner.js",
+      "sha256": "9d3bd4fa498f1f42befe30d1d5d01d1e420996b2887006cecadfdc2011553cbc",
+      "review": "PENDING",
+      "namedCalls": 1
+    },
+    {
+      "path": "src/storage/migration-archive.js",
+      "sha256": "38848cc8ab285a2ce37ef7b7b3405cf51e024d023670f7dfbf46eac01bdda37a",
+      "review": "PENDING",
+      "namedCalls": 1
+    },
+    {
+      "path": "src/storage/migration-candidate.js",
+      "sha256": "41f01d20be6caac40ef541a8d6175e429bd595f5bd3a7a9f046571c880e88ecb",
+      "review": "PENDING",
+      "namedCalls": 3
+    },
+    {
+      "path": "src/commands/update.js",
+      "sha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+      "review": "PENDING",
+      "namedCalls": 2
+    },
+    {
+      "path": "src/commands/init.js",
+      "sha256": "dbd6aff6b7e27d3fa26e06921ad54c7e569413ee5717f20111c639c77d073dde",
+      "review": "PENDING",
+      "namedCalls": 1
+    },
+    {
+      "path": "src/commands/doctor.js",
+      "sha256": "1ea77fd088a1277b03bc2edeb034462f8f56df5ce3eb95dd7b68000dd5a983d1",
+      "review": "PENDING",
+      "namedCalls": 1
+    },
+    {
+      "path": "src/persistent-transport/state.js",
+      "sha256": "a877435a1b4a7f5c7d4b6310538451f81079b70d4486d0ed990ed61819ccb86d",
+      "review": "PENDING",
+      "namedCalls": 1
+    },
+    {
+      "path": "src/core/signing/statement-file.js",
+      "sha256": "4b0db680c034bd21497e5fa96c01ea79a7faa14f6424c85965f4c9183304880b",
+      "review": "PENDING",
+      "namedCalls": 1
+    }
+  ],
+  "wholeConsumerClosure": false,
+  "limitations": [
+    "Named static calls omit aliases, dynamic/external imports and other write primitives.",
+    "Filesystem helper role is classified but caller authority is not closed.",
+    "Completing raw-node:fs core role inventory does not prove complete public/transitive consumer coverage."
+  ]
+}
