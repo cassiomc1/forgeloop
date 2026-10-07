@@ -3338,3 +3338,7 @@ Consumer closure,currentWindows settlement verification,completeCI/workflow acce
 ### Canonical settlement selection805
 
 Theindependent-contract control nowexercises both explicit taskID andcanonical contract/events paths withouttaskId. Bothreject stale publication withE_STATE_REVISION_CONFLICT,preserve exactindependent task/artifact/event rows,andreject retry withE_DECISION_NOT_UNRESOLVED. All10 settlement/diagnosis tests pass;production code isunchanged. Evidence: `benchmarks/storage-sqlite/settlement805-canonical-path.json`. Theadded test stillrequires platform execution;current core37701918510 remainslive onf1f8f95. Progress55%;original consumer/resource/code-reduction andprotocol closure remainopen;noPR orpublication.
+
+### Acceptance summary reconciliation806
+
+Themain progress table nowreflects retainedcurrent platform/performance/LOC evidence insteadof older checkpoint summaries. Allnine workflow definitions changed fromthepinned baseline havehashed source-role dispositions. Expanded nodecompatibility andstandalone fullpackage/MCP matrix execution remainpending aftercurrentremoteCI terminates;publication workflows areseparate release actions andarenotdispatched asverification. Evidence: `benchmarks/storage-sqlite/workflow-acceptance806.json`. Currentcore37701918510 completes shard3 successfully;actualcounts arein `linux-shard3-806-terminal.json`,whiletheparent remainslive. Progress55%;alloriginal release/resource/code-reduction andprotocolclosure boundaries remainunchanged.
