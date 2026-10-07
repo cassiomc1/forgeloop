@@ -1,4 +1,5 @@
 import { ARTIFACT_PATHS, writeJsonArtifact } from "./artifacts.js";
+import { withTaskTransaction } from "./transaction.js";
 import { readContract } from "./contract.js";
 import { assertRouteInvariants } from "./router.js";
 import { validateProfileSources } from "./profile.js";
@@ -187,7 +188,19 @@ export async function validateReadyProtocolConsistency(options = {}) {
   });
 }
 
-export async function runPreflight({
+export async function runPreflight(options = {}) {
+  if (options.persist === false) return runPreflightInTransaction(options);
+  let taskId = options.taskId;
+  if (!taskId) {
+    const { target, packageRoot, strict, contractPath, routePath, statePath } = options;
+    const result = await evaluatePreflight({ target, packageRoot, strict, contractPath, routePath, statePath });
+    if (result.taskId !== "unknown") taskId = result.taskId;
+  }
+  if (!taskId) return runPreflightInTransaction(options);
+  return withTaskTransaction({ target: options.target, taskId, packageRoot: options.packageRoot, operation: "preflight" }, () => runPreflightInTransaction({ ...options, taskId }));
+}
+
+async function runPreflightInTransaction({
   target,
   packageRoot,
   strict = false,
@@ -202,7 +215,7 @@ export async function runPreflight({
   let result = await evaluatePreflight({ target, packageRoot, strict, taskId, contractPath, routePath, statePath });
   if (!persist) return result;
 
-  let ledger = await assertPreflightPersistenceSafety(target, packageRoot, { taskId, eventsPath });
+  let ledger = await assertPreflightPersistenceSafety(target, packageRoot, { taskId, contractPath, routePath, statePath, eventsPath });
   assertPreflightResultPersistenceSafety(result);
   assertExistingReadyLifecycleCompatibility(ledger, result);
 
@@ -228,7 +241,7 @@ export async function runPreflight({
       result = await evaluatePreflight({ target, packageRoot, strict, taskId, contractPath, routePath, statePath });
       assertPreflightResultPersistenceSafety(result);
       assertExistingReadyLifecycleCompatibility(ledger, result);
-      ledger = await assertPreflightPersistenceSafety(target, packageRoot, { taskId, eventsPath });
+      ledger = await assertPreflightPersistenceSafety(target, packageRoot, { taskId, contractPath, routePath, statePath, eventsPath });
     }
   }
 

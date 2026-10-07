@@ -1,0 +1,17 @@
+{
+  "increment": 769,
+  "runId": 37684202204,
+  "jobId": 113007782076,
+  "sourceRevision": "aa29518f3242911838e387b73cd141e8847d3583",
+  "shard": 4,
+  "status": "completed",
+  "conclusion": "success",
+  "counts": {
+    "tests": 841,
+    "pass": 838,
+    "fail": 0,
+    "skipped": 3
+  },
+  "logSha256": "d3203ea5c1057eed7b8e42dbf2721c8b10c5621f28ec6340f124f7fe03ecc2a1",
+  "scope": "One completed Linux coverage shard onaa29518; later corrections require current-source acceptance."
+}
