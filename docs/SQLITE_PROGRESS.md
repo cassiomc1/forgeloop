@@ -306,3 +306,9 @@ Eight additional modules havehashed raw-file role review: shipped guide registry
 ### Remaining raw core file roles808
 
 Thefour remaining raw-node:fs core modules ininventory785 nowhavehashed role dispositions: shipped schema loading,Git/source revision material,explicitdiagnostic input imports,andgeneric filesystem primitives. Thegeneric atomic writer doesnotselect task authority;itsnamed production callers areinventoried asPENDING fordomain/storage admission review. Raw-module role coverage isnot exhaustive public/transitive consumer closure,andaliases/dynamic calls remainoutside thisnamed scan. Evidence: `benchmarks/storage-sqlite/public-file-boundary808.json`. Currentcore37701918510 remainslive. Progress55%;resource/code-reduction,workflow andprotocolclosure remainopen;noPR orpublication.
+
+### Increment 809: named file-write authority subset
+
+Reviewed nine of the 28 named `writeFileAtomic` caller modules inventoried in increment 808, with source hashes and supporting template/transport path sources in `benchmarks/storage-sqlite/public-file-boundary809.json`. Canonical artifact writes select SQLite transactions; portable artifact writes reject operational identities. Other reviewed writes serve installation ownership/templates, portable bundle output, temporary signing input, or search process coordination. Nineteen storage migration/backup/restore caller modules remain pending. This subset does not establish complete consumer closure or change the 11/20 completed steps.
+
+Validation: direct source review, documentation checks and `git diff --check`; no production behavior changed. Publication state: branch checkpoint only; no PR or package publication.
