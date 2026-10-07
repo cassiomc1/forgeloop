@@ -29,6 +29,10 @@ inputs:
     description: "Use custom version of lychee link checker"
     default: v0.24.2
     required: false
+  linuxTarget:
+    description: "Linux release target suffix (gnu or musl)"
+    default: gnu
+    required: false
   output:
     description: "Summary output file path"
     default: "lychee/out.md"
@@ -70,12 +74,13 @@ runs:
         cd "${TEMP_DIR}"
 
         ARCH=$(uname -m)
+        case "$LYCHEE_LINUX_TARGET" in gnu|musl) ;; *) echo "Unsupported Linux target" >&2; exit 1 ;; esac
         # Determine filename and download URL based on version
         if [[ "${LYCHEE_VERSION}" =~ ^v0\.0|^v0\.1[0-5]\. ]]; then
-          FILENAME="lychee-${LYCHEE_VERSION}-${ARCH}-unknown-linux-gnu.tar.gz"
+          FILENAME="lychee-${LYCHEE_VERSION}-${ARCH}-unknown-linux-${LYCHEE_LINUX_TARGET}.tar.gz"
           DOWNLOAD_URL="https://github.com/lycheeverse/lychee/releases/download/${LYCHEE_VERSION}/${FILENAME}"
         else
-          FILENAME="lychee-${ARCH}-unknown-linux-gnu.tar.gz"
+          FILENAME="lychee-${ARCH}-unknown-linux-${LYCHEE_LINUX_TARGET}.tar.gz"
           if [[ "${LYCHEE_VERSION}" == 'nightly' ]]; then
             DOWNLOAD_URL="https://github.com/lycheeverse/lychee/releases/download/nightly/${FILENAME}"
           elif [[ "${LYCHEE_VERSION}" == 'latest' ]]; then
@@ -105,6 +110,7 @@ runs:
         echo "temp_dir=${TEMP_DIR}" >> $GITHUB_OUTPUT
       env:
         LYCHEE_VERSION: ${{ inputs.lycheeVersion }}
+        LYCHEE_LINUX_TARGET: ${{ inputs.linuxTarget }}
       shell: bash
     - name: Install lychee
       run: |

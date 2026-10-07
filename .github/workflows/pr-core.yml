@@ -213,6 +213,7 @@ jobs:
         if: ${{ needs.classify.outputs.docs == 'true' }}
         uses: ./.github/actions/lychee
         with:
+          linuxTarget: musl
           args: >-
             --config .lychee.toml
             --verbose
