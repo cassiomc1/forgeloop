@@ -1,0 +1,61 @@
+{
+  "increment": 695,
+  "rows": [
+    {
+      "file": "src/storage/migration-candidate.js",
+      "sha256": "41f01d20be6caac40ef541a8d6175e429bd595f5bd3a7a9f046571c880e88ecb",
+      "roles": [
+        "task-inventory.ndjson streams validated task IDs, keys and state fingerprints",
+        "candidate-manifest.json records PREPARING/PREPARED or failure under owned maintenance; source/attachment/parity validation remains authoritative",
+        "candidate-recovery.json records exact captured source binding; refuses rebuild after staging, marker or active database; interrupted candidates retained"
+      ]
+    },
+    {
+      "file": "src/storage/migration-rollback-preparation.js",
+      "sha256": "1152bbb354970c43c8530d681790c08941408328e59654eb6e62044b2dcd9bfe",
+      "roles": [
+        "rollback-journal.json PREPARING/READY retains an independently verified native backup and exact marker/native logical binding",
+        "recovery adopts exact dead-owner continuity and retains incomplete backup attempts; READY alone is insufficient"
+      ]
+    },
+    {
+      "file": "src/storage/migration-rollback-source-stage.js",
+      "sha256": "6bfbf8e0ad81644596fff0f055593082e7627bbac66de070986f81aa4f8b2211",
+      "roles": [
+        "source-stage.json PREPARING/READY binds operation/source/native/backup; exclusive copy verified against captured inventory",
+        "recovery checks exact owner chains and journal bindings; incomplete copies retained in recovery-history before fresh copy"
+      ]
+    },
+    {
+      "file": "src/storage/migration-rollback-publication.js",
+      "sha256": "81ca1f7c72e57f885a137e33d428c4303db0f1bb859ac19c67372d9826553417",
+      "roles": [
+        "publication-journal.json SWITCHING/NATIVE_RETAINED/RESTORED requires explicit nativeWritesExcluded, verified stage and owner",
+        "moves native roots before legacy roots; inventory/partition checks detect missing/duplicate/changed roots",
+        "metadata owner adoption occurs only after capture/native backup/partition/DB parity and closed WAL checks"
+      ]
+    },
+    {
+      "file": "src/storage/migration-rollback-release.js",
+      "sha256": "6838a25238dd71cd2b2c6d740fb32c3f1914bfd06ed376f154bd4dd7cb0b5cfb",
+      "roles": [
+        "target-validation.json requires clean exact ee9 legacy checkout; task-list identity parity; VALID validation for every task; final source/native rechecks before maintenance release"
+      ]
+    },
+    {
+      "file": "src/storage/project-replacement.js",
+      "sha256": "8edb1daa7f5a50a56c2762488db647d1e441d1f421d8dd6b2f1fbc5a813efa59",
+      "roles": [
+        "replacement-intent.json uses exact operation UUID root, live maintenance owner, verified incoming source and independent outgoing retention",
+        "resume validates before/adopted intent fingerprints, owner continuity, incoming snapshots and publication stage selection"
+      ]
+    }
+  ],
+  "method": "Current direct source review of retained maintenance metadata writes and their enclosing operations",
+  "wholeScopeVerified": false,
+  "limitations": [
+    "No arbitrary external process/filesystem sandbox claim.",
+    "Operator exclusion of old binaries remains an explicit operational prerequisite.",
+    "This static review does not settle the intermittent Windows PARTIAL_OUTGOING failure."
+  ]
+}
