@@ -1,4 +1,5 @@
 import { readdir } from "node:fs/promises";
+import { setImmediate as nextTurn } from "node:timers/promises";
 import { ensureWithin, fileExists } from "./filesystem.js";
 import { getPackageRoot } from "./templates.js";
 import { TASK_STATE_ROOT, TASK_ARTIFACT_FILES, taskArtifactPath } from "./task-paths.js";
@@ -177,6 +178,9 @@ async function discoverSelectedTasks(target, packageRoot, taskKeys) {
 
   const tasks = [];
   for (const entry of entries) {
+    // Native reads resolve synchronously. Let other requests run between
+    // bounded groups without releasing the owned immutable snapshot.
+    if (store && !store.transaction && !store.db.isTransaction && tasks.length > 0 && tasks.length % 16 === 0) await nextTurn();
     if (!entry.isDirectory() && !entry.isSymbolicLink()) continue;
     if (!/^[a-f0-9]{64}$/.test(entry.name)) continue;
 

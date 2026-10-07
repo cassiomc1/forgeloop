@@ -2,6 +2,7 @@ import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import path from "node:path";
+import { setImmediate as nextTurn } from "node:timers/promises";
 
 import { createGitRepository } from "./helpers/git-fixture.js";
 import { runTaskCreate } from "../src/commands/task-create.js";
@@ -106,6 +107,48 @@ test("discovery owns one project snapshot for its catalog and all task projectio
     driver.DatabaseSync = Original;
     writer.close(); db.close();
     await removeTempTree(target);
+  }
+});
+
+test("native catalog discovery yields while retaining one immutable project snapshot", async () => {
+  const target = await createGitRepository("forgeloop-discovery-fairness-");
+  const db = openStorageDatabase(path.join(target, "state.sqlite"));
+  const writer = openStorageDatabase(path.join(target, "state.sqlite"));
+  let prototype;
+  let originalRead;
+  let scheduled;
+  const seen = new Set();
+  let observedAtTurn = null;
+  try {
+    for (let index = 0; index < 64; index++) {
+      const taskId = `fair-${String(index).padStart(3, "0")}`;
+      upsertTask(db, { taskId, descriptor: createTaskDescriptor({ taskId, writeClaims: [] }) });
+    }
+    await withOperationalStore({ db, target }, async source => {
+      await discoverTasks(target);
+      prototype = Object.getPrototypeOf(source);
+      originalRead = prototype.readText;
+      prototype.readText = function(relativePath) {
+        if (this.target === target && this.db !== db && relativePath.endsWith("/task.json")) {
+          seen.add(relativePath);
+          if (!scheduled) scheduled = nextTurn().then(() => {
+            observedAtTurn = seen.size;
+            upsertTask(writer, { taskId: "fair-added", descriptor: createTaskDescriptor({ taskId: "fair-added", writeClaims: [] }) });
+          });
+        }
+        return originalRead.call(this, relativePath);
+      };
+      const tasks = await discoverTasks(target);
+      await scheduled;
+      assert.ok(observedAtTurn > 0 && observedAtTurn < 64, "Other event-loop work must run before the catalog completes");
+      assert.equal(tasks.length, 64, "Concurrent additions must remain outside the owned snapshot");
+      assert.ok(tasks.every(task => task.healthy));
+      assert.throws(() => source.commit(), { code: "E_STATE_REVISION_CONFLICT" });
+    });
+  } finally {
+    if (prototype) prototype.readText = originalRead;
+    await scheduled;
+    writer.close(); db.close(); await removeTempTree(target);
   }
 });
 
