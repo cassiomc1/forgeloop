@@ -209,12 +209,9 @@ jobs:
             --no-globs
             **/*.{md,markdown}
             #vendor/archify/**
-      - name: Expose the link-check action binary directory
-        if: ${{ needs.classify.outputs.docs == 'true' }}
-        run: echo "$RUNNER_TEMP/lychee/bin" >> "$GITHUB_PATH"
       - name: Check external documentation links
         if: ${{ needs.classify.outputs.docs == 'true' }}
-        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        uses: ./.github/actions/lychee
         with:
           args: >-
             --config .lychee.toml
