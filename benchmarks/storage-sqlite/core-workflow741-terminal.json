@@ -1,0 +1,122 @@
+{
+  "runId": 37669039007,
+  "head": "58857c6c95104410ffd5ec0e425be17f5870e1d3",
+  "conclusion": "failure",
+  "jobs": [
+    {
+      "id": 112955700201,
+      "name": "Classify changed paths",
+      "conclusion": "success",
+      "runner": "GitHub Actions 1000017253"
+    },
+    {
+      "id": 112955790855,
+      "name": "Lint and dependency policy",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112955790888,
+      "name": "Verify generated Archify diagram",
+      "conclusion": "failure",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112955790958,
+      "name": "tarball smoke (ubuntu-latest)",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112955790975,
+      "name": "audit",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112955791022,
+      "name": "Unit tests (Node 24.19.0, shard 0/4)",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112955791037,
+      "name": "Unit tests (Node 24, shard 3/4)",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112955791058,
+      "name": "Unit tests (Node 24, shard 4/4)",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112955791137,
+      "name": "Unit tests (Node 24, shard 1/4)",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112955791200,
+      "name": "Unit tests (Node 24, shard 2/4)",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112966496390,
+      "name": "Coverage report (Node 24)",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112966872459,
+      "name": "Repository Index native matrix / Classify Repository Index paths",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112966971467,
+      "name": "Repository Index native matrix / Verify Repository Index manifest",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112967076710,
+      "name": "Repository Index native matrix / Native Repository Index (Windows)",
+      "conclusion": "success",
+      "runner": "forgeloop-windows-remote"
+    },
+    {
+      "id": 112967076885,
+      "name": "Repository Index native matrix / Native Repository Index (Linux)",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112967076894,
+      "name": "Repository Index native matrix / Native Repository Index (macOS)",
+      "conclusion": "success",
+      "runner": "forgeloop-macos-local"
+    },
+    {
+      "id": 112967626405,
+      "name": "validate (22)",
+      "conclusion": "failure",
+      "runner": "GitHub Actions 1000017254"
+    }
+  ],
+  "linuxCoreCounts": {
+    "tests": 2861,
+    "pass": 2849,
+    "fail": 0,
+    "skipped": 12
+  },
+  "documentationFailure": "Pinned GNU Lychee v0.24.2 requires unavailable GLIBC_2.38/2.39 after explicit-bash PATH correction succeeds.",
+  "correction": "b9609c6 selects same-release musl build; renewed run37672672596 dispatched after terminal previous run.",
+  "limitations": [
+    "Predates direct completion-rebind correction274358a.",
+    "Full original acceptance remains incomplete."
+  ],
+  "apiSha256": "f2f7108e35a7d4c510e65a7e3072acf2ca216ab4f751e0661b411d232de22885"
+}

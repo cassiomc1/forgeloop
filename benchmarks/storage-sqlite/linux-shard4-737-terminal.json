@@ -1,0 +1,16 @@
+{
+  "runId": 37669039007,
+  "jobId": 112955791058,
+  "head": "58857c6c95104410ffd5ec0e425be17f5870e1d3",
+  "platform": "linux",
+  "hostname": "51abbe357f3e",
+  "conclusion": "success",
+  "counts": {
+    "tests": 838,
+    "pass": 835,
+    "fail": 0,
+    "skipped": 3
+  },
+  "logSha256": "49d848e9457a8b31d56a121ada4d331b38f7aac6b6dcf0f47096889aeae0fb1e",
+  "scope": "Coverage shard only; predates direct completion rebind correction."
+}
