@@ -1,0 +1,27 @@
+{
+  "runId": 37669039007,
+  "jobId": 112955791022,
+  "head": "58857c6c95104410ffd5ec0e425be17f5870e1d3",
+  "conclusion": "success",
+  "testGroups": {
+    "tests": [
+      80,
+      72
+    ],
+    "pass": [
+      80,
+      72
+    ],
+    "fail": [
+      0,
+      0
+    ],
+    "skipped": [
+      0,
+      0
+    ]
+  },
+  "logSha256": "195af2c7057ba7254a2d5b91c190d574db26861fbbb8b05007e3bf75a190e53a",
+  "scope": "Targeted minimum-runtime smoke",
+  "limitation": "Not full migration acceptance; predates direct completion rebind correction."
+}

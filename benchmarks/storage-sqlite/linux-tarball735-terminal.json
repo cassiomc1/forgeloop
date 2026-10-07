@@ -1,0 +1,23 @@
+{
+  "runId": 37669039007,
+  "jobId": 112955790958,
+  "head": "58857c6c95104410ffd5ec0e425be17f5870e1d3",
+  "conclusion": "success",
+  "testGroups": {
+    "tests": [
+      73
+    ],
+    "pass": [
+      73
+    ],
+    "fail": [
+      0
+    ],
+    "skipped": [
+      0
+    ]
+  },
+  "logSha256": "5dbd630b064e4e9958e796da00acf8d4ea2a4d264c4a045aa266e7a6dce2b5e2",
+  "scope": "Package tests plus CLI/MCP tarball smoke",
+  "limitation": "Not full migration acceptance; predates direct completion rebind correction."
+}
