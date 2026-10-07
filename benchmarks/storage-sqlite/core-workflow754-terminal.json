@@ -1,0 +1,118 @@
+{
+  "runId": 37672672596,
+  "head": "f63dd90ffd1cb587df34a5b053b643a650d6704e",
+  "conclusion": "failure",
+  "jobs": [
+    {
+      "id": 112968146930,
+      "name": "Classify changed paths",
+      "conclusion": "success",
+      "runner": "GitHub Actions 1000017255"
+    },
+    {
+      "id": 112968254852,
+      "name": "Lint and dependency policy",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112968254863,
+      "name": "tarball smoke (ubuntu-latest)",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112968254873,
+      "name": "audit",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112968254954,
+      "name": "Verify generated Archify diagram",
+      "conclusion": "failure",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112968255176,
+      "name": "Unit tests (Node 24.19.0, shard 0/4)",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112968255198,
+      "name": "Unit tests (Node 24, shard 4/4)",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112968255282,
+      "name": "Unit tests (Node 24, shard 3/4)",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112968255283,
+      "name": "Unit tests (Node 24, shard 1/4)",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112968256163,
+      "name": "Unit tests (Node 24, shard 2/4)",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112979069787,
+      "name": "Coverage report (Node 24)",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112979353603,
+      "name": "Repository Index native matrix / Classify Repository Index paths",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112979468466,
+      "name": "Repository Index native matrix / Verify Repository Index manifest",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112979581921,
+      "name": "Repository Index native matrix / Native Repository Index (macOS)",
+      "conclusion": "success",
+      "runner": "forgeloop-macos-local"
+    },
+    {
+      "id": 112979581963,
+      "name": "Repository Index native matrix / Native Repository Index (Windows)",
+      "conclusion": "success",
+      "runner": "forgeloop-windows-remote"
+    },
+    {
+      "id": 112979582054,
+      "name": "Repository Index native matrix / Native Repository Index (Linux)",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "id": 112980187821,
+      "name": "validate (22)",
+      "conclusion": "failure",
+      "runner": "GitHub Actions 1000017256"
+    }
+  ],
+  "linuxCoreCounts": {
+    "tests": 2862,
+    "pass": 2850,
+    "fail": 0,
+    "skipped": 12
+  },
+  "documentationFailure": "Musl Lychee executed; seven unversioned Node API links returned404. VerifiedNode24 replacements e2fad2b await renewed CI.",
+  "limitation": "Predates cross-task staging guard6b98c92; whole original acceptance remains incomplete.",
+  "apiSha256": "e6a1dd7c1199c97501a472981073eb1ccc3dfcbc82e5da2a7a9fc053a08a26c6"
+}

@@ -1,0 +1,15 @@
+{
+  "runId": 37672672596,
+  "jobId": 112968256163,
+  "head": "f63dd90ffd1cb587df34a5b053b643a650d6704e",
+  "hostname": "51abbe357f3e",
+  "conclusion": "success",
+  "counts": {
+    "tests": 681,
+    "pass": 681,
+    "fail": 0,
+    "skipped": 0
+  },
+  "logSha256": "b6a4171b2ef018eec00307d0fdc6726a3770875df9c9ffa41fcb8dee022eb93f",
+  "limitation": "Predates cross-task staging guard6b98c92; scoped shard evidence."
+}
