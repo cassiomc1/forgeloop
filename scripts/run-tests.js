@@ -27,4 +27,6 @@ const result = spawnSync(process.execPath, argv, {
   stdio: "inherit",
 });
 
+if (result.error) console.error(`Unable to start the test runner: ${result.error.message}`);
+if (result.signal) console.error(`Test runner terminated by signal ${result.signal}`);
 process.exitCode = result.status ?? 1;

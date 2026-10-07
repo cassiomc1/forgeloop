@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "scope": "Windows full-suite launcher startup",
+  "failedRun": 37644618024,
+  "failedSource": "bbd0ba9c50602d7a8c24ce1ec9b9298252171c33",
+  "observations": {
+    "admissionHostIdentityCheckoutNodeAndDependencies": "passed",
+    "npmTest": "exit 1 before test output",
+    "testFiles": 425,
+    "estimatedAbsoluteWindowsCommandCharacters": 37613,
+    "estimatedRelativeWindowsCommandCharacters": 16363,
+    "windowsCommandLineLimit": 32767
+  },
+  "diagnosis": "Absolute test filenames exceed the Windows process command line limit. Remote confirmation remains pending.",
+  "correction": "Resolve selectors against the repository as before, but pass the selected files relative to the child working directory. Report spawn errors and termination signals.",
+  "validation": {
+    "selectionTests": 5,
+    "passed": 5,
+    "lint": "passed",
+    "fastVerification": "passed"
+  },
+  "originalPlanComplete": false,
+  "progressPercent": 55
+}
