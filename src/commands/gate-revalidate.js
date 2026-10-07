@@ -1,10 +1,7 @@
-import { lstat } from "node:fs/promises";
-
 import { optionalConfig } from "../core/preflight-loaders.js";
 import { readContract } from "../core/contract.js";
 import { appendProtocolEvent, validateEventLedger, validateStateLedgerCoherence } from "../core/events.js";
-import { assertSafePath, ensureWithin, isPathWithin, readBytes, realpathWithTransientWindowsRetry } from "../core/filesystem.js";
-import { sha256 } from "../core/manifest.js";
+import { assertSafePath, ensureWithin } from "../core/filesystem.js";
 import { requiredGatesForGuides } from "../core/guide-metadata.js";
 import { readPersistedRoute } from "../core/route-artifact.js";
 import { staleReasons } from "../core/next-action-artifacts.js";
@@ -13,7 +10,7 @@ import { taskGatePath, taskArtifactPath } from "../core/task-paths.js";
 import { withTaskMutation } from "../core/task-command.js";
 import { readWorkState } from "../core/work-state.js";
 import { stateIdentityErrors } from "../core/completion-relationships.js";
-import { persistGate, readCanonicalGateArtifactBinding, readGateIfPresent, validateGateArtifacts } from "../core/gate-artifact.js";
+import { persistGate, readCanonicalGateArtifactBinding, hashGateFile, readGateIfPresent, validateGateArtifacts } from "../core/gate-artifact.js";
 import {
   GATE_REVALIDATED_EVENT,
   assertGateRevalidatedDetails,
@@ -31,21 +28,16 @@ function revalidationError(message, code = "E_GATE_REVALIDATION_UNSAFE", artifac
 }
 
 async function hashGateArtifact(target, relativePath) {
-  let artifactPath;
   try {
-    artifactPath = ensureWithin(target, relativePath);
+    ensureWithin(target, relativePath);
     const canonical = readCanonicalGateArtifactBinding(target, relativePath);
     if (canonical) {
       await assertSafePath(target, relativePath);
       if (canonical.sha256 === null) throw new Error("artifact is missing from canonical storage");
       return { path: relativePath, sha256: canonical.sha256 };
     }
-    const stat = await lstat(artifactPath);
-    if (!stat.isFile() || stat.isSymbolicLink()) throw new Error("artifact must be a regular file");
-    const rootReal = await realpathWithTransientWindowsRetry(target);
-    const artifactReal = await realpathWithTransientWindowsRetry(artifactPath);
-    if (!isPathWithin(rootReal, artifactReal)) throw new Error("artifact resolves outside the project");
-    return { path: relativePath, sha256: sha256(await readBytes(artifactReal)) };
+    const binding = await hashGateFile(target, relativePath);
+    return { path: relativePath, sha256: binding.sha256 };
   } catch (cause) {
     throw revalidationError(`Cannot refresh gate artifact ${relativePath}: ${cause.message}`, "E_GATE_REVALIDATION_UNSAFE", [relativePath]);
   }

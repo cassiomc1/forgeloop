@@ -1,4 +1,6 @@
-import { assertSafePath, ensureWithin, fileExists, readBytes } from "./filesystem.js";
+import { assertSafePath, ensureWithin, fileExists, isPathWithin, realpathWithTransientWindowsRetry } from "./filesystem.js";
+import { constants } from "node:fs";
+import { lstat, open } from "node:fs/promises";
 import { ARTIFACT_PATHS, readJsonArtifact, writeJsonArtifact } from "./artifacts.js";
 import { assertSchema, readSchema } from "./schema-validation.js";
 import { sha256 } from "./manifest.js";
@@ -66,6 +68,56 @@ export function readCanonicalGateArtifactBinding(target, relativePath) {
   return { path: relativePath, sha256: source.text === null ? null : sha256(source.text), byteLength: source.text === null ? 0 : Buffer.byteLength(source.text) };
 }
 
+/** Admit one regular external evidence handle before reading any bytes. */
+async function withGateFile(target, relativePath, maxBytes, callback) {
+  const filename = await assertSafePath(target, relativePath);
+  const root = await realpathWithTransientWindowsRetry(target);
+  const resolved = await realpathWithTransientWindowsRetry(filename);
+  if (!isPathWithin(root, resolved)) throw new Error("Gate artifact resolves outside the project");
+  const file = await open(resolved, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0));
+  try {
+    const info = await file.stat();
+    const current = await lstat(resolved);
+    if (!info.isFile() || !current.isFile() || current.isSymbolicLink()
+      || info.dev !== current.dev || info.ino !== current.ino
+      || !isPathWithin(root, await realpathWithTransientWindowsRetry(resolved))) throw new Error("Gate artifact changed during file admission");
+    if (info.size > maxBytes) throw new Error(`Gate artifact exceeds the maximum size of ${maxBytes} bytes`);
+    return await callback(file);
+  } finally { await file.close(); }
+}
+
+async function* gateFileChunks(file, maxBytes) {
+  let byteLength = 0;
+  for await (const bytes of file.createReadStream({ autoClose: false, highWaterMark: 64 * 1024 })) {
+    byteLength += bytes.length;
+    if (byteLength > maxBytes) throw new Error(`Gate artifact exceeds the maximum size of ${maxBytes} bytes`);
+    yield bytes;
+  }
+}
+
+/** Hash external evidence from one verified handle, with bounded streaming memory. */
+export async function hashGateFile(target, relativePath, { maxBytes = Infinity } = {}) {
+  return withGateFile(target, relativePath, maxBytes, async file => {
+    const digest = createHash("sha256");
+    let byteLength = 0;
+    for await (const bytes of gateFileChunks(file, maxBytes)) {
+      byteLength += bytes.length;
+      digest.update(bytes);
+    }
+    return { path: relativePath, sha256: digest.digest("hex"), byteLength };
+  });
+}
+
+/** Explicit JSON gate input remains file-owned and allocation-bounded. */
+export async function readGateFileJson(target, relativePath, { maxBytes } = {}) {
+  if (!Number.isSafeInteger(maxBytes) || maxBytes < 0) throw new Error("Gate evidence requires a finite byte limit");
+  return withGateFile(target, relativePath, maxBytes, async file => {
+    const chunks = [];
+    for await (const bytes of gateFileChunks(file, maxBytes)) chunks.push(bytes);
+    return JSON.parse(Buffer.concat(chunks).toString("utf8"));
+  });
+}
+
 export async function validateGateArtifacts(target, gateValue, packageRoot) {
   if (await needsExistingProjectScope(target)) {
     return withExistingProjectScope(target, () => validateGateArtifacts(target, gateValue, packageRoot), { readOnly: true });
@@ -86,8 +138,8 @@ export async function validateGateArtifacts(target, gateValue, packageRoot) {
       stale.push({ path: artifact.path, status: "missing" });
       continue;
     }
-    const digest = sha256(await readBytes(artifactPath));
-    if (digest !== artifact.sha256) stale.push({ path: artifact.path, status: "changed" });
+    const binding = await hashGateFile(target, artifact.path);
+    if (binding.sha256 !== artifact.sha256) stale.push({ path: artifact.path, status: "changed" });
   }
   return stale;
 }

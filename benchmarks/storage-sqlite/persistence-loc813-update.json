@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "productionRoots": [
+    "src",
+    "integrations/mcp/src"
+  ],
+  "countingMethod": "Nonblank physical production lines including comments; same whole-module union on both sides; tests/scripts/package manifests excluded",
+  "scopeMethod": "Conservative candidate union: direct persistence/file-I/O signals in either version, every storage module, every changed/new production module. All omitted modules are listed too. Requires semantic scope review before release acceptance.",
+  "scopeReviewComplete": false,
+  "releaseThresholdsVerified": false,
+  "includedFiles": 280,
+  "baselineNonblankPhysicalLines": 43677,
+  "currentNonblankPhysicalLines": 51941,
+  "netReduction": -0.18920713418961932,
+  "candidateTargetMet": false,
+  "increment": 813,
+  "rawInventorySha256": "b35dd0786882fd0b91da75be93f7c0c61e166411b6a8f84e16e8ea0f91f5b55d",
+  "gapTo25PercentTarget": 19184
+}

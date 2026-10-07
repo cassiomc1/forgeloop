@@ -1,13 +1,11 @@
-import { lstat, readFile as readBytesFromFile } from "node:fs/promises";
 import path from "node:path";
 
-import { sha256 } from "../core/manifest.js";
-import { assertSafePath, ensureWithin, isPathWithin, realpathWithTransientWindowsRetry } from "../core/filesystem.js";
+import { assertSafePath, ensureWithin } from "../core/filesystem.js";
 import { readPersistedRoute } from "../core/route-artifact.js";
 import { readContract } from "../core/contract.js";
 import { readGuideMetadata, requiredGatesForGuides } from "../core/guide-metadata.js";
 import { optionalConfig } from "../core/preflight-loaders.js";
-import { persistGate, readCanonicalGateArtifactBinding } from "../core/gate-artifact.js";
+import { persistGate, readCanonicalGateArtifactBinding, hashGateFile, readGateFileJson } from "../core/gate-artifact.js";
 import { readWorkState } from "../core/work-state.js";
 import { taskArtifactPath, taskGatePath } from "../core/task-paths.js";
 import { withTaskMutation } from "../core/task-command.js";
@@ -61,9 +59,8 @@ async function hashArtifact(target, artifactPath) {
   if (typeof artifactPath !== "string" || !artifactPath || path.isAbsolute(artifactPath)) {
     throw gateError(`Gate artifact must be a project-relative path: ${artifactPath}`);
   }
-  let candidate;
   try {
-    candidate = ensureWithin(target, artifactPath);
+    ensureWithin(target, artifactPath);
   } catch (cause) {
     throw gateError(`Gate artifact escapes the project: ${artifactPath}`, { cause });
   }
@@ -74,24 +71,12 @@ async function hashArtifact(target, artifactPath) {
     if (canonical.byteLength > MAX_GATE_ARTIFACT_BYTES) throw gateError(`Gate artifact exceeds the maximum size of ${MAX_GATE_ARTIFACT_BYTES} bytes: ${artifactPath}`);
     return { path: artifactPath, sha256: canonical.sha256 };
   }
-  let stat;
   try {
-    stat = await lstat(candidate);
+    const binding = await hashGateFile(target, artifactPath, { maxBytes: MAX_GATE_ARTIFACT_BYTES });
+    return { path: artifactPath, sha256: binding.sha256 };
   } catch (cause) {
-    throw gateError(`Gate artifact is unavailable: ${artifactPath}`, { cause });
+    throw gateError(`Gate artifact is unavailable or unsafe: ${artifactPath}`, { cause });
   }
-  if (!stat.isFile() || stat.isSymbolicLink()) {
-    throw gateError(`Gate artifact must be a regular file: ${artifactPath}`);
-  }
-  if (stat.size > MAX_GATE_ARTIFACT_BYTES) {
-    throw gateError(`Gate artifact exceeds the maximum size of ${MAX_GATE_ARTIFACT_BYTES} bytes: ${artifactPath}`);
-  }
-  const rootReal = await realpathWithTransientWindowsRetry(target);
-  const candidateReal = await realpathWithTransientWindowsRetry(candidate).catch(() => null);
-  if (!candidateReal || !isPathWithin(rootReal, candidateReal)) {
-    throw gateError(`Gate artifact escapes the project: ${artifactPath}`);
-  }
-  return { path: artifactPath, sha256: sha256(await readBytesFromFile(candidateReal)) };
 }
 
 async function readEvidenceFile(target, evidencePath) {
@@ -99,16 +84,7 @@ async function readEvidenceFile(target, evidencePath) {
     throw gateError(`Gate evidence must be a project-relative path: ${evidencePath}`);
   }
   try {
-    const candidate = ensureWithin(target, evidencePath);
-    const stat = await lstat(candidate);
-    if (!stat.isFile() || stat.isSymbolicLink()) throw new Error("not a regular file");
-    if (stat.size > MAX_GATE_EVIDENCE_BYTES) throw new Error(`file exceeds ${MAX_GATE_EVIDENCE_BYTES} bytes`);
-    const rootReal = await realpathWithTransientWindowsRetry(target);
-    const candidateReal = await realpathWithTransientWindowsRetry(candidate);
-    if (!isPathWithin(rootReal, candidateReal)) throw new Error("outside project");
-    const bytes = await readBytesFromFile(candidateReal);
-    if (bytes.length > MAX_GATE_EVIDENCE_BYTES) throw new Error(`file exceeds ${MAX_GATE_EVIDENCE_BYTES} bytes`);
-    const value = JSON.parse(bytes.toString("utf8"));
+    const value = await readGateFileJson(target, evidencePath, { maxBytes: MAX_GATE_EVIDENCE_BYTES });
     return { path: evidencePath, value };
   } catch (cause) {
     throw gateError(`Gate evidence file is invalid: ${evidencePath}`, { cause });
