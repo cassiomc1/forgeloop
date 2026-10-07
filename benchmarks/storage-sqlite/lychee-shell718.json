@@ -1,0 +1,24 @@
+{
+  "increment": 718,
+  "head": "2700c4e",
+  "upstream": "lycheeverse/lychee-action",
+  "commit": "e7477775783ea5526144ba13e8db5eec57747ce8",
+  "parity": "action.yml differs only by explicit bash entrypoint invocation; entrypoint.sh and both licenses match downloaded immutable upstream source.",
+  "failureEvidence": {
+    "run": 37664407297,
+    "job": 112939906863,
+    "head": "ffc91ca",
+    "markdownFilesLinted": 170,
+    "issues": 0,
+    "failure": "command not found at Lychee version and execution steps despite earlier GITHUB_PATH export",
+    "logSha256": "b47359dd12283f03ca7839ec3e9c57f76c237e48e9debf520756b21628ca195a"
+  },
+  "checks": [
+    "bash -n PASS",
+    "Both YAML files parsed",
+    "docs:check PASS",
+    "git diff --check PASS"
+  ],
+  "actualCorrectedExecution": "pending; previous run continues; not replaced",
+  "remaining": "Full original acceptance remains open; no CI PASS claim."
+}
