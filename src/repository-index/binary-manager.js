@@ -183,9 +183,10 @@ export function validateArchiveEntry(entry) {
 
 async function listArchiveEntries(archivePath, { archive = "tar.gz", execFileImpl = nodeExecFile } = {}) {
   const listCommand = archive === "zip" && process.platform !== "win32" ? "unzip" : "tar";
-  const listArgs = listCommand === "unzip" ? ["-Z1", archivePath] : ["-tf", archivePath];
+  const archiveName = path.basename(archivePath);
+  const listArgs = listCommand === "unzip" ? ["-Z1", archiveName] : ["-tf", archiveName];
   try {
-    const listed = await execFileAsync(execFileImpl, listCommand, listArgs, { maxBuffer: 2 * 1024 * 1024 });
+    const listed = await execFileAsync(execFileImpl, listCommand, listArgs, { cwd: path.dirname(archivePath), maxBuffer: 2 * 1024 * 1024 });
     return listed.stdout.split(/\r?\n/).filter(Boolean).map(validateArchiveEntry);
   } catch (cause) {
     throw repositoryIndexError(REPOSITORY_INDEX_ERROR_CODES.ENGINE_EXTRACTION_FAILED, `Unable to inspect tgrep archive: ${cause.message}`, { cause });
@@ -196,10 +197,10 @@ async function extractArchive(archivePath, extractionDirectory, { archive = "tar
   await listArchiveEntries(archivePath, { archive, execFileImpl });
   const extractCommand = archive === "zip" && process.platform !== "win32" ? "unzip" : "tar";
   const extractArgs = extractCommand === "unzip"
-    ? ["-q", archivePath, "-d", extractionDirectory]
-    : ["-xf", archivePath, "-C", extractionDirectory];
+    ? ["-q", path.basename(archivePath), "-d", extractionDirectory]
+    : ["-xf", path.basename(archivePath), "-C", extractionDirectory];
   try {
-    await execFileAsync(execFileImpl, extractCommand, extractArgs, { maxBuffer: 2 * 1024 * 1024 });
+    await execFileAsync(execFileImpl, extractCommand, extractArgs, { cwd: path.dirname(archivePath), maxBuffer: 2 * 1024 * 1024 });
   } catch (cause) {
     throw repositoryIndexError(REPOSITORY_INDEX_ERROR_CODES.ENGINE_EXTRACTION_FAILED, `Unable to extract tgrep archive: ${cause.message}`, { cause });
   }

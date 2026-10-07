@@ -1,6 +1,7 @@
 import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
+import { removeTempTree } from "./helpers/rm-safe.js";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -60,7 +61,7 @@ test("completion findings expose repair-oriented next actions", async () => {
     assert.equal(typeof chronology?.next, "string");
     assert.match(chronology.next, /phase|verification|event/i);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
