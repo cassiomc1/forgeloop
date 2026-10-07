@@ -90,3 +90,31 @@ test("callback failure persists neither state nor events and a later transaction
     assert.ok(committedState(target));
   });
 });
+
+
+test("a task transaction cannot append another task's event", async () => {
+  await project(async target => {
+    const otherTaskId = "other-event-owner";
+    await runTaskCreate({ target, taskId: otherTaskId, packageRoot, claims: [] });
+    const before = await readEvents(target, packageRoot, { taskId: otherTaskId });
+    await assert.rejects(withTaskTransaction({ target, taskId, packageRoot }, () =>
+      appendProtocolEvent(target, { taskId: otherTaskId, event: "OBSERVATION", details: { message: "wrong transaction" } }, packageRoot, { taskId: otherTaskId })), { code: "E_TASK_CONTEXT_MISMATCH" });
+    assert.deepEqual(await readEvents(target, packageRoot, { taskId: otherTaskId }), before);
+  });
+});
+
+
+for (const operation of ["replace", "delete"]) test(`a task transaction cannot ${operation} another task's state`, async () => {
+  await project(async target => {
+    const otherTaskId = "other-state-owner";
+    await runTaskCreate({ target, taskId: otherTaskId, packageRoot, claims: [] });
+    const otherState = createWorkState({ taskId: otherTaskId, phase: "RECEIVED", contractFingerprint: "0".repeat(64) });
+    await writeWorkState(target, otherState, { packageRoot, taskId: otherTaskId });
+    const before = await readWorkState(target, { packageRoot, taskId: otherTaskId });
+    await assert.rejects(withTaskTransaction({ target, taskId, packageRoot }, tx => {
+      const filename = taskArtifactPath(otherTaskId, "state");
+      return operation === "delete" ? tx.stageDelete(filename) : tx.stageText(filename, JSON.stringify({ ...otherState, revision: 1 }));
+    }), { code: "E_TASK_CONTEXT_MISMATCH" });
+    assert.deepEqual(await readWorkState(target, { packageRoot, taskId: otherTaskId }), before);
+  });
+});

@@ -309,10 +309,17 @@ class OperationalStore {
     }
   }
 
+  assertMutationTask(location) {
+    if (location?.taskKey && location.taskKey !== taskStorageKey(this.transaction.taskId)) {
+      throw storageError("E_TASK_CONTEXT_MISMATCH", "Operational mutation targets another task than its transaction");
+    }
+  }
+
   stageText(relativePath, text) {
     if (!this.transaction) throw storageError("E_STORAGE_TRANSACTION_INVALID", "Operational writes require a domain transaction");
     const location = locator(relativePath);
     if (!location || location.kind === "events") throw storageError("E_STORAGE_OPERATION_UNSUPPORTED", "Only structured operational records can be replaced");
+    this.assertMutationTask(location);
     this.readText(relativePath);
     const payload = JSON.parse(text);
     if (location.kind === "descriptor" && (payload.taskKey !== location.taskKey || taskStorageKey(payload.taskId) !== location.taskKey)) {
@@ -324,6 +331,7 @@ class OperationalStore {
   appendText(relativePath, text) {
     if (!this.transaction) throw storageError("E_STORAGE_TRANSACTION_INVALID", "Operational appends require a domain transaction");
     const location = locator(relativePath);
+    this.assertMutationTask(location);
     const taskId = this.taskId(location);
     if (location?.kind !== "events" || !taskId) throw storageError("E_TASK_NOT_FOUND", "Ledger append requires an existing task descriptor");
     this.readEvents(relativePath, 1);
@@ -336,6 +344,7 @@ class OperationalStore {
     if (!this.transaction) throw storageError("E_STORAGE_TRANSACTION_INVALID", "Operational deletion requires a domain transaction");
     const location = locator(relativePath);
     if (!location || !["state", "recovery", "continuity"].includes(location.kind)) throw storageError("E_STORAGE_OPERATION_UNSUPPORTED", "Audit records cannot be deleted through the mutation overlay");
+    this.assertMutationTask(location);
     if (this.readText(relativePath) === null) {
       const taskId = this.taskId(location);
       const observed = this.reads.get(`artifact:${JSON.stringify([taskId, location.kind, location.artifactId])}`);

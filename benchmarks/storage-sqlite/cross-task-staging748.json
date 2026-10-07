@@ -1,0 +1,21 @@
+{
+  "increment": 748,
+  "finding": "Task A transaction could append an event to task B ledger without rejecting the foreign task identity.",
+  "correction": "Shared staging guard compares canonical task storage key against active transaction taskId before replacing, appending or deleting task records.",
+  "checks": {
+    "transactionTests": 13,
+    "failures": 0,
+    "complexityRegressions": [],
+    "fastTier": "PASS"
+  },
+  "logSha256": {
+    "cross-task-red747.log": "ad590764e8e877b72370bd0266b2dabc349946ddc19b69489faca3b739b3cfbb",
+    "cross-task-green748.log": "5e5a9225b7b35edfc167198df574e4888f28ed24089fd4bdd9eb4fab715f8a01",
+    "cross-task-fast748.log": "c89c4085b77bcd4e302f21a20cc484a4f3885b2c26244880747e93acfd7fbfca"
+  },
+  "limitations": [
+    "Full corrected platform verification pending.",
+    "Session markers remain project-scoped; no blanket cross-task read restriction.",
+    "Whole original migration acceptance remains incomplete."
+  ]
+}
