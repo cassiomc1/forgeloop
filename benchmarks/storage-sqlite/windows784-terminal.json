@@ -1,0 +1,21 @@
+{
+  "increment": 784,
+  "runId": 37694548277,
+  "jobId": 113042891779,
+  "sourceRevision": "74ea4ac93957d4082ef173e6b08c2dc11bb976b4",
+  "status": "completed",
+  "conclusion": "success",
+  "counts": {
+    "tests": 2884,
+    "pass": 2870,
+    "fail": 0,
+    "skipped": 14
+  },
+  "gatePathControls": 4,
+  "logSha256": "a848eb458d1d70224ffe7fd4654e4956353a1c6847f70a4faca19a733b6bef88",
+  "hostEvidence": [
+    "2026-10-07T22:11:33.3005860Z Windows host: 100.83.46.210; computer: VM-CASSIO",
+    "2026-10-07T22:11:33.3022094Z Docker Linux runner: 51abbe357f3e2a1958f8e89c83b430aa7d056cdbc4f6a435baaa3022e66b7a47 sha256:91581bafab4379cc61eefb17f06bd3aea55cad6b3e4b6531c69ae5968a2aa40a true 51abbe357f3e"
+  ],
+  "scope": "Full Windows Node suite including gate-path783; not the full Mac22-gate prepush pipeline."
+}

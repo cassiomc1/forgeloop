@@ -1,0 +1,148 @@
+{
+  "increment": 786,
+  "sourceRevision": "74ea4ac93957d4082ef173e6b08c2dc11bb976b4",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "host": {
+    "model": "Mac14,2",
+    "cpu": "Apple M2",
+    "memoryBytes": 8589934592,
+    "macOS": "27.0.1",
+    "node": "v24.19.0",
+    "sqlite": "3.53.3"
+  },
+  "sourceFiles": 2863,
+  "sourceUnchanged": true,
+  "measurementOrdering": "All local/remote tests terminal first; serial uninstrumented latency stages then separate instrumented MCP resource stage.",
+  "artifacts": [
+    "startup786",
+    "commit786",
+    "populated-cli786",
+    "mcp-latency786",
+    "idempotency786",
+    "mcp-resources786"
+  ],
+  "resourceMetrics": [
+    {
+      "tasks": 10,
+      "operation": "taskListTool",
+      "native": {
+        "samples": 20,
+        "workerLifetimePeakRssMiB": 167.015625,
+        "maximumTimerLatenessMs": 9.223208999999997,
+        "medianCpuMicros": 12380.0,
+        "maximumAsyncFilesystemRequests": 101,
+        "rssEndpointRangeBytes": [
+          137330688,
+          175128576
+        ]
+      },
+      "baseline": {
+        "samples": 20,
+        "workerLifetimePeakRssMiB": 157.765625,
+        "maximumTimerLatenessMs": 1.1467079999999896,
+        "medianCpuMicros": 16437.0,
+        "maximumAsyncFilesystemRequests": 666,
+        "rssEndpointRangeBytes": [
+          135348224,
+          165429248
+        ]
+      }
+    },
+    {
+      "tasks": 10,
+      "operation": "projectTasksResource",
+      "native": {
+        "samples": 20,
+        "workerLifetimePeakRssMiB": 171.265625,
+        "maximumTimerLatenessMs": 8.081583000000023,
+        "medianCpuMicros": 9879.5,
+        "maximumAsyncFilesystemRequests": 97,
+        "rssEndpointRangeBytes": [
+          175980544,
+          179568640
+        ]
+      },
+      "baseline": {
+        "samples": 20,
+        "workerLifetimePeakRssMiB": 158.296875,
+        "maximumTimerLatenessMs": 1.0971670000001268,
+        "medianCpuMicros": 14116.5,
+        "maximumAsyncFilesystemRequests": 662,
+        "rssEndpointRangeBytes": [
+          165511168,
+          165986304
+        ]
+      }
+    },
+    {
+      "tasks": 1000,
+      "operation": "taskListTool",
+      "native": {
+        "samples": 20,
+        "workerLifetimePeakRssMiB": 339.59375,
+        "maximumTimerLatenessMs": 19.951915999999983,
+        "medianCpuMicros": 637199.0,
+        "maximumAsyncFilesystemRequests": 101,
+        "rssEndpointRangeBytes": [
+          301776896,
+          355090432
+        ]
+      },
+      "baseline": {
+        "samples": 20,
+        "workerLifetimePeakRssMiB": 235.1875,
+        "maximumTimerLatenessMs": 4.954792000000452,
+        "medianCpuMicros": 1350606.0,
+        "maximumAsyncFilesystemRequests": 66006,
+        "rssEndpointRangeBytes": [
+          180551680,
+          246595584
+        ]
+      }
+    },
+    {
+      "tasks": 1000,
+      "operation": "projectTasksResource",
+      "native": {
+        "samples": 20,
+        "workerLifetimePeakRssMiB": 353.40625,
+        "maximumTimerLatenessMs": 21.08341599999767,
+        "medianCpuMicros": 597246.0,
+        "maximumAsyncFilesystemRequests": 97,
+        "rssEndpointRangeBytes": [
+          340656128,
+          368017408
+        ]
+      },
+      "baseline": {
+        "samples": 20,
+        "workerLifetimePeakRssMiB": 235.1875,
+        "maximumTimerLatenessMs": 4.895750000003318,
+        "medianCpuMicros": 1334782.0,
+        "maximumAsyncFilesystemRequests": 66002,
+        "rssEndpointRangeBytes": [
+          229261312,
+          230440960
+        ]
+      }
+    }
+  ],
+  "acceptance": {
+    "startup": "PASS on measured fixtures",
+    "smallWorkspace": "PASS on measured latency fixtures",
+    "stateEventCommit": "Greater than30% reduction at10/1000 events with ownership parity;100000 result/tail parity only because baseline audit refuses JSON_LIMIT_EXCEEDED.",
+    "largeMCPDiscovery": "2.38x tool and2.09x resource p95 improvement.",
+    "largeCLIDiscovery": "1.8645x p95 improvement;below2x target. Remaining validation cost explanation/profiling still required.",
+    "largeCLIHistory": "191.673ms native versus153.392ms baseline;large fixture regression retained.",
+    "idempotency": "68.623x p95 improvement at1000 public actions/approvals,with output andmissing-key parity.",
+    "resources": "Native353.406MiB versusbaseline235.188MiB worker lifetime peak;finite20request observations,not universal bound oraccepted budget.",
+    "netLOC": "43677 baseline versus51896 current;25% target false.",
+    "releaseThresholdsVerified": false
+  },
+  "limits": [
+    "Resource-stage timings are not uninstrumented release p95.",
+    "MCP transport is actual in-memory client/server with same adapter,not HTTP/stdio.",
+    "Expected response payloads omitted from compact artifacts;raw output hashes retained andcomparison scripts reproduce full parity assertions.",
+    "No tests orbenchmarks overlap within admitted measurement windows."
+  ]
+}
