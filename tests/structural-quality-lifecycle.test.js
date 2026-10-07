@@ -16,10 +16,12 @@ import { runRecordDiagnosis } from "../src/commands/record-diagnosis.js";
 import { runRoute } from "../src/commands/route.js";
 import { runTaskCreate } from "../src/commands/task-create.js";
 import { createConfig, writeConfig } from "../src/core/config.js";
-import { createContract, writeContract } from "../src/core/contract.js";
+import { createContract, readContract, writeContract } from "../src/core/contract.js";
 import { createForgeLoopContext } from "../src/core/runtime-context.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { readWorkState } from "../src/core/work-state.js";
+import { captureStructuralQualityBaseline } from "../src/core/structural-quality/service.js";
+import { openStorageDatabase } from "../src/storage/index.js";
 
 const packageRoot = getPackageRoot();
 const taskId = "structural-quality-lifecycle-task";
@@ -333,4 +335,55 @@ test("bounded attempt limits preserve a blocked gate outcome", async () => {
   } finally {
     await rm(target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
   }
+});
+
+
+function withQualityDatabase(target, callback) {
+  const db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+  try { return callback(db); } finally { db.close(); }
+}
+
+function qualityPersistenceRows(target) {
+  return withQualityDatabase(target, db => ({
+    tasks: db.prepare("SELECT * FROM tasks ORDER BY task_id").all(),
+    artifacts: db.prepare("SELECT * FROM task_artifacts ORDER BY task_id, kind, artifact_id").all(),
+    events: db.prepare("SELECT * FROM events ORDER BY task_id, seq").all(),
+  }));
+}
+
+test("direct baseline artifact and event roll back together and retry succeeds", async () => {
+  const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-direct-quality-"));
+  try {
+    await setupTask(target);
+    const before = qualityPersistenceRows(target);
+    let scans = 0;
+    const runtimeContext = fakeContext([9000], null, () => { scans += 1; });
+    withQualityDatabase(target, db => db.exec("CREATE TRIGGER fail_direct_quality BEFORE INSERT ON events WHEN NEW.event_type = 'STRUCTURAL_QUALITY_BASELINE_RECORDED' BEGIN SELECT RAISE(ABORT, 'injected quality baseline event failure'); END"));
+    await assert.rejects(() => captureStructuralQualityBaseline({ target, packageRoot, taskId, runtimeContext }), /injected quality baseline event failure/);
+    assert.deepEqual(qualityPersistenceRows(target), before);
+    assert.equal(scans, 1);
+    withQualityDatabase(target, db => db.exec("DROP TRIGGER fail_direct_quality"));
+    const result = await captureStructuralQualityBaseline({ target, packageRoot, taskId, runtimeContext });
+    assert.equal(result.status, "CAPTURED");
+    assert.equal(scans, 2);
+    assert.equal(qualityPersistenceRows(target).events.filter(row => row.event_type === "STRUCTURAL_QUALITY_BASELINE_RECORDED").length, 1);
+  } finally { await rm(target, { recursive: true, force: true }); }
+});
+
+test("direct baseline rejects changed canonical bindings without provider replay", async () => {
+  const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-quality-binding-"));
+  try {
+    await setupTask(target);
+    let afterMutation;
+    let scans = 0;
+    const runtimeContext = fakeContext([9000], null, async () => {
+      scans += 1;
+      const contract = await readContract(target, packageRoot, { taskId });
+      await writeContract(target, { ...contract.value, objective: "independent contract changed during observation" }, packageRoot, { taskId });
+      afterMutation = qualityPersistenceRows(target);
+    });
+    await assert.rejects(() => captureStructuralQualityBaseline({ target, packageRoot, taskId, runtimeContext }), error => error.code === "E_STRUCTURAL_QUALITY_OBSERVATION_EPOCH_STALE");
+    assert.equal(scans, 1);
+    assert.deepEqual(qualityPersistenceRows(target), afterMutation);
+  } finally { await rm(target, { recursive: true, force: true }); }
 });

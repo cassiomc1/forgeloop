@@ -1,0 +1,36 @@
+{
+  "increment": 767,
+  "status": "APPLIED_AND_FOCUSED_VERIFIED",
+  "mainSourceChanged": true,
+  "parentHead": "6cd3820ced49957f8b97956055b584e8327add6a",
+  "productionChange": "Final quality-baseline artifact/event publication joins or creates a task transaction. Provider scan remains before this boundary. Current phase/contract/route/policy/scope and READY preflight are checked inside it; current prior baseline is used for the event.",
+  "checks": {
+    "qualityRegressionTests": 20,
+    "additionalCallerTests": 2,
+    "realSentruxVersion": "0.5.7",
+    "failures": 0,
+    "skips": 0,
+    "verifyFast": "PASS",
+    "complexity": "PASS",
+    "fullCurrentPlatforms": "PENDING"
+  },
+  "sourceHashes": {
+    "src/core/structural-quality/service.js": "b79d77f508c683e5f8564e34edd7afddcfb24619e6f500a190582486a12f1dfa",
+    "tests/structural-quality-lifecycle.test.js": "b0d270175af757edb5dc3ac0cf02defc90d45bbc89cc496e3fff3ea844de5b30"
+  },
+  "patchSha256": "b79dae90161d1539573c2fdcc66f2920cb5cc737a7f088ffa66874fd8eddfd10",
+  "logs": {
+    "direct-quality767-candidate-tests.log": "f862decc2caa461c8317fbe0c6f0e7f660941deecf374d0265a01e78c3aa2d94",
+    "direct-quality767-candidate-lint.log": "91e9e350d5b23f70d54e6111350806921e5591d2c5db33e3ef95096b7c63a5ae",
+    "direct-quality766-positive-controls.log": "e231dc11c179cada71404bb123cc17bd550cd1f19c8898e6176a9e08d3bb1e69"
+  },
+  "mainLogHashes": {
+    "direct-quality767-main-tests.log": "d9955ea51efb6348adfe1b9d656572f9b9ae4d4b86cb11047e363390c23bea7c",
+    "direct-quality767-callers.log": "7ad1950c4f3cdd1a03bb4d80cc47dc51f6aee5ff36308e1d519d768f10b77ecc",
+    "fast767.log": "0ca8dd5d65b7c23358cb3c66d19ad1e9b31d8fc79598392330dfd3c9892ed9b0",
+    "complexity767.log": "32111f472b37a8b8941d21c72e18a3815643453328562aed2fd87e8a2f0417f2"
+  },
+  "progressPercent": 55,
+  "releaseThresholdsVerified": false,
+  "protocolComplete": false
+}

@@ -37,6 +37,7 @@ import {
 import { appendProtocolEvent } from "../events.js";
 import { getPackageRoot } from "../templates.js";
 import { withTaskMutation } from "../task-command.js";
+import { withTaskTransaction } from "../transaction.js";
 import { getOperationalStore } from "../../storage/operational-context.js";
 
 async function withQualityReadObservation(target, callback) {
@@ -411,31 +412,43 @@ export async function captureStructuralQualityBaseline({ target, packageRoot = g
     scope: updatedInputs.scope,
     snapshot: scan.snapshot,
   };
-  const written = await writeStructuralQualityBaseline(target, taskId, value, packageRoot, { phase: inputs.state.phase, replace, taskId });
-  if (!written.identical) {
-    await appendProtocolEvent(target, {
-      taskId,
-      event: "STRUCTURAL_QUALITY_BASELINE_RECORDED",
-      details: {
-        artifactRef: written.path,
-        artifactFingerprint: written.fingerprint,
-        providerId: scan.provider.id,
-        providerVersion: scan.provider.version,
-        replaced: Boolean(existing),
-        supersededFingerprint: existing?.fingerprint ?? null,
-      },
-    }, packageRoot, { taskId });
-  }
-  return {
-    status: written.existing ? "REPLACED" : "CAPTURED",
-    mode: policy.mode,
-    provider: scan.provider,
-    artifactRef: written.path,
-    artifactFingerprint: written.fingerprint,
-    baseline: written.value,
-    existing: written.existing,
-    identical: written.identical,
-  };
+  return withTaskTransaction({ target, taskId, packageRoot, operation: "quality-baseline" }, async () => {
+    const currentInputs = await taskInputs(target, packageRoot, taskId, { runtimeContext, timeoutMs, maxOutputBytes });
+    if (currentInputs.state.phase !== "PLANNED"
+      || currentInputs.contract.fingerprint !== inputs.contract.fingerprint
+      || currentInputs.route.fingerprint !== inputs.route.fingerprint
+      || structuralQualityPolicyFingerprint(currentInputs.policy) !== policyFingerprint
+      || currentInputs.scopeFingerprint !== inputs.scopeFingerprint) {
+      throw qualityError(E_STRUCTURAL_QUALITY_OBSERVATION_EPOCH_STALE, "Task baseline configuration changed during observation");
+    }
+    await assertReadyPreflight(target, packageRoot, taskId);
+    const currentBaseline = await readStructuralQualityBaseline(target, taskId, packageRoot);
+    const written = await writeStructuralQualityBaseline(target, taskId, value, packageRoot, { phase: currentInputs.state.phase, replace, taskId });
+    if (!written.identical) {
+      await appendProtocolEvent(target, {
+        taskId,
+        event: "STRUCTURAL_QUALITY_BASELINE_RECORDED",
+        details: {
+          artifactRef: written.path,
+          artifactFingerprint: written.fingerprint,
+          providerId: scan.provider.id,
+          providerVersion: scan.provider.version,
+          replaced: Boolean(currentBaseline),
+          supersededFingerprint: currentBaseline?.fingerprint ?? null,
+        },
+      }, packageRoot, { taskId });
+    }
+    return {
+      status: written.existing ? "REPLACED" : "CAPTURED",
+      mode: policy.mode,
+      provider: scan.provider,
+      artifactRef: written.path,
+      artifactFingerprint: written.fingerprint,
+      baseline: written.value,
+      existing: written.existing,
+      identical: written.identical,
+    };
+  });
 }
 
 async function persistEvaluationAndCheck({ target, packageRoot, taskId, inputs, persisted, authorityContext, runtimeContext }) {
