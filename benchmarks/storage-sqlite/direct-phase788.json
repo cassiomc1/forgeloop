@@ -1,0 +1,35 @@
+{
+  "increment": 788,
+  "parentHead": "2f3f21f25ef986b8748ed9fbcf5c341d84499010",
+  "problem": "Direct phase advancement with canonical paths and no taskId refuses a valid lifecycle because persisted preflight selection lacks canonical task identity.",
+  "reproduction": {
+    "tests": 6,
+    "passed": 3,
+    "failed": 3,
+    "reason": "Canonical-path cases refuse before injected failure; no partial publication observed on prior source."
+  },
+  "change": "Validate destination phase first; infer canonical state task identity before the existing advance transaction wrapper. Preserve original internal prerequisites, revision/coherence checks and receipt/event publication body.",
+  "controls": "Explicit-task and inferred canonical-path calls exercise CORRECTING receipt failure plus VERIFYING receipt/event failures. Exact task/artifact/event rows unchanged on refusal; retry changes phase, records commit witness and retains two verification-cycle start events.",
+  "checks": {
+    "focusedTests": 22,
+    "callerTests": 57,
+    "failures": 0,
+    "skipped": 0,
+    "verifyFast": "PASS",
+    "complexity": "PASS with unchanged limits",
+    "lint": "PASS with one existing complexity warning",
+    "fullCurrentPlatforms": "PENDING"
+  },
+  "logHashes": {
+    "phase788-before.log": "6b79c9b5a14e4fe72241e7b4c1537046fa29f103dec8cc1405e3bd5bb5245939",
+    "phase788-tests.log": "eee42c9f51452f2cf5224cf71932a2c1bd39b18db64037414116433338532fbe",
+    "phase788-callers.log": "f2f807f1b48974139f4372f308556663f7df809a6d35db8cd415e77e1e7c57b2",
+    "phase788-fast.log": "04f4aa720e5272b47f86e4248f8ff6310fb3c881bb0e388a17f25420e4e99efe",
+    "phase788-complexity.log": "32111f472b37a8b8941d21c72e18a3815643453328562aed2fd87e8a2f0417f2",
+    "phase788-lint.log": "5438a68fefa298fdd93b274e9111c67dd8b0ce8ac082db2013b7cc0e8f02a066"
+  },
+  "productionSha256": "6b82bb071ef85a21dc411eb7d25f5b5afdfe237845bf7e9688dc3792e0689a86",
+  "testSha256": "a568a3cd19f59eb92ebdebfbee64b081305bf46c781352e79868fa232b19f1ec",
+  "progressPercent": 55,
+  "protocolComplete": false
+}

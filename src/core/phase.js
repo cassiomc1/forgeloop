@@ -346,7 +346,12 @@ export async function preparePhaseReceipt({ target, packageRoot, taskId, state, 
 }
 
 export async function advanceWorkState(target, toPhase, options = {}) {
-  const normalizedOptions = typeof options === "string" ? { packageRoot: options } : options;
+  assertWorkPhase(toPhase);
+  let normalizedOptions = typeof options === "string" ? { packageRoot: options } : options;
+  if (!normalizedOptions.taskId) {
+    const state = await readWorkState(target, normalizedOptions);
+    normalizedOptions = { ...normalizedOptions, taskId: state?.taskId };
+  }
   if (!normalizedOptions.taskId || await getTaskTransaction(target)) {
     return advanceWorkStateInternal(target, toPhase, normalizedOptions);
   }
@@ -372,8 +377,6 @@ async function advanceWorkStateInternal(target, toPhase, normalizedOptions) {
     receiptPath = null,
     eventsPath = null,
   } = normalizedOptions;
-  assertWorkPhase(toPhase);
-
   let state = await readWorkState(target, { packageRoot, taskId, statePath });
   const stateRel = statePath ?? (taskId ? taskArtifactPath(taskId, "state") : ARTIFACT_PATHS.state);
   if (!state) throw phaseError("E_PHASE_PREREQUISITE_MISSING", "Cannot advance without work state", [stateRel]);
