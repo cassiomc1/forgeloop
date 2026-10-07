@@ -20,6 +20,9 @@ import { canonicalFingerprint } from "../src/core/artifacts.js";
 import { prepareCompletion, recordCheck as recordCheckArtifact } from "../src/core/completion-artifacts.js";
 import { createTaskDescriptor, writeTaskDescriptor } from "../src/core/task-descriptor.js";
 
+import { rebindCompletionRejectionSnapshot } from "../src/core/completion-recovery-rebind.js";
+import { openStorageDatabase } from "../src/storage/index.js";
+
 const packageRoot = getPackageRoot();
 
 
@@ -296,5 +299,23 @@ test("preflight keeps ROUTED resume for a ledger without execution milestones", 
     const restored = await readWorkState(target, { packageRoot, taskId });
     assert.equal(restored.phase, "ROUTED");
     assert.deepEqual(restored.pendingSteps, ["planning", "implementation", "verification"]);
+  });
+});
+
+
+test("direct completion rejection rebind rolls back state when event publication fails", async () => {
+  await withTarget(async target => {
+    const { taskId } = await setupDriftedReviewingRejection(target);
+    const db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+    try {
+      const before = db.prepare("SELECT state_json FROM tasks WHERE task_id = ?").get(taskId).state_json;
+      const count = db.prepare("SELECT COUNT(*) AS n FROM events WHERE task_id = ?").get(taskId).n;
+      const artifacts = db.prepare("SELECT kind, artifact_id, payload_json, fingerprint FROM task_artifacts WHERE task_id = ? ORDER BY kind, artifact_id").all(taskId);
+      db.exec("CREATE TRIGGER refuse_rebound_event BEFORE INSERT ON events BEGIN SELECT RAISE(ABORT, 'injected rebound event failure'); END");
+      await assert.rejects(rebindCompletionRejectionSnapshot({ target, packageRoot, taskId }), /injected rebound event failure/);
+      assert.equal(db.prepare("SELECT state_json FROM tasks WHERE task_id = ?").get(taskId).state_json, before, "State must roll back with the rejected event");
+      assert.equal(db.prepare("SELECT COUNT(*) AS n FROM events WHERE task_id = ?").get(taskId).n, count);
+      assert.deepEqual(db.prepare("SELECT kind, artifact_id, payload_json, fingerprint FROM task_artifacts WHERE task_id = ? ORDER BY kind, artifact_id").all(taskId), artifacts, "Receipt and other artifacts must roll back too");
+    } finally { db.close(); }
   });
 });

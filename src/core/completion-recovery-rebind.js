@@ -3,6 +3,7 @@ import { appendProtocolEvent, validateCompletionRecoveryAuthorization, validateE
 import { createReceipt } from "./receipt.js";
 import { taskArtifactPath } from "./task-paths.js";
 import { mutateWorkState, readWorkState } from "./work-state.js";
+import { getTaskTransaction, withTaskTransaction } from "./transaction.js";
 
 function resolveArtifactPath(key, taskId, override) {
   if (override) return override;
@@ -65,7 +66,16 @@ function findMatchingRejectionEvent(events, attempt, cycle) {
  *     rejection carrying the current fingerprints is appended,
  *   - the execution receipt is re-bound to the current checkpoint when present.
  */
-export async function rebindCompletionRejectionSnapshot({
+export async function rebindCompletionRejectionSnapshot(options = {}) {
+  if (await getTaskTransaction(options.target)) return rebindRejectionInTransaction(options);
+  const state = await readWorkState(options.target, { packageRoot: options.packageRoot,
+    taskId: options.taskId, statePath: resolveArtifactPath("state", options.taskId, options.statePath) });
+  if (!state) return { rebound: false };
+  return withTaskTransaction({ target: options.target, taskId: options.taskId ?? state.taskId,
+    packageRoot: options.packageRoot, operation: "rebind-completion-rejection" }, () => rebindRejectionInTransaction(options));
+}
+
+async function rebindRejectionInTransaction({
   target,
   packageRoot,
   taskId = null,
