@@ -1,0 +1,18 @@
+{
+  "increment": 709,
+  "parentHead": "ffc91ca",
+  "scope": "Retired supplied persistence seam for runRecordDiagnosis; not complete public/transitive diagnosis authority.",
+  "source": {
+    "src/commands/record-diagnosis.js": "41fcc0a954efa799d164f301f8d1d771f183ef30fe36cebe3766693fe081b402",
+    "src/storage/operational-context.js": "53fa9ed5fe2b0724071dda1c1594f8a2101fcf645bcf286da5407a4b9d37183f",
+    "tests/storage-retired-command-seam.test.js": "84726eee2e9cdb75e795533ece4bdd1ebfb461222de08e6a6e5d4a7a364edce9"
+  },
+  "check": {
+    "tests": 1,
+    "pass": 1,
+    "fail": 0,
+    "logSha256": "ea6a3ac73fe7b233f847c63e9041c10e9381f98f8f336e1cff62e2f5e79afd4c"
+  },
+  "retrieval": "JG partial context exit2; verified by direct reads and test.",
+  "remaining": "Direct domain exports, every consumer, phase/event/CAS atomicity and whole authority remain covered by separate unresolved audit."
+}

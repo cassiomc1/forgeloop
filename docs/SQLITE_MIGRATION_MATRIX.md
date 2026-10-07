@@ -180,7 +180,7 @@ Generated discovery: `node scripts/inventory-operational-storage.mjs /tmp/sqlite
 
 - CI, portable bundles, exports, attachment digests, old client refusal, storage marker, doctor and backup/restore require new-format coverage.
 - Required operational artifact byte digests and optional structural-quality reads must be modeled before their prerequisite evidence can be accepted without filesystem access.
-- Temporary diagnosis persistence capability and duplicated guard selection remain removal milestones.
+- Temporary diagnosis persistence capability is retired: `assertCanonicalPersistence` rejects supplied capabilities before storage allocation; current regression709 passes. Duplicated guard selection and complete transitive consumer closure remain review milestones.
 - Human configuration/policy, package assets, source/Git, large attachments and tgrep data remain files intentionally.
 
 ## Shared boundary evidence (partial existing-store production selection)
