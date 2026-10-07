@@ -16,6 +16,8 @@ The original migration plan section8 remains authoritative. `maintenance-coverag
 
 The backup implementation uses SQLite's supported backup API rather than copying a live WAL database file. It validates the copied database, flushes it and publishes exclusively. Project backups retain referenced attachment bytes and digest inventories; corrupt or incomplete bundles are refused. The current focused tests exercise those behaviors. Recovery/restore interruption coverage and final platform acceptance remain separate.
 
+## Maintenance verification history
+
 ### Pre-write source restoration drill (checkpoint 538)
 
 `scripts/drill-storage-prewrite-source-rollback.mjs` passed on Mac in an owned linked Git worktree. It preserves a canonical legacy export, runs the actual migration, validates the native task, checks equality with the retained publication snapshot, restores the preserved source at the same path offline, and obtains `VALID` from the pinned legacy client. A separate accepted-native-task control triggers the same comparison guard and leaves the new native task intact. This is a disposable operational drill, not a production rollback command. Snapshot equality does not prove the absence of historical reverted writes. Windows/Linux, attachment rollback, and interrupted restoration remain pending. Evidence: `benchmarks/storage-sqlite/prewrite-source-rollback-538.json`.

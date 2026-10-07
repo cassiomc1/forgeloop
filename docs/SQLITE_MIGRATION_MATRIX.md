@@ -232,7 +232,6 @@ The integration checks cover host approval, authorization and reconciliation, ac
 | src/commands/task-show.js | Resolved taskId/key; taskArtifactPath for contract, route, state, preflight, receipt, continuity, events and recovery | Artifact existence consults selected storage before physical files. Public CLI discovery/contract-create/task-show retains idempotent state and exposes canonical route progress | Full installed resource/platform coverage, large-ledger inspection memory, direct filesystem branch removal |
 | Public contract-revise and route executors | Explicit migrated task, contract/route fingerprints, indexed state revision, CONTRACT_REVISED and commit ledger witnesses | Migrated public revision clears derived gate authorization, preserves ownership, and produces an executable stale-route recovery command; contract-revise suite15/15 passes locally | All task phases/consumer transport combinations on final source and platform acceptance |
 
-
 ## Canonical diagnosis/advance retirement boundary (increments119–144)
 
 | Consumer | Canonical records and selection | Verified boundary | Remaining acceptance |
@@ -300,7 +299,6 @@ without fresh bootstrap or new filesystem publication. Dedicated unmarked
 SQLite loss controls and bootstrap/connection-owner controls pass22/22. Later
 file replacement/driver-opening and power-loss windows remain separate work.
 
-
 ## Native writer boundary source review (increment 324)
 
 The current canonical dispatcher (`src/core/command-executors.js`) selects
@@ -328,7 +326,6 @@ compatibility contract, maintenance topology or performance/LOC gate. Native
 full audit still materializes the ledger and needs bounded-memory correction
 without relaxing repair, gate, revision or decision backlinks.
 
-
 Increment374 source review: task conflict inspection uses callback-owned claim evidence and computes latest meaningful activity without an event payload array/sort. Early-history positions use canonical collection access. READY preflight consistency reads its state and ledger within the audit callback and reduces READY matches without a filtered array. Public assertPreflightPersistenceSafety still returns an array ledger to mutation callers; prepared transaction read sets/overlays intentionally retain their current contract. This is partial consumer coverage, not full bounded-memory acceptance. validate-protocol pre-audit loaders, discovery supplied-artifact coherence, remaining pending rows and representative action/approval/recovery scales remain unresolved.
 
 Increment375 discovery review: per-task native descriptor/state/lease/presence and claim projection now share an immutable audit callback; the initial indexed identity is validated and never substitutes for payload/schema/proof validation. The current set of tasks is still output-proportional and catalog-wide snapshot consistency is not established. Public mutation overlays retain their existing read-set/CAS behavior.
@@ -349,7 +346,6 @@ Increment383: read-only task-scope now shares an immutable audit snapshot; mutat
 
 Increment384: discovery catalog and all committed task projections share one immutable project backup. Nested snapshots reuse only live module-owned readonly handles. Nested observation queries follow the current parent db for CAS after intermediate owners close. Direct native findTaskById selects indexed authority before discovery; empty/missing lookup never scans the project catalog. Current20repeat discovery gains remain below2x and10task overhead exceeds tolerance; performance acceptance stays open.25Pending70Partial command rows remain.
 
-
 ## Full acceptance audit after initial command review (increment401)
 
 All108 command rows have initial boundary review;95 remain Partial. Static inventory benchmarks/storage-sqlite/consumer-inventory-401.json is discovery only, not writer or completion proof. Frozen full401 includes398audit/399reconciliation and400template correction; its result remains pending.
@@ -368,7 +364,6 @@ All108 command rows have initial boundary review;95 remain Partial. Static inven
 | Delivery | Worktree branch and self-hosted workflow changes prepared | Validator-backed COMPLETE/VALID, then authorized PR creation and attachment; no merge/publication authorization |
 
 Power-loss certification is not substituted for the plan's process-termination checks. Proposed target misses require investigation and release decision; correctness and durability remain fixed. Matrix review count does not redefine the original goal or imply95Partial rows complete.
-
 
 ### Process-termination evidence refinement (increment403)
 
@@ -442,7 +437,6 @@ Current inclusive LOC503 is published:267 included modules,43098 baseline/50487 
 - Legacy receipt discovery remains explicit read-only inspection without native authority; missing/orphan native authority fails closed without allocation. Default child CLI is resolved from the installed script source rather than assuming a duplicate CLI in the target checkout.
 - Receipt/audit/task-resolution25/25 controls pass, including real strict CLI rejection of incomplete native tasks, cross-task payload mismatch, audit child failure, native shadow precedence and retained orphan bytes. Full/platform and transitive consumer acceptance remain open. Evidence: `benchmarks/storage-sqlite/canonical-receipt-ci-consumer-606.json`.
 
-
 ### Binding-aware writer discovery and corrected Mac verification (increment612)
 
 Corrected source611b passes all22 Mac pre-push gates:2814 core tests,2803
@@ -481,7 +475,6 @@ behavioral refusal evidence. Static parsing alone cannot close the sole-writer
 checkpoint. The original performance,LOC,maintenance and workflow requirements
 remain in scope.
 
-
 The corrected-source [twenty-repetition CLI timing](../benchmarks/storage-sqlite/populated-cli-macos-612.json)
 passes output parity for all four small/large discovery/history profiles. Large
 discovery p95 is1494.224ms for the pinned filesystem baseline and741.170ms
@@ -492,7 +485,6 @@ prior609 measurement was1.972x,so this close threshold crossing must retain
 that variance evidence. Commit,idempotency,startup,persistent-MCP and resource
 acceptance are still open;the whole performance checkpoint remains PARTIAL.
 All2638 frozen source hashes remain unchanged after timing.
-
 
 ### Public bundle authority boundary (increment613)
 
@@ -507,7 +499,6 @@ retains the source hash and bounded assertions. No production code changes.
 The new controls still require Windows/Linux execution;they do not establish
 whole transitive authority or power-loss proof. The611b full platform runs
 continue against their immutable source.
-
 
 ### Corrected Windows result and sequential performance refresh (increment614)
 
@@ -542,7 +533,6 @@ Whole performance remains PARTIAL:large commit validation-cost investigation,
 persistent integration,resource budgets and required contention profiles stay
 open. No durability or integrity check was weakened to meet a target.
 
-
 [Supplemental instrumented idempotency observations](../benchmarks/storage-sqlite/macos-idempotency-resources-614.json)
 cover the same10/1000/5000-action fixtures with20 repetitions per backend.
 Output and missing-key parity pass. The artifact preserves raw CPU,async
@@ -551,7 +541,6 @@ and database/WAL endpoint measurements. It explicitly excludes operation peak
 RSS,peak live WAL,SQLite internal I/O,direct lock waits and persistent-MCP
 transport proof;no resource budget is marked passed from these observations.
 Instrumentation timing is separate from the uninstrumented latency comparison.
-
 
 ### Large state/event commit diagnosis (increment615)
 
@@ -570,7 +559,6 @@ not release timings;the grouped prototype has not proved exact error-path
 parity or a30% end-to-end improvement. It is not promoted to production.
 All2638 frozen source hashes remain unchanged. The required large-commit
 validation-cost investigation remains open;integrity and durability are retained.
-
 
 ### Grouped-query rejection and retained error-parity controls (increment616)
 
@@ -594,7 +582,6 @@ overlapped full verification due to a scheduling error;all its timing samples
 are invalidated. Full verification of the rejected immutable candidate was
 terminated with exit143,with logs/source retained;it is not a passing gate.
 Linux612 continues against the accepted611b production source.
-
 
 ### Current platform checkpoint closure (scope617, collected increment616)
 

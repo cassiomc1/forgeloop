@@ -301,7 +301,6 @@ This scoped run does not establish full-plan acceptance or current remote
 platform, MCP and packaging results. The individual counts below describe
 historical focused runs and do not replace current regression evidence.
 
-
 `node --test tests/storage-store.test.js` — 16 tests covering durability
 settings, schema versioning, indexed lookup, optimistic concurrency conflicts,
 claim reservation, idempotency uniqueness, event ordering and hash
@@ -606,7 +605,6 @@ are refused. Unreferenced content-addressed objects are retained, consistent wit
 the no-automatic-deletion policy. Full crash recovery coverage and bounded large-ledger audit memory remain
 unfinished.
 
-
 The public `storage-migrate --destination <new-directory> --writers-quiesced`
 command runs initial preparation, staging, archival, activation and terminal
 verification under one maintenance owner. The destination is project-relative
@@ -617,7 +615,6 @@ Failures retain exclusion and original/captured evidence. Resume is available
 only for the verified publication stages described below; retrying the initial
 command is not a recovery procedure.
 This initial command does not establish the full migration plan's acceptance.
-
 
 `storage-migration-resume --destination <retained-directory> --expected-owner
 <uuid> --writers-quiesced` adopts only the exact retained dead local owner,
@@ -630,7 +627,6 @@ inspected before any further recovery. Unrecorded capture and interrupted owner 
 work. SIGKILL fixture coverage proves durable STAGED, ARCHIVED and PUBLISHED
 boundaries on macOS/Node 24, not every write window or power-loss/platform behavior.
 
-
 Resume also handles a verified PREPARED candidate before publication begins,
 an empty publication directory left by its allocation, and identified STAGING or
 FAILED publication attempts bound to that candidate. It first requires unchanged
@@ -642,7 +638,6 @@ in a nonempty publication directory, an unsupported identity, changed bindings,
 failed source validation or evidence of cutover prevents rebuilding. Recorded incomplete capture can resume only while its original inventory is unchanged. Tests construct partial stage layouts
 and kill their actual owner; they do not yet inject a crash during every native
 backup or atomic journal-write window.
-
 
 Candidate recovery now begins from a completely verified CAPTURED source,
 including a capture completed before candidate preparation starts. PREPARING or
@@ -658,7 +653,6 @@ validators, integrity, source parity and independent round-trip checks must pass
 again. Unbound candidate files are refused. SIGKILL fixtures cover a complete
 capture, constructed PREPARING state and a partially completed recovery move;
 full native import interruption and all atomic-write windows remain unverified.
-
 
 Recorded CAPTURING/FAILED source capture now resumes before candidate recovery.
 The recorded files/directories must equal the current active source inventory,
@@ -677,7 +671,6 @@ large-scale performance or memory acceptance. A capture without its recorded
 inventory is still refused. SIGKILL fixtures use constructed missing/partial
 capture layouts; every copy/write window and power-loss behavior remain unverified.
 
-
 SQLite work now admits a candidate minimum of Node 24.19.0, selected from the
 locally tested Node 24.19.0 / SQLite 3.53.3 / macOS arm64 runtime. Earlier Node
 versions are rejected with `E_STORAGE_UNSUPPORTED_RUNTIME` before driver loading
@@ -689,7 +682,6 @@ Package engines and minimum platform workflow definitions are now aligned.
 Breaking-release metadata, hosted platform results, SQLite fix review, package
 startup measurement and release acceptance remain unfinished. The official runtime documentation fetch was unavailable during this
 increment; no external SQLite-fix coverage claim follows from these local checks.
-
 
 `protocol-info --json` and integration/MCP capabilities now share the versioned
 `features.operationalStorage` declaration. It reports SQLite format/version,
@@ -710,7 +702,6 @@ requires explicit migration before ordinary mutation; it is not converted during
 command dispatch. The retained seed and journal are maintenance evidence, not a
 writable mirror of later operational records. Bootstrap does not yet prove the
 full old-client exclusion or platform interruption matrix required by the plan.
-
 
 Persistent core hosts can use `createForgeLoopContext({ persistentStorage: true })`
 and pass that same context out-of-band to commands and integration resource reads.
@@ -739,7 +730,6 @@ through `authorityContextProvider`. Embedded MCP tests instrument native opens t
 prove tool/resource handle reuse and shutdown closure. These tests do not prove
 packed-core/stdio startup or all platform/transport lifetime behavior.
 
-
 Connection ownership resolves the real project path before selecting its cache
 entry, so allowed parent-path aliases share one handle and queue. Requests are
 registered as admitted before asynchronous resolution; shutdown waits for those
@@ -748,14 +738,12 @@ and in-lease shutdown, while completed scopes no longer appear live to delayed
 shutdown callbacks. The existing prohibition on a symlink project root remains
 unchanged; canonical ownership does not relax filesystem containment checks.
 
-
 A lightweight core registry now defers importing the connection-owner
 implementation until a persistent context actually starts work. Context creation
 and the default legacy command path do not load that implementation. Admission
 is tracked during both lazy initialization and canonical path resolution; shutdown
 drains both phases and still refuses an active in-lease close. The strict legacy
 import-boundary regression remains enabled without adding a module exemption.
-
 
 Candidate attachment coverage now derives from canonical `attachment_references`
 rows after import. Every reference must match a captured object's exact path,
@@ -767,7 +755,6 @@ NOT_VERIFIED, preventing publication until their references are explicitly
 mapped. No blob is deleted to satisfy coverage. This implements canonical
 portable-reference coverage, not the remaining legacy signature/path-consumer
 migration or production restore activation.
-
 
 Prepared SQLite mutations now expose `transaction.stageAttachment({ referenceId,
 readable })`. It publishes and verifies immutable bytes outside the native writer,
@@ -1014,7 +1001,6 @@ evidence, live owners and retained handoff locks are refused. Native SIGKILL
 controls establish selected local process recovery windows; earliest intent,
 handoff-lock, power-loss and hosted platform acceptance remain incomplete.
 
-
 ## Owner-bound maintenance handoff (increment210)
 
 A resume archives the already durable owner marker by a non-replacing hard link.
@@ -1083,7 +1069,6 @@ callback. They cannot reinterpret that loss as fresh-project bootstrap. Ordinary
 fresh command dispatch retains explicit bootstrap behavior. This covers that
 selection-to-admission gap; it is not evidence for all file replacement or
 power-loss windows during driver opening.
-
 
 ## Current known unsupported topology admission
 

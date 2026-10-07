@@ -47,7 +47,6 @@ Requires externally excluded writers and the exact retained dead local owner UUI
 
 <!-- END FORGELOOP GENERATED: cli:storage-migration-resume:options -->
 
-
 ### `storage-rollback-resume`
 
 Resume a recorded source rollback publication under an exact dead local maintenance owner. Stop and exclude all writers; keep native writes excluded. The clean supported legacy target is validated before owner adoption. Actual source/native locations, captured bytes, independent backup and owner history are revalidated before operation journals change. Target validation must pass for every task before maintenance release.
@@ -92,7 +91,6 @@ Original native files, independent backups, captured source, inventories and val
 - `--json`: emit restoration and target-validation metadata
 
 <!-- END FORGELOOP GENERATED: cli:storage-rollback:options -->
-
 
 ### `storage-migrate`
 

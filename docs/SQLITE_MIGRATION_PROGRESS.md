@@ -990,7 +990,6 @@ Full original migration implementation and acceptance remain unfinished and NOT_
 
 Full original migration implementation and acceptance remain unfinished and NOT_VERIFIED; no PR exists. Remaining obsolete modules/writers, consumers, downgrade, memory/performance/LOC, release/platform and final regression remain required.
 
-
 ## Increment 124 — canonical sequence without injected persistence
 
 - Replaced the last retired persistence capability in the canonical fixture module with an explicitly migrated public SQLite project and an independent legacy control copied from the same valid lifecycle seed. Both execute diagnosis and correction; assertions compare state, receipt and ordered domain event semantics while excluding only existing timestamp/hash/transaction identity differences.
@@ -998,14 +997,12 @@ Full original migration implementation and acceptance remain unfinished and NOT_
 
 Full original migration implementation and acceptance remain unfinished and NOT_VERIFIED; no PR exists. Remaining writers/modules, consumer coverage, downgrade, measured memory/performance/LOC, release/platform and final whole-plan checks remain required.
 
-
 ## Increment 125 — independent public correction writers
 
 - Converted the correction contention fixture to explicit public migration and diagnosis against canonical .forgeloop/state.sqlite. Separate OS processes now call public advance without the retired injected capability. They are released from a shared start barrier; exactly one correction commits, the loser reports E_STATE_REVISION_CONFLICT, and state revision/event count each increase by one with valid ledger and storage integrity. This is a start-barrier contention test, not a deterministic commit-boundary interruption test.
 - Final focused regression passes1/1 (/tmp/sqlite-canonical-contention-increment125-final.log), fast verification passes (/tmp/sqlite-canonical-contention-increment125-fast.log), and whitespace passes. The shared worker still contains old diagnosis-only test paths used by other pending consumers; obsolete modules are not yet removed.
 
 Full original migration implementation and acceptance remain unfinished and NOT_VERIFIED; no PR exists. Remaining writers/modules, consumer coverage, downgrade, measured memory/performance/LOC, release/platform and final whole-plan checks remain required.
-
 
 ## Increment 126 — canonical correction I/O and coexistence refusal
 
@@ -1015,7 +1012,6 @@ Full original migration implementation and acceptance remain unfinished and NOT_
 
 Full original migration implementation and acceptance remain unfinished and NOT_VERIFIED; no PR exists. Remaining writers/modules, consumers, downgrade, measured memory/performance/LOC, release/platform and final whole-plan checks remain required.
 
-
 ## Increment 127 — canonical public continuity suite
 
 - Converted the continuity suite from injected persistence capabilities/private imports to explicit public migration followed by canonical public diagnosis/advance. Same database continuity, reopening inspection connection, exact state revisions, one correction commit event, valid ledger/integrity, missing-diagnosis rejection and unchanged invalid-transition snapshot remain asserted. The invalid transition now requires the canonical E_PHASE_TRANSITION_INVALID domain error rather than the retired adapter error.
@@ -1023,7 +1019,6 @@ Full original migration implementation and acceptance remain unfinished and NOT_
 - Complete continuity suite passes6/6 (/tmp/sqlite-continuity-increment127.log); fast verification passes (/tmp/sqlite-continuity-increment127-fast.log); whitespace passes. Other seam consumers/obsolete modules remain pending.
 
 Full original migration implementation and acceptance remain unfinished and NOT_VERIFIED; no PR exists. Remaining writers/modules, consumers, downgrade, measured memory/performance/LOC, release/platform and final whole-plan checks remain required.
-
 
 ## Increment 128 — public integration diagnosis and refusal boundaries
 
@@ -1034,7 +1029,6 @@ Full original migration implementation and acceptance remain unfinished and NOT_
 
 Full original migration implementation and acceptance remain unfinished and NOT_VERIFIED; no PR exists. Remaining writers/modules, consumers, downgrade, measured memory/performance/LOC, release/platform and final whole-plan checks remain required.
 
-
 ## Increment 129 — retire remaining integration capability fixtures
 
 - Removed all retired capability imports/contexts from integration-dispatch coverage. Inconsistent indexed phase now rejects E_STORAGE_PAYLOAD_MISMATCH before domain mutation; missing structured-case input rejects E_DIAGNOSTIC_CASE_INVALID through the canonical parser. Recovery evidence without canonical history retains its fail-closed ownership assertion.
@@ -1042,7 +1036,6 @@ Full original migration implementation and acceptance remain unfinished and NOT_
 - Four converted rejection cases pass4/4 (/tmp/sqlite-integration-rejections-increment129-final.log); fast verification passes (/tmp/sqlite-integration-rejections-increment129-fast.log); whitespace passes. Earlier discovered expected-code mismatches were inspected before changing assertions. Complete module regression is running as exec session37514 (/tmp/sqlite-integration-dispatch-increment129-full.log), not yet claimed passing.
 
 Full original migration implementation and acceptance remain unfinished and NOT_VERIFIED; no PR exists. Remaining obsolete modules/writers, consumers, downgrade, measured memory/performance/LOC, release/platform and final whole-plan checks remain required.
-
 
 ## Increment 130 — complete integration regression and readonly loading boundary
 
@@ -1052,7 +1045,6 @@ Full original migration implementation and acceptance remain unfinished and NOT_
 
 Full original migration implementation and acceptance remain unfinished and NOT_VERIFIED; no PR exists. Remaining obsolete modules/writers, consumers, downgrade, measured memory/performance/LOC, release/platform and final whole-plan checks remain required.
 
-
 ## Increment 131 — attempted-I/O evidence uses canonical dispatch
 
 - Converted check-a filesystem observer driver to a valid canonical lifecycle seed and explicit public storage migration. Retired capability imports/context are removed; a readonly canonical inspection connection snapshots state/events/claims/receipt. Contradictory legacy fixture records are created only after migration, then ordinary dispatch must reject migration-required with unchanged canonical snapshot.
@@ -1060,7 +1052,6 @@ Full original migration implementation and acceptance remain unfinished and NOT_
 - All three observer regressions pass3/3 (/tmp/sqlite-evidence-observer-increment131.log); fast verification passes (/tmp/sqlite-evidence-observer-increment131-fast.log); whitespace passes. The last capability consumer is check-b transaction evidence driver. The complete evidence module is not claimed passing until that driver is converted.
 
 Full original migration implementation and acceptance remain unfinished and NOT_VERIFIED; no PR exists. Remaining obsolete modules/writers, consumers, downgrade, measured memory/performance/LOC, release/platform and final whole-plan checks remain required.
-
 
 ## Increment 132 — remove obsolete injected persistence seam
 
@@ -1071,7 +1062,6 @@ Full original migration implementation and acceptance remain unfinished and NOT_
 
 Full original migration implementation and acceptance remain unfinished and NOT_VERIFIED; no PR exists. Remaining obsolete modules/writers, consumers, downgrade, measured memory/performance/LOC, release/platform and final whole-plan checks remain required.
 
-
 ## Increment 133 — remove unused private phase transition
 
 - Collected post-seam-removal evidence module and retired-capability guard terminal success9/9 (/tmp/sqlite-seam-removal-increment132-full.log). Native SQL abort/retry, observer controls, read-only loading and early capability rejection all pass after removal.
@@ -1080,7 +1070,6 @@ Full original migration implementation and acceptance remain unfinished and NOT_
 
 Full original migration implementation and acceptance remain unfinished and NOT_VERIFIED; no PR exists. Remaining obsolete modules/writers, consumers, downgrade, measured memory/performance/LOC, release/platform and final whole-plan checks remain required.
 
-
 ## Increment 134 — public fail-closed diagnosis validation
 
 - Replaced private recordDiagnosisInStore validation fixtures with a valid canonical lifecycle seed, optional additional semantic decision, explicit public migration and public diagnosis dispatch. Eight cases preserve valid-evidence controls, unavailable/tampered/missing/malformed rejection, valid-ledger insufficiency and reopened logical snapshot assertions. Removed this module's private diagnosis-transition import.
@@ -1088,7 +1077,6 @@ Full original migration implementation and acceptance remain unfinished and NOT_
 - Fast verification and whitespace pass (/tmp/sqlite-public-validation-increment134-fast.log). Full eight-case suite is running as exec session93751 (/tmp/sqlite-public-validation-increment134.log); first five cases passed at this checkpoint. Complete module success is not yet claimed. No validation boundary was relaxed in production.
 
 Full original migration implementation and acceptance remain unfinished and NOT_VERIFIED; no PR exists. Other private diagnosis transition consumers, obsolete writers/modules, downgrade, measured memory/performance/LOC, release/platform and final whole-plan checks remain required.
-
 
 ## Increment 135 — benchmark uses guarded canonical diagnosis
 
@@ -1099,7 +1087,6 @@ Full original migration implementation and acceptance remain unfinished and NOT_
 
 Full original migration implementation and acceptance remain unfinished and NOT_VERIFIED; no PR exists. Remaining obsolete modules/writers, complete equal-work matrix, downgrade, measured memory/performance/LOC, release/platform and final whole-plan checks remain required.
 
-
 ## Increment 136 — genuine event parity through canonical diagnosis
 
 - Converted the valid differential diagnosis case to one supported canonical lifecycle seed copied into an independent legacy control, explicit public SQLite migration and public diagnosis dispatch. Both guarded commands inherit the exact same ledger head and state revision; diagnosis details, revision, normalized event content/hash, chain position and idempotency remain compared.
@@ -1107,7 +1094,6 @@ Full original migration implementation and acceptance remain unfinished and NOT_
 - Final focused parity regression passes1/1 (/tmp/sqlite-diagnosis-parity-increment136-final.log); fast verification passes (/tmp/sqlite-diagnosis-parity-increment136-fast.log); whitespace passes. Other cases in the differential module still invoke the private diagnosis transition and need conversion before it can be removed; the whole module is not claimed passing.
 
 Full original migration implementation and acceptance remain unfinished and NOT_VERIFIED; no PR exists. Remaining obsolete modules/writers, consumers, downgrade, measured memory/performance/LOC, release/platform and final whole-plan checks remain required.
-
 
 ## Increment 137 — canonical diagnosis chain and repeat persistence
 
@@ -1117,7 +1103,6 @@ Full original migration implementation and acceptance remain unfinished and NOT_
 
 Full original migration implementation and acceptance remain unfinished and NOT_VERIFIED; no PR exists. Remaining obsolete modules/writers, consumers, downgrade, measured memory/performance/LOC, release/platform and final whole-plan checks remain required.
 
-
 ## Increment 138 — canonical diagnosis rejection parity
 
 - Converted unmatched current-cycle evidence rejection to a shared valid lifecycle seed, independent legacy control and explicitly migrated public SQLite dispatch. Both reject E_DIAGNOSIS_EVIDENCE_INVALID and preserve their entire state/event snapshots.
@@ -1126,7 +1111,6 @@ Full original migration implementation and acceptance remain unfinished and NOT_
 
 Full original migration implementation and acceptance remain unfinished and NOT_VERIFIED; no PR exists. Remaining obsolete modules/writers, consumers, downgrade, measured memory/performance/LOC, release/platform and final whole-plan checks remain required.
 
-
 ## Increment 139 — canonical corruption refusal preserves raw records
 
 - Converted invalid verification cycle and tampered-ledger differential cases to explicit migrated public diagnosis. Each first completes a successful public diagnosis control, then corrupts only the owned fixture database and repeats public dispatch. Corruption rejects E_TASK_CLAIM_OWNERSHIP_INCONSISTENT at the canonical ownership boundary before diagnosis-specific validation.
@@ -1134,7 +1118,6 @@ Full original migration implementation and acceptance remain unfinished and NOT_
 - Initial expected private-layer codes failed; inspected actual public errors and validation order before updating expectations. Final tests pass2/2 (/tmp/sqlite-diagnosis-corruption-increment139-final.log); fast passes (/tmp/sqlite-diagnosis-corruption-increment139-fast.log); final targeted lint/whitespace pass after adding healthy controls. Remaining differential/process consumers still need conversion and full module is not claimed passing.
 
 Full original migration implementation and acceptance remain unfinished and NOT_VERIFIED; no PR exists. Remaining obsolete modules/writers, consumers, downgrade, measured memory/performance/LOC, release/platform and final whole-plan checks remain required.
-
 
 ## Increment 140 — real passing-check evidence and independent test registration
 
@@ -1145,7 +1128,6 @@ Full original migration implementation and acceptance remain unfinished and NOT_
 
 Full original migration implementation and acceptance remain unfinished and NOT_VERIFIED; no PR exists. Remaining private consumers, obsolete modules/writers, downgrade, measured memory/performance/LOC, release/platform and final whole-plan checks remain required.
 
-
 ## Increment 141 — canonical diagnosis export identity and original work preservation
 
 - Converted the differential module's last private diagnosis call to supported lifecycle/public migration/public diagnosis. Export supplies its source attachment root; reimport preserves the complete state fingerprint and event list, including diagnosis identity and the following canonical transaction witness. Focused final round-trip passes1/1 (/tmp/sqlite-diagnosis-export-increment141.log). Private transition import is removed from this module.
@@ -1153,7 +1135,6 @@ Full original migration implementation and acceptance remain unfinished and NOT_
 - Rechecked the original checkout manifest: all36 original dirty-file SHA256 hashes remain unchanged. No original operational data was migrated. Remaining private diagnosis consumer is the process test worker; module and commit helper cannot yet be removed.
 
 Full original migration implementation and acceptance remain unfinished and NOT_VERIFIED; no PR exists. Remaining obsolete modules/writers, complete consumer coverage, downgrade, measured memory/performance/LOC, release/platform and final whole-plan checks remain required.
-
 
 ## Increment 142 — canonical process interruption boundaries
 
@@ -1164,7 +1145,6 @@ Full original migration implementation and acceptance remain unfinished and NOT_
 
 Full original migration implementation and acceptance remain unfinished and NOT_VERIFIED; no PR exists. Remaining obsolete modules/writers, consumers, downgrade, measured memory/performance/LOC, release/platform and final whole-plan checks remain required.
 
-
 ## Increment 143 — retire private diagnosis worker and transition
 
 - Collected canonical interruption suite terminal success5/5 (/tmp/sqlite-native-interruption-increment142-full.log). Converted all multiprocess diagnosis fixtures to supported lifecycle seeds/public migration/canonical paths with captured revision/event baselines. Repeated diagnosis adds only a witness; new diagnosis adds diagnosis plus witness.
@@ -1173,7 +1153,6 @@ Full original migration implementation and acceptance remain unfinished and NOT_
 - Fast verification passes (/tmp/sqlite-native-multiprocess-increment143-fast.log); final targeted lint/whitespace pass. Full post-removal multiprocess plus correction contention regression is running as exec session45596 (/tmp/sqlite-native-multiprocess-increment143-full.log); complete-module result is not yet claimed. It started before the last conflict assertion tightening, which is separately verified above.
 
 Full original migration implementation and acceptance remain unfinished and NOT_VERIFIED; no PR exists. Remaining filesystem writers, full consumer matrix, downgrade, measured memory/performance/LOC, release/platform and final whole-plan checks remain required.
-
 
 ## Increment 144 — current dispatch documentation and process regression result
 
@@ -1712,7 +1691,6 @@ Full original migration implementation and acceptance remain unfinished and NOT_
 - User expanded the goal to move GitHub macOS Node tests to local macOS and Windows/Linux Node tests to the specified remote Windows host, with Linux in Docker. Authenticated encrypted WinRM PowerShell inspection succeeded: Windows Server2022/PowerShell5.1 and an operational Linux Docker engine; Node/Git were not on the remote session PATH. A temporary isolated client contains no stored credentials; no host configuration or workflows have yet been changed. Remote runtime/runner inventory, workflow migration and actual Windows/Linux validation are now required before PR.
 - Full original legacy writer/transaction/scan/compaction retirement, remaining consumer verification, bounded audit memory, full performance/LOC matrix, remaining crash/release and validator-backed acceptance remain unfinished/NOT_VERIFIED. No PR, commit, push, merge or publication.
 
-
 ### Increment 218 — remote test-host admission and Linux runtime smoke
 
 Authenticated PowerShell 5.1 remoting to the requested Windows Server 2022 host succeeded with NTLM message encryption required. Repository runner inventory returned zero registered runners. Standard Node/Git/PowerShell installation directories and runner services were absent in the inspected host locations; this is scoped inventory, not an exhaustive disk search.
@@ -1720,7 +1698,6 @@ Authenticated PowerShell 5.1 remoting to the requested Windows Server 2022 host 
 Docker Desktop exposed its working Linux engine through `npipe:////./pipe/dockerDesktopLinuxEngine`. The first public-image pull failed because automatic credential-helper selection required an unavailable interactive logon session. A temporary Docker configuration with an empty public Docker Hub auth entry avoided automatic helper discovery; it contained no credentials, used the existing engine endpoint, and was removed in `finally`. Stored Docker credentials and configuration were not modified.
 
 The actual remote container run passed a native SQLite create/insert/select smoke: Linux, Node v24.19.0, SQLite 3.53.3, expected value 42. Image `node:24.19.0-bookworm-slim` resolved to digest `sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df`. The disposable container was removed; the requested test image remains cached. No repository tests ran in that container, no Windows Node tests ran, no runners were registered, and workflows have not yet been migrated. Full original and expanded acceptance remains unfinished; no PR or publication.
-
 
 ## Increment 219 — real platform validation, Windows flush correction and installed runners
 
@@ -1732,20 +1709,17 @@ The actual remote container run passed a native SQLite create/insert/select smok
 - A focused Windows reproduction proved the oversized OpenSrc fixture could not start its child because the70KB payload was embedded in argv. The fixture now pipes that unchanged payload through stdin, retaining real process/output-limit assertions. All16 OpenSrc advisory tests pass locally and on Windows (/tmp/sqlite-opensrc-portable219.log and /tmp/forgeloop-windows-opensrc-fixed219-result.json). Production advisory guards are unchanged.
 - Other observed frozen Windows failures (benchmark revision fixture and cached database replacement) await complete diagnostics. Missing .git metadata in the transferred snapshot is a harness limitation, not a proven product regression. Current full original migration, writer retirement, consumer matrix, bounded auditing, matched performance/LOC targets, crash/release acceptance and validator-backed closure remain unfinished/NOT_VERIFIED. No PR, commit, push, merge or publication.
 
-
 ## Increment 220 — diagnosed platform deadline and verified Windows correction I/O
 
 - A timed isolated Windows driver completed successfully: fixture8191ms, migration complete47726ms, commands complete47910ms, real report produced (/tmp/forgeloop-windows-correction-profile219-result.json). Linux full-suite observations also showed the same30s child deadline failures while related canonical fixtures took roughly75–120s. This is observed fixture/migration latency; it does not satisfy the original performance gates.
 - Raised the semantic correction-I/O child's bounded allowance to180s without changing assertions, payloads, production code or dedicated performance criteria. Both absent/contradictory-file tests pass on Windows at48256.7ms/49030.0ms (/tmp/forgeloop-windows-correction-bounded220-result.json), and locally2/2 (/tmp/sqlite-correction-bounded220-local.log). Full running snapshots remain unchanged and therefore still contain the previous deadline.
 - Linux full suite remains live and its log proves cached database replacement passes there; the Windows replacement failure still requires its actual diagnostic stack. Current fast verification, scoped lint and whitespace pass; original36 dirty files rechecked unchanged. Full platform/current-source acceptance, actual changed-workflow execution, original migration retirement/performance/LOC/crash acceptance and ForgeLoop closure remain incomplete. No PR or publication.
 
-
 ## Increment 221 — native Windows database replacement semantics
 
 - Focused Windows reproduction confirmed EBUSY at the first rename of an open cached SQLite database (/tmp/forgeloop-windows-replacement221-result.json). Linux's ongoing frozen full suite had already passed the same replacement control. No production cache admission defect was established.
 - The Windows test now requires the native EBUSY refusal, verifies the same cached connection and task remain authoritative, closes the runtime, replaces the file and verifies a fresh runtime selects the replacement. The existing open-handle replacement, missing-authority refusal and old-handle invalidation assertions remain active on platforms that support rename while open. No skip or production guard weakening was introduced.
 - Focused replacement controls pass on Windows1/1 (15258ms, /tmp/forgeloop-windows-replacement-fixed221-result.json) and macOS1/1 (3099ms, /tmp/sqlite-replacement221-local.log). Scoped lint and whitespace pass. Full frozen platform suites remain live and exclude this test correction; full current-source acceptance and original retirement/performance/LOC/crash requirements remain unfinished. No PR or publication.
-
 
 ## Increment 222 — terminal Windows full-suite diagnosis and fixture portability
 
@@ -1755,13 +1729,11 @@ The actual remote container run passed a native SQLite create/insert/select smok
 - Benchmark fixture failed claimsAllowed because transferred source omitted Git metadata. In the independent loader-check workspace only, fetched the actual public base ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5 and reset its index with --mixed, preserving all source edits. The unchanged benchmark control then passes1/1 (/tmp/forgeloop-windows-git-fixture222-result.json). No synthetic commit or product revision was invented, and the full frozen source was untouched. Future full platform snapshots must preserve real Git base metadata.
 - Fast verification, scoped lint and whitespace pass. Full current-source platform acceptance, actual GitHub workflow execution, original retirement/performance/LOC/crash requirements and ForgeLoop closure remain unfinished. No PR, commit, push or publication.
 
-
 ## Increment 223 — complete preparation checkpoint regression on Windows/macOS
 
 - After increment222's portable intent-filename correction, the entire storage-replacement-preparation test file passes18/18 on Windows (74926ms, /tmp/forgeloop-windows-preparation223-result.json) and macOS (18375ms, /tmp/sqlite-preparation223-local.log). This includes all17 initial/adoption SIGKILL checkpoint cases plus the altered evidence/unrelated-owner refusal control. Real child processes were killed and resumed; no checkpoint, assertion, recovery branch or production guard was skipped or weakened.
 - Linux frozen full-suite state was authoritatively Running:true with PID2899; subsequent logs progressed through maintenance handoff, migration candidate, attachment growth and publication staging controls (/tmp/forgeloop-linux-full-tail220-result.json). The observation is a verified live wait, not full Linux success; no duplicate full suite was launched.
 - All27 failures in the completed frozen Windows run now have scoped corrective evidence across increments219–223, but a complete current-source Windows rerun with actual Git base metadata remains mandatory. Linux's frozen snapshot likewise excludes later loader/deadline corrections. Full current-source platform/workflow acceptance and the original sole-writer retirement, consumer/performance/LOC/crash/release requirements remain unfinished. No PR, commit, push or publication.
-
 
 ## Increment 224 — corrected complete Windows regression launched with real Git provenance
 
@@ -1770,13 +1742,11 @@ The actual remote container run passed a native SQLite create/insert/select smok
 - Launched the full npm run test:ci suite with two workers and all current corrected tests, runner admission/workflow tests and production staged-file flush corrections. Direct log observation confirms real test progress; its exit file is not yet present (/tmp/forgeloop-windows-full224-logs-result.json). The launch client remains live, so this is RUNNING/NOT_VERIFIED, not success. Observation command status1 reflects the absent exit file, not a terminal test failure.
 - The previous Linux full container remains running on its original frozen snapshot; no duplicate Linux run was launched. Full current-source platform/MCP/package/workflow evidence, original migration retirement/performance/LOC/crash/release acceptance and validator-backed completion remain unfinished. No PR, commit, push or publication.
 
-
 ## Increment 225 — current clean MCP and real package smoke
 
 - Clean MCP regression passes73/73 on local macOS Node24.19.0,0fail/skip,22013ms (/tmp/sqlite-current-mcp-increment225.log). It installed authentic locked dependencies and the current actual core2.0.0 tarball SHA256cf402336ef612913636e7f9cf981b82ddf18ca0a7c20824839c75745640aa7b4 in an isolated temporary fixture, preserving shared node_modules. This covers the current staged-file flush production corrections; no production source changed during the run.
 - npm run mcp:pack:check succeeds (/tmp/sqlite-current-package-increment225.log). The actual core/MCP packages install and communicate via stdio; fresh init and task creation activate canonical SQLite, avoid legacy task namespaces, and expose canonical task/actions resources and installed version identities. This is local package/MCP evidence, not cross-platform publication or hosted workflow success.
 - Linux full container was authoritatively Running:true with PID2899; logs progressed through killed-owner migration and independent reader/writer controls. The same frozen full run is preserved. Corrected Windows full snapshot224 also remains pending. Full platform/current-source workflow execution, sole-writer retirement, consumer matrix, bounded audit memory, matched performance/LOC/crash/release acceptance and ForgeLoop closure remain unfinished. No PR, commit, push or publication.
-
 
 ## Increment 226 — reviewed MCP non-persistence consumer classifications
 
@@ -1784,21 +1754,17 @@ The actual remote container run passed a native SQLite create/insert/select smok
 - Evidence references current clean MCP73/73 and real stdio package smoke from increment225, including canonical project-root matrix and byte-bound refusal controls. The rows explicitly retain full-platform acceptance as pending; neither source review nor aggregate suite success is used to claim all command/resource consumers settled. Remaining matrix rows, writable legacy retirement and original performance/audit/crash/release criteria remain unfinished.
 - Corrected full Windows snapshot224 logs show active test progress and no exit file; absent exit-file observation is not terminal failure. Source remains frozen despite later documentation updates. Both full platform results and changed GitHub workflow execution remain pending. Whitespace passes; no PR, commit, push or publication.
 
-
 ## Increment 227 — platform validation and MCP cleanup diagnosis
 
 Increment227: current macOS full test:ci live handle69957, log /tmp/sqlite-current-regression227.log, snapshot /tmp/sqlite-current-regression227-source.json. Windows clean MCP live handle8697, result target /tmp/forgeloop-windows-mcp227-result.json. Windows224 full launch handle16883 still pending. Linux219 full container Running:true PID2899. All3 designated GitHub runners verified online/idle. Lifecycle record and next completed; keep source/docs frozen during macOS full test. Add this progress checkpoint to docs only after validating frozen source at full-run completion. No PR/push/publication; goal active, full acceptance incomplete.
-
 
 ## Increment 228 — platform validation and MCP cleanup diagnosis
 
 Windows focused real client/server close probe: client close alone leaves EBUSY; server close releases rename (/tmp/forgeloop-windows-client-close228-result.json). Ownership helper closes only client, while server owns persistent storage. Prepared corrected ownership fixture /tmp/sqlite-ownership-closed-server228.test.js; not applied to source or running clean MCP snapshot. Current macOS full snapshot must remain unchanged until terminal. Windows MCP controller8968 and ownership worker9992 remained live at process observation. Goal still active; whole acceptance incomplete.
 
-
 ## Increment 229 — platform validation and MCP cleanup diagnosis
 
 Increment229: copied the authenticated clean MCP package/source into independent C:/forgeloop-tests/increment229/mcp-project, excluding node_modules and linking its unchanged locked dependencies. Applied only prepared ownership helper cleanup there: client.close finally calls server.close. All4 ownership tests pass Windows,32900ms (/tmp/forgeloop-windows-ownership229-result.json); assertions unchanged. Original source and live snapshots untouched. Corrected /tmp/sqlite-ownership-closed-server228.test.js awaits application after macOS source-freeze verification. Original Windows clean MCP handle8697 still pending; macOS full handle69957 active. No complete/PR/publication.
-
 
 ## Increment 230 — corrected Windows MCP73/73 and current macOS full diagnosis
 
@@ -1808,14 +1774,12 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - After verifying the macOS frozen source at full-run completion, applied the corrected ownership helper to the actual worktree. New clean macOS MCP validation is running (/tmp/sqlite-current-mcp-increment230.log); do not claim its outcome prematurely. The earlier uncorrected Windows clean suite remains separately pending; no duplicate identical-source restart was performed.
 - Full corrected core/platform workflow verification, original sole-writer retirement/consumer matrix/bounded-audit/performance/LOC/crash/release acceptance and validator-backed completion remain unfinished. No PR, commit, push or publication.
 
-
 ## Increment 231 — current macOS MCP pass and terminal Linux full diagnosis
 
 - Current clean macOS MCP regression passes73/73,0fail/skip,19617ms (/tmp/sqlite-current-mcp-increment230.log), after applying the verified client/server cleanup helper. Corrected independent Windows MCP73/73 remains observed in increment230.
 - The original frozen Linux full container terminated exit1, not OOM, at2026-10-03T00:03:19Z. Complete test:ci output:2618tests,2602passed,4failed,12skipped,4428949ms (/tmp/forgeloop-linux-full-complete231-result.json). Three failures are the already diagnosed absent Git metadata and old30s I/O fixture deadline. One additional failure is E_TASK_LOCKED in concurrent legacy structural-quality evaluations while quality-verify-check owns the fixture lock; it requires scoped reproduction and diagnosis, not a skipped assertion or weaker contention policy.
 - Started an independent focused Linux structural-quality reproduction from readonly source224 with real Git metadata and fresh locked Linux dependencies. The completed full container/source and active Windows suites remain unchanged. No Linux whole-suite success is claimed, and no identical failed full run is restarted solely because observation expired.
 - Full corrected core/platform/workflow evidence and original migration retirement/consumer/bounded-audit/performance/LOC/crash/release requirements remain unfinished. No PR, commit, push or publication.
-
 
 ## Increment 232 — native structural-quality concurrency regression corrected
 
@@ -1825,13 +1789,11 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Complete structural lifecycle file passes8/8 (/tmp/sqlite-native-quality232-corrected.log). An additional native control passes1/1 and requires exactly3 provider calls for one baseline plus two concurrent observations (/tmp/sqlite-native-quality232-provider-count.log). Fast verification and whitespace pass; scoped lint reports0errors with4complexity warnings in the existing large service functions. Remote corrected/public CLI/MCP concurrency and full current-source regression remain pending. Updated only the quality-verify consumer row to partial scoped evidence, retaining retirement/platform gaps.
 - Original full migration writer retirement, remaining consumer review, bounded audit, matched performance/LOC/crash/release requirements and actual changed-workflow execution remain unfinished. No PR, commit, push or publication.
 
-
 ## Increment 233 — native concurrency verified on Windows and remote Docker Linux
 
 - Frozen source233 contains2415 files and7632921 bytes; archive SHA256 e8cea34bafae7de9072ddcd1786e862a562f110df55702fda6d2dce37f426b66 was verified before remote extraction. Real base Git metadata and locked dependencies were prepared independently.
 - Windows native SQLite quality concurrency passes1/1,32733ms (/tmp/forgeloop-windows-native-quality233-result.json). Remote Docker Linux passes1/1,48573ms, container terminal exit0 and not OOM (/tmp/forgeloop-linux-native-quality233-result.json). Both retain attempt allocation, check projection and exactly three provider invocations; these are scoped controls, not full-platform acceptance.
 - Original dirty checkout remains unchanged across all36 recorded files. Earlier Windows full224 remains separately unfinished at last observation. Full current-source regression, writer retirement, consumer coverage, bounded audit, matched performance/LOC/crash criteria and actual changed-workflow execution remain unfinished. No PR, commit, push or publication.
-
 
 ## Increments 234–237 — isolated normal-writer cutover and consumer scope validation
 
@@ -1849,14 +1811,12 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Added explicit test-only portable legacy fixture export, closing SQLite before removing disposable fixture database files and copying exported JSON/NDJSON evidence. Production writers remain native. A real export-to-legacy then migrate probe reaches PUBLISHED;22/22 candidate/source migration controls pass (/tmp/sqlite-cutover-migration-fixtures238.log). Nine migration test files now request legacy fixtures explicitly; remaining fixtures still require audit.
 - Rechecked hashes for six reviewed MCP adapter sources and updated their consumer rows: four are non-persistence transformations; tool/resource registries delegate to canonical core. Current macOS scoped proof is recorded without claiming Windows/Linux full acceptance or all core consumers settled.
 
-
 ## Increment 239 — native standalone operation reservations and retired filesystem lock writers
 
 - Removed standalone filesystem claims-lock acquisition and stale-claims mutation; the retained entry points refuse explicitly after maintenance admission. Normal claim reservation already uses canonical transaction preparation. Removed filesystem task-lock creation, quarantine and unlock branches. Compatibility readers and pure lease identity/staleness classification remain.
 - Standalone task acquisition now keeps a canonical existing-project connection scope until the returned release handle is consumed. Acquisition/release are short SQLite transactions; external work holds only a durable operation reservation. Direct lock reads, force unlock and stale compare-and-release select the existing canonical store. Missing or unconverted authority is refused before allocating a standalone reservation.
 - Current native bootstrap/boundary and migration-source controls pass46/46,5181ms (/tmp/sqlite-native-lease239-current.log). Additional standalone controls pass5/5,796ms (/tmp/sqlite-native-lease239-replacement.log), including independent reads, competing acquisition refusal, release/reacquisition and old-handle refusal to delete a replacement owner. Scoped lint and whitespace pass.
 - Existing filesystem-oriented lock fixtures are being checked for replacement with equivalent native SQL controls; no full suite claim is made after this change. Other raw writers, legacy transaction maintenance, consumer audit, bounded ledger validation, complete measured performance/LOC/crash/platform/workflow requirements and protocol closure remain unfinished. No PR, commit, push or publication.
-
 
 ## Increment 240 — native lock fixtures and retained-owner admission
 
@@ -1894,7 +1854,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Native/bootstrap and migration-source regression passes42/42,5029ms (/tmp/sqlite-retired-transactions244.log). Updated maintenance tests preserve terminal, ambiguous and staging payloads/manifests byte-for-byte through refused preview/apply/recovery. Maintenance/source group passes16/16,4942ms (/tmp/sqlite-retired-maintenance244.log). Scoped lint and whitespace pass.
 - Existing old filesystem transaction tests still require replacement with native atomicity controls, and doctor fix diagnostics need review for the retired recovery boundary. Complete bounded-audit/performance/LOC/crash/consumer/platform/workflow and protocol acceptance remain unfinished. No PR, commit, push or publication.
 
-
 ## Increment 245 — native transaction atomicity controls and doctor repair diagnostics
 
 - Replaced obsolete filesystem staging/publication/recovery tests with native preparation controls: same-task nesting, cross-task refusal, independent-reader isolation, ordered atomic event/state commit and final witness, deletion commit/rollback, callback rollback and later successful reuse. Existing dedicated storage crash suites remain required; these controls do not replace power-loss acceptance.
@@ -1912,13 +1871,11 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Remote Docker Linux full snapshot233 terminates exit0,not OOM:2623tests,2611passed,0failed,12skipped,2277735ms (/tmp/forgeloop-linux-full233-state234-result.json). This is the complete earlier frozen snapshot result; it precedes writer retirement and cannot support current-source full acceptance.
 
-
 ## Increment 247 — backup, restore, attachment and signature fixture parity
 
 - Seven backup/restore/attachment/signing test files now explicitly request portable legacy fixtures where they exercise import. Native production writers are unchanged. Initial42-test group exposed four stale export-manifest failures after signature fixtures added records. Explicit legacy fixture export now removes only export-index/per-task export-manifest metadata after copying; operational payloads and ledgers remain intact. This models mutable pre-cutover source rather than a frozen export catalog.
 - Corrected backup/restore/attachment/signature group passes42/42,17484ms (/tmp/sqlite-backup-fixture247-corrected.log), including real signature publication interruption and independent object bindings. Public restore/replacement API/CLI group passes4/4,4860ms (/tmp/sqlite-restore-command247.log). Whitespace passes. Shared fixture changes require migration-suite regression next; current whole-platform acceptance remains unfinished.
 - Remaining complete consumer/fixture review, bounded full audit, matched performance/LOC/crash/current-platform/workflow and validator-backed closure remain unfinished. No PR, commit, push or publication.
-
 
 ## Increment 248 — native connection and dispatcher fixtures
 
@@ -1927,7 +1884,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Current fast verification is running (/tmp/sqlite-native-consumers248-fast.log). Remaining canonical fixture consumers still contain migration setup and need individual review; full consumer, bounded-audit, matched performance/LOC/crash/current-platform/workflow and validator-backed acceptance remain unfinished. No PR, commit, push or publication.
 
 - Increment248 fast verification terminates exit0 (/tmp/sqlite-native-consumers248-fast.log). ForgeLoop next remains nonterminal VERIFYING/RECORD_VERIFICATION; broad acceptance is not protocol verified.
-
 
 ## Increment 249 — current native crash and public lifecycle controls
 
@@ -1938,7 +1894,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Complete storage suite249 terminates exit1:335tests,313passed,22failed,0skipped,74730ms (/tmp/sqlite-storage-suite249.log). Failures are concentrated in continuity6, correction I/O2, evidence observers/native witnesses8 and multiprocess6. Full output provides next diagnosis; it is not a live wait or passing acceptance.
 
-
 ## Increment 250 — remaining continuity, observer and multiprocess fixtures
 
 - Removed redundant native-to-legacy migration from continuity/multiprocess seeds and observer/native-witness drivers. Legacy refusal control explicitly uses portable legacy source. Correction observer creates its positive-control directory then removes it before canonical command observation.
@@ -1948,14 +1903,12 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Complete storage suite250 terminates exit0: ℹ tests 336; ℹ pass 336; ℹ fail 0; ℹ skipped 0; ℹ duration_ms 73858.776333 (/tmp/sqlite-storage-suite250.log). This proves the current macOS storage test group; whole core/API/CLI/MCP/platform and release acceptance remain separate unfinished requirements.
 
-
 ## Increment 251 — contract revision native authority and freshness reader
 
 - Contract revision tests now read native logical artifacts and deliberately corrupt disposable SQLite payloads with consistent indexed projections. State/contract corruption and rehashed historical events no longer create legacy mirrors. Native lifecycle fixtures bypass redundant migration; portable candidate input files remain file-owned.
 - First run15tests,12passed/3failed exposed direct API freshness reading a nonexistent legacy contract. Production readContractFingerprint now selects existing native read-only authority before reading, without bootstrap or migration. Generic portable input reads retain their file path semantics. Corrected full contract-revision suite passes15/15,0fail/skip,38970ms (/tmp/sqlite-contract-revise251-corrected.log), including original failing CONTRACT_READY next action, PLANNED stale-route next action and historical checkpoint revalidation.
 - Additional freshness/checkpoint/work-state group completes31tests,18passed/13failed,17800ms (/tmp/sqlite-freshness251.log). Most failures reference obsolete raw filesystem corruption/inspection; concurrent checkpoint revalidation also exposes a real optimistic revision race requiring separate diagnosis. Do not treat those failures as passing or weaken their rules. Fast verification terminates exit0 (/tmp/sqlite-contract251-fast.log); whitespace passes.
 - Full original-plan bounded audit, measured performance/LOC/power-loss/consumer/current-platform/workflow and validator-backed acceptance remain unfinished. No commit, push, PR or publication.
-
 
 ## Increment 252 — checkpoint conflict reconciliation and native corruption controls
 
@@ -1964,7 +1917,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Initial fast verification identified the fixture variable errors; corrected fast verification terminates exit0 (/tmp/sqlite-checkpoint252-fast-corrected.log). Whitespace passes. Storage documentation reflects native direct API parity and safe checkpoint conflict reconciliation.
 - Complete macOS core run starts from frozen /tmp/forgeloop-macos-full252,2417 source files SHA256 bound by /tmp/sqlite-macos-full252-source.json, Git baselineee9ce111 and existing authentic dependency links, Node24.19.0. Live handle11002; log /tmp/sqlite-macos-full252.log. Authoritative source may advance independently; do not attribute this frozen run to later bytes or restart on observation timeout. Full original-plan bounded audit/performance/LOC/power-loss/consumer/current-platform/workflow and validator-backed acceptance remain unfinished. No commit, push, PR or publication.
 
-
 ## Increment 253 — direct signature authority and complete core failure inventory
 
 - Direct attestation status/verification, Sigstore verification, statement presentation and object consumption now select existing native read-only authority for their full operation. Native task identity, attachment bindings and private verified bytes remain available to external verifier callbacks. Existing scopes reuse their authority; no read bootstrap or migration occurs. Direct bundle publication selects existing native authority and requires preparation; retired legacy operational destination publication refuses E_STORAGE_OPERATION_UNSUPPORTED before signer invocation. Explicit portable file destinations remain file-owned.
@@ -1972,14 +1924,12 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Frozen complete macOS core252 terminates exit1:2626tests,2121passed,494failed,11skipped,206357ms (/tmp/sqlite-macos-full252.log). All2417 SHA256 source entries remain unchanged after execution. It precedes253 production changes. Parsed failure inventory /tmp/sqlite-macos-full252-failures.json contains481 terminal failure blocks across115files; aggregate494 includes hierarchical test counts.76 parsed failures explicitly reference missing legacy task-state paths. Numerous other fixtures lack canonical descriptors or target obsolete singleton paths; production/public compatibility issues must be distinguished by source review before fixes. Do not claim current full core acceptance.
 - Full original-plan bounded audit/performance/LOC/power-loss/consumer/current-platform/workflow and validator-backed acceptance remain unfinished. No commit, push, PR or publication.
 
-
 ## Increment 254 — policy snapshot and execution authority outside dispatch
 
 - Native readTaskPolicySnapshot now selects existing readonly authority before its presence check. Test durable-policy seeding creates a canonical descriptor only when absent, preserving existing task ownership and refusing unexpected errors. Initial focused action group12/17 passed, exposing direct execution preparation selecting the retired singleton path because resolveExecutionArtifactPath checked an unselected filesystem descriptor. Both execution path resolution and execution reads now select existing native readonly authority before namespace/owner lookup; no bootstrap or implicit migration.
 - Corrected action authorization/reconciliation/verification group passes17/17,0fail/skip,6270ms (/tmp/sqlite-action-policy254-corrected.log), including real deterministic subprocess execution and independent postcondition checks. Basic action fixtures explicitly create descriptors; deliberate orphan tampering deletes only disposable native proposal history. Group passes6/6,1265ms (/tmp/sqlite-actions254.log); its test title now accurately describes orphan detection rather than implying process-crash evidence. Dedicated process-crash suites remain separate.
 - Expanded11-file durable-policy/authority group completes67tests,58passed/9failed,36159ms (/tmp/sqlite-durable-policy254-regression.log). Remaining cases include missing descriptor in one approval fixture, raw action/approval file tampering and symlink refusal occurring at earlier migration admission; all require scoped review, not weakening authority. Fast verification terminates exit0 (/tmp/sqlite-action254-fast.log). Subsequent scoped lint passes0errors (/tmp/sqlite-action254-scoped-lint.log); whitespace passes.
 - Full original-plan bounded audit/performance/LOC/power-loss/consumer/current-platform/workflow and validator-backed acceptance remain unfinished. No commit, push, PR or publication.
-
 
 ## Increment 255 — native action and approval tampering parity
 
@@ -2016,7 +1966,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Corrected completion/preflight/gate/next-action group passes129/129,0fail/skip,22601ms (/tmp/sqlite-completion259-corrected.log). Final fast verification exits0 (/tmp/sqlite-completion259-final-fast.log), final scoped lint0errors/warnings and whitespace pass. Consumer matrix retains partial status and transitive/full-integration/current-platform acceptance as pending.
 - Frozen whole macOS core259 starts from2419 SHA256 source files at /tmp/forgeloop-macos-full259, manifest /tmp/sqlite-macos-full259-source.json, pinned Node24.19 and authentic shared dependencies. npm test is confirmed live via exec session12679; /tmp/sqlite-macos-full259.log has no terminal acceptance result yet. Observe that same handle/log rather than restart on an observation expiry. Full original-plan bounded audit/performance/LOC/power-loss/consumer/current-platform/workflow and validator-backed acceptance remain unfinished. No commit, push, PR or publication.
 
-
 ## Increment 260 — canonical discovery and recovery concurrency
 
 - Direct discoverTasks selects existing readonly SQLite authority before discovery; implicit selectors and resume no longer depend on retired filesystem mirrors. Recovery/resume/ownership fixtures inspect and deliberately corrupt disposable native rows and operation leases. The 5000-event ownership control retains its original bound. Unmigrated unhealthy legacy namespaces refuse admission without allocating a database.
@@ -2029,7 +1978,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Converted terminal-result setup and explicit task bindings, receipt inspection/writes and disposable ledger tampering to native SQLite authority. Requirement identity, duplicate-text independent evidence, invalid status/type, publication status regression and observation-specific reconciliation retain their original assertions. Valid ledger-tail truncation removes both a terminal event and its following commit witness; its description explicitly models deliberate damage, not a new process-crash result.
 - Terminal-result suite passes12/12,0fail/skip,5323ms (/tmp/sqlite-terminal261-final.log). Scoped lint has0errors and1 discovery complexity warning (/tmp/sqlite-recovery-terminal261-lint.log); whitespace passes. Original checkout36/36 manifest hashes remain unchanged. Fast verification terminates exit0 (/tmp/sqlite-recovery-terminal261-fast.log).
 - Full original-plan acceptance remains unfinished; scoped tests do not fulfill the task contract. No commit, push, PR or publication.
-
 
 ## Increment 262 — native lifecycle integrity fixtures
 
@@ -2048,7 +1996,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Initial17-test native run16pass/1fail exposed old single-event expectation. Corrected final eight-file group passes58/58,0fail/skip,10698ms (/tmp/sqlite-lifecycle-terminal264-final.log), covering terminal requirements/result, lifecycle, recovery/concurrency and attachment/event export validation. Scoped lint0errors and3 preexisting bundle complexity warnings; whitespace passes. Original checkout36/36 hashes unchanged. Fast verification terminates exit0 (/tmp/sqlite-lifecycle264-fast.log).
 - Full original-plan bounded audit, performance/LOC, power-loss, consumer, current-platform/workflow and validator-backed acceptance remain unfinished. No commit, push, PR or publication.
 
-
 ## Increment 265 — general bundle compatibility and optional native revisions
 
 - Converted general bundle fixtures to explicit descriptors/task paths and disposable native contract/state inspection. Native bundles include canonical descriptor and empty event ledger. Portable manifest digest/path tampering, execution provenance, malformed assumptions and secret-like bundled contracts retain their assertions. The raw historical attachment phase explicitly exports a legacy fixture before testing compatibility reads; it does not pretend to stage a native attachment. Native attachment consumers, signing and operational lifecycle export retain separate storage-suite coverage.
@@ -2060,7 +2007,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Converted claim-state tombstone deletion, malformed recovery/descriptor/state, foreign ledger and changed descriptor claims to disposable SQLite authority. Native malformed task rows prevent trusted claim summaries; independent indexed reservation inspection proves unchanged reservations while mutation remains disabled. The phase-filter fixture creates a native malformed task rather than forbidden legacy coexistence. Recovery artifacts cannot resurrect claims, forged COMPLETE cannot release ownership, and list/show/status agree on inconsistent authority.
 - Initial18-test native run16pass/2fail exposed the unreadable task summary and earlier foreign append refusal. Corrected corruption controls preserve both safety checks. Final claim/ownership/recovery corpus/recover/bundle group passes62/62,0fail/skip,8002ms (/tmp/sqlite-claim-bundle266-final.log). After final unused-import cleanup, scoped lint0errors/warnings (/tmp/sqlite-claim-bundle266-lint.log). Whitespace passes; original checkout36/36 manifest hashes unchanged. Final fast verification terminates exit0 (/tmp/sqlite-claim266-fast.log).
 - Full original-plan bounded audit, performance/LOC, power-loss, transitive consumer, current-platform/workflow and validator-backed acceptance remain unfinished. No commit, push, PR or publication.
-
 
 ## Increment 267 — native legacy-recovery repair and explicit migration source fixtures
 
@@ -2083,7 +2029,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Final resumability/repair/migration group passes26/26,0fail/skip,18812ms (/tmp/sqlite-repair-resumable270-final.log). Scoped lint0errors and1 existing scope complexity warning (/tmp/sqlite-repair-verification270-lint.log); whitespace passes. Original checkout36/36 manifest hashes unchanged.
 - Full original-plan bounded audit, performance/LOC, power-loss, transitive consumer, current-platform/workflow and validator-backed acceptance remain unfinished. No commit, push, PR or publication.
 
-
 ## Increment 271 — native structured diagnosis and read-only correction traces
 
 - Diagnostic/correction trace fixtures explicitly create canonical task descriptors before native events/state. Idempotent diagnostic fingerprints, cycle/evidence mismatch, hypothesis/intervention chronology and repeated intervention controls retain their assertions. Trace deduplication, forward phase reconstruction, failure signatures and surfaces retain their original counts and bindings.
@@ -2105,14 +2050,12 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Focused artifacts/bundle group passes6/6,0fail/skip,899ms (/tmp/sqlite-quality274-fixtures.log). Final complete structural-quality fixture suite plus diagnostic/trace/supersession/completion-recovery group passes59/59,0fail/skip,16339ms (/tmp/sqlite-quality-diagnostics274-final.log). Includes stale-source, measurement-model compatibility, orphaned projection repair without rescanning and unavailable provider controls. Scoped lint0errors and5 existing complexity warnings (/tmp/sqlite-quality274-lint.log); whitespace passes. Original checkout36/36 manifest hashes unchanged.
 - Frozen full macOS268 remains terminal failed with152 failures and predates269–274. Full original-plan bounded audit, performance/LOC, power-loss, transitive consumer, current-platform/workflow and validator-backed acceptance remain unfinished. No commit, push, PR or publication.
 
-
 ## Increments 275–277 — native action, approval and diagnosis authority fixtures
 
 - Explicit canonical descriptors and task identities replace implicit filesystem fixture setup. Approval absence, creation, tampering and policy snapshot removal inspect native authority. Forged action identity is rejected at the indexed payload boundary; independent raw action/event inspection confirms no mutation. Caller-reported authority, host-bound approval, installation permissions and policy drift controls retain their assertions.
 - Native diagnosis compatibility retains readable legacy hypothesis projections while requiring append-only diagnosis authority before correction. Action readiness retains untrusted forged-state refusal.
 - Final complete action/approval and diagnosis-compatibility suite passes73/73,0fail/skip,13471ms (/tmp/sqlite-action-approval277-final.log). Scoped lint exits0 (/tmp/sqlite-actions277-lint.log). Fast verification exits0 (/tmp/sqlite-actions277-fast.log). Earlier expanded run exposed4 fixture failures; all4 were diagnosed and corrected before this final run.
 - Frozen macOS268 remains failed and predates these changes. Full original-plan acceptance, current platform validation and PR remain pending.
-
 
 ## Increments 278–280 — native observability, gate provenance and trajectory controls
 
@@ -2121,14 +2064,12 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Expanded history/gates/diagnosis/revision/metrics suite passes28/28,0fail/skip,22710ms (/tmp/sqlite-history-gates279-final.log). Final trajectory/evaluation/canonical-action/gain-stall suite passes20/20,0fail/skip,4385ms (/tmp/sqlite-trajectory280-final.log). Scoped lint0errors/warnings (/tmp/sqlite-observability280-lint.log); whitespace passes; original checkout36/36 source hashes unchanged.
 - Whole-plan acceptance remains unfinished. No commit, push, PR, merge or publication.
 
-
 ## Increments 281–284 — native correction, settlement and task-isolation regression
 
 - Converted intervention/settlement/structured-diagnostic/correction-cycle/compound-requirement setup and command identities to canonical task-scoped native authority. Contract-bound criteria, missing criteria, monotonic multi-cycle correction, later failure superseding prior passes and structured-versus-legacy diagnosis precedence retain their controls. Compound failed/blocked child evidence still routes the corresponding next action.
 - Cross-projection three-cycle consistency uses native descriptors and read-only logical-table/file invariants. Two-task inspect isolation preserves independent check/progress projections without foreign task leakage.
 - Final combined diagnostic/observability/gate/revision/trajectory/compound suite passes77/77,0fail/skip,24346ms (/tmp/sqlite-diagnostics283-final.log). Inspect isolation passes1/1,454ms (/tmp/sqlite-inspect284-native.log). Scoped lint0errors/warnings (/tmp/sqlite-diagnostic282-lint.log and /tmp/sqlite-diagnostics283-lint.log). Fast verification exits0 (/tmp/sqlite-diagnostics282-fast.log); it predates final283–284 test-only fixture edits. Earlier expanded282 failed one missing descriptor, corrected before the final77-test run.
 - Frozen full macOS268 remains failed and predates269–284. Full original-plan acceptance and validator-backed completion remain pending; no commit, push, PR or publication.
-
 
 ## Increments 285–287 — native completion ownership, abandonment and canonical artifacts
 
@@ -2137,7 +2078,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Contract/route roundtrip binds explicit task identities. Secret-value contract fixture updates native fingerprint/index coherently to reach domain validation and confirms no secret echo. Explicit portable export tests preserve unsafe-path rejection; operational writes remain native-only.
 - Expanded ownership/claim/abandonment/next-task group passes42/42,0fail/skip,6768ms (/tmp/sqlite-ownership286-final.log). Contract/route/direct-artifact/sole-writer group passes26/26,0fail/skip,1389ms (/tmp/sqlite-artifacts287-final.log). Scoped lint0errors/warnings (/tmp/sqlite-ownership-artifacts287-lint.log); whitespace passes and original36/36 hashes unchanged.
 - Full original-plan performance, bounded audit, platform and validator-backed acceptance remain pending. No commit, push, PR or publication.
-
 
 ## Increment 288 — fresh frozen full macOS source
 
@@ -2149,18 +2089,15 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Direct listCanonicalHandoffs now selects existing readonly native authority before enumeration. Native handoff tamper fixtures update typed artifact payload/fingerprint coherently so handoff digest validation remains the rejecting boundary; no implicit repair. Complete handoff suite passes22/22,0fail/skip,29780ms (/tmp/sqlite-handoff290-native.log).
 - Continuity fixture binds native canonical task identity while caller identity/phase/fingerprint fields remain ignored. Expanded continuity/handoff/attachment regression passes35/35,0fail/skip,31130ms (/tmp/sqlite-handoff-continuity291-final.log). Fast verification terminates exit0 (/tmp/sqlite-handoff291-fast.log). Scoped handoff/recovery lint0errors/warnings (/tmp/sqlite-handoff290-lint.log); continuity lint0errors/warnings (/tmp/sqlite-continuity291-lint.log).
 
-
 ## Increment 292 — canonical contract assumption roundtrip
 
 - Valid contract assumption roundtrip now explicitly creates native task authority and binds write/read task identity. Explicit manually persisted legacy input rejection tests remain input fixtures; unsafe assumption values, irreversibility, unsupported sources and secret echo controls retain assertions. Complete assumption suite passes41/41,0fail/skip,860ms (/tmp/sqlite-contract292-native.log).
 - Full macOS288 is terminal failed; fast291 is terminal passed. Full-plan acceptance remains unfinished.
 
-
 ## Increment 293 — attestation coverage fixture authority ordering
 
 - Attested task fixture creates its canonical descriptor before contract/route writes. Full coverage suite passes3/3,0fail/skip,3383ms (/tmp/sqlite-attestation293-native.log), preserving empty-range, gaps, identical/conflicting overlap, deletion/rename and content identity checks. Fixture providers are not real signer certification.
 - Latest frozen full288 predates289–293. Its57 failures remain authoritative for that frozen source, not proof that later corrections have whole-suite acceptance. Full original-plan bounded audit, performance/LOC, power-loss/topology, platform/release and validator-backed acceptance remain unfinished. No commit, push, PR or publication.
-
 
 ## Increments 294–297 — native executable transitions, checkpoint restoration and workspace refusal
 
@@ -2174,12 +2111,10 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Continuity/handoff/workspace/attestation/coverage/storage-signing combined group passes24/24,0fail/skip,4341ms (/tmp/sqlite-continuity-attestation299-final.log). Final expanded signing/attachment/direct-artifact regression passes22/22,0fail/skip,4317ms (/tmp/sqlite-attestation299-regression.log). Fast verification terminates exit0 (/tmp/sqlite-attestation299-fast.log). Scoped lint0errors,1 existing attestation-status complexity warning (/tmp/sqlite-attestation299-lint.log).
 - Frozen full macOS288 remains terminal failed57 and predates289–299. Full original-plan bounded audit, performance/LOC, current platform and validator-backed acceptance remain unfinished. No commit, push, PR or publication.
 
-
 ## Increment 300 — native attestation end-to-end signature fixture
 
 - End-to-end signature fixture uses the supported native task preparation/signing attachment path rather than a physical operational bundle alias. Fake signer coverage remains explicitly fixture-based, preserving real content mismatch and uncovered-file refusal without claiming external certification.
 - Complete attestation suite plus native signing statement/bundle suites passes15/15,0fail/skip,2959ms (/tmp/sqlite-attestation300-final.log). Scoped lint0errors,1 existing status complexity warning (/tmp/sqlite-attestation300-lint.log). Full macOS288 remains failed57 and predates later corrections; current whole-platform, performance/LOC and validator-backed acceptance remain unfinished.
-
 
 ## Increment 301 — explicit legacy migration inputs and legacy receipt compatibility
 
@@ -2197,7 +2132,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Repository-evidence route fixture supplies explicit canonical task identity while preserving unscoped detection. Project detection passes16/16,0fail/skip,2706ms (/tmp/sqlite-project307-native.log). Native integration resource missing-contract control removes only the native contract artifact; portable Unicode-path state binds native task identity. Cross-process continuity reads the same native task context rather than a singleton alias. Expanded group passes32/32,0fail/skip,4146.998125ms (/tmp/sqlite-portable308-corrected.log). Scoped lint0errors/warnings (/tmp/sqlite-portable308-final-lint.log); whitespace passes and original36/36 hashes unchanged.
 - Frozen full288 remains failed57 and predates these corrections. Full original-plan bounded audit, performance/LOC, current Windows/Linux/macOS/release and validator-backed acceptance remain unfinished. No commit, push, PR or publication.
 
-
 ## Increments 309–315 — native decision, alias and direct completion validation
 
 - Decision fixtures create canonical task authority and inspect native events. Snapshot destination conflicts refuse migration before changing database bytes. Nested aliases of the same physical project resolve to the existing scope; a new operation still rejects a symlinked database root. Retired filesystem rollback refuses mutation while doctor retains the incomplete transaction finding. Combined alias/decision/policy checks pass69/69,0fail/skip,43922ms (/tmp/sqlite-alias-decision311-final.log); fast311 exits0.
@@ -2205,18 +2139,15 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Reconcile corruption fixtures alter native ledger bytes; pruning and observed command provenance bind canonical descriptors. Combined checks pass29/29,0fail/skip,5189ms (/tmp/sqlite-remaining314-native.log). Traversal refusal verifies no task or legacy namespace committed, permitting an empty native bootstrap. Bootstrap checks pass27/27,0fail/skip,28416ms (/tmp/sqlite-bootstrap315-native.log). Scoped lint exits0 (/tmp/sqlite-final315-lint.log).
 - Frozen full288 remains the latest terminal full run:57fail, predating these corrections. Full original-plan acceptance, bounded audit, matched performance/LOC, current platform/release checks and validator-backed closure remain unfinished. No commit, push, PR or publication.
 
-
 ## Increments 316–319 — frozen full run and discovery comparator repair
 
 - Frozen full316 terminates exit1:2632tests,2619pass,2fail,11skip,258754.542ms (/tmp/sqlite-macos-full316.log). All2419 source hashes remain unchanged. Snapshot accidentally omitted Git metadata; benchmark claim permission and repository evidence route fail as expected without provenance. No assertions were relaxed. Frozen318 copies the same2419 hashed files and independent base-commit Git metadata from full288; its isolated execution-profile benchmark tests pass19/19,0fail/skip,1424ms (/tmp/sqlite-profile318-provenance.log). Full318 is running, not yet acceptance evidence.
 - Fast315 terminates exit0 (/tmp/sqlite-final315-fast.log). MCP server/HTTP source review confirms canonical dispatcher/resource delegation, package-only metadata file reads and owned/shared persistent context shutdown; matrix rows remain partial pending current platform/MCP evidence.
 - Discovery comparator no longer attempts to import a newly native fixture as legacy input. It explicitly exports portable evidence, requires identical complete discoverTasks results and measures both discovery paths; low-level indexed row query timing is kept separately without a speedup claim. Bounds sizes1–5000; reports runtime/hardware/durability and labels retained legacy read compatibility, not pinned-release baseline. Smoke319 size10/repeats3 passes output parity (/tmp/sqlite-benchmark319-smoke.json); run overlaps verification and is only harness smoke, not publishable release performance evidence. Full benchmark/durability/concurrency/LOC gates remain unverified.
 
-
 ## Increment 320 — strict project-route fixture ranking under the suite provider
 
 - Full318 has one failing project-route assertion: equal-confidence suite-injected semantic recommendations reverse tied guide rankings. The detector found Flutter correctly; this is not a traversal-budget failure. Standalone execution without the suite loader passed and therefore did not reproduce its actual provider. The route fixture now injects decreasing candidate confidence, preserving exact expected guide order and all membership/scope assertions. Project detection with the real suite loader passes16/16,0fail/skip,515ms (/tmp/sqlite-project320-loader.log). No production routing rule changed and no network provider is needed. Full original-plan acceptance remains unfinished.
-
 
 ## Increments 321–322 — green frozen macOS core and pinned discovery measurement
 
@@ -2225,18 +2156,15 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Pinned size10 smoke with5 repeats and equal-output/valid-ownership assertions passes (/tmp/sqlite-benchmark322-pinned-smoke.json and /tmp/sqlite-benchmark322-seed-smoke.json). The matched discovery matrix10/100/250/1000/5000 with20 repeats is running (/tmp/sqlite-benchmark322-discovery-matrix.json). No release threshold result is claimed yet.
 - Remote authentication input is unavailable in the current context and was not retained in files. A request for the missing password is pending while local work continues; existing remote execution authorization remains valid. Full original-plan bounded audit, remaining benchmarks/LOC, current platform/integration/release and validator-backed closure remain unfinished. No commit, push, PR or publication.
 
-
 ## Increment 323 — measured pinned discovery matrix and current frozen MCP run
 
 - Discovery matrix322 terminates exit0,20 repeats per10/100/250/1000/5000 task fixture, strict identical complete API results and valid ownership at every size. p95 native/baseline ms:5.060/13.310;28.599/122.244;76.776/310.572;312.391/1443.917;1391.746/6850.547. At5000, baseline/native ratio4.922 satisfies the scoped discovery target. Node24.19.0, macOSARM64 AppleM2, SQLite3.53.3 WAL/FULL; fixed-timestamp RECEIVED tasks, no event/action load, warm-cache API with per-call native connection. Results/method are retained in benchmarks/storage-sqlite. No claim for other original-plan dimensions.
 - Frozen321 MCP tests now run with a temporary resolve hook pinning the integration API to that same frozen core and the suite semantic fixture loader. Shared authentic dependencies are preserved. Session95462/log /tmp/sqlite-mcp323-frozen.log remains pending; no MCP success claim yet.
 
-
 ## Increment 324 — authentic frozen MCP package binding and remote staging
 
 - MCP323 terminates72pass/1fail: the temporary integration resolve hook selected frozen2.0.0 while shared dependency package.json remained1.14.0. Preserved the strict version assertion. Isolated external dependency links select frozen core for both module and manifest, leaving shared dependencies untouched. Authentic frozen MCP324 terminates exit0:73tests,73pass,0fail/skip,3271ms (/tmp/sqlite-mcp324-authentic.log). Source321 hashes remain the production scope; dependency topology correction is isolated to its test checkout.
 - Current fast323 terminates exit0 (/tmp/sqlite-current323-fast.log). Remote credentials restored by explicit goal continuation. Encrypted NTLM WinRM source staging324 terminates exit0; SHA256 archive809efd784fecac1e135218d8d29a5291195eaf342d3cb53f8d373c1e2490b3da verified before extraction. Source contains frozen321's2419 hashed files plus manifest. Isolated Windows Git/Node/dependency setup is running; no platform acceptance claimed.
-
 
 ## Increments 325–327 — current installed package smoke and live remote platform suites
 
@@ -2244,13 +2172,11 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Frozen package325 rejects its obsolete >=20 engine assertion. Current326 rejects unscoped route before mutation with E_TASK_REQUIRED. Updated smoke requires installed engine to equal manifest and >=24.19.0, creates canonical task before task-bound route, and injects explicit installed local test provider via --import. Fixture output is not model certification and makes no optional network request. Current327 core package smoke terminates exit0 (/tmp/sqlite-package327-current.log); current327 MCP tarball smoke terminates exit0 (/tmp/sqlite-mcp-package327-current.log), validating installed API/core/MCP identities, read-only admission, native task resource/action projections and stdio. Scoped lint exits0 (/tmp/sqlite-package327-lint.log).
 - Full original-plan bounded audit, remaining idempotency/commit/memory/concurrency/startup/LOC measurements, full consumer inventory, current terminal Windows/Linux and CI/protocol acceptance remain unfinished. No commit, push, PR or publication.
 
-
 ## Increments 328–329 — matched idempotency matrix and remaining source-size trend
 
 - New idempotency harness requires a clean pinned baseline, validates every synthetic proposed action/fingerprint and compares complete public API found/missing results. Alternates measurement order; seeds outside timing; no external action executes. Matrix20 repeats at10/1000/5000 actions terminates exit0 (/tmp/sqlite-idempotency328-matrix.json); raw samples retained in benchmarks/storage-sqlite/macos-idempotency-328.json. Native/baseline p95 ms:2.039/2.211;2.805/222.271;3.027/1096.056. Large-fixture ratios79.227/362.138 satisfy scoped lookup target; no commit/full-audit/concurrency claim.
 - Broad production src nonblank physical-line trend measured against the clean baseline:65345→71594,+6249 (+9.563%). Includes comments and all storage/import/export/maintenance under src; excludes tests/scripts/MCP. /tmp/sqlite-production-lines329.json records every file. This broad scope is not the reviewed persistence-specific acceptance denominator and does not prove25% reduction. Original target remains unfinished; no scope exclusion or success claim.
 - Authoritative Linux329 inspect terminates exit0 and reports the same full324 container Running:true, PID47231, noOOM/terminal result. Initial format argument was rejected by remoting quoting; corrected inspect reads full structured state without restarting the container. Windows324 remains pending; its last authoritative PID4224 was alive.
-
 
 ## Increment 330 — matched public state/event transaction harness
 
@@ -2258,12 +2184,10 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Initial smoke discovered the benchmark supplied timestamp instead of event field at, causing real wall-clock bytes/hashes to differ. Corrected fixture input to at without changing production code; smoke terminates exit0 (/tmp/sqlite-commit330-smoke-corrected.json). Matrix10/1000/100000 prior events with20 repetitions is confirmed live via session47385 (/tmp/sqlite-commit330-matrix.json/.err); no30% commit improvement claim yet. Scoped idempotency lint passes0errors/warnings (/tmp/sqlite-idempotency329-lint.log).
 - Full original-plan acceptance remains unfinished, including bounded full-audit memory, matched crash/topology/concurrency/runtime gates, reviewed persistence-specific LOC, full consumer matrix, terminal current remote/CI evidence and validator-backed closure. No commit, push, PR or publication.
 
-
 ## Increment 331 — baseline large-ledger checkpoint fixture correction
 
 - Commit matrix330 terminates exit1 at the100k baseline: portable native exports intentionally lack obsolete events.ndjson.index.json, so baseline append fell back to full read and rejected its2MiB limit. Preserved source/error /tmp/sqlite-commit330-matrix.err. The benchmark now adds the exact valid chain-head cache during unmeasured legacy setup, matching the pinned writer's normal index; no baseline byte limit or transaction implementation changed. Corrected matrix331 is live via88380 (/tmp/sqlite-commit331-matrix.json/.err). No commit speedup claim until terminal parity results.
 - Original dirty checkout remains36/36 manifest hashes unchanged through330. Full plan remains active and not protocol-complete.
-
 
 ## Increment 332 — terminal matched commit matrix exposes large-ledger regression
 
@@ -2271,19 +2195,16 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Source trace: unit-of-work.commit recalculates resolveStoreClaimState for affected tasks, which materializes and validates full ledger history before updating claim projection. This is a diagnosis lead connecting the remaining bounded-memory and performance work; no integrity checks bypassed, no trusted editable cursor introduced and no production optimization claimed.
 - Full original plan remains unverified, not COMPLETE. No commit, push, PR or publication.
 
-
 ## Increments 333–334 — known network-topology refusal before SQLite allocation
 
 - Added storage/topology.js admission before direct database open and fresh writable bootstrap. Windows UNC/extended UNC paths refuse E_STORAGE_TOPOLOGY_UNSUPPORTED. Linux statfs bigint identifiers reject NFS, SMB/CIFS/SMB2, AFS, Coda, Ceph and9P using upstream Linux UAPI magic.h constants; signed32-bit forms normalize identically. Missing database inspection uses nearest existing ancestor without allocation. No actor override, journal fallback or durable-setting relaxation.
 - Darwin numeric IDs are not Linux filesystem identifiers; mapped Windows drives, remote FUSE, Darwin mounts and real network-mounted/power-loss acceptance remain unverified. Documentation distinguishes known denial from universal certification. Focused topology/runtime/bootstrap/store333 passes49/49,0fail/skip,1140ms; scoped lint passes0errors/warnings. Final extended-local-UNC control correction is rechecked in334; complete storage group is running after production topology edits. Full frozen321 platform runs predate this change.
 - Windows observer333 terminated exit0, samePID4224 alive and advancing killed-owner tests, no terminal exitfile. Linux334 inspect terminated exit0 for samefull324 container; Running:true, PID47231, noOOM/terminal result. No restarts. Full original acceptance remains unfinished and noPR/publication.
 
-
 ## Increment 335 — preserve lazy read-only admission after topology enforcement
 
 - Full storage334 terminates exit1 with one failure: new static topology import resolved during fresh read-only dispatch and violated C1's admission module constraint. No database was allocated. Corrected production bootstrap to dynamically import topology only on writable allocation; direct selected database opens retain the check. C1 allow-list and assertions unchanged. Final topology/runtime/bootstrap/store334 passes49/49,0fail/skip,1146ms; evidence/admission plus topology335 passes11/11,0fail/skip,5484ms. Corrected complete storage and fast335 are running on final production source.
 - Maintained storage status now distinguishes historical checkpoint notes from current acceptance and correctly reports retired filesystem writer/lock/compaction machinery with retained discovery/refusal compatibility. Native full audit and100k commit regression, reviewed LOC, consumer and current terminal platform/CI/protocol acceptance remain unresolved.
-
 
 ## Increments 336–337 — terminal Windows frozen source and portable fixture correction
 
@@ -2293,13 +2214,11 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Isolated remote source337 is SHA256-verified before extraction:archive f1a431ccb84f3077ab05b1b8d608b048fd60e2f57953c5218f714b70f2b748bd,2427 hashed files. Git metadata remains at pinned baseline; authentic135 packages installed and all2427 source hashes verified. Windows focused337 is dispatched with affected suites plus topology checks; launch client73149 pending, no focused remote pass claim yet. This is a new corrected source, not a restart of frozen324. Linuxfull324 was last confirmed Running:true and remains to observe.
 - Original plan remains incomplete: bounded audit/full claim projection and large-ledger commit target, concurrency/memory/power-loss/runtime/LOC, complete consumer inventory, current full-platform/CI and validator-backed closure are unfinished. No commit, push, PR or publication.
 
-
 ## Increments 338–339 — terminal Linux baseline and corrected platform verification
 
 - Linux full324 terminates with container exit0, no OOM:2632tests,2620pass,0fail,12skip,1611646ms. A stopped-container copy verifies all2419 frozen source hashes unchanged (/tmp/forgeloop-linux324-hashes338-result.json). This source predates topology admission and the Windows portable-path fixture correction.
 - Windows affected suites plus topology on source337 terminate exit0:88tests,88pass,0fail/skip,51788ms. Production logical-path policy and domain assertions remain unchanged. Corrected full337 runs are independently confirmed live:WindowsPID9656 progressing with no terminal exitfile, Linuxcontainer0a55d7a0862d Running:true, PID68042, noOOM. Neither is restarted to resolve observation delay.
 - New macOS full339 snapshot contains2427 SHA256-listed source files, independent pinned Git metadata and authentic shared dependencies. npm test is running; no terminal current-platform claim yet. Scoped fixture lint and whitespace checks pass. Original acceptance remains unfinished, including bounded full audit, large-ledger commit regression, representative concurrency/runtime measurements, reviewed persistence LOC, complete consumer matrix, GitHub execution and validator-backed closure. No commit, push, PR or publication.
-
 
 ## Increments 340–341 — current macOS full pass and nonempty claim benchmark
 
@@ -2307,7 +2226,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Commit benchmark now supports an explicit bounded claim count, reserves actual native claim rows during unmeasured setup, and checks complete ownership classification plus exact persisted ACTIVE reservation rows after timing. Four-claim smoke340 passes. Full340 fails its added ownership comparison at100k because the unchanged pinned filesystem full audit refuses the existing2MiB limit and retains all claims; native classification remains valid. Preserved /tmp/sqlite-commit340-claims-matrix.err. Corrected report341 explicitly distinguishes MATCHED ownership from REFUSED baseline ownership and never claims ownership parity for that fixture. Canonical timed transaction result and persisted state/tail comparisons remain strict. Full341 is running; no commit improvement claim.
 - Source review settles decision-status as portable configuration/provider status with no operational persistence. Decision-show uses the canonical schema-validated native artifact seam. Handoff list/show use native artifact/collection and full acceptance-ledger reads, but whole-command cross-read atomic snapshot and bounded audit remain unresolved. Four consumer-matrix rows now reflect these specific findings rather than obsolete generic filesystem-cutover placeholders.
 - Full original acceptance remains unfinished. No commit, push, PR or publication; protocol remains VERIFYING.
-
 
 ## Increments 342–346 — reservation retention correction and prepush failure
 
@@ -2317,19 +2235,16 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Four-claim benchmark344 passes strict state/event parity, but repair-history fallback was added afterward. Final345 source native/baseline p95 at10/1000/100000events:12.189/212.239,11.789/200.377,91.237/183.134ms. Full baseline ownership audit remains separately REFUSED at100k. Concurrent local coverage/repair work may affect timings; an isolated346 matrix now runs after those checks terminate. No universal performance, bounded full audit or release acceptance claim.
 - Windows/Linux337 full runs remain live on older production. Original36 checkout hashes unchanged. No commit, push, PR or publication; original plan remains unfinished.
 
-
 ## Increment 346 — isolated corrected transaction result
 
 - Isolated four-claim matrix346 terminates exit0 with20 alternating samples at10/1000/100000events after coverage/repair jobs terminate. Native/baseline p95:8.828/120.851,11.409/121.078,93.029/140.916ms. Scoped100k reduction is approximately34 percent, meeting this fixture's30 percent commit target. Raw samples retained in benchmarks/storage-sqlite/macos-commit-retention-346.json. Full baseline ownership audit remains explicitly REFUSED at100k; no ownership parity or full release acceptance claim. Earlier failed matrices remain retained.
 - Current complete storage suite and verify:fast are running on final reservation correction. Full audit still materializes the ledger for actual ownership/authority readers; bounded full-audit acceptance is unfinished. Prepush complexity regression, full consumer inventory, representative runtime/concurrency/memory/power-loss/LOC, current platform/CI and validator-backed closure remain outstanding.
-
 
 ## Increment 347 — corrected storage verification and terminal Windows source integrity
 
 - Final reservation correction complete storage group terminates exit0:342tests,342pass,0fail/skip,80558ms (/tmp/sqlite-reservation346-storage.log). verify:fast terminates exit0 (/tmp/sqlite-reservation346-fast.log). Advanced CORRECTING→VERIFYING and recorded scoped evidence without promoting unfinished aggregate acceptance. Native next346 returns nonterminal RECORD_VERIFICATION.
 - Windows full337 authoritatively terminates:PID9656 absent, exit0,2634tests,2621pass,0fail,13skip,1474074ms. All2427 frozen source hashes unchanged (/tmp/forgeloop-windows337-terminal346-hashes-result.json). Initial hash observer used an incorrect manifest parent path; corrected to the manifest inside frozen source without rerunning tests. This full suite predates reservation correction343–345. Linuxfull337 remainsRunning:true, PID68042, noOOM and progressing Structural Quality tests.
 - Current protocolVERIFYING is not COMPLETE/VALID. Prepush complexity failures and full original-plan bounded audit, matrix, consumer/LOC/topology/power-loss/current platforms/CI/closure requirements remain unfinished. No commit, push, PR or publication.
-
 
 ## Increments 348–350 — complexity correction and complete frozen platform results
 
@@ -2338,20 +2253,17 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Linuxfull337 terminates containerexit0, noOOM:2634tests,2622pass,0fail,12skip,1604151ms. Stopped-container source copy verifies all2427 source hashes unchanged (/tmp/forgeloop-linux337-terminal348-hashes-result.json). Windowsfull337 and macOS339 are also terminalgreen; all three frozen scopes predate reservation/complexity correction. Current full-platform validation remains separate.
 - Added independent-process public transaction contention harness with1/2/4/8 workers, readiness barrier, strict final state/event/ownership parity, actual claim retention, bounded rollback-only retry policy, per-worker peakRSS/event-loop delay and explicit measurement limitations. Small smoke is running; no throughput/contention acceptance claim. Full original plan remains unfinished, noPR/publication.
 
-
 ## Increments 351–352 — final contention matrix and exact portable schema policy
 
 - Final independent-process contention351 matrix terminates exit0:1/2/4/8workers,20commits per worker,1000prior events,three alternating-order runs per count. All12matched runs preserve complete final state/event/ownership and actual ACTIVE reservation rows. Raw evidence retained in benchmarks/storage-sqlite/macos-contention-351.json; pooled native/baseline commitp95ms:4.757/130.638,14.948/137.324,54.351/1593.714,96.100/4289.179. Native bounded retry totals0/30/151/542; baseline0/0/2/23. Delays included in samples; no external work replayed. Worker RSS/event-loop data retained. No CLI/MCP startup, direct lockwait/FSops/peakWAL or full-audit memory claim. Scoped lint exits0.
 - Frozen prepush349 terminates exit1 only at Python loop-validator after coverage2636tests2625pass0fail11skip; criticalcoverage, lint, dependencies, complexity, docs, completions, summary, changelog, repository manifest/hygiene,67PoCtests,73MCPtests, bothpackchecks,54Pythonunitchecks, markdown and loopselftests pass. Secret scan was not reached. Recorded failure and diagnosis, enteredCORRECTING; preflight351READY. Validator now accepts only the explicit task-bundle enum[1,2] compatibility exception while keeping generic const1 policy. Positive portable versions and negative unsupported bundle/unrelated enum tests pass:20Python tests; repository loop-validator and19selftests pass.
 - Full original plan remains active; noPR/publication. Next final prepush snapshot includes current verification harness/schema policy before all-tier recheck.
 
-
 ## Increment 353 — complete frozen prepush passes without source drift
 
 - Frozen prepush352 terminates exit0 across all required gates. Coverage2636tests,2625pass,0fail,11skip; criticalcoverage, lint, dependency policy and unchanged complexity threshold pass. Documentation/completions/summary/changelog/manifest/hygiene pass;67PoCtests,73MCPtests and12package tests pass. Python unit suite, markdown/selftests, loop/selftests and secret scan pass. All2432 frozen source SHA256 entries remain unchanged. Full log /tmp/sqlite-prepush352.log; manifest /tmp/sqlite-prepush352-source.json.
 - Scope includes final reservation retention, evaluator admission refactors, contention harness and precise task-bundle v1/v2 validator policy. Prior complexity/loop failures remain preserved. Current original checkout remains36/36 saved file hashes unchanged.
 - Advanced CORRECTING→VERIFYING. This complete prepush result is scoped evidence, not complete original-plan acceptance: bounded full-audit memory, full public-consumer/file compatibility review, remaining coldCLI/warmMCP/approval volume/FSops/direct lockwait/peakWAL measurements, persistence-specific LOC, current Windows/Linux and actual self-hosted GitHub execution, migration acceptance/protocol closure remain unfinished. No commit, push, PR or publication.
-
 
 ## Increments 354–355 — reproducible LOC deficit and direct receipt admission correction
 
@@ -2360,14 +2272,12 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Initial corrected test expected contradictory legacy files to be ignored, but existing project admission correctly refuses mixed layout withE_STORAGE_MIGRATION_REQUIRED. Preserved /tmp/sqlite-receipt355-regression.log; corrected only test expectation and fixture cleanup, retaining the fail-closed gate. Final receipt/direct-artifact/retired-seam/integration-dispatch group passes39/39,0fail/skip,8023ms. Direct no-ambient and canonical explicit reads, mixed-layout refusal, independent portable file and native fingerprint tamper are covered. verify:fast355 exits0.
 - Reviewed validate-state READ selector/state reader, verify-scope native transactional scope+event publication with ownership/workspace guards, and workspace-status native binding read/live Git error envelope. Four matrix rows now reflect named boundaries and remaining transitive/integration scope rather than obsolete filesystem-cutover placeholders. Their focused scope/workspace/new-cli group passes7/7,0fail/skip,2214ms. Full original plan remains unfinished; noPR/publication.
 
-
 ## Increments 356–357 — fresh CLI startup correction
 
 - Thirty alternating fresh-process samples reproduce startup target failure: version native/baseline p95 143.662/124.470ms and empty task-list137.302/117.171ms. Retained raw before data in benchmarks/storage-sqlite/macos-cli-startup-356.json. Resolution trace finds401source modules including40storage modules on version output. Recorded failure and diagnosis; CORRECTING preflight356 returnsREADY.
 - CLI formatter imports and executor implementation imports now resolve only inside selected async handlers. Public registries, command parsing and canonical admission wrapper remain in place. Version now resolves16source modules and zero storage modules. A fresh-process presentation regression rejects command implementation imports for version/help and passes1/1. CLI/runtime/integration/dispatch/bootstrap/receipt regression passes107/107,0fail/skip,40724ms; verify:fast and scoped lint exit0.
 - Independent remeasurement with checks idle passes the scoped startup tolerance: baseline/native p95 version125.273/42.619ms and empty-list119.831/69.985ms. All outputs match expected contracts and no storage is allocated. Retained raw after data in benchmarks/storage-sqlite/macos-cli-startup-357.json. Warm filesystem caches only; populated CLI/MCP and complete release acceptance remain unfinished.
 - Full current-source prepush and platform acceptance remain pending. No commit, push, PR or publication.
-
 
 ## Increment 358 — current frozen verification and independent cache boundaries
 
@@ -2377,7 +2287,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Reviewed action propose/show/record/authorize/verify/reconcile and approval request/resolve command boundaries through task mutation, action/approval staging and event publication. Operational artifact writers require active native transactions; nested domain transactions join the outer guarded mutation. Read APIs select existing read-only native storage before portable fallback. Immutable/idempotent action identity, generic transition authority exclusions, policy epochs, trusted host grant matching and pending-only approval resolution remain enforced. Eight matrix rows now record named boundaries; full transitive and integration acceptance remains pending.
 
-
 ## Increment 359 — real storage faults and current full-run diagnosis
 
 - Frozen prepush358 terminal exit1 at coverage:2638tests,2626pass,1fail,11skip,368639ms. All2438 frozen source hashes unchanged. Sole failure C1 module-resolution expectation: lazy command loading exposes maintenance-owner, maintenance-handoff and existing-project-scope imports previously loaded before command tracing. Source review confirms filesystem ownership/handoff and no-allocation authority detection; explicit helper allow-list updated while node:sqlite/driver/store prohibited-import and database-allocation checks remain. Later prepush gates were not reached.
@@ -2385,14 +2294,12 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Early protocol record attempts rejected unexecuted command provenance, an invalid option and unsupported failure class; no check evidence was fabricated. Recorded a structured IMPLEMENTATION_FAILURE case with explicit MANUAL_OBSERVATION provenance and named raw/source observations, then canonical advance toCORRECTING and preflightREADY before production correction. Original36 saved file hashes remain unchanged.
 - Admission/fault/presentation group passes14/14,0fail/skip,5125ms; verify:fast and scoped lint exit0. Subsequent full prepush remains pending at this entry. Full original-plan acceptance remainsNOT_VERIFIED; no commit, push, PR or publication.
 
-
 ## Increments 360–361 — interrupted frozen run and policy diff path correction
 
 - Frozen360 contains2439source files, including damaged-header correction and C1 helper classification. Its handle50915 is missing after session continuation; authoritative process inspection confirms no test/npm/prepush process remains. Log /tmp/sqlite-prepush360.log stops during crash/restore tests without aggregate or exit status. Treat as INTERRUPTED/NOT_VERIFIED; preserve raw run and snapshot, do not infer terminal success.
 - Policy diff explicit before/after paths bypass native snapshots through readFile. New direct API test reproducesENOENT for a real native task snapshot (/tmp/sqlite-policy361-before.log). Recorded manual-review failed observation whileVERIFYING, canonical diagnosis/advanceCORRECTING/preflightREADY before correction. Canonical relative/absolute paths now select existing read-only authority and native artifact bytes; portable inputs stay independent. Missing native record remainsENOENT; unsupported canonical input refuses E_STORAGE_OPERATION_UNSUPPORTED; mixed physical task layout refuses E_STORAGE_MIGRATION_REQUIRED.
 - Initial policy/path/hardening/lock/discovery/pack group passes62/62,0fail/skip,50866ms; final added unsupported-path guard and path test passes1/1,521ms. verify:fast, final scoped lint and unchanged complexity budget pass. Four policy matrix rows now distinguish project file-owned policy/configuration from native immutable task snapshots and explicit portable inputs. Full transitive/integration/platform acceptance remains pending.
 - Full original plan remainsNOT_VERIFIED, including bounded full-audit memory and persistence LOC target/release decision. No commit, push, PR or publication.
-
 
 ## Increment 362 — current local/remote frozen verification
 
@@ -2402,7 +2309,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Full original-plan consumer/transitive, memory, performance/LOC, final platform/GitHub and validator closure remain unfinished. No commit, push, PR or publication.
 
 - Local frozen prepush362 terminates exit0, durable status confirmed:2643core tests,2632pass,0fail,11skip,394762ms. All2440source hashes unchanged after termination. Every required gate passes:coverage/critical coverage,lint,dependency,unchanged complexity,docs/completions/summary/changelog,manifest/hygiene,67PoCtests,73MCPtests,MCPpack,12corepack tests,Python unit/markdown/loop validators and self-tests,secret scan2265texts. Source includes final policy explicit-path guard, native corruption mapping, receipt and lazy CLI corrections. This is current scoped local verification, not full original-plan closure. Remote Windows/Linux362 remain live.
-
 
 ## Increments 363–364 — full-audit collection foundation and terminal platform362
 
@@ -2414,14 +2320,12 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Followed native next ENTER_VERIFYING, recorded scoped foundation evidence without marking tests complete, and re-recorded the unresolved full-audit gap as failed against complete-sqlite. Next routes diagnosis; appended the new wiring-specific diagnosis, advancedCORRECTING and preflight364READY. Current task is ready for immutable snapshot-backed native audit wiring; the original full contract and scope remain intact.
 
-
 ## Increment 365 — native claim snapshot wiring
 
 - Native claim guards now consume explicit event collections inside one synchronous SQLite read snapshot, joining an existing caller transaction without committing it. The owner expires retained views and paused cursors on exit; asynchronous callbacks are refused. Contiguous indexed sequences select direct lookup only: every payload still checks all indexed fields. Gapped sequences retain positional semantics and fail canonical chronology. Independent statements preserve nested repair/proof scans.
 - Completion ownership accepts explicit collections; initial regression exposed an Array-only guard that skipped proof checks. Fixed before acceptance. Reservation projection routes indexed/payload disagreements into full proof while retaining its conservative ACTIVE-only authority boundary. Ledger hash validation tracks the previous streamed hash instead of issuing one historical lookup per event.
 - Canonical-loader scoped authority group172/172 passes,0fail/skip,25905ms (/tmp/sqlite-snapshot365-regression3.log). Final four owner tests pass (/tmp/sqlite-snapshot365-owner-final.log), including concurrent WAL append snapshot stability, nested scans, retained-view/cursor expiry, caller transaction ownership, async refusal, indexed tampering and sequence gaps. Initial failures retained in /tmp/sqlite-snapshot365-regression.log, regression2.log and authority.log; nested prepared-statement cursor invalidation corrected. Fast verification exit0; ESLint zero errors with existing events complexity warnings; unchanged complexity budget PASS.
 - Public array readers and async validateEventLedger remain unchanged. Full-audit relation maps and filtered task histories still require bounded/spilled state; no current memory improvement or complete-plan acceptance claimed. Platform362 predates this change. No commit, push, PR or publication.
-
 
 ## Increments 366–367 — detached callback audit and measured memory
 
@@ -2432,7 +2336,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Frozen benchmark367 completes exit0, 2,447source files unchanged after measurement. Published benchmarks/storage-sqlite/macos-ledger-memory-367.json. Seed42/1KiB observations/10,1000,100000events, fresh worker per operation/size, one warmup/three samples. Every successful operation matches full canonical count/head/byte digest. Native100k callback/array peakRSS184720/623248KiB and p95 6769.910/1924.039ms. Callback memory is lower for this fixture; detached copying and repeated decoder scans add latency. Native1000 callback/array p9575.901/28.522ms versus pinned filesystem19.123ms. No performance-release pass; representative action/approval/recovery and bounded relation state remain open. Unfrozen diagnostic366 excluded from final-source acceptance.
 - Frozen full local prepush367 started with durable exit tracking /tmp/sqlite-prepush367.exit and raw /tmp/sqlite-prepush367.log; still running when recorded. Platform362 is terminal green but predates these changes. No current full-platform/GitHub acceptance, commit, push, PR, merge or publication claimed.
 
-
 ## Increments 368–370 — malformed payload regression, typed proof selection, scratch relations
 
 - Frozen prepush367 terminates exit1:2653tests2641pass1fail11skip,374101ms. Sole failure scale-ledger.test.js:111 expected E_STORAGE_PAYLOAD_MISMATCH; new claim collection exposed raw JSON.parse SyntaxError from decodeIndexedEvent. All2447post-terminal source hashes unchanged; failed run retained. Recorded failed check/diagnosis and preflight368READY before decoder correction. Shared decoder now uses typed repository decode and rejects non-object event payloads before indexed comparisons. Targeted store/guard49/49 and scale/proof134/134 pass.
@@ -2441,7 +2344,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Owned scratch relation Map/Set backing spills after128entries or64KiB metadata; bounded1MiB SQLite cache, file-backed temporary sorting, lazy allocation and owner cleanup. It stores primitives and source positions only. Private scratch transaction cannot change live WAL/FULL persistence and is discarded on scope exit. Metadata/insertion order/delete/expiry/nested-owner/cleanup tests pass, plus full canonical handoff duplicate/digest parity. Native audit test includes1000handoff pairs and rejects duplicate acceptance with the same array-validator errors. Final native+relation group8/8; broader proof/recovery/decision group147/147. Fast exit0, ESLint zero errors/five existing complexity warnings, unchanged complexity PASS.
 - Frozen benchmark370 exit0;2451post-measurement hashes unchanged. Published benchmarks/storage-sqlite/macos-ledger-memory-370.json. Native100k callback/array p953392.667/2013.827ms, peakRSS182288/570528KiB; callback latency lower than367 but still slower than arrays. Native1000callback/array/filesystem44.125/26.721/20.978ms;10events4.440/1.083/2.141ms. Every successful row matches full canonical count/head/byte digest. No representative action/approval/recovery or complete bounded-memory/performance acceptance claim.
 - Replacement full frozen prepush370 is live, durable status /tmp/sqlite-prepush370.exit and raw /tmp/sqlite-prepush370.log, session50202. Do not restart solely due observation timeout. Platform362 predates these changes; final full-platform/GitHub/protocol closure remains pending. Remaining consumer matrix has50Pending rows plusPartial rows. No commit, push, PR, merge or publication.
-
 
 ## Increment 371 — combined canonical audit scan
 
@@ -2454,7 +2356,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Frozen prepush370 now terminal exit0, all2451post-terminal source hashes unchanged, required gates through secret scan2276texts pass. This source precedes371 combined scan. Raw /tmp/sqlite-prepush370.log and durable exit0 retained.
 
-
 ## Increment 372 — internal recovery summary and native guard relation ownership
 
 - Frozen benchmark371 terminal exit0, all2452post-measurement hashes unchanged. Published benchmarks/storage-sqlite/macos-ledger-memory-371.json. Native100k callback p952979.771ms/RSS162480KiB vs array1944.354ms/627072KiB. Native1000 callback39.657ms vs array27.734/filesystem21.441. Complete count/head/byte parity holds; observation-only fixture and unchanged large baseline refusals do not prove full performance acceptance.
@@ -2465,14 +2366,12 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Started full frozen prepush372 on2453files, session58169, raw /tmp/sqlite-prepush372.log and durable exit /tmp/sqlite-prepush372.exit. Recorded scoped verification and unresolved async-array gap; followed native next to diagnosis, CORRECTING and preflight372READY.
 
-
 ## Increment 373 — callback-owned internal async claim resolution
 
 - Public collectTaskClaimEvidence keeps its array ledger/history contract. Selected committed native scopes now resolve internal ownership through withEventLedgerAudit, reading descriptor/state/recovery/repair artifacts from the same immutable callback scope and summarizing cycles. Prepared transactions or staged writes/events/attachments keep the existing collection/read-set path.
 - Nested audits for the same task and package root reuse the owned event collection and database rather than copying the snapshot again. They rerun validators and immutable artifact bindings using their own options; no tolerant result is reused as strict authority. Actual legacy recovery control proves a tolerated outer audit remains invalid in strict nested ownership and cannot allow mutation. Public arrays remain available inside callback scopes. Source lifetime and CAS observations are unchanged.
 - Initial scoped regression48/48, broad canonical authority174/174, final owner7/7 pass,0fail/skip. Final owner run includes package-root reuse key. Fast exit0, lint zero errors/three existing events complexity warnings and unchanged complexity PASS. Raw /tmp/sqlite-async373-regression.log, authority.log, owner-final.log, fast.log, lint.log and complexity.log. These overlap, are scoped and do not replace full tests.
 - Frozen prepush372 remains live in session58169, durable /tmp/sqlite-prepush372.exit and raw /tmp/sqlite-prepush372.log; it precedes373. More internal public-array users (including task-conflict evidence and preflight consistency), remaining50Pending consumer rows plusPartial, representative relation performance, LOC release evaluation and final platform/GitHub/protocol closure remain unfinished. No commit, push, PR, merge or publication.
-
 
 ## Increment 374 — callback conflict inspection and READY consistency
 
@@ -2484,7 +2383,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Frozen374 source2453files at /tmp/forgeloop-conflict374; manifest /tmp/sqlite-conflict374-source.json. Full prepush started with durable /tmp/sqlite-prepush374.exit and raw /tmp/sqlite-prepush374.log; terminal result pending. Native next followed through VERIFYING, scoped/full-gap evidence, diagnosis, CORRECTING and preflight374READY.
 
-
 ## Increment 375 — coherent discovery and native responsibility visibility
 
 - Native discovery now reads each task descriptor/state/lease and continuity/receipt presence inside the same immutable callback as ledger/ownership, instead of passing live artifacts into a later snapshot. Initial indexed identity still undergoes canonical task-column/payload checks, followed by schema/proof validators; prepared transaction overlays and portable namespace errors remain compatible. A concurrent writer control instruments actual projected artifact reads, changes descriptor claims/state timestamp in another SQLite connection, verifies the unchanged snapshot result, observes the later update and rejects stale parent CAS commit.
@@ -2494,7 +2392,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Original full-plan performance/LOC/fault/platform/GitHub/protocol closure is unfinished; no commit, push, PR, merge or publication. Checkpoint document unchanged.
 
 - Frozen corrected source3752454files at /tmp/forgeloop-discovery375; /tmp/sqlite-discovery375-source.json. Full prepush375 started; raw /tmp/sqlite-prepush375.log and durable /tmp/sqlite-prepush375.exit, result pending. Native next followed through verification evidence/failed full374 record, diagnosis, CORRECTING and preflight375READY. Original36 files SHA unchanged.
-
 
 ## Increment 376 — callback progress and diagnostic interval streaming
 
@@ -2506,7 +2403,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Frozen3762454files /tmp/forgeloop-diagnostic376, manifest /tmp/sqlite-diagnostic376-source.json. Full prepush376 started; raw /tmp/sqlite-prepush376.log, durable /tmp/sqlite-prepush376.exit, result pending. Native next followed through VERIFYING scoped/full-gap evidence, diagnosis, CORRECTING and preflight376READY.
 
-
 ## Increment 377 — snapshot continuity context and primitive relation summaries
 
 - Continuity state/contract/artifact/handoff reads now share a native immutable audit callback, with transaction overlays and portable compatibility retained. Its safe diagnostic reader projects directly from the callback collection, awaits rejection inside its catch and reports present:false for invalid/unavailable authority. Public full reflection/trace APIs remain unchanged.
@@ -2517,7 +2413,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Full prepush376 terminal exit1: core2673tests2661pass1fail11skip. Sole failure is run-check timeout stdout14-byte expectation: deadline150ms killed a child before it emitted bytes. Coverage percentages87.95statements/78.55branches/87.58functions exceeded thresholds; the test exit caused coverage gate failure. All2454 frozen source hashes unchanged. Output capture now runs an exiting child with exact byte/SHA expectations; hanging-child timeout still proves failed/timeout/null exit/SIGTERM, bounded hashes and no truncation while permitting0or14 startup-dependent bytes. Focused run-check19/19 and lint zero errors passed. Frozen377 initial source predates this test correction and is retained immutable; corrected final snapshot/full run must use a new directory. No production timeout was lengthened or disabled.
 
-
 ## Increment 378 — latest-only internal information-gain result
 
 - One generator now computes each finalized information-gain entry from its immediately previous diagnostic/snapshot. It preserves semantic dimensions, classification, frozen output and public buildInformationGainProjection array contract. Internal summarizeInformationGain consumes entries while retaining only the latest matching verification cycle; progress uses this summary rather than constructing the full diagnostic result array. Failure metadata and interval scans remain unchanged and are not claimed bounded/performance-complete.
@@ -2525,7 +2420,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Corrected full prepush377 runs on /tmp/forgeloop-context377-final2455files, source manifest /tmp/sqlite-context377-final-source.json, session71323; raw /tmp/sqlite-prepush377-final.log and durable /tmp/sqlite-prepush377-final.exit. It predates378. Native377-final sequence finished CORRECTING/preflightREADY. No full377 result yet.40Pending plusPartial, public trace/reflection/failure metadata/representative relation performance, LOC/fault/final-platform/GitHub/protocol acceptance remain unfinished. No commit, push, PR, merge or publication.
 
 - Native378 next followed through VERIFYING scoped/full-gap evidence, diagnosis, CORRECTING and preflightREADY. Fast378 terminal exit0; original36 SHA unchanged. Frozen378 source will be retained for later full verification; do not start a second heavy full suite while377-final is live.
-
 
 ## Increment 379 — indexed primitive failure membership
 
@@ -2538,7 +2432,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Final379parity/owner32/32 and authority18/18 pass,0fail/skip; final complexity unchangedPASS/lint zero errors. Initial expired-cursor failure retained in parity.log, corrected parity2.log authoritative. Fast exit0. Frozen379 pending; no full suite overlap with live377-final.
 
-
 ## Increment 380 — grouped context failure surfaces and adapter review
 
 - Continuity diagnostic context now uses primitive grouped indexed membership for its per-cycle failed requirement surfaces. State-check contributions and sorted cycle comparisons retain their existing decisions without nested per-cycle resident Sets. Spill control covers160requirements/repeated intervention groups, unchanged cycle surfaces preserving160repeat warnings and an additional blocked state requirement suppressing them. Public full reflection/trace outputs and repeated relation scans remain outside final scale acceptance.
@@ -2547,7 +2440,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Representative relation/runtime/memory evidence, remaining consumers, LOC target investigation, full fault/current-platform/GitHub/protocol acceptance unfinished. No commit, push, PR, merge or publication.
 
 - Frozen3802455files /tmp/forgeloop-context380, manifest /tmp/sqlite-context380-source.json. Full prepush380 started; raw /tmp/sqlite-prepush380.log and durable /tmp/sqlite-prepush380.exit, result pending. Native next followed through verification scoped/full-gap evidence, diagnosis, CORRECTING and preflight380READY.
-
 
 ## Increment 381 — owned snapshot and trace source
 
@@ -2559,7 +2451,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Final381fast terminal exit0; scoped21/21, lint zero errors and unchanged complexity PASS. Full380 terminal exit0 core2679tests2668pass0fail11skip464227.412125ms, MCP73/73 and all gates passed;2455frozen source hashes unchanged. Original36SHA entries unchanged. Native next followed through VERIFYING scoped/full-gap records, diagnosis, CORRECTING and preflight381READY.
 
 - Frozen3812455files /tmp/forgeloop-snapshot381, manifest /tmp/sqlite-snapshot381-source.json. Current full prepush381 started; raw /tmp/sqlite-prepush381.log, durable /tmp/sqlite-prepush381.exit, result pending. No full verification overlap.
-
 
 ## Increment 382 — streaming phase chronology and atomic task-show reads
 
@@ -2576,7 +2467,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Current matrix recount:31exact Pending rows and64Partial rows across108command rows. Earlier shorthand31Pending plusPartial means31pending reviews plus the partial rows, not31total incomplete rows. Current authoritative source count retained; no narrowing of full-plan acceptance. Remote monitor confirms both Windows11116alive and Linux container running, exits absent.
 
-
 ## Increment 383 — consistent scope inspection and descriptor race correction
 
 - Read-only task-scope now reads descriptor/state/claims inside one immutable native audit callback. Mutation rereads descriptor after entering the claims/lease scope instead of carrying the earlier detached read into the write. Concurrent descriptor fields are preserved while new claims still follow scope freeze/recovery/conflict/cleanliness rules and native CAS.
@@ -2588,7 +2478,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - A documentation update ran in frozen382 by mistake. Its two affected documentation files were restored byte-for-byte from the verified source archive and rechecked against all2455manifest hashes. Current383 documentation updates were applied to the worktree; the earlier /tmp/forgeloop-scope383 freeze predates those updates and is not final383 verification authority. Benchmark runtime source was not modified.
 
 - Final383fast terminal exit0, lint zero errors and unchanged complexity PASS. Native next advanced through scoped/full-gap verification, diagnosis, CORRECTING and preflight383READY. The performance regression is recorded against the full complete-sqlite requirement, not accepted as a narrowed success. Original36SHA unchanged. Full383 run deferred while next discovery performance correction is prepared; scoped checks do not close final full/platform acceptance.
-
 
 ## Increment 384 — one project snapshot for discovery
 
@@ -2606,33 +2495,33 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Frozen final3842459files /tmp/forgeloop-discovery384-final, manifest /tmp/sqlite-discovery384-final-source.json. Full local prepush384started, raw /tmp/sqlite-prepush384.log and durable /tmp/sqlite-prepush384.exit, result pending. Earlier candidate2458is benchmark-only and predates direct-lookup fix. Current source full/platform/package/GitHub/complete-validator acceptance remains open.
 
-
 ### Increment385: metrics snapshot consistency and lightweight import correction
+
 - Frozen384 full prepush exited1:2689tests2677pass1fail11skip. The failing C1 fresh readonly dispatch test detected eager snapshot/unit-of-work imports from task-discovery. Current source defers those imports until native authority is selected; focused storage evidence/discovery12/12 passes without relaxing the import admission assertion. All2459 frozen source hashes and original36dirty-file hashes remain unchanged.
 - Native trajectory metrics now project trace, reflection, route, persisted usage and action readiness under one owned audit snapshot. Readiness is evaluated once. Provider usage remains an external observation. Concurrent independent SQL action deletion during the provider callback leaves current metrics at their original counts, while the next read observes deletion. Previous frozen384 metrics fails the control (unresolved0 instead of1); current metrics/evaluation/canonical-actions8/8 passes. Public trace/reflection arrays remain proportional to history; bounded total memory is not claimed.
 - Initial test fixture used an invalid action ID; corrected to action-pending before acceptance. Initial temporary negative-control rewrite was syntactically invalid and is not evidence; corrected control2 fails the intended readiness assertion. Complexity originally regressed; private route/usage helpers restore unchanged baseline PASS. Lint zero errors and fast terminalexit0. Raw /tmp/sqlite-trajectory385-regression3.log,control2.log,admission385.log,complexity385.log,lint385.log,fast385.log.
 - Full384 failure and current scoped results recorded through native next/VERIFYING/DIAGNOSING/CORRECTING. Current full/platform/package/GitHub/performance/LOC and remaining matrix acceptance remain open. No commit,push,PR,merge or publication.
 
-
 ### Increment386: attestation consumer source review
+
 - Reviewed attestation create/status/verify/range commands and statement/verifier/coverage cores. Create stages current/history artifacts plus event in a native task transaction; COMPLETE exception remains narrow and workspace/manifest/completion/audit guards are retained. Status/verify select read-only native authority, but multiple artifact/binding reads still need an owned immutable snapshot consistency review. Range discovery now snapshots its catalog; later per-task reads need consistency review. Git content and signature bundles remain external observations.
 - Four command matrix rows moved Pending to Partial based on source review; version-history/repeated-cycle rejection, binding/content mutation, native e2e and range-overlap controls exist and passed prior frozen382 core acceptance. No new current full acceptance claim. Matrix now21exactPending,74Partial across108command rows. No code changes386. Frozen385 full prepush is running from2459files; /tmp/sqlite-prepush385.log and durable exit path.
 
-
 ### Increment387: attestation immutable project read owner
+
 - Added lightweight withProjectReadSnapshot: existing-only readonly native admission, one module-owned committed backup reused across nested readers, lazy SQLite imports, prepared transaction/overlay bypass. Native status/verify/range projections now own this snapshot across bound artifact reads and async external providers. No live writer transaction is held across external callbacks; staged writers and portable compatibility retain their prior paths.
 - Three independent-writer controls delete bound task artifacts after statement reading begins. Current status/verify/range remain VALID from their immutable snapshot; next reads report missing/invalid data; parent mutation CAS rejects changed authority. Prior frozen384 implementations fail all3 intended assertions. Existing owner expiry/cleanup/discovery tests remain green. Public coverage sets and manifest arrays remain proportional; bounded whole-history memory is not claimed.
 - Attestation/e2e/verifier/coverage/summary plus discovery/audit30/30 pass; initial admission/attestation17/17 pass; new owner3/3 pass; isolated current packed/locked MCP73/73 pass. Fast terminalexit0, lint zero errors and unchanged complexity PASS. Raw /tmp/sqlite-attestation387-final-regression.log,owner.log,control.log,regression.log,mcp.log,fast.log,lint.log,complexity.log. Full385 is still live and predates387. No overlapping full rerun or CPU performance measurement started. Matrix21Pending74Partial across108command rows; all remaining full-plan requirements persist. No commit,push,PR,merge or publication.
 
-
 ### Increment388: mutation transaction review and rollback controls
+
 - Full frozen385 local prepush terminalexit0:2690coretests2679pass0fail11skip; isolated MCP73/73 and all gates passed. All2459post-terminal source hashes unchanged. Source predates387attestation correction and388tests; it is not final full-scope acceptance. Original36dirty-file hashes remain unchanged.
 - Reviewed task-create/task-abandon/record-check/gate-record/gate-revalidate native transaction boundaries. Five matrix rows moved Pending to Partial; matrix16Pending79Partial across108command rows. Readonly compatibility remains; external gate evidence files are intentional inputs. Direct low-level recordCheck requires an active transaction and still needs API-boundary acceptance; command coverage does not prove every lower-level entrypoint.
 - New record-check controls fail after staged receipt and after staged ledger append, proving state/artifact/event rows all remain identical. Successful retry commits the check and ledger. Initial event hook used stageText instead of appendText and missed its intended fault; corrected hook exercises the actual append path. Current rollback/task-abandon/gate group15/15 passed0fail/skip; lint zero errors. Raw /tmp/sqlite-mutation388-regression.log and lint.log; initial owner.log is non-authority for event fault.
 - Native discovery CPU profile started after full385 and focused tests became terminal; frozen3851000tasks20repeats, /tmp/sqlite-discovery388.cpuprofile. Profiling is diagnostic, not benchmark acceptance. No full suite overlap/performance claims. Remaining performance/memory/LOC/full final platform/package/GitHub/validator requirements persist; no commit,push,PR,merge or publication.
 
-
 ### Increment389: profile-guided empty-range query correction
+
 - Diagnostic frozen385 CPU profile at1,000empty-ledger tasks/20reads attributes largest sampled self time to typed ledger iteration (5,884.4ms), followed by task-row query (2,414.9ms), garbage collection (1,467.9ms), range iteration (1,217.3ms). Published diagnostic summary benchmarks/storage-sqlite/macos-discovery-profile-388.json; includes setup and does not prove end-to-end latency acceptance.
 - Owned ledger range iteration now skips SQL when start=end while still completing an empty full-scan SHA256 digest; typed iteration checks source expiry before skipping an empty range. No event/schema/index trust check is removed for populated histories. New control instruments the owned copy: zero range queries, correct empty digest, expired normal/typed scans rejected. Prior frozen385 implementation fails the same query-count assertion with2queries.
 - Ledger/discovery/audit27/27 pass0fail/skip; lint zero errors, unchanged complexity PASS. Raw /tmp/sqlite-ledger389-regression.log,control.log,lint.log,complexity.log. Fast and packed MCP checks running. Unrelated Xcode clang/swift processes consume substantial CPU; fresh latency comparison deferred rather than claiming quiet-machine acceptance. No external build interrupted. Performance2xlarge/small-tolerance, representative history/memory/FS/WAL/lock/event-loop and net LOC25percent targets remain unresolved.
@@ -2640,15 +2529,15 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Final389fast terminalexit0 and current packed/locked MCP73/73 passed; lint zero errors and unchanged complexity PASS. Native next followed VERIFYING/scoped+full-gap checks/DIAGNOSING/CORRECTING; preflight389READY. Full current-source verification will use a fresh frozen389snapshot; no timing acceptance claim under external CPU load.
 
-
 ### Increment390: direct recorded-check API transaction atomicity
+
 - Source review found recordCheck committed state through its lower-level auto transaction before receipt/event when called without an ambient domain transaction. Command wrappers hid that gap. Extended receipt/event fault controls to direct API; both previous implementations fail full row equality after rejection, proving partial durable writes.
 - Task-scoped recordCheck now opens one native domain transaction and records its commit witness; nested command/quality/executed-check callers reuse their existing transaction. Scalar input validation remains before storage admission. Untargeted compatibility/error path remains unchanged; no invalid/manual/actor evidence is promoted. State, receipt and VERIFICATION_RECORDED are staged together.
 - Command/direct rollback controls4/4 and final owner/executed-check group23/23 passed0fail/skip after witness addition; successful retry ends in TRANSACTION_COMMITTED. Completion/run-check/structural-quality/repair/lightweight-admission63/63 passed before the final direct-only witness option. Packed current MCP73/73 and fast terminalexit0 likewise precede that final direct-only option; command nested path is unchanged. Final lint zero errors; unchanged complexity PASS. Raw /tmp/sqlite-record390-before.log (intended direct failures),owner.log,final-owner.log,regression.log,mcp.log,fast.log,final-lint.log,complexity.log.
 - Full frozen389 remains live and predates390. Matrix16Pending79Partial; whole-plan performance/memory/FS/lock/WAL/event-loop/netLOC, remaining command/transitive writer audit, current final platforms/package/GitHub/full validator still incomplete. No commit,push,PR,merge or publication.
 
-
 ### Increment391: efficiency snapshot and evaluation read-to-commit continuity
+
 - Native efficiency now reads metrics and contract fingerprint from one owned project snapshot; Git/provider/baseline observations remain external. Concurrent contract deletion during provider callback retains original fingerprint in this report; later report seesmissingcontract. Prior frozen389 report returnsnullfingerprint and fails the intended control.
 - Native trajectory evaluation validates scenario input before existing-only writable admission, then collects trace+metrics in one committed project snapshot. Root operational observations survive its closure until the derived evaluation artifact/event CAS commit. Concurrent independently appended valid OBSERVATION during usage callback rejects E_STATE_REVISION_CONFLICT and publishes neither evaluationartifact norTRAJECTORY_EVALUATED; freshretry succeeds. Prior frozen389 persists the stale evaluation and fails missing-rejection control. No replay of external callbacks or live write transaction across provider I/O. Prepared overlay path retains existing behavior.
 - Public evaluation shapes/scenario fingerprint/local-file path boundary, unknown usage/comparability and proportional trace/metric histories remain unchanged. Command adapter efficiency preserves ledger and UNKNOWN/NOT_COMPARABLE; eval derives PASS and adds exactly one bound event. Two matrix rows moved Pending to Partial;14Pending81Partial across108command rows.
@@ -2656,8 +2545,8 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Full frozen389terminalexit0:2696coretests2685pass0fail11skip, MCP73/73 and all validation gates passed. All2462post-terminal source hashes unchanged; source predates390direct-check and391efficiency/evaluation corrections. Current scoped results do not substitute for final source/platform acceptance. A fresh frozen391candidate will be used for paired discovery measurements before another full run.
 
-
 ### Increment392: discovery threshold evidence and native semantic resolution
+
 - Frozen391paired discovery benchmark terminalexit0,2462source hashes unchanged;20repetitions each at10/100/250/1000/5000tasks against pinned baseline, complete equal-output/ownership checks, WAL/FULL unchanged. Native/basep95ms9.559/13.464,45.213/128.437,120.884/322.834,352.860/1199.395,1897.509/6473.841. Large1k/5k speedups3.399/3.412meet2xtarget;10tasknative faster,no small regression observed. Published benchmarks/storage-sqlite/macos-discovery-391.json with source/hardware/runtime/repetitions/conditions. Synthetic empty-ledger fixture and uncontrollable ordinary macOS/GUI background activity are disclosed; representative histories/actions/recovery/full resource and final source acceptance remain open. No ForgeLoop suite overlapped measurement.
 - Native automatic semantic decision discovery still used a physical directory and missed SQLite-only artifacts. Resolver now lists canonical logical decision names and validates ledger/artifacts inside one project snapshot; portable enumeration applies only without native authority. Model-route/semantic-plan and direct task-bindings reads now use one owned project snapshot.
 - New native tests first exposed taskStateFingerprint mismatch: producer hashed sanitized provider lifecycle while consumers hashed canonical raw task state. Producer/cache now bind canonical task-state digest from taskBindings; prompt/semantic fingerprints retain sanitized provider-input digest. Commands compare taskStateFingerprint; they do not incorrectly compare lifecycle-only stateFingerprint to a combined lifecycle+semantic prompt hash. Existing artifacts remain immutable, and stale-task proof still rejects. This change strengthens actual canonical task binding rather than trusting a truncated/redacted prompt as task authority.
@@ -2667,8 +2556,8 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Final392native next followed VERIFYING/scoped+full-gap checks/DIAGNOSING/CORRECTING; preflight392READY. Original36dirty-file SHA unchanged. Fresh full source verification will include390-392corrections; prior389green remains historical.
 
-
 ### Increment393: semantic provider and cache read-to-commit continuity
+
 - Native direct decision recording and context-plan now retain an existing-only writable operational root from binding discovery through provider evaluation and CAS persistence. No live SQLite or preparation transaction is held during external provider work. An independent canonical task change rejects E_STATE_REVISION_CONFLICT, publishes no new decision artifact, and does not replay the provider; a clean retry succeeds.
 - Cache preparation reads current bindings and artifact/ledger proof inside one owned project snapshot. Concurrent artifact deletion preserves the original cached result within that snapshot and merges observations into the parent for CAS rejection; a fresh read rejects E_DECISION_LEDGER_INVALID without provider invocation. Prepared mutation overlays retain their existing behavior.
 - Native owner8/8 and final decision/admission22/22 pass,0fail/skip. Prior frozen392 service controls fail4/4 as intended: two stale provider-result missing rejections and two mixed cache proof errors. Control probe permits an absent ambient store only for the old implementation so it tests the stale-persistence defect rather than null instrumentation. Initial control2 provider failures were instrumentation errors; corrected control3 is the evidence. Current packed locked MCP73/73, fast exit0, lint zeroerrors and unchanged complexity PASS. Raw /tmp/sqlite-decision393-owner2.log,final-regression.log,control3.log,final-mcp.log,final-fast.log,final-lint.log,final-complexity.log.
@@ -2677,16 +2566,16 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Native393 next/VERIFYING/scoped and full-gap evidence/DIAGNOSING/CORRECTING completed; preflight READY. Final next ENTER_VERIFYING is nonterminal because full-plan gaps remain. Next audit: checkpoint eligibility currently reads task state, ledger, ownership, contract and route in separate read owners before its mutation boundary; no completion claim.
 
-
 ### Increment394: checkpoint eligibility snapshot
+
 - Checkpoint eligibility now reads task state, event proof, ownership, contract, persisted route and freshness in one owned committed project snapshot. Prepared mutation paths retain staged observations; revalidation still rechecks eligibility inside its task transaction, preserves adjacent transition/commit witnesses, and never turns unrelated CAS conflicts into success.
 - New native fresh-checkpoint control independently deletes the canonical route after state read. Current eligibility retains the original fresh result, parent CAS rejects E_STATE_REVISION_CONFLICT, and a fresh invocation rejects missing proof. Removing only the snapshot wrapper fails with ARTIFACT_MISSING at route loading. Checkpoint20/20 and admission/bootstrap/workspace77/77 pass0fail/skip. Raw /tmp/sqlite-checkpoint394.log,control.log,regression.log. Lint zeroerrors, unchanged complexity PASS; fast exit0. Packed MCP result pending at this entry.
 - Matrix10Pending85Partial across108commands; Partial is reviewed scope, not whole-plan completion. Baseline command inspection identifies a remaining multi-artifact write boundary (baseline plus policy lock) to audit next. Full392green predates393/394; final platform/package/GitHub, representative resource comparisons, LOC investigation and validator closure remain open. No commit,push,PR,merge or publication.
 
 - Final394 packed locked MCP73/73 terminalexit0. Native next/VERIFYING/evidence/DIAGNOSING/CORRECTING completed, preflight394READY; final next remains nonterminal ENTER_VERIFYING because full-plan gaps remain. No full suite live; full392source remains frozen and unchanged.
 
-
 ### Increment395: baseline input boundary and native reset guard
+
 - Original plan Keep as files explicitly excludes baseline and policy.lock from SQLite: these remain reviewable project inputs with schema validation and canonical digests. The previous394 note identifying a multi-artifact database boundary was an investigation lead, not a migration requirement; no SQLite relocation or new file transaction backend was introduced.
 - Found real native guard race: task discovery snapshot closed before readTaskPolicySnapshot, allowing baseline reset after concurrent snapshot deletion. Active-task catalog and policy proof now share one committed project snapshot. Independent deletion removes exactly one canonical policySnapshot row after state read; current command rejects E_BASELINE_RECORD_DURING_ACTIVE_TASK and parent CAS rejects stale observations. Previous frozen392 baseline command permits reset and fails the intended missing-rejection control. Reset authorization and monotonic update behavior unchanged; project input files are outside SQLite observation/CAS scope as specified by the plan.
 - Owner5/5 and policy/autonomy/lock/native-path68/68 passed0fail/skip; negative control1 intended failure. Packed locked MCP73/73, fast terminalexit0, lint zeroerrors, unchanged complexity PASS. Raw /tmp/sqlite-baseline395-owner.log,control.log,regression.log,mcp.log,fast.log,lint.log,complexity.log. Matrix9Pending86Partial across108commands. Repository index source confirms tgrep engine files are another intentional plan exclusion, to finish review next.
@@ -2694,8 +2583,8 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Native395 next/VERIFYING/evidence/DIAGNOSING/CORRECTING completed; preflight395READY and final next nonterminal. Original36dirty-file hashes unchanged. Goal active, full scope retained.
 
-
 ### Increment396: engine/install exclusions and native Git ignore rules
+
 - Original plan explicitly retains tgrep index/engine lifecycle files, distributed source assets and install manifests outside SQLite. Reviewed repository-index and persistent transport paths/ownership locks; no task operational writer found in these namespaces. Scoped engine ownership/privacy/search/transport21tests20pass0fail1skip; real native migration requires an explicit tgrep binary and is not verified by the skip. Raw /tmp/sqlite-index396.log.
 - Reviewed init/update output plans, conflict/profile preservation, policy verification before manifest authority and engine setup boundary. Found generated .forgeloop/.gitignore still only described old state: native SQLite database, sidecars and storage marker could be staged in initialized projects. Added exact state.sqlite/state.sqlite-*/storage-version.json rules; no broad policy or manifest exclusion. Real Git check-ignore test verifies all four runtime paths ignored and baseline/policy.lock/install manifest remain reviewable.
 - Current init17/17 passed0fail/skip; preceding install/CLI56/56 was run before template correction and is historical. Lint zeroerrors and unchanged complexity PASS. Raw /tmp/sqlite-install396-final.log,log,lint.log,complexity.log. Fast/MCP ongoing at this entry. Matrix6Pending89Partial across108commands. Partial remains limited reviewed scope, not whole-plan completion.
@@ -2703,16 +2592,16 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Final396 fast and packed locked MCP73/73 terminalexit0. Native lifecycle next/VERIFYING/evidence/DIAGNOSING/CORRECTING complete; preflight396READY and next nonterminal. Original36dirty files unchanged. No full suite live; full392 remains historical.
 
-
 ### Increment397: direct completion preparation transaction
+
 - Direct prepareCompletion previously read contract/route/state and derived preflight/receipt relationships before only its final artifact writer entered a transaction. Task-bound API now owns the complete preparation transaction and commit witness; command path reuses its outer mutation transaction. Untargeted compatibility/error path retained. No external command replay or authority-policy bypass introduced.
 - Fault controls for direct and command entry throw after commit-witness event staging. Both reject and preserve exact canonical task/artifact/event rows; clean retries succeed with final TRANSACTION_COMMITTED. Removing only direct wrapper permits direct API success without reaching witness and fails missing-rejection control; this is a missing whole-operation/witness boundary control, not proof of power-loss or every concurrency scenario.
 - Preparation/direct-check/ergonomics23/23 and completion/claim/workspace/admission29/29 pass0fail/skip. Lint zeroerrors with five existing large-helper warnings; unchanged complexity PASS. Raw /tmp/sqlite-prepare397-owner.log,control.log,regression.log,lint.log,complexity.log. Fast/packed MCP ongoing at this entry. Matrix5Pending90Partial across108commands; full transitive/public scope, representative resource/LOC release investigation and current source/platform/package/GitHub/validator acceptance remain unresolved. No commit,push,PR,merge or publication.
 
 - Final397 fast and packed locked MCP73/73 terminalexit0. Native next/VERIFYING/evidence/DIAGNOSING/CORRECTING completed; preflight397READY, final next nonterminal. New full frozen source will include393-397 corrections, destination /tmp/forgeloop-prepare397-final and source manifest /tmp/sqlite-prepare397-final-source.json; raw /tmp/sqlite-prepush397.log and durable /tmp/sqlite-prepush397.exit. Result pending, no current full/platform acceptance claim.
 
-
 ### Increment398: complete audit projection snapshot
+
 - Native evaluateAudit now owns one committed project snapshot across completion, attestation, ready consistency, task ownership, action consistency, changed-path receipt metadata and structural-quality proofs. Prepared overlays retain existing behavior. Git/source/install/policy file observations are external; no whole-filesystem atomicity claim.
 - Concurrent independent deletion removes exactly one receipt after state read. Current audit retains its original complete result, parent observation CAS rejects, and the next fresh audit reflects missing receipt. Prior frozen397 audit changes coverage and receipt findings during the same invocation and fails exact-result control. Initial control.log failed a temporary dynamic import path; corrected control2.log is the intended mixed-snapshot evidence.
 - Native owner1/1 and audit/CLI-guidance regression4/4 pass0fail/skip. Lint zeroerrors with existing large-audit warning; unchanged complexity PASS. Raw /tmp/sqlite-audit398-owner.log,control2.log,regression.log,lint.log,complexity.log. Fast/packed MCP ongoing at this entry. Matrix4Pending91Partial across108commands; transitive/public/resource/final acceptance remains incomplete.
@@ -2720,8 +2609,8 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Final398 fast and packed locked MCP73/73 terminalexit0. Native next/VERIFYING/evidence/DIAGNOSING/CORRECTING completed; preflight398READY, next nonterminal. Original36dirty files unchanged. Full397session96660 remains live; its source predates398.
 
-
 ### Increment399: direct closure reconciliation atomicity
+
 - Direct runReconcileClosure previously committed its execution artifact and CHECKPOINT_RECONCILED event before rebound state/receipt; later state failure left a partial reconciliation. Task-bound direct service now owns one preparation transaction with commit witness across validation, execution result and reconciliation persistence. Command path reuses its existing transaction. Missing task identity retains old local validation error path.
 - Fault injected after state staging rejects and preserves exact task/artifact/event/execution rows; clean retry succeeds and ends TRANSACTION_COMMITTED. Prior frozen397 direct service rejects the injected failure but leaves execution/event rows, failing canonical-row equality. Reconciliation14/14 and workspace/rebind/admission6/6 pass0fail/skip. Raw /tmp/sqlite-reconcile399-owner.log,control.log,regression.log. Lint zeroerrors and unchanged complexity PASS; fast/MCP ongoing at this entry.
 - This verifies database rollback, not rollback of external command effects, external execution exactly-once/crash reservation or every failure point. Prepared callbacks hold no live SQL write transaction; full process-termination/execution resource proof remains part of original scope. No automatic command replay introduced. Matrix3Pending92Partial across108commands.
@@ -2729,8 +2618,8 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Final399 fast and packed locked MCP73/73 terminalexit0. Native lifecycle next/VERIFYING/evidence/DIAGNOSING/CORRECTING completed; preflight399READY and next nonterminal. Original36dirty files unchanged. Full397 remains live; no restart or performance measurement overlap.
 
-
 ### Increment400: remaining command boundary source review
+
 - Reviewed run-action short guard/lease boundary and action service ordering: proposal, deterministic preparation, authorization and STARTED commit precede exact-argv launch; uncertainty becomes COMMIT_UNKNOWN rather than blind retry. Reviewed run-check binding/scope/authority and no-live-SQL external verification path; execution result persists before atomic recordCheck state/receipt/event commit. Earlier390direct check fault controls remain relevant but do not cover every external execution interruption.
 - Reviewed legacy recovery: fresh explicit acknowledgement, narrow tolerated legacy-event validation, candidate equality across admission, semantic claim reservation, current recovery/state observations, precommit tail revalidation and atomic migration marker/recovery/event/witness, then fail-closed postvalidation. Existing code retains observations under native withProjectClaimsLock project scope; no production patch needed from this review. Initial discovery and every failure/resource/crash path remain part of transitive audit.
 - Current action hardening/chains/security, check/workspace and legacy recovery suite48/48 passed0fail/skip. Raw /tmp/sqlite-boundaries400.log. All108 command rows now have an initial reviewed boundary:0Pending95Partial. This is not complete SQLite acceptance or proof all95Partial rows satisfy all original requirements. Full transitive/public path/error/fault audit, process-termination/external reservations, representative resource/LOC investigation, final current source/platform/package/GitHub and validator closure remain open. soleSQLiteWriter stays false until full writer audit.
@@ -2742,8 +2631,8 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Current corrected template core/init25/25 pass0fail/skip; /tmp/sqlite-template400-final.log is acceptance. Full397failed evidence and scoped correction persisted. Diagnosis enum EXPECTATION_FAILURE was rejected; existing accepted IMPLEMENTATION_FAILURE records explicit stale-test-expectation cause. Lifecycle returned CORRECTING/preflightREADY with nonterminal next. No full suite live; final full current acceptance remains pending.
 
-
 ### Increment401: full acceptance consolidation and corrected frozen run
+
 - Fresh source frozen /tmp/forgeloop-audit401-final contains2465files including398audit,399direct reconciliation and400corrected ignore expectation. Manifest /tmp/sqlite-audit401-final-source.json; full prepush session61016 live, raw /tmp/sqlite-prepush401.log/durable /tmp/sqlite-prepush401.exit.397failed run is terminal; no overlapping full suite. No performance benchmark during validation.
 - Refreshed source consumer inventory benchmarks/storage-sqlite/consumer-inventory-401.json; relative import and named I/O signals are discovery only. Added original definition-of-done evidence/checklist to migration matrix. Explicitly retain full95Partial transitive/public/writer/fault/resource scope after initial command review; soleSQLiteWriter remains false.
 - Current source inspection confirms native action/approval lists use indexed records when authority selected, but retain read-only portable directory paths; obsolete normal-operation reachability and explicit interchange requirements must be reconciled before deletion. Configuration/export atomic writing is required by original plan. Remaining incomplete legacy transaction inspector is compatibility/maintenance review, not permission to restore a second writable backend.
@@ -2751,8 +2640,8 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Refreshed inventory has235signal modules127surfaces. Repository hygiene passes. Native401 next/VERIFYING/evidence/DIAGNOSING/CORRECTING completed; preflight401READY, next nonterminal. Original36dirty files unchanged. Full401session61016 confirmed live; frozen source excludes subsequent documentation/inventory additions, no terminal result claimed.
 
-
 ### Increment402: compatibility reader classification, writer/fault evidence and current LOC
+
 - Source review finds incomplete .txn discovery only in legacy migration-source admission, doctor without native authority and compatibility benchmark. Native doctor bypasses it; filesystem recovery/compaction explicitly refuse. Action/approval directory readers sit behind existing-native selection and indexed store branches; retain read-only portability until explicit import/public path coverage proves removal safe. No second writable backend added, no blanket deletion of required maintenance evidence.
 - Reviewed signing statement/bundle private temp files and native attachment staging: canonical bytes are supplied to external signer without legacy mirror; selected bundle requires prepared transaction and current statement binding. Configuration/portable writer forbids operational namespaces and active operational transactions. These are intended external/interchange boundaries, not persistence-count exclusions.
 - Current sole-writer guards/recoverable errors/signing/legacy signature suite31/31 pass0fail/skip, raw /tmp/sqlite-writers402.log. Page-budget exhaustion is a real SQLite FULL probe, not physical host disk exhaustion. Busy/read-only/corrupt-byte preservation and explicit legacy signature migration are scoped; full public writer/process-termination proof remains incomplete, capability false retained.
@@ -2761,16 +2650,16 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Native402 next/VERIFYING/evidence/DIAGNOSING/CORRECTING completed; preflight402READY and final next nonterminal. Hygiene passes, original36dirty files unchanged. Full401handle61016 confirmed live; no restart or terminal acceptance claim.
 
-
 ### Increment403: current canonical process-crash and attachment proof
+
 - Inspected interruption worker: canonical real diagnosis fixture, native owned store and command-runtime record-diagnosis; Proxy barriers pause actual conditional state update/event INSERT/COMMIT boundaries. Parent SIGKILL/reopen validates original or complete committed snapshots, integrity, ledger semantics, event count/head/order/hash. No simulator or unmanaged active project state used.
 - Current interruption before commit, after commit acknowledgement, after state update before event, next-writer recovery and reopened validation plus correction contention/attachment cases8/8 pass0fail/skip. Raw /tmp/sqlite-crash403.log. Attachment conflict preserves all records and expired preparation refuses late bindings. This is strong Mac process-termination evidence for diagnosis/attachment families, not every public mutator or external effect exactly-once; no physical power-loss requirement added.
 - Refined acceptance matrix to record observed process boundaries rather than repeat undifferentiated missing-crash-proof claim. Remaining mutation families/public writers, representative resources/LOC target release decision and final platforms/package/GitHub/validator acceptance stay open. Current production unchanged from frozen401; full401session61016 remains live. No commit,push,PR,merge or publication.
 
 - Native403 next/VERIFYING/evidence/DIAGNOSING/CORRECTING completed; preflight403READY and final next nonterminal. Hygiene passes; original36dirty files unchanged. Full401session61016 remains confirmed live, no replacement run or terminal acceptance.
 
-
 ### Increment404: full401 acceptance and genuine diagnosis benchmark baseline
+
 - Full frozen401terminalexit0:2716coretests2705pass0fail11skip, packed MCP73/73 and every validation gate passed. All2465post-terminal source hashes unchanged. It includes398audit,399reconcile and400template correction; later403scope documentation/inventories excluded. Current production unchanged from401 at this point. Remote382 predates recent corrections; current remote/package/GitHub/protocol global acceptance remains pending.
 - Inspection found diagnosis parity harness labelled a current runRecordDiagnosis invocation filesystem and attempted migration of an already native fixture. It could not establish a pinned-filesystem comparison. Corrected --baseline-root requires clean ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5, imports that command/ledger validator, exports current canonical fixture to separate portable root before timing, copies reviewable policy only if present, and opens already-native current DB before timing. Both invoke their real command and assert a new revision/event, validate resulting ledger outside timed samples. No synthetic backend label or import cost included in timer.
 - Smoke1failed because canonical fixture has no policy directory; ENOENT absence now preserved, other copy errors propagate. Corrected smoke2completed one sample each with actual baseline/native domain mutation and valid ledgers. This is harness validation, not performance/release acceptance. Raw /tmp/sqlite-diagnosis404-smoke2.json/.err. Scalar counts/seed scope and whole payload/schema proof remain disclosed; representative action/recovery/resource matrix not closed.
@@ -2778,8 +2667,8 @@ Increment229: copied the authenticated clean MCP package/source into independent
 
 - Frozen404candidate2467files launched real paired diagnosis1/10tasks20measured+2warmups in session21335; raw /tmp/sqlite-diagnosis404.json/.err and durableexit. Handle confirmed live; no terminal result or speedup claim. No validation/protocol CLI or other measurement overlaps this benchmark. Protocol remains CORRECTING from403; next/evidence reconciliation deferred until measurement terminal to avoid contaminating timing.
 
-
 ### Increment405: paired canonical diagnosis result
+
 - Frozen404benchmark terminalexit0; all2467postmeasurement hashes unchanged.20measured/two warmups each at1/10tasks,29actual selected events from supported canonical failure/diagnosis timeline. Real pinned filesystem command/exported fixture and current native command both assert actual revision/event mutation and validate resulting ledgers outside timer. Native/basep95ms4.962/143.996 and5.264/154.712; medians4.598/125.480 and4.629/137.476. Published macos-diagnosis-404.json with exact source hashes/reproduction/conditions and baseHEAD-vs-uncommitted implementation distinction.
 - Targeted small canonical diagnosis case gains performance with WAL/FULL unchanged. No large-history/action/recovery/RSS/FS/lock/WAL/event-loop/general-release claim. No full/focused suite or other benchmark overlapped; ordinary GUI/background activity not controlled. Old mislabeled harness results not accepted. No live benchmark remains.
 - Full401green proves production398/399 and400template correction; benchmark harness changed afterward and must receive current validation. Remote382stillpredates corrections, final platform/package/GitHub/validator/LOC/resource acceptance remains incomplete. Goal active; no commit,push,PR,merge or publication.
@@ -2932,7 +2821,6 @@ Increment229: copied the authenticated clean MCP package/source into independent
 - Progress remains55% (11/20 original verified checkpoints). Full correctedsourceplatforms,consumer/solewriter,maintenance,performance/resources,inclusiveLOC,actualworkflow execution andprotocolPR requirements remain open. No commit,push,PR,merge or publication.
 
 - Corrected612staging follow-up: archive digest verified before isolated extraction; Windowssetup exit0 verifies2638 source hashes,fetches pinnedbaseline Git objects andinstalls135 locked packages. Full Windows612 launched once;OS process PID1936 ispresent,durable exitabsent andcore tests progress. Linux612 remains queued untilWindows612 terminates. Mac611b remains live.
-
 
 ## Increment616 / scope617 — reservation parity and current platform closure
 
@@ -3095,7 +2983,6 @@ Owned full Mac655 prepush session56643 terminated exit0 after618.56 seconds. All
 
 Current Windows/Linux and actual changed workflows remain unverified. The retained LOC inventory604 is above its reduction target and scope review remains pending; commit gains do not settle that requirement. Snapshot decision-list cost at1000 tasks remains visible in654 evidence. Future optimizations must retain consistent projections, original artifact validation/errors, prepared-operation visibility and observation rechecks, while keeping external work outside native transactions. Whole persistence authority/maintenance coverage, original performance/resource/LOC acceptance, current remote platforms,VALID and PR delivery remain open. Progress stays **55% (11/20 done)**.
 
-
 ### Increment 657 — finite consistent decision capture
 
 The task/decisions resource now captures its sorted catalog and canonical bytes synchronously inside one deferred native read transaction, then validates schemas after that transaction closes. Existing canonical binding checks and observation rechecks remain active. Prepared operations retain staged visibility; caller-owned raw native transactions are rejected without being closed. A deferred later storage error preserves preceding schema-failure order. Other task resources retain their existing whole-project snapshot.
@@ -3104,18 +2991,15 @@ Selected storage tests32 pass; three focused snapshot/error-order tests pass, in
 
 Full Mac655 is historical for this correction. Current full Mac, Windows/Linux, candidate workflows, complete persistence authority/maintenance closure, original resource/performance and inclusive LOC acceptance remain open. No PR or publication. Progress remains55% (11/20 done); no requirement waived.
 
-
 ### Increment 658 — expired claim-release authority
 
 A focused regression reproduced releaseClaims deleting a reservation from a Promise continuation after runInTransaction rejected and rolled back. Adding the repository writer guard rejected that direct deletion; a second regression then reproduced reopening a new native transaction from the same expired continuation. Transaction entry now rejects expired inherited contexts before opening a native transaction. Active independent-connection nesting retains its existing behavior. Valid synchronous transactional and ordinary single-statement claim releases remain supported. All63 selected store, differential, attachment and decision-snapshot tests pass; fast verification passes. Evidence: benchmarks/storage-sqlite/expired-claim-release-658.json. Jevgrep658 completed exit0 and led to current transaction/repository source inspection. This correction does not prove every public or transitive writer boundary.
 
 The conservative inclusive LOC inventory was refreshed against the clean pinned ee9 baseline, retaining every storage/import/export/maintenance module and the same whole-module union on both sides. Candidate scope remains semantically unapproved and the25% reduction target remains unmet; new guards are retained despite this size pressure. Evidence: benchmarks/storage-sqlite/persistence-loc-candidate-658.json. Full Mac655 predates657/658, current remote and workflow checks remain open, and no PR/publication or COMPLETE/VALID is claimed. Progress55% (11/20 done).
 
-
 ### Increment 659 — independent transaction regression coverage
 
 All59 store/differential tests pass. Added regression confirms active nested transactions on independent databases each commit correctly, the outer native transaction remains active after the inner closes, and an expired continuation cannot reopen on a different database to delete claims. Both transactions remain closed after rejection. No production code changed. Repository writers, lease mutations, unit-of-work commit and attachment-reference insertion were inspected for their native transaction guards; this bounded source audit does not prove all public/transitive writers, attachment publication or maintenance authority. Evidence: benchmarks/storage-sqlite/independent-transaction-context-659.json. Consolidated current Mac prepush is the next verification action; previous full655 predates657/658. Progress55%; original full scope remains incomplete.
-
 
 ### Increment 664 — consolidated Mac failure diagnosed and corrected
 
@@ -3123,13 +3007,11 @@ Owned fullMac659 session77655 terminated exit1 after521.91 seconds; all2715 admi
 
 Native decision-byte validation was extracted into a coherent helper in the same module, preserving capture, error order and output. Existing complexity baseline was unchanged. Complexity check now passes;14 resource/snapshot tests pass and lint exits0 (warnings remain). This production refactor needs consolidated validation; no performance rerun or release acceptance is inferred. Workflow routing660 and live runner/baseline failure661 review remain external diagnostic artifacts pending incorporation after validation. All original unmet requirements remain open; progress55%; no PR/publication or COMPLETE/VALID.
 
-
 ### Increment 671 — current Mac verification reconciled
 
 Owned fullMac665 session70222 terminated exit0 after559.65 seconds. All22 prepush gates pass, including the unchanged complexity gate, clean MCP install/tests, MCP/core packaging and Python validators. All2716 admitted file hashes were unchanged before and after execution. This current run covers decision capture657, expired claim release and transaction revival658, independent-connection regression659 and complexity refactor664. Evidence: benchmarks/storage-sqlite/full-macos665-terminal.json. Historical failed659 complexity evidence is preserved.
 
 Current remote Windows/Linux and actual candidate workflow execution remain unverified. Persistence authority/maintenance closure, original performance/resource and inclusive LOC acceptance, validator-backed COMPLETE and PR delivery remain open. No production changes were made in reconciliation. Progress55% (11/20 done), no requirement waived.
-
 
 ### Increment 672 — attachment publication entry guard
 
@@ -3137,13 +3019,11 @@ A regression reproduced database-associated attachment publication returning pub
 
 Standalone publication without a database remains an explicit file API. Already-started preparation may retain immutable unbound objects by existing design; this entry guard does not claim cancellation of arbitrary asynchronous external work or exhaustive persistence authority. FullMac665 predates this two-module guard correction; current remote and complete original acceptance remain open. Progress55%, no waiver or PR/publication.
 
-
 ### Increment 673 — retained transaction compatibility containment
 
 Current caller review finds the legacy incomplete-transaction scan used by migration source admission and doctor when no native store is selected. It remains read-only; retired compaction/recovery refuse writes. Native event reads use canonical SQLite; portable event readers remain required explicit import/export inspection. Captured event sidecars are retained archive evidence and excluded from candidate import. These modules remain in inclusive LOC scope; this review does not prove repository-wide obsolete-code removal.
 
 A regression reproduced symlinked legacy transaction discovery returning without rejection. The scan now checks safe containment for root, entries and each manifest before reading; containment errors are outside the malformed-manifest compatibility catch. Symlink root and file-manifest tests preserve external bytes. All22 transaction/migration-source tests, fast verification and unchanged complexity check pass. Jevgrep673 completed exit0. Evidence: benchmarks/storage-sqlite/retained-transaction-containment-673.json. Concurrent hostile check/use replacement remains unproven. FullMac665 predates672/673; original scope and platform/release/LOC gates remain open. Progress55%; no PR or publication.
-
 
 ### Increment 674 — inclusive LOC refresh and release hold
 
@@ -3151,13 +3031,11 @@ Reproducible conservative inventory against clean pinned ee9 now counts278 inclu
 
 Delivery recommendation is HOLD_RELEASE under the original plan's failed-target investigation/release-decision rule. No25% target waiver, hidden importer exclusion, integrity weakening or formatting compression was adopted. Retained legacy scanner/portable-reader roles were investigated in673 and remain required; deleting them solely to shrink counts would remove compatibility admission/evidence behavior. Evidence: benchmarks/storage-sqlite/persistence-release-hold-674.json. Required next evidence is a reviewed symmetric scope, safe justified consolidation, current full platforms/candidate workflow execution, original resources/performance acceptance and validator-backed closure. This recommendation does not replace the user goal or authorize publication. Progress55%; no PR/publication.
 
-
 ### Increment 675 — largest-module persistence scope review
 
 Source review of four large conservative-union modules distinguishes roles. Unchanged project-detection.js reads repository manifests/source using open-read and readdir, ignores .forgeloop during traversal and performs project classification; this is a candidate non-operational inspection boundary, not an applied exclusion or complete transitive proof. CLI command definitions are declarative but include new migration/restore maintenance metadata, so remain counted. Structural-quality service and completion-artifacts directly persist canonical baseline/evaluation/check/receipt/state/event evidence and remain included despite mixed domain logic.
 
 Sensitivity only: symmetrically excluding unchanged project-detection2073 lines gives41440 baseline and49501 current (+19.45%), still below no reduction target. No exclusion was applied to the maintained674 union; all storage/import/export/maintenance costs remain counted. Evidence: benchmarks/storage-sqlite/persistence-scope-role-review-675.json. Scope review remains incomplete and HOLD_RELEASE recommendation remains. No production changes or broad LOC acceptance. Progress55%; original goal remains active.
-
 
 ### Increment 682 — current consolidated Mac verification
 
@@ -3165,13 +3043,11 @@ Owned fullMac676 session17763 terminated exit0 after530.83 seconds. All22 prepus
 
 Current Windows/Linux and actual candidate workflows remain unverified. Original inclusive persistence/maintenance authority closure, resources/performance and LOC acceptance, VALID and PR remain open. Conservative LOC674 and scope-review675 still do not meet the25% reduction target; HOLD_RELEASE recommendation retained. Progress55%, no waiver or publication.
 
-
 ### Increment 683 — retained filesystem wrapper caller refresh
 
 Current src JavaScript AST inventory identifies79 named-import identifier call sites in37 modules:54 writeFileAtomic and25 readBytes. Each row retains source hash, location and first argument; per-call roles remain pending. This bounded discovery excludes namespace, dynamic, assigned aliases, unresolved shadowing and transitive behavior, and is not sole-writer or unused-code proof. Evidence: benchmarks/storage-sqlite/filesystem-wrapper-calls-683.json. Jevgrep failed because its supplied root was a file; exact references and direct source reads were used. Installed TypeScript exposes only version metadata, so existing Espree parsed the inventory without installing software.
 
 Directly inspected retained callers include persistent-transport state, repository-index lifecycle records and migration/restore publication journals. The atomic writer still has required uses and is not deleted solely for LOC pressure. Config/export/install/attachment atomic behavior stays required under the original plan. No production code changed; fullMac676 remains current for production. Per-call retained-role and authority closure, original resources/LOC and current remote/workflow acceptance remain incomplete. Progress55%; no PR/publication.
-
 
 ### Increment 684 — retained transport and index lifecycle paths
 
@@ -3179,20 +3055,17 @@ Two wrapper sites from inventory683 were reviewed through their callers. Transpo
 
 Transport home remains trusted configurable host input; its deep-imported write helper accepts arbitrary paths. Parent aliases, concurrent check/use replacement, external native-process effects and whole dependency/public-surface closure are not proven. No production edits or new runtime tests; full Mac676 remains current for unchanged production. Remaining77 inventory calls still need individual role review. Progress55%; original scope, release/LOC, remote/workflow, VALID and PR requirements remain open.
 
-
 ### Increment 685 — portable output and expired marker activation
 
 Four additional atomic wrapper sites were reviewed: portable JSON output rejects operational namespaces/database files and active transactions; installer manifest uses a fixed validated path; selected signing statements use private temporary files with canonical-byte recheck and cleanup; marker activation requires a live maintenance owner and exact pending binding. Bundle raw output directories derive from validated task IDs. Source hashes and limits: benchmarks/storage-sqlite/portable-marker-boundaries-685.json. Combined with684, six of79 inventory sites have current scoped role reviews; remaining73 and whole public authority remain open.
 
 A new marker regression verifies an expired Promise continuation cannot adopt a later maintenance owner. Missing-owner and wrong-operation attempts preserve pending marker bytes; a matching live owner activates successfully. All27 selected marker/direct-artifact/signing/maintenance tests pass. No production edits; full Mac676 still covers current production but predates this test addition. Progress55%, original requirements unchanged; no PR/publication.
 
-
 ### Increment 686 — portable exporter native-destination refusal
 
 Regression reproduced exportDatabase emitting operational filesystem aliases directly into an active native project. Public task/database export now checks physical destination ancestors for native database, marker or retained sidecar evidence before snapshot/output. Native roots and operational namespace destinations reject E_STORAGE_EXPORT_DESTINATION; separate portable subdirectories remain valid. Existing per-file safe paths, identity validation, size bounds and attachment/manifest integrity bindings remain intact. Five exporter wrapper sites have scoped role review, giving11 reviewed sites across684–686; original683 line positions are historical after this edit. Evidence: benchmarks/storage-sqlite/export-destination-authority-686.json.
 
 Original63 selected store/export/attachment/migration tests pass. Expanded5 destination regressions pass, including linked root/task-state destinations and each retained evidence type in a separate project, with preserved bytes and source integrity. Jevgrep completed exit0 with107000 bytes. Concurrent hostile replacement after admission remains unproven; non-native portable exports retain re-importable legacy layout. Full Mac676 predates this production correction; renewed full/current remote verification remains required. Progress55%; no original requirement waived and no PR/publication.
-
 
 ### Increment 687 — full Mac result, installer roles and next authority correction
 
@@ -3202,13 +3075,11 @@ Direct caller review classifies15 installer wrapper sites across doctor/init/upd
 
 An isolated fixture demonstrates gate validation reporting a canonical SQLite artifact missing despite available matching bytes/digest. Record/revalidate hash paths also require source files. Next correction must cover all three gate reference consumers while preserving external-file bounds and canonical observations. All three self-hosted runners are currently online/idle; Windows and Node compatibility workflow_dispatch provide a candidate validation route after branch push, without restoring the local WinRM client for those jobs. PR-only core still needs supported dispatch or eventual PR execution; availability is not candidate execution or physical host proof. No push/dispatch/PR performed. Evidence: benchmarks/storage-sqlite/next-action-evidence687.json. Progress55%; original full acceptance, LOC/resources and VALID remain open.
 
-
 ### Increment 688 — canonical gate artifact byte bindings
 
 Before-fix regressions reproduced canonical gate freshness reporting available bytes missing and gate-record rejecting the canonical descriptor without a source file. Recording, freshness validation and revalidation now share canonical byte bindings through the operational read observations. Direct freshness selects existing native authority; missing selected artifacts never fall back to retained physical shadows, and mixed-layout entry still refuses admission. Canonical ledger hashing streams rows to preserve exact byte digest without whole-ledger text materialization. External file admission and gate phase/epoch/provenance rules remain intact. Evidence: benchmarks/storage-sqlite/canonical-gate-bindings-688.json.
 
 All59 selected gate/preflight tests pass, including public record-to-revalidate lifecycle without mirrors, changed/missing canonical references, independent writer CAS rejection preserving its update and suppressing staged gate publication, and streaming ledger byte parity. Fast verification, lint and unchanged complexity check pass. Full Mac686 predates this three-module correction; renewed full/current remote validation remains required. Streaming mechanism is not a measured resource/release acceptance claim. Progress55%; original scope/LOC/resource/workflow/VALID and PR requirements remain open, no waiver or publication.
-
 
 ### Increment 689 — candidate core dispatch and remote identity evidence
 
@@ -3216,13 +3087,11 @@ Core workflow now supports manual dispatch, using existing classifier --all to s
 
 All14 workflow/classifier/admission tests and6 Python workflow-policy tests pass; fast verification, lint, docs and diff checks pass. Classification shell integration is local Mac evidence, skipped on Windows because its actual workflow job is hosted Linux. GitHub confirms PR Core registered/active and previously run, but its latest successful PR run is not candidate evidence. Current remote execution and source-pinned candidate workflows remain pending. Dispatch the remote workflows sequentially; no commit/push/dispatch/PR/publication performed. Full Mac686 predates runtime688 and this workflow edit. Progress55%; original authority/maintenance, resources/performance, inclusive LOC and VALID requirements remain open.
 
-
 ### Increment 690 — current prepush PASS and candidate branch preparation
 
 Owned full Mac689 session76088 terminated exit0 after555.93 seconds. All22 gates pass, all2734 admitted source hashes were unchanged, and every test group reports zero failures. This run covers canonical gate correction688 and candidate workflow/manual classification changes689. Evidence: benchmarks/storage-sqlite/full-macos689-terminal.json. No runtime/workflow edits in reconciliation.
 
 Candidate staging inventory excludes both dependency symlinks. Remote main still matches pinned ee9 and the candidate branch is not yet remote at preparation. The account has repository push permission; candidate commit/push and sequential Windows then compatibility/core dispatch are the next verification actions. Original plan requires PR only after completion, so no PR or release is created at this step. Full Windows/Linux/candidate workflows and original authority/maintenance/resource/LOC/VALID acceptance remain open. Progress55%; no waiver.
-
 
 ### Increments 691-694 — Candidate platform execution and canonical presence
 
@@ -3234,7 +3103,6 @@ Compatibility run 37648524533 on older candidate 7289669 passes Linux Node 24.19
 
 Progress remains **55% (11/20 verified checkpoints)**. Original consumer/maintenance closure, current full platform checks, resource/performance and net-code-reduction acceptance, validator-backed completion and the eventual PR remain open. Native task phase is CORRECTING; repository fingerprint drift prevents advancement and next suggests a closure command that excludes this phase and requires objective satisfaction. This protocol closure blocker is preserved; no state is rewritten directly, no COMPLETE/VALID is claimed, and no PR or publication is created.
 
-
 ### Increment 695 — Remove obsolete prerequisite adapter; review maintenance writes
 
 `src/storage/execution-prerequisites.js` has no callers/imports in current production, tests, documentation or scripts and is absent from public package/index exports. The active phase path uses the shared core validator. Remove the unused adapter while preserving shared validation and all importer/exporter/maintenance code. Forty-seven storage/preflight tests and 25 phase/package tests pass, as do lint and fast verification. The core workflow 37650850892 remains active on immutable source 5c4e54e; it does not cover this later deletion.
@@ -3243,16 +3111,24 @@ Current source review covers candidate inventory/manifest/recovery journal roles
 
 The conservative candidate LOC union now includes the changed continuity-lint module on both sides: baseline 43,592 versus current 51,654 lines (+18.49%), still failing the original reduction target. Scope review is incomplete; differing inventory scope must not be presented as a measured improvement. All seven compatibility jobs in run 37648524533 are terminal SUCCESS on older source 7289669. Progress remains55%; original full acceptance, net code reduction, resources, protocol closure and PR remain open.
 
-
 ### Increment 697 — Consistent retry cleanup and preserved test semantics
 
 Replace 432 recursive removals inside AST-identified finally/t.after cleanup blocks in 167 test files with the existing removeTempTree helper. Two files containing local rm bindings remain unchanged for separate review. Full module AST comparison against a5e3540, normalizing only the inventoried calls and helper/fs imports, confirms assertions and non-cleanup fault deletions are unchanged. Lint, fast verification and the full local Mac Node 24.19 suite pass: 2,854 total, 2,843 passed, 11 skipped, zero failures. This is core-suite validation, not a full 22-gate prepush or current Windows pass. Evidence: benchmarks/storage-sqlite/test-cleanup-parity697.json.
 
 Core workflow 37650850892 on earlier source 5c4e54e has terminal-success Linux shards 1, 2 and 4; minimum-runtime testing is running and shard 3 is pending. No overlap is dispatched on the shared Windows/Docker host. An isolated fixture separately reproduces direct required-artifact fingerprinting falsely reporting an existing canonical descriptor missing outside an existing storage scope; correction follows after this stable-source test run. Progress remains55%; original authority/consumer, full platform, resource/LOC and validator-backed closure requirements remain open. No PR or publication.
 
-
 ### Increment 697 follow-up — Required-artifact canonical read scope
 
 An isolated task-create fixture and a failing regression show the direct required-artifact fingerprint helper reporting a canonical SQLite descriptor missing outside an existing storage scope. The helper now selects the existing native authority through the shared read-snapshot boundary before the original fingerprint loop. Twenty-three focused direct-artifact, checkpoint and canonical-lifecycle tests pass, including absent canonical artifact reporting, missing-database refusal, orphan WAL/SHM refusal and external material-file freshness. Lint, fast verification and unchanged complexity limits pass. Evidence: benchmarks/storage-sqlite/required-artifact-scope697.json. The full core Mac pass earlier in this increment predates this four-line runtime correction.
 
 Direct source review also records remaining legacy-source capture and active replacement manifest/intent/archive journal roles plus the portable artifact reader/writer; evidence: benchmarks/storage-sqlite/remaining-wrapper-review697.json. This does not establish arbitrary external writer exclusion or whole transitive authority. Official next remains CORRECTING/RECONCILE_CLOSURE with repository-drift recovery guidance; the previously documented phase/objective blocker remains, and no lifecycle state is manually rewritten. Progress55%; final platform/full prepush, original resource/LOC acceptance and VALID/PR remain open.
+
+### Increment 698 — Full current Mac pass, terminal core result and Markdown correction
+
+Full local Mac prepush on d344831 passes all22 gates after539.08 seconds:2855 core tests,2844 passed,11 skipped,zero failures; all2755 admitted source hashes remain unchanged. This covers the required-artifact read-snapshot correction and shared cleanup. Evidence: benchmarks/storage-sqlite/full-macos698-terminal.json.
+
+Core run37650850892 on earlier5c4e54e is terminal FAILURE: Linux coverage shards1–4, minimum runtime, coverage report, audit, lint, package smoke and native index Linux/Mac/Windows all succeed. Documentation fails241 Markdown formatting findings; aggregate validation correctly fails. Correct blank-line/heading/list spacing across seven affected documents while retaining existing nonblank lines; add two explicit parent section headings. Local markdownlint is unavailable and not installed; actual renewed CI is required. Evidence: benchmarks/storage-sqlite/core-workflow698-terminal.json and docs-format-parity698.json.
+
+Fresh named-import wrapper inventory records79 direct calls across37 modules, each with current source hash/function/argument and a bounded source-role review reference. Namespace/dynamic/assigned aliases, unresolved shadowing and arbitrary external effects remain outside that inventory; it is not sole-writer proof. Static workflow inventory distinguishes self-hosted project suites from hosted classification, aggregation, CodeQL and explicit publication/metadata jobs. Evidence: filesystem-wrapper-map698.json, current-source-review698.json and workflow-routing698.json under benchmarks/storage-sqlite.
+
+Refresh the current progress page:11 DONE,8 PARTIAL,1 PENDING;55% remains unchanged. The conservative LOC union remains above baseline and below no reduction target; full scope/resource/code-size acceptance and validator-backed closure remain open. No PR or publication.

@@ -72,6 +72,7 @@ At1,000 approvals, uninstrumented listing is30.866× faster on this fixture; the
 ```sh
 node scripts/benchmark-storage-idempotency.mjs --operation=approvals --fixture=public-approvals --sizes=10,1000 --repeats=20 --warmup=2 --resources=true --baseline-root=/absolute/path/to/clean/baseline
 # Repeat separately with --resources=false for latency comparison.
+
 ```
 
 ## Supported protocol validation: regression requires investigation
@@ -96,6 +97,7 @@ The small native fixture regresses7.422ms, exceeding the proposed5ms allowance; 
 ```sh
 node scripts/benchmark-storage-idempotency.mjs --operation=protocol --fixture=public-approvals --sizes=10,1000 --repeats=20 --warmup=2 --resources=true --baseline-root=/absolute/path/to/clean/baseline
 # Repeat separately with --resources=false for latency comparison.
+
 ```
 
 ## READY-preflight typed lookup repetition
@@ -111,6 +113,7 @@ Use `--persistent=true` with the supported protocol operation to measure a warm 
 ```sh
 node scripts/benchmark-storage-idempotency.mjs --operation=protocol --fixture=public-approvals --sizes=10,1000 --repeats=20 --warmup=2 --persistent=true --resources=false --baseline-root=/absolute/path/to/clean/baseline
 # Run separately with --resources=true for instrumented resource samples.
+
 ```
 
 Frozen454 publishes20 measured/two discarded warmup samples per backend/size in `macos-persistent-protocol-latency-454.json` and `macos-persistent-protocol-resources-454.json`. Complete successful VALID results match with no errors, and all2483 source hashes remain unchanged after both terminal exits0. The harness also passes small control runs for both grouped backend orders and the default alternating per-call mode; ESLint reports no errors or warnings. No local suite or other benchmark overlaps these runs; desktop activity and filesystem caches remain uncontrolled.
@@ -145,7 +148,6 @@ for this zero-claim task; this is a diagnosis lead, not permission to bypass
 ownership or integrity validation. Bounded full-audit/claim projection and
 representative nonempty-claim/concurrency fixtures remain required.
 
-
 ## Nonempty claim reservations: large fixture target still failed
 
 ```sh
@@ -167,7 +169,6 @@ transaction results do not establish full audit parity. No production limit,
 ownership assertion or durability setting was relaxed. These synthetic
 RECEIVED observations do not replace complete lifecycle, power-loss, memory
 or1/2/4/8-process acceptance.
-
 
 ## Conservative reservation retention correction
 
@@ -191,7 +192,6 @@ event fixture at its unchanged 2 MiB limit, so that row records ownership
 parity as false. All earlier failed measurements remain available. Separate
 power-loss, full lifecycle, cold CLI, warm MCP and process-contention evidence
 remains required.
-
 
 ## Independent-process state/event contention
 
@@ -227,7 +227,6 @@ not peak WAL pressure. Direct lock-wait duration, Node filesystem operations,
 SQLite internal I/O, actual CLI/MCP startup, power-loss equivalence and a larger
 lifecycle/artifact fixture remain separate work. Release acceptance remains
 `releaseThresholdsVerified: false`.
-
 
 ## Conservative persistence LOC inventory: target not met
 
@@ -291,7 +290,6 @@ claimed. Public export has no baseline-equivalent timing. Full audit still
 materializes events; the observed memory deficit is retained as the correction
 baseline. This report does not prove bounded full audit or release acceptance.
 
-
 ## Callback snapshot audit, increments 366–367
 
 `macos-ledger-memory-367.json` records the same seeded 10/1,000/100,000
@@ -321,7 +319,6 @@ Observation-only payloads do not prove action/approval/recovery scale. Writer
 waits, physical disk fault behavior, and full release acceptance remain open.
 The unfrozen diagnostic366 report remains at /tmp/sqlite-ledger-memory366.json;
 it is excluded from final-source acceptance.
-
 
 ## Verified typed selection and scratch relation backing, increments 368–370
 
@@ -354,7 +351,6 @@ copying still need investigation, alongside remaining relation arrays and
 consumer/platform acceptance. No full bounded-memory or performance-release
 claim follows from this observation-only report.
 
-
 ## Combined canonical scan, increment 371
 
 `macos-ledger-memory-371.json` repeats the same observation-only experiment on
@@ -370,13 +366,11 @@ still needs investigation and release evaluation. This report precedes372
 recovery-summary changes and is not representative relation/platform/full
 release acceptance.
 
-
 ### Preliminary discovery regression after snapshot guards (increment 383)
 
 `macos-discovery-383-before.json` measures frozen382 source against the clean plan-pinned baseline, five warm-cache API repetitions per variant/size on Node24.19.0/SQLite3.53.3/macOSARM64/AppleM2. Reproduce with `node scripts/benchmark-storage-sqlite.mjs --sizes=10,100,250,1000 --repeats=5 --baseline-root=<clean-pinned-checkout>`. Both paths return identical complete discovery outputs and validate ownership; direct SQL lookup is a separate measurement, not end-to-end acceptance. Synthetic tasks have RECEIVED states and empty logical ledgers, so this does not close representative history/action/recovery scales.
 
 Native/baseline p95 milliseconds at10/100/250/1000tasks:976.843/586.636,1073.527/238.769,787.805/317.339,6814.438/1338.299. Five samples and large first/small-scale variance are preliminary, not release acceptance. The observed native path is slower at every measured size; earlier322 discovery gains do not establish current acceptance. Source review finds a detached whole-database backup for each task audit. Investigate sharing one immutable project snapshot while retaining full per-task validation, output parity, expiry/cleanup and parent CAS. No durability or integrity gate may be weakened to recover latency. All2455frozen source hashes were unchanged after restoring two accidentally edited documentation files from the verified source archive; runtime sources were untouched.
-
 
 ### Shared project snapshot discovery (increment 384)
 
@@ -384,18 +378,15 @@ Native/baseline p95 milliseconds at10/100/250/1000tasks:976.843/586.636,1073.527
 
 Native/baseline p95ms at10/100/250/1000/5000tasks:31.608/16.140,119.223/174.109,283.533/416.267,911.554/1421.918,4686.786/6528.505. Current paired baseline speedups1.460/1.468/1.560/1.393at100+tasks miss the proposed2xlarge-workspace threshold. The10-task native overhead15.468ms exceeds the small-workspace tolerance and remains under investigation. The earlier before/after runs use different repetition counts, so do not treat their ratio as a paired release speedup. Full per-task schema/hash/ownership validation remains enabled; profile repeated row reads, artifact validation and semantic bindings before another optimization. Representative ledgers/actions/approvals/recovery, populated CLI/warm integration, memory/FS/lock/WAL/event-loop measurements remain open.
 
-
 ### Discovery diagnostic CPU profile (increment388)
 
 `macos-discovery-profile-388.json` records sampled self time from frozen385 synthetic native discovery (1,000empty-ledger tasks,20reads), with pinned runtime/source manifest. Raw profile is `/tmp/sqlite-discovery388.cpuprofile`; setup is included, so this is diagnostic rather than acceptance timing. Typed ledger iteration and repeated task-row queries dominate samples. Increment389 avoids range/index queries for an empty owned range while preserving full-scan digest completion and expiry checks. A query-count control proves0range queries versus2on the previous source. Post-correction latency acceptance remains open: an unrelated Xcode build was CPU-active during follow-up checks, and no timing comparison is treated as quiet-machine evidence.
-
 
 ### Empty-range query correction discovery comparison (increment391)
 
 `macos-discovery-391.json` repeats all five task sizes20times against the same clean pinned pre-migration baseline. Reproduce with `node scripts/benchmark-storage-sqlite.mjs --sizes=10,100,250,1000,5000 --repeats=20 --baseline-root=<clean-pinned-checkout>`. Frozen391candidate2462source hashes are unchanged after measurement. This source includes389empty-range query correction plus390/391API/read consistency changes; it predates392decision discovery changes. No ForgeLoop test suite overlapped measurement; ordinary macOS/GUI background activity was not disabled. Both variants use warm-cache API calls, with baseline then native batches; no filesystem-cold claim. Native WAL/FULL and complete per-task integrity/ownership validation remain enabled.
 
 Native/baseline p95ms at10/100/250/1000/5000tasks:9.559/13.464,45.213/128.437,120.884/322.834,352.860/1199.395,1897.509/6473.841. Equal-output discovery speedups2.841/2.671/3.399/3.412at100+tasks;10-task native path is faster and no small-workspace regression is observed in this fixture. Large2x and small-tolerance targets are met for these synthetic empty-ledger fixtures. Overall release thresholds remain unverified: representative valid histories/actions/approvals/recovery, populated CLI/warm integration and full resource/LOC/platform acceptance still require evidence. These are paired native/baseline comparisons, not a cross-run before/after speedup attribution.
-
 
 ### Current inclusive code-size investigation (increment402)
 
@@ -417,7 +408,6 @@ The same recorded inventory attributes the increase as follows. These are whole-
 The storage layer accounts for 88.49% of net growth. Existing transaction, task-migration, task-lock and transaction-maintenance modules together shrink from 1,114 to 362 lines, a reduction of 752 lines, but this does not offset the new implementation. The union also includes unchanged domain and repository code (for example, project detection); removing unrelated unchanged code from both sides would make the relative increase larger, so a narrower denominator alone cannot establish the reduction target.
 
 At this denominator, meeting the proposed 25% reduction requires at most 32,323 counted lines, or 18,049 fewer than the current candidate. That is an architectural gap, not a formatting opportunity. Do not remove required migration/export/restore functionality, integrity checks or ownership validation to satisfy it. Review persistence-specific responsibility overlap and obsolete runtime branches before approving a semantic denominator and remeasuring. The current release decision is to retain the code-size acceptance gap: this candidate is not accepted as meeting the original plan. This decision does not establish migration completion or authorize publication.
-
 
 ### Genuine canonical diagnosis command comparison (increment404)
 
@@ -442,7 +432,6 @@ Each real timed mutation reports CPU deltas, process filesystem block counters, 
 
 This mode does not measure total filesystem operations, SQLite internal I/O, direct lock waits, operation peak RSS, peak live WAL, or MCP/HTTP event-loop behavior. Process-lifetime peak RSS includes fixture/import work and earlier samples, and the event-loop histogram includes a short timer drain outside command latency. Instrumented latency must be compared separately from the published uninstrumented404 result. The repeated macOS run is now published below; its limited counters do not establish whole-plan resource acceptance. Platform405 source is frozen before this harness extension; its core/MCP/package results cannot validate this extension.
 
-
 `macos-diagnosis-resources-413.json` contains 20 measured samples plus two discarded warmups per backend for 1/10 tasks and the exact 2,468-file frozen-source hashes, verified unchanged after terminal exit0. Canonical selected histories contain29 events; each measured command advances revision and publishes a diagnosis, and both ledgers validate afterward. Runtime: Node24.19.0, SQLite3.53.3, AppleM2/macOSARM64; WAL/FULL/foreign-keys durability retained. The remote Windows/Linux suites used another host; no local ForgeLoop suite or other benchmark overlapped this run. Desktop background activity and periodic WinRM observation were not controlled.
 
 | Tasks | Backend | Instrumented command p95 ms | User CPU p95 microseconds | System CPU p95 microseconds | Node async FS requests p95 | Timer maximum-lateness p95 ms |
@@ -453,7 +442,6 @@ This mode does not measure total filesystem operations, SQLite internal I/O, dir
 | 10 | Native SQLite | 4.734 | 4,971 | 324 | 0 | 3.795 |
 
 The scheduled probe captures native synchronous blocking despite lower overall command latency. This is a canonical domain-command observation, not MCP/HTTP responsiveness evidence. Native WAL endpoint maxima are32,992/20,632bytes at1/10tasks, with database sizes208,896/229,376bytes; these are endpoint maxima across samples, not peak live WAL. All OS filesystem block counters were zero, so no disk-operation conclusion is accepted. Native zero Node async FS requests excludes SQLite internal and synchronous I/O. RSS endpoints and process-lifetime peak remain raw context, not an accepted operation-memory comparison because fixture/import work and previous samples share the process. Broader representative workloads, operation peak RSS, total I/O, direct lock waits and persistent integration behavior remain open. Release thresholds remain unverified.
-
 
 ### Owned immutable audit proof investigation, increments462–465
 

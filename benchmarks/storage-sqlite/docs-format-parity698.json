@@ -1,0 +1,48 @@
+{
+  "files": [
+    {
+      "file": "benchmarks/storage-sqlite/README.md",
+      "beforeSha256": "8352ae78fece1d90dab62dbf92f0a6216123af99e89fad0c78c7d3d154603b7b",
+      "afterSha256": "31df89e8ed4e5c717c47e9db411ee34cb7d10f9a66ed2cb243ba4851021a6079",
+      "allExistingNonblankLinesPreserved": true
+    },
+    {
+      "file": "docs/CLI_REFERENCE.md",
+      "beforeSha256": "7792f589f76295b9ea3bfd671f907107ed7d8b9044cc6b9af1a037d578e2d453",
+      "afterSha256": "a4e23381212556815ef01e0afa1ede4637e8396246abdbb18a401e23a7161de7",
+      "allExistingNonblankLinesPreserved": true
+    },
+    {
+      "file": "docs/SQLITE_MAINTENANCE_COVERAGE.md",
+      "beforeSha256": "947dcecf19a23c767f8bc4ac92063cb174027fdd8c0db8e35dfa21c3b99e33d1",
+      "afterSha256": "e37c13e44efd94deea4bd39e705195179ca75d0fe5876a48c72e703a3880b823",
+      "allExistingNonblankLinesPreserved": true
+    },
+    {
+      "file": "docs/SQLITE_MIGRATION_MATRIX.md",
+      "beforeSha256": "9465cb2ec0f79825f07cb3e1d598caa851f7e18b07e98e8c979971c93d770268",
+      "afterSha256": "062800dfb5707bf8012438a0d44c22eed278f052ac7a1aab3ee7ce68cad80bd0",
+      "allExistingNonblankLinesPreserved": true
+    },
+    {
+      "file": "docs/SQLITE_MIGRATION_PROGRESS.md",
+      "beforeSha256": "1a90fd184e44208e2c102c6bb5278f53d3948f452de1ab4a9dcf6a576aa1baea",
+      "afterSha256": "edc23e9c667ce59e2b9ce9f88e61c6c650fb856105f122db2852078454afd5a5",
+      "allExistingNonblankLinesPreserved": true
+    },
+    {
+      "file": "docs/SQLITE_PROGRESS.md",
+      "beforeSha256": "44952930a3c0b0ce12da85793e11a8f1aa99f66b70d6ee867f899d94cc64be25",
+      "afterSha256": "21492444eec6f3c9ecfc7c860484a63352ce5266ec885e709a0ff6c196ffabb3",
+      "allExistingNonblankLinesPreserved": true
+    },
+    {
+      "file": "docs/SQLITE_STORAGE.md",
+      "beforeSha256": "07f87aa730fcbcf52b47c74bcab8c2bbdc8de19539c8d96ef3b8cc88df7a8bf3",
+      "afterSha256": "0748da8f105c20e73b980f5903f6435791f9bb6be7b261714d9aeec34e6212ad",
+      "allExistingNonblankLinesPreserved": true
+    }
+  ],
+  "findings": 241,
+  "method": "Fence-aware blank-line normalization, heading spacing, and two explicit parent section headings; all existing nonblank lines retained in order."
+}

@@ -1,0 +1,977 @@
+{
+  "increment": 698,
+  "method": "Fresh Espree AST named-import identifier call inventory with current source hashes and references to bounded source-role reviews; references are traceability, not broad authority proof.",
+  "historicalCalls": 79,
+  "currentCalls": 79,
+  "currentFiles": 37,
+  "missingReviewReferences": [],
+  "wholeScopeVerified": false,
+  "limitations": [
+    "Namespace imports, dynamic imports, assigned aliases and transitive external effects remain outside this inventory.",
+    "Identifier shadowing is not resolved.",
+    "Historical line numbers are not treated as current locations.",
+    "File-level evidence references do not establish per-call exhaustive authority or runtime validation."
+  ],
+  "rows": [
+    {
+      "file": "src/commands/doctor.js",
+      "line": 117,
+      "wrapper": "readBytes",
+      "argument": "destination",
+      "enclosingFunction": "adoptAdapters",
+      "sha256": "1ea77fd088a1277b03bc2edeb034462f8f56df5ce3eb95dd7b68000dd5a983d1",
+      "reviewReferences": [
+        "installer-wrapper-review687.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/commands/doctor.js",
+      "line": 313,
+      "wrapper": "writeFileAtomic",
+      "argument": "destination",
+      "enclosingFunction": "runDoctor",
+      "sha256": "1ea77fd088a1277b03bc2edeb034462f8f56df5ce3eb95dd7b68000dd5a983d1",
+      "reviewReferences": [
+        "installer-wrapper-review687.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/commands/doctor.js",
+      "line": 326,
+      "wrapper": "readBytes",
+      "argument": "destination",
+      "enclosingFunction": "runDoctor",
+      "sha256": "1ea77fd088a1277b03bc2edeb034462f8f56df5ce3eb95dd7b68000dd5a983d1",
+      "reviewReferences": [
+        "installer-wrapper-review687.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/commands/gate-revalidate.js",
+      "line": 48,
+      "wrapper": "readBytes",
+      "argument": "artifactReal",
+      "enclosingFunction": "hashGateArtifact",
+      "sha256": "48679a857e9df5abbae507a1152de4faef83c3064c9fed5c5fe2ddc7cafdb50f",
+      "reviewReferences": [
+        "canonical-gate-bindings-688.json",
+        "current-source-review698.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/commands/init.js",
+      "line": 205,
+      "wrapper": "readBytes",
+      "argument": "destination",
+      "enclosingFunction": "runInit",
+      "sha256": "dbd6aff6b7e27d3fa26e06921ad54c7e569413ee5717f20111c639c77d073dde",
+      "reviewReferences": [
+        "installer-wrapper-review687.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/commands/init.js",
+      "line": 306,
+      "wrapper": "writeFileAtomic",
+      "argument": "destination",
+      "enclosingFunction": "runInit",
+      "sha256": "dbd6aff6b7e27d3fa26e06921ad54c7e569413ee5717f20111c639c77d073dde",
+      "reviewReferences": [
+        "installer-wrapper-review687.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/commands/update.js",
+      "line": 27,
+      "wrapper": "readBytes",
+      "argument": "filePath",
+      "enclosingFunction": "verifyWrite",
+      "sha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+      "reviewReferences": [
+        "installer-wrapper-review687.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/commands/update.js",
+      "line": 78,
+      "wrapper": "readBytes",
+      "argument": "legacyPath",
+      "enclosingFunction": "cleanupLegacyFiles",
+      "sha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+      "reviewReferences": [
+        "installer-wrapper-review687.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/commands/update.js",
+      "line": 133,
+      "wrapper": "readBytes",
+      "argument": "destination",
+      "enclosingFunction": "migrateLegacyLayout",
+      "sha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+      "reviewReferences": [
+        "installer-wrapper-review687.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/commands/update.js",
+      "line": 166,
+      "wrapper": "readBytes",
+      "argument": "destination",
+      "enclosingFunction": "migrateLegacyLayout",
+      "sha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+      "reviewReferences": [
+        "installer-wrapper-review687.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/commands/update.js",
+      "line": 169,
+      "wrapper": "readBytes",
+      "argument": "legacyDestination",
+      "enclosingFunction": "migrateLegacyLayout",
+      "sha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+      "reviewReferences": [
+        "installer-wrapper-review687.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/commands/update.js",
+      "line": 232,
+      "wrapper": "readBytes",
+      "argument": "legacyDestination",
+      "enclosingFunction": "migrateLegacyLayout",
+      "sha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+      "reviewReferences": [
+        "installer-wrapper-review687.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/commands/update.js",
+      "line": 284,
+      "wrapper": "writeFileAtomic",
+      "argument": "plan.destination",
+      "enclosingFunction": "migrateLegacyLayout",
+      "sha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+      "reviewReferences": [
+        "installer-wrapper-review687.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/commands/update.js",
+      "line": 372,
+      "wrapper": "readBytes",
+      "argument": "legacyDestination",
+      "enclosingFunction": "runUpdate",
+      "sha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+      "reviewReferences": [
+        "installer-wrapper-review687.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/commands/update.js",
+      "line": 411,
+      "wrapper": "readBytes",
+      "argument": "destination",
+      "enclosingFunction": "runUpdate",
+      "sha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+      "reviewReferences": [
+        "installer-wrapper-review687.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/commands/update.js",
+      "line": 446,
+      "wrapper": "writeFileAtomic",
+      "argument": "plan.destination",
+      "enclosingFunction": "runUpdate",
+      "sha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+      "reviewReferences": [
+        "installer-wrapper-review687.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/commands/validate-protocol.js",
+      "line": 33,
+      "wrapper": "readBytes",
+      "argument": "artifactPath",
+      "enclosingFunction": "readArtifact",
+      "sha256": "7890edf1f54a84eef70a5fea1fa90e65d86ad93b61b85891caef7e34c4938ba7",
+      "reviewReferences": [
+        "current-source-review698.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/commands/validate-receipt.js",
+      "line": 17,
+      "wrapper": "readBytes",
+      "argument": "receiptPath",
+      "enclosingFunction": "validateReceiptFile",
+      "sha256": "6f90636670ded6b747f70638c7084681b07c4b6213341feb811b7f8e864e9a6b",
+      "reviewReferences": [
+        "current-source-review698.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/core/artifacts.js",
+      "line": 128,
+      "wrapper": "readBytes",
+      "argument": "artifactPath",
+      "enclosingFunction": "readPortableJsonArtifact",
+      "sha256": "4667bc01b1f6416ee22e0de6788bb8ae21ce238b5ce9724961c92c06d0e92db2",
+      "reviewReferences": [
+        "portable-marker-boundaries-685.json",
+        "remaining-wrapper-review697.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/core/artifacts.js",
+      "line": 210,
+      "wrapper": "writeFileAtomic",
+      "argument": "artifactPath",
+      "enclosingFunction": "writePortableJsonArtifact",
+      "sha256": "4667bc01b1f6416ee22e0de6788bb8ae21ce238b5ce9724961c92c06d0e92db2",
+      "reviewReferences": [
+        "portable-marker-boundaries-685.json",
+        "remaining-wrapper-review697.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/core/bundles.js",
+      "line": 229,
+      "wrapper": "writeFileAtomic",
+      "argument": "destination",
+      "enclosingFunction": null,
+      "sha256": "8d74bf947d73e3a9ae5b4149da78e6ff8584d48d6c04f12bf296fcaa487e1991",
+      "reviewReferences": [
+        "portable-marker-boundaries-685.json",
+        "retained-read-wrapper-review693.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/core/bundles.js",
+      "line": 506,
+      "wrapper": "readBytes",
+      "argument": "ensureWithin(target, `${directory}/${artifact}`)",
+      "enclosingFunction": "readTaskBundle",
+      "sha256": "8d74bf947d73e3a9ae5b4149da78e6ff8584d48d6c04f12bf296fcaa487e1991",
+      "reviewReferences": [
+        "portable-marker-boundaries-685.json",
+        "retained-read-wrapper-review693.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/core/bundles.js",
+      "line": 617,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(target, `${directory}/events.ndjson`)",
+      "enclosingFunction": "exportBundleLedgerAndGates",
+      "sha256": "8d74bf947d73e3a9ae5b4149da78e6ff8584d48d6c04f12bf296fcaa487e1991",
+      "reviewReferences": [
+        "portable-marker-boundaries-685.json",
+        "retained-read-wrapper-review693.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/core/bundles.js",
+      "line": 626,
+      "wrapper": "writeFileAtomic",
+      "argument": "ensureWithin(target, `${directory}/events.ndjson`)",
+      "enclosingFunction": "exportBundleLedgerAndGates",
+      "sha256": "8d74bf947d73e3a9ae5b4149da78e6ff8584d48d6c04f12bf296fcaa487e1991",
+      "reviewReferences": [
+        "portable-marker-boundaries-685.json",
+        "retained-read-wrapper-review693.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/core/bundles.js",
+      "line": 626,
+      "wrapper": "readBytes",
+      "argument": "eventsPath",
+      "enclosingFunction": "exportBundleLedgerAndGates",
+      "sha256": "8d74bf947d73e3a9ae5b4149da78e6ff8584d48d6c04f12bf296fcaa487e1991",
+      "reviewReferences": [
+        "portable-marker-boundaries-685.json",
+        "retained-read-wrapper-review693.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/core/gate-artifact.js",
+      "line": 89,
+      "wrapper": "readBytes",
+      "argument": "artifactPath",
+      "enclosingFunction": "validateGateArtifacts",
+      "sha256": "0e81116939618b6e534719fe0cb7eab2485faedbc412c339681c1b9a03f840a7",
+      "reviewReferences": [
+        "canonical-gate-bindings-688.json",
+        "current-source-review698.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/core/inspect.js",
+      "line": 194,
+      "wrapper": "readBytes",
+      "argument": "profilePath",
+      "enclosingFunction": "inspectSelectedTarget",
+      "sha256": "c92a5c9e9678bf6653f3ae871984653789b15dfd03ff38540fddd55c8752bddd",
+      "reviewReferences": [
+        "canonical-presence-694.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/core/manifest.js",
+      "line": 80,
+      "wrapper": "writeFileAtomic",
+      "argument": "manifestPath",
+      "enclosingFunction": "writeManifest",
+      "sha256": "9e29e1c9466bb0fc6a2ae9371a4f8bec995a01f11377684f0d66bcfa58221f4f",
+      "reviewReferences": [
+        "portable-marker-boundaries-685.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/core/preflight-loaders.js",
+      "line": 19,
+      "wrapper": "readBytes",
+      "argument": "filePath",
+      "enclosingFunction": "readProfile",
+      "sha256": "785f690c5fcb95c6789f4c757bbb8218befaae467213211bd9340ebaaf3027ae",
+      "reviewReferences": [
+        "retained-read-wrapper-review693.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/core/signing/statement-file.js",
+      "line": 22,
+      "wrapper": "writeFileAtomic",
+      "argument": "filename",
+      "enclosingFunction": "withSigningStatementFile",
+      "sha256": "4b0db680c034bd21497e5fa96c01ea79a7faa14f6424c85965f4c9183304880b",
+      "reviewReferences": [
+        "portable-marker-boundaries-685.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/core/structural-quality/sentrux-mcp.js",
+      "line": 359,
+      "wrapper": "readBytes",
+      "argument": "rulesAbsolute",
+      "enclosingFunction": "sentruxScopeBinding",
+      "sha256": "fea4ef10c25efa80b67f8ab2fcd25e4c0f8fe935ff51698bef52fc98042befaf",
+      "reviewReferences": [
+        "retained-read-wrapper-review693.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/core/structural-quality/source-fingerprint.js",
+      "line": 37,
+      "wrapper": "readBytes",
+      "argument": "fullPath",
+      "enclosingFunction": "readMaterialFile",
+      "sha256": "de166c936a7c4246fbd014f2ea9eee1faba98a586287aae0286d0a2515774735",
+      "reviewReferences": [
+        "retained-read-wrapper-review693.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/core/work-state.js",
+      "line": 262,
+      "wrapper": "readBytes",
+      "argument": "statePath",
+      "enclosingFunction": "readWorkState",
+      "sha256": "e8370604edc6cdde5e832fd8014de4d2628d1dd8bd30856d64cdf0dc908d7b83",
+      "reviewReferences": [
+        "retained-read-wrapper-review693.json",
+        "required-artifact-scope697.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/core/work-state.js",
+      "line": 295,
+      "wrapper": "readBytes",
+      "argument": "contractPath",
+      "enclosingFunction": "readContractFingerprint",
+      "sha256": "e8370604edc6cdde5e832fd8014de4d2628d1dd8bd30856d64cdf0dc908d7b83",
+      "reviewReferences": [
+        "retained-read-wrapper-review693.json",
+        "required-artifact-scope697.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/core/work-state.js",
+      "line": 413,
+      "wrapper": "readBytes",
+      "argument": "artifactPath",
+      "enclosingFunction": "readSelectedRequiredArtifactFingerprints",
+      "sha256": "e8370604edc6cdde5e832fd8014de4d2628d1dd8bd30856d64cdf0dc908d7b83",
+      "reviewReferences": [
+        "retained-read-wrapper-review693.json",
+        "required-artifact-scope697.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/persistent-transport/state.js",
+      "line": 33,
+      "wrapper": "writeFileAtomic",
+      "argument": "statePath",
+      "enclosingFunction": "writePersistentTransportState",
+      "sha256": "a877435a1b4a7f5c7d4b6310538451f81079b70d4486d0ed990ed61819ccb86d",
+      "reviewReferences": [
+        "retained-lifecycle-path-review-684.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/repository-index/server.js",
+      "line": 32,
+      "wrapper": "writeFileAtomic",
+      "argument": "filePath",
+      "enclosingFunction": "writeJson",
+      "sha256": "4e18bcd059920281616a7ae0a368571ae5bb8c71c6f59929ded044cafcad4ef1",
+      "reviewReferences": [
+        "retained-lifecycle-path-review-684.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/exporter.js",
+      "line": 139,
+      "wrapper": "writeFileAtomic",
+      "argument": "filename",
+      "enclosingFunction": "publish",
+      "sha256": "2e005a6784c73f42e53831a800b09b50730f901dd358d7463009f776b55a2a4b",
+      "reviewReferences": [
+        "export-destination-authority-686.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/exporter.js",
+      "line": 271,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(destination, relativePath)",
+      "enclosingFunction": "exportDatabaseSnapshot",
+      "sha256": "2e005a6784c73f42e53831a800b09b50730f901dd358d7463009f776b55a2a4b",
+      "reviewReferences": [
+        "export-destination-authority-686.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/exporter.js",
+      "line": 277,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(destination, \".forgeloop/session.json\")",
+      "enclosingFunction": "exportDatabaseSnapshot",
+      "sha256": "2e005a6784c73f42e53831a800b09b50730f901dd358d7463009f776b55a2a4b",
+      "reviewReferences": [
+        "export-destination-authority-686.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/exporter.js",
+      "line": 282,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(destination, \"export-index.json\")",
+      "enclosingFunction": "exportDatabaseSnapshot",
+      "sha256": "2e005a6784c73f42e53831a800b09b50730f901dd358d7463009f776b55a2a4b",
+      "reviewReferences": [
+        "export-destination-authority-686.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/exporter.js",
+      "line": 304,
+      "wrapper": "writeFileAtomic",
+      "argument": "filename",
+      "enclosingFunction": null,
+      "sha256": "2e005a6784c73f42e53831a800b09b50730f901dd358d7463009f776b55a2a4b",
+      "reviewReferences": [
+        "export-destination-authority-686.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/migration-activate.js",
+      "line": 56,
+      "wrapper": "writeFileAtomic",
+      "argument": "journalPath",
+      "enclosingFunction": "activateArchivedMigration",
+      "sha256": "12b11a733f5a615ee1becbc8e3780fadfc7e55c92146cd07e82718c588871267",
+      "reviewReferences": [
+        "migration-journal-wrapper-review694.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/migration-archive.js",
+      "line": 31,
+      "wrapper": "writeFileAtomic",
+      "argument": "journalPath",
+      "enclosingFunction": null,
+      "sha256": "38848cc8ab285a2ce37ef7b7b3405cf51e024d023670f7dfbf46eac01bdda37a",
+      "reviewReferences": [
+        "migration-journal-wrapper-review694.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/migration-candidate.js",
+      "line": 44,
+      "wrapper": "writeFileAtomic",
+      "argument": "filename",
+      "enclosingFunction": "writeTaskInventory",
+      "sha256": "41f01d20be6caac40ef541a8d6175e429bd595f5bd3a7a9f046571c880e88ecb",
+      "reviewReferences": [
+        "maintenance-wrapper-review695.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/migration-candidate.js",
+      "line": 216,
+      "wrapper": "writeFileAtomic",
+      "argument": "manifestPath",
+      "enclosingFunction": null,
+      "sha256": "41f01d20be6caac40ef541a8d6175e429bd595f5bd3a7a9f046571c880e88ecb",
+      "reviewReferences": [
+        "maintenance-wrapper-review695.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/migration-candidate.js",
+      "line": 363,
+      "wrapper": "writeFileAtomic",
+      "argument": "intentPath",
+      "enclosingFunction": "resumeMigrationCandidate",
+      "sha256": "41f01d20be6caac40ef541a8d6175e429bd595f5bd3a7a9f046571c880e88ecb",
+      "reviewReferences": [
+        "maintenance-wrapper-review695.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/migration-publication.js",
+      "line": 71,
+      "wrapper": "writeFileAtomic",
+      "argument": "journalPath",
+      "enclosingFunction": null,
+      "sha256": "6e60f541f53f977bc1670d2c2f7577e5e718b1e1fff80ba49d4e7c026d8b38ed",
+      "reviewReferences": [
+        "migration-journal-wrapper-review694.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/migration-rollback-preparation.js",
+      "line": 29,
+      "wrapper": "writeFileAtomic",
+      "argument": "journalPath",
+      "enclosingFunction": null,
+      "sha256": "1152bbb354970c43c8530d681790c08941408328e59654eb6e62044b2dcd9bfe",
+      "reviewReferences": [
+        "maintenance-wrapper-review695.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/migration-rollback-preparation.js",
+      "line": 87,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(verified.root,\"rollback-journal.json\")",
+      "enclosingFunction": "recoverOwnedMigrationSourceRollbackPreparation",
+      "sha256": "1152bbb354970c43c8530d681790c08941408328e59654eb6e62044b2dcd9bfe",
+      "reviewReferences": [
+        "maintenance-wrapper-review695.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/migration-rollback-preparation.js",
+      "line": 109,
+      "wrapper": "writeFileAtomic",
+      "argument": "journalPath",
+      "enclosingFunction": null,
+      "sha256": "1152bbb354970c43c8530d681790c08941408328e59654eb6e62044b2dcd9bfe",
+      "reviewReferences": [
+        "maintenance-wrapper-review695.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/migration-rollback-publication.js",
+      "line": 45,
+      "wrapper": "writeFileAtomic",
+      "argument": "filename",
+      "enclosingFunction": null,
+      "sha256": "81ca1f7c72e57f885a137e33d428c4303db0f1bb859ac19c67372d9826553417",
+      "reviewReferences": [
+        "maintenance-wrapper-review695.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/migration-rollback-publication.js",
+      "line": 63,
+      "wrapper": "writeFileAtomic",
+      "argument": "filename",
+      "enclosingFunction": null,
+      "sha256": "81ca1f7c72e57f885a137e33d428c4303db0f1bb859ac19c67372d9826553417",
+      "reviewReferences": [
+        "maintenance-wrapper-review695.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/migration-rollback-publication.js",
+      "line": 161,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(recordRoot,filename)",
+      "enclosingFunction": null,
+      "sha256": "81ca1f7c72e57f885a137e33d428c4303db0f1bb859ac19c67372d9826553417",
+      "reviewReferences": [
+        "maintenance-wrapper-review695.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/migration-rollback-release.js",
+      "line": 62,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(published.root,\"target-validation.json\")",
+      "enclosingFunction": "validateAndReleaseMigrationSourceRollback",
+      "sha256": "6838a25238dd71cd2b2c6d740fb32c3f1914bfd06ed376f154bd4dd7cb0b5cfb",
+      "reviewReferences": [
+        "maintenance-wrapper-review695.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/migration-rollback-source-stage.js",
+      "line": 27,
+      "wrapper": "writeFileAtomic",
+      "argument": "filename",
+      "enclosingFunction": null,
+      "sha256": "6bfbf8e0ad81644596fff0f055593082e7627bbac66de070986f81aa4f8b2211",
+      "reviewReferences": [
+        "maintenance-wrapper-review695.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/migration-rollback-source-stage.js",
+      "line": 90,
+      "wrapper": "writeFileAtomic",
+      "argument": "filename",
+      "enclosingFunction": null,
+      "sha256": "6bfbf8e0ad81644596fff0f055593082e7627bbac66de070986f81aa4f8b2211",
+      "reviewReferences": [
+        "maintenance-wrapper-review695.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/migration-source.js",
+      "line": 161,
+      "wrapper": "writeFileAtomic",
+      "argument": "manifestPath",
+      "enclosingFunction": null,
+      "sha256": "4e2b78e7be7b1641883b28d0b33fe34fd1264b047ce88e00e617e5607aa9ffdb",
+      "reviewReferences": [
+        "remaining-wrapper-review697.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/migration-source.js",
+      "line": 239,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(attempt, \"source-manifest.json\")",
+      "enclosingFunction": "resumeLegacySourceCapture",
+      "sha256": "4e2b78e7be7b1641883b28d0b33fe34fd1264b047ce88e00e617e5607aa9ffdb",
+      "reviewReferences": [
+        "remaining-wrapper-review697.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/migration-source.js",
+      "line": 251,
+      "wrapper": "writeFileAtomic",
+      "argument": "manifestPath",
+      "enclosingFunction": "resumeLegacySourceCapture",
+      "sha256": "4e2b78e7be7b1641883b28d0b33fe34fd1264b047ce88e00e617e5607aa9ffdb",
+      "reviewReferences": [
+        "remaining-wrapper-review697.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/project-backup.js",
+      "line": 35,
+      "wrapper": "writeFileAtomic",
+      "argument": "manifestPath",
+      "enclosingFunction": null,
+      "sha256": "66dffeb2ca6fa6f6c90a3eb19fafad8e5fd69596f2794c23ef95669fce5f1370",
+      "reviewReferences": [
+        "backup-restore-wrapper-review694.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/project-backup.js",
+      "line": 51,
+      "wrapper": "writeFileAtomic",
+      "argument": "inventoryPath",
+      "enclosingFunction": "backupProjectStorage",
+      "sha256": "66dffeb2ca6fa6f6c90a3eb19fafad8e5fd69596f2794c23ef95669fce5f1370",
+      "reviewReferences": [
+        "backup-restore-wrapper-review694.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/project-replacement.js",
+      "line": 72,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(current.root, \"replacement-intent.json\")",
+      "enclosingFunction": null,
+      "sha256": "8edb1daa7f5a50a56c2762488db647d1e441d1f421d8dd6b2f1fbc5a813efa59",
+      "reviewReferences": [
+        "maintenance-wrapper-review695.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/project-replacement.js",
+      "line": 115,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(operationRoot, \"replacement-intent.json\")",
+      "enclosingFunction": null,
+      "sha256": "8edb1daa7f5a50a56c2762488db647d1e441d1f421d8dd6b2f1fbc5a813efa59",
+      "reviewReferences": [
+        "maintenance-wrapper-review695.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/project-restore.js",
+      "line": 44,
+      "wrapper": "writeFileAtomic",
+      "argument": "journalPath",
+      "enclosingFunction": null,
+      "sha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+      "reviewReferences": [
+        "current-source-review698.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/project-restore.js",
+      "line": 86,
+      "wrapper": "writeFileAtomic",
+      "argument": "journalPath",
+      "enclosingFunction": null,
+      "sha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+      "reviewReferences": [
+        "current-source-review698.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/project-restore.js",
+      "line": 111,
+      "wrapper": "writeFileAtomic",
+      "argument": "journalPath",
+      "enclosingFunction": null,
+      "sha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+      "reviewReferences": [
+        "current-source-review698.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/project-restore.js",
+      "line": 169,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(current.root, \"restore-journal.json\")",
+      "enclosingFunction": null,
+      "sha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+      "reviewReferences": [
+        "current-source-review698.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/project-restore.js",
+      "line": 195,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(root, \"restore-journal.json\")",
+      "enclosingFunction": null,
+      "sha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+      "reviewReferences": [
+        "current-source-review698.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/restore-preparation.js",
+      "line": 21,
+      "wrapper": "writeFileAtomic",
+      "argument": "temporary",
+      "enclosingFunction": "retainCompletedIntent",
+      "sha256": "70c2db1ac984643434a5e1986028efc39f79b9d2f2576a4cbe35f39bd0161347",
+      "reviewReferences": [
+        "backup-restore-wrapper-review694.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/restore-preparation.js",
+      "line": 45,
+      "wrapper": "writeFileAtomic",
+      "argument": "journalPath",
+      "enclosingFunction": null,
+      "sha256": "70c2db1ac984643434a5e1986028efc39f79b9d2f2576a4cbe35f39bd0161347",
+      "reviewReferences": [
+        "backup-restore-wrapper-review694.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/restore-replacement-archive.js",
+      "line": 132,
+      "wrapper": "writeFileAtomic",
+      "argument": "filename",
+      "enclosingFunction": "archiveActiveStorageReplacement",
+      "sha256": "fbd0347cb136200ab4cdf848c47c1948f226913a3714c347b71d8fb541c4dd36",
+      "reviewReferences": [
+        "remaining-wrapper-review697.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/restore-replacement-archive.js",
+      "line": 139,
+      "wrapper": "writeFileAtomic",
+      "argument": "filename",
+      "enclosingFunction": "archiveActiveStorageReplacement",
+      "sha256": "fbd0347cb136200ab4cdf848c47c1948f226913a3714c347b71d8fb541c4dd36",
+      "reviewReferences": [
+        "remaining-wrapper-review697.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/restore-replacement-archive.js",
+      "line": 167,
+      "wrapper": "writeFileAtomic",
+      "argument": "filename",
+      "enclosingFunction": "archiveActiveStorageReplacement",
+      "sha256": "fbd0347cb136200ab4cdf848c47c1948f226913a3714c347b71d8fb541c4dd36",
+      "reviewReferences": [
+        "remaining-wrapper-review697.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/restore-replacement-owner.js",
+      "line": 29,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(retained.root, \"owner-journal.json\")",
+      "enclosingFunction": "adoptPreparedReplacementOwner",
+      "sha256": "9d3bd4fa498f1f42befe30d1d5d01d1e420996b2887006cecadfdc2011553cbc",
+      "reviewReferences": [
+        "backup-restore-wrapper-review694.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/restore-replacement-preparation.js",
+      "line": 78,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(outgoing, \"replacement-manifest.json\")",
+      "enclosingFunction": "reconcileOutgoingAllocation",
+      "sha256": "07c55045508317bb70d20c7b4b687da662d9ab1f41e209d1972a3c7e06180014",
+      "reviewReferences": [
+        "remaining-wrapper-review697.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/restore-replacement-preparation.js",
+      "line": 89,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(root, \"replacement-intent.json\")",
+      "enclosingFunction": null,
+      "sha256": "07c55045508317bb70d20c7b4b687da662d9ab1f41e209d1972a3c7e06180014",
+      "reviewReferences": [
+        "remaining-wrapper-review697.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/restore-replacement.js",
+      "line": 59,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(root, \"replacement-manifest.json\")",
+      "enclosingFunction": "persistManifest",
+      "sha256": "f7b7aed1fe54c4feb71a192a5c2aed9ff92bdb80f26d053ba1498d433cc1f138",
+      "reviewReferences": [
+        "remaining-wrapper-review697.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    },
+    {
+      "file": "src/storage/storage-marker.js",
+      "line": 62,
+      "wrapper": "writeFileAtomic",
+      "argument": "await assertSafePath(target, MARKER)",
+      "enclosingFunction": "activateStorageVersionMarker",
+      "sha256": "be4744869306bfba37f02f2ab58152761c12d079360eb4220917019e5d8ad79d",
+      "reviewReferences": [
+        "portable-marker-boundaries-685.json"
+      ],
+      "classification": "BOUNDED_DIRECT_CALL_WITH_REVIEW_REFERENCE"
+    }
+  ]
+}

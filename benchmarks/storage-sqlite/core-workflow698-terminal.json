@@ -1,0 +1,132 @@
+{
+  "increment": 698,
+  "runId": 37650850892,
+  "url": "https://github.com/cassiomc1/forgeloop/actions/runs/37650850892",
+  "head": "5c4e54e7c2a98a7d9a67baa58cd331507d182260",
+  "status": "completed",
+  "conclusion": "failure",
+  "jobs": [
+    {
+      "name": "Classify changed paths",
+      "id": 112893487700,
+      "status": "completed",
+      "conclusion": "success",
+      "runner": "GitHub Actions 1000017247"
+    },
+    {
+      "name": "audit",
+      "id": 112893575005,
+      "status": "completed",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "name": "Lint and dependency policy",
+      "id": 112893575081,
+      "status": "completed",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "name": "Verify generated Archify diagram",
+      "id": 112893575163,
+      "status": "completed",
+      "conclusion": "failure",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "name": "Unit tests (Node 24, shard 1/4)",
+      "id": 112893575280,
+      "status": "completed",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "name": "tarball smoke (ubuntu-latest)",
+      "id": 112893575324,
+      "status": "completed",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "name": "Unit tests (Node 24, shard 2/4)",
+      "id": 112893575334,
+      "status": "completed",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "name": "Unit tests (Node 24.19.0, shard 0/4)",
+      "id": 112893575378,
+      "status": "completed",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "name": "Unit tests (Node 24, shard 4/4)",
+      "id": 112893575470,
+      "status": "completed",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "name": "Unit tests (Node 24, shard 3/4)",
+      "id": 112893575548,
+      "status": "completed",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "name": "Coverage report (Node 24)",
+      "id": 112904584740,
+      "status": "completed",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "name": "Repository Index native matrix / Classify Repository Index paths",
+      "id": 112905048328,
+      "status": "completed",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "name": "Repository Index native matrix / Verify Repository Index manifest",
+      "id": 112905155186,
+      "status": "completed",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "name": "Repository Index native matrix / Native Repository Index (Linux)",
+      "id": 112905268564,
+      "status": "completed",
+      "conclusion": "success",
+      "runner": "forgeloop-linux-remote"
+    },
+    {
+      "name": "Repository Index native matrix / Native Repository Index (macOS)",
+      "id": 112905268611,
+      "status": "completed",
+      "conclusion": "success",
+      "runner": "forgeloop-macos-local"
+    },
+    {
+      "name": "Repository Index native matrix / Native Repository Index (Windows)",
+      "id": 112905268715,
+      "status": "completed",
+      "conclusion": "success",
+      "runner": "forgeloop-windows-remote"
+    },
+    {
+      "name": "validate (22)",
+      "id": 112905841438,
+      "status": "completed",
+      "conclusion": "failure",
+      "runner": "GitHub Actions 1000017248"
+    }
+  ],
+  "failure": "Markdown lint: 241 formatting findings; aggregate gate fails accordingly.",
+  "notCurrentHead": "Run predates unused adapter deletion, shared test cleanup and required-artifact scope correction.",
+  "docsLogSha256": "773f7e275c7411b5a27e42ba899e0542d548a557d90c1561ec3e8bf3478baba3"
+}

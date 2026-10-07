@@ -1,0 +1,566 @@
+{
+  "increment": 698,
+  "scope": "All current workflow jobs with explicit setup-node or node/npm commands; static routing inventory, not proof of candidate execution.",
+  "rows": [
+    {
+      "workflow": ".github/workflows/codeql.yml",
+      "job": "analyze",
+      "runsOn": "ubuntu-latest",
+      "matrix": null,
+      "commands": [
+        "npm ci --ignore-scripts"
+      ],
+      "workflowSha256": "9b1ee45e423d541c718ef2a109adee9118637a860f6fdc487a4d52d93cb9034d",
+      "hosted": true
+    },
+    {
+      "workflow": ".github/workflows/docs.yml",
+      "job": "docs",
+      "runsOn": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ],
+      "matrix": null,
+      "commands": [
+        "npm ci --ignore-scripts",
+        "npm run docs:check",
+        "python3 -c 'import sys; assert sys.version_info >= (3, 9), \"Python 3.9+ is required\"'\npython3 -m unittest tests.test_validate_markdown tests.test_validate_loop_system -v\npython3 scripts/validate_markdown.py --self-test\npython3 scripts/validate_markdown.py\npython3 scripts/validate_loop_system.py --self-test\npython3 scripts/validate_loop_system.py\n"
+      ],
+      "workflowSha256": "217e44645996a5dab0883ebadc4dee4dd41a47dc4a0e93d186eb771036338d20",
+      "hosted": false
+    },
+    {
+      "workflow": ".github/workflows/forgeloop-audit.yml",
+      "job": "audit",
+      "runsOn": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ],
+      "matrix": null,
+      "commands": [
+        "if [ \"$EVENT_NAME\" = \"workflow_dispatch\" ]; then\n  node scripts/ci-classify.mjs --all --github-output\nelse\n  node scripts/ci-classify.mjs --github-output\nfi\n",
+        "npm ci --ignore-scripts",
+        "node scripts/audit-receipts.mjs",
+        "echo \"Receipt audit not applicable for this change.\""
+      ],
+      "workflowSha256": "291148bbd1ee6db77386826317dcfa500538f7df78ab0f71dbebad87edab2b1e",
+      "hosted": false
+    },
+    {
+      "workflow": ".github/workflows/mcp-publish.yml",
+      "job": "verify",
+      "runsOn": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ],
+      "matrix": null,
+      "commands": [
+        "expected=\"$EXPECTED_MCP_VERSION\"\nactual=\"$(node -p \"JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version\")\"\ntest \"$expected\" = \"$actual\"\n",
+        "npm ci --install-links --ignore-scripts --no-audit --no-fund",
+        "npm test"
+      ],
+      "workflowSha256": "752bbb1e6d95e1056e52f1fba32b7920a81bcfc4af87a05d5f5cc057999f0466",
+      "hosted": false
+    },
+    {
+      "workflow": ".github/workflows/mcp-publish.yml",
+      "job": "publish",
+      "runsOn": "ubuntu-latest",
+      "matrix": null,
+      "commands": [
+        "expected=\"$EXPECTED_MCP_VERSION\"\nactual=\"$(node -p \"JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version\")\"\ntest \"$expected\" = \"$actual\"\n",
+        "npm ci --install-links --ignore-scripts --no-audit --no-fund",
+        "npm publish --provenance --access restricted"
+      ],
+      "workflowSha256": "752bbb1e6d95e1056e52f1fba32b7920a81bcfc4af87a05d5f5cc057999f0466",
+      "hosted": true
+    },
+    {
+      "workflow": ".github/workflows/node-compat.yml",
+      "job": "minimum",
+      "runsOn": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ],
+      "matrix": null,
+      "commands": [
+        "npm ci --ignore-scripts",
+        "npm run test:quick\nnode src/cli.js --help\nnode src/cli.js protocol-info --json\nnode --test tests/storage-runtime.test.js tests/storage-store.test.js tests/storage-operational-bootstrap.test.js\n"
+      ],
+      "workflowSha256": "7e7c5d1cbce60c678613940a7a687abe0176ea0679810ba11c391a78e980c689",
+      "hosted": false
+    },
+    {
+      "workflow": ".github/workflows/node-compat.yml",
+      "job": "expanded",
+      "runsOn": "${{ matrix.runner }}",
+      "matrix": {
+        "include": [
+          {
+            "os": "Linux",
+            "runner": [
+              "self-hosted",
+              "Linux",
+              "X64",
+              "forgeloop-linux-remote"
+            ],
+            "node-version": "24.19.0"
+          },
+          {
+            "os": "Linux",
+            "runner": [
+              "self-hosted",
+              "Linux",
+              "X64",
+              "forgeloop-linux-remote"
+            ],
+            "node-version": 26
+          },
+          {
+            "os": "macOS",
+            "runner": [
+              "self-hosted",
+              "macOS",
+              "ARM64",
+              "forgeloop-macos-local"
+            ],
+            "node-version": "24.19.0"
+          },
+          {
+            "os": "macOS",
+            "runner": [
+              "self-hosted",
+              "macOS",
+              "ARM64",
+              "forgeloop-macos-local"
+            ],
+            "node-version": 24
+          },
+          {
+            "os": "Windows",
+            "runner": [
+              "self-hosted",
+              "Windows",
+              "X64",
+              "forgeloop-windows-remote"
+            ],
+            "node-version": "24.19.0"
+          },
+          {
+            "os": "Windows",
+            "runner": [
+              "self-hosted",
+              "Windows",
+              "X64",
+              "forgeloop-windows-remote"
+            ],
+            "node-version": 24
+          }
+        ]
+      },
+      "commands": [
+        "npm ci --ignore-scripts",
+        "npm run test:quick\nnode src/cli.js --help\nnode src/cli.js protocol-info --json\nnode --test tests/storage-runtime.test.js tests/storage-store.test.js tests/storage-operational-bootstrap.test.js\n"
+      ],
+      "workflowSha256": "7e7c5d1cbce60c678613940a7a687abe0176ea0679810ba11c391a78e980c689",
+      "hosted": false
+    },
+    {
+      "workflow": ".github/workflows/npm-publish.yml",
+      "job": "verify",
+      "runsOn": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ],
+      "matrix": null,
+      "commands": [
+        "expected=\"${GITHUB_REF_NAME#v}\"\nactual=\"$(node -p \"JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version\")\"\ntest \"$expected\" = \"$actual\"\n",
+        "node --input-type=module <<'NODE'\nimport { readFile } from \"node:fs/promises\";\n\nconst packageJson = JSON.parse(await readFile(\"package.json\", \"utf8\"));\nconst registryPath = encodeURIComponent(packageJson.name);\nconst response = await fetch(`https://registry.npmjs.org/${registryPath}/${packageJson.version}`);\nif (response.status === 200) {\n  throw new Error(`${packageJson.name}@${packageJson.version} already exists on npm`);\n}\nif (response.status !== 404) {\n  throw new Error(`Unable to prove ${packageJson.name}@${packageJson.version} is unpublished: HTTP ${response.status}`);\n}\nconsole.log(`${packageJson.name}@${packageJson.version} is not published`);\nNODE\n",
+        "npm ci --ignore-scripts",
+        "npm run repository:hygiene",
+        "npm run dependency:policy",
+        "npm run lint",
+        "npm run coverage",
+        "npm run critical-coverage:check",
+        "npm run pack:check",
+        "npm pack --dry-run --json > package-dry-run.json\nnode --input-type=module <<'NODE'\nimport { readFile } from \"node:fs/promises\";\n\nconst report = JSON.parse(await readFile(\"package-dry-run.json\", \"utf8\"))[0];\nconst paths = report.files.map(({ path }) => path);\nconst forbidden = paths.filter((path) =>\n  path.startsWith(\"benchmarks/execution-profiles/results/\")\n  || path.startsWith(\"tests/\")\n  || path.startsWith(\"coverage/\")\n  || path.startsWith(\".git/\")\n  || path.startsWith(\".forgeloop/task-state/\")\n  || path.startsWith(\".forgeloop/\")\n  || path.endsWith(\".tgz\")\n  || (path.startsWith(\".github/\") && path !== \".github/copilot-instructions.md\"));\nif (forbidden.length > 0) {\n  throw new Error(`Forbidden package paths: ${forbidden.join(\", \")}`);\n}\nfor (const required of [\n  \"src/cli.js\",\n  \"src/config/guides.json\",\n  \"schemas/work-state.schema.json\",\n  \"benchmarks/execution-profiles/documentation-correction.json\",\n]) {\n  if (!paths.includes(required)) throw new Error(`Missing required package path: ${required}`);\n}\nconsole.log(`Inspected ${paths.length} package files (${report.size} bytes packed)`);\nNODE\n",
+        "npm run pack:smoke",
+        "npm run docs:check",
+        "python3 -c 'import sys; assert sys.version_info >= (3, 9), \"Python 3.9+ is required\"'\npython3 -m unittest discover -s tests -v\npython3 scripts/validate_markdown.py --self-test\npython3 scripts/validate_markdown.py\npython3 scripts/validate_loop_system.py --self-test\npython3 scripts/validate_loop_system.py\npython3 scripts/scan_secrets.py\n"
+      ],
+      "workflowSha256": "2728a8062c820a639a5ab035a249d76b5caae4e802fd0a5015709ff2b4682dcf",
+      "hosted": false
+    },
+    {
+      "workflow": ".github/workflows/npm-publish.yml",
+      "job": "publish",
+      "runsOn": "ubuntu-latest",
+      "matrix": null,
+      "commands": [
+        "expected=\"${GITHUB_REF_NAME#v}\"\nactual=\"$(node -p \"JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version\")\"\ntest \"$expected\" = \"$actual\"\n",
+        "node --input-type=module <<'NODE'\nimport { readFile } from \"node:fs/promises\";\n\nconst packageJson = JSON.parse(await readFile(\"package.json\", \"utf8\"));\nconst registryPath = encodeURIComponent(packageJson.name);\nconst response = await fetch(`https://registry.npmjs.org/${registryPath}/${packageJson.version}`);\nif (response.status === 200) {\n  throw new Error(`${packageJson.name}@${packageJson.version} already exists on npm`);\n}\nif (response.status !== 404) {\n  throw new Error(`Unable to prove ${packageJson.name}@${packageJson.version} is unpublished: HTTP ${response.status}`);\n}\nconsole.log(`${packageJson.name}@${packageJson.version} is not published`);\nNODE\n",
+        "npm ci --ignore-scripts",
+        "npm publish --provenance --access restricted"
+      ],
+      "workflowSha256": "2728a8062c820a639a5ab035a249d76b5caae4e802fd0a5015709ff2b4682dcf",
+      "hosted": true
+    },
+    {
+      "workflow": ".github/workflows/package-smoke.yml",
+      "job": "classify",
+      "runsOn": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ],
+      "matrix": null,
+      "commands": [
+        "if [ \"$EVENT_NAME\" = \"workflow_dispatch\" ]; then\n  node scripts/ci-classify.mjs --all --github-output\nelse\n  node scripts/ci-classify.mjs --github-output\nfi\nnpm run repository:hygiene\n"
+      ],
+      "workflowSha256": "c301935722ca5224b107220c69611b63e450a0600bc825cd3f140dd0a08f7935",
+      "hosted": false
+    },
+    {
+      "workflow": ".github/workflows/package-smoke.yml",
+      "job": "tarball-smoke",
+      "runsOn": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ],
+      "matrix": null,
+      "commands": [
+        "npm ci --ignore-scripts",
+        "npm run mcp:setup",
+        "npm run mcp:test\nnpm run mcp:pack:check\nnpm run pack:smoke\n"
+      ],
+      "workflowSha256": "c301935722ca5224b107220c69611b63e450a0600bc825cd3f140dd0a08f7935",
+      "hosted": false
+    },
+    {
+      "workflow": ".github/workflows/package-smoke.yml",
+      "job": "release-tarball-smoke",
+      "runsOn": "${{ matrix.runner }}",
+      "matrix": {
+        "include": [
+          {
+            "os": "macOS",
+            "runner": [
+              "self-hosted",
+              "macOS",
+              "ARM64",
+              "forgeloop-macos-local"
+            ]
+          },
+          {
+            "os": "Windows",
+            "runner": [
+              "self-hosted",
+              "Windows",
+              "X64",
+              "forgeloop-windows-remote"
+            ]
+          }
+        ]
+      },
+      "commands": [
+        "npm ci --ignore-scripts",
+        "npm run mcp:setup",
+        "npm run mcp:test\nnpm run mcp:pack:check\nnpm run pack:smoke\n"
+      ],
+      "workflowSha256": "c301935722ca5224b107220c69611b63e450a0600bc825cd3f140dd0a08f7935",
+      "hosted": false
+    },
+    {
+      "workflow": ".github/workflows/pr-core.yml",
+      "job": "classify",
+      "runsOn": "ubuntu-latest",
+      "matrix": null,
+      "commands": [
+        "if [ \"$EVENT_NAME\" = \"workflow_dispatch\" ]; then\n  node scripts/ci-classify.mjs --all --github-output\nelse\n  node scripts/ci-classify.mjs --github-output\nfi\n"
+      ],
+      "workflowSha256": "016561de63d14e6f60408ceb69c835cdba49b8cfe8a85c96ecabcb477f6746d8",
+      "hosted": true
+    },
+    {
+      "workflow": ".github/workflows/pr-core.yml",
+      "job": "core",
+      "runsOn": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ],
+      "matrix": {
+        "include": [
+          {
+            "node-version": 24,
+            "shard": 1
+          },
+          {
+            "node-version": 24,
+            "shard": 2
+          },
+          {
+            "node-version": 24,
+            "shard": 3
+          },
+          {
+            "node-version": 24,
+            "shard": 4
+          },
+          {
+            "node-version": "24.19.0",
+            "shard": 0
+          }
+        ]
+      },
+      "commands": [
+        "npm ci --ignore-scripts",
+        "node --input-type=module -e 'import os from \"node:os\"; console.log(JSON.stringify({ platform:process.platform, architecture:process.arch, hostname:os.hostname(), revision:process.env.GITHUB_SHA }));'",
+        "if [ \"$DOCS_ONLY\" = \"true\" ]; then\n  npm run test:quick\nelse\n  export FORGELOOP_TEST_SHARD=\"${{ matrix.shard }}/4\"\n  npm run coverage:shard\nfi\n",
+        "npm run test:quick\nnode src/cli.js --help\nnode src/cli.js protocol-info --json\nnode --test tests/storage-runtime.test.js tests/storage-store.test.js tests/storage-operational-bootstrap.test.js\n",
+        "echo \"Minimum Node 24.19.0 compatibility is not applicable for this change.\"",
+        "echo \"Additional Node 24 shards are not applicable for documentation-only changes.\""
+      ],
+      "workflowSha256": "016561de63d14e6f60408ceb69c835cdba49b8cfe8a85c96ecabcb477f6746d8",
+      "hosted": false
+    },
+    {
+      "workflow": ".github/workflows/pr-core.yml",
+      "job": "coverage-report",
+      "runsOn": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ],
+      "matrix": null,
+      "commands": [
+        "npm ci --ignore-scripts",
+        "npm run coverage:report\nnpm run critical-coverage:check\n"
+      ],
+      "workflowSha256": "016561de63d14e6f60408ceb69c835cdba49b8cfe8a85c96ecabcb477f6746d8",
+      "hosted": false
+    },
+    {
+      "workflow": ".github/workflows/pr-core.yml",
+      "job": "lint",
+      "runsOn": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ],
+      "matrix": null,
+      "commands": [
+        "npm run repository:hygiene",
+        "npm ci --ignore-scripts",
+        "npm run lint",
+        "npm run dependency:policy",
+        "echo \"Source lint and dependency policy are not applicable for this change.\""
+      ],
+      "workflowSha256": "016561de63d14e6f60408ceb69c835cdba49b8cfe8a85c96ecabcb477f6746d8",
+      "hosted": false
+    },
+    {
+      "workflow": ".github/workflows/pr-core.yml",
+      "job": "docs-diagram",
+      "runsOn": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ],
+      "matrix": null,
+      "commands": [
+        "npm ci --ignore-scripts",
+        "npm run docs:check",
+        "python3 -c 'import sys; assert sys.version_info >= (3, 9), \"Python 3.9+ is required\"'\npython3 -m unittest tests.test_validate_markdown tests.test_validate_loop_system -v\npython3 scripts/validate_markdown.py --self-test\npython3 scripts/validate_markdown.py\npython3 scripts/validate_loop_system.py --self-test\npython3 scripts/validate_loop_system.py\n",
+        "echo \"Documentation and diagram validation not applicable for this change.\""
+      ],
+      "workflowSha256": "016561de63d14e6f60408ceb69c835cdba49b8cfe8a85c96ecabcb477f6746d8",
+      "hosted": false
+    },
+    {
+      "workflow": ".github/workflows/pr-core.yml",
+      "job": "audit",
+      "runsOn": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ],
+      "matrix": null,
+      "commands": [
+        "npm ci --ignore-scripts",
+        "node scripts/audit-receipts.mjs",
+        "echo \"Receipt audit not applicable for this change.\""
+      ],
+      "workflowSha256": "016561de63d14e6f60408ceb69c835cdba49b8cfe8a85c96ecabcb477f6746d8",
+      "hosted": false
+    },
+    {
+      "workflow": ".github/workflows/pr-core.yml",
+      "job": "tarball-smoke",
+      "runsOn": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ],
+      "matrix": null,
+      "commands": [
+        "npm ci --ignore-scripts",
+        "npm run mcp:setup",
+        "npm run mcp:test\nnpm run mcp:pack:check\nnpm run pack:smoke\n",
+        "echo \"Package and MCP smoke not applicable for this change.\""
+      ],
+      "workflowSha256": "016561de63d14e6f60408ceb69c835cdba49b8cfe8a85c96ecabcb477f6746d8",
+      "hosted": false
+    },
+    {
+      "workflow": ".github/workflows/pr-core.yml",
+      "job": "required-validation",
+      "runsOn": "ubuntu-latest",
+      "matrix": null,
+      "commands": [
+        "node --input-type=module <<'NODE'\nconst needs = JSON.parse(process.env.REQUIRED_RESULTS);\nconst coreResult = needs.core?.result;\nif (process.env.CORE_APPLICABLE === \"true\") {\n  if (coreResult !== \"success\") throw new Error(`core did not succeed: ${coreResult ?? \"missing\"}`);\n} else if (coreResult !== \"skipped\") {\n  throw new Error(`core ran unexpectedly: ${coreResult ?? \"missing\"}`);\n}\nfor (const name of [\"classify\", \"lint\", \"docs-diagram\", \"audit\", \"tarball-smoke\"]) {\n  if (needs[name]?.result !== \"success\") {\n    throw new Error(`${name} did not succeed: ${needs[name]?.result ?? \"missing\"}`);\n  }\n}\nconst coverageResult = needs[\"coverage-report\"]?.result;\nif (process.env.COVERAGE_APPLICABLE === \"true\") {\n  if (coverageResult !== \"success\") throw new Error(`coverage-report did not succeed: ${coverageResult ?? \"missing\"}`);\n} else if (coverageResult !== \"skipped\") {\n  throw new Error(`coverage-report ran unexpectedly: ${coverageResult ?? \"missing\"}`);\n}\nconst indexResult = needs[\"repository-index\"]?.result;\nif (process.env.REPOSITORY_INDEX_APPLICABLE === \"true\") {\n  if (indexResult !== \"success\") throw new Error(`repository-index did not succeed: ${indexResult ?? \"missing\"}`);\n} else if (indexResult !== \"skipped\") {\n  throw new Error(`repository-index ran unexpectedly: ${indexResult ?? \"missing\"}`);\n}\nconsole.log(\"Required validation passed for all applicable jobs.\");\nNODE\n"
+      ],
+      "workflowSha256": "016561de63d14e6f60408ceb69c835cdba49b8cfe8a85c96ecabcb477f6746d8",
+      "hosted": true
+    },
+    {
+      "workflow": ".github/workflows/release-notes.yml",
+      "job": "release-notes",
+      "runsOn": "ubuntu-latest",
+      "matrix": null,
+      "commands": [
+        "npm pack --json > pack.json\nTARBALL=\"$(node -p \"JSON.parse(require('fs').readFileSync('pack.json', 'utf8'))[0].filename\")\"\nsha256sum \"$TARBALL\" > \"$TARBALL.sha256\"\necho \"RELEASE_TARBALL=$TARBALL\" >> \"$GITHUB_ENV\"\n",
+        "gh release create \"$GITHUB_REF_NAME\" --verify-tag --generate-notes --title \"$GITHUB_REF_NAME\" \"$RELEASE_TARBALL.sha256\""
+      ],
+      "workflowSha256": "01bc85832f431963c5f959a323cff22764d6b6e0c6d6414dccfe0a87629e19ae",
+      "hosted": true
+    },
+    {
+      "workflow": ".github/workflows/repository-index.yml",
+      "job": "classify",
+      "runsOn": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ],
+      "matrix": null,
+      "commands": [
+        "if [ \"$EVENT_NAME\" = \"workflow_call\" ] || [ \"$EVENT_NAME\" = \"workflow_dispatch\" ]; then\n  node scripts/ci-classify.mjs --all --github-output\nelse\n  node scripts/ci-classify.mjs --github-output\nfi\n"
+      ],
+      "workflowSha256": "223aab47a7809538fb575fb85410892cec50a0e170d343fdf1ff219896fc9597",
+      "hosted": false
+    },
+    {
+      "workflow": ".github/workflows/repository-index.yml",
+      "job": "manifest",
+      "runsOn": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ],
+      "matrix": null,
+      "commands": [
+        "npm ci --ignore-scripts",
+        "npm run repository-index:manifest"
+      ],
+      "workflowSha256": "223aab47a7809538fb575fb85410892cec50a0e170d343fdf1ff219896fc9597",
+      "hosted": false
+    },
+    {
+      "workflow": ".github/workflows/repository-index.yml",
+      "job": "native",
+      "runsOn": "${{ matrix.runner }}",
+      "matrix": {
+        "include": [
+          {
+            "os": "Linux",
+            "runner": [
+              "self-hosted",
+              "Linux",
+              "X64",
+              "forgeloop-linux-remote"
+            ]
+          },
+          {
+            "os": "macOS",
+            "runner": [
+              "self-hosted",
+              "macOS",
+              "ARM64",
+              "forgeloop-macos-local"
+            ]
+          },
+          {
+            "os": "Windows",
+            "runner": [
+              "self-hosted",
+              "Windows",
+              "X64",
+              "forgeloop-windows-remote"
+            ]
+          }
+        ]
+      },
+      "commands": [
+        "npm ci --ignore-scripts",
+        "node --input-type=module <<'NODE'\nimport { createHash } from \"node:crypto\";\nimport { appendFile, chmod, mkdir, mkdtemp, readFile, readdir, writeFile } from \"node:fs/promises\";\nimport { execFile as nodeExecFile } from \"node:child_process\";\nimport os from \"node:os\";\nimport path from \"node:path\";\n\nconst manifest = JSON.parse(await readFile(\"src/repository-index/tgrep-manifest.json\", \"utf8\"));\nconst platformName = ({ darwin: \"darwin\", linux: \"linux\", win32: \"windows\" })[process.platform];\nconst platformKey = `${platformName}-${process.arch}`;\nconst asset = manifest.assets[platformKey];\nif (!asset) throw new Error(`No pinned tgrep asset for ${process.platform}/${process.arch} (${platformKey})`);\nconst tempRoot = await mkdtemp(path.join(process.env.RUNNER_TEMP ?? os.tmpdir(), \"ForgeLoop Native Test \"));\nconst archivePath = path.join(tempRoot, asset.assetName);\nconst response = await fetch(`${manifest.releaseBaseUrl}/${asset.assetName}`, { redirect: \"follow\" });\nif (!response.ok) throw new Error(`tgrep asset download failed: HTTP ${response.status}`);\nawait writeFile(archivePath, Buffer.from(await response.arrayBuffer()), { flag: \"wx\" });\n\nasync function sha256(filePath) {\n  const hash = createHash(\"sha256\");\n  hash.update(await readFile(filePath));\n  return hash.digest(\"hex\");\n}\nconst archiveSha = await sha256(archivePath);\nif (archiveSha !== asset.sha256) throw new Error(`archive checksum mismatch: expected ${asset.sha256}, got ${archiveSha}`);\n\nfunction execFile(file, args) {\n  return new Promise((resolve, reject) => nodeExecFile(file, args, { shell: false, maxBuffer: 4 * 1024 * 1024 }, (error, stdout, stderr) => {\n    if (error) { error.stdout = stdout; error.stderr = stderr; reject(error); return; }\n    resolve({ stdout, stderr });\n  }));\n}\nfunction validateEntry(entry) {\nconst portable = entry.replaceAll(\"\\\\\", \"/\").replace(/^\\.\\//u, \"\") || \".\";\n  const normalized = path.posix.normalize(portable);\n  if (path.posix.isAbsolute(portable) || path.win32.isAbsolute(portable) || normalized === \"..\" || normalized.startsWith(\"../\")) throw new Error(`unsafe archive entry: ${entry}`);\n  return normalized;\n}\nconst listingCommand = asset.archive === \"zip\" ? \"unzip\" : \"tar\";\nconst listingArgs = listingCommand === \"unzip\" ? [\"-Z1\", archivePath] : [\"-tf\", archivePath];\nconst listing = await execFile(listingCommand, listingArgs);\nconst entries = listing.stdout.split(/\\r?\\n/u).filter(Boolean).map(validateEntry);\nif (!entries.some((entry) => path.posix.basename(entry) === asset.binaryName)) throw new Error(`archive does not contain ${asset.binaryName}`);\nconst extractionDirectory = path.join(tempRoot, \"extract\");\nawait mkdir(extractionDirectory);\nconst extractCommand = asset.archive === \"zip\" ? \"unzip\" : \"tar\";\nconst extractArgs = extractCommand === \"unzip\" ? [\"-q\", archivePath, \"-d\", extractionDirectory] : [\"-xf\", archivePath, \"-C\", extractionDirectory];\nawait execFile(extractCommand, extractArgs);\nconst found = [];\nasync function visit(directory) {\n  for (const entry of await readdir(directory, { withFileTypes: true })) {\n    const entryPath = path.join(directory, entry.name);\n    if (entry.isSymbolicLink()) throw new Error(`extracted symbolic link: ${entry.name}`);\n    if (entry.isDirectory()) await visit(entryPath);\n    else if (entry.isFile() && entry.name === asset.binaryName) found.push(entryPath);\n  }\n}\nawait visit(extractionDirectory);\nif (found.length !== 1) throw new Error(`expected exactly one ${asset.binaryName}, found ${found.length}`);\nconst binaryPath = found[0];\nconst binarySha = await sha256(binaryPath);\nif (binarySha !== asset.binarySha256) throw new Error(`binary checksum mismatch: expected ${asset.binarySha256}, got ${binarySha}`);\nif (process.platform !== \"win32\") await chmod(binaryPath, 0o755);\nconsole.log(`Native tgrep platform=${process.platform} arch=${process.arch} asset=${asset.assetName}`);\nconsole.log(`Native tgrep binary=${binaryPath}`);\nawait appendFile(process.env.GITHUB_ENV, `FORGELOOP_TGREP_BINARY=${binaryPath}\\n`);\nNODE\n",
+        "node --input-type=module <<'NODE'\nimport { execFile } from \"node:child_process\";\nconst binary = process.env.FORGELOOP_TGREP_BINARY;\nif (!binary) throw new Error(\"FORGELOOP_TGREP_BINARY is not set\");\nawait new Promise((resolve, reject) => execFile(binary, [\"--version\"], { shell: false }, (error, stdout, stderr) => {\n  if (error) { error.stdout = stdout; error.stderr = stderr; reject(error); return; }\n  console.log(\"Native tgrep version: \" + stdout.trim());\n  resolve();\n}));\nconsole.log(\"Native runner platform=\" + process.platform + \" arch=\" + process.arch + \" node=\" + process.version);\nNODE\nnode --test \\\n  tests/repository-index-live.test.js \\\n  tests/repository-index-differential.test.js \\\n  tests/repository-index-migration.test.js \\\n  tests/persistent-transport-native.test.js\n",
+        "node --test tests/repository-index-native-cli.test.js"
+      ],
+      "workflowSha256": "223aab47a7809538fb575fb85410892cec50a0e170d343fdf1ff219896fc9597",
+      "hosted": false
+    },
+    {
+      "workflow": ".github/workflows/windows-full-suite.yml",
+      "job": "test",
+      "runsOn": [
+        "self-hosted",
+        "Windows",
+        "X64",
+        "forgeloop-windows-remote"
+      ],
+      "matrix": null,
+      "commands": [
+        "$ErrorActionPreference = 'Stop'\n$requestedHost = '100.83.46.210'\nif (-not (Get-NetIPAddress -AddressFamily IPv4 | Where-Object IPAddress -eq $requestedHost)) {\n  throw 'The Windows runner is not on the requested host.'\n}\n$dockerExe = Join-Path $env:ProgramFiles 'Docker\\Docker\\resources\\bin\\docker.exe'\n$identity = & $dockerExe --config 'C:\\forgeloop-ci\\docker-config' --host 'npipe:////./pipe/dockerDesktopLinuxEngine' inspect forgeloop-linux-remote --format '{{.Id}} {{.Image}} {{.State.Running}} {{.Config.Hostname}}'\nif ($LASTEXITCODE -ne 0) { throw 'Docker Linux runner inspection failed.' }\nif ($identity -notmatch '^[a-f0-9]{64} sha256:[a-f0-9]{64} true [A-Za-z0-9][A-Za-z0-9_.-]{0,252}$') { throw 'The Docker Linux runner is not running with a verifiable identity.' }\nWrite-Output \"Windows host: $requestedHost; computer: $env:COMPUTERNAME\"\nWrite-Output \"Docker Linux runner: $identity\"\n",
+        "npm ci --ignore-scripts",
+        "npm test"
+      ],
+      "workflowSha256": "f384e60231f80939bf5c98064b5456466ec7aeac313909cf5dd14480e42cf5c1",
+      "hosted": false
+    }
+  ],
+  "hostedRoles": {
+    "codeql.yml/analyze": "GitHub CodeQL analysis/autobuild, no explicit test suite",
+    "pr-core.yml/classify": "Changed-path classifier, no project test suite",
+    "pr-core.yml/required-validation": "Aggregates job results, no project test suite",
+    "npm-publish.yml/publish": "Explicit trusted publication job; not dispatched",
+    "mcp-publish.yml/publish": "Explicit trusted publication job; not dispatched",
+    "release-notes.yml/release-notes": "Release metadata; no project test suite"
+  },
+  "limitations": [
+    "Actions may invoke internal runtimes; this inventory covers explicit repository commands.",
+    "Matrix routing does not prove runner identity or all workflow rows passed.",
+    "No publish or release dispatch is authorized or performed."
+  ]
+}
