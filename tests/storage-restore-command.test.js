@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { mkdtemp, readFile, readdir, rm, stat } from "node:fs/promises";
+import { mkdtemp, readFile, readdir, stat } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import { Readable } from "node:stream";
 import os from "node:os";
@@ -84,6 +85,6 @@ test("restore CLI and shared command API activate verified backups and reject mi
     assert.match(JSON.stringify(repeated), /E_STORAGE_RESTORE_INVALID/);
   } finally {
     db.close();
-    for (const target of [original, cliTarget, apiTarget]) await rm(target, { recursive: true, force: true });
+    for (const target of [original, cliTarget, apiTarget]) await removeTempTree(target);
   }
 });

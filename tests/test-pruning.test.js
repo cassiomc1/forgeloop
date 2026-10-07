@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -56,7 +57,7 @@ test("high-confidence unprotected redundancy reaches the isolated prune probe", 
     assert.equal(result.liveWorktreeModified, false);
     assert.equal(result.temporaryWorkspaceCleaned, true);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -111,5 +112,5 @@ test("persisted prune candidates cannot write through absolute, traversal or sym
       assert.equal(result.temporaryWorkspaceCleaned, true);
       assert.equal(await readFile(external, "utf8"), source, file);
     }
-  } finally { await rm(root, { recursive: true, force: true }); }
+  } finally { await removeTempTree(root); }
 });

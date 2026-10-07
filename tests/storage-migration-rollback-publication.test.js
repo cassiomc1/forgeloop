@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { readFile, rm, stat, writeFile } from "node:fs/promises";
+import { readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { buildDiagnosisProject, TEST_TASK_ID } from "./helpers/storage-fixtures.js";
 import { taskStorageKey } from "../src/core/task-identity.js";
@@ -40,5 +41,5 @@ for(const mode of ["restored","source-tamper","native-tamper","binary-attachment
    else await verifyPublishedMigrationSourceRollback(target,"retained");
    assert.deepEqual(await readFile(path.join(target,"retained/source",relative)),original);
   });
- }finally{await rm(target,{recursive:true,force:true});}
+ }finally{await removeTempTree(target);}
 });

@@ -1,8 +1,9 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { fork, execFileSync } from "node:child_process";
 import { once } from "node:events";
-import { mkdtemp, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, readdir, stat, writeFile } from "node:fs/promises";
 import { Readable } from "node:stream";
 import os from "node:os";
 import path from "node:path";
@@ -68,7 +69,7 @@ test("verified restore activates canonical project dispatch and independent atta
     assert.deepEqual(await readFile(path.join(backup, reference.path)), bytes);
     assert.deepEqual(await readFile(path.join(result.retainedSnapshot, reference.path)), bytes);
     await assert.rejects(restoreProjectStorageToFreshProject(backup, target, { writersQuiesced: true }), { code: "E_STORAGE_RESTORE_INVALID" });
-  } finally { db.close(); await rm(original, { recursive: true, force: true }); await rm(target, { recursive: true, force: true }); }
+  } finally { db.close(); await removeTempTree(original); await removeTempTree(target); }
 });
 
 test("restore refuses unquiesced writers, corrupt backup and retained legacy state", async () => {
@@ -85,7 +86,7 @@ test("restore refuses unquiesced writers, corrupt backup and retained legacy sta
     await writeFile(path.join(backup, reference.path), "corrupt");
     await assert.rejects(restoreProjectStorageToFreshProject(backup, target, { writersQuiesced: true }), { code: "E_STORAGE_ATTACHMENT_INVALID" });
     await assert.rejects(readFile(path.join(target, ".forgeloop/storage-version.json")), { code: "ENOENT" });
-  } finally { db.close(); await rm(original, { recursive: true, force: true }); await rm(target, { recursive: true, force: true }); }
+  } finally { db.close(); await removeTempTree(original); await removeTempTree(target); }
 });
 
 test("restore rejects schema-invalid canonical evidence before marker activation and retains exclusion", async () => {
@@ -109,7 +110,7 @@ test("restore rejects schema-invalid canonical evidence before marker activation
     const dispatched = await executeForgeLoopCommand({ command: "task-list", projectPath: target, input: {} });
     assert.equal(dispatched.ok, false);
     assert.match(JSON.stringify(dispatched), /E_STORAGE_MAINTENANCE_IN_PROGRESS/);
-  } finally { db.close(); await rm(original, { recursive: true, force: true }); await rm(target, { recursive: true, force: true }); }
+  } finally { db.close(); await removeTempTree(original); await removeTempTree(target); }
 });
 
 for (const checkpoint of ["PARTIAL", "MISSING", "RETAINING", "RETAINED", "REBUILD", "REBUILD_CONFLICT", "PREPARING", "PREPARING_CHANGED", "READY", "PENDING", "OBJECT", "DATABASE", "ACTIVE_MARKER", "UNBOUND", "CHANGED_DATABASE", "TERMINAL_CHANGED"]) test(`${checkpoint} restore reconciles owned SIGKILL and refuses live-owner adoption`, { timeout: 60000 }, async () => {
@@ -224,6 +225,6 @@ for (const checkpoint of ["PARTIAL", "MISSING", "RETAINING", "RETAINED", "REBUIL
     assert.match(JSON.stringify(listed.result), new RegExp(TEST_TASK_ID));
   } finally {
     if (worker && worker.exitCode === null && worker.signalCode === null) { const exited = once(worker, "exit"); worker.kill("SIGKILL"); await exited; }
-    db.close(); await rm(original, { recursive: true, force: true }); await rm(target, { recursive: true, force: true });
+    db.close(); await removeTempTree(original); await removeTempTree(target);
   }
 });

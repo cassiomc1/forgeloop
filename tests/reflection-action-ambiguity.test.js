@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -180,6 +181,6 @@ test("COMMIT_UNKNOWN adds reconciliation guidance without downgrading STALLED", 
     assert.ok(reflection.signals.includes("EXTERNAL_ACTION_RECONCILIATION_REQUIRED"));
     assert.equal(reflection.recommendedProtocolAction, "RECONCILE_EXTERNAL_ACTION");
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });

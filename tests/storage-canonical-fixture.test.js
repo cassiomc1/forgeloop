@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import test from "node:test";
 import assert from "node:assert/strict";
-import { cp, mkdtemp, rm } from "node:fs/promises";
+import { cp, mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import { buildCanonicalDiagnosisProject } from "./helpers/canonical-diagnosis-fixture.js";
 import { runRecordDiagnosis } from "../src/commands/record-diagnosis.js";
@@ -16,7 +17,7 @@ test("canonical fixture reaches DIAGNOSING and completes native diagnosis/advanc
     assert.equal(next.phase, "CORRECTING");
     assert.equal((await validateEventLedger(fixture.target, fixture.packageRoot, { taskId: fixture.taskId })).valid, true);
   } finally {
-    await rm(fixture.target, { recursive: true, force: true });
+    await removeTempTree(fixture.target);
   }
 });
 
@@ -38,7 +39,7 @@ test("canonical seed continues through public SQLite dispatch without operationa
     } finally { db.close(); }
     const { readdir } = await import("node:fs/promises");
     await assert.rejects(readdir(path.join(fixture.target, ".forgeloop/task-state")), { code: "ENOENT" });
-  } finally { await rm(fixture.target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(fixture.target); }
 });
 
 test("missing persisted preflight rejects correction on direct API and public SQLite without mutation", async () => {
@@ -69,8 +70,8 @@ test("missing persisted preflight rejects correction on direct API and public SQ
     assert.deepEqual({ state: findTaskById(db, fixture.taskId).state, events: listEvents(db, fixture.taskId) }, before);
   } finally {
     db?.close();
-    await rm(fixture.target, { recursive: true, force: true });
-    await rm(control.target, { recursive: true, force: true });
+    await removeTempTree(fixture.target);
+    await removeTempTree(control.target);
   }
 });
 
@@ -103,7 +104,7 @@ for (const fault of ["after-state-write", "after-event-write"]) {
       assert.equal(findTaskById(db, fixture.taskId).state.phase, "CORRECTING");
     } finally {
       db?.close();
-      await rm(fixture.target, { recursive: true, force: true });
+      await removeTempTree(fixture.target);
     }
   });
 }
@@ -150,8 +151,8 @@ test("canonical direct API/public SQLite sequence preserves state, receipt and e
     assert.deepEqual(storedEvents.map(event => event.event), ["DIAGNOSIS_RECORDED", "TRANSACTION_COMMITTED", "TRANSACTION_COMMITTED"]);
   } finally {
     db?.close();
-    await rm(controlTarget, { recursive: true, force: true });
-    await rm(fixture.target, { recursive: true, force: true });
+    await removeTempTree(controlTarget);
+    await removeTempTree(fixture.target);
   }
 });
 
@@ -178,6 +179,6 @@ test("canonical recovery rejects SQLite correction without mutating released cla
     assert.deepEqual(snapshot(), before);
   } finally {
     db?.close();
-    await rm(fixture.target, { recursive: true, force: true });
+    await removeTempTree(fixture.target);
   }
 });

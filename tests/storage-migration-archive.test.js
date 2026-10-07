@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { mkdir, readFile, rename, rm } from "node:fs/promises";
+import { mkdir, readFile, rename } from "node:fs/promises";
 import path from "node:path";
 import { buildDiagnosisProject } from "./helpers/storage-fixtures.js";
 import { prepareMigrationCandidate } from "../src/storage/migration-candidate.js";
@@ -34,5 +35,5 @@ test("owner-bound archival recognizes a rename before journal update and retains
     assert.equal(JSON.parse(await readFile(path.join(staged.path, "publication-journal.json"), "utf8")).phase, "ARCHIVED");
     // Retained source remains independently valid after the active roots moved.
     await verifyMigrationPublicationStage(target, "retained", { sourcePartition: true });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

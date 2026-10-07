@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import { ensureFixtureTask, overwriteFixtureRecordBytes } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -70,7 +71,7 @@ test("raw forged VERIFIED state without trusted evidence is UNTRUSTED", async ()
     const summary = await evaluateRequiredActionReadiness({ target, packageRoot, taskId });
     assert.equal(summary.untrusted >= 1, true);
     assert.equal(summary.satisfied, 0);
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("correctly authorized + committed + verified action is SATISFIED", async () => {
@@ -87,7 +88,7 @@ test("correctly authorized + committed + verified action is SATISFIED", async ()
     const summary = await evaluateRequiredActionReadiness({ target, packageRoot, taskId });
     assert.equal(summary.satisfied, 1);
     assert.equal(summary.unresolved, 0);
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("legacy required action without a requirement is readable but never trusted-satisfied", async () => {
@@ -126,5 +127,5 @@ test("legacy required action without a requirement is readable but never trusted
     const summary = await evaluateRequiredActionReadiness({ target, packageRoot, taskId });
     assert.equal(summary.untrusted, 1);
     assert.equal(summary.satisfied, 0);
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

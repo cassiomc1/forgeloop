@@ -1,7 +1,8 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import { ensureFixtureTask, readFixtureText, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
 import { taskArtifactPath } from "../src/core/task-paths.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -85,7 +86,7 @@ test("record-continuity parses work-item flags and writes only operational conte
     assert.equal(stored.taskId, "task-1");
     assert.equal(stored.phase, "EXECUTING");
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -109,6 +110,6 @@ test("clear-continuity removes only the continuity artifact", async () => {
     assert.equal(await readFixtureText(target, taskArtifactPath(taskId, "continuity")), null);
     assert.equal(await readFixtureText(target, taskArtifactPath(taskId, "state")), stateBefore);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });

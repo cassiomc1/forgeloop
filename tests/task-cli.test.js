@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { access, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { access, mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
@@ -18,7 +19,7 @@ async function withTarget(fn) {
   try {
     await fn(target);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 }
 

@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -30,7 +31,7 @@ async function withTarget(run) {
     await appendProtocolEvent(target, { taskId, event: "TASK_RECEIVED" }, packageRoot, { taskId });
     await run(target);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 }
 

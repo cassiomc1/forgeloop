@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { openStorageDatabase } from "../src/storage/connection.js";
@@ -24,5 +25,5 @@ test("logical ledger presence avoids event materialization while evidence reads 
       assert.equal(operationalArtifactExists(target, taskArtifactPath(taskId, "state")), false);
       assert.throws(() => readOperationalText(target, ledger), /LEDGER_MATERIALIZED/);
     });
-  } finally { db.close(); await rm(target, { recursive: true, force: true }); }
+  } finally { db.close(); await removeTempTree(target); }
 });

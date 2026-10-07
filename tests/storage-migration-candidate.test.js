@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { mkdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -62,7 +63,7 @@ test("candidate preparation validates a real lifecycle and preserves source/expo
     changed.prepare("UPDATE tasks SET revision = revision + 1").run();
     changed.close();
     await assert.rejects(verifyMigrationCandidate(target, "retained"), { code: "E_STORAGE_MIGRATION_PARITY_INVALID" });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("candidate preparation rejects schema-invalid optional records and retains diagnostics and exclusion", async () => {
@@ -79,7 +80,7 @@ test("candidate preparation rejects schema-invalid optional records and retains 
     const status = await executeForgeLoopCommand({ command: "storage-migration-status", projectPath: target, input: {} });
     assert.equal(status.result.maintenance.status, "RETAINED");
     await assert.rejects(verifyMigrationCandidate(target, "retained"), { code: "E_STORAGE_MIGRATION_PARITY_INVALID" });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("candidate preparation refuses unmapped source artifacts and does not claim attachment references verified", async () => {
@@ -95,8 +96,8 @@ test("candidate preparation refuses unmapped source artifacts and does not claim
     await writeFile(path.join(unmapped, ".forgeloop/task-state", taskStorageKey(TEST_TASK_ID), "unknown-operational.json"), "{}");
     await assert.rejects(prepareMigrationCandidate(unmapped, { destination: "retained", writersQuiesced: true }), { code: "E_STORAGE_MIGRATION_UNMAPPED_SOURCE" });
   } finally {
-    await rm(target, { recursive: true, force: true });
-    await rm(unmapped, { recursive: true, force: true });
+    await removeTempTree(target);
+    await removeTempTree(unmapped);
   }
 });
 
@@ -109,7 +110,7 @@ test("candidate validation refuses owned command evidence whose execution refere
     await writeFile(filename, JSON.stringify(state));
     await assert.rejects(prepareMigrationCandidate(target, { destination: "retained", writersQuiesced: true }), { code: "E_EXECUTION_REF_INVALID" });
     assert.equal(JSON.parse(await readFile(path.join(target, "retained/candidate-manifest.json"), "utf8")).status, "FAILED");
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("source parity refuses invalid UTF-8 even when decoded event hashes validate", async () => {
@@ -127,7 +128,7 @@ test("source parity refuses invalid UTF-8 even when decoded event hashes validat
     await writeFile(filename, invalidBytes);
     await assert.rejects(prepareMigrationCandidate(target, { destination: "retained", writersQuiesced: true }), /UTF|encoding/iu);
     assert.deepEqual(await readFile(filename), invalidBytes);
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("an empty orphan namespace survives capture and aborts candidate import", async () => {
@@ -139,7 +140,7 @@ test("an empty orphan namespace survives capture and aborts candidate import", a
     const failed = JSON.parse(await readFile(path.join(target, "retained/candidate-manifest.json"), "utf8"));
     assert.equal(failed.status, "FAILED");
     assert.ok(failed.error.report.errors.some(issue => issue.code === "E_TASK_DESCRIPTOR_INVALID"));
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("candidate import refuses empty unknown namespaces and stray task-root files", async () => {
@@ -160,7 +161,7 @@ test("candidate import refuses empty unknown namespaces and stray task-root file
         assert.equal(rejected.prepare("SELECT COUNT(*) AS count FROM events").get().count, 0);
       } finally { rejected.close(); }
       if (!directory) assert.equal(await readFile(entry, "utf8"), "{}");
-    } finally { await rm(target, { recursive: true, force: true }); }
+    } finally { await removeTempTree(target); }
   }
 });
 
@@ -189,5 +190,5 @@ test("candidate recovery refuses unbound files, changed fingerprints and staging
     assert.deepEqual(await readFile(filename), raw);
     assert.deepEqual(await readFile(attachment), raw);
     await assert.rejects(stat(path.join(captured.path, "candidate-history")), { code: "ENOENT" });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

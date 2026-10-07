@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { mkdtemp, readdir, rm } from "node:fs/promises";
+import { mkdtemp, readdir } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { executeForgeLoopCommand } from "../src/core/command-runtime.js";
@@ -22,5 +23,5 @@ test("retired persistence capabilities fail before command storage allocation", 
     }
     await assert.rejects(runAdvance({ target, to: "CORRECTING", persistence: {} }), { code: "E_STORAGE_OPERATION_UNSUPPORTED" });
     await assert.rejects(runRecordDiagnosis({ target, persistence: {} }), { code: "E_STORAGE_OPERATION_UNSUPPORTED" });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

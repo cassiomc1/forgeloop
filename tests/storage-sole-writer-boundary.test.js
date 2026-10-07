@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { access, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { access, mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { createTaskDescriptor, writeTaskDescriptor, readTaskDescriptor } from "../src/core/task-descriptor.js";
@@ -17,7 +18,7 @@ import { writeJsonArtifact, writePortableJsonArtifact } from "../src/core/artifa
 async function project(callback) {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-sole-writer-"));
   try { await callback(target); }
-  finally { await rm(target, { recursive: true, force: true }); }
+  finally { await removeTempTree(target); }
 }
 
 test("direct descriptor and state writers create only canonical SQLite authority", async () => {

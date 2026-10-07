@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { mkdir, readFile, rm, rename, writeFile, cp } from "node:fs/promises";
@@ -43,7 +44,7 @@ test("source partition inspection derives interrupted archival location and refu
     await rm(path.join(archived, "extra.json"));
     await rm(archived, { recursive: true });
     await assert.rejects(inspectMigrationSourcePartition(target, "retained"), { code: "E_STORAGE_MIGRATION_ARCHIVE_INVALID" });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("empty captured roots remain distinguishable from missing and duplicated roots", async () => {
@@ -59,7 +60,7 @@ test("empty captured roots remain distinguishable from missing and duplicated ro
     assert.equal(partition.roots.find(root => root.path === ".forgeloop/attachments").location, "ARCHIVED");
     await mkdir(active);
     await assert.rejects(inspectMigrationSourcePartition(target, "retained"), { code: "E_STORAGE_MIGRATION_ARCHIVE_INVALID" });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("published attachment growth preserves captured bytes and refuses unmanaged additions", async () => {
@@ -80,5 +81,5 @@ test("published attachment growth preserves captured bytes and refuses unmanaged
     const unmanaged = path.join(target, ".forgeloop/attachments/unmanaged.bin");
     await writeFile(unmanaged, "unmanaged");
     await assert.rejects(inspectMigrationSourcePartition(target, "retained", { allowAttachmentGrowth: true }), { code: "E_STORAGE_MIGRATION_ARCHIVE_INVALID" });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

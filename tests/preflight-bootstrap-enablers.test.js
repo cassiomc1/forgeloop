@@ -1,8 +1,9 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import { discoverTasks } from "../src/core/task-discovery.js";
 import { withProjectStorage } from "../src/storage/project-boundary.js";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { access, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
+import { access, mkdtemp, readFile, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -46,7 +47,7 @@ async function withTarget(prefix, fn) {
   try {
     await fn(target);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 }
 
@@ -133,7 +134,7 @@ test("gate-record rejects path traversal before writing", async () => {
     await assert.rejects(access(path.join(target, ".forgeloop", "task-state")));
     await assert.rejects(access(path.join(target, "outside.txt")));
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -159,7 +160,7 @@ test("feature preset bootstrap reaches READY through gate-record and detects sta
     const stale = await runPreflight({ target, packageRoot, taskId: "bootstrap-e2e" });
     assert.ok(stale.errors.some((error) => error.code === "E_GATE_STALE"));
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 

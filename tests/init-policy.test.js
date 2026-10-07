@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readdir, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -66,7 +67,7 @@ test("INIT-POLICY-1: policy discovery failure fails init with no manifest", asyn
     );
     assert.equal(await readManifest(target), null, "no initialization authority may exist");
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -90,7 +91,7 @@ test("INIT-POLICY-2: baseline write failure fails init and a retry succeeds", as
     await runInit({ target, dryRun: false, packageRoot, packageVersion: PACKAGE_VERSION });
     await assertInitialized(target);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -112,7 +113,7 @@ test("INIT-POLICY-3: policy lock write failure fails init and a retry succeeds",
     await runInit({ target, dryRun: false, packageRoot, packageVersion: PACKAGE_VERSION });
     await assertInitialized(target);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -136,7 +137,7 @@ test("INIT-POLICY-4: manifest write failure is retried without manual cleanup", 
     assert.ok(retry.actions.some((action) => action.action === "reuse"), "retry must reuse already-correct files");
     await assertInitialized(target);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -153,7 +154,7 @@ test("INIT-POLICY-5: unknown architecture succeeds autonomously with uncertainty
     const discovery = await readDiscoveryReport(target, packageRoot);
     assert.ok(["LOW", "UNKNOWN"].includes(discovery.architecture.confidence));
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -167,7 +168,7 @@ test("INIT-POLICY-6: successful initialization produces valid manifest and verif
       await readFile(path.join(target, artifact), "utf8");
     }
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -180,7 +181,7 @@ test("INIT-POLICY-7: dry-run performs zero writes", async () => {
     assert.deepEqual(after, before, "dry-run must not write any files");
     assert.equal(await readManifest(target), null);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -197,7 +198,7 @@ test("INIT-KIT-1: a matching canonical kit file is reusable resumable output", a
     assert.ok(result.actions.some((action) => action.action === "reuse" && action.path === loop.relativePath));
     await assertInitialized(target);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -216,7 +217,7 @@ test("INIT-KIT-2: a divergent canonical kit file blocks init without overwrite",
     assert.equal(await readManifest(target), null, "manifest must remain absent");
     assert.equal(await readFile(path.join(target, kitPath), "utf8"), conflicting, "conflicting file must be unchanged");
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -235,7 +236,7 @@ test("INIT-KIT-3: a divergent canonical kit schema blocks init", async () => {
     assert.equal(await readManifest(target), null);
     assert.equal(await readFile(path.join(target, kitPath), "utf8"), conflicting);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -253,7 +254,7 @@ test("INIT-KIT-4: a custom PROJECT_PROFILE.md remains preserved with preserve=tr
     assert.equal(manifest.files[profilePath].preserve, true);
     await assertInitialized(target);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -267,7 +268,7 @@ test("INIT-KIT-5: a pre-existing root native adapter remains preserved, not a ki
     assert.equal(await readFile(path.join(target, "AGENTS.md"), "utf8"), customAgents);
     await assertInitialized(target);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -299,7 +300,7 @@ test("INIT-KIT-6: canonical kit conflict is detected before any initialization w
     assert.equal(await readManifest(target), null);
     assert.equal(await readFile(path.join(target, conflictPath), "utf8"), "tampered canonical kit\n");
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -335,7 +336,7 @@ test("INIT-POLICY-8: dry-run detects a deterministic existing policy conflict an
       "conflicting baseline must remain unchanged",
     );
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -369,7 +370,7 @@ test("INIT-POLICY-9: dry-run reports reuse for canonical policy artifacts left b
     assert.deepEqual(after, before, "dry-run must not write any files");
     assert.equal(await readManifest(target), null);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -386,5 +387,5 @@ test("init excludes native SQLite runtime files from Git while retaining reviewa
     const result = await execute("git", ["-C", target, "check-ignore", "--no-index", ...ignored]);
     assert.deepEqual(result.stdout.trim().split(/\r?\n/), ignored);
     await assert.rejects(execute("git", ["-C", target, "check-ignore", "--no-index", ".forgeloop/policy/baseline.json", ".forgeloop/policy/policy.lock", ".forgeloop/manifest.json"]), error => error.code === 1 && error.stdout === "");
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

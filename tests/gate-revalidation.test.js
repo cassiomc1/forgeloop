@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -37,7 +38,7 @@ async function withTarget(run) {
     await writeFile(path.join(target, "THREAT_MODEL.md"), "original gate evidence\n");
     await run(target);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 }
 

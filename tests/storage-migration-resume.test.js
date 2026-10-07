@@ -1,8 +1,9 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { execFileSync, fork } from "node:child_process";
 import { once } from "node:events";
-import { readFile, readdir, rm, stat } from "node:fs/promises";
+import { readFile, readdir, stat } from "node:fs/promises";
 import path from "node:path";
 import { buildDiagnosisProject } from "./helpers/storage-fixtures.js";
 import { resumeProjectStorageMigration } from "../src/storage/migration.js";
@@ -75,6 +76,6 @@ for (const phase of ["CAPTURING", "PARTIAL_SOURCE", "CAPTURED", "PREPARING", "PA
       await assert.rejects(stat(path.join(target, ".forgeloop/.storage-maintenance")), { code: "ENOENT" });
       const created = await executeForgeLoopCommand({ command: "task-create", projectPath: target, input: { taskId: "resumed-write", claims: ["other-path"] } });
       assert.equal(created.ok, true, JSON.stringify(created));
-    } finally { worker?.kill("SIGKILL"); await rm(target, { recursive: true, force: true }); }
+    } finally { worker?.kill("SIGKILL"); await removeTempTree(target); }
   });
 }

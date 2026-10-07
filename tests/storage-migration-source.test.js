@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { mkdir, open, readFile, rm, stat, symlink, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -34,7 +35,7 @@ test("namespace import refuses every unconverted singleton task artifact without
       await rm(source, { recursive: true });
       assert.deepEqual(await inventoryLegacySource(target), baseline);
     }
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("capture verification rejects oversized and invalid UTF-8 manifests without altering retained source", async () => {
@@ -53,7 +54,7 @@ test("capture verification rejects oversized and invalid UTF-8 manifests without
     await assert.rejects(verifyLegacySourceCapture(target, "retained"), { code: "E_STORAGE_MIGRATION_CAPTURE_INVALID" });
     await writeFile(manifestPath, original);
     assert.equal((await verifyLegacySourceCapture(target, "retained")).manifest.status, "CAPTURED");
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("retained source capture preserves operational and raw attachment bytes and reimports", async () => {
@@ -77,7 +78,7 @@ test("retained source capture preserves operational and raw attachment bytes and
     await assert.rejects(captureLegacySource(target, destination, { writersQuiesced: true }), { code: "EEXIST" });
     await writeFile(path.join(captured.source, ".forgeloop/attachments/raw.bin"), "tampered");
     await assert.rejects(verifyLegacySourceCapture(target, destination), { code: "E_STORAGE_MIGRATION_CAPTURE_INVALID" });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("capture leaves filesystem-owned policy identity intact without treating it as a writer lock", async () => {
@@ -91,7 +92,7 @@ test("capture leaves filesystem-owned policy identity intact without treating it
     assert.equal(captured.manifest.files.some(file => file.path === filename), false);
     assert.equal(await readFile(path.join(target, filename), "utf8"), bytes);
     assert.equal((await verifyLegacySourceCapture(target, "retained")).manifest.status, "CAPTURED");
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("capture requires explicit writer quiescence and refuses retained task locks", async () => {
@@ -101,7 +102,7 @@ test("capture requires explicit writer quiescence and refuses retained task lock
     await mkdir(path.join(target, ".forgeloop/locks"), { recursive: true });
     await writeFile(path.join(target, ".forgeloop/locks/owner.lock"), "{}");
     await assert.rejects(captureLegacySource(target, "retained", { writersQuiesced: true }), { code: "E_STORAGE_MIGRATION_BUSY" });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("capture rejects incomplete transactions, source overlap and symlinks", async () => {
@@ -114,7 +115,7 @@ test("capture rejects incomplete transactions, source overlap and symlinks", asy
     await rm(path.join(target, ".forgeloop/.txn/incomplete"), { recursive: true });
     await symlink(path.join(target, "outside"), path.join(target, ".forgeloop/task-state/linked"));
     await assert.rejects(captureLegacySource(target, "retained", { writersQuiesced: true }), /symlink/iu);
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("capture verification refuses incomplete manifests and changed membership", async () => {
@@ -129,7 +130,7 @@ test("capture verification refuses incomplete manifests and changed membership",
     await assert.rejects(verifyLegacySourceCapture(target, "retained"), { code: "E_STORAGE_MIGRATION_CAPTURE_INVALID" });
     await writeFile(path.join(target, ".forgeloop/state.sqlite"), "not a legacy project");
     await assert.rejects(captureLegacySource(target, "second", { writersQuiesced: true }), { code: "E_STORAGE_MIGRATION_SOURCE_INVALID" });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("source capture preserves empty directories and rejects directory-membership tampering", async () => {
@@ -143,7 +144,7 @@ test("source capture preserves empty directories and rejects directory-membershi
     await verifyLegacySourceCapture(target, "retained");
     await mkdir(path.join(captured.source, ".forgeloop/task-state/unexpected-empty"));
     await assert.rejects(verifyLegacySourceCapture(target, "retained"), { code: "E_STORAGE_MIGRATION_CAPTURE_INVALID" });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("maintenance excludes public commands, lock acquisition and independent CLI processes", async () => {
@@ -170,7 +171,7 @@ test("maintenance excludes public commands, lock acquisition and independent CLI
     assert.equal(result.ok, true);
     await mkdir(path.join(target, ".forgeloop/.storage-maintenance"));
     await assert.rejects(withStorageMaintenance(target, () => assert.fail("must not run")), { code: "E_STORAGE_MAINTENANCE_IN_PROGRESS" });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("public migration status reports incomplete or malformed bootstrap state without opening a database", async () => {
@@ -198,7 +199,7 @@ test("public migration status reports incomplete or malformed bootstrap state wi
     await rm(path.join(target, ".forgeloop/task-state"), { recursive: true });
     await rm(path.join(target, ".forgeloop/.txn"), { recursive: true, force: true });
     assert.equal((await status()).result.layout, "SQLITE_PRESENT");
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("closed maintenance context cannot reopen an expired exclusion", async () => {
@@ -212,7 +213,7 @@ test("closed maintenance context cannot reopen an expired exclusion", async () =
     });
     resume();
     await assert.rejects(continuation, { code: "E_STORAGE_MAINTENANCE_IN_PROGRESS" });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("a killed maintenance owner leaves exclusion for explicit recovery", async () => {
@@ -276,7 +277,7 @@ test("a killed maintenance owner leaves exclusion for explicit recovery", async 
     });
     assert.deepEqual(await readFile(path.join(target, `.forgeloop/storage-maintenance-history/${owner.ownerId}.json`)), originalBytes);
     assert.equal((await executeForgeLoopCommand({ command: "task-list", projectPath: target, input: {} })).ok, true);
-  } finally { child?.kill("SIGKILL"); await rm(target, { recursive: true, force: true }); }
+  } finally { child?.kill("SIGKILL"); await removeTempTree(target); }
 });
 
 test("live maintenance ownership cannot be adopted and failed recovery work retains exclusion", async () => {
@@ -291,7 +292,7 @@ test("live maintenance ownership cannot be adopted and failed recovery work reta
     assert.equal(status.result.maintenance.status, "RETAINED");
     const normal = await executeForgeLoopCommand({ command: "task-list", projectPath: target, input: {} });
     assert.equal(normal.error.code, "E_STORAGE_MAINTENANCE_IN_PROGRESS");
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("capture recovery refuses changed originals and unrecorded partial entries without altering evidence", async () => {
@@ -317,5 +318,5 @@ test("capture recovery refuses changed originals and unrecorded partial entries 
     assert.equal(await readFile(unexpected, "utf8"), "unrecorded bytes");
     assert.deepEqual(await readFile(manifestPath), recorded);
     await assert.rejects(readFile(path.join(captured.path, "source-history")), { code: "ENOENT" });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

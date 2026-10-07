@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -18,7 +19,7 @@ async function withProject(callback) {
   try {
     return await callback(projectPath);
   } finally {
-    await rm(projectPath, { recursive: true, force: true });
+    await removeTempTree(projectPath);
   }
 }
 
@@ -141,7 +142,7 @@ test("normalizer rejects traversal, outside paths, symlinks, and malformed lines
       assert.equal(result.items.length, 1);
       assert.match(result.items[0].summary, /rejected_candidates=4/u);
     } finally {
-      await rm(outsidePath, { recursive: true, force: true });
+      await removeTempTree(outsidePath);
     }
   });
 });

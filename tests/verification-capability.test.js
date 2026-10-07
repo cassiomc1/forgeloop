@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -387,7 +388,7 @@ test("resolveExecutionResolution handles recursive npm scripts, restart semantic
     });
     assert.equal(missingScriptResult.mayInstall, false);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -903,7 +904,7 @@ test("resolveExecutionResolution handles npm script lifecycle and nested dispatc
     });
     assert.equal(missingScriptResult.mayInstall, false);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -1198,7 +1199,7 @@ test("project-local authority claims are rejected as an untrusted source", async
     assert.equal(readiness.covered.length, 0);
     assert.equal(readiness.invalid[0].reasonCode, E_AUTHORITY_UNTRUSTED_SOURCE);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -1236,8 +1237,8 @@ test("host-supplied external authority file and directory are trusted", async ()
     });
     assert.equal(fromDirectory.valid, true);
   } finally {
-    await rm(target, { recursive: true, force: true });
-    await rm(authorityRoot, { recursive: true, force: true });
+    await removeTempTree(target);
+    await removeTempTree(authorityRoot);
   }
 });
 
@@ -1268,8 +1269,8 @@ test("standalone environment-selected authority remains untrusted", async () => 
     else process.env.FORGELOOP_AUTHORITY_FILE = previousFile;
     if (previousDir === undefined) delete process.env.FORGELOOP_AUTHORITY_DIR;
     else process.env.FORGELOOP_AUTHORITY_DIR = previousDir;
-    await rm(target, { recursive: true, force: true });
-    await rm(authorityRoot, { recursive: true, force: true });
+    await removeTempTree(target);
+    await removeTempTree(authorityRoot);
   }
 });
 
@@ -1295,8 +1296,8 @@ test("standalone environment-selected authority directory remains untrusted", as
     else process.env.FORGELOOP_AUTHORITY_FILE = previousFile;
     if (previousDir === undefined) delete process.env.FORGELOOP_AUTHORITY_DIR;
     else process.env.FORGELOOP_AUTHORITY_DIR = previousDir;
-    await rm(target, { recursive: true, force: true });
-    await rm(authorityRoot, { recursive: true, force: true });
+    await removeTempTree(target);
+    await removeTempTree(authorityRoot);
   }
 });
 
@@ -1320,7 +1321,7 @@ test("a configured authority file inside the target is rejected", async () => {
     assert.equal(result.valid, false);
     assert.equal(result.error.code, E_AUTHORITY_UNTRUSTED_SOURCE);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 

@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -25,6 +26,6 @@ test("concurrent event writers serialize a shared ledger without duplicate seque
     assert.equal(events[0].previousHash, null);
     assert.equal(events[1].previousHash, events[0].hash);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });

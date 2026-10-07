@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, access, rm } from "node:fs/promises";
+import { mkdtemp, access } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -31,5 +32,5 @@ test("topology inspection of a missing database does not allocate directories or
     const db = openStorageDatabase(existing);
     try { assert.equal(db.prepare("PRAGMA journal_mode").get().journal_mode, "wal"); }
     finally { db.close(); }
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -154,7 +155,7 @@ test("bundle export/import preserves typed quality evidence without rescanning",
     assert.equal(loaded.artifacts.structuralQuality.evaluations[0].currentSignal, 9000);
     assert.equal(loaded.artifacts.state.checks[0].details.artifactFingerprint, prepared.evaluation.fingerprint);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -172,6 +173,6 @@ test("bundle reads reject tampered quality artifacts and stale check fingerprint
       /fingerprint does not match|stale|does not match|bytes disagree with manifest/i,
     );
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });

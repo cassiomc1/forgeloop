@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -30,6 +31,6 @@ test("the Sigstore convenience verifier keeps policy and process execution bound
     assert.ok(calls[0].args.includes("--certificate-identity"));
     assert.ok(calls[0].args.includes("--certificate-oidc-issuer"));
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });

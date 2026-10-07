@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtemp, realpath, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, realpath, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -26,5 +27,5 @@ registerHooks({ resolve(specifier, context, nextResolve) {
       if (flag === "--version") assert.equal(result.stdout.trim(), JSON.parse(await readFile(path.join(root, "package.json"), "utf8")).version);
       else assert.match(result.stdout, /^Usage: forgeloop/u);
     }
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

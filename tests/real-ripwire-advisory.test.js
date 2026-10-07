@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, readFile, readlink, readdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readlink, readdir, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -72,7 +73,7 @@ test("real smoke snapshots include empty directories", async () => {
     const snapshot = await snapshotTree(projectPath);
     assert.ok(snapshot.some(([relativePath, kind]) => relativePath === ".forgeloop/" && kind === "directory"));
   } finally {
-    await rm(projectPath, { recursive: true, force: true });
+    await removeTempTree(projectPath);
   }
 });
 
@@ -107,6 +108,6 @@ test("qualified Ripwire binary interoperates through the advisory API", { skip: 
     const after = await snapshotTree(projectPath);
     assertQualifiedSmokeResult(result, before, after, expectedVersion);
   } finally {
-    await rm(projectPath, { recursive: true, force: true });
+    await removeTempTree(projectPath);
   }
 });

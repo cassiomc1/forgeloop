@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { cp, mkdtemp, readFile, rm, symlink } from "node:fs/promises";
+import { cp, mkdtemp, readFile, symlink } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -18,7 +19,7 @@ test("rejects a target path that escapes the requested root", async () => {
     await assert.rejects(resolveTarget(target, "../outside"), /inside|directory|not found/i);
     assert.throws(() => ensureWithin(target, "../outside"), /outside|escape/i);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -31,7 +32,7 @@ test("round-trips a versioned manifest", async () => {
     assert.deepEqual(await readManifest(target), manifest);
     assert.match(await readFile(path.join(target, ".forgeloop", "manifest.json"), "utf8"), /schemaVersion/);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -65,7 +66,7 @@ test("template entries use the inline .gitignore source when the package omits .
       "# Local resumable task state is untrusted, target-specific data.\nwork-state.json\nstate.sqlite\nstate.sqlite-*\nstorage-version.json\nexecutions/\nrepository-index/\n",
     );
   } finally {
-    await rm(packageRoot, { recursive: true, force: true });
+    await removeTempTree(packageRoot);
   }
 });
 
@@ -81,8 +82,8 @@ test("rejects a destination whose existing parent is a symlink", async () => {
       /symlink|target directory/i,
     );
   } finally {
-    await rm(target, { recursive: true, force: true });
-    await rm(outside, { recursive: true, force: true });
+    await removeTempTree(target);
+    await removeTempTree(outside);
   }
 });
 

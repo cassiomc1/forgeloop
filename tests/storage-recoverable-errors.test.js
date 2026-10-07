@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -8,7 +9,7 @@ import { openStorageDatabase, runInTransaction, isInTransaction } from "../src/s
 async function fixture(callback) {
   const directory = await mkdtemp(path.join(os.tmpdir(), "forgeloop-storage-faults-"));
   try { await callback(path.join(directory, "state.sqlite")); }
-  finally { await rm(directory, { recursive: true, force: true }); }
+  finally { await removeTempTree(directory); }
 }
 
 test("a real page-budget exhaustion rolls back and exposes the recoverable full error", async () => {

@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -85,7 +86,7 @@ test("trusted out-of-band authority context resolves a HOST_ATTESTED approval", 
     assert.equal(envelope.result.authorityKind, "HOST_ATTESTED");
     assert.equal(envelope.result.hostGrantRef, "grant-123");
   } finally {
-    await rm(fixture.target, { recursive: true, force: true });
+    await removeTempTree(fixture.target);
   }
 });
 
@@ -113,7 +114,7 @@ test("actor-supplied authorityContext inside input cannot self-mint host authori
     assert.equal(envelope.ok, false);
     assert.equal(envelope.error.code, "E_ACTION_AUTHORITY_REQUIRED");
   } finally {
-    await rm(fixture.target, { recursive: true, force: true });
+    await removeTempTree(fixture.target);
   }
 });
 
@@ -173,7 +174,7 @@ test("trusted top-level authority reaches reconciliation through the programmati
 
     assert.equal(envelope.ok, true);
     assert.equal(envelope.result.action.state, "COMMITTED");
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("actor-supplied authority in input still cannot settle reconciliation", async () => {
@@ -201,7 +202,7 @@ test("actor-supplied authority in input still cannot settle reconciliation", asy
 
     assert.equal(envelope.ok, false);
     assert.equal(envelope.error.code, "E_ACTION_RECONCILIATION_AUTHORITY_REQUIRED");
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("action-authorize through the programmatic runtime: input cannot mint authority, host context can", async () => {
@@ -251,5 +252,5 @@ test("action-authorize through the programmatic runtime: input cannot mint autho
     assert.equal(trusted.ok, true);
     assert.equal(trusted.result.action.state, "AUTHORIZED");
     assert.equal(trusted.result.authorization.authorityRef, "grant-host-7");
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

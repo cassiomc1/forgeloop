@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { mkdir, mkdtemp, readFile, rename, rm, symlink, writeFile } from "node:fs/promises";
@@ -31,7 +32,7 @@ async function withTarget(run) {
   try {
     await run(target);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 }
 
@@ -272,8 +273,8 @@ test("init installs all templates only in the selected target", async () => {
     }
     assert.deepEqual(await readdir(caller), []);
   } finally {
-    await rm(caller, { recursive: true, force: true });
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(caller);
+    await removeTempTree(target);
   }
 });
 
@@ -442,7 +443,7 @@ test("CLI runs when invoked through an npm-style symlink", async () => {
     assert.equal(result.status, 0, result.stderr);
     assert.equal(result.stdout.trim(), currentPackageVersion);
   } finally {
-    await rm(binDirectory, { recursive: true, force: true });
+    await removeTempTree(binDirectory);
   }
 });
 

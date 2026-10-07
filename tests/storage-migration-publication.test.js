@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createHash } from "node:crypto";
@@ -44,7 +45,7 @@ test("publication staging retains a closed independent database and verifies can
     await writeFile(manifestPath, JSON.stringify({ ...manifest, databaseSha256: digest }));
     await writeFile(journalPath, JSON.stringify({ ...journal, databaseSha256: digest }));
     await assert.rejects(verifyMigrationPublicationStage(target, "retained"), error => error.code === "E_STORAGE_MIGRATION_PUBLICATION_INVALID" && error.message.includes("canonical rows"));
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("publication staging refuses unresolved attachment coverage before creating publication files", async () => {
@@ -56,7 +57,7 @@ test("publication staging refuses unresolved attachment coverage before creating
     await assert.rejects(stageMigrationPublication(target, "retained", { writersQuiesced: true }), error => error.code === "E_STORAGE_MIGRATION_PUBLICATION_INVALID" && error.message.includes("Attachment reference coverage"));
     await assert.rejects(stat(path.join(target, "retained/publication")), { code: "ENOENT" });
     assert.equal(await readFile(path.join(target, ".forgeloop/attachments/unmapped.bin"), "utf8"), "retained bytes");
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("interrupted stage rebuild refuses changed bindings and any active or pending publication", async () => {
@@ -80,5 +81,5 @@ test("interrupted stage rebuild refuses changed bindings and any active or pendi
     await assert.rejects(resume(), error => error.code === "E_STORAGE_MIGRATION_PUBLICATION_INVALID" && error.message.includes("cannot be rebuilt"));
     assert.deepEqual(await readFile(path.join(staged.bundle, "state.sqlite")), bytes);
     await assert.rejects(stat(path.join(target, "retained/publication-history")), { code: "ENOENT" });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

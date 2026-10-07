@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { mkdir, mkdtemp, readdir, rm, symlink, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readdir, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -75,7 +76,7 @@ test("Agent Browser provider factory is inert and verifies through the public AP
     assert.equal(calls.some(({ args }) => args.includes("--session")), true);
     assert.equal(calls.at(-1).args.includes("close"), true);
   } finally {
-    await rm(root, { recursive: true, force: true });
+    await removeTempTree(root);
   }
 });
 
@@ -103,7 +104,7 @@ test("Agent Browser provider rejects version mismatch and exact-origin escape", 
       runtimeContext: escapeContext,
     }), (error) => error.code === E_BROWSER_VERIFICATION_ORIGIN_DENIED || error.code === "E_BROWSER_VERIFICATION_PROVIDER_UNAVAILABLE");
   } finally {
-    await rm(root, { recursive: true, force: true });
+    await removeTempTree(root);
   }
 });
 
@@ -134,7 +135,7 @@ test("Agent Browser provider supports snapshot locators, wait, assertion order, 
     assert.equal(result.artifacts[0].kind, "SCREENSHOT");
     assert.match(result.artifacts[0].ref, /^agent-browser\/checkout\/[a-f0-9]{64}\.png$/u);
   } finally {
-    await rm(root, { recursive: true, force: true });
+    await removeTempTree(root);
   }
 });
 
@@ -157,7 +158,7 @@ test("Agent Browser malformed command envelopes and scalar observations fail clo
     assert.equal(result.status, "BLOCKED");
     assert.equal(result.assertions.every((item) => item.status === "BLOCKED"), true);
   } finally {
-    await rm(root, { recursive: true, force: true });
+    await removeTempTree(root);
   }
 });
 
@@ -171,7 +172,7 @@ test("Agent Browser temporary roots cannot overlap the verification target", asy
       runtimeContext: createForgeLoopContext({ browserVerificationProviders: { "agent-browser": provider } }),
     }), (error) => error.code === "E_BROWSER_VERIFICATION_PROVIDER_INVALID");
   } finally {
-    await rm(root, { recursive: true, force: true });
+    await removeTempTree(root);
   }
 });
 
@@ -187,7 +188,7 @@ test("Agent Browser rejects temporary roots physically inside the target before 
     await assert.rejects(() => provider.verify({ ...request(), target }), { code: "E_BROWSER_VERIFICATION_PROVIDER_INVALID" });
     assert.equal(calls.length, 0);
     assert.deepEqual(await readdir(target), []);
-  } finally { await rm(root, { recursive: true, force: true }); }
+  } finally { await removeTempTree(root); }
 });
 
 test("Agent Browser rejects returned target directories without deleting them", async () => {
@@ -205,5 +206,5 @@ test("Agent Browser rejects returned target directories without deleting them", 
     assert.equal(calls.length, 0);
     assert.deepEqual(removed, []);
     assert.deepEqual(await readdir(target), ["retained"]);
-  } finally { await rm(root, { recursive: true, force: true }); }
+  } finally { await removeTempTree(root); }
 });

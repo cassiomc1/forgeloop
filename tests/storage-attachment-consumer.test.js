@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { readFile, rm, symlink, writeFile } from "node:fs/promises";
@@ -36,7 +37,7 @@ test("attachment consumers receive private verified bytes and clean up after suc
       }), /consumer failed/u);
       await assert.rejects(readFile(temporary), { code: "ENOENT" });
     });
-  } finally { db.close(); await rm(target, { recursive: true, force: true }); }
+  } finally { db.close(); await removeTempTree(target); }
 });
 
 test("attachment consumers refuse corrupt, oversized, missing, linked and unbound objects before use", async () => {
@@ -63,5 +64,5 @@ test("attachment consumers refuse corrupt, oversized, missing, linked and unboun
       await assert.rejects(withOperationalAttachmentFile(target, reference.path, TEST_TASK_ID, consume));
       assert.equal(calls, 0);
     });
-  } finally { db.close(); await rm(target, { recursive: true, force: true }); }
+  } finally { db.close(); await removeTempTree(target); }
 });

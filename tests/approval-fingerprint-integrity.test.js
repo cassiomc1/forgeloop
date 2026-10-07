@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import { readFixtureText, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -72,7 +73,7 @@ test("post-authorization approval mutation makes readiness UNTRUSTED with an app
       taskId: fixture.taskId, action: fixture.action });
     assert.equal(after.status, "UNTRUSTED");
     assert.ok(after.reasons.some((reason) => reason.includes("bound approval integrity failed")));
-  } finally { await rm(fixture.target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(fixture.target); }
 });
 
 test("untampered bound approval keeps authorization trusted", async () => {
@@ -84,7 +85,7 @@ test("untampered bound approval keeps authorization trusted", async () => {
       expectedFingerprint: fixture.authorization.approvalFingerprint,
     });
     assert.equal(verdict.fingerprint, fixture.authorization.approvalFingerprint);
-  } finally { await rm(fixture.target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(fixture.target); }
 });
 
 test("post-authorization approval mutation is audit-visible", async () => {
@@ -107,5 +108,5 @@ test("post-authorization approval mutation is audit-visible", async () => {
     assert.notEqual(after.status, "VALID");
     assert.ok(after.errors.some((error) => error.readiness === "UNTRUSTED"),
       "tampered bound approval surfaces an untrusted-readiness audit error");
-  } finally { await rm(fixture.target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(fixture.target); }
 });

@@ -1,8 +1,9 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { spawn, execFile } from "node:child_process";
 import { once } from "node:events";
-import { mkdtemp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
@@ -37,7 +38,7 @@ async function withDeadOwner(callback) {
     await kill(child);
     const original = await readFile(ownerPath(target));
     await callback(target, JSON.parse(original), original, children);
-  } finally { for (const child of children) child.kill("SIGKILL"); await rm(target, { recursive: true, force: true }); }
+  } finally { for (const child of children) child.kill("SIGKILL"); await removeTempTree(target); }
 }
 
 for (const checkpoint of ["CLAIM", "BEFORE_OWNER", "AFTER_OWNER"]) {

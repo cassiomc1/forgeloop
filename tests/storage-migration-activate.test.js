@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { readFile, rm, stat, writeFile } from "node:fs/promises";
+import { readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { buildDiagnosisProject, TEST_TASK_ID } from "./helpers/storage-fixtures.js";
 import { openStorageDatabase } from "../src/storage/connection.js";
@@ -69,5 +70,5 @@ test("validated archival activates an independent SQLite copy and releases publi
     assert.equal(grown.attachments, 1);
     await writeFile(path.join(target, reference.path), "tampered");
     await assert.rejects(withStorageMaintenance(target, () => verifyPublishedMigration(target, "retained", { writersQuiesced: true })), { code: "E_STORAGE_MIGRATION_ARCHIVE_INVALID" });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

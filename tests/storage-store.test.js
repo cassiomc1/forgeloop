@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { mkdtemp, readFile, rm, writeFile, mkdir, symlink } from "node:fs/promises";
 import { createHash } from "node:crypto";
@@ -182,7 +183,7 @@ async function withTempDir(run) {
   try {
     return await run(directory);
   } finally {
-    await rm(directory, { recursive: true, force: true });
+    await removeTempTree(directory);
   }
 }
 

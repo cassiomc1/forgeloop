@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { writeFile, rm, stat } from "node:fs/promises";
+import { writeFile, stat } from "node:fs/promises";
 import { createGitRepository } from "./helpers/git-fixture.js";
 import path from "node:path";
 import { runTaskCreate } from "../src/commands/task-create.js";
@@ -44,5 +45,5 @@ test("native responsibility remains visible and immutable without a filesystem m
     assert.deepEqual(await readResponsibility(target, context), before);
     assert.deepEqual(await validateEventLedger(target, context.packageRoot, context), ledger);
     assert.deepEqual(await readWorkState(target, context), state);
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

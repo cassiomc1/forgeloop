@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import { ensureFixtureTask, readFixtureText, overwriteFixtureRecordBytes } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -72,7 +73,7 @@ test("CALLER_ACKNOWLEDGED approval does not satisfy REQUIRE_APPROVAL", async () 
     assert.equal(result.allowed, false);
     assert.equal(result.reasonCode, "E_ACTION_AUTHORITY_REQUIRED");
   } finally {
-    await rm(fixture.target, { recursive: true, force: true });
+    await removeTempTree(fixture.target);
   }
 });
 
@@ -106,7 +107,7 @@ test("HOST_ATTESTED approval from a trusted host boundary satisfies REQUIRE_APPR
     assert.equal(result.approval.authorityRef, "approval-grant-1");
     assert.match(result.approval.approvalFingerprint, /^[a-f0-9]{64}$/);
   } finally {
-    await rm(fixture.target, { recursive: true, force: true });
+    await removeTempTree(fixture.target);
   }
 });
 
@@ -137,6 +138,6 @@ test("replaced approval content after authorization is detectable via the bound 
     const current = await readApproval(fixture.target, { packageRoot, taskId: fixture.taskId, approvalId: "approval-push" });
     assert.notEqual(approvalFingerprint(current), boundFingerprint);
   } finally {
-    await rm(fixture.target, { recursive: true, force: true });
+    await removeTempTree(fixture.target);
   }
 });

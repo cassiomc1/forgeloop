@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { cp, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { cp, mkdtemp, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -116,6 +117,6 @@ test("schema health distinguishes invalid and unsupported schema versions", asyn
     assert.equal(report.status, "unsupported-version");
     assert.equal(report.schemas.find((item) => item.name === "routing-input").status, "unsupported-version");
   } finally {
-    await rm(packageRoot, { recursive: true, force: true });
+    await removeTempTree(packageRoot);
   }
 });

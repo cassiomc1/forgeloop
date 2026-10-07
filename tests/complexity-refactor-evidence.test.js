@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -26,7 +27,7 @@ test("doctor reports the semantic decision plane from the live credential state"
   } finally {
     if (prior === undefined) delete process.env.TYPESAFE_API_KEY;
     else process.env.TYPESAFE_API_KEY = prior;
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 

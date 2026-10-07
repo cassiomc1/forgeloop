@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import { exportLegacyFixture } from "./helpers/storage-fixtures.js";
 import { runTaskCreate } from "../src/commands/task-create.js";
 import { runValidateReceipt } from "../src/commands/validate-receipt.js";
@@ -62,7 +63,7 @@ async function withTarget(run) {
   try {
     await run(target);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 }
 

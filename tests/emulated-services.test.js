@@ -1,10 +1,11 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { EventEmitter } from "node:events";
 import { PassThrough } from "node:stream";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { mkdir, mkdtemp, readdir, realpath, rm, symlink, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readdir, realpath, symlink, writeFile } from "node:fs/promises";
 
 import {
   createEmulatedServicesProvider,
@@ -86,7 +87,7 @@ test("emulated temporary paths cannot resolve into the target or grant rejected 
     assert.equal(calls.length, 0);
     assert.deepEqual(removed, []);
     assert.deepEqual(await readdir(target), ["retained"]);
-  } finally { await rm(root, { recursive: true, force: true }); }
+  } finally { await removeTempTree(root); }
 });
 
 test("provider qualifies the host executable, uses argv-only execution, observes loopback, and cleans up", async () => {

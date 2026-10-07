@@ -1,8 +1,9 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdtemp, readFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -39,6 +40,6 @@ for (const mode of ["absent", "contradictory"]) {
       const prohibited = report.attempts.filter(attempt => !admissionMetadata(attempt) && attempt.path.startsWith(report.target)
         && /[/\\]\.forgeloop[/\\](?:task-state|locks|\.txn|sessions)(?:[/\\]|$)/.test(attempt.path));
       assert.deepEqual(prohibited, [], JSON.stringify(prohibited));
-    } finally { await rm(directory, { recursive: true, force: true }); }
+    } finally { await removeTempTree(directory); }
   });
 }

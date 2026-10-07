@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, writeFile, readFile } from "node:fs/promises";
+import { mkdir, mkdtemp, writeFile, readFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -59,7 +60,7 @@ test("proposeAction atomically creates the artifact and appends ACTION_PROPOSED"
     assert.equal(propose.details.actionId, "action-push-release");
     assert.equal(propose.details.actionFingerprint, result.action.actionFingerprint);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -95,7 +96,7 @@ test("proposeAction is idempotent per key and conflicts on fingerprint drift", a
       (error) => error.code === "E_ACTION_IDEMPOTENCY_REQUIRED",
     );
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -115,7 +116,7 @@ test("READ_ONLY actions do not require an idempotency key", async () => {
     assert.equal(result.action.effectClass, "READ_ONLY");
     assert.equal(result.action.idempotencyKey ?? null, null);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -188,7 +189,7 @@ test("transitionAction enforces the state machine, revision, and ledger pairing"
       assert.ok(kinds.includes(expected), `${expected} present in ledger`);
     }
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -211,7 +212,7 @@ test("listActions and findActionByIdempotencyKey project canonical artifacts", a
     const missing = await findActionByIdempotencyKey(target, { packageRoot, taskId: "list-task", idempotencyKey: "nope" });
     assert.equal(missing, null);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -237,7 +238,7 @@ test("an action without its matching proposal event is reported as an orphan", a
     const orphaned = await detectOrphanActions(target, { packageRoot, taskId: "crash-task" });
     assert.deepEqual(orphaned, [action.actionId]);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -254,5 +255,5 @@ test("action listing and idempotency refuse legacy directory scans without creat
   await assert.rejects(readAction(target,{packageRoot,taskId:"legacy-scan",actionId:"action-retained"}),{code:"E_STORAGE_MIGRATION_REQUIRED"});
   assert.deepEqual(await readFile(filename),bytes);
   await assert.rejects(readFile(path.join(target,".forgeloop/state.sqlite")),{code:"ENOENT"});
- } finally {await rm(target,{recursive:true,force:true});}
+ } finally {await removeTempTree(target);}
 });

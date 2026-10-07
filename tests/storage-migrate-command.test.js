@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { mkdir, readFile, rm, stat, writeFile } from "node:fs/promises";
+import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { buildDiagnosisProject } from "./helpers/storage-fixtures.js";
@@ -24,7 +25,7 @@ test("public migration requires quiescence, publishes retained state, and permit
     assert.equal(created.ok, true, JSON.stringify(created));
     const listed = await executeForgeLoopCommand({ command: "task-list", projectPath: target, input: {} });
     assert.equal(listed.ok, true, JSON.stringify(listed));
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("public migration failure retains exclusion and preserves an existing destination", async () => {
@@ -41,5 +42,5 @@ test("public migration failure retains exclusion and preserves an existing desti
     await stat(path.join(target, ".forgeloop/task-state"));
     const listed = await executeForgeLoopCommand({ command: "task-list", projectPath: target, input: {} });
     assert.equal(listed.ok, false);
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

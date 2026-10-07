@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createHash } from "node:crypto";
@@ -48,7 +49,7 @@ test("project backup and fresh restore retain snapshot references and exact bina
     const rejected = path.join(target, "refused-restore");
     await assert.rejects(restoreProjectStorageBackup(retained, rejected), { code: "E_STORAGE_ATTACHMENT_INVALID" });
     await assert.rejects(readFile(path.join(rejected, "backup-manifest.json")), { code: "ENOENT" });
-  } finally { db.close(); await rm(target, { recursive: true, force: true }); }
+  } finally { db.close(); await removeTempTree(target); }
 });
 
 test("project backup retains a refused incomplete bundle when source attachment bytes are corrupt", async () => {
@@ -62,7 +63,7 @@ test("project backup retains a refused incomplete bundle when source attachment 
     assert.equal(JSON.parse(await readFile(path.join(retained, "backup-manifest.json"))).status, "FAILED");
     await assert.rejects(verifyProjectStorageBackup(retained), { code: "E_STORAGE_BACKUP_INVALID" });
     await assert.rejects(backupProjectStorage(db, target, retained), { code: "EEXIST" });
-  } finally { db.close(); await rm(target, { recursive: true, force: true }); }
+  } finally { db.close(); await removeTempTree(target); }
 });
 
 test("public API and CLI attachment backup select the canonical store and preserve source bindings", async () => {
@@ -84,5 +85,5 @@ test("public API and CLI attachment backup select the canonical store and preser
     const cli = JSON.parse(stdout);
     assert.equal(cli.attachmentsIncluded, true);
     assert.deepEqual(await readFile(path.join(target, "cli-backup", reference.path)), Buffer.from("public bytes"));
-  } finally { try { db.close(); } catch { /* Already closed before public dispatch. */ } await rm(target, { recursive: true, force: true }); }
+  } finally { try { db.close(); } catch { /* Already closed before public dispatch. */ } await removeTempTree(target); }
 });

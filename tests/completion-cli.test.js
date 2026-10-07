@@ -1,7 +1,8 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import { recordExecutedFakeCheck } from "./helpers/executed-fake-check.js";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -54,7 +55,7 @@ async function withTarget(run) {
   try {
     await run(target);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 }
 
@@ -301,6 +302,6 @@ test("standalone completion CLI rejects actor-selected authority sources", async
 
     });
   } finally {
-    await rm(authorityRoot, { recursive: true, force: true });
+    await removeTempTree(authorityRoot);
   }
 });

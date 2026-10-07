@@ -1,7 +1,8 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import { testSemanticProvider } from "../src/core/decision/test-provider.js";
 import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -23,7 +24,7 @@ async function temporaryProject(prefix, callback) {
   try {
     return await callback(target);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 }
 

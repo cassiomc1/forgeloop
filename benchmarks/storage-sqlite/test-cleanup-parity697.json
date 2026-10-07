@@ -1,0 +1,878 @@
+{
+  "head": "a5e3540b4c148bc75bb69bfe6cd9fbd0f87a69d8",
+  "files": 167,
+  "convertedCalls": 432,
+  "method": "Complete module AST equality after normalizing only inventoried cleanup calls and helper/fs imports; preserves assertions and non-cleanup removals.",
+  "rows": [
+    {
+      "file": "tests/action-authorization.test.js",
+      "calls": 4,
+      "astParity": true
+    },
+    {
+      "file": "tests/action-authorize.test.js",
+      "calls": 3,
+      "astParity": true
+    },
+    {
+      "file": "tests/action-cli.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/action-ledger.test.js",
+      "calls": 3,
+      "astParity": true
+    },
+    {
+      "file": "tests/action-readiness.test.js",
+      "calls": 3,
+      "astParity": true
+    },
+    {
+      "file": "tests/action-reconciliation.test.js",
+      "calls": 7,
+      "astParity": true
+    },
+    {
+      "file": "tests/action-security.test.js",
+      "calls": 3,
+      "astParity": true
+    },
+    {
+      "file": "tests/action-verification.test.js",
+      "calls": 5,
+      "astParity": true
+    },
+    {
+      "file": "tests/actions.test.js",
+      "calls": 7,
+      "astParity": true
+    },
+    {
+      "file": "tests/advisory-context-replay-safety.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/agent-browser-process.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/agent-browser-provider.test.js",
+      "calls": 7,
+      "astParity": true
+    },
+    {
+      "file": "tests/approval-authority-boundary.test.js",
+      "calls": 3,
+      "astParity": true
+    },
+    {
+      "file": "tests/approval-fingerprint-integrity.test.js",
+      "calls": 3,
+      "astParity": true
+    },
+    {
+      "file": "tests/approvals.test.js",
+      "calls": 3,
+      "astParity": true
+    },
+    {
+      "file": "tests/archify-toolchain.test.js",
+      "calls": 10,
+      "astParity": true
+    },
+    {
+      "file": "tests/astra-correctness.test.js",
+      "calls": 3,
+      "astParity": true
+    },
+    {
+      "file": "tests/attestation-coverage.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/attestation-summary.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/attestation.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/audit-report.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/bundle.test.js",
+      "calls": 4,
+      "astParity": true
+    },
+    {
+      "file": "tests/checkpoint-freshness.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/cli-presentation-admission.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/cli.test.js",
+      "calls": 4,
+      "astParity": true
+    },
+    {
+      "file": "tests/completion-cli.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/completion-ergonomics.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/complexity-refactor-evidence.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/concurrent-ledger.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/continuity-cli.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/continuity-semantic-lint.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/continuity.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/contract-assumptions.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/contract-presets.test.js",
+      "calls": 4,
+      "astParity": true
+    },
+    {
+      "file": "tests/core.test.js",
+      "calls": 5,
+      "astParity": true
+    },
+    {
+      "file": "tests/cross-harness-resume.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/doctor-transaction.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/documentation-conformance.test.js",
+      "calls": 5,
+      "astParity": true
+    },
+    {
+      "file": "tests/documentation-diagram-inventory.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/documentation-diagrams.test.js",
+      "calls": 5,
+      "astParity": true
+    },
+    {
+      "file": "tests/documentation-examples.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/documentation-portability.test.js",
+      "calls": 4,
+      "astParity": true
+    },
+    {
+      "file": "tests/durable-action-chains.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/durable-action-hardening.test.js",
+      "calls": 7,
+      "astParity": true
+    },
+    {
+      "file": "tests/emulated-services.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/gate-record.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/gate-revalidation.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/hidden-layout.test.js",
+      "calls": 3,
+      "astParity": true
+    },
+    {
+      "file": "tests/init-policy.test.js",
+      "calls": 16,
+      "astParity": true
+    },
+    {
+      "file": "tests/integration-authority-context.test.js",
+      "calls": 5,
+      "astParity": true
+    },
+    {
+      "file": "tests/jev-decision-enforcement.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/json-output.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/ledger-event-collection.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/lifecycle.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/mcp-test-prerequisite.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/new-cli.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/nodejs-project-detection.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/observability.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/persistent-transport-native.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/persistent-transport.test.js",
+      "calls": 4,
+      "astParity": true
+    },
+    {
+      "file": "tests/policy-adapters.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/policy-autonomy.test.js",
+      "calls": 5,
+      "astParity": true
+    },
+    {
+      "file": "tests/policy-diff-native-path.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/policy-discovery.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/policy-hardening.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/policy-lock.test.js",
+      "calls": 4,
+      "astParity": true
+    },
+    {
+      "file": "tests/policy.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/portability.test.js",
+      "calls": 3,
+      "astParity": true
+    },
+    {
+      "file": "tests/preflight-bootstrap-enablers.test.js",
+      "calls": 3,
+      "astParity": true
+    },
+    {
+      "file": "tests/preflight.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/profile-provenance.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/project-claims-lock.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/project-detection.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/protocol-artifacts.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/real-ripwire-advisory.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/reflection-action-ambiguity.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/repository-index-binary-manager.test.js",
+      "calls": 6,
+      "astParity": true
+    },
+    {
+      "file": "tests/repository-index-concurrency.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/repository-index-doctor.test.js",
+      "calls": 5,
+      "astParity": true
+    },
+    {
+      "file": "tests/repository-index-hot-path.test.js",
+      "calls": 3,
+      "astParity": true
+    },
+    {
+      "file": "tests/repository-index-init.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/repository-index-integration.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/repository-index-privacy.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/repository.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/revision-provider-conformance.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/ripwire-advisory-normalize.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/ripwire-advisory-process.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/ripwire-advisory-provider.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/route-artifact.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/run-action.test.js",
+      "calls": 6,
+      "astParity": true
+    },
+    {
+      "file": "tests/run-check.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/runner-admission.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/rust-project-detection.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/scale-ledger.test.js",
+      "calls": 4,
+      "astParity": true
+    },
+    {
+      "file": "tests/scale-tasks.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/schema-health.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/semantic-loader-path.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/signing-provider-conformance.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/signing-provider.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/sigstore.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-active-replacement.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-artifact-presence.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-attachment-consumer.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-attachment-files.test.js",
+      "calls": 6,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-attachment-transaction.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-canonical-fixture.test.js",
+      "calls": 8,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-connection-owner.test.js",
+      "calls": 8,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-correction-io.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-direct-artifacts.test.js",
+      "calls": 7,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-discovery-snapshot.test.js",
+      "calls": 5,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-event-export-validation.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-export-destination.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-historical-export-manifest.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-legacy-signature.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-maintenance-handoff.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-marker.test.js",
+      "calls": 3,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-metadata-json.test.js",
+      "calls": 3,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-migrate-command.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-migration-activate.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-migration-archive.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-migration-attachments.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-migration-candidate.test.js",
+      "calls": 9,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-migration-partition.test.js",
+      "calls": 3,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-migration-publication.test.js",
+      "calls": 3,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-migration-resume.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-migration-rollback-admission.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-migration-rollback-operator.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-migration-rollback-preparation.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-migration-rollback-publication-resume.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-migration-rollback-publication.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-migration-rollback-ready-resume.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-migration-rollback-release.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-migration-rollback-source-stage.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-migration-rollback-stage-resume.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-migration-source.test.js",
+      "calls": 14,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-project-backup.test.js",
+      "calls": 3,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-project-bootstrap.test.js",
+      "calls": 6,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-project-restore.test.js",
+      "calls": 8,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-recoverable-errors.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-responsibility.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-restore-command.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-retired-command-seam.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-rollback-command.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-signing-statement.test.js",
+      "calls": 7,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-singleton-import.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-sole-writer-boundary.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-store.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-task-scope.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/storage-topology.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/structural-quality-artifacts.test.js",
+      "calls": 3,
+      "astParity": true
+    },
+    {
+      "file": "tests/structural-quality-bundle.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/structural-quality-projection-repair.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/structural-quality-source-drift.test.js",
+      "calls": 6,
+      "astParity": true
+    },
+    {
+      "file": "tests/task-cli.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/task-foundation.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/task-lock.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/task-migration-validation.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/task-migration.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/task-resolution.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/test-pruning.test.js",
+      "calls": 2,
+      "astParity": true
+    },
+    {
+      "file": "tests/trajectory-canonical-actions.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/transaction.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/validate-protocol-cli.test.js",
+      "calls": 12,
+      "astParity": true
+    },
+    {
+      "file": "tests/validate-receipt-task.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/verification-capability.test.js",
+      "calls": 10,
+      "astParity": true
+    },
+    {
+      "file": "tests/verification-execution-isolation.test.js",
+      "calls": 1,
+      "astParity": true
+    },
+    {
+      "file": "tests/workflow-policy.test.js",
+      "calls": 1,
+      "astParity": true
+    }
+  ],
+  "skipped": [
+    {
+      "file": "tests/action-ledger-replay.test.js",
+      "reason": "local rm binding requires separate review"
+    },
+    {
+      "file": "tests/repository-index-server.test.js",
+      "reason": "local rm binding requires separate review"
+    }
+  ],
+  "increment": 697,
+  "checks": {
+    "moduleAstParity": "PASS",
+    "lint": "PASS",
+    "verifyFast": "PASS",
+    "fullMacNode2419": {
+      "exitCode": 0,
+      "summary": [
+        "\u2139 tests 2854",
+        "\u2139 suites 0",
+        "\u2139 pass 2843",
+        "\u2139 fail 0",
+        "\u2139 cancelled 0",
+        "\u2139 skipped 11",
+        "\u2139 todo 0",
+        "\u2139 duration_ms 336379.938666"
+      ],
+      "logSha256": "7b5d970d96f4cd1b5a1d922069c36c32775e4adc876df0fde681e7ff0a96004c"
+    }
+  },
+  "limitations": [
+    "Windows teardown behavior on current candidate remains unverified.",
+    "Two files with local rm bindings were deliberately left unchanged.",
+    "No assertion or fault-simulation deletion changes; production runtime unchanged by this cleanup."
+  ]
+}

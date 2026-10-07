@@ -1,9 +1,10 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import { appendEvent, runInTransaction } from "../src/storage/index.js";
 import { ensureFixtureTask, readRawFixtureText, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
 import { taskArtifactPath } from "../src/core/task-paths.js";
 import { withProjectStorage } from "../src/storage/project-boundary.js";
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -22,7 +23,7 @@ test("ledger tail reads only the requested recent events", async () => {
     const tail = await readEventTail(target, getPackageRoot(), { limit: 3, taskId: "tail-task" });
     assert.deepEqual(tail.map((event) => event.seq), [10, 11, 12]);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -50,7 +51,7 @@ test("ledger tail remains bounded for a 100k-event NDJSON ledger", async () => {
     const tail = await readPortableEventTail(target, getPackageRoot(), { limit: 5 });
     assert.deepEqual(tail.map((event) => event.seq), [99_996, 99_997, 99_998, 99_999, 100_000]);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -73,7 +74,7 @@ test("native ledger tail returns only five recent events from a 100k-event valid
     assert.deepEqual(tail.map(event => event.seq), [99_996, 99_997, 99_998, 99_999, 100_000]);
     assert.equal(tail[1].previousHash, tail[0].hash);
     await assert.rejects(readFile(path.join(target, ".forgeloop/events.ndjson")), { code: "ENOENT" });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("ledger checkpoint follows changed ledger without creating or rewriting an index sidecar", async () => {
@@ -112,6 +113,6 @@ test("ledger checkpoint follows changed ledger without creating or rewriting an 
     assert.equal(await readRawFixtureText(target, ledgerPath), corruptedLedger);
     assert.equal(await readFile(indexPath, "utf8"), retainedIndex);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });

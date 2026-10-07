@@ -1,7 +1,7 @@
 import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { access, chmod, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { access, chmod, mkdtemp, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -34,7 +34,7 @@ async function withTarget(run) {
     await ensureFixtureTask(target, "task-1", packageRoot);
     await run(target);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 }
 

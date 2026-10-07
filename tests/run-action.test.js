@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { access, mkdtemp, readFile, rm } from "node:fs/promises";
+import { access, mkdtemp, readFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -32,7 +33,7 @@ test("side-effecting run-action refuses a missing idempotency key", async () => 
     await assert.rejects(executeDurableAction({ target, packageRoot, taskId,
       input: input({ idempotencyKey: undefined }), argv: [process.execPath, "-e", "0"] }),
     (error) => error.code === "E_ACTION_IDEMPOTENCY_REQUIRED");
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("DENY blocks before process launch", async () => {
@@ -43,7 +44,7 @@ test("DENY blocks before process launch", async () => {
       input: input(), argv: [process.execPath, "-e", `require('fs').writeFileSync(${JSON.stringify(sentinel)},'bad')`] }),
     (error) => error.code === "E_ACTION_CAPABILITY_DENIED");
     await assert.rejects(access(sentinel));
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("exact argv execution does not interpret shell metacharacters", async () => {
@@ -57,7 +58,7 @@ test("exact argv execution does not interpret shell metacharacters", async () =>
     assert.equal(result.action.state, "COMMITTED");
     assert.equal(await readFile(sentinel, "utf8"), `literal;touch ${injected}`);
     await assert.rejects(access(injected));
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("pre-launch authority rejection leaves the action PROPOSED with no ACTION_STARTED", async () => {
@@ -75,7 +76,7 @@ test("pre-launch authority rejection leaves the action PROPOSED with no ACTION_S
     const { readEvents } = await import("../src/core/events.js");
     const events = await readEvents(target, packageRoot, { taskId });
     assert.equal(events.some((event) => event.event === "ACTION_STARTED"), false);
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("argv normalization failure leaves the action PROPOSED with no ACTION_STARTED", async () => {
@@ -93,7 +94,7 @@ test("argv normalization failure leaves the action PROPOSED with no ACTION_START
     const { readEvents } = await import("../src/core/events.js");
     const events = await readEvents(target, packageRoot, { taskId });
     assert.equal(events.some((event) => event.event === "ACTION_STARTED"), false);
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 function readActionModule() {
@@ -108,5 +109,5 @@ test("executeDurableAction returns canonical authorization evidence", async () =
     assert.equal(result.authorization.capabilityDecision, "ALLOW");
     assert.match(result.authorization.capabilityPolicyFingerprint, /^[a-f0-9]{64}$/);
     assert.equal(result.capability, undefined);
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

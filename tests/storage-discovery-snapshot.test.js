@@ -1,7 +1,8 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import path from "node:path";
-import { rm } from "node:fs/promises";
+
 import { createGitRepository } from "./helpers/git-fixture.js";
 import { runTaskCreate } from "../src/commands/task-create.js";
 import { discoverTasks, findTaskById } from "../src/core/task-discovery.js";
@@ -50,7 +51,7 @@ test("task-row statement reuse preserves fresh rows and live snapshot rechecks",
       db.prepare("UPDATE tasks SET task_key = ? WHERE task_id = ?").run("f".repeat(64), descriptor.taskId);
       assert.throws(() => source.taskRow("f".repeat(64)), { code: "E_STORAGE_PAYLOAD_MISMATCH" });
     });
-  } finally { db.prepare = originalPrepare; db.close(); await rm(target, { recursive: true, force: true }); }
+  } finally { db.prepare = originalPrepare; db.close(); await removeTempTree(target); }
 });
 
 test("discovery owns one project snapshot for its catalog and all task projections", async () => {
@@ -104,7 +105,7 @@ test("discovery owns one project snapshot for its catalog and all task projectio
   } finally {
     driver.DatabaseSync = Original;
     writer.close(); db.close();
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -129,7 +130,7 @@ test("nested storage snapshots reuse only an active module-owned readonly copy",
     const externalReadonly = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"), { readOnly: true });
     try { await withStorageSnapshot(externalReadonly, owned => assert.notEqual(owned, externalReadonly)); }
     finally { externalReadonly.close(); }
-  } finally { db.close(); await rm(target, { recursive: true, force: true }); }
+  } finally { db.close(); await removeTempTree(target); }
 });
 
 
@@ -152,7 +153,7 @@ test("direct native task lookup never expands into project-wide discovery", asyn
     assert.equal(await findTaskById(target, "direct-missing", packageRoot), null);
   } finally {
     if (prototype) prototype.listTaskKeys = originalCatalog;
-    db.close(); await rm(target, { recursive: true, force: true });
+    db.close(); await removeTempTree(target);
   }
 });
 
@@ -193,6 +194,6 @@ test("snapshot acquisition does not restart behind independent writes between ba
   } finally {
     driver.backup = originalBackup;
     writer.close(); db.close();
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });

@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm, readdir } from "node:fs/promises";
+import { mkdtemp, readdir } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -29,6 +30,6 @@ test("task discovery retains 1,000 independent task namespaces", async () => {
     assert.equal(tasks.filter((task) => task.healthy).length, 1_000);
     assert.equal(new Set(tasks.map((task) => task.taskId)).size, 1_000);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });

@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { copyFile, readFile, rm } from "node:fs/promises";
@@ -46,7 +47,7 @@ test("migration verifies portable attachment bindings and retains bytes through 
     } finally { db.close(); }
     await restoreProjectStorageBackup(path.join(target, "after-backup"), path.join(target, "restored-backup"));
     assert.deepEqual(await readFile(path.join(target, "restored-backup", reference.path)), bytes);
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("unmapped captured objects remain retained and prevent attachment coverage publication", async () => {
@@ -58,5 +59,5 @@ test("unmapped captured objects remain retained and prevent attachment coverage 
     await assert.rejects(stageMigrationPublication(target, "retained", { writersQuiesced: true }), error => error.code === "E_STORAGE_MIGRATION_PUBLICATION_INVALID" && error.message.includes("Attachment reference coverage"));
     assert.deepEqual(await readFile(path.join(target, reference.path)), bytes);
     assert.equal(await readFile(path.join(target, orphan.path), "utf8"), "unmapped object");
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

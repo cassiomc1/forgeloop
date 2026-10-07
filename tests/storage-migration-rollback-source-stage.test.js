@@ -1,10 +1,11 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import { Readable } from "node:stream";
 import { importProjectState } from "../src/storage/importer.js";
 import { registerAttachment } from "../src/storage/attachment-references.js";
 import { exportDatabase } from "../src/storage/exporter.js";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { cp, readFile, rm, writeFile } from "node:fs/promises";
+import { cp, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { buildDiagnosisProject, TEST_TASK_ID } from "./helpers/storage-fixtures.js";
 import { taskStorageKey } from "../src/core/task-identity.js";
@@ -47,5 +48,5 @@ for(const mode of ["ready","source-tamper","extra-file","binding-tamper","binary
    assert.deepEqual(await readFile(path.join(target,"retained/source",relative)),captured);
   });
   assert.deepEqual(await readFile(path.join(target,".forgeloop/state.sqlite")),native);
- } finally {await rm(target,{recursive:true,force:true});}
+ } finally {await removeTempTree(target);}
 });

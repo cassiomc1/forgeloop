@@ -1,8 +1,9 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { fork } from "node:child_process";
 import { once } from "node:events";
-import { cp, readFile, rm, writeFile } from "node:fs/promises";
+import { cp, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { buildDiagnosisProject, TEST_TASK_ID } from "./helpers/storage-fixtures.js";
 import { taskStorageKey } from "../src/core/task-identity.js";
@@ -49,6 +50,6 @@ for(const mode of ["SWITCHING","DATABASE_RETAINED","NATIVE_RETAINED","PARTIAL_SO
   }
  }finally{
   if(worker && worker.exitCode === null && worker.signalCode === null){const exited=once(worker,"exit");worker.kill("SIGKILL");await exited;}
-  await rm(target,{recursive:true,force:true});
+  await removeTempTree(target);
  }
 });

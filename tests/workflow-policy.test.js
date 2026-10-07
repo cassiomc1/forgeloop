@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, readdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readdir, readFile, writeFile } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import os from "node:os";
 import path from "node:path";
@@ -37,7 +38,7 @@ test("core manual dispatch selects every gate without PR revision metadata and p
     assert.equal(compatibility.jobs.expanded.needs, "minimum");
     assert.match(compatibility.jobs.expanded.if, /always\(\)/);
     assert.equal(compatibility.jobs.expanded.strategy["max-parallel"], 1);
-  } finally { await rm(directory, { recursive: true, force: true }); }
+  } finally { await removeTempTree(directory); }
 });
 
 async function readWorkflow(name) {

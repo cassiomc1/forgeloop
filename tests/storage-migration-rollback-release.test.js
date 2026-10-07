@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -21,5 +22,5 @@ for(const mode of ["missing","unsupported","modified"])test(`rollback release re
    await writeFile(path.join(root,"src/cli.js"),"modified validator");
   }
   await assert.rejects(verifyRollbackLegacyTarget(root),{code:"E_STORAGE_SOURCE_ROLLBACK_VALIDATION_INVALID"});
- }finally{await rm(root,{recursive:true,force:true});}
+ }finally{await removeTempTree(root);}
 });

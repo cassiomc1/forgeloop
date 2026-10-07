@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdtemp, readFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -40,6 +41,6 @@ test("preflight, audit, report, and policy expose deterministic local CLI contra
     assert.equal(JSON.parse(audit.stdout).status, "INVALID");
     assert.equal(JSON.parse(report.stdout).verdict, "INCOMPLETE");
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });

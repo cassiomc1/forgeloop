@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -42,7 +43,7 @@ test("on-demand source preserves complete lifecycle validation and corruption ve
       damaged.push(event);
       assert.deepEqual(result(decodedSource(damaged)), result(damaged));
     }
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("historical views retain private source positions and reject copied/foreign identity", () => {

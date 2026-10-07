@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -36,7 +37,7 @@ test("documentation examples run in a disposable fixture and assert JSON paths",
     assert.equal(result.exitCode, 0);
     assert.equal(result.json.protocolVersion, 1);
   } finally {
-    await rm(directory, { recursive: true, force: true });
+    await removeTempTree(directory);
   }
 });
 

@@ -1,7 +1,8 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import { withProjectStorage } from "../src/storage/project-boundary.js";
 import { ensureFixtureTask, overwriteFixtureRecordBytes } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -37,7 +38,7 @@ test("forged action identity is rejected by native indexed authority", async () 
     const before = await authority();
     await assert.rejects(validateActionLedgerConsistency(target, { packageRoot, taskId }), { code: "E_STORAGE_PAYLOAD_MISMATCH" });
     assert.deepEqual(await authority(), before);
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("CALLER_REPORTED cannot manufacture authorization", async () => {
@@ -57,7 +58,7 @@ test("CALLER_REPORTED cannot manufacture authorization", async () => {
     );
     const current = await readAction(target, { packageRoot, taskId, actionId: action.actionId });
     assert.equal(current.state, "PROPOSED");
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("CALLER_REPORTED cannot manufacture verification", async () => {
@@ -78,5 +79,5 @@ test("CALLER_REPORTED cannot manufacture verification", async () => {
     );
     const current = await readAction(target, { packageRoot, taskId, actionId: action.actionId });
     assert.equal(current.state, "PROPOSED");
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

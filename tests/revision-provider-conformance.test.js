@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
 import { appendFile, rm, writeFile } from "node:fs/promises";
@@ -20,7 +21,7 @@ async function withRepository(fn) {
   try {
     await fn(target);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 }
 

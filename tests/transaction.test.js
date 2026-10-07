@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { access, mkdtemp, rm } from "node:fs/promises";
+import { access, mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -20,7 +21,7 @@ async function project(callback) {
     await callback(target);
     assert.deepEqual(await findIncompleteTransactions(target), []);
     await assert.rejects(access(path.join(target, ".forgeloop/.txn")), { code: "ENOENT" });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 }
 function committedState(target) {
   const db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"), { readOnly: true });

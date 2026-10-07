@@ -1,7 +1,8 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import { ensureFixtureTask, readFixtureText } from "./helpers/native-storage-fixture.js";
 import { taskArtifactPath } from "../src/core/task-paths.js";
 import assert from "node:assert/strict";
-import { access, mkdtemp, rm } from "node:fs/promises";
+import { access, mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -113,7 +114,7 @@ test("recording continuity derives canonical bindings and ignores actor identity
     assert.deepEqual(stored.repositoryFingerprint, { branch: "main", head: "new" });
     assert.equal(stored.currentFocus.id, "header");
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 

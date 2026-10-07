@@ -1,7 +1,8 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createHash, randomUUID } from "node:crypto";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { Readable } from "node:stream";
@@ -26,7 +27,7 @@ async function fixture(callback) {
     try { reference = await registerAttachment(db, target, { taskId, referenceId: "outgoing-binary", readable: Readable.from([Buffer.from([0, 255, 128, 10])]) }); }
     finally { db.close(); }
     await callback({ target, reference });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 }
 
 const databaseDigest = async target => createHash("sha256").update(await readFile(path.join(target, ".forgeloop/state.sqlite"))).digest("hex");

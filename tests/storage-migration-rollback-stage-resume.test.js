@@ -1,8 +1,9 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { fork } from "node:child_process";
 import { once } from "node:events";
-import { readFile, rm, writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { buildDiagnosisProject } from "./helpers/storage-fixtures.js";
 import { resumeMigrationSourceRollbackStage } from "../src/storage/migration-rollback-source-stage.js";
@@ -44,6 +45,6 @@ for(const mode of ["READY","PREPARING_COMPLETE","PREPARING_PARTIAL","PREPARING_M
   assert.deepEqual(await readFile(path.join(target,".forgeloop/state.sqlite")),native);
  }finally{
   if(worker && worker.exitCode === null && worker.signalCode === null){const exited=once(worker,"exit");worker.kill("SIGKILL");await exited;}
-  await rm(target,{recursive:true,force:true});
+  await removeTempTree(target);
  }
 });

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { lstat, readFile, symlink, writeFile } from "node:fs/promises";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -471,7 +471,7 @@ test("recordCheck requires a prepared receipt and rejects a symlink target", asy
       );
       assert.equal((await lstat(link)).isSymbolicLink(), true);
     } finally {
-      await rm(link, { recursive: true, force: true });
+      await removeTempTree(link);
     }
     assert.equal(context.contract.taskId, "task-ergonomics");
   });

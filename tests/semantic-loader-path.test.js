@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { copyFile, mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -25,5 +26,5 @@ test("semantic preload propagates to child processes through a repository path c
       env: { ...process.env, NODE_OPTIONS: "" }, encoding: "utf8",
     });
     assert.equal(output.trim(), "CHILD_PRELOAD_OK");
-  } finally { await rm(directory, { recursive: true, force: true }); }
+  } finally { await removeTempTree(directory); }
 });

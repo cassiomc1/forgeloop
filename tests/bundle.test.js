@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import { ensureFixtureTask, readRawFixtureText, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
 import { exportLegacyFixture } from "./helpers/storage-fixtures.js";
 import assert from "node:assert/strict";
@@ -133,7 +134,7 @@ test("portable task bundles copy only canonical protocol artifacts", async () =>
     await symlink(path.join(target, taskArtifactPath(contract.taskId, "contract")), sourceAttachment);
     await assert.rejects(exportTaskBundle(target, contract.taskId, packageRoot), /symlink/);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -190,7 +191,7 @@ test("portable task bundles revalidate execution references against bundled arti
     assert.equal(loaded.artifacts.executions[execution.execution.executionId].executionId, execution.execution.executionId);
     assert.equal(loaded.artifacts.state.checks[0].executionRef, execution.execution.executionId);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -207,7 +208,7 @@ test("bundle export rejects a manually persisted semantically invalid current co
       /non-empty/i,
     );
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -242,6 +243,6 @@ test("bundle reads reject a manually persisted secret-like bundled contract", as
       },
     );
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });

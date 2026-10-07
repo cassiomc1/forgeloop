@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { rm } from "node:fs/promises";
+
 import path from "node:path";
 import { buildDiagnosisProject, TEST_TASK_ID } from "./helpers/storage-fixtures.js";
 import { importProjectState } from "../src/storage/importer.js";
@@ -18,5 +19,5 @@ test("streamed event export validates indexed authority before emitting corrupte
     db.prepare("UPDATE events SET event_type = 'CORRUPT_INDEX' WHERE task_id = ? AND seq = ?").run(TEST_TASK_ID, expected[0].seq);
     assert.throws(() => [...iterateCanonicalEvents(db, TEST_TASK_ID)], { code: "E_STORAGE_PAYLOAD_MISMATCH" });
     await assert.rejects(exportTask(db, TEST_TASK_ID, path.join(root, "invalid-export")), { code: "E_STORAGE_PAYLOAD_MISMATCH" });
-  } finally { db.close(); await rm(root, { recursive: true, force: true }); }
+  } finally { db.close(); await removeTempTree(root); }
 });

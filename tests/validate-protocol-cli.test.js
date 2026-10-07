@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
@@ -96,7 +97,7 @@ test("validate-protocol validates a read-only coherent artifact set", async () =
     assert.equal(result.status, 0, result.stderr);
     assert.equal(JSON.parse(result.stdout).status, "VALID");
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -150,7 +151,7 @@ test("validate-protocol validates a single-actor run without delegation inputs",
     assert.equal(report.delegation.status, "NOT_APPLICABLE");
     assert.equal(report.delegation.required, false);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -205,7 +206,7 @@ test("validate-protocol treats an explicitly missing continuity artifact as opti
     assert.equal(report.continuity.status, "NOT_APPLICABLE");
     assert.equal(report.continuity.classification, "ABSENT");
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -282,7 +283,7 @@ test("validate-protocol accepts task-scoped observed command provenance", async 
     assert.equal(report.status, "VALID");
     assert.deepEqual(report.errors, []);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -301,7 +302,7 @@ test("validate-protocol reports inconsistencies and rejects unsafe paths", async
     assert.equal(unsafe.status, 1);
     assert.match(unsafe.stderr, /inside target|escapes target/i);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -398,7 +399,7 @@ test("validate-protocol derives STALE when the current contract changed", async 
     assert.ok(report.stale.reasons.includes("CONTRACT_CHANGED"));
     assert.equal(report.stale.contractComparison, "MISMATCH");
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -413,7 +414,7 @@ test("validate-protocol derives STALE when the current contract is not supplied"
     assert.ok(report.stale.reasons.includes("CONTRACT_NOT_VERIFIED"));
     assert.equal(report.stale.contractComparison, "NOT_VERIFIED");
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -430,7 +431,7 @@ test("validate-protocol derives STALE when the repository fingerprint changed", 
     assert.ok(report.stale.reasons.includes("REPOSITORY_CHANGED"));
     assert.equal(report.stale.repositoryComparison, "MISMATCH");
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -457,7 +458,7 @@ test("validate-protocol derives STALE when a required artifact changed or is mis
     assert.ok(report.stale.reasons.includes("REQUIRED_ARTIFACT_MISSING"));
     assert.equal(report.stale.artifactComparison, "MISSING");
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -476,7 +477,7 @@ test("validate-protocol returns VALID when freshness and artifacts match", async
     assert.equal(report.status, "VALID");
     assert.equal(report.stale, null);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -502,7 +503,7 @@ test("validate-protocol human output explains stale freshness evidence", async (
     assert.match(result.stdout, /Contract: MISMATCH/);
     assert.match(result.stdout, /CONTRACT_CHANGED/);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -524,6 +525,6 @@ test("validate-protocol preserves INVALID precedence over stale freshness", asyn
     assert.equal(report.status, "INVALID");
     assert.equal(report.stale, null);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });

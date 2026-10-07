@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { fork } from "node:child_process";
@@ -50,7 +51,7 @@ async function fixture(callback) {
     await writeFile(path.join(target, signature.path), signatureBytes);
     putArtifact(db, { taskId: TEST_TASK_ID, kind: "attestation", artifactId: "statement", payload: value, sourceText: statementBytes.toString("utf8") });
     await callback({ target, output, db, statement, signature, statementBytes, signatureBytes });
-  } finally { db.close(); await rm(target, { recursive: true, force: true }); await rm(output, { recursive: true, force: true }); }
+  } finally { db.close(); await removeTempTree(target); await removeTempTree(output); }
 }
 
 test("legacy signature preparation preserves source/ledger bytes and supplies immutable logical aliases", async () => {

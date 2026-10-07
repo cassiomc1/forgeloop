@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -25,7 +26,7 @@ test("the lock API is project-scoped and does not become a search-duration globa
     assert.equal(result, "done");
     assert.deepEqual(calls, ["inside"]);
   } finally {
-    await rm(lockRoot, { recursive: true, force: true });
+    await removeTempTree(lockRoot);
   }
 });
 

@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { cp, lstat, mkdir, mkdtemp, readFile, rm, symlink, unlink, writeFile } from "node:fs/promises";
@@ -27,7 +28,7 @@ async function withTarget(run) {
   try {
     await run(target);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 }
 
@@ -113,7 +114,7 @@ test("init rejects a symlinked hidden kit before writing target files", async ()
       assert.notEqual(result.status, 0);
       await assert.rejects(() => lstat(path.join(target, "AGENTS.md")));
     } finally {
-      await rm(outside, { recursive: true, force: true });
+      await removeTempTree(outside);
     }
   });
 });
@@ -294,7 +295,7 @@ test("update validates legacy symlink paths before writing the hidden kit", asyn
       assert.equal(await pathExists(path.join(target, ".forgeloop/kit/LOOP_ENGINEERING.md")), false);
       assert.equal(await pathExists(path.join(target, "LOOP_ENGINEERING.md")), true);
     } finally {
-      await rm(outside, { recursive: true, force: true });
+      await removeTempTree(outside);
     }
   });
 });

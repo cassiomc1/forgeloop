@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -61,7 +62,7 @@ test("arbitrary COMMITTED settlement without trusted authority is rejected", asy
     );
     const current = await readAction(f.target, { packageRoot, taskId: f.taskId, actionId: f.action.actionId });
     assert.equal(current.state, "COMMIT_UNKNOWN");
-  } finally { await rm(f.target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(f.target); }
 });
 
 test("arbitrary NOT_COMMITTED settlement without trusted authority is rejected", async () => {
@@ -73,7 +74,7 @@ test("arbitrary NOT_COMMITTED settlement without trusted authority is rejected",
         evidenceRefs: ["actor:says-not-committed"] }),
       (error) => error.code === "E_ACTION_RECONCILIATION_AUTHORITY_REQUIRED",
     );
-  } finally { await rm(f.target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(f.target); }
 });
 
 test("settling without any evidence reference is rejected even with trusted authority", async () => {
@@ -85,7 +86,7 @@ test("settling without any evidence reference is rejected even with trusted auth
         evidenceRefs: [], authorityContext: trustedAuthority }),
       (error) => error.code === "E_ACTION_RECONCILIATION_EVIDENCE_INVALID",
     );
-  } finally { await rm(f.target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(f.target); }
 });
 
 test("UNKNOWN observation remains caller-recordable and keeps COMMIT_UNKNOWN", async () => {
@@ -94,7 +95,7 @@ test("UNKNOWN observation remains caller-recordable and keeps COMMIT_UNKNOWN", a
     const result = await reconcileAction({ target: f.target, packageRoot, taskId: f.taskId,
       actionId: f.action.actionId, outcome: "UNKNOWN", evidenceRefs: [] });
     assert.equal(result.action.state, "COMMIT_UNKNOWN");
-  } finally { await rm(f.target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(f.target); }
 });
 
 test("trusted COMMITTED settlement settles the action", async () => {
@@ -104,7 +105,7 @@ test("trusted COMMITTED settlement settles the action", async () => {
       actionId: f.action.actionId, outcome: "COMMITTED",
       evidenceRefs: ["external:release-visible"], authorityContext: trustedAuthority });
     assert.equal(result.action.state, "COMMITTED");
-  } finally { await rm(f.target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(f.target); }
 });
 
 test("trusted NOT_COMMITTED returns the action to PROPOSED for reauthorization", async () => {
@@ -121,7 +122,7 @@ test("trusted NOT_COMMITTED returns the action to PROPOSED for reauthorization",
         actionId: f.action.actionId, outcome: "UNKNOWN" }),
       (error) => error.code === "E_ACTION_STATE_MISMATCH",
     );
-  } finally { await rm(f.target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(f.target); }
 });
 
 test("retry after trusted NOT_COMMITTED re-evaluates changed policy before launch", async () => {
@@ -148,5 +149,5 @@ test("retry after trusted NOT_COMMITTED re-evaluates changed policy before launc
       (error) => error.code === "E_ACTION_CAPABILITY_DENIED",
     );
     await assert.rejects((async () => { const { access } = await import("node:fs/promises"); await access(sentinel); })());
-  } finally { await rm(f.target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(f.target); }
 });

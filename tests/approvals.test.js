@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, readFile, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -62,7 +63,7 @@ test("approval persists and is readable by a fresh invocation", async () => {
     assert.equal(fresh.status, "PENDING");
     assert.equal((await listApprovals(fixture.target, { packageRoot, taskId: fixture.taskId })).length, 1);
   } finally {
-    await rm(fixture.target, { recursive: true, force: true });
+    await removeTempTree(fixture.target);
   }
 });
 
@@ -83,7 +84,7 @@ test("approval resolution is one-time and current binding validates", async () =
       approvalId: "approval-push", decision: "REJECTED", authorityKind: "CALLER_ACKNOWLEDGED" }),
     (error) => error.code === "E_APPROVAL_ALREADY_RESOLVED");
   } finally {
-    await rm(fixture.target, { recursive: true, force: true });
+    await removeTempTree(fixture.target);
   }
 });
 
@@ -99,5 +100,5 @@ test("approval listing and payload reads refuse legacy authority without changin
   await assert.rejects(readApproval(target,{packageRoot,taskId:"legacy-approval",approvalId:"approval-retained"}),{code:"E_STORAGE_MIGRATION_REQUIRED"});
   assert.deepEqual(await readFile(filename),bytes);
   await assert.rejects(readFile(path.join(target,".forgeloop/state.sqlite")),{code:"ENOENT"});
- }finally{await rm(target,{recursive:true,force:true});}
+ }finally{await removeTempTree(target);}
 });

@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { mkdtemp, mkdir, writeFile, rm, stat } from "node:fs/promises";
@@ -59,7 +60,7 @@ test("singleton candidate preserves state, ordered ledger hashes and gate identi
     await assert.rejects(importProjectState(target, path.join(target, "identity-refused.sqlite"), { convertSingleton: true }), { code: "E_STORAGE_PAYLOAD_MISMATCH" });
     await assert.rejects(stat(path.join(target, "identity-refused.sqlite")), { code: "ENOENT" });
     assert.deepEqual(await inventoryLegacySource(target), mismatchedExecution);
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("singleton conversion imports directly into an unpublished SQLite transaction and preserves source", async () => {
@@ -107,5 +108,5 @@ test("singleton conversion imports directly into an unpublished SQLite transacti
     try { assert.equal(findTaskById(active, contract.taskId).descriptor.taskId, contract.taskId); }
     finally { active.close(); }
     assert.deepEqual(await inventoryLegacySource(target), []);
-  } finally { db?.close(); await rm(target, { recursive: true, force: true }); }
+  } finally { db?.close(); await removeTempTree(target); }
 });

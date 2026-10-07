@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -32,5 +33,5 @@ test("explicit canonical policy diff paths read native snapshots and portable fi
     await writeFile(path.join(target, virtual), JSON.stringify(portable));
     await assert.rejects(runPolicyDiff({ target, packageRoot, before: virtual, after: "portable.json" }), { code: "E_STORAGE_MIGRATION_REQUIRED" });
     assert.deepEqual(await runPolicyDiff({ target, packageRoot, before: "portable.json", after: "portable.json" }), diffPolicies(portable, portable));
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

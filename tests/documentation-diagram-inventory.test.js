@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
@@ -45,7 +46,7 @@ test("inventory classifies active diagram sources, references, and text while ig
     assert.deepEqual(inventory.diagramLikeText.map((entry) => entry.line), [11, 12]);
     assert.deepEqual(inventory.unreferencedVisualAssets, []);
   } finally {
-    await rm(rootDir, { recursive: true, force: true });
+    await removeTempTree(rootDir);
   }
 });
 
@@ -103,6 +104,6 @@ test("inventory detects orphaned and missing manifest-owned diagram artifacts", 
     const missing = await scanDocumentationDiagrams({ rootDir });
     assert.ok(missing.orphanedDiagramArtifacts.includes("missing:docs/assets/diagrams/flow.html"));
   } finally {
-    await rm(rootDir, { recursive: true, force: true });
+    await removeTempTree(rootDir);
   }
 });

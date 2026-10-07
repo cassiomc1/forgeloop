@@ -1,8 +1,9 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import { ensureFixtureTask, readFixtureText } from "./helpers/native-storage-fixture.js";
 import { taskArtifactPath } from "../src/core/task-paths.js";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -79,6 +80,6 @@ test("a fresh process resumes the same task from persisted continuity", async ()
     const persisted=JSON.parse(await readFixtureText(target, taskArtifactPath("task-cross", "continuity")));
     assert.equal(persisted.workStateFingerprint,canonicalFingerprint(state));
   } finally {
-    await rm(target,{recursive:true,force:true});
+    await removeTempTree(target);
   }
 });

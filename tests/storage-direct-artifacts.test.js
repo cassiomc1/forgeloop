@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { mkdtemp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
@@ -19,7 +20,7 @@ async function project(callback) {
     const created = await executeForgeLoopCommand({ command: "task-create", projectPath: target, input: { taskId, claims: [] } });
     assert.equal(created.ok, true, JSON.stringify(created));
     await callback(target);
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 }
 
 const state = () => createWorkState({ taskId, phase: "RECEIVED", contractFingerprint: "0".repeat(64), lastUpdated: "2026-10-02T12:00:00.000Z" });
@@ -89,7 +90,7 @@ for (const sidecar of ["state.sqlite-wal", "state.sqlite-shm"]) {
       await assert.rejects(readWorkState(target, { packageRoot, taskId }), { code: "E_STORAGE_MIGRATION_REQUIRED" });
       assert.equal(await readFile(filename, "utf8"), "retained sidecar evidence");
       assert.deepEqual(await readdir(path.join(target, ".forgeloop")), [sidecar]);
-    } finally { await rm(target, { recursive: true, force: true }); }
+    } finally { await removeTempTree(target); }
   });
 }
 
@@ -102,7 +103,7 @@ test("native route requires a task instead of publishing a singleton routing res
     assert.equal(result.error.code, "E_TASK_REQUIRED", JSON.stringify(result));
     await assert.rejects(readFile(path.join(target, ARTIFACT_PATHS.route)), { code: "ENOENT" });
     await assert.rejects(readdir(path.join(target, ".forgeloop/.txn")), { code: "ENOENT" });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 
@@ -126,7 +127,7 @@ for (const readOnly of [true, false]) {
       assert.equal(calls, 0);
       assert.deepEqual(await readdir(path.join(target, ".forgeloop")), before);
       await assert.rejects(readFile(filename), { code: "ENOENT" });
-    } finally { await rm(target, { recursive: true, force: true }); }
+    } finally { await removeTempTree(target); }
   });
 }
 
@@ -145,7 +146,7 @@ test("operational JSON refuses legacy payload while explicit portable inspection
   await writeFile(filename,'{"taskId":"broken"}');
   await assert.rejects(readPortableJsonArtifact(target,relative,"task-descriptor",packageRoot),{code:"ARTIFACT_INVALID"});
   await assert.rejects(readPortableJsonArtifact(target,"../outside.json","task-descriptor",packageRoot),{code:"ARTIFACT_PATH_INVALID"});
- }finally{await rm(target,{recursive:true,force:true});}
+ }finally{await removeTempTree(target);}
 });
 
 
@@ -169,7 +170,7 @@ test("operational ledger readers refuse retained legacy bytes while explicit ins
   await writeFile(filename,bytes);assert.deepEqual(await readFile(filename),bytes);
   await assert.rejects(readFile(path.join(target,".forgeloop/state.sqlite")),{code:"ENOENT"});
   await rm(filename);assert.deepEqual(await readEvents(target,packageRoot,options),[]);assert.deepEqual(await readEventTail(target,packageRoot,options),[]);
- } finally {await rm(target,{recursive:true,force:true});}
+ } finally {await removeTempTree(target);}
 });
 
 
@@ -195,5 +196,5 @@ test("canonical execution lookup rejects ambiguity and legacy filesystem records
   await mkdir(path.dirname(filename),{recursive:true});await writeFile(filename,bytes);
   for(const selector of [undefined,taskId]) await assert.rejects(readExecutionArtifact({target,packageRoot,executionRef:executionId,taskId:selector}),{code:"E_EXECUTION_REF_INVALID"});
   assert.deepEqual(await readFile(filename),bytes);await assert.rejects(readFile(path.join(target,".forgeloop/state.sqlite")),{code:"ENOENT"});
- }finally{await rm(target,{recursive:true,force:true});}
+ }finally{await removeTempTree(target);}
 });

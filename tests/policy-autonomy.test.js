@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm, writeFile, mkdir } from "node:fs/promises";
+import { mkdtemp, writeFile, mkdir } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -123,7 +124,7 @@ test("1. Zero-interaction acceptance test: clean repository unattended complete 
     });
     assert.equal(compRes.status, "VALID");
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -163,7 +164,7 @@ test("2. Brownfield autonomy acceptance test: pre-existing violations baselined,
     assert.equal(statusAfter.newViolations.length >= 1, true);
     assert.equal(statusAfter.errors.some((e) => e.code === "NEW_VIOLATION"), true);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -214,7 +215,7 @@ test("3. Unknown architecture acceptance test: unknown directory structure produ
     const preflight = await runPreflight({ target, packageRoot, taskId: "task-unknown-arch" });
     assert.equal(preflight.status, "READY");
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -247,7 +248,7 @@ test("4. Inert inference acceptance test: discovered inert downgraded; project i
     assert.equal(projectPolicyEval.status, "INVALID");
     assert.equal(projectPolicyEval.errors.some((e) => e.code === "CHECK_INERT"), true);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -401,7 +402,7 @@ test("9. Policy drift test: task activated with policy A detects drift when poli
     const statusAfter = await runPolicyStatus({ target, packageRoot, taskId: "task-drift" });
     assert.equal(statusAfter.drift.detected, true);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 

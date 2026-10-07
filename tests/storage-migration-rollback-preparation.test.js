@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { cp, readFile, rm, stat, writeFile } from "node:fs/promises";
+import { cp, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { Readable } from "node:stream";
 import { importProjectState } from "../src/storage/importer.js";
@@ -52,6 +53,6 @@ for(const mode of ["ready","backup-tamper","owner-tamper","new-native-task","att
     await assert.rejects(verifyPreparedMigrationSourceRollback(target,"retained",{writersQuiesced:true}),{code:"E_STORAGE_MAINTENANCE_IN_PROGRESS"});
     assert.equal((await executeForgeLoopCommand({command:"task-list",projectPath:target,input:{}})).ok,false);
    }
-  } finally {await rm(target,{recursive:true,force:true});}
+  } finally {await removeTempTree(target);}
  });
 }

@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { setImmediate } from "node:timers";
@@ -32,7 +33,7 @@ test("persistent runtime reuses one project connection, enforces access modes an
     await runtimeContext.close();
     assert.throws(() => readonly.prepare("SELECT 1"));
     await assert.rejects(withProjectStorage(target, () => {}, options), { code: "E_STORAGE_RUNTIME_CLOSED" });
-  } finally { await runtimeContext.close(); await rm(target, { recursive: true, force: true }); }
+  } finally { await runtimeContext.close(); await removeTempTree(target); }
 });
 
 test("runtime shutdown drains an admitted lease and refuses new work", async () => {
@@ -54,7 +55,7 @@ test("runtime shutdown drains an admitted lease and refuses new work", async () 
     release();
     assert.equal(await pending, 1);
     await closing;
-  } finally { await runtimeContext.close(); await rm(target, { recursive: true, force: true }); }
+  } finally { await runtimeContext.close(); await removeTempTree(target); }
 });
 
 test("cached runtime validates a replacement database instead of retaining stale project state", async () => {
@@ -92,7 +93,7 @@ test("cached runtime validates a replacement database instead of retaining stale
     assert.notEqual(replacement, first);
     assert.throws(() => first.prepare("SELECT 1"));
     assert.equal(replacement.prepare("SELECT COUNT(*) AS count FROM tasks").get().count, 1);
-  } finally { await runtimeContext.close(); await rm(target, { recursive: true, force: true }); }
+  } finally { await runtimeContext.close(); await removeTempTree(target); }
 });
 
 test("runtime refuses a leaked native transaction and reopens a clean connection", async () => {
@@ -108,7 +109,7 @@ test("runtime refuses a leaked native transaction and reopens a clean connection
     const next = await withProjectStorage(target, store => store.db, { runtimeContext });
     assert.notEqual(next, leaked);
     assert.equal(next.isTransaction, false);
-  } finally { await runtimeContext.close(); await rm(target, { recursive: true, force: true }); }
+  } finally { await runtimeContext.close(); await removeTempTree(target); }
 });
 
 test("project aliases reuse one connection and shutdown drains path resolution", async () => {
@@ -126,7 +127,7 @@ test("project aliases reuse one connection and shutdown drains path resolution",
     assert.equal(await admitted, 1);
     await closing;
     assert.throws(() => first.prepare("SELECT 1"));
-  } finally { await runtimeContext.close(); await rm(alias, { force: true }); await rm(target, { recursive: true, force: true }); }
+  } finally { await runtimeContext.close(); await rm(alias, { force: true }); await removeTempTree(target); }
 });
 
 test("independent warm-runtime work proceeds while another callback awaits external work", async () => {
@@ -157,7 +158,7 @@ test("independent warm-runtime work proceeds while another callback awaits exter
     release?.();
     await Promise.allSettled([first, second]);
     await runtimeContext.close();
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -198,7 +199,7 @@ test("access-mode transition drains shared leases before closing their handle", 
     release?.();
     await Promise.allSettled([first, readonly]);
     await runtimeContext.close();
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -227,6 +228,6 @@ test("overlapping lease cannot observe another callback's leaked native transact
     release?.();
     await Promise.allSettled([first]);
     await runtimeContext.close();
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });

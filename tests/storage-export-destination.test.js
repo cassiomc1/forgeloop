@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readdir, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { openStorageDatabase, upsertTask, exportDatabase, exportTask, checkStorageIntegrity } from "../src/storage/index.js";
@@ -32,7 +33,7 @@ test("portable exports cannot recreate operational aliases in a native project",
     assert.equal(JSON.parse(await readFile(path.join(portable, "export-index.json"), "utf8")).tasks[0].taskId, taskId);
   } finally {
     db.close();
-    await rm(root, { recursive: true, force: true });
+    await removeTempTree(root);
   }
 });
 
@@ -54,7 +55,7 @@ for (const evidence of ["state.sqlite", "state.sqlite-wal", "state.sqlite-shm", 
       assert.equal(checkStorageIntegrity(db).ok, true);
     } finally {
       db.close();
-      await rm(root, { recursive: true, force: true });
+      await removeTempTree(root);
     }
   });
 }

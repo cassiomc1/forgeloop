@@ -1,7 +1,8 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import path from "node:path";
-import { rm } from "node:fs/promises";
+
 import { createGitRepository } from "./helpers/git-fixture.js";
 import { runTaskCreate } from "../src/commands/task-create.js";
 import { runTaskScope } from "../src/commands/task-scope.js";
@@ -48,7 +49,7 @@ test("read-only task-scope projects claims from one immutable descriptor snapsho
       } finally { prototype.readText = originalRead; }
     });
     assert.deepEqual((await runTaskScope(f)).writeClaims, ["src"]);
-  } finally { writer.close(); db.close(); await rm(f.target, { recursive: true, force: true }); }
+  } finally { writer.close(); db.close(); await removeTempTree(f.target); }
 });
 
 test("task-scope update rereads its descriptor after entering the claims mutation scope", async () => {
@@ -80,6 +81,6 @@ test("task-scope update rereads its descriptor after entering the claims mutatio
   } finally {
     if (prototype) prototype.readText = originalRead;
     writer.close();
-    await rm(f.target, { recursive: true, force: true });
+    await removeTempTree(f.target);
   }
 });

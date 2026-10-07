@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
@@ -92,7 +93,7 @@ test("required artifact hashes detect missing and changed material files", async
     assert.equal(missing.artifactComparison, "MISSING");
     assert.ok(missing.reasons.includes("REQUIRED_ARTIFACT_MISSING"));
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 

@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { mkdtemp, readFile, readdir, rm, writeFile, symlink } from "node:fs/promises";
@@ -28,7 +29,7 @@ test("immutable attachment publication verifies bytes and refuses corrupted dedu
     await symlink(path.join(target, "outside"), path.join(target, reference.path));
     await assert.rejects(verifyAttachmentFile(target, reference), /symlink/iu);
     await assert.rejects(verifyAttachmentFile(target, { ...reference, path: "../outside" }), { code: "E_STORAGE_ATTACHMENT_INVALID" });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("attachment publication refuses an active SQLite write transaction", async () => {
@@ -39,7 +40,7 @@ test("attachment publication refuses an active SQLite write transaction", async 
     await assert.rejects(publishAttachmentFile(target, Readable.from(["bytes"]), { db }), { code: "E_STORAGE_ATTACHMENT_INVALID" });
     db.exec("ROLLBACK");
     await assert.rejects(readFile(path.join(target, ".forgeloop/attachments/objects")), { code: "ENOENT" });
-  } finally { db.close(); await rm(target, { recursive: true, force: true }); }
+  } finally { db.close(); await removeTempTree(target); }
 });
 
 test("a failed attachment stream publishes no reference and preserves earlier objects", async () => {
@@ -50,7 +51,7 @@ test("a failed attachment stream publishes no reference and preserves earlier ob
     await assert.rejects(publishAttachmentFile(target, Readable.from(interrupted())), /source interrupted/u);
     assert.deepEqual(await readdir(path.join(target, ".forgeloop/attachments/objects")), [earlier.sha256]);
     assert.equal(await readFile(path.join(target, earlier.path), "utf8"), "retained bytes");
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("registered attachment identities are immutable and portable with verified bytes", async () => {
@@ -71,7 +72,7 @@ test("registered attachment identities are immutable and portable with verified 
     assert.equal(await readFile(path.join(exported, reference.path), "utf8"), "external evidence");
     await writeFile(path.join(exported, reference.path), "tampered");
     await assert.rejects(importProjectState(exported, path.join(target, "rejected.sqlite")), error => error.code === "E_STORAGE_IMPORT_ABORTED" && error.report.errors.some(issue => issue.code === "E_STORAGE_ATTACHMENT_INVALID"));
-  } finally { restored?.close(); db.close(); await rm(target, { recursive: true, force: true }); }
+  } finally { restored?.close(); db.close(); await removeTempTree(target); }
 });
 
 test("storage integrity refuses malformed references even when native SQLite checks pass", async () => {
@@ -89,7 +90,7 @@ test("storage integrity refuses malformed references even when native SQLite che
     const destination = path.join(target, "refused.sqlite");
     await assert.rejects(backupStorageDatabase(db, destination), { code: "E_STORAGE_BACKUP_INVALID" });
     await assert.rejects(readFile(destination), { code: "ENOENT" });
-  } finally { db.close(); await rm(target, { recursive: true, force: true }); }
+  } finally { db.close(); await removeTempTree(target); }
 });
 
 
@@ -110,6 +111,6 @@ test("expired native callbacks reject attachment publication before consuming by
       assert.equal(consumed, false);
       await assert.rejects(readdir(path.join(target, ".forgeloop/attachments/objects")), { code: "ENOENT" });
       assert.equal([...iterateAttachmentReferences(db)].length, 0);
-    } finally { db.close(); await rm(target, { recursive: true, force: true }); }
+    } finally { db.close(); await removeTempTree(target); }
   }
 });

@@ -1,8 +1,9 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { fork } from "node:child_process";
 import { once } from "node:events";
-import { readFile, rm, writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { buildDiagnosisProject } from "./helpers/storage-fixtures.js";
 import { resumePreparedMigrationSourceRollback } from "../src/storage/migration-rollback-preparation.js";
@@ -37,6 +38,6 @@ for(const mode of ["ready","backup-tamper","owner-tamper","preparing-ready","pre
   assert.equal((await executeForgeLoopCommand({command:"task-list",projectPath:target,input:{}})).ok,false);
  } finally {
   if(worker && worker.exitCode === null && worker.signalCode === null){const exited=once(worker,"exit");worker.kill("SIGKILL");await exited;}
-  await rm(target,{recursive:true,force:true});
+  await removeTempTree(target);
  }
 });

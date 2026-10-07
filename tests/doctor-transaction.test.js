@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, writeFile, readFile } from "node:fs/promises";
+import { mkdir, mkdtemp, writeFile, readFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -21,6 +22,6 @@ test("doctor diagnoses retired legacy repair and preserves interrupted transacti
     assert.ok(fixed.findings.some((finding) => finding.code === "E_TRANSACTION_INCOMPLETE"));
     assert.equal(await readFile(path.join(root, "manifest.json"), "utf8"), bytes);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });

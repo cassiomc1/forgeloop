@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { mkdtemp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
@@ -28,7 +29,7 @@ test("fresh bootstrap publishes an empty authoritative store and retains its rec
     await assert.rejects(readdir(path.join(target, ".forgeloop/task-state")), { code: "ENOENT" });
     assert.equal((await verifyActiveProjectRestore(target, journal.operationId)).currentStateVerified, true);
     await assert.rejects(bootstrapProjectStorage(target, { writersQuiesced: true }), { code: "E_STORAGE_RESTORE_INVALID" });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("ordinary fresh dispatch bootstraps on mutation while inspection allocates nothing", async () => {
@@ -49,7 +50,7 @@ test("ordinary fresh dispatch bootstraps on mutation while inspection allocates 
     const retained = await withProjectStorage(target, () => readGateIfPresent(target, "test", getPackageRoot(), { taskId: gate.taskId }), { readOnly: true });
     assert.deepEqual(retained.value, gate);
     assert.equal(await withProjectStorage(target, () => readGateIfPresent(target, "absent", getPackageRoot(), { taskId: gate.taskId }), { readOnly: true }), null);
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("bootstrap rejects an unsupported runtime before allocating evidence", async () => {
@@ -62,7 +63,7 @@ test("bootstrap rejects an unsupported runtime before allocating evidence", asyn
       await assert.rejects(bootstrapProjectStorage(process.argv[1], { writersQuiesced: true }), { code: 'E_STORAGE_UNSUPPORTED_RUNTIME' });
     `, target]);
     assert.deepEqual(await readdir(target), []);
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("ordinary legacy mutation requires explicit migration and preserves its bytes", async () => {
@@ -76,7 +77,7 @@ test("ordinary legacy mutation requires explicit migration and preserves its byt
     assert.equal(result.error.code, "E_STORAGE_MIGRATION_REQUIRED");
     assert.equal(await readFile(filename, "utf8"), "legacy evidence\n");
     assert.deepEqual(await readdir(path.join(target, ".forgeloop")), ["work-state.json"]);
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("bootstrap requires explicit exclusion and preserves legacy state before allocation", async () => {
@@ -90,7 +91,7 @@ test("bootstrap requires explicit exclusion and preserves legacy state before al
     await assert.rejects(bootstrapProjectStorage(target, { writersQuiesced: true }), { code: "E_STORAGE_RESTORE_INVALID" });
     assert.equal(await readFile(legacy, "utf8"), "retained legacy bytes\n");
     assert.deepEqual(await readdir(path.join(target, ".forgeloop")), ["events.ndjson"]);
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 
@@ -131,5 +132,5 @@ test("direct task transaction selects existing SQLite and preserves atomic rollb
     assert.equal(calls, 0);
     await assert.rejects(readdir(path.join(target, ".forgeloop/.txn")), { code: "ENOENT" });
     await writeFile(database, retained);
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

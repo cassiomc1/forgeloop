@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { readFile, rm, stat } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { buildDiagnosisProject } from "./helpers/storage-fixtures.js";
 import { migrateProjectStorage } from "../src/storage/migration.js";
@@ -17,5 +18,5 @@ for(const mode of ["no-quiescence","no-write-exclusion","unsupported-target"])te
   assert.deepEqual(await readFile(path.join(target,".forgeloop/storage-version.json")),marker);
   await assert.rejects(stat(path.join(target,".forgeloop/.storage-maintenance")),{code:"ENOENT"});
   await assert.rejects(stat(path.join(target,"retained/publication/source-rollback")),{code:"ENOENT"});
- }finally{await rm(target,{recursive:true,force:true});}
+ }finally{await removeTempTree(target);}
 });

@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { readFile, rm, stat } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { buildDiagnosisProject } from "./helpers/storage-fixtures.js";
@@ -17,7 +18,7 @@ for(const mode of ["missing-native-exclusion","missing-target","unsupported-targ
   assert.deepEqual(await readFile(path.join(target,".forgeloop/state.sqlite")),database);
   await assert.rejects(stat(path.join(target,".forgeloop/.storage-maintenance")),{code:"ENOENT"});
   await assert.rejects(stat(path.join(target,"retained/publication/source-rollback")),{code:"ENOENT"});
- }finally{await rm(target,{recursive:true,force:true});}
+ }finally{await removeTempTree(target);}
 });
 test("public rollback help explains conditional native-write exclusion",()=>{
  const result=spawnSync(process.execPath,["src/cli.js","storage-rollback","--help"],{encoding:"utf8"});
@@ -31,7 +32,7 @@ test("public rollback resume requires exact owner before touching project",async
   assert.equal(result.ok,false);
   await assert.rejects(stat(path.join(target,".forgeloop/.storage-maintenance")),{code:"ENOENT"});
   await assert.rejects(stat(path.join(target,".forgeloop/state.sqlite")),{code:"ENOENT"});
- }finally{await rm(target,{recursive:true,force:true});}
+ }finally{await removeTempTree(target);}
 });
 test("public rollback resume help names exact owner and publication boundary",()=>{
  const result=spawnSync(process.execPath,["src/cli.js","storage-rollback-resume","--help"],{encoding:"utf8"});

@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { readFile, rm } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { Readable } from "node:stream";
 import { buildDiagnosisProject, TEST_TASK_ID } from "./helpers/storage-fixtures.js";
@@ -39,7 +40,7 @@ test("prepared attachment bindings commit with artifacts/events and conflict rol
       assert.equal(await readFile(path.join(target, rejectedReference.path), "utf8"), "different signature bytes");
       assert.equal(store.db.isTransaction, false);
     });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("attachment staging refuses an expired preparation without binding late published bytes", async () => {
@@ -57,5 +58,5 @@ test("attachment staging refuses an expired preparation without binding late pub
     release();
     assert.equal((await late).code, "E_STORAGE_TRANSACTION_EXPIRED");
     await withProjectStorage(target, store => assert.equal([...iterateAttachmentReferences(store.db)].length, 0));
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

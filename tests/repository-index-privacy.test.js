@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -71,6 +72,6 @@ test("public search errors redact local paths while preserving the error code", 
         && !Object.hasOwn(error, "binaryPath"),
     );
   } finally {
-    await rm(root, { recursive: true, force: true });
+    await removeTempTree(root);
   }
 });

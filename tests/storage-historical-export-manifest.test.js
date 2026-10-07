@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { cp, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
@@ -38,6 +39,6 @@ for (const change of ["historical-prefix","identity","prefix-digest","membership
     assert.equal(await readFile(path.join(candidate.path,"source",relative),"utf8"),original);
    } else await assert.rejects(prepare,{code:"E_STORAGE_MIGRATION_PARITY_INVALID"});
    assert.equal(await readFile(filename,"utf8"),original);
-  } finally {db?.close();await fixture.cleanup();await rm(portable,{recursive:true,force:true});}
+  } finally {db?.close();await fixture.cleanup();await removeTempTree(portable);}
  });
 }

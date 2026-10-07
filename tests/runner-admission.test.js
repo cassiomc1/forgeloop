@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { mkdtemp, writeFile, symlink, rm } from "node:fs/promises";
+import { mkdtemp, writeFile, symlink } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { admitRunnerJob, assertRunnerEventAdmission } from "../scripts/ci-runner-admission.mjs";
@@ -43,5 +44,5 @@ test("runner admission requires a bounded regular UTF-8 event file", async () =>
     const alias = path.join(directory, "alias.json");
     await symlink(filename, alias);
     await assert.rejects(admitRunnerJob({ ...env, GITHUB_EVENT_PATH: alias }), { code: "E_RUNNER_EVENT_UNTRUSTED" });
-  } finally { await rm(directory, { recursive: true, force: true }); }
+  } finally { await removeTempTree(directory); }
 });

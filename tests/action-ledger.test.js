@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -56,7 +57,7 @@ test("action lifecycle events keep a valid hash-chained ledger", async () => {
     const result = await validateEventLedger(target, packageRoot, { taskId: "chain-task" });
     assert.equal(result.valid, true, JSON.stringify(result.errors));
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -77,7 +78,7 @@ test("event detail validators reject malformed action event details", async () =
       (error) => error.code === "E_EVENT_INVALID" || error.code === "E_ACTION_EVIDENCE_INVALID",
     );
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -121,6 +122,6 @@ test("transition persists fingerprint binding and refuses foreign fingerprints",
     const stored = await readAction(target, { packageRoot, taskId: "fp-task", actionId: action.actionId });
     assert.equal(stored.state, "AUTHORIZED");
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });

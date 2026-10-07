@@ -1,7 +1,8 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import { ensureFixtureTask, readFixtureText, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
 import { taskArtifactPath } from "../src/core/task-paths.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -28,7 +29,7 @@ async function withTarget(run) {
   try {
     await run(target);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 }
 

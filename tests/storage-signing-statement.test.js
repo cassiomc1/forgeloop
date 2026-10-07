@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { readFile, rm, symlink, writeFile } from "node:fs/promises";
@@ -36,7 +37,7 @@ test("statement signature lookup accepts duplicate byte bindings and rejects cor
       db.prepare("UPDATE attachment_references SET sha256 = ? WHERE task_id = ?").run("0".repeat(64), TEST_TASK_ID);
       assert.throws(() => resolveAttestationBundlePath(target, TEST_TASK_ID), { code: "E_STORAGE_ATTACHMENT_INVALID" });
     });
-  } finally { db.close(); await rm(target, { recursive: true, force: true }); }
+  } finally { db.close(); await removeTempTree(target); }
 });
 
 test("SQLite Sigstore signing stages immutable bundles, cleans temporary files, and rolls back bindings", async () => {
@@ -129,7 +130,7 @@ test("SQLite Sigstore signing stages immutable bundles, cleans temporary files, 
       assert.notEqual(resolveAttestationBundlePath(target, TEST_TASK_ID), signed.path);
       assert.notEqual(resolveAttestationBundlePath(target, TEST_TASK_ID), additional.path);
     });
-  } finally { db.close(); await rm(target, { recursive: true, force: true }); }
+  } finally { db.close(); await removeTempTree(target); }
 });
 
 test("SQLite Sigstore verification receives private canonical bytes and cleans up success and failure", async () => {
@@ -158,7 +159,7 @@ test("SQLite Sigstore verification receives private canonical bytes and cleans u
       await assert.rejects(readFile(temporary), { code: "ENOENT" });
     });
     await assert.rejects(readFile(path.join(target, statementPath)), { code: "ENOENT" });
-  } finally { db.close(); await rm(target, { recursive: true, force: true }); }
+  } finally { db.close(); await removeTempTree(target); }
 });
 
 test("SQLite signing refuses linked output and removes failed signer temporary files", async () => {
@@ -185,7 +186,7 @@ test("SQLite signing refuses linked output and removes failed signer temporary f
         assert.equal(await readFile(external, "utf8"), "preserve existing bytes");
       }
     });
-  } finally { db.close(); await rm(target, { recursive: true, force: true }); }
+  } finally { db.close(); await removeTempTree(target); }
 });
 
 test("SQLite signer refuses changed canonical statements and active writer transactions", async () => {
@@ -210,7 +211,7 @@ test("SQLite signer refuses changed canonical statements and active writer trans
         assert.equal(calls, 1);
       } finally { db.exec("ROLLBACK"); }
     });
-  } finally { db.close(); await rm(target, { recursive: true, force: true }); }
+  } finally { db.close(); await removeTempTree(target); }
 });
 
 
@@ -259,7 +260,7 @@ test("direct native signer verification binds private statement and attachment b
     assert.equal(calls, 2, "corrupt native bytes cannot reach the verifier");
     await assert.rejects(readFile(path.join(target, statementPath)), { code: "ENOENT" });
     await assert.rejects(readFile(path.join(target, taskAttestationBundlePath(TEST_TASK_ID))), { code: "ENOENT" });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 
@@ -276,5 +277,5 @@ test("legacy operational bundle publication is refused without altering source o
     assert.equal(await readFile(eventsPath, "utf8"), before);
     await assert.rejects(readFile(path.join(target, ".forgeloop/state.sqlite")), { code: "ENOENT" });
     await assert.rejects(readFile(path.join(target, taskAttestationBundlePath(TEST_TASK_ID))), { code: "ENOENT" });
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { readFile, rm, writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { taskStorageKey } from "../src/core/task-identity.js";
 import { TEST_TASK_ID } from "./helpers/storage-fixtures.js";
@@ -39,7 +40,7 @@ for (const mode of ["unchanged","new-task","orphan-bytes","altered-source","reta
    assert.deepEqual(await readFile(path.join(target,".forgeloop/state.sqlite")),before);
    if (orphan) assert.deepEqual(await readFile(path.join(target,orphan.path)),Buffer.from([0,255,13,10]));
    assert.equal((await executeForgeLoopCommand({command:"task-list",projectPath:target,input:{}})).ok,true);
-  } finally {reader?.close();await rm(target,{recursive:true,force:true});}
+  } finally {reader?.close();await removeTempTree(target);}
  });
 }
 
@@ -63,6 +64,6 @@ test("source rollback admission refuses an independent busy writer without chang
   assert.equal(recovered.unchangedCanonicalSnapshot,true);
  } finally {
   if (worker && worker.exitCode === null && worker.signalCode === null) {const exited=once(worker,"exit");worker.kill("SIGKILL");await exited;}
-  await rm(target,{recursive:true,force:true});
+  await removeTempTree(target);
  }
 });

@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { mkdtemp, open, rm, symlink, writeFile, stat } from "node:fs/promises";
+import { mkdtemp, open, symlink, writeFile, stat } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { readStorageMetadataJson, STORAGE_CATALOG_LIMITS } from "../src/storage/metadata-json.js";
@@ -25,7 +26,7 @@ test("storage catalog reads reject oversized files, invalid encoding and excessi
     await assert.rejects(readStorageMetadataJson(root, "catalog.json"), SyntaxError);
     await symlink(filename, path.join(root, "linked.json"));
     await assert.rejects(readStorageMetadataJson(root, "linked.json", { optional: true }));
-  } finally { await rm(root, { recursive: true, force: true }); }
+  } finally { await removeTempTree(root); }
 });
 
 test("portable import rejects an oversized sparse catalog before creating a native database", async () => {
@@ -41,7 +42,7 @@ test("portable import rejects an oversized sparse catalog before creating a nati
     });
     assert.equal((await stat(destination)).size, 0);
     assert.equal((await stat(path.join(root, "export-index.json"))).size, STORAGE_CATALOG_LIMITS.maxBytes + 1);
-  } finally { await rm(root, { recursive: true, force: true }); }
+  } finally { await removeTempTree(root); }
 });
 
 test("backup restore refuses an oversized manifest without allocating a destination", async () => {
@@ -52,5 +53,5 @@ test("backup restore refuses an oversized manifest without allocating a destinat
     const destination = path.join(root, "refused-restore");
     await assert.rejects(restoreProjectStorageBackup(root, destination), { code: "JSON_LIMIT_EXCEEDED" });
     await assert.rejects(stat(destination), { code: "ENOENT" });
-  } finally { await rm(root, { recursive: true, force: true }); }
+  } finally { await removeTempTree(root); }
 });

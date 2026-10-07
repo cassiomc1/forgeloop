@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import { execFile } from "node:child_process";
 import os from "node:os";
 import path from "node:path";
@@ -58,7 +59,7 @@ test("persistent transport preserves native search results, shares one host, and
     await stopRepositoryIndexServer(secondRepository, nativeOptions(binary, { homeDirectory })).catch(() => {});
     await removeFixtureRepository(firstRepository);
     await removeFixtureRepository(secondRepository);
-    await rm(homeDirectory, { recursive: true, force: true });
-    await rm(cliHomeDirectory, { recursive: true, force: true });
+    await removeTempTree(homeDirectory);
+    await removeTempTree(cliHomeDirectory);
   }
 });

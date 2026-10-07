@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -18,7 +19,7 @@ test("audit reports exact invalid protocol findings without executing project co
     assert.ok(result.errors.some((error) => error.code === "E_CONTRACT_MISSING"));
     assert.ok(result.errors.some((error) => error.code === "E_ROUTE_MISSING"));
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -32,6 +33,6 @@ test("report exposes independent completion, publication, and readiness dimensio
     assert.equal(first.productionReadiness, "not-verified");
     assert.ok(first.sections.some((section) => section.id === "evidence-coverage"));
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });

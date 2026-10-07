@@ -1,7 +1,8 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { randomUUID } from "node:crypto";
-import { mkdtemp, mkdir, readFile, writeFile, rm } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { withStorageMaintenance } from "../src/storage/maintenance.js";
@@ -36,7 +37,7 @@ test("expired maintenance activation preserves the pending marker and cannot ado
   } finally {
     release();
     await delayed?.catch(() => {});
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -62,7 +63,7 @@ test("pending and missing-database markers prevent filesystem fallback after exc
       await assert.rejects(readStorageVersionMarker(target), { code: "E_STORAGE_VERSION_MARKER_INVALID" });
     }
     assert.equal(await readFile(filename, "utf8"), "x".repeat(65537));
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("marked writable dispatch refuses schema disagreement without upgrading database bytes", async () => {
@@ -84,5 +85,5 @@ test("marked writable dispatch refuses schema disagreement without upgrading dat
     const oldBytes = await readFile(filename);
     await assert.rejects(withProjectStorage(target, () => assert.fail("marked schema must not auto-upgrade")), { code: "E_STORAGE_MIGRATION_REQUIRED" });
     assert.deepEqual(await readFile(filename), oldBytes);
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

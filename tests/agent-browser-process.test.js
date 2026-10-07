@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { EventEmitter } from "node:events";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { PassThrough } from "node:stream";
@@ -53,7 +54,7 @@ test("Agent Browser process transport is shell-free and argv-only", async () => 
     assert.equal("AGENT_BROWSER_PROFILE" in calls[0].options.env, false);
     assert.equal("AI_GATEWAY_API_KEY" in calls[0].options.env, false);
   } finally {
-    await rm(root, { recursive: true, force: true });
+    await removeTempTree(root);
   }
 });
 
@@ -100,7 +101,7 @@ test("Agent Browser process transport bounds output and aborts", async () => {
       (error) => error.code === E_BROWSER_VERIFICATION_TIMEOUT,
     );
   } finally {
-    await rm(root, { recursive: true, force: true });
+    await removeTempTree(root);
   }
 });
 
