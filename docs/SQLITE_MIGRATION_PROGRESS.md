@@ -3258,3 +3258,9 @@ Direct completion preparation with canonical artifact paths and no taskId previo
 Full Mac776 on2fe68ee passes all22 gates in561.46seconds with2849 unchanged source hashes:2879 core tests,2868pass,11skip,zero failures;MCP73,PoC67 andpackage12 pass. It predates preparation780. Current core37691118116 onf523001 has completed documentation with zero Markdown orlink errors, Linux shard3 with616tests/612pass/4skip andshard4 with925tests/922pass/3skip,zero failures. The parent workflow remains live. Evidence: `full-macos776-terminal.json`, `documentation778-terminal.json`, `linux-shard3-779-terminal.json`, and `linux-shard4-780-terminal.json`.
 
 The conservative280-module inventory now counts43677 baseline and51894 current production lines. The original25% reduction target remains unmet;scope review,consumer authority,current full platforms,performance/resources andvalidator-backed closure remainopen. Progress55%;no PR,release orpublication.
+
+### Full corrected Mac validation781
+
+Full Mac781 on e423cb53d0d1cbb08c715c6b6329c8fe427e105e passes all22 prepush gates in535.99seconds with2855 unchanged source hashes. Core:2880tests,2869pass,11skip,zero failures. MCP73,PoC67 andpackage12 pass. Evidence: `benchmarks/storage-sqlite/full-macos781-terminal.json`. Current remote validation remains pending.
+
+Core37691118116 on earlierf523001 also completes Linux shard2 with652tests,allpassed,zero skips;minimum Node24.19 has80CLI and72storage tests,allpassed. The final Linux shard andparent remain live. Evidence: `linux-shard2-781-terminal.json` and `minimum-node781-terminal.json`. Original performance/resources,25%code reduction,consumer authority andprotocolVALID closure remainopen. Progress55%;no PR orpublication.
