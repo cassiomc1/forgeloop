@@ -1,0 +1,14 @@
+{
+  "increment": 772,
+  "runId": 37689067214,
+  "jobId": 113024298885,
+  "sourceRevision": "f5230012e12c85ff5e6bd46c2d1488d83c6ebb1e",
+  "status": "completed",
+  "conclusion": "success",
+  "tests": 2877,
+  "passed": 2863,
+  "failed": 0,
+  "skipped": 14,
+  "scope": "Full Windows core Node suite; MCP/package gates separate.",
+  "logSha256": "cb39c304bb95c99e5460fda397d3d247b4c299ffd59181354c8f47a7e71b56d1"
+}
