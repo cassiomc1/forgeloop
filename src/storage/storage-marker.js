@@ -1,5 +1,6 @@
+import { constants } from "node:fs";
 import { lstat, open } from "node:fs/promises";
-import { assertSafePath, writeFileAtomic } from "../core/filesystem.js";
+import { assertSafePath, isPathWithin, realpathWithTransientWindowsRetry, writeFileAtomic } from "../core/filesystem.js";
 import { assertOwnedStorageMaintenance } from "./maintenance.js";
 
 const MARKER = ".forgeloop/storage-version.json";
@@ -16,13 +17,31 @@ export function validateStorageVersionMarker(value) {
 
 export async function readStorageVersionMarker(target) {
   const filename = await assertSafePath(target, MARKER);
+  const root = await realpathWithTransientWindowsRetry(target);
   let bytes;
   try {
-    if (!(await lstat(filename)).isFile()) throw invalid("Storage marker must be a regular file");
-    const file = await open(filename, "r");
+    const observed = await lstat(filename, { bigint: true });
+    if (!observed.isFile()) throw invalid("Storage marker must be a regular file");
+    if (!isPathWithin(root, await realpathWithTransientWindowsRetry(filename))) throw invalid("Storage marker resolves outside the project");
+    let file;
+    try { file = await open(filename, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0)); }
+    catch (error) { if (error.code === "ELOOP") throw invalid("Storage marker must be a regular file"); throw error; }
     try {
-      if ((await file.stat()).size > 65536) throw invalid("Storage marker exceeds its byte limit");
-      bytes = await file.readFile();
+      const actual = await file.stat({ bigint: true });
+      const current = await lstat(filename, { bigint: true });
+      if (!actual.isFile() || !current.isFile() || current.isSymbolicLink()
+        || actual.dev !== observed.dev || actual.ino !== observed.ino
+        || current.dev !== observed.dev || current.ino !== observed.ino
+        || !isPathWithin(root, await realpathWithTransientWindowsRetry(filename))) throw invalid("Storage marker must retain its admitted file identity");
+      if (actual.size > 65536n) throw invalid("Storage marker exceeds its byte limit");
+      const buffer = Buffer.alloc(65537);
+      let count = 0;
+      while (count < buffer.length) {
+        const { bytesRead } = await file.read(buffer, count, buffer.length - count, count);
+        if (bytesRead === 0) break;
+        count += bytesRead;
+      }
+      bytes = buffer.subarray(0, count);
     } finally { await file.close(); }
   } catch (error) { if (error.code === "ENOENT") return null; throw error; }
   if (bytes.length > 65536 || !Buffer.from(bytes.toString("utf8")).equals(bytes)) throw invalid("Storage marker encoding or size is invalid");
