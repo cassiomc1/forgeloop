@@ -416,3 +416,7 @@ Focused Windows868 (37784025559) passes7/8 with zero skips:ordinary admission an
 ### Windows admission terminal870
 
 Focused Windows869 (37784396310) on `7a19829` passes8/8 with zero skips, including unchanged ordinary admission, readonly/writable/persistent redirections, cached reuse, restored parent and both sidecars. Correction869 therefore closes the named Windows admission failures866–868. This is deterministic interleaving evidence, not native descriptor introspection or privileged timestamp-forgery proof. Final full current-source platforms, performance/resources, inclusive LOC and protocol closure remain open.
+
+### Full current-source failures871 and observer correction872
+
+Mac871 on `d6a9549` terminates failure after567.849seconds with all2990 admitted hashes unchanged:2922core tests,2906passed,5failed,11skipped. Windows871 (37784649634) terminates failure:2922tests,2892passed,6failed,24skipped. Five failures on each host come from the test filesystem observer replacing realpathSync without preserving native. Correction872 preserves and observes that separate API. Windows also refuses PUBLICATION_READY recovery because killed-worker PID4328 is reported present; resume/test PIDs differ. Added OS identity diagnostics retain that refusal rather than treating it as a pass. Full current-platform acceptance remains open.

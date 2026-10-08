@@ -41,6 +41,13 @@ function patch(moduleObject, names, tag) {
       record(`${tag}:${name}`, first);
       return original.call(this, first, ...rest);
     };
+    // Native realpath is a separate public entry point; preserve and observe it.
+    if (typeof original.native === "function") {
+      moduleObject[name].native = function observedNative(first, ...rest) {
+        record(`${tag}:${name}`, first);
+        return original.native.call(this, first, ...rest);
+      };
+    }
   }
 }
 

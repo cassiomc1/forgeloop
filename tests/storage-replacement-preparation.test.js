@@ -151,6 +151,12 @@ for (const checkpoint of ["PREPARING", "OUTGOING_BASELINE", "OUTGOING_ALLOCATED"
           resumed = JSON.parse(execFileSync(process.execPath, ["src/cli.js", "storage-restore-resume", "--path", fixture.target, "--operation", options.operationId, "--expected-owner", options.expectedOwnerId, "--replace-active", "--writers-quiesced", "--json"], { encoding: "utf8" }));
         } catch (error) {
           error.message += `\nRecovery process identities: ${JSON.stringify({ recordedOwnerPid: ownerBeforeCli.pid, killedWorkerPid: worker.pid, resumeCliPid: error.pid, testPid: process.pid })}`;
+          if (process.platform === "win32") {
+            try {
+              const diagnostic = execFileSync("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", `Get-Process -Id ${ownerBeforeCli.pid} -ErrorAction SilentlyContinue | Select-Object Id,ProcessName,StartTime,HasExited | ConvertTo-Json -Compress`], { encoding: "utf8", timeout: 10000 });
+              error.message += `\nObserved Windows owner PID: ${diagnostic.trim() || "absent"}`;
+            } catch (observationError) { error.message += `\nWindows owner PID observation unavailable: ${observationError.code ?? observationError.status}`; }
+          }
           throw error;
         }
       } else resumed = await resumeActiveProjectReplacement(fixture.target, options);

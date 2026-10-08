@@ -8,7 +8,7 @@
  * Usage: node --require ../helpers/fs-observer.cjs check-a-driver.mjs <outJson> <mode>
  *   mode = "control" | "absent-legacy" | "contradictory-legacy"
  */
-import { writeFileSync } from "node:fs";
+import { writeFileSync, realpathSync } from "node:fs";
 import path from "node:path";
 
 import { executeForgeLoopCommand } from "../../src/core/command-runtime.js";
@@ -42,6 +42,9 @@ async function runControls() {
   const transient = path.join(probeDir, "transient.ndjson");
   await writeFile(transient, "{}\n");
   const afterWrite = attempts().length;
+  const nativeStart = attempts().length;
+  realpathSync.native(probeDir);
+  report.checks.controlNativeRealpathRecorded = attempts().slice(nativeStart).some(entry => entry.api === "fs:realpathSync" && entry.path === probeDir);
   await cleanupDir(probeDir);
   const afterRemove = attempts().length;
 

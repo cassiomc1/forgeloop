@@ -109,6 +109,7 @@ test("A1: the observer records a caught prohibited read and a transient write", 
     assert.equal(report.checks.controlCaughtReadRecorded, true, "a swallowed prohibited read must be recorded");
     assert.equal(report.checks.controlTransientWriteRecorded, true, "a transient prohibited write must be recorded");
     assert.equal(report.checks.controlRemovalRecorded, true, "removal of the transient file must be recorded");
+    assert.equal(report.checks.controlNativeRealpathRecorded, true, "native realpath remains callable and observed");
   });
 });
 

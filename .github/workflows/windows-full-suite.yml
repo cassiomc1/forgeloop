@@ -12,6 +12,7 @@ on:
         options:
           - full
           - database-admission
+          - storage-correction
         default: full
 
 permissions:
@@ -57,6 +58,9 @@ jobs:
       - name: Run full Node suite with Windows process and filesystem semantics
         if: ${{ github.event_name != 'workflow_dispatch' || inputs.suite == 'full' }}
         run: npm test
+      - name: Validate instrumented storage and replacement recovery on Windows
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.suite == 'storage-correction' }}
+        run: node --import ./scripts/test-semantic-provider-loader.mjs --test tests/storage-database-admission.test.js tests/storage-correction-io.test.js tests/storage-evidence-checks.test.js tests/storage-replacement-preparation.test.js
       - name: Diagnose project database admission on Windows
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.suite == 'database-admission' }}
         run: node --test tests/storage-database-admission.test.js

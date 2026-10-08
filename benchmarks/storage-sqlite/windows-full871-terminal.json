@@ -1,0 +1,16 @@
+{
+  "increment": 872,
+  "runId": 37784649634,
+  "sourceRevision": "d6a95496a3f507f1ba47524479a20a5fc85cb639",
+  "status": "FAILED",
+  "counts": {
+    "tests": 2922,
+    "pass": 2892,
+    "fail": 6,
+    "skipped": 24
+  },
+  "diagnosis": {
+    "fiveInstrumentationFailures": "Test fs observer replaces realpathSync and loses native property. Production native call throws before observed dispatch.",
+    "replacementRecoveryFailure": "PUBLICATION_READY actual CLI reports owner PID4328 still present after child SIGKILL; resume PID8288/test9124 differ. Current identity observation not captured; diagnose without weakening live-owner refusal."
+  }
+}
