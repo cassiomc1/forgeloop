@@ -15,6 +15,7 @@ import { openStorageDatabase } from "../src/storage/index.js";
 import { withOperationalStore } from "../src/storage/unit-of-work.js";
 import { getOperationalStore } from "../src/storage/operational-context.js";
 import { runContextPlan } from "../src/commands/context-plan.js";
+import { executeForgeLoopCommand } from "../src/integration.js";
 
 async function record(f, decisionKind, questionSetId, decisionId) {
   return recordSemanticDecision({ ...f, decisionId, provider: testSemanticProvider,
@@ -25,6 +26,12 @@ test("native automatic decision discovery uses logical artifacts and retains sta
   const f = await buildCanonicalDiagnosisProject();
   try {
     const created = await record(f, "MODEL_ROUTE", "model-route-v1", "native-model");
+    await assert.rejects(stat(path.join(f.target, taskDecisionDirectory(f.taskId))), { code: "ENOENT" });
+    const shown = await executeForgeLoopCommand({ command: "decision-show", projectPath: f.target,
+      input: { taskId: f.taskId, decisionId: created.artifact.decisionId } });
+    assert.equal(shown.ok, true, JSON.stringify(shown.error));
+    assert.equal(shown.exitCode, 0);
+    assert.deepEqual(shown.result, created.artifact);
     await assert.rejects(stat(path.join(f.target, taskDecisionDirectory(f.taskId))), { code: "ENOENT" });
     const bindings = await readCurrentDecisionBindings(f.target, f.packageRoot, f.taskId);
     assert.equal(created.artifact.taskStateFingerprint, bindings.taskStateFingerprint);

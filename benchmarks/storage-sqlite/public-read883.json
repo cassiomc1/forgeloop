@@ -1,0 +1,26 @@
+{
+  "increment": 883,
+  "sourceBase": "111206dee7c4ea210469c5ea17a0333680e19622",
+  "changedTests": [
+    {
+      "path": "tests/storage-responsibility.test.js",
+      "sha256": "2a6d93999ac37359ccdcacb1a79a26dea9746c28652f4365728f7b0a9c429eb0"
+    },
+    {
+      "path": "tests/storage-decision-resolution.test.js",
+      "sha256": "3718eaa801025548b4bbcea937962030a91d693d22f626a07611d429ddb9e44b"
+    }
+  ],
+  "productionChanged": false,
+  "cases": [
+    "responsibility-status public dispatcher returns exact canonical VALID result with no responsibility JSON mirror",
+    "decision-show public dispatcher returns exact canonical decision with no decision directory mirror"
+  ],
+  "verification": {
+    "selectedTests": 9,
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0
+  },
+  "scope": "Adds positive public-dispatch coverage to two existing canonical fixtures. No claim about all commands, MCP transport framing or full consumer closure."
+}

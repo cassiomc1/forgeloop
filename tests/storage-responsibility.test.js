@@ -16,6 +16,7 @@ import { setResponsibilityContract, readResponsibility, resolveResponsibilitySta
 import { taskResponsibilityPath } from "../src/core/task-paths.js";
 import { validateEventLedger } from "../src/core/events.js";
 import { readWorkState } from "../src/core/work-state.js";
+import { executeForgeLoopCommand } from "../src/integration.js";
 
 test("native responsibility remains visible and immutable without a filesystem mirror", async () => {
   const target = await createGitRepository("forgeloop-responsibility-");
@@ -39,6 +40,11 @@ test("native responsibility remains visible and immutable without a filesystem m
     const status = await resolveResponsibilityStatus(target, context);
     assert.equal(status.status, "VALID", JSON.stringify(status.errors));
     assert.equal(status.responsibility.label, "native-pass");
+    const dispatched = await executeForgeLoopCommand({ command: "responsibility-status", projectPath: target, input: { taskId: context.taskId } });
+    assert.equal(dispatched.ok, true, JSON.stringify(dispatched.error));
+    assert.equal(dispatched.exitCode, 0);
+    assert.deepEqual(dispatched.result, status);
+    await assert.rejects(stat(path.join(target, taskResponsibilityPath(context.taskId))), { code: "ENOENT" });
     const ledger = await validateEventLedger(target, context.packageRoot, context);
     const state = await readWorkState(target, context);
     await assert.rejects(setResponsibilityContract(target, { ...context, label: "replacement", allowedPaths: ["."] }), /immutable during a pass/);
