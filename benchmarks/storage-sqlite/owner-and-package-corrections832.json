@@ -1,0 +1,36 @@
+{
+  "increment": 832,
+  "baseRevision": "691c708aecee90516d28773923192db17c9ae02f",
+  "sourceHashes": {
+    "src/storage/maintenance-owner.js": "cf18aff27a8df3ccc2257048b787428ba03c7d5e55e0aecaa6560daefe16e64e",
+    "scripts/mcp-locked-install.mjs": "e1b7e1da0eef878d54589994bf65cc8839c632296927954d385d175ec6750a7b",
+    "tests/storage-maintenance-owner-containment.test.js": "dbc7cc956ead6179909b51de84c1d78603ed89217401b4fcfb7392d1080846cb"
+  },
+  "shortReadBefore": {
+    "swapped": true,
+    "accepted": false,
+    "selectedInsideOwner": false,
+    "errorCode": "E_STORAGE_MAINTENANCE_OWNER_INVALID"
+  },
+  "scratchCandidateAfter": {
+    "swapped": true,
+    "accepted": true,
+    "selectedInsideOwner": true,
+    "errorCode": null
+  },
+  "preflight": "READY",
+  "checks": {
+    "initialStorage": "22/22 PASS",
+    "finalOwnerAfterExtraction": "14/14 PASS",
+    "cleanMCP": "73/73 PASS",
+    "fast": "PASS before helper extraction",
+    "complexity": "PASS",
+    "changedFileLint": "PASS"
+  },
+  "limits": [
+    "Scratch proof is distinct from production focused execution",
+    "Windows extraction destination correction still requires actual workflow execution",
+    "Full Mac828 predates these corrections",
+    "Original performance/resource and code-reduction acceptance remain open"
+  ]
+}

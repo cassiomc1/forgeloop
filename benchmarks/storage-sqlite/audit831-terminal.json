@@ -1,0 +1,109 @@
+{
+  "conclusion": "success",
+  "headSha": "691c708aecee90516d28773923192db17c9ae02f",
+  "jobs": [
+    {
+      "completedAt": "2026-10-08T01:29:43Z",
+      "conclusion": "success",
+      "databaseId": 113103576021,
+      "name": "audit",
+      "startedAt": "2026-10-08T01:29:29Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-08T01:29:32Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-08T01:29:30Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T01:29:32Z",
+          "conclusion": "success",
+          "name": "Set up runner",
+          "number": 2,
+          "startedAt": "2026-10-08T01:29:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T01:29:35Z",
+          "conclusion": "success",
+          "name": "Check out repository for audit classification",
+          "number": 3,
+          "startedAt": "2026-10-08T01:29:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T01:29:35Z",
+          "conclusion": "success",
+          "name": "Set up Node.js",
+          "number": 4,
+          "startedAt": "2026-10-08T01:29:35Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T01:29:35Z",
+          "conclusion": "success",
+          "name": "Classify invocation",
+          "number": 5,
+          "startedAt": "2026-10-08T01:29:35Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T01:29:37Z",
+          "conclusion": "success",
+          "name": "Install locked Node toolchain for audit changes",
+          "number": 6,
+          "startedAt": "2026-10-08T01:29:35Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T01:29:37Z",
+          "conclusion": "success",
+          "name": "Audit supplied receipts",
+          "number": 7,
+          "startedAt": "2026-10-08T01:29:37Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T01:29:37Z",
+          "conclusion": "skipped",
+          "name": "Receipt audit not applicable",
+          "number": 8,
+          "startedAt": "2026-10-08T01:29:37Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T01:29:37Z",
+          "conclusion": "success",
+          "name": "Post Set up Node.js",
+          "number": 15,
+          "startedAt": "2026-10-08T01:29:37Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T01:29:37Z",
+          "conclusion": "success",
+          "name": "Post Check out repository for audit classification",
+          "number": 16,
+          "startedAt": "2026-10-08T01:29:37Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T01:29:37Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 17,
+          "startedAt": "2026-10-08T01:29:37Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/cassiomc1/forgeloop/actions/runs/37713176439/job/113103576021"
+    }
+  ],
+  "status": "completed",
+  "url": "https://github.com/cassiomc1/forgeloop/actions/runs/37713176439",
+  "increment": 831,
+  "scope": "Actual standalone receipt audit workflow on691c708; not whole migration completion"
+}

@@ -3454,3 +3454,13 @@ At10tasks native/baseline p95 is120.475/160.254ms for paginated discovery and149
 Full package workflow37711688912 on30c1c9f completed with Linux and Mac smoke successful but Windows MCP setup failed before tests. The selected tar binary interpreted the absolute C: archive pathname as a remote address (`Cannot connect to C: resolve failed`). Terminal workflow evidence is retained in `package827-terminal.json`. This is a real package acceptance failure, not a passing platform result.
 
 Locked MCP installation now reads and extracts archives using a relative `./basename` from the archive parent directory. Package identity, locked dependency versions and tarball integrity checks remain unchanged. Official preflight READY; changed-file lint passes. Local clean MCP passes73/73; documentation and diff checks pass. Corrected full workflow acceptance remains pending. No dependency symlinks or original checkout state were changed. Progress55%; noPR orpublication.
+
+### Increment 828: full current Mac terminal validation
+
+Full prepush on691c708 passes in557.41seconds with all2,942 admitted source hashes unchanged. Terminal evidence: `full-macos828-terminal.json`. This validates shared owner/metadata/marker admission824 and local junction fixtures825; it predates corrections832.
+
+### Increments 829–832: short-read owner and Windows extraction corrections
+
+A scratch seven-byte read control rejected a valid maintenance owner because the reader assumed one read filled the file. The bounded candidate completes short reads and refuses post-stat growth beyond64KiB; both scratch controls pass. After full Mac828 terminated and official preflight returned READY, production reading adopted the loop with unchanged containment and schema checks.
+
+Corrected package37712833705 passed Linux andMac but Windows extraction failed: tar accepted the relative archive but rejected the absolute Windows destination. Retained failure: `package830-terminal.json`. Extraction now uses a relative destination from the archive parent, with forward slashes. Package identity and locked dependencies remain enforced. Standalone receipt audit37713176439 passed on691c708 (`audit831-terminal.json`). Focused storage22/22 and cleanMCP73/73 pass; after private read-loop extraction, owner14/14, complexity and changed-file lint pass. Fast passed before helper extraction; actual corrected Windows package execution remains required. Evidence: `owner-and-package-corrections832.json`. Progress55%; full original consumer, performance/resource, inclusiveLOC and protocol requirements remain open; noPR orpublication.

@@ -21,7 +21,7 @@ function replaceLocalPackage(target, tarball) {
   // locally built packages without asking npm to resolve registry metadata again.
   rmSync(destination, { recursive: true, force: true });
   mkdirSync(destination, { recursive: true });
-  execFileSync("tar", ["-xzf", `./${path.basename(tarball)}`, "--strip-components=1", "-C", path.resolve(destination)],
+  execFileSync("tar", ["-xzf", `./${path.basename(tarball)}`, "--strip-components=1", "-C", path.relative(path.dirname(path.resolve(tarball)), path.resolve(destination)).split(path.sep).join("/")],
     { cwd: path.dirname(path.resolve(tarball)) });
 }
 
