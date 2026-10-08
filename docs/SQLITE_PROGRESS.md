@@ -1,14 +1,14 @@
 # SQLite migration progress
 
-**55% — 11/20 verified checkpoints**
+**60% — 12/20 verified checkpoints**
 
 ```text
-███████████░░░░░░░░░ 55%
+████████████░░░░░░░░ 60%
 ```
 
-Checkpoints have equal weight; this percentage does not estimate effort or release readiness. Full Mac873 passes on `fe8705c`, including core, MCP and packaging. Selected Windows872 passes37/37, but full Windows873 fails one replacement recovery checkpoint; diagnostic875 preserves the worker error and OS process identity. Core workflow37787748585 runs on `fe8705c`. Whole migration acceptance is open. No PR, merge or publication is claimed.
+Checkpoints have equal weight; this percentage does not estimate effort or release readiness. Full Mac873 and Windows885 pass on source-bound revisions of the unchanged production implementation. Core881 passes17jobs,package886 passes on all three hosts,and compatibility887 passes7jobs. Whole migration acceptance is open. No PR,merge or publication is claimed.
 
-Done: 11. Partial: 8. Pending: 1. Historical scoped evidence remains recorded below; current consumer/maintenance authority, final platforms, performance/resources, inclusive code reduction and protocol closure remain open.
+Done:12. Partial:7. Pending:1. Historical scoped evidence remains recorded below;consumer/maintenance authority,final pre-PR acceptance,performance/resources,inclusive code reduction and protocol closure remain open.
 
 | # | Checkpoint | State | Evidence or remaining work |
 | ---: | --- | --- | --- |
@@ -26,9 +26,9 @@ Done: 11. Partial: 8. Pending: 1. Historical scoped evidence remains recorded be
 | 12 | Operational exclusion drill for inventoried old clients | DONE | Final portable497 passes on Mac, Windows and Docker Linux: actual pinned CLI/lock, observed process stop, OS exclusion, source archival/backup parity, native write and terminal three-task validation. [Procedure and limits](SQLITE_OLD_CLIENT_EXCLUSION.md); privileged bypass and uninventoried installations remain outside this named drill. |
 | 13 | Independent-process conflict/crash controls | DONE | Corrected native worker/CAS controls pass full Mac472 and remote464 core. This checkpoint excludes the current raw-file audit gap, tracked in10/15. |
 | 14 | Full Mac snapshot499 before context501 | DONE | Canonical prepush:2723 core tests,2712 passed,0 failed,11 skipped; MCP73, PoC67 and package12 pass;2500 source hashes unchanged. New context501 correction has focused verification; final-current-source gate stays open in15. |
-| 15 | Final Mac/Windows/Linux core, MCP and packages | PARTIAL | Full Mac873 passes on `fe8705c`:2922core tests,2911passed,11skipped;MCP73,PoC67,package12pass. Full Windows885 on `c15264c` passes2922tests:2898passed,24skipped,zero failures. Core881 passes all17jobs;final package/runtime matrices and pre-PR acceptance remain open. |
+| 15 | Final Mac/Windows/Linux core, MCP and packages | PARTIAL | Full Mac873 passes on `fe8705c`:2922core tests,2911passed,11skipped;MCP73,PoC67,package12pass. Full Windows885 on `c15264c` passes2922tests:2898passed,24skipped,zero failures. Core881 passes all17jobs;package886 and compatibility887 pass all supported hosts. Final pre-PR acceptance remains open. |
 | 16 | Move GitHub Node workflow routing to requested hosts | DONE | Definitions select local Mac, remote Windows and remote Docker Linux labels. Live GitHub runner inventory610 confirms all three online; remote Docker lists the Linux Actions runner container on100.83.46.210. Actual changed-workflow execution remains checkpoint17. |
-| 17 | Execute changed GitHub workflows | PARTIAL | Core863 (37776853775) reached terminal failure on `1753dd0`: all test shards, coverage, audit/lint, Linux package smoke and native-index matrix passed, but Markdown MD012 and aggregate validation failed. Correction864 removes those groups;Core881 on `fe8705c` now passes all17jobs,including documentation and aggregate validation. The changed Windows suite workflow is running with recovery diagnostics;final package/runtime matrices remain required. Publication workflows require separate release authority. |
+| 17 | Execute changed GitHub workflows | DONE | Core881 passes17jobs;full Windows885 passes;package886 passesLinux/Mac/Windows;compatibility887 passes7jobs. These are required validation workflows on the requested hosts. No publication workflow was executed;publication remains outside the authorized scope. |
 | 18 | Representative performance and resource acceptance | PARTIAL | Five-size MCP856 passes full response parity with 20 repetitions: at 5,000 tasks paginated listing improves 2.24x and full resource 2.73x; both 10-task operations improve. Separate MCP857 records native/baseline lifetime RSS up to 609.4/235.3 MiB and higher native timer lateness; resource acceptance remains open. Current contention850/851 passes complete state/event/ownership parity at 1/2/4/8 writers. Earlier matched CLI826, commit786 and idempotency results retain their source and validation limits. Equal-guarantee 100,000-event full audit, complete resource budgets and final comparisons remain open. |
 | 19 | Inclusive persistence LOC and release decision | PARTIAL | Inclusive 281-module inventory865 counts 43,779 baseline versus 52,159 current nonblank production lines. The original 25% reduction is unmet, with a 19,325-line gap. All new store/import/export/compatibility/maintenance costs remain included. Architecture investigation and release resolution remain open. |
 | 20 | ForgeLoop VALID closure and requested PR | PENDING | Full task is not validator-complete. Open and attach PR only after all required work is finished. |
@@ -471,3 +471,7 @@ Full Windows run37792283976 on `c15264c` passes2922tests:2898passed,24skipped,ze
 ### Final package/MCP platform matrix886
 
 Package workflow37793835687 on `9ced7f2` completes successfully across Linux,Mac andWindows. Each host passes all73MCP tests without skips/failures,packagedMCP smoke and core tarball smoke after locked installs. All4workflow jobs pass,with serialized host execution. Full Mac873,Windows885 and Core881 remain source-bound regression evidence for the unchanged production implementation. Expanded minimum/runtime compatibility,final representative performance/resources,consumer closure,code-reduction release decision and validator-backed completion remain open. No package publication occurred.
+
+### Expanded runtime compatibility887
+
+Workflow37794383611 on `5d5d066` completes all7jobs successfully. Each job passes80quick and72targeted native runtime/store/bootstrap tests without failures or skips,plus CLI startup and protocol-info. Node24.19.0 runs on Linux,Mac andWindows;Linux26 and Mac/Windows24 variants also pass. This completes required changed validation-workflow execution(checkpoint17),bringing verified checkpoints to12/20(60%). Original whole-plan performance,code reduction,consumer/maintenance and validator closure requirements remain open.

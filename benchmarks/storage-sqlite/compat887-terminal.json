@@ -1,0 +1,186 @@
+{
+  "increment": 887,
+  "workflowRun": 37794383611,
+  "url": "https://github.com/cassiomc1/forgeloop/actions/runs/37794383611",
+  "sourceRevision": "5d5d0665e32012dad4acca4cc124b12c8a381931",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "id": 113369903370,
+      "name": "Minimum Node 24.19.0 compatibility",
+      "status": "completed",
+      "conclusion": "success",
+      "testGroups": {
+        "tests": [
+          80,
+          72
+        ],
+        "pass": [
+          80,
+          72
+        ],
+        "fail": [
+          0,
+          0
+        ],
+        "skipped": [
+          0,
+          0
+        ]
+      },
+      "logSha256": "6aef51fe49de460fd96a2512a1f13910c99e4a35cec04fa39ac73e0595cb718a"
+    },
+    {
+      "id": 113370477727,
+      "name": "Node compatibility (macOS, Node 24.19.0)",
+      "status": "completed",
+      "conclusion": "success",
+      "testGroups": {
+        "tests": [
+          80,
+          72
+        ],
+        "pass": [
+          80,
+          72
+        ],
+        "fail": [
+          0,
+          0
+        ],
+        "skipped": [
+          0,
+          0
+        ]
+      },
+      "logSha256": "1467708cf914694e281292ebb909afb90b66a934d0bf01247e149fa83328a8ab"
+    },
+    {
+      "id": 113370477769,
+      "name": "Node compatibility (Linux, Node 24.19.0)",
+      "status": "completed",
+      "conclusion": "success",
+      "testGroups": {
+        "tests": [
+          80,
+          72
+        ],
+        "pass": [
+          80,
+          72
+        ],
+        "fail": [
+          0,
+          0
+        ],
+        "skipped": [
+          0,
+          0
+        ]
+      },
+      "logSha256": "59eb88a3d827bc23fafae51e79d6c7dab0d4e570374f6b57f8dccdc9f40ae433"
+    },
+    {
+      "id": 113370477847,
+      "name": "Node compatibility (Linux, Node 26)",
+      "status": "completed",
+      "conclusion": "success",
+      "testGroups": {
+        "tests": [
+          80,
+          72
+        ],
+        "pass": [
+          80,
+          72
+        ],
+        "fail": [
+          0,
+          0
+        ],
+        "skipped": [
+          0,
+          0
+        ]
+      },
+      "logSha256": "d0d15b160f11079a281def6ffd39799f0adf2b5b41872a55360f49062eac220b"
+    },
+    {
+      "id": 113370477896,
+      "name": "Node compatibility (Windows, Node 24)",
+      "status": "completed",
+      "conclusion": "success",
+      "testGroups": {
+        "tests": [
+          80,
+          72
+        ],
+        "pass": [
+          80,
+          72
+        ],
+        "fail": [
+          0,
+          0
+        ],
+        "skipped": [
+          0,
+          0
+        ]
+      },
+      "logSha256": "0a5525d26f2cd7d484f9a410c17fa9c823aa5d7e5694e08e868a93103996833c"
+    },
+    {
+      "id": 113370477961,
+      "name": "Node compatibility (macOS, Node 24)",
+      "status": "completed",
+      "conclusion": "success",
+      "testGroups": {
+        "tests": [
+          80,
+          72
+        ],
+        "pass": [
+          80,
+          72
+        ],
+        "fail": [
+          0,
+          0
+        ],
+        "skipped": [
+          0,
+          0
+        ]
+      },
+      "logSha256": "81d0db04436e6e0c8354ce9ba446aac5f7c154a2cdaa43c18a60fa0bd21d1c1a"
+    },
+    {
+      "id": 113370478047,
+      "name": "Node compatibility (Windows, Node 24.19.0)",
+      "status": "completed",
+      "conclusion": "success",
+      "testGroups": {
+        "tests": [
+          80,
+          72
+        ],
+        "pass": [
+          80,
+          72
+        ],
+        "fail": [
+          0,
+          0
+        ],
+        "skipped": [
+          0,
+          0
+        ]
+      },
+      "logSha256": "36e25492957a157794b208621dbb3ca37eda85acf591d83e133cf7f0708cb726"
+    }
+  ],
+  "scope": "Minimum and expanded targeted compatibility smoke, including quick tests, CLI startup/protocol-info, native runtime/store/bootstrap. Linux 24.19.0/26, macOS 24.19.0/24, Windows 24.19.0/24. Separate full/platform package evidence remains source-bound. No publication."
+}
