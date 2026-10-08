@@ -48,7 +48,7 @@ export async function buildTaskHistory({
   let omittedEvents = 0;
   if (Number.isInteger(filters.limit) && filters.limit >= 0 && events.length > filters.limit) {
     omittedEvents = events.length - filters.limit;
-    events = events.slice(-filters.limit);
+    events = filters.limit === 0 ? [] : events.slice(-filters.limit);
   }
 
   const checkAttempts = trace.checks.reduce(

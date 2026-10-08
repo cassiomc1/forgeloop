@@ -158,6 +158,15 @@ test("history preserves attempts and is deterministic and read-only", async () =
     assert.equal(filtered.truncated, true);
     assert.equal(filtered.truncation.omittedEvents, historyA.summary.eventCount - 3);
 
+    const empty = await buildTaskHistory({ target, packageRoot, taskId, filters: { limit: 0 } });
+    assert.deepEqual(empty.events, []);
+    assert.equal(empty.summary.eventCount, 0);
+    assert.equal(empty.summary.totalEventCount, historyA.summary.totalEventCount);
+    assert.equal(empty.truncation.omittedEvents, historyA.summary.totalEventCount);
+    assert.deepEqual(empty.integrity, historyA.integrity);
+    assert.deepEqual(empty.historyQuality, historyA.historyQuality);
+    assert.equal(await hashTaskDirectory(target), before, "zero-limit history remains read-only");
+
     assert.match(formatHistoryResult(historyA), /ForgeLoop Execution History/);
   } finally {
     await removeTempTree(target);
