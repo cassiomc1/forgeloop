@@ -6,7 +6,7 @@
 ███████████░░░░░░░░░ 55%
 ```
 
-Checkpoints have equal weight; this percentage does not estimate effort or release readiness. Mac862 and Windows860 passed their stated source. Admission correction865 changes three production modules afterward and passes 51 focused tests plus fast checks; Mac866 full prepush passes but Windows866 fails ordinary admission; current Windows correction and Linux validation remain required. Core863 reached terminal failure only for documentation MD012 and aggregate validation; actual corrected workflow acceptance remains pending. Whole migration acceptance is open. No PR, merge or publication is claimed.
+Checkpoints have equal weight; this percentage does not estimate effort or release readiness. Mac862 and Windows860 passed their stated source. Admission correction865 changes three production modules afterward and passes 51 focused tests plus fast checks; Mac866 full prepush passes its source. Windows866 admission failures are diagnosed and corrected through869; current focused Windows passes8/8. Full corrected Mac/Windows/Linux validation remains required. Core863 reached terminal failure only for documentation MD012 and aggregate validation; actual corrected workflow acceptance remains pending. Whole migration acceptance is open. No PR, merge or publication is claimed.
 
 Done: 11. Partial: 8. Pending: 1. Historical scoped evidence remains recorded below; current consumer/maintenance authority, final platforms, performance/resources, inclusive code reduction and protocol closure remain open.
 
@@ -412,3 +412,7 @@ Focused Windows867 (37783665165) fails8/8 and exposes the unchanged-database mis
 ### Windows restored-path diagnosis869
 
 Focused Windows868 (37784025559) passes7/8 with zero skips:ordinary admission and retained redirections are corrected. Restoring the original parent after opening still returns the outside task because SQLite reports a logical filename. Correction869 adds captured project-directory device/inode and nanosecond modification/change stamps, refusing directory membership changes during admission before configuration. This is an additional specific-interleaving guard, not native descriptor identity or privileged timestamp-forgery proof. Current corrected Windows and full-platform checks remain pending.
+
+### Windows admission terminal870
+
+Focused Windows869 (37784396310) on `7a19829` passes8/8 with zero skips, including unchanged ordinary admission, readonly/writable/persistent redirections, cached reuse, restored parent and both sidecars. Correction869 therefore closes the named Windows admission failures866–868. This is deterministic interleaving evidence, not native descriptor introspection or privileged timestamp-forgery proof. Final full current-source platforms, performance/resources, inclusive LOC and protocol closure remain open.
