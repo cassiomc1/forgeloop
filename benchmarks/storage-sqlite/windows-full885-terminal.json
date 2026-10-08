@@ -1,0 +1,16 @@
+{
+  "increment": 885,
+  "workflowRun": 37792283976,
+  "jobId": 113362595696,
+  "url": "https://github.com/cassiomc1/forgeloop/actions/runs/37792283976",
+  "sourceRevision": "c15264cff66b27ff8ad40f65ab07c580da13fb23",
+  "status": "completed",
+  "conclusion": "success",
+  "tests": 2922,
+  "passed": 2898,
+  "failed": 0,
+  "skipped": 24,
+  "durationMs": 464554.8867,
+  "logSha256": "a13125de99b7e56eb4f9614101be582a5d824d0563debfa989f9036767908563",
+  "scope": "Full Windows npm test on requested host; all replacement recovery assertions retained. Does not include package/MCP smoke or changes to two public-read assertions after this source revision. Prior intermittent owner/adoption failures did not recur; their causes remain unconfirmed."
+}
