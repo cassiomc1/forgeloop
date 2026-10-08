@@ -1,0 +1,210 @@
+{
+  "increment": 876,
+  "sourceRevision": "be3ad1625314e41acd9ff0f5e82970283fcd33f1",
+  "status": "PASS",
+  "scope": "Every persisted non-project artifact declared in current registry resolves to native logical namespace under actual ordinary read-only project admission.",
+  "rows": [
+    {
+      "key": "descriptor",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/task.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/task.json",
+      "recognized": true
+    },
+    {
+      "key": "contract",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/contract.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/contract.json",
+      "recognized": true
+    },
+    {
+      "key": "route",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/routing-result.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/routing-result.json",
+      "recognized": true
+    },
+    {
+      "key": "preflight",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/preflight.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/preflight.json",
+      "recognized": true
+    },
+    {
+      "key": "events",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/events.ndjson",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/events.ndjson",
+      "recognized": true
+    },
+    {
+      "key": "session",
+      "scope": "SESSION",
+      "declaredPath": ".forgeloop/sessions/<session-id>.json",
+      "concretePath": ".forgeloop/sessions/fixture.json",
+      "recognized": true
+    },
+    {
+      "key": "gates",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/gates/<gate>.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/gates/fixture.json",
+      "recognized": true
+    },
+    {
+      "key": "state",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/work-state.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/work-state.json",
+      "recognized": true
+    },
+    {
+      "key": "continuity",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/continuity.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/continuity.json",
+      "recognized": true
+    },
+    {
+      "key": "receipt",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/execution-receipt.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/execution-receipt.json",
+      "recognized": true
+    },
+    {
+      "key": "executions",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/executions/exec-<id>.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/executions/exec-fixture.json",
+      "recognized": true
+    },
+    {
+      "key": "policySnapshot",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/policy-snapshot.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/policy-snapshot.json",
+      "recognized": true
+    },
+    {
+      "key": "recovery",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/recovery.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/recovery.json",
+      "recognized": true
+    },
+    {
+      "key": "actions",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/actions/action-<id>.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/actions/action-fixture.json",
+      "recognized": true
+    },
+    {
+      "key": "approvals",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/approvals/approval-<id>.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/approvals/approval-fixture.json",
+      "recognized": true
+    },
+    {
+      "key": "evaluations",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/evaluations/eval-<id>.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/evaluations/eval-fixture.json",
+      "recognized": true
+    },
+    {
+      "key": "structuralQuality",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/structural-quality/baseline.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/structural-quality/baseline.json",
+      "recognized": true
+    },
+    {
+      "key": "usage",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/usage.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/usage.json",
+      "recognized": true
+    },
+    {
+      "key": "workspaceBinding",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/workspace-binding.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/workspace-binding.json",
+      "recognized": true
+    },
+    {
+      "key": "handoffs",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/handoffs/handoff-<id>.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/handoffs/handoff-fixture.json",
+      "recognized": true
+    },
+    {
+      "key": "responsibility",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/responsibility.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/responsibility.json",
+      "recognized": true
+    },
+    {
+      "key": "verificationScope",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/verification-scope.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/verification-scope.json",
+      "recognized": true
+    },
+    {
+      "key": "codeManifest",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/attestations/code-manifest.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/attestations/code-manifest.json",
+      "recognized": true
+    },
+    {
+      "key": "attestationStatement",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/attestations/statement.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/attestations/statement.json",
+      "recognized": true
+    },
+    {
+      "key": "attestationBundle",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/attestations/statement.sigstore.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/attestations/statement.sigstore.json",
+      "recognized": true
+    },
+    {
+      "key": "semanticDecisions",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/decisions/<decision-id>.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/decisions/fixture.json",
+      "recognized": true
+    },
+    {
+      "key": "testUtility",
+      "scope": "TASK",
+      "declaredPath": ".forgeloop/task-state/<task-key>/test-utility.json",
+      "concretePath": ".forgeloop/task-state/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/test-utility.json",
+      "recognized": true
+    }
+  ],
+  "sourceHashes": {
+    "src/core/artifact-registry.js": "cb67698912ee639ba1ab9d564c96ba55237f89ed2db8bd1068b16267fda58c01",
+    "src/core/task-paths.js": "9171da797b98aa5da7b1cbcabd42e8fa6ae543fe0b1b28dad966b311002c6017",
+    "src/storage/unit-of-work.js": "02eea758e34845de2a655c8e9bf4851c2b89a5117a4cfdb0d4aae16400283605",
+    "src/storage/project-boundary.js": "0fe481357f6d5459a760ddfbf5a21bf6557315482f6612c6cfd829cfa9d8ab57",
+    "src/storage/connection.js": "ca21ebb7d35aaf3ea74be04b767e755436934c52fd4db2c5e828aabdd20dee74"
+  },
+  "databaseBytesUnchanged": true,
+  "limits": [
+    "Recognition proves native namespace mapping only, not successful domain writes or every caller behavior.",
+    "Project configuration, installation assets, attachments and explicit portable exports remain intentionally filesystem-owned."
+  ],
+  "wholeConsumerClosure": false
+}
