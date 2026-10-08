@@ -1,0 +1,40 @@
+{
+  "increment": 816,
+  "baseRevision": "a80c6f9698fe59fffcf41ed79f46d577ee726152",
+  "sourceHashes": {
+    "src/commands/gate-record.js": "f3eb2df3669c4d6190ad5988452fb2486b869065d9cb58f0092c5c932d117f67",
+    "src/storage/maintenance-owner.js": "54e78fd7fa9eefff1752a0c109c61fcea45348538a9bc770b4442b55155e1119",
+    "tests/storage-maintenance-owner-containment.test.js": "911c5db558185a7b757646df6ec0844260cae6b47934573d0f4bb2accea6f7f2"
+  },
+  "focusedTests": {
+    "tests": 54,
+    "pass": 54,
+    "fail": 0,
+    "skip": 0
+  },
+  "productionBefore": {
+    "swapped": true,
+    "accepted": true,
+    "selectedOutsideOwner": true,
+    "errorCode": null
+  },
+  "productionAfter": {
+    "swapped": true,
+    "accepted": false,
+    "selectedOutsideOwner": false,
+    "errorCode": "E_STORAGE_MAINTENANCE_OWNER_INVALID"
+  },
+  "limits": [
+    "Windows controls explicitly skipped; descriptor fallback exercised on Mac only",
+    "Full corrected-source validation pending",
+    "Whole consumer closure not established"
+  ],
+  "preflight": "READY",
+  "checks": {
+    "fast": "PASS",
+    "lintErrors": 0,
+    "lintWarnings": 113,
+    "complexity": "PASS",
+    "documentation": "PASS"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "increment": 815,
+  "sourceRevision": "a80c6f9",
+  "status": "SOURCE_REVIEWED_SUBSET",
+  "reviewed": [
+    {
+      "path": "src/repository-index/lifecycle.js",
+      "sha256": "4c9bbb44eaa504fe5df73a5ea09ba6ae463fdf82f222239e5072d282693fe37d",
+      "disposition": "Raw lstat identifies a Git repository candidate. It observes source/Git layout, not task or event authority."
+    },
+    {
+      "path": "src/repository-index/manifest.js",
+      "sha256": "93d9ecad4d7747fa95fd7a8bcdbf074aa2bb73b786dd057bb4ddecae4062fa45",
+      "disposition": "Reads the shipped tgrep asset manifest under packageRoot and validates engine/platform asset metadata. This is distributed engine installation input."
+    },
+    {
+      "path": "src/repository-index/normalize-json.js",
+      "sha256": "52eb60821e64829d2a719b7085b2c58dcc39445c63278da34163a73d8db693aa",
+      "disposition": "Canonicalizes the repository root before normalizing bounded search output paths. No operational file writer; normalized results are repository-discovery output."
+    },
+    {
+      "path": "src/repository-index/search.js",
+      "sha256": "e605e7ef407dd6b499d87de4bdeef43d94d16eeb798e55ab7720c33421069a44",
+      "disposition": "Canonicalizes repository root for repository-index readiness, setup and bounded search execution. Index source files and process metadata remain auxiliary repository discovery state."
+    },
+    {
+      "path": "src/repository-index/status.js",
+      "sha256": "0e37e3796bc412c581d19f44090f85bcd215965285e907851009e6b5bc8f274f",
+      "disposition": "Reads repository-index engine/serve/meta JSON and verifies source-root and process ownership for search status. These are auxiliary index/process records, not task artifacts or ledger state."
+    },
+    {
+      "path": "src/storage/connection-owner.js",
+      "sha256": "0b53258b443150941e438596159f8259a6043f065a8faac67bd6019a7b4c33ae",
+      "disposition": "Uses canonical project root and bigint device/inode metadata for native connection leasing. Database replacement is refused while leases overlap; no filesystem operational artifact fallback or mirror writer."
+    },
+    {
+      "path": "src/storage/snapshot.js",
+      "sha256": "52d0e9a891f630df71f34f9fd7fed008a7b97f0ad04efe4727422d7fe2e30d81",
+      "disposition": "Creates a private temporary SQLite backup and opens it read-only for isolated reads. Only owned live snapshots may be reused; snapshot handles and scratch directories are closed/removed in finally."
+    },
+    {
+      "path": "src/storage/ledger-relations.js",
+      "sha256": "8e056da18d958c11178c9f4a97ba9e2de1858dfab166142024b16398226029e2",
+      "disposition": "Creates and removes private temporary SQLite spill storage for primitive relation metadata/source positions. Spill relations are validation scratch rather than a second authoritative task store."
+    },
+    {
+      "path": "src/storage/topology.js",
+      "sha256": "2c7b381abca72c4a4fc2173623ff5dce13ff6f5982d77ab4c2dbd302e2d6b1fa",
+      "disposition": "Reads filesystem topology metadata before SQLite creates storage/sidecars. Rejects named unsupported Linux network types and Windows UNC paths; the deny-list does not certify every other filesystem."
+    }
+  ],
+  "wholeConsumerClosure": false,
+  "limitations": [
+    "Direct raw-filesystem source roles only; complete delegated consumer and current platform acceptance are independent.",
+    "Evidence retained outside the checkout while full Mac814 source-manifest validation is live."
+  ]
+}

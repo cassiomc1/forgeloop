@@ -1,0 +1,68 @@
+{
+  "increment": 814,
+  "sourceRevision": "a80c6f9698fe59fffcf41ed79f46d577ee726152",
+  "status": "SOURCE_REVIEWED_SUBSET",
+  "reviewed": [
+    {
+      "path": "src/integration.js",
+      "sha256": "adaa63fe570f28cd65f27060c558213025672183cddf26e9386de761ccd30526",
+      "disposition": "Direct fs read obtains shipped core package version. Operational command/resource execution delegates through shared integration dispatch and project storage admission; package version is not task authority."
+    },
+    {
+      "path": "src/cli.js",
+      "sha256": "30e8cf93ec2cf24061b58dc35e15a172836847b987229dd6e9d4a5436e3dfec3",
+      "disposition": "Raw reads obtain shipped package version; realpathSync selects the actual CLI entrypoint. Operational commands delegate through canonical dispatch. This role review does not replace per-command authority evidence."
+    },
+    {
+      "path": "integrations/mcp/src/server.js",
+      "sha256": "620bc4c53b7be6f7e2ce6559d3da3615b0399823cc547930d2dcc733e6776ba2",
+      "disposition": "Direct fs read obtains MCP package version. Tool/resource execution delegates through ForgeLoop integration and canonical project-context adapters; this source is not an operational artifact file writer."
+    },
+    {
+      "path": "src/persistent-transport/lifecycle.js",
+      "sha256": "e6ce0e846153b3fb46cbda0d8af404340945d6051ce62ef17012d66b5e83f491",
+      "disposition": "Raw fs roles are package version, user-scoped transport directory and socket/endpoint cleanup. State removal checks observed ownership and nonce; startup lock uses the auxiliary repository-index lock primitive."
+    },
+    {
+      "path": "src/persistent-transport/server.js",
+      "sha256": "f071d3f0d2c35bb885e4b0e6ab2fd60ab0b177fd05ba81a16720a6ea38e387da",
+      "disposition": "Reads package version and manages socket mode/endpoint cleanup, with user-scoped process state delegated to transport state module. Search service process metadata is explicitly distinct from task storage."
+    },
+    {
+      "path": "src/persistent-transport/client.js",
+      "sha256": "d0b61ee9c1673b769452283699fd2a34eb8d6c84af421462684d79bf367b2c80",
+      "disposition": "Reads package version and canonicalizes repository root for transport search. User-scoped process state comes through transport state/lifecycle/ownership modules; no direct operational task file reader/writer."
+    },
+    {
+      "path": "src/adapters/opensrc/search.js",
+      "sha256": "13ce23e8d4ad9e620ae5d7af1cdb99be6aa33ecc366acefdae4ae839d612ba6f",
+      "disposition": "Raw fs reads traverse explicitly provided advisory source directories under search containment and read budgets. Returned snippets are advisory repository source, not task artifact authority. This role review does not certify all hostile filesystem races."
+    },
+    {
+      "path": "src/adapters/opensrc/provider.js",
+      "sha256": "624a21cea775f9ad9c39f948f14b65d684747285c5ce33286a7d32003914105e",
+      "disposition": "Canonicalizes configured source/cache paths and verifies the returned source directory belongs to the configured cache. Provider construction and recall are advisory; no lifecycle writer."
+    },
+    {
+      "path": "src/adapters/emulated-services/provider.js",
+      "sha256": "adbe1bdde4616a412a177bf33653f6cce770fcf3732c98b64ceb8276961f5170",
+      "disposition": "Raw fs roles validate explicit executable/config files and create/remove temporary service execution paths outside target storage. Provider output is advisory evidence; no direct canonical task writer."
+    },
+    {
+      "path": "src/adapters/agent-browser/process.js",
+      "sha256": "847c26235795e56099178810945737c00f5d22cbbc52cbade33efd0fc38641e3",
+      "disposition": "Raw fs roles validate the explicit browser executable as a regular file before bounded process execution. No operational artifact writer."
+    },
+    {
+      "path": "src/adapters/agent-browser/provider.js",
+      "sha256": "5c98d7eebbc24f8db8bb29853a4c6eddf4e3d5dd827d6c7d74b3ba63511abc66",
+      "disposition": "Creates a physical temporary execution directory outside target, reads screenshot output there and cleans it after provider execution. Results carry artifact metadata; canonical persistence is a separate service responsibility."
+    }
+  ],
+  "wholeConsumerClosure": false,
+  "limitations": [
+    "This role audit classifies direct raw-filesystem uses in the listed integration, transport and provider modules. It does not certify every delegated domain service.",
+    "Advisory provider/search paths remain external inputs; no optional provider network request was made.",
+    "Evidence remains external until the current Mac source-manifest validation terminates."
+  ]
+}

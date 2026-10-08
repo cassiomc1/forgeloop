@@ -1,4 +1,5 @@
 import path from "node:path";
+import { lstat } from "node:fs/promises";
 
 import { assertSafePath, ensureWithin } from "../core/filesystem.js";
 import { readPersistedRoute } from "../core/route-artifact.js";
@@ -71,6 +72,11 @@ async function hashArtifact(target, artifactPath) {
     if (canonical.byteLength > MAX_GATE_ARTIFACT_BYTES) throw gateError(`Gate artifact exceeds the maximum size of ${MAX_GATE_ARTIFACT_BYTES} bytes: ${artifactPath}`);
     return { path: artifactPath, sha256: canonical.sha256 };
   }
+  let info;
+  try { info = await lstat(ensureWithin(target, artifactPath)); }
+  catch (cause) { throw gateError(`Gate artifact is unavailable: ${artifactPath}`, { cause }); }
+  if (!info.isFile() || info.isSymbolicLink()) throw gateError(`Gate artifact must be a regular file: ${artifactPath}`);
+  if (info.size > MAX_GATE_ARTIFACT_BYTES) throw gateError(`Gate artifact exceeds the maximum size of ${MAX_GATE_ARTIFACT_BYTES} bytes: ${artifactPath}`);
   try {
     const binding = await hashGateFile(target, artifactPath, { maxBytes: MAX_GATE_ARTIFACT_BYTES });
     return { path: artifactPath, sha256: binding.sha256 };
