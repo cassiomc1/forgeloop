@@ -1,0 +1,34 @@
+{
+  "increment": 841,
+  "baseRevision": "fba2ca43d704b3eeaaddc504e0be6984b84589b3",
+  "sourceHashes": {
+    "src/core/completion.js": "6f02c9de9e0125d6c30e552b433e44957646cac3c9bee654d58a99f691ee4739",
+    "tests/storage-record-check-atomicity.test.js": "fd15b9fe3113e0271983d4384198d693a70c3f308ea7e00d57867eab7c349aac"
+  },
+  "diagnosis": "Completion without taskId but with canonical artifact paths loaded selected state while prerequisite readers used singleton ledger selection; structured lifecycle errors differed from explicit task selection. The original fault probe never reached mutation.",
+  "change": "Both evaluation and mutation resolve an omitted task ID from validated selected work state. Mutation opens the existing task transaction boundary before its internal completion flow. Missing/invalid-state reads retain evaluator diagnostics.",
+  "regression": "A canonical modern REVIEWING fixture with an observed verification event compares the complete paths-only and explicit-task evaluation. Injection after rejection-event staging proves exact task/artifact/event rollback; successful retry records rejection and transaction witness.",
+  "checks": {
+    "red": "Initial selected/path evaluation parity assertion failed before the correction.",
+    "atomicity": {
+      "tests": 10,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0
+    },
+    "completionRecovery": {
+      "tests": 63,
+      "passed": 63,
+      "failed": 0,
+      "skipped": 0
+    },
+    "verifyFast": "PASS",
+    "diffCheck": "PASS"
+  },
+  "wholeConsumerClosure": false,
+  "releaseThresholdsVerified": false,
+  "limitations": [
+    "Full platform verification predating this production change is historical evidence.",
+    "This correction does not settle inclusive LOC or memory/contention release acceptance."
+  ]
+}

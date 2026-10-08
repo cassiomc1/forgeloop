@@ -302,9 +302,20 @@ export async function evaluateCompletion({
 } = {}) {
   const options = { target, packageRoot, strict, authorityContext, runtimeContext, taskId, contractPath, routePath, statePath, receiptPath, eventsPath, preflightPath };
   if (await needsExistingProjectScope(target)) {
-    return withExistingProjectScope(target, () => evaluateSelectedCompletion(options), { readOnly: true });
+    return withExistingProjectScope(target, async () => evaluateSelectedCompletion(await resolveCompletionTaskOptions(options)), { readOnly: true });
   }
-  return evaluateSelectedCompletion(options);
+  return evaluateSelectedCompletion(await resolveCompletionTaskOptions(options));
+}
+
+async function resolveCompletionTaskOptions(options) {
+  if (options.taskId) return options;
+  try {
+    const state = await readWorkState(options.target, { packageRoot: options.packageRoot, statePath: options.statePath });
+    return state ? { ...options, taskId: state.taskId } : options;
+  } catch {
+    // Preserve the evaluator's structured missing/invalid-state diagnostics.
+    return options;
+  }
 }
 
 async function evaluateSelectedCompletion({
@@ -887,6 +898,7 @@ async function runCompleteInternal({
 }
 
 export async function runComplete(options = {}) {
+  options = await resolveCompletionTaskOptions(options);
   const taskId = options.taskId ?? null;
   if (options.persist !== false && taskId && !(await getTaskTransaction(options.target))) {
     return withTaskTransaction({

@@ -347,3 +347,10 @@ Four deterministic swap controls reject evidence and preserve gate, task state a
 Physical temporary-root admission in both external-service adapters supersedes the older lexical-only finding. Source review confirms physical root, target and returned-directory checks before execution or recursive cleanup authority; external executables remain outside a proven filesystem sandbox. Evidence: `benchmarks/storage-sqlite/adapter-boundary-review839.json`.
 
 A fresh bounded transitive scan covered 324 core/storage modules, finding 46 exported reachable-write leads and 12 multi-write candidates. Direct review of completion recording and rejection-rebinding wrappers confirms selected transaction boundaries that the scanner does not fully recognize. Evidence: `benchmarks/storage-sqlite/transaction-wrapper-review840.json`. These are source dispositions, not new fault-test or complete consumer-closure proof. Preflight returned READY. The completed-step count remains 11/20; Linux core run 37714655629 remains live, and no benchmark, PR or publication occurred.
+
+
+### Increment 841: completion selection and rejection atomicity
+
+Direct completion with canonical artifact paths and no explicit task ID previously mixed selected task state with singleton prerequisite ledger selection, producing false lifecycle errors. Evaluation and mutation now resolve the validated selected state identity before proceeding; completion rejection writes use the existing task transaction. Missing/invalid-state diagnostics remain evaluator-owned.
+
+The regression compares full selected/path-only evaluation, injects a rejection-event staging failure and requires exact state/artifact/event rollback, then verifies a successful rejection retry and commit witness. Ten atomicity tests and 63 completion/recovery tests passed without failures or skips. Evidence: `benchmarks/storage-sqlite/completion-selection841.json`. Fast checks passed. Earlier platform results predate this correction; complete consumer closure, resource/LOC acceptance and validator-backed delivery remain open. No PR or publication.

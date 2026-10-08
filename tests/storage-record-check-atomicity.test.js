@@ -10,6 +10,8 @@ import { prepareCompletion, recordCheck } from "../src/core/completion-artifacts
 import { taskArtifactPath } from "../src/core/task-paths.js";
 import { openStorageDatabase } from "../src/storage/index.js";
 import { withOperationalStore } from "../src/storage/unit-of-work.js";
+import { runAdvance } from "../src/commands/advance.js";
+import { evaluateCompletion, runComplete } from "../src/core/completion.js";
 
 function taskRecords(db, taskId) {
   return {
@@ -18,6 +20,53 @@ function taskRecords(db, taskId) {
     events: db.prepare("SELECT * FROM events WHERE task_id = ? ORDER BY seq").all(taskId),
   };
 }
+
+test("completion canonical paths preserve selected evaluation and roll back rejection writes", async () => {
+  const target = await createGitRepository("forgeloop-complete-paths-atomic-");
+  const packageRoot = getPackageRoot();
+  const taskId = "complete-paths-atomic";
+  let db;
+  try {
+    await setupVerifyingTask(target, packageRoot, { taskId, requirement: "tests" });
+    await recordCheck({ target, packageRoot, taskId, id: "observed-tests", kind: "manual-review",
+      requirement: "tests", status: "passed", evidenceKind: "OBSERVED", result: "Fixture observation" });
+    await runAdvance({ target, packageRoot, taskId, to: "REVIEWING" });
+    db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+    const options = { target, packageRoot };
+    for (const kind of ["contract", "route", "state", "receipt", "events", "preflight"]) {
+      options[`${kind}Path`] = taskArtifactPath(taskId, kind);
+    }
+    const selected = await evaluateCompletion({ ...options, taskId });
+    const pathsOnly = await evaluateCompletion(options);
+    assert.deepEqual(pathsOnly, selected);
+    assert.equal(selected.status, "REJECTED");
+    assert.ok(selected.errors.every(error => error.code === "E_EVIDENCE_REQUIRED"));
+    const before = taskRecords(db, taskId);
+    await withOperationalStore({ db, target }, async source => {
+      const prototype = Object.getPrototypeOf(source);
+      const append = prototype.appendText;
+      let reached = false;
+      prototype.appendText = function(relativePath, text) {
+        const result = append.call(this, relativePath, text);
+        if (this.target === target && relativePath === taskArtifactPath(taskId, "events")) {
+          reached = true;
+          throw new Error("injected completion rejection event failure");
+        }
+        return result;
+      };
+      try { await assert.rejects(runComplete(options), /injected completion rejection event failure/); }
+      finally { prototype.appendText = append; }
+      assert.equal(reached, true);
+    });
+    assert.deepEqual(taskRecords(db, taskId), before);
+    const result = await runComplete(options);
+    assert.equal(result.status, "REJECTED");
+    const after = taskRecords(db, taskId);
+    assert.equal(after.task.revision, before.task.revision + 1);
+    assert.ok(after.events.some(row => row.event_type === "COMPLETION_REJECTED"));
+    assert.equal(after.events.at(-1).event_type, "TRANSACTION_COMMITTED");
+  } finally { db?.close(); await removeTempTree(target); }
+});
 
 for (const entry of ["command", "direct API", "direct canonical paths"]) for (const point of ["receipt", "event"]) {
   test(`record-check ${entry} rolls back state, receipt and ledger after ${point} staging failure`, async () => {
