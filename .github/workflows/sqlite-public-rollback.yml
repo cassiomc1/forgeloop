@@ -1,0 +1,63 @@
+name: SQLite public rollback drills
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sqlite-public-rollback-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  drills:
+    name: Public rollback (${{ matrix.os }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    strategy:
+      max-parallel: 1
+      fail-fast: false
+      matrix:
+        include:
+          - { os: Linux, runner: [self-hosted, Linux, X64, forgeloop-linux-remote] }
+          - { os: Windows, runner: [self-hosted, Windows, X64, forgeloop-windows-remote] }
+    defaults:
+      run:
+        working-directory: current
+    steps:
+      - name: Check out current source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: current
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check out pinned legacy validator
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5
+          path: legacy
+          persist-credentials: false
+      - name: Set up minimum supported Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.19.0
+          cache: npm
+          cache-dependency-path: |
+            current/package-lock.json
+            legacy/package-lock.json
+      - name: Install locked current toolchain
+        run: npm ci --ignore-scripts
+      - name: Install locked legacy validator dependencies
+        working-directory: legacy
+        run: npm ci --ignore-scripts
+      - name: Run sixteen actual public CLI rollback and owner-death drills
+        run: node scripts/drill-storage-public-rollback.mjs --legacy-root=../legacy --output="${{ runner.temp }}/sqlite-public-rollback-${{ github.run_id }}-${{ github.run_attempt }}"
+      - name: Retain complete drill evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: sqlite-public-rollback-${{ matrix.os }}
+          path: ${{ runner.temp }}/sqlite-public-rollback-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: error
+          retention-days: 14
