@@ -56,8 +56,9 @@ export async function withProjectStorage(target, callback, { readOnly = false, r
   ]);
   const root = await realpath(target);
   const identity = await lstat(filename, { bigint: true });
+  const rootIdentity = await lstat(target, { bigint: true });
   const options = { readOnly, allowSchemaUpgrade: !marker, allowOptionalIndexCreation: !readOnly,
-    projectAdmission: { root, target, dev: identity.dev, ino: identity.ino } };
+    projectAdmission: { root, target, dev: identity.dev, ino: identity.ino, rootIdentity } };
   const db = connectionLease ? await connectionLease.open(filename, options) : openStorageDatabase(filename, options);
   try {
     if (marker) {

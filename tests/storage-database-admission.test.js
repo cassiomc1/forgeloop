@@ -149,6 +149,7 @@ test("unchanged project admission retains native filename and file identity", as
     db = openStorageDatabase(filename); db.close(); db = null;
     const root = await realpath(target);
     const asyncIdentity = await lstat(filename, { bigint: true });
+    const rootIdentity = await lstat(target, { bigint: true });
     const syncIdentity = lstatSync(filename, { bigint: true });
     db = new (loadStorageDriver().DatabaseSync)(filename, { readOnly: true });
     const opened = realpathSync.native(db.location());
@@ -157,6 +158,6 @@ test("unchanged project admission retains native filename and file identity", as
       forward: isPathWithin(expected, opened), reverse: isPathWithin(opened, expected),
       asyncIdentity: { dev: String(asyncIdentity.dev), ino: String(asyncIdentity.ino) },
       syncIdentity: { dev: String(syncIdentity.dev), ino: String(syncIdentity.ino) } });
-    assert.doesNotThrow(() => assertProjectDatabaseAdmission(db, { root, target, dev: asyncIdentity.dev, ino: asyncIdentity.ino }), observation);
+    assert.doesNotThrow(() => assertProjectDatabaseAdmission(db, { root, target, dev: asyncIdentity.dev, ino: asyncIdentity.ino, rootIdentity }), observation);
   } finally { db?.close(); await removeTempTree(base); }
 });

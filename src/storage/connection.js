@@ -219,8 +219,9 @@ export function assertProjectDatabaseAdmission(db, admission) {
   const expected = path.join(admission.root, ".forgeloop/state.sqlite");
   const changed = () => Object.assign(new Error("Project database path changed while opening or reusing its connection"), { code: "E_STORAGE_MIGRATION_REQUIRED" });
   try {
-    const root = lstatSync(admission.target);
+    const root = lstatSync(admission.target, { bigint: true });
     if (!root.isDirectory() || root.isSymbolicLink()) throw changed();
+    if (admission.rootIdentity && ["dev", "ino", "mtimeNs", "ctimeNs"].some(key => root[key] !== admission.rootIdentity[key])) throw changed();
     const opened = realpathSync.native(db.location());
     const resolvedExpected = realpathSync.native(expected);
     const current = lstatSync(expected, { bigint: true });

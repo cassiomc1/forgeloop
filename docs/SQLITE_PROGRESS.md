@@ -408,3 +408,7 @@ Full Mac866 on `3630a4c` passes all prepush gates in614.097seconds with all2984 
 ### Windows short-path diagnosis868
 
 Focused Windows867 (37783665165) fails8/8 and exposes the unchanged-database mismatch:SQLite reports `ADMINI~1` while admission expects `Administrator`;async/sync device and inode match. Non-native realpath preserves the short alias. Correction868 resolves both filenames through native realpath before comparison and retains file identity and sidecar guards. Current corrected Windows controls/full suites remain pending;Mac866 predates this production correction.
+
+### Windows restored-path diagnosis869
+
+Focused Windows868 (37784025559) passes7/8 with zero skips:ordinary admission and retained redirections are corrected. Restoring the original parent after opening still returns the outside task because SQLite reports a logical filename. Correction869 adds captured project-directory device/inode and nanosecond modification/change stamps, refusing directory membership changes during admission before configuration. This is an additional specific-interleaving guard, not native descriptor identity or privileged timestamp-forgery proof. Current corrected Windows and full-platform checks remain pending.
