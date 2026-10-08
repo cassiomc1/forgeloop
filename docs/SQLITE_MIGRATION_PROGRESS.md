@@ -3468,3 +3468,9 @@ Corrected package37712833705 passed Linux andMac but Windows extraction failed: 
 ### Increment 833: current acceptance reconciliation
 
 Fast verification passes on final4917e8b production source after the owner-loop helper extraction. The main progress table now reflects full Mac828 (2910core tests,2899pass,11skip,zero failures), actual standalone audit success, both retained package failures and the current corrected package run37713754546. Current full-platform and Windows junction acceptance remain pending. Inclusive281-module inventory833 counts43,779 baseline and52,112 current nonblank production lines, a19,278-line gap to25% reduction. All maintenance and compatibility costs stay included. Progress55%; original performance/resource, consumer closure, LOC and protocol requirements remain open; noPR orpublication.
+
+### Increment 837: corrected package and full Mac acceptance
+
+Full package37713754546 on4917e8b passes all4 jobs: classification, Linux package/MCP and Mac/Windows release package/MCP. Actual Windows execution verifies the relative archive and destination corrections; both preceding failures remain retained. Evidence: `package835-terminal.json`.
+
+Full Mac834 onf40b4b6 passes all prepush gates in535.62seconds with all2,947 admitted source hashes unchanged. Evidence: `full-macos834-terminal.json`. Full Windows37714027990 onthe same source isstill active; no overlapping Linux workload or benchmark was started. The bounded five-entrypoint legacy sidecar/compaction review isretained in `retired-entrypoint-review836.json`; it doesnot prove whole transitive consumer closure. Original performance/resource, inclusiveLOC, consumer and protocol acceptance remainopen. Progress55%; noPR orpublication.
