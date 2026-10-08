@@ -2,7 +2,6 @@
 
 Current checkpoint progress: [SQLite migration progress](SQLITE_PROGRESS.md).
 
-
 ## Current dispatch and literal-file review (849)
 
 The package exposes CLI and `./integration`; 115 command definitions have exactly 115 executors, with no missing or extra entries, and the integration registry declares 25 resources. CLI, programmatic API and MCP tools share the executor boundary. MCP resource calls share the integration-resource boundary. Ordinary project dispatch selects SQLite admission; explicit maintenance/conversion exceptions retain dedicated admission. Missing read-only state is noncreating; writable fresh state bootstraps SQLite and retained legacy state requires explicit migration.

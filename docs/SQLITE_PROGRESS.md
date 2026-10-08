@@ -6,7 +6,7 @@
 ███████████░░░░░░░░░ 55%
 ```
 
-Checkpoints have equal weight; this percentage does not estimate effort or release readiness. Full Mac842 passed all prepush gates on `008fade` with 2,954 unchanged source hashes: 2,913 core tests, 2,902 passed, 11 skipped and zero failures; MCP73, PoC67 and package12 passed. Route correction848 follows this full run and has six passing focused routing tests; fast checks passed. Linux Core849 (37714655629) passed all 17 jobs on earlier `6433e56`. Prior Windows/package/compatibility results remain source-bound. Whole migration acceptance remains open. No PR, merge or publication is claimed.
+Checkpoints have equal weight; this percentage does not estimate effort or release readiness. Full Mac862 passed every prepush gate on `1753dd0` with 2,978 unchanged source hashes: 2,914 core tests, 2,903 passed, 11 skipped and zero failures; MCP73, PoC67 and package12 passed. Windows860 passed the same production source, with 24 platform skips. Current Core863 is live and has a Markdown formatting failure; prior package/compatibility results remain source-bound. Whole migration acceptance remains open. No PR, merge or publication is claimed.
 
 Done: 11. Partial: 8. Pending: 1. Historical scoped evidence remains recorded below; current consumer/maintenance authority, final platforms, performance/resources, inclusive code reduction and protocol closure remain open.
 
@@ -26,9 +26,9 @@ Done: 11. Partial: 8. Pending: 1. Historical scoped evidence remains recorded be
 | 12 | Operational exclusion drill for inventoried old clients | DONE | Final portable497 passes on Mac, Windows and Docker Linux: actual pinned CLI/lock, observed process stop, OS exclusion, source archival/backup parity, native write and terminal three-task validation. [Procedure and limits](SQLITE_OLD_CLIENT_EXCLUSION.md); privileged bypass and uninventoried installations remain outside this named drill. |
 | 13 | Independent-process conflict/crash controls | DONE | Corrected native worker/CAS controls pass full Mac472 and remote464 core. This checkpoint excludes the current raw-file audit gap, tracked in10/15. |
 | 14 | Full Mac snapshot499 before context501 | DONE | Canonical prepush:2723 core tests,2712 passed,0 failed,11 skipped; MCP73, PoC67 and package12 pass;2500 source hashes unchanged. New context501 correction has focused verification; final-current-source gate stays open in15. |
-| 15 | Final Mac/Windows/Linux core, MCP and packages | PARTIAL | Full Mac842 passes all prepush gates on008fade with2954 unchanged source hashes andzero failures. Route848 follows that run; final current platforms remain required. Windows838 andpackage835 are passing historical source-bound results; Linux Core849 passed all 17 jobs on `6433e56`; final current-platform runs remain required. |
+| 15 | Final Mac/Windows/Linux core, MCP and packages | PARTIAL | Full Mac862 passes every prepush gate on `1753dd0` with 2,978 unchanged source hashes and zero failures. Windows860 passes the same production source: 2,914 tests, 2,890 passed, 24 skips. Current Core863 is live; final Linux and current cross-platform package/MCP results remain required. |
 | 16 | Move GitHub Node workflow routing to requested hosts | DONE | Definitions select local Mac, remote Windows and remote Docker Linux labels. Live GitHub runner inventory610 confirms all three online; remote Docker lists the Linux Actions runner container on100.83.46.210. Actual changed-workflow execution remains checkpoint17. |
-| 17 | Execute changed GitHub workflows | PARTIAL | Core849 (37714655629) passed all 17 jobs on `6433e56`; expanded Node compatibility37709144849 passed7jobs on9cb9163; standalone audit37713176439 passed on691c708. Package Windows setup/extraction failed in37711688912/37712833705. Corrected full matrix37713754546 passed4jobs on4917e8b. Publication workflows require separate release authority. |
+| 17 | Execute changed GitHub workflows | PARTIAL | Current Core863 (37776853775) remains live on `1753dd0`; docs:check and diagrams passed, but Markdown MD012 failed on six blank-line groups. Correction864 removes those groups; actual corrected workflow acceptance remains pending. Prior Core849 passed 17 jobs and package835 passed all four jobs on their stated older sources. Publication workflows require separate release authority. |
 | 18 | Representative performance and resource acceptance | PARTIAL | Five-size MCP856 passes full response parity with 20 repetitions: at 5,000 tasks paginated listing improves 2.24x and full resource 2.73x; both 10-task operations improve. Separate MCP857 records native/baseline lifetime RSS up to 609.4/235.3 MiB and higher native timer lateness; resource acceptance remains open. Current contention850/851 passes complete state/event/ownership parity at 1/2/4/8 writers. Earlier matched CLI826, commit786 and idempotency results retain their source and validation limits. Equal-guarantee 100,000-event full audit, complete resource budgets and final comparisons remain open. |
 | 19 | Inclusive persistence LOC and release decision | PARTIAL | Current inclusive 281-module inventory843 counts 43,779 baseline versus 52,123 current nonblank production lines. The original 25% reduction is unmet, with a 19,289-line gap. All new store/import/export/compatibility/maintenance costs remainincluded; no denominator exclusions, formatting compression, integrity weakening or target waiver. Architecture and release resolution remainopen. |
 | 20 | ForgeLoop VALID closure and requested PR | PENDING | Full task is not validator-complete. Open and attach PR only after all required work is finished. |
@@ -341,20 +341,17 @@ A deterministic path-resolution barrier reproduced external artifact acceptance 
 
 Four deterministic swap controls reject evidence and preserve gate, task state and event history exactly; they are explicitly skipped on Windows. The focused gate group passes 16/16 without failures/skips on Mac; preflight READY, fast, lint and complexity checks pass. Evidence: `benchmarks/storage-sqlite/gate-file-containment813.json`. Full current-source/platform/resource acceptance remains open. Inclusive LOC is refreshed in `benchmarks/storage-sqlite/persistence-loc813-update.json`; the original 25% reduction remains unmet. No PR, merge or package publication.
 
-
 ### Increments 839–840: current adapter and transaction-wrapper review
 
 Physical temporary-root admission in both external-service adapters supersedes the older lexical-only finding. Source review confirms physical root, target and returned-directory checks before execution or recursive cleanup authority; external executables remain outside a proven filesystem sandbox. Evidence: `benchmarks/storage-sqlite/adapter-boundary-review839.json`.
 
 A fresh bounded transitive scan covered 324 core/storage modules, finding 46 exported reachable-write leads and 12 multi-write candidates. Direct review of completion recording and rejection-rebinding wrappers confirms selected transaction boundaries that the scanner does not fully recognize. Evidence: `benchmarks/storage-sqlite/transaction-wrapper-review840.json`. These are source dispositions, not new fault-test or complete consumer-closure proof. Preflight returned READY. The completed-step count remains 11/20; Linux core run 37714655629 remains live, and no benchmark, PR or publication occurred.
 
-
 ### Increment 841: completion selection and rejection atomicity
 
 Direct completion with canonical artifact paths and no explicit task ID previously mixed selected task state with singleton prerequisite ledger selection, producing false lifecycle errors. Evaluation and mutation now resolve the validated selected state identity before proceeding; completion rejection writes use the existing task transaction. Missing/invalid-state diagnostics remain evaluator-owned.
 
 The regression compares full selected/path-only evaluation, injects a rejection-event staging failure and requires exact state/artifact/event rollback, then verifies a successful rejection retry and commit witness. Ten atomicity tests and 63 completion/recovery tests passed without failures or skips. Evidence: `benchmarks/storage-sqlite/completion-selection841.json`. Fast checks passed. Earlier platform results predate this correction; complete consumer closure, resource/LOC acceptance and validator-backed delivery remain open. No PR or publication.
-
 
 ### Increments 842–848: full validation, file-role reconciliation and route identity
 
@@ -364,11 +361,9 @@ All 103 literal `node:fs` module roles are now reconciled: 97 unchanged source-r
 
 A direct route regression supplied a fingerprint and canonical paths without a task ID. Contract reading was skipped, so task identity was unavailable. Correction848 reads the selected contract when identity must be inferred while preserving any supplied fingerprint. Existing transaction recursion remains responsible for atomic route/state publication. Six checkout routing tests passed, including explicit/inferred/supplied-fingerprint fault rollback and successful retries. `benchmarks/storage-sqlite/route-selection848.json` records the reproduction and correction. Fast checks passed; full current-platform validation, resource/LOC acceptance and protocol closure remain open. No PR or publication.
 
-
 ### Increment 849: declared public dispatch boundary
 
 Reviewed the installed package export map, CLI/API executor selection and MCP tool/resource delegation. All 115 command definitions have matching executors, and 25 integration resources are declared. Forty-seven current public dispatch, authority, resource snapshot and CLI parity regressions passed without failures or skips. `benchmarks/storage-sqlite/public-dispatch-boundary849.json` records the source hashes and limits; this is shared-boundary evidence, not complete transitive or maintenance-window acceptance. The consumer matrix now distinguishes current evidence from historical findings. The 11/20 completed-step count is unchanged. Linux core37714655629 completed successfully on earlier6433e56; final current-source validation remains open. No benchmark, PR or publication.
-
 
 ### Increments 850–855: current contention and MCP output boundary
 
@@ -391,3 +386,9 @@ The separate twenty-repetition resource run passes complete response parity at a
 Windows860 (37721989459) succeeds on `0a97657`: 2,914 core tests, 2,890 passed, 24 skipped and zero failures on the requested remote host. This workflow does not run package/MCP checks. Mac859 has no terminal receipt and its wrapper/verifier processes are absent; its log ends during the core suite. All 2,975 admitted hashes remain unchanged at observation. The cause is unknown; the interrupted run is retained and supplies no full-suite PASS. A detached current-source relaunch is required.
 
 AST module inventory861 covers all 505 production JavaScript modules and resolves every local static import, literal dynamic import/require, and named/star reexport. The current package self-reference maps MCP to the integration source. CLI/API/MCP roots reach 436/465/477 modules respectively. All 103 literal filesystem modules match their reviewed hashes; no unresolved local or computed imports occur in this inventory. This closes module dependency discovery beyond the earlier named-call scan. Runtime effects and parameter conformance remain separate; no whole-consumer completion is claimed. Evidence is retained in `module-closure861.json`. Progress remains 11/20; no PR or publication.
+
+### Increments 862–864: full current Mac and CI Markdown correction
+
+Detached Mac862 completes every prepush gate on `1753dd0` in 591.04 seconds with all 2,978 source hashes unchanged. Core: 2,914 tests, 2,903 passed, 11 skipped, zero failures; MCP73, PoC67 and package12 pass. Windows860 covers the same production modules; only documentation/evidence changed between those revisions. The previous interrupted Mac859 remains retained separately.
+
+Core863 remains live. Its documentation job passed all diagrams and canonical documentation checks, then markdownlint MD012 rejected six extra blank-line groups introduced in two SQLite progress documents. Correction864 removes exactly those groups and changes no production source. Failed-job diagnosis and full Mac terminal receipts are retained. Local documentation and literal blank-line checks pass; full markdownlint is unavailable locally and actual corrected workflow acceptance remains required. Progress remains 11/20; no PR or publication.
