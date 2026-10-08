@@ -1,0 +1,97 @@
+{
+  "status": "INCOMPLETE_CANCELLED",
+  "sourceRevision": "8a5dea39cab4a132be4e4f923fd79311c040826a",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "runId": 37829091525,
+  "url": "https://github.com/cassiomc1/forgeloop/actions/runs/37829091525",
+  "sourceHashesUnchanged": 3020,
+  "repeats": 200,
+  "requestedSizes": [
+    1000,
+    5000
+  ],
+  "completedPairs": [
+    {
+      "operation": "taskListTool",
+      "tasks": 1000,
+      "outputParity": true,
+      "native": {
+        "samples": 200,
+        "p95Ms": 2253.843903000001,
+        "maxRssEndpointBytes": 439070720,
+        "workerLifetimePeakRssBytes": 439332864,
+        "maxScheduledTimerLatenessMs": 227.5850040000514
+      },
+      "baseline": {
+        "samples": 200,
+        "p95Ms": 7465.536248999997,
+        "maxRssEndpointBytes": 248913920,
+        "workerLifetimePeakRssBytes": 248967168,
+        "maxScheduledTimerLatenessMs": 23.80710199999885
+      },
+      "baselineToNativeP95Ratio": 3.3123572750814385
+    },
+    {
+      "operation": "projectTasksResource",
+      "tasks": 1000,
+      "outputParity": true,
+      "native": {
+        "samples": 200,
+        "p95Ms": 2266.8104439999443,
+        "maxRssEndpointBytes": 470978560,
+        "workerLifetimePeakRssBytes": 472027136,
+        "maxScheduledTimerLatenessMs": 226.65408999996725
+      },
+      "baseline": {
+        "samples": 200,
+        "p95Ms": 7563.59117499995,
+        "maxRssEndpointBytes": 248872960,
+        "workerLifetimePeakRssBytes": 251633664,
+        "maxScheduledTimerLatenessMs": 20.175371000077575
+      },
+      "baselineToNativeP95Ratio": 3.3366668108575808
+    }
+  ],
+  "missing": [
+    "baseline-5000.json",
+    "native-5000.json",
+    "comparison.json"
+  ],
+  "firstCauseJournalPresent": false,
+  "cleanup": "Runner log records orphan Node processes 477563 and 477832 terminated at 20:34:28Z",
+  "limits": [
+    "Cancellation after configured 90-minute job limit; no application failure cause retained",
+    "Only completed 1000-task pairs inspected; 5000-task validation not achieved",
+    "RSS endpoint samples and worker lifetime peaks are not request peaks",
+    "No universal memory bound or approved resource ceiling established"
+  ],
+  "releaseThresholdsVerified": false,
+  "artifacts": [
+    {
+      "path": "benchmark.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "source-after.json",
+      "sha256": "3de7e96cbdb45716c93e0484751ea0080e2db72a0849a81bf6f2520f0b8d55f2"
+    },
+    {
+      "path": "source-before.json",
+      "sha256": "3de7e96cbdb45716c93e0484751ea0080e2db72a0849a81bf6f2520f0b8d55f2"
+    },
+    {
+      "path": "workers/baseline-1000.json",
+      "sha256": "99302e0ddda5a39a0ae6452ccf12f4bf93fc7ed6b0b1a70b0951a85bee50e01d"
+    },
+    {
+      "path": "workers/native-1000.json",
+      "sha256": "c8e3136356ba81467f9503ab19e692ac8015d1b6273adc88775afebddb02f351"
+    }
+  ],
+  "completed1000MeasuredMinutes": {
+    "native": 12.465687567750003,
+    "baseline": 46.33607462021667,
+    "combined": 58.80176218796667
+  },
+  "nextExperimentRationale": "Completed 1000-task samples alone consumed 58.80 measured minutes of the 90-minute budget. A later original 5000-task pair requires a substantially longer scheduling budget and durable progress evidence; current artifact does not prove whether cancellation interrupted useful work or a stall."
+}
