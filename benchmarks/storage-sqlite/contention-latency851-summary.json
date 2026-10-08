@@ -1,0 +1,47 @@
+{
+  "sourceRevision": "316964fc08a210faacaf7e43b1898afaaf6e78a2",
+  "resourceInstrumentation": false,
+  "releaseThresholdsVerified": false,
+  "measurementLimits": [
+    "Filesystem operations and SQLite internal I/O are not measured;direct BEGIN entry timing and sampled live WAL require --resources=true",
+    "Worker RSS excludes parent synthetic seed; process startup is harness startup, not CLI startup"
+  ],
+  "results": [
+    {
+      "processes": 1,
+      "repetitions": 3,
+      "parity": true,
+      "nativeMedianP95Ms": 3.9275420000000025,
+      "baselineMedianP95Ms": 131.1596669999999,
+      "nativeMedianCommitsPerSecond": 233.02995745746964,
+      "baselineMedianCommitsPerSecond": 8.121705930235724
+    },
+    {
+      "processes": 2,
+      "repetitions": 3,
+      "parity": true,
+      "nativeMedianP95Ms": 15.407792,
+      "baselineMedianP95Ms": 642.9951659999999,
+      "nativeMedianCommitsPerSecond": 312.6663091640099,
+      "baselineMedianCommitsPerSecond": 8.257262229876245
+    },
+    {
+      "processes": 4,
+      "repetitions": 3,
+      "parity": true,
+      "nativeMedianP95Ms": 33.078417,
+      "baselineMedianP95Ms": 1350.9607500000002,
+      "nativeMedianCommitsPerSecond": 355.5431115466525,
+      "baselineMedianCommitsPerSecond": 8.003829164735972
+    },
+    {
+      "processes": 8,
+      "repetitions": 3,
+      "parity": true,
+      "nativeMedianP95Ms": 47.611791,
+      "baselineMedianP95Ms": 5260.962041999999,
+      "nativeMedianCommitsPerSecond": 448.30086923829805,
+      "baselineMedianCommitsPerSecond": 8.253205100103393
+    }
+  ]
+}

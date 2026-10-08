@@ -17,10 +17,12 @@ assert.equal(execFileSync("git", ["-C", baselineRoot, "status", "--porcelain", "
 const sizes = (argument("sizes") ?? "10,1000").split(",").map(Number);
 const repeats = Number(argument("repeats") ?? 20);
 const resources = argument("resources") ?? "false";
+const taskListLimit = argument("task-list-limit") === undefined ? null : Number(argument("task-list-limit"));
 const validationOnly = process.argv.includes("--validate-only");
 assert.ok(sizes.every(size => Number.isInteger(size) && size > 0 && size <= 5000));
 assert.ok(Number.isInteger(repeats) && repeats >= (validationOnly ? 2 : 20));
 assert.ok(["true", "false"].includes(resources));
+assert.ok(taskListLimit === null || (Number.isInteger(taskListLimit) && taskListLimit > 0 && taskListLimit <= 5000));
 const percentile = values => [...values].sort((a, b) => a - b)[Math.ceil(values.length * 0.95) - 1];
 const timestamp = "2026-09-11T00:00:00.000Z";
 const versions = {};
@@ -73,12 +75,19 @@ for (const [sizeIndex, size] of sizes.entries()) {
       const output = path.join(directory, `${backend}.json`);
       const run = spawnSync(process.execPath, [path.join(currentRoot, "scripts/lib/storage-mcp-benchmark-worker.mjs"),
         backend === "native" ? currentRoot : baselineRoot, path.join(currentRoot, "integrations/mcp"),
-        backend === "native" ? native : portable, output, String(repeats), resources], { encoding: "utf8", maxBuffer: 4 * 1024 * 1024 });
+        backend === "native" ? native : portable, output, String(repeats), resources, taskListLimit === null ? "" : String(taskListLimit)], { encoding: "utf8", maxBuffer: 4 * 1024 * 1024 });
       assert.equal(run.status, 0, run.stderr);
       backends[backend] = JSON.parse(await readFile(output, "utf8"));
     }
     for (const name of Object.keys(backends.native.results)) {
       const n = backends.native.results[name], b = backends.baseline.results[name];
+      if (name === "taskListTool") {
+        assert.equal(n.expected.result.total, size);
+        assert.equal(n.expected.result.tasks.length, taskListLimit === null ? size : Math.min(size, taskListLimit));
+      } else {
+        assert.equal(n.expected.count, size);
+        assert.equal(n.expected.tasks.length, size);
+      }
       assert.deepEqual(comparable(n.expected, "native"), comparable(b.expected, "baseline"));
       results.push({ tasks: size, events: size * 10, operation: name, outputParity: true,
         native: n, baseline: b, nativeP95Ms: percentile(n.samplesMs), baselineP95Ms: percentile(b.samplesMs) });
@@ -86,6 +95,7 @@ for (const [sizeIndex, size] of sizes.entries()) {
   } finally { await rm(directory, { recursive: true, force: true }); }
 }
 const output = { baselineRevision: revision, node: process.version, platform: process.platform, repeats, resources, validationOnly,
+  taskListRequest: taskListLimit === null ? {} : { limit: taskListLimit },
   declaredBackendVersions: versions, parityException: "Only metadata.packageVersion;each raw value must equal its backend package manifest",
   adapter: "same current MCP adapter with current or pinned core selected by module resolution hook", transport: "in-memory MCP client/server",
   limits: ["Transport serialization/stdio/HTTP not measured", "Synthetic valid tasks/claims and ten observation events per task", "Resource samples are separately instrumented;RSS endpoints are not operation peak", "Not complete MCP throughput/contention/resource acceptance"],

@@ -1,0 +1,505 @@
+{
+  "scope": "Current storage modules, shared filesystem helper and named maintenance test modules compared with admitted full Mac834 manifest; not dependency-closed or current platform execution proof.",
+  "comparisonManifest": "source-manifest834.json",
+  "matching": 99,
+  "total": 99,
+  "drift": [],
+  "files": [
+    {
+      "path": "src/core/filesystem.js",
+      "sha256": "4174506b0832bdadadd9b7b676baa835b15b2b7e68fc980902dedeacb2564a57",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/artifact-bytes.js",
+      "sha256": "95cef7c799313f8203109ddf2e5c3c53ce99cbce8e6b20e1e55221641fce66e6",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/attachment-binding.js",
+      "sha256": "c30e1b58d2caad481399cef391936f86c1d76ca4dea0ae10e71c47db8e0ad24b",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/attachment-files.js",
+      "sha256": "10e3da12d126263bb4ef7ca2684911bc778048b90069a84ccc73029cd53b93f5",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/attachment-references.js",
+      "sha256": "b85b1594ee44256a6e13381debedaae81f396baaf51f0815060c40177ba78c4a",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/backup.js",
+      "sha256": "32016e0aaf027c2d0084717a81f1e9b1f48286ce87abdfb05a8a5764a7d8dd9a",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/capabilities.js",
+      "sha256": "59be8434f95b1926f44f7f13750e5492036efa3d4b7a844970a62cb37ee6e814",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/connection-owner.js",
+      "sha256": "0b53258b443150941e438596159f8259a6043f065a8faac67bd6019a7b4c33ae",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/connection.js",
+      "sha256": "c8df192b1a1613dcdfa0e0dc3998e0d78c4d7ca17ee25044903e8c0a0bc0368f",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/existing-project-scope.js",
+      "sha256": "9d4e8d5154865048a17075e388155f18bdea26b8a5a6e0e883d015683221e6e2",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/export-destination.js",
+      "sha256": "a5385331d4035e007f2f8edc92774bec513db3e99d257e34dc2219d3886def0b",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/exporter.js",
+      "sha256": "2e005a6784c73f42e53831a800b09b50730f901dd358d7463009f776b55a2a4b",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/importer.js",
+      "sha256": "22dbd284184c72b7270de7bbb95d06a2ec7f529f3305b355a4a9671a403a6f6b",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/index.js",
+      "sha256": "86d1420e8f5baa8a419dbe5782e32ca9bc121fdaffc0f3e3a4453e251265d759",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/leases.js",
+      "sha256": "7539d7c540d1b42efc82c72d628d5ae6785c7b287d87dceeaaef42744b06c8b6",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/ledger-event-snapshot.js",
+      "sha256": "fe4b836ec40799e7601744e9573f6876adaec426c1a787ac7d397b7e80468633",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/ledger-relations.js",
+      "sha256": "8e056da18d958c11178c9f4a97ba9e2de1858dfab166142024b16398226029e2",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/legacy-maintenance-boundary.js",
+      "sha256": "4c3bc7a3c45b8fca61bd1b6e4d320c65466423bd96d08ea1b1947008c4c41f10",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/legacy-signature.js",
+      "sha256": "f4e126a0ec08e538d4f105f46808fa01ad8940e2846711ad68f0ddd5c9a20d52",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/maintenance-handoff.js",
+      "sha256": "79113b4f2c706ae35c0ffa775b433fbd085fd95d4d23d0d25072151f4c3887f5",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/maintenance-owner.js",
+      "sha256": "cf18aff27a8df3ccc2257048b787428ba03c7d5e55e0aecaa6560daefe16e64e",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/maintenance.js",
+      "sha256": "ce19d71c8507b70bd56b022667d63064c2b0b76f5722d8a304d27ec2e681478f",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/metadata-json.js",
+      "sha256": "a12fe17e3818325804f84447ac298b5a1c8cc423c98c0d2bcb91b317bb365e9c",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/migration-activate.js",
+      "sha256": "12b11a733f5a615ee1becbc8e3780fadfc7e55c92146cd07e82718c588871267",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/migration-archive.js",
+      "sha256": "38848cc8ab285a2ce37ef7b7b3405cf51e024d023670f7dfbf46eac01bdda37a",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/migration-attachment-root.js",
+      "sha256": "a50bc04562a2e422ab15c1c59f87abac81f9c023bb9034fc7cee5fc82763f69c",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/migration-candidate.js",
+      "sha256": "41f01d20be6caac40ef541a8d6175e429bd595f5bd3a7a9f046571c880e88ecb",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/migration-publication.js",
+      "sha256": "6e60f541f53f977bc1670d2c2f7577e5e718b1e1fff80ba49d4e7c026d8b38ed",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/migration-rollback-admission.js",
+      "sha256": "da43ae3a2930f7adf3370898ff1e9a9689df8319f6c861e23f6aa52ce2cf5c73",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/migration-rollback-preparation.js",
+      "sha256": "1152bbb354970c43c8530d681790c08941408328e59654eb6e62044b2dcd9bfe",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/migration-rollback-publication.js",
+      "sha256": "81ca1f7c72e57f885a137e33d428c4303db0f1bb859ac19c67372d9826553417",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/migration-rollback-release.js",
+      "sha256": "6838a25238dd71cd2b2c6d740fb32c3f1914bfd06ed376f154bd4dd7cb0b5cfb",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/migration-rollback-source-stage.js",
+      "sha256": "6bfbf8e0ad81644596fff0f055593082e7627bbac66de070986f81aa4f8b2211",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/migration-rollback.js",
+      "sha256": "f4f054b19857ee4ebf0e423d79f2962a3f296199b978799ac47aca826a235060",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/migration-source-partition.js",
+      "sha256": "c65e33c6283421262d3ab34f80a291baccc3d96b379e672569d7b3cc878589a4",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/migration-source.js",
+      "sha256": "4e2b78e7be7b1641883b28d0b33fe34fd1264b047ce88e00e617e5607aa9ffdb",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/migration-terminal.js",
+      "sha256": "ff24b1b717315d373ccc2d99d84b1753e7c185deb627c1edc04cec590bcb4b3e",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/migration-validation.js",
+      "sha256": "c8517c81062f0609444b82929962ede9cb805236e599265ba26872edeb903ab3",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/migration.js",
+      "sha256": "6d84791488206fc394c2501d2f6c4d34ba8e12fba34dede0e40c48b64c3e03fa",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/operational-attachments.js",
+      "sha256": "aad9f3449a00cfed7d0c689af47ef51e7a87e354c920bbff999d86ece0238690",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/operational-context.js",
+      "sha256": "53fa9ed5fe2b0724071dda1c1594f8a2101fcf645bcf286da5407a4b9d37183f",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/project-backup.js",
+      "sha256": "66dffeb2ca6fa6f6c90a3eb19fafad8e5fd69596f2794c23ef95669fce5f1370",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/project-bootstrap.js",
+      "sha256": "b511b8eb18837fa217fc1c3fa2f892d1136456e464a3d10a777643908da68aaa",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/project-boundary.js",
+      "sha256": "72d5ff54501b9b31234d3ef6e7c9610c5f1dd5f248a671fcd6e03c38ac558b2c",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/project-read-snapshot.js",
+      "sha256": "0cbdd1aa0987447eb2a4222a85ac2645a5f930aa1ade142fcbea190946a6a1a6",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/project-replacement.js",
+      "sha256": "8edb1daa7f5a50a56c2762488db647d1e441d1f421d8dd6b2f1fbc5a813efa59",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/project-restore.js",
+      "sha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/repository.js",
+      "sha256": "19289ab3fb61fa0b8c0a44efea24f270a8a73ca6d2951bdd54617779f9eaa3d1",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/restore-journal.js",
+      "sha256": "50e68dd1a61a9080a833e1e2e05476934b652317cdfe22f11af36cad379f838f",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/restore-layout.js",
+      "sha256": "64a380833307e834fbcbf0cd1f6210151b014cbcce95e44615a2ed5c2ebb9e4c",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/restore-preparation.js",
+      "sha256": "70c2db1ac984643434a5e1986028efc39f79b9d2f2576a4cbe35f39bd0161347",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/restore-replacement-archive.js",
+      "sha256": "fbd0347cb136200ab4cdf848c47c1948f226913a3714c347b71d8fb541c4dd36",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/restore-replacement-owner.js",
+      "sha256": "9d3bd4fa498f1f42befe30d1d5d01d1e420996b2887006cecadfdc2011553cbc",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/restore-replacement-preparation.js",
+      "sha256": "07c55045508317bb70d20c7b4b687da662d9ab1f41e209d1972a3c7e06180014",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/restore-replacement.js",
+      "sha256": "f7b7aed1fe54c4feb71a192a5c2aed9ff92bdb80f26d053ba1498d433cc1f138",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/restore-terminal.js",
+      "sha256": "51d56ba62c80d697a3c55728b0ba811b6fb3d55c0631d7ccb137dd128e33da61",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/runtime.js",
+      "sha256": "7678e198ada6dd469c038ed9428e1697b64360d577c13256a94526d99b3077bc",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/schema.js",
+      "sha256": "fb9875774da8e37c02df05f19a44542a3608930c5841a88c653fc9fa19156082",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/singleton-import.js",
+      "sha256": "811af2a22679865f4bf8dfd0d47508444cafdf9f63fd289e5f462feb30ca06db",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/snapshot-continuity.js",
+      "sha256": "9a33e104f24922cd2736382a5e531b91a42164a809640d742d67eb707d4d545b",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/snapshot.js",
+      "sha256": "52d0e9a891f630df71f34f9fd7fed008a7b97f0ad04efe4727422d7fe2e30d81",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/storage-marker.js",
+      "sha256": "1664b9f2c1005507ee1aa256dc443f0d82c728646c2cf04a8460f1b270a0ca05",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/task-guards.js",
+      "sha256": "473f1c6aa8d70d938b79725626d8ae6f55cc41210e1bd70eab0b2624ea8b18c1",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/topology.js",
+      "sha256": "2c7b381abca72c4a4fc2173623ff5dce13ff6f5982d77ab4c2dbd302e2d6b1fa",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/transaction.js",
+      "sha256": "090a74c3080af94d9a7bb100ed9b5606b99635febc672c1a0bcbadc26e98836c",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "src/storage/unit-of-work.js",
+      "sha256": "02eea758e34845de2a655c8e9bf4851c2b89a5117a4cfdb0d4aae16400283605",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-active-replacement.test.js",
+      "sha256": "b06322a155ce69c394ec6665e8ed6603c813bf4240e827554e3cfd756a961ce1",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-attachment-aliases.test.js",
+      "sha256": "f17c31bc0f5605a1abed3dd2a52aaadb96b5190bfc17ee62452cbb4d22a013e7",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-attachment-consumer.test.js",
+      "sha256": "d4754a2de719a76efa868ad80d5264cf693df1ec846d1eb2e8a1d06e75675500",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-attachment-files.test.js",
+      "sha256": "3d7c89f8c89ee03541d07e9e3f77a7ca0580fa2cc0c88d32f04e052351e792d4",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-attachment-transaction.test.js",
+      "sha256": "a82009dfcbb5a8ae9c2a0cb5933df344159ce638e8073044f2b31afdf634b54d",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-forward-rebuild.test.js",
+      "sha256": "a3d21025a6610f711c5d1c0a15091b8406c306664c45a41ed1bbd79fc203efdf",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-maintenance-handoff.test.js",
+      "sha256": "7d99a51fd9cd8f5f492681bad9fc5d83211fcbd075810cf7751ae3699558dec4",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-maintenance-owner-containment.test.js",
+      "sha256": "dbc7cc956ead6179909b51de84c1d78603ed89217401b4fcfb7392d1080846cb",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-migration-activate.test.js",
+      "sha256": "45bebb09fc50664b2460f1480da6fc00e2e9b125c6fbcede37b7fbafc410bb92",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-migration-archive.test.js",
+      "sha256": "39e94a4c2f6496a147aba7c8f68d18835a299139edf07995c1408a3222f31959",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-migration-attachments.test.js",
+      "sha256": "debdd3c057c74b5de5ebc2a19201c73e6fc0771b329ae27eb93a555c24d78e62",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-migration-candidate.test.js",
+      "sha256": "e35b33f57aa114a37efc6bb48381314650a22fa6f26cd36a5c9f8e3c5edc2df3",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-migration-partition.test.js",
+      "sha256": "48846ec02fdc09884902fa5a561f0ee62d6e9f5117be74da08d1dabc2f467bef",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-migration-publication.test.js",
+      "sha256": "044fc7f94d1d41a68185653c01fb6dfa10bf0cdc4e77241f36e86fd97922fa4b",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-migration-resume.test.js",
+      "sha256": "291e919fa88f1697797b6dad3f1ba05ecb433ec27fefe3f7c2ad46aed8f8ec2f",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-migration-rollback-admission.test.js",
+      "sha256": "9ac8d3de36abae95f614c9c98ae98049a1f272199269574be3d56c86137ef962",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-migration-rollback-operator.test.js",
+      "sha256": "1a4cf2326184268e217a7173824c1dc492f66b85a8f414af04273e77191ff43d",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-migration-rollback-preparation.test.js",
+      "sha256": "31b252eceae77b819a4421bbb8965ed67a01ed45544ef8c01e339ec1f27e1f17",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-migration-rollback-publication-resume.test.js",
+      "sha256": "c50249933cd04c1e236e6713fd1a1de56a1d8ce4deb03b233ee8b9a68b77f299",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-migration-rollback-publication.test.js",
+      "sha256": "30829a529814b8950d1505e3b89824bf34a07ef364a8ff1753e8fba9c58f16fe",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-migration-rollback-ready-resume.test.js",
+      "sha256": "87b059d29f60f35734082eeba90166f689b4a3de90b37c94f23f0d37d4faa91b",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-migration-rollback-release.test.js",
+      "sha256": "1eeef48032ed19cd8e7df74aa577c08869e119223ba373ec7b5269d65eace8d1",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-migration-rollback-source-stage.test.js",
+      "sha256": "6ed8408039459b4ee6939252228dcf5feec9dbffa6c5cfb5f5254b8eea11d117",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-migration-rollback-stage-resume.test.js",
+      "sha256": "d82392823dc58aca946403de4a7ae0f6b3feaaa9cb89014d11ae96debc5a8139",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-migration-source.test.js",
+      "sha256": "ac9d9a8475c7cc7675f62946ecec66cd74fd82c1626bd0443b039e70e88e3650",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-project-backup.test.js",
+      "sha256": "3806e7f424ea4b51422e2704b245799218b18675f11c83bcc098918747ccdc3a",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-project-restore.test.js",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-replacement-archive.test.js",
+      "sha256": "3a63116d05cfe1ef158b54cae2863993e26f7acfd99fba5159142300e30c5213",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-replacement-preparation.test.js",
+      "sha256": "ead0b82825f398be800fc778df566416cda5a4ec23bc329c121261ffdd7a549d",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-replacement-publication.test.js",
+      "sha256": "ef2b88d24e5ff8f345397aa60f70b44c8bf8527b2794ad145ac21567949df878",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-resource-read-snapshot.test.js",
+      "sha256": "81092142e49d0c1479b26f82cddcdc58cdc919bc7311824c4c86048cf77b93f7",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-restore-command.test.js",
+      "sha256": "7b34447e7d7d874f96bdda9756dac707ab49ec6d89b0e65a649c13a2f24bb276",
+      "matchesAdmittedMac834": true
+    },
+    {
+      "path": "tests/storage-rollback-command.test.js",
+      "sha256": "70c671f5f5ba30475f122238f448e8dde93a4539008bdb32eeefbe70b6846da2",
+      "matchesAdmittedMac834": true
+    }
+  ],
+  "wholeMaintenanceAccepted": false
+}

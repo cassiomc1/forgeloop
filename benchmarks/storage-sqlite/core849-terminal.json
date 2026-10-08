@@ -1,0 +1,82 @@
+{
+  "runId": 37714655629,
+  "url": "https://github.com/cassiomc1/forgeloop/actions/runs/37714655629",
+  "sourceRevision": "6433e5680cf2a7e25e507fcfaf59d2ed2fe7a26f",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "Classify changed paths",
+      "conclusion": "success"
+    },
+    {
+      "name": "Lint and dependency policy",
+      "conclusion": "success"
+    },
+    {
+      "name": "audit",
+      "conclusion": "success"
+    },
+    {
+      "name": "Verify generated Archify diagram",
+      "conclusion": "success"
+    },
+    {
+      "name": "tarball smoke (ubuntu-latest)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Unit tests (Node 24.19.0, shard 0/4)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Unit tests (Node 24, shard 3/4)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Unit tests (Node 24, shard 1/4)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Unit tests (Node 24, shard 2/4)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Unit tests (Node 24, shard 4/4)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Coverage report (Node 24)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Repository Index native matrix / Classify Repository Index paths",
+      "conclusion": "success"
+    },
+    {
+      "name": "Repository Index native matrix / Verify Repository Index manifest",
+      "conclusion": "success"
+    },
+    {
+      "name": "Repository Index native matrix / Native Repository Index (Linux)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Repository Index native matrix / Native Repository Index (macOS)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Repository Index native matrix / Native Repository Index (Windows)",
+      "conclusion": "success"
+    },
+    {
+      "name": "validate (22)",
+      "conclusion": "success"
+    }
+  ],
+  "currentSourceVerified": false,
+  "limitations": [
+    "This source predates completion841 and route848.",
+    "Terminal success covers actual listed jobs; later source changes require separate validation."
+  ]
+}

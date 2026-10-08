@@ -6,10 +6,12 @@ import { pathToFileURL } from "node:url";
 import { performance } from "node:perf_hooks";
 import { measureStorageResources } from "./storage-benchmark-resources.mjs";
 
-const [coreRoot, adapterRoot, target, output, repetitions, instrumentation] = process.argv.slice(2);
+const [coreRoot, adapterRoot, target, output, repetitions, instrumentation, requestedLimit] = process.argv.slice(2);
 const repeats = Number(repetitions);
 assert.ok(Number.isInteger(repeats) && repeats >= 2);
 const resources = instrumentation === "true";
+const taskListLimit = requestedLimit ? Number(requestedLimit) : null;
+assert.ok(taskListLimit === null || (Number.isInteger(taskListLimit) && taskListLimit > 0 && taskListLimit <= 5000));
 registerHooks({ resolve(specifier, context, next) {
   if (specifier === "@cassiomc1/forgeloop/integration") {
     return { url: pathToFileURL(path.join(coreRoot, "src/integration.js")).href, shortCircuit: true };
@@ -28,9 +30,11 @@ try {
   await client.connect(clientTransport);
   const operations = {
     taskListTool: async () => {
-      const response = await client.callTool({ name: "forgeloop_task_list", arguments: {} });
-      assert.notEqual(response.isError, true);
-      return JSON.parse(response.content[0].text);
+      const response = await client.callTool({ name: "forgeloop_task_list", arguments: taskListLimit === null ? {} : { limit: taskListLimit } });
+      const value = JSON.parse(response.content[0].text);
+      const error = value.error ?? value;
+      assert.notEqual(response.isError, true, `Task-list failed: ${error.code ?? "unknown"} ${error.message ?? ""}`);
+      return value;
     },
     projectTasksResource: async () => {
       const response = await client.readResource({ uri: "forgeloop://project/tasks" });

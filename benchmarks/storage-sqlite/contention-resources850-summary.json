@@ -1,0 +1,67 @@
+{
+  "sourceRevision": "316964fc08a210faacaf7e43b1898afaaf6e78a2",
+  "releaseThresholdsVerified": false,
+  "resourceLimits": [
+    "BEGIN IMMEDIATE duration includes SQL entry overhead and lock waiting;it excludes optimistic conflict retries before BEGIN",
+    "WAL maximum is periodically observed,not a guaranteed instantaneous peak",
+    "Instrumented timings are not uninstrumented release latency"
+  ],
+  "results": [
+    {
+      "processes": 1,
+      "repetitions": 3,
+      "parity": true,
+      "nativeMedianP95Ms": 3.8891670000000005,
+      "baselineMedianP95Ms": 143.11845800000003,
+      "nativeMaxWorkerRssMiB": 74.828125,
+      "baselineMaxWorkerRssMiB": 85.0,
+      "nativeSampledWalMaxBytes": 28872,
+      "nativeRetries": 0,
+      "baselineRetries": 0,
+      "nativeMaxBeginEntryMs": 0.007917000000006169,
+      "failedBeginEntries": 0
+    },
+    {
+      "processes": 2,
+      "repetitions": 3,
+      "parity": true,
+      "nativeMedianP95Ms": 21.341583,
+      "baselineMedianP95Ms": 158.67816700000003,
+      "nativeMaxWorkerRssMiB": 75.078125,
+      "baselineMaxWorkerRssMiB": 85.53125,
+      "nativeSampledWalMaxBytes": 41232,
+      "nativeRetries": 26,
+      "baselineRetries": 0,
+      "nativeMaxBeginEntryMs": 1.3018749999999955,
+      "failedBeginEntries": 0
+    },
+    {
+      "processes": 4,
+      "repetitions": 3,
+      "parity": true,
+      "nativeMedianP95Ms": 33.569209,
+      "baselineMedianP95Ms": 1458.5846669999992,
+      "nativeMaxWorkerRssMiB": 75.234375,
+      "baselineMaxWorkerRssMiB": 86.0625,
+      "nativeSampledWalMaxBytes": 152472,
+      "nativeRetries": 107,
+      "baselineRetries": 2,
+      "nativeMaxBeginEntryMs": 10.253959000000009,
+      "failedBeginEntries": 0
+    },
+    {
+      "processes": 8,
+      "repetitions": 3,
+      "parity": true,
+      "nativeMedianP95Ms": 55.00749999999999,
+      "baselineMedianP95Ms": 4484.7919999999995,
+      "nativeMaxWorkerRssMiB": 75.921875,
+      "baselineMaxWorkerRssMiB": 86.546875,
+      "nativeSampledWalMaxBytes": 420272,
+      "nativeRetries": 381,
+      "baselineRetries": 26,
+      "nativeMaxBeginEntryMs": 19.996791,
+      "failedBeginEntries": 0
+    }
+  ]
+}

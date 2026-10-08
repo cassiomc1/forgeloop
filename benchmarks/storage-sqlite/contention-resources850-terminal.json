@@ -1,0 +1,11 @@
+{
+  "increment": 850,
+  "sourceRevision": "316964fc08a210faacaf7e43b1898afaaf6e78a2",
+  "cwd": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop",
+  "exitCode": 0,
+  "elapsedSeconds": 118.05420589447021,
+  "manifestFiles": 2959,
+  "admittedSourceUnchanged": true,
+  "status": "PASS",
+  "scope": "Instrumented independent-process contention comparison with source manifest checked before and after; not uninstrumented latency acceptance."
+}
