@@ -6,8 +6,9 @@ import { pathToFileURL } from "node:url";
 import { performance } from "node:perf_hooks";
 import { measureStorageResources } from "./storage-benchmark-resources.mjs";
 import { installBenchmarkFailureJournal } from "./benchmark-failure-journal.mjs";
+import { createBenchmarkProgressJournal } from "./benchmark-progress-journal.mjs";
 
-const [coreRoot, adapterRoot, target, output, repetitions, instrumentation, requestedLimit] = process.argv.slice(2);
+const [coreRoot, adapterRoot, target, output, repetitions, instrumentation, requestedLimit, retainProgress] = process.argv.slice(2);
 const repeats = Number(repetitions);
 assert.ok(Number.isInteger(repeats) && repeats >= 2);
 const resources = instrumentation === "true";
@@ -15,6 +16,9 @@ const taskListLimit = requestedLimit ? Number(requestedLimit) : null;
 assert.ok(taskListLimit === null || (Number.isInteger(taskListLimit) && taskListLimit > 0 && taskListLimit <= 5000));
 const progress = { operation: null, stage: "BOOTSTRAP", sampleIndex: null, completedSamples: 0 };
 const results = {};
+const progressJournal = retainProgress === "true" ? createBenchmarkProgressJournal(`${output}.progress.ndjson`) : null;
+const checkpoint = () => progressJournal?.record({ coreRoot, target, repeats, resources, progress: { ...progress } });
+checkpoint();
 const failureJournal = installBenchmarkFailureJournal(`${output}.failure.json`, () => ({
   coreRoot, adapterRoot, target, repeats, resources, progress: { ...progress },
   completedOperations: Object.fromEntries(Object.entries(results).map(([name, result]) => [name, result.samplesMs.length])),
@@ -51,13 +55,16 @@ try {
   };
   for (const [name, operation] of Object.entries(operations)) {
     Object.assign(progress, { operation: name, stage: "EXPECTED", sampleIndex: null, completedSamples: 0 });
+    checkpoint();
     const expected = await operation();
     progress.stage = "WARMUP";
+    checkpoint();
     await operation();
     const samples = [];
     const resourceSamples = [];
     for (let index = 0; index < repeats; index++) {
       Object.assign(progress, { stage: "MEASURED", sampleIndex: index });
+      if (index === 0) checkpoint();
       const start = performance.now();
       const measured = resources ? await measureStorageResources(target, operation) : { value: await operation() };
       const elapsed = performance.now() - start;
@@ -65,18 +72,25 @@ try {
       samples.push(resources ? measured.elapsedMs : elapsed);
       if (resources) resourceSamples.push(measured.resources);
       progress.completedSamples = index + 1;
+      if ((index + 1) % 10 === 0 || index + 1 === repeats) checkpoint();
     }
     results[name] = { expected, samplesMs: samples, resourceSamples };
   }
   progress.stage = "WRITE_OUTPUT";
+  checkpoint();
   await writeFile(output, JSON.stringify({ coreRoot, adapterRoot, target, repeats, resources, transport: "actual MCP in-memory client/server", results }, null, 2));
 } catch (error) {
   failureJournal.record(error);
   throw error;
 } finally {
   progress.stage = "CLOSE_CLIENT";
+  checkpoint();
   await client.close();
   progress.stage = "CLOSE_SERVER";
+  checkpoint();
   await server.close();
   failureJournal.dispose();
+  progress.stage = "CLOSED";
+  checkpoint();
+  progressJournal?.close();
 }

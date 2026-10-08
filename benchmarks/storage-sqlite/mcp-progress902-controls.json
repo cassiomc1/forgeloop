@@ -1,0 +1,153 @@
+{
+  "status": "SCOPED_PASS",
+  "scope": "Harness progress retention and scheduling only; no performance acceptance",
+  "jobBudgetMinutes": 600,
+  "rationale": "Prior completed 1000-task pairs consumed 58.80 measured minutes before 5000-task comparison within 90-minute job budget",
+  "workloadUnchanged": {
+    "sizes": [
+      1000,
+      5000
+    ],
+    "repeats": 200,
+    "resources": true,
+    "taskListLimit": 100,
+    "sdkRequestTimeoutMs": 60000
+  },
+  "progress": "Exclusive append-only fsync records before bootstrap/operations, every ten completed samples and shutdown; outside measured operations",
+  "limits": [
+    "Periodic journal disk writes between requests can affect subsequent process/cache behavior; both backends use identical instrumentation",
+    "Cancellation can leave a partially written final line; earlier complete records are observations, not completion evidence"
+  ],
+  "positivePilot": {
+    "tasks": 10,
+    "repeats": 2,
+    "validationOnly": true,
+    "operations": 2,
+    "fullResponseParity": true,
+    "fixturesRemoved": true
+  },
+  "negativeControl": {
+    "workerExit": 1,
+    "firstCause": "E_RETENTION_CONTROL",
+    "parentCleanedFixture": true,
+    "completionNotClaimed": true,
+    "firstAttempt": "Parent-only --import did not propagate to worker; preserved successful pilot, corrected with inherited NODE_OPTIONS on a fresh evidence path"
+  },
+  "journals": {
+    "mcp-progress902-workers/native-10.json.progress.ndjson": {
+      "count": 13,
+      "last": {
+        "coreRoot": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop",
+        "target": "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-mcp-benchmark-Ebu3bC/native",
+        "repeats": 2,
+        "resources": true,
+        "progress": {
+          "operation": "projectTasksResource",
+          "stage": "CLOSED",
+          "sampleIndex": 1,
+          "completedSamples": 2
+        },
+        "pid": 72970,
+        "sequence": 13,
+        "at": "2026-10-08T20:44:25.345Z"
+      },
+      "sha256": "9117332c55bd9a57e986cc2b680ad38f80b61948eed35bb72ce943bd9a96c131"
+    },
+    "mcp-progress902-workers/baseline-10.json.progress.ndjson": {
+      "count": 13,
+      "last": {
+        "coreRoot": "/Users/cassio/.codex/verification/sqlite-baseline624",
+        "target": "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-mcp-benchmark-Ebu3bC/portable",
+        "repeats": 2,
+        "resources": true,
+        "progress": {
+          "operation": "projectTasksResource",
+          "stage": "CLOSED",
+          "sampleIndex": 1,
+          "completedSamples": 2
+        },
+        "pid": 72973,
+        "sequence": 13,
+        "at": "2026-10-08T20:44:25.919Z"
+      },
+      "sha256": "8aa62aff0de61dd1daf1805ec35075883b79d05717d4d2104db62a79cc8e2c87"
+    },
+    "mcp-progress902-workers/parent.progress.ndjson": {
+      "count": 11,
+      "last": {
+        "stage": "COMPLETED",
+        "pid": 72944,
+        "sequence": 11,
+        "at": "2026-10-08T20:44:25.954Z"
+      },
+      "sha256": "a9ca106d5d6a0da8df0b43952283510733a385b83d29129acf25dccb55aa4d97"
+    },
+    "mcp-progress902-negative2-workers/native-10.json.progress.ndjson": {
+      "count": 1,
+      "last": {
+        "coreRoot": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop",
+        "target": "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-mcp-benchmark-OmwsTT/native",
+        "repeats": 2,
+        "resources": true,
+        "progress": {
+          "operation": null,
+          "stage": "BOOTSTRAP",
+          "sampleIndex": null,
+          "completedSamples": 0
+        },
+        "pid": 73119,
+        "sequence": 1,
+        "at": "2026-10-08T20:45:13.800Z"
+      },
+      "sha256": "e73b745400c9ec227c3e56c182137d4a32a16b94b946ada1c8a65edd88a95e64"
+    },
+    "mcp-progress902-negative2-workers/parent.progress.ndjson": {
+      "count": 7,
+      "last": {
+        "stage": "CLEANUP_COMPLETED",
+        "tasks": 10,
+        "pid": 73091,
+        "sequence": 7,
+        "at": "2026-10-08T20:45:14.049Z"
+      },
+      "sha256": "80e709c7440b1371bdfc30174a1ff0e95d5fddb4f58f23e137fc5b60ad2d6b1d"
+    }
+  },
+  "releaseThresholdsVerified": false,
+  "validation": {
+    "journalTests": {
+      "status": "PASS",
+      "logSha256": "a1369ac33289d77918cca836626d32597c5b47d0a9ba939b00ee7363072e9dab"
+    },
+    "lint": {
+      "status": "PASS",
+      "logSha256": "21da8265910464e7d99630aab85eab930f1f410e21835f85fa5c66157f006cfc"
+    },
+    "fast": {
+      "status": "PASS",
+      "logSha256": "e0e52ee44e3d75fb19cfa509459f79d2cca1f67d2e44bcbca586756e9b22c9cd"
+    },
+    "documentation": {
+      "status": "PASS",
+      "logSha256": "dbe93d88cf10bdc2a49ded7643ba81cec73a29648abbdd8b7fee0755760c51ca"
+    }
+  },
+  "changedHarnessFiles": [
+    {
+      "path": "scripts/lib/benchmark-progress-journal.mjs",
+      "sha256": "f0615f2cfad54c84062e19df1998182b77e1130a30806f318a7df8f7cb71c3ac"
+    },
+    {
+      "path": "scripts/lib/storage-mcp-benchmark-worker.mjs",
+      "sha256": "eac5bddd0343cbeb6a130112ec73767dfa6574241e145462f0983ddb020d2040"
+    },
+    {
+      "path": "scripts/benchmark-storage-mcp.mjs",
+      "sha256": "ddb8e2d281678c4cbf35d45c902fed502334e95340de3f8a3b809ede4d8dd725"
+    },
+    {
+      "path": ".github/workflows/windows-full-suite.yml",
+      "sha256": "b33d2e34eb95230e4a7ce8e1761042f78a061373c7d7bc7787640cb4db8a6989"
+    }
+  ]
+}
