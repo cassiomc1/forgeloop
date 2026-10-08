@@ -475,3 +475,7 @@ Package workflow37793835687 on `9ced7f2` completes successfully across Linux,Mac
 ### Expanded runtime compatibility887
 
 Workflow37794383611 on `5d5d066` completes all7jobs successfully. Each job passes80quick and72targeted native runtime/store/bootstrap tests without failures or skips,plus CLI startup and protocol-info. Node24.19.0 runs on Linux,Mac andWindows;Linux26 and Mac/Windows24 variants also pass. This completes required changed validation-workflow execution(checkpoint17),bringing verified checkpoints to12/20(60%). Original whole-plan performance,code reduction,consumer/maintenance and validator closure requirements remain open.
+
+### Natural resource comparison888 failure
+
+Frozen `e58d864` run888 endsFAILED(exit1) after991.504seconds with all3007source hashes unchanged. Native1000-task tool/resource workers each finish200stable responses;the paired legacy worker raisesSDK REQUEST_TIMEOUT(60000ms) before writing its result. An OS sample shows uncaught-exception exit blocked in Node/libuv thread-pool cleanup;after preserving native output,the exact failed baseline worker is killed so the parent retains stderr and a failure receipt. A1-second profile intervention is disclosed;no aggregate or release acceptance is claimed. Current instrumentation omits the failing operation/sample index,which must be captured before another experiment. No5000-task result exists. Native partial results and exact limits are retained in `mcp-resources888-failed.json`.
