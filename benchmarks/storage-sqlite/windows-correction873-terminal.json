@@ -1,0 +1,18 @@
+{
+  "increment": 873,
+  "runId": 37786259591,
+  "jobId": 113341674195,
+  "sourceRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+  "status": "PASS",
+  "counts": {
+    "tests": 37,
+    "pass": 37,
+    "fail": 0,
+    "skipped": 0
+  },
+  "scope": "Selected admission, correction I/O, evidence observer and replacement preparation controls on actual Windows.",
+  "limits": [
+    "The prior full-suite PUBLICATION_READY owner-liveness failure did not recur in this selected run; its OS process identity therefore remains unknown.",
+    "No current full Windows acceptance claimed."
+  ]
+}

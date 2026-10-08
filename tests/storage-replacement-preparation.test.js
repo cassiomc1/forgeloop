@@ -44,7 +44,7 @@ for (const checkpoint of ["OWNER", "INTENT", "OUTGOING_OWNER", "OUTGOING_RETAINI
       const initial = await start(new URL("./helpers/storage-replacement-preparation-worker.mjs", import.meta.url), [fixture.target, path.join(fixture.operationRoot, "snapshot"), retaining ? "PARTIAL_OUTGOING" : "OUTGOING_READY"]);
       await kill();
       const adopted = await start(new URL("./helpers/storage-replacement-failed-resume-worker.mjs", import.meta.url), [fixture.target, initial.operationId, initial.ownerId, checkpoint]);
-      assert.equal(adopted.checkpoint, checkpoint);
+      assert.equal(adopted.checkpoint, checkpoint, JSON.stringify(adopted));
       assert.notEqual(adopted.ownerId, initial.ownerId);
       await kill();
       const options = { operationId: initial.operationId, expectedOwnerId: adopted.ownerId, writersQuiesced: true };

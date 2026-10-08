@@ -5,9 +5,11 @@ import { archiveActiveStorageReplacement } from "../../src/storage/restore-repla
 import { readMaintenanceOwner } from "../../src/storage/maintenance-owner.js";
 import fs from "node:fs";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
 import { syncBuiltinESMExports } from "node:module";
 
 const [target, operationId, expectedOwnerId, checkpoint] = process.argv.slice(2);
+const initialOwner = (await readMaintenanceOwner(target)).value;
 const hold = async () => {
   process.send({ checkpoint, ownerId: (await readMaintenanceOwner(target)).value.ownerId });
   await new Promise(() => { setInterval(() => {}, 1000); });
@@ -48,5 +50,11 @@ try {
   }
   throw new Error("Expected corrupt source rejection");
 } catch (error) {
-  process.send({ code: error.code, message: error.message, ownerId: (await readMaintenanceOwner(target)).value.ownerId });
+  const diagnostics = { recordedOwnerPid: initialOwner.pid, recordedOwnerId: initialOwner.ownerId, workerPid: process.pid, checkpoint };
+  if (process.platform === "win32") {
+    try {
+      diagnostics.ownerProcess = execFileSync("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", `Get-Process -Id ${initialOwner.pid} -ErrorAction SilentlyContinue | Select-Object Id,ProcessName,StartTime,HasExited | ConvertTo-Json -Compress`], { encoding: "utf8", timeout: 10000 }).trim() || "absent";
+    } catch (observationError) { diagnostics.observationError = observationError.code ?? observationError.status; }
+  }
+  process.send({ code: error.code, message: error.message, ownerId: (await readMaintenanceOwner(target)).value.ownerId, diagnostics });
 }

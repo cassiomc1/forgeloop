@@ -1,0 +1,15 @@
+{
+  "increment": 875,
+  "runId": 37786564333,
+  "jobId": 113342724185,
+  "sourceRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+  "status": "FAILED",
+  "counts": {
+    "tests": 2922,
+    "pass": 2897,
+    "fail": 1,
+    "skipped": 24
+  },
+  "failure": "Replacement adoption REBUILD_ALLOCATED received IPC message without checkpoint. Assertion omitted returned error message; actual cause unknown. Do not infer same PID failure or pass.",
+  "correction": "Preserve full IPC response in assertion; worker error includes initial owner and current worker process IDs, plus Windows Get-Process identity on error. No admission bypass or retry added."
+}
