@@ -1,0 +1,33 @@
+{
+  "increment": 848,
+  "baseRevision": "008fade14cac5ec98b7ae831f14aa62f1385cd61",
+  "sourceHashes": {
+    "src/core/route-artifact.js": "0b1ebd6241e70131ca65e9394995127bd6314913911ed3543341492c7cc882bc",
+    "tests/storage-direct-route-atomicity.test.js": "5c7395e2cdf194bbd3f177cc4a457175f5ea6e1545353c152162cc51b90421cc"
+  },
+  "diagnosis": "Supplying a contract fingerprint skipped the contract read even when taskId was omitted. Canonical contract/route paths therefore failed E_TASK_REQUIRED before route/state transaction rollback could be exercised.",
+  "change": "Read the selected contract for missing task identity independently of supplied fingerprint; only fill an absent fingerprint. Existing transaction recursion and binding guards remain authoritative.",
+  "checks": {
+    "red": "External copy of the existing fixture failed E_TASK_REQUIRED instead of reaching its injected task-state write failure.",
+    "candidate": {
+      "tests": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    "checkoutRouting": {
+      "tests": 6,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0
+    },
+    "verifyFast": "PASS",
+    "preflight": "READY",
+    "diffCheck": "PASS"
+  },
+  "wholeConsumerClosure": false,
+  "limitations": [
+    "Full Mac842 passed before this two-line production correction.",
+    "Linux core37714655629 remains live on older6433e56 source; no final current-platform acceptance.",
+    "Original resource, inclusive LOC and protocol completion gates remain open."
+  ]
+}

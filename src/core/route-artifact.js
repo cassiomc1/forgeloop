@@ -18,10 +18,10 @@ async function persistRouteInTransaction(target, route, packageRoot, options) {
   const { contractFingerprint: suppliedFingerprint, ...writeOptions } = options;
   let contractFingerprint = suppliedFingerprint;
   let contractArtifact = null;
-  if (contractFingerprint === undefined) {
+  if (contractFingerprint === undefined || !options.taskId) {
     try {
       contractArtifact = await readContract(target, packageRoot, options);
-      contractFingerprint = contractArtifact.fingerprint;
+      if (contractFingerprint === undefined) contractFingerprint = contractArtifact.fingerprint;
     } catch (error) {
       if (error.code !== "ARTIFACT_MISSING") throw error;
     }

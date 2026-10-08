@@ -28,7 +28,8 @@ function snapshot(target) {
   }));
 }
 
-for (const inferIdentity of [false, true]) test(`direct route rollback with ${inferIdentity ? "inferred" : "explicit"} task identity`, async () => {
+for (const identity of ["explicit", "inferred", "inferred with supplied fingerprint"]) test(`direct route rollback with ${identity} task identity`, async () => {
+  const inferIdentity = identity !== "explicit";
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-direct-route-"));
   try {
     await runTaskCreate({ target, taskId, packageRoot, claims: [] });
@@ -40,7 +41,9 @@ for (const inferIdentity of [false, true]) test(`direct route rollback with ${in
     await runRoute({ target, packageRoot, taskId, workType: "documentation", surfaces: ["config"] });
     const contract = await readContract(target, packageRoot, { taskId });
     const route = evaluateRoute({ workType: "complete-website", surfaces: ["ui"], risks: [], platforms: ["web"], executableChange: true });
-    const options = inferIdentity ? { contractPath: taskArtifactPath(taskId, "contract") } : { taskId, contractFingerprint: contract.fingerprint };
+    const options = inferIdentity ? { contractPath: taskArtifactPath(taskId, "contract"),
+      ...(identity === "inferred with supplied fingerprint" ? { routePath: taskArtifactPath(taskId, "route"), contractFingerprint: contract.fingerprint } : {}) }
+      : { taskId, contractFingerprint: contract.fingerprint };
     const before = snapshot(target);
     database(target, db => db.exec("CREATE TRIGGER fail_direct_route BEFORE UPDATE ON tasks BEGIN SELECT RAISE(ABORT, 'injected route state failure'); END"));
     await assert.rejects(() => persistRoute(target, route, packageRoot, options), /injected route state failure/);
