@@ -1,0 +1,58 @@
+{
+  "increment": 824,
+  "sourceHashes": {
+    "src/core/filesystem.js": "4174506b0832bdadadd9b7b676baa835b15b2b7e68fc980902dedeacb2564a57",
+    "src/storage/maintenance-owner.js": "cc2bbc7aee17d8d0a1fc232bd95f4d91f648cff46280dae41f8c5b97cef0b6d0",
+    "src/storage/metadata-json.js": "a12fe17e3818325804f84447ac298b5a1c8cc423c98c0d2bcb91b317bb365e9c",
+    "src/storage/storage-marker.js": "1664b9f2c1005507ee1aa256dc443f0d82c728646c2cf04a8460f1b270a0ca05",
+    "tests/storage-maintenance-owner-containment.test.js": "9cc7cc136ceb731df2127206bdb3ef2ad0b16b6d36a77c6828a3021cf9c73c04",
+    "tests/storage-metadata-containment.test.js": "e7b9182161bda41a09fbf76ebf7f69fa7ad1b363ca763eb6eb43347de0b1a7eb"
+  },
+  "ownerBefore": {
+    "swapped": true,
+    "accepted": true,
+    "selectedOutsideOwner": true,
+    "errorCode": null
+  },
+  "ownerAfter": {
+    "swapped": true,
+    "accepted": false,
+    "selectedOutsideOwner": false,
+    "errorCode": "E_STORAGE_MAINTENANCE_OWNER_INVALID"
+  },
+  "metadataBefore": {
+    "swapped": true,
+    "accepted": true,
+    "selectedOutsideMarker": true,
+    "errorCode": null
+  },
+  "metadataAfter": {
+    "swapped": true,
+    "accepted": false,
+    "selectedOutsideMarker": false,
+    "errorCode": "E_STORAGE_METADATA_INVALID"
+  },
+  "storageFocused": {
+    "tests": 33,
+    "pass": 33,
+    "fail": 0,
+    "skip": 0
+  },
+  "preflight": "READY",
+  "changedFileLint": "PASS",
+  "complexity": "PASS",
+  "scope": "Shared opened-file identity and resolved-project containment check reused by maintenance owner, metadata and marker readers",
+  "limits": [
+    "Symlink controls explicitly skip Windows",
+    "Descriptor fallback runs on Mac; actual Windows race acceptance not claimed",
+    "Full Mac822 validates predecessor9cb9163, not this correction",
+    "Whole consumer/resource/code-reduction acceptance remains open"
+  ],
+  "filesystemRetryControls": {
+    "tests": 6,
+    "pass": 6,
+    "fail": 0,
+    "skip": 0
+  },
+  "fast": "PASS"
+}

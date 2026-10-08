@@ -105,6 +105,17 @@ export function isPathWithin(root, candidate, { platform = process.platform } = 
       && !pathApi.isAbsolute(relative));
 }
 
+/** Recheck an opened regular file against its admitted project path before reading. */
+export async function assertRegularProjectFileIdentity(file, filename, observed, root, invalid) {
+  const actual = await file.stat({ bigint: true });
+  const current = await lstat(filename, { bigint: true });
+  if (!actual.isFile() || !current.isFile() || current.isSymbolicLink()
+    || actual.dev !== observed.dev || actual.ino !== observed.ino
+    || current.dev !== observed.dev || current.ino !== observed.ino
+    || !isPathWithin(root, await realpathWithTransientWindowsRetry(filename))) throw invalid();
+  return actual;
+}
+
 export async function assertSafePath(root, relativePath) {
   const destination = ensureWithin(root, relativePath);
   const absoluteRoot = path.resolve(root);

@@ -1,0 +1,136 @@
+{
+  "conclusion": "success",
+  "jobs": [
+    {
+      "conclusion": "success",
+      "databaseId": 113067129389,
+      "name": "Classify changed paths",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 113067179368,
+      "name": "audit",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 113067179409,
+      "name": "Lint and dependency policy",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 113067179496,
+      "name": "Verify generated Archify diagram",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 113067179526,
+      "name": "Unit tests (Node 24, shard 4/4)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 113067179555,
+      "name": "Unit tests (Node 24, shard 3/4)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 113067179621,
+      "name": "Unit tests (Node 24, shard 2/4)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 113067179633,
+      "name": "Unit tests (Node 24, shard 1/4)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 113067179660,
+      "name": "Unit tests (Node 24.19.0, shard 0/4)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 113067179683,
+      "name": "tarball smoke (ubuntu-latest)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 113089705343,
+      "name": "Coverage report (Node 24)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 113089860770,
+      "name": "Repository Index native matrix / Classify Repository Index paths",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 113089923760,
+      "name": "Repository Index native matrix / Verify Repository Index manifest",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 113089988389,
+      "name": "Repository Index native matrix / Native Repository Index (Windows)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 113089988456,
+      "name": "Repository Index native matrix / Native Repository Index (macOS)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 113089988478,
+      "name": "Repository Index native matrix / Native Repository Index (Linux)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 113090365855,
+      "name": "validate (22)",
+      "status": "completed"
+    }
+  ],
+  "status": "completed",
+  "increment": 823,
+  "runId": 37701918510,
+  "sourceRevision": "f1f8f95effab5c13bb83fb0e62e06ac220719b87",
+  "wholeCurrentPlatformAcceptance": false,
+  "coreCounts": {
+    "tests": 2893,
+    "pass": 2881,
+    "fail": 0,
+    "skip": 12
+  },
+  "minimumRuntimeCounts": [
+    {
+      "tests": 80,
+      "pass": 80,
+      "fail": 0,
+      "skip": 0
+    },
+    {
+      "tests": 72,
+      "pass": 72,
+      "fail": 0,
+      "skip": 0
+    }
+  ],
+  "limits": [
+    "Predates corrections 813,816,818,819,821",
+    "Full current Windows/Linux platform acceptance remains open"
+  ]
+}

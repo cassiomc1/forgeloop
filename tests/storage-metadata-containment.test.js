@@ -6,16 +6,16 @@ import { randomUUID } from "node:crypto";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { readMaintenanceOwner } from "../src/storage/maintenance-owner.js";
+import { readStorageMetadataJson } from "../src/storage/metadata-json.js";
 import { removeTempTree } from "./helpers/rm-safe.js";
 
 for (const portable of [false, true]) {
-  test(`maintenance owner refuses a symlink replacement before open (${portable ? "descriptor fallback" : "native no-follow"})`, { skip: process.platform === "win32" }, async () => {
+  test(`storage metadata refuses a symlink replacement before open (${portable ? "descriptor fallback" : "native no-follow"})`, { skip: process.platform === "win32" }, async () => {
     const target = await fs.mkdtemp(path.join(os.tmpdir(), "forgeloop-owner-contained-"));
     const outside = await fs.mkdtemp(path.join(os.tmpdir(), "forgeloop-owner-outside-"));
-    const filename = path.join(target, ".forgeloop/.storage-maintenance/owner.json");
+    const filename = path.join(target, ".forgeloop/catalog.json");
     const external = path.join(outside, "owner.json");
-    const owner = () => ({ schemaVersion: 1, ownerId: randomUUID(), pid: process.pid, hostname: os.hostname(), acquiredAt: new Date().toISOString() });
+    const owner = () => ({ schemaVersion: 1, storageFormat: "sqlite", storageVersion: 1, databaseSchemaVersion: 5, phase: "ACTIVE", operationId: randomUUID(), sourceInventoryFingerprint: "a".repeat(64) });
     const insideText = `${JSON.stringify(owner())}\n`;
     const outsideText = `${JSON.stringify(owner())}\n`;
     const original = fs.open;
@@ -24,7 +24,7 @@ for (const portable of [false, true]) {
       await fs.mkdir(path.dirname(filename), { recursive: true });
       await fs.writeFile(filename, insideText);
       await fs.writeFile(external, outsideText);
-      assert.equal((await readMaintenanceOwner(target)).text, insideText);
+      assert.deepEqual(await readStorageMetadataJson(target, ".forgeloop/catalog.json"), JSON.parse(insideText));
       fs.open = async function (file, ...args) {
         if (String(file) === filename) {
           if (!swapped) {
@@ -37,7 +37,7 @@ for (const portable of [false, true]) {
         return original.call(this, file, ...args);
       };
       syncBuiltinESMExports();
-      await assert.rejects(readMaintenanceOwner(target), error => error.code === "E_STORAGE_MAINTENANCE_OWNER_INVALID");
+      await assert.rejects(readStorageMetadataJson(target, ".forgeloop/catalog.json"), error => error.code === "E_STORAGE_METADATA_INVALID");
       assert.equal(swapped, true, "replace the admitted file at the actual open boundary");
       assert.equal(await fs.readFile(external, "utf8"), outsideText, "the reader must preserve outside evidence");
       assert.equal((await fs.lstat(filename)).isSymbolicLink(), true, "refusal must not repair or delete the retained pathname");
@@ -50,27 +50,28 @@ for (const portable of [false, true]) {
   });
 }
 
-const ownerRecord = () => ({ schemaVersion: 1, ownerId: randomUUID(), pid: process.pid, hostname: os.hostname(), acquiredAt: new Date().toISOString() });
+const markerRecord = () => ({ schemaVersion: 1, storageFormat: "sqlite", storageVersion: 1,
+  databaseSchemaVersion: 5, phase: "ACTIVE", operationId: randomUUID(), sourceInventoryFingerprint: "b".repeat(64) });
 
-test("maintenance owner refuses a parent symlink after path validation", { skip: process.platform === "win32" }, async () => {
+test("storage metadata refuses a parent symlink after path validation", { skip: process.platform === "win32" }, async () => {
   const target = await fs.mkdtemp(path.join(os.tmpdir(), "forgeloop-marker-parent-"));
   const outside = await fs.mkdtemp(path.join(os.tmpdir(), "forgeloop-marker-parent-outside-"));
-  const parent = path.join(target, ".forgeloop/.storage-maintenance"), filename = path.join(parent, "owner.json");
-  const external = path.join(outside, "owner.json"), text = JSON.stringify(ownerRecord());
-  const original = fs.lstat;
-  let admissions = 0, swapped = false;
+  const parent = path.join(target, ".forgeloop"), filename = path.join(parent, "catalog.json");
+  const external = path.join(outside, "catalog.json"), text = JSON.stringify(markerRecord());
+  const original = fs.open;
+  let swapped = false;
   try {
-    await fs.mkdir(parent, { recursive: true }); await fs.writeFile(filename, JSON.stringify(ownerRecord())); await fs.writeFile(external, text);
-    fs.lstat = async function (name, ...args) {
-      if (String(name) === filename && ++admissions === 3) {
+    await fs.mkdir(parent); await fs.writeFile(filename, JSON.stringify(markerRecord())); await fs.writeFile(external, text);
+    fs.open = async function (name, ...args) {
+      if (String(name) === filename && !swapped) {
         swapped = true; await fs.rename(parent, path.join(target, ".forgeloop-retained")); await fs.symlink(outside, parent);
       }
       return original.call(this, name, ...args);
     };
     syncBuiltinESMExports();
-    await assert.rejects(readMaintenanceOwner(target), { code: "E_STORAGE_MAINTENANCE_OWNER_INVALID" });
+    await assert.rejects(readStorageMetadataJson(target, ".forgeloop/catalog.json"), { code: "E_STORAGE_METADATA_INVALID" });
     assert.equal(swapped, true); assert.equal(await fs.readFile(external, "utf8"), text);
   } finally {
-    fs.lstat = original; syncBuiltinESMExports(); await removeTempTree(target); await removeTempTree(outside);
+    fs.open = original; syncBuiltinESMExports(); await removeTempTree(target); await removeTempTree(outside);
   }
 });

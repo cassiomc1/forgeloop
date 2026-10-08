@@ -1,6 +1,6 @@
 import { constants } from "node:fs";
-import { open } from "node:fs/promises";
-import { assertSafePath } from "../core/filesystem.js";
+import { lstat, open } from "node:fs/promises";
+import { assertSafePath, assertRegularProjectFileIdentity, realpathWithTransientWindowsRetry } from "../core/filesystem.js";
 import { assertJsonBytes, assertJsonLimits, JSON_LIMITS } from "../core/json-safety.js";
 
 export const STORAGE_CATALOG_LIMITS = Object.freeze({ ...JSON_LIMITS, maxBytes: 64 * 1024 * 1024, maxArrayLength: 500_000 });
@@ -10,12 +10,13 @@ function invalid(message) { return Object.assign(new Error(message), { code: "E_
 /** Bound allocation before reading, including growth after the initial stat. */
 export async function readStorageMetadataJson(root, relative, { limits = STORAGE_CATALOG_LIMITS, optional = false } = {}) {
   const filename = await assertSafePath(root, relative);
-  let file;
-  try { file = await open(filename, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0)); }
-  catch (error) { if (optional && error.code === "ENOENT") return null; throw error; }
+  const resolvedRoot = await realpathWithTransientWindowsRetry(root);
+  let observed, file;
+  try { observed = await lstat(filename, { bigint: true }); file = await open(filename, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0)); }
+  catch (error) { if (error.code === "ELOOP") throw invalid(`Storage metadata must be a regular file: ${relative}`); if (optional && error.code === "ENOENT") return null; throw error; }
   try {
-    const info = await file.stat();
-    if (!info.isFile()) throw invalid(`Storage metadata must be a regular file: ${relative}`);
+    const info = await assertRegularProjectFileIdentity(file, filename, observed, resolvedRoot,
+      () => invalid(`Storage metadata must retain its admitted project file: ${relative}`));
     assertJsonBytes({ byteLength: info.size }, relative, limits);
     const chunks = [];
     let size = 0;

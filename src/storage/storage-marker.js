@@ -1,6 +1,6 @@
 import { constants } from "node:fs";
 import { lstat, open } from "node:fs/promises";
-import { assertSafePath, isPathWithin, realpathWithTransientWindowsRetry, writeFileAtomic } from "../core/filesystem.js";
+import { assertSafePath, assertRegularProjectFileIdentity, isPathWithin, realpathWithTransientWindowsRetry, writeFileAtomic } from "../core/filesystem.js";
 import { assertOwnedStorageMaintenance } from "./maintenance.js";
 
 const MARKER = ".forgeloop/storage-version.json";
@@ -27,12 +27,8 @@ export async function readStorageVersionMarker(target) {
     try { file = await open(filename, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0)); }
     catch (error) { if (error.code === "ELOOP") throw invalid("Storage marker must be a regular file"); throw error; }
     try {
-      const actual = await file.stat({ bigint: true });
-      const current = await lstat(filename, { bigint: true });
-      if (!actual.isFile() || !current.isFile() || current.isSymbolicLink()
-        || actual.dev !== observed.dev || actual.ino !== observed.ino
-        || current.dev !== observed.dev || current.ino !== observed.ino
-        || !isPathWithin(root, await realpathWithTransientWindowsRetry(filename))) throw invalid("Storage marker must retain its admitted file identity");
+      const actual = await assertRegularProjectFileIdentity(file, filename, observed, root,
+        () => invalid("Storage marker must retain its admitted file identity"));
       if (actual.size > 65536n) throw invalid("Storage marker exceeds its byte limit");
       const buffer = Buffer.alloc(65537);
       let count = 0;
