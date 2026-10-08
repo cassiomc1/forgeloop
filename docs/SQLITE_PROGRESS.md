@@ -495,3 +495,7 @@ On `b5bdfb9`, all16 Mac public CLI drills pass in148.211seconds with3012 source 
 ### Baseline filesystem completion diagnosis893
 
 Diagnostic-only baseline execution on `657b756` reproduces REQUEST_TIMEOUT at projectTasksResource sample94 after200 successful paginated tool samples. One lstat promise remains unresolved for59.167seconds at exit, with FSReqPromise active; a live OS sample shows all four libuv workers idle. This narrows investigation toward request completion but does not prove a runtime defect. Promise wrappers change instrumentation, so this is no performance acceptance. The failed worker required explicit termination after retained diagnostics; all processes are terminal and3013 source hashes are unchanged. The Node report excludes environment variables. Evidence: `benchmarks/storage-sqlite/mcp-diagnosis893-failed.json`.
+
+### Remote public rollback894 and loader correction895
+
+Run37825369268 on `e4151ed` is terminal FAILED: Linux passes all16 public rollback/recovery cases in379.009seconds with3015 unchanged source hashes. Windows fails before the first fixture enters because Node rejects the absolute C: loader path passed to --import. Correction895 passes a file URL and saves live child output with a five-minute failure limit per case. No Windows acceptance or production fix is inferred. Evidence: `benchmarks/storage-sqlite/public-rollback894-terminal.json`.
