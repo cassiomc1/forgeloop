@@ -1,5 +1,5 @@
 import { getStorageConnectionOwner } from "../core/storage-runtime-registry.js";
-import { lstat } from "node:fs/promises";
+import { lstat, realpath } from "node:fs/promises";
 import { assertSafePath } from "../core/filesystem.js";
 import { getOperationalStore } from "./operational-context.js";
 import { assertStorageMaintenanceInactive } from "./maintenance.js";
@@ -54,7 +54,10 @@ export async function withProjectStorage(target, callback, { readOnly = false, r
   const [{ openStorageDatabase, readStorageMeta }, { withOperationalStore }] = await Promise.all([
     import("./connection.js"), import("./unit-of-work.js"),
   ]);
-  const options = { readOnly, allowSchemaUpgrade: !marker, allowOptionalIndexCreation: !readOnly };
+  const root = await realpath(target);
+  const identity = await lstat(filename, { bigint: true });
+  const options = { readOnly, allowSchemaUpgrade: !marker, allowOptionalIndexCreation: !readOnly,
+    projectAdmission: { root, target, dev: identity.dev, ino: identity.ino } };
   const db = connectionLease ? await connectionLease.open(filename, options) : openStorageDatabase(filename, options);
   try {
     if (marker) {

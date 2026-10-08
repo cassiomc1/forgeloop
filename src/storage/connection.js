@@ -4,6 +4,9 @@ import { validateAttachmentReference } from "./attachment-binding.js";
 import { canonicalFingerprint } from "../core/artifacts.js";
 import { eventHash, validateKnownEventDetails } from "../core/events.js";
 import { loadStorageDriver } from "./runtime.js";
+import { lstatSync, realpathSync } from "node:fs";
+import path from "node:path";
+import { isPathWithin } from "../core/filesystem.js";
 
 import { PROTOCOL_VERSION } from "../core/protocol.js";
 import { OPTIONAL_STORAGE_INDEXES, SCHEMA_MIGRATIONS, STORAGE_FORMAT, STORAGE_FORMAT_VERSION, STORAGE_SCHEMA_VERSION } from "./schema.js";
@@ -210,6 +213,31 @@ function ensureOptionalIndexes(db) {
   }
 }
 
+/** Check SQLite's opened filename before configuration or reuse of a project handle. */
+export function assertProjectDatabaseAdmission(db, admission) {
+  if (!admission) return;
+  const expected = path.join(admission.root, ".forgeloop/state.sqlite");
+  const changed = () => Object.assign(new Error("Project database path changed while opening or reusing its connection"), { code: "E_STORAGE_MIGRATION_REQUIRED" });
+  try {
+    const root = lstatSync(admission.target);
+    if (!root.isDirectory() || root.isSymbolicLink()) throw changed();
+    const opened = realpathSync(db.location());
+    const current = lstatSync(expected, { bigint: true });
+    if (!isPathWithin(expected, opened) || !isPathWithin(opened, expected)
+      || !current.isFile() || current.isSymbolicLink()
+      || current.dev !== admission.dev || current.ino !== admission.ino) throw changed();
+    for (const suffix of ["-wal", "-shm"]) {
+      try {
+        const sidecar = lstatSync(`${expected}${suffix}`);
+        if (!sidecar.isFile() || sidecar.isSymbolicLink()) throw changed();
+      } catch (error) { if (error.code !== "ENOENT") throw error; }
+    }
+  } catch (error) {
+    if (["ENOENT", "ENOTDIR", "ELOOP"].includes(error.code)) throw changed();
+    throw error;
+  }
+}
+
 /**
  * Open the operational store, apply durability defaults, and ensure the schema
  * is current. The caller owns the returned handle and must `close()` it.
@@ -220,6 +248,7 @@ export function openStorageDatabase(databasePath, {
   allowOptionalIndexCreation = allowSchemaUpgrade,
   now = new Date().toISOString(),
   busyTimeoutMs = BUSY_TIMEOUT_MS,
+  projectAdmission = null,
 } = {}) {
   const { DatabaseSync } = assertStorageRuntime();
   if (!Number.isInteger(busyTimeoutMs) || busyTimeoutMs < 0 || busyTimeoutMs > 2_147_483_647) {
@@ -231,6 +260,7 @@ export function openStorageDatabase(databasePath, {
   let db;
   try {
     db = new DatabaseSync(databasePath, { readOnly, open: true, enableForeignKeyConstraints: true });
+    assertProjectDatabaseAdmission(db, projectAdmission);
     applyConnectionSettings(db, busyTimeoutMs);
     assertConnectionSettings(db, busyTimeoutMs);
     if (!readOnly && allowSchemaUpgrade) applyMigrations(db, { now });

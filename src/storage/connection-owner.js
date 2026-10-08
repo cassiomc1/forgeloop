@@ -21,7 +21,8 @@ async function openOwnedConnection(entry, filename, options) {
     if (after.dev !== identity.dev || after.ino !== identity.ino) { db.close(); throw closed("Project database changed while opening its connection"); }
     entry.db = db; entry.identity = after; entry.readOnly = options.readOnly;
   }
-  const { assertStorageMetadataCurrent } = await import("./connection.js");
+  const { assertStorageMetadataCurrent, assertProjectDatabaseAdmission } = await import("./connection.js");
+  assertProjectDatabaseAdmission(entry.db, options.projectAdmission);
   assertStorageMetadataCurrent(entry.db);
   return entry.db;
 }
