@@ -151,7 +151,7 @@ test("unchanged project admission retains native filename and file identity", as
     const asyncIdentity = await lstat(filename, { bigint: true });
     const syncIdentity = lstatSync(filename, { bigint: true });
     db = new (loadStorageDriver().DatabaseSync)(filename, { readOnly: true });
-    const opened = realpathSync(db.location());
+    const opened = realpathSync.native(db.location());
     const expected = path.join(root, ".forgeloop/state.sqlite");
     const observation = JSON.stringify({ platform: process.platform, root, expected, location: db.location(), opened,
       forward: isPathWithin(expected, opened), reverse: isPathWithin(opened, expected),

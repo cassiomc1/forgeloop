@@ -404,3 +404,7 @@ Core863 reached terminal failure: all test shards, coverage, lint/audit, Linux p
 ### Current admission platform validation866
 
 Full Mac866 on `3630a4c` passes all prepush gates in614.097seconds with all2984 admitted hashes unchanged. Windows866 (37782187793) fails:2921tests,1632passed,1265failed,24skipped. Failures originate in the new post-open admission identity/path predicate during ordinary fixture setup; race controls therefore are not passing Windows evidence. Diagnostic867 adds a real unchanged-database control and an allow-listed focused Windows workflow scope. Full remains the default; diagnosis does not replace full acceptance. Updated source review accounts for all104 filesystem-import modules, including three changed storage modules; whole transitive conformance remains open. No PR or release.
+
+### Windows short-path diagnosis868
+
+Focused Windows867 (37783665165) fails8/8 and exposes the unchanged-database mismatch:SQLite reports `ADMINI~1` while admission expects `Administrator`;async/sync device and inode match. Non-native realpath preserves the short alias. Correction868 resolves both filenames through native realpath before comparison and retains file identity and sidecar guards. Current corrected Windows controls/full suites remain pending;Mac866 predates this production correction.

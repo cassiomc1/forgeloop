@@ -221,9 +221,10 @@ export function assertProjectDatabaseAdmission(db, admission) {
   try {
     const root = lstatSync(admission.target);
     if (!root.isDirectory() || root.isSymbolicLink()) throw changed();
-    const opened = realpathSync(db.location());
+    const opened = realpathSync.native(db.location());
+    const resolvedExpected = realpathSync.native(expected);
     const current = lstatSync(expected, { bigint: true });
-    if (!isPathWithin(expected, opened) || !isPathWithin(opened, expected)
+    if (!isPathWithin(resolvedExpected, opened) || !isPathWithin(opened, resolvedExpected)
       || !current.isFile() || current.isSymbolicLink()
       || current.dev !== admission.dev || current.ino !== admission.ino) throw changed();
     for (const suffix of ["-wal", "-shm"]) {
