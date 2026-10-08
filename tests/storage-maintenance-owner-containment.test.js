@@ -52,7 +52,7 @@ for (const portable of [false, true]) {
 
 const ownerRecord = () => ({ schemaVersion: 1, ownerId: randomUUID(), pid: process.pid, hostname: os.hostname(), acquiredAt: new Date().toISOString() });
 
-test("maintenance owner refuses a parent symlink after path validation", { skip: process.platform === "win32" }, async () => {
+test("maintenance owner refuses a parent link after path validation", async () => {
   const target = await fs.mkdtemp(path.join(os.tmpdir(), "forgeloop-marker-parent-"));
   const outside = await fs.mkdtemp(path.join(os.tmpdir(), "forgeloop-marker-parent-outside-"));
   const parent = path.join(target, ".forgeloop/.storage-maintenance"), filename = path.join(parent, "owner.json");
@@ -63,7 +63,7 @@ test("maintenance owner refuses a parent symlink after path validation", { skip:
     await fs.mkdir(parent, { recursive: true }); await fs.writeFile(filename, JSON.stringify(ownerRecord())); await fs.writeFile(external, text);
     fs.lstat = async function (name, ...args) {
       if (String(name) === filename && ++admissions === 3) {
-        swapped = true; await fs.rename(parent, path.join(target, ".forgeloop-retained")); await fs.symlink(outside, parent);
+        swapped = true; await fs.rename(parent, path.join(target, ".forgeloop-retained")); await fs.symlink(outside, parent, process.platform === "win32" ? "junction" : "dir");
       }
       return original.call(this, name, ...args);
     };

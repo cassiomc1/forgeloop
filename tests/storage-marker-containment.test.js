@@ -53,7 +53,7 @@ for (const portable of [false, true]) {
 const markerRecord = () => ({ schemaVersion: 1, storageFormat: "sqlite", storageVersion: 1,
   databaseSchemaVersion: 5, phase: "ACTIVE", operationId: randomUUID(), sourceInventoryFingerprint: "b".repeat(64) });
 
-test("storage marker refuses a parent symlink after path validation", { skip: process.platform === "win32" }, async () => {
+test("storage marker refuses a parent link after path validation", async () => {
   const target = await fs.mkdtemp(path.join(os.tmpdir(), "forgeloop-marker-parent-"));
   const outside = await fs.mkdtemp(path.join(os.tmpdir(), "forgeloop-marker-parent-outside-"));
   const parent = path.join(target, ".forgeloop"), filename = path.join(parent, "storage-version.json");
@@ -64,7 +64,7 @@ test("storage marker refuses a parent symlink after path validation", { skip: pr
     await fs.mkdir(parent); await fs.writeFile(filename, JSON.stringify(markerRecord())); await fs.writeFile(external, text);
     fs.lstat = async function (name, ...args) {
       if (String(name) === filename && ++admissions === 3) {
-        swapped = true; await fs.rename(parent, path.join(target, ".forgeloop-retained")); await fs.symlink(outside, parent);
+        swapped = true; await fs.rename(parent, path.join(target, ".forgeloop-retained")); await fs.symlink(outside, parent, process.platform === "win32" ? "junction" : "dir");
       }
       return original.call(this, name, ...args);
     };

@@ -1,0 +1,18 @@
+{
+  "increment": 825,
+  "sourceHashes": {
+    "tests/storage-maintenance-owner-containment.test.js": "e380c144b0b9e81c35d482ad25d7fa7a098635d49c23430bce36c803640b6882",
+    "tests/storage-metadata-containment.test.js": "e72f33ed9ee3aa17f12bd50d119a80c4340f870553aab98ffee2388ea0aaa2a8",
+    "tests/storage-marker-containment.test.js": "97f8279da5e1d1ac47583f4bd1489ab4f238820a3d095313112fc8daa587f4e2"
+  },
+  "localTests": {
+    "tests": 11,
+    "pass": 11,
+    "fail": 0,
+    "skip": 0
+  },
+  "changedFileLint": "PASS",
+  "scope": "Three parent-path fixtures use directory junctions on Windows and directories on POSIX; removes their Windows skip",
+  "WindowsActualExecution": "PENDING",
+  "remainingSkip": "Final-file symlink controls still explicitly skip Windows; descriptor fallback is a Mac control"
+}
