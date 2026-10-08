@@ -15,6 +15,7 @@ import { buildTaskHistory, formatHistoryResult } from "../src/core/history.js";
 import { buildTaskTrace } from "../src/core/trace.js";
 import { buildTaskReflection } from "../src/core/reflection.js";
 import { mutateWorkState, readWorkState } from "../src/core/work-state.js";
+import { openStorageDatabase } from "../src/storage/connection.js";
 
 const packageRoot = getPackageRoot();
 
@@ -167,10 +168,46 @@ test("history preserves attempts and is deterministic and read-only", async () =
     assert.deepEqual(empty.historyQuality, historyA.historyQuality);
     assert.equal(await hashTaskDirectory(target), before, "zero-limit history remains read-only");
 
+    for (const limit of [1, 2, 5, historyA.events.length, historyA.events.length + 1]) {
+      const tail = await buildTaskHistory({ target, packageRoot, taskId, filters: { limit } });
+      assert.deepEqual(tail.events, historyA.events.slice(-limit), "bounded history preserves chronological tail order");
+      assert.equal(tail.summary.totalEventCount, historyA.events.length);
+      assert.deepEqual(tail.historyQuality, historyA.historyQuality);
+    }
+    const checks = await buildTaskHistory({ target, packageRoot, taskId,
+      filters: { type: " verification, ", checks: true, phase: "CORRECTING", since: "not-a-date", until: "2999-01-01", limit: 1 } });
+    assert.deepEqual(checks.events, verificationEvents.slice(-1));
+    assert.equal(checks.summary.totalEventCount, historyA.events.length);
+    assert.deepEqual(checks.integrity, historyA.integrity);
+    const excluded = await buildTaskHistory({ target, packageRoot, taskId,
+      filters: { type: "TASK_RECEIVED", failures: true, limit: 2 } });
+    assert.deepEqual(excluded.events, []);
+    assert.equal(excluded.truncated, undefined);
+    assert.deepEqual(excluded.historyQuality, historyA.historyQuality);
+
     assert.match(formatHistoryResult(historyA), /ForgeLoop Execution History/);
   } finally {
     await removeTempTree(target);
   }
+});
+
+test("limited history still detects tampering outside the selected events", async () => {
+  const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-history-tamper-"));
+  try {
+    const taskId = await seedFullDiagnosticRun({ target });
+    const db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+    try {
+      assert.equal(db.prepare("UPDATE events SET event_json = json_set(event_json, '$.details.tamper', 1) WHERE task_id = ? AND seq = 1").run(taskId).changes, 1);
+    } finally { db.close(); }
+    const complete = await buildTaskHistory({ target, packageRoot, taskId });
+    assert.equal(complete.integrity.valid, false);
+    for (const filters of [{ limit: 0 }, { limit: 1 }, { type: "VERIFICATION_RECORDED", limit: 1 }]) {
+      const selected = await buildTaskHistory({ target, packageRoot, taskId, filters });
+      assert.deepEqual(selected.integrity, complete.integrity);
+      assert.equal(selected.summary.totalEventCount, complete.summary.totalEventCount);
+      assert.ok(selected.events.every(event => event.sequence !== 1));
+    }
+  } finally { await removeTempTree(target); }
 });
 
 test("trace correlates checks, diagnostics, and is deterministic read-only", async () => {

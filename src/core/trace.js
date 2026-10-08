@@ -396,10 +396,15 @@ function* phasedEvents(events) {
 }
 
 export function historyQualityFor({ snapshot, normalizedEvents }) {
+  return historyQualityFromSummary(snapshot, normalizedEvents.length,
+    normalizedEvents.some((event) => event.timestampQuality !== "authoritative"));
+}
+
+function historyQualityFromSummary(snapshot, eventCount, hasLegacyTimestamp) {
   const reasons = [];
-  const hasLedger = normalizedEvents.length > 0;
+  const hasLedger = eventCount > 0;
   if (!hasLedger) reasons.push("LEDGER_ABSENT");
-  if (normalizedEvents.some((event) => event.timestampQuality !== "authoritative")) {
+  if (hasLegacyTimestamp) {
     reasons.push("LEGACY_PHASE_TIMESTAMPS_UNAVAILABLE");
   }
   if (snapshot.state && Number.isInteger(snapshot.state.verificationCycle) && snapshot.state.verificationCycle > 1
@@ -410,31 +415,45 @@ export function historyQualityFor({ snapshot, normalizedEvents }) {
   return { level, reasons };
 }
 
-export async function buildTaskTrace({ target, packageRoot, taskId = null, eventsPath = null } = {}) {
+// History supplies an output collector only. Complete snapshot auditing and
+// every diagnostic/action projection below remain independent of its selection.
+export async function buildTaskTrace({ target, packageRoot, taskId = null, eventsPath = null } = {}, eventProjection = null) {
   return withTaskSnapshot({ target, packageRoot, taskId, eventsPath }, snapshot =>
-    buildTraceFromSnapshot({ target, packageRoot, taskId, eventsPath, snapshot }));
+    buildTraceFromSnapshot({ target, packageRoot, taskId, eventsPath, snapshot, eventProjection }));
 }
 
-async function buildTraceFromSnapshot({ target, packageRoot, taskId, eventsPath, snapshot }) {
+function projectNormalizedEvents(taskEvents, artifactPath, eventProjection) {
+  const normalizedEvents = [];
+  let totalEventCount = 0;
+  let hasLegacyTimestamp = false;
+  for (const { event, phase, quality } of phasedEvents(taskEvents)) {
+    const normalized = normalizeProtocolEvent(event, {
+      phase: phase ?? null,
+      artifactPath,
+      phaseQuality: quality ?? "unknown",
+    });
+    totalEventCount += 1;
+    hasLegacyTimestamp ||= normalized.timestampQuality !== "authoritative";
+    if (eventProjection) eventProjection.add(normalized);
+    else normalizedEvents.push(normalized);
+  }
+
+  return { normalizedEvents, totalEventCount, hasLegacyTimestamp };
+}
+
+async function buildTraceFromSnapshot({ target, packageRoot, taskId, eventsPath, snapshot, eventProjection }) {
   const artifactPath = eventsPath ?? ".forgeloop/task-state/<task-key>/events.ndjson";
 
   const belongsToTask = event => !event.taskId || event.taskId === taskId;
   const taskEvents = taskId && !snapshot.events.every(belongsToTask)
     ? snapshot.events.filter(belongsToTask) : snapshot.events;
-  const normalizedEvents = [];
-  for (const { event, phase, quality } of phasedEvents(taskEvents)) {
-    normalizedEvents.push(normalizeProtocolEvent(event, {
-      phase: phase ?? null,
-      artifactPath,
-      phaseQuality: quality ?? "unknown",
-    }));
-  }
+  const { normalizedEvents, totalEventCount, hasLegacyTimestamp } = projectNormalizedEvents(taskEvents, artifactPath, eventProjection);
 
   const integrity = {
     valid: snapshot.integrity.valid,
     errors: snapshot.integrity.errors,
   };
-  const historyQuality = historyQualityFor({ snapshot, normalizedEvents });
+  const historyQuality = historyQualityFromSummary(snapshot, totalEventCount, hasLegacyTimestamp);
   const diagnostics = structuredDiagnostics(taskEvents);
 
   const failureSignatures = projectFailureSignatures({ state: snapshot.state, events: taskEvents });
@@ -549,7 +568,8 @@ async function buildTraceFromSnapshot({ target, packageRoot, taskId, eventsPath,
     historyQuality,
     integrity,
     artifacts: {},
-    events: normalizedEvents,
+    events: eventProjection ? eventProjection.result() : normalizedEvents,
+    ...(eventProjection ? { totalEventCount } : {}),
     transitions: lifecycleTransitions(taskEvents),
     executions,
     checks: projectChecks(snapshot),

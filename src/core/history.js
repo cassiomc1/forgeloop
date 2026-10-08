@@ -10,46 +10,50 @@ export const HISTORY_FILTER_OPTIONS = Object.freeze([
   "limit",
 ]);
 
+function historyEventProjection(filters) {
+  const predicates = [];
+  for (const key of ["type", "phase"]) {
+    if (!filters[key]) continue;
+    const values = String(filters[key]).split(",").map(value => value.trim()).filter(Boolean);
+    if (values.length) predicates.push(event => values.includes(event[key])
+      || (key === "type" && values.includes(event.category)));
+  }
+  if (filters.failures) predicates.push(event => event.category === "verification"
+    && ["failed", "blocked"].includes(String(event.data?.status ?? "")));
+  if (filters.checks) predicates.push(event => event.category === "verification");
+  for (const key of ["since", "until"]) {
+    if (!filters[key]) continue;
+    const bound = Date.parse(filters[key]);
+    if (!Number.isNaN(bound)) predicates.push(event => event.timestamp
+      && (key === "since" ? Date.parse(event.timestamp) >= bound : Date.parse(event.timestamp) <= bound));
+  }
+  const limit = Number.isInteger(filters.limit) && filters.limit >= 0 ? filters.limit : null;
+  const events = [];
+  let matched = 0;
+  let cursor = 0;
+  return {
+    add(event) {
+      if (!predicates.every(predicate => predicate(event))) return;
+      matched += 1;
+      if (limit === 0) return;
+      if (limit === null || events.length < limit) events.push(event);
+      else { events[cursor] = event; cursor = (cursor + 1) % limit; }
+    },
+    result: () => cursor === 0 ? events : events.slice(cursor).concat(events.slice(0, cursor)),
+    get omittedEvents() { return matched - events.length; },
+  };
+}
+
 export async function buildTaskHistory({
   target,
   packageRoot,
   taskId = null,
   filters = {},
 } = {}) {
-  const trace = await buildTaskTrace({ target, packageRoot, taskId });
-  let events = [...trace.events];
-
-  if (filters.type) {
-    const types = String(filters.type).split(",").map((value) => value.trim()).filter(Boolean);
-    if (types.length > 0) {
-      events = events.filter((event) => types.includes(event.type) || types.includes(event.category));
-    }
-  }
-  if (filters.phase) {
-    const phases = String(filters.phase).split(",").map((value) => value.trim()).filter(Boolean);
-    if (phases.length > 0) events = events.filter((event) => phases.includes(event.phase));
-  }
-  if (filters.failures) {
-    events = events.filter((event) => event.category === "verification"
-      && ["failed", "blocked"].includes(String(event.data?.status ?? "")));
-  }
-  if (filters.checks) {
-    events = events.filter((event) => event.category === "verification");
-  }
-  if (filters.since) {
-    const since = Date.parse(filters.since);
-    if (!Number.isNaN(since)) events = events.filter((event) => event.timestamp && Date.parse(event.timestamp) >= since);
-  }
-  if (filters.until) {
-    const until = Date.parse(filters.until);
-    if (!Number.isNaN(until)) events = events.filter((event) => event.timestamp && Date.parse(event.timestamp) <= until);
-  }
-
-  let omittedEvents = 0;
-  if (Number.isInteger(filters.limit) && filters.limit >= 0 && events.length > filters.limit) {
-    omittedEvents = events.length - filters.limit;
-    events = filters.limit === 0 ? [] : events.slice(-filters.limit);
-  }
+  const projection = historyEventProjection(filters);
+  const trace = await buildTaskTrace({ target, packageRoot, taskId }, projection);
+  const events = trace.events;
+  const omittedEvents = projection.omittedEvents;
 
   const checkAttempts = trace.checks.reduce(
     (total, check) => total + check.attemptCount,
@@ -67,7 +71,7 @@ export async function buildTaskHistory({
     snapshot: trace.snapshot,
     summary: {
       eventCount: events.length,
-      totalEventCount: trace.events.length,
+      totalEventCount: trace.totalEventCount,
       checkAttemptCount: checkAttempts,
       failedAttemptCount: failedAttempts,
       diagnosticCaseCount: trace.diagnostics.cases.length,
