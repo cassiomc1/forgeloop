@@ -1,0 +1,39 @@
+{
+  "increment": 897,
+  "sourceRevision": "a41eb2d",
+  "status": "PASS",
+  "scope": "Harness-only retention controls on changed benchmark harness; no performance acceptance.",
+  "sourceHashes": {
+    "scripts/benchmark-storage-mcp.mjs": "04163b13ca8285fffa3f8e9707ea973b2a22ffc087ca6147b0f67544e73be2fc",
+    "scripts/lib/storage-mcp-benchmark-worker.mjs": "1e309bb55b79542c63492c4e90fcfc2481419317bf0db176798cc3df7de679c7",
+    ".github/workflows/windows-full-suite.yml": "b56bbc31b0cc5c8471f6fe77aaa549976ca52a5784f877a7ef3c3c5716070de7"
+  },
+  "pilot": {
+    "tasks": 10,
+    "repeats": 2,
+    "validationOnly": true,
+    "operations": [
+      "taskListTool",
+      "projectTasksResource"
+    ],
+    "outputParity": true,
+    "rawWorkersRetained": 2
+  },
+  "negative": {
+    "intentionalWorkerExit": 1,
+    "expectedError": "E_RETENTION_CONTROL",
+    "stableFirstCauseJournalRetained": true,
+    "parentFailureJournalRetained": true,
+    "temporaryFixtureRemoved": true
+  },
+  "checks": [
+    "verify:fast PASS",
+    "Changed benchmark ESLint PASS",
+    "Workflow YAML parse and bash -n PASS"
+  ],
+  "limits": [
+    "Small functional pilot is not a timing/resource result",
+    "Original workload and SDK timeout unchanged",
+    "Linux original1000/5000 task200-repeat comparison not yet executed"
+  ]
+}

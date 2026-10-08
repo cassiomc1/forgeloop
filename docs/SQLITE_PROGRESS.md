@@ -503,3 +503,11 @@ Run37825369268 on `e4151ed` is terminal FAILED: Linux passes all16 public rollba
 ### Production/platform source reconciliation896
 
 All565 production/schema/MCP/package files exactly match the sources used by passing full Mac873, full Windows885, Core881, package886 and compatibility887. All505 module hashes from closure871 also match current source. This resolves stale statements that route848 or admission869 are absent from later platform checks; changed tests/harnesses/workflows/docs and final pre-PR execution remain separate. No caller-conformance, performance/resource, inclusive LOC or protocol-completion claim follows from hash identity. Evidence: `benchmarks/storage-sqlite/production-platform-reconciliation896.json`.
+
+### Current public rollback897 on all requested hosts
+
+On `57b894a`, all16 public CLI rollback/recovery cases pass on each host: Mac148.810seconds, Linux382.132seconds, Windows479.152seconds. Every host retains3016 unchanged source hashes; binary recovery, native-byte preservation, pinned legacy VALID and maintenance release assertions are verified in the retained outputs. This closes the named Windows loader failure894 and refreshes current all-host public rollback coverage. Constructed persisted checkpoints do not prove syscall power loss or privileged-writer exclusion. Complete remaining maintenance ownership reconciliation is separate. Evidence: `benchmarks/storage-sqlite/public-rollback897-all-hosts.json`.
+
+### Stable MCP worker evidence897
+
+The benchmark accepts an optional fresh external worker-evidence directory. A10-task two-repetition functional pilot preserves full response parity and both raw worker outputs. An intentional worker failure exits1, retains the first E_RETENTION_CONTROL journal and parent failure record outside fixture cleanup, and removes the temporary fixture. Fast verification, changed-file lint and workflow YAML/shell parsing pass. A registered manual Linux job preserves source manifests and runs the original1000/5000-task200-repetition instrumented workload with unchanged SDK timeout. It has not yet run; no performance acceptance follows. Evidence: `benchmarks/storage-sqlite/mcp-worker-retention897.json`.

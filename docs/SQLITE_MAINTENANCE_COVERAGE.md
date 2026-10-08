@@ -101,3 +101,7 @@ The four named controls in `tests/storage-recoverable-errors.test.js` pass in re
 ### Current-source public rollback/recovery892
 
 On `b5bdfb9`, all16 Mac public CLI drills pass in148.211seconds with3012 source hashes unchanged: initial rollback, post-write refusal, and14 owner-death preparation/staging/publication checkpoints. Every recovery case verifies binary reference/byte preservation, unchanged retained native bytes, pinned legacy VALID before/after, and validation-backed maintenance release. The post-write control preserves accepted native work. Current remote drills and complete maintenance ownership reconciliation remain open. Constructed persisted checkpoints do not prove syscall power-loss behavior or exclude privileged writers. Evidence: `benchmarks/storage-sqlite/public-rollback892-terminal.json`.
+
+### Current public rollback897 on all requested hosts
+
+On `57b894a`, all16 public CLI rollback/recovery cases pass on each host: Mac148.810seconds, Linux382.132seconds, Windows479.152seconds. Every host retains3016 unchanged source hashes; binary recovery, native-byte preservation, pinned legacy VALID and maintenance release assertions are verified in the retained outputs. This closes the named Windows loader failure894 and refreshes current all-host public rollback coverage. Constructed persisted checkpoints do not prove syscall power loss or privileged-writer exclusion. Complete remaining maintenance ownership reconciliation is separate. Evidence: `benchmarks/storage-sqlite/public-rollback897-all-hosts.json`.

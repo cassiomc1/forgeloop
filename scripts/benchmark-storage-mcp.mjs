@@ -23,6 +23,13 @@ assert.ok(sizes.every(size => Number.isInteger(size) && size > 0 && size <= 5000
 assert.ok(Number.isInteger(repeats) && repeats >= (validationOnly ? 2 : 20));
 assert.ok(["true", "false"].includes(resources));
 assert.ok(taskListLimit === null || (Number.isInteger(taskListLimit) && taskListLimit > 0 && taskListLimit <= 5000));
+const workerEvidenceDirectory = argument("worker-evidence-directory") ? path.resolve(argument("worker-evidence-directory")) : null;
+if (workerEvidenceDirectory) {
+  const relative = path.relative(currentRoot, workerEvidenceDirectory);
+  assert.ok(relative === ".." || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative), "Worker evidence must stay outside the checked source tree");
+  // Refuse reuse so a retained first-cause journal cannot mask a new run.
+  await mkdir(workerEvidenceDirectory);
+}
 const percentile = values => [...values].sort((a, b) => a - b)[Math.ceil(values.length * 0.95) - 1];
 const timestamp = "2026-09-11T00:00:00.000Z";
 const versions = {};
@@ -72,7 +79,9 @@ for (const [sizeIndex, size] of sizes.entries()) {
     const backends = {};
     const order = sizeIndex % 2 ? ["baseline", "native"] : ["native", "baseline"];
     for (const backend of order) {
-      const output = path.join(directory, `${backend}.json`);
+      const output = workerEvidenceDirectory
+        ? path.join(workerEvidenceDirectory, `${backend}-${size}.json`)
+        : path.join(directory, `${backend}.json`);
       const run = spawnSync(process.execPath, [path.join(currentRoot, "scripts/lib/storage-mcp-benchmark-worker.mjs"),
         backend === "native" ? currentRoot : baselineRoot, path.join(currentRoot, "integrations/mcp"),
         backend === "native" ? native : portable, output, String(repeats), resources, taskListLimit === null ? "" : String(taskListLimit)], { encoding: "utf8", maxBuffer: 4 * 1024 * 1024 });
@@ -104,7 +113,8 @@ for (const [sizeIndex, size] of sizes.entries()) {
     }
   } finally { await rm(directory, { recursive: true, force: true }); }
 }
-const output = { baselineRevision: revision, node: process.version, platform: process.platform, repeats, resources, validationOnly,
+const output = { sourceRevision: execFileSync("git", ["-C", currentRoot, "rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
+  workerEvidenceDirectory, baselineRevision: revision, node: process.version, platform: process.platform, repeats, resources, validationOnly,
   taskListRequest: taskListLimit === null ? {} : { limit: taskListLimit },
   declaredBackendVersions: versions, parityException: "Only metadata.packageVersion;each raw value must equal its backend package manifest",
   adapter: "same current MCP adapter with current or pinned core selected by module resolution hook", transport: "in-memory MCP client/server",
