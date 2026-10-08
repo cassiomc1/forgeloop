@@ -1,0 +1,113 @@
+{
+  "increment": 881,
+  "workflowRun": 37787748585,
+  "url": "https://github.com/cassiomc1/forgeloop/actions/runs/37787748585",
+  "sourceRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "id": 113346783958,
+      "name": "Classify changed paths",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113346860838,
+      "name": "Lint and dependency policy",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113346860876,
+      "name": "tarball smoke (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113346860917,
+      "name": "Verify generated Archify diagram",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113346861009,
+      "name": "Unit tests (Node 24, shard 2/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113346861042,
+      "name": "Unit tests (Node 24, shard 3/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113346861067,
+      "name": "audit",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113346861108,
+      "name": "Unit tests (Node 24, shard 1/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113346861196,
+      "name": "Unit tests (Node 24.19.0, shard 0/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113346861231,
+      "name": "Unit tests (Node 24, shard 4/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113359656001,
+      "name": "Coverage report (Node 24)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113359958554,
+      "name": "Repository Index native matrix / Classify Repository Index paths",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113360072263,
+      "name": "Repository Index native matrix / Verify Repository Index manifest",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113360193993,
+      "name": "Repository Index native matrix / Native Repository Index (macOS)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113360194261,
+      "name": "Repository Index native matrix / Native Repository Index (Windows)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113360194335,
+      "name": "Repository Index native matrix / Native Repository Index (Linux)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113360841082,
+      "name": "validate (22)",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "scope": "Core CI, including Linux shards, minimum Node 24.19.0, coverage, package/MCP smoke, documentation and serial native repository-index matrix. Does not establish full Windows suite or whole SQLite completion."
+}

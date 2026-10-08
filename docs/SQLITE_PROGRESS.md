@@ -447,3 +447,11 @@ Full Mac873 on `fe8705c` passes all prepush gates in812.011seconds with all2992 
 ### Declared operational namespace coverage876
 
 Runtime probe876 enumerates all27 persisted non-project artifact registry declarations and resolves every concrete task/session path through the actual native OperationalStore under ordinary read-only admission. Database bytes remain unchanged;source hashes bind registry,task-paths,store and admission modules. This closes the declared-namespace mapping question only;recognition does not prove successful domain writes or every caller behavior. Whole transitive consumer closure remainsPARTIAL.
+
+### Inclusive code-cost investigation880
+
+The unchanged counting scope contains65 native storage/maintenance modules with7130nonblank lines. Other grouped deltas are core domain/boundaries+1022,command wrappers+249,MCP+14,other included production−35,for total+8380. The largest removals are transaction265,task-migration246,task-lock178and transaction-maintenance62lines. The19325line gap cannot be closed by simplifying the new store alone:even deleting all7130required native-storage lines would leave12195lines below the required reduction. That counterfactual is diagnostic,not a deletion proposal or scope exclusion. A coherent architectural reduction or the original plan's explicit release resolution remains required;validation,import/export and recovery code stay counted.
+
+### Core CI terminal result881
+
+Core run37787748585 on `fe8705c` completed successfully:all17jobs passed,including four Node24Linux shards,minimum Node24.19.0 shard,coverage,lint/audit,Linux tarball/MCP smoke,documentation and serial native repository-index checks on Mac/Windows/Linux. The separate full Windows recovery failure remains open;this Core result does not establish whole-plan completion.
