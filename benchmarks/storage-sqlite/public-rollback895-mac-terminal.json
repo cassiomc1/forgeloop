@@ -1,0 +1,134 @@
+{
+  "status": "PASS",
+  "sourceRevision": "57b894a542d2347a5234c494c20126bb8820774f",
+  "node": "v24.19.0",
+  "platform": "darwin",
+  "architecture": "arm64",
+  "elapsedSeconds": 148.810337042,
+  "manifestFiles": 3016,
+  "admittedSourceUnchanged": true,
+  "plannedCases": 16,
+  "caseTimeoutMs": 300000,
+  "results": [
+    {
+      "case": "initial-false",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "outputSha256": "e0da1eb325d45d02a92f497ebcd63db1fcb5dedda1f7c47c7c2f77fd9c1ced31"
+    },
+    {
+      "case": "initial-true",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "outputSha256": "2f9efedde8d39d0f14bc8c4aa7d2f207f4ad98929b86fcd59741aa7977ea586f"
+    },
+    {
+      "case": "PREP_READY",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "outputSha256": "119bdff4e020ccc7a10943972b3122f3ad5b0f50b58d200470c86aa74934272c"
+    },
+    {
+      "case": "PREP_PREPARING_COMPLETE",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "outputSha256": "eee3ddfc1bcfd0853b106233c0a0e05a4cc0d4ba7935ab697911901035999a3f"
+    },
+    {
+      "case": "PREP_PREPARING_PARTIAL",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "outputSha256": "bbe218b1c17e8f93c0d0c3de92242c35cfe18334c654588488a8b3ff572e23ea"
+    },
+    {
+      "case": "PREP_PREPARING_MISSING",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "outputSha256": "311400ce195abcabd275a3791c2c50b01912dbe2310edd35aa28c01226a47ea9"
+    },
+    {
+      "case": "STAGE_READY",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "outputSha256": "f1bfad95fa81f1eaf15485f0f7fbe3f9f67c4a069f2d2eb7800447c814b14fd2"
+    },
+    {
+      "case": "STAGE_PREPARING_COMPLETE",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "outputSha256": "ef01b02b3568043755e7647ef649e2f21d504130f6c03f4a5975aa9307a41b6a"
+    },
+    {
+      "case": "STAGE_PREPARING_PARTIAL",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "outputSha256": "527bbfb6cc6eb67271349e85d4c0b40c2f25986ee34903daad572c2a7ceb126a"
+    },
+    {
+      "case": "STAGE_PREPARING_MISSING",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "outputSha256": "f20c652f314d29fd139687d9877e5cd60bff690ff092b04c7f2747c1579718ce"
+    },
+    {
+      "case": "STAGE_PREPARING_BINARY",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "outputSha256": "d511d89277cf4dbf003e08f05ccd99dccfdcbec5360ccc4669bcbcc32efdc644"
+    },
+    {
+      "case": "SWITCHING",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "outputSha256": "91e543b2504fd6c58a5d15aa4c9cc57b1caf88a6a0868774a48fddfe8193f2a5"
+    },
+    {
+      "case": "DATABASE_RETAINED",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "outputSha256": "36ae8787a31f2ccd625b514efc490cee3df3dede10a55d8abefe99dce2d76bd9"
+    },
+    {
+      "case": "NATIVE_RETAINED",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "outputSha256": "9bb8a1fd9067e0263be60d2ca7c367f9865b7f1684d9920de312325066e105ee"
+    },
+    {
+      "case": "PARTIAL_SOURCE",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "outputSha256": "4b6642d37dc986a9d8cba55c5970a605f165c2e221e68fc7effd8655dea69fdd"
+    },
+    {
+      "case": "RESTORED",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "outputSha256": "113b4117615cf16f2986477656306970236c9a44e1c2a829722c1ee49ece7859"
+    }
+  ],
+  "limits": [
+    "Constructed persisted owner-death checkpoints, not syscall power loss",
+    "Disposable linked worktrees; no live project migration",
+    "No exclusion claim for privileged or uninventoried writers",
+    "A timed-out child fails the run; its descendants require runner cleanup before another workload"
+  ],
+  "increment": 895,
+  "sourceManifestSha256": "83cd1969e26d1d27d323e8d34818f2bb470158cff02e0e5d0de51c9e4d09754d"
+}

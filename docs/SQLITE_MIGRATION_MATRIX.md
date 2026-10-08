@@ -2,11 +2,17 @@
 
 Current checkpoint progress: [SQLite migration progress](SQLITE_PROGRESS.md).
 
+## Current production and validation reconciliation896
+
+All565 tracked production files under src/schemas/MCP src, plus core/MCP package manifests and locks, have identical Git blobs to the sources used by full Mac873, full Windows885, Core881, package886 and runtime compatibility887. Current working files also match HEAD. All505 module hashes from closure871 remain unchanged. Therefore route848 and admission869 are included in those passing production snapshots. Later changes affect tests, harnesses, workflows, documentation and evidence; final pre-PR checks must still cover the finished checkout.
+
+This reconciles the historical platform-pending statements below without treating module reachability as complete caller conformance. The104 filesystem-origin module inventory includes the reviewed admission changes871; the older103-module review847 remains historical. Complete consumer/maintenance reconciliation, performance/resources, inclusive code reduction and validator-backed closure remain open. Evidence: `benchmarks/storage-sqlite/production-platform-reconciliation896.json`.
+
 ## Current dispatch and literal-file review (849)
 
 The package exposes CLI and `./integration`; 115 command definitions have exactly 115 executors, with no missing or extra entries, and the integration registry declares 25 resources. CLI, programmatic API and MCP tools share the executor boundary. MCP resource calls share the integration-resource boundary. Ordinary project dispatch selects SQLite admission; explicit maintenance/conversion exceptions retain dedicated admission. Missing read-only state is noncreating; writable fresh state bootstraps SQLite and retained legacy state requires explicit migration.
 
-All 103 literal filesystem module roles are reconciled in `benchmarks/storage-sqlite/raw-file-role-reconciliation847.json`. This closes literal module-role coverage, not complete transitive parameter conformance. The supplied-fingerprint route correction848 follows full Mac842 and therefore still requires final platform verification. Current public dispatch, authority, resource snapshot and CLI parity regressions pass 47 tests without failures or skips. Source hashes and exact limits are in `benchmarks/storage-sqlite/public-dispatch-boundary849.json`.
+All 103 literal filesystem module roles are reconciled in `benchmarks/storage-sqlite/raw-file-role-reconciliation847.json`. This closes literal module-role coverage, not complete transitive parameter conformance. The supplied-fingerprint route correction848 was pending platform verification at this historical checkpoint; reconciliation896 confirms its production source is included in the later passing platform snapshots. Current public dispatch, authority, resource snapshot and CLI parity regressions pass 47 tests without failures or skips. Source hashes and exact limits are in `benchmarks/storage-sqlite/public-dispatch-boundary849.json`.
 
 Historical entries below retain their original source and unresolved findings. They must not override newer implementation evidence or be treated as current completion claims. Remaining acceptance includes transitive reader/writer conformance, current maintenance/platform coverage, original performance/resource/code-reduction gates and validator-backed completion.
 
