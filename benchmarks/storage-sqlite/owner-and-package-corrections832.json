@@ -23,7 +23,7 @@
     "initialStorage": "22/22 PASS",
     "finalOwnerAfterExtraction": "14/14 PASS",
     "cleanMCP": "73/73 PASS",
-    "fast": "PASS before helper extraction",
+    "fast": "PASS on final4917e8b source (833)",
     "complexity": "PASS",
     "changedFileLint": "PASS"
   },
