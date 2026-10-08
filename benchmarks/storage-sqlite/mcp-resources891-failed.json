@@ -1,0 +1,52 @@
+{
+  "increment": 891,
+  "sourceRevision": "4968e63c56c664c8ef13cab1e6eb997a12bb3053",
+  "cwd": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop",
+  "exitCode": 1,
+  "elapsedSeconds": 1173.2120411396027,
+  "manifestFiles": 3011,
+  "admittedSourceUnchanged": true,
+  "status": "FAILED",
+  "scope": "Paginated (limit 100) MCP in-memory client/server discovery comparison across 1000/5000 tasks and two hundred repetitions; natural GC and retained per-request RSS endpoints; optional resource instrumentation enabled; resource latency is separate from uninstrumented timing; source manifest checked before and after. Full output parity except validated package version, not stdio/HTTP or filesystem-cold evidence.",
+  "workerFailure": {
+    "status": "FAILED",
+    "workerPid": 13750,
+    "coreRoot": "/Users/cassio/.codex/verification/sqlite-baseline624",
+    "adapterRoot": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/integrations/mcp",
+    "target": "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-mcp-benchmark-2YEVWY/portable",
+    "repeats": 200,
+    "resources": true,
+    "progress": {
+      "operation": "projectTasksResource",
+      "stage": "MEASURED",
+      "sampleIndex": 197,
+      "completedSamples": 197
+    },
+    "completedOperations": {
+      "taskListTool": 200
+    },
+    "error": {
+      "name": "SdkError",
+      "code": "REQUEST_TIMEOUT",
+      "message": "Request timed out",
+      "stack": "SdkError: Request timed out\n    at Timeout.timeoutHandler (/Users/cassio/Documents/github/forgeloop/integrations/mcp/node_modules/@modelcontextprotocol/client/dist/src-NAgB4Mp8.cjs:6150:40)\n    at listOnTimeout (node:internal/timers:635:17)\n    at process.processTimers (node:internal/timers:571:7)",
+      "data": {
+        "timeout": 60000
+      }
+    }
+  },
+  "intervention": {
+    "workerPid": 13750,
+    "parentPid": 12049,
+    "signal": "SIGKILL",
+    "reason": "Recorded REQUEST_TIMEOUT at resource sample197; OS sample confirms uncaught-exception exit blocked in libuv threadpool join.",
+    "profiling": "1-second sample after recorded failure; no release measurement accepted.",
+    "nativeOutputAndFailureJournalPreserved": true
+  },
+  "artifactHashes": {
+    "mcp-resources891.log": "2a1ee0f1a8df1e6ed7390b452b309d1f497fa2d2bc0b5bf9c491398aa523b28f",
+    "mcp-resources891-native1000-partial.json": "abb98bd2c0e09e39d4e2f50a1843a1af9b8df1385535f7ee7c0dfe1e51964ceb",
+    "mcp-resources891-baseline-stack.txt": "523fd15c388cad686f697c838c71930280c7851c137908eb1f96ead5de14d15d"
+  },
+  "acceptance": "FAILED: no matched aggregate and no 5000-task result. Diagnostic identifies timeout; it does not establish timeout cause or waive resource gates."
+}
