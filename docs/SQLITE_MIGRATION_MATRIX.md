@@ -2,6 +2,15 @@
 
 Current checkpoint progress: [SQLite migration progress](SQLITE_PROGRESS.md).
 
+
+## Current dispatch and literal-file review (849)
+
+The package exposes CLI and `./integration`; 115 command definitions have exactly 115 executors, with no missing or extra entries, and the integration registry declares 25 resources. CLI, programmatic API and MCP tools share the executor boundary. MCP resource calls share the integration-resource boundary. Ordinary project dispatch selects SQLite admission; explicit maintenance/conversion exceptions retain dedicated admission. Missing read-only state is noncreating; writable fresh state bootstraps SQLite and retained legacy state requires explicit migration.
+
+All 103 literal filesystem module roles are reconciled in `benchmarks/storage-sqlite/raw-file-role-reconciliation847.json`. This closes literal module-role coverage, not complete transitive parameter conformance. The supplied-fingerprint route correction848 follows full Mac842 and therefore still requires final platform verification. Current public dispatch, authority, resource snapshot and CLI parity regressions pass 47 tests without failures or skips. Source hashes and exact limits are in `benchmarks/storage-sqlite/public-dispatch-boundary849.json`.
+
+Historical entries below retain their original source and unresolved findings. They must not override newer implementation evidence or be treated as current completion claims. Remaining acceptance includes transitive reader/writer conformance, current maintenance/platform coverage, original performance/resource/code-reduction gates and validator-backed completion.
+
 ## Resource accounting475–477 and context cleanup479
 
 The benchmark harness now supports opt-in `--resources=true --linux-peak-rss=true` on Linux. Requested unsupported/denied procfs access and overlapping windows reject. The exact-module Linux control verifies high-water reset excludes earlier allocations and releases the measurement scope after exceptions/nested attempts. Mac default measurement, non-Linux refusal and a35-event complete-VALID public-fixture plumbing comparison pass. Fast verification and changed-file lint pass. This establishes instrumentation behavior only; resource477 terminates exit0/no OOM after both full472 host suites finish, using an immutable2494-file candidate and a clean pinned filesystem baseline. Complete VALID parity holds in20measured/2warmup samples per backend at59/3029 events. Native/filesystem instrumented p95 is163.966/163.251ms and620.119/399.245ms; operation-window RSS p95 is138252288/162959360bytes and368173056/316424192bytes. The large native latency/RSS/timer results retain acceptance gaps; process warming/retained fixtures and uncontrolled background/staging preclude causal memory attribution. Corrected Windows480 starts afterward and is confirmed live as PID10632.
