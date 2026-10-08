@@ -5,6 +5,14 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      suite:
+        description: Windows validation scope
+        type: choice
+        options:
+          - full
+          - database-admission
+        default: full
 
 permissions:
   contents: read
@@ -47,4 +55,8 @@ jobs:
       - name: Install locked Node toolchain
         run: npm ci --ignore-scripts
       - name: Run full Node suite with Windows process and filesystem semantics
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.suite == 'full' }}
         run: npm test
+      - name: Diagnose project database admission on Windows
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.suite == 'database-admission' }}
+        run: node --test tests/storage-database-admission.test.js

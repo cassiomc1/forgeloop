@@ -6,7 +6,7 @@
 ███████████░░░░░░░░░ 55%
 ```
 
-Checkpoints have equal weight; this percentage does not estimate effort or release readiness. Mac862 and Windows860 passed their stated source. Admission correction865 changes three production modules afterward and passes 51 focused tests plus fast checks; final current platforms remain required. Core863 reached terminal failure only for documentation MD012 and aggregate validation; actual corrected workflow acceptance remains pending. Whole migration acceptance is open. No PR, merge or publication is claimed.
+Checkpoints have equal weight; this percentage does not estimate effort or release readiness. Mac862 and Windows860 passed their stated source. Admission correction865 changes three production modules afterward and passes 51 focused tests plus fast checks; Mac866 full prepush passes but Windows866 fails ordinary admission; current Windows correction and Linux validation remain required. Core863 reached terminal failure only for documentation MD012 and aggregate validation; actual corrected workflow acceptance remains pending. Whole migration acceptance is open. No PR, merge or publication is claimed.
 
 Done: 11. Partial: 8. Pending: 1. Historical scoped evidence remains recorded below; current consumer/maintenance authority, final platforms, performance/resources, inclusive code reduction and protocol closure remain open.
 
@@ -400,3 +400,7 @@ A disposable constructor-boundary reproduction made ordinary task-list accept a 
 All 51 focused connection/bootstrap/admission tests pass on Node24.19/macOS, including seven read/write/cached/restored-path/sidecar controls, with no failures or skips. Fast verification passes. Windows and Linux execution remains required; restored-path and parent-junction controls are enabled. Actual Windows file-symlink privilege refusal may skip only the two corresponding controls. No native descriptor introspection or arbitrary privileged-race guarantee is claimed. Three production modules changed after Mac862/Windows860, so their full acceptance is historical. The filesystem-module inventory now includes the connection module new metadata reads; whole consumer closure remains open.
 
 Core863 reached terminal failure: all test shards, coverage, lint/audit, Linux package smoke and native-index matrix passed; Markdown MD012 and aggregate validation failed. Correction864 remains locally passing but needs actual corrected CI. Inclusive LOC865 retains all new admission cost and the original unmet reduction target. Progress remains 11/20; no PR or publication.
+
+### Current admission platform validation866
+
+Full Mac866 on `3630a4c` passes all prepush gates in614.097seconds with all2984 admitted hashes unchanged. Windows866 (37782187793) fails:2921tests,1632passed,1265failed,24skipped. Failures originate in the new post-open admission identity/path predicate during ordinary fixture setup; race controls therefore are not passing Windows evidence. Diagnostic867 adds a real unchanged-database control and an allow-listed focused Windows workflow scope. Full remains the default; diagnosis does not replace full acceptance. Updated source review accounts for all104 filesystem-import modules, including three changed storage modules; whole transitive conformance remains open. No PR or release.

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { mkdtemp, mkdir, readFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, lstat } from "node:fs/promises";
 import { renameSync, symlinkSync, unlinkSync, rmSync } from "node:fs";
 import { createRequire, syncBuiltinESMExports } from "node:module";
 import os from "node:os";
@@ -133,3 +133,30 @@ for (const suffix of ["-wal", "-shm"]) {
     } finally { driver.DatabaseSync = Actual; await removeTempTree(base); }
   });
 }
+
+import { lstatSync, realpathSync } from "node:fs";
+import { realpath } from "node:fs/promises";
+import { openStorageDatabase, assertProjectDatabaseAdmission } from "../src/storage/connection.js";
+import { isPathWithin } from "../src/core/filesystem.js";
+
+test("unchanged project admission retains native filename and file identity", async () => {
+  const base = await mkdtemp(path.join(os.tmpdir(), "forgeloop-db-identity-"));
+  const target = path.join(base, "target");
+  await mkdir(path.join(target, ".forgeloop"), { recursive: true });
+  const filename = path.join(target, ".forgeloop/state.sqlite");
+  let db;
+  try {
+    db = openStorageDatabase(filename); db.close(); db = null;
+    const root = await realpath(target);
+    const asyncIdentity = await lstat(filename, { bigint: true });
+    const syncIdentity = lstatSync(filename, { bigint: true });
+    db = new (loadStorageDriver().DatabaseSync)(filename, { readOnly: true });
+    const opened = realpathSync(db.location());
+    const expected = path.join(root, ".forgeloop/state.sqlite");
+    const observation = JSON.stringify({ platform: process.platform, root, expected, location: db.location(), opened,
+      forward: isPathWithin(expected, opened), reverse: isPathWithin(opened, expected),
+      asyncIdentity: { dev: String(asyncIdentity.dev), ino: String(asyncIdentity.ino) },
+      syncIdentity: { dev: String(syncIdentity.dev), ino: String(syncIdentity.ino) } });
+    assert.doesNotThrow(() => assertProjectDatabaseAdmission(db, { root, target, dev: asyncIdentity.dev, ino: asyncIdentity.ino }), observation);
+  } finally { db?.close(); await removeTempTree(base); }
+});
