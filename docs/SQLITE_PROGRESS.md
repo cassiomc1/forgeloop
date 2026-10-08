@@ -467,3 +467,7 @@ Reproducible ESLint9.39.5 classic complexity measurement uses the same281-module
 ### Full Windows terminal result885
 
 Full Windows run37792283976 on `c15264c` passes2922tests:2898passed,24skipped,zero failures,in464.555seconds. Actual requested-host identity and all recovery assertions remain enforced. Earlier PUBLICATION_READY/REBUILD_ALLOCATED failures do not recur;this does not establish their causes or claim a production liveness correction. The full run predates883public-read assertion additions,which have local9/9 coverage. Separate final package/MCP and minimum-runtime platform matrices remain required.
+
+### Final package/MCP platform matrix886
+
+Package workflow37793835687 on `9ced7f2` completes successfully across Linux,Mac andWindows. Each host passes all73MCP tests without skips/failures,packagedMCP smoke and core tarball smoke after locked installs. All4workflow jobs pass,with serialized host execution. Full Mac873,Windows885 and Core881 remain source-bound regression evidence for the unchanged production implementation. Expanded minimum/runtime compatibility,final representative performance/resources,consumer closure,code-reduction release decision and validator-backed completion remain open. No package publication occurred.
