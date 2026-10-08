@@ -37,6 +37,25 @@ Keep this page current when a checkpoint is verified, invalidated by a later cha
 
 Detailed evidence: [migration matrix](SQLITE_MIGRATION_MATRIX.md), [original plan](SQLITE_MIGRATION_PLAN.md), [benchmark results and limits](../benchmarks/storage-sqlite/README.md), [self-hosted test setup](SELF_HOSTED_TESTS.md).
 
+## Original-plan completion audit878
+
+This audit follows the ten definition-of-done items in section10 of the original plan. Historical green results are source-bound; a static inventory or namespace match alone cannot close caller behavior. The20-checkpoint progress bar above remains an implementation tracker.
+
+| Original definition-of-done item | Current finding | Evidence needed to close the item |
+| --- | --- | --- |
+| SQLite is the sole authoritative operational writer | PARTIAL: normal dispatch is native;live protocol-info still advertises `soleSQLiteWriter:false` | Settle every remaining consumer/maintenance authority row using current source and conformance evidence before changing the advertised claim. |
+| Related state/event mutations share a transaction | PARTIAL: native CAS/read-set and rollback controls pass full Mac873 | Complete remaining caller reconciliation;preserve external execution outside SQL transactions and current Windows/Linux regression acceptance. |
+| Protocol validation and public authority are preserved | PARTIAL: current Mac lifecycle/tamper/authority suites pass | Current remote suites and complete caller-boundary review;do not infer authority from indexed summaries. |
+| Every public file-path dependency is migrated or exported | PARTIAL: all27 declared operational artifacts resolve to SQLite;505module imports resolve;104filesystem origins reviewed | Reconcile successful domain/caller behavior with remaining matrix rows;namespace recognition and reachability are insufficient alone. |
+| Migration,recovery,backup,restore,downgrade are documented/tested | PARTIAL: named all-host drills and full Mac873 pass | Diagnose current Windows replacement recovery failure and finish current-source maintenance/platform acceptance. See [maintenance coverage](SQLITE_MAINTENANCE_COVERAGE.md). |
+| Legacy write clients cannot use migrated active layout | Scoped drill verified: actual pinned old client is stopped/excluded and old layout archived | Preserve the documented operator inventory/exclusion boundary in final acceptance;no privileged-bypass or uninventoried-client claim. See [procedure](SQLITE_OLD_CLIENT_EXCLUSION.md). |
+| Obsolete transactions,indexes,scans,compaction removed | Implemented normal-path retirement with retained explicit inspection/refusal | Final writer/consumer audit must confirm no writable legacy path is reachable from public dispatch. Retained migration/export readers are intentional. |
+| Reproducible performance/code-size comparisons published | PARTIAL: maintained harnesses and source-bound comparisons exist | Refresh final production comparisons/resources;investigate failed targets and resolve release decision. Inclusive LOC52159versus43779baseline fails25%reduction by19325lines. |
+| CLI,MCP,API,packaging,platform checks pass | PARTIAL: full Mac873 and current Linux tarball/MCP job pass | Current Windows recovery fix/full suite,remaining core workflow jobs,final package matrix and required pre-PR checks. |
+| SQLite/runtime compatibility and format advertised | VERIFIED current read-only command: SQLite format1,schema5,driver node:sqlite,minNode24.19.0;package engine matches | Preserve supported-platform and minimum-runtime evidence through final source;advertising is separate from sole-writer and release acceptance. |
+
+Phase4's exit requires measurable code reduction and performance gates;it is not satisfied by local implementation or a draft PR. Section9 explicitly requires investigation and a release decision when a target fails. No target waiver,release publication,validator-backed completion or PR is claimed.
+
 ## Diagnostic and verification history
 
 ### MCP memory diagnostic625

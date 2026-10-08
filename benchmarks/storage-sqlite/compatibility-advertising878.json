@@ -1,0 +1,49 @@
+{
+  "increment": 878,
+  "sourceRevision": "c3d8e8b",
+  "status": "OBSERVED",
+  "packageEngine": ">=24.19.0",
+  "operationalStorage": {
+    "version": 1,
+    "defaultBackend": "sqlite",
+    "soleSQLiteWriter": false,
+    "sqlite": {
+      "format": "sqlite",
+      "formatVersion": 1,
+      "schemaVersion": 5,
+      "path": ".forgeloop/state.sqlite",
+      "driver": "node:sqlite",
+      "minimumNode": "24.19.0",
+      "selection": "FRESH_WRITABLE_BOOTSTRAP_OR_EXISTING_DATABASE"
+    },
+    "portableFormats": [
+      "JSON",
+      "NDJSON"
+    ],
+    "migration": {
+      "explicit": true,
+      "requiresWritersQuiesced": true,
+      "resumeRequiresRecordedInventory": true,
+      "automaticDowngrade": false,
+      "commands": [
+        "storage-migrate",
+        "storage-migration-resume",
+        "storage-migration-status",
+        "storage-rollback",
+        "storage-rollback-resume"
+      ],
+      "rollbackRequiresNativeWritesExcluded": true,
+      "rollbackRequiresPinnedLegacyTarget": true
+    },
+    "backup": {
+      "database": true,
+      "referencedAttachments": true,
+      "command": "storage-backup"
+    }
+  },
+  "planSha256": "f406dca99817b12740fdd76a92fd3060932ee5a81d76f8b86cb27d402b76da69",
+  "limits": [
+    "Advertised soleSQLiteWriter is false; runtime/version advertising does not prove full sole-writer acceptance.",
+    "This command is read-only capability evidence, not lifecycle completion."
+  ]
+}
