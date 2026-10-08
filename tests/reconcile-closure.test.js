@@ -95,6 +95,7 @@ async function setupStaleExecutingTask(target, options = {}) {
     repositoryFingerprint: options.repositoryFingerprint ?? { branch: "main", head: STALE_HEAD },
     phase,
     previousPhase,
+    ...(options.diagnosedHypothesis ? { diagnosedHypothesis: options.diagnosedHypothesis } : {}),
     selectedGuides: route.guides,
     requiredGates: [],
     satisfiedGates: [],
@@ -266,7 +267,7 @@ test("reconcile-closure CLI accepts only contract-bound verification evidence", 
   });
 });
 
-test("reconcile-closure refuses tasks outside EXECUTING/VERIFYING/REVIEWING", async () => {
+test("reconcile-closure refuses tasks outside EXECUTING/VERIFYING/CORRECTING/REVIEWING", async () => {
   await withTarget(async (target) => {
     const { taskId } = await setupStaleExecutingTask(target, { phase: "DIAGNOSING", previousPhase: "VERIFYING" });
     await assert.rejects(
@@ -590,5 +591,21 @@ test("direct native reconciliation rolls back execution, reconciliation event an
       assert.equal(result.reconciled, true);
       assert.equal(records().events.at(-1).event_type, "TRANSACTION_COMMITTED");
     } finally { db.close(); }
+  });
+});
+
+
+test("reconcile-closure refuses CORRECTING without a current-cycle diagnosis", async () => {
+  await withTarget(async (target) => {
+    const { taskId } = await setupStaleExecutingTask(target, { phase: "CORRECTING", previousPhase: "DIAGNOSING", diagnosedHypothesis: "A legacy hypothesis has no append-only diagnosis" });
+    const before = await readWorkState(target, { packageRoot, taskId });
+    const events = await readEvents(target, packageRoot, { taskId });
+    await assert.rejects(() => runReconcileClosure({ target, packageRoot, taskId,
+      checkId: "regression-tests",
+      requirement: "pack tarball test asserts the README image is excluded from the npm package",
+      argv: [process.execPath, "-e", "process.exit(0)"],
+    }), error => error.code === "E_DIAGNOSIS_REQUIRED");
+    assert.deepEqual(await readWorkState(target, { packageRoot, taskId }), before);
+    assert.deepEqual(await readEvents(target, packageRoot, { taskId }), events);
   });
 });

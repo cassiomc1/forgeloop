@@ -296,7 +296,7 @@ capability-family versions.
 | gate-revalidate | MUTATING | Refreshes a stale satisfied gate after execution only when current identity and active claims prove the change is safe. |
 | next | READ_ONLY | Returns deterministic next-action guidance and command recommendations based on active state. |
 | preflight | MUTATING | Evaluates pre-implementation contract, routing, and gates; synchronizes work state when READY. |
-| reconcile-closure | MUTATING | Refreshes the work-state checkpoint of an EXECUTING, VERIFYING, or REVIEWING task whose objective is already satisfied in the current repository, after contract-bound executed evidence, so canonical completion can proceed. |
+| reconcile-closure | MUTATING | Refreshes the work-state checkpoint of an EXECUTING, VERIFYING, CORRECTING, or REVIEWING task whose objective is already satisfied in the current repository, after contract-bound executed evidence, so canonical completion can proceed. |
 | record-decision-criterion | MUTATING | Records an append-only decision settlement criterion bound to the active contract fingerprint. |
 | record-diagnosis | MUTATING | Records an append-only diagnosis event or structured diagnostic case in the lifecycle event ledger. |
 | record-hypothesis-disposition | MUTATING | Records an evidence-bound hypothesis disposition update in the lifecycle event ledger. |

@@ -10,10 +10,12 @@ import { taskArtifactPath } from "./task-paths.js";
 import { resolveTaskClaimState } from "./task-claim-state.js";
 import { classifyLoadedWorkState, readWorkState, mutateWorkState } from "./work-state.js";
 import { classifyRequirement } from "./evidence-readiness.js";
+import { assertDiagnosingToCorrectingTransition } from "./phase.js";
+import { resolveCurrentCycleDiagnostic } from "./diagnostic-projection.js";
 
 export const RECONCILE_EVENT = "CHECKPOINT_RECONCILED";
 
-const RECONCILABLE_PHASES = new Set(["EXECUTING", "VERIFYING", "REVIEWING"]);
+const RECONCILABLE_PHASES = new Set(["EXECUTING", "VERIFYING", "CORRECTING", "REVIEWING"]);
 
 function reconcileError(code, message, artifacts = []) {
   const error = new Error(message);
@@ -101,6 +103,14 @@ async function validateReconciliationCheckpoint({
     );
   }
 
+  if (state.phase === "CORRECTING") {
+    // Recovery retains this phase; it cannot manufacture diagnosis or authorize
+    // a retry that the ordinary correction transition would refuse.
+    assertDiagnosingToCorrectingTransition({
+      state, events: ledger.events, resolveDiagnosis: resolveCurrentCycleDiagnostic,
+    });
+  }
+
   const ownership = await resolveTaskClaimState(target, { taskId, packageRoot });
   if (!ownership.ownershipValid || !ownership.mutationAllowed || ownership.claimState !== "ACTIVE") {
     const first = ownership.ownershipErrors?.[0] ?? ownership.errors?.[0] ?? {};
@@ -134,12 +144,12 @@ async function validateReconciliationCheckpoint({
 }
 
 /**
- * Canonical recovery for an EXECUTING, VERIFYING, or REVIEWING task whose
+ * Canonical recovery for an EXECUTING, VERIFYING, CORRECTING, or REVIEWING task whose
  * objective is already satisfied in the current repository but whose
  * work-state checkpoint is stale because the repository fingerprint moved.
  *
  * The command refreshes the checkpoint repository fingerprint only after:
- *   - the task is EXECUTING, VERIFYING, or REVIEWING (with either a
+ *   - the task is EXECUTING, VERIFYING, CORRECTING, or REVIEWING (with either a
  *     persisted completion rejection or the narrow repository-only bootstrap
  *     path),
  *   - classification requires revalidation and the only drift is
@@ -196,7 +206,7 @@ async function reconcileSelectedClosure({
   if (!RECONCILABLE_PHASES.has(state.phase)) {
     throw reconcileError(
       "E_RECONCILE_PHASE_INVALID",
-      `reconcile-closure supports EXECUTING, VERIFYING, or REVIEWING tasks whose objective is already satisfied; found ${state.phase}`,
+      `reconcile-closure supports EXECUTING, VERIFYING, CORRECTING, or REVIEWING tasks whose objective is already satisfied; found ${state.phase}`,
       [stateRel],
     );
   }
