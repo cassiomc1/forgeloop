@@ -1,0 +1,30 @@
+{
+  "increment": 890,
+  "productionChanged": false,
+  "sourceHashes": {
+    "scripts/lib/benchmark-failure-journal.mjs": "0616ff2d2ecd93dd8e09a96887e233bd41167e1cb8d8b92f5ef292dd2f4f7214",
+    "scripts/lib/storage-mcp-benchmark-worker.mjs": "1e309bb55b79542c63492c4e90fcfc2481419317bf0db176798cc3df7de679c7",
+    "scripts/benchmark-storage-mcp.mjs": "194b959240f07904702aed1ce3d84a8f281f668324a0320a896ef875ab2b7bbd",
+    "tests/benchmark-failure-journal.test.js": "6c787055813ce48b8acb50e8fd1c739701dc68efb07746b9b98213d8bad51899"
+  },
+  "checks": {
+    "failureControls": 2,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "verifyFast": "PASS",
+    "docs": "PASS",
+    "lint": "PASS",
+    "healthyPilot": {
+      "tasks": 10,
+      "repeats": 2,
+      "resources": true,
+      "validationOnly": true,
+      "outputParity": [
+        true,
+        true
+      ]
+    }
+  },
+  "change": "Synchronous first-cause journal on caught or uncaught worker failure; records active operation/stage/sample and completed counts; default uncaught termination preserved. Parent retains journal with failed result. No per-request file writes, timeout changes, forced collection, skipped assertions or accepted performance result."
+}

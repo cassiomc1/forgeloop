@@ -76,6 +76,16 @@ for (const [sizeIndex, size] of sizes.entries()) {
       const run = spawnSync(process.execPath, [path.join(currentRoot, "scripts/lib/storage-mcp-benchmark-worker.mjs"),
         backend === "native" ? currentRoot : baselineRoot, path.join(currentRoot, "integrations/mcp"),
         backend === "native" ? native : portable, output, String(repeats), resources, taskListLimit === null ? "" : String(taskListLimit)], { encoding: "utf8", maxBuffer: 4 * 1024 * 1024 });
+      if (run.status !== 0 && argument("output")) {
+        let workerDiagnostics = null;
+        let diagnosticReadError = null;
+        try { workerDiagnostics = JSON.parse(await readFile(`${output}.failure.json`, "utf8")); }
+        catch (error) { diagnosticReadError = { code: error.code ?? error.name, message: error.message }; }
+        await writeFile(`${argument("output")}.failure.json`, JSON.stringify({
+          status: "FAILED", backend, tasks: size, baselineRevision: revision,
+          workerStatus: run.status, workerSignal: run.signal, workerDiagnostics, diagnosticReadError, stderr: run.stderr,
+        }, null, 2) + "\n");
+      }
       assert.equal(run.status, 0, run.stderr);
       backends[backend] = JSON.parse(await readFile(output, "utf8"));
     }
