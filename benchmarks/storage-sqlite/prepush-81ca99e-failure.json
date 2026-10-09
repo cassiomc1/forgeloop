@@ -1,0 +1,16 @@
+{
+  "sourceRevision": "81ca99e485758f3c159947a691eb60360697e754",
+  "exitCode": 1,
+  "coreTests": 2955,
+  "passed": 2930,
+  "failed": 14,
+  "skipped": 11,
+  "durationMs": 599304.9285,
+  "trackedHashesCompared": 3073,
+  "trackedHashesUnchanged": true,
+  "initialManifestCaptureBoundary": "Immediately after starting prepush; tracked working tree clean at capture",
+  "logPath": "/Users/cassio/.codex/verification/sqlite-81ca99e-prepush.log",
+  "logSha256": "1ae547d0e1cdc694c6279e58d382ec0f23a73ca6fd1cb2e74f33005baa9faa08",
+  "laterPrepushStages": "Not reached after coverage failure",
+  "acceptance": false
+}
