@@ -599,3 +599,7 @@ Core37896839025 on5aba2d0 isterminal failure:2938unit cases,2925pass,12skip,one 
 ### Corrected Windows full-suite acceptance926
 
 Windows37899690295 on405f90b terminates success:2939tests,2915pass,24skip,zero failures. Both the deterministic semantic-artifact conflict control and unchanged independent correction writers test have exact PASS records in the retained job log. Current production/test bytes remain identical to that passing source. Evidence:`benchmarks/storage-sqlite/windows923-terminal926.json`. Corrected Linux/Core,current resource/LOC/consumer authority and protocol acceptance remain open;noPR orpublication.
+
+### Corrected Core terminal acceptance931
+
+Core37900647372 on20aca2b terminates success onattempt2 withall17jobs successful. Unitshards retain2939cases,2927pass,12skip,zero failures. Attempt1failed external links on GitHub503;unchanged representative links returned200 with systemcurl,andtargeted failed-job retry passed documentation andaggregate gates. Original failed-attempt logs remain bound in evidence. Corrected fullWindows926 also passes onidentical production/test bytes. Current all-host package/MCP37921165587 isdispatched;original resource,LOC,consumer authority andprotocol gates remainopen. Evidence:`benchmarks/storage-sqlite/core926-terminal931.json`. NoPR orpublication.
