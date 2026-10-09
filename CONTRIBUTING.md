@@ -88,8 +88,7 @@ the committed hotspot budget require an explicit explanation and review.
 TypeScript and YAML are development-only dependencies for packed-consumer and
 semantic workflow verification; the core runtime has no npm dependencies.
 
-Transaction payload maintenance is opt-in:
-`npm run transactions:compact -- --path /path/to/project --retain-days 7`
-previews the operation; add `--apply` to compact eligible payloads. Manifests,
-ledgers, recent transactions, and ambiguous outcomes remain intact. See the
-[Astra implementation record](docs/ASTRA_IMPLEMENTATION.md) for boundaries.
+Filesystem transaction-payload maintenance is retired with the SQLite
+migration. Preserve legacy evidence for explicit migration and diagnosis. See
+the [Astra implementation record](docs/ASTRA_IMPLEMENTATION.md) for historical
+boundaries.

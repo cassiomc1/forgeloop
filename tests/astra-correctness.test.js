@@ -4,7 +4,7 @@ import { mkdir, mkdtemp, readFile, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
-import { withTaskTransaction, recoverIncompleteTransactions, findIncompleteTransactions } from "../src/core/transaction.js";
+import { withTaskTransaction, findIncompleteTransactions } from "../src/core/transaction.js";
 import { writeJsonArtifact } from "../src/core/artifacts.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { resolveExecutionProfile } from "../src/core/execution-profile.js";
@@ -41,18 +41,17 @@ test("nested aliases of the same physical project retain transaction identity", 
   } finally { await removeTempTree(root); }
 });
 
-test("retired filesystem rollback refuses mutation and doctor keeps the incomplete transaction visible", async () => {
+test("doctor keeps incomplete legacy transaction evidence visible and unchanged", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-recovered-health-"));
   try {
     const root = path.join(target, ".forgeloop/.txn/probe");
     await mkdir(root, { recursive: true });
     await writeFile(path.join(root, "manifest.json"), JSON.stringify({ transactionId: "probe", status: "COMMITTING", writes: [] }));
     const before = await readFile(path.join(root, "manifest.json"), "utf8");
-    await assert.rejects(recoverIncompleteTransactions(target), { code: "E_STORAGE_OPERATION_UNSUPPORTED" });
-    assert.equal(await readFile(path.join(root, "manifest.json"), "utf8"), before);
     assert.equal((await findIncompleteTransactions(target))[0].status, "COMMITTING");
     const doctor = await runDoctor({ target, packageRoot: getPackageRoot(), fix: true });
     assert.equal(doctor.findings.some((f) => f.code === "E_TRANSACTION_INCOMPLETE"), true);
+    assert.equal(await readFile(path.join(root, "manifest.json"), "utf8"), before);
   } finally { await removeTempTree(target); }
 });
 

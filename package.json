@@ -166,7 +166,6 @@
     "benchmark:profiles:outliers": "node scripts/report-execution-profile-outliers.mjs",
     "benchmark:profiles:tail-analysis": "node scripts/report-tail-interpretation.mjs",
     "benchmark:profiles:regression": "node scripts/check-efficiency-regression.mjs",
-    "transactions:compact": "node scripts/compact-transactions.mjs",
     "complexity:check": "node scripts/check-complexity.mjs",
     "repository-index:manifest": "node scripts/verify-tgrep-manifest.mjs",
     "repository:hygiene": "node scripts/check-repository-hygiene.mjs",

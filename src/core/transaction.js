@@ -30,10 +30,6 @@ export async function findIncompleteTransactions(target) {
   return found;
 }
 
-export async function recoverIncompleteTransactions() {
-  throw Object.assign(new Error("Filesystem transaction recovery is retired; reconcile incomplete legacy transactions with the compatible pre-migration release before importing"), { code: "E_STORAGE_OPERATION_UNSUPPORTED" });
-}
-
 export async function withTaskTransaction({ target, taskId, operation = "mutation", packageRoot, recordCommitEvent = false } = {}, callback) {
   if (!target || !taskId) throw new Error("target and taskId are required for a task transaction");
   if (!getOperationalStore(target)) {
