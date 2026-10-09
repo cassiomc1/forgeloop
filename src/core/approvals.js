@@ -1,5 +1,3 @@
-import { needsExistingProjectScope, withExistingProjectScope } from "../storage/existing-project-scope.js";
-
 import { getTaskTransaction, withTaskTransaction } from "./transaction.js";
 import { appendProtocolEvent } from "./events.js";
 import { canonicalFingerprint } from "./artifacts.js";
@@ -19,7 +17,7 @@ import { isTrustedHostAuthorityContext } from "./capability-policy.js";
 import { taskApprovalPath } from "./task-paths.js";
 import { readAction } from "./actions.js";
 import { readWorkState } from "./work-state.js";
-import { getOperationalStore, readOperationalText } from "../storage/operational-context.js";
+import { readNativeJson, requireNativeStore, withNativeReadScope } from "./native-storage.js";
 
 function approvalError(code, message) {
   const error = new Error(message);
@@ -28,13 +26,12 @@ function approvalError(code, message) {
 }
 
 async function readApprovalFile(target, taskId, approvalId) {
-  if (await needsExistingProjectScope(target)) {
-    return withExistingProjectScope(target, () => readApprovalFile(target, taskId, approvalId), { readOnly: true });
-  }
-  const relPath = taskApprovalPath(taskId, approvalId);
-  const operational = readOperationalText(target, relPath);
-  if (operational.selected) return operational.text === null ? null : JSON.parse(operational.text);
-  throw approvalError("E_STORAGE_MIGRATION_REQUIRED", "Approvals require canonical SQLite storage; migrate legacy operational state explicitly");
+  return withNativeReadScope(target, () => readNativeJson(
+    target,
+    taskApprovalPath(taskId, approvalId),
+    approvalError,
+    "Approvals require canonical SQLite storage; migrate legacy operational state explicitly",
+  ));
 }
 
 async function writeApprovalFile(target, taskId, approval) {
@@ -44,12 +41,11 @@ async function writeApprovalFile(target, taskId, approval) {
 }
 
 async function listApprovalFiles(target, taskId) {
-  if (await needsExistingProjectScope(target)) {
-    return withExistingProjectScope(target, () => listApprovalFiles(target, taskId), { readOnly: true });
-  }
-  const store = getOperationalStore(target);
-  if (store) return store.listRecords(taskId, "approval").sort((left, right) => String(left.requestedAt).localeCompare(String(right.requestedAt)));
-  throw approvalError("E_STORAGE_MIGRATION_REQUIRED", "Approval listing requires canonical SQLite storage; migrate legacy operational state explicitly");
+  return withNativeReadScope(target, () => requireNativeStore(
+    target,
+    approvalError,
+    "Approval listing requires canonical SQLite storage; migrate legacy operational state explicitly",
+  ).listRecords(taskId, "approval").sort((left, right) => String(left.requestedAt).localeCompare(String(right.requestedAt))));
 }
 
 function approvalBindingFields(approval) {

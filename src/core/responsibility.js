@@ -11,7 +11,7 @@ import { normalizeWriteClaims } from "./task-scope.js";
 import { taskResponsibilityPath } from "./task-paths.js";
 import { ensureWithin, fileExists } from "./filesystem.js";
 import { getOperationalStore, operationalArtifactExists } from "../storage/operational-context.js";
-import { needsExistingProjectScope, withExistingProjectScope } from "../storage/existing-project-scope.js";
+import { withNativeReadScope } from "./native-storage.js";
 import { appendProtocolEvent, withEventLedgerAudit } from "./events.js";
 import { withTaskTransaction } from "./transaction.js";
 import { assertTaskMutationAllowed } from "./task-claim-state.js";
@@ -120,20 +120,19 @@ export async function validateResponsibilityContract(value, packageRoot = getPac
 }
 
 export async function readResponsibility(target, { taskId, packageRoot = getPackageRoot() } = {}) {
-  if (await needsExistingProjectScope(target)) {
-    return withExistingProjectScope(target, () => readResponsibility(target, { taskId, packageRoot }), { readOnly: true });
-  }
-  const relativePath = taskResponsibilityPath(taskId);
-  if (!(operationalArtifactExists(target, relativePath) ?? await fileExists(ensureWithin(target, relativePath)))) return null;
-  try {
-    const artifact = await readJsonArtifact(target, relativePath, "responsibility", packageRoot);
-    const value = await validateResponsibilityContract(artifact.value, packageRoot);
-    if (value.taskId !== taskId) throw responsibilityError("E_RESPONSIBILITY_INVALID", "Responsibility taskId does not match its task namespace", [relativePath]);
-    return { ...artifact, value };
-  } catch (error) {
-    if (error.code === "E_RESPONSIBILITY_INVALID") throw error;
-    throw responsibilityError("E_RESPONSIBILITY_INVALID", `Responsibility contract is invalid: ${error.message}`, [relativePath]);
-  }
+  return withNativeReadScope(target, async () => {
+    const relativePath = taskResponsibilityPath(taskId);
+    if (!(operationalArtifactExists(target, relativePath) ?? await fileExists(ensureWithin(target, relativePath)))) return null;
+    try {
+      const artifact = await readJsonArtifact(target, relativePath, "responsibility", packageRoot);
+      const value = await validateResponsibilityContract(artifact.value, packageRoot);
+      if (value.taskId !== taskId) throw responsibilityError("E_RESPONSIBILITY_INVALID", "Responsibility taskId does not match its task namespace", [relativePath]);
+      return { ...artifact, value };
+    } catch (error) {
+      if (error.code === "E_RESPONSIBILITY_INVALID") throw error;
+      throw responsibilityError("E_RESPONSIBILITY_INVALID", `Responsibility contract is invalid: ${error.message}`, [relativePath]);
+    }
+  });
 }
 
 async function currentResponsibilityInputs(target, { taskId, packageRoot }) {
@@ -179,11 +178,10 @@ export function validateResponsibilityChecks(responsibility, state) {
 
 export async function resolveResponsibilityStatus(target, { taskId, packageRoot = getPackageRoot() } = {}) {
   const read = () => resolveLoadedResponsibilityStatus(target, { taskId, packageRoot });
-  if (await needsExistingProjectScope(target)) {
-    return withExistingProjectScope(target, () => resolveResponsibilityStatus(target, { taskId, packageRoot }), { readOnly: true });
-  }
-  if (getOperationalStore(target)) return withEventLedgerAudit(target, packageRoot, { taskId }, read);
-  return read();
+  return withNativeReadScope(target, () => {
+    if (getOperationalStore(target)) return withEventLedgerAudit(target, packageRoot, { taskId }, read);
+    return read();
+  });
 }
 
 async function resolveLoadedResponsibilityStatus(target, { taskId, packageRoot }) {

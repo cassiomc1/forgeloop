@@ -1,6 +1,6 @@
 import { withEventLedgerAudit } from "./events.js";
 import { getOperationalStore } from "../storage/operational-context.js";
-import { needsExistingProjectScope, withExistingProjectScope } from "../storage/existing-project-scope.js";
+import { withNativeReadScope } from "./native-storage.js";
 import { buildTaskTrace } from "./trace.js";
 import { buildTaskReflection } from "./reflection.js";
 import { readPersistedRoute } from "./route-artifact.js";
@@ -14,13 +14,12 @@ export const COMPARABLE_WORK_EVENTS = new Set([
 
 export async function buildTrajectoryMetrics(options) {
   const { target, packageRoot, taskId } = options;
-  if (await needsExistingProjectScope(target)) {
-    return withExistingProjectScope(target, () => buildTrajectoryMetrics(options), { readOnly: true });
-  }
-  if (getOperationalStore(target)) {
-    return withEventLedgerAudit(target, packageRoot, { taskId }, () => projectTrajectoryMetrics(options));
-  }
-  return projectTrajectoryMetrics(options);
+  return withNativeReadScope(target, () => {
+    if (getOperationalStore(target)) {
+      return withEventLedgerAudit(target, packageRoot, { taskId }, () => projectTrajectoryMetrics(options));
+    }
+    return projectTrajectoryMetrics(options);
+  });
 }
 
 async function readActionReadiness(options) {

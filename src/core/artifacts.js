@@ -9,6 +9,7 @@ import { assertSchema, readSchema } from "./schema-validation.js";
 import { getPackageRoot } from "./templates.js";
 import { getTaskTransaction, withTaskTransaction } from "./transaction.js";
 import { getOperationalStore, readOperationalText } from "../storage/operational-context.js";
+import { withNativeReadScope } from "./native-storage.js";
 
 const OPERATIONAL_SCHEMAS = new Set(Object.values(ARTIFACT_REGISTRY)
   .filter(artifact => artifact.scope !== "PROJECT" && artifact.schema)
@@ -88,22 +89,21 @@ export async function readJsonArtifact(
   schemaName,
   packageRoot = getPackageRoot(),
 ) {
-  if (await needsExistingProjectScope(target)) {
-    return withExistingProjectScope(target, () => readJsonArtifact(target, relativePath, schemaName, packageRoot), { readOnly: true });
-  }
-  const operational = readOperationalText(target, relativePath);
-  if (operational.selected) {
-    return parseCapturedJsonArtifact(operational.text, relativePath, schemaName, packageRoot);
-  }
-  if (isOperationalArtifactPath(relativePath)) {
-    try { await assertSafePath(target, relativePath); }
-    catch (error) { throw artifactError("ARTIFACT_PATH_INVALID", relativePath, error); }
-    if (!(await fileExists(ensureWithin(target, relativePath)))) {
-      throw new ArtifactError("ARTIFACT_MISSING", `Artifact is missing: ${relativePath}`, [relativePath]);
+  return withNativeReadScope(target, async () => {
+    const operational = readOperationalText(target, relativePath);
+    if (operational.selected) {
+      return parseCapturedJsonArtifact(operational.text, relativePath, schemaName, packageRoot);
     }
-    throw new ArtifactError("E_STORAGE_MIGRATION_REQUIRED", "Operational JSON reads require canonical SQLite storage; migrate legacy state explicitly", [relativePath]);
-  }
-  return readPortableJsonArtifact(target, relativePath, schemaName, packageRoot);
+    if (isOperationalArtifactPath(relativePath)) {
+      try { await assertSafePath(target, relativePath); }
+      catch (error) { throw artifactError("ARTIFACT_PATH_INVALID", relativePath, error); }
+      if (!(await fileExists(ensureWithin(target, relativePath)))) {
+        throw new ArtifactError("ARTIFACT_MISSING", `Artifact is missing: ${relativePath}`, [relativePath]);
+      }
+      throw new ArtifactError("E_STORAGE_MIGRATION_REQUIRED", "Operational JSON reads require canonical SQLite storage; migrate legacy state explicitly", [relativePath]);
+    }
+    return readPortableJsonArtifact(target, relativePath, schemaName, packageRoot);
+  });
 }
 
 /** Explicit file inspection for migration inputs, portable exports and configuration. */

@@ -10,7 +10,7 @@ import { taskStorageKey } from "./task-identity.js";
 import { withEventLedgerAudit } from "./events.js";
 import { resolveTaskClaimState } from "./task-claim-state.js";
 import { getOperationalStore, operationalArtifactExists } from "../storage/operational-context.js";
-import { needsExistingProjectScope, withExistingProjectScope } from "../storage/existing-project-scope.js";
+import { withNativeReadScope } from "./native-storage.js";
 
 /**
  * Explicitly recognized legacy-incidental artifacts that may legitimately
@@ -88,15 +88,14 @@ async function discoveryArtifactExists(target, taskId, kind, filename) {
 }
 
 export async function discoverTasks(target, packageRoot = getPackageRoot(), { taskKeys = null } = {}) {
-  const read = () => discoverSelectedTasks(target, packageRoot, taskKeys);
-  if (await needsExistingProjectScope(target)) {
-    return withExistingProjectScope(target, () => discoverTasks(target, packageRoot, { taskKeys }), { readOnly: true });
-  }
-  const store = getOperationalStore(target);
-  if (!store || store.transaction || store.writes.size || store.events.size || store.attachments.size) return read();
-  const { withStorageSnapshot } = await import("../storage/snapshot.js");
-  const { withOperationalReadSnapshot } = await import("../storage/unit-of-work.js");
-  return withStorageSnapshot(store.db, db => withOperationalReadSnapshot({ db, target }, read));
+  return withNativeReadScope(target, async () => {
+    const read = () => discoverSelectedTasks(target, packageRoot, taskKeys);
+    const store = getOperationalStore(target);
+    if (!store || store.transaction || store.writes.size || store.events.size || store.attachments.size) return read();
+    const { withStorageSnapshot } = await import("../storage/snapshot.js");
+    const { withOperationalReadSnapshot } = await import("../storage/unit-of-work.js");
+    return withStorageSnapshot(store.db, db => withOperationalReadSnapshot({ db, target }, read));
+  });
 }
 
 async function discoverTaskEntry(target, packageRoot, entry) {
@@ -229,12 +228,11 @@ async function discoverSelectedTasks(target, packageRoot, taskKeys) {
 }
 
 export async function findTaskById(target, taskId, packageRoot = getPackageRoot()) {
-  if (await needsExistingProjectScope(target)) {
-    return withExistingProjectScope(target, () => findTaskById(target, taskId, packageRoot), { readOnly: true });
-  }
-  const taskKey = taskStorageKey(taskId);
-  const store = getOperationalStore(target);
-  if (store && !store.taskRow(taskKey)) return null;
-  const tasks = await discoverTasks(target, packageRoot, store ? { taskKeys: [taskKey] } : {});
-  return tasks.find((t) => t.healthy !== false && (t.taskId === taskId || t.taskKey === taskKey)) ?? null;
+  return withNativeReadScope(target, async () => {
+    const taskKey = taskStorageKey(taskId);
+    const store = getOperationalStore(target);
+    if (store && !store.taskRow(taskKey)) return null;
+    const tasks = await discoverTasks(target, packageRoot, store ? { taskKeys: [taskKey] } : {});
+    return tasks.find((t) => t.healthy !== false && (t.taskId === taskId || t.taskKey === taskKey)) ?? null;
+  });
 }

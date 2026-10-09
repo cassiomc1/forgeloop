@@ -1,4 +1,3 @@
-import { needsExistingProjectScope, withExistingProjectScope } from "../storage/existing-project-scope.js";
 import { readdir } from "node:fs/promises";
 import { createReadStream } from "node:fs";
 import { createHash } from "node:crypto";
@@ -24,6 +23,7 @@ import { validateVerificationScope } from "./verification-scope.js";
 import { validateResponsibilityContract } from "./responsibility.js";
 import { validateWorkspaceBinding } from "./workspace-binding.js";
 import { validateCodeManifest, validateCodeManifestBindings } from "./code-manifest.js";
+import { withNativeReadScope } from "./native-storage.js";
 import { assertAttestationStatementBindings } from "./attestation-verifier.js";
 import { validateAttestationStatement } from "./attestation.js";
 import {
@@ -243,16 +243,15 @@ async function tryReadJson(target, taskPath, legacyPath, schemaName, packageRoot
 }
 
 export async function exportTaskBundle(target, taskId, packageRoot) {
-  if (await needsExistingProjectScope(target)) {
-    return withExistingProjectScope(target, () => exportTaskBundle(target, taskId, packageRoot), { readOnly: true });
-  }
-  const store = getOperationalStore(target);
-  if (!store) return exportSelectedTaskBundle(target, taskId, packageRoot);
-  const [{ withStorageSnapshot }, { withOperationalStore }, { operationalContext }] = await Promise.all([
-    import("../storage/snapshot.js"), import("../storage/unit-of-work.js"), import("../storage/operational-context.js"),
-  ]);
-  return withStorageSnapshot(store.db, snapshot => operationalContext.run(null,
-    () => withOperationalStore({ db: snapshot, target }, () => exportSelectedTaskBundle(target, taskId, packageRoot))));
+  return withNativeReadScope(target, async () => {
+    const store = getOperationalStore(target);
+    if (!store) return exportSelectedTaskBundle(target, taskId, packageRoot);
+    const [{ withStorageSnapshot }, { withOperationalStore }, { operationalContext }] = await Promise.all([
+      import("../storage/snapshot.js"), import("../storage/unit-of-work.js"), import("../storage/operational-context.js"),
+    ]);
+    return withStorageSnapshot(store.db, snapshot => operationalContext.run(null,
+      () => withOperationalStore({ db: snapshot, target }, () => exportSelectedTaskBundle(target, taskId, packageRoot))));
+  });
 }
 
 async function exportSelectedTaskBundle(target, taskId, packageRoot) {

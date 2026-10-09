@@ -1,5 +1,5 @@
 import { withProjectReadSnapshot } from "../storage/project-read-snapshot.js";
-import { needsExistingProjectScope, withExistingProjectScope } from "../storage/existing-project-scope.js";
+import { withExistingProjectScope } from "../storage/existing-project-scope.js";
 import { createHash } from "node:crypto";
 import path from "node:path";
 
@@ -21,6 +21,7 @@ import { canonicalFingerprint } from "./artifacts.js";
 import { taskArtifactPath } from "./task-paths.js";
 import { getTaskTransaction, withTaskTransaction } from "./transaction.js";
 import { readOperationalText, getOperationalStore } from "../storage/operational-context.js";
+import { withNativeReadScope } from "./native-storage.js";
 
 export const WORK_STATE_PATH = ".forgeloop/work-state.json";
 
@@ -237,68 +238,66 @@ async function validateStoredState(state, packageRoot = getPackageRoot()) {
 }
 
 export async function readWorkState(target, options = {}) {
-  if (await needsExistingProjectScope(target)) {
-    return withExistingProjectScope(target, () => readWorkState(target, options), { readOnly: true });
-  }
-  const packageRoot = typeof options === "string" ? options : (options?.packageRoot ?? getPackageRoot());
-  const relPath = typeof options === "object" && options !== null
-    ? (options.statePath ?? options.relativePath ?? (options.taskId ? taskArtifactPath(options.taskId, "state") : (options.taskContext ? options.taskContext.paths.state : WORK_STATE_PATH)))
-    : WORK_STATE_PATH;
+  return withNativeReadScope(target, async () => {
+    const packageRoot = typeof options === "string" ? options : (options?.packageRoot ?? getPackageRoot());
+    const relPath = typeof options === "object" && options !== null
+      ? (options.statePath ?? options.relativePath ?? (options.taskId ? taskArtifactPath(options.taskId, "state") : (options.taskContext ? options.taskContext.paths.state : WORK_STATE_PATH)))
+      : WORK_STATE_PATH;
 
-  const operational = readOperationalText(target, relPath);
-  if (operational.selected) {
-    if (operational.text === null) return null;
-    assertJsonBytes(operational.text, relPath);
-    return validateStoredState(JSON.parse(operational.text), packageRoot);
-  }
-  await assertSafePath(target, relPath);
-  const statePath = ensureWithin(target, relPath);
-  let state;
-  try {
-    const transaction = (await getTaskTransaction(target));
-    const staged = transaction ? await transaction.readText(relPath) : null;
-    if (staged === null) {
-      if (!(await fileExists(statePath))) return null;
-      const bytes = await readBytes(statePath);
-      assertJsonBytes(bytes, relPath);
-      state = JSON.parse(bytes.toString("utf8"));
-    } else {
-      const bytes = Buffer.from(staged, "utf8");
-      assertJsonBytes(bytes, relPath);
-      state = JSON.parse(staged);
+    const operational = readOperationalText(target, relPath);
+    if (operational.selected) {
+      if (operational.text === null) return null;
+      assertJsonBytes(operational.text, relPath);
+      return validateStoredState(JSON.parse(operational.text), packageRoot);
     }
-  } catch (error) {
-    throw new WorkStateError(`Unable to parse ${relPath}: ${error.message}`);
-  }
-  try {
-    return await validateStoredState(state, packageRoot);
-  } catch (error) {
-    if (error instanceof WorkStateError) throw error;
-    throw new WorkStateError(error.message);
-  }
+    await assertSafePath(target, relPath);
+    const statePath = ensureWithin(target, relPath);
+    let state;
+    try {
+      const transaction = (await getTaskTransaction(target));
+      const staged = transaction ? await transaction.readText(relPath) : null;
+      if (staged === null) {
+        if (!(await fileExists(statePath))) return null;
+        const bytes = await readBytes(statePath);
+        assertJsonBytes(bytes, relPath);
+        state = JSON.parse(bytes.toString("utf8"));
+      } else {
+        const bytes = Buffer.from(staged, "utf8");
+        assertJsonBytes(bytes, relPath);
+        state = JSON.parse(staged);
+      }
+    } catch (error) {
+      throw new WorkStateError(`Unable to parse ${relPath}: ${error.message}`);
+    }
+    try {
+      return await validateStoredState(state, packageRoot);
+    } catch (error) {
+      if (error instanceof WorkStateError) throw error;
+      throw new WorkStateError(error.message);
+    }
+  });
 }
 
 export async function readContractFingerprint(target, contractFile) {
-  if (await needsExistingProjectScope(target)) {
-    return withExistingProjectScope(target, () => readContractFingerprint(target, contractFile), { readOnly: true });
-  }
-  const operational = readOperationalText(target, contractFile);
-  if (operational.selected) {
-    if (operational.text === null) throw new WorkStateError(`Unable to parse contract ${contractFile}: artifact missing`);
-    assertJsonBytes(operational.text, contractFile);
-    return { path: contractFile, fingerprint: contractFingerprint(JSON.parse(operational.text)) };
-  }
-  await assertSafePath(target, contractFile);
-  const contractPath = ensureWithin(target, contractFile);
-  let contract;
-  try {
-    const bytes = await readBytes(contractPath);
-    assertJsonBytes(bytes, contractFile);
-    contract = JSON.parse(bytes.toString("utf8"));
-  } catch (error) {
-    throw new WorkStateError(`Unable to parse contract ${contractFile}: ${error.message}`);
-  }
-  return { path: contractFile, fingerprint: contractFingerprint(contract) };
+  return withNativeReadScope(target, async () => {
+    const operational = readOperationalText(target, contractFile);
+    if (operational.selected) {
+      if (operational.text === null) throw new WorkStateError(`Unable to parse contract ${contractFile}: artifact missing`);
+      assertJsonBytes(operational.text, contractFile);
+      return { path: contractFile, fingerprint: contractFingerprint(JSON.parse(operational.text)) };
+    }
+    await assertSafePath(target, contractFile);
+    const contractPath = ensureWithin(target, contractFile);
+    let contract;
+    try {
+      const bytes = await readBytes(contractPath);
+      assertJsonBytes(bytes, contractFile);
+      contract = JSON.parse(bytes.toString("utf8"));
+    } catch (error) {
+      throw new WorkStateError(`Unable to parse contract ${contractFile}: ${error.message}`);
+    }
+    return { path: contractFile, fingerprint: contractFingerprint(contract) };
+  });
 }
 
 export async function writeWorkState(target, state, options = {}) {

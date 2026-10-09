@@ -1,10 +1,10 @@
 import { getOperationalStore } from "../storage/operational-context.js";
-import { needsExistingProjectScope, withExistingProjectScope } from "../storage/existing-project-scope.js";
 import { withEventLedgerAudit } from "./events.js";
 import { canonicalFingerprint } from "./artifacts.js";
 import { assertContinuitySemantics, readContinuity } from "./continuity.js";
 import { WORK_TRANSITIONS } from "./protocol.js";
 import { lintContinuity } from "./continuity-lint.js";
+import { withNativeReadScope } from "./native-storage.js";
 
 const RECONCILIATION_CODE = "E_CONTINUITY_RECONCILIATION_REQUIRED";
 
@@ -175,9 +175,10 @@ export function classifyContinuity({
 
 export async function reconcileContinuity({ target, packageRoot, taskId = null } = {}) {
   const read = () => reconcileLoadedContinuity({ target, packageRoot, taskId });
-  if (await needsExistingProjectScope(target)) return withExistingProjectScope(target, () => reconcileContinuity({ target, packageRoot, taskId }), { readOnly: true });
-  if (getOperationalStore(target) && taskId) return withEventLedgerAudit(target, packageRoot, { taskId }, read);
-  return read();
+  return withNativeReadScope(target, () => {
+    if (getOperationalStore(target) && taskId) return withEventLedgerAudit(target, packageRoot, { taskId }, read);
+    return read();
+  });
 }
 
 async function reconcileLoadedContinuity({ target, packageRoot, taskId }) {

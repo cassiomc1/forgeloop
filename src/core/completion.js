@@ -1,4 +1,3 @@
-import { needsExistingProjectScope, withExistingProjectScope } from "../storage/existing-project-scope.js";
 import { ARTIFACT_PATHS, canonicalFingerprint, readJsonArtifact, writeJsonArtifact } from "./artifacts.js";
 import { requiredEvidenceForTarget, validateChecksExecutionProvenance } from "./completion-artifacts.js";
 import { appendProtocolEvent, previewProtocolEvent, LIFECYCLE_MILESTONES, validateEventLedger, validateStateLedgerCoherence } from "./events.js";
@@ -21,6 +20,7 @@ import { createCodeManifest, readCodeManifest, validateCodeManifestBindings, wri
 import { getTaskTransaction, withTaskTransaction } from "./transaction.js";
 import { operationalArtifactExists } from "../storage/operational-context.js";
 import { validateStructuralQualityCheckProvenance } from "./structural-quality/service.js";
+import { withNativeReadScope } from "./native-storage.js";
 
 async function attestationConfiguration(target, packageRoot, errors) {
   try {
@@ -301,10 +301,7 @@ export async function evaluateCompletion({
   preflightPath = null,
 } = {}) {
   const options = { target, packageRoot, strict, authorityContext, runtimeContext, taskId, contractPath, routePath, statePath, receiptPath, eventsPath, preflightPath };
-  if (await needsExistingProjectScope(target)) {
-    return withExistingProjectScope(target, async () => evaluateSelectedCompletion(await resolveCompletionTaskOptions(options)), { readOnly: true });
-  }
-  return evaluateSelectedCompletion(await resolveCompletionTaskOptions(options));
+  return withNativeReadScope(target, async () => evaluateSelectedCompletion(await resolveCompletionTaskOptions(options)));
 }
 
 async function resolveCompletionTaskOptions(options) {

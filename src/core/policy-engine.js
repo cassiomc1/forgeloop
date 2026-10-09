@@ -1,4 +1,4 @@
-import { needsExistingProjectScope, withExistingProjectScope } from "../storage/existing-project-scope.js";
+import { withNativeReadScope } from "./native-storage.js";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileExists } from "./filesystem.js";
@@ -84,22 +84,21 @@ export async function writePolicyLock(target, lock, packageRoot) {
 }
 
 export async function readTaskPolicySnapshot(target, taskId, packageRoot) {
-  if (await needsExistingProjectScope(target)) {
-    return withExistingProjectScope(target, () => readTaskPolicySnapshot(target, taskId, packageRoot), { readOnly: true });
-  }
-  const relPath = taskArtifactPath(taskId, "policySnapshot");
-  const selected = operationalArtifactExists(target, relPath);
-  if (selected !== null) return selected ? (await readJsonArtifact(target, relPath, "policy-snapshot", packageRoot)).value : null;
-  const fullPath = path.join(target, relPath);
-  if (!(await fileExists(fullPath))) {
-    return null;
-  }
-  const raw = await readFile(fullPath, "utf8");
-  assertJsonLimits(raw, relPath);
-  const parsed = JSON.parse(raw);
-  const schema = await readSchema("policy-snapshot", packageRoot);
-  assertSchema(parsed, schema, "policy-snapshot");
-  return parsed;
+  return withNativeReadScope(target, async () => {
+    const relPath = taskArtifactPath(taskId, "policySnapshot");
+    const selected = operationalArtifactExists(target, relPath);
+    if (selected !== null) return selected ? (await readJsonArtifact(target, relPath, "policy-snapshot", packageRoot)).value : null;
+    const fullPath = path.join(target, relPath);
+    if (!(await fileExists(fullPath))) {
+      return null;
+    }
+    const raw = await readFile(fullPath, "utf8");
+    assertJsonLimits(raw, relPath);
+    const parsed = JSON.parse(raw);
+    const schema = await readSchema("policy-snapshot", packageRoot);
+    assertSchema(parsed, schema, "policy-snapshot");
+    return parsed;
+  });
 }
 
 export async function writeTaskPolicySnapshot(target, taskId, snapshot, packageRoot) {
