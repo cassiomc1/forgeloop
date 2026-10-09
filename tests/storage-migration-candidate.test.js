@@ -66,6 +66,29 @@ test("candidate preparation validates a real lifecycle and preserves source/expo
   } finally { await removeTempTree(target); }
 });
 
+test("candidate preparation retains legacy event-index bytes without reproducing the sidecar", async () => {
+  const target = await buildDiagnosisProject({ legacy: true });
+  try {
+    const relativeSidecar = `.forgeloop/task-state/${taskStorageKey(TEST_TASK_ID)}/events.ndjson.index.json`;
+    const sidecar = path.join(target, relativeSidecar);
+    const sidecarBytes = Buffer.from('{"schemaVersion":1,"entries":[{"seq":6,"offset":123}]}' + "\n");
+    await writeFile(sidecar, sidecarBytes);
+
+    const before = await inventoryLegacySource(target);
+    assert.ok(before.some(file => file.path === relativeSidecar));
+    const prepared = await prepareMigrationCandidate(target, { destination: "retained", writersQuiesced: true });
+
+    assert.deepEqual(await readFile(sidecar), sidecarBytes);
+    assert.deepEqual(await readFile(path.join(prepared.path, "source", relativeSidecar)), sidecarBytes);
+    assert.deepEqual(await inventoryLegacySource(target), before);
+    await assert.rejects(
+      stat(path.join(prepared.path, "parity-export", relativeSidecar)),
+      { code: "ENOENT" },
+    );
+    assert.ok(prepared.manifest.parity.filesCompared > 0);
+  } finally { await removeTempTree(target); }
+});
+
 test("candidate preparation rejects schema-invalid optional records and retains diagnostics and exclusion", async () => {
   const target = await buildDiagnosisProject({ legacy: true });
   try {

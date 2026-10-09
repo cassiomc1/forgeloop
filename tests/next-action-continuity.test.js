@@ -2,6 +2,39 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import { NEXT_ACTIONS } from "../src/core/next-action-model.js";
+import { taskArtifactPath } from "../src/core/task-paths.js";
+
+test("blocking continuity responses identify the selected task's artifacts", async () => {
+  const { nextActionForContinuity } = await import("../src/core/next-action-continuity.js");
+  const taskId = "selected-continuity-task";
+  const expectedArtifacts = [taskArtifactPath(taskId, "continuity"), taskArtifactPath(taskId, "state")];
+  for (const classification of ["RECONCILIATION_REQUIRED", "INVALID", "INCONSISTENT"]) {
+    const response = nextActionForContinuity({
+      context: { taskId, currentPhase: "EXECUTING" },
+      continuity: { classification },
+    });
+    assert.equal(response.nextAction, NEXT_ACTIONS.RESOLVE_BLOCKER);
+    assert.deepEqual(response.requiredArtifacts, expectedArtifacts);
+    assert.ok(response.reasons.length > 0);
+    for (const reason of response.reasons) {
+      assert.deepEqual([...reason.artifacts].sort(), expectedArtifacts);
+    }
+    if (classification === "RECONCILIATION_REQUIRED") {
+      assert.deepEqual(response.commands, [`forgeloop reconcile-continuity --task ${taskId}`]);
+      assert.deepEqual(response.commandSpecs[0].argv, ["reconcile-continuity", `--task=${taskId}`, "--json"]);
+    }
+  }
+});
+
+test("continuity responses retain singleton artifact paths when no task is selected", async () => {
+  const { nextActionForContinuity } = await import("../src/core/next-action-continuity.js");
+  const response = nextActionForContinuity({
+    context: { currentPhase: "EXECUTING" },
+    continuity: { classification: "RECONCILIATION_REQUIRED" },
+  });
+  assert.deepEqual(response.requiredArtifacts, [".forgeloop/continuity.json", ".forgeloop/work-state.json"]);
+  assert.deepEqual(response.commands, ["forgeloop reconcile-continuity"]);
+});
 
 test("next-action model exposes CONTINUE_IMPLEMENTATION without a phase-change command", async () => {
   const { commandFor } = await import("../src/core/next-action-model.js");

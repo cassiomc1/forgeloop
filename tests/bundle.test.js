@@ -2,6 +2,7 @@ import { removeTempTree } from "./helpers/rm-safe.js";
 import { ensureFixtureTask, readRawFixtureText, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
 import { exportLegacyFixture } from "./helpers/storage-fixtures.js";
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { mkdir, mkdtemp, readFile, rm, writeFile, symlink, rename } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -12,6 +13,7 @@ import { taskAttestationBundlePath, taskArtifactPath } from "../src/core/task-pa
 import { writeJsonArtifact } from "../src/core/artifacts.js";
 import { createCheck } from "../src/core/checks.js";
 import { createContract, contractFingerprint, writeContract } from "../src/core/contract.js";
+import { writeContinuity } from "../src/core/continuity.js";
 import { runCommandExecution } from "../src/core/execution.js";
 import { evaluateRoute } from "../src/core/router.js";
 import { persistRoute } from "../src/core/route-artifact.js";
@@ -242,6 +244,58 @@ test("bundle reads reject a manually persisted secret-like bundled contract", as
         return true;
       },
     );
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("portable task bundles reject continuity bound to a foreign task after manifest rebinding", async () => {
+  const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-bundle-continuity-identity-"));
+  const taskId = "bundle-continuity-owner";
+  const foreignTaskId = "bundle-continuity-foreign";
+  try {
+    const contract = createContract({
+      taskId,
+      objective: "bundle continuity identity",
+      deliverables: [],
+      constraints: [],
+      risks: [],
+      verification: [],
+      successCriteria: [],
+      stopConditions: [],
+      unresolvedDecisions: [],
+      sourceRefs: [],
+    });
+    await ensureFixtureTask(target, taskId, packageRoot);
+    await writeContract(target, contract, packageRoot, { taskId });
+    await prepareRouteAndState(target, contract);
+    await writeContinuity(target, {}, { taskId, packageRoot });
+
+    const bundle = await exportTaskBundle(target, taskId, packageRoot);
+    const sameTask = await readTaskBundle(target, taskId, packageRoot);
+    assert.equal(sameTask.manifest.taskId, taskId);
+    assert.equal(sameTask.artifacts.continuity.taskId, taskId);
+
+    const directory = path.join(target, ".forgeloop", "tasks", taskId);
+    const manifestPath = path.join(directory, "bundle.json");
+    const continuityPath = path.join(directory, "continuity.json");
+    const continuity = JSON.parse(await readFile(continuityPath, "utf8"));
+    continuity.taskId = foreignTaskId;
+    await writeFile(continuityPath, `${JSON.stringify(continuity, null, 2)}\n`, "utf8");
+
+    const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+    const continuityBytes = await readFile(continuityPath);
+    const continuityBinding = manifest.files.find(file => file.path === "continuity.json");
+    assert.ok(continuityBinding, "the exported continuity artifact must be manifest-bound");
+    continuityBinding.size = continuityBytes.length;
+    continuityBinding.sha256 = createHash("sha256").update(continuityBytes).digest("hex");
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
+
+    await assert.rejects(
+      () => readTaskBundle(target, taskId, packageRoot),
+      { code: "E_BUNDLE_TASK_MISMATCH" },
+    );
+    assert.equal(bundle.taskId, taskId);
   } finally {
     await removeTempTree(target);
   }

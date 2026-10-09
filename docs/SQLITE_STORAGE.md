@@ -471,15 +471,26 @@ observed lease before deleting it, and malformed ownership stays fail closed.
 Full action-launch crash/reconciliation coverage and long-running lease renewal
 remain required.
 
-Production CLI, API and MCP boundaries select an existing SQLite store; fresh
-and legacy projects still use the filesystem adapter. Remaining direct path consumers, public maintenance,
-legacy exclusion/cutover, platform validation, deletion of filesystem staging
-and original performance/code-size acceptance remain unfinished.
+At this historical checkpoint, fresh and legacy projects still used the
+filesystem adapter. Current CLI, API and MCP boundaries select existing SQLite
+storage and bootstrap fresh writable projects into SQLite; ordinary legacy
+mutation requires explicit migration. Fresh read-only commands do not create a
+store. Current capabilities still advertise `soleSQLiteWriter: false` because
+the complete consumer audit and original release acceptance remain unfinished.
 
 `storage-backup` opens the source store read-only even though it writes a new
 destination. `doctor` also opens the store read-only unless `--fix` is explicitly
 true. Both inspection paths refuse an older schema without upgrading it;
 command mutation classification alone does not authorize a source migration.
+
+Ordinary backup does not require writer quiescence. The database backup uses
+SQLite's native backup API; attachment-inclusive backup enumerates references
+from the retained database snapshot and copies verified immutable attachment
+objects. Later source mutations do not redefine the retained snapshot. Explicit
+migration and active-project restore replacement retain their separate writer
+quiescence and maintenance ownership requirements. Direct backup APIs accept a
+database handle and source root from their caller; they do not independently
+establish that the handle belongs to that root.
 
 Private migration candidate preparation captures retained sources, imports them,
 validates domain schemas and lifecycle evidence, checks source/export parity and

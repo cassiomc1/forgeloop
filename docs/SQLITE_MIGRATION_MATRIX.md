@@ -2,6 +2,41 @@
 
 Current checkpoint progress: [SQLite migration progress](SQLITE_PROGRESS.md).
 
+## Pending corrections and bounded filesystem review943
+
+Five test files now contain unexecuted regressions for selected-task continuity
+retrieval and response paths, foreign-task continuity in portable bundles,
+public task-scope lease/claim rejection, and exact retained legacy sidecar bytes.
+Production corrections have not been applied. These cases must run against the
+unchanged implementation before correction and then pass afterward; their
+presence does not establish acceptance.
+
+The external binding review reconciles all 42 indexed filesystem escape leads
+and all 54 statically resolved `writeFileAtomic` call sites against current
+source hashes. The reports distinguish portable/configuration output,
+maintenance journals, immutable attachment bytes, installation metadata and
+advisory transport/index state from canonical operational records. Numeric
+open/access flags are not callable filesystem capabilities. This closes the
+finite inventory reconciliation, not interprocedural or whole-repository
+sole-writer proof. Other filesystem APIs, wrapper propagation and public
+consumer behavior retain their separate obligations.
+
+Ordinary backup is intentionally online: SQLite backup produces a retained
+snapshot, and attachment copying follows that snapshot's immutable references.
+Migration and active replacement retain separate quiescence requirements.
+Direct backup callers supply the database/source-root association; this source
+review does not independently validate arbitrary supplied handles.
+
+External records are retained under `/Users/cassio/.codex/verification`:
+`regressions939-preparation.json`, `filesystem-escapes942-reconciliation.json`,
+`filesystem-atomic943-reconciliation.json`, and their referenced reports.
+The portable scoped review is retained in
+`benchmarks/storage-sqlite/filesystem-authority944-review.json`, including
+call-site descriptions, source hashes, coverage leads and explicit limits.
+The natural resource job was still measuring at the 14:50 UTC observation;
+tests remain deferred until terminal status and cleanup. The inclusive LOC
+target remains unmet, protocol state remains `CORRECTING`, and no PR exists.
+
 ## Current production and validation933
 
 The semantic revision-conflict correction919 is now covered by full local prepush920, Windows926, Core931 (all17 jobs), package932 (MCP73 on each of three hosts) and expanded compatibility933 (all7 jobs). Source-bound terminal records are retained under `benchmarks/storage-sqlite`. Local documentation/evidence commits since pushed `20aca2b` do not change production or tests. Natural resource comparison37922435146 is running against that validated revision; it is not yet acceptance. Complete consumer/maintenance authority, resource/LOC gates and protocol closure remain open.
