@@ -15,8 +15,8 @@ function createOwner(extra = {}) {
   return { schemaVersion: 1, ownerId: randomUUID(), pid: process.pid, hostname: os.hostname(), acquiredAt: new Date().toISOString(), ...extra };
 }
 
-async function runOwnedMaintenance(target, directory, ownerData, callback, { retainOnError = false } = {}) {
-  const context = { directory, ownerId: ownerData.ownerId, active: true, releaseBlocked: false };
+async function runOwnedMaintenance(target, directory, ownerData, callback, { retainOnError = false } = {}, deadOwner = null) {
+  const context = { directory, ownerId: ownerData.ownerId, active: true, releaseBlocked: false, deadOwner };
   let completed = false;
   try {
     const result = await active.run(context, callback);
@@ -94,6 +94,9 @@ function assertLocalOwnerDead(owner) {
 /** Follow only the exact persisted adoption chain; never scan or infer owners. */
 export async function assertStorageMaintenanceOwnerContinuity(target, { expectedOwnerId, recordedOwnerId } = {}) {
   if (!MAINTENANCE_OWNER_ID.test(expectedOwnerId ?? "") || !MAINTENANCE_OWNER_ID.test(recordedOwnerId ?? "")) throw busy("Owner continuity requires exact identities");
+  const context = active.getStore();
+  const proof = context?.active && context.ownerId === expectedOwnerId
+    && context.directory === await assertSafePath(target, EXCLUSION) ? context.deadOwner : null;
   let owner = (await readMaintenanceOwner(target)).value;
   if (owner.ownerId !== expectedOwnerId) throw busy("Current maintenance owner differs from continuity request");
   const visited = new Set();
@@ -104,7 +107,11 @@ export async function assertStorageMaintenanceOwnerContinuity(target, { expected
     if (!MAINTENANCE_OWNER_ID.test(owner.resumedFrom ?? "")) throw busy("Recorded operation owner is outside maintenance adoption history");
     const previous = await readMaintenanceOwner(target, `.forgeloop/storage-maintenance-history/${owner.resumedFrom}.json`);
     if (previous.value.ownerId !== owner.resumedFrom) throw busy("Maintenance owner history identity differs from its pathname");
-    assertLocalOwnerDead(previous.value);
+    if (context?.active && proof?.ownerId === previous.value.ownerId) {
+      // Adoption already observed this exact owner's death. A later process
+      // may reuse its PID; only unchanged bytes in this live scope retain proof.
+      if (previous.text !== proof.text) throw busy("Verified dead owner archive changed");
+    } else assertLocalOwnerDead(previous.value);
     owner = previous.value;
   }
   throw busy("Maintenance owner history exceeds bounded recovery depth");
@@ -134,5 +141,7 @@ export async function resumeStorageMaintenance(target, { expectedOwnerId, writer
   await publishMaintenanceOwner(target, claimedOwner);
   // Recovery failure retains this new owner's marker; later work must inspect
   // the operation state instead of reopening normal commands over partial work.
-  return runOwnedMaintenance(target, directory, ownerData, callback, { retainOnError: true });
+  return runOwnedMaintenance(target, directory, ownerData, callback, { retainOnError: true }, {
+    ownerId: previous.value.ownerId, text: previous.text,
+  });
 }
