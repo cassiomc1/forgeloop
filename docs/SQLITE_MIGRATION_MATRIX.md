@@ -4,42 +4,62 @@ Current checkpoint progress: [SQLite migration progress](SQLITE_PROGRESS.md).
 
 ## Current local acceptance evidence
 
-Full Node 24.19.0 prepush at `4b196d3` passed with 2,958 core tests:
-2,947 passed, zero failed, and 11 skipped. Clean packaged MCP passed 77 tests;
-PoC67, package12, Python56, coverage, documentation, policy, and remaining
-prepush gates passed. All 3,090 tracked source hashes matched the before-start
-manifest. Evidence: `benchmarks/storage-sqlite/prepush-4b196d3-success.json`.
+Full Node 24.19.0 prepush at `9dd179c` passed with 2,959 core tests:
+2,948 passed, zero failed, and 11 skipped. Clean packaged MCP passed 77 tests;
+PoC67, package12, Python56, coverage, documentation, policy, and all 22 prepush
+stages passed. All 3,092 tracked source hashes matched the before-start
+manifest. `TYPESAFE_API_KEY` and `NODE_OPTIONS` were unset at launch. Evidence:
+`benchmarks/storage-sqlite/prepush-9dd179c-success.json`.
 These results supersede the historical unexecuted-regression descriptions
 below; they do not establish current cross-platform or whole-consumer closure.
 
-The actual MCP suites now cover native activation, evaluation and accepted
+The MCP handoff fixture now explicitly installs and clears the deterministic
+repository test provider. This corrects the missing-provider failure in
+GitHub tarball-smoke job `114034460816` without changing production
+credential requirements. The clean packed 77-test suite also passed separately
+with credentials and the provider loader unset.
+
+The actual MCP suites cover native activation, evaluation and accepted
 handoff resources, and full/maintenance portable bundle tools with exact API
 response parity and exported-file size/digest checks. Core validation includes
 selected-task continuity, foreign-task bundle rejection, and public
 run-action/native and adapter run-check transaction-boundary regressions.
 
+Pure read-only scopes now avoid constructing commit observations and row
+digests. They still validate payloads, indexed fields, event chains, semantic
+bindings and private snapshot integrity. Detached proof views with writable
+ancestors retain full conflict observations, including through nested views.
+The new regression reproduced four unnecessary read-set entries before the
+correction, then passed with zero entries and rejection of independently
+modified event indexes on the next audit. All 64 focused snapshot, audit,
+tamper and atomicity tests passed. See
+`benchmarks/storage-sqlite/readonly-observation-9dd179c.json`.
+This proves the read-set behavior, not an RSS improvement.
+
 The durability helper preserves tolerated directory-sync errors and strict
-publication open/close errors. The startup module-boundary regression found
-by full validation was corrected through lazy maintenance-handoff loading,
-without widening the admission-module allow-list. Immutable task-row caching
-is bounded to 64 rows; deferred task observations retain the revision and
-full-row conflict fingerprint. This structural bound is not an RSS claim.
+publication open/close errors. The startup module-boundary regression was
+corrected through lazy maintenance-handoff loading without widening the
+admission-module allow-list. Immutable task-row caching is bounded to 64 rows;
+deferred task observations retain revision and full-row conflict bindings.
 
 Matched 1,000-task MCP pilots at `9f7cc66` and `589c565` retain 25 samples per
 backend/operation, response parity, unchanged before-start source hashes,
 closed workers, parent completion, and fixture cleanup. At `589c565`, native
 project/tasks p95 was 507.17 ms versus 1,278.75 ms for baseline, but native
-endpoint RSS remained higher. Resource acceptance remains open. See
-`benchmarks/storage-sqlite/mcp-pilot-589c565.json`.
+endpoint RSS remained higher. Resource acceptance remains open, and the
+read-only observation correction requires a fresh measurement after cleanup.
+See `benchmarks/storage-sqlite/mcp-pilot-589c565.json`.
 
-The inclusive function scope at production `8927208` is closed with zero
-unresolved membership, but its 25,732 → 32,538 selected-line comparison fails
-the unchanged 25% reduction target. All storage, importer/exporter,
-compatibility, and maintenance code remains included. Later production
-changes require a refreshed measurement. See
-`benchmarks/storage-sqlite/persistence-loc-c98186c-closed.json`.
+The inclusive function scope at `9dd179c` is closed with zero unresolved
+membership: 25,732 baseline lines became 32,529 current lines, against the
+unchanged target ceiling of 19,299. The 25% reduction target fails. All
+storage, importer/exporter, compatibility and maintenance code remains
+included. Existing membership dispositions were preserved; only metadata for
+unchanged function/call fingerprints was refreshed. All 933 source hashes
+were checked. See `benchmarks/storage-sqlite/persistence-loc-9dd179c-closed.json`.
 
-GitHub core run `37993768913` is validating pushed revision `aa03451`.
+GitHub core run `37993768913` is still validating earlier pushed revision
+`aa03451`; its tarball-smoke job failed before the fixture correction.
 Current expanded platform results, resource/LOC acceptance, sole-writer and
 whole-consumer closure, and official validator-backed completion remain open.
 No PR or package publication has been performed.
