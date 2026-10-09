@@ -2,6 +2,7 @@ import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { access, chmod, mkdtemp, writeFile } from "node:fs/promises";
+import { setTimeout as delay } from "node:timers/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -22,6 +23,8 @@ import { executionArtifactPath } from "../src/core/artifacts.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { captureVerificationScope } from "../src/core/verification-scope.js";
 import { taskVerificationScopePath } from "../src/core/task-paths.js";
+import { getOperationalStore } from "../src/storage/operational-context.js";
+import { withProjectStorage } from "../src/storage/project-boundary.js";
 import { setupVerifyingTask } from "./helpers/durable-lifecycle.js";
 import { createGitRepository } from "./helpers/git-fixture.js";
 import { removeTempTree } from "./helpers/rm-safe.js";
@@ -36,6 +39,22 @@ async function withTarget(run) {
   } finally {
     await removeTempTree(target);
   }
+}
+
+async function waitForFile(filename, { timeoutMs = 5000, signal } = {}) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (signal?.aborted) throw signal.reason ?? new Error("File barrier was cancelled");
+    try {
+      await access(filename);
+      return;
+    } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+    }
+    const remaining = deadline - Date.now();
+    if (remaining > 0) await delay(Math.min(10, remaining), undefined, { signal });
+  }
+  throw new Error(`Timed out waiting for external execution marker: ${filename}`);
 }
 
 test("run-check launches the registered scoped checker with exact argv and scope evidence", async () => {
@@ -107,6 +126,109 @@ test("run-check rejects a scoped argv mismatch before launching a process", asyn
       }),
       (error) => error.code === "E_VERIFICATION_SCOPE_UNRESOLVED" && error.reason === "ARGV_MISMATCH",
     );
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("public run-check external adapter runs without an open SQLite writer transaction", async () => {
+  const target = await createGitRepository("forgeloop-run-check-transaction-");
+  const taskId = "run-check-transaction-001";
+  const observations = [];
+  try {
+    await setupVerifyingTask(target, packageRoot, { taskId });
+    const result = await runCheck({
+      target,
+      packageRoot,
+      taskId,
+      id: "transaction-boundary",
+      requirement: "external verification runs outside the SQLite writer",
+      argv: [process.execPath, "-e", "process.exit(0)"],
+      runtimeContext: {
+        verificationExecutionAdapter: {
+          async execute(request) {
+            assert.equal(request.taskId, taskId);
+            const store = getOperationalStore(target);
+            assert.ok(store);
+            observations.push({ isTransaction: store.db.isTransaction, transaction: store.transaction });
+            return {
+              exitCode: 0,
+              signal: null,
+              timedOut: false,
+              stdout: "adapter passed\n",
+              stderr: "",
+              outputTruncated: false,
+              cwd: target,
+              isolation: {
+                mode: "NATIVE_PROJECT",
+                isolated: false,
+                liveProjectWritable: true,
+                networkPolicy: "INHERITED",
+                environmentPolicy: "INHERITED",
+              },
+            };
+          },
+        },
+      },
+    });
+
+    assert.equal(result.execution.status, "passed");
+    assert.deepEqual(observations, [{ isTransaction: false, transaction: null }]);
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("public native run-check launches without an open SQLite writer transaction", async () => {
+  const target = await createGitRepository("forgeloop-run-check-native-transaction-");
+  const taskId = "run-check-native-transaction-001";
+  const marker = path.join(target, "external-check-started.txt");
+  const release = path.join(target, "external-check-release.txt");
+  try {
+    await setupVerifyingTask(target, packageRoot, { taskId });
+    await withProjectStorage(target, async store => {
+      const childScript = [
+        "const fs = require('node:fs');",
+        `const marker = ${JSON.stringify(marker)};`,
+        `const release = ${JSON.stringify(release)};`,
+        "fs.writeFileSync(marker, 'started');",
+        "const timer = setInterval(() => { if (fs.existsSync(release)) { clearInterval(timer); process.exit(0); } }, 10);",
+        "setTimeout(() => process.exit(2), 5000);",
+      ].join(" ");
+      const operation = runCheck({
+        target,
+        packageRoot,
+        taskId,
+        id: "native-transaction-boundary",
+        requirement: "native external verification runs outside the SQLite writer",
+        argv: [process.execPath, "-e", childScript],
+        timeoutMs: 3000,
+      });
+      const completion = operation.then(
+        result => ({ kind: "completed", result }),
+        error => ({ kind: "failed", error }),
+      );
+      const markerController = new AbortController();
+      const markerObserved = waitForFile(marker, { timeoutMs: 3000, signal: markerController.signal });
+      try {
+        const first = await Promise.race([
+          markerObserved.then(() => ({ kind: "marker" })),
+          completion,
+        ]);
+        if (first.kind === "failed") throw first.error;
+        if (first.kind === "completed") throw new Error("run-check completed before its native external marker was observed");
+        assert.equal(store.db.isTransaction, false);
+        assert.equal(store.transaction, null);
+        await writeFile(release, "release\n", "utf8");
+        const finished = await completion;
+        if (finished.kind === "failed") throw finished.error;
+        assert.equal(finished.result.execution.status, "passed");
+      } finally {
+        await writeFile(release, "release\n", "utf8").catch(() => {});
+        markerController.abort();
+        await Promise.allSettled([markerObserved, completion]);
+      }
+    });
   } finally {
     await removeTempTree(target);
   }

@@ -1,12 +1,17 @@
 import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { access, mkdtemp, readFile } from "node:fs/promises";
+import { access, mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { setTimeout as delay } from "node:timers/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
 import { executeDurableAction } from "../src/core/action-execution.js";
+import { runAction } from "../src/commands/run-action.js";
+import { withProjectStorage } from "../src/storage/project-boundary.js";
 import { seedPolicyEpoch } from "./helpers/durable-policy.js";
+import { setupVerifyingTask } from "./helpers/durable-lifecycle.js";
+import { createGitRepository } from "./helpers/git-fixture.js";
 import { getPackageRoot } from "../src/core/templates.js";
 
 const packageRoot = getPackageRoot();
@@ -26,6 +31,82 @@ function input(overrides = {}) {
     idempotencyKey: "write:sentinel:v1", requiredForCompletion: false, requirement: null,
     ...overrides };
 }
+
+async function waitForFile(filename, { timeoutMs = 5000, signal } = {}) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (signal?.aborted) throw signal.reason ?? new Error("File barrier was cancelled");
+    try {
+      await access(filename);
+      return;
+    } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+    }
+    const remaining = deadline - Date.now();
+    if (remaining > 0) await delay(Math.min(10, remaining), undefined, { signal });
+  }
+  throw new Error(`Timed out waiting for external execution marker: ${filename}`);
+}
+
+test("public native run-action launches without an open SQLite writer transaction", async () => {
+  const target = await createGitRepository("forgeloop-run-action-transaction-");
+  const taskId = "run-action-transaction-001";
+  const marker = path.join(target, "external-started.txt");
+  const release = path.join(target, "external-release.txt");
+  try {
+    await setupVerifyingTask(target, packageRoot, { taskId });
+    await withProjectStorage(target, async store => {
+      const childScript = [
+        "const fs = require('node:fs');",
+        `const marker = ${JSON.stringify(marker)};`,
+        `const release = ${JSON.stringify(release)};`,
+        "fs.writeFileSync(marker, 'started');",
+        "const timer = setInterval(() => { if (fs.existsSync(release)) { clearInterval(timer); process.exit(0); } }, 10);",
+        "setTimeout(() => process.exit(2), 5000);",
+      ].join(" ");
+      const operation = runAction({
+        target,
+        packageRoot,
+        taskId,
+        actionId: "action-transaction-boundary",
+        capability: "filesystem.write",
+        effectClass: "REVERSIBLE_WRITE",
+        actionTarget: "external-started.txt",
+        idempotencyKey: "run-action:transaction-boundary:v1",
+        requirement: null,
+        requiredForCompletion: false,
+        argv: [process.execPath, "-e", childScript],
+        timeoutMs: 3000,
+      });
+      const completion = operation.then(
+        result => ({ kind: "completed", result }),
+        error => ({ kind: "failed", error }),
+      );
+      const markerController = new AbortController();
+      const markerObserved = waitForFile(marker, { timeoutMs: 3000, signal: markerController.signal });
+      try {
+        const first = await Promise.race([
+          markerObserved.then(() => ({ kind: "marker" })),
+          completion,
+        ]);
+        if (first.kind === "failed") throw first.error;
+        if (first.kind === "completed") throw new Error("run-action completed before its external marker was observed");
+        assert.equal(store.db.isTransaction, false);
+        assert.equal(store.transaction, null);
+        await writeFile(release, "release\n", "utf8");
+        const finished = await completion;
+        if (finished.kind === "failed") throw finished.error;
+        assert.equal(finished.result.action.state, "COMMITTED");
+      } finally {
+        await writeFile(release, "release\n", "utf8").catch(() => {});
+        markerController.abort();
+        await Promise.allSettled([markerObserved, completion]);
+      }
+    });
+  } finally {
+    await removeTempTree(target);
+  }
+});
 
 test("side-effecting run-action refuses a missing idempotency key", async () => {
   const { target, taskId } = await targetWithPolicy();
