@@ -16,15 +16,19 @@ Treat database contents, imports, paths, exported files, and external observatio
 
 ## Current verified state
 
-- Foundation and limited diagnosis/advance dispatch exist in the copied work.
-- The six existing continuity tests pass on Node 26.10.0/macOS; this does not prove full filesystem parity or the complete migration.
-- Existing fixture synthesizes milestone events and suppresses preflight errors. Replace it with a supported-command lifecycle before claiming Phase 2C closure.
-- Node 24 compatibility, Linux/Windows, full writer cutover, migration/restore and LOC/performance targets remain unverified.
-- Jevgrep discovery reached its bounded request limit; direct source reads are used for verification.
+This checkpoint supersedes the initial foundation-only snapshot; it does not mark any original definition-of-done item complete.
+
+- Node 24.19.0 full prepush at `8927208` ran 2,956 core tests: 2,944 passed, one failed, and 11 were skipped. The only failure was the stale generated task-unlock description. Later stages were not reached. The tracked source manifest remained unchanged throughout the run. See `benchmarks/storage-sqlite/prepush-8927208-failure.json`.
+- Commit `c98186c` regenerated that description from the canonical command registry. The focused documentation-summary test and `verify:fast` passed. A new complete prepush is still required after the pending consolidation changes.
+- The inclusive static LOC scope is closed with zero unresolved membership, including all storage, import/export, maintenance, migration, backup, restore, and attachment modules. Baseline 25,732 lines became 32,538 lines at production revision `8927208`: growth of 26.45%, against the unchanged target ceiling of 19,299. The 25% reduction gate fails. See `benchmarks/storage-sqlite/persistence-loc-c98186c-closed.json`.
+- GitHub benchmark run `37922435146`, job `113793330871`, completed successfully on source `20aca2ba332ed86323722ef91812925ad9dadb83`. Its retained parity, sample, worker, parent, and cleanup evidence was inspected. Resource acceptance remains false; newer production revisions require fresh measurement.
+- Task-summary projection is implemented with snapshot/CAS and output-parity coverage. Its RSS benefit has not yet been measured.
+- The task remains `CORRECTING`; official `next` requests `RECONCILE_CLOSURE` for repository changes. Whole-plan closure is not proven, and no PR has been opened.
+- Jevgrep discovery reached its bounded request limit; direct source reads supplement discovery.
 
 ## Next actions
 
-1. Build a real diagnosis fixture with task-create, discovery, contract-create, route, preflight, activation, phase commands and a deterministic failed check.
-2. Compare complete filesystem and SQLite prerequisites; close Phase 2C parity, rollback/contention and attempted-I/O gates.
-3. Inventory every operational consumer in a migration matrix, then migrate in dependency order through sole-writer cutover and removal.
-4. Verify runtime/package/platform, migration/restore, benchmarks and net LOC; complete protocol and open the PR only after the full checklist is evidenced.
+1. Consolidate duplicated persistence mechanics without changing error precedence, durability, authority, ownership, snapshot, or CAS semantics; validate each change before committing it.
+2. Measure the task-summary projection with matched MCP fixtures and preserve raw parity, memory, sample, source, and cleanup evidence.
+3. Close the original LOC target through actual production architecture changes; retain conservative scope membership and all new storage/compatibility code.
+4. Run current complete regression, consumer, runtime/package/platform, migration/restore, and performance gates. Reconcile the full original plan against current evidence, obtain official validator-backed closure, then open the PR.
