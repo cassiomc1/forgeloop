@@ -118,7 +118,13 @@ class OperationalStore {
     if (this.transaction && !this.db.isTransaction && previous && canonicalFingerprint(value ?? null) !== previous.fingerprint) {
       throw storageError(previous.conflictCode ?? "E_STATE_REVISION_CONFLICT", "Operational records changed between preparation reads");
     }
-    if (!this.reads.has(key)) this.reads.set(key, { query, value: Array.isArray(value) ? null : value, conflictCode, fingerprint: canonicalFingerprint(value ?? null) });
+    if (!this.reads.has(key)) {
+      // Task writes need the observed revision, while conflict detection binds
+      // the entire row through its fingerprint and live query. Do not retain
+      // every descriptor/state payload alongside an immutable discovery copy.
+      const retained = key.startsWith("task:") && value ? { revision: value.revision } : Array.isArray(value) ? null : value;
+      this.reads.set(key, { query, value: retained, conflictCode, fingerprint: canonicalFingerprint(value ?? null) });
+    }
     return value;
   }
 
@@ -144,7 +150,12 @@ class OperationalStore {
     }
     // Reuse only successfully validated bytes from a live owned read-only copy.
     // Observation queries remain uncached and rebind to the parent at commit.
-    if (immutable) this.snapshotTaskRows.set(taskKey, row ? Object.freeze(row) : null);
+    if (immutable) {
+      // Eviction is safe only for this owned immutable snapshot. Re-reading an
+      // evicted row repeats payload validation and preserves its observation.
+      if (this.snapshotTaskRows.size >= 64) this.snapshotTaskRows.delete(this.snapshotTaskRows.keys().next().value);
+      this.snapshotTaskRows.set(taskKey, row ? Object.freeze(row) : null);
+    }
     return row;
   }
 

@@ -18,6 +18,30 @@ import { withProjectStorage } from "../src/storage/project-boundary.js";
 import { withOperationalStore, withOperationalReadSnapshot, withOperationalTransaction } from "../src/storage/unit-of-work.js";
 import { withStorageSnapshot } from "../src/storage/snapshot.js";
 
+test("snapshot task cache stays bounded without dropping full-row conflict bindings", async () => {
+  const target = await createGitRepository("forgeloop-task-cache-bound-");
+  const db = openStorageDatabase(path.join(target, "state.sqlite"));
+  const descriptors = Array.from({ length: 80 }, (_, index) => createTaskDescriptor({ taskId: `cache-${index}`, writeClaims: [] }));
+  try {
+    runInTransaction(db, () => {
+      for (const descriptor of descriptors) upsertTask(db, { taskId: descriptor.taskId, descriptor });
+    });
+    await withOperationalStore({ db, target }, async source => {
+      await withStorageSnapshot(db, snapshot => withOperationalReadSnapshot({ db: snapshot, target }, async store => {
+        for (const descriptor of descriptors) assert.equal(store.taskRow(descriptor.taskKey).task_id, descriptor.taskId);
+        assert.equal(store.snapshotTaskRows.size, 64);
+        assert.equal(store.reads.size, 80);
+        assert.deepEqual(store.reads.get(`task:${descriptors[0].taskKey}`).value, { revision: null });
+        assert.equal(store.taskRow(descriptors[0].taskKey).task_id, descriptors[0].taskId, "evicted task remains readable from the same snapshot");
+        assert.equal(store.snapshotTaskRows.size, 64);
+      }));
+      const changed = { ...descriptors[0], updatedAt: "2026-10-09T00:00:00.000Z" };
+      upsertTask(db, { taskId: changed.taskId, descriptor: changed });
+      assert.throws(() => source.commit(), { code: "E_STATE_REVISION_CONFLICT" });
+    });
+  } finally { db.close(); await removeTempTree(target); }
+});
+
 test("task-row statement reuse preserves fresh rows and live snapshot rechecks", async () => {
   const target = await createGitRepository("forgeloop-task-query-reuse-");
   const db = openStorageDatabase(path.join(target, "state.sqlite"));
