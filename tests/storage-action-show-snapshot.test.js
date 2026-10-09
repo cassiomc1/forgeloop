@@ -11,6 +11,7 @@ import { getPackageRoot } from "../src/core/templates.js";
 import { openStorageDatabase } from "../src/storage/connection.js";
 import { withOperationalStore } from "../src/storage/unit-of-work.js";
 import { runInTransaction } from "../src/storage/transaction.js";
+import { withTaskTransaction } from "../src/core/transaction.js";
 
 // A raw independent tamper after descriptor admission tests a read boundary;
 // it is not represented as a valid action transition or a trusted publisher.
@@ -63,5 +64,33 @@ for (const surface of ["direct", "command"]) {
         assert.equal(rejected.error.code, "E_STORAGE_PAYLOAD_MISMATCH");
       }
     } finally { writer?.close(); db?.close(); await removeTempTree(target); }
+  });
+}
+
+for (const surface of ["direct", "command"]) {
+  test(`action-show ${surface} reads a prepared action without publishing it`, async () => {
+    const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-action-show-prepared-"));
+    const packageRoot = getPackageRoot(), taskId = "action-show-prepared", actionId = "action-prepared";
+    let observer;
+    try {
+      const created = await executeForgeLoopCommand({ command: "task-create", projectPath: target, input: { taskId, claims: [] } });
+      assert.equal(created.ok, true, JSON.stringify(created));
+      observer = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+      const count = () => observer.prepare("SELECT COUNT(*) AS n FROM actions WHERE task_id = ? AND action_id = ?").get(taskId, actionId).n;
+      await withTaskTransaction({ target, taskId, packageRoot, operation: "action-show-prepared-read" }, async () => {
+        const proposed = await proposeAction(target, { packageRoot, taskId, input: {
+          actionId, effectClass: "READ_ONLY", capability: "filesystem.read", operation: "inspect", target: "src",
+          requiredForCompletion: false, requirement: null, provenance: "CALLER_REPORTED",
+        } });
+        assert.equal(count(), 0, "prepared action must remain outside committed storage");
+        const result = surface === "direct"
+          ? await runActionShow({ target, packageRoot, taskId, actionId })
+          : await executeForgeLoopCommand({ command: "action-show", projectPath: target, input: { taskId, actionId } });
+        if (surface === "command") assert.equal(result.ok, true, JSON.stringify(result));
+        assert.deepEqual(surface === "command" ? result.result : result, proposed.action);
+        assert.equal(count(), 0, "action-show must not publish prepared work");
+      });
+      assert.equal(count(), 1, "only the enclosing transaction publishes the action");
+    } finally { observer?.close(); await removeTempTree(target); }
   });
 }

@@ -1,0 +1,340 @@
+{
+  "sourceRevision": "369d57438ef97081c753a8da112df6718508980a",
+  "status": "DIAGNOSTIC_COMPLETED",
+  "trackedSourceHashesUnchanged": 3040,
+  "profiles": [
+    {
+      "backend": "native",
+      "tasks": 1000,
+      "profileFile": "allocations-82222.json",
+      "profileSha256": "bab7214a1a21d849cd7a1bfc51f823fb6844e85ce6dc3e22e33be500e68103fe",
+      "rssFinalMiB": 410.734375,
+      "allocationHotspots": [
+        {
+          "sampledBytes": 409953992,
+          "function": "validate",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/schema-validation.js",
+          "line": 99
+        },
+        {
+          "sampledBytes": 290696264,
+          "function": "iterateRange",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/ledger-event-snapshot.js",
+          "line": 51
+        },
+        {
+          "sampledBytes": 263991880,
+          "function": "canonicalFingerprint",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/artifacts.js",
+          "line": 58
+        },
+        {
+          "sampledBytes": 250898168,
+          "function": "visit",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/json-safety.js",
+          "line": 28
+        },
+        {
+          "sampledBytes": 177640232,
+          "function": "sort",
+          "url": "",
+          "line": 0
+        },
+        {
+          "sampledBytes": 159206216,
+          "function": "iterateTypes",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/ledger-event-snapshot.js",
+          "line": 71
+        },
+        {
+          "sampledBytes": 150708496,
+          "function": "",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/unit-of-work.js",
+          "line": 119
+        },
+        {
+          "sampledBytes": 130312352,
+          "function": "taskRow",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/unit-of-work.js",
+          "line": 117
+        },
+        {
+          "sampledBytes": 121318704,
+          "function": "resolve",
+          "url": "node:path",
+          "line": 1245
+        },
+        {
+          "sampledBytes": 90567936,
+          "function": "entries",
+          "url": "",
+          "line": 0
+        },
+        {
+          "sampledBytes": 75959136,
+          "function": "Set",
+          "url": "",
+          "line": 0
+        },
+        {
+          "sampledBytes": 72555168,
+          "function": "keys",
+          "url": "",
+          "line": 0
+        }
+      ]
+    },
+    {
+      "backend": "baseline",
+      "tasks": 1000,
+      "profileFile": "allocations-82234.json",
+      "profileSha256": "28f46f934378e44d59295561a17858d695c27e88634ea716a2552ed86bfff915",
+      "rssFinalMiB": 206.875,
+      "allocationHotspots": [
+        {
+          "sampledBytes": 414090112,
+          "function": "validate",
+          "url": "file:///Users/cassio/.codex/verification/sqlite-baseline624/src/core/schema-validation.js",
+          "line": 99
+        },
+        {
+          "sampledBytes": 353226464,
+          "function": "lstat",
+          "url": "node:internal/fs/promises",
+          "line": 1080
+        },
+        {
+          "sampledBytes": 345490264,
+          "function": "join",
+          "url": "node:path",
+          "line": 1332
+        },
+        {
+          "sampledBytes": 253255304,
+          "function": "visit",
+          "url": "file:///Users/cassio/.codex/verification/sqlite-baseline624/src/core/json-safety.js",
+          "line": 28
+        },
+        {
+          "sampledBytes": 221620600,
+          "function": "assertSafePath",
+          "url": "file:///Users/cassio/.codex/verification/sqlite-baseline624/src/core/filesystem.js",
+          "line": 108
+        },
+        {
+          "sampledBytes": 168058064,
+          "function": "promiseInitHook",
+          "url": "node:internal/async_hooks",
+          "line": 328
+        },
+        {
+          "sampledBytes": 121711904,
+          "function": "normalizeString",
+          "url": "node:path",
+          "line": 92
+        },
+        {
+          "sampledBytes": 115555952,
+          "function": "resolve",
+          "url": "node:path",
+          "line": 1245
+        },
+        {
+          "sampledBytes": 108971648,
+          "function": "normalize",
+          "url": "node:path",
+          "line": 1293
+        },
+        {
+          "sampledBytes": 105255344,
+          "function": "(V8 API)",
+          "url": "",
+          "line": 0
+        },
+        {
+          "sampledBytes": 93846104,
+          "function": "entries",
+          "url": "",
+          "line": 0
+        },
+        {
+          "sampledBytes": 91777184,
+          "function": "realpath",
+          "url": "node:internal/fs/promises",
+          "line": 1239
+        }
+      ]
+    },
+    {
+      "backend": "baseline",
+      "tasks": 5000,
+      "profileFile": "allocations-82505.json",
+      "profileSha256": "59272e87fbeced8b9210d77b4167bfa908c8267263d81bc3e36be4c2fa68555b",
+      "rssFinalMiB": 542.734375,
+      "allocationHotspots": [
+        {
+          "sampledBytes": 2061410848,
+          "function": "validate",
+          "url": "file:///Users/cassio/.codex/verification/sqlite-baseline624/src/core/schema-validation.js",
+          "line": 99
+        },
+        {
+          "sampledBytes": 1753514008,
+          "function": "lstat",
+          "url": "node:internal/fs/promises",
+          "line": 1080
+        },
+        {
+          "sampledBytes": 1707595464,
+          "function": "join",
+          "url": "node:path",
+          "line": 1332
+        },
+        {
+          "sampledBytes": 1246277320,
+          "function": "assertSafePath",
+          "url": "file:///Users/cassio/.codex/verification/sqlite-baseline624/src/core/filesystem.js",
+          "line": 108
+        },
+        {
+          "sampledBytes": 1244732632,
+          "function": "visit",
+          "url": "file:///Users/cassio/.codex/verification/sqlite-baseline624/src/core/json-safety.js",
+          "line": 28
+        },
+        {
+          "sampledBytes": 856252488,
+          "function": "promiseInitHook",
+          "url": "node:internal/async_hooks",
+          "line": 328
+        },
+        {
+          "sampledBytes": 595326480,
+          "function": "resolve",
+          "url": "node:path",
+          "line": 1245
+        },
+        {
+          "sampledBytes": 562406056,
+          "function": "normalizeString",
+          "url": "node:path",
+          "line": 92
+        },
+        {
+          "sampledBytes": 552954808,
+          "function": "normalize",
+          "url": "node:path",
+          "line": 1293
+        },
+        {
+          "sampledBytes": 539329280,
+          "function": "canonicalFingerprint",
+          "url": "file:///Users/cassio/.codex/verification/sqlite-baseline624/src/core/artifacts.js",
+          "line": 51
+        },
+        {
+          "sampledBytes": 519818528,
+          "function": "(V8 API)",
+          "url": "",
+          "line": 0
+        },
+        {
+          "sampledBytes": 476501608,
+          "function": "realpath",
+          "url": "node:internal/fs/promises",
+          "line": 1239
+        }
+      ]
+    },
+    {
+      "backend": "native",
+      "tasks": 5000,
+      "profileFile": "allocations-82696.json",
+      "profileSha256": "8300f4cb2afe4e33ea8a891c1bb2d328b1ff089d0eeed72b56bda4930f5cc44d",
+      "rssFinalMiB": 499.109375,
+      "allocationHotspots": [
+        {
+          "sampledBytes": 2074012480,
+          "function": "validate",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/schema-validation.js",
+          "line": 99
+        },
+        {
+          "sampledBytes": 1552948128,
+          "function": "iterateRange",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/ledger-event-snapshot.js",
+          "line": 51
+        },
+        {
+          "sampledBytes": 1437812096,
+          "function": "canonicalFingerprint",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/artifacts.js",
+          "line": 58
+        },
+        {
+          "sampledBytes": 1243388184,
+          "function": "visit",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/core/json-safety.js",
+          "line": 28
+        },
+        {
+          "sampledBytes": 877374680,
+          "function": "sort",
+          "url": "",
+          "line": 0
+        },
+        {
+          "sampledBytes": 815470832,
+          "function": "iterateTypes",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/ledger-event-snapshot.js",
+          "line": 71
+        },
+        {
+          "sampledBytes": 776794064,
+          "function": "",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/unit-of-work.js",
+          "line": 119
+        },
+        {
+          "sampledBytes": 638699960,
+          "function": "taskRow",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/unit-of-work.js",
+          "line": 117
+        },
+        {
+          "sampledBytes": 617767736,
+          "function": "resolve",
+          "url": "node:path",
+          "line": 1245
+        },
+        {
+          "sampledBytes": 448737552,
+          "function": "entries",
+          "url": "",
+          "line": 0
+        },
+        {
+          "sampledBytes": 376745584,
+          "function": "Set",
+          "url": "",
+          "line": 0
+        },
+        {
+          "sampledBytes": 363462952,
+          "function": "keys",
+          "url": "",
+          "line": 0
+        }
+      ]
+    }
+  ],
+  "responseParityVerified": true,
+  "forcedGc": false,
+  "releaseAcceptanceVerified": false,
+  "limitations": [
+    "Two repetitions; sampled allocation includes collected objects and bootstrap.",
+    "Profiler and timer overhead change execution; latency is not release evidence.",
+    "Final RSS is not request peak or retained heap."
+  ],
+  "method": "External inspector preload, 32768-byte sampling with collected objects included; 1000/5000 tasks, two repetitions, actual paired MCP responses, no forced GC."
+}

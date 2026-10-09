@@ -547,3 +547,9 @@ Production reconciliation909 compares all565 production/schema/MCP source and pa
 ### Current full prepush diagnosis910
 
 Full prepush on545a5a3 exits1:2935core cases,2923pass,11skip and one workflow-policy failure. The guard rejects the documented600-minute manual paired MCP job because it requires every timeout below360. The completed902experiment exceeds six hours; lowering its budget would truncate the original workload. The correction permits at most600 only for that exact manual job and verifies its admission and self-hosted Linux runner; all other jobs retain the original bound. All six focused workflow-policy cases pass. Whole prepush and later tiers remain unverified pending a fresh complete run. Failure evidence:`benchmarks/storage-sqlite/full-prepush909-failed.json`.
+
+### Full prepush and allocation diagnosis912
+
+Local full prepush on369d574 exits0:2935core cases,2924pass,11skip,zero failures;MCP73,PoC67 and package12pass with all other canonical tiers. Source-bound evidence:`benchmarks/storage-sqlite/full-prepush910-complete.json`. Direct/public action-show staged controls also pass and are now integrated:independent storage sees no action until the enclosing transaction commits.
+
+The external allocation diagnostic completes paired1000/5000task fixtures with full response parity and all3040source hashes unchanged. Native-specific sampled allocation hotspots are ledger row scans and canonical fingerprints;schema validation dominates both backends. Sampling includes collected objects and startup,uses two repetitions and adds instrumentation overhead;it does not establish retained heap,request peak,release latency or bounded-memory acceptance. Evidence:`benchmarks/storage-sqlite/mcp-memory912-diagnostic.json`. Whole remote/current-source,LOC,resource and protocol acceptance remain open.

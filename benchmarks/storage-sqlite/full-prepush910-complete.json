@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "369d57438ef97081c753a8da112df6718508980a",
+  "command": "npm run verify:prepush",
+  "status": "PASS",
+  "exitCode": 0,
+  "platform": "darwin",
+  "node": "24.19.0",
+  "core": {
+    "tests": 2935,
+    "pass": 2924,
+    "skipped": 11,
+    "fail": 0
+  },
+  "mcp": {
+    "pass": 73,
+    "fail": 0
+  },
+  "poc": {
+    "pass": 67,
+    "fail": 0
+  },
+  "package": {
+    "pass": 12,
+    "fail": 0
+  },
+  "passedTiers": [
+    "coverage (527.3s)",
+    "critical-coverage:check (0.2s)",
+    "lint (4.3s)",
+    "dependency:policy (0.1s)",
+    "complexity:check (1.7s)",
+    "docs:check (2.6s)",
+    "completions:check (0.1s)",
+    "summary:check (0.1s)",
+    "changelog:check (0.2s)",
+    "repository-index:manifest (0.1s)",
+    "repository:hygiene (0.2s)",
+    "poc:evidence:verify (0.2s)",
+    "poc:evidence:test (1.5s)",
+    "mcp:test:clean (6.4s)",
+    "mcp:pack:check (3.0s)",
+    "pack:check (1.7s)",
+    "python-unittest (1.1s)",
+    "markdown-self-test (0.0s)",
+    "markdown-validator (0.7s)",
+    "loop-self-test (0.2s)",
+    "loop-validator (0.1s)",
+    "secret-scan (10.7s)"
+  ],
+  "logPath": "/Users/cassio/.codex/verification/full-prepush910.log",
+  "logSha256": "cc002191c1a5bc69296dc5c5f57b5831d993bb6bfe637027b442ca9acd934e67",
+  "limitations": [
+    "Local source-bound prepush; not current remote platform acceptance or full plan completion."
+  ]
+}
