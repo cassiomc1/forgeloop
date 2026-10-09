@@ -11,6 +11,7 @@ import { withEventLedgerAudit } from "./events.js";
 import { resolveTaskClaimState } from "./task-claim-state.js";
 import { getOperationalStore, operationalArtifactExists } from "../storage/operational-context.js";
 import { withNativeReadScope } from "./native-storage.js";
+import { withProjectReadSnapshot } from "../storage/project-read-snapshot.js";
 
 /**
  * Explicitly recognized legacy-incidental artifacts that may legitimately
@@ -101,14 +102,8 @@ export async function discoverTaskSummaries(target, packageRoot = getPackageRoot
 }
 
 async function discoverTasksInScope(target, packageRoot, taskKeys, summaryOnly) {
-  return withNativeReadScope(target, async () => {
-    const read = () => discoverSelectedTasks(target, packageRoot, taskKeys, summaryOnly);
-    const store = getOperationalStore(target);
-    if (!store || store.transaction || store.writes.size || store.events.size || store.attachments.size) return read();
-    const { withStorageSnapshot } = await import("../storage/snapshot.js");
-    const { withOperationalReadSnapshot } = await import("../storage/unit-of-work.js");
-    return withStorageSnapshot(store.db, db => withOperationalReadSnapshot({ db, target }, read));
-  });
+  return withProjectReadSnapshot(target,
+    () => discoverSelectedTasks(target, packageRoot, taskKeys, summaryOnly));
 }
 
 async function discoverTaskEntry(target, packageRoot, entry) {

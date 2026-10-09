@@ -1,4 +1,5 @@
-import { needsExistingProjectScope, withExistingProjectScope } from "../../storage/existing-project-scope.js";
+import { needsExistingProjectScope } from "../../storage/existing-project-scope.js";
+import { withProjectReadSnapshot } from "../../storage/project-read-snapshot.js";
 import { canonicalFingerprint, readJsonArtifact } from "../artifacts.js";
 import { readConfig } from "../config.js";
 import { readContract } from "../contract.js";
@@ -39,19 +40,6 @@ import { getPackageRoot } from "../templates.js";
 import { withTaskMutation } from "../task-command.js";
 import { withTaskTransaction } from "../transaction.js";
 import { getOperationalStore } from "../../storage/operational-context.js";
-
-async function withQualityReadObservation(target, callback) {
-  if (await needsExistingProjectScope(target)) {
-    return withExistingProjectScope(target, () => withQualityReadObservation(target, callback), { readOnly: true });
-  }
-  const store = getOperationalStore(target);
-  // Prepared mutations must observe their own staged values and retain CAS.
-  if (!store || store.transaction || store.writes.size || store.events.size || store.attachments.size) return callback();
-  const [{ withStorageSnapshot }, { withOperationalReadSnapshot }] = await Promise.all([
-    import("../../storage/snapshot.js"), import("../../storage/unit-of-work.js"),
-  ]);
-  return withStorageSnapshot(store.db, db => withOperationalReadSnapshot({ db, target }, callback));
-}
 
 async function withQualityMutation(target, options, operation, callback) {
   const native = Boolean(getOperationalStore(target)) || await needsExistingProjectScope(target);
@@ -173,7 +161,7 @@ function normalizeScanResult(result, provider, detection, projectPath) {
 }
 
 export async function resolveStructuralQualityContext(options = {}) {
-  return withQualityReadObservation(options.target, () => resolveStructuralQualityContextObservation(options));
+  return withProjectReadSnapshot(options.target, () => resolveStructuralQualityContextObservation(options));
 }
 
 async function resolveStructuralQualityContextObservation({
@@ -942,7 +930,7 @@ function projectionFromArtifacts(policy, baseline, current, state, evaluations =
 }
 
 export async function projectStructuralQualityStatus(options = {}) {
-  return withQualityReadObservation(options.target, () => projectStructuralQualityStatusObservation(options));
+  return withProjectReadSnapshot(options.target, () => projectStructuralQualityStatusObservation(options));
 }
 
 async function projectStructuralQualityStatusObservation({ target, packageRoot = getPackageRoot(), taskId, runtimeContext } = {}) {
