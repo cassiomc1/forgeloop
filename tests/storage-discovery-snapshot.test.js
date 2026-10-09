@@ -214,8 +214,10 @@ test("nested detached read snapshots retain CAS observations through a writable 
           assert.equal(inner.taskRow(descriptor.taskKey).task_id, taskId);
         });
         assert.equal(innerStore.parent, null, "closed nested snapshot must release its parent chain");
+        assert.equal(innerStore.reads.size, 0, "closed nested snapshot must release detached observations");
       }));
       assert.equal(outerStore.parent, null, "closed outer snapshot must release its parent chain");
+      assert.equal(outerStore.reads.size, 0, "closed outer snapshot must release detached observations");
       assert.ok(source.reads.size > 0, "nested detached observations must reach the writable ancestor");
       upsertTask(writer, {
         taskId,

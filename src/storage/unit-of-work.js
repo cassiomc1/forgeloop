@@ -506,6 +506,10 @@ export async function withOperationalReadSnapshot({ db, target }, callback) {
         if (!writable.reads.has(key)) writable.reads.set(key, observation);
       }
     }
+    // The detached scope is closed now. Any observations needed by a writable
+    // ancestor were copied above; release this scope's query closures and
+    // fingerprints so the closed snapshot cannot be retained by its map.
+    store.reads.clear();
     // Closed detached scopes no longer need their parent chain. The deferred
     // observations retain this store and resolve through the writable db getter
     // above, so releasing the chain avoids retaining closed snapshot handles.
