@@ -12,6 +12,7 @@ import { getPackageRoot } from "../../../src/core/templates.js";
 import { openStorageDatabase, putArtifact } from "../../../src/storage/index.js";
 import { createGitRepository } from "../../../tests/helpers/git-fixture.js";
 import { setupVerifyingTask } from "../../../tests/helpers/durable-lifecycle.js";
+import { installTestSemanticProvider, clearTestSemanticProvider } from "../../../src/core/decision/test-provider.js";
 import { runHandoffCreate } from "../../../src/commands/handoff-create.js";
 import { runHandoffAccept } from "../../../src/commands/handoff-accept.js";
 import { taskArtifactPath } from "../../../src/core/task-paths.js";
@@ -73,6 +74,7 @@ test("MCP native handoffs resource projects the SQLite handoff and acceptance wi
   let client;
   let server;
   try {
+    installTestSemanticProvider();
     await setupVerifyingTask(target, packageRoot, { taskId });
     const created = await runHandoffCreate({ target, packageRoot, taskId, handoffId: "mcp-resource-envelope" });
     const accepted = await runHandoffAccept({
@@ -103,6 +105,7 @@ test("MCP native handoffs resource projects the SQLite handoff and acceptance wi
     });
     await assert.rejects(access(legacyDirectory), { code: "ENOENT" });
   } finally {
+    clearTestSemanticProvider();
     await client?.close();
     await server?.close();
     await removeTempTree(target);
