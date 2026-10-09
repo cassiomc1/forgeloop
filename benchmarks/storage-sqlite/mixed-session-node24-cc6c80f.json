@@ -1,0 +1,15 @@
+{
+  "sourceRevision": "cc6c80f6a8ce0cf38832e248077380b22a864e6d",
+  "snapshot": "git archive of committed revision; no uncommitted core edits",
+  "runtime": "Node v24.19.0",
+  "command": "node --test tests/storage-integration-dispatch.test.js",
+  "testCount": 15,
+  "passed": 15,
+  "failed": 0,
+  "skipped": 0,
+  "exitCode": 0,
+  "durationMs": 10908.135542,
+  "snapshotCleanupCompleted": true,
+  "scope": "Public integration dispatch including legacy session singleton, session collection, task ledger sidecar refusal with preserved SQLite and filesystem state",
+  "limitation": "Focused committed-source verification; not full migration acceptance"
+}
