@@ -1,6 +1,5 @@
-import { createHash } from "node:crypto";
-import { createReadStream } from "node:fs";
 import { lstat, mkdir } from "node:fs/promises";
+import { digestFile } from "./file-durability.js";
 import { assertSafePath, writeFileAtomic } from "../core/filesystem.js";
 import { canonicalFingerprint } from "../core/artifacts.js";
 import { assertJsonBytes, assertJsonLimits } from "../core/json-safety.js";
@@ -27,12 +26,6 @@ export const REPLACEMENT_ACTIVE_ROOTS = Object.freeze([".forgeloop/storage-versi
 async function replacementRoot(target, operationId) {
   if (!MAINTENANCE_OWNER_ID.test(operationId ?? "")) throw invalid("Replacement preparation requires an exact restore operation identity");
   return assertSafePath(target, `.forgeloop/storage-restores/${operationId}/outgoing`);
-}
-
-async function digest(filename) {
-  const result = createHash("sha256");
-  for await (const bytes of createReadStream(filename)) result.update(bytes);
-  return result.digest("hex");
 }
 
 export async function assertReplacementConnectionsClosed(target) {
@@ -96,7 +89,7 @@ export async function prepareActiveStorageReplacement(target, operationId, { wri
     const checkpoint = db.prepare("PRAGMA wal_checkpoint(TRUNCATE)").get();
     if (checkpoint.busy !== 0 || checkpoint.log !== 0) throw invalid("Outgoing database still has active readers or required WAL contents");
     const inventory = await inventoryStorageRoots(target, REPLACEMENT_ACTIVE_ROOTS);
-    Object.assign(manifest, { databaseSha256: await digest(await assertSafePath(target, DATABASE)), inventory, inventoryFingerprint: canonicalFingerprint(inventory) });
+    Object.assign(manifest, { databaseSha256: await digestFile(await assertSafePath(target, DATABASE)), inventory, inventoryFingerprint: canonicalFingerprint(inventory) });
     if (canonicalFingerprint(logicalSnapshot(db)) !== manifest.logicalFingerprint) throw invalid("Outgoing state changed before its closed database binding was recorded");
   } catch (error) {
     if (manifest) { manifest.status = "FAILED"; manifest.error = { code: error.code ?? "E_STORAGE_RESTORE_INVALID", message: error.message }; try { await persistManifest(target, root, manifest); } catch { /* PREPARING is also refused. */ } }
@@ -140,7 +133,7 @@ export async function assertActiveStorageReplacementUnchanged(target, operationI
   const retained = await verifyPreparedActiveStorageReplacement(target, operationId);
   await assertReplacementConnectionsClosed(target);
   if (canonicalFingerprint(await assertActiveLayout(target)) !== canonicalFingerprint(retained.manifest.marker)
-    || await digest(await assertSafePath(target, DATABASE)) !== retained.manifest.databaseSha256
+    || await digestFile(await assertSafePath(target, DATABASE)) !== retained.manifest.databaseSha256
     || canonicalFingerprint(await inventoryStorageRoots(target, REPLACEMENT_ACTIVE_ROOTS)) !== retained.manifest.inventoryFingerprint) throw invalid("Active state changed after outgoing replacement preparation; archival is forbidden");
   await withVerifiedProjectStorageBackup(retained.backup, async ({ db }) => {
     for (const reference of iterateAttachmentReferences(db)) await verifyAttachmentFile(target, reference);

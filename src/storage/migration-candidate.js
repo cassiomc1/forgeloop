@@ -3,6 +3,7 @@ import { createReadStream } from "node:fs";
 import { lstat, mkdir, mkdtemp, open, readFile, readdir, rename, rm } from "node:fs/promises";
 import path from "node:path";
 import { TextDecoder } from "node:util";
+import { digestFile } from "./file-durability.js";
 import { assertSafePath, writeFileAtomic } from "../core/filesystem.js";
 import { canonicalFingerprint } from "../core/artifacts.js";
 import { assertJsonBytes, assertJsonLimits } from "../core/json-safety.js";
@@ -42,7 +43,7 @@ async function writeTaskInventory(db, directory, validation) {
     }
   }
   await writeFileAtomic(filename, records());
-  return { path: "task-inventory.ndjson", records: validation.tasks.length, sha256: await fileDigest(filename) };
+  return { path: "task-inventory.ndjson", records: validation.tasks.length, sha256: await digestFile(filename) };
 }
 
 export function logicalSnapshot(db) {
@@ -58,12 +59,6 @@ export function logicalSnapshot(db) {
   }
   const { storage_format, storage_version, schema_version, protocol_version, active_session_id } = readStorageMeta(db);
   return { tables, metadata: { storage_format, storage_version, schema_version, protocol_version, active_session_id } };
-}
-
-async function fileDigest(filename) {
-  const hash = createHash("sha256");
-  for await (const chunk of createReadStream(filename)) hash.update(chunk);
-  return hash.digest("hex");
 }
 
 async function contentFingerprint(filename, ledger) {
@@ -175,7 +170,7 @@ async function checkSourceParity(captured, exported, db, mappings = []) {
     }
     const ledger = file.path.endsWith("/events.ndjson");
     const signature = file.path.endsWith("/statement.sigstore.json");
-    const fingerprint = filename => signature ? fileDigest(filename) : contentFingerprint(filename, ledger);
+    const fingerprint = filename => signature ? digestFile(filename) : contentFingerprint(filename, ledger);
     if (await fingerprint(original) !== await fingerprint(reproduced)) throw invalid(`Source/export payload differs: ${file.path}`);
     filesCompared += 1;
   }
@@ -243,7 +238,7 @@ async function prepareCapturedCandidate(target, destination, captured, { package
       const file = await open(candidatePath, "r+");
       try { await file.sync(); } finally { await file.close(); }
       manifest.status = "PREPARED";
-      Object.assign(manifest, { candidateSha256: await fileDigest(candidatePath), metadata, logical, validation: validationSummary(validation), taskInventory, parity, importReport: { totals: imported.report.totals, importedTasks: imported.report.imported.length, skipped: imported.report.skipped, errors: imported.report.errors } });
+      Object.assign(manifest, { candidateSha256: await digestFile(candidatePath), metadata, logical, validation: validationSummary(validation), taskInventory, parity, importReport: { totals: imported.report.totals, importedTasks: imported.report.imported.length, skipped: imported.report.skipped, errors: imported.report.errors } });
       await persist();
       return { path: captured.path, candidatePath, manifest, attachmentRoot: attachments.root };
     } catch (error) {
@@ -275,9 +270,9 @@ async function assertCandidateFiles(captured, candidatePath, manifest) {
     try { if (suffix === "-wal" && (await lstat(sidecar)).size !== 0) throw invalid("Candidate has unshipped WAL contents"); }
     catch (error) { if (error.code !== "ENOENT") throw error; }
   }
-  if (await fileDigest(candidatePath) !== manifest.candidateSha256) throw invalid("Candidate database bytes disagree with retained digest");
+  if (await digestFile(candidatePath) !== manifest.candidateSha256) throw invalid("Candidate database bytes disagree with retained digest");
   if (manifest.taskInventory?.path !== "task-inventory.ndjson"
-    || await fileDigest(await assertSafePath(captured.path, manifest.taskInventory.path)) !== manifest.taskInventory.sha256) throw invalid("Task inventory bytes disagree with retained digest");
+    || await digestFile(await assertSafePath(captured.path, manifest.taskInventory.path)) !== manifest.taskInventory.sha256) throw invalid("Task inventory bytes disagree with retained digest");
 }
 
 /** Revalidate a retained private candidate; never treat its manifest as authority alone. */
@@ -316,7 +311,6 @@ export async function verifyMigrationCandidate(target, destination, { packageRoo
     return { path: captured.path, candidatePath, manifest, attachmentRoot };
   } finally { try { sourceDb?.close(); db.close(); } finally { if (recheck) await rm(recheck, { recursive: true, force: true }); } }
 }
-
 
 const CANDIDATE_FILES = Object.freeze(["candidate-manifest.json", "candidate.sqlite", "candidate.sqlite-wal", "candidate.sqlite-shm", "candidate-attachments", "task-inventory.ndjson", "parity-export", "parity.sqlite", "parity.sqlite-wal", "parity.sqlite-shm"]);
 async function info(filename) {

@@ -1,19 +1,11 @@
 import { link, mkdir, open, rename } from "node:fs/promises";
 import { createHash } from "node:crypto";
+import { syncDirectory } from "./file-durability.js";
 import { assertSafePath } from "../core/filesystem.js";
 import { MAINTENANCE_OWNER_ID, readMaintenanceOwner } from "./maintenance-owner.js";
 
 const HISTORY = ".forgeloop/storage-maintenance-history";
 const busy = message => Object.assign(new Error(message), { code: "E_STORAGE_MAINTENANCE_IN_PROGRESS" });
-
-async function syncDirectory(filename) {
-  try {
-    const handle = await open(filename, "r");
-    try { await handle.sync(); } finally { await handle.close(); }
-  } catch (error) {
-    if (!["EINVAL", "EPERM", "EISDIR", "ENOTSUP", "UNKNOWN"].includes(error.code)) throw error;
-  }
-}
 
 async function optionalClaim(target, relative) {
   try { return (await readMaintenanceOwner(target, relative)).value; }

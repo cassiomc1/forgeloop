@@ -1,20 +1,12 @@
-import { mkdir, open, rename } from "node:fs/promises";
+import { mkdir, rename } from "node:fs/promises";
 import path from "node:path";
+import { syncDirectory } from "./file-durability.js";
 import { assertSafePath, writeFileAtomic } from "../core/filesystem.js";
 import { assertOwnedStorageMaintenance } from "./maintenance.js";
 import { verifyMigrationPublicationStage } from "./migration-publication.js";
 import { inspectMigrationSourcePartition } from "./migration-source-partition.js";
 import { openStorageDatabase, readStorageMeta } from "./connection.js";
 import { writePendingStorageVersionMarker } from "./storage-marker.js";
-
-async function syncDirectory(directory) {
-  try {
-    const handle = await open(directory, "r");
-    try { await handle.sync(); } finally { await handle.close(); }
-  } catch (error) {
-    if (!["EINVAL", "EPERM", "EISDIR", "ENOTSUP", "UNKNOWN"].includes(error.code)) throw error;
-  }
-}
 
 /** Must remain inside the owner's complete cutover/recovery callback. */
 export async function archiveMigrationSources(target, destination, { writersQuiesced = false, packageRoot } = {}) {

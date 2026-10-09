@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { cp, lstat, mkdir, open, rename } from "node:fs/promises";
+import { cp, lstat, mkdir, rename } from "node:fs/promises";
+import { syncDirectory } from "./file-durability.js";
 import { assertSafePath, writeFileAtomic } from "../core/filesystem.js";
 import { canonicalFingerprint } from "../core/artifacts.js";
 import { assertOwnedStorageMaintenance, assertStorageMaintenanceOwnerContinuity, resumeStorageMaintenance, retainStorageMaintenance } from "./maintenance.js";
@@ -49,11 +50,6 @@ export async function verifyMigrationSourceRollbackStage(target,destination,opti
  await verifySourceInventory(source,captured);
  await assertOwnedStorageMaintenance(target);
  return {root,source,manifest,nativeAuthorityRetained:true,restored:false};
-}
-
-async function syncDirectory(directory){
- try{const handle=await open(directory,"r");try{await handle.sync();}finally{await handle.close();}}
- catch(error){if(!["EINVAL","EPERM","EISDIR","ENOTSUP","UNKNOWN"].includes(error.code))throw error;}
 }
 
 /** Recover a dead stage owner; incomplete copies are retained as independent attempts. */

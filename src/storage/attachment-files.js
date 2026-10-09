@@ -1,30 +1,16 @@
 import { createHash } from "node:crypto";
-import { constants, createReadStream, createWriteStream } from "node:fs";
+import { constants, createWriteStream } from "node:fs";
 import { link, lstat, mkdir, mkdtemp, open, rm } from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
 import { Transform } from "node:stream";
 import { pipeline } from "node:stream/promises";
+import { digestFile, syncDirectory } from "./file-durability.js";
 import { assertSafePath } from "../core/filesystem.js";
 import { assertWritableContext } from "./transaction.js";
 
 function invalid(message) { return Object.assign(new Error(message), { code: "E_STORAGE_ATTACHMENT_INVALID" }); }
 
-async function digest(filename) {
-  const hash = createHash("sha256");
-  let size = 0;
-  for await (const bytes of createReadStream(filename)) { hash.update(bytes); size += bytes.length; }
-  return { size, sha256: hash.digest("hex") };
-}
-
-async function syncDirectory(directory) {
-  try {
-    const handle = await open(directory, "r");
-    try { await handle.sync(); } finally { await handle.close(); }
-  } catch (error) {
-    if (!["EINVAL", "EPERM", "EISDIR", "ENOTSUP", "UNKNOWN"].includes(error.code)) throw error;
-  }
-}
 
 /** Verify referenced immutable bytes without loading the attachment into memory. */
 async function attachmentFilename(target, reference) {
@@ -38,7 +24,7 @@ async function attachmentFilename(target, reference) {
 
 export async function verifyAttachmentFile(target, reference) {
   const filename = await attachmentFilename(target, reference);
-  const actual = await digest(filename);
+  const actual = await digestFile(filename, { includeSize: true });
   if (actual.size !== reference.size || actual.sha256 !== reference.sha256) throw invalid("Attachment bytes disagree with their reference");
   return reference;
 }
@@ -79,7 +65,7 @@ export async function publishAttachmentFile(target, readable, { db, temporaryRoo
   const filename = path.join(temporary, "bytes");
   try {
     await pipeline(readable, createWriteStream(filename, { flags: "wx", mode: 0o600 }));
-    const binding = await digest(filename);
+    const binding = await digestFile(filename, { includeSize: true });
     const file = await open(filename, "r+");
     try { await file.sync(); } finally { await file.close(); }
     const reference = { path: `.forgeloop/attachments/objects/${binding.sha256}`, ...binding };

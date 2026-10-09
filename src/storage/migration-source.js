@@ -1,8 +1,9 @@
-import { createHash, randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { createReadStream, createWriteStream } from "node:fs";
 import { lstat, mkdir, open, opendir, readdir, rename } from "node:fs/promises";
 import path from "node:path";
 import { pipeline } from "node:stream/promises";
+import { digestFile, syncDirectory } from "./file-durability.js";
 import { assertSafePath, writeFileAtomic } from "../core/filesystem.js";
 import { findIncompleteTransactions } from "../core/transaction.js";
 import { assertOwnedStorageMaintenance, withStorageMaintenance } from "./maintenance.js";
@@ -26,27 +27,11 @@ async function infoIfPresent(filename) {
   catch (error) { if (error.code === "ENOENT") return null; throw error; }
 }
 
-async function digest(filename) {
-  const hash = createHash("sha256");
-  let size = 0;
-  for await (const bytes of createReadStream(filename)) { hash.update(bytes); size += bytes.length; }
-  return { size, sha256: hash.digest("hex") };
-}
-
 async function syncDirectories(directory) {
   for (const entry of await readdir(directory, { withFileTypes: true })) {
     if (entry.isDirectory()) await syncDirectories(path.join(directory, entry.name));
   }
   await syncDirectory(directory);
-}
-
-async function syncDirectory(directory) {
-  try {
-    const handle = await open(directory, "r");
-    try { await handle.sync(); } finally { await handle.close(); }
-  } catch (error) {
-    if (!["EINVAL", "EPERM", "EISDIR", "ENOTSUP", "UNKNOWN"].includes(error.code)) throw error;
-  }
 }
 
 function recordInventoryEntry(entries, value, budget) {
@@ -71,7 +56,7 @@ async function inventoryPath(target, relativePath, files, directories, budget) {
       await inventoryPath(target, `${relativePath}/${entry.name}`, files, directories, budget);
     }
   } else if (info.isFile()) {
-    recordInventoryEntry(files, { path: relativePath, ...await digest(filename) }, budget);
+    recordInventoryEntry(files, { path: relativePath, ...await digestFile(filename, { includeSize: true }) }, budget);
   } else {
     throw failure("E_STORAGE_MIGRATION_SOURCE_INVALID", `Unsupported source entry: ${relativePath}`);
   }
@@ -181,7 +166,6 @@ async function captureExcludedLegacySource(target, destination) {
   }
 }
 
-
 async function readCaptureManifest(filename) {
   try { return await readStorageMetadataJson(path.dirname(filename), path.basename(filename)); }
   catch (error) {
@@ -206,7 +190,7 @@ async function copyCapturedFile(target, source, file) {
   await pipeline(createReadStream(await assertSafePath(target, file.path)), createWriteStream(copied, { flags: "wx", mode: 0o600 }));
   const handle = await open(copied, "r+");
   try { await handle.sync(); } finally { await handle.close(); }
-  const copiedDigest = await digest(copied);
+  const copiedDigest = await digestFile(copied, { includeSize: true });
   if (copiedDigest.size !== file.size || copiedDigest.sha256 !== file.sha256) throw failure("E_STORAGE_MIGRATION_SOURCE_CHANGED", `Source bytes changed during recovery: ${file.path}`);
 }
 

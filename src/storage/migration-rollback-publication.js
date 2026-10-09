@@ -1,5 +1,6 @@
-import { lstat, mkdir, open, rename } from "node:fs/promises";
+import { lstat, mkdir, rename } from "node:fs/promises";
 import path from "node:path";
+import { syncDirectory } from "./file-durability.js";
 import { assertSafePath, writeFileAtomic } from "../core/filesystem.js";
 import { canonicalFingerprint } from "../core/artifacts.js";
 import { assertOwnedStorageMaintenance, assertStorageMaintenanceOwnerContinuity, resumeStorageMaintenance, retainStorageMaintenance } from "./maintenance.js";
@@ -13,10 +14,6 @@ import { readStorageMetadataJson } from "./metadata-json.js";
 const NATIVE_ROOTS=[".forgeloop/state.sqlite",".forgeloop/storage-version.json",".forgeloop/attachments"];
 function invalid(message){return Object.assign(new Error(message),{code:"E_STORAGE_SOURCE_ROLLBACK_INVALID"});}
 async function exists(filename){try{await lstat(filename);return true;}catch(error){if(error.code === "ENOENT")return false;throw error;}}
-async function syncDirectory(directory){
- try{const handle=await open(directory,"r");try{await handle.sync();}finally{await handle.close();}}
- catch(error){if(!["EINVAL","EPERM","EISDIR","ENOTSUP","UNKNOWN"].includes(error.code))throw error;}
-}
 async function retainedRoot(target,destination){return assertSafePath(await assertSafePath(target,destination),"publication/source-rollback/source-publication");}
 async function moveExclusive(sourceRoot,destinationRoot,relative){
  const source=await assertSafePath(sourceRoot,relative);

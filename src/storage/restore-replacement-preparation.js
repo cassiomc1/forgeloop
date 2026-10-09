@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { mkdir, rename, open } from "node:fs/promises";
+import { mkdir, rename } from "node:fs/promises";
+import { syncDirectory } from "./file-durability.js";
 import { assertSafePath, writeFileAtomic } from "../core/filesystem.js";
 import { canonicalFingerprint } from "../core/artifacts.js";
 import { readStorageMetadataJson } from "./metadata-json.js";
@@ -32,11 +33,6 @@ async function verifyRetainedHistory(root, rebuild, operationId) {
     const manifest = await readStorageMetadataJson(await assertSafePath(root, `outgoing-history/${record.historyId}`), "replacement-manifest.json");
     if (manifest.operationId !== operationId || canonicalFingerprint(manifest) !== record.manifestFingerprint) throw invalid("Retained outgoing preparation manifest changed");
   }
-}
-
-async function syncDirectory(directory) {
-  try { const handle = await open(directory, "r"); try { await handle.sync(); } finally { await handle.close(); } }
-  catch (error) { if (!["EINVAL", "EPERM", "EISDIR", "ENOTSUP", "UNKNOWN"].includes(error.code)) throw error; }
 }
 
 async function verifyPreparationBaseline(target, manifest, packageRoot) {

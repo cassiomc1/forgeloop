@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
-import { lstat, mkdir, open, readFile, readdir, rename } from "node:fs/promises";
+import { lstat, mkdir, readFile, readdir, rename } from "node:fs/promises";
 import path from "node:path";
+import { syncDirectory } from "./file-durability.js";
 import { assertSafePath, writeFileAtomic } from "../core/filesystem.js";
 import { canonicalFingerprint } from "../core/artifacts.js";
 import { assertJsonBytes, assertJsonLimits } from "../core/json-safety.js";
@@ -89,16 +90,8 @@ export async function stageMigrationPublication(target, destination, { writersQu
   }, { retainOnError: true });
 }
 
-
 async function present(filename) {
   try { return await lstat(filename); } catch (error) { if (error.code === "ENOENT") return null; throw error; }
-}
-
-async function syncDirectory(directory) {
-  const handle = await open(directory, "r");
-  try { await handle.sync(); }
-  catch (error) { if (!["EINVAL", "EPERM", "EISDIR", "ENOTSUP", "UNKNOWN"].includes(error.code)) throw error; }
-  finally { await handle.close(); }
 }
 
 /** Preserve an unpublished interrupted stage, then rebuild from verified sources. */
@@ -137,14 +130,14 @@ export async function resumeMigrationPublicationStage(target, destination, { wri
     await mkdir(history, { recursive: true });
     const attempt = await assertSafePath(history, randomUUID());
     await mkdir(attempt); // Exclusive history allocation; never replace an older attempt.
-    await syncDirectory(root);
-    await syncDirectory(history);
-    await syncDirectory(attempt);
+    await syncDirectory(root, { catchOpenErrors: false, catchCloseErrors: false });
+    await syncDirectory(history, { catchOpenErrors: false, catchCloseErrors: false });
+    await syncDirectory(attempt, { catchOpenErrors: false, catchCloseErrors: false });
     const retained = await assertSafePath(attempt, "publication");
     await rename(directory, retained);
-    await syncDirectory(attempt);
-    await syncDirectory(root);
-    await syncDirectory(history);
+    await syncDirectory(attempt, { catchOpenErrors: false, catchCloseErrors: false });
+    await syncDirectory(root, { catchOpenErrors: false, catchCloseErrors: false });
+    await syncDirectory(history, { catchOpenErrors: false, catchCloseErrors: false });
   }
   return stageMigrationPublication(target, destination, { writersQuiesced, packageRoot });
 }

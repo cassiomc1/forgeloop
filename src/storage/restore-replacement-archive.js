@@ -1,5 +1,6 @@
-import { mkdir, open, opendir, rename } from "node:fs/promises";
+import { mkdir, opendir, rename } from "node:fs/promises";
 import path from "node:path";
+import { syncDirectory } from "./file-durability.js";
 import { assertSafePath, writeFileAtomic } from "../core/filesystem.js";
 import { canonicalFingerprint } from "../core/artifacts.js";
 import { getPackageRoot } from "../core/templates.js";
@@ -18,13 +19,6 @@ const hash = value => typeof value === "string" && /^[a-f0-9]{64}$/u.test(value)
 const belongs = (name, root) => name === root || name.startsWith(`${root}/`);
 const subset = (inventory, root) => ({ files: inventory.files.filter(file => belongs(file.path, root)), directories: inventory.directories.filter(name => belongs(name, root)) });
 const present = inventory => inventory.files.length > 0 || inventory.directories.length > 0;
-
-async function syncDirectory(directory) {
-  try {
-    const file = await open(directory, "r");
-    try { await file.sync(); } finally { await file.close(); }
-  } catch (error) { if (!["EINVAL", "EPERM", "EISDIR", "ENOTSUP", "UNKNOWN"].includes(error.code)) throw error; }
-}
 
 async function incomingSnapshot(target, operationId, packageRoot) {
   const root = await assertSafePath(target, `.forgeloop/storage-restores/${operationId}/snapshot`);

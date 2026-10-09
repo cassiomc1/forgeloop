@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { createReadStream } from "node:fs";
 import { lstat, mkdir } from "node:fs/promises";
 import path from "node:path";
+import { digestFile } from "./file-durability.js";
 import { assertSafePath, writeFileAtomic } from "../core/filesystem.js";
 import { JSON_LIMITS } from "../core/json-safety.js";
 import { readStorageMetadataJson } from "./metadata-json.js";
@@ -11,12 +12,6 @@ import { iterateAttachmentReferences } from "./attachment-references.js";
 import { publishAttachmentFile, verifyAttachmentFile } from "./attachment-files.js";
 
 function invalid(message) { return Object.assign(new Error(message), { code: "E_STORAGE_BACKUP_INVALID" }); }
-
-async function digest(filename) {
-  const hash = createHash("sha256");
-  for await (const bytes of createReadStream(filename)) hash.update(bytes);
-  return hash.digest("hex");
-}
 
 async function copyAttachment(source, destination, reference) {
   await verifyAttachmentFile(source, reference);
@@ -50,7 +45,7 @@ export async function backupProjectStorage(db, target, destination) {
     const inventoryPath = await assertSafePath(directory, "attachments.ndjson");
     await writeFileAtomic(inventoryPath, inventory());
     snapshot.close(); snapshot = null;
-    Object.assign(manifest, { status: "READY", databaseSha256: await digest(databasePath), inventorySha256: await digest(inventoryPath), references });
+    Object.assign(manifest, { status: "READY", databaseSha256: await digestFile(databasePath), inventorySha256: await digestFile(inventoryPath), references });
     await persist();
     return { path: directory, kind: manifest.kind, attachmentsIncluded: true, references };
   } catch (error) {
@@ -72,7 +67,7 @@ export async function withVerifiedProjectStorageBackup(directory, callback) {
     try { if (suffix === "-wal" && (await lstat(sidecar)).size !== 0) throw invalid("Backup requires unshipped WAL contents"); }
     catch (error) { if (error.code !== "ENOENT") throw error; }
   }
-  if (await digest(filename) !== manifest.databaseSha256) throw invalid("Backup database digest mismatch");
+  if (await digestFile(filename) !== manifest.databaseSha256) throw invalid("Backup database digest mismatch");
   const db = openStorageDatabase(filename, { readOnly: true });
   try {
     if (!checkStorageIntegrity(db).ok) throw invalid("Backup database failed integrity");
@@ -84,7 +79,7 @@ export async function withVerifiedProjectStorageBackup(directory, callback) {
       inventory.update(`${JSON.stringify(reference)}\n`);
     }
     if (references !== manifest.references || inventory.digest("hex") !== manifest.inventorySha256
-      || await digest(await assertSafePath(root, "attachments.ndjson")) !== manifest.inventorySha256) throw invalid("Backup inventory disagrees with canonical references");
+      || await digestFile(await assertSafePath(root, "attachments.ndjson")) !== manifest.inventorySha256) throw invalid("Backup inventory disagrees with canonical references");
     return await callback({ db, root, manifest });
   } finally { db.close(); }
 }
