@@ -1,0 +1,453 @@
+{
+  "kind": "PAIRED_RESOURCE_OBSERVATION",
+  "sourceRevision": "158938ba95f6d016cc53463c76c35fa5fda51c70",
+  "trackedSourceUnchanged": true,
+  "trackedFiles": 3027,
+  "repeats": 200,
+  "results": [
+    {
+      "tasks": 1000,
+      "operation": "taskListTool",
+      "outputParity": true,
+      "native": {
+        "latencyP95Ms": 2217.507458999986,
+        "rssEndpointMaxBytes": 459603968,
+        "workerLifetimePeakRssBytes": 459997184,
+        "timerLatenessMaxMs": 218.4348900000332,
+        "quartiles": [
+          {
+            "samples": [
+              0,
+              49
+            ],
+            "rssEndpointMinBytes": 287862784,
+            "rssEndpointMaxBytes": 430862336,
+            "rssEndpointMedianBytes": 352473088.0,
+            "latencyP95Ms": 2052.612368
+          },
+          {
+            "samples": [
+              50,
+              99
+            ],
+            "rssEndpointMinBytes": 441135104,
+            "rssEndpointMaxBytes": 452431872,
+            "rssEndpointMedianBytes": 448356352.0,
+            "latencyP95Ms": 2139.815272000007
+          },
+          {
+            "samples": [
+              100,
+              149
+            ],
+            "rssEndpointMinBytes": 451031040,
+            "rssEndpointMaxBytes": 454918144,
+            "rssEndpointMedianBytes": 452833280.0,
+            "latencyP95Ms": 2228.2567189999972
+          },
+          {
+            "samples": [
+              150,
+              199
+            ],
+            "rssEndpointMinBytes": 452718592,
+            "rssEndpointMaxBytes": 459603968,
+            "rssEndpointMedianBytes": 454012928.0,
+            "latencyP95Ms": 2358.3788279999862
+          }
+        ]
+      },
+      "baseline": {
+        "latencyP95Ms": 7439.108508999983,
+        "rssEndpointMaxBytes": 250822656,
+        "workerLifetimePeakRssBytes": 251334656,
+        "timerLatenessMaxMs": 32.03975600004196,
+        "quartiles": [
+          {
+            "samples": [
+              0,
+              49
+            ],
+            "rssEndpointMinBytes": 172630016,
+            "rssEndpointMaxBytes": 249618432,
+            "rssEndpointMedianBytes": 248881152.0,
+            "latencyP95Ms": 7447.223066999984
+          },
+          {
+            "samples": [
+              50,
+              99
+            ],
+            "rssEndpointMinBytes": 249524224,
+            "rssEndpointMaxBytes": 250228736,
+            "rssEndpointMedianBytes": 250058752.0,
+            "latencyP95Ms": 7437.242153000087
+          },
+          {
+            "samples": [
+              100,
+              149
+            ],
+            "rssEndpointMinBytes": 249708544,
+            "rssEndpointMaxBytes": 250626048,
+            "rssEndpointMedianBytes": 250101760.0,
+            "latencyP95Ms": 7520.423458999954
+          },
+          {
+            "samples": [
+              150,
+              199
+            ],
+            "rssEndpointMinBytes": 250052608,
+            "rssEndpointMaxBytes": 250822656,
+            "rssEndpointMedianBytes": 250396672.0,
+            "latencyP95Ms": 7424.608250000048
+          }
+        ]
+      },
+      "baselineOverNativeP95": 3.3547163410015077
+    },
+    {
+      "tasks": 1000,
+      "operation": "projectTasksResource",
+      "outputParity": true,
+      "native": {
+        "latencyP95Ms": 2249.337864000001,
+        "rssEndpointMaxBytes": 469471232,
+        "workerLifetimePeakRssBytes": 469864448,
+        "timerLatenessMaxMs": 296.2654469999252,
+        "quartiles": [
+          {
+            "samples": [
+              0,
+              49
+            ],
+            "rssEndpointMinBytes": 457269248,
+            "rssEndpointMaxBytes": 463400960,
+            "rssEndpointMedianBytes": 458301440.0,
+            "latencyP95Ms": 2249.337864000001
+          },
+          {
+            "samples": [
+              50,
+              99
+            ],
+            "rssEndpointMinBytes": 459145216,
+            "rssEndpointMaxBytes": 461901824,
+            "rssEndpointMedianBytes": 460488704.0,
+            "latencyP95Ms": 2258.4714460000396
+          },
+          {
+            "samples": [
+              100,
+              149
+            ],
+            "rssEndpointMinBytes": 460300288,
+            "rssEndpointMaxBytes": 465125376,
+            "rssEndpointMedianBytes": 462544896.0,
+            "latencyP95Ms": 2180.470935999998
+          },
+          {
+            "samples": [
+              150,
+              199
+            ],
+            "rssEndpointMinBytes": 462487552,
+            "rssEndpointMaxBytes": 469471232,
+            "rssEndpointMedianBytes": 463595520.0,
+            "latencyP95Ms": 2212.8509730000515
+          }
+        ]
+      },
+      "baseline": {
+        "latencyP95Ms": 7590.053272000048,
+        "rssEndpointMaxBytes": 252665856,
+        "workerLifetimePeakRssBytes": 253444096,
+        "timerLatenessMaxMs": 28.4172869999893,
+        "quartiles": [
+          {
+            "samples": [
+              0,
+              49
+            ],
+            "rssEndpointMinBytes": 250130432,
+            "rssEndpointMaxBytes": 250814464,
+            "rssEndpointMedianBytes": 250511360.0,
+            "latencyP95Ms": 7465.827794000041
+          },
+          {
+            "samples": [
+              50,
+              99
+            ],
+            "rssEndpointMinBytes": 250454016,
+            "rssEndpointMaxBytes": 251387904,
+            "rssEndpointMedianBytes": 250943488.0,
+            "latencyP95Ms": 7642.357689999975
+          },
+          {
+            "samples": [
+              100,
+              149
+            ],
+            "rssEndpointMinBytes": 251121664,
+            "rssEndpointMaxBytes": 252035072,
+            "rssEndpointMedianBytes": 251541504.0,
+            "latencyP95Ms": 7456.676228000317
+          },
+          {
+            "samples": [
+              150,
+              199
+            ],
+            "rssEndpointMinBytes": 251879424,
+            "rssEndpointMaxBytes": 252665856,
+            "rssEndpointMedianBytes": 252200960.0,
+            "latencyP95Ms": 7592.8781200000085
+          }
+        ]
+      },
+      "baselineOverNativeP95": 3.374350022500686
+    },
+    {
+      "tasks": 5000,
+      "operation": "taskListTool",
+      "outputParity": true,
+      "native": {
+        "latencyP95Ms": 11035.595880000037,
+        "rssEndpointMaxBytes": 687669248,
+        "workerLifetimePeakRssBytes": 690397184,
+        "timerLatenessMaxMs": 144.61907799984328,
+        "quartiles": [
+          {
+            "samples": [
+              0,
+              49
+            ],
+            "rssEndpointMinBytes": 383000576,
+            "rssEndpointMaxBytes": 673722368,
+            "rssEndpointMedianBytes": 662523904.0,
+            "latencyP95Ms": 10951.281175000004
+          },
+          {
+            "samples": [
+              50,
+              99
+            ],
+            "rssEndpointMinBytes": 669728768,
+            "rssEndpointMaxBytes": 679415808,
+            "rssEndpointMedianBytes": 672923648.0,
+            "latencyP95Ms": 11254.288473000051
+          },
+          {
+            "samples": [
+              100,
+              149
+            ],
+            "rssEndpointMinBytes": 673452032,
+            "rssEndpointMaxBytes": 687669248,
+            "rssEndpointMedianBytes": 677257216.0,
+            "latencyP95Ms": 10744.071797999903
+          },
+          {
+            "samples": [
+              150,
+              199
+            ],
+            "rssEndpointMinBytes": 678338560,
+            "rssEndpointMaxBytes": 685277184,
+            "rssEndpointMedianBytes": 681197568.0,
+            "latencyP95Ms": 11277.62828399986
+          }
+        ]
+      },
+      "baseline": {
+        "latencyP95Ms": 36145.37179700006,
+        "rssEndpointMaxBytes": 263213056,
+        "workerLifetimePeakRssBytes": 263213056,
+        "timerLatenessMaxMs": 55.68042999971658,
+        "quartiles": [
+          {
+            "samples": [
+              0,
+              49
+            ],
+            "rssEndpointMinBytes": 250470400,
+            "rssEndpointMaxBytes": 253947904,
+            "rssEndpointMedianBytes": 252645376.0,
+            "latencyP95Ms": 36912.300540000084
+          },
+          {
+            "samples": [
+              50,
+              99
+            ],
+            "rssEndpointMinBytes": 253005824,
+            "rssEndpointMaxBytes": 256421888,
+            "rssEndpointMedianBytes": 255184896.0,
+            "latencyP95Ms": 35953.66125799995
+          },
+          {
+            "samples": [
+              100,
+              149
+            ],
+            "rssEndpointMinBytes": 256126976,
+            "rssEndpointMaxBytes": 259436544,
+            "rssEndpointMedianBytes": 257921024.0,
+            "latencyP95Ms": 35633.5496749999
+          },
+          {
+            "samples": [
+              150,
+              199
+            ],
+            "rssEndpointMinBytes": 259162112,
+            "rssEndpointMaxBytes": 263213056,
+            "rssEndpointMedianBytes": 261660672.0,
+            "latencyP95Ms": 35824.09104400035
+          }
+        ]
+      },
+      "baselineOverNativeP95": 3.2753439134634146
+    },
+    {
+      "tasks": 5000,
+      "operation": "projectTasksResource",
+      "outputParity": true,
+      "native": {
+        "latencyP95Ms": 11125.49218599964,
+        "rssEndpointMaxBytes": 716328960,
+        "workerLifetimePeakRssBytes": 717266944,
+        "timerLatenessMaxMs": 106.87688099965453,
+        "quartiles": [
+          {
+            "samples": [
+              0,
+              49
+            ],
+            "rssEndpointMinBytes": 683634688,
+            "rssEndpointMaxBytes": 692551680,
+            "rssEndpointMedianBytes": 686884864.0,
+            "latencyP95Ms": 11329.07421500003
+          },
+          {
+            "samples": [
+              50,
+              99
+            ],
+            "rssEndpointMinBytes": 689123328,
+            "rssEndpointMaxBytes": 702087168,
+            "rssEndpointMedianBytes": 696246272.0,
+            "latencyP95Ms": 11173.504031000193
+          },
+          {
+            "samples": [
+              100,
+              149
+            ],
+            "rssEndpointMinBytes": 698490880,
+            "rssEndpointMaxBytes": 707612672,
+            "rssEndpointMedianBytes": 701181952.0,
+            "latencyP95Ms": 10975.400825999677
+          },
+          {
+            "samples": [
+              150,
+              199
+            ],
+            "rssEndpointMinBytes": 702926848,
+            "rssEndpointMaxBytes": 716328960,
+            "rssEndpointMedianBytes": 707465216.0,
+            "latencyP95Ms": 11177.193560000043
+          }
+        ]
+      },
+      "baseline": {
+        "latencyP95Ms": 39226.71902600117,
+        "rssEndpointMaxBytes": 269893632,
+        "workerLifetimePeakRssBytes": 269893632,
+        "timerLatenessMaxMs": 85.34849600028247,
+        "quartiles": [
+          {
+            "samples": [
+              0,
+              49
+            ],
+            "rssEndpointMinBytes": 150847488,
+            "rssEndpointMaxBytes": 265539584,
+            "rssEndpointMedianBytes": 246513664.0,
+            "latencyP95Ms": 42771.84527899977
+          },
+          {
+            "samples": [
+              50,
+              99
+            ],
+            "rssEndpointMinBytes": 251899904,
+            "rssEndpointMaxBytes": 266948608,
+            "rssEndpointMedianBytes": 259850240.0,
+            "latencyP95Ms": 38332.928487999365
+          },
+          {
+            "samples": [
+              100,
+              149
+            ],
+            "rssEndpointMinBytes": 266948608,
+            "rssEndpointMaxBytes": 269647872,
+            "rssEndpointMedianBytes": 269500416.0,
+            "latencyP95Ms": 44261.25393100083
+          },
+          {
+            "samples": [
+              150,
+              199
+            ],
+            "rssEndpointMinBytes": 269402112,
+            "rssEndpointMaxBytes": 269893632,
+            "rssEndpointMedianBytes": 269627392.0,
+            "latencyP95Ms": 37987.069310000166
+          }
+        ]
+      },
+      "baselineOverNativeP95": 3.5258412275336655
+    }
+  ],
+  "artifactHashes": {
+    "source-before.json": "563ab588e100e9014811c6b4fde0091da17deda7c25be09efa4be1b595f94541",
+    "source-after.json": "563ab588e100e9014811c6b4fde0091da17deda7c25be09efa4be1b595f94541",
+    "comparison.json": "4077e860a39f13efbbb93c9d8ea33aebcea91cd31928d13994c81d2186f7b719",
+    "benchmark.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "workers/baseline-5000.json": "95cb5c85628f6b41cb1a0d3919eb1ff9906a7736c9d5acc878239657a4d2f4f3",
+    "workers/native-5000.json": "49d168b7b96df2dbfbfaba642ebee74031213cf5f99da0a522c889f21627fae4",
+    "workers/native-1000.json": "bb6b1dd3b8e47f9105bd3252358724216c669abb59f88482eb1b25446e284da8",
+    "workers/parent.progress.ndjson": "7748efe5d290864558cb3fd61a01cefcf2f46969ef7877f93b432250b9cb6b38",
+    "workers/baseline-5000.json.progress.ndjson": "e07d87a76ca727f077889ba60560d735efa9fda9ff8a266bf29c94c31803ab63",
+    "workers/native-1000.json.progress.ndjson": "19d81b956dbf02f13a19eb3dcb46add85aa3bb5e5c89d1e035dde404a3e19de6",
+    "workers/native-5000.json.progress.ndjson": "7303b7b61af7c37ee0eb8a3d8422020f1d083a8f8859e930a7e4fbdbb72d9a5c",
+    "workers/baseline-1000.json": "9aaa3116d4ee93b2983487306ca534cbff1b8a571464c47c4212ca062a164f5d",
+    "workers/baseline-1000.json.progress.ndjson": "fcb75a4aeceedf51e04042474b719a500c54d6e3725cc361af2c596b49f1bb82"
+  },
+  "releaseThresholdsVerified": false,
+  "limits": [
+    "Resource-instrumented warm in-memory MCP request latency, not stdio/HTTP/filesystem-cold",
+    "Request RSS endpoints are not request peaks; lifetime peaks include worker setup",
+    "Quartiles report observed evolution, not a proof of an asymptotic bound or an invented RSS ceiling",
+    "No whole-goal acceptance inferred from four matched operation results"
+  ],
+  "runUrl": "https://github.com/cassiomc1/forgeloop/actions/runs/37842080969",
+  "artifactId": 11592812560,
+  "artifactZipSha256": "4b07154939a09336e53b6f68a81b7bd720988e657bbcee84636bc828445d6edf",
+  "terminalStatus": "success",
+  "progressValidation": {
+    "parentRecords": 20,
+    "workerRecordsEach": 51,
+    "orderedSequences": true,
+    "workersClosed": 4,
+    "parentCompleted": true,
+    "allWorkersExitedZero": true,
+    "fixtureCleanupCompleted": true,
+    "firstCauseFailureJournals": 0
+  }
+}
