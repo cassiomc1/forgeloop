@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "sourceBase": "c188854",
+  "status": "FOCUSED_CORRECTION_VERIFIED",
+  "productionFiles": {
+    "src/storage/snapshot.js": "1de9646ab166b2f7ff951f98c53b1ece5cf252ec5c66fe91cc1d2b8c78681377",
+    "src/storage/unit-of-work.js": "52f29d4d771d36db0853132d53ad7c40609982a8815b3939f082c1e5988892b5"
+  },
+  "logs": {
+    "snapshot-row913-before.log": "d2947839f98090bed416d804308e02a4fb78de40eab17b3e1eaf6c5b627b5695",
+    "snapshot-row913-after.log": "24564d769f000b50b9017544d7ad848b9eea5be249e9a3c28b019ea1a268bc11",
+    "snapshot-row913-cleanup.log": "f8fb6aad20356607418cd678225127b3bc4d57e6423b496123f2137604551463"
+  },
+  "before": "New immutable read-reuse assertion fails:3 SQL reads versus expected1.",
+  "after": {
+    "snapshotCasesPassed": 27,
+    "finalCleanupDiscoveryCasesPassed": 7
+  },
+  "performanceAcceptanceVerified": false,
+  "wholePlanComplete": false
+}

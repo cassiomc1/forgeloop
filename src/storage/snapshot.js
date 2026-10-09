@@ -4,6 +4,8 @@ import os from "node:os";
 import path from "node:path";
 
 const ownedSnapshots = new WeakSet();
+/** Only copies admitted here are immutable; callers cannot register live handles. */
+export function isOwnedStorageSnapshot(db) { return ownedSnapshots.has(db); }
 // Copy a committed snapshot in one native backup step. Smaller batches restart
 // after writes from other connections and can starve readers under sustained work.
 // This is a page-step limit, not an allocation or a JavaScript buffer size.

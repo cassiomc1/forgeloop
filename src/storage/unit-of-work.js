@@ -10,6 +10,7 @@ import { artifactByteDigest } from "./artifact-bytes.js";
 import { runInTransaction } from "./transaction.js";
 import { assertArtifactTaskIdentity, decodeIndexedEvent, appendEvent, putArtifact, putAction, putApproval, putExecution, putSession, upsertTask } from "./repository.js";
 import { resolveStoreReservationState } from "./task-guards.js";
+import { isOwnedStorageSnapshot } from "./snapshot.js";
 
 const SINGLE = Object.fromEntries(Object.entries(TASK_ARTIFACT_FILES)
   .filter(([, filename]) => filename.endsWith(".json"))
@@ -84,6 +85,7 @@ class OperationalStore {
     this.db = db;
     this.target = path.resolve(target);
     this.reads = new Map();
+    this.snapshotTaskRows = new Map();
     this.writes = new Map();
     this.events = new Map();
     this.attachments = new Map();
@@ -115,6 +117,8 @@ class OperationalStore {
   }
 
   taskRow(taskKey) {
+    const immutable = isOwnedStorageSnapshot(this.db);
+    if (immutable && this.snapshotTaskRows.has(taskKey)) return this.snapshotTaskRows.get(taskKey);
     // Cache the statement, never the row; detached observations rebind this.db to the live parent.
     const row = this.observe(`task:${taskKey}`, () => queryTaskRow(this.db, taskKey));
     if (row) {
@@ -132,6 +136,9 @@ class OperationalStore {
         throw storageError("E_STORAGE_PAYLOAD_MISMATCH", "Indexed task fields disagree with canonical task payloads");
       }
     }
+    // Reuse only successfully validated bytes from a live owned read-only copy.
+    // Observation queries remain uncached and rebind to the parent at commit.
+    if (immutable) this.snapshotTaskRows.set(taskKey, row ? Object.freeze(row) : null);
     return row;
   }
 
@@ -469,6 +476,7 @@ export async function withOperationalReadSnapshot({ db, target }, callback) {
   try { return await operationalContext.run(store, () => callback(store)); }
   finally {
     store.active = false;
+    store.snapshotTaskRows.clear();
     if (source) {
       // Observation queries resolve this store's db at commit time. Preserve
       // snapshot fingerprints, but query the live parent connection on recheck.

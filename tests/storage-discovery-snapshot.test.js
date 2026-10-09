@@ -240,3 +240,41 @@ test("snapshot acquisition does not restart behind independent writes between ba
     await removeTempTree(target);
   }
 });
+
+
+test("owned immutable snapshot validates each task row once without hiding live commit conflicts", async () => {
+  const target = await createGitRepository("forgeloop-task-row-snapshot-");
+  const db = openStorageDatabase(path.join(target, "state.sqlite"));
+  const descriptor = createTaskDescriptor({ taskId: "snapshot-row-reuse", writeClaims: [] });
+  upsertTask(db, { taskId: descriptor.taskId, descriptor });
+  try {
+    await withOperationalStore({ db, target }, async source => {
+      await withStorageSnapshot(db, snapshot => withOperationalReadSnapshot({ db: snapshot, target }, async reader => {
+        const prepare = snapshot.prepare;
+        let rowReads = 0;
+        snapshot.prepare = function(sql) {
+          const statement = prepare.call(this, sql);
+          if (sql === "SELECT * FROM tasks WHERE task_key = ?") {
+            const get = statement.get;
+            statement.get = function(...args) { rowReads++; return get.apply(this, args); };
+          }
+          return statement;
+        };
+        const admitted = reader.taskRow(descriptor.taskKey);
+        assert.equal(admitted.task_id, descriptor.taskId);
+        upsertTask(db, { taskId: descriptor.taskId, descriptor: { ...descriptor, updatedAt: "2032-01-01T00:00:00.000Z" } });
+        assert.deepEqual(reader.taskRow(descriptor.taskKey), admitted);
+        assert.deepEqual(reader.taskRow(descriptor.taskKey), admitted);
+        assert.equal(rowReads, 1, "immutable task bytes should be decoded only once");
+      }));
+      assert.throws(() => source.commit(), { code: "E_STATE_REVISION_CONFLICT" });
+    });
+    // A failed validation must not admit the row to a subsequent cached read.
+    db.prepare("UPDATE tasks SET task_key = ? WHERE task_id = ?").run("f".repeat(64), descriptor.taskId);
+    await withStorageSnapshot(db, snapshot => withOperationalReadSnapshot({ db: snapshot, target }, async reader => {
+      for (let index = 0; index < 2; index++) {
+        assert.throws(() => reader.taskRow("f".repeat(64)), { code: "E_STORAGE_PAYLOAD_MISMATCH" });
+      }
+    }));
+  } finally { db.close(); await removeTempTree(target); }
+});
