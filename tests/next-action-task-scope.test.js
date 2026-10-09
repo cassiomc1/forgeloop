@@ -30,8 +30,8 @@ test("selected EXECUTING task reads its own continuity before entering verificat
   const taskB = "continuity-task-b";
   const expectedArtifacts = [taskArtifactPath(taskA, "continuity"), taskArtifactPath(taskA, "state")];
   await withTarget(async (target) => {
-    await setupTaskTo(target, taskA, "EXECUTING");
-    await setupTaskTo(target, taskB, "EXECUTING");
+    await setupTaskTo(target, taskA, "EXECUTING", { claims: ["src/a"] });
+    await setupTaskTo(target, taskB, "EXECUTING", { claims: ["src/b"] });
     await writeContinuity(target, {
       remainingWork: [{ id: "finish-a", summary: "Finish task A implementation" }],
     }, { taskId: taskA, packageRoot });

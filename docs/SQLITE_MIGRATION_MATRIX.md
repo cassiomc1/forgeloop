@@ -2,6 +2,28 @@
 
 Current checkpoint progress: [SQLite migration progress](SQLITE_PROGRESS.md).
 
+## Terminal resource comparison927 and continuity corrections
+
+GitHub run `37922435146`, job `113793330871`, completed successfully on
+`20aca2ba332ed86323722ef91812925ad9dadb83`. Artifact `11634220092` retains
+four matched operation results, 200 latency/resource samples per backend and
+operation, unchanged 3,057 tracked source records, four closed workers, parent
+completion and fixture cleanup. The runner returned idle. The retained analysis
+is `benchmarks/storage-sqlite/mcp-resources927-complete.json`.
+
+Observed MCP p95 speedup is 3.95–4.06×. At 5,000 tasks native RSS endpoints reach
+682.48 MiB versus 254.36 MiB for the baseline; finite samples do not establish
+bounded long-lived memory or close resource acceptance. Full-plan completion,
+LOC reduction and protocol closure remain open.
+
+Runtime regressions reproduced selected-task continuity being ignored and a
+portable bundle accepting foreign-task continuity after manifest rebinding.
+Production now forwards the selected task through continuity retrieval and
+response paths, and rejects bundle continuity with a different task identity.
+The bundle suites pass 13 cases; focused and broader continuity suites pass
+26 cases. `verify:fast` passes. Earlier preparation sections below describe
+historical checkpoints and do not override these correction results.
+
 ## Pending corrections and bounded filesystem review943
 
 Five test files now contain unexecuted regressions for selected-task continuity

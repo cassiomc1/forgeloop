@@ -56,7 +56,7 @@ test("fresh continuity with remaining work keeps EXECUTING", async () => {
   assert.equal(result.currentPhase, "EXECUTING");
   assert.equal(result.terminal, false);
   assert.deepEqual(result.commands, []);
-  assert.deepEqual(result.requiredArtifacts, [".forgeloop/continuity.json", ".forgeloop/work-state.json"]);
+  assert.deepEqual(result.requiredArtifacts, [taskArtifactPath("task-1", "continuity"), taskArtifactPath("task-1", "state")]);
 });
 
 test("fresh continuity without remaining work preserves existing verification transition", async () => {
@@ -87,7 +87,7 @@ test("stale or invalid continuity blocks premature verification", async () => {
     },
   });
   assert.equal(stale.nextAction, NEXT_ACTIONS.RESOLVE_BLOCKER);
-  assert.deepEqual(stale.commands, ["forgeloop reconcile-continuity"]);
+  assert.deepEqual(stale.commands, ["forgeloop reconcile-continuity --task task-1"]);
   assert.deepEqual(stale.reasonCodes, ["E_CONTINUITY_RECONCILIATION_REQUIRED"]);
 
   const invalid = nextActionForContinuity({

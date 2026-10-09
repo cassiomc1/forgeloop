@@ -521,6 +521,9 @@ export async function readTaskBundle(target, taskId, packageRoot) {
     }
     if (mapping[1] === "continuity") {
       assertContinuitySemantics(loadedArtifact.value);
+      if (loadedArtifact.value.taskId !== taskId) {
+        throw bundleBindingError("E_BUNDLE_TASK_MISMATCH", "Continuity taskId does not match its bundle task");
+      }
     }
     if (mapping[1] === "workspace-binding" && loadedArtifact.value.taskId !== taskId) {
       const error = new Error("Workspace binding taskId does not match its bundle task");
