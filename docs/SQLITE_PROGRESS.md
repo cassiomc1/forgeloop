@@ -565,3 +565,9 @@ Frozen709a3e9 completes the same external sampled-allocation1000/5000task,two-re
 ### Current full local acceptance915
 
 Full prepush on6645b65 completes exit0:2938core cases,2927pass,11skip,zero failures;MCP73,PoC67,package12 and all canonical tiers pass. The consumer matrix now distinguishes560unchanged historical production files from five corrections rather than claiming historical whole-platform identity. Current remote checks and whole acceptance remain open. Evidence:`benchmarks/storage-sqlite/full-prepush915-complete.json`.
+
+### Current inventory reconciliation916
+
+Current source resolves505modules and all literal imports across CLI436/API465/MCP477module closures. All104filesystem-origin modules have source-bound role review;the sole changed filesystem module,snapshot.js,adds only the owned-copy membership predicate and leaves backup/cleanup operations unchanged. The77named filesystem wrapper calls in35files retain review references. This is static reconciliation,not exhaustive transitive authority proof. Evidence:`benchmarks/storage-sqlite/filesystem-role-reconciliation916.json`.
+
+Current symmetric candidate LOC inventory includes282modules,43788baseline versus52190current nonblank production lines. The reduction target remains unmet and semantic scope review remains incomplete. Evidence:`benchmarks/storage-sqlite/persistence-loc915-summary.json`.

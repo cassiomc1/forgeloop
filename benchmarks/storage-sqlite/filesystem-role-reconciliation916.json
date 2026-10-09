@@ -1,0 +1,22 @@
+{
+  "sourceRevision": "4794f0a85cc90eb95d67f590bec86a8acde99fef",
+  "modules": 505,
+  "filesystemModules": 104,
+  "unresolvedImports": [],
+  "changedFilesystemReview": {
+    "path": "src/storage/snapshot.js",
+    "sha256": "1de9646ab166b2f7ff951f98c53b1ece5cf252ec5c66fe91cc1d2b8c78681377",
+    "role": "Temporary committed SQLite backup/read-only copy;finally closes database and removes exclusively-created temporary directory.",
+    "change": "Exports WeakSet membership predicate;does not add filesystem calls or writable operational paths."
+  },
+  "wrapperCalls": 77,
+  "wholeConsumerClosure": false,
+  "wholeSoleWriterProof": false,
+  "limitations": [
+    "Static dependency and role reconciliation,not exhaustive runtime authority proof."
+  ],
+  "evidenceInputs": {
+    "module-closure916.json": "7366295682846d3508f649d929dc91b3e6ada1c91252e35e8f98c8def1f6b815",
+    "wrapper-map916.json": "c431ee259fc8506bcd07e7a02b000d9b06ba4ef1d0c3984d4ba43e5e7a084222"
+  }
+}
