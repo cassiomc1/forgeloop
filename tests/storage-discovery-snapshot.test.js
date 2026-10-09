@@ -9,9 +9,12 @@ import { runTaskCreate } from "../src/commands/task-create.js";
 import { discoverTasks, findTaskById } from "../src/core/task-discovery.js";
 import { createTaskDescriptor } from "../src/core/task-descriptor.js";
 import { getPackageRoot } from "../src/core/templates.js";
+import { createForgeLoopContext } from "../src/integration.js";
 import { loadStorageDriver } from "../src/storage/runtime.js";
 import { openStorageDatabase, runInTransaction, upsertTask } from "../src/storage/index.js";
-import { withOperationalStore, withOperationalReadSnapshot } from "../src/storage/unit-of-work.js";
+import { getOperationalStore } from "../src/storage/operational-context.js";
+import { withProjectStorage } from "../src/storage/project-boundary.js";
+import { withOperationalStore, withOperationalReadSnapshot, withOperationalTransaction } from "../src/storage/unit-of-work.js";
 import { withStorageSnapshot } from "../src/storage/snapshot.js";
 
 test("task-row statement reuse preserves fresh rows and live snapshot rechecks", async () => {
@@ -106,6 +109,87 @@ test("discovery owns one project snapshot for its catalog and all task projectio
   } finally {
     driver.DatabaseSync = Original;
     writer.close(); db.close();
+    await removeTempTree(target);
+  }
+});
+
+test("read-only discovery does not retain detached observations in its project scope", async () => {
+  const target = await createGitRepository("forgeloop-discovery-readonly-retention-");
+  const packageRoot = getPackageRoot();
+  const taskIds = ["retention-a", "retention-b", "retention-c"];
+  try {
+    for (const taskId of taskIds) await runTaskCreate({ target, packageRoot, taskId, claims: [] });
+    await withProjectStorage(target, async source => {
+      await withProjectStorage(target, async () => {
+        const nested = getOperationalStore(target);
+        assert.equal(nested, source);
+        assert.equal(nested.readOnly, true);
+        await assert.rejects(
+          withOperationalTransaction({ target, taskId: taskIds[0], operation: "read-only-nested-mutation", packageRoot }, () => undefined),
+          { code: "E_STORAGE_READ_ONLY" },
+        );
+      }, { readOnly: false });
+      const tasks = await discoverTasks(target, packageRoot);
+      assert.deepEqual(tasks.map(task => task.taskId).sort(), taskIds.sort());
+      assert.equal(source.readOnly, true);
+      assert.equal(source.reads.size, 0, "read-only discovery must release detached observations instead of retaining commit state");
+    }, { readOnly: true });
+  } finally { await removeTempTree(target); }
+});
+
+test("logical read-only scope blocks nested writable access on a writable database", async () => {
+  const target = await createGitRepository("forgeloop-discovery-readonly-logical-");
+  const packageRoot = getPackageRoot();
+  const taskId = "readonly-logical-task";
+  const filename = path.join(target, ".forgeloop/state.sqlite");
+  let db;
+  try {
+    await runTaskCreate({ target, packageRoot, taskId, claims: [] });
+    db = openStorageDatabase(filename);
+    await withOperationalStore({ db, target, readOnly: true }, async source => {
+      assert.equal(db.prepare("PRAGMA query_only").get().query_only, 0, "fixture must use a physically writable connection");
+      await withProjectStorage(target, async () => {
+        const nested = getOperationalStore(target);
+        assert.equal(nested, source);
+        assert.equal(nested.readOnly, true);
+        assert.throws(() => nested.commit(), { code: "E_STORAGE_READ_ONLY" });
+        await assert.rejects(
+          withOperationalTransaction({ target, taskId, operation: "nested-writable-request", packageRoot }, () => undefined),
+          { code: "E_STORAGE_READ_ONLY" },
+        );
+      }, { readOnly: false });
+      assert.equal(source.transaction, null);
+      assert.equal(source.writes.size, 0);
+      assert.equal(db.prepare("SELECT COUNT(*) AS count FROM tasks").get().count, 1);
+    });
+  } finally {
+    db?.close();
+    await removeTempTree(target);
+  }
+});
+
+test("detached read snapshots cannot mutate or commit through a writable parent lease", async () => {
+  const target = await createGitRepository("forgeloop-discovery-readonly-lease-");
+  const packageRoot = getPackageRoot();
+  const taskId = "readonly-lease-task";
+  const runtimeContext = createForgeLoopContext({ persistentStorage: true });
+  try {
+    await runTaskCreate({ target, packageRoot, taskId, claims: [] });
+    await withProjectStorage(target, async source => {
+      assert.equal(source.readOnly, false);
+      await withOperationalReadSnapshot({ db: source.db, target }, async reader => {
+        assert.equal(reader.readOnly, true);
+        assert.throws(() => reader.commit(), { code: "E_STORAGE_READ_ONLY" });
+        await assert.rejects(
+          withOperationalTransaction({ target, taskId, operation: "detached-readonly-mutation", packageRoot }, () => undefined),
+          { code: "E_STORAGE_READ_ONLY" },
+        );
+      });
+      assert.equal(source.transaction, null);
+      assert.equal(source.writes.size, 0);
+    }, { runtimeContext });
+  } finally {
+    await runtimeContext.close();
     await removeTempTree(target);
   }
 });

@@ -81,9 +81,10 @@ function observeEventRows(db, taskId, limit, consume = null) {
  * work between transactions is neither replayed nor held under a writer lock.
  */
 class OperationalStore {
-  constructor(db, target) {
+  constructor(db, target, { readOnly = false } = {}) {
     this.db = db;
     this.target = path.resolve(target);
+    this.readOnly = readOnly;
     this.reads = new Map();
     this.snapshotTaskRows = new Map();
     this.writes = new Map();
@@ -102,6 +103,10 @@ class OperationalStore {
     // Presence is discovery only; readEvents still validates actual evidence.
     if (location?.kind === "events") return this.taskId(location) !== null;
     return this.readText(relativePath) !== null;
+  }
+
+  assertWritable() {
+    if (this.readOnly) throw storageError("E_STORAGE_READ_ONLY", "Read-only operational scope cannot stage mutations");
   }
 
   observe(key, query, conflictCode = null) {
@@ -325,6 +330,7 @@ class OperationalStore {
   }
 
   stageText(relativePath, text) {
+    this.assertWritable();
     if (!this.transaction) throw storageError("E_STORAGE_TRANSACTION_INVALID", "Operational writes require a domain transaction");
     const location = locator(relativePath);
     if (!location || location.kind === "events") throw storageError("E_STORAGE_OPERATION_UNSUPPORTED", "Only structured operational records can be replaced");
@@ -338,6 +344,7 @@ class OperationalStore {
   }
 
   appendText(relativePath, text) {
+    this.assertWritable();
     if (!this.transaction) throw storageError("E_STORAGE_TRANSACTION_INVALID", "Operational appends require a domain transaction");
     const location = locator(relativePath);
     this.assertMutationTask(location);
@@ -350,6 +357,7 @@ class OperationalStore {
   }
 
   stageDelete(relativePath) {
+    this.assertWritable();
     if (!this.transaction) throw storageError("E_STORAGE_TRANSACTION_INVALID", "Operational deletion requires a domain transaction");
     const location = locator(relativePath);
     if (!location || !["state", "recovery", "continuity"].includes(location.kind)) throw storageError("E_STORAGE_OPERATION_UNSUPPORTED", "Audit records cannot be deleted through the mutation overlay");
@@ -364,6 +372,7 @@ class OperationalStore {
   }
 
   commit() {
+    this.assertWritable();
     runInTransaction(this.db, () => {
       for (const [key, observation] of this.reads) {
         if (canonicalFingerprint(observation.query() ?? null) !== observation.fingerprint) {
@@ -452,13 +461,13 @@ async function commitPreparedStore(store, packageRoot) {
   }
 }
 
-export async function withOperationalStore({ db, target }, callback) {
+export async function withOperationalStore({ db, target, readOnly = false }, callback) {
   const existing = getOperationalStore(target);
   if (existing) {
     if (existing.db !== db) throw storageError("E_TASK_CONTEXT_MISMATCH", "Cannot switch stores in an active project scope");
     return callback(existing);
   }
-  const store = new OperationalStore(db, target);
+  const store = new OperationalStore(db, target, { readOnly });
   try { return await operationalContext.run(store, () => callback(store)); }
   finally { store.active = false; }
 }
@@ -469,7 +478,11 @@ export async function withOperationalReadSnapshot({ db, target }, callback) {
   if (source?.transaction || source?.writes.size || source?.events.size || source?.attachments.size) {
     throw storageError("E_STORAGE_SNAPSHOT_TRANSACTION", "Detached audit requires committed operational records");
   }
-  const store = new OperationalStore(db, target);
+  // A detached scope is an immutable audit view even when its parent owns a
+  // writable leased connection. Its observations may still be merged into a
+  // writable parent after the view closes, but the view itself must never
+  // prepare or commit mutations against its snapshot handle.
+  const store = new OperationalStore(db, target, { readOnly: true });
   store.stageText = store.appendText = store.stageDelete = () => {
     throw storageError("E_STORAGE_READ_ONLY", "Detached audit cannot stage operational writes");
   };
@@ -477,7 +490,7 @@ export async function withOperationalReadSnapshot({ db, target }, callback) {
   finally {
     store.active = false;
     store.snapshotTaskRows.clear();
-    if (source) {
+    if (source && !source.readOnly) {
       // Observation queries resolve this store's db at commit time. Preserve
       // snapshot fingerprints, but query the live parent connection on recheck.
       Object.defineProperty(store, "db", { configurable: true, get: () => source.db });
@@ -491,6 +504,7 @@ export async function withOperationalReadSnapshot({ db, target }, callback) {
 export async function withOperationalTransaction({ target, taskId, operation, packageRoot, recordCommitEvent }, callback) {
   const store = getOperationalStore(target);
   if (!store) throw storageError("E_STORAGE_OPERATION_UNSUPPORTED", "No operational store selected");
+  if (store.readOnly) throw storageError("E_STORAGE_READ_ONLY", "Read-only operational scope cannot prepare mutations");
   if (store.transaction) {
     if (store.transaction.taskId !== taskId) throw storageError("E_TASK_CONTEXT_MISMATCH", "Nested transaction targets another task");
     return callback(store.transaction);

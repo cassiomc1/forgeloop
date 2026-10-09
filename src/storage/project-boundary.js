@@ -66,7 +66,7 @@ export async function withProjectStorage(target, callback, { readOnly = false, r
       if (metadata.schema_version !== marker.databaseSchemaVersion || metadata.storage_version !== marker.storageVersion
         || metadata.storage_format !== marker.storageFormat) throw Object.assign(new Error("Active database metadata disagrees with its storage marker"), { code: "E_STORAGE_VERSION_MARKER_INVALID" });
     }
-    return await withOperationalStore({ db, target }, callback);
+    return await withOperationalStore({ db, target, readOnly }, callback);
   }
   finally { if (!connectionLease) db.close(); }
 }
