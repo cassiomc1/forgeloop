@@ -6,7 +6,8 @@ import { setImmediate as nextTurn } from "node:timers/promises";
 
 import { createGitRepository } from "./helpers/git-fixture.js";
 import { runTaskCreate } from "../src/commands/task-create.js";
-import { discoverTasks, findTaskById } from "../src/core/task-discovery.js";
+import { discoverTasks, discoverTaskSummaries, findTaskById } from "../src/core/task-discovery.js";
+import { readForgeLoopIntegrationResource } from "../src/core/integration-resources.js";
 import { createTaskDescriptor } from "../src/core/task-descriptor.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { createForgeLoopContext } from "../src/integration.js";
@@ -109,6 +110,66 @@ test("discovery owns one project snapshot for its catalog and all task projectio
   } finally {
     driver.DatabaseSync = Original;
     writer.close(); db.close();
+    await removeTempTree(target);
+  }
+});
+
+test("project task summaries preserve unhealthy ordering, parity, and snapshot CAS", async () => {
+  const target = await createGitRepository("forgeloop-discovery-task-summaries-");
+  const packageRoot = getPackageRoot();
+  const validTaskId = "summary-valid";
+  const corruptTaskId = "summary-corrupt";
+  const filename = path.join(target, ".forgeloop/state.sqlite");
+  let db;
+  let writer;
+  let prototype;
+  let originalRead;
+  let changed = false;
+  try {
+    await runTaskCreate({ target, packageRoot, taskId: validTaskId, claims: [] });
+    await runTaskCreate({ target, packageRoot, taskId: corruptTaskId, claims: [] });
+    db = openStorageDatabase(filename);
+    writer = openStorageDatabase(filename);
+    db.prepare("UPDATE tasks SET descriptor_json = ? WHERE task_id = ?").run("{}", corruptTaskId);
+    const full = await discoverTasks(target, packageRoot);
+    const expected = full.map(task => ({
+      taskId: task.taskId,
+      healthy: task.healthy !== false,
+      phase: task.phase ?? null,
+      mutationAllowed: task.mutationAllowed !== false,
+    }));
+    const invalid = expected.find(task => task.healthy === false);
+    assert.ok(invalid, "fixture must contain an unhealthy task");
+    assert.equal(invalid.taskId, null, "unhealthy entries must retain null task identity");
+
+    const resource = await readForgeLoopIntegrationResource("project/tasks", { projectPath: target, packageRoot });
+    assert.equal(resource.data.count, expected.length);
+    assert.deepEqual(resource.data.tasks, expected);
+    assert.deepEqual(await discoverTaskSummaries(target, packageRoot), expected);
+
+    await withOperationalStore({ db, target }, async source => {
+      prototype = Object.getPrototypeOf(source);
+      originalRead = prototype.readText;
+      prototype.readText = function(relativePath) {
+        if (!changed && this.target === target && this.db !== db && relativePath.endsWith("/task.json")) {
+          changed = true;
+          upsertTask(writer, {
+            taskId: "summary-cas-added",
+            descriptor: createTaskDescriptor({ taskId: "summary-cas-added", writeClaims: [] }),
+          });
+        }
+        return originalRead.call(this, relativePath);
+      };
+      try {
+        assert.deepEqual(await discoverTaskSummaries(target, packageRoot), expected);
+        assert.equal(changed, true, "summary discovery must read through the owned snapshot");
+        assert.throws(() => source.commit(), { code: "E_STATE_REVISION_CONFLICT" });
+      } finally { prototype.readText = originalRead; }
+    });
+  } finally {
+    if (prototype) prototype.readText = originalRead;
+    writer?.close();
+    db?.close();
     await removeTempTree(target);
   }
 });

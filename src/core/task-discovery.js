@@ -88,8 +88,21 @@ async function discoveryArtifactExists(target, taskId, kind, filename) {
 }
 
 export async function discoverTasks(target, packageRoot = getPackageRoot(), { taskKeys = null } = {}) {
+  return discoverTasksInScope(target, packageRoot, taskKeys, false);
+}
+
+/**
+ * Internal integration projection. Discovery still validates every task and
+ * records every snapshot observation, but releases the full task graph after
+ * retaining only the public project/tasks fields and its canonical sort key.
+ */
+export async function discoverTaskSummaries(target, packageRoot = getPackageRoot(), { taskKeys = null } = {}) {
+  return discoverTasksInScope(target, packageRoot, taskKeys, true);
+}
+
+async function discoverTasksInScope(target, packageRoot, taskKeys, summaryOnly) {
   return withNativeReadScope(target, async () => {
-    const read = () => discoverSelectedTasks(target, packageRoot, taskKeys);
+    const read = () => discoverSelectedTasks(target, packageRoot, taskKeys, summaryOnly);
     const store = getOperationalStore(target);
     if (!store || store.transaction || store.writes.size || store.events.size || store.attachments.size) return read();
     const { withStorageSnapshot } = await import("../storage/snapshot.js");
@@ -159,7 +172,33 @@ async function discoverTaskEntry(target, packageRoot, entry) {
   };
 }
 
-async function discoverSelectedTasks(target, packageRoot, taskKeys) {
+function projectTaskSummary(task) {
+  return {
+    taskId: task.taskId,
+    healthy: task.healthy !== false,
+    phase: task.phase ?? null,
+    mutationAllowed: task.mutationAllowed !== false,
+  };
+}
+
+function compareDiscoveredTasks(a, b) {
+  return (a.taskId ?? a.taskKey).localeCompare(b.taskId ?? b.taskKey);
+}
+
+function appendDiscoveredTask(tasks, task, summaryOnly) {
+  if (!summaryOnly) {
+    tasks.push(task);
+    return;
+  }
+  tasks.push({ sortKey: task.taskId ?? task.taskKey, value: projectTaskSummary(task) });
+}
+
+function finishDiscoveredTasks(tasks, summaryOnly) {
+  if (summaryOnly) return tasks.sort((a, b) => a.sortKey.localeCompare(b.sortKey)).map(({ value }) => value);
+  return tasks.sort(compareDiscoveredTasks);
+}
+
+async function discoverSelectedTasks(target, packageRoot, taskKeys, summaryOnly = false) {
   const store = getOperationalStore(target);
   const rootPath = ensureWithin(target, TASK_STATE_ROOT);
   if (!store && !(await fileExists(rootPath))) {
@@ -189,7 +228,7 @@ async function discoverSelectedTasks(target, packageRoot, taskKeys) {
       const task = taskId
         ? await withEventLedgerAudit(target, packageRoot, { taskId }, readEntry)
         : await readEntry();
-      tasks.push(task);
+      appendDiscoveredTask(tasks, task, summaryOnly);
     } catch (err) {
       // A directory without a task.json descriptor is not automatically a
       // task namespace: classify by contents so explicitly recognized legacy
@@ -201,17 +240,17 @@ async function discoverSelectedTasks(target, packageRoot, taskKeys) {
         if (classification.kind === "LEGACY_INCIDENTAL") {
           continue;
         }
-        tasks.push({
+        appendDiscoveredTask(tasks, {
           taskId: null,
           taskKey: entry.name,
           directory: `${TASK_STATE_ROOT}/${entry.name}`,
           healthy: false,
           error: classification.error,
-        });
+        }, summaryOnly);
         continue;
       }
       // P1-2: Surface corrupt task namespaces instead of silently hiding them
-      tasks.push({
+      appendDiscoveredTask(tasks, {
         taskId: null,
         taskKey: entry.name,
         directory: `${TASK_STATE_ROOT}/${entry.name}`,
@@ -220,11 +259,11 @@ async function discoverSelectedTasks(target, packageRoot, taskKeys) {
           code: err.code ?? "E_TASK_DESCRIPTOR_INVALID",
           message: err.message ?? String(err),
         },
-      });
+      }, summaryOnly);
     }
   }
 
-  return tasks.sort((a, b) => (a.taskId ?? a.taskKey).localeCompare(b.taskId ?? b.taskKey));
+  return finishDiscoveredTasks(tasks, summaryOnly);
 }
 
 export async function findTaskById(target, taskId, packageRoot = getPackageRoot()) {

@@ -3,7 +3,7 @@ import { withProjectStorage } from "../storage/project-boundary.js";
 import { withProjectReadSnapshot } from "../storage/project-read-snapshot.js";
 import { runProtocolInfo } from "../commands/protocol-info.js";
 import { readContract } from "./contract.js";
-import { discoverTasks } from "./task-discovery.js";
+import { discoverTaskSummaries } from "./task-discovery.js";
 import { resolveTaskClaimState } from "./task-claim-state.js";
 import { runStatus } from "../commands/status.js";
 import { runContinuity } from "../commands/continuity.js";
@@ -143,13 +143,8 @@ async function readForgeLoopIntegrationResourceCore(uri, {
 
   if (uri === "protocol/info") return { uri, data: await runProtocolInfo({ packageVersion }) };
   if (uri === "project/tasks") {
-    const tasks = await discoverTasks(projectPath, packageRoot);
-    return { uri, data: { count: tasks.length, tasks: tasks.map((task) => ({
-      taskId: task.taskId,
-      healthy: task.healthy !== false,
-      phase: task.phase ?? null,
-      mutationAllowed: task.mutationAllowed !== false,
-    })) } };
+    const tasks = await discoverTaskSummaries(projectPath, packageRoot);
+    return { uri, data: { count: tasks.length, tasks } };
   }
   if (TASK_RESOURCE_URIS.has(uri) && (typeof taskId !== "string" || !taskId)) {
     const error = new Error(`Resource ${uri} requires a taskId`);
