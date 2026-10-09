@@ -1,0 +1,86 @@
+{
+  "increment": 898,
+  "kind": "EXISTING_CONFORMANCE_RECONCILIATION",
+  "sourceRevision": "8a5dea39cab4a132be4e4f923fd79311c040826a",
+  "executedRevision": "fe8705c",
+  "log": "/Users/cassio/.codex/verification/full-macos873.log",
+  "logSha256": "8022ee8b3e7095b342500eafe5e929fc99a19d5666dc7e550d68aaa001705aa0",
+  "cases": [
+    {
+      "artifact": "usage",
+      "testFile": "tests/cli.test.js",
+      "sha256": "37ee1cffe91c81295dcecf6e425dcefb63d15c3d1db45c8e524d17f56702ab47",
+      "testBytesMatchExecutedRevision": true,
+      "observedPassingRecord": {
+        "line": 342,
+        "text": "\u2714 usage-record persists actor telemetry and metrics preserve its provenance (944.304875ms)"
+      }
+    },
+    {
+      "artifact": "testUtility",
+      "testFile": "tests/jev-decision-enforcement.test.js",
+      "sha256": "ce0d44ee673611065c938314b62f66e8214f07a20f89b43b6a2be7170617490a",
+      "testBytesMatchExecutedRevision": true,
+      "observedPassingRecord": {
+        "line": 1051,
+        "text": "\u2714 test utility sends real inventory metadata in bounded Jev batches (679.629875ms)"
+      }
+    },
+    {
+      "artifact": "session",
+      "testFile": "tests/storage-operational-bootstrap.test.js",
+      "sha256": "04ec7b1d316f0b8bf352dfc6721ad3ca1f4db7778444766eaaab9a6ce43b20e2",
+      "testBytesMatchExecutedRevision": true,
+      "observedPassingRecord": {
+        "line": 2311,
+        "text": "\u2714 canonical SQLite lifecycle completes after a real correction cycle without legacy task or session files (1710.820042ms)"
+      }
+    },
+    {
+      "artifact": "verificationScope",
+      "testFile": "tests/verification-scope-freshness.test.js",
+      "sha256": "40fc714885320ff74c5ee6f2dca8f3296fe52d7f550eaf5466790e885acd17a1",
+      "testBytesMatchExecutedRevision": true,
+      "observedPassingRecord": {
+        "line": 2938,
+        "text": "\u2714 verification scope becomes stale after its canonical inputs change (1687.387ms)"
+      }
+    },
+    {
+      "artifact": "workspaceBinding",
+      "testFile": "tests/workspace-binding.test.js",
+      "sha256": "694d202be5e07c1e81b93a53a7c227ea3050b68d0eff1ca14dd775568f861b2b",
+      "testBytesMatchExecutedRevision": true,
+      "observedPassingRecord": {
+        "line": 2964,
+        "text": "\u2714 workspace binding is immutable and matches the current Git worktree (1203.480291ms)"
+      }
+    },
+    {
+      "artifact": "continuityRecord",
+      "testFile": "tests/continuity-cli.test.js",
+      "sha256": "1cf9cfbe8dfc9897831d1db37815bdd2c2184a17174eba5702014e8aa931e838",
+      "testBytesMatchExecutedRevision": true,
+      "observedPassingRecord": {
+        "line": 443,
+        "text": "\u2714 record-continuity parses work-item flags and writes only operational context (241.771083ms)"
+      }
+    },
+    {
+      "artifact": "continuityClear",
+      "testFile": "tests/continuity-cli.test.js",
+      "sha256": "1cf9cfbe8dfc9897831d1db37815bdd2c2184a17174eba5702014e8aa931e838",
+      "testBytesMatchExecutedRevision": true,
+      "observedPassingRecord": {
+        "line": 444,
+        "text": "\u2714 clear-continuity removes only the continuity artifact (218.786667ms)"
+      }
+    }
+  ],
+  "limits": [
+    "Exact current test bytes and named positive PASS records from fullMac873; no new tests executed",
+    "Production source identity reconciled separately896",
+    "Each test proves only assertions reviewed in domain-caller898; parser-only tests are excluded",
+    "No complete caller closure or new fault rollback/public dispatch proof"
+  ]
+}

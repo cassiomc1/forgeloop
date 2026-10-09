@@ -1,0 +1,70 @@
+{
+  "increment": 898,
+  "kind": "EXISTING_CONFORMANCE_RECONCILIATION",
+  "sourceRevision": "8a5dea39cab4a132be4e4f923fd79311c040826a",
+  "executedRevision": "fe8705c",
+  "log": "/Users/cassio/.codex/verification/full-macos873.log",
+  "logSha256": "8022ee8b3e7095b342500eafe5e929fc99a19d5666dc7e550d68aaa001705aa0",
+  "cases": [
+    {
+      "artifact": "preflight",
+      "testFile": "tests/storage-direct-preflight-atomicity.test.js",
+      "sha256": "7482dec00864a7880e3e899dae6952a67aa1b202eaca1ff229c090d3b2c434f5",
+      "testBytesMatchExecutedRevision": true,
+      "passingRecord": {
+        "line": 2054,
+        "text": "\u2714 direct preflight rollback with explicit task identity (618.4915ms)"
+      }
+    },
+    {
+      "artifact": "preflight",
+      "testFile": "tests/storage-direct-preflight-atomicity.test.js",
+      "sha256": "7482dec00864a7880e3e899dae6952a67aa1b202eaca1ff229c090d3b2c434f5",
+      "testBytesMatchExecutedRevision": true,
+      "passingRecord": {
+        "line": 2055,
+        "text": "\u2714 direct preflight rollback with canonical paths (592.122709ms)"
+      }
+    },
+    {
+      "artifact": "gates",
+      "testFile": "tests/gate-native-selection.test.js",
+      "sha256": "ae067ff3c1114881fd8cab9c7663e312963a10db6fb976da8947bfda1f61796a",
+      "testBytesMatchExecutedRevision": true,
+      "passingRecord": {
+        "line": 868,
+        "text": "\u2714 canonical gate binding participates in commit conflict detection against an independent writer (214.02775ms)"
+      }
+    },
+    {
+      "artifact": "gates",
+      "testFile": "tests/gate-native-selection.test.js",
+      "sha256": "ae067ff3c1114881fd8cab9c7663e312963a10db6fb976da8947bfda1f61796a",
+      "testBytesMatchExecutedRevision": true,
+      "passingRecord": {
+        "line": 869,
+        "text": "\u2714 canonical gate ledger hashing streams rows and preserves exact exported byte digest (246.814625ms)"
+      }
+    },
+    {
+      "artifact": "policySnapshot",
+      "testFile": "tests/policy-diff-native-path.test.js",
+      "sha256": "121cf818d22810d3a97535228e54e6fe49c14c8430b038ec63793744a48097db",
+      "testBytesMatchExecutedRevision": true,
+      "passingRecord": {
+        "line": 1309,
+        "text": "\u2714 explicit canonical policy diff paths read native snapshots and portable files independently (551.746041ms)"
+      }
+    }
+  ],
+  "sourceReview": {
+    "preflight": "src/core/preflight.js:191-200 encloses policy snapshot, activation events and preflight in shared transaction",
+    "policySnapshot": "src/core/policy-engine.js:105 write delegates canonical writeJsonArtifact; project sources registry remains FILE per registry scope",
+    "gates": "Native binding tests preserve digest bytes and refuse stale concurrent descriptor observation"
+  },
+  "limits": [
+    "Five existing exact-test PASS records, no new execution",
+    "Preflight test snapshots tasks/artifacts/events only; do not infer all tables or arbitrary failures",
+    "No entire27-artifact or all-public-consumer completion claim"
+  ]
+}

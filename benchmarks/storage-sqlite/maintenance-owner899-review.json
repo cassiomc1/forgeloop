@@ -1,0 +1,99 @@
+{
+  "increment": 899,
+  "sourceRevision": "8a5dea39cab4a132be4e4f923fd79311c040826a",
+  "kind": "READ_ONLY_MAINTENANCE_OWNER_RECONCILIATION",
+  "sourceHashes": {
+    "src/storage/maintenance.js": "ce19d71c8507b70bd56b022667d63064c2b0b76f5722d8a304d27ec2e681478f",
+    "src/storage/maintenance-owner.js": "cf18aff27a8df3ccc2257048b787428ba03c7d5e55e0aecaa6560daefe16e64e",
+    "src/storage/restore-replacement-owner.js": "9d3bd4fa498f1f42befe30d1d5d01d1e420996b2887006cecadfdc2011553cbc",
+    "src/storage/migration-activate.js": "12b11a733f5a615ee1becbc8e3780fadfc7e55c92146cd07e82718c588871267",
+    "src/storage/migration-archive.js": "38848cc8ab285a2ce37ef7b7b3405cf51e024d023670f7dfbf46eac01bdda37a",
+    "src/storage/migration-publication.js": "6e60f541f53f977bc1670d2c2f7577e5e718b1e1fff80ba49d4e7c026d8b38ed"
+  },
+  "discovery": {
+    "tool": "jg0.8.0",
+    "exitCode": 0,
+    "relevantFiles": 31,
+    "output": "/Users/cassio/.codex/verification/maintenance-owner899-jg.txt"
+  },
+  "reviewed": [
+    "Bounded owner bytes require regular contained handle, valid UUID/pid/timestamp and UTF-8 JSON",
+    "Active context and exact retained owner checked by assertOwnedStorageMaintenance; inherited contexts recheck identity; release refuses changed owner/unexpected entries",
+    "Resume asserts writersQuiesced and exact local dead owner; source bytes rechecked during preparation/archive/handoff; exclusive handoff publication retains exclusion",
+    "Migration archival guards source roots before partition reinspection and rename; activation guards attachment publication and terminal marker admission",
+    "Replacement owner journal binds retained manifest fingerprint and exact adoption history before publication"
+  ],
+  "executedRevision": "fe8705c",
+  "logSha256": "8022ee8b3e7095b342500eafe5e929fc99a19d5666dc7e550d68aaa001705aa0",
+  "cases": [
+    {
+      "testFile": "tests/storage-maintenance-handoff.test.js",
+      "sha256": "7d99a51fd9cd8f5f492681bad9fc5d83211fcbd075810cf7751ae3699558dec4",
+      "testBytesMatchExecutedRevision": true,
+      "passingRecord": {
+        "line": 2161,
+        "text": "\u2714 a live handoff claimant cannot be displaced while the canonical owner is still dead (221.715709ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-maintenance-handoff.test.js",
+      "sha256": "7d99a51fd9cd8f5f492681bad9fc5d83211fcbd075810cf7751ae3699558dec4",
+      "testBytesMatchExecutedRevision": true,
+      "passingRecord": {
+        "line": 2162,
+        "text": "\u2714 two independent maintenance resumers accept exactly one callback and retain canonical exclusion (251.341208ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-maintenance-handoff.test.js",
+      "sha256": "7d99a51fd9cd8f5f492681bad9fc5d83211fcbd075810cf7751ae3699558dec4",
+      "testBytesMatchExecutedRevision": true,
+      "passingRecord": {
+        "line": 2163,
+        "text": "\u2714 a delayed contender cannot occupy the promoted owner's next handoff identity (373.08125ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-maintenance-handoff.test.js",
+      "sha256": "7d99a51fd9cd8f5f492681bad9fc5d83211fcbd075810cf7751ae3699558dec4",
+      "testBytesMatchExecutedRevision": true,
+      "passingRecord": {
+        "line": 2166,
+        "text": "\u2714 tampered, foreign and cyclic handoff claims refuse recovery without replacing owner or evidence (342.953417ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-maintenance-owner-containment.test.js",
+      "sha256": "dbc7cc956ead6179909b51de84c1d78603ed89217401b4fcfb7392d1080846cb",
+      "testBytesMatchExecutedRevision": true,
+      "passingRecord": {
+        "line": 2167,
+        "text": "\u2714 maintenance owner refuses a symlink replacement before open (native no-follow) (15.651458ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-maintenance-owner-containment.test.js",
+      "sha256": "dbc7cc956ead6179909b51de84c1d78603ed89217401b4fcfb7392d1080846cb",
+      "testBytesMatchExecutedRevision": true,
+      "passingRecord": {
+        "line": 2168,
+        "text": "\u2714 maintenance owner refuses a symlink replacement before open (descriptor fallback) (4.733667ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-maintenance-owner-containment.test.js",
+      "sha256": "dbc7cc956ead6179909b51de84c1d78603ed89217401b4fcfb7392d1080846cb",
+      "testBytesMatchExecutedRevision": true,
+      "passingRecord": {
+        "line": 2169,
+        "text": "\u2714 maintenance owner refuses a parent link after path validation (9.885542ms)"
+      }
+    }
+  ],
+  "limits": [
+    "Seven unchanged named tests reconciled with retained terminal PASS records; no new execution",
+    "No claim every destructive helper branch has been reconciled",
+    "No syscall power-loss or privileged-writer exclusion proof",
+    "Full goal, ownership closure, resources and LOC release decision remain open"
+  ]
+}

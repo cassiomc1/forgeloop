@@ -1,0 +1,306 @@
+{
+  "kind": "SHARED_OPERATIONAL_WRITE_BOUNDARY_RECONCILIATION",
+  "sourceRevision": "158938ba95f6d016cc53463c76c35fa5fda51c70",
+  "executedRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+  "logSha256": "8022ee8b3e7095b342500eafe5e929fc99a19d5666dc7e550d68aaa001705aa0",
+  "cases": [
+    {
+      "testFile": "tests/storage-sole-writer-boundary.test.js",
+      "sha256": "a62097fe2f44a7ed2e9f07cbc7f552f4e882b9e42085d8e136c2261ccdce8202",
+      "testBytesMatchExecutedRevision": true,
+      "name": "direct descriptor and state writers create only canonical SQLite authority",
+      "record": {
+        "line": 2455,
+        "text": "\u2714 direct descriptor and state writers create only canonical SQLite authority (265.948416ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-sole-writer-boundary.test.js",
+      "sha256": "a62097fe2f44a7ed2e9f07cbc7f552f4e882b9e42085d8e136c2261ccdce8202",
+      "testBytesMatchExecutedRevision": true,
+      "name": "portable output cannot recreate retired transaction staging or block native admission",
+      "record": {
+        "line": 2456,
+        "text": "\u2714 portable output cannot recreate retired transaction staging or block native admission (282.294875ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-sole-writer-boundary.test.js",
+      "sha256": "a62097fe2f44a7ed2e9f07cbc7f552f4e882b9e42085d8e136c2261ccdce8202",
+      "testBytesMatchExecutedRevision": true,
+      "name": "direct operational writers refuse legacy authority without converting or altering it",
+      "record": {
+        "line": 2457,
+        "text": "\u2714 direct operational writers refuse legacy authority without converting or altering it (7.948292ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-sole-writer-boundary.test.js",
+      "sha256": "a62097fe2f44a7ed2e9f07cbc7f552f4e882b9e42085d8e136c2261ccdce8202",
+      "testBytesMatchExecutedRevision": true,
+      "name": "direct action APIs read native records outside command dispatch without legacy directories",
+      "record": {
+        "line": 2458,
+        "text": "\u2714 direct action APIs read native records outside command dispatch without legacy directories (237.3805ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-sole-writer-boundary.test.js",
+      "sha256": "a62097fe2f44a7ed2e9f07cbc7f552f4e882b9e42085d8e136c2261ccdce8202",
+      "testBytesMatchExecutedRevision": true,
+      "name": "standalone task reservation remains durable across independent readers and releases without a filesystem lock",
+      "record": {
+        "line": 2459,
+        "text": "\u2714 standalone task reservation remains durable across independent readers and releases without a filesystem lock (267.010084ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-sole-writer-boundary.test.js",
+      "sha256": "a62097fe2f44a7ed2e9f07cbc7f552f4e882b9e42085d8e136c2261ccdce8202",
+      "testBytesMatchExecutedRevision": true,
+      "name": "releasing an old standalone reservation cannot delete a replacement owner",
+      "record": {
+        "line": 2460,
+        "text": "\u2714 releasing an old standalone reservation cannot delete a replacement owner (228.277375ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-sole-writer-boundary.test.js",
+      "sha256": "a62097fe2f44a7ed2e9f07cbc7f552f4e882b9e42085d8e136c2261ccdce8202",
+      "testBytesMatchExecutedRevision": true,
+      "name": "bootstrap and restore preserve retained legacy owners before allocating native authority",
+      "record": {
+        "line": 2461,
+        "text": "\u2714 bootstrap and restore preserve retained legacy owners before allocating native authority (5.407125ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-sole-writer-boundary.test.js",
+      "sha256": "a62097fe2f44a7ed2e9f07cbc7f552f4e882b9e42085d8e136c2261ccdce8202",
+      "testBytesMatchExecutedRevision": true,
+      "name": "state writes reject portable paths before allocating SQLite or producing a second authority",
+      "record": {
+        "line": 2462,
+        "text": "\u2714 state writes reject portable paths before allocating SQLite or producing a second authority (0.773625ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-sole-writer-boundary.test.js",
+      "sha256": "a62097fe2f44a7ed2e9f07cbc7f552f4e882b9e42085d8e136c2261ccdce8202",
+      "testBytesMatchExecutedRevision": true,
+      "name": "canonical clearing preserves unconverted legacy state and continuity",
+      "record": {
+        "line": 2463,
+        "text": "\u2714 canonical clearing preserves unconverted legacy state and continuity (5.925417ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-sole-writer-boundary.test.js",
+      "sha256": "a62097fe2f44a7ed2e9f07cbc7f552f4e882b9e42085d8e136c2261ccdce8202",
+      "testBytesMatchExecutedRevision": true,
+      "name": "canonical clearing cannot delete an independent portable file or its native checkpoint",
+      "record": {
+        "line": 2464,
+        "text": "\u2714 canonical clearing cannot delete an independent portable file or its native checkpoint (226.075584ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-sole-writer-boundary.test.js",
+      "sha256": "a62097fe2f44a7ed2e9f07cbc7f552f4e882b9e42085d8e136c2261ccdce8202",
+      "testBytesMatchExecutedRevision": true,
+      "name": "explicit portable JSON output cannot become canonical authority or overwrite storage metadata",
+      "record": {
+        "line": 2465,
+        "text": "\u2714 explicit portable JSON output cannot become canonical authority or overwrite storage metadata (10.304167ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-direct-artifacts.test.js",
+      "sha256": "1bda140017617492e04baadc9042fa18b0360f3b6585259291882d88a8a6d507",
+      "testBytesMatchExecutedRevision": true,
+      "name": "direct native artifact reads and writes resolve canonical authority without filesystem mirrors",
+      "record": {
+        "line": 2039,
+        "text": "\u2714 direct native artifact reads and writes resolve canonical authority without filesystem mirrors (395.959792ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-direct-artifacts.test.js",
+      "sha256": "1bda140017617492e04baadc9042fa18b0360f3b6585259291882d88a8a6d507",
+      "testBytesMatchExecutedRevision": true,
+      "name": "direct required-artifact fingerprints select canonical SQLite bytes without mirrors",
+      "record": {
+        "line": 2040,
+        "text": "\u2714 direct required-artifact fingerprints select canonical SQLite bytes without mirrors (230.962125ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-direct-artifacts.test.js",
+      "sha256": "1bda140017617492e04baadc9042fa18b0360f3b6585259291882d88a8a6d507",
+      "testBytesMatchExecutedRevision": true,
+      "name": "native persistence refuses singleton aliases while project configuration stays filesystem-owned",
+      "record": {
+        "line": 2041,
+        "text": "\u2714 native persistence refuses singleton aliases while project configuration stays filesystem-owned (258.592375ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-direct-artifacts.test.js",
+      "sha256": "1bda140017617492e04baadc9042fa18b0360f3b6585259291882d88a8a6d507",
+      "testBytesMatchExecutedRevision": true,
+      "name": "direct native artifact entry points refuse missing databases rather than returning filesystem absence or publishing aliases",
+      "record": {
+        "line": 2042,
+        "text": "\u2714 direct native artifact entry points refuse missing databases rather than returning filesystem absence or publishing aliases (233.695458ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-direct-artifacts.test.js",
+      "sha256": "1bda140017617492e04baadc9042fa18b0360f3b6585259291882d88a8a6d507",
+      "testBytesMatchExecutedRevision": true,
+      "name": "native route requires a task instead of publishing a singleton routing result",
+      "record": {
+        "line": 2045,
+        "text": "\u2714 native route requires a task instead of publishing a singleton routing result (238.054166ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-direct-artifacts.test.js",
+      "sha256": "1bda140017617492e04baadc9042fa18b0360f3b6585259291882d88a8a6d507",
+      "testBytesMatchExecutedRevision": true,
+      "name": "operational JSON refuses legacy payload while explicit portable inspection validates unchanged bytes",
+      "record": {
+        "line": 2048,
+        "text": "\u2714 operational JSON refuses legacy payload while explicit portable inspection validates unchanged bytes (4.818209ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-direct-artifacts.test.js",
+      "sha256": "1bda140017617492e04baadc9042fa18b0360f3b6585259291882d88a8a6d507",
+      "testBytesMatchExecutedRevision": true,
+      "name": "operational ledger readers refuse retained legacy bytes while explicit inspection preserves validation",
+      "record": {
+        "line": 2049,
+        "text": "\u2714 operational ledger readers refuse retained legacy bytes while explicit inspection preserves validation (23.654583ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-direct-artifacts.test.js",
+      "sha256": "1bda140017617492e04baadc9042fa18b0360f3b6585259291882d88a8a6d507",
+      "testBytesMatchExecutedRevision": true,
+      "name": "canonical execution lookup rejects ambiguity and legacy filesystem records",
+      "record": {
+        "line": 2050,
+        "text": "\u2714 canonical execution lookup rejects ambiguity and legacy filesystem records (255.632875ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-direct-artifacts.test.js",
+      "sha256": "1bda140017617492e04baadc9042fa18b0360f3b6585259291882d88a8a6d507",
+      "testBytesMatchExecutedRevision": true,
+      "name": "orphan state.sqlite-wal prevents direct artifact filesystem fallback",
+      "record": {
+        "line": 2043,
+        "text": "\u2714 orphan state.sqlite-wal prevents direct artifact filesystem fallback (13.115917ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-direct-artifacts.test.js",
+      "sha256": "1bda140017617492e04baadc9042fa18b0360f3b6585259291882d88a8a6d507",
+      "testBytesMatchExecutedRevision": true,
+      "name": "orphan state.sqlite-shm prevents direct artifact filesystem fallback",
+      "record": {
+        "line": 2044,
+        "text": "\u2714 orphan state.sqlite-shm prevents direct artifact filesystem fallback (11.850208ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-bundle-authority-boundary.test.js",
+      "sha256": "53ea47715849189a4c96971e7bc35aaf3663c0ddbd127145eedbf8c1726cef1b",
+      "testBytesMatchExecutedRevision": true,
+      "name": "public bundle export retains native database bytes and produces portable output",
+      "record": {
+        "line": 1978,
+        "text": "\u2714 public bundle export retains native database bytes and produces portable output (342.91725ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-bundle-authority-boundary.test.js",
+      "sha256": "53ea47715849189a4c96971e7bc35aaf3663c0ddbd127145eedbf8c1726cef1b",
+      "testBytesMatchExecutedRevision": true,
+      "name": "public bundle export refuses a symlink destination before replacing native authority",
+      "record": {
+        "line": 1979,
+        "text": "\u2714 public bundle export refuses a symlink destination before replacing native authority (289.933292ms)"
+      }
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "src/core/artifacts.js",
+      "sha256": "4667bc01b1f6416ee22e0de6788bb8ae21ce238b5ce9724961c92c06d0e92db2",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/core/transaction.js",
+      "sha256": "e34f4c1cfe99e1c5112d9117fcc845e8d49eb581d9adb13f4e52c42a8cdef4ef",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/storage/existing-project-scope.js",
+      "sha256": "9d4e8d5154865048a17075e388155f18bdea26b8a5a6e0e883d015683221e6e2",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/storage/operational-context.js",
+      "sha256": "53fa9ed5fe2b0724071dda1c1594f8a2101fcf645bcf286da5407a4b9d37183f",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/storage/project-boundary.js",
+      "sha256": "0fe481357f6d5459a760ddfbf5a21bf6557315482f6612c6cfd829cfa9d8ab57",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/storage/unit-of-work.js",
+      "sha256": "02eea758e34845de2a655c8e9bf4851c2b89a5117a4cfdb0d4aae16400283605",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/core/task-descriptor.js",
+      "sha256": "16d424d050d8cd65eef3806e93eb1ad2d908fe925dd4b41d18b5e9160fc8e380",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/core/work-state.js",
+      "sha256": "e8370604edc6cdde5e832fd8014de4d2628d1dd8bd30856d64cdf0dc908d7b83",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/core/continuity.js",
+      "sha256": "f16e6bf582bbc47db10bd235b5b367e14b0787cdc12799c904d2c61a6ef9acf5",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/core/task-lock.js",
+      "sha256": "00e5b217ca72c4b0fc7dab611d96b5e3d0d0c1b5f01116bce5900028ba38fefc",
+      "bytesMatchExecutedRevision": true
+    }
+  ],
+  "reviewedInvariants": [
+    "Recognized operational JSON stages canonical text within withTaskTransaction; no writeFileAtomic fallback on reserved native aliases",
+    "Native operational schema cannot be relabeled as independent file output through writeJsonArtifact",
+    "Explicit portable output rejects operational namespace, database/sidecars/marker and active operational transaction",
+    "Missing database/retained marker or orphan sidecars refuse fallback; unconverted legacy state is preserved without allocating native authority",
+    "Retired filesystem transaction recovery rejects; remaining transaction inspector is read-only",
+    "Closed AsyncLocalStorage context rejects late access; mismatched physical project context refuses cross-project use",
+    "Bundle export preserves native database bytes and refuses linked destinations"
+  ],
+  "wholeSoleWriterProof": false,
+  "limits": [
+    "Twenty-three named existing Mac controls reconciled without new test execution during902benchmark",
+    "Shared boundary assertions do not replace review of all direct filesystem origins and transitive caller arguments",
+    "Two production recovery/command-description files differ from full Mac873; final complete-source validation remains",
+    "External process effects and configuration/portable files remain separately scoped; no alternate operational writer is authorized"
+  ]
+}

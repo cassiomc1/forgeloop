@@ -1,0 +1,228 @@
+{
+  "kind": "EXISTING_CONFORMANCE_RECONCILIATION",
+  "sourceRevision": "158938ba95f6d016cc53463c76c35fa5fda51c70",
+  "logs": {
+    "/Users/cassio/.codex/verification/full-macos873.log": {
+      "sha256": "8022ee8b3e7095b342500eafe5e929fc99a19d5666dc7e550d68aaa001705aa0"
+    },
+    "/Users/cassio/.codex/verification/public-read883.log": {
+      "sha256": "22f191ba7d914786dd0fe1816dc0ed1daceb858414536bca679262cb90479138"
+    }
+  },
+  "cases": [
+    {
+      "domain": "codeManifest",
+      "testFile": "tests/storage-direct-domain-atomicity.test.js",
+      "sha256": "a60e97c73a61d9a26b3253bc39db3d186791f08ad059661d3d949dbd8236e9f4",
+      "testBytesMatchRecordedEvidence": true,
+      "evidence": "benchmarks/storage-sqlite/full-macos873-terminal.json",
+      "log": "/Users/cassio/.codex/verification/full-macos873.log",
+      "record": {
+        "line": 2053,
+        "text": "\u2714 direct code manifest history and replacement roll back together (281.5705ms)"
+      }
+    },
+    {
+      "domain": "verificationScope",
+      "testFile": "tests/storage-direct-domain-atomicity.test.js",
+      "sha256": "a60e97c73a61d9a26b3253bc39db3d186791f08ad059661d3d949dbd8236e9f4",
+      "testBytesMatchRecordedEvidence": true,
+      "evidence": "benchmarks/storage-sqlite/full-macos873-terminal.json",
+      "log": "/Users/cassio/.codex/verification/full-macos873.log",
+      "record": {
+        "line": 2051,
+        "text": "\u2714 direct scope artifact and event roll back together (1109.195916ms)"
+      }
+    },
+    {
+      "domain": "handoffs",
+      "testFile": "tests/storage-direct-domain-atomicity.test.js",
+      "sha256": "a60e97c73a61d9a26b3253bc39db3d186791f08ad059661d3d949dbd8236e9f4",
+      "testBytesMatchRecordedEvidence": true,
+      "evidence": "benchmarks/storage-sqlite/full-macos873-terminal.json",
+      "log": "/Users/cassio/.codex/verification/full-macos873.log",
+      "record": {
+        "line": 2052,
+        "text": "\u2714 direct handoff artifact and event roll back together (942.727875ms)"
+      }
+    },
+    {
+      "domain": "responsibility",
+      "testFile": "tests/storage-responsibility.test.js",
+      "sha256": "2a6d93999ac37359ccdcacb1a79a26dea9746c28652f4365728f7b0a9c429eb0",
+      "testBytesMatchRecordedEvidence": true,
+      "evidence": "benchmarks/storage-sqlite/public-read883.json",
+      "log": "/Users/cassio/.codex/verification/public-read883.log",
+      "record": {
+        "line": 9,
+        "text": "\u2714 native responsibility remains visible and immutable without a filesystem mirror (543.826084ms)"
+      }
+    },
+    {
+      "domain": "semanticDecisions",
+      "testFile": "tests/storage-decision-resolution.test.js",
+      "sha256": "3718eaa801025548b4bbcea937962030a91d693d22f626a07611d429ddb9e44b",
+      "testBytesMatchRecordedEvidence": true,
+      "evidence": "benchmarks/storage-sqlite/public-read883.json",
+      "log": "/Users/cassio/.codex/verification/public-read883.log",
+      "record": {
+        "line": 1,
+        "text": "\u2714 native automatic decision discovery uses logical artifacts and retains stale-binding rejection (775.237625ms)"
+      }
+    },
+    {
+      "domain": "attestationBundle",
+      "testFile": "tests/storage-signing-statement.test.js",
+      "sha256": "421640f5f34482370f14e45594a9aea72e13d34440132f326656858d598bd2eb",
+      "testBytesMatchRecordedEvidence": true,
+      "evidence": "benchmarks/storage-sqlite/full-macos873-terminal.json",
+      "log": "/Users/cassio/.codex/verification/full-macos873.log",
+      "record": {
+        "line": 2447,
+        "text": "\u2714 SQLite Sigstore signing stages immutable bundles, cleans temporary files, and rolls back bindings (564.7135ms)"
+      }
+    },
+    {
+      "domain": "attestationBundle",
+      "testFile": "tests/storage-signing-statement.test.js",
+      "sha256": "421640f5f34482370f14e45594a9aea72e13d34440132f326656858d598bd2eb",
+      "testBytesMatchRecordedEvidence": true,
+      "evidence": "benchmarks/storage-sqlite/full-macos873-terminal.json",
+      "log": "/Users/cassio/.codex/verification/full-macos873.log",
+      "record": {
+        "line": 2448,
+        "text": "\u2714 SQLite Sigstore verification receives private canonical bytes and cleans up success and failure (468.970625ms)"
+      }
+    },
+    {
+      "domain": "attestationBundle",
+      "testFile": "tests/storage-signing-statement.test.js",
+      "sha256": "421640f5f34482370f14e45594a9aea72e13d34440132f326656858d598bd2eb",
+      "testBytesMatchRecordedEvidence": true,
+      "evidence": "benchmarks/storage-sqlite/full-macos873-terminal.json",
+      "log": "/Users/cassio/.codex/verification/full-macos873.log",
+      "record": {
+        "line": 2451,
+        "text": "\u2714 direct native signer verification binds private statement and attachment bytes without legacy aliases (394.861584ms)"
+      }
+    },
+    {
+      "domain": "attestationBundle",
+      "testFile": "tests/storage-signing-statement.test.js",
+      "sha256": "421640f5f34482370f14e45594a9aea72e13d34440132f326656858d598bd2eb",
+      "testBytesMatchRecordedEvidence": true,
+      "evidence": "benchmarks/storage-sqlite/full-macos873-terminal.json",
+      "log": "/Users/cassio/.codex/verification/full-macos873.log",
+      "record": {
+        "line": 2452,
+        "text": "\u2714 legacy operational bundle publication is refused without altering source or invoking signer (343.532208ms)"
+      }
+    },
+    {
+      "domain": "attestationBundle",
+      "testFile": "tests/storage-attachment-transaction.test.js",
+      "sha256": "a82009dfcbb5a8ae9c2a0cb5933df344159ce638e8073044f2b31afdf634b54d",
+      "testBytesMatchRecordedEvidence": true,
+      "evidence": "benchmarks/storage-sqlite/full-macos873-terminal.json",
+      "log": "/Users/cassio/.codex/verification/full-macos873.log",
+      "record": {
+        "line": 1971,
+        "text": "\u2714 prepared attachment bindings commit with artifacts/events and conflict rolls everything back (403.829458ms)"
+      }
+    },
+    {
+      "domain": "attestationBundle",
+      "testFile": "tests/storage-attachment-transaction.test.js",
+      "sha256": "a82009dfcbb5a8ae9c2a0cb5933df344159ce638e8073044f2b31afdf634b54d",
+      "testBytesMatchRecordedEvidence": true,
+      "evidence": "benchmarks/storage-sqlite/full-macos873-terminal.json",
+      "log": "/Users/cassio/.codex/verification/full-macos873.log",
+      "record": {
+        "line": 1972,
+        "text": "\u2714 attachment staging refuses an expired preparation without binding late published bytes (302.514917ms)"
+      }
+    },
+    {
+      "domain": "attestationBundle",
+      "testFile": "tests/storage-attachment-files.test.js",
+      "sha256": "3d7c89f8c89ee03541d07e9e3f77a7ca0580fa2cc0c88d32f04e052351e792d4",
+      "testBytesMatchRecordedEvidence": true,
+      "evidence": "benchmarks/storage-sqlite/full-macos873-terminal.json",
+      "log": "/Users/cassio/.codex/verification/full-macos873.log",
+      "record": {
+        "line": 1968,
+        "text": "\u2714 registered attachment identities are immutable and portable with verified bytes (674.949125ms)"
+      }
+    }
+  ],
+  "reviewedSource": [
+    {
+      "path": "src/core/code-manifest.js",
+      "sha256": "0d8226722d4252f053a255358129697edeff83d5922d8195e49bab2d8c0033ec",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/core/responsibility.js",
+      "sha256": "ad0bc0fee3c6d9b4adfceb00879cdb476a6c3ad6798f2209bc06c66beec023b7",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/core/decision/service.js",
+      "sha256": "83a9e1b46268ae07c15463e3223c69df14ab35477eedbfe7e13ac266ecfb8d6d",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/core/signing/sigstore.js",
+      "sha256": "535578aec42e6e71ba77c17762d5de230daa8c2e8ab7bf6d7fa5da7b3ea2752c",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/core/signing/bundle-file.js",
+      "sha256": "055a6031cbd72bde093816b9da6c2fe1cbd5737cd63340ecb87851498711d5f3",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/core/signing/statement-file.js",
+      "sha256": "4b0db680c034bd21497e5fa96c01ea79a7faa14f6424c85965f4c9183304880b",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/core/attachment-paths.js",
+      "sha256": "dd7ab7f39f4d3c7cd78ced41fdc9cfb637934a6484e49e7f8392be6dd0e26ea1",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/storage/operational-attachments.js",
+      "sha256": "aad9f3449a00cfed7d0c689af47ef51e7a87e354c920bbff999d86ece0238690",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/storage/attachment-files.js",
+      "sha256": "10e3da12d126263bb4ef7ca2684911bc778048b90069a84ccc73029cd53b93f5",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/storage/attachment-references.js",
+      "sha256": "b85b1594ee44256a6e13381debedaae81f396baaf51f0815060c40177ba78c4a",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/storage/unit-of-work.js",
+      "sha256": "02eea758e34845de2a655c8e9bf4851c2b89a5117a4cfdb0d4aae16400283605",
+      "bytesMatchExecutedRevision": true
+    }
+  ],
+  "sourceReview": [
+    "Code manifest history/current publication share withTaskTransaction; injected current-row failure rolls history back",
+    "Responsibility canonical existence, workspace authority, artifact/event publication share one task transaction",
+    "Decision service records accepted provider observation in guarded native mutation; provider judgment is advisory",
+    "Attestation status/verification resolve statement-bound signature path before fileExists; signing stages references, verification consumes private canonical statement and attachment bytes"
+  ],
+  "wholeConsumerClosure": false,
+  "limits": [
+    "Existing named Mac evidence reconciled without running tests during902benchmark",
+    "565 production-file comparison identifies two changed recovery/command-description files separately",
+    "Source inventory and named assertions do not prove every public branch or whole maintenance authority",
+    "External cosign execution is deterministically supplied in signing controls; no live signing or publication performed"
+  ]
+}

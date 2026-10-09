@@ -1,0 +1,1054 @@
+{
+  "kind": "INTEGRATED_SCOPED_CONFORMANCE_RECONCILIATION",
+  "reports": [
+    {
+      "path": "benchmarks/storage-sqlite/domain-conformance898-reconciliation.json",
+      "sha256": "12cabd53bd7a761374bbe612f0775259417d79600677f0aa538e9e5aad525b64",
+      "namedCases": 7,
+      "currentTestBytesRechecked": true
+    },
+    {
+      "path": "benchmarks/storage-sqlite/policy-gate-conformance898-reconciliation.json",
+      "sha256": "5dd07411dfaf29585a2810b1b7ef3d5e737337f8288de8e754b35473e82b6fd0",
+      "namedCases": 5,
+      "currentTestBytesRechecked": true
+    },
+    {
+      "path": "benchmarks/storage-sqlite/derived-artifact899-reconciliation.json",
+      "sha256": "61737380c2aa9b7e4613e43be9aec77323c5e81e176c9569baa971df303d92d5",
+      "namedCases": 8,
+      "currentTestBytesRechecked": true
+    },
+    {
+      "path": "benchmarks/storage-sqlite/maintenance-owner899-review.json",
+      "sha256": "fc3040317b6636d98c3963190b4b443d1387d6e7d158d14c233c40790923b577",
+      "namedCases": 7,
+      "currentTestBytesRechecked": true
+    },
+    {
+      "path": "benchmarks/storage-sqlite/artifact-caller-conformance903.json",
+      "sha256": "bc9628d528c1fd9b7f4f5cbab67d86a079bfb76567abbcaddee527165c9403b4",
+      "namedCases": 12,
+      "currentTestBytesRechecked": true
+    },
+    {
+      "path": "benchmarks/storage-sqlite/maintenance-owner-conformance904.json",
+      "sha256": "7d1ac06c3118f0c28942d8455ca9ae3e4c3a1b3d387317e176b53ed4a8b99eaf",
+      "namedCases": 20,
+      "currentTestBytesRechecked": true
+    },
+    {
+      "path": "benchmarks/storage-sqlite/shared-writer-boundary905.json",
+      "sha256": "760931345e038b83a63100c4cdbf96ed49315d3f7cfa9e98558b174801557335",
+      "namedCases": 23,
+      "currentTestBytesRechecked": true
+    },
+    {
+      "path": "benchmarks/storage-sqlite/action-approval-conformance907.json",
+      "sha256": "8e0d72995f78a481261a9f3c9cb4879fe659f1cbe6a271ebc17b7d984b74a50a",
+      "namedCases": 31,
+      "currentTestBytesRechecked": true
+    }
+  ],
+  "uniqueNamedCases": [
+    {
+      "testFile": "tests/cli.test.js",
+      "name": "usage-record persists actor telemetry and metrics preserve its provenance",
+      "sha256": "37ee1cffe91c81295dcecf6e425dcefb63d15c3d1db45c8e524d17f56702ab47",
+      "reports": [
+        "domain-conformance898-reconciliation.json"
+      ]
+    },
+    {
+      "testFile": "tests/jev-decision-enforcement.test.js",
+      "name": "test utility sends real inventory metadata in bounded Jev batches",
+      "sha256": "ce0d44ee673611065c938314b62f66e8214f07a20f89b43b6a2be7170617490a",
+      "reports": [
+        "domain-conformance898-reconciliation.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-operational-bootstrap.test.js",
+      "name": "canonical SQLite lifecycle completes after a real correction cycle without legacy task or session files",
+      "sha256": "04ec7b1d316f0b8bf352dfc6721ad3ca1f4db7778444766eaaab9a6ce43b20e2",
+      "reports": [
+        "domain-conformance898-reconciliation.json"
+      ]
+    },
+    {
+      "testFile": "tests/verification-scope-freshness.test.js",
+      "name": "verification scope becomes stale after its canonical inputs change",
+      "sha256": "40fc714885320ff74c5ee6f2dca8f3296fe52d7f550eaf5466790e885acd17a1",
+      "reports": [
+        "domain-conformance898-reconciliation.json"
+      ]
+    },
+    {
+      "testFile": "tests/workspace-binding.test.js",
+      "name": "workspace binding is immutable and matches the current Git worktree",
+      "sha256": "694d202be5e07c1e81b93a53a7c227ea3050b68d0eff1ca14dd775568f861b2b",
+      "reports": [
+        "domain-conformance898-reconciliation.json"
+      ]
+    },
+    {
+      "testFile": "tests/continuity-cli.test.js",
+      "name": "record-continuity parses work-item flags and writes only operational context",
+      "sha256": "1cf9cfbe8dfc9897831d1db37815bdd2c2184a17174eba5702014e8aa931e838",
+      "reports": [
+        "domain-conformance898-reconciliation.json"
+      ]
+    },
+    {
+      "testFile": "tests/continuity-cli.test.js",
+      "name": "clear-continuity removes only the continuity artifact",
+      "sha256": "1cf9cfbe8dfc9897831d1db37815bdd2c2184a17174eba5702014e8aa931e838",
+      "reports": [
+        "domain-conformance898-reconciliation.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-direct-preflight-atomicity.test.js",
+      "name": "direct preflight rollback with explicit task identity",
+      "sha256": "7482dec00864a7880e3e899dae6952a67aa1b202eaca1ff229c090d3b2c434f5",
+      "reports": [
+        "policy-gate-conformance898-reconciliation.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-direct-preflight-atomicity.test.js",
+      "name": "direct preflight rollback with canonical paths",
+      "sha256": "7482dec00864a7880e3e899dae6952a67aa1b202eaca1ff229c090d3b2c434f5",
+      "reports": [
+        "policy-gate-conformance898-reconciliation.json"
+      ]
+    },
+    {
+      "testFile": "tests/gate-native-selection.test.js",
+      "name": "canonical gate binding participates in commit conflict detection against an independent writer",
+      "sha256": "ae067ff3c1114881fd8cab9c7663e312963a10db6fb976da8947bfda1f61796a",
+      "reports": [
+        "policy-gate-conformance898-reconciliation.json"
+      ]
+    },
+    {
+      "testFile": "tests/gate-native-selection.test.js",
+      "name": "canonical gate ledger hashing streams rows and preserves exact exported byte digest",
+      "sha256": "ae067ff3c1114881fd8cab9c7663e312963a10db6fb976da8947bfda1f61796a",
+      "reports": [
+        "policy-gate-conformance898-reconciliation.json"
+      ]
+    },
+    {
+      "testFile": "tests/policy-diff-native-path.test.js",
+      "name": "explicit canonical policy diff paths read native snapshots and portable files independently",
+      "sha256": "121cf818d22810d3a97535228e54e6fe49c14c8430b038ec63793744a48097db",
+      "reports": [
+        "policy-gate-conformance898-reconciliation.json"
+      ]
+    },
+    {
+      "testFile": "tests/attestation-e2e.test.js",
+      "name": "completion, statement creation, content verification, and range coverage form one end-to-end chain",
+      "sha256": "9e9ce197e6b2231c8086dca34b1cc12aa21a209fca082d2c7d3c3bf4c7cc36d8",
+      "reports": [
+        "derived-artifact899-reconciliation.json"
+      ]
+    },
+    {
+      "testFile": "tests/structural-quality-artifacts.test.js",
+      "name": "quality artifacts are task-scoped, schema-validated, and numerically listed",
+      "sha256": "d0637faddf8363d06e58aea098d690bc546566eb8a025381e4df7e997e8018b6",
+      "reports": [
+        "derived-artifact899-reconciliation.json"
+      ]
+    },
+    {
+      "testFile": "tests/structural-quality-artifacts.test.js",
+      "name": "baseline capture is idempotent, replaceable only before execution, and records bindings",
+      "sha256": "d0637faddf8363d06e58aea098d690bc546566eb8a025381e4df7e997e8018b6",
+      "reports": [
+        "derived-artifact899-reconciliation.json"
+      ]
+    },
+    {
+      "testFile": "tests/trajectory-evaluation.test.js",
+      "name": "native trajectory command adapters preserve derived evaluation and read-only efficiency",
+      "sha256": "4ebd65119982386629b7055b06742a1fa7ca69ceda47ddf5d17a658df28a2388",
+      "reports": [
+        "derived-artifact899-reconciliation.json"
+      ]
+    },
+    {
+      "testFile": "tests/trajectory-evaluation.test.js",
+      "name": "trajectory evaluation persists a reproducible PASS and emits a bound event",
+      "sha256": "4ebd65119982386629b7055b06742a1fa7ca69ceda47ddf5d17a658df28a2388",
+      "reports": [
+        "derived-artifact899-reconciliation.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-handoff-read-snapshot.test.js",
+      "name": "handoff show projects artifact and acceptance from one snapshot across independent ledger writes",
+      "sha256": "d1e387a9aa0491ae493f5e52f37875c30bf125077a4c437d1497c0d7ddae90ab",
+      "reports": [
+        "derived-artifact899-reconciliation.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-handoff-read-snapshot.test.js",
+      "name": "handoff list projects artifact and acceptance from one snapshot across independent ledger writes",
+      "sha256": "d1e387a9aa0491ae493f5e52f37875c30bf125077a4c437d1497c0d7ddae90ab",
+      "reports": [
+        "derived-artifact899-reconciliation.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-handoff-read-snapshot.test.js",
+      "name": "handoff resource projects artifact and acceptance from one snapshot across independent ledger writes",
+      "sha256": "d1e387a9aa0491ae493f5e52f37875c30bf125077a4c437d1497c0d7ddae90ab",
+      "reports": [
+        "derived-artifact899-reconciliation.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-maintenance-handoff.test.js",
+      "name": "a live handoff claimant cannot be displaced while the canonical owner is still dead",
+      "sha256": "7d99a51fd9cd8f5f492681bad9fc5d83211fcbd075810cf7751ae3699558dec4",
+      "reports": [
+        "maintenance-owner899-review.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-maintenance-handoff.test.js",
+      "name": "two independent maintenance resumers accept exactly one callback and retain canonical exclusion",
+      "sha256": "7d99a51fd9cd8f5f492681bad9fc5d83211fcbd075810cf7751ae3699558dec4",
+      "reports": [
+        "maintenance-owner899-review.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-maintenance-handoff.test.js",
+      "name": "a delayed contender cannot occupy the promoted owner's next handoff identity",
+      "sha256": "7d99a51fd9cd8f5f492681bad9fc5d83211fcbd075810cf7751ae3699558dec4",
+      "reports": [
+        "maintenance-owner899-review.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-maintenance-handoff.test.js",
+      "name": "tampered, foreign and cyclic handoff claims refuse recovery without replacing owner or evidence",
+      "sha256": "7d99a51fd9cd8f5f492681bad9fc5d83211fcbd075810cf7751ae3699558dec4",
+      "reports": [
+        "maintenance-owner899-review.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-maintenance-owner-containment.test.js",
+      "name": "maintenance owner refuses a symlink replacement before open (native no-follow)",
+      "sha256": "dbc7cc956ead6179909b51de84c1d78603ed89217401b4fcfb7392d1080846cb",
+      "reports": [
+        "maintenance-owner899-review.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-maintenance-owner-containment.test.js",
+      "name": "maintenance owner refuses a symlink replacement before open (descriptor fallback)",
+      "sha256": "dbc7cc956ead6179909b51de84c1d78603ed89217401b4fcfb7392d1080846cb",
+      "reports": [
+        "maintenance-owner899-review.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-maintenance-owner-containment.test.js",
+      "name": "maintenance owner refuses a parent link after path validation",
+      "sha256": "dbc7cc956ead6179909b51de84c1d78603ed89217401b4fcfb7392d1080846cb",
+      "reports": [
+        "maintenance-owner899-review.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-direct-domain-atomicity.test.js",
+      "name": "direct code manifest history and replacement roll back together",
+      "sha256": "a60e97c73a61d9a26b3253bc39db3d186791f08ad059661d3d949dbd8236e9f4",
+      "reports": [
+        "artifact-caller-conformance903.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-direct-domain-atomicity.test.js",
+      "name": "direct scope artifact and event roll back together",
+      "sha256": "a60e97c73a61d9a26b3253bc39db3d186791f08ad059661d3d949dbd8236e9f4",
+      "reports": [
+        "artifact-caller-conformance903.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-direct-domain-atomicity.test.js",
+      "name": "direct handoff artifact and event roll back together",
+      "sha256": "a60e97c73a61d9a26b3253bc39db3d186791f08ad059661d3d949dbd8236e9f4",
+      "reports": [
+        "artifact-caller-conformance903.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-responsibility.test.js",
+      "name": "native responsibility remains visible and immutable without a filesystem mirror",
+      "sha256": "2a6d93999ac37359ccdcacb1a79a26dea9746c28652f4365728f7b0a9c429eb0",
+      "reports": [
+        "artifact-caller-conformance903.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-decision-resolution.test.js",
+      "name": "native automatic decision discovery uses logical artifacts and retains stale-binding rejection",
+      "sha256": "3718eaa801025548b4bbcea937962030a91d693d22f626a07611d429ddb9e44b",
+      "reports": [
+        "artifact-caller-conformance903.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-signing-statement.test.js",
+      "name": "SQLite Sigstore signing stages immutable bundles, cleans temporary files, and rolls back bindings",
+      "sha256": "421640f5f34482370f14e45594a9aea72e13d34440132f326656858d598bd2eb",
+      "reports": [
+        "artifact-caller-conformance903.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-signing-statement.test.js",
+      "name": "SQLite Sigstore verification receives private canonical bytes and cleans up success and failure",
+      "sha256": "421640f5f34482370f14e45594a9aea72e13d34440132f326656858d598bd2eb",
+      "reports": [
+        "artifact-caller-conformance903.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-signing-statement.test.js",
+      "name": "direct native signer verification binds private statement and attachment bytes without legacy aliases",
+      "sha256": "421640f5f34482370f14e45594a9aea72e13d34440132f326656858d598bd2eb",
+      "reports": [
+        "artifact-caller-conformance903.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-signing-statement.test.js",
+      "name": "legacy operational bundle publication is refused without altering source or invoking signer",
+      "sha256": "421640f5f34482370f14e45594a9aea72e13d34440132f326656858d598bd2eb",
+      "reports": [
+        "artifact-caller-conformance903.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-attachment-transaction.test.js",
+      "name": "prepared attachment bindings commit with artifacts/events and conflict rolls everything back",
+      "sha256": "a82009dfcbb5a8ae9c2a0cb5933df344159ce638e8073044f2b31afdf634b54d",
+      "reports": [
+        "artifact-caller-conformance903.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-attachment-transaction.test.js",
+      "name": "attachment staging refuses an expired preparation without binding late published bytes",
+      "sha256": "a82009dfcbb5a8ae9c2a0cb5933df344159ce638e8073044f2b31afdf634b54d",
+      "reports": [
+        "artifact-caller-conformance903.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-attachment-files.test.js",
+      "name": "registered attachment identities are immutable and portable with verified bytes",
+      "sha256": "3d7c89f8c89ee03541d07e9e3f77a7ca0580fa2cc0c88d32f04e052351e792d4",
+      "reports": [
+        "artifact-caller-conformance903.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-active-replacement.test.js",
+      "name": "active replacement requires explicit quiescence, exact operation and live maintenance ownership",
+      "sha256": "b06322a155ce69c394ec6665e8ed6603c813bf4240e827554e3cfd756a961ce1",
+      "reports": [
+        "maintenance-owner-conformance904.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-replacement-preparation.test.js",
+      "name": "outgoing owner journal refuses altered evidence bindings and unrelated owners",
+      "sha256": "3c095ea1d753153083d766d95f5a73e52ed945ebea8703c999796b0d5fae7718",
+      "reports": [
+        "maintenance-owner-conformance904.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-replacement-publication.test.js",
+      "name": "archived replacement activates incoming authority and releases admission only after validation",
+      "sha256": "ef2b88d24e5ff8f345397aa60f70b44c8bf8527b2794ad145ac21567949df878",
+      "reports": [
+        "maintenance-owner-conformance904.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-replacement-publication.test.js",
+      "name": "incoming corruption after archival retains exclusion and refuses publication",
+      "sha256": "ef2b88d24e5ff8f345397aa60f70b44c8bf8527b2794ad145ac21567949df878",
+      "reports": [
+        "maintenance-owner-conformance904.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "name": "PARTIAL restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "reports": [
+        "maintenance-owner-conformance904.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "name": "MISSING restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "reports": [
+        "maintenance-owner-conformance904.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "name": "RETAINING restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "reports": [
+        "maintenance-owner-conformance904.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "name": "RETAINED restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "reports": [
+        "maintenance-owner-conformance904.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "name": "REBUILD restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "reports": [
+        "maintenance-owner-conformance904.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "name": "REBUILD_CONFLICT restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "reports": [
+        "maintenance-owner-conformance904.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "name": "PREPARING restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "reports": [
+        "maintenance-owner-conformance904.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "name": "PREPARING_CHANGED restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "reports": [
+        "maintenance-owner-conformance904.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "name": "READY restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "reports": [
+        "maintenance-owner-conformance904.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "name": "PENDING restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "reports": [
+        "maintenance-owner-conformance904.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "name": "OBJECT restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "reports": [
+        "maintenance-owner-conformance904.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "name": "DATABASE restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "reports": [
+        "maintenance-owner-conformance904.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "name": "ACTIVE_MARKER restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "reports": [
+        "maintenance-owner-conformance904.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "name": "UNBOUND restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "reports": [
+        "maintenance-owner-conformance904.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "name": "CHANGED_DATABASE restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "reports": [
+        "maintenance-owner-conformance904.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "name": "TERMINAL_CHANGED restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "reports": [
+        "maintenance-owner-conformance904.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-sole-writer-boundary.test.js",
+      "name": "direct descriptor and state writers create only canonical SQLite authority",
+      "sha256": "a62097fe2f44a7ed2e9f07cbc7f552f4e882b9e42085d8e136c2261ccdce8202",
+      "reports": [
+        "shared-writer-boundary905.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-sole-writer-boundary.test.js",
+      "name": "portable output cannot recreate retired transaction staging or block native admission",
+      "sha256": "a62097fe2f44a7ed2e9f07cbc7f552f4e882b9e42085d8e136c2261ccdce8202",
+      "reports": [
+        "shared-writer-boundary905.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-sole-writer-boundary.test.js",
+      "name": "direct operational writers refuse legacy authority without converting or altering it",
+      "sha256": "a62097fe2f44a7ed2e9f07cbc7f552f4e882b9e42085d8e136c2261ccdce8202",
+      "reports": [
+        "shared-writer-boundary905.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-sole-writer-boundary.test.js",
+      "name": "direct action APIs read native records outside command dispatch without legacy directories",
+      "sha256": "a62097fe2f44a7ed2e9f07cbc7f552f4e882b9e42085d8e136c2261ccdce8202",
+      "reports": [
+        "shared-writer-boundary905.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-sole-writer-boundary.test.js",
+      "name": "standalone task reservation remains durable across independent readers and releases without a filesystem lock",
+      "sha256": "a62097fe2f44a7ed2e9f07cbc7f552f4e882b9e42085d8e136c2261ccdce8202",
+      "reports": [
+        "shared-writer-boundary905.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-sole-writer-boundary.test.js",
+      "name": "releasing an old standalone reservation cannot delete a replacement owner",
+      "sha256": "a62097fe2f44a7ed2e9f07cbc7f552f4e882b9e42085d8e136c2261ccdce8202",
+      "reports": [
+        "shared-writer-boundary905.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-sole-writer-boundary.test.js",
+      "name": "bootstrap and restore preserve retained legacy owners before allocating native authority",
+      "sha256": "a62097fe2f44a7ed2e9f07cbc7f552f4e882b9e42085d8e136c2261ccdce8202",
+      "reports": [
+        "shared-writer-boundary905.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-sole-writer-boundary.test.js",
+      "name": "state writes reject portable paths before allocating SQLite or producing a second authority",
+      "sha256": "a62097fe2f44a7ed2e9f07cbc7f552f4e882b9e42085d8e136c2261ccdce8202",
+      "reports": [
+        "shared-writer-boundary905.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-sole-writer-boundary.test.js",
+      "name": "canonical clearing preserves unconverted legacy state and continuity",
+      "sha256": "a62097fe2f44a7ed2e9f07cbc7f552f4e882b9e42085d8e136c2261ccdce8202",
+      "reports": [
+        "shared-writer-boundary905.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-sole-writer-boundary.test.js",
+      "name": "canonical clearing cannot delete an independent portable file or its native checkpoint",
+      "sha256": "a62097fe2f44a7ed2e9f07cbc7f552f4e882b9e42085d8e136c2261ccdce8202",
+      "reports": [
+        "shared-writer-boundary905.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-sole-writer-boundary.test.js",
+      "name": "explicit portable JSON output cannot become canonical authority or overwrite storage metadata",
+      "sha256": "a62097fe2f44a7ed2e9f07cbc7f552f4e882b9e42085d8e136c2261ccdce8202",
+      "reports": [
+        "shared-writer-boundary905.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-direct-artifacts.test.js",
+      "name": "direct native artifact reads and writes resolve canonical authority without filesystem mirrors",
+      "sha256": "1bda140017617492e04baadc9042fa18b0360f3b6585259291882d88a8a6d507",
+      "reports": [
+        "shared-writer-boundary905.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-direct-artifacts.test.js",
+      "name": "direct required-artifact fingerprints select canonical SQLite bytes without mirrors",
+      "sha256": "1bda140017617492e04baadc9042fa18b0360f3b6585259291882d88a8a6d507",
+      "reports": [
+        "shared-writer-boundary905.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-direct-artifacts.test.js",
+      "name": "native persistence refuses singleton aliases while project configuration stays filesystem-owned",
+      "sha256": "1bda140017617492e04baadc9042fa18b0360f3b6585259291882d88a8a6d507",
+      "reports": [
+        "shared-writer-boundary905.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-direct-artifacts.test.js",
+      "name": "direct native artifact entry points refuse missing databases rather than returning filesystem absence or publishing aliases",
+      "sha256": "1bda140017617492e04baadc9042fa18b0360f3b6585259291882d88a8a6d507",
+      "reports": [
+        "shared-writer-boundary905.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-direct-artifacts.test.js",
+      "name": "native route requires a task instead of publishing a singleton routing result",
+      "sha256": "1bda140017617492e04baadc9042fa18b0360f3b6585259291882d88a8a6d507",
+      "reports": [
+        "shared-writer-boundary905.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-direct-artifacts.test.js",
+      "name": "operational JSON refuses legacy payload while explicit portable inspection validates unchanged bytes",
+      "sha256": "1bda140017617492e04baadc9042fa18b0360f3b6585259291882d88a8a6d507",
+      "reports": [
+        "shared-writer-boundary905.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-direct-artifacts.test.js",
+      "name": "operational ledger readers refuse retained legacy bytes while explicit inspection preserves validation",
+      "sha256": "1bda140017617492e04baadc9042fa18b0360f3b6585259291882d88a8a6d507",
+      "reports": [
+        "shared-writer-boundary905.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-direct-artifacts.test.js",
+      "name": "canonical execution lookup rejects ambiguity and legacy filesystem records",
+      "sha256": "1bda140017617492e04baadc9042fa18b0360f3b6585259291882d88a8a6d507",
+      "reports": [
+        "shared-writer-boundary905.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-direct-artifacts.test.js",
+      "name": "orphan state.sqlite-wal prevents direct artifact filesystem fallback",
+      "sha256": "1bda140017617492e04baadc9042fa18b0360f3b6585259291882d88a8a6d507",
+      "reports": [
+        "shared-writer-boundary905.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-direct-artifacts.test.js",
+      "name": "orphan state.sqlite-shm prevents direct artifact filesystem fallback",
+      "sha256": "1bda140017617492e04baadc9042fa18b0360f3b6585259291882d88a8a6d507",
+      "reports": [
+        "shared-writer-boundary905.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-bundle-authority-boundary.test.js",
+      "name": "public bundle export retains native database bytes and produces portable output",
+      "sha256": "53ea47715849189a4c96971e7bc35aaf3663c0ddbd127145eedbf8c1726cef1b",
+      "reports": [
+        "shared-writer-boundary905.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-bundle-authority-boundary.test.js",
+      "name": "public bundle export refuses a symlink destination before replacing native authority",
+      "sha256": "53ea47715849189a4c96971e7bc35aaf3663c0ddbd127145eedbf8c1726cef1b",
+      "reports": [
+        "shared-writer-boundary905.json"
+      ]
+    },
+    {
+      "testFile": "tests/actions.test.js",
+      "name": "proposeAction atomically creates the artifact and appends ACTION_PROPOSED",
+      "sha256": "3bebe130bf10ed98fb0c5e0721cab6d52e13558fd62cc01218694dd498bfedf4",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/actions.test.js",
+      "name": "proposeAction is idempotent per key and conflicts on fingerprint drift",
+      "sha256": "3bebe130bf10ed98fb0c5e0721cab6d52e13558fd62cc01218694dd498bfedf4",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/actions.test.js",
+      "name": "READ_ONLY actions do not require an idempotency key",
+      "sha256": "3bebe130bf10ed98fb0c5e0721cab6d52e13558fd62cc01218694dd498bfedf4",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/actions.test.js",
+      "name": "transitionAction enforces the state machine, revision, and ledger pairing",
+      "sha256": "3bebe130bf10ed98fb0c5e0721cab6d52e13558fd62cc01218694dd498bfedf4",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/actions.test.js",
+      "name": "listActions and findActionByIdempotencyKey project canonical artifacts",
+      "sha256": "3bebe130bf10ed98fb0c5e0721cab6d52e13558fd62cc01218694dd498bfedf4",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/actions.test.js",
+      "name": "an action without its matching proposal event is reported as an orphan",
+      "sha256": "3bebe130bf10ed98fb0c5e0721cab6d52e13558fd62cc01218694dd498bfedf4",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/actions.test.js",
+      "name": "action listing and idempotency refuse legacy directory scans without creating native authority",
+      "sha256": "3bebe130bf10ed98fb0c5e0721cab6d52e13558fd62cc01218694dd498bfedf4",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/approval-authority-boundary.test.js",
+      "name": "CALLER_ACKNOWLEDGED approval does not satisfy REQUIRE_APPROVAL",
+      "sha256": "0a7bbb92669904d16adf6ad11d87e008ffb62c67e03ab68edaf837b3cfe89531",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/approval-authority-boundary.test.js",
+      "name": "HOST_ATTESTED approval from a trusted host boundary satisfies REQUIRE_APPROVAL",
+      "sha256": "0a7bbb92669904d16adf6ad11d87e008ffb62c67e03ab68edaf837b3cfe89531",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/approval-authority-boundary.test.js",
+      "name": "replaced approval content after authorization is detectable via the bound fingerprint",
+      "sha256": "0a7bbb92669904d16adf6ad11d87e008ffb62c67e03ab68edaf837b3cfe89531",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/action-authorization.test.js",
+      "name": "capability-policy drift after the task snapshot blocks before launch",
+      "sha256": "1c3674539c8e761d3bafe8d1ccea3d6f6428490fb623e5fc21fdf24fa062e6c1",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/action-authorization.test.js",
+      "name": "raw transitionAction cannot mint AUTHORIZED on the modern flow",
+      "sha256": "1c3674539c8e761d3bafe8d1ccea3d6f6428490fb623e5fc21fdf24fa062e6c1",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/action-authorization.test.js",
+      "name": "canonical authorization binds full policy evidence to the event",
+      "sha256": "1c3674539c8e761d3bafe8d1ccea3d6f6428490fb623e5fc21fdf24fa062e6c1",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/action-authorization.test.js",
+      "name": "REQUIRE_APPROVAL authorization events must bind approval and authority evidence",
+      "sha256": "1c3674539c8e761d3bafe8d1ccea3d6f6428490fb623e5fc21fdf24fa062e6c1",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/action-verification.test.js",
+      "name": "arbitrary evidence strings cannot verify an action",
+      "sha256": "7e3dd26dc9759767af8cb3c0893c021c443aa37ab6889aa71a3c5a948c97584a",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/action-verification.test.js",
+      "name": "the action's own commit execution is not independent postcondition verification",
+      "sha256": "7e3dd26dc9759767af8cb3c0893c021c443aa37ab6889aa71a3c5a948c97584a",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/action-verification.test.js",
+      "name": "a canonical independent passed check verifies the action",
+      "sha256": "7e3dd26dc9759767af8cb3c0893c021c443aa37ab6889aa71a3c5a948c97584a",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/action-verification.test.js",
+      "name": "a passed check for a different requirement cannot verify the action",
+      "sha256": "7e3dd26dc9759767af8cb3c0893c021c443aa37ab6889aa71a3c5a948c97584a",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/action-verification.test.js",
+      "name": "new required proposals cannot omit a requirement",
+      "sha256": "7e3dd26dc9759767af8cb3c0893c021c443aa37ab6889aa71a3c5a948c97584a",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/action-reconciliation.test.js",
+      "name": "settlement-class outcomes are classified correctly",
+      "sha256": "7f4d83fb49117d6809ebfd5d9440bd8180c0185c914f9df41e35228ff7be1717",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/action-reconciliation.test.js",
+      "name": "arbitrary COMMITTED settlement without trusted authority is rejected",
+      "sha256": "7f4d83fb49117d6809ebfd5d9440bd8180c0185c914f9df41e35228ff7be1717",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/action-reconciliation.test.js",
+      "name": "arbitrary NOT_COMMITTED settlement without trusted authority is rejected",
+      "sha256": "7f4d83fb49117d6809ebfd5d9440bd8180c0185c914f9df41e35228ff7be1717",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/action-reconciliation.test.js",
+      "name": "settling without any evidence reference is rejected even with trusted authority",
+      "sha256": "7f4d83fb49117d6809ebfd5d9440bd8180c0185c914f9df41e35228ff7be1717",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/action-reconciliation.test.js",
+      "name": "UNKNOWN observation remains caller-recordable and keeps COMMIT_UNKNOWN",
+      "sha256": "7f4d83fb49117d6809ebfd5d9440bd8180c0185c914f9df41e35228ff7be1717",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/action-reconciliation.test.js",
+      "name": "trusted COMMITTED settlement settles the action",
+      "sha256": "7f4d83fb49117d6809ebfd5d9440bd8180c0185c914f9df41e35228ff7be1717",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/action-reconciliation.test.js",
+      "name": "trusted NOT_COMMITTED returns the action to PROPOSED for reauthorization",
+      "sha256": "7f4d83fb49117d6809ebfd5d9440bd8180c0185c914f9df41e35228ff7be1717",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/action-reconciliation.test.js",
+      "name": "retry after trusted NOT_COMMITTED re-evaluates changed policy before launch",
+      "sha256": "7f4d83fb49117d6809ebfd5d9440bd8180c0185c914f9df41e35228ff7be1717",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-operational-bootstrap.test.js",
+      "name": "canonical action idempotency and single-decision approvals use the SQLite record store",
+      "sha256": "04ec7b1d316f0b8bf352dfc6721ad3ca1f4db7778444766eaaab9a6ce43b20e2",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-operational-bootstrap.test.js",
+      "name": "SQLite propose rolls back its record and ledger when event publication fails",
+      "sha256": "04ec7b1d316f0b8bf352dfc6721ad3ca1f4db7778444766eaaab9a6ce43b20e2",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-operational-bootstrap.test.js",
+      "name": "SQLite request rolls back its record and ledger when event publication fails",
+      "sha256": "04ec7b1d316f0b8bf352dfc6721ad3ca1f4db7778444766eaaab9a6ce43b20e2",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    },
+    {
+      "testFile": "tests/storage-operational-bootstrap.test.js",
+      "name": "SQLite resolve rolls back its record and ledger when event publication fails",
+      "sha256": "04ec7b1d316f0b8bf352dfc6721ad3ca1f4db7778444766eaaab9a6ce43b20e2",
+      "reports": [
+        "action-approval-conformance907.json"
+      ]
+    }
+  ],
+  "uniqueNamedCaseCount": 113,
+  "sourceHashes": {
+    "src/storage/maintenance.js": "ce19d71c8507b70bd56b022667d63064c2b0b76f5722d8a304d27ec2e681478f",
+    "src/storage/maintenance-owner.js": "cf18aff27a8df3ccc2257048b787428ba03c7d5e55e0aecaa6560daefe16e64e",
+    "src/storage/restore-replacement-owner.js": "9d3bd4fa498f1f42befe30d1d5d01d1e420996b2887006cecadfdc2011553cbc",
+    "src/storage/migration-activate.js": "12b11a733f5a615ee1becbc8e3780fadfc7e55c92146cd07e82718c588871267",
+    "src/storage/migration-archive.js": "38848cc8ab285a2ce37ef7b7b3405cf51e024d023670f7dfbf46eac01bdda37a",
+    "src/storage/migration-publication.js": "6e60f541f53f977bc1670d2c2f7577e5e718b1e1fff80ba49d4e7c026d8b38ed",
+    "src/core/code-manifest.js": "0d8226722d4252f053a255358129697edeff83d5922d8195e49bab2d8c0033ec",
+    "src/core/responsibility.js": "ad0bc0fee3c6d9b4adfceb00879cdb476a6c3ad6798f2209bc06c66beec023b7",
+    "src/core/decision/service.js": "83a9e1b46268ae07c15463e3223c69df14ab35477eedbfe7e13ac266ecfb8d6d",
+    "src/core/signing/sigstore.js": "535578aec42e6e71ba77c17762d5de230daa8c2e8ab7bf6d7fa5da7b3ea2752c",
+    "src/core/signing/bundle-file.js": "055a6031cbd72bde093816b9da6c2fe1cbd5737cd63340ecb87851498711d5f3",
+    "src/core/signing/statement-file.js": "4b0db680c034bd21497e5fa96c01ea79a7faa14f6424c85965f4c9183304880b",
+    "src/core/attachment-paths.js": "dd7ab7f39f4d3c7cd78ced41fdc9cfb637934a6484e49e7f8392be6dd0e26ea1",
+    "src/storage/operational-attachments.js": "aad9f3449a00cfed7d0c689af47ef51e7a87e354c920bbff999d86ece0238690",
+    "src/storage/attachment-files.js": "10e3da12d126263bb4ef7ca2684911bc778048b90069a84ccc73029cd53b93f5",
+    "src/storage/attachment-references.js": "b85b1594ee44256a6e13381debedaae81f396baaf51f0815060c40177ba78c4a",
+    "src/storage/unit-of-work.js": "02eea758e34845de2a655c8e9bf4851c2b89a5117a4cfdb0d4aae16400283605",
+    "src/storage/project-restore.js": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+    "src/storage/project-replacement.js": "8edb1daa7f5a50a56c2762488db647d1e441d1f421d8dd6b2f1fbc5a813efa59",
+    "src/storage/restore-replacement.js": "f7b7aed1fe54c4feb71a192a5c2aed9ff92bdb80f26d053ba1498d433cc1f138",
+    "src/storage/restore-replacement-preparation.js": "07c55045508317bb70d20c7b4b687da662d9ab1f41e209d1972a3c7e06180014",
+    "src/storage/restore-preparation.js": "70c2db1ac984643434a5e1986028efc39f79b9d2f2576a4cbe35f39bd0161347",
+    "src/storage/restore-replacement-archive.js": "fbd0347cb136200ab4cdf848c47c1948f226913a3714c347b71d8fb541c4dd36",
+    "src/storage/migration.js": "6d84791488206fc394c2501d2f6c4d34ba8e12fba34dede0e40c48b64c3e03fa",
+    "src/storage/migration-candidate.js": "41f01d20be6caac40ef541a8d6175e429bd595f5bd3a7a9f046571c880e88ecb",
+    "src/storage/migration-terminal.js": "ff24b1b717315d373ccc2d99d84b1753e7c185deb627c1edc04cec590bcb4b3e",
+    "src/storage/migration-rollback.js": "f4f054b19857ee4ebf0e423d79f2962a3f296199b978799ac47aca826a235060",
+    "src/storage/migration-rollback-admission.js": "da43ae3a2930f7adf3370898ff1e9a9689df8319f6c861e23f6aa52ce2cf5c73",
+    "src/storage/migration-rollback-preparation.js": "1152bbb354970c43c8530d681790c08941408328e59654eb6e62044b2dcd9bfe",
+    "src/storage/migration-rollback-source-stage.js": "6bfbf8e0ad81644596fff0f055593082e7627bbac66de070986f81aa4f8b2211",
+    "src/storage/migration-rollback-publication.js": "81ca1f7c72e57f885a137e33d428c4303db0f1bb859ac19c67372d9826553417",
+    "src/storage/migration-rollback-release.js": "6838a25238dd71cd2b2c6d740fb32c3f1914bfd06ed376f154bd4dd7cb0b5cfb",
+    "src/storage/storage-marker.js": "1664b9f2c1005507ee1aa256dc443f0d82c728646c2cf04a8460f1b270a0ca05",
+    "src/core/artifacts.js": "4667bc01b1f6416ee22e0de6788bb8ae21ce238b5ce9724961c92c06d0e92db2",
+    "src/core/transaction.js": "e34f4c1cfe99e1c5112d9117fcc845e8d49eb581d9adb13f4e52c42a8cdef4ef",
+    "src/storage/existing-project-scope.js": "9d4e8d5154865048a17075e388155f18bdea26b8a5a6e0e883d015683221e6e2",
+    "src/storage/operational-context.js": "53fa9ed5fe2b0724071dda1c1594f8a2101fcf645bcf286da5407a4b9d37183f",
+    "src/storage/project-boundary.js": "0fe481357f6d5459a760ddfbf5a21bf6557315482f6612c6cfd829cfa9d8ab57",
+    "src/core/task-descriptor.js": "16d424d050d8cd65eef3806e93eb1ad2d908fe925dd4b41d18b5e9160fc8e380",
+    "src/core/work-state.js": "e8370604edc6cdde5e832fd8014de4d2628d1dd8bd30856d64cdf0dc908d7b83",
+    "src/core/continuity.js": "f16e6bf582bbc47db10bd235b5b367e14b0787cdc12799c904d2c61a6ef9acf5",
+    "src/core/task-lock.js": "00e5b217ca72c4b0fc7dab611d96b5e3d0d0c1b5f01116bce5900028ba38fefc",
+    "src/core/actions.js": "bf9ce702df4b5cac2d609f2761a5aee8361a16a0ebdecfe650d45f31c9cdb2af",
+    "src/core/approvals.js": "6cc9020d81f308b8790fe0a0f8a23b90273f7079194bc4c9e2bd864c5336f705",
+    "src/core/action-authorization.js": "4523902b938600c7873feb60a9fa5624e2fa9d352c36d824c11c3b8834a5c3d3",
+    "src/core/action-verification.js": "46e1405ddda3573cf734eed4f37acb21d908471b25ce88656479a23131497294",
+    "src/core/action-reconciliation.js": "2475063ef3c44b6386935a12432fb45ee28e9828fa2dc4289190b2f21710759c",
+    "src/core/action-ledger-projection.js": "9b0af7e23a8ea2ee0ece8581926d0109bcc6df1fa94f56e4926e667ce21080f5",
+    "src/core/action-model.js": "bf5197aaf205522dc243c507f4b65ff09d064244cea88d4e0b2a3213b87c1a25",
+    "src/commands/action-propose.js": "10a58e6e15ab8a57782ba481729518aed225ae382dce44de253bf88a7a55cb50",
+    "src/commands/action-show.js": "161935a5214e38701978b52ec90465554de466633db5c8e0af28824f49b9cc1e",
+    "src/commands/action-record.js": "7039f0d33718a543e350b3399eb4df2fca6f3d7260f7b755d67453c1f3d2abe0",
+    "src/commands/action-authorize.js": "6bb415d3ed34b7ff7debc90d77f3b6fb3024f4be02cf2a964a2bf0c561be44e1",
+    "src/commands/action-verify.js": "a3ff2f57610101b572093a193bd5016628609399c0b833ca909f2550c2324991",
+    "src/commands/action-reconcile.js": "824f1b4e9e59452c5cf3f44b075b36fb376f65c5b27b795a63f4e0429c9197a9",
+    "src/commands/approval-request.js": "ebaa86744d7fbd2056c557be7d77a8ab34d18825aa685f158a78ef66b22eb41a",
+    "src/commands/approval-resolve.js": "4980c1d9d2b5184877e7d5b625af65eff418de55f7347102826a868080c904f0"
+  },
+  "sourceFileCount": 57,
+  "currentHashMismatches": [
+    {
+      "path": "src/commands/action-show.js",
+      "observedSourceSha256": "161935a5214e38701978b52ec90465554de466633db5c8e0af28824f49b9cc1e",
+      "currentSha256": "e0f168ff4d301bfd39badd913f63f778b98a1ac5779fa78a08964da4ff47b647"
+    }
+  ],
+  "candidateOnly": {
+    "executed": true,
+    "maintainedTest": "tests/storage-action-show-snapshot.test.js",
+    "beforeFix": "Both valid-fixture cases fail on mixed read after independent writer tamper. Initial unsupported-capability setup failure retained separately.",
+    "afterFix": "Both snapshot cases and 24 related action cases pass on Node24.19.0. Subsequent request must reject tampered indexed row.",
+    "regressionLogSha256": "774128754b758051978c5ce9016ac5c3bc017b83287fd0b5f4e728fe14e16f33"
+  },
+  "additionalStaticRoleEvidence": {
+    "report": "/Users/cassio/.codex/verification/filesystem-role-reconciliation906.json",
+    "sha256": "92a4d5d7a580ace2ea83530b0268399fe5191ccd70df277b7efba4ab5e4e5665",
+    "literalFsModules": 104,
+    "runtimeConformance": false
+  },
+  "integrationRules": [
+    "Retain each observed host, source revision and log identity.",
+    "113 unique historical named cases remain distinct from the new snapshot cases.",
+    "One changed source file is explicitly disclosed; historical results are not current whole-suite evidence.",
+    "No whole consumer, maintenance, sole writer, resource, final platform, protocol or PR acceptance inferred."
+  ],
+  "wholeConsumerClosure": false,
+  "wholeMaintenanceAccepted": false,
+  "wholeSoleWriterProof": false,
+  "finalPlatformAcceptance": false,
+  "protocolComplete": false,
+  "prCreated": false,
+  "observedSourceRevision": "158938ba95f6d016cc53463c76c35fa5fda51c70",
+  "sourceRevision": "724ad5397c3cf9be20d238fe6b3d497315adb101"
+}

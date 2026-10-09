@@ -1,0 +1,128 @@
+{
+  "kind": "CURRENT_PRODUCTION_RECONCILIATION",
+  "sourceRevision": "724ad5397c3cf9be20d238fe6b3d497315adb101",
+  "productionFiles": 565,
+  "records": [
+    {
+      "evidence": "benchmarks/storage-sqlite/full-macos873-terminal.json",
+      "evidenceSha256": "2328baf3d56b111978f3bc9b857b3ae136e2c6e51fa5ef2a5f186ddd177963a2",
+      "sourceRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+      "unchangedFiles": 562,
+      "differences": [
+        {
+          "path": "src/commands/action-show.js",
+          "before": "c5cf5a5bb9042320a94832c6ea92d5327feed889",
+          "current": "329382bc08752e1e29cc981ca8920a09cdf5e7ca"
+        },
+        {
+          "path": "src/core/cli-command-definitions.js",
+          "before": "a163b6b5776b08932e5f5a32c8f4d05d0c206634",
+          "current": "62f9ed1fc343cddcf36c4ae7cb6a818016c81b11"
+        },
+        {
+          "path": "src/core/reconcile-closure.js",
+          "before": "319159c522b33a61fd97ff9025a06b0ab4adaeb5",
+          "current": "1f721ef45102acd5818b297a3c04634022e99c3c"
+        }
+      ]
+    },
+    {
+      "evidence": "benchmarks/storage-sqlite/windows-full885-terminal.json",
+      "evidenceSha256": "708f5725c42b8b3ec7acb0167a062d1bf583fc950e87b6b94be8728d53e1f133",
+      "sourceRevision": "c15264cff66b27ff8ad40f65ab07c580da13fb23",
+      "unchangedFiles": 562,
+      "differences": [
+        {
+          "path": "src/commands/action-show.js",
+          "before": "c5cf5a5bb9042320a94832c6ea92d5327feed889",
+          "current": "329382bc08752e1e29cc981ca8920a09cdf5e7ca"
+        },
+        {
+          "path": "src/core/cli-command-definitions.js",
+          "before": "a163b6b5776b08932e5f5a32c8f4d05d0c206634",
+          "current": "62f9ed1fc343cddcf36c4ae7cb6a818016c81b11"
+        },
+        {
+          "path": "src/core/reconcile-closure.js",
+          "before": "319159c522b33a61fd97ff9025a06b0ab4adaeb5",
+          "current": "1f721ef45102acd5818b297a3c04634022e99c3c"
+        }
+      ]
+    },
+    {
+      "evidence": "benchmarks/storage-sqlite/core881-terminal.json",
+      "evidenceSha256": "da8e075825aded8e7cb1214ce86641a05a3e2a5db6b0719b171c9305f184b8a3",
+      "sourceRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+      "unchangedFiles": 562,
+      "differences": [
+        {
+          "path": "src/commands/action-show.js",
+          "before": "c5cf5a5bb9042320a94832c6ea92d5327feed889",
+          "current": "329382bc08752e1e29cc981ca8920a09cdf5e7ca"
+        },
+        {
+          "path": "src/core/cli-command-definitions.js",
+          "before": "a163b6b5776b08932e5f5a32c8f4d05d0c206634",
+          "current": "62f9ed1fc343cddcf36c4ae7cb6a818016c81b11"
+        },
+        {
+          "path": "src/core/reconcile-closure.js",
+          "before": "319159c522b33a61fd97ff9025a06b0ab4adaeb5",
+          "current": "1f721ef45102acd5818b297a3c04634022e99c3c"
+        }
+      ]
+    },
+    {
+      "evidence": "benchmarks/storage-sqlite/package886-terminal.json",
+      "evidenceSha256": "00a237e556f9debe8503ac4f2fc8d0f6001b93c735844782ae251ea9f351890c",
+      "sourceRevision": "9ced7f2252fbd47b2201989dfc19ef4a3d41c401",
+      "unchangedFiles": 562,
+      "differences": [
+        {
+          "path": "src/commands/action-show.js",
+          "before": "c5cf5a5bb9042320a94832c6ea92d5327feed889",
+          "current": "329382bc08752e1e29cc981ca8920a09cdf5e7ca"
+        },
+        {
+          "path": "src/core/cli-command-definitions.js",
+          "before": "a163b6b5776b08932e5f5a32c8f4d05d0c206634",
+          "current": "62f9ed1fc343cddcf36c4ae7cb6a818016c81b11"
+        },
+        {
+          "path": "src/core/reconcile-closure.js",
+          "before": "319159c522b33a61fd97ff9025a06b0ab4adaeb5",
+          "current": "1f721ef45102acd5818b297a3c04634022e99c3c"
+        }
+      ]
+    },
+    {
+      "evidence": "benchmarks/storage-sqlite/compat887-terminal.json",
+      "evidenceSha256": "f9c814894ebf057c066e1ed7ea52d14d251af53f752323cd1a1635451c4b113b",
+      "sourceRevision": "5d5d0665e32012dad4acca4cc124b12c8a381931",
+      "unchangedFiles": 562,
+      "differences": [
+        {
+          "path": "src/commands/action-show.js",
+          "before": "c5cf5a5bb9042320a94832c6ea92d5327feed889",
+          "current": "329382bc08752e1e29cc981ca8920a09cdf5e7ca"
+        },
+        {
+          "path": "src/core/cli-command-definitions.js",
+          "before": "a163b6b5776b08932e5f5a32c8f4d05d0c206634",
+          "current": "62f9ed1fc343cddcf36c4ae7cb6a818016c81b11"
+        },
+        {
+          "path": "src/core/reconcile-closure.js",
+          "before": "319159c522b33a61fd97ff9025a06b0ab4adaeb5",
+          "current": "1f721ef45102acd5818b297a3c04634022e99c3c"
+        }
+      ]
+    }
+  ],
+  "wholeCurrentPlatformPass": false,
+  "historicalReconciliation": "benchmarks/storage-sqlite/production-platform-reconciliation896.json",
+  "limits": [
+    "Historical exact identity applies only to the pinned source revision.",
+    "Current production has three changed files; scoped tests do not substitute for final whole-platform verification."
+  ]
+}
