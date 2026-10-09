@@ -595,3 +595,7 @@ A505-module scope-aware scan resolves492static filesystem import bindings and102
 ### Prior-source Core terminal reconciliation925
 
 Core37896839025 on5aba2d0 isterminal failure:2938unit cases,2925pass,12skip,one source failure in correction contention. The aggregate gate correctly refuses because core failed;coverage aggregation is skipped and all other jobs succeed. The exact conflict correction5222708 passes full localprepush920. Corrected Windows37899690295 on405f90b remains live;corrected Core execution follows after remote workload termination. Evidence:`benchmarks/storage-sqlite/core918-terminal925.json`. This retains failed-source history without promoting local success to remote or wholeplan acceptance.
+
+### Corrected Windows full-suite acceptance926
+
+Windows37899690295 on405f90b terminates success:2939tests,2915pass,24skip,zero failures. Both the deterministic semantic-artifact conflict control and unchanged independent correction writers test have exact PASS records in the retained job log. Current production/test bytes remain identical to that passing source. Evidence:`benchmarks/storage-sqlite/windows923-terminal926.json`. Corrected Linux/Core,current resource/LOC/consumer authority and protocol acceptance remain open;noPR orpublication.
