@@ -201,15 +201,21 @@ test("nested detached read snapshots retain CAS observations through a writable 
   const filename = path.join(target, "state.sqlite");
   const db = openStorageDatabase(filename);
   const writer = openStorageDatabase(filename);
+  let outerStore;
+  let innerStore;
   try {
     upsertTask(db, { taskId, descriptor });
     await withOperationalStore({ db, target }, async source => {
       await withStorageSnapshot(db, snapshot => withOperationalReadSnapshot({ db: snapshot, target }, async outer => {
+        outerStore = outer;
         await withOperationalReadSnapshot({ db: snapshot, target }, async inner => {
+          innerStore = inner;
           assert.equal(inner.readOnly, true);
           assert.equal(inner.taskRow(descriptor.taskKey).task_id, taskId);
         });
+        assert.equal(innerStore.parent, null, "closed nested snapshot must release its parent chain");
       }));
+      assert.equal(outerStore.parent, null, "closed outer snapshot must release its parent chain");
       assert.ok(source.reads.size > 0, "nested detached observations must reach the writable ancestor");
       upsertTask(writer, {
         taskId,
