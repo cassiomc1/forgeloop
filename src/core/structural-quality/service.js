@@ -645,34 +645,33 @@ export async function evaluateStructuralQuality({ target, packageRoot = getPacka
 
   // Execute provider observation OUTSIDE task mutation lock
   const sourceFingerprintBefore = await computeMaterialSourceFingerprint(target);
+  // Every non-pass branch binds the same reserved task/cycle and source epoch.
+  const evaluationInputs = {
+    taskId,
+    inputs: initialInputs,
+    cycle,
+    attempt,
+    policy,
+    baseline,
+    sourceMaterialFingerprint: sourceFingerprintBefore,
+  };
   let evaluation;
 
   if (!baseline) {
     evaluation = nonPassEvaluation({
-      taskId,
-      inputs: initialInputs,
-      cycle,
-      attempt,
-      policy,
+      ...evaluationInputs,
       reasonCode: E_STRUCTURAL_QUALITY_BASELINE_MISSING,
       sourceObservation: { beforeFingerprint: sourceFingerprintBefore, afterFingerprint: sourceFingerprintBefore, stable: true },
-      sourceMaterialFingerprint: sourceFingerprintBefore,
     });
   } else {
     try {
       const scopeChanged = baseline.value.bindings?.scopeFingerprint !== initialInputs.scopeFingerprint;
       if (scopeChanged) {
         evaluation = nonPassEvaluation({
-          taskId,
-          inputs: initialInputs,
-          cycle,
-          attempt,
-          policy,
+          ...evaluationInputs,
           reasonCode: E_STRUCTURAL_QUALITY_EVALUATION_INCOMPARABLE,
           reasonCodes: ["PROVIDER_CONFIG_CHANGED"],
-          baseline,
           sourceObservation: { beforeFingerprint: sourceFingerprintBefore, afterFingerprint: sourceFingerprintBefore, stable: true },
-          sourceMaterialFingerprint: sourceFingerprintBefore,
         });
         evaluation.comparison.reasonCodes = [E_STRUCTURAL_QUALITY_EVALUATION_INCOMPARABLE, "PROVIDER_CONFIG_CHANGED"];
       } else {
@@ -689,18 +688,12 @@ export async function evaluateStructuralQuality({ target, packageRoot = getPacka
 
         if (!isStable) {
           evaluation = nonPassEvaluation({
-          taskId,
-          inputs: initialInputs,
-          cycle,
-          attempt,
-          policy,
+          ...evaluationInputs,
           reasonCode: E_STRUCTURAL_QUALITY_SOURCE_DRIFT,
           providerId: scan.provider.id,
           providerVersion: scan.provider.version,
           detection: scan.detection,
-          baseline,
           sourceObservation: { beforeFingerprint: sourceFingerprintBefore, afterFingerprint: sourceFingerprintAfter, stable: false },
-          sourceMaterialFingerprint: sourceFingerprintBefore,
           });
         } else {
           const updatedInputs = initialInputs;
@@ -745,20 +738,14 @@ export async function evaluateStructuralQuality({ target, packageRoot = getPacka
       const sourceFingerprintAfter = await computeMaterialSourceFingerprint(target).catch(() => sourceFingerprintBefore);
       const code = error.code ?? E_STRUCTURAL_QUALITY_PROVIDER_UNAVAILABLE;
       evaluation = nonPassEvaluation({
-        taskId,
-        inputs: initialInputs,
-        cycle,
-        attempt,
-        policy,
+        ...evaluationInputs,
         reasonCode: code,
         providerId: policy.provider,
-        baseline,
         sourceObservation: {
           beforeFingerprint: sourceFingerprintBefore,
           afterFingerprint: sourceFingerprintAfter,
           stable: sourceFingerprintBefore === sourceFingerprintAfter,
         },
-        sourceMaterialFingerprint: sourceFingerprintBefore,
         });
       }
   }
