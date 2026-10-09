@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "increment": 919,
+  "kind": "semantic-decision-contention-correction",
+  "remoteFailure": {
+    "runId": 37896839025,
+    "jobId": 113710107479,
+    "source": "5aba2d0220b2b45dc961e32237c932997987d5b6",
+    "expected": "E_STATE_REVISION_CONFLICT",
+    "observed": "E_DECISION_LEDGER_INVALID",
+    "logSha256": "4ed9d736435dcb3f424c83cf770073c5431e5d14a9b4f0247b4cffab752bca9f"
+  },
+  "diagnosis": "A real independent SQLite writer changes an observed task row. Direct decision-artifact reread rejects with E_STATE_REVISION_CONFLICT; semantic binding validator previously suppressed that error as invalid ledger.",
+  "correction": "Propagate only E_STATE_REVISION_CONFLICT; preserve existing unavailable/invalid-artifact mapping for other errors.",
+  "focused": {
+    "tests": 22,
+    "pass": 22,
+    "fail": 0
+  },
+  "controls": {
+    "usesActualSQLiteConnections": true,
+    "independentWrite": "test-only upsertTask changes descriptor updatedAt under runInTransaction",
+    "malformedArtifactControlRetained": true,
+    "strictContentionLoserCodeUnchanged": true
+  },
+  "logs": {
+    "semantic-conflict919-before.log": "9ef83829786811acf68949285921feb7dd6c1837d830ed2cf6d7e92abb53da4c",
+    "semantic-conflict919-control.log": "0589363d43998f72c1290544cec03428cf3fb0c81ff52706020ba7695971af30",
+    "semantic-conflict919-after.log": "404df886c0b8cdd2cceb7a01c985fe8e82e4403b1cb226f26977af9117d99c10",
+    "semantic-conflict919-fast.log": "a72918731741c09b9a15971e4a29e09bc31c26837883980905d267b3ac765a69",
+    "semantic-conflict919-contention-repeat.log": "7d2bf7b4d3617e3314810d948549f8b03fc95e15b79b609470c4819b28909036"
+  },
+  "wholePlanAcceptance": false,
+  "remoteCorrectedSourceAcceptance": false,
+  "sourceSha256": {
+    "src/core/decision/events.js": "f738f9a92f364093272bc1e60936a2bc1947d30b9e0efb32d7dbc8ffd01f4985",
+    "tests/storage-event-audit.test.js": "6b21f78bab224c90c915e6336dfe435d3f8e50f1d32296eeea57331ec96aff7d"
+  },
+  "fastVerification": {
+    "exitCode": 0
+  },
+  "independentContentionRepetitions": {
+    "runs": 5,
+    "pass": 5,
+    "fail": 0
+  }
+}

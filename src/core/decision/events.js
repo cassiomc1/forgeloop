@@ -96,6 +96,7 @@ export async function validateSemanticDecisionArtifactBindings(target, packageRo
         errors.push({ code: DECISION_ERROR_CODES.LEDGER_INVALID, message: `event ${event.seq} does not match its immutable semantic decision artifact` });
       }
     } catch (error) {
+      if (error.code === "E_STATE_REVISION_CONFLICT") throw error;
       errors.push({ code: DECISION_ERROR_CODES.LEDGER_INVALID, message: `event ${event.seq} semantic decision artifact is unavailable or invalid` });
     }
   }

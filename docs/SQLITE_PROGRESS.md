@@ -575,3 +575,7 @@ Current symmetric candidate LOC inventory includes282modules,43788baseline versu
 ### Current scoped conformance reconciliation917
 
 All113historically catalogued named conformance cases have exact PASS lines in full prepush915 on6645b65. Every referenced test file retains its historical hash;two reviewed production files(unit-of-work and action-show)have changed and remain explicitly identified. Current production/test bytes match that passing local revision. This refreshes named local conformance evidence without promoting it to exhaustive consumer/sole-writer/maintenance or whole-plan acceptance. Evidence:`benchmarks/storage-sqlite/scoped-conformance917.json`.
+
+### Semantic decision contention correction919
+
+Core run37896839025 on5aba2d0 failed the unchanged two-process correction test: the losing writer returned E_DECISION_LEDGER_INVALID instead of E_STATE_REVISION_CONFLICT. A deterministic two-connection control confirms the direct artifact read detects a real observed-row conflict but semantic binding validation suppresses it. The validator now propagates that exact conflict code while retaining other invalid-artifact errors. All22focused event-audit and correction-contention cases pass, including malformed-artifact and snapshot-tamper controls. Evidence:`benchmarks/storage-sqlite/semantic-conflict919-correction.json`. Current remote corrected-source and broad acceptance remain pending; whole consumer,resource,LOC and protocol gates remain open. NoPR orpublication.

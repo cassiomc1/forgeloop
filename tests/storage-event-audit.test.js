@@ -22,6 +22,32 @@ import { discoverTasks } from "../src/core/task-discovery.js";
 import { inspectTaskConflictState } from "../src/core/task-conflict-inspection.js";
 import { collectTaskClaimEvidence, classifyTaskClaimState, resolveTaskClaimState, withTaskClaimEvidence } from "../src/core/task-claim-state.js";
 
+test("semantic artifact validation preserves a real competing writer revision conflict", async () => {
+  const f = await buildCanonicalDiagnosisProject();
+  const filename = path.join(f.target, ".forgeloop/state.sqlite");
+  const db = openStorageDatabase(filename);
+  const writer = openStorageDatabase(filename);
+  try {
+    const ledger = await validateEventLedger(f.target, f.packageRoot, { taskId: f.taskId });
+    const semantic = ledger.events.find(event => event.event === "SEMANTIC_DECISION_RECORDED");
+    assert.ok(semantic);
+    await withOperationalStore({ db, target: f.target }, async () => {
+      await assert.rejects(withOperationalTransaction({ ...f, operation: "semantic-conflict-control", recordCommitEvent: false }, async () => {
+        await readDecisionArtifact(f.target, f.taskId, semantic.details.decisionId, f.packageRoot);
+        const row = writer.prepare("SELECT descriptor_json, state_json FROM tasks WHERE task_id = ?").get(f.taskId);
+        const descriptor = { ...JSON.parse(row.descriptor_json), updatedAt: "2030-01-01T00:00:00.000Z" };
+        runInTransaction(writer, () => upsertTask(writer, { taskId: f.taskId, descriptor, state: JSON.parse(row.state_json) }));
+        await assert.rejects(readDecisionArtifact(f.target, f.taskId, semantic.details.decisionId, f.packageRoot), { code: "E_STATE_REVISION_CONFLICT" });
+        // This second read must fail before commit; a corrupt-ledger result
+        // would erase the competing writer's revision-conflict diagnosis.
+        await assert.rejects(validateSemanticDecisionArtifactBindings(f.target, f.packageRoot, [semantic]), { code: "E_STATE_REVISION_CONFLICT" });
+        throw Object.assign(new Error("rollback conflict control"), { code: "E_STATE_REVISION_CONFLICT" });
+      }), { code: "E_STATE_REVISION_CONFLICT" });
+    });
+    assert.equal((await validateEventLedger(f.target, f.packageRoot, { taskId: f.taskId })).valid, true);
+  } finally { writer.close(); db.close(); await f.cleanup(); }
+});
+
 test("native callback audit preserves canonical proofs, artifact snapshot, and later mutation observations", async () => {
   const f = await buildCanonicalDiagnosisProject();
   const filename = path.join(f.target, ".forgeloop/state.sqlite");
