@@ -1,0 +1,59 @@
+{
+  "sourceRevision": "30153c3499abc829f0d223d1ff3ce6abd0ff4d84",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "capturedAt": "2026-10-09T22:24:22.582829+00:00",
+  "productionChange": "Share reserved task/cycle/source bindings across four structural-quality non-pass branches",
+  "nonblankProductionReduction": 13,
+  "focusedTests": 20,
+  "broaderTests": 19,
+  "failedTests": 0,
+  "fastVerification": "passed",
+  "testProvider": "repository deterministic semantic-provider loader; credentials unset",
+  "baselineSelectedLines": 25732,
+  "currentSelectedLines": 32516,
+  "targetCeiling": 19299,
+  "remainingReductionGap": 13217,
+  "acceptanceEligible": true,
+  "unresolvedMembership": 0,
+  "targetMet": false,
+  "sourceHashesChecked": 933,
+  "scopeRefresh": {
+    "unchangedHelperBodiesChecked": 24,
+    "method": "Exact before/after source slices and direct Git diff review",
+    "membershipChanges": 0,
+    "thresholdChanges": 0
+  },
+  "scopeManifest": "benchmarks/storage-sqlite/persistence-loc/scope-30153c3.json.gz",
+  "artifacts": [
+    {
+      "path": "/Users/cassio/.codex/verification/persistence-loc-function-result-30153c3-closed.json",
+      "sha256": "37490e14a6dd0db5cbf3c849ca5df8d139480b3231402d3325b8e6387ab48140"
+    },
+    {
+      "path": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/benchmarks/storage-sqlite/persistence-loc/scope-30153c3.json.gz",
+      "sha256": "5cd5160b0663157285d34b5afc9b5e028671e1d874956305a7d80f3582f79da4"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/quality-context-consolidation-focused-loader.log",
+      "sha256": "0b80c1c9d6b830769d5f8f57d80156c7bb47a7594cad438c3512578b9a3f289a"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/quality-context-consolidation-broader.log",
+      "sha256": "655ac0fc869160433e963ebdfe107737567d92c398f511172a23c5c2b00766d8"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/quality-context-consolidation-fast.log",
+      "sha256": "62d656237e6b2ab8e9091c2d3ae4a0704d3a13a74bbc636020f46ed2b1493963"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/quality-context-consolidation-scope-refresh.json",
+      "sha256": "62f4564d09da82bac7fa1b19bd31c0ab1c59b3268908e2d431d692cb46cb724b"
+    }
+  ],
+  "limitations": [
+    "No RSS or latency improvement claimed",
+    "Current CI runs cover preceding c89a9db production",
+    "Full regression/platform/consumer/resource and protocol closure remain open"
+  ],
+  "wholePlanAcceptance": false
+}

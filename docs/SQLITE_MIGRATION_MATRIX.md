@@ -70,6 +70,15 @@ include the pinned baseline and explicit failed-target interpretation. Negative
 controls confirm unresolved membership and stale source hashes cannot produce
 acceptance, even when normalized token fingerprints match.
 
+Structural-quality evaluation now shares the reserved task/cycle/source inputs
+across its four non-pass branches. All 39 focused/broader tests and fast
+verification pass. The change removes 13 nonblank production lines. At
+`30153c3`, the reviewed inclusive count is 25,732 → 32,516 with zero unresolved
+membership; 13,217 lines still separate the current code from the unchanged
+19,299 ceiling. No resource improvement is inferred. See
+`benchmarks/storage-sqlite/persistence-loc-30153c3-closed.json`. The active core,
+Node, package and Windows CI runs remain pinned to preceding `c89a9db`.
+
 GitHub core run `37993768913` on `aa03451` finished with two primary failures:
 the pre-fix MCP fixture and an external OpenAPI link connection failure. All
 unit shards, coverage and Repository Index hosts passed; the final aggregate
