@@ -1,0 +1,48 @@
+{
+  "kind": "CURRENT_EXPANDED_NODE_COMPATIBILITY_TERMINAL",
+  "runId": 37921532549,
+  "sourceRevision": "20aca2ba332ed86323722ef91812925ad9dadb83",
+  "url": "https://github.com/cassiomc1/forgeloop/actions/runs/37921532549",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "jobId": 113790366767,
+      "name": "Minimum Node 24.19.0 compatibility",
+      "conclusion": "success"
+    },
+    {
+      "jobId": 113790769157,
+      "name": "Node compatibility (Windows, Node 24.19.0)",
+      "conclusion": "success"
+    },
+    {
+      "jobId": 113790769185,
+      "name": "Node compatibility (Linux, Node 26)",
+      "conclusion": "success"
+    },
+    {
+      "jobId": 113790769211,
+      "name": "Node compatibility (macOS, Node 24)",
+      "conclusion": "success"
+    },
+    {
+      "jobId": 113790769241,
+      "name": "Node compatibility (macOS, Node 24.19.0)",
+      "conclusion": "success"
+    },
+    {
+      "jobId": 113790769285,
+      "name": "Node compatibility (Windows, Node 24)",
+      "conclusion": "success"
+    },
+    {
+      "jobId": 113790769323,
+      "name": "Node compatibility (Linux, Node 24.19.0)",
+      "conclusion": "success"
+    }
+  ],
+  "terminalSnapshotSha256": "8c3ccb041a19806024320a831734555068f1d5938f2fd0c677438256a943d6f8",
+  "logSha256": "e83dce7b082d0bb828ef34f2cef6937dd4078d6fe608efda30df054003b0677d",
+  "wholePlanAcceptance": false
+}
