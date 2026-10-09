@@ -1,0 +1,95 @@
+{
+  "sourceRevision": "7a79045b7b316b1ccbfae3343965fa66a16f8929",
+  "exitCode": 0,
+  "trackedSourceHashesUnchanged": true,
+  "trackedFileCount": 3079,
+  "sourceManifestCaptureBoundary": "After parent start; production freeze requested; tracked source clean",
+  "responseParityException": "Only metadata.packageVersion;each raw value must equal its backend package manifest",
+  "workersClosed": 2,
+  "workersExitedZero": 2,
+  "fixturesRemoved": true,
+  "parentCompleted": true,
+  "rows": [
+    {
+      "operation": "taskListTool",
+      "samplesPerBackend": 25,
+      "responseParity": true,
+      "native": {
+        "p95Ms": 557.5762919999997,
+        "maxEndpointRssMiB": 283.734375
+      },
+      "baseline": {
+        "p95Ms": 1469.1912500000003,
+        "maxEndpointRssMiB": 220.296875
+      }
+    },
+    {
+      "operation": "projectTasksResource",
+      "samplesPerBackend": 25,
+      "responseParity": true,
+      "native": {
+        "p95Ms": 509.87525000000096,
+        "maxEndpointRssMiB": 303.75
+      },
+      "baseline": {
+        "p95Ms": 1342.0812080000032,
+        "maxEndpointRssMiB": 192.34375
+      }
+    }
+  ],
+  "rawFiles": [
+    {
+      "path": "/Users/cassio/.codex/verification/sqlite-mcp-pilot-7a79045/comparison-run1.json",
+      "sha256": "8eedf12c4a038621f27547d0901aeeed3811ac8057956703e15f1f4e1415927a"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/sqlite-mcp-pilot-7a79045/parent-run1.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/sqlite-mcp-pilot-7a79045/parent-run1.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/sqlite-mcp-pilot-7a79045/parent.stderr.log",
+      "sha256": "7ff065c87c821762570b13f8398c864f5bd2a3b1476dbcaba0a1b16e953a3c64"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/sqlite-mcp-pilot-7a79045/parent.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/sqlite-mcp-pilot-7a79045/source-manifest.json",
+      "sha256": "7412d893a6300f765c6654af4073ef741269606d18a1bdb3cb0bcc7951d353b5"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/sqlite-mcp-pilot-7a79045/workers-run1/baseline-1000.json",
+      "sha256": "3f6e317342a21c70c05a7a0a5d1fab9f4cc062090f3b1c4a2385fffb78e7db86"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/sqlite-mcp-pilot-7a79045/workers-run1/baseline-1000.json.progress.ndjson",
+      "sha256": "522ddf699f8c2ad85f7475cbf5695ed11f461f7092c1a4faa8e66eac97140320"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/sqlite-mcp-pilot-7a79045/workers-run1/native-1000.json",
+      "sha256": "9d545a10cbe5f19ebc56343230767b67663c93b8419aba099380fb7e602a008a"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/sqlite-mcp-pilot-7a79045/workers-run1/native-1000.json.progress.ndjson",
+      "sha256": "14e57cb34b2dd79177b72db800410c5da674d7929ece1b3d2643003561a1a1c2"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/sqlite-mcp-pilot-7a79045/workers-run1/parent.progress.ndjson",
+      "sha256": "fd496adac1dbe1b588e8ddcfc5720649d06d6e5ab0f3cc2379089eb00d45e96a"
+    }
+  ],
+  "acceptance": false,
+  "limitations": [
+    "Transport serialization/stdio/HTTP not measured",
+    "Synthetic valid tasks/claims and ten observation events per task",
+    "Resource samples are separately instrumented;RSS endpoints are not operation peak",
+    "Not complete MCP throughput/contention/resource acceptance",
+    "25 samples only; no bound or isolated before/after attribution; prior25pilot usedlimit1000, thislimit100.",
+    "Initial attempt refused precreated evidence directory before measurement; retained error log."
+  ]
+}
