@@ -1,0 +1,92 @@
+{
+  "kind": "MAINTENANCE_ADMISSION_MATRIX_RECONCILIATION",
+  "sourceRevision": "5222708738582c38ec51b688e48076738b176c6a",
+  "existingMapping": [
+    {
+      "command": "task-migrate",
+      "source": "src/core/task-storage-migration.js",
+      "currentSha256": "219bbe05474d6a872091c20beef5ed06856a6214c49660e0f5ea807370f362c7",
+      "sameAs622": true,
+      "admissionPreviouslyReviewed": "withStorageMaintenance;dryRun/no-legacy return without mutation"
+    },
+    {
+      "command": "migrate-protocol",
+      "source": "src/core/protocol-migration.js",
+      "currentSha256": "31d8571cfd8ceb9fd66b6b25d95d100c448e573c87488a6e810ef4ccc1706f39",
+      "sameAs622": true,
+      "admissionPreviouslyReviewed": "supported protocol target checked before admission;dryRun/no-legacy readonly"
+    },
+    {
+      "command": "storage-migration-status",
+      "source": "src/commands/storage-migration-status.js",
+      "currentSha256": "3d013e83b241d278d0eed4c52b192a3df4cfd482502bcc2fe64b01efafc87830",
+      "sameAs622": true,
+      "admissionPreviouslyReviewed": "read-only lstat and owner metadata;no DB allocation/validation claimed"
+    },
+    {
+      "command": "storage-migrate",
+      "source": "src/storage/migration.js",
+      "currentSha256": "6d84791488206fc394c2501d2f6c4d34ba8e12fba34dede0e40c48b64c3e03fa",
+      "sameAs622": true,
+      "admissionPreviouslyReviewed": "withStorageMaintenance;explicit destination andwritersQuiesced"
+    },
+    {
+      "command": "storage-migration-resume",
+      "source": "src/storage/migration.js",
+      "currentSha256": "6d84791488206fc394c2501d2f6c4d34ba8e12fba34dede0e40c48b64c3e03fa",
+      "sameAs622": true,
+      "admissionPreviouslyReviewed": "resumeStorageMaintenance;exact recorded owner andquiescence"
+    },
+    {
+      "command": "storage-rollback",
+      "source": "src/storage/migration-rollback.js",
+      "currentSha256": "f4f054b19857ee4ebf0e423d79f2962a3f296199b978799ac47aca826a235060",
+      "sameAs622": true,
+      "admissionPreviouslyReviewed": "withStorageMaintenance;writers/nativewritesexcluded;clean supported legacy target validation before acquisition"
+    },
+    {
+      "command": "storage-rollback-resume",
+      "source": "src/storage/migration-rollback.js",
+      "currentSha256": "f4f054b19857ee4ebf0e423d79f2962a3f296199b978799ac47aca826a235060",
+      "sameAs622": true,
+      "admissionPreviouslyReviewed": "publication resume or resumeStorageMaintenance;exactowner,excludedwriters/nativewrites andsupportedtarget"
+    },
+    {
+      "command": "storage-restore",
+      "source": "src/storage/project-restore.js",
+      "currentSha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+      "sameAs622": true,
+      "admissionPreviouslyReviewed": "validatedsource;quiescence;withStorageMaintenance;active replacement additionally retains outgoing authority"
+    },
+    {
+      "command": "storage-restore-resume",
+      "source": "src/storage/project-restore.js",
+      "currentSha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+      "sameAs622": true,
+      "admissionPreviouslyReviewed": "journal/owner continuity checked;resumeStorageMaintenance;quiescence;current owned checkpoint rechecked"
+    }
+  ],
+  "missingDedicatedRows": [
+    "storage-restore",
+    "storage-restore-resume",
+    "storage-migration-status",
+    "storage-migration-resume",
+    "storage-migrate",
+    "storage-backup"
+  ],
+  "inlineExecutors": [
+    "storage-rollback",
+    "storage-rollback-resume"
+  ],
+  "backupAdmission": "withProjectStorage read-only selected SQLite; runStorageBackup requires canonical store, safe destination and retained SQLite backup; optional canonical references copy attachment bytes. No project operational mutation or migration exception.",
+  "replacementDispatch": "restore and restore-resume select fresh or active replacement service from explicit replaceActive; active replacement retains outgoing authority and verifies exact owner continuity.",
+  "wholeMaintenanceClosure": false,
+  "wholeConsumerClosure": false,
+  "nextAction": "Add explicit current public maintenance rows with source-bound assertions; retain transitive ownership and final platform gaps.",
+  "reviewedHashes": {
+    "src/core/command-executors.js": "2c32d0ad5fd2afcab246a357617e1b3e1040e20e3975a9cf9757f51525a94c3b",
+    "src/commands/storage-backup.js": "eb3bdda3b2a0c55649d8c7e9f4f62b95fa9eb3f78e6e657b5416b420f973ad7f",
+    "src/storage/project-backup.js": "66dffeb2ca6fa6f6c90a3eb19fafad8e5fd69596f2794c23ef95669fce5f1370",
+    "src/storage/project-replacement.js": "8edb1daa7f5a50a56c2762488db647d1e441d1f421d8dd6b2f1fbc5a813efa59"
+  }
+}

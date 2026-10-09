@@ -2,11 +2,28 @@
 
 Current checkpoint progress: [SQLite migration progress](SQLITE_PROGRESS.md).
 
-## Current production reconciliation915
+## Current production and validation920
 
-Current6645b65 has560 of565 production files identical to the historical full Mac873 revision. Five changed files are action-show,CLI command definitions,reconcile-closure,snapshot and unit-of-work. Historical remote successes do not verify these corrections. Current local full prepush915 passes2938core cases(2927pass,11skip),MCP73,PoC67,package12 and all canonical tiers. Current remote checks,complete consumer/maintenance acceptance,resource/LOC gates and protocol closure remain open. Evidence:`benchmarks/storage-sqlite/production-reconciliation915.json` and `benchmarks/storage-sqlite/full-prepush915-complete.json`.
+Current5222708 includes the semantic decision revision-conflict correction919. Full local prepush920 passes2939core cases(2928pass,11skip),MCP73,PoC67,package12 and every canonical gate. Windows916 passes on4794f0a but predates decision/events.js and its regression test. Linux run37896839025 on5aba2d0 failed correction contention before this correction; its remaining jobs are separate evidence. Current remote acceptance,complete consumer/maintenance authority,resource/LOC gates and protocol closure remain open. Evidence:`benchmarks/storage-sqlite/full-prepush920-complete.json`,`benchmarks/storage-sqlite/semantic-conflict919-correction.json` and `benchmarks/storage-sqlite/windows916-terminal-reconciliation920.json`.
 
-Reconciliation896 remains a historical identity record for its pinned checkout;it must not be read as current-source platform acceptance. Historical entries below retain their source boundaries.
+Historical reconciliation896 and915 remain source-bound records, not current platform acceptance.
+
+## Current storage entry-point review921
+
+The original per-file table predates these public entry points. Rollback commands use inline executors rather than dedicated command files. This review identifies current admission and conformance sources; it does not establish complete transitive authority or final platform acceptance.
+
+| Command | Implementation | Persisted or exported data | Admission and ownership | Conformance source | Remaining acceptance |
+| --- | --- | --- | --- | --- | --- |
+| `storage-migrate` | `src/commands/storage-migrate.js` | Retained source capture and SQLite cutover | Explicit destination/quiescence; owner-bound migration service | `tests/storage-migrate-command.test.js` | Migration publication and old-client exclusion; current full-source/platform and transitive reconciliation remain required |
+| `storage-migration-resume` | `src/commands/storage-migration-resume.js` | Retained cutover journal and candidate | Exact dead owner/quiescence; owner continuity; preserve accepted native state | `tests/storage-migration-resume.test.js` | Per-checkpoint process termination and terminal validation; current full-source/platform and transitive reconciliation remain required |
+| `storage-migration-status` | `src/commands/storage-migration-status.js` | Layout and bounded maintenance-owner metadata | Read-only exception; lstat and contained owner reads; no liveness/database validation claim | `tests/storage-migration-source.test.js` | Noncreating public status while ordinary dispatch is excluded; current full-source/platform and transitive reconciliation remain required |
+| `storage-restore` | `src/commands/storage-restore.js` | Verified backup into fresh or explicitly replaced active project | Quiescence; exact maintenance owner; outgoing retention for active replacement | `tests/storage-restore-command.test.js` | Fresh and active replacement branch coverage; current full-source/platform and transitive reconciliation remain required |
+| `storage-restore-resume` | `src/commands/storage-restore-resume.js` | Recorded fresh/active replacement publication | Explicit operation and owner; recorded continuity; quiescence; terminal current-state validation | `tests/storage-project-restore.test.js` | All current public recovery/platform checkpoints; current full-source/platform and transitive reconciliation remain required |
+| `storage-backup` | `src/commands/storage-backup.js` | SQLite backup; optional referenced attachment bytes | Canonical read-only project admission; safe destination; committed independent backup; no overwrite | `tests/storage-project-backup.test.js` | Database-only and attachment-inclusive CLI/API behavior; current full-source/platform and transitive reconciliation remain required |
+| `storage-rollback` | `src/core/command-executors.js` | Conditional restoration to supported legacy release | Inline executor; operator requires excluded writers/native writes; pinned clean target; validation-backed release | `tests/storage-rollback-command.test.js` | Actual pinned legacy CLI plus supported rollback boundaries; current full-source/platform and transitive reconciliation remain required |
+| `storage-rollback-resume` | `src/core/command-executors.js` | Recorded conditional source restoration | Inline executor; exact owner; excluded writers/native writes; clean pinned target; continuity | `tests/storage-rollback-command.test.js` | Public recovery checkpoints and retained native/binary preservation; current full-source/platform and transitive reconciliation remain required |
+
+Evidence: `benchmarks/storage-sqlite/maintenance-matrix921-review.json`. All nine service source hashes in the earlier admission mapping622 still match current source. Filename matching is discovery only; the six missing dedicated command rows and two inline rollback executors do not imply missing implementation.
 
 ## Current dispatch and literal-file review (849)
 

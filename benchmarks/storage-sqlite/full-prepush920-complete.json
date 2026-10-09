@@ -1,0 +1,19 @@
+{
+  "kind": "FULL_LOCAL_PREPUSH_TERMINAL",
+  "sourceRevision": "5222708738582c38ec51b688e48076738b176c6a",
+  "exitCode": 0,
+  "core": {
+    "tests": 2939,
+    "pass": 2928,
+    "fail": 0,
+    "skipped": 11
+  },
+  "poc": 67,
+  "mcp": 73,
+  "package": 12,
+  "canonicalGates": "All PASS; terminal secret scan PASS",
+  "logSha256": "1f4ac5ad5d4b74cd11431d81ba9f98dbdd27813ac428d0381cc3b7f57adc25e1",
+  "sourceBinding": "Tracked checkout clean before and after validation; no source edits during run. No comprehensive pre/post hash manifest claimed.",
+  "wholePlanAcceptance": false,
+  "remoteCurrentSourceAcceptance": false
+}
