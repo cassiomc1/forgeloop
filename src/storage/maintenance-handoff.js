@@ -1,11 +1,17 @@
 import { link, mkdir, open, rename } from "node:fs/promises";
 import { createHash } from "node:crypto";
-import { syncDirectory } from "./file-durability.js";
 import { assertSafePath } from "../core/filesystem.js";
 import { MAINTENANCE_OWNER_ID, readMaintenanceOwner } from "./maintenance-owner.js";
 
 const HISTORY = ".forgeloop/storage-maintenance-history";
 const busy = message => Object.assign(new Error(message), { code: "E_STORAGE_MAINTENANCE_IN_PROGRESS" });
+
+// Admission inspects ownership without running durable handoff writes.
+// Load the shared filesystem kernel only when a handoff actually needs it.
+async function syncDirectory(directory) {
+  const durability = await import("./file-durability.js");
+  return durability.syncDirectory(directory);
+}
 
 async function optionalClaim(target, relative) {
   try { return (await readMaintenanceOwner(target, relative)).value; }

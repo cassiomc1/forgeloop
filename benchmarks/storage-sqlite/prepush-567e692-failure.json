@@ -1,0 +1,16 @@
+{
+  "sourceRevision": "567e6925930aa4317ee297f35eaee78da8e5e428",
+  "exitCode": 1,
+  "coreTests": {
+    "total": 2958,
+    "pass": 2946,
+    "fail": 1,
+    "skip": 11
+  },
+  "failure": "Fresh readonly admission eagerly resolves file-durability.js through maintenance-handoff.js",
+  "trackedSourceHashesUnchanged": true,
+  "trackedFileCount": 3089,
+  "laterStages": "Not reached",
+  "logSha256": "1ad3b4e785e24d7662e3253818c6679172cad1605dd86408d682df6a35fd688e",
+  "wholePlanAcceptance": false
+}
