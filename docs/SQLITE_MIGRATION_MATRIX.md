@@ -57,9 +57,18 @@ storage, importer/exporter, compatibility and maintenance code remains
 included. Existing membership dispositions were preserved; only metadata for
 unchanged function/call fingerprints was refreshed. All 933 source hashes
 were checked. See `benchmarks/storage-sqlite/persistence-loc-9dd179c-closed.json`.
+The analyzer and exact reviewed scope are now retained in the repository;
+[reproduction instructions](../benchmarks/storage-sqlite/persistence-loc/README.md)
+include the pinned baseline and explicit failed-target interpretation. Negative
+controls confirm unresolved membership and stale source hashes cannot produce
+acceptance, even when normalized token fingerprints match.
 
-GitHub core run `37993768913` is still validating earlier pushed revision
-`aa03451`; its tarball-smoke job failed before the fixture correction.
+GitHub core run `37993768913` on `aa03451` finished with two primary failures:
+the pre-fix MCP fixture and an external OpenAPI link connection failure. All
+unit shards, coverage and Repository Index hosts passed; the final aggregate
+gate correctly refused the failed prerequisite. Logs and job results are
+retained in `benchmarks/storage-sqlite/core-aa03451-terminal.json`. Fresh core
+and expanded platform validation are required on the corrected candidate.
 Current expanded platform results, resource/LOC acceptance, sole-writer and
 whole-consumer closure, and official validator-backed completion remain open.
 No PR or package publication has been performed.

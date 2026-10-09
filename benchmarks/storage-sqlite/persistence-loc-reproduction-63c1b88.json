@@ -1,0 +1,60 @@
+{
+  "validatedAtRepositoryRevision": "63c1b88a480f2fac9ccdeba4a6584a5c28aef17e",
+  "productionSourceRevision": "9dd179c5d4b691a57dbf25901f67f69da23b4aeb",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "capturedAt": "2026-10-09T22:10:45.015115+00:00",
+  "baselineSelectedLines": 25732,
+  "currentSelectedLines": 32529,
+  "unresolvedMembership": 0,
+  "acceptanceEligible": true,
+  "targetMet": false,
+  "sourceHashesChecked": 933,
+  "controls": {
+    "knownUnresolvedMembershipRefusesAcceptance": true,
+    "staleSourceHashWithUnchangedTokenFingerprintRefusesAcceptance": true,
+    "malformedUnknownDuplicateArgumentsRejected": true,
+    "unchangedValidInputsReproduceExactOutputAfterToolCleanup": true,
+    "compressedScopeReproducesSameEvidence": true,
+    "truncatedCompressedScopeRejected": true
+  },
+  "publishedInputs": [
+    "scripts/measure-persistence-loc.mjs",
+    "benchmarks/storage-sqlite/persistence-loc/scope-9dd179c.json.gz",
+    "benchmarks/storage-sqlite/persistence-loc/whole-module-inventory.json"
+  ],
+  "artifacts": [
+    {
+      "path": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/scripts/measure-persistence-loc.mjs",
+      "sha256": "a90937b6d197fbcc771ea3025fa849bf5d6c9be80720d5419369bc9801bec18d"
+    },
+    {
+      "path": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/benchmarks/storage-sqlite/persistence-loc/scope-9dd179c.json.gz",
+      "sha256": "c1cc44ed08fffd5094e18883ebc922714e4507ea2ab1ac2190eb2483485bb9a6"
+    },
+    {
+      "path": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/benchmarks/storage-sqlite/persistence-loc/whole-module-inventory.json",
+      "sha256": "012f6571ecb0cbf15e3555703e3a666b0a0d85816174e40627052d8d62b951f8"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/persistence-loc-published-tool-final.json",
+      "sha256": "aca62fbb479c1e9545d15a926c2aecab9a746f044b2afee8fc5a8805251e9460"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/persistence-loc-published-tool-negative.json",
+      "sha256": "f3b80c9f7d71e89931bdfec2e0ef2c14b58d393e654c3b541de7896093062e26"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/persistence-loc-published-tool-stale-source.json",
+      "sha256": "e851768d872446ea525a0bbcb3cbf651a9df7f829604fb6b5bd83f01b12e5c93"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/persistence-loc-published-tool-gzip.json",
+      "sha256": "718c73bf683d353a9f61012ecbf0f0aeeaee73c8d7b9c8490a8f61614e911923"
+    }
+  ],
+  "limitations": [
+    "Normalized token fingerprints are matching heuristics; raw source hashes and direct review remain authoritative",
+    "Static comparison does not establish runtime, performance or whole-plan acceptance"
+  ],
+  "wholePlanAcceptance": false
+}
