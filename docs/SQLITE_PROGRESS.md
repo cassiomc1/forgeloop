@@ -571,3 +571,7 @@ Full prepush on6645b65 completes exit0:2938core cases,2927pass,11skip,zero failu
 Current source resolves505modules and all literal imports across CLI436/API465/MCP477module closures. All104filesystem-origin modules have source-bound role review;the sole changed filesystem module,snapshot.js,adds only the owned-copy membership predicate and leaves backup/cleanup operations unchanged. The77named filesystem wrapper calls in35files retain review references. This is static reconciliation,not exhaustive transitive authority proof. Evidence:`benchmarks/storage-sqlite/filesystem-role-reconciliation916.json`.
 
 Current symmetric candidate LOC inventory includes282modules,43788baseline versus52190current nonblank production lines. The reduction target remains unmet and semantic scope review remains incomplete. Evidence:`benchmarks/storage-sqlite/persistence-loc915-summary.json`.
+
+### Current scoped conformance reconciliation917
+
+All113historically catalogued named conformance cases have exact PASS lines in full prepush915 on6645b65. Every referenced test file retains its historical hash;two reviewed production files(unit-of-work and action-show)have changed and remain explicitly identified. Current production/test bytes match that passing local revision. This refreshes named local conformance evidence without promoting it to exhaustive consumer/sole-writer/maintenance or whole-plan acceptance. Evidence:`benchmarks/storage-sqlite/scoped-conformance917.json`.
