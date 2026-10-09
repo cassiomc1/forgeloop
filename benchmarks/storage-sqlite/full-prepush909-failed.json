@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "545a5a38bedfc36de6d7ff2496470707e123c2da",
+  "command": "npm run verify:prepush",
+  "node": "24.19.0",
+  "platform": "darwin",
+  "status": "FAILED",
+  "exitCode": 1,
+  "core": {
+    "tests": 2935,
+    "pass": 2923,
+    "fail": 1,
+    "skipped": 11,
+    "durationMs": 524723.574209
+  },
+  "failure": {
+    "test": "every tracked workflow job has a bounded timeout and read-only checkouts",
+    "file": "tests/workflow-policy.test.js",
+    "cause": "Guard requires timeout <360; documented manual paired MCP experiment has bounded timeout 600 and observed duration exceeding six hours."
+  },
+  "log": "/Users/cassio/.codex/verification/full-prepush909.log",
+  "logSha256": "ef76dc34f8be4144daca4576c649c7d56f07f91abab9717a0289fa355a1cfeaf",
+  "laterTiersVerified": false,
+  "wholePrepushPass": false
+}

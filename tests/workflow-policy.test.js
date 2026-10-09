@@ -138,7 +138,15 @@ test("every tracked workflow job has a bounded timeout and read-only checkouts",
         continue;
       }
       const timeout = Number(job.match(/^    timeout-minutes:\s*(\d+)\s*$/mu)?.[1]);
-      assert.ok(Number.isInteger(timeout) && timeout > 0 && timeout < 360, `${name} has an unbounded job timeout`);
+      const resourceBenchmark = name === "windows-full-suite.yml" && job.startsWith("  mcp-resources:\n");
+      // The complete paired 200-sample workload takes over six hours. Only
+      // this manual self-hosted experiment receives the documented larger cap.
+      if (resourceBenchmark) {
+        const definition = parse(workflow).jobs["mcp-resources"];
+        assert.equal(definition.if, "${{ github.event_name == 'workflow_dispatch' && inputs.suite == 'mcp-resources' }}");
+        assert.deepEqual(definition["runs-on"], ["self-hosted", "Linux", "X64", "forgeloop-linux-remote"]);
+      }
+      assert.ok(Number.isInteger(timeout) && timeout > 0 && (resourceBenchmark ? timeout <= 600 : timeout < 360), `${name} has an unbounded job timeout`);
       if (job.includes("actions/checkout@")) {
         assert.match(job, /persist-credentials:\s*false/u, `${name} checkout must not persist credentials`);
       }
