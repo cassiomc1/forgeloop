@@ -94,6 +94,20 @@ test("full+maintenance MCP bundle execution matches the direct API and preserves
       manifest.files.map((file) => file.path).sort(),
       [...manifest.artifacts].sort(),
     );
+    // The public bundle command has one canonical portable destination under
+    // `.forgeloop/tasks/<taskId>`; this test intentionally does not invent an
+    // unsupported destination argument. Verify every exported byte against
+    // the manifest's raw schema, including its declared size and digest.
+    for (const file of manifest.files) {
+      const exportedPath = path.join(target, ".forgeloop", "tasks", taskId, file.path);
+      const bytes = await readFile(exportedPath);
+      assert.equal(bytes.byteLength, file.size, `${file.path} size must match its manifest`);
+      assert.equal(
+        createHash("sha256").update(bytes).digest("hex"),
+        file.sha256,
+        `${file.path} digest must match its manifest`,
+      );
+    }
 
     assert.equal(await sha256File(databasePath), beforeDigest);
     for (const relativePath of LEGACY_LIVE_STATE) await assertAbsent(target, relativePath);
