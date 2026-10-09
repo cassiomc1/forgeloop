@@ -561,3 +561,7 @@ Allocation diagnosis912 motivates reuse of task rows only within live read-only 
 ### Allocation correction comparison914
 
 Frozen709a3e9 completes the same external sampled-allocation1000/5000task,two-repetition paired MCP diagnostic,with full parity,terminal cleanup and all3043source hashes unchanged. Native taskRow samples decrease130312352→26962672bytes at1000tasks and638699960→130177760at5000. Final native RSS410.73→410.16MiB and499.11→478.28MiB respectively does not establish a universal bound or sustained improvement. Sampling includes collected objects and startup;latency is instrumentation-affected and not release evidence. Natural-lifetime memory acceptance and broad/current platform regressions remain open. Evidence:`benchmarks/storage-sqlite/mcp-memory914-correction-comparison.json`.
+
+### Current full local acceptance915
+
+Full prepush on6645b65 completes exit0:2938core cases,2927pass,11skip,zero failures;MCP73,PoC67,package12 and all canonical tiers pass. The consumer matrix now distinguishes560unchanged historical production files from five corrections rather than claiming historical whole-platform identity. Current remote checks and whole acceptance remain open. Evidence:`benchmarks/storage-sqlite/full-prepush915-complete.json`.

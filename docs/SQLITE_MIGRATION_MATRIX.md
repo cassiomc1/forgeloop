@@ -2,11 +2,11 @@
 
 Current checkpoint progress: [SQLite migration progress](SQLITE_PROGRESS.md).
 
-## Current production and validation reconciliation896
+## Current production reconciliation915
 
-All565 tracked production files under src/schemas/MCP src, plus core/MCP package manifests and locks, have identical Git blobs to the sources used by full Mac873, full Windows885, Core881, package886 and runtime compatibility887. Current working files also match HEAD. All505 module hashes from closure871 remain unchanged. Therefore route848 and admission869 are included in those passing production snapshots. Later changes affect tests, harnesses, workflows, documentation and evidence; final pre-PR checks must still cover the finished checkout.
+Current6645b65 has560 of565 production files identical to the historical full Mac873 revision. Five changed files are action-show,CLI command definitions,reconcile-closure,snapshot and unit-of-work. Historical remote successes do not verify these corrections. Current local full prepush915 passes2938core cases(2927pass,11skip),MCP73,PoC67,package12 and all canonical tiers. Current remote checks,complete consumer/maintenance acceptance,resource/LOC gates and protocol closure remain open. Evidence:`benchmarks/storage-sqlite/production-reconciliation915.json` and `benchmarks/storage-sqlite/full-prepush915-complete.json`.
 
-This reconciles the historical platform-pending statements below without treating module reachability as complete caller conformance. The104 filesystem-origin module inventory includes the reviewed admission changes871; the older103-module review847 remains historical. Complete consumer/maintenance reconciliation, performance/resources, inclusive code reduction and validator-backed closure remain open. Evidence: `benchmarks/storage-sqlite/production-platform-reconciliation896.json`.
+Reconciliation896 remains a historical identity record for its pinned checkout;it must not be read as current-source platform acceptance. Historical entries below retain their source boundaries.
 
 ## Current dispatch and literal-file review (849)
 
