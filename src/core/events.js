@@ -945,7 +945,7 @@ export async function withEventLedgerAudit(target, packageRoot, options, callbac
     finally { ownedLedgerProofs.delete(events); }
   }), {
     validate(event, index) { validateStoredEvent(event, schema, `${relPath}[${index}]`); return event; },
-    onFullScan(digest) { completeObservation(digest); },
+    onFullScan: store.captureObservations ? digest => completeObservation(digest) : null,
   });
 }
 

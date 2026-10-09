@@ -17,6 +17,41 @@ import { getOperationalStore } from "../src/storage/operational-context.js";
 import { withProjectStorage } from "../src/storage/project-boundary.js";
 import { withOperationalStore, withOperationalReadSnapshot, withOperationalTransaction } from "../src/storage/unit-of-work.js";
 import { withStorageSnapshot } from "../src/storage/snapshot.js";
+import { withEventLedgerAudit } from "../src/core/events.js";
+import { taskArtifactPath } from "../src/core/task-paths.js";
+
+test("pure read-only audits validate rows without building a future commit read set", async () => {
+  const target = await createGitRepository("forgeloop-readonly-observation-allocation-");
+  const packageRoot = getPackageRoot();
+  const taskId = "readonly-audit-observations";
+  let writer;
+  try {
+    await runTaskCreate({ target, packageRoot, taskId, claims: [] });
+    writer = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+    await withProjectStorage(target, async source => {
+      const tasks = source.listTaskKeys();
+      assert.equal(tasks.length, 1);
+      const row = source.taskRow(tasks[0]);
+      assert.equal(row.task_id, taskId);
+      assert.ok(source.readEvents(taskArtifactPath(taskId, "events"), 1).length > 0);
+      assert.ok([...source.iterateEvents(taskArtifactPath(taskId, "events"))].length > 0);
+      assert.equal(source.reads.size, 0, "a pure reader cannot commit and must not construct commit fingerprints");
+      await withEventLedgerAudit(target, packageRoot, { taskId }, async audit => {
+        assert.equal(audit.valid, true);
+        const detached = getOperationalStore(target);
+        assert.equal(detached.reads.size, 0, "full ledger validation must not allocate a read-only commit read set");
+        // The active owned snapshot remains valid; the next request must see
+        // and reject changed indexed fields on the independent live connection.
+        writer.prepare("UPDATE events SET event_type = 'CORRUPTED_INDEX' WHERE task_id = ? AND seq = 1").run(taskId);
+      });
+      await withEventLedgerAudit(target, packageRoot, { taskId }, audit => {
+        assert.equal(audit.valid, false);
+        assert.ok(audit.errors.some(error => error.code === "E_STORAGE_PAYLOAD_MISMATCH"));
+      });
+      assert.throws(() => source.commit(), { code: "E_STORAGE_READ_ONLY" });
+    }, { readOnly: true });
+  } finally { writer?.close(); await removeTempTree(target); }
+});
 
 test("snapshot task cache stays bounded without dropping full-row conflict bindings", async () => {
   const target = await createGitRepository("forgeloop-task-cache-bound-");

@@ -60,18 +60,18 @@ function recordPayload(row, kind) {
   return payload;
 }
 
-function observeEventRows(db, taskId, limit, consume = null) {
+function observeEventRows(db, taskId, limit, consume = null, bindRows = true) {
   const statement = limit === null
     ? db.prepare("SELECT * FROM events WHERE task_id = ? ORDER BY seq")
     : db.prepare("SELECT * FROM events WHERE task_id = ? ORDER BY seq DESC LIMIT ?");
   const rows = limit === null ? statement.iterate(taskId) : statement.iterate(taskId, limit);
-  const digest = createHash("sha256");
+  const digest = bindRows ? createHash("sha256") : null;
   for (const row of rows) {
     const event = decodeIndexedEvent(row);
-    digest.update(canonicalFingerprint(row));
+    digest?.update(canonicalFingerprint(row));
     if (consume) consume(event);
   }
-  return digest.digest("hex");
+  return digest?.digest("hex") ?? null;
 }
 
 /**
@@ -86,6 +86,9 @@ class OperationalStore {
     this.target = path.resolve(target);
     this.readOnly = readOnly;
     this.parent = parent;
+    // Only a writable scope or its detached proof view needs future commit
+    // observations. Pure readers still validate every payload and event.
+    this.captureObservations = !readOnly || Boolean(parent?.captureObservations);
     this.reads = new Map();
     this.snapshotTaskRows = new Map();
     this.writes = new Map();
@@ -112,6 +115,7 @@ class OperationalStore {
 
   observe(key, query, conflictCode = null) {
     const value = query();
+    if (!this.captureObservations) return value;
     const previous = this.reads.get(key);
     // The atomic apply phase may reread its own just-written rows. Its complete
     // read set was already checked before the first write under BEGIN IMMEDIATE.
@@ -284,8 +288,8 @@ class OperationalStore {
     // validation cursor; full reads bind every observed row against tampering.
     const key = `events:${taskId}:${limit ?? "all"}`;
     const storedEvents = [];
-    const digest = observeEventRows(this.db, taskId, limit, event => storedEvents.push(event));
-    if (!this.reads.has(key)) this.reads.set(key, { query: () => observeEventRows(this.db, taskId, limit), value: null,
+    const digest = observeEventRows(this.db, taskId, limit, event => storedEvents.push(event), this.captureObservations);
+    if (this.captureObservations && !this.reads.has(key)) this.reads.set(key, { query: () => observeEventRows(this.db, taskId, limit), value: null,
       conflictCode: null, fingerprint: canonicalFingerprint(digest) });
     if (limit !== null) storedEvents.reverse();
     for (const event of this.events.get(taskId) ?? []) storedEvents.push(event);
@@ -298,6 +302,7 @@ class OperationalStore {
     if (location?.kind !== "events") throw storageError("E_EVENT_INVALID", "Expected logical ledger path");
     const taskId = this.taskId(location);
     if (!taskId) throw storageError("E_TASK_NOT_FOUND", "Snapshot ledger requires its canonical task");
+    if (!this.captureObservations) return null;
     const key = `events:${taskId}:all`;
     const firstObservation = !this.reads.has(key);
     if (firstObservation) this.reads.set(key, { query: () => { throw storageError("E_STORAGE_OBSERVATION_INCOMPLETE", "Event iteration was not fully consumed"); }, value: null, fingerprint: null });
@@ -317,13 +322,13 @@ class OperationalStore {
     const taskId = this.taskId(location);
     if (!taskId) return;
     const key = `events:${taskId}:all`;
-    const firstObservation = !this.reads.has(key);
+    const firstObservation = this.captureObservations && !this.reads.has(key);
     if (firstObservation) this.reads.set(key, { query: () => { throw storageError("E_STORAGE_OBSERVATION_INCOMPLETE", "Event iteration was not fully consumed"); }, value: null, fingerprint: null });
-    const digest = createHash("sha256");
+    const digest = this.captureObservations ? createHash("sha256") : null;
     for (const row of this.db.prepare("SELECT * FROM events WHERE task_id = ? ORDER BY seq").iterate(taskId)) {
       if (!this.active) throw storageError("E_STORAGE_TRANSACTION_INVALID", "Operational iterator scope already closed");
       const event = decodeIndexedEvent(row);
-      digest.update(canonicalFingerprint(row));
+      digest?.update(canonicalFingerprint(row));
       yield event;
     }
     if (!this.active) throw storageError("E_STORAGE_TRANSACTION_INVALID", "Operational iterator scope already closed");
