@@ -46,7 +46,14 @@ export async function withProjectStorage(target, callback, { readOnly = false, r
   // SQLite opens these adjacent files itself; validate their containment too.
   await assertSafePath(target, ".forgeloop/state.sqlite-wal");
   await assertSafePath(target, ".forgeloop/state.sqlite-shm");
-  for (const relativePath of [".forgeloop/task-state", ".forgeloop/work-state.json", ".forgeloop/events.ndjson", ".forgeloop/.txn"]) {
+  for (const relativePath of [
+    ".forgeloop/task-state",
+    ".forgeloop/work-state.json",
+    ".forgeloop/events.ndjson",
+    ".forgeloop/.txn",
+    ".forgeloop/session.json",
+    ".forgeloop/sessions",
+  ]) {
     if (await exists(await assertSafePath(target, relativePath))) {
       throw Object.assign(new Error("SQLite and writable legacy operational state cannot coexist; explicit migration is required"), { code: "E_STORAGE_MIGRATION_REQUIRED" });
     }

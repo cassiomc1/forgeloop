@@ -15,7 +15,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { readdirSync } from "node:fs";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, writeFile, readFile } from "node:fs/promises";
 import path from "node:path";
 
 import { executeForgeLoopCommand } from "../src/core/command-runtime.js";
@@ -126,6 +126,43 @@ test("B3: contradictory legacy files block canonical dispatch without mutation",
     await cleanupDir(target);
   }
 });
+
+const MIXED_LAYOUT_CASES = Object.freeze([
+  ["legacy active-session singleton", ".forgeloop/session.json"],
+  ["legacy session collection", ".forgeloop/sessions/retained.json"],
+  ["legacy task ledger index sidecar", ".forgeloop/task-state/retained/events.ndjson.index.json"],
+]);
+
+for (const [label, relativePath] of MIXED_LAYOUT_CASES) {
+  test(`B3b: ${label} blocks public dispatch without SQLite or filesystem mutation`, async () => {
+    const { target, databasePath, db, before } = await buildStoreFixture();
+    const filename = path.join(target, relativePath);
+    const retainedBytes = Buffer.from("retained legacy operational evidence\n");
+    try {
+      await mkdir(path.dirname(filename), { recursive: true });
+      await writeFile(filename, retainedBytes);
+      const databaseBytes = await readFile(databasePath);
+      const beforeManifest = manifest(path.join(target, ".forgeloop"));
+
+      const envelope = await executeForgeLoopCommand({
+        command: "record-diagnosis",
+        projectPath: target,
+        input: { ...DIAGNOSIS_INPUT, taskId: TEST_TASK_ID },
+      });
+
+      assert.equal(envelope.ok, false, JSON.stringify(envelope));
+      assert.equal(envelope.error.code, "E_STORAGE_MIGRATION_REQUIRED");
+      assert.deepEqual(logicalSnapshot(db, TEST_TASK_ID), before, "mixed layout must not mutate SQLite");
+      assert.equal(validateLedgerEvents(listEvents(db, TEST_TASK_ID)).valid, true, "SQLite ledger remains valid");
+      assert.deepEqual(await readFile(databasePath), databaseBytes, "SQLite bytes remain unchanged");
+      assert.deepEqual(await readFile(filename), retainedBytes, "retained legacy evidence remains unchanged");
+      assert.deepEqual(manifest(path.join(target, ".forgeloop")), beforeManifest, "public dispatch creates no filesystem fallback");
+    } finally {
+      db.close();
+      await cleanupDir(target);
+    }
+  });
+}
 
 test("B4: inconsistent indexed state rejects before canonical mutation", async () => {
   // A guard rejection must leave the database exactly as it was, proving the
