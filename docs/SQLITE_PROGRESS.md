@@ -6,7 +6,7 @@
 ████████████░░░░░░░░ 60%
 ```
 
-Checkpoints have equal weight; this percentage does not estimate effort or release readiness. Full Mac873 and Windows885 pass on source-bound revisions of the unchanged production implementation. Core881 passes17jobs,package886 passes on all three hosts,and compatibility887 passes7jobs. Whole migration acceptance is open. No PR,merge or publication is claimed.
+Checkpoints have equal weight; this percentage does not estimate effort or release readiness. Current production passes full local prepush920,full Windows926,all17Core931 jobs,andpackage/MCP932 onLinux,macOS andWindows. Expanded Node compatibility37921532549 isstill active. Runtime source andtests remain unchanged across these checks;historical entries retain their earlier source boundaries. Whole migration acceptance isopen. No PR,merge orpublication isclaimed.
 
 Done:12. Partial:7. Pending:1. Historical scoped evidence remains recorded below;consumer/maintenance authority,final pre-PR acceptance,performance/resources,inclusive code reduction and protocol closure remain open.
 
@@ -603,3 +603,9 @@ Windows37899690295 on405f90b terminates success:2939tests,2915pass,24skip,zero f
 ### Corrected Core terminal acceptance931
 
 Core37900647372 on20aca2b terminates success onattempt2 withall17jobs successful. Unitshards retain2939cases,2927pass,12skip,zero failures. Attempt1failed external links on GitHub503;unchanged representative links returned200 with systemcurl,andtargeted failed-job retry passed documentation andaggregate gates. Original failed-attempt logs remain bound in evidence. Corrected fullWindows926 also passes onidentical production/test bytes. Current all-host package/MCP37921165587 isdispatched;original resource,LOC,consumer authority andprotocol gates remainopen. Evidence:`benchmarks/storage-sqlite/core926-terminal931.json`. NoPR orpublication.
+
+### Current package acceptance932 and scoped binding/handle review929–930
+
+Package37921165587 on20aca2b terminates success onallfourjobs,including Linux,macOS andWindows package/MCP checks. MCP73/73 passes without skips oneachhost. Production/test bytes remainunchanged since passing current local920,Windows926 andCore931. Evidence:`benchmarks/storage-sqlite/package932-summary.json`. Expanded compatibility37921532549 follows before natural-resource measurement.
+
+The external alias extension resolves fouradditional default/assigned-binding calls witha control that includes assignment,destructuring,parameterdefault andlexicalshadowing. Current additions are two executable statreads,private outside-target browser cwdcreation,andadvisory rootrealpath. First-origin/conditional propagation isdiscovery,not exhaustive runtimeauthority. Handle review identifies36open/stream calls versus35historically:gate external evidence adds acontained readonlyhandle,andowner/marker reads adopt readonly no-follow flags. Fourr+ handles onlysync owned createdsnapshot/candidate/copy/attachment stagingbytes inreviewedblocks. No newwritable operational backend isobserved inthese scoped leads;whole caller/path andexternal effects remainopen. Evidence:`filesystem-bindings929-review.json` and`file-handles930-review.json`. Progress stays60%;resource,LOC,consumer authority andprotocol gates remainopen.

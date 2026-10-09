@@ -1,0 +1,101 @@
+{
+  "kind": "CURRENT_FILE_HANDLE_RECONCILIATION",
+  "sourceRevision": "20aca2ba332ed86323722ef91812925ad9dadb83",
+  "currentHandleOrStreamCalls": 36,
+  "previousHandleOrStreamCalls": 35,
+  "addedExpressions": [
+    {
+      "file": "src/core/gate-artifact.js",
+      "expression": "open(resolved,constants.O_RDONLY|(constants.O_NOFOLLOW??0))"
+    },
+    {
+      "file": "src/storage/maintenance-owner.js",
+      "expression": "open(filename,constants.O_RDONLY|(constants.O_NOFOLLOW??0))"
+    },
+    {
+      "file": "src/storage/storage-marker.js",
+      "expression": "open(filename,constants.O_RDONLY|(constants.O_NOFOLLOW??0))"
+    }
+  ],
+  "removedExpressions": [
+    {
+      "file": "src/storage/maintenance-owner.js",
+      "expression": "open(filename,\"r\")"
+    },
+    {
+      "file": "src/storage/storage-marker.js",
+      "expression": "open(filename,\"r\")"
+    }
+  ],
+  "changedReviewedFiles": [
+    {
+      "file": "src/core/filesystem.js",
+      "currentSha256": "4174506b0832bdadadd9b7b676baa835b15b2b7e68fc980902dedeacb2564a57",
+      "oldSha256": "daef6207f2bf5676414f81a635b054cb0cd06d01a2cfaa900f677683d53d00a4"
+    },
+    {
+      "file": "src/repository-index/binary-manager.js",
+      "currentSha256": "e5445ac9306053478e2c9f694ca8d890509c4f27f33e36d1797ef404ed0a1888",
+      "oldSha256": "99c6fd6917fd2a49d1ce7416dbe49e1642b20c8e643926d938843f489d9c103e"
+    },
+    {
+      "file": "src/storage/attachment-files.js",
+      "currentSha256": "10e3da12d126263bb4ef7ca2684911bc778048b90069a84ccc73029cd53b93f5",
+      "oldSha256": "f9b7bc28c820b7d9183f8e92d38c1a3ab19f731d6b0751488db8b643a30432c5"
+    },
+    {
+      "file": "src/storage/maintenance-handoff.js",
+      "currentSha256": "79113b4f2c706ae35c0ffa775b433fbd085fd95d4d23d0d25072151f4c3887f5",
+      "oldSha256": "38749c972924c900cb746ffaa8483428369435f7bd67739fc12837ba9667dcba"
+    },
+    {
+      "file": "src/storage/maintenance-owner.js",
+      "currentSha256": "cf18aff27a8df3ccc2257048b787428ba03c7d5e55e0aecaa6560daefe16e64e",
+      "oldSha256": "8f22e1cf930bff4a40ba24d8017bff84ac54822e30b17f12a8204ea5d6c4c4bf"
+    },
+    {
+      "file": "src/storage/metadata-json.js",
+      "currentSha256": "a12fe17e3818325804f84447ac298b5a1c8cc423c98c0d2bcb91b317bb365e9c",
+      "oldSha256": "a34e07736bda5d4fc662ceb3527e9a80bf70d404c5bb238f4f7a5576886df28c"
+    },
+    {
+      "file": "src/storage/storage-marker.js",
+      "currentSha256": "1664b9f2c1005507ee1aa256dc443f0d82c728646c2cf04a8460f1b270a0ca05",
+      "oldSha256": "be4744869306bfba37f02f2ab58152761c12d079360eb4220917019e5d8ad79d"
+    }
+  ],
+  "rPlusReview": [
+    {
+      "file": "src/storage/attachment-files.js",
+      "line": 83,
+      "sha256": "10e3da12d126263bb4ef7ca2684911bc778048b90069a84ccc73029cd53b93f5",
+      "role": "Sync-only handle to owned created snapshot/candidate/copy/attachment staging bytes; no write method observed in this handle block."
+    },
+    {
+      "file": "src/storage/backup.js",
+      "line": 24,
+      "sha256": "32016e0aaf027c2d0084717a81f1e9b1f48286ce87abdfb05a8a5764a7d8dd9a",
+      "role": "Sync-only handle to owned created snapshot/candidate/copy/attachment staging bytes; no write method observed in this handle block."
+    },
+    {
+      "file": "src/storage/migration-candidate.js",
+      "line": 243,
+      "sha256": "41f01d20be6caac40ef541a8d6175e429bd595f5bd3a7a9f046571c880e88ecb",
+      "role": "Sync-only handle to owned created snapshot/candidate/copy/attachment staging bytes; no write method observed in this handle block."
+    },
+    {
+      "file": "src/storage/migration-source.js",
+      "line": 207,
+      "sha256": "4e2b78e7be7b1641883b28d0b33fe34fd1264b047ce88e00e617e5607aa9ffdb",
+      "role": "Sync-only handle to owned created snapshot/candidate/copy/attachment staging bytes; no write method observed in this handle block."
+    }
+  ],
+  "wholeConsumerClosure": false,
+  "wholeSoleWriterProof": false,
+  "limits": [
+    "Handle flags and inspected blocks do not establish every public caller namespace or arbitrary dependency effects.",
+    "The generic atomic primitive retains77caller-boundary review obligations.",
+    "This static scan does not cover returned handles propagated across functions or computed methods."
+  ],
+  "rawInventorySha256": "a2d4645ab9f21e1b5312cb78775fcdc827f1256b5b847a9e597adde3790794d2"
+}
