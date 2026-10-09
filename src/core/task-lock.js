@@ -56,13 +56,6 @@ export function isValidTaskLockIdentity(lock) {
     && hasLeaseIdentity(lock);
 }
 
-export function isValidProjectClaimsLockIdentity(lock) {
-  return Boolean(lock)
-    && !lock.corrupted
-    && lock.scope === "claims-reservation"
-    && hasLeaseIdentity(lock);
-}
-
 function classifyLeaseWindow(lock, now) {
   const heartbeat = Date.parse(lock.heartbeatAt ?? lock.acquiredAt);
   if (!Number.isFinite(heartbeat)) return { status: "UNKNOWN", stale: false };
@@ -85,42 +78,6 @@ export function classifyLockStaleness(lock, now = Date.now()) {
  */
 export function currentProcessStartToken(now = Date.now(), uptimeSeconds = process.uptime()) {
   return `${process.pid}:${Math.max(0, Math.floor(now - (uptimeSeconds * 1000)))}`;
-}
-
-export const CLAIMS_LOCK_REL_PATH = ".forgeloop/.claims.lock";
-
-export async function readProjectClaimsLockInfo(target) {
-  if (getOperationalStore(target)) return null;
-  await assertSafePath(target, CLAIMS_LOCK_REL_PATH);
-  const fullPath = ensureWithin(target, CLAIMS_LOCK_REL_PATH);
-
-  if (!(await fileExists(fullPath))) {
-    return null;
-  }
-
-  try {
-    const raw = await readFile(fullPath, "utf8");
-    return JSON.parse(raw);
-  } catch {
-    return { corrupted: true };
-  }
-}
-
-export function classifyProjectClaimsLock(lock, now = Date.now()) {
-  if (!lock) return { status: "NONE", stale: false };
-  if (lock.corrupted) return { status: "CORRUPT", stale: false };
-  if (!isValidProjectClaimsLockIdentity(lock)) return { status: "UNKNOWN", stale: false };
-  return classifyLeaseWindow(lock, now);
-}
-
-export async function releaseStaleProjectClaimsLockIfUnchanged(target) {
-  await assertStorageMaintenanceInactive(target);
-  throw Object.assign(new Error("Filesystem claims-lock mutation is retired; preserve legacy evidence for explicit migration"), { code: "E_STORAGE_OPERATION_UNSUPPORTED" });
-}
-
-export async function acquireProjectClaimsLock(target) {
-  await assertStorageMaintenanceInactive(target);
-  throw Object.assign(new Error("Standalone filesystem claims locks are retired; use canonical withProjectClaimsLock"), { code: "E_STORAGE_OPERATION_UNSUPPORTED" });
 }
 
 export async function withProjectClaimsLock(target, operationOrCallback, callback) {

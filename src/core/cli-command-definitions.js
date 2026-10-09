@@ -1446,10 +1446,10 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
       "--stale-only": Object.freeze({ targetKey: "staleOnly", parseType: "boolean", takesValue: false, description: "release only a lock whose lease is expired" }),
       "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit structured output as JSON" }),
     }),
-    writes: [],
-    removes: [".forgeloop/locks/<taskKey>.lock"],
+    writes: [".forgeloop/state.sqlite"],
+    removes: [],
     mayExecuteExternalProcess: false,
-    description: "Removes an orphaned task lock file to recover an interrupted task.",
+    description: "Releases a canonical SQLite operation lease to recover an interrupted task.",
   }),
   "task-recover": Object.freeze({
     name: "task-recover",

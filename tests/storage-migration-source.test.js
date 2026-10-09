@@ -8,7 +8,7 @@ import { captureLegacySource, inventoryLegacySource, resumeLegacySourceCapture, 
 import { importProjectState } from "../src/storage/importer.js";
 import { resumeStorageMaintenance, withStorageMaintenance } from "../src/storage/maintenance.js";
 import { executeForgeLoopCommand } from "../src/core/command-runtime.js";
-import { acquireTaskLock, acquireProjectClaimsLock } from "../src/core/task-lock.js";
+import { acquireTaskLock } from "../src/core/task-lock.js";
 import { execFile, spawn } from "node:child_process";
 import { once } from "node:events";
 import { promisify } from "node:util";
@@ -160,7 +160,6 @@ test("maintenance excludes public commands, lock acquisition and independent CLI
       const cliStatus = await promisify(execFile)(process.execPath, [path.join(getPackageRoot(), "src/cli.js"), "storage-migration-status", "--path", target, "--json"]);
       assert.equal(JSON.parse(cliStatus.stdout).maintenance.owner.ownerId, status.result.maintenance.owner.ownerId);
       await assert.rejects(acquireTaskLock(target, "must-not-write"), { code: "E_STORAGE_MAINTENANCE_IN_PROGRESS" });
-      await assert.rejects(acquireProjectClaimsLock(target), { code: "E_STORAGE_MAINTENANCE_IN_PROGRESS" });
       await assert.rejects(promisify(execFile)(process.execPath, [path.join(getPackageRoot(), "src/cli.js"), "task-list", "--path", target, "--json"]), error =>
         `${error.stdout}${error.stderr}`.includes("E_STORAGE_MAINTENANCE_IN_PROGRESS"));
       // Nested maintenance work joins this exact owner; no second exclusion.
