@@ -12,6 +12,12 @@ The semantic revision-conflict correction919 is now covered by full local prepus
 
 This resolves the specified quality persistence boundaries, not every transitive dependency or public projection. The historical quality rows below remain partial until those remaining obligations are reconciled; no sole-writer capability is enabled by this review.
 
+## Continuity writer and deletion reconciliation935
+
+`record-continuity` and `clear-continuity` use native task mutation wrappers. Canonical recording delegates to SQLite artifact staging; clearing requires an exact task/path and stages only continuity deletion in a task transaction. Current source and four conformance test files exactly match full prepush920. Its retained log proves recording, command input parsing, state-preserving deletion, refusal of authority fields, and fresh/stale non-evidence classification. Source hashes and six exact results are retained in `benchmarks/storage-sqlite/continuity-consumers935-review.json`.
+
+Direct callers can supply state/contract/repository options. That compatibility boundary does not make supplied data lifecycle evidence; direct-call freshness/race scenarios and reconciliation/context consumers remain separate review obligations. This review does not close the whole continuity family or universal transitive consumer checkpoint.
+
 ## Current storage entry-point review921
 
 The original per-file table predates these public entry points. Rollback commands use inline executors rather than dedicated command files. This review identifies current admission and conformance sources; it does not establish complete transitive authority or final platform acceptance.

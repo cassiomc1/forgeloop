@@ -1,0 +1,87 @@
+{
+  "kind": "CONTINUITY_CONSUMER_SOURCE_BOUND_RECONCILIATION",
+  "sourceRevision": "72701e1848f1148dc52b50b3cc00b3a0d0ad6734",
+  "verificationRevision": "5222708738582c38ec51b688e48076738b176c6a",
+  "verificationLogSha256": "1f4ac5ad5d4b74cd11431d81ba9f98dbdd27813ac428d0381cc3b7f57adc25e1",
+  "files": [
+    {
+      "path": "src/commands/record-continuity.js",
+      "sha256": "77a04d35e70bc6f36a90a36c363d1010522b6100c335b03a1943667b123f5fc4",
+      "matchesPrepush920": true
+    },
+    {
+      "path": "src/commands/clear-continuity.js",
+      "sha256": "6d49a19c96e7245e00b7ef1e95b6745f02b31854f906f94876e1fae9092198ec",
+      "matchesPrepush920": true
+    },
+    {
+      "path": "src/core/continuity.js",
+      "sha256": "f16e6bf582bbc47db10bd235b5b367e14b0787cdc12799c904d2c61a6ef9acf5",
+      "matchesPrepush920": true
+    },
+    {
+      "path": "src/core/artifacts.js",
+      "sha256": "4667bc01b1f6416ee22e0de6788bb8ae21ce238b5ce9724961c92c06d0e92db2",
+      "matchesPrepush920": true
+    },
+    {
+      "path": "tests/continuity.test.js",
+      "sha256": "955e1e268415e7fdbadf1ddbf772e16a4dc5bd3dfd4e194d5acc0816cb15a679",
+      "matchesPrepush920": true
+    },
+    {
+      "path": "tests/continuity-cli.test.js",
+      "sha256": "1cf9cfbe8dfc9897831d1db37815bdd2c2184a17174eba5702014e8aa931e838",
+      "matchesPrepush920": true
+    },
+    {
+      "path": "tests/continuity-safety.test.js",
+      "sha256": "b0d4981d634c0fdbaadc730c6a74798b0b3a12306c1d3fba584dde09759a38a0",
+      "matchesPrepush920": true
+    },
+    {
+      "path": "tests/continuity-conformance.test.js",
+      "sha256": "1efdd07cbdba2d162378e351575a39b72ca37a33d8da23ba77b720d444dc76d3",
+      "matchesPrepush920": true
+    }
+  ],
+  "observedControls": [
+    {
+      "name": "recording continuity derives canonical bindings and ignores actor identity fields",
+      "retainedResult": "\u2714 recording continuity derives canonical bindings and ignores actor identity fields (232.142334ms)"
+    },
+    {
+      "name": "record-continuity parses work-item flags and writes only operational context",
+      "retainedResult": "\u2714 record-continuity parses work-item flags and writes only operational context (224.647625ms)"
+    },
+    {
+      "name": "clear-continuity removes only the continuity artifact",
+      "retainedResult": "\u2714 clear-continuity removes only the continuity artifact (172.240375ms)"
+    },
+    {
+      "name": "continuity rejects evidence publication and authority fields",
+      "retainedResult": "\u2714 continuity rejects evidence publication and authority fields (0.906166ms)"
+    },
+    {
+      "name": "fresh continuity is valid but has no evidence authority",
+      "retainedResult": "\u2714 fresh continuity is valid but has no evidence authority (1.641208ms)"
+    },
+    {
+      "name": "stale continuity reports STALE without becoming evidence",
+      "retainedResult": "\u2714 stale continuity reports STALE without becoming evidence (0.233791ms)"
+    }
+  ],
+  "reviewedBoundaries": [
+    "record and clear command wrappers use withTaskMutation; canonical writes delegate writeJsonArtifact to SQLite staging",
+    "clear requires exact canonical task identity/path, refuses alternate export paths and stages deletion in withTaskTransaction",
+    "continuity remains operational context; supplied state/contract/repository options support direct callers and are not lifecycle verification authority"
+  ],
+  "remaining": [
+    "Direct-call supplied binding freshness and concurrent recording scenarios require separate conformance review",
+    "Remaining reconciliation/context readers and public API/MCP projection scope",
+    "Whole transitive consumer and sole-writer acceptance"
+  ],
+  "newTestsRun": false,
+  "wholeConsumerClosure": false,
+  "wholePlanAcceptance": false
+}
