@@ -2,6 +2,27 @@
 
 Current checkpoint progress: [SQLite migration progress](SQLITE_PROGRESS.md).
 
+## Verified retirement and read-only scope corrections
+
+Full local prepush on `2a3429e` passes: 2,938 core tests pass, 11 are skipped,
+and MCP73, PoC67, package12 and remaining gates pass. The retained record is
+`benchmarks/storage-sqlite/post927-prepush-complete.json`. Commit `00a276d`
+adds actual MCP activation coverage: the current-source clean MCP suite passes
+74 tests, including response/session-row/active-pointer identity and absence
+of live session-file mirrors. This is local coverage, not platform closure.
+
+Commit `ee9addd` removes the retired compaction script, maintenance module,
+package command and unused recovery wrapper. Read-only incomplete-transaction
+inspection remains for migration admission and doctor diagnosis. All 27 focused
+transaction/doctor/migration tests and fast verification pass. This retirement
+removes 21 nonblank maintained source/script lines, not the required 25% total.
+
+Commit `57b91bd` prevents read-only scopes and detached snapshots from staging
+or committing mutations, including on a physically writable connection. Pure
+read-only discovery releases detached commit observations; writable parents
+retain freshness checks. All 47 focused snapshot, owner and bootstrap tests
+pass. Measured RSS improvement and final-source acceptance remain unverified.
+
 ## Terminal resource comparison927 and continuity corrections
 
 GitHub run `37922435146`, job `113793330871`, completed successfully on
