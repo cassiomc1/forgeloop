@@ -2,11 +2,15 @@
 
 Current checkpoint progress: [SQLite migration progress](SQLITE_PROGRESS.md).
 
-## Current production and validation920
+## Current production and validation933
 
-Current5222708 includes the semantic decision revision-conflict correction919. Full local prepush920 passes2939core cases(2928pass,11skip),MCP73,PoC67,package12 and every canonical gate. Windows916 passes on4794f0a but predates decision/events.js and its regression test. Linux run37896839025 on5aba2d0 failed correction contention before this correction; its remaining jobs are separate evidence. Current remote acceptance,complete consumer/maintenance authority,resource/LOC gates and protocol closure remain open. Evidence:`benchmarks/storage-sqlite/full-prepush920-complete.json`,`benchmarks/storage-sqlite/semantic-conflict919-correction.json` and `benchmarks/storage-sqlite/windows916-terminal-reconciliation920.json`.
+The semantic revision-conflict correction919 is now covered by full local prepush920, Windows926, Core931 (all17 jobs), package932 (MCP73 on each of three hosts) and expanded compatibility933 (all7 jobs). Source-bound terminal records are retained under `benchmarks/storage-sqlite`. Local documentation/evidence commits since pushed `20aca2b` do not change production or tests. Natural resource comparison37922435146 is running against that validated revision; it is not yet acceptance. Complete consumer/maintenance authority, resource/LOC gates and protocol closure remain open.
 
-Historical reconciliation896 and915 remain source-bound records, not current platform acceptance.
+## Quality consumer reconciliation934
+
+`quality-baseline` enters native task mutation; its direct service commits the baseline artifact and event together after rechecking canonical bindings. `quality-status` reads through the owned native snapshot when no prepared writes exist. Evaluation enumeration selects operational names; canonical artifact reads/writes select SQLite and portable output refuses canonical namespaces. Current source and the three relevant test files exactly match full prepush920. Its retained log proves five named controls: consistent independently replaced state/contract observation, baseline immutability, artifact/event rollback, stale binding rejection without provider replay, and concurrent native attempt allocation. Hashes, exact results and limits are in `benchmarks/storage-sqlite/quality-consumers934-review.json`.
+
+This resolves the specified quality persistence boundaries, not every transitive dependency or public projection. The historical quality rows below remain partial until those remaining obligations are reconciled; no sole-writer capability is enabled by this review.
 
 ## Current storage entry-point review921
 
