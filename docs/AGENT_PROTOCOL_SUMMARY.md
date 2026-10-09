@@ -347,7 +347,7 @@ capability-family versions.
 | task-repair-contract-bootstrap | MUTATING | Repairs the exact duplicate contract bootstrap defect without rewriting history; idempotent and append-only. |
 | task-repair-legacy-recovery | MUTATING | Migrates one recognized legacy OPERATOR_RECOVERY_RECORDED boundary event into the modern durable recovery representation (append-only; original event unchanged). |
 | task-resume | MUTATING | Reacquires a recovered task's write claims under project serialization and restores ordinary mutation authority. |
-| task-unlock | MUTATING | Removes an orphaned task lock file to recover an interrupted task. |
+| task-unlock | MUTATING | Releases a canonical SQLite operation lease to recover an interrupted task. |
 | update | MUTATING | Updates installed templates, discovery adapters, and canonical engineering guides to the latest version. |
 
 ### scope

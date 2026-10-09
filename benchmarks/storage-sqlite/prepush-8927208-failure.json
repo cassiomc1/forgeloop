@@ -1,0 +1,17 @@
+{
+  "sourceRevision": "8927208c7d674e79c9679e48c8755dde385647eb",
+  "terminalExitCode": 1,
+  "coreTests": {
+    "total": 2956,
+    "passed": 2944,
+    "failed": 1,
+    "skipped": 11
+  },
+  "failure": "Generated agent summary is stale: docs/AGENT_PROTOCOL_SUMMARY.md",
+  "laterStages": "Not reached after coverage command failed",
+  "trackedManifestMatches": true,
+  "changedFiles": [],
+  "logSha256": "2053bebf1889417a2c77cdf1d0fb1784137da7427e861fbc6031072ab5158278",
+  "capturedAt": "2026-10-09T20:06:04.397308+00:00",
+  "wholePlanAcceptance": false
+}
