@@ -4,6 +4,36 @@ Current checkpoint progress: [SQLite migration progress](SQLITE_PROGRESS.md).
 
 ## Current local acceptance evidence
 
+Full prepush covering `cea6fc2` passed all 22 stages: 2,964 core tests,
+2,953 passed, zero failed and 11 skipped; clean packed MCP77, PoC67,
+package12 and Python56 passed. All 3,109 tracked hashes and the two new test
+hashes stayed unchanged through terminal completion. See
+`benchmarks/storage-sqlite/prepush-cea6fc2-success.json`.
+
+The maintenance adoption correction retains initial dead-owner admission and
+handoff checks. Its private proof binds exact archived bytes, current owner,
+project directory and live callback context. Actual child death followed by
+simulated PID reuse reproduced the old refusal; changed archives and expired
+inherited contexts reject after correction. All 33 focused controls passed.
+The original Windows failure cause remains unobserved, and current Windows
+execution remains required. See
+`benchmarks/storage-sqlite/maintenance-adoption-proof-cea6fc2.json`.
+
+Core `37998303671` passed all 17 jobs and package `37998309000` passed all four
+jobs on earlier `c89a9db`. Expanded Node `37998306683` ended with six passing
+jobs and a failed macOS 24.19 job after a checkout DNS stall and deadline
+cancellation. The retained service and log timestamps disagree; no duration
+or successful compatibility result is inferred. These runs predate the current
+correction. Their terminal receipts retain that source boundary.
+
+Current inclusive LOC is 25,732 baseline versus 32,525 at `cea6fc2`, with zero
+unresolved membership and the original 19,299 ceiling. All storage and
+maintenance code remains included. The 25% gate fails. See
+`benchmarks/storage-sqlite/persistence-loc-cea6fc2-closed.json`.
+Current cross-platform, whole-consumer, resource and protocol closure remain
+open; no PR or publication has occurred. The entries below retain historical
+source-bound evidence.
+
 Full Node 24.19.0 prepush at `9dd179c` passed with 2,959 core tests:
 2,948 passed, zero failed, and 11 skipped. Clean packaged MCP passed 77 tests;
 PoC67, package12, Python56, coverage, documentation, policy, and all 22 prepush

@@ -1,0 +1,53 @@
+{
+  "kind": "MAINTENANCE_ADOPTION_BOUNDARY_REVIEW",
+  "reviewedAt": "2026-10-09T23:45:34.371485+00:00",
+  "sourceHashes": {
+    "src/storage/maintenance.js": "09b719c9747ace837abda0a404c720c231b5be594a67b624968e090543549141",
+    "tests/storage-maintenance-adoption-proof.test.js": "6d66fd0ce658a124d525283628a5490c3158592e7c0220c570d0d3fd56506dd7",
+    "tests/helpers/maintenance-adoption-owner-worker.mjs": "4a5f94c7fdaeec18254c79f300d9a78b5939a4df7f1db000e7924076b7d9baaf"
+  },
+  "originalFailure": {
+    "run": 37998312872,
+    "job": 114049894832,
+    "source": "c89a9dbc55df4632d08fdabd681d9e7913834e77",
+    "observed": "Post-adoption historical owner liveness check refused the rollback backup-tamper test. Original log does not establish actual PID reuse."
+  },
+  "reproduction": {
+    "actualChildDeath": true,
+    "postAdoptionPidReuse": "simulated by process.kill(pid, 0) only after successful adoption",
+    "correctedFixtureRedLog": "maintenance-adoption-proof-red-corrected-fixture.log"
+  },
+  "authorityReview": [
+    "Initial adoption still requires exact requested owner, local host and observed dead process, including reread and handoff checks.",
+    "The private proof binds exact archived owner bytes, current owner identity, project directory and live callback context.",
+    "Changed archive bytes reject. An inherited AsyncResource after callback closure cannot reuse the proof.",
+    "Every other historical ancestor retains its original liveness check; host, identity, cycle and depth checks remain.",
+    "No serialized flag, caller option or public API grants an adoption proof."
+  ],
+  "validation": {
+    "focusedInitial": 17,
+    "finalGuards": 16,
+    "fast": "passed",
+    "fullPrepushSession": 20271,
+    "fullPrepush": "passed",
+    "fullPrepushReceipt": "prepush-cea6fc2-success.json",
+    "evidenceFast": "passed",
+    "evidenceDocs": "passed"
+  },
+  "limits": [
+    "The mechanism is reproduced; the original Windows failure cause is not independently observed.",
+    "Current corrected-source Windows execution remains required.",
+    "Full migration, resource acceptance, original LOC target and protocol closure remain open."
+  ],
+  "sourceRevision": "cea6fc2de071a71a23517a01cadf49896e854ca6",
+  "logs": {
+    "maintenance-adoption-proof-red-corrected-fixture.log": "498485ae9ff8340d8c2f65d1edeff3c2f1741f9221635165ae23c4f3c72e8a14",
+    "maintenance-adoption-proof-focused.log": "7663df84228b209fa012b1abed4a3b883139b7f60f8b8287ae1bc9a955d435be",
+    "maintenance-adoption-proof-guards.log": "7b5e2baf8d9f74774c38d0151675428fda90f66275f00b134a4a5a753cc81ba6",
+    "maintenance-adoption-proof-fast.log": "6f42d84a3d03a8b35a8d31838c6cb42a2926be2ca7cca5f8d1cb8b64dff3a119",
+    "maintenance-adoption-proof-evidence-fast.log": "bfe6d08b899387c67e7ba900ed16eebd1c93dd738e966744b6d55fa6462cba89",
+    "maintenance-adoption-proof-evidence-docs.log": "3f62a13e07499cf69ed501d62a77ca085de79c793fd88a1d2af7a7c1ebbbad12"
+  },
+  "productionNonblankLineDelta": 9,
+  "wholePlanAcceptance": false
+}

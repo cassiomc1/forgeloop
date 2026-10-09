@@ -5,7 +5,7 @@ nonblank physical lines. The scope includes the new store, importer/exporter,
 compatibility and maintenance code. Comments count on both sides. Runtime
 validation, performance and release acceptance remain separate requirements.
 
-The reviewed function scope is pinned to production source `30153c3` and
+The current comparison is pinned to production source `cea6fc2` and
 baseline `ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5`. Prepare a clean checkout of
 that baseline. The current checkout must have the locked TypeScript 7.0.2
 development dependency already available; the analyzer does not install tools,
@@ -22,7 +22,11 @@ node scripts/measure-persistence-loc.mjs \
   --output="$LOC_RESULT_PATH"
 ```
 
-At the pinned production source, the result is 25,732 baseline lines and 32,516
+The reviewed scope manifest was prepared at `30153c3`. The later maintenance
+correction changes only a whole-module inclusion; its exact source was reviewed
+without changing any helper or non-helper membership disposition.
+
+At the pinned production source, the result is 25,732 baseline lines and 32,525
 current lines. The target ceiling is 19,299: `targetMet` is false. Zero unresolved
 membership makes the static scope eligible for comparison, not the migration
 eligible for release. Successful process exit means analysis completed; it
@@ -47,7 +51,7 @@ the function-scope acceptance result and do not describe current production.
 They remain retained rather than replaced by a narrower count.
 
 The current compact result receipt is
-[`persistence-loc-30153c3-closed.json`](../persistence-loc-30153c3-closed.json).
+[`persistence-loc-cea6fc2-closed.json`](../persistence-loc-cea6fc2-closed.json).
 The full output is deliberately generated outside the repository because it
 contains detailed AST and source evidence; it is reproducible from the script,
 manifest and pinned source inputs above.
