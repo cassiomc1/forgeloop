@@ -35,7 +35,7 @@ for (const mode of ["absent", "contradictory"]) {
       }
       // Admission may inspect directory metadata; it must never read legacy
       // payloads, scan their contents, or write operational mirrors.
-      const admissionMetadata = attempt => [".forgeloop/task-state", ".forgeloop/.txn", ".forgeloop/locks", ".forgeloop/.claims.lock"].some(relative => attempt.path === path.join(report.target, relative))
+      const admissionMetadata = attempt => [".forgeloop/task-state", ".forgeloop/.txn", ".forgeloop/locks", ".forgeloop/.claims.lock", ".forgeloop/sessions"].some(relative => attempt.path === path.join(report.target, relative))
         && /:(?:lstat|stat|lstatSync|statSync|access|accessSync|existsSync|realpath|realpathSync)$/.test(attempt.api);
       const prohibited = report.attempts.filter(attempt => !admissionMetadata(attempt) && attempt.path.startsWith(report.target)
         && /[/\\]\.forgeloop[/\\](?:task-state|locks|\.txn|sessions)(?:[/\\]|$)/.test(attempt.path));

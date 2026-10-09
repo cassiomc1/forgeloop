@@ -21,10 +21,31 @@ for (const boundary of ["readiness", "identity"]) {
           await withOperationalStore({ db, target: fixture.target }, async store => {
             const originalRead = store.readText;
             let reached = false;
+            let identityReadCount = null;
+            if (boundary === "identity") {
+              const observed = [];
+              store.readText = function(relativePath) {
+                observed.push(relativePath);
+                return originalRead.call(this, relativePath);
+              };
+              try {
+                await assert.rejects(
+                  advanceWorkState(fixture.target, "CORRECTING", { taskId: fixture.taskId, packageRoot: fixture.packageRoot }),
+                  { code: "E_DIAGNOSIS_REQUIRED" },
+                );
+              } finally { store.readText = originalRead; }
+              identityReadCount = observed.filter(readPath => readPath === relative).length;
+              assert.ok(identityReadCount > 0, `identity boundary did not read ${relative}`);
+            }
+            let reads = 0;
             store.readText = function(relativePath) {
-              // Let readiness finish when targeting the later identity wrapper.
-              const selectedBoundary = boundary === "readiness" || (new Error().stack ?? "").includes("readPhaseIdentityArtifacts");
-              if (relativePath === relative && selectedBoundary) { reached = true; throw injected; }
+              if (relativePath === relative) {
+                reads += 1;
+                if (boundary === "readiness" || reads === identityReadCount) {
+                  reached = true;
+                  throw injected;
+                }
+              }
               return originalRead.call(this, relativePath);
             };
             try {
