@@ -11,6 +11,17 @@ Production corrections have not been applied. These cases must run against the
 unchanged implementation before correction and then pass afterward; their
 presence does not establish acceptance.
 
+Commit `f88d2f9` also prepares public run-action and native run-check tests that
+pause a real child process and observe the active SQLite store, plus a separate
+run-check adapter callback test. Syntax and ESLint checks pass; test bodies have
+not run. Task-scope Git inspection still lacks an equivalent observation.
+
+The external `persistence-loc922-scope-review.json` identifies unrelated domain
+code included by the conservative whole-module inventory. Its published totals
+remain retained. The prepared function-scope analyzer and manifest preserve the
+25% threshold, include every storage module, and reject unresolved membership;
+they have not produced an acceptance measurement.
+
 The external binding review reconciles all 42 indexed filesystem escape leads
 and all 54 statically resolved `writeFileAtomic` call sites against current
 source hashes. The reports distinguish portable/configuration output,
@@ -39,7 +50,7 @@ target remains unmet, protocol state remains `CORRECTING`, and no PR exists.
 
 ## Current production and validation933
 
-The semantic revision-conflict correction919 is now covered by full local prepush920, Windows926, Core931 (all17 jobs), package932 (MCP73 on each of three hosts) and expanded compatibility933 (all7 jobs). Source-bound terminal records are retained under `benchmarks/storage-sqlite`. Local documentation/evidence commits since pushed `20aca2b` do not change production or tests. Natural resource comparison37922435146 is running against that validated revision; it is not yet acceptance. Complete consumer/maintenance authority, resource/LOC gates and protocol closure remain open.
+The semantic revision-conflict correction919 is now covered by full local prepush920, Windows926, Core931 (all17 jobs), package932 (MCP73 on each of three hosts) and expanded compatibility933 (all7 jobs). Source-bound terminal records are retained under `benchmarks/storage-sqlite`. Local commits since pushed `20aca2b` retain unchanged production and add the unexecuted regressions described above. Natural resource comparison37922435146 is running against that validated production revision; it is not yet acceptance. Complete consumer/maintenance authority, resource/LOC gates and protocol closure remain open.
 
 ## Quality consumer reconciliation934
 
