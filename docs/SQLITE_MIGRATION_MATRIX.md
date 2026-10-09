@@ -36,6 +36,13 @@ tamper and atomicity tests passed. See
 `benchmarks/storage-sqlite/readonly-observation-9dd179c.json`.
 This proves the read-set behavior, not an RSS improvement.
 
+The public task-scope Git boundary regression observes the real Git status
+subprocess before launch and after return. No SQL or unit-of-work transaction
+is open at either point, and an independent connection can reserve the writer.
+The expected scope claim then commits; all five focused task-scope tests pass.
+This closes the named observation gap, not universal transitive consumer
+acceptance. See `benchmarks/storage-sqlite/task-scope-git-boundary-c89a9db.json`.
+
 The durability helper preserves tolerated directory-sync errors and strict
 publication open/close errors. The startup module-boundary regression was
 corrected through lazy maintenance-handoff loading without widening the
@@ -128,7 +135,8 @@ presence does not establish acceptance.
 Commit `f88d2f9` also prepares public run-action and native run-check tests that
 pause a real child process and observe the active SQLite store, plus a separate
 run-check adapter callback test. Syntax and ESLint checks pass; test bodies have
-not run. Task-scope Git inspection still lacks an equivalent observation.
+not run. The current task-scope Git observation is recorded above; this
+historical preparation entry does not override the later execution results.
 
 The external `persistence-loc922-scope-review.json` identifies unrelated domain
 code included by the conservative whole-module inventory. Its published totals
