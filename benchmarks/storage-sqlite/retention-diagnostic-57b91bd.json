@@ -1,0 +1,46 @@
+{
+  "purpose": "Bounded diagnostic; not resource acceptance",
+  "beforeRevision": "ee9addd9807641bccaeb234254bfb8169e0776cd",
+  "afterRevision": "57b91bd5b41dfb5e2c9725844b290d0d3c86313c",
+  "samples": [
+    {
+      "variant": "parent",
+      "rawPath": "/Users/cassio/.codex/verification/sqlite-retention-diagnostic-57b91bd-parent.json",
+      "sha256": "a34bace218fa14281fefdf63f2beab0e38dd4090a502be68fa7575d430638950",
+      "requests": 25,
+      "taskCountEveryRequest": 1000,
+      "physicalQueryOnly": 0,
+      "logicalReadOnly": false,
+      "observationsFirstLastMax": [
+        6001,
+        6001,
+        6001
+      ],
+      "peakRssBytes": 333774848,
+      "peakHeapBytes": 176337640
+    },
+    {
+      "variant": "current",
+      "rawPath": "/Users/cassio/.codex/verification/sqlite-retention-diagnostic-57b91bd-current.json",
+      "sha256": "8943929be831fe3c7181b8416ec44436d97fb04a12b4461352e7d1bccc9beb67",
+      "requests": 25,
+      "taskCountEveryRequest": 1000,
+      "physicalQueryOnly": 0,
+      "logicalReadOnly": true,
+      "observationsFirstLastMax": [
+        0,
+        0,
+        0
+      ],
+      "peakRssBytes": 276283392,
+      "peakHeapBytes": 76817304
+    }
+  ],
+  "parityLimit": "Task counts only; not full response equality",
+  "acceptanceEligible": false,
+  "limitations": [
+    "25 direct discoverTasks calls, not full MCP matrix",
+    "No universal memory bound established",
+    "No transport or operation peak measurement"
+  ]
+}
