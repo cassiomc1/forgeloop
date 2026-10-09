@@ -194,6 +194,36 @@ test("detached read snapshots cannot mutate or commit through a writable parent 
   }
 });
 
+test("nested detached read snapshots retain CAS observations through a writable ancestor", async () => {
+  const target = await createGitRepository("forgeloop-discovery-nested-cas-");
+  const taskId = "nested-cas-task";
+  const descriptor = createTaskDescriptor({ taskId, writeClaims: [] });
+  const filename = path.join(target, "state.sqlite");
+  const db = openStorageDatabase(filename);
+  const writer = openStorageDatabase(filename);
+  try {
+    upsertTask(db, { taskId, descriptor });
+    await withOperationalStore({ db, target }, async source => {
+      await withStorageSnapshot(db, snapshot => withOperationalReadSnapshot({ db: snapshot, target }, async outer => {
+        await withOperationalReadSnapshot({ db: snapshot, target }, async inner => {
+          assert.equal(inner.readOnly, true);
+          assert.equal(inner.taskRow(descriptor.taskKey).task_id, taskId);
+        });
+      }));
+      assert.ok(source.reads.size > 0, "nested detached observations must reach the writable ancestor");
+      upsertTask(writer, {
+        taskId,
+        descriptor: { ...descriptor, updatedAt: "2035-01-01T00:00:00.000Z" },
+      });
+      assert.throws(() => source.commit(), { code: "E_STATE_REVISION_CONFLICT" });
+    });
+  } finally {
+    writer.close();
+    db.close();
+    await removeTempTree(target);
+  }
+});
+
 test("native catalog discovery yields while retaining one immutable project snapshot", async () => {
   const target = await createGitRepository("forgeloop-discovery-fairness-");
   const db = openStorageDatabase(path.join(target, "state.sqlite"));

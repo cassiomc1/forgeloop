@@ -81,10 +81,11 @@ function observeEventRows(db, taskId, limit, consume = null) {
  * work between transactions is neither replayed nor held under a writer lock.
  */
 class OperationalStore {
-  constructor(db, target, { readOnly = false } = {}) {
+  constructor(db, target, { readOnly = false, parent = null } = {}) {
     this.db = db;
     this.target = path.resolve(target);
     this.readOnly = readOnly;
+    this.parent = parent;
     this.reads = new Map();
     this.snapshotTaskRows = new Map();
     this.writes = new Map();
@@ -442,6 +443,12 @@ class OperationalStore {
   }
 }
 
+function writableAncestor(store) {
+  let current = store;
+  while (current && current.readOnly) current = current.parent;
+  return current ?? null;
+}
+
 async function commitPreparedStore(store, packageRoot) {
   // A new task can appear during preparation. Refresh only the claim inputs,
   // through the shared domain validator, before trying to reserve the writer
@@ -482,7 +489,7 @@ export async function withOperationalReadSnapshot({ db, target }, callback) {
   // writable leased connection. Its observations may still be merged into a
   // writable parent after the view closes, but the view itself must never
   // prepare or commit mutations against its snapshot handle.
-  const store = new OperationalStore(db, target, { readOnly: true });
+  const store = new OperationalStore(db, target, { readOnly: true, parent: source });
   store.stageText = store.appendText = store.stageDelete = () => {
     throw storageError("E_STORAGE_READ_ONLY", "Detached audit cannot stage operational writes");
   };
@@ -490,12 +497,13 @@ export async function withOperationalReadSnapshot({ db, target }, callback) {
   finally {
     store.active = false;
     store.snapshotTaskRows.clear();
-    if (source && !source.readOnly) {
+    const writable = writableAncestor(source);
+    if (writable) {
       // Observation queries resolve this store's db at commit time. Preserve
       // snapshot fingerprints, but query the live parent connection on recheck.
-      Object.defineProperty(store, "db", { configurable: true, get: () => source.db });
+      Object.defineProperty(store, "db", { configurable: true, get: () => writable.db });
       for (const [key, observation] of store.reads) {
-        if (!source.reads.has(key)) source.reads.set(key, observation);
+        if (!writable.reads.has(key)) writable.reads.set(key, observation);
       }
     }
   }
