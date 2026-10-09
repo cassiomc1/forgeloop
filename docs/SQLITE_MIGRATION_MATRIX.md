@@ -43,6 +43,13 @@ The expected scope claim then commits; all five focused task-scope tests pass.
 This closes the named observation gap, not universal transitive consumer
 acceptance. See `benchmarks/storage-sqlite/task-scope-git-boundary-c89a9db.json`.
 
+Public `task-recover` and `task-resume` now have SQL event-insertion fault
+controls. Both aborts preserve every logical table; retries change ownership
+and recovery artifacts exactly once while preserving lifecycle state. All 30
+focused recovery/resume/race tests pass. This establishes the named native
+command boundaries, not whole transitive acceptance. See
+`benchmarks/storage-sqlite/public-recovery-atomicity-b5775cc.json`.
+
 The durability helper preserves tolerated directory-sync errors and strict
 publication open/close errors. The startup module-boundary regression was
 corrected through lazy maintenance-handoff loading without widening the
@@ -1010,3 +1017,14 @@ Current Windows/Linux and actual changed workflows remain unverified. The retain
 ## Continuity freshness reconciliation936
 
 Current native reconciliation enters the detached ledger/operational read snapshot and compares the stored continuity state fingerprint, task, phase and contract against current bindings. Four current-source-matched full prepush920 controls verify fresh classification, state/repository drift, task/contract mismatch and phase drift. Conformance retains no evidence authority. `benchmarks/storage-sqlite/continuity-freshness936-review.json` retains exact results and hashes. Independent-writer direct recording and complete diagnostic/lint/handoff dependency coverage remain open; no new tests were run during resource measurement.
+
+## Current Windows failure
+
+Windows run `37998312872` on `c89a9db` is terminal failure: 2,959 tests,
+2,934 passed, one failed and 24 skipped. The rollback backup-tamper fixture
+expected `E_STORAGE_BACKUP_INVALID`; maintenance instead refused the recorded
+owner PID as still present with `E_STORAGE_MAINTENANCE_IN_PROGRESS`. Child
+exit is awaited by the fixture, but cleanup timing or PID reuse is not yet
+established. Owner liveness and backup checks remain intact. See
+`benchmarks/storage-sqlite/windows-c89a9db-failure.json`. Other dispatched
+workflows remain active; current Windows acceptance is open.

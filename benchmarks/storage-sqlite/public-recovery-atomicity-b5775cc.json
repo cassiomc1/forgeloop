@@ -1,0 +1,33 @@
+{
+  "sourceRevision": "b5775cc95c2987d66b90ac14c65edf6c86f67105",
+  "capturedAt": "2026-10-09T22:27:55.839895+00:00",
+  "productionChanged": false,
+  "focusedTests": 30,
+  "passed": 30,
+  "failed": 0,
+  "publicFaultControls": {
+    "task-recover": "AFTER INSERT OPERATOR_RECOVERY_RECORDED abort preserves every logical table and active ownership; retry releases claims once with matching recovery",
+    "task-resume": "AFTER INSERT TASK_RECOVERY_RESUMED abort preserves changed descriptor/claims, recovery artifact and ledger; retry reacquires src claim and clears recovery once"
+  },
+  "stateUnchangedAfterSuccess": true,
+  "sourceHashes": {
+    "src/commands/task-recover.js": "ff9cfb3b5a9a22c468ce557829862518fd2df2ebb60ce131b1a3d75a9d4e0c0d",
+    "src/commands/task-resume.js": "b63d995441546cd96de132426fa9d4285f4d1c2495bb20025632171a9cf98427",
+    "src/core/task-recovery.js": "9e5f383ad176fd518104e5ab14a4bb931b98515a22d785fa82f6a0bfe37bb8c0",
+    "src/core/task-lock.js": "5bf80d68ac6c13a7a31a0a4836043630df66d144441bcedf51be0e5c4cd93e72",
+    "src/storage/unit-of-work.js": "68d361d64bb345a10e99405e5d14d830143f5731a8b32900e0087e264760c307",
+    "tests/storage-public-recovery-atomicity.test.js": "15b95c37117844dcabfee11bb4599e0e46fa7ae50f9b1329499b7073a962b021",
+    "tests/task-recover.test.js": "e864d2f4463e0317e04a1a1a73ab31d12d2b1caa24f5ae1aa469be305ade0319",
+    "tests/task-resume.test.js": "7b9872192d5a449ea8adfb75310e8fcc73cfda37eb704ee1974011f231fa301e",
+    "tests/task-recovery-concurrency.test.js": "b383ce91131334370335f7a30beec200de4b8073a7f36f800b05bf8aba6a861b"
+  },
+  "log": {
+    "path": "/Users/cassio/.codex/verification/public-recovery-atomicity-focused.log",
+    "sha256": "646364108630161dbb1ef0014588a04362fcc9126a24ff545db9e55e1d1a769b"
+  },
+  "limitations": [
+    "Named public native command controls; not exhaustive transitive or final platform acceptance",
+    "Injected SQL abort does not prove power-loss durability"
+  ],
+  "wholePlanAcceptance": false
+}
