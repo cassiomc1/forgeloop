@@ -1,0 +1,33 @@
+{
+  "runId": 38006401000,
+  "sourceRevision": "050e50167235b98df95d5b5b51d98da9efbd24dd",
+  "status": "completed",
+  "conclusion": "success",
+  "scope": "default package dispatch; full_matrix omitted",
+  "jobs": [
+    {
+      "id": 114076087322,
+      "name": "Classify package paths",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114077546581,
+      "name": "tarball smoke (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114078400054,
+      "name": "release package smoke (${{ matrix.os }})",
+      "status": "completed",
+      "conclusion": "skipped"
+    }
+  ],
+  "log": {
+    "path": "/Users/cassio/.codex/verification/package-050e501-minimum-full.log",
+    "sha256": "9bdde0f15f868096763407524751f77f211fd0b1f95b6da69f43db0ca62c4e00"
+  },
+  "fullPlatformAcceptance": false,
+  "wholePlanAcceptance": false
+}

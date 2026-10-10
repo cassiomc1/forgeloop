@@ -4,9 +4,23 @@ Current checkpoint progress: [SQLite migration progress](SQLITE_PROGRESS.md).
 
 ## Current local acceptance evidence
 
+Full prepush `40328bf` passes all 22 stages: 2,964 core tests, 2,953 passed,
+zero failed, 11 skipped; MCP77, PoC67, package12 and Python56 pass. All 3,122
+tracked hashes remain unchanged at terminal completion. This covers snapshot
+consolidation `d8949b0`. See `benchmarks/storage-sqlite/prepush-40328bf-success.json`.
+
+Three new maintained continuity tests were added after that freeze. All 20
+focused continuity checks and fast verification pass. Supplied state/contract
+data cannot replace canonical authority or classify as fresh; foreign-task
+input rejects with every logical table unchanged. Accepted advisory writes
+preserve unrelated artifacts, existing events, canonical contracts and lifecycle
+state. See `benchmarks/storage-sqlite/continuity-supplied-context-47ed1c9.json`.
+Production code is unchanged; final whole-source/platform validation and broader
+consumer closure remain required.
+
 Snapshot consolidation `d8949b0` shares the existing committed-read snapshot
 admission in discovery and structural quality. All 38 focused tests and fast
-verification pass; full current-source validation remains required. The scope
+verification pass; full local prepush `40328bf` also passes. The scope
 review retains all membership decisions, with 30 byte-identical source units
 and three changed delegation wrappers. Inclusive LOC is 25,732 → 32,507,
 zero unresolved membership, with the original 19,299 ceiling still unmet.
@@ -17,8 +31,9 @@ Runtime run `38006398759` on `050e501` passed the minimum-runtime job and
 skipped the expanded matrix because the input was omitted. Its retained receipt
 does not claim platform acceptance. Expanded `38007031832` is dispatched with
 `expanded=true`. Windows full `38006393854` passes 2,964 tests, 2,940 passed,
-zero failed and 24 skipped, including both adoption controls. Core and minimum
-package runs remain active. All predate the snapshot consolidation.
+zero failed and 24 skipped, including both adoption controls. Core remains
+active. Minimum package `38006401000` passed; full package `38007325350` is
+dispatched with `full_matrix=true` on `40328bf` and includes the consolidation.
 
 Full prepush covering `cea6fc2` passed all 22 stages: 2,964 core tests,
 2,953 passed, zero failed and 11 skipped; clean packed MCP77, PoC67,
