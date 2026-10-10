@@ -123,14 +123,9 @@ export async function readPortableJsonArtifact(target, relativePath, schemaName,
     );
   }
 
-  let value;
   try {
     const bytes = await readBytes(artifactPath);
-    assertJsonBytes(bytes, relativePath);
-    value = JSON.parse(bytes.toString("utf8"));
-    assertJsonLimits(value, relativePath);
-    const schema = await readSchema(schemaName, packageRoot);
-    assertSchema(value, schema, relativePath);
+    return await parseCapturedJsonArtifact(bytes, relativePath, schemaName, packageRoot);
   } catch (error) {
     throw artifactError(
       ["JSON_LIMIT_EXCEEDED", "ARTIFACT_PATH_INVALID"].includes(error.code)
@@ -140,12 +135,6 @@ export async function readPortableJsonArtifact(target, relativePath, schemaName,
       error,
     );
   }
-
-  return {
-    value,
-    path: relativePath,
-    fingerprint: canonicalFingerprint(value),
-  };
 }
 
 export async function writeJsonArtifact(
