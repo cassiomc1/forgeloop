@@ -73,14 +73,13 @@ async function assertPermissionRefusal(result) {
   assert.notEqual(result.status, 0);
   if (process.platform === "win32") {
     const entrypoint = path.join(legacyClient, "src/cli.js");
-    assert.deepEqual(await readFile(entrypoint), legacyEntryBytes, "The privileged controller must prove unchanged pinned source still exists");
     const deniedRead = windowsSourceReadRefusal();
     if (result.stderr.includes(`Cannot find module '${entrypoint}'`) && /requireStack: \[\]/u.test(result.stderr)) {
       assert.match(result.stderr, /code: 'MODULE_NOT_FOUND'/u);
-      return { deniedRead, sourcePresentMatchesPinned: true, maskedMainEntrypoint: true };
+      return { deniedRead, sourceIdentityVerification: "after-fixture-acl-restoration", maskedMainEntrypoint: true };
     }
     assert.match(`${result.stderr}\n${result.error?.code ?? ""}`, /EACCES|EPERM|permission denied|access is denied/i);
-    return { deniedRead, sourcePresentMatchesPinned: true, maskedMainEntrypoint: false };
+    return { deniedRead, sourceIdentityVerification: "after-fixture-acl-restoration", maskedMainEntrypoint: false };
   }
   assert.match(`${result.stderr}\n${result.error?.code ?? ""}`, /EACCES|EPERM|permission denied|access is denied/i);
   return { directPermissionRefusal: true };
@@ -177,8 +176,18 @@ try {
   assert.equal(terminal.taskCount, 3);
   await assert.rejects(stat(path.join(target, ".forgeloop/task-state")), { code: "ENOENT" });
   assert.deepEqual((await verifyLegacySourceCapture(target, "retained")).manifest.files, initialInventory);
+  let restoredSourceMatchesPinned = null;
+  if (process.platform === "win32") {
+    // Verify source identity after both denied launches and native validation.
+    // No old client runs after this disposable installation is re-enabled.
+    await restoreFixtureAccess();
+    assert.deepEqual(await readFile(path.join(legacyClient, "src/cli.js")), legacyEntryBytes,
+      "Excluded source must still match the pinned bytes after fixture ACL restoration");
+    restoredSourceMatchesPinned = true;
+  }
   console.log(JSON.stringify({ status: "PASS", platform: process.platform, runtime: process.version, pinnedLegacyHead: PINNED_HEAD,
     strategy: isolateDataIdentity ? "separate-data-owner" : "disabled-legacy-installation", legacyIdentity: isolateDataIdentity ? 65534 : sid ?? process.getuid(),
+    restoredSourceMatchesPinned,
     removedOldClientPrivileges: process.platform === "win32" ? ["SeBackupPrivilege", "SeRestorePrivilege"] : [],
     oldPreCutover: JSON.parse(before.stdout), oldLock: { pid: child.pid, stoppedExit: exitCode, signal },
     migrationWithoutQuiescence: "REFUSED", actualLegacyLock: "REFUSED_BUSY", deadMaintenanceOwner: { pid: owner.pid, ownerId: owner.ownerId },
