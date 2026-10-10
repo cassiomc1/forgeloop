@@ -1,5 +1,13 @@
 # SQLite migration progress
 
+## Current owned-snapshot correctness correction
+
+A new regression reproduced payload-only tampering in a private audit snapshot: a direct event read could expose the altered payload before the outer audit guard rejected the snapshot. Detached collections now invoke the existing strict identity guard before returning direct reads and at streamed cursor boundaries. Identity includes the WAL because a suspended reader can pin changes outside the main database file. Live snapshots and prepared overlays retain their separate validation paths.
+
+Root focused validation passes 41 tests, including direct/typed/resumed-cursor tamper refusal and public `route`/`preflight` rollback with clean retry. The earlier full prepush and hosted checks are evidence for their recorded source only; they do not validate this production correction. Full current verification, fresh performance measurements and validator closure remain pending.
+
+Windows strict identity hashing at iterator boundaries can require work proportional to database bytes for each row. This is an explicit unresolved performance risk, not an accepted optimization or a waived gate. The original inclusive 25% LOC target remains unchanged; its previous 32,428-line result predates this correction and must be regenerated.
+
 ## Increment 1 — valid canonical seed and correction prerequisites
 
 Original specification: `SQLITE_MIGRATION_PLAN.md`. Full scope remains active; this increment does not complete Phases 2–4.

@@ -537,6 +537,41 @@ test("raw filesystem writes invalidate an owned proof without a SQLite data-vers
 });
 
 
+test("owned audit refuses direct reads after payload-only private snapshot tamper", async () => {
+  const f = await buildCanonicalDiagnosisProject();
+  try {
+    await assert.rejects(withEventLedgerAudit(f.target, f.packageRoot, { taskId: f.taskId }, async audit => {
+      assert.equal(audit.valid, true);
+      const scanned = [...audit.events];
+      assert.ok(scanned.length > 0, "canonical fixture must contain an event for the owned full-scan proof");
+      const snapshot = getOperationalStore(f.target).db;
+      const filename = snapshot.prepare("PRAGMA database_list").all().find(row => row.name === "main").file;
+      const writer = openStorageDatabase(filename);
+      try {
+        const row = writer.prepare("SELECT event_json FROM events WHERE task_id = ? AND seq = 1").get(f.taskId);
+        const event = JSON.parse(row.event_json);
+        event.details = { ...event.details, snapshotTamperMarker: "changed-after-owned-full-scan" };
+        writer.prepare("UPDATE events SET event_json = ? WHERE task_id = ? AND seq = 1")
+          .run(JSON.stringify(event), f.taskId);
+      } finally { writer.close(); }
+
+      // A payload-only write leaves the indexed columns and hash unchanged.
+      // Both direct and type-indexed reads must detect the stale owned proof
+      // before exposing the changed event_json payload.
+      assert.throws(() => audit.events.at(0), { code: "E_STATE_REVISION_CONFLICT" });
+      assert.throws(() => [...audit.events.entriesOfTypes([scanned[0].event])], { code: "E_STATE_REVISION_CONFLICT" });
+
+      await withEventLedgerAudit(f.target, f.packageRoot, { taskId: f.taskId }, nested => {
+        assert.equal(nested.valid, false);
+        assert.ok(nested.errors.some(error => error.code === "E_STATE_REVISION_CONFLICT"));
+      });
+      return "must not escape";
+    }), { code: "E_STATE_REVISION_CONFLICT" });
+    assert.equal((await validateEventLedger(f.target, f.packageRoot, { taskId: f.taskId })).valid, true);
+  } finally { await rm(f.target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 }); }
+});
+
+
 test("owned audit rejects private snapshot changes during callback without a nested audit", async () => {
   const f = await buildCanonicalDiagnosisProject();
   try {
@@ -553,8 +588,34 @@ test("owned audit rejects private snapshot changes during callback without a nes
           .run(event.hash, JSON.stringify(event), f.taskId);
       } finally { writer.close(); }
       await Promise.resolve();
-      assert.equal(audit.events.at(0).hash, "f".repeat(64));
-      audit.valid = false;
+      assert.throws(() => audit.events.at(0), { code: "E_STATE_REVISION_CONFLICT" });
+      return "must not escape";
+    }), { code: "E_STATE_REVISION_CONFLICT" });
+    assert.equal((await validateEventLedger(f.target, f.packageRoot, { taskId: f.taskId })).valid, true);
+  } finally { await rm(f.target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 }); }
+});
+
+
+test("owned audit rejects payload tampering while a range iterator is suspended", async () => {
+  const f = await buildCanonicalDiagnosisProject();
+  try {
+    await assert.rejects(withEventLedgerAudit(f.target, f.packageRoot, { taskId: f.taskId }, async audit => {
+      assert.equal(audit.valid, true);
+      assert.ok(audit.events.length > 1, "canonical fixture must contain a suspended range row");
+      const iterator = audit.events.values();
+      const first = iterator.next();
+      assert.equal(first.done, false);
+      const snapshot = getOperationalStore(f.target).db;
+      const filename = snapshot.prepare("PRAGMA database_list").all().find(row => row.name === "main").file;
+      const writer = openStorageDatabase(filename);
+      try {
+        const row = writer.prepare("SELECT event_json FROM events WHERE task_id = ? AND seq = 2").get(f.taskId);
+        const event = JSON.parse(row.event_json);
+        event.details = { ...event.details, snapshotTamperMarker: "changed-while-range-suspended" };
+        writer.prepare("UPDATE events SET event_json = ? WHERE task_id = ? AND seq = 2")
+          .run(JSON.stringify(event), f.taskId);
+      } finally { writer.close(); }
+      assert.throws(() => iterator.next(), { code: "E_STATE_REVISION_CONFLICT" });
       return "must not escape";
     }), { code: "E_STATE_REVISION_CONFLICT" });
     assert.equal((await validateEventLedger(f.target, f.packageRoot, { taskId: f.taskId })).valid, true);

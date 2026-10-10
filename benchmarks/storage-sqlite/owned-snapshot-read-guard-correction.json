@@ -1,0 +1,49 @@
+{
+  "kind": "OWNED_SNAPSHOT_READ_GUARD_CORRECTION",
+  "recordedAt": "2026-10-10T06:33:17.624830+00:00",
+  "baseRevision": "073665715d7e260fa9339d484b3fc3971b94c93c",
+  "sourceHashes": {
+    "src/core/events.js": "a0691da7f31a85d2f7f5c7ba5b9a6f4405ba02e50c147d407f852fc1cc23fde6",
+    "src/storage/ledger-event-snapshot.js": "02675d046164ab2b81927427ac57d213ec775af7f83a6cf89e8f79de8dae0227",
+    "tests/storage-event-audit.test.js": "fba3ed770e26c1f4c385eca325bf3208c2e99f54745f5e5af3ee728cfe6c0d49",
+    "tests/storage-public-routing-atomicity.test.js": "5603d390052b9f42f3d01a8faaeab1dcbb8d1cba1f1ca82cfb56e5181f571b8b"
+  },
+  "logs": [
+    {
+      "path": "/Users/cassio/.codex/verification/snapshot-direct-tamper-0736657-reproduction.log",
+      "sha256": "80d496d443adeab5c91c7b9bf9d3e14e72c66aab19874b00552fa053ad9b506d"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/owned-snapshot-routing-0736657-root.log",
+      "sha256": "dcf683f6b49cc80f42dcdb5945b37e08ea460f21eaadb3f3b715c252ceec36d9"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/owned-snapshot-routing-0736657-fast.log",
+      "sha256": "48cdbd1484d085f9d5b520ae2e4ed83a963c549ba5b661011f9bab0e97bab606"
+    }
+  ],
+  "validation": {
+    "node": "24.19.0",
+    "reproduction": {
+      "exitCode": 1,
+      "failure": "direct event read did not refuse changed private snapshot"
+    },
+    "focused": {
+      "exitCode": 0,
+      "tests": 41,
+      "pass": 41,
+      "fail": 0,
+      "skip": 0
+    },
+    "verifyFast": {
+      "exitCode": 0
+    }
+  },
+  "limits": [
+    "Current full prepush and hosted validation remain pending after production correction.",
+    "Strict Windows file-byte hashing at iterator boundaries can be quadratic with growing ledger/database; original performance acceptance remains open.",
+    "No benchmark launched; old LOC result predates this correction.",
+    "No whole-plan acceptance or validator-backed completion."
+  ],
+  "publication": "NO_PR"
+}

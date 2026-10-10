@@ -857,20 +857,38 @@ async function validateReadLedger(target, packageRoot, options, reader) {
 const ownedLedgerProofs = new WeakMap();
 
 function ownedSnapshotFileIdentity(filename) {
-  const file = lstatSync(filename, { bigint: true });
-  if (!file.isFile()) throw protocolError("E_STATE_REVISION_CONFLICT", "Owned ledger snapshot file changed during its audit");
-  const identity = [file.dev, file.ino, file.size, file.mtimeNs, file.ctimeNs].join(":");
+  // The WAL is durable database content that can change while a read cursor
+  // pins the main file. The SHM sidecar only carries transient lock/index
+  // state, so it is intentionally excluded from the byte identity.
+  const paths = [filename, `${filename}-wal`];
+  const files = paths.map(current => {
+    try {
+      const file = lstatSync(current, { bigint: true });
+      if (!file.isFile()) throw protocolError("E_STATE_REVISION_CONFLICT", "Owned ledger snapshot file changed during its audit");
+      return file;
+    } catch (error) {
+      if (error?.code === "ENOENT") return null;
+      throw error;
+    }
+  });
+  const identity = files.map(file => file
+    ? [file.dev, file.ino, file.size, file.mtimeNs, file.ctimeNs].join(":")
+    : "missing").join("|");
   if (process.platform !== "win32") return identity;
   // Windows may defer file timestamps until SQLite's open handle closes.
   // Hash readable bytes with bounded memory so raw writes cannot reuse a proof.
-  const fd = openSync(filename, "r");
-  try {
-    const hash = createHash("sha256");
-    const buffer = Buffer.allocUnsafe(64 * 1024);
-    let count;
-    while ((count = readSync(fd, buffer, 0, buffer.length, null)) !== 0) hash.update(buffer.subarray(0, count));
-    return `${identity}:${hash.digest("hex")}`;
-  } finally { closeSync(fd); }
+  const hash = createHash("sha256");
+  const buffer = Buffer.allocUnsafe(64 * 1024);
+  for (const [index, current] of paths.entries()) {
+    hash.update(`${index}:`);
+    if (!files[index]) continue;
+    const fd = openSync(current, "r");
+    try {
+      let count;
+      while ((count = readSync(fd, buffer, 0, buffer.length, null)) !== 0) hash.update(buffer.subarray(0, count));
+    } finally { closeSync(fd); }
+  }
+  return `${identity}:${hash.digest("hex")}`;
 }
 
 function assertOwnedLedgerUnchanged(events) {
@@ -952,6 +970,13 @@ export async function withEventLedgerAudit(target, packageRoot, options, callbac
   }), {
     validate(event, index) { validateStoredEvent(event, schema, `${relPath}[${index}]`); return event; },
     onFullScan: store.captureObservations ? digest => completeObservation(digest) : null,
+    // Keep the private schema/index proof valid for every collection read,
+    // including a cursor resumed after the caller yielded an event. The guard
+    // deliberately uses the full owned snapshot identity check on all
+    // platforms; Windows may defer filesystem timestamps, so a cheap-only
+    // resume check would expose a raw-tampered payload before the outer audit
+    // boundary noticed it.
+    guard(_events, _phase) { assertOwnedLedgerUnchanged(_events); },
   });
 }
 

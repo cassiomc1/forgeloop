@@ -23,7 +23,7 @@ function* iterateTypedRows(db, query, arity, parameters) {
   finally { activeTypedStatements.delete(statement); }
 }
 
-function ownCollection(db, taskId, { validate = event => event, onFullScan = null } = {}) {
+function ownCollection(db, taskId, { validate = event => event, onFullScan = null, guard = null } = {}) {
   let active = true;
   let indexedFieldsValidated = false;
   const assertActive = () => {
@@ -42,14 +42,21 @@ function ownCollection(db, taskId, { validate = event => event, onFullScan = nul
     const event = decodeIndexedEvent(row);
     return indexedFieldsValidated ? event : validate(event, index);
   };
+  const assertGuard = phase => {
+    if (typeof guard === "function") guard(events, phase);
+  };
   const events = new LedgerEventCollection({
     length: count,
     readAt(index) {
       assertActive();
-      return decode(at.get(taskId, contiguous ? index + 1 : index), index);
+      assertGuard("start");
+      const event = decode(at.get(taskId, contiguous ? index + 1 : index), index);
+      assertGuard("end");
+      return event;
     },
     *iterateRange(start, end) {
       assertActive();
+      assertGuard("start");
       // Nested proof scans need independent statements; reusing one invalidates its outer cursor.
       const range = end > start ? db.prepare(rangeSql) : null;
       const rows = !range ? [] : contiguous ? range.iterate(taskId, start, end) : range.iterate(taskId, end - start, start);
@@ -59,33 +66,57 @@ function ownCollection(db, taskId, { validate = event => event, onFullScan = nul
         assertActive();
         const event = decode(row, index++);
         if (digest) digest.update(canonicalFingerprint(row));
+        assertGuard("before-yield");
         yield event;
         assertActive();
+        // A writer may run while the caller owns the yielded event. Recheck
+        // before fetching/decoding the next row and before completing a scan.
+        assertGuard("resume");
       }
       assertActive();
+      assertGuard("end");
       if (start === 0 && end === count) {
         if (digest) onFullScan(digest.digest("hex"));
+        assertGuard("after-full-scan");
         indexedFieldsValidated = true;
       }
     },
     *iterateTypes(start, end, types) {
       assertActive();
-      if (start === end) return;
-      if (!contiguous || !indexedFieldsValidated) {
-        for (const [index, event] of events.slice(start, end).entries()) {
-          if (types.includes(event.event)) yield { index: start + index, event };
-          assertActive();
-        }
+      assertGuard("start");
+      if (start === end) {
+        assertGuard("end");
         return;
       }
-      if (!types.length) return;
+      if (!contiguous || !indexedFieldsValidated) {
+        for (const [index, event] of events.slice(start, end).entries()) {
+          assertActive();
+          if (types.includes(event.event)) {
+            assertGuard("before-yield");
+            yield { index: start + index, event };
+            assertActive();
+            assertGuard("resume");
+          }
+          assertActive();
+        }
+        assertGuard("end");
+        return;
+      }
+      if (!types.length) {
+        assertGuard("end");
+        return;
+      }
       const query = `SELECT * FROM events INDEXED BY events_type_idx WHERE task_id = ? AND seq > ? AND seq <= ? AND event_type IN (${types.map(() => "?").join(",")}) ORDER BY seq`;
       for (const row of iterateTypedRows(db, query, types.length, [taskId, start, end, ...types])) {
         assertActive();
-        yield { index: row.seq - 1, event: decode(row, row.seq - 1) };
+        const event = decode(row, row.seq - 1);
+        assertGuard("before-yield");
+        yield { index: row.seq - 1, event };
         assertActive();
+        assertGuard("resume");
       }
       assertActive();
+      assertGuard("end");
     },
   });
   return { events, close() { active = false; } };
