@@ -92,9 +92,10 @@ function spawnWorker(root, target, operations, resources) {
     if (message.result) result = message.result;
   });
   child.on("error", error => { resolveReady(); rejectDone(error); });
-  child.on("exit", (code, signal) => {
+  child.on("close", (code, signal) => {
     resolveReady();
-    if (code === 0 && result) resolveDone({ ...result, harnessProcessStartupMs: startupMs });
+    if (code === 0 && signal === null && result) resolveDone({ ...result, harnessProcessStartupMs: startupMs,
+      workerCompletion: { pid: child.pid, exitCode: code, signal, stdioClosed: true } });
     else rejectDone(new Error(`Contention worker failed (${code}/${signal}): ${stderr.slice(-2000)}`));
   });
   // Attach a handler before admission so an early failure cannot become an
@@ -132,7 +133,14 @@ async function runWorkers(root, target, processes, operations, resources) {
     const samples = results.flatMap(value => value.samplesMs);
     return { elapsedMs, throughputCommitsPerSecond: processes * operations * 1000 / elapsedMs,
       commitP95Ms: percentile(samples), ...(resources ? { walSamples, maximumObservedWalBytes, walSamplingIntervalMs: 2 } : {}), workers: results };
-  } finally { sampling = false; await sampler; for (const value of workers) if (value.child.exitCode === null) value.child.kill(); }
+  } finally {
+    sampling = false;
+    try { await sampler; }
+    finally {
+      for (const value of workers) if (value.child.exitCode === null && value.child.signalCode === null) value.child.kill();
+      await Promise.allSettled(workers.map(value => value.done));
+    }
+  }
 }
 
 async function byteSize(filename) {
