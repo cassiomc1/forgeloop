@@ -1,0 +1,42 @@
+{
+  "sourceRevision": "3a8f716d8dc70112ce87632f66940ee71f9d2e40",
+  "command": "npm run verify:prepush",
+  "exitCode": 0,
+  "completedAt": "2026-10-10T02:05:50.980156+00:00",
+  "stages": [
+    "coverage (507.8s)",
+    "critical-coverage:check (0.2s)",
+    "lint (4.2s)",
+    "dependency:policy (0.1s)",
+    "complexity:check (1.6s)",
+    "docs:check (2.6s)",
+    "completions:check (0.1s)",
+    "summary:check (0.1s)",
+    "changelog:check (0.2s)",
+    "repository-index:manifest (0.1s)",
+    "repository:hygiene (0.2s)",
+    "poc:evidence:verify (0.2s)",
+    "poc:evidence:test (1.5s)",
+    "mcp:test:clean (7.3s)",
+    "mcp:pack:check (2.9s)",
+    "pack:check (1.7s)",
+    "python-unittest (1.0s)",
+    "markdown-self-test (0.0s)",
+    "markdown-validator (0.8s)",
+    "loop-self-test (0.2s)",
+    "loop-validator (0.1s)",
+    "secret-scan (11.2s)"
+  ],
+  "core": {
+    "tests": 2984,
+    "passed": 2973,
+    "failed": 0,
+    "skipped": 11
+  },
+  "trackedFilesUnchanged": 3156,
+  "logSha256": "88573de02e1caa9709f5ec0f2efd812eabfb94321fbe7bcd81557856a8c809ae",
+  "limitations": [
+    "Local validation only; full current hosted platform verification pending.",
+    "Original memory/performance, inclusive LOC and whole-plan protocol closure remain open."
+  ]
+}
