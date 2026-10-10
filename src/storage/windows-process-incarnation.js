@@ -110,6 +110,17 @@ function validTicks(value) {
   try { return BigInt(value) <= MAX_DATETIME_TICKS; } catch { return false; }
 }
 
+/** Validate the persisted owner token without accepting observation-only fields. */
+export function isWindowsProcessIncarnationToken(value, { pid = value?.pid } = {}) {
+  try { assertProcessId(pid); } catch { return false; }
+  return !!value
+    && exactKeys(value, ["kind", "pid", "schemaVersion", "startTimeTicks"])
+    && value.kind === WINDOWS_PROCESS_INCARNATION_KIND
+    && value.schemaVersion === WINDOWS_PROCESS_INCARNATION_SCHEMA_VERSION
+    && value.pid === pid
+    && validTicks(value.startTimeTicks);
+}
+
 /** Parse only the small, authority-bearing JSON envelope emitted by the fixed script. */
 export function parseWindowsProcessIncarnationOutput(stdout, { pid, maxOutputBytes = MAX_OUTPUT_BYTES } = {}) {
   try { assertProcessId(pid); } catch { return null; }

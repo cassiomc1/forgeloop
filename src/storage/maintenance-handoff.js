@@ -2,9 +2,23 @@ import { link, mkdir, open, rename } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { assertSafePath } from "../core/filesystem.js";
 import { MAINTENANCE_OWNER_ID, readMaintenanceOwner } from "./maintenance-owner.js";
+import { isWindowsProcessIncarnationToken, readWindowsProcessIncarnation } from "./windows-process-incarnation.js";
 
 const HISTORY = ".forgeloop/storage-maintenance-history";
 const busy = message => Object.assign(new Error(message), { code: "E_STORAGE_MAINTENANCE_IN_PROGRESS" });
+
+async function assertPublishableOwner(ownerData) {
+  if (process.platform !== "win32") return;
+  if (ownerData.pid !== process.pid || !isWindowsProcessIncarnationToken(ownerData.processIncarnation, { pid: process.pid })) {
+    throw busy("Windows process incarnation is missing or malformed; publication refused");
+  }
+  let observation;
+  try { observation = await readWindowsProcessIncarnation(process.pid); } catch { observation = null; }
+  if (!observation || observation.status !== "ALIVE" || observation.hasExited !== false
+    || observation.startTimeTicks !== ownerData.processIncarnation.startTimeTicks) {
+    throw busy("Windows process incarnation changed or is unavailable; publication refused");
+  }
+}
 
 // Admission inspects ownership without running durable handoff writes.
 // Load the shared filesystem kernel only when a handoff actually needs it.
@@ -14,7 +28,10 @@ async function syncDirectory(directory) {
 }
 
 async function optionalClaim(target, relative) {
-  try { return (await readMaintenanceOwner(target, relative)).value; }
+  try {
+    const envelope = await readMaintenanceOwner(target, relative);
+    return { relative, ...envelope };
+  }
   catch (error) { if (error.code === "ENOENT") return null; throw error; }
 }
 
@@ -61,13 +78,18 @@ export async function claimMaintenanceHandoff(target, previous, ownerData, asser
       } catch (error) {
         if (error.code !== "EEXIST") throw error;
       }
-      claimant = (await readMaintenanceOwner(target, relative)).value;
+      const envelope = await readMaintenanceOwner(target, relative);
+      claimant = { relative, ...envelope };
     }
-    if (!MAINTENANCE_OWNER_ID.test(claimant.ownerId) || claimant.resumedFrom !== previous.value.ownerId || claimant.handoffSourceSha256 !== sourceSha256) {
+    if (!MAINTENANCE_OWNER_ID.test(claimant.value.ownerId) || claimant.value.resumedFrom !== previous.value.ownerId || claimant.value.handoffSourceSha256 !== sourceSha256) {
       throw busy("Maintenance handoff differs from the requested owner");
     }
-    assertDead(claimant);
-    predecessor = claimant.ownerId;
+    await assertDead(claimant.value);
+    const rechecked = await readMaintenanceOwner(target, claimant.relative);
+    if (rechecked.text !== claimant.text || rechecked.value.ownerId !== claimant.value.ownerId) {
+      throw busy("Maintenance handoff claimant changed during liveness verification");
+    }
+    predecessor = rechecked.value.ownerId;
   }
   throw busy("Maintenance handoff history exceeds bounded recovery depth");
 }
@@ -89,6 +111,7 @@ export async function archiveMaintenanceOwner(target, previous) {
 
 /** Promotion scratch stays outside the exclusion and every byte comes from the durable claim. */
 export async function publishMaintenanceOwner(target, ownerData) {
+  await assertPublishableOwner(ownerData);
   const root = await assertSafePath(target, `${HISTORY}/handoff-promotions`);
   await mkdir(root, { recursive: true });
   await syncDirectory(await assertSafePath(target, HISTORY));

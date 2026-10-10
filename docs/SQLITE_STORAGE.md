@@ -233,6 +233,17 @@ candidate files remain unfinished. Older
 binaries must be stopped and operationally excluded; this marker cannot make
 an older implementation recognize a new rule.
 
+New Windows maintenance owners retain the process creation-time token obtained
+through the fixed system PowerShell executable under a fully qualified
+`SystemRoot`. Recovery refuses the same live incarnation and unavailable or
+malformed observations; a verified different incarnation distinguishes PID
+reuse from a surviving owner. The configured host environment remains trusted;
+this is not an OS attestation. Missing PowerShell prevents owner creation before
+the exclusion directory is created. Legacy owners without a token retain the
+conservative PID check and can resume only when it reports process absence.
+Handoff and continuity records are reread after asynchronous liveness checks;
+changed bytes refuse recovery. Windows integration validation is still pending.
+
 A safe operator procedure is: quiesce all writers, preserve an intact source
 backup, import into a temporary database, review the report, run
 `checkStorageIntegrity()` (`integrity_check` and `foreign_key_check`), and only

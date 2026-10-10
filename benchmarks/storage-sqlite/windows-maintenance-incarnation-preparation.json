@@ -1,0 +1,34 @@
+{
+  "kind": "WINDOWS_MAINTENANCE_INCARNATION_INTEGRATION_PREPARATION",
+  "sourceBefore": "5110555",
+  "ownerSchemaVersion": 1,
+  "optionalTokenKind": "windows-process-start-time-ticks-v1",
+  "legacyBehavior": "unchanged process.kill(pid,0), only ESRCH admits recovery",
+  "newWindowsOwner": "self creation-time observation before exclusion creation",
+  "admission": "same live incarnation refuses; verified different incarnation or exited/absent allows; unavailable/malformed refuses",
+  "asynchronousHistoryGuard": "reread exact claimant/history path and bytes after awaited liveness before following chain",
+  "portableFocused": {
+    "node": "24.19.0",
+    "tests": 50,
+    "passed": 46,
+    "failed": 0,
+    "skippedWindowsOnly": 4
+  },
+  "verifyFastExitCode": 0,
+  "hostedIntegration": "pending",
+  "priorHelperOnlyRun": 38048235578,
+  "productionFileHashes": {
+    "src/storage/maintenance.js": "533ccb43da6874d82a5be26b7eab13a3bd5421186ba3ba878a626acee3c2cbf7",
+    "src/storage/maintenance-handoff.js": "6942a920f78932d4b0266a0cc41f512547e1e6c40be88d17586234ff4f53c9f3",
+    "src/storage/windows-process-incarnation.js": "ca436d5b274351b0bfbe15c86e847a0bcbeab7a2b8dbb5bdf411f91d102f9595",
+    "tests/storage-maintenance-incarnation.test.js": "c535cb62eb6bbdcccf1f10c478b64d3e1f5acf55ecee0164d7ca6e4da6944eb9",
+    "tests/storage-maintenance-handoff-async.test.js": "d398c8cad391d4b36f352726a42205620f563c993bce2797420fbd84f375fcef",
+    ".github/workflows/windows-full-suite.yml": "b86aa7e2a2af0ec8b37c166a7def75d524bd1f86d84c38c9d30f941d741fcf24"
+  },
+  "releaseAcceptance": false,
+  "locScope": "All new storage code remains included in original inclusive 25 percent gate",
+  "retainedLogs": [
+    "maintenance-incarnation-root-focused.log.gz",
+    "maintenance-incarnation-root-fast.log.gz"
+  ]
+}

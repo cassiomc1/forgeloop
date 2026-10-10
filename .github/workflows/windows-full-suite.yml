@@ -67,7 +67,7 @@ jobs:
         run: node --import ./scripts/test-semantic-provider-loader.mjs --test tests/storage-database-admission.test.js tests/storage-correction-io.test.js tests/storage-evidence-checks.test.js tests/storage-replacement-preparation.test.js
       - name: Validate kernel-backed Windows process incarnation observations
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.suite == 'process-incarnation' }}
-        run: node --test tests/storage-windows-process-incarnation.test.js
+        run: node --test tests/storage-windows-process-incarnation.test.js tests/storage-maintenance-incarnation.test.js tests/storage-maintenance-handoff-async.test.js
       - name: Diagnose project database admission on Windows
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.suite == 'database-admission' }}
         run: node --test tests/storage-database-admission.test.js

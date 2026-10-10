@@ -5,14 +5,37 @@ import os from "node:os";
 import { assertSafePath } from "../core/filesystem.js";
 import { MAINTENANCE_OWNER_ID, readMaintenanceOwner } from "./maintenance-owner.js";
 import { archiveMaintenanceOwner, claimMaintenanceHandoff, publishMaintenanceOwner } from "./maintenance-handoff.js";
+import {
+  isWindowsProcessIncarnationToken,
+  readWindowsProcessIncarnation,
+  WINDOWS_PROCESS_INCARNATION_KIND,
+  WINDOWS_PROCESS_INCARNATION_SCHEMA_VERSION,
+} from "./windows-process-incarnation.js";
 
 const EXCLUSION = ".forgeloop/.storage-maintenance";
 const active = new AsyncLocalStorage();
 
 function busy(message) { return Object.assign(new Error(message), { code: "E_STORAGE_MAINTENANCE_IN_PROGRESS" }); }
 
-function createOwner(extra = {}) {
-  return { schemaVersion: 1, ownerId: randomUUID(), pid: process.pid, hostname: os.hostname(), acquiredAt: new Date().toISOString(), ...extra };
+async function createOwner(extra = {}) {
+  const owner = { schemaVersion: 1, ownerId: randomUUID(), pid: process.pid, hostname: os.hostname(), acquiredAt: new Date().toISOString(), ...extra };
+  if (process.platform !== "win32") return owner;
+  let observation;
+  try { observation = await readWindowsProcessIncarnation(process.pid); } catch { observation = null; }
+  if (!observation || observation.status !== "ALIVE" || observation.hasExited !== false || observation.pid !== process.pid) {
+    throw busy("Windows process incarnation is unavailable; maintenance owner publication refused");
+  }
+  const processIncarnation = {
+    kind: WINDOWS_PROCESS_INCARNATION_KIND,
+    pid: observation.pid,
+    schemaVersion: WINDOWS_PROCESS_INCARNATION_SCHEMA_VERSION,
+    startTimeTicks: observation.startTimeTicks,
+  };
+  if (!isWindowsProcessIncarnationToken(processIncarnation, { pid: process.pid })) {
+    throw busy("Windows process incarnation is malformed; maintenance owner publication refused");
+  }
+  owner.processIncarnation = processIncarnation;
+  return owner;
 }
 
 async function runOwnedMaintenance(target, directory, ownerData, callback, { retainOnError = false } = {}, deadOwner = null) {
@@ -72,10 +95,10 @@ export async function withStorageMaintenance(target, callback, options = {}) {
     if ((await readMaintenanceOwner(target)).value.ownerId !== inherited.ownerId) throw busy("Maintenance owner changed");
     return callback();
   }
+  const ownerData = await createOwner();
   try { await mkdir(directory); }
   catch (error) { if (error.code === "EEXIST") throw busy("A retained storage maintenance operation requires reconciliation"); throw error; }
   const ownerPath = await assertSafePath(target, `${EXCLUSION}/owner.json`);
-  const ownerData = createOwner();
   const owner = await open(ownerPath, "wx", 0o600);
   try {
     await owner.writeFile(`${JSON.stringify(ownerData)}\n`);
@@ -84,8 +107,28 @@ export async function withStorageMaintenance(target, callback, options = {}) {
   return runOwnedMaintenance(target, directory, ownerData, callback, options);
 }
 
-function assertLocalOwnerDead(owner) {
+function validatePersistedOwnerIncarnation(owner) {
+  if (owner.processIncarnation === undefined) return null;
+  if (process.platform !== "win32" || !isWindowsProcessIncarnationToken(owner.processIncarnation, { pid: owner.pid })) {
+    throw busy("Maintenance owner process incarnation is unsupported or malformed");
+  }
+  return owner.processIncarnation;
+}
+
+async function assertLocalOwnerDead(owner) {
   if (owner.hostname !== os.hostname()) throw busy("Remote or unbound owner cannot be safely resumed on this host");
+  const processIncarnation = validatePersistedOwnerIncarnation(owner);
+  if (processIncarnation) {
+    let observation;
+    try { observation = await readWindowsProcessIncarnation(owner.pid); } catch { observation = null; }
+    if (!observation || observation.pid !== owner.pid) throw busy("Owner process identity is unavailable; resume refused");
+    if (observation.status === "ALIVE" && observation.hasExited === false) {
+      if (observation.startTimeTicks === processIncarnation.startTimeTicks) throw busy("Maintenance owner process is still present; resume refused");
+      return;
+    }
+    if (observation.status === "EXITED" || observation.status === "NOT_FOUND") return;
+    throw busy("Owner process identity is unavailable; resume refused");
+  }
   try { process.kill(owner.pid, 0); }
   catch (error) { if (error.code === "ESRCH") return; throw busy("Owner liveness is unavailable; resume refused"); }
   throw busy("Maintenance owner process is still present; resume refused");
@@ -105,13 +148,22 @@ export async function assertStorageMaintenanceOwnerContinuity(target, { expected
     visited.add(owner.ownerId);
     if (owner.ownerId === recordedOwnerId) return;
     if (!MAINTENANCE_OWNER_ID.test(owner.resumedFrom ?? "")) throw busy("Recorded operation owner is outside maintenance adoption history");
-    const previous = await readMaintenanceOwner(target, `.forgeloop/storage-maintenance-history/${owner.resumedFrom}.json`);
+    const previousRelative = `.forgeloop/storage-maintenance-history/${owner.resumedFrom}.json`;
+    const previous = await readMaintenanceOwner(target, previousRelative);
     if (previous.value.ownerId !== owner.resumedFrom) throw busy("Maintenance owner history identity differs from its pathname");
     if (context?.active && proof?.ownerId === previous.value.ownerId) {
       // Adoption already observed this exact owner's death. A later process
       // may reuse its PID; only unchanged bytes in this live scope retain proof.
       if (previous.text !== proof.text) throw busy("Verified dead owner archive changed");
-    } else assertLocalOwnerDead(previous.value);
+    } else {
+      await assertLocalOwnerDead(previous.value);
+      const rechecked = await readMaintenanceOwner(target, previousRelative);
+      if (rechecked.text !== previous.text || rechecked.value.ownerId !== previous.value.ownerId) {
+        throw busy("Verified dead owner archive changed during liveness verification");
+      }
+      owner = rechecked.value;
+      continue;
+    }
     owner = previous.value;
   }
   throw busy("Maintenance owner history exceeds bounded recovery depth");
@@ -123,17 +175,17 @@ export async function resumeStorageMaintenance(target, { expectedOwnerId, writer
   if (typeof callback !== "function" || typeof expectedOwnerId !== "string" || !MAINTENANCE_OWNER_ID.test(expectedOwnerId)) throw busy("Resume requires an exact owner identity and recovery operation");
   const previous = await readMaintenanceOwner(target);
   if (previous.value.ownerId !== expectedOwnerId) throw busy("Retained owner differs from the requested resume identity");
-  assertLocalOwnerDead(previous.value);
+  await assertLocalOwnerDead(previous.value);
   const directory = await assertSafePath(target, EXCLUSION);
   const handoff = await assertSafePath(target, `${EXCLUSION}/handoff`);
   try {
     await lstat(handoff);
     throw busy("Unbound legacy handoff requires reconciliation");
   } catch (error) { if (error.code !== "ENOENT") throw error; }
-  const ownerData = createOwner({ resumedFrom: expectedOwnerId });
+  const ownerData = await createOwner({ resumedFrom: expectedOwnerId });
   const rechecked = await readMaintenanceOwner(target);
   if (rechecked.text !== previous.text) throw busy("Owner changed during resume preparation");
-  assertLocalOwnerDead(rechecked.value);
+  await assertLocalOwnerDead(rechecked.value);
   await archiveMaintenanceOwner(target, previous);
   if ((await readMaintenanceOwner(target)).text !== previous.text) throw busy("Owner changed during archival");
   const claimedOwner = await claimMaintenanceHandoff(target, previous, ownerData, assertLocalOwnerDead);
