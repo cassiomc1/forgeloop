@@ -1,0 +1,34 @@
+{
+  "kind": "BENCHMARK_LINUX_ADMISSION_AND_CLEANUP_PREPARATION",
+  "baseRevision": "d4a4856a55bd24124a8eb0bb36830be7c72e2501",
+  "status": "PREPARED_NOT_EXECUTED_ON_LINUX",
+  "sourceHashes": {
+    ".github/workflows/windows-full-suite.yml": "4d02130c0a548fb7dc20cd2d7cccbade20445efd6fc64b4e5b024edc9d5e55e8",
+    "scripts/ci/observe-benchmark-runner.mjs": "3cb4766ab75c3e63750ea074e17e0b776934749df36c4b2f1f9e5b032ac6c50c",
+    "tests/benchmark-runner-observer.test.js": "e06be2bd747aefaac67cb70ea3e9cce0b7168e4e18f4d039d575241459ddf372"
+  },
+  "controls": [
+    "Assert checkout HEAD equals workflow github.sha before measurement.",
+    "Assert pinned filesystem baseline, Node24.19.0, Linux and configured runner name.",
+    "Refuse competing visible Node processes outside observer ancestry.",
+    "Retain before/after process metadata with command hashes, never command text.",
+    "Refuse stale or remaining benchmark temporary entries without deleting them.",
+    "Bind cleanup evidence to source/run/attempt/runner/hostname/temp scope."
+  ],
+  "validation": {
+    "syntheticProcTests": 4,
+    "pass": 4,
+    "fail": 0,
+    "lint": "PASS",
+    "workflowSyntax": "PASS"
+  },
+  "logPath": "/Users/cassio/.codex/verification/benchmark-runner-observer-d4a4856-root.log",
+  "logSha256": "65693d925a1740bca1d9a3c82c2fd02ea06679a0dccfece018c78f718579b450",
+  "limits": [
+    "ActualLinuxproc execution pending.",
+    "Physical Windows host quiescence not proven; Docker sibling or host processes outside PID namespace not observed.",
+    "Point-in-time observation is not a workload reservation lock.",
+    "No measurement dispatched; whole-plan gates remain open."
+  ],
+  "acceptanceClaim": false
+}

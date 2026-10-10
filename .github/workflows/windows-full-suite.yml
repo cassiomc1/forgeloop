@@ -165,12 +165,27 @@ jobs:
       - name: Install locked baseline dependencies
         working-directory: legacy
         run: npm ci --ignore-scripts
+      - name: Admit the frozen Linux benchmark checkout
+        env:
+          EXPECTED_BENCHMARK_SHA: ${{ github.sha }}
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from "node:assert/strict";
+          import { execFileSync } from "node:child_process";
+          assert.equal(execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(), process.env.EXPECTED_BENCHMARK_SHA);
+          assert.equal(execFileSync("git", ["-C", "../legacy", "rev-parse", "HEAD"], { encoding: "utf8" }).trim(), "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5");
+          assert.equal(process.version, "v24.19.0");
+          assert.equal(process.platform, "linux");
+          assert.equal(process.env.RUNNER_NAME, "forgeloop-linux-remote");
+          console.log(`Admitted source ${process.env.EXPECTED_BENCHMARK_SHA}; ${process.version}; ${process.env.RUNNER_NAME}`);
+          NODE
       - name: Compare natural resource lifetime with equal MCP responses
         env:
           MCP_RESOURCE_OUTPUT: ${{ runner.temp }}/sqlite-mcp-resources-${{ github.run_id }}-${{ github.run_attempt }}
         run: |
           mkdir "$MCP_RESOURCE_OUTPUT"
           git diff --exit-code HEAD
+          node scripts/ci/observe-benchmark-runner.mjs --phase=before --output="$MCP_RESOURCE_OUTPUT/runner-before.json"
           node --input-type=module <<'NODE'
           import { execFileSync } from "node:child_process";
           import { readFileSync, writeFileSync } from "node:fs";
@@ -200,6 +215,11 @@ jobs:
           assert.deepEqual(manifest, before, "Tracked source changed during resource comparison");
           console.log(`All ${manifest.length} tracked source hashes unchanged`);
           NODE
+      - name: Observe Linux benchmark cleanup
+        if: always()
+        env:
+          MCP_RESOURCE_OUTPUT: ${{ runner.temp }}/sqlite-mcp-resources-${{ github.run_id }}-${{ github.run_attempt }}
+        run: node scripts/ci/observe-benchmark-runner.mjs --phase=after --before="$MCP_RESOURCE_OUTPUT/runner-before.json" --output="$MCP_RESOURCE_OUTPUT/runner-after.json"
       - name: Retain aggregate, raw workers and first-cause failures
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

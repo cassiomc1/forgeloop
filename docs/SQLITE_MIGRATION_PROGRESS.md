@@ -1,5 +1,9 @@
 # SQLite migration progress
 
+## Current benchmark admission preparation
+
+The paired MCP resource workflow now checks the requested source revision, pinned baseline, Node 24.19.0, Linux platform and configured runner before measuring. A before/after observer records redacted Linux process metadata and benchmark temporary entries, refuses competing Node processes or leftover temporary state, and binds cleanup to the same source/run/runner scope. Four synthetic `/proc` controls pass; actual Linux execution remains pending. This does not establish physical Windows-host quiescence or reserve the shared host. No benchmark has been dispatched with these new controls.
+
 ## Current owned-snapshot correctness correction
 
 A new regression reproduced payload-only tampering in a private audit snapshot: a direct event read could expose the altered payload before the outer audit guard rejected the snapshot. Detached collections now invoke the existing strict identity guard before returning direct reads and at streamed cursor boundaries. Identity includes the WAL because a suspended reader can pin changes outside the main database file. Live snapshots and prepared overlays retain their separate validation paths.
