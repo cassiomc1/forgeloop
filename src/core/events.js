@@ -893,7 +893,7 @@ function ownedSnapshotFileIdentity(filename) {
 
 function assertOwnedLedgerUnchanged(events) {
   const owned = ownedLedgerProofs.get(events);
-  if (owned && (owned.db.prepare("PRAGMA data_version").get().data_version !== owned.version
+  if (owned && (owned.versionStatement.get().data_version !== owned.version
     || ownedSnapshotFileIdentity(owned.filename) !== owned.fileIdentity)) {
     throw protocolError("E_STATE_REVISION_CONFLICT", "Owned ledger snapshot changed during its audit");
   }
@@ -963,8 +963,9 @@ export async function withEventLedgerAudit(target, packageRoot, options, callbac
     completeObservation = snapshotStore.beginEventSnapshotObservation(relPath);
     snapshotStore.auditSource = { taskId, packageRoot, relPath, events };
     const filename = db.prepare("PRAGMA database_list").all().find(row => row.name === "main").file;
+    const versionStatement = db.prepare("PRAGMA data_version");
     ownedLedgerProofs.set(events, { db, filename, store: snapshotStore, taskId, packageRoot, relPath, semanticValidated: false, fileIdentity: ownedSnapshotFileIdentity(filename),
-      version: db.prepare("PRAGMA data_version").get().data_version, successes: new Set() });
+      versionStatement, version: versionStatement.get().data_version, successes: new Set() });
     try { return await evaluateCallbackLedgerAudit(target, packageRoot, options, callback, events, relPath); }
     finally { ownedLedgerProofs.delete(events); }
   }), {

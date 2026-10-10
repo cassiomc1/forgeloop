@@ -1,5 +1,9 @@
 # SQLite migration progress
 
+## Current owned guard statement reuse
+
+Snapshot guards now prepare `PRAGMA data_version` once per private snapshot and execute it afresh at every existing boundary. All file/WAL identity checks, full Windows byte hashing, direct-read and cursor-resume guards remain intact. A real two-connection control confirms fresh values after another connection commits; 42 focused integrity/routing tests pass. Lint has zero errors and the same three existing complexity warnings. This removes repeated statement preparation, but no new performance benefit or LOC acceptance is claimed before measurement and source-binding review. See `benchmarks/storage-sqlite/owned-guard-statement-reuse-preparation.json`.
+
 ## Current ledger-memory observation and hosted Core result
 
 The frozen `ebb632b` macOS ledger run completed all 18 workers, with parent exit zero, all worker PIDs absent afterward, equal full-payload digest/count/head on measured rows, unchanged tracked hashes and empty benchmark temporary prefixes. At 100,000 events, native iterator / detached audit / export peaked at approximately 123 / 140 / 134 MiB worker RSS; the public array audit peaked at 533 MiB. Baseline iterator and audit refused the existing whole-ledger JSON limit and cannot qualify for an equal-output speedup. At 1,000 events, native iterator and array audit were slower in this three-repeat observation; diagnosis is required. Raw rows, worker closure records, source manifest, first-cause log and terminal receipt are retained with prefix `benchmarks/storage-sqlite/ledger-ebb632b-macos`. Background activity/cache state and memory ceilings remain uncontrolled or undeclared; no performance acceptance is inferred.

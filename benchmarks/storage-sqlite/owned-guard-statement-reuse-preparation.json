@@ -1,0 +1,30 @@
+{
+  "kind": "OWNED_GUARD_STATEMENT_REUSE_PREPARATION",
+  "sourceBaseRevision": "0119a8b9ccce43b0c342f1e0cdd5c1e981c049c5",
+  "change": "Prepare PRAGMA data_version once per private owned snapshot; execute get anew at every existing integrity guard.",
+  "preserved": [
+    "All collection start/end/before-yield/resume/full-scan guards",
+    "Main-file and WAL identity checks",
+    "Full Windows readable-byte hashing",
+    "Private proof ownership and callback expiry",
+    "Cached version comparison against a newly evaluated PRAGMA value"
+  ],
+  "validation": {
+    "focusedIntegrityAndRoutingTests": {
+      "passed": 42,
+      "failed": 0,
+      "skipped": 0
+    },
+    "realTwoConnectionPragmaFreshness": "PASS",
+    "eslintErrors": 0,
+    "eslintWarnings": 3,
+    "baselineEslintWarnings": 3,
+    "verifyFast": "PASS_EXIT_0"
+  },
+  "performanceAcceptance": "UNMEASURED",
+  "limits": [
+    "No guard removed or identity weakened.",
+    "Prepared-statement cost reduction is a source-level diagnosis; new timings are required.",
+    "Full current-platform checks and new LOC source bindings remain required."
+  ]
+}
