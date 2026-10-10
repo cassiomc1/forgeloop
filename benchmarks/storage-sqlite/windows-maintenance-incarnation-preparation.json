@@ -15,7 +15,20 @@
     "skippedWindowsOnly": 4
   },
   "verifyFastExitCode": 0,
-  "hostedIntegration": "pending",
+  "hostedIntegration": {
+    "runId": 38048972520,
+    "sourceRevision": "aa117a2395ca60622347e581ab9c075bf38f6ded",
+    "conclusion": "success",
+    "tests": 16,
+    "passed": 16,
+    "failed": 0,
+    "skipped": 0,
+    "node": "24.21.0",
+    "fullSuiteExecuted": false,
+    "completedAt": "2026-10-10T11:36:23Z",
+    "retainedLog": "benchmarks/storage-sqlite/windows-maintenance-aa117a2.log.gz",
+    "logSha256": "1f2082f1d9ed4bbd3e23b13a5005a1fb6d8edd32a341a3c36389eea595b4cd7b"
+  },
   "priorHelperOnlyRun": 38048235578,
   "productionFileHashes": {
     "src/storage/maintenance.js": "533ccb43da6874d82a5be26b7eab13a3bd5421186ba3ba878a626acee3c2cbf7",
