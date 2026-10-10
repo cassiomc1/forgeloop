@@ -358,7 +358,12 @@ test("PR CI shards one covered Node execution and targets Node compatibility", a
   assert.match(minimumNodeStep.if, /needs\.classify\.outputs\.node_compat/);
   assert.match(core.jobs.lint.steps.find(step => step.name === "Run JavaScript lint").run, /npm run lint/);
   const compatibility = parseYaml(await readFile(".github/workflows/node-compat.yml", "utf8"));
-  assert.match(compatibility.jobs.minimum.steps.at(-1).run, /test:quick/);
+  for (const job of [compatibility.jobs.minimum, compatibility.jobs.expanded]) {
+    const commands = job.steps.filter(step => step.run).map(step => step.run);
+    for (const command of ["npm run test:quick", "node src/cli.js --help", "node src/cli.js protocol-info --json", "node --test tests/storage-runtime.test.js tests/storage-store.test.js tests/storage-operational-bootstrap.test.js"]) {
+      assert.equal(commands.filter(value => value === command).length, 1, `${command} must have its own failure-reporting step`);
+    }
+  }
   assert.doesNotMatch(JSON.stringify(compatibility.jobs), /npm test/u);
 });
 

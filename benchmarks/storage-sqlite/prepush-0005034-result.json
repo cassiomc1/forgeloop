@@ -1,0 +1,27 @@
+{
+  "sourceHead": "000503459f7344b7edb62bd3c1eccd9f8533b07c",
+  "exitCode": 1,
+  "stage": "coverage",
+  "tests": 3070,
+  "passed": 3052,
+  "failed": 2,
+  "skipped": 16,
+  "durationMs": 813523.930542,
+  "trackedHashesUnchanged": true,
+  "trackedFiles": 3414,
+  "failures": [
+    {
+      "file": "tests/package-smoke.test.js",
+      "reason": "Expected old two-platform release matrix; new Windows minimum plus current matrix has three cases."
+    },
+    {
+      "file": "tests/package.test.js",
+      "reason": "Expected last multiline compatibility command to include test:quick; command now has its own failure-reporting step."
+    }
+  ],
+  "laterPrepushStagesExecuted": false,
+  "limitations": [
+    "This is a failed whole check; no passing full-prepush acceptance claim."
+  ],
+  "log": "/Users/cassio/.codex/verification/prepush-0005034.log"
+}
