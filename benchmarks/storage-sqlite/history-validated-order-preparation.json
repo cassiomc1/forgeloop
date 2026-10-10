@@ -1,0 +1,15 @@
+{
+  "kind": "HISTORY_VALIDATED_ORDER_REUSE",
+  "sourceBefore": "f68d8c8",
+  "change": "Private trace projection reuses validated contiguous sequence proof; invalid ledgers retain original ordering fallback",
+  "guards": "All collection identity and cursor-resume guards unchanged",
+  "focusedTests": {
+    "passed": 20,
+    "failed": 0,
+    "skipped": 0
+  },
+  "verifyFastExitCode": 0,
+  "performanceMeasured": false,
+  "locBindingsRefreshRequired": true,
+  "acceptanceClaim": false
+}

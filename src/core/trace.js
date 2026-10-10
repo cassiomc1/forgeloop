@@ -375,9 +375,9 @@ function orderedSequences(events) {
   });
 }
 
-function* phasedEvents(events) {
+function* phasedEvents(events, validatedOrder = false) {
   let currentPhase = null;
-  if (orderedSequences(events)) {
+  if (validatedOrder || orderedSequences(events)) {
     for (const event of events) {
       const step = phaseStep(event, currentPhase);
       currentPhase = step.phase;
@@ -422,11 +422,11 @@ export async function buildTaskTrace({ target, packageRoot, taskId = null, event
     buildTraceFromSnapshot({ target, packageRoot, taskId, eventsPath, snapshot, eventProjection }));
 }
 
-function projectNormalizedEvents(taskEvents, artifactPath, eventProjection) {
+function projectNormalizedEvents(taskEvents, artifactPath, eventProjection, validatedOrder) {
   const normalizedEvents = [];
   let totalEventCount = 0;
   let hasLegacyTimestamp = false;
-  for (const { event, phase, quality } of phasedEvents(taskEvents)) {
+  for (const { event, phase, quality } of phasedEvents(taskEvents, validatedOrder)) {
     const normalized = normalizeProtocolEvent(event, {
       phase: phase ?? null,
       artifactPath,
@@ -447,7 +447,9 @@ async function buildTraceFromSnapshot({ target, packageRoot, taskId, eventsPath,
   const belongsToTask = event => !event.taskId || event.taskId === taskId;
   const taskEvents = taskId && !snapshot.events.every(belongsToTask)
     ? snapshot.events.filter(belongsToTask) : snapshot.events;
-  const { normalizedEvents, totalEventCount, hasLegacyTimestamp } = projectNormalizedEvents(taskEvents, artifactPath, eventProjection);
+  // The private snapshot audit already proved seq === index + 1. Invalid
+  // ledgers retain the original duplicate/order compatibility projection.
+  const { normalizedEvents, totalEventCount, hasLegacyTimestamp } = projectNormalizedEvents(taskEvents, artifactPath, eventProjection, snapshot.integrity.valid);
 
   const integrity = {
     valid: snapshot.integrity.valid,
