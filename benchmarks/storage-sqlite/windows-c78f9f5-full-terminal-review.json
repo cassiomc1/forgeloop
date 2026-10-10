@@ -1,0 +1,80 @@
+{
+  "kind": "CURRENT_WINDOWS_FULL_TERMINAL_REVIEW",
+  "runId": 38026046837,
+  "sourceRevision": "c78f9f5cc01fdedbbc4f9805eb63ca4ad566fd33",
+  "conclusion": "success",
+  "testSummary": {
+    "tests": [
+      2991
+    ],
+    "pass": [
+      2966
+    ],
+    "fail": [
+      0
+    ],
+    "skipped": [
+      25
+    ],
+    "cancelled": [
+      0
+    ]
+  },
+  "skippedTestLogLines": [
+    "2026-10-10T05:01:26.7472987Z \ufe63 optional Agent Browser localhost smoke (1.0077ms) # SKIP",
+    "2026-10-10T05:03:50.6387007Z \ufe63 durable action writes reject a symlinked actions directory (0.133ms) # SKIP",
+    "2026-10-10T05:03:50.6582479Z \ufe63 gate record refuses evidence replaced by an outside symlink after path resolution (1.5025ms) # SKIP",
+    "2026-10-10T05:03:50.6584200Z \ufe63 gate evidence refuses evidence replaced by an outside symlink after path resolution (0.2419ms) # SKIP",
+    "2026-10-10T05:03:50.6585789Z \ufe63 gate validate refuses evidence replaced by an outside symlink after path resolution (0.2149ms) # SKIP",
+    "2026-10-10T05:03:50.6587265Z \ufe63 gate revalidate refuses evidence replaced by an outside symlink after path resolution (0.1714ms) # SKIP",
+    "2026-10-10T05:05:39.3538659Z \ufe63 persistent transport preserves native search results, shares one host, and recovers (1.6991ms) # native Repository Index tests require an explicit FORGELOOP_TGREP_BINARY",
+    "2026-10-10T05:05:39.3784449Z \ufe63 canonical policy snapshot refuses a linked legacy file (2.9429ms) # SKIP",
+    "2026-10-10T05:05:39.4333090Z \ufe63 qualified Ripwire binary interoperates through the advisory API (0.1972ms) # Set FORGELOOP_TEST_RIPWIRE_PATH and FORGELOOP_TEST_RIPWIRE_VERSION",
+    "2026-10-10T05:05:39.4336104Z \ufe63 real Sentrux 0.5.7 public integration detects a dependency-cycle regression (1.6197ms) # SKIP",
+    "2026-10-10T05:05:39.4468594Z \ufe63 concurrent native setup and search clients converge on one owned server (0.9109ms) # native Repository Index tests require an explicit FORGELOOP_TGREP_BINARY",
+    "2026-10-10T05:05:39.4469844Z \ufe63 native search matches the ripgrep oracle for a controlled literal query (1.6766ms) # native Repository Index tests require an explicit FORGELOOP_TGREP_BINARY",
+    "2026-10-10T05:05:39.4474720Z \ufe63 doctor public JSON omits absolute Repository Index paths (0.8177ms) # native Repository Index tests require an explicit FORGELOOP_TGREP_BINARY",
+    "2026-10-10T05:05:39.4488366Z \ufe63 real pinned tgrep setup, live mutation, deletion, and no-match behavior (2.013ms) # native Repository Index tests require an explicit FORGELOOP_TGREP_BINARY",
+    "2026-10-10T05:05:39.4496552Z \ufe63 a crashed owned server is restarted by the next search (0.3505ms) # native Repository Index tests require an explicit FORGELOOP_TGREP_BINARY",
+    "2026-10-10T05:05:39.4499829Z \ufe63 live watcher reconciles a Git branch switch with added and removed files (0.4194ms) # native Repository Index tests require an explicit FORGELOOP_TGREP_BINARY",
+    "2026-10-10T05:05:39.4516658Z \ufe63 pre-Repository-Index projects migrate through update without rewriting task state (1.0043ms) # native migration test requires FORGELOOP_TGREP_BINARY",
+    "2026-10-10T05:05:39.4519096Z \ufe63 native CLI acceptance covers init, doctor, search, rebuild, and stop (1.9829ms) # native CLI acceptance requires an explicit FORGELOOP_TGREP_BINARY",
+    "2026-10-10T05:06:58.5526959Z \ufe63 maintenance owner refuses a symlink replacement before open (native no-follow) (1.5117ms) # SKIP",
+    "2026-10-10T05:06:58.5531010Z \ufe63 maintenance owner refuses a symlink replacement before open (descriptor fallback) (2.2062ms) # SKIP",
+    "2026-10-10T05:06:58.5541850Z \ufe63 storage marker refuses a symlink replacement before open (native no-follow) (1.6739ms) # SKIP",
+    "2026-10-10T05:06:58.5543781Z \ufe63 storage marker refuses a symlink replacement before open (descriptor fallback) (0.204ms) # SKIP",
+    "2026-10-10T05:06:58.5557504Z \ufe63 storage metadata refuses a symlink replacement before open (native no-follow) (2.979ms) # SKIP",
+    "2026-10-10T05:06:58.5558990Z \ufe63 storage metadata refuses a symlink replacement before open (descriptor fallback) (0.2798ms) # SKIP",
+    "2026-10-10T05:09:44.1342960Z \ufe63 core manual dispatch selects every gate without PR revision metadata and preserves PR path routing (2.4902ms) # SKIP"
+  ],
+  "skipExtraction": "Spec reporter skip glyph includes both generic SKIP and explicit reason text.",
+  "jobs": [
+    {
+      "id": 114136996708,
+      "name": "Windows full Node suite",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_name": "forgeloop-windows-remote"
+    },
+    {
+      "id": 114136997551,
+      "name": "Linux paired MCP storage resources",
+      "status": "completed",
+      "conclusion": "skipped",
+      "runner_name": null
+    },
+    {
+      "id": 114136997731,
+      "name": "Public rollback (${{ matrix.os }})",
+      "status": "completed",
+      "conclusion": "skipped",
+      "runner_name": null
+    }
+  ],
+  "logSha256": "18ff45705a1859acde7a1bd8e593b4fb127b01ef285133d676d086c3df88c4b8",
+  "limitations": [
+    "Skipped tests do not prove their individual controls.",
+    "Expanded runtime/package/Core checks remain pending.",
+    "Full suite does not replace standalone public rollback or old-client exclusion drills, performance/LOC or protocol closure."
+  ]
+}
