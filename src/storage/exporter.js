@@ -1,3 +1,4 @@
+import { PORTABLE_ARTIFACT_MAPPINGS } from "../core/artifact-registry.js";
 import { artifactByteDigest } from "./artifact-bytes.js";
 import { canonicalFingerprint } from "../core/artifacts.js";
 import { withStorageSnapshot } from "./snapshot.js";
@@ -36,35 +37,12 @@ import {
  * any state mutation.
  */
 
-const ARTIFACT_FILENAMES = Object.freeze({
-  contract: "contract.json",
-  route: "routing-result.json",
-  preflight: "preflight.json",
-  continuity: "continuity.json",
-  receipt: "execution-receipt.json",
-  policySnapshot: "policy-snapshot.json",
-  recovery: "recovery.json",
-  workspaceBinding: "workspace-binding.json",
-  responsibility: "responsibility.json",
-  verificationScope: "verification-scope.json",
-  usage: "usage.json",
-  testUtility: "test-utility.json",
-});
-
-/**
- * Directory-backed artifact kinds mapped to the directory the importer reads.
- * The stored `kind` is singular while the on-disk directory is plural, so this
- * mapping is the reverse of the importer's directory table and must stay in sync
- * with it for a bundle to re-import without losing artifacts.
- */
-const ARTIFACT_DIRECTORIES = Object.freeze({
-  gate: "gates",
-  handoff: "handoffs",
-  decision: "decisions",
-  attestation: "attestations",
-  evaluation: "evaluations",
-  structuralQuality: "structural-quality",
-});
+const ARTIFACT_FILENAMES = Object.freeze(Object.fromEntries(
+  PORTABLE_ARTIFACT_MAPPINGS.singletons.map(({ kind, filename }) => [kind, filename]),
+));
+const ARTIFACT_DIRECTORIES = Object.freeze(Object.fromEntries(
+  PORTABLE_ARTIFACT_MAPPINGS.collections.map(({ kind, directory }) => [kind, directory]),
+));
 
 function serialize(value) {
   return `${JSON.stringify(value, null, 2)}\n`;

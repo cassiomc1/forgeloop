@@ -1,3 +1,4 @@
+import { PORTABLE_ARTIFACT_MAPPINGS } from "../core/artifact-registry.js";
 import { readdir, readFile, open, realpath, lstat } from "node:fs/promises";
 import { createReadStream } from "node:fs";
 import { createHash } from "node:crypto";
@@ -40,32 +41,6 @@ import {
  * the importer resolves paths through the same boundary the rest of the
  * protocol uses rather than re-deriving directory layouts.
  */
-
-/** Single-file artifacts imported into `task_artifacts` with their logical kind. */
-const SINGLE_FILE_ARTIFACTS = Object.freeze([
-  ["contract", "contract"],
-  ["route", "route"],
-  ["preflight", "preflight"],
-  ["continuity", "continuity"],
-  ["receipt", "receipt"],
-  ["policySnapshot", "policySnapshot"],
-  ["recovery", "recovery"],
-  ["workspaceBinding", "workspaceBinding"],
-  ["responsibility", "responsibility"],
-  ["verificationScope", "verificationScope"],
-  ["usage", "usage"],
-  ["testUtility", "testUtility"],
-]);
-
-/** Directory artifacts whose members are imported under `<kind>/<artifactId>`. */
-const DIRECTORY_ARTIFACTS = Object.freeze([
-  ["gates", "gate"],
-  ["handoffs", "handoff"],
-  ["decisions", "decision"],
-  ["attestations", "attestation"],
-  ["evaluations", "evaluation"],
-  ["structural-quality", "structuralQuality"],
-]);
 
 async function readArtifactSource(target, relativePath) {
   const bytes = await readFile(await assertSafePath(target, relativePath));
@@ -235,7 +210,7 @@ async function importTask(db, target, taskKey, report, prepared) {
     appendEvent(db, { taskId, event });
   }
 
-  for (const [artifactKey, kind] of SINGLE_FILE_ARTIFACTS) {
+  for (const { key: artifactKey, kind } of PORTABLE_ARTIFACT_MAPPINGS.singletons) {
     const payload = await readJsonIfPresent(target, taskArtifactPath(taskId, artifactKey));
     if (payload !== null) putArtifact(db, { taskId, kind, payload, sourceText: await readArtifactSource(target, taskArtifactPath(taskId, artifactKey)) });
   }
@@ -403,7 +378,7 @@ async function importSessions(db, target, prepared, index) {
 }
 
 async function importDirectoryArtifacts(db, target, taskKey, taskId, prepared) {
-  for (const [directoryKey, kind] of DIRECTORY_ARTIFACTS) {
+  for (const { directory: directoryKey, kind } of PORTABLE_ARTIFACT_MAPPINGS.collections) {
     const files = await listJsonFiles(target, `${TASK_STATE_ROOT}/${taskKey}/${directoryKey}`, kind === "attestation" || kind === "structuralQuality");
     for (const file of files) {
       if (kind === "attestation" && file.path.endsWith("/statement.sigstore.json")) {

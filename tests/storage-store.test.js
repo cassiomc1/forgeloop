@@ -670,6 +670,20 @@ test("portable export and import retain nested quality, attestation history and 
     const { descriptor } = await writeTaskNamespace(source, "nested-task", { events: 2 });
     const first = await importProjectState(source, path.join(directory, "first.sqlite"));
     const cases = [
+      ["contract", CURRENT_ARTIFACT_ID, "contract.json"],
+      ["route", CURRENT_ARTIFACT_ID, "routing-result.json"],
+      ["preflight", CURRENT_ARTIFACT_ID, "preflight.json"],
+      ["continuity", CURRENT_ARTIFACT_ID, "continuity.json"],
+      ["receipt", CURRENT_ARTIFACT_ID, "execution-receipt.json"],
+      ["policySnapshot", CURRENT_ARTIFACT_ID, "policy-snapshot.json"],
+      ["workspaceBinding", CURRENT_ARTIFACT_ID, "workspace-binding.json"],
+      ["responsibility", CURRENT_ARTIFACT_ID, "responsibility.json"],
+      ["verificationScope", CURRENT_ARTIFACT_ID, "verification-scope.json"],
+      ["usage", CURRENT_ARTIFACT_ID, "usage.json"],
+      ["testUtility", CURRENT_ARTIFACT_ID, "test-utility.json"],
+      ["gate", "gate-example", "gates/gate-example.json"],
+      ["handoff", "handoff-example", "handoffs/handoff-example.json"],
+      ["decision", "decision-example", "decisions/decision-example.json"],
       ["evaluation", "eval-example", "evaluations/eval-example.json"],
       ["structuralQuality", "baseline", "structural-quality/baseline.json"],
       ["structuralQuality", "evaluations/cycle-1-attempt-1", "structural-quality/evaluations/cycle-1-attempt-1.json"],
@@ -690,8 +704,24 @@ test("portable export and import retain nested quality, attestation history and 
       const second = await importProjectState(destination, path.join(directory, "second.sqlite"));
       try {
         const records = listArtifacts(second.db, "nested-task");
-        for (const [kind, artifactId] of cases) assert.equal(records.find(record => record.kind === kind && record.artifactId === artifactId)?.sourceText, sourceText);
+        for (const [kind, artifactId] of cases) {
+          const record = records.find(record => record.kind === kind && record.artifactId === artifactId);
+          assert.equal(record?.sourceText, sourceText);
+          assert.equal(record?.byteDigest, createHash("sha256").update(sourceText).digest("hex"));
+          assert.deepEqual(record?.payload, JSON.parse(sourceText));
+        }
       } finally { second.db.close(); }
+      // Recovery is authority-bearing: generic artifact bytes must not establish a recovery cycle.
+      putArtifact(first.db, { taskId: "nested-task", kind: "recovery", payload: JSON.parse(sourceText), sourceText });
+      const invalidRecovery = path.join(directory, "invalid-recovery");
+      await exportDatabase(first.db, invalidRecovery);
+      assert.equal(await readFile(path.join(invalidRecovery, ".forgeloop/task-state", descriptor.taskKey, "recovery.json"), "utf8"), sourceText);
+      await assert.rejects(importProjectState(invalidRecovery, path.join(directory, "invalid-recovery.sqlite")), error => {
+        assert.equal(error.code, "E_STORAGE_IMPORT_ABORTED");
+        assert.ok(error.report.errors.some(finding => finding.code === "E_TASK_RECOVERY_INCONSISTENT"));
+        return true;
+      });
+      first.db.prepare("DELETE FROM task_artifacts WHERE kind = 'recovery'").run();
       putArtifact(first.db, { taskId: "nested-task", kind: "unmappedEvidence", payload: {} });
       await assert.rejects(exportDatabase(first.db, path.join(directory, "unmapped")), { code: "E_STORAGE_EXPORT_UNSUPPORTED" });
       first.db.prepare("DELETE FROM task_artifacts WHERE kind = 'unmappedEvidence'").run();

@@ -18,6 +18,7 @@ import { buildCanonicalDiagnosisProject } from "../tests/helpers/canonical-diagn
 import { executeForgeLoopCommand } from "../src/core/command-runtime.js";
 import { createForgeLoopContext } from "../src/core/runtime-context.js";
 import { withProjectStorage } from "../src/storage/project-boundary.js";
+import { getOperationalStore } from "../src/storage/operational-context.js";
 import { createTaskDescriptor } from "../src/core/task-descriptor.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { openStorageDatabase, runInTransaction, upsertTask, putAction, exportDatabase } from "../src/storage/index.js";
@@ -117,7 +118,7 @@ assert.ok(["true", "false"].includes(persistentMode), "persistent must be true o
 const persistent = persistentMode === "true";
 const nativeComparisonRoot = argument("native-comparison-root") ? path.resolve(argument("native-comparison-root")) : null;
 assert.ok(!nativeComparisonRoot || (operation === "protocol" && !persistent), "Native variant comparison requires per-call protocol mode");
-assert.ok(!persistent || operation === "protocol", "persistent measurement requires the canonical protocol runtime");
+assert.ok(!persistent || operation === "protocol" || (operation === "idempotency" && fixtureMode === "public-approvals"), "persistent measurement requires protocol or public-approvals idempotency");
 const profileDirectory = argument("profile-dir");
 if (profileDirectory) await mkdir(path.resolve(profileDirectory), { recursive: true });
 assert.ok(["idempotency", "approvals", "protocol"].includes(operation), "operation must be idempotency, approvals or protocol");
@@ -329,6 +330,35 @@ for (const size of sizes) {
       continue;
     }
     markFailureContext("PUBLIC_PARITY_PRECHECK", size);
+    const lookupCases = [
+      { position: "first", key: "benchmark-key-0" },
+      { position: "middle", key: `benchmark-key-${Math.floor(size / 2)}` },
+      { position: "tail", key: `benchmark-key-${size - 1}` },
+      { position: "missing", key: "benchmark-key-missing" },
+    ];
+    let persistentConnection;
+    let directLookupIdentityChecks = 0;
+    async function directLookupBatch(nativeBackend) {
+      const outputs = [];
+      for (const { position, key } of lookupCases) {
+        const lookup = () => (nativeBackend ? findActionByIdempotencyKey : legacy.findActionByIdempotencyKey)(
+          nativeBackend ? target : portable, { taskId, idempotencyKey: key, packageRoot: nativeBackend ? getPackageRoot() : baselineRoot });
+        const value = nativeBackend && runtimeContext
+          ? await withProjectStorage(target, async () => {
+            assert.equal(getOperationalStore(target)?.db, persistentConnection);
+            const found = await lookup();
+            // Check the connection actually in scope immediately after every successful public call.
+            assert.equal(getOperationalStore(target)?.db, persistentConnection);
+            directLookupIdentityChecks += 1;
+            return found;
+          }, { runtimeContext, readOnly: true })
+          : await lookup();
+        if (position === "missing") assert.equal(value, null);
+        else { assert.ok(value); assert.equal(value.idempotencyKey, key); }
+        outputs.push({ position, value });
+      }
+      return outputs;
+    }
     const options = { taskId, idempotencyKey: `benchmark-key-${size - 1}` };
     const baselineApprovalApi = operation === "approvals" ? await import(pathToFileURL(path.join(baselineRoot, "src/core/approvals.js")).href) : null;
     const baselineProtocol = operation === "protocol" ? await import(pathToFileURL(path.join(nativeComparisonRoot ?? baselineRoot, "src/core/command-runtime.js")).href) : null;
@@ -343,12 +373,12 @@ for (const size of sizes) {
       ? () => validateThroughRuntime(executeForgeLoopCommand)
       : operation === "approvals"
       ? () => listApprovals(target, { taskId, packageRoot: getPackageRoot() })
-      : () => findActionByIdempotencyKey(target, { ...options, packageRoot: getPackageRoot() });
+      : () => persistent ? directLookupBatch(true) : findActionByIdempotencyKey(target, { ...options, packageRoot: getPackageRoot() });
     const legacyCall = operation === "protocol"
       ? () => validateThroughRuntime(baselineProtocol.executeForgeLoopCommand)
       : operation === "approvals"
       ? () => baselineApprovalApi.listApprovals(portable, { taskId, packageRoot: baselineRoot })
-      : () => legacy.findActionByIdempotencyKey(portable, { ...options, packageRoot: baselineRoot });
+      : () => persistent ? directLookupBatch(false) : legacy.findActionByIdempotencyKey(portable, { ...options, packageRoot: baselineRoot });
     // Execution provenance is bound to this exact project path. Swap only
     // disposable closed fixtures, outside measurement; never rewrite receipts.
     markFailureContext("MEASUREMENT_PRECHECK", size);
@@ -383,7 +413,6 @@ for (const size of sizes) {
         for (const pair of index % 2 ? [filesystem, native] : [native, filesystem]) samplesToRun.push({ pair, index });
       }
     }
-    let persistentConnection;
     for (const { pair: [call, samples, resourceTarget, resourceSamples], index } of samplesToRun) {
       markFailureContext("MEASUREMENT_SAMPLE", size, { backend: call === legacyCall ? "baseline" : "native", sample: index });
       if (persistent && call === legacyCall && runtimeContext) {
@@ -393,10 +422,10 @@ for (const size of sizes) {
       await selectFilesystem(call === legacyCall);
       if (persistent && call === nativeCall && !runtimeContext) {
         runtimeContext = createForgeLoopContext({ persistentStorage: true });
-        persistentConnection = await withProjectStorage(target, store => store.db, { runtimeContext, readOnly: true });
+        persistentConnection = await withProjectStorage(target, () => getOperationalStore(target).db, { runtimeContext, readOnly: true });
       }
       if (persistent && call === nativeCall) {
-        assert.equal(await withProjectStorage(target, store => store.db, { runtimeContext, readOnly: true }), persistentConnection);
+        assert.equal(await withProjectStorage(target, () => getOperationalStore(target).db, { runtimeContext, readOnly: true }), persistentConnection);
       }
       const profiler = profileDirectory ? new Session() : null;
       if (profiler) {
@@ -427,7 +456,7 @@ for (const size of sizes) {
       }
       assert.deepEqual(result, expected);
       if (persistent && call === nativeCall) {
-        assert.equal(await withProjectStorage(target, store => store.db, { runtimeContext, readOnly: true }), persistentConnection);
+        assert.equal(await withProjectStorage(target, () => getOperationalStore(target).db, { runtimeContext, readOnly: true }), persistentConnection);
         persistentConnectionReuseChecks += 1;
       }
     }
@@ -435,7 +464,16 @@ for (const size of sizes) {
       await runtimeContext.close(); runtimeContext = null;
       assert.throws(() => persistentConnection.prepare("SELECT 1"));
     }
-    const timedSamplesProduced = nativeSamples.length > 0 || legacySamples.length > 0;
+    const expectedSamples = validationOnly ? 0 : repeats;
+    assert.equal(nativeSamples.length, expectedSamples, "Exact native sample count required");
+    assert.equal(legacySamples.length, expectedSamples, "Exact baseline sample count required");
+    assert.equal(nativeResources.length, resourcesEnabled ? expectedSamples : 0);
+    assert.equal(legacyResources.length, resourcesEnabled ? expectedSamples : 0);
+    if (persistent && operation === "idempotency") {
+      assert.equal(directLookupIdentityChecks, validationOnly ? 0 : (repeats + warmup) * lookupCases.length);
+    }
+    if (persistent) assert.equal(persistentConnectionReuseChecks, validationOnly ? 0 : repeats + warmup);
+    const timedSamplesProduced = nativeSamples.length === repeats && legacySamples.length === repeats;
     const persistentConnectionReuseVerified = persistent && !validationOnly && persistentConnectionReuseChecks > 0;
     const persistentConnectionReuseStatus = !persistent
       ? "NOT_APPLICABLE"
@@ -470,6 +508,16 @@ for (const size of sizes) {
       persistentConnectionReuseChecks,
       persistentConnectionReuseVerified,
       persistentConnectionReuseStatus,
+      ...(operation === "idempotency" && persistent ? {
+        lookupBatchOutputs: expected,
+        lookupPositions: lookupCases.map(item => item.position),
+        publicLookupsPerSample: lookupCases.length,
+        timingUnit: "one sequential first/middle/tail/missing public lookup batch",
+        nativePublicLookupCallsMeasured: nativeSamples.length * lookupCases.length,
+        baselinePublicLookupCallsMeasured: legacySamples.length * lookupCases.length,
+        persistentPublicLookupConnectionIdentityChecks: directLookupIdentityChecks,
+        identityChecksIncludeWarmup: true,
+      } : {}),
       ...(operation === "protocol" ? { protocolResult: expected } : {}), outputParity: true, missingKeyParity: true, nativeSamplesMs: nativeSamples, baselineSamplesMs: legacySamples,
       nativeP95Ms: validationOnly ? null : percentile(nativeSamples), baselineP95Ms: validationOnly ? null : percentile(legacySamples), speedupP95: validationOnly ? null : percentile(legacySamples) / percentile(nativeSamples),
       ...(resourcesEnabled ? { rawResourceSamples: { native: nativeResources, baseline: legacyResources } } : {}) });
@@ -594,7 +642,7 @@ process.stdout.write(`${JSON.stringify({ schemaVersion: 1, baselineRevision: rev
   cpu: os.cpus()[0]?.model ?? null, validationOnly, repeats, warmup, timestamp,
   sourceRevision: sourceBefore.current.revision, sourceManifests: sourceBefore, sourceManifestsAfter: sourceAfter,
   trackedSourcesUnchanged, benchmarkComplete,
-  runtime: persistent ? "warm canonical integration runtime with one persistent native connection per backend batch" : "warm-cache public API with per-call native connection",
+  runtime: persistent ? operation === "idempotency" ? "warm direct public lookup batches through persistent project storage context" : "warm canonical integration runtime with one persistent native connection per backend batch" : "warm-cache public API with per-call native connection",
   persistentConnectionReuseVerified,
   persistentConnectionReuseEvidence,
   backendOrder: persistent ? "grouped backend batches, reversed between dataset sizes; connection closed before fixture switch" : "alternating each repetition",
@@ -607,7 +655,7 @@ process.stdout.write(`${JSON.stringify({ schemaVersion: 1, baselineRevision: rev
   resourceMode: resourcesEnabled, linuxOperationPeakRssEnabled: linuxPeakRss,
   ...(resourcesEnabled ? { resourceMeasurementLimits } : {}),
   fixtureMode, operation, profiling: Boolean(profileDirectory),
-  fixtureLimits: [fixtureMode === "synthetic" ? "Synthetic schema-valid PROPOSED actions without approvals, execution records or lifecycle history" : "Canonical diagnosis lifecycle plus public action proposals and alternating approved/rejected approvals; no external action execution", operation === "protocol" ? "Supported validate-protocol result must match completely; it is not every task/action audit" : operation === "approvals" ? "Complete approval listing and validation is measured; output arrays remain proportional to volume" : "Found-key lookup is measured; missing-key and approval parity are validated outside measurement", "This is not full action execution, claim reservation, recovery mutation or warm MCP acceptance"],
+  fixtureLimits: [fixtureMode === "synthetic" ? "Synthetic schema-valid PROPOSED actions without approvals, execution records or lifecycle history" : "Canonical diagnosis lifecycle plus public action proposals and alternating approved/rejected approvals; no external action execution", operation === "protocol" ? "Supported validate-protocol result must match completely; it is not every task/action audit" : operation === "approvals" ? "Complete approval listing and validation is measured; output arrays remain proportional to volume" : (persistent ? "Each sample measures a sequential first/middle/tail/missing public lookup batch; complete action/approval/ledger parity is prechecked outside measurement" : "Found-key lookup is measured; missing-key and approval parity are validated outside measurement"), "This is not full action execution, claim reservation, recovery mutation or warm MCP acceptance"],
   outputParityVerified, equalValidationParityEligible, equalValidationAcceptanceEligible,
   equalValidationAcceptanceIneligibilityReasons,
   sourceAdmissionEligible, timingAcceptanceEligible,
