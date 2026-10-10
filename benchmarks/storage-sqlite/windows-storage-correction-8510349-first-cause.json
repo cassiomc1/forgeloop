@@ -1,0 +1,33 @@
+{
+  "kind": "WINDOWS_STORAGE_CORRECTION_FIRST_CAUSE",
+  "runId": 38049218755,
+  "sourceRevision": "85103497a00a1ec43e81bd282e06e38d5e4b87e7",
+  "conclusion": "failure",
+  "tests": 37,
+  "passed": 36,
+  "failed": 1,
+  "skipped": 0,
+  "firstFailure": "C1: fresh readonly dispatch resolves only admission modules without allocating SQLite",
+  "file": "tests/storage-evidence-checks.test.js:164",
+  "cause": "Static imports in maintenance and maintenance-handoff resolve windows-process-incarnation on fresh readonly startup",
+  "replacementControls": "All replacement preparation/adoption SIGKILL checkpoints passed, including PARTIAL_OUTGOING and PUBLICATION_READY",
+  "plannedCorrection": "Load Windows process observer lazily only for owner creation/liveness/publication; preserve admission module allowlist",
+  "logSha256": "5cc357695bd2a2827d9048ab5c4750c6710807f102ead5e36ae60253809349da",
+  "retainedLog": "benchmarks/storage-sqlite/windows-storage-correction-8510349.log.gz",
+  "releaseAcceptance": false,
+  "implementedCorrection": {
+    "helperImport": "lazy only for Windows maintenance creation/liveness/publication",
+    "allowlistChanged": false,
+    "rootC1": {
+      "node": "24.19.0",
+      "passed": 1,
+      "failed": 0,
+      "logSha256": "a8646c5d67c14e0b658b378b981c0fd31c051f83241f2fc7da4e4f9629464146"
+    },
+    "sourceHashes": {
+      "src/storage/maintenance.js": "09cd7e4cdabc817fb2735480345d422ec09ff9b9f7c474eba1758df3087e0714",
+      "src/storage/maintenance-handoff.js": "c6cdd755e4f37e4b9c491f0bb4018c9e50517cd0751abf8cba7825ad12c8142e"
+    },
+    "hostedRecheck": "pending"
+  }
+}

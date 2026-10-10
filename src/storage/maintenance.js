@@ -5,12 +5,6 @@ import os from "node:os";
 import { assertSafePath } from "../core/filesystem.js";
 import { MAINTENANCE_OWNER_ID, readMaintenanceOwner } from "./maintenance-owner.js";
 import { archiveMaintenanceOwner, claimMaintenanceHandoff, publishMaintenanceOwner } from "./maintenance-handoff.js";
-import {
-  isWindowsProcessIncarnationToken,
-  readWindowsProcessIncarnation,
-  WINDOWS_PROCESS_INCARNATION_KIND,
-  WINDOWS_PROCESS_INCARNATION_SCHEMA_VERSION,
-} from "./windows-process-incarnation.js";
 
 const EXCLUSION = ".forgeloop/.storage-maintenance";
 const active = new AsyncLocalStorage();
@@ -20,6 +14,12 @@ function busy(message) { return Object.assign(new Error(message), { code: "E_STO
 async function createOwner(extra = {}) {
   const owner = { schemaVersion: 1, ownerId: randomUUID(), pid: process.pid, hostname: os.hostname(), acquiredAt: new Date().toISOString(), ...extra };
   if (process.platform !== "win32") return owner;
+  const {
+    isWindowsProcessIncarnationToken,
+    readWindowsProcessIncarnation,
+    WINDOWS_PROCESS_INCARNATION_KIND,
+    WINDOWS_PROCESS_INCARNATION_SCHEMA_VERSION,
+  } = await import("./windows-process-incarnation.js");
   let observation;
   try { observation = await readWindowsProcessIncarnation(process.pid); } catch { observation = null; }
   if (!observation || observation.status !== "ALIVE" || observation.hasExited !== false || observation.pid !== process.pid) {
@@ -107,23 +107,20 @@ export async function withStorageMaintenance(target, callback, options = {}) {
   return runOwnedMaintenance(target, directory, ownerData, callback, options);
 }
 
-function validatePersistedOwnerIncarnation(owner) {
-  if (owner.processIncarnation === undefined) return null;
-  if (process.platform !== "win32" || !isWindowsProcessIncarnationToken(owner.processIncarnation, { pid: owner.pid })) {
-    throw busy("Maintenance owner process incarnation is unsupported or malformed");
-  }
-  return owner.processIncarnation;
-}
-
 async function assertLocalOwnerDead(owner) {
   if (owner.hostname !== os.hostname()) throw busy("Remote or unbound owner cannot be safely resumed on this host");
-  const processIncarnation = validatePersistedOwnerIncarnation(owner);
-  if (processIncarnation) {
+  if (owner.processIncarnation !== undefined) {
+    if (process.platform !== "win32") throw busy("Maintenance owner process incarnation is unsupported or malformed");
+    const { isWindowsProcessIncarnationToken, readWindowsProcessIncarnation } =
+      await import("./windows-process-incarnation.js");
+    if (!isWindowsProcessIncarnationToken(owner.processIncarnation, { pid: owner.pid })) {
+      throw busy("Maintenance owner process incarnation is unsupported or malformed");
+    }
     let observation;
     try { observation = await readWindowsProcessIncarnation(owner.pid); } catch { observation = null; }
     if (!observation || observation.pid !== owner.pid) throw busy("Owner process identity is unavailable; resume refused");
     if (observation.status === "ALIVE" && observation.hasExited === false) {
-      if (observation.startTimeTicks === processIncarnation.startTimeTicks) throw busy("Maintenance owner process is still present; resume refused");
+      if (observation.startTimeTicks === owner.processIncarnation.startTimeTicks) throw busy("Maintenance owner process is still present; resume refused");
       return;
     }
     if (observation.status === "EXITED" || observation.status === "NOT_FOUND") return;

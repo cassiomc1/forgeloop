@@ -2,13 +2,14 @@ import { link, mkdir, open, rename } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { assertSafePath } from "../core/filesystem.js";
 import { MAINTENANCE_OWNER_ID, readMaintenanceOwner } from "./maintenance-owner.js";
-import { isWindowsProcessIncarnationToken, readWindowsProcessIncarnation } from "./windows-process-incarnation.js";
 
 const HISTORY = ".forgeloop/storage-maintenance-history";
 const busy = message => Object.assign(new Error(message), { code: "E_STORAGE_MAINTENANCE_IN_PROGRESS" });
 
 async function assertPublishableOwner(ownerData) {
   if (process.platform !== "win32") return;
+  const { isWindowsProcessIncarnationToken, readWindowsProcessIncarnation } =
+    await import("./windows-process-incarnation.js");
   if (ownerData.pid !== process.pid || !isWindowsProcessIncarnationToken(ownerData.processIncarnation, { pid: process.pid })) {
     throw busy("Windows process incarnation is missing or malformed; publication refused");
   }
