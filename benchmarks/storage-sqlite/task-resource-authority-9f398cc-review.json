@@ -1,0 +1,169 @@
+{
+  "reportType": "sqlite-task-resource-authority-regression",
+  "generatedAt": "2026-10-10T05:55:58.651Z",
+  "worktree": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop",
+  "sourceRevision": "9f398cca6f6db1ba4b37e3a2bc167af88800e059",
+  "node": "v24.19.0",
+  "command": "env -u TYPESAFE_API_KEY -u NODE_OPTIONS /Users/cassio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --import=./scripts/test-semantic-provider-loader.mjs --test tests/storage-task-resource-authority.test.js",
+  "result": {
+    "tests": 4,
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0
+  },
+  "testFile": {
+    "path": "tests/storage-task-resource-authority.test.js",
+    "sha256": "9f8257dc7ae03eea3ca8f514bc09488fa4f4b1563d4eeea2cead863c64b3cf51"
+  },
+  "log": {
+    "path": "/Users/cassio/.codex/verification/storage-task-resource-authority-pinned-corrected.log",
+    "sha256": "3dcad4b19e291768800e93e8f1a297646939bc44fb3263f9ff44408b3105d9a7"
+  },
+  "sourceHashes": {
+    "src/core/integration-resources.js": "2561e00a7078fc1834ad2173b38c19978ef57a6705ab294158f83cac88b71ba6",
+    "integrations/mcp/src/resource-registry.js": "6d022292824215ed6f339e59d208bc346408c25fe5db9d2a3944978f59d2ca84",
+    "src/core/workspace-binding.js": "5a0aef7cb4c14a6ab29f4bf368ffb75e392ac72d1e39763e26ad75542c0c6be5",
+    "src/core/responsibility.js": "2791558cf6dcdf4dab0757accc6e512166a96fa643c130a8fa0798b7a210f0da",
+    "src/core/verification-scope.js": "43d694fb75ae93c11105b201b1ffd9de623d5040899929efbcd26624aa62793d",
+    "src/core/attestation.js": "993573dffee03c80a06005a30e1d365a0cae24e252a20149b0c7a92885daffae",
+    "src/core/structural-quality/service.js": "0e2f550c916362b1775cdc103b6f9385952b850bfcf56702d9c135c8c3c4b19c",
+    "src/core/actions.js": "8c1fd1c146ec72cf6dc27f973d32f3e0d8d083b209eb4c84a5e22910e536a42b",
+    "src/core/approvals.js": "5d0df4f429636ffe41e1a92e09f05f9821124c637836fb3daf5271405332c9a1",
+    "src/core/test-intelligence/service.js": "56cf4d165b512441fa00b75bc44ac251c131db03bdf6217a237411b18b116c8b",
+    "src/commands/model-route.js": "175146193f6f025e010d9038abef41528cf93aba509e8a0952d94b5bcb8b9e1e",
+    "src/commands/test-utility.js": "98bc0b88f471dff582b2439ae0c78ecbcb833bb327b9effe85fcf22aa65bcea4"
+  },
+  "coveredResources": [
+    {
+      "resource": "task/workspace-binding",
+      "fixture": "runWorkspaceBind on a Git worktree",
+      "assertions": [
+        "MATCH status",
+        "taskId binding",
+        "current workspaceIdentity equals bound workspaceIdentity",
+        "64-hex binding fingerprint",
+        "MCP parity",
+        "legacy task tree absent"
+      ]
+    },
+    {
+      "resource": "task/responsibility",
+      "fixture": "setResponsibilityContract with native-resource-responsibility-sentinel",
+      "assertions": [
+        "VALID status",
+        "label sentinel",
+        "allowedPaths [src]",
+        "taskId binding",
+        "MCP parity",
+        "legacy task tree absent"
+      ]
+    },
+    {
+      "resource": "task/verification-scope",
+      "fixture": "runVerifyScope AUTO with no trusted scoped checker",
+      "assertions": [
+        "taskId binding",
+        "FULL resolvedMode",
+        "FULL fallback",
+        "MCP parity",
+        "legacy task tree absent"
+      ]
+    },
+    {
+      "resource": "task/attestation",
+      "fixture": "complete native task and runAttestationCreate after source sentinel",
+      "assertions": [
+        "VALID status",
+        "VERIFIED level",
+        "content/receipt/ledger VALID",
+        "one covered source file",
+        "statement subject digest parity",
+        "MCP parity",
+        "legacy task tree absent"
+      ]
+    },
+    {
+      "resource": "task/structural-quality",
+      "fixture": "gate baseline captured through public quality-baseline with schema-valid fake provider snapshot",
+      "assertions": [
+        "gate mode",
+        "fake provider",
+        "OBSERVED baseline",
+        "qualitySignal 9000",
+        "64-hex fingerprint",
+        "MCP parity with injected storage runtime context",
+        "legacy task tree absent"
+      ]
+    },
+    {
+      "resource": "task/actions",
+      "fixture": "runActionPropose with resource-native-sentinel target",
+      "assertions": [
+        "one native action",
+        "target sentinel",
+        "MCP parity",
+        "legacy task tree absent"
+      ]
+    },
+    {
+      "resource": "task/action",
+      "fixture": "same action selected by actionId",
+      "assertions": [
+        "actionId binding",
+        "target sentinel",
+        "MCP parity",
+        "legacy task tree absent"
+      ]
+    },
+    {
+      "resource": "task/approvals",
+      "fixture": "runApprovalRequest under REQUIRE_APPROVAL policy",
+      "assertions": [
+        "one PENDING approval",
+        "reason sentinel",
+        "MCP parity",
+        "legacy task tree absent"
+      ]
+    },
+    {
+      "resource": "task/context-plan",
+      "fixture": "readOnly balanced context projection through task resource",
+      "assertions": [
+        "balanced profile",
+        "zero candidates",
+        "evidenceAuthority NONE",
+        "lifecycleAuthority false",
+        "MCP parity",
+        "legacy task tree absent"
+      ]
+    },
+    {
+      "resource": "task/model-route",
+      "fixture": "record native MODEL_ROUTE semantic decision with test provider",
+      "assertions": [
+        "typesafe-jev engine",
+        "STANDARD resolved route",
+        "0.95 semantic confidence",
+        "lifecycleAuthority false",
+        "MCP parity",
+        "legacy task tree absent"
+      ]
+    },
+    {
+      "resource": "task/test-utility",
+      "fixture": "runTestUtility over resource-native-sentinel.test.js",
+      "assertions": [
+        "PROVIDER_REPORTED",
+        "sentinel file and test name",
+        "MCP parity",
+        "legacy task tree absent"
+      ]
+    }
+  ],
+  "limits": [
+    "task/context-plan is intentionally a pure read-only projection with no persisted task artifact; the test asserts its bounded authority contract and transport parity.",
+    "The focused test binds the MCP adapter package specifier to this checkout's public integration entrypoint because the preserved local MCP file dependency points at the original checkout; no dependency tree or production source was changed.",
+    "No benchmark, full regression suite, install, commit, or production edit was performed by this subtask."
+  ],
+  "fixtureDiagnosis": "Initial root validation without TYPESAFE_API_KEY reproduced a missing explicit semantic test provider in quality setup. Corrected runRoute semanticProvider injection; no production change."
+}
