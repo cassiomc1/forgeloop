@@ -1,5 +1,11 @@
 # SQLite migration progress
 
+## Current macOS commit observation
+
+A frozen local run at `7bcfeaf` completed all 10 / 1,000 / 100,000-event rows with 20 repetitions and three deterministic claims on Node 24.19.0 / Apple M2. Both source manifests stayed unchanged. At 10 and 1,000 events, result/state/tail/ownership parity matched, with observed native p95 reductions of 89.8% and 90.9%. The 100,000-event baseline ownership audit refused its existing JSON limit, so that timing row is explicitly ineligible for equal-validation acceptance. Raw samples and manifests are retained in `benchmarks/storage-sqlite/commit-7bcfeaf-macos-observation.json.gz`; the summary retains qualifications.
+
+This is a synthetic RECEIVED observation workload, with commit-only timing and ownership classification afterward. Local background applications were uncontrolled; host reservation, power-loss equivalence, realistic lifecycle performance, cold startup, full resources and the original concurrency matrix remain unproved. No release threshold or whole performance gate is accepted from this observation.
+
 ## Current Windows recovery fixture correction
 
 Windows full run `38042718400` refused a recorded maintenance owner before the requested adoption checkpoint. The fixture now registers both child exit and close before SIGKILL and waits for closed handles before recovery; production stale-owner refusal remains unchanged. Root focused recovery/parity checks pass 23 tests and `verify:fast` passes. Corrected hosted run `38043819343` at `e7acc63` passes all 37 focused tests on Windows / Node 24.21.0, including `REBUILD_ALLOCATED`. Full current Windows acceptance remains required; process-handle timing is a plausible diagnosis, not a confirmed platform fix. The rejected task-state extraction is removed, with three useful parity regressions retained against unchanged production.
