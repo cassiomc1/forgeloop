@@ -6,6 +6,7 @@ import { DatabaseSync } from "node:sqlite";
 import { executeForgeLoopCommand } from "../src/core/command-runtime.js";
 import { createGitRepository } from "./helpers/git-fixture.js";
 import { setupVerifyingTask } from "./helpers/durable-lifecycle.js";
+import { bindTaskWorkspace } from "../src/core/workspace-binding.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { removeTempTree } from "./helpers/rm-safe.js";
 import { buildCanonicalDiagnosisProject } from "./helpers/canonical-diagnosis-fixture.js";
@@ -70,6 +71,33 @@ test("public workspace binding rolls back artifact and event publication", async
     const retried = await invoke();
     assert.equal(retried.ok, true, JSON.stringify(retried));
     assert.equal(db.prepare("SELECT COUNT(*) AS n FROM events WHERE event_type='WORKSPACE_BOUND'").get().n, 1);
+    await noMirrors(target);
+  } finally { db?.close(); await removeTempTree(target); }
+});
+
+for (const [command, event, input] of [
+  ["verify-scope", "VERIFICATION_SCOPE_CAPTURED", { verificationScopeMode: "FULL" }],
+  ["handoff-create", "HANDOFF_CREATED", { handoffNote: "public atomic handoff" }],
+]) test(`public ${command} rolls back its artifact and ledger event`, async () => {
+  const target = await createGitRepository("forgeloop-public-scope-handoff-");
+  const taskId = "public-scope-handoff";
+  let db;
+  try {
+    await setupVerifyingTask(target, getPackageRoot(), { taskId });
+    await bindTaskWorkspace(target, { taskId, packageRoot: getPackageRoot() });
+    db = new DatabaseSync(path.join(target, ".forgeloop/state.sqlite"));
+    const invoke = () => executeForgeLoopCommand({ command, projectPath: target, input: { taskId, ...input } });
+    const before = snapshot(db);
+    db.exec(`CREATE TRIGGER wrapper_fault BEFORE INSERT ON events WHEN NEW.event_type='${event}' BEGIN SELECT RAISE(ABORT, 'PUBLIC_WRAPPER_FAULT'); END`);
+    try {
+      const failed = await invoke();
+      assert.equal(failed.ok, false, JSON.stringify(failed));
+      assert.match(JSON.stringify(failed.error), /PUBLIC_WRAPPER_FAULT/);
+      assert.deepEqual(snapshot(db), before);
+    } finally { db.exec("DROP TRIGGER wrapper_fault"); }
+    const retried = await invoke();
+    assert.equal(retried.ok, true, JSON.stringify(retried));
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM events WHERE event_type=?").get(event).n, 1);
     await noMirrors(target);
   } finally { db?.close(); await removeTempTree(target); }
 });
