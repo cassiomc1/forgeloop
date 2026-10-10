@@ -16,7 +16,21 @@
   "platformTokenSource": "Fixed system PowerShell retained .NET Process handle and invariant UTC StartTime ticks",
   "systemRootTrust": "Configured host environment; no OS attestation claim",
   "legacyAdmissionChanged": false,
-  "hostedWindowsValidation": "pending",
+  "hostedWindowsValidation": {
+    "runId": 38048235578,
+    "sourceRevision": "3b5b8b624c44e7b156d6813b153c0f9b3a0e4544",
+    "conclusion": "success",
+    "tests": 10,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0,
+    "node": "24.21.0",
+    "completedAt": "2026-10-10T11:23:56Z",
+    "fullSuiteExecuted": false,
+    "logSha256": "4a7d6c33cac9c7dda4ee80ead0e0af8043cfe402bd1337ddc70ff68f980e0517",
+    "url": "https://github.com/cassiomc1/forgeloop/actions/runs/38048235578",
+    "retainedLog": "benchmarks/storage-sqlite/windows-incarnation-3b5b8b6.log.gz"
+  },
   "scope": "New storage helper is included in future inclusive LOC inventory",
   "acceptanceClaim": false
 }
