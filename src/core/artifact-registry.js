@@ -446,14 +446,24 @@ export const ARTIFACT_REGISTRY = Object.freeze(Object.fromEntries(
   })]),
 ));
 
+function portableSingletonMapping(key) {
+  return Object.freeze({
+    key, kind: ARTIFACT_REGISTRY[key].canonicalStorage.kind, filename: TASK_ARTIFACT_FILES[key],
+  });
+}
+
+function portableCollectionMapping([key, registryKey]) {
+  return Object.freeze({
+    kind: ARTIFACT_REGISTRY[registryKey].canonicalStorage.kind, directory: TASK_ARTIFACT_FILES[key],
+  });
+}
+
 /** Ordered interchange mappings; bundle-specific filenames remain in bundles.js. */
 export const PORTABLE_ARTIFACT_MAPPINGS = Object.freeze({
   singletons: Object.freeze([
     "contract", "route", "preflight", "continuity", "receipt", "policySnapshot",
     "recovery", "workspaceBinding", "responsibility", "verificationScope", "usage", "testUtility",
-  ].map(key => Object.freeze({
-    key, kind: ARTIFACT_REGISTRY[key].canonicalStorage.kind, filename: TASK_ARTIFACT_FILES[key],
-  }))),
+  ].map(portableSingletonMapping)),
   collections: Object.freeze([
     ["gates", "gates"],
     ["handoffs", "handoffs"],
@@ -461,7 +471,5 @@ export const PORTABLE_ARTIFACT_MAPPINGS = Object.freeze({
     ["attestations", "codeManifest"],
     ["evaluations", "evaluations"],
     ["structuralQuality", "structuralQuality"],
-  ].map(([key, registryKey]) => Object.freeze({
-    kind: ARTIFACT_REGISTRY[registryKey].canonicalStorage.kind, directory: TASK_ARTIFACT_FILES[key],
-  }))),
+  ].map(portableCollectionMapping)),
 });
