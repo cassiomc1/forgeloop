@@ -1,0 +1,49 @@
+{
+  "kind": "PUBLIC_LARGE_STATE_EVENT_VALIDATION_REFUSAL",
+  "sourceRevision": "ba6ad03",
+  "node": "v24.19.0",
+  "sourceManifestsUnchanged": true,
+  "validationOnly": true,
+  "rawArtifact": "public-commit100000-ba6ad03-validation.json.gz",
+  "rawSha256": "937f3dcb1e9562663840b961122160965e949eafd4d72de7e1f6702442f65948",
+  "results": [
+    {
+      "fixtureMode": "public-domain",
+      "validationOnly": true,
+      "publicPreludeEvents": 8,
+      "initialRevision": 0,
+      "commitCount": 1,
+      "initialEvents": 100000,
+      "claimCount": 3,
+      "committedResultParity": true,
+      "persistedStateAndTailParity": true,
+      "ownershipClassificationParity": false,
+      "equalValidationAcceptanceEligible": false,
+      "acceptanceRefusal": "Baseline ownership validation refused the workload; timing is observational only",
+      "baselineOwnershipAudit": {
+        "status": "REFUSED",
+        "causeCode": "JSON_LIMIT_EXCEEDED",
+        "claimsRetained": true
+      },
+      "nativeOwnershipValid": true,
+      "nativeReservationsVerified": true,
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      },
+      "nativeSamplesMs": [],
+      "baselineSamplesMs": [],
+      "nativeP95Ms": null,
+      "baselineP95Ms": null,
+      "reductionP95": null
+    }
+  ],
+  "equalValidationAcceptanceEligible": false,
+  "releaseThresholdsVerified": false,
+  "limits": [
+    "Pinned baseline unchanged; original100000eventdimension retained",
+    "Baseline fullownershiprefusal JSON_LIMIT_EXCEEDED remains explicit",
+    "No timing samples or matched-speedup claim",
+    "Native memory/resource acceptance remains separate"
+  ]
+}
