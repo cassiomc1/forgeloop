@@ -28,6 +28,15 @@ async function connectServer({ mode = SERVER_MODES.SAFE, projectPath = "." } = {
   return { client, policy, cleanup: async () => { await removeTempTree(target); } };
 }
 
+function resolveIntegrationPackageManifest() {
+  const integrationPath = fileURLToPath(import.meta.resolve("@cassiomc1/forgeloop/integration"));
+  const manifestPath = path.resolve(path.dirname(integrationPath), "..", "package.json");
+  return {
+    path: manifestPath,
+    value: JSON.parse(readFileSync(manifestPath, "utf8")),
+  };
+}
+
 test("forgeloop_capabilities exists and reports versions, features, policy, and resources", async () => {
   const { client, cleanup } = await connectServer({ mode: SERVER_MODES.FULL, projectPath: "." });
   try {
@@ -123,11 +132,9 @@ test("capabilities report the installed core version and never leak projectRoot"
     const data = result.structuredContent;
 
     // §14-17: core packageVersion is real, not null.
-    const coreManifest = JSON.parse(readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "node_modules", "@cassiomc1", "forgeloop", "package.json"),
-      "utf8",
-    ));
-    assert.equal(data.packageVersion, coreManifest.version);
+    const coreManifest = resolveIntegrationPackageManifest();
+    assert.match(coreManifest.path, /(?:^|[\\/])package\.json$/u);
+    assert.equal(data.packageVersion, coreManifest.value.version);
     assert.equal(data.integrationApiVersion, 1);
     assert.equal(data.protocolVersion, 1);
     assert.equal(data.server.version, mcpServerVersion());
