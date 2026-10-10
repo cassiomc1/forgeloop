@@ -28,6 +28,27 @@ test("outgoing owner journal refuses altered evidence bindings and unrelated own
   } finally { await fixture.cleanup(); }
 });
 
+// Failure-only observations; never treat these as permission to bypass liveness.
+async function appendOwnerHistoryDiagnostics(error, target, worker) {
+  const observations = { testPid: process.pid, workerPid: worker?.pid, owners: [] };
+  try {
+    let owner = JSON.parse(await readFile(path.join(target, ".forgeloop/.storage-maintenance/owner.json"), "utf8"));
+    const visited = new Set();
+    for (let depth = 0; depth < 64 && !visited.has(owner.ownerId); depth += 1) {
+      visited.add(owner.ownerId);
+      observations.owners.push(owner);
+      if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/u.test(owner.resumedFrom ?? "")) break;
+      owner = JSON.parse(await readFile(path.join(target, ".forgeloop/storage-maintenance-history", `${owner.resumedFrom}.json`), "utf8"));
+    }
+    if (process.platform === "win32") {
+      const pids = [...new Set(observations.owners.map(value => value.pid))];
+      if (pids.some(pid => !Number.isInteger(pid) || pid < 1)) throw new Error("Invalid diagnostic PID");
+      observations.processes = execFileSync("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", `Get-Process -Id ${pids.join(",")} -ErrorAction SilentlyContinue | Select-Object Id,ProcessName,StartTime,HasExited | ConvertTo-Json -Compress`], { encoding: "utf8", timeout: 10000 }).trim();
+    }
+  } catch (observationError) { observations.error = observationError.message; }
+  error.message += `\nMaintenance owner history observations: ${JSON.stringify(observations)}`;
+}
+
 for (const checkpoint of ["OWNER", "INTENT", "OUTGOING_OWNER", "OUTGOING_RETAINING", "OUTGOING_RENAMED", "OUTGOING_RETAINED", "REBUILD_BASELINE", "REBUILD_ALLOCATED"]) {
   test(`replacement reconciles SIGKILL between adoption records at ${checkpoint}`, { timeout: 60000 }, async () => {
     const fixture = await buildActiveReplacementFixture();
@@ -159,7 +180,13 @@ for (const checkpoint of ["PREPARING", "OUTGOING_BASELINE", "OUTGOING_ALLOCATED"
           }
           throw error;
         }
-      } else resumed = await resumeActiveProjectReplacement(fixture.target, options);
+      } else {
+        try { resumed = await resumeActiveProjectReplacement(fixture.target, options); }
+        catch (error) {
+          await appendOwnerHistoryDiagnostics(error, fixture.target, worker);
+          throw error;
+        }
+      }
       assert.equal(resumed.replaced, true);
       assert.equal((await verifyActiveProjectRestore(fixture.target, ready.operationId)).active, true);
       if (originalManifest) assert.deepEqual(await readFile(path.join(root, "outgoing/replacement-manifest.json")), originalManifest);
