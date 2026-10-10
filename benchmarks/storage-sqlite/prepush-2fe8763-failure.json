@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "revision": "2fe8763729075527df749ce8432a8646fc719ce3",
+  "exitCode": 1,
+  "trackedSourceFiles": 3365,
+  "sourceUnchanged": true,
+  "changedFiles": [],
+  "failure": "secret-scan: tests/storage-maintenance-incarnation.test.js:117 sensitive-assignment",
+  "core": {
+    "tests": 3070,
+    "passed": 3054,
+    "failed": 0,
+    "skipped": 16
+  },
+  "mcpClean": {
+    "tests": 84,
+    "passed": 84,
+    "failed": 0,
+    "skipped": 0
+  },
+  "log": "prepush-2fe8763.log",
+  "capturedAt": "2026-10-10T15:19:38.761310+00:00",
+  "passedStages": [
+    "coverage",
+    "critical-coverage:check",
+    "lint",
+    "dependency:policy",
+    "complexity:check",
+    "docs:check",
+    "completions:check",
+    "summary:check",
+    "changelog:check",
+    "repository-index:manifest",
+    "repository:hygiene",
+    "poc:evidence:verify",
+    "poc:evidence:test",
+    "mcp:test:clean",
+    "mcp:pack:check",
+    "pack:check",
+    "python-unittest",
+    "markdown-self-test",
+    "markdown-validator",
+    "loop-self-test",
+    "loop-validator"
+  ],
+  "failedStage": "secret-scan",
+  "fullPrepushPassed": false
+}

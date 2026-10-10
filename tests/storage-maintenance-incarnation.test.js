@@ -114,20 +114,20 @@ test("the fixed Windows observer reports a missing PID as NOT_FOUND", { skip: pr
 test("Windows owner liveness refuses the same token and accepts a different verified incarnation", { skip: process.platform !== "win32" }, async () => {
   const observed = await readWindowsProcessIncarnation(process.pid);
   assert.ok(observed?.status === "ALIVE" && observed.hasExited === false, "self identity must be available for Windows owner admission");
-  const token = {
+  const processIncarnation = {
     kind: WINDOWS_PROCESS_INCARNATION_KIND,
     pid: process.pid,
     schemaVersion: 1,
     startTimeTicks: observed.startTimeTicks,
   };
-  const fixture = await retainedOwner(ownerRecord(token));
+  const fixture = await retainedOwner(ownerRecord(processIncarnation));
   try {
     const owner = JSON.parse(fixture.bytes);
     await assert.rejects(
       resumeStorageMaintenance(fixture.target, { expectedOwnerId: owner.ownerId, writersQuiesced: true }, () => assert.fail("same live incarnation must refuse recovery")),
       { code: "E_STORAGE_MAINTENANCE_IN_PROGRESS" },
     );
-    const differentToken = { ...token, startTimeTicks: token.startTimeTicks === "1" ? "2" : "1" };
+    const differentToken = { ...processIncarnation, startTimeTicks: processIncarnation.startTimeTicks === "1" ? "2" : "1" };
     await writeFile(ownerPath(fixture.target), JSON.stringify({ ...owner, processIncarnation: differentToken }) + "\n");
     let invoked = false;
     await resumeStorageMaintenance(fixture.target, { expectedOwnerId: owner.ownerId, writersQuiesced: true }, () => { invoked = true; });
