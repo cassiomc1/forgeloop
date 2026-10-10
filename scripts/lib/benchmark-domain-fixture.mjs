@@ -48,6 +48,13 @@ function refusal(message, details = {}) {
   return error;
 }
 
+function publicFixtureRefusal(message, details = {}) {
+  const error = new Error(`PUBLIC_FIXTURE_BASELINE_REFUSED: ${message}`);
+  error.code = "E_BENCHMARK_BASELINE_PUBLIC_FIXTURE_UNSUPPORTED";
+  error.details = details;
+  return error;
+}
+
 function modulePath(root, relativePath) {
   return pathToFileURL(path.join(root, relativePath)).href;
 }
@@ -64,9 +71,31 @@ async function importRequiredModule(root, relativePath) {
   }
 }
 
+async function importRequiredPublicModule(root, relativePath) {
+  try {
+    return await import(modulePath(root, relativePath));
+  } catch (error) {
+    throw publicFixtureRefusal(`baseline does not expose ${relativePath}`, {
+      relativePath,
+      causeCode: error.code ?? null,
+      causeMessage: error.message,
+    });
+  }
+}
+
 function requireFunction(module, name, relativePath) {
   if (typeof module?.[name] !== "function") {
     throw refusal(`baseline ${relativePath} lacks ${name} required by the rich fixture`, {
+      relativePath,
+      name,
+    });
+  }
+  return module[name];
+}
+
+function requirePublicFunction(module, name, relativePath) {
+  if (typeof module?.[name] !== "function") {
+    throw publicFixtureRefusal(`baseline ${relativePath} lacks ${name} required by the public fixture`, {
       relativePath,
       name,
     });
@@ -169,6 +198,55 @@ export async function buildPublicScaleTaskFixture({
     expectedInitialEventCount: 2,
     pathPrefix,
   });
+}
+
+/** Build a complete public task population without direct storage seeding. */
+export async function buildPublicTaskDataset({
+  target,
+  packageRoot = getPackageRoot(),
+  size,
+  startIndex = 0,
+  taskIdAt,
+  claimsForIndex,
+  pathForIndex,
+  eventCount,
+  eventCountForIndex,
+} = {}) {
+  assert.ok(Number.isInteger(size) && size >= 1);
+  assert.ok(Number.isInteger(startIndex) && startIndex >= 0 && startIndex <= size);
+  assert.equal(typeof taskIdAt, "function");
+  assert.ok(typeof eventCountForIndex === "function" || Number.isInteger(eventCount));
+  const taskIds = [];
+  for (let index = startIndex; index < size; index++) {
+    const taskId = taskIdAt(index);
+    const claims = claimsForIndex ? claimsForIndex(index) : [`src/populated-cli-task-${index}`];
+    const pathPrefix = pathForIndex ? pathForIndex(index) : `src/populated-cli-task-${index}/input.js`;
+    const requestedEventCount = eventCountForIndex ? eventCountForIndex(index) : eventCount;
+    assert.ok(Number.isInteger(requestedEventCount) && requestedEventCount >= 2,
+      "public task datasets require the two task-create events before observations");
+    await buildPublicScaleTaskFixture({
+      target,
+      packageRoot,
+      taskId,
+      claims,
+      eventCount: requestedEventCount,
+      pathPrefix,
+    });
+    taskIds.push(taskId);
+  }
+  return taskIds;
+}
+
+/** Describe the exact event composition emitted by an ordinary public task. */
+export function describePublicFixtureEventComposition(eventCount) {
+  assert.ok(Number.isInteger(eventCount) && eventCount >= 2);
+  const transactionCommitEvents = eventCount > 2 ? 1 : 0;
+  return {
+    totalEvents: eventCount,
+    taskCreateEvents: 2,
+    observationEvents: eventCount - 2 - transactionCommitEvents,
+    transactionCommitEvents,
+  };
 }
 
 /**
@@ -327,6 +405,75 @@ export async function buildRichSelectedTaskFixture({
   };
 }
 
+async function comparePublicTaskParity({
+  nativeRoot,
+  portableRoot,
+  currentRoot,
+  baselineRoot,
+  taskIds,
+  validateBaselineLedger,
+  resolveBaselineClaims,
+  readBaselineWorkState,
+  refusalFactory,
+} = {}) {
+  const taskParity = [];
+  for (const candidateTaskId of taskIds ?? []) {
+    const nativeLedger = await validateEventLedger(nativeRoot, currentRoot, { taskId: candidateTaskId });
+    const baselineLedger = await validateBaselineLedger(portableRoot, baselineRoot, { taskId: candidateTaskId });
+    if (!nativeLedger.valid || !baselineLedger.valid) {
+      throw refusalFactory("a public task failed ledger validation on one backend", {
+        taskId: candidateTaskId,
+        nativeErrors: nativeLedger.errors,
+        baselineErrors: baselineLedger.errors,
+      });
+    }
+    assert.deepEqual(baselineLedger.events, nativeLedger.events, `public task ${candidateTaskId} ledger differs after export`);
+    const nativeState = await readWorkState(nativeRoot, { packageRoot: currentRoot, taskId: candidateTaskId });
+    const baselineState = await readBaselineWorkState(portableRoot, { packageRoot: baselineRoot, taskId: candidateTaskId });
+    assert.deepEqual(baselineState, nativeState, `public task ${candidateTaskId} state differs after export`);
+    const nativeClaims = await resolveTaskClaimState(nativeRoot, { packageRoot: currentRoot, taskId: candidateTaskId });
+    const baselineClaims = await resolveBaselineClaims(portableRoot, { packageRoot: baselineRoot, taskId: candidateTaskId });
+    assert.deepEqual(baselineClaims, nativeClaims, `public task ${candidateTaskId} claims differ after export`);
+    taskParity.push({
+      taskId: candidateTaskId,
+      eventCount: nativeLedger.events.length,
+      phase: nativeState?.phase ?? null,
+      claimState: nativeClaims.claimState,
+    });
+  }
+  return taskParity;
+}
+
+/** Validate ordinary public task projections against the pinned baseline. */
+export async function validatePublicTaskParity({
+  nativeRoot,
+  portableRoot,
+  currentRoot = getPackageRoot(),
+  baselineRoot,
+  taskIds = [],
+} = {}) {
+  assert.ok(Array.isArray(taskIds) && taskIds.length > 0);
+  const eventModule = await importRequiredPublicModule(baselineRoot, "src/core/events.js");
+  const claimsModule = await importRequiredPublicModule(baselineRoot, "src/core/task-claim-state.js");
+  const workStateModule = await importRequiredPublicModule(baselineRoot, "src/core/work-state.js");
+  const taskParity = await comparePublicTaskParity({
+    nativeRoot,
+    portableRoot,
+    currentRoot,
+    baselineRoot,
+    taskIds,
+    validateBaselineLedger: requirePublicFunction(eventModule, "validateEventLedger", "src/core/events.js"),
+    resolveBaselineClaims: requirePublicFunction(claimsModule, "resolveTaskClaimState", "src/core/task-claim-state.js"),
+    readBaselineWorkState: requirePublicFunction(workStateModule, "readWorkState", "src/core/work-state.js"),
+    refusalFactory: publicFixtureRefusal,
+  });
+  return {
+    status: "VALIDATED",
+    tasks: taskParity.length,
+    taskParity,
+  };
+}
+
 /**
  * Compare the rich selected-task artifacts, and optionally every public scale
  * task, through the pinned baseline's read/validation APIs. Missing baseline
@@ -387,29 +534,20 @@ export async function validateRichFixtureAcrossBackends({
     assert.deepEqual(baseline[field], native[field], `portable baseline ${field} differs from native rich fixture`);
   }
 
-  const taskParity = [];
-  for (const candidateTaskId of taskIds ?? []) {
-    const nativeLedger = await validateEventLedger(nativeRoot, currentRoot, { taskId: candidateTaskId });
-    const baselineLedger = await validateBaselineLedger(portableRoot, baselineRoot, { taskId: candidateTaskId });
-    if (!nativeLedger.valid || !baselineLedger.valid) {
-      throw refusal("a public scale task failed ledger validation on one backend", {
-        taskId: candidateTaskId,
-        nativeErrors: nativeLedger.errors,
-        baselineErrors: baselineLedger.errors,
-      });
-    }
-    assert.deepEqual(baselineLedger.events, nativeLedger.events, `public task ${candidateTaskId} ledger differs after export`);
-    const nativeState = await readWorkState(nativeRoot, { packageRoot: currentRoot, taskId: candidateTaskId });
-    const baselineState = await readBaselineWorkState(portableRoot, { packageRoot: baselineRoot, taskId: candidateTaskId });
-    assert.deepEqual(baselineState, nativeState, `public task ${candidateTaskId} state differs after export`);
-    const nativeClaims = await resolveTaskClaimState(nativeRoot, { packageRoot: currentRoot, taskId: candidateTaskId });
-    const baselineClaims = await resolveBaselineClaims(portableRoot, { packageRoot: baselineRoot, taskId: candidateTaskId });
-    assert.deepEqual(baselineClaims, nativeClaims, `public task ${candidateTaskId} claims differ after export`);
-    taskParity.push({ taskId: candidateTaskId, eventCount: nativeLedger.events.length, phase: nativeState?.phase ?? null, claimState: nativeClaims.claimState });
-  }
+  const taskParity = await comparePublicTaskParity({
+    nativeRoot,
+    portableRoot,
+    currentRoot,
+    baselineRoot,
+    taskIds,
+    validateBaselineLedger,
+    resolveBaselineClaims,
+    readBaselineWorkState,
+    refusalFactory: refusal,
+  });
 
   return {
-    status: "ACCEPTED",
+    status: "VALIDATED",
     taskId,
     requiredApis: [
       "events.validateEventLedger",
@@ -425,6 +563,6 @@ export async function validateRichFixtureAcrossBackends({
     recoveryStatus: native.recovery?.status ?? null,
     claimState: native.claims.claimState,
     identitiesEqual: true,
-    ...(taskParity.length > 0 ? { publicTaskParity: { status: "ACCEPTED", tasks: taskParity.length, taskParity } } : {}),
+    ...(taskParity.length > 0 ? { publicTaskParity: { status: "VALIDATED", tasks: taskParity.length, taskParity } } : {}),
   };
 }

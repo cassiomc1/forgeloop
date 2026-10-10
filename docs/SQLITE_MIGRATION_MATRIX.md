@@ -4,38 +4,41 @@ Current checkpoint progress: [SQLite migration progress](SQLITE_PROGRESS.md).
 
 ## Current source and acceptance boundary
 
-The latest production correction is `03bbf94`: private owned audit snapshots
-check main-file and WAL identity before direct reads and at iterator boundaries.
-Full prepush at that revision passed 22 stages with all 3,208 tracked source
-hashes unchanged; 41 focused snapshot/routing controls also passed. See
-`benchmarks/storage-sqlite/prepush-03bbf94-success.json` and
-`benchmarks/storage-sqlite/owned-snapshot-read-guard-correction.json`.
-The four task-resource parity cases now reside in the MCP dependency suite;
-its clean packed-package run passed 81 tests. These corrections supersede the
-older source descriptions below, not their source-bound historical receipts.
+The latest committed correction is `d870414`, which preserves structured
+completion rejection when typed storage admission detects a foreign task-state
+payload. Its 114 focused tests and fast validation pass. The preceding full
+prepush at `51065cc` failed on this case and stopped in coverage; later stages
+were not executed. A full prepush on the combined final source remains required.
+See `benchmarks/storage-sqlite/completion-typed-admission-correction.json` and
+`benchmarks/storage-sqlite/prepush-51065cc-failure.json`.
 
-Windows focused storage/replacement validation at `e7acc63` passed 37 tests on
-Node 24.21.0. This validates the closed-worker fixture correction, not the full
-current Windows suite or a proven general process-handle timing diagnosis. See
-`benchmarks/storage-sqlite/windows-storage-correction-e7acc63-success.json`.
+Commit `51065cc` consolidates typed action, approval and execution storage while
+preserving task-descriptor admission, staged isolation, idempotency observations
+and transaction identity checks. Public rich task fixtures have validated native
+and portable ledger, state and claim parity. Fixture validation emits no timing
+samples and does not establish performance acceptance.
 
-The current reviewed inclusive function scope counts **32,479** lines against
-baseline **25,732** and ceiling **19,299**, with zero unresolved membership.
-Membership and exclusions are unchanged; source bindings alone were refreshed.
-The five-line discovery declaration remains counted. The remaining reduction
-required is **13,180 lines**. Retained inputs, result and review receipt are
-under `benchmarks/storage-sqlite/persistence-loc/` with the `7531da3` prefix,
-bound to production at `e7acc63`. A separate clean `a6a852f` whole-module
-cross-check retains 349 modules and counts 59,659 current / 51,248 baseline
-lines. It is scope-incomplete and cannot replace the function-scope gate.
+The latest closed inclusive function scope remains historical: at `8be05f7`,
+**32,480** lines against baseline **25,732** and ceiling **19,299**, with zero
+unresolved membership. A partial refresh at `51065cc` reports 31,938 lines but
+still has **178 unresolved bindings or memberships**, so it is not a closed
+comparable count and cannot establish acceptance. Every storage, importer,
+exporter and maintenance module remains included. The original **25%** target
+is unchanged and unmet. Current scope closure and architectural reduction are
+still in progress.
 
-The original performance matrix remains open on this production correction.
-Windows per-row whole-database integrity hashing has an unresolved scaling
-risk. The new Linux runner observer is prepared but has not executed in a
-benchmark; it cannot prove shared Windows-host isolation. No new benchmark
-acceptance, full newest-source platform acceptance, whole-goal closure or PR
-is claimed. Current CI must be queried directly; a running or queued job is
-not a passed gate.
+The paired MCP resource job on `20aca2b` completed successfully with equal
+responses, 200 samples per case, and 3,057 unchanged tracked source hashes.
+SQLite p95 was approximately four times faster, with higher observed memory
+usage. These historical diagnostic results do not establish the original full
+performance/resource matrix or shared physical-host isolation. See
+`benchmarks/storage-sqlite/mcp-resources927-complete.json`.
+
+The latest retained Windows focused result at `8245dd7` passed 21 tests;
+full-suite and benchmark execution were skipped. Current full platform,
+package/runtime, whole-consumer, performance and LOC acceptance remain open.
+No whole-goal completion, validator-backed closure, PR or publication is claimed.
+Query live CI separately from these source-bound historical receipts.
 
 ### Original definition-of-done audit
 

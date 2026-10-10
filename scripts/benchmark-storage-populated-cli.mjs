@@ -12,8 +12,10 @@ import { buildProtocolEvent } from "../src/core/events.js";
 import { openStorageDatabase, runInTransaction, upsertTask, reserveClaims, appendEvent, exportDatabase } from "../src/storage/index.js";
 import {
   appendCanonicalObservationEvents,
-  buildPublicScaleTaskFixture,
+  buildPublicTaskDataset,
   buildRichSelectedTaskFixture,
+  describePublicFixtureEventComposition,
+  validatePublicTaskParity,
   validateRichFixtureAcrossBackends,
 } from "./lib/benchmark-domain-fixture.mjs";
 
@@ -30,7 +32,7 @@ const selectedEvents = Number(argument("selected-events") ?? 1000);
 const repeats = Number(argument("repeats") ?? 20);
 const validationOnly = process.argv.includes("--validate-only");
 const fixtureMode = argument("fixture") ?? "synthetic";
-assert.ok(["synthetic", "canonical-rich", "canonical-rich-all"].includes(fixtureMode), "--fixture must be synthetic, canonical-rich, or canonical-rich-all");
+assert.ok(["synthetic", "canonical-basic-all", "canonical-rich", "canonical-rich-all"].includes(fixtureMode), "--fixture must be synthetic, canonical-basic-all, canonical-rich, or canonical-rich-all");
 const cpuProfileDirectory = argument("cpu-profile-dir");
 assert.ok(!cpuProfileDirectory || validationOnly, "CPU profiling requires --validate-only; instrumented samples are not release latency");
 if (cpuProfileDirectory) await mkdir(path.resolve(cpuProfileDirectory), { recursive: true });
@@ -46,7 +48,53 @@ for (const [backend, root] of Object.entries({ baseline: baselineRoot, native: c
   code[backend] = { packageVersion: packageJson.version, cliSha256: createHash("sha256").update(await readFile(path.join(root, "src/cli.js"))).digest("hex") };
 }
 
+async function exportPublicDataset(nativeRoot, portableRoot) {
+  const db = openStorageDatabase(path.join(nativeRoot, ".forgeloop/state.sqlite"));
+  try {
+    assert.equal(db.prepare("PRAGMA synchronous").get().synchronous, 2);
+    assert.equal(db.prepare("PRAGMA journal_mode").get().journal_mode, "wal");
+    await exportDatabase(db, portableRoot);
+    return {
+      events: db.prepare("SELECT count(*) AS count FROM events").get().count,
+      sqliteVersion: db.prepare("SELECT sqlite_version() AS version").get().version,
+    };
+  } finally {
+    try { db.close(); } catch {}
+  }
+}
+
 async function seed(nativeRoot, portableRoot, size) {
+  if (fixtureMode === "canonical-basic-all") {
+    assert.ok(eventsPerTask >= 2, "--events must be at least the two public task-create events");
+    assert.ok(selectedEvents >= 2, "--selected-events must be at least the two public task-create events");
+    const taskIds = await buildPublicTaskDataset({
+      target: nativeRoot,
+      packageRoot: currentRoot,
+      size,
+      taskIdAt,
+      eventCountForIndex: index => index === 0 ? selectedEvents : eventsPerTask,
+      claimsForIndex: index => [`src/populated-cli-task-${index}`],
+      pathForIndex: index => `src/populated-cli-task-${index}/input.js`,
+    });
+    const dataset = await exportPublicDataset(nativeRoot, portableRoot);
+    dataset.publicTaskParity = await validatePublicTaskParity({
+      nativeRoot,
+      portableRoot,
+      currentRoot,
+      baselineRoot,
+      taskIds,
+    });
+    dataset.publicTaskGeneration = {
+      status: "VALIDATED",
+      allTasksPublic: true,
+      tasks: size,
+      selectedTaskEvents: selectedEvents,
+      otherTaskEvents: eventsPerTask,
+      selectedTaskEventProfile: describePublicFixtureEventComposition(selectedEvents),
+      otherTaskEventProfile: describePublicFixtureEventComposition(eventsPerTask),
+    };
+    return dataset;
+  }
   if (fixtureMode === "canonical-rich-all") {
     const richFixture = await buildRichSelectedTaskFixture({ target: nativeRoot, packageRoot: currentRoot, taskId: taskIdAt(0) });
     assert.ok(selectedEvents >= richFixture.ledger.length,
@@ -59,44 +107,34 @@ async function seed(nativeRoot, portableRoot, size) {
       expectedInitialEventCount: richFixture.ledger.length,
       pathPrefix: "src/populated-cli-selected/input.js",
     });
-    for (let index = 1; index < size; index++) {
-      await buildPublicScaleTaskFixture({
-        target: nativeRoot,
-        packageRoot: currentRoot,
-        taskId: taskIdAt(index),
-        claims: [`src/populated-cli-task-${index}`],
-        eventCount: eventsPerTask,
-        pathPrefix: `src/populated-cli-task-${index}/input.js`,
-      });
-    }
-    const db = openStorageDatabase(path.join(nativeRoot, ".forgeloop/state.sqlite"));
-    try {
-      assert.equal(db.prepare("PRAGMA synchronous").get().synchronous, 2);
-      assert.equal(db.prepare("PRAGMA journal_mode").get().journal_mode, "wal");
-      await exportDatabase(db, portableRoot);
-      const dataset = {
-        events: db.prepare("SELECT count(*) AS count FROM events").get().count,
-        sqliteVersion: db.prepare("SELECT sqlite_version() AS version").get().version,
-      };
-      db.close();
-      dataset.richFixtureAdmission = await validateRichFixtureAcrossBackends({
-        nativeRoot,
-        portableRoot,
-        currentRoot,
-        baselineRoot,
-        taskId: taskIdAt(0),
-        taskIds: Array.from({ length: size }, (_, index) => taskIdAt(index)),
-      });
-      dataset.richPreludeEvents = richFixture.ledger.length;
-      dataset.publicTaskGeneration = {
-        status: "ACCEPTED",
-        allTasksPublic: true,
-        tasks: size,
-        selectedTaskEvents: selectedEvents,
-        otherTaskEvents: eventsPerTask,
-      };
-      return dataset;
-    } finally { try { db.close(); } catch {} }
+    const publicTaskIds = size > 1 ? await buildPublicTaskDataset({
+      target: nativeRoot,
+      packageRoot: currentRoot,
+      size,
+      startIndex: 1,
+      eventCount: eventsPerTask,
+      taskIdAt,
+      claimsForIndex: index => [`src/populated-cli-task-${index}`],
+      pathForIndex: index => `src/populated-cli-task-${index}/input.js`,
+    }) : [];
+    const dataset = await exportPublicDataset(nativeRoot, portableRoot);
+    dataset.richFixtureAdmission = await validateRichFixtureAcrossBackends({
+      nativeRoot,
+      portableRoot,
+      currentRoot,
+      baselineRoot,
+      taskId: taskIdAt(0),
+      taskIds: [taskIdAt(0), ...publicTaskIds],
+    });
+    dataset.richPreludeEvents = richFixture.ledger.length;
+    dataset.publicTaskGeneration = {
+      status: "VALIDATED",
+      allTasksPublic: true,
+      tasks: size,
+      selectedTaskEvents: selectedEvents,
+      otherTaskEvents: eventsPerTask,
+    };
+    return dataset;
   }
   const richFixture = fixtureMode === "canonical-rich"
     ? await buildRichSelectedTaskFixture({ target: nativeRoot, packageRoot: currentRoot, taskId: taskIdAt(0) })
@@ -214,10 +252,12 @@ for (const size of sizes) {
 process.stdout.write(`${JSON.stringify({ schemaVersion: 1, baselineRevision, node: process.version, platform: process.platform, architecture: process.arch,
   cpu: os.cpus()[0]?.model, totalMemoryBytes: os.totalmem(), code, validationOnly, releaseThresholdsVerified: false,
   normalizedFields: ["history.snapshot.capturedAt: validated timestamp, omitted only from equality"],
-  runtime: fixtureMode === "canonical-rich-all"
+  runtime: fixtureMode === "canonical-basic-all"
+    ? "Fresh CLI per sample, alternating backend order, warm filesystem caches; every task created through public task/event APIs with exact selected and scale event dimensions"
+    : fixtureMode === "canonical-rich-all"
     ? "Fresh CLI per sample, alternating backend order, warm filesystem caches; every task created through public task/event APIs, with one selected task exercising lifecycle/action/diagnosis/recovery"
     : fixtureMode === "canonical-rich"
     ? "Fresh CLI per sample, alternating backend order, warm filesystem caches; one public lifecycle/action/diagnosis/recovery selected task plus synthetic scale-only RECEIVED tasks"
     : "Fresh CLI per sample, alternating backend order, warm filesystem caches; synthetic valid RECEIVED tasks with disjoint claims and hash-chained observations",
   durability: "SQLite WAL/FULL; read-only benchmark does not measure commit durability",
-  limitations: ["No filesystem-cold, persistent MCP, filesystem operation count, lock-wait, peak RSS, event-loop or WAL-peak claim", "CLI hashes identify entrypoints, not a complete source manifest; bind final measurements to an immutable checkout", "Canonical-rich mode keeps bulk tasks diagnostic-only until public generation is equivalent", "Canonical-rich-all validates every public task ledger and claim projection before sampling", "Validation-only mode emits no timing samples or latency acceptance claim"], results }, null, 2)}\n`);
+  limitations: ["No filesystem-cold, persistent MCP, filesystem operation count, lock-wait, peak RSS, event-loop or WAL-peak claim", "CLI hashes identify entrypoints, not a complete source manifest; bind final measurements to an immutable checkout", "Canonical-rich mode keeps bulk tasks diagnostic-only until public generation is equivalent", "Canonical-basic-all validates every public task ledger, state and claim projection before sampling", "Canonical-rich-all validates every public task ledger and claim projection before sampling", "Validation-only mode emits no timing samples or latency acceptance claim"], results }, null, 2)}\n`);
