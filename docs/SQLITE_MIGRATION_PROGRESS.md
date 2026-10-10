@@ -1,5 +1,11 @@
 # SQLite migration progress
 
+## Current ledger-memory observation and hosted Core result
+
+The frozen `ebb632b` macOS ledger run completed all 18 workers, with parent exit zero, all worker PIDs absent afterward, equal full-payload digest/count/head on measured rows, unchanged tracked hashes and empty benchmark temporary prefixes. At 100,000 events, native iterator / detached audit / export peaked at approximately 123 / 140 / 134 MiB worker RSS; the public array audit peaked at 533 MiB. Baseline iterator and audit refused the existing whole-ledger JSON limit and cannot qualify for an equal-output speedup. At 1,000 events, native iterator and array audit were slower in this three-repeat observation; diagnosis is required. Raw rows, worker closure records, source manifest, first-cause log and terminal receipt are retained with prefix `benchmarks/storage-sqlite/ledger-ebb632b-macos`. Background activity/cache state and memory ceilings remain uncontrolled or undeclared; no performance acceptance is inferred.
+
+Core run `38042716555` completed successfully at `d4a4856`, with all 17 jobs successful, including five test shards, coverage, audit, lint, tarball smoke and native Repository Index checks on macOS/Windows/Linux. This records its exact source; newer fixture/observer cases and benchmark drivers require their own evidence. The hosted macOS index job completed before the ledger measurement began. See `benchmarks/storage-sqlite/core-d4a4856-terminal-review.json`. Full current Windows, original LOC/performance and validator closure remain open.
+
 ## Current macOS commit observation
 
 A frozen local run at `7bcfeaf` completed all 10 / 1,000 / 100,000-event rows with 20 repetitions and three deterministic claims on Node 24.19.0 / Apple M2. Both source manifests stayed unchanged. At 10 and 1,000 events, result/state/tail/ownership parity matched, with observed native p95 reductions of 89.8% and 90.9%. The 100,000-event baseline ownership audit refused its existing JSON limit, so that timing row is explicitly ineligible for equal-validation acceptance. Raw samples and manifests are retained in `benchmarks/storage-sqlite/commit-7bcfeaf-macos-observation.json.gz`; the summary retains qualifications.
