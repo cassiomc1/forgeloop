@@ -655,3 +655,117 @@ for (const [operation, event] of [
     });
   });
 }
+
+for (const [name, read] of [
+  ["action", store => store.readAction("typed-observed", "action-missing")],
+  ["approval", store => store.readApproval("typed-observed", "approval-missing")],
+  ["execution", store => store.readExecution("typed-observed", "exec-missing")],
+  ["action collection", store => store.listActions("typed-observed")],
+  ["approval collection", store => store.listApprovals("typed-observed")],
+  ["idempotency", store => store.findActionByIdempotencyKey("typed-observed", "missing")],
+]) {
+  test(`typed ${name} preparation rejects a changed canonical task descriptor`, async () => {
+    await project(async ({ target, db }) => {
+      await withOperationalStore({ db, target }, () => executeForgeLoopCommand({ command: "task-create", projectPath: target, input: { taskId: "typed-observed", claims: [] } }));
+      const other = openStorageDatabase(path.join(target, "state.sqlite"));
+      try {
+        await assert.rejects(withOperationalStore({ db, target }, store => withOperationalTransaction({ target, taskId: "typed-observed", operation: "typed-read-conflict", recordCommitEvent: false }, () => {
+          read(store);
+          other.prepare("UPDATE tasks SET updated_at = ? WHERE task_id = ?").run("typed-concurrent-marker", "typed-observed");
+        })), { code: "E_STATE_REVISION_CONFLICT" });
+        assert.equal(findTaskById(db, "typed-observed").updatedAt, "typed-concurrent-marker");
+        assert.equal(listEvents(db, "typed-observed").length, 2);
+      } finally { other.close(); }
+    });
+  });
+}
+
+test("staged action reads and collection enumeration preserve prepared identity and bytes", async () => {
+  await project(async ({ target, db }) => {
+    const taskId = "typed-isolation";
+    await withOperationalStore({ db, target }, async store => {
+      await executeForgeLoopCommand({ command: "task-create", projectPath: target, input: { taskId, claims: [] } });
+      const { action } = await proposeAction(target, { packageRoot: getPackageRoot(), taskId, input: {
+        actionId: "action-isolated", effectClass: "EXTERNAL_PUBLICATION", capability: "repository.push",
+        operation: "push branch", target: "origin/topic", idempotencyKey: "isolated-once",
+        requiredForCompletion: true, requirement: "publication", provenance: "HOST_REPORTED",
+      } });
+      await withOperationalTransaction({ target, taskId, operation: "typed-isolation", recordCommitEvent: false }, transaction => {
+        transaction.stageAction(action);
+        action.target = "caller-mutated";
+        for (const value of [store.readAction(taskId, action.actionId), store.listActions(taskId)[0], store.findActionByIdempotencyKey(taskId, "isolated-once")]) {
+          assert.equal(value.target, "origin/topic");
+          value.actionId = "action-rebound";
+          value.target = "returned-value-mutated";
+        }
+        assert.deepEqual(store.listArtifactNames(taskId, "actions"), ["action-isolated.json"]);
+        assert.equal(store.readAction(taskId, "action-isolated").target, "origin/topic");
+      });
+      const rows = db.prepare("SELECT action_id, payload_json FROM actions WHERE task_id = ?").all(taskId);
+      assert.equal(rows.length, 1);
+      assert.equal(rows[0].action_id, "action-isolated");
+      assert.equal(JSON.parse(rows[0].payload_json).target, "origin/topic");
+    });
+  });
+});
+
+test("new staged approval and execution names are visible without exposing mutable values", async () => {
+  await project(async ({ target, db }) => {
+    const taskId = "task-1";
+    await withOperationalStore({ db, target }, async store => {
+      await executeForgeLoopCommand({ command: "task-create", projectPath: target, input: { taskId, claims: [] } });
+      const approval = JSON.parse(await readFile(path.join(getPackageRoot(), "tests/fixtures/schemas/approval/valid.json"), "utf8"));
+      const execution = { ...JSON.parse(await readFile(path.join(getPackageRoot(), "tests/fixtures/schemas/execution/valid.json"), "utf8")), taskId, executionId: "exec-isolated" };
+      const stop = new Error("rollback isolation probe");
+      await assert.rejects(withOperationalTransaction({ target, taskId, operation: "typed-new-record-isolation", recordCommitEvent: false }, transaction => {
+        transaction.stageApproval(approval);
+        transaction.stageExecution(execution);
+        approval.reason = "input mutation";
+        execution.argv.push("input mutation");
+        store.readApproval(taskId, approval.approvalId).reason = "read mutation";
+        store.listApprovals(taskId)[0].reason = "list mutation";
+        store.readExecution(taskId, execution.executionId).argv.push("read mutation");
+        assert.equal(store.readApproval(taskId, approval.approvalId).reason, "release publication requires operator approval");
+        assert.deepEqual(store.readExecution(taskId, execution.executionId).argv, ["fixture"]);
+        assert.deepEqual(store.listArtifactNames(taskId, "approvals"), ["approval-push-1.json"]);
+        assert.deepEqual(store.listArtifactNames(taskId, "executions"), ["exec-isolated.json"]);
+        throw stop;
+      }), error => error === stop);
+      assert.equal(db.prepare("SELECT COUNT(*) AS count FROM approvals WHERE task_id = ?").get(taskId).count, 0);
+      assert.equal(db.prepare("SELECT COUNT(*) AS count FROM executions WHERE task_id = ?").get(taskId).count, 0);
+    });
+  });
+});
+
+test("staged idempotency lookup preserves the unique-key conflict read set", async () => {
+  await project(async ({ target, db }) => {
+    const taskId = "task-1";
+    await withOperationalStore({ db, target }, () => executeForgeLoopCommand({ command: "task-create", projectPath: target, input: { taskId, claims: [] } }));
+    const action = JSON.parse(await readFile(path.join(getPackageRoot(), "tests/fixtures/schemas/action/valid.json"), "utf8"));
+    const competitor = { ...action, actionId: "action-competitor" };
+    const other = openStorageDatabase(path.join(target, "state.sqlite"));
+    try {
+      await assert.rejects(withOperationalStore({ db, target }, store => withOperationalTransaction({ target, taskId, operation: "typed-idempotency-conflict", recordCommitEvent: false }, transaction => {
+        transaction.stageAction(action);
+        assert.equal(store.findActionByIdempotencyKey(taskId, action.idempotencyKey).actionId, action.actionId);
+        other.prepare("INSERT INTO actions (task_id, action_id, idempotency_key, status, revision, payload_json) VALUES (?, ?, ?, ?, ?, ?)")
+          .run(taskId, competitor.actionId, competitor.idempotencyKey, competitor.state, competitor.revision, JSON.stringify(competitor));
+      })), { code: "E_ACTION_IDEMPOTENCY_CONFLICT" });
+      assert.deepEqual(db.prepare("SELECT action_id FROM actions WHERE task_id = ?").all(taskId).map(row => row.action_id), ["action-competitor"]);
+      assert.equal(listEvents(db, taskId).length, 2);
+    } finally { other.close(); }
+  });
+});
+
+test("indexed record dispatch rejects inherited and caller-supplied SQL identifiers", async () => {
+  await project(async ({ target, db }) => {
+    await withOperationalStore({ db, target }, store => {
+      for (const kind of ["__proto__", "constructor", "actions WHERE 1=1 --"]) {
+        for (const read of [() => store.readRecord(kind, "task-1", "action-one"), () => store.listRecords("task-1", kind), () => store.stageRecord(kind, { taskId: "task-1" })]) {
+          assert.throws(read, { code: "E_STORAGE_OPERATION_UNSUPPORTED" });
+        }
+      }
+      assert.equal(db.prepare("SELECT COUNT(*) AS count FROM tasks").get().count, 0);
+    });
+  });
+});

@@ -10,6 +10,12 @@ import { createTaskDescriptor } from "../src/core/task-descriptor.js";
 import { createWorkState } from "../src/core/work-state.js";
 import { buildProtocolEvent } from "../src/core/events.js";
 import { openStorageDatabase, runInTransaction, upsertTask, reserveClaims, appendEvent, exportDatabase } from "../src/storage/index.js";
+import {
+  appendCanonicalObservationEvents,
+  buildPublicScaleTaskFixture,
+  buildRichSelectedTaskFixture,
+  validateRichFixtureAcrossBackends,
+} from "./lib/benchmark-domain-fixture.mjs";
 
 const argument = name => process.argv.find(value => value.startsWith(`--${name}=`))?.slice(name.length + 3);
 const baselineRevision = "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5";
@@ -23,6 +29,8 @@ const eventsPerTask = Number(argument("events") ?? 10);
 const selectedEvents = Number(argument("selected-events") ?? 1000);
 const repeats = Number(argument("repeats") ?? 20);
 const validationOnly = process.argv.includes("--validate-only");
+const fixtureMode = argument("fixture") ?? "synthetic";
+assert.ok(["synthetic", "canonical-rich", "canonical-rich-all"].includes(fixtureMode), "--fixture must be synthetic, canonical-rich, or canonical-rich-all");
 const cpuProfileDirectory = argument("cpu-profile-dir");
 assert.ok(!cpuProfileDirectory || validationOnly, "CPU profiling requires --validate-only; instrumented samples are not release latency");
 if (cpuProfileDirectory) await mkdir(path.resolve(cpuProfileDirectory), { recursive: true });
@@ -39,14 +47,83 @@ for (const [backend, root] of Object.entries({ baseline: baselineRoot, native: c
 }
 
 async function seed(nativeRoot, portableRoot, size) {
-  await mkdir(path.join(nativeRoot, ".forgeloop"));
+  if (fixtureMode === "canonical-rich-all") {
+    const richFixture = await buildRichSelectedTaskFixture({ target: nativeRoot, packageRoot: currentRoot, taskId: taskIdAt(0) });
+    assert.ok(selectedEvents >= richFixture.ledger.length,
+      `--selected-events=${selectedEvents} is below the canonical rich prelude length ${richFixture.ledger.length}`);
+    await appendCanonicalObservationEvents({
+      target: nativeRoot,
+      packageRoot: currentRoot,
+      taskId: taskIdAt(0),
+      eventCount: selectedEvents,
+      expectedInitialEventCount: richFixture.ledger.length,
+      pathPrefix: "src/populated-cli-selected/input.js",
+    });
+    for (let index = 1; index < size; index++) {
+      await buildPublicScaleTaskFixture({
+        target: nativeRoot,
+        packageRoot: currentRoot,
+        taskId: taskIdAt(index),
+        claims: [`src/populated-cli-task-${index}`],
+        eventCount: eventsPerTask,
+        pathPrefix: `src/populated-cli-task-${index}/input.js`,
+      });
+    }
+    const db = openStorageDatabase(path.join(nativeRoot, ".forgeloop/state.sqlite"));
+    try {
+      assert.equal(db.prepare("PRAGMA synchronous").get().synchronous, 2);
+      assert.equal(db.prepare("PRAGMA journal_mode").get().journal_mode, "wal");
+      await exportDatabase(db, portableRoot);
+      const dataset = {
+        events: db.prepare("SELECT count(*) AS count FROM events").get().count,
+        sqliteVersion: db.prepare("SELECT sqlite_version() AS version").get().version,
+      };
+      db.close();
+      dataset.richFixtureAdmission = await validateRichFixtureAcrossBackends({
+        nativeRoot,
+        portableRoot,
+        currentRoot,
+        baselineRoot,
+        taskId: taskIdAt(0),
+        taskIds: Array.from({ length: size }, (_, index) => taskIdAt(index)),
+      });
+      dataset.richPreludeEvents = richFixture.ledger.length;
+      dataset.publicTaskGeneration = {
+        status: "ACCEPTED",
+        allTasksPublic: true,
+        tasks: size,
+        selectedTaskEvents: selectedEvents,
+        otherTaskEvents: eventsPerTask,
+      };
+      return dataset;
+    } finally { try { db.close(); } catch {} }
+  }
+  const richFixture = fixtureMode === "canonical-rich"
+    ? await buildRichSelectedTaskFixture({ target: nativeRoot, packageRoot: currentRoot, taskId: taskIdAt(0) })
+    : null;
+  if (richFixture) {
+    await appendCanonicalObservationEvents({
+      target: nativeRoot,
+      packageRoot: currentRoot,
+      taskId: taskIdAt(0),
+      eventCount: selectedEvents,
+      expectedInitialEventCount: richFixture.ledger.length,
+      pathPrefix: "src/populated-cli-selected/input.js",
+    });
+  }
+  await mkdir(path.join(nativeRoot, ".forgeloop"), { recursive: true });
   const db = openStorageDatabase(path.join(nativeRoot, ".forgeloop/state.sqlite"));
   try {
     assert.equal(db.prepare("PRAGMA synchronous").get().synchronous, 2);
     assert.equal(db.prepare("PRAGMA journal_mode").get().journal_mode, "wal");
+    if (richFixture) {
+      assert.ok(selectedEvents >= richFixture.ledger.length,
+        `--selected-events=${selectedEvents} is below the canonical rich prelude length ${richFixture.ledger.length}`);
+    }
     runInTransaction(db, () => {
       for (let index = 0; index < size; index++) {
         const taskId = taskIdAt(index);
+        if (richFixture && index === 0) continue;
         const descriptor = createTaskDescriptor({ taskId, writeClaims: [`src/task-${index}`], createdAt: timestamp, updatedAt: timestamp });
         const state = createWorkState({ taskId, phase: "RECEIVED", contractFingerprint: "0".repeat(64), repositoryFingerprint: { branch: null, head: null }, lastUpdated: timestamp });
         upsertTask(db, { taskId, descriptor, state });
@@ -61,8 +138,20 @@ async function seed(nativeRoot, portableRoot, size) {
       }
     });
     await exportDatabase(db, portableRoot);
-    return { events: db.prepare("SELECT count(*) AS count FROM events").get().count, sqliteVersion: db.prepare("SELECT sqlite_version() AS version").get().version };
-  } finally { db.close(); }
+    const dataset = { events: db.prepare("SELECT count(*) AS count FROM events").get().count, sqliteVersion: db.prepare("SELECT sqlite_version() AS version").get().version };
+    db.close();
+    if (richFixture) {
+      dataset.richFixtureAdmission = await validateRichFixtureAcrossBackends({
+        nativeRoot,
+        portableRoot,
+        currentRoot,
+        baselineRoot,
+        taskId: taskIdAt(0),
+      });
+      dataset.richPreludeEvents = richFixture.ledger.length;
+    }
+    return dataset;
+  } finally { try { db.close(); } catch {} }
 }
 
 function invoke(backend, target, operation) {
@@ -101,7 +190,7 @@ for (const size of sizes) {
         assert.equal(expected.total, size);
         assert.ok(expected.tasks.every(task => task.healthy && task.ownershipValid && task.mutationAllowed));
       }
-      const result = { operation, tasks: size, eventsPerOtherTask: eventsPerTask, selectedTaskEvents: selectedEvents, ...dataset, outputContractVerified: true,
+      const result = { operation, fixtureMode, tasks: size, eventsPerOtherTask: eventsPerTask, selectedTaskEvents: selectedEvents, ...dataset, outputContractVerified: true,
         outputSha256: createHash("sha256").update(JSON.stringify(expected)).digest("hex") };
       if (!validationOnly) {
         const samples = { baseline: [], native: [] };
@@ -125,6 +214,10 @@ for (const size of sizes) {
 process.stdout.write(`${JSON.stringify({ schemaVersion: 1, baselineRevision, node: process.version, platform: process.platform, architecture: process.arch,
   cpu: os.cpus()[0]?.model, totalMemoryBytes: os.totalmem(), code, validationOnly, releaseThresholdsVerified: false,
   normalizedFields: ["history.snapshot.capturedAt: validated timestamp, omitted only from equality"],
-  runtime: "Fresh CLI per sample, alternating backend order, warm filesystem caches; synthetic valid RECEIVED tasks with disjoint claims and hash-chained observations",
+  runtime: fixtureMode === "canonical-rich-all"
+    ? "Fresh CLI per sample, alternating backend order, warm filesystem caches; every task created through public task/event APIs, with one selected task exercising lifecycle/action/diagnosis/recovery"
+    : fixtureMode === "canonical-rich"
+    ? "Fresh CLI per sample, alternating backend order, warm filesystem caches; one public lifecycle/action/diagnosis/recovery selected task plus synthetic scale-only RECEIVED tasks"
+    : "Fresh CLI per sample, alternating backend order, warm filesystem caches; synthetic valid RECEIVED tasks with disjoint claims and hash-chained observations",
   durability: "SQLite WAL/FULL; read-only benchmark does not measure commit durability",
-  limitations: ["No filesystem-cold, persistent MCP, filesystem operation count, lock-wait, peak RSS, event-loop or WAL-peak claim", "CLI hashes identify entrypoints, not a complete source manifest; bind final measurements to an immutable checkout", "Validation-only mode emits no timing samples or latency acceptance claim"], results }, null, 2)}\n`);
+  limitations: ["No filesystem-cold, persistent MCP, filesystem operation count, lock-wait, peak RSS, event-loop or WAL-peak claim", "CLI hashes identify entrypoints, not a complete source manifest; bind final measurements to an immutable checkout", "Canonical-rich mode keeps bulk tasks diagnostic-only until public generation is equivalent", "Canonical-rich-all validates every public task ledger and claim projection before sampling", "Validation-only mode emits no timing samples or latency acceptance claim"], results }, null, 2)}\n`);

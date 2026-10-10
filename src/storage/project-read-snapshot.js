@@ -8,7 +8,7 @@ export async function withProjectReadSnapshot(target, read) {
   }
   const store = getOperationalStore(target);
   // Prepared operations must retain their staged records and transaction observations.
-  if (!store || store.transaction || store.writes.size || store.events.size || store.attachments.size) return read();
+  if (!store || store.hasPreparedMutations()) return read();
   const { withStorageSnapshot, isOwnedStorageSnapshot } = await import("./snapshot.js");
   // Reuse only a pure reader on an owned immutable copy. Writable ancestors
   // still need detached observation scopes for later conflict checks.

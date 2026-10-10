@@ -171,7 +171,7 @@ export async function writeJsonArtifact(
     if (!dryRun) {
       const scopedTaskId = taskId ?? value.taskId ?? store.transaction?.taskId;
       if (!scopedTaskId) throw new ArtifactError("E_TASK_REQUIRED", "Operational artifact requires a task identity", [relativePath]);
-      await withTaskTransaction({ target, taskId: scopedTaskId, operation, packageRoot }, tx => tx.stageText(relativePath, text));
+      await withTaskTransaction({ target, taskId: scopedTaskId, operation, packageRoot }, tx => tx.stageJsonRecord(relativePath, text, schemaName));
     }
     return { path: relativePath, fingerprint: canonicalFingerprint(value), value };
   }

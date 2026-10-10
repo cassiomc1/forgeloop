@@ -469,7 +469,7 @@ export function classifyTaskClaimState(evidence) {
 export async function withTaskClaimEvidence(target, options, callback) {
   let store;
   try { store = getOperationalStore(target); } catch { /* Preserve collected fail-closed evidence for invalid contexts. */ }
-  if (store && !store.transaction && !store.writes.size && !store.events.size && !store.attachments.size
+  if (store && !store.hasPreparedMutations()
     && typeof options.taskId === "string" && options.taskId) {
     return withEventLedgerAudit(target, options.packageRoot, { taskId: options.taskId }, async ledger => (
       callback(await collectClaimEvidence(target, options, ledger))

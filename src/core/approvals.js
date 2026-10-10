@@ -14,10 +14,9 @@ import {
   E_APPROVAL_STALE,
 } from "./error-codes.js";
 import { isTrustedHostAuthorityContext } from "./capability-policy.js";
-import { taskApprovalPath } from "./task-paths.js";
 import { readAction } from "./actions.js";
 import { readWorkState } from "./work-state.js";
-import { readNativeJson, requireNativeStore, withNativeReadScope } from "./native-storage.js";
+import { requireNativeStore, withNativeReadScope } from "./native-storage.js";
 
 function approvalError(code, message) {
   const error = new Error(message);
@@ -26,18 +25,17 @@ function approvalError(code, message) {
 }
 
 async function readApprovalFile(target, taskId, approvalId) {
-  return withNativeReadScope(target, () => readNativeJson(
+  return withNativeReadScope(target, () => requireNativeStore(
     target,
-    taskApprovalPath(taskId, approvalId),
     approvalError,
     "Approvals require canonical SQLite storage; migrate legacy operational state explicitly",
-  ));
+  ).readApproval(taskId, approvalId));
 }
 
-async function writeApprovalFile(target, taskId, approval) {
+async function writeApprovalFile(target, approval) {
   const transaction = await getTaskTransaction(target);
   if (!transaction) throw approvalError("E_STORAGE_TRANSACTION_INVALID", "Approval persistence requires an active task transaction");
-  return transaction.stageText(taskApprovalPath(taskId, approval.approvalId), `${JSON.stringify(approval, null, 2)}\n`);
+  return transaction.stageApproval(approval);
 }
 
 async function listApprovalFiles(target, taskId) {
@@ -45,7 +43,7 @@ async function listApprovalFiles(target, taskId) {
     target,
     approvalError,
     "Approval listing requires canonical SQLite storage; migrate legacy operational state explicitly",
-  ).listRecords(taskId, "approval").sort((left, right) => String(left.requestedAt).localeCompare(String(right.requestedAt))));
+  ).listApprovals(taskId).sort((left, right) => String(left.requestedAt).localeCompare(String(right.requestedAt))));
 }
 
 function approvalBindingFields(approval) {
@@ -175,7 +173,7 @@ export async function requestApproval(target, { packageRoot, taskId, input }) {
       };
       validateApprovalArtifact(approval);
 
-      await writeApprovalFile(target, taskId, approval);
+      await writeApprovalFile(target, approval);
       await appendProtocolEvent(target, {
         taskId,
         event: "APPROVAL_REQUESTED",
@@ -263,7 +261,7 @@ export async function resolveApproval(target, {
         reason: reason ?? current.reason ?? null,
       };
       validateApprovalArtifact(resolved);
-      await writeApprovalFile(target, taskId, resolved);
+      await writeApprovalFile(target, resolved);
 
       const details = {
         approvalId: resolved.approvalId,

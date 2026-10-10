@@ -3,6 +3,7 @@ import { ensureWithin, fileExists } from "./filesystem.js";
 import {
   ARTIFACT_PATHS,
   executionArtifactPath,
+  parseCapturedJsonArtifact,
   readJsonArtifact,
 } from "./artifacts.js";
 import { taskArtifactPath, taskExecutionPath } from "./task-paths.js";
@@ -95,6 +96,15 @@ export async function readExecutionArtifact({ target, executionRef, packageRoot,
       taskId = store.executionTaskId(executionRef);
     }
     relativePath = taskId ? taskExecutionPath(taskId, executionRef) : executionArtifactPath(executionRef);
+    if (store?.recognizes(relativePath)) {
+      const execution = store.readExecution(taskId, executionRef);
+      return parseCapturedJsonArtifact(
+        execution === null ? null : `${JSON.stringify(execution, null, 2)}\n`,
+        relativePath,
+        "execution",
+        packageRoot,
+      );
+    }
     const artifact = await readJsonArtifact(target, relativePath, "execution", packageRoot);
     return artifact;
   } catch (error) {

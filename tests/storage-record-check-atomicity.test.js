@@ -44,18 +44,18 @@ test("completion canonical paths preserve selected evaluation and roll back reje
     const before = taskRecords(db, taskId);
     await withOperationalStore({ db, target }, async source => {
       const prototype = Object.getPrototypeOf(source);
-      const append = prototype.appendText;
+      const append = prototype.appendEvent;
       let reached = false;
-      prototype.appendText = function(relativePath, text) {
-        const result = append.call(this, relativePath, text);
-        if (this.target === target && relativePath === taskArtifactPath(taskId, "events")) {
+      prototype.appendEvent = function(event) {
+        const result = append.call(this, event);
+        if (this.target === target && event?.taskId === taskId) {
           reached = true;
           throw new Error("injected completion rejection event failure");
         }
         return result;
       };
       try { await assert.rejects(runComplete(options), /injected completion rejection event failure/); }
-      finally { prototype.appendText = append; }
+      finally { prototype.appendEvent = append; }
       assert.equal(reached, true);
     });
     assert.deepEqual(taskRecords(db, taskId), before);
@@ -87,13 +87,14 @@ for (const entry of ["command", "direct API", "direct canonical paths"]) for (co
       const record = entry === "command" ? runRecordCheck : recordCheck;
       await withOperationalStore({ db, target }, async source => {
         const prototype = Object.getPrototypeOf(source);
-        const method = point === "receipt" ? "stageText" : "appendText";
+        const method = point === "receipt" ? "stageText" : "appendEvent";
         const originalStage = prototype[method];
         let reached = false;
-        prototype[method] = function(relativePath, text) {
-          const result = originalStage.call(this, relativePath, text);
+        prototype[method] = function(...args) {
+          const result = originalStage.call(this, ...args);
+          const relativePath = args[0];
           const fail = point === "receipt" ? relativePath === taskArtifactPath(taskId, "receipt")
-            : relativePath === taskArtifactPath(taskId, "events");
+            : args[0]?.taskId === taskId;
           if (this.target === target && fail) { reached = true; throw new Error("injected check staging failure"); }
           return result;
         };
@@ -133,18 +134,18 @@ for (const entry of ["command", "direct API", "direct canonical paths"]) {
       }
       await withOperationalStore({ db, target }, async source => {
         const prototype = Object.getPrototypeOf(source);
-        const append = prototype.appendText;
+        const append = prototype.appendEvent;
         let reached = false;
-        prototype.appendText = function(relativePath, text) {
-          const value = append.call(this, relativePath, text);
-          if (this.target === target && relativePath === taskArtifactPath(taskId, "events")) {
+        prototype.appendEvent = function(event) {
+          const value = append.call(this, event);
+          if (this.target === target && event?.taskId === taskId) {
             reached = true;
             throw new Error("injected preparation witness failure");
           }
           return value;
         };
         try { await assert.rejects(prepare(options), /injected preparation witness failure/); }
-        finally { prototype.appendText = append; }
+        finally { prototype.appendEvent = append; }
         assert.equal(reached, true);
       });
       assert.deepEqual(taskRecords(db, taskId), before);

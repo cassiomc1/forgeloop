@@ -665,7 +665,7 @@ export async function appendProtocolEvent(target, input, packageRoot, options = 
   assertSchema(event, schema, relPath);
   event.hash = eventHash(event);
   if (!options.dryRun) {
-    await activeTransaction.appendText(relPath, `${JSON.stringify(event)}\n`);
+    activeTransaction.appendEvent(event);
     activeTransaction.eventCheckpoints.set(relPath, { schemaVersion: 1, seq: event.seq, lastHash: event.hash });
   }
   return event;
@@ -947,7 +947,7 @@ export async function withEventLedgerAudit(target, packageRoot, options, callbac
   const relPath = options?.eventsPath ?? options?.relativePath ?? (options?.taskId ? taskArtifactPath(options.taskId, "events") : ARTIFACT_PATHS.events);
   const store = getOperationalStore(target);
   // Prepared mutations retain their existing read-set/CAS and staged-overlay semantics.
-  if (!store?.recognizes(relPath) || !relPath.endsWith("/events.ndjson") || store.transaction || store.writes.size || store.events.size || store.attachments.size) {
+  if (!store?.recognizes(relPath) || !relPath.endsWith("/events.ndjson") || store.hasPreparedMutations()) {
     return callback(await validateEventLedger(target, packageRoot, options));
   }
   const taskId = store.taskId({ taskKey: relPath.split("/")[2] });

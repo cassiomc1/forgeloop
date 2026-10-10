@@ -19,8 +19,7 @@ import {
   E_ACTION_STATE_MISMATCH,
   E_ACTION_VERIFICATION_REQUIRED,
 } from "./error-codes.js";
-import { taskActionPath } from "./task-paths.js";
-import { readNativeJson, requireNativeStore, withNativeReadScope } from "./native-storage.js";
+import { requireNativeStore, withNativeReadScope } from "./native-storage.js";
 
 const STATE_EVENT_NAMES = Object.freeze({
   AUTHORIZED: "ACTION_AUTHORIZED",
@@ -39,18 +38,17 @@ function actionError(code, message) {
 }
 
 async function readActionFile(target, taskId, actionId) {
-  return withNativeReadScope(target, () => readNativeJson(
+  return withNativeReadScope(target, () => requireNativeStore(
     target,
-    taskActionPath(taskId, actionId),
     actionError,
     "Actions require canonical SQLite storage; migrate legacy operational state explicitly",
-  ));
+  ).readAction(taskId, actionId));
 }
 
-async function writeActionFile(target, taskId, action) {
+async function writeActionFile(target, action) {
   const transaction = await getTaskTransaction(target);
   if (!transaction) throw actionError("E_STORAGE_TRANSACTION_INVALID", "Action persistence requires an active task transaction");
-  return transaction.stageText(taskActionPath(taskId, action.actionId), `${JSON.stringify(action, null, 2)}\n`);
+  return transaction.stageAction(action);
 }
 
 async function listActionFiles(target, taskId) {
@@ -58,7 +56,7 @@ async function listActionFiles(target, taskId) {
     target,
     actionError,
     "Action listing requires canonical SQLite storage; migrate legacy operational state explicitly",
-  ).listRecords(taskId, "action").sort((left, right) => String(left.createdAt).localeCompare(String(right.createdAt))));
+  ).listActions(taskId).sort((left, right) => String(left.createdAt).localeCompare(String(right.createdAt))));
 }
 
 function assertProposeInput(input) {
@@ -148,7 +146,7 @@ export async function proposeAction(target, { packageRoot, taskId, input }) {
       };
       validateActionArtifact(action);
 
-      await writeActionFile(target, taskId, action);
+      await writeActionFile(target, action);
       await appendProtocolEvent(target, {
         taskId,
         event: "ACTION_PROPOSED",
@@ -191,7 +189,7 @@ export async function findActionByIdempotencyKey(target, { taskId, idempotencyKe
     target,
     actionError,
     "Action listing requires canonical SQLite storage; migrate legacy operational state explicitly",
-  ).actionByIdempotencyKey(taskId, idempotencyKey));
+  ).findActionByIdempotencyKey(taskId, idempotencyKey));
   return found ? validateActionArtifact(found) : null;
 }
 
@@ -255,7 +253,7 @@ async function applyTransition(target, {
         next.commitResultCode = details.commitResultCode;
       }
       validateActionArtifact(next);
-      await writeActionFile(target, taskId, next);
+      await writeActionFile(target, next);
 
       const baseDetails = {
         actionId: next.actionId,

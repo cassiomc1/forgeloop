@@ -37,12 +37,14 @@ for (const entry of ["command", "direct API", "direct canonical paths"]) for (co
       const record = entry === "command" ? runRecordTerminalResult : recordTerminalResult;
       await withOperationalStore({ db, target }, async source => {
         const prototype = Object.getPrototypeOf(source);
-        const method = point === "receipt" ? "stageText" : "appendText";
+        const method = point === "receipt" ? "stageText" : "appendEvent";
         const original = prototype[method];
         let reached = false;
-        prototype[method] = function(relativePath, text) {
-          const result = original.call(this, relativePath, text);
-          if (this.target === target && relativePath === taskArtifactPath(taskId, point === "receipt" ? "receipt" : "events")) {
+        prototype[method] = function(...args) {
+          const result = original.call(this, ...args);
+          const relativePath = args[0];
+          const matches = point === "receipt" ? relativePath === taskArtifactPath(taskId, "receipt") : args[0]?.taskId === taskId;
+          if (this.target === target && matches) {
             reached = true;
             throw new Error("injected terminal result staging failure");
           }
