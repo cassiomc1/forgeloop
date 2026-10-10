@@ -1,0 +1,266 @@
+{
+  "kind": "HISTORY_TAIL_CPU_DIAGNOSIS",
+  "sourceRevision": "cb72425",
+  "parityRunExitCode": 0,
+  "instrumentation": "Node CPU profile; validation-only mode, no latency samples",
+  "finding": "Native profile contains repeated lstat samples during ledger iteration; source confirms main/WAL guards on before-yield and resume",
+  "causalityLimit": "Sampling implicates guarded iteration but does not isolate quantitative contribution or establish safe removal",
+  "preservedBoundary": "No guards or integrity validation removed",
+  "profiles": [
+    {
+      "profile": "baseline-forgeloop-populated-baseline-sJ170N-history-tail.cpuprofile",
+      "sha256": "2a0be83f56ae6d8511a5802c10e7fb43e5433d26d45c74a31f42260fe092b6c3",
+      "samples": 127,
+      "topFrames": [
+        {
+          "samples": 8,
+          "function": "(garbage collector)",
+          "url": "",
+          "line": 0
+        },
+        {
+          "samples": 6,
+          "function": "compileSourceTextModule",
+          "url": "node:internal/modules/esm/utils",
+          "line": 316
+        },
+        {
+          "samples": 4,
+          "function": "compileSourceTextModule",
+          "url": "node:internal/modules/esm/utils",
+          "line": 316
+        },
+        {
+          "samples": 3,
+          "function": "(program)",
+          "url": "",
+          "line": 0
+        },
+        {
+          "samples": 3,
+          "function": "(idle)",
+          "url": "",
+          "line": 0
+        },
+        {
+          "samples": 3,
+          "function": "buildTaskTrace",
+          "url": "file:///Users/cassio/.codex/verification/sqlite-baseline624/src/core/trace.js",
+          "line": 399
+        },
+        {
+          "samples": 2,
+          "function": "open",
+          "url": "",
+          "line": 0
+        },
+        {
+          "samples": 2,
+          "function": "compileSourceTextModule",
+          "url": "node:internal/modules/esm/utils",
+          "line": 316
+        },
+        {
+          "samples": 2,
+          "function": "compileSourceTextModule",
+          "url": "node:internal/modules/esm/utils",
+          "line": 316
+        },
+        {
+          "samples": 2,
+          "function": "compileSourceTextModule",
+          "url": "node:internal/modules/esm/utils",
+          "line": 316
+        },
+        {
+          "samples": 2,
+          "function": "getPackageScopeConfig",
+          "url": "node:internal/modules/package_json_reader",
+          "line": 192
+        },
+        {
+          "samples": 2,
+          "function": "",
+          "url": "file:///Users/cassio/.codex/verification/sqlite-baseline624/src/core/events.js",
+          "line": 589
+        },
+        {
+          "samples": 2,
+          "function": "validate",
+          "url": "file:///Users/cassio/.codex/verification/sqlite-baseline624/src/core/schema-validation.js",
+          "line": 99
+        },
+        {
+          "samples": 1,
+          "function": "internalModuleStat",
+          "url": "",
+          "line": 0
+        },
+        {
+          "samples": 1,
+          "function": "syncLink",
+          "url": "node:internal/modules/esm/module_job",
+          "line": 147
+        },
+        {
+          "samples": 1,
+          "function": "afterLoad",
+          "url": "node:internal/modules/esm/loader",
+          "line": 495
+        },
+        {
+          "samples": 1,
+          "function": "",
+          "url": "node:internal/readline/interface",
+          "line": 1
+        },
+        {
+          "samples": 1,
+          "function": "RegExp: %2F|%5C",
+          "url": "",
+          "line": 0
+        },
+        {
+          "samples": 1,
+          "function": "compileForInternalLoader",
+          "url": "node:internal/bootstrap/realm",
+          "line": 383
+        },
+        {
+          "samples": 1,
+          "function": "compileForInternalLoader",
+          "url": "node:internal/bootstrap/realm",
+          "line": 383
+        }
+      ]
+    },
+    {
+      "profile": "native-forgeloop-populated-native-W0ppRj-history-tail.cpuprofile",
+      "sha256": "6b07e79fea3e46853a87d1af6f9cfcc6a9fa44d1957c18e2fc3ab69f7d9b847d",
+      "samples": 228,
+      "topFrames": [
+        {
+          "samples": 12,
+          "function": "lstat",
+          "url": "",
+          "line": 0
+        },
+        {
+          "samples": 8,
+          "function": "(garbage collector)",
+          "url": "",
+          "line": 0
+        },
+        {
+          "samples": 8,
+          "function": "lstat",
+          "url": "",
+          "line": 0
+        },
+        {
+          "samples": 6,
+          "function": "lstat",
+          "url": "",
+          "line": 0
+        },
+        {
+          "samples": 5,
+          "function": "(idle)",
+          "url": "",
+          "line": 0
+        },
+        {
+          "samples": 5,
+          "function": "lstat",
+          "url": "",
+          "line": 0
+        },
+        {
+          "samples": 4,
+          "function": "lstat",
+          "url": "",
+          "line": 0
+        },
+        {
+          "samples": 4,
+          "function": "lstat",
+          "url": "",
+          "line": 0
+        },
+        {
+          "samples": 4,
+          "function": "iterateRange",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/ledger-event-snapshot.js",
+          "line": 57
+        },
+        {
+          "samples": 4,
+          "function": "iterateRange",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/ledger-event-snapshot.js",
+          "line": 57
+        },
+        {
+          "samples": 3,
+          "function": "decode",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/repository.js",
+          "line": 28
+        },
+        {
+          "samples": 3,
+          "function": "lstat",
+          "url": "",
+          "line": 0
+        },
+        {
+          "samples": 3,
+          "function": "lstat",
+          "url": "",
+          "line": 0
+        },
+        {
+          "samples": 3,
+          "function": "lstat",
+          "url": "",
+          "line": 0
+        },
+        {
+          "samples": 3,
+          "function": "lstat",
+          "url": "",
+          "line": 0
+        },
+        {
+          "samples": 3,
+          "function": "lstat",
+          "url": "",
+          "line": 0
+        },
+        {
+          "samples": 3,
+          "function": "iterateRange",
+          "url": "file:///Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/storage/ledger-event-snapshot.js",
+          "line": 57
+        },
+        {
+          "samples": 3,
+          "function": "lstat",
+          "url": "",
+          "line": 0
+        },
+        {
+          "samples": 2,
+          "function": "compileSourceTextModule",
+          "url": "node:internal/modules/esm/utils",
+          "line": 316
+        },
+        {
+          "samples": 2,
+          "function": "compileSourceTextModule",
+          "url": "node:internal/modules/esm/utils",
+          "line": 316
+        }
+      ]
+    }
+  ],
+  "acceptanceClaim": false
+}
