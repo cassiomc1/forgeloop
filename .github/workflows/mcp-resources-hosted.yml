@@ -1,0 +1,249 @@
+name: Hosted Linux MCP resource matrix
+
+# This workflow covers paired MCP resource cases only. The original SQLite
+# plan's remaining event/action/concurrency/CLI/audit/export rows stay separate
+# evidence and are intentionally not folded into this workflow.
+on:
+  workflow_dispatch:
+    inputs:
+      fixture:
+        description: Public fixture mode; synthetic is diagnostic only
+        type: choice
+        options:
+          - canonical-rich-all
+          - canonical-basic-all
+          - synthetic
+        default: canonical-rich-all
+        required: true
+      events:
+        description: Event count for ordinary public tasks
+        type: choice
+        options:
+          - "10"
+          - "1000"
+          - "100000"
+        default: "10"
+        required: true
+      selected_events:
+        description: Event count for the selected public task
+        type: choice
+        options:
+          - "10"
+          - "1000"
+          - "100000"
+        default: "1000"
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hosted-mcp-resources-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  mcp-resources:
+    name: Hosted Linux MCP ${{ matrix.case }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      # Each case uses one fresh hosted VM. Serial matrix scheduling avoids
+      # running benchmark cases concurrently in this workflow; it does not
+      # prove physical host-wide isolation from unrelated workloads.
+      max-parallel: 1
+      matrix:
+        include:
+          - case: tasks-1000-both
+            size: 1000
+            operation: both
+          - case: tasks-5000-task-list
+            size: 5000
+            operation: taskListTool
+          - case: tasks-5000-project-tasks
+            size: 5000
+            operation: projectTasksResource
+    env:
+      MCP_CASE: ${{ matrix.case }}
+      MCP_SIZE: ${{ matrix.size }}
+      MCP_OPERATION: ${{ matrix.operation }}
+      MCP_FIXTURE: ${{ inputs.fixture }}
+      MCP_EVENTS: ${{ inputs.events }}
+      MCP_SELECTED_EVENTS: ${{ inputs.selected_events }}
+      MCP_BASELINE_REVISION: ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5
+      MCP_REPEATS: "200"
+      MCP_TASK_LIST_LIMIT: "100"
+      MCP_RESOURCE_OUTPUT: ${{ runner.temp }}/sqlite-mcp-hosted-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.case }}
+    defaults:
+      run:
+        working-directory: current
+    steps:
+      - name: Check out current source at the dispatched SHA
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          path: current
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check out pinned filesystem baseline
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5
+          path: legacy
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Set up Node.js 24.19.0
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.19.0
+          cache: npm
+          cache-dependency-path: |
+            current/package-lock.json
+            legacy/package-lock.json
+
+      - name: Install locked current and MCP dependencies
+        run: |
+          npm ci --ignore-scripts
+          npm run mcp:setup
+
+      - name: Install locked baseline dependencies
+        working-directory: legacy
+        run: npm ci --ignore-scripts
+
+      - name: Admit paired hosted case and write before evidence
+        env:
+          EXPECTED_BENCHMARK_SHA: ${{ github.sha }}
+        run: |
+          mkdir -p "$MCP_RESOURCE_OUTPUT"
+          node --input-type=module <<'NODE'
+          import assert from "node:assert/strict";
+          import { createHash } from "node:crypto";
+          import { execFileSync } from "node:child_process";
+          import { mkdir, readFile, writeFile } from "node:fs/promises";
+          import os from "node:os";
+          import path from "node:path";
+
+          const currentRoot = ".";
+          const baselineRoot = "../legacy";
+          const hashFile = async filename => createHash("sha256").update(await readFile(filename)).digest("hex");
+          const sourceManifest = async root => {
+            const revision = execFileSync("git", ["-C", root, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+            const status = execFileSync("git", ["-C", root, "status", "--porcelain", "--untracked-files=no"], { encoding: "utf8" }).trim();
+            assert.equal(status, "", `${root} checkout is dirty before measurement`);
+            const files = execFileSync("git", ["-C", root, "ls-files", "-z"], { encoding: "utf8" }).split("\0").filter(Boolean).sort();
+            return { revision, status, trackedFiles: files.length, files: await Promise.all(files.map(async file => ({ path: file, sha256: await hashFile(path.join(root, file)) }))) };
+          };
+          assert.equal(execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(), process.env.EXPECTED_BENCHMARK_SHA);
+          assert.equal(execFileSync("git", ["-C", baselineRoot, "rev-parse", "HEAD"], { encoding: "utf8" }).trim(), process.env.MCP_BASELINE_REVISION);
+          assert.equal(process.version, "v24.19.0");
+          assert.equal(process.platform, "linux");
+          assert.equal(process.arch, "x64");
+          const operations = process.env.MCP_OPERATION === "both" ? ["taskListTool", "projectTasksResource"] : [process.env.MCP_OPERATION];
+          assert.ok(operations.every(value => ["taskListTool", "projectTasksResource"].includes(value)));
+          const pairedCase = {
+            schemaVersion: 1,
+            case: process.env.MCP_CASE,
+            tasks: Number(process.env.MCP_SIZE),
+            sizes: [Number(process.env.MCP_SIZE)],
+            operations,
+            fixtureMode: process.env.MCP_FIXTURE,
+            eventsPerTask: Number(process.env.MCP_EVENTS),
+            selectedEvents: Number(process.env.MCP_SELECTED_EVENTS),
+            repeats: Number(process.env.MCP_REPEATS),
+            resources: true,
+            validationOnly: false,
+            sampleMode: "timed",
+            taskListLimit: Number(process.env.MCP_TASK_LIST_LIMIT),
+            currentRevision: process.env.EXPECTED_BENCHMARK_SHA,
+            baselineRevision: process.env.MCP_BASELINE_REVISION,
+            runner: { os: process.env.RUNNER_OS, arch: process.env.RUNNER_ARCH, name: process.env.RUNNER_NAME, image: process.env.ImageOS ?? null, imageVersion: process.env.ImageVersion ?? null },
+          };
+          const runtime = {
+            schemaVersion: 1,
+            node: process.version,
+            platform: process.platform,
+            architecture: process.arch,
+            cpu: os.cpus()[0]?.model ?? null,
+            logicalCpus: os.cpus().length,
+            totalMemoryBytes: os.totalmem(),
+            hostname: os.hostname(),
+            runnerOs: process.env.RUNNER_OS ?? null,
+            runnerArch: process.env.RUNNER_ARCH ?? null,
+            runnerName: process.env.RUNNER_NAME ?? null,
+            image: process.env.ImageOS ?? null,
+            imageVersion: process.env.ImageVersion ?? null,
+            workflowRun: process.env.GITHUB_RUN_ID ?? null,
+            workflowAttempt: process.env.GITHUB_RUN_ATTEMPT ?? null,
+          };
+          const source = { schemaVersion: 1, current: await sourceManifest(currentRoot), baseline: await sourceManifest(baselineRoot) };
+          await mkdir(process.env.MCP_RESOURCE_OUTPUT, { recursive: true });
+          await writeFile(path.join(process.env.MCP_RESOURCE_OUTPUT, "paired-case.json"), `${JSON.stringify(pairedCase, null, 2)}\n`, { flag: "wx" });
+          await writeFile(path.join(process.env.MCP_RESOURCE_OUTPUT, "runtime.json"), `${JSON.stringify(runtime, null, 2)}\n`, { flag: "wx" });
+          await writeFile(path.join(process.env.MCP_RESOURCE_OUTPUT, "source-manifest.json"), `${JSON.stringify(source, null, 2)}\n`, { flag: "wx" });
+          await writeFile(path.join(process.env.MCP_RESOURCE_OUTPUT, "source-before.json"), `${JSON.stringify(source, null, 2)}\n`, { flag: "wx" });
+          NODE
+          node scripts/ci/observe-benchmark-runner.mjs --phase=before --temp-prefix=forgeloop-mcp-benchmark- --output="$MCP_RESOURCE_OUTPUT/runner-before.json"
+
+      - name: Run paired baseline/current MCP case
+        run: |
+          args=(
+            scripts/benchmark-storage-mcp.mjs
+            "--baseline-root=../legacy"
+            "--resources=true"
+            "--task-list-limit=$MCP_TASK_LIST_LIMIT"
+            "--sizes=$MCP_SIZE"
+            "--repeats=$MCP_REPEATS"
+            "--fixture=$MCP_FIXTURE"
+            "--events=$MCP_EVENTS"
+            "--selected-events=$MCP_SELECTED_EVENTS"
+            "--worker-evidence-directory=$MCP_RESOURCE_OUTPUT/workers"
+            "--source-manifest=$MCP_RESOURCE_OUTPUT/source-manifest.json"
+            "--paired-case=$MCP_RESOURCE_OUTPUT/paired-case.json"
+            "--output=$MCP_RESOURCE_OUTPUT/comparison.json"
+          )
+          if [ "$MCP_OPERATION" != "both" ]; then
+            args+=("--operation=$MCP_OPERATION")
+          fi
+          node "${args[@]}" > "$MCP_RESOURCE_OUTPUT/benchmark.log" 2>&1
+
+      - name: Verify source and observe hosted cleanup
+        if: ${{ always() }}
+        run: |
+          set +e
+          node --input-type=module <<'NODE'
+          import assert from "node:assert/strict";
+          import { createHash } from "node:crypto";
+          import { execFileSync } from "node:child_process";
+          import { readFile, writeFile } from "node:fs/promises";
+          import path from "node:path";
+
+          const root = ".";
+          const hashFile = async filename => createHash("sha256").update(await readFile(filename)).digest("hex");
+          const manifest = async repo => {
+            const revision = execFileSync("git", ["-C", repo, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+            const status = execFileSync("git", ["-C", repo, "status", "--porcelain", "--untracked-files=no"], { encoding: "utf8" }).trim();
+            assert.equal(status, "", `${repo} checkout is dirty after measurement`);
+            const files = execFileSync("git", ["-C", repo, "ls-files", "-z"], { encoding: "utf8" }).split("\0").filter(Boolean).sort();
+            return { revision, status, trackedFiles: files.length, files: await Promise.all(files.map(async file => ({ path: file, sha256: await hashFile(path.join(repo, file)) }))) };
+          };
+          const before = JSON.parse(await readFile(path.join(process.env.MCP_RESOURCE_OUTPUT, "source-before.json"), "utf8"));
+          const after = { schemaVersion: 1, current: await manifest(root), baseline: await manifest("../legacy") };
+          await writeFile(path.join(process.env.MCP_RESOURCE_OUTPUT, "source-after.json"), `${JSON.stringify(after, null, 2)}\n`, { flag: "wx" });
+          assert.deepEqual(after, before, "Tracked current or baseline source changed during measurement");
+          NODE
+          source_status=$?
+          node scripts/ci/observe-benchmark-runner.mjs --phase=after --temp-prefix=forgeloop-mcp-benchmark- --before="$MCP_RESOURCE_OUTPUT/runner-before.json" --output="$MCP_RESOURCE_OUTPUT/runner-after.json"
+          observer_status=$?
+          set -e
+          if [ "$source_status" -ne 0 ] || [ "$observer_status" -ne 0 ]; then exit 1; fi
+
+      - name: Retain hosted MCP case evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: sqlite-mcp-hosted-${{ matrix.case }}
+          path: ${{ runner.temp }}/sqlite-mcp-hosted-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.case }}
+          if-no-files-found: error
+          retention-days: 14

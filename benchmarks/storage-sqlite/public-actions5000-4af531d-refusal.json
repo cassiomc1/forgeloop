@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "kind": "PUBLIC_ACTIONS_5000_BASELINE_REFUSAL",
+  "revision": "4af531d75848c232416de6a7783bcb9ea95ac5e2",
+  "node": "24.19.0",
+  "fixture": "public-approvals",
+  "requestedActions": 5000,
+  "requestedApprovals": 5000,
+  "validationOnly": true,
+  "exitCode": 1,
+  "status": "BASELINE_LEDGER_REFUSED",
+  "code": "JSON_LIMIT_EXCEEDED",
+  "baselineLimitBytes": 2097152,
+  "failureLocation": "scripts/benchmark-storage-idempotency.mjs:128",
+  "nativeLedgerValidationAndStateCoherence": "passed before baseline assertion; does not establish complete action/approval parity",
+  "completeActionApprovalParity": "not reached",
+  "equalValidationEligible": false,
+  "releaseThresholdsVerified": false,
+  "timedSamplesProduced": false,
+  "trackedFiles": 3384,
+  "trackedSourceUnchanged": true,
+  "logSha256": "fa6611521571db3213dd36680d19a21f75d5e1e2b4583819a647fa60a6a0a173",
+  "limitations": [
+    "The runner cleaned temporary fixtures after failure; raw fixture bytes were not retained.",
+    "This is an explicit refusal, not a passing performance or parity gate.",
+    "No baseline limit or requested workload was changed."
+  ]
+}
