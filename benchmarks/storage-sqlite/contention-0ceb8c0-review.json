@@ -1,0 +1,21 @@
+{
+  "kind": "CONTENTION_DIAGNOSTIC_REVIEW",
+  "sourceRevision": "0ceb8c037d7c92106c882d8b466c59fb0e058e17",
+  "sourceManifestsUnchanged": true,
+  "parentExitCode": 0,
+  "closedWorkers": 90,
+  "workerPidsAbsent": true,
+  "rows": 12,
+  "logicalCommits": 1800,
+  "stateEventOwnershipParity": true,
+  "acceptanceClaim": false,
+  "limits": [
+    "Filesystem operations and SQLite internal I/O are not measured;direct BEGIN entry timing and sampled live WAL require --resources=true",
+    "Worker RSS excludes parent synthetic seed; process startup is harness startup, not CLI startup",
+    "BEGIN IMMEDIATE duration includes SQL entry overhead and lock waiting;it excludes optimistic conflict retries before BEGIN",
+    "WAL maximum is periodically observed,not a guaranteed instantaneous peak",
+    "Instrumented timings are not uninstrumented release latency",
+    "Repeated synthetic TASK_RECEIVED ledger is not realistic lifecycle acceptance",
+    "Local background/cache uncontrolled"
+  ]
+}
