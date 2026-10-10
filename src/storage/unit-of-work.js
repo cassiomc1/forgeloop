@@ -327,7 +327,9 @@ class OperationalStore {
     this.assertRecordMutation(event);
     const taskId = this.transaction.taskId;
     this.readEvents(`.forgeloop/task-state/${taskStorageKey(taskId)}/events.ndjson`, 1);
-    this.events.set(taskId, [...(this.events.get(taskId) ?? []), structuredClone(event)]);
+    let staged = this.events.get(taskId);
+    if (!staged) { staged = []; this.events.set(taskId, staged); }
+    staged.push(structuredClone(event));
   }
 
   readEvents(relativePath, limit = null) {
@@ -344,7 +346,11 @@ class OperationalStore {
     if (this.captureObservations && !this.reads.has(key)) this.reads.set(key, { query: () => observeEventRows(this.db, taskId, limit), value: null,
       conflictCode: null, fingerprint: canonicalFingerprint(digest) });
     if (limit !== null) storedEvents.reverse();
-    for (const event of this.events.get(taskId) ?? []) storedEvents.push(event);
+    const staged = this.events.get(taskId) ?? [];
+    // Keep the persisted-head observation above even when staged events fill
+    // the tail: commit must still reject a competing persisted append.
+    const stagedTail = Number.isInteger(limit) && limit > 0 ? staged.slice(-limit) : staged;
+    for (const event of stagedTail) storedEvents.push(structuredClone(event));
     return limit === null ? storedEvents : storedEvents.slice(-limit);
   }
 
@@ -386,9 +392,11 @@ class OperationalStore {
     if (!this.active) throw storageError("E_STORAGE_TRANSACTION_INVALID", "Operational iterator scope already closed");
     if (firstObservation) this.reads.set(key, { query: () => observeEventRows(this.db, taskId, null), value: null,
       conflictCode: null, fingerprint: canonicalFingerprint(digest.digest("hex")) });
-    for (const event of this.events.get(taskId) ?? []) {
+    // Capture membership once, preserving the prior replace-on-append
+    // iterator boundary while keeping the staged mutable array private.
+    for (const event of (this.events.get(taskId) ?? []).slice()) {
       if (!this.active) throw storageError("E_STORAGE_TRANSACTION_INVALID", "Operational iterator scope already closed");
-      yield event;
+      yield structuredClone(event);
     }
   }
 

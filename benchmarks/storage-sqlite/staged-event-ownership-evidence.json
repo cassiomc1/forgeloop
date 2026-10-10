@@ -1,0 +1,29 @@
+{
+  "sourceBase": "b531ae184dcdefab035a52ece014a6e601e518e7",
+  "before": {
+    "exitCode": 1,
+    "cause": "returned staged event tail aliases owned payload"
+  },
+  "after": {
+    "focusedTests": 62,
+    "passed": 62,
+    "failed": 0,
+    "skipped": 0,
+    "eslint": "PASS"
+  },
+  "performanceAcceptance": false,
+  "logs": [
+    {
+      "file": "staged-event-before.log.gz",
+      "rawSha256": "347f94b336239b5c5b52e6c7711864934e0721b6f85a9669d2d0bd305e6cf1c4"
+    },
+    {
+      "file": "staged-event-after.log.gz",
+      "rawSha256": "01238d2e1123e0d47d2b330a625a3cf853984fe2366d0622766387d0f21cd108"
+    },
+    {
+      "file": "staged-event-focused.log.gz",
+      "rawSha256": "a1de86a256b06993c0008dc6e4993b3c05e95595fc8bfbcf9a92f5906f582d7b"
+    }
+  ]
+}
