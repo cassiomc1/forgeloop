@@ -6,6 +6,7 @@ import { DatabaseSync } from "node:sqlite";
 import { executeForgeLoopCommand } from "../src/core/command-runtime.js";
 import { createGitRepository } from "./helpers/git-fixture.js";
 import { setupVerifyingTask } from "./helpers/durable-lifecycle.js";
+import { proposeAction } from "../src/core/actions.js";
 import { bindTaskWorkspace } from "../src/core/workspace-binding.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { removeTempTree } from "./helpers/rm-safe.js";
@@ -118,6 +119,30 @@ test("public task creation rolls back descriptor claims and initial event togeth
     assert.equal(retried.ok, true, JSON.stringify(retried));
     assert.equal(db.prepare("SELECT COUNT(*) AS n FROM tasks WHERE task_id=?").get(taskId).n, 1);
     assert.equal(db.prepare("SELECT COUNT(*) AS n FROM events WHERE task_id=? AND event_type='TASK_RECEIVED'").get(taskId).n, 1);
+    await noMirrors(target);
+  });
+});
+
+test("public action cancellation rolls back indexed action and event together", async () => {
+  await fixture(async ({ target, db, taskId }) => {
+    await proposeAction(target, { packageRoot: getPackageRoot(), taskId, input: {
+      actionId: "action-atomic-cancel", effectClass: "EXTERNAL_PUBLICATION", capability: "repository.push",
+      target: "origin/topic", operation: "push branch", idempotencyKey: "atomic-cancel-key",
+      requiredForCompletion: true, requirement: "publication", provenance: "HOST_REPORTED",
+    } });
+    const invoke = () => executeForgeLoopCommand({ command: "action-record", projectPath: target,
+      input: { taskId, actionId: "action-atomic-cancel", actionState: "CANCELLED", actionProvenance: "CALLER_REPORTED" } });
+    const before = snapshot(db);
+    db.exec("CREATE TRIGGER action_cancel_fault BEFORE INSERT ON events WHEN NEW.event_type='ACTION_CANCELLED' BEGIN SELECT RAISE(ABORT, 'PUBLIC_CANCEL_FAULT'); END");
+    try {
+      const failed = await invoke();
+      assert.equal(failed.ok, false, JSON.stringify(failed));
+      assert.match(JSON.stringify(failed.error), /PUBLIC_CANCEL_FAULT/);
+      assert.deepEqual(snapshot(db), before);
+    } finally { db.exec("DROP TRIGGER action_cancel_fault"); }
+    const retried = await invoke();
+    assert.equal(retried.ok, true, JSON.stringify(retried));
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM events WHERE event_type='ACTION_CANCELLED'").get().n, 1);
     await noMirrors(target);
   });
 });
