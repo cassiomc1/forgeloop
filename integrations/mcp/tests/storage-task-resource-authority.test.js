@@ -5,34 +5,34 @@ import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
 
-import { readForgeLoopIntegrationResource, createForgeLoopContext } from "../src/integration.js";
-import { runActivate } from "../src/commands/activate.js";
-import { runAdvance } from "../src/commands/advance.js";
-import { runAttestationCreate } from "../src/commands/attestation-create.js";
-import { runCheck } from "../src/commands/run-check.js";
-import { runComplete } from "../src/commands/complete.js";
-import { runPrepareCompletion } from "../src/commands/prepare-completion.js";
-import { runPreflight } from "../src/commands/preflight.js";
-import { runQualityBaseline } from "../src/commands/quality-baseline.js";
-import { runRoute } from "../src/commands/route.js";
-import { runTaskCreate } from "../src/commands/task-create.js";
-import { runTestUtility } from "../src/commands/test-utility.js";
-import { runVerifyScope } from "../src/commands/verify-scope.js";
-import { runWorkspaceBind } from "../src/commands/workspace-bind.js";
-import { runActionPropose } from "../src/commands/action-propose.js";
-import { runApprovalRequest } from "../src/commands/approval-request.js";
-import { recordSemanticDecision } from "../src/core/decision/service.js";
-import { installTestSemanticProvider, clearTestSemanticProvider, testSemanticProvider } from "../src/core/decision/test-provider.js";
-import { createConfig, writeConfig } from "../src/core/config.js";
-import { createContract, writeContract } from "../src/core/contract.js";
-import { setResponsibilityContract } from "../src/core/responsibility.js";
-import { taskDirectory } from "../src/core/task-paths.js";
-import { getPackageRoot } from "../src/core/templates.js";
-import { setupVerifyingTask } from "./helpers/durable-lifecycle.js";
-import { createGitRepository } from "./helpers/git-fixture.js";
+import { readForgeLoopIntegrationResource, createForgeLoopContext } from "../../../src/integration.js";
+import { runActivate } from "../../../src/commands/activate.js";
+import { runAdvance } from "../../../src/commands/advance.js";
+import { runAttestationCreate } from "../../../src/commands/attestation-create.js";
+import { runCheck } from "../../../src/commands/run-check.js";
+import { runComplete } from "../../../src/commands/complete.js";
+import { runPrepareCompletion } from "../../../src/commands/prepare-completion.js";
+import { runPreflight } from "../../../src/commands/preflight.js";
+import { runQualityBaseline } from "../../../src/commands/quality-baseline.js";
+import { runRoute } from "../../../src/commands/route.js";
+import { runTaskCreate } from "../../../src/commands/task-create.js";
+import { runTestUtility } from "../../../src/commands/test-utility.js";
+import { runVerifyScope } from "../../../src/commands/verify-scope.js";
+import { runWorkspaceBind } from "../../../src/commands/workspace-bind.js";
+import { runActionPropose } from "../../../src/commands/action-propose.js";
+import { runApprovalRequest } from "../../../src/commands/approval-request.js";
+import { recordSemanticDecision } from "../../../src/core/decision/service.js";
+import { installTestSemanticProvider, clearTestSemanticProvider, testSemanticProvider } from "../../../src/core/decision/test-provider.js";
+import { createConfig, writeConfig } from "../../../src/core/config.js";
+import { createContract, writeContract } from "../../../src/core/contract.js";
+import { setResponsibilityContract } from "../../../src/core/responsibility.js";
+import { taskDirectory } from "../../../src/core/task-paths.js";
+import { getPackageRoot } from "../../../src/core/templates.js";
+import { setupVerifyingTask } from "../../../tests/helpers/durable-lifecycle.js";
+import { createGitRepository } from "../../../tests/helpers/git-fixture.js";
 
 const packageRoot = getPackageRoot();
-const mcpRequire = createRequire(new URL("../integrations/mcp/package.json", import.meta.url));
+const mcpRequire = createRequire(new URL("../package.json", import.meta.url));
 const { Client } = mcpRequire("@modelcontextprotocol/client");
 const { InMemoryTransport } = mcpRequire("@modelcontextprotocol/server");
 
@@ -40,7 +40,7 @@ const { InMemoryTransport } = mcpRequire("@modelcontextprotocol/server");
 // installed file dependency may point at the original checkout, so bind the
 // adapter's stable package specifier to this checkout's public integration
 // entrypoint for this source-level regression. No dependency tree is changed.
-const currentIntegrationUrl = new URL("../src/integration.js", import.meta.url).href;
+const currentIntegrationUrl = new URL("../../../src/integration.js", import.meta.url).href;
 registerHooks({
   resolve(specifier, context, nextResolve) {
     if (specifier === "@cassiomc1/forgeloop/integration") {
@@ -51,11 +51,11 @@ registerHooks({
 });
 
 async function connectMcp(projectPath, runtimeContext = null) {
-  const mcp = await import("../integrations/mcp/src/server.js");
+  const mcp = await import("../src/server.js");
   const product = runtimeContext
     ? mcp.buildForgeLoopMcpServer({
-      projectContext: await (await import("../integrations/mcp/src/project-context.js")).resolveProjectContext(projectPath),
-      policy: (await import("../integrations/mcp/src/capability-policy.js")).resolveLaunchPolicy({ mode: "readonly" }),
+      projectContext: await (await import("../src/project-context.js")).resolveProjectContext(projectPath),
+      policy: (await import("../src/capability-policy.js")).resolveLaunchPolicy({ mode: "readonly" }),
       packageRoot,
       storageRuntimeContext: runtimeContext,
     })

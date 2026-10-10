@@ -1,0 +1,39 @@
+{
+  "kind": "MCP_RESOURCE_TEST_PLACEMENT_CORRECTION",
+  "baseRevision": "03bbf94271c1a55425b61e3e93321ef93faeb74d",
+  "cause": "Root core test imported MCP-only dependencies not installed by core Windows/Linux jobs.",
+  "failedRuns": [
+    "38030615837",
+    "38030617835"
+  ],
+  "change": "Move all four maintained API/MCP parity cases into integrations/mcp/tests, preserving assertions and adapting relative paths.",
+  "validation": {
+    "focusedPass": 4,
+    "cleanPackedMcpPass": 81,
+    "fail": 0,
+    "skip": 0
+  },
+  "preservedSymlinkRun": {
+    "result": "FAILED",
+    "cause": "Existing installed file dependency resolves original checkout, not current production; clean packed run verifies current source."
+  },
+  "logs": [
+    {
+      "path": "/Users/cassio/.codex/verification/windows-full-0736657-failure.log",
+      "sha256": "81444fb607133641b71eb8995929b5fa11727f0258a0dca38d42021dba827c0a"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/core-0736657-failure.log",
+      "sha256": "bb25776e2af0317f6aae921ca21081d4e200e296d96f08a23da87293e8de876b"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/mcp-resource-placement-03bbf94.log",
+      "sha256": "43b2157a9b125d59f0913284699fc814966255cbdb050182ef8586972da4b290"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/mcp-resource-placement-clean-03bbf94.log",
+      "sha256": "a440d05732827c5aa849fd5eb1f08f71c7f07e4930b40a7a18ef13bd341d4a9d"
+    }
+  ],
+  "acceptanceClaim": false
+}
