@@ -110,6 +110,33 @@ export async function discoverTaskListEntries(target, packageRoot = getPackageRo
   return discoverTasksInScope(target, packageRoot, taskKeys, DISCOVERY_PROJECTIONS.TASK_LIST);
 }
 
+/** Retain a finite page only after every task has passed normal discovery. */
+export async function discoverTaskListPage(target, packageRoot = getPackageRoot(), { phase, active, offset, limit }) {
+  const retained = [];
+  let total = 0;
+  const capacity = limit === null ? Infinity : limit === 0 ? 0 : offset + limit;
+  const collect = (task, fallbackSortKey) => {
+    if ((phase && task.phase !== phase) || (active && (task.claimState !== "ACTIVE" || task.mutationAllowed !== true))) return;
+    total += 1;
+    if (capacity === 0) return;
+    const entry = { sortKey: task.taskId ?? task.taskKey ?? fallbackSortKey, value: task };
+    if (capacity === Infinity) { retained.push(entry); return; }
+    let low = 0, high = retained.length;
+    while (low < high) {
+      const middle = Math.floor((low + high) / 2);
+      if (retained[middle].sortKey.localeCompare(entry.sortKey) <= 0) low = middle + 1;
+      else high = middle;
+    }
+    if (low >= capacity) return;
+    retained.splice(low, 0, entry);
+    if (retained.length > capacity) retained.pop();
+  };
+  await withProjectReadSnapshot(target,
+    () => discoverSelectedTasks(target, packageRoot, null, DISCOVERY_PROJECTIONS.TASK_LIST, collect));
+  if (capacity === Infinity) retained.sort((a, b) => a.sortKey.localeCompare(b.sortKey));
+  return { tasks: retained.slice(offset).map(entry => entry.value), total };
+}
+
 const DISCOVERY_PROJECTIONS = Object.freeze({
   FULL: "full",
   SUMMARY: "summary",
@@ -269,7 +296,8 @@ function compareDiscoveredTasks(a, b) {
   return (a.taskId ?? a.taskKey).localeCompare(b.taskId ?? b.taskKey);
 }
 
-function appendDiscoveredTask(tasks, task, projection, fallbackSortKey = null) {
+function appendDiscoveredTask(tasks, task, projection, fallbackSortKey = null, collect = null) {
+  if (collect) { collect(task, fallbackSortKey); return; }
   if (projection === DISCOVERY_PROJECTIONS.FULL) {
     tasks.push(task);
     return;
@@ -284,7 +312,7 @@ function finishDiscoveredTasks(tasks, projection) {
   return tasks.sort(compareDiscoveredTasks);
 }
 
-async function discoverSelectedTasks(target, packageRoot, taskKeys, projection = DISCOVERY_PROJECTIONS.FULL) {
+async function discoverSelectedTasks(target, packageRoot, taskKeys, projection = DISCOVERY_PROJECTIONS.FULL, collect) {
   const store = getOperationalStore(target);
   const rootPath = ensureWithin(target, TASK_STATE_ROOT);
   if (!store && !(await fileExists(rootPath))) {
@@ -301,10 +329,12 @@ async function discoverSelectedTasks(target, packageRoot, taskKeys, projection =
   }
 
   const tasks = [];
+  let scanned = 0;
   for (const entry of entries) {
     // Native reads resolve synchronously. Let other requests run between
     // bounded groups without releasing the owned immutable snapshot.
-    if (store && !store.transaction && !store.db.isTransaction && tasks.length > 0 && tasks.length % 16 === 0) await nextTurn();
+    if (store && !store.transaction && !store.db.isTransaction && scanned > 0 && scanned % 16 === 0) await nextTurn();
+    scanned += 1;
     if (!entry.isDirectory() && !entry.isSymbolicLink()) continue;
     if (!/^[a-f0-9]{64}$/.test(entry.name)) continue;
 
@@ -314,7 +344,7 @@ async function discoverSelectedTasks(target, packageRoot, taskKeys, projection =
       const task = taskId
         ? await withEventLedgerAudit(target, packageRoot, { taskId }, readEntry)
         : await readEntry();
-      appendDiscoveredTask(tasks, task, projection, entry.name);
+      appendDiscoveredTask(tasks, task, projection, entry.name, collect);
     } catch (err) {
       // A directory without a task.json descriptor is not automatically a
       // task namespace: classify by contents so explicitly recognized legacy
@@ -332,7 +362,7 @@ async function discoverSelectedTasks(target, packageRoot, taskKeys, projection =
           directory: `${TASK_STATE_ROOT}/${entry.name}`,
           healthy: false,
           error: classification.error,
-        }, projection), projection, entry.name);
+        }, projection), projection, entry.name, collect);
         continue;
       }
       // P1-2: Surface corrupt task namespaces instead of silently hiding them
@@ -345,7 +375,7 @@ async function discoverSelectedTasks(target, packageRoot, taskKeys, projection =
           code: err.code ?? "E_TASK_DESCRIPTOR_INVALID",
           message: err.message ?? String(err),
         },
-      }, projection), projection, entry.name);
+      }, projection), projection, entry.name, collect);
     }
   }
 

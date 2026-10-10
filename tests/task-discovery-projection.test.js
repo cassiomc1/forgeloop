@@ -69,6 +69,18 @@ test("task-list projection preserves canonical fields, ordering, filters, and pa
     assert.equal(listed.offset, 1);
     assert.equal(listed.limit, 2);
     assert.equal(listed.hasMore, false);
+    for (const limit of [0, 1, 2, null]) {
+      for (const offset of [0, 1, 4]) {
+        for (const phase of [null, expected[0].phase]) {
+          const page = await runTaskList({ target, packageRoot, limit, offset, phase });
+          const filtered = phase ? expected.filter(task => task.phase === phase) : expected;
+          assert.deepEqual(page.tasks, filtered.slice(offset, limit === null ? undefined : offset + limit));
+          assert.equal(page.total, filtered.length);
+          assert.equal(page.hasMore, limit !== null && offset + limit < filtered.length);
+        }
+      }
+    }
+
   } finally {
     await removeTempTree(target);
   }
@@ -113,7 +125,9 @@ test("summary and task-list projections preserve corrupt entries and one-snapsho
       };
       try {
         const expectedList = full.map(taskListProjection);
-        assert.deepEqual(await discoverTaskListEntries(target, packageRoot), expectedList);
+        const page = await runTaskList({ target, packageRoot, limit: 1 });
+        assert.deepEqual(page.tasks, expectedList.slice(0, 1));
+        assert.equal(page.total, expectedList.length);
         assert.equal(changed, true);
         assert.throws(() => source.commit(), { code: "E_STATE_REVISION_CONFLICT" });
       } finally {
