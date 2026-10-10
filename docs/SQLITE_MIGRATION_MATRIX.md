@@ -62,6 +62,21 @@ hashes, successful exits, native-byte parity and recovery validation are reviewe
 in `benchmarks/storage-sqlite/public-rollback-54d2e3c-windows-review.json`.
 Direct child completion is not runner-wide cleanup evidence.
 
+Full local prepush at `7bbfe3e` now passes all 22 stages, including 3,034 core
+tests (3,023 passed, zero failed, 11 skipped), MCP77 and package checks. All
+3,203 tracked source hashes remained unchanged. See
+`benchmarks/storage-sqlite/prepush-7bbfe3e-success.json`. The new action, repair,
+closure, evaluation and external-finalization regressions are included. They
+retain separate intent/outcome commits for external work and do not claim
+exactly-once external effects.
+
+Fresh exact-head function-level persistence LOC at `7bbfe3e` is 25,732 baseline
+versus 32,428 current lines. See
+`benchmarks/storage-sqlite/persistence-loc/result-7bbfe3e-summary.json`.
+The separate conservative whole-module inventory was also refreshed, preserving
+the old union and adding all selected module and storage paths symmetrically;
+its target also fails. It is not a replacement scope or denominator.
+
 Inclusive persistence LOC is 25,732 baseline versus 32,428 current lines, with
 zero unresolved membership and the unchanged ceiling of 19,299. All storage,
 import/export and maintenance code remains included. The exact five-line

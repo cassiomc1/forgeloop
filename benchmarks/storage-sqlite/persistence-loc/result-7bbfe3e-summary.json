@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "acceptanceEligible": true,
+  "targetMet": false,
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "currentRevision": "7bbfe3e6ac0273c4e8aa313289e0f217005d795f",
+  "parserVersion": "7.0.2",
+  "baselineSourceClean": true,
+  "scopeManifestSha256": "6e2b7afde2ad3805c04108c953ecd84323333eb26c652a2dc591573ada1f5933",
+  "productionRoots": [
+    "src",
+    "integrations/mcp/src"
+  ],
+  "baselineSelectedLines": 25732,
+  "currentSelectedLines": 32428,
+  "netReduction": -0.2602207368257423,
+  "threshold": "currentSelectedLines <= baselineSelectedLines * 0.75",
+  "declaredUnresolvedMembership": [],
+  "unresolvedMembership": [],
+  "kind": "PERSISTENCE_LOC_CURRENT_REPRODUCTION",
+  "rawResultPath": "/Users/cassio/.codex/verification/persistence-loc-function-7bbfe3e-raw.json",
+  "rawResultSha256": "a5f209a799e1f6f4d20b436f10e6de7e157cf2ed8d543967207a105632d676c8",
+  "reviewedResultPath": "/Users/cassio/.codex/verification/persistence-loc-function-7bbfe3e-reviewed.json",
+  "reviewedResultSha256": "9af374ab4b2edacea8ebb5e49ac43aa4fae88d0c9d10b7c84c79a85494629344",
+  "reviewedDeclarationSupplement": [
+    {
+      "id": "eb3-projection-enum",
+      "node": {
+        "side": "current",
+        "path": "src/core/task-discovery.js",
+        "key": "src/core/task-discovery.js::VariableStatement::DISCOVERY_PROJECTIONS",
+        "sourceKey": "src/core/task-discovery.js::top-level::VariableStatement::DISCOVERY_PROJECTIONS",
+        "kind": "VariableStatement",
+        "name": "DISCOVERY_PROJECTIONS",
+        "lineStart": 140,
+        "lineEnd": 144,
+        "nonblankPhysicalLines": 5,
+        "reason": "reviewed-exact-persistence-declaration",
+        "stable": true,
+        "fingerprint": null,
+        "sourceSha256": "79f11e587bda62119f09fef252f9188071ba7b7f6263b8aab250ab4b1ed96644",
+        "rawFileSha256": "79f11e587bda62119f09fef252f9188071ba7b7f6263b8aab250ab4b1ed96644"
+      },
+      "reason": "Base analyzer does not process explicit topLevelDeclarationDispositions. Retain the prior exact reviewed inclusion; same source hash and declaration bytes verified. No scope reduction."
+    }
+  ],
+  "ceiling": 19299,
+  "gap": 13129,
+  "limits": [
+    "Exact unchanged reviewed function scope, including all storage/import/export/maintenance code.",
+    "Base analyzer omits the reviewed five-line DISCOVERY_PROJECTIONS declaration; retained source-bound inclusion applied explicitly.",
+    "Static source counts do not prove runtime acceptance or validator closure."
+  ]
+}
