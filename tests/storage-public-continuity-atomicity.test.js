@@ -4,6 +4,10 @@ import { readdir } from "node:fs/promises";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { executeForgeLoopCommand } from "../src/core/command-runtime.js";
+import { createGitRepository } from "./helpers/git-fixture.js";
+import { setupVerifyingTask } from "./helpers/durable-lifecycle.js";
+import { getPackageRoot } from "../src/core/templates.js";
+import { removeTempTree } from "./helpers/rm-safe.js";
 import { buildCanonicalDiagnosisProject } from "./helpers/canonical-diagnosis-fixture.js";
 
 
@@ -46,4 +50,26 @@ for (const command of ["record-continuity", "clear-continuity"]) test(`public ${
     assert.equal(db.prepare("SELECT COUNT(*) AS n FROM events WHERE event_type='TRANSACTION_COMMITTED'").get().n, count + 1);
     await noMirrors(target);
   });
+});
+
+test("public workspace binding rolls back artifact and event publication", async () => {
+  const target = await createGitRepository("forgeloop-public-workspace-atomicity-");
+  let db;
+  try {
+    await setupVerifyingTask(target, getPackageRoot(), { taskId: "workspace-atomicity" });
+    db = new DatabaseSync(path.join(target, ".forgeloop/state.sqlite"));
+    const invoke = () => executeForgeLoopCommand({ command: "workspace-bind", projectPath: target, input: { taskId: "workspace-atomicity" } });
+    const before = snapshot(db);
+    db.exec("CREATE TRIGGER workspace_fault BEFORE INSERT ON events WHEN NEW.event_type='WORKSPACE_BOUND' BEGIN SELECT RAISE(ABORT, 'WORKSPACE_PUBLIC_FAULT'); END");
+    try {
+      const failed = await invoke();
+      assert.equal(failed.ok, false, JSON.stringify(failed));
+      assert.match(JSON.stringify(failed.error), /WORKSPACE_PUBLIC_FAULT/);
+      assert.deepEqual(snapshot(db), before);
+    } finally { db.exec("DROP TRIGGER workspace_fault"); }
+    const retried = await invoke();
+    assert.equal(retried.ok, true, JSON.stringify(retried));
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM events WHERE event_type='WORKSPACE_BOUND'").get().n, 1);
+    await noMirrors(target);
+  } finally { db?.close(); await removeTempTree(target); }
 });
