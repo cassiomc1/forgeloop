@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "acceptanceEligible": true,
+  "targetMet": false,
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "currentRevision": "567f594b94f0b6c9af7cf1782fcc37ecbc40a34a",
+  "parserVersion": "7.0.2",
+  "baselineSourceClean": true,
+  "scopeManifestSha256": "6e2b7afde2ad3805c04108c953ecd84323333eb26c652a2dc591573ada1f5933",
+  "productionRoots": [
+    "src",
+    "integrations/mcp/src"
+  ],
+  "baselineSelectedLines": 25732,
+  "currentSelectedLines": 32428,
+  "netReduction": -0.2602207368257423,
+  "threshold": "currentSelectedLines <= baselineSelectedLines * 0.75",
+  "declaredUnresolvedMembership": [],
+  "unresolvedMembership": [],
+  "wholeModuleInventory": {
+    "retainedAsSeparateEvidence": true,
+    "path": "/Users/cassio/.codex/verification/persistence-loc922-inventory.json",
+    "candidateTargetMet": false,
+    "scopeReviewComplete": false
+  },
+  "limitations": [
+    "This result is static LOC evidence; it does not prove runtime sole-writer closure, correctness, latency, or durability gates.",
+    "Any unresolved membership makes acceptanceEligible=false and forbids targetMet=true."
+  ],
+  "reviewedDeclarationSupplement": [
+    {
+      "id": "eb3-projection-enum",
+      "node": {
+        "side": "current",
+        "path": "src/core/task-discovery.js",
+        "key": "src/core/task-discovery.js::VariableStatement::DISCOVERY_PROJECTIONS",
+        "sourceKey": "src/core/task-discovery.js::top-level::VariableStatement::DISCOVERY_PROJECTIONS",
+        "kind": "VariableStatement",
+        "name": "DISCOVERY_PROJECTIONS",
+        "lineStart": 140,
+        "lineEnd": 144,
+        "nonblankPhysicalLines": 5,
+        "reason": "reviewed-exact-persistence-declaration",
+        "stable": true,
+        "fingerprint": null,
+        "sourceSha256": "79f11e587bda62119f09fef252f9188071ba7b7f6263b8aab250ab4b1ed96644",
+        "rawFileSha256": "79f11e587bda62119f09fef252f9188071ba7b7f6263b8aab250ab4b1ed96644"
+      },
+      "reason": "Base analyzer does not process explicit topLevelDeclarationDispositions. Retain the prior exact reviewed inclusion; same source hash and declaration bytes verified. No scope reduction."
+    }
+  ],
+  "kind": "PERSISTENCE_LOC_FUNCTION_SCOPE_SUMMARY",
+  "rawResultSha256": "124da39ef029ca534a7a597ad76cfff792e95357b466af4935c8494343dd5e12",
+  "retainedScope": "scope-semantic-audit-reuse.json.gz",
+  "changedSourceHashes": {
+    "src/core/events.js": "3784221ef07b184a7c380f29c9ce5d048f882eb9eca8ec432153a351dda141b6",
+    "src/core/task-discovery.js": "79f11e587bda62119f09fef252f9188071ba7b7f6263b8aab250ab4b1ed96644"
+  },
+  "reproductionNote": "Run retained external function analyzer against the clean ee9 baseline and retained scope; preserve explicit reviewed declaration inclusions. Raw graph remains in external verification output."
+}

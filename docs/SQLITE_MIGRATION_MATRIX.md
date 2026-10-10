@@ -4,54 +4,38 @@ Current checkpoint progress: [SQLite migration progress](SQLITE_PROGRESS.md).
 
 ## Current source and acceptance boundary
 
-Current production is `bd2000c`, including the canonical policy-snapshot reader,
-shared portable artifact parser, bounded legacy-manifest reader, and finite
-task-list page collector. The latest completed full local prepush is `5dbb2a2`:
-all 22 stages pass; 2,983 core tests, 2,972 passed, zero failed, 11 skipped.
-That full run predates the manifest-reader and page-collector changes. Its source
-observation was captured during execution, not before launch; tracked files were
-clean at launch and unchanged from that observation through completion. See
-`benchmarks/storage-sqlite/prepush-5dbb2a2-success.json`.
+Current implementation includes direct canonical handoff-list snapshot reads and
+private successful semantic-binding reuse within the exact detached audit scope.
+The latter retains snapshot tamper checks, artifact observations for parent CAS,
+independent strict/tolerant ledger validation, and uncached failure/overlay paths.
+It passes 31 focused tests, 80 quick tests, fast checks and complexity checks.
+The stable baseline reproduced two read-count failures: four semantic decisions
+were read twelve times across nested audits. See
+`benchmarks/storage-sqlite/owned-semantic-audit-success-reuse.json`.
 
-Full prepush on `ab2ea79` failed its core stage: 2,984 tests, 2,972 passed,
-one failed, 11 skipped. All 3,152 tracked hashes matched the before-start
-manifest. Fresh read-only dispatch resolved a prohibited metadata-reader module
-because of a static import in the legacy transaction reader. Correction
-`bd2000c` defers that import until an existing manifest is inspected; all 26
-affected tests and fast checks pass. Full corrected-source validation remains
-required. See `benchmarks/storage-sqlite/prepush-ab2ea79-failure.json` and
-`benchmarks/storage-sqlite/legacy-manifest-lazy-reader-correction.json`.
+Full local prepush on preceding `567f594` passed all 22 stages: 2,985 core tests,
+2,974 passed, zero failed and 11 skipped. All 3,159 tracked hashes match the
+manifest captured before launch. This covers the direct handoff-list correction;
+it predates semantic-binding reuse. Full validation of the newest implementation
+remains required. See `benchmarks/storage-sqlite/prepush-567f594-success.json`.
 
-Core CI `38011468995` passed all 17 jobs and expanded Node compatibility
-`38011473602` passed all seven jobs on earlier `a5faa02`. Raw logs and job
-identities were retained and reviewed. These results predate the later
-production corrections. See
-`benchmarks/storage-sqlite/ci-a5faa02-core-runtime-terminal-review.json`.
+Hosted Core, expanded Node compatibility, package smoke and full Windows runs
+passed on earlier `69a0aa0`; they predate the handoff and semantic-reuse changes.
+The full Windows run passed 2,959 of 2,984 tests, with zero failures and 25 skips.
+Skipped test names are retained and do not prove their individual controls. See
+`benchmarks/storage-sqlite/ci-69a0aa0-terminal-review.json` and
+`benchmarks/storage-sqlite/windows-69a0aa0-full-suite-log-review.json`.
 
-Windows focused storage correction on `e8273a6` passed all 37 tests with zero
-failures or skips. It predates the two latest production changes and does not
-prove complete Windows acceptance. The preceding full Windows run on `a5faa02`
-failed one owner-history liveness check; the original process identity cause
-remains unproven. Failure-only diagnostics now retain owner-chain observations.
-See `benchmarks/storage-sqlite/windows-e8273a6-storage-correction.json` and
-`benchmarks/storage-sqlite/windows-a5faa02-recovery-diagnosis.json`.
-
-The bounded legacy-manifest correction passes 31 affected tests and fast checks.
-The finite-page collector passes 17 affected tests and complexity checks; fast
-checks pass before removal of an unnecessary default parameter. It preserves
-full canonical task validation and writable-parent CAS observations. The bound
-covers retained projected page entries, not task keys or whole-process RSS.
-See `benchmarks/storage-sqlite/legacy-manifest-allocation-bound.json` and
-`benchmarks/storage-sqlite/task-list-page-retention.json`.
-
-Inclusive persistence LOC is 25,732 baseline versus 32,423 current lines, with
+Inclusive persistence LOC is 25,732 baseline versus 32,428 current lines, with
 zero unresolved membership and the unchanged ceiling of 19,299. All storage,
-import/export and maintenance code remains included. The LOC target fails;
-resource, full current platform, whole-consumer and validator-backed closure
-remain open. No sole-writer capability, complete-plan acceptance or PR is
-claimed. The source-bound entries below are historical and do not override this
-boundary. Live CI state must be checked through GitHub rather than inferred
-from historical dispatch descriptions.
+import/export and maintenance code remains included. The exact five-line
+`DISCOVERY_PROJECTIONS` declaration remains counted even though the base analyzer
+does not apply its explicit declaration disposition. The LOC target fails.
+Natural resource memory, the original performance matrix, full newest-source
+platform checks, whole-consumer acceptance and validator-backed closure remain
+open. No sole-writer capability, complete-plan acceptance or PR is claimed.
+Historical entries below do not override this boundary. Live CI state must be
+checked through GitHub rather than inferred from earlier dispatch descriptions.
 
 ## Historical local acceptance evidence
 

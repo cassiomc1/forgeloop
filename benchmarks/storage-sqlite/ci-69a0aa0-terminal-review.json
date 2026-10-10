@@ -1,0 +1,57 @@
+{
+  "sourceRevision": "69a0aa0571c0ca76ea16b41ead2044ac852efac9",
+  "runs": [
+    {
+      "id": 38015714174,
+      "name": "PR Core",
+      "jobs": 17,
+      "success": 17,
+      "skipped": 0,
+      "hashes": {
+        "terminal.json": "ca964f6a69e4e10d98f6430b84a16b1149838aa40defdc4ac50a2c6d61a77bed",
+        "jobs.json": "122be2766b23388ce724d8f6a91514fb1ddd81d414546278a37dda96521f26b3",
+        "full.log": "e07db86b0ed99ee6ca0772c43b2f1c1ca125cf849b76ba9756ad3b9fda6b5d49"
+      }
+    },
+    {
+      "id": 38015716120,
+      "name": "Windows full suite",
+      "jobs": 3,
+      "success": 1,
+      "skipped": 2,
+      "hashes": {
+        "terminal.json": "c806658159f5de1e5a6a6fc6a6ba69a4eb3af84c4a5482302979bed6f75df9ce",
+        "jobs.json": "39b1da90b71097f1dff1116a2c41660aca2b2257b75749989ae3c8daf78ab40a",
+        "full.log": "af6d0fd8bcb5240c5c60200542697ed8647abcfebdfc6b6edecdc22d6d6fdd03"
+      }
+    },
+    {
+      "id": 38015718000,
+      "name": "Node compatibility",
+      "jobs": 7,
+      "success": 7,
+      "skipped": 0,
+      "hashes": {
+        "terminal.json": "685c150fea10faf00e72fcf08eeccefc6d0c31ad547443617bf2c1d5cc78d5af",
+        "jobs.json": "d77fabedd71b0440a541f72c999ef71c118b4ee5e45466046199aa9f90f2afda",
+        "full.log": "6cb20e9196c88b5b296366b9b863c412b9d3b391cb6df6781e455a4acd243833"
+      }
+    },
+    {
+      "id": 38015720142,
+      "name": "Package smoke",
+      "jobs": 4,
+      "success": 4,
+      "skipped": 0,
+      "hashes": {
+        "terminal.json": "2cc6138b4b9c293e7b46dea5c4ed4f57f57780cf936398e2cf4ac3c1d4663182",
+        "jobs.json": "6dc5df803c9714d8f44e2301a43cab9d27a41534883ea795d8b13dbf1054ba7e",
+        "full.log": "d363d65d96da2603e5ab9b6f8ce78f33459431422c44491094636f5b8a581652"
+      }
+    }
+  ],
+  "limitations": [
+    "Predates direct canonical handoff list correction 567f594.",
+    "No resource, inclusive LOC, whole-consumer or validator closure acceptance inferred."
+  ]
+}

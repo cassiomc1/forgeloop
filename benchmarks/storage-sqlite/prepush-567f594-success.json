@@ -1,0 +1,44 @@
+{
+  "sourceRevision": "567f594b94f0b6c9af7cf1782fcc37ecbc40a34a",
+  "command": "npm run verify:prepush",
+  "exitCode": 0,
+  "sessionId": 50177,
+  "completedAt": "2026-10-10T04:37:04.544518+00:00",
+  "stages": [
+    "coverage (535.1s)",
+    "critical-coverage:check (0.2s)",
+    "lint (4.3s)",
+    "dependency:policy (0.1s)",
+    "complexity:check (1.6s)",
+    "docs:check (2.7s)",
+    "completions:check (0.1s)",
+    "summary:check (0.2s)",
+    "changelog:check (0.2s)",
+    "repository-index:manifest (0.1s)",
+    "repository:hygiene (0.2s)",
+    "poc:evidence:verify (0.2s)",
+    "poc:evidence:test (1.5s)",
+    "mcp:test:clean (7.4s)",
+    "mcp:pack:check (2.9s)",
+    "pack:check (1.7s)",
+    "python-unittest (1.0s)",
+    "markdown-self-test (0.0s)",
+    "markdown-validator (0.8s)",
+    "loop-self-test (0.2s)",
+    "loop-validator (0.1s)",
+    "secret-scan (11.8s)"
+  ],
+  "core": {
+    "tests": 2985,
+    "passed": 2974,
+    "failed": 0,
+    "skipped": 11
+  },
+  "trackedFilesUnchanged": 3159,
+  "startingManifestSha256": "691100ed090b35251ee0ce8b8771b28e543b0e77bb3cd2dccac6d959796698b7",
+  "logSha256": "da23aa4a3002e539c6c56dbe89a3789a97b556f0ed4941fdb50c2dfa96eb8688",
+  "limitations": [
+    "Local validation only; hosted runs69a0aa0 predate direct handoff list correction567f594.",
+    "Original memory/performance, inclusive LOC and whole-plan protocol closure remain open."
+  ]
+}

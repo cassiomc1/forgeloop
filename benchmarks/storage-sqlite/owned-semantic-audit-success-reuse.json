@@ -1,0 +1,60 @@
+{
+  "kind": "owned-semantic-audit-success-reuse",
+  "baselineRevision": "567f594b94f0b6c9af7cf1782fcc37ecbc40a34a",
+  "reviewedAt": "2026-10-10T04:40:43.241570+00:00",
+  "admission": "READY",
+  "admissionReceipt": "semantic-cache-preflight.json",
+  "productionChanges": [
+    "Private successful semantic artifact binding validation reused only in exact detached store/db/task/path/package scope",
+    "Pre-hit and post-validation snapshot identity/data-version guards preserved",
+    "Initial artifact observations remain merged into writable parent for CAS",
+    "Core strict/tolerant validation remains independently keyed; semantic failures and prepared overlays uncached",
+    "Nested auditSource reuse now binds exact ledger path"
+  ],
+  "baselineReproduction": {
+    "tests": 27,
+    "passed": 25,
+    "failed": 2,
+    "reason": "Valid nesting and tolerant/strict controls read four decisions twelve times; expected four.",
+    "fixtureDiagnosis": "First run additionally exposed missing nested task options and absent operational store in overlay fixture. These fixture errors were corrected before production changes; stable baseline has only two intended read-count failures."
+  },
+  "focused": {
+    "tests": 31,
+    "passed": 31,
+    "failed": 0,
+    "skipped": 0
+  },
+  "fast": {
+    "passed": true,
+    "quickTests": 80
+  },
+  "complexity": {
+    "status": "PASS",
+    "regressions": []
+  },
+  "sourceHashes": {
+    "src/core/events.js": "3784221ef07b184a7c380f29c9ce5d048f882eb9eca8ec432153a351dda141b6",
+    "tests/storage-event-audit.test.js": "64ccf17c69b3011c75b9ac3169eb4045f1d3e74fe669ad40b01e9b945b317ce4"
+  },
+  "logHashes": {
+    "semantic-cache-red.log": "5d7e44538f3a91fce27babe755a0debc4f1f8177cfa5cbee1d72c079b048835c",
+    "semantic-cache-red-corrected-fixtures.log": "c0ec8f4faca3eeeef4c39b41b9e7acc190eb8edda6d27e92d958fec8fb653297",
+    "semantic-cache-focused.log": "50423d39a8a32870b229be50d91a34ab7545f0fafcec4baf8688256c1ae8d2e9",
+    "semantic-cache-fast.log": "7f05d166ea051552e6269c5f334b2435a4403ea013032f52878e316824c42cd6",
+    "semantic-cache-complexity.log": "32111f472b37a8b8941d21c72e18a3815643453328562aed2fd87e8a2f0417f2"
+  },
+  "loc": {
+    "baseline": 25732,
+    "current": 32428,
+    "ceiling": 19299,
+    "unresolvedMembership": 0,
+    "targetMet": false,
+    "reviewedDeclarationSupplement": "Retains exact five-line DISCOVERY_PROJECTIONS inclusion ignored by base analyzer; prior source hash and bytes verified."
+  },
+  "limitations": [
+    "Full prepush567f594 predates this production optimization; current full validation and hosted checks required",
+    "Explicit event-path callers without taskId safely miss the cache and revalidate",
+    "No natural RSS, latency, performance acceptance or inclusive LOC target claimed",
+    "Whole-plan consumer acceptance and official VALID closure remain open"
+  ]
+}

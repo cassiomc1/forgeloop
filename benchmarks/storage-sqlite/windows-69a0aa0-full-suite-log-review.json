@@ -1,0 +1,43 @@
+{
+  "runId": 38015716120,
+  "sourceRevision": "69a0aa0571c0ca76ea16b41ead2044ac852efac9",
+  "logSha256": "af6d0fd8bcb5240c5c60200542697ed8647abcfebdfc6b6edecdc22d6d6fdd03",
+  "counts": {
+    "tests": 2984,
+    "pass": 2959,
+    "fail": 0,
+    "skipped": 25
+  },
+  "skippedTests": [
+    "\ufe63 optional Agent Browser localhost smoke (0.9565ms) # SKIP",
+    "\ufe63 durable action writes reject a symlinked actions directory (0.0935ms) # SKIP",
+    "\ufe63 gate record refuses evidence replaced by an outside symlink after path resolution (1.4052ms) # SKIP",
+    "\ufe63 gate evidence refuses evidence replaced by an outside symlink after path resolution (0.193ms) # SKIP",
+    "\ufe63 gate validate refuses evidence replaced by an outside symlink after path resolution (0.1621ms) # SKIP",
+    "\ufe63 gate revalidate refuses evidence replaced by an outside symlink after path resolution (0.1473ms) # SKIP",
+    "\ufe63 persistent transport preserves native search results, shares one host, and recovers (1.9395ms) # native Repository Index tests require an explicit FORGELOOP_TGREP_BINARY",
+    "\ufe63 canonical policy snapshot refuses a linked legacy file (0.4238ms) # SKIP",
+    "\ufe63 qualified Ripwire binary interoperates through the advisory API (0.1902ms) # Set FORGELOOP_TEST_RIPWIRE_PATH and FORGELOOP_TEST_RIPWIRE_VERSION",
+    "\ufe63 real Sentrux 0.5.7 public integration detects a dependency-cycle regression (1.3118ms) # SKIP",
+    "\ufe63 concurrent native setup and search clients converge on one owned server (1.0726ms) # native Repository Index tests require an explicit FORGELOOP_TGREP_BINARY",
+    "\ufe63 native search matches the ripgrep oracle for a controlled literal query (1.7154ms) # native Repository Index tests require an explicit FORGELOOP_TGREP_BINARY",
+    "\ufe63 doctor public JSON omits absolute Repository Index paths (1.0902ms) # native Repository Index tests require an explicit FORGELOOP_TGREP_BINARY",
+    "\ufe63 real pinned tgrep setup, live mutation, deletion, and no-match behavior (2.0972ms) # native Repository Index tests require an explicit FORGELOOP_TGREP_BINARY",
+    "\ufe63 a crashed owned server is restarted by the next search (0.4091ms) # native Repository Index tests require an explicit FORGELOOP_TGREP_BINARY",
+    "\ufe63 live watcher reconciles a Git branch switch with added and removed files (0.489ms) # native Repository Index tests require an explicit FORGELOOP_TGREP_BINARY",
+    "\ufe63 pre-Repository-Index projects migrate through update without rewriting task state (2.3487ms) # native migration test requires FORGELOOP_TGREP_BINARY",
+    "\ufe63 native CLI acceptance covers init, doctor, search, rebuild, and stop (2.4698ms) # native CLI acceptance requires an explicit FORGELOOP_TGREP_BINARY",
+    "\ufe63 maintenance owner refuses a symlink replacement before open (native no-follow) (1.6481ms) # SKIP",
+    "\ufe63 maintenance owner refuses a symlink replacement before open (descriptor fallback) (0.3245ms) # SKIP",
+    "\ufe63 storage marker refuses a symlink replacement before open (native no-follow) (0.9261ms) # SKIP",
+    "\ufe63 storage marker refuses a symlink replacement before open (descriptor fallback) (0.1374ms) # SKIP",
+    "\ufe63 storage metadata refuses a symlink replacement before open (native no-follow) (2.6113ms) # SKIP",
+    "\ufe63 storage metadata refuses a symlink replacement before open (descriptor fallback) (0.1925ms) # SKIP",
+    "\ufe63 core manual dispatch selects every gate without PR revision metadata and preserves PR path routing (2.286ms) # SKIP"
+  ],
+  "limitations": [
+    "Predates direct handoff list snapshot correction567f594",
+    "Skipped tests are not acceptance evidence for their individual Windows controls",
+    "No LOC, performance, memory or whole-plan closure inferred"
+  ]
+}

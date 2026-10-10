@@ -901,8 +901,14 @@ async function evaluateCallbackLedgerAudit(target, packageRoot, options, callbac
   let result;
   try {
     result = validateOwnedLedgerEvents(events, options);
-    const bindingErrors = await validateSemanticDecisionArtifactBindings(target, packageRoot, events);
+    const owned = assertOwnedLedgerUnchanged(events);
+    const sameScope = owned && owned.store === getOperationalStore(target)
+      && owned.db === owned.store.db && owned.packageRoot === packageRoot
+      && owned.relPath === relPath && owned.taskId === options?.taskId;
+    const bindingErrors = sameScope && owned.semanticValidated
+      ? [] : await validateSemanticDecisionArtifactBindings(target, packageRoot, events);
     assertOwnedLedgerUnchanged(events);
+    if (sameScope && result.valid && bindingErrors.length === 0) owned.semanticValidated = true;
     if (bindingErrors.length) result = { valid: false, events, errors: [...result.errors, ...bindingErrors] };
   } catch (error) {
     result = { valid: false, events: [], errors: [{ code: error.code ?? "E_EVENT_INVALID", message: error.message, artifacts: [relPath] }] };
@@ -928,7 +934,7 @@ export async function withEventLedgerAudit(target, packageRoot, options, callbac
   }
   const taskId = store.taskId({ taskKey: relPath.split("/")[2] });
   if (!taskId) return callback(await validateEventLedger(target, packageRoot, options));
-  if (store.auditSource?.taskId === taskId && store.auditSource.packageRoot === packageRoot) {
+  if (store.auditSource?.taskId === taskId && store.auditSource.packageRoot === packageRoot && store.auditSource.relPath === relPath) {
     return evaluateCallbackLedgerAudit(target, packageRoot, options, callback, store.auditSource.events, relPath);
   }
   const schema = await readSchema("event", packageRoot);
@@ -937,9 +943,9 @@ export async function withEventLedgerAudit(target, packageRoot, options, callbac
   let completeObservation;
   return withDetachedLedgerSnapshot(store.db, taskId, (events, db) => withOperationalReadSnapshot({ db, target }, async snapshotStore => {
     completeObservation = snapshotStore.beginEventSnapshotObservation(relPath);
-    snapshotStore.auditSource = { taskId, packageRoot, events };
+    snapshotStore.auditSource = { taskId, packageRoot, relPath, events };
     const filename = db.prepare("PRAGMA database_list").all().find(row => row.name === "main").file;
-    ownedLedgerProofs.set(events, { db, filename, fileIdentity: ownedSnapshotFileIdentity(filename),
+    ownedLedgerProofs.set(events, { db, filename, store: snapshotStore, taskId, packageRoot, relPath, semanticValidated: false, fileIdentity: ownedSnapshotFileIdentity(filename),
       version: db.prepare("PRAGMA data_version").get().data_version, successes: new Set() });
     try { return await evaluateCallbackLedgerAudit(target, packageRoot, options, callback, events, relPath); }
     finally { ownedLedgerProofs.delete(events); }

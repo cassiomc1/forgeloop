@@ -560,3 +560,226 @@ test("owned audit rejects private snapshot changes during callback without a nes
     assert.equal((await validateEventLedger(f.target, f.packageRoot, { taskId: f.taskId })).valid, true);
   } finally { await rm(f.target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 }); }
 });
+
+function installDecisionArtifactReadCounter(target) {
+  const store = getOperationalStore(target);
+  const prototype = Object.getPrototypeOf(store);
+  const original = prototype.readText;
+  let count = 0;
+  prototype.readText = function countedRead(relativePath) {
+    if (typeof relativePath === "string"
+      && relativePath.includes("/decisions/")
+      && relativePath.endsWith(".json")) count += 1;
+    return original.call(this, relativePath);
+  };
+  return {
+    count: () => count,
+    restore: () => { prototype.readText = original; },
+  };
+}
+
+test("owned semantic binding reuse reads each validated decision once in the exact audit scope", async () => {
+  const f = await buildCanonicalDiagnosisProject();
+  const expected = await validateEventLedger(f.target, f.packageRoot, { taskId: f.taskId });
+  const decisionCount = [...expected.events]
+    .filter(event => event.event === "SEMANTIC_DECISION_RECORDED").length;
+  assert.ok(decisionCount > 0, "canonical fixture must contain semantic decision records");
+  const db = openStorageDatabase(path.join(f.target, ".forgeloop/state.sqlite"));
+  try {
+    await withOperationalStore({ db, target: f.target }, async () => {
+      const counter = installDecisionArtifactReadCounter(f.target);
+      try {
+        await withEventLedgerAudit(f.target, f.packageRoot, { taskId: f.taskId }, async outer => {
+          assert.equal(outer.valid, true);
+          const nestedClaims = await resolveTaskClaimState(f.target, f);
+          assert.equal(nestedClaims.taskId, f.taskId);
+          assert.equal(nestedClaims.valid, true);
+          await withEventLedgerAudit(f.target, f.packageRoot, { taskId: f.taskId }, nested => {
+            assert.equal(nested.valid, true);
+            assert.equal(nested.events, outer.events);
+          });
+        });
+        assert.equal(counter.count(), decisionCount,
+          "nested claim/audit paths must reuse successful semantic bindings without rereading artifacts");
+      } finally { counter.restore(); }
+    });
+  } finally { db.close(); await rm(f.target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 }); }
+});
+
+test("owned semantic cache rejects a private snapshot decision-artifact tamper", async () => {
+  const f = await buildCanonicalDiagnosisProject();
+  try {
+    await assert.rejects(withEventLedgerAudit(f.target, f.packageRoot, { taskId: f.taskId }, async outer => {
+      assert.equal(outer.valid, true);
+      const semantic = [...outer.events].find(event => event.event === "SEMANTIC_DECISION_RECORDED");
+      assert.ok(semantic);
+      const snapshot = getOperationalStore(f.target).db;
+      const filename = snapshot.prepare("PRAGMA database_list").all().find(row => row.name === "main").file;
+      const writer = openStorageDatabase(filename);
+      try {
+        const row = writer.prepare(
+          "SELECT payload_json FROM task_artifacts WHERE task_id = ? AND kind = 'decision' AND artifact_id = ?",
+        ).get(semantic.taskId, semantic.details.decisionId);
+        assert.ok(row);
+        const payload = JSON.parse(row.payload_json);
+        payload.answers = { ...(payload.answers ?? {}), privateSnapshotTamper: true };
+        const changed = writer.prepare(
+          "UPDATE task_artifacts SET payload_json = ? WHERE task_id = ? AND kind = 'decision' AND artifact_id = ?",
+        ).run(JSON.stringify(payload), semantic.taskId, semantic.details.decisionId);
+        assert.equal(changed.changes, 1);
+        await withEventLedgerAudit(f.target, f.packageRoot, { taskId: f.taskId }, nested => {
+          assert.equal(nested.valid, false);
+          assert.ok(nested.errors.some(error => error.code === "E_STATE_REVISION_CONFLICT"));
+        });
+      } finally { writer.close(); }
+    }), { code: "E_STATE_REVISION_CONFLICT" });
+  } finally { await rm(f.target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 }); }
+});
+
+test("nested claim resolution retains live decision observations for parent CAS", async () => {
+  const f = await buildCanonicalDiagnosisProject();
+  const expected = await resolveTaskClaimState(f.target, f);
+  const filename = path.join(f.target, ".forgeloop/state.sqlite");
+  const db = openStorageDatabase(filename);
+  const writer = openStorageDatabase(filename);
+  try {
+    await withOperationalStore({ db, target: f.target }, async source => {
+      await withEventLedgerAudit(f.target, f.packageRoot, { taskId: f.taskId }, async outer => {
+        assert.equal(outer.valid, true);
+        const semantic = [...outer.events].find(event => event.event === "SEMANTIC_DECISION_RECORDED");
+        assert.ok(semantic);
+        const row = writer.prepare(
+          "SELECT payload_json FROM task_artifacts WHERE task_id = ? AND kind = 'decision' AND artifact_id = ?",
+        ).get(semantic.taskId, semantic.details.decisionId);
+        const payload = JSON.parse(row.payload_json);
+        payload.recordedAt = "2030-01-01T00:00:00.000Z";
+        writer.prepare(
+          "UPDATE task_artifacts SET payload_json = ? WHERE task_id = ? AND kind = 'decision' AND artifact_id = ?",
+        ).run(JSON.stringify(payload), semantic.taskId, semantic.details.decisionId);
+        const nestedClaims = await resolveTaskClaimState(f.target, f);
+        assert.equal(nestedClaims.valid, expected.valid);
+        assert.equal(nestedClaims.claimState, expected.claimState);
+      });
+      assert.throws(() => source.commit(), { code: "E_STATE_REVISION_CONFLICT" },
+        "the first semantic read must remain in the writable parent's CAS set");
+    });
+  } finally {
+    writer.close();
+    db.close();
+    await rm(f.target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
+  }
+});
+
+test("invalid semantic artifacts are reread instead of being cached as successful bindings", async () => {
+  const f = await buildCanonicalDiagnosisProject();
+  const expected = await validateEventLedger(f.target, f.packageRoot, { taskId: f.taskId });
+  const decisionCount = [...expected.events]
+    .filter(event => event.event === "SEMANTIC_DECISION_RECORDED").length;
+  const filename = path.join(f.target, ".forgeloop/state.sqlite");
+  const db = openStorageDatabase(filename);
+  try {
+    const semantic = [...expected.events].find(event => event.event === "SEMANTIC_DECISION_RECORDED");
+    assert.ok(semantic);
+    const changed = db.prepare(
+      "UPDATE task_artifacts SET payload_json = ? WHERE task_id = ? AND kind = 'decision' AND artifact_id = ?",
+    ).run("{}", semantic.taskId, semantic.details.decisionId);
+    assert.equal(changed.changes, 1);
+    await withOperationalStore({ db, target: f.target }, async () => {
+      const counter = installDecisionArtifactReadCounter(f.target);
+      try {
+        await withEventLedgerAudit(f.target, f.packageRoot, { taskId: f.taskId }, async first => {
+          assert.equal(first.valid, false);
+          assert.ok(first.errors.some(error => error.message.includes("semantic decision artifact")));
+          await withEventLedgerAudit(f.target, f.packageRoot, { taskId: f.taskId }, second => {
+            assert.equal(second.valid, false);
+            assert.ok(second.errors.some(error => error.message.includes("semantic decision artifact")));
+          });
+        });
+        assert.equal(counter.count(), decisionCount * 2,
+          "semantic binding failures must not become reusable successes");
+      } finally { counter.restore(); }
+    });
+  } finally { db.close(); await rm(f.target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 }); }
+});
+
+test("prepared overlays use the uncached array audit fallback", async () => {
+  const f = await buildCanonicalDiagnosisProject();
+  const expected = await validateEventLedger(f.target, f.packageRoot, { taskId: f.taskId });
+  const decisionCount = [...expected.events]
+    .filter(event => event.event === "SEMANTIC_DECISION_RECORDED").length;
+  const db = openStorageDatabase(path.join(f.target, ".forgeloop/state.sqlite"));
+  try {
+    await assert.rejects(withOperationalStore({ db, target: f.target }, () => withOperationalTransaction({
+      target: f.target,
+      taskId: f.taskId,
+      packageRoot: f.packageRoot,
+      operation: "semantic-audit-cache-overlay-control",
+      recordCommitEvent: false,
+    }, async () => {
+      const counter = installDecisionArtifactReadCounter(f.target);
+      try {
+        await appendProtocolEvent(
+          f.target,
+          { taskId: f.taskId, event: "OBSERVATION", details: { message: "prepared overlay" } },
+          f.packageRoot,
+          { taskId: f.taskId },
+        );
+        await withEventLedgerAudit(f.target, f.packageRoot, { taskId: f.taskId }, first => {
+          assert.equal(first.valid, true);
+          assert.equal(Array.isArray(first.events), true);
+        });
+        await withEventLedgerAudit(f.target, f.packageRoot, { taskId: f.taskId }, second => {
+          assert.equal(second.valid, true);
+          assert.equal(Array.isArray(second.events), true);
+        });
+        assert.equal(counter.count(), decisionCount * 2,
+          "a prepared source must not consult an owned detached semantic cache");
+      } finally { counter.restore(); }
+      throw Object.assign(new Error("rollback prepared semantic audit"), { code: "E_TEST_ROLLBACK" });
+    })), { code: "E_TEST_ROLLBACK" });
+  } finally { db.close(); await rm(f.target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 }); }
+});
+
+test("strict and tolerant ledger modes stay independent while semantic bindings reuse", async () => {
+  const f = await buildCanonicalDiagnosisProject();
+  const expected = await validateEventLedger(f.target, f.packageRoot, { taskId: f.taskId });
+  const decisionCount = [...expected.events]
+    .filter(event => event.event === "SEMANTIC_DECISION_RECORDED").length;
+  const filename = path.join(f.target, ".forgeloop/state.sqlite");
+  const db = openStorageDatabase(filename);
+  try {
+    const last = expected.events.at(-1);
+    const legacy = buildProtocolEvent({
+      taskId: f.taskId,
+      event: "OPERATOR_RECOVERY_RECORDED",
+      details: {
+        classification: "RECOVERABLE",
+        reasonCodes: ["LEGACY_RECOVERY"],
+        authorization: "OPERATOR_AUTHORIZED",
+        note: "known defect fixture",
+      },
+    }, { checkpoint: { seq: last.seq, lastHash: last.hash } });
+    appendEvent(db, { taskId: f.taskId, event: legacy });
+    await withOperationalStore({ db, target: f.target }, async () => {
+      const counter = installDecisionArtifactReadCounter(f.target);
+      try {
+        await withEventLedgerAudit(f.target, f.packageRoot, {
+          taskId: f.taskId,
+          allowUnmigratedLegacyRecoveryEvents: true,
+        }, async tolerantOuter => {
+          assert.equal(tolerantOuter.valid, true);
+          await withEventLedgerAudit(f.target, f.packageRoot, { taskId: f.taskId }, strict => {
+            assert.equal(strict.valid, false);
+            assert.ok(strict.errors.some(error => error.message.includes("not officially migrated")));
+          });
+          await withEventLedgerAudit(f.target, f.packageRoot, {
+            taskId: f.taskId,
+            allowUnmigratedLegacyRecoveryEvents: true,
+          }, tolerant => assert.equal(tolerant.valid, true));
+        });
+        assert.equal(counter.count(), decisionCount,
+          "legacy tolerance must vary only core validation, not semantic artifact reuse");
+      } finally { counter.restore(); }
+    });
+  } finally { db.close(); await rm(f.target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 }); }
+});
