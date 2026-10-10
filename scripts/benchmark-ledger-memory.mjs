@@ -27,6 +27,8 @@ const TASK = "ledger-memory-benchmark";
 const AT = "2026-09-30T00:00:00.000Z";
 const packageRoot = getPackageRoot();
 const arg = (name, fallback) => process.argv.find(value => value.startsWith(`--${name}=`))?.slice(name.length + 3) ?? fallback;
+const readScope = arg("read-scope", "read-only");
+assert.ok(["read-only", "mutation-observation"].includes(readScope), "Invalid --read-scope");
 function integer(name, fallback, min, max) {
   const value = Number(arg(name, fallback));
   assert.ok(Number.isSafeInteger(value) && value >= min && value <= max, `Invalid --${name}`);
@@ -111,13 +113,13 @@ async function measureWorker() {
     }
   }
   try {
-    if (db) await withOperationalStore({ db, target }, run); else await run();
+    if (db) await withOperationalStore({ db, target, readOnly: readScope === "read-only" }, run); else await run();
     const p50 = percentile(samples, 0.5);
     const p95 = percentile(samples, 0.95);
-    return { status: "MEASURED", backend, operation, auditImplementation: operation === "audit" && !legacy ? "callback-detached-snapshot" : operation.startsWith("audit") ? "public-array" : null, warmup, repeats, samplesMs: samples.map(rounded), p50Ms: rounded(p50), p95Ms: rounded(p95), eventsPerSecondAtP50: rounded(expected.count * 1000 / p50), peakProcessRssKiB: process.resourceUsage().maxRSS, finalRssBytes: process.memoryUsage().rss, eventLoopDelayMaxMs: rounded(histogram.max / 1e6), eventLoopDelayP95Ms: rounded(histogram.percentile(95) / 1e6), observed: expected, sqliteVersion: db?.prepare("SELECT sqlite_version() AS version").get().version ?? null };
+    return { status: "MEASURED", backend, operation, readScope, auditImplementation: operation === "audit" && !legacy ? "callback-detached-snapshot" : operation.startsWith("audit") ? "public-array" : null, warmup, repeats, samplesMs: samples.map(rounded), p50Ms: rounded(p50), p95Ms: rounded(p95), eventsPerSecondAtP50: rounded(expected.count * 1000 / p50), peakProcessRssKiB: process.resourceUsage().maxRSS, finalRssBytes: process.memoryUsage().rss, eventLoopDelayMaxMs: rounded(histogram.max / 1e6), eventLoopDelayP95Ms: rounded(histogram.percentile(95) / 1e6), observed: expected, sqliteVersion: db?.prepare("SELECT sqlite_version() AS version").get().version ?? null };
   } catch (error) {
     if (backend !== "filesystem" || error.code !== "JSON_LIMIT_EXCEEDED") throw error;
-    return { status: "REFUSED", backend, operation, warmup, repeats, samplesMs: [], p50Ms: null, p95Ms: null, peakProcessRssKiB: process.resourceUsage().maxRSS, observed: null, error: { code: error.code, message: "Pinned filesystem reader refuses the whole ledger at its existing JSON byte limit" } };
+    return { status: "REFUSED", backend, operation, readScope, warmup, repeats, samplesMs: [], p50Ms: null, p95Ms: null, peakProcessRssKiB: process.resourceUsage().maxRSS, observed: null, error: { code: error.code, message: "Pinned filesystem reader refuses the whole ledger at its existing JSON byte limit" } };
   } finally { histogram.disable(); db?.close(); }
 }
 
@@ -194,13 +196,13 @@ async function main() {
       try {
         const fixture = await seed(temporary, size, seedValue, payloadBytes);
         for (const [backend, operation] of [["filesystem", "iterator"], ["sqlite", "iterator"], ["sqlite", "audit"], ["sqlite", "audit-array"], ["filesystem", "audit"], ["sqlite", "export"]]) {
-          const result = await child([`--baseline-root=${baselineRoot}`, `--worker=${backend}`, `--operation=${operation}`, `--target=${fixture[backend]}`, `--expected=${JSON.stringify(fixture.expected)}`, `--repeats=${repeats}`, `--warmup=${warmup}`]);
+          const result = await child([`--baseline-root=${baselineRoot}`, `--read-scope=${readScope}`, `--worker=${backend}`, `--operation=${operation}`, `--target=${fixture[backend]}`, `--expected=${JSON.stringify(fixture.expected)}`, `--repeats=${repeats}`, `--warmup=${warmup}`]);
           rows.push({ events: size, ledgerBytes: fixture.ledgerBytes, databaseBytes: fixture.databaseBytes, ...result });
           process.stderr.write(`${size} ${backend} ${operation}: status=${result.status} p95=${result.p95Ms}ms RSS=${result.peakProcessRssKiB}KiB\n`);
         }
       } finally { await rm(temporary, { recursive: true, force: true }); }
     }
-    const result = { schemaVersion: 1, baseline: { commit: BASELINE, packageVersion: baselineVersion, source: "Pinned pre-migration filesystem readers" }, generatedAt: new Date().toISOString(), seed: seedValue, payloadBytes, runtime: process.version, platform: process.platform, arch: process.arch, cpu: os.cpus()[0]?.model, logicalCpus: os.cpus().length, totalMemoryBytes: os.totalmem(), loadAverage: os.loadavg(), sqliteDurability: { journalMode: "WAL", synchronous: "FULL" }, method: "Fresh worker per operation/size; common benchmark harness plus pinned reader imports for filesystem rows; warm domain timings; peak process RSS includes startup, warmup, measured samples and export validation; setup excluded; no forced GC or controlled filesystem cache eviction; no baseline-equivalent export timing; no CLI/platform/concurrency or full acceptance claim.", rows };
+    const result = { schemaVersion: 1, baseline: { commit: BASELINE, packageVersion: baselineVersion, source: "Pinned pre-migration filesystem readers" }, generatedAt: new Date().toISOString(), readScope, seed: seedValue, payloadBytes, runtime: process.version, platform: process.platform, arch: process.arch, cpu: os.cpus()[0]?.model, logicalCpus: os.cpus().length, totalMemoryBytes: os.totalmem(), loadAverage: os.loadavg(), sqliteDurability: { journalMode: "WAL", synchronous: "FULL" }, method: "Fresh worker per operation/size; common benchmark harness plus pinned reader imports for filesystem rows; warm domain timings; read-only operational scope by default, explicit mutation-observation mode retains CAS read-set hashing; peak process RSS includes startup, warmup, measured samples and export validation; setup excluded; no forced GC or controlled filesystem cache eviction; no baseline-equivalent export timing; no CLI/platform/concurrency or full acceptance claim.", rows };
     const filename = arg("out", null);
     if (filename) await writeFile(filename, `${JSON.stringify(result, null, 2)}\n`);
     else process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);

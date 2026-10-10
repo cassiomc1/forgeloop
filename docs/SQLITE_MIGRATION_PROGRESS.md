@@ -1,5 +1,9 @@
 # SQLite migration progress
 
+## Current ledger read-scope preparation
+
+The ledger driver now defaults to the read-only operational scope used by public read commands. The previous fixture used a read-only database with the writable store default, adding mutation CAS read-set hashing. That historical mode remains available through `--read-scope=mutation-observation`; parent and worker output record the chosen mode. A real-store control confirms equal payloads with CAS observations only in the mutation mode. Syntax, lint and fast checks pass. The prior `ebb632b` results remain historical mutation-observation measurements; a scope change must not be attributed to the prepared-PRAGMA production optimization. All original sizes, payloads, validators, snapshot guards and baseline refusals remain unchanged. Fresh runs in both modes are required. See `benchmarks/storage-sqlite/ledger-read-scope-preparation.json`.
+
 ## Current owned guard statement reuse
 
 Snapshot guards now prepare `PRAGMA data_version` once per private snapshot and execute it afresh at every existing boundary. All file/WAL identity checks, full Windows byte hashing, direct-read and cursor-resume guards remain intact. A real two-connection control confirms fresh values after another connection commits; 42 focused integrity/routing tests pass. Lint has zero errors and the same three existing complexity warnings. This removes repeated statement preparation, but no new performance benefit or LOC acceptance is claimed before measurement and source-binding review. See `benchmarks/storage-sqlite/owned-guard-statement-reuse-preparation.json`.
