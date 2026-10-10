@@ -9,7 +9,7 @@ import { pathToFileURL } from "node:url";
 import { performance } from "node:perf_hooks";
 import { measureStorageResources, resourceMeasurementLimits } from "./lib/storage-benchmark-resources.mjs";
 import { canonicalActionFingerprint, validateActionArtifact } from "../src/core/action-model.js";
-import { findActionByIdempotencyKey, proposeAction } from "../src/core/actions.js";
+import { findActionByIdempotencyKey, listActions, proposeAction, validateActionLedgerConsistency } from "../src/core/actions.js";
 import { listApprovals, requestApproval, resolveApproval } from "../src/core/approvals.js";
 import { validateEventLedger, validateStateLedgerCoherence } from "../src/core/events.js";
 import { buildCanonicalDiagnosisProject } from "../tests/helpers/canonical-diagnosis-fixture.js";
@@ -30,6 +30,7 @@ assert.equal(execFileSync("git", ["-C", baselineRoot, "status", "--porcelain", "
 const legacy = await import(pathToFileURL(path.join(baselineRoot, "src/core/actions.js")).href);
 const sizes = (argument("sizes") ?? "10,1000,5000").split(",").map(Number);
 const repeats = Number(argument("repeats") ?? 20);
+const validationOnly = process.argv.includes("--validate-only");
 const warmup = Number(argument("warmup") ?? 0);
 assert.ok(Number.isInteger(warmup) && warmup >= 0 && warmup <= 100);
 const resourceMode = argument("resources") ?? "false";
@@ -130,6 +131,19 @@ for (const size of sizes) {
       assert.deepEqual(await listApprovals(target, { packageRoot: getPackageRoot(), taskId }),
         await baselineApprovals.listApprovals(portable, { packageRoot: baselineRoot, taskId }));
       assert.equal((await listApprovals(target, { packageRoot: getPackageRoot(), taskId })).length, size);
+      const nativeActions = await listActions(target, { packageRoot: getPackageRoot(), taskId });
+      const portableActions = await legacy.listActions(portable, { packageRoot: baselineRoot, taskId });
+      assert.equal(nativeActions.length, size);
+      assert.deepEqual(portableActions, nativeActions, "Complete public action histories must match");
+      assert.deepEqual(await validateActionLedgerConsistency(target, { packageRoot: getPackageRoot(), taskId }), []);
+      assert.deepEqual(await legacy.validateActionLedgerConsistency(portable, { packageRoot: baselineRoot, taskId }), []);
+      for (const idempotencyKey of ["benchmark-key-0", `benchmark-key-${Math.floor(size / 2)}`, `benchmark-key-${size - 1}`, "benchmark-key-missing"]) {
+        assert.deepEqual(
+          await findActionByIdempotencyKey(target, { packageRoot: getPackageRoot(), taskId, idempotencyKey }),
+          await legacy.findActionByIdempotencyKey(portable, { packageRoot: baselineRoot, taskId, idempotencyKey }),
+          "First, middle, tail and missing public idempotency lookups must match",
+        );
+      }
     }
     const fixtureMs = performance.now() - fixtureStarted;
     const options = { taskId, idempotencyKey: `benchmark-key-${size - 1}` };
@@ -172,14 +186,14 @@ for (const size of sizes) {
     const native = [nativeCall, nativeSamples, target, nativeResources];
     const filesystem = [legacyCall, legacySamples, holding ? target : portable, legacyResources];
     const samplesToRun = [];
-    if (persistent) {
+    if (!validationOnly && persistent) {
       // Keep a native connection only while its fixture occupies its bound path.
       // Grouped backend batches avoid swapping an open SQLite handle on Windows.
       const groups = results.length % 2 ? [filesystem, native] : [native, filesystem];
       for (const pair of groups) {
         for (let index = 0; index < repeats + warmup; index++) samplesToRun.push({ pair, index });
       }
-    } else {
+    } else if (!validationOnly) {
       for (let index = 0; index < repeats + warmup; index++) {
         for (const pair of index % 2 ? [filesystem, native] : [native, filesystem]) samplesToRun.push({ pair, index });
       }
@@ -235,7 +249,7 @@ for (const size of sizes) {
       assert.throws(() => persistentConnection.prepare("SELECT 1"));
     }
     results.push({ actions: size, approvals: canonical ? size : 0, ledgerEvents, fixtureMs, ...(operation === "protocol" ? { protocolResult: expected } : {}), outputParity: true, missingKeyParity: true, nativeSamplesMs: nativeSamples, baselineSamplesMs: legacySamples,
-      nativeP95Ms: percentile(nativeSamples), baselineP95Ms: percentile(legacySamples), speedupP95: percentile(legacySamples) / percentile(nativeSamples),
+      nativeP95Ms: validationOnly ? null : percentile(nativeSamples), baselineP95Ms: validationOnly ? null : percentile(legacySamples), speedupP95: validationOnly ? null : percentile(legacySamples) / percentile(nativeSamples),
       ...(resourcesEnabled ? { rawResourceSamples: { native: nativeResources, baseline: legacyResources } } : {}) });
   } finally {
     await runtimeContext?.close();
@@ -245,9 +259,9 @@ for (const size of sizes) {
   }
 }
 process.stdout.write(`${JSON.stringify({ schemaVersion: 1, baselineRevision: revision, node: process.version, platform: process.platform, architecture: process.arch,
-  cpu: os.cpus()[0]?.model ?? null, repeats, warmup, timestamp,
+  cpu: os.cpus()[0]?.model ?? null, validationOnly, repeats, warmup, timestamp,
   runtime: persistent ? "warm canonical integration runtime with one persistent native connection per backend batch" : "warm-cache public API with per-call native connection",
-  persistentConnectionReuseVerified: persistent,
+  persistentConnectionReuseVerified: persistent && !validationOnly,
   backendOrder: persistent ? "grouped backend batches, reversed between dataset sizes; connection closed before fixture switch" : "alternating each repetition",
   ...(nativeComparisonRoot ? {
     comparisonKind: "DIAGNOSTIC_NATIVE_VARIANTS",
