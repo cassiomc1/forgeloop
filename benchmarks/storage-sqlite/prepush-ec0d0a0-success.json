@@ -1,0 +1,44 @@
+{
+  "sourceRevision": "ec0d0a059b17a888cbf722efb908c94bea233b78",
+  "command": "npm run verify:prepush",
+  "exitCode": 0,
+  "sessionId": 81854,
+  "completedAt": "2026-10-10T04:53:52.289155+00:00",
+  "stages": [
+    "coverage (532.8s)",
+    "critical-coverage:check (0.3s)",
+    "lint (5.6s)",
+    "dependency:policy (0.2s)",
+    "complexity:check (2.0s)",
+    "docs:check (3.0s)",
+    "completions:check (0.1s)",
+    "summary:check (0.2s)",
+    "changelog:check (0.2s)",
+    "repository-index:manifest (0.2s)",
+    "repository:hygiene (0.2s)",
+    "poc:evidence:verify (0.2s)",
+    "poc:evidence:test (1.6s)",
+    "mcp:test:clean (7.8s)",
+    "mcp:pack:check (3.0s)",
+    "pack:check (1.8s)",
+    "python-unittest (1.1s)",
+    "markdown-self-test (0.1s)",
+    "markdown-validator (0.8s)",
+    "loop-self-test (0.3s)",
+    "loop-validator (0.1s)",
+    "secret-scan (12.7s)"
+  ],
+  "core": {
+    "tests": 2991,
+    "passed": 2980,
+    "failed": 0,
+    "skipped": 11
+  },
+  "trackedFilesUnchanged": 3165,
+  "startingManifestSha256": "a71d70e93e13732a073075b2be2c57bd45ae40f0e19d78dcc03d36d6daf1bea2",
+  "logSha256": "4bb4c723ccd86f2c8c6fabfdfa4ce06cfab25e6c953701f37a1992ed6d7cb246",
+  "limitations": [
+    "Local validation only; current hosted validation remains required.",
+    "Original memory/performance, inclusive LOC and whole-consumer/protocol closure remain open."
+  ]
+}

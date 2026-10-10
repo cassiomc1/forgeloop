@@ -13,11 +13,21 @@ The stable baseline reproduced two read-count failures: four semantic decisions
 were read twelve times across nested audits. See
 `benchmarks/storage-sqlite/owned-semantic-audit-success-reuse.json`.
 
-Full local prepush on preceding `567f594` passed all 22 stages: 2,985 core tests,
-2,974 passed, zero failed and 11 skipped. All 3,159 tracked hashes match the
-manifest captured before launch. This covers the direct handoff-list correction;
-it predates semantic-binding reuse. Full validation of the newest implementation
-remains required. See `benchmarks/storage-sqlite/prepush-567f594-success.json`.
+Full local prepush on `ec0d0a0` passed all 22 stages: 2,991 core tests,
+2,980 passed, zero failed and 11 skipped. All 3,165 tracked hashes match the
+manifest captured before launch. This covers both corrections above. See
+`benchmarks/storage-sqlite/prepush-ec0d0a0-success.json`.
+
+Current-source maintenance coverage now records migration, migration resume,
+migration status, backup, restore and restore resume, including admission,
+binary integrity, rollback and legacy refusal boundaries. The source review
+and exact passing test names are retained in
+`benchmarks/storage-sqlite/maintenance-consumers-ec0d0a0-review.json`.
+The ten prepared continuity, bundle identity and transaction-boundary controls
+also passed in the same full run; their execution receipt is
+`benchmarks/storage-sqlite/regressions945-current-ec0d0a0-execution.json`.
+Historical preparation records remain unchanged. These finite checks do not
+prove the complete sole-writer or whole-consumer acceptance requirement.
 
 Hosted Core, expanded Node compatibility, package smoke and full Windows runs
 passed on earlier `69a0aa0`; they predate the handoff and semantic-reuse changes.

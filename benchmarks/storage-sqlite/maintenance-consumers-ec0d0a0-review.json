@@ -1,0 +1,1419 @@
+{
+  "schemaVersion": 1,
+  "kind": "CURRENT_SOURCE_MAINTENANCE_CONSUMER_REVIEW",
+  "generatedAt": "2026-10-10T04:56:23.503090+00:00",
+  "source": {
+    "worktree": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop",
+    "revision": "ec0d0a059b17a888cbf722efb908c94bea233b78",
+    "expectedRevision": "ec0d0a059b17a888cbf722efb908c94bea233b78",
+    "branch": "codex/sqlite-end-to-end",
+    "status": [
+      "## codex/sqlite-end-to-end...origin/codex/sqlite-end-to-end [ahead 2]",
+      "?? integrations/mcp/node_modules",
+      "?? node_modules"
+    ],
+    "preservedUntrackedState": [
+      "integrations/mcp/node_modules",
+      "node_modules"
+    ]
+  },
+  "scope": {
+    "purpose": "Finite source-bound audit of the six dedicated storage maintenance consumers and the supported public authority boundary.",
+    "originalPlanDefinitionOfDone": "docs/SQLITE_MIGRATION_PLAN.md:279-290",
+    "supportedPublicSurfaces": [
+      "package root CLI export",
+      "package ./integration export",
+      "transport-neutral command runtime",
+      "MCP tool/resource delegators"
+    ],
+    "explicitLimits": [
+      "This review does not claim SQLite sole-writer capability acceptance.",
+      "A trusted raw DatabaseSync caller can choose and rewrite a local database; target inference is impossible for that internal helper contract and is outside the supported package boundary.",
+      "Privileged or third-party external processes can cause filesystem side effects; this report does not claim universal exclusion of them.",
+      "Dynamic aliases, assigned callback effects, dependency internals and every arbitrary code execution path are not closed by finite static inventories.",
+      "Portable export/bundle/signing/configuration and installation metadata remain explicit file-owned compatibility/output surfaces; they are not operational state authority."
+    ]
+  },
+  "terminalValidation": {
+    "status": "confirmed_local_exit_0",
+    "receipt": "/Users/cassio/.codex/verification/prepush-ec0d0a0-success.json",
+    "log": "/Users/cassio/.codex/verification/prepush-ec0d0a0.log",
+    "sessionId": 81854,
+    "command": "npm run verify:prepush",
+    "completedAt": "2026-10-10T04:53:52.289155+00:00",
+    "exitCode": 0,
+    "core": {
+      "tests": 2991,
+      "passed": 2980,
+      "failed": 0,
+      "skipped": 11
+    },
+    "stages": [
+      "coverage (532.8s)",
+      "critical-coverage:check (0.3s)",
+      "lint (5.6s)",
+      "dependency:policy (0.2s)",
+      "complexity:check (2.0s)",
+      "docs:check (3.0s)",
+      "completions:check (0.1s)",
+      "summary:check (0.2s)",
+      "changelog:check (0.2s)",
+      "repository-index:manifest (0.2s)",
+      "repository:hygiene (0.2s)",
+      "poc:evidence:verify (0.2s)",
+      "poc:evidence:test (1.6s)",
+      "mcp:test:clean (7.8s)",
+      "mcp:pack:check (3.0s)",
+      "pack:check (1.8s)",
+      "python-unittest (1.1s)",
+      "markdown-self-test (0.1s)",
+      "markdown-validator (0.8s)",
+      "loop-self-test (0.3s)",
+      "loop-validator (0.1s)",
+      "secret-scan (12.7s)"
+    ],
+    "logSha256": "4bb4c723ccd86f2c8c6fabfdfa4ce06cfab25e6c953701f37a1992ed6d7cb246",
+    "startingManifestSha256": "a71d70e93e13732a073075b2be2c57bd45ae40f0e19d78dcc03d36d6daf1bea2",
+    "trackedFilesUnchanged": 3165,
+    "localOnlyLimitations": [
+      "Local validation only; current hosted validation remains required.",
+      "Original memory/performance, inclusive LOC and whole-consumer/protocol closure remain open."
+    ]
+  },
+  "sixMissingMaintenanceRows": [
+    {
+      "command": "storage-migrate",
+      "implementation": {
+        "path": "src/commands/storage-migrate.js",
+        "lines": "1-5",
+        "sha256": "cae777a08d5b50fb9b54a0ca4a9a9a9c8597c02ca5f413af98f0be347d908859"
+      },
+      "admissionAndOwnership": "Delegates to migrateProjectStorage with explicit destination and writersQuiesced; source capture/candidate/publication own the maintenance exclusion.",
+      "maintainedTests": [
+        {
+          "path": "tests/storage-migrate-command.test.js",
+          "lines": "10-29,31-45",
+          "names": [
+            "public migration requires quiescence, publishes retained state, and permits subsequent commands",
+            "public migration failure retains exclusion and preserves an existing destination"
+          ],
+          "logLines": [
+            2229,
+            2230
+          ]
+        },
+        {
+          "path": "tests/storage-migration-attachments.test.js",
+          "lines": "33-62",
+          "names": [
+            "migration verifies portable attachment bindings and retains bytes through publication and backup",
+            "unmapped captured objects remain retained and prevent attachment coverage publication"
+          ],
+          "logLines": [
+            2233,
+            2234
+          ]
+        }
+      ],
+      "fullLogLines": [
+        {
+          "line": 2229,
+          "text": "✔ public migration requires quiescence, publishes retained state, and permits subsequent commands (1887.612ms)"
+        },
+        {
+          "line": 2230,
+          "text": "✔ public migration failure retains exclusion and preserves an existing destination (330.348167ms)"
+        },
+        {
+          "line": 2233,
+          "text": "✔ migration verifies portable attachment bindings and retains bytes through publication and backup (2231.675084ms)"
+        },
+        {
+          "line": 2234,
+          "text": "✔ unmapped captured objects remain retained and prevent attachment coverage publication (833.899334ms)"
+        }
+      ],
+      "remainingAcceptance": "Hosted/current-source platform and transitive reconciliation, old-client exclusion evidence, performance/LOC gates and final validator closure remain open."
+    },
+    {
+      "command": "storage-migration-resume",
+      "implementation": {
+        "path": "src/commands/storage-migration-resume.js",
+        "lines": "1-5",
+        "sha256": "0d9171a76d4af56f184669611de857a0404bb8478776a44579e16180b6e59b8d"
+      },
+      "admissionAndOwnership": "Delegates to resumeProjectStorageMigration with destination, exact expectedOwnerId and writersQuiesced; live-owner adoption is refused and killed-owner evidence is resumed.",
+      "maintainedTests": [
+        {
+          "path": "tests/storage-migration-resume.test.js",
+          "lines": "13-80",
+          "nameTemplate": "killed ${phase} owner resumes verified cutover without rewinding accepted state",
+          "generatedPhases": [
+            "CAPTURING",
+            "PARTIAL_SOURCE",
+            "CAPTURED",
+            "PREPARING",
+            "PARTIAL_CANDIDATE_MOVE",
+            "PREPARED",
+            "EMPTY_STAGE",
+            "STAGING",
+            "STAGED",
+            "PARTIAL_ARCHIVING",
+            "ARCHIVED",
+            "DATABASE_PENDING_MARKER",
+            "ACTIVE_PENDING_JOURNAL",
+            "PUBLISHED"
+          ],
+          "logLines": [
+            2250,
+            2251,
+            2252,
+            2253,
+            2254,
+            2255,
+            2256,
+            2257,
+            2258,
+            2259,
+            2260,
+            2261,
+            2262,
+            2263
+          ]
+        },
+        {
+          "path": "tests/storage-migration-source.test.js",
+          "lines": "150-202,218-326",
+          "names": [
+            "maintenance excludes public commands, lock acquisition and independent CLI processes",
+            "closed maintenance context cannot reopen an expired exclusion",
+            "a killed maintenance owner leaves exclusion for explicit recovery",
+            "live maintenance ownership cannot be adopted and failed recovery work retains exclusion",
+            "capture recovery refuses changed originals and unrecorded partial entries without altering evidence"
+          ],
+          "logLines": [
+            2321,
+            2323,
+            2324,
+            2325,
+            2326
+          ]
+        }
+      ],
+      "fullLogLines": [
+        {
+          "line": 2250,
+          "text": "✔ killed CAPTURING owner resumes verified cutover without rewinding accepted state (2211.239792ms)"
+        },
+        {
+          "line": 2251,
+          "text": "✔ killed PARTIAL_SOURCE owner resumes verified cutover without rewinding accepted state (2036.789709ms)"
+        },
+        {
+          "line": 2252,
+          "text": "✔ killed CAPTURED owner resumes verified cutover without rewinding accepted state (1950.594875ms)"
+        },
+        {
+          "line": 2253,
+          "text": "✔ killed PREPARING owner resumes verified cutover without rewinding accepted state (2093.742917ms)"
+        },
+        {
+          "line": 2254,
+          "text": "✔ killed PARTIAL_CANDIDATE_MOVE owner resumes verified cutover without rewinding accepted state (2190.0195ms)"
+        },
+        {
+          "line": 2255,
+          "text": "✔ killed PREPARED owner resumes verified cutover without rewinding accepted state (1968.529625ms)"
+        },
+        {
+          "line": 2256,
+          "text": "✔ killed EMPTY_STAGE owner resumes verified cutover without rewinding accepted state (1547.264458ms)"
+        },
+        {
+          "line": 2257,
+          "text": "✔ killed STAGING owner resumes verified cutover without rewinding accepted state (1561.143125ms)"
+        },
+        {
+          "line": 2258,
+          "text": "✔ killed STAGED owner resumes verified cutover without rewinding accepted state (1685.693541ms)"
+        },
+        {
+          "line": 2259,
+          "text": "✔ killed PARTIAL_ARCHIVING owner resumes verified cutover without rewinding accepted state (2205.047125ms)"
+        },
+        {
+          "line": 2260,
+          "text": "✔ killed ARCHIVED owner resumes verified cutover without rewinding accepted state (2294.64625ms)"
+        },
+        {
+          "line": 2261,
+          "text": "✔ killed DATABASE_PENDING_MARKER owner resumes verified cutover without rewinding accepted state (2067.216791ms)"
+        },
+        {
+          "line": 2262,
+          "text": "✔ killed ACTIVE_PENDING_JOURNAL owner resumes verified cutover without rewinding accepted state (2007.631833ms)"
+        },
+        {
+          "line": 2263,
+          "text": "✔ killed PUBLISHED owner resumes verified cutover without rewinding accepted state (2250.166334ms)"
+        },
+        {
+          "line": 2321,
+          "text": "✔ maintenance excludes public commands, lock acquisition and independent CLI processes (514.87675ms)"
+        },
+        {
+          "line": 2323,
+          "text": "✔ closed maintenance context cannot reopen an expired exclusion (305.426625ms)"
+        },
+        {
+          "line": 2324,
+          "text": "✔ a killed maintenance owner leaves exclusion for explicit recovery (451.538542ms)"
+        },
+        {
+          "line": 2325,
+          "text": "✔ live maintenance ownership cannot be adopted and failed recovery work retains exclusion (321.582917ms)"
+        },
+        {
+          "line": 2326,
+          "text": "✔ capture recovery refuses changed originals and unrecorded partial entries without altering evidence (408.302125ms)"
+        }
+      ],
+      "remainingAcceptance": "Hosted/current-source checkpoint receipts and full platform/transitive maintenance ownership reconciliation remain open."
+    },
+    {
+      "command": "storage-migration-status",
+      "implementation": {
+        "path": "src/commands/storage-migration-status.js",
+        "lines": "1-44",
+        "sha256": "3d013e83b241d278d0eed4c52b192a3df4cfd482502bcc2fe64b01efafc87830"
+      },
+      "admissionAndOwnership": "Read-only lstat/contained-owner inspection; it reports layout and bounded owner metadata without opening or validating the operational database.",
+      "maintainedTests": [
+        {
+          "path": "tests/storage-migration-source.test.js",
+          "lines": "150-202",
+          "names": [
+            "maintenance excludes public commands, lock acquisition and independent CLI processes",
+            "public migration status reports incomplete or malformed bootstrap state without opening a database"
+          ],
+          "logLines": [
+            2321,
+            2322
+          ]
+        },
+        {
+          "path": "integrations/mcp/tests/storage-migration-status.test.js",
+          "lines": "1-40",
+          "names": [
+            "read-only MCP migration status inspects exclusion while ordinary reads remain blocked"
+          ],
+          "logLines": [
+            4140,
+            4141,
+            4142
+          ],
+          "claim": "Auxiliary local MCP evidence only; it does not close hosted/platform acceptance."
+        }
+      ],
+      "fullLogLines": [
+        {
+          "line": 2321,
+          "text": "✔ maintenance excludes public commands, lock acquisition and independent CLI processes (514.87675ms)"
+        },
+        {
+          "line": 2322,
+          "text": "✔ public migration status reports incomplete or malformed bootstrap state without opening a database (333.121334ms)"
+        },
+        {
+          "line": 4140,
+          "text": "{\"level\":\"info\",\"event\":\"tool_call\",\"tool\":\"forgeloop_storage_migration_status\",\"riskClass\":\"READ_ONLY\",\"durationMs\":5,\"ok\":true}"
+        },
+        {
+          "line": 4141,
+          "text": "{\"level\":\"info\",\"event\":\"tool_call\",\"tool\":\"forgeloop_task_list\",\"riskClass\":\"READ_ONLY\",\"durationMs\":2,\"ok\":false}"
+        },
+        {
+          "line": 4142,
+          "text": "✔ read-only MCP migration status inspects exclusion while ordinary reads remain blocked (75.017209ms)"
+        }
+      ],
+      "remainingAcceptance": "The status read-only boundary is locally exercised; package/transport/platform and whole consumer reconciliation remain open."
+    },
+    {
+      "command": "storage-restore",
+      "implementation": {
+        "path": "src/commands/storage-restore.js",
+        "lines": "1-8",
+        "sha256": "2ef1d773fc218d3f3acc7753af2ff6846b96c944d03d435ea9504ab8d3ed6774"
+      },
+      "admissionAndOwnership": "Selects fresh restore or active replacement only when replaceActive is true; both services require quiescence, verify retained evidence and preserve outgoing authority on replacement.",
+      "maintainedTests": [
+        {
+          "path": "tests/storage-restore-command.test.js",
+          "lines": "16-90",
+          "names": [
+            "replacement admission rejects missing quiescence and nonboolean selection without allocating evidence",
+            "explicit api replacement retains outgoing state and activates incoming authority",
+            "explicit cli replacement retains outgoing state and activates incoming authority",
+            "restore CLI and shared command API activate verified backups and reject missing writer exclusion"
+          ],
+          "logLines": [
+            2483,
+            2484,
+            2485,
+            2486
+          ]
+        },
+        {
+          "path": "tests/storage-project-restore.test.js",
+          "lines": "23-113",
+          "names": [
+            "verified restore activates canonical project dispatch and independent attachment bytes",
+            "restore refuses unquiesced writers, corrupt backup and retained legacy state",
+            "restore rejects schema-invalid canonical evidence before marker activation and retains exclusion"
+          ],
+          "logLines": [
+            2393,
+            2394,
+            2395
+          ]
+        }
+      ],
+      "fullLogLines": [
+        {
+          "line": 2393,
+          "text": "✔ verified restore activates canonical project dispatch and independent attachment bytes (642.635125ms)"
+        },
+        {
+          "line": 2394,
+          "text": "✔ restore refuses unquiesced writers, corrupt backup and retained legacy state (319.439ms)"
+        },
+        {
+          "line": 2395,
+          "text": "✔ restore rejects schema-invalid canonical evidence before marker activation and retains exclusion (399.982666ms)"
+        },
+        {
+          "line": 2483,
+          "text": "✔ replacement admission rejects missing quiescence and nonboolean selection without allocating evidence (513.28975ms)"
+        },
+        {
+          "line": 2484,
+          "text": "✔ explicit api replacement retains outgoing state and activates incoming authority (1099.12375ms)"
+        },
+        {
+          "line": 2485,
+          "text": "✔ explicit cli replacement retains outgoing state and activates incoming authority (1167.448834ms)"
+        },
+        {
+          "line": 2486,
+          "text": "✔ restore CLI and shared command API activate verified backups and reject missing writer exclusion (864.940792ms)"
+        }
+      ],
+      "remainingAcceptance": "Local fresh/active controls pass; retained plan evidence still requires current hosted/platform restore activation and full maintenance ownership/transitive closure."
+    },
+    {
+      "command": "storage-restore-resume",
+      "implementation": {
+        "path": "src/commands/storage-restore-resume.js",
+        "lines": "1-7",
+        "sha256": "acbf0748cdf0d01be8d0a6e20d57159decc428e6d45198db903fd3d6d4bac17f"
+      },
+      "admissionAndOwnership": "Selects fresh or active replacement resume by replaceActive and passes exact operation/owner/quiescence to the recorded restore service.",
+      "maintainedTests": [
+        {
+          "path": "tests/storage-project-restore.test.js",
+          "lines": "116-190",
+          "nameTemplate": "${checkpoint} restore reconciles owned SIGKILL and refuses live-owner adoption",
+          "generatedCheckpoints": [
+            "PARTIAL",
+            "MISSING",
+            "RETAINING",
+            "RETAINED",
+            "REBUILD",
+            "REBUILD_CONFLICT",
+            "PREPARING",
+            "PREPARING_CHANGED",
+            "READY",
+            "PENDING",
+            "OBJECT",
+            "DATABASE",
+            "ACTIVE_MARKER",
+            "UNBOUND",
+            "CHANGED_DATABASE",
+            "TERMINAL_CHANGED"
+          ],
+          "logLines": [
+            2396,
+            2397,
+            2398,
+            2399,
+            2400,
+            2401,
+            2402,
+            2403,
+            2404,
+            2405,
+            2406,
+            2407,
+            2408,
+            2409,
+            2410,
+            2411
+          ]
+        },
+        {
+          "path": "tests/storage-replacement-archive.test.js",
+          "lines": "85-150",
+          "nameTemplate": "replacement resumes actual SIGKILL after ${checkpoint} while refusing live-owner adoption",
+          "generatedCheckpoints": [
+            "MARKER",
+            "ATTACHMENTS",
+            "DATABASE",
+            "ARCHIVED"
+          ],
+          "logLines": [
+            2441,
+            2442,
+            2443,
+            2444
+          ]
+        },
+        {
+          "path": "tests/storage-replacement-publication.test.js",
+          "lines": "43-86",
+          "nameTemplate": "replacement resumes actual SIGKILL after publication ${checkpoint}",
+          "generatedCheckpoints": [
+            "READY",
+            "PUBLISHING",
+            "PENDING_MARKER",
+            "ATTACHMENT",
+            "DATABASE",
+            "ACTIVE_MARKER",
+            "ACTIVE"
+          ],
+          "logLines": [
+            2464,
+            2465,
+            2466,
+            2467,
+            2468,
+            2469,
+            2470
+          ]
+        }
+      ],
+      "fullLogLines": [
+        {
+          "line": 2396,
+          "text": "✔ PARTIAL restore reconciles owned SIGKILL and refuses live-owner adoption (640.8975ms)"
+        },
+        {
+          "line": 2397,
+          "text": "✔ MISSING restore reconciles owned SIGKILL and refuses live-owner adoption (645.982167ms)"
+        },
+        {
+          "line": 2398,
+          "text": "✔ RETAINING restore reconciles owned SIGKILL and refuses live-owner adoption (627.86775ms)"
+        },
+        {
+          "line": 2399,
+          "text": "✔ RETAINED restore reconciles owned SIGKILL and refuses live-owner adoption (660.98025ms)"
+        },
+        {
+          "line": 2400,
+          "text": "✔ REBUILD restore reconciles owned SIGKILL and refuses live-owner adoption (686.578375ms)"
+        },
+        {
+          "line": 2401,
+          "text": "✔ REBUILD_CONFLICT restore reconciles owned SIGKILL and refuses live-owner adoption (479.188375ms)"
+        },
+        {
+          "line": 2402,
+          "text": "✔ PREPARING restore reconciles owned SIGKILL and refuses live-owner adoption (676.418584ms)"
+        },
+        {
+          "line": 2403,
+          "text": "✔ PREPARING_CHANGED restore reconciles owned SIGKILL and refuses live-owner adoption (579.292792ms)"
+        },
+        {
+          "line": 2404,
+          "text": "✔ READY restore reconciles owned SIGKILL and refuses live-owner adoption (669.090917ms)"
+        },
+        {
+          "line": 2405,
+          "text": "✔ PENDING restore reconciles owned SIGKILL and refuses live-owner adoption (815.119333ms)"
+        },
+        {
+          "line": 2406,
+          "text": "✔ OBJECT restore reconciles owned SIGKILL and refuses live-owner adoption (594.560042ms)"
+        },
+        {
+          "line": 2407,
+          "text": "✔ DATABASE restore reconciles owned SIGKILL and refuses live-owner adoption (685.276875ms)"
+        },
+        {
+          "line": 2408,
+          "text": "✔ ACTIVE_MARKER restore reconciles owned SIGKILL and refuses live-owner adoption (669.023041ms)"
+        },
+        {
+          "line": 2409,
+          "text": "✔ UNBOUND restore reconciles owned SIGKILL and refuses live-owner adoption (604.069125ms)"
+        },
+        {
+          "line": 2410,
+          "text": "✔ CHANGED_DATABASE restore reconciles owned SIGKILL and refuses live-owner adoption (656.26925ms)"
+        },
+        {
+          "line": 2411,
+          "text": "✔ TERMINAL_CHANGED restore reconciles owned SIGKILL and refuses live-owner adoption (648.513125ms)"
+        },
+        {
+          "line": 2441,
+          "text": "✔ replacement resumes actual SIGKILL after MARKER while refusing live-owner adoption (1132.915041ms)"
+        },
+        {
+          "line": 2442,
+          "text": "✔ replacement resumes actual SIGKILL after ATTACHMENTS while refusing live-owner adoption (944.900083ms)"
+        },
+        {
+          "line": 2443,
+          "text": "✔ replacement resumes actual SIGKILL after DATABASE while refusing live-owner adoption (958.458958ms)"
+        },
+        {
+          "line": 2444,
+          "text": "✔ replacement resumes actual SIGKILL after ARCHIVED while refusing live-owner adoption (927.171708ms)"
+        },
+        {
+          "line": 2464,
+          "text": "✔ replacement resumes actual SIGKILL after publication READY (1334.751208ms)"
+        },
+        {
+          "line": 2465,
+          "text": "✔ replacement resumes actual SIGKILL after publication PUBLISHING (1199.739542ms)"
+        },
+        {
+          "line": 2466,
+          "text": "✔ replacement resumes actual SIGKILL after publication PENDING_MARKER (1238.532666ms)"
+        },
+        {
+          "line": 2467,
+          "text": "✔ replacement resumes actual SIGKILL after publication ATTACHMENT (1270.576ms)"
+        },
+        {
+          "line": 2468,
+          "text": "✔ replacement resumes actual SIGKILL after publication DATABASE (1235.222917ms)"
+        },
+        {
+          "line": 2469,
+          "text": "✔ replacement resumes actual SIGKILL after publication ACTIVE_MARKER (1250.126709ms)"
+        },
+        {
+          "line": 2470,
+          "text": "✔ replacement resumes actual SIGKILL after publication ACTIVE (1351.254625ms)"
+        }
+      ],
+      "remainingAcceptance": "Current local SIGKILL/recovery controls are retained; cross-platform hosted execution and whole restore/maintenance ownership acceptance remain open."
+    },
+    {
+      "command": "storage-backup",
+      "implementation": {
+        "path": "src/commands/storage-backup.js",
+        "lines": "1-15",
+        "sha256": "eb3bdda3b2a0c55649d8c7e9f4f62b95fa9eb3f78e6e657b5416b420f973ad7f"
+      },
+      "admissionAndOwnership": "Requires an admitted operational store for target, validates a safe destination under target, and passes the admitted db plus target to the attachment-aware snapshot service.",
+      "maintainedTests": [
+        {
+          "path": "tests/storage-project-backup.test.js",
+          "lines": "17-53,55-67,69-89",
+          "names": [
+            "project backup and fresh restore retain snapshot references and exact binary bytes",
+            "project backup retains a refused incomplete bundle when source attachment bytes are corrupt",
+            "public API and CLI attachment backup select the canonical store and preserve source bindings"
+          ],
+          "logLines": [
+            2384,
+            2385,
+            2386
+          ]
+        }
+      ],
+      "fullLogLines": [
+        {
+          "line": 2384,
+          "text": "✔ project backup and fresh restore retain snapshot references and exact binary bytes (480.748708ms)"
+        },
+        {
+          "line": 2385,
+          "text": "✔ project backup retains a refused incomplete bundle when source attachment bytes are corrupt (313.873625ms)"
+        },
+        {
+          "line": 2386,
+          "text": "✔ public API and CLI attachment backup select the canonical store and preserve source bindings (494.246958ms)"
+        }
+      ],
+      "remainingAcceptance": "Local API/CLI binding and byte/digest refusal pass; installed transport/platform and complete transitive authority acceptance remain open."
+    }
+  ],
+  "publicAuthorityBinding": [
+    {
+      "path": "src/core/command-runtime.js",
+      "lines": "31-104",
+      "sha256": "56085a5bddeccabcbcf008b1c26c4293cc8b4d7c321f9684fd9e5493f038afcf",
+      "evidence": "Validates command/input, resolves the project target, and invokes the canonical executor with trusted authority/runtime context out of actor-controlled input."
+    },
+    {
+      "path": "src/core/command-executors.js",
+      "lines": "110-152,856-875",
+      "sha256": "2c32d0ad5fd2afcab246a357617e1b3e1040e20e3975a9cf9757f51525a94c3b",
+      "evidence": "Maps all six commands to canonical services; maintenance/restore exceptions use dedicated admission, ordinary commands use withProjectStorage, and backup is read-only on source."
+    },
+    {
+      "path": "src/integration.js",
+      "lines": "1-14,34-50",
+      "sha256": "adaa63fe570f28cd65f27060c558213025672183cddf26e9386de761ccd30526",
+      "evidence": "The supported ./integration package surface re-exports executeForgeLoopCommand, resource reads and command definitions."
+    },
+    {
+      "path": "integrations/mcp/src/tool-registry.js",
+      "lines": "29-101",
+      "sha256": "f3f128a02cf5142df1db43f72cb8565f5791c856c71e104383284899f2316bc1",
+      "evidence": "MCP derives tools from canonical command metadata, strips actor authority/runtime fields, applies policy, then delegates to executeForgeLoopCommand."
+    },
+    {
+      "path": "src/core/integration-resources.js",
+      "lines": "287-293",
+      "sha256": "2561e00a7078fc1834ad2173b38c19978ef57a6705ab294158f83cac88b71ba6",
+      "evidence": "Integration resources use read-only withProjectStorage/read snapshots."
+    },
+    {
+      "path": "src/commands/storage-backup.js",
+      "lines": "4-14",
+      "sha256": "eb3bdda3b2a0c55649d8c7e9f4f62b95fa9eb3f78e6e657b5416b420f973ad7f",
+      "evidence": "getOperationalStore(target), safe destination, and admitted db/target are the only public backup inputs."
+    },
+    {
+      "path": "src/storage/operational-context.js",
+      "lines": "15-32",
+      "sha256": "53fa9ed5fe2b0724071dda1c1594f8a2101fcf645bcf286da5407a4b9d37183f",
+      "evidence": "AsyncLocalStorage store must match target path or realpath; mismatches fail with E_TASK_CONTEXT_MISMATCH."
+    },
+    {
+      "path": "src/storage/project-boundary.js",
+      "lines": "29-78",
+      "sha256": "f9206ae43b67467556430679d6f925bb5dcad14cec1cab12b214af358ed470b3",
+      "evidence": "Checks maintenance/legacy locks and marker, bootstraps only fresh writable projects, refuses mixed legacy state, and passes projectAdmission to SQLite."
+    },
+    {
+      "path": "src/storage/connection.js",
+      "lines": "216-280",
+      "sha256": "ca21ebb7d35aaf3ea74be04b767e755436934c52fd4db2c5e828aabdd20dee74",
+      "evidence": "Opened database must match canonical path, regular-file/dev/ino/root identity and non-symlink sidecars before configuration/reuse."
+    },
+    {
+      "path": "package.json",
+      "lines": "195-201",
+      "sha256": "a969287c8dd733919ed2dedd94f856f64b355cc1722e17f6c752465ee5d5d21f",
+      "evidence": "NPM exports are only the package root CLI and ./integration; internal storage/index.js is not a package subpath."
+    }
+  ],
+  "internalHelperContract": {
+    "conclusion": "No independent public misbinding regression is warranted for the low-level exporter/backup helpers under the supported threat model.",
+    "exportTask": {
+      "path": "src/storage/exporter.js",
+      "lines": "88-96",
+      "contract": "Trusted caller supplies authoritative db, taskId and portable destination; helper exports a consistent read snapshot and does not infer a source target."
+    },
+    "exportDatabase": {
+      "path": "src/storage/exporter.js",
+      "lines": "221-230,232-264",
+      "contract": "Trusted caller supplies authoritative db, destination and optional attachmentRoot; every referenced attachment is verified against size and SHA-256 before copy."
+    },
+    "backupProjectStorage": {
+      "path": "src/storage/project-backup.js",
+      "lines": "16-57,59-84",
+      "contract": "Trusted caller supplies committed db, source target and destination; the service records database/inventory digests, verifies references and rejects changed bytes."
+    },
+    "supportedPublicBinding": "storage-backup binds target through command-runtime -> COMMAND_EXECUTORS -> withProjectStorage -> operationalContext -> getOperationalStore and passes that store.db/target to backupProjectStorage.",
+    "packageBoundary": "The source barrel exports helpers for repository-local consumers, but package.json exports only the CLI and ./integration. Raw DatabaseSync callers can already rewrite any local database they are authorized to open; that is an internal trusted-caller contract, not a reachable actor-controlled public target swap.",
+    "docsBinding": "docs/SQLITE_MIGRATION_MATRIX.md:939-941 records that internal exportTask/exportDatabase are not package export surfaces and that per-call maintenance ownership/aliases/dependencies/transitive proof remain open."
+  },
+  "soleWriterAudit": {
+    "requirement": "docs/SQLITE_MIGRATION_PLAN.md:281-290 requires sole SQLite operational authority, migrated or explicitly exported file consumers, tested migration/recovery/backup/restore/downgrade, old-client exclusion, obsolete writer removal and CLI/MCP/API/package/platform checks.",
+    "currentSupportedSurfaceConclusion": "Within the reviewed built-in CLI/integration/MCP boundary, no concrete public misbinding or legacy operational writer was found. Ordinary dispatch and direct writer helpers route through canonical SQLite admission; legacy operational state is refused, and explicit portable outputs remain outside canonical authority.",
+    "maintainedControls": [
+      {
+        "path": "tests/storage-integration-dispatch.test.js",
+        "names": [
+          "B1: a SQLite dispatch performs no legacy task-OPERATIONAL write",
+          "B2: a store-routed dispatch creates no legacy operational filesystem artifact",
+          "B3: contradictory legacy files block canonical dispatch without mutation",
+          "B3b: legacy active-session singleton blocks public dispatch without SQLite or filesystem mutation",
+          "B3b: legacy session collection blocks public dispatch without SQLite or filesystem mutation",
+          "B3b: legacy task ledger index sidecar blocks public dispatch without SQLite or filesystem mutation",
+          "D2: default context refuses unconverted legacy mutation and opens no store",
+          "D4: missing structured case is rejected without mutation or filesystem fallback"
+        ],
+        "logLines": [
+          2155,
+          2156,
+          2157,
+          2158,
+          2159,
+          2160,
+          2164,
+          2166
+        ]
+      },
+      {
+        "path": "tests/storage-operational-bootstrap.test.js",
+        "names": [
+          "public read-only storage neither creates nor upgrades a store and refuses symlinks",
+          "public command and resource boundaries select an existing canonical SQLite store",
+          "integration collections read canonical SQLite artifacts without legacy directories",
+          "collection preparation includes staged artifacts and rejects a concurrent insertion",
+          "nested quality collections and handoffs retain validation without filesystem fallback",
+          "canonical task-create commits descriptor, claims and ledger to SQLite without a legacy namespace",
+          "canonical task-create preserves duplicate and overlapping-claim errors on SQLite",
+          "canonical SQLite lifecycle completes after a real correction cycle without legacy task or session files"
+        ],
+        "logLines": [
+          2337,
+          2338,
+          2341,
+          2342,
+          2343,
+          2344,
+          2345,
+          2355
+        ]
+      },
+      {
+        "path": "tests/storage-project-bootstrap.test.js",
+        "names": [
+          "ordinary legacy mutation requires explicit migration and preserves its bytes",
+          "bootstrap requires explicit exclusion and preserves legacy state before allocation",
+          "direct task transaction selects existing SQLite and preserves atomic rollback"
+        ],
+        "logLines": [
+          2390,
+          2391,
+          2392
+        ]
+      },
+      {
+        "path": "tests/storage-sole-writer-boundary.test.js",
+        "names": [
+          "direct descriptor and state writers create only canonical SQLite authority",
+          "portable output cannot recreate retired transaction staging or block native admission",
+          "direct operational writers refuse legacy authority without converting or altering it",
+          "bootstrap and restore preserve retained legacy owners before allocating native authority",
+          "state writes reject portable paths before allocating SQLite or producing a second authority",
+          "canonical clearing preserves unconverted legacy state and continuity",
+          "explicit portable JSON output cannot become canonical authority or overwrite storage metadata"
+        ],
+        "logLines": [
+          2507,
+          2508,
+          2509,
+          2513,
+          2514,
+          2515,
+          2517
+        ]
+      },
+      {
+        "path": "tests/storage-marker.test.js",
+        "names": [
+          "pending and missing-database markers prevent filesystem fallback after exclusion release"
+        ],
+        "logLines": [
+          2221
+        ]
+      },
+      {
+        "path": "tests/storage-correction-io.test.js",
+        "nameTemplate": "diagnosis/correction/readback use canonical storage without legacy payload I/O with ${mode} files",
+        "generatedModes": [
+          "absent",
+          "contradictory"
+        ],
+        "logLines": [
+          2031,
+          2032
+        ]
+      },
+      {
+        "path": "tests/actions.test.js",
+        "names": [
+          "action listing and idempotency refuse legacy directory scans without creating native authority"
+        ],
+        "logLines": [
+          69
+        ]
+      },
+      {
+        "path": "tests/approvals.test.js",
+        "names": [
+          "approval listing and payload reads refuse legacy authority without changing retained bytes"
+        ],
+        "logLines": [
+          132
+        ]
+      },
+      {
+        "path": "tests/storage-continuity-diagnosis-correcting.test.js",
+        "names": [
+          "C6: default context refuses unconverted legacy mutation without allocating SQLite"
+        ],
+        "logLines": [
+          2026
+        ]
+      }
+    ],
+    "fullLogLines": [
+      {
+        "line": 69,
+        "text": "✔ action listing and idempotency refuse legacy directory scans without creating native authority (3.354083ms)"
+      },
+      {
+        "line": 132,
+        "text": "✔ approval listing and payload reads refuse legacy authority without changing retained bytes (3.522625ms)"
+      },
+      {
+        "line": 2026,
+        "text": "✔ C6: default context refuses unconverted legacy mutation without allocating SQLite (279.372959ms)"
+      },
+      {
+        "line": 2031,
+        "text": "✔ diagnosis/correction/readback use canonical storage without legacy payload I/O with absent files (923.439583ms)"
+      },
+      {
+        "line": 2032,
+        "text": "✔ diagnosis/correction/readback use canonical storage without legacy payload I/O with contradictory files (875.29225ms)"
+      },
+      {
+        "line": 2155,
+        "text": "✔ B1: a SQLite dispatch performs no legacy task-OPERATIONAL write (793.540791ms)"
+      },
+      {
+        "line": 2156,
+        "text": "✔ B2: a store-routed dispatch creates no legacy operational filesystem artifact (729.178125ms)"
+      },
+      {
+        "line": 2157,
+        "text": "✔ B3: contradictory legacy files block canonical dispatch without mutation (670.811292ms)"
+      },
+      {
+        "line": 2158,
+        "text": "✔ B3b: legacy active-session singleton blocks public dispatch without SQLite or filesystem mutation (671.899959ms)"
+      },
+      {
+        "line": 2159,
+        "text": "✔ B3b: legacy session collection blocks public dispatch without SQLite or filesystem mutation (652.872709ms)"
+      },
+      {
+        "line": 2160,
+        "text": "✔ B3b: legacy task ledger index sidecar blocks public dispatch without SQLite or filesystem mutation (676.636208ms)"
+      },
+      {
+        "line": 2164,
+        "text": "✔ D2: default context refuses unconverted legacy mutation and opens no store (318.89125ms)"
+      },
+      {
+        "line": 2166,
+        "text": "✔ D4: missing structured case is rejected without mutation or filesystem fallback (771.182625ms)"
+      },
+      {
+        "line": 2221,
+        "text": "✔ pending and missing-database markers prevent filesystem fallback after exclusion release (30.573875ms)"
+      },
+      {
+        "line": 2321,
+        "text": "✔ maintenance excludes public commands, lock acquisition and independent CLI processes (514.87675ms)"
+      },
+      {
+        "line": 2337,
+        "text": "✔ public read-only storage neither creates nor upgrades a store and refuses symlinks (30.293958ms)"
+      },
+      {
+        "line": 2338,
+        "text": "✔ public command and resource boundaries select an existing canonical SQLite store (357.061083ms)"
+      },
+      {
+        "line": 2341,
+        "text": "✔ integration collections read canonical SQLite artifacts without legacy directories (39.4415ms)"
+      },
+      {
+        "line": 2342,
+        "text": "✔ collection preparation includes staged artifacts and rejects a concurrent insertion (19.443375ms)"
+      },
+      {
+        "line": 2343,
+        "text": "✔ nested quality collections and handoffs retain validation without filesystem fallback (25.202209ms)"
+      },
+      {
+        "line": 2344,
+        "text": "✔ canonical task-create commits descriptor, claims and ledger to SQLite without a legacy namespace (24.133875ms)"
+      },
+      {
+        "line": 2345,
+        "text": "✔ canonical task-create preserves duplicate and overlapping-claim errors on SQLite (51.274875ms)"
+      },
+      {
+        "line": 2355,
+        "text": "✔ canonical SQLite lifecycle completes after a real correction cycle without legacy task or session files (1092.293459ms)"
+      },
+      {
+        "line": 2390,
+        "text": "✔ ordinary legacy mutation requires explicit migration and preserves its bytes (3.223917ms)"
+      },
+      {
+        "line": 2391,
+        "text": "✔ bootstrap requires explicit exclusion and preserves legacy state before allocation (2.408084ms)"
+      },
+      {
+        "line": 2392,
+        "text": "✔ direct task transaction selects existing SQLite and preserves atomic rollback (178.612417ms)"
+      },
+      {
+        "line": 2507,
+        "text": "✔ direct descriptor and state writers create only canonical SQLite authority (207.101708ms)"
+      },
+      {
+        "line": 2508,
+        "text": "✔ portable output cannot recreate retired transaction staging or block native admission (195.407417ms)"
+      },
+      {
+        "line": 2509,
+        "text": "✔ direct operational writers refuse legacy authority without converting or altering it (2.966792ms)"
+      },
+      {
+        "line": 2510,
+        "text": "✔ direct action APIs read native records outside command dispatch without legacy directories (229.356667ms)"
+      },
+      {
+        "line": 2513,
+        "text": "✔ bootstrap and restore preserve retained legacy owners before allocating native authority (3.662916ms)"
+      },
+      {
+        "line": 2514,
+        "text": "✔ state writes reject portable paths before allocating SQLite or producing a second authority (0.519083ms)"
+      },
+      {
+        "line": 2515,
+        "text": "✔ canonical clearing preserves unconverted legacy state and continuity (5.101167ms)"
+      },
+      {
+        "line": 2516,
+        "text": "✔ canonical clearing cannot delete an independent portable file or its native checkpoint (168.222375ms)"
+      },
+      {
+        "line": 2517,
+        "text": "✔ explicit portable JSON output cannot become canonical authority or overwrite storage metadata (8.760333ms)"
+      }
+    ],
+    "remainingConcreteReviewItems": [
+      "src/core/bundles.js:180-243,245-255,612-631 retains explicit portable/legacy export readers and writes only the fixed .forgeloop/tasks portable bundle namespace; this is an intentional export boundary, but its full transitive consumer/platform acceptance is still separate.",
+      "Installation/configuration/manifest and signing scratch writes remain file-owned non-operational surfaces classified in the current matrix; they must stay explicitly excluded from operational authority inventories.",
+      "No current source line in activation.js, transaction.js, task-command.js or artifacts.js directly writes legacy operational authority when unselected; those helpers route through canonical admission or reject portable/canonical path misuse.",
+      "Universal arbitrary dynamic/alias/dependency/external-process exclusion is not a finite supported-API proof and remains outside this report."
+    ],
+    "notAccepted": true
+  },
+  "binaryDigestAndRollbackBoundaries": [
+    {
+      "path": "tests/storage-project-backup.test.js",
+      "sha256": "3806e7f424ea4b51422e2704b245799218b18675f11c83bcc098918747ccdc3a",
+      "lines": "17-53,55-67,69-89",
+      "assertions": [
+        "exact binary attachment bytes survive backup and fresh restore",
+        "inventory substitution with a recomputed manifest digest is rejected by canonical reference verification",
+        "tampered attachment bytes refuse restore without allocating a destination",
+        "corrupt source retains FAILED backup evidence and refuses overwrite",
+        "public API and CLI backup select the canonical store and preserve source binding"
+      ]
+    },
+    {
+      "path": "tests/storage-migration-attachments.test.js",
+      "sha256": "debdd3c057c74b5de5ebc2a19201c73e6fc0771b329ae27eb93a555c24d78e62",
+      "lines": "33-62",
+      "assertions": [
+        "migration candidate parity marks attachment references VERIFIED",
+        "source, published target and backup/restore retain exact binary bytes",
+        "unmapped captured objects block attachment coverage publication while retained bytes remain"
+      ]
+    },
+    {
+      "path": "tests/storage-project-restore.test.js",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "lines": "23-113",
+      "assertions": [
+        "restore journal binds source/database/inventory fingerprints and phase",
+        "current-state deletion or source/live attachment corruption is refused",
+        "retained backup and snapshot bytes remain intact after live corruption",
+        "unquiesced/corrupt/schema-invalid restore retains exclusion and avoids marker activation"
+      ]
+    },
+    {
+      "path": "tests/storage-replacement-archive.test.js",
+      "sha256": "3a63116d05cfe1ef158b54cae2863993e26f7acfd99fba5159142300e30c5213",
+      "lines": "20-60,62-83,85-150",
+      "assertions": [
+        "outgoing archive binds publication intent independently of new active roots",
+        "retained native bytes and independent outgoing/incoming attachment bytes are preserved",
+        "missing/corrupt/unrecorded evidence refuses active movement",
+        "SIGKILL checkpoints refuse live-owner adoption and retain exclusion"
+      ]
+    },
+    {
+      "path": "tests/storage-replacement-preparation.test.js",
+      "sha256": "1d95773566805fac20d4c5d577fc4726b0cebbccb42b05f755523f2ef646532e",
+      "lines": "16-31",
+      "assertions": [
+        "altered outgoing evidence bindings and unrelated owners are rejected"
+      ]
+    },
+    {
+      "path": "tests/storage-replacement-publication.test.js",
+      "sha256": "ef2b88d24e5ff8f345397aa60f70b44c8bf8527b2794ad145ac21567949df878",
+      "lines": "16-126",
+      "assertions": [
+        "active replacement uses independent incoming source and retained outgoing authority",
+        "publication SIGKILL checkpoints resume only with exact owner continuity",
+        "post-archive corruption refuses publication and retains exclusion"
+      ]
+    },
+    {
+      "path": "tests/storage-forward-rebuild.test.js",
+      "sha256": "a3d21025a6610f711c5d1c0a15091b8406c306664c45a41ed1bbd79fc203efdf",
+      "lines": "25-80",
+      "assertions": [
+        "latest verified snapshot rebuild retains post-native-write task/event/attachment state and exact binary bytes"
+      ]
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "src/core/command-runtime.js",
+      "sha256": "56085a5bddeccabcbcf008b1c26c4293cc8b4d7c321f9684fd9e5493f038afcf",
+      "role": "transport-neutral target resolution, input validation and executor invocation"
+    },
+    {
+      "path": "src/core/command-executors.js",
+      "sha256": "2c32d0ad5fd2afcab246a357617e1b3e1040e20e3975a9cf9757f51525a94c3b",
+      "role": "canonical executor map and ordinary/maintenance admission split"
+    },
+    {
+      "path": "src/core/integration-resources.js",
+      "sha256": "2561e00a7078fc1834ad2173b38c19978ef57a6705ab294158f83cac88b71ba6",
+      "role": "read-only integration resource admission through project storage"
+    },
+    {
+      "path": "src/core/activation.js",
+      "sha256": "de461ebf711e7f75aeff4e348f44f762ce9d4b0a381922f48acf4078f937ee90",
+      "role": "direct activation helper routes to canonical project storage"
+    },
+    {
+      "path": "src/core/transaction.js",
+      "sha256": "376cc4d038e8868015968c41992568b5f15be148bb5b39942ae308512cab0f69",
+      "role": "direct transaction helper routes to canonical project storage"
+    },
+    {
+      "path": "src/core/task-command.js",
+      "sha256": "8a56af0c503944eb8a12b5ed326c9cfa21b9390eab570ec27a4e4b050e0a2e6c",
+      "role": "direct task mutation helper routes to canonical project storage"
+    },
+    {
+      "path": "src/core/artifacts.js",
+      "sha256": "a28d2abf4628fc88ab9c6826a836628e6c24c3a917647399c12d705067a2d8f9",
+      "role": "operational artifact writes require SQLite; portable writes reject canonical paths"
+    },
+    {
+      "path": "src/core/bundles.js",
+      "sha256": "334be44273d816e7b68cf7434369467e2466cdce13fad05908b4311320cefe5e",
+      "role": "explicit portable bundle export and compatibility readers"
+    },
+    {
+      "path": "src/core/native-adapters.js",
+      "sha256": "f87ca256960bdbd07804192bd8922fce49baae8556cfb25505951c3bb0f8a5dd",
+      "role": "installed protocol shim/configuration compatibility text"
+    },
+    {
+      "path": "src/integration.js",
+      "sha256": "adaa63fe570f28cd65f27060c558213025672183cddf26e9386de761ccd30526",
+      "role": "supported package integration export delegates to command runtime/resources"
+    },
+    {
+      "path": "src/commands/storage-backup.js",
+      "sha256": "eb3bdda3b2a0c55649d8c7e9f4f62b95fa9eb3f78e6e657b5416b420f973ad7f",
+      "role": "public backup command binds target store and safe destination"
+    },
+    {
+      "path": "src/commands/storage-migrate.js",
+      "sha256": "cae777a08d5b50fb9b54a0ca4a9a9a9c8597c02ca5f413af98f0be347d908859",
+      "role": "public migration command delegate"
+    },
+    {
+      "path": "src/commands/storage-migration-resume.js",
+      "sha256": "0d9171a76d4af56f184669611de857a0404bb8478776a44579e16180b6e59b8d",
+      "role": "public migration resume delegate"
+    },
+    {
+      "path": "src/commands/storage-migration-status.js",
+      "sha256": "3d013e83b241d278d0eed4c52b192a3df4cfd482502bcc2fe64b01efafc87830",
+      "role": "read-only migration layout/owner status command"
+    },
+    {
+      "path": "src/commands/storage-restore.js",
+      "sha256": "2ef1d773fc218d3f3acc7753af2ff6846b96c944d03d435ea9504ab8d3ed6774",
+      "role": "public fresh/active restore selector"
+    },
+    {
+      "path": "src/commands/storage-restore-resume.js",
+      "sha256": "acbf0748cdf0d01be8d0a6e20d57159decc428e6d45198db903fd3d6d4bac17f",
+      "role": "public fresh/active restore resume selector"
+    },
+    {
+      "path": "src/storage/index.js",
+      "sha256": "86d1420e8f5baa8a419dbe5782e32ca9bc121fdaffc0f3e3a4453e251265d759",
+      "role": "repository-local storage barrel; not a package subpath export"
+    },
+    {
+      "path": "src/storage/project-boundary.js",
+      "sha256": "f9206ae43b67467556430679d6f925bb5dcad14cec1cab12b214af358ed470b3",
+      "role": "canonical project storage admission and mixed-layout refusal"
+    },
+    {
+      "path": "src/storage/operational-context.js",
+      "sha256": "53fa9ed5fe2b0724071dda1c1594f8a2101fcf645bcf286da5407a4b9d37183f",
+      "role": "target-bound AsyncLocalStorage context and mismatch refusal"
+    },
+    {
+      "path": "src/storage/connection.js",
+      "sha256": "ca21ebb7d35aaf3ea74be04b767e755436934c52fd4db2c5e828aabdd20dee74",
+      "role": "database path/device/inode/root/sidecar admission"
+    },
+    {
+      "path": "src/storage/project-backup.js",
+      "sha256": "d70b5f3992e36320723cad440f4ac2ab756700e88822acfc78beb74c2c88a609",
+      "role": "committed SQLite snapshot, attachment digest inventory and verification"
+    },
+    {
+      "path": "src/storage/exporter.js",
+      "sha256": "2e005a6784c73f42e53831a800b09b50730f901dd358d7463009f776b55a2a4b",
+      "role": "consistent read-snapshot export and attachmentRoot digest binding"
+    },
+    {
+      "path": "src/storage/project-restore.js",
+      "sha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+      "role": "fresh restore, journal continuity and current-state verification"
+    },
+    {
+      "path": "src/storage/project-replacement.js",
+      "sha256": "8edb1daa7f5a50a56c2762488db647d1e441d1f421d8dd6b2f1fbc5a813efa59",
+      "role": "active-project replacement admission/orchestration"
+    },
+    {
+      "path": "src/storage/restore-replacement.js",
+      "sha256": "108b700e2574b560ca77b0d9f318844a4bf971069ba7201feb2efde84605bd27",
+      "role": "active replacement preparation/verification"
+    },
+    {
+      "path": "src/storage/restore-replacement-archive.js",
+      "sha256": "f7fb726b8866b9441d6af69d2f4685f32c470d198fd86c531924b7c578d402a2",
+      "role": "outgoing archive and retained exclusion verification"
+    },
+    {
+      "path": "src/storage/restore-terminal.js",
+      "sha256": "51d56ba62c80d697a3c55728b0ba811b6fb3d55c0631d7ccb137dd128e33da61",
+      "role": "terminal active restore verification"
+    },
+    {
+      "path": "src/storage/restore-journal.js",
+      "sha256": "50e68dd1a61a9080a833e1e2e05476934b652317cdfe22f11af36cad379f838f",
+      "role": "recorded restore source and binding verification"
+    },
+    {
+      "path": "src/storage/migration.js",
+      "sha256": "6d84791488206fc394c2501d2f6c4d34ba8e12fba34dede0e40c48b64c3e03fa",
+      "role": "migration publication and owner-bound resume service"
+    },
+    {
+      "path": "src/storage/migration-source.js",
+      "sha256": "2a7980a1e5a2e8be4b7857a8ad5aaacc58b9aea300071c9f5674d04302e19055",
+      "role": "legacy source inventory/capture and retained source validation"
+    },
+    {
+      "path": "src/storage/migration-candidate.js",
+      "sha256": "8d291a6afa6b51321d6f2eba160b88ccb739bef7031ce60304e1a10627e76d20",
+      "role": "candidate parity and attachment membership validation"
+    },
+    {
+      "path": "src/storage/migration-publication.js",
+      "sha256": "60d9c865f6bb85130cf546ddeb80c0404990a403c2b88256871669b968eb15e6",
+      "role": "candidate staging/publication and attachment verification"
+    },
+    {
+      "path": "src/storage/migration-terminal.js",
+      "sha256": "ff24b1b717315d373ccc2d99d84b1753e7c185deb627c1edc04cec590bcb4b3e",
+      "role": "published migration current-state validation"
+    },
+    {
+      "path": "src/storage/maintenance.js",
+      "sha256": "09b719c9747ace837abda0a404c720c231b5be594a67b624968e090543549141",
+      "role": "writer exclusion and owner continuation"
+    },
+    {
+      "path": "src/storage/maintenance-owner.js",
+      "sha256": "cf18aff27a8df3ccc2257048b787428ba03c7d5e55e0aecaa6560daefe16e64e",
+      "role": "bounded owner evidence and exact-owner checks"
+    },
+    {
+      "path": "integrations/mcp/src/tool-registry.js",
+      "sha256": "f3f128a02cf5142df1db43f72cb8565f5791c856c71e104383284899f2316bc1",
+      "role": "MCP tool policy/delegation into supported integration runtime"
+    }
+  ],
+  "testHashes": [
+    {
+      "path": "tests/storage-migrate-command.test.js",
+      "sha256": "0cdd14feb017c39b412f66b97635da1e6d99488298c34e5190a2df0f75f348a3",
+      "role": "direct public API/CLI migration acceptance and refusal"
+    },
+    {
+      "path": "tests/storage-migration-resume.test.js",
+      "sha256": "291e919fa88f1697797b6dad3f1ba05ecb433ec27fefe3f7c2ad46aed8f8ec2f",
+      "role": "SIGKILL owner resume across migration checkpoints"
+    },
+    {
+      "path": "tests/storage-migration-source.test.js",
+      "sha256": "f29127a421a79c8bc15bdc3e2e34d39ff5de2c120eb4db4070ef30d23a3dc12b",
+      "role": "source capture, maintenance exclusion, status and owner recovery"
+    },
+    {
+      "path": "tests/storage-restore-command.test.js",
+      "sha256": "7b34447e7d7d874f96bdda9756dac707ab49ec6d89b0e65a649c13a2f24bb276",
+      "role": "public fresh/active restore API and CLI admission"
+    },
+    {
+      "path": "tests/storage-project-restore.test.js",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "role": "fresh restore bytes, journal bindings, refusal and resume checkpoints"
+    },
+    {
+      "path": "tests/storage-project-backup.test.js",
+      "sha256": "3806e7f424ea4b51422e2704b245799218b18675f11c83bcc098918747ccdc3a",
+      "role": "backup/restore bytes, inventory tamper, corrupt-source and public API/CLI"
+    },
+    {
+      "path": "tests/storage-migration-attachments.test.js",
+      "sha256": "debdd3c057c74b5de5ebc2a19201c73e6fc0771b329ae27eb93a555c24d78e62",
+      "role": "portable attachment digest/reference coverage through migration and backup"
+    },
+    {
+      "path": "tests/storage-forward-rebuild.test.js",
+      "sha256": "a3d21025a6610f711c5d1c0a15091b8406c306664c45a41ed1bbd79fc203efdf",
+      "role": "latest verified snapshot native rebuild and post-write binary preservation"
+    },
+    {
+      "path": "tests/storage-replacement-archive.test.js",
+      "sha256": "3a63116d05cfe1ef158b54cae2863993e26f7acfd99fba5159142300e30c5213",
+      "role": "outgoing archive, digest binding, binary preservation and SIGKILL recovery"
+    },
+    {
+      "path": "tests/storage-replacement-preparation.test.js",
+      "sha256": "1d95773566805fac20d4c5d577fc4726b0cebbccb42b05f755523f2ef646532e",
+      "role": "outgoing owner evidence binding refusal"
+    },
+    {
+      "path": "tests/storage-replacement-publication.test.js",
+      "sha256": "ef2b88d24e5ff8f345397aa60f70b44c8bf8527b2794ad145ac21567949df878",
+      "role": "active replacement publication, binary source independence and SIGKILL resume"
+    },
+    {
+      "path": "tests/storage-integration-dispatch.test.js",
+      "sha256": "937d0147e34dbbad0e88b80bf8a53a306572e65476676e6869dc3a5dd0c2e7d4",
+      "role": "public dispatch no legacy operational writes/fallback and mixed-layout refusal"
+    },
+    {
+      "path": "tests/storage-operational-bootstrap.test.js",
+      "sha256": "04ec7b1d316f0b8bf352dfc6721ad3ca1f4db7778444766eaaab9a6ce43b20e2",
+      "role": "read-only/admission and public command/resource canonical store selection"
+    },
+    {
+      "path": "tests/storage-project-bootstrap.test.js",
+      "sha256": "787a88f28e02670f64e8f41c2ba0079cc7670bee4e7a969af227dece4bf1d3fb",
+      "role": "fresh bootstrap, legacy refusal and direct transaction admission"
+    },
+    {
+      "path": "tests/storage-sole-writer-boundary.test.js",
+      "sha256": "a62097fe2f44a7ed2e9f07cbc7f552f4e882b9e42085d8e136c2261ccdce8202",
+      "role": "direct writer refusal, canonical SQLite authority and portable-path refusal"
+    },
+    {
+      "path": "tests/storage-marker.test.js",
+      "sha256": "5c070b650e1733c0c4afdfcdaffaa08496fc6a856d881efa9c95cdb0b561989a",
+      "role": "pending/missing database marker prevents filesystem fallback"
+    },
+    {
+      "path": "tests/storage-correction-io.test.js",
+      "sha256": "55683dace24cacfc759a89ef68387faa3dbf670fccafb2e150076098a6e263da",
+      "role": "diagnosis/correction/readback canonical storage without legacy payload I/O"
+    },
+    {
+      "path": "tests/actions.test.js",
+      "sha256": "3bebe130bf10ed98fb0c5e0721cab6d52e13558fd62cc01218694dd498bfedf4",
+      "role": "direct action reads refuse legacy directory scans"
+    },
+    {
+      "path": "tests/approvals.test.js",
+      "sha256": "eea340420a375b03c0f505c9015dc0e3b66f9a48fd5e2b014d7f5cc0b7c3c325",
+      "role": "direct approval reads refuse legacy authority"
+    },
+    {
+      "path": "tests/storage-continuity-diagnosis-correcting.test.js",
+      "sha256": "b871ab84e813f07b661bc8873922cce4ccff11f9f645e7f6990ec59bc2497cd7",
+      "role": "unconverted legacy mutation refusal"
+    },
+    {
+      "path": "integrations/mcp/tests/storage-migration-status.test.js",
+      "sha256": "933e0164f2e42f19f3601e407aea9d399547014a2dcd6991580671db972e3897",
+      "role": "MCP read-only status delegation and ordinary-read blocking"
+    },
+    {
+      "path": "integrations/mcp/tests/storage-restore-policy.test.js",
+      "sha256": "4593b841fc4512085fd22516fceb0e0685ba561c1075914b6226f1cf39596656",
+      "role": "MCP restore tool exposure and canonical input policy shape"
+    }
+  ],
+  "evidenceHashes": {
+    "prepushReceiptSha256": "543eb05db2707f8d45a668e856208911ebf5cc83ffa9062bea4b085bc76a84fc",
+    "prepushLogSha256": "4bb4c723ccd86f2c8c6fabfdfa4ce06cfab25e6c953701f37a1992ed6d7cb246",
+    "planSha256": "f406dca99817b12740fdd76a92fd3060932ee5a81d76f8b86cb27d402b76da69",
+    "matrixSha256": "871a1a2640239ed9929b8f93371685afee3f7633f0b8e433c64356abcbe5c710",
+    "maintenanceCoverageSha256": "095547ca07150166f4f34fafe3d102801063d8dd7f933013a2d94585761e5a99"
+  },
+  "currentAcceptanceState": {
+    "localPrepush": "PASS, terminal receipt confirmed for current revision ec0d0a0.",
+    "hostedValidation": "PENDING; receipt explicitly says local validation only.",
+    "platformMatrix": "PENDING as current-source/whole consumer acceptance for this review; retained historical/platform artifacts do not replace current-source closure.",
+    "restoreAndRollback": "Local maintained fresh/active restore and rollback controls exist; production restore activation, current hosted cross-platform receipts and complete maintenance ownership reconciliation remain separate requirements.",
+    "wholeConsumerAndSoleWriter": "OPEN; no capability acceptance or ForgeLoop VALID claim.",
+    "performanceAndLoc": "OPEN; original 2x/30%/10%/25% targets and inclusive persistence LOC scope remain required."
+  },
+  "prioritizedNextCorrections": [
+    "Use the six rows and current hashes as the source-bound checklist for the hosted current-source platform run; reconcile every retained receipt to ec0d0a0 before claiming parity.",
+    "Complete the finite supported-surface consumer inventory for all built-in CLI, ./integration and MCP command/resource delegates, classifying each file write as SQLite operational, explicit portable/export, installation/configuration, scratch or external observation.",
+    "Close assigned alias/dependency/dynamic callback and maintenance ownership evidence where it affects supported public operations; keep raw trusted DatabaseSync and privileged external-process limits explicit.",
+    "Run the prepared focused regressions against unchanged production for selected-task continuity and portable bundle identity, then implement only diagnosed corrections and repeat validation."
+  ],
+  "conclusion": {
+    "result": "PROVISIONAL_REQUIREMENT_AUDIT_COMPLETE",
+    "publicMisbindingFound": false,
+    "concreteBuiltInLegacyOperationalWriterFound": false,
+    "soleWriterVerified": false,
+    "capabilityClaim": false,
+    "prReady": false
+  }
+}

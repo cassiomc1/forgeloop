@@ -1,0 +1,114 @@
+{
+  "kind": "PREPARED_REGRESSION_CURRENT_EXECUTION_REVIEW",
+  "sourceRevision": "ec0d0a059b17a888cbf722efb908c94bea233b78",
+  "reviewedAt": "2026-10-10T04:57:43.520272+00:00",
+  "originalPreparationRetained": "benchmarks/storage-sqlite/regressions945-preparation.json",
+  "originalPreparationRevision": "3bafbb1217c0f5a3dafac7070f44076c21325fdc",
+  "currentFullValidation": "benchmarks/storage-sqlite/prepush-ec0d0a0-success.json",
+  "logSha256": "4bb4c723ccd86f2c8c6fabfdfa4ce06cfab25e6c953701f37a1992ed6d7cb246",
+  "sourceHashes": {
+    "src/core/bundles.js": "334be44273d816e7b68cf7434369467e2466cdce13fad05908b4311320cefe5e",
+    "src/core/next-action-continuity.js": "e6f5526e8ce2389de03a600fbc284215441034840f0d4b45de786b995ce9b56c",
+    "tests/bundle.test.js": "b69527197f7acc671dc85fd0b3ddc96cd63063b60cba8f391bbb35878add72f6",
+    "tests/next-action-continuity.test.js": "9c09d71b4e7b354cdd76b24d2fa52afe0f8d017a5e08a83fe408a1edd42d65b1",
+    "tests/next-action-task-scope.test.js": "399a98790011fd4d3dd1e3e6e4a0e1097c7b21baeab3b5fa6d88bba34f7d6bf0",
+    "tests/run-action.test.js": "4e4e8143be97014b8150aec4744f37b68c9682cf3bd3ee9eaf2cfb016fc71c17",
+    "tests/run-check.test.js": "2b1cc2c588e170274e4a34e58af760166e5392d24816cbe07a32fdd1763a868d",
+    "tests/storage-migration-candidate.test.js": "2f65295bf865b783b406575923e4c3dfe946cd5deaafedca71d36e70f72e936c",
+    "tests/storage-task-scope.test.js": "eb893c50d48cedea609434d569fff36c32c8f407e5b86f049b3a651bf97efc70"
+  },
+  "changedSincePreparation": [
+    "tests/next-action-task-scope.test.js",
+    "tests/next-action-continuity.test.js",
+    "src/core/next-action-continuity.js",
+    "src/core/bundles.js"
+  ],
+  "executedControls": [
+    {
+      "test": "selected EXECUTING task reads its own continuity before entering verification",
+      "file": "tests/next-action-task-scope.test.js",
+      "passedLogEvidence": {
+        "line": 1121,
+        "text": "\u2714 selected EXECUTING task reads its own continuity before entering verification (738.617666ms)"
+      }
+    },
+    {
+      "test": "blocking continuity responses identify the selected task's artifacts",
+      "file": "tests/next-action-continuity.test.js",
+      "passedLogEvidence": {
+        "line": 1095,
+        "text": "\u2714 blocking continuity responses identify the selected task's artifacts (15.154709ms)"
+      }
+    },
+    {
+      "test": "continuity responses retain singleton artifact paths when no task is selected",
+      "file": "tests/next-action-continuity.test.js",
+      "passedLogEvidence": {
+        "line": 1096,
+        "text": "\u2714 continuity responses retain singleton artifact paths when no task is selected (0.143833ms)"
+      }
+    },
+    {
+      "test": "portable task bundles reject continuity bound to a foreign task after manifest rebinding",
+      "file": "tests/bundle.test.js",
+      "passedLogEvidence": {
+        "line": 225,
+        "text": "\u2714 portable task bundles reject continuity bound to a foreign task after manifest rebinding (307.624666ms)"
+      }
+    },
+    {
+      "test": "public task-scope mutation rejects an independently leased task",
+      "file": "tests/storage-task-scope.test.js",
+      "passedLogEvidence": {
+        "line": 2570,
+        "text": "\u2714 public task-scope mutation rejects an independently leased task (298.575083ms)"
+      }
+    },
+    {
+      "test": "public task-scope mutation rejects claims overlapping a leased task",
+      "file": "tests/storage-task-scope.test.js",
+      "passedLogEvidence": {
+        "line": 2571,
+        "text": "\u2714 public task-scope mutation rejects claims overlapping a leased task (349.815916ms)"
+      }
+    },
+    {
+      "test": "candidate preparation retains legacy event-index bytes without reproducing the sidecar",
+      "file": "tests/storage-migration-candidate.test.js",
+      "passedLogEvidence": {
+        "line": 2236,
+        "text": "\u2714 candidate preparation retains legacy event-index bytes without reproducing the sidecar (547.988792ms)"
+      }
+    },
+    {
+      "test": "public native run-action launches without an open SQLite writer transaction",
+      "file": "tests/run-action.test.js",
+      "passedLogEvidence": {
+        "line": 1855,
+        "text": "\u2714 public native run-action launches without an open SQLite writer transaction (717.7045ms)"
+      }
+    },
+    {
+      "test": "public run-check external adapter runs without an open SQLite writer transaction",
+      "file": "tests/run-check.test.js",
+      "passedLogEvidence": {
+        "line": 1864,
+        "text": "\u2714 public run-check external adapter runs without an open SQLite writer transaction (751.814875ms)"
+      }
+    },
+    {
+      "test": "public native run-check launches without an open SQLite writer transaction",
+      "file": "tests/run-check.test.js",
+      "passedLogEvidence": {
+        "line": 1865,
+        "text": "\u2714 public native run-check launches without an open SQLite writer transaction (712.910042ms)"
+      }
+    }
+  ],
+  "limitations": [
+    "Historical preparation remains an unexecuted record for its original source revision, not current status.",
+    "Current full source executes these exact controls; this is not a new baseline reproduction of already corrected defects.",
+    "Current hosted coverage and original whole-plan acceptance remain separate."
+  ],
+  "wholePlanAcceptance": false
+}
