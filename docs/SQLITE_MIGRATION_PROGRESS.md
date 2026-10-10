@@ -1,5 +1,9 @@
 # SQLite migration progress
 
+## Current Windows recovery fixture correction
+
+Windows full run `38042718400` refused a recorded maintenance owner before the requested adoption checkpoint. The fixture now registers both child exit and close before SIGKILL and waits for closed handles before recovery; production stale-owner refusal remains unchanged. Root focused recovery/parity checks pass 23 tests and `verify:fast` passes. Windows validation of the corrected fixture is still required; process-handle timing is a plausible diagnosis, not a confirmed platform fix. The rejected task-state extraction is removed, with three useful parity regressions retained against unchanged production.
+
 ## Current benchmark admission preparation
 
 The paired MCP resource workflow now checks the requested source revision, pinned baseline, Node 24.19.0, Linux platform and configured runner before measuring. A before/after observer records redacted Linux process metadata and benchmark temporary entries, refuses competing Node processes or leftover temporary state, and binds cleanup to the same source/run/runner scope. Four synthetic `/proc` controls pass; actual Linux execution remains pending. This does not establish physical Windows-host quiescence or reserve the shared host. No benchmark has been dispatched with these new controls.

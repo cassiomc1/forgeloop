@@ -49,6 +49,14 @@ async function appendOwnerHistoryDiagnostics(error, target, worker) {
   error.message += `\nMaintenance owner history observations: ${JSON.stringify(observations)}`;
 }
 
+async function killWorker(worker) {
+  const exited = once(worker, "exit");
+  const closed = once(worker, "close");
+  assert.equal(worker.kill("SIGKILL"), true);
+  assert.equal((await exited)[1], "SIGKILL");
+  await closed;
+}
+
 for (const checkpoint of ["OWNER", "INTENT", "OUTGOING_OWNER", "OUTGOING_RETAINING", "OUTGOING_RENAMED", "OUTGOING_RETAINED", "REBUILD_BASELINE", "REBUILD_ALLOCATED"]) {
   test(`replacement reconciles SIGKILL between adoption records at ${checkpoint}`, { timeout: 60000 }, async () => {
     const fixture = await buildActiveReplacementFixture();
@@ -59,15 +67,14 @@ for (const checkpoint of ["OWNER", "INTENT", "OUTGOING_OWNER", "OUTGOING_RETAINI
       worker.stderr.on("data", bytes => { stderr += bytes; });
       return Promise.race([once(worker, "message").then(([message]) => message), once(worker, "exit").then(([code]) => { throw new Error(`Adoption worker exited ${code}: ${stderr}`); })]);
     };
-    const kill = async () => { const exited = once(worker, "exit"); assert.equal(worker.kill("SIGKILL"), true); assert.equal((await exited)[1], "SIGKILL"); };
     try {
       const retaining = ["OUTGOING_RETAINING", "OUTGOING_RENAMED", "OUTGOING_RETAINED", "REBUILD_BASELINE", "REBUILD_ALLOCATED"].includes(checkpoint);
       const initial = await start(new URL("./helpers/storage-replacement-preparation-worker.mjs", import.meta.url), [fixture.target, path.join(fixture.operationRoot, "snapshot"), retaining ? "PARTIAL_OUTGOING" : "OUTGOING_READY"]);
-      await kill();
+      await killWorker(worker);
       const adopted = await start(new URL("./helpers/storage-replacement-failed-resume-worker.mjs", import.meta.url), [fixture.target, initial.operationId, initial.ownerId, checkpoint]);
       assert.equal(adopted.checkpoint, checkpoint, JSON.stringify(adopted));
       assert.notEqual(adopted.ownerId, initial.ownerId);
-      await kill();
+      await killWorker(worker);
       const options = { operationId: initial.operationId, expectedOwnerId: adopted.ownerId, writersQuiesced: true };
       if (checkpoint === "OWNER") {
         const history = path.join(fixture.target, ".forgeloop/storage-maintenance-history", `${initial.ownerId}.json`);
@@ -80,7 +87,7 @@ for (const checkpoint of ["OWNER", "INTENT", "OUTGOING_OWNER", "OUTGOING_RETAINI
       assert.equal((await verifyActiveProjectRestore(fixture.target, initial.operationId)).active, true);
       if (retaining) assert.equal((await readdir(path.join(fixture.target, ".forgeloop/storage-restores", initial.operationId, "outgoing-history"))).length, checkpoint.startsWith("REBUILD_") ? 2 : 1);
     } finally {
-      if (worker && worker.exitCode === null && worker.signalCode === null) { const exited = once(worker, "exit"); worker.kill("SIGKILL"); await exited; }
+      if (worker && worker.exitCode === null && worker.signalCode === null) await killWorker(worker);
       await fixture.cleanup();
     }
   });
@@ -97,9 +104,7 @@ for (const checkpoint of ["PREPARING", "OUTGOING_BASELINE", "OUTGOING_ALLOCATED"
       const ready = await Promise.race([once(worker, "message").then(([message]) => message), once(worker, "exit").then(([code]) => { throw new Error(`Preparation worker exited ${code}: ${stderr}`); })]);
       const options = { operationId: ready.operationId, expectedOwnerId: ready.ownerId, writersQuiesced: true };
       await assert.rejects(resumeActiveProjectReplacement(fixture.target, options), { code: "E_STORAGE_MAINTENANCE_IN_PROGRESS" });
-      const exited = once(worker, "exit");
-      assert.equal(worker.kill("SIGKILL"), true);
-      assert.equal((await exited)[1], "SIGKILL");
+      await killWorker(worker);
       const root = path.join(fixture.target, ".forgeloop/storage-restores", ready.operationId);
       let originalManifest;
       if (checkpoint === "PUBLICATION_READY") {
@@ -141,9 +146,7 @@ for (const checkpoint of ["PREPARING", "OUTGOING_BASELINE", "OUTGOING_ALLOCATED"
         worker = fork(new URL("./helpers/storage-replacement-failed-resume-worker.mjs", import.meta.url), [fixture.target, ready.operationId, options.expectedOwnerId, "REBUILD_DATABASE"], { stdio: ["ignore", "ignore", "pipe", "ipc"] });
         const rebuilt = await Promise.race([once(worker, "message").then(([message]) => message), once(worker, "exit").then(([code]) => { throw new Error(`Rebuild worker exited ${code}`); })]);
         assert.equal(rebuilt.checkpoint, "REBUILD_DATABASE", JSON.stringify(rebuilt));
-        const rebuiltExit = once(worker, "exit");
-        assert.equal(worker.kill("SIGKILL"), true);
-        assert.equal((await rebuiltExit)[1], "SIGKILL");
+        await killWorker(worker);
         options.expectedOwnerId = rebuilt.ownerId;
       }
       if (checkpoint === "OUTGOING_READY") {
@@ -208,7 +211,7 @@ for (const checkpoint of ["PREPARING", "OUTGOING_BASELINE", "OUTGOING_ALLOCATED"
       }
       assert.equal((await executeForgeLoopCommand({ command: "task-list", projectPath: fixture.target, input: {} })).ok, true);
     } finally {
-      if (worker && worker.exitCode === null && worker.signalCode === null) { const exited = once(worker, "exit"); worker.kill("SIGKILL"); await exited; }
+      if (worker && worker.exitCode === null && worker.signalCode === null) await killWorker(worker);
       await fixture.cleanup();
     }
   });

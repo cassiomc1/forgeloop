@@ -53,7 +53,8 @@ try {
   const diagnostics = { recordedOwnerPid: initialOwner.pid, recordedOwnerId: initialOwner.ownerId, workerPid: process.pid, checkpoint };
   if (process.platform === "win32") {
     try {
-      diagnostics.ownerProcess = execFileSync("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", `Get-Process -Id ${initialOwner.pid} -ErrorAction SilentlyContinue | Select-Object Id,ProcessName,StartTime,HasExited | ConvertTo-Json -Compress`], { encoding: "utf8", timeout: 10000 }).trim() || "absent";
+      const command = `$owner = Get-Process -Id ${initialOwner.pid} -ErrorAction SilentlyContinue; if ($null -eq $owner) { Write-Output absent } else { $owner | Select-Object Id,ProcessName,StartTime,HasExited | ConvertTo-Json -Compress }`;
+      diagnostics.ownerProcess = execFileSync("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", command], { encoding: "utf8", timeout: 10000 }).trim() || "absent";
     } catch (observationError) { diagnostics.observationError = observationError.code ?? observationError.status; }
   }
   process.send({ code: error.code, message: error.message, ownerId: (await readMaintenanceOwner(target)).value.ownerId, diagnostics });
