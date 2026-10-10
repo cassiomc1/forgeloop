@@ -1,0 +1,19 @@
+{
+  "kind": "MAINTENANCE_ADOPTION_FIXTURE_CORRECTION",
+  "sourceBefore": "d7e86d7",
+  "legacyControl": "Remove optional Windows token before adoption, explicitly exercise legacy process.kill private-proof semantics",
+  "realClosedChildControl": "ESRCH permits legacy recovery; a reused live PID requires refusal, without retries",
+  "nativeWindowsControl": "same creation token refuses continuity, different verified observed token allows old incarnation death; closed worker accepts absence/exited or verified different live incarnation",
+  "syntheticTokenCaveat": "Different-token fixture models PID reuse; it does not force actual operating-system PID reuse",
+  "local": {
+    "node": "24.19.0",
+    "tests": 11,
+    "passed": 7,
+    "failed": 0,
+    "windowsOnlySkipped": 4,
+    "eslintExitCode": 0
+  },
+  "hostedValidation": "pending",
+  "logSha256": "3acdfa1e1611961c71cd2dc159d5d185c4c2a3c0080530ff2096f2e26e5d863e",
+  "fullAcceptance": false
+}
