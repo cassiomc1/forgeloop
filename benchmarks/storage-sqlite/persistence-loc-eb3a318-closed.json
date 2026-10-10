@@ -1,0 +1,40 @@
+{
+  "kind": "PERSISTENCE_LOC_REVIEWED_SCOPE",
+  "productionRevision": "eb3a318e7f0fbbb53658f118209dba952e848797",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "baselineSelectedLines": 25732,
+  "currentSelectedLines": 32406,
+  "ceiling": 19299,
+  "gap": 13107,
+  "unresolvedMembership": [],
+  "acceptanceEligible": true,
+  "targetMet": false,
+  "enumIncluded": {
+    "side": "current",
+    "path": "src/core/task-discovery.js",
+    "key": "src/core/task-discovery.js::VariableStatement::DISCOVERY_PROJECTIONS",
+    "sourceKey": "src/core/task-discovery.js::top-level::VariableStatement::DISCOVERY_PROJECTIONS",
+    "kind": "VariableStatement",
+    "name": "DISCOVERY_PROJECTIONS",
+    "lineStart": 113,
+    "lineEnd": 117,
+    "nonblankPhysicalLines": 5,
+    "reason": "reviewed-exact-persistence-declaration",
+    "stable": true,
+    "fingerprint": null,
+    "sourceSha256": "bc128b80134055cf2fd0ac6ae2e25c7a4b7ee4e403a5fadc0da4fe0a92430d45",
+    "rawFileSha256": "bc128b80134055cf2fd0ac6ae2e25c7a4b7ee4e403a5fadc0da4fe0a92430d45"
+  },
+  "analyzerSha256": "215152788ab42e2fcab9a9e1336bdd91b25e92c848bc4370bb6df17f78ff4e49",
+  "resultSha256": "aedb64a41108e68a4d2da9f2dcaca363732ac343bea6cb888c4a222e041c539b",
+  "scopeManifestSha256": "6d69d064c16161195188bbe7636828c18abf4263a81d996cd54dcec769999238",
+  "checks": {
+    "maintainedControls": 2,
+    "failures": 0,
+    "complexity": "PASS"
+  },
+  "limitations": [
+    "Scope closure and analyzer success do not satisfy original25percent reduction target.",
+    "Resource, full consumer/platform and validator closure remain open."
+  ]
+}

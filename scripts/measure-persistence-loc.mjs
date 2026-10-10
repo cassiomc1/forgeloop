@@ -23,7 +23,7 @@ import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { pathToFileURL } from "node:url";
+import { pathToFileURL, fileURLToPath } from "node:url";
 import { gunzipSync } from "node:zlib";
 
 const SOURCE_EXTENSIONS = new Set([".js", ".mjs", ".ts"]);
@@ -80,7 +80,7 @@ function fail(message, details = []) {
   throw new Error(`${message}${suffix}`);
 }
 
-function loadTypeScript(repoRoot, expectedVersion) {
+export function loadTypeScript(repoRoot, expectedVersion) {
   let requireFromRepo;
   try {
     requireFromRepo = createRequire(pathToFileURL(path.join(repoRoot, "package.json")).href);
@@ -881,6 +881,18 @@ function topLevelDeclarationSpans(ts, file, manifest) {
   return spans;
 }
 
+export function exactDeclarationSpan(ts, file, entry) {
+  const matches = file.sourceFile.statements.filter(statement => topLevelDeclarationName(ts, statement) === entry.name);
+  if (matches.length !== 1) throw new Error(`Exact declaration must match once: ${entry.id}`);
+  const statement = matches[0];
+  if (ts.isFunctionDeclaration(statement) || ts.isClassDeclaration(statement) || IMPORT_KINDS.has(nodeKindName(ts, statement))) throw new Error(`Unsupported exact declaration kind: ${entry.id}`);
+  if (file.sha256 !== entry.sourceSha256 || statement.getText(file.sourceFile) !== entry.sourceEvidence) throw new Error(`Stale exact declaration binding: ${entry.id}`);
+  const start = statement.getStart(file.sourceFile), end = statement.end;
+  const kind = nodeKindName(ts, statement);
+  const span = {kind, name: entry.name, key: `${file.path}::top-level::${kind}::${entry.name}`, identityKey: `${file.path}::${kind}::${entry.name}`, start, end, lineStart: lineOf(file.sourceFile, start), lineEnd: lineOf(file.sourceFile, end - 1), stable: true};
+  return span;
+}
+
 function topLevelDeclarationName(ts, statement) {
   if (ts.isVariableStatement?.(statement)) {
     const names = statement.declarationList.declarations
@@ -1050,6 +1062,19 @@ function collectSelectionsForSide(ts, files, manifest, side, helperDispositions 
     for (const record of file.functions) classifyDirectFunction(ts, file, record, manifest, moduleMap, side, nonHelperDispositions);
   }
   const reasonsByPath = new Map();
+  const declarationEntries = manifest.topLevelDeclarationDispositions ?? [];
+  const declarationKeys = new Set();
+  for (const entry of declarationEntries) {
+    if (!["baseline", "current"].includes(entry.side) || !entry.id || !entry.path || !entry.name || !entry.sourceEvidence || !/^[a-f0-9]{64}$/.test(entry.sourceSha256 ?? "")) throw new Error("Malformed exact declaration binding");
+    const key = `${entry.side}:${entry.path}:${entry.name}`;
+    if (declarationKeys.has(key)) throw new Error(`Duplicate exact declaration binding: ${key}`);
+    declarationKeys.add(key);
+  }
+  const exactDeclarations = declarationEntries.filter(entry => entry.side === side);
+  for (const entry of exactDeclarations) {
+    if (!filesByPath.has(entry.path)) throw new Error(`Missing exact declaration file: ${entry.path}`);
+    if (entry.disposition !== "REVIEWED_INCLUDE_PERSISTENCE") throw new Error(`Unsupported exact declaration disposition: ${entry.id}`);
+  }
   for (const file of files) {
     file.unresolved = [...file.unresolved];
     const selected = new Map();
@@ -1070,6 +1095,10 @@ function collectSelectionsForSide(ts, files, manifest, side, helperDispositions 
       for (const span of topLevelDeclarationSpans(ts, file, manifest)) {
         if (!selected.has(span.identityKey)) selected.set(span.identityKey, { span, reasons: new Set(["operational-top-level-declaration"]) });
       }
+    }
+    for (const entry of exactDeclarations.filter(candidate => candidate.path === file.path)) {
+      const span = exactDeclarationSpan(ts, file, entry);
+      if (!isStoragePath(file.path, manifest)) selected.set(span.identityKey, {span, reasons: new Set(["reviewed-exact-persistence-declaration"])});
     }
     selectedByPath.set(file.path, selected);
     reasonsByPath.set(file.path, file.unresolved);
@@ -1840,7 +1869,7 @@ async function main() {
   }, null, 2)}\n`);
 }
 
-main().catch(error => {
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main().catch(error => {
   for (const parser of OPEN_PARSERS) parser.close();
   process.stderr.write(`${error.stack ?? error}\n`);
   process.exitCode = 1;

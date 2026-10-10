@@ -1,6 +1,8 @@
 # SQLite migration execution checkpoint
 
-Current correction `70ce7c3` rejects portable action, approval and execution records whose indexed fields disagree with canonical payloads. Three controls reproduced acceptance of tampered indexes before the fix; 85 storage tests, 32 consumer tests, strengthened export/getter controls and fast verification pass afterward. Terminal-result atomicity controls in `816cadf` also pass. Full prepush, platform acceptance and refreshed LOC evidence for this correction remain pending; previous production totals are historical. Evidence: `benchmarks/storage-sqlite/record-export-binding-70ce7c3.json`. The original complete plan, 25% inclusive LOC target, memory/performance gates and validator-backed closure remain required.
+Current production `eb3a318` validates task and record payload/index identity, projects validated task-list entries, and removes three unused private adapters. All 22 local prepush stages passed on frozen source: 2,976 core tests, 2,965 passed, zero failed, 11 skipped; all 3,131 tracked hashes remained unchanged. The earlier complexity failure at `68cbda9` is retained, and the corrected source passes complexity. Evidence: `benchmarks/storage-sqlite/prepush-eb3a318-success.json` and `benchmarks/storage-sqlite/task-export-projection-eb3a318.json`. Current platform and resource acceptance remain pending. The original complete plan, 25% inclusive LOC target, memory/performance gates and validator-backed closure remain required.
+
+The refreshed inclusive LOC inventory includes the projection enum explicitly and has zero unresolved membership: 25,732 baseline lines versus 32,406 current lines, against the unchanged 19,299 ceiling. The reduction gate fails by 13,107 lines. All storage/import/export/maintenance modules remain included. See `benchmarks/storage-sqlite/persistence-loc-eb3a318-closed.json`; older totals below are historical.
 
 ## Scope and authority
 

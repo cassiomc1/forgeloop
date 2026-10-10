@@ -1,0 +1,27 @@
+{
+  "kind": "FULL_PREPUSH_TERMINAL_FAILURE",
+  "revision": "68cbda9e0d814c1daa108922e85f997520ac54c9",
+  "exitCode": 1,
+  "trackedFilesUnchanged": 3130,
+  "coreTests": 2976,
+  "corePassed": 2965,
+  "coreFailed": 0,
+  "coreSkipped": 11,
+  "firstFailure": {
+    "stage": "complexity:check",
+    "file": "src/storage/repository.js",
+    "score": 27,
+    "limit": 25
+  },
+  "passedStages": [
+    "coverage",
+    "critical-coverage:check",
+    "lint",
+    "dependency:policy"
+  ],
+  "logSha256": "5aaeee60dc4649c3c62bcc599a753b72b127e740e49e01d773cd072175fdf4f5",
+  "limits": [
+    "Later prepush stages did not run after complexity failure.",
+    "No full prepush success or migration acceptance."
+  ]
+}
