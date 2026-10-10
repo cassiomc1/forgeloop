@@ -1,0 +1,49 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { readdir } from "node:fs/promises";
+import path from "node:path";
+import { DatabaseSync } from "node:sqlite";
+import { executeForgeLoopCommand } from "../src/core/command-runtime.js";
+import { buildCanonicalDiagnosisProject } from "./helpers/canonical-diagnosis-fixture.js";
+
+
+
+async function fixture(callback) {
+  const f = await buildCanonicalDiagnosisProject();
+  const db = new DatabaseSync(path.join(f.target, ".forgeloop/state.sqlite"));
+  try { await callback({ target: f.target, db, taskId: f.taskId }); }
+  finally { db.close(); await f.cleanup(); }
+}
+function snapshot(db) {
+  const tables = db.prepare("SELECT name FROM sqlite_schema WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name").all();
+  return tables.map(({name}) => ({name, rows: db.prepare(`SELECT * FROM "${name.replaceAll('"','""')}"`).all().map(row=>JSON.stringify(row)).sort()}));
+}
+async function noMirrors(target) {
+  const names = await readdir(path.join(target, ".forgeloop"));
+  for (const name of ["task-state", "sessions", "session.json", ".txn"]) assert.equal(names.includes(name), false, name);
+}
+
+for (const command of ["record-continuity", "clear-continuity"]) test(`public ${command} rolls back with its transaction witness`, async () => {
+  await fixture(async ({ target, db, taskId }) => {
+    const record = () => executeForgeLoopCommand({ command: "record-continuity", projectPath: target, input: { taskId, focusId: "atomic", focusSummary: "retain selected task context" } });
+    if (command === "clear-continuity") {
+      const seeded = await record();
+      assert.equal(seeded.ok, true, JSON.stringify(seeded));
+    }
+    const invoke = command === "record-continuity" ? record : () => executeForgeLoopCommand({ command, projectPath: target, input: { taskId } });
+    const before = snapshot(db);
+    db.exec("CREATE TRIGGER continuity_witness_fault BEFORE INSERT ON events WHEN NEW.event_type='TRANSACTION_COMMITTED' BEGIN SELECT RAISE(ABORT, 'CONTINUITY_WITNESS_FAULT'); END");
+    try {
+      const failed = await invoke();
+      assert.equal(failed.ok, false, JSON.stringify(failed));
+      assert.match(JSON.stringify(failed.error), /CONTINUITY_WITNESS_FAULT/);
+      assert.deepEqual(snapshot(db), before);
+      assert.equal(db.isTransaction, false);
+    } finally { db.exec("DROP TRIGGER continuity_witness_fault"); }
+    const count = db.prepare("SELECT COUNT(*) AS n FROM events WHERE event_type='TRANSACTION_COMMITTED'").get().n;
+    const retried = await invoke();
+    assert.equal(retried.ok, true, JSON.stringify(retried));
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM events WHERE event_type='TRANSACTION_COMMITTED'").get().n, count + 1);
+    await noMirrors(target);
+  });
+});
