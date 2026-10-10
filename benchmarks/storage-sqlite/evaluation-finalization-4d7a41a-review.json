@@ -1,0 +1,41 @@
+{
+  "kind": "evaluation-external-finalization-regression",
+  "sourceRevision": "4d7a41a",
+  "node": "v24.19.0",
+  "environmentRemoved": [
+    "TYPESAFE_API_KEY",
+    "NODE_OPTIONS"
+  ],
+  "tests": 7,
+  "passed": 7,
+  "failed": 0,
+  "skipped": 0,
+  "testHashes": {
+    "tests/storage-public-evaluation-atomicity.test.js": "ed547b3d5e46697d8e64f615d5ebfffe2f433679852d6668843c0a9a80e4e349",
+    "tests/storage-public-external-finalization-atomicity.test.js": "5edcd89d2652216d96b42d5a57c47a0f50c6a959f1b1e7078f659e2fab9b1fb5"
+  },
+  "log": {
+    "path": "/Users/cassio/.codex/verification/finalization-evaluation-4d7a41a.log",
+    "sha256": "30146f7bc28dcb5891ea796c784a3be4d112c387bd0c3e59392e5d675fa8fac4"
+  },
+  "fast": {
+    "exitCode": 0,
+    "path": "/Users/cassio/.codex/verification/acceptance-4d7a41a-fast.log",
+    "sha256": "930bd5d49061eb661180cee2dcae5e75f1d6640f73bbb8798e3794777a26773e"
+  },
+  "controls": [
+    "public eval artifact/event rollback",
+    "public attestation-create current rollback",
+    "canonical attestation history writer rollback",
+    "context-plan semantic recording rollback",
+    "decision supersession no orphan rollback",
+    "native run-action captured outcome survives outer witness failure and committed retry refuses before launch",
+    "adapter run-check captured execution/receipt survives outer witness failure with one adapter call"
+  ],
+  "limits": [
+    "Attestation history and semantic paths exercise canonical command/service APIs, not all transport combinations.",
+    "An outer external-operation witness fault intentionally retains previously committed intent/outcome transactions; it does not roll those back.",
+    "run-check assertion covers no automatic duplicate call, not exactly-once deliberate checker retry.",
+    "No benchmark or complete-plan acceptance."
+  ]
+}
