@@ -1,0 +1,328 @@
+{
+  "kind": "SHARED_COMMITTED_READ_SNAPSHOT_CONSOLIDATION",
+  "sourceRevision": "d8949b00f2021133b090d8e5cfe0bbd21b45cef5",
+  "capturedAt": "2026-10-09T23:58:37.674175+00:00",
+  "changes": [
+    "Discovery delegates admission and snapshot selection to withProjectReadSnapshot.",
+    "Structural-quality context/status use the same helper; duplicated withQualityReadObservation is removed."
+  ],
+  "boundaryReview": [
+    "The shared helper selects existing authority without bootstrapping or migrating.",
+    "Active transactions and staged writes, events or attachments bypass detachment and preserve proposed values/CAS.",
+    "Committed readers retain module-owned detached snapshots and normal payload, ledger and binding validation."
+  ],
+  "sourceHashes": {
+    "src/core/task-discovery.js": "c22a631ceae67ccc9b3ec0b9dbc47291dd18ca89e8009cd3e0dc6e84da90c81f",
+    "src/core/structural-quality/service.js": "0e2f550c916362b1775cdc103b6f9385952b850bfcf56702d9c135c8c3c4b19c",
+    "src/storage/project-read-snapshot.js": "0cbdd1aa0987447eb2a4222a85ac2645a5f930aa1ade142fcbea190946a6a1a6"
+  },
+  "focused": {
+    "tests": 38,
+    "passed": 38,
+    "failed": 0,
+    "skipped": 0,
+    "log": "/Users/cassio/.codex/verification/shared-read-snapshot-final-focused.log",
+    "sha256": "33fd0be6f2dc543dd0b6f4aaff557be707af5d9ff691fe954be50955cebf4cdd"
+  },
+  "fast": {
+    "exitCode": 0,
+    "log": "/Users/cassio/.codex/verification/shared-read-snapshot-final-fast.log",
+    "sha256": "90ddd82efdcd4ed0940e870049264fbbbfa2404bcb5af53b8f367d4463968e57"
+  },
+  "scopeReview": {
+    "kind": "EXACT_SOURCE_SCOPE_BINDING_REVIEW",
+    "reviewed": [
+      {
+        "path": "src/core/task-discovery.js",
+        "name": "discoverSelectedTasks.readEntry",
+        "disposition": "REVIEWED_INCLUDE_PERSISTENCE",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "bee6e3f4d4ad3e3a580d3da216002649a966fdbe3483940a9f4d6379371323de",
+        "currentFingerprint": "bee6e3f4d4ad3e3a580d3da216002649a966fdbe3483940a9f4d6379371323de"
+      },
+      {
+        "path": "src/core/task-discovery.js",
+        "name": "discoverTasks",
+        "disposition": "REVIEWED_INCLUDE_PERSISTENCE",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "dce5e117bcdc4899ab06f9676ee474cad2815d8be99b67ef1da3e8fa5e9fd9ee",
+        "currentFingerprint": "dce5e117bcdc4899ab06f9676ee474cad2815d8be99b67ef1da3e8fa5e9fd9ee"
+      },
+      {
+        "path": "src/core/task-discovery.js",
+        "name": "findTaskById",
+        "disposition": "REVIEWED_INCLUDE_PERSISTENCE",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "48c07c214afc9ef1a709e65fc918ec6e9289eb5f73783413dc11055c559e5db5",
+        "currentFingerprint": "48c07c214afc9ef1a709e65fc918ec6e9289eb5f73783413dc11055c559e5db5"
+      },
+      {
+        "path": "src/core/task-discovery.js",
+        "name": "discoverTaskSummaries",
+        "disposition": "REVIEWED_INCLUDE_PERSISTENCE",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "f68bd9dfc4c3404c50184ba800fb668b93b44fa9c194832220c801c125fa7fbf",
+        "currentFingerprint": "f68bd9dfc4c3404c50184ba800fb668b93b44fa9c194832220c801c125fa7fbf"
+      },
+      {
+        "path": "src/core/task-discovery.js",
+        "name": "discoverTasksInScope",
+        "disposition": "REVIEWED_INCLUDE_PERSISTENCE",
+        "rawFunctionUnchanged": false,
+        "previousFingerprint": "dd62ee7921a73f6b70c36eabafd0c917e9b95fb7a5dadf0b5a35c8ee6947c88a",
+        "currentFingerprint": "526813c14ec4776985d77c984f17d9876b7224132ab974e3109c0437c22aa0da"
+      },
+      {
+        "path": "src/core/task-discovery.js",
+        "name": "projectTaskSummary",
+        "disposition": "REVIEWED_INCLUDE_PERSISTENCE",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "9e23abd34f5ab49d4a76413d525d2538eb14d6d99aeb37c56e99771445291f05",
+        "currentFingerprint": "9e23abd34f5ab49d4a76413d525d2538eb14d6d99aeb37c56e99771445291f05"
+      },
+      {
+        "path": "src/core/task-discovery.js",
+        "name": "compareDiscoveredTasks",
+        "disposition": "REVIEWED_INCLUDE_PERSISTENCE",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "59aaf26785a81a8c383abe88ff3419728e2261d59da41e9c11c64a98b5768292",
+        "currentFingerprint": "59aaf26785a81a8c383abe88ff3419728e2261d59da41e9c11c64a98b5768292"
+      },
+      {
+        "path": "src/core/task-discovery.js",
+        "name": "appendDiscoveredTask",
+        "disposition": "REVIEWED_INCLUDE_PERSISTENCE",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "b521cb871e6f9113afb08400ff0e94e61d960a97e3ddf3a4f2c3bc7f6c774aa9",
+        "currentFingerprint": "b521cb871e6f9113afb08400ff0e94e61d960a97e3ddf3a4f2c3bc7f6c774aa9"
+      },
+      {
+        "path": "src/core/task-discovery.js",
+        "name": "finishDiscoveredTasks",
+        "disposition": "REVIEWED_INCLUDE_PERSISTENCE",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "1f77acc05980255ba8cc3168d8f797d58268a1ee5e70ffae5b528448ac25aaa5",
+        "currentFingerprint": "1f77acc05980255ba8cc3168d8f797d58268a1ee5e70ffae5b528448ac25aaa5"
+      },
+      {
+        "path": "src/core/structural-quality/service.js",
+        "name": "persistEvaluationAndCheck.staleRecoveryResult",
+        "disposition": "REVIEWED_INCLUDE_PERSISTENCE",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "8d49c609d05e7b474dc9acbeebe7b77072779ebfb703fecbfb0367200405bc69",
+        "currentFingerprint": "8d49c609d05e7b474dc9acbeebe7b77072779ebfb703fecbfb0367200405bc69"
+      },
+      {
+        "path": "src/core/structural-quality/service.js",
+        "name": "baseBindings",
+        "disposition": "REVIEWED_EXCLUDE_PURE_DOMAIN",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "7dc052216aa2c1fa3b41041d478f8409614929275e151c3c087061b96c0f1f99",
+        "currentFingerprint": "7dc052216aa2c1fa3b41041d478f8409614929275e151c3c087061b96c0f1f99"
+      },
+      {
+        "path": "src/core/structural-quality/service.js",
+        "name": "checkProjection",
+        "disposition": "REVIEWED_INCLUDE_PERSISTENCE",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "1b70edfadc95255441659566f257a4a3d181c5e89aabad39b824c06d10cafc56",
+        "currentFingerprint": "1b70edfadc95255441659566f257a4a3d181c5e89aabad39b824c06d10cafc56"
+      },
+      {
+        "path": "src/core/structural-quality/service.js",
+        "name": "configuredPolicy",
+        "disposition": "REVIEWED_EXCLUDE_PURE_DOMAIN",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "998884122c12a5e182e3d4fde1abca04f96cc537658f9a749084ae5acaf1ba12",
+        "currentFingerprint": "998884122c12a5e182e3d4fde1abca04f96cc537658f9a749084ae5acaf1ba12"
+      },
+      {
+        "path": "src/core/structural-quality/service.js",
+        "name": "emptyProjection",
+        "disposition": "REVIEWED_EXCLUDE_PURE_DOMAIN",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "e6d95acc16dee670fdbc012847acff7cbe7860daf5832717e3cd24d6ed74aa7f",
+        "currentFingerprint": "e6d95acc16dee670fdbc012847acff7cbe7860daf5832717e3cd24d6ed74aa7f"
+      },
+      {
+        "path": "src/core/structural-quality/service.js",
+        "name": "invokeProvider",
+        "disposition": "REVIEWED_INCLUDE_PERSISTENCE",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "697a66689449d0c367d09a6880c19df9e8f459255f7ac75d2031a7a745fdf618",
+        "currentFingerprint": "697a66689449d0c367d09a6880c19df9e8f459255f7ac75d2031a7a745fdf618"
+      },
+      {
+        "path": "src/core/structural-quality/service.js",
+        "name": "isRecord",
+        "disposition": "REVIEWED_INCLUDE_PERSISTENCE",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "c2a4b44ca3a622b83e55c1990028a9843efc842d865657c2efd34569878465a8",
+        "currentFingerprint": "c2a4b44ca3a622b83e55c1990028a9843efc842d865657c2efd34569878465a8"
+      },
+      {
+        "path": "src/core/structural-quality/service.js",
+        "name": "loadOptionalConfig",
+        "disposition": "REVIEWED_INCLUDE_PERSISTENCE",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "0caa48526f6ca5973881b6040818a1e49b3a885c71403427b786402528e90d45",
+        "currentFingerprint": "0caa48526f6ca5973881b6040818a1e49b3a885c71403427b786402528e90d45"
+      },
+      {
+        "path": "src/core/structural-quality/service.js",
+        "name": "nonPassEvaluation",
+        "disposition": "REVIEWED_EXCLUDE_PURE_DOMAIN",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "3aac339168462c3b87eef95559b69d41ebc8ee5b1fb3eaf9749967f4ad22d145",
+        "currentFingerprint": "3aac339168462c3b87eef95559b69d41ebc8ee5b1fb3eaf9749967f4ad22d145"
+      },
+      {
+        "path": "src/core/structural-quality/service.js",
+        "name": "normalizeScanResult",
+        "disposition": "REVIEWED_INCLUDE_PERSISTENCE",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "7b7f511e3e78f3de3c68297e6817fe9b96227ed27b3095a2a1466990892d1e70",
+        "currentFingerprint": "7b7f511e3e78f3de3c68297e6817fe9b96227ed27b3095a2a1466990892d1e70"
+      },
+      {
+        "path": "src/core/structural-quality/service.js",
+        "name": "persistEvaluationAndCheck",
+        "disposition": "REVIEWED_INCLUDE_PERSISTENCE",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "468f595b2b230889c2afd18d8065666f685ae775fe8ea67b4d38c4b250d6ac09",
+        "currentFingerprint": "468f595b2b230889c2afd18d8065666f685ae775fe8ea67b4d38c4b250d6ac09"
+      },
+      {
+        "path": "src/core/structural-quality/service.js",
+        "name": "projectStructuralQualityStatus",
+        "disposition": "REVIEWED_INCLUDE_PERSISTENCE",
+        "rawFunctionUnchanged": false,
+        "previousFingerprint": "d608e497a5bc47be7b6bdcd12d6f44e223673187d01a30916fdb6d3154dfceeb",
+        "currentFingerprint": "25c52d33a7ebe00e199563f86b2c91302ccf6103f7ff96cba91db7570dceaa5a"
+      },
+      {
+        "path": "src/core/structural-quality/service.js",
+        "name": "projectionFromArtifacts",
+        "disposition": "REVIEWED_EXCLUDE_PURE_DOMAIN",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "7f37b4411da316ec59050c30ab9af33e09f0fc27e6b1be8dbc5e251f9428d60c",
+        "currentFingerprint": "7f37b4411da316ec59050c30ab9af33e09f0fc27e6b1be8dbc5e251f9428d60c"
+      },
+      {
+        "path": "src/core/structural-quality/service.js",
+        "name": "providerCompatibilityErrors",
+        "disposition": "REVIEWED_INCLUDE_PERSISTENCE",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "1c5dba0f9f7d8eccf8ca7c8b32eb3d9522bc1413d29b0155e7a2a04b043df208",
+        "currentFingerprint": "1c5dba0f9f7d8eccf8ca7c8b32eb3d9522bc1413d29b0155e7a2a04b043df208"
+      },
+      {
+        "path": "src/core/structural-quality/service.js",
+        "name": "providerDetection",
+        "disposition": "REVIEWED_INCLUDE_PERSISTENCE",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "8101b9ec122ff90e30af13b66f6a2af9d5551e15e23f32b0c60a037e3a969a74",
+        "currentFingerprint": "8101b9ec122ff90e30af13b66f6a2af9d5551e15e23f32b0c60a037e3a969a74"
+      },
+      {
+        "path": "src/core/structural-quality/service.js",
+        "name": "providerMetadata",
+        "disposition": "REVIEWED_INCLUDE_PERSISTENCE",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "d3d7680cae7e893ed22994e2de24a5cc0be956d0e4c6b03cfdd1e4d80543a46f",
+        "currentFingerprint": "d3d7680cae7e893ed22994e2de24a5cc0be956d0e4c6b03cfdd1e4d80543a46f"
+      },
+      {
+        "path": "src/core/structural-quality/service.js",
+        "name": "qualityError",
+        "disposition": "REVIEWED_EXCLUDE_PURE_DOMAIN",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "e85b14c1bc090bb7d38ea6d5adccc22c954e64fb5d1b410db9839651140e3449",
+        "currentFingerprint": "e85b14c1bc090bb7d38ea6d5adccc22c954e64fb5d1b410db9839651140e3449"
+      },
+      {
+        "path": "src/core/structural-quality/service.js",
+        "name": "resolveProviderForContext",
+        "disposition": "REVIEWED_EXCLUDE_PURE_DOMAIN",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "9780d851bd448ed0d598dd7faca31508a79cc4d2370603e7dbe69c41dd27f73d",
+        "currentFingerprint": "9780d851bd448ed0d598dd7faca31508a79cc4d2370603e7dbe69c41dd27f73d"
+      },
+      {
+        "path": "src/core/structural-quality/service.js",
+        "name": "resolveStructuralQualityContext",
+        "disposition": "REVIEWED_INCLUDE_PERSISTENCE",
+        "rawFunctionUnchanged": false,
+        "previousFingerprint": "5e30d7dcc8a132dac0a53d283095e6d2988330ec1e63eb1a10442845ff0f415e",
+        "currentFingerprint": "34aa9c2a6bb151bf7aec486991b11e9d0971750e6ceac1b7177317835b7fd0a7"
+      },
+      {
+        "path": "src/core/structural-quality/service.js",
+        "name": "scopeIdentity",
+        "disposition": "REVIEWED_EXCLUDE_PURE_DOMAIN",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "011d6e70278b095563cd2a17e69a1bba8be046ab91b09635eaf468f0767dc18c",
+        "currentFingerprint": "011d6e70278b095563cd2a17e69a1bba8be046ab91b09635eaf468f0767dc18c"
+      },
+      {
+        "path": "src/core/structural-quality/service.js",
+        "name": "statusForComparison",
+        "disposition": "REVIEWED_EXCLUDE_PURE_DOMAIN",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "68aa9fe975cc65045f8a3555f3c25094feca5819739517ed0b303891f7ac6a16",
+        "currentFingerprint": "68aa9fe975cc65045f8a3555f3c25094feca5819739517ed0b303891f7ac6a16"
+      },
+      {
+        "path": "src/core/structural-quality/service.js",
+        "name": "taskInputs",
+        "disposition": "REVIEWED_INCLUDE_PERSISTENCE",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "5fd6a2829193758a66b1f6a5c2772af46ecee3b82cdfce55caaef80f323dee44",
+        "currentFingerprint": "5fd6a2829193758a66b1f6a5c2772af46ecee3b82cdfce55caaef80f323dee44"
+      },
+      {
+        "path": "src/core/structural-quality/service.js",
+        "name": "validateBindingErrors",
+        "disposition": "REVIEWED_EXCLUDE_PURE_DOMAIN",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "b8868f7a13911c0768e788f7b9a22d27165db6714b75c7e3aef698a19b13c81e",
+        "currentFingerprint": "b8868f7a13911c0768e788f7b9a22d27165db6714b75c7e3aef698a19b13c81e"
+      },
+      {
+        "path": "src/core/structural-quality/service.js",
+        "name": "validateStructuralQualityEvaluationFreshness",
+        "disposition": "REVIEWED_INCLUDE_PERSISTENCE",
+        "rawFunctionUnchanged": true,
+        "previousFingerprint": "0a5466a3e153e8d8f8e5dfb8b7dd8ed31038833c40f6d1ad1fed2c56084996b1",
+        "currentFingerprint": "0a5466a3e153e8d8f8e5dfb8b7dd8ed31038833c40f6d1ad1fed2c56084996b1"
+      }
+    ],
+    "unchangedRawFunctions": 30,
+    "changedWrappers": 3,
+    "membershipChanged": false,
+    "nonHelperDispositionsChanged": false,
+    "storageWholeModuleInclusionPreserved": true,
+    "thresholdPreserved": true,
+    "output": "/Users/cassio/.codex/verification/shared-read-snapshot-scope-reviewed.json.gz"
+  },
+  "inclusiveLoc": {
+    "baseline": 25732,
+    "before": 32525,
+    "current": 32507,
+    "reductionThisChange": 18,
+    "ceiling": 19299,
+    "unresolvedMembership": 0,
+    "acceptanceEligible": true,
+    "targetMet": false
+  },
+  "fullResult": {
+    "path": "/Users/cassio/.codex/verification/persistence-loc-d8949b0-published.json",
+    "sha256": "e7e3933dcebce77b8144bcd10ffda21833cee0069be4da94963ecd5076d90c6e"
+  },
+  "limits": [
+    "No measured RSS benefit is inferred.",
+    "Full local and platform validation on this consolidation remain pending.",
+    "Whole consumer, original performance/LOC and protocol closure remain open."
+  ],
+  "wholePlanAcceptance": false
+}

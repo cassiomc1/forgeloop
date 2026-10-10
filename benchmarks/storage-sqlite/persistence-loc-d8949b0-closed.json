@@ -1,0 +1,22 @@
+{
+  "kind": "INCLUSIVE_PERSISTENCE_LOC",
+  "sourceRevision": "d8949b00f2021133b090d8e5cfe0bbd21b45cef5",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "baselineLines": 25732,
+  "currentLines": 32507,
+  "targetCeiling": 19299,
+  "remainingReduction": 13208,
+  "acceptanceEligible": true,
+  "unresolvedMembership": 0,
+  "targetMet": false,
+  "scopeManifest": "persistence-loc/scope-d8949b0.json.gz",
+  "scopeManifestSha256": "0c91cf11f234a79e6bd845c269f75cb3502180b861672354d96cb08b3060c478",
+  "membershipChanged": false,
+  "allStorageModulesIncluded": true,
+  "priorWholeModuleInventoryRetained": true,
+  "fullResult": {
+    "path": "/Users/cassio/.codex/verification/persistence-loc-d8949b0-published.json",
+    "sha256": "e7e3933dcebce77b8144bcd10ffda21833cee0069be4da94963ecd5076d90c6e"
+  },
+  "wholePlanAcceptance": false
+}

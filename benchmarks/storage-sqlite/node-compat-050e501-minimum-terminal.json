@@ -1,0 +1,33 @@
+{
+  "runId": 38006398759,
+  "sourceRevision": "050e50167235b98df95d5b5b51d98da9efbd24dd",
+  "status": "completed",
+  "conclusion": "success",
+  "capturedAt": "2026-10-09T23:59:22.067392+00:00",
+  "scope": "minimum runtime only; expanded input was omitted",
+  "jobs": [
+    {
+      "id": 114076079847,
+      "name": "Minimum Node 24.19.0 compatibility",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-09T23:50:59Z",
+      "completed_at": "2026-10-09T23:56:38Z"
+    },
+    {
+      "id": 114077452239,
+      "name": "Node compatibility (${{ matrix.os }}, Node ${{ matrix.node-version }})",
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-10-09T23:56:39Z",
+      "completed_at": "2026-10-09T23:56:39Z"
+    }
+  ],
+  "log": {
+    "path": "/Users/cassio/.codex/verification/node-compat-050e501-full.log",
+    "sha256": "387fb184a1f1314f78dc47cd4dd95f8e25a2845e57834457d10527d8dad5bca9"
+  },
+  "expandedPlatformAcceptance": false,
+  "snapshotConsolidationCovered": false,
+  "wholePlanAcceptance": false
+}

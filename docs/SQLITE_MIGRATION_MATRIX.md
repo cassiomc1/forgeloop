@@ -4,6 +4,22 @@ Current checkpoint progress: [SQLite migration progress](SQLITE_PROGRESS.md).
 
 ## Current local acceptance evidence
 
+Snapshot consolidation `d8949b0` shares the existing committed-read snapshot
+admission in discovery and structural quality. All 38 focused tests and fast
+verification pass; full current-source validation remains required. The scope
+review retains all membership decisions, with 30 byte-identical source units
+and three changed delegation wrappers. Inclusive LOC is 25,732 → 32,507,
+zero unresolved membership, with the original 19,299 ceiling still unmet.
+See `benchmarks/storage-sqlite/shared-read-snapshot-d8949b0.json` and
+`benchmarks/storage-sqlite/persistence-loc-d8949b0-closed.json`.
+
+Runtime run `38006398759` on `050e501` passed the minimum-runtime job and
+skipped the expanded matrix because the input was omitted. Its retained receipt
+does not claim platform acceptance. Expanded `38007031832` is dispatched with
+`expanded=true`. Windows full `38006393854` passes 2,964 tests, 2,940 passed,
+zero failed and 24 skipped, including both adoption controls. Core and minimum
+package runs remain active. All predate the snapshot consolidation.
+
 Full prepush covering `cea6fc2` passed all 22 stages: 2,964 core tests,
 2,953 passed, zero failed and 11 skipped; clean packed MCP77, PoC67,
 package12 and Python56 passed. All 3,109 tracked hashes and the two new test
