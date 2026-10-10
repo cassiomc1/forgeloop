@@ -1,6 +1,8 @@
 /** Equal-output public API comparison; synthetic setup is never commit evidence. */
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { mkdtemp, mkdir, rename, rm, writeFile } from "node:fs/promises";
 import { Session } from "node:inspector/promises";
 import os from "node:os";
@@ -27,10 +29,77 @@ assert.ok(baseline, "--baseline-root requires a clean pinned checkout");
 const baselineRoot = path.resolve(baseline);
 assert.equal(execFileSync("git", ["-C", baselineRoot, "rev-parse", "HEAD"], { encoding: "utf8" }).trim(), revision);
 assert.equal(execFileSync("git", ["-C", baselineRoot, "status", "--porcelain", "--untracked-files=no"], { encoding: "utf8" }).trim(), "");
+const validationOnly = process.argv.includes("--validate-only");
+const currentRoot = path.resolve(import.meta.dirname, "..");
+const baselineJsonLimitBytes = 2 * 1024 * 1024;
+function sourceManifest(root, { enforceAdmission = true } = {}) {
+  const dirty = execFileSync("git", ["-C", root, "status", "--porcelain", "--untracked-files=no"], { encoding: "utf8" }).trim();
+  if (enforceAdmission) assert.ok(validationOnly || dirty === "", "Timed benchmark sources must be committed and unchanged");
+  const untracked = execFileSync("git", ["-C", root, "ls-files", "--others", "--exclude-standard", "--", "src", "integrations/mcp/src", "scripts"], { encoding: "utf8" }).trim();
+  if (enforceAdmission) assert.equal(untracked, "", "Untracked runtime or benchmark source cannot qualify a frozen comparison");
+  const files = execFileSync("git", ["-C", root, "ls-files", "-z"], { encoding: "utf8" }).split("\0").filter(Boolean).sort();
+  return {
+    trackedWorkingChanges: dirty,
+    untrackedRuntimeSource: untracked,
+    revision: execFileSync("git", ["-C", root, "rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
+    files: files.map(file => ({ path: file, sha256: createHash("sha256").update(readFileSync(path.join(root, file))).digest("hex") })),
+  };
+}
+function inspectKnownBaselineLedgerRefusal(result) {
+  if (result?.valid !== false || !Array.isArray(result.errors) || result.errors.length !== 1) return null;
+  const [error] = result.errors;
+  const artifacts = error?.artifacts;
+  if (error?.code !== "JSON_LIMIT_EXCEEDED"
+    || !Array.isArray(artifacts) || artifacts.length !== 1
+    || typeof artifacts[0] !== "string"
+    || !/^\.forgeloop\/task-state\/[a-f0-9]{64}\/events\.ndjson$/.test(artifacts[0])
+    || error.message !== `${artifacts[0]} exceeds the ${baselineJsonLimitBytes}-byte limit`) return null;
+  return {
+    status: "REFUSED",
+    stage: "BASELINE_LEDGER_VALIDATION",
+    code: error.code,
+    message: error.message,
+    artifacts: [...artifacts],
+    baselineLimitBytes: baselineJsonLimitBytes,
+  };
+}
+const sourceBefore = { current: sourceManifest(currentRoot), baseline: sourceManifest(baselineRoot) };
+const sourceAdmissionEligible = sourceBefore.current.trackedWorkingChanges === ""
+  && sourceBefore.baseline.trackedWorkingChanges === ""
+  && sourceBefore.current.untrackedRuntimeSource === ""
+  && sourceBefore.baseline.untrackedRuntimeSource === "";
+function validationAcceptanceIneligibilityReasons({ baselineRefused = false, equalValidationParityEligible, nativeComparisonRoot, sourceAdmissionEligible, validationOnly }) {
+  return [
+    ...(sourceAdmissionEligible ? [] : ["SOURCE_NOT_CLEAN_COMMITTED"]),
+    ...(validationOnly ? ["VALIDATION_ONLY"] : []),
+    ...(nativeComparisonRoot ? ["DIAGNOSTIC_NATIVE_VARIANT"] : []),
+    ...(equalValidationParityEligible ? [] : ["FULL_PUBLIC_PARITY_NOT_ESTABLISHED"]),
+    ...(baselineRefused ? ["BASELINE_LEDGER_REFUSAL"] : []),
+  ];
+}
+function serializeBenchmarkError(error) {
+  const serialized = {
+    name: error?.name ?? "Error",
+    code: error?.code ?? null,
+    message: error?.message ?? String(error),
+    stack: error?.stack ?? null,
+  };
+  if (Array.isArray(error?.artifacts)) serialized.artifacts = [...error.artifacts];
+  else if (typeof error?.artifacts === "string") serialized.artifacts = error.artifacts;
+  return serialized;
+}
+function createUnexpectedFailure(error, context, nativeProofStatus, resultsProduced) {
+  return {
+    status: "UNEXPECTED_ERROR",
+    firstCause: serializeBenchmarkError(error),
+    context: { ...context },
+    nativeProofStatus,
+    resultsProduced,
+  };
+}
 const legacy = await import(pathToFileURL(path.join(baselineRoot, "src/core/actions.js")).href);
 const sizes = (argument("sizes") ?? "10,1000,5000").split(",").map(Number);
 const repeats = Number(argument("repeats") ?? 20);
-const validationOnly = process.argv.includes("--validate-only");
 const warmup = Number(argument("warmup") ?? 0);
 assert.ok(Number.isInteger(warmup) && warmup >= 0 && warmup <= 100);
 const resourceMode = argument("resources") ?? "false";
@@ -58,13 +127,25 @@ assert.ok(Number.isInteger(repeats) && repeats >= 2 && repeats <= 100);
 const timestamp = "2026-09-11T00:00:00.000Z";
 const percentile = samples => [...samples].sort((a, b) => a - b)[Math.ceil(samples.length * 0.95) - 1];
 const results = [];
+let sourceAfter = null;
+let sourceAfterCaptureError = null;
+let benchmarkFailure = null;
+let activeFailureContext = { stage: "PRE_MEASUREMENT", size: null };
+let activeNativeProofStatus = "NOT_STARTED";
+const markFailureContext = (stage, size, extra = {}) => {
+  activeFailureContext = { stage, size, ...extra };
+};
+try {
 for (const size of sizes) {
+  activeNativeProofStatus = fixtureMode === "public-approvals" ? "NOT_STARTED" : "NOT_APPLICABLE";
+  markFailureContext("FIXTURE_SETUP", size);
+
   const fixtureStarted = performance.now();
   const taskId = "idempotency-benchmark";
-  const canonical = fixtureMode === "public-approvals" ? await buildCanonicalDiagnosisProject({ taskId }) : null;
-  const target = canonical?.target ?? await mkdtemp(path.join(os.tmpdir(), "forgeloop-idempotency-native-"));
-  const portable = await mkdtemp(path.join(os.tmpdir(), "forgeloop-idempotency-portable-"));
-  const holding = operation === "protocol" ? await mkdtemp(path.join(os.tmpdir(), "forgeloop-benchmark-holding-")) : null;
+  let canonical = null;
+  let target = null;
+  let portable = null;
+  let holding = null;
   let filesystemActive = false;
   async function selectFilesystem(selected) {
     if (nativeComparisonRoot || !holding || selected === filesystemActive) return;
@@ -77,7 +158,13 @@ for (const size of sizes) {
   }
   let db;
   let runtimeContext = null;
+  let primaryError = null;
   try {
+    canonical = fixtureMode === "public-approvals" ? await buildCanonicalDiagnosisProject({ taskId }) : null;
+    target = canonical?.target ?? await mkdtemp(path.join(os.tmpdir(), "forgeloop-idempotency-native-"));
+    portable = await mkdtemp(path.join(os.tmpdir(), "forgeloop-idempotency-portable-"));
+    holding = operation === "protocol" ? await mkdtemp(path.join(os.tmpdir(), "forgeloop-benchmark-holding-")) : null;
+    markFailureContext("NATIVE_FIXTURE_SEED", size);
     await mkdir(path.join(target, ".forgeloop"), { recursive: true });
     db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
     if (canonical) {
@@ -115,37 +202,133 @@ for (const size of sizes) {
         putAction(db, { taskId, action });
       }
     });
+    markFailureContext("PORTABLE_EXPORT", size);
     await exportDatabase(db, portable);
     db.close(); db = null;
     let ledgerEvents = 0;
+    let nativeActionCount = 0;
+    let nativeApprovalCount = 0;
+    let nativeActionLedgerValid = null;
+    let nativeLookupChecks = 0;
+    let baselineRefusal = null;
+    let completeActionApprovalParity = false;
+    activeNativeProofStatus = canonical ? "IN_PROGRESS" : "NOT_APPLICABLE";
+    markFailureContext("NATIVE_PROOF", size);
     if (canonical) {
       const ledger = await validateEventLedger(target, getPackageRoot(), { taskId });
       assert.equal(ledger.valid, true, JSON.stringify(ledger.errors));
       assert.deepEqual(validateStateLedgerCoherence(canonical.state, ledger.events), []);
       ledgerEvents = ledger.events.length;
+
+      // Complete the native proof before admitting the portable baseline. A
+      // baseline ledger refusal must not prevent counting and validating every
+      // native action and approval in the requested workload.
+      const nativeApprovals = await listApprovals(target, { packageRoot: getPackageRoot(), taskId });
+      nativeApprovalCount = nativeApprovals.length;
+      assert.equal(nativeApprovalCount, size, "Native public approval count must match the requested workload");
+      const nativeActions = await listActions(target, { packageRoot: getPackageRoot(), taskId });
+      nativeActionCount = nativeActions.length;
+      assert.equal(nativeActionCount, size, "Native public action count must match the requested workload");
+      assert.deepEqual(await validateActionLedgerConsistency(target, { packageRoot: getPackageRoot(), taskId }), []);
+      nativeActionLedgerValid = true;
+      for (const idempotencyKey of ["benchmark-key-0", `benchmark-key-${Math.floor(size / 2)}`, `benchmark-key-${size - 1}`, "benchmark-key-missing"]) {
+        const found = await findActionByIdempotencyKey(target, { packageRoot: getPackageRoot(), taskId, idempotencyKey });
+        if (idempotencyKey === "benchmark-key-missing") assert.equal(found, null);
+        else {
+          assert.ok(found, `Native action must exist for ${idempotencyKey}`);
+          assert.equal(found.idempotencyKey, idempotencyKey);
+        }
+        nativeLookupChecks += 1;
+      }
+      activeNativeProofStatus = "COMPLETE";
+      markFailureContext("BASELINE_VALIDATION", size);
+
       const baselineEvents = await import(pathToFileURL(path.join(baselineRoot, "src/core/events.js")).href);
       const portableLedger = await baselineEvents.validateEventLedger(portable, baselineRoot, { taskId });
-      assert.equal(portableLedger.valid, true, JSON.stringify(portableLedger.errors));
-      assert.deepEqual(portableLedger.events, ledger.events);
-      const baselineApprovals = await import(pathToFileURL(path.join(baselineRoot, "src/core/approvals.js")).href);
-      assert.deepEqual(await listApprovals(target, { packageRoot: getPackageRoot(), taskId }),
-        await baselineApprovals.listApprovals(portable, { packageRoot: baselineRoot, taskId }));
-      assert.equal((await listApprovals(target, { packageRoot: getPackageRoot(), taskId })).length, size);
-      const nativeActions = await listActions(target, { packageRoot: getPackageRoot(), taskId });
-      const portableActions = await legacy.listActions(portable, { packageRoot: baselineRoot, taskId });
-      assert.equal(nativeActions.length, size);
-      assert.deepEqual(portableActions, nativeActions, "Complete public action histories must match");
-      assert.deepEqual(await validateActionLedgerConsistency(target, { packageRoot: getPackageRoot(), taskId }), []);
-      assert.deepEqual(await legacy.validateActionLedgerConsistency(portable, { packageRoot: baselineRoot, taskId }), []);
-      for (const idempotencyKey of ["benchmark-key-0", `benchmark-key-${Math.floor(size / 2)}`, `benchmark-key-${size - 1}`, "benchmark-key-missing"]) {
-        assert.deepEqual(
-          await findActionByIdempotencyKey(target, { packageRoot: getPackageRoot(), taskId, idempotencyKey }),
-          await legacy.findActionByIdempotencyKey(portable, { packageRoot: baselineRoot, taskId, idempotencyKey }),
-          "First, middle, tail and missing public idempotency lookups must match",
-        );
+      baselineRefusal = inspectKnownBaselineLedgerRefusal(portableLedger);
+      if (!portableLedger.valid && !baselineRefusal) {
+        assert.equal(portableLedger.valid, true, JSON.stringify(portableLedger.errors));
+      }
+      if (!baselineRefusal) {
+        assert.equal(portableLedger.valid, true, JSON.stringify(portableLedger.errors));
+        assert.deepEqual(portableLedger.events, ledger.events);
+        const baselineApprovals = await import(pathToFileURL(path.join(baselineRoot, "src/core/approvals.js")).href);
+        assert.deepEqual(nativeApprovals,
+          await baselineApprovals.listApprovals(portable, { packageRoot: baselineRoot, taskId }));
+        const portableActions = await legacy.listActions(portable, { packageRoot: baselineRoot, taskId });
+        assert.deepEqual(portableActions, nativeActions, "Complete public action histories must match");
+        assert.deepEqual(await legacy.validateActionLedgerConsistency(portable, { packageRoot: baselineRoot, taskId }), []);
+        for (const idempotencyKey of ["benchmark-key-0", `benchmark-key-${Math.floor(size / 2)}`, `benchmark-key-${size - 1}`, "benchmark-key-missing"]) {
+          assert.deepEqual(
+            await findActionByIdempotencyKey(target, { packageRoot: getPackageRoot(), taskId, idempotencyKey }),
+            await legacy.findActionByIdempotencyKey(portable, { packageRoot: baselineRoot, taskId, idempotencyKey }),
+            "First, middle, tail and missing public idempotency lookups must match",
+          );
+        }
+        completeActionApprovalParity = true;
+      } else {
+        baselineRefusal = {
+          ...baselineRefusal,
+          requestedActions: size,
+          requestedApprovals: size,
+          nativeProof: {
+            ledgerValid: true,
+            stateCoherenceValid: true,
+            actionCount: nativeActionCount,
+            approvalCount: nativeApprovalCount,
+            actionLedgerValid: nativeActionLedgerValid,
+            idempotencyChecks: nativeLookupChecks,
+          },
+        };
       }
     }
     const fixtureMs = performance.now() - fixtureStarted;
+    if (baselineRefusal) {
+      const equalValidationParityEligible = false;
+      const equalValidationAcceptanceIneligibilityReasons = validationAcceptanceIneligibilityReasons({
+        baselineRefused: true, equalValidationParityEligible, nativeComparisonRoot,
+        sourceAdmissionEligible, validationOnly,
+      });
+      results.push({
+        actions: size,
+        approvals: canonical ? size : 0,
+        ledgerEvents,
+        fixtureMs,
+        nativeActionCount,
+        nativeApprovalCount,
+        nativeActionLedgerValid,
+        nativeLookupChecks,
+        completeActionApprovalParity: "NOT_REACHED_BASELINE_REFUSAL",
+        parityScope: "BASELINE_REFUSAL_BEFORE_EQUAL_VALIDATION",
+        baselineValidation: baselineRefusal,
+        outputParity: null,
+        outputParityVerified: false,
+        missingKeyParity: null,
+        equalValidationParityEligible,
+        equalValidationAcceptanceEligible: false,
+        equalValidationAcceptanceIneligibilityReasons,
+        sourceAdmissionEligible,
+        timingAcceptanceEligible: false,
+        timingAcceptanceIneligibilityReasons: [
+          ...equalValidationAcceptanceIneligibilityReasons,
+          "NO_TIMED_SAMPLES",
+        ],
+        acceptanceRefusal: "Pinned baseline event-ledger validation refused the requested public workload; timing is observationally unavailable",
+        timedSamplesProduced: false,
+        unmeasuredReason: "BASELINE_LEDGER_REFUSAL",
+        persistentConnectionReuseApplicable: persistent,
+        persistentConnectionReuseChecks: 0,
+        persistentConnectionReuseVerified: false,
+        persistentConnectionReuseStatus: persistent ? "NOT_MEASURED_BASELINE_REFUSAL" : "NOT_APPLICABLE",
+        nativeSamplesMs: [],
+        baselineSamplesMs: [],
+        nativeP95Ms: null,
+        baselineP95Ms: null,
+        speedupP95: null,
+      });
+      continue;
+    }
+    markFailureContext("PUBLIC_PARITY_PRECHECK", size);
     const options = { taskId, idempotencyKey: `benchmark-key-${size - 1}` };
     const baselineApprovalApi = operation === "approvals" ? await import(pathToFileURL(path.join(baselineRoot, "src/core/approvals.js")).href) : null;
     const baselineProtocol = operation === "protocol" ? await import(pathToFileURL(path.join(nativeComparisonRoot ?? baselineRoot, "src/core/command-runtime.js")).href) : null;
@@ -168,6 +351,7 @@ for (const size of sizes) {
       : () => legacy.findActionByIdempotencyKey(portable, { ...options, packageRoot: baselineRoot });
     // Execution provenance is bound to this exact project path. Swap only
     // disposable closed fixtures, outside measurement; never rewrite receipts.
+    markFailureContext("MEASUREMENT_PRECHECK", size);
     await selectFilesystem(true);
     let expected;
     try { expected = await legacyCall(); }
@@ -183,6 +367,7 @@ for (const size of sizes) {
     assert.equal(await legacy.findActionByIdempotencyKey(portable, { ...options, idempotencyKey: "missing", packageRoot: baselineRoot }), null);
     const nativeSamples = []; const legacySamples = [];
     const nativeResources = []; const legacyResources = [];
+    let persistentConnectionReuseChecks = 0;
     const native = [nativeCall, nativeSamples, target, nativeResources];
     const filesystem = [legacyCall, legacySamples, holding ? target : portable, legacyResources];
     const samplesToRun = [];
@@ -200,6 +385,7 @@ for (const size of sizes) {
     }
     let persistentConnection;
     for (const { pair: [call, samples, resourceTarget, resourceSamples], index } of samplesToRun) {
+      markFailureContext("MEASUREMENT_SAMPLE", size, { backend: call === legacyCall ? "baseline" : "native", sample: index });
       if (persistent && call === legacyCall && runtimeContext) {
         await runtimeContext.close(); runtimeContext = null;
         assert.throws(() => persistentConnection.prepare("SELECT 1"));
@@ -242,26 +428,175 @@ for (const size of sizes) {
       assert.deepEqual(result, expected);
       if (persistent && call === nativeCall) {
         assert.equal(await withProjectStorage(target, store => store.db, { runtimeContext, readOnly: true }), persistentConnection);
+        persistentConnectionReuseChecks += 1;
       }
     }
     if (runtimeContext) {
       await runtimeContext.close(); runtimeContext = null;
       assert.throws(() => persistentConnection.prepare("SELECT 1"));
     }
-    results.push({ actions: size, approvals: canonical ? size : 0, ledgerEvents, fixtureMs, ...(operation === "protocol" ? { protocolResult: expected } : {}), outputParity: true, missingKeyParity: true, nativeSamplesMs: nativeSamples, baselineSamplesMs: legacySamples,
+    const timedSamplesProduced = nativeSamples.length > 0 || legacySamples.length > 0;
+    const persistentConnectionReuseVerified = persistent && !validationOnly && persistentConnectionReuseChecks > 0;
+    const persistentConnectionReuseStatus = !persistent
+      ? "NOT_APPLICABLE"
+      : persistentConnectionReuseVerified
+      ? "VERIFIED"
+      : validationOnly
+      ? "NOT_MEASURED_VALIDATION_ONLY"
+      : "NOT_MEASURED";
+    const equalValidationParityEligible = Boolean(canonical && completeActionApprovalParity);
+    const outputParityVerified = true;
+    const equalValidationAcceptanceIneligibilityReasons = validationAcceptanceIneligibilityReasons({
+      equalValidationParityEligible, nativeComparisonRoot, sourceAdmissionEligible, validationOnly,
+    });
+    const equalValidationAcceptanceEligible = equalValidationAcceptanceIneligibilityReasons.length === 0;
+    const timingAcceptanceIneligibilityReasons = [
+      ...equalValidationAcceptanceIneligibilityReasons,
+      ...(timedSamplesProduced ? [] : ["NO_TIMED_SAMPLES"]),
+      ...(persistent && !persistentConnectionReuseVerified ? ["PERSISTENT_REUSE_NOT_VERIFIED"] : []),
+    ];
+    const timingAcceptanceEligible = timingAcceptanceIneligibilityReasons.length === 0;
+    results.push({ actions: size, approvals: canonical ? size : 0, ledgerEvents, fixtureMs, nativeActionCount, nativeApprovalCount, nativeActionLedgerValid, nativeLookupChecks,
+      completeActionApprovalParity: canonical ? completeActionApprovalParity : null,
+      parityScope: canonical ? "FULL_PUBLIC_ACTION_APPROVAL_LEDGER" : "MEASURED_OPERATION_OUTPUT_ONLY",
+      outputParityVerified, equalValidationParityEligible, equalValidationAcceptanceEligible,
+      equalValidationAcceptanceIneligibilityReasons,
+      sourceAdmissionEligible, timingAcceptanceEligible,
+      timingAcceptanceIneligibilityReasons,
+      baselineValidation: canonical ? { status: "VALID" } : null,
+      timedSamplesProduced,
+      unmeasuredReason: timedSamplesProduced ? null : validationOnly ? "VALIDATION_ONLY" : "NO_TIMED_SAMPLES",
+      persistentConnectionReuseApplicable: persistent,
+      persistentConnectionReuseChecks,
+      persistentConnectionReuseVerified,
+      persistentConnectionReuseStatus,
+      ...(operation === "protocol" ? { protocolResult: expected } : {}), outputParity: true, missingKeyParity: true, nativeSamplesMs: nativeSamples, baselineSamplesMs: legacySamples,
       nativeP95Ms: validationOnly ? null : percentile(nativeSamples), baselineP95Ms: validationOnly ? null : percentile(legacySamples), speedupP95: validationOnly ? null : percentile(legacySamples) / percentile(nativeSamples),
       ...(resourcesEnabled ? { rawResourceSamples: { native: nativeResources, baseline: legacyResources } } : {}) });
+  } catch (error) {
+    primaryError = error;
+    if (!benchmarkFailure) benchmarkFailure = createUnexpectedFailure(error, activeFailureContext, activeNativeProofStatus, results.length);
+    throw error;
   } finally {
-    await runtimeContext?.close();
-    db?.close(); await selectFilesystem(false);
-    await rm(target, { recursive: true, force: true }); await rm(portable, { recursive: true, force: true });
-    if (holding) await rm(holding, { recursive: true, force: true });
+    const cleanupErrors = [];
+    try { await runtimeContext?.close(); } catch (error) { cleanupErrors.push(error); }
+    try { db?.close(); } catch (error) { cleanupErrors.push(error); }
+    try { await selectFilesystem(false); } catch (error) { cleanupErrors.push(error); }
+    for (const cleanupPath of [target, portable, holding]) {
+      if (!cleanupPath) continue;
+      try { await rm(cleanupPath, { recursive: true, force: true }); } catch (error) { cleanupErrors.push(error); }
+    }
+    if (cleanupErrors.length > 0) {
+      if (primaryError) {
+        if (benchmarkFailure) benchmarkFailure.cleanupErrors = cleanupErrors.map(serializeBenchmarkError);
+      } else {
+        const cleanupError = cleanupErrors[0];
+        if (!benchmarkFailure) benchmarkFailure = createUnexpectedFailure(cleanupError, { ...activeFailureContext, stage: "CLEANUP" }, activeNativeProofStatus, results.length);
+        benchmarkFailure.cleanupErrors = cleanupErrors.map(serializeBenchmarkError);
+        throw cleanupError;
+      }
+    }
   }
 }
+} catch (error) {
+  if (!benchmarkFailure) benchmarkFailure = createUnexpectedFailure(error, activeFailureContext, activeNativeProofStatus, results.length);
+}
+try {
+  sourceAfter = { current: sourceManifest(currentRoot, { enforceAdmission: false }), baseline: sourceManifest(baselineRoot, { enforceAdmission: false }) };
+} catch (error) {
+  sourceAfterCaptureError = serializeBenchmarkError(error);
+  if (!benchmarkFailure) benchmarkFailure = createUnexpectedFailure(error, { stage: "SOURCE_POSTCHECK", size: null }, activeNativeProofStatus, results.length);
+}
+const trackedSourcesUnchanged = sourceAfter !== null
+  && JSON.stringify(sourceAfter) === JSON.stringify(sourceBefore);
+if (!benchmarkFailure && !trackedSourcesUnchanged) {
+  benchmarkFailure = {
+    status: "SOURCE_CHANGED",
+    firstCause: {
+      name: "SourceIntegrityError",
+      code: "E_SOURCE_CHANGED",
+      message: "Current or baseline tracked source changed during validation or measurement",
+      stack: null,
+    },
+    context: { stage: "SOURCE_POSTCHECK", size: null },
+    nativeProofStatus: activeNativeProofStatus,
+    resultsProduced: results.length,
+  };
+}
+if (benchmarkFailure) {
+  benchmarkFailure.sourceAfter = sourceAfter;
+  benchmarkFailure.sourceAfterCaptureError = sourceAfterCaptureError;
+  benchmarkFailure.trackedSourcesUnchanged = trackedSourcesUnchanged;
+}
+const baselineRefusals = results.filter(result => result.baselineValidation?.status === "REFUSED");
+const benchmarkComplete = benchmarkFailure === null && trackedSourcesUnchanged;
+const outputParityVerified = benchmarkComplete && results.length > 0
+  && results.every(result => result.outputParityVerified === true);
+const equalValidationParityEligible = benchmarkComplete && results.length > 0
+  && results.every(result => result.equalValidationParityEligible === true);
+const persistentReuseMeasuredCases = results.filter(result => result.persistentConnectionReuseChecks > 0);
+const persistentConnectionReuseVerified = benchmarkComplete && persistent
+  && results.length > 0
+  && results.every(result => result.persistentConnectionReuseVerified === true);
+const persistentConnectionReuseStatus = !persistent
+  ? "NOT_APPLICABLE"
+  : persistentConnectionReuseVerified
+  ? "VERIFIED"
+  : validationOnly
+  ? "NOT_MEASURED_VALIDATION_ONLY"
+  : persistentReuseMeasuredCases.length === 0 && baselineRefusals.length === results.length
+  ? "NOT_MEASURED_BASELINE_REFUSAL"
+  : persistentReuseMeasuredCases.length === 0
+  ? "NOT_MEASURED"
+  : "PARTIAL";
+const persistentConnectionReuseEvidence = {
+  applicable: persistent,
+  status: persistentConnectionReuseStatus,
+  totalCases: results.length,
+  measuredCases: persistentReuseMeasuredCases.length,
+  verifiedCases: results.filter(result => result.persistentConnectionReuseVerified === true).length,
+  unmeasuredCases: results.filter(result => result.persistentConnectionReuseChecks === 0).length,
+  baselineRefusalCases: baselineRefusals.length,
+  validationOnly,
+};
+const timedSamplesProduced = results.some(result => result.timedSamplesProduced === true);
+const failureIneligibilityReasons = [
+  ...(benchmarkFailure?.status === "UNEXPECTED_ERROR" ? ["UNEXPECTED_BENCHMARK_FAILURE"] : []),
+  ...(sourceAfter !== null && !trackedSourcesUnchanged ? ["SOURCE_CHANGED_DURING_BENCHMARK"] : []),
+  ...(sourceAfterCaptureError ? ["SOURCE_AFTER_UNAVAILABLE"] : []),
+];
+const equalValidationAcceptanceIneligibilityReasons = [
+  ...validationAcceptanceIneligibilityReasons({
+    baselineRefused: baselineRefusals.length > 0, equalValidationParityEligible, nativeComparisonRoot,
+    sourceAdmissionEligible, validationOnly,
+  }),
+  ...failureIneligibilityReasons,
+];
+const equalValidationAcceptanceEligible = benchmarkComplete && equalValidationAcceptanceIneligibilityReasons.length === 0;
+const timingAcceptanceIneligibilityReasons = [
+  ...equalValidationAcceptanceIneligibilityReasons,
+  ...(timedSamplesProduced ? [] : ["NO_TIMED_SAMPLES"]),
+  ...(persistent && !persistentConnectionReuseVerified ? ["PERSISTENT_REUSE_NOT_VERIFIED"] : []),
+];
+const timingAcceptanceEligible = benchmarkComplete && timingAcceptanceIneligibilityReasons.length === 0;
+const failureManifest = benchmarkFailure ?? (baselineRefusals.length === 0 ? null : {
+  status: "EXPLICIT_BASELINE_REFUSAL",
+  firstCause: baselineRefusals[0].baselineValidation,
+  stages: baselineRefusals.map(result => ({
+    stage: result.baselineValidation.stage,
+    actions: result.actions,
+    approvals: result.approvals,
+    code: result.baselineValidation.code,
+    artifacts: result.baselineValidation.artifacts,
+  })),
+});
 process.stdout.write(`${JSON.stringify({ schemaVersion: 1, baselineRevision: revision, node: process.version, platform: process.platform, architecture: process.arch,
   cpu: os.cpus()[0]?.model ?? null, validationOnly, repeats, warmup, timestamp,
+  sourceRevision: sourceBefore.current.revision, sourceManifests: sourceBefore, sourceManifestsAfter: sourceAfter,
+  trackedSourcesUnchanged, benchmarkComplete,
   runtime: persistent ? "warm canonical integration runtime with one persistent native connection per backend batch" : "warm-cache public API with per-call native connection",
-  persistentConnectionReuseVerified: persistent && !validationOnly,
+  persistentConnectionReuseVerified,
+  persistentConnectionReuseEvidence,
   backendOrder: persistent ? "grouped backend batches, reversed between dataset sizes; connection closed before fixture switch" : "alternating each repetition",
   ...(nativeComparisonRoot ? {
     comparisonKind: "DIAGNOSTIC_NATIVE_VARIANTS",
@@ -273,4 +608,11 @@ process.stdout.write(`${JSON.stringify({ schemaVersion: 1, baselineRevision: rev
   ...(resourcesEnabled ? { resourceMeasurementLimits } : {}),
   fixtureMode, operation, profiling: Boolean(profileDirectory),
   fixtureLimits: [fixtureMode === "synthetic" ? "Synthetic schema-valid PROPOSED actions without approvals, execution records or lifecycle history" : "Canonical diagnosis lifecycle plus public action proposals and alternating approved/rejected approvals; no external action execution", operation === "protocol" ? "Supported validate-protocol result must match completely; it is not every task/action audit" : operation === "approvals" ? "Complete approval listing and validation is measured; output arrays remain proportional to volume" : "Found-key lookup is measured; missing-key and approval parity are validated outside measurement", "This is not full action execution, claim reservation, recovery mutation or warm MCP acceptance"],
-  releaseThresholdsVerified: false, results }, null, 2)}\n`);
+  outputParityVerified, equalValidationParityEligible, equalValidationAcceptanceEligible,
+  equalValidationAcceptanceIneligibilityReasons,
+  sourceAdmissionEligible, timingAcceptanceEligible,
+  timingAcceptanceIneligibilityReasons,
+  sourceAdmissionReason: sourceAdmissionEligible ? "CLEAN_COMMITTED_SOURCE" : validationOnly ? "VALIDATION_ONLY_SOURCE_MAY_BE_DIRTY" : "SOURCE_NOT_ELIGIBLE",
+  timedSamplesProduced,
+  failureManifest, releaseThresholdsVerified: false, results }, null, 2)}\n`);
+if (benchmarkFailure) process.exitCode = 1;

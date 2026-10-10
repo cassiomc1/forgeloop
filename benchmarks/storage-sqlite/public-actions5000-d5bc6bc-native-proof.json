@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "d5bc6bc976e6db29fef02b4380753c03f7ad9b84",
+  "testedRunnerSha256": "370cd23c2f9f784239a3757042aa4bbda330acb4c51d12c5d5c00856c8c610f6",
+  "sourceState": "DIRTY_VALIDATE_ONLY",
+  "nativeProof": {
+    "ledgerValid": true,
+    "stateCoherenceValid": true,
+    "actionCount": 5000,
+    "approvalCount": 5000,
+    "actionLedgerValid": true,
+    "idempotencyChecks": 4
+  },
+  "ledgerEvents": 15029,
+  "baselineRefusal": {
+    "status": "REFUSED",
+    "stage": "BASELINE_LEDGER_VALIDATION",
+    "code": "JSON_LIMIT_EXCEEDED",
+    "message": ".forgeloop/task-state/b0999e5acd2ea7845d3d3ff11e24bc541a8777e9fdefb72b03a28cede21a428e/events.ndjson exceeds the 2097152-byte limit",
+    "artifacts": [
+      ".forgeloop/task-state/b0999e5acd2ea7845d3d3ff11e24bc541a8777e9fdefb72b03a28cede21a428e/events.ndjson"
+    ],
+    "baselineLimitBytes": 2097152,
+    "requestedActions": 5000,
+    "requestedApprovals": 5000,
+    "nativeProof": {
+      "ledgerValid": true,
+      "stateCoherenceValid": true,
+      "actionCount": 5000,
+      "approvalCount": 5000,
+      "actionLedgerValid": true,
+      "idempotencyChecks": 4
+    }
+  },
+  "fullParity": "NOT_REACHED_BASELINE_REFUSAL",
+  "timingSamples": 0,
+  "equalValidationAcceptanceEligible": false,
+  "trackedSourcesUnchanged": true,
+  "sourceFileCounts": {
+    "current": 3398,
+    "baseline": 2261
+  },
+  "releaseThresholdsVerified": false,
+  "temporaryFixtureRetention": "Harness cleaned its disposable fixture in finally; the report retains assertions and manifests, not raw fixture database or ledger."
+}
