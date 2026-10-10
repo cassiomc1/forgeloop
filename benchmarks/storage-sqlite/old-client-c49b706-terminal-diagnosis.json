@@ -1,0 +1,53 @@
+{
+  "runId": 38027318922,
+  "sourceRevision": "c49b7063f00e0e335e8fb0a4ddd8252521ed7ade",
+  "linux": {
+    "status": "PASS",
+    "sourceRevision": "c49b7063f00e0e335e8fb0a4ddd8252521ed7ade",
+    "parentExit": 0,
+    "preflightError": null,
+    "strictStdoutJson": true,
+    "sourceUnchanged": true,
+    "cleanup": "PASS",
+    "cleanupScope": [
+      "temporary entries matching the drill prefix",
+      "direct old-client drill process termination"
+    ],
+    "rawFiles": [
+      "stdout.json",
+      "stderr.log",
+      "parent-exit.json",
+      "source-before.json",
+      "source-after.json",
+      "cleanup.json"
+    ]
+  },
+  "windows": {
+    "status": "FAILED",
+    "sourceRevision": "c49b7063f00e0e335e8fb0a4ddd8252521ed7ade",
+    "parentExit": 1,
+    "preflightError": null,
+    "strictStdoutJson": false,
+    "sourceUnchanged": true,
+    "cleanup": "PASS",
+    "cleanupScope": [
+      "temporary entries matching the drill prefix",
+      "direct old-client drill process termination"
+    ],
+    "rawFiles": [
+      "stdout.json",
+      "stderr.log",
+      "parent-exit.json",
+      "source-before.json",
+      "source-after.json",
+      "cleanup.json"
+    ]
+  },
+  "diagnosis": "Windows controller readFile of excluded CLI source failed EPERM at assertPermissionRefusal line76. Independent restricted-token read refusal must remain; source-byte verification needs a controller mechanism compatible with denial ACL, or verification after fixture ACL restoration before acceptance. No production storage defect inferred.",
+  "nextCorrection": "Preserve actual exclusion while checking retained source identity after restoring only fixture ACLs, before emitting PASS. Review no writable client is launched after restoration.",
+  "limits": [
+    "Windows exclusion not accepted.",
+    "No rerun before diagnosed fixture correction.",
+    "No whole-plan or PR acceptance."
+  ]
+}
