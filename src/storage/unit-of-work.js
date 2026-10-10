@@ -8,7 +8,7 @@ import { taskStorageKey } from "../core/task-identity.js";
 import { TASK_ARTIFACT_FILES } from "../core/task-paths.js";
 import { artifactByteDigest } from "./artifact-bytes.js";
 import { runInTransaction } from "./transaction.js";
-import { assertArtifactTaskIdentity, decodeIndexedEvent, appendEvent, putArtifact, putAction, putApproval, putExecution, putSession, upsertTask } from "./repository.js";
+import { assertArtifactTaskIdentity, decodeIndexedEvent, decodeIndexedRecord, appendEvent, putArtifact, putAction, putApproval, putExecution, putSession, upsertTask } from "./repository.js";
 import { resolveStoreReservationState } from "./task-guards.js";
 import { isOwnedStorageSnapshot } from "./snapshot.js";
 
@@ -48,17 +48,6 @@ function locator(relativePath) {
 }
 
 function serialized(payload) { return `${JSON.stringify(payload, null, 2)}\n`; }
-
-function recordPayload(row, kind) {
-  const payload = JSON.parse(row.payload_json);
-  const fields = {
-    action: { action_id: payload.actionId, idempotency_key: payload.idempotencyKey ?? null, status: payload.state ?? payload.status ?? null, revision: payload.revision ?? null },
-    approval: { approval_id: payload.approvalId, action_id: payload.actionId ?? null, decision: payload.decision ?? null },
-    execution: { execution_id: payload.executionId, check_id: payload.checkId ?? null, verification_cycle: payload.verificationCycle ?? null },
-  }[kind];
-  if (payload.taskId !== row.task_id || Object.entries(fields).some(([column, value]) => row[column] !== value)) throw storageError("E_STORAGE_PAYLOAD_MISMATCH", "Indexed operational fields disagree with their canonical payload");
-  return payload;
-}
 
 function observeEventRows(db, taskId, limit, consume = null, bindRows = true) {
   const statement = limit === null
@@ -189,7 +178,7 @@ class OperationalStore {
   listRecords(taskId, kind) {
     const [table, idColumn] = RECORD_TABLES[kind];
     const rows = this.observe(`record-list:${taskId}:${kind}`, () => this.db.prepare(`SELECT * FROM ${table} WHERE task_id = ? ORDER BY ${idColumn}`).all(taskId));
-    const records = new Map(rows.map(row => [row[idColumn], recordPayload(row, kind)]));
+    const records = new Map(rows.map(row => [row[idColumn], decodeIndexedRecord(row, kind, { requireTaskIdentity: true })]));
     for (const write of this.writes.values()) {
       if (write.location.taskKey === taskStorageKey(taskId) && write.location.kind === kind) records.set(write.location.artifactId, write.payload);
     }
@@ -237,7 +226,7 @@ class OperationalStore {
     }
     const row = this.observe(`idempotency:${JSON.stringify([taskId, idempotencyKey])}`, () => this.db.prepare("SELECT * FROM actions WHERE task_id = ? AND idempotency_key = ?").get(taskId, idempotencyKey) ?? null, "E_ACTION_IDEMPOTENCY_CONFLICT");
     if (!row) return null;
-    return recordPayload(row, "action");
+    return decodeIndexedRecord(row, "action", { requireTaskIdentity: true });
   }
 
   executionTaskId(executionId) {
@@ -268,7 +257,7 @@ class OperationalStore {
     if (location.kind === "events") return this.readEvents(relativePath).map(event => `${JSON.stringify(event)}\n`).join("");
     const artifact = this.artifactRow(location, taskId);
     if (!artifact) return null;
-    if (RECORD_TABLES[location.kind]) return serialized(recordPayload(artifact, location.kind));
+    if (RECORD_TABLES[location.kind]) return serialized(decodeIndexedRecord(artifact, location.kind, { requireTaskIdentity: true }));
     const payload = JSON.parse(artifact.payload_json);
     assertArtifactTaskIdentity(payload, taskId);
     if (artifact.fingerprint !== undefined && artifact.fingerprint !== canonicalFingerprint(payload)) throw storageError("E_STORAGE_PAYLOAD_MISMATCH", "Stored artifact fingerprint disagrees with its payload");

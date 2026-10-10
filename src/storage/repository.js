@@ -36,6 +36,22 @@ export function assertArtifactTaskIdentity(payload, taskId) {
   if (payload?.taskId !== undefined && payload.taskId !== taskId) throw Object.assign(new Error("Artifact payload has a mismatched task identity"), { code: "E_STORAGE_PAYLOAD_MISMATCH", taskIdentityMismatch: true });
 }
 
+/** Bind extracted record columns to their canonical payload before projection. */
+export function decodeIndexedRecord(row, kind, { requireTaskIdentity = false } = {}) {
+  const payload = decode(row.payload_json);
+  assertArtifactTaskIdentity(payload, row.task_id);
+  const fields = {
+    action: { action_id: payload?.actionId, idempotency_key: payload?.idempotencyKey ?? null, status: payload?.state ?? payload?.status ?? null, revision: payload?.revision ?? null },
+    approval: { approval_id: payload?.approvalId, action_id: payload?.actionId ?? null, decision: payload?.decision ?? null },
+    execution: { execution_id: payload?.executionId, check_id: payload?.checkId ?? null, verification_cycle: payload?.verificationCycle ?? null },
+  }[kind];
+  if (!fields || (requireTaskIdentity && payload?.taskId !== row.task_id)
+    || Object.entries(fields).some(([column, value]) => row[column] !== value)) {
+    throw Object.assign(new Error("Indexed operational fields disagree with their canonical payload"), { code: "E_STORAGE_PAYLOAD_MISMATCH" });
+  }
+  return payload;
+}
+
 /* ------------------------------------------------------------------ tasks */
 
 /**
@@ -283,14 +299,14 @@ export function putAction(db, { taskId, action }) {
 /** Indexed replacement for the previous filesystem idempotency scan. */
 export function findActionByIdempotencyKey(db, taskId, idempotencyKey) {
   const row = db
-    .prepare("SELECT payload_json FROM actions WHERE task_id = ? AND idempotency_key = ?")
+    .prepare("SELECT * FROM actions WHERE task_id = ? AND idempotency_key = ?")
     .get(taskId, idempotencyKey);
-  return row ? decode(row.payload_json) : null;
+  return row ? decodeIndexedRecord(row, "action") : null;
 }
 
 export function findActionById(db, taskId, actionId) {
-  const row = db.prepare("SELECT payload_json FROM actions WHERE task_id = ? AND action_id = ?").get(taskId, actionId);
-  return row ? decode(row.payload_json) : null;
+  const row = db.prepare("SELECT * FROM actions WHERE task_id = ? AND action_id = ?").get(taskId, actionId);
+  return row ? decodeIndexedRecord(row, "action") : null;
 }
 
 export function listActions(db, taskId, options = {}) {
@@ -299,9 +315,9 @@ export function listActions(db, taskId, options = {}) {
 
 export function* iterateActions(db, taskId, { status = null } = {}) {
   const rows = status
-    ? db.prepare("SELECT payload_json FROM actions WHERE task_id = ? AND status = ? ORDER BY action_id").iterate(taskId, status)
-    : db.prepare("SELECT payload_json FROM actions WHERE task_id = ? ORDER BY action_id").iterate(taskId);
-  for (const row of rows) yield decode(row.payload_json);
+    ? db.prepare("SELECT * FROM actions WHERE task_id = ? AND status = ? ORDER BY action_id").iterate(taskId, status)
+    : db.prepare("SELECT * FROM actions WHERE task_id = ? ORDER BY action_id").iterate(taskId);
+  for (const row of rows) yield decodeIndexedRecord(row, "action");
 }
 
 /* -------------------------------------------------------------- approvals */
@@ -319,8 +335,8 @@ export function putApproval(db, { taskId, approval }) {
 }
 
 export function findApprovalById(db, taskId, approvalId) {
-  const row = db.prepare("SELECT payload_json FROM approvals WHERE task_id = ? AND approval_id = ?").get(taskId, approvalId);
-  return row ? decode(row.payload_json) : null;
+  const row = db.prepare("SELECT * FROM approvals WHERE task_id = ? AND approval_id = ?").get(taskId, approvalId);
+  return row ? decodeIndexedRecord(row, "approval") : null;
 }
 
 export function listApprovals(db, taskId, options = {}) {
@@ -329,9 +345,9 @@ export function listApprovals(db, taskId, options = {}) {
 
 export function* iterateApprovals(db, taskId, { actionId = null } = {}) {
   const rows = actionId
-    ? db.prepare("SELECT payload_json FROM approvals WHERE task_id = ? AND action_id = ? ORDER BY approval_id").iterate(taskId, actionId)
-    : db.prepare("SELECT payload_json FROM approvals WHERE task_id = ? ORDER BY approval_id").iterate(taskId);
-  for (const row of rows) yield decode(row.payload_json);
+    ? db.prepare("SELECT * FROM approvals WHERE task_id = ? AND action_id = ? ORDER BY approval_id").iterate(taskId, actionId)
+    : db.prepare("SELECT * FROM approvals WHERE task_id = ? ORDER BY approval_id").iterate(taskId);
+  for (const row of rows) yield decodeIndexedRecord(row, "approval");
 }
 
 /* ------------------------------------------------------------- executions */
@@ -355,8 +371,8 @@ export function putExecution(db, { taskId, execution }) {
 }
 
 export function findExecutionById(db, taskId, executionId) {
-  const row = db.prepare("SELECT payload_json FROM executions WHERE task_id = ? AND execution_id = ?").get(taskId, executionId);
-  return row ? decode(row.payload_json) : null;
+  const row = db.prepare("SELECT * FROM executions WHERE task_id = ? AND execution_id = ?").get(taskId, executionId);
+  return row ? decodeIndexedRecord(row, "execution") : null;
 }
 
 export function listExecutions(db, taskId, options = {}) {
@@ -369,9 +385,9 @@ export function* iterateExecutions(db, taskId, { checkId = null, verificationCyc
   if (checkId !== null) { clauses.push("check_id = ?"); params.push(checkId); }
   if (verificationCycle !== null) { clauses.push("verification_cycle = ?"); params.push(verificationCycle); }
   const rows = db
-    .prepare(`SELECT payload_json FROM executions WHERE ${clauses.join(" AND ")} ORDER BY execution_id`)
+    .prepare(`SELECT * FROM executions WHERE ${clauses.join(" AND ")} ORDER BY execution_id`)
     .iterate(...params);
-  for (const row of rows) yield decode(row.payload_json);
+  for (const row of rows) yield decodeIndexedRecord(row, "execution");
 }
 
 /* ------------------------------------------------------- generic artifacts */
