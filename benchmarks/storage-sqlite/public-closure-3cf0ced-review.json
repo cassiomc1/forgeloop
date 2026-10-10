@@ -1,0 +1,30 @@
+{
+  "kind": "public-closure-atomicity-regression",
+  "sourceRevision": "3cf0ced",
+  "node": "v24.19.0",
+  "tests": 2,
+  "passed": 2,
+  "failed": 0,
+  "skipped": 0,
+  "faults": [
+    "CHECKPOINT_RECONCILED publication",
+    "receipt stageText failure"
+  ],
+  "assertions": [
+    "complete native tables unchanged on fault",
+    "closed transaction",
+    "retry one canonical execution and reconciliation event",
+    "exact-operation commit count",
+    "current repository fingerprint bound to state"
+  ],
+  "testSha256": "7837e6ded7d7320547d8175a11bfe9b9b5e69f1d738d9c4647779091d6cbc566",
+  "log": {
+    "path": "/Users/cassio/.codex/verification/public-closure-3cf0ced.log",
+    "sha256": "59cfa6f5956ca700f20937efd2909761a1e40a24ca9c437c80062b8934464448"
+  },
+  "limits": [
+    "Inert process.exit(0) checker reruns on explicit retry; no exactly-once external-side-effect claim.",
+    "Fixture history/state constructed with canonical helper APIs.",
+    "No full-plan protocol completion claim."
+  ]
+}
