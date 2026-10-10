@@ -123,7 +123,7 @@ test("public task creation rolls back descriptor claims and initial event togeth
   });
 });
 
-test("public action cancellation rolls back indexed action and event together", async () => {
+for (const faultEvent of ["ACTION_CANCELLED", "TRANSACTION_COMMITTED"]) test(`public action cancellation rolls back when ${faultEvent} publication fails`, async () => {
   await fixture(async ({ target, db, taskId }) => {
     await proposeAction(target, { packageRoot: getPackageRoot(), taskId, input: {
       actionId: "action-atomic-cancel", effectClass: "EXTERNAL_PUBLICATION", capability: "repository.push",
@@ -133,7 +133,7 @@ test("public action cancellation rolls back indexed action and event together", 
     const invoke = () => executeForgeLoopCommand({ command: "action-record", projectPath: target,
       input: { taskId, actionId: "action-atomic-cancel", actionState: "CANCELLED", actionProvenance: "CALLER_REPORTED" } });
     const before = snapshot(db);
-    db.exec("CREATE TRIGGER action_cancel_fault BEFORE INSERT ON events WHEN NEW.event_type='ACTION_CANCELLED' BEGIN SELECT RAISE(ABORT, 'PUBLIC_CANCEL_FAULT'); END");
+    db.exec(`CREATE TRIGGER action_cancel_fault BEFORE INSERT ON events WHEN NEW.event_type='${faultEvent}' BEGIN SELECT RAISE(ABORT, 'PUBLIC_CANCEL_FAULT'); END`);
     try {
       const failed = await invoke();
       assert.equal(failed.ok, false, JSON.stringify(failed));
