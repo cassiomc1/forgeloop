@@ -1,0 +1,34 @@
+{
+  "kind": "LEGACY_MANIFEST_ALLOCATION_BOUND",
+  "productionParent": "e8273a699be3ac372e74c66cf0fbbf887d3b8465",
+  "files": {
+    "src/core/transaction.js": "04f90a6cbdc19fb21caa8f4932d8fa086ef64c876a93b60a3905f858a339ab43",
+    "tests/transaction-maintenance.test.js": "50ce0c3775e563c76e3b8bb71814da2632ddc8094734a3efc4fd2604f43804ce"
+  },
+  "change": "Use readStorageMetadataJson with existing 64 MiB catalog budget for legacy transaction manifests. Preserve pre-parse symlink refusal and ABANDONED malformed classification. No writes or recovery of legacy data.",
+  "baselineControl": "Valid JSON COMMITTED manifest larger than 64 MiB was omitted by prior reader; maintained regression failed expected retained malformed entry.",
+  "validation": {
+    "focused": {
+      "passed": 31,
+      "failed": 0,
+      "skipped": 0
+    },
+    "fast": "PASS",
+    "diffCheck": "PASS"
+  },
+  "limitations": [
+    "Full prepush receipt on 5dbb2a2 predates this production edit.",
+    "Windows e8273a6 focused result: 37 passed, zero failed or skipped; predates this edit.",
+    "No performance or memory acceptance inferred from this correction."
+  ],
+  "loc": {
+    "baselineSelectedLines": 25732,
+    "currentSelectedLines": 32394,
+    "ceiling": 19299,
+    "gap": 13095,
+    "unresolvedMembership": 0,
+    "targetMet": false,
+    "scopeManifest": "benchmarks/storage-sqlite/persistence-loc/scope-artifact-consolidation.json.gz",
+    "resultSha256": "c9c5c926a8316f2806071889aed91db993e0b1bfd631bd4f603596896976278e"
+  }
+}

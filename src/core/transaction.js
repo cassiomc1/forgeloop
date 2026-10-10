@@ -1,7 +1,8 @@
-import { readdir, readFile } from "node:fs/promises";
+import { readdir } from "node:fs/promises";
 
 import { assertSafePath, fileExists } from "./filesystem.js";
 import { getOperationalStore } from "../storage/operational-context.js";
+import { readStorageMetadataJson } from "../storage/metadata-json.js";
 
 const TRANSACTION_ROOT = ".forgeloop/.txn";
 
@@ -19,9 +20,10 @@ export async function findIncompleteTransactions(target) {
   for (const entry of entries) {
     await assertSafePath(target, `${TRANSACTION_ROOT}/${entry.name}`);
     if (!entry.isDirectory()) continue;
-    const filename = await assertSafePath(target, `${TRANSACTION_ROOT}/${entry.name}/manifest.json`);
+    const relative = `${TRANSACTION_ROOT}/${entry.name}/manifest.json`;
+    await assertSafePath(target, relative);
     try {
-      const manifest = JSON.parse(await readFile(filename, "utf8"));
+      const manifest = await readStorageMetadataJson(target, relative);
       if (!TERMINAL_STATUSES.has(manifest.status)) found.push(manifest);
     } catch {
       found.push({ transactionId: entry.name, status: "ABANDONED", malformed: true });

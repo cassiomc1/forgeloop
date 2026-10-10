@@ -1,6 +1,6 @@
 import { findIncompleteTransactions, withTaskTransaction } from "../src/core/transaction.js";
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, writeFile, readFile, symlink } from "node:fs/promises";
+import { mkdtemp, mkdir, writeFile, readFile, symlink, open, stat } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -46,4 +46,24 @@ test("legacy transaction discovery refuses symlinked roots and manifests", async
     await assert.rejects(findIncompleteTransactions(target), /symlink/iu);
     assert.equal(await readFile(external, "utf8"), bytes);
   }
+});
+
+
+test("oversized terminal legacy manifest remains visible without modifying retained evidence", async t => {
+  const target = await mkdtemp(path.join(os.tmpdir(), "txn-manifest-budget-"));
+  t.after(() => removeTempTree(target));
+  const directory = path.join(target, ".forgeloop/.txn/oversized");
+  await mkdir(directory, { recursive: true });
+  const filename = path.join(directory, "manifest.json");
+  const file = await open(filename, "wx");
+  try {
+    await file.writeFile(JSON.stringify({ transactionId: "oversized", status: "COMMITTED" }));
+    const padding = Buffer.alloc(1024 * 1024, " ");
+    for (let index = 0; index < 64; index += 1) await file.write(padding);
+  } finally { await file.close(); }
+  const before = await stat(filename);
+  assert.deepEqual(await findIncompleteTransactions(target), [{ transactionId: "oversized", status: "ABANDONED", malformed: true }]);
+  const after = await stat(filename);
+  assert.equal(after.size, before.size);
+  assert.equal(after.mtimeMs, before.mtimeMs);
 });

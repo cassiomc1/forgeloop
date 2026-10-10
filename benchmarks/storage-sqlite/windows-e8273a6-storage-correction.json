@@ -1,0 +1,13 @@
+{
+  "run": 38013623698,
+  "sourceRevision": "e8273a699be3ac372e74c66cf0fbbf887d3b8465",
+  "conclusion": "success",
+  "completed": "2026-10-10T01:35:16Z",
+  "scope": "Windows storage-correction suite only",
+  "tests": 37,
+  "passed": 37,
+  "failed": 0,
+  "skipped": 0,
+  "logSha256": "f1cb10cb95203d5386e3b849bf942eb40f3c47b16857803c9979ad30343f7044",
+  "limitation": "Earlier owner-history refusal was not reproduced; no process identity cause proven. Predates legacy manifest allocation bound edit. Not full Windows current-source acceptance."
+}
