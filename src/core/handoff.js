@@ -1,4 +1,4 @@
-import { needsExistingProjectScope, withExistingProjectScope } from "../storage/existing-project-scope.js";
+import { withProjectReadSnapshot } from "../storage/project-read-snapshot.js";
 import { randomUUID } from "node:crypto";
 import { readdir } from "node:fs/promises";
 import { listOperationalArtifactNames, operationalArtifactExists } from "../storage/operational-context.js";
@@ -226,23 +226,22 @@ export async function readCanonicalHandoff(target, {
 }
 
 export async function listCanonicalHandoffs(target, { taskId, packageRoot = getPackageRoot() } = {}) {
-  if (await needsExistingProjectScope(target)) {
-    return withExistingProjectScope(target, () => listCanonicalHandoffs(target, { taskId, packageRoot }), { readOnly: true });
-  }
-  const directory = taskHandoffDirectory(taskId);
-  let names = listOperationalArtifactNames(target, taskId, "handoffs");
-  if (names === null) {
-    if (!(await fileExists(ensureWithin(target, directory)))) return [];
-    names = (await readdir(ensureWithin(target, directory), { withFileTypes: true })).filter(entry => entry.isFile()).map(entry => entry.name);
-  }
-  const handoffs = [];
-  for (const name of names) {
-    if (!/^handoff-[A-Za-z0-9_-]+\.json$/u.test(name)) continue;
-    const handoffId = name.slice(0, -5);
-    const artifact = await readCanonicalHandoff(target, { taskId, handoffId, packageRoot });
-    handoffs.push(artifact.value);
-  }
-  return handoffs.sort((left, right) => left.createdAt.localeCompare(right.createdAt) || left.handoffId.localeCompare(right.handoffId));
+  return withProjectReadSnapshot(target, async () => {
+    const directory = taskHandoffDirectory(taskId);
+    let names = listOperationalArtifactNames(target, taskId, "handoffs");
+    if (names === null) {
+      if (!(await fileExists(ensureWithin(target, directory)))) return [];
+      names = (await readdir(ensureWithin(target, directory), { withFileTypes: true })).filter(entry => entry.isFile()).map(entry => entry.name);
+    }
+    const handoffs = [];
+    for (const name of names) {
+      if (!/^handoff-[A-Za-z0-9_-]+\.json$/u.test(name)) continue;
+      const handoffId = name.slice(0, -5);
+      const artifact = await readCanonicalHandoff(target, { taskId, handoffId, packageRoot });
+      handoffs.push(artifact.value);
+    }
+    return handoffs.sort((left, right) => left.createdAt.localeCompare(right.createdAt) || left.handoffId.localeCompare(right.handoffId));
+  });
 }
 
 export async function resolveLatestHandoff(target, { taskId, packageRoot = getPackageRoot() } = {}) {
