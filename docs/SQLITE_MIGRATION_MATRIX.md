@@ -4,6 +4,55 @@ Current checkpoint progress: [SQLite migration progress](SQLITE_PROGRESS.md).
 
 ## Current source and acceptance boundary
 
+The latest production correction is `03bbf94`: private owned audit snapshots
+check main-file and WAL identity before direct reads and at iterator boundaries.
+Full prepush at that revision passed 22 stages with all 3,208 tracked source
+hashes unchanged; 41 focused snapshot/routing controls also passed. See
+`benchmarks/storage-sqlite/prepush-03bbf94-success.json` and
+`benchmarks/storage-sqlite/owned-snapshot-read-guard-correction.json`.
+The four task-resource parity cases now reside in the MCP dependency suite;
+its clean packed-package run passed 81 tests. These corrections supersede the
+older source descriptions below, not their source-bound historical receipts.
+
+Windows focused storage/replacement validation at `e7acc63` passed 37 tests on
+Node 24.21.0. This validates the closed-worker fixture correction, not the full
+current Windows suite or a proven general process-handle timing diagnosis. See
+`benchmarks/storage-sqlite/windows-storage-correction-e7acc63-success.json`.
+
+The current reviewed inclusive function scope counts **32,479** lines against
+baseline **25,732** and ceiling **19,299**, with zero unresolved membership.
+Membership and exclusions are unchanged; source bindings alone were refreshed.
+The five-line discovery declaration remains counted. The remaining reduction
+required is **13,180 lines**. Retained inputs, result and review receipt are
+under `benchmarks/storage-sqlite/persistence-loc/` with the `7531da3` prefix,
+bound to production at `e7acc63`. A separate clean `a6a852f` whole-module
+cross-check retains 349 modules and counts 59,659 current / 51,248 baseline
+lines. It is scope-incomplete and cannot replace the function-scope gate.
+
+The original performance matrix remains open on this production correction.
+Windows per-row whole-database integrity hashing has an unresolved scaling
+risk. The new Linux runner observer is prepared but has not executed in a
+benchmark; it cannot prove shared Windows-host isolation. No new benchmark
+acceptance, full newest-source platform acceptance, whole-goal closure or PR
+is claimed. Current CI must be queried directly; a running or queued job is
+not a passed gate.
+
+### Original definition-of-done audit
+
+| Requirement | Current evidence boundary / remaining work |
+| --- | --- |
+| Sole authoritative SQLite operational writer | Finite consumer and I/O controls pass; whole-consumer acceptance remains open. |
+| Atomic related state/event mutations | Focused rollback controls and full recorded-source suites pass; preserve every public mutation boundary in final validation. |
+| Protocol and authority semantics | Tamper and authority controls pass on their recorded sources; validator-backed final closure remains open. |
+| Public file-path consumers | Maintained CLI/API/MCP controls exist; final complete consumer reconciliation remains open. |
+| Migration, recovery, backup, restore, downgrade | Retained platform drills cover defined finite cases; final source-bound acceptance and limitations remain required. |
+| Legacy-client exclusion | Corrected Linux/Windows and macOS drills are retained; no live rollout has occurred. |
+| Obsolete machinery retirement | Implementation removes operational legacy paths; inclusive net LOC gate still fails. |
+| Reproducible performance/code-size comparison | LOC inputs/results retained; original equal-work performance and resource gates remain open. |
+| CLI/MCP/API/package/platform checks | Full local recorded-source checks and finite hosted runs pass; current full platform matrix remains open. |
+| Runtime/storage compatibility declarations | Maintained declarations and package checks exist; final unchanged-source package/runtime acceptance remains required. |
+
+
 Current implementation includes direct canonical handoff-list snapshot reads and
 private successful semantic-binding reuse within the exact detached audit scope.
 The latter retains snapshot tamper checks, artifact observations for parent CAS,
@@ -70,14 +119,14 @@ closure, evaluation and external-finalization regressions are included. They
 retain separate intent/outcome commits for external work and do not claim
 exactly-once external effects.
 
-Fresh exact-head function-level persistence LOC at `7bbfe3e` is 25,732 baseline
+Historical exact-head function-level persistence LOC at `7bbfe3e` is 25,732 baseline
 versus 32,428 current lines. See
 `benchmarks/storage-sqlite/persistence-loc/result-7bbfe3e-summary.json`.
 The separate conservative whole-module inventory was also refreshed, preserving
 the old union and adding all selected module and storage paths symmetrically;
 its target also fails. It is not a replacement scope or denominator.
 
-Inclusive persistence LOC is 25,732 baseline versus 32,428 current lines, with
+The historical `7bbfe3e` inclusive persistence LOC is 25,732 baseline versus 32,428 current lines, with
 zero unresolved membership and the unchanged ceiling of 19,299. All storage,
 import/export and maintenance code remains included. The exact five-line
 `DISCOVERY_PROJECTIONS` declaration remains counted even though the base analyzer
