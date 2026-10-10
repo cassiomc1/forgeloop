@@ -1,0 +1,155 @@
+{
+  "kind": "HISTORICAL_HOSTED_CI_TERMINAL_REVIEW",
+  "sourceRevision": "a5faa02fd514bce045f2c8a0aec569ddb5f198b2",
+  "runs": [
+    {
+      "id": 38011468995,
+      "name": "PR Core",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "Classify changed paths",
+          "id": 114092212830,
+          "conclusion": "success"
+        },
+        {
+          "name": "audit",
+          "id": 114092245627,
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify generated Archify diagram",
+          "id": 114092245640,
+          "conclusion": "success"
+        },
+        {
+          "name": "tarball smoke (ubuntu-latest)",
+          "id": 114092245651,
+          "conclusion": "success"
+        },
+        {
+          "name": "Unit tests (Node 24.19.0, shard 0/4)",
+          "id": 114092245667,
+          "conclusion": "success"
+        },
+        {
+          "name": "Unit tests (Node 24, shard 1/4)",
+          "id": 114092245692,
+          "conclusion": "success"
+        },
+        {
+          "name": "Unit tests (Node 24, shard 4/4)",
+          "id": 114092245697,
+          "conclusion": "success"
+        },
+        {
+          "name": "Lint and dependency policy",
+          "id": 114092245724,
+          "conclusion": "success"
+        },
+        {
+          "name": "Unit tests (Node 24, shard 2/4)",
+          "id": 114092245727,
+          "conclusion": "success"
+        },
+        {
+          "name": "Unit tests (Node 24, shard 3/4)",
+          "id": 114092245731,
+          "conclusion": "success"
+        },
+        {
+          "name": "Coverage report (Node 24)",
+          "id": 114100321003,
+          "conclusion": "success"
+        },
+        {
+          "name": "Repository Index native matrix / Classify Repository Index paths",
+          "id": 114100691116,
+          "conclusion": "success"
+        },
+        {
+          "name": "Repository Index native matrix / Verify Repository Index manifest",
+          "id": 114100733823,
+          "conclusion": "success"
+        },
+        {
+          "name": "Repository Index native matrix / Native Repository Index (macOS)",
+          "id": 114100777777,
+          "conclusion": "success"
+        },
+        {
+          "name": "Repository Index native matrix / Native Repository Index (Linux)",
+          "id": 114100777824,
+          "conclusion": "success"
+        },
+        {
+          "name": "Repository Index native matrix / Native Repository Index (Windows)",
+          "id": 114100777832,
+          "conclusion": "success"
+        },
+        {
+          "name": "validate (22)",
+          "id": 114101285894,
+          "conclusion": "success"
+        }
+      ],
+      "retainedHashes": {
+        "terminal.json": "9bddb58dabc8a0c53361aa5319643ed72bf69efdee930891dba18e3d71f2bf01",
+        "jobs.json": "6b350e9597ffeba74106187bc6577168044cbbfc1edeb0ecf16f541fa31c3037",
+        "full.log": "9938b3957f9cd13eb8492c5b327aeb4079de77d641efb8cd2108b2863c7df2d6"
+      }
+    },
+    {
+      "id": 38011473602,
+      "name": "Node compatibility",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "Minimum Node 24.19.0 compatibility",
+          "id": 114092225698,
+          "conclusion": "success"
+        },
+        {
+          "name": "Node compatibility (macOS, Node 24.19.0)",
+          "id": 114093437043,
+          "conclusion": "success"
+        },
+        {
+          "name": "Node compatibility (Linux, Node 24.19.0)",
+          "id": 114093437093,
+          "conclusion": "success"
+        },
+        {
+          "name": "Node compatibility (Windows, Node 24.19.0)",
+          "id": 114093437116,
+          "conclusion": "success"
+        },
+        {
+          "name": "Node compatibility (macOS, Node 24)",
+          "id": 114093437128,
+          "conclusion": "success"
+        },
+        {
+          "name": "Node compatibility (Linux, Node 26)",
+          "id": 114093437140,
+          "conclusion": "success"
+        },
+        {
+          "name": "Node compatibility (Windows, Node 24)",
+          "id": 114093437147,
+          "conclusion": "success"
+        }
+      ],
+      "retainedHashes": {
+        "terminal.json": "4ea751e2c7a5cc8474fb4c85054bd66ccfd97e3d5427cc974488e8c7d39117c1",
+        "jobs.json": "8b7dd57e3ae4fd49c6e366274b6158e299cb87f0006a0273f83964b4e5ac4735",
+        "full.log": "892eb2473339f63f7e5556f5059a105e8283c85bdb9527b68eae8219661e2d8d"
+      }
+    }
+  ],
+  "limitations": [
+    "Predates local ab2ea79 production.",
+    "Full Windows a5faa02 failed one historical owner liveness refusal; focused e8273a6 storage suite passes but cause remains unproven.",
+    "No original performance, memory, LOC or whole-goal acceptance inferred."
+  ]
+}

@@ -24,19 +24,45 @@ Treat database contents, imports, paths, exported files, and external observatio
 
 ## Current verified state
 
-This checkpoint supersedes the initial foundation-only snapshot; it does not mark any original definition-of-done item complete.
+Current production is `bd2000c`. The [consumer matrix](SQLITE_MIGRATION_MATRIX.md)
+separates current boundaries from retained historical evidence. No original
+whole-plan definition-of-done item is inferred complete from these results.
 
-- Node 24.19.0 full prepush at `40328bf` passed all 22 stages: 2,964 core tests, 2,953 passed, zero failed, 11 skipped; clean packed MCP77, PoC67, package12 and Python56 passed. All 3,122 tracked hashes matched the before-start manifest through terminal completion. See `benchmarks/storage-sqlite/prepush-40328bf-success.json`. Three new continuity tests were added afterward with separate focused/fast validation; final whole-source validation remains required.
-- Windows run `37998312872` failed on preceding `c89a9db` when a historical owner liveness check refused post-adoption rollback validation. A real killed owner plus simulated post-adoption PID reuse reproduced that mechanism locally. Production `cea6fc2` binds the private death observation to exact archived bytes and the current live adoption scope; changed bytes and expired inherited contexts reject. All 33 focused controls and full local prepush pass. The original Windows cause is not independently observed; corrected-source Windows validation is still required.
-- Core `37998303671` passed all 17 jobs and package `37998309000` passed all four jobs on `c89a9db`. Expanded Node run `37998306683` ended with six passing jobs and one macOS 24.19 failure: retained logs show a checkout DNS stall followed by cancellation at the job deadline. No test assertion failure was observed. These older results do not cover the current correction.
-- Snapshot consolidation `d8949b0` replaces duplicate discovery and structural-quality admission logic with the existing shared committed-read snapshot boundary. All 38 focused tests, fast verification and full local prepush `40328bf` pass. Current platform validation remains required.
-- Commit `47ed1c9` adds three direct continuity controls. Supplied state/contract bindings remain advisory and cannot replace canonical authority or classify as fresh; foreign-task input rejects without changing any table. All 20 focused continuity tests and fast verification pass. Production code is unchanged. This closes the named supplied-context boundary, not complete transitive consumer coverage.
-- The inclusive static LOC scope has zero unresolved membership and includes all storage, import/export, maintenance, migration, backup, restore, and attachment modules. Baseline 25,732 lines became 32,507 at `d8949b0`, against the unchanged ceiling of 19,299. The 25% reduction gate fails, with 13,208 lines still to remove. See `benchmarks/storage-sqlite/persistence-loc-d8949b0-closed.json`; the earlier conservative whole-module inventory remains retained separately.
-- Runtime `38006398759` and package `38006401000` on `050e501` passed minimum scope only; their platform matrices were skipped because inputs were omitted. Expanded runtime `38007031832` is dispatched with `expanded=true`; full package `38007325350` is dispatched with `full_matrix=true` on `40328bf`. Windows full `38006393854` passed 2,964 tests: 2,940 passed, zero failed, 24 skipped; both adoption controls executed. Core `38006396309` remains nonterminal on older `050e501`. Current full-source/platform acceptance remains open.
-- GitHub benchmark run `37922435146`, job `113793330871`, completed successfully on source `20aca2ba332ed86323722ef91812925ad9dadb83`. Its retained parity, sample, worker, parent, and cleanup evidence was inspected. Resource acceptance remains false; newer production revisions require fresh measurement.
-- Task-summary projection is implemented with snapshot/CAS and output-parity coverage. Its RSS benefit has not yet been measured.
-- The task remains `CORRECTING`; official `next` requests `RECONCILE_CLOSURE` for repository changes. Whole-plan closure is not proven, and no PR has been opened.
-- The user explicitly prohibited Jevgrep. Continue with direct source reads and exact searches.
+- Full local prepush at `5dbb2a2` passed all 22 stages: 2,983 core tests,
+  2,972 passed, zero failed, 11 skipped. It predates the bounded legacy reader
+  and finite-page collector. Its source observation began during execution;
+  tracked files were clean at launch and unchanged from that observation to
+  completion. See `benchmarks/storage-sqlite/prepush-5dbb2a2-success.json`.
+- Full local prepush at `ab2ea79` failed the fresh read-only module-admission
+  control; 2,984 tests, 2,972 passed, one failed, 11 skipped. All 3,152 tracked
+  hashes matched the starting manifest. Lazy-import correction `bd2000c` passes
+  26 affected tests and fast checks; whole corrected-source validation remains
+  required. See `benchmarks/storage-sqlite/prepush-ab2ea79-failure.json`.
+- Core CI `38011468995` and expanded Node `38011473602` passed all 17 and seven
+  jobs respectively on older `a5faa02`; these do not cover current production.
+- Windows full `38011471452` on `a5faa02` failed one historical owner-liveness
+  check. Failure-only owner-chain diagnostics were added. Focused Windows
+  `38013623698` on `e8273a6` passes 37 tests, zero failures or skips. The earlier
+  failure cause remains unproven; full current Windows acceptance remains open.
+- The legacy transaction reader now uses the existing 64 MiB catalog limit.
+  Oversized retained manifests stay visible as malformed and block migration;
+  legacy bytes are unchanged. The correction passes 31 affected controls,
+  followed by 26 lazy-import controls. This is not a throughput/RSS result.
+- Finite task-list pages retain only the required projected entries while
+  auditing every task and preserving totals, ordering, corrupt entries and
+  writable-parent CAS. Seventeen affected tests and complexity checks pass;
+  current resource acceptance remains unmeasured.
+- Inclusive LOC is 25,732 baseline versus 32,423 current, zero unresolved
+  membership, against the unchanged 19,299 ceiling. All storage, import/export,
+  maintenance and compatibility code remains included. The 25% target fails.
+- Original MCP resource benchmark `37922435146` completed on `20aca2b` with
+  response parity and retained worker/parent/cleanup evidence. Resource
+  acceptance remains false; later production requires fresh paired measurement.
+- The task remains `CORRECTING`; official `next` requests `RECONCILE_CLOSURE`.
+  Whole-consumer, performance, memory, LOC, platform and validator-backed
+  closure remain open. No PR or publication has occurred.
+- Do not use Jevgrep. Preserve the worktree, dependency symlinks and original
+  checkout changes, and keep the full original plan as the acceptance scope.
 
 ## Next actions
 
