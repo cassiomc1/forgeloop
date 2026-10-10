@@ -1,0 +1,67 @@
+{
+  "kind": "IDEMPOTENCY_DIAGNOSTIC",
+  "sourceRevision": "8b23440ed552cf9141c167cc7dc951a487461a2a",
+  "sourceManifestsUnchanged": true,
+  "parentExitCode": 0,
+  "rows": [
+    {
+      "actions": 10,
+      "outputParity": true,
+      "missingKeyParity": true,
+      "nativeP95Ms": 4.854333999999994,
+      "baselineP95Ms": 4.117500000000064,
+      "speedupP95": 0.8482111037271165
+    },
+    {
+      "actions": 100,
+      "outputParity": true,
+      "missingKeyParity": true,
+      "nativeP95Ms": 3.2590839999998025,
+      "baselineP95Ms": 22.819334000000026,
+      "speedupP95": 7.0017630720783535
+    },
+    {
+      "actions": 250,
+      "outputParity": true,
+      "missingKeyParity": true,
+      "nativeP95Ms": 3.2973749999991924,
+      "baselineP95Ms": 58.2777500000002,
+      "speedupP95": 17.673983092615934
+    },
+    {
+      "actions": 1000,
+      "outputParity": true,
+      "missingKeyParity": true,
+      "nativeP95Ms": 3.694375000002765,
+      "baselineP95Ms": 238.1596669999999,
+      "speedupP95": 64.46548252405933
+    },
+    {
+      "actions": 5000,
+      "outputParity": true,
+      "missingKeyParity": true,
+      "nativeP95Ms": 3.9839580000116257,
+      "baselineP95Ms": 1158.6848749999917,
+      "speedupP95": 290.8376230363399
+    }
+  ],
+  "samplesPerBackendPerSize": 20,
+  "warmup": 1,
+  "acceptanceClaim": false,
+  "limits": [
+    "Synthetic schema-valid PROPOSED actions without approvals, execution records or lifecycle history",
+    "Found-key lookup is measured; missing-key and approval parity are validated outside measurement",
+    "This is not full action execution, claim reservation, recovery mutation or warm MCP acceptance",
+    "Instrumented command latency includes async_hooks overhead; resource snapshots are outside its timer; compare separately from uninstrumented results",
+    "Node async filesystem request counts exclude synchronous calls, SQLite internal I/O and external processes; they are not total filesystem operations",
+    "Filesystem block counters are OS process resource counters, not logical operation counts; zero may reflect caching or unsupported accounting",
+    "RSS endpoints are not operation peak RSS; processLifetimePeakRssKiB includes imports, fixture setup and previous samples",
+    "Event-loop histogram includes the short post-command timer drain, excludes fixture/session setup and validation, and is not MCP/HTTP transport evidence",
+    "A one-millisecond scheduled timer probe includes the post-command drain and scheduler noise; it complements the histogram, which can miss initial synchronous blocking",
+    "Database/WAL byte sizes are endpoints while the connection remains open, not peak live WAL or filesystem-cold measurements",
+    "The filesystem baseline has zero database/WAL bytes by design; these fields are not its total persisted data size",
+    "Direct lock-wait duration and external-process resource use are not measured",
+    "Opt-in Linux operation RSS uses resettable kernel VmHWM accounting, which is an estimate rather than a sampled smaps measurement; reset/read instrumentation and retained fixtures remain in scope",
+    "Local background/cache uncontrolled; no physical host reservation claim"
+  ]
+}

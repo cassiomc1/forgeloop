@@ -1,5 +1,9 @@
 # SQLite migration progress
 
+## Current indexed action lookup observation
+
+Frozen `8b23440` completed 10/100/250/1,000/5,000-action idempotency fixtures with 20 instrumented repetitions per backend and one warmup. Every found-key response and missing-key result matched; source manifests remained unchanged. Native/baseline p95 was 4.854/4.118 ms at 10 actions and 3.984/1,158.685 ms at 5,000. The small row adds 0.736 ms, within the original 5 ms tolerance. These schema-valid synthetic PROPOSED actions omit approval/execution/lifecycle history; RSS endpoints include shared-process history, async counters exclude SQLite I/O, and background/cache were uncontrolled. Results are diagnostics, not complete public-consumer/resource acceptance. Inputs, samples and terminal evidence are retained under `benchmarks/storage-sqlite/idempotency-8b23440-*`.
+
 ## Current fresh CLI startup observation
 
 Frozen `da596a7` completed 30 alternating repetitions per backend for version and empty task-list: all 120 child calls returned correct output, no storage was allocated, and current/baseline tracked source manifests stayed unchanged. Native/baseline p95 was 46.7/133.8 ms for version and 72.5/129.0 ms for empty task-list. Both observed rows meet the original small-workspace regression tolerance. Background applications and filesystem caches were uncontrolled; this is an empty-workspace diagnostic, not populated CLI, persistent integration, RSS or whole-performance acceptance. Raw inputs/results/terminal records are retained under `benchmarks/storage-sqlite/cli-startup-da596a7-*`.
