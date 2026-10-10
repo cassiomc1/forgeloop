@@ -1,0 +1,16 @@
+{
+  "exitCode": 1,
+  "trackedSourcesUnchanged": true,
+  "sourceHead": "819cd7ae77005c97e50aeedf9dd142d206613c2c",
+  "elapsedSeconds": 694.9732100963593,
+  "status": "FAILED_FINAL_SECRET_SCAN",
+  "coreTests": 3073,
+  "corePassed": 3057,
+  "coreFailed": 0,
+  "coreSkipped": 16,
+  "mcpPassed": 88,
+  "stagesPassed": 21,
+  "failedStage": "secret-scan",
+  "cause": "Two boolean receipt keys containing token classified as sensitive assignments; original test names retained in testName/passed entries after diagnosis.",
+  "correctedSecretScan": "PASS 4049 text files; whole prepush remains historical failed result."
+}

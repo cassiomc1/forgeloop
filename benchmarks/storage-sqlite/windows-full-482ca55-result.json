@@ -12,13 +12,28 @@
   "passed": 3045,
   "failed": 0,
   "skipped": 25,
-  "windowsSpecificControls": {
-    "Windows continuity validates a closed token owner": true,
-    "Windows owner publication refuses missing or inaccessible": true,
-    "the fixed Windows observer reports a missing PID": true,
-    "Windows owner liveness refuses the same token": true,
-    "real Windows observation proves stable self identity": true
-  },
+  "windowsSpecificControls": [
+    {
+      "testName": "Windows continuity validates a closed token owner",
+      "passed": true
+    },
+    {
+      "testName": "Windows owner publication refuses missing or inaccessible",
+      "passed": true
+    },
+    {
+      "testName": "the fixed Windows observer reports a missing PID",
+      "passed": true
+    },
+    {
+      "testName": "Windows owner liveness refuses the same token",
+      "passed": true
+    },
+    {
+      "testName": "real Windows observation proves stable self identity",
+      "passed": true
+    }
+  ],
   "skippedTests": [
     "2026-10-10T15:25:30.8459890Z \ufe63 optional Agent Browser localhost smoke (0.8414ms) # SKIP",
     "2026-10-10T15:29:25.1056399Z \ufe63 durable action writes reject a symlinked actions directory (0.1305ms) # SKIP",
