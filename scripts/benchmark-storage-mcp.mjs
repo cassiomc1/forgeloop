@@ -1,11 +1,16 @@
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
-import { createHash } from "node:crypto";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { performance } from "node:perf_hooks";
+import {
+  BENCHMARK_SOURCE_MANIFEST_SCHEMA_VERSION,
+  BENCHMARK_SOURCE_UNTRACKED_POLICY,
+  captureBenchmarkSourceManifest,
+} from "./lib/benchmark-source-manifest.mjs";
 import { createBenchmarkProgressJournal } from "./lib/benchmark-progress-journal.mjs";
+import { assertStorageResourceSamples, assertTimingSamples } from "./lib/benchmark-mcp-sample-validation.mjs";
 import { createTaskDescriptor } from "../src/core/task-descriptor.js";
 import { createWorkState } from "../src/core/work-state.js";
 import { buildProtocolEvent } from "../src/core/events.js";
@@ -17,7 +22,6 @@ const currentRoot = path.resolve(import.meta.dirname, "..");
 const revision = "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5";
 const sourceRevision = execFileSync("git", ["-C", currentRoot, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
 assert.equal(execFileSync("git", ["-C", baselineRoot, "rev-parse", "HEAD"], { encoding: "utf8" }).trim(), revision);
-assert.equal(execFileSync("git", ["-C", baselineRoot, "status", "--porcelain", "--untracked-files=no"], { encoding: "utf8" }).trim(), "");
 const sizes = (argument("sizes") ?? "10,1000").split(",").map(Number);
 const repeats = Number(argument("repeats") ?? 20);
 const resources = argument("resources") ?? "false";
@@ -53,18 +57,7 @@ const parentFailurePath = parentOutputPath
   : workerEvidenceDirectory ? path.join(workerEvidenceDirectory, "parent-failure.json") : null;
 
 async function actualManifest(root) {
-  const revision = execFileSync("git", ["-C", root, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
-  const status = execFileSync("git", ["-C", root, "status", "--porcelain", "--untracked-files=no"], { encoding: "utf8" }).trim();
-  const files = execFileSync("git", ["-C", root, "ls-files", "-z"], { encoding: "utf8" }).split("\0").filter(Boolean).sort();
-  return {
-    revision,
-    status,
-    trackedFiles: files.length,
-    files: await Promise.all(files.map(async file => ({
-      path: file,
-      sha256: createHash("sha256").update(await readFile(path.join(root, file))).digest("hex"),
-    }))),
-  };
+  return captureBenchmarkSourceManifest(root);
 }
 
 async function validateManifestEntry(entry, label, root, expectedRevision, observedEntry = null) {
@@ -73,6 +66,25 @@ async function validateManifestEntry(entry, label, root, expectedRevision, obser
   assert.equal(entry.status, "", `${label} checkout is dirty`);
   assert.ok(Number.isInteger(entry.trackedFiles) && entry.trackedFiles >= 0, `${label} tracked-file count is invalid`);
   assert.ok(Array.isArray(entry.files), `${label} tracked-file hashes are missing`);
+  assert.deepEqual(entry.untrackedPolicy, BENCHMARK_SOURCE_UNTRACKED_POLICY, `${label} untracked-path policy is unsupported`);
+  assert.ok(entry.untrackedEvidence && typeof entry.untrackedEvidence === "object", `${label} untracked-path evidence is missing`);
+  assert.ok(Number.isSafeInteger(entry.untrackedEvidence.scannedPathCount) && entry.untrackedEvidence.scannedPathCount >= 0, `${label} untracked scan count is invalid`);
+  assert.ok(Array.isArray(entry.untrackedEvidence.admittedEntries), `${label} admitted dependency evidence is missing`);
+  assert.ok(Array.isArray(entry.untrackedEvidence.unexpectedPaths), `${label} unexpected-path evidence is missing`);
+  const unexpectedPaths = entry.untrackedEvidence.unexpectedPaths;
+  assert.deepEqual([...unexpectedPaths].sort(), unexpectedPaths, `${label} unexpected-path evidence is not sorted`);
+  assert.equal(new Set(unexpectedPaths).size, unexpectedPaths.length, `${label} unexpected-path evidence contains duplicates`);
+  assert.deepEqual(unexpectedPaths, [], `${label} contains unexpected untracked paths`);
+  const admittedPaths = entry.untrackedEvidence.admittedEntries.map(admitted => admitted?.path);
+  assert.deepEqual([...admittedPaths].sort(), admittedPaths, `${label} admitted dependency evidence is not sorted`);
+  assert.equal(new Set(admittedPaths).size, admittedPaths.length, `${label} admitted dependency evidence contains duplicates`);
+  for (const admitted of entry.untrackedEvidence.admittedEntries) {
+    assert.ok(typeof admitted?.path === "string" && BENCHMARK_SOURCE_UNTRACKED_POLICY.allowedPrefixes.some(prefix => admitted.path === prefix || admitted.path.startsWith(`${prefix}/`)), `${label} contains an unapproved admitted path`);
+    assert.ok(["directory", "file", "symlink", "other"].includes(admitted.type), `${label} contains an invalid admitted path type`);
+    assert.ok(typeof admitted.resolvedPath === "string" && path.isAbsolute(admitted.resolvedPath), `${label} admitted path identity is missing`);
+    assert.ok(admitted.symlinkTarget === null || typeof admitted.symlinkTarget === "string", `${label} admitted symlink target is invalid`);
+    assert.equal(admitted.type === "symlink", admitted.symlinkTarget !== null, `${label} admitted symlink identity is inconsistent`);
+  }
   assert.equal(entry.trackedFiles, entry.files.length, `${label} tracked-file count does not match hashes`);
   const paths = entry.files.map(file => file?.path);
   assert.deepEqual([...paths].sort(), paths, `${label} tracked-file manifest is not sorted`);
@@ -85,7 +97,7 @@ async function validateManifestEntry(entry, label, root, expectedRevision, obser
 }
 
 async function validateSourceManifestInput(manifest) {
-  assert.equal(manifest?.schemaVersion, 1, "source manifest schema is unsupported");
+  assert.equal(manifest?.schemaVersion, BENCHMARK_SOURCE_MANIFEST_SCHEMA_VERSION, "source manifest schema is unsupported");
   await validateManifestEntry(manifest.current, "current", currentRoot, sourceRevision, sourceBefore.current);
   await validateManifestEntry(manifest.baseline, "baseline", baselineRoot, revision, sourceBefore.baseline);
   return {
@@ -98,7 +110,7 @@ async function validateSourceManifestInput(manifest) {
 }
 
 async function captureSourcePair() {
-  return { schemaVersion: 1, current: await actualManifest(currentRoot), baseline: await actualManifest(baselineRoot) };
+  return { schemaVersion: BENCHMARK_SOURCE_MANIFEST_SCHEMA_VERSION, current: await actualManifest(currentRoot), baseline: await actualManifest(baselineRoot) };
 }
 
 function observedCase() {
@@ -171,6 +183,9 @@ async function writeParentFailure(error, context = {}) {
 
 try {
   sourceBefore = await captureSourcePair();
+  for (const [label, entry] of Object.entries({ current: sourceBefore.current, baseline: sourceBefore.baseline })) {
+    assert.deepEqual(entry.untrackedEvidence.unexpectedPaths, [], `${label} checkout contains unexpected untracked paths`);
+  }
   assert.equal(sourceBefore.baseline.status, "", "baseline checkout is dirty before measurement");
   if (!validationOnly) assert.equal(sourceBefore.current.status, "", "timed benchmark requires a clean current checkout");
 } catch (error) {
@@ -353,18 +368,81 @@ async function seed(native, portable, size) {
   return fixtureMode === "synthetic" ? seedSynthetic(native, portable, size) : seedPublic(native, portable, size);
 }
 
+async function readProgressRecords(filename, label) {
+  const text = await readFile(filename, "utf8");
+  const lines = text.split("\n").filter(Boolean);
+  assert.ok(lines.length > 0, `${label} progress journal is empty`);
+  const records = lines.map((line, index) => {
+    let record;
+    try { record = JSON.parse(line); }
+    catch (error) { throw new Error(`${label} progress journal line ${index + 1} is invalid JSON`, { cause: error }); }
+    assert.equal(record.sequence, index + 1, `${label} progress journal sequence is not contiguous`);
+    assert.ok(Number.isInteger(record.pid) && record.pid > 0, `${label} progress journal PID is invalid`);
+    return record;
+  });
+  return records;
+}
+
+async function assertWorkerCompletion(output, worker, backend, size) {
+  if (!workerEvidenceDirectory) return { status: "NOT_RETAINED", backend, tasks: size };
+  const records = await readProgressRecords(`${output}.progress.ndjson`, `${backend}/${size}`);
+  const terminal = records.at(-1);
+  assert.equal(terminal.progress?.stage, "CLOSED", `${backend}/${size} worker did not close cleanly`);
+  assert.equal(terminal.pid, worker.runtime?.pid, `${backend}/${size} worker PID differs from its output`);
+  assert.deepEqual(terminal.operations, operations, `${backend}/${size} worker operation journal differs`);
+  assert.equal(terminal.repeats, repeats, `${backend}/${size} worker repeat journal differs`);
+  assert.equal(terminal.validationOnly, validationOnly, `${backend}/${size} worker validation journal differs`);
+  return {
+    status: "VALIDATED",
+    backend,
+    tasks: size,
+    pid: terminal.pid,
+    terminalStage: terminal.progress.stage,
+    terminalSequence: terminal.sequence,
+    journalRecords: records.length,
+  };
+}
+
+async function assertParentCompletion() {
+  if (!workerEvidenceDirectory) return { status: "NOT_RETAINED" };
+  const records = await readProgressRecords(path.join(workerEvidenceDirectory, "parent.progress.ndjson"), "parent");
+  const terminal = records.at(-1);
+  assert.equal(terminal.stage, "COMPLETED", "parent progress journal did not reach COMPLETED");
+  assert.equal(terminal.pid, process.pid, "parent progress journal PID differs from the benchmark process");
+  assert.deepEqual(terminal.operations, operations, "parent operation journal differs");
+  assert.equal(terminal.repeats, repeats, "parent repeat journal differs");
+  assert.equal(terminal.validationOnly, validationOnly, "parent validation journal differs");
+  return {
+    status: "VALIDATED",
+    pid: terminal.pid,
+    terminalStage: terminal.stage,
+    terminalSequence: terminal.sequence,
+    journalRecords: records.length,
+  };
+}
+
 function assertWorkerSampleCounts(worker, backend, operation) {
   const expectedSamples = validationOnly ? 0 : repeats;
   const expectedResourceSamples = validationOnly || resources !== "true" ? 0 : repeats;
   assert.equal(worker.validationOnly, validationOnly, `${backend}/${operation} validation mode mismatch`);
+  assert.equal(worker.wireValidation, "STRICT_CANONICAL_MCP_ENVELOPE", `${backend}/${operation} wire validation missing`);
+  assert.ok(Number.isSafeInteger(worker.sampleCount) && worker.sampleCount >= 0, `${backend}/${operation} declared sample count is invalid`);
   assert.equal(worker.sampleCount, expectedSamples, `${backend}/${operation} declared sample count mismatch`);
+  assert.ok(Array.isArray(worker.samplesMs), `${backend}/${operation} timing samples are missing`);
   assert.equal(worker.samplesMs.length, expectedSamples, `${backend}/${operation} sample array mismatch`);
+  assertTimingSamples(worker.samplesMs, `${backend}/${operation} timing samples`);
+  assert.ok(Array.isArray(worker.resourceSamples), `${backend}/${operation} resource samples are missing`);
+  assert.ok(Number.isSafeInteger(worker.resourceSampleCount) && worker.resourceSampleCount >= 0, `${backend}/${operation} declared resource sample count is invalid`);
   assert.equal(worker.resourceSampleCount, expectedResourceSamples, `${backend}/${operation} declared resource sample count mismatch`);
   assert.equal(worker.resourceSamples.length, expectedResourceSamples, `${backend}/${operation} resource sample array mismatch`);
+  assertStorageResourceSamples(worker.resourceSamples, `${backend}/${operation} resource samples`);
   if (validationOnly) assert.equal(worker.resourceTiming, "SKIPPED_VALIDATE_ONLY");
 }
 
+
 const results = [];
+const workerCompletionEvidence = [];
+let parentCompletionEvidence = null;
 let benchmarkError = null;
 let failureContext = null;
 try {
@@ -405,7 +483,9 @@ try {
           assert.equal(run.status, 0, run.stderr);
           const workerResult = JSON.parse(await readFile(output, "utf8"));
           for (const name of operations) assertWorkerSampleCounts(workerResult.results[name], backend, name);
-          backends[backend] = { ...workerResult, workerWall: { workerStartedAt, workerEndedAt, workerElapsedMs, status: run.status, signal: run.signal } };
+          const completionEvidence = await assertWorkerCompletion(output, workerResult, backend, size);
+          workerCompletionEvidence.push(completionEvidence);
+          backends[backend] = { ...workerResult, workerWall: { workerStartedAt, workerEndedAt, workerElapsedMs, status: run.status, signal: run.signal }, completionEvidence };
         }
         assert.deepEqual(Object.keys(backends.native.results).sort(), [...operations].sort());
         assert.deepEqual(Object.keys(backends.baseline.results).sort(), [...operations].sort());
@@ -461,7 +541,13 @@ try {
     await writeParentFailure(benchmarkError, failureContext ?? activeContext);
     throw benchmarkError;
   }
-  checkpoint({ stage: "COMPLETED", operations, validationOnly, fixtureMode });
+  try {
+    checkpoint({ stage: "COMPLETED", operations, repeats, validationOnly, fixtureMode });
+    parentCompletionEvidence = await assertParentCompletion();
+  } catch (error) {
+    await writeParentFailure(error, { stage: "PARENT_COMPLETION" });
+    throw error;
+  }
 } finally {
   progressJournal?.close();
 }
@@ -479,6 +565,8 @@ const output = {
   runtime: { node: process.version, platform: process.platform, architecture: process.arch, cpu: os.cpus()[0]?.model ?? null, logicalCpus: os.cpus().length, runnerName: process.env.RUNNER_NAME ?? null, workflowRun: process.env.GITHUB_RUN_ID ?? null, workflowAttempt: process.env.GITHUB_RUN_ATTEMPT ?? null },
   pairedCase: pairedCase ? { declared: pairedCase, observed: observedCase() } : null,
   workerEvidenceDirectory,
+  workerCompletionEvidence,
+  parentCompletionEvidence,
   parentFailurePath,
   progressRetention: workerEvidenceDirectory ? { sampleInterval: 10, durability: "fsync outside measured operations", limitation: "Between-request journal writes can affect subsequent process/cache behavior" } : null,
   repeats,

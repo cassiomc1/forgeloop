@@ -7,6 +7,7 @@ import { performance } from "node:perf_hooks";
 import { measureStorageResources } from "./storage-benchmark-resources.mjs";
 import { installBenchmarkFailureJournal } from "./benchmark-failure-journal.mjs";
 import { createBenchmarkProgressJournal } from "./benchmark-progress-journal.mjs";
+import { assertStorageResourceSample, assertTimingSamples } from "./benchmark-mcp-sample-validation.mjs";
 
 const [coreRoot, adapterRoot, target, output, repetitions, instrumentation, requestedLimit, retainProgress, requestedOperations, validationFlag] = process.argv.slice(2);
 const repeats = Number(repetitions);
@@ -17,8 +18,38 @@ const resources = instrumentation === "true";
 const taskListLimit = requestedLimit ? Number(requestedLimit) : null;
 assert.ok(taskListLimit === null || (Number.isInteger(taskListLimit) && taskListLimit > 0 && taskListLimit <= 5000));
 const knownOperations = ["taskListTool", "projectTasksResource"];
+const WIRE_VALIDATION = "STRICT_CANONICAL_MCP_ENVELOPE";
 const operationNames = requestedOperations ? requestedOperations.split(",").filter(Boolean) : knownOperations;
 assert.ok(operationNames.length > 0 && new Set(operationNames).size === operationNames.length && operationNames.every(value => knownOperations.includes(value)), "Unsupported MCP benchmark operation");
+
+function parseCanonicalJsonText(text, label) {
+  assert.equal(typeof text, "string", `${label} must contain text`);
+  const value = JSON.parse(text);
+  assert.equal(text, JSON.stringify(value, null, 2), `${label} JSON serialization is not canonical`);
+  return value;
+}
+
+function readToolEnvelope(response) {
+  assert.ok(Array.isArray(response?.content), "MCP tool content is missing");
+  assert.equal(response.content.length, 1, "MCP tool must return one content item");
+  assert.equal(response.content[0]?.type, "text", "MCP tool content must be text");
+  const value = parseCanonicalJsonText(response.content[0].text, "MCP tool content");
+  if (response.isError === true) {
+    const error = value.error ?? value;
+    assert.fail(`MCP tool failed: ${error.code ?? "unknown"} ${error.message ?? ""}`);
+  }
+  assert.deepEqual(response.structuredContent, value, "MCP tool structuredContent differs from its canonical text");
+  return value;
+}
+
+function readResourceEnvelope(response, uri) {
+  assert.notEqual(response?.isError, true, "MCP resource returned an error");
+  assert.ok(Array.isArray(response?.contents), "MCP resource contents are missing");
+  assert.equal(response.contents.length, 1, "MCP resource must return one content item");
+  assert.equal(response.contents[0]?.uri, uri, "MCP resource URI changed in transit");
+  assert.equal(response.contents[0]?.mimeType, "application/json", "MCP resource MIME type changed in transit");
+  return parseCanonicalJsonText(response.contents[0].text, "MCP resource content");
+}
 const workerStartedAt = new Date().toISOString();
 const progress = { operations: operationNames, validationOnly, operation: null, stage: "BOOTSTRAP", sampleIndex: null, completedSamples: 0 };
 const results = {};
@@ -48,15 +79,15 @@ try {
   const availableOperations = {
     taskListTool: async () => {
       const response = await client.callTool({ name: "forgeloop_task_list", arguments: taskListLimit === null ? {} : { limit: taskListLimit } });
-      const value = JSON.parse(response.content[0].text);
+      const value = readToolEnvelope(response);
       const error = value.error ?? value;
       assert.notEqual(response.isError, true, `Task-list failed: ${error.code ?? "unknown"} ${error.message ?? ""}`);
       return value;
     },
     projectTasksResource: async () => {
-      const response = await client.readResource({ uri: "forgeloop://project/tasks" });
-      assert.equal(response.contents.length, 1);
-      return JSON.parse(response.contents[0].text);
+      const uri = "forgeloop://project/tasks";
+      const response = await client.readResource({ uri });
+      return readResourceEnvelope(response, uri);
     },
   };
   const operations = Object.fromEntries(operationNames.map(name => [name, availableOperations[name]]));
@@ -79,6 +110,7 @@ try {
         resourceSampleCount: 0,
         validationOnly: true,
         validationCalls: 2,
+        wireValidation: WIRE_VALIDATION,
         resourceTiming: "SKIPPED_VALIDATE_ONLY",
       };
       continue;
@@ -93,7 +125,10 @@ try {
       const measured = resources ? await measureStorageResources(target, operation) : { value: await operation() };
       const elapsed = performance.now() - start;
       assert.deepEqual(measured.value, expected);
-      samples.push(resources ? measured.elapsedMs : elapsed);
+      const sampleMs = resources ? measured.elapsedMs : elapsed;
+      assertTimingSamples([sampleMs], `${name} sample ${index}`);
+      if (resources) assertStorageResourceSample(measured.resources, `${name} resource sample ${index}`);
+      samples.push(sampleMs);
       if (resources) resourceSamples.push(measured.resources);
       progress.completedSamples = index + 1;
       if ((index + 1) % 10 === 0 || index + 1 === repeats) checkpoint();
@@ -105,6 +140,7 @@ try {
       sampleCount: samples.length,
       resourceSampleCount: resourceSamples.length,
       validationOnly: false,
+      wireValidation: WIRE_VALIDATION,
       resourceTiming: resources ? "ENABLED" : "DISABLED",
     };
   }

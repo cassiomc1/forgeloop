@@ -147,22 +147,15 @@ jobs:
           mkdir -p "$MCP_RESOURCE_OUTPUT"
           node --input-type=module <<'NODE'
           import assert from "node:assert/strict";
-          import { createHash } from "node:crypto";
           import { execFileSync } from "node:child_process";
-          import { mkdir, readFile, writeFile } from "node:fs/promises";
+          import { mkdir, writeFile } from "node:fs/promises";
           import os from "node:os";
           import path from "node:path";
 
           const currentRoot = ".";
           const baselineRoot = "../legacy";
-          const hashFile = async filename => createHash("sha256").update(await readFile(filename)).digest("hex");
-          const sourceManifest = async root => {
-            const revision = execFileSync("git", ["-C", root, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
-            const status = execFileSync("git", ["-C", root, "status", "--porcelain", "--untracked-files=no"], { encoding: "utf8" }).trim();
-            assert.equal(status, "", `${root} checkout is dirty before measurement`);
-            const files = execFileSync("git", ["-C", root, "ls-files", "-z"], { encoding: "utf8" }).split("\0").filter(Boolean).sort();
-            return { revision, status, trackedFiles: files.length, files: await Promise.all(files.map(async file => ({ path: file, sha256: await hashFile(path.join(root, file)) }))) };
-          };
+          const { BENCHMARK_SOURCE_MANIFEST_SCHEMA_VERSION, captureBenchmarkSourceManifest } =
+            await import("./scripts/lib/benchmark-source-manifest.mjs");
           assert.equal(execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(), process.env.EXPECTED_BENCHMARK_SHA);
           assert.equal(execFileSync("git", ["-C", baselineRoot, "rev-parse", "HEAD"], { encoding: "utf8" }).trim(), process.env.MCP_BASELINE_REVISION);
           assert.equal(process.version, "v24.19.0");
@@ -205,12 +198,21 @@ jobs:
             workflowRun: process.env.GITHUB_RUN_ID ?? null,
             workflowAttempt: process.env.GITHUB_RUN_ATTEMPT ?? null,
           };
-          const source = { schemaVersion: 1, current: await sourceManifest(currentRoot), baseline: await sourceManifest(baselineRoot) };
+          const source = {
+            schemaVersion: BENCHMARK_SOURCE_MANIFEST_SCHEMA_VERSION,
+            current: await captureBenchmarkSourceManifest(currentRoot),
+            baseline: await captureBenchmarkSourceManifest(baselineRoot),
+          };
+          assert.equal(source.current.status, "", "current checkout is dirty before measurement");
+          assert.equal(source.baseline.status, "", "baseline checkout is dirty before measurement");
           await mkdir(process.env.MCP_RESOURCE_OUTPUT, { recursive: true });
           await writeFile(path.join(process.env.MCP_RESOURCE_OUTPUT, "paired-case.json"), `${JSON.stringify(pairedCase, null, 2)}\n`, { flag: "wx" });
           await writeFile(path.join(process.env.MCP_RESOURCE_OUTPUT, "runtime.json"), `${JSON.stringify(runtime, null, 2)}\n`, { flag: "wx" });
           await writeFile(path.join(process.env.MCP_RESOURCE_OUTPUT, "source-manifest.json"), `${JSON.stringify(source, null, 2)}\n`, { flag: "wx" });
           await writeFile(path.join(process.env.MCP_RESOURCE_OUTPUT, "source-before.json"), `${JSON.stringify(source, null, 2)}\n`, { flag: "wx" });
+          for (const [label, entry] of Object.entries({ current: source.current, baseline: source.baseline })) {
+            assert.deepEqual(entry.untrackedEvidence?.unexpectedPaths, [], `${label} checkout has unexpected untracked paths: ${JSON.stringify(entry.untrackedEvidence?.unexpectedPaths ?? null)}`);
+          }
           NODE
           node scripts/ci/observe-benchmark-runner.mjs --phase=before --temp-prefix=forgeloop-mcp-benchmark- --output="$MCP_RESOURCE_OUTPUT/runner-before.json"
 
@@ -269,24 +271,19 @@ jobs:
           if [ -f "$MCP_RESOURCE_OUTPUT/source-before.json" ] && [ -d current/.git ] && [ -d legacy/.git ] && command -v node >/dev/null 2>&1; then
             node --input-type=module <<'NODE'
           import assert from "node:assert/strict";
-          import { createHash } from "node:crypto";
-          import { execFileSync } from "node:child_process";
           import { readFile, writeFile } from "node:fs/promises";
           import path from "node:path";
 
-          const root = "current";
-          const hashFile = async filename => createHash("sha256").update(await readFile(filename)).digest("hex");
-          const manifest = async repo => {
-            const revision = execFileSync("git", ["-C", repo, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
-            const status = execFileSync("git", ["-C", repo, "status", "--porcelain", "--untracked-files=no"], { encoding: "utf8" }).trim();
-            assert.equal(status, "", `${repo} checkout is dirty after measurement`);
-            const files = execFileSync("git", ["-C", repo, "ls-files", "-z"], { encoding: "utf8" }).split("\0").filter(Boolean).sort();
-            return { revision, status, trackedFiles: files.length, files: await Promise.all(files.map(async file => ({ path: file, sha256: await hashFile(path.join(repo, file)) }))) };
-          };
+          const { BENCHMARK_SOURCE_MANIFEST_SCHEMA_VERSION, captureBenchmarkSourceManifest } =
+            await import("./current/scripts/lib/benchmark-source-manifest.mjs");
           const before = JSON.parse(await readFile(path.join(process.env.MCP_RESOURCE_OUTPUT, "source-before.json"), "utf8"));
-          const after = { schemaVersion: 1, current: await manifest(root), baseline: await manifest("legacy") };
+          const after = {
+            schemaVersion: BENCHMARK_SOURCE_MANIFEST_SCHEMA_VERSION,
+            current: await captureBenchmarkSourceManifest("current"),
+            baseline: await captureBenchmarkSourceManifest("legacy"),
+          };
           await writeFile(path.join(process.env.MCP_RESOURCE_OUTPUT, "source-after.json"), `${JSON.stringify(after, null, 2)}\n`, { flag: "wx" });
-          assert.deepEqual(after, before, "Tracked current or baseline source changed during measurement");
+          assert.deepEqual(after, before, "Current or baseline source changed during measurement");
           NODE
           source_status=$?
           else
