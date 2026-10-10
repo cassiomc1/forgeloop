@@ -101,3 +101,23 @@ for (const [command, event, input] of [
     await noMirrors(target);
   } finally { db?.close(); await removeTempTree(target); }
 });
+
+test("public task creation rolls back descriptor claims and initial event together", async () => {
+  await fixture(async ({ target, db }) => {
+    const taskId = "new-atomic-task";
+    const invoke = () => executeForgeLoopCommand({ command: "task-create", projectPath: target, input: { taskId, claims: ["independent-atomic-task"] } });
+    const before = snapshot(db);
+    db.exec("CREATE TRIGGER task_create_fault BEFORE INSERT ON events WHEN NEW.event_type='TASK_RECEIVED' BEGIN SELECT RAISE(ABORT, 'PUBLIC_TASK_CREATE_FAULT'); END");
+    try {
+      const failed = await invoke();
+      assert.equal(failed.ok, false, JSON.stringify(failed));
+      assert.match(JSON.stringify(failed.error), /PUBLIC_TASK_CREATE_FAULT/);
+      assert.deepEqual(snapshot(db), before);
+    } finally { db.exec("DROP TRIGGER task_create_fault"); }
+    const retried = await invoke();
+    assert.equal(retried.ok, true, JSON.stringify(retried));
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM tasks WHERE task_id=?").get(taskId).n, 1);
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM events WHERE task_id=? AND event_type='TASK_RECEIVED'").get(taskId).n, 1);
+    await noMirrors(target);
+  });
+});
