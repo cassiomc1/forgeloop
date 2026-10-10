@@ -247,6 +247,19 @@ async function loadRequired(readArtifact, errorCode, errorMessage, artifacts, er
   }
 }
 
+async function loadCompletionActions(target, packageRoot, taskId, errors) {
+  const { evaluateRequiredActionReadiness } = await import("./action-readiness.js");
+  const evidence = taskId ? await loadRequired(async () => ({
+    actions: await listActions(target, { packageRoot, taskId }),
+    readiness: await evaluateRequiredActionReadiness({ target, packageRoot, taskId }),
+  }), "E_ACTION_INVALID", "Durable action evidence is not available", [taskArtifactPath(taskId, "actions")], errors) : null;
+  return {
+    actions: evidence?.actions ?? [],
+    readiness: evidence?.readiness
+      ?? { total: 0, satisfied: 0, unresolved: 0, ambiguous: 0, failed: 0, untrusted: 0, actions: [] },
+  };
+}
+
 function publicationStatus(receipt) {
   if (receipt.publicationStatus) return receipt.publicationStatus;
   if (receipt.publication?.deployed) return "deployed";
@@ -606,14 +619,7 @@ async function evaluateSelectedCompletion({
   // Completion truth consumes the canonical action-readiness projection, not
   // raw state labels: a forged VERIFIED label can never satisfy a required
   // action (INV-VERIFY-02).
-  const { evaluateRequiredActionReadiness } = await import("./action-readiness.js");
-  const actionEvidence = actionTaskId ? await loadRequired(async () => ({
-    actions: await listActions(target, { packageRoot, taskId: actionTaskId }),
-    readiness: await evaluateRequiredActionReadiness({ target, packageRoot, taskId: actionTaskId }),
-  }), "E_ACTION_INVALID", "Durable action evidence is not available", [taskArtifactPath(actionTaskId, "actions")], errors) : null;
-  const durableActions = actionEvidence?.actions ?? [];
-  const requiredActionReadiness = actionEvidence?.readiness
-    ?? { total: 0, satisfied: 0, unresolved: 0, ambiguous: 0, failed: 0, untrusted: 0, actions: [] };
+  const { actions: durableActions, readiness: requiredActionReadiness } = await loadCompletionActions(target, packageRoot, actionTaskId, errors);
   for (const readiness of requiredActionReadiness.actions) {
     if (readiness.status === "SATISFIED") continue;
     const action = durableActions.find((candidate) => candidate.actionId === readiness.actionId);

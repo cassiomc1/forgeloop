@@ -1,0 +1,20 @@
+{
+  "kind": "COMPLETION_ACTION_EVIDENCE_COMPLEXITY_CORRECTION",
+  "parentRevision": "ee76a9a",
+  "sourceSha256": "1dd588c599936fe7cc85f358b727d52c88af441c360cabeca39c0efb55d28fbc",
+  "behavior": "Private loader preserves canonical action/readiness order, structured errors and empty fallback; validator/gate unchanged",
+  "node": "v24.19.0",
+  "focused": {
+    "tests": 97,
+    "passed": 97,
+    "failed": 0,
+    "skipped": 0
+  },
+  "complexityExitCode": 0,
+  "verifyFastExitCode": 0,
+  "fullPrepushCurrentSource": false,
+  "limits": [
+    "Full prepush rerun required",
+    "Inclusive LOC gate remains unmet"
+  ]
+}
