@@ -28,6 +28,19 @@
       "src/storage/maintenance.js": "09cd7e4cdabc817fb2735480345d422ec09ff9b9f7c474eba1758df3087e0714",
       "src/storage/maintenance-handoff.js": "c6cdd755e4f37e4b9c491f0bb4018c9e50517cd0751abf8cba7825ad12c8142e"
     },
-    "hostedRecheck": "pending"
+    "hostedRecheck": {
+      "runId": 38049482999,
+      "sourceRevision": "cf64e8559051b8a9b14853f86c4e91485c8cd9fe",
+      "conclusion": "success",
+      "node": "24.21.0",
+      "tests": 37,
+      "passed": 37,
+      "failed": 0,
+      "skipped": 0,
+      "includes": "C1 admission resolution and every replacement preparation checkpoint",
+      "fullSuiteExecuted": false,
+      "retainedLog": "benchmarks/storage-sqlite/windows-storage-correction-cf64e85.log.gz",
+      "logSha256": "040a94f1af16bbe81c67d5dec1c99808f97251ed867d7502414afc973fdb2942"
+    }
   }
 }
