@@ -1,3 +1,4 @@
+import { createTaskDescriptor } from "../src/core/task-descriptor.js";
 import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import test from "node:test";
@@ -13,7 +14,7 @@ test("portable exports cannot recreate operational aliases in a native project",
   const db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
   const taskId = "export-boundary";
   try {
-    upsertTask(db, { taskId, descriptor: { schemaVersion: 1, taskId, writeClaims: [] } });
+    upsertTask(db, { taskId, descriptor: createTaskDescriptor({ taskId, writeClaims: [] }) });
     const alias = path.join(root, "native-alias");
     await symlink(target, alias, process.platform === "win32" ? "junction" : "dir");
     const before = await readdir(path.join(target, ".forgeloop"));
@@ -44,7 +45,7 @@ for (const evidence of ["state.sqlite", "state.sqlite-wal", "state.sqlite-shm", 
     const destination = path.join(root, "destination");
     const bytes = Buffer.from("retained authority evidence");
     try {
-      upsertTask(db, { taskId: "retained", descriptor: { schemaVersion: 1, taskId: "retained", writeClaims: [] } });
+      upsertTask(db, { taskId: "retained", descriptor: createTaskDescriptor({ taskId: "retained", writeClaims: [] }) });
       await mkdir(path.join(destination, ".forgeloop"), { recursive: true });
       const filename = path.join(destination, ".forgeloop", evidence);
       await writeFile(filename, bytes);

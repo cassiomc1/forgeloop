@@ -119,11 +119,11 @@ test("snapshot includes committed WAL data and remains isolated from independent
     let writer;
     try {
       db.exec("PRAGMA wal_autocheckpoint = 0");
-      upsertTask(db, { taskId: "snapshot-task", descriptor: makeDescriptor("snapshot-task"), state: { phase: "PLANNED", revision: 1 } });
+      upsertTask(db, { taskId: "snapshot-task", descriptor: makeDescriptor("snapshot-task"), state: { taskId: "snapshot-task", phase: "PLANNED", revision: 1 } });
       writer = openStore(directory);
       await withStorageSnapshot(db, async snapshot => {
         assert.equal(findTaskById(snapshot, "snapshot-task").state.revision, 1);
-        upsertTask(writer, { taskId: "snapshot-task", descriptor: makeDescriptor("snapshot-task"), state: { phase: "EXECUTING", revision: 2 } });
+        upsertTask(writer, { taskId: "snapshot-task", descriptor: makeDescriptor("snapshot-task"), state: { taskId: "snapshot-task", phase: "EXECUTING", revision: 2 } });
         assert.equal(findTaskById(db, "snapshot-task").state.revision, 2);
         assert.equal(findTaskById(snapshot, "snapshot-task").state.revision, 1);
         assert.throws(() => snapshot.exec("DELETE FROM tasks"), /readonly/i);
@@ -265,7 +265,7 @@ test("opening a store applies WAL, foreign keys, and the schema version", async 
 test("reopening an existing store preserves its rows", async () => {
   await withTempDir(async (directory) => {
     const first = openStore(directory);
-    upsertTask(first, { taskId: "t1", descriptor: makeDescriptor("t1"), state: { phase: "RECEIVED", revision: 1 } });
+    upsertTask(first, { taskId: "t1", descriptor: makeDescriptor("t1"), state: { taskId: "t1", phase: "RECEIVED", revision: 1 } });
     first.close();
 
     const second = openStore(directory);
@@ -285,7 +285,7 @@ test("task lookup uses the primary key rather than a project-wide scan", async (
         upsertTask(db, {
           taskId: `task-${index}`,
           descriptor: makeDescriptor(`task-${index}`),
-          state: { phase: index % 2 === 0 ? "RECEIVED" : "EXECUTING", revision: 1 },
+          state: { taskId: `task-${index}`, phase: index % 2 === 0 ? "RECEIVED" : "EXECUTING", revision: 1 },
         });
       }
       const found = findTaskById(db, "task-7");
@@ -306,9 +306,9 @@ test("optimistic concurrency rejects a stale expected revision", async () => {
   await withTempDir(async (directory) => {
     const db = openStore(directory);
     try {
-      upsertTask(db, { taskId: "t1", descriptor: makeDescriptor("t1"), state: { phase: "RECEIVED", revision: 1 } });
-      const accepted = mutateTaskState(db, { taskId: "t1", expectedRevision: 1, state: { phase: "EXECUTING", revision: 2 } });
-      const rejected = mutateTaskState(db, { taskId: "t1", expectedRevision: 1, state: { phase: "VERIFYING", revision: 3 } });
+      upsertTask(db, { taskId: "t1", descriptor: makeDescriptor("t1"), state: { taskId: "t1", phase: "RECEIVED", revision: 1 } });
+      const accepted = mutateTaskState(db, { taskId: "t1", expectedRevision: 1, state: { taskId: "t1", phase: "EXECUTING", revision: 2 } });
+      const rejected = mutateTaskState(db, { taskId: "t1", expectedRevision: 1, state: { taskId: "t1", phase: "VERIFYING", revision: 3 } });
       assert.equal(accepted, true);
       assert.equal(rejected, false);
       assert.equal(findTaskById(db, "t1").phase, "EXECUTING");
@@ -415,11 +415,11 @@ test("a state mutation and its audit event commit together", async () => {
   await withTempDir(async (directory) => {
     const db = openStore(directory);
     try {
-      upsertTask(db, { taskId: "t1", descriptor: makeDescriptor("t1"), state: { phase: "RECEIVED", revision: 1 } });
+      upsertTask(db, { taskId: "t1", descriptor: makeDescriptor("t1"), state: { taskId: "t1", phase: "RECEIVED", revision: 1 } });
       const applied = commitTaskMutation(db, {
         taskId: "t1",
         expectedRevision: 1,
-        state: { phase: "EXECUTING", revision: 2 },
+        state: { taskId: "t1", phase: "EXECUTING", revision: 2 },
         event: makeEvent(1, "t1"),
       });
       assert.equal(applied, true);
@@ -430,7 +430,7 @@ test("a state mutation and its audit event commit together", async () => {
       const conflicted = commitTaskMutation(db, {
         taskId: "t1",
         expectedRevision: 1,
-        state: { phase: "VERIFYING", revision: 3 },
+        state: { taskId: "t1", phase: "VERIFYING", revision: 3 },
         event: makeEvent(2, "t1"),
       });
       assert.equal(conflicted, false);

@@ -8,7 +8,7 @@ import { taskStorageKey } from "../core/task-identity.js";
 import { TASK_ARTIFACT_FILES } from "../core/task-paths.js";
 import { artifactByteDigest } from "./artifact-bytes.js";
 import { runInTransaction } from "./transaction.js";
-import { assertArtifactTaskIdentity, decodeIndexedEvent, decodeIndexedRecord, appendEvent, putArtifact, putAction, putApproval, putExecution, putSession, upsertTask } from "./repository.js";
+import { assertArtifactTaskIdentity, decodeIndexedEvent, decodeIndexedRecord, decodeIndexedTaskPayloads, appendEvent, putArtifact, putAction, putApproval, putExecution, putSession, upsertTask } from "./repository.js";
 import { resolveStoreReservationState } from "./task-guards.js";
 import { isOwnedStorageSnapshot } from "./snapshot.js";
 
@@ -126,21 +126,7 @@ class OperationalStore {
     if (immutable && this.snapshotTaskRows.has(taskKey)) return this.snapshotTaskRows.get(taskKey);
     // Cache the statement, never the row; detached observations rebind this.db to the live parent.
     const row = this.observe(`task:${taskKey}`, () => queryTaskRow(this.db, taskKey));
-    if (row) {
-      let descriptor;
-      let state;
-      try {
-        descriptor = JSON.parse(row.descriptor_json);
-        state = row.state_json === null ? null : JSON.parse(row.state_json);
-      } catch {
-        throw storageError("E_STORAGE_PAYLOAD_MISMATCH", "Canonical task payload is malformed JSON");
-      }
-      if (descriptor.taskId !== row.task_id || descriptor.taskKey !== row.task_key
-        || taskStorageKey(row.task_id) !== row.task_key || (state && state.taskId !== row.task_id)
-        || row.phase !== (state?.phase ?? null) || row.revision !== (state?.revision ?? null)) {
-        throw storageError("E_STORAGE_PAYLOAD_MISMATCH", "Indexed task fields disagree with canonical task payloads");
-      }
-    }
+    if (row) decodeIndexedTaskPayloads(row);
     // Reuse only successfully validated bytes from a live owned read-only copy.
     // Observation queries remain uncached and rebind to the parent at commit.
     if (immutable) {

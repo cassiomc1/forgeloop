@@ -38,14 +38,14 @@ export function assertArtifactTaskIdentity(payload, taskId) {
 
 /** Bind extracted record columns to their canonical payload before projection. */
 export function decodeIndexedRecord(row, kind, { requireTaskIdentity = false } = {}) {
-  const payload = decode(row.payload_json);
+  const payload = decode(row.payload_json) ?? {};
   assertArtifactTaskIdentity(payload, row.task_id);
   const fields = {
-    action: { action_id: payload?.actionId, idempotency_key: payload?.idempotencyKey ?? null, status: payload?.state ?? payload?.status ?? null, revision: payload?.revision ?? null },
-    approval: { approval_id: payload?.approvalId, action_id: payload?.actionId ?? null, decision: payload?.decision ?? null },
-    execution: { execution_id: payload?.executionId, check_id: payload?.checkId ?? null, verification_cycle: payload?.verificationCycle ?? null },
+    action: { action_id: payload.actionId, idempotency_key: payload.idempotencyKey ?? null, status: payload.state ?? payload.status ?? null, revision: payload.revision ?? null },
+    approval: { approval_id: payload.approvalId, action_id: payload.actionId ?? null, decision: payload.decision ?? null },
+    execution: { execution_id: payload.executionId, check_id: payload.checkId ?? null, verification_cycle: payload.verificationCycle ?? null },
   }[kind];
-  if (!fields || (requireTaskIdentity && payload?.taskId !== row.task_id)
+  if (!fields || (requireTaskIdentity && payload.taskId !== row.task_id)
     || Object.entries(fields).some(([column, value]) => row[column] !== value)) {
     throw Object.assign(new Error("Indexed operational fields disagree with their canonical payload"), { code: "E_STORAGE_PAYLOAD_MISMATCH" });
   }
@@ -86,6 +86,19 @@ export function upsertTask(db, { taskId, taskKey = taskStorageKey(taskId), descr
   );
 }
 
+/** Validate canonical task payloads against their indexed identity and state. */
+export function decodeIndexedTaskPayloads(row) {
+  const descriptor = decode(row.descriptor_json);
+  const state = decode(row.state_json);
+  if (!descriptor || descriptor.taskId !== row.task_id || descriptor.taskKey !== row.task_key
+    || taskStorageKey(row.task_id) !== row.task_key || (state && state.taskId !== row.task_id)
+    || row.phase !== (state?.phase ?? null) || row.revision !== (state?.revision ?? null)
+    || row.created_at !== (descriptor.createdAt ?? null)) {
+    throw Object.assign(new Error("Indexed task fields disagree with canonical task payloads"), { code: "E_STORAGE_PAYLOAD_MISMATCH" });
+  }
+  return { descriptor, state };
+}
+
 function hydrateTask(row) {
   if (!row) return null;
   return {
@@ -95,8 +108,7 @@ function hydrateTask(row) {
     revision: row.revision,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
-    descriptor: decode(row.descriptor_json),
-    state: decode(row.state_json),
+    ...decodeIndexedTaskPayloads(row),
   };
 }
 
