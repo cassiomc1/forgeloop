@@ -1,6 +1,20 @@
 # SQLite migration execution checkpoint
 
-Current production `eb3a318` validates task and record payload/index identity, projects validated task-list entries, and removes three unused private adapters. All 22 local prepush stages passed on frozen source: 2,976 core tests, 2,965 passed, zero failed, 11 skipped; all 3,131 tracked hashes remained unchanged. The earlier complexity failure at `68cbda9` is retained, and the corrected source passes complexity. Evidence: `benchmarks/storage-sqlite/prepush-eb3a318-success.json` and `benchmarks/storage-sqlite/task-export-projection-eb3a318.json`. Current platform and resource acceptance remain pending. The original complete plan, 25% inclusive LOC target, memory/performance gates and validator-backed closure remain required.
+## Active checkpoint — 2026-10-10
+
+Committed head at this checkpoint is `004de70`; typed-record and benchmark-fixture changes remain uncommitted and under review. The official task remains `CORRECTING`, with `nextAction=RECONCILE_CLOSURE`. This is partially verified implementation, not validator-backed completion.
+
+- Windows process-incarnation/adoption run `38055611163` on `8245dd7` passed 21 tests, zero failures or skips. It did not run the full Windows suite or benchmarks. Retained receipt: `benchmarks/storage-sqlite/windows-incarnation-8245dd7-result.json`.
+- Typed-record corrections restore canonical descriptor observations, clone staged values, preserve collection overlays and malformed-ID checks, and bind commit identities. The follow-up review found no new correctness blocker; shared dispatch consolidation is still in progress.
+- Focused checks passed: 87 snapshot/prepared-mutation tests, one competing idempotency insertion regression, and 20 consumer snapshot/export tests. Earlier draft `verify:fast` passed; changed source must receive fresh validation before acceptance. Evidence and execution limitations are retained in `benchmarks/storage-sqlite/typed-storage-review-progress-da3465d.json`.
+- The rich selected-task fixture passed validation-only native/portable task-list and history parity at 10 tasks and 1,000 selected-task events, including a 49-event public lifecycle/action/diagnosis/recovery prelude. No timings were collected. Synthetic bulk tasks remain a known acceptance gap; further fixture work is in progress.
+- The original MCP benchmark is terminal and handled. Later production still needs matched performance/resource evidence. No current whole-platform, whole-consumer, full-prepush, or performance acceptance is inferred from focused results.
+- The last pinned inclusive LOC analysis remains failing: 25,732 baseline, 32,480 current at `8be05f7`, unchanged ceiling 19,299. Later changes invalidate current-source bindings; all storage/import/export/maintenance code remains in scope and the 25% target remains required.
+- Complete original Phases 0–4, current platform/runtime/package and performance/LOC gates, and official `complete=VALID` before opening a PR. No PR, merge, publication, or live-state conversion has occurred.
+
+The entries below are historical checkpoints and must not be treated as current acceptance evidence.
+
+Historical production `eb3a318` validates task and record payload/index identity, projects validated task-list entries, and removes three unused private adapters. All 22 local prepush stages passed on frozen source: 2,976 core tests, 2,965 passed, zero failed, 11 skipped; all 3,131 tracked hashes remained unchanged. The earlier complexity failure at `68cbda9` is retained, and the corrected source passes complexity. Evidence: `benchmarks/storage-sqlite/prepush-eb3a318-success.json` and `benchmarks/storage-sqlite/task-export-projection-eb3a318.json`. Current platform and resource acceptance remain pending. The original complete plan, 25% inclusive LOC target, memory/performance gates and validator-backed closure remain required.
 
 The refreshed inclusive LOC inventory includes the projection enum explicitly and has zero unresolved membership: 25,732 baseline lines versus 32,406 current lines, against the unchanged 19,299 ceiling. The reduction gate fails by 13,107 lines. All storage/import/export/maintenance modules remain included. See `benchmarks/storage-sqlite/persistence-loc-eb3a318-closed.json`; older totals below are historical.
 
@@ -22,9 +36,9 @@ Existing 36 changed files were copied from the original checkout, with hashes pr
 
 Treat database contents, imports, paths, exported files, and external observations as untrusted. Reuse schema, hash-chain, artifact-binding, ownership, claim overlap, revision, and authority validators. SQLite constraints supplement domain validation. Bind SQL values and keep extension loading disabled. Verify WAL, foreign keys, FULL synchronization and bounded busy timeout. Never hold transactions across asynchronous external effects. Reject stale revisions, partial evidence and unsupported storage formats. Publish verified immutable attachments before committing references. Migration runs only explicitly, against disposable or specifically authorized projects, with quiesced writers, verified backups, checkpointed publication and interruption recovery. Exclude old writers after cutover. Preserve historical event hashes and legacy logical paths. No independent writable filesystem mirror in the new format.
 
-## Current verified state
+## Historical verified state
 
-Current production is `bd2000c`. The [consumer matrix](SQLITE_MIGRATION_MATRIX.md)
+The following retained evidence describes production at `bd2000c`. The [consumer matrix](SQLITE_MIGRATION_MATRIX.md)
 separates current boundaries from retained historical evidence. No original
 whole-plan definition-of-done item is inferred complete from these results.
 
