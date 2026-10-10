@@ -1,0 +1,46 @@
+{
+  "kind": "FROZEN_SOURCE_FULL_PREPUSH",
+  "sourceRevision": "288a56393013f9246ed4cc3300296c06ea6ce8c5",
+  "exitCode": 0,
+  "trackedFiles": 3139,
+  "trackedSourceUnchanged": true,
+  "stages": [
+    "coverage (513.3s)",
+    "critical-coverage:check (0.3s)",
+    "lint (4.2s)",
+    "dependency:policy (0.1s)",
+    "complexity:check (1.6s)",
+    "docs:check (2.6s)",
+    "completions:check (0.1s)",
+    "summary:check (0.1s)",
+    "changelog:check (0.2s)",
+    "repository-index:manifest (0.1s)",
+    "repository:hygiene (0.2s)",
+    "poc:evidence:verify (0.2s)",
+    "poc:evidence:test (1.5s)",
+    "mcp:test:clean (7.4s)",
+    "mcp:pack:check (2.9s)",
+    "pack:check (1.7s)",
+    "python-unittest (1.0s)",
+    "markdown-self-test (0.1s)",
+    "markdown-validator (0.8s)",
+    "loop-self-test (0.2s)",
+    "loop-validator (0.1s)",
+    "secret-scan (11.2s)"
+  ],
+  "core": {
+    "total": 2979,
+    "passed": 2968,
+    "failed": 0,
+    "skipped": 11
+  },
+  "log": {
+    "path": "/Users/cassio/.codex/verification/prepush-288a563.log",
+    "sha256": "6fc24e6bbccc823a992b81e80cd21ca48b2db0e5268829c3ba7eaa4c0070e16b"
+  },
+  "limitations": [
+    "Local Node24.19 only.",
+    "Known policy-snapshot legacy authority/symlink defects were reproduced externally after this source froze; green suite does not close them.",
+    "Current performance,memory,inclusiveLOC and validator closure remain open."
+  ]
+}

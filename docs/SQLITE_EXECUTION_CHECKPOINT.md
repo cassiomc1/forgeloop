@@ -6,6 +6,8 @@ The refreshed inclusive LOC inventory includes the projection enum explicitly an
 
 Nested pure-reader scope reuse is now implemented: only a module-owned immutable snapshot with no future commit observations reuses its active operational scope. Writable ancestors retain separate observation scopes. Seventeen focused and nine public-reader tests, fast verification and complexity pass. Memory benefit is unmeasured, and existing full-prepush/platform evidence predates this production change. See `benchmarks/storage-sqlite/nested-read-scope-reuse.json`.
 
+Canonical policy snapshot reads now reject unselected legacy authority and linked paths through the shared artifact reader. Two red controls reproduced the defects; 70 focused tests, fast verification and complexity pass after correction. Missing snapshots remain null and portable inspection preserves bytes. Full prepush `288a563` passed all 22 stages (2,968 core passed, zero failed, 11 skipped) before this correction. Refreshed LOC membership is closed but the original reduction target still fails. See `benchmarks/storage-sqlite/policy-snapshot-authority-correction.json` and `benchmarks/storage-sqlite/prepush-288a563-success.json`.
+
 ## Scope and authority
 
 Implement the original `SQLITE_MIGRATION_PLAN.md` through Phases 0–4 and open a PR after all steps pass. Phase 5 optimizations require measured justification. No release publication or live-state conversion is authorized or performed.
