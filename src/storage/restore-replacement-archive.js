@@ -13,12 +13,11 @@ import { validateMigrationDatabase } from "./migration-validation.js";
 import { restorePathExists } from "./restore-layout.js";
 import { REPLACEMENT_ACTIVE_ROOTS, assertReplacementConnectionsClosed, assertActiveStorageReplacementUnchanged, verifyPreparedActiveStorageReplacement } from "./restore-replacement.js";
 import { adoptPreparedReplacementOwner } from "./restore-replacement-owner.js";
+import { inventoryPresent, subsetInventory } from "./migration-source-partition.js";
 
 const invalid = message => Object.assign(new Error(message), { code: "E_STORAGE_RESTORE_INVALID" });
 const hash = value => typeof value === "string" && /^[a-f0-9]{64}$/u.test(value);
 const belongs = (name, root) => name === root || name.startsWith(`${root}/`);
-const subset = (inventory, root) => ({ files: inventory.files.filter(file => belongs(file.path, root)), directories: inventory.directories.filter(name => belongs(name, root)) });
-const present = inventory => inventory.files.length > 0 || inventory.directories.length > 0;
 
 async function incomingSnapshot(target, operationId, packageRoot) {
   const root = await assertSafePath(target, `.forgeloop/storage-restores/${operationId}/snapshot`);
@@ -51,12 +50,12 @@ export async function inspectActiveStorageReplacementPartition(target, operation
   const archived = await inventoryArchive(archive);
   const roots = [];
   for (const root of REPLACEMENT_ACTIVE_ROOTS) {
-    const original = subset(retained.manifest.inventory, root);
-    const current = subset(active, root);
-    const historical = subset(archived, root);
-    if (present(current) && present(historical)) throw invalid(`Outgoing root exists in both active and archived locations: ${root}`);
-    if (canonicalFingerprint(present(current) ? current : historical) !== canonicalFingerprint(original)) throw invalid(`Outgoing replacement membership or bytes differ: ${root}`);
-    roots.push({ path: root, location: present(current) ? "ACTIVE" : present(historical) ? "ARCHIVED" : "ABSENT" });
+    const original = subsetInventory(retained.manifest.inventory, root);
+    const current = subsetInventory(active, root);
+    const historical = subsetInventory(archived, root);
+    if (inventoryPresent(current) && inventoryPresent(historical)) throw invalid(`Outgoing root exists in both active and archived locations: ${root}`);
+    if (canonicalFingerprint(inventoryPresent(current) ? current : historical) !== canonicalFingerprint(original)) throw invalid(`Outgoing replacement membership or bytes differ: ${root}`);
+    roots.push({ path: root, location: inventoryPresent(current) ? "ACTIVE" : inventoryPresent(historical) ? "ARCHIVED" : "ABSENT" });
   }
   if (!retained.manifest.inventory.files.some(file => file.path === ".forgeloop/state.sqlite")
     || !retained.manifest.inventory.files.some(file => file.path === ".forgeloop/storage-version.json")) throw invalid("Outgoing replacement inventory omits database or marker authority");
@@ -84,7 +83,7 @@ export async function verifyRetainedStorageReplacementArchive(target, operationI
   const archive = await assertSafePath(retained.root, "archive");
   const inventory = await inventoryArchive(archive);
   for (const root of REPLACEMENT_ACTIVE_ROOTS) {
-    if (canonicalFingerprint(subset(inventory, root)) !== canonicalFingerprint(subset(retained.manifest.inventory, root))) throw invalid(`Retained outgoing membership or bytes differ: ${root}`);
+    if (canonicalFingerprint(subsetInventory(inventory, root)) !== canonicalFingerprint(subsetInventory(retained.manifest.inventory, root))) throw invalid(`Retained outgoing membership or bytes differ: ${root}`);
   }
   const incoming = await incomingSnapshot(target, operationId, packageRoot);
   if (incoming.fingerprint !== incomingFingerprint) throw invalid("Incoming replacement snapshot differs from publication intent");

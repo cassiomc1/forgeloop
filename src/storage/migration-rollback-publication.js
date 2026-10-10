@@ -10,6 +10,7 @@ import { openStorageDatabase } from "./connection.js";
 import { logicalSnapshot } from "./migration-candidate.js";
 import { withVerifiedProjectStorageBackup } from "./project-backup.js";
 import { readStorageMetadataJson } from "./metadata-json.js";
+import { inventoryPresent, subsetInventory } from "./migration-source-partition.js";
 
 const NATIVE_ROOTS=[".forgeloop/state.sqlite",".forgeloop/storage-version.json",".forgeloop/attachments"];
 function invalid(message){return Object.assign(new Error(message),{code:"E_STORAGE_SOURCE_ROLLBACK_INVALID"});}
@@ -80,15 +81,13 @@ async function continuePublication(target,destination,root,journal){
  return verifyPublishedMigrationSourceRollback(target,destination);
 }
 
-function subset(inventory,root){const matches=name=>name === root || name.startsWith(`${root}/`);return {files:inventory.files.filter(file=>matches(file.path)),directories:inventory.directories.filter(matches)};}
-function present(inventory){return inventory.files.length || inventory.directories.length;}
 async function verifyNativePartition(target,native,journal){
  const active=await inventoryStorageRoots(target,NATIVE_ROOTS);
  const retained=await inventoryStorageRoots(native,NATIVE_ROOTS);
  for(const root of NATIVE_ROOTS){
-  const a=subset(active,root),r=subset(retained,root),expected=subset(journal.nativeInventory,root);
-  if(present(a) && present(r))throw invalid(`Native root duplicated during rollback: ${root}`);
-  if(canonicalFingerprint(present(a)?a:r) !== canonicalFingerprint(expected))throw invalid(`Native root bytes changed during rollback: ${root}`);
+  const a=subsetInventory(active,root),r=subsetInventory(retained,root),expected=subsetInventory(journal.nativeInventory,root);
+  if(inventoryPresent(a) && inventoryPresent(r))throw invalid(`Native root duplicated during rollback: ${root}`);
+  if(canonicalFingerprint(inventoryPresent(a)?a:r) !== canonicalFingerprint(expected))throw invalid(`Native root bytes changed during rollback: ${root}`);
  }
 }
 async function verifySourcePartition(target,destination,source){
@@ -96,9 +95,9 @@ async function verifySourcePartition(target,destination,source){
  const expected={files:captured.manifest.files,directories:captured.manifest.directories};
  const active=await inventoryLegacySourceLayout(target),staged=await inventoryLegacyArchiveLayout(source);
  for(const root of LEGACY_SOURCE_ROOTS){
-  const a=subset(active,root),s=subset(staged,root);
-  if(present(a) && present(s))throw invalid(`Source root duplicated during rollback: ${root}`);
-  if(canonicalFingerprint(present(a)?a:s) !== canonicalFingerprint(subset(expected,root)))throw invalid(`Source root bytes changed during rollback: ${root}`);
+  const a=subsetInventory(active,root),s=subsetInventory(staged,root);
+  if(inventoryPresent(a) && inventoryPresent(s))throw invalid(`Source root duplicated during rollback: ${root}`);
+  if(canonicalFingerprint(inventoryPresent(a)?a:s) !== canonicalFingerprint(subsetInventory(expected,root)))throw invalid(`Source root bytes changed during rollback: ${root}`);
  }
 }
 

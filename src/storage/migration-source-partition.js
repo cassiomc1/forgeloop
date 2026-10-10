@@ -4,15 +4,15 @@ import { LEGACY_SOURCE_ROOTS, inventoryLegacyArchiveLayout, inventoryLegacySourc
 
 function invalid(message) { return Object.assign(new Error(message), { code: "E_STORAGE_MIGRATION_ARCHIVE_INVALID" }); }
 
-function subset(inventory, root) {
+export function subsetInventory(inventory, root) {
   const matches = name => name === root || name.startsWith(`${root}/`);
   return { files: inventory.files.filter(file => matches(file.path)), directories: inventory.directories.filter(matches) };
 }
 
-function present(inventory) { return inventory.files.length > 0 || inventory.directories.length > 0; }
+export function inventoryPresent(inventory) { return inventory.files.length > 0 || inventory.directories.length > 0; }
 
 function assertAttachmentGrowth(root, original, active, archived, signatureObjects, allowAttachmentGrowth) {
-  if (present(archived)) throw invalid("Published attachment objects must remain active");
+  if (inventoryPresent(archived)) throw invalid("Published attachment objects must remain active");
   const originalFiles = new Map(original.files.map(file => [file.path, file]));
   const activeFiles = new Map(active.files.map(file => [file.path, file]));
   for (const file of original.files) {
@@ -39,18 +39,18 @@ export async function inspectMigrationSourcePartition(target, destination, { all
   const signatureObjects = new Map(expected.files.filter(file => /^\.forgeloop\/task-state\/[a-f0-9]{64}\/attestations\/(?:history\/cycle-[1-9][0-9]*\/)?statement\.sigstore\.json$/u.test(file.path)).map(file => [file.sha256, file.size]));
   const roots = [];
   for (const root of LEGACY_SOURCE_ROOTS) {
-    const original = subset(expected, root);
-    const active = subset(activeInventory, root);
-    const archived = subset(archiveInventory, root);
+    const original = subsetInventory(expected, root);
+    const active = subsetInventory(activeInventory, root);
+    const archived = subsetInventory(archiveInventory, root);
     if ((allowAttachmentGrowth || allowSignatureObjectGrowth) && root === ".forgeloop/attachments") {
       assertAttachmentGrowth(root, original, active, archived, signatureObjects, allowAttachmentGrowth);
-      roots.push({ path: root, location: present(active) ? "ACTIVE" : "ABSENT" });
+      roots.push({ path: root, location: inventoryPresent(active) ? "ACTIVE" : "ABSENT" });
       continue;
     }
-    if (present(active) && present(archived)) throw invalid(`Source exists in both active and archived locations: ${root}`);
-    const actual = present(active) ? active : archived;
+    if (inventoryPresent(active) && inventoryPresent(archived)) throw invalid(`Source exists in both active and archived locations: ${root}`);
+    const actual = inventoryPresent(active) ? active : archived;
     if (canonicalFingerprint(actual) !== canonicalFingerprint(original)) throw invalid(`Source membership or bytes differ from retained capture: ${root}`);
-    roots.push({ path: root, location: present(active) ? "ACTIVE" : present(archived) ? "ARCHIVED" : "ABSENT" });
+    roots.push({ path: root, location: inventoryPresent(active) ? "ACTIVE" : inventoryPresent(archived) ? "ARCHIVED" : "ABSENT" });
   }
   return { archive, sourceInventoryFingerprint: canonicalFingerprint(expected), roots };
 }
