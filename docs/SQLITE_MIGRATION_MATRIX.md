@@ -29,12 +29,36 @@ also passed in the same full run; their execution receipt is
 Historical preparation records remain unchanged. These finite checks do not
 prove the complete sole-writer or whole-consumer acceptance requirement.
 
-Hosted Core, expanded Node compatibility, package smoke and full Windows runs
-passed on earlier `69a0aa0`; they predate the handoff and semantic-reuse changes.
-The full Windows run passed 2,959 of 2,984 tests, with zero failures and 25 skips.
-Skipped test names are retained and do not prove their individual controls. See
-`benchmarks/storage-sqlite/ci-69a0aa0-terminal-review.json` and
-`benchmarks/storage-sqlite/windows-69a0aa0-full-suite-log-review.json`.
+Hosted Core attempt 2, expanded Node compatibility, package smoke and full
+Windows checks passed on `c78f9f5`, covering unchanged production at `ec0d0a0`.
+The first Core attempt failed on external documentation link 503 responses and
+a timeout; the failed-job retry passed without altering checks. See
+`benchmarks/storage-sqlite/core-c78f9f5-attempt2-terminal-review.json`,
+`benchmarks/storage-sqlite/node-c78f9f5-expanded-terminal-review.json`,
+`benchmarks/storage-sqlite/windows-c78f9f5-full-terminal-review.json` and
+`benchmarks/storage-sqlite/package-c78f9f5-terminal-review.json`.
+These runs predate the newest maintained consumer acceptance controls.
+
+Eleven native task resources now have direct integration and MCP payload parity
+checks, including valid responsibility, attestation and structural quality.
+Four focused tests pass on Node 24.19 with the TypeSafe key removed. Five public
+lifecycle commands also pass injected event publication failures: every canonical
+table remains unchanged, the transaction closes, and retry appends one domain
+event followed by its operation-bound witness. See
+`benchmarks/storage-sqlite/task-resource-authority-9f398cc-review.json` and
+`benchmarks/storage-sqlite/public-lifecycle-657dcb0-review.json`.
+These controls do not prove every public writer or every fault point.
+
+Corrected old-client exclusion passed on Linux and Windows at `f38d626`, with
+strict raw JSON, source manifests, direct child exit and temporary-prefix cleanup.
+The Windows correction verifies pinned source bytes after restoring disposable
+fixture ACLs, rather than reading them while denied. See
+`benchmarks/storage-sqlite/old-client-f38d626-remote-terminal-review.json`.
+Linux public rollback at `54d2e3c` passed sixteen cases; retained case hashes,
+source manifest and recovery validation are reviewed in
+`benchmarks/storage-sqlite/public-rollback-54d2e3c-linux-review.json`.
+Windows job `114144940328` remains running as of this review. Direct child
+completion is not runner-wide cleanup evidence.
 
 Inclusive persistence LOC is 25,732 baseline versus 32,428 current lines, with
 zero unresolved membership and the unchanged ceiling of 19,299. All storage,
