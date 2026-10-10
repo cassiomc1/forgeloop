@@ -1,0 +1,32 @@
+{
+  "kind": "CURRENT_MACOS_MAINTENANCE_DRILL_REVIEW",
+  "sourceRevision": "de6adb80a1ec5c29dab964c41d47b73acb1ec3a0",
+  "rollbackCasesPassed": 16,
+  "oldClientExclusion": "PASS scoped disposable installation",
+  "sourceHashesUnchangedAfterBothDrills": 3172,
+  "rawRollbackCaseHashesVerified": true,
+  "parentExitCodes": [
+    0,
+    0
+  ],
+  "cleanupObservation": "Process inventory after completion showed no drill/worker processes; fixture finally blocks completed before parent exit.",
+  "evidence": [
+    {
+      "path": "/Users/cassio/.codex/verification/public-rollback-de6adb8-macos/terminal.json",
+      "sha256": "c70e5f783f13e3702ff41be4d195d59f7825ffc5f4f4cfc4bf8d0435b248fca8"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/public-rollback-de6adb8-macos/source-manifest.json",
+      "sha256": "96f79700e6e6d2cf19a147ce0f62ad908e052c4477f08033a5ff963fbc207857"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/old-client-de6adb8-macos.json",
+      "sha256": "0ed244e38494982d4072f9eb3bc2b91991ee9504f8d7dcfb1e50d164950db14f"
+    }
+  ],
+  "limits": [
+    "macOS only; current remote drills remain required.",
+    "No live migration, syscall power-loss, privileged bypass or uninventoried-client proof.",
+    "Performance, LOC, whole consumer and protocol acceptance remain open."
+  ]
+}
