@@ -1,0 +1,24 @@
+{
+  "kind": "WINDOWS_FOCUSED_STORAGE_CORRECTION",
+  "sourceRevision": "e7acc63ded4f865cd5c4bc5f57435e26c0010f0b",
+  "runId": 38043819343,
+  "jobId": 114189205850,
+  "conclusion": "success",
+  "nodeVersion": "24.21.0",
+  "tests": 37,
+  "passed": 37,
+  "failed": 0,
+  "skipped": 0,
+  "logSha256": "72016da35d05fc2c334392e1ab01cb9404bf9bd08e2e4e4c42075a36c3c925c9",
+  "coveredFiles": [
+    "tests/storage-database-admission.test.js",
+    "tests/storage-correction-io.test.js",
+    "tests/storage-evidence-checks.test.js",
+    "tests/storage-replacement-preparation.test.js"
+  ],
+  "limits": [
+    "Focused suite only; does not establish full current Windows acceptance.",
+    "Hosted post-job cleanup observed; physical host-wide quiescence not proven.",
+    "Closed-worker fixture passes; original failure mechanism remains a plausible timing diagnosis, not proven."
+  ]
+}

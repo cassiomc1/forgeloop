@@ -2,7 +2,7 @@
 
 ## Current Windows recovery fixture correction
 
-Windows full run `38042718400` refused a recorded maintenance owner before the requested adoption checkpoint. The fixture now registers both child exit and close before SIGKILL and waits for closed handles before recovery; production stale-owner refusal remains unchanged. Root focused recovery/parity checks pass 23 tests and `verify:fast` passes. Windows validation of the corrected fixture is still required; process-handle timing is a plausible diagnosis, not a confirmed platform fix. The rejected task-state extraction is removed, with three useful parity regressions retained against unchanged production.
+Windows full run `38042718400` refused a recorded maintenance owner before the requested adoption checkpoint. The fixture now registers both child exit and close before SIGKILL and waits for closed handles before recovery; production stale-owner refusal remains unchanged. Root focused recovery/parity checks pass 23 tests and `verify:fast` passes. Corrected hosted run `38043819343` at `e7acc63` passes all 37 focused tests on Windows / Node 24.21.0, including `REBUILD_ALLOCATED`. Full current Windows acceptance remains required; process-handle timing is a plausible diagnosis, not a confirmed platform fix. The rejected task-state extraction is removed, with three useful parity regressions retained against unchanged production.
 
 ## Current benchmark admission preparation
 
@@ -14,7 +14,7 @@ A new regression reproduced payload-only tampering in a private audit snapshot: 
 
 Full prepush at `03bbf94` passed with all 3,208 tracked hashes unchanged. Root focused validation passes 41 tests, including direct/typed/resumed-cursor tamper refusal and public `route`/`preflight` rollback with clean retry. The earlier full prepush and hosted checks are evidence for their recorded source only; they do not validate this production correction. The four API/MCP resource parity cases now belong to the MCP suite because core CI does not install MCP dependencies. Their clean packed-package suite passes 81 tests; corrected hosted checks, fresh performance measurements and validator closure remain pending.
 
-Windows strict identity hashing at iterator boundaries can require work proportional to database bytes for each row. This is an explicit unresolved performance risk, not an accepted optimization or a waived gate. The original inclusive 25% LOC target remains unchanged; its previous 32,428-line result predates this correction and must be regenerated.
+Windows strict identity hashing at iterator boundaries can require work proportional to database bytes for each row. This is an explicit unresolved performance risk, not an accepted optimization or a waived gate. The original inclusive 25% LOC target remains unchanged; the refreshed scope-bound audit at `e7acc63` counts 32,479 lines against baseline 25,732 and ceiling 19,299, with zero unresolved membership. The target fails by 13,180 lines. Only source bindings were refreshed: membership, exclusions, mandatory modules, baseline and threshold remain unchanged. The reviewed manifest, raw analyzer result and review receipt are retained as compressed JSON under `benchmarks/storage-sqlite/persistence-loc/`.
 
 ## Increment 1 — valid canonical seed and correction prerequisites
 
