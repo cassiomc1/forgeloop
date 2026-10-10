@@ -1,0 +1,327 @@
+{
+  "kind": "CORRECTED_REMOTE_OLD_CLIENT_TERMINAL_REVIEW",
+  "runId": 38028490918,
+  "sourceRevision": "f38d6263b32337db562243d889ac666585bf8340",
+  "hosts": [
+    {
+      "host": "windows",
+      "summary": {
+        "status": "PASS",
+        "sourceRevision": "f38d6263b32337db562243d889ac666585bf8340",
+        "parentExit": 0,
+        "preflightError": null,
+        "strictStdoutJson": true,
+        "sourceUnchanged": true,
+        "cleanup": "PASS",
+        "cleanupScope": [
+          "temporary entries matching the drill prefix",
+          "direct old-client drill process termination"
+        ],
+        "rawFiles": [
+          "stdout.json",
+          "stderr.log",
+          "parent-exit.json",
+          "source-before.json",
+          "source-after.json",
+          "cleanup.json"
+        ]
+      },
+      "drill": {
+        "status": "PASS",
+        "platform": "win32",
+        "runtime": "v24.19.0",
+        "pinnedLegacyHead": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+        "strategy": "disabled-legacy-installation",
+        "legacyIdentity": "S-1-5-21-474750824-3875185355-394250181-500",
+        "restoredSourceMatchesPinned": true,
+        "removedOldClientPrivileges": [
+          "SeBackupPrivilege",
+          "SeRestorePrivilege"
+        ],
+        "oldPreCutover": {
+          "taskId": "old-before-cutover",
+          "taskKey": "53aa44b2ab2f448484d1cca2273e310b6e2f4b2d5dbfd96c0ea06488869b1e1c",
+          "directory": ".forgeloop/task-state/53aa44b2ab2f448484d1cca2273e310b6e2f4b2d5dbfd96c0ea06488869b1e1c",
+          "descriptorPath": ".forgeloop/task-state/53aa44b2ab2f448484d1cca2273e310b6e2f4b2d5dbfd96c0ea06488869b1e1c/task.json",
+          "writeClaims": [],
+          "contractCopied": false,
+          "createdAt": "2026-10-10T05:46:32.357Z"
+        },
+        "oldLock": {
+          "pid": 7772,
+          "stoppedExit": 0,
+          "signal": null
+        },
+        "migrationWithoutQuiescence": "REFUSED",
+        "actualLegacyLock": "REFUSED_BUSY",
+        "deadMaintenanceOwner": {
+          "pid": 8096,
+          "ownerId": "d4b2b713-5d68-4f4b-aff0-cdc34c97ea60"
+        },
+        "oldAfterStop": {
+          "exit": 1,
+          "error": "node:internal/modules/cjs/loader:1520\r\n  throw err;\r\n  ^\r\n\r\nError: Cannot find module 'C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\forgeloop-old-client-drill-qBwVvH\\legacy-client\\src\\cli.js'\r\n    at Module._resolveFilename (node:internal/modules/cjs/loader:1517:15)\r\n    at wrapResolveFilename (node:internal/modules/cjs/loader:1071:27)\r\n    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1095:10)\r\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1122:12)\r\n    at Module._load (node:internal/modules/cjs/loader:1294:5)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\r\n    at node:internal/main/run_main_module:33:47 {\r\n  code: 'MODULE_NOT_FOUND',\r\n  requireStack: []\r\n}\r\n\r\nNode.js v24.19.0\r\n",
+          "proof": {
+            "deniedRead": "EPERM",
+            "sourceIdentityVerification": "after-fixture-acl-restoration",
+            "maskedMainEntrypoint": true
+          }
+        },
+        "oldAfterCutover": {
+          "exit": 1,
+          "error": "node:internal/modules/cjs/loader:1520\r\n  throw err;\r\n  ^\r\n\r\nError: Cannot find module 'C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\forgeloop-old-client-drill-qBwVvH\\legacy-client\\src\\cli.js'\r\n    at Module._resolveFilename (node:internal/modules/cjs/loader:1517:15)\r\n    at wrapResolveFilename (node:internal/modules/cjs/loader:1071:27)\r\n    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1095:10)\r\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1122:12)\r\n    at Module._load (node:internal/modules/cjs/loader:1294:5)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\r\n    at node:internal/main/run_main_module:33:47 {\r\n  code: 'MODULE_NOT_FOUND',\r\n  requireStack: []\r\n}\r\n\r\nNode.js v24.19.0\r\n",
+          "proof": {
+            "deniedRead": "EPERM",
+            "sourceIdentityVerification": "after-fixture-acl-restoration",
+            "maskedMainEntrypoint": true
+          }
+        },
+        "migration": {
+          "phase": "PUBLISHED",
+          "operationId": "f1f0f46d-d7c7-4548-b8a0-73124296c1d7",
+          "taskCount": 2,
+          "attachments": 0,
+          "currentStateVerified": true,
+          "restored": false,
+          "path": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\forgeloop-closure-ltpd9z\\.forgeloop\\state.sqlite",
+          "destination": "retained"
+        },
+        "terminalAfterNewWrite": {
+          "phase": "PUBLISHED",
+          "operationId": "f1f0f46d-d7c7-4548-b8a0-73124296c1d7",
+          "taskCount": 3,
+          "attachments": 0,
+          "currentStateVerified": true,
+          "restored": false
+        },
+        "sourceFiles": [
+          {
+            "path": ".forgeloop/.txn/txn-f748fabc-ee53-48c1-b3c9-06b796252f37/manifest.json",
+            "size": 979,
+            "sha256": "a045b40eaa2396dacd4610f06ecb8c49c224baf74cdb123e418ccff8b2662b5d"
+          },
+          {
+            "path": ".forgeloop/.txn/txn-f748fabc-ee53-48c1-b3c9-06b796252f37/stage/.forgeloop/task-state/53aa44b2ab2f448484d1cca2273e310b6e2f4b2d5dbfd96c0ea06488869b1e1c/events.ndjson.append",
+            "size": 674,
+            "sha256": "86fd590e5de86d9a7f904f0ad1b0c490ffe1c0b043b73bdd605196f85457c19e"
+          },
+          {
+            "path": ".forgeloop/task-state/53aa44b2ab2f448484d1cca2273e310b6e2f4b2d5dbfd96c0ea06488869b1e1c/events.ndjson",
+            "size": 674,
+            "sha256": "86fd590e5de86d9a7f904f0ad1b0c490ffe1c0b043b73bdd605196f85457c19e"
+          },
+          {
+            "path": ".forgeloop/task-state/53aa44b2ab2f448484d1cca2273e310b6e2f4b2d5dbfd96c0ea06488869b1e1c/events.ndjson.index.json",
+            "size": 106,
+            "sha256": "7f69f22f7d4baf2a43debb7e0dff658b9eefcf4848b57328d8f194e39a368c14"
+          },
+          {
+            "path": ".forgeloop/task-state/53aa44b2ab2f448484d1cca2273e310b6e2f4b2d5dbfd96c0ea06488869b1e1c/task.json",
+            "size": 271,
+            "sha256": "56f8a7be6189b89255f5433685763e49de05d7a0c91ccaf04aa4fdaef9c4330d"
+          },
+          {
+            "path": ".forgeloop/task-state/d64bc038a23c20c820d91a0b4ea357176fcb05f2ea113b1f10c5325b5f2c5d62/contract.json",
+            "size": 460,
+            "sha256": "962912d5a3e748e1e3cf3f39f2eb7b12507af5bed8741c03560adbd6204d507d"
+          },
+          {
+            "path": ".forgeloop/task-state/d64bc038a23c20c820d91a0b4ea357176fcb05f2ea113b1f10c5325b5f2c5d62/events.ndjson",
+            "size": 1744,
+            "sha256": "37f27c6d725c97626a19795f7466c14709e32838426598304df1847a2be3fafe"
+          },
+          {
+            "path": ".forgeloop/task-state/d64bc038a23c20c820d91a0b4ea357176fcb05f2ea113b1f10c5325b5f2c5d62/routing-result.json",
+            "size": 1852,
+            "sha256": "3b54b0afa7e47adeb38755f53471cb8dedace311d77159caa583ef78286125f4"
+          },
+          {
+            "path": ".forgeloop/task-state/d64bc038a23c20c820d91a0b4ea357176fcb05f2ea113b1f10c5325b5f2c5d62/task.json",
+            "size": 310,
+            "sha256": "103b36260572ef1c87b5b63b5ab9948f65fa4537c36e62a0e7df6e93e5ebd72a"
+          },
+          {
+            "path": ".forgeloop/task-state/d64bc038a23c20c820d91a0b4ea357176fcb05f2ea113b1f10c5325b5f2c5d62/work-state.json",
+            "size": 1021,
+            "sha256": "660afe1ecf3786d815a4d6ea1dd95167716d8e646ac072d8234b49ee52e197a0"
+          }
+        ],
+        "backupPreserved": true,
+        "nativeNewWrite": true,
+        "oldLayoutAbsent": true,
+        "limits": "Excludes only the inventoried identity/installation in this disposable fixture. Privileged permission changes and other installations are outside this proof. Production requires all launch sources inventoried, stopped and excluded before asserting writers-quiesced."
+      },
+      "hashes": {
+        "summary.json": "bc7ce491caab3aea08b9c1869fb5eb15039c2d8c77f8f45947dbfd881f45370a",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "runner-before.json": "a65a722c6a63c535212ecf649eff7f5b032f31a3abc893c691d68aad4702cc40",
+        "source-before.json": "474c54134e844d80fcf62f925501c9e160092520affe9fe8610a61306c7a7b15",
+        "source-after.json": "474c54134e844d80fcf62f925501c9e160092520affe9fe8610a61306c7a7b15",
+        "stdout-validation.json": "c523dae004f19d59ffe9b112fc22f06c44d9dd8cf706e611aa4bb42d886b427c",
+        "cleanup.json": "46ee5c7d9195fb87c95d9363bf8fff3f11268f2186ce8b7ff378bdc18466eb50",
+        "stdout.json": "af0f6cf537806b3b12eeb714cea9212ef3f7674321b48ebf1609d3a8bde1ba1d",
+        "source-comparison.json": "10e19cf05de3f8abbeea0510fd91c99ac7400dc68b84a14b76dd916ab4351c3b",
+        "parent-exit.json": "7454f2e542d7d1ecd403b3da012ba6c303097bddf16995e3f9852c53ef151790"
+      }
+    },
+    {
+      "host": "linux",
+      "summary": {
+        "status": "PASS",
+        "sourceRevision": "f38d6263b32337db562243d889ac666585bf8340",
+        "parentExit": 0,
+        "preflightError": null,
+        "strictStdoutJson": true,
+        "sourceUnchanged": true,
+        "cleanup": "PASS",
+        "cleanupScope": [
+          "temporary entries matching the drill prefix",
+          "direct old-client drill process termination"
+        ],
+        "rawFiles": [
+          "stdout.json",
+          "stderr.log",
+          "parent-exit.json",
+          "source-before.json",
+          "source-after.json",
+          "cleanup.json"
+        ]
+      },
+      "drill": {
+        "status": "PASS",
+        "platform": "linux",
+        "runtime": "v24.19.0",
+        "pinnedLegacyHead": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+        "strategy": "separate-data-owner",
+        "legacyIdentity": 65534,
+        "restoredSourceMatchesPinned": null,
+        "removedOldClientPrivileges": [],
+        "oldPreCutover": {
+          "taskId": "old-before-cutover",
+          "taskKey": "53aa44b2ab2f448484d1cca2273e310b6e2f4b2d5dbfd96c0ea06488869b1e1c",
+          "directory": ".forgeloop/task-state/53aa44b2ab2f448484d1cca2273e310b6e2f4b2d5dbfd96c0ea06488869b1e1c",
+          "descriptorPath": ".forgeloop/task-state/53aa44b2ab2f448484d1cca2273e310b6e2f4b2d5dbfd96c0ea06488869b1e1c/task.json",
+          "writeClaims": [],
+          "contractCopied": false,
+          "createdAt": "2026-10-10T05:44:25.683Z"
+        },
+        "oldLock": {
+          "pid": 812176,
+          "stoppedExit": 0,
+          "signal": null
+        },
+        "migrationWithoutQuiescence": "REFUSED",
+        "actualLegacyLock": "REFUSED_BUSY",
+        "deadMaintenanceOwner": {
+          "pid": 812187,
+          "ownerId": "55c883d0-7f1c-4f81-846c-8476c60138e0"
+        },
+        "oldAfterStop": {
+          "exit": 1,
+          "error": "{\n  \"status\": \"ERROR\",\n  \"ok\": false,\n  \"error\": {\n    \"code\": \"EACCES\",\n    \"message\": \"EACCES: permission denied, open '/tmp/forgeloop-closure-OLFUlq/.forgeloop/.claims.lock'\"\n  }\n}\n",
+          "proof": {
+            "directPermissionRefusal": true
+          }
+        },
+        "oldAfterCutover": {
+          "exit": 1,
+          "error": "{\n  \"status\": \"ERROR\",\n  \"ok\": false,\n  \"error\": {\n    \"code\": \"EACCES\",\n    \"message\": \"EACCES: permission denied, open '/tmp/forgeloop-closure-OLFUlq/.forgeloop/.claims.lock'\"\n  }\n}\n",
+          "proof": {
+            "directPermissionRefusal": true
+          }
+        },
+        "migration": {
+          "phase": "PUBLISHED",
+          "operationId": "9f65101a-7aeb-462e-82bd-7059639aa089",
+          "taskCount": 2,
+          "attachments": 0,
+          "currentStateVerified": true,
+          "restored": false,
+          "path": "/tmp/forgeloop-closure-OLFUlq/.forgeloop/state.sqlite",
+          "destination": "retained"
+        },
+        "terminalAfterNewWrite": {
+          "phase": "PUBLISHED",
+          "operationId": "9f65101a-7aeb-462e-82bd-7059639aa089",
+          "taskCount": 3,
+          "attachments": 0,
+          "currentStateVerified": true,
+          "restored": false
+        },
+        "sourceFiles": [
+          {
+            "path": ".forgeloop/.txn/txn-351b03de-76b4-40fc-9919-f30fe2f88c5c/manifest.json",
+            "size": 979,
+            "sha256": "bf6520b771aaa954344eaacf8dd00e936d3e79120c90d88fa5c92b3b7904a50b"
+          },
+          {
+            "path": ".forgeloop/.txn/txn-351b03de-76b4-40fc-9919-f30fe2f88c5c/stage/.forgeloop/task-state/53aa44b2ab2f448484d1cca2273e310b6e2f4b2d5dbfd96c0ea06488869b1e1c/events.ndjson.append",
+            "size": 674,
+            "sha256": "152486a0396e9d809754923a68eb0a6603ebe7d8d442addb0622a5e467c56259"
+          },
+          {
+            "path": ".forgeloop/task-state/53aa44b2ab2f448484d1cca2273e310b6e2f4b2d5dbfd96c0ea06488869b1e1c/events.ndjson",
+            "size": 674,
+            "sha256": "152486a0396e9d809754923a68eb0a6603ebe7d8d442addb0622a5e467c56259"
+          },
+          {
+            "path": ".forgeloop/task-state/53aa44b2ab2f448484d1cca2273e310b6e2f4b2d5dbfd96c0ea06488869b1e1c/events.ndjson.index.json",
+            "size": 106,
+            "sha256": "fed6014fe7971d1d053d1b6c4fb79e9de84b054cdca9d98385f8c01aa50910bb"
+          },
+          {
+            "path": ".forgeloop/task-state/53aa44b2ab2f448484d1cca2273e310b6e2f4b2d5dbfd96c0ea06488869b1e1c/task.json",
+            "size": 271,
+            "sha256": "4f5293606928f7222c8d8b186f730a409a0ab38a74e1ca4fa6b7fc877d9941ce"
+          },
+          {
+            "path": ".forgeloop/task-state/d64bc038a23c20c820d91a0b4ea357176fcb05f2ea113b1f10c5325b5f2c5d62/contract.json",
+            "size": 460,
+            "sha256": "962912d5a3e748e1e3cf3f39f2eb7b12507af5bed8741c03560adbd6204d507d"
+          },
+          {
+            "path": ".forgeloop/task-state/d64bc038a23c20c820d91a0b4ea357176fcb05f2ea113b1f10c5325b5f2c5d62/events.ndjson",
+            "size": 1744,
+            "sha256": "37f27c6d725c97626a19795f7466c14709e32838426598304df1847a2be3fafe"
+          },
+          {
+            "path": ".forgeloop/task-state/d64bc038a23c20c820d91a0b4ea357176fcb05f2ea113b1f10c5325b5f2c5d62/routing-result.json",
+            "size": 1852,
+            "sha256": "3b54b0afa7e47adeb38755f53471cb8dedace311d77159caa583ef78286125f4"
+          },
+          {
+            "path": ".forgeloop/task-state/d64bc038a23c20c820d91a0b4ea357176fcb05f2ea113b1f10c5325b5f2c5d62/task.json",
+            "size": 310,
+            "sha256": "103b36260572ef1c87b5b63b5ab9948f65fa4537c36e62a0e7df6e93e5ebd72a"
+          },
+          {
+            "path": ".forgeloop/task-state/d64bc038a23c20c820d91a0b4ea357176fcb05f2ea113b1f10c5325b5f2c5d62/work-state.json",
+            "size": 1021,
+            "sha256": "30a26cc0574cb6dc8e88b5d3048dbbee99da087bd8025720267ff5797c785173"
+          }
+        ],
+        "backupPreserved": true,
+        "nativeNewWrite": true,
+        "oldLayoutAbsent": true,
+        "limits": "Excludes only the inventoried identity/installation in this disposable fixture. Privileged permission changes and other installations are outside this proof. Production requires all launch sources inventoried, stopped and excluded before asserting writers-quiesced."
+      },
+      "hashes": {
+        "summary.json": "bc7ce491caab3aea08b9c1869fb5eb15039c2d8c77f8f45947dbfd881f45370a",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "runner-before.json": "5ead3d1be0cca65919b150899a36b43669ad08ece010efa5fbe843a1b432406a",
+        "source-before.json": "4072960417584a43c27cbb1aceb9b1ca35c099fa10be2d37f2073bdd602780d2",
+        "source-after.json": "4072960417584a43c27cbb1aceb9b1ca35c099fa10be2d37f2073bdd602780d2",
+        "stdout-validation.json": "c523dae004f19d59ffe9b112fc22f06c44d9dd8cf706e611aa4bb42d886b427c",
+        "cleanup.json": "46ee5c7d9195fb87c95d9363bf8fff3f11268f2186ce8b7ff378bdc18466eb50",
+        "stdout.json": "1455b52ccf06847fe1d45d6725525df718220fdba5f1ebaea666e412c221707f",
+        "source-comparison.json": "10e19cf05de3f8abbeea0510fd91c99ac7400dc68b84a14b76dd916ab4351c3b",
+        "parent-exit.json": "75e226e0bbd4879a00bc1bb745749a438958a08848f785320a783abc100cad71"
+      }
+    }
+  ],
+  "limits": [
+    "Disposable inventoried installation only; privileged and uninventoried clients excluded from proof.",
+    "Wrapper cleanup measures direct parent and temporary prefix only; runner-wide quiescence remains separate.",
+    "No full-plan, performance, LOC or validator acceptance."
+  ]
+}
