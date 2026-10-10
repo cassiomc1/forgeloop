@@ -6,6 +6,11 @@ name: Hosted Linux MCP resource matrix
 on:
   workflow_dispatch:
     inputs:
+      instrument_resources:
+        description: Collect instrumented resources; disable for a separate uninstrumented latency run
+        type: boolean
+        default: true
+        required: true
       fixture:
         description: Public fixture mode; synthetic is diagnostic only
         type: choice
@@ -72,6 +77,7 @@ jobs:
       MCP_SELECTED_EVENTS: ${{ inputs.selected_events }}
       MCP_BASELINE_REVISION: ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5
       MCP_REPEATS: "200"
+      MCP_RESOURCES: ${{ inputs.instrument_resources }}
       MCP_TASK_LIST_LIMIT: "100"
     defaults:
       run:
@@ -162,6 +168,7 @@ jobs:
           assert.equal(process.platform, "linux");
           assert.equal(process.arch, "x64");
           const operations = process.env.MCP_OPERATION === "both" ? ["taskListTool", "projectTasksResource"] : [process.env.MCP_OPERATION];
+          assert.ok(["true", "false"].includes(process.env.MCP_RESOURCES), "resource measurement mode is invalid");
           assert.ok(operations.every(value => ["taskListTool", "projectTasksResource"].includes(value)));
           const pairedCase = {
             schemaVersion: 1,
@@ -173,7 +180,7 @@ jobs:
             eventsPerTask: Number(process.env.MCP_EVENTS),
             selectedEvents: Number(process.env.MCP_SELECTED_EVENTS),
             repeats: Number(process.env.MCP_REPEATS),
-            resources: true,
+            resources: process.env.MCP_RESOURCES === "true",
             validationOnly: false,
             sampleMode: "timed",
             taskListLimit: Number(process.env.MCP_TASK_LIST_LIMIT),
@@ -222,7 +229,7 @@ jobs:
           args=(
             scripts/benchmark-storage-mcp.mjs
             "--baseline-root=../legacy"
-            "--resources=true"
+            "--resources=$MCP_RESOURCES"
             "--task-list-limit=$MCP_TASK_LIST_LIMIT"
             "--sizes=$MCP_SIZE"
             "--repeats=$MCP_REPEATS"
