@@ -200,6 +200,36 @@ export async function buildPublicScaleTaskFixture({
   });
 }
 
+/** Initialize a state/event workload through the public contract bootstrap. */
+export async function buildPublicStateEventLane({ target, packageRoot = getPackageRoot(), taskId, eventCount, claims = [] } = {}) {
+  assert.ok(Number.isInteger(eventCount) && eventCount >= 2);
+  await runTaskCreate({ target, packageRoot, taskId, claims });
+  await runDiscover({ target, packageRoot, taskId });
+  const contract = createContract({
+    taskId,
+    objective: "Measure canonical state and observation event commits.",
+    deliverables: ["benchmark-state-event"],
+    constraints: [], risks: [], stopConditions: [], unresolvedDecisions: [], sourceRefs: [],
+    verification: [{ id: "state-event-parity", text: "State revisions and event hashes retain matched parity.", type: "VERIFICATION" }],
+    successCriteria: ["Canonical state and ledger remain coherent."],
+  });
+  const contractFile = `${taskId}-benchmark-contract.json`;
+  await writeFile(path.join(target, contractFile), JSON.stringify(contract), "utf8");
+  await runContractCreate({ target, packageRoot, taskId, contractFile, semanticProvider: testSemanticProvider });
+  const prelude = await validateEventLedger(target, packageRoot, { taskId });
+  assert.equal(prelude.valid, true, JSON.stringify(prelude.errors));
+  const state = await readWorkState(target, { packageRoot, taskId });
+  assert.ok(state, "public contract bootstrap must initialize work state");
+  assert.deepEqual(validateStateLedgerCoherence(state, prelude.events), []);
+  const { ledger } = await appendCanonicalObservationEvents({
+    target, packageRoot, taskId, eventCount,
+    expectedInitialEventCount: prelude.events.length,
+    pathPrefix: "src/benchmark-state-event/input.js",
+  });
+  assert.deepEqual(validateStateLedgerCoherence(state, ledger), []);
+  return { taskId, state, ledger, preludeEvents: prelude.events.length, claims };
+}
+
 /** Build a complete public task population without direct storage seeding. */
 export async function buildPublicTaskDataset({
   target,

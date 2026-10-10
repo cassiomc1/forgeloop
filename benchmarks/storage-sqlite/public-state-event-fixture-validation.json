@@ -1,0 +1,87 @@
+{
+  "kind": "PUBLIC_STATE_EVENT_FIXTURE_VALIDATION",
+  "parentRevision": "4e2dcb8",
+  "node": "v24.19.0",
+  "sourceHashes": {
+    "scripts/lib/benchmark-domain-fixture.mjs": "2770cc5e1b52d62903de02234c8a7ae50867e4b0b9f4b673025e46d50fc643fe",
+    "scripts/benchmark-storage-commit.mjs": "1cbd32e5cc6674ebbb53bd6cfed0a6703b3e6ac3bc15f10e7581faf10be7d636"
+  },
+  "runs": [
+    {
+      "artifact": "public-commit-4e2dcb8-validation.json.gz",
+      "sha256": "244cfb7043003ee3cb5a9b81e92951628ca377c38e7c349059e9f9d656bd0e5e",
+      "results": [
+        {
+          "fixtureMode": "public-domain",
+          "validationOnly": true,
+          "publicPreludeEvents": 8,
+          "initialRevision": 0,
+          "commitCount": 1,
+          "initialEvents": 10,
+          "claimCount": 3,
+          "committedResultParity": true,
+          "persistedStateAndTailParity": true,
+          "ownershipClassificationParity": true,
+          "equalValidationAcceptanceEligible": true,
+          "acceptanceRefusal": null,
+          "baselineOwnershipAudit": {
+            "status": "MATCHED"
+          },
+          "nativeOwnershipValid": true,
+          "nativeReservationsVerified": true,
+          "durability": {
+            "journalMode": "wal",
+            "synchronous": 2
+          },
+          "nativeSamplesMs": [],
+          "baselineSamplesMs": [],
+          "nativeP95Ms": null,
+          "baselineP95Ms": null,
+          "reductionP95": null
+        }
+      ]
+    },
+    {
+      "artifact": "public-commit1000-4e2dcb8-validation.json.gz",
+      "sha256": "87a11112c294fa8704f856796d145bf7ec955ae9c1ab4caf0e72aca4f5dd520f",
+      "results": [
+        {
+          "fixtureMode": "public-domain",
+          "validationOnly": true,
+          "publicPreludeEvents": 8,
+          "initialRevision": 0,
+          "commitCount": 1,
+          "initialEvents": 1000,
+          "claimCount": 3,
+          "committedResultParity": true,
+          "persistedStateAndTailParity": true,
+          "ownershipClassificationParity": true,
+          "equalValidationAcceptanceEligible": true,
+          "acceptanceRefusal": null,
+          "baselineOwnershipAudit": {
+            "status": "MATCHED"
+          },
+          "nativeOwnershipValid": true,
+          "nativeReservationsVerified": true,
+          "durability": {
+            "journalMode": "wal",
+            "synchronous": 2
+          },
+          "nativeSamplesMs": [],
+          "baselineSamplesMs": [],
+          "nativeP95Ms": null,
+          "baselineP95Ms": null,
+          "reductionP95": null
+        }
+      ]
+    }
+  ],
+  "targetedEslintExitCode": 0,
+  "verifyFastExitCode": 0,
+  "releaseThresholdsVerified": false,
+  "limits": [
+    "Validation-only tracks exact working-source hashes; timed runs still require committed unchanged sources",
+    "100000-event baseline refusal and original performance/resource gates remain required",
+    "No production behavior changed"
+  ]
+}
