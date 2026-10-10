@@ -45,7 +45,7 @@ jobs:
   mcp-resources:
     name: Hosted Linux MCP ${{ matrix.case }}
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 359
     strategy:
       fail-fast: false
       # Each case uses one fresh hosted VM. Serial matrix scheduling avoids

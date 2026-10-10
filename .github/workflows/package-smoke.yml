@@ -69,14 +69,15 @@ jobs:
         run: npm ci --ignore-scripts
       - name: Install MCP test dependencies
         run: npm run mcp:setup
-      - name: Run Linux package and MCP smoke
-        run: |
-          npm run mcp:test
-          npm run mcp:pack:check
-          npm run pack:smoke
+      - name: Run Linux MCP tests
+        run: npm run mcp:test
+      - name: Run Linux MCP package check
+        run: npm run mcp:pack:check
+      - name: Run Linux package smoke
+        run: npm run pack:smoke
 
   release-tarball-smoke:
-    name: release package smoke (${{ matrix.os }})
+    name: release package smoke (${{ matrix.os }}, Node ${{ matrix.node-version }})
     needs: [classify, tarball-smoke]
     if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (inputs.full_matrix == true) }}
     runs-on: ${{ matrix.runner }}
@@ -86,8 +87,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { os: macOS, runner: [self-hosted, macOS, ARM64, forgeloop-macos-local] }
-          - { os: Windows, runner: [self-hosted, Windows, X64, forgeloop-windows-remote] }
+          - { os: macOS, runner: [self-hosted, macOS, ARM64, forgeloop-macos-local], node-version: 24 }
+          - { os: Windows, runner: [self-hosted, Windows, X64, forgeloop-windows-remote], node-version: "24.19.0" }
+          - { os: Windows, runner: [self-hosted, Windows, X64, forgeloop-windows-remote], node-version: 24 }
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -96,14 +98,15 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 24
+          node-version: ${{ matrix.node-version }}
           cache: npm
       - name: Install locked Node toolchain
         run: npm ci --ignore-scripts
       - name: Install MCP test dependencies
         run: npm run mcp:setup
-      - name: Run release package and MCP smoke
-        run: |
-          npm run mcp:test
-          npm run mcp:pack:check
-          npm run pack:smoke
+      - name: Run release MCP tests
+        run: npm run mcp:test
+      - name: Run release MCP package check
+        run: npm run mcp:pack:check
+      - name: Run release package smoke
+        run: npm run pack:smoke

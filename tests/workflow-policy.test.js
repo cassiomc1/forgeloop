@@ -188,7 +188,9 @@ test("Node test jobs use the requested hosts and preserve the platform matrices"
   assert.deepEqual(compatibility.jobs.expanded.strategy.matrix.include.map(row => [row.os, String(row["node-version"])]), [
     ["Linux", "24.19.0"], ["Linux", "26"], ["macOS", "24.19.0"], ["macOS", "24"], ["Windows", "24.19.0"], ["Windows", "24"],
   ]);
-  assert.equal(parse(await readWorkflow("package-smoke.yml")).jobs["release-tarball-smoke"].strategy.matrix.include.length, 2);
+  assert.deepEqual(parse(await readWorkflow("package-smoke.yml")).jobs["release-tarball-smoke"].strategy.matrix.include.map(row => [row.os, String(row["node-version"])]), [
+    ["macOS", "24"], ["Windows", "24.19.0"], ["Windows", "24"],
+  ]);
   assert.equal(parse(await readWorkflow("repository-index.yml")).jobs.native.strategy.matrix.include.length, 3);
   for (const name of ["npm-publish.yml", "mcp-publish.yml"]) {
     const jobs = parse(await readWorkflow(name)).jobs;

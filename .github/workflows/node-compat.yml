@@ -37,12 +37,14 @@ jobs:
           cache: npm
       - name: Install locked Node toolchain
         run: npm ci --ignore-scripts
-      - name: Run targeted compatibility smoke
-        run: |
-          npm run test:quick
-          node src/cli.js --help
-          node src/cli.js protocol-info --json
-          node --test tests/storage-runtime.test.js tests/storage-store.test.js tests/storage-operational-bootstrap.test.js
+      - name: Run targeted compatibility tests
+        run: npm run test:quick
+      - name: Check CLI help
+        run: node src/cli.js --help
+      - name: Check protocol info
+        run: node src/cli.js protocol-info --json
+      - name: Run storage compatibility tests
+        run: node --test tests/storage-runtime.test.js tests/storage-store.test.js tests/storage-operational-bootstrap.test.js
 
   expanded:
     name: Node compatibility (${{ matrix.os }}, Node ${{ matrix.node-version }})
@@ -73,9 +75,11 @@ jobs:
           cache: npm
       - name: Install locked Node toolchain
         run: npm ci --ignore-scripts
-      - name: Run targeted compatibility smoke
-        run: |
-          npm run test:quick
-          node src/cli.js --help
-          node src/cli.js protocol-info --json
-          node --test tests/storage-runtime.test.js tests/storage-store.test.js tests/storage-operational-bootstrap.test.js
+      - name: Run targeted compatibility tests
+        run: npm run test:quick
+      - name: Check CLI help
+        run: node src/cli.js --help
+      - name: Check protocol info
+        run: node src/cli.js protocol-info --json
+      - name: Run storage compatibility tests
+        run: node --test tests/storage-runtime.test.js tests/storage-store.test.js tests/storage-operational-bootstrap.test.js

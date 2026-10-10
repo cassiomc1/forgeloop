@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile, realpath, writeFile } from "node:fs/promises";
 import { createRequire, registerHooks } from "node:module";
 import path from "node:path";
 import { test } from "node:test";
@@ -36,9 +36,10 @@ registerHooks({
 });
 
 async function connectMcp(projectPath) {
+  const canonicalProjectPath = await realpath(projectPath);
   const { createForgeLoopMcpServer } = await import("../src/server.js");
   const { server } = await createForgeLoopMcpServer({
-    projectPath,
+    projectPath: canonicalProjectPath,
     mode: "readonly",
     packageRoot,
   });
@@ -63,8 +64,9 @@ async function readMcpResource(client, uri) {
 }
 
 async function readDirectResource(projectPath, resource, extra = {}) {
+  const canonicalProjectPath = await realpath(projectPath);
   const result = await readForgeLoopIntegrationResource(resource, {
-    projectPath,
+    projectPath: canonicalProjectPath,
     packageRoot,
     ...extra,
   });
