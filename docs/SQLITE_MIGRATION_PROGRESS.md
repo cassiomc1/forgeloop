@@ -1,5 +1,9 @@
 # SQLite migration progress
 
+## Current fresh CLI startup observation
+
+Frozen `da596a7` completed 30 alternating repetitions per backend for version and empty task-list: all 120 child calls returned correct output, no storage was allocated, and current/baseline tracked source manifests stayed unchanged. Native/baseline p95 was 46.7/133.8 ms for version and 72.5/129.0 ms for empty task-list. Both observed rows meet the original small-workspace regression tolerance. Background applications and filesystem caches were uncontrolled; this is an empty-workspace diagnostic, not populated CLI, persistent integration, RSS or whole-performance acceptance. Raw inputs/results/terminal records are retained under `benchmarks/storage-sqlite/cli-startup-da596a7-*`.
+
 ## Current two-mode ledger and Windows correction evidence
 
 Frozen `8be05f7` runs completed both read-only and mutation-observation scopes: 36 workers closed, three samples per measured row, matching payload/count/head evidence, all 3,232 source hashes unchanged, and no remaining benchmark temporary prefixes. At 100,000 events the read-only native iterator/audit/export p95 values were 1,279 / 4,063 / 2,788 ms. Mutation-observation values were 1,888 / 5,462 / 2,842 ms. The scope difference includes CAS observation work; it is not evidence attributing gains to statement reuse. Background/cache conditions were uncontrolled, and filesystem 100,000-event readers refused their original JSON limit. These are diagnostics, not whole release acceptance. Raw records and review are retained under `benchmarks/storage-sqlite/ledger-8be05f7-*`.
