@@ -73,12 +73,35 @@ jobs:
       MCP_BASELINE_REVISION: ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5
       MCP_REPEATS: "200"
       MCP_TASK_LIST_LIMIT: "100"
-      MCP_RESOURCE_OUTPUT: ${{ runner.temp }}/sqlite-mcp-hosted-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.case }}
     defaults:
       run:
         working-directory: current
     steps:
+      # runner.temp is available at step scope, but GitHub rejects runner in
+      # jobs.env. Initialize the retained evidence directory before checkout
+      # so checkout/setup failures still have an artifact path.
+      - name: Initialize retained evidence directory
+        id: initialize_evidence
+        working-directory: ${{ github.workspace }}
+        env:
+          MCP_RESOURCE_OUTPUT: ${{ runner.temp }}/sqlite-mcp-hosted-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.case }}
+        run: |
+          set -eu
+          printf 'MCP_RESOURCE_OUTPUT=%s\n' "$MCP_RESOURCE_OUTPUT" >> "$GITHUB_ENV"
+          mkdir -p "$MCP_RESOURCE_OUTPUT"
+          cat > "$MCP_RESOURCE_OUTPUT/workflow-admission.txt" <<EOF
+          kind=HOSTED_MCP_WORKFLOW_ADMISSION
+          case=$MCP_CASE
+          runner_os=$RUNNER_OS
+          runner_arch=$RUNNER_ARCH
+          runner_name=$RUNNER_NAME
+          run_id=$GITHUB_RUN_ID
+          attempt=$GITHUB_RUN_ATTEMPT
+          status=EVIDENCE_DIRECTORY_INITIALIZED
+          EOF
+
       - name: Check out current source at the dispatched SHA
+        id: checkout_current
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.sha }}
@@ -87,6 +110,7 @@ jobs:
           persist-credentials: false
 
       - name: Check out pinned filesystem baseline
+        id: checkout_baseline
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5
@@ -95,6 +119,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up Node.js 24.19.0
+        id: setup_node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24.19.0
@@ -104,15 +129,18 @@ jobs:
             legacy/package-lock.json
 
       - name: Install locked current and MCP dependencies
+        id: install_current
         run: |
           npm ci --ignore-scripts
           npm run mcp:setup
 
       - name: Install locked baseline dependencies
+        id: install_baseline
         working-directory: legacy
         run: npm ci --ignore-scripts
 
       - name: Admit paired hosted case and write before evidence
+        id: admission
         env:
           EXPECTED_BENCHMARK_SHA: ${{ github.sha }}
         run: |
@@ -187,6 +215,7 @@ jobs:
           node scripts/ci/observe-benchmark-runner.mjs --phase=before --temp-prefix=forgeloop-mcp-benchmark- --output="$MCP_RESOURCE_OUTPUT/runner-before.json"
 
       - name: Run paired baseline/current MCP case
+        id: benchmark
         run: |
           args=(
             scripts/benchmark-storage-mcp.mjs
@@ -209,17 +238,43 @@ jobs:
           node "${args[@]}" > "$MCP_RESOURCE_OUTPUT/benchmark.log" 2>&1
 
       - name: Verify source and observe hosted cleanup
+        id: cleanup
         if: ${{ always() }}
+        working-directory: ${{ github.workspace }}
+        env:
+          MCP_RESOURCE_OUTPUT: ${{ runner.temp }}/sqlite-mcp-hosted-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.case }}
+          INITIALIZE_EVIDENCE_OUTCOME: ${{ steps.initialize_evidence.outcome }}
+          CHECKOUT_CURRENT_OUTCOME: ${{ steps.checkout_current.outcome }}
+          CHECKOUT_BASELINE_OUTCOME: ${{ steps.checkout_baseline.outcome }}
+          SETUP_NODE_OUTCOME: ${{ steps.setup_node.outcome }}
+          INSTALL_CURRENT_OUTCOME: ${{ steps.install_current.outcome }}
+          INSTALL_BASELINE_OUTCOME: ${{ steps.install_baseline.outcome }}
+          ADMISSION_OUTCOME: ${{ steps.admission.outcome }}
+          BENCHMARK_OUTCOME: ${{ steps.benchmark.outcome }}
         run: |
           set +e
-          node --input-type=module <<'NODE'
+          mkdir -p "$MCP_RESOURCE_OUTPUT"
+          cat > "$MCP_RESOURCE_OUTPUT/workflow-failure-context.txt" <<EOF
+          kind=HOSTED_MCP_WORKFLOW_FAILURE_CONTEXT
+          initialize_evidence=$INITIALIZE_EVIDENCE_OUTCOME
+          checkout_current=$CHECKOUT_CURRENT_OUTCOME
+          checkout_baseline=$CHECKOUT_BASELINE_OUTCOME
+          setup_node=$SETUP_NODE_OUTCOME
+          install_current=$INSTALL_CURRENT_OUTCOME
+          install_baseline=$INSTALL_BASELINE_OUTCOME
+          admission=$ADMISSION_OUTCOME
+          benchmark=$BENCHMARK_OUTCOME
+          EOF
+          source_status=1
+          if [ -f "$MCP_RESOURCE_OUTPUT/source-before.json" ] && [ -d current/.git ] && [ -d legacy/.git ] && command -v node >/dev/null 2>&1; then
+            node --input-type=module <<'NODE'
           import assert from "node:assert/strict";
           import { createHash } from "node:crypto";
           import { execFileSync } from "node:child_process";
           import { readFile, writeFile } from "node:fs/promises";
           import path from "node:path";
 
-          const root = ".";
+          const root = "current";
           const hashFile = async filename => createHash("sha256").update(await readFile(filename)).digest("hex");
           const manifest = async repo => {
             const revision = execFileSync("git", ["-C", repo, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
@@ -229,13 +284,21 @@ jobs:
             return { revision, status, trackedFiles: files.length, files: await Promise.all(files.map(async file => ({ path: file, sha256: await hashFile(path.join(repo, file)) }))) };
           };
           const before = JSON.parse(await readFile(path.join(process.env.MCP_RESOURCE_OUTPUT, "source-before.json"), "utf8"));
-          const after = { schemaVersion: 1, current: await manifest(root), baseline: await manifest("../legacy") };
+          const after = { schemaVersion: 1, current: await manifest(root), baseline: await manifest("legacy") };
           await writeFile(path.join(process.env.MCP_RESOURCE_OUTPUT, "source-after.json"), `${JSON.stringify(after, null, 2)}\n`, { flag: "wx" });
           assert.deepEqual(after, before, "Tracked current or baseline source changed during measurement");
           NODE
           source_status=$?
-          node scripts/ci/observe-benchmark-runner.mjs --phase=after --temp-prefix=forgeloop-mcp-benchmark- --before="$MCP_RESOURCE_OUTPUT/runner-before.json" --output="$MCP_RESOURCE_OUTPUT/runner-after.json"
-          observer_status=$?
+          else
+            printf '%s\n' "source-after=SKIPPED_NO_ADMITTED_CHECKOUT" >> "$MCP_RESOURCE_OUTPUT/workflow-failure-context.txt"
+          fi
+          observer_status=1
+          if [ -f "$MCP_RESOURCE_OUTPUT/runner-before.json" ] && [ -d current ] && command -v node >/dev/null 2>&1; then
+            node current/scripts/ci/observe-benchmark-runner.mjs --phase=after --temp-prefix=forgeloop-mcp-benchmark- --before="$MCP_RESOURCE_OUTPUT/runner-before.json" --output="$MCP_RESOURCE_OUTPUT/runner-after.json"
+            observer_status=$?
+          else
+            printf '%s\n' "runner-after=SKIPPED_NO_BEFORE_OBSERVATION" >> "$MCP_RESOURCE_OUTPUT/workflow-failure-context.txt"
+          fi
           set -e
           if [ "$source_status" -ne 0 ] || [ "$observer_status" -ne 0 ]; then exit 1; fi
 

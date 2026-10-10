@@ -1,8 +1,16 @@
 import assert from "node:assert/strict";
+import { readFile, writeFile } from "node:fs/promises";
 import { createRequire, registerHooks } from "node:module";
+import path from "node:path";
 import { test } from "node:test";
 
 import { readForgeLoopIntegrationResource } from "../../../src/integration.js";
+import { recordSemanticDecision } from "../../../src/core/decision/service.js";
+import { testSemanticProvider } from "../../../src/core/decision/test-provider.js";
+import { evaluateTrajectory } from "../../../src/core/trajectory-evaluation.js";
+import { runHandoffAccept } from "../../../src/commands/handoff-accept.js";
+import { runHandoffCreate } from "../../../src/commands/handoff-create.js";
+import { runTaskCreate } from "../../../src/commands/task-create.js";
 import { getPackageRoot } from "../../../src/core/templates.js";
 import { setupVerifyingTask } from "../../../tests/helpers/durable-lifecycle.js";
 import { createGitRepository } from "../../../tests/helpers/git-fixture.js";
@@ -46,7 +54,12 @@ async function readMcpResource(client, uri) {
   assert.equal(response.contents.length, 1, uri);
   assert.equal(response.contents[0].uri, uri, uri);
   assert.equal(response.contents[0].mimeType, "application/json", uri);
-  return JSON.parse(response.contents[0].text);
+  const text = response.contents[0].text;
+  const value = JSON.parse(text);
+  // The MCP adapter promises to transmit the exact bounded JSON serialization;
+  // assert the wire bytes are canonical before comparing the parsed payload.
+  assert.equal(text, JSON.stringify(value, null, 2), uri);
+  return value;
 }
 
 async function readDirectResource(projectPath, resource, extra = {}) {
@@ -234,6 +247,231 @@ test("MCP repository/index-status resources/read preserve explicit engine health
     assert.equal(mcp.engine, "tgrep");
     assert.equal(mcp.required, true);
     assert.equal(mcp.health, direct.health);
+  } finally {
+    await client?.close();
+    await server?.close();
+    await removeTempTree(target);
+  }
+});
+
+test("MCP project/tasks preserves empty and populated canonical discovery parity", async () => {
+  const emptyTarget = await createGitRepository("forgeloop-mcp-project-tasks-empty-");
+  let client;
+  let server;
+  try {
+    const direct = await readDirectResource(emptyTarget, "project/tasks");
+    assert.deepEqual(direct, { count: 0, tasks: [] });
+
+    ({ client, server } = await connectMcp(emptyTarget));
+    const mcp = await readMcpResource(client, "forgeloop://project/tasks");
+    assert.deepEqual(stableTransportValue(mcp), stableTransportValue(direct));
+  } finally {
+    await client?.close();
+    await server?.close();
+    await removeTempTree(emptyTarget);
+  }
+
+  const populatedTarget = await createGitRepository("forgeloop-mcp-project-tasks-populated-");
+  client = undefined;
+  server = undefined;
+  try {
+    const taskId = "mcp-project-tasks-populated";
+    await setupVerifyingTask(populatedTarget, packageRoot, { taskId });
+
+    const direct = await readDirectResource(populatedTarget, "project/tasks");
+    assert.equal(direct.count, 1);
+    assert.deepEqual(direct.tasks, [{
+      taskId,
+      healthy: true,
+      phase: "VERIFYING",
+      mutationAllowed: true,
+    }]);
+
+    ({ client, server } = await connectMcp(populatedTarget));
+    const mcp = await readMcpResource(client, "forgeloop://project/tasks");
+    assert.deepEqual(stableTransportValue(mcp), stableTransportValue(direct));
+  } finally {
+    await client?.close();
+    await server?.close();
+    await removeTempTree(populatedTarget);
+  }
+});
+
+test("MCP task/ownership preserves the canonical projection and fails closed for invalid subjects", async () => {
+  const target = await createGitRepository("forgeloop-mcp-task-ownership-");
+  const taskId = "mcp-task-ownership";
+  const missingTaskId = "mcp-task-ownership-missing";
+  let client;
+  let server;
+  try {
+    await setupVerifyingTask(target, packageRoot, { taskId });
+
+    const direct = await readDirectResource(target, "task/ownership", { taskId });
+    assert.equal(direct.taskId, taskId);
+    assert.equal(direct.claimState, "ACTIVE");
+    assert.equal(direct.mutationAllowed, true);
+    assert.equal(direct.ownershipValid, true);
+    assert.deepEqual(direct.effectiveWriteClaims, ["src"]);
+
+    ({ client, server } = await connectMcp(target));
+    const mcp = await readMcpResource(client, "forgeloop://task/" + taskId + "/ownership");
+    assert.deepEqual(stableTransportValue(mcp), stableTransportValue(direct));
+
+    for (const kind of ["ownership", "handoffs", "evaluations", "decisions"]) {
+      await assert.rejects(
+        () => readDirectResource(target, "task/" + kind),
+        (error) => {
+          assert.equal(error.code, "E_TASK_REQUIRED");
+          assert.equal(error.message, "Resource task/" + kind + " requires a taskId");
+          return true;
+        },
+        kind,
+      );
+    }
+    const unknownDirect = await readDirectResource(target, "task/ownership", { taskId: missingTaskId });
+    assert.equal(unknownDirect.taskId, missingTaskId);
+    assert.equal(unknownDirect.claimState, "INCONSISTENT");
+    assert.equal(unknownDirect.mutationAllowed, false);
+    assert.equal(unknownDirect.ownershipValid, false);
+    assert.ok(unknownDirect.reasonCodes.includes("E_TASK_CLAIM_OWNERSHIP_INCONSISTENT"));
+    assert.ok(unknownDirect.reasonCodes.includes("E_TASK_NOT_FOUND"));
+
+    const unknownMcp = await readMcpResource(
+      client,
+      "forgeloop://task/" + missingTaskId + "/ownership",
+    );
+    assert.deepEqual(stableTransportValue(unknownMcp), stableTransportValue(unknownDirect));
+
+    const missingUri = "forgeloop://task//ownership";
+    await assert.rejects(
+      () => client.readResource({ uri: missingUri }),
+      (error) => {
+        assert.equal(error.code, -32602);
+        assert.deepEqual(error.data, { uri: missingUri });
+        assert.equal(error.message, "Resource not found: " + missingUri);
+        return true;
+      },
+    );
+  } finally {
+    await client?.close();
+    await server?.close();
+    await removeTempTree(target);
+  }
+});
+
+test("MCP empty handoffs, evaluations and decisions preserve direct-resource parity", async () => {
+  const target = await createGitRepository("forgeloop-mcp-empty-secondary-resources-");
+  const taskId = "mcp-empty-secondary-resources";
+  let client;
+  let server;
+  try {
+    // task-create creates only the canonical descriptor and lifecycle ledger,
+    // leaving the three collection resources empty without bypassing public
+    // storage or seeding rows directly.
+    await runTaskCreate({ target, packageRoot, taskId, claims: [] });
+
+    const direct = new Map([
+      ["handoffs", await readDirectResource(target, "task/handoffs", { taskId })],
+      ["evaluations", await readDirectResource(target, "task/evaluations", { taskId })],
+      ["decisions", await readDirectResource(target, "task/decisions", { taskId })],
+    ]);
+    assert.deepEqual(direct.get("handoffs"), { taskId, count: 0, handoffs: [] });
+    assert.deepEqual(direct.get("evaluations"), { evaluations: [] });
+    assert.deepEqual(direct.get("decisions"), { taskId, decisions: [] });
+
+    ({ client, server } = await connectMcp(target));
+    for (const [kind, expected] of direct) {
+      const actual = await readMcpResource(client, "forgeloop://task/" + taskId + "/" + kind);
+      assert.deepEqual(
+        stableTransportValue(actual),
+        stableTransportValue(expected),
+        kind,
+      );
+    }
+  } finally {
+    await client?.close();
+    await server?.close();
+    await removeTempTree(target);
+  }
+});
+
+test("MCP handoffs, evaluations and decisions preserve populated direct-resource parity", async () => {
+  const target = await createGitRepository("forgeloop-mcp-populated-resources-");
+  const taskId = "mcp-populated-resources";
+  const evaluationId = "eval-mcp-resource-parity";
+  const decisionId = "diagnosis-mcp-resource-parity";
+  let client;
+  let server;
+  try {
+    await setupVerifyingTask(target, packageRoot, { taskId });
+
+    // The scenario is written through the filesystem helper and evaluated
+    // through the public trajectory API; no artifact or database rows are
+    // seeded by the fixture.
+    const scenarioFixture = await readFile(
+      path.join(packageRoot, "tests", "fixtures", "schemas", "trajectory-scenario", "valid.json"),
+      "utf8",
+    );
+    await writeFile(path.join(target, "trajectory-scenario.json"), scenarioFixture, "utf8");
+
+    const created = await runHandoffCreate({ target, packageRoot, taskId });
+    const accepted = await runHandoffAccept({
+      target,
+      packageRoot,
+      taskId,
+      handoffId: created.handoff.handoffId,
+      consumerId: "mcp-resource-parity-consumer",
+      harness: "mcp-resource-parity",
+    });
+    assert.equal(accepted.accepted, true);
+    const statusAfterAcceptance = await readDirectResource(target, "task/status", { taskId });
+    assert.equal(statusAfterAcceptance.phase, "VERIFYING");
+
+    const evaluation = await evaluateTrajectory({
+      target,
+      packageRoot,
+      taskId,
+      scenarioPath: "trajectory-scenario.json",
+      evaluationId,
+    });
+    assert.equal(evaluation.evaluationId, evaluationId);
+    assert.equal(evaluation.taskId, taskId);
+
+    const decision = await recordSemanticDecision({
+      target,
+      packageRoot,
+      taskId,
+      decisionId,
+      provider: testSemanticProvider,
+      request: {
+        decisionKind: "DIAGNOSIS_PRIORITY",
+        questionSetId: "diagnosis-v1",
+        state: { objective: "MCP resource parity" },
+      },
+    });
+    assert.equal(decision.artifact.decisionId, decisionId);
+
+    const direct = new Map([
+      ["handoffs", await readDirectResource(target, "task/handoffs", { taskId })],
+      ["evaluations", await readDirectResource(target, "task/evaluations", { taskId })],
+      ["decisions", await readDirectResource(target, "task/decisions", { taskId })],
+    ]);
+    assert.equal(direct.get("handoffs").count, 1);
+    assert.equal(direct.get("handoffs").handoffs[0].acceptance.status, "ACCEPTED");
+    assert.equal(direct.get("evaluations").evaluations.length, 1);
+    assert.equal(direct.get("evaluations").evaluations[0].evaluationId, evaluationId);
+    assert.equal(direct.get("decisions").taskId, taskId);
+    assert.ok(direct.get("decisions").decisions.some((item) => item.decisionId === decisionId));
+
+    ({ client, server } = await connectMcp(target));
+    for (const [kind, expected] of direct) {
+      const actual = await readMcpResource(client, "forgeloop://task/" + taskId + "/" + kind);
+      assert.deepEqual(
+        stableTransportValue(actual),
+        stableTransportValue(expected),
+        kind,
+      );
+    }
   } finally {
     await client?.close();
     await server?.close();

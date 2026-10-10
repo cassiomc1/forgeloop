@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "baseRevision": "d5bc6bc976e6db29fef02b4380753c03f7ad9b84",
+  "productionChanged": false,
+  "mcpFocused": {
+    "tests": 7,
+    "pass": 7,
+    "fail": 0,
+    "skipped": 0,
+    "log": "mcp-resource-parity-d5bc6bc-focused.log.gz"
+  },
+  "cleanPackageMcp": {
+    "tests": 88,
+    "pass": 88,
+    "fail": 0,
+    "skipped": 0,
+    "log": "mcp-resource-parity-d5bc6bc-clean.log.gz"
+  },
+  "addedResources": [
+    "project/tasks",
+    "task/ownership",
+    "task/handoffs",
+    "task/evaluations",
+    "task/decisions"
+  ],
+  "fixtureBoundary": "Public task-create, verifying lifecycle, handoff, trajectory evaluation and pinned test semantic provider; no SQL fixture seeding or network decisions.",
+  "workflowFailure": {
+    "run": 38066624226,
+    "cause": "Unrecognized runner.temp in job-level env",
+    "executedBenchmarkJobs": 0,
+    "correction": "Initialize evidence path in a runner step, retain setup and checkout failures."
+  },
+  "workflowSyntax": "mcp-hosted-workflow-correction-syntax.json.gz",
+  "fullPlanAcceptance": false,
+  "remainingGates": [
+    "performance and contention matrix",
+    "inclusive LOC target",
+    "remaining platform and minimum runtime compatibility",
+    "validator-backed lifecycle closure"
+  ]
+}
