@@ -89,7 +89,7 @@ async function discoveryArtifactExists(target, taskId, kind, filename) {
 }
 
 export async function discoverTasks(target, packageRoot = getPackageRoot(), { taskKeys = null } = {}) {
-  return discoverTasksInScope(target, packageRoot, taskKeys, false);
+  return discoverTasksInScope(target, packageRoot, taskKeys, DISCOVERY_PROJECTIONS.FULL);
 }
 
 /**
@@ -98,22 +98,76 @@ export async function discoverTasks(target, packageRoot = getPackageRoot(), { ta
  * retaining only the public project/tasks fields and its canonical sort key.
  */
 export async function discoverTaskSummaries(target, packageRoot = getPackageRoot(), { taskKeys = null } = {}) {
-  return discoverTasksInScope(target, packageRoot, taskKeys, true);
+  return discoverTasksInScope(target, packageRoot, taskKeys, DISCOVERY_PROJECTIONS.SUMMARY);
 }
 
-async function discoverTasksInScope(target, packageRoot, taskKeys, summaryOnly) {
+/**
+ * Internal task-list projection. It runs the same per-task validation and
+ * snapshot/CAS observation as full discovery while retaining only the fields
+ * consumed by the task-list command.
+ */
+export async function discoverTaskListEntries(target, packageRoot = getPackageRoot(), { taskKeys = null } = {}) {
+  return discoverTasksInScope(target, packageRoot, taskKeys, DISCOVERY_PROJECTIONS.TASK_LIST);
+}
+
+const DISCOVERY_PROJECTIONS = Object.freeze({
+  FULL: "full",
+  SUMMARY: "summary",
+  TASK_LIST: "task-list",
+});
+
+async function discoverTasksInScope(target, packageRoot, taskKeys, projection) {
   return withProjectReadSnapshot(target,
-    () => discoverSelectedTasks(target, packageRoot, taskKeys, summaryOnly));
+    () => discoverSelectedTasks(target, packageRoot, taskKeys, projection));
 }
 
-async function discoverTaskEntry(target, packageRoot, entry) {
+function projectTaskList(task) {
+  if (task.healthy === false) {
+    return {
+      taskId: task.taskId ?? null,
+      taskKey: task.taskKey,
+      directory: task.directory,
+      healthy: false,
+      error: task.error,
+    };
+  }
+  return {
+    taskId: task.taskId,
+    taskKey: task.taskKey,
+    directory: task.directory,
+    healthy: true,
+    phase: task.phase,
+    writeClaims: task.writeClaims ?? [],
+    historicalWriteClaims: task.historicalWriteClaims ?? [],
+    effectiveWriteClaims: task.effectiveWriteClaims ?? [],
+    claimState: task.claimState,
+    recovery: task.recovery,
+    mutationAllowed: task.mutationAllowed,
+    ownershipValid: task.ownershipValid,
+    ownershipErrors: task.ownershipErrors ?? task.errors ?? [],
+    reasonCodes: task.reasonCodes ?? [],
+    locked: task.locked,
+    hasContinuity: task.hasContinuity,
+    hasReceipt: task.hasReceipt,
+    createdAt: task.createdAt,
+    updatedAt: task.updatedAt,
+  };
+}
+
+function projectTask(task, projection) {
+  if (projection === DISCOVERY_PROJECTIONS.FULL) return task;
+  if (projection === DISCOVERY_PROJECTIONS.SUMMARY) return projectTaskSummary(task);
+  return projectTaskList(task);
+}
+
+async function discoverTaskEntry(target, packageRoot, entry, projection) {
   const descriptorArtifact = await readTaskDescriptor(target, entry.name, packageRoot);
   const descriptor = descriptorArtifact.value;
   const taskId = descriptor.taskId;
 
   // P1-1: Verify descriptor taskKey matches the actual directory name
   if (descriptor.taskKey !== entry.name) {
-    return {
+    return projectTask({
       taskId: descriptor.taskId ?? null,
       taskKey: entry.name,
       directory: `${TASK_STATE_ROOT}/${entry.name}`,
@@ -122,7 +176,7 @@ async function discoverTaskEntry(target, packageRoot, entry) {
         code: "E_TASK_KEY_MISMATCH",
         message: `Task directory key "${entry.name}" does not match descriptor taskKey "${descriptor.taskKey}"`,
       },
-    };
+    }, projection);
   }
 
   const { state, phase, lastUpdated } = await readDiscoveryState(target, taskId, descriptor, packageRoot);
@@ -144,13 +198,48 @@ async function discoverTaskEntry(target, packageRoot, entry) {
     state,
   });
   const recovery = claimProjection.recovery;
+  const directory = `${TASK_STATE_ROOT}/${descriptor.taskKey}`;
+  const locked = lockInfo !== null;
+
+  if (projection === DISCOVERY_PROJECTIONS.SUMMARY) {
+    return {
+      taskId,
+      healthy: true,
+      phase,
+      mutationAllowed: claimProjection.mutationAllowed !== false,
+    };
+  }
+
+  if (projection === DISCOVERY_PROJECTIONS.TASK_LIST) {
+    return projectTaskList({
+      taskId,
+      taskKey: descriptor.taskKey,
+      directory,
+      healthy: true,
+      phase,
+      writeClaims: claimProjection.writeClaims,
+      historicalWriteClaims: claimProjection.historicalWriteClaims,
+      effectiveWriteClaims: claimProjection.effectiveWriteClaims,
+      claimState: claimProjection.claimState,
+      recovery,
+      mutationAllowed: claimProjection.mutationAllowed,
+      ownershipValid: claimProjection.valid,
+      ownershipErrors: claimProjection.ownershipErrors,
+      reasonCodes: claimProjection.reasonCodes,
+      locked,
+      hasContinuity,
+      hasReceipt,
+      createdAt: descriptor.createdAt,
+      updatedAt: descriptor.updatedAt,
+    });
+  }
 
   return {
     taskId,
     taskKey: descriptor.taskKey,
     healthy: true,
     phase,
-    locked: lockInfo !== null,
+    locked,
     lockInfo,
     ...claimProjection,
     ownershipValid: claimProjection.valid,
@@ -163,7 +252,7 @@ async function discoverTaskEntry(target, packageRoot, entry) {
     hasReceipt,
     ...(claimProjection.errors.length > 0 ? { errors: claimProjection.errors } : {}),
     descriptor,
-    directory: `${TASK_STATE_ROOT}/${descriptor.taskKey}`,
+    directory,
   };
 }
 
@@ -180,20 +269,22 @@ function compareDiscoveredTasks(a, b) {
   return (a.taskId ?? a.taskKey).localeCompare(b.taskId ?? b.taskKey);
 }
 
-function appendDiscoveredTask(tasks, task, summaryOnly) {
-  if (!summaryOnly) {
+function appendDiscoveredTask(tasks, task, projection, fallbackSortKey = null) {
+  if (projection === DISCOVERY_PROJECTIONS.FULL) {
     tasks.push(task);
     return;
   }
-  tasks.push({ sortKey: task.taskId ?? task.taskKey, value: projectTaskSummary(task) });
+  tasks.push({ sortKey: task.taskId ?? task.taskKey ?? fallbackSortKey, value: task });
 }
 
-function finishDiscoveredTasks(tasks, summaryOnly) {
-  if (summaryOnly) return tasks.sort((a, b) => a.sortKey.localeCompare(b.sortKey)).map(({ value }) => value);
+function finishDiscoveredTasks(tasks, projection) {
+  if (projection !== DISCOVERY_PROJECTIONS.FULL) {
+    return tasks.sort((a, b) => a.sortKey.localeCompare(b.sortKey)).map(({ value }) => value);
+  }
   return tasks.sort(compareDiscoveredTasks);
 }
 
-async function discoverSelectedTasks(target, packageRoot, taskKeys, summaryOnly = false) {
+async function discoverSelectedTasks(target, packageRoot, taskKeys, projection = DISCOVERY_PROJECTIONS.FULL) {
   const store = getOperationalStore(target);
   const rootPath = ensureWithin(target, TASK_STATE_ROOT);
   if (!store && !(await fileExists(rootPath))) {
@@ -218,12 +309,12 @@ async function discoverSelectedTasks(target, packageRoot, taskKeys, summaryOnly 
     if (!/^[a-f0-9]{64}$/.test(entry.name)) continue;
 
     try {
-      const readEntry = () => discoverTaskEntry(target, packageRoot, entry);
+      const readEntry = () => discoverTaskEntry(target, packageRoot, entry, projection);
       const taskId = store?.taskId({ taskKey: entry.name });
       const task = taskId
         ? await withEventLedgerAudit(target, packageRoot, { taskId }, readEntry)
         : await readEntry();
-      appendDiscoveredTask(tasks, task, summaryOnly);
+      appendDiscoveredTask(tasks, task, projection, entry.name);
     } catch (err) {
       // A directory without a task.json descriptor is not automatically a
       // task namespace: classify by contents so explicitly recognized legacy
@@ -235,17 +326,17 @@ async function discoverSelectedTasks(target, packageRoot, taskKeys, summaryOnly 
         if (classification.kind === "LEGACY_INCIDENTAL") {
           continue;
         }
-        appendDiscoveredTask(tasks, {
+        appendDiscoveredTask(tasks, projectTask({
           taskId: null,
           taskKey: entry.name,
           directory: `${TASK_STATE_ROOT}/${entry.name}`,
           healthy: false,
           error: classification.error,
-        }, summaryOnly);
+        }, projection), projection, entry.name);
         continue;
       }
       // P1-2: Surface corrupt task namespaces instead of silently hiding them
-      appendDiscoveredTask(tasks, {
+      appendDiscoveredTask(tasks, projectTask({
         taskId: null,
         taskKey: entry.name,
         directory: `${TASK_STATE_ROOT}/${entry.name}`,
@@ -254,11 +345,11 @@ async function discoverSelectedTasks(target, packageRoot, taskKeys, summaryOnly 
           code: err.code ?? "E_TASK_DESCRIPTOR_INVALID",
           message: err.message ?? String(err),
         },
-      }, summaryOnly);
+      }, projection), projection, entry.name);
     }
   }
 
-  return finishDiscoveredTasks(tasks, summaryOnly);
+  return finishDiscoveredTasks(tasks, projection);
 }
 
 export async function findTaskById(target, taskId, packageRoot = getPackageRoot()) {

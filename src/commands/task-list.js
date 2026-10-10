@@ -1,8 +1,8 @@
-import { discoverTasks } from "../core/task-discovery.js";
+import { discoverTaskListEntries } from "../core/task-discovery.js";
 import { WORK_PHASES } from "../core/protocol.js";
 
 export async function runTaskList({ target, packageRoot, phase = null, active = false, limit = null, offset = 0 } = {}) {
-  const tasks = await discoverTasks(target, packageRoot);
+  const tasks = await discoverTaskListEntries(target, packageRoot);
   const normalizedPhase = typeof phase === "string" && phase.trim() !== "" ? phase.trim().toUpperCase() : null;
   if (normalizedPhase && !WORK_PHASES.includes(normalizedPhase)) {
     const error = new Error(`Unknown task phase filter: ${phase}`);
@@ -17,38 +17,7 @@ export async function runTaskList({ target, packageRoot, phase = null, active = 
   const end = Number.isInteger(limit) && limit >= 0 ? start + limit : undefined;
   const projected = filtered.slice(start, end);
   return {
-    tasks: projected.map((task) => {
-      if (task.healthy === false) {
-        return {
-          taskId: task.taskId ?? null,
-          taskKey: task.taskKey,
-          directory: task.directory,
-          healthy: false,
-          error: task.error,
-        };
-      }
-      return {
-        taskId: task.taskId,
-        taskKey: task.taskKey,
-        directory: task.directory,
-        healthy: true,
-        phase: task.phase,
-        writeClaims: task.writeClaims ?? [],
-        historicalWriteClaims: task.historicalWriteClaims ?? [],
-        effectiveWriteClaims: task.effectiveWriteClaims ?? [],
-        claimState: task.claimState,
-        recovery: task.recovery,
-        mutationAllowed: task.mutationAllowed,
-        ownershipValid: task.ownershipValid,
-        ownershipErrors: task.ownershipErrors ?? task.errors ?? [],
-        reasonCodes: task.reasonCodes ?? [],
-        locked: task.locked,
-        hasContinuity: task.hasContinuity,
-        hasReceipt: task.hasReceipt,
-        createdAt: task.createdAt,
-        updatedAt: task.updatedAt,
-      };
-    }),
+    tasks: projected,
     ...(normalizedPhase ? { phase: normalizedPhase } : {}),
     ...(active ? { active: true } : {}),
     offset: start,
