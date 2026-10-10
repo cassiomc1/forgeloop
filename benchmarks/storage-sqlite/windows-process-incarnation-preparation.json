@@ -1,0 +1,22 @@
+{
+  "kind": "WINDOWS_PROCESS_INCARNATION_HELPER_PREPARATION",
+  "sourceBefore": "1d0b969",
+  "admissionWired": false,
+  "portableFocusedTests": {
+    "passed": 9,
+    "failed": 0,
+    "skipped": 1
+  },
+  "realTimeoutChildControl": {
+    "closedBeforeResult": true,
+    "pidAbsent": true,
+    "returnedUnavailable": true
+  },
+  "eslintExitCode": 0,
+  "platformTokenSource": "Fixed system PowerShell retained .NET Process handle and invariant UTC StartTime ticks",
+  "systemRootTrust": "Configured host environment; no OS attestation claim",
+  "legacyAdmissionChanged": false,
+  "hostedWindowsValidation": "pending",
+  "scope": "New storage helper is included in future inclusive LOC inventory",
+  "acceptanceClaim": false
+}
