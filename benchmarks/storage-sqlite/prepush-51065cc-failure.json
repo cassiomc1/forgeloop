@@ -1,0 +1,25 @@
+{
+  "kind": "PREPUSH_SOURCE_BOUND_FAILURE",
+  "sourceRevision": "51065ccf32e51b0357ad8a6f7c08659eeeede626",
+  "node": "24.19.0",
+  "exitCode": 1,
+  "failedStage": "coverage",
+  "tests": 3070,
+  "passed": 3052,
+  "failedIncludingParent": 2,
+  "skipped": 16,
+  "distinctFailingLeaf": "next-action.test.js / completion identity / work-state task ID",
+  "trackedSourceUnchanged": true,
+  "trackedFiles": 3323,
+  "laterStagesExecuted": false,
+  "acceptance": false,
+  "retainedArtifacts": {
+    "prepush-51065cc.log.gz": "dc9d2118328b4c320879dd7800d4a77ae05ea8eba18564e4f4bba00dea95b587",
+    "prepush-51065cc-source-before.json.gz": "c4ecca8482b79e1b0919a06d8894a58ad16cecf8d8a2c71c16106618cb037d75",
+    "prepush-51065cc-source-after.json.gz": "c4ecca8482b79e1b0919a06d8894a58ad16cecf8d8a2c71c16106618cb037d75",
+    "prepush-51065cc-completion-first-cause.log.gz": "959d5c74cc44892f34446cccbb3a5ea573d4d916e37cddebf5b7bdd06d5165bb",
+    "prepush-51065cc-completion-first-cause.json.gz": "63f1f029f934a6b751c16e1384072fb578e1c1d15aa76d578bdcc63cc5f25ff4",
+    "gate-revalidate-51065cc.json.gz": "69a39a1efe71cd2881df6a528059d88378f16d9d6004afed33818b0929ac4569",
+    "preflight-51065cc-ready.json.gz": "4873e0b39c2720b93aeb1e5dd0991e42f87b8d07a455231c964dba417e589bfb"
+  }
+}

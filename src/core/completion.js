@@ -599,9 +599,7 @@ async function evaluateSelectedCompletion({
   }
 
   const actionTaskId = contract?.value?.taskId ?? taskId;
-  const durableActions = actionTaskId
-    ? await listActions(target, { packageRoot, taskId: actionTaskId })
-    : [];
+
   const contractRequirements = new Set([
     ...(contract?.value?.verification ?? []), ...(contract?.value?.successCriteria ?? []),
   ]);
@@ -609,9 +607,13 @@ async function evaluateSelectedCompletion({
   // raw state labels: a forged VERIFIED label can never satisfy a required
   // action (INV-VERIFY-02).
   const { evaluateRequiredActionReadiness } = await import("./action-readiness.js");
-  const requiredActionReadiness = actionTaskId
-    ? await evaluateRequiredActionReadiness({ target, packageRoot, taskId: actionTaskId })
-    : { total: 0, satisfied: 0, unresolved: 0, ambiguous: 0, failed: 0, untrusted: 0, actions: [] };
+  const actionEvidence = actionTaskId ? await loadRequired(async () => ({
+    actions: await listActions(target, { packageRoot, taskId: actionTaskId }),
+    readiness: await evaluateRequiredActionReadiness({ target, packageRoot, taskId: actionTaskId }),
+  }), "E_ACTION_INVALID", "Durable action evidence is not available", [taskArtifactPath(actionTaskId, "actions")], errors) : null;
+  const durableActions = actionEvidence?.actions ?? [];
+  const requiredActionReadiness = actionEvidence?.readiness
+    ?? { total: 0, satisfied: 0, unresolved: 0, ambiguous: 0, failed: 0, untrusted: 0, actions: [] };
   for (const readiness of requiredActionReadiness.actions) {
     if (readiness.status === "SATISFIED") continue;
     const action = durableActions.find((candidate) => candidate.actionId === readiness.actionId);
