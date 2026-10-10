@@ -1,0 +1,29 @@
+{
+  "kind": "COMMIT_BENCHMARK_SOURCE_ADMISSION_PREPARATION",
+  "sourceBaseRevision": "5c5a022b4aa0248df82f7e0ff281a7eba8193612",
+  "changes": [
+    "Both checkouts must have committed tracked source and no untracked runtime/benchmark source.",
+    "Current and baseline tracked byte manifests are captured before and rechecked after measurement.",
+    "Ownership-validation refusal explicitly makes a result ineligible for equal-validation acceptance."
+  ],
+  "validation": {
+    "syntax": "PASS",
+    "eslint": "PASS_ZERO_WARNINGS",
+    "extractedSourceManifestControls": {
+      "passed": 4,
+      "cases": [
+        "clean digest",
+        "dirty tracked source refusal",
+        "untracked runtime refusal",
+        "committed source drift differs"
+      ]
+    },
+    "fullBenchmarkExecuted": false,
+    "verifyFast": "PASS_EXIT_0"
+  },
+  "limits": [
+    "The helper was exercised in disposable Git fixtures; the full measurement driver remains unexecuted.",
+    "No timing, throughput, durability equivalence or release threshold is accepted by preparation checks.",
+    "Shared physical host isolation and remaining original benchmark matrix remain open."
+  ]
+}

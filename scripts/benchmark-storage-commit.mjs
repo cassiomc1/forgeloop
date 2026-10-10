@@ -1,6 +1,8 @@
 /** Matched public state-plus-event transaction measurement; setup is excluded. */
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -20,6 +22,17 @@ const baselineRoot = path.resolve(baseline);
 assert.equal(execFileSync("git", ["-C", baselineRoot, "rev-parse", "HEAD"], { encoding: "utf8" }).trim(), revision);
 assert.equal(execFileSync("git", ["-C", baselineRoot, "status", "--porcelain", "--untracked-files=no"], { encoding: "utf8" }).trim(), "");
 const currentRoot = path.resolve(import.meta.dirname, "..");
+function sourceManifest(root) {
+  assert.equal(execFileSync("git", ["-C", root, "status", "--porcelain", "--untracked-files=no"], { encoding: "utf8" }).trim(), "", "Benchmark sources must be committed and unchanged");
+  const untracked = execFileSync("git", ["-C", root, "ls-files", "--others", "--exclude-standard", "--", "src", "integrations/mcp/src", "scripts"], { encoding: "utf8" }).trim();
+  assert.equal(untracked, "", "Untracked runtime or benchmark source cannot qualify a frozen comparison");
+  const files = execFileSync("git", ["-C", root, "ls-files", "-z"], { encoding: "utf8" }).split("\0").filter(Boolean).sort();
+  return {
+    revision: execFileSync("git", ["-C", root, "rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
+    files: files.map(file => ({ path: file, sha256: createHash("sha256").update(readFileSync(path.join(root, file))).digest("hex") })),
+  };
+}
+const sourceBefore = { current: sourceManifest(currentRoot), baseline: sourceManifest(baselineRoot) };
 async function api(root) {
   const load = name => import(pathToFileURL(path.join(root, `src/core/${name}.js`)).href);
   return { root, ...(await load("work-state")), ...(await load("events")), ...(await load("transaction")), ...(await load("task-claim-state")) };
@@ -100,11 +113,16 @@ for (const count of sizes) {
     db.close(); db = null;
     results.push({ initialEvents: count, claimCount, committedResultParity: true, persistedStateAndTailParity: true,
       ownershipClassificationParity: !baselineAuditRefused,
+      equalValidationAcceptanceEligible: !baselineAuditRefused,
+      acceptanceRefusal: baselineAuditRefused ? "Baseline ownership validation refused the workload; timing is observational only" : null,
       baselineOwnershipAudit: baselineAuditRefused ? { status: "REFUSED", causeCode: "JSON_LIMIT_EXCEEDED", claimsRetained: true } : { status: "MATCHED" },
       nativeOwnershipValid: true, nativeReservationsVerified: true, durability, nativeSamplesMs: nativeSamples, baselineSamplesMs: baselineSamples,
       nativeP95Ms: percentile(nativeSamples), baselineP95Ms: percentile(baselineSamples), reductionP95: 1 - percentile(nativeSamples) / percentile(baselineSamples) });
   } finally { db?.close(); await rm(target, { recursive: true, force: true }); await rm(portable, { recursive: true, force: true }); }
 }
+const sourceAfter = { current: sourceManifest(currentRoot), baseline: sourceManifest(baselineRoot) };
+assert.deepEqual(sourceAfter, sourceBefore, "Current or baseline tracked source changed during measurement");
 process.stdout.write(`${JSON.stringify({ schemaVersion: 1, baselineRevision: revision, node: process.version, platform: process.platform, architecture: process.arch, cpu: os.cpus()[0]?.model ?? null,
+  sourceManifests: sourceBefore, trackedSourcesUnchanged: true,
   repeats, claimCount, timestamp, runtime: "warm-cache public transaction API with per-call native connection", syntheticSeedOutsideMeasurement: true,
   durabilityQualification: "Native WAL/FULL and unchanged pinned filesystem fsync transaction implementation; power-loss equivalence requires separate evidence.", releaseThresholdsVerified: false, results }, null, 2)}\n`);
