@@ -1,0 +1,343 @@
+{
+  "kind": "LEDGER_TWO_SCOPE_DIAGNOSTIC",
+  "sourceRevision": "8be05f7f4f790627517eb9c40fd797e66cf87548",
+  "workersClosed": 36,
+  "workerPidsAbsent": true,
+  "fullTrackedManifestVerifiedAgainstGit": 3232,
+  "payloadCountDigestHeadParity": true,
+  "samplesPerMeasuredRow": 3,
+  "rows": [
+    {
+      "readScope": "mutation-observation",
+      "events": 10,
+      "backend": "filesystem",
+      "operation": "iterator",
+      "status": "MEASURED",
+      "p95Ms": 1.186,
+      "peakProcessRssKiB": 74160
+    },
+    {
+      "readScope": "mutation-observation",
+      "events": 10,
+      "backend": "sqlite",
+      "operation": "iterator",
+      "status": "MEASURED",
+      "p95Ms": 1.035,
+      "peakProcessRssKiB": 73632
+    },
+    {
+      "readScope": "mutation-observation",
+      "events": 10,
+      "backend": "sqlite",
+      "operation": "audit",
+      "status": "MEASURED",
+      "p95Ms": 5.629,
+      "peakProcessRssKiB": 75200
+    },
+    {
+      "readScope": "mutation-observation",
+      "events": 10,
+      "backend": "sqlite",
+      "operation": "audit-array",
+      "status": "MEASURED",
+      "p95Ms": 1.199,
+      "peakProcessRssKiB": 73584
+    },
+    {
+      "readScope": "mutation-observation",
+      "events": 10,
+      "backend": "filesystem",
+      "operation": "audit",
+      "status": "MEASURED",
+      "p95Ms": 1.417,
+      "peakProcessRssKiB": 74464
+    },
+    {
+      "readScope": "mutation-observation",
+      "events": 10,
+      "backend": "sqlite",
+      "operation": "export",
+      "status": "MEASURED",
+      "p95Ms": 33.591,
+      "peakProcessRssKiB": 77504
+    },
+    {
+      "readScope": "mutation-observation",
+      "events": 1000,
+      "backend": "filesystem",
+      "operation": "iterator",
+      "status": "MEASURED",
+      "p95Ms": 16.843,
+      "peakProcessRssKiB": 110064
+    },
+    {
+      "readScope": "mutation-observation",
+      "events": 1000,
+      "backend": "sqlite",
+      "operation": "iterator",
+      "status": "MEASURED",
+      "p95Ms": 21.894,
+      "peakProcessRssKiB": 79536
+    },
+    {
+      "readScope": "mutation-observation",
+      "events": 1000,
+      "backend": "sqlite",
+      "operation": "audit",
+      "status": "MEASURED",
+      "p95Ms": 57.715,
+      "peakProcessRssKiB": 93952
+    },
+    {
+      "readScope": "mutation-observation",
+      "events": 1000,
+      "backend": "sqlite",
+      "operation": "audit-array",
+      "status": "MEASURED",
+      "p95Ms": 30.155,
+      "peakProcessRssKiB": 104656
+    },
+    {
+      "readScope": "mutation-observation",
+      "events": 1000,
+      "backend": "filesystem",
+      "operation": "audit",
+      "status": "MEASURED",
+      "p95Ms": 22.654,
+      "peakProcessRssKiB": 113136
+    },
+    {
+      "readScope": "mutation-observation",
+      "events": 1000,
+      "backend": "sqlite",
+      "operation": "export",
+      "status": "MEASURED",
+      "p95Ms": 57.042,
+      "peakProcessRssKiB": 92928
+    },
+    {
+      "readScope": "mutation-observation",
+      "events": 100000,
+      "backend": "filesystem",
+      "operation": "iterator",
+      "status": "REFUSED",
+      "p95Ms": null,
+      "peakProcessRssKiB": 351440
+    },
+    {
+      "readScope": "mutation-observation",
+      "events": 100000,
+      "backend": "sqlite",
+      "operation": "iterator",
+      "status": "MEASURED",
+      "p95Ms": 1888.072,
+      "peakProcessRssKiB": 110336
+    },
+    {
+      "readScope": "mutation-observation",
+      "events": 100000,
+      "backend": "sqlite",
+      "operation": "audit",
+      "status": "MEASURED",
+      "p95Ms": 5461.512,
+      "peakProcessRssKiB": 130688
+    },
+    {
+      "readScope": "mutation-observation",
+      "events": 100000,
+      "backend": "sqlite",
+      "operation": "audit-array",
+      "status": "MEASURED",
+      "p95Ms": 2021.556,
+      "peakProcessRssKiB": 581936
+    },
+    {
+      "readScope": "mutation-observation",
+      "events": 100000,
+      "backend": "filesystem",
+      "operation": "audit",
+      "status": "REFUSED",
+      "p95Ms": null,
+      "peakProcessRssKiB": 358288
+    },
+    {
+      "readScope": "mutation-observation",
+      "events": 100000,
+      "backend": "sqlite",
+      "operation": "export",
+      "status": "MEASURED",
+      "p95Ms": 2841.943,
+      "peakProcessRssKiB": 135360
+    },
+    {
+      "readScope": "read-only",
+      "events": 10,
+      "backend": "filesystem",
+      "operation": "iterator",
+      "status": "MEASURED",
+      "p95Ms": 1.202,
+      "peakProcessRssKiB": 74064
+    },
+    {
+      "readScope": "read-only",
+      "events": 10,
+      "backend": "sqlite",
+      "operation": "iterator",
+      "status": "MEASURED",
+      "p95Ms": 0.786,
+      "peakProcessRssKiB": 73488
+    },
+    {
+      "readScope": "read-only",
+      "events": 10,
+      "backend": "sqlite",
+      "operation": "audit",
+      "status": "MEASURED",
+      "p95Ms": 5.797,
+      "peakProcessRssKiB": 74912
+    },
+    {
+      "readScope": "read-only",
+      "events": 10,
+      "backend": "sqlite",
+      "operation": "audit-array",
+      "status": "MEASURED",
+      "p95Ms": 1.103,
+      "peakProcessRssKiB": 73600
+    },
+    {
+      "readScope": "read-only",
+      "events": 10,
+      "backend": "filesystem",
+      "operation": "audit",
+      "status": "MEASURED",
+      "p95Ms": 1.38,
+      "peakProcessRssKiB": 74544
+    },
+    {
+      "readScope": "read-only",
+      "events": 10,
+      "backend": "sqlite",
+      "operation": "export",
+      "status": "MEASURED",
+      "p95Ms": 31.975,
+      "peakProcessRssKiB": 77792
+    },
+    {
+      "readScope": "read-only",
+      "events": 1000,
+      "backend": "filesystem",
+      "operation": "iterator",
+      "status": "MEASURED",
+      "p95Ms": 14.325,
+      "peakProcessRssKiB": 110080
+    },
+    {
+      "readScope": "read-only",
+      "events": 1000,
+      "backend": "sqlite",
+      "operation": "iterator",
+      "status": "MEASURED",
+      "p95Ms": 18.049,
+      "peakProcessRssKiB": 80736
+    },
+    {
+      "readScope": "read-only",
+      "events": 1000,
+      "backend": "sqlite",
+      "operation": "audit",
+      "status": "MEASURED",
+      "p95Ms": 52.363,
+      "peakProcessRssKiB": 92560
+    },
+    {
+      "readScope": "read-only",
+      "events": 1000,
+      "backend": "sqlite",
+      "operation": "audit-array",
+      "status": "MEASURED",
+      "p95Ms": 22.867,
+      "peakProcessRssKiB": 101200
+    },
+    {
+      "readScope": "read-only",
+      "events": 1000,
+      "backend": "filesystem",
+      "operation": "audit",
+      "status": "MEASURED",
+      "p95Ms": 20.09,
+      "peakProcessRssKiB": 115008
+    },
+    {
+      "readScope": "read-only",
+      "events": 1000,
+      "backend": "sqlite",
+      "operation": "export",
+      "status": "MEASURED",
+      "p95Ms": 54.334,
+      "peakProcessRssKiB": 92752
+    },
+    {
+      "readScope": "read-only",
+      "events": 100000,
+      "backend": "filesystem",
+      "operation": "iterator",
+      "status": "REFUSED",
+      "p95Ms": null,
+      "peakProcessRssKiB": 324736
+    },
+    {
+      "readScope": "read-only",
+      "events": 100000,
+      "backend": "sqlite",
+      "operation": "iterator",
+      "status": "MEASURED",
+      "p95Ms": 1279.032,
+      "peakProcessRssKiB": 115472
+    },
+    {
+      "readScope": "read-only",
+      "events": 100000,
+      "backend": "sqlite",
+      "operation": "audit",
+      "status": "MEASURED",
+      "p95Ms": 4062.514,
+      "peakProcessRssKiB": 164272
+    },
+    {
+      "readScope": "read-only",
+      "events": 100000,
+      "backend": "sqlite",
+      "operation": "audit-array",
+      "status": "MEASURED",
+      "p95Ms": 1721.71,
+      "peakProcessRssKiB": 485200
+    },
+    {
+      "readScope": "read-only",
+      "events": 100000,
+      "backend": "filesystem",
+      "operation": "audit",
+      "status": "REFUSED",
+      "p95Ms": null,
+      "peakProcessRssKiB": 358544
+    },
+    {
+      "readScope": "read-only",
+      "events": 100000,
+      "backend": "sqlite",
+      "operation": "export",
+      "status": "MEASURED",
+      "p95Ms": 2787.747,
+      "peakProcessRssKiB": 139824
+    }
+  ],
+  "acceptanceClaim": false,
+  "limits": [
+    "Local background activity uncontrolled; diagnostic comparison only.",
+    "Historical same-mode comparison isolates source changes only approximately; mode changes are separate workload changes.",
+    "Scope modes differ in CAS observation work; do not attribute mode difference to prepared PRAGMA optimization.",
+    "Three samples and uncontrolled background/cache do not establish release gates.",
+    "100000 filesystem refusal is not a speedup."
+  ]
+}

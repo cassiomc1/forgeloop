@@ -1,5 +1,13 @@
 # SQLite migration progress
 
+## Current two-mode ledger and Windows correction evidence
+
+Frozen `8be05f7` runs completed both read-only and mutation-observation scopes: 36 workers closed, three samples per measured row, matching payload/count/head evidence, all 3,232 source hashes unchanged, and no remaining benchmark temporary prefixes. At 100,000 events the read-only native iterator/audit/export p95 values were 1,279 / 4,063 / 2,788 ms. Mutation-observation values were 1,888 / 5,462 / 2,842 ms. The scope difference includes CAS observation work; it is not evidence attributing gains to statement reuse. Background/cache conditions were uncontrolled, and filesystem 100,000-event readers refused their original JSON limit. These are diagnostics, not whole release acceptance. Raw records and review are retained under `benchmarks/storage-sqlite/ledger-8be05f7-*`.
+
+The current inclusive LOC review verifies 933 source hashes with zero unresolved membership: 32,480 lines against baseline 25,732 and ceiling 19,299. Membership, mandatory storage/import/export/maintenance scope, discovery supplement and original threshold remain unchanged. The target fails by 13,181 lines; no acceptance is claimed.
+
+Windows full run `38045220857` at `0119a8b` passed 3,015 tests, failed one and skipped 25. Recovery at `PARTIAL_OUTGOING` refused an owner PID before `REBUILD_DATABASE`; a later diagnostic observed it absent. Normal failed-worker branches now register and await `close` as well as `exit`. Eighteen focused local tests and fast checks pass. Exact Windows timing and PID reuse remain unproven; production liveness refusal is unchanged and fresh Windows execution is required.
+
 ## Current ledger read-scope preparation
 
 The ledger driver now defaults to the read-only operational scope used by public read commands. The previous fixture used a read-only database with the writable store default, adding mutation CAS read-set hashing. That historical mode remains available through `--read-scope=mutation-observation`; parent and worker output record the chosen mode. A real-store control confirms equal payloads with CAS observations only in the mutation mode. Syntax, lint and fast checks pass. The prior `ebb632b` results remain historical mutation-observation measurements; a scope change must not be attributed to the prepared-PRAGMA production optimization. All original sizes, payloads, validators, snapshot guards and baseline refusals remain unchanged. Fresh runs in both modes are required. See `benchmarks/storage-sqlite/ledger-read-scope-preparation.json`.

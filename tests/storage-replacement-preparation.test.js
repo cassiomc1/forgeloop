@@ -124,9 +124,11 @@ for (const checkpoint of ["PREPARING", "OUTGOING_BASELINE", "OUTGOING_ALLOCATED"
         await writeFile(allocation, JSON.stringify(changed));
         worker = fork(new URL("./helpers/storage-replacement-failed-resume-worker.mjs", import.meta.url), [fixture.target, ready.operationId, ready.ownerId], { stdio: ["ignore", "ignore", "pipe", "ipc"] });
         const finished = once(worker, "exit");
+        const closed = once(worker, "close");
         const [failed] = await once(worker, "message");
         assert.equal(failed.code, "E_STORAGE_RESTORE_INVALID");
         assert.equal((await finished)[0], 0);
+        await closed;
         await assert.rejects(readFile(path.join(root, "outgoing/replacement-manifest.json")), { code: "ENOENT" });
         await writeFile(allocation, bytes);
         options.expectedOwnerId = failed.ownerId;
@@ -137,9 +139,11 @@ for (const checkpoint of ["PREPARING", "OUTGOING_BASELINE", "OUTGOING_ALLOCATED"
         await writeFile(orphan, "changed outgoing orphan");
         worker = fork(new URL("./helpers/storage-replacement-failed-resume-worker.mjs", import.meta.url), [fixture.target, ready.operationId, ready.ownerId], { stdio: ["ignore", "ignore", "pipe", "ipc"] });
         const finished = once(worker, "exit");
+        const closed = once(worker, "close");
         const [failed] = await once(worker, "message");
         assert.equal(failed.code, "E_STORAGE_RESTORE_INVALID");
         assert.equal((await finished)[0], 0);
+        await closed;
         await assert.rejects(readdir(path.join(root, "outgoing-history")), { code: "ENOENT" });
         options.expectedOwnerId = failed.ownerId;
         await writeFile(orphan, bytes);
@@ -156,10 +160,12 @@ for (const checkpoint of ["PREPARING", "OUTGOING_BASELINE", "OUTGOING_ALLOCATED"
         await writeFile(incoming, "corrupt source before recovered preparation");
         worker = fork(new URL("./helpers/storage-replacement-failed-resume-worker.mjs", import.meta.url), [fixture.target, ready.operationId, ready.ownerId], { stdio: ["ignore", "ignore", "pipe", "ipc"] });
         const finished = once(worker, "exit");
+        const closed = once(worker, "close");
         const [failed] = await once(worker, "message");
         assert.equal(failed.code, "E_STORAGE_ATTACHMENT_INVALID");
         assert.notEqual(failed.ownerId, ready.ownerId);
         assert.equal((await finished)[0], 0);
+        await closed;
         assert.equal(JSON.parse(await readFile(path.join(root, "outgoing/owner-journal.json"))).ownerId, failed.ownerId);
         options.expectedOwnerId = failed.ownerId;
         await writeFile(incoming, bytes);

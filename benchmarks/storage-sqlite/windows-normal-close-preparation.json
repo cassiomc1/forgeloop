@@ -1,0 +1,14 @@
+{
+  "kind": "NORMAL_EXIT_WORKER_CLOSE_CORRECTION",
+  "productionChanged": false,
+  "sourceBefore": "8be05f7f4f790627517eb9c40fd797e66cf87548",
+  "focused": {
+    "passed": 18,
+    "failed": 0,
+    "skipped": 0
+  },
+  "verifyFastExitCode": 0,
+  "windowsCause": "Plausible lifecycle interval; PID reuse and exact Windows cause unproven",
+  "windowsValidation": "pending",
+  "acceptanceClaim": false
+}

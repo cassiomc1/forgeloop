@@ -1,0 +1,21 @@
+{
+  "kind": "WINDOWS_FULL_SUITE_FAILURE_DIAGNOSIS",
+  "runId": 38045220857,
+  "jobId": 114193276423,
+  "sourceRevision": "0119a8b9ccce43b0c342f1e0cdd5c1e981c049c5",
+  "status": "failure",
+  "tests": 3041,
+  "passed": 3015,
+  "failed": 1,
+  "skipped": 25,
+  "failingTest": "initial replacement resumes SIGKILL at PARTIAL_OUTGOING",
+  "refusal": "E_STORAGE_MAINTENANCE_IN_PROGRESS",
+  "recordedOwnerPid": 9452,
+  "workerPid": 9764,
+  "requestedCheckpoint": "REBUILD_DATABASE",
+  "laterDiagnosticOwnerProcess": "absent",
+  "firstCauseConfirmed": false,
+  "hypothesis": "Normal failed-worker exit paths do not await child close before successor adoption. Existing SIGKILL helper already awaits close.",
+  "productionLivenessDisposition": "Preserve fail-closed check; no bypass or retry on refusal.",
+  "logSha256": "197f85d76edbfd619b43ba97e5f59afabc00cc29bc7fa8355b686419f14dd9d2"
+}
