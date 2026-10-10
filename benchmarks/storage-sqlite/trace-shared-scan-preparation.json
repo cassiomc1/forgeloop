@@ -1,0 +1,40 @@
+{
+  "kind": "TRACE_SHARED_EVENT_SCAN_PREPARATION",
+  "comparisonBase": "1d0b9698a50c8c5f84d593609e31dbf1c6586035",
+  "sourceHashes": {
+    "frozenTraceSha256": "a5f8845c5c99187e90b7acfe87f8970a4c4b54431ca2674db2f98d83e3ab25cc",
+    "currentDraftTraceSha256": "8c472d27a2efc704fa0324505d3889036a2820e7de666eb13b01eac3364845b6",
+    "archiveSha256": "c95f2d0c546e9ae761c18f6bb762e61b851098a6cf17504fa886f7c83eb83fa7"
+  },
+  "nativeParity": {
+    "events": 35,
+    "integrityValid": true,
+    "fullOutputEqual": true
+  },
+  "portableProjectionParity": {
+    "events": 15,
+    "fullOutputEqual": true,
+    "duplicateSequence": true,
+    "storageAuditBypassed": true
+  },
+  "normalizedField": "snapshot.capturedAt only",
+  "sourceCopyProof": {
+    "filesExcludingTrace": 3272,
+    "equal": true,
+    "dependencyTargetsEqual": true,
+    "temporaryCopiesRemoved": true
+  },
+  "rootFocusedTests": {
+    "node": "24.19.0",
+    "tests": 20,
+    "passed": 20,
+    "failed": 0,
+    "skipped": 0
+  },
+  "verifyFastExitCode": 0,
+  "sourceNonblankGrowth": 15,
+  "performanceMeasured": false,
+  "inclusiveLocGateSatisfied": false,
+  "fullMigrationAcceptance": false,
+  "guardPolicy": "Shared scan preserves per-row and callback boundary guards; diagnostics, checks, failures and action replay remain separate"
+}

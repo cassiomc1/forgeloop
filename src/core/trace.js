@@ -201,23 +201,6 @@ export function normalizeProtocolEvent(event, context = {}) {
   };
 }
 
-function lifecycleTransitions(events) {
-  const transitions = [];
-  let lastPhaseEvent = null;
-  for (const event of events) {
-    if (!LIFECYCLE_TRANSITIONS.includes(event.event)) continue;
-    transitions.push({
-      sequence: event.seq,
-      at: event.at,
-      type: event.event,
-      details: event.details ?? {},
-      previous: lastPhaseEvent?.type ?? null,
-    });
-    lastPhaseEvent = event;
-  }
-  return transitions;
-}
-
 function projectChecks(snapshot) {
   const state = snapshot.state;
   const attemptsByCheck = new Map();
@@ -422,8 +405,20 @@ export async function buildTaskTrace({ target, packageRoot, taskId = null, event
     buildTraceFromSnapshot({ target, packageRoot, taskId, eventsPath, snapshot, eventProjection }));
 }
 
-function projectNormalizedEvents(taskEvents, artifactPath, eventProjection, validatedOrder) {
+function projectTraceEvents(taskEvents, artifactPath, eventProjection, validatedOrder) {
   const normalizedEvents = [];
+  const transitions = [];
+  let lastPhaseEvent = null;
+  const executions = [];
+  const seenExecutions = new Set();
+  const evidenceSources = new Map();
+  const recovery = [];
+  const completionAttempts = [];
+  const continuity = [];
+  let validatedAt = null;
+  let rejectedAt = null;
+  let actionEventCount = 0;
+  let reconciliationCount = 0;
   let totalEventCount = 0;
   let hasLegacyTimestamp = false;
   for (const { event, phase, quality } of phasedEvents(taskEvents, validatedOrder)) {
@@ -436,9 +431,72 @@ function projectNormalizedEvents(taskEvents, artifactPath, eventProjection, vali
     hasLegacyTimestamp ||= normalized.timestampQuality !== "authoritative";
     if (eventProjection) eventProjection.add(normalized);
     else normalizedEvents.push(normalized);
+
+    if (LIFECYCLE_TRANSITIONS.includes(event.event)) {
+      transitions.push({
+        sequence: event.seq,
+        at: event.at,
+        type: event.event,
+        details: event.details ?? {},
+        previous: lastPhaseEvent?.type ?? null,
+      });
+      lastPhaseEvent = event;
+    }
+
+    const details = event.details ?? {};
+    const executionId = details.executionId ?? details.executionRef ?? null;
+    if (executionId && !seenExecutions.has(executionId)) {
+      seenExecutions.add(executionId);
+      executions.push({
+        executionId,
+        sequence: event.seq,
+        at: event.at,
+        status: details.status ?? null,
+        exitCode: details.exitCode ?? null,
+        resolution: details.resolution ?? null,
+      });
+    }
+
+    const refs = [
+      ...(Array.isArray(details.evidenceRefs) ? details.evidenceRefs : []),
+      ...(Array.isArray(details.hypotheses)
+        ? details.hypotheses.flatMap((hypothesis) => hypothesis.evidenceRefs ?? [])
+        : []),
+    ];
+    for (const ref of refs) {
+      if (!ref) continue;
+      if (!evidenceSources.has(ref)) evidenceSources.set(ref, { ref, sources: [] });
+      if (!evidenceSources.get(ref).sources.includes(event.event)) evidenceSources.get(ref).sources.push(event.event);
+    }
+
+    if (["TASK_RECOVERY_RECORDED", "TASK_RECOVERY_RESUMED", "OPERATOR_RECOVERY_RECORDED", "TASK_ABANDONED", "LEGACY_RECOVERY_MIGRATION_RECORDED"].includes(event.event)) {
+      recovery.push({ sequence: event.seq, at: event.at, type: event.event, details });
+    }
+    if (event.event === "COMPLETION_VALIDATED" || event.event === "COMPLETION_REJECTED") {
+      completionAttempts.push({ sequence: event.seq, at: event.at, type: event.event });
+      if (event.event === "COMPLETION_VALIDATED") validatedAt = event.at ?? null;
+      else rejectedAt = event.at ?? null;
+    }
+    if (event.event.startsWith("ACTION_") || event.event.startsWith("APPROVAL_")) actionEventCount += 1;
+    if (event.event === "ACTION_RECONCILED") reconciliationCount += 1;
+    if (event.event === "CONTINUITY_RECORDED" || event.event === "CHECKPOINT_RECONCILED") {
+      continuity.push({ sequence: event.seq, at: event.at, type: event.event });
+    }
   }
 
-  return { normalizedEvents, totalEventCount, hasLegacyTimestamp };
+  return {
+    normalizedEvents,
+    totalEventCount,
+    hasLegacyTimestamp,
+    transitions,
+    executions,
+    evidence: [...evidenceSources.values()].sort((a, b) => a.ref.localeCompare(b.ref)),
+    recovery,
+    completion: { validatedAt, rejectedAt, attempts: completionAttempts },
+    continuity,
+    actionEventCount,
+    reconciliationCount,
+  };
 }
 
 async function buildTraceFromSnapshot({ target, packageRoot, taskId, eventsPath, snapshot, eventProjection }) {
@@ -449,7 +507,10 @@ async function buildTraceFromSnapshot({ target, packageRoot, taskId, eventsPath,
     ? snapshot.events.filter(belongsToTask) : snapshot.events;
   // The private snapshot audit already proved seq === index + 1. Invalid
   // ledgers retain the original duplicate/order compatibility projection.
-  const { normalizedEvents, totalEventCount, hasLegacyTimestamp } = projectNormalizedEvents(taskEvents, artifactPath, eventProjection, snapshot.integrity.valid);
+  const {
+    normalizedEvents, totalEventCount, hasLegacyTimestamp, transitions,
+    executions, evidence, recovery, completion, continuity, actionEventCount, reconciliationCount,
+  } = projectTraceEvents(taskEvents, artifactPath, eventProjection, snapshot.integrity.valid);
 
   const integrity = {
     valid: snapshot.integrity.valid,
@@ -460,50 +521,6 @@ async function buildTraceFromSnapshot({ target, packageRoot, taskId, eventsPath,
 
   const failureSignatures = projectFailureSignatures({ state: snapshot.state, events: taskEvents });
   const failureSurfaces = projectFailureSurfaces({ state: snapshot.state, events: taskEvents });
-
-  const executions = [];
-  const seenExecutions = new Set();
-  for (const event of taskEvents) {
-    const d = event.details ?? {};
-    const executionId = d.executionId ?? d.executionRef ?? null;
-    if (!executionId || seenExecutions.has(executionId)) continue;
-    seenExecutions.add(executionId);
-    executions.push({
-      executionId,
-      sequence: event.seq,
-      at: event.at,
-      status: d.status ?? null,
-      exitCode: d.exitCode ?? null,
-      resolution: d.resolution ?? null,
-    });
-  }
-
-  const evidenceSources = new Map();
-  for (const event of taskEvents) {
-    const refs = [
-      ...(Array.isArray(event.details?.evidenceRefs) ? event.details.evidenceRefs : []),
-      ...(Array.isArray(event.details?.hypotheses)
-        ? event.details.hypotheses.flatMap((hypothesis) => hypothesis.evidenceRefs ?? [])
-        : []),
-    ];
-    for (const ref of refs) {
-      if (!ref) continue;
-      if (!evidenceSources.has(ref)) evidenceSources.set(ref, { ref, sources: [] });
-      if (!evidenceSources.get(ref).sources.includes(event.event)) evidenceSources.get(ref).sources.push(event.event);
-    }
-  }
-  const evidence = [...evidenceSources.values()].sort((a, b) => a.ref.localeCompare(b.ref));
-
-  const recovery = taskEvents
-    .filter((event) => ["TASK_RECOVERY_RECORDED", "TASK_RECOVERY_RESUMED", "OPERATOR_RECOVERY_RECORDED", "TASK_ABANDONED", "LEGACY_RECOVERY_MIGRATION_RECORDED"].includes(event.event))
-    .map((event) => ({ sequence: event.seq, at: event.at, type: event.event, details: event.details ?? {} }));
-
-  const completionEvents = taskEvents.filter((event) => ["COMPLETION_VALIDATED", "COMPLETION_REJECTED"].includes(event.event));
-  const completion = {
-    validatedAt: completionEvents.findLast((event) => event.event === "COMPLETION_VALIDATED")?.at ?? null,
-    rejectedAt: completionEvents.findLast((event) => event.event === "COMPLETION_REJECTED")?.at ?? null,
-    attempts: completionEvents.map((event) => ({ sequence: event.seq, at: event.at, type: event.event })),
-  };
 
   const actions = snapshot.taskId
     ? await listActions(target, { packageRoot, taskId: snapshot.taskId })
@@ -521,7 +538,6 @@ async function buildTraceFromSnapshot({ target, packageRoot, taskId, eventsPath,
       artifact: action,
     }));
   }
-  const actionEvents = taskEvents.filter((event) => event.event.startsWith("ACTION_") || event.event.startsWith("APPROVAL_"));
   const byState = Object.fromEntries([...new Set(actions.map((action) => action.state))].sort()
     .map((state) => [state, actions.filter((action) => action.state === state).length]));
   const byCapability = Object.fromEntries([...new Set(actions.map((action) => action.capability))].sort()
@@ -545,8 +561,8 @@ async function buildTraceFromSnapshot({ target, packageRoot, taskId, eventsPath,
       || (projection.state === "VERIFIED" && !(projection.authorization.valid && projection.verification.valid))
     ).length,
     repeatedIdempotencyAttempts,
-    reconciliationCount: taskEvents.filter((event) => event.event === "ACTION_RECONCILED").length,
-    eventCount: actionEvents.length,
+    reconciliationCount,
+    eventCount: actionEventCount,
   };
 
   return {
@@ -572,7 +588,7 @@ async function buildTraceFromSnapshot({ target, packageRoot, taskId, eventsPath,
     artifacts: {},
     events: eventProjection ? eventProjection.result() : normalizedEvents,
     ...(eventProjection ? { totalEventCount } : {}),
-    transitions: lifecycleTransitions(taskEvents),
+    transitions,
     executions,
     checks: projectChecks(snapshot),
     evidence,
@@ -582,9 +598,7 @@ async function buildTraceFromSnapshot({ target, packageRoot, taskId, eventsPath,
     },
     failureSignatures,
     failureSurfaces,
-    continuity: taskEvents
-      .filter((event) => ["CONTINUITY_RECORDED", "CHECKPOINT_RECONCILED"].includes(event.event))
-      .map((event) => ({ sequence: event.seq, at: event.at, type: event.event })),
+    continuity,
     recovery,
     policy: {},
     audit: {},
