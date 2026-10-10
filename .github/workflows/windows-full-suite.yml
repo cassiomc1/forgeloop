@@ -14,6 +14,7 @@ on:
           - database-admission
           - storage-correction
           - public-rollback
+          - old-client
           - mcp-resources
         default: full
 
@@ -68,8 +69,8 @@ jobs:
         run: node --test tests/storage-database-admission.test.js
 
   public-rollback:
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.suite == 'public-rollback' }}
-    name: Public rollback (${{ matrix.os }})
+    if: ${{ github.event_name == 'workflow_dispatch' && (inputs.suite == 'public-rollback' || inputs.suite == 'old-client') }}
+    name: ${{ inputs.suite == 'old-client' && 'Old-client exclusion' || 'Public rollback' }} (${{ matrix.os }})
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     strategy:
@@ -109,13 +110,25 @@ jobs:
         working-directory: legacy
         run: npm ci --ignore-scripts
       - name: Run sixteen actual public CLI rollback and owner-death drills
+        if: ${{ inputs.suite == 'public-rollback' }}
         run: node scripts/drill-storage-public-rollback.mjs --legacy-root=../legacy --output="${{ runner.temp }}/sqlite-public-rollback-${{ github.run_id }}-${{ github.run_attempt }}"
       - name: Retain complete drill evidence
-        if: always()
+        if: ${{ always() && inputs.suite == 'public-rollback' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: sqlite-public-rollback-${{ matrix.os }}
           path: ${{ runner.temp }}/sqlite-public-rollback-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: error
+          retention-days: 14
+      - name: Run old-client exclusion drill with retained evidence
+        if: ${{ inputs.suite == 'old-client' }}
+        run: node scripts/ci/record-old-client-exclusion-evidence.mjs --legacy-root=../legacy --output="${{ runner.temp }}/sqlite-old-client-${{ github.run_id }}-${{ github.run_attempt }}"
+      - name: Retain complete old-client exclusion evidence
+        if: ${{ always() && inputs.suite == 'old-client' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: sqlite-old-client-${{ matrix.os }}
+          path: ${{ runner.temp }}/sqlite-old-client-${{ github.run_id }}-${{ github.run_attempt }}
           if-no-files-found: error
           retention-days: 14
 
