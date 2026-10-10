@@ -4,6 +4,8 @@ Current production `eb3a318` validates task and record payload/index identity, p
 
 The refreshed inclusive LOC inventory includes the projection enum explicitly and has zero unresolved membership: 25,732 baseline lines versus 32,406 current lines, against the unchanged 19,299 ceiling. The reduction gate fails by 13,107 lines. All storage/import/export/maintenance modules remain included. See `benchmarks/storage-sqlite/persistence-loc-eb3a318-closed.json`; older totals below are historical.
 
+Nested pure-reader scope reuse is now implemented: only a module-owned immutable snapshot with no future commit observations reuses its active operational scope. Writable ancestors retain separate observation scopes. Seventeen focused and nine public-reader tests, fast verification and complexity pass. Memory benefit is unmeasured, and existing full-prepush/platform evidence predates this production change. See `benchmarks/storage-sqlite/nested-read-scope-reuse.json`.
+
 ## Scope and authority
 
 Implement the original `SQLITE_MIGRATION_PLAN.md` through Phases 0–4 and open a PR after all steps pass. Phase 5 optimizations require measured justification. No release publication or live-state conversion is authorized or performed.

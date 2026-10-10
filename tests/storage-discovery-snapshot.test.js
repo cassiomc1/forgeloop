@@ -16,6 +16,7 @@ import { openStorageDatabase, runInTransaction, upsertTask } from "../src/storag
 import { getOperationalStore } from "../src/storage/operational-context.js";
 import { withProjectStorage } from "../src/storage/project-boundary.js";
 import { withOperationalStore, withOperationalReadSnapshot, withOperationalTransaction } from "../src/storage/unit-of-work.js";
+import { withProjectReadSnapshot } from "../src/storage/project-read-snapshot.js";
 import { withStorageSnapshot } from "../src/storage/snapshot.js";
 import { withEventLedgerAudit } from "../src/core/events.js";
 import { taskArtifactPath } from "../src/core/task-paths.js";
@@ -519,4 +520,33 @@ test("owned immutable snapshot validates each task row once without hiding live 
       }
     }));
   } finally { db.close(); await removeTempTree(target); }
+});
+
+
+test("nested project reads reuse pure immutable scopes but preserve writable observations", async () => {
+  const target = await createGitRepository("forgeloop-nested-project-reader-");
+  let db;
+  try {
+    await runTaskCreate({ target, packageRoot: getPackageRoot(), taskId: "nested-reader", claims: [] });
+    db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+    for (const readOnly of [true, false]) {
+      await withOperationalStore({ db, target, readOnly }, async source => {
+        await withProjectReadSnapshot(target, async () => {
+          const outer = getOperationalStore(target);
+          assert.notEqual(outer, source);
+          assert.equal(outer.captureObservations, !readOnly);
+          await withProjectReadSnapshot(target, async () => {
+            const inner = getOperationalStore(target);
+            assert.equal(inner === outer, readOnly);
+            assert.equal(inner.db, outer.db);
+            assert.ok(inner.taskRow(inner.listTaskKeys()[0]));
+            assert.throws(() => inner.stageText("ignored", "{}"), { code: "E_STORAGE_READ_ONLY" });
+          });
+          assert.equal(getOperationalStore(target), outer);
+        });
+        assert.equal(getOperationalStore(target), source);
+        if (!readOnly) assert.ok(source.reads.size > 0);
+      });
+    }
+  } finally { db?.close(); await removeTempTree(target); }
 });

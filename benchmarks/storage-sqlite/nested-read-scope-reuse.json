@@ -1,0 +1,47 @@
+{
+  "kind": "PURE_READER_NESTED_SNAPSHOT_SCOPE_REUSE",
+  "parentRevision": "a5faa02fd514bce045f2c8a0aec569ddb5f198b2",
+  "behavior": "Reuse an active module-owned immutable scope only when captureObservations is false. Writable ancestors continue minting detached observation scopes; staged state bypass is unchanged.",
+  "checks": {
+    "focused": 17,
+    "publicConsumers": 9,
+    "failed": 0,
+    "skipped": 0,
+    "fastExitCode": 0,
+    "complexity": "PASS"
+  },
+  "sourceHashes": {
+    "src/storage/project-read-snapshot.js": "ef96fadf9340d7fd79d187aa66272c3ea327382e5190cc98e52c02931b58f864",
+    "tests/storage-discovery-snapshot.test.js": "8bfad4f6a71f85cf7de95516042dba9d5557d25a219599f0c8ed25a264a96eb0"
+  },
+  "logs": {
+    "nested-scope-focused.log": {
+      "path": "/Users/cassio/.codex/verification/nested-scope-focused.log",
+      "sha256": "22dd881cddec467bfb93f9ab2e23c9c9caf9d97623ac0c87be5cf844dc2ed0c1"
+    },
+    "nested-scope-consumers.log": {
+      "path": "/Users/cassio/.codex/verification/nested-scope-consumers.log",
+      "sha256": "9081cb9b76036b263869ec9735314b8a5144db0d7ef6f0862d4d0aa26adc09be"
+    },
+    "nested-scope-fast.log": {
+      "path": "/Users/cassio/.codex/verification/nested-scope-fast.log",
+      "sha256": "6f80ceb463780874f0a08327e6da07872501e8710e8c5897b19db268949fe781"
+    },
+    "nested-scope-complexity.log": {
+      "path": "/Users/cassio/.codex/verification/nested-scope-complexity.log",
+      "sha256": "32111f472b37a8b8941d21c72e18a3815643453328562aed2fd87e8a2f0417f2"
+    }
+  },
+  "loc": {
+    "baseline": 25732,
+    "current": 32409,
+    "ceiling": 19299,
+    "unresolved": [],
+    "targetMet": false
+  },
+  "limitations": [
+    "No measured latency or RSS benefit.",
+    "Fullprepush receipt eb3a318 and activeCI a5faa02 predate this production change.",
+    "Whole plan, performance/memory,25percentLOC and validator closure remain open."
+  ]
+}
