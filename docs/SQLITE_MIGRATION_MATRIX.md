@@ -57,8 +57,10 @@ fixture ACLs, rather than reading them while denied. See
 Linux public rollback at `54d2e3c` passed sixteen cases; retained case hashes,
 source manifest and recovery validation are reviewed in
 `benchmarks/storage-sqlite/public-rollback-54d2e3c-linux-review.json`.
-Windows job `114144940328` remains running as of this review. Direct child
-completion is not runner-wide cleanup evidence.
+Windows job `114144940328` also passed all sixteen cases. Its retained output
+hashes, successful exits, native-byte parity and recovery validation are reviewed
+in `benchmarks/storage-sqlite/public-rollback-54d2e3c-windows-review.json`.
+Direct child completion is not runner-wide cleanup evidence.
 
 Inclusive persistence LOC is 25,732 baseline versus 32,428 current lines, with
 zero unresolved membership and the unchanged ceiling of 19,299. All storage,

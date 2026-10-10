@@ -1,0 +1,35 @@
+{
+  "kind": "public-repair-atomicity-regression",
+  "sourceRevision": "3735e10",
+  "node": "v24.19.0",
+  "environmentRemoved": [
+    "TYPESAFE_API_KEY",
+    "NODE_OPTIONS"
+  ],
+  "tests": 4,
+  "passed": 4,
+  "failed": 0,
+  "skipped": 0,
+  "commands": [
+    "task-abandon",
+    "task-repair-contract-bootstrap",
+    "task-migrate-contract-bootstrap-repair",
+    "task-repair-legacy-recovery"
+  ],
+  "assertions": [
+    "complete canonical table rollback on domain-event publication failure",
+    "transaction closed",
+    "retry one domain event and exact-operation witness",
+    "repeated abandonment refuses without mutation",
+    "repair/migration idempotence leaves all tables unchanged"
+  ],
+  "testSha256": "e5458b17249efb819fea981bf1038e9c4ce25942154dc8bb7c7849383e1ec60f",
+  "log": {
+    "path": "/Users/cassio/.codex/verification/public-repair-3735e10.log",
+    "sha256": "6bed8ddf11dfec489f44ccf678a9bd77208cb026f1fac0ef1a5181a783a2a3e4"
+  },
+  "limits": [
+    "Constructed valid historical fixture boundaries; no live project repair/migration.",
+    "No universal writer or full-plan acceptance claim."
+  ]
+}
