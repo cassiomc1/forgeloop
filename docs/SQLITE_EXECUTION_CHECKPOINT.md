@@ -1,5 +1,7 @@
 # SQLite migration execution checkpoint
 
+Current correction `70ce7c3` rejects portable action, approval and execution records whose indexed fields disagree with canonical payloads. Three controls reproduced acceptance of tampered indexes before the fix; 85 storage tests, 32 consumer tests, strengthened export/getter controls and fast verification pass afterward. Terminal-result atomicity controls in `816cadf` also pass. Full prepush, platform acceptance and refreshed LOC evidence for this correction remain pending; previous production totals are historical. Evidence: `benchmarks/storage-sqlite/record-export-binding-70ce7c3.json`. The original complete plan, 25% inclusive LOC target, memory/performance gates and validator-backed closure remain required.
+
 ## Scope and authority
 
 Implement the original `SQLITE_MIGRATION_PLAN.md` through Phases 0–4 and open a PR after all steps pass. Phase 5 optimizations require measured justification. No release publication or live-state conversion is authorized or performed.
