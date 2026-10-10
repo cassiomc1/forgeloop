@@ -1,5 +1,11 @@
 # SQLite migration progress
 
+## Current populated CLI and Windows PID reuse findings
+
+Frozen `cd93184` completed all ten populated CLI rows (10/100/250/1,000/5,000 tasks; listing and history tail), twenty samples per backend, full response parity and unchanged source manifests. At ten tasks native history-tail p95 was 300.4 ms versus 196.0 ms, exceeding the original small-workspace tolerance. At 5,000 tasks listing was 4,739.8 versus 8,360.2 ms (1.76x), while history tail was 402.3 versus 153.0 ms. These failures require diagnosis; no performance acceptance is claimed. Raw source-bound evidence is retained under `benchmarks/storage-sqlite/populated-cli-cd93184-*`.
+
+Windows full run `38046501649` failed at `PUBLICATION_READY`. The killed and closed owner PID 8712 was later observed as a live `git` process, directly demonstrating PID reuse at the diagnostic observation. Exact refusal-time identity was not captured. Awaiting worker close alone is insufficient; production conservatively refuses live/ambiguous PIDs. A reviewed process-incarnation proof is needed before changing that boundary. See `windows-da596a7-pid-reuse-diagnosis.json`; no passing Windows claim or blind rerun is made.
+
 ## Current indexed action lookup observation
 
 Frozen `8b23440` completed 10/100/250/1,000/5,000-action idempotency fixtures with 20 instrumented repetitions per backend and one warmup. Every found-key response and missing-key result matched; source manifests remained unchanged. Native/baseline p95 was 4.854/4.118 ms at 10 actions and 3.984/1,158.685 ms at 5,000. The small row adds 0.736 ms, within the original 5 ms tolerance. These schema-valid synthetic PROPOSED actions omit approval/execution/lifecycle history; RSS endpoints include shared-process history, async counters exclude SQLite I/O, and background/cache were uncontrolled. Results are diagnostics, not complete public-consumer/resource acceptance. Inputs, samples and terminal evidence are retained under `benchmarks/storage-sqlite/idempotency-8b23440-*`.
