@@ -2,7 +2,6 @@ import { readdir } from "node:fs/promises";
 
 import { assertSafePath, fileExists } from "./filesystem.js";
 import { getOperationalStore } from "../storage/operational-context.js";
-import { readStorageMetadataJson } from "../storage/metadata-json.js";
 
 const TRANSACTION_ROOT = ".forgeloop/.txn";
 
@@ -23,6 +22,7 @@ export async function findIncompleteTransactions(target) {
     const relative = `${TRANSACTION_ROOT}/${entry.name}/manifest.json`;
     await assertSafePath(target, relative);
     try {
+      const { readStorageMetadataJson } = await import("../storage/metadata-json.js");
       const manifest = await readStorageMetadataJson(target, relative);
       if (!TERMINAL_STATUSES.has(manifest.status)) found.push(manifest);
     } catch {

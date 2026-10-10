@@ -1,0 +1,17 @@
+{
+  "sourceRevision": "ab2ea79b11a969f56844ee3d401c813ed837baef",
+  "command": "npm run verify:prepush",
+  "exitCode": 1,
+  "stoppedAt": "coverage",
+  "core": {
+    "tests": 2984,
+    "passed": 2972,
+    "failed": 1,
+    "skipped": 11
+  },
+  "failure": "C1: fresh readonly dispatch resolves only admission modules without allocating SQLite",
+  "diagnosis": "Static metadata-json import from core/transaction.js resolves storage parser on fresh readonly dispatch; preserve lazy storage admission by importing only during retained manifest inspection.",
+  "trackedFilesUnchanged": 3152,
+  "logSha256": "d838398f6e8d05693952c5712e17ca0b2ea1711a88d6a876cab238a0e3e38a7a",
+  "remainingStages": "not run"
+}
