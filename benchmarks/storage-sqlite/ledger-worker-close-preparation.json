@@ -1,0 +1,26 @@
+{
+  "kind": "LEDGER_WORKER_CLOSE_PREPARATION",
+  "sourceBaseRevision": "5541bb6",
+  "changes": [
+    "Wait for child close and normal exit before parsing worker JSON.",
+    "Retain worker PID, exit code, signal and stdioClosed for each measured/refused row."
+  ],
+  "validation": {
+    "syntax": "PASS",
+    "eslint": "PASS_ZERO_WARNINGS",
+    "actualChildControls": {
+      "passed": 3,
+      "cases": [
+        "normal complete JSON",
+        "inherited stdout completes after parent exit",
+        "nonzero worker refuses with first-cause stderr"
+      ]
+    },
+    "verifyFast": "PASS_EXIT_0"
+  },
+  "fullBenchmarkExecuted": false,
+  "limits": [
+    "Helper controls use real disposable child processes; the full ledger driver remains unexecuted.",
+    "Direct worker completion is not physical host isolation or global cleanup evidence."
+  ]
+}

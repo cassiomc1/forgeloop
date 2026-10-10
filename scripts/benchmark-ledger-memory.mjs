@@ -163,11 +163,13 @@ async function child(args) {
   let stderr = "";
   worker.stdout.on("data", bytes => { stdout += bytes; });
   worker.stderr.on("data", bytes => { stderr += bytes; });
-  await new Promise((resolve, reject) => {
+  const completion = await new Promise((resolve, reject) => {
     worker.once("error", reject);
-    worker.once("exit", code => code === 0 ? resolve() : reject(new Error(`Ledger worker failed (${code}): ${stderr}`)));
+    worker.once("close", (code, signal) => code === 0 && signal === null
+      ? resolve({ pid: worker.pid, exitCode: code, signal, stdioClosed: true })
+      : reject(new Error(`Ledger worker failed (${code}, ${signal}): ${stderr}`)));
   });
-  return { ...JSON.parse(stdout), freshWorkerWallMs: rounded(performance.now() - start) };
+  return { ...JSON.parse(stdout), workerCompletion: completion, freshWorkerWallMs: rounded(performance.now() - start) };
 }
 
 async function main() {
