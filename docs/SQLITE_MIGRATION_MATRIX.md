@@ -55,7 +55,6 @@ Query live CI separately from these source-bound historical receipts.
 | CLI/MCP/API/package/platform checks | Full local recorded-source checks and finite hosted runs pass; current full platform matrix remains open. |
 | Runtime/storage compatibility declarations | Maintained declarations and package checks exist; final unchanged-source package/runtime acceptance remains required. |
 
-
 Current implementation includes direct canonical handoff-list snapshot reads and
 private successful semantic-binding reuse within the exact detached audit scope.
 The latter retains snapshot tamper checks, artifact observations for parent CAS,
