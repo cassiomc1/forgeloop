@@ -844,6 +844,12 @@ async function validateReadLedger(target, packageRoot, options, reader) {
   try {
     events = await reader(target, packageRoot, { ...options, eventsPath: relPath });
   } catch (error) {
+    // A concurrent commit can invalidate a preparation read between statements;
+    // that is the standard retryable revision conflict, not ledger evidence.
+    // Converting it into an invalid-ledger result would let classification
+    // surface a transient contention loser as permanent ownership
+    // inconsistency, so a conflict keeps its own domain error here.
+    if (error?.code === "E_STATE_REVISION_CONFLICT") throw error;
     return { valid: false, events: [], errors: [{ code: error.code ?? "E_EVENT_INVALID", message: error.message, artifacts: [relPath] }] };
   }
   const result = validateLedgerEvents(events, options);
