@@ -267,20 +267,47 @@ test("reconcile-closure CLI accepts only contract-bound verification evidence", 
   });
 });
 
-test("reconcile-closure refuses tasks outside EXECUTING/VERIFYING/CORRECTING/REVIEWING", async () => {
+test("reconcile-closure rebinds an undiagnosed drifted DIAGNOSING task and refuses tasks outside the reconcilable set", async () => {
   await withTarget(async (target) => {
+    // The drift stranded DIAGNOSING between entering the phase and recording
+    // the cycle's first diagnosis; reconcile is the only legal exit and records
+    // the rebound diagnosis itself, bound to the passed evidence.
     const { taskId } = await setupStaleExecutingTask(target, { phase: "DIAGNOSING", previousPhase: "VERIFYING" });
-    await assert.rejects(
-      () => runReconcileClosure({
-        target,
-        packageRoot,
-        taskId,
-        checkId: "regression-tests",
-        requirement: "pack tarball test asserts the README image is excluded from the npm package",
-        argv: ["node", "-e", "process.exit(0)"],
-      }),
-      (error) => error.code === "E_RECONCILE_PHASE_INVALID",
+    const requirement = "pack tarball test asserts the README image is excluded from the npm package";
+
+    const failing = runCli(
+      target,
+      "reconcile-closure",
+      "--task", taskId,
+      "--id", "regression-tests",
+      "--requirement", requirement,
+      "--",
+      "node", "-e", "process.exit(1)",
     );
+    assert.equal(failing.status, 1);
+    assert.match(failing.stderr, /E_RECONCILE_EVIDENCE_FAILED/);
+
+    const passing = runCli(
+      target,
+      "reconcile-closure",
+      "--task", taskId,
+      "--id", "regression-tests",
+      "--requirement", requirement,
+      "--json",
+      "--",
+      "node", "-e", "process.exit(0)",
+    );
+    assert.equal(passing.status, 0, passing.stderr);
+    const report = JSON.parse(passing.stdout);
+    assert.equal(report.reconciled, true);
+    assert.equal(report.event, "CHECKPOINT_RECONCILED");
+
+    const events = await readEvents(target, packageRoot, { taskId });
+    const caseEvent = events.filter((event) => event.event === "DIAGNOSTIC_CASE_RECORDED").at(-1);
+    assert.ok(caseEvent, "reconcile must record the rebound cycle diagnosis");
+    assert.equal(caseEvent.details.verificationCycle, 1);
+    assert.equal(caseEvent.details.hypotheses[0].settledBy.type, "CHECK_STATUS");
+    assert.ok(events.some((event) => event.event === "CHECKPOINT_RECONCILED"));
   });
 });
 

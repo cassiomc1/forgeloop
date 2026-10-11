@@ -8,6 +8,7 @@ import { createReceipt } from "./receipt.js";
 import { currentRepositoryFingerprint } from "./repository.js";
 import { taskArtifactPath } from "./task-paths.js";
 import { resolveTaskClaimState } from "./task-claim-state.js";
+import { DIAGNOSTIC_SCHEMA_VERSION, diagnosticSemanticFingerprint } from "./diagnostic-model.js";
 import { classifyLoadedWorkState, readWorkState, mutateWorkState } from "./work-state.js";
 import { classifyRequirement } from "./evidence-readiness.js";
 import { assertDiagnosingToCorrectingTransition } from "./phase.js";
@@ -15,7 +16,66 @@ import { resolveCurrentCycleDiagnostic } from "./diagnostic-projection.js";
 
 export const RECONCILE_EVENT = "CHECKPOINT_RECONCILED";
 
-const RECONCILABLE_PHASES = new Set(["EXECUTING", "VERIFYING", "CORRECTING", "REVIEWING"]);
+/**
+ * Build the schema-valid rebound diagnostic case for a drifted DIAGNOSING task
+ * that entered the phase before its cycle recorded any diagnosis. The case
+ * binds every observation to the just-passed contract-bound evidence execution
+ * so the diagnosis carries explicit provenance instead of being manufactured
+ * by recovery: the hypothesis is the recovery statement, settled by the
+ * successful evidence, with the next safe action being the canonical advance.
+ */
+function reconcileReboundDiagnosticCase({
+  taskId,
+  verificationCycle,
+  checkId,
+  requirement,
+  command,
+  executionId,
+  repositoryHead,
+}) {
+  const statementLimit = 2000;
+  const observations = [{
+    id: "obs-reconcile-evidence",
+    kind: "CHECK_RESULT",
+    evidenceRef: checkId,
+    provenance: "FORGELOOP_EXECUTED",
+    statement: `Contract-bound evidence ${checkId} passed in the current repository (${repositoryHead}); execution ${executionId}: ${command}`.slice(0, statementLimit),
+  }];
+  const hypotheses = [{
+    id: "h-reconcile-rebind",
+    statement: `Repository moved after the task entered DIAGNOSING but before the cycle recorded any diagnosis; cycle ${verificationCycle} diagnosis is rebound from the passed contract-bound evidence requirement "${requirement}".`.slice(0, statementLimit),
+    contributorRefs: [],
+    evidenceRefs: [checkId],
+    settledBy: { type: "CHECK_STATUS", checkId, expectedStatus: "passed" },
+    status: "OPEN",
+  }];
+  const details = {
+    schemaVersion: DIAGNOSTIC_SCHEMA_VERSION,
+    verificationCycle,
+    diagnosticRevision: 1,
+    failureClass: "VERIFICATION_FAILURE",
+    observations,
+    contributors: [],
+    hypotheses,
+    nextSafeAction: {
+      statement: "Advance DIAGNOSING -> CORRECTING -> VERIFYING and continue the canonical verification pipeline in the reconciled repository.".slice(0, statementLimit),
+    },
+  };
+  details.diagnosticFingerprint = diagnosticSemanticFingerprint({
+    verificationCycle: details.verificationCycle,
+    failureClass: details.failureClass,
+    case_: details,
+  });
+  details.previousDiagnosticFingerprint = null;
+  return details;
+}
+
+// DIAGNOSING is reconcilable under the same diagnosis-boundary condition as
+// CORRECTING: the active cycle must already carry an append-only diagnosis.
+// Without it, drift entering DIAGNOSING before the cycle's first diagnosis is
+// unrecoverable (reconcile-closure, task-recover, handoff, and every mutation
+// all refuse), which stranded real drifted tasks on this exact edge.
+const RECONCILABLE_PHASES = new Set(["EXECUTING", "VERIFYING", "DIAGNOSING", "CORRECTING", "REVIEWING"]);
 
 function reconcileError(code, message, artifacts = []) {
   const error = new Error(message);
@@ -103,11 +163,24 @@ async function validateReconciliationCheckpoint({
     );
   }
 
-  if (state.phase === "CORRECTING") {
-    // Recovery retains this phase; it cannot manufacture diagnosis or authorize
-    // a retry that the ordinary correction transition would refuse.
+  if (state.phase === "CORRECTING" || state.phase === "DIAGNOSING") {
+    // The diagnosis boundary for CORRECTING stays absolute: recovery can never
+    // manufacture a diagnosis or authorize a retry the ordinary correction
+    // transition would refuse. A drifted DIAGNOSING task without a cycle
+    // diagnosis is the one legal exception: the drift struck between entering
+    // DIAGNOSING and recording the cycle's first diagnosis, and no other
+    // command can create either the diagnosis or the fresh checkpoint. Such a
+    // task reconciles only after contract-bound evidence passes, and the
+    // reconcile itself records the cycle diagnosis below (provenance bound to
+    // the passed evidence execution).
+    const cycleDiagnosis = resolveCurrentCycleDiagnostic(ledger.events, state.taskId, state.verificationCycle ?? 1);
+    if (state.phase === "DIAGNOSING" && !cycleDiagnosis) {
+      return { ...state, undiagnosedDiagnosingRebind: true };
+    }
     assertDiagnosingToCorrectingTransition({
-      state, events: ledger.events, resolveDiagnosis: resolveCurrentCycleDiagnostic,
+      state,
+      events: ledger.events,
+      resolveDiagnosis: resolveCurrentCycleDiagnostic,
     });
   }
 
@@ -206,7 +279,7 @@ async function reconcileSelectedClosure({
   if (!RECONCILABLE_PHASES.has(state.phase)) {
     throw reconcileError(
       "E_RECONCILE_PHASE_INVALID",
-      `reconcile-closure supports EXECUTING, VERIFYING, CORRECTING, or REVIEWING tasks whose objective is already satisfied; found ${state.phase}`,
+      `reconcile-closure supports EXECUTING, VERIFYING, DIAGNOSING, CORRECTING, or REVIEWING tasks whose objective is already satisfied; found ${state.phase}`,
       [stateRel],
     );
   }
@@ -262,6 +335,24 @@ async function reconcileSelectedClosure({
 
   const repository = await currentRepositoryFingerprint(target);
   const previous = state.repositoryFingerprint;
+
+  const rebindDiagnosis = Boolean(state.undiagnosedDiagnosingRebind);
+  if (rebindDiagnosis) {
+    delete state.undiagnosedDiagnosingRebind;
+    await appendProtocolEvent(target, {
+      taskId,
+      event: "DIAGNOSTIC_CASE_RECORDED",
+      details: reconcileReboundDiagnosticCase({
+        taskId,
+        verificationCycle: state.verificationCycle ?? 1,
+        checkId,
+        requirement,
+        command: argv.join(" "),
+        executionId: execution.execution.executionId,
+        repositoryHead: repository.head,
+      }),
+    }, packageRoot, { taskId });
+  }
 
   await appendProtocolEvent(target, {
     taskId,

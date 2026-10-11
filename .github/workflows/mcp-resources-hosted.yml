@@ -221,7 +221,13 @@ jobs:
             assert.deepEqual(entry.untrackedEvidence?.unexpectedPaths, [], `${label} checkout has unexpected untracked paths: ${JSON.stringify(entry.untrackedEvidence?.unexpectedPaths ?? null)}`);
           }
           NODE
-          node scripts/ci/observe-benchmark-runner.mjs --phase=before --temp-prefix=forgeloop-mcp-benchmark- --output="$MCP_RESOURCE_OUTPUT/runner-before.json"
+          # GitHub-hosted VMs protect other tenants' PIDs with EACCES, so the
+          # fail-closed /proc inventory can only complete with root visibility
+          # (unprivileged users see ~147 unreadable PIDs and the observer
+          # refuses with E_PROCESS_INVENTORY_INCOMPLETE). sudo -E preserves the
+          # exact Node executable, temp scope and revision binding; only the
+          # observation gains the required read visibility.
+          sudo -E env EXPECTED_BENCHMARK_SHA="$EXPECTED_BENCHMARK_SHA" MCP_CASE="$MCP_CASE" RUNNER_OS="$RUNNER_OS" RUNNER_ARCH="$RUNNER_ARCH" RUNNER_NAME="$RUNNER_NAME" GITHUB_RUN_ID="$GITHUB_RUN_ID" GITHUB_RUN_ATTEMPT="$GITHUB_RUN_ATTEMPT" TMPDIR="$TMPDIR" HOME="$HOME" node scripts/ci/observe-benchmark-runner.mjs --phase=before --temp-prefix=forgeloop-mcp-benchmark- --output="$MCP_RESOURCE_OUTPUT/runner-before.json"
 
       - name: Run paired baseline/current MCP case
         id: benchmark
@@ -298,7 +304,7 @@ jobs:
           fi
           observer_status=1
           if [ -f "$MCP_RESOURCE_OUTPUT/runner-before.json" ] && [ -d current ] && command -v node >/dev/null 2>&1; then
-            node current/scripts/ci/observe-benchmark-runner.mjs --phase=after --temp-prefix=forgeloop-mcp-benchmark- --before="$MCP_RESOURCE_OUTPUT/runner-before.json" --output="$MCP_RESOURCE_OUTPUT/runner-after.json"
+            sudo -E env EXPECTED_BENCHMARK_SHA="$EXPECTED_BENCHMARK_SHA" MCP_CASE="$MCP_CASE" RUNNER_OS="$RUNNER_OS" RUNNER_ARCH="$RUNNER_ARCH" RUNNER_NAME="$RUNNER_NAME" GITHUB_RUN_ID="$GITHUB_RUN_ID" GITHUB_RUN_ATTEMPT="$GITHUB_RUN_ATTEMPT" TMPDIR="$TMPDIR" HOME="$HOME" node current/scripts/ci/observe-benchmark-runner.mjs --phase=after --temp-prefix=forgeloop-mcp-benchmark- --before="$MCP_RESOURCE_OUTPUT/runner-before.json" --output="$MCP_RESOURCE_OUTPUT/runner-after.json"
             observer_status=$?
           else
             printf '%s\n' "runner-after=SKIPPED_NO_BEFORE_OBSERVATION" >> "$MCP_RESOURCE_OUTPUT/workflow-failure-context.txt"
