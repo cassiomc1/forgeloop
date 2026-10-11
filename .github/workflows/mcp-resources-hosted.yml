@@ -266,6 +266,7 @@ jobs:
           INSTALL_BASELINE_OUTCOME: ${{ steps.install_baseline.outcome }}
           ADMISSION_OUTCOME: ${{ steps.admission.outcome }}
           BENCHMARK_OUTCOME: ${{ steps.benchmark.outcome }}
+          EXPECTED_BENCHMARK_SHA: ${{ github.sha }}
         run: |
           set +e
           mkdir -p "$MCP_RESOURCE_OUTPUT"
