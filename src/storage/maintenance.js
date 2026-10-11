@@ -7,6 +7,11 @@ import { MAINTENANCE_OWNER_ID, readMaintenanceOwner } from "./maintenance-owner.
 import { archiveMaintenanceOwner, claimMaintenanceHandoff, publishMaintenanceOwner } from "./maintenance-handoff.js";
 
 const EXCLUSION = ".forgeloop/.storage-maintenance";
+// Single bounded retry for the Windows kill-to-observation race. Small enough
+// to stay inside resume timeouts, long enough for the kernel to release the
+// exited process handle. The retry re-reads the owner observation; it never
+// converts an absent observation into a death proof.
+const WINDOWS_OWNER_REQUERY_DELAY_MS = 250;
 const active = new AsyncLocalStorage();
 
 function busy(message) { return Object.assign(new Error(message), { code: "E_STORAGE_MAINTENANCE_IN_PROGRESS" }); }
@@ -116,15 +121,24 @@ async function assertLocalOwnerDead(owner) {
     if (!isWindowsProcessIncarnationToken(owner.processIncarnation, { pid: owner.pid })) {
       throw busy("Maintenance owner process incarnation is unsupported or malformed");
     }
-    let observation;
-    try { observation = await readWindowsProcessIncarnation(owner.pid); } catch { observation = null; }
-    if (!observation || observation.pid !== owner.pid) throw busy("Owner process identity is unavailable; resume refused");
-    if (observation.status === "ALIVE" && observation.hasExited === false) {
-      if (observation.startTimeTicks === owner.processIncarnation.startTimeTicks) throw busy("Maintenance owner process is still present; resume refused");
-      return;
+    for (let attempt = 0; ; attempt += 1) {
+      let observation;
+      try { observation = await readWindowsProcessIncarnation(owner.pid); } catch { observation = null; }
+      if (observation && observation.pid === owner.pid) {
+        if (observation.status === "ALIVE" && observation.hasExited === false) {
+          if (observation.startTimeTicks === owner.processIncarnation.startTimeTicks) throw busy("Maintenance owner process is still present; resume refused");
+          return;
+        }
+        // Exit and kernel-absent observations carry their own proof: HasExited
+        // with matching ticks, or GetProcessById rejecting the PID entirely.
+        if (observation.status === "EXITED" || observation.status === "NOT_FOUND") return;
+      }
+      // A failed query (null/UNAVAILABLE) is ambiguous: it neither proves the
+      // process died nor that it lives. One bounded re-query rides out the
+      // transient kill-to-handle-lookup race; a second failure stays closed.
+      if (attempt >= 1) throw busy("Owner process identity is unavailable; resume refused");
+      await new Promise(resolve => setTimeout(resolve, WINDOWS_OWNER_REQUERY_DELAY_MS));
     }
-    if (observation.status === "EXITED" || observation.status === "NOT_FOUND") return;
-    throw busy("Owner process identity is unavailable; resume refused");
   }
   try { process.kill(owner.pid, 0); }
   catch (error) { if (error.code === "ESRCH") return; throw busy("Owner liveness is unavailable; resume refused"); }
