@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 2,
+  "node": "v24.19.0",
+  "fixtureTimestamp": "2026-09-11T00:00:00.000Z",
+  "fixturePhase": "RECEIVED",
+  "platform": "darwin",
+  "architecture": "arm64",
+  "cpu": "Apple M2",
+  "comparator": "pinned-pre-migration-release",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "runtime": "warm-cache API with per-call native connection",
+  "releaseThresholdsVerified": false,
+  "repeats": 20,
+  "results": [
+    {
+      "size": 10,
+      "outputParity": true,
+      "nativeDiscoveryP50Ms": 8.623,
+      "nativeDiscoveryP95Ms": 10.148,
+      "discoverySpeedupP95": 1.361,
+      "filesystemDiscoveryP50Ms": 12.729,
+      "filesystemDiscoveryP95Ms": 13.812,
+      "storeLookupP50Ms": 0.114,
+      "storeLookupP95Ms": 0.13,
+      "sqliteVersion": "3.53.3",
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      }
+    },
+    {
+      "size": 250,
+      "outputParity": true,
+      "nativeDiscoveryP50Ms": 117.265,
+      "nativeDiscoveryP95Ms": 124.299,
+      "discoverySpeedupP95": 2.442,
+      "filesystemDiscoveryP50Ms": 297.512,
+      "filesystemDiscoveryP95Ms": 303.567,
+      "storeLookupP50Ms": 2.698,
+      "storeLookupP95Ms": 3.082,
+      "sqliteVersion": "3.53.3",
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      }
+    },
+    {
+      "size": 1000,
+      "outputParity": true,
+      "nativeDiscoveryP50Ms": 448.518,
+      "nativeDiscoveryP95Ms": 459.519,
+      "discoverySpeedupP95": 2.69,
+      "filesystemDiscoveryP50Ms": 1226.097,
+      "filesystemDiscoveryP95Ms": 1236.319,
+      "storeLookupP50Ms": 11.106,
+      "storeLookupP95Ms": 11.65,
+      "sqliteVersion": "3.53.3",
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      }
+    }
+  ]
+}

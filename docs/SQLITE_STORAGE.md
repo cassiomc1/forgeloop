@@ -377,6 +377,19 @@ coverage includes before-event, before-COMMIT and confirmed-after-COMMIT windows
 These scoped results do not prove every native/portable handoff, power-loss
 window or supported platform.
 
+Competing-writer classification guarantee: a concurrent commit that invalidates
+a preparation-scoped event-ledger read between statements surfaces as the
+standard retryable `E_STATE_REVISION_CONFLICT`, never as
+`E_TASK_CLAIM_OWNERSHIP_INCONSISTENT`. Earlier, `validateEventLedger`'s
+reader-result wrapper could re-flavor that transient conflict as invalid ledger
+evidence, which ownership classification then reported as permanent claim
+inconsistency and hard-blocked mutation. The conflict now keeps its own domain
+code at the wrapper boundary, so contention losers retry and only genuine
+disagreement between descriptor, state, recovery and ledger classifies as
+`INCONSISTENT`. Measured with four concurrent CLI processes committing to one
+task: admission and ownership parity hold across repeated runs and workers only
+observe the documented retryable codes.
+
 Current evidence is recorded per increment in `SQLITE_MIGRATION_PROGRESS.md`.
 Complete consumer auditing, legacy filesystem writer removal, reverse export
 and supported downgrade, active-project restore replacement, net persistence

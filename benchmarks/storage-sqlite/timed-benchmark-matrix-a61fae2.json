@@ -1,0 +1,269 @@
+{
+  "kind": "STORAGE_TIMED_BENCHMARK_MATRIX",
+  "phase": "a61fae2-refresh",
+  "sourceRevisionHead": "a61fae22db5822596ffd31889ea6334cf0fb87e0",
+  "priorPhaseRevision": "4504270e1509f202330b7f58cb99231b15376147",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "node": "v24.19.0",
+  "platform": "darwin",
+  "arch": "arm64",
+  "cpu": "Apple M2",
+  "pinnedNode": "/Users/cassio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin",
+  "collectedAt": "2026-10-11T03:41:05.349185+00:00",
+  "releaseThresholdsVerified": false,
+  "rawRuns": {
+    "commit-a61fae2-timed.json": {
+      "sha256": "e10e4d9698fcdcb9f05d8914946dbb96e47d8132d7cbf4adb2e0c3f8f4efc6ea"
+    },
+    "commit-a61fae2-2m-refusal-validation.json": {
+      "sha256": "a8f0b2583abdc0a785d2ad7a56234e468297b8aefca537b108215986a1f23910"
+    },
+    "discovery-a61fae2-timed.json": {
+      "sha256": "052449fb512789d37a518de8e9d7ae098beca893a7642704e1c951f90d04eb30"
+    },
+    "idempotency-a61fae2-timed.json": {
+      "sha256": "0b392f87f036125453f23e54259fc336b02980d5284ae20160e7455d46cc3ee7"
+    },
+    "cli-startup-a61fae2-timed.json": {
+      "sha256": "e2cd1461db9e9e67c90664f6d7171fcc1de185f1c07c184dc05a9adb841f6dc8"
+    }
+  },
+  "summary": {
+    "a61fae2": {
+      "commit": [
+        {
+          "initialEvents": 10,
+          "nativeP50Ms": 8.42,
+          "baselineP50Ms": 117.0,
+          "nativeP95Ms": 11.58,
+          "baselineP95Ms": 125.89,
+          "p95ReductionFraction": 0.91,
+          "parity": true,
+          "timingAcceptanceEligible": true
+        },
+        {
+          "initialEvents": 1000,
+          "nativeP50Ms": 24.57,
+          "baselineP50Ms": 117.26,
+          "nativeP95Ms": 32.93,
+          "baselineP95Ms": 128.0,
+          "p95ReductionFraction": 0.74,
+          "parity": true,
+          "timingAcceptanceEligible": true
+        },
+        {
+          "initialEvents": 100000,
+          "status": "NOT_COMPARABLE",
+          "timingStatus": "NOT_MEASURED",
+          "reason": "2 MiB baseline ledger reader limit; documented refusal preserved as NOT_COMPARABLE, not a failure"
+        }
+      ],
+      "discovery": [
+        {
+          "tasks": 10,
+          "outputParity": true,
+          "nativeP95Ms": 10.15,
+          "filesystemP95Ms": 13.81,
+          "speedupP95": 1.36
+        },
+        {
+          "tasks": 250,
+          "outputParity": true,
+          "nativeP95Ms": 124.3,
+          "filesystemP95Ms": 303.57,
+          "speedupP95": 2.44
+        },
+        {
+          "tasks": 1000,
+          "outputParity": true,
+          "nativeP95Ms": 459.52,
+          "filesystemP95Ms": 1236.32,
+          "speedupP95": 2.69
+        }
+      ],
+      "idempotency": [
+        {
+          "actions": 10,
+          "outputParity": true,
+          "nativeP95Ms": 2.51,
+          "baselineP95Ms": 2.32,
+          "speedupP95": 0.9,
+          "timingAcceptanceEligible": false,
+          "reason": [
+            "FULL_PUBLIC_PARITY_NOT_ESTABLISHED"
+          ]
+        },
+        {
+          "actions": 1000,
+          "outputParity": true,
+          "nativeP95Ms": 3.44,
+          "baselineP95Ms": 224.21,
+          "speedupP95": 65.1,
+          "timingAcceptanceEligible": false,
+          "reason": [
+            "FULL_PUBLIC_PARITY_NOT_ESTABLISHED"
+          ]
+        },
+        {
+          "actions": 5000,
+          "outputParity": true,
+          "nativeP95Ms": 3.35,
+          "baselineP95Ms": 1108.07,
+          "speedupP95": 330.5,
+          "timingAcceptanceEligible": false,
+          "reason": [
+            "FULL_PUBLIC_PARITY_NOT_ESTABLISHED"
+          ]
+        }
+      ],
+      "cliStartup": [
+        {
+          "operation": "version",
+          "nativeP95Ms": 43.78,
+          "baselineP95Ms": 122.59,
+          "regressionMs": -78.81,
+          "smallWorkspaceTargetMet": true
+        },
+        {
+          "operation": "empty-task-list",
+          "nativeP95Ms": 71.39,
+          "baselineP95Ms": 122.92,
+          "regressionMs": -51.53,
+          "smallWorkspaceTargetMet": true
+        }
+      ]
+    },
+    "provenance_4504270": {
+      "cliStartup": [
+        {
+          "baselineP95Ms": 121.25,
+          "nativeP95Ms": 44.5,
+          "operation": "version",
+          "regressionMs": -76.76,
+          "smallWorkspaceTargetMet": true
+        },
+        {
+          "baselineP95Ms": 121.58,
+          "nativeP95Ms": 78.53,
+          "operation": "empty-task-list",
+          "regressionMs": -43.06,
+          "smallWorkspaceTargetMet": true
+        }
+      ],
+      "commit": [
+        {
+          "baselineP50Ms": 112.39,
+          "baselineP95Ms": 123.22,
+          "initialEvents": 10,
+          "nativeP50Ms": 8.4,
+          "nativeP95Ms": 11.04,
+          "parity": true,
+          "timingAcceptanceEligible": true
+        },
+        {
+          "baselineP50Ms": 110.98,
+          "baselineP95Ms": 118.41,
+          "initialEvents": 1000,
+          "nativeP50Ms": 24.32,
+          "nativeP95Ms": 32.65,
+          "parity": true,
+          "timingAcceptanceEligible": true
+        },
+        {
+          "initialEvents": 100000,
+          "reason": "2 MiB baseline ledger reader limit \u2014 documented refusal, preserved as non-comparability, not failure",
+          "status": "NOT_COMPARABLE",
+          "timingAcceptanceEligible": false,
+          "timingStatus": "NOT_MEASURED"
+        }
+      ],
+      "contention": [
+        {
+          "firstFailure": null,
+          "operationsPerProcess": 20,
+          "outputAndOwnershipParity": true,
+          "processes": 1
+        },
+        {
+          "firstFailure": null,
+          "operationsPerProcess": 20,
+          "outputAndOwnershipParity": true,
+          "processes": 2
+        },
+        {
+          "baselineCommitP50Ms": 132.84,
+          "baselineCommitP95Ms": 1235.92,
+          "baselineThroughputCps": 7.34,
+          "firstFailure": null,
+          "nativeCommitP50Ms": 22.62,
+          "nativeCommitP95Ms": 259.73,
+          "nativeThroughputCps": 43.25,
+          "operationsPerProcess": 20,
+          "outputAndOwnershipParity": true,
+          "processes": 4,
+          "sampleCount": 80
+        }
+      ],
+      "discovery": [
+        {
+          "filesystemP95Ms": 13.62,
+          "nativeP95Ms": 10.09,
+          "outputParity": true,
+          "speedupP95": 1.35,
+          "tasks": 10
+        },
+        {
+          "filesystemP95Ms": 303.37,
+          "nativeP95Ms": 129.34,
+          "outputParity": true,
+          "speedupP95": 2.35,
+          "tasks": 250
+        },
+        {
+          "filesystemP95Ms": 1238.34,
+          "nativeP95Ms": 465.45,
+          "outputParity": true,
+          "speedupP95": 2.66,
+          "tasks": 1000
+        }
+      ],
+      "idempotency": [
+        {
+          "actions": 10,
+          "baselineP95Ms": 2.13,
+          "nativeP95Ms": 2.67,
+          "outputParity": true,
+          "reason": "FULL_PUBLIC_PARITY_NOT_ESTABLISHED",
+          "speedupP95": 0.8,
+          "timingAcceptanceEligible": false
+        },
+        {
+          "actions": 1000,
+          "baselineP95Ms": 223.49,
+          "nativeP95Ms": 3.61,
+          "outputParity": true,
+          "speedupP95": 61.8
+        },
+        {
+          "actions": 5000,
+          "baselineP95Ms": 1111.29,
+          "nativeP95Ms": 3.85,
+          "outputParity": true,
+          "speedupP95": 288.9
+        }
+      ]
+    }
+  },
+  "fixReference": {
+    "commit": "a61fae22db5822596ffd31889ea6334cf0fb87e0",
+    "path": "src/core/events.js",
+    "change": "validateReadLedger rethrows E_STATE_REVISION_CONFLICT instead of converting reader conflicts into invalid-ledger results; contention rows therefore measured at this HEAD"
+  },
+  "limitations": [
+    "Contention rows were measured at a61fae2 (see contention-a61fae2-timed.json); prior 4504270 contention limitation superseded by the classification fix",
+    "Idempotency small-size rows carry the script's own FULL_PUBLIC_PARITY_NOT_ESTABLISHED ineligibility marker verbatim; observational only",
+    "All runs: warm-cache, seeded fixtures excluded from measurement, tracked sources unchanged (trackedSourcesUnchanged=true in every raw run), pinned Node 24.19.0",
+    "The 2 MiB 100,000-event baseline refusal is NOT_COMPARABLE by design and is never treated as a pass or speedup",
+    "releaseThresholdsVerified remains false: peak RSS/event-loop delay, cold conditions, and hardware matrix remain unmeasured"
+  ]
+}
