@@ -1,8 +1,13 @@
 # Inclusive production persistence LOC: release-decision record
 
-**Status:** OPEN — pending owner decision. This document records the investigation
-the migration plan prescribes for a failed target; it does not waive, re-define,
-or close the gate itself.
+**Status:** CLOSED — owner decision recorded 2026-10-12. This document records the
+investigation the migration plan prescribes for a failed target. The owner chose
+the documented Option A+C in
+[SQLITE_LOC_OWNER_RECOMMENDATION.md](SQLITE_LOC_OWNER_RECOMMENDATION.md):
+the numeric 25% reduction gate is retired and replaced by the
+performance-parity acceptance criterion (migration plan §9 as amended in
+commit `831b139`+ this record's commit). This document no longer blocks
+acceptance; its investigation content is retained unchanged below.
 
 **Prepared:** 2026-10-11, at source revision `4504270e1509f202330b7f58cb99231b15376147`
 (branch `codex/sqlite-end-to-end`), with unchanged inclusive scope and an exact,

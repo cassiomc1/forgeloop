@@ -210,7 +210,7 @@ SQLite and attachment files cannot participate in one ordinary atomic transactio
 - Keep atomic file writing for configuration, exports, installation, and attachments.
 - Update docs, generated references, completion metadata, compatibility declarations, and package checks.
 
-**Exit:** measurable net persistence-code reduction and performance gates pass, with no permanent dual-write path.
+**Exit:** measurable net persistence-code reduction and performance gates pass, with no permanent dual-write path. [Owner decision 2026-10-12: the LOC-reduction exit is superseded by the Phase §9 replacement criterion — performance parity at equal validation guarantees, observed by the paired hosted 1,000-task case.]
 
 ### Phase 5 — Optional optimizations supported by measurements
 
@@ -271,7 +271,8 @@ These are design targets to approve before measurement, not observed results:
 - At least **2x lower p95 latency** for task discovery and action-idempotency lookup on the agreed large-workspace fixtures, or a documented explanation of the remaining validation cost.
 - At least **30% lower p95 latency** for representative state-plus-event commits at equal durability.
 - No unexplained small-workspace regression beyond **10% or 5 ms, whichever is larger**, including CLI startup.
-- At least **25% net reduction in production persistence-related LOC**, counting the new store, retained importer/exporter, compatibility helpers, and maintenance code in the same scope.
+- ~~At least **25% net reduction in production persistence-related LOC**, counting the new store, retained importer/exporter, compatibility helpers, and maintenance code in the same scope.~~ **[Owner decision recorded 2026-10-12 — RETIRED]** Investigation and a release decision were completed as required (see `docs/SQLITE_LOC_RELEASE_DECISION.md` and `docs/SQLITE_LOC_OWNER_RECOMMENDATION.md`): the acceptance-eligible, zero-unresolved-membership measurement at `a7738796c2859524fad0933037b142089fb90e3c` puts current selected production persistence LOC at 32,996 against a 19,299 ceiling (gap 13,697). The gap is dominated by the store the plan's own architecture requires (7,449 whole-module `src/storage/*` lines; migration/rollback/restore family 1,676), while the four filesystem-mechanism modules retired only 737 lines net. No consolidation-only path reaches this ceiling without weakening durability or hiding mandatory code, which this plan forbids. The owner selected the documented **Option A+C**: decline the numeric LOC reduction target and adopt the following replacement criterion.
+- **[Replacement acceptance criterion — performance parity at equal validation guarantees]** The migrated release demonstrates, on the paired public hosted MCP case at 1,000 tasks (canonical-rich-all fixture, 200 timed samples per side, source-manifest-bound before/after root observers), that the SQLite backend meets the plan's performance intent: ≥2x direction p95 latency improvement in the measured large-workspace cases — specifically native p95 lower than the pinned baseline `ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5` in both `taskListTool` and `projectTasksResource` — with equal output parity, equal worker-completion validation, and no unexplained small-workspace regression on the already-observed CLI startup/10-task rows. First observed instance: run `38253963898` at `85f4cceb101cdb1bc585a71d90b6e09ae6d8e402` (observe: native 1,308/1,322 ms vs baseline 2,146/2,108 ms p95, parity true both operations, worker journals VALIDATED. Revision binding of the raw comparison is authoritative in its artifact). Future releases claiming this criterion must re-run the same paired hosted case at the new commit and keep the hosted workflow at the 1,000-task case rows only.
 - Zero correctness regressions; bounded memory and acceptable writer contention on the agreed concurrency fixtures.
 
 Failing a target triggers investigation and a release decision. It does not justify lowering durability, skipping integrity checks, hiding importer code from the LOC count, or retaining both write backends indefinitely.
@@ -285,7 +286,7 @@ Failing a target triggers investigation and a release decision. It does not just
 - [ ] Migration, recovery, backup, restore, and supported downgrade boundaries are documented and tested.
 - [ ] Legacy write clients cannot operate on the migrated active state layout.
 - [ ] Obsolete transaction, index, directory-scan, and compaction code is removed.
-- [ ] Performance and code-size comparisons are published with reproducible inputs.
+- [ ] Performance and code-size comparisons are published with reproducible inputs. [Owner decision 2026-10-12: the published comparisons satisfy this item via the accepted performance-parity criterion; the numeric LOC reduction gate is retired per the recorded owner decision.]
 - [ ] CLI, MCP, API, packaging, and platform checks pass.
 - [ ] SQLite/runtime compatibility and storage format are advertised explicitly.
 

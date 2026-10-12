@@ -1,7 +1,11 @@
 # Inclusive persistence LOC: owner decision recommendation (a773879 state, 2026-10-12)
 
-**Status:** DECISION REQUESTED — this document recommends an owner architecture
-choice; it does not apply any change and does not close the gate.
+**Status:** OWNER DECISION RECORDED 2026-10-12 — the owner authorized **Option A+C**:
+depcline the numeric LOC reduction gate and adopt the performance-parity
+acceptance criterion (now amended into `SQLITE_MIGRATION_PLAN.md` §9/§7/§10 with
+the decision status recorded in `SQLITE_LOC_RELEASE_DECISION.md`, which is now
+CLOSED). No Option B consolidation and no unrelated architecture change was
+performed or is authorized by this record.
 
 **Evidence base:** the acceptance-eligible, zero-unresolved-membership analyzer
 run bound to `a7738796c2859524fad0933037b142089fb90e3c`
