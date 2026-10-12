@@ -23,7 +23,7 @@ Baseline `ee9ce11` selected 25,732 lines; current 32,996; unchanged ceiling
 | Baseline retirements taken | −922 file-level (−67 maintenance) plus shared-file deletions | fileRows diff |
 | Mechanism-retirement delta (transaction/task-migration/task-lock/txn-maintenance) | **−737** | nodeRows per-path line sums |
 
-The gap is dominated by the SQLite store itself (7,449 lines), not by残留
+The gap is dominated by the SQLite store itself (7,449 lines), not by lingering
 legacy code: the four filesystem-mechanism modules already shrank by 737 lines
 (`transaction.js` 291→32, `task-migration.js` 330→89, `task-lock.js` 297→119,
 `transaction-maintenance.js` 59→0). Even deleting the remaining shim bytes
