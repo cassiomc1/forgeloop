@@ -163,6 +163,46 @@ async function validateReconciliationCheckpoint({
     );
   }
 
+  await assertReconciliationClaimOwnership(target, { taskId, packageRoot, state, stateRel, eventsRel });
+
+  const reboundOrState = await rebindReconciliationState(target, {
+    packageRoot,
+    taskId,
+    state,
+    ledger,
+    authorityContext,
+    runtimeContext,
+    stateRel,
+    receiptRel,
+  });
+  return reboundOrState;
+}
+
+/** Fail closed unless the task claim is valid, mutable, and ACTIVE in this checkout. */
+async function assertReconciliationClaimOwnership(target, { taskId, packageRoot, state, stateRel, eventsRel }) {
+  const ownership = await resolveTaskClaimState(target, { taskId, packageRoot });
+  if (!ownership.ownershipValid || !ownership.mutationAllowed || ownership.claimState !== "ACTIVE") {
+    const first = ownership.ownershipErrors?.[0] ?? ownership.errors?.[0] ?? {};
+    throw reconcileError(
+      first.code ?? "E_TASK_CLAIM_OWNERSHIP_INCONSISTENT",
+      `reconcile-closure requires active, valid task claim ownership: ${first.message ?? ownership.claimState}`,
+      [stateRel, eventsRel],
+    );
+  }
+}
+
+/** Handle the phase-bound diagnosis rebind gates for CORRECTING/DIAGNOSING and the REVIEWING recovery authorization.
+ * Returns the possibly-rebound state (or the original state when no rebind applies). */
+async function rebindReconciliationState(target, {
+  packageRoot,
+  taskId,
+  state,
+  ledger,
+  authorityContext,
+  runtimeContext,
+  stateRel,
+  receiptRel,
+}) {
   if (state.phase === "CORRECTING" || state.phase === "DIAGNOSING") {
     // The diagnosis boundary for CORRECTING stays absolute: recovery can never
     // manufacture a diagnosis or authorize a retry the ordinary correction
@@ -184,27 +224,11 @@ async function validateReconciliationCheckpoint({
     });
   }
 
-  const ownership = await resolveTaskClaimState(target, { taskId, packageRoot });
-  if (!ownership.ownershipValid || !ownership.mutationAllowed || ownership.claimState !== "ACTIVE") {
-    const first = ownership.ownershipErrors?.[0] ?? ownership.errors?.[0] ?? {};
-    throw reconcileError(
-      first.code ?? "E_TASK_CLAIM_OWNERSHIP_INCONSISTENT",
-      `reconcile-closure requires active, valid task claim ownership: ${first.message ?? ownership.claimState}`,
-      [stateRel, eventsRel],
-    );
-  }
-
   if (state.phase !== "REVIEWING" || !Object.prototype.hasOwnProperty.call(state, "lastCompletionAttempt")) {
     return state;
   }
 
-  const recovery = await authorizeCompletionRecoveryOrRebind({
-    target,
-    packageRoot,
-    taskId,
-    authorityContext,
-    runtimeContext,
-  });
+  const recovery = await authorizeCompletionRecoveryOrRebind({ target, packageRoot, taskId, authorityContext, runtimeContext });
   if (!recovery.recoveryAuth.authorized) {
     const first = recovery.recoveryAuth.errors?.[0] ?? {};
     throw reconcileError(
@@ -254,18 +278,7 @@ async function reconcileSelectedClosure({
   authorityContext,
   runtimeContext,
 } = {}) {
-  if (typeof taskId !== "string" || !taskId.trim()) {
-    throw reconcileError("E_TASK_REQUIRED", "reconcile-closure requires --task", []);
-  }
-  if (typeof checkId !== "string" || !checkId.trim()) {
-    throw reconcileError("E_RECONCILE_REQUIREMENT_UNKNOWN", "reconcile-closure requires --id", []);
-  }
-  if (typeof requirement !== "string" || !requirement.trim()) {
-    throw reconcileError("E_RECONCILE_REQUIREMENT_UNKNOWN", "reconcile-closure requires --requirement", []);
-  }
-  if (!Array.isArray(argv) || argv.length === 0) {
-    throw reconcileError("E_RECONCILE_EVIDENCE_FAILED", "reconcile-closure requires -- followed by the evidence command argv", []);
-  }
+  requireReconcileInputs({ taskId, checkId, requirement, argv });
 
   const stateRel = taskArtifactPath(taskId, "state");
   const contractRel = taskArtifactPath(taskId, "contract");
@@ -403,4 +416,20 @@ async function reconcileSelectedClosure({
     executionPath: execution.path,
     event: RECONCILE_EVENT,
   };
+}
+
+/** Validate the reconcile arguments exactly as before; shared by the phase-independent input gate. */
+function requireReconcileInputs({ taskId, checkId, requirement, argv } = {}) {
+  if (typeof taskId !== "string" || !taskId.trim()) {
+    throw reconcileError("E_TASK_REQUIRED", "reconcile-closure requires --task", []);
+  }
+  if (typeof checkId !== "string" || !checkId.trim()) {
+    throw reconcileError("E_RECONCILE_REQUIREMENT_UNKNOWN", "reconcile-closure requires --id", []);
+  }
+  if (typeof requirement !== "string" || !requirement.trim()) {
+    throw reconcileError("E_RECONCILE_REQUIREMENT_UNKNOWN", "reconcile-closure requires --requirement", []);
+  }
+  if (!Array.isArray(argv) || argv.length === 0) {
+    throw reconcileError("E_RECONCILE_EVIDENCE_FAILED", "reconcile-closure requires -- followed by the evidence command argv", []);
+  }
 }
