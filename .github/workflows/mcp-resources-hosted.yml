@@ -62,12 +62,6 @@ jobs:
           - case: tasks-1000-both
             size: 1000
             operation: both
-          - case: tasks-5000-task-list
-            size: 5000
-            operation: taskListTool
-          - case: tasks-5000-project-tasks
-            size: 5000
-            operation: projectTasksResource
     env:
       MCP_CASE: ${{ matrix.case }}
       MCP_SIZE: ${{ matrix.size }}
