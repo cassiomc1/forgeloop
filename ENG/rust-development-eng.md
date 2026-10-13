@@ -111,6 +111,44 @@ manifest, lockfile, configuration, source, or generated output.
 Rust 1.99.0 is the latest stable release as of 2026-10-13. This dated reference
 does not change a project's declared MSRV, toolchain, or edition.
 
+### Rust 1.99.0 release review
+
+The [Rust 1.99.0 release notes](https://releases.rs/docs/1.99.0/) report a
+stable release on 2026-10-01. Apply these changes only when the affected
+project's toolchain and compatibility policy permit them:
+
+- **Language and unsafe code:** C-variadic function definitions are stable;
+  naked C-variadic functions remain behind the nightly
+  `c_variadic_naked_functions` feature. The new
+  `raw_borrows_via_references` lint is allow-by-default, so it does not replace
+  an explicit lint policy. Review unsafe code that relies on `UnsafeCell`
+  access or reference-to-raw-borrow behavior alongside the release's adjusted
+  `invalid_reference_casting` lint; do not infer that these changes relax
+  aliasing or safety invariants.
+- **Cargo and workspaces:** Cargo adds a `debug` profile that is currently
+  identical to `dev` and prepares for a possible later profile transition.
+  On edition 2024 or later, a workspace member can override an inherited
+  dependency's `default-features`; on earlier editions,
+  `default-features = false` remains ignored with a warning. Check the edition
+  before relying on the override.
+- **Library APIs and targets:** the release stabilizes APIs including
+  `Vec::into_parts`/`Vec::from_parts`, `Box::into_non_null`/`Box::from_non_null`,
+  `String::from_utf8_lossy_owned`, `VecDeque::retain_back`, and
+  `std::fs::set_times`. `riscv64-unknown-linux-musl` is promoted to Tier 2
+  with host tools. Check each API's stabilization version and target support
+  against the package MSRV and supported deployment matrix before adoption.
+- **Compatibility checks:** legacy integral modules such as `std::i32` are
+  fully deprecated, `no_mangle_generic_items` is a hard error, and the safety
+  invariants of `Pin::new_unchecked` have changed slightly. Rust 1.99 also
+  disables Cargo incremental compilation by default in CI and expands the
+  non-local macro semicolon warning to macros from dependencies. Review these
+  changes when diagnosing new warnings, build-time shifts, or compatibility
+  failures.
+
+These release notes are a version-specific review aid, not a reason to raise
+MSRV or change edition, lint levels, profiles, or targets without an explicit
+project decision and matching CI coverage.
+
 Resolve conflicts in this order:
 
 1. Platform and safety rules.
