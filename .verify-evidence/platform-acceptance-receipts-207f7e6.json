@@ -1,0 +1,96 @@
+{
+  "kind": "PLATFORM_ACCEPTANCE_RECEIPT_BINDING",
+  "schemaVersion": 1,
+  "revision": "207f7e651c38b1c72ccedcef9e3fcf9364a62d9e",
+  "branch": "codex/sqlite-end-to-end",
+  "generatedAt": "2026-10-13T10:34:00Z",
+  "receipts": [
+    {
+      "role": "windows_full_suite",
+      "runId": 38313530729,
+      "workflow": "Windows full suite",
+      "revision": "207f7e651c38b1c72ccedcef9e3fcf9364a62d9e",
+      "event": "workflow_dispatch",
+      "conclusion": "success",
+      "url": "https://github.com/cassiomc1/forgeloop/actions/runs/38313530729"
+    },
+    {
+      "role": "hosted_mcp_parity_pair_current_attempt",
+      "runId": 38356645442,
+      "workflow": "Hosted Linux MCP resource matrix",
+      "revision": "207f7e651c38b1c72ccedcef9e3fcf9364a62d9e",
+      "event": "workflow_dispatch",
+      "conclusion": "success",
+      "url": "https://github.com/cassiomc1/forgeloop/actions/runs/38356645442",
+      "pairedCase": {
+        "case": "tasks-1000-both",
+        "tasks": 1000,
+        "fixtureMode": "canonical-rich-all",
+        "eventsPerTask": 10,
+        "selectedEvents": 1000,
+        "repeats": 200,
+        "resources": true,
+        "sampleMode": "timed",
+        "taskListLimit": 100,
+        "operations": ["taskListTool", "projectTasksResource"],
+        "outputParity": { "taskListTool": true, "projectTasksResource": true },
+        "parityException": "Only metadata.packageVersion; each raw value must equal its backend package manifest",
+        "releaseThresholdsVerified": false,
+        "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+        "precedentConsistency": "identical paired-case.json shape to successful 85f4cce run 38253963898; releaseThresholdsVerified=false matches that precedent"
+      },
+      "evidenceArtifact": "sqlite-mcp-hosted-tasks-1000-both"
+    },
+    {
+      "role": "hosted_mcp_parity_pair_first_attempt_superseded",
+      "runId": 38313544390,
+      "workflow": "Hosted Linux MCP resource matrix",
+      "revision": "207f7e651c38b1c72ccedcef9e3fcf9364a62d9e",
+      "event": "workflow_dispatch",
+      "conclusion": "cancelled",
+      "url": "https://github.com/cassiomc1/forgeloop/actions/runs/38313544390",
+      "diagnosis": {
+        "stage": "Run paired baseline/current MCP case",
+        "failure": "GitHub job killed at the hard 6h wall (started 2026-10-12T21:54:43Z, killed 2026-10-13T03:53:51Z) during SEEDING",
+        "rootCause": "dispatch supplied inputs.events=1000 instead of the workflow default 10; seeding 1000 tasks x 1000 events per task does not complete inside the 359-minute job budget",
+        "productImpact": "none; production code unchanged since 4d507d5; superseded by run 38356645442 with the precedent-matched inputs",
+        "dispatchCorrection": "re-dispatched pinned to codex/sqlite-end-to-end (head 207f7e6) with events=10, selected_events=1000, fixture=canonical-rich-all, instrument_resources=true"
+      }
+    },
+    {
+      "role": "rollback_restore_windows",
+      "runId": 38069883516,
+      "workflow": "Windows full suite",
+      "shaShort": "0005034",
+      "event": "workflow_dispatch",
+      "conclusion": "success",
+      "url": "https://github.com/cassiomc1/forgeloop/actions/runs/38069883516",
+      "note": "public rollback/restore verdict inspected before acceptance per plan clause; bound to its own revision 0005034, not to 207f7e6"
+    }
+  ],
+  "localEvidence": [
+    {
+      "role": "old_client_legacy_state_refusal",
+      "path": "benchmarks/storage-sqlite/old-client-exclusion-207f7e6.json",
+      "status": "PASS",
+      "summary": "old client/legacy-state execution refusal drill: migrationWithoutQuiescence=REFUSED, actualLegacyLock=REFUSED_BUSY, old client EACCES direct-permission refusals pre- and post-cutover"
+    }
+  ],
+  "skips": [
+    {
+      "scope": "windows-only code paths (PowerShell/NTFS-specific install, lock, and rollback branches)",
+      "binding": "bound to hosted-ci Windows runners only; not locally reproducible on darwin",
+      "status": "RUN_WITH_SAME_REVISION (38313530729 at 207f7e6, success; 38069883516 at 0005034, success)"
+    },
+    {
+      "scope": "eventsPerTask=1000 hosted seeding variant",
+      "status": "SKIPPED_COMMITTED",
+      "reason": "exceeds the 359-minute hosted job budget (job wall at GitHub's 6h hard cap). The amended plan §9 criterion requires the 1,000-task parity pair executed under the same paired-case shape as the successful precedent (eventsPerTask=10), which is what run 38356645442 delivers. Not reattempted within this pass."
+    },
+    {
+      "scope": "focused migration/rollback/restore/legacy-refusal/concurrency local re-runs at 207f7e6",
+      "status": "BOUND_NOT_RERUN",
+      "reason": "production code unchanged since 4d507d5, so existing revision-bound receipts are authoritative instead of reruns"
+    }
+  ]
+}

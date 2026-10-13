@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "objective": "Reconcile fresh current-source evidence for the SQLite migration acceptance items still open after the prior protocol-complete task: full regression/prepush, public rollback and old-client exclusion, Windows/Linux platform checks, package/MCP lanes, hosted MCP 1000-case benchmark, freshly bound LOC gate proof-of-run; report accepted items and remaining gaps without claiming acceptance beyond evidence.",
+  "assumptions": [],
+  "deliverables": [
+    "docs/SQLITE_EXECUTION_CHECKPOINT.md refreshed with the a773879 evidence boundary",
+    "benchmarks/storage-sqlite/persistence-loc/loc-a773879-r5.json and scope-a773879-rebound.json committed as the LOC proof-of-run",
+    "Fresh CI receipts at a773879 reviewed and recorded: Windows full suite, public rollback, package smoke, hosted MCP 1000-only, PR Core"
+  ],
+  "constraints": [
+    "Treat live checkout and ForgeLoop state as authoritative; do not migrate live data, publish, deploy, or open a PR.",
+    "Preserve .forgeloop/state.sqlite as the single authoritative writable store and keep fail-closed boundaries.",
+    "Keep the hosted MCP workflow at the 1000-case-only matrix; do not restore the 5000-task cases and do not claim their measurements passed.",
+    "Do not edit lifecycle-owned state directly; use official ForgeLoop commands.",
+    "Preserve unrelated dirty/untracked state."
+  ],
+  "risks": [
+    "CI runs may fail for environmental reasons requiring diagnosis.",
+    "The LOC gate remains unmet; acceptance cannot be claimed while the release decision is open."
+  ],
+  "stopConditions": [
+    "A required CI lane fails for a code cause that needs an owner product decision beyond evidence reconciliation."
+  ],
+  "unresolvedDecisions": [],
+  "sourceRefs": [
+    "docs/SQLITE_MIGRATION_PLAN.md",
+    "docs/SQLITE_EXECUTION_CHECKPOINT.md",
+    "docs/SQLITE_LOC_RELEASE_DECISION.md"
+  ],
+  "verification": [
+    {
+      "id": "verify-acceptance-evidence",
+      "text": "All prior-task acceptance items are reconciled against fresh a773879 evidence with accepted items and remaining gaps explicitly recorded, including the unmet LOC gate and the 1000-only hosted matrix boundary.",
+      "type": "VERIFICATION",
+      "requiredEvidenceKind": "OBSERVED"
+    }
+  ],
+  "successCriteria": [
+    {
+      "id": "acceptance-evidence-current",
+      "text": "The checkpoint/matrix documents and revision-bound evidence describe the tested revision a773879 correctly, distinguishing protocol completion from product acceptance.",
+      "type": "PRODUCT",
+      "requiredEvidenceKind": "OBSERVED"
+    }
+  ]
+}
