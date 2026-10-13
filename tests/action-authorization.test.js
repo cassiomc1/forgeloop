@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { access, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { access, mkdtemp, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -43,7 +44,7 @@ test("capability-policy drift after the task snapshot blocks before launch", asy
       (error) => error.code === "E_ACTION_POLICY_DRIFT",
     );
     await assert.rejects(access(sentinel));
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("raw transitionAction cannot mint AUTHORIZED on the modern flow", async () => {
@@ -59,7 +60,7 @@ test("raw transitionAction cannot mint AUTHORIZED on the modern flow", async () 
     );
     const current = await readAction(target, { packageRoot, taskId, actionId: action.actionId });
     assert.equal(current.state, "PROPOSED");
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("canonical authorization binds full policy evidence to the event", async () => {
@@ -84,7 +85,7 @@ test("canonical authorization binds full policy evidence to the event", async ()
     assert.match(authorizedEvent.details.policyLockDigest, /^sha256:[a-f0-9]{64}$/);
     assert.match(authorizedEvent.details.taskPolicyDigest, /^sha256:[a-f0-9]{64}$/);
     assert.match(authorizedEvent.details.capabilityPolicyFingerprint, /^[a-f0-9]{64}$/);
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });
 
 test("REQUIRE_APPROVAL authorization events must bind approval and authority evidence", async () => {
@@ -113,5 +114,5 @@ test("REQUIRE_APPROVAL authorization events must bind approval and authority evi
         } }),
       (error) => error.code === "E_ACTION_EVIDENCE_INVALID",
     );
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

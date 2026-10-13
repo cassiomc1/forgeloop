@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "scope": "Verified sequential Linux full launch after Windows602 terminal and source digest verification",
+  "containerId": "27114ee9eda85e2c5aaa1fdf4aed0432d149c0db402b5820822898227608769e",
+  "image": "node:24.19.0-bookworm",
+  "archiveSha256": "4af317e40733feff17f05b32e6553a6744f5d460222441e304b0e3d802a24f8e",
+  "observedState": {
+    "Status": "running",
+    "Running": true,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "Dead": false,
+    "Pid": 19359,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "2026-10-06T20:11:07.807742031Z",
+    "FinishedAt": "0001-01-01T00:00:00Z"
+  },
+  "limitations": [
+    "Job is live,not a terminal pass.",
+    "Source601 precedes later603\u2013605 production changes;current-source full acceptance remains required."
+  ]
+}

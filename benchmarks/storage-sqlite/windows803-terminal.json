@@ -1,0 +1,17 @@
+{
+  "increment": 803,
+  "runId": 37701093187,
+  "jobId": 113064454131,
+  "sourceRevision": "934ecce85455a09df04dda1ff977b07edf662e39",
+  "status": "completed",
+  "conclusion": "success",
+  "counts": {
+    "tests": 2892,
+    "pass": 2878,
+    "fail": 0,
+    "skipped": 14
+  },
+  "logSha256": "220fc46cb98911c07f82118f4374839d46886c27283f5e8a1ac82a9354258cb1",
+  "previousFailure": "PUBLICATION_READY owner-liveness refusal did not recur; PID reuse remains unconfirmed.",
+  "scope": "Full Windows suite on diagnostic source; predates settlement801."
+}

@@ -1,5 +1,6 @@
+import { readFixtureText } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdtemp, readFile } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -98,7 +99,7 @@ test("mock semantic decision is persisted as a non-authoritative artifact and le
   const ledger = await validateEventLedger(target, packageRoot, { taskId: "jev-foundation-test" });
   assert.equal(ledger.valid, true, JSON.stringify(ledger.errors));
   assert.ok(ledger.events.some((event) => event.event === "TRANSACTION_COMMITTED" && event.details.operation === "semantic-decision"));
-  const serialized = await readFile(path.join(target, taskArtifactPath("jev-foundation-test", "events")), "utf8");
+  const serialized = await readFixtureText(target, taskArtifactPath("jev-foundation-test", "events"));
   assert.doesNotMatch(serialized, /TYPESAFE_API_KEY|api_key|authorization/i);
 });
 

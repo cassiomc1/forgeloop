@@ -9,6 +9,9 @@ import { E_TASK_NOT_FOUND } from "../core/error-codes.js";
 import { resolveTaskClaimState } from "../core/task-claim-state.js";
 import { readPersistedRoute } from "../core/route-artifact.js";
 import { projectExecutionProfile } from "../core/execution-profile.js";
+import { withEventLedgerAudit } from "../core/events.js";
+import { needsExistingProjectScope, withExistingProjectScope } from "../storage/existing-project-scope.js";
+import { getOperationalStore, operationalArtifactExists } from "../storage/operational-context.js";
 
 function taskError(code, message, artifacts = []) {
   const error = new Error(message);
@@ -17,8 +20,19 @@ function taskError(code, message, artifacts = []) {
   return error;
 }
 
-export async function runTaskShow({ target, packageRoot, taskId, compact = false } = {}) {
+export async function runTaskShow(options = {}) {
+  const { target, packageRoot, taskId } = options;
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => runTaskShow(options), { readOnly: true });
+  }
   const context = await resolveTaskContext(target, { taskId, packageRoot, explicitRequired: true, selectionMode: TASK_SELECTION_MODES.READ });
+  if (getOperationalStore(target)) {
+    return withEventLedgerAudit(target, packageRoot, { taskId: context.taskId }, () => projectTaskShow(options, context));
+  }
+  return projectTaskShow(options, context);
+}
+
+async function projectTaskShow({ target, packageRoot, compact = false }, context) {
   const effectiveTaskId = context.taskId;
 
   let descriptor = null;
@@ -54,7 +68,7 @@ export async function runTaskShow({ target, packageRoot, taskId, compact = false
     const rel = taskArtifactPath(effectiveTaskId, name);
     artifacts[name] = {
       path: rel,
-      exists: await fileExists(ensureWithin(target, rel)),
+      exists: operationalArtifactExists(target, rel) ?? await fileExists(ensureWithin(target, rel)),
     };
   }
 

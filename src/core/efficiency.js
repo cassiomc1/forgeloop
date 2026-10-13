@@ -4,6 +4,7 @@ import { assertSafePath, ensureWithin } from "./filesystem.js";
 import { readContract } from "./contract.js";
 import { currentRepositoryFingerprint } from "./repository.js";
 import { buildTrajectoryMetrics } from "./trajectory-metrics.js";
+import { withProjectReadSnapshot } from "../storage/project-read-snapshot.js";
 
 function efficiencyError(code, message) {
   const error = new Error(message);
@@ -92,7 +93,11 @@ export async function readEfficiencyBaseline(target, baselinePath) {
   }
 }
 
-export async function buildEfficiencyReport({ target, packageRoot, taskId, baselinePath = null, runtimeContext = null } = {}) {
+export async function buildEfficiencyReport(options = {}) {
+  return withProjectReadSnapshot(options.target, () => projectEfficiencyReport(options));
+}
+
+async function projectEfficiencyReport({ target, packageRoot, taskId, baselinePath = null, runtimeContext = null } = {}) {
   const metrics = await buildTrajectoryMetrics({ target, packageRoot, taskId, runtimeContext });
   const repository = await currentRepositoryFingerprint(target);
   let promptSpecFingerprint = null;

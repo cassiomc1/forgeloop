@@ -123,7 +123,6 @@ function validate(value, schema, location, errors, rootSchema = schema) {
       return candidateErrors.length === 0;
     });
     if (matches.length !== 1) errors.push(`${location}: expected exactly one matching schema`);
-    return;
   }
 
   if (schema.type && !typeMatches(value, schema.type)) {
@@ -213,6 +212,12 @@ export async function readSchema(name, packageRoot = getPackageRoot()) {
   return schema;
 }
 
+function schemaHealthVersion(schema, name) {
+  const versions = schema?.properties?.schemaVersion?.enum ?? null;
+  const version = schema?.properties?.schemaVersion?.const ?? (name === "task-bundle" && JSON.stringify(versions) === "[1,2]" ? 2 : null);
+  return version;
+}
+
 export async function inspectSchemaHealth(packageRoot = getPackageRoot()) {
   const schemas = [];
   for (const name of SHIPPED_SCHEMA_NAMES) {
@@ -223,13 +228,13 @@ export async function inspectSchemaHealth(packageRoot = getPackageRoot()) {
       assertJsonBytes(bytes, filename);
       const schema = JSON.parse(bytes.toString("utf8"));
       assertJsonLimits(schema, filename);
-      const version = schema?.properties?.schemaVersion?.const ?? null;
+      const version = schemaHealthVersion(schema, name);
       let status = "valid";
       let error = null;
       if (!schema || typeof schema !== "object" || Array.isArray(schema)) {
         status = "invalid";
         error = "schema root must be an object";
-      } else if (version !== 1) {
+      } else if (version !== 1 && !(name === "task-bundle" && version === 2)) {
         status = "unsupported-version";
         error = `schemaVersion ${version ?? "missing"} is not supported`;
       }

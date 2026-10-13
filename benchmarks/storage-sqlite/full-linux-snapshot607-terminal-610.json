@@ -1,0 +1,30 @@
+{
+  "containerId": "fe2fd89eb37bc10063d20bd9b7759f624ff7b8c3dfe01e4d33d062eaca4f2b50",
+  "state": {
+    "Status": "exited",
+    "Running": false,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "Dead": false,
+    "Pid": 0,
+    "ExitCode": 1,
+    "Error": "",
+    "StartedAt": "2026-10-07T00:51:35.335843212Z",
+    "FinishedAt": "2026-10-07T01:11:44.771646429Z"
+  },
+  "sourceFiles": 2618,
+  "sourceDrift": [],
+  "collectionRoot": "C:/forgeloop-tests/terminal610-linux-copy",
+  "snapshot": "606",
+  "collectedIncrement": 610,
+  "testSummaries": [
+    "\u2139 tests 2798",
+    "\u2139 pass 2785",
+    "\u2139 fail 1",
+    "\u2139 skipped 12"
+  ],
+  "mcpAndPackagesReached": false,
+  "failure": "independent correction writers accept exactly one phase transition: revision conflict wrapped as E_PHASE_PREREQUISITE_MISSING",
+  "fullCurrentProductionAcceptance": false
+}

@@ -1,3 +1,4 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import { recordExecutedFakeCheck } from "./helpers/executed-fake-check.js";
 import assert from "node:assert/strict";
 import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
@@ -61,12 +62,14 @@ test("stale receipt recovery: prepare-completion is recoverable and next returns
       unresolvedDecisions: [],
       sourceRefs: [],
     });
+    await ensureFixtureTask(target, contract.taskId, packageRoot);
     const contractHash = contractFingerprint(contract);
-    await writeContract(target, contract, packageRoot);
+    await writeContract(target, contract, packageRoot, { taskId: contract.taskId });
 
     const route = evaluateRoute({ workType: "code", surfaces: ["config"], platforms: [] });
     const persistedRoute = await persistRoute(target, route, packageRoot, {
       contractFingerprint: contractHash,
+      taskId: contract.taskId,
     });
 
     const state = createWorkState({
@@ -76,20 +79,20 @@ test("stale receipt recovery: prepare-completion is recoverable and next returns
       selectedGuides: persistedRoute.value.guides,
       phase: "ROUTED",
     });
-    await writeWorkState(target, state, packageRoot);
+    await writeWorkState(target, state, { packageRoot, taskId: contract.taskId });
 
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "TASK_RECEIVED" }, packageRoot);
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot);
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot);
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "TASK_RECEIVED" }, packageRoot, { taskId: contract.taskId });
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot, { taskId: contract.taskId });
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot, { taskId: contract.taskId });
 
-    await runPreflight({ target, packageRoot });
+    await runPreflight({ target, packageRoot, taskId: contract.taskId });
 
-    await advanceWorkState(target, "PLANNED", packageRoot);
-    await advanceWorkState(target, "EXECUTING", packageRoot);
-    await advanceWorkState(target, "VERIFYING", packageRoot);
+    await advanceWorkState(target, "PLANNED", { packageRoot, taskId: contract.taskId });
+    await advanceWorkState(target, "EXECUTING", { packageRoot, taskId: contract.taskId });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: contract.taskId });
 
     // Prepare receipt in VERIFYING phase
-    const prepared1 = await prepareCompletion({ target, packageRoot });
+    const prepared1 = await prepareCompletion({ target, packageRoot, taskId: contract.taskId });
     assert.ok(prepared1.receipt);
     assert.equal(prepared1.receipt.taskId, contract.taskId);
 
@@ -98,6 +101,7 @@ test("stale receipt recovery: prepare-completion is recoverable and next returns
       await recordCheck({
         target,
         packageRoot,
+        taskId: contract.taskId,
         id: `check-${req}`,
         kind: "manual-review",
         requirement: req,
@@ -108,25 +112,25 @@ test("stale receipt recovery: prepare-completion is recoverable and next returns
     }
 
     // Now mutate state (e.g. adding a completed step or updating lastUpdated)
-    const currentState = await readWorkState(target, packageRoot);
+    const currentState = await readWorkState(target, { packageRoot, taskId: contract.taskId });
     const mutatedState = {
       ...currentState,
       completedSteps: [...currentState.completedSteps, "extra-step"],
       lastUpdated: new Date(Date.now() + 1000).toISOString(),
     };
-    await writeWorkState(target, mutatedState, packageRoot);
+    await writeWorkState(target, mutatedState, { packageRoot, taskId: contract.taskId });
 
     // next should recommend PREPARE_COMPLETION to refresh the stale receipt
-    const nextResult = await getNextAction({ target, packageRoot });
+    const nextResult = await getNextAction({ target, packageRoot, taskId: contract.taskId });
     assert.equal(nextResult.nextAction, NEXT_ACTIONS.PREPARE_COMPLETION);
 
     // prepareCompletion must succeed cleanly on the stale receipt without throwing E_RECEIPT_STATE_MISMATCH
-    const refreshed = await prepareCompletion({ target, packageRoot });
+    const refreshed = await prepareCompletion({ target, packageRoot, taskId: contract.taskId });
     assert.ok(refreshed.receipt);
     assert.equal(refreshed.receipt.taskId, contract.taskId);
 
     // Now next should be able to enter REVIEWING or proceed
-    const nextAfterRefresh = await getNextAction({ target, packageRoot });
+    const nextAfterRefresh = await getNextAction({ target, packageRoot, taskId: contract.taskId });
     assert.equal(nextAfterRefresh.nextAction, NEXT_ACTIONS.ENTER_REVIEWING);
   });
 });
@@ -145,12 +149,14 @@ test("installation authority enforcement: recordCheck, evaluateCompletion, and e
       unresolvedDecisions: [],
       sourceRefs: [],
     });
+    await ensureFixtureTask(target, contract.taskId, packageRoot);
     const contractHash = contractFingerprint(contract);
-    await writeContract(target, contract, packageRoot);
+    await writeContract(target, contract, packageRoot, { taskId: contract.taskId });
 
     const route = evaluateRoute({ workType: "code", surfaces: ["config"], platforms: [] });
     const persistedRoute = await persistRoute(target, route, packageRoot, {
       contractFingerprint: contractHash,
+      taskId: contract.taskId,
     });
 
     const state = createWorkState({
@@ -160,19 +166,19 @@ test("installation authority enforcement: recordCheck, evaluateCompletion, and e
       selectedGuides: persistedRoute.value.guides,
       phase: "ROUTED",
     });
-    await writeWorkState(target, state, packageRoot);
+    await writeWorkState(target, state, { packageRoot, taskId: contract.taskId });
 
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "TASK_RECEIVED" }, packageRoot);
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot);
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot);
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "TASK_RECEIVED" }, packageRoot, { taskId: contract.taskId });
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot, { taskId: contract.taskId });
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot, { taskId: contract.taskId });
 
-    await runPreflight({ target, packageRoot });
+    await runPreflight({ target, packageRoot, taskId: contract.taskId });
 
-    await advanceWorkState(target, "PLANNED", packageRoot);
-    await advanceWorkState(target, "EXECUTING", packageRoot);
-    await advanceWorkState(target, "VERIFYING", packageRoot);
+    await advanceWorkState(target, "PLANNED", { packageRoot, taskId: contract.taskId });
+    await advanceWorkState(target, "EXECUTING", { packageRoot, taskId: contract.taskId });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: contract.taskId });
 
-    await prepareCompletion({ target, packageRoot });
+    await prepareCompletion({ target, packageRoot, taskId: contract.taskId });
 
     // Attempting to record an unauthorized install-capable command must throw E_INSTALLATION_AUTHORITY_REQUIRED
     await assert.rejects(
@@ -180,6 +186,7 @@ test("installation authority enforcement: recordCheck, evaluateCompletion, and e
         await recordExecutedFakeCheck(recordCheck, {
           target,
           packageRoot,
+          taskId: contract.taskId,
           id: "modlens-check",
           kind: "command",
           requirement: "visual-check",
@@ -197,6 +204,7 @@ test("installation authority enforcement: recordCheck, evaluateCompletion, and e
         await recordExecutedFakeCheck(recordCheck, {
           target,
           packageRoot,
+          taskId: contract.taskId,
           id: "modlens-check-self-assert",
           kind: "command",
           requirement: "visual-check",
@@ -217,6 +225,7 @@ test("installation authority enforcement: recordCheck, evaluateCompletion, and e
         await recordExecutedFakeCheck(recordCheck, {
           target,
           packageRoot,
+          taskId: contract.taskId,
           id: "modlens-check-missing-auth",
           kind: "command",
           requirement: "visual-check",
@@ -253,6 +262,7 @@ test("installation authority enforcement: recordCheck, evaluateCompletion, and e
         await recordExecutedFakeCheck(recordCheck, {
           target,
           packageRoot,
+          taskId: contract.taskId,
           id: "modlens-check-local-fake",
           kind: "command",
           requirement: "visual-check",
@@ -295,6 +305,7 @@ test("installation authority enforcement: recordCheck, evaluateCompletion, and e
         await recordExecutedFakeCheck(recordCheck, {
           target,
           packageRoot,
+          taskId: contract.taskId,
           id: "modlens-check-wrong-scope",
           kind: "command",
           requirement: "visual-check",
@@ -332,6 +343,7 @@ test("installation authority enforcement: recordCheck, evaluateCompletion, and e
     const authorizedRecord = await recordExecutedFakeCheck(recordCheck, {
       target,
       packageRoot,
+      taskId: contract.taskId,
       id: "modlens-check-auth",
       kind: "command",
       requirement: "visual-check",
@@ -350,6 +362,7 @@ test("installation authority enforcement: recordCheck, evaluateCompletion, and e
     const nonInstallingRecord = await recordExecutedFakeCheck(recordCheck, {
       target,
       packageRoot,
+      taskId: contract.taskId,
       id: "modlens-check-no-install",
       kind: "command",
       requirement: "visual-check",

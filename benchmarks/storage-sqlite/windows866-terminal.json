@@ -1,0 +1,16 @@
+{
+  "increment": 866,
+  "runId": 37782187793,
+  "jobId": 113327797108,
+  "sourceRevision": "3630a4ced0ab9497cfd276ef36ea06fe6ebec986",
+  "status": "FAILED",
+  "platform": "Windows",
+  "counts": {
+    "tests": 2921,
+    "pass": 1632,
+    "fail": 1265,
+    "skipped": 24
+  },
+  "diagnosis": "New post-open project admission rejects ordinary fixture setup at connection.js identity/path predicate. Exact differing value not yet captured. Race cases fail before setup completion; not evidence those controls passed.",
+  "publication": "No PR or release."
+}

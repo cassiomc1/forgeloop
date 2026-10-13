@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "2a3429e4b57372c9d38bf03d3eb9970efb8e121d",
+  "command": "npm run verify:prepush",
+  "nodeVersion": "24.19.0",
+  "exitCode": 0,
+  "sourceEditsHeldDuringRun": true,
+  "trackedSourceManifestCaptured": false,
+  "core": {
+    "tests": 2949,
+    "passed": 2938,
+    "failed": 0,
+    "skipped": 11
+  },
+  "mcp": {
+    "tests": 73,
+    "passed": 73,
+    "failed": 0
+  },
+  "poc": {
+    "tests": 67,
+    "passed": 67,
+    "failed": 0
+  },
+  "package": {
+    "tests": 12,
+    "passed": 12,
+    "failed": 0
+  },
+  "rawLog": "/Users/cassio/.codex/verification/post927-prepush.log",
+  "rawLogSha256": "3ae073cbbaf6337716688bfdcb5a1f9dd74b5f3d8195a037edcc32b07db70ee6",
+  "limits": [
+    "Local verification only; new subsequent edits require proportional checks and eventual final validation.",
+    "Not full SQLite migration acceptance or validator-backed COMPLETE."
+  ]
+}

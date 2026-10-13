@@ -1,5 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
+import { readFixtureText, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -63,15 +65,15 @@ test("post-authorization approval mutation makes readiness UNTRUSTED with an app
 
     // Mutate the resolved approval artifact behind the protocol's back.
     const approvalPath = path.join(fixture.target, taskApprovalPath(fixture.taskId, "approval-push"));
-    const approval = JSON.parse(await readFile(approvalPath, "utf8"));
+    const approval = JSON.parse(await readFixtureText(fixture.target, approvalPath));
     approval.hostGrantRef = "tampered-grant";
-    await writeFile(approvalPath, JSON.stringify(approval, null, 2) + "\n", "utf8");
+    await overwriteFixtureText(fixture.target, approvalPath, JSON.stringify(approval, null, 2) + "\n", "utf8");
 
     const after = await evaluateActionReadiness({ target: fixture.target, packageRoot,
       taskId: fixture.taskId, action: fixture.action });
     assert.equal(after.status, "UNTRUSTED");
     assert.ok(after.reasons.some((reason) => reason.includes("bound approval integrity failed")));
-  } finally { await rm(fixture.target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(fixture.target); }
 });
 
 test("untampered bound approval keeps authorization trusted", async () => {
@@ -83,7 +85,7 @@ test("untampered bound approval keeps authorization trusted", async () => {
       expectedFingerprint: fixture.authorization.approvalFingerprint,
     });
     assert.equal(verdict.fingerprint, fixture.authorization.approvalFingerprint);
-  } finally { await rm(fixture.target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(fixture.target); }
 });
 
 test("post-authorization approval mutation is audit-visible", async () => {
@@ -98,13 +100,13 @@ test("post-authorization approval mutation is audit-visible", async () => {
     );
 
     const approvalPath = path.join(fixture.target, taskApprovalPath(fixture.taskId, "approval-push"));
-    const approval = JSON.parse(await readFile(approvalPath, "utf8"));
+    const approval = JSON.parse(await readFixtureText(fixture.target, approvalPath));
     approval.hostGrantRef = "tampered-grant";
-    await writeFile(approvalPath, JSON.stringify(approval, null, 2) + "\n", "utf8");
+    await overwriteFixtureText(fixture.target, approvalPath, JSON.stringify(approval, null, 2) + "\n", "utf8");
 
     const after = await evaluateAudit({ target: fixture.target, packageRoot, taskId: fixture.taskId });
     assert.notEqual(after.status, "VALID");
     assert.ok(after.errors.some((error) => error.readiness === "UNTRUSTED"),
       "tampered bound approval surfaces an untrusted-readiness audit error");
-  } finally { await rm(fixture.target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(fixture.target); }
 });

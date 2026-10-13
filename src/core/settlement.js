@@ -1,3 +1,4 @@
+import { getTaskTransaction, withTaskTransaction } from "./transaction.js";
 import { readContract } from "./contract.js";
 import { appendProtocolEvent, validateEventLedger } from "./events.js";
 import {
@@ -18,7 +19,17 @@ export {
   normalizeDecisionText,
 };
 
-export async function recordDecisionCriterion({
+export async function recordDecisionCriterion(options) {
+  normalizeDecisionCriterionInput(options);
+  if (await getTaskTransaction(options.target)) return recordCriterion(options);
+  const contract = await readContract(options.target, options.packageRoot, { taskId: options.taskId, contractPath: options.contractPath });
+  const taskId = options.taskId ?? contract?.value?.taskId;
+  if (!taskId) return recordCriterion(options);
+  return withTaskTransaction({ target: options.target, packageRoot: options.packageRoot,
+    taskId, operation: "record-decision-criterion" }, () => recordCriterion({ ...options, taskId }));
+}
+
+async function recordCriterion({
   target,
   packageRoot,
   decision,

@@ -1,0 +1,100 @@
+{
+  "increment": 865,
+  "sourceBaseRevision": "80f27fd7efbb3b5ed986df5efae07fdb28d9ca91",
+  "sourceHashes": {
+    "src/storage/connection.js": "d5f43afce9c391583cc264c5ecda8f5265aa3fce41b2e586c5ef3afc0b6be995",
+    "src/storage/connection-owner.js": "081d7ca7d303c0e69e232007bf2d1b2cd7076dfa6b7f4e3e53405cd23611a6fe",
+    "src/storage/project-boundary.js": "1a8778fae814840a050172557eac445b39fabc628130ab01d0f0e0b0f4239feb",
+    "tests/storage-database-admission.test.js": "1ee39deffb69657cb1c648f27289f8c7330ff689755b18788512dc6f9eedc9bb"
+  },
+  "diagnosis": "A deterministic parent-directory redirection before the native SQLite constructor made ordinary task-list return another project healthy task. Outside database bytes remained unchanged in that read-only reproduction.",
+  "red": {
+    "platform": "darwin",
+    "swapped": true,
+    "result": {
+      "ok": true,
+      "command": "task-list",
+      "exitCode": 0,
+      "result": {
+        "tasks": [
+          {
+            "taskId": "outside-sentinel",
+            "taskKey": "f9bf0212b68528206e400f811829dea79e2ccac31d8275aec5f5ce41435dad84",
+            "directory": ".forgeloop/task-state/f9bf0212b68528206e400f811829dea79e2ccac31d8275aec5f5ce41435dad84",
+            "healthy": true,
+            "phase": null,
+            "writeClaims": [],
+            "historicalWriteClaims": [],
+            "effectiveWriteClaims": [],
+            "claimState": "ACTIVE",
+            "recovery": null,
+            "mutationAllowed": true,
+            "ownershipValid": true,
+            "ownershipErrors": [],
+            "reasonCodes": [],
+            "locked": false,
+            "hasContinuity": false,
+            "hasReceipt": false,
+            "createdAt": "2026-10-08T12:43:40.298Z",
+            "updatedAt": "2026-10-08T12:43:40.298Z"
+          }
+        ],
+        "offset": 0,
+        "total": 1,
+        "hasMore": false
+      },
+      "error": null,
+      "metadata": {
+        "protocolVersion": 1,
+        "integrationApiVersion": 1,
+        "packageVersion": "2.0.0"
+      }
+    },
+    "outsideDatabaseBytesUnchanged": true
+  },
+  "green": {
+    "platform": "darwin",
+    "swapped": true,
+    "openedLocation": "/private/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-db-open-race-YQTjfG/outside/.forgeloop/state.sqlite",
+    "result": {
+      "ok": false,
+      "command": "task-list",
+      "exitCode": 1,
+      "result": null,
+      "error": {
+        "code": "E_STORAGE_MIGRATION_REQUIRED",
+        "message": "Project database path changed while opening or reusing its connection"
+      },
+      "metadata": {
+        "protocolVersion": 1,
+        "integrationApiVersion": 1
+      }
+    },
+    "outsideDatabaseBytesUnchanged": true
+  },
+  "correction": "Capture physical project root and main-file dev/inode during admission. Validate SQLite reported opened filename, current main identity, regular project root and non-symlink sidecars before WAL/schema configuration. Recheck cached handles before metadata and callback execution.",
+  "checks": {
+    "preflight": "READY",
+    "focusedTests": {
+      "tests": 51,
+      "passed": 51,
+      "failed": 0,
+      "skipped": 0
+    },
+    "raceControls": {
+      "tests": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0
+    },
+    "verifyFast": "PASS"
+  },
+  "limitations": [
+    "These controls verify specific deterministic interleavings, not arbitrary privileged filesystem mutation at every syscall.",
+    "Windows/Linux current controls and final full current-source suites remain pending. Restored-path control is enabled on Windows.",
+    "Final-file symlink controls may skip only after actual Windows EPERM; parent-junction controls remain enabled.",
+    "SQLite filename/path metadata is checked; no native file-descriptor introspection is claimed."
+  ],
+  "wholeConsumerClosure": false,
+  "publication": "No PR, merge or release."
+}

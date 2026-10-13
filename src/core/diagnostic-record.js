@@ -1,5 +1,6 @@
 import { appendProtocolEvent, validateEventLedger } from "./events.js";
 import { readWorkState, mutateWorkState } from "./work-state.js";
+import { getTaskTransaction, withTaskTransaction } from "./transaction.js";
 import {
   DIAGNOSTIC_SCHEMA_VERSION,
   DISPOSITION_TRANSITIONS,
@@ -80,7 +81,15 @@ export function legacyDiagnosisToDiagnosticCase(diagnosisDetails) {
   };
 }
 
-export async function recordStructuredDiagnosticCase({
+export async function recordStructuredDiagnosticCase(options) {
+  if (await getTaskTransaction(options.target)) return recordDiagnosticCase(options);
+  const state = await readWorkState(options.target, { packageRoot: options.packageRoot, taskId: options.taskId });
+  if (!state) return recordDiagnosticCase(options);
+  return withTaskTransaction({ target: options.target, taskId: options.taskId ?? state.taskId,
+    packageRoot: options.packageRoot, operation: "record-diagnostic-case" }, () => recordDiagnosticCase(options));
+}
+
+async function recordDiagnosticCase({
   target,
   packageRoot,
   caseFile = null,
@@ -218,7 +227,15 @@ export async function recordStructuredDiagnosticCase({
   return { event, state: updatedState, diagnosticCase: details, idempotent: false };
 }
 
-export async function recordIntervention({
+export async function recordIntervention(options) {
+  if (await getTaskTransaction(options.target)) return recordInterventionInternal(options);
+  const state = await readWorkState(options.target, { packageRoot: options.packageRoot, taskId: options.taskId });
+  if (!state) return recordInterventionInternal(options);
+  return withTaskTransaction({ target: options.target, taskId: options.taskId ?? state.taskId,
+    packageRoot: options.packageRoot, operation: "record-intervention" }, () => recordInterventionInternal(options));
+}
+
+async function recordInterventionInternal({
   target,
   packageRoot,
   interventionFile = null,
@@ -303,7 +320,15 @@ export async function recordIntervention({
   };
 }
 
-export async function recordHypothesisDisposition({
+export async function recordHypothesisDisposition(options) {
+  if (await getTaskTransaction(options.target)) return recordDisposition(options);
+  const state = await readWorkState(options.target, { packageRoot: options.packageRoot, taskId: options.taskId });
+  if (!state) return recordDisposition(options);
+  return withTaskTransaction({ target: options.target, taskId: options.taskId ?? state.taskId,
+    packageRoot: options.packageRoot, operation: "record-hypothesis-disposition" }, () => recordDisposition(options));
+}
+
+async function recordDisposition({
   target,
   packageRoot,
   hypothesisRef,

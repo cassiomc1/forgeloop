@@ -1,3 +1,4 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { mkdtemp } from "node:fs/promises";
@@ -21,6 +22,7 @@ async function withTarget(run) {
 }
 
 async function seedTask(target, { taskId, cycle, checks, phase }) {
+  await ensureFixtureTask(target, taskId, packageRoot);
   await appendProtocolEvent(target, {
     taskId,
     event: "VERIFICATION_RECORDED",
@@ -57,6 +59,7 @@ test("C0/P2 safety net: inspect --task is isolated per task and progress receive
 
     for (const [selected, other] of [["task-a", "task-b"], ["task-b", "task-a"]]) {
       const inspection = await inspectTarget({ target, packageRoot, taskId: selected });
+      assert.equal(inspection.state.present, true, "canonical native state must be reported present");
       const taskInspection = inspection.taskInspection;
       assert.ok(taskInspection, "task inspection present");
 

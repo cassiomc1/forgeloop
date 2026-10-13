@@ -1,0 +1,15 @@
+{
+  "observedAt": "2026-10-10T01:21:53.213997+00:00",
+  "run": 38011471452,
+  "source": "a5faa02fd514bce045f2c8a0aec569ddb5f198b2",
+  "tests": 2978,
+  "passed": 2953,
+  "failed": 1,
+  "skipped": 24,
+  "failure": "initial replacement resumes SIGKILL at OUTGOING_ALLOCATED",
+  "code": "E_STORAGE_MAINTENANCE_IN_PROGRESS",
+  "site": "assertStorageMaintenanceOwnerContinuity -> assertLocalOwnerDead(previous.value)",
+  "analysis": "The initial worker was killed and awaited, then a separate failed-resume worker adopted ownership and exited. Final resume verifies older owner history. A live PID in that history is refused. PID reuse is plausible but unproven: failure log does not identify the live process or its creation time. Do not weaken liveness refusal or infer owner death from elapsed time.",
+  "nextEvidence": "Capture recorded historical owner PID, current test/worker PID, and OS process identity at the continuity refusal on Windows; distinguish PID reuse from genuinely live owner before choosing correction.",
+  "log": "/Users/cassio/.codex/verification/windows-a5faa02-failed.log"
+}

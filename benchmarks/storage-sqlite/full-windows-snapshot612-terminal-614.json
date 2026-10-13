@@ -1,0 +1,27 @@
+{
+  "exitCode": 0,
+  "pid": "1936",
+  "processPresent": false,
+  "sourceFiles": 2638,
+  "sourceDrift": [],
+  "candidate": "611b",
+  "remoteIncrement": 612,
+  "collectedIncrement": 614,
+  "testSummaries": [
+    "\u2139 tests 2814",
+    "\u2139 pass 2801",
+    "\u2139 fail 0",
+    "\u2139 skipped 13",
+    "\u2139 tests 73",
+    "\u2139 pass 73",
+    "\u2139 fail 0",
+    "\u2139 skipped 0"
+  ],
+  "packageChecksPassed": [
+    "pack:smoke",
+    "mcp:pack:check"
+  ],
+  "rawLog": "/tmp/sqlite-windows612-terminal614.stdout.log",
+  "wholeAcceptanceVerified": false,
+  "limitation": "Corrected source Windows passes;Linux612 is newly launched;public bundle613 controls are newer test-only additions and need separate remote verification."
+}

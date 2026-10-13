@@ -1,0 +1,55 @@
+{
+  "sourceRevision": "7bbfe3e6ac0273c4e8aa313289e0f217005d795f",
+  "terminalHead": "7bbfe3e6ac0273c4e8aa313289e0f217005d795f",
+  "completedAt": "2026-10-10T06:16:56.105287+00:00",
+  "exitCode": 0,
+  "sourceUnchanged": true,
+  "manifestFiles": 3203,
+  "startSha256": "6f9a1096eae503e0c6cb0666114914176c65e39a0985be6cfad66f9b3a382bdc",
+  "logSha256": "63436fdc65317e6b199fd31990fcd25db13291b75596aba6c1000c2895f253a7",
+  "kind": "FULL_PREPUSH_TERMINAL_REVIEW",
+  "passedStages": [
+    "coverage (564.3s)",
+    "critical-coverage:check (0.2s)",
+    "lint (4.4s)",
+    "dependency:policy (0.1s)",
+    "complexity:check (1.7s)",
+    "docs:check (2.6s)",
+    "completions:check (0.1s)",
+    "summary:check (0.1s)",
+    "changelog:check (0.2s)",
+    "repository-index:manifest (0.1s)",
+    "repository:hygiene (0.2s)",
+    "poc:evidence:verify (0.2s)",
+    "poc:evidence:test (1.6s)",
+    "mcp:test:clean (7.7s)",
+    "mcp:pack:check (3.1s)",
+    "pack:check (1.7s)",
+    "python-unittest (1.0s)",
+    "markdown-self-test (0.0s)",
+    "markdown-validator (0.8s)",
+    "loop-self-test (0.2s)",
+    "loop-validator (0.1s)",
+    "secret-scan (11.8s)"
+  ],
+  "stageCount": 22,
+  "core": {
+    "tests": 3034,
+    "passed": 3023,
+    "failed": 0,
+    "skipped": 11
+  },
+  "mcp": {
+    "tests": 77,
+    "passed": 77,
+    "failed": 0,
+    "skipped": 0
+  },
+  "externalStartManifest": "/Users/cassio/.codex/verification/prepush-7bbfe3e-start.json",
+  "externalLog": "/Users/cassio/.codex/verification/prepush-7bbfe3e.log",
+  "limits": [
+    "Local macOS pinned Node24.19; newest maintained consumer regressions included.",
+    "Skipped controls are not proved by this run.",
+    "No performance, inclusive LOC target, whole consumer scope or protocol completion acceptance."
+  ]
+}

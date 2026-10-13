@@ -1,0 +1,34 @@
+{
+  "increment": 769,
+  "parentHead": "11e79492fb86029975a265cb5773f06279a8f9c4",
+  "defect": "Direct persisted preflight commits related state/policy/ledger before final preflight artifact failure. Exact SQL snapshots differ after controlled artifact INSERT ABORT.",
+  "change": "Persisted calls resolve a concrete task identity and create/join a task transaction around reevaluation and all original writes. Preview remains readonly. Explicit canonical artifact paths are forwarded to persistence safety admission.",
+  "discardedCandidate": "Inline transaction guard exceeded existing complexity limit33vs29; separate wrapper retains original body. Inferred-identity control exposed omitted canonical path arguments, now forwarded.",
+  "checks": {
+    "isolatedFinalTests": 49,
+    "mainTestsIncludingCoreBoundaries": 53,
+    "failures": 0,
+    "skips": 0,
+    "verifyFast": "PASS",
+    "complexity": "PASS",
+    "fullCorrectedPlatforms": "PENDING"
+  },
+  "controls": [
+    "Explicit task and canonical-path-inferred task: final artifact failure leaves exact task/artifact/event rows unchanged.",
+    "Readonly preview leaves same SQL rows unchanged.",
+    "Removing trigger permits READY artifact publication."
+  ],
+  "sourceSha256": "89e992d75d2492dada2fa615118dade2901d058e1424ca87d0090c82ba621361",
+  "testSha256": "7482dec00864a7880e3e899dae6952a67aa1b202eaca1ff229c090d3b2c434f5",
+  "logHashes": {
+    "direct-preflight-atomicity768.log": "d495820d09a7fb323c18dac3d7bfd722984753e63e5044737d9eb977d8ac3be9",
+    "direct-preflight769-candidate-tests.log": "268dea2cce6222cd283cbd418c87085c9d7d2ad9a9fb61dc66e8f2e7a26613e8",
+    "direct-preflight769-main-tests.log": "3ceec6291e8cad5aa8d12e6eca11c64dbcf520ffba9c9bea3412696678a22cb5",
+    "fast769.log": "234c7364cfc982714df130ecb1655524aea8912838a13156646c3a2e202b0585",
+    "complexity769.log": "32111f472b37a8b8941d21c72e18a3815643453328562aed2fd87e8a2f0417f2"
+  },
+  "initialMixedLocationRun": "48 tests combined isolated direct probe with root preflight regressions; not final candidate evidence. Corrected-root49 and main53 results replace that scope.",
+  "progressPercent": 55,
+  "releaseThresholdsVerified": false,
+  "protocolComplete": false
+}

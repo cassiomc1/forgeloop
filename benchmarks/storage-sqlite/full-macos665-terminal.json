@@ -1,0 +1,68 @@
+{
+  "increment": 665,
+  "cwd": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop",
+  "exitCode": 0,
+  "elapsedSeconds": 559.6529369354248,
+  "manifestFiles": 2716,
+  "admittedSourceUnchanged": true,
+  "status": "PASS",
+  "scope": "Full verify:prepush on working checkout, source manifest checked before and after; not frozen clone.",
+  "gates": [
+    "coverage (524.4s)",
+    "critical-coverage:check (0.3s)",
+    "lint (4.7s)",
+    "dependency:policy (0.2s)",
+    "complexity:check (1.8s)",
+    "docs:check (2.7s)",
+    "completions:check (0.1s)",
+    "summary:check (0.2s)",
+    "changelog:check (0.2s)",
+    "repository-index:manifest (0.1s)",
+    "repository:hygiene (0.2s)",
+    "poc:evidence:verify (0.2s)",
+    "poc:evidence:test (1.7s)",
+    "mcp:test:clean (6.8s)",
+    "mcp:pack:check (2.9s)",
+    "pack:check (1.7s)",
+    "python-unittest (0.9s)",
+    "markdown-self-test (0.0s)",
+    "markdown-validator (0.7s)",
+    "loop-self-test (0.2s)",
+    "loop-validator (0.1s)",
+    "secret-scan (9.2s)"
+  ],
+  "testGroups": [
+    {
+      "total": 2839,
+      "suites": 0,
+      "passed": 2828,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 11
+    },
+    {
+      "total": 67,
+      "suites": 0,
+      "passed": 67,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    {
+      "total": 73,
+      "suites": 0,
+      "passed": 73,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    {
+      "total": 12,
+      "suites": 0,
+      "passed": 12,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0
+    }
+  ]
+}

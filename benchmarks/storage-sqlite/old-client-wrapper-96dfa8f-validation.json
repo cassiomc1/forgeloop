@@ -1,0 +1,44 @@
+{
+  "kind": "OLD_CLIENT_EVIDENCE_WRAPPER_VALIDATION",
+  "sourceRevision": "96dfa8f3c8c10592a9b2cb3177a2742436a2f3b3",
+  "fastStages": "5 PASS; quick80pass0fail",
+  "dirtyAdmission": "exit1 E_SOURCE_DIRTY; spawnSkipped true",
+  "cleanMacos": {
+    "status": "PASS",
+    "sourceRevision": "96dfa8f3c8c10592a9b2cb3177a2742436a2f3b3",
+    "parentExit": 0,
+    "preflightError": null,
+    "strictStdoutJson": true,
+    "sourceUnchanged": true,
+    "cleanup": "PASS",
+    "cleanupScope": [
+      "temporary entries matching the drill prefix",
+      "direct old-client drill process termination"
+    ],
+    "rawFiles": [
+      "stdout.json",
+      "stderr.log",
+      "parent-exit.json",
+      "source-before.json",
+      "source-after.json",
+      "cleanup.json"
+    ]
+  },
+  "artifactHashes": {
+    "summary.json": "b08c65e876bf560e9c594fe6d852f8b34a8b0a9fa34ad08c7f00f169501f0e00",
+    "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "runner-before.json": "962b073c36a0f2830b09eace3f8fd4d33d30e6b0b8039f4231f51aef7b9870cd",
+    "source-before.json": "7babbd822b3aedf0f89c97292b3af7db88e1408d08cc95e98021896b4fe58193",
+    "source-after.json": "7babbd822b3aedf0f89c97292b3af7db88e1408d08cc95e98021896b4fe58193",
+    "stdout-validation.json": "c523dae004f19d59ffe9b112fc22f06c44d9dd8cf706e611aa4bb42d886b427c",
+    "cleanup.json": "46ee5c7d9195fb87c95d9363bf8fff3f11268f2186ce8b7ff378bdc18466eb50",
+    "stdout.json": "01fdc8c0e5da9382126ffde7cd29da1b9798758c19722c58f2eb7f22e17c99e3",
+    "source-comparison.json": "0b93287c9cbc51f70f8eee5b6f9fc185d05be4318af4de6681bef3dc9b86c270",
+    "parent-exit.json": "6bf24533042c24e41f391207d5cbb6bcce1705140291bd5bcb41c73780dc188b"
+  },
+  "limits": [
+    "Direct child termination and prefixed fixture cleanup only; not descendant or runner-wide quiescence.",
+    "Remote Linux/Windows execution remains required.",
+    "No production storage behavior change or whole-plan acceptance."
+  ]
+}

@@ -1,0 +1,177 @@
+{
+  "kind": "HISTORICAL_CI_TERMINAL_REVIEW",
+  "runs": [
+    {
+      "id": "38007325350",
+      "sourceRevision": "40328bfa0932554ec7e638dd9928a089fd5f92a4",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 114079014426,
+          "name": "Classify package paths",
+          "conclusion": "success"
+        },
+        {
+          "id": 114080167921,
+          "name": "tarball smoke (ubuntu-latest)",
+          "conclusion": "success"
+        },
+        {
+          "id": 114086981975,
+          "name": "release package smoke (Windows)",
+          "conclusion": "success"
+        },
+        {
+          "id": 114086982005,
+          "name": "release package smoke (macOS)",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": "38007031832",
+      "sourceRevision": "050e50167235b98df95d5b5b51d98da9efbd24dd",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 114078085242,
+          "name": "Minimum Node 24.19.0 compatibility",
+          "conclusion": "success"
+        },
+        {
+          "id": 114086787928,
+          "name": "Node compatibility (Windows, Node 24.19.0)",
+          "conclusion": "success"
+        },
+        {
+          "id": 114086787949,
+          "name": "Node compatibility (Linux, Node 26)",
+          "conclusion": "success"
+        },
+        {
+          "id": 114086787962,
+          "name": "Node compatibility (macOS, Node 24.19.0)",
+          "conclusion": "success"
+        },
+        {
+          "id": 114086787996,
+          "name": "Node compatibility (macOS, Node 24)",
+          "conclusion": "success"
+        },
+        {
+          "id": 114086788011,
+          "name": "Node compatibility (Windows, Node 24)",
+          "conclusion": "success"
+        },
+        {
+          "id": 114086788013,
+          "name": "Node compatibility (Linux, Node 24.19.0)",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": "38006396309",
+      "sourceRevision": "050e50167235b98df95d5b5b51d98da9efbd24dd",
+      "status": "completed",
+      "conclusion": "failure",
+      "jobs": [
+        {
+          "id": 114076073069,
+          "name": "Classify changed paths",
+          "conclusion": "success"
+        },
+        {
+          "id": 114076109734,
+          "name": "tarball smoke (ubuntu-latest)",
+          "conclusion": "success"
+        },
+        {
+          "id": 114076109777,
+          "name": "audit",
+          "conclusion": "success"
+        },
+        {
+          "id": 114076109798,
+          "name": "Verify generated Archify diagram",
+          "conclusion": "failure"
+        },
+        {
+          "id": 114076109805,
+          "name": "Lint and dependency policy",
+          "conclusion": "success"
+        },
+        {
+          "id": 114076109816,
+          "name": "Unit tests (Node 24, shard 3/4)",
+          "conclusion": "success"
+        },
+        {
+          "id": 114076109821,
+          "name": "Unit tests (Node 24.19.0, shard 0/4)",
+          "conclusion": "success"
+        },
+        {
+          "id": 114076109841,
+          "name": "Unit tests (Node 24, shard 2/4)",
+          "conclusion": "success"
+        },
+        {
+          "id": 114076109860,
+          "name": "Unit tests (Node 24, shard 1/4)",
+          "conclusion": "success"
+        },
+        {
+          "id": 114076109881,
+          "name": "Unit tests (Node 24, shard 4/4)",
+          "conclusion": "failure"
+        },
+        {
+          "id": 114086520861,
+          "name": "Repository Index native matrix / Classify Repository Index paths",
+          "conclusion": "success"
+        },
+        {
+          "id": 114086521386,
+          "name": "Coverage report (Node 24)",
+          "conclusion": "skipped"
+        },
+        {
+          "id": 114087031290,
+          "name": "Repository Index native matrix / Verify Repository Index manifest",
+          "conclusion": "success"
+        },
+        {
+          "id": 114087390102,
+          "name": "Repository Index native matrix / Native Repository Index (macOS)",
+          "conclusion": "success"
+        },
+        {
+          "id": 114087390148,
+          "name": "Repository Index native matrix / Native Repository Index (Linux)",
+          "conclusion": "success"
+        },
+        {
+          "id": 114087390159,
+          "name": "Repository Index native matrix / Native Repository Index (Windows)",
+          "conclusion": "success"
+        },
+        {
+          "id": 114088211554,
+          "name": "validate (22)",
+          "conclusion": "failure"
+        }
+      ]
+    }
+  ],
+  "coreFailure": {
+    "externalLinks": "One request timeout for ruby-doc.org/3.4/gems/minitest/Minitest.html; checker reports zero errors. This is a failed gate, not proof of a broken link.",
+    "tests": "Three dead source publication owner rollback-resume controls timed out at60000ms. Source-level diagnosis pending.",
+    "coverage": "Skipped due to failed shard."
+  },
+  "limitations": [
+    "Historical heads only; no current eb3a318 platform acceptance inferred."
+  ]
+}

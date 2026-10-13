@@ -1,3 +1,4 @@
+import { ensureFixtureTask } from "./native-storage-fixture.js";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
@@ -17,6 +18,7 @@ import { writeTaskPolicySnapshot } from "../../src/core/policy-engine.js";
  * requires all three to agree before any side effect.
  */
 export async function seedPolicyEpoch(target, packageRoot, taskId, capabilityPolicy) {
+  await ensureFixtureTask(target, taskId, packageRoot);
   await mkdir(path.join(target, ".forgeloop", "policy"), { recursive: true });
   await writeFile(
     path.join(target, ".forgeloop", "policy", "capabilities.json"),

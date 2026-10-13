@@ -1,6 +1,7 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { mkdtemp, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -20,6 +21,8 @@ import { persistRoute } from "../src/core/route-artifact.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { inspectTaskConflictState } from "../src/core/task-conflict-inspection.js";
 import { createWorkState, writeWorkState } from "../src/core/work-state.js";
+import { withProjectStorage } from "../src/storage/project-boundary.js";
+import { readOperationalText } from "../src/storage/operational-context.js";
 
 const packageRoot = getPackageRoot();
 const cliPath = path.join(packageRoot, "src", "cli.js");
@@ -48,12 +51,14 @@ test("every lifecycle action recommended by next is executable and makes progres
       unresolvedDecisions: [],
       sourceRefs: [],
     });
+    await ensureFixtureTask(target, contract.taskId, packageRoot);
     const contractHash = contractFingerprint(contract);
-    await writeContract(target, contract, packageRoot);
+    await writeContract(target, contract, packageRoot, { taskId: contract.taskId });
 
     const route = evaluateRoute({ workType: "code", surfaces: ["config"], platforms: [] });
     const persistedRoute = await persistRoute(target, route, packageRoot, {
       contractFingerprint: contractHash,
+      taskId: contract.taskId,
     });
 
     const state = createWorkState({
@@ -73,39 +78,39 @@ test("every lifecycle action recommended by next is executable and makes progres
       blockers: [],
       verificationEvidence: [],
     });
-    await writeWorkState(target, state, { packageRoot });
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot);
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot);
+    await writeWorkState(target, state, { packageRoot, taskId: contract.taskId });
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot, { taskId: contract.taskId });
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot, { taskId: contract.taskId });
 
     // In PLANNED: next recommends START_EXECUTION or RUN_PREFLIGHT
-    const preflight = await runPreflight({ target, packageRoot });
+    const preflight = await runPreflight({ target, packageRoot, taskId: contract.taskId });
     assert.equal(preflight.status, "READY");
 
-    let next = await getNextAction(target, packageRoot);
+    let next = await getNextAction({ target, packageRoot, taskId: contract.taskId });
     assert.equal(next.nextAction, NEXT_ACTIONS.START_EXECUTION);
     assert.ok(next.commands.length > 0);
 
     // Execute recommended advance to EXECUTING
-    await advanceWorkState(target, "EXECUTING", { packageRoot });
+    await advanceWorkState(target, "EXECUTING", { packageRoot, taskId: contract.taskId });
 
     // In EXECUTING: next recommends ENTER_VERIFYING
-    next = await getNextAction(target, packageRoot);
+    next = await getNextAction({ target, packageRoot, taskId: contract.taskId });
     assert.equal(next.nextAction, NEXT_ACTIONS.ENTER_VERIFYING);
     assert.ok(next.commands.length > 0);
 
     // Execute recommended advance to VERIFYING
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: contract.taskId });
 
     // In VERIFYING without receipt: next recommends PREPARE_COMPLETION
-    next = await getNextAction(target, packageRoot);
+    next = await getNextAction({ target, packageRoot, taskId: contract.taskId });
     assert.equal(next.nextAction, NEXT_ACTIONS.PREPARE_COMPLETION);
     assert.ok(next.commands.length > 0);
 
     // Execute prepare completion
-    await prepareCompletion({ target, packageRoot });
+    await prepareCompletion({ target, packageRoot, taskId: contract.taskId });
 
     // In VERIFYING with receipt but unverified: next recommends RECORD_VERIFICATION
-    next = await getNextAction(target, packageRoot);
+    next = await getNextAction({ target, packageRoot, taskId: contract.taskId });
     assert.equal(next.nextAction, NEXT_ACTIONS.RECORD_VERIFICATION);
     assert.ok(next.commands.length > 0);
 
@@ -113,6 +118,7 @@ test("every lifecycle action recommended by next is executable and makes progres
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: contract.taskId,
       id: "unit-tests",
       requirement: "tests",
       status: "passed",
@@ -122,30 +128,31 @@ test("every lifecycle action recommended by next is executable and makes progres
     });
 
     // With all evidence covered: next recommends ENTER_REVIEWING
-    next = await getNextAction(target, packageRoot);
+    next = await getNextAction({ target, packageRoot, taskId: contract.taskId });
     assert.equal(next.nextAction, NEXT_ACTIONS.ENTER_REVIEWING);
     assert.ok(next.commands.length > 0);
 
     // Execute advance to REVIEWING
-    await advanceWorkState(target, "REVIEWING", { packageRoot });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId: contract.taskId });
 
     // In REVIEWING with valid evidence: next recommends RUN_COMPLETE
-    next = await getNextAction(target, packageRoot);
+    next = await getNextAction({ target, packageRoot, taskId: contract.taskId });
     assert.equal(next.nextAction, NEXT_ACTIONS.RUN_COMPLETE);
     assert.ok(next.commands.length > 0);
 
     // Execute runComplete
-    const completion = await runComplete({ target, packageRoot });
+    const completion = await runComplete({ target, packageRoot, taskId: contract.taskId });
     assert.equal(completion.status, "VALID");
 
     // In COMPLETE: next reports NONE
-    next = await getNextAction(target, packageRoot);
+    next = await getNextAction({ target, packageRoot, taskId: contract.taskId });
     assert.equal(next.nextAction, NEXT_ACTIONS.NONE);
   });
 });
 
 test("post-task-create discovery has an executable canonical transition", async () => {
   await withTarget(async (target) => {
+    const read = callback => withProjectStorage(target, callback, { readOnly: true });
     execFileSync(process.execPath, [cliPath, "task-create", "--task", "initial-discovery", "--claim", "src", "--path", target], {
       cwd: packageRoot,
       stdio: "pipe",
@@ -167,10 +174,10 @@ test("post-task-create discovery has an executable canonical transition", async 
     }));
     assert.equal(discover.phase, "DISCOVERING");
 
-    const earlyConflict = await inspectTaskConflictState(target, {
+    const earlyConflict = await read(() => inspectTaskConflictState(target, {
       taskId: "initial-discovery",
       packageRoot,
-    });
+    }));
     assert.equal(earlyConflict.classification, "ACTIVE");
     assert.equal(earlyConflict.evidence.phase, "DISCOVERING");
 
@@ -195,19 +202,20 @@ test("post-task-create discovery has an executable canonical transition", async 
     assert.equal(afterContract.artifacts.contract.exists, true);
     assert.equal(afterContract.artifacts.state.exists, true);
 
-    const statePath = path.join(target, afterContract.artifacts.state.path);
-    const stateBeforeRepeat = await readFile(statePath, "utf8");
+    const readStateText = () => read(() => readOperationalText(target, afterContract.artifacts.state.path).text);
+    const stateBeforeRepeat = await readStateText();
+    assert.notEqual(stateBeforeRepeat, null);
     const repeatedContract = JSON.parse(execFileSync(process.execPath, [cliPath, "contract-create", "--task", "initial-discovery", "--path", target, "--preset", "feature", "--json"], {
       cwd: packageRoot,
       encoding: "utf8",
     }));
     assert.equal(repeatedContract.idempotent, true);
-    assert.equal(await readFile(statePath, "utf8"), stateBeforeRepeat);
+    assert.equal(await readStateText(), stateBeforeRepeat);
 
-    const discoveryConflict = await inspectTaskConflictState(target, {
+    const discoveryConflict = await read(() => inspectTaskConflictState(target, {
       taskId: "initial-discovery",
       packageRoot,
-    });
+    }));
     assert.equal(discoveryConflict.classification, "ACTIVE");
 
     execFileSync(process.execPath, [cliPath, "route", "--task", "initial-discovery", "--path", target, "--work", "code", "--surface", "documentation", "--executable-change", "--json"], {
@@ -269,12 +277,14 @@ test("product correction loop commands recommended by next are executable (P2-8 
       unresolvedDecisions: [],
       sourceRefs: [],
     });
+    await ensureFixtureTask(target, contract.taskId, packageRoot);
     const contractHash = contractFingerprint(contract);
-    await writeContract(target, contract, packageRoot);
+    await writeContract(target, contract, packageRoot, { taskId: contract.taskId });
 
     const route = evaluateRoute({ workType: "code", surfaces: ["config"], platforms: [] });
     const persistedRoute = await persistRoute(target, route, packageRoot, {
       contractFingerprint: contractHash,
+      taskId: contract.taskId,
     });
 
     const state = createWorkState({
@@ -294,21 +304,22 @@ test("product correction loop commands recommended by next are executable (P2-8 
       blockers: [],
       verificationEvidence: [],
     });
-    await writeWorkState(target, state, { packageRoot });
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot);
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot);
+    await writeWorkState(target, state, { packageRoot, taskId: contract.taskId });
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot, { taskId: contract.taskId });
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot, { taskId: contract.taskId });
 
-    const preflight = await runPreflight({ target, packageRoot });
+    const preflight = await runPreflight({ target, packageRoot, taskId: contract.taskId });
     assert.equal(preflight.status, "READY");
 
-    await advanceWorkState(target, "EXECUTING", { packageRoot });
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "EXECUTING", { packageRoot, taskId: contract.taskId });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: contract.taskId });
+    await prepareCompletion({ target, packageRoot, taskId: contract.taskId });
 
     // 1. Record failed check
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: contract.taskId,
       id: "unit-tests-c1",
       requirement: "tests",
       status: "failed",
@@ -318,21 +329,22 @@ test("product correction loop commands recommended by next are executable (P2-8 
     });
 
     // 2. In VERIFYING with failed check: next recommends DIAGNOSE
-    let next = await getNextAction(target, packageRoot);
+    let next = await getNextAction({ target, packageRoot, taskId: contract.taskId });
     assert.equal(next.nextAction, NEXT_ACTIONS.DIAGNOSE);
     assert.ok(next.commands.length > 0);
 
     // 3. Execute advance to DIAGNOSING
-    await advanceWorkState(target, "DIAGNOSING", { packageRoot });
+    await advanceWorkState(target, "DIAGNOSING", { packageRoot, taskId: contract.taskId });
 
     // 4. Before diagnosis is recorded: next recommends RECORD_DIAGNOSIS
-    next = await getNextAction(target, packageRoot);
+    next = await getNextAction({ target, packageRoot, taskId: contract.taskId });
     assert.equal(next.nextAction, NEXT_ACTIONS.RECORD_DIAGNOSIS);
 
     // Record diagnosis
     await recordDiagnosis({
       target,
       packageRoot,
+      taskId: contract.taskId,
       hypothesis: "Fixed logic off-by-one error",
       failureClass: "VERIFICATION_FAILURE",
       evidenceRefs: ["unit-tests-c1"],
@@ -341,25 +353,26 @@ test("product correction loop commands recommended by next are executable (P2-8 
     });
 
     // 5. In DIAGNOSING with hypothesis: next recommends CORRECT
-    next = await getNextAction(target, packageRoot);
+    next = await getNextAction({ target, packageRoot, taskId: contract.taskId });
     assert.equal(next.nextAction, NEXT_ACTIONS.CORRECT);
     assert.ok(next.commands.length > 0);
 
     // 6. Execute advance to CORRECTING
-    await advanceWorkState(target, "CORRECTING", { packageRoot });
+    await advanceWorkState(target, "CORRECTING", { packageRoot, taskId: contract.taskId });
 
     // 7. In CORRECTING: next recommends ENTER_VERIFYING
-    next = await getNextAction(target, packageRoot);
+    next = await getNextAction({ target, packageRoot, taskId: contract.taskId });
     assert.equal(next.nextAction, NEXT_ACTIONS.ENTER_VERIFYING);
     assert.ok(next.commands.length > 0);
 
     // 8. Execute advance to VERIFYING (cycle 2)
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: contract.taskId });
 
     // 9. In VERIFYING (cycle 2): record passing check
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: contract.taskId,
       id: "unit-tests-c2",
       requirement: "tests",
       status: "passed",
@@ -369,12 +382,12 @@ test("product correction loop commands recommended by next are executable (P2-8 
     });
 
     // 10. Next recommends ENTER_REVIEWING
-    next = await getNextAction(target, packageRoot);
+    next = await getNextAction({ target, packageRoot, taskId: contract.taskId });
     assert.equal(next.nextAction, NEXT_ACTIONS.ENTER_REVIEWING);
 
     // 11. Advance to REVIEWING and complete
-    await advanceWorkState(target, "REVIEWING", { packageRoot });
-    const completion = await runComplete({ target, packageRoot });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId: contract.taskId });
+    const completion = await runComplete({ target, packageRoot, taskId: contract.taskId });
     assert.equal(completion.status, "VALID");
   });
 });
@@ -393,12 +406,14 @@ test("evidence recovery loop commands recommended by next are executable (P2-8 C
       unresolvedDecisions: [],
       sourceRefs: [],
     });
+    await ensureFixtureTask(target, contract.taskId, packageRoot);
     const contractHash = contractFingerprint(contract);
-    await writeContract(target, contract, packageRoot);
+    await writeContract(target, contract, packageRoot, { taskId: contract.taskId });
 
     const route = evaluateRoute({ workType: "code", surfaces: ["config"], platforms: [] });
     const persistedRoute = await persistRoute(target, route, packageRoot, {
       contractFingerprint: contractHash,
+      taskId: contract.taskId,
     });
 
     const state = createWorkState({
@@ -418,21 +433,22 @@ test("evidence recovery loop commands recommended by next are executable (P2-8 C
       blockers: [],
       verificationEvidence: [],
     });
-    await writeWorkState(target, state, { packageRoot });
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot);
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot);
+    await writeWorkState(target, state, { packageRoot, taskId: contract.taskId });
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot, { taskId: contract.taskId });
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot, { taskId: contract.taskId });
 
-    const preflight = await runPreflight({ target, packageRoot });
+    const preflight = await runPreflight({ target, packageRoot, taskId: contract.taskId });
     assert.equal(preflight.status, "READY");
 
-    await advanceWorkState(target, "EXECUTING", { packageRoot });
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "EXECUTING", { packageRoot, taskId: contract.taskId });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: contract.taskId });
+    await prepareCompletion({ target, packageRoot, taskId: contract.taskId });
 
     // Only record 1 of 2 checks
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: contract.taskId,
       id: "unit-tests",
       requirement: "tests",
       status: "passed",
@@ -441,24 +457,25 @@ test("evidence recovery loop commands recommended by next are executable (P2-8 C
       result: "Passed",
     });
 
-    await advanceWorkState(target, "REVIEWING", { packageRoot });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId: contract.taskId });
 
     // Run complete -> REJECTED
-    const completion1 = await runComplete({ target, packageRoot });
+    const completion1 = await runComplete({ target, packageRoot, taskId: contract.taskId });
     assert.equal(completion1.status, "REJECTED");
 
     // In REVIEWING after rejection: next recommends ENTER_VERIFYING
-    let next = await getNextAction(target, packageRoot);
+    let next = await getNextAction({ target, packageRoot, taskId: contract.taskId });
     assert.equal(next.nextAction, NEXT_ACTIONS.ENTER_VERIFYING);
     assert.ok(next.commands.length > 0);
 
     // Execute recommended advance to VERIFYING (cycle 2)
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: contract.taskId });
 
     // Record missing check
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: contract.taskId,
       id: "build-check",
       requirement: "build",
       status: "passed",
@@ -468,12 +485,12 @@ test("evidence recovery loop commands recommended by next are executable (P2-8 C
     });
 
     // Next recommends ENTER_REVIEWING
-    next = await getNextAction(target, packageRoot);
+    next = await getNextAction({ target, packageRoot, taskId: contract.taskId });
     assert.equal(next.nextAction, NEXT_ACTIONS.ENTER_REVIEWING);
 
     // Advance to REVIEWING and complete
-    await advanceWorkState(target, "REVIEWING", { packageRoot });
-    const completion2 = await runComplete({ target, packageRoot });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId: contract.taskId });
+    const completion2 = await runComplete({ target, packageRoot, taskId: contract.taskId });
     assert.equal(completion2.status, "VALID");
   });
 });

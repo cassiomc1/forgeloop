@@ -1,0 +1,130 @@
+{
+  "kind": "FULL_PREPUSH_TERMINAL",
+  "sourceRevision": "cea6fc2de071a71a23517a01cadf49896e854ca6",
+  "launchRevision": "099f2480fd34c4e862cfec4b4db28363ab0e2781",
+  "sourceAtLaunch": "Committed parent plus the exact maintenance correction and two new test files",
+  "capturedAt": "2026-10-09T23:48:19.632553+00:00",
+  "command": "env -u TYPESAFE_API_KEY -u NODE_OPTIONS npm run verify:prepush",
+  "runtime": {
+    "node": "24.19.0",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "sessionId": 20271,
+  "exitCode": 0,
+  "core": {
+    "tests": 2964,
+    "passed": 2953,
+    "failed": 0,
+    "skipped": 11
+  },
+  "poc": 67,
+  "cleanPackedMcp": 77,
+  "package": 12,
+  "python": 56,
+  "stages": [
+    {
+      "id": "coverage",
+      "elapsed": "556.1s"
+    },
+    {
+      "id": "critical-coverage:check",
+      "elapsed": "0.3s"
+    },
+    {
+      "id": "lint",
+      "elapsed": "4.5s"
+    },
+    {
+      "id": "dependency:policy",
+      "elapsed": "0.1s"
+    },
+    {
+      "id": "complexity:check",
+      "elapsed": "1.7s"
+    },
+    {
+      "id": "docs:check",
+      "elapsed": "2.7s"
+    },
+    {
+      "id": "completions:check",
+      "elapsed": "0.1s"
+    },
+    {
+      "id": "summary:check",
+      "elapsed": "0.1s"
+    },
+    {
+      "id": "changelog:check",
+      "elapsed": "0.2s"
+    },
+    {
+      "id": "repository-index:manifest",
+      "elapsed": "0.1s"
+    },
+    {
+      "id": "repository:hygiene",
+      "elapsed": "0.2s"
+    },
+    {
+      "id": "poc:evidence:verify",
+      "elapsed": "0.2s"
+    },
+    {
+      "id": "poc:evidence:test",
+      "elapsed": "1.5s"
+    },
+    {
+      "id": "mcp:test:clean",
+      "elapsed": "7.4s"
+    },
+    {
+      "id": "mcp:pack:check",
+      "elapsed": "2.9s"
+    },
+    {
+      "id": "pack:check",
+      "elapsed": "1.7s"
+    },
+    {
+      "id": "python-unittest",
+      "elapsed": "1.0s"
+    },
+    {
+      "id": "markdown-self-test",
+      "elapsed": "0.1s"
+    },
+    {
+      "id": "markdown-validator",
+      "elapsed": "0.8s"
+    },
+    {
+      "id": "loop-self-test",
+      "elapsed": "0.2s"
+    },
+    {
+      "id": "loop-validator",
+      "elapsed": "0.1s"
+    },
+    {
+      "id": "secret-scan",
+      "elapsed": "12.2s"
+    }
+  ],
+  "sourceManifest": {
+    "path": "/Users/cassio/.codex/verification/maintenance-adoption-proof-prepush-start.json",
+    "sha256": "8cc0699e4cb8c42ef38d626eed4835bb7786f3c8243ac12e51f228c6e33c659a",
+    "trackedFiles": 3109,
+    "newTestFiles": 2,
+    "trackedListUnchanged": true,
+    "allHashesUnchangedAtTerminal": true,
+    "headUnchangedThroughTerminal": true
+  },
+  "log": {
+    "path": "/Users/cassio/.codex/verification/maintenance-adoption-proof-prepush.log",
+    "sha256": "df5250987affe4b32bd6d09085273390537758d303fe10c60cf657ae317d5755"
+  },
+  "crossPlatformAcceptance": false,
+  "wholePlanAcceptance": false
+}

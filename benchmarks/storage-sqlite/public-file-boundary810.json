@@ -1,0 +1,70 @@
+{
+  "increment": 810,
+  "sourceRevision": "9489a5111fe12fd5cdb053365ae247d8a7ad663a",
+  "status": "SOURCE_REVIEWED_SUBSET",
+  "reviewed": [
+    {
+      "path": "src/storage/storage-marker.js",
+      "sha256": "be4744869306bfba37f02f2ab58152761c12d079360eb4220917019e5d8ad79d",
+      "disposition": "Explicit bootstrap/cutover marker is file-owned under original plan section 3. Pending creation is exclusive, synced and maintenance-owned; activation requires matching operation, inventory and schema bindings under the same owner."
+    },
+    {
+      "path": "src/storage/migration-activate.js",
+      "sha256": "12b11a733f5a615ee1becbc8e3780fadfc7e55c92146cd07e82718c588871267",
+      "disposition": "Requires writer exclusion, maintenance ownership and verified archival. It publishes immutable attachment objects and a SQLite backup, verifies logical parity and integrity before marker activation, then records the publication journal. Journal writes are maintenance checkpoints, not task mirrors."
+    },
+    {
+      "path": "src/storage/migration-publication.js",
+      "sha256": "6e60f541f53f977bc1670d2c2f7577e5e718b1e1fff80ba49d4e7c026d8b38ed",
+      "disposition": "Maintains explicit publication-stage journals and independently retained backup bundles. Staging obtains maintenance ownership and verifies candidate/bundle bindings; recovery refuses rebuilding after marker or database publication and retains interrupted attempts."
+    },
+    {
+      "path": "src/storage/migration-archive.js",
+      "sha256": "38848cc8ab285a2ce37ef7b7b3405cf51e024d023670f7dfbf46eac01bdda37a",
+      "disposition": "Under maintenance ownership and explicit writer exclusion, records archival progress and moves inventoried legacy roots to retained archive. It revalidates source partition and excludes immutable attachment roots from archival; no normal-path task file writer."
+    },
+    {
+      "path": "src/storage/exporter.js",
+      "sha256": "2e005a6784c73f42e53831a800b09b50730f901dd358d7463009f776b55a2a4b",
+      "disposition": "Explicit interchange export runs from a consistent storage snapshot and uses assertPortableExportDestination before task output allocation. Named writes produce portable artifact/event/session/catalog files and attachment outputs; export is not a live mirror."
+    },
+    {
+      "path": "src/storage/project-backup.js",
+      "sha256": "66dffeb2ca6fa6f6c90a3eb19fafad8e5fd69596f2794c23ef95669fce5f1370",
+      "disposition": "Writes independent backup manifests and attachment inventories in exclusively allocated directories. Uses a committed SQLite backup, verifies referenced attachment bytes and digest bindings; restore backup output is fresh and independently verified."
+    },
+    {
+      "path": "src/storage/restore-preparation.js",
+      "sha256": "70c2db1ac984643434a5e1986028efc39f79b9d2f2576a4cbe35f39bd0161347",
+      "disposition": "Maintains owner-checked restore preparation journals and independently retained rebuild intents. Interrupted snapshots are retained before rebuilding from a fingerprint-bound, verified backup; temporary intent publication uses exclusive link semantics."
+    },
+    {
+      "path": "src/storage/migration-rollback-release.js",
+      "sha256": "6838a25238dd71cd2b2c6d740fb32c3f1914bfd06ed376f154bd4dd7cb0b5cfb",
+      "disposition": "Writes an explicit target-version validation receipt only after source-pinned legacy checkout validation, exact task catalog parity, every-task protocol validation and final retained-byte verification. Maintenance is released only after validation; not normal-path operational writing."
+    },
+    {
+      "path": "src/storage/restore-replacement-owner.js",
+      "sha256": "9d3bd4fa498f1f42befe30d1d5d01d1e420996b2887006cecadfdc2011553cbc",
+      "disposition": "Writes a replacement ownership journal after retained outgoing evidence and exact maintenance-owner continuity checks. It does not mutate the independently retained outgoing manifest or operational task rows."
+    }
+  ],
+  "namedCallerModulesReviewedCumulative": 18,
+  "namedCallerModulesStillPending": [
+    "src/storage/migration-candidate.js",
+    "src/storage/migration-rollback-preparation.js",
+    "src/storage/migration-rollback-publication.js",
+    "src/storage/migration-rollback-source-stage.js",
+    "src/storage/migration-source.js",
+    "src/storage/project-replacement.js",
+    "src/storage/project-restore.js",
+    "src/storage/restore-replacement-archive.js",
+    "src/storage/restore-replacement-preparation.js",
+    "src/storage/restore-replacement.js"
+  ],
+  "wholeConsumerClosure": false,
+  "limitations": [
+    "This source-role audit classifies named static atomic writes only. Transitive aliases and other publication primitives remain outside this inventory.",
+    "Maintenance checkpoints are explicitly supported bootstrap/migration file roles under the original plan; classification alone is not proof of every recovery path or current platform acceptance."
+  ]
+}

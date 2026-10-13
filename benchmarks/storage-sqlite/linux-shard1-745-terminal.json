@@ -1,0 +1,16 @@
+{
+  "runId": 37672672596,
+  "jobId": 112968255283,
+  "head": "f63dd90ffd1cb587df34a5b053b643a650d6704e",
+  "platform": "linux",
+  "hostname": "51abbe357f3e",
+  "conclusion": "success",
+  "counts": {
+    "tests": 734,
+    "pass": 729,
+    "fail": 0,
+    "skipped": 5
+  },
+  "logSha256": "fb978bfe26bf26815ee00b7791d9d9fc0953a2df086d24f862728bb5714be2cf",
+  "scope": "Current production coverage shard1 only; remaining shards and whole acceptance pending."
+}

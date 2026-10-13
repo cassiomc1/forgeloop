@@ -1,0 +1,54 @@
+{
+  "checkpoint": 554,
+  "scope": "Mac Windows Docker Linux read-only rollback content admission tests",
+  "macEvidence": {
+    "checkpoint": 553,
+    "scope": "Mac internal read-only rollback content admission under owned maintenance",
+    "sourceHashes": {
+      "src/storage/migration-rollback-admission.js": "d934d5254a2180c29d0cff5ab24e03ec03c2c954045236e4679b9ca9e3645aaf",
+      "tests/storage-migration-rollback-admission.test.js": "6a1b9e50c764225c2be974e9397a6ff62f917f8e82d4047b3dc02c9243dbb605"
+    },
+    "tests": 5,
+    "passed": 5,
+    "rawLog": "\u2714 validated archival activates an independent SQLite copy and releases public dispatch (5094.755875ms)\n\u2714 source rollback admission unchanged preserves existing authority (4018.555ms)\n\u2714 source rollback admission new-task preserves existing authority (2734.5295ms)\n\u2714 source rollback admission orphan-bytes preserves existing authority (2444.510583ms)\n\u2714 source rollback admission altered-source preserves existing authority (1583.494625ms)\n\u2139 tests 5\n\u2139 suites 0\n\u2139 pass 5\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 10971.778167\n",
+    "fastVerificationExit": 0,
+    "lintExit": 0,
+    "controls": [
+      "Explicit writer exclusion required",
+      "Live owner required",
+      "New native task refused",
+      "Extra immutable orphan bytes refused and retained",
+      "Altered captured source refused",
+      "Active database bytes unchanged"
+    ],
+    "limitations": [
+      "Internal content-admission helper only; not public rollback command",
+      "No absence-of-historical-write proof",
+      "No restoration token or destructive switch",
+      "Windows/Linux current helper tests pending",
+      "Full original-plan acceptance incomplete"
+    ]
+  },
+  "remoteRaw": {
+    "windows": {
+      "status": 0,
+      "output": "{\"sourceFiles\":2507,\"patches\":{\"src/core/work-state.js\":\"fae79a89d33d170159195d3b3d6448a5ad45422df952422cd2dd18e722052ff9\",\"tests/checkpoint-revalidation.test.js\":\"9d6aafb3b96b03525d29ab9bef133f62af1612d56b9710c3293738d22070cd32\",\"src/core/structural-quality/service.js\":\"38981b46ae61b4ca173fd37d5855ac4ce6580719dcc51b429474a2f44417b363\",\"tests/storage-quality-context.test.js\":\"1deb0efe1f37b09829eb3b46d47cedd9e51e5ef0a921fc86e56c0e4e22195bce\",\"src/storage/task-guards.js\":\"0ff2d6a4b1109e47d97a772c19b54ba68dbae6c739e43d3253b399b244eafff4\",\"src/commands/status.js\":\"826d0f912630f5df52f6d696780cd9a4cc77493dad072f3ebd3c5a2e432e118f\",\"tests/storage-state-classification-snapshot.test.js\":\"d5e2a6efe3ab48be4fda5a85f27c0fc6becdcdf7d07e7f76dfe350f9bc6ea86a\",\"scripts/drill-storage-reverse-export-compatibility.mjs\":\"ef4978e694207059fa27dc9cb701539dfc5b828558e6afba875e1020756e2008\",\"tests/helpers/canonical-diagnosis-fixture.js\":\"add6d2df4664967e203ae93061e649fb3b16f132ee39626c151018679383769f\",\"scripts/drill-storage-prewrite-source-rollback.mjs\":\"95ddf7088f39cefb5cc78d22d6636e898d83fb8914414cc58eed90090edf1b90\",\"tests/storage-migration-resume.test.js\":\"2b5942e27dfcc28de5561fbbe1eba3bb5b1ef723bb9dad9e855f57f1583aa511\",\"tests/helpers/storage-migration-crash-worker.mjs\":\"7b647e308e324f857e6d279eff7b011dfc854c7a84afa89c35e0032279ccc75b\",\"src/storage/migration-candidate.js\":\"bfe9de59e88e05eb61d70eca35f6f5540a766ba8155f6b26b5707f211dc7e94f\",\"tests/storage-historical-export-manifest.test.js\":\"76c97421ec3b81e911da35c565cdcd6c062f9081534ed93edb3c356219576b4d\",\"src/storage/migration-rollback-admission.js\":\"d934d5254a2180c29d0cff5ab24e03ec03c2c954045236e4679b9ca9e3645aaf\",\"tests/storage-migration-rollback-admission.test.js\":\"6a1b9e50c764225c2be974e9397a6ff62f917f8e82d4047b3dc02c9243dbb605\"},\"status\":0,\"stdout\":\"\u2714 validated archival activates an independent SQLite copy and releases public dispatch (6192.5895ms)\\n\u2714 source rollback admission unchanged preserves existing authority (4615.6527ms)\\n\u2714 source rollback admission new-task preserves existing authority (4403.9733ms)\\n\u2714 source rollback admission orphan-bytes preserves existing authority (3376.1054ms)\\n\u2714 source rollback admission altered-source preserves existing authority (3541.6814ms)\\n\u2139 tests 5\\n\u2139 suites 0\\n\u2139 pass 5\\n\u2139 fail 0\\n\u2139 cancelled 0\\n\u2139 skipped 0\\n\u2139 todo 0\\n\u2139 duration_ms 16139.8145\\n\",\"stderr\":\"\"}\n",
+      "error": ""
+    },
+    "linux": {
+      "status": 0,
+      "output": "{\"status\":0,\"stdout\":\"{\\\"sourceBefore\\\":2507,\\\"sourceAfter\\\":2507,\\\"patches\\\":{\\\"src/core/work-state.js\\\":\\\"fae79a89d33d170159195d3b3d6448a5ad45422df952422cd2dd18e722052ff9\\\",\\\"tests/checkpoint-revalidation.test.js\\\":\\\"9d6aafb3b96b03525d29ab9bef133f62af1612d56b9710c3293738d22070cd32\\\",\\\"src/core/structural-quality/service.js\\\":\\\"38981b46ae61b4ca173fd37d5855ac4ce6580719dcc51b429474a2f44417b363\\\",\\\"tests/storage-quality-context.test.js\\\":\\\"1deb0efe1f37b09829eb3b46d47cedd9e51e5ef0a921fc86e56c0e4e22195bce\\\",\\\"src/storage/task-guards.js\\\":\\\"0ff2d6a4b1109e47d97a772c19b54ba68dbae6c739e43d3253b399b244eafff4\\\",\\\"src/commands/status.js\\\":\\\"826d0f912630f5df52f6d696780cd9a4cc77493dad072f3ebd3c5a2e432e118f\\\",\\\"tests/storage-state-classification-snapshot.test.js\\\":\\\"d5e2a6efe3ab48be4fda5a85f27c0fc6becdcdf7d07e7f76dfe350f9bc6ea86a\\\",\\\"scripts/drill-storage-reverse-export-compatibility.mjs\\\":\\\"ef4978e694207059fa27dc9cb701539dfc5b828558e6afba875e1020756e2008\\\",\\\"tests/helpers/canonical-diagnosis-fixture.js\\\":\\\"add6d2df4664967e203ae93061e649fb3b16f132ee39626c151018679383769f\\\",\\\"scripts/drill-storage-prewrite-source-rollback.mjs\\\":\\\"95ddf7088f39cefb5cc78d22d6636e898d83fb8914414cc58eed90090edf1b90\\\",\\\"tests/storage-migration-resume.test.js\\\":\\\"2b5942e27dfcc28de5561fbbe1eba3bb5b1ef723bb9dad9e855f57f1583aa511\\\",\\\"tests/helpers/storage-migration-crash-worker.mjs\\\":\\\"7b647e308e324f857e6d279eff7b011dfc854c7a84afa89c35e0032279ccc75b\\\",\\\"src/storage/migration-candidate.js\\\":\\\"bfe9de59e88e05eb61d70eca35f6f5540a766ba8155f6b26b5707f211dc7e94f\\\",\\\"tests/storage-historical-export-manifest.test.js\\\":\\\"76c97421ec3b81e911da35c565cdcd6c062f9081534ed93edb3c356219576b4d\\\",\\\"src/storage/migration-rollback-admission.js\\\":\\\"d934d5254a2180c29d0cff5ab24e03ec03c2c954045236e4679b9ca9e3645aaf\\\",\\\"tests/storage-migration-rollback-admission.test.js\\\":\\\"6a1b9e50c764225c2be974e9397a6ff62f917f8e82d4047b3dc02c9243dbb605\\\"},\\\"status\\\":0,\\\"stdout\\\":\\\"\u2714 validated archival activates an independent SQLite copy and releases public dispatch (6221.354146ms)\\\\n\u2714 source rollback admission unchanged preserves existing authority (4924.25846ms)\\\\n\u2714 source rollback admission new-task preserves existing authority (4076.002284ms)\\\\n\u2714 source rollback admission orphan-bytes preserves existing authority (4230.742417ms)\\\\n\u2714 source rollback admission altered-source preserves existing authority (3673.5388ms)\\\\n\u2139 tests 5\\\\n\u2139 suites 0\\\\n\u2139 pass 5\\\\n\u2139 fail 0\\\\n\u2139 cancelled 0\\\\n\u2139 skipped 0\\\\n\u2139 todo 0\\\\n\u2139 duration_ms 17093.1081\\\\n\\\",\\\"stderr\\\":\\\"\\\"}\\n\",\"stderr\":\"\"}\n",
+      "error": ""
+    }
+  },
+  "sourceHashes": {
+    "src/storage/migration-rollback-admission.js": "d934d5254a2180c29d0cff5ab24e03ec03c2c954045236e4679b9ca9e3645aaf",
+    "tests/storage-migration-rollback-admission.test.js": "6a1b9e50c764225c2be974e9397a6ff62f917f8e82d4047b3dc02c9243dbb605"
+  },
+  "passedPerHost": 5,
+  "limitations": [
+    "Internal content admission only; no restoration token or absence-of-historical-writes proof",
+    "Resumable source restoration and closed-connection admission still pending",
+    "Not final full-current-source release acceptance"
+  ]
+}

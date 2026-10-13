@@ -1,5 +1,6 @@
+import { readFixtureText, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -168,12 +169,12 @@ test("corrupt ledger after canonical completion fails closed", async () => {
     await completeOfficially(target, taskId, ["tests"]);
 
     const eventsPath = ensureWithin(target, taskArtifactPath(taskId, "events"));
-    const original = await readFile(eventsPath, "utf8");
+    const original = await readFixtureText(target, eventsPath);
     const lines = original.trim().split("\n");
     const second = JSON.parse(lines[1]);
     second.taskId = `${second.taskId}-tampered`;
     lines[1] = JSON.stringify(second);
-    await writeFile(eventsPath, `${lines.join("\n")}\n`, "utf8");
+    await overwriteFixtureText(target, eventsPath, `${lines.join("\n")}\n`);
 
     const projection = await resolveTaskClaimState(target, { taskId, packageRoot });
     assert.equal(projection.claimState, "INCONSISTENT");
@@ -191,7 +192,7 @@ test("missing canonical completion event fails closed", async () => {
     // Remove the COMPLETION_VALIDATED event and rebuild a structurally valid
     // chain so the only defect is the missing completion proof.
     const eventsPath = ensureWithin(target, taskArtifactPath(taskId, "events"));
-    const lines = (await readFile(eventsPath, "utf8")).trim().split("\n");
+    const lines = (await readFixtureText(target, eventsPath)).trim().split("\n");
     let events = lines.map((line) => JSON.parse(line))
       .filter((event) => event.event !== "COMPLETION_VALIDATED");
     let previousHash = null;
@@ -203,7 +204,7 @@ test("missing canonical completion event fails closed", async () => {
       previousHash = event.hash;
       return event;
     });
-    await writeFile(eventsPath, `${events.map((event) => JSON.stringify(event)).join("\n")}\n`, "utf8");
+    await overwriteFixtureText(target, eventsPath, `${events.map((event) => JSON.stringify(event)).join("\n")}\n`);
 
     const projection = await resolveTaskClaimState(target, { taskId, packageRoot });
     assert.equal(projection.claimState, "INCONSISTENT");

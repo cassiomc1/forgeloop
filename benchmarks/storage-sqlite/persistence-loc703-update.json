@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "productionRoots": [
+    "src",
+    "integrations/mcp/src"
+  ],
+  "countingMethod": "Nonblank physical production lines including comments; same whole-module union on both sides; tests/scripts/package manifests excluded",
+  "scopeMethod": "Conservative candidate union: direct persistence/file-I/O signals in either version, every storage module, every changed/new production module. All omitted modules are listed too. Requires semantic scope review before release acceptance.",
+  "scopeReviewComplete": false,
+  "releaseThresholdsVerified": false,
+  "includedFiles": 279,
+  "baselineNonblankPhysicalLines": 43592,
+  "currentNonblankPhysicalLines": 51678,
+  "netReduction": -0.1854927509634796,
+  "candidateTargetMet": false,
+  "increment": 703,
+  "head": "3fdcf236392992c2dbf8f95ba0bde0a09d771bf4",
+  "baseInventory": "benchmarks/storage-sqlite/persistence-loc698.json",
+  "rawSha256": "e9ef45759e963f24a08a50079c0e670fd09b6cd958b0eb56eec6e9b56b90d6d4",
+  "changedModuleRecords": [
+    {
+      "path": "src/core/task-discovery.js",
+      "included": true,
+      "scopeReview": "PENDING",
+      "reasons": [
+        "baseline-direct-persistence-or-file-IO-signal",
+        "current-direct-persistence-or-file-IO-signal",
+        "changed-production-module-included-conservatively"
+      ],
+      "baseline": {
+        "nonblankPhysicalLines": 180,
+        "bytes": 6931,
+        "sha256": "1efa26c7d50df35fb41dab6a0136acc888a9b43b66b574f71f6ba97a971888f0",
+        "persistenceSignal": true
+      },
+      "current": {
+        "nonblankPhysicalLines": 221,
+        "bytes": 9464,
+        "sha256": "5a79849caef814dbf1208e297ee14116f892314df98e2481812dd5afcda3d5ad",
+        "persistenceSignal": true
+      }
+    },
+    {
+      "path": "src/storage/maintenance-handoff.js",
+      "included": true,
+      "scopeReview": "PENDING",
+      "reasons": [
+        "current-direct-persistence-or-file-IO-signal",
+        "complete-storage-import-export-maintenance-owner",
+        "changed-production-module-included-conservatively",
+        "new-production-module-included-conservatively"
+      ],
+      "baseline": null,
+      "current": {
+        "nonblankPhysicalLines": 100,
+        "bytes": 5460,
+        "sha256": "79113b4f2c706ae35c0ffa775b433fbd085fd95d4d23d0d25072151f4c3887f5",
+        "persistenceSignal": true
+      }
+    }
+  ],
+  "allOtherModuleRecordsUnchanged": true,
+  "targetMaximumLines": 32694,
+  "additionalLinesToRemove": 18984
+}

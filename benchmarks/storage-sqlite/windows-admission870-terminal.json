@@ -1,0 +1,24 @@
+{
+  "increment": 870,
+  "runId": 37784396310,
+  "jobId": 113335313015,
+  "sourceRevision": "7a19829cf488080ecd85e8eaf458cfcadb7e7012",
+  "status": "PASS",
+  "counts": {
+    "tests": 8,
+    "pass": 8,
+    "fail": 0,
+    "skipped": 0
+  },
+  "sourceHashes": {
+    "src/storage/connection.js": "ca21ebb7d35aaf3ea74be04b767e755436934c52fd4db2c5e828aabdd20dee74",
+    "src/storage/project-boundary.js": "0fe481357f6d5459a760ddfbf5a21bf6557315482f6612c6cfd829cfa9d8ab57",
+    "src/storage/connection-owner.js": "081d7ca7d303c0e69e232007bf2d1b2cd7076dfa6b7f4e3e53405cd23611a6fe",
+    "tests/storage-database-admission.test.js": "a9cdf7cb72e923ca0163d695167d0a12a27a5367851442a1ad06c0a8e9eff88d"
+  },
+  "scope": "Eight actual Windows admission controls, including unchanged database, cold/warm parent redirection, restored parent, writable refusal and both sidecars. No skips.",
+  "limitations": [
+    "Specific deterministic interleavings, not arbitrary privileged timestamp forgery or native descriptor introspection.",
+    "Full current-source platforms and whole migration acceptance remain pending."
+  ]
+}

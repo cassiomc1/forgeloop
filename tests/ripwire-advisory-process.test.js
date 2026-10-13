@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -28,7 +29,7 @@ async function withProject(callback) {
   try {
     return await callback(projectPath);
   } finally {
-    await rm(projectPath, { recursive: true, force: true });
+    await removeTempTree(projectPath);
   }
 }
 

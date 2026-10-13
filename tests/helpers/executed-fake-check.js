@@ -20,7 +20,7 @@ export async function recordExecutedFakeCheck(recordCheck, input) {
   const command = input.command.trim();
     const tokens = command.match(/(?:[^\s"']+|"[^"]*"|'[^']*')+/gu)
       ?.map((token) => token.replace(/^("|')|("|')$/gu, "")) ?? [];
-    const state = await readWorkState(input.target, input.packageRoot);
+    const state = await readWorkState(input.target, { packageRoot: input.packageRoot, taskId: input.taskId ?? null });
     const fakeNpx = path.join(
       input.target,
       ".forgeloop",

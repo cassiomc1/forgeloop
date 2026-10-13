@@ -1,0 +1,66 @@
+{
+  "increment": 812,
+  "sourceRevision": "3a8993a512c91323f9984bc3816a066677002f0c",
+  "status": "SOURCE_REVIEWED_SUBSET",
+  "reviewed": [
+    {
+      "path": "src/storage/maintenance.js",
+      "sha256": "ce19d71c8507b70bd56b022667d63064c2b0b76f5722d8a304d27ec2e681478f",
+      "disposition": "Exclusive bootstrap maintenance owner metadata is synced before operation callbacks. Ordinary command admission is excluded; owner-bound contexts and exact dead-local-owner recovery control cutover and release."
+    },
+    {
+      "path": "src/storage/maintenance-handoff.js",
+      "sha256": "79113b4f2c706ae35c0ffa775b433fbd085fd95d4d23d0d25072151f4c3887f5",
+      "disposition": "Immutable maintenance history and handoff claims use exclusive writes/hard links, bounded exact-owner chains, synced publication and promotion. These are bootstrap exclusion metadata, not task mirrors."
+    },
+    {
+      "path": "src/storage/attachment-files.js",
+      "sha256": "10e3da12d126263bb4ef7ca2684911bc778048b90069a84ccc73029cd53b93f5",
+      "disposition": "Attachment publication is explicit immutable file authority allowed by the plan. Exclusive temporary files are streamed and synced, content-addressed hard-link publication is verified, and publication refuses an active database transaction before reference commit."
+    },
+    {
+      "path": "src/storage/backup.js",
+      "sha256": "32016e0aaf027c2d0084717a81f1e9b1f48286ce87abdfb05a8a5764a7d8dd9a",
+      "disposition": "SQLite native backup writes a private snapshot, validates integrity, syncs bytes and publishes by non-overwriting hard link. Restore refuses active-database replacement and validates schema metadata read-only."
+    },
+    {
+      "path": "src/repository-index/lock.js",
+      "sha256": "77748809ef760e444dcdf09df280df956288cfeff379ef0a7755daf673f7892f",
+      "disposition": "Repository-index process lock uses exclusive file creation and owner identity for release. Renames quarantine stale search-engine lock metadata; this is auxiliary search coordination, not operational task authority."
+    },
+    {
+      "path": "src/repository-index/binary-manager.js",
+      "sha256": "e5445ac9306053478e2c9f694ca8d890509c4f27f33e36d1797ef404ed0a1888",
+      "disposition": "Writes downloaded archives and stages/renames checked tgrep binaries under managed engine storage and installation lock. Checks archive/binary digests and executable version; no operational artifact writer."
+    },
+    {
+      "path": "src/core/test-intelligence/prune.js",
+      "sha256": "35589fb442033e16ddfeb28af2ea6a5f91aa31a2b2f1ad4719544def6bcb60f4",
+      "disposition": "Copies source into a disposable temporary probe workspace excluding .forgeloop and .git; modifies only the contained temporary test file and reports no live-worktree modification."
+    }
+  ],
+  "directPublicationInventory": {
+    "matchedLines": 26,
+    "sha256": "07032e4e8539500236cad9c46401367036488e0ca363291e7138e08f561021bc",
+    "command": [
+      "rg",
+      "-n",
+      "\\b(writeFile|appendFile|copyFile|rename|writeFileSync|appendFileSync)\\s*\\(",
+      "src",
+      "integrations/mcp/src"
+    ]
+  },
+  "focusedChecks": {
+    "tests": 20,
+    "pass": 20,
+    "fail": 0,
+    "skipped": 0,
+    "logSha256": "65e3f356fc6cf8c2ad13f819e4ced5f2ca5b10414bf32ad59d8d6a17a42e5ddb"
+  },
+  "wholeConsumerClosure": false,
+  "limitations": [
+    "Static textual inventory does not prove aliases, dynamic imports, external callers or every low-level mutation path.",
+    "Prior reviewed migration/restore moves remain explicit maintenance paths; this increment extends coverage to stream and hard-link publishers.",
+    "This is not complete runtime or cross-platform validation."
+  ]
+}

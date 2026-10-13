@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "sqlite-end-to-end-20260930",
+  "objective": "Execute all phases of the original SQLite migration plan and open a pull request after all implementation and verification steps.",
+  "assumptions": [],
+  "deliverables": [
+    "."
+  ],
+  "constraints": [
+    "One authoritative SQLite operational writer; retain files only for human configuration, assets, attachments and explicit interchange.",
+    "Preserve protocol hashes, lifecycle rules, claims, authority and public errors.",
+    "Do not migrate live project data or publish a release.",
+    "Preserve the original checkout and its task state; implement in the isolated worktree."
+  ],
+  "risks": [
+    "Breaking Node runtime baseline",
+    "Persistence and authority regressions",
+    "Interrupted cutover and WAL backup correctness"
+  ],
+  "stopConditions": [
+    "Required product behavior or acceptance facts remain unresolved."
+  ],
+  "unresolvedDecisions": [],
+  "sourceRefs": [
+    "contract-preset:feature"
+  ],
+  "verification": [
+    {
+      "id": "verify-sqlite",
+      "text": "Full SQLite lifecycle, migration/restore, contention, tamper, CLI/API/MCP and required regression gates pass.",
+      "type": "VERIFICATION",
+      "requiredEvidenceKind": "OBSERVED"
+    }
+  ],
+  "successCriteria": [
+    {
+      "id": "complete-sqlite",
+      "text": "Every definition-of-done item in docs/SQLITE_MIGRATION_PLAN.md is implemented and evidenced, including sole writer, removed obsolete code and measured performance and LOC.",
+      "type": "PRODUCT",
+      "requiredEvidenceKind": "OBSERVED"
+    }
+  ]
+}

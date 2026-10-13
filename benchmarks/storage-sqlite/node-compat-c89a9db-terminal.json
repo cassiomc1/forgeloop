@@ -1,0 +1,145 @@
+{
+  "runId": 37998306683,
+  "jobId": 114051401461,
+  "sourceRevision": "c89a9dbc55df4632d08fdabd681d9e7913834e77",
+  "name": "Node compatibility (macOS, Node 24.19.0)",
+  "status": "completed",
+  "conclusion": "failure",
+  "startedAt": "2026-10-09T23:22:50Z",
+  "completedAt": "2026-10-09T23:32:51Z",
+  "diagnosis": "GitHub DNS resolution stalled fetch for 807266 ms; retry fetched expected revision, but job timeout canceled incomplete quick tests",
+  "assertionFailureObserved": false,
+  "acceptance": false,
+  "workflowStillActive": false,
+  "steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-09T23:22:52Z",
+      "completed_at": "2026-10-09T23:22:54Z"
+    },
+    {
+      "name": "Set up runner",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-09T23:22:54Z",
+      "completed_at": "2026-10-09T23:22:54Z"
+    },
+    {
+      "name": "Check out repository",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-09T23:22:54Z",
+      "completed_at": "2026-10-09T23:36:37Z"
+    },
+    {
+      "name": "Set up Node.js",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-09T23:36:37Z",
+      "completed_at": "2026-10-09T23:37:08Z"
+    },
+    {
+      "name": "Install locked Node toolchain",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-09T23:37:08Z",
+      "completed_at": "2026-10-09T23:37:10Z"
+    },
+    {
+      "name": "Run targeted compatibility smoke",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started_at": "2026-10-09T23:37:10Z",
+      "completed_at": "2026-10-09T23:37:42Z"
+    },
+    {
+      "name": "Post Set up Node.js",
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-10-09T23:37:42Z",
+      "completed_at": "2026-10-09T23:37:42Z"
+    },
+    {
+      "name": "Post Check out repository",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-09T23:37:42Z",
+      "completed_at": "2026-10-09T23:37:44Z"
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-09T23:37:44Z",
+      "completed_at": "2026-10-09T23:37:45Z"
+    }
+  ],
+  "log": {
+    "path": "/Users/cassio/.codex/verification/node-compat-c89a9db-macos2419.log",
+    "sha256": "7c49326cc7af2a2a829f845d5f13b5e0abb6f1c807720bca42a5a6d5c800a376"
+  },
+  "workflowStatus": "completed",
+  "workflowConclusion": "failure",
+  "jobs": [
+    {
+      "id": 114049877560,
+      "name": "Minimum Node 24.19.0 compatibility",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-09T22:16:41Z",
+      "completed_at": "2026-10-09T22:21:29Z"
+    },
+    {
+      "id": 114051401461,
+      "name": "Node compatibility (macOS, Node 24.19.0)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-10-09T23:22:50Z",
+      "completed_at": "2026-10-09T23:32:51Z"
+    },
+    {
+      "id": 114051401464,
+      "name": "Node compatibility (Windows, Node 24)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-09T23:40:40Z",
+      "completed_at": "2026-10-09T23:41:52Z"
+    },
+    {
+      "id": 114051401482,
+      "name": "Node compatibility (macOS, Node 24)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-09T23:38:12Z",
+      "completed_at": "2026-10-09T23:39:22Z"
+    },
+    {
+      "id": 114051401484,
+      "name": "Node compatibility (Linux, Node 26)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-09T22:54:05Z",
+      "completed_at": "2026-10-09T22:55:12Z"
+    },
+    {
+      "id": 114051401508,
+      "name": "Node compatibility (Linux, Node 24.19.0)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-09T22:46:00Z",
+      "completed_at": "2026-10-09T22:47:11Z"
+    },
+    {
+      "id": 114051401701,
+      "name": "Node compatibility (Windows, Node 24.19.0)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-09T23:39:24Z",
+      "completed_at": "2026-10-09T23:40:38Z"
+    }
+  ],
+  "timestampLimit": "Job completed_at precedes later retained step/log timestamps. These inconsistent service timestamps are retained; no elapsed-duration claim is inferred.",
+  "wholePlanAcceptance": false
+}

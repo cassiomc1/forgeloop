@@ -1,0 +1,642 @@
+{
+  "kind": "EXISTING_MAINTENANCE_OWNER_CONFORMANCE",
+  "sourceRevision": "158938ba95f6d016cc53463c76c35fa5fda51c70",
+  "logs": {
+    "Mac": {
+      "path": "/Users/cassio/.codex/verification/full-macos873.log",
+      "sha256": "8022ee8b3e7095b342500eafe5e929fc99a19d5666dc7e550d68aaa001705aa0"
+    },
+    "Windows": {
+      "path": "/Users/cassio/.codex/verification/windows885-conformance904.log",
+      "sha256": "5de387d1362ba81694c4a6b22ded93250a4a4c2e1ded4c29dfc9660868646a25"
+    }
+  },
+  "windowsRun": {
+    "id": 37792283976,
+    "headSha": "c15264cff66b27ff8ad40f65ab07c580da13fb23",
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "cases": [
+    {
+      "testFile": "tests/storage-active-replacement.test.js",
+      "sha256": "b06322a155ce69c394ec6665e8ed6603c813bf4240e827554e3cfd756a961ce1",
+      "name": "active replacement requires explicit quiescence, exact operation and live maintenance ownership",
+      "observations": [
+        {
+          "host": "Mac",
+          "executedRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+          "line": 1955,
+          "text": "\u2714 active replacement requires explicit quiescence, exact operation and live maintenance ownership (360.806083ms)"
+        },
+        {
+          "host": "Windows",
+          "executedRevision": "c15264cff66b27ff8ad40f65ab07c580da13fb23",
+          "line": 2151,
+          "text": "Windows full Node suite\tUNKNOWN STEP\t2026-10-08T14:30:00.2385578Z \u2714 active replacement requires explicit quiescence, exact operation and live maintenance ownership (1791.1931ms)"
+        }
+      ]
+    },
+    {
+      "testFile": "tests/storage-replacement-preparation.test.js",
+      "sha256": "3c095ea1d753153083d766d95f5a73e52ed945ebea8703c999796b0d5fae7718",
+      "name": "outgoing owner journal refuses altered evidence bindings and unrelated owners",
+      "observations": [
+        {
+          "host": "Windows",
+          "executedRevision": "c15264cff66b27ff8ad40f65ab07c580da13fb23",
+          "line": 2589,
+          "text": "Windows full Node suite\tUNKNOWN STEP\t2026-10-08T14:33:12.1192380Z \u2714 outgoing owner journal refuses altered evidence bindings and unrelated owners (2369.3669ms)"
+        }
+      ]
+    },
+    {
+      "testFile": "tests/storage-replacement-publication.test.js",
+      "sha256": "ef2b88d24e5ff8f345397aa60f70b44c8bf8527b2794ad145ac21567949df878",
+      "name": "archived replacement activates incoming authority and releases admission only after validation",
+      "observations": [
+        {
+          "host": "Mac",
+          "executedRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+          "line": 2419,
+          "text": "\u2714 archived replacement activates incoming authority and releases admission only after validation (1388.544208ms)"
+        },
+        {
+          "host": "Windows",
+          "executedRevision": "c15264cff66b27ff8ad40f65ab07c580da13fb23",
+          "line": 2615,
+          "text": "Windows full Node suite\tUNKNOWN STEP\t2026-10-08T14:33:12.1389230Z \u2714 archived replacement activates incoming authority and releases admission only after validation (5571.5391ms)"
+        }
+      ]
+    },
+    {
+      "testFile": "tests/storage-replacement-publication.test.js",
+      "sha256": "ef2b88d24e5ff8f345397aa60f70b44c8bf8527b2794ad145ac21567949df878",
+      "name": "incoming corruption after archival retains exclusion and refuses publication",
+      "observations": [
+        {
+          "host": "Mac",
+          "executedRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+          "line": 2420,
+          "text": "\u2714 incoming corruption after archival retains exclusion and refuses publication (916.501959ms)"
+        },
+        {
+          "host": "Windows",
+          "executedRevision": "c15264cff66b27ff8ad40f65ab07c580da13fb23",
+          "line": 2616,
+          "text": "Windows full Node suite\tUNKNOWN STEP\t2026-10-08T14:33:12.1390855Z \u2714 incoming corruption after archival retains exclusion and refuses publication (3940.7173ms)"
+        }
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "name": "PARTIAL restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "observations": [
+        {
+          "host": "Mac",
+          "executedRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+          "line": 2352,
+          "text": "\u2714 PARTIAL restore reconciles owned SIGKILL and refuses live-owner adoption (845.480166ms)"
+        },
+        {
+          "host": "Windows",
+          "executedRevision": "c15264cff66b27ff8ad40f65ab07c580da13fb23",
+          "line": 2548,
+          "text": "Windows full Node suite\tUNKNOWN STEP\t2026-10-08T14:33:09.0895376Z \u2714 PARTIAL restore reconciles owned SIGKILL and refuses live-owner adoption (2893.4218ms)"
+        }
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "name": "MISSING restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "observations": [
+        {
+          "host": "Mac",
+          "executedRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+          "line": 2353,
+          "text": "\u2714 MISSING restore reconciles owned SIGKILL and refuses live-owner adoption (814.0285ms)"
+        },
+        {
+          "host": "Windows",
+          "executedRevision": "c15264cff66b27ff8ad40f65ab07c580da13fb23",
+          "line": 2549,
+          "text": "Windows full Node suite\tUNKNOWN STEP\t2026-10-08T14:33:09.0897035Z \u2714 MISSING restore reconciles owned SIGKILL and refuses live-owner adoption (2708.0382ms)"
+        }
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "name": "RETAINING restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "observations": [
+        {
+          "host": "Mac",
+          "executedRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+          "line": 2354,
+          "text": "\u2714 RETAINING restore reconciles owned SIGKILL and refuses live-owner adoption (822.791625ms)"
+        },
+        {
+          "host": "Windows",
+          "executedRevision": "c15264cff66b27ff8ad40f65ab07c580da13fb23",
+          "line": 2550,
+          "text": "Windows full Node suite\tUNKNOWN STEP\t2026-10-08T14:33:09.0898360Z \u2714 RETAINING restore reconciles owned SIGKILL and refuses live-owner adoption (3071.3674ms)"
+        }
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "name": "RETAINED restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "observations": [
+        {
+          "host": "Mac",
+          "executedRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+          "line": 2355,
+          "text": "\u2714 RETAINED restore reconciles owned SIGKILL and refuses live-owner adoption (827.260083ms)"
+        },
+        {
+          "host": "Windows",
+          "executedRevision": "c15264cff66b27ff8ad40f65ab07c580da13fb23",
+          "line": 2551,
+          "text": "Windows full Node suite\tUNKNOWN STEP\t2026-10-08T14:33:09.0899618Z \u2714 RETAINED restore reconciles owned SIGKILL and refuses live-owner adoption (2848.6422ms)"
+        }
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "name": "REBUILD restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "observations": [
+        {
+          "host": "Mac",
+          "executedRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+          "line": 2356,
+          "text": "\u2714 REBUILD restore reconciles owned SIGKILL and refuses live-owner adoption (777.128416ms)"
+        },
+        {
+          "host": "Windows",
+          "executedRevision": "c15264cff66b27ff8ad40f65ab07c580da13fb23",
+          "line": 2552,
+          "text": "Windows full Node suite\tUNKNOWN STEP\t2026-10-08T14:33:09.0901189Z \u2714 REBUILD restore reconciles owned SIGKILL and refuses live-owner adoption (2866.2752ms)"
+        }
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "name": "REBUILD_CONFLICT restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "observations": [
+        {
+          "host": "Mac",
+          "executedRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+          "line": 2357,
+          "text": "\u2714 REBUILD_CONFLICT restore reconciles owned SIGKILL and refuses live-owner adoption (631.861083ms)"
+        },
+        {
+          "host": "Windows",
+          "executedRevision": "c15264cff66b27ff8ad40f65ab07c580da13fb23",
+          "line": 2553,
+          "text": "Windows full Node suite\tUNKNOWN STEP\t2026-10-08T14:33:09.0902711Z \u2714 REBUILD_CONFLICT restore reconciles owned SIGKILL and refuses live-owner adoption (2202.3316ms)"
+        }
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "name": "PREPARING restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "observations": [
+        {
+          "host": "Mac",
+          "executedRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+          "line": 2358,
+          "text": "\u2714 PREPARING restore reconciles owned SIGKILL and refuses live-owner adoption (840.585583ms)"
+        },
+        {
+          "host": "Windows",
+          "executedRevision": "c15264cff66b27ff8ad40f65ab07c580da13fb23",
+          "line": 2554,
+          "text": "Windows full Node suite\tUNKNOWN STEP\t2026-10-08T14:33:09.0904958Z \u2714 PREPARING restore reconciles owned SIGKILL and refuses live-owner adoption (3058.2229ms)"
+        }
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "name": "PREPARING_CHANGED restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "observations": [
+        {
+          "host": "Mac",
+          "executedRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+          "line": 2359,
+          "text": "\u2714 PREPARING_CHANGED restore reconciles owned SIGKILL and refuses live-owner adoption (681.064375ms)"
+        },
+        {
+          "host": "Windows",
+          "executedRevision": "c15264cff66b27ff8ad40f65ab07c580da13fb23",
+          "line": 2555,
+          "text": "Windows full Node suite\tUNKNOWN STEP\t2026-10-08T14:33:09.0905927Z \u2714 PREPARING_CHANGED restore reconciles owned SIGKILL and refuses live-owner adoption (2277.8413ms)"
+        }
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "name": "READY restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "observations": [
+        {
+          "host": "Mac",
+          "executedRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+          "line": 2360,
+          "text": "\u2714 READY restore reconciles owned SIGKILL and refuses live-owner adoption (839.141375ms)"
+        },
+        {
+          "host": "Windows",
+          "executedRevision": "c15264cff66b27ff8ad40f65ab07c580da13fb23",
+          "line": 2556,
+          "text": "Windows full Node suite\tUNKNOWN STEP\t2026-10-08T14:33:09.0906730Z \u2714 READY restore reconciles owned SIGKILL and refuses live-owner adoption (2844.9306ms)"
+        }
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "name": "PENDING restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "observations": [
+        {
+          "host": "Mac",
+          "executedRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+          "line": 2361,
+          "text": "\u2714 PENDING restore reconciles owned SIGKILL and refuses live-owner adoption (997.276166ms)"
+        },
+        {
+          "host": "Windows",
+          "executedRevision": "c15264cff66b27ff8ad40f65ab07c580da13fb23",
+          "line": 2557,
+          "text": "Windows full Node suite\tUNKNOWN STEP\t2026-10-08T14:33:09.0909335Z \u2714 PENDING restore reconciles owned SIGKILL and refuses live-owner adoption (3362.4721ms)"
+        }
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "name": "OBJECT restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "observations": [
+        {
+          "host": "Mac",
+          "executedRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+          "line": 2362,
+          "text": "\u2714 OBJECT restore reconciles owned SIGKILL and refuses live-owner adoption (851.84925ms)"
+        },
+        {
+          "host": "Windows",
+          "executedRevision": "c15264cff66b27ff8ad40f65ab07c580da13fb23",
+          "line": 2558,
+          "text": "Windows full Node suite\tUNKNOWN STEP\t2026-10-08T14:33:09.0911513Z \u2714 OBJECT restore reconciles owned SIGKILL and refuses live-owner adoption (2669.1859ms)"
+        }
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "name": "DATABASE restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "observations": [
+        {
+          "host": "Mac",
+          "executedRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+          "line": 2363,
+          "text": "\u2714 DATABASE restore reconciles owned SIGKILL and refuses live-owner adoption (816.921042ms)"
+        },
+        {
+          "host": "Windows",
+          "executedRevision": "c15264cff66b27ff8ad40f65ab07c580da13fb23",
+          "line": 2559,
+          "text": "Windows full Node suite\tUNKNOWN STEP\t2026-10-08T14:33:09.0912413Z \u2714 DATABASE restore reconciles owned SIGKILL and refuses live-owner adoption (2591.3926ms)"
+        }
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "name": "ACTIVE_MARKER restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "observations": [
+        {
+          "host": "Mac",
+          "executedRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+          "line": 2364,
+          "text": "\u2714 ACTIVE_MARKER restore reconciles owned SIGKILL and refuses live-owner adoption (800.991625ms)"
+        },
+        {
+          "host": "Windows",
+          "executedRevision": "c15264cff66b27ff8ad40f65ab07c580da13fb23",
+          "line": 2560,
+          "text": "Windows full Node suite\tUNKNOWN STEP\t2026-10-08T14:33:09.0913201Z \u2714 ACTIVE_MARKER restore reconciles owned SIGKILL and refuses live-owner adoption (2580.5043ms)"
+        }
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "name": "UNBOUND restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "observations": [
+        {
+          "host": "Mac",
+          "executedRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+          "line": 2365,
+          "text": "\u2714 UNBOUND restore reconciles owned SIGKILL and refuses live-owner adoption (738.452166ms)"
+        },
+        {
+          "host": "Windows",
+          "executedRevision": "c15264cff66b27ff8ad40f65ab07c580da13fb23",
+          "line": 2561,
+          "text": "Windows full Node suite\tUNKNOWN STEP\t2026-10-08T14:33:09.0914214Z \u2714 UNBOUND restore reconciles owned SIGKILL and refuses live-owner adoption (2799.4504ms)"
+        }
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "name": "CHANGED_DATABASE restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "observations": [
+        {
+          "host": "Mac",
+          "executedRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+          "line": 2366,
+          "text": "\u2714 CHANGED_DATABASE restore reconciles owned SIGKILL and refuses live-owner adoption (783.429209ms)"
+        },
+        {
+          "host": "Windows",
+          "executedRevision": "c15264cff66b27ff8ad40f65ab07c580da13fb23",
+          "line": 2562,
+          "text": "Windows full Node suite\tUNKNOWN STEP\t2026-10-08T14:33:09.0916078Z \u2714 CHANGED_DATABASE restore reconciles owned SIGKILL and refuses live-owner adoption (2543.0543ms)"
+        }
+      ]
+    },
+    {
+      "testFile": "tests/storage-project-restore.test.js",
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "name": "TERMINAL_CHANGED restore reconciles owned SIGKILL and refuses live-owner adoption",
+      "observations": [
+        {
+          "host": "Mac",
+          "executedRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+          "line": 2367,
+          "text": "\u2714 TERMINAL_CHANGED restore reconciles owned SIGKILL and refuses live-owner adoption (794.831167ms)"
+        },
+        {
+          "host": "Windows",
+          "executedRevision": "c15264cff66b27ff8ad40f65ab07c580da13fb23",
+          "line": 2563,
+          "text": "Windows full Node suite\tUNKNOWN STEP\t2026-10-08T14:33:09.0917338Z \u2714 TERMINAL_CHANGED restore reconciles owned SIGKILL and refuses live-owner adoption (2344.5074ms)"
+        }
+      ]
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "src/storage/maintenance.js",
+      "sha256": "ce19d71c8507b70bd56b022667d63064c2b0b76f5722d8a304d27ec2e681478f",
+      "ownershipCallSites": [
+        56,
+        62
+      ],
+      "bytesMatchExecutedRevisions": true
+    },
+    {
+      "path": "src/storage/maintenance-owner.js",
+      "sha256": "cf18aff27a8df3ccc2257048b787428ba03c7d5e55e0aecaa6560daefe16e64e",
+      "ownershipCallSites": [],
+      "bytesMatchExecutedRevisions": true
+    },
+    {
+      "path": "src/storage/project-restore.js",
+      "sha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+      "ownershipCallSites": [
+        28,
+        43,
+        84,
+        115,
+        116,
+        137,
+        148,
+        152,
+        167,
+        168,
+        174,
+        191
+      ],
+      "bytesMatchExecutedRevisions": true
+    },
+    {
+      "path": "src/storage/project-replacement.js",
+      "sha256": "8edb1daa7f5a50a56c2762488db647d1e441d1f421d8dd6b2f1fbc5a813efa59",
+      "ownershipCallSites": [
+        67,
+        69,
+        71,
+        111,
+        114
+      ],
+      "bytesMatchExecutedRevisions": true
+    },
+    {
+      "path": "src/storage/restore-replacement.js",
+      "sha256": "f7b7aed1fe54c4feb71a192a5c2aed9ff92bdb80f26d053ba1498d433cc1f138",
+      "ownershipCallSites": [
+        55,
+        65,
+        95,
+        109,
+        139
+      ],
+      "bytesMatchExecutedRevisions": true
+    },
+    {
+      "path": "src/storage/restore-replacement-owner.js",
+      "sha256": "9d3bd4fa498f1f42befe30d1d5d01d1e420996b2887006cecadfdc2011553cbc",
+      "ownershipCallSites": [
+        12,
+        28
+      ],
+      "bytesMatchExecutedRevisions": true
+    },
+    {
+      "path": "src/storage/restore-replacement-preparation.js",
+      "sha256": "07c55045508317bb70d20c7b4b687da662d9ab1f41e209d1972a3c7e06180014",
+      "ownershipCallSites": [
+        48,
+        49,
+        74,
+        83,
+        89
+      ],
+      "bytesMatchExecutedRevisions": true
+    },
+    {
+      "path": "src/storage/restore-preparation.js",
+      "sha256": "70c2db1ac984643434a5e1986028efc39f79b9d2f2576a4cbe35f39bd0161347",
+      "ownershipCallSites": [
+        44,
+        58,
+        73,
+        81
+      ],
+      "bytesMatchExecutedRevisions": true
+    },
+    {
+      "path": "src/storage/restore-replacement-archive.js",
+      "sha256": "fbd0347cb136200ab4cdf848c47c1948f226913a3714c347b71d8fb541c4dd36",
+      "ownershipCallSites": [
+        119,
+        131,
+        138,
+        151,
+        166
+      ],
+      "bytesMatchExecutedRevisions": true
+    },
+    {
+      "path": "src/storage/migration.js",
+      "sha256": "6d84791488206fc394c2501d2f6c4d34ba8e12fba34dede0e40c48b64c3e03fa",
+      "ownershipCallSites": [],
+      "bytesMatchExecutedRevisions": true
+    },
+    {
+      "path": "src/storage/migration-candidate.js",
+      "sha256": "41f01d20be6caac40ef541a8d6175e429bd595f5bd3a7a9f046571c880e88ecb",
+      "ownershipCallSites": [
+        343,
+        391
+      ],
+      "bytesMatchExecutedRevisions": true
+    },
+    {
+      "path": "src/storage/migration-publication.js",
+      "sha256": "6e60f541f53f977bc1670d2c2f7577e5e718b1e1fff80ba49d4e7c026d8b38ed",
+      "ownershipCallSites": [
+        107,
+        135
+      ],
+      "bytesMatchExecutedRevisions": true
+    },
+    {
+      "path": "src/storage/migration-archive.js",
+      "sha256": "38848cc8ab285a2ce37ef7b7b3405cf51e024d023670f7dfbf46eac01bdda37a",
+      "ownershipCallSites": [
+        22,
+        39
+      ],
+      "bytesMatchExecutedRevisions": true
+    },
+    {
+      "path": "src/storage/migration-activate.js",
+      "sha256": "12b11a733f5a615ee1becbc8e3780fadfc7e55c92146cd07e82718c588871267",
+      "ownershipCallSites": [
+        19,
+        36,
+        51
+      ],
+      "bytesMatchExecutedRevisions": true
+    },
+    {
+      "path": "src/storage/migration-terminal.js",
+      "sha256": "ff24b1b717315d373ccc2d99d84b1753e7c185deb627c1edc04cec590bcb4b3e",
+      "ownershipCallSites": [
+        18,
+        35
+      ],
+      "bytesMatchExecutedRevisions": true
+    },
+    {
+      "path": "src/storage/migration-rollback.js",
+      "sha256": "f4f054b19857ee4ebf0e423d79f2962a3f296199b978799ac47aca826a235060",
+      "ownershipCallSites": [],
+      "bytesMatchExecutedRevisions": true
+    },
+    {
+      "path": "src/storage/migration-rollback-admission.js",
+      "sha256": "da43ae3a2930f7adf3370898ff1e9a9689df8319f6c861e23f6aa52ce2cf5c73",
+      "ownershipCallSites": [
+        14,
+        33,
+        47,
+        52
+      ],
+      "bytesMatchExecutedRevisions": true
+    },
+    {
+      "path": "src/storage/migration-rollback-preparation.js",
+      "sha256": "1152bbb354970c43c8530d681790c08941408328e59654eb6e62044b2dcd9bfe",
+      "ownershipCallSites": [
+        20,
+        40,
+        57,
+        70,
+        81,
+        85,
+        96,
+        129
+      ],
+      "bytesMatchExecutedRevisions": true
+    },
+    {
+      "path": "src/storage/migration-rollback-source-stage.js",
+      "sha256": "6bfbf8e0ad81644596fff0f055593082e7627bbac66de070986f81aa4f8b2211",
+      "ownershipCallSites": [
+        33,
+        50,
+        66,
+        68
+      ],
+      "bytesMatchExecutedRevisions": true
+    },
+    {
+      "path": "src/storage/migration-rollback-publication.js",
+      "sha256": "81ca1f7c72e57f885a137e33d428c4303db0f1bb859ac19c67372d9826553417",
+      "ownershipCallSites": [
+        35,
+        67,
+        76,
+        123,
+        169,
+        185
+      ],
+      "bytesMatchExecutedRevisions": true
+    },
+    {
+      "path": "src/storage/migration-rollback-release.js",
+      "sha256": "6838a25238dd71cd2b2c6d740fb32c3f1914bfd06ed376f154bd4dd7cb0b5cfb",
+      "ownershipCallSites": [
+        52,
+        59
+      ],
+      "bytesMatchExecutedRevisions": true
+    },
+    {
+      "path": "src/storage/storage-marker.js",
+      "sha256": "1664b9f2c1005507ee1aa256dc443f0d82c728646c2cf04a8460f1b270a0ca05",
+      "ownershipCallSites": [
+        51,
+        71
+      ],
+      "bytesMatchExecutedRevisions": true
+    }
+  ],
+  "reviewedInvariants": [
+    "Active exclusion uses exact live AsyncLocalStorage owner context and retained owner UUID; ordinary dispatch refuses maintenance",
+    "Initial migration/rollback/restore acquires exclusion; resume requires exact recorded dead-owner continuity and explicit quiescence",
+    "Archival and activation helpers recheck ownership before logical publication boundaries",
+    "Fresh/active restore validators retain exclusion on corrupt or inconsistent evidence; terminal validation authorizes release",
+    "Every named restore checkpoint asserts live-owner refusal before SIGKILL; OBJECT additionally checks public command refusal"
+  ],
+  "wholeMaintenanceAccepted": false,
+  "limits": [
+    "Twenty Windows and nineteen Mac unchanged named controls reconciled; no new runtime execution during902benchmark",
+    "Replacement preparation test gained a diagnostic assertion message after Mac873; current file matched only to Windows885",
+    "Call-site inventory alone does not prove dominance or every destructive helper branch",
+    "Constructed durable checkpoints are not syscall-level power-loss controls",
+    "Privileged or uninventoried external writers require operator exclusion",
+    "Final current whole-source/platform acceptance remains required after two production recovery/description changes"
+  ]
+}

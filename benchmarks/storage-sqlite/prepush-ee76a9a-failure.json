@@ -1,0 +1,30 @@
+{
+  "revision": "ee76a9a",
+  "exitCode": 1,
+  "core": {
+    "tests": 3070,
+    "passed": 3054,
+    "failed": 0,
+    "skipped": 16
+  },
+  "passedStages": [
+    "coverage",
+    "critical-coverage:check",
+    "lint",
+    "dependency:policy"
+  ],
+  "failedStage": "complexity:check",
+  "firstCause": {
+    "file": "src/core/completion.js",
+    "score": 164,
+    "limit": 161
+  },
+  "laterStagesExecuted": false,
+  "trackedFiles": 3342,
+  "launchManifestMatchesCommittedRevision": true,
+  "postRunWorkingChanges": [
+    "src/core/completion.js"
+  ],
+  "postRunLimits": "Completion helper correction was begun after terminal result before this receipt; pre-edit all-file terminal manifest was not captured. No unchanged-source completion claim is made.",
+  "logSha256": "0c4a05ae681a3dc58cf4456b5826bdb6598d582fa3a12d5c9b74fd6d05293492"
+}

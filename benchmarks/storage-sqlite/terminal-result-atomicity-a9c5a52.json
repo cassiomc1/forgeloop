@@ -1,0 +1,41 @@
+{
+  "kind": "PUBLIC_TERMINAL_RESULT_ATOMICITY_CONTROLS",
+  "productionRevision": "a9c5a523e29214f3692259bfbe698aa8720a4471",
+  "testPath": "tests/storage-terminal-result-atomicity.test.js",
+  "testSha256": "1b9df8461a2349736bd25e2828627aa55ccd39ce05ae30d0d5efd900e56ea928",
+  "entries": [
+    "command",
+    "direct API",
+    "direct canonical paths"
+  ],
+  "faultPoints": [
+    "after receipt staging",
+    "after ledger staging"
+  ],
+  "observations": [
+    "Six injected aborts leave every logical SQLite table byte-equivalent in serialized row snapshots.",
+    "Each subsequent successful retry reports published receipt status and exactly one TERMINAL_RESULT_RECORDED event."
+  ],
+  "verification": {
+    "focused": {
+      "tests": 39,
+      "passed": 39,
+      "failed": 0,
+      "skipped": 0,
+      "exitCode": 0,
+      "log": "/Users/cassio/.codex/verification/terminal-result-atomicity-focused.log",
+      "sha256": "fedf22be633f3527069a6df0dda052a88577899afc793e106d9827502f9ea2b9"
+    },
+    "fast": {
+      "exitCode": 0,
+      "log": "/Users/cassio/.codex/verification/terminal-result-atomicity-fast.log",
+      "sha256": "e5d0954c23b70d622134d9476f4052297893f1c8243e218d3901c7e81c8329ac"
+    }
+  },
+  "limits": [
+    "Faults are injected after staging, not during disk flush or host process termination.",
+    "Fixture publication observation does not publish a package or establish real publication.",
+    "Finite consumer control only; memory, inclusive 25 percent LOC, whole consumer and validator-backed migration closure remain incomplete.",
+    "Production unchanged; no production defect inferred."
+  ]
+}

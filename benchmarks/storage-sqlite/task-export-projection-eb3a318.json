@@ -1,0 +1,47 @@
+{
+  "kind": "TASK_EXPORT_BINDING_AND_VALIDATED_PROJECTION_CORRECTION",
+  "sourceRevision": "eb3a318e7f0fbbb53658f118209dba952e848797",
+  "taskExportCorrection": "Shared indexed task payload validation rejects descriptor owner/key, state owner, indexed phase/revision/creation-time mismatch. updated_at is intentionally not bound to descriptor.updatedAt because state mutation uses state.lastUpdated or current time.",
+  "projection": "Preserve full discovery validation, snapshot/CAS and public task-list contract while assembling smaller consumer projections.",
+  "retirement": "Remove three private adapters with no production or public export callers; preserve live claim and reservation classifiers.",
+  "checks": {
+    "taskExportFocused": 66,
+    "combinedFocused": 68,
+    "combinedFocusedFailures": 0,
+    "combinedFocusedSkips": 0,
+    "combinedFastExitCode": 0,
+    "fullPrepush": "PASS22stages at eb3a318; see prepush-eb3a318-success.json"
+  },
+  "sourceHashes": {
+    "src/storage/repository.js": "0885fe8a00a5e520fa7029bca1c29f724e4dbcfe87bac2d682d5c0e820b2b79d",
+    "src/storage/unit-of-work.js": "374ff52b13973e5267b273b271104526df6ca0679dc75582b509504d57024bc2",
+    "src/core/task-discovery.js": "bc128b80134055cf2fd0ac6ae2e25c7a4b7ee4e403a5fadc0da4fe0a92430d45",
+    "src/commands/task-list.js": "f587282d0643c8c773c06df87d78ada62e1d1dcda3fe4faff42e21a468ab1412",
+    "src/storage/task-guards.js": "bb3bff5f20f9484fc89fe2f99426958115833be1faf489be594bfa4a5ff901d1",
+    "tests/storage-task-export-validation.test.js": "757139b9cf791d06db66f000b8e1c7e43b2c85974812cd0da0603ba1595263b6",
+    "tests/task-discovery-projection.test.js": "e8a8d8de9cf8c76f6bf6a4bcc4fbca2592f9e078877845b842f71ee242b22bbc"
+  },
+  "logs": {
+    "task-export-binding-red.log": {
+      "path": "/Users/cassio/.codex/verification/task-export-binding-red.log",
+      "sha256": "1f534e2f14ca887e44474e502d134b23dc9bb0bcbc92b4be20ad378e975d9215"
+    },
+    "task-export-binding-final-focused.log": {
+      "path": "/Users/cassio/.codex/verification/task-export-binding-final-focused.log",
+      "sha256": "e05e695fed77c11eb11cde74130083732c6dc067d8e5d9c650ae3f18be5bec88"
+    },
+    "task-projection-retirement-combined-focused.log": {
+      "path": "/Users/cassio/.codex/verification/task-projection-retirement-combined-focused.log",
+      "sha256": "6ff21e58c135ca667265a328a63525c566db5504ef1762c2485b0a03a1a799bf"
+    },
+    "task-projection-retirement-combined-fast.log": {
+      "path": "/Users/cassio/.codex/verification/task-projection-retirement-combined-fast.log",
+      "sha256": "e4ab05d2c8db89441afe4ebb66720e67c5afd12e55977ddfd2c27aac4f7e6ca0"
+    }
+  },
+  "limitations": [
+    "No measured RSS benefit.",
+    "Current LOC scope review pending; original25percent target unchanged.",
+    "Full public consumer, performance and validator closure remain open."
+  ]
+}

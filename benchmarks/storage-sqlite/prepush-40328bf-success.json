@@ -1,0 +1,127 @@
+{
+  "kind": "FULL_PREPUSH_TERMINAL",
+  "sourceRevision": "40328bfa0932554ec7e638dd9928a089fd5f92a4",
+  "capturedAt": "2026-10-10T00:12:40.921047+00:00",
+  "command": "env -u TYPESAFE_API_KEY -u NODE_OPTIONS npm run verify:prepush",
+  "sessionId": 25284,
+  "exitCode": 0,
+  "runtime": {
+    "node": "24.19.0",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "core": {
+    "tests": 2964,
+    "passed": 2953,
+    "failed": 0,
+    "skipped": 11
+  },
+  "cleanPackedMcp": 77,
+  "poc": 67,
+  "package": 12,
+  "python": 56,
+  "stages": [
+    {
+      "id": "coverage",
+      "elapsed": "548.7s"
+    },
+    {
+      "id": "critical-coverage:check",
+      "elapsed": "0.3s"
+    },
+    {
+      "id": "lint",
+      "elapsed": "4.3s"
+    },
+    {
+      "id": "dependency:policy",
+      "elapsed": "0.1s"
+    },
+    {
+      "id": "complexity:check",
+      "elapsed": "1.7s"
+    },
+    {
+      "id": "docs:check",
+      "elapsed": "2.6s"
+    },
+    {
+      "id": "completions:check",
+      "elapsed": "0.1s"
+    },
+    {
+      "id": "summary:check",
+      "elapsed": "0.1s"
+    },
+    {
+      "id": "changelog:check",
+      "elapsed": "0.2s"
+    },
+    {
+      "id": "repository-index:manifest",
+      "elapsed": "0.1s"
+    },
+    {
+      "id": "repository:hygiene",
+      "elapsed": "0.2s"
+    },
+    {
+      "id": "poc:evidence:verify",
+      "elapsed": "0.2s"
+    },
+    {
+      "id": "poc:evidence:test",
+      "elapsed": "1.6s"
+    },
+    {
+      "id": "mcp:test:clean",
+      "elapsed": "8.1s"
+    },
+    {
+      "id": "mcp:pack:check",
+      "elapsed": "3.1s"
+    },
+    {
+      "id": "pack:check",
+      "elapsed": "1.7s"
+    },
+    {
+      "id": "python-unittest",
+      "elapsed": "1.0s"
+    },
+    {
+      "id": "markdown-self-test",
+      "elapsed": "0.1s"
+    },
+    {
+      "id": "markdown-validator",
+      "elapsed": "0.8s"
+    },
+    {
+      "id": "loop-self-test",
+      "elapsed": "0.2s"
+    },
+    {
+      "id": "loop-validator",
+      "elapsed": "0.1s"
+    },
+    {
+      "id": "secret-scan",
+      "elapsed": "11.3s"
+    }
+  ],
+  "sourceManifest": {
+    "path": "/Users/cassio/.codex/verification/shared-read-snapshot-prepush-start.json",
+    "sha256": "25981a22c32cd2256d14ac54c2c79f5a5b003055cd34d3c4dc4c5834c1cf36fe",
+    "trackedFiles": 3122,
+    "headUnchanged": true,
+    "fileListUnchanged": true,
+    "allHashesUnchangedAtTerminal": true
+  },
+  "log": {
+    "path": "/Users/cassio/.codex/verification/shared-read-snapshot-prepush.log",
+    "sha256": "9d02e280326150cf876e84343e1a9497bbef746e371f3e5a480aef0254c3b5d0"
+  },
+  "wholePlanAcceptance": false,
+  "crossPlatformAcceptance": false
+}

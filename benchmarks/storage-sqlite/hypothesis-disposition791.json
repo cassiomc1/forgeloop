@@ -1,0 +1,50 @@
+{
+  "increment": 791,
+  "status": "MAIN_VALIDATED",
+  "mainSourceChanged": true,
+  "parentHead": "12b2bbdd152cec4c87e27d344006368b8856b411",
+  "problem": "Direct hypothesis disposition accepts a transition from an old status projection after an independent terminal disposition commits.",
+  "before": {
+    "accepted": true,
+    "independentCommitReached": true,
+    "invalidTransitions": 1
+  },
+  "candidate": {
+    "accepted": false,
+    "errorCode": "E_STATE_REVISION_CONFLICT",
+    "independentCommitPreserved": true,
+    "invalidTransitions": 0,
+    "retry": "E_HYPOTHESIS_DISPOSITION_INVALID"
+  },
+  "change": "Create or join a task transaction before disposition state/ledger validation; preserve original validation and event-publication body.",
+  "controls": "Actual evidenceRefs array uses iterator as deterministic validation barrier; a separate SQLite connection appends a valid terminal event. Candidate test includes ordinary successful WEAKENED transition, exact independent-row preservation, valid canonical ledger and refused retry.",
+  "checks": {
+    "candidateTests": 15,
+    "failed": 0,
+    "skipped": 0,
+    "complexity": "PASS",
+    "lint": "PASS with two existing warnings",
+    "mainApplication": "APPLIED",
+    "additionalCallerTests": 3,
+    "mainTests": 18,
+    "verifyFast": "PASS",
+    "fullCurrentPlatforms": "PENDING"
+  },
+  "patchSha256": "1935605e6c468a14513d231213e3dcae41bab4351dd25e51ccaa0fbd48cbf6f4",
+  "logHashes": {
+    "hypothesis-race790-before-final.log": "7b24e6d3a80e77c991b84f426ac8d633e079768d7a2b4aebe8c128c3087f27bf",
+    "hypothesis-race790-candidate.log": "86cf3a0380753b975c5a3eddde7489f7b3d700745deb8fc7ea751b29be11315f",
+    "hypothesis790-candidate-tests.log": "45c43d3a9e05d2bbee939cd587f3fea26751892c2b8f13fcacdd536e7d5bc2c4",
+    "hypothesis790-candidate-complexity.log": "32111f472b37a8b8941d21c72e18a3815643453328562aed2fd87e8a2f0417f2",
+    "hypothesis790-candidate-lint.log": "5087e1a50bc1c05bed0f304c828a4d0f6e5136ee835c30f5b140fc8b28bb7784",
+    "hypothesis791-candidate-callers.log": "c0339af4b848f5291d714dc116056b7436b637c91f945c4ebe799f7d8604229d",
+    "hypothesis791-main-tests.log": "c4af283318ef72c1382c7179d37372c5a79c735496600327f770ae114d45021b",
+    "hypothesis791-fast.log": "38bf1cdd8f4e8110b7f5bf11c8444459778d5405cd59014467bf16e43b829905",
+    "hypothesis791-complexity.log": "32111f472b37a8b8941d21c72e18a3815643453328562aed2fd87e8a2f0417f2",
+    "hypothesis791-lint.log": "bbe1b85ff0ba7cbc59d5c701499dac504e110de2a60f34f95a89321f669b0492"
+  },
+  "productionSha256": "9e1a3f8fd1bc5d7df9970809224343f7548674a24568d417d9058f42960f3d80",
+  "testSha256": "cee91cb900f06a9bafe63246dc2589e79f47274306a511406f4ef33826955157",
+  "progressPercent": 55,
+  "protocolComplete": false
+}

@@ -1,0 +1,71 @@
+{
+  "kind": "CURRENT_ALL_HOST_PACKAGE_MCP_TERMINAL",
+  "runId": 37921165587,
+  "sourceRevision": "20aca2ba332ed86323722ef91812925ad9dadb83",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "jobId": 113789246557,
+      "name": "tarball smoke (ubuntu-latest)",
+      "conclusion": "success",
+      "mcpCounts": {
+        "tests": [
+          73
+        ],
+        "pass": [
+          73
+        ],
+        "fail": [
+          0
+        ],
+        "skipped": [
+          0
+        ]
+      },
+      "logSha256": "57fac6a19c09182c3a874a9c032be96ec0509b8abe04642450eebc5496acc66c"
+    },
+    {
+      "jobId": 113789515349,
+      "name": "release package smoke (Windows)",
+      "conclusion": "success",
+      "mcpCounts": {
+        "tests": [
+          73
+        ],
+        "pass": [
+          73
+        ],
+        "fail": [
+          0
+        ],
+        "skipped": [
+          0
+        ]
+      },
+      "logSha256": "ae4df974a391edb0c45dce2dd97ddbb8bc92a437245f477565f9981d920c4f5b"
+    },
+    {
+      "jobId": 113789515354,
+      "name": "release package smoke (macOS)",
+      "conclusion": "success",
+      "mcpCounts": {
+        "tests": [
+          73
+        ],
+        "pass": [
+          73
+        ],
+        "fail": [
+          0
+        ],
+        "skipped": [
+          0
+        ]
+      },
+      "logSha256": "285a204ffc346c223ff26977837a45c13f2eabd36416306c8322593953bc191f"
+    }
+  ],
+  "terminalSnapshotSha256": "cd652a11983f4f8ec8c73d27340a789c7d11441cef0886b3162301b2cd7ff338",
+  "wholePlanAcceptance": false
+}

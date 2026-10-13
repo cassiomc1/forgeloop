@@ -1,0 +1,24 @@
+{
+  "earlierPeak": 149929984,
+  "measured": {
+    "method": "procfs VmHWM reset via clear_refs=5 before each operation",
+    "rssAtResetBytes": 50872320,
+    "rssAfterBytes": 59289600,
+    "operationWindowPeakRssBytes": 59289600,
+    "accounting": "Kernel RSS estimate; includes retained fixtures and window instrumentation, excludes previous high-water marks and post-command timer drain"
+  },
+  "resetExcludesPreviousPeak": true,
+  "failureAndNestedScopeCleanup": true,
+  "latencyAcceptance": false,
+  "schemaVersion": 1,
+  "kind": "DIAGNOSTIC_RESOURCE_INSTRUMENTATION_CONTROL",
+  "sourceSha256": "3149a078a43b701c59453305d3385780e08e3392341a1c3a6cfccb7f89bea339",
+  "node": "24.19.0",
+  "kernel": "6.18.40.1-microsoft-standard-WSL2",
+  "conditions": {
+    "fullHostSuitesConcurrent": true,
+    "performanceAcceptance": false,
+    "domainFixtureMeasured": false
+  },
+  "sourceReference": "https://cdn.kernel.org/doc/html/latest/filesystems/proc.html"
+}

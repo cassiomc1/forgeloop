@@ -1,0 +1,5081 @@
+{
+  "increment": 884,
+  "inventorySha256": "b255de2aceb172d7eb67349f4d886b38dd5c0486b7d83732d5eea8a3c0fc24d6",
+  "sourceRevision": "d9f17f921f5969a5d1c3236aa3db5bf900d836d0",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "eslintVersion": "9.39.5",
+  "scope": "Same conservative 281-module inclusive union as persistence-loc871; not a revised acceptance scope.",
+  "method": "ESLint complexity rule, default classic variant, maximum zero to emit every function score. Total sums function complexity; branches sums score minus one. Missing modules contribute zero. Module maxima are not summed. No execution/latency inference.",
+  "baseline": {
+    "functions": 2944,
+    "total": 15290,
+    "branches": 12346,
+    "maximum": 161
+  },
+  "current": {
+    "functions": 4117,
+    "total": 19626,
+    "branches": 15509,
+    "maximum": 161
+  },
+  "rows": [
+    {
+      "path": "integrations/mcp/src/http.js",
+      "baseline": {
+        "sha256": "d020634f49fe47ee3f20a0c34353a39776c1836660a1826ee0cf9b8ba4ce6458",
+        "functions": 17,
+        "total": 65,
+        "branches": 48,
+        "maximum": 17
+      },
+      "current": {
+        "sha256": "14282506767853c0f7a1037181ae882287ef5c8a4701a08a861e5ea76e306f61",
+        "functions": 17,
+        "total": 66,
+        "branches": 49,
+        "maximum": 17
+      },
+      "deltaBranches": 1
+    },
+    {
+      "path": "integrations/mcp/src/resource-registry.js",
+      "baseline": {
+        "sha256": "2e91bc9567ff3f757bceb7ae4d91ce16dfea201d6650ad369e9a5726fdb85579",
+        "functions": 8,
+        "total": 14,
+        "branches": 6,
+        "maximum": 6
+      },
+      "current": {
+        "sha256": "6d022292824215ed6f339e59d208bc346408c25fe5db9d2a3944978f59d2ca84",
+        "functions": 10,
+        "total": 17,
+        "branches": 7,
+        "maximum": 6
+      },
+      "deltaBranches": 1
+    },
+    {
+      "path": "integrations/mcp/src/server.js",
+      "baseline": {
+        "sha256": "a4abf5d3bec4b435a132b0c1231a1d6c0f694dbf92139e7bc97f53869ad280d1",
+        "functions": 7,
+        "total": 23,
+        "branches": 16,
+        "maximum": 15
+      },
+      "current": {
+        "sha256": "620bc4c53b7be6f7e2ce6559d3da3615b0399823cc547930d2dcc733e6776ba2",
+        "functions": 8,
+        "total": 31,
+        "branches": 23,
+        "maximum": 15
+      },
+      "deltaBranches": 7
+    },
+    {
+      "path": "integrations/mcp/src/tool-registry.js",
+      "baseline": {
+        "sha256": "af3e4d86bb6ce36f6244d4293bbb16afead72961c2ca142187d5626e3009e2f3",
+        "functions": 3,
+        "total": 19,
+        "branches": 16,
+        "maximum": 14
+      },
+      "current": {
+        "sha256": "f3f128a02cf5142df1db43f72cb8565f5791c856c71e104383284899f2316bc1",
+        "functions": 3,
+        "total": 19,
+        "branches": 16,
+        "maximum": 14
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/adapters/agent-browser/provider.js",
+      "baseline": {
+        "sha256": "87cb3217d2021955b62cd20541124305df9f2ec16616cd0b841c595a05636c54",
+        "functions": 30,
+        "total": 116,
+        "branches": 86,
+        "maximum": 12
+      },
+      "current": {
+        "sha256": "5c98d7eebbc24f8db8bb29853a4c6eddf4e3d5dd827d6c7d74b3ba63511abc66",
+        "functions": 30,
+        "total": 115,
+        "branches": 85,
+        "maximum": 12
+      },
+      "deltaBranches": -1
+    },
+    {
+      "path": "src/adapters/emulated-services/provider.js",
+      "baseline": {
+        "sha256": "82b086422790f040f90741b97ff3932d27db1154805e2ca20f1c584cfc0f017c",
+        "functions": 23,
+        "total": 107,
+        "branches": 84,
+        "maximum": 16
+      },
+      "current": {
+        "sha256": "adbe1bdde4616a412a177bf33653f6cce770fcf3732c98b64ceb8276961f5170",
+        "functions": 23,
+        "total": 108,
+        "branches": 85,
+        "maximum": 16
+      },
+      "deltaBranches": 1
+    },
+    {
+      "path": "src/adapters/opensrc/search.js",
+      "baseline": {
+        "sha256": "13ce23e8d4ad9e620ae5d7af1cdb99be6aa33ecc366acefdae4ae839d612ba6f",
+        "functions": 15,
+        "total": 83,
+        "branches": 68,
+        "maximum": 23
+      },
+      "current": {
+        "sha256": "13ce23e8d4ad9e620ae5d7af1cdb99be6aa33ecc366acefdae4ae839d612ba6f",
+        "functions": 15,
+        "total": 83,
+        "branches": 68,
+        "maximum": 23
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/adapters/temporary-paths.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "1c0f0943ab923ecfab76c46660b8f9024c465a3a8a9e3d1d0b2a2d9189d0132b",
+        "functions": 1,
+        "total": 5,
+        "branches": 4,
+        "maximum": 5
+      },
+      "deltaBranches": 4
+    },
+    {
+      "path": "src/cli.js",
+      "baseline": {
+        "sha256": "bc312d0ff7194720feeec49b295d9fdd4acd11bbe80cf97b3c661e0fc7ed181a",
+        "functions": 124,
+        "total": 235,
+        "branches": 111,
+        "maximum": 34
+      },
+      "current": {
+        "sha256": "30e8cf93ec2cf24061b58dc35e15a172836847b987229dd6e9d4a5436e3dfec3",
+        "functions": 140,
+        "total": 253,
+        "branches": 113,
+        "maximum": 34
+      },
+      "deltaBranches": 2
+    },
+    {
+      "path": "src/commands/action-authorize.js",
+      "baseline": {
+        "sha256": "6bb415d3ed34b7ff7debc90d77f3b6fb3024f4be02cf2a964a2bf0c561be44e1",
+        "functions": 3,
+        "total": 3,
+        "branches": 0,
+        "maximum": 1
+      },
+      "current": {
+        "sha256": "6bb415d3ed34b7ff7debc90d77f3b6fb3024f4be02cf2a964a2bf0c561be44e1",
+        "functions": 3,
+        "total": 3,
+        "branches": 0,
+        "maximum": 1
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/action-propose.js",
+      "baseline": {
+        "sha256": "10a58e6e15ab8a57782ba481729518aed225ae382dce44de253bf88a7a55cb50",
+        "functions": 3,
+        "total": 3,
+        "branches": 0,
+        "maximum": 1
+      },
+      "current": {
+        "sha256": "10a58e6e15ab8a57782ba481729518aed225ae382dce44de253bf88a7a55cb50",
+        "functions": 3,
+        "total": 3,
+        "branches": 0,
+        "maximum": 1
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/action-reconcile.js",
+      "baseline": {
+        "sha256": "824f1b4e9e59452c5cf3f44b075b36fb376f65c5b27b795a63f4e0429c9197a9",
+        "functions": 3,
+        "total": 3,
+        "branches": 0,
+        "maximum": 1
+      },
+      "current": {
+        "sha256": "824f1b4e9e59452c5cf3f44b075b36fb376f65c5b27b795a63f4e0429c9197a9",
+        "functions": 3,
+        "total": 3,
+        "branches": 0,
+        "maximum": 1
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/action-record.js",
+      "baseline": {
+        "sha256": "7039f0d33718a543e350b3399eb4df2fca6f3d7260f7b755d67453c1f3d2abe0",
+        "functions": 3,
+        "total": 8,
+        "branches": 5,
+        "maximum": 5
+      },
+      "current": {
+        "sha256": "7039f0d33718a543e350b3399eb4df2fca6f3d7260f7b755d67453c1f3d2abe0",
+        "functions": 3,
+        "total": 8,
+        "branches": 5,
+        "maximum": 5
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/action-verify.js",
+      "baseline": {
+        "sha256": "a3ff2f57610101b572093a193bd5016628609399c0b833ca909f2550c2324991",
+        "functions": 3,
+        "total": 3,
+        "branches": 0,
+        "maximum": 1
+      },
+      "current": {
+        "sha256": "a3ff2f57610101b572093a193bd5016628609399c0b833ca909f2550c2324991",
+        "functions": 3,
+        "total": 3,
+        "branches": 0,
+        "maximum": 1
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/advance.js",
+      "baseline": {
+        "sha256": "75efde05e048081916646c44aac73340f88471e80365e5ac17e469194156c0e3",
+        "functions": 3,
+        "total": 8,
+        "branches": 5,
+        "maximum": 3
+      },
+      "current": {
+        "sha256": "c5ff6362c0d2bb6f8d85b016fdc9b71de13ef8c472214ee18720910c37555a24",
+        "functions": 3,
+        "total": 9,
+        "branches": 6,
+        "maximum": 4
+      },
+      "deltaBranches": 1
+    },
+    {
+      "path": "src/commands/approval-request.js",
+      "baseline": {
+        "sha256": "ebaa86744d7fbd2056c557be7d77a8ab34d18825aa685f158a78ef66b22eb41a",
+        "functions": 4,
+        "total": 14,
+        "branches": 10,
+        "maximum": 11
+      },
+      "current": {
+        "sha256": "ebaa86744d7fbd2056c557be7d77a8ab34d18825aa685f158a78ef66b22eb41a",
+        "functions": 4,
+        "total": 14,
+        "branches": 10,
+        "maximum": 11
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/approval-resolve.js",
+      "baseline": {
+        "sha256": "4980c1d9d2b5184877e7d5b625af65eff418de55f7347102826a868080c904f0",
+        "functions": 3,
+        "total": 3,
+        "branches": 0,
+        "maximum": 1
+      },
+      "current": {
+        "sha256": "4980c1d9d2b5184877e7d5b625af65eff418de55f7347102826a868080c904f0",
+        "functions": 3,
+        "total": 3,
+        "branches": 0,
+        "maximum": 1
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/attestation-create.js",
+      "baseline": {
+        "sha256": "cca00702f05e8d7500024519509feb3078d172ae5b026856b94db86eb043b690",
+        "functions": 4,
+        "total": 8,
+        "branches": 4,
+        "maximum": 3
+      },
+      "current": {
+        "sha256": "cca00702f05e8d7500024519509feb3078d172ae5b026856b94db86eb043b690",
+        "functions": 4,
+        "total": 8,
+        "branches": 4,
+        "maximum": 3
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/baseline.js",
+      "baseline": {
+        "sha256": "1511908c39a80ffdd5be8a3e81ab99c572611ac18f864916296f61a5e8434a01",
+        "functions": 7,
+        "total": 46,
+        "branches": 39,
+        "maximum": 31
+      },
+      "current": {
+        "sha256": "e4a4dbd414d265d11bc079a648e5d253d7e1ad1b96829ca3bbf9d8e3ab5fd49d",
+        "functions": 9,
+        "total": 48,
+        "branches": 39,
+        "maximum": 25
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/checkpoint-revalidate.js",
+      "baseline": {
+        "sha256": "dd49066279b65bdf5b8c6da0a0e581ab13fdd3eaccf50f0a76938924f8e47129",
+        "functions": 11,
+        "total": 55,
+        "branches": 44,
+        "maximum": 15
+      },
+      "current": {
+        "sha256": "8f9147c3ff5e62d2a640fae170966c15b4533f8c3668f7680ff9a3532ad90f1d",
+        "functions": 13,
+        "total": 62,
+        "branches": 49,
+        "maximum": 15
+      },
+      "deltaBranches": 5
+    },
+    {
+      "path": "src/commands/clear-continuity.js",
+      "baseline": {
+        "sha256": "6d49a19c96e7245e00b7ef1e95b6745f02b31854f906f94876e1fae9092198ec",
+        "functions": 3,
+        "total": 8,
+        "branches": 5,
+        "maximum": 3
+      },
+      "current": {
+        "sha256": "6d49a19c96e7245e00b7ef1e95b6745f02b31854f906f94876e1fae9092198ec",
+        "functions": 3,
+        "total": 8,
+        "branches": 5,
+        "maximum": 3
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/clear-state.js",
+      "baseline": {
+        "sha256": "1c776cb0cbf51ca1a0c21162d3f931f2c3c863c57566cf25b18c811ad3ea72bd",
+        "functions": 3,
+        "total": 8,
+        "branches": 5,
+        "maximum": 3
+      },
+      "current": {
+        "sha256": "1c776cb0cbf51ca1a0c21162d3f931f2c3c863c57566cf25b18c811ad3ea72bd",
+        "functions": 3,
+        "total": 8,
+        "branches": 5,
+        "maximum": 3
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/complete.js",
+      "baseline": {
+        "sha256": "ef75082e6354d45684fa0ce195987853b59d2ece88b36402758d5de1ca838d62",
+        "functions": 3,
+        "total": 11,
+        "branches": 8,
+        "maximum": 4
+      },
+      "current": {
+        "sha256": "950128c152c23ce49b9b6eb8c86b6872185667b9000f21cdd5200e2d66497920",
+        "functions": 4,
+        "total": 18,
+        "branches": 14,
+        "maximum": 7
+      },
+      "deltaBranches": 6
+    },
+    {
+      "path": "src/commands/contract-create.js",
+      "baseline": {
+        "sha256": "531d907d1244e164b262e498a5ea4ec9236574702a0b3c3394bb357bb1332758",
+        "functions": 18,
+        "total": 82,
+        "branches": 64,
+        "maximum": 18
+      },
+      "current": {
+        "sha256": "6ef3eca71f6ab51c39747447dfb5270972dec84d814b0cf6b074dfb277f91898",
+        "functions": 18,
+        "total": 83,
+        "branches": 65,
+        "maximum": 19
+      },
+      "deltaBranches": 1
+    },
+    {
+      "path": "src/commands/contract-revise.js",
+      "baseline": {
+        "sha256": "d76609930996c8eb23ebe7f54279946ae4e507dc02a0dd3ccf4d3549d67a1a61",
+        "functions": 11,
+        "total": 46,
+        "branches": 35,
+        "maximum": 14
+      },
+      "current": {
+        "sha256": "d76609930996c8eb23ebe7f54279946ae4e507dc02a0dd3ccf4d3549d67a1a61",
+        "functions": 11,
+        "total": 46,
+        "branches": 35,
+        "maximum": 14
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/discover.js",
+      "baseline": {
+        "sha256": "4cf896bc3688f97a8b5f3bf7c278f487b0a1858775a6c03dbc40a4c4fb0cb123",
+        "functions": 6,
+        "total": 24,
+        "branches": 18,
+        "maximum": 12
+      },
+      "current": {
+        "sha256": "4cf896bc3688f97a8b5f3bf7c278f487b0a1858775a6c03dbc40a4c4fb0cb123",
+        "functions": 6,
+        "total": 24,
+        "branches": 18,
+        "maximum": 12
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/doctor.js",
+      "baseline": {
+        "sha256": "824b0b1c421453cae437fe2b637a3e3200945b708eef027012bf25c9550929ca",
+        "functions": 11,
+        "total": 111,
+        "branches": 100,
+        "maximum": 63
+      },
+      "current": {
+        "sha256": "1ea77fd088a1277b03bc2edeb034462f8f56df5ce3eb95dd7b68000dd5a983d1",
+        "functions": 12,
+        "total": 116,
+        "branches": 104,
+        "maximum": 60
+      },
+      "deltaBranches": 4
+    },
+    {
+      "path": "src/commands/gate-record.js",
+      "baseline": {
+        "sha256": "96a7695fa71828527334e876ea0a2dd94c435bdb0d5cfe236370617c16175d28",
+        "functions": 19,
+        "total": 88,
+        "branches": 69,
+        "maximum": 21
+      },
+      "current": {
+        "sha256": "f3eb2df3669c4d6190ad5988452fb2486b869065d9cb58f0092c5c932d117f67",
+        "functions": 18,
+        "total": 84,
+        "branches": 66,
+        "maximum": 21
+      },
+      "deltaBranches": -3
+    },
+    {
+      "path": "src/commands/gate-revalidate.js",
+      "baseline": {
+        "sha256": "b53d444543eaec7a07d0f58bd44f3f81ff9f56893ba25f4852b3da76de2cdaf2",
+        "functions": 8,
+        "total": 39,
+        "branches": 31,
+        "maximum": 17
+      },
+      "current": {
+        "sha256": "722e7adb1be5dac37536a8c1ccab8e07e2aa7a82598c1e24088fff077f82420a",
+        "functions": 8,
+        "total": 38,
+        "branches": 30,
+        "maximum": 17
+      },
+      "deltaBranches": -1
+    },
+    {
+      "path": "src/commands/handoff-list.js",
+      "baseline": {
+        "sha256": "c817a0c2f849781b6f9cbc2ceeff3607180fae89611e4503852801799ad78fae",
+        "functions": 3,
+        "total": 11,
+        "branches": 8,
+        "maximum": 5
+      },
+      "current": {
+        "sha256": "4aaeb4a8127b9647b3a88b38dc349f6bc9c64c6a92adc1d26c0d4cd618ea6af6",
+        "functions": 5,
+        "total": 14,
+        "branches": 9,
+        "maximum": 5
+      },
+      "deltaBranches": 1
+    },
+    {
+      "path": "src/commands/handoff-show.js",
+      "baseline": {
+        "sha256": "bd8f3e977037333788de393284b48599b2331f9824120d3bbbb85f6072f7617c",
+        "functions": 2,
+        "total": 8,
+        "branches": 6,
+        "maximum": 6
+      },
+      "current": {
+        "sha256": "23fad13aeca8087e2aa1cd69087aeb28e58e766bd0cf442ca342da5b3689ef90",
+        "functions": 4,
+        "total": 11,
+        "branches": 7,
+        "maximum": 6
+      },
+      "deltaBranches": 1
+    },
+    {
+      "path": "src/commands/init.js",
+      "baseline": {
+        "sha256": "dbd6aff6b7e27d3fa26e06921ad54c7e569413ee5717f20111c639c77d073dde",
+        "functions": 9,
+        "total": 83,
+        "branches": 74,
+        "maximum": 40
+      },
+      "current": {
+        "sha256": "dbd6aff6b7e27d3fa26e06921ad54c7e569413ee5717f20111c639c77d073dde",
+        "functions": 9,
+        "total": 83,
+        "branches": 74,
+        "maximum": 40
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/migrate-protocol.js",
+      "baseline": {
+        "sha256": "a593bc5479f6e6d6f80f321ac052e816d8fa18eb8ff292c4b9592632f00303ca",
+        "functions": 2,
+        "total": 8,
+        "branches": 6,
+        "maximum": 5
+      },
+      "current": {
+        "sha256": "74106c4ddb0cb8fa551f04730877bc46275265f6e8034574b08edad4ffb22b06",
+        "functions": 2,
+        "total": 9,
+        "branches": 7,
+        "maximum": 5
+      },
+      "deltaBranches": 1
+    },
+    {
+      "path": "src/commands/model-route.js",
+      "baseline": {
+        "sha256": "2338f892984c7c230994c778249cfd3a747606218754e802741b91073c0dad32",
+        "functions": 2,
+        "total": 5,
+        "branches": 3,
+        "maximum": 4
+      },
+      "current": {
+        "sha256": "175146193f6f025e010d9038abef41528cf93aba509e8a0952d94b5bcb8b9e1e",
+        "functions": 4,
+        "total": 9,
+        "branches": 5,
+        "maximum": 4
+      },
+      "deltaBranches": 2
+    },
+    {
+      "path": "src/commands/next.js",
+      "baseline": {
+        "sha256": "ec250244428c63d98e8ff40422e92ee3aa1cbae6cdcd3bb1a2cffb62c0f833c1",
+        "functions": 7,
+        "total": 44,
+        "branches": 37,
+        "maximum": 18
+      },
+      "current": {
+        "sha256": "c3237ede7c810ca399bb8c4589affb75de63afd5e8d2ab0096ab3e1ea7d277fd",
+        "functions": 9,
+        "total": 47,
+        "branches": 38,
+        "maximum": 18
+      },
+      "deltaBranches": 1
+    },
+    {
+      "path": "src/commands/policy-diff.js",
+      "baseline": {
+        "sha256": "a6f3bfee8e11b8af6c83353d750ed51a361b11b527220025651490a377909e18",
+        "functions": 2,
+        "total": 15,
+        "branches": 13,
+        "maximum": 10
+      },
+      "current": {
+        "sha256": "113d2e4375eddb2f2ae551c880cff285115dd88d134da71824456d398bd97160",
+        "functions": 6,
+        "total": 26,
+        "branches": 20,
+        "maximum": 12
+      },
+      "deltaBranches": 7
+    },
+    {
+      "path": "src/commands/preflight.js",
+      "baseline": {
+        "sha256": "f7ead37d5521bbdcd7b258587a0c596c99c8f8eb2566b019367b85d2114f250e",
+        "functions": 3,
+        "total": 10,
+        "branches": 7,
+        "maximum": 4
+      },
+      "current": {
+        "sha256": "f7ead37d5521bbdcd7b258587a0c596c99c8f8eb2566b019367b85d2114f250e",
+        "functions": 3,
+        "total": 10,
+        "branches": 7,
+        "maximum": 4
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/prepare-completion.js",
+      "baseline": {
+        "sha256": "4b22fe092ec89536c34806b5d72371d4175f64250068fccea2e25fc1cbdbab45",
+        "functions": 3,
+        "total": 7,
+        "branches": 4,
+        "maximum": 3
+      },
+      "current": {
+        "sha256": "4b22fe092ec89536c34806b5d72371d4175f64250068fccea2e25fc1cbdbab45",
+        "functions": 3,
+        "total": 7,
+        "branches": 4,
+        "maximum": 3
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/progress.js",
+      "baseline": {
+        "sha256": "2894794c797da034186326ad01fad2ca814277284d9d6e6ebc84316471ebf966",
+        "functions": 2,
+        "total": 15,
+        "branches": 13,
+        "maximum": 9
+      },
+      "current": {
+        "sha256": "f51d6c1cbe61db6e1ba58011b45dd0f203af66c35b2b1c01a2c30d4ada6255e9",
+        "functions": 3,
+        "total": 18,
+        "branches": 15,
+        "maximum": 10
+      },
+      "deltaBranches": 2
+    },
+    {
+      "path": "src/commands/quality-baseline.js",
+      "baseline": {
+        "sha256": "f19d2dfebb13a7b791ab6acea0c3f75910f85940515351a09dabd8f33d63901f",
+        "functions": 3,
+        "total": 19,
+        "branches": 16,
+        "maximum": 13
+      },
+      "current": {
+        "sha256": "f19d2dfebb13a7b791ab6acea0c3f75910f85940515351a09dabd8f33d63901f",
+        "functions": 3,
+        "total": 19,
+        "branches": 16,
+        "maximum": 13
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/reconcile-closure.js",
+      "baseline": {
+        "sha256": "8ab1ddec6f269f1ed41efd0763183120c7ff6e36778a98ec890dacd20e2a8fb5",
+        "functions": 3,
+        "total": 14,
+        "branches": 11,
+        "maximum": 9
+      },
+      "current": {
+        "sha256": "8ab1ddec6f269f1ed41efd0763183120c7ff6e36778a98ec890dacd20e2a8fb5",
+        "functions": 3,
+        "total": 14,
+        "branches": 11,
+        "maximum": 9
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/record-check.js",
+      "baseline": {
+        "sha256": "418e3b22133fec44698fcb461bf2e10222df987e6fd9227624f671fb3c6f6279",
+        "functions": 4,
+        "total": 10,
+        "branches": 6,
+        "maximum": 3
+      },
+      "current": {
+        "sha256": "418e3b22133fec44698fcb461bf2e10222df987e6fd9227624f671fb3c6f6279",
+        "functions": 4,
+        "total": 10,
+        "branches": 6,
+        "maximum": 3
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/record-continuity.js",
+      "baseline": {
+        "sha256": "77a04d35e70bc6f36a90a36c363d1010522b6100c335b03a1943667b123f5fc4",
+        "functions": 6,
+        "total": 30,
+        "branches": 24,
+        "maximum": 12
+      },
+      "current": {
+        "sha256": "77a04d35e70bc6f36a90a36c363d1010522b6100c335b03a1943667b123f5fc4",
+        "functions": 6,
+        "total": 30,
+        "branches": 24,
+        "maximum": 12
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/record-decision-criterion.js",
+      "baseline": {
+        "sha256": "23396488f9f5ea2763137844ae171a4a4bcba4d98e139b783865492837f6848c",
+        "functions": 3,
+        "total": 9,
+        "branches": 6,
+        "maximum": 4
+      },
+      "current": {
+        "sha256": "23396488f9f5ea2763137844ae171a4a4bcba4d98e139b783865492837f6848c",
+        "functions": 3,
+        "total": 9,
+        "branches": 6,
+        "maximum": 4
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/record-diagnosis.js",
+      "baseline": {
+        "sha256": "291ec2fc2ded8a580e44f18f66550500ba7d715dd7a66d2de16ffc5567e4e3b9",
+        "functions": 6,
+        "total": 34,
+        "branches": 28,
+        "maximum": 14
+      },
+      "current": {
+        "sha256": "41fcc0a954efa799d164f301f8d1d771f183ef30fe36cebe3766693fe081b402",
+        "functions": 6,
+        "total": 35,
+        "branches": 29,
+        "maximum": 15
+      },
+      "deltaBranches": 1
+    },
+    {
+      "path": "src/commands/record-hypothesis-disposition.js",
+      "baseline": {
+        "sha256": "380e2bacd448fecf976de4f237d4dbd6f6f84b4295d99209c09e5695077962cd",
+        "functions": 3,
+        "total": 15,
+        "branches": 12,
+        "maximum": 8
+      },
+      "current": {
+        "sha256": "380e2bacd448fecf976de4f237d4dbd6f6f84b4295d99209c09e5695077962cd",
+        "functions": 3,
+        "total": 15,
+        "branches": 12,
+        "maximum": 8
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/record-intervention.js",
+      "baseline": {
+        "sha256": "be406cdef16b7a7e8d626d2b1f9348d4d69c26dd766984e557f5a8d5bad672be",
+        "functions": 4,
+        "total": 13,
+        "branches": 9,
+        "maximum": 6
+      },
+      "current": {
+        "sha256": "be406cdef16b7a7e8d626d2b1f9348d4d69c26dd766984e557f5a8d5bad672be",
+        "functions": 4,
+        "total": 13,
+        "branches": 9,
+        "maximum": 6
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/record-terminal-result.js",
+      "baseline": {
+        "sha256": "92ee8effdbf41aba1636df9dcfd757b24d3e24014366d45e79bf9e6753ab7b07",
+        "functions": 3,
+        "total": 7,
+        "branches": 4,
+        "maximum": 3
+      },
+      "current": {
+        "sha256": "92ee8effdbf41aba1636df9dcfd757b24d3e24014366d45e79bf9e6753ab7b07",
+        "functions": 3,
+        "total": 7,
+        "branches": 4,
+        "maximum": 3
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/route.js",
+      "baseline": {
+        "sha256": "fdff40ff6a57281bec0d54145686233db1aa6da3b926d13a97459a462c2bba36",
+        "functions": 10,
+        "total": 62,
+        "branches": 52,
+        "maximum": 21
+      },
+      "current": {
+        "sha256": "fdff40ff6a57281bec0d54145686233db1aa6da3b926d13a97459a462c2bba36",
+        "functions": 10,
+        "total": 62,
+        "branches": 52,
+        "maximum": 21
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/run-action.js",
+      "baseline": {
+        "sha256": "5031fe2a09d854b0257b486e5bb0cf478c299e50e82444d80cfb94c08caf9022",
+        "functions": 3,
+        "total": 5,
+        "branches": 2,
+        "maximum": 2
+      },
+      "current": {
+        "sha256": "5031fe2a09d854b0257b486e5bb0cf478c299e50e82444d80cfb94c08caf9022",
+        "functions": 3,
+        "total": 5,
+        "branches": 2,
+        "maximum": 2
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/run-check.js",
+      "baseline": {
+        "sha256": "1ae5a4232496a7278180663db7eab040ec689b3ba0ab6976627f16fa73cb5e6c",
+        "functions": 4,
+        "total": 20,
+        "branches": 16,
+        "maximum": 9
+      },
+      "current": {
+        "sha256": "1ae5a4232496a7278180663db7eab040ec689b3ba0ab6976627f16fa73cb5e6c",
+        "functions": 4,
+        "total": 20,
+        "branches": 16,
+        "maximum": 9
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/semantic-plan.js",
+      "baseline": {
+        "sha256": "f87b03e8915394ad1d24b670ee9550b0e065dcc1a7ab51c409a838dbad0c3365",
+        "functions": 2,
+        "total": 5,
+        "branches": 3,
+        "maximum": 4
+      },
+      "current": {
+        "sha256": "728f1dc656a88575429d67bbd00e6581bdb5651fd84a63b9c5a52e51deeec0bf",
+        "functions": 5,
+        "total": 14,
+        "branches": 9,
+        "maximum": 5
+      },
+      "deltaBranches": 6
+    },
+    {
+      "path": "src/commands/status.js",
+      "baseline": {
+        "sha256": "056ba1be3cffe0ded5e943607e6a144afe3891dd1294aa238227fd569c521785",
+        "functions": 3,
+        "total": 55,
+        "branches": 52,
+        "maximum": 26
+      },
+      "current": {
+        "sha256": "826d0f912630f5df52f6d696780cd9a4cc77493dad072f3ebd3c5a2e432e118f",
+        "functions": 5,
+        "total": 58,
+        "branches": 53,
+        "maximum": 26
+      },
+      "deltaBranches": 1
+    },
+    {
+      "path": "src/commands/storage-backup.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "eb3bdda3b2a0c55649d8c7e9f4f62b95fa9eb3f78e6e657b5416b420f973ad7f",
+        "functions": 1,
+        "total": 7,
+        "branches": 6,
+        "maximum": 7
+      },
+      "deltaBranches": 6
+    },
+    {
+      "path": "src/commands/storage-migrate.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "cae777a08d5b50fb9b54a0ca4a9a9a9c8597c02ca5f413af98f0be347d908859",
+        "functions": 1,
+        "total": 3,
+        "branches": 2,
+        "maximum": 3
+      },
+      "deltaBranches": 2
+    },
+    {
+      "path": "src/commands/storage-migration-resume.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "0d9171a76d4af56f184669611de857a0404bb8478776a44579e16180b6e59b8d",
+        "functions": 1,
+        "total": 3,
+        "branches": 2,
+        "maximum": 3
+      },
+      "deltaBranches": 2
+    },
+    {
+      "path": "src/commands/storage-migration-status.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "3d013e83b241d278d0eed4c52b192a3df4cfd482502bcc2fe64b01efafc87830",
+        "functions": 3,
+        "total": 16,
+        "branches": 13,
+        "maximum": 7
+      },
+      "deltaBranches": 13
+    },
+    {
+      "path": "src/commands/storage-restore-resume.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "acbf0748cdf0d01be8d0a6e20d57159decc428e6d45198db903fd3d6d4bac17f",
+        "functions": 1,
+        "total": 5,
+        "branches": 4,
+        "maximum": 5
+      },
+      "deltaBranches": 4
+    },
+    {
+      "path": "src/commands/storage-restore.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "2ef1d773fc218d3f3acc7753af2ff6846b96c944d03d435ea9504ab8d3ed6774",
+        "functions": 1,
+        "total": 5,
+        "branches": 4,
+        "maximum": 5
+      },
+      "deltaBranches": 4
+    },
+    {
+      "path": "src/commands/task-abandon.js",
+      "baseline": {
+        "sha256": "3acde6b679d09cf15617274c4f65cb6b84459e37c1b783dd236129ba7b8e73ef",
+        "functions": 11,
+        "total": 43,
+        "branches": 32,
+        "maximum": 8
+      },
+      "current": {
+        "sha256": "cef19d8bd532f3cf3b54e614e973976da671d4e33ef0bd7f36fe67b6a1e95d11",
+        "functions": 11,
+        "total": 45,
+        "branches": 34,
+        "maximum": 8
+      },
+      "deltaBranches": 2
+    },
+    {
+      "path": "src/commands/task-create.js",
+      "baseline": {
+        "sha256": "dee1a85f88aee619a38ff53fe624e3f392aa3a1a2f932bad2305c16ee8aca768",
+        "functions": 9,
+        "total": 42,
+        "branches": 33,
+        "maximum": 21
+      },
+      "current": {
+        "sha256": "dee1a85f88aee619a38ff53fe624e3f392aa3a1a2f932bad2305c16ee8aca768",
+        "functions": 9,
+        "total": 42,
+        "branches": 33,
+        "maximum": 21
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/task-list.js",
+      "baseline": {
+        "sha256": "02044e835082b738c788e83a2045b7da9f6261f4cd064bb11e83439b04fd3c3e",
+        "functions": 5,
+        "total": 44,
+        "branches": 39,
+        "maximum": 21
+      },
+      "current": {
+        "sha256": "02044e835082b738c788e83a2045b7da9f6261f4cd064bb11e83439b04fd3c3e",
+        "functions": 5,
+        "total": 44,
+        "branches": 39,
+        "maximum": 21
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/task-migrate-contract-bootstrap-repair.js",
+      "baseline": {
+        "sha256": "cf8ea6f5f6f6c2e6ab25403d2bfa52b545cd51c5028545e5f83e1c0c90161f98",
+        "functions": 9,
+        "total": 54,
+        "branches": 45,
+        "maximum": 17
+      },
+      "current": {
+        "sha256": "cf8ea6f5f6f6c2e6ab25403d2bfa52b545cd51c5028545e5f83e1c0c90161f98",
+        "functions": 9,
+        "total": 54,
+        "branches": 45,
+        "maximum": 17
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/task-migrate.js",
+      "baseline": {
+        "sha256": "3a5e095b71fa7c5bcdd6da8a7beee2bffab84e24efa95fe30b2d6fa712ace44a",
+        "functions": 4,
+        "total": 11,
+        "branches": 7,
+        "maximum": 6
+      },
+      "current": {
+        "sha256": "317bdffd331267fbf0dfbb7fdb8cda54ba5029e210243997637a5c27d1eb5f4d",
+        "functions": 4,
+        "total": 12,
+        "branches": 8,
+        "maximum": 6
+      },
+      "deltaBranches": 1
+    },
+    {
+      "path": "src/commands/task-recover.js",
+      "baseline": {
+        "sha256": "b3ec6d9f260cae4b5e8401e62313cca62208ec3ae193dff65e867fe2719984e6",
+        "functions": 8,
+        "total": 29,
+        "branches": 21,
+        "maximum": 9
+      },
+      "current": {
+        "sha256": "ff9cfb3b5a9a22c468ce557829862518fd2df2ebb60ce131b1a3d75a9d4e0c0d",
+        "functions": 9,
+        "total": 34,
+        "branches": 25,
+        "maximum": 11
+      },
+      "deltaBranches": 4
+    },
+    {
+      "path": "src/commands/task-repair-contract-bootstrap.js",
+      "baseline": {
+        "sha256": "f6f9bb63253c531cb0d1f78acd69102e4e2eaa7ca1be4d06afec546ed50cfd23",
+        "functions": 14,
+        "total": 72,
+        "branches": 58,
+        "maximum": 18
+      },
+      "current": {
+        "sha256": "f6f9bb63253c531cb0d1f78acd69102e4e2eaa7ca1be4d06afec546ed50cfd23",
+        "functions": 14,
+        "total": 72,
+        "branches": 58,
+        "maximum": 18
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/task-repair-legacy-recovery.js",
+      "baseline": {
+        "sha256": "a66399902b175f8b3225e3fdae8e157b4d3c695fae0bba8c4a264347869ca564",
+        "functions": 17,
+        "total": 66,
+        "branches": 49,
+        "maximum": 13
+      },
+      "current": {
+        "sha256": "a66399902b175f8b3225e3fdae8e157b4d3c695fae0bba8c4a264347869ca564",
+        "functions": 17,
+        "total": 66,
+        "branches": 49,
+        "maximum": 13
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/task-resume.js",
+      "baseline": {
+        "sha256": "b63d995441546cd96de132426fa9d4285f4d1c2495bb20025632171a9cf98427",
+        "functions": 8,
+        "total": 35,
+        "branches": 27,
+        "maximum": 14
+      },
+      "current": {
+        "sha256": "b63d995441546cd96de132426fa9d4285f4d1c2495bb20025632171a9cf98427",
+        "functions": 8,
+        "total": 35,
+        "branches": 27,
+        "maximum": 14
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/task-scope.js",
+      "baseline": {
+        "sha256": "9c40e77df71d8916ca56838bacd2e3605ece21f0782b94e896945d12125efff9",
+        "functions": 5,
+        "total": 16,
+        "branches": 11,
+        "maximum": 6
+      },
+      "current": {
+        "sha256": "899ee6197753c00e5aaab5d81cea0a75cbe8a9fca597f232a53a11960a34e550",
+        "functions": 8,
+        "total": 24,
+        "branches": 16,
+        "maximum": 7
+      },
+      "deltaBranches": 5
+    },
+    {
+      "path": "src/commands/task-show.js",
+      "baseline": {
+        "sha256": "2bdf7ac8c346445d6f8fa82267694bc46884d1854f9802ebc8de8d8ad3f6c6b9",
+        "functions": 7,
+        "total": 34,
+        "branches": 27,
+        "maximum": 21
+      },
+      "current": {
+        "sha256": "6fd96e0e64df63ad72c6fb191932b13319f579c6c58b2034454506b8e18c0d8d",
+        "functions": 10,
+        "total": 40,
+        "branches": 30,
+        "maximum": 21
+      },
+      "deltaBranches": 3
+    },
+    {
+      "path": "src/commands/update.js",
+      "baseline": {
+        "sha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+        "functions": 13,
+        "total": 130,
+        "branches": 117,
+        "maximum": 48
+      },
+      "current": {
+        "sha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+        "functions": 13,
+        "total": 130,
+        "branches": 117,
+        "maximum": 48
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/usage-record.js",
+      "baseline": {
+        "sha256": "0efba00a21931f358de3203e1ff1ac6f2d076fbd27f8f2e3ffe9c7997823b3a5",
+        "functions": 4,
+        "total": 19,
+        "branches": 15,
+        "maximum": 12
+      },
+      "current": {
+        "sha256": "0efba00a21931f358de3203e1ff1ac6f2d076fbd27f8f2e3ffe9c7997823b3a5",
+        "functions": 4,
+        "total": 19,
+        "branches": 15,
+        "maximum": 12
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/commands/validate-protocol.js",
+      "baseline": {
+        "sha256": "068fb040c984e699fd80190922e7bbe98c4afd3d6fa8ff93db2d5f5e4f92e806",
+        "functions": 35,
+        "total": 116,
+        "branches": 81,
+        "maximum": 50
+      },
+      "current": {
+        "sha256": "7890edf1f54a84eef70a5fea1fa90e65d86ad93b61b85891caef7e34c4938ba7",
+        "functions": 39,
+        "total": 129,
+        "branches": 90,
+        "maximum": 42
+      },
+      "deltaBranches": 9
+    },
+    {
+      "path": "src/commands/validate-receipt.js",
+      "baseline": {
+        "sha256": "8c0f8fbad8e76a442dcce4f28bab95e0728e544e78189ce0aebb492190865e06",
+        "functions": 3,
+        "total": 10,
+        "branches": 7,
+        "maximum": 5
+      },
+      "current": {
+        "sha256": "6f90636670ded6b747f70638c7084681b07c4b6213341feb811b7f8e864e9a6b",
+        "functions": 4,
+        "total": 17,
+        "branches": 13,
+        "maximum": 8
+      },
+      "deltaBranches": 6
+    },
+    {
+      "path": "src/commands/validate-state.js",
+      "baseline": {
+        "sha256": "c4a39056548d50a06581e8a09e47cf2bb83ee039d6da8e65361861661b917c47",
+        "functions": 4,
+        "total": 12,
+        "branches": 8,
+        "maximum": 6
+      },
+      "current": {
+        "sha256": "c4a39056548d50a06581e8a09e47cf2bb83ee039d6da8e65361861661b917c47",
+        "functions": 4,
+        "total": 12,
+        "branches": 8,
+        "maximum": 6
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/action-ledger-projection.js",
+      "baseline": {
+        "sha256": "28050d8d4b688556541c5dc29a2305f5e95f7e1b0a5250b390e625b91f3446e8",
+        "functions": 6,
+        "total": 90,
+        "branches": 84,
+        "maximum": 61
+      },
+      "current": {
+        "sha256": "9b0af7e23a8ea2ee0ece8581926d0109bcc6df1fa94f56e4926e667ce21080f5",
+        "functions": 6,
+        "total": 92,
+        "branches": 86,
+        "maximum": 61
+      },
+      "deltaBranches": 2
+    },
+    {
+      "path": "src/core/actions.js",
+      "baseline": {
+        "sha256": "f86494c71d72e963cbf3b7a60096be542ca1cb730d8e0395ad8016615a180c61",
+        "functions": 26,
+        "total": 99,
+        "branches": 73,
+        "maximum": 18
+      },
+      "current": {
+        "sha256": "bf9ce702df4b5cac2d609f2761a5aee8361a16a0ebdecfe650d45f31c9cdb2af",
+        "functions": 27,
+        "total": 102,
+        "branches": 75,
+        "maximum": 18
+      },
+      "deltaBranches": 2
+    },
+    {
+      "path": "src/core/activation.js",
+      "baseline": {
+        "sha256": "6d0ad1c984d753f708340819160c51d81c0c74f5699176690cfa5f3bfe996e49",
+        "functions": 2,
+        "total": 6,
+        "branches": 4,
+        "maximum": 5
+      },
+      "current": {
+        "sha256": "de461ebf711e7f75aeff4e348f44f762ce9d4b0a381922f48acf4078f937ee90",
+        "functions": 3,
+        "total": 8,
+        "branches": 5,
+        "maximum": 6
+      },
+      "deltaBranches": 1
+    },
+    {
+      "path": "src/core/approvals.js",
+      "baseline": {
+        "sha256": "0f3d72083c5aa94a14f32d4b89185f663bec9f736528fbcc49e19c2821d0f04d",
+        "functions": 20,
+        "total": 90,
+        "branches": 70,
+        "maximum": 17
+      },
+      "current": {
+        "sha256": "6cc9020d81f308b8790fe0a0f8a23b90273f7079194bc4c9e2bd864c5336f705",
+        "functions": 22,
+        "total": 87,
+        "branches": 65,
+        "maximum": 17
+      },
+      "deltaBranches": -5
+    },
+    {
+      "path": "src/core/artifact-registry.js",
+      "baseline": {
+        "sha256": "1fdaa597a52523743e07df0b2048a79b8fc5d8d8ff684686b0954c512d8b27cb",
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0
+      },
+      "current": {
+        "sha256": "cb67698912ee639ba1ab9d564c96ba55237f89ed2db8bd1068b16267fda58c01",
+        "functions": 2,
+        "total": 12,
+        "branches": 10,
+        "maximum": 8
+      },
+      "deltaBranches": 10
+    },
+    {
+      "path": "src/core/artifacts.js",
+      "baseline": {
+        "sha256": "0cfb111076ecca4ade2410ccb4a2d703ead29d8a0128560046694738bebc07e3",
+        "functions": 9,
+        "total": 37,
+        "branches": 28,
+        "maximum": 14
+      },
+      "current": {
+        "sha256": "4667bc01b1f6416ee22e0de6788bb8ae21ce238b5ce9724961c92c06d0e92db2",
+        "functions": 17,
+        "total": 66,
+        "branches": 49,
+        "maximum": 18
+      },
+      "deltaBranches": 21
+    },
+    {
+      "path": "src/core/attachment-paths.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "dd7ab7f39f4d3c7cd78ced41fdc9cfb637934a6484e49e7f8392be6dd0e26ea1",
+        "functions": 5,
+        "total": 23,
+        "branches": 18,
+        "maximum": 12
+      },
+      "deltaBranches": 18
+    },
+    {
+      "path": "src/core/attestation-coverage.js",
+      "baseline": {
+        "sha256": "b222fc59912f41b4b89dcd3453d120f0129005e53602f1b41950b46cd6466d5a",
+        "functions": 11,
+        "total": 59,
+        "branches": 48,
+        "maximum": 44
+      },
+      "current": {
+        "sha256": "a5898e2aaa4c30bfd004370a09c3843a0719f4863c9ddec3736757a1fe6d37e4",
+        "functions": 13,
+        "total": 62,
+        "branches": 49,
+        "maximum": 44
+      },
+      "deltaBranches": 1
+    },
+    {
+      "path": "src/core/attestation-verifier.js",
+      "baseline": {
+        "sha256": "0e1f02e49bdc4ae550b7c406bd9f6730db7073b668ebd72a8b0cefe9b5c37f6d",
+        "functions": 7,
+        "total": 84,
+        "branches": 77,
+        "maximum": 43
+      },
+      "current": {
+        "sha256": "bf3a0825fa2e9eb4f4b9dd73386bc5c5faa4657af64641bcc80d63199630534e",
+        "functions": 9,
+        "total": 96,
+        "branches": 87,
+        "maximum": 43
+      },
+      "deltaBranches": 10
+    },
+    {
+      "path": "src/core/attestation.js",
+      "baseline": {
+        "sha256": "cda8ac33cc3753f540ea4796c9c97ebdcc286f6f46258c6f0801779512239e89",
+        "functions": 8,
+        "total": 85,
+        "branches": 77,
+        "maximum": 45
+      },
+      "current": {
+        "sha256": "993573dffee03c80a06005a30e1d365a0cae24e252a20149b0c7a92885daffae",
+        "functions": 12,
+        "total": 90,
+        "branches": 78,
+        "maximum": 43
+      },
+      "deltaBranches": 1
+    },
+    {
+      "path": "src/core/audit-ux.js",
+      "baseline": {
+        "sha256": "cb5253a2ba9795fa7b64c75e6be75cba5d1b91a29affa8801fd6126c3a86c4ad",
+        "functions": 46,
+        "total": 191,
+        "branches": 145,
+        "maximum": 22
+      },
+      "current": {
+        "sha256": "cb5253a2ba9795fa7b64c75e6be75cba5d1b91a29affa8801fd6126c3a86c4ad",
+        "functions": 46,
+        "total": 191,
+        "branches": 145,
+        "maximum": 22
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/audit.js",
+      "baseline": {
+        "sha256": "392017500a55c482c578b13dad5921ddc1a6b4d9518043f11b25b9e76e2a12d8",
+        "functions": 10,
+        "total": 105,
+        "branches": 95,
+        "maximum": 65
+      },
+      "current": {
+        "sha256": "40f4b61810171fc803f68291519690c1d06f87e369a13f064ec105e81f1f15c3",
+        "functions": 12,
+        "total": 108,
+        "branches": 96,
+        "maximum": 65
+      },
+      "deltaBranches": 1
+    },
+    {
+      "path": "src/core/bundles.js",
+      "baseline": {
+        "sha256": "07fd53dbd0b75ac33558c303c0951a90143ef9ccbe22fe2b597fa841a53a88e9",
+        "functions": 25,
+        "total": 201,
+        "branches": 176,
+        "maximum": 55
+      },
+      "current": {
+        "sha256": "9867a424d43b5301b5fcfab49b807e2334415f2839804c6cbaffccf9a3b08928",
+        "functions": 46,
+        "total": 258,
+        "branches": 212,
+        "maximum": 53
+      },
+      "deltaBranches": 36
+    },
+    {
+      "path": "src/core/capability-policy.js",
+      "baseline": {
+        "sha256": "e9dee892353f8565e6ac34e11a449a6f4c5dc945a0a805cb79b927eedf64eb31",
+        "functions": 8,
+        "total": 56,
+        "branches": 48,
+        "maximum": 25
+      },
+      "current": {
+        "sha256": "e9dee892353f8565e6ac34e11a449a6f4c5dc945a0a805cb79b927eedf64eb31",
+        "functions": 8,
+        "total": 56,
+        "branches": 48,
+        "maximum": 25
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/checkpoint-revalidation.js",
+      "baseline": {
+        "sha256": "bdd1ea388208fb47e59c4f391bbbcb56ec2f59f1074e43a8d21149368090e535",
+        "functions": 22,
+        "total": 148,
+        "branches": 126,
+        "maximum": 21
+      },
+      "current": {
+        "sha256": "f58d2e258c3dd5e67103fc2c776467044241215f70f4ea41f077950dbbcb4a3d",
+        "functions": 20,
+        "total": 146,
+        "branches": 126,
+        "maximum": 21
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/cli-command-definitions.js",
+      "baseline": {
+        "sha256": "57abebde55b03509e14fbaed76eb35baa03ce16ac86e1929f8d2d94c3ea16e59",
+        "functions": 4,
+        "total": 12,
+        "branches": 8,
+        "maximum": 8
+      },
+      "current": {
+        "sha256": "9d084bb966b0cd529f632aee283fc163efda96d25a657462af3b61b283a4d5f1",
+        "functions": 4,
+        "total": 12,
+        "branches": 8,
+        "maximum": 8
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/code-manifest.js",
+      "baseline": {
+        "sha256": "5c17d8180f3f31b48fb1c533c76c99fa3a25312f2b89106e96f7dd4e0e100979",
+        "functions": 26,
+        "total": 160,
+        "branches": 134,
+        "maximum": 37
+      },
+      "current": {
+        "sha256": "0d8226722d4252f053a255358129697edeff83d5922d8195e49bab2d8c0033ec",
+        "functions": 28,
+        "total": 165,
+        "branches": 137,
+        "maximum": 37
+      },
+      "deltaBranches": 3
+    },
+    {
+      "path": "src/core/command-executors.js",
+      "baseline": {
+        "sha256": "ff5f246ba99d371499258dce7beec93cae1141dbd55a48d2645febe0732817da",
+        "functions": 107,
+        "total": 155,
+        "branches": 48,
+        "maximum": 8
+      },
+      "current": {
+        "sha256": "2c32d0ad5fd2afcab246a357617e1b3e1040e20e3975a9cf9757f51525a94c3b",
+        "functions": 225,
+        "total": 299,
+        "branches": 74,
+        "maximum": 23
+      },
+      "deltaBranches": 26
+    },
+    {
+      "path": "src/core/command-input.js",
+      "baseline": {
+        "sha256": "b5a03da3f704368131b016217b9eaf11a197b0e650b3afa7fa6d91d779449a23",
+        "functions": 23,
+        "total": 162,
+        "branches": 139,
+        "maximum": 45
+      },
+      "current": {
+        "sha256": "693ee64c6a979bc8b6ae471ee75fc229aace71b7d32670c14881e0b26fa0c122",
+        "functions": 25,
+        "total": 207,
+        "branches": 182,
+        "maximum": 45
+      },
+      "deltaBranches": 43
+    },
+    {
+      "path": "src/core/command-resolution.js",
+      "baseline": {
+        "sha256": "1b6f3ae671a1a2fcd4dc04604c2f67c4fcd1c8fe82dc094659d1847988b520c0",
+        "functions": 10,
+        "total": 104,
+        "branches": 94,
+        "maximum": 42
+      },
+      "current": {
+        "sha256": "1b6f3ae671a1a2fcd4dc04604c2f67c4fcd1c8fe82dc094659d1847988b520c0",
+        "functions": 10,
+        "total": 104,
+        "branches": 94,
+        "maximum": 42
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/command-runtime.js",
+      "baseline": {
+        "sha256": "56085a5bddeccabcbcf008b1c26c4293cc8b4d7c321f9684fd9e5493f038afcf",
+        "functions": 2,
+        "total": 14,
+        "branches": 12,
+        "maximum": 13
+      },
+      "current": {
+        "sha256": "56085a5bddeccabcbcf008b1c26c4293cc8b4d7c321f9684fd9e5493f038afcf",
+        "functions": 2,
+        "total": 14,
+        "branches": 12,
+        "maximum": 13
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/completion-artifacts.js",
+      "baseline": {
+        "sha256": "c8ce293b50d3c65b0621319892dc77348b99ebfa10e8ef6fc3ee406568eb0274",
+        "functions": 37,
+        "total": 355,
+        "branches": 318,
+        "maximum": 78
+      },
+      "current": {
+        "sha256": "13ec0a5ede8f2c955983dd411c50bcabfe68598cd857fde9cfe981b300c2e4cb",
+        "functions": 46,
+        "total": 378,
+        "branches": 332,
+        "maximum": 61
+      },
+      "deltaBranches": 14
+    },
+    {
+      "path": "src/core/completion-ownership.js",
+      "baseline": {
+        "sha256": "62a04da6fa09d5aeac445551727671a2e61d7f595ee3ceecc21b9ace2c8b819a",
+        "functions": 5,
+        "total": 30,
+        "branches": 25,
+        "maximum": 25
+      },
+      "current": {
+        "sha256": "582455259ba24109909769902f7d63fcba4b48b625cef659d8801ea3bd47850d",
+        "functions": 5,
+        "total": 32,
+        "branches": 27,
+        "maximum": 25
+      },
+      "deltaBranches": 2
+    },
+    {
+      "path": "src/core/completion-recovery-rebind.js",
+      "baseline": {
+        "sha256": "1f0c508951f625e8017abd1e761ff77641ff3e37d2f803fe0f87bf5a00c6dc95",
+        "functions": 10,
+        "total": 65,
+        "branches": 55,
+        "maximum": 26
+      },
+      "current": {
+        "sha256": "8385a5bec51ab43baab514d71f4d156535ec579e1249e49709b2db7a7fa13ca9",
+        "functions": 12,
+        "total": 71,
+        "branches": 59,
+        "maximum": 26
+      },
+      "deltaBranches": 4
+    },
+    {
+      "path": "src/core/completion.js",
+      "baseline": {
+        "sha256": "f917668840a5a7295d77f30b4e7fe389630b66470bca2d2dcee967a1b726e1dc",
+        "functions": 45,
+        "total": 408,
+        "branches": 363,
+        "maximum": 161
+      },
+      "current": {
+        "sha256": "6f02c9de9e0125d6c30e552b433e44957646cac3c9bee654d58a99f691ee4739",
+        "functions": 49,
+        "total": 431,
+        "branches": 382,
+        "maximum": 161
+      },
+      "deltaBranches": 19
+    },
+    {
+      "path": "src/core/config.js",
+      "baseline": {
+        "sha256": "c1cecfc25e42fb8601f82e64831186ce8a1456e5298bae0a113e4bd0ea9eb248",
+        "functions": 6,
+        "total": 50,
+        "branches": 44,
+        "maximum": 41
+      },
+      "current": {
+        "sha256": "c1cecfc25e42fb8601f82e64831186ce8a1456e5298bae0a113e4bd0ea9eb248",
+        "functions": 6,
+        "total": 50,
+        "branches": 44,
+        "maximum": 41
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/conformance.js",
+      "baseline": {
+        "sha256": "82b56d8db6bb93fde04c1549f58846b779528446d4b11410c5f44888d1987b92",
+        "functions": 11,
+        "total": 126,
+        "branches": 115,
+        "maximum": 84
+      },
+      "current": {
+        "sha256": "00fe2b93376b98dc293ea423f9d51d63d49fd6f10023beceb2e093f4d12f2add",
+        "functions": 11,
+        "total": 126,
+        "branches": 115,
+        "maximum": 84
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/continuity-lint.js",
+      "baseline": {
+        "sha256": "99fcdfc39942ac1fcf4f0cfc6917e68e1d7dfe860db0fc7bb859054cde8d99d8",
+        "functions": 5,
+        "total": 45,
+        "branches": 40,
+        "maximum": 29
+      },
+      "current": {
+        "sha256": "47f36d581c19de82e3b90e530ffbffa7dc87d0c3df39bed0da15f767e9cd90b2",
+        "functions": 8,
+        "total": 52,
+        "branches": 44,
+        "maximum": 29
+      },
+      "deltaBranches": 4
+    },
+    {
+      "path": "src/core/continuity-reconciliation.js",
+      "baseline": {
+        "sha256": "9ffacee37b3126dd473a4c5cbcb5bbbfaab1de4c6dd16409283fee1ec8737a89",
+        "functions": 12,
+        "total": 84,
+        "branches": 72,
+        "maximum": 22
+      },
+      "current": {
+        "sha256": "65379a676d655d70a788c5c28650fe9e16e426e62ccb380e2514a7a1537d7393",
+        "functions": 16,
+        "total": 92,
+        "branches": 76,
+        "maximum": 22
+      },
+      "deltaBranches": 4
+    },
+    {
+      "path": "src/core/continuity.js",
+      "baseline": {
+        "sha256": "8de8f71e791a0d7a287e95beee877d74dffa635897f03cbbae0780070034d949",
+        "functions": 20,
+        "total": 111,
+        "branches": 91,
+        "maximum": 34
+      },
+      "current": {
+        "sha256": "f16e6bf582bbc47db10bd235b5b367e14b0787cdc12799c904d2c61a6ef9acf5",
+        "functions": 22,
+        "total": 115,
+        "branches": 93,
+        "maximum": 34
+      },
+      "deltaBranches": 2
+    },
+    {
+      "path": "src/core/contract-bootstrap-recovery.js",
+      "baseline": {
+        "sha256": "952c560e4ab28bb4b6c47814c258572adfaf76da3bc4c087c553150660807f45",
+        "functions": 62,
+        "total": 328,
+        "branches": 266,
+        "maximum": 35
+      },
+      "current": {
+        "sha256": "40a98d39e034af27b61cd2b40b744016757142f3d9564284319d373166df5057",
+        "functions": 53,
+        "total": 320,
+        "branches": 267,
+        "maximum": 35
+      },
+      "deltaBranches": 1
+    },
+    {
+      "path": "src/core/contract-revision.js",
+      "baseline": {
+        "sha256": "be551e62a4ef3d9d947dc70aca2b3f8e7a76fe544b1ba0c56552227b1216510f",
+        "functions": 19,
+        "total": 130,
+        "branches": 111,
+        "maximum": 23
+      },
+      "current": {
+        "sha256": "7da064c7f33a44a4c2a0005fbd5f87cff03fe568736ad213a58466d3880e77d5",
+        "functions": 16,
+        "total": 127,
+        "branches": 111,
+        "maximum": 23
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/contract.js",
+      "baseline": {
+        "sha256": "1cd42499371c2e8bc7d4b2143a755d33d9fe647af97009f6a5d7bca4a8c8abb1",
+        "functions": 16,
+        "total": 87,
+        "branches": 71,
+        "maximum": 22
+      },
+      "current": {
+        "sha256": "1cd42499371c2e8bc7d4b2143a755d33d9fe647af97009f6a5d7bca4a8c8abb1",
+        "functions": 16,
+        "total": 87,
+        "branches": 71,
+        "maximum": 22
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/decision/artifact.js",
+      "baseline": {
+        "sha256": "62dff6ebb071e455ee49b1ba4472ece8c2c52f3539f6ae02f08ed51094114a04",
+        "functions": 5,
+        "total": 28,
+        "branches": 23,
+        "maximum": 21
+      },
+      "current": {
+        "sha256": "599a895102041ba682e67f38059894dd12ae6a52690d7bd21e1863e83f7446a5",
+        "functions": 5,
+        "total": 29,
+        "branches": 24,
+        "maximum": 21
+      },
+      "deltaBranches": 1
+    },
+    {
+      "path": "src/core/decision/events.js",
+      "baseline": {
+        "sha256": "e7d586f7382cae21c919caa0781f8efaa331f875ae63d7ef1fb05f39da579d3b",
+        "functions": 7,
+        "total": 59,
+        "branches": 52,
+        "maximum": 25
+      },
+      "current": {
+        "sha256": "392838b9613a8e5e602149121f2e78dd5a9e94d93e5fa6b4bb0022c3b78d7f05",
+        "functions": 7,
+        "total": 61,
+        "branches": 54,
+        "maximum": 25
+      },
+      "deltaBranches": 2
+    },
+    {
+      "path": "src/core/decision/resolver.js",
+      "baseline": {
+        "sha256": "3eab7b0860c100f55de398357affa22634ec6f3d73884823c11dbc18c0ab557a",
+        "functions": 18,
+        "total": 96,
+        "branches": 78,
+        "maximum": 15
+      },
+      "current": {
+        "sha256": "39b42a877aa38cf12613c2c92b8a0ac3b7bc1a0d83997bf7391b7c95ed9aa0a6",
+        "functions": 22,
+        "total": 100,
+        "branches": 78,
+        "maximum": 15
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/decision/service.js",
+      "baseline": {
+        "sha256": "5a1326d7e169379d32f3d63919013eef69d4bb9e0532a551c95f5447abe91365",
+        "functions": 11,
+        "total": 69,
+        "branches": 58,
+        "maximum": 17
+      },
+      "current": {
+        "sha256": "83a9e1b46268ae07c15463e3223c69df14ab35477eedbfe7e13ac266ecfb8d6d",
+        "functions": 16,
+        "total": 81,
+        "branches": 65,
+        "maximum": 11
+      },
+      "deltaBranches": 7
+    },
+    {
+      "path": "src/core/decision/task-bindings.js",
+      "baseline": {
+        "sha256": "ca0c3c0bdb32a122c2080bf4438f7279f59f4334df73167a561de5eec769db5a",
+        "functions": 4,
+        "total": 27,
+        "branches": 23,
+        "maximum": 22
+      },
+      "current": {
+        "sha256": "cfb580f2a5fb31e342c015913ebace97d56922c447fc723496440484b203a941",
+        "functions": 6,
+        "total": 29,
+        "branches": 23,
+        "maximum": 21
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/diagnosis-model.js",
+      "baseline": {
+        "sha256": "ef2f3b70f939e53f1f18db7ec9a00b5b4273c035a68c377159113ac9f1cecae2",
+        "functions": 12,
+        "total": 77,
+        "branches": 65,
+        "maximum": 26
+      },
+      "current": {
+        "sha256": "4b8ef09b82f979f5cf746a06dabb335a639c4c3e34fb7adfe46f3700a51ce3e8",
+        "functions": 13,
+        "total": 82,
+        "branches": 69,
+        "maximum": 26
+      },
+      "deltaBranches": 4
+    },
+    {
+      "path": "src/core/diagnosis.js",
+      "baseline": {
+        "sha256": "1bce1e47fca9a722688a28fb660d282c2802b53cf6b1ef779cb4f074a655394b",
+        "functions": 8,
+        "total": 39,
+        "branches": 31,
+        "maximum": 28
+      },
+      "current": {
+        "sha256": "d656e4f4d77430cb5740e3346867a1d8864c7b4a8e5fca8c299f9ae0d23e71e1",
+        "functions": 10,
+        "total": 44,
+        "branches": 34,
+        "maximum": 28
+      },
+      "deltaBranches": 3
+    },
+    {
+      "path": "src/core/diagnostic-projection.js",
+      "baseline": {
+        "sha256": "e0edd7396bc1d9f3b819952fc9c6f53d4b9b6504a6958fcf73ff1f58b88631e5",
+        "functions": 13,
+        "total": 32,
+        "branches": 19,
+        "maximum": 6
+      },
+      "current": {
+        "sha256": "e2376fb144f2a9ebab54777cd266ee0acdaa60fc3ddece71f0434ae4eee8e5d3",
+        "functions": 15,
+        "total": 57,
+        "branches": 42,
+        "maximum": 20
+      },
+      "deltaBranches": 23
+    },
+    {
+      "path": "src/core/diagnostic-record.js",
+      "baseline": {
+        "sha256": "57344dacb555cde46ba692238e5b951ee67110f9b65c1aa7a2f3ea2dfa61ad1e",
+        "functions": 22,
+        "total": 131,
+        "branches": 109,
+        "maximum": 45
+      },
+      "current": {
+        "sha256": "9d472e4d87a8a7c7fa6fdaeb473f60c7904b15357ec203c690e4bea589982240",
+        "functions": 28,
+        "total": 146,
+        "branches": 118,
+        "maximum": 45
+      },
+      "deltaBranches": 9
+    },
+    {
+      "path": "src/core/efficiency.js",
+      "baseline": {
+        "sha256": "71d5636f110a5046197bc65fffae64348e28df54a9e55aeaac3d625faa10515c",
+        "functions": 8,
+        "total": 77,
+        "branches": 69,
+        "maximum": 26
+      },
+      "current": {
+        "sha256": "8bcdcd327cf898cb0a4b807d44518f11554ca27980ae5e34023057dd5dc774f3",
+        "functions": 10,
+        "total": 80,
+        "branches": 70,
+        "maximum": 26
+      },
+      "deltaBranches": 1
+    },
+    {
+      "path": "src/core/events.js",
+      "baseline": {
+        "sha256": "6178b5ac128e1cc933d9f5693b1c5edad6d8ba2223e23854dfe520c90ae3cef0",
+        "functions": 62,
+        "total": 440,
+        "branches": 378,
+        "maximum": 52
+      },
+      "current": {
+        "sha256": "270d8cb19abc637e5e6a432269aa0041b2830713b7375c9432d9e842040d83a2",
+        "functions": 76,
+        "total": 509,
+        "branches": 433,
+        "maximum": 52
+      },
+      "deltaBranches": 55
+    },
+    {
+      "path": "src/core/execution-prerequisites.js",
+      "baseline": {
+        "sha256": "df5cd88452d7dcc3f300e9fe11109f67481b727f8cff545796cd4e2df680721f",
+        "functions": 21,
+        "total": 82,
+        "branches": 61,
+        "maximum": 27
+      },
+      "current": {
+        "sha256": "947b3223d09afdbd4e7367855958cc9822046e5abcfab995e790c33b76d4f974",
+        "functions": 22,
+        "total": 88,
+        "branches": 66,
+        "maximum": 25
+      },
+      "deltaBranches": 5
+    },
+    {
+      "path": "src/core/execution-profile-context.js",
+      "baseline": {
+        "sha256": "e1f972abdb374eb6cdd477bbfcd9364d710d9e39474e8211a0b683a9f294ba0e",
+        "functions": 8,
+        "total": 42,
+        "branches": 34,
+        "maximum": 25
+      },
+      "current": {
+        "sha256": "e1f972abdb374eb6cdd477bbfcd9364d710d9e39474e8211a0b683a9f294ba0e",
+        "functions": 8,
+        "total": 42,
+        "branches": 34,
+        "maximum": 25
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/execution.js",
+      "baseline": {
+        "sha256": "d2b27eafb578b80b68c0e0e5cdc83f56d430259c9eb8773afd9f085d072f6410",
+        "functions": 5,
+        "total": 34,
+        "branches": 29,
+        "maximum": 14
+      },
+      "current": {
+        "sha256": "f31fa3a1efee6314c800f87808d7d1d18a87a76f173fee728a424decda709dcc",
+        "functions": 7,
+        "total": 33,
+        "branches": 26,
+        "maximum": 10
+      },
+      "deltaBranches": -3
+    },
+    {
+      "path": "src/core/filesystem.js",
+      "baseline": {
+        "sha256": "daef6207f2bf5676414f81a635b054cb0cd06d01a2cfaa900f677683d53d00a4",
+        "functions": 12,
+        "total": 76,
+        "branches": 64,
+        "maximum": 13
+      },
+      "current": {
+        "sha256": "4174506b0832bdadadd9b7b676baa835b15b2b7e68fc980902dedeacb2564a57",
+        "functions": 13,
+        "total": 85,
+        "branches": 72,
+        "maximum": 13
+      },
+      "deltaBranches": 8
+    },
+    {
+      "path": "src/core/gate-artifact.js",
+      "baseline": {
+        "sha256": "794f9cb9d74466573bd4c6251889c4e46961df3ab13dc15bbac6c3dc96cb97ec",
+        "functions": 6,
+        "total": 32,
+        "branches": 26,
+        "maximum": 7
+      },
+      "current": {
+        "sha256": "8262d4ea6d526b3cbf18ca6b4959ff9a2d8cbfcf11664ebd549a46b862b2645a",
+        "functions": 15,
+        "total": 74,
+        "branches": 59,
+        "maximum": 10
+      },
+      "deltaBranches": 33
+    },
+    {
+      "path": "src/core/gate-provenance.js",
+      "baseline": {
+        "sha256": "a3ae70a8dbf38674bc0104bb8dc2dba9a3987be0cf1653345e93b9eab6933dc3",
+        "functions": 14,
+        "total": 86,
+        "branches": 72,
+        "maximum": 16
+      },
+      "current": {
+        "sha256": "ffdc7769ce5353af8b8315f12645df67eac4b48e52fb0e82c4bdd6d4a33e8f9e",
+        "functions": 14,
+        "total": 86,
+        "branches": 72,
+        "maximum": 16
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/guide-metadata.js",
+      "baseline": {
+        "sha256": "1e50b9a40f3a01978b7db72ace559fd79112b061b6e14c74687d98e41e3ffbc5",
+        "functions": 8,
+        "total": 24,
+        "branches": 16,
+        "maximum": 8
+      },
+      "current": {
+        "sha256": "1e50b9a40f3a01978b7db72ace559fd79112b061b6e14c74687d98e41e3ffbc5",
+        "functions": 8,
+        "total": 24,
+        "branches": 16,
+        "maximum": 8
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/handoff-acceptance.js",
+      "baseline": {
+        "sha256": "5348df27025a915f3338e8bc235c54faff40690d8d46ffa42b5266c302fd2b3a",
+        "functions": 14,
+        "total": 84,
+        "branches": 70,
+        "maximum": 26
+      },
+      "current": {
+        "sha256": "5348df27025a915f3338e8bc235c54faff40690d8d46ffa42b5266c302fd2b3a",
+        "functions": 14,
+        "total": 84,
+        "branches": 70,
+        "maximum": 26
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/handoff.js",
+      "baseline": {
+        "sha256": "49c2a9179ee8f479e1a2c1da55a15766a06b35ee92b36ec86bedfb7a60d0c6b2",
+        "functions": 20,
+        "total": 91,
+        "branches": 71,
+        "maximum": 22
+      },
+      "current": {
+        "sha256": "48f38209c4ad09c55a9877069c9e292fdcf3638fa6aae3b93a3165b1a1851bfd",
+        "functions": 25,
+        "total": 102,
+        "branches": 77,
+        "maximum": 22
+      },
+      "deltaBranches": 6
+    },
+    {
+      "path": "src/core/history.js",
+      "baseline": {
+        "sha256": "35c429cdf936b008d5f68d6e48f082f9a0d7629048423a0fc6e4e4e6d217f5ae",
+        "functions": 14,
+        "total": 48,
+        "branches": 34,
+        "maximum": 18
+      },
+      "current": {
+        "sha256": "2d1c34dd5fefd71ecb0173d05ea3fb00dd1aebd70f9ccaac6e68a1a7ade559ae",
+        "functions": 16,
+        "total": 53,
+        "branches": 37,
+        "maximum": 11
+      },
+      "deltaBranches": 3
+    },
+    {
+      "path": "src/core/hypothesis-projection.js",
+      "baseline": {
+        "sha256": "916454f1ad7c6328344f1bb300a3a9da25e37791f175babb5528300fb1aa19b5",
+        "functions": 11,
+        "total": 42,
+        "branches": 31,
+        "maximum": 20
+      },
+      "current": {
+        "sha256": "b8eb5eaa1b8c8f903cf652a1952d6d0bb3b8568fcc9d542e694eca26a076f032",
+        "functions": 15,
+        "total": 70,
+        "branches": 55,
+        "maximum": 22
+      },
+      "deltaBranches": 24
+    },
+    {
+      "path": "src/core/information-gain-projection.js",
+      "baseline": {
+        "sha256": "39a377410ad0cf848ec29f6e96acdaf2f26a63318592687a1d3b78c79dc57949",
+        "functions": 37,
+        "total": 159,
+        "branches": 122,
+        "maximum": 40
+      },
+      "current": {
+        "sha256": "57ffba53a969b319e8ce9ddc1d1acd9b9157c7ae6e56e072992b2ea99a913921",
+        "functions": 35,
+        "total": 169,
+        "branches": 134,
+        "maximum": 24
+      },
+      "deltaBranches": 12
+    },
+    {
+      "path": "src/core/inspect.js",
+      "baseline": {
+        "sha256": "0e04a43b05d59d2cef6064181c56ab471da43c7b78aa7d8c25f7782b64088ed5",
+        "functions": 12,
+        "total": 104,
+        "branches": 92,
+        "maximum": 55
+      },
+      "current": {
+        "sha256": "c92a5c9e9678bf6653f3ae871984653789b15dfd03ff38540fddd55c8752bddd",
+        "functions": 15,
+        "total": 109,
+        "branches": 94,
+        "maximum": 55
+      },
+      "deltaBranches": 2
+    },
+    {
+      "path": "src/core/integration-invocation-policy.js",
+      "baseline": {
+        "sha256": "a0825f7335f210a55f39451ef769f6dc67c1d9047aca8d0e3ccc88e7362caed4",
+        "functions": 8,
+        "total": 27,
+        "branches": 19,
+        "maximum": 8
+      },
+      "current": {
+        "sha256": "8c0e042fc68b9166802280b541b52895ef253b51765bb4c3bea24b9de4a979c5",
+        "functions": 8,
+        "total": 27,
+        "branches": 19,
+        "maximum": 8
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/integration-resources.js",
+      "baseline": {
+        "sha256": "8cebad405c343f00d0d97d614df6bb669fde9066b0d3e87e4e14ab04810c59c3",
+        "functions": 8,
+        "total": 73,
+        "branches": 65,
+        "maximum": 52
+      },
+      "current": {
+        "sha256": "e1d2820a430f44cd7cf75a5ff9c14d6d7d86abd9e0dc565b8fb3f9a04556984a",
+        "functions": 12,
+        "total": 79,
+        "branches": 67,
+        "maximum": 51
+      },
+      "deltaBranches": 2
+    },
+    {
+      "path": "src/core/ledger-event-collection.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "59c34fad66d138aaf1699966567fa190a8d531e3ca76e31ed06a9fb5bed5b509",
+        "functions": 27,
+        "total": 96,
+        "branches": 69,
+        "maximum": 14
+      },
+      "deltaBranches": 69
+    },
+    {
+      "path": "src/core/ledger-relations.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "eab3ced32adeb0a642b14fbaef53ae441acb89d49fed6e061417637b1a2004df",
+        "functions": 6,
+        "total": 14,
+        "branches": 8,
+        "maximum": 3
+      },
+      "deltaBranches": 8
+    },
+    {
+      "path": "src/core/manifest.js",
+      "baseline": {
+        "sha256": "9e29e1c9466bb0fc6a2ae9371a4f8bec995a01f11377684f0d66bcfa58221f4f",
+        "functions": 5,
+        "total": 27,
+        "branches": 22,
+        "maximum": 19
+      },
+      "current": {
+        "sha256": "9e29e1c9466bb0fc6a2ae9371a4f8bec995a01f11377684f0d66bcfa58221f4f",
+        "functions": 5,
+        "total": 27,
+        "branches": 22,
+        "maximum": 19
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/next-action-pending-actions.js",
+      "baseline": {
+        "sha256": "b77c0677043d9838b35628d5663b744a83808cc281e0300fe1b963ec710d4cbf",
+        "functions": 4,
+        "total": 30,
+        "branches": 26,
+        "maximum": 25
+      },
+      "current": {
+        "sha256": "b77c0677043d9838b35628d5663b744a83808cc281e0300fe1b963ec710d4cbf",
+        "functions": 4,
+        "total": 30,
+        "branches": 26,
+        "maximum": 25
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/next-action-phases.js",
+      "baseline": {
+        "sha256": "52006827920d3b4f8d77826b5e68dab4c314c799fdf3bdc283a776a7cb1fae7c",
+        "functions": 17,
+        "total": 82,
+        "branches": 65,
+        "maximum": 53
+      },
+      "current": {
+        "sha256": "dc80a03493293683b53122ee9873b783387f5db85ac1ee2897b96dbee03e1788",
+        "functions": 17,
+        "total": 82,
+        "branches": 65,
+        "maximum": 53
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/next-action-planned-phase.js",
+      "baseline": {
+        "sha256": "8d25666130ff98ef2ba08bb9dffaab53d9c608a4082d05759e9b85e866b554a1",
+        "functions": 3,
+        "total": 13,
+        "branches": 10,
+        "maximum": 8
+      },
+      "current": {
+        "sha256": "8d25666130ff98ef2ba08bb9dffaab53d9c608a4082d05759e9b85e866b554a1",
+        "functions": 3,
+        "total": 13,
+        "branches": 10,
+        "maximum": 8
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/next-action-review-phase.js",
+      "baseline": {
+        "sha256": "2bfd85e44c87e5e490728d06502d53f8b7ccec2c745b767a72a5ab0db05ecda5",
+        "functions": 11,
+        "total": 52,
+        "branches": 41,
+        "maximum": 30
+      },
+      "current": {
+        "sha256": "a709969b30d316f59812016605ddcd8fda784b0562411ea1ebc459c2aedbe6d2",
+        "functions": 11,
+        "total": 52,
+        "branches": 41,
+        "maximum": 30
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/next-action-verification-phase.js",
+      "baseline": {
+        "sha256": "8dff13ac6ae12919cc49a8eef8c81a788696ec27a8609e2b5bfdd105b37693ee",
+        "functions": 9,
+        "total": 43,
+        "branches": 34,
+        "maximum": 27
+      },
+      "current": {
+        "sha256": "99cd387dea52b9ff866aaff4f7ed3356f23aa875a2a5abf1315c9c0782982014",
+        "functions": 9,
+        "total": 43,
+        "branches": 34,
+        "maximum": 27
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/next-action.js",
+      "baseline": {
+        "sha256": "92a3ca86484aaf24cb77bc598e429622a92b76d9745cd2d9061bd00b44481a78",
+        "functions": 25,
+        "total": 107,
+        "branches": 82,
+        "maximum": 27
+      },
+      "current": {
+        "sha256": "6f9aa5796c4a58c3707c9e5ef77a9a19113c215871aa0ff3c2e12ac8000104ef",
+        "functions": 27,
+        "total": 114,
+        "branches": 87,
+        "maximum": 27
+      },
+      "deltaBranches": 5
+    },
+    {
+      "path": "src/core/phase.js",
+      "baseline": {
+        "sha256": "24b20a481505394029187a50293e85b02da6027ef6dbd80c125ac418b114a13c",
+        "functions": 24,
+        "total": 193,
+        "branches": 169,
+        "maximum": 93
+      },
+      "current": {
+        "sha256": "6b82bb071ef85a21dc411eb7d25f5b5afdfe237845bf7e9688dc3792e0689a86",
+        "functions": 29,
+        "total": 218,
+        "branches": 189,
+        "maximum": 75
+      },
+      "deltaBranches": 20
+    },
+    {
+      "path": "src/core/policy-adapters.js",
+      "baseline": {
+        "sha256": "981d9975e5b961806289f4901a14dc807d6533fa1c473f9808e728be804cfb25",
+        "functions": 15,
+        "total": 91,
+        "branches": 76,
+        "maximum": 22
+      },
+      "current": {
+        "sha256": "981d9975e5b961806289f4901a14dc807d6533fa1c473f9808e728be804cfb25",
+        "functions": 15,
+        "total": 91,
+        "branches": 76,
+        "maximum": 22
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/policy-baseline.js",
+      "baseline": {
+        "sha256": "6b9bfa592f2529c64442466e8f609f219a65666a6d3085c402c009bca9a05424",
+        "functions": 9,
+        "total": 38,
+        "branches": 29,
+        "maximum": 18
+      },
+      "current": {
+        "sha256": "6b9bfa592f2529c64442466e8f609f219a65666a6d3085c402c009bca9a05424",
+        "functions": 9,
+        "total": 38,
+        "branches": 29,
+        "maximum": 18
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/policy-discovery.js",
+      "baseline": {
+        "sha256": "1d0a8af04f773bc95439207670a9aa5b606e04e777b8e454aedb2d47dd380f74",
+        "functions": 3,
+        "total": 60,
+        "branches": 57,
+        "maximum": 49
+      },
+      "current": {
+        "sha256": "1d0a8af04f773bc95439207670a9aa5b606e04e777b8e454aedb2d47dd380f74",
+        "functions": 3,
+        "total": 60,
+        "branches": 57,
+        "maximum": 49
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/policy-engine.js",
+      "baseline": {
+        "sha256": "082706738324ca0081110a114db55a79a448dc72e38ea29fd3a1068478af5e02",
+        "functions": 26,
+        "total": 141,
+        "branches": 115,
+        "maximum": 45
+      },
+      "current": {
+        "sha256": "780fc64459d8b9f12e1062029f6fe22d73e41b1cad3970033a5286a1d0c7d072",
+        "functions": 27,
+        "total": 145,
+        "branches": 118,
+        "maximum": 45
+      },
+      "deltaBranches": 3
+    },
+    {
+      "path": "src/core/preflight-consistency.js",
+      "baseline": {
+        "sha256": "8a791f106a85664ad5ec30df5b9efc93f69b92a1cc81dd84aab56e905271d8fa",
+        "functions": 29,
+        "total": 162,
+        "branches": 133,
+        "maximum": 33
+      },
+      "current": {
+        "sha256": "3d45f14ad30ff16bd0b027ccbdc37a7224e9df36efca4f3f15178008fac0701f",
+        "functions": 25,
+        "total": 162,
+        "branches": 137,
+        "maximum": 33
+      },
+      "deltaBranches": 4
+    },
+    {
+      "path": "src/core/preflight-loaders.js",
+      "baseline": {
+        "sha256": "3d11ddfb3228bfd37863cc096476161d445b8cf5f65fe087e39dc7411a571978",
+        "functions": 7,
+        "total": 59,
+        "branches": 52,
+        "maximum": 22
+      },
+      "current": {
+        "sha256": "d0d6a3f650d14bd9454ea2b2bd50a2641670c6724687e4e37c9b023852aa0385",
+        "functions": 8,
+        "total": 70,
+        "branches": 62,
+        "maximum": 24
+      },
+      "deltaBranches": 10
+    },
+    {
+      "path": "src/core/preflight-model.js",
+      "baseline": {
+        "sha256": "243e05797e0fe9683fae09590fbf96957404fc864da99c5517ec6a7242548bbe",
+        "functions": 8,
+        "total": 50,
+        "branches": 42,
+        "maximum": 33
+      },
+      "current": {
+        "sha256": "3255af53d92e1af96ba25e6957dfdabecb9be1cb617cd3ffc8de15547026e9e6",
+        "functions": 9,
+        "total": 54,
+        "branches": 45,
+        "maximum": 33
+      },
+      "deltaBranches": 3
+    },
+    {
+      "path": "src/core/preflight.js",
+      "baseline": {
+        "sha256": "c24ff739ece37c5ea970f01b709e75aad98ac3dbd7e48204bcb2ecd612d58442",
+        "functions": 4,
+        "total": 101,
+        "branches": 97,
+        "maximum": 69
+      },
+      "current": {
+        "sha256": "89e992d75d2492dada2fa615118dade2901d058e1424ca87d0090c82ba621361",
+        "functions": 7,
+        "total": 110,
+        "branches": 103,
+        "maximum": 68
+      },
+      "deltaBranches": 6
+    },
+    {
+      "path": "src/core/prepared-execution.js",
+      "baseline": {
+        "sha256": "0f55ef32a22ecc312faaae75eeec32196c89a1039b217330a1aa9f75eece615d",
+        "functions": 16,
+        "total": 60,
+        "branches": 44,
+        "maximum": 17
+      },
+      "current": {
+        "sha256": "0f55ef32a22ecc312faaae75eeec32196c89a1039b217330a1aa9f75eece615d",
+        "functions": 16,
+        "total": 60,
+        "branches": 44,
+        "maximum": 17
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/profile.js",
+      "baseline": {
+        "sha256": "88877cee83dd29b9aa06aa0bc2db148799bfb660a6b45ec6609b4e5b923f1f30",
+        "functions": 4,
+        "total": 18,
+        "branches": 14,
+        "maximum": 12
+      },
+      "current": {
+        "sha256": "88877cee83dd29b9aa06aa0bc2db148799bfb660a6b45ec6609b4e5b923f1f30",
+        "functions": 4,
+        "total": 18,
+        "branches": 14,
+        "maximum": 12
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/progress.js",
+      "baseline": {
+        "sha256": "961ec25153c7c37fa22da8310073ba8f1b9182ac39e660d70648363b888f807e",
+        "functions": 11,
+        "total": 86,
+        "branches": 75,
+        "maximum": 66
+      },
+      "current": {
+        "sha256": "18e50cd71fb10ccd975ac4c6efffd33ab9c5fe6259b7f9c9f520f29850379053",
+        "functions": 13,
+        "total": 92,
+        "branches": 79,
+        "maximum": 65
+      },
+      "deltaBranches": 4
+    },
+    {
+      "path": "src/core/project-detection.js",
+      "baseline": {
+        "sha256": "96956accd87bb28890ac74dbaec95a02250cb6f9b9ba4a47ac507955fe21c530",
+        "functions": 217,
+        "total": 990,
+        "branches": 773,
+        "maximum": 25
+      },
+      "current": {
+        "sha256": "96956accd87bb28890ac74dbaec95a02250cb6f9b9ba4a47ac507955fe21c530",
+        "functions": 217,
+        "total": 990,
+        "branches": 773,
+        "maximum": 25
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/protocol-info.js",
+      "baseline": {
+        "sha256": "89f973730fa577d20fbc52acf2ae7bb1fccf3accead701aff4f78918b93be366",
+        "functions": 6,
+        "total": 9,
+        "branches": 3,
+        "maximum": 3
+      },
+      "current": {
+        "sha256": "1a1dc89b60839725c123d644f495510f79bcdb61c6b63b492aee007f33c00c60",
+        "functions": 6,
+        "total": 9,
+        "branches": 3,
+        "maximum": 3
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/protocol-migration.js",
+      "baseline": {
+        "sha256": "2e5daafe81e26dd327a5501ad0eec3e3ad8986cb78415c692b6e34a8a8dc4af9",
+        "functions": 3,
+        "total": 12,
+        "branches": 9,
+        "maximum": 6
+      },
+      "current": {
+        "sha256": "31d8571cfd8ceb9fd66b6b25d95d100c448e573c87488a6e810ef4ccc1706f39",
+        "functions": 3,
+        "total": 14,
+        "branches": 11,
+        "maximum": 8
+      },
+      "deltaBranches": 2
+    },
+    {
+      "path": "src/core/reconcile-closure.js",
+      "baseline": {
+        "sha256": "4c87980bde60f3eb505243de85dd5d3b3a85e469494a6df8b17c521fd8963696",
+        "functions": 7,
+        "total": 70,
+        "branches": 63,
+        "maximum": 25
+      },
+      "current": {
+        "sha256": "57fb91254a376b1ec06b39e7bc35c86f2ce51c7cc8302839de883c8fbcf46a2d",
+        "functions": 9,
+        "total": 75,
+        "branches": 66,
+        "maximum": 25
+      },
+      "deltaBranches": 3
+    },
+    {
+      "path": "src/core/recovery-history.js",
+      "baseline": {
+        "sha256": "54f362f17b6cb90031eeaa1a0cd8def1379e2e7f1d7dae3586b97e08968a2173",
+        "functions": 5,
+        "total": 42,
+        "branches": 37,
+        "maximum": 31
+      },
+      "current": {
+        "sha256": "8b477e8010310f043e57aa91e27239fe9a91a73926ef1023c3f882c0272f480a",
+        "functions": 8,
+        "total": 55,
+        "branches": 47,
+        "maximum": 28
+      },
+      "deltaBranches": 10
+    },
+    {
+      "path": "src/core/reflection.js",
+      "baseline": {
+        "sha256": "c3085f72596a0298e3249e1c0b8eaa544583371340792cb5fdef4d89db2e0010",
+        "functions": 35,
+        "total": 161,
+        "branches": 126,
+        "maximum": 43
+      },
+      "current": {
+        "sha256": "a3b2f85306f31881fa6e1644f71de2c8a42590f0522eaaf94f5e53af34fedcaa",
+        "functions": 29,
+        "total": 159,
+        "branches": 130,
+        "maximum": 43
+      },
+      "deltaBranches": 4
+    },
+    {
+      "path": "src/core/report.js",
+      "baseline": {
+        "sha256": "c2cb300de2b1ebe0a88cee80a426371ef49b78b3f6949bc9f5095d91a82b4287",
+        "functions": 5,
+        "total": 23,
+        "branches": 18,
+        "maximum": 14
+      },
+      "current": {
+        "sha256": "c2cb300de2b1ebe0a88cee80a426371ef49b78b3f6949bc9f5095d91a82b4287",
+        "functions": 5,
+        "total": 23,
+        "branches": 18,
+        "maximum": 14
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/repository.js",
+      "baseline": {
+        "sha256": "d58060afdea41fd9e4373b64956632d9b7b54cec14f71c5d5b5641c80b4218b5",
+        "functions": 34,
+        "total": 142,
+        "branches": 108,
+        "maximum": 11
+      },
+      "current": {
+        "sha256": "d58060afdea41fd9e4373b64956632d9b7b54cec14f71c5d5b5641c80b4218b5",
+        "functions": 34,
+        "total": 142,
+        "branches": 108,
+        "maximum": 11
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/responsibility.js",
+      "baseline": {
+        "sha256": "cdafd8635eb1eec70ea052b72445d1fe21330bb568811d27503d142e12690235",
+        "functions": 25,
+        "total": 99,
+        "branches": 74,
+        "maximum": 12
+      },
+      "current": {
+        "sha256": "ad0bc0fee3c6d9b4adfceb00879cdb476a6c3ad6798f2209bc06c66beec023b7",
+        "functions": 29,
+        "total": 108,
+        "branches": 79,
+        "maximum": 12
+      },
+      "deltaBranches": 5
+    },
+    {
+      "path": "src/core/resumability.js",
+      "baseline": {
+        "sha256": "2a29fd3e1da34a3d2b32ad97eb7ba6a36b1ae0e8fa74ac4cf9489045a61b4025",
+        "functions": 22,
+        "total": 67,
+        "branches": 45,
+        "maximum": 17
+      },
+      "current": {
+        "sha256": "2a29fd3e1da34a3d2b32ad97eb7ba6a36b1ae0e8fa74ac4cf9489045a61b4025",
+        "functions": 22,
+        "total": 67,
+        "branches": 45,
+        "maximum": 17
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/revision/git.js",
+      "baseline": {
+        "sha256": "7c424f9cd2606fee9e8f601744820075ebd4ec0e22947fed0fde9b602fcf555c",
+        "functions": 17,
+        "total": 73,
+        "branches": 56,
+        "maximum": 30
+      },
+      "current": {
+        "sha256": "7c424f9cd2606fee9e8f601744820075ebd4ec0e22947fed0fde9b602fcf555c",
+        "functions": 17,
+        "total": 73,
+        "branches": 56,
+        "maximum": 30
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/route-artifact.js",
+      "baseline": {
+        "sha256": "abdda98c9c7fd426eeccb261ffe1391c8c80bb72f124ef17aa6d45a3c246a522",
+        "functions": 2,
+        "total": 30,
+        "branches": 28,
+        "maximum": 20
+      },
+      "current": {
+        "sha256": "0b1ebd6241e70131ca65e9394995127bd6314913911ed3543341492c7cc882bc",
+        "functions": 5,
+        "total": 38,
+        "branches": 33,
+        "maximum": 23
+      },
+      "deltaBranches": 5
+    },
+    {
+      "path": "src/core/runtime-context.js",
+      "baseline": {
+        "sha256": "deb71fd79efd836d05a98bf932209283d6fa9a19137cc8293c6b2d1a35ab68dc",
+        "functions": 31,
+        "total": 103,
+        "branches": 72,
+        "maximum": 17
+      },
+      "current": {
+        "sha256": "ae30f8e1d03251ba00663c52c7eefdf77a97b3e0b6abbcf5e2bc24dbccc5f704",
+        "functions": 31,
+        "total": 108,
+        "branches": 77,
+        "maximum": 22
+      },
+      "deltaBranches": 5
+    },
+    {
+      "path": "src/core/schema-validation.js",
+      "baseline": {
+        "sha256": "c25d0588de9b9911cc5a58afba777d0aa708a5cb56f5a4a88e10bd5522f55fdf",
+        "functions": 17,
+        "total": 100,
+        "branches": 83,
+        "maximum": 41
+      },
+      "current": {
+        "sha256": "670d4436e7b1b223ace35bbef99beb98e6928b8d2e5de265cc62369530a1ef7b",
+        "functions": 18,
+        "total": 109,
+        "branches": 91,
+        "maximum": 41
+      },
+      "deltaBranches": 8
+    },
+    {
+      "path": "src/core/settlement.js",
+      "baseline": {
+        "sha256": "5fca6a73b6bcdfcd4c080ccbd974213a60ecf4f10ee19667c6107e2ecffce525",
+        "functions": 1,
+        "total": 11,
+        "branches": 10,
+        "maximum": 11
+      },
+      "current": {
+        "sha256": "f338a9aab7e3384377254de2ff8f5f1a93a329724c72b1f7f55b8acf2557e6e8",
+        "functions": 3,
+        "total": 18,
+        "branches": 15,
+        "maximum": 11
+      },
+      "deltaBranches": 5
+    },
+    {
+      "path": "src/core/signing/bundle-file.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "055a6031cbd72bde093816b9da6c2fe1cbd5737cd63340ecb87851498711d5f3",
+        "functions": 2,
+        "total": 12,
+        "branches": 10,
+        "maximum": 11
+      },
+      "deltaBranches": 10
+    },
+    {
+      "path": "src/core/signing/bundle-reference.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "9abe15e46c3d1b44e46a4c7fd5bec47845fe23cffe80735561f53724cf82dfec",
+        "functions": 3,
+        "total": 3,
+        "branches": 0,
+        "maximum": 1
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/signing/sigstore.js",
+      "baseline": {
+        "sha256": "223eaf0866a808d5d406ab243db0d3606e8b45cb9eabe81a8c55bd606f904db9",
+        "functions": 8,
+        "total": 69,
+        "branches": 61,
+        "maximum": 33
+      },
+      "current": {
+        "sha256": "535578aec42e6e71ba77c17762d5de230daa8c2e8ab7bf6d7fa5da7b3ea2752c",
+        "functions": 15,
+        "total": 81,
+        "branches": 66,
+        "maximum": 25
+      },
+      "deltaBranches": 5
+    },
+    {
+      "path": "src/core/signing/statement-file.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "4b0db680c034bd21497e5fa96c01ea79a7faa14f6424c85965f4c9183304880b",
+        "functions": 3,
+        "total": 8,
+        "branches": 5,
+        "maximum": 6
+      },
+      "deltaBranches": 5
+    },
+    {
+      "path": "src/core/sql-project.js",
+      "baseline": {
+        "sha256": "b361144df393bdc35abdf431fc9ae5665598850d49586fb172db25c4bc29e3ea",
+        "functions": 16,
+        "total": 64,
+        "branches": 48,
+        "maximum": 13
+      },
+      "current": {
+        "sha256": "b361144df393bdc35abdf431fc9ae5665598850d49586fb172db25c4bc29e3ea",
+        "functions": 16,
+        "total": 64,
+        "branches": 48,
+        "maximum": 13
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/storage-runtime-registry.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "bd4ecfc60272049a8a99205341de5bfc2fa674c789a56fee6dd70321c36802e3",
+        "functions": 12,
+        "total": 21,
+        "branches": 9,
+        "maximum": 4
+      },
+      "deltaBranches": 9
+    },
+    {
+      "path": "src/core/structural-quality/artifacts.js",
+      "baseline": {
+        "sha256": "fbc884bbcb452e8c6f45d1b1276a2b01ab8204f83b8c0d683bea2baff5e35e89",
+        "functions": 19,
+        "total": 152,
+        "branches": 133,
+        "maximum": 61
+      },
+      "current": {
+        "sha256": "52dc875b78e605a1296bec92d3689b066b96c894cb27e7aad3493c4f9454a71f",
+        "functions": 21,
+        "total": 157,
+        "branches": 136,
+        "maximum": 61
+      },
+      "deltaBranches": 3
+    },
+    {
+      "path": "src/core/structural-quality/sentrux-mcp.js",
+      "baseline": {
+        "sha256": "fea4ef10c25efa80b67f8ab2fcd25e4c0f8fe935ff51698bef52fc98042befaf",
+        "functions": 38,
+        "total": 220,
+        "branches": 182,
+        "maximum": 41
+      },
+      "current": {
+        "sha256": "fea4ef10c25efa80b67f8ab2fcd25e4c0f8fe935ff51698bef52fc98042befaf",
+        "functions": 38,
+        "total": 220,
+        "branches": 182,
+        "maximum": 41
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/structural-quality/service.js",
+      "baseline": {
+        "sha256": "db79a33a606f0ed1386e7e312079a3fcd2416588e4d564e385625a7604741083",
+        "functions": 44,
+        "total": 450,
+        "branches": 406,
+        "maximum": 53
+      },
+      "current": {
+        "sha256": "b79d77f508c683e5f8564e34edd7afddcfb24619e6f500a190582486a12f1dfa",
+        "functions": 53,
+        "total": 478,
+        "branches": 425,
+        "maximum": 53
+      },
+      "deltaBranches": 19
+    },
+    {
+      "path": "src/core/structural-quality/source-fingerprint.js",
+      "baseline": {
+        "sha256": "de166c936a7c4246fbd014f2ea9eee1faba98a586287aae0286d0a2515774735",
+        "functions": 7,
+        "total": 35,
+        "branches": 28,
+        "maximum": 13
+      },
+      "current": {
+        "sha256": "de166c936a7c4246fbd014f2ea9eee1faba98a586287aae0286d0a2515774735",
+        "functions": 7,
+        "total": 35,
+        "branches": 28,
+        "maximum": 13
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/task-claim-state.js",
+      "baseline": {
+        "sha256": "00cbfd9f505db85261acc4d5bbdf1eb0e56ee166987aa8375c3a28013d4b0cbd",
+        "functions": 22,
+        "total": 123,
+        "branches": 101,
+        "maximum": 25
+      },
+      "current": {
+        "sha256": "d2eabdbbc6846680e23c8f51d22440626fb206612817b9c6630fb245debce0a4",
+        "functions": 25,
+        "total": 153,
+        "branches": 128,
+        "maximum": 20
+      },
+      "deltaBranches": 27
+    },
+    {
+      "path": "src/core/task-command.js",
+      "baseline": {
+        "sha256": "50a749a4484f74f36dfdd5da196ad2132c2f318fc1c9ccd781b05a2288f944cc",
+        "functions": 3,
+        "total": 17,
+        "branches": 14,
+        "maximum": 9
+      },
+      "current": {
+        "sha256": "8a56af0c503944eb8a12b5ed326c9cfa21b9390eab570ec27a4e4b050e0a2e6c",
+        "functions": 7,
+        "total": 26,
+        "branches": 19,
+        "maximum": 13
+      },
+      "deltaBranches": 5
+    },
+    {
+      "path": "src/core/task-conflict-inspection.js",
+      "baseline": {
+        "sha256": "8c4a3ddef3f7a45128deacce4fddebaa13ab6658b041d4dc03399810c81ac27a",
+        "functions": 19,
+        "total": 129,
+        "branches": 110,
+        "maximum": 52
+      },
+      "current": {
+        "sha256": "dd449755592e8f149437c0f126b078f2e76c7ad8300395ef2ceb1cc7f34ee027",
+        "functions": 16,
+        "total": 130,
+        "branches": 114,
+        "maximum": 49
+      },
+      "deltaBranches": 4
+    },
+    {
+      "path": "src/core/task-context.js",
+      "baseline": {
+        "sha256": "ea14306ecd04f9624db022df456652cafd6c0c5e67fcba2e8f473ac5c3f21c74",
+        "functions": 9,
+        "total": 51,
+        "branches": 42,
+        "maximum": 32
+      },
+      "current": {
+        "sha256": "ea14306ecd04f9624db022df456652cafd6c0c5e67fcba2e8f473ac5c3f21c74",
+        "functions": 9,
+        "total": 51,
+        "branches": 42,
+        "maximum": 32
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/task-descriptor.js",
+      "baseline": {
+        "sha256": "292a593923dfeb5628cb9f1a7ec71905bcdb684c62e5ac208cdf74700c0e53ee",
+        "functions": 4,
+        "total": 17,
+        "branches": 13,
+        "maximum": 6
+      },
+      "current": {
+        "sha256": "16d424d050d8cd65eef3806e93eb1ad2d908fe925dd4b41d18b5e9160fc8e380",
+        "functions": 5,
+        "total": 23,
+        "branches": 18,
+        "maximum": 11
+      },
+      "deltaBranches": 5
+    },
+    {
+      "path": "src/core/task-discovery.js",
+      "baseline": {
+        "sha256": "1efa26c7d50df35fb41dab6a0136acc888a9b43b66b574f71f6ba97a971888f0",
+        "functions": 7,
+        "total": 38,
+        "branches": 31,
+        "maximum": 23
+      },
+      "current": {
+        "sha256": "5a79849caef814dbf1208e297ee14116f892314df98e2481812dd5afcda3d5ad",
+        "functions": 19,
+        "total": 75,
+        "branches": 56,
+        "maximum": 24
+      },
+      "deltaBranches": 25
+    },
+    {
+      "path": "src/core/task-lock.js",
+      "baseline": {
+        "sha256": "40cd6884dd7b433198425673edadcfd2677a053af173c40803e2b15946969d6e",
+        "functions": 22,
+        "total": 137,
+        "branches": 115,
+        "maximum": 15
+      },
+      "current": {
+        "sha256": "00e5b217ca72c4b0fc7dab611d96b5e3d0d0c1b5f01116bce5900028ba38fefc",
+        "functions": 28,
+        "total": 92,
+        "branches": 64,
+        "maximum": 10
+      },
+      "deltaBranches": -51
+    },
+    {
+      "path": "src/core/task-migration-validation.js",
+      "baseline": {
+        "sha256": "8db6f340e8613d3920650e23f1ab7ca5c907e4abfa14a646b3d0c503a79bbb83",
+        "functions": 5,
+        "total": 31,
+        "branches": 26,
+        "maximum": 14
+      },
+      "current": {
+        "sha256": "5316075dcc6682315ce825bbfefb3ff0eb8c9da334cb1cbcd19285ea756e7b26",
+        "functions": 5,
+        "total": 31,
+        "branches": 26,
+        "maximum": 14
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/task-migration.js",
+      "baseline": {
+        "sha256": "c0b9c33daa3b7cba181bfdc6f5788a2a94a52755544292395443d9bc97de8396",
+        "functions": 7,
+        "total": 65,
+        "branches": 58,
+        "maximum": 51
+      },
+      "current": {
+        "sha256": "6b8e90705bc4cce7089a8885883b3a02bca3141beaa23e6a2213ef89550159a9",
+        "functions": 5,
+        "total": 21,
+        "branches": 16,
+        "maximum": 15
+      },
+      "deltaBranches": -42
+    },
+    {
+      "path": "src/core/task-paths.js",
+      "baseline": {
+        "sha256": "9171da797b98aa5da7b1cbcabd42e8fa6ae543fe0b1b28dad966b311002c6017",
+        "functions": 29,
+        "total": 58,
+        "branches": 29,
+        "maximum": 7
+      },
+      "current": {
+        "sha256": "9171da797b98aa5da7b1cbcabd42e8fa6ae543fe0b1b28dad966b311002c6017",
+        "functions": 29,
+        "total": 58,
+        "branches": 29,
+        "maximum": 7
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/task-recovery.js",
+      "baseline": {
+        "sha256": "9e5f383ad176fd518104e5ab14a4bb931b98515a22d785fa82f6a0bfe37bb8c0",
+        "functions": 14,
+        "total": 78,
+        "branches": 64,
+        "maximum": 32
+      },
+      "current": {
+        "sha256": "9e5f383ad176fd518104e5ab14a4bb931b98515a22d785fa82f6a0bfe37bb8c0",
+        "functions": 14,
+        "total": 78,
+        "branches": 64,
+        "maximum": 32
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/task-snapshot.js",
+      "baseline": {
+        "sha256": "e8615f2331963d92601e3b045394150c3db94b06fdf76733d24e570d7a1ad1e2",
+        "functions": 3,
+        "total": 24,
+        "branches": 21,
+        "maximum": 17
+      },
+      "current": {
+        "sha256": "ee8a85dacca4646a589e5a110bcd981323653f679393483822649d29dfad9deb",
+        "functions": 9,
+        "total": 54,
+        "branches": 45,
+        "maximum": 17
+      },
+      "deltaBranches": 24
+    },
+    {
+      "path": "src/core/task-storage-migration.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "219bbe05474d6a872091c20beef5ed06856a6214c49660e0f5ea807370f362c7",
+        "functions": 2,
+        "total": 10,
+        "branches": 8,
+        "maximum": 9
+      },
+      "deltaBranches": 8
+    },
+    {
+      "path": "src/core/templates.js",
+      "baseline": {
+        "sha256": "b65a5d9f459f6586d69842dd662fac7fec13b7ee9967ced71e02a5554f9dcd0f",
+        "functions": 3,
+        "total": 6,
+        "branches": 3,
+        "maximum": 3
+      },
+      "current": {
+        "sha256": "20e92251bc83f699890533fd397536755226b93b74ca04766f94212128faf8f8",
+        "functions": 3,
+        "total": 6,
+        "branches": 3,
+        "maximum": 3
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/test-intelligence/inventory.js",
+      "baseline": {
+        "sha256": "11325818eaf83a522818e25ef3e75b10d0be39d485e0e8ffd94861a2632357d8",
+        "functions": 8,
+        "total": 23,
+        "branches": 15,
+        "maximum": 7
+      },
+      "current": {
+        "sha256": "11325818eaf83a522818e25ef3e75b10d0be39d485e0e8ffd94861a2632357d8",
+        "functions": 8,
+        "total": 23,
+        "branches": 15,
+        "maximum": 7
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/test-intelligence/prune.js",
+      "baseline": {
+        "sha256": "314ea0fcc2e90c7e4f4ec9e363e007749d72d2dc7f5cc62d7ab134a041053274",
+        "functions": 7,
+        "total": 28,
+        "branches": 21,
+        "maximum": 12
+      },
+      "current": {
+        "sha256": "35589fb442033e16ddfeb28af2ea6a5f91aa31a2b2f1ad4719544def6bcb60f4",
+        "functions": 7,
+        "total": 28,
+        "branches": 21,
+        "maximum": 12
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/test-intelligence/service.js",
+      "baseline": {
+        "sha256": "56cf4d165b512441fa00b75bc44ac251c131db03bdf6217a237411b18b116c8b",
+        "functions": 8,
+        "total": 14,
+        "branches": 6,
+        "maximum": 4
+      },
+      "current": {
+        "sha256": "56cf4d165b512441fa00b75bc44ac251c131db03bdf6217a237411b18b116c8b",
+        "functions": 8,
+        "total": 14,
+        "branches": 6,
+        "maximum": 4
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/trace.js",
+      "baseline": {
+        "sha256": "0d7e23fedcc3d79149b5b252a90218435dd3a0f1d22c9b156b9e8f6751e8b757",
+        "functions": 53,
+        "total": 266,
+        "branches": 213,
+        "maximum": 59
+      },
+      "current": {
+        "sha256": "ef7e3ed565bdfc4b6d64478ab2bada61888f884ebee2d5bcabe6626204804867",
+        "functions": 61,
+        "total": 287,
+        "branches": 226,
+        "maximum": 59
+      },
+      "deltaBranches": 13
+    },
+    {
+      "path": "src/core/trajectory-evaluation.js",
+      "baseline": {
+        "sha256": "a434ea16422598e1121b7e9d2b1ad357ee9096b37acc2a9ceb1db03c3dd4193b",
+        "functions": 9,
+        "total": 46,
+        "branches": 37,
+        "maximum": 36
+      },
+      "current": {
+        "sha256": "0126cca076bebabbaac8c68c6355554871eab5a7c146ebc6476c64948386fcae",
+        "functions": 12,
+        "total": 50,
+        "branches": 38,
+        "maximum": 28
+      },
+      "deltaBranches": 1
+    },
+    {
+      "path": "src/core/trajectory-metrics.js",
+      "baseline": {
+        "sha256": "53a5cc7ef2f26472f6206495645a37fed7047b096962de5b140706b09ebba095",
+        "functions": 10,
+        "total": 47,
+        "branches": 37,
+        "maximum": 35
+      },
+      "current": {
+        "sha256": "c62800c0c2bce591b59bbd61cbba29744d80adc279e721ec7874729457d2b28f",
+        "functions": 14,
+        "total": 54,
+        "branches": 40,
+        "maximum": 33
+      },
+      "deltaBranches": 3
+    },
+    {
+      "path": "src/core/transaction-maintenance.js",
+      "baseline": {
+        "sha256": "90804a893d1a0aea1a8778ac4a18863d1b28049fa898a01ffc639f2c39313e93",
+        "functions": 3,
+        "total": 34,
+        "branches": 31,
+        "maximum": 15
+      },
+      "current": {
+        "sha256": "bf7da409cb63b288daca24a7205552506e31091a3f60bdb6446b0008e11df7e8",
+        "functions": 1,
+        "total": 5,
+        "branches": 4,
+        "maximum": 5
+      },
+      "deltaBranches": -27
+    },
+    {
+      "path": "src/core/transaction.js",
+      "baseline": {
+        "sha256": "29514f6f3bf1a4225060b69650fdefbb8f5d9c9f558d7373b0740e925ff6b8b3",
+        "functions": 24,
+        "total": 97,
+        "branches": 73,
+        "maximum": 17
+      },
+      "current": {
+        "sha256": "e34f4c1cfe99e1c5112d9117fcc845e8d49eb581d9adb13f4e52c42a8cdef4ef",
+        "functions": 5,
+        "total": 18,
+        "branches": 13,
+        "maximum": 7
+      },
+      "deltaBranches": -60
+    },
+    {
+      "path": "src/core/usage.js",
+      "baseline": {
+        "sha256": "c15ad88c2bcdb24cd58d146c3a2de4286c12c12993c888b7dbd7a4a139283550",
+        "functions": 10,
+        "total": 58,
+        "branches": 48,
+        "maximum": 10
+      },
+      "current": {
+        "sha256": "c15ad88c2bcdb24cd58d146c3a2de4286c12c12993c888b7dbd7a4a139283550",
+        "functions": 10,
+        "total": 58,
+        "branches": 48,
+        "maximum": 10
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/verification-scope-capability.js",
+      "baseline": {
+        "sha256": "2b7015b04c115d23418b7eea01bec2ef71e0cce6c0ca25230b402ec4598b53a4",
+        "functions": 21,
+        "total": 68,
+        "branches": 47,
+        "maximum": 10
+      },
+      "current": {
+        "sha256": "2b7015b04c115d23418b7eea01bec2ef71e0cce6c0ca25230b402ec4598b53a4",
+        "functions": 21,
+        "total": 68,
+        "branches": 47,
+        "maximum": 10
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/core/verification-scope.js",
+      "baseline": {
+        "sha256": "c1a84a6229379e6beeb456e7206bf352157dcb518a6aaae9f693dd63a2ed6049",
+        "functions": 22,
+        "total": 116,
+        "branches": 94,
+        "maximum": 33
+      },
+      "current": {
+        "sha256": "bb24105182c44eb2e0c23d56410ba0b7d23a128b065fe4a9a0513309b03165e2",
+        "functions": 25,
+        "total": 122,
+        "branches": 97,
+        "maximum": 33
+      },
+      "deltaBranches": 3
+    },
+    {
+      "path": "src/core/work-state.js",
+      "baseline": {
+        "sha256": "a0dc713c19f12fadb0b79e7edd10209af236844aaa38031443baecf7370d7577",
+        "functions": 35,
+        "total": 275,
+        "branches": 240,
+        "maximum": 66
+      },
+      "current": {
+        "sha256": "e8370604edc6cdde5e832fd8014de4d2628d1dd8bd30856d64cdf0dc908d7b83",
+        "functions": 45,
+        "total": 302,
+        "branches": 257,
+        "maximum": 66
+      },
+      "deltaBranches": 17
+    },
+    {
+      "path": "src/core/workspace-binding.js",
+      "baseline": {
+        "sha256": "5a0aef7cb4c14a6ab29f4bf368ffb75e392ac72d1e39763e26ad75542c0c6be5",
+        "functions": 10,
+        "total": 54,
+        "branches": 44,
+        "maximum": 10
+      },
+      "current": {
+        "sha256": "5a0aef7cb4c14a6ab29f4bf368ffb75e392ac72d1e39763e26ad75542c0c6be5",
+        "functions": 10,
+        "total": 54,
+        "branches": 44,
+        "maximum": 10
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/persistent-transport/client.js",
+      "baseline": {
+        "sha256": "d0b61ee9c1673b769452283699fd2a34eb8d6c84af421462684d79bf367b2c80",
+        "functions": 30,
+        "total": 114,
+        "branches": 84,
+        "maximum": 18
+      },
+      "current": {
+        "sha256": "d0b61ee9c1673b769452283699fd2a34eb8d6c84af421462684d79bf367b2c80",
+        "functions": 30,
+        "total": 114,
+        "branches": 84,
+        "maximum": 18
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/persistent-transport/lifecycle.js",
+      "baseline": {
+        "sha256": "e6ce0e846153b3fb46cbda0d8af404340945d6051ce62ef17012d66b5e83f491",
+        "functions": 10,
+        "total": 59,
+        "branches": 49,
+        "maximum": 13
+      },
+      "current": {
+        "sha256": "e6ce0e846153b3fb46cbda0d8af404340945d6051ce62ef17012d66b5e83f491",
+        "functions": 10,
+        "total": 59,
+        "branches": 49,
+        "maximum": 13
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/persistent-transport/server.js",
+      "baseline": {
+        "sha256": "f071d3f0d2c35bb885e4b0e6ab2fd60ab0b177fd05ba81a16720a6ea38e387da",
+        "functions": 44,
+        "total": 94,
+        "branches": 50,
+        "maximum": 9
+      },
+      "current": {
+        "sha256": "f071d3f0d2c35bb885e4b0e6ab2fd60ab0b177fd05ba81a16720a6ea38e387da",
+        "functions": 44,
+        "total": 94,
+        "branches": 50,
+        "maximum": 9
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/persistent-transport/state.js",
+      "baseline": {
+        "sha256": "a877435a1b4a7f5c7d4b6310538451f81079b70d4486d0ed990ed61819ccb86d",
+        "functions": 3,
+        "total": 18,
+        "branches": 15,
+        "maximum": 9
+      },
+      "current": {
+        "sha256": "a877435a1b4a7f5c7d4b6310538451f81079b70d4486d0ed990ed61819ccb86d",
+        "functions": 3,
+        "total": 18,
+        "branches": 15,
+        "maximum": 9
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/repository-index/binary-manager.js",
+      "baseline": {
+        "sha256": "99c6fd6917fd2a49d1ce7416dbe49e1642b20c8e643926d938843f489d9c103e",
+        "functions": 27,
+        "total": 138,
+        "branches": 111,
+        "maximum": 24
+      },
+      "current": {
+        "sha256": "e5445ac9306053478e2c9f694ca8d890509c4f27f33e36d1797ef404ed0a1888",
+        "functions": 27,
+        "total": 139,
+        "branches": 112,
+        "maximum": 24
+      },
+      "deltaBranches": 1
+    },
+    {
+      "path": "src/repository-index/lock.js",
+      "baseline": {
+        "sha256": "77748809ef760e444dcdf09df280df956288cfeff379ef0a7755daf673f7892f",
+        "functions": 9,
+        "total": 44,
+        "branches": 35,
+        "maximum": 17
+      },
+      "current": {
+        "sha256": "77748809ef760e444dcdf09df280df956288cfeff379ef0a7755daf673f7892f",
+        "functions": 9,
+        "total": 44,
+        "branches": 35,
+        "maximum": 17
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/repository-index/manifest.js",
+      "baseline": {
+        "sha256": "93d9ecad4d7747fa95fd7a8bcdbf074aa2bb73b786dd057bb4ddecae4062fa45",
+        "functions": 13,
+        "total": 56,
+        "branches": 43,
+        "maximum": 21
+      },
+      "current": {
+        "sha256": "93d9ecad4d7747fa95fd7a8bcdbf074aa2bb73b786dd057bb4ddecae4062fa45",
+        "functions": 13,
+        "total": 56,
+        "branches": 43,
+        "maximum": 21
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/repository-index/server.js",
+      "baseline": {
+        "sha256": "4e18bcd059920281616a7ae0a368571ae5bb8c71c6f59929ded044cafcad4ef1",
+        "functions": 27,
+        "total": 142,
+        "branches": 115,
+        "maximum": 22
+      },
+      "current": {
+        "sha256": "4e18bcd059920281616a7ae0a368571ae5bb8c71c6f59929ded044cafcad4ef1",
+        "functions": 27,
+        "total": 142,
+        "branches": 115,
+        "maximum": 22
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/repository-index/status.js",
+      "baseline": {
+        "sha256": "0e37e3796bc412c581d19f44090f85bcd215965285e907851009e6b5bc8f274f",
+        "functions": 33,
+        "total": 164,
+        "branches": 131,
+        "maximum": 18
+      },
+      "current": {
+        "sha256": "0e37e3796bc412c581d19f44090f85bcd215965285e907851009e6b5bc8f274f",
+        "functions": 33,
+        "total": 164,
+        "branches": 131,
+        "maximum": 18
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/storage/artifact-bytes.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "95cef7c799313f8203109ddf2e5c3c53ce99cbce8e6b20e1e55221641fce66e6",
+        "functions": 1,
+        "total": 8,
+        "branches": 7,
+        "maximum": 8
+      },
+      "deltaBranches": 7
+    },
+    {
+      "path": "src/storage/attachment-binding.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "c30e1b58d2caad481399cef391936f86c1d76ca4dea0ae10e71c47db8e0ad24b",
+        "functions": 1,
+        "total": 12,
+        "branches": 11,
+        "maximum": 12
+      },
+      "deltaBranches": 11
+    },
+    {
+      "path": "src/storage/attachment-files.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "10e3da12d126263bb4ef7ca2684911bc778048b90069a84ccc73029cd53b93f5",
+        "functions": 8,
+        "total": 31,
+        "branches": 23,
+        "maximum": 8
+      },
+      "deltaBranches": 23
+    },
+    {
+      "path": "src/storage/attachment-references.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "b85b1594ee44256a6e13381debedaae81f396baaf51f0815060c40177ba78c4a",
+        "functions": 5,
+        "total": 11,
+        "branches": 6,
+        "maximum": 5
+      },
+      "deltaBranches": 6
+    },
+    {
+      "path": "src/storage/backup.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "32016e0aaf027c2d0084717a81f1e9b1f48286ce87abdfb05a8a5764a7d8dd9a",
+        "functions": 2,
+        "total": 7,
+        "branches": 5,
+        "maximum": 5
+      },
+      "deltaBranches": 5
+    },
+    {
+      "path": "src/storage/capabilities.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "59be8434f95b1926f44f7f13750e5492036efa3d4b7a844970a62cb37ee6e814",
+        "functions": 1,
+        "total": 1,
+        "branches": 0,
+        "maximum": 1
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/storage/connection-owner.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "081d7ca7d303c0e69e232007bf2d1b2cd7076dfa6b7f4e3e53405cd23611a6fe",
+        "functions": 27,
+        "total": 62,
+        "branches": 35,
+        "maximum": 14
+      },
+      "deltaBranches": 35
+    },
+    {
+      "path": "src/storage/connection.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "ca21ebb7d35aaf3ea74be04b767e755436934c52fd4db2c5e828aabdd20dee74",
+        "functions": 22,
+        "total": 137,
+        "branches": 115,
+        "maximum": 22
+      },
+      "deltaBranches": 115
+    },
+    {
+      "path": "src/storage/existing-project-scope.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "9d4e8d5154865048a17075e388155f18bdea26b8a5a6e0e883d015683221e6e2",
+        "functions": 8,
+        "total": 24,
+        "branches": 16,
+        "maximum": 8
+      },
+      "deltaBranches": 16
+    },
+    {
+      "path": "src/storage/export-destination.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "a5385331d4035e007f2f8edc92774bec513db3e99d257e34dc2219d3886def0b",
+        "functions": 4,
+        "total": 15,
+        "branches": 11,
+        "maximum": 6
+      },
+      "deltaBranches": 11
+    },
+    {
+      "path": "src/storage/exporter.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "2e005a6784c73f42e53831a800b09b50730f901dd358d7463009f776b55a2a4b",
+        "functions": 18,
+        "total": 70,
+        "branches": 52,
+        "maximum": 18
+      },
+      "deltaBranches": 52
+    },
+    {
+      "path": "src/storage/importer.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "22dbd284184c72b7270de7bbb95d06a2ec7f529f3305b355a4a9671a403a6f6b",
+        "functions": 26,
+        "total": 167,
+        "branches": 141,
+        "maximum": 23
+      },
+      "deltaBranches": 141
+    },
+    {
+      "path": "src/storage/index.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "86d1420e8f5baa8a419dbe5782e32ca9bc121fdaffc0f3e3a4453e251265d759",
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/storage/leases.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "7539d7c540d1b42efc82c72d628d5ae6785c7b287d87dceeaaef42744b06c8b6",
+        "functions": 9,
+        "total": 34,
+        "branches": 25,
+        "maximum": 15
+      },
+      "deltaBranches": 25
+    },
+    {
+      "path": "src/storage/ledger-event-snapshot.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "fe4b836ec40799e7601744e9573f6876adaec426c1a787ac7d397b7e80468633",
+        "functions": 16,
+        "total": 56,
+        "branches": 40,
+        "maximum": 13
+      },
+      "deltaBranches": 40
+    },
+    {
+      "path": "src/storage/ledger-relations.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "8e056da18d958c11178c9f4a97ba9e2de1858dfab166142024b16398226029e2",
+        "functions": 45,
+        "total": 85,
+        "branches": 40,
+        "maximum": 6
+      },
+      "deltaBranches": 40
+    },
+    {
+      "path": "src/storage/legacy-maintenance-boundary.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "4c3bc7a3c45b8fca61bd1b6e4d320c65466423bd96d08ea1b1947008c4c41f10",
+        "functions": 2,
+        "total": 10,
+        "branches": 8,
+        "maximum": 7
+      },
+      "deltaBranches": 8
+    },
+    {
+      "path": "src/storage/legacy-signature.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "f4e126a0ec08e538d4f105f46808fa01ad8940e2846711ad68f0ddd5c9a20d52",
+        "functions": 10,
+        "total": 59,
+        "branches": 49,
+        "maximum": 20
+      },
+      "deltaBranches": 49
+    },
+    {
+      "path": "src/storage/maintenance-handoff.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "79113b4f2c706ae35c0ffa775b433fbd085fd95d4d23d0d25072151f4c3887f5",
+        "functions": 7,
+        "total": 29,
+        "branches": 22,
+        "maximum": 12
+      },
+      "deltaBranches": 22
+    },
+    {
+      "path": "src/storage/maintenance-owner.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "cf18aff27a8df3ccc2257048b787428ba03c7d5e55e0aecaa6560daefe16e64e",
+        "functions": 3,
+        "total": 28,
+        "branches": 25,
+        "maximum": 24
+      },
+      "deltaBranches": 25
+    },
+    {
+      "path": "src/storage/maintenance.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "ce19d71c8507b70bd56b022667d63064c2b0b76f5722d8a304d27ec2e681478f",
+        "functions": 11,
+        "total": 60,
+        "branches": 49,
+        "maximum": 14
+      },
+      "deltaBranches": 49
+    },
+    {
+      "path": "src/storage/metadata-json.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "a12fe17e3818325804f84447ac298b5a1c8cc423c98c0d2bcb91b317bb365e9c",
+        "functions": 3,
+        "total": 13,
+        "branches": 10,
+        "maximum": 11
+      },
+      "deltaBranches": 10
+    },
+    {
+      "path": "src/storage/migration-activate.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "12b11a733f5a615ee1becbc8e3780fadfc7e55c92146cd07e82718c588871267",
+        "functions": 3,
+        "total": 23,
+        "branches": 20,
+        "maximum": 21
+      },
+      "deltaBranches": 20
+    },
+    {
+      "path": "src/storage/migration-archive.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "38848cc8ab285a2ce37ef7b7b3405cf51e024d023670f7dfbf46eac01bdda37a",
+        "functions": 5,
+        "total": 17,
+        "branches": 12,
+        "maximum": 10
+      },
+      "deltaBranches": 12
+    },
+    {
+      "path": "src/storage/migration-attachment-root.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "a50bc04562a2e422ab15c1c59f87abac81f9c023bb9034fc7cee5fc82763f69c",
+        "functions": 6,
+        "total": 28,
+        "branches": 22,
+        "maximum": 15
+      },
+      "deltaBranches": 22
+    },
+    {
+      "path": "src/storage/migration-candidate.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "41f01d20be6caac40ef541a8d6175e429bd595f5bd3a7a9f046571c880e88ecb",
+        "functions": 40,
+        "total": 218,
+        "branches": 178,
+        "maximum": 25
+      },
+      "deltaBranches": 178
+    },
+    {
+      "path": "src/storage/migration-publication.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "6e60f541f53f977bc1670d2c2f7577e5e718b1e1fff80ba49d4e7c026d8b38ed",
+        "functions": 11,
+        "total": 72,
+        "branches": 61,
+        "maximum": 23
+      },
+      "deltaBranches": 61
+    },
+    {
+      "path": "src/storage/migration-rollback-admission.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "da43ae3a2930f7adf3370898ff1e9a9689df8319f6c861e23f6aa52ce2cf5c73",
+        "functions": 4,
+        "total": 17,
+        "branches": 13,
+        "maximum": 9
+      },
+      "deltaBranches": 13
+    },
+    {
+      "path": "src/storage/migration-rollback-preparation.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "1152bbb354970c43c8530d681790c08941408328e59654eb6e62044b2dcd9bfe",
+        "functions": 15,
+        "total": 63,
+        "branches": 48,
+        "maximum": 23
+      },
+      "deltaBranches": 48
+    },
+    {
+      "path": "src/storage/migration-rollback-publication.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "81ca1f7c72e57f885a137e33d428c4303db0f1bb859ac19c67372d9826553417",
+        "functions": 25,
+        "total": 111,
+        "branches": 86,
+        "maximum": 19
+      },
+      "deltaBranches": 86
+    },
+    {
+      "path": "src/storage/migration-rollback-release.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "6838a25238dd71cd2b2c6d740fb32c3f1914bfd06ed376f154bd4dd7cb0b5cfb",
+        "functions": 8,
+        "total": 31,
+        "branches": 23,
+        "maximum": 9
+      },
+      "deltaBranches": 23
+    },
+    {
+      "path": "src/storage/migration-rollback-source-stage.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "6bfbf8e0ad81644596fff0f055593082e7627bbac66de070986f81aa4f8b2211",
+        "functions": 17,
+        "total": 55,
+        "branches": 38,
+        "maximum": 22
+      },
+      "deltaBranches": 38
+    },
+    {
+      "path": "src/storage/migration-rollback.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "f4f054b19857ee4ebf0e423d79f2962a3f296199b978799ac47aca826a235060",
+        "functions": 4,
+        "total": 23,
+        "branches": 19,
+        "maximum": 11
+      },
+      "deltaBranches": 19
+    },
+    {
+      "path": "src/storage/migration-source-partition.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "c65e33c6283421262d3ab34f80a291baccc3d96b379e672569d7b3cc878589a4",
+        "functions": 13,
+        "total": 42,
+        "branches": 29,
+        "maximum": 15
+      },
+      "deltaBranches": 29
+    },
+    {
+      "path": "src/storage/migration-source.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "4e2b78e7be7b1641883b28d0b33fe34fd1264b047ce88e00e617e5607aa9ffdb",
+        "functions": 35,
+        "total": 114,
+        "branches": 79,
+        "maximum": 22
+      },
+      "deltaBranches": 79
+    },
+    {
+      "path": "src/storage/migration-terminal.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "ff24b1b717315d373ccc2d99d84b1753e7c185deb627c1edc04cec590bcb4b3e",
+        "functions": 3,
+        "total": 17,
+        "branches": 14,
+        "maximum": 12
+      },
+      "deltaBranches": 14
+    },
+    {
+      "path": "src/storage/migration-validation.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "c8517c81062f0609444b82929962ede9cb805236e599265ba26872edeb903ab3",
+        "functions": 4,
+        "total": 32,
+        "branches": 28,
+        "maximum": 13
+      },
+      "deltaBranches": 28
+    },
+    {
+      "path": "src/storage/migration.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "6d84791488206fc394c2501d2f6c4d34ba8e12fba34dede0e40c48b64c3e03fa",
+        "functions": 4,
+        "total": 15,
+        "branches": 11,
+        "maximum": 6
+      },
+      "deltaBranches": 11
+    },
+    {
+      "path": "src/storage/operational-attachments.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "aad9f3449a00cfed7d0c689af47ef51e7a87e354c920bbff999d86ece0238690",
+        "functions": 8,
+        "total": 23,
+        "branches": 15,
+        "maximum": 14
+      },
+      "deltaBranches": 15
+    },
+    {
+      "path": "src/storage/operational-context.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "53fa9ed5fe2b0724071dda1c1594f8a2101fcf645bcf286da5407a4b9d37183f",
+        "functions": 5,
+        "total": 20,
+        "branches": 15,
+        "maximum": 8
+      },
+      "deltaBranches": 15
+    },
+    {
+      "path": "src/storage/project-backup.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "66dffeb2ca6fa6f6c90a3eb19fafad8e5fd69596f2794c23ef95669fce5f1370",
+        "functions": 11,
+        "total": 37,
+        "branches": 26,
+        "maximum": 18
+      },
+      "deltaBranches": 26
+    },
+    {
+      "path": "src/storage/project-bootstrap.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "b511b8eb18837fa217fc1c3fa2f892d1136456e464a3d10a777643908da68aaa",
+        "functions": 1,
+        "total": 4,
+        "branches": 3,
+        "maximum": 4
+      },
+      "deltaBranches": 3
+    },
+    {
+      "path": "src/storage/project-boundary.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "0fe481357f6d5459a760ddfbf5a21bf6557315482f6612c6cfd829cfa9d8ab57",
+        "functions": 4,
+        "total": 31,
+        "branches": 27,
+        "maximum": 24
+      },
+      "deltaBranches": 27
+    },
+    {
+      "path": "src/storage/project-read-snapshot.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "0cbdd1aa0987447eb2a4222a85ac2645a5f930aa1ade142fcbea190946a6a1a6",
+        "functions": 3,
+        "total": 9,
+        "branches": 6,
+        "maximum": 7
+      },
+      "deltaBranches": 6
+    },
+    {
+      "path": "src/storage/project-replacement.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "8edb1daa7f5a50a56c2762488db647d1e441d1f421d8dd6b2f1fbc5a813efa59",
+        "functions": 18,
+        "total": 71,
+        "branches": 53,
+        "maximum": 21
+      },
+      "deltaBranches": 53
+    },
+    {
+      "path": "src/storage/project-restore.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+        "functions": 20,
+        "total": 72,
+        "branches": 52,
+        "maximum": 20
+      },
+      "deltaBranches": 52
+    },
+    {
+      "path": "src/storage/repository.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "19289ab3fb61fa0b8c0a44efea24f270a8a73ca6d2951bdd54617779f9eaa3d1",
+        "functions": 51,
+        "total": 159,
+        "branches": 108,
+        "maximum": 16
+      },
+      "deltaBranches": 108
+    },
+    {
+      "path": "src/storage/restore-journal.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "50e68dd1a61a9080a833e1e2e05476934b652317cdfe22f11af36cad379f838f",
+        "functions": 7,
+        "total": 59,
+        "branches": 52,
+        "maximum": 16
+      },
+      "deltaBranches": 52
+    },
+    {
+      "path": "src/storage/restore-layout.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "64a380833307e834fbcbf0cd1f6210151b014cbcce95e44615a2ed5c2ebb9e4c",
+        "functions": 3,
+        "total": 17,
+        "branches": 14,
+        "maximum": 13
+      },
+      "deltaBranches": 14
+    },
+    {
+      "path": "src/storage/restore-preparation.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "70c2db1ac984643434a5e1986028efc39f79b9d2f2576a4cbe35f39bd0161347",
+        "functions": 5,
+        "total": 34,
+        "branches": 29,
+        "maximum": 22
+      },
+      "deltaBranches": 29
+    },
+    {
+      "path": "src/storage/restore-replacement-archive.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "fbd0347cb136200ab4cdf848c47c1948f226913a3714c347b71d8fb541c4dd36",
+        "functions": 25,
+        "total": 89,
+        "branches": 64,
+        "maximum": 13
+      },
+      "deltaBranches": 64
+    },
+    {
+      "path": "src/storage/restore-replacement-owner.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "9d3bd4fa498f1f42befe30d1d5d01d1e420996b2887006cecadfdc2011553cbc",
+        "functions": 2,
+        "total": 20,
+        "branches": 18,
+        "maximum": 19
+      },
+      "deltaBranches": 18
+    },
+    {
+      "path": "src/storage/restore-replacement-preparation.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "07c55045508317bb70d20c7b4b687da662d9ab1f41e209d1972a3c7e06180014",
+        "functions": 13,
+        "total": 84,
+        "branches": 71,
+        "maximum": 23
+      },
+      "deltaBranches": 71
+    },
+    {
+      "path": "src/storage/restore-replacement.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "f7b7aed1fe54c4feb71a192a5c2aed9ff92bdb80f26d053ba1498d433cc1f138",
+        "functions": 13,
+        "total": 74,
+        "branches": 61,
+        "maximum": 25
+      },
+      "deltaBranches": 61
+    },
+    {
+      "path": "src/storage/restore-terminal.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "51d56ba62c80d697a3c55728b0ba811b6fb3d55c0631d7ccb137dd128e33da61",
+        "functions": 4,
+        "total": 16,
+        "branches": 12,
+        "maximum": 8
+      },
+      "deltaBranches": 12
+    },
+    {
+      "path": "src/storage/runtime.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "7678e198ada6dd469c038ed9428e1697b64360d577c13256a94526d99b3077bc",
+        "functions": 3,
+        "total": 15,
+        "branches": 12,
+        "maximum": 8
+      },
+      "deltaBranches": 12
+    },
+    {
+      "path": "src/storage/schema.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "fb9875774da8e37c02df05f19a44542a3608930c5841a88c653fc9fa19156082",
+        "functions": 1,
+        "total": 1,
+        "branches": 0,
+        "maximum": 1
+      },
+      "deltaBranches": 0
+    },
+    {
+      "path": "src/storage/singleton-import.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "811af2a22679865f4bf8dfd0d47508444cafdf9f63fd289e5f462feb30ca06db",
+        "functions": 3,
+        "total": 39,
+        "branches": 36,
+        "maximum": 17
+      },
+      "deltaBranches": 36
+    },
+    {
+      "path": "src/storage/snapshot-continuity.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "9a33e104f24922cd2736382a5e531b91a42164a809640d742d67eb707d4d545b",
+        "functions": 1,
+        "total": 12,
+        "branches": 11,
+        "maximum": 12
+      },
+      "deltaBranches": 11
+    },
+    {
+      "path": "src/storage/snapshot.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "52d0e9a891f630df71f34f9fd7fed008a7b97f0ad04efe4727422d7fe2e30d81",
+        "functions": 1,
+        "total": 5,
+        "branches": 4,
+        "maximum": 5
+      },
+      "deltaBranches": 4
+    },
+    {
+      "path": "src/storage/storage-marker.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "1664b9f2c1005507ee1aa256dc443f0d82c728646c2cf04a8460f1b270a0ca05",
+        "functions": 6,
+        "total": 39,
+        "branches": 33,
+        "maximum": 14
+      },
+      "deltaBranches": 33
+    },
+    {
+      "path": "src/storage/task-guards.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "473f1c6aa8d70d938b79725626d8ae6f55cc41210e1bd70eab0b2624ea8b18c1",
+        "functions": 10,
+        "total": 73,
+        "branches": 63,
+        "maximum": 22
+      },
+      "deltaBranches": 63
+    },
+    {
+      "path": "src/storage/topology.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "2c7b381abca72c4a4fc2173623ff5dce13ff6f5982d77ab4c2dbd302e2d6b1fa",
+        "functions": 3,
+        "total": 17,
+        "branches": 14,
+        "maximum": 8
+      },
+      "deltaBranches": 14
+    },
+    {
+      "path": "src/storage/transaction.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "090a74c3080af94d9a7bb100ed9b5606b99635febc672c1a0bcbadc26e98836c",
+        "functions": 9,
+        "total": 46,
+        "branches": 37,
+        "maximum": 18
+      },
+      "deltaBranches": 37
+    },
+    {
+      "path": "src/storage/unit-of-work.js",
+      "baseline": {
+        "functions": 0,
+        "total": 0,
+        "branches": 0,
+        "maximum": 0,
+        "absent": true
+      },
+      "current": {
+        "sha256": "02eea758e34845de2a655c8e9bf4851c2b89a5117a4cfdb0d4aae16400283605",
+        "functions": 78,
+        "total": 319,
+        "branches": 241,
+        "maximum": 22
+      },
+      "deltaBranches": 241
+    }
+  ]
+}

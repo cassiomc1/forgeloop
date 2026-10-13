@@ -1,0 +1,31 @@
+{
+  "increment": 868,
+  "diagnosticRun": 37783665165,
+  "diagnosticSource": "0529bfe",
+  "status": "FAILED",
+  "counts": {
+    "tests": 8,
+    "passed": 0,
+    "failed": 8,
+    "skipped": 0
+  },
+  "unchangedDatabaseObservation": {
+    "platform": "win32",
+    "root": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\forgeloop-db-identity-N944rn\\target",
+    "expected": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\forgeloop-db-identity-N944rn\\target\\.forgeloop\\state.sqlite",
+    "location": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\forgeloop-db-identity-N944rn\\target\\.forgeloop\\state.sqlite",
+    "opened": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\forgeloop-db-identity-N944rn\\target\\.forgeloop\\state.sqlite",
+    "forward": false,
+    "reverse": false,
+    "asyncIdentity": {
+      "dev": "2295306874",
+      "ino": "585749426535794508"
+    },
+    "syncIdentity": {
+      "dev": "2295306874",
+      "ino": "585749426535794508"
+    }
+  },
+  "correction": "Resolve both reported SQLite filename and expected filename with realpathSync.native before containment comparison. Retain regular-file and admitted dev/inode checks.",
+  "verification": "Current Windows correction pending; no restored-path race acceptance claimed."
+}

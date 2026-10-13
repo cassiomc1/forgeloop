@@ -1,0 +1,24 @@
+{
+  "scope": "Unused internal capture helper only; whole consumer review remains pending",
+  "path": "src/storage/task-guards.js",
+  "sha256": "0ff2d6a4b1109e47d97a772c19b54ba68dbae6c739e43d3253b399b244eafff4",
+  "removedSymbol": "captureStoreWorkspaceBinding",
+  "proof": "Exact symbol search across src/tests/integrations/docs found only its definition; package exports only CLI and integration entrypoints; no re-export or caller. Active assertion and external workspace identity provider retained.",
+  "validation": {
+    "focusedTests": {
+      "passed": 13,
+      "failed": 0,
+      "exit": 0
+    },
+    "fastExit": 0
+  },
+  "inclusiveLoc": {
+    "includedFiles": 267,
+    "baselineNonblankPhysicalLines": 43098,
+    "currentNonblankPhysicalLines": 50439,
+    "netReduction": -0.17033273005707916,
+    "candidateTargetMet": false
+  },
+  "scopeReviewComplete": false,
+  "releaseAccepted": false
+}

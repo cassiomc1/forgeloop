@@ -1,0 +1,100 @@
+{
+  "sourceRevision": "3d396452a8a8af60c768f034b3c5522e13e44067",
+  "workerEvidenceDirectory": "/Users/cassio/.codex/verification/sqlite-mcp-resources-pilot-TNJOXt/workers",
+  "progressRetention": {
+    "sampleInterval": 10,
+    "durability": "fsync outside measured operations",
+    "limitation": "Between-request journal writes can affect subsequent process/cache behavior"
+  },
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "node": "v24.19.0",
+  "platform": "darwin",
+  "repeats": 25,
+  "resources": "true",
+  "validationOnly": false,
+  "taskListRequest": {
+    "limit": 1000
+  },
+  "declaredBackendVersions": {
+    "native": "2.0.0",
+    "baseline": "1.14.0"
+  },
+  "parityException": "Only metadata.packageVersion;each raw value must equal its backend package manifest",
+  "adapter": "same current MCP adapter with current or pinned core selected by module resolution hook",
+  "transport": "in-memory MCP client/server",
+  "limits": [
+    "Transport serialization/stdio/HTTP not measured",
+    "Synthetic valid tasks/claims and ten observation events per task",
+    "Resource samples are separately instrumented;RSS endpoints are not operation peak",
+    "Not complete MCP throughput/contention/resource acceptance"
+  ],
+  "releaseThresholdsVerified": false,
+  "results": [
+    {
+      "tasks": 1000,
+      "events": 10000,
+      "operation": "taskListTool",
+      "outputParity": true,
+      "nativeP95Ms": 633.5799999999999,
+      "baselineP95Ms": 1666.0112499999996
+    },
+    {
+      "tasks": 1000,
+      "events": 10000,
+      "operation": "projectTasksResource",
+      "outputParity": true,
+      "nativeP95Ms": 639.2487919999985,
+      "baselineP95Ms": 1739.570041999992
+    }
+  ],
+  "journals": {
+    "parent.progress.ndjson": {
+      "entries": 11,
+      "terminalStage": "COMPLETED"
+    },
+    "native-1000.json.progress.ndjson": {
+      "entries": 17,
+      "terminalStage": "CLOSED"
+    },
+    "baseline-1000.json.progress.ndjson": {
+      "entries": 17,
+      "terminalStage": "CLOSED"
+    }
+  },
+  "rawFiles": [
+    {
+      "path": "/Users/cassio/.codex/verification/sqlite-mcp-resources-pilot-TNJOXt/README.md",
+      "sha256": "e905285c00c803cba0ffbdffc8140ab17a41a70886ccf75244aea607b117613a"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/sqlite-mcp-resources-pilot-TNJOXt/pilot.json",
+      "sha256": "aa3fa98a4d88d76095a474fcc11324761e71095669dfb420fa078f49dc3215eb"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/sqlite-mcp-resources-pilot-TNJOXt/pilot.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/sqlite-mcp-resources-pilot-TNJOXt/workers/baseline-1000.json",
+      "sha256": "3c327826493fe786817ddd9a5becabeb90996e093274257c0687d132643846a7"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/sqlite-mcp-resources-pilot-TNJOXt/workers/baseline-1000.json.progress.ndjson",
+      "sha256": "2998e7cb9c1b5040815b8d2c328c1e304281dadcf83ae8a0269105e834ac4fe7"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/sqlite-mcp-resources-pilot-TNJOXt/workers/native-1000.json",
+      "sha256": "50b4e9941d75c2ec32015c0a0fc32c22ce0e2c6fe24ce73c36ffe8428218bf02"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/sqlite-mcp-resources-pilot-TNJOXt/workers/native-1000.json.progress.ndjson",
+      "sha256": "10d6a787663b2fddff9287139e982ea8466bf0710662684e14ac83b7ae831978"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/sqlite-mcp-resources-pilot-TNJOXt/workers/parent.progress.ndjson",
+      "sha256": "544fe9904a72b79bde18c0dfa605a8a49b4e178719b869bfdebab95a8ba69cf8"
+    }
+  ],
+  "acceptanceEligible": false,
+  "sourceManifestLimitation": "Harness reports source revision but has no before/after tracked-source hash manifest."
+}

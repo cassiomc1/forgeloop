@@ -1,0 +1,59 @@
+{
+  "sourceRevision": "9dd179c5d4b691a57dbf25901f67f69da23b4aeb",
+  "status": "FOCUSED_AND_FULL_LOCAL_VALIDATION_COMPLETE",
+  "capturedAt": "2026-10-09T21:45:35.880793+00:00",
+  "readOnlyRegression": {
+    "before": "Expected zero read-set entries, observed four",
+    "after": "Full read-only audit keeps zero entries and rejects live indexed event tampering on the next request"
+  },
+  "focusedTests": 64,
+  "focusedFailures": 0,
+  "fastVerificationPassed": true,
+  "mcpFixtureFix": {
+    "commit": "42e4faf",
+    "cleanPackageTests": 77,
+    "environmentUnset": [
+      "TYPESAFE_API_KEY",
+      "NODE_OPTIONS"
+    ],
+    "productionAuthenticationChanged": false
+  },
+  "fullPrepush": {
+    "session": 90111,
+    "log": "/Users/cassio/.codex/verification/readonly-observation-prepush.log",
+    "status": "COMPLETED",
+    "exitCode": 0
+  },
+  "artifacts": [
+    {
+      "path": "/Users/cassio/.codex/verification/readonly-observation-red.log",
+      "sha256": "b455478850e9ca96712dbfce7f07442d8f70677ce9a795042c024b52535883b1"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/readonly-observation-focused.log",
+      "sha256": "b8e82a8d8145b43e5a3c02c601dafc97ec246a9494d52dc9a59a1affa98483d8"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/readonly-observation-regressions.log",
+      "sha256": "e62116e66c443f89fa02c253d5720ea0d73884d22d99e287a8e16d32b3a47c62"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/readonly-observation-verify-fast.log",
+      "sha256": "af89e7c6c77e209e7b61998b803c6f82c7b2666bcf41e96caaf37579f6e5454a"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/mcp-clean-deterministic-provider.log",
+      "sha256": "b4400d18e0bbfbc8673f77e4ebd19b988f24f38ce20f796ef581275470626368"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/mcp-fixture-verify-fast.log",
+      "sha256": "cb2c39d47162a6b791f98541603c29d256f8225a1d4b04c926800db757b8fba5"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/ci-aa03451-tarball-smoke.log",
+      "sha256": "fd9f3466cd49b947e7371b1310878fbcdb217a98a3886d4a7ff72e787bfff392"
+    }
+  ],
+  "resourceAcceptance": false,
+  "wholePlanAcceptance": false
+}

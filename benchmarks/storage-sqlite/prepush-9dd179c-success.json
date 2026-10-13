@@ -1,0 +1,65 @@
+{
+  "sourceRevision": "9dd179c5d4b691a57dbf25901f67f69da23b4aeb",
+  "exitCode": 0,
+  "capturedAt": "2026-10-09T21:52:20.053671+00:00",
+  "trackedSourceHashesUnchanged": true,
+  "trackedFileCount": 3092,
+  "captureBoundary": "Before full prepush start",
+  "environmentUnset": [
+    "TYPESAFE_API_KEY",
+    "NODE_OPTIONS"
+  ],
+  "coreTests": {
+    "total": 2959,
+    "pass": 2948,
+    "fail": 0,
+    "skip": 11
+  },
+  "otherSuites": {
+    "poc": 67,
+    "mcp": 77,
+    "package": 12,
+    "python": 56
+  },
+  "passedStages": [
+    "coverage (519.2s)",
+    "critical-coverage:check (0.2s)",
+    "lint (4.2s)",
+    "dependency:policy (0.1s)",
+    "complexity:check (1.6s)",
+    "docs:check (2.6s)",
+    "completions:check (0.1s)",
+    "summary:check (0.1s)",
+    "changelog:check (0.2s)",
+    "repository-index:manifest (0.1s)",
+    "repository:hygiene (0.2s)",
+    "poc:evidence:verify (0.2s)",
+    "poc:evidence:test (1.5s)",
+    "mcp:test:clean (7.3s)",
+    "mcp:pack:check (2.9s)",
+    "pack:check (1.7s)",
+    "python-unittest (2.2s)",
+    "markdown-self-test (0.1s)",
+    "markdown-validator (0.8s)",
+    "loop-self-test (0.2s)",
+    "loop-validator (0.1s)",
+    "secret-scan (11.2s)"
+  ],
+  "log": {
+    "path": "/Users/cassio/.codex/verification/readonly-observation-prepush.log",
+    "sha256": "62e66ed99722176f599128a8ec0fa9f01e8b4d71d7ce7b698cc3e894d3dbde2f"
+  },
+  "manifest": {
+    "path": "/Users/cassio/.codex/verification/readonly-observation-prepush-start-manifest.json",
+    "sha256": "ffb000caa2134cf6184993dc58d3da46dee6ac18db180d167598a967a7db77f8"
+  },
+  "wholePlanAcceptance": false,
+  "remaining": [
+    "Original inclusive 25 percent LOC target",
+    "Current memory/resource acceptance",
+    "Current expanded platform matrix",
+    "Whole consumer and sole-writer closure",
+    "Official VALID completion",
+    "PR after all steps"
+  ]
+}

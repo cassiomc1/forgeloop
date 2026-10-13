@@ -16,6 +16,7 @@ import { persistRoute } from "../src/core/route-artifact.js";
 import { createTaskDescriptor, writeTaskDescriptor } from "../src/core/task-descriptor.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { createWorkState, writeWorkState } from "../src/core/work-state.js";
+import { withProjectStorage } from "../src/storage/project-boundary.js";
 
 const packageRoot = getPackageRoot();
 
@@ -40,6 +41,7 @@ function authorityFor(taskId) {
 async function setupEvaluationTarget() {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-context-propagation-"));
   const taskId = "context-propagation-task";
+  return withProjectStorage(target, async () => {
   const contract = createContract({
     taskId,
     objective: "exercise integration context propagation",
@@ -116,6 +118,7 @@ async function setupEvaluationTarget() {
   await advanceWorkState(target, "REVIEWING", { packageRoot, taskId, runtimeContext });
 
   return { target, taskId, authorityContext, runtimeContext };
+  });
 }
 
 async function withEvaluationTarget(run) {
@@ -123,7 +126,7 @@ async function withEvaluationTarget(run) {
   try {
     await run(fixture);
   } finally {
-    await rm(fixture.target, { recursive: true, force: true });
+    await rm(fixture.target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
   }
 }
 

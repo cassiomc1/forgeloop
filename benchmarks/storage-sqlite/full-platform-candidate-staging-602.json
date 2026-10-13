@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "scope": "Stage the immutable601 candidate for full requested-platform verification; no terminal full pass claimed",
+  "candidate": {
+    "sourceFiles": 2607,
+    "manifest": "/tmp/sqlite-legacy-inspection601-source.json",
+    "archiveBytes": 13184696,
+    "archiveSha256": "4af317e40733feff17f05b32e6553a6744f5d460222441e304b0e3d802a24f8e"
+  },
+  "windows": {
+    "root": "C:/forgeloop-tests/increment602/source",
+    "setupStatus": 0,
+    "sourceHashesVerified": 2607,
+    "lockedDependenciesInstalled": 135,
+    "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+    "status": "RUNNING",
+    "observation": {
+      "stdoutBytes": 60577,
+      "exitCode": null,
+      "pid": 8552,
+      "alive": true,
+      "stdoutWriteTicks": 639269131266062978
+    },
+    "priorObservedStdoutBytes": 43594,
+    "launcherSession": 84482,
+    "setupResultSha256": "6e3eddbc5dd5e5b54f904d3553c3bebdfbcf7fc7764cad4177cf9e1840d90fc7"
+  },
+  "macos": {
+    "root": "/tmp/forgeloop-legacy-inspection601",
+    "status": "RUNNING",
+    "session": 74921,
+    "log": "/tmp/sqlite-legacy-inspection601-prepush.log",
+    "exitFile": "/tmp/sqlite-legacy-inspection601-prepush.exit"
+  },
+  "linux": {
+    "status": "NOT_LAUNCHED",
+    "launchRequest": "/tmp/forgeloop-linux-full602-launch-request.json",
+    "next": "Launch only after Windows terminal result; use same immutable admitted source and Docker on requested host."
+  },
+  "discovery": {
+    "surfaceModules": 127,
+    "candidateRecords": 243,
+    "inventorySha256": "22915f45d6703b23df3298a5e2d591f76f2337a8d2aa920434e1cbd5df5812e5",
+    "authority": "DISCOVERY_ONLY; static reachability is not verification or scope closure."
+  },
+  "limitations": [
+    "Both full jobs remain live; terminal logs and after-run source integrity are required.",
+    "Linux full run remains pending.",
+    "Remaining original all-consumer, performance/LOC, workflow and protocol/PR gates remain open."
+  ]
+}

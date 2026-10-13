@@ -1,0 +1,173 @@
+{
+  "sourceHead": "000503459f7344b7edb62bd3c1eccd9f8533b07c",
+  "runId": 38069000333,
+  "status": "completed",
+  "githubConclusion": "success",
+  "observedTargetedCompatibility": "PASS",
+  "rows": [
+    {
+      "jobId": 114262392065,
+      "name": "Minimum Node 24.19.0 compatibility",
+      "runner": "forgeloop-linux-remote",
+      "actualNode": "v24.19.0",
+      "testGroups": [
+        {
+          "tests": 80,
+          "passed": 80,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "tests": 82,
+          "passed": 82,
+          "failed": 0,
+          "skipped": 0
+        }
+      ],
+      "cleanupObserved": true,
+      "rawLog": "/Users/cassio/.codex/verification/node-compat-0005034-job-114262392065.log",
+      "rawLogSha256": "71883669ae55ee8f476c6fe77e3b571c67faa31186747426a864b3e57ea00e09"
+    },
+    {
+      "jobId": 114262652006,
+      "name": "Node compatibility (Linux, Node 26)",
+      "runner": "forgeloop-linux-remote",
+      "actualNode": "v26.10.0",
+      "testGroups": [
+        {
+          "tests": 80,
+          "passed": 80,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "tests": 82,
+          "passed": 82,
+          "failed": 0,
+          "skipped": 0
+        }
+      ],
+      "cleanupObserved": true,
+      "rawLog": "/Users/cassio/.codex/verification/node-compat-0005034-job-114262652006.log",
+      "rawLogSha256": "4ed56f74ef7535a529e3516131953005e9c13cbd70d3c935d749c18d0f0d2616"
+    },
+    {
+      "jobId": 114262652015,
+      "name": "Node compatibility (Linux, Node 24.19.0)",
+      "runner": "forgeloop-linux-remote",
+      "actualNode": "v24.19.0",
+      "testGroups": [
+        {
+          "tests": 80,
+          "passed": 80,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "tests": 82,
+          "passed": 82,
+          "failed": 0,
+          "skipped": 0
+        }
+      ],
+      "cleanupObserved": true,
+      "rawLog": "/Users/cassio/.codex/verification/node-compat-0005034-job-114262652015.log",
+      "rawLogSha256": "1485d17feabf38c1b12fdad739b6f4027df31fde95c255e16ba5e8ce50f1b90f"
+    },
+    {
+      "jobId": 114262652024,
+      "name": "Node compatibility (Windows, Node 24)",
+      "runner": "forgeloop-windows-remote",
+      "actualNode": "v24.21.0",
+      "testGroups": [
+        {
+          "tests": 80,
+          "passed": 80,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "tests": 82,
+          "passed": 82,
+          "failed": 0,
+          "skipped": 0
+        }
+      ],
+      "cleanupObserved": true,
+      "rawLog": "/Users/cassio/.codex/verification/node-compat-0005034-job-114262652024.log",
+      "rawLogSha256": "49c9c153f70a2481f43b0ec132e5974405d4b6974c6cc0848e74909439c29ae3"
+    },
+    {
+      "jobId": 114262652061,
+      "name": "Node compatibility (macOS, Node 24)",
+      "runner": "forgeloop-macos-local",
+      "actualNode": "v24.19.0",
+      "testGroups": [
+        {
+          "tests": 80,
+          "passed": 80,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "tests": 82,
+          "passed": 82,
+          "failed": 0,
+          "skipped": 0
+        }
+      ],
+      "cleanupObserved": true,
+      "rawLog": "/Users/cassio/.codex/verification/node-compat-0005034-job-114262652061.log",
+      "rawLogSha256": "4b417b9121b87c4c37c352789fbc54090fa7278ee4550223878c8f7909cadac0"
+    },
+    {
+      "jobId": 114262652069,
+      "name": "Node compatibility (macOS, Node 24.19.0)",
+      "runner": "forgeloop-macos-local",
+      "actualNode": "v24.19.0",
+      "testGroups": [
+        {
+          "tests": 80,
+          "passed": 80,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "tests": 82,
+          "passed": 82,
+          "failed": 0,
+          "skipped": 0
+        }
+      ],
+      "cleanupObserved": true,
+      "rawLog": "/Users/cassio/.codex/verification/node-compat-0005034-job-114262652069.log",
+      "rawLogSha256": "8efc9eeaba9e3f243a9f7e3de4d96d2923da029c0c4b6d8c1aa6ab18bcc82d8b"
+    },
+    {
+      "jobId": 114262652103,
+      "name": "Node compatibility (Windows, Node 24.19.0)",
+      "runner": "forgeloop-windows-remote",
+      "actualNode": "v24.19.0",
+      "testGroups": [
+        {
+          "tests": 80,
+          "passed": 80,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "tests": 82,
+          "passed": 82,
+          "failed": 0,
+          "skipped": 0
+        }
+      ],
+      "cleanupObserved": true,
+      "rawLog": "/Users/cassio/.codex/verification/node-compat-0005034-job-114262652103.log",
+      "rawLogSha256": "1354e7b2be89eeb22a4a12b1238d21e1cad195114a35708e19f5846655b2bf9d"
+    }
+  ],
+  "limits": [
+    "Targeted quick, CLI help, protocol-info and storage compatibility checks; not full platform regression or performance/LOC acceptance."
+  ]
+}

@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
+import { mkdtemp, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -99,7 +100,7 @@ test("baseline capture detects mid-scan source drift and fails closed in gate mo
       { code: "E_STRUCTURAL_QUALITY_SOURCE_DRIFT" },
     );
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -117,7 +118,7 @@ test("baseline capture detects mid-scan source drift and records NOT_OBSERVED in
     assert.equal(result.status, "NOT_OBSERVED");
     assert.equal(result.reasonCodes[0], "E_STRUCTURAL_QUALITY_SOURCE_DRIFT");
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -142,7 +143,7 @@ test("quality verification detects mid-scan source drift and blocks gate check",
     assert.equal(verifyResult.evaluation.sourceObservation.stable, false);
     assert.equal(verifyResult.check.status, "blocked");
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -166,7 +167,7 @@ test("provenance check rejects evaluation check if worktree was modified after v
     const errors = await validateStructuralQualityCheckProvenance(check, { target, packageRoot, taskId, state });
     assert.ok(errors.some((err) => err.code === "E_STRUCTURAL_QUALITY_EVIDENCE_STALE"));
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -181,7 +182,7 @@ test("source fingerprinting fails closed on unsafe symlinks", async () => {
       { code: "E_STRUCTURAL_QUALITY_SOURCE_FINGERPRINT_UNAVAILABLE" },
     );
   } finally {
-    await rm(target, { recursive: true, force: true });
-    await rm(outside, { recursive: true, force: true });
+    await removeTempTree(target);
+    await removeTempTree(outside);
   }
 });

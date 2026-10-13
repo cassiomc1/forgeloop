@@ -1,0 +1,21 @@
+{
+  "increment": 672,
+  "before": "Database-associated attachment publication from an expired native callback returned published",
+  "after": {
+    "targetedTests": 11,
+    "fastVerificationExit": 0,
+    "lintExit": 0,
+    "complexityStatus": "PASS",
+    "expiredEntryCode": "E_STORAGE_TRANSACTION_EXPIRED",
+    "streamConsumed": false,
+    "objectDirectoryCreated": false,
+    "referencesCreated": 0
+  },
+  "scope": "Database-associated publication and registration entry; standalone no-database file publication and already-started preparation effects are separate boundaries",
+  "releaseThresholdsVerified": false,
+  "hashes": {
+    "src/storage/attachment-files.js": "10e3da12d126263bb4ef7ca2684911bc778048b90069a84ccc73029cd53b93f5",
+    "src/storage/attachment-references.js": "b85b1594ee44256a6e13381debedaae81f396baaf51f0815060c40177ba78c4a",
+    "tests/storage-attachment-files.test.js": "3b03bfb9652253ec6e12d4e79773907f52936363dd9644c69de0cf57c68ed604"
+  }
+}

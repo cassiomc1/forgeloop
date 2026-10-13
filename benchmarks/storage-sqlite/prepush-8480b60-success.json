@@ -1,0 +1,37 @@
+{
+  "sourceRevision": "8480b60275110e8e9957275e8f47efb50f19efa6",
+  "checkedAt": "2026-10-09T19:22:49.205771+00:00",
+  "command": "npm run verify:prepush",
+  "nodeVersion": "24.19.0",
+  "exitCode": 0,
+  "trackedFileCount": 3074,
+  "sourceManifestMatches": true,
+  "changedFiles": [],
+  "removedFiles": [],
+  "logPath": "/Users/cassio/.codex/verification/sqlite-8480b60-prepush.log",
+  "logSha256": "8e3935dd8ee11e9346c07868f9da5c925d4997ff0bdc3cc3c2897f776def3f61",
+  "core": {
+    "tests": 2956,
+    "passed": 2945,
+    "failed": 0,
+    "skipped": 11
+  },
+  "poc": {
+    "tests": 67,
+    "passed": 67
+  },
+  "mcp": {
+    "tests": 74,
+    "passed": 74
+  },
+  "package": {
+    "tests": 12,
+    "passed": 12
+  },
+  "limitations": [
+    "This verification does not close current-source benchmark, platform, whole consumer, LOC or protocol acceptance gates."
+  ],
+  "acceptance": false,
+  "initialManifestPath": "/Users/cassio/.codex/verification/sqlite-8480b60-prepush-start-manifest.json",
+  "initialManifestSha256": "3e91ce58e4469d6af5b6e847744a76662be8c2336473160d00c451c22be6992c"
+}

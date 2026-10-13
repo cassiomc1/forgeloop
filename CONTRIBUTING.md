@@ -12,8 +12,8 @@ aggregates coverage without rerunning tests. `npm run test:watch` provides
 local watch mode. Run `npm run mcp:setup` explicitly when MCP checks are in
 scope. Keep CLI metadata, generated
 references, schemas, completions, summaries, and conformance scenarios
-aligned. Do not add vendor-specific runtime behavior: ForgeLoop remains a
-file-backed protocol and support CLI.
+aligned. Do not add vendor-specific runtime behavior: ForgeLoop uses canonical
+SQLite operational storage and explicit file interchange.
 
 The ordinary PR workflow is intentionally path-aware. `pr-core.yml` always
 publishes the ruleset contexts `audit`, `CodeQL`, `Verify generated Archify
@@ -22,6 +22,11 @@ diagram`, `validate (22)`, `tarball smoke (ubuntu-latest)`, and
 or is skipped unexpectedly. Broader main-branch and release workflows provide
 the explicit cross-platform, package, Windows, documentation, and audit
 coverage that is not duplicated on every pull request.
+
+Node test jobs use local macOS and remote native Windows/Linux Docker runners.
+See [self-hosted validation](./docs/SELF_HOSTED_TESTS.md) for admission, runtime,
+service and evidence boundaries. Required check names remain stable, including
+the historical `tarball smoke (ubuntu-latest)` context.
 
 ## Protocol changes
 
@@ -83,8 +88,7 @@ the committed hotspot budget require an explicit explanation and review.
 TypeScript and YAML are development-only dependencies for packed-consumer and
 semantic workflow verification; the core runtime has no npm dependencies.
 
-Transaction payload maintenance is opt-in:
-`npm run transactions:compact -- --path /path/to/project --retain-days 7`
-previews the operation; add `--apply` to compact eligible payloads. Manifests,
-ledgers, recent transactions, and ambiguous outcomes remain intact. See the
-[Astra implementation record](docs/ASTRA_IMPLEMENTATION.md) for boundaries.
+Filesystem transaction-payload maintenance is retired with the SQLite
+migration. Preserve legacy evidence for explicit migration and diagnosis. See
+the [Astra implementation record](docs/ASTRA_IMPLEMENTATION.md) for historical
+boundaries.

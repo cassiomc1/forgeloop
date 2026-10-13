@@ -1,0 +1,212 @@
+{
+  "schemaVersion": 1,
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "productionRoots": [
+    "src",
+    "integrations/mcp/src"
+  ],
+  "countingMethod": "Nonblank physical production lines including comments; same whole-module union on both sides; tests/scripts/package manifests excluded",
+  "scopeMethod": "Conservative candidate union: direct persistence/file-I/O signals in either version, every storage module, every changed/new production module. All omitted modules are listed too. Requires semantic scope review before release acceptance.",
+  "scopeReviewComplete": false,
+  "releaseThresholdsVerified": false,
+  "includedFiles": 279,
+  "baselineNonblankPhysicalLines": 43592,
+  "currentNonblankPhysicalLines": 51734,
+  "netReduction": -0.1867773903468526,
+  "candidateTargetMet": false,
+  "increment": 760,
+  "parentHead": "da347e8406c39b91b58b37f6dbbc1159baa6fa23",
+  "baseInventory": "benchmarks/storage-sqlite/persistence-loc698.json",
+  "rawSha256": "ce65f7d3f1e5f8acae5749351fc8809b43ad4499260d9dbc80fa1631883358ca",
+  "changedModuleRecords": [
+    {
+      "path": "src/core/completion-artifacts.js",
+      "included": true,
+      "scopeReview": "PENDING",
+      "reasons": [
+        "baseline-direct-persistence-or-file-IO-signal",
+        "current-direct-persistence-or-file-IO-signal",
+        "changed-production-module-included-conservatively"
+      ],
+      "baseline": {
+        "nonblankPhysicalLines": 990,
+        "bytes": 36059,
+        "sha256": "c8ce293b50d3c65b0621319892dc77348b99ebfa10e8ef6fc3ee406568eb0274",
+        "persistenceSignal": true
+      },
+      "current": {
+        "nonblankPhysicalLines": 1012,
+        "bytes": 37368,
+        "sha256": "b6f35a856eead863d69858cfd367df511f9ca11e5d84134b8cfe5e4aad0fa48d",
+        "persistenceSignal": true
+      }
+    },
+    {
+      "path": "src/core/completion-recovery-rebind.js",
+      "included": true,
+      "scopeReview": "PENDING",
+      "reasons": [
+        "baseline-direct-persistence-or-file-IO-signal",
+        "current-direct-persistence-or-file-IO-signal",
+        "changed-production-module-included-conservatively"
+      ],
+      "baseline": {
+        "nonblankPhysicalLines": 178,
+        "bytes": 7459,
+        "sha256": "1f0c508951f625e8017abd1e761ff77641ff3e37d2f803fe0f87bf5a00c6dc95",
+        "persistenceSignal": true
+      },
+      "current": {
+        "nonblankPhysicalLines": 187,
+        "bytes": 8151,
+        "sha256": "8385a5bec51ab43baab514d71f4d156535ec579e1249e49709b2db7a7fa13ca9",
+        "persistenceSignal": true
+      }
+    },
+    {
+      "path": "src/core/diagnosis.js",
+      "included": true,
+      "scopeReview": "PENDING",
+      "reasons": [
+        "baseline-direct-persistence-or-file-IO-signal",
+        "current-direct-persistence-or-file-IO-signal",
+        "changed-production-module-included-conservatively"
+      ],
+      "baseline": {
+        "nonblankPhysicalLines": 159,
+        "bytes": 5031,
+        "sha256": "1bce1e47fca9a722688a28fb660d282c2802b53cf6b1ef779cb4f074a655394b",
+        "persistenceSignal": true
+      },
+      "current": {
+        "nonblankPhysicalLines": 167,
+        "bytes": 5676,
+        "sha256": "d656e4f4d77430cb5740e3346867a1d8864c7b4a8e5fca8c299f9ae0d23e71e1",
+        "persistenceSignal": true
+      }
+    },
+    {
+      "path": "src/core/diagnostic-record.js",
+      "included": true,
+      "scopeReview": "PENDING",
+      "reasons": [
+        "baseline-direct-persistence-or-file-IO-signal",
+        "current-direct-persistence-or-file-IO-signal",
+        "changed-production-module-included-conservatively"
+      ],
+      "baseline": {
+        "nonblankPhysicalLines": 325,
+        "bytes": 13976,
+        "sha256": "57344dacb555cde46ba692238e5b951ee67110f9b65c1aa7a2f3ea2dfa61ad1e",
+        "persistenceSignal": true
+      },
+      "current": {
+        "nonblankPhysicalLines": 333,
+        "bytes": 14565,
+        "sha256": "0e166788d91d38d798e0fd972ae7a0ce3bfeca2c0842e5f2b7bc3828e94d4f71",
+        "persistenceSignal": true
+      }
+    },
+    {
+      "path": "src/core/preflight-loaders.js",
+      "included": true,
+      "scopeReview": "PENDING",
+      "reasons": [
+        "baseline-direct-persistence-or-file-IO-signal",
+        "current-direct-persistence-or-file-IO-signal",
+        "changed-production-module-included-conservatively"
+      ],
+      "baseline": {
+        "nonblankPhysicalLines": 143,
+        "bytes": 6463,
+        "sha256": "3d11ddfb3228bfd37863cc096476161d445b8cf5f65fe087e39dc7411a571978",
+        "persistenceSignal": true
+      },
+      "current": {
+        "nonblankPhysicalLines": 149,
+        "bytes": 6895,
+        "sha256": "d0d6a3f650d14bd9454ea2b2bd50a2641670c6724687e4e37c9b023852aa0385",
+        "persistenceSignal": true
+      }
+    },
+    {
+      "path": "src/core/task-discovery.js",
+      "included": true,
+      "scopeReview": "PENDING",
+      "reasons": [
+        "baseline-direct-persistence-or-file-IO-signal",
+        "current-direct-persistence-or-file-IO-signal",
+        "changed-production-module-included-conservatively"
+      ],
+      "baseline": {
+        "nonblankPhysicalLines": 180,
+        "bytes": 6931,
+        "sha256": "1efa26c7d50df35fb41dab6a0136acc888a9b43b66b574f71f6ba97a971888f0",
+        "persistenceSignal": true
+      },
+      "current": {
+        "nonblankPhysicalLines": 221,
+        "bytes": 9464,
+        "sha256": "5a79849caef814dbf1208e297ee14116f892314df98e2481812dd5afcda3d5ad",
+        "persistenceSignal": true
+      }
+    },
+    {
+      "path": "src/storage/maintenance-handoff.js",
+      "included": true,
+      "scopeReview": "PENDING",
+      "reasons": [
+        "current-direct-persistence-or-file-IO-signal",
+        "complete-storage-import-export-maintenance-owner",
+        "changed-production-module-included-conservatively",
+        "new-production-module-included-conservatively"
+      ],
+      "baseline": null,
+      "current": {
+        "nonblankPhysicalLines": 100,
+        "bytes": 5460,
+        "sha256": "79113b4f2c706ae35c0ffa775b433fbd085fd95d4d23d0d25072151f4c3887f5",
+        "persistenceSignal": true
+      }
+    },
+    {
+      "path": "src/storage/repository.js",
+      "included": true,
+      "scopeReview": "PENDING",
+      "reasons": [
+        "current-direct-persistence-or-file-IO-signal",
+        "complete-storage-import-export-maintenance-owner",
+        "changed-production-module-included-conservatively",
+        "new-production-module-included-conservatively"
+      ],
+      "baseline": null,
+      "current": {
+        "nonblankPhysicalLines": 422,
+        "bytes": 19049,
+        "sha256": "0daa932a050bd7ec78474899b098d385b34d8066690129ad79149d4eb25c3790",
+        "persistenceSignal": true
+      }
+    },
+    {
+      "path": "src/storage/unit-of-work.js",
+      "included": true,
+      "scopeReview": "PENDING",
+      "reasons": [
+        "current-direct-persistence-or-file-IO-signal",
+        "complete-storage-import-export-maintenance-owner",
+        "changed-production-module-included-conservatively",
+        "new-production-module-included-conservatively"
+      ],
+      "baseline": null,
+      "current": {
+        "nonblankPhysicalLines": 494,
+        "bytes": 31940,
+        "sha256": "02eea758e34845de2a655c8e9bf4851c2b89a5117a4cfdb0d4aae16400283605",
+        "persistenceSignal": true
+      }
+    }
+  ],
+  "allOtherModuleRecordsUnchanged": true,
+  "targetMaximumLines": 32694,
+  "additionalLinesToRemove": 19040
+}

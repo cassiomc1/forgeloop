@@ -1,0 +1,67 @@
+{
+  "increment": 888,
+  "sourceRevision": "e58d864bcb4151545abd50b683e75be50e34934e",
+  "cwd": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop",
+  "exitCode": 1,
+  "elapsedSeconds": 991.5040292739868,
+  "manifestFiles": 3007,
+  "admittedSourceUnchanged": true,
+  "status": "FAILED",
+  "scope": "Paginated (limit 100) MCP in-memory client/server discovery comparison across 1000/5000 tasks and two hundred repetitions; natural GC and retained per-request RSS endpoints; optional resource instrumentation enabled; resource latency is separate from uninstrumented timing; source manifest checked before and after. Full output parity except validated package version, not stdio/HTTP or filesystem-cold evidence.",
+  "baselineFailure": {
+    "code": "REQUEST_TIMEOUT",
+    "requestTimeoutMs": 60000,
+    "outputWritten": false,
+    "exactOperationAndSampleIndex": "not captured by current worker; instrumentation correction required"
+  },
+  "termination": {
+    "workerPid": 44125,
+    "parentPid": 39776,
+    "reason": "OS sample shows uncaught exception exit blocked in uv__threadpool_cleanup -> uv_thread_join; all libuv workers sampled waiting. CPU unchanged and baseline output absent.",
+    "signal": "SIGKILL",
+    "samplingIntervention": "1-second OS stack sample after observed CPU stall; no measurement acceptance claimed.",
+    "nativePartialPreserved": true
+  },
+  "nativePartial": {
+    "tasks": 1000,
+    "events": 10000,
+    "operations": [
+      {
+        "operation": "taskListTool",
+        "repetitions": 200,
+        "withinBackendResponseStability": true,
+        "peakLifetimeRssMiB": 378.625,
+        "quarterlyEndpointRssMediansMiB": [
+          345.4453125,
+          286.8984375,
+          282.421875,
+          321.0390625
+        ],
+        "last50EndpointRssRangeMiB": [
+          244.90625,
+          351.046875
+        ]
+      },
+      {
+        "operation": "projectTasksResource",
+        "repetitions": 200,
+        "withinBackendResponseStability": true,
+        "peakLifetimeRssMiB": 378.625,
+        "quarterlyEndpointRssMediansMiB": [
+          271.6484375,
+          276.984375,
+          275.8671875,
+          257.546875
+        ],
+        "last50EndpointRssRangeMiB": [
+          188.65625,
+          328.5
+        ]
+      }
+    ],
+    "rawSha256": "adcc495d7b0de1c3f010deba69a10a123ca419dbe75168ab4e6e7fb3b2fe93c1"
+  },
+  "failedLogSha256": "57c814d89a54af7e75ef1568996d12f1176dc87cea0ce056b0c276007036a862",
+  "osStackSampleSha256": "430e15beed9531ca8a6956f2b267e01ed1b0a795e7ef951374aa0c8f4bec8a58",
+  "acceptance": "FAILED: no matched baseline/native aggregate, no 5000-task results, no full performance/resource acceptance. Native partial measurements are finite unprofiled observations; no accepted memory budget or universal bound."
+}

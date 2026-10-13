@@ -1,3 +1,4 @@
+import { withProjectReadSnapshot } from "../storage/project-read-snapshot.js";
 import { createHash } from "node:crypto";
 
 import { canonicalFingerprint } from "./artifacts.js";
@@ -8,7 +9,8 @@ import { assertRevisionProvider, resolveRevisionProvider } from "./revision/prov
 import { REVISION_PROVIDERS } from "./revision/registry.js";
 import { assertSigningProvider, resolveSigningProvider } from "./signing/provider.js";
 import { SIGNING_PROVIDERS } from "./signing/registry.js";
-import { taskAttestationBundlePath, taskAttestationStatementPath } from "./task-paths.js";
+import { taskAttestationStatementPath } from "./task-paths.js";
+import { resolveAttestationBundlePath } from "./attachment-paths.js";
 import { ensureWithin, fileExists } from "./filesystem.js";
 import { E_ATTESTATION_CONFIGURATION_INVALID } from "./error-codes.js";
 
@@ -131,6 +133,23 @@ export async function verifyAttestation({
   trustedRoot = null,
   requireSignature = false,
 } = {}) {
+  const options = { target, packageRoot, taskId, revision, bundlePath, identity, issuer, revisionProvider, signingProvider, trustedRoot, requireSignature };
+  return withProjectReadSnapshot(target, () => verifySelectedAttestation(options));
+}
+
+async function verifySelectedAttestation({
+  target,
+  packageRoot = getPackageRoot(),
+  taskId,
+  revision = null,
+  bundlePath = null,
+  identity = null,
+  issuer = null,
+  revisionProvider = null,
+  signingProvider = null,
+  trustedRoot = null,
+  requireSignature = false,
+} = {}) {
   let effectiveRequireSignature = requireSignature === true;
   let effectiveSigningProvider = signingProvider;
   let effectiveBundlePath = bundlePath;
@@ -146,7 +165,6 @@ export async function verifyAttestation({
   } catch (error) {
     if (error.code !== "ARTIFACT_MISSING") configurationError = error;
   }
-  if (effectiveRequireSignature && !effectiveBundlePath) effectiveBundlePath = taskAttestationBundlePath(taskId);
   const result = {
     schemaVersion: 1,
     status: "INVALID",
@@ -166,6 +184,7 @@ export async function verifyAttestation({
     return result;
   }
   try {
+    if (effectiveBundlePath || effectiveRequireSignature) effectiveBundlePath = resolveAttestationBundlePath(target, taskId, effectiveBundlePath);
     const statementArtifact = await readAttestationStatement({ target, packageRoot, taskId });
     const manifestArtifact = await readCodeManifest({ target, packageRoot, taskId });
     await validateAttestationStatement(statementArtifact.value, packageRoot);

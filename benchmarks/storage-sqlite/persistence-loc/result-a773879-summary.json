@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "kind": "PERSISTENCE_LOC_FUNCTION_SCOPE_RESULT_SUMMARY",
+  "reviewedRevision": "a7738796c2859524fad0933037b142089fb90e3c",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "baselineSelectedLines": 25732,
+  "currentSelectedLines": 32996,
+  "netReduction": -0.282294419399969,
+  "threshold": "currentSelectedLines <= baselineSelectedLines * 0.75",
+  "acceptanceEligible": true,
+  "targetMet": false,
+  "unresolvedMembershipCount": 0,
+  "identityMappingsApplied": [
+    {
+      "id": "checkpoint-revalidate-selected-eligibility",
+      "baselineKey": "src/commands/checkpoint-revalidate.js::FunctionDeclaration::inspectEligibility",
+      "currentKey": "src/commands/checkpoint-revalidate.js::FunctionDeclaration::inspectSelectedEligibility"
+    },
+    {
+      "id": "attestation-coverage-selected-evaluation",
+      "baselineKey": "src/core/attestation-coverage.js::FunctionDeclaration::evaluateAttestationCoverage",
+      "currentKey": "src/core/attestation-coverage.js::FunctionDeclaration::evaluateSelectedAttestationCoverage"
+    },
+    {
+      "id": "audit-selected-evaluation",
+      "baselineKey": "src/core/audit.js::FunctionDeclaration::evaluateAudit",
+      "currentKey": "src/core/audit.js::FunctionDeclaration::evaluateSelectedAudit"
+    },
+    {
+      "id": "completion-artifacts-terminal-result-transaction",
+      "baselineKey": "src/core/completion-artifacts.js::FunctionDeclaration::recordTerminalResult",
+      "currentKey": "src/core/completion-artifacts.js::FunctionDeclaration::recordTerminalResultInTransaction"
+    },
+    {
+      "id": "completion-recovery-rebind-transaction",
+      "baselineKey": "src/core/completion-recovery-rebind.js::FunctionDeclaration::rebindCompletionRejectionSnapshot",
+      "currentKey": "src/core/completion-recovery-rebind.js::FunctionDeclaration::rebindRejectionInTransaction"
+    },
+    {
+      "id": "completion-selected-evaluation",
+      "baselineKey": "src/core/completion.js::FunctionDeclaration::evaluateCompletion",
+      "currentKey": "src/core/completion.js::FunctionDeclaration::evaluateSelectedCompletion"
+    },
+    {
+      "id": "continuity-loaded-reconciliation",
+      "baselineKey": "src/core/continuity-reconciliation.js::FunctionDeclaration::reconcileContinuity",
+      "currentKey": "src/core/continuity-reconciliation.js::FunctionDeclaration::reconcileLoadedContinuity"
+    },
+    {
+      "id": "decision-snapshot-bindings",
+      "baselineKey": "src/core/decision/task-bindings.js::FunctionDeclaration::readCurrentDecisionBindings",
+      "currentKey": "src/core/decision/task-bindings.js::FunctionDeclaration::readSnapshotBindings"
+    },
+    {
+      "id": "diagnosis-transaction-recording",
+      "baselineKey": "src/core/diagnosis.js::FunctionDeclaration::recordDiagnosis",
+      "currentKey": "src/core/diagnosis.js::FunctionDeclaration::recordDiagnosisInTransaction"
+    },
+    {
+      "id": "diagnostic-record-case",
+      "baselineKey": "src/core/diagnostic-record.js::FunctionDeclaration::recordStructuredDiagnosticCase",
+      "currentKey": "src/core/diagnostic-record.js::FunctionDeclaration::recordDiagnosticCase"
+    },
+    {
+      "id": "diagnostic-record-intervention",
+      "baselineKey": "src/core/diagnostic-record.js::FunctionDeclaration::recordIntervention",
+      "currentKey": "src/core/diagnostic-record.js::FunctionDeclaration::recordInterventionInternal"
+    },
+    {
+      "id": "diagnostic-record-disposition",
+      "baselineKey": "src/core/diagnostic-record.js::FunctionDeclaration::recordHypothesisDisposition",
+      "currentKey": "src/core/diagnostic-record.js::FunctionDeclaration::recordDisposition"
+    },
+    {
+      "id": "reconcile-closure-selected",
+      "baselineKey": "src/core/reconcile-closure.js::FunctionDeclaration::runReconcileClosure",
+      "currentKey": "src/core/reconcile-closure.js::FunctionDeclaration::reconcileSelectedClosure"
+    },
+    {
+      "id": "settlement-decision-criterion",
+      "baselineKey": "src/core/settlement.js::FunctionDeclaration::recordDecisionCriterion",
+      "currentKey": "src/core/settlement.js::FunctionDeclaration::recordCriterion"
+    },
+    {
+      "id": "structural-quality-context-observation",
+      "baselineKey": "src/core/structural-quality/service.js::FunctionDeclaration::resolveStructuralQualityContext",
+      "currentKey": "src/core/structural-quality/service.js::FunctionDeclaration::resolveStructuralQualityContextObservation"
+    },
+    {
+      "id": "structural-quality-status-observation",
+      "baselineKey": "src/core/structural-quality/service.js::FunctionDeclaration::projectStructuralQualityStatus",
+      "currentKey": "src/core/structural-quality/service.js::FunctionDeclaration::projectStructuralQualityStatusObservation"
+    },
+    {
+      "id": "verification-scope-transaction",
+      "baselineKey": "src/core/verification-scope.js::FunctionDeclaration::persistVerificationScope",
+      "currentKey": "src/core/verification-scope.js::FunctionDeclaration::persistVerificationScopeInTransaction"
+    }
+  ],
+  "renameCandidates": [],
+  "scopeManifest": "benchmarks/storage-sqlite/persistence-loc/scope-a773879-rebound.json",
+  "rawResult": "benchmarks/storage-sqlite/persistence-loc/loc-a773879-r5.json.gz",
+  "analysis": {
+    "ceiling": 19299,
+    "gapToCeiling": 13697,
+    "verdict": "TARGET_NOT_MET — release-decision record docs/SQLITE_LOC_RELEASE_DECISION.md remains OPEN"
+  }
+}

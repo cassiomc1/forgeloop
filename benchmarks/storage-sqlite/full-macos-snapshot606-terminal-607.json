@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "scope": "Full Mac immutable606 prepush withCIreceipt606andC6portablefixturecorrection",
+  "exitCode": 0,
+  "sourceRoot": "/tmp/forgeloop-receipt606",
+  "sourceFiles": 2618,
+  "sourceDrift": [],
+  "rawLogSha256": "1c4eb2a76fec081a4c136364ad6c8596e0246b5ba0f80e1d0344b06da4123274",
+  "testGroups": [
+    {
+      "tests": 2798,
+      "pass": 2787,
+      "fail": 0,
+      "skipped": 11
+    },
+    {
+      "tests": 67,
+      "pass": 67,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "tests": 73,
+      "pass": 73,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "tests": 12,
+      "pass": 12,
+      "fail": 0,
+      "skipped": 0
+    }
+  ],
+  "passedGates": [
+    "coverage (488.9s)",
+    "critical-coverage:check (0.2s)",
+    "lint (4.1s)",
+    "dependency:policy (0.1s)",
+    "complexity:check (1.8s)",
+    "docs:check (2.8s)",
+    "completions:check (0.1s)",
+    "summary:check (0.2s)",
+    "changelog:check (0.2s)",
+    "repository-index:manifest (0.1s)",
+    "repository:hygiene (0.2s)",
+    "poc:evidence:verify (0.2s)",
+    "poc:evidence:test (1.8s)",
+    "mcp:test:clean (7.2s)",
+    "mcp:pack:check (3.1s)",
+    "pack:check (1.7s)",
+    "python-unittest (0.8s)",
+    "markdown-self-test (0.1s)",
+    "markdown-validator (0.5s)",
+    "loop-self-test (0.2s)",
+    "loop-validator (0.1s)",
+    "secret-scan (3.7s)"
+  ],
+  "limitations": [
+    "New populated CLI benchmark harness607 is separately validated;not in this snapshot.",
+    "Windows/Linux current-source acceptance andactualGitHub workflows remain required."
+  ]
+}

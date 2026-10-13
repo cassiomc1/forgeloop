@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -24,7 +25,7 @@ test("Sigstore provider uses bounded argument-based execution and keeps signing 
     assert.deepEqual(calls[1].args.slice(0, 3), ["attest-blob", "--statement", path.join(target, "statement.json")]);
     assert.ok(calls[2].args.includes("--certificate-identity"));
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 

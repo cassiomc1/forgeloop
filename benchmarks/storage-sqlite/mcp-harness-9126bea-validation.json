@@ -1,0 +1,96 @@
+{
+  "sourceHead": "9126bea5307c10c78ca5dc86fa977cbc8fc4bfec",
+  "sourceStatus": "DIRTY_VALIDATE_ONLY",
+  "runtime": {
+    "node": "v24.19.0",
+    "platform": "darwin",
+    "architecture": "arm64",
+    "cpu": "Apple M2",
+    "logicalCpus": 8,
+    "runnerName": null,
+    "workflowRun": null,
+    "workflowAttempt": null
+  },
+  "fixture": {
+    "mode": "canonical-basic-all",
+    "tasks": 10,
+    "eventsPerTask": 10,
+    "selectedEvents": 10,
+    "totalEvents": 100
+  },
+  "focusedChecks": {
+    "tests": 9,
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0
+  },
+  "fast": "PASS",
+  "operations": [
+    {
+      "operation": "taskListTool",
+      "outputParity": true,
+      "samples": {
+        "native": 0,
+        "baseline": 0
+      },
+      "resourceSamples": {
+        "native": 0,
+        "baseline": 0
+      }
+    },
+    {
+      "operation": "projectTasksResource",
+      "outputParity": true,
+      "samples": {
+        "native": 0,
+        "baseline": 0
+      },
+      "resourceSamples": {
+        "native": 0,
+        "baseline": 0
+      }
+    }
+  ],
+  "sourceManifestsUnchanged": true,
+  "workerCompletion": [
+    {
+      "status": "VALIDATED",
+      "backend": "native",
+      "tasks": 10,
+      "pid": 45097,
+      "terminalStage": "CLOSED",
+      "terminalSequence": 9,
+      "journalRecords": 9
+    },
+    {
+      "status": "VALIDATED",
+      "backend": "baseline",
+      "tasks": 10,
+      "pid": 45098,
+      "terminalStage": "CLOSED",
+      "terminalSequence": 9,
+      "journalRecords": 9
+    }
+  ],
+  "parentCompletion": {
+    "status": "VALIDATED",
+    "pid": 44922,
+    "terminalStage": "COMPLETED",
+    "terminalSequence": 11,
+    "journalRecords": 11
+  },
+  "negativeSourceAdmission": {
+    "unexpectedUntrackedPath": "scripts/benchmark-untracked-admission-control.mjs",
+    "exitCode": 1,
+    "failureStage": "SOURCE_ADMISSION",
+    "controlRemoved": true
+  },
+  "timingAcceptanceEligible": false,
+  "limits": [
+    "In-memory MCP only; no timed samples or release threshold acceptance.",
+    "Known ignored dependency contents are not enumerated; admitted root identities and lock/source hashes are retained.",
+    "Public fixture validation executed on staged source, not clean committed timing source."
+  ],
+  "complexity": "PASS",
+  "changedFileLint": "PASS"
+}

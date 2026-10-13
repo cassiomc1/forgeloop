@@ -50,7 +50,7 @@ export function selectTests(files, args, root) {
     ? selected.filter((_, index) => index % shard.total === shard.index - 1)
     : selected;
   if (sharded.length === 0) throw new Error(`Shard ${shard.index}/${shard.total} has no selected test files`);
-  return ["--test", ...options, ...sharded];
+  return ["--test", ...options, ...sharded.map((file) => path.relative(root, file))];
 }
 
 function parseShard(value) {

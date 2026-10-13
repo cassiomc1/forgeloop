@@ -1,6 +1,6 @@
 # ForgeLoop Artifact Reference
 
-This reference documents the canonical artifacts persisted in the `.forgeloop/` directory.
+This reference distinguishes each artifact's logical identity, canonical storage and portable export path. Operational task and session records are stored in `.forgeloop/state.sqlite`; project configuration, policy inputs and immutable attachment bytes remain files.
 
 All artifact schemas are defined in `schemas/*.schema.json`. Persisted artifact shapes are strictly bound to these schemas and validated during protocol transitions.
 
@@ -8,44 +8,57 @@ All artifact schemas are defined in `schemas/*.schema.json`. Persisted artifact 
 
 ## 1. Artifact Registry Summary
 
+Historical path strings remain logical identities so existing hashed evidence
+can be resolved without rewriting its history. A logical task path does not
+promise that a live JSON or NDJSON file exists. Read operational payloads through
+the canonical CLI, integration API or MCP resources; portable files are produced
+by explicit exports.
+
+The registry retains `path` as the logical alias and adds `logicalPath`,
+`canonicalStorage` and `exportPath`. Project files have no database export path
+and are copied separately. Signature bundles use immutable content-addressed
+files bound by SQLite references; their portable bindings are in
+`export-index.json#attachments`. A historical signature path is emitted only
+when its verified legacy alias is bound to the exported statement.
+
 <!-- BEGIN FORGELOOP GENERATED: artifact-registry -->
 
-| Artifact File | Schema | Ownership | Mutability | Trust Role |
-| --- | --- | --- | --- | --- |
-| `task-state/<task-key>/task.json` | `task-descriptor` | Protocol Managed | Mutable Before Execution | Task Descriptor |
-| `task-state/<task-key>/contract.json` | `current-contract` | Agent Authored | Mutable Before Execution | Operational Specification |
-| `task-state/<task-key>/routing-result.json` | `routing-result` | Protocol Generated | Mutable On Reroute | Guide Routing Specification |
-| `task-state/<task-key>/preflight.json` | `preflight` | Protocol Generated | Overwritten On Preflight | Readiness Attestation |
-| `sources.json` | `source-registry` | Operator Or Agent | Mutable On Discovery | Source Attestation |
-| `task-state/<task-key>/events.ndjson` | `event` | Protocol Appended | Append Only | Audit Ledger |
-| `sessions/<session-id>.json` | `activation` | Protocol Generated | Overwritten On Activate | Session Marker |
-| `config.json` | `config` | Operator Or Agent | Mutable Configuration | Project Configuration |
-| `task-state/<task-key>/gates/<gate>.json` | `gate` | Agent Authored Or Reviewer | Overwritten On Gate Satisfaction | Gate Approval Attestation |
-| `task-state/<task-key>/work-state.json` | `work-state` | Protocol Managed | Atomic State Transitions | Canonical Lifecycle State |
-| `task-state/<task-key>/continuity.json` | `continuity` | Agent Or Harness | Mutable Handoff Notes | Non Evidence Handoff |
-| `task-state/<task-key>/execution-receipt.json` | `execution-receipt` | Protocol Compiled | Atomic Compilation | Evidence Compilation |
-| `task-state/<task-key>/executions/exec-<id>.json` | `execution` | Protocol Executed | Immutable Once Written | Execution Provenance |
-| `policy/rules.json` | `policy-rules` | Operator Or Agent | Mutable Configuration | Policy Specification |
-| `policy/discovery.json` | `policy-discovery` | Protocol Generated | Mutable On Discovery | Discovered Policy Specification |
-| `policy/baseline.json` | `policy-baseline` | Protocol Generated Or Operator | Monotonic Ratchet Down | Brownfield Baseline |
-| `policy/policy.lock` | `policy-lock` | Protocol Generated | Atomic Digest Compilation | Policy Integrity Lock |
-| `task-state/<task-key>/policy-snapshot.json` | `policy-snapshot` | Protocol Generated | Mutable Before Execution | Task Policy Attestation |
-| `task-state/<task-key>/recovery.json` | `task-recovery` | Protocol Generated | Recovery State Transitions | Task Recovery State |
-| `task-state/<task-key>/actions/action-<id>.json` | `action` | Protocol Managed | State Machine Transitions | External Action Provenance |
-| `task-state/<task-key>/approvals/approval-<id>.json` | `approval` | Protocol Managed | Append Decision Once | Action Approval Attestation |
-| `policy/capabilities.json` | `capability-policy` | Operator Or Agent | Mutable Configuration | Capability Policy Specification |
-| `task-state/<task-key>/evaluations/eval-<id>.json` | `trajectory-evaluation` | Protocol Compiled | Immutable Once Written | Trajectory Evaluation |
-| `task-state/<task-key>/structural-quality/baseline.json` | `structural-quality` | Protocol Compiled | Baseline Immutable After Execution | Structural Quality Evidence |
-| `task-state/<task-key>/usage.json` | `usage` | Actor Or Trusted Host | Overwritten On Usage Record | Informational Usage Telemetry |
-| `task-state/<task-key>/workspace-binding.json` | `workspace-binding` | Protocol Generated | Immutable After Bind | Workspace Identity Binding |
-| `task-state/<task-key>/handoffs/handoff-<id>.json` | `handoff-envelope` | Protocol Compiled | Immutable Once Written | Canonical Handoff Snapshot |
-| `task-state/<task-key>/responsibility.json` | `responsibility` | Agent Or Harness Constrained | Immutable During Pass | Responsibility Constraint |
-| `task-state/<task-key>/verification-scope.json` | `verification-scope` | Protocol Compiled | Recomputed On Scope Change | Verification Scope Plan |
-| `task-state/<task-key>/attestations/code-manifest.json` | `code-manifest` | Protocol Generated | Immutable Once Written | Content Integrity Snapshot |
-| `task-state/<task-key>/attestations/statement.json` | `in-toto-statement` | Protocol Compiled | Immutable Once Written | Code Attestation Statement |
-| `task-state/<task-key>/attestations/statement.sigstore.json` | `null` | External Signing Provider | External Immutable | External Signature Bundle |
-| `task-state/<task-key>/decisions/<decision-id>.json` | `semantic-decision` | Protocol Compiled | Immutable Once Written | Semantic Decision |
-| `task-state/<task-key>/test-utility.json` | `test-utility` | Protocol Compiled | Overwritten On Analysis | Non Evidence Test Analysis |
+| Logical Identity | Canonical Storage | Export Path | Schema | Ownership | Mutability | Trust Role |
+| --- | --- | --- | --- | --- | --- | --- |
+| `.forgeloop/task-state/<task-key>/task.json` | `.forgeloop/state.sqlite :: tasks.descriptor_json` | `.forgeloop/task-state/<task-key>/task.json` | `task-descriptor` | Protocol Managed | Mutable Before Execution | Task Descriptor |
+| `.forgeloop/task-state/<task-key>/contract.json` | `.forgeloop/state.sqlite :: task_artifacts (contract)` | `.forgeloop/task-state/<task-key>/contract.json` | `current-contract` | Agent Authored | Mutable Before Execution | Operational Specification |
+| `.forgeloop/task-state/<task-key>/routing-result.json` | `.forgeloop/state.sqlite :: task_artifacts (route)` | `.forgeloop/task-state/<task-key>/routing-result.json` | `routing-result` | Protocol Generated | Mutable On Reroute | Guide Routing Specification |
+| `.forgeloop/task-state/<task-key>/preflight.json` | `.forgeloop/state.sqlite :: task_artifacts (preflight)` | `.forgeloop/task-state/<task-key>/preflight.json` | `preflight` | Protocol Generated | Overwritten On Preflight | Readiness Attestation |
+| `.forgeloop/sources.json` | `.forgeloop/sources.json` | `Copied separately` | `source-registry` | Operator Or Agent | Mutable On Discovery | Source Attestation |
+| `.forgeloop/task-state/<task-key>/events.ndjson` | `.forgeloop/state.sqlite :: events` | `.forgeloop/task-state/<task-key>/events.ndjson` | `event` | Protocol Appended | Append Only | Audit Ledger |
+| `.forgeloop/sessions/<session-id>.json` | `.forgeloop/state.sqlite :: sessions` | `.forgeloop/sessions/<session-id>.json` | `activation` | Protocol Generated | Overwritten On Activate | Session Marker |
+| `.forgeloop/config.json` | `.forgeloop/config.json` | `Copied separately` | `config` | Operator Or Agent | Mutable Configuration | Project Configuration |
+| `.forgeloop/task-state/<task-key>/gates/<gate>.json` | `.forgeloop/state.sqlite :: task_artifacts (gate)` | `.forgeloop/task-state/<task-key>/gates/<gate>.json` | `gate` | Agent Authored Or Reviewer | Overwritten On Gate Satisfaction | Gate Approval Attestation |
+| `.forgeloop/task-state/<task-key>/work-state.json` | `.forgeloop/state.sqlite :: tasks.state_json` | `.forgeloop/task-state/<task-key>/work-state.json` | `work-state` | Protocol Managed | Atomic State Transitions | Canonical Lifecycle State |
+| `.forgeloop/task-state/<task-key>/continuity.json` | `.forgeloop/state.sqlite :: task_artifacts (continuity)` | `.forgeloop/task-state/<task-key>/continuity.json` | `continuity` | Agent Or Harness | Mutable Handoff Notes | Non Evidence Handoff |
+| `.forgeloop/task-state/<task-key>/execution-receipt.json` | `.forgeloop/state.sqlite :: task_artifacts (receipt)` | `.forgeloop/task-state/<task-key>/execution-receipt.json` | `execution-receipt` | Protocol Compiled | Atomic Compilation | Evidence Compilation |
+| `.forgeloop/task-state/<task-key>/executions/exec-<id>.json` | `.forgeloop/state.sqlite :: executions` | `.forgeloop/task-state/<task-key>/executions/exec-<id>.json` | `execution` | Protocol Executed | Immutable Once Written | Execution Provenance |
+| `.forgeloop/policy/rules.json` | `.forgeloop/policy/rules.json` | `Copied separately` | `policy-rules` | Operator Or Agent | Mutable Configuration | Policy Specification |
+| `.forgeloop/policy/discovery.json` | `.forgeloop/policy/discovery.json` | `Copied separately` | `policy-discovery` | Protocol Generated | Mutable On Discovery | Discovered Policy Specification |
+| `.forgeloop/policy/baseline.json` | `.forgeloop/policy/baseline.json` | `Copied separately` | `policy-baseline` | Protocol Generated Or Operator | Monotonic Ratchet Down | Brownfield Baseline |
+| `.forgeloop/policy/policy.lock` | `.forgeloop/policy/policy.lock` | `Copied separately` | `policy-lock` | Protocol Generated | Atomic Digest Compilation | Policy Integrity Lock |
+| `.forgeloop/task-state/<task-key>/policy-snapshot.json` | `.forgeloop/state.sqlite :: task_artifacts (policySnapshot)` | `.forgeloop/task-state/<task-key>/policy-snapshot.json` | `policy-snapshot` | Protocol Generated | Mutable Before Execution | Task Policy Attestation |
+| `.forgeloop/task-state/<task-key>/recovery.json` | `.forgeloop/state.sqlite :: task_artifacts (recovery)` | `.forgeloop/task-state/<task-key>/recovery.json` | `task-recovery` | Protocol Generated | Recovery State Transitions | Task Recovery State |
+| `.forgeloop/task-state/<task-key>/actions/action-<id>.json` | `.forgeloop/state.sqlite :: actions` | `.forgeloop/task-state/<task-key>/actions/action-<id>.json` | `action` | Protocol Managed | State Machine Transitions | External Action Provenance |
+| `.forgeloop/task-state/<task-key>/approvals/approval-<id>.json` | `.forgeloop/state.sqlite :: approvals` | `.forgeloop/task-state/<task-key>/approvals/approval-<id>.json` | `approval` | Protocol Managed | Append Decision Once | Action Approval Attestation |
+| `.forgeloop/policy/capabilities.json` | `.forgeloop/policy/capabilities.json` | `Copied separately` | `capability-policy` | Operator Or Agent | Mutable Configuration | Capability Policy Specification |
+| `.forgeloop/task-state/<task-key>/evaluations/eval-<id>.json` | `.forgeloop/state.sqlite :: task_artifacts (evaluation)` | `.forgeloop/task-state/<task-key>/evaluations/eval-<id>.json` | `trajectory-evaluation` | Protocol Compiled | Immutable Once Written | Trajectory Evaluation |
+| `.forgeloop/task-state/<task-key>/structural-quality/baseline.json` | `.forgeloop/state.sqlite :: task_artifacts (structuralQuality)` | `.forgeloop/task-state/<task-key>/structural-quality/baseline.json` | `structural-quality` | Protocol Compiled | Baseline Immutable After Execution | Structural Quality Evidence |
+| `.forgeloop/task-state/<task-key>/usage.json` | `.forgeloop/state.sqlite :: task_artifacts (usage)` | `.forgeloop/task-state/<task-key>/usage.json` | `usage` | Actor Or Trusted Host | Overwritten On Usage Record | Informational Usage Telemetry |
+| `.forgeloop/task-state/<task-key>/workspace-binding.json` | `.forgeloop/state.sqlite :: task_artifacts (workspaceBinding)` | `.forgeloop/task-state/<task-key>/workspace-binding.json` | `workspace-binding` | Protocol Generated | Immutable After Bind | Workspace Identity Binding |
+| `.forgeloop/task-state/<task-key>/handoffs/handoff-<id>.json` | `.forgeloop/state.sqlite :: task_artifacts (handoff)` | `.forgeloop/task-state/<task-key>/handoffs/handoff-<id>.json` | `handoff-envelope` | Protocol Compiled | Immutable Once Written | Canonical Handoff Snapshot |
+| `.forgeloop/task-state/<task-key>/responsibility.json` | `.forgeloop/state.sqlite :: task_artifacts (responsibility)` | `.forgeloop/task-state/<task-key>/responsibility.json` | `responsibility` | Agent Or Harness Constrained | Immutable During Pass | Responsibility Constraint |
+| `.forgeloop/task-state/<task-key>/verification-scope.json` | `.forgeloop/state.sqlite :: task_artifacts (verificationScope)` | `.forgeloop/task-state/<task-key>/verification-scope.json` | `verification-scope` | Protocol Compiled | Recomputed On Scope Change | Verification Scope Plan |
+| `.forgeloop/task-state/<task-key>/attestations/code-manifest.json` | `.forgeloop/state.sqlite :: task_artifacts (attestation)` | `.forgeloop/task-state/<task-key>/attestations/code-manifest.json` | `code-manifest` | Protocol Generated | Immutable Once Written | Content Integrity Snapshot |
+| `.forgeloop/task-state/<task-key>/attestations/statement.json` | `.forgeloop/state.sqlite :: task_artifacts (attestation)` | `.forgeloop/task-state/<task-key>/attestations/statement.json` | `in-toto-statement` | Protocol Compiled | Immutable Once Written | Code Attestation Statement |
+| `.forgeloop/task-state/<task-key>/attestations/statement.sigstore.json` | `.forgeloop/state.sqlite :: attachment_references` | `.forgeloop/attachments/objects/<sha256>` | `null` | External Signing Provider | External Immutable | External Signature Bundle |
+| `.forgeloop/task-state/<task-key>/decisions/<decision-id>.json` | `.forgeloop/state.sqlite :: task_artifacts (decision)` | `.forgeloop/task-state/<task-key>/decisions/<decision-id>.json` | `semantic-decision` | Protocol Compiled | Immutable Once Written | Semantic Decision |
+| `.forgeloop/task-state/<task-key>/test-utility.json` | `.forgeloop/state.sqlite :: task_artifacts (testUtility)` | `.forgeloop/task-state/<task-key>/test-utility.json` | `test-utility` | Protocol Compiled | Overwritten On Analysis | Non Evidence Test Analysis |
 
 <!-- END FORGELOOP GENERATED: artifact-registry -->
 

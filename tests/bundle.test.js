@@ -1,13 +1,19 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
+import { ensureFixtureTask, readRawFixtureText, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
+import { exportLegacyFixture } from "./helpers/storage-fixtures.js";
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { mkdir, mkdtemp, readFile, rm, writeFile, symlink, rename } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
 
 import { exportTaskBundle, readTaskBundle } from "../src/core/bundles.js";
-import { ARTIFACT_PATHS, writeJsonArtifact } from "../src/core/artifacts.js";
+import { taskAttestationBundlePath, taskArtifactPath } from "../src/core/task-paths.js";
+import { writeJsonArtifact } from "../src/core/artifacts.js";
 import { createCheck } from "../src/core/checks.js";
 import { createContract, contractFingerprint, writeContract } from "../src/core/contract.js";
+import { writeContinuity } from "../src/core/continuity.js";
 import { runCommandExecution } from "../src/core/execution.js";
 import { evaluateRoute } from "../src/core/router.js";
 import { persistRoute } from "../src/core/route-artifact.js";
@@ -50,8 +56,9 @@ async function writeManualJson(target, relativePath, value) {
 async function prepareRouteAndState(target, contract) {
   await persistRoute(target, evaluateRoute({ workType: "documentation" }), packageRoot, {
     contractFingerprint: contractFingerprint(contract),
+    taskId: contract.taskId,
   });
-  await writeJsonArtifact(target, ARTIFACT_PATHS.state, {
+  await writeJsonArtifact(target, taskArtifactPath(contract.taskId, "state"), {
     schemaVersion: 1,
     protocolVersion: 1,
     taskId: contract.taskId,
@@ -85,15 +92,51 @@ test("portable task bundles copy only canonical protocol artifacts", async () =>
       unresolvedDecisions: [],
       sourceRefs: [],
     });
-    await writeContract(target, contract, packageRoot);
+    await ensureFixtureTask(target, contract.taskId, packageRoot);
+    await writeContract(target, contract, packageRoot, { taskId: contract.taskId });
     await prepareRouteAndState(target, contract);
     const bundle = await exportTaskBundle(target, contract.taskId, packageRoot);
     assert.equal(bundle.taskId, contract.taskId);
     const loaded = await readTaskBundle(target, contract.taskId, packageRoot);
-    assert.deepEqual(loaded.manifest.artifacts.sort(), ["contract.json", "route.json", "state.json"]);
+    assert.deepEqual(loaded.manifest.artifacts.sort(), ["contract.json", "events.ndjson", "route.json", "state.json", "task.json"]);
     assert.match(await readFile(path.join(target, ".forgeloop", "tasks", contract.taskId, "bundle.json"), "utf8"), /bundle-001/);
+    const manifestPath = path.join(target, bundle.path);
+    const { files, ...legacy } = loaded.manifest;
+    await writeFile(manifestPath, JSON.stringify({ ...legacy, schemaVersion: 1 }));
+    const legacyRead = await readTaskBundle(target, contract.taskId, packageRoot);
+    assert.equal(legacyRead.manifest.schemaVersion, 1);
+    await writeFile(manifestPath, JSON.stringify({ ...loaded.manifest, files: [] }));
+    await assert.rejects(readTaskBundle(target, contract.taskId, packageRoot), { code: "E_BUNDLE_DIGEST_INVALID" });
+    await writeFile(manifestPath, JSON.stringify({ ...loaded.manifest, artifacts: ["../escape.json"], files: [{ ...files[0], path: "../escape.json" }] }));
+    await assert.rejects(readTaskBundle(target, contract.taskId, packageRoot), { code: "E_BUNDLE_PATH_INVALID" });
+    const {proposeAction}=await import("../src/core/actions.js");
+    const proposed=await proposeAction(target,{packageRoot,taskId:contract.taskId,input:{
+      actionId:"action-portable-inspection",effectClass:"REVERSIBLE_WRITE",capability:"filesystem.write",
+      target:"local.txt",operation:"write local fixture",idempotencyKey:"portable:inspection",provenance:"CALLER_REPORTED",
+    }});
+    // Explicit compatibility fixture: legacy attachment reads remain supported.
+    // Native attachment export is exercised by storage-operational-bootstrap.
+    await exportLegacyFixture(target);
+    const sourceAttachment = path.join(target, taskAttestationBundlePath(contract.taskId));
+    await mkdir(path.dirname(sourceAttachment), { recursive: true });
+    const attachmentBytes = JSON.stringify({ payload: "x".repeat(2 * 1024 * 1024) });
+    await writeFile(sourceAttachment, attachmentBytes);
+    const withAttachment = await exportTaskBundle(target, contract.taskId, packageRoot);
+    const binding = withAttachment.files.find(file => file.path === "attestations/statement.sigstore.json");
+    const exportedAction=JSON.parse(await readFile(path.join(target,path.dirname(withAttachment.path),"actions",`${proposed.action.actionId}.json`),"utf8"));
+    assert.deepEqual(exportedAction,proposed.action);
+    const actionPath=path.join(target,taskArtifactPath(contract.taskId,"actions"),`${proposed.action.actionId}.json`);
+    const renamedAction=path.join(path.dirname(actionPath),"action-wrong-source.json");
+    await rename(actionPath,renamedAction);
+    await assert.rejects(exportTaskBundle(target,contract.taskId,packageRoot),{code:"E_BUNDLE_TASK_MISMATCH"});
+    await rename(renamedAction,actionPath);
+    assert.equal(binding.size, Buffer.byteLength(attachmentBytes));
+    assert.equal(await readFile(path.join(target, path.dirname(withAttachment.path), binding.path), "utf8"), attachmentBytes);
+    await rm(sourceAttachment);
+    await symlink(path.join(target, taskArtifactPath(contract.taskId, "contract")), sourceAttachment);
+    await assert.rejects(exportTaskBundle(target, contract.taskId, packageRoot), /symlink/);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -112,7 +155,8 @@ test("portable task bundles revalidate execution references against bundled arti
       unresolvedDecisions: [],
       sourceRefs: [],
     });
-    await writeContract(target, contract, packageRoot);
+    await ensureFixtureTask(target, contract.taskId, packageRoot);
+    await writeContract(target, contract, packageRoot, { taskId: contract.taskId });
     await prepareRouteAndState(target, contract);
     const execution = await runCommandExecution({
       target,
@@ -139,9 +183,9 @@ test("portable task bundles revalidate execution references against bundled arti
       packageRoot,
       requireCommandProvenance: true,
     });
-    const state = JSON.parse(await readFile(path.join(target, ARTIFACT_PATHS.state), "utf8"));
+    const state = JSON.parse(await readRawFixtureText(target, taskArtifactPath(contract.taskId, "state")));
     state.checks = [check];
-    await writeJsonArtifact(target, ARTIFACT_PATHS.state, state, "work-state", packageRoot);
+    await writeJsonArtifact(target, taskArtifactPath(contract.taskId, "state"), state, "work-state", packageRoot);
 
     const bundle = await exportTaskBundle(target, contract.taskId, packageRoot);
     const loaded = await readTaskBundle(target, contract.taskId, packageRoot);
@@ -149,7 +193,7 @@ test("portable task bundles revalidate execution references against bundled arti
     assert.equal(loaded.artifacts.executions[execution.execution.executionId].executionId, execution.execution.executionId);
     assert.equal(loaded.artifacts.state.checks[0].executionRef, execution.execution.executionId);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -157,7 +201,8 @@ test("bundle export rejects a manually persisted semantically invalid current co
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-bundle-export-invalid-"));
   try {
     const contract = manualContract("bundle-invalid-export", [{ ...safeAssumption, value: "   " }]);
-    await writeManualJson(target, ARTIFACT_PATHS.contract, contract);
+    await ensureFixtureTask(target, contract.taskId, packageRoot);
+    await overwriteFixtureText(target, taskArtifactPath(contract.taskId, "contract"), JSON.stringify(contract));
     await prepareRouteAndState(target, contract);
 
     await assert.rejects(
@@ -165,7 +210,7 @@ test("bundle export rejects a manually persisted semantically invalid current co
       /non-empty/i,
     );
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -175,7 +220,8 @@ test("bundle reads reject a manually persisted secret-like bundled contract", as
     const contract = createContract({
       ...manualContract("bundle-invalid-read", [safeAssumption]),
     });
-    await writeContract(target, contract, packageRoot);
+    await ensureFixtureTask(target, contract.taskId, packageRoot);
+    await writeContract(target, contract, packageRoot, { taskId: contract.taskId });
     await prepareRouteAndState(target, contract);
     await exportTaskBundle(target, contract.taskId, packageRoot);
 
@@ -193,12 +239,64 @@ test("bundle reads reject a manually persisted secret-like bundled contract", as
     await assert.rejects(
       () => readTaskBundle(target, contract.taskId, packageRoot),
       (error) => {
-        assert.match(error.message, /secret-like/i);
+        assert.match(error.message, /secret-like|bytes disagree with manifest/i);
         assert.equal(error.message.includes(sensitiveValue), false);
         return true;
       },
     );
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
+  }
+});
+
+test("portable task bundles reject continuity bound to a foreign task after manifest rebinding", async () => {
+  const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-bundle-continuity-identity-"));
+  const taskId = "bundle-continuity-owner";
+  const foreignTaskId = "bundle-continuity-foreign";
+  try {
+    const contract = createContract({
+      taskId,
+      objective: "bundle continuity identity",
+      deliverables: [],
+      constraints: [],
+      risks: [],
+      verification: [],
+      successCriteria: [],
+      stopConditions: [],
+      unresolvedDecisions: [],
+      sourceRefs: [],
+    });
+    await ensureFixtureTask(target, taskId, packageRoot);
+    await writeContract(target, contract, packageRoot, { taskId });
+    await prepareRouteAndState(target, contract);
+    await writeContinuity(target, {}, { taskId, packageRoot });
+
+    const bundle = await exportTaskBundle(target, taskId, packageRoot);
+    const sameTask = await readTaskBundle(target, taskId, packageRoot);
+    assert.equal(sameTask.manifest.taskId, taskId);
+    assert.equal(sameTask.artifacts.continuity.taskId, taskId);
+
+    const directory = path.join(target, ".forgeloop", "tasks", taskId);
+    const manifestPath = path.join(directory, "bundle.json");
+    const continuityPath = path.join(directory, "continuity.json");
+    const continuity = JSON.parse(await readFile(continuityPath, "utf8"));
+    continuity.taskId = foreignTaskId;
+    await writeFile(continuityPath, `${JSON.stringify(continuity, null, 2)}\n`, "utf8");
+
+    const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+    const continuityBytes = await readFile(continuityPath);
+    const continuityBinding = manifest.files.find(file => file.path === "continuity.json");
+    assert.ok(continuityBinding, "the exported continuity artifact must be manifest-bound");
+    continuityBinding.size = continuityBytes.length;
+    continuityBinding.sha256 = createHash("sha256").update(continuityBytes).digest("hex");
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
+
+    await assert.rejects(
+      () => readTaskBundle(target, taskId, packageRoot),
+      { code: "E_BUNDLE_TASK_MISMATCH" },
+    );
+    assert.equal(bundle.taskId, taskId);
+  } finally {
+    await removeTempTree(target);
   }
 });

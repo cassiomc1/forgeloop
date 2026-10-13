@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "increment": 733,
+  "finding": "Direct completion rejection rebinding committed state before a failing event insert.",
+  "correction": "Join existing task transaction or create an outer transaction for state, receipt, and event publication.",
+  "faultInjection": "SQLite BEFORE INSERT events trigger raises ABORT; assert exact state, event count and all typed artifact rows unchanged.",
+  "checks": {
+    "focusedRegressionTests": 48,
+    "failures": 0,
+    "docs": "PASS",
+    "complexityRegressions": [],
+    "fastTier": "PASS"
+  },
+  "limitations": [
+    "Full corrected platform suites remain pending.",
+    "This is not proof of all public consumer transaction boundaries.",
+    "Official next remains nonterminal RECONCILE_CLOSURE with repository drift."
+  ],
+  "logSha256": {
+    "rebind-red732.log": "8c6bd94178b20216bd80b0a380cc20a3c492637e07558b29266d05958e15e674",
+    "rebind-green732.log": "9e563f33ae517206839f5cfc01aef39853798cb99bdfac1aa2dc595f5423aa8a",
+    "rebind-regression733.log": "ad95166c55f756db8dc1487c24ee207c4e0af404fc9d052d49267c1d66d5d779",
+    "rebind-fast733.log": "577cf07bff9281141c9a0309f5715e0d6a61ba8eaabbb8cf94a5c9be02c484c7"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "increment": 760,
+  "parentHead": "da347e8406c39b91b58b37f6dbbc1159baa6fa23",
+  "scope": "Generic native artifact identity at write, direct lookup, iteration and operational read boundaries",
+  "reproduction": "Only task_artifacts.task_id changed: all three generic read surfaces accepted the original task payload under another owner; byte evidence and fingerprint unchanged",
+  "change": "Shared optional payload taskId binding validator; preserves receipt/gate domain rejection codes via marked identity errors; foreign fixtures injected directly in tests",
+  "selectedTestsBeforeReceiptReaderRefactor": {
+    "tests": 122,
+    "passed": 122,
+    "failed": 0
+  },
+  "domainAndTransactionTestsAfterRefactor": {
+    "tests": 44,
+    "passed": 44,
+    "failed": 0
+  },
+  "fastVerification": "PASS",
+  "complexity": "PASS no regressions",
+  "fullCorrectedPlatforms": "PENDING",
+  "logs": {
+    "artifact-read-owner759.log": "3ba0a3a4f0eb42a3f4aca933a80a01086bdaa6de5972ecd35bd34667452a4c15",
+    "artifact-read759-red.log": "d309c3ec7de1c77992bf10c5be3e14f86854ded96dbe910423f410d476a4c2f6",
+    "artifact-read759-green.log": "acc45d8382ecaacdc94d3489cc1a405174b61553765773ba7080d70cb50929ad",
+    "artifact-read760-green.log": "39b18cc14138d192b25667d714eda0662c230f11ec052c605b8d8877f333c775",
+    "artifact-read760-domain.log": "3e71a470cf239749741df040fd9d93aa0abae1a8af90593cec4d8531ced89044",
+    "fast760.log": "0a904a9d88c8cb406e8624c9671c5efcce22ba162e91ec8795a907aa62a04f0b",
+    "complexity760.log": "32111f472b37a8b8941d21c72e18a3815643453328562aed2fd87e8a2f0417f2"
+  }
+}

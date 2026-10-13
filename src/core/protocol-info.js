@@ -7,6 +7,8 @@ import { VERIFICATION_ISOLATION_MODES } from "./verification-execution.js";
 import { PROVIDER_KINDS } from "../providers/capabilities.js";
 import { DECISION_DEFAULT_POLICY, DECISION_ENGINE_ID, PINNED_JEV_MODEL } from "./decision/constants.js";
 
+import { getStorageCapabilities } from "../storage/capabilities.js";
+
 export const SCHEMA_COMPATIBILITY_POLICY = Object.freeze({
   protocolVersion: PROTOCOL_VERSION,
   schemaVersion: 1,
@@ -38,6 +40,7 @@ export function protocolInfo({ packageVersion = null } = {}) {
     writesSchemaVersions: schemaVersions,
     compatibility: SCHEMA_COMPATIBILITY_POLICY,
     features: {
+      operationalStorage: getStorageCapabilities(),
       semanticDecisionPlane: {
         version: 1,
         supported: true,

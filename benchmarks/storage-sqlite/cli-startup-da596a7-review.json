@@ -1,0 +1,32 @@
+{
+  "sourceRevision": "da596a78adc188c489bc7b2aac34f047f7bb4d71",
+  "parentExitCode": 0,
+  "manifestsUnchanged": true,
+  "childCalls": 120,
+  "results": [
+    {
+      "operation": "version",
+      "repeats": 30,
+      "outputContractVerified": true,
+      "storageAllocationAbsent": true,
+      "baselineP95Ms": 133.7913750000007,
+      "nativeP95Ms": 46.674582999999984,
+      "candidateSmallWorkspaceTargetMet": true
+    },
+    {
+      "operation": "empty-task-list",
+      "repeats": 30,
+      "outputContractVerified": true,
+      "storageAllocationAbsent": true,
+      "baselineP95Ms": 128.96487499999967,
+      "nativeP95Ms": 72.54362499999934,
+      "candidateSmallWorkspaceTargetMet": true
+    }
+  ],
+  "acceptanceClaim": false,
+  "limits": [
+    "Background and warm cache uncontrolled",
+    "Empty workspace only",
+    "No populated CLI, persistent integration or whole performance gate claim"
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "kind": "MACOS_COMMIT_DIAGNOSTIC_OBSERVATION",
+  "sourceRevision": "7bcfeaf275f6d4738285231ae40251b730055eb8",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "node": "v24.19.0",
+  "cpu": "Apple M2",
+  "platform": "darwin",
+  "repeats": 20,
+  "claimCount": 3,
+  "terminalExitCode": 0,
+  "rawArtifactSha256": "e57b02b31e850b104d05f0784b5223de5a785c946639ae01095a0a914bec11cf",
+  "sourceHashMismatchCount": 0,
+  "currentTrackedFiles": 3221,
+  "baselineTrackedFiles": 2261,
+  "temporaryPrefixEntriesAfter": [],
+  "results": [
+    {
+      "initialEvents": 10,
+      "nativeP95Ms": 12.819750000000113,
+      "baselineP95Ms": 125.40141700000004,
+      "reductionP95": 0.8977702939353539,
+      "ownershipClassificationParity": true,
+      "equalValidationAcceptanceEligible": true,
+      "baselineOwnershipAudit": {
+        "status": "MATCHED"
+      }
+    },
+    {
+      "initialEvents": 1000,
+      "nativeP95Ms": 11.45575000000008,
+      "baselineP95Ms": 126.22787499999959,
+      "reductionP95": 0.9092454816339092,
+      "ownershipClassificationParity": true,
+      "equalValidationAcceptanceEligible": true,
+      "baselineOwnershipAudit": {
+        "status": "MATCHED"
+      }
+    },
+    {
+      "initialEvents": 100000,
+      "nativeP95Ms": 4.861249999999927,
+      "baselineP95Ms": 144.9732499999991,
+      "reductionP95": 0.9664679518462892,
+      "ownershipClassificationParity": false,
+      "equalValidationAcceptanceEligible": false,
+      "baselineOwnershipAudit": {
+        "status": "REFUSED",
+        "causeCode": "JSON_LIMIT_EXCEEDED",
+        "claimsRetained": true
+      }
+    }
+  ],
+  "releaseThresholdsVerified": false,
+  "limits": [
+    "Local background applications remain uncontrolled; no physical-host reservation is claimed.",
+    "Synthetic RECEIVED observations, not a realistic lifecycle fixture.",
+    "Commit-only timing; full ownership classification occurs afterward on both backends.",
+    "Current native commit includes reservation projection not present in the baseline commit.",
+    "100000-event baseline ownership refusal excludes that row from equal-validation acceptance.",
+    "WAL/FULL and baseline filesystem fsync configuration are observed; power-loss equivalence is not proved.",
+    "Temporary-prefix after-state is a point observation, not arbitrary-process cleanup evidence."
+  ]
+}

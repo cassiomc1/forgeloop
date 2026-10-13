@@ -1,0 +1,61 @@
+{
+  "status": "SCOPED_PASS",
+  "baseRevision": "d4be253",
+  "behavior": "CORRECTING repository-only recovery retains canonical diagnosis and phase; contract-bound executed evidence required",
+  "reproduction": "Disposable public lifecycle and actual Git commit; next recommends RECONCILE_CLOSURE and pre-fix command rejects E_RECONCILE_PHASE_INVALID",
+  "checks": [
+    {
+      "name": "focused reconciliation",
+      "tests": 18,
+      "passed": 18,
+      "failed": 0,
+      "logSha256": "e6c4f185322399794384242d6047574d797c572be1412e7420ddc74a63ef4e31"
+    },
+    {
+      "name": "lifecycle and recovery regressions",
+      "tests": 19,
+      "passed": 19,
+      "failed": 0,
+      "logSha256": "8d9bc54b3a7a904142d69869d691f28d475b3684fc28376080fa413e770e2be6"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "src/core/reconcile-closure.js",
+      "sha256": "fc7c1bfab91129889611bcae269558dd0e7c0c96570de72438ec21db49168212"
+    },
+    {
+      "path": "src/core/cli-command-definitions.js",
+      "sha256": "2f8faab4f3fa37a41fb77392ee552c5e9245573ef518097a9fefe60436c2d74f"
+    },
+    {
+      "path": "tests/reconcile-correction-recovery.test.js",
+      "sha256": "d9bebf5fea36f3f5704171092c0849123c37efd2e512c1b25680480d94568f01"
+    },
+    {
+      "path": "tests/reconcile-closure.test.js",
+      "sha256": "a7485d616ab9cf9a7c1d814c5e10c5ce1ba4cc13f11d6cf14b2ad132e1f26df5"
+    }
+  ],
+  "liveTaskRebound": false,
+  "wholeMigrationAcceptance": false,
+  "limits": [
+    "Current focused Mac tests only; final full/platform validation remains",
+    "No change to completion authority or contract requirements",
+    "No pending LOC or performance gate waived"
+  ],
+  "validation": {
+    "lint": {
+      "status": "PASS",
+      "logSha256": "21da8265910464e7d99630aab85eab930f1f410e21835f85fa5c66157f006cfc"
+    },
+    "fast": {
+      "status": "PASS",
+      "logSha256": "58007c20bd8148af91a87c00abf71789e024a7fb6281bd1a0611379e8a08166f"
+    },
+    "documentation": {
+      "status": "PASS",
+      "logSha256": "dbe93d88cf10bdc2a49ded7643ba81cec73a29648abbdd8b7fee0755760c51ca"
+    }
+  }
+}

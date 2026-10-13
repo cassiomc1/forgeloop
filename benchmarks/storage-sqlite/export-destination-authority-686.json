@@ -1,0 +1,79 @@
+{
+  "increment": 686,
+  "productionChanged": true,
+  "reproducedBeforeFix": "Native-root export completed without expected rejection; export-before686.log records failing regression.",
+  "correction": "Public task/database exports check physical destination and native authority evidence in relevant ancestor projects before snapshot or output. Native root and operational namespace exports refuse E_STORAGE_EXPORT_DESTINATION; independent portable subdirectories remain supported.",
+  "evidenceFiles": [
+    "state.sqlite",
+    "state.sqlite-wal",
+    "state.sqlite-shm",
+    "storage-version.json"
+  ],
+  "reviewedWrapperSites": [
+    {
+      "file": "src/storage/exporter.js",
+      "originalInventoryLine": 137,
+      "role": "explicit portable export output",
+      "boundary": "Public export admission rejects native-root/operational-namespace destinations; per-file assertSafePath, identity checks, bounded manifest and integrity bindings remain."
+    },
+    {
+      "file": "src/storage/exporter.js",
+      "originalInventoryLine": 268,
+      "role": "explicit portable export output",
+      "boundary": "Public export admission rejects native-root/operational-namespace destinations; per-file assertSafePath, identity checks, bounded manifest and integrity bindings remain."
+    },
+    {
+      "file": "src/storage/exporter.js",
+      "originalInventoryLine": 274,
+      "role": "explicit portable export output",
+      "boundary": "Public export admission rejects native-root/operational-namespace destinations; per-file assertSafePath, identity checks, bounded manifest and integrity bindings remain."
+    },
+    {
+      "file": "src/storage/exporter.js",
+      "originalInventoryLine": 279,
+      "role": "explicit portable export output",
+      "boundary": "Public export admission rejects native-root/operational-namespace destinations; per-file assertSafePath, identity checks, bounded manifest and integrity bindings remain."
+    },
+    {
+      "file": "src/storage/exporter.js",
+      "originalInventoryLine": 301,
+      "role": "explicit portable export output",
+      "boundary": "Public export admission rejects native-root/operational-namespace destinations; per-file assertSafePath, identity checks, bounded manifest and integrity bindings remain."
+    }
+  ],
+  "checks": {
+    "originalSelectedExportSuite": {
+      "passed": 63,
+      "failed": 0,
+      "log": "/Users/cassio/.codex/verification/export686.log"
+    },
+    "expandedDestinationRegressions": {
+      "passed": 5,
+      "failed": 0,
+      "log": "/Users/cassio/.codex/verification/export-destination686.log"
+    },
+    "verifyFast": "PASS",
+    "lint": "PASS",
+    "complexity": "PASS",
+    "docs": "PASS",
+    "gitDiff": "PASS"
+  },
+  "sourceSha256": {
+    "src/storage/exporter.js": "2e005a6784c73f42e53831a800b09b50730f901dd358d7463009f776b55a2a4b",
+    "src/storage/export-destination.js": "a5385331d4035e007f2f8edc92774bec513db3e99d257e34dc2219d3886def0b",
+    "tests/storage-export-destination.test.js": "2cf54b412a52f3e8a9cd8c86c61d085ad5f2abafe6427a27c401ff3c78f7311b"
+  },
+  "jevgrep": {
+    "exitCode": 0,
+    "bytes": 107000,
+    "log": "/Users/cassio/.codex/verification/jg686.log",
+    "verificationEvidence": false
+  },
+  "wholeScopeVerified": false,
+  "limitations": [
+    "Concurrent hostile destination replacement after admission is not proven.",
+    "Non-native explicit interchange exports still intentionally emit importable legacy layout.",
+    "Full Mac676 predates this production change; current full and remote validation remains required.",
+    "Original authority, release/resource/LOC and workflow acceptance remain open."
+  ]
+}

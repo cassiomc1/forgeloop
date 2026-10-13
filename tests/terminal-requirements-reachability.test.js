@@ -1,3 +1,5 @@
+import { buildTaskArtifactPaths } from "../src/core/task-paths.js";
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
@@ -16,11 +18,12 @@ import { evaluateRoute } from "../src/core/router.js";
 import { persistRoute } from "../src/core/route-artifact.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { clearWorkState, createWorkState, readWorkState, writeWorkState } from "../src/core/work-state.js";
-import { ARTIFACT_PATHS, canonicalFingerprint, readJsonArtifact } from "../src/core/artifacts.js";
+import { canonicalFingerprint, readJsonArtifact } from "../src/core/artifacts.js";
 import { NEXT_ACTIONS, getNextAction } from "../src/core/next-action.js";
 import { terminalRequirementsForContract } from "../src/core/evidence-readiness.js";
 
 const packageRoot = getPackageRoot();
+const ARTIFACT_PATHS = buildTaskArtifactPaths("task-terminal-reachability");
 const PUBLICATION_REQUIREMENT = {
   id: "release-publication",
   text: "Package published to npm registry",
@@ -35,6 +38,7 @@ const PRODUCTION_REQUIREMENT = {
 async function withTarget(run) {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-terminal-reachability-"));
   try {
+    await ensureFixtureTask(target, "task-terminal-reachability", packageRoot);
     await run(target);
   } finally {
     await removeTempTree(target);
@@ -55,10 +59,11 @@ async function setupTarget(target, { verification, successCriteria }) {
     sourceRefs: [],
   });
   const contractHash = contractFingerprint(contract);
-  await writeContract(target, contract, packageRoot);
+  await writeContract(target, contract, packageRoot, { taskId: contract.taskId });
   const route = evaluateRoute({ workType: "code", surfaces: ["config"], platforms: [] });
   const persistedRoute = await persistRoute(target, route, packageRoot, {
     contractFingerprint: contractHash,
+    taskId: contract.taskId,
   });
   const state = createWorkState({
     taskId: contract.taskId,
@@ -77,21 +82,22 @@ async function setupTarget(target, { verification, successCriteria }) {
     blockers: [],
     verificationEvidence: [],
   });
-  await writeWorkState(target, state, { packageRoot });
-  await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot);
-  await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot);
-  const preflight = await runPreflight({ target, packageRoot });
+  await writeWorkState(target, state, { packageRoot, taskId: "task-terminal-reachability" });
+  await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot, { taskId: "task-terminal-reachability" });
+  await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot, { taskId: "task-terminal-reachability" });
+  const preflight = await runPreflight({ target, packageRoot, taskId: "task-terminal-reachability" });
   assert.equal(preflight.status, "READY");
-  await advanceWorkState(target, "EXECUTING", { packageRoot });
+  await advanceWorkState(target, "EXECUTING", { packageRoot, taskId: "task-terminal-reachability" });
 }
 
 async function reachReviewing(target, contractShape) {
   await setupTarget(target, contractShape);
-  await advanceWorkState(target, "VERIFYING", { packageRoot });
-  await prepareCompletion({ target, packageRoot });
+  await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-terminal-reachability" });
+  await prepareCompletion({ target, packageRoot, taskId: "task-terminal-reachability" });
   await recordCheck({ kind: "manual-review",
     target,
     packageRoot,
+    taskId: "task-terminal-reachability",
     id: "tests-check",
     requirement: "tests",
     status: "passed",
@@ -99,7 +105,7 @@ async function reachReviewing(target, contractShape) {
     command: "npm test",
     result: "Passed",
   });
-  await advanceWorkState(target, "REVIEWING", { packageRoot });
+  await advanceWorkState(target, "REVIEWING", { packageRoot, taskId: "task-terminal-reachability" });
 }
 
 function assertLedgerPrefixUnchanged(before, after) {
@@ -127,10 +133,11 @@ test("publication requirement declared only in contract verification is reachabl
       successCriteria: ["tests"],
     });
 
-    const ledgerBefore = await validateEventLedger(target, packageRoot);
+    const ledgerBefore = await validateEventLedger(target, packageRoot, { taskId: "task-terminal-reachability" });
     const recorded = await runRecordTerminalResult({
       target,
       packageRoot,
+      taskId: "task-terminal-reachability",
       requirement: "release-publication",
       type: "PUBLICATION",
       status: "published",
@@ -140,12 +147,13 @@ test("publication requirement declared only in contract verification is reachabl
     assert.equal(recorded.requirementId, "release-publication");
     assert.equal(recorded.status, "published");
 
-    const ledgerAfterRecord = await validateEventLedger(target, packageRoot);
+    const ledgerAfterRecord = await validateEventLedger(target, packageRoot, { taskId: "task-terminal-reachability" });
     assertLedgerPrefixUnchanged(ledgerBefore, ledgerAfterRecord);
-    assert.equal(ledgerAfterRecord.events.length, ledgerBefore.events.length + 1);
-    assert.equal(ledgerAfterRecord.events.at(-1).event, "TERMINAL_RESULT_RECORDED");
+    assert.equal(ledgerAfterRecord.events.length, ledgerBefore.events.length + 2);
+    assert.equal(ledgerAfterRecord.events.at(-1).event, "TRANSACTION_COMMITTED");
+    assert.equal(ledgerAfterRecord.events.at(-2).event, "TERMINAL_RESULT_RECORDED");
 
-    const completed = await runComplete({ target, packageRoot });
+    const completed = await runComplete({ target, packageRoot, taskId: "task-terminal-reachability" });
     assert.equal(completed.status, "VALID");
     assert.equal(completed.taskStatus, "COMPLETE");
   });
@@ -161,6 +169,7 @@ test("production readiness requirement declared only in contract verification is
     const recorded = await runRecordTerminalResult({
       target,
       packageRoot,
+      taskId: "task-terminal-reachability",
       requirement: "release-readiness",
       type: "PRODUCTION_READINESS",
       status: "ready",
@@ -169,7 +178,7 @@ test("production readiness requirement declared only in contract verification is
     });
     assert.equal(recorded.requirementId, "release-readiness");
 
-    const completed = await runComplete({ target, packageRoot });
+    const completed = await runComplete({ target, packageRoot, taskId: "task-terminal-reachability" });
     assert.equal(completed.status, "VALID");
     assert.equal(completed.taskStatus, "COMPLETE");
   });
@@ -190,7 +199,7 @@ test("next and completion report the same verification-only terminal requirement
       .map((arg) => arg.slice("--requirement=".length))
       .sort();
 
-    const rejected = await runComplete({ target, packageRoot });
+    const rejected = await runComplete({ target, packageRoot, taskId: "task-terminal-reachability" });
     assert.equal(rejected.status, "REJECTED");
     const pendingIds = rejected.errors
       .filter((error) => error.code === "E_PUBLICATION_REQUIREMENT_PENDING")
@@ -209,14 +218,15 @@ test("unrelated terminal result is rejected without mutation", async () => {
       successCriteria: ["tests"],
     });
 
-    const stateBefore = await readWorkState(target, packageRoot);
+    const stateBefore = await readWorkState(target, { packageRoot, taskId: "task-terminal-reachability" });
     const receiptBefore = (await readJsonArtifact(target, ARTIFACT_PATHS.receipt, "execution-receipt", packageRoot)).value;
-    const ledgerBefore = await validateEventLedger(target, packageRoot);
+    const ledgerBefore = await validateEventLedger(target, packageRoot, { taskId: "task-terminal-reachability" });
 
     await assert.rejects(
       () => runRecordTerminalResult({
         target,
         packageRoot,
+        taskId: "task-terminal-reachability",
         requirement: "another-release",
         type: "PUBLICATION",
         status: "published",
@@ -226,9 +236,9 @@ test("unrelated terminal result is rejected without mutation", async () => {
       (error) => error.code === "E_TERMINAL_REQUIREMENT_UNKNOWN",
     );
 
-    const stateAfter = await readWorkState(target, packageRoot);
+    const stateAfter = await readWorkState(target, { packageRoot, taskId: "task-terminal-reachability" });
     const receiptAfter = (await readJsonArtifact(target, ARTIFACT_PATHS.receipt, "execution-receipt", packageRoot)).value;
-    const ledgerAfter = await validateEventLedger(target, packageRoot);
+    const ledgerAfter = await validateEventLedger(target, packageRoot, { taskId: "task-terminal-reachability" });
     assert.equal(canonicalFingerprint(stateAfter), canonicalFingerprint(stateBefore));
     assert.equal(canonicalFingerprint(receiptAfter), canonicalFingerprint(receiptBefore));
     assertLedgerPrefixUnchanged(ledgerBefore, ledgerAfter);
@@ -242,13 +252,14 @@ test("ordinary check cannot satisfy a verification-only terminal requirement", a
       verification: ["tests", PUBLICATION_REQUIREMENT],
       successCriteria: ["tests"],
     });
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-terminal-reachability" });
+    await prepareCompletion({ target, packageRoot, taskId: "task-terminal-reachability" });
 
     await assert.rejects(
       () => recordCheck({ kind: "manual-review",
         target,
         packageRoot,
+        taskId: "task-terminal-reachability",
         id: "publication-check",
         requirement: "release-publication",
         status: "passed",
@@ -267,20 +278,20 @@ test("superseded receipt remains auditable while terminal result is recorded", a
       verification: ["tests", PUBLICATION_REQUIREMENT],
       successCriteria: ["tests"],
     });
-    const ledgerBeforeLoss = await validateEventLedger(target, packageRoot);
+    const ledgerBeforeLoss = await validateEventLedger(target, packageRoot, { taskId: "task-terminal-reachability" });
 
-    await clearWorkState(target, { packageRoot });
-    const rebuiltPreflight = await runPreflight({ target, packageRoot });
+    await clearWorkState(target, { packageRoot, taskId: "task-terminal-reachability" });
+    const rebuiltPreflight = await runPreflight({ target, packageRoot, taskId: "task-terminal-reachability" });
     assert.equal(rebuiltPreflight.status, "READY");
-    const rebuilt = await readWorkState(target, packageRoot);
+    const rebuilt = await readWorkState(target, { packageRoot, taskId: "task-terminal-reachability" });
     assert.equal(rebuilt.phase, "REVIEWING");
     assert.deepEqual(
-      validateStateLedgerCoherence(rebuilt, (await validateEventLedger(target, packageRoot)).events),
+      validateStateLedgerCoherence(rebuilt, (await validateEventLedger(target, packageRoot, { taskId: "task-terminal-reachability" })).events),
       [],
     );
 
-    await prepareCompletion({ target, packageRoot });
-    const refreshed = await readWorkState(target, packageRoot);
+    await prepareCompletion({ target, packageRoot, taskId: "task-terminal-reachability" });
+    const refreshed = await readWorkState(target, { packageRoot, taskId: "task-terminal-reachability" });
     const refreshedReceipt = (await readJsonArtifact(target, ARTIFACT_PATHS.receipt, "execution-receipt", packageRoot)).value;
     assert.equal(refreshedReceipt.stateFingerprint, canonicalFingerprint(refreshed));
     assert.deepEqual(refreshedReceipt.checks ?? [], []);
@@ -288,6 +299,7 @@ test("superseded receipt remains auditable while terminal result is recorded", a
     const recorded = await runRecordTerminalResult({
       target,
       packageRoot,
+      taskId: "task-terminal-reachability",
       requirement: "release-publication",
       type: "PUBLICATION",
       status: "published",
@@ -296,7 +308,7 @@ test("superseded receipt remains auditable while terminal result is recorded", a
     });
     assert.equal(recorded.requirementId, "release-publication");
 
-    const ledgerAfter = await validateEventLedger(target, packageRoot);
+    const ledgerAfter = await validateEventLedger(target, packageRoot, { taskId: "task-terminal-reachability" });
     assert.equal(ledgerAfter.valid, true);
     assertLedgerPrefixUnchanged(ledgerBeforeLoss, ledgerAfter);
   });

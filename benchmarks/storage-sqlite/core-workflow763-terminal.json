@@ -1,0 +1,138 @@
+{
+  "run": {
+    "conclusion": "success",
+    "head_sha": "6b98c9273afbd1b028c83d3b6e94e10b20a32361",
+    "html_url": "https://github.com/cassiomc1/forgeloop/actions/runs/37676307490",
+    "id": 37676307490,
+    "status": "completed"
+  },
+  "jobs": [
+    {
+      "conclusion": "success",
+      "id": 112980605336,
+      "name": "Classify changed paths",
+      "runner_name": "GitHub Actions 1000017257",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112980692010,
+      "name": "audit",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112980692038,
+      "name": "tarball smoke (ubuntu-latest)",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112980692078,
+      "name": "Verify generated Archify diagram",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112980692098,
+      "name": "Lint and dependency policy",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112980692162,
+      "name": "Unit tests (Node 24, shard 4/4)",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112980692212,
+      "name": "Unit tests (Node 24, shard 1/4)",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112980692260,
+      "name": "Unit tests (Node 24, shard 3/4)",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112980692264,
+      "name": "Unit tests (Node 24.19.0, shard 0/4)",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112980692335,
+      "name": "Unit tests (Node 24, shard 2/4)",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112991334533,
+      "name": "Coverage report (Node 24)",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112991628433,
+      "name": "Repository Index native matrix / Classify Repository Index paths",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112991724347,
+      "name": "Repository Index native matrix / Verify Repository Index manifest",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112991824200,
+      "name": "Repository Index native matrix / Native Repository Index (Windows)",
+      "runner_name": "forgeloop-windows-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112991824283,
+      "name": "Repository Index native matrix / Native Repository Index (macOS)",
+      "runner_name": "forgeloop-macos-local",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112991824312,
+      "name": "Repository Index native matrix / Native Repository Index (Linux)",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "id": 112996390239,
+      "name": "validate (22)",
+      "runner_name": "GitHub Actions 1000017259",
+      "status": "completed"
+    }
+  ],
+  "core": {
+    "tests": 2865,
+    "passed": 2853,
+    "failed": 0,
+    "skipped": 12
+  },
+  "scope": "Entire corrected core workflow including pinned musl link checker and native index on all three requested hosts; source predates artifact and direct API corrections",
+  "publication": "No release/package publication"
+}

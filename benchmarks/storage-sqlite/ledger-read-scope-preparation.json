@@ -1,0 +1,25 @@
+{
+  "kind": "LEDGER_READ_SCOPE_PREPARATION",
+  "sourceBaseRevision": "f4b9c58",
+  "default": "read-only",
+  "historicalModeOption": "--read-scope=mutation-observation",
+  "reason": "Public READ_ONLY executors pass readOnly to withProjectStorage and its operational store. The old fixture opened a read-only database but used the writable store default, adding CAS read-set hashes to read timings.",
+  "preserved": [
+    "Every original dataset size, payload size, seed and chain",
+    "All schema, indexed-column and event-hash checks",
+    "All owned snapshot integrity guards and Windows byte hashing",
+    "Explicit old mutation-observation mode for comparable historical workload"
+  ],
+  "validation": {
+    "realStoreScopeControl": "PASS_EQUAL_PAYLOAD_READ_ONLY_WITHOUT_CAS_AND_MUTATION_MODE_WITH_CAS",
+    "syntax": "PASS",
+    "eslint": "PASS_ZERO_WARNINGS",
+    "verifyFast": "PASS_EXIT_0"
+  },
+  "performanceAcceptance": "UNMEASURED",
+  "limits": [
+    "Earlier ebb632b measurements used mutation-observation implicitly and are retained as historical observations.",
+    "Do not attribute a scope-mode change to the prepared-PRAGMA production optimization.",
+    "Both modes require fresh source-bound runs; no release or whole performance acceptance follows from preparation."
+  ]
+}

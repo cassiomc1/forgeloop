@@ -1,0 +1,31 @@
+{
+  "runId": 38006393854,
+  "sourceRevision": "050e50167235b98df95d5b5b51d98da9efbd24dd",
+  "status": "completed",
+  "conclusion": "success",
+  "capturedAt": "2026-10-10T00:01:11.600059+00:00",
+  "job": {
+    "id": 114076064182,
+    "name": "Windows full Node suite",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-10-09T23:50:55Z",
+    "completed_at": "2026-10-09T23:59:41Z"
+  },
+  "core": {
+    "tests": 2964,
+    "passed": 2940,
+    "failed": 0,
+    "skipped": 24
+  },
+  "adoptionControlsExecuted": [
+    "survives simulated PID reuse only in live context",
+    "rejects changed archived history"
+  ],
+  "log": {
+    "path": "/Users/cassio/.codex/verification/windows-050e501-full.log",
+    "sha256": "97f6d2db866864c75dd348713db92e7e257b8e8b79b5879f0f1dd83043b841ff"
+  },
+  "snapshotConsolidationCovered": false,
+  "wholePlanAcceptance": false
+}

@@ -1,0 +1,51 @@
+{
+  "sourceRevision": "c89a9dbc55df4632d08fdabd681d9e7913834e77",
+  "runId": 37998312872,
+  "jobId": 114049894832,
+  "status": "completed",
+  "conclusion": "failure",
+  "tests": 2959,
+  "passed": 2934,
+  "failed": 1,
+  "skipped": 24,
+  "failure": {
+    "test": "dead rollback preparation owner backup-tamper resumes only verified native retention",
+    "expected": "E_STORAGE_BACKUP_INVALID",
+    "actual": "E_STORAGE_MAINTENANCE_IN_PROGRESS",
+    "message": "Maintenance owner process is still present; resume refused",
+    "source": "tests/storage-migration-rollback-ready-resume.test.js:36",
+    "causeStatus": "NOT_ESTABLISHED",
+    "nextDiagnostic": "Observe killed child close and recorded PID liveness through owner adoption; retain strict owner/backup checks"
+  },
+  "jobs": [
+    {
+      "id": 114049894832,
+      "name": "Windows full Node suite",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-10-09T22:16:45Z",
+      "completed_at": "2026-10-09T22:25:33Z"
+    },
+    {
+      "id": 114049896040,
+      "name": "Linux paired MCP storage resources",
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-10-09T22:16:43Z",
+      "completed_at": "2026-10-09T22:16:42Z"
+    },
+    {
+      "id": 114049896240,
+      "name": "Public rollback (${{ matrix.os }})",
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-10-09T22:16:43Z",
+      "completed_at": "2026-10-09T22:16:42Z"
+    }
+  ],
+  "log": {
+    "path": "/Users/cassio/.codex/verification/windows-c89a9db-full.log",
+    "sha256": "dc51a12086c61c331521e48888a9b3c7a60ec183cf29f21797f4a596fb26676b"
+  },
+  "wholePlanAcceptance": false
+}

@@ -1,5 +1,6 @@
+import { deleteFixtureArtifact } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -20,6 +21,51 @@ import { createWorkState, writeWorkState } from "../src/core/work-state.js";
 import { removeTempTree } from "./helpers/rm-safe.js";
 
 const packageRoot = getPackageRoot();
+
+test("selected EXECUTING task reads its own continuity before entering verification", async () => {
+  const { writeContinuity } = await import("../src/core/continuity.js");
+  const { executeForgeLoopCommand } = await import("../src/integration.js");
+  const { reconcileContinuity } = await import("../src/core/continuity-reconciliation.js");
+  const taskA = "continuity-task-a";
+  const taskB = "continuity-task-b";
+  const expectedArtifacts = [taskArtifactPath(taskA, "continuity"), taskArtifactPath(taskA, "state")];
+  await withTarget(async (target) => {
+    await setupTaskTo(target, taskA, "EXECUTING", { claims: ["src/a"] });
+    await setupTaskTo(target, taskB, "EXECUTING", { claims: ["src/b"] });
+    await writeContinuity(target, {
+      remainingWork: [{ id: "finish-a", summary: "Finish task A implementation" }],
+    }, { taskId: taskA, packageRoot });
+
+    const continuityA = await reconcileContinuity({ target, packageRoot, taskId: taskA });
+    assert.equal(continuityA.classification, "FRESH");
+    assert.equal(continuityA.continuity.remainingWork[0].id, "finish-a");
+    const continuityB = await reconcileContinuity({ target, packageRoot, taskId: taskB });
+    assert.equal(continuityB.classification, "ABSENT");
+
+    const nextA = await getNextAction({ target, packageRoot, taskId: taskA });
+    assert.equal(nextA.nextAction, NEXT_ACTIONS.CONTINUE_IMPLEMENTATION);
+    assert.equal(nextA.taskId, taskA);
+    assert.equal(nextA.currentPhase, "EXECUTING");
+    assert.deepEqual(nextA.requiredArtifacts, expectedArtifacts);
+    assert.deepEqual(nextA.reasons[0].artifacts, [taskArtifactPath(taskA, "continuity")]);
+
+    const nextB = await getNextAction({ target, packageRoot, taskId: taskB });
+    assert.equal(nextB.nextAction, NEXT_ACTIONS.ENTER_VERIFYING);
+    assert.equal(nextB.taskId, taskB);
+    for (const [taskId, expectedAction] of [
+      [taskA, NEXT_ACTIONS.CONTINUE_IMPLEMENTATION],
+      [taskB, NEXT_ACTIONS.ENTER_VERIFYING],
+    ]) {
+      const envelope = await executeForgeLoopCommand({
+        command: "next", projectPath: target, input: { taskId },
+      });
+      assert.equal(envelope.ok, true, JSON.stringify(envelope.error));
+      assert.equal(envelope.result.taskId, taskId);
+      assert.equal(envelope.result.nextAction, expectedAction);
+      if (taskId === taskA) assert.deepEqual(envelope.result.requiredArtifacts, expectedArtifacts);
+    }
+  });
+});
 
 async function withTarget(run) {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-next-task-scope-"));
@@ -104,7 +150,7 @@ test("NEXT-TASK-1: PLANNED next-action for an explicitly selected task uses only
     // Task B is PLANNED with its PREFLIGHT_READY ledger event but without the
     // task-scoped preflight artifact.
     await setupTaskTo(target, "task-b", "PLANNED", { preflight: true });
-    await rm(path.join(target, taskArtifactPath("task-b", "preflight")));
+    await deleteFixtureArtifact(target, taskArtifactPath("task-b", "preflight"));
 
     const nextB = await getNextAction({ target, packageRoot, taskId: "task-b" });
     assert.equal(nextB.nextAction, NEXT_ACTIONS.RUN_PREFLIGHT);

@@ -1,0 +1,26 @@
+{
+  "increment": 855,
+  "scope": "MCP benchmark pagination and diagnosed oversized output; no production output or validation-limit change.",
+  "failedRun": "mcp-latency852-terminal.json",
+  "diagnosis": {
+    "fixtureTasks": 5000,
+    "request": {},
+    "errorCode": "E_MCP_RESULT_TOO_LARGE",
+    "guardBytes": 4194304,
+    "observedBackend": "native",
+    "probe": "External bounded two-repetition validation-only probe, failed before timing comparisons."
+  },
+  "change": "Optional --task-list-limit is passed to both native and pinned-core MCP workers. Recorded request and exact task total/page length checks distinguish pagination from a reduced dataset. Tool errors now retain typed code/message.",
+  "checks": {
+    "requestLimit100At10Tasks": "Full tool/resource content parity passed, two validation-only repetitions.",
+    "requestLimit100At250Tasks": "Full tool/resource content parity passed; tool total250, page100, hasMoretrue.",
+    "verifyFast": "PASS",
+    "exactCountsAt10And250": "PASS"
+  },
+  "performanceAccepted": false,
+  "limitations": [
+    "Validation-only controls are not release latency evidence.",
+    "The failed unpaginated run published no complete five-size comparison.",
+    "Current paginated five-size measurements still need execution."
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "scope": "CI receipt audit discovers canonical SQLite receipts and retains read-only legacy discovery",
+  "sourceSha256": {
+    "scripts/audit-receipts.mjs": "d75d7c214d9aa7405d61bb009755180e82fe129acdabbee7d2de6bbbce07e970",
+    "tests/audit-receipts.test.js": "1e3273a325e328de283647ea40a515f95b50308405558a4be1fc7a299c145974"
+  },
+  "checks": {
+    "receiptAuditAndTaskResolution": {
+      "tests": 25,
+      "pass": 25,
+      "fail": 0
+    },
+    "verifyFast": "PASS",
+    "lint": {
+      "errors": 0,
+      "warnings": 113
+    },
+    "diagnosisContinuityAndReceiptFinal": {
+      "tests": 11,
+      "pass": 11,
+      "fail": 0,
+      "overlap": "5 receipt cases overlap25 earlier;6 continuity cases additional."
+    }
+  },
+  "behavior": [
+    "Native discovery selects current receipt identities from an owned read-only storage snapshot; source payload/schema/identity validation remains required.",
+    "Snapshot owner closes before child strict CLI audit; no write transaction spans external execution.",
+    "Canonical selection ignores malformed legacy shadow files. Incomplete native receipts still fail real strict CLI audit.",
+    "Legacy receipt inspection remains available only when no native authority is selected. Orphan sidecars prevent replacement allocation.",
+    "Default child CLI path resolves from the script location so targeted checkout root need not contain a duplicate CLI. Each child still audits the requested root."
+  ],
+  "limitations": [
+    "Scoped local validation only;fresh full/platform checks remain required.",
+    "Staged remote606 candidate covers immutable605 and does not contain this CI consumer correction.",
+    "No exhaustive consumer/sole-writer proof or final performance/LOC/workflow acceptance inferred."
+  ],
+  "fixtureCorrection": {
+    "file": "tests/storage-continuity-diagnosis-correcting.test.js",
+    "sha256": "b871ab84e813f07b661bc8873922cce4ccff11f9f645e7f6990ec59bc2497cd7",
+    "guarantee": "Explicit portable fixture snapshot;canonical refusal and complete source inventory equality retained;no SQLite allocation."
+  }
+}

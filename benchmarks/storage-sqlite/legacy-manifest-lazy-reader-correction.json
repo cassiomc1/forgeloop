@@ -1,0 +1,17 @@
+{
+  "productionParent": "ab2ea79",
+  "sourceSha256": "376cc4d038e8868015968c41992568b5f15be148bb5b39942ae308512cab0f69",
+  "diagnosis": "Static bounded-metadata import resolved a prohibited storage module during fresh readonly dispatch. Full prepush reproduced C1 failure; all 3152 tracked source hashes matched starting manifest.",
+  "correction": "Import readStorageMetadataJson only when inspecting an existing legacy manifest. Allocation bound and symlink/error behavior remain intact.",
+  "validation": {
+    "affectedPassed": 26,
+    "failed": 0,
+    "skipped": 0,
+    "fast": "PASS",
+    "diffCheck": "PASS"
+  },
+  "limitations": [
+    "Full combined-source regression requires a new run.",
+    "Original whole-plan, memory, LOC, consumer and platform gates remain open."
+  ]
+}

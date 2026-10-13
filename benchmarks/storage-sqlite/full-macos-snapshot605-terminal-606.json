@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "scope": "TerminalMac605corecoveragebeforeCIreceipt606andC6portablefixturecorrection",
+  "exitCode": 1,
+  "counts": {
+    "tests": 2796,
+    "pass": 2784,
+    "fail": 1,
+    "skipped": 11
+  },
+  "sourceFiles": 2613,
+  "sourceDrift": [],
+  "rawLogSha256": "76fe31148feb89cea4d53fa5941583e91feef8143eb4639d27d441b51fc0594e",
+  "failure": "C6 default context refuses unconverted legacy mutation without allocating SQLite: initial fixture snapshot calls canonical readEvents on legacy source,now explicitly refused.",
+  "laterStages": "MCP/package checks not reached after coverage failure.",
+  "limitations": [
+    "Not full pass;fixture correction andCI606consumerneedfreshcurrentfullverification."
+  ]
+}

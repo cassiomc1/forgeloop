@@ -1,0 +1,41 @@
+{
+  "kind": "FULL_HOSTED_PACKAGE_TERMINAL_REVIEW",
+  "runId": 38026050998,
+  "sourceRevision": "c78f9f5cc01fdedbbc4f9805eb63ca4ad566fd33",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "id": 114137007343,
+      "name": "Classify package paths",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_name": "forgeloop-linux-remote"
+    },
+    {
+      "id": 114138033623,
+      "name": "tarball smoke (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_name": "forgeloop-linux-remote"
+    },
+    {
+      "id": 114139857001,
+      "name": "release package smoke (macOS)",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_name": "forgeloop-macos-local"
+    },
+    {
+      "id": 114139857036,
+      "name": "release package smoke (Windows)",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_name": "forgeloop-windows-remote"
+    }
+  ],
+  "logSha256": "a71d9f00b34d840af72321e8dbbd2a9a2ab14095bae6586107369f1f21a5f817",
+  "limits": [
+    "Package and MCP smoke on supported hosts only.",
+    "Core and expanded runtime pending; not performance, LOC, consumer or protocol closure."
+  ]
+}

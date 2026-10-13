@@ -1,0 +1,189 @@
+{
+  "schemaVersion": 1,
+  "kind": "PERSISTENCE_LOC_EXTERNAL_SCOPE_REVIEW_SUMMARY",
+  "status": "PROVISIONAL_REVIEW_WITH_UNRESOLVED_MEMBERSHIP",
+  "acceptanceEligible": false,
+  "targetMet": false,
+  "acceptanceClaimed": false,
+  "originalThreshold": "25% net reduction in unchanged symmetric persistence-related scope",
+  "source": {
+    "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+    "pinnedReviewCurrentRevision": "81ca99e485758f3c159947a691eb60360697e754",
+    "rerunCurrentRevision": "150a34700a40da48e043253bbf26de204c49eda9",
+    "productionDriftSince8480": "none; only three benchmark/prepush evidence JSON files were added between 8480b60 and the rerun HEAD",
+    "parserVersion": "7.0.2",
+    "canonicalManifest": "/Users/cassio/.codex/verification/persistence-loc-function-scope-manifest.json",
+    "canonicalManifestModified": false,
+    "prepushEvidence": {
+      "path": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/benchmarks/storage-sqlite/prepush-8480b60-success.json",
+      "sourceRevision": "8480b60275110e8e9957275e8f47efb50f19efa6",
+      "exitCode": 0,
+      "trackedFileCount": 3074,
+      "sourceManifestMatches": true
+    }
+  },
+  "helperReview": {
+    "inventoryDir": "/Users/cassio/.codex/verification/persistence-loc-helper-inventory-81ca-v1",
+    "partitionsValidated": [
+      1,
+      2,
+      3
+    ],
+    "validation": "/Users/cassio/.codex/verification/persistence-loc-helper-review-validation-8480-v5.json",
+    "validationStatus": "REVIEW_REJECTED_PENDING_CORRECTION",
+    "partitionResults": [
+      {
+        "partition": 1,
+        "status": "REJECTED_UNSUPPORTED_OR_MISMATCHED",
+        "dispositionCount": 250,
+        "errorCount": 4,
+        "errorsAreUnsupportedCallgraphOnly": true,
+        "targets": [
+          "src/core/prepared-execution.js#resolveExecutionArtifactPathFor"
+        ]
+      },
+      {
+        "partition": 2,
+        "status": "REJECTED_UNSUPPORTED_OR_MISMATCHED",
+        "dispositionCount": 253,
+        "errorCount": 15,
+        "errorsAreUnsupportedCallgraphOnly": true,
+        "targets": [
+          "src/commands/protocol-info.js#runProtocolInfo",
+          "src/core/receipt.js#createReceipt",
+          "src/core/structural-quality/artifacts.js#assertStructuralQualityBindings"
+        ]
+      },
+      {
+        "partition": 3,
+        "status": "REJECTED_UNSUPPORTED_OR_MISMATCHED",
+        "dispositionCount": 253,
+        "errorCount": 46,
+        "errorsAreUnsupportedCallgraphOnly": true,
+        "targets": [
+          "src/commands/next.js#runNext.read",
+          "src/core/bundles.js#assertStructuralQualityBundleEvidence",
+          "src/core/code-manifest.js#validateCodeManifest",
+          "src/core/events.js#parseEventsText",
+          "src/core/events.js#validateStoredEvents",
+          "src/core/guide-metadata.js#requiredGatesForGuides",
+          "src/core/inspect.js#structuralQualityIssues",
+          "src/core/receipt.js#validateReceipt",
+          "src/core/responsibility.js#validateResponsibilityContract",
+          "src/core/task-descriptor.js#validateTaskDescriptor",
+          "src/core/trace.js#projectNormalizedEvents",
+          "src/core/verification-scope.js#validateVerificationScope",
+          "src/core/workspace-binding.js#validateWorkspaceBinding"
+        ]
+      }
+    ],
+    "acceptedDispositionCount": 725,
+    "acceptedTargetCount": 424,
+    "acceptedByDisposition": {
+      "REVIEWED_EXCLUDE_PURE_DOMAIN": 490,
+      "REVIEWED_INCLUDE_PERSISTENCE": 235
+    },
+    "rejectedUnsupportedTargetCount": 17,
+    "rejectedUnsupportedTargets": [
+      "src/commands/next.js#runNext.read",
+      "src/commands/protocol-info.js#runProtocolInfo",
+      "src/core/bundles.js#assertStructuralQualityBundleEvidence",
+      "src/core/code-manifest.js#validateCodeManifest",
+      "src/core/events.js#parseEventsText",
+      "src/core/events.js#validateStoredEvents",
+      "src/core/guide-metadata.js#requiredGatesForGuides",
+      "src/core/inspect.js#structuralQualityIssues",
+      "src/core/prepared-execution.js#resolveExecutionArtifactPathFor",
+      "src/core/receipt.js#createReceipt",
+      "src/core/receipt.js#validateReceipt",
+      "src/core/responsibility.js#validateResponsibilityContract",
+      "src/core/structural-quality/artifacts.js#assertStructuralQualityBindings",
+      "src/core/task-descriptor.js#validateTaskDescriptor",
+      "src/core/trace.js#projectNormalizedEvents",
+      "src/core/verification-scope.js#validateVerificationScope",
+      "src/core/workspace-binding.js#validateWorkspaceBinding"
+    ],
+    "candidateManifest": "/Users/cassio/.codex/verification/persistence-loc-function-scope-manifest-8480-all-reviewed-candidate.json",
+    "candidateEvidence": "/Users/cassio/.codex/verification/persistence-loc-helper-dispositions-all-reviewed.json",
+    "policy": "No file-wide or name-pattern exclusions; no storage helper endpoint was accepted; storage remains mandatory whole-module scope.",
+    "validationSha256": "dcd85184d1502e742ee47b82f30a2d5156b7d4768d4f8fbc426791c6f047a4ac"
+  },
+  "staticBindingCorrections": {
+    "analyzer": "/Users/cassio/.codex/verification/persistence-loc-function-analyzer.mjs",
+    "corrections": [
+      "Recurse through TypeScript 7 BindingElement wrappers when proving Promise.all destructured dynamic imports.",
+      "Recognize ObjectBindingPattern by SyntaxKind because the pinned remote AST predicate is not reliable for that node.",
+      "Prove each dynamic import against its nearest lexical function so sibling nested callbacks with the same binding name cannot create false unresolved findings."
+    ],
+    "effect": "All selected fixed relative dynamic imports are proven; selected dynamic-import residual is zero. Unselected global dynamic findings remain fail-closed."
+  },
+  "finalResult": {
+    "path": "/Users/cassio/.codex/verification/persistence-loc-function-result-8480b60-all-reviewed-dynamic-fixed-v10.json",
+    "sha256": "6f6fa89313ab13e26d60ba0e166eff7bd5385789fe36e0654d87de8e613b3289",
+    "baselineSelectedLines": 18243,
+    "currentSelectedLines": 25638,
+    "netReduction": -0.40536096036836056,
+    "unresolvedMembership": 491,
+    "helperMembershipDispositionsApplied": 725,
+    "selectedNonHelperFindings": {
+      "filesystem-path-proof-unresolved": 83,
+      "computed-local-persistence-call": 1
+    },
+    "allFunctionNonHelperFindings": {
+      "filesystem-path-proof-unresolved": 329,
+      "computed-local-persistence-call": 171,
+      "dynamic-local-import": 365
+    },
+    "allFunctionDynamicProof": {
+      "literal-relative-module-and-binding-uses-proven": 147,
+      "unproven-binding-or-use": 218
+    },
+    "targetThresholdPreserved": "currentSelectedLines <= baselineSelectedLines * 0.75"
+  },
+  "nonHelperInventory": {
+    "summary": "/Users/cassio/.codex/verification/persistence-loc-nonhelper-inventory-8480-all-reviewed-v3/summary.json",
+    "categories": {
+      "dynamic-local-import": {
+        "path": "/Users/cassio/.codex/verification/persistence-loc-nonhelper-inventory-8480-all-reviewed-v3/dynamic-imports.json",
+        "recordCount": 0,
+        "occurrenceCount": 0,
+        "allCallerDefinitionsHaveHashes": true,
+        "allCallsitesHaveFingerprints": true
+      },
+      "filesystem-path-proof-unresolved": {
+        "path": "/Users/cassio/.codex/verification/persistence-loc-nonhelper-inventory-8480-all-reviewed-v3/filesystem-path-proof.json",
+        "recordCount": 77,
+        "occurrenceCount": 83,
+        "allCallerDefinitionsHaveHashes": true,
+        "allCallsitesHaveFingerprints": true
+      },
+      "computed-local-persistence-call": {
+        "path": "/Users/cassio/.codex/verification/persistence-loc-nonhelper-inventory-8480-all-reviewed-v3/computed-calls.json",
+        "recordCount": 1,
+        "occurrenceCount": 1,
+        "allCallerDefinitionsHaveHashes": true,
+        "allCallsitesHaveFingerprints": true
+      }
+    },
+    "reviewStatus": "PENDING_SOURCE_REVIEW_FOR_FILESYSTEM_AND_COMPUTED_RESIDUALS"
+  },
+  "storageScope": {
+    "wholeModuleRule": true,
+    "currentStorageModuleCount": 65,
+    "currentStorageNonblankLines": 7171,
+    "acceptedStorageHelperDispositions": 0,
+    "importExportMaintenancePreserved": true
+  },
+  "limitations": [
+    "The 17 rejected target identities remain unresolved because source-backed callgraph proof found direct persistence, filesystem, operational-path, storage-import, or unknown evidence.",
+    "The final result remains acceptance-ineligible; no 25% acceptance or completion claim is made.",
+    "No production files, tests, benchmarks, or canonical manifest entries were changed by this review."
+  ],
+  "parentRetention": {
+    "recordedAtRevision": "254997080ecdc819bfd92caab01c67d1bd5e6a29",
+    "rawReviewPath": "/Users/cassio/.codex/verification/persistence-loc-external-scope-review-summary-150a347.json",
+    "rawReviewSha256": "63e85429989286874ba4dbcf3fda35d95583fcd9d56dba0b91833fce49ca83ff",
+    "referencedResultAndValidationHashesVerified": true,
+    "purpose": "Retain provisional rejected exclusions and remaining scope work; this is not acceptance evidence."
+  }
+}

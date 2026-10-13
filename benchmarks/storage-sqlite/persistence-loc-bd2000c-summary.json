@@ -1,0 +1,15 @@
+{
+  "sourceRevision": "bd2000c",
+  "baselineSelectedLines": 25732,
+  "currentSelectedLines": 32423,
+  "ceiling": 19299,
+  "gap": 13124,
+  "unresolvedMembership": 0,
+  "targetMet": false,
+  "scopeManifest": "benchmarks/storage-sqlite/persistence-loc/scope-page-collector.json.gz",
+  "resultSha256": "00df9d605862e52718377b4f9f4cb1d4bbfbafbd6a38d72736ccb83d8f3d3af6",
+  "limitations": [
+    "Analysis eligibility is not LOC target acceptance.",
+    "All storage/import/export/maintenance code and conservative membership retained."
+  ]
+}

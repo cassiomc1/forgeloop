@@ -9,6 +9,8 @@ import { taskEvaluationPath } from "./task-paths.js";
 import { appendProtocolEvent } from "./events.js";
 import { assertSafePath, ensureWithin } from "./filesystem.js";
 import { withTaskTransaction } from "./transaction.js";
+import { withProjectReadSnapshot } from "../storage/project-read-snapshot.js";
+import { needsExistingProjectScope, withExistingProjectScope } from "../storage/existing-project-scope.js";
 
 function evaluationError(code, message) { const error = new Error(message); error.code = code; return error; }
 
@@ -25,8 +27,18 @@ export async function evaluateTrajectory({ target, packageRoot, taskId, scenario
   }
   assertSchema(scenario, await readSchema("trajectory-scenario", packageRoot), "trajectory scenario");
   if (!/^eval-[A-Za-z0-9_-]+$/.test(evaluationId)) throw evaluationError("E_TRAJECTORY_SCENARIO_INVALID", "evaluationId is invalid");
-  const trace = await buildTaskTrace({ target, packageRoot, taskId });
-  const metrics = await buildTrajectoryMetrics({ target, packageRoot, taskId, runtimeContext });
+  const options = { target, packageRoot, taskId, scenarioPath, evaluationId, runtimeContext };
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => evaluateValidatedTrajectory(options, scenario));
+  }
+  return evaluateValidatedTrajectory(options, scenario);
+}
+
+async function evaluateValidatedTrajectory({ target, packageRoot, taskId, evaluationId, runtimeContext }, scenario) {
+  const { trace, metrics } = await withProjectReadSnapshot(target, async () => ({
+    trace: await buildTaskTrace({ target, packageRoot, taskId }),
+    metrics: await buildTrajectoryMetrics({ target, packageRoot, taskId, runtimeContext }),
+  }));
   const milestoneSet = new Set(trace.events.map((event) => event.type));
   const missingMilestones = (scenario.requiredMilestones ?? []).filter((milestone) => !milestoneSet.has(milestone));
   const completionEvent = trace.events.find((event) => event.type === "COMPLETION_VALIDATED");
@@ -62,7 +74,7 @@ export async function evaluateTrajectory({ target, packageRoot, taskId, scenario
   };
   const evaluation = { ...base, evaluationFingerprint: canonicalFingerprint(base) };
   assertSchema(evaluation, await readSchema("trajectory-evaluation", packageRoot), "trajectory evaluation");
-  await withTaskTransaction({ target, taskId, operation: "trajectory-evaluated" }, async () => {
+  await withTaskTransaction({ target, packageRoot, taskId, operation: "trajectory-evaluated" }, async () => {
     await writeJsonArtifact(target, taskEvaluationPath(taskId, evaluationId), evaluation, "trajectory-evaluation", packageRoot);
     await appendProtocolEvent(target, { taskId, event: "TRAJECTORY_EVALUATED", fingerprint: evaluation.evaluationFingerprint,
       details: { evaluationId, scenarioId: scenario.scenarioId, evaluationFingerprint: evaluation.evaluationFingerprint } }, packageRoot, { taskId });

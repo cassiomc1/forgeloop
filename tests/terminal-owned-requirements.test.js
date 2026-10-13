@@ -1,3 +1,4 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
@@ -23,6 +24,7 @@ const packageRoot = getPackageRoot();
 async function withTarget(run) {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-terminal-"));
   try {
+    await ensureFixtureTask(target, "task-terminal", packageRoot);
     await run(target);
   } finally {
     await removeTempTree(target);
@@ -43,10 +45,11 @@ async function setupTarget(target, { verification = ["tests"], successCriteria =
     sourceRefs: [],
   });
   const contractHash = contractFingerprint(contract);
-  await writeContract(target, contract, packageRoot);
+  await writeContract(target, contract, packageRoot, { taskId: contract.taskId });
   const route = evaluateRoute({ workType: "code", surfaces: ["config"], platforms: [] });
   const persistedRoute = await persistRoute(target, route, packageRoot, {
     contractFingerprint: contractHash,
+    taskId: contract.taskId,
   });
   const state = createWorkState({
     taskId: contract.taskId,
@@ -65,12 +68,12 @@ async function setupTarget(target, { verification = ["tests"], successCriteria =
     blockers: [],
     verificationEvidence: [],
   });
-  await writeWorkState(target, state, { packageRoot });
-  await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot);
-  await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot);
-  const preflight = await runPreflight({ target, packageRoot });
+  await writeWorkState(target, state, { packageRoot, taskId: "task-terminal" });
+  await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot, { taskId: "task-terminal" });
+  await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot, { taskId: "task-terminal" });
+  const preflight = await runPreflight({ target, packageRoot, taskId: "task-terminal" });
   assert.equal(preflight.status, "READY");
-  await advanceWorkState(target, "EXECUTING", { packageRoot });
+  await advanceWorkState(target, "EXECUTING", { packageRoot, taskId: "task-terminal" });
 }
 
 test("cannot claim premature passed OBSERVED check for LIFECYCLE requirement (Matrix H)", async () => {
@@ -80,14 +83,15 @@ test("cannot claim premature passed OBSERVED check for LIFECYCLE requirement (Ma
       successCriteria: ["tests", "Lifecycle reaches validator-backed COMPLETE state"],
     });
 
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-terminal" });
+    await prepareCompletion({ target, packageRoot, taskId: "task-terminal" });
 
     // Attempting to record passed + OBSERVED for lifecycle requirement must throw E_FUTURE_LIFECYCLE_EVIDENCE
     await assert.rejects(
       () => recordCheck({ kind: "manual-review",
         target,
         packageRoot,
+        taskId: "task-terminal",
         id: "lifecycle-check",
         requirement: "Lifecycle reaches validator-backed COMPLETE state",
         status: "passed",
@@ -107,14 +111,15 @@ test("cannot claim premature passed OBSERVED check for PUBLICATION requirement (
       successCriteria: ["tests", "Package published to npm registry"],
     });
 
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-terminal" });
+    await prepareCompletion({ target, packageRoot, taskId: "task-terminal" });
 
     // Attempting to record passed + OBSERVED for publication requirement must throw E_FUTURE_LIFECYCLE_EVIDENCE
     await assert.rejects(
       () => recordCheck({ kind: "manual-review",
         target,
         packageRoot,
+        taskId: "task-terminal",
         id: "pub-check",
         requirement: "Package published to npm registry",
         status: "passed",
@@ -134,14 +139,15 @@ test("cannot claim premature passed OBSERVED check for PRODUCTION_READINESS requ
       successCriteria: ["tests", "Production deployment readiness verified"],
     });
 
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-terminal" });
+    await prepareCompletion({ target, packageRoot, taskId: "task-terminal" });
 
     // Attempting to record passed + OBSERVED for production readiness requirement must throw E_FUTURE_LIFECYCLE_EVIDENCE
     await assert.rejects(
       () => recordCheck({ kind: "manual-review",
         target,
         packageRoot,
+        taskId: "task-terminal",
         id: "deploy-check",
         requirement: "Production deployment readiness verified",
         status: "passed",
@@ -209,11 +215,12 @@ test("terminal requirements do not block readiness during verification review", 
 test("standard vs strict closure requirements (Matrix P & Q)", async () => {
   await withTarget(async (target) => {
     await setupTarget(target);
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-terminal" });
+    await prepareCompletion({ target, packageRoot, taskId: "task-terminal" });
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: "task-terminal",
       id: "tests-pass",
       requirement: "tests",
       status: "passed",
@@ -221,7 +228,7 @@ test("standard vs strict closure requirements (Matrix P & Q)", async () => {
       command: "npm test",
       result: "Passed",
     });
-    await advanceWorkState(target, "REVIEWING", { packageRoot });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId: "task-terminal" });
 
     // Standard completion passes
     const standardResult = await runComplete({ target, packageRoot, strict: false });
@@ -235,11 +242,12 @@ test("local task without publication requirement completes with local-only and n
       verification: ["tests"],
       successCriteria: ["tests"],
     });
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-terminal" });
+    await prepareCompletion({ target, packageRoot, taskId: "task-terminal" });
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: "task-terminal",
       id: "tests-pass",
       requirement: "tests",
       status: "passed",
@@ -247,9 +255,9 @@ test("local task without publication requirement completes with local-only and n
       command: "npm test",
       result: "Passed",
     });
-    await advanceWorkState(target, "REVIEWING", { packageRoot });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId: "task-terminal" });
 
-    const result = await runComplete({ target, packageRoot });
+    const result = await runComplete({ target, packageRoot, taskId: "task-terminal" });
     assert.equal(result.status, "VALID");
     assert.equal(result.taskStatus, "COMPLETE");
     assert.equal(result.publicationStatus, "local-only");
@@ -263,11 +271,12 @@ test("publication explicitly required but local-only rejects completion (P1-6 Te
       verification: ["tests"],
       successCriteria: ["tests", "Package is published to npm registry"],
     });
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-terminal" });
+    await prepareCompletion({ target, packageRoot, taskId: "task-terminal" });
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: "task-terminal",
       id: "tests-pass",
       requirement: "tests",
       status: "passed",
@@ -275,9 +284,9 @@ test("publication explicitly required but local-only rejects completion (P1-6 Te
       command: "npm test",
       result: "Passed",
     });
-    await advanceWorkState(target, "REVIEWING", { packageRoot });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId: "task-terminal" });
 
-    const result = await runComplete({ target, packageRoot });
+    const result = await runComplete({ target, packageRoot, taskId: "task-terminal" });
     assert.equal(result.status, "REJECTED");
     assert.ok(result.errors.some((e) => e.code === "E_PUBLICATION_REQUIREMENT_PENDING"));
   });
@@ -289,11 +298,12 @@ test("production readiness explicitly required but not-verified rejects completi
       verification: ["tests"],
       successCriteria: ["tests", "Production deployment succeeds"],
     });
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-terminal" });
+    await prepareCompletion({ target, packageRoot, taskId: "task-terminal" });
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: "task-terminal",
       id: "tests-pass",
       requirement: "tests",
       status: "passed",
@@ -301,9 +311,9 @@ test("production readiness explicitly required but not-verified rejects completi
       command: "npm test",
       result: "Passed",
     });
-    await advanceWorkState(target, "REVIEWING", { packageRoot });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId: "task-terminal" });
 
-    const result = await runComplete({ target, packageRoot });
+    const result = await runComplete({ target, packageRoot, taskId: "task-terminal" });
     assert.equal(result.status, "REJECTED");
     assert.ok(result.errors.some((e) => e.code === "E_PRODUCTION_REQUIREMENT_PENDING"));
   });

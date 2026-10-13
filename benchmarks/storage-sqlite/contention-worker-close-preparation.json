@@ -1,0 +1,12 @@
+{
+  "kind": "CONTENTION_WORKER_CLOSE_PREPARATION",
+  "sourceBefore": "17772c0",
+  "productionChanged": false,
+  "change": "Resolve successful worker completion at close and await every done promise during failure cleanup",
+  "syntaxExitCode": 0,
+  "eslintExitCode": 0,
+  "verifyFastExitCode": 0,
+  "realChildControl": "Captured close/exitCode0/signalnull/stdioClosedtrue",
+  "newContentionMeasurement": "pending",
+  "acceptanceClaim": false
+}

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile, writeFile } from "node:fs/promises";
+import { readFixtureText, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
 import { test } from "node:test";
 
 import { runTaskRecover } from "../src/commands/task-recover.js";
@@ -50,9 +50,9 @@ test("next fails closed on recovery artifact and ledger mismatch", async () => {
     const { taskId } = await setupAbandonedTask(target, { taskId: "next-inconsistent" });
     await runTaskRecover({ target, packageRoot, taskId, acknowledgeRecovery: true });
     const recoveryPath = ensureWithin(target, taskArtifactPath(taskId, "recovery"));
-    const recovery = JSON.parse(await readFile(recoveryPath, "utf8"));
+    const recovery = JSON.parse(await readFixtureText(target, recoveryPath));
     recovery.recoveryEventSeq += 1;
-    await writeFile(recoveryPath, `${JSON.stringify(recovery, null, 2)}\n`, "utf8");
+    await overwriteFixtureText(target, recoveryPath, `${JSON.stringify(recovery, null, 2)}\n`);
 
     const next = await getNextAction({ target, packageRoot, taskId });
     assert.equal(next.nextAction, NEXT_ACTIONS.RESOLVE_RECOVERY_INCONSISTENCY);

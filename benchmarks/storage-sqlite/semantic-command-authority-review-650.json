@@ -1,0 +1,27 @@
+{
+  "increment": 650,
+  "scope": "Semantic command persistence authority review; no production changes",
+  "publicExecutor": {
+    "error": {
+      "code": "E_DECISION_REQUEST_INVALID",
+      "message": "Dynamic semantic question set has invalid bounded questions."
+    },
+    "providerCalls": 0,
+    "before": {
+      "artifacts": 8,
+      "events": 29
+    },
+    "after": {
+      "artifacts": 8,
+      "events": 29
+    }
+  },
+  "validation": {
+    "tests": 15,
+    "passed": 15,
+    "failed": 0,
+    "log": "/Users/cassio/.codex/verification/semantic-boundary650.log"
+  },
+  "conclusion": "Current public executor supplies no candidates and rejects the empty question set before provider evaluation. Direct task-bound context planning remains semantic-capable and uses SQLite optimistic validation. Existing concurrent-change/cache regressions pass. No new writer leak demonstrated; CLI usability and metadata mismatch are separate unresolved design issues.",
+  "wholeAcceptance": false
+}

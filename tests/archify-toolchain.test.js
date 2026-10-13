@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, readFile, rename, rm, symlink, unlink, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rename, symlink, unlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -105,7 +106,7 @@ test("schema version metadata does not affect vendor tree integrity", async () =
     assert.doesNotThrow(() => validateArchifyPin(pin));
     assert.deepEqual(await verifyVendorTreeIntegrity(root, pin.integrity), integrity);
   } finally {
-    await rm(root, { recursive: true, force: true });
+    await removeTempTree(root);
   }
 });
 
@@ -119,7 +120,7 @@ test("malformed integrity still fails closed after schema validation", async () 
       "E_VENDOR_INTEGRITY_PIN_INVALID",
     );
   } finally {
-    await rm(root, { recursive: true, force: true });
+    await removeTempTree(root);
   }
 });
 
@@ -140,8 +141,8 @@ test("vendor integrity digest is deterministic across creation order", async () 
     assert.deepEqual(Object.keys(firstIntegrity.files), ["nested/alpha.json", "nested/beta.txt", "zeta.mjs"]);
     assert.deepEqual(await verifyVendorTreeIntegrity(first, firstIntegrity), firstIntegrity);
   } finally {
-    await rm(first, { recursive: true, force: true });
-    await rm(second, { recursive: true, force: true });
+    await removeTempTree(first);
+    await removeTempTree(second);
   }
 });
 
@@ -165,7 +166,7 @@ test("vendor integrity fails closed on modified, extra, missing, and renamed fil
     await rename(path.join(root, "nested", "alpha.json"), path.join(root, "nested", "renamed.json"));
     await expectIntegrityError(() => verifyVendorTreeIntegrity(root, expected), "E_VENDOR_INTEGRITY_FILE_SET");
   } finally {
-    await rm(root, { recursive: true, force: true });
+    await removeTempTree(root);
   }
 });
 
@@ -186,7 +187,7 @@ test("vendor integrity rejects symlinked entries", async (t) => {
       "E_VENDOR_INTEGRITY_SYMLINK",
     );
   } finally {
-    await rm(root, { recursive: true, force: true });
+    await removeTempTree(root);
   }
 });
 
@@ -200,7 +201,7 @@ test("vendor integrity ignores only .DS_Store and preserves all other files", as
     await verifyVendorTreeIntegrity(root, integrity);
     assert.match(await readFile(path.join(root, "zeta.mjs"), "utf8"), /zeta/);
   } finally {
-    await rm(root, { recursive: true, force: true });
+    await removeTempTree(root);
   }
 });
 
@@ -216,7 +217,7 @@ test("Archify wrapper accepts a valid documentation-scoped invocation", async ()
     assert.deepEqual(await validateArchifyInvocation("deliver", deliverArgs, { rootDir: root }), deliverArgs);
     assert.deepEqual(await validateArchifyInvocation("doctor", [], { rootDir: root }), []);
   } finally {
-    await rm(root, { recursive: true, force: true });
+    await removeTempTree(root);
   }
 });
 
@@ -252,7 +253,7 @@ test("Archify wrapper rejects malformed and out-of-bound paths", async () => {
       "E_ARCHIFY_INVOCATION",
     );
   } finally {
-    await rm(root, { recursive: true, force: true });
+    await removeTempTree(root);
   }
 });
 
@@ -284,6 +285,6 @@ test("Archify wrapper rejects source and output symlink escapes", async (t) => {
       "E_ARCHIFY_PATH_SYMLINK",
     );
   } finally {
-    await rm(root, { recursive: true, force: true });
+    await removeTempTree(root);
   }
 });

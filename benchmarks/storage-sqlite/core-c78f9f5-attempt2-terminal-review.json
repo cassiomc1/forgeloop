@@ -1,0 +1,100 @@
+{
+  "kind": "CORE_FAILED_JOB_RETRY_TERMINAL_REVIEW",
+  "runId": 38026044486,
+  "attempt": 2,
+  "sourceRevision": "c78f9f5cc01fdedbbc4f9805eb63ca4ad566fd33",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "id": 114144453320,
+      "name": "Verify generated Archify diagram",
+      "conclusion": "success"
+    },
+    {
+      "id": 114144453689,
+      "name": "Classify changed paths",
+      "conclusion": "success"
+    },
+    {
+      "id": 114144453976,
+      "name": "Lint and dependency policy",
+      "conclusion": "success"
+    },
+    {
+      "id": 114144453981,
+      "name": "audit",
+      "conclusion": "success"
+    },
+    {
+      "id": 114144454034,
+      "name": "Unit tests (Node 24, shard 3/4)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114144454063,
+      "name": "Unit tests (Node 24, shard 1/4)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114144454317,
+      "name": "Unit tests (Node 24.19.0, shard 0/4)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114144454448,
+      "name": "Unit tests (Node 24, shard 4/4)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114144454981,
+      "name": "Coverage report (Node 24)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114144469012,
+      "name": "Unit tests (Node 24, shard 2/4)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114144471975,
+      "name": "tarball smoke (ubuntu-latest)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114144626423,
+      "name": "Repository Index native matrix / Classify Repository Index paths",
+      "conclusion": "success"
+    },
+    {
+      "id": 114144669171,
+      "name": "Repository Index native matrix / Verify Repository Index manifest",
+      "conclusion": "success"
+    },
+    {
+      "id": 114144718431,
+      "name": "Repository Index native matrix / Native Repository Index (macOS)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114144718461,
+      "name": "Repository Index native matrix / Native Repository Index (Windows)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114144718467,
+      "name": "Repository Index native matrix / Native Repository Index (Linux)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114144956299,
+      "name": "validate (22)",
+      "conclusion": "success"
+    }
+  ],
+  "logSha256": "d6105a1ef15816dfe037646176a1619219c9a43bc3114cb9cd0f396b4fb26c53",
+  "priorAttempt": "Retained attempt1 external link503/timeout failure; failed-only retry preserves originalpassingjobs.",
+  "limits": [
+    "Source predates new continuity/scope/handofftests anddrillwrapper; productionstorageunchanged.",
+    "No wholeplanperformance/LOC/validatoracceptance."
+  ]
+}

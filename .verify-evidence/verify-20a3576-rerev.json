@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "taskId": "sqlite-verify-rerev-20261012",
+  "recordedAt": "2026-10-12T00:00:00Z",
+  "baseRevision": "20a35764c518976586ae9cec8f765b3730aa11e6",
+  "branch": "codex/sqlite-end-to-end",
+  "fixCommit": "4d507d5465a6a80cd20328b4dfb854d0cd2e9b32",
+  "summary": "Re-verification of the SQLite end-to-end migration branch at the actual tested revision: full verify:prepush, verify:fast, and the focused SQLite migration/recovery/concurrency test files mapped to the plan's acceptance items. One in-scope failure appeared (complexity gate on src/core/reconcile-closure.js) and was fixed; the first extraction dropped the function's return statement, caught by reconcile tests and restored before the full passes.",
+  "checks": [
+    {
+      "id": "verify-fast",
+      "command": "npm run verify:fast",
+      "revision": "20a35764c518976586ae9cec8f765b3730aa11e6 + src/core/reconcile-closure.js fix (uncommitted at run time, committed as 4d507d5)",
+      "exitStatus": 0,
+      "result": "5 PASS / 0 FAIL (test:quick, lint, dependency:policy, docs:generated:check, repository:hygiene)",
+      "logSha256": "1f2a9172ade5799ab7ad7c8d1f5fb1f8255b30a3cb7c1c2a825a59992d664002"
+    },
+    {
+      "id": "verify-prepush",
+      "command": "npm run verify:prepush",
+      "revision": "20a35764c518976586ae9cec8f765b3730aa11e6 + src/core/reconcile-closure.js fix (uncommitted at run time, committed as 4d507d5)",
+      "exitStatus": 0,
+      "result": "22 PASS / 0 FAIL — coverage (578.4s), critical-coverage:check, lint, dependency:policy, complexity:check, docs:check, completions:check, summary:check, changelog:check, repository-index:manifest, repository:hygiene, poc:evidence:verify, poc:evidence:test, mcp:test:clean, mcp:pack:check, pack:check, python-unittest, markdown-self-test, markdown-validator, loop-self-test, loop-validator, secret-scan",
+      "logSha256": "be98418d96f24a91f8b743aac65b3ff8ce51b51a317e88959793e5af732d627b"
+    },
+    {
+      "id": "storage-focused",
+      "command": "node scripts/run-tests.js tests/storage-migration-resume.test.js tests/storage-interruption.test.js tests/storage-multiprocess.test.js tests/storage-correction-contention.test.js tests/storage-database-admission.test.js tests/storage-legacy-signature.test.js tests/storage-forward-rebuild.test.js tests/storage-active-replacement.test.js tests/storage-file-durability.test.js tests/storage-maintenance-handoff.test.js tests/storage-maintenance-handoff-async.test.js tests/storage-maintenance-incarnation.test.js tests/storage-maintenance-adoption-proof.test.js tests/storage-maintenance-owner-containment.test.js tests/storage-migration-rollback-admission.test.js tests/storage-migration-rollback-operator.test.js tests/storage-migration-rollback-preparation.test.js",
+      "revision": "4d507d5465a6a80cd20328b4dfb854d0cd2e9b32 (committed tree)",
+      "exitStatus": 0,
+      "result": "90 tests: 86 pass / 0 fail / 4 skipped (Windows-only owner-observer platform checks, expected on macOS)",
+      "logSha256": "50e1ce9cd42543c0b13ca4567538688464213d1fc1b5d81465923cf210323873"
+    }
+  ],
+  "inScopeFailureAndFix": {
+    "failure": "verify:prepush complexity:check failed on src/core/reconcile-closure.js (reconcileSelectedClosure) — an earlier pass's receipt-rebind extraction exceeded the repository complexity gate.",
+    "fix": "Rebalanced the extraction so the rebind receipt helper owns the per-branch work; the first attempt dropped the function's final return, caught immediately by tests/reconcile-closure.test.js (15/15 after restore). Committed as 4d507d5."
+  },
+  "scopeBoundaries": [
+    "No ForgeLoop lifecycle state touched; no 5000-task dispatch; no PR/merge/publish/deploy/live migration.",
+    "fail-closed E_STORAGE_MIGRATION_REQUIRED and sole-writer SQLite semantics preserved (database-admission, legacy-signature, interruption, multiprocess tests all pass)."
+  ],
+  "limitations": [
+    "verify:prepush and verify:fast ran with the reconcile-closure fix present in the working tree but before it was committed; the fix is byte-identical to commit 4d507d5, so the prepush result binds to tree(20a3576)+fix = 4d507d5.",
+    "The four skipped tests exercise Windows PowerShell owner-observation; Linux/macOS equivalents in the same files passed.",
+    "Log files live under /tmp and are referenced by sha256 only; they are not committed."
+  ]
+}

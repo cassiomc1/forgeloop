@@ -1,0 +1,63 @@
+{
+  "increment": 689,
+  "productionRuntimeChanged": false,
+  "workflowChanged": true,
+  "beforeEvidence": "/Users/cassio/.codex/verification/workflow-before689.log",
+  "correction": "Core accepts manual dispatch and selects full classifier flags without revision-range payload; PR path routing retained. Native index matrix waits for preceding Linux jobs and uses max-parallel1. Expanded compatibility follows minimum and serializes rows. Always conditions preserve native diagnostic runs after preceding failures, while classification/trust/expanded admission still gates invocation.",
+  "executionIdentity": "Windows job requires requested host IPv4 and inspects only container ID/image/running state/hostname. Linux core jobs record OS/architecture/hostname/revision to correlate execution. PowerShell and remote execution are not yet verified.",
+  "registeredCoreWorkflow": {
+    "id": 353839074,
+    "name": "PR Core",
+    "path": ".github/workflows/pr-core.yml",
+    "state": "active"
+  },
+  "lastObservedCoreRun": {
+    "conclusion": "success",
+    "event": "pull_request",
+    "head_sha": "78b1186a13ad16c017ce3cdf6edf9d715749ef46",
+    "id": 36768782614,
+    "status": "completed"
+  },
+  "lastObservedRunIsCandidateEvidence": false,
+  "dispatchDocs": [
+    "https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows",
+    "https://docs.github.com/en/rest/actions/workflows"
+  ],
+  "checks": {
+    "nodeWorkflowClassifierAdmissionTests": {
+      "passed": 14,
+      "failed": 0,
+      "log": "/Users/cassio/.codex/verification/workflow689.log"
+    },
+    "pythonWorkflowPolicy": {
+      "passed": 6,
+      "failed": 0
+    },
+    "verifyFast": "PASS",
+    "lint": "PASS",
+    "docs": "PASS",
+    "gitDiff": "PASS"
+  },
+  "sourceSha256": {
+    ".github/workflows/pr-core.yml": "016561de63d14e6f60408ceb69c835cdba49b8cfe8a85c96ecabcb477f6746d8",
+    ".github/workflows/repository-index.yml": "223aab47a7809538fb575fb85410892cec50a0e170d343fdf1ff219896fc9597",
+    ".github/workflows/node-compat.yml": "7e7c5d1cbce60c678613940a7a687abe0176ea0679810ba11c391a78e980c689",
+    ".github/workflows/windows-full-suite.yml": "f384e60231f80939bf5c98064b5456466ec7aeac313909cf5dd14480e42cf5c1",
+    "tests/workflow-policy.test.js": "4c21399a556caa7bd45854584b66324441f1cd4fd6b87bd5811864aa86c1a805",
+    "docs/SELF_HOSTED_TESTS.md": "edec080fecea174a30c107a779728c0a28c28a61712d397252990ee075a2770a"
+  },
+  "jevgrep": {
+    "exitCode": 0,
+    "bytes": 6764,
+    "log": "/Users/cassio/.codex/verification/jg689.log",
+    "verificationEvidence": false
+  },
+  "wholeScopeVerified": false,
+  "limitations": [
+    "Actual candidate GitHub execution remains pending; registered active workflow and previous successful PR run are not candidate checks.",
+    "Node classification shell integration is tested locally on Mac and skipped on Windows because this hosted classification step runs on Linux.",
+    "Serial dependencies cover the listed workflow invocation, not arbitrary separately scheduled workflows. Dispatch remote workflows sequentially.",
+    "Full Mac686 predates runtime688 and these workflow changes.",
+    "Remaining original persistence/maintenance, resource/performance, inclusive25percent LOC, VALID and PR requirements remain open."
+  ]
+}

@@ -1,3 +1,5 @@
+import { needsExistingProjectScope } from "../../storage/existing-project-scope.js";
+import { withProjectReadSnapshot } from "../../storage/project-read-snapshot.js";
 import { canonicalFingerprint, readJsonArtifact } from "../artifacts.js";
 import { readConfig } from "../config.js";
 import { readContract } from "../contract.js";
@@ -36,6 +38,22 @@ import {
 import { appendProtocolEvent } from "../events.js";
 import { getPackageRoot } from "../templates.js";
 import { withTaskMutation } from "../task-command.js";
+import { withTaskTransaction } from "../transaction.js";
+import { getOperationalStore } from "../../storage/operational-context.js";
+
+async function withQualityMutation(target, options, operation, callback) {
+  const native = Boolean(getOperationalStore(target)) || await needsExistingProjectScope(target);
+  for (let retry = 0; ; retry += 1) {
+    try {
+      return await withTaskMutation(target, options, operation, callback);
+    } catch (error) {
+      // These callbacks persist an already captured observation. A native
+      // conflict discards their staged writes; rerun admission and bindings
+      // against current records without invoking the provider again.
+      if (!native || error.code !== "E_STATE_REVISION_CONFLICT" || retry >= 2) throw error;
+    }
+  }
+}
 import { findTaskById } from "../task-discovery.js";
 import { currentChangedPaths } from "../repository.js";
 import { assertClaimsCoverChangedPaths } from "../task-scope.js";
@@ -142,7 +160,11 @@ function normalizeScanResult(result, provider, detection, projectPath) {
   };
 }
 
-export async function resolveStructuralQualityContext({
+export async function resolveStructuralQualityContext(options = {}) {
+  return withProjectReadSnapshot(options.target, () => resolveStructuralQualityContextObservation(options));
+}
+
+async function resolveStructuralQualityContextObservation({
   target,
   packageRoot = getPackageRoot(),
   taskId,
@@ -378,31 +400,43 @@ export async function captureStructuralQualityBaseline({ target, packageRoot = g
     scope: updatedInputs.scope,
     snapshot: scan.snapshot,
   };
-  const written = await writeStructuralQualityBaseline(target, taskId, value, packageRoot, { phase: inputs.state.phase, replace, taskId });
-  if (!written.identical) {
-    await appendProtocolEvent(target, {
-      taskId,
-      event: "STRUCTURAL_QUALITY_BASELINE_RECORDED",
-      details: {
-        artifactRef: written.path,
-        artifactFingerprint: written.fingerprint,
-        providerId: scan.provider.id,
-        providerVersion: scan.provider.version,
-        replaced: Boolean(existing),
-        supersededFingerprint: existing?.fingerprint ?? null,
-      },
-    }, packageRoot, { taskId });
-  }
-  return {
-    status: written.existing ? "REPLACED" : "CAPTURED",
-    mode: policy.mode,
-    provider: scan.provider,
-    artifactRef: written.path,
-    artifactFingerprint: written.fingerprint,
-    baseline: written.value,
-    existing: written.existing,
-    identical: written.identical,
-  };
+  return withTaskTransaction({ target, taskId, packageRoot, operation: "quality-baseline" }, async () => {
+    const currentInputs = await taskInputs(target, packageRoot, taskId, { runtimeContext, timeoutMs, maxOutputBytes });
+    if (currentInputs.state.phase !== "PLANNED"
+      || currentInputs.contract.fingerprint !== inputs.contract.fingerprint
+      || currentInputs.route.fingerprint !== inputs.route.fingerprint
+      || structuralQualityPolicyFingerprint(currentInputs.policy) !== policyFingerprint
+      || currentInputs.scopeFingerprint !== inputs.scopeFingerprint) {
+      throw qualityError(E_STRUCTURAL_QUALITY_OBSERVATION_EPOCH_STALE, "Task baseline configuration changed during observation");
+    }
+    await assertReadyPreflight(target, packageRoot, taskId);
+    const currentBaseline = await readStructuralQualityBaseline(target, taskId, packageRoot);
+    const written = await writeStructuralQualityBaseline(target, taskId, value, packageRoot, { phase: currentInputs.state.phase, replace, taskId });
+    if (!written.identical) {
+      await appendProtocolEvent(target, {
+        taskId,
+        event: "STRUCTURAL_QUALITY_BASELINE_RECORDED",
+        details: {
+          artifactRef: written.path,
+          artifactFingerprint: written.fingerprint,
+          providerId: scan.provider.id,
+          providerVersion: scan.provider.version,
+          replaced: Boolean(currentBaseline),
+          supersededFingerprint: currentBaseline?.fingerprint ?? null,
+        },
+      }, packageRoot, { taskId });
+    }
+    return {
+      status: written.existing ? "REPLACED" : "CAPTURED",
+      mode: policy.mode,
+      provider: scan.provider,
+      artifactRef: written.path,
+      artifactFingerprint: written.fingerprint,
+      baseline: written.value,
+      existing: written.existing,
+      identical: written.identical,
+    };
+  });
 }
 
 async function persistEvaluationAndCheck({ target, packageRoot, taskId, inputs, persisted, authorityContext, runtimeContext }) {
@@ -443,7 +477,7 @@ async function persistEvaluationAndCheck({ target, packageRoot, taskId, inputs, 
     runtimeContext,
     taskId: context?.taskId ?? taskId,
   });
-  const recorded = await withTaskMutation(target, { taskId, packageRoot }, "quality-verify-check", async (context) => {
+  const recorded = await withQualityMutation(target, { taskId, packageRoot }, "quality-verify-check", async (context) => {
     const effectiveTaskId = context?.taskId ?? taskId;
     const evaluations = await listStructuralQualityEvaluations(target, effectiveTaskId, packageRoot);
     const latest = evaluations
@@ -599,34 +633,33 @@ export async function evaluateStructuralQuality({ target, packageRoot = getPacka
 
   // Execute provider observation OUTSIDE task mutation lock
   const sourceFingerprintBefore = await computeMaterialSourceFingerprint(target);
+  // Every non-pass branch binds the same reserved task/cycle and source epoch.
+  const evaluationInputs = {
+    taskId,
+    inputs: initialInputs,
+    cycle,
+    attempt,
+    policy,
+    baseline,
+    sourceMaterialFingerprint: sourceFingerprintBefore,
+  };
   let evaluation;
 
   if (!baseline) {
     evaluation = nonPassEvaluation({
-      taskId,
-      inputs: initialInputs,
-      cycle,
-      attempt,
-      policy,
+      ...evaluationInputs,
       reasonCode: E_STRUCTURAL_QUALITY_BASELINE_MISSING,
       sourceObservation: { beforeFingerprint: sourceFingerprintBefore, afterFingerprint: sourceFingerprintBefore, stable: true },
-      sourceMaterialFingerprint: sourceFingerprintBefore,
     });
   } else {
     try {
       const scopeChanged = baseline.value.bindings?.scopeFingerprint !== initialInputs.scopeFingerprint;
       if (scopeChanged) {
         evaluation = nonPassEvaluation({
-          taskId,
-          inputs: initialInputs,
-          cycle,
-          attempt,
-          policy,
+          ...evaluationInputs,
           reasonCode: E_STRUCTURAL_QUALITY_EVALUATION_INCOMPARABLE,
           reasonCodes: ["PROVIDER_CONFIG_CHANGED"],
-          baseline,
           sourceObservation: { beforeFingerprint: sourceFingerprintBefore, afterFingerprint: sourceFingerprintBefore, stable: true },
-          sourceMaterialFingerprint: sourceFingerprintBefore,
         });
         evaluation.comparison.reasonCodes = [E_STRUCTURAL_QUALITY_EVALUATION_INCOMPARABLE, "PROVIDER_CONFIG_CHANGED"];
       } else {
@@ -643,18 +676,12 @@ export async function evaluateStructuralQuality({ target, packageRoot = getPacka
 
         if (!isStable) {
           evaluation = nonPassEvaluation({
-          taskId,
-          inputs: initialInputs,
-          cycle,
-          attempt,
-          policy,
+          ...evaluationInputs,
           reasonCode: E_STRUCTURAL_QUALITY_SOURCE_DRIFT,
           providerId: scan.provider.id,
           providerVersion: scan.provider.version,
           detection: scan.detection,
-          baseline,
           sourceObservation: { beforeFingerprint: sourceFingerprintBefore, afterFingerprint: sourceFingerprintAfter, stable: false },
-          sourceMaterialFingerprint: sourceFingerprintBefore,
           });
         } else {
           const updatedInputs = initialInputs;
@@ -699,26 +726,20 @@ export async function evaluateStructuralQuality({ target, packageRoot = getPacka
       const sourceFingerprintAfter = await computeMaterialSourceFingerprint(target).catch(() => sourceFingerprintBefore);
       const code = error.code ?? E_STRUCTURAL_QUALITY_PROVIDER_UNAVAILABLE;
       evaluation = nonPassEvaluation({
-        taskId,
-        inputs: initialInputs,
-        cycle,
-        attempt,
-        policy,
+        ...evaluationInputs,
         reasonCode: code,
         providerId: policy.provider,
-        baseline,
         sourceObservation: {
           beforeFingerprint: sourceFingerprintBefore,
           afterFingerprint: sourceFingerprintAfter,
           stable: sourceFingerprintBefore === sourceFingerprintAfter,
         },
-        sourceMaterialFingerprint: sourceFingerprintBefore,
         });
       }
   }
 
   // Commit under task mutation lock
-  const captured = await withTaskMutation(target, { taskId, packageRoot }, "quality-verify-evaluation", async (context) => {
+  const captured = await withQualityMutation(target, { taskId, packageRoot }, "quality-verify-evaluation", async (context) => {
     const lockedTaskId = context?.taskId ?? taskId;
     const inputs = await taskInputs(target, packageRoot, lockedTaskId, { runtimeContext, timeoutMs, maxOutputBytes });
     if (inputs.state.phase !== "VERIFYING") {
@@ -908,7 +929,11 @@ function projectionFromArtifacts(policy, baseline, current, state, evaluations =
   return projection;
 }
 
-export async function projectStructuralQualityStatus({ target, packageRoot = getPackageRoot(), taskId, runtimeContext } = {}) {
+export async function projectStructuralQualityStatus(options = {}) {
+  return withProjectReadSnapshot(options.target, () => projectStructuralQualityStatusObservation(options));
+}
+
+async function projectStructuralQualityStatusObservation({ target, packageRoot = getPackageRoot(), taskId, runtimeContext } = {}) {
   const config = await loadOptionalConfig(target, packageRoot);
   const policy = configuredPolicy(config);
   if (!policy || policy.mode === "off") return emptyProjection(null);

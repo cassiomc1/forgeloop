@@ -1,0 +1,39 @@
+{
+  "id": "dfe48c1ce8b28be2e6e13a40359a872c20124f71123584940321ec646bdd9da1",
+  "state": {
+    "Status": "exited",
+    "Running": false,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "Dead": false,
+    "Pid": 0,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "2026-10-07T01:49:03.821947316Z",
+    "FinishedAt": "2026-10-07T02:08:55.071818925Z"
+  },
+  "image": "node:24.19.0-bookworm",
+  "snapshot": "2b7893aef6fabe01c72fb6bb1cefb93cf9cde193acdc5c286bcd977e7ad77928",
+  "sourceFiles": 2638,
+  "sourceDrift": [],
+  "actualTerminalWorkingLayerCopiedTo": "C:/forgeloop-tests/terminal615-linux-copy",
+  "candidate": "611b",
+  "collectedIncrement": 616,
+  "testSummaries": [
+    "\u2139 tests 2814",
+    "\u2139 pass 2802",
+    "\u2139 fail 0",
+    "\u2139 skipped 12",
+    "\u2139 tests 73",
+    "\u2139 pass 73",
+    "\u2139 fail 0",
+    "\u2139 skipped 0"
+  ],
+  "packageChecksPassed": [
+    "pack:smoke",
+    "mcp:pack:check"
+  ],
+  "wholeAcceptanceVerified": false,
+  "rawLog": "/tmp/sqlite-linux612-terminal616.stdout.log"
+}

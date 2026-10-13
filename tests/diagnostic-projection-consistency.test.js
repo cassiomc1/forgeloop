@@ -1,3 +1,5 @@
+import { withExistingProjectScope } from "../src/storage/existing-project-scope.js";
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { mkdtemp, readdir, readFile } from "node:fs/promises";
@@ -53,6 +55,7 @@ function interventionEvent(cycle, id, statement, hypothesisRefs) {
 }
 
 async function seedThreeCycleTask(target) {
+  await ensureFixtureTask(target, TASK, packageRoot);
   const events = [];
   const push = (event, details) => events.push({ event, details });
 
@@ -146,6 +149,7 @@ test("cross-projection semantic consistency across three correction cycles", asy
       const entries = await readdir(dir, { recursive: true });
       const hash = createHash("sha256");
       for (const relative of entries.sort()) {
+        if (["state.sqlite-wal", "state.sqlite-shm"].includes(relative)) continue;
         hash.update(relative);
         try {
           hash.update(await readFile(path.join(dir, relative)));
@@ -153,6 +157,15 @@ test("cross-projection semantic consistency across three correction cycles", asy
           // directories
         }
       }
+      const records = await withExistingProjectScope(target, store => {
+        const tables = store.db.prepare("SELECT name FROM sqlite_schema WHERE type = 'table' ORDER BY name").all();
+        return tables.map(({ name }) => {
+          assert.match(name, /^[a-z_]+$/u);
+          const rows = store.db.prepare(`SELECT * FROM "${name}"`).all();
+          return { name, rows: rows.map(row => JSON.stringify(row)).sort() };
+        });
+      }, { readOnly: true });
+      hash.update(JSON.stringify(records));
       return hash.digest("hex");
     }
     const before = await hashTree(forgeDir);

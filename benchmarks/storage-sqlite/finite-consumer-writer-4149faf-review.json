@@ -1,0 +1,1791 @@
+{
+  "schemaVersion": 1,
+  "kind": "FINITE_SUPPORTED_CONSUMER_WRITER_ACCEPTANCE_REVIEW",
+  "generatedAt": "2026-10-10T05:04:23.183137+00:00",
+  "source": {
+    "worktree": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop",
+    "revision": "4149faf6d0f3d14be03643ac419b74b599c399da",
+    "expectedProductionRevision": "ec0d0a059b17a888cbf722efb908c94bea233b78",
+    "branch": "codex/sqlite-end-to-end",
+    "status": [
+      "## codex/sqlite-end-to-end...origin/codex/sqlite-end-to-end [ahead 1]",
+      "?? integrations/mcp/node_modules",
+      "?? node_modules"
+    ],
+    "productionSourceDiff": {
+      "comparedTo": "ec0d0a059b17a888cbf722efb908c94bea233b78",
+      "allDiffPathsSinceBaseline": [
+        "benchmarks/storage-sqlite/maintenance-consumers-ec0d0a0-review.json",
+        "benchmarks/storage-sqlite/prepush-ec0d0a0-success.json",
+        "benchmarks/storage-sqlite/regressions945-current-ec0d0a0-execution.json",
+        "docs/SQLITE_MIGRATION_MATRIX.md",
+        "docs/SQLITE_PROGRESS.md"
+      ],
+      "productionCodeDiff": [],
+      "documentationOnlyDiff": [
+        "docs/SQLITE_MIGRATION_MATRIX.md",
+        "docs/SQLITE_PROGRESS.md"
+      ],
+      "evidenceOnlyDiff": [
+        "benchmarks/storage-sqlite/maintenance-consumers-ec0d0a0-review.json",
+        "benchmarks/storage-sqlite/prepush-ec0d0a0-success.json",
+        "benchmarks/storage-sqlite/regressions945-current-ec0d0a0-execution.json"
+      ],
+      "interpretation": "No production-code changes since ec0d0a0; HEAD adds retained evidence and documentation only."
+    },
+    "preservedUntrackedState": [
+      "integrations/mcp/node_modules",
+      "node_modules"
+    ]
+  },
+  "scope": {
+    "purpose": "Finite exhaustive audit boundary for built-in supported operational consumers and writer roles, with concrete remaining evidence controls.",
+    "originalPlan": {
+      "publicConsumerAudit": "docs/SQLITE_MIGRATION_PLAN.md:153-157",
+      "correctnessAndPerformance": "docs/SQLITE_MIGRATION_PLAN.md:236-277",
+      "definitionOfDone": "docs/SQLITE_MIGRATION_PLAN.md:279-290"
+    },
+    "supportedPublicSurfaces": [
+      "package root CLI export",
+      "package ./integration export",
+      "transport-neutral command runtime and command definitions",
+      "MCP command tools and integration resources"
+    ],
+    "finiteBuiltInBoundary": [
+      "115 CLI command definitions and their 115 canonical executors",
+      "25 integration resource definitions",
+      "all built-in command implementations, storage boundary/admission modules, validators, bundle/export/import code, and checked-in CI/examples/conformance/documentation consumers named by the plan",
+      "literal filesystem role inventory and import-bound atomic writer inventory as discovery inputs, with transitive ownership still requiring behavior/source evidence"
+    ],
+    "explicitLimits": [
+      "A trusted raw node:sqlite DatabaseSync caller can deliberately rewrite a local database; the low-level helper cannot infer target identity and this is outside the package root/./integration/MCP supported actor boundary.",
+      "Privileged or third-party processes can produce filesystem side effects; the plan requires supported-client admission and old-client exclusion, not universal prevention of unknown processes.",
+      "Portable exports, bundle/signing output, installation/configuration, repository-index/search transport and external evidence scratch are explicit file-owned surfaces when their destination and authority are reviewed; they are not operational SQLite authority.",
+      "Static inventories do not prove dynamic aliases, assigned callbacks, dependency internals, arbitrary parameters or every external process effect."
+    ]
+  },
+  "supportedConsumerInventory": {
+    "commandRegistry": {
+      "definitionCount": 115,
+      "executorCount": 115,
+      "missingExecutors": [],
+      "extraExecutors": [],
+      "categoryCounts": {
+        "project-maintenance": 25,
+        "diagnostics": 25,
+        "verification": 12,
+        "lifecycle": 21,
+        "continuity": 7,
+        "actions": 9,
+        "policy-audit": 7,
+        "workspace": 2,
+        "task": 1,
+        "scope": 2,
+        "attestation": 4
+      },
+      "categories": {
+        "project-maintenance": [
+          "storage-restore-resume",
+          "storage-restore",
+          "storage-migration-status",
+          "storage-migration-resume",
+          "storage-rollback",
+          "storage-rollback-resume",
+          "storage-migrate",
+          "storage-backup",
+          "contract-revise",
+          "init",
+          "index-setup",
+          "index-start",
+          "index-stop",
+          "index-rebuild",
+          "update",
+          "checkpoint-revalidate",
+          "task-migrate",
+          "migrate-protocol",
+          "task-unlock",
+          "task-recover",
+          "task-abandon",
+          "task-repair-contract-bootstrap",
+          "task-migrate-contract-bootstrap-repair",
+          "task-repair-legacy-recovery",
+          "task-resume"
+        ],
+        "diagnostics": [
+          "protocol-info",
+          "decision-status",
+          "decision-show",
+          "context-plan",
+          "model-route",
+          "semantic-plan",
+          "test-inventory",
+          "test-utility",
+          "test-prune-plan",
+          "doctor",
+          "index-status",
+          "search",
+          "metrics",
+          "usage-record",
+          "efficiency",
+          "eval",
+          "history",
+          "trace",
+          "reflect",
+          "progress",
+          "profile-interview",
+          "inspect",
+          "status",
+          "validate-state",
+          "validate-protocol"
+        ],
+        "verification": [
+          "test-prune-probe",
+          "quality-baseline",
+          "quality-verify",
+          "quality-status",
+          "prepare-completion",
+          "run-check",
+          "record-check",
+          "record-terminal-result",
+          "audit",
+          "report",
+          "validate-receipt",
+          "verify-scope"
+        ],
+        "lifecycle": [
+          "discover",
+          "contract-create",
+          "gate-record",
+          "gate-revalidate",
+          "activate",
+          "route",
+          "preflight",
+          "advance",
+          "next",
+          "record-diagnosis",
+          "record-intervention",
+          "record-hypothesis-disposition",
+          "record-decision-criterion",
+          "complete",
+          "clear-state",
+          "reconcile-closure",
+          "task-create",
+          "task-list",
+          "task-show",
+          "task-lock-status",
+          "task-scope"
+        ],
+        "continuity": [
+          "continuity",
+          "record-continuity",
+          "reconcile-continuity",
+          "clear-continuity",
+          "handoff-create",
+          "handoff-list",
+          "handoff-show"
+        ],
+        "actions": [
+          "run-action",
+          "action-propose",
+          "action-record",
+          "action-show",
+          "action-reconcile",
+          "action-verify",
+          "action-authorize",
+          "approval-request",
+          "approval-resolve"
+        ],
+        "policy-audit": [
+          "policy",
+          "policy-discover",
+          "policy-status",
+          "policy-diff",
+          "rule-verify",
+          "baseline",
+          "bundle"
+        ],
+        "workspace": [
+          "workspace-bind",
+          "workspace-status"
+        ],
+        "task": [
+          "handoff-accept"
+        ],
+        "scope": [
+          "responsibility-set",
+          "responsibility-status"
+        ],
+        "attestation": [
+          "attestation-create",
+          "attestation-verify",
+          "attestation-status",
+          "attestation-verify-range"
+        ]
+      },
+      "mutationCounts": {
+        "MUTATING": 66,
+        "READ_ONLY": 44,
+        "EXTERNAL_EXECUTION": 5
+      },
+      "separatelyOwnedMaintenanceCommands": [
+        "task-migrate",
+        "migrate-protocol",
+        "storage-migration-status",
+        "storage-rollback-resume",
+        "storage-rollback",
+        "storage-migrate",
+        "storage-migration-resume",
+        "storage-restore",
+        "storage-restore-resume"
+      ],
+      "ordinaryCommandCount": 106,
+      "roleCounts": {
+        "maintenance-cutover-and-recovery": 9,
+        "portable-export-or-bundle": 2,
+        "read-only-projection-or-diagnostic": 39,
+        "canonical-operational-state-and-protocol": 52,
+        "installation-and-policy-inputs": 7,
+        "repository-index-and-search-cache": 6
+      },
+      "roles": {
+        "maintenance-cutover-and-recovery": [
+          "storage-restore-resume",
+          "storage-restore",
+          "storage-migration-status",
+          "storage-migration-resume",
+          "storage-rollback",
+          "storage-rollback-resume",
+          "storage-migrate",
+          "task-migrate",
+          "migrate-protocol"
+        ],
+        "portable-export-or-bundle": [
+          "storage-backup",
+          "bundle"
+        ],
+        "read-only-projection-or-diagnostic": [
+          "protocol-info",
+          "decision-status",
+          "decision-show",
+          "context-plan",
+          "model-route",
+          "semantic-plan",
+          "test-inventory",
+          "test-prune-plan",
+          "quality-status",
+          "next",
+          "continuity",
+          "reconcile-continuity",
+          "action-show",
+          "metrics",
+          "efficiency",
+          "history",
+          "trace",
+          "reflect",
+          "progress",
+          "audit",
+          "report",
+          "policy-status",
+          "policy-diff",
+          "rule-verify",
+          "inspect",
+          "status",
+          "validate-state",
+          "validate-receipt",
+          "validate-protocol",
+          "task-list",
+          "task-show",
+          "task-lock-status",
+          "workspace-status",
+          "handoff-list",
+          "handoff-show",
+          "responsibility-status",
+          "attestation-verify",
+          "attestation-status",
+          "attestation-verify-range"
+        ],
+        "canonical-operational-state-and-protocol": [
+          "test-utility",
+          "test-prune-probe",
+          "discover",
+          "contract-create",
+          "contract-revise",
+          "gate-record",
+          "gate-revalidate",
+          "activate",
+          "route",
+          "preflight",
+          "quality-baseline",
+          "quality-verify",
+          "advance",
+          "record-continuity",
+          "clear-continuity",
+          "prepare-completion",
+          "run-check",
+          "run-action",
+          "action-propose",
+          "action-record",
+          "action-reconcile",
+          "action-verify",
+          "action-authorize",
+          "usage-record",
+          "eval",
+          "approval-request",
+          "approval-resolve",
+          "record-check",
+          "record-terminal-result",
+          "record-diagnosis",
+          "record-intervention",
+          "record-hypothesis-disposition",
+          "record-decision-criterion",
+          "complete",
+          "clear-state",
+          "checkpoint-revalidate",
+          "reconcile-closure",
+          "task-create",
+          "task-scope",
+          "task-unlock",
+          "task-recover",
+          "task-abandon",
+          "task-repair-contract-bootstrap",
+          "task-migrate-contract-bootstrap-repair",
+          "task-repair-legacy-recovery",
+          "task-resume",
+          "workspace-bind",
+          "handoff-create",
+          "handoff-accept",
+          "responsibility-set",
+          "verify-scope",
+          "attestation-create"
+        ],
+        "installation-and-policy-inputs": [
+          "init",
+          "doctor",
+          "update",
+          "policy",
+          "policy-discover",
+          "baseline",
+          "profile-interview"
+        ],
+        "repository-index-and-search-cache": [
+          "index-setup",
+          "index-start",
+          "index-stop",
+          "index-status",
+          "index-rebuild",
+          "search"
+        ]
+      },
+      "writeBearingCommandCount": 70,
+      "writeBearingCommands": [
+        {
+          "name": "storage-restore-resume",
+          "category": "project-maintenance",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/storage-restores",
+            ".forgeloop/state.sqlite",
+            ".forgeloop/attachments",
+            ".forgeloop/storage-version.json",
+            ".forgeloop/.storage-maintenance",
+            ".forgeloop/storage-maintenance-history"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "maintenance-cutover-and-recovery"
+        },
+        {
+          "name": "storage-restore",
+          "category": "project-maintenance",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/storage-restores",
+            ".forgeloop/state.sqlite",
+            ".forgeloop/attachments",
+            ".forgeloop/storage-version.json",
+            ".forgeloop/.storage-maintenance"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "maintenance-cutover-and-recovery"
+        },
+        {
+          "name": "storage-migration-resume",
+          "category": "project-maintenance",
+          "mutation": "MUTATING",
+          "writes": [
+            "<destination>",
+            ".forgeloop/state.sqlite",
+            ".forgeloop/storage-version.json",
+            ".forgeloop/.storage-maintenance",
+            ".forgeloop/storage-maintenance-history"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "maintenance-cutover-and-recovery"
+        },
+        {
+          "name": "storage-rollback",
+          "category": "project-maintenance",
+          "mutation": "MUTATING",
+          "writes": [
+            "<destination>",
+            "export-index.json",
+            ".forgeloop/task-state",
+            ".forgeloop/attachments",
+            ".forgeloop/.storage-maintenance"
+          ],
+          "removes": [
+            ".forgeloop/state.sqlite",
+            ".forgeloop/storage-version.json"
+          ],
+          "mayExecuteExternalProcess": true,
+          "role": "maintenance-cutover-and-recovery"
+        },
+        {
+          "name": "storage-rollback-resume",
+          "category": "project-maintenance",
+          "mutation": "MUTATING",
+          "writes": [
+            "<destination>",
+            "export-index.json",
+            ".forgeloop/task-state",
+            ".forgeloop/attachments",
+            ".forgeloop/.storage-maintenance"
+          ],
+          "removes": [
+            ".forgeloop/state.sqlite",
+            ".forgeloop/storage-version.json"
+          ],
+          "mayExecuteExternalProcess": true,
+          "role": "maintenance-cutover-and-recovery"
+        },
+        {
+          "name": "storage-migrate",
+          "category": "project-maintenance",
+          "mutation": "MUTATING",
+          "writes": [
+            "<destination>",
+            ".forgeloop/state.sqlite",
+            ".forgeloop/storage-version.json",
+            ".forgeloop/.storage-maintenance"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "maintenance-cutover-and-recovery"
+        },
+        {
+          "name": "storage-backup",
+          "category": "project-maintenance",
+          "mutation": "MUTATING",
+          "writes": [
+            "<destination>"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "portable-export-or-bundle"
+        },
+        {
+          "name": "test-utility",
+          "category": "diagnostics",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/test-utility.json"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "discover",
+          "category": "lifecycle",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "contract-create",
+          "category": "lifecycle",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/contract.json",
+            ".forgeloop/task-state/<taskKey>/work-state.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "contract-revise",
+          "category": "project-maintenance",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/contract.json",
+            ".forgeloop/task-state/<taskKey>/work-state.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "gate-record",
+          "category": "lifecycle",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/gates/<gate>.json"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "gate-revalidate",
+          "category": "lifecycle",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/gates/<gate>.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "init",
+          "category": "project-maintenance",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/*",
+            "AGENTS.md",
+            "CLAUDE.md",
+            ".cursor/rules/project-loop.mdc",
+            ".github/copilot-instructions.md"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": true,
+          "role": "installation-and-policy-inputs"
+        },
+        {
+          "name": "doctor",
+          "category": "diagnostics",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/.manifest.json"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": true,
+          "role": "installation-and-policy-inputs"
+        },
+        {
+          "name": "index-setup",
+          "category": "project-maintenance",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/repository-index/*"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": true,
+          "role": "repository-index-and-search-cache"
+        },
+        {
+          "name": "index-start",
+          "category": "project-maintenance",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/repository-index/engine-state.json"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": true,
+          "role": "repository-index-and-search-cache"
+        },
+        {
+          "name": "index-stop",
+          "category": "project-maintenance",
+          "mutation": "MUTATING",
+          "writes": [],
+          "removes": [
+            ".forgeloop/repository-index/serve.json",
+            ".forgeloop/repository-index/engine-state.json"
+          ],
+          "mayExecuteExternalProcess": true,
+          "role": "repository-index-and-search-cache"
+        },
+        {
+          "name": "index-rebuild",
+          "category": "project-maintenance",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/repository-index/*"
+          ],
+          "removes": [
+            ".forgeloop/repository-index/tgrep/*"
+          ],
+          "mayExecuteExternalProcess": true,
+          "role": "repository-index-and-search-cache"
+        },
+        {
+          "name": "update",
+          "category": "project-maintenance",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/*",
+            "AGENTS.md",
+            "CLAUDE.md",
+            ".cursor/rules/project-loop.mdc",
+            ".github/copilot-instructions.md"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": true,
+          "role": "installation-and-policy-inputs"
+        },
+        {
+          "name": "activate",
+          "category": "lifecycle",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/sessions/<sessionId>.json"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "route",
+          "category": "lifecycle",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/routing-result.json"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "preflight",
+          "category": "lifecycle",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/preflight.json",
+            ".forgeloop/task-state/<taskKey>/work-state.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "quality-baseline",
+          "category": "verification",
+          "mutation": "EXTERNAL_EXECUTION",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/structural-quality/baseline.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": true,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "quality-verify",
+          "category": "verification",
+          "mutation": "EXTERNAL_EXECUTION",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/structural-quality/evaluations/cycle-<n>-attempt-<n>.json",
+            ".forgeloop/task-state/<taskKey>/work-state.json",
+            ".forgeloop/task-state/<taskKey>/execution-receipt.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": true,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "advance",
+          "category": "lifecycle",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/work-state.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "record-continuity",
+          "category": "continuity",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/continuity.json"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "clear-continuity",
+          "category": "continuity",
+          "mutation": "MUTATING",
+          "writes": [],
+          "removes": [
+            ".forgeloop/task-state/<taskKey>/continuity.json"
+          ],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "prepare-completion",
+          "category": "verification",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/execution-receipt.json"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "run-check",
+          "category": "verification",
+          "mutation": "EXTERNAL_EXECUTION",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/executions/exec-<id>.json",
+            ".forgeloop/task-state/<taskKey>/work-state.json",
+            ".forgeloop/task-state/<taskKey>/execution-receipt.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": true,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "run-action",
+          "category": "actions",
+          "mutation": "EXTERNAL_EXECUTION",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/actions/action-<id>.json",
+            ".forgeloop/task-state/<taskKey>/executions/exec-<id>.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": true,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "action-propose",
+          "category": "actions",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/actions/action-<id>.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "action-record",
+          "category": "actions",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/actions/action-<id>.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "action-reconcile",
+          "category": "actions",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/actions/action-<id>.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "action-verify",
+          "category": "actions",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/actions/action-<id>.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "action-authorize",
+          "category": "actions",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/actions/action-<id>.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "usage-record",
+          "category": "diagnostics",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/usage.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "eval",
+          "category": "diagnostics",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/evaluations/eval-<id>.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "approval-request",
+          "category": "actions",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/approvals/approval-<id>.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "approval-resolve",
+          "category": "actions",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/approvals/approval-<id>.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "record-check",
+          "category": "verification",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/work-state.json",
+            ".forgeloop/task-state/<taskKey>/execution-receipt.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "record-terminal-result",
+          "category": "verification",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/work-state.json",
+            ".forgeloop/task-state/<taskKey>/execution-receipt.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "record-diagnosis",
+          "category": "lifecycle",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/events.ndjson",
+            ".forgeloop/task-state/<taskKey>/work-state.json"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "record-intervention",
+          "category": "lifecycle",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "record-hypothesis-disposition",
+          "category": "lifecycle",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "record-decision-criterion",
+          "category": "lifecycle",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "complete",
+          "category": "lifecycle",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/work-state.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "policy-discover",
+          "category": "policy-audit",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/policy/discovery.json",
+            ".forgeloop/policy/policy.lock"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "installation-and-policy-inputs"
+        },
+        {
+          "name": "baseline",
+          "category": "policy-audit",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/policy/baseline.json",
+            ".forgeloop/policy/policy.lock"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "installation-and-policy-inputs"
+        },
+        {
+          "name": "bundle",
+          "category": "policy-audit",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/tasks/<taskId>"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "portable-export-or-bundle"
+        },
+        {
+          "name": "clear-state",
+          "category": "lifecycle",
+          "mutation": "MUTATING",
+          "writes": [],
+          "removes": [
+            ".forgeloop/task-state/<taskKey>/work-state.json"
+          ],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "checkpoint-revalidate",
+          "category": "project-maintenance",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/work-state.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "reconcile-closure",
+          "category": "lifecycle",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/executions/exec-<id>.json",
+            ".forgeloop/task-state/<taskKey>/work-state.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": true,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "task-create",
+          "category": "lifecycle",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/task.json",
+            ".forgeloop/task-state/<taskKey>/contract.json"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "task-scope",
+          "category": "lifecycle",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/task.json"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "task-migrate",
+          "category": "project-maintenance",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/state.sqlite",
+            ".forgeloop/storage-version.json",
+            "<destination>/*"
+          ],
+          "removes": [
+            ".forgeloop/current-contract.json",
+            ".forgeloop/routing-result.json",
+            ".forgeloop/work-state.json",
+            ".forgeloop/preflight.json",
+            ".forgeloop/execution-receipt.json",
+            ".forgeloop/events.ndjson",
+            ".forgeloop/continuity.json",
+            ".forgeloop/gates",
+            ".forgeloop/executions"
+          ],
+          "mayExecuteExternalProcess": false,
+          "role": "maintenance-cutover-and-recovery"
+        },
+        {
+          "name": "migrate-protocol",
+          "category": "project-maintenance",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/state.sqlite",
+            ".forgeloop/storage-version.json",
+            "<destination>/*"
+          ],
+          "removes": [
+            ".forgeloop/current-contract.json",
+            ".forgeloop/routing-result.json",
+            ".forgeloop/work-state.json",
+            ".forgeloop/preflight.json",
+            ".forgeloop/execution-receipt.json",
+            ".forgeloop/events.ndjson",
+            ".forgeloop/continuity.json",
+            ".forgeloop/gates",
+            ".forgeloop/executions"
+          ],
+          "mayExecuteExternalProcess": false,
+          "role": "maintenance-cutover-and-recovery"
+        },
+        {
+          "name": "task-unlock",
+          "category": "project-maintenance",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/state.sqlite"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "task-recover",
+          "category": "project-maintenance",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/recovery.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "task-abandon",
+          "category": "project-maintenance",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/recovery.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "task-repair-contract-bootstrap",
+          "category": "project-maintenance",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/work-state.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "task-migrate-contract-bootstrap-repair",
+          "category": "project-maintenance",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "task-repair-legacy-recovery",
+          "category": "project-maintenance",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/recovery.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "task-resume",
+          "category": "project-maintenance",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/task.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [
+            ".forgeloop/task-state/<taskKey>/recovery.json"
+          ],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "workspace-bind",
+          "category": "workspace",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/workspace-binding.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "handoff-create",
+          "category": "continuity",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/handoffs/handoff-<id>.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "handoff-accept",
+          "category": "task",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "responsibility-set",
+          "category": "scope",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/responsibility.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "verify-scope",
+          "category": "verification",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/verification-scope.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": true,
+          "role": "canonical-operational-state-and-protocol"
+        },
+        {
+          "name": "attestation-create",
+          "category": "attestation",
+          "mutation": "MUTATING",
+          "writes": [
+            ".forgeloop/task-state/<taskKey>/attestations/statement.json",
+            ".forgeloop/task-state/<taskKey>/events.ndjson"
+          ],
+          "removes": [],
+          "mayExecuteExternalProcess": false,
+          "role": "canonical-operational-state-and-protocol"
+        }
+      ]
+    },
+    "integrationResources": {
+      "count": 25,
+      "names": [
+        "protocol/info",
+        "project/tasks",
+        "task/status",
+        "task/ownership",
+        "task/contract",
+        "task/continuity",
+        "task/workspace-binding",
+        "task/handoffs",
+        "task/responsibility",
+        "task/verification-scope",
+        "task/attestation",
+        "task/structural-quality",
+        "task/actions",
+        "task/action",
+        "task/approvals",
+        "task/metrics",
+        "task/context",
+        "task/audit-view",
+        "task/evaluations",
+        "task/decisions",
+        "task/context-plan",
+        "task/model-route",
+        "task/test-utility",
+        "project/capability-policy",
+        "repository/index-status"
+      ],
+      "implementation": "src/core/integration-resources.js",
+      "MCPRegistration": "integrations/mcp/src/resource-registry.js"
+    },
+    "transportAndPathFamilies": [
+      "CLI argument parsing and command runtime",
+      "programmatic ./integration execute/resource APIs",
+      "MCP tool registry, resource registry and server transport",
+      "validators and protocol/lifecycle authority readers",
+      "bundle generation and portable export/import/attachment digest boundaries",
+      "CI workflows, examples, conformance fixtures and documentation references"
+    ]
+  },
+  "finiteAcceptanceChecklist": [
+    {
+      "id": "command-executor-parity",
+      "boundary": "All 115 built-in command definitions and executors",
+      "requiredEvidence": "Exact current-source metadata parity plus behavior coverage for ordinary, read-only, external-evidence and nine separately-owned maintenance commands across CLI, ./integration and MCP.",
+      "currentEvidence": "Current definitions import reports 115 definitions, 115 executors, zero missing and zero extra; local full prepush completed with zero failures.",
+      "status": "metadata-closed_behavior-and-platform-open",
+      "nextEvidence": "Current-source CLI/package/integration/MCP receipts with source manifest identity and platform parity; retain per-command admission/refusal evidence for writer-bearing commands."
+    },
+    {
+      "id": "canonical-operational-writers",
+      "boundary": "Writer-bearing commands assigned to canonical-operational-state-and-protocol plus direct public integration writers",
+      "requiredEvidence": "Every supported built-in mutation enters the canonical project/task transaction boundary; related state/event rows commit atomically; no normal-operation legacy filesystem fallback remains.",
+      "currentEvidence": "Named local controls cover mixed legacy refusal, missing-state refusal, no legacy task/transaction fallback, canonical bootstrap, native task mutation and sole-writer boundary assertions; current source route uses command-runtime and storage admission.",
+      "status": "finite_named_controls_pass_transitive_and_platform_proof-open",
+      "nextEvidence": "Source-bound writer closure for all current transitive/API/MCP paths, including aliases/callbacks/dependency effects, plus current platform execution and fault-path coverage for each mutation family."
+    },
+    {
+      "id": "maintenance-cutover-and-recovery",
+      "boundary": "Nine separately-owned commands: task-migrate, migrate-protocol, storage-migration-status, storage-rollback, storage-rollback-resume, storage-migrate, storage-migration-resume, storage-restore, storage-restore-resume; six dedicated storage rows plus two inline rollback executors in the matrix.",
+      "requiredEvidence": "Owner/quiescence/admission, capture/publication, attachment and database integrity, interruption/recovery, old-client exclusion, supported rollback/downgrade and terminal release across all public surfaces.",
+      "currentEvidence": "Current maintenance report binds six storage rows to source hashes, maintained test names and exact local prepush log lines; rollback source/test mapping remains in matrix lines 323-324.",
+      "status": "local-current-mac-scoped-pass_platform-current-hosted-and-old-client-open",
+      "nextEvidence": "Run and retain current-source package/CLI/API/MCP and supported Windows/macOS/Linux receipts for rollback/restore/migration publication and old-client refusal; reconcile source manifest and terminal worker cleanup."
+    },
+    {
+      "id": "portable-export-bundle-attachments",
+      "boundary": "storage-backup, bundle, exporter/project-backup helpers, attachment files and explicit migration/rollback destinations",
+      "requiredEvidence": "Snapshot consistency, manifest/fingerprint identity, exact binary size/digest and safe destination binding; portable output remains separate from operational authority.",
+      "currentEvidence": "Local backup/restore and bundle tests plus exporter/project-backup source review; low-level helpers accept trusted db/task/destination/attachmentRoot rather than inferring target.",
+      "status": "local-binary-and-digest-controls-pass_current-package-platform-and-rollback-boundary-open",
+      "nextEvidence": "Current package/API/CLI/MCP export parity, attachment-inclusive backup/restore and current rollback publication receipts with source-bound target identity."
+    },
+    {
+      "id": "resource-read-boundary",
+      "boundary": "All 25 integration resources and MCP resource registration",
+      "requiredEvidence": "Read-only resource calls load canonical SQLite projections through the same storage admission and never assume legacy JSON files; current transport output remains parity-compatible.",
+      "currentEvidence": "25 resource definitions are present and integration-resources uses read-only project storage; local full prepush and prior scoped MCP checks pass.",
+      "status": "registry-and-local-scoped-controls-pass_current-natural-resource-and-platform-transport-open",
+      "nextEvidence": "Current-source MCP/resource benchmark terminal artifacts with sample counts, response parity, source manifests, four worker/parent completion and cleanup, plus current package/platform resource tests."
+    },
+    {
+      "id": "file-role-exceptions",
+      "boundary": "Installation/configuration, policy inputs, repository-index/search transport, signing scratch and portable output writers",
+      "requiredEvidence": "Each file writer is explicitly outside operational authority, has a fixed/contained destination and retains its own ownership/cleanup/validation controls.",
+      "currentEvidence": "103 literal filesystem modules have reconciled roles; all 54 import-bound writeFileAtomic call sites have role classifications in retained discovery; matrix documents installation, index and transport exceptions.",
+      "status": "role-inventory-current-closure-of-transitive-ownership-open",
+      "nextEvidence": "Update the source-bound callsite/alias/dependency review against current c78f9f5 and attach behavior receipts for each exception family; do not convert static role discovery into sole-writer proof."
+    },
+    {
+      "id": "validator-and-delivery-closure",
+      "boundary": "ForgeLoop lifecycle, validator, package, workflow and publication surfaces",
+      "requiredEvidence": "Performance/code-size gates, current platform/package checks, validator-backed COMPLETE/VALID and only then PR/publication.",
+      "currentEvidence": "Local prepush is terminal exit 0; current matrix records inclusive LOC target failure (25,732 baseline vs 32,428 current, ceiling 19,299).",
+      "status": "open",
+      "nextEvidence": "Resolve the failed 25% LOC target through correction or documented release decision, complete original performance/resource matrix, run current hosted/platform/package checks, then obtain validator-backed COMPLETE/VALID."
+    }
+  ],
+  "currentEvidence": {
+    "localPrepush": {
+      "receipt": "/Users/cassio/.codex/verification/prepush-ec0d0a0-success.json",
+      "sourceRevision": "ec0d0a059b17a888cbf722efb908c94bea233b78",
+      "sessionId": 81854,
+      "exitCode": 0,
+      "core": {
+        "tests": 2991,
+        "passed": 2980,
+        "failed": 0,
+        "skipped": 11
+      },
+      "stageCount": 22,
+      "logSha256": "4bb4c723ccd86f2c8c6fabfdfa4ce06cfab25e6c953701f37a1992ed6d7cb246",
+      "trackedFilesUnchanged": 3165,
+      "scopeLimitations": [
+        "Local validation only; current hosted validation remains required.",
+        "Original memory/performance, inclusive LOC and whole-consumer/protocol closure remain open."
+      ]
+    },
+    "currentMatrix": {
+      "path": "docs/SQLITE_MIGRATION_MATRIX.md",
+      "sourceLines": [
+        "16-48",
+        "311-334",
+        "680-697",
+        "943-951"
+      ],
+      "interpretation": "Current local source and finite controls are retained, but whole consumer/sole-writer, current platform/hosted, performance/resource, inclusive LOC and validator closure remain open.",
+      "progressDoc": {
+        "path": "docs/SQLITE_PROGRESS.md",
+        "currentHeadUpdate": "documentation-only LOC/current-source boundary refresh",
+        "sourceRevision": "4149faf6d0f3d14be03643ac419b74b599c399da"
+      }
+    },
+    "staticDiscoveryInputs": [
+      {
+        "path": "benchmarks/storage-sqlite/raw-file-role-reconciliation847.json",
+        "claim": "103 literal filesystem module roles reviewed; not complete transitive parameter conformance."
+      },
+      {
+        "path": "benchmarks/storage-sqlite/atomic-writer-caller-review-621.json",
+        "claim": "54 import-bound writeFileAtomic callers in 28 modules classified; per-call ownership, aliases, dependency and transitive proof remain open."
+      },
+      {
+        "path": "benchmarks/storage-sqlite/public-dispatch-boundary849.json",
+        "claim": "Command/resource/authority parity snapshot and 47 focused checks; not every combination or transitive consumer."
+      }
+    ],
+    "fixedRegressionInterpretation": {
+      "path": "benchmarks/storage-sqlite/regressions945-current-ec0d0a0-execution.json",
+      "status": "current_ec0_controls_passed_in_full_pre_push",
+      "note": "Do not reopen the historical continuity/bundle defect preparation as an unresolved production defect; the retained current receipt records the ten controls as passed."
+    }
+  },
+  "publicAuthorityAndHelperContract": {
+    "supportedChain": [
+      {
+        "path": "src/core/command-runtime.js",
+        "lines": "31-104",
+        "claim": "Validates input, resolves target and invokes canonical executor with authority/runtime context outside actor-controlled input."
+      },
+      {
+        "path": "src/core/command-executors.js",
+        "lines": "110-152,856-875",
+        "claim": "Routes ordinary commands through project storage and storage exceptions through dedicated admission; backup uses admitted source."
+      },
+      {
+        "path": "src/integration.js",
+        "lines": "1-14,34-50",
+        "claim": "Supported ./integration surface re-exports canonical command/resource APIs."
+      },
+      {
+        "path": "integrations/mcp/src/tool-registry.js",
+        "lines": "29-101",
+        "claim": "MCP tools derive metadata, strip actor authority/runtime fields, apply policy and delegate to canonical command runtime."
+      },
+      {
+        "path": "src/core/integration-resources.js",
+        "lines": "287-293",
+        "claim": "MCP/integration resource reads use read-only project storage snapshots."
+      },
+      {
+        "path": "src/commands/storage-backup.js",
+        "lines": "4-14",
+        "claim": "Public backup admits source store for target, constrains destination and passes admitted db/target to backup service."
+      },
+      {
+        "path": "src/storage/operational-context.js",
+        "lines": "15-32",
+        "claim": "Operational context target mismatch fails closed."
+      },
+      {
+        "path": "src/storage/project-boundary.js",
+        "lines": "29-78",
+        "claim": "Canonical admission handles maintenance/legacy locks, fresh SQLite bootstrap, mixed legacy refusal and project admission."
+      },
+      {
+        "path": "src/storage/connection.js",
+        "lines": "216-280",
+        "claim": "SQLite path/device/inode/root/sidecar identity is checked before reuse."
+      }
+    ],
+    "lowLevelContract": {
+      "conclusion": "No public target-misbinding defect was found; no regression should be manufactured for the trusted low-level helper contract.",
+      "exporter": {
+        "path": "src/storage/exporter.js",
+        "lines": "88-96,221-230,232-264",
+        "contract": "exportTask/exportDatabase receive authoritative db, task/destination and optional attachmentRoot from a trusted caller; attachment bytes are size/digest verified. They do not infer a source target."
+      },
+      "projectBackup": {
+        "path": "src/storage/project-backup.js",
+        "lines": "16-57,59-84",
+        "contract": "backupProjectStorage receives admitted db/target/destination and binds database plus attachment inventory before publication."
+      },
+      "publicBoundary": "The public command calls getOperationalStore(target), validates a safe destination and passes the admitted store/target. A raw DatabaseSync caller remains outside the supported public boundary."
+    }
+  },
+  "exactRemainingControls": [
+    {
+      "priority": 1,
+      "id": "current-source-platform-and-hosted-receipts",
+      "gap": "Historical hosted Core/Node/package/Windows receipts predate handoff and semantic-reuse changes; the current local source is ec0-equivalent but does not substitute for current platform or hosted execution.",
+      "evidenceNeeded": "Current c78f9f5/ec0-equivalent source manifest, exact package tarball startup, ./integration and MCP tests, supported macOS/Windows/Linux receipts, and terminal worker/cleanup records."
+    },
+    {
+      "priority": 2,
+      "id": "whole-supported-consumer-transitive-closure",
+      "gap": "115 command metadata and 25 resource definitions are finite and exact, but static inventories do not close assigned aliases, dynamic imports, callback/dependency effects or parameter provenance across validators, bundles, workflows, examples and fixtures.",
+      "evidenceNeeded": "Current-source source-bound call graph/role map plus targeted behavior receipts for every writer-bearing and resource consumer family; preserve explicit compatibility/export/config exceptions."
+    },
+    {
+      "priority": 3,
+      "id": "maintenance-rollback-old-client-acceptance",
+      "gap": "Local current Mac maintenance rows pass; current supported-host publication/recovery/rollback and old-client exclusion remain unproved, including production rollback activation and attachment restoration boundaries.",
+      "evidenceNeeded": "Current CLI/API/MCP and platform receipts for nine special commands, six dedicated storage rows, inline rollback/resume and old-client refusal with retained source/target/attachment digests."
+    },
+    {
+      "priority": 4,
+      "id": "atomic-writer-role-ownership",
+      "gap": "54 import-bound writeFileAtomic call sites and 103 literal filesystem modules have role inventories, but per-call maintenance ownership, aliases, dependencies and transitive writer provenance remain open.",
+      "evidenceNeeded": "Current source hashes for every callsite plus finite role/owner evidence and behavior checks; no claim of universal process exclusion."
+    },
+    {
+      "priority": 5,
+      "id": "performance-resource-and-loc-gates",
+      "gap": "Original benchmark matrix and natural MCP memory/resource acceptance are not closed. Inclusive persistence LOC is objectively over target: 25,732 baseline, 32,428 current, ceiling 19,299.",
+      "evidenceNeeded": "Reproducible p50/p95/throughput/RSS/filesystem ops/lock waits/WAL/event-loop results and an explicit correction or release decision for the failed 25% LOC target."
+    },
+    {
+      "priority": 6,
+      "id": "forgeloop-validator-closure",
+      "gap": "Local prepush exit 0 is not ForgeLoop COMPLETE/VALID and no PR should be opened while required gates remain open.",
+      "evidenceNeeded": "Validator-backed COMPLETE/VALID receipt after all plan gates, followed by authorized PR creation/publication."
+    }
+  ],
+  "notRemainingDefects": [
+    "The prepared continuity and portable bundle identity defects are not current unresolved regressions; the current ec0 receipt records the ten prepared controls as passed.",
+    "No public exporter/backup target-misbinding defect was found under the supported authority chain.",
+    "No concrete built-in normal-operation legacy filesystem writer was identified in the finite supported boundary; existing controls refuse named legacy/mixed/missing-state fallback cases.",
+    "Universal prevention of deliberate raw DatabaseSync rewrites or privileged external filesystem changes is outside the declared supported-client threat boundary."
+  ],
+  "sourceHashes": {
+    "src/core/cli-command-definitions.js": {
+      "sha256": "9c33ea4bc021e4ae0ffc77204821d792942691412bc993f496d1be54a3a891fb",
+      "bytes": 133601
+    },
+    "src/core/command-executors.js": {
+      "sha256": "2c32d0ad5fd2afcab246a357617e1b3e1040e20e3975a9cf9757f51525a94c3b",
+      "bytes": 48334
+    },
+    "src/core/command-runtime.js": {
+      "sha256": "56085a5bddeccabcbcf008b1c26c4293cc8b4d7c321f9684fd9e5493f038afcf",
+      "bytes": 3666
+    },
+    "src/core/integration-resources.js": {
+      "sha256": "2561e00a7078fc1834ad2173b38c19978ef57a6705ab294158f83cac88b71ba6",
+      "bytes": 15449
+    },
+    "src/integration.js": {
+      "sha256": "adaa63fe570f28cd65f27060c558213025672183cddf26e9386de761ccd30526",
+      "bytes": 6774
+    },
+    "integrations/mcp/src/tool-registry.js": {
+      "sha256": "f3f128a02cf5142df1db43f72cb8565f5791c856c71e104383284899f2316bc1",
+      "bytes": 4720
+    },
+    "integrations/mcp/src/resource-registry.js": {
+      "sha256": "6d022292824215ed6f339e59d208bc346408c25fe5db9d2a3944978f59d2ca84",
+      "bytes": 4835
+    },
+    "src/core/filesystem.js": {
+      "sha256": "4174506b0832bdadadd9b7b676baa835b15b2b7e68fc980902dedeacb2564a57",
+      "bytes": 7519
+    },
+    "src/core/bundles.js": {
+      "sha256": "334be44273d816e7b68cf7434369467e2466cdce13fad05908b4311320cefe5e",
+      "bytes": 36495
+    },
+    "src/storage/project-boundary.js": {
+      "sha256": "f9206ae43b67467556430679d6f925bb5dcad14cec1cab12b214af358ed470b3",
+      "bytes": 4776
+    },
+    "src/storage/operational-context.js": {
+      "sha256": "53fa9ed5fe2b0724071dda1c1594f8a2101fcf645bcf286da5407a4b9d37183f",
+      "bytes": 2055
+    },
+    "src/storage/connection.js": {
+      "sha256": "ca21ebb7d35aaf3ea74be04b767e755436934c52fd4db2c5e828aabdd20dee74",
+      "bytes": 16734
+    },
+    "src/storage/exporter.js": {
+      "sha256": "2e005a6784c73f42e53831a800b09b50730f901dd358d7463009f776b55a2a4b",
+      "bytes": 14827
+    },
+    "src/storage/project-backup.js": {
+      "sha256": "d70b5f3992e36320723cad440f4ac2ab756700e88822acfc78beb74c2c88a609",
+      "bytes": 5550
+    },
+    "src/commands/storage-backup.js": {
+      "sha256": "eb3bdda3b2a0c55649d8c7e9f4f62b95fa9eb3f78e6e657b5416b420f973ad7f",
+      "bytes": 959
+    },
+    "src/commands/storage-migrate.js": {
+      "sha256": "cae777a08d5b50fb9b54a0ca4a9a9a9c8597c02ca5f413af98f0be347d908859",
+      "bytes": 265
+    },
+    "src/commands/storage-migration-resume.js": {
+      "sha256": "0d9171a76d4af56f184669611de857a0404bb8478776a44579e16180b6e59b8d",
+      "bytes": 323
+    },
+    "src/commands/storage-migration-status.js": {
+      "sha256": "3d013e83b241d278d0eed4c52b192a3df4cfd482502bcc2fe64b01efafc87830",
+      "bytes": 2211
+    },
+    "src/commands/storage-restore.js": {
+      "sha256": "2ef1d773fc218d3f3acc7753af2ff6846b96c944d03d435ea9504ab8d3ed6774",
+      "bytes": 527
+    },
+    "src/commands/storage-restore-resume.js": {
+      "sha256": "acbf0748cdf0d01be8d0a6e20d57159decc428e6d45198db903fd3d6d4bac17f",
+      "bytes": 513
+    },
+    "src/core/transaction.js": {
+      "sha256": "376cc4d038e8868015968c41992568b5f15be148bb5b39942ae308512cab0f69",
+      "bytes": 2002
+    },
+    "src/core/task-command.js": {
+      "sha256": "8a56af0c503944eb8a12b5ed326c9cfa21b9390eab570ec27a4e4b050e0a2e6c",
+      "bytes": 3250
+    },
+    "src/core/activation.js": {
+      "sha256": "de461ebf711e7f75aeff4e348f44f762ce9d4b0a381922f48acf4078f937ee90",
+      "bytes": 1363
+    },
+    "src/core/artifacts.js": {
+      "sha256": "a28d2abf4628fc88ab9c6826a836628e6c24c3a917647399c12d705067a2d8f9",
+      "bytes": 9204
+    },
+    "package.json": {
+      "sha256": "a969287c8dd733919ed2dedd94f856f64b355cc1722e17f6c752465ee5d5d21f",
+      "bytes": 8980
+    },
+    "docs/SQLITE_MIGRATION_PLAN.md": {
+      "sha256": "f406dca99817b12740fdd76a92fd3060932ee5a81d76f8b86cb27d402b76da69",
+      "bytes": 29865
+    },
+    "docs/SQLITE_MIGRATION_MATRIX.md": {
+      "sha256": "f43eb9bda0a5b569a3cc6764c65c45ecb72fd5421bfdb94c2b996f3fd6e36cf3",
+      "bytes": 201322
+    },
+    "docs/SQLITE_MAINTENANCE_COVERAGE.md": {
+      "sha256": "095547ca07150166f4f34fafe3d102801063d8dd7f933013a2d94585761e5a99",
+      "bytes": 31794
+    }
+  },
+  "testHashes": {
+    "tests/storage-integration-dispatch.test.js": {
+      "sha256": "937d0147e34dbbad0e88b80bf8a53a306572e65476676e6869dc3a5dd0c2e7d4",
+      "bytes": 18096
+    },
+    "tests/storage-operational-bootstrap.test.js": {
+      "sha256": "04ec7b1d316f0b8bf352dfc6721ad3ca1f4db7778444766eaaab9a6ce43b20e2",
+      "bytes": 47631
+    },
+    "tests/storage-sole-writer-boundary.test.js": {
+      "sha256": "a62097fe2f44a7ed2e9f07cbc7f552f4e882b9e42085d8e136c2261ccdce8202",
+      "bytes": 11042
+    },
+    "tests/storage-marker.test.js": {
+      "sha256": "5c070b650e1733c0c4afdfcdaffaa08496fc6a856d881efa9c95cdb0b561989a",
+      "bytes": 5495
+    },
+    "tests/storage-project-bootstrap.test.js": {
+      "sha256": "787a88f28e02670f64e8f41c2ba0079cc7670bee4e7a969af227dece4bf1d3fb",
+      "bytes": 8976
+    },
+    "tests/storage-migrate-command.test.js": {
+      "sha256": "0cdd14feb017c39b412f66b97635da1e6d99488298c34e5190a2df0f75f348a3",
+      "bytes": 3056
+    },
+    "tests/storage-migration-resume.test.js": {
+      "sha256": "291e919fa88f1697797b6dad3f1ba05ecb433ec27fefe3f7c2ad46aed8f8ec2f",
+      "bytes": 6261
+    },
+    "tests/storage-migration-source.test.js": {
+      "sha256": "f29127a421a79c8bc15bdc3e2e34d39ff5de2c120eb4db4070ef30d23a3dc12b",
+      "bytes": 21785
+    },
+    "integrations/mcp/tests/storage-migration-status.test.js": {
+      "sha256": "933e0164f2e42f19f3601e407aea9d399547014a2dcd6991580671db972e3897",
+      "bytes": 2092
+    },
+    "tests/storage-restore-command.test.js": {
+      "sha256": "7b34447e7d7d874f96bdda9756dac707ab49ec6d89b0e65a649c13a2f24bb276",
+      "bytes": 6073
+    },
+    "tests/storage-project-restore.test.js": {
+      "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+      "bytes": 17076
+    },
+    "tests/storage-replacement-archive.test.js": {
+      "sha256": "3a63116d05cfe1ef158b54cae2863993e26f7acfd99fba5159142300e30c5213",
+      "bytes": 10538
+    },
+    "tests/storage-replacement-publication.test.js": {
+      "sha256": "ef2b88d24e5ff8f345397aa60f70b44c8bf8527b2794ad145ac21567949df878",
+      "bytes": 9231
+    },
+    "tests/storage-project-backup.test.js": {
+      "sha256": "3806e7f424ea4b51422e2704b245799218b18675f11c83bcc098918747ccdc3a",
+      "bytes": 6379
+    },
+    "tests/storage-rollback-command.test.js": {
+      "sha256": "70c671f5f5ba30475f122238f448e8dde93a4539008bdb32eeefbe70b6846da2",
+      "bytes": 2820
+    },
+    "tests/storage-correction-io.test.js": {
+      "sha256": "55683dace24cacfc759a89ef68387faa3dbf670fccafb2e150076098a6e263da",
+      "bytes": 2950
+    },
+    "tests/run-action.test.js": {
+      "sha256": "4e4e8143be97014b8150aec4744f37b68c9682cf3bd3ee9eaf2cfb016fc71c17",
+      "bytes": 8682
+    },
+    "tests/run-check.test.js": {
+      "sha256": "2b1cc2c588e170274e4a34e58af760166e5392d24816cbe07a32fdd1763a868d",
+      "bytes": 23587
+    },
+    "tests/bundle.test.js": {
+      "sha256": "b69527197f7acc671dc85fd0b3ddc96cd63063b60cba8f391bbb35878add72f6",
+      "bytes": 13471
+    },
+    "tests/continuity.test.js": {
+      "sha256": "955e1e268415e7fdbadf1ddbf772e16a4dc5bd3dfd4e194d5acc0816cb15a679",
+      "bytes": 5760
+    }
+  },
+  "evidenceHashes": {
+    "benchmarks/storage-sqlite/command-admission-catalogue-618.json": {
+      "sha256": "1b4c3e6a4ef4c5a9abbd57653987d6f1d9973c5b1f3ffd97d1dab7e667113b21",
+      "bytes": 5165
+    },
+    "benchmarks/storage-sqlite/consumer-inventory-401.json": {
+      "sha256": "e10f0702bd372ca6499639299ca43ebdd8a8eb79943f402c1af05d311b90788f",
+      "bytes": 594417
+    },
+    "benchmarks/storage-sqlite/atomic-writer-caller-review-621.json": {
+      "sha256": "f13afc4790d46ba91976286d991d9e4ae93ca25e7cc8b42d4b25176be45586e6",
+      "bytes": 38921
+    },
+    "benchmarks/storage-sqlite/raw-file-role-reconciliation847.json": {
+      "sha256": "1a692db9d525494b583d7fc4033a69329233fffea5e22b30ea645c65e29544fc",
+      "bytes": 49907
+    },
+    "benchmarks/storage-sqlite/public-dispatch-boundary849.json": {
+      "sha256": "4e20e16b8b08a9340e8165bc73430fccf2caa6db0122782e52794119a4380f9f",
+      "bytes": 2559
+    },
+    "benchmarks/storage-sqlite/maintenance-consumers-ec0d0a0-review.json": {
+      "sha256": "4441162341f5ef453ef190dc50122b2fb4506f017b4f2cdbbb26cb82c6f447ff",
+      "bytes": 61830
+    },
+    "benchmarks/storage-sqlite/prepush-ec0d0a0-success.json": {
+      "sha256": "543eb05db2707f8d45a668e856208911ebf5cc83ffa9062bea4b085bc76a84fc",
+      "bytes": 1378
+    },
+    "benchmarks/storage-sqlite/regressions945-current-ec0d0a0-execution.json": {
+      "sha256": "a95eaee364af2c34e4b78c9875da56e05ba6e16ca57fa84f608ce91634a65540",
+      "bytes": 5385
+    },
+    "/Users/cassio/.codex/verification/prepush-ec0d0a0-success.json": {
+      "sha256": "543eb05db2707f8d45a668e856208911ebf5cc83ffa9062bea4b085bc76a84fc",
+      "bytes": 1378
+    },
+    "/Users/cassio/.codex/verification/prepush-ec0d0a0.log": {
+      "sha256": "4bb4c723ccd86f2c8c6fabfdfa4ce06cfab25e6c953701f37a1992ed6d7cb246",
+      "bytes": 373116
+    },
+    "/Users/cassio/.codex/verification/maintenance-consumers-ec0d0a0-review.json": {
+      "sha256": "4441162341f5ef453ef190dc50122b2fb4506f017b4f2cdbbb26cb82c6f447ff",
+      "bytes": 61830
+    }
+  },
+  "conclusion": {
+    "finiteBoundaryEnumerated": true,
+    "commandRegistryParity": true,
+    "resourceRegistryCount": 25,
+    "concreteBuiltinLegacyWriterDefectFound": false,
+    "lowLevelPublicMisbindingFound": false,
+    "soleWriterVerified": false,
+    "wholeConsumerClosure": false,
+    "capabilityClaim": false,
+    "currentHostedPlatformAcceptance": false,
+    "performanceAcceptance": false,
+    "inclusiveLocTarget": {
+      "baseline": 25732,
+      "current": 32428,
+      "ceiling": 19299,
+      "passes": false
+    },
+    "validatorBackedComplete": false,
+    "nextAction": "Use the six prioritized evidence controls above; do not claim sole-writer, whole-consumer, complete-plan or PR readiness from the finite local green subset."
+  }
+}

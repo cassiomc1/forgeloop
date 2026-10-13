@@ -1,7 +1,7 @@
 import { migrateProtocol } from "../core/protocol-migration.js";
 
-export async function runMigrateProtocol({ target, packageRoot, to, dryRun = false } = {}) {
-  return migrateProtocol(target, { to, dryRun, packageRoot });
+export async function runMigrateProtocol({ target, packageRoot, to, dryRun = false, destination, writersQuiesced = false } = {}) {
+  return migrateProtocol(target, { to, dryRun, packageRoot, destination, writersQuiesced });
 }
 
 export function formatMigrateProtocolResult(result) {

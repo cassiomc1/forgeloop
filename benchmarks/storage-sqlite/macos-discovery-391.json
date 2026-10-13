@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 2,
+  "node": "v24.19.0",
+  "fixtureTimestamp": "2026-09-11T00:00:00.000Z",
+  "fixturePhase": "RECEIVED",
+  "platform": "darwin",
+  "architecture": "arm64",
+  "cpu": "Apple M2",
+  "comparator": "pinned-pre-migration-release",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "runtime": "warm-cache API with per-call native connection",
+  "releaseThresholdsVerified": false,
+  "repeats": 20,
+  "results": [
+    {
+      "size": 10,
+      "outputParity": true,
+      "nativeDiscoveryP50Ms": 8.08,
+      "nativeDiscoveryP95Ms": 9.559,
+      "discoverySpeedupP95": 1.408,
+      "filesystemDiscoveryP50Ms": 12.898,
+      "filesystemDiscoveryP95Ms": 13.464,
+      "storeLookupP50Ms": 0.108,
+      "storeLookupP95Ms": 0.218,
+      "sqliteVersion": "3.53.3",
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      }
+    },
+    {
+      "size": 100,
+      "outputParity": true,
+      "nativeDiscoveryP50Ms": 40.138,
+      "nativeDiscoveryP95Ms": 45.213,
+      "discoverySpeedupP95": 2.841,
+      "filesystemDiscoveryP50Ms": 121.026,
+      "filesystemDiscoveryP95Ms": 128.437,
+      "storeLookupP50Ms": 1.065,
+      "storeLookupP95Ms": 1.132,
+      "sqliteVersion": "3.53.3",
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      }
+    },
+    {
+      "size": 250,
+      "outputParity": true,
+      "nativeDiscoveryP50Ms": 91.685,
+      "nativeDiscoveryP95Ms": 120.884,
+      "discoverySpeedupP95": 2.671,
+      "filesystemDiscoveryP50Ms": 309.705,
+      "filesystemDiscoveryP95Ms": 322.834,
+      "storeLookupP50Ms": 2.436,
+      "storeLookupP95Ms": 2.579,
+      "sqliteVersion": "3.53.3",
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      }
+    },
+    {
+      "size": 1000,
+      "outputParity": true,
+      "nativeDiscoveryP50Ms": 335.707,
+      "nativeDiscoveryP95Ms": 352.86,
+      "discoverySpeedupP95": 3.399,
+      "filesystemDiscoveryP50Ms": 1175.101,
+      "filesystemDiscoveryP95Ms": 1199.395,
+      "storeLookupP50Ms": 9.94,
+      "storeLookupP95Ms": 10.609,
+      "sqliteVersion": "3.53.3",
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      }
+    },
+    {
+      "size": 5000,
+      "outputParity": true,
+      "nativeDiscoveryP50Ms": 1735.577,
+      "nativeDiscoveryP95Ms": 1897.509,
+      "discoverySpeedupP95": 3.412,
+      "filesystemDiscoveryP50Ms": 6279.132,
+      "filesystemDiscoveryP95Ms": 6473.841,
+      "storeLookupP50Ms": 51.951,
+      "storeLookupP95Ms": 71.38,
+      "sqliteVersion": "3.53.3",
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      }
+    }
+  ],
+  "sourceRoot": "/tmp/forgeloop-discovery391-candidate",
+  "sourceManifest": "/tmp/sqlite-discovery391-candidate-source.json",
+  "sourceFiles": 2462,
+  "postMeasurementSourceHashesUnchanged": true,
+  "fixtureScope": "Synthetic RECEIVED tasks, valid claim ownership, empty logical ledgers; does not prove representative history/action/approval/recovery acceptance",
+  "discoveryFixtureTargetsMet": true,
+  "machineConditions": "No ForgeLoop full or focused test suite ran during measurement; normal macOS background/GUI activity was not disabled or controlled. Warm-cache API; not filesystem-cold. Baseline then native sample batches,20repetitions per variant/size."
+}

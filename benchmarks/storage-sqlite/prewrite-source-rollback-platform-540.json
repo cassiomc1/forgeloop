@@ -1,0 +1,149 @@
+{
+  "checkpoint": 540,
+  "macPositive": {
+    "scope": "Disposable linked-worktree pre-write offline source restoration; no production rollback command or post-write rollback claim",
+    "before": {
+      "exit": 0,
+      "stdout": "{\n  \"status\": \"VALID\",\n  \"errors\": [],\n  \"incomplete\": [],\n  \"stale\": null,\n  \"delegation\": {\n    \"status\": \"NOT_APPLICABLE\",\n    \"required\": false,\n    \"errors\": []\n  },\n  \"continuity\": {\n    \"required\": false,\n    \"status\": \"NOT_APPLICABLE\",\n    \"classification\": \"ABSENT\",\n    \"errors\": [],\n    \"reasonCodes\": [],\n    \"reasons\": [\n      \"CONTINUITY_ABSENT\"\n    ],\n    \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n    \"evidenceAuthority\": \"NONE\"\n  },\n  \"evidence\": [\n    {\n      \"kind\": \"OBSERVED\",\n      \"source\": \"ForgeLoop protocol conformance\",\n      \"result\": \"VALID\"\n    }\n  ]\n}\n",
+      "stderr": ""
+    },
+    "migrated": {
+      "phase": "PUBLISHED",
+      "operationId": "0789d168-486c-4778-8c72-e147b19e9a83",
+      "taskCount": 1,
+      "attachments": 0,
+      "currentStateVerified": true,
+      "restored": false,
+      "path": "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-N8I1OQ-linked/.forgeloop/state.sqlite",
+      "destination": "rollback-migration-retained"
+    },
+    "nativeValidation": {
+      "ok": true,
+      "command": "validate-protocol",
+      "exitCode": 0,
+      "result": {
+        "status": "VALID",
+        "errors": [],
+        "incomplete": [],
+        "stale": null,
+        "delegation": {
+          "status": "NOT_APPLICABLE",
+          "required": false,
+          "errors": []
+        },
+        "continuity": {
+          "required": false,
+          "status": "NOT_APPLICABLE",
+          "classification": "ABSENT",
+          "errors": [],
+          "reasonCodes": [],
+          "reasons": [
+            "CONTINUITY_ABSENT"
+          ],
+          "authority": "OPERATIONAL_CONTEXT_ONLY",
+          "evidenceAuthority": "NONE"
+        },
+        "evidence": [
+          {
+            "kind": "OBSERVED",
+            "source": "ForgeLoop protocol conformance",
+            "result": "VALID"
+          }
+        ]
+      },
+      "error": null,
+      "metadata": {
+        "protocolVersion": 1,
+        "integrationApiVersion": 1,
+        "packageVersion": "2.0.0"
+      }
+    },
+    "after": {
+      "exit": 0,
+      "stdout": "{\n  \"status\": \"VALID\",\n  \"errors\": [],\n  \"incomplete\": [],\n  \"stale\": null,\n  \"delegation\": {\n    \"status\": \"NOT_APPLICABLE\",\n    \"required\": false,\n    \"errors\": []\n  },\n  \"continuity\": {\n    \"required\": false,\n    \"status\": \"NOT_APPLICABLE\",\n    \"classification\": \"ABSENT\",\n    \"errors\": [],\n    \"reasonCodes\": [],\n    \"reasons\": [\n      \"CONTINUITY_ABSENT\"\n    ],\n    \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n    \"evidenceAuthority\": \"NONE\"\n  },\n  \"evidence\": [\n    {\n      \"kind\": \"OBSERVED\",\n      \"source\": \"ForgeLoop protocol conformance\",\n      \"result\": \"VALID\"\n    }\n  ]\n}\n",
+      "stderr": ""
+    },
+    "nativeSnapshotUnchanged": true,
+    "retainedNativeLayout": true,
+    "preservedSourceRetained": true,
+    "sourceManifestPresent": true,
+    "fingerprint": "a8d0c11d6dc28de9d79df85b712f4792c86bfea62477847de8ddd092faea6628"
+  },
+  "macNegative": {
+    "scope": "Disposable post-write negative control",
+    "sourceRestorationRefused": true,
+    "restored": false,
+    "newNativeTaskPreserved": true,
+    "nativeValidation": {
+      "ok": true,
+      "command": "validate-protocol",
+      "exitCode": 0,
+      "result": {
+        "status": "VALID",
+        "errors": [],
+        "incomplete": [],
+        "stale": null,
+        "delegation": {
+          "status": "NOT_APPLICABLE",
+          "required": false,
+          "errors": []
+        },
+        "continuity": {
+          "required": false,
+          "status": "NOT_APPLICABLE",
+          "classification": "ABSENT",
+          "errors": [],
+          "reasonCodes": [],
+          "reasons": [
+            "CONTINUITY_ABSENT"
+          ],
+          "authority": "OPERATIONAL_CONTEXT_ONLY",
+          "evidenceAuthority": "NONE"
+        },
+        "evidence": [
+          {
+            "kind": "OBSERVED",
+            "source": "ForgeLoop protocol conformance",
+            "result": "VALID"
+          }
+        ]
+      },
+      "error": null,
+      "metadata": {
+        "protocolVersion": 1,
+        "integrationApiVersion": 1,
+        "packageVersion": "2.0.0"
+      }
+    },
+    "migrated": {
+      "phase": "PUBLISHED",
+      "operationId": "982e7b5b-5c82-4ec0-80e2-62c2ca04c847",
+      "taskCount": 1,
+      "attachments": 0,
+      "currentStateVerified": true,
+      "restored": false,
+      "path": "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-ZGRDW6-linked/.forgeloop/state.sqlite",
+      "destination": "rollback-migration-retained"
+    }
+  },
+  "remoteRaw": {
+    "windows": {
+      "status": 0,
+      "output": "{\"sourceFiles\":2504,\"patches\":{\"src/core/work-state.js\":\"fae79a89d33d170159195d3b3d6448a5ad45422df952422cd2dd18e722052ff9\",\"tests/checkpoint-revalidation.test.js\":\"9d6aafb3b96b03525d29ab9bef133f62af1612d56b9710c3293738d22070cd32\",\"src/core/structural-quality/service.js\":\"38981b46ae61b4ca173fd37d5855ac4ce6580719dcc51b429474a2f44417b363\",\"tests/storage-quality-context.test.js\":\"1deb0efe1f37b09829eb3b46d47cedd9e51e5ef0a921fc86e56c0e4e22195bce\",\"src/storage/task-guards.js\":\"0ff2d6a4b1109e47d97a772c19b54ba68dbae6c739e43d3253b399b244eafff4\",\"src/commands/status.js\":\"826d0f912630f5df52f6d696780cd9a4cc77493dad072f3ebd3c5a2e432e118f\",\"tests/storage-state-classification-snapshot.test.js\":\"d5e2a6efe3ab48be4fda5a85f27c0fc6becdcdf7d07e7f76dfe350f9bc6ea86a\",\"scripts/drill-storage-reverse-export-compatibility.mjs\":\"b2447aba62d5e0d08f02f89b375d1ef74f06c3a8bbce72d00000d8c81ec00e0f\",\"tests/helpers/canonical-diagnosis-fixture.js\":\"add6d2df4664967e203ae93061e649fb3b16f132ee39626c151018679383769f\",\"scripts/drill-storage-prewrite-source-rollback.mjs\":\"95ddf7088f39cefb5cc78d22d6636e898d83fb8914414cc58eed90090edf1b90\"},\"runs\":[{\"negative\":false,\"status\":0,\"stdout\":\"{\\n  \\\"scope\\\": \\\"Disposable linked-worktree pre-write offline source restoration; no production rollback command or post-write rollback claim\\\",\\n  \\\"before\\\": {\\n    \\\"exit\\\": 0,\\n    \\\"stdout\\\": \\\"{\\\\n  \\\\\\\"status\\\\\\\": \\\\\\\"VALID\\\\\\\",\\\\n  \\\\\\\"errors\\\\\\\": [],\\\\n  \\\\\\\"incomplete\\\\\\\": [],\\\\n  \\\\\\\"stale\\\\\\\": null,\\\\n  \\\\\\\"delegation\\\\\\\": {\\\\n    \\\\\\\"status\\\\\\\": \\\\\\\"NOT_APPLICABLE\\\\\\\",\\\\n    \\\\\\\"required\\\\\\\": false,\\\\n    \\\\\\\"errors\\\\\\\": []\\\\n  },\\\\n  \\\\\\\"continuity\\\\\\\": {\\\\n    \\\\\\\"required\\\\\\\": false,\\\\n    \\\\\\\"status\\\\\\\": \\\\\\\"NOT_APPLICABLE\\\\\\\",\\\\n    \\\\\\\"classification\\\\\\\": \\\\\\\"ABSENT\\\\\\\",\\\\n    \\\\\\\"errors\\\\\\\": [],\\\\n    \\\\\\\"reasonCodes\\\\\\\": [],\\\\n    \\\\\\\"reasons\\\\\\\": [\\\\n      \\\\\\\"CONTINUITY_ABSENT\\\\\\\"\\\\n    ],\\\\n    \\\\\\\"authority\\\\\\\": \\\\\\\"OPERATIONAL_CONTEXT_ONLY\\\\\\\",\\\\n    \\\\\\\"evidenceAuthority\\\\\\\": \\\\\\\"NONE\\\\\\\"\\\\n  },\\\\n  \\\\\\\"evidence\\\\\\\": [\\\\n    {\\\\n      \\\\\\\"kind\\\\\\\": \\\\\\\"OBSERVED\\\\\\\",\\\\n      \\\\\\\"source\\\\\\\": \\\\\\\"ForgeLoop protocol conformance\\\\\\\",\\\\n      \\\\\\\"result\\\\\\\": \\\\\\\"VALID\\\\\\\"\\\\n    }\\\\n  ]\\\\n}\\\\n\\\",\\n    \\\"stderr\\\": \\\"\\\"\\n  },\\n  \\\"migrated\\\": {\\n    \\\"phase\\\": \\\"PUBLISHED\\\",\\n    \\\"operationId\\\": \\\"2e3c9845-3373-4348-b6d3-30868d382ead\\\",\\n    \\\"taskCount\\\": 1,\\n    \\\"attachments\\\": 0,\\n    \\\"currentStateVerified\\\": true,\\n    \\\"restored\\\": false,\\n    \\\"path\\\": \\\"C:\\\\\\\\Users\\\\\\\\ADMINI~1\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\forgeloop-canonical-diagnosis-git-YN0WPJ-linked\\\\\\\\.forgeloop\\\\\\\\state.sqlite\\\",\\n    \\\"destination\\\": \\\"rollback-migration-retained\\\"\\n  },\\n  \\\"nativeValidation\\\": {\\n    \\\"ok\\\": true,\\n    \\\"command\\\": \\\"validate-protocol\\\",\\n    \\\"exitCode\\\": 0,\\n    \\\"result\\\": {\\n      \\\"status\\\": \\\"VALID\\\",\\n      \\\"errors\\\": [],\\n      \\\"incomplete\\\": [],\\n      \\\"stale\\\": null,\\n      \\\"delegation\\\": {\\n        \\\"status\\\": \\\"NOT_APPLICABLE\\\",\\n        \\\"required\\\": false,\\n        \\\"errors\\\": []\\n      },\\n      \\\"continuity\\\": {\\n        \\\"required\\\": false,\\n        \\\"status\\\": \\\"NOT_APPLICABLE\\\",\\n        \\\"classification\\\": \\\"ABSENT\\\",\\n        \\\"errors\\\": [],\\n        \\\"reasonCodes\\\": [],\\n        \\\"reasons\\\": [\\n          \\\"CONTINUITY_ABSENT\\\"\\n        ],\\n        \\\"authority\\\": \\\"OPERATIONAL_CONTEXT_ONLY\\\",\\n        \\\"evidenceAuthority\\\": \\\"NONE\\\"\\n      },\\n      \\\"evidence\\\": [\\n        {\\n          \\\"kind\\\": \\\"OBSERVED\\\",\\n          \\\"source\\\": \\\"ForgeLoop protocol conformance\\\",\\n          \\\"result\\\": \\\"VALID\\\"\\n        }\\n      ]\\n    },\\n    \\\"error\\\": null,\\n    \\\"metadata\\\": {\\n      \\\"protocolVersion\\\": 1,\\n      \\\"integrationApiVersion\\\": 1,\\n      \\\"packageVersion\\\": \\\"2.0.0\\\"\\n    }\\n  },\\n  \\\"after\\\": {\\n    \\\"exit\\\": 0,\\n    \\\"stdout\\\": \\\"{\\\\n  \\\\\\\"status\\\\\\\": \\\\\\\"VALID\\\\\\\",\\\\n  \\\\\\\"errors\\\\\\\": [],\\\\n  \\\\\\\"incomplete\\\\\\\": [],\\\\n  \\\\\\\"stale\\\\\\\": null,\\\\n  \\\\\\\"delegation\\\\\\\": {\\\\n    \\\\\\\"status\\\\\\\": \\\\\\\"NOT_APPLICABLE\\\\\\\",\\\\n    \\\\\\\"required\\\\\\\": false,\\\\n    \\\\\\\"errors\\\\\\\": []\\\\n  },\\\\n  \\\\\\\"continuity\\\\\\\": {\\\\n    \\\\\\\"required\\\\\\\": false,\\\\n    \\\\\\\"status\\\\\\\": \\\\\\\"NOT_APPLICABLE\\\\\\\",\\\\n    \\\\\\\"classification\\\\\\\": \\\\\\\"ABSENT\\\\\\\",\\\\n    \\\\\\\"errors\\\\\\\": [],\\\\n    \\\\\\\"reasonCodes\\\\\\\": [],\\\\n    \\\\\\\"reasons\\\\\\\": [\\\\n      \\\\\\\"CONTINUITY_ABSENT\\\\\\\"\\\\n    ],\\\\n    \\\\\\\"authority\\\\\\\": \\\\\\\"OPERATIONAL_CONTEXT_ONLY\\\\\\\",\\\\n    \\\\\\\"evidenceAuthority\\\\\\\": \\\\\\\"NONE\\\\\\\"\\\\n  },\\\\n  \\\\\\\"evidence\\\\\\\": [\\\\n    {\\\\n      \\\\\\\"kind\\\\\\\": \\\\\\\"OBSERVED\\\\\\\",\\\\n      \\\\\\\"source\\\\\\\": \\\\\\\"ForgeLoop protocol conformance\\\\\\\",\\\\n      \\\\\\\"result\\\\\\\": \\\\\\\"VALID\\\\\\\"\\\\n    }\\\\n  ]\\\\n}\\\\n\\\",\\n    \\\"stderr\\\": \\\"\\\"\\n  },\\n  \\\"nativeSnapshotUnchanged\\\": true,\\n  \\\"retainedNativeLayout\\\": true,\\n  \\\"preservedSourceRetained\\\": true,\\n  \\\"sourceManifestPresent\\\": true,\\n  \\\"fingerprint\\\": \\\"240f31ee28be1ba8e3bfb44a433c31c8cd55c3dde18f393f6dfc5aa517d6129d\\\"\\n}\\n\",\"stderr\":\"\"},{\"negative\":true,\"status\":0,\"stdout\":\"{\\n  \\\"scope\\\": \\\"Disposable post-write negative control\\\",\\n  \\\"sourceRestorationRefused\\\": true,\\n  \\\"restored\\\": false,\\n  \\\"newNativeTaskPreserved\\\": true,\\n  \\\"nativeValidation\\\": {\\n    \\\"ok\\\": true,\\n    \\\"command\\\": \\\"validate-protocol\\\",\\n    \\\"exitCode\\\": 0,\\n    \\\"result\\\": {\\n      \\\"status\\\": \\\"VALID\\\",\\n      \\\"errors\\\": [],\\n      \\\"incomplete\\\": [],\\n      \\\"stale\\\": null,\\n      \\\"delegation\\\": {\\n        \\\"status\\\": \\\"NOT_APPLICABLE\\\",\\n        \\\"required\\\": false,\\n        \\\"errors\\\": []\\n      },\\n      \\\"continuity\\\": {\\n        \\\"required\\\": false,\\n        \\\"status\\\": \\\"NOT_APPLICABLE\\\",\\n        \\\"classification\\\": \\\"ABSENT\\\",\\n        \\\"errors\\\": [],\\n        \\\"reasonCodes\\\": [],\\n        \\\"reasons\\\": [\\n          \\\"CONTINUITY_ABSENT\\\"\\n        ],\\n        \\\"authority\\\": \\\"OPERATIONAL_CONTEXT_ONLY\\\",\\n        \\\"evidenceAuthority\\\": \\\"NONE\\\"\\n      },\\n      \\\"evidence\\\": [\\n        {\\n          \\\"kind\\\": \\\"OBSERVED\\\",\\n          \\\"source\\\": \\\"ForgeLoop protocol conformance\\\",\\n          \\\"result\\\": \\\"VALID\\\"\\n        }\\n      ]\\n    },\\n    \\\"error\\\": null,\\n    \\\"metadata\\\": {\\n      \\\"protocolVersion\\\": 1,\\n      \\\"integrationApiVersion\\\": 1,\\n      \\\"packageVersion\\\": \\\"2.0.0\\\"\\n    }\\n  },\\n  \\\"migrated\\\": {\\n    \\\"phase\\\": \\\"PUBLISHED\\\",\\n    \\\"operationId\\\": \\\"2c3cf79f-ab3e-4347-bdc8-ae5acdf91620\\\",\\n    \\\"taskCount\\\": 1,\\n    \\\"attachments\\\": 0,\\n    \\\"currentStateVerified\\\": true,\\n    \\\"restored\\\": false,\\n    \\\"path\\\": \\\"C:\\\\\\\\Users\\\\\\\\ADMINI~1\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\forgeloop-canonical-diagnosis-git-3VviQC-linked\\\\\\\\.forgeloop\\\\\\\\state.sqlite\\\",\\n    \\\"destination\\\": \\\"rollback-migration-retained\\\"\\n  }\\n}\\n\",\"stderr\":\"\"}]}\n",
+      "error": ""
+    },
+    "linux": {
+      "status": 0,
+      "output": "{\"status\":0,\"stdout\":\"{\\\"sourceBefore\\\":2504,\\\"sourceAfter\\\":2504,\\\"patches\\\":{\\\"src/core/work-state.js\\\":\\\"fae79a89d33d170159195d3b3d6448a5ad45422df952422cd2dd18e722052ff9\\\",\\\"tests/checkpoint-revalidation.test.js\\\":\\\"9d6aafb3b96b03525d29ab9bef133f62af1612d56b9710c3293738d22070cd32\\\",\\\"src/core/structural-quality/service.js\\\":\\\"38981b46ae61b4ca173fd37d5855ac4ce6580719dcc51b429474a2f44417b363\\\",\\\"tests/storage-quality-context.test.js\\\":\\\"1deb0efe1f37b09829eb3b46d47cedd9e51e5ef0a921fc86e56c0e4e22195bce\\\",\\\"src/storage/task-guards.js\\\":\\\"0ff2d6a4b1109e47d97a772c19b54ba68dbae6c739e43d3253b399b244eafff4\\\",\\\"src/commands/status.js\\\":\\\"826d0f912630f5df52f6d696780cd9a4cc77493dad072f3ebd3c5a2e432e118f\\\",\\\"tests/storage-state-classification-snapshot.test.js\\\":\\\"d5e2a6efe3ab48be4fda5a85f27c0fc6becdcdf7d07e7f76dfe350f9bc6ea86a\\\",\\\"scripts/drill-storage-reverse-export-compatibility.mjs\\\":\\\"b2447aba62d5e0d08f02f89b375d1ef74f06c3a8bbce72d00000d8c81ec00e0f\\\",\\\"tests/helpers/canonical-diagnosis-fixture.js\\\":\\\"add6d2df4664967e203ae93061e649fb3b16f132ee39626c151018679383769f\\\",\\\"scripts/drill-storage-prewrite-source-rollback.mjs\\\":\\\"95ddf7088f39cefb5cc78d22d6636e898d83fb8914414cc58eed90090edf1b90\\\"},\\\"runs\\\":[{\\\"negative\\\":false,\\\"status\\\":0,\\\"stdout\\\":\\\"{\\\\n  \\\\\\\"scope\\\\\\\": \\\\\\\"Disposable linked-worktree pre-write offline source restoration; no production rollback command or post-write rollback claim\\\\\\\",\\\\n  \\\\\\\"before\\\\\\\": {\\\\n    \\\\\\\"exit\\\\\\\": 0,\\\\n    \\\\\\\"stdout\\\\\\\": \\\\\\\"{\\\\\\\\n  \\\\\\\\\\\\\\\"status\\\\\\\\\\\\\\\": \\\\\\\\\\\\\\\"VALID\\\\\\\\\\\\\\\",\\\\\\\\n  \\\\\\\\\\\\\\\"errors\\\\\\\\\\\\\\\": [],\\\\\\\\n  \\\\\\\\\\\\\\\"incomplete\\\\\\\\\\\\\\\": [],\\\\\\\\n  \\\\\\\\\\\\\\\"stale\\\\\\\\\\\\\\\": null,\\\\\\\\n  \\\\\\\\\\\\\\\"delegation\\\\\\\\\\\\\\\": {\\\\\\\\n    \\\\\\\\\\\\\\\"status\\\\\\\\\\\\\\\": \\\\\\\\\\\\\\\"NOT_APPLICABLE\\\\\\\\\\\\\\\",\\\\\\\\n    \\\\\\\\\\\\\\\"required\\\\\\\\\\\\\\\": false,\\\\\\\\n    \\\\\\\\\\\\\\\"errors\\\\\\\\\\\\\\\": []\\\\\\\\n  },\\\\\\\\n  \\\\\\\\\\\\\\\"continuity\\\\\\\\\\\\\\\": {\\\\\\\\n    \\\\\\\\\\\\\\\"required\\\\\\\\\\\\\\\": false,\\\\\\\\n    \\\\\\\\\\\\\\\"status\\\\\\\\\\\\\\\": \\\\\\\\\\\\\\\"NOT_APPLICABLE\\\\\\\\\\\\\\\",\\\\\\\\n    \\\\\\\\\\\\\\\"classification\\\\\\\\\\\\\\\": \\\\\\\\\\\\\\\"ABSENT\\\\\\\\\\\\\\\",\\\\\\\\n    \\\\\\\\\\\\\\\"errors\\\\\\\\\\\\\\\": [],\\\\\\\\n    \\\\\\\\\\\\\\\"reasonCodes\\\\\\\\\\\\\\\": [],\\\\\\\\n    \\\\\\\\\\\\\\\"reasons\\\\\\\\\\\\\\\": [\\\\\\\\n      \\\\\\\\\\\\\\\"CONTINUITY_ABSENT\\\\\\\\\\\\\\\"\\\\\\\\n    ],\\\\\\\\n    \\\\\\\\\\\\\\\"authority\\\\\\\\\\\\\\\": \\\\\\\\\\\\\\\"OPERATIONAL_CONTEXT_ONLY\\\\\\\\\\\\\\\",\\\\\\\\n    \\\\\\\\\\\\\\\"evidenceAuthority\\\\\\\\\\\\\\\": \\\\\\\\\\\\\\\"NONE\\\\\\\\\\\\\\\"\\\\\\\\n  },\\\\\\\\n  \\\\\\\\\\\\\\\"evidence\\\\\\\\\\\\\\\": [\\\\\\\\n    {\\\\\\\\n      \\\\\\\\\\\\\\\"kind\\\\\\\\\\\\\\\": \\\\\\\\\\\\\\\"OBSERVED\\\\\\\\\\\\\\\",\\\\\\\\n      \\\\\\\\\\\\\\\"source\\\\\\\\\\\\\\\": \\\\\\\\\\\\\\\"ForgeLoop protocol conformance\\\\\\\\\\\\\\\",\\\\\\\\n      \\\\\\\\\\\\\\\"result\\\\\\\\\\\\\\\": \\\\\\\\\\\\\\\"VALID\\\\\\\\\\\\\\\"\\\\\\\\n    }\\\\\\\\n  ]\\\\\\\\n}\\\\\\\\n\\\\\\\",\\\\n    \\\\\\\"stderr\\\\\\\": \\\\\\\"\\\\\\\"\\\\n  },\\\\n  \\\\\\\"migrated\\\\\\\": {\\\\n    \\\\\\\"phase\\\\\\\": \\\\\\\"PUBLISHED\\\\\\\",\\\\n    \\\\\\\"operationId\\\\\\\": \\\\\\\"81c1fb0f-910f-40e2-8995-55afa25f0a01\\\\\\\",\\\\n    \\\\\\\"taskCount\\\\\\\": 1,\\\\n    \\\\\\\"attachments\\\\\\\": 0,\\\\n    \\\\\\\"currentStateVerified\\\\\\\": true,\\\\n    \\\\\\\"restored\\\\\\\": false,\\\\n    \\\\\\\"path\\\\\\\": \\\\\\\"/tmp/forgeloop-canonical-diagnosis-git-7gNw9c-linked/.forgeloop/state.sqlite\\\\\\\",\\\\n    \\\\\\\"destination\\\\\\\": \\\\\\\"rollback-migration-retained\\\\\\\"\\\\n  },\\\\n  \\\\\\\"nativeValidation\\\\\\\": {\\\\n    \\\\\\\"ok\\\\\\\": true,\\\\n    \\\\\\\"command\\\\\\\": \\\\\\\"validate-protocol\\\\\\\",\\\\n    \\\\\\\"exitCode\\\\\\\": 0,\\\\n    \\\\\\\"result\\\\\\\": {\\\\n      \\\\\\\"status\\\\\\\": \\\\\\\"VALID\\\\\\\",\\\\n      \\\\\\\"errors\\\\\\\": [],\\\\n      \\\\\\\"incomplete\\\\\\\": [],\\\\n      \\\\\\\"stale\\\\\\\": null,\\\\n      \\\\\\\"delegation\\\\\\\": {\\\\n        \\\\\\\"status\\\\\\\": \\\\\\\"NOT_APPLICABLE\\\\\\\",\\\\n        \\\\\\\"required\\\\\\\": false,\\\\n        \\\\\\\"errors\\\\\\\": []\\\\n      },\\\\n      \\\\\\\"continuity\\\\\\\": {\\\\n        \\\\\\\"required\\\\\\\": false,\\\\n        \\\\\\\"status\\\\\\\": \\\\\\\"NOT_APPLICABLE\\\\\\\",\\\\n        \\\\\\\"classification\\\\\\\": \\\\\\\"ABSENT\\\\\\\",\\\\n        \\\\\\\"errors\\\\\\\": [],\\\\n        \\\\\\\"reasonCodes\\\\\\\": [],\\\\n        \\\\\\\"reasons\\\\\\\": [\\\\n          \\\\\\\"CONTINUITY_ABSENT\\\\\\\"\\\\n        ],\\\\n        \\\\\\\"authority\\\\\\\": \\\\\\\"OPERATIONAL_CONTEXT_ONLY\\\\\\\",\\\\n        \\\\\\\"evidenceAuthority\\\\\\\": \\\\\\\"NONE\\\\\\\"\\\\n      },\\\\n      \\\\\\\"evidence\\\\\\\": [\\\\n        {\\\\n          \\\\\\\"kind\\\\\\\": \\\\\\\"OBSERVED\\\\\\\",\\\\n          \\\\\\\"source\\\\\\\": \\\\\\\"ForgeLoop protocol conformance\\\\\\\",\\\\n          \\\\\\\"result\\\\\\\": \\\\\\\"VALID\\\\\\\"\\\\n        }\\\\n      ]\\\\n    },\\\\n    \\\\\\\"error\\\\\\\": null,\\\\n    \\\\\\\"metadata\\\\\\\": {\\\\n      \\\\\\\"protocolVersion\\\\\\\": 1,\\\\n      \\\\\\\"integrationApiVersion\\\\\\\": 1,\\\\n      \\\\\\\"packageVersion\\\\\\\": \\\\\\\"2.0.0\\\\\\\"\\\\n    }\\\\n  },\\\\n  \\\\\\\"after\\\\\\\": {\\\\n    \\\\\\\"exit\\\\\\\": 0,\\\\n    \\\\\\\"stdout\\\\\\\": \\\\\\\"{\\\\\\\\n  \\\\\\\\\\\\\\\"status\\\\\\\\\\\\\\\": \\\\\\\\\\\\\\\"VALID\\\\\\\\\\\\\\\",\\\\\\\\n  \\\\\\\\\\\\\\\"errors\\\\\\\\\\\\\\\": [],\\\\\\\\n  \\\\\\\\\\\\\\\"incomplete\\\\\\\\\\\\\\\": [],\\\\\\\\n  \\\\\\\\\\\\\\\"stale\\\\\\\\\\\\\\\": null,\\\\\\\\n  \\\\\\\\\\\\\\\"delegation\\\\\\\\\\\\\\\": {\\\\\\\\n    \\\\\\\\\\\\\\\"status\\\\\\\\\\\\\\\": \\\\\\\\\\\\\\\"NOT_APPLICABLE\\\\\\\\\\\\\\\",\\\\\\\\n    \\\\\\\\\\\\\\\"required\\\\\\\\\\\\\\\": false,\\\\\\\\n    \\\\\\\\\\\\\\\"errors\\\\\\\\\\\\\\\": []\\\\\\\\n  },\\\\\\\\n  \\\\\\\\\\\\\\\"continuity\\\\\\\\\\\\\\\": {\\\\\\\\n    \\\\\\\\\\\\\\\"required\\\\\\\\\\\\\\\": false,\\\\\\\\n    \\\\\\\\\\\\\\\"status\\\\\\\\\\\\\\\": \\\\\\\\\\\\\\\"NOT_APPLICABLE\\\\\\\\\\\\\\\",\\\\\\\\n    \\\\\\\\\\\\\\\"classification\\\\\\\\\\\\\\\": \\\\\\\\\\\\\\\"ABSENT\\\\\\\\\\\\\\\",\\\\\\\\n    \\\\\\\\\\\\\\\"errors\\\\\\\\\\\\\\\": [],\\\\\\\\n    \\\\\\\\\\\\\\\"reasonCodes\\\\\\\\\\\\\\\": [],\\\\\\\\n    \\\\\\\\\\\\\\\"reasons\\\\\\\\\\\\\\\": [\\\\\\\\n      \\\\\\\\\\\\\\\"CONTINUITY_ABSENT\\\\\\\\\\\\\\\"\\\\\\\\n    ],\\\\\\\\n    \\\\\\\\\\\\\\\"authority\\\\\\\\\\\\\\\": \\\\\\\\\\\\\\\"OPERATIONAL_CONTEXT_ONLY\\\\\\\\\\\\\\\",\\\\\\\\n    \\\\\\\\\\\\\\\"evidenceAuthority\\\\\\\\\\\\\\\": \\\\\\\\\\\\\\\"NONE\\\\\\\\\\\\\\\"\\\\\\\\n  },\\\\\\\\n  \\\\\\\\\\\\\\\"evidence\\\\\\\\\\\\\\\": [\\\\\\\\n    {\\\\\\\\n      \\\\\\\\\\\\\\\"kind\\\\\\\\\\\\\\\": \\\\\\\\\\\\\\\"OBSERVED\\\\\\\\\\\\\\\",\\\\\\\\n      \\\\\\\\\\\\\\\"source\\\\\\\\\\\\\\\": \\\\\\\\\\\\\\\"ForgeLoop protocol conformance\\\\\\\\\\\\\\\",\\\\\\\\n      \\\\\\\\\\\\\\\"result\\\\\\\\\\\\\\\": \\\\\\\\\\\\\\\"VALID\\\\\\\\\\\\\\\"\\\\\\\\n    }\\\\\\\\n  ]\\\\\\\\n}\\\\\\\\n\\\\\\\",\\\\n    \\\\\\\"stderr\\\\\\\": \\\\\\\"\\\\\\\"\\\\n  },\\\\n  \\\\\\\"nativeSnapshotUnchanged\\\\\\\": true,\\\\n  \\\\\\\"retainedNativeLayout\\\\\\\": true,\\\\n  \\\\\\\"preservedSourceRetained\\\\\\\": true,\\\\n  \\\\\\\"sourceManifestPresent\\\\\\\": true,\\\\n  \\\\\\\"fingerprint\\\\\\\": \\\\\\\"a5521386c4d37ae74fff0fdd337e7dc428071d23cfbf845cae00fe6464b05569\\\\\\\"\\\\n}\\\\n\\\",\\\"stderr\\\":\\\"\\\"},{\\\"negative\\\":true,\\\"status\\\":0,\\\"stdout\\\":\\\"{\\\\n  \\\\\\\"scope\\\\\\\": \\\\\\\"Disposable post-write negative control\\\\\\\",\\\\n  \\\\\\\"sourceRestorationRefused\\\\\\\": true,\\\\n  \\\\\\\"restored\\\\\\\": false,\\\\n  \\\\\\\"newNativeTaskPreserved\\\\\\\": true,\\\\n  \\\\\\\"nativeValidation\\\\\\\": {\\\\n    \\\\\\\"ok\\\\\\\": true,\\\\n    \\\\\\\"command\\\\\\\": \\\\\\\"validate-protocol\\\\\\\",\\\\n    \\\\\\\"exitCode\\\\\\\": 0,\\\\n    \\\\\\\"result\\\\\\\": {\\\\n      \\\\\\\"status\\\\\\\": \\\\\\\"VALID\\\\\\\",\\\\n      \\\\\\\"errors\\\\\\\": [],\\\\n      \\\\\\\"incomplete\\\\\\\": [],\\\\n      \\\\\\\"stale\\\\\\\": null,\\\\n      \\\\\\\"delegation\\\\\\\": {\\\\n        \\\\\\\"status\\\\\\\": \\\\\\\"NOT_APPLICABLE\\\\\\\",\\\\n        \\\\\\\"required\\\\\\\": false,\\\\n        \\\\\\\"errors\\\\\\\": []\\\\n      },\\\\n      \\\\\\\"continuity\\\\\\\": {\\\\n        \\\\\\\"required\\\\\\\": false,\\\\n        \\\\\\\"status\\\\\\\": \\\\\\\"NOT_APPLICABLE\\\\\\\",\\\\n        \\\\\\\"classification\\\\\\\": \\\\\\\"ABSENT\\\\\\\",\\\\n        \\\\\\\"errors\\\\\\\": [],\\\\n        \\\\\\\"reasonCodes\\\\\\\": [],\\\\n        \\\\\\\"reasons\\\\\\\": [\\\\n          \\\\\\\"CONTINUITY_ABSENT\\\\\\\"\\\\n        ],\\\\n        \\\\\\\"authority\\\\\\\": \\\\\\\"OPERATIONAL_CONTEXT_ONLY\\\\\\\",\\\\n        \\\\\\\"evidenceAuthority\\\\\\\": \\\\\\\"NONE\\\\\\\"\\\\n      },\\\\n      \\\\\\\"evidence\\\\\\\": [\\\\n        {\\\\n          \\\\\\\"kind\\\\\\\": \\\\\\\"OBSERVED\\\\\\\",\\\\n          \\\\\\\"source\\\\\\\": \\\\\\\"ForgeLoop protocol conformance\\\\\\\",\\\\n          \\\\\\\"result\\\\\\\": \\\\\\\"VALID\\\\\\\"\\\\n        }\\\\n      ]\\\\n    },\\\\n    \\\\\\\"error\\\\\\\": null,\\\\n    \\\\\\\"metadata\\\\\\\": {\\\\n      \\\\\\\"protocolVersion\\\\\\\": 1,\\\\n      \\\\\\\"integrationApiVersion\\\\\\\": 1,\\\\n      \\\\\\\"packageVersion\\\\\\\": \\\\\\\"2.0.0\\\\\\\"\\\\n    }\\\\n  },\\\\n  \\\\\\\"migrated\\\\\\\": {\\\\n    \\\\\\\"phase\\\\\\\": \\\\\\\"PUBLISHED\\\\\\\",\\\\n    \\\\\\\"operationId\\\\\\\": \\\\\\\"cfeec393-5f21-4324-a67c-82546429381f\\\\\\\",\\\\n    \\\\\\\"taskCount\\\\\\\": 1,\\\\n    \\\\\\\"attachments\\\\\\\": 0,\\\\n    \\\\\\\"currentStateVerified\\\\\\\": true,\\\\n    \\\\\\\"restored\\\\\\\": false,\\\\n    \\\\\\\"path\\\\\\\": \\\\\\\"/tmp/forgeloop-canonical-diagnosis-git-XnI26Y-linked/.forgeloop/state.sqlite\\\\\\\",\\\\n    \\\\\\\"destination\\\\\\\": \\\\\\\"rollback-migration-retained\\\\\\\"\\\\n  }\\\\n}\\\\n\\\",\\\"stderr\\\":\\\"\\\"}]}\\n\",\"stderr\":\"\"}\n",
+      "error": ""
+    }
+  },
+  "sourceSha256": "95ddf7088f39cefb5cc78d22d6636e898d83fb8914414cc58eed90090edf1b90",
+  "fastVerificationExit": 0,
+  "limitations": [
+    "Disposable operational drill only, no production rollback command",
+    "Historical reverted writes not detectable by content comparison",
+    "Attachment rollback and interrupted restoration pending",
+    "Not whole migration release acceptance"
+  ]
+}

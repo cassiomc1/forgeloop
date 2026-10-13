@@ -1,0 +1,61 @@
+{
+  "kind": "CONTINUITY_RECONCILIATION_FRESHNESS_REVIEW",
+  "verificationRevision": "5222708738582c38ec51b688e48076738b176c6a",
+  "files": [
+    {
+      "path": "src/commands/reconcile-continuity.js",
+      "sha256": "5d852e8649fbb0c8ff0f1b76cd6ec48f5adacf014731f74981f987454ab94078",
+      "matchesPrepush920": true
+    },
+    {
+      "path": "src/core/continuity-reconciliation.js",
+      "sha256": "65379a676d655d70a788c5c28650fe9e16e426e62ccb380e2514a7a1537d7393",
+      "matchesPrepush920": true
+    },
+    {
+      "path": "src/core/continuity-conformance.js",
+      "sha256": "23a293ec9cb154492172dbf3c64e5f132a22b0812de64ed01a6795d1fb2e6ba1",
+      "matchesPrepush920": true
+    },
+    {
+      "path": "src/core/events.js",
+      "sha256": "270d8cb19abc637e5e6a432269aa0041b2830713b7375c9432d9e842040d83a2",
+      "matchesPrepush920": true
+    },
+    {
+      "path": "tests/continuity-reconciliation.test.js",
+      "sha256": "5a892f74c15b12a20725dd3959810a9d653c01cfc482a917074ea99abc0572a9",
+      "matchesPrepush920": true
+    }
+  ],
+  "verificationLogSha256": "1f4ac5ad5d4b74cd11431d81ba9f98dbdd27813ac428d0381cc3b7f57adc25e1",
+  "observedControls": [
+    {
+      "name": "matching bindings classify continuity as FRESH",
+      "retainedResult": "\u2714 matching bindings classify continuity as FRESH (1.647542ms)"
+    },
+    {
+      "name": "work-state or repository drift requires reconciliation without corrupting task identity",
+      "retainedResult": "\u2714 work-state or repository drift requires reconciliation without corrupting task identity (0.262959ms)"
+    },
+    {
+      "name": "task or contract mismatch is INCONSISTENT",
+      "retainedResult": "\u2714 task or contract mismatch is INCONSISTENT (0.278084ms)"
+    },
+    {
+      "name": "legal phase drift is reconcilable but impossible backward drift is inconsistent",
+      "retainedResult": "\u2714 legal phase drift is reconcilable but impossible backward drift is inconsistent (0.278417ms)"
+    }
+  ],
+  "reviewedBoundaries": [
+    "native reconcileContinuity uses withEventLedgerAudit and detached ledger/operational read snapshot",
+    "classification compares continuity workStateFingerprint with canonical current state and checks task, phase and current contract fingerprint",
+    "mismatch remains INCONSISTENT or RECONCILIATION_REQUIRED; conformance remains optional with evidenceAuthority NONE"
+  ],
+  "remaining": [
+    "Observed independent writer during direct continuity recording; test after current resource run",
+    "Full diagnostic/lint/handoff dependency and public projection reconciliation"
+  ],
+  "newTestsRun": false,
+  "wholeConsumerClosure": false
+}

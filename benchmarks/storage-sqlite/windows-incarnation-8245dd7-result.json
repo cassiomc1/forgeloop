@@ -1,0 +1,16 @@
+{
+  "kind": "WINDOWS_INCARNATION_ADOPTION_FOCUSED_RESULT",
+  "sourceRevision": "8245dd7a7291062745ead91b030649276602a2b2",
+  "runId": 38055611163,
+  "jobId": 114223330489,
+  "conclusion": "success",
+  "tests": 21,
+  "passed": 21,
+  "failed": 0,
+  "skipped": 0,
+  "fullSuiteExecuted": false,
+  "benchmarkExecuted": false,
+  "retainedLog": "windows-incarnation-8245dd7.log.gz",
+  "compressedLogSha256": "072be0a19838f58d826c65d578b608d305bf652e765fcdd886d98ee22173af94",
+  "releaseAcceptance": false
+}

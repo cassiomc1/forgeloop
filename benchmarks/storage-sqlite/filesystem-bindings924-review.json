@@ -1,0 +1,383 @@
+{
+  "kind": "LEXICAL_FILESYSTEM_REFERENCE_REVIEW",
+  "sourceRevision": "405f90bdcf8ba5fa0f600aac1f07f2fb9964975c",
+  "modules": 505,
+  "staticImportBindings": 492,
+  "lexicallyResolvedCalls": 1024,
+  "reviewedEscapes": 37,
+  "atomicReadWrapperCalls": 77,
+  "matchesPrior77CallSet": true,
+  "parserErrors": [],
+  "rows": [
+    {
+      "file": "src/adapters/agent-browser/process.js",
+      "line": 37,
+      "from": "node:fs",
+      "member": "*",
+      "expression": "fsImpl = fs",
+      "sha256": "847c26235795e56099178810945737c00f5d22cbbc52cbade33efd0fc38641e3",
+      "reviewedRole": "Executable regular-file reads through injected/default filesystem; no write method in these bindings."
+    },
+    {
+      "file": "src/adapters/agent-browser/process.js",
+      "line": 110,
+      "from": "node:fs",
+      "member": "*",
+      "expression": "fsImpl = fs",
+      "sha256": "847c26235795e56099178810945737c00f5d22cbbc52cbade33efd0fc38641e3",
+      "reviewedRole": "Executable regular-file reads through injected/default filesystem; no write method in these bindings."
+    },
+    {
+      "file": "src/adapters/agent-browser/provider.js",
+      "line": 217,
+      "from": "node:fs",
+      "member": "*",
+      "expression": "fs.lstatSync",
+      "sha256": "5c98d7eebbc24f8db8bb29853a4c6eddf4e3d5dd827d6c7d74b3ba63511abc66",
+      "reviewedRole": "Bound executable stat functions; isolated outside-target temporary cwd, screenshot byte read and owned cwd cleanup."
+    },
+    {
+      "file": "src/adapters/agent-browser/provider.js",
+      "line": 217,
+      "from": "node:fs",
+      "member": "*",
+      "expression": "fs.lstatSync.bind(fs)",
+      "sha256": "5c98d7eebbc24f8db8bb29853a4c6eddf4e3d5dd827d6c7d74b3ba63511abc66",
+      "reviewedRole": "Bound executable stat functions; isolated outside-target temporary cwd, screenshot byte read and owned cwd cleanup."
+    },
+    {
+      "file": "src/adapters/agent-browser/provider.js",
+      "line": 218,
+      "from": "node:fs",
+      "member": "*",
+      "expression": "fs.statSync",
+      "sha256": "5c98d7eebbc24f8db8bb29853a4c6eddf4e3d5dd827d6c7d74b3ba63511abc66",
+      "reviewedRole": "Bound executable stat functions; isolated outside-target temporary cwd, screenshot byte read and owned cwd cleanup."
+    },
+    {
+      "file": "src/adapters/agent-browser/provider.js",
+      "line": 218,
+      "from": "node:fs",
+      "member": "*",
+      "expression": "fs.statSync.bind(fs)",
+      "sha256": "5c98d7eebbc24f8db8bb29853a4c6eddf4e3d5dd827d6c7d74b3ba63511abc66",
+      "reviewedRole": "Bound executable stat functions; isolated outside-target temporary cwd, screenshot byte read and owned cwd cleanup."
+    },
+    {
+      "file": "src/adapters/agent-browser/provider.js",
+      "line": 103,
+      "from": "node:fs/promises",
+      "member": "mkdtemp",
+      "expression": "fsImpl?.mkdtemp ?? mkdtemp",
+      "sha256": "5c98d7eebbc24f8db8bb29853a4c6eddf4e3d5dd827d6c7d74b3ba63511abc66",
+      "reviewedRole": "Bound executable stat functions; isolated outside-target temporary cwd, screenshot byte read and owned cwd cleanup."
+    },
+    {
+      "file": "src/adapters/agent-browser/provider.js",
+      "line": 219,
+      "from": "node:fs/promises",
+      "member": "mkdtemp",
+      "expression": "mkdtemp",
+      "sha256": "5c98d7eebbc24f8db8bb29853a4c6eddf4e3d5dd827d6c7d74b3ba63511abc66",
+      "reviewedRole": "Bound executable stat functions; isolated outside-target temporary cwd, screenshot byte read and owned cwd cleanup."
+    },
+    {
+      "file": "src/adapters/agent-browser/provider.js",
+      "line": 220,
+      "from": "node:fs/promises",
+      "member": "readFile",
+      "expression": "readFile",
+      "sha256": "5c98d7eebbc24f8db8bb29853a4c6eddf4e3d5dd827d6c7d74b3ba63511abc66",
+      "reviewedRole": "Bound executable stat functions; isolated outside-target temporary cwd, screenshot byte read and owned cwd cleanup."
+    },
+    {
+      "file": "src/adapters/agent-browser/provider.js",
+      "line": 221,
+      "from": "node:fs/promises",
+      "member": "rm",
+      "expression": "rm",
+      "sha256": "5c98d7eebbc24f8db8bb29853a4c6eddf4e3d5dd827d6c7d74b3ba63511abc66",
+      "reviewedRole": "Bound executable stat functions; isolated outside-target temporary cwd, screenshot byte read and owned cwd cleanup."
+    },
+    {
+      "file": "src/adapters/emulated-services/provider.js",
+      "line": 181,
+      "from": "node:fs",
+      "member": "*",
+      "expression": "options.fsImpl ?? fs",
+      "sha256": "adbe1bdde4616a412a177bf33653f6cce770fcf3732c98b64ceb8276961f5170",
+      "reviewedRole": "Executable stat and validated outside-target temporary state creation/cleanup; rejected target path is not cleanup authority."
+    },
+    {
+      "file": "src/adapters/emulated-services/provider.js",
+      "line": 190,
+      "from": "node:fs",
+      "member": "*",
+      "expression": "fs.promises",
+      "sha256": "adbe1bdde4616a412a177bf33653f6cce770fcf3732c98b64ceb8276961f5170",
+      "reviewedRole": "Executable stat and validated outside-target temporary state creation/cleanup; rejected target path is not cleanup authority."
+    },
+    {
+      "file": "src/adapters/emulated-services/provider.js",
+      "line": 191,
+      "from": "node:fs",
+      "member": "*",
+      "expression": "fs.promises",
+      "sha256": "adbe1bdde4616a412a177bf33653f6cce770fcf3732c98b64ceb8276961f5170",
+      "reviewedRole": "Executable stat and validated outside-target temporary state creation/cleanup; rejected target path is not cleanup authority."
+    },
+    {
+      "file": "src/adapters/opensrc/search.js",
+      "line": 48,
+      "from": "node:fs/promises",
+      "member": "lstat",
+      "expression": "lstat",
+      "sha256": "13ce23e8d4ad9e620ae5d7af1cdb99be6aa33ecc366acefdae4ae839d612ba6f",
+      "reviewedRole": "Read-only advisory-source hooks: lstat/readdir/readFile/realpath."
+    },
+    {
+      "file": "src/adapters/opensrc/search.js",
+      "line": 48,
+      "from": "node:fs/promises",
+      "member": "readdir",
+      "expression": "readdir",
+      "sha256": "13ce23e8d4ad9e620ae5d7af1cdb99be6aa33ecc366acefdae4ae839d612ba6f",
+      "reviewedRole": "Read-only advisory-source hooks: lstat/readdir/readFile/realpath."
+    },
+    {
+      "file": "src/adapters/opensrc/search.js",
+      "line": 48,
+      "from": "node:fs/promises",
+      "member": "readFile",
+      "expression": "readFile",
+      "sha256": "13ce23e8d4ad9e620ae5d7af1cdb99be6aa33ecc366acefdae4ae839d612ba6f",
+      "reviewedRole": "Read-only advisory-source hooks: lstat/readdir/readFile/realpath."
+    },
+    {
+      "file": "src/adapters/opensrc/search.js",
+      "line": 48,
+      "from": "node:fs/promises",
+      "member": "realpath",
+      "expression": "realpath",
+      "sha256": "13ce23e8d4ad9e620ae5d7af1cdb99be6aa33ecc366acefdae4ae839d612ba6f",
+      "reviewedRole": "Read-only advisory-source hooks: lstat/readdir/readFile/realpath."
+    },
+    {
+      "file": "src/core/filesystem.js",
+      "line": 53,
+      "from": "node:fs/promises",
+      "member": "lstat",
+      "expression": "lstatImpl = lstat",
+      "sha256": "4174506b0832bdadadd9b7b676baa835b15b2b7e68fc980902dedeacb2564a57",
+      "reviewedRole": "Read-only realpath/lstat defaults passed to bounded transient Windows retry."
+    },
+    {
+      "file": "src/core/filesystem.js",
+      "line": 40,
+      "from": "node:fs/promises",
+      "member": "realpath",
+      "expression": "realpathImpl = realpath",
+      "sha256": "4174506b0832bdadadd9b7b676baa835b15b2b7e68fc980902dedeacb2564a57",
+      "reviewedRole": "Read-only realpath/lstat defaults passed to bounded transient Windows retry."
+    },
+    {
+      "file": "src/core/gate-artifact.js",
+      "line": 77,
+      "from": "node:fs",
+      "member": "constants",
+      "expression": "constants.O_RDONLY",
+      "sha256": "8262d4ea6d526b3cbf18ca6b4959ff9a2d8cbfcf11664ebd549a46b862b2645a",
+      "reviewedRole": "Filesystem constants only; numeric open/access flags, no callable writer."
+    },
+    {
+      "file": "src/core/gate-artifact.js",
+      "line": 77,
+      "from": "node:fs",
+      "member": "constants",
+      "expression": "constants.O_NOFOLLOW",
+      "sha256": "8262d4ea6d526b3cbf18ca6b4959ff9a2d8cbfcf11664ebd549a46b862b2645a",
+      "reviewedRole": "Filesystem constants only; numeric open/access flags, no callable writer."
+    },
+    {
+      "file": "src/core/signing/bundle-file.js",
+      "line": 40,
+      "from": "node:fs",
+      "member": "constants",
+      "expression": "constants.O_RDONLY",
+      "sha256": "055a6031cbd72bde093816b9da6c2fe1cbd5737cd63340ecb87851498711d5f3",
+      "reviewedRole": "Filesystem constants only; numeric open/access flags, no callable writer."
+    },
+    {
+      "file": "src/core/signing/bundle-file.js",
+      "line": 40,
+      "from": "node:fs",
+      "member": "constants",
+      "expression": "constants.O_NOFOLLOW",
+      "sha256": "055a6031cbd72bde093816b9da6c2fe1cbd5737cd63340ecb87851498711d5f3",
+      "reviewedRole": "Filesystem constants only; numeric open/access flags, no callable writer."
+    },
+    {
+      "file": "src/core/trusted-authority.js",
+      "line": 148,
+      "from": "node:fs",
+      "member": "constants",
+      "expression": "fsConstants.R_OK",
+      "sha256": "b8134ec73d784eaf7611f7adacab9ada9ecd42793d1d8ee9b6f3d1f86b92fe34",
+      "reviewedRole": "Filesystem constants only; numeric open/access flags, no callable writer."
+    },
+    {
+      "file": "src/core/trusted-authority.js",
+      "line": 221,
+      "from": "node:fs",
+      "member": "constants",
+      "expression": "fsConstants.R_OK",
+      "sha256": "b8134ec73d784eaf7611f7adacab9ada9ecd42793d1d8ee9b6f3d1f86b92fe34",
+      "reviewedRole": "Filesystem constants only; numeric open/access flags, no callable writer."
+    },
+    {
+      "file": "src/core/trusted-authority.js",
+      "line": 242,
+      "from": "node:fs",
+      "member": "constants",
+      "expression": "fsConstants.F_OK",
+      "sha256": "b8134ec73d784eaf7611f7adacab9ada9ecd42793d1d8ee9b6f3d1f86b92fe34",
+      "reviewedRole": "Filesystem constants only; numeric open/access flags, no callable writer."
+    },
+    {
+      "file": "src/repository-index/binary-manager.js",
+      "line": 73,
+      "from": "node:fs/promises",
+      "member": "constants",
+      "expression": "fsConstants.X_OK",
+      "sha256": "e5445ac9306053478e2c9f694ca8d890509c4f27f33e36d1797ef404ed0a1888",
+      "reviewedRole": "Filesystem constants only; numeric open/access flags, no callable writer."
+    },
+    {
+      "file": "src/repository-index/binary-manager.js",
+      "line": 121,
+      "from": "node:fs/promises",
+      "member": "constants",
+      "expression": "fsConstants.X_OK",
+      "sha256": "e5445ac9306053478e2c9f694ca8d890509c4f27f33e36d1797ef404ed0a1888",
+      "reviewedRole": "Filesystem constants only; numeric open/access flags, no callable writer."
+    },
+    {
+      "file": "src/repository-index/normalize-json.js",
+      "line": 140,
+      "from": "node:fs/promises",
+      "member": "realpath",
+      "expression": "realpathImpl = realpath",
+      "sha256": "52eb60821e64829d2a719b7085b2c58dcc39445c63278da34163a73d8db693aa",
+      "reviewedRole": "Read-only realpath default used to canonicalize advisory search repository root."
+    },
+    {
+      "file": "src/storage/attachment-files.js",
+      "line": 52,
+      "from": "node:fs",
+      "member": "constants",
+      "expression": "constants.O_RDONLY",
+      "sha256": "10e3da12d126263bb4ef7ca2684911bc778048b90069a84ccc73029cd53b93f5",
+      "reviewedRole": "Filesystem constants only; numeric open/access flags, no callable writer."
+    },
+    {
+      "file": "src/storage/attachment-files.js",
+      "line": 52,
+      "from": "node:fs",
+      "member": "constants",
+      "expression": "constants.O_NOFOLLOW",
+      "sha256": "10e3da12d126263bb4ef7ca2684911bc778048b90069a84ccc73029cd53b93f5",
+      "reviewedRole": "Filesystem constants only; numeric open/access flags, no callable writer."
+    },
+    {
+      "file": "src/storage/maintenance-owner.js",
+      "line": 25,
+      "from": "node:fs",
+      "member": "constants",
+      "expression": "constants.O_RDONLY",
+      "sha256": "cf18aff27a8df3ccc2257048b787428ba03c7d5e55e0aecaa6560daefe16e64e",
+      "reviewedRole": "Filesystem constants only; numeric open/access flags, no callable writer."
+    },
+    {
+      "file": "src/storage/maintenance-owner.js",
+      "line": 25,
+      "from": "node:fs",
+      "member": "constants",
+      "expression": "constants.O_NOFOLLOW",
+      "sha256": "cf18aff27a8df3ccc2257048b787428ba03c7d5e55e0aecaa6560daefe16e64e",
+      "reviewedRole": "Filesystem constants only; numeric open/access flags, no callable writer."
+    },
+    {
+      "file": "src/storage/metadata-json.js",
+      "line": 15,
+      "from": "node:fs",
+      "member": "constants",
+      "expression": "constants.O_RDONLY",
+      "sha256": "a12fe17e3818325804f84447ac298b5a1c8cc423c98c0d2bcb91b317bb365e9c",
+      "reviewedRole": "Filesystem constants only; numeric open/access flags, no callable writer."
+    },
+    {
+      "file": "src/storage/metadata-json.js",
+      "line": 15,
+      "from": "node:fs",
+      "member": "constants",
+      "expression": "constants.O_NOFOLLOW",
+      "sha256": "a12fe17e3818325804f84447ac298b5a1c8cc423c98c0d2bcb91b317bb365e9c",
+      "reviewedRole": "Filesystem constants only; numeric open/access flags, no callable writer."
+    },
+    {
+      "file": "src/storage/storage-marker.js",
+      "line": 27,
+      "from": "node:fs",
+      "member": "constants",
+      "expression": "constants.O_RDONLY",
+      "sha256": "1664b9f2c1005507ee1aa256dc443f0d82c728646c2cf04a8460f1b270a0ca05",
+      "reviewedRole": "Filesystem constants only; numeric open/access flags, no callable writer."
+    },
+    {
+      "file": "src/storage/storage-marker.js",
+      "line": 27,
+      "from": "node:fs",
+      "member": "constants",
+      "expression": "constants.O_NOFOLLOW",
+      "sha256": "1664b9f2c1005507ee1aa256dc443f0d82c728646c2cf04a8460f1b270a0ca05",
+      "reviewedRole": "Filesystem constants only; numeric open/access flags, no callable writer."
+    }
+  ],
+  "namedExistingConformance": [
+    {
+      "testFile": "tests/agent-browser-provider.test.js",
+      "name": "Agent Browser rejects returned target directories without deleting them",
+      "sha256": "0d0b84815f7b366de2db1e5d9268ab8555f4ef5276b674bdb3bb960c8a5a0c7d",
+      "fullPrepush920PassLine": 114
+    },
+    {
+      "testFile": "tests/agent-browser-provider.test.js",
+      "name": "Agent Browser rejects temporary roots physically inside the target before creating or spawning",
+      "sha256": "0d0b84815f7b366de2db1e5d9268ab8555f4ef5276b674bdb3bb960c8a5a0c7d",
+      "fullPrepush920PassLine": 113
+    },
+    {
+      "testFile": "tests/opensrc-search.test.js",
+      "name": "file symlink escape is rejected while contained links resolve",
+      "sha256": "d0106ce0f836a58d1daa0471133f2ca5a5ad839d8989816a115a2d8aefaa2dc2",
+      "fullPrepush920PassLine": 1263
+    },
+    {
+      "testFile": "tests/filesystem-realpath-retry.test.js",
+      "name": "realpath retry fails closed for persistent Windows EPERM",
+      "sha256": "0f291fa74ad1956944410607d148b309e81c1a91bcc13691be61e2037b8ca828",
+      "fullPrepush920PassLine": 843
+    }
+  ],
+  "fullLocalTestRevision": "5222708738582c38ec51b688e48076738b176c6a",
+  "reviewedSourceAndTestsUnchangedSinceFullRun": true,
+  "wholeSoleWriterProof": false,
+  "wholeConsumerClosure": false,
+  "limitations": [
+    "Binding scan covers static imports and direct identifier/member variable initializers; assignment expressions, destructuring aliases, dynamic-loaded bindings and arbitrary callback/handle effects still require review.",
+    "External provider processes are isolated by existing trusted-host capability tests; this does not prove arbitrary external process effects.",
+    "File-level role review and four named local checks are scoped evidence."
+  ],
+  "rawInventorySha256": "63d1ff8cae6b6600ac0bfde5a557941c16b6ac445b74750b4bb254a95e73645a",
+  "producerSha256": "02b489c88cfd619337c7a2eb3de7e917a28a135c8112ad0b7de945491ea5af4e"
+}

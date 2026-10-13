@@ -1,0 +1,38 @@
+{
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "currentRevision": "9dd179c5d4b691a57dbf25901f67f69da23b4aeb",
+  "baselineSelectedLines": 25732,
+  "currentSelectedLines": 32529,
+  "netReduction": -0.26414581066376486,
+  "acceptanceEligible": true,
+  "targetMet": false,
+  "threshold": "currentSelectedLines <= baselineSelectedLines * 0.75",
+  "parserVersion": "7.0.2",
+  "capturedAt": "2026-10-09T21:46:24.193653+00:00",
+  "unresolvedMembership": 0,
+  "targetCeiling": 19299,
+  "gap": 13230,
+  "sourceHashesChecked": 933,
+  "allStorageImportExportMaintenanceIncluded": true,
+  "scopeMembershipChanged": false,
+  "exclusionsAdded": false,
+  "wholePlanAcceptance": false,
+  "artifacts": [
+    {
+      "path": "/Users/cassio/.codex/verification/persistence-loc-function-result-9dd179c-closed.json",
+      "sha256": "db4a4672db8c0ef4ee3a64c7de32e0184f0d4d8a14e9568be612e1d16a342c39"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/persistence-loc-function-scope-manifest-9dd179c-refreshed.json",
+      "sha256": "4cdd7c8f21f15c3fc7c7dca3d676f6f19acaff64bd9f3d44513c82bbf14be35a"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/persistence-loc-scope-refresh-9dd179c.json",
+      "sha256": "d160f163366b4fa649e8f9a30c9497409fad9a33faaa8c2d760a9c73bfaa0fd0"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/persistence-loc-function-analyzer.mjs",
+      "sha256": "11616f80bddee55dab700992160f8fa674115eaa42f614b3c52a752c366a33aa"
+    }
+  ]
+}

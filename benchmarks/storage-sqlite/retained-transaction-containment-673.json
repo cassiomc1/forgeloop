@@ -1,0 +1,28 @@
+{
+  "increment": 673,
+  "releaseThresholdsVerified": false,
+  "retainedRoles": {
+    "src/core/transaction.js": "SQLite preparation delegation plus read-only legacy-incomplete admission scan; no legacy recovery writer",
+    "src/core/transaction-maintenance.js": "Explicit refusal of retired compaction",
+    "src/core/events.js": "Canonical native reads/writes plus required read-only portable import/export ledger inspection",
+    "src/storage/migration-source.js": "Captures old sidecar as retained migration evidence; no sidecar authority",
+    "src/storage/migration-candidate.js": "Ignores captured sidecar and old transaction payloads when building native candidate"
+  },
+  "before": "Symlinked legacy transaction root discovery returned without expected rejection",
+  "after": {
+    "tests": 22,
+    "passed": 22,
+    "fastExit": 0,
+    "complexity": "PASS",
+    "symlinkRootsAndManifestsRejected": true
+  },
+  "limits": [
+    "No whole-repository obsolete-code absence proof",
+    "Check/use concurrency against hostile directory replacement not proven",
+    "Full Mac665 predates672 and673"
+  ],
+  "hashes": {
+    "src/core/transaction.js": "e34f4c1cfe99e1c5112d9117fcc845e8d49eb581d9adb13f4e52c42a8cdef4ef",
+    "tests/transaction-maintenance.test.js": "8f59c63d26f2a1246434ab7e73149b193525466975f01804c05bddbf562485cf"
+  }
+}

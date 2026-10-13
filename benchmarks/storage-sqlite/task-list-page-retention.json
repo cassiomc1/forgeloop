@@ -1,0 +1,42 @@
+{
+  "kind": "BOUNDED_TASK_LIST_PAGE_RETENTION",
+  "productionParent": "ccfcb53",
+  "files": {
+    "src/core/task-discovery.js": "79f11e587bda62119f09fef252f9188071ba7b7f6263b8aab250ab4b1ed96644",
+    "src/commands/task-list.js": "f09845598db07e5706b729ebc1be6692fb17bfd746e8edd8d5dfe789cea046e1",
+    "tests/task-discovery-projection.test.js": "976e683db9b59bd41d0a961a93bab5e7935211082440a05dafedbaba155dfe99"
+  },
+  "behavior": "Finite pages retain at most offset+limit projected entries between visits (one extra during insertion), with zero retained entries for limit zero. All task namespaces still undergo canonical discovery and snapshot observation before return. Unlimited lists retain collect-and-sort behavior.",
+  "preserved": [
+    "canonical localeCompare ordering and corrupt-entry fallback sort keys",
+    "phase and active filters, totals and hasMore",
+    "descriptor/state, ledger, ownership and claim validation",
+    "shared immutable snapshot and writable-parent CAS observations",
+    "scan scheduling every sixteen visited entries"
+  ],
+  "validation": {
+    "focused": {
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    "complexity": "PASS after removal of unnecessary default parameter; threshold unchanged",
+    "fast": "PASS before default-parameter removal",
+    "diffCheck": "PASS"
+  },
+  "loc": {
+    "baselineSelectedLines": 25732,
+    "currentSelectedLines": 32422,
+    "ceiling": 19299,
+    "targetMet": false,
+    "unresolvedMembership": 0,
+    "scopeManifest": "benchmarks/storage-sqlite/persistence-loc/scope-page-collector.json.gz",
+    "resultSha256": "8004f61411d081238553aba9196b61265c8e44bd0c0a517d0c189f1ede860e16"
+  },
+  "limitations": [
+    "No current paired RSS or latency measurement; no resource acceptance claim.",
+    "Task-key catalog and requested returned page still scale with their actual sizes.",
+    "Full prepush and hosted CI on earlier source revisions predate this production change.",
+    "25 percent inclusive LOC target and entire migration plan remain open."
+  ]
+}

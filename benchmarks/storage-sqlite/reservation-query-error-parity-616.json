@@ -1,0 +1,41 @@
+{
+  "increment": 616,
+  "productionChanged": false,
+  "productionRestoredTo": "611b",
+  "productionFilesCompared": 508,
+  "productionDrift": [],
+  "controls": {
+    "canonicalPayloadCases": 74,
+    "indexedBlobColumnCases": 5,
+    "focusedRegressionTests": 19,
+    "focusedRegressionPassed": 19
+  },
+  "beforeExpandedBlobControl": {
+    "exitCode": 1,
+    "actualCode": "ERR_SQLITE_ERROR",
+    "actualMessage": "malformed JSON",
+    "expectedCode": "E_STORAGE_PAYLOAD_MISMATCH",
+    "expectedMessage": "Indexed event fields disagree with canonical evidence",
+    "rawLog": "/tmp/sqlite-reservation616-blob-before.log"
+  },
+  "afterScalarRestoration": {
+    "exitCode": 0,
+    "rawLog": "/tmp/sqlite-reservation616-final.log"
+  },
+  "rejectedCandidateVerification": {
+    "candidate": "616-grouped-query",
+    "reason": "Candidate rejected after reproduced BLOB-column error-code regression; production restored to verified scalar query.",
+    "processGroup": 42764,
+    "signal": "SIGTERM",
+    "wholeAcceptanceVerified": false
+  },
+  "invalidNativeAB": {
+    "exitCode": 0,
+    "timingsValid": false,
+    "reason": "Scheduling error: native A/B diagnostic overlapped full Mac616 prepush verification. Discard all timing samples.",
+    "rawLog": "/tmp/sqlite-native-commit-ab616.json"
+  },
+  "testFile": "tests/storage-reservation-projection.test.js",
+  "testSha256": "870bb99a6af27604e49b26959a2addaeca6149c54def6e19b92bc0272bce82b7",
+  "remoteNewControlsVerified": false
+}

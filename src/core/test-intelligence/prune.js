@@ -1,4 +1,5 @@
 import { readTestUtility } from "./service.js";
+import { assertSafePath } from "../filesystem.js";
 import { cp, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -38,6 +39,9 @@ export async function runPruneProbe({ target, packageRoot, taskId, testId } = {}
   }
   const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "forgeloop-prune-probe-"));
   try {
+    // Persisted utility records do not grant access outside the project or
+    // through symlinks copied into the disposable workspace.
+    await assertSafePath(target, item.file);
     await cp(target, temporaryRoot, {
       recursive: true,
       dereference: false,
@@ -49,7 +53,7 @@ export async function runPruneProbe({ target, packageRoot, taskId, testId } = {}
     const dependencies = path.join(target, "node_modules");
     try { await symlink(dependencies, path.join(temporaryRoot, "node_modules"), "junction"); } catch { /* dependencies are optional for static probes */ }
     if (item.file.endsWith(".mjs") || item.file.endsWith(".js")) {
-      const candidatePath = path.join(temporaryRoot, item.file);
+      const candidatePath = await assertSafePath(temporaryRoot, item.file);
       const source = await readFile(candidatePath, "utf8");
       const escapedName = item.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       const pattern = new RegExp(`\\b(test|it)\\s*\\(\\s*([\\"'])${escapedName}\\2`);

@@ -1,0 +1,34 @@
+{
+  "sourceRevision": "6645b65e9bef0027bd854a528d3bae9e873a5006",
+  "historicalReference": "fe8705c",
+  "productionFiles": 565,
+  "unchangedFiles": 560,
+  "changedFiles": [
+    {
+      "path": "src/commands/action-show.js",
+      "baselineBlob": "c5cf5a5bb9042320a94832c6ea92d5327feed889",
+      "currentBlob": "329382bc08752e1e29cc981ca8920a09cdf5e7ca"
+    },
+    {
+      "path": "src/core/cli-command-definitions.js",
+      "baselineBlob": "a163b6b5776b08932e5f5a32c8f4d05d0c206634",
+      "currentBlob": "62f9ed1fc343cddcf36c4ae7cb6a818016c81b11"
+    },
+    {
+      "path": "src/core/reconcile-closure.js",
+      "baselineBlob": "319159c522b33a61fd97ff9025a06b0ab4adaeb5",
+      "currentBlob": "1f721ef45102acd5818b297a3c04634022e99c3c"
+    },
+    {
+      "path": "src/storage/snapshot.js",
+      "baselineBlob": "4dd336baa145b6b3122a2c91896e482f4ee87c98",
+      "currentBlob": "b95151541705080a6e819a26238b63d07143521a"
+    },
+    {
+      "path": "src/storage/unit-of-work.js",
+      "baselineBlob": "f4d685a2d66aa5e586ccf448eee7c3451b64a479",
+      "currentBlob": "205f1e41b671b4e12e0f25be93344f635285b2cc"
+    }
+  ],
+  "wholeCurrentPlatformPass": false
+}

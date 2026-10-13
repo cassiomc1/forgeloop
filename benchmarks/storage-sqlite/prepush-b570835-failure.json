@@ -1,0 +1,15 @@
+{
+  "revision": "b570835",
+  "exitCode": 1,
+  "trackedFiles": 3348,
+  "trackedSourceUnchanged": true,
+  "core": {
+    "tests": 3070,
+    "passed": 3054,
+    "failed": 0,
+    "skipped": 16
+  },
+  "failedStage": "mcp:test:clean",
+  "firstCause": "Two resource-read-coverage lifecycle fixtures require live semantic credentials instead of local test provider",
+  "laterStagesExecuted": false
+}

@@ -1,3 +1,4 @@
+import { withTaskTransaction } from "./transaction.js";
 import { createHash } from "node:crypto";
 import path from "node:path";
 
@@ -15,6 +16,7 @@ import {
   taskCodeManifestHistoryPath,
 } from "./task-paths.js";
 import { ensureWithin, fileExists } from "./filesystem.js";
+import { operationalArtifactExists } from "../storage/operational-context.js";
 import { resolveRevisionProvider } from "./revision/provider.js";
 import { REVISION_PROVIDERS } from "./revision/registry.js";
 
@@ -217,10 +219,14 @@ export async function readCodeManifest({ target, packageRoot = getPackageRoot(),
   }
 }
 
-export async function writeCodeManifest({ target, packageRoot = getPackageRoot(), taskId, manifest } = {}) {
+export async function writeCodeManifest(options = {}) {
+  return withTaskTransaction({ target: options.target, taskId: options.taskId, packageRoot: options.packageRoot, operation: "code-manifest-capture" }, () => writeCodeManifestInTransaction(options));
+}
+
+async function writeCodeManifestInTransaction({ target, packageRoot = getPackageRoot(), taskId, manifest } = {}) {
   const value = await validateCodeManifest(manifest, packageRoot);
   const relativePath = taskCodeManifestPath(taskId);
-  if (await fileExists(ensureWithin(target, relativePath))) {
+  if (operationalArtifactExists(target, relativePath) ?? await fileExists(ensureWithin(target, relativePath))) {
     let previous;
     try {
       previous = await readCodeManifest({ target, packageRoot, taskId });
@@ -232,7 +238,7 @@ export async function writeCodeManifest({ target, packageRoot = getPackageRoot()
       throw manifestError("E_ATTESTATION_MANIFEST_INVALID", "Code manifest is immutable within a verification cycle", [relativePath]);
     }
     const historyPath = taskCodeManifestHistoryPath(taskId, previousCycle);
-    if (!(await fileExists(ensureWithin(target, historyPath)))) {
+    if (!(operationalArtifactExists(target, historyPath) ?? await fileExists(ensureWithin(target, historyPath)))) {
       await writeJsonArtifact(target, historyPath, previous.value, "code-manifest", packageRoot, { taskId, operation: "code-manifest-history" });
     }
   }

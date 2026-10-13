@@ -1,0 +1,16 @@
+{
+  "runId": 37676307490,
+  "jobId": 112980692162,
+  "head": "6b98c9273afbd1b028c83d3b6e94e10b20a32361",
+  "platform": "Linux Docker",
+  "hostname": "51abbe357f3e",
+  "runner": "forgeloop-linux-remote",
+  "conclusion": "success",
+  "tests": 842,
+  "passed": 839,
+  "failed": 0,
+  "skipped": 3,
+  "log": "linux-shard4-756.log",
+  "logSha256": "b86219a8456597e5dc21746635b8cd41364371c354ca3382e001ea037144e23f",
+  "scope": "Coverage shard 4/4 only; other current workflow jobs remain pending"
+}

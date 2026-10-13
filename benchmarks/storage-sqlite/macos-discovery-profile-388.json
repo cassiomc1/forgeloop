@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 1,
+  "kind": "diagnostic-cpu-profile",
+  "sourceRoot": "/tmp/forgeloop-trajectory385-final",
+  "sourceManifest": "/tmp/sqlite-trajectory385-final-source.json",
+  "taskCount": 1000,
+  "repeats": 20,
+  "node": "v24.19.0",
+  "scope": "Synthetic empty-ledger native discovery only, includes setup; not acceptance timing or representative history proof",
+  "profile": "/tmp/sqlite-discovery388.cpuprofile",
+  "topSelfSamples": [
+    {
+      "function": "iterateTypes",
+      "source": "storage/ledger-event-snapshot.js",
+      "line": 54,
+      "sampledMs": 5884.351
+    },
+    {
+      "function": "",
+      "source": "storage/unit-of-work.js",
+      "line": 106,
+      "sampledMs": 2414.92
+    },
+    {
+      "function": "(garbage collector)",
+      "source": "",
+      "line": 0,
+      "sampledMs": 1467.872
+    },
+    {
+      "function": "iterateRange",
+      "source": "storage/ledger-event-snapshot.js",
+      "line": 34,
+      "sampledMs": 1217.342
+    },
+    {
+      "function": "taskRow",
+      "source": "storage/unit-of-work.js",
+      "line": 105,
+      "sampledMs": 610.702
+    },
+    {
+      "function": "",
+      "source": "storage/unit-of-work.js",
+      "line": 145,
+      "sampledMs": 447.047
+    },
+    {
+      "function": "withStorageSnapshot",
+      "source": "storage/snapshot.js",
+      "line": 9,
+      "sampledMs": 406.626
+    },
+    {
+      "function": "ownCollection",
+      "source": "storage/ledger-event-snapshot.js",
+      "line": 9,
+      "sampledMs": 253.543
+    },
+    {
+      "function": "Hash",
+      "source": "node:internal/crypto/hash",
+      "line": 97,
+      "sampledMs": 213.625
+    },
+    {
+      "function": "validate",
+      "source": "core/schema-validation.js",
+      "line": 99,
+      "sampledMs": 137.918
+    },
+    {
+      "function": "update",
+      "source": "node:internal/crypto/hash",
+      "line": 145,
+      "sampledMs": 130.958
+    },
+    {
+      "function": "(program)",
+      "source": "",
+      "line": 0,
+      "sampledMs": 129.917
+    },
+    {
+      "function": "digest",
+      "source": "node:internal/crypto/hash",
+      "line": 163,
+      "sampledMs": 126.043
+    },
+    {
+      "function": "observe",
+      "source": "storage/unit-of-work.js",
+      "line": 99,
+      "sampledMs": 117.584
+    },
+    {
+      "function": "entriesOfTypes",
+      "source": "core/ledger-event-collection.js",
+      "line": 93,
+      "sampledMs": 111.255
+    },
+    {
+      "function": "",
+      "source": "storage/leases.js",
+      "line": 11,
+      "sampledMs": 110.04
+    },
+    {
+      "function": "canonicalFingerprint",
+      "source": "core/artifacts.js",
+      "line": 58,
+      "sampledMs": 108.583
+    },
+    {
+      "function": "locator",
+      "source": "storage/unit-of-work.js",
+      "line": 24,
+      "sampledMs": 105.248
+    },
+    {
+      "function": "(idle)",
+      "source": "",
+      "line": 0,
+      "sampledMs": 100.835
+    },
+    {
+      "function": "visit",
+      "source": "core/json-safety.js",
+      "line": 28,
+      "sampledMs": 91.289
+    },
+    {
+      "function": "resolve",
+      "source": "node:path",
+      "line": 1245,
+      "sampledMs": 90.421
+    },
+    {
+      "function": "canonicalize",
+      "source": "core/artifacts.js",
+      "line": 48,
+      "sampledMs": 90.209
+    }
+  ]
+}

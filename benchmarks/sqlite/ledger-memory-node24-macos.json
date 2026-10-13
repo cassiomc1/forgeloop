@@ -1,0 +1,446 @@
+{
+  "schemaVersion": 1,
+  "baseline": {
+    "commit": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+    "packageVersion": "1.14.0",
+    "source": "Pinned pre-migration filesystem readers"
+  },
+  "generatedAt": "2026-10-02T21:20:33.472Z",
+  "seed": 42,
+  "payloadBytes": 1024,
+  "runtime": "v24.19.0",
+  "platform": "darwin",
+  "arch": "arm64",
+  "cpu": "Apple M2",
+  "logicalCpus": 8,
+  "totalMemoryBytes": 8589934592,
+  "loadAverage": [
+    4.04541015625,
+    2.83056640625,
+    2.1298828125
+  ],
+  "sqliteDurability": {
+    "journalMode": "WAL",
+    "synchronous": "FULL"
+  },
+  "method": "Fresh worker per operation/size; common benchmark harness plus pinned reader imports for filesystem rows; warm domain timings; peak process RSS includes startup, warmup, measured samples and export validation; setup excluded; no forced GC or controlled filesystem cache eviction; no baseline-equivalent export timing; no CLI/platform/concurrency or full acceptance claim.",
+  "rows": [
+    {
+      "events": 10,
+      "ledgerBytes": 13622,
+      "databaseBytes": 159744,
+      "status": "MEASURED",
+      "backend": "filesystem",
+      "operation": "iterator",
+      "warmup": 1,
+      "repeats": 3,
+      "samplesMs": [
+        1.551,
+        0.945,
+        0.829
+      ],
+      "p50Ms": 0.945,
+      "p95Ms": 1.551,
+      "eventsPerSecondAtP50": 10578.753,
+      "peakProcessRssKiB": 74464,
+      "finalRssBytes": 76267520,
+      "eventLoopDelayMaxMs": 11.239,
+      "eventLoopDelayP95Ms": 11.166,
+      "observed": {
+        "count": 10,
+        "lastHash": "89314af96139f010695daac4a60a3043d83ef584c8a7bb0e2a679bc526428350",
+        "sha256": "08a7a5e124bf5b3ab3b10d9b2926ae207a60953c173f53e571742e8224a14405"
+      },
+      "sqliteVersion": null,
+      "freshWorkerWallMs": 266.953
+    },
+    {
+      "events": 10,
+      "ledgerBytes": 13622,
+      "databaseBytes": 159744,
+      "status": "MEASURED",
+      "backend": "sqlite",
+      "operation": "iterator",
+      "warmup": 1,
+      "repeats": 3,
+      "samplesMs": [
+        0.585,
+        0.564,
+        0.693
+      ],
+      "p50Ms": 0.585,
+      "p95Ms": 0.693,
+      "eventsPerSecondAtP50": 17090.365,
+      "peakProcessRssKiB": 73248,
+      "finalRssBytes": 75005952,
+      "eventLoopDelayMaxMs": 11.813,
+      "eventLoopDelayP95Ms": 11.108,
+      "observed": {
+        "count": 10,
+        "lastHash": "89314af96139f010695daac4a60a3043d83ef584c8a7bb0e2a679bc526428350",
+        "sha256": "08a7a5e124bf5b3ab3b10d9b2926ae207a60953c173f53e571742e8224a14405"
+      },
+      "sqliteVersion": "3.53.3",
+      "freshWorkerWallMs": 260.904
+    },
+    {
+      "events": 10,
+      "ledgerBytes": 13622,
+      "databaseBytes": 159744,
+      "status": "MEASURED",
+      "backend": "sqlite",
+      "operation": "audit",
+      "warmup": 1,
+      "repeats": 3,
+      "samplesMs": [
+        0.843,
+        0.725,
+        0.881
+      ],
+      "p50Ms": 0.843,
+      "p95Ms": 0.881,
+      "eventsPerSecondAtP50": 11868.859,
+      "peakProcessRssKiB": 73376,
+      "finalRssBytes": 75153408,
+      "eventLoopDelayMaxMs": 11.379,
+      "eventLoopDelayP95Ms": 11.076,
+      "observed": {
+        "count": 10,
+        "lastHash": "89314af96139f010695daac4a60a3043d83ef584c8a7bb0e2a679bc526428350",
+        "sha256": "08a7a5e124bf5b3ab3b10d9b2926ae207a60953c173f53e571742e8224a14405"
+      },
+      "sqliteVersion": "3.53.3",
+      "freshWorkerWallMs": 282.369
+    },
+    {
+      "events": 10,
+      "ledgerBytes": 13622,
+      "databaseBytes": 159744,
+      "status": "MEASURED",
+      "backend": "filesystem",
+      "operation": "audit",
+      "warmup": 1,
+      "repeats": 3,
+      "samplesMs": [
+        1.665,
+        0.971,
+        1.116
+      ],
+      "p50Ms": 1.116,
+      "p95Ms": 1.665,
+      "eventsPerSecondAtP50": 8958.567,
+      "peakProcessRssKiB": 74624,
+      "finalRssBytes": 76414976,
+      "eventLoopDelayMaxMs": 11.411,
+      "eventLoopDelayP95Ms": 11.231,
+      "observed": {
+        "count": 10,
+        "lastHash": "89314af96139f010695daac4a60a3043d83ef584c8a7bb0e2a679bc526428350",
+        "sha256": "08a7a5e124bf5b3ab3b10d9b2926ae207a60953c173f53e571742e8224a14405"
+      },
+      "sqliteVersion": null,
+      "freshWorkerWallMs": 278.629
+    },
+    {
+      "events": 10,
+      "ledgerBytes": 13622,
+      "databaseBytes": 159744,
+      "status": "MEASURED",
+      "backend": "sqlite",
+      "operation": "export",
+      "warmup": 1,
+      "repeats": 3,
+      "samplesMs": [
+        29.358,
+        24.659,
+        28.808
+      ],
+      "p50Ms": 28.808,
+      "p95Ms": 29.358,
+      "eventsPerSecondAtP50": 347.128,
+      "peakProcessRssKiB": 76640,
+      "finalRssBytes": 78479360,
+      "eventLoopDelayMaxMs": 20.054,
+      "eventLoopDelayP95Ms": 11.534,
+      "observed": {
+        "count": 10,
+        "lastHash": "89314af96139f010695daac4a60a3043d83ef584c8a7bb0e2a679bc526428350",
+        "sha256": "08a7a5e124bf5b3ab3b10d9b2926ae207a60953c173f53e571742e8224a14405"
+      },
+      "sqliteVersion": "3.53.3",
+      "freshWorkerWallMs": 417.729
+    },
+    {
+      "events": 1000,
+      "ledgerBytes": 1371726,
+      "databaseBytes": 2277376,
+      "status": "MEASURED",
+      "backend": "filesystem",
+      "operation": "iterator",
+      "warmup": 1,
+      "repeats": 3,
+      "samplesMs": [
+        15.696,
+        16.294,
+        16.416
+      ],
+      "p50Ms": 16.294,
+      "p95Ms": 16.416,
+      "eventsPerSecondAtP50": 61371.026,
+      "peakProcessRssKiB": 109536,
+      "finalRssBytes": 109395968,
+      "eventLoopDelayMaxMs": 19.628,
+      "eventLoopDelayP95Ms": 16.4,
+      "observed": {
+        "count": 1000,
+        "lastHash": "63262cd7146b288aa45b748aa139e9f2108fdc7e40618b97af3a8e4b68d7352d",
+        "sha256": "ed2ad6c6f16fdf52009ee81f9bff91ec02d94e3efee04586f02420caea5d9dae"
+      },
+      "sqliteVersion": null,
+      "freshWorkerWallMs": 343.498
+    },
+    {
+      "events": 1000,
+      "ledgerBytes": 1371726,
+      "databaseBytes": 2277376,
+      "status": "MEASURED",
+      "backend": "sqlite",
+      "operation": "iterator",
+      "warmup": 1,
+      "repeats": 3,
+      "samplesMs": [
+        21.182,
+        20.078,
+        21.329
+      ],
+      "p50Ms": 21.182,
+      "p95Ms": 21.329,
+      "eventsPerSecondAtP50": 47210.174,
+      "peakProcessRssKiB": 79536,
+      "finalRssBytes": 81461248,
+      "eventLoopDelayMaxMs": 31.457,
+      "eventLoopDelayP95Ms": 31.359,
+      "observed": {
+        "count": 1000,
+        "lastHash": "63262cd7146b288aa45b748aa139e9f2108fdc7e40618b97af3a8e4b68d7352d",
+        "sha256": "ed2ad6c6f16fdf52009ee81f9bff91ec02d94e3efee04586f02420caea5d9dae"
+      },
+      "sqliteVersion": "3.53.3",
+      "freshWorkerWallMs": 341.27
+    },
+    {
+      "events": 1000,
+      "ledgerBytes": 1371726,
+      "databaseBytes": 2277376,
+      "status": "MEASURED",
+      "backend": "sqlite",
+      "operation": "audit",
+      "warmup": 1,
+      "repeats": 3,
+      "samplesMs": [
+        29.773,
+        25.835,
+        29.081
+      ],
+      "p50Ms": 29.081,
+      "p95Ms": 29.773,
+      "eventsPerSecondAtP50": 34387.156,
+      "peakProcessRssKiB": 101392,
+      "finalRssBytes": 103825408,
+      "eventLoopDelayMaxMs": 42.238,
+      "eventLoopDelayP95Ms": 39.485,
+      "observed": {
+        "count": 1000,
+        "lastHash": "63262cd7146b288aa45b748aa139e9f2108fdc7e40618b97af3a8e4b68d7352d",
+        "sha256": "ed2ad6c6f16fdf52009ee81f9bff91ec02d94e3efee04586f02420caea5d9dae"
+      },
+      "sqliteVersion": "3.53.3",
+      "freshWorkerWallMs": 387.898
+    },
+    {
+      "events": 1000,
+      "ledgerBytes": 1371726,
+      "databaseBytes": 2277376,
+      "status": "MEASURED",
+      "backend": "filesystem",
+      "operation": "audit",
+      "warmup": 1,
+      "repeats": 3,
+      "samplesMs": [
+        23.331,
+        22.506,
+        23.02
+      ],
+      "p50Ms": 23.02,
+      "p95Ms": 23.331,
+      "eventsPerSecondAtP50": 43441.351,
+      "peakProcessRssKiB": 111376,
+      "finalRssBytes": 113885184,
+      "eventLoopDelayMaxMs": 25.854,
+      "eventLoopDelayP95Ms": 23.233,
+      "observed": {
+        "count": 1000,
+        "lastHash": "63262cd7146b288aa45b748aa139e9f2108fdc7e40618b97af3a8e4b68d7352d",
+        "sha256": "ed2ad6c6f16fdf52009ee81f9bff91ec02d94e3efee04586f02420caea5d9dae"
+      },
+      "sqliteVersion": null,
+      "freshWorkerWallMs": 376.642
+    },
+    {
+      "events": 1000,
+      "ledgerBytes": 1371726,
+      "databaseBytes": 2277376,
+      "status": "MEASURED",
+      "backend": "sqlite",
+      "operation": "export",
+      "warmup": 1,
+      "repeats": 3,
+      "samplesMs": [
+        64.908,
+        102.812,
+        142.104
+      ],
+      "p50Ms": 102.812,
+      "p95Ms": 142.104,
+      "eventsPerSecondAtP50": 9726.511,
+      "peakProcessRssKiB": 92784,
+      "finalRssBytes": 95010816,
+      "eventLoopDelayMaxMs": 11.715,
+      "eventLoopDelayP95Ms": 11.461,
+      "observed": {
+        "count": 1000,
+        "lastHash": "63262cd7146b288aa45b748aa139e9f2108fdc7e40618b97af3a8e4b68d7352d",
+        "sha256": "ed2ad6c6f16fdf52009ee81f9bff91ec02d94e3efee04586f02420caea5d9dae"
+      },
+      "sqliteVersion": "3.53.3",
+      "freshWorkerWallMs": 718.004
+    },
+    {
+      "events": 100000,
+      "ledgerBytes": 137577730,
+      "databaseBytes": 214929408,
+      "status": "REFUSED",
+      "backend": "filesystem",
+      "operation": "iterator",
+      "warmup": 1,
+      "repeats": 3,
+      "samplesMs": [],
+      "p50Ms": null,
+      "p95Ms": null,
+      "peakProcessRssKiB": 351200,
+      "observed": null,
+      "error": {
+        "code": "JSON_LIMIT_EXCEEDED",
+        "message": "Pinned filesystem reader refuses the whole ledger at its existing JSON byte limit"
+      },
+      "freshWorkerWallMs": 572.188
+    },
+    {
+      "events": 100000,
+      "ledgerBytes": 137577730,
+      "databaseBytes": 214929408,
+      "status": "MEASURED",
+      "backend": "sqlite",
+      "operation": "iterator",
+      "warmup": 1,
+      "repeats": 3,
+      "samplesMs": [
+        1609.276,
+        1572.864,
+        1570.289
+      ],
+      "p50Ms": 1572.864,
+      "p95Ms": 1609.276,
+      "eventsPerSecondAtP50": 63578.3,
+      "peakProcessRssKiB": 114320,
+      "finalRssBytes": 117063680,
+      "eventLoopDelayMaxMs": 1891.631,
+      "eventLoopDelayP95Ms": 1620.05,
+      "observed": {
+        "count": 100000,
+        "lastHash": "b13874bb4aaf5b97802b85694cd49852c3855b6b63aafeb2ef1f88acfeb239b1",
+        "sha256": "390ebb81e296c4f3c8923f24461aa12664d0ee958ecb11ab8c6a622c02cd6f23"
+      },
+      "sqliteVersion": "3.53.3",
+      "freshWorkerWallMs": 6907.398
+    },
+    {
+      "events": 100000,
+      "ledgerBytes": 137577730,
+      "databaseBytes": 214929408,
+      "status": "MEASURED",
+      "backend": "sqlite",
+      "operation": "audit",
+      "warmup": 1,
+      "repeats": 3,
+      "samplesMs": [
+        1972.948,
+        2015.857,
+        1935.518
+      ],
+      "p50Ms": 1972.948,
+      "p95Ms": 2015.857,
+      "eventsPerSecondAtP50": 50685.569,
+      "peakProcessRssKiB": 632720,
+      "finalRssBytes": 647905280,
+      "eventLoopDelayMaxMs": 2054.16,
+      "eventLoopDelayP95Ms": 2025.849,
+      "observed": {
+        "count": 100000,
+        "lastHash": "b13874bb4aaf5b97802b85694cd49852c3855b6b63aafeb2ef1f88acfeb239b1",
+        "sha256": "390ebb81e296c4f3c8923f24461aa12664d0ee958ecb11ab8c6a622c02cd6f23"
+      },
+      "sqliteVersion": "3.53.3",
+      "freshWorkerWallMs": 8242.075
+    },
+    {
+      "events": 100000,
+      "ledgerBytes": 137577730,
+      "databaseBytes": 214929408,
+      "status": "REFUSED",
+      "backend": "filesystem",
+      "operation": "audit",
+      "warmup": 1,
+      "repeats": 3,
+      "samplesMs": [],
+      "p50Ms": null,
+      "p95Ms": null,
+      "peakProcessRssKiB": 358752,
+      "observed": null,
+      "error": {
+        "code": "JSON_LIMIT_EXCEEDED",
+        "message": "Pinned filesystem reader refuses the whole ledger at its existing JSON byte limit"
+      },
+      "freshWorkerWallMs": 267.143
+    },
+    {
+      "events": 100000,
+      "ledgerBytes": 137577730,
+      "databaseBytes": 214929408,
+      "status": "MEASURED",
+      "backend": "sqlite",
+      "operation": "export",
+      "warmup": 1,
+      "repeats": 3,
+      "samplesMs": [
+        2603.368,
+        2347.356,
+        2380.642
+      ],
+      "p50Ms": 2380.642,
+      "p95Ms": 2603.368,
+      "eventsPerSecondAtP50": 42005.471,
+      "peakProcessRssKiB": 144464,
+      "finalRssBytes": 147832832,
+      "eventLoopDelayMaxMs": 25.215,
+      "eventLoopDelayP95Ms": 10.371,
+      "observed": {
+        "count": 100000,
+        "lastHash": "b13874bb4aaf5b97802b85694cd49852c3855b6b63aafeb2ef1f88acfeb239b1",
+        "sha256": "390ebb81e296c4f3c8923f24461aa12664d0ee958ecb11ab8c6a622c02cd6f23"
+      },
+      "sqliteVersion": "3.53.3",
+      "freshWorkerWallMs": 12564.208
+    }
+  ]
+}

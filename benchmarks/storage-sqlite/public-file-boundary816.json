@@ -1,0 +1,91 @@
+{
+  "increment": 816,
+  "sourceRevision": "a80c6f9",
+  "status": "SOURCE_ROLE_INVENTORY_CLASSIFIED_WITH_OPEN_FINDING",
+  "reviewed": [
+    {
+      "path": "src/storage/export-destination.js",
+      "sha256": "a5385331d4035e007f2f8edc92774bec513db3e99d257e34dc2219d3886def0b",
+      "disposition": "Observes physical output ancestors and native database/sidecar/marker evidence to refuse portable output inside selected operational namespaces. No task mutation; this is explicit export admission."
+    },
+    {
+      "path": "src/storage/importer.js",
+      "sha256": "22dbd284184c72b7270de7bbb95d06a2ec7f529f3305b355a4a9671a403a6f6b",
+      "disposition": "Reads explicit portable/legacy input and allocates a fresh unpublished SQLite destination exclusively. Imported task/session namespaces commit together or roll back; source files are not a live operational mirror."
+    },
+    {
+      "path": "src/storage/singleton-import.js",
+      "sha256": "811af2a22679865f4bf8dfd0d47508444cafdf9f63fd289e5f462feb30ca06db",
+      "disposition": "Reads legacy singleton conversion input, validates schema/source fingerprints before and after selection, then imports into the caller-owned unpublished SQLite transaction. No writable temporary filesystem task namespace."
+    },
+    {
+      "path": "src/storage/legacy-maintenance-boundary.js",
+      "sha256": "4c3bc7a3c45b8fca61bd1b6e4d320c65466423bd96d08ea1b1947008c4c41f10",
+      "disposition": "Observes retained legacy claim/task locks and refuses native admission rather than clearing an unknown legacy owner. Bootstrap/migration exclusion compatibility input."
+    },
+    {
+      "path": "src/storage/legacy-signature.js",
+      "sha256": "f4e126a0ec08e538d4f105f46808fa01ad8940e2846711ad68f0ddd5c9a20d52",
+      "disposition": "Reads inventoried legacy signature/attachment sources for explicit conversion, checks recorded membership/size and publishes immutable attachment objects through the storage attachment boundary. Not normal task file persistence."
+    },
+    {
+      "path": "src/storage/maintenance-owner.js",
+      "sha256": "8f22e1cf930bff4a40ba24d8017bff84ac54822e30b17f12a8204ea5d6c4c4bf",
+      "disposition": "Reads bounded explicit bootstrap maintenance-owner metadata and exact text for owner continuity. Role is file-owned exclusion metadata, but a confirmed final-component swap race is pending correction and prevents treating its current containment as accepted."
+    },
+    {
+      "path": "src/storage/metadata-json.js",
+      "sha256": "a34e07736bda5d4fc662ceb3527e9a80bf70d404c5bb238f4f7a5576886df28c",
+      "disposition": "Reads explicit storage maintenance/import/export metadata through a no-follow regular-file handle with size checks before and during allocation, UTF-8 and JSON limits. No writer; platform-specific admission acceptance is independent."
+    },
+    {
+      "path": "src/storage/migration-attachment-root.js",
+      "sha256": "a50bc04562a2e422ab15c1c59f87abac81f9c023bb9034fc7cee5fc82763f69c",
+      "disposition": "Builds an independent candidate immutable attachment root from recorded capture input and validates exact object membership and canonical references. Not a second operational task writer."
+    },
+    {
+      "path": "src/storage/migration-rollback-admission.js",
+      "sha256": "da43ae3a2930f7adf3370898ff1e9a9689df8319f6c861e23f6aa52ce2cf5c73",
+      "disposition": "Observes native database/sidecars under maintenance ownership, requires closed checkpointed connections, compares current versus retained canonical snapshot and refuses accepted native changes before preserved-source rollback. Equality is not advertised as historical-write exclusion."
+    },
+    {
+      "path": "src/storage/operational-context.js",
+      "sha256": "53fa9ed5fe2b0724071dda1c1594f8a2101fcf645bcf286da5407a4b9d37183f",
+      "disposition": "Raw realpathSync verifies project identity for selected operational context. Reads/presence checks delegate to the selected canonical store; expired and mismatched scopes are refused."
+    },
+    {
+      "path": "src/storage/project-bootstrap.js",
+      "sha256": "b511b8eb18837fa217fc1c3fa2f892d1136456e464a3d10a777643908da68aaa",
+      "disposition": "Allocates an independent empty SQLite seed and verified backup, then delegates to journaled fresh-project restore. Requires explicit writer exclusion and freshness; no destructive legacy conversion during read-only commands."
+    },
+    {
+      "path": "src/storage/project-boundary.js",
+      "sha256": "72d5ff54501b9b31234d3ef6e7c9610c5f1dd5f248a671fcd6e03c38ac558b2c",
+      "disposition": "Observes storage marker/database/sidecars and retained legacy namespaces before canonical dispatch. Native selection refuses pending/missing/contradictory authority; read-only unselected access does not allocate a replacement database."
+    },
+    {
+      "path": "src/storage/restore-layout.js",
+      "sha256": "64a380833307e834fbcbf0cd1f6210151b014cbcce95e44615a2ed5c2ebb9e4c",
+      "disposition": "Observes publication namespace and verifies immutable objects against the retained incoming snapshot. Refuses legacy state and unbound object membership before restore publication."
+    }
+  ],
+  "knownFindings": [
+    {
+      "module": "src/storage/maintenance-owner.js",
+      "status": "CONFIRMED_PENDING_FIX",
+      "reproduction": "/Users/cassio/.codex/verification/maintenance-owner816-race.mjs",
+      "result": {
+        "swapped": true,
+        "accepted": true,
+        "selectedOutsideOwner": true,
+        "errorCode": null
+      }
+    }
+  ],
+  "wholeConsumerClosure": false,
+  "limitations": [
+    "Source-role classification does not prove all runtime containment, ownership or resource invariants.",
+    "Direct raw fs inventory omits indirect wrappers, dynamically constructed specifiers and external callers.",
+    "No checkout files changed during live Mac814 validation."
+  ]
+}

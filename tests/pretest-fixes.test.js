@@ -9,7 +9,8 @@ const repositoryRoot = path.resolve(".");
 test("ForgeLoop receipt discovery runs after checkout without skipping absent evidence", async () => {
   const workflow = parseYaml(await readFile(path.join(repositoryRoot, ".github/workflows/forgeloop-audit.yml"), "utf8"));
   const audit = workflow.jobs.audit;
-  assert.equal(audit.if, undefined);
+  assert.match(audit.if, /github\.event\.pull_request\.head\.repo\.full_name == github\.repository/);
+  assert.doesNotMatch(audit.if, /hashFiles|receipt|outputs\.audit/);
   const checkout = audit.steps.findIndex(step => step.uses?.startsWith("actions/checkout@"));
   const verify = audit.steps.findIndex(step => step.run === "node scripts/audit-receipts.mjs");
   assert.ok(checkout >= 0 && verify > checkout);

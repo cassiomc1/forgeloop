@@ -1,0 +1,55 @@
+{
+  "kind": "PUBLIC_ACTION_HISTORY_PARITY_VALIDATION",
+  "parentRevision": "c0d204c",
+  "sourceSha256": "4b07010cc75051e0cab10b6f3241b644dd1b0e913eb01589aa2d52847141abb2",
+  "node": "v24.19.0",
+  "results": [
+    {
+      "artifact": "public-action-parity-c0d204c.json.gz",
+      "sha256": "563a32bc8b3d38ab7aaceaefd41ac0ef3006bb457680d92ecb1b596f011e2a39",
+      "results": [
+        {
+          "actions": 10,
+          "approvals": 10,
+          "ledgerEvents": 59,
+          "fixtureMs": 1093.860041,
+          "outputParity": true,
+          "missingKeyParity": true,
+          "nativeSamplesMs": [],
+          "baselineSamplesMs": [],
+          "nativeP95Ms": null,
+          "baselineP95Ms": null,
+          "speedupP95": null
+        }
+      ]
+    },
+    {
+      "artifact": "public-action-parity1000-c0d204c.json.gz",
+      "sha256": "c0144bb24bb587660667b69e6a40a5d0a92258a70c9462031d76a83430d51ae1",
+      "results": [
+        {
+          "actions": 1000,
+          "approvals": 1000,
+          "ledgerEvents": 3029,
+          "fixtureMs": 75305.06,
+          "outputParity": true,
+          "missingKeyParity": true,
+          "nativeSamplesMs": [],
+          "baselineSamplesMs": [],
+          "nativeP95Ms": null,
+          "baselineP95Ms": null,
+          "speedupP95": null
+        }
+      ]
+    }
+  ],
+  "checks": [
+    "Complete action arrays",
+    "Action ledger consistency on both backends",
+    "First/middle/tail/missing indexedlookup parity",
+    "Approval arrays and ledger/state parity"
+  ],
+  "targetedEslintExitCode": 0,
+  "verifyFastExitCode": 0,
+  "releaseThresholdsVerified": false
+}

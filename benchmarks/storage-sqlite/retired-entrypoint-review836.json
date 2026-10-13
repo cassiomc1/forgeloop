@@ -1,0 +1,22 @@
+{
+  "increment": 836,
+  "sourceRevision": "f40b4b6951c0807c58009a827a7965a0a87667b1",
+  "sourceHashes": {
+    "src/core/events.js": "270d8cb19abc637e5e6a432269aa0041b2830713b7375c9432d9e842040d83a2",
+    "src/core/actions.js": "bf9ce702df4b5cac2d609f2761a5aee8361a16a0ebdecfe650d45f31c9cdb2af",
+    "src/core/approvals.js": "6cc9020d81f308b8790fe0a0f8a23b90273f7079194bc4c9e2bd864c5336f705",
+    "src/core/transaction.js": "e34f4c1cfe99e1c5112d9117fcc845e8d49eb581d9adb13f4e52c42a8cdef4ef",
+    "src/storage/legacy-maintenance-boundary.js": "4c3bc7a3c45b8fca61bd1b6e4d320c65466423bd96d08ea1b1947008c4c41f10"
+  },
+  "scope": "Exact legacy sidecar/transaction primitive scan plus direct source reading for five entrypoints",
+  "findings": [
+    "No event sidecar index or compaction invocation in reviewed event/action/approval entrypoints",
+    "Retained .txn inventory reads incomplete legacy manifests; recovery function refuses unsupported mutation",
+    "Legacy maintenance boundary refuses retained claim/task locks before native admission"
+  ],
+  "wholeConsumerClosure": false,
+  "limitations": [
+    "Assigned aliases and external/dynamic effects are not proved by this subset",
+    "No tests or timing acceptance inferred from static source review"
+  ]
+}

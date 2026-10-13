@@ -1,0 +1,31 @@
+{
+  "kind": "PERSISTENCE_LOC_CLOSED_CONSERVATIVE_SCOPE",
+  "sourceRevision": "5bd895e3c0cd4590980946d4aca81c72ed394cc8",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "baselineNonblankLines": 25732,
+  "currentNonblankLines": 32515,
+  "netReduction": -0.26360174102285083,
+  "requiredReduction": 0.25,
+  "targetCeilingLines": 19299.0,
+  "linesAboveCeiling": 13216.0,
+  "unresolvedMembership": 0,
+  "staticMeasurementEligible": true,
+  "targetMet": false,
+  "sourceFileHashesVerified": 932,
+  "rawResultPath": "/Users/cassio/.codex/verification/persistence-loc-function-result-5bd895e-final-conservative.json",
+  "rawResultSha256": "87ac4107802508032b12193c51b57580a3ba25e40ad6f3d5fdc0647338f23b94",
+  "scopeManifestPath": "/Users/cassio/.codex/verification/persistence-loc-function-scope-manifest-cc43c62-final-conservative.json",
+  "scopeManifestSha256": "19a7dd0010220767e9e90a1ba74774fd11c984dd7192b370a90231b48eae036a",
+  "wholeModuleInventory": {
+    "retainedAsSeparateEvidence": true,
+    "path": "/Users/cassio/.codex/verification/persistence-loc922-inventory.json",
+    "candidateTargetMet": false,
+    "scopeReviewComplete": false
+  },
+  "wholePlanAcceptance": false,
+  "limitations": [
+    "This result is static LOC evidence; it does not prove runtime sole-writer closure, correctness, latency, or durability gates.",
+    "Any unresolved membership makes acceptanceEligible=false and forbids targetMet=true.",
+    "Conservative inclusion closes counting uncertainty; it does not establish an optimal architecture or authorize a threshold waiver."
+  ]
+}

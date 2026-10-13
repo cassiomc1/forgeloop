@@ -11,7 +11,7 @@ import {
 import { buildForgeLoopMcpServer } from "./server.js";
 import { resolveProjectContext } from "./project-context.js";
 import { resolveLaunchPolicy, SERVER_MODES } from "./capability-policy.js";
-import { FORGELOOP_INTEGRATION_API_VERSION } from "@cassiomc1/forgeloop/integration";
+import { createForgeLoopContext, FORGELOOP_INTEGRATION_API_VERSION } from "@cassiomc1/forgeloop/integration";
 
 const LOOPBACK_HOSTS = new Set(["127.0.0.1", "localhost", "::1"]);
 
@@ -74,8 +74,9 @@ export async function createForgeLoopHttpHandler({
 
   // Stateless strict-modern: a fresh product per request keeps no session
   // authority, and legacy-era traffic is rejected instead of served.
+  const storageRuntimeContext = createForgeLoopContext({ persistentStorage: true });
   const mcp = createMcpHandler(
-    () => buildForgeLoopMcpServer({ projectContext, policy, packageRoot }),
+    () => buildForgeLoopMcpServer({ projectContext, policy, packageRoot, storageRuntimeContext }),
     { responseMode: "json", legacy: "reject" },
   );
 
@@ -96,7 +97,7 @@ export async function createForgeLoopHttpHandler({
   return Object.freeze({
     handle,
     close: async () => {
-      await mcp.close();
+      try { await mcp.close(); } finally { await storageRuntimeContext.close?.(); }
     },
   });
 }

@@ -1,0 +1,100 @@
+{
+  "increment": 893,
+  "sourceRevision": "657b75637da5b0b529167693b6b5121073076c6f",
+  "exitCode": 1,
+  "elapsedSeconds": 2473.7835869789124,
+  "manifestFiles": 3013,
+  "admittedSourceUnchanged": true,
+  "status": "FAILED",
+  "scope": "DIAGNOSTIC ONLY: baseline 1000 tasks, limit100 tool and full resource, 200 repetitions; promise wrappers and stall-triggered Node diagnostic report; workload unchanged, instrumentation changed; cannot substitute for a paired performance comparison.",
+  "workerFailure": {
+    "status": "FAILED",
+    "workerPid": 41431,
+    "coreRoot": "/Users/cassio/.codex/verification/sqlite-baseline624",
+    "adapterRoot": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/integrations/mcp",
+    "target": "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-mcp-benchmark-6gVb3F/portable",
+    "repeats": 200,
+    "resources": true,
+    "progress": {
+      "operation": "projectTasksResource",
+      "stage": "MEASURED",
+      "sampleIndex": 94,
+      "completedSamples": 94
+    },
+    "completedOperations": {
+      "taskListTool": 200
+    },
+    "error": {
+      "name": "SdkError",
+      "code": "REQUEST_TIMEOUT",
+      "message": "Request timed out",
+      "stack": "SdkError: Request timed out\n    at Timeout.timeoutHandler (/Users/cassio/Documents/github/forgeloop/integrations/mcp/node_modules/@modelcontextprotocol/client/dist/src-NAgB4Mp8.cjs:6150:40)\n    at listOnTimeout (node:internal/timers:635:17)\n    at process.processTimers (node:internal/timers:571:7)",
+      "data": {
+        "timeout": 60000
+      }
+    }
+  },
+  "runtime": {
+    "reason": "exit",
+    "pid": 41431,
+    "node": "v24.19.0",
+    "uv": "1.52.1",
+    "memory": {
+      "rss": 30670848,
+      "heapTotal": 183795712,
+      "heapUsed": 70555376,
+      "external": 3364251,
+      "arrayBuffers": 682568
+    },
+    "totals": {
+      "lstat": 11055659,
+      "realpath": 3585553,
+      "readFile": 896593,
+      "access": 2390667,
+      "readdir": 299,
+      "stat": 1178
+    },
+    "pending": [
+      {
+        "operation": "lstat",
+        "path": "/private/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-mcp-benchmark-6gVb3F/portable/.forgeloop/task-state/cbed7c62cd31adf28c942e171ab6372764e2f1dcaa28b22e13f7636810578a8a",
+        "startedMs": 419225.861167,
+        "ageMs": 59167.13483299996
+      }
+    ],
+    "activeResources": [
+      "FSReqPromise",
+      "PipeWrap",
+      "PipeWrap",
+      "PipeWrap"
+    ]
+  },
+  "diagnosis": "Single unresolved lstat promise with FSReqPromise active; all four sampled libuv workers idle before SDK timeout. Runtime/OS completion failure is suspected, not proven. No production fix, timeout increase, forced GC or passing comparison.",
+  "manualIntervention": {
+    "action": "SIGKILL failed worker only",
+    "pid": 41431,
+    "parentPid": 41320,
+    "command": "/Users/cassio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node /Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/scripts/lib/storage-mcp-benchmark-worker.mjs /Users/cassio/.codex/verification/sqlite-baseline624 /Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/integrations/mcp /var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-mcp-benchmark-6gVb3F/portable /var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-mcp-benchmark-6gVb3F/baseline.json 200 true 100",
+    "reason": "REQUEST_TIMEOUT journal and exit runtime retained; worker remains alive in shutdown",
+    "timestamp": "2026-10-08T18:33:24.136079+00:00"
+  },
+  "evidence": [
+    {
+      "file": "mcp-diagnosis893-report-41431.json",
+      "sha256": "20fd99f2c4092e6402a038618dc84ba3a9de8ff1569eefe897f0eac899c4b437"
+    },
+    {
+      "file": "mcp-diagnosis893-live-stack.txt",
+      "sha256": "dd2a7b8532d03878d09d348d090189579354eb7fa56cc01502b8fe24a6848991"
+    },
+    {
+      "file": "mcp-diagnosis893-preload.mjs",
+      "sha256": "35c27ca99fc2acdd2d76f5361cfb8945c931e763cd8c93f79b5d5cf3dec1edf8"
+    },
+    {
+      "file": "mcp-diagnosis893-parent.mjs",
+      "sha256": "999784b9cc1d0d774118fafa8fdf9a8ed1962f368203d724da6d8005e741ae7c"
+    }
+  ],
+  "reportEnvironmentExcluded": true
+}

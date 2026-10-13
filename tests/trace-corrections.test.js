@@ -1,3 +1,5 @@
+import { withExistingProjectScope } from "../src/storage/existing-project-scope.js";
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { mkdtemp, readdir, readFile } from "node:fs/promises";
@@ -23,6 +25,7 @@ async function withTarget(run) {
 }
 
 async function seedTask(target, { taskId, events = [], checks = [], phase = "VERIFYING", cycle = 1 }) {
+  await ensureFixtureTask(target, taskId, packageRoot);
   for (const { event, details } of events) {
     await appendProtocolEvent(target, { taskId, event, details }, packageRoot, { taskId });
   }
@@ -181,6 +184,7 @@ test("C0/invariant F safety net: read-only projections do not mutate .forgeloop 
       const entries = await readdir(dir, { recursive: true });
       const hash = createHash("sha256");
       for (const relative of entries.sort()) {
+        if (["state.sqlite-wal", "state.sqlite-shm"].includes(relative)) continue;
         const full = path.join(dir, relative);
         hash.update(relative);
         try {
@@ -189,6 +193,17 @@ test("C0/invariant F safety net: read-only projections do not mutate .forgeloop 
           // directories
         }
       }
+      // SQLite readers may create coordination sidecars. Check every logical
+      // table as well as persistent file bytes so WAL-backed writes cannot hide.
+      const records = await withExistingProjectScope(target, store => {
+        const tables = store.db.prepare("SELECT name FROM sqlite_schema WHERE type = 'table' ORDER BY name").all();
+        return tables.map(({ name }) => {
+          assert.match(name, /^[a-z_]+$/u);
+          const rows = store.db.prepare(`SELECT * FROM "${name}"`).all();
+          return { name, rows: rows.map(row => JSON.stringify(row)).sort() };
+        });
+      }, { readOnly: true });
+      hash.update(JSON.stringify(records));
       return hash.digest("hex");
     }
 

@@ -1,3 +1,4 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { cp, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
@@ -105,7 +106,7 @@ test("generation preserves the human-owned review and emits no review state in r
     assert.equal(Object.hasOwn(JSON.parse(await readFile(receiptPath, "utf8")), "visualReview"), false);
     await checkDocumentationDiagrams({ rootDir, reproducible: false });
   } finally {
-    await rm(rootDir, { recursive: true, force: true });
+    await removeTempTree(rootDir);
   }
 });
 
@@ -119,7 +120,7 @@ test("diagram checking fails closed when one review is missing among multiple di
         && error.message.includes("forgeloop-verification-trust-flow.review.json"),
     );
   } finally {
-    await rm(rootDir, { recursive: true, force: true });
+    await removeTempTree(rootDir);
   }
 });
 
@@ -135,7 +136,7 @@ test("source drift invalidates the persisted visual approval after regeneration"
       (error) => error.code === "E_DIAGRAM_REVIEW_SOURCE_STALE",
     );
   } finally {
-    await rm(rootDir, { recursive: true, force: true });
+    await removeTempTree(rootDir);
   }
 });
 
@@ -150,7 +151,7 @@ test("SVG drift invalidates the persisted visual approval before freshness check
       (error) => error.code === "E_DIAGRAM_REVIEW_SVG_STALE",
     );
   } finally {
-    await rm(rootDir, { recursive: true, force: true });
+    await removeTempTree(rootDir);
   }
 });
 
@@ -171,6 +172,6 @@ test("generation delegates governed but unimplemented types to the canonical ren
       },
     );
   } finally {
-    await rm(rootDir, { recursive: true, force: true });
+    await removeTempTree(rootDir);
   }
 });

@@ -1,0 +1,11 @@
+{
+  "increment": 856,
+  "sourceRevision": "9bc6573279ccc140327d0cf4676ea90ae62a1aa8",
+  "cwd": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop",
+  "exitCode": 0,
+  "elapsedSeconds": 700.2785260677338,
+  "manifestFiles": 2969,
+  "admittedSourceUnchanged": true,
+  "status": "PASS",
+  "scope": "Paginated (limit 100) MCP in-memory client/server discovery comparison across five task sizes and twenty repetitions; optional resource instrumentation disabled; source manifest checked before and after. Full output parity except validated package version, not stdio/HTTP or filesystem-cold evidence."
+}

@@ -1,7 +1,9 @@
+import { ledgerEventsOfTypes } from "./ledger-event-collection.js";
+import { ledgerRelationMap, ledgerRelationSet, ledgerGroupedSet } from "./ledger-relations.js";
 import { buildTaskTrace } from "./trace.js";
 import { readEvents } from "./events.js";
 import { findTaskById } from "./task-discovery.js";
-import { projectHypothesisStates } from "./hypothesis-projection.js";
+import { projectHypothesisStates, summarizeOpenHypotheses } from "./hypothesis-projection.js";
 import {
   buildInformationGainProjection,
   evaluateStructuredDiagnosticStall,
@@ -64,11 +66,9 @@ export function evaluateInterventionEffectiveness(trace, surfacesByCycle) {
 }
 
 function failedRequirementSurfacesFromEvents(events = [], state = null) {
-  const byCycle = new Map();
+  const byCycle = ledgerGroupedSet();
   const record = (cycle, requirement) => {
-    if (!requirement) return;
-    if (!byCycle.has(cycle)) byCycle.set(cycle, new Set());
-    byCycle.get(cycle).add(requirement);
+    if (requirement) byCycle.add(cycle, requirement);
   };
   for (const event of events) {
     if (event.event !== "VERIFICATION_RECORDED") continue;
@@ -95,88 +95,83 @@ function signatureSetsByCycle(trace) {
   return byCycle;
 }
 
-export function deriveDiagnosticContext(events = [], state = null) {
-  const cycle = state?.verificationCycle ?? null;
-  const taskEvents = events.filter((event) => !state?.taskId || event.taskId === state.taskId);
+function* contextEvents(events, types, taskId) {
+  for (const event of ledgerEventsOfTypes(events, types)) if (!taskId || event.taskId === taskId) yield event;
+}
 
-  // Canonical failure-signature hashes for the active verification cycle.
-  const activeFailureSignatures = [...new Set(
-    taskEvents
-      .filter((event) => event.event === "VERIFICATION_RECORDED"
-        && ["failed", "blocked"].includes(event.details?.status)
-        && (cycle === null || event.details?.verificationCycle === cycle))
-      .map((event) => {
-        const d = event.details;
-        return computeFailureSignature({
-          requirement: d.requirement ?? d.id ?? d.checkId,
-          status: d.status,
-          exitCode: Number.isInteger(d.exitCode) ? d.exitCode : null,
-          failureToken: typeof d.failureToken === "string" && d.failureToken
-            ? d.failureToken
-            : (typeof d.details?.failureToken === "string" ? d.details.failureToken : null),
-        });
-      }),
-  )].sort();
+function contextFailureSignature(details) {
+  return computeFailureSignature({ requirement: details.requirement ?? details.id ?? details.checkId,
+    status: details.status, exitCode: Number.isInteger(details.exitCode) ? details.exitCode : null,
+    failureToken: typeof details.failureToken === "string" && details.failureToken
+      ? details.failureToken : (typeof details.details?.failureToken === "string" ? details.details.failureToken : null) });
+}
 
-  const activeFailedRequirements = [...new Set(
-    [
-      ...taskEvents
-        .filter((event) => event.event === "VERIFICATION_RECORDED"
-          && ["failed", "blocked"].includes(event.details?.status)
-          && (cycle === null || event.details?.verificationCycle === cycle))
-        .map((event) => event.details?.requirement ?? event.details?.id ?? event.details?.checkId),
-      ...((state?.checks ?? []))
-        .filter((check) => ["failed", "blocked"].includes(check.status)
-          && (cycle === null || check.details?.verificationCycle === cycle))
-        .map((check) => check.requirement ?? check.id ?? check.checkId),
-    ].filter(Boolean),
-  )].sort();
+function activeFailure(details, cycle, observedCycle) {
+  return ["failed", "blocked"].includes(details?.status) && (cycle === null || observedCycle === cycle);
+}
 
-  const projection = projectHypothesisStates(taskEvents);
-  const openHypotheses = [...projection.openHypotheses].sort();
+function activeContextFailures(events, state, cycle) {
+  const signatures = new Set();
+  const requirements = new Set();
+  for (const event of contextEvents(events, ["VERIFICATION_RECORDED"], state?.taskId)) {
+    const details = event.details;
+    if (!activeFailure(details, cycle, details?.verificationCycle)) continue;
+    signatures.add(contextFailureSignature(details));
+    const requirement = details.requirement ?? details.id ?? details.checkId;
+    if (requirement) requirements.add(requirement);
+  }
+  for (const check of state?.checks ?? []) {
+    if (!activeFailure(check, cycle, check.details?.verificationCycle)) continue;
+    const requirement = check.requirement ?? check.id ?? check.checkId;
+    if (requirement) requirements.add(requirement);
+  }
+  return { activeFailureSignatures: [...signatures].sort(), activeFailedRequirements: [...requirements].sort() };
+}
 
-  const interventions = taskEvents.filter((event) => event.event === "INTERVENTION_RECORDED");
-  const latestIntervention = interventions.at(-1)?.details?.intervention?.id ?? null;
-
-  // doNotRepeat requires semantic repetition AND at least two completed
-  // post-intervention verification cycles AND unchanged failure surface.
-  const surfacesByCycle = failedRequirementSurfacesFromEvents(taskEvents, state);
-  const completedCycles = [...new Set(
-    taskEvents.filter((event) => event.event === "VERIFICATION_STARTED")
-      .map((event) => event.details?.verificationCycle)
-      .filter(Number.isInteger),
-  )].sort((a, b) => a - b);
-
-  const fingerprintGroups = new Map();
-  for (const event of interventions) {
+function contextInterventions(events, taskId) {
+  const groups = ledgerRelationMap();
+  const lastCycles = ledgerRelationMap();
+  const invalidCycles = ledgerRelationSet();
+  let latestIntervention = null;
+  for (const event of contextEvents(events, ["INTERVENTION_RECORDED"], taskId)) {
+    latestIntervention = event.details?.intervention?.id ?? null;
     const fingerprint = event.details?.interventionSemanticFingerprint;
     if (!fingerprint) continue;
-    if (!fingerprintGroups.has(fingerprint)) fingerprintGroups.set(fingerprint, []);
-    fingerprintGroups.get(fingerprint).push(event);
+    groups.set(fingerprint, (groups.get(fingerprint) ?? 0) + 1);
+    const cycle = Number(event.details?.verificationCycle ?? 1);
+    if (!Number.isFinite(cycle)) invalidCycles.add(fingerprint);
+    else lastCycles.set(fingerprint, Math.max(lastCycles.get(fingerprint) ?? -Infinity, cycle));
   }
+  return { groups, lastCycles, invalidCycles, latestIntervention };
+}
 
+export function deriveDiagnosticContext(events = [], state = null) {
+  const cycle = state?.verificationCycle ?? null;
+  const failures = activeContextFailures(events, state, cycle);
+  const openHypotheses = summarizeOpenHypotheses(events, state?.taskId).sort();
+  const relevant = { *[Symbol.iterator]() {
+    yield* contextEvents(events, ["VERIFICATION_RECORDED"], state?.taskId);
+  } };
+  const surfacesByCycle = failedRequirementSurfacesFromEvents(relevant, state);
+  const cycles = new Set();
+  for (const event of contextEvents(events, ["VERIFICATION_STARTED"], state?.taskId)) {
+    if (Number.isInteger(event.details?.verificationCycle)) cycles.add(event.details.verificationCycle);
+  }
+  const completedCycles = [...cycles].sort((a, b) => a - b);
+  const { groups, lastCycles, invalidCycles, latestIntervention } = contextInterventions(events, state?.taskId);
   const doNotRepeat = [];
-  for (const [fingerprint, group] of fingerprintGroups.entries()) {
-    if (group.length < 2) continue;
-    const lastInterventionCycle = Math.max(...group.map((event) => event.details?.verificationCycle ?? 1));
-    const postCycles = completedCycles.filter((completed) => completed > lastInterventionCycle);
-    if (postCycles.length < 2) continue;
-    const firstSurface = [...(surfacesByCycle.get(lastInterventionCycle) ?? [])].sort();
-    const latestSurface = [...(surfacesByCycle.get(postCycles.at(-1)) ?? [])].sort();
-    if (JSON.stringify(firstSurface) === JSON.stringify(latestSurface)) {
-      doNotRepeat.push(fingerprint);
-    }
+  for (const [fingerprint, countOfInterventions] of groups) {
+    if (countOfInterventions < 2 || invalidCycles.has(fingerprint)) continue;
+    const lastCycle = lastCycles.get(fingerprint);
+    let count = 0;
+    let latestCycle = null;
+    for (const completed of completedCycles) if (completed > lastCycle) { count++; latestCycle = completed; }
+    if (count < 2) continue;
+    const firstSurface = [...(surfacesByCycle.values(lastCycle))].sort();
+    const latestSurface = [...(surfacesByCycle.values(latestCycle))].sort();
+    if (JSON.stringify(firstSurface) === JSON.stringify(latestSurface)) doNotRepeat.push(fingerprint);
   }
-  doNotRepeat.sort();
-
-  return {
-    activeFailureSignatures,
-    activeFailedRequirements,
-    openHypotheses,
-    latestIntervention,
-    nextExperiment: null,
-    doNotRepeat,
-  };
+  return { ...failures, openHypotheses, latestIntervention, nextExperiment: null, doNotRepeat: doNotRepeat.sort() };
 }
 
 export async function buildTaskReflection({ target, packageRoot, taskId = null } = {}) {

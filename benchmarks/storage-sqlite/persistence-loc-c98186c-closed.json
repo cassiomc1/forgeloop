@@ -1,0 +1,243 @@
+{
+  "schemaVersion": 1,
+  "kind": "PERSISTENCE_LOC_FINAL_CONSERVATIVE_SCOPE_SUMMARY",
+  "status": "STATIC_MEASUREMENT_ELIGIBLE_SCOPE_CLOSED",
+  "acceptanceClaimed": false,
+  "source": {
+    "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+    "productionSourceRevision": "8927208c7d674e79c9679e48c8755dde385647eb",
+    "currentCheckoutRevision": "c98186cdcfcf598234d9ce1b4446b1d8cec55503",
+    "productionSourceUnchangedFromProjectionRevisionToCurrentCheckout": true,
+    "productionRoots": [
+      "src",
+      "integrations/mcp/src"
+    ],
+    "baselineSourceClean": true
+  },
+  "staticMeasurement": {
+    "acceptanceEligible": true,
+    "targetMet": false,
+    "baselineSelectedLines": 25732,
+    "currentSelectedLines": 32538,
+    "targetCeilingLines": 19299.0,
+    "gapAboveTargetCeilingLines": 13239.0,
+    "netReduction": -0.2644955697186382,
+    "threshold": "currentSelectedLines <= baselineSelectedLines * 0.75",
+    "unresolvedMembershipCount": 0,
+    "identityMappingsApplied": 17,
+    "renameCandidates": 0,
+    "decision": "Scope membership is closed and statically eligible; the unchanged 25% target fails because the selected current scope grows by 26.45%. This is not whole-plan acceptance."
+  },
+  "helperMembership": {
+    "exactDispositionCount": 1601,
+    "reviewedDispositionCount": 725,
+    "conservativeIncludedDispositionCount": 876,
+    "includedDispositionCount": 1111,
+    "pureDomainExclusionDispositionCount": 490,
+    "unresolvedHelperDispositionCount": 0,
+    "forceSelectedProjectionHelperCount": 6,
+    "projectionHelpers": [
+      "discoverTaskSummaries",
+      "discoverTasksInScope",
+      "projectTaskSummary",
+      "compareDiscoveredTasks",
+      "appendDiscoveredTask",
+      "finishDiscoveredTasks"
+    ],
+    "previouslyRejectedIdentityCount": 17,
+    "previouslyRejectedExactEndpointCount": 31
+  },
+  "nonHelperMembership": {
+    "exactDispositionCount": 154,
+    "unresolvedNonHelperDispositionCount": 0,
+    "bySideAndCategory": {
+      "baseline:filesystem-path-proof-unresolved": 79,
+      "current:filesystem-path-proof-unresolved": 74,
+      "current:computed-local-persistence-call": 1
+    },
+    "semanticStatus": "INCLUDED_WITH_SEMANTIC_UNCERTAINTY",
+    "initialInventory": {
+      "path": "/Users/cassio/.codex/verification/persistence-loc-nonhelper-inventory-8480-all-reviewed-v3",
+      "filesystemRecordCount": 77,
+      "filesystemOccurrenceCount": 83,
+      "computedOccurrenceCount": 1,
+      "dynamicOccurrenceCount": 0
+    },
+    "finalInventory": {
+      "path": "/Users/cassio/.codex/verification/persistence-loc-nonhelper-inventory-c98186c-final",
+      "filesystemRecordCount": 123,
+      "filesystemOccurrenceCount": 153,
+      "computedOccurrenceCount": 1,
+      "dynamicOccurrenceCount": 0
+    },
+    "allFunctionDiagnosticFindingsRetained": {
+      "baseline:filesystem-path-proof-unresolved": 173,
+      "baseline:computed-local-persistence-call": 81,
+      "baseline:dynamic-local-import": 49,
+      "current:filesystem-path-proof-unresolved": 155,
+      "current:computed-local-persistence-call": 90,
+      "current:dynamic-local-import": 316
+    },
+    "reasonForGrowth": "Conservative helper inclusion exposes additional exact filesystem callsites; they remain included in the ledger rather than omitted."
+  },
+  "wholeModuleStorageScope": {
+    "mandatoryPrefix": "src/storage/",
+    "currentFileCount": 65,
+    "currentNonblankLines": 7175,
+    "baselineFileCount": 0,
+    "baselineNonblankLines": 0,
+    "allStorageModulesIncluded": true,
+    "selectionReasonCounts": {
+      "mandatory-storage-module": 65
+    },
+    "roles": {
+      "importer": {
+        "fileCount": 2,
+        "nonblankLines": 524,
+        "paths": [
+          "src/storage/importer.js",
+          "src/storage/singleton-import.js"
+        ]
+      },
+      "exporter": {
+        "fileCount": 2,
+        "nonblankLines": 327,
+        "paths": [
+          "src/storage/export-destination.js",
+          "src/storage/exporter.js"
+        ]
+      },
+      "maintenance": {
+        "fileCount": 4,
+        "nonblankLines": 282,
+        "paths": [
+          "src/storage/legacy-maintenance-boundary.js",
+          "src/storage/maintenance-handoff.js",
+          "src/storage/maintenance-owner.js",
+          "src/storage/maintenance.js"
+        ]
+      },
+      "migration": {
+        "fileCount": 16,
+        "nonblankLines": 1712,
+        "paths": [
+          "src/storage/migration-activate.js",
+          "src/storage/migration-archive.js",
+          "src/storage/migration-attachment-root.js",
+          "src/storage/migration-candidate.js",
+          "src/storage/migration-publication.js",
+          "src/storage/migration-rollback-admission.js",
+          "src/storage/migration-rollback-preparation.js",
+          "src/storage/migration-rollback-publication.js",
+          "src/storage/migration-rollback-release.js",
+          "src/storage/migration-rollback-source-stage.js",
+          "src/storage/migration-rollback.js",
+          "src/storage/migration-source-partition.js",
+          "src/storage/migration-source.js",
+          "src/storage/migration-terminal.js",
+          "src/storage/migration-validation.js",
+          "src/storage/migration.js"
+        ]
+      },
+      "restore": {
+        "fileCount": 9,
+        "nonblankLines": 844,
+        "paths": [
+          "src/storage/project-restore.js",
+          "src/storage/restore-journal.js",
+          "src/storage/restore-layout.js",
+          "src/storage/restore-preparation.js",
+          "src/storage/restore-replacement-archive.js",
+          "src/storage/restore-replacement-owner.js",
+          "src/storage/restore-replacement-preparation.js",
+          "src/storage/restore-replacement.js",
+          "src/storage/restore-terminal.js"
+        ]
+      },
+      "backup": {
+        "fileCount": 2,
+        "nonblankLines": 147,
+        "paths": [
+          "src/storage/backup.js",
+          "src/storage/project-backup.js"
+        ]
+      },
+      "attachment": {
+        "fileCount": 5,
+        "nonblankLines": 237,
+        "paths": [
+          "src/storage/attachment-binding.js",
+          "src/storage/attachment-files.js",
+          "src/storage/attachment-references.js",
+          "src/storage/migration-attachment-root.js",
+          "src/storage/operational-attachments.js"
+        ]
+      },
+      "transaction": {
+        "fileCount": 1,
+        "nonblankLines": 163,
+        "paths": [
+          "src/storage/transaction.js"
+        ]
+      }
+    },
+    "canonicalWholeModuleInventory": {
+      "retainedAsSeparateEvidence": true,
+      "path": "/Users/cassio/.codex/verification/persistence-loc922-inventory.json",
+      "candidateTargetMet": false,
+      "scopeReviewComplete": false
+    },
+    "currentStorageFileHashDigest": "f19399f5a3697aeb6e12f2727416d983b124c57950845d262a1acbfe9d0dd35a",
+    "currentStorageNodeHashDigest": "92fa79ab65acaf1e55fd4f686353ba06094fac2fd96f4ab99ebd806f25dc3d7e"
+  },
+  "prepush": {
+    "path": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/benchmarks/storage-sqlite/prepush-8927208-failure.json",
+    "sourceRevision": "8927208c7d674e79c9679e48c8755dde385647eb",
+    "terminalExitCode": 1,
+    "testsTotal": 2956,
+    "testsPassed": 2944,
+    "testsFailed": 1,
+    "testsSkipped": 11,
+    "failure": "Generated agent summary is stale: docs/AGENT_PROTOCOL_SUMMARY.md",
+    "trackedManifestMatches": true,
+    "logSha256": "2053bebf1889417a2c77cdf1d0fb1784137da7427e861fbc6031072ab5158278"
+  },
+  "hashEvidence": {
+    "resultRawSha256": "5e47518f1b4efafea57fae2c62dd0e03bf1d69f6cfa20d9584d7d0b6ad033bb3",
+    "manifestRawSha256": "d117d6a6a174876e71ff761292bef3235f50379a926495436388031266f88b9c",
+    "manifestCanonicalSha256InResult": "3e9c239d5551f52d0d55a2ccc91e7aea4745cf96d3602df52ef56fa75ec57374",
+    "ledgerRawSha256": "50db7d38f6cfc112a73a886e3bbe1032fa3c0884ee97612919b2013bb66832df",
+    "analyzerSha256": "11616f80bddee55dab700992160f8fa674115eaa42f614b3c52a752c366a33aa",
+    "manifestRefreshSha256": "66742c91105a90aab119041fdc45ab06835641d4e494f6f804df06e753639d13",
+    "currentAllFileRows": {
+      "count": 506,
+      "shaDigest": "cc7d5d6810afb7bb7f041b1ae8f5a1da75efb29b61bd3b4f1e112bdc61b16164"
+    },
+    "currentAllNodeRows": {
+      "count": 1023,
+      "shaDigest": "9c3d4e0433e7155a47aa3bdc255cb8918321cf98461ffbc822da1d782d129dcb"
+    },
+    "baselineAllFileRows": {
+      "count": 426,
+      "shaDigest": "75bae1f819124ed9ae4db295fff16cdce303c9de323ab13b2a2a16513276e562"
+    },
+    "baselineAllNodeRows": {
+      "count": 862,
+      "shaDigest": "fb0a73c98e31606fdc953fc320493159318e72f93ef98b8e67470795e90124ad"
+    }
+  },
+  "artifacts": {
+    "scopeManifest": "/Users/cassio/.codex/verification/persistence-loc-function-scope-manifest-8927208-final-conservative.json",
+    "scopeResult": "/Users/cassio/.codex/verification/persistence-loc-function-result-c98186c-final-conservative.json",
+    "nonHelperLedger": "/Users/cassio/.codex/verification/persistence-loc-final-conservative-nonhelper-includes-c98186c.json",
+    "nonHelperInventory": "/Users/cassio/.codex/verification/persistence-loc-nonhelper-inventory-c98186c-final",
+    "canonicalWholeModuleInventory": "/Users/cassio/.codex/verification/persistence-loc922-inventory.json"
+  },
+  "limitations": [
+    "This result is static LOC evidence; it does not prove runtime sole-writer closure, correctness, latency, or durability gates.",
+    "Any unresolved membership makes acceptanceEligible=false and forbids targetMet=true.",
+    "The static result does not prove runtime correctness, performance, durability, consumer acceptance, or validator-backed ForgeLoop completion.",
+    "The prepush remains failed on the stale generated documentation summary; that is recorded separately from static scope eligibility.",
+    "Semantic uncertainty is conservatively included and separately labeled; no pure exclusion is used to meet the threshold."
+  ]
+}

@@ -1,12 +1,17 @@
 import { readdir } from "node:fs/promises";
+import { setImmediate as nextTurn } from "node:timers/promises";
 import { ensureWithin, fileExists } from "./filesystem.js";
 import { getPackageRoot } from "./templates.js";
 import { TASK_STATE_ROOT, TASK_ARTIFACT_FILES, taskArtifactPath } from "./task-paths.js";
 import { readTaskDescriptor } from "./task-descriptor.js";
-import { readJsonArtifact } from "./artifacts.js";
+import { readJsonArtifact, readPortableJsonArtifact } from "./artifacts.js";
 import { readLockInfo } from "./task-lock.js";
 import { taskStorageKey } from "./task-identity.js";
+import { withEventLedgerAudit } from "./events.js";
 import { resolveTaskClaimState } from "./task-claim-state.js";
+import { getOperationalStore, operationalArtifactExists } from "../storage/operational-context.js";
+import { withNativeReadScope } from "./native-storage.js";
+import { withProjectReadSnapshot } from "../storage/project-read-snapshot.js";
 
 /**
  * Explicitly recognized legacy-incidental artifacts that may legitimately
@@ -55,124 +60,313 @@ async function classifyDescriptorlessTaskDirectory(target, taskKey) {
   };
 }
 
-export async function discoverTasks(target, packageRoot = getPackageRoot()) {
+async function readDiscoveryState(target, taskId, descriptor, packageRoot) {
+  // Check work-state if available
+  let state = null;
+  let phase = null;
+  let lastUpdated = descriptor.updatedAt ?? descriptor.createdAt;
+  try {
+    const reader = getOperationalStore(target) ? readJsonArtifact : readPortableJsonArtifact;
+    const stateArtifact = await reader(
+      target,
+      taskArtifactPath(taskId, "state"),
+      "work-state",
+      packageRoot,
+    );
+    state = stateArtifact.value;
+    phase = state.phase ?? null;
+    if (state.lastUpdated) {
+      lastUpdated = state.lastUpdated;
+    }
+  } catch {
+    // State might not exist yet
+  }
+  return { state, phase, lastUpdated };
+}
+
+async function discoveryArtifactExists(target, taskId, kind, filename) {
+  return operationalArtifactExists(target, taskArtifactPath(taskId, kind)) ?? await fileExists(filename);
+}
+
+export async function discoverTasks(target, packageRoot = getPackageRoot(), { taskKeys = null } = {}) {
+  return discoverTasksInScope(target, packageRoot, taskKeys, DISCOVERY_PROJECTIONS.FULL);
+}
+
+/**
+ * Internal integration projection. Discovery still validates every task and
+ * records every snapshot observation, but releases the full task graph after
+ * retaining only the public project/tasks fields and its canonical sort key.
+ */
+export async function discoverTaskSummaries(target, packageRoot = getPackageRoot(), { taskKeys = null } = {}) {
+  return discoverTasksInScope(target, packageRoot, taskKeys, DISCOVERY_PROJECTIONS.SUMMARY);
+}
+
+/**
+ * Internal task-list projection. It runs the same per-task validation and
+ * snapshot/CAS observation as full discovery while retaining only the fields
+ * consumed by the task-list command.
+ */
+export async function discoverTaskListEntries(target, packageRoot = getPackageRoot(), { taskKeys = null } = {}) {
+  return discoverTasksInScope(target, packageRoot, taskKeys, DISCOVERY_PROJECTIONS.TASK_LIST);
+}
+
+/** Retain a finite page only after every task has passed normal discovery. */
+export async function discoverTaskListPage(target, packageRoot = getPackageRoot(), { phase, active, offset, limit }) {
+  const retained = [];
+  let total = 0;
+  const capacity = limit === null ? Infinity : limit === 0 ? 0 : offset + limit;
+  const collect = (task, fallbackSortKey) => {
+    if ((phase && task.phase !== phase) || (active && (task.claimState !== "ACTIVE" || task.mutationAllowed !== true))) return;
+    total += 1;
+    if (capacity === 0) return;
+    const entry = { sortKey: task.taskId ?? task.taskKey ?? fallbackSortKey, value: task };
+    if (capacity === Infinity) { retained.push(entry); return; }
+    let low = 0, high = retained.length;
+    while (low < high) {
+      const middle = Math.floor((low + high) / 2);
+      if (retained[middle].sortKey.localeCompare(entry.sortKey) <= 0) low = middle + 1;
+      else high = middle;
+    }
+    if (low >= capacity) return;
+    retained.splice(low, 0, entry);
+    if (retained.length > capacity) retained.pop();
+  };
+  await withProjectReadSnapshot(target,
+    () => discoverSelectedTasks(target, packageRoot, null, DISCOVERY_PROJECTIONS.TASK_LIST, collect));
+  if (capacity === Infinity) retained.sort((a, b) => a.sortKey.localeCompare(b.sortKey));
+  return { tasks: retained.slice(offset).map(entry => entry.value), total };
+}
+
+const DISCOVERY_PROJECTIONS = Object.freeze({
+  FULL: "full",
+  SUMMARY: "summary",
+  TASK_LIST: "task-list",
+});
+
+async function discoverTasksInScope(target, packageRoot, taskKeys, projection) {
+  return withProjectReadSnapshot(target,
+    () => discoverSelectedTasks(target, packageRoot, taskKeys, projection));
+}
+
+function projectTaskList(task) {
+  if (task.healthy === false) {
+    return {
+      taskId: task.taskId ?? null,
+      taskKey: task.taskKey,
+      directory: task.directory,
+      healthy: false,
+      error: task.error,
+    };
+  }
+  return {
+    taskId: task.taskId,
+    taskKey: task.taskKey,
+    directory: task.directory,
+    healthy: true,
+    phase: task.phase,
+    writeClaims: task.writeClaims ?? [],
+    historicalWriteClaims: task.historicalWriteClaims ?? [],
+    effectiveWriteClaims: task.effectiveWriteClaims ?? [],
+    claimState: task.claimState,
+    recovery: task.recovery,
+    mutationAllowed: task.mutationAllowed,
+    ownershipValid: task.ownershipValid,
+    ownershipErrors: task.ownershipErrors ?? task.errors ?? [],
+    reasonCodes: task.reasonCodes ?? [],
+    locked: task.locked,
+    hasContinuity: task.hasContinuity,
+    hasReceipt: task.hasReceipt,
+    createdAt: task.createdAt,
+    updatedAt: task.updatedAt,
+  };
+}
+
+function projectTask(task, projection) {
+  if (projection === DISCOVERY_PROJECTIONS.FULL) return task;
+  if (projection === DISCOVERY_PROJECTIONS.SUMMARY) return projectTaskSummary(task);
+  return projectTaskList(task);
+}
+
+async function discoverTaskEntry(target, packageRoot, entry, projection) {
+  const descriptorArtifact = await readTaskDescriptor(target, entry.name, packageRoot);
+  const descriptor = descriptorArtifact.value;
+  const taskId = descriptor.taskId;
+
+  // P1-1: Verify descriptor taskKey matches the actual directory name
+  if (descriptor.taskKey !== entry.name) {
+    return projectTask({
+      taskId: descriptor.taskId ?? null,
+      taskKey: entry.name,
+      directory: `${TASK_STATE_ROOT}/${entry.name}`,
+      healthy: false,
+      error: {
+        code: "E_TASK_KEY_MISMATCH",
+        message: `Task directory key "${entry.name}" does not match descriptor taskKey "${descriptor.taskKey}"`,
+      },
+    }, projection);
+  }
+
+  const { state, phase, lastUpdated } = await readDiscoveryState(target, taskId, descriptor, packageRoot);
+
+  // Check lock status
+  const lockInfo = await readLockInfo(target, taskId);
+
+  // Check continuity & receipt presence
+  const continuityPath = ensureWithin(target, taskArtifactPath(taskId, "continuity"));
+  const hasContinuity = await discoveryArtifactExists(target, taskId, "continuity", continuityPath);
+
+  const receiptPath = ensureWithin(target, taskArtifactPath(taskId, "receipt"));
+  const hasReceipt = await discoveryArtifactExists(target, taskId, "receipt", receiptPath);
+
+  const claimProjection = await resolveTaskClaimState(target, {
+    taskId,
+    packageRoot,
+    descriptor,
+    state,
+  });
+  const recovery = claimProjection.recovery;
+  const directory = `${TASK_STATE_ROOT}/${descriptor.taskKey}`;
+  const locked = lockInfo !== null;
+
+  if (projection === DISCOVERY_PROJECTIONS.SUMMARY) {
+    return {
+      taskId,
+      healthy: true,
+      phase,
+      mutationAllowed: claimProjection.mutationAllowed !== false,
+    };
+  }
+
+  if (projection === DISCOVERY_PROJECTIONS.TASK_LIST) {
+    return projectTaskList({
+      taskId,
+      taskKey: descriptor.taskKey,
+      directory,
+      healthy: true,
+      phase,
+      writeClaims: claimProjection.writeClaims,
+      historicalWriteClaims: claimProjection.historicalWriteClaims,
+      effectiveWriteClaims: claimProjection.effectiveWriteClaims,
+      claimState: claimProjection.claimState,
+      recovery,
+      mutationAllowed: claimProjection.mutationAllowed,
+      ownershipValid: claimProjection.valid,
+      ownershipErrors: claimProjection.ownershipErrors,
+      reasonCodes: claimProjection.reasonCodes,
+      locked,
+      hasContinuity,
+      hasReceipt,
+      createdAt: descriptor.createdAt,
+      updatedAt: descriptor.updatedAt,
+    });
+  }
+
+  return {
+    taskId,
+    taskKey: descriptor.taskKey,
+    healthy: true,
+    phase,
+    locked,
+    lockInfo,
+    ...claimProjection,
+    ownershipValid: claimProjection.valid,
+    recovery,
+    operatorRecoveredAt: recovery?.recoveredAt ?? null,
+    createdAt: descriptor.createdAt,
+    updatedAt: descriptor.updatedAt,
+    lastUpdated,
+    hasContinuity,
+    hasReceipt,
+    ...(claimProjection.errors.length > 0 ? { errors: claimProjection.errors } : {}),
+    descriptor,
+    directory,
+  };
+}
+
+function projectTaskSummary(task) {
+  return {
+    taskId: task.taskId,
+    healthy: task.healthy !== false,
+    phase: task.phase ?? null,
+    mutationAllowed: task.mutationAllowed !== false,
+  };
+}
+
+function compareDiscoveredTasks(a, b) {
+  return (a.taskId ?? a.taskKey).localeCompare(b.taskId ?? b.taskKey);
+}
+
+function appendDiscoveredTask(tasks, task, projection, fallbackSortKey = null, collect = null) {
+  if (collect) { collect(task, fallbackSortKey); return; }
+  if (projection === DISCOVERY_PROJECTIONS.FULL) {
+    tasks.push(task);
+    return;
+  }
+  tasks.push({ sortKey: task.taskId ?? task.taskKey ?? fallbackSortKey, value: task });
+}
+
+function finishDiscoveredTasks(tasks, projection) {
+  if (projection !== DISCOVERY_PROJECTIONS.FULL) {
+    return tasks.sort((a, b) => a.sortKey.localeCompare(b.sortKey)).map(({ value }) => value);
+  }
+  return tasks.sort(compareDiscoveredTasks);
+}
+
+async function discoverSelectedTasks(target, packageRoot, taskKeys, projection = DISCOVERY_PROJECTIONS.FULL, collect) {
+  const store = getOperationalStore(target);
   const rootPath = ensureWithin(target, TASK_STATE_ROOT);
-  if (!(await fileExists(rootPath))) {
+  if (!store && !(await fileExists(rootPath))) {
     return [];
   }
 
   let entries = [];
   try {
-    entries = await readdir(rootPath, { withFileTypes: true });
+    entries = store
+      ? (taskKeys ?? store.listTaskKeys()).map(name => ({ name, isDirectory: () => true, isSymbolicLink: () => false }))
+      : await readdir(rootPath, { withFileTypes: true });
   } catch {
     return [];
   }
 
   const tasks = [];
+  let scanned = 0;
   for (const entry of entries) {
+    // Native reads resolve synchronously. Let other requests run between
+    // bounded groups without releasing the owned immutable snapshot.
+    if (store && !store.transaction && !store.db.isTransaction && scanned > 0 && scanned % 16 === 0) await nextTurn();
+    scanned += 1;
     if (!entry.isDirectory() && !entry.isSymbolicLink()) continue;
     if (!/^[a-f0-9]{64}$/.test(entry.name)) continue;
 
     try {
-      const descriptorArtifact = await readTaskDescriptor(target, entry.name, packageRoot);
-      const descriptor = descriptorArtifact.value;
-      const taskId = descriptor.taskId;
-
-      // P1-1: Verify descriptor taskKey matches the actual directory name
-      if (descriptor.taskKey !== entry.name) {
-        tasks.push({
-          taskId: descriptor.taskId ?? null,
-          taskKey: entry.name,
-          directory: `${TASK_STATE_ROOT}/${entry.name}`,
-          healthy: false,
-          error: {
-            code: "E_TASK_KEY_MISMATCH",
-            message: `Task directory key "${entry.name}" does not match descriptor taskKey "${descriptor.taskKey}"`,
-          },
-        });
-        continue;
-      }
-
-      // Check work-state if available
-      let state = null;
-      let phase = null;
-      let lastUpdated = descriptor.updatedAt ?? descriptor.createdAt;
-      try {
-        const stateArtifact = await readJsonArtifact(
-          target,
-          taskArtifactPath(taskId, "state"),
-          "work-state",
-          packageRoot,
-        );
-        state = stateArtifact.value;
-        phase = state.phase ?? null;
-        if (state.lastUpdated) {
-          lastUpdated = state.lastUpdated;
-        }
-      } catch {
-        // State might not exist yet
-      }
-
-      // Check lock status
-      const lockInfo = await readLockInfo(target, taskId);
-
-      // Check continuity & receipt presence
-      const continuityPath = ensureWithin(target, taskArtifactPath(taskId, "continuity"));
-      const hasContinuity = await fileExists(continuityPath);
-
-      const receiptPath = ensureWithin(target, taskArtifactPath(taskId, "receipt"));
-      const hasReceipt = await fileExists(receiptPath);
-
-      const claimProjection = await resolveTaskClaimState(target, {
-        taskId,
-        packageRoot,
-        descriptor,
-        state,
-      });
-      const recovery = claimProjection.recovery;
-
-      tasks.push({
-        taskId,
-        taskKey: descriptor.taskKey,
-        healthy: true,
-        phase,
-        locked: lockInfo !== null,
-        lockInfo,
-        ...claimProjection,
-        ownershipValid: claimProjection.valid,
-        recovery,
-        operatorRecoveredAt: recovery?.recoveredAt ?? null,
-        createdAt: descriptor.createdAt,
-        updatedAt: descriptor.updatedAt,
-        lastUpdated,
-        hasContinuity,
-        hasReceipt,
-        ...(claimProjection.errors.length > 0 ? { errors: claimProjection.errors } : {}),
-        descriptor,
-        directory: `${TASK_STATE_ROOT}/${descriptor.taskKey}`,
-      });
+      const readEntry = () => discoverTaskEntry(target, packageRoot, entry, projection);
+      const taskId = store?.taskId({ taskKey: entry.name });
+      const task = taskId
+        ? await withEventLedgerAudit(target, packageRoot, { taskId }, readEntry)
+        : await readEntry();
+      appendDiscoveredTask(tasks, task, projection, entry.name, collect);
     } catch (err) {
       // A directory without a task.json descriptor is not automatically a
       // task namespace: classify by contents so explicitly recognized legacy
       // spillover (policy-snapshot.json) stays compatible while any modern
       // task artifact without a descriptor fails closed instead of silently
       // reopening the legacy singleton fallback.
-      if (err.code === "E_TASK_NOT_FOUND" || err.code === "ARTIFACT_MISSING") {
+      if (!store && (err.code === "E_TASK_NOT_FOUND" || err.code === "ARTIFACT_MISSING")) {
         const classification = await classifyDescriptorlessTaskDirectory(target, entry.name);
         if (classification.kind === "LEGACY_INCIDENTAL") {
           continue;
         }
-        tasks.push({
+        appendDiscoveredTask(tasks, projectTask({
           taskId: null,
           taskKey: entry.name,
           directory: `${TASK_STATE_ROOT}/${entry.name}`,
           healthy: false,
           error: classification.error,
-        });
+        }, projection), projection, entry.name, collect);
         continue;
       }
       // P1-2: Surface corrupt task namespaces instead of silently hiding them
-      tasks.push({
+      appendDiscoveredTask(tasks, projectTask({
         taskId: null,
         taskKey: entry.name,
         directory: `${TASK_STATE_ROOT}/${entry.name}`,
@@ -181,15 +375,19 @@ export async function discoverTasks(target, packageRoot = getPackageRoot()) {
           code: err.code ?? "E_TASK_DESCRIPTOR_INVALID",
           message: err.message ?? String(err),
         },
-      });
+      }, projection), projection, entry.name, collect);
     }
   }
 
-  return tasks.sort((a, b) => (a.taskId ?? a.taskKey).localeCompare(b.taskId ?? b.taskKey));
+  return finishDiscoveredTasks(tasks, projection);
 }
 
 export async function findTaskById(target, taskId, packageRoot = getPackageRoot()) {
-  const taskKey = taskStorageKey(taskId);
-  const tasks = await discoverTasks(target, packageRoot);
-  return tasks.find((t) => t.healthy !== false && (t.taskId === taskId || t.taskKey === taskKey)) ?? null;
+  return withNativeReadScope(target, async () => {
+    const taskKey = taskStorageKey(taskId);
+    const store = getOperationalStore(target);
+    if (store && !store.taskRow(taskKey)) return null;
+    const tasks = await discoverTasks(target, packageRoot, store ? { taskKeys: [taskKey] } : {});
+    return tasks.find((t) => t.healthy !== false && (t.taskId === taskId || t.taskKey === taskKey)) ?? null;
+  });
 }

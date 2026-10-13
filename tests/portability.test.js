@@ -1,6 +1,8 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -46,7 +48,7 @@ test("CLI handles target paths with spaces and Unicode", async () => {
     assert.equal(report.status, "ABSENT");
     assert.deepEqual(report.repository, { branch: null, head: null });
   } finally {
-    await rm(parent, { recursive: true, force: true });
+    await removeTempTree(parent);
   }
 });
 
@@ -69,8 +71,9 @@ test("state APIs preserve a CRLF target file and validate a checkpoint on a port
       blockers: [],
       verificationEvidence: [],
     });
-    await writeWorkState(target, state);
-    assert.deepEqual(await readWorkState(target), state);
+    await ensureFixtureTask(target, state.taskId, path.resolve("."));
+    await writeWorkState(target, state, { taskId: state.taskId });
+    assert.deepEqual(await readWorkState(target, { taskId: state.taskId }), state);
 
     const profilePath = path.join(target, "profile-crlf.txt");
     const crlf = "profile-mode: project\r\nlanguage: en\r\n";
@@ -81,7 +84,7 @@ test("state APIs preserve a CRLF target file and validate a checkpoint on a port
     assert.equal(validation.status, 0, validation.stderr);
     assert.equal(JSON.parse(validation.stdout).ok, true);
   } finally {
-    await rm(parent, { recursive: true, force: true });
+    await removeTempTree(parent);
   }
 });
 
@@ -129,6 +132,6 @@ test("structural-quality MCP normalization survives portable Unicode paths", asy
     assert.equal(result.snapshot.qualitySignal, 9000);
     assert.equal(result.snapshot.statistics.crossModuleEdges, 2);
   } finally {
-    await rm(parent, { recursive: true, force: true });
+    await removeTempTree(parent);
   }
 });

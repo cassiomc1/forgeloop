@@ -1,0 +1,41 @@
+{
+  "increment": 743,
+  "scope": "Named healthy native rebuild via latest verified snapshot after accepted task and binary attachment writes",
+  "test": "tests/storage-forward-rebuild.test.js",
+  "platformEvidence": [
+    {
+      "platform": "macOS",
+      "head": "274358a7a8ffc5efce800ed9723a0679fcfab8d8",
+      "testSha256": "a3d21025a6610f711c5d1c0a15091b8406c306664c45a41ed1bbd79fc203efdf",
+      "passingRecord": "\u2714 native rebuild from a verified latest snapshot retains post-native-write tasks, events and attachments (873.9375ms)",
+      "logSha256": "455141680422a1d10af3f41c2fc7da258876a696ecbc2c8ada6e98fd6deeee9b"
+    },
+    {
+      "platform": "Windows",
+      "head": "dd7b4dea1a4f2ccf809c90e0a70c7389767e1309",
+      "testSha256": "a3d21025a6610f711c5d1c0a15091b8406c306664c45a41ed1bbd79fc203efdf",
+      "passingRecord": "2026-10-07T18:40:40.4551388Z \u2714 native rebuild from a verified latest snapshot retains post-native-write tasks, events and attachments (5218.29ms)",
+      "logSha256": "9e9069d64a3c9d49c5b60fe224c6ed5c864b572c5ff98dabdc0a19f4810579b1"
+    },
+    {
+      "platform": "Linux Docker",
+      "head": "58857c6c95104410ffd5ec0e425be17f5870e1d3",
+      "testSha256": "a3d21025a6610f711c5d1c0a15091b8406c306664c45a41ed1bbd79fc203efdf",
+      "passingRecord": "2026-10-07T19:05:24.8578903Z \u2714 native rebuild from a verified latest snapshot retains post-native-write tasks, events and attachments (3093.81098ms)",
+      "logSha256": "e830cfc3e1c8d34b7b10f553d0a8273f6a4a164d137cd1d4894bd893658731c2"
+    }
+  ],
+  "verifiedAssertions": [
+    "Latest snapshot equals all canonical logical tables/metadata",
+    "Older snapshot differs",
+    "Restored logical state equals accepted state",
+    "Binary attachment bytes preserved",
+    "Archived outgoing database digest equals original"
+  ],
+  "limitations": [
+    "Operator writer exclusion and latest-snapshot comparison required.",
+    "Not arbitrary corruption repair or stale-snapshot automatic refusal.",
+    "Remote revisions predate direct completion-rebind correction; no whole current-source platform claim.",
+    "Whole maintenance acceptance remains incomplete."
+  ]
+}

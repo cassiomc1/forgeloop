@@ -1,0 +1,88 @@
+{
+  "increment": 811,
+  "sourceRevision": "7f16f85274571c9f1f94e5724f171afb1f3650e2",
+  "status": "NAMED_ATOMIC_CALLER_ROLE_INVENTORY_CLASSIFIED",
+  "reviewed": [
+    {
+      "path": "src/storage/migration-source.js",
+      "sha256": "4e2b78e7be7b1641883b28d0b33fe34fd1264b047ce88e00e617e5607aa9ffdb",
+      "disposition": "Named atomic writes persist explicit legacy capture manifests and retained capture history. Initial capture requires writer exclusion and maintenance scope; recovery requires owned maintenance, unchanged original inventory, no cutover marker/candidate and bounded recorded membership."
+    },
+    {
+      "path": "src/storage/migration-candidate.js",
+      "sha256": "41f01d20be6caac40ef541a8d6175e429bd595f5bd3a7a9f046571c880e88ecb",
+      "disposition": "Writes candidate task inventory, preparation manifest and recovery intent. Candidate work is maintenance-scoped, validates integrity and portable round-trip parity, checkpoints before PREPARED and retains interrupted candidate files; recovery refuses rebuilding after publication or cutover."
+    },
+    {
+      "path": "src/storage/migration-rollback-preparation.js",
+      "sha256": "1152bbb354970c43c8530d681790c08941408328e59654eb6e62044b2dcd9bfe",
+      "disposition": "Writes rollback preparation and owner-adoption journals under retained maintenance exclusion. READY requires current admission parity, matching native marker and independently verified native backup. Interrupted backups are retained rather than overwritten."
+    },
+    {
+      "path": "src/storage/migration-rollback-source-stage.js",
+      "sha256": "6bfbf8e0ad81644596fff0f055593082e7627bbac66de070986f81aa4f8b2211",
+      "disposition": "Writes explicit rollback source-stage manifests during exclusive copy and owner recovery. Stage bindings, captured source membership and bytes, prepared native backup and exact owner continuity are revalidated; incomplete copies are retained independently."
+    },
+    {
+      "path": "src/storage/migration-rollback-publication.js",
+      "sha256": "81ca1f7c72e57f885a137e33d428c4303db0f1bb859ac19c67372d9826553417",
+      "disposition": "Writes rollback publication and owner-adoption journals. Publication requires operator exclusion of native writes and verified source stage; native authority is retained before legacy roots are restored. Recovery validates partitions, exact owner chain and closed native WAL before adopting metadata."
+    },
+    {
+      "path": "src/storage/project-replacement.js",
+      "sha256": "8edb1daa7f5a50a56c2762488db647d1e441d1f421d8dd6b2f1fbc5a813efa59",
+      "disposition": "Writes explicit replacement preparation intents in maintenance callbacks. Writer exclusion, exact owner continuity, unchanged source backup and validated incoming snapshot precede archival/publication. Recovery refuses conflicting publication checkpoints."
+    },
+    {
+      "path": "src/storage/project-restore.js",
+      "sha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+      "disposition": "Writes explicit restore publication/preparation journals under maintenance ownership. Fresh restore refuses existing authority; replacement requires verified outgoing archival. Published database logical parity, integrity, domain validation and referenced attachments are checked before ACTIVE; owner recovery revalidates recorded journals."
+    },
+    {
+      "path": "src/storage/restore-replacement.js",
+      "sha256": "f7b7aed1fe54c4feb71a192a5c2aed9ff92bdb80f26d053ba1498d433cc1f138",
+      "disposition": "Writes retained outgoing replacement manifests through an owner-checked helper. Preparation validates outgoing authority, refuses live operation leases, records baseline before allocation, retains independent backup and requires closed connections before READY."
+    },
+    {
+      "path": "src/storage/restore-replacement-archive.js",
+      "sha256": "fbd0347cb136200ab4cdf848c47c1948f226913a3714c347b71d8fb541c4dd36",
+      "disposition": "Writes explicit replacement archival journals and exact owner-adoption metadata. Incoming/outgoing bindings and active-root partitions are verified before root moves; complete archive verification precedes ARCHIVED."
+    },
+    {
+      "path": "src/storage/restore-replacement-preparation.js",
+      "sha256": "07c55045508317bb70d20c7b4b687da662d9ab1f41e209d1972a3c7e06180014",
+      "disposition": "Writes missing allocation metadata and owner-checked rebuild intent. Reconstruction requires matching preparation baseline; ambiguous membership and changed outgoing authority are refused. Interrupted outgoing attempts and manifests remain independently retained."
+    }
+  ],
+  "namedCallerModulesReviewedCumulative": 28,
+  "namedCallerModulesStillPending": [],
+  "referenceInventory": {
+    "matchedLines": 83,
+    "sha256": "67a6957c070622bc9dcf682c1922f79e156058edb466fc3a91b3ba6b0538ed13",
+    "command": [
+      "rg",
+      "-n",
+      "writeFileAtomic",
+      "src",
+      "--glob",
+      "*.js"
+    ]
+  },
+  "wholeConsumerClosure": false,
+  "limitations": [
+    "All 28 named static caller modules from increment 808 are classified across increments 809-811; this is a bounded role audit, not proof of every caller invariant.",
+    "Dynamic imports, external callers and other write primitives require separate inventory and review.",
+    "Current platform and complete public workflow acceptance remain independently open."
+  ],
+  "validation": {
+    "focusedStorageBoundaryTests": {
+      "tests": 32,
+      "pass": 32,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "2b5940bf5645d133753bb41c6c6d3668a9f460a0a2050a4ab2cac13ab1378fd2"
+    },
+    "documentationChecks": "PASS",
+    "diffCheck": "PASS"
+  }
+}

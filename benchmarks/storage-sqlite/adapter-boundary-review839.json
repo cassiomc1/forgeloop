@@ -1,0 +1,27 @@
+{
+  "increment": 839,
+  "sourceRevision": "935313995d23d8bc25680aeca64dc2030feba634",
+  "recordedAt": "2026-10-08T01:50:59.845629+00:00",
+  "scope": "Direct source review of adapter temporary-path admission and subprocess boundary; no new execution or timing evidence",
+  "sourceHashes": {
+    "src/adapters/temporary-paths.js": "1c0f0943ab923ecfab76c46660b8f9024c465a3a8a9e3d1d0b2a2d9189d0132b",
+    "src/adapters/agent-browser/provider.js": "5c98d7eebbc24f8db8bb29853a4c6eddf4e3d5dd827d6c7d74b3ba63511abc66",
+    "src/adapters/agent-browser/process.js": "847c26235795e56099178810945737c00f5d22cbbc52cbade33efd0fc38641e3",
+    "src/adapters/emulated-services/provider.js": "adbe1bdde4616a412a177bf33653f6cce770fcf3732c98b64ceb8276961f5170",
+    "tests/agent-browser-provider.test.js": "0d0b84815f7b366de2db1e5d9268ab8555f4ef5276b674bdb3bb960c8a5a0c7d",
+    "tests/emulated-services.test.js": "48b2b5b0fe9294c19ce29a334c9b810574847927d8f0471080d9f1eddfb35d02"
+  },
+  "findings": [
+    "Both providers resolve physical configured root, target, and created directory before process execution or assigning recursive-cleanup authority.",
+    "The helper resolves existing ancestors for absent target suffixes.",
+    "Existing tests cover aliased temporary roots and rejected injected return paths. Test presence is not a new execution result.",
+    "Agent Browser launches shell:false with explicit cwd and filters state/profile/plugin/download/config environment overrides."
+  ],
+  "supersedes": "The lexical-only temporary-root limitation in writer-alias-discovery-643.json is stale for these providers.",
+  "wholeConsumerClosure": false,
+  "limitations": [
+    "Realpath checks do not prove immunity to every concurrent ancestor replacement.",
+    "An explicit child cwd does not sandbox a third-party executable or prove all its filesystem effects.",
+    "This bounded review does not establish complete dynamic callgraph or external-consumer coverage."
+  ]
+}

@@ -1,6 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -46,6 +47,6 @@ test("attestation summary writes stable fields and reports invocation errors", a
       (error) => error.status === 2 && /--input is required/u.test(error.stderr),
     );
   } finally {
-    await rm(directory, { recursive: true, force: true });
+    await removeTempTree(directory);
   }
 });

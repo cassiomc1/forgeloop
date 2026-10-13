@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -71,7 +72,7 @@ test("persistent transport host publishes bounded status and shuts down through 
     assert.equal((await getPersistentTransportStatus({ homeDirectory })).status, "NOT_RUNNING");
   } finally {
     await shutdownPersistentSearchHost({ homeDirectory, timeoutMs: 1_000 }).catch(() => {});
-    await rm(homeDirectory, { recursive: true, force: true });
+    await removeTempTree(homeDirectory);
   }
 });
 
@@ -89,7 +90,7 @@ test("persistent transport can verify a live host through its authenticated endp
     assert.equal(inspection.ownershipMode, "ENDPOINT_HANDSHAKE");
   } finally {
     await shutdownPersistentSearchHost({ homeDirectory, timeoutMs: 1_000 }).catch(() => {});
-    await rm(homeDirectory, { recursive: true, force: true });
+    await removeTempTree(homeDirectory);
   }
 });
 
@@ -109,7 +110,7 @@ test("endpoint-authenticated cleanup shuts down the verified host without killin
     assert.equal(killCount, 0);
   } finally {
     await shutdownPersistentSearchHost({ homeDirectory, timeoutMs: 1_000 }).catch(() => {});
-    await rm(homeDirectory, { recursive: true, force: true });
+    await removeTempTree(homeDirectory);
   }
 });
 
@@ -133,7 +134,7 @@ test("persistent transport does not claim ownership of an unrelated live process
     assert.equal(status.status, "OWNERSHIP_UNVERIFIED");
     assert.equal(status.owned, false);
   } finally {
-    await rm(homeDirectory, { recursive: true, force: true });
+    await removeTempTree(homeDirectory);
   }
 });
 

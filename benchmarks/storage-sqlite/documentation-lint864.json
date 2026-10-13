@@ -1,0 +1,22 @@
+{
+  "increment": 864,
+  "sourceRevision": "1753dd087ba44624d0b74d6a178510b06b6958b6",
+  "runId": 37776853775,
+  "jobId": 113309868383,
+  "jobConcluded": "failure",
+  "diagnosis": "All Archify and docs:check stages passed; markdownlint MD012 found six extra blank-line groups in two SQLite progress documents. External-link stage was not reached.",
+  "correctedBlankGroups": {
+    "docs/SQLITE_PROGRESS.md": 5,
+    "docs/SQLITE_MIGRATION_MATRIX.md": 1
+  },
+  "productionChanged": false,
+  "rawFailedJobLog": "/Users/cassio/.codex/verification/archify863-failed.log",
+  "rawLogSha256": "be6b212c4a765071aa8659ddeb7527736a16a83228ec5a881f3a9840561dd8a6",
+  "actualCorrectedWorkflowAccepted": false,
+  "checks": {
+    "docsCheck": "PASS",
+    "MD012BlankGroups": "none in corrected files",
+    "gitDiffCheck": "PASS",
+    "fullMarkdownlint": "not available locally; actual CI remains required"
+  }
+}

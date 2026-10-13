@@ -1,0 +1,18 @@
+{
+  "testSource": {
+    "file": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/tests/storage-recoverable-errors.test.js",
+    "sha256": "a6dcdd384892eccdb9a14a0194e69c31428e4ee4ac93197a27463986d6174c2a"
+  },
+  "scenarios": [
+    "Actual PRAGMA max_page_count exhaustion yields E_STORAGE_FULL with zero accepted rows, then recovers after increasing budget",
+    "Read-only mutation yields E_STORAGE_READ_ONLY and preserves data",
+    "Independent live writer yields E_STORAGE_BUSY and retry succeeds after rollback",
+    "Damaged database header yields E_STORAGE_CORRUPT and bytes remain unchanged"
+  ],
+  "observedPasses": {
+    "mac": "full-macos693.log lines 2320-2323; full run FAILED later complexity",
+    "windows": "windows-workflow694.log lines 2507-2510; full run FAILED unrelated teardown"
+  },
+  "scope": "Connection/transaction fault classification and recovery; not application-level every mutation or physical disk power failure",
+  "wholeScopeVerified": false
+}

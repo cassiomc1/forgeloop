@@ -1,0 +1,38 @@
+{
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "countingMethod": "Nonblank physical production lines including comments; same whole-module union on both sides; tests/scripts/package manifests excluded",
+  "scopeMethod": "Conservative candidate union: direct persistence/file-I/O signals in either version, every storage module, every changed/new production module. All omitted modules are listed too. Requires semantic scope review before release acceptance.",
+  "scopeReviewComplete": false,
+  "releaseThresholdsVerified": false,
+  "includedFiles": 282,
+  "baselineNonblankPhysicalLines": 43788,
+  "currentNonblankPhysicalLines": 52191,
+  "netReduction": -0.19190189092902155,
+  "candidateTargetMet": false,
+  "sourceRevision": "a2dcff191a4613a6b1683842b367fba91fd34547",
+  "groups": {
+    "Other production": {
+      "baseline": 4414,
+      "current": 4393,
+      "modules": 18
+    },
+    "Command adapters": {
+      "baseline": 6014,
+      "current": 6266,
+      "modules": 67
+    },
+    "Core domain": {
+      "baseline": 33360,
+      "current": 34392,
+      "modules": 132
+    },
+    "SQLite store and maintenance": {
+      "baseline": 0,
+      "current": 7140,
+      "modules": 65
+    }
+  },
+  "gapTo25PercentReduction": 19350,
+  "inventorySha256": "012f6571ecb0cbf15e3555703e3a666b0a0d85816174e40627052d8d62b951f8",
+  "finding": "The 7140-line new store/maintenance scope explains most growth; legacy domain code also grows. Removing the small read-only legacy transaction inspector cannot meet the inclusive target. No scope shrinkage or durability relaxation proposed."
+}

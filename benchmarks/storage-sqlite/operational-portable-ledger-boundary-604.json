@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "scope": "Retire operational filesystem ledger reader fallback and stale transaction text branches; explicit portable source inspection retained",
+  "sourceSha256": {
+    "src/core/events.js": "270d8cb19abc637e5e6a432269aa0041b2830713b7375c9432d9e842040d83a2",
+    "src/core/task-claim-state.js": "d2eabdbbc6846680e23c8f51d22440626fb206612817b9c6630fb245debce0a4",
+    "src/core/task-migration-validation.js": "5316075dcc6682315ce825bbfefb3ff0eb8c9da334cb1cbcd19285ea756e7b26",
+    "src/storage/singleton-import.js": "811af2a22679865f4bf8dfd0d47508444cafdf9f63fd289e5f462feb30ca06db",
+    "tests/storage-direct-artifacts.test.js": "75c94e6157e6af43cbb5fa9e00703a24e5bc9054a96a6cc6de1c953a41528794",
+    "tests/scale-ledger.test.js": "157729de27b740bd2d058089e8b5d2348026ecfa2ebffeebd0c1c59566ff7995"
+  },
+  "checks": {
+    "claimDiscoveryReceiptEventAudit": {
+      "tests": 67,
+      "pass": 67,
+      "fail": 0
+    },
+    "initialImportBundleScale": {
+      "tests": 29,
+      "pass": 29,
+      "fail": 0,
+      "note": "Before final direct claim authority-selection correction and added direct ledger control;9 direct artifact cases overlap later67."
+    },
+    "verifyFast": "PASS before final claim authority selection correction",
+    "complexityFinal": "PASS",
+    "finalImportBundleScale": {
+      "tests": 20,
+      "pass": 20,
+      "fail": 0,
+      "overlap": 0
+    },
+    "lintFinal": {
+      "errors": 0,
+      "warnings": 113
+    },
+    "verifyFastFinal": "PASS"
+  },
+  "behavior": [
+    "readEvents/readEventTail and iterateEvents refuse retained operational ledger files without native authority; absent operational ledgers remain empty without allocation.",
+    "Explicit portable readers validate event schemas and limits without selecting a database. Portable validation retains hash chronology and semantic artifact binding rules.",
+    "Singleton and migration source inspection use explicit portable readers; legacy claim inspection selects portable validation only when no current store or existing native authority is present.",
+    "Native checkpoint uses indexed tail; obsolete filesystem transaction readText branches removed.",
+    "100000-line legacy tail remains covered through explicit portable reader; native100000eventvalidchain tail controls retained."
+  ],
+  "diagnosis": [
+    "Initial traversal control expected a nonexistent error code; corrected to the existing path containment error message.",
+    "Initial claim projection chose portable reading outside an active native context despite existing database. Added existing-only admission detection;67 guards then pass."
+  ],
+  "limitations": [
+    "No exhaustive consumer/sole-writer closure inferred.",
+    "Mac603 and Windows602 full jobs cover previous immutable production snapshots;final current-source full acceptance still required.",
+    "Remote final ledger boundary validation, remaining performance/resource and LOC target acceptance remain open."
+  ],
+  "locCandidate": {
+    "modules": 273,
+    "baselineLines": 43098,
+    "currentLines": 51073,
+    "increasePercent": 18.5,
+    "targetMet": false,
+    "semanticScopeReviewComplete": false,
+    "storageModules": 65,
+    "storageLines": 7010
+  }
+}

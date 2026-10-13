@@ -1,6 +1,6 @@
 {
   "name": "@cassiomc1/forgeloop-mcp",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Local-first MCP server exposing the canonical ForgeLoop programmatic integration API over stdio and optional loopback-only HTTP.",
   "type": "module",
   "license": "PolyForm-Noncommercial-1.0.0",
@@ -8,7 +8,7 @@
     "access": "restricted"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=24.19.0"
   },
   "bin": {
     "forgeloop-mcp": "./bin/forgeloop-mcp.js",
@@ -22,13 +22,16 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@cassiomc1/forgeloop": ">=1.5.0 <2",
     "@modelcontextprotocol/server": "2.0.0"
   },
   "scripts": {
     "test": "node --test \"tests/*.test.js\""
   },
   "devDependencies": {
-    "@modelcontextprotocol/client": "2.0.0"
+    "@modelcontextprotocol/client": "2.0.0",
+    "@cassiomc1/forgeloop": "file:../.."
+  },
+  "peerDependencies": {
+    "@cassiomc1/forgeloop": ">=2.0.0 <3"
   }
 }

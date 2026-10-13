@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -54,7 +55,7 @@ test("verifyPolicyLock reports a mismatch when capabilities.json drifts after lo
     const legacy = await verifyPolicyLock(target, packageRoot);
     assert.equal(legacy.status, "NOT_APPLICABLE");
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -77,7 +78,7 @@ test("a malformed capabilities.json fails closed as INVALID in lock verification
       assert.match(result.error ?? "", /capability|malformed/i);
     }
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -113,7 +114,7 @@ test("verifyPolicyLock detects capabilities.json drift against a capability-boun
       assert.ok(result.mismatches.includes("capabilityPolicyDigest"));
     }
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -129,6 +130,6 @@ test("capabilities.json alone is recognized as policy configuration", async () =
     const { detectPolicyCapability } = await import("../src/core/policy-engine.js");
     assert.equal(await detectPolicyCapability(target, packageRoot), "AVAILABLE");
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });

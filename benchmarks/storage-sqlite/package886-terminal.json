@@ -1,0 +1,56 @@
+{
+  "increment": 886,
+  "workflowRun": 37793835687,
+  "sourceRevision": "9ced7f2252fbd47b2201989dfc19ef4a3d41c401",
+  "url": "https://github.com/cassiomc1/forgeloop/actions/runs/37793835687",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "databaseId": 113367977472,
+      "name": "Classify package paths",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "databaseId": 113368096309,
+      "name": "tarball smoke (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "mcpTests": 73,
+      "mcpPassed": 73,
+      "mcpFailed": 0,
+      "mcpSkipped": 0,
+      "coreTarballSmoke": "PASS",
+      "mcpTarballSmoke": "PASS",
+      "logSha256": "7ff0a9dd4e548cc6d9885a06a71d11723d7261edb62c55250a59dfc03582b02e"
+    },
+    {
+      "databaseId": 113368505682,
+      "name": "release package smoke (Windows)",
+      "status": "completed",
+      "conclusion": "success",
+      "mcpTests": 73,
+      "mcpPassed": 73,
+      "mcpFailed": 0,
+      "mcpSkipped": 0,
+      "coreTarballSmoke": "PASS",
+      "mcpTarballSmoke": "PASS",
+      "logSha256": "52fc223cd5479c4c31018a06d378b8da97efb2649260f385a940052af048061a"
+    },
+    {
+      "databaseId": 113368505781,
+      "name": "release package smoke (macOS)",
+      "status": "completed",
+      "conclusion": "success",
+      "mcpTests": 73,
+      "mcpPassed": 73,
+      "mcpFailed": 0,
+      "mcpSkipped": 0,
+      "coreTarballSmoke": "PASS",
+      "mcpTarballSmoke": "PASS",
+      "logSha256": "b2b7110ff4ab12a906acd950ae260a2c511140c4c1c941b3feee881bd135a599"
+    }
+  ],
+  "scope": "Locked installs and packaged core/MCP smoke on Linux/macOS/Windows; each host passes all 73 MCP tests, MCP package smoke and core tarball smoke. No registry publication or merge."
+}

@@ -1,7 +1,7 @@
-import { migrateLegacyLayout } from "../core/task-migration.js";
+import { migrateLegacyTaskStorage } from "../core/task-storage-migration.js";
 
-export async function runTaskMigrate({ target, packageRoot, dryRun = false } = {}) {
-  const result = await migrateLegacyLayout(target, { packageRoot, dryRun });
+export async function runTaskMigrate({ target, packageRoot, dryRun = false, destination, writersQuiesced = false } = {}) {
+  const result = await migrateLegacyTaskStorage(target, { packageRoot, dryRun, destination, writersQuiesced });
   return result;
 }
 

@@ -1,0 +1,47 @@
+{
+  "runId": 37998309000,
+  "sourceRevision": "c89a9dbc55df4632d08fdabd681d9e7913834e77",
+  "status": "completed",
+  "conclusion": "success",
+  "capturedAt": "2026-10-09T23:37:49.007552+00:00",
+  "jobs": [
+    {
+      "id": 114049884056,
+      "name": "Classify package paths",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-09T22:21:32Z",
+      "completed_at": "2026-10-09T22:21:56Z"
+    },
+    {
+      "id": 114051534218,
+      "name": "tarball smoke (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-09T22:39:12Z",
+      "completed_at": "2026-10-09T22:40:00Z"
+    },
+    {
+      "id": 114056918762,
+      "name": "release package smoke (macOS)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-09T22:40:03Z",
+      "completed_at": "2026-10-09T22:46:47Z"
+    },
+    {
+      "id": 114056918811,
+      "name": "release package smoke (Windows)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-09T22:46:49Z",
+      "completed_at": "2026-10-09T22:48:06Z"
+    }
+  ],
+  "laterProductionCorrectionCovered": false,
+  "wholePlanAcceptance": false,
+  "log": {
+    "path": "/Users/cassio/.codex/verification/package-c89a9db-full.log",
+    "sha256": "6e5c66e1fd3beed4487ae40acab91d0645c3cc7df5ec55712650acb2e6c5bfee"
+  }
+}

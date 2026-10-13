@@ -1,0 +1,663 @@
+import { publishAttachmentFile, verifyAttachmentFile } from "./attachment-files.js";
+import { insertVerifiedAttachmentReference, validateAttachmentReference } from "./attachment-references.js";
+import path from "node:path";
+import { randomUUID, createHash } from "node:crypto";
+import { operationalContext, getOperationalStore } from "./operational-context.js";
+import { canonicalFingerprint } from "../core/artifacts.js";
+import { taskStorageKey } from "../core/task-identity.js";
+import { TASK_ARTIFACT_FILES } from "../core/task-paths.js";
+import { artifactByteDigest } from "./artifact-bytes.js";
+import { runInTransaction } from "./transaction.js";
+import { assertArtifactTaskIdentity, decodeIndexedEvent, decodeIndexedRecord, decodeIndexedTaskPayloads, appendEvent, putArtifact, putSession, upsertTask } from "./repository.js";
+import { resolveStoreReservationState } from "./task-guards.js";
+import { isOwnedStorageSnapshot } from "./snapshot.js";
+import { RECORD_DEFINITIONS, RECORD_SCHEMA_KINDS } from "./record-definitions.js";
+
+const SINGLE = Object.fromEntries(Object.entries(TASK_ARTIFACT_FILES)
+  .filter(([, filename]) => filename.endsWith(".json"))
+  .map(([kind, filename]) => [filename, kind]));
+const COLLECTIONS = Object.freeze({ gates: "gate", actions: "action", approvals: "approval", executions: "execution", evaluations: "evaluation", decisions: "decision", handoffs: "handoff", attestations: "attestation", "structural-quality": "structuralQuality" });
+const taskRowStatements = new WeakMap();
+
+function recordKey(taskId, ...parts) {
+  return JSON.stringify([taskId, ...parts]);
+}
+
+function recordDefinition(kind) {
+  return Object.hasOwn(RECORD_DEFINITIONS, kind) ? RECORD_DEFINITIONS[kind] : null;
+}
+
+function queryTaskRow(db, taskKey) {
+  if (!taskRowStatements.has(db)) taskRowStatements.set(db, db.prepare("SELECT * FROM tasks WHERE task_key = ?"));
+  return taskRowStatements.get(db).get(taskKey) ?? null;
+}
+
+function storageError(code, message) {
+  return Object.assign(new Error(message), { code });
+}
+
+function locator(relativePath) {
+  if (typeof relativePath !== "string" || relativePath.includes("\\")) return null;
+  if (relativePath === ".forgeloop/session.json") return { kind: "activeSession" };
+  const session = /^\.forgeloop\/sessions\/([^/]+)\.json$/.exec(relativePath);
+  if (session && !session[1].includes("..") && !session[1].includes("\u0000")) return { kind: "session", sessionId: session[1] };
+  const match = /^\.forgeloop\/task-state\/([a-f0-9]{64})\/(.+)$/.exec(relativePath);
+  if (!match) return null;
+  const [, taskKey, name] = match;
+  if (name.split("/").some(segment => !segment || segment === "." || segment === ".." || segment.includes("\u0000"))) {
+    throw storageError("ARTIFACT_PATH_INVALID", "Operational artifact path escapes its logical namespace");
+  }
+  if (name === "events.ndjson") return { taskKey, kind: "events", artifactId: "current" };
+  if (SINGLE[name]) return { taskKey, kind: SINGLE[name], artifactId: "current" };
+  const separator = name.indexOf("/");
+  const kind = COLLECTIONS[name.slice(0, separator)];
+  if (separator > 0 && kind && name.endsWith(".json")) return { taskKey, kind, artifactId: name.slice(separator + 1, -5) };
+  throw storageError("E_STORAGE_OPERATION_UNSUPPORTED", `Unsupported operational artifact: ${relativePath}`);
+}
+
+function serialized(payload) { return `${JSON.stringify(payload, null, 2)}\n`; }
+
+function observeEventRows(db, taskId, limit, consume = null, bindRows = true) {
+  const statement = limit === null
+    ? db.prepare("SELECT * FROM events WHERE task_id = ? ORDER BY seq")
+    : db.prepare("SELECT * FROM events WHERE task_id = ? ORDER BY seq DESC LIMIT ?");
+  const rows = limit === null ? statement.iterate(taskId) : statement.iterate(taskId, limit);
+  const digest = bindRows ? createHash("sha256") : null;
+  for (const row of rows) {
+    const event = decodeIndexedEvent(row);
+    digest?.update(canonicalFingerprint(row));
+    if (consume) consume(event);
+  }
+  return digest?.digest("hex") ?? null;
+}
+
+/**
+ * A preparation scope holds validated proposed records, never a database lock.
+ * Its read set is checked again under BEGIN IMMEDIATE before any SQL mutation.
+ * Each existing domain transaction remains one atomic database commit; external
+ * work between transactions is neither replayed nor held under a writer lock.
+ */
+class OperationalStore {
+  constructor(db, target, { readOnly = false, parent = null } = {}) {
+    this.db = db;
+    this.target = path.resolve(target);
+    this.readOnly = readOnly;
+    this.parent = parent;
+    // Only a writable scope or its detached proof view needs future commit
+    // observations. Pure readers still validate every payload and event.
+    this.captureObservations = !readOnly || Boolean(parent?.captureObservations);
+    this.reads = new Map();
+    this.snapshotTaskRows = new Map();
+    this.writes = new Map();
+    this.recordWrites = {
+      action: new Map(),
+      approval: new Map(),
+      execution: new Map(),
+    };
+    this.events = new Map();
+    this.attachments = new Map();
+    this.transaction = null;
+    this.active = true;
+    this.ownedLeases = new Map();
+  }
+
+  recognizes(relativePath) { return locator(relativePath) !== null; }
+
+  hasPreparedMutations() {
+    return Boolean(this.transaction || this.writes.size || this.events.size || this.attachments.size || Object.values(this.recordWrites).some(records => records.size));
+  }
+
+  artifactExists(relativePath) {
+    const location = locator(relativePath);
+    // Every canonical task has a logical ledger, including an empty one.
+    // Presence is discovery only; readEvents still validates actual evidence.
+    if (location?.kind === "events") return this.taskId(location) !== null;
+    return this.readText(relativePath) !== null;
+  }
+
+  assertWritable() {
+    if (this.readOnly) throw storageError("E_STORAGE_READ_ONLY", "Read-only operational scope cannot stage mutations");
+  }
+
+  observe(key, query, conflictCode = null) {
+    const value = query();
+    if (!this.captureObservations) return value;
+    const previous = this.reads.get(key);
+    // The atomic apply phase may reread its own just-written rows. Its complete
+    // read set was already checked before the first write under BEGIN IMMEDIATE.
+    if (this.transaction && !this.db.isTransaction && previous && canonicalFingerprint(value ?? null) !== previous.fingerprint) {
+      throw storageError(previous.conflictCode ?? "E_STATE_REVISION_CONFLICT", "Operational records changed between preparation reads");
+    }
+    if (!this.reads.has(key)) {
+      // Task writes need the observed revision, while conflict detection binds
+      // the entire row through its fingerprint and live query. Do not retain
+      // every descriptor/state payload alongside an immutable discovery copy.
+      const retained = key.startsWith("task:") && value ? { revision: value.revision } : Array.isArray(value) ? null : value;
+      this.reads.set(key, { query, value: retained, conflictCode, fingerprint: canonicalFingerprint(value ?? null) });
+    }
+    return value;
+  }
+
+  taskRow(taskKey) {
+    const immutable = isOwnedStorageSnapshot(this.db);
+    if (immutable && this.snapshotTaskRows.has(taskKey)) return this.snapshotTaskRows.get(taskKey);
+    // Cache the statement, never the row; detached observations rebind this.db to the live parent.
+    const row = this.observe(`task:${taskKey}`, () => queryTaskRow(this.db, taskKey));
+    if (row) decodeIndexedTaskPayloads(row);
+    // Reuse only successfully validated bytes from a live owned read-only copy.
+    // Observation queries remain uncached and rebind to the parent at commit.
+    if (immutable) {
+      // Eviction is safe only for this owned immutable snapshot. Re-reading an
+      // evicted row repeats payload validation and preserves its observation.
+      if (this.snapshotTaskRows.size >= 64) this.snapshotTaskRows.delete(this.snapshotTaskRows.keys().next().value);
+      this.snapshotTaskRows.set(taskKey, row ? Object.freeze(row) : null);
+    }
+    return row;
+  }
+
+  listTaskKeys() {
+    return this.observe("task-catalog", () => this.db.prepare("SELECT task_key FROM tasks ORDER BY task_key").all()).map(row => row.task_key);
+  }
+
+  taskId(location) {
+    const descriptorPath = `.forgeloop/task-state/${location.taskKey}/task.json`;
+    const staged = this.writes.get(descriptorPath);
+    const taskId = staged ? JSON.parse(staged.text).taskId : this.taskRow(location.taskKey)?.task_id;
+    if (!taskId) return null;
+    if (taskStorageKey(taskId) !== location.taskKey) throw storageError("E_TASK_KEY_MISMATCH", "Stored task identity disagrees with its namespace");
+    return taskId;
+  }
+
+  artifactRow(location, taskId) {
+    return this.observe(`artifact:${JSON.stringify([taskId, location.kind, location.artifactId])}`, () => this.db.prepare("SELECT * FROM task_artifacts WHERE task_id = ? AND kind = ? AND artifact_id = ?").get(taskId, location.kind, location.artifactId) ?? null);
+  }
+
+  readRecord(kind, taskId, artifactId) {
+    const definition = recordDefinition(kind);
+    if (!definition) throw storageError("E_STORAGE_OPERATION_UNSUPPORTED", `Unknown indexed record kind: ${kind}`);
+    definition.pathBuilder(taskId, artifactId);
+    if (!this.taskId({ taskKey: taskStorageKey(taskId) })) return null;
+    const staged = this.recordWrites[kind].get(recordKey(taskId, artifactId));
+    if (staged !== undefined) return structuredClone(staged);
+    const row = this.observe(
+      `record:${recordKey(taskId, kind, artifactId)}`,
+      () => this.db.prepare(`SELECT * FROM ${definition.table} WHERE task_id = ? AND ${definition.idColumn} = ?`).get(taskId, artifactId) ?? null,
+      definition.conflictCode,
+    );
+    return row ? decodeIndexedRecord(row, kind, { requireTaskIdentity: true }) : null;
+  }
+
+  listRecords(taskId, kind) {
+    const definition = recordDefinition(kind);
+    if (!definition) throw storageError("E_STORAGE_OPERATION_UNSUPPORTED", `Unknown indexed record kind: ${kind}`);
+    if (!this.taskId({ taskKey: taskStorageKey(taskId) })) return [];
+    const rows = this.observe(
+      `record-list:${taskId}:${kind}`,
+      () => this.db.prepare(`SELECT * FROM ${definition.table} WHERE task_id = ? ORDER BY ${definition.idColumn}`).all(taskId),
+    );
+    const records = new Map(rows.map(row => [row[definition.idColumn], decodeIndexedRecord(row, kind, { requireTaskIdentity: true })]));
+    for (const record of this.recordWrites[kind].values()) {
+      if (record.taskId === taskId) records.set(record[definition.payloadId], structuredClone(record));
+    }
+    return [...records.values()];
+  }
+
+  readAction(taskId, actionId) { return this.readRecord("action", taskId, actionId); }
+
+  listActions(taskId) { return this.listRecords(taskId, "action"); }
+
+  findActionByIdempotencyKey(taskId, idempotencyKey) {
+    if (!this.taskId({ taskKey: taskStorageKey(taskId) })) return null;
+    const row = this.observe(`idempotency:${recordKey(taskId, idempotencyKey)}`, () => this.db.prepare("SELECT * FROM actions WHERE task_id = ? AND idempotency_key = ?").get(taskId, idempotencyKey) ?? null, "E_ACTION_IDEMPOTENCY_CONFLICT");
+    for (const action of this.recordWrites.action.values()) {
+      if (action.taskId === taskId && action.idempotencyKey === idempotencyKey) return structuredClone(action);
+    }
+    return row ? decodeIndexedRecord(row, "action", { requireTaskIdentity: true }) : null;
+  }
+
+  readApproval(taskId, approvalId) { return this.readRecord("approval", taskId, approvalId); }
+
+  listApprovals(taskId) { return this.listRecords(taskId, "approval"); }
+
+  readExecution(taskId, executionId) { return this.readRecord("execution", taskId, executionId); }
+
+  assertRecordMutation(record) {
+    this.assertWritable();
+    if (!this.transaction) throw storageError("E_STORAGE_TRANSACTION_INVALID", "Operational record writes require a domain transaction");
+    if (!record || record.taskId !== this.transaction.taskId) throw storageError("E_TASK_CONTEXT_MISMATCH", "Operational record targets another task than its transaction");
+    if (!this.taskId({ taskKey: taskStorageKey(record.taskId) })) throw storageError("E_TASK_NOT_FOUND", "Operational mutation requires an existing task descriptor");
+  }
+
+  stageRecord(kind, record) {
+    const definition = recordDefinition(kind);
+    if (!definition) throw storageError("E_STORAGE_OPERATION_UNSUPPORTED", `Unknown indexed record kind: ${kind}`);
+    this.assertRecordMutation(record);
+    const artifactId = record[definition.payloadId];
+    this.readRecord(kind, record.taskId, artifactId);
+    this.recordWrites[kind].set(recordKey(record.taskId, artifactId), structuredClone(record));
+  }
+
+  stageAction(action) { this.stageRecord("action", action); }
+
+  stageApproval(approval) { this.stageRecord("approval", approval); }
+
+  stageExecution(execution) { this.stageRecord("execution", execution); }
+
+  listArtifactNames(taskId, collection) {
+    const [directory, ...segments] = collection.split("/");
+    const kind = COLLECTIONS[directory];
+    if (!kind) throw storageError("E_STORAGE_OPERATION_UNSUPPORTED", `Unknown operational collection: ${collection}`);
+    if (segments.some(segment => !segment || segment === "." || segment === ".." || segment.includes("\\") || segment.includes("\u0000"))) throw storageError("ARTIFACT_PATH_INVALID", "Invalid operational collection path");
+    const prefix = segments.length ? `${segments.join("/")}/` : "";
+    const record = recordDefinition(kind);
+    const rows = this.observe(`collection:${JSON.stringify([taskId, kind])}`, () => record
+      ? this.db.prepare(`SELECT ${record.idColumn} AS artifact_id FROM ${record.table} WHERE task_id = ? ORDER BY ${record.idColumn}`).all(taskId)
+      : this.db.prepare("SELECT artifact_id FROM task_artifacts WHERE task_id = ? AND kind = ? ORDER BY artifact_id").all(taskId, kind));
+    const names = new Set(rows.map(row => `${row.artifact_id}.json`));
+    for (const value of this.recordWrites[kind]?.values() ?? []) {
+      if (value.taskId === taskId) names.add(`${value[record.payloadId]}.json`);
+    }
+    for (const write of this.writes.values()) {
+      if (write.location.taskKey === taskStorageKey(taskId) && write.location.kind === kind) names.add(`${write.location.artifactId}.json`);
+    }
+    return [...names].filter(name => name.startsWith(prefix) && !name.slice(prefix.length).includes("/")).map(name => name.slice(prefix.length)).sort();
+  }
+
+  /** A finite collection capture never holds a native transaction across validation. */
+  captureDecisionTexts(taskId) {
+    const capture = () => {
+      const entries = [];
+      for (const name of this.listArtifactNames(taskId, "decisions").filter(value => /^[A-Za-z0-9][A-Za-z0-9_-]{0,127}\.json$/.test(value)).sort()) {
+        const relativePath = `.forgeloop/task-state/${taskStorageKey(taskId)}/decisions/${name}`;
+        // Defer a later storage error until preceding captured values have had
+        // their schema validation, preserving the existing first-error order.
+        try { entries.push({ relativePath, text: this.readText(relativePath) }); }
+        catch (error) { entries.push({ error }); break; }
+      }
+      return entries;
+    };
+    if (this.hasPreparedMutations()) return capture();
+    if (this.db.isTransaction) throw storageError("E_STORAGE_SNAPSHOT_TRANSACTION", "Decision capture requires committed operational records");
+    return runInTransaction(this.db, capture, { immediate: false });
+  }
+
+  executionTaskId(executionId) {
+    const definition = RECORD_DEFINITIONS.execution;
+    const rows = this.observe(`execution-reference:${executionId}`, () => this.db.prepare(`SELECT task_id FROM ${definition.table} WHERE ${definition.idColumn} = ? ORDER BY task_id LIMIT 2`).all(executionId));
+    const taskIds = new Set(rows.map(row => row.task_id));
+    for (const execution of this.recordWrites.execution.values()) {
+      if (execution[definition.payloadId] === executionId) taskIds.add(execution.taskId);
+    }
+    if (taskIds.size !== 1) throw storageError("E_EXECUTION_REF_INVALID", taskIds.size ? "Execution reference is ambiguous across tasks" : "Execution reference does not resolve to a canonical record");
+    return [...taskIds][0];
+  }
+
+  readText(relativePath) {
+    if (this.writes.has(relativePath)) return this.writes.get(relativePath).text;
+    const location = locator(relativePath);
+    if (!location) throw storageError("E_STORAGE_OPERATION_UNSUPPORTED", `Not an operational artifact: ${relativePath}`);
+    if (location.kind === "session" || location.kind === "activeSession") {
+      const row = this.observe(`session:${location.sessionId ?? "active"}`, () => location.kind === "session"
+        ? this.db.prepare("SELECT * FROM sessions WHERE session_id = ?").get(location.sessionId) ?? null
+        : this.db.prepare("SELECT s.* FROM sessions s JOIN storage_meta m ON m.active_session_id = s.session_id WHERE m.id = 1").get() ?? null);
+      return row ? serialized(JSON.parse(row.activation_json)) : null;
+    }
+    const row = this.taskRow(location.taskKey);
+    if (location.kind === "descriptor") return row ? serialized(JSON.parse(row.descriptor_json)) : null;
+    if (location.kind === "state") return row?.state_json ? serialized(JSON.parse(row.state_json)) : null;
+    const taskId = this.taskId(location);
+    if (!taskId) return null;
+    if (location.kind === "events") return this.readEvents(relativePath).map(event => `${JSON.stringify(event)}\n`).join("");
+    if (recordDefinition(location.kind)) {
+      const record = this.readRecord(location.kind, taskId, location.artifactId);
+      return record ? serialized(record) : null;
+    }
+    const artifact = this.artifactRow(location, taskId);
+    if (!artifact) return null;
+    const payload = JSON.parse(artifact.payload_json);
+    assertArtifactTaskIdentity(payload, taskId);
+    if (artifact.fingerprint !== undefined && artifact.fingerprint !== canonicalFingerprint(payload)) throw storageError("E_STORAGE_PAYLOAD_MISMATCH", "Stored artifact fingerprint disagrees with its payload");
+    if (artifact.source_json !== undefined && (artifact.source_json !== null || artifact.byte_digest !== null)) {
+      artifactByteDigest({ sourceText: artifact.source_json, byteDigest: artifact.byte_digest, payload });
+    }
+    return artifact.source_json ?? serialized(payload);
+  }
+
+  appendEvent(event) {
+    this.assertRecordMutation(event);
+    const taskId = this.transaction.taskId;
+    this.readEvents(`.forgeloop/task-state/${taskStorageKey(taskId)}/events.ndjson`, 1);
+    let staged = this.events.get(taskId);
+    if (!staged) { staged = []; this.events.set(taskId, staged); }
+    staged.push(structuredClone(event));
+  }
+
+  readEvents(relativePath, limit = null) {
+    if (limit === null) return [...this.iterateEvents(relativePath)];
+    const location = locator(relativePath);
+    if (location?.kind !== "events") throw storageError("E_EVENT_INVALID", "Expected logical ledger path");
+    const taskId = this.taskId(location);
+    if (!taskId) return [];
+    // Audit authority still checks actual events. A tail head alone is not a
+    // validation cursor; full reads bind every observed row against tampering.
+    const key = `events:${taskId}:${limit ?? "all"}`;
+    const storedEvents = [];
+    const digest = observeEventRows(this.db, taskId, limit, event => storedEvents.push(event), this.captureObservations);
+    if (this.captureObservations && !this.reads.has(key)) this.reads.set(key, { query: () => observeEventRows(this.db, taskId, limit), value: null,
+      conflictCode: null, fingerprint: canonicalFingerprint(digest) });
+    if (limit !== null) storedEvents.reverse();
+    const staged = this.events.get(taskId) ?? [];
+    // Keep the persisted-head observation above even when staged events fill
+    // the tail: commit must still reject a competing persisted append.
+    const stagedTail = Number.isInteger(limit) && limit > 0 ? staged.slice(-limit) : staged;
+    for (const event of stagedTail) storedEvents.push(structuredClone(event));
+    return limit === null ? storedEvents : storedEvents.slice(-limit);
+  }
+
+  /** A collection owner may complete this observation only after its full canonical row scan. */
+  beginEventSnapshotObservation(relativePath) {
+    const location = locator(relativePath);
+    if (location?.kind !== "events") throw storageError("E_EVENT_INVALID", "Expected logical ledger path");
+    const taskId = this.taskId(location);
+    if (!taskId) throw storageError("E_TASK_NOT_FOUND", "Snapshot ledger requires its canonical task");
+    if (!this.captureObservations) return null;
+    const key = `events:${taskId}:all`;
+    const firstObservation = !this.reads.has(key);
+    if (firstObservation) this.reads.set(key, { query: () => { throw storageError("E_STORAGE_OBSERVATION_INCOMPLETE", "Event iteration was not fully consumed"); }, value: null, fingerprint: null });
+    return digest => {
+      if (!this.active) throw storageError("E_STORAGE_TRANSACTION_EXPIRED", "Snapshot observation scope has closed");
+      if (typeof digest !== "string" || !/^[a-f0-9]{64}$/.test(digest)) throw storageError("E_STORAGE_OBSERVATION_INCOMPLETE", "Snapshot observation requires a complete row digest");
+      if (firstObservation) this.reads.set(key, { query: () => observeEventRows(this.db, taskId, null), value: null,
+        conflictCode: null, fingerprint: canonicalFingerprint(digest) });
+    };
+  }
+
+  /** Full consumption binds every observed row; partial reads cannot authorize a commit. */
+  *iterateEvents(relativePath) {
+    if (!this.active) throw storageError("E_STORAGE_TRANSACTION_INVALID", "Operational iterator scope already closed");
+    const location = locator(relativePath);
+    if (location?.kind !== "events") throw storageError("E_EVENT_INVALID", "Expected logical ledger path");
+    const taskId = this.taskId(location);
+    if (!taskId) return;
+    const key = `events:${taskId}:all`;
+    const firstObservation = this.captureObservations && !this.reads.has(key);
+    if (firstObservation) this.reads.set(key, { query: () => { throw storageError("E_STORAGE_OBSERVATION_INCOMPLETE", "Event iteration was not fully consumed"); }, value: null, fingerprint: null });
+    const digest = this.captureObservations ? createHash("sha256") : null;
+    for (const row of this.db.prepare("SELECT * FROM events WHERE task_id = ? ORDER BY seq").iterate(taskId)) {
+      if (!this.active) throw storageError("E_STORAGE_TRANSACTION_INVALID", "Operational iterator scope already closed");
+      const event = decodeIndexedEvent(row);
+      digest?.update(canonicalFingerprint(row));
+      yield event;
+    }
+    if (!this.active) throw storageError("E_STORAGE_TRANSACTION_INVALID", "Operational iterator scope already closed");
+    if (firstObservation) this.reads.set(key, { query: () => observeEventRows(this.db, taskId, null), value: null,
+      conflictCode: null, fingerprint: canonicalFingerprint(digest.digest("hex")) });
+    // Capture membership once, preserving the prior replace-on-append
+    // iterator boundary while keeping the staged mutable array private.
+    for (const event of (this.events.get(taskId) ?? []).slice()) {
+      if (!this.active) throw storageError("E_STORAGE_TRANSACTION_INVALID", "Operational iterator scope already closed");
+      yield structuredClone(event);
+    }
+  }
+
+  assertMutationTask(location) {
+    if (location?.taskKey && location.taskKey !== taskStorageKey(this.transaction.taskId)) {
+      throw storageError("E_TASK_CONTEXT_MISMATCH", "Operational mutation targets another task than its transaction");
+    }
+  }
+
+  stageJsonRecord(relativePath, text, schemaName) {
+    const kind = Object.hasOwn(RECORD_SCHEMA_KINDS, schemaName) ? RECORD_SCHEMA_KINDS[schemaName] : null;
+    const definition = recordDefinition(kind);
+    if (!definition) return this.stageText(relativePath, text);
+    const payload = JSON.parse(text);
+    const artifactId = payload?.[definition.payloadId];
+    const typedPath = payload?.taskId && artifactId
+      ? definition.pathBuilder(payload.taskId, artifactId)
+      : null;
+    if (typedPath !== relativePath) return this.stageText(relativePath, text);
+    this.stageRecord(kind, payload);
+  }
+
+  stageText(relativePath, text) {
+    this.assertWritable();
+    if (!this.transaction) throw storageError("E_STORAGE_TRANSACTION_INVALID", "Operational writes require a domain transaction");
+    const location = locator(relativePath);
+    if (!location || location.kind === "events" || recordDefinition(location.kind)) {
+      throw storageError("E_STORAGE_OPERATION_UNSUPPORTED", "Typed operational records must use their task mutation methods");
+    }
+    this.assertMutationTask(location);
+    this.readText(relativePath);
+    const payload = JSON.parse(text);
+    if (location.kind === "descriptor" && (payload.taskKey !== location.taskKey || taskStorageKey(payload.taskId) !== location.taskKey)) {
+      throw storageError("E_TASK_KEY_MISMATCH", "Proposed descriptor disagrees with its namespace");
+    }
+    this.writes.set(relativePath, { location, text, payload });
+  }
+
+  stageDelete(relativePath) {
+    this.assertWritable();
+    if (!this.transaction) throw storageError("E_STORAGE_TRANSACTION_INVALID", "Operational deletion requires a domain transaction");
+    const location = locator(relativePath);
+    if (!location || !["state", "recovery", "continuity"].includes(location.kind)) throw storageError("E_STORAGE_OPERATION_UNSUPPORTED", "Audit records cannot be deleted through the mutation overlay");
+    this.assertMutationTask(location);
+    if (this.readText(relativePath) === null) {
+      const taskId = this.taskId(location);
+      const observed = this.reads.get(`artifact:${JSON.stringify([taskId, location.kind, location.artifactId])}`);
+      if (observed?.value) throw storageError("E_STATE_REVISION_CONFLICT", "Operational deletion target changed during preparation");
+      throw storageError("ARTIFACT_MISSING", "Operational deletion target is missing");
+    }
+    this.writes.set(relativePath, { location, text: null, payload: null, deleted: true });
+  }
+
+  commit() {
+    this.assertWritable();
+    runInTransaction(this.db, () => {
+      for (const [key, observation] of this.reads) {
+        if (canonicalFingerprint(observation.query() ?? null) !== observation.fingerprint) {
+          if (key === "task-catalog" && [...this.writes.values()].some(write => write.location.kind === "descriptor")) {
+            throw storageError("E_STORAGE_CATALOG_CHANGED", "Claim candidates changed before reservation");
+          }
+          if (observation.conflictCode) throw storageError(observation.conflictCode, "Operational binding changed during preparation");
+          throw storageError("E_STATE_REVISION_CONFLICT", "Operational records changed while this mutation was prepared");
+        }
+      }
+      for (const [kind, records] of Object.entries(this.recordWrites)) {
+        const definition = recordDefinition(kind);
+        for (const [key, record] of records) {
+          this.assertRecordMutation(record);
+          const id = record[definition.payloadId];
+          if (key !== recordKey(record.taskId, id)) throw storageError("E_STORAGE_PAYLOAD_MISMATCH", "Prepared record identity changed before commit");
+          definition.pathBuilder(record.taskId, id);
+        }
+      }
+      const descriptors = [...this.writes.values()].filter(write => write.location.kind === "descriptor");
+      for (const write of descriptors) {
+        const descriptor = write.payload;
+        const previous = this.db.prepare("SELECT state_json FROM tasks WHERE task_id = ?").get(descriptor.taskId);
+        upsertTask(this.db, { taskId: descriptor.taskId, descriptor, state: previous?.state_json ? JSON.parse(previous.state_json) : null });
+        this.db.prepare("DELETE FROM claims WHERE task_id = ?").run(descriptor.taskId);
+        const insert = this.db.prepare("INSERT INTO claims (task_id, claim_norm, reservation_state, created_at) VALUES (?, ?, 'ACTIVE', ?)");
+        for (const claim of descriptor.writeClaims) insert.run(descriptor.taskId, claim, descriptor.updatedAt);
+      }
+      for (const [kind, records] of Object.entries(this.recordWrites)) {
+        const definition = recordDefinition(kind);
+        for (const record of records.values()) definition.writer(this.db, { taskId: record.taskId, [kind]: record });
+      }
+      for (const write of this.writes.values()) this.apply(write);
+      for (const reference of this.attachments.values()) insertVerifiedAttachmentReference(this.db, reference);
+      for (const [taskId, events] of this.events) for (const event of events) appendEvent(this.db, { taskId, event });
+      const affectedTasks = new Set(this.events.keys());
+      for (const write of this.writes.values()) if (write.location.taskKey) affectedTasks.add(this.taskId(write.location));
+      for (const records of Object.values(this.recordWrites)) {
+        for (const record of records.values()) affectedTasks.add(record.taskId);
+      }
+      for (const taskId of affectedTasks) {
+        const reservationState = resolveStoreReservationState(this.db, taskId);
+        this.db.prepare("UPDATE claims SET reservation_state = ? WHERE task_id = ?").run(reservationState, taskId);
+      }
+    });
+    this.reads.clear();
+    this.writes.clear();
+    for (const records of Object.values(this.recordWrites)) records.clear();
+    this.events.clear();
+    this.attachments.clear();
+  }
+
+  apply({ location, payload, text, deleted = false }) {
+    if (location.kind === "session") {
+      if (payload.sessionId !== location.sessionId) throw storageError("E_STORAGE_PAYLOAD_MISMATCH", "Activation belongs to another session");
+      putSession(this.db, { sessionId: location.sessionId, activation: payload });
+      return;
+    }
+    if (location.kind === "activeSession") {
+      this.db.prepare("UPDATE storage_meta SET active_session_id = ? WHERE id = 1").run(payload.sessionId);
+      return;
+    }
+    const taskId = this.taskId(location);
+    if (!taskId) throw storageError("E_TASK_NOT_FOUND", "Operational mutation requires its canonical descriptor");
+    if (deleted) {
+      if (location.kind === "state") this.db.prepare("UPDATE tasks SET phase = NULL, revision = NULL, state_json = NULL WHERE task_id = ?").run(taskId);
+      else this.db.prepare("DELETE FROM task_artifacts WHERE task_id = ? AND kind = ? AND artifact_id = ?").run(taskId, location.kind, location.artifactId);
+      return;
+    }
+    if (location.kind === "descriptor") return;
+    if (location.kind === "state") {
+      if (payload.taskId !== taskId) throw storageError("E_TASK_ID_MISMATCH", "State belongs to another task");
+      const expectedRevision = this.reads.get(`task:${location.taskKey}`)?.value?.revision ?? null;
+      const changed = this.db.prepare("UPDATE tasks SET phase = ?, revision = ?, state_json = ? WHERE task_id = ? AND revision IS ?").run(payload.phase, payload.revision ?? null, JSON.stringify(payload), taskId, expectedRevision);
+      if (changed.changes !== 1) throw storageError("E_STATE_REVISION_CONFLICT", "State mutation lost its task");
+      return;
+    }
+    if (recordDefinition(location.kind)) throw storageError("E_STORAGE_OPERATION_UNSUPPORTED", "Typed operational records must use their task mutation methods");
+    putArtifact(this.db, { taskId, kind: location.kind, artifactId: location.artifactId, payload, sourceText: text });
+  }
+}
+
+function writableAncestor(store) {
+  let current = store;
+  while (current && current.readOnly) current = current.parent;
+  return current ?? null;
+}
+
+async function commitPreparedStore(store, packageRoot) {
+  // A new task can appear during preparation. Refresh only the claim inputs,
+  // through the shared domain validator, before trying to reserve the writer
+  // again. Do not replay the command callback or any external operation.
+  for (let refresh = 0; ; refresh += 1) {
+    try { store.commit(); return; }
+    catch (error) {
+      if (error.code !== "E_STORAGE_CATALOG_CHANGED" || refresh >= 3) throw error;
+      store.reads.delete("task-catalog");
+      const { discoverTasks } = await import("../core/task-discovery.js");
+      const { assertNoScopeConflicts } = await import("../core/task-scope.js");
+      const tasks = await discoverTasks(store.target, packageRoot);
+      for (const write of store.writes.values()) {
+        if (write.location.kind === "descriptor") assertNoScopeConflicts(write.payload.writeClaims, tasks, write.payload.taskId);
+      }
+    }
+  }
+}
+
+export async function withOperationalStore({ db, target, readOnly = false }, callback) {
+  const existing = getOperationalStore(target);
+  if (existing) {
+    if (existing.db !== db) throw storageError("E_TASK_CONTEXT_MISMATCH", "Cannot switch stores in an active project scope");
+    return callback(existing);
+  }
+  const store = new OperationalStore(db, target, { readOnly });
+  try { return await operationalContext.run(store, () => callback(store)); }
+  finally { store.active = false; }
+}
+
+/** A detached immutable audit scope cannot stage mutations or replace caller observations. */
+export async function withOperationalReadSnapshot({ db, target }, callback) {
+  const source = getOperationalStore(target);
+  if (source?.hasPreparedMutations()) {
+    throw storageError("E_STORAGE_SNAPSHOT_TRANSACTION", "Detached audit requires committed operational records");
+  }
+  // A detached scope is an immutable audit view even when its parent owns a
+  // writable leased connection. Its observations may still be merged into a
+  // writable parent after the view closes, but the view itself must never
+  // prepare or commit mutations against its snapshot handle.
+  const store = new OperationalStore(db, target, { readOnly: true, parent: source });
+  store.stageText = store.stageJsonRecord = store.stageDelete = store.stageAction = store.stageApproval = store.stageExecution = store.appendEvent = () => {
+    throw storageError("E_STORAGE_READ_ONLY", "Detached audit cannot stage operational writes");
+  };
+  try { return await operationalContext.run(store, () => callback(store)); }
+  finally {
+    store.active = false;
+    store.snapshotTaskRows.clear();
+    const writable = writableAncestor(source);
+    if (writable) {
+      // Observation queries resolve this store's db at commit time. Preserve
+      // snapshot fingerprints, but query the live parent connection on recheck.
+      Object.defineProperty(store, "db", { configurable: true, get: () => writable.db });
+      for (const [key, observation] of store.reads) {
+        if (!writable.reads.has(key)) writable.reads.set(key, observation);
+      }
+    }
+    // The detached scope is closed now. Any observations needed by a writable
+    // ancestor were copied above; release this scope's query closures and
+    // fingerprints so the closed snapshot cannot be retained by its map.
+    store.reads.clear();
+    // Closed detached scopes no longer need their parent chain. The deferred
+    // observations retain this store and resolve through the writable db getter
+    // above, so releasing the chain avoids retaining closed snapshot handles.
+    store.parent = null;
+  }
+}
+
+export async function withOperationalTransaction({ target, taskId, operation, packageRoot, recordCommitEvent }, callback) {
+  const store = getOperationalStore(target);
+  if (!store) throw storageError("E_STORAGE_OPERATION_UNSUPPORTED", "No operational store selected");
+  if (store.readOnly) throw storageError("E_STORAGE_READ_ONLY", "Read-only operational scope cannot prepare mutations");
+  if (store.transaction) {
+    if (store.transaction.taskId !== taskId) throw storageError("E_TASK_CONTEXT_MISMATCH", "Nested transaction targets another task");
+    return callback(store.transaction);
+  }
+  const { readOperationalLease } = await import("./leases.js");
+  const lease = readOperationalLease(store, taskId);
+  if (lease && store.ownedLeases.get(taskId) !== lease.lockId) throw storageError("E_TASK_LOCKED", "Task is reserved by another external operation");
+  const assertCurrent = () => {
+    if (!store.active || store.transaction !== transaction) throw storageError("E_STORAGE_TRANSACTION_EXPIRED", "Operational preparation transaction has already closed");
+  };
+  const transaction = {
+    target: store.target, taskId, operation, kind: "sqlite", transactionId: `txn-${randomUUID()}`,
+    readText: relativePath => { assertCurrent(); return store.readText(relativePath); },
+    stageText: (relativePath, text) => { assertCurrent(); return store.stageText(relativePath, text); },
+    stageJsonRecord: (relativePath, text, schemaName) => { assertCurrent(); return store.stageJsonRecord(relativePath, text, schemaName); },
+    stageAction: action => { assertCurrent(); return store.stageAction(action); },
+    stageApproval: approval => { assertCurrent(); return store.stageApproval(approval); },
+    stageExecution: execution => { assertCurrent(); return store.stageExecution(execution); },
+    appendEvent: event => { assertCurrent(); return store.appendEvent(event); },
+    stageDelete: relativePath => { assertCurrent(); return store.stageDelete(relativePath); },
+    stageAttachment: async ({ referenceId, readable }) => {
+      assertCurrent();
+      const binding = await publishAttachmentFile(store.target, readable, { db: store.db });
+      const reference = validateAttachmentReference({ taskId, referenceId, ...binding });
+      await verifyAttachmentFile(store.target, reference);
+      assertCurrent();
+      const key = JSON.stringify([taskId, referenceId]);
+      const prior = store.attachments.get(key);
+      if (prior && canonicalFingerprint(prior) !== canonicalFingerprint(reference)) throw storageError("E_STORAGE_ATTACHMENT_INVALID", "Staged immutable attachment identity names different bytes");
+      store.attachments.set(key, reference);
+      return reference;
+    },
+  };
+  store.transaction = transaction;
+  try {
+    const result = await callback(transaction);
+    if (recordCommitEvent) {
+      const { appendProtocolEvent } = await import("../core/events.js");
+      await appendProtocolEvent(target, { taskId, event: "TRANSACTION_COMMITTED", details: { transactionId: transaction.transactionId, operation } }, packageRoot, { taskId });
+    }
+    await commitPreparedStore(store, packageRoot);
+    return result;
+  } catch (error) {
+    store.reads.clear(); store.writes.clear();
+    for (const records of Object.values(store.recordWrites)) records.clear();
+    store.events.clear(); store.attachments.clear();
+    throw error;
+  } finally { store.transaction = null; }
+}

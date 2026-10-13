@@ -1,0 +1,32 @@
+{
+  "increment": 840,
+  "sourceRevision": "935313995d23d8bc25680aeca64dc2030feba634",
+  "method": "Static named/local/import/namespace/reexport call reachability, stopping traversal at named task transaction callback barriers. Conservative nested callbacks; excludes assigned aliases, export-star/object dispatch, shadowing resolution and dynamic calls. Discovery only; source review and faults required.",
+  "modulesDiscovered": 324,
+  "exportsWithReachableWrites": 46,
+  "multiWriteCandidates": 12,
+  "sourceHashes": {
+    "src/core/completion-artifacts.js": "13ec0a5ede8f2c955983dd411c50bcabfe68598cd857fde9cfe981b300c2e4cb",
+    "src/core/completion-recovery-rebind.js": "8385a5bec51ab43baab514d71f4d156535ec579e1249e49709b2db7a7fa13ca9",
+    "src/core/work-state.js": "e8370604edc6cdde5e832fd8014de4d2628d1dd8bd30856d64cdf0dc908d7b83",
+    "src/core/transaction.js": "e34f4c1cfe99e1c5112d9117fcc845e8d49eb581d9adb13f4e52c42a8cdef4ef",
+    "tests/storage-record-check-atomicity.test.js": "3dcd5a49c513b2635aa4ea21b8eb4bdb68bcafd4b434f2399f61265ac72a196d"
+  },
+  "reviewed": {
+    "recordCheck": "Resolves an omitted task ID from schema/semantic-validated state before wrapping state, receipt and ledger writes in withTaskTransaction. Absent state reaches prerequisite refusal, not an accepted mutation.",
+    "rebindCompletionRejectionSnapshot": "Reuses getTaskTransaction when present; otherwise reads selected state and opens withTaskTransaction using its validated task ID.",
+    "authorizeCompletionRecoveryOrRebind": "Delegates its mutation to the reviewed rebind wrapper.",
+    "recordTerminalResult": "Reads selected state and invokes withTaskTransaction before its mutation implementation."
+  },
+  "existingTestScope": "storage-record-check-atomicity covers receipt/event fault rollback for command, direct API and direct canonical-path entries; presence inspection is not a new test execution.",
+  "wholeConsumerClosure": false,
+  "limitations": [
+    "Static scan excludes assigned aliases, export-star/object dispatch, scope-shadowing resolution and dynamic calls.",
+    "A conditional transaction-context branch is not recognized by this scan and must be reviewed directly.",
+    "Other multi-write candidates and external subprocess effects remain outside this bounded disposition."
+  ],
+  "checks": {
+    "preflight": "READY",
+    "newTestsExecuted": false
+  }
+}

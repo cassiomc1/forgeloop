@@ -17,6 +17,8 @@ import { evaluateProgress } from "./progress.js";
 import { readEvents } from "./events.js";
 import { taskStructuralQualityDirectory } from "./task-paths.js";
 import { projectStructuralQualityStatus } from "./structural-quality/status.js";
+import { operationalArtifactExists } from "../storage/operational-context.js";
+import { withProjectReadSnapshot } from "../storage/project-read-snapshot.js";
 
 function reasonCodesFor({ state, trace, progress }) {
   const codes = [];
@@ -169,7 +171,15 @@ function profileMetadata(bytes) {
 
 import { taskArtifactPath } from "./task-paths.js";
 
-export async function inspectTarget({ target, packageRoot, contractFile = null, authorityContext, runtimeContext, taskId = null, stateFile = null } = {}) {
+async function inspectStatePresence(target, relativePath) {
+  return operationalArtifactExists(target, relativePath) ?? await fileExists(ensureWithin(target, relativePath));
+}
+
+export async function inspectTarget(options = {}) {
+  return withProjectReadSnapshot(options.target, () => inspectSelectedTarget(options));
+}
+
+async function inspectSelectedTarget({ target, packageRoot, contractFile = null, authorityContext, runtimeContext, taskId = null, stateFile = null } = {}) {
   let manifest = null;
   let manifestError = null;
   try {
@@ -184,8 +194,7 @@ export async function inspectTarget({ target, packageRoot, contractFile = null, 
     ? { ...profileMetadata(await readBytes(profilePath)), path: profileRelativePath }
     : { mode: null, status: null };
   const effectiveStateRel = stateFile ?? (taskId ? taskArtifactPath(taskId, "state") : WORK_STATE_PATH);
-  const statePath = ensureWithin(target, effectiveStateRel);
-  const statePresent = await fileExists(statePath);
+  const statePresent = await inspectStatePresence(target, effectiveStateRel);
   const classifiedState = await readAndClassifyWorkState({ target, packageRoot, contractFile, taskId, stateFile: effectiveStateRel });
   const rawState = classifiedState?.state ?? null;
   const taskInfo = taskId ? await findTaskById(target, taskId, packageRoot) : null;

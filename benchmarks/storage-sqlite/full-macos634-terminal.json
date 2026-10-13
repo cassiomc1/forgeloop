@@ -1,0 +1,54 @@
+{
+  "status": "PASS",
+  "exitCode": 0,
+  "gates": [
+    "coverage (485.6s)",
+    "critical-coverage:check (0.3s)",
+    "lint (4.0s)",
+    "dependency:policy (0.1s)",
+    "complexity:check (1.6s)",
+    "docs:check (2.6s)",
+    "completions:check (0.1s)",
+    "summary:check (0.1s)",
+    "changelog:check (0.2s)",
+    "repository-index:manifest (0.1s)",
+    "repository:hygiene (0.2s)",
+    "poc:evidence:verify (0.2s)",
+    "poc:evidence:test (1.5s)",
+    "mcp:test:clean (6.1s)",
+    "mcp:pack:check (2.9s)",
+    "pack:check (1.7s)",
+    "python-unittest (0.9s)",
+    "markdown-self-test (0.0s)",
+    "markdown-validator (0.7s)",
+    "loop-self-test (0.2s)",
+    "loop-validator (0.1s)",
+    "secret-scan (7.9s)"
+  ],
+  "gateCount": 22,
+  "core": {
+    "tests": 2821,
+    "passed": 2810,
+    "skipped": 11,
+    "failed": 0
+  },
+  "poc": {
+    "tests": 67,
+    "passed": 67
+  },
+  "mcp": {
+    "tests": 73,
+    "passed": 73
+  },
+  "package": {
+    "tests": 12,
+    "passed": 12
+  },
+  "sourceFilesChecked": 2682,
+  "workingCheckoutMismatches": [],
+  "frozenControlMismatches": [],
+  "actualExecutionRoot": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop",
+  "controlRoot": "/Users/cassio/.codex/verification/sqlite-candidate634",
+  "log": "/Users/cassio/.codex/verification/sqlite-candidate634-prepush.log",
+  "limitation": "Execution used isolated working checkout rather than frozen copy;before/after admitted source equality verified. Remote/current workflow and whole migration acceptance remain pending."
+}

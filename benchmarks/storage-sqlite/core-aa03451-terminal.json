@@ -1,0 +1,150 @@
+{
+  "runId": 37993768913,
+  "sourceRevision": "aa03451ea820f9c88aac35af6494322af3f68d2c",
+  "status": "completed",
+  "conclusion": "failure",
+  "jobs": [
+    {
+      "id": 114034406080,
+      "name": "Classify changed paths",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114034460767,
+      "name": "Lint and dependency policy",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114034460771,
+      "name": "audit",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114034460816,
+      "name": "tarball smoke (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 114034460940,
+      "name": "Unit tests (Node 24, shard 1/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114034460953,
+      "name": "Unit tests (Node 24, shard 3/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114034461029,
+      "name": "Verify generated Archify diagram",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 114034461073,
+      "name": "Unit tests (Node 24, shard 4/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114034461080,
+      "name": "Unit tests (Node 24, shard 2/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114034461102,
+      "name": "Unit tests (Node 24.19.0, shard 0/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114042775289,
+      "name": "Coverage report (Node 24)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114043454866,
+      "name": "Repository Index native matrix / Classify Repository Index paths",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114043525551,
+      "name": "Repository Index native matrix / Verify Repository Index manifest",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114043610318,
+      "name": "Repository Index native matrix / Native Repository Index (macOS)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114043610349,
+      "name": "Repository Index native matrix / Native Repository Index (Windows)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114043610436,
+      "name": "Repository Index native matrix / Native Repository Index (Linux)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114044026918,
+      "name": "validate (22)",
+      "status": "completed",
+      "conclusion": "failure"
+    }
+  ],
+  "primaryFailures": {
+    "114034460816": "MCP handoff fixture needed explicit deterministic semantic provider; fixed in 42e4faf and clean packed 77-test suite passes without credentials",
+    "114034461029": "Archify and documentation checks passed; external link checker could not connect to OpenAPI endpoint, which was reachable during subsequent verification. No link exemptions or normative guide edits applied."
+  },
+  "aggregateFailure": {
+    "114044026918": "Required gate correctly failed because docs-diagram did not succeed; not a separate runtime failure"
+  },
+  "artifacts": [
+    {
+      "id": 11647107017,
+      "name": "coverage-shard-2",
+      "sizeInBytes": 16684808,
+      "expired": false
+    },
+    {
+      "id": 11646622927,
+      "name": "coverage-shard-3",
+      "sizeInBytes": 23778551,
+      "expired": false
+    },
+    {
+      "id": 11646518540,
+      "name": "coverage-shard-4",
+      "sizeInBytes": 13824117,
+      "expired": false
+    },
+    {
+      "id": 11645734382,
+      "name": "coverage-shard-1",
+      "sizeInBytes": 15530824,
+      "expired": false
+    }
+  ],
+  "logs": {
+    "path": "/Users/cassio/.codex/verification/ci-aa03451-complete-logs.zip",
+    "sha256": "355f6c2ebf3d3d864fb2c3b1607cdb1b94da675a2d39216d096fa1a0be9c02dd",
+    "zipEntries": 197
+  },
+  "requiresFreshRunOnCorrectedHead": true,
+  "wholePlanAcceptance": false
+}

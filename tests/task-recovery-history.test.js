@@ -4,7 +4,10 @@ import { test } from "node:test";
 import {
   classifyRecoveryHistory,
   resolveRecoveryHistory,
+  summarizeRecoveryHistory,
 } from "../src/core/recovery-history.js";
+import { decodedLedgerSource } from "./helpers/ledger-event-collection.js";
+import { withSpilledLedgerRelations } from "../src/storage/ledger-relations.js";
 
 function recovery(seq, recoveryId) {
   return {
@@ -21,6 +24,36 @@ function resume(seq, recoveryId) {
     details: { recoveryId, reacquiredClaims: ["src"] },
   };
 }
+
+test("internal recovery summary preserves cycle decisions and errors beyond spill threshold", async () => {
+  const events = [];
+  for (let index = 0; index < 1000; index += 1) {
+    events.push(recovery(events.length + 1, `recovery-${index}`));
+    events.push(resume(events.length + 1, `recovery-${index}`));
+  }
+  for (const tail of [[], [recovery(2001, "recovery-active")], [recovery(2001, "recovery-999")], [resume(2001, "recovery-999")], [recovery(2001, "recovery-active"), recovery(2002, "recovery-conflict")]]) {
+    const source = [...events, ...tail];
+    const expected = classifyRecoveryHistory(source);
+    await withSpilledLedgerRelations(owner => {
+      const maps = [];
+      const create = owner.map;
+      owner.map = () => { const map = create(); maps.push(map); return map; };
+      const observedIds = [];
+      const actual = summarizeRecoveryHistory(decodedLedgerSource(source), cycle => observedIds.push(cycle.recoveryId));
+      assert.deepEqual(actual, {
+        activeRecoveryId: expected.activeRecoveryId,
+        activeRecovery: expected.activeRecovery,
+        completedRecoveryCount: expected.completedRecoveries.length,
+        valid: expected.valid,
+        errors: expected.errors,
+      });
+      assert.deepEqual(observedIds, expected.recoveries.map(cycle => cycle.recoveryId));
+      assert.equal("recoveries" in actual, false);
+      assert.equal("completedRecoveries" in actual, false);
+      assert.ok(maps.some(map => map.spilled));
+    });
+  }
+});
 
 test("classifyRecoveryHistory reports one unresolved recovery cycle as active", () => {
   const event = recovery(7, "recovery-a");

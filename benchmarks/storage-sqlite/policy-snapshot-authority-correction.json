@@ -1,0 +1,41 @@
+{
+  "kind": "CANONICAL_POLICY_SNAPSHOT_AUTHORITY_CORRECTION",
+  "parentRevision": "288a56393013f9246ed4cc3300296c06ea6ce8c5",
+  "redControls": 2,
+  "correction": "Shared canonical artifact reader refuses unselected legacy authority and linked paths. Missing remains null; explicit portable inspection preserves bytes.",
+  "checks": {
+    "focused": 70,
+    "failed": 0,
+    "skipped": 0,
+    "fastExitCode": 0,
+    "complexity": "PASS"
+  },
+  "loc": {
+    "baselineSelectedLines": 25732,
+    "currentSelectedLines": 32403,
+    "unresolvedMembership": [],
+    "targetMet": false
+  },
+  "sourceHashes": {
+    "src/core/policy-engine.js": "414c9534ff82467efb3d8936825a3de7b7b7e28713e4c74483fd68bc94b47b52",
+    "tests/policy-snapshot-authority.test.js": "7a31ecadb6077bd5e474102edee4a072568052bfd60dfae5b13a136ab87a7cbe"
+  },
+  "logs": {
+    "policy-snapshot-authority-baseline-tests.log": {
+      "path": "/Users/cassio/.codex/verification/policy-snapshot-authority-baseline-tests.log",
+      "sha256": "112f0089bd74eddecdacbe12fd079c7a82d3a576bc5d8e06d56b22e9ace047ec"
+    },
+    "policy-reader-fix-focused.log": {
+      "path": "/Users/cassio/.codex/verification/policy-reader-fix-focused.log",
+      "sha256": "138f8519371f61d56f4ec9bc5913b8388d12a2bcb52c6ea935a7f4c064edca7e"
+    },
+    "policy-reader-fix-fast.log": {
+      "path": "/Users/cassio/.codex/verification/policy-reader-fix-fast.log",
+      "sha256": "b95ecf18c048feefb5588e959dfcbf439f9f6600013959d63a18ad7f3d91cec7"
+    }
+  },
+  "limitations": [
+    "Fullprepush288a563 and activeCIa5faa02 predate this fix.",
+    "Whole consumer/performance/memory/25percentLOC and validator closure remain open."
+  ]
+}

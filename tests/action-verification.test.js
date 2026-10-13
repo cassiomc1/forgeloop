@@ -1,5 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -72,7 +74,7 @@ test("arbitrary evidence strings cannot verify an action", async () => {
     );
     const current = await readAction(fixture.target, { packageRoot, taskId: fixture.taskId, actionId: fixture.action.actionId });
     assert.equal(current.state, "COMMITTED");
-  } finally { await rm(fixture.target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(fixture.target); }
 });
 
 test("the action's own commit execution is not independent postcondition verification", async () => {
@@ -83,7 +85,7 @@ test("the action's own commit execution is not independent postcondition verific
         actionId: fixture.action.actionId, evidenceRef: fixture.execution.executionId }),
       (error) => error.code === "E_ACTION_VERIFICATION_INVALID",
     );
-  } finally { await rm(fixture.target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(fixture.target); }
 });
 
 test("a canonical independent passed check verifies the action", async () => {
@@ -103,7 +105,7 @@ test("a canonical independent passed check verifies the action", async () => {
       taskId: fixture.taskId, actionId: fixture.action.actionId, evidenceRef });
     assert.equal(result.state, "VERIFIED");
     assert.equal(result.lastEvidenceRef, evidenceRef);
-  } finally { await rm(fixture.target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(fixture.target); }
 });
 
 test("a passed check for a different requirement cannot verify the action", async () => {
@@ -122,7 +124,7 @@ test("a passed check for a different requirement cannot verify the action", asyn
     );
     const current = await readAction(fixture.target, { packageRoot, taskId: fixture.taskId, actionId: fixture.action.actionId });
     assert.equal(current.state, "COMMITTED");
-  } finally { await rm(fixture.target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(fixture.target); }
 });
 
 test("new required proposals cannot omit a requirement", async () => {
@@ -137,6 +139,7 @@ test("new required proposals cannot omit a requirement", async () => {
       } }),
       (error) => error.code === "E_ACTION_INVALID",
     );
+    await ensureFixtureTask(target, "verify-noreq", packageRoot);
     // Non-required actions without a requirement remain allowed.
     const { action } = await proposeAction(target, { packageRoot, taskId: "verify-noreq", input: {
       actionId: "action-optional", effectClass: "REVERSIBLE_WRITE", capability: "filesystem.write",
@@ -144,5 +147,5 @@ test("new required proposals cannot omit a requirement", async () => {
       requiredForCompletion: false, requirement: null, provenance: "CALLER_REPORTED",
     } });
     assert.equal(action.requiredForCompletion, false);
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

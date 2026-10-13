@@ -1,0 +1,248 @@
+{
+  "schemaVersion": 1,
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "node": "v24.19.0",
+  "platform": "darwin",
+  "architecture": "arm64",
+  "cpu": "Apple M2",
+  "repeats": 20,
+  "claimCount": 3,
+  "timestamp": "2026-09-11T00:00:00.000Z",
+  "runtime": "warm-cache public transaction API with per-call native connection",
+  "syntheticSeedOutsideMeasurement": true,
+  "durabilityQualification": "Native WAL/FULL and unchanged pinned filesystem fsync transaction implementation; power-loss equivalence requires separate evidence.",
+  "releaseThresholdsVerified": false,
+  "results": [
+    {
+      "initialEvents": 10,
+      "claimCount": 3,
+      "committedResultParity": true,
+      "persistedStateAndTailParity": true,
+      "ownershipClassificationParity": true,
+      "baselineOwnershipAudit": {
+        "status": "MATCHED"
+      },
+      "nativeOwnershipValid": true,
+      "nativeReservationsVerified": true,
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      },
+      "nativeSamplesMs": [
+        7.2052079999999705,
+        8.171208999999976,
+        6.311166000000071,
+        9.132125000000087,
+        7.003000000000043,
+        5.113000000000056,
+        3.216457999999875,
+        6.304333000000042,
+        5.294957999999951,
+        8.187207999999828,
+        6.479000000000042,
+        6.765292000000045,
+        4.782707999999957,
+        10.29995800000006,
+        3.570709000000079,
+        4.138958000000002,
+        3.3285829999999805,
+        4.094040999999834,
+        3.507583000000068,
+        5.329583000000184
+      ],
+      "baselineSamplesMs": [
+        101.63429100000002,
+        107.215417,
+        114.333666,
+        117.092625,
+        120.79208400000005,
+        115.61466700000005,
+        96.539041,
+        100.22074999999995,
+        106.38745799999992,
+        116.03591700000015,
+        111.03512499999988,
+        100.98066700000004,
+        113.48825000000011,
+        98.76637499999993,
+        92.74195899999995,
+        103.15158400000018,
+        100.61250000000018,
+        108.9657500000003,
+        108.24799999999959,
+        106.96054200000026
+      ],
+      "nativeP95Ms": 9.132125000000087,
+      "baselineP95Ms": 117.092625,
+      "reductionP95": 0.9220093921372069
+    },
+    {
+      "initialEvents": 1000,
+      "claimCount": 3,
+      "committedResultParity": true,
+      "persistedStateAndTailParity": true,
+      "ownershipClassificationParity": true,
+      "baselineOwnershipAudit": {
+        "status": "MATCHED"
+      },
+      "nativeOwnershipValid": true,
+      "nativeReservationsVerified": true,
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      },
+      "nativeSamplesMs": [
+        3.110957999999755,
+        3.184042000000318,
+        3.0700000000001637,
+        4.576916999999867,
+        3.125666999999794,
+        7.140834000000268,
+        5.1702909999999065,
+        9.196709000000283,
+        6.464750000000095,
+        5.386540999999852,
+        4.393667000000278,
+        5.6117080000003625,
+        4.586332999999286,
+        7.419875000000502,
+        5.005334000000403,
+        8.229416999999557,
+        6.28020800000013,
+        6.251957999999831,
+        4.736499999999978,
+        8.151667000000089
+      ],
+      "baselineSamplesMs": [
+        101.56058299999995,
+        97.99670799999967,
+        101.67445799999996,
+        98.96995800000013,
+        103.74837500000012,
+        102.49116700000013,
+        109.12604199999987,
+        125.77541699999983,
+        103.06616699999995,
+        106.74275000000034,
+        98.4787080000001,
+        110.23641700000007,
+        105.45370900000034,
+        110.20433400000002,
+        106.50433299999986,
+        113.04883299999983,
+        104.4808750000002,
+        99.72683400000005,
+        105.09695800000009,
+        120.0438750000003
+      ],
+      "nativeP95Ms": 8.229416999999557,
+      "baselineP95Ms": 120.0438750000003,
+      "reductionP95": 0.9314465898405934
+    },
+    {
+      "initialEvents": 100000,
+      "claimCount": 3,
+      "committedResultParity": true,
+      "persistedStateAndTailParity": true,
+      "ownershipClassificationParity": false,
+      "baselineOwnershipAudit": {
+        "status": "REFUSED",
+        "causeCode": "JSON_LIMIT_EXCEEDED",
+        "claimsRetained": true
+      },
+      "nativeOwnershipValid": true,
+      "nativeReservationsVerified": true,
+      "durability": {
+        "journalMode": "wal",
+        "synchronous": 2
+      },
+      "nativeSamplesMs": [
+        2.993000000000393,
+        4.378582999999708,
+        3.824624999999287,
+        5.043541999999434,
+        3.767249999998967,
+        4.723250000000917,
+        3.7874160000010306,
+        4.651166999999987,
+        4.161334000000352,
+        4.91504200000054,
+        4.6336670000000595,
+        4.994999999998981,
+        3.960417000000234,
+        4.170875000001615,
+        3.649374999999054,
+        5.0101249999988795,
+        3.727499999999054,
+        4.125958999999057,
+        3.300249999998414,
+        4.874250000000757
+      ],
+      "baselineSamplesMs": [
+        162.03379200000018,
+        145.02029100000073,
+        129.7415000000001,
+        133.00704100000075,
+        135.09712500000023,
+        135.01891699999942,
+        133.35816700000032,
+        133.0060420000009,
+        138.18254199999865,
+        136.92974999999933,
+        133.4108750000014,
+        137.9646670000002,
+        137.00666699999965,
+        135.1217919999999,
+        133.9795839999988,
+        132.26458400000047,
+        138.53145799999947,
+        129.70233299999927,
+        126.01908299999923,
+        128.02224999999999
+      ],
+      "nativeP95Ms": 5.0101249999988795,
+      "baselineP95Ms": 145.02029100000073,
+      "reductionP95": 0.9654522483340013
+    }
+  ],
+  "increment": 653,
+  "implementation": "Optional exact-predicate reservation index; schema/marker version remains 5. Writable public admission installs; readonly/retained no-upgrade opens do not.",
+  "commitTargetObserved": true,
+  "productionDeltasFromFullMac651": [
+    {
+      "path": "src/storage/connection.js",
+      "beforeSha256": "bf65003686bb6ae127db5a0ced2abeeb8c56264a26833af7e1d735a69d3b5d8e",
+      "currentSha256": "c8df192b1a1613dcdfa0e0dc3998e0d78c4d7ca17ee25044903e8c0a0bc0368f"
+    },
+    {
+      "path": "src/storage/project-boundary.js",
+      "beforeSha256": "088b0c88715cff4f84015210fa461fc3165785543297488ccf1e9f19546c81d1",
+      "currentSha256": "72d5ff54501b9b31234d3ef6e7c9610c5f1dd5f248a671fcd6e03c38ac558b2c"
+    },
+    {
+      "path": "src/storage/schema.js",
+      "beforeSha256": "963acb38063728cb66f72a3c51b0421225cd730e86c4505cba68fa44f946ed0b",
+      "currentSha256": "fb9875774da8e37c02df05f19a44542a3608930c5841a88c653fc9fa19156082"
+    },
+    {
+      "path": "src/storage/task-guards.js",
+      "beforeSha256": "0ff2d6a4b1109e47d97a772c19b54ba68dbae6c739e43d3253b399b244eafff4",
+      "currentSha256": "473f1c6aa8d70d938b79725626d8ae6f55cc41210e1bd70eab0b2624ea8b18c1"
+    }
+  ],
+  "checks": {
+    "selectedTestsPassed": 92,
+    "cleanMcpTestsPassed": 73,
+    "verifyFast": "PASS",
+    "oracleComparison": "Historical scan forced NOT INDEXED, includes87 scalar/BLOB cases",
+    "publicAdmission": "Existing marker-bound schema5 preserved; readonly missing index remains absent; writable scope creates it without changing marker bytes.",
+    "retainedSnapshot": "allowSchemaUpgrade:false defaults to no optional index creation",
+    "fallback": "Missing or ineligible altered index preserves historical scan/error behavior"
+  },
+  "discardedApproach": "Required schema6 was not adopted: current cutover markers bind databaseSchemaVersion and ordinary admission intentionally disables such upgrades. Optional index absence does not alter domain outcomes, so it is separate from required schema migrations.",
+  "limits": [
+    "Warm-cache public transaction fixture with3claims; WAL/FULL versus unchanged pinned filesystem fsync; not physical power-loss equivalence.",
+    "100000-event pinned full ownership audit refuses JSON_LIMIT_EXCEEDED; state/event/tail parity holds and both retain claims.",
+    "Full Mac651 predates this four-module production change. Current full platforms and original broader performance/resource/LOC gates remain open."
+  ]
+}

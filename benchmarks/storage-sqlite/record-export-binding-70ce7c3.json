@@ -1,0 +1,57 @@
+{
+  "kind": "PORTABLE_RECORD_INDEX_BINDING_CORRECTION",
+  "revision": "70ce7c37223b78d01c362a1391bad11e9ee75db4",
+  "priorProductionRevision": "816cadf",
+  "reproduction": {
+    "failed": 3,
+    "reason": "Unchanged export accepted corrupted action status, approval decision and execution check index."
+  },
+  "correction": "Share indexed record decoding between repository getters/iterators and operational reads. Bind owner when present; operational reads continue requiring owner. Preserve lazy cursor decoding and existing selector/order behavior.",
+  "checks": {
+    "storage": 85,
+    "consumers": 32,
+    "finalControls": 3,
+    "failuresAfterCorrection": 0,
+    "skipsAfterCorrection": 0,
+    "fastExitCode": 0,
+    "finalLintExitCode": 0
+  },
+  "sourceHashes": {
+    "src/storage/repository.js": "6bd8e80612d6481b404c351d39263bc93766ab673c26b5e5813f24f1f343bb31",
+    "src/storage/unit-of-work.js": "f521c86bfde89a8e2c7a0cab7d692d6d1e1f071323ace8951ffdff01f764ceb5",
+    "tests/storage-record-export-validation.test.js": "657514ec4d45f0bf672251d1a0c000a6e7b9d0a45ef3a7396f59971c6dc8ede6"
+  },
+  "logs": {
+    "red": {
+      "path": "/Users/cassio/.codex/verification/record-export-binding-red.log",
+      "sha256": "319a1d97326f89bae99f896a289bbf384f35e851b32e8fe5c7f7ac9ed577db53"
+    },
+    "storage": {
+      "path": "/Users/cassio/.codex/verification/record-export-binding-shared-focused.log",
+      "sha256": "28413752668fb5375010fe745c687626da86f0fc0d00b96bb466e20273220778"
+    },
+    "consumers": {
+      "path": "/Users/cassio/.codex/verification/record-export-binding-consumers.log",
+      "sha256": "da0934139c55e3e563559c11ec20918cba5da252693b1f3c09369a7c4aa337ab"
+    },
+    "finalControls": {
+      "path": "/Users/cassio/.codex/verification/record-export-binding-final-controls.log",
+      "sha256": "1959dc8382b381e69e4dc892980438cd72bd0fc7f0db127473e7329651e0c4b5"
+    },
+    "fast": {
+      "path": "/Users/cassio/.codex/verification/record-export-binding-fast.log",
+      "sha256": "3c66aaff89be50e2c0a96288db86c3344833455496ce472c635a9645bb3c88f1"
+    },
+    "finalLint": {
+      "path": "/Users/cassio/.codex/verification/record-export-binding-final-lint.log",
+      "sha256": "3d687dee9d815f2982f479cde9878f9d7443857326f9b90ee8d4f91430211d84"
+    }
+  },
+  "limitations": [
+    "Returned records are validated; filtered queries are not a complete scan of records excluded by their selectors.",
+    "Export refusal may leave an incomplete destination; no successful export manifest is established by the rejected call.",
+    "Full prepush and cross-platform acceptance of this correction remain pending.",
+    "Prior d8949b0 LOC total is historical after this production change; scope review and rerun remain pending.",
+    "No measured latency or memory benefit; original 25 percent target and full consumer scope remain required."
+  ]
+}

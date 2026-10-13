@@ -5,6 +5,7 @@ import { runPreflight } from "../../src/commands/preflight.js";
 import { runTaskCreate } from "../../src/commands/task-create.js";
 import { runRoute } from "../../src/commands/route.js";
 import { createContract, writeContract, contractFingerprint } from "../../src/core/contract.js";
+import { testSemanticProvider } from "../../src/core/decision/test-provider.js";
 import { seedPolicyEpoch } from "./durable-policy.js";
 
 /**
@@ -17,6 +18,7 @@ export async function setupVerifyingTask(target, packageRoot, {
   taskId,
   capabilityPolicy = { schemaVersion: 1, defaultDecision: "ALLOW", rules: [] },
   requirement = "postcondition",
+  semanticProvider = testSemanticProvider,
 } = {}) {
   await runTaskCreate({ target, packageRoot, taskId, claims: ["src"] });
   if (capabilityPolicy) {
@@ -36,7 +38,7 @@ export async function setupVerifyingTask(target, packageRoot, {
   });
   await writeContract(target, contract, packageRoot, { taskId });
   const fingerprint = contractFingerprint(contract);
-  await runRoute({ target, packageRoot, taskId, workType: "code", surfaces: ["config"], executableChange: true });
+  await runRoute({ target, packageRoot, taskId, workType: "code", surfaces: ["config"], executableChange: true, semanticProvider });
   const preflight = await runPreflight({ target, packageRoot, taskId });
   if (preflight.status !== "READY") throw new Error(`fixture preflight not READY: ${preflight.status}`);
   await runActivate({ target, packageRoot, taskId });

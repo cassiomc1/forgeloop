@@ -1,0 +1,28 @@
+{
+  "kind": "PUBLIC_ATOMICITY_FINITE_CONTROL_EXECUTION",
+  "sourceRevision": "eeda81be766804f4705c00683637f6ed74ce1326",
+  "testFile": "tests/storage-public-continuity-atomicity.test.js",
+  "testSha256": "c2ffc61be3295ec99cc92993fa2a060814480b4a65e55aa7aac7654a8372b716",
+  "logSha256": "92916dfcb3dbf190af1a711f4db89f6ca5fd62026c60ad7620d884776fe128f9",
+  "passed": 6,
+  "failed": 0,
+  "skipped": 0,
+  "controls": [
+    "record-continuity commit-witness rollback",
+    "clear-continuity commit-witness rollback",
+    "workspace-bind artifact/event rollback",
+    "verify-scope artifact/event rollback",
+    "handoff-create artifact/event rollback",
+    "task-create descriptor/claims/event rollback"
+  ],
+  "assertions": [
+    "All native tables equal pre-call snapshot after injected SQL publication fault.",
+    "Retry succeeds and creates exactly one relevant event/witness.",
+    "No legacy task-state/session/transaction mirrors."
+  ],
+  "limits": [
+    "No production defect observed; fixtures corrected for canonical work-state and non-overlapping claims.",
+    "Other action/evaluation/diagnostic/repair families and eleven resource payload controls remain open.",
+    "Does not prove whole plan, performance/LOC or ForgeLoop completion."
+  ]
+}

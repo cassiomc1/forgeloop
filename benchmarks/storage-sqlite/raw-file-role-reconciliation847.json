@@ -1,0 +1,733 @@
+{
+  "increment": 847,
+  "sourceRevision": "008fade14cac5ec98b7ae831f14aa62f1385cd61",
+  "scope": "Literal node:fs module inventory in src and integrations/mcp/src; indirect wrappers, assigned aliases and constructed imports remain outside this bound.",
+  "modules": 103,
+  "unchangedReviewed": 97,
+  "directlyReviewed": 6,
+  "newLiteralFsModulesSince817": [],
+  "reviewed": [
+    {
+      "path": "integrations/mcp/src/server.js",
+      "sha256": "620bc4c53b7be6f7e2ce6559d3da3615b0399823cc547930d2dcc733e6776ba2",
+      "disposition": "Direct fs read obtains MCP package version. Tool/resource execution delegates through ForgeLoop integration and canonical project-context adapters; this source is not an operational artifact file writer.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary814.json"
+    },
+    {
+      "path": "src/adapters/agent-browser/process.js",
+      "sha256": "847c26235795e56099178810945737c00f5d22cbbc52cbade33efd0fc38641e3",
+      "disposition": "Raw fs roles validate the explicit browser executable as a regular file before bounded process execution. No operational artifact writer.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary814.json"
+    },
+    {
+      "path": "src/adapters/agent-browser/provider.js",
+      "sha256": "5c98d7eebbc24f8db8bb29853a4c6eddf4e3d5dd827d6c7d74b3ba63511abc66",
+      "disposition": "Creates a physical temporary execution directory outside target, reads screenshot output there and cleans it after provider execution. Results carry artifact metadata; canonical persistence is a separate service responsibility.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary814.json"
+    },
+    {
+      "path": "src/adapters/emulated-services/provider.js",
+      "sha256": "adbe1bdde4616a412a177bf33653f6cce770fcf3732c98b64ceb8276961f5170",
+      "disposition": "Raw fs roles validate explicit executable/config files and create/remove temporary service execution paths outside target storage. Provider output is advisory evidence; no direct canonical task writer.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary814.json"
+    },
+    {
+      "path": "src/adapters/opensrc/provider.js",
+      "sha256": "624a21cea775f9ad9c39f948f14b65d684747285c5ce33286a7d32003914105e",
+      "disposition": "Canonicalizes configured source/cache paths and verifies the returned source directory belongs to the configured cache. Provider construction and recall are advisory; no lifecycle writer.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary814.json"
+    },
+    {
+      "path": "src/adapters/opensrc/search.js",
+      "sha256": "13ce23e8d4ad9e620ae5d7af1cdb99be6aa33ecc366acefdae4ae839d612ba6f",
+      "disposition": "Raw fs reads traverse explicitly provided advisory source directories under search containment and read budgets. Returned snippets are advisory repository source, not task artifact authority. This role review does not certify all hostile filesystem races.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary814.json"
+    },
+    {
+      "path": "src/cli.js",
+      "sha256": "30e8cf93ec2cf24061b58dc35e15a172836847b987229dd6e9d4a5436e3dfec3",
+      "disposition": "Raw reads obtain shipped package version; realpathSync selects the actual CLI entrypoint. Operational commands delegate through canonical dispatch. This role review does not replace per-command authority evidence.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary814.json"
+    },
+    {
+      "path": "src/commands/contract-create.js",
+      "sha256": "6ef3eca71f6ab51c39747447dfb5270972dec84d814b0cf6b074dfb277f91898",
+      "disposition": "contractFile is explicit creation/import input or fingerprint-equivalence check during recovery; validated historical canonical contract and ledger remain authoritative. writeContract/state/events use task mutation.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary803.json"
+    },
+    {
+      "path": "src/commands/gate-record.js",
+      "sha256": "f3eb2df3669c4d6190ad5988452fb2486b869065d9cb58f0092c5c932d117f67",
+      "disposition": "Raw lstat checks external evidence type/size before verified handle hashing; canonical bindings select operational read-set bytes. Gate and event mutation use withTaskMutation and persistGate.",
+      "review": "direct-source-current"
+    },
+    {
+      "path": "src/commands/policy-diff.js",
+      "sha256": "113d2e4375eddb2f2ae551c880cff285115dd88d134da71824456d398bd97160",
+      "disposition": "Native logical input paths select readOperationalText; unsupported canonical paths refuse. Non-operational --before/--after files are explicit comparison inputs. Default task policy snapshot uses canonical policy reader.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary803.json"
+    },
+    {
+      "path": "src/commands/storage-migration-status.js",
+      "sha256": "3d013e83b241d278d0eed4c52b192a3df4cfd482502bcc2fe64b01efafc87830",
+      "disposition": "Read-only bootstrap layout and exclusion-marker inspection works before database admission; database/publication validation explicitly NOT_RUN/NOT_VERIFIED. No operational write authority.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary803.json"
+    },
+    {
+      "path": "src/commands/task-create.js",
+      "sha256": "dee1a85f88aee619a38ff53fe624e3f392aa3a1a2f932bad2305c16ee8aca768",
+      "disposition": "contractFile is explicit validated proposed contract input. Descriptor/claim/state publication uses canonical task creation; file input is not retained writable operational authority.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary803.json"
+    },
+    {
+      "path": "src/commands/update.js",
+      "sha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+      "disposition": "Named writes publish managed kit templates and staged hidden-layout kit updates; source entries derive from TEMPLATE_PATHS. Hash verification precedes installation manifest authority changes. This role does not establish all migration writer coverage.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary809.json"
+    },
+    {
+      "path": "src/core/bundles.js",
+      "sha256": "9867a424d43b5301b5fcfab49b807e2334415f2839804c6cbaffccf9a3b08928",
+      "disposition": "Named atomic writes publish explicit portable bundle attachment and event outputs. Native ledger bytes come from selected SQLite rows; retained filesystem ledger reads occur only in the unselected branch.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary809.json"
+    },
+    {
+      "path": "src/core/capability-policy.js",
+      "sha256": "e9dee892353f8565e6ac34e11a449a6f4c5dc945a0a805cb79b927eedf64eb31",
+      "disposition": "Project capability policy remains human-edited file; containment, schema/property allow-list and fingerprint preserved. Cannot declare authority/trust metadata.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary803.json"
+    },
+    {
+      "path": "src/core/command-resolution.js",
+      "sha256": "1b6f3ae671a1a2fcd4dc04604c2f67c4fcd1c8fe82dc094659d1847988b520c0",
+      "disposition": "Reads project package.json for command resolution; package manifests remain repository inputs.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary797.json"
+    },
+    {
+      "path": "src/core/command-runtime.js",
+      "sha256": "56085a5bddeccabcbcf008b1c26c4293cc8b4d7c321f9684fd9e5493f038afcf",
+      "disposition": "Reads shipped package.json only to expose runtime package version; delegates commands through canonical executors.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary807.json"
+    },
+    {
+      "path": "src/core/decision/resolver.js",
+      "sha256": "39b42a877aa38cf12613c2c92b8a0ac3b7bc1a0d83997bf7391b7c95ed9aa0a6",
+      "disposition": "Required decision resolution owns project snapshot; native decision names precede portable directory enumeration.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary783.json"
+    },
+    {
+      "path": "src/core/diagnostic-record.js",
+      "sha256": "9d472e4d87a8a7c7fa6fdaeb473f60c7904b15357ec203c690e4bea589982240",
+      "disposition": "Raw readFile handles explicit diagnostic/intervention import inputs after containment/safe-path validation; canonical case/intervention/disposition publication uses native task transactions.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary808.json"
+    },
+    {
+      "path": "src/core/efficiency.js",
+      "sha256": "8bcdcd327cf898cb0a4b807d44518f11554ca27980ae5e34023057dd5dc774f3",
+      "disposition": "baselinePath is explicit project-local comparison input with containment/schema checks; operational metrics and contract are read through the project snapshot.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary797.json"
+    },
+    {
+      "path": "src/core/events.js",
+      "sha256": "270d8cb19abc637e5e6a432269aa0041b2830713b7375c9432d9e842040d83a2",
+      "disposition": "Canonical ledger selects store; explicit portable reader inspects files; native absence is distinct from legacy migration refusal.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary783.json"
+    },
+    {
+      "path": "src/core/filesystem.js",
+      "sha256": "4174506b0832bdadadd9b7b676baa835b15b2b7e68fc980902dedeacb2564a57",
+      "disposition": "General file/path primitives retain configuration, portable output and attachment roles. New shared admission helper checks fstat/lstat regular type, observed dev/ino equality and physical root containment before a caller reads. It does not add an operational writer.",
+      "review": "direct-source-current"
+    },
+    {
+      "path": "src/core/gate-artifact.js",
+      "sha256": "8262d4ea6d526b3cbf18ca6b4959ff9a2d8cbfcf11664ebd549a46b862b2645a",
+      "disposition": "Canonical gates read/write through shared artifact storage. Canonical bindings stream operational events or read selected payloads. External evidence uses admitted regular handles and bounded streaming; hashing/JSON inputs remain external evidence files.",
+      "review": "direct-source-current"
+    },
+    {
+      "path": "src/core/guide-metadata.js",
+      "sha256": "1e50b9a40f3a01978b7db72ace559fd79112b061b6e14c74687d98e41e3ffbc5",
+      "disposition": "Reads shipped guide Markdown metadata; guide files remain package assets.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary807.json"
+    },
+    {
+      "path": "src/core/guide-registry.js",
+      "sha256": "6112ae9e5af389ce83131e216fb3dbd095d92c28a32872c3853cc6fb6296510e",
+      "disposition": "Reads shipped src/config/guides.json; immutable guide registry is distributed source asset.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary807.json"
+    },
+    {
+      "path": "src/core/handoff.js",
+      "sha256": "48f38209c4ad09c55a9877069c9e292fdcf3638fa6aae3b93a3165b1a1851bfd",
+      "disposition": "Existing native scope and operational artifact names before legacy directory enumeration.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary783.json"
+    },
+    {
+      "path": "src/core/integration-resources.js",
+      "sha256": "e1d2820a430f44cd7cf75a5ff9c14d6d7d86abd9e0dc565b8fb3f9a04556984a",
+      "disposition": "Native resource catalog selected before directory fallback, under resource snapshot wrapper.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary783.json"
+    },
+    {
+      "path": "src/core/manifest.js",
+      "sha256": "9e29e1c9466bb0fc6a2ae9371a4f8bec995a01f11377684f0d66bcfa58221f4f",
+      "disposition": "Writes .forgeloop/manifest.json installation ownership metadata after manifest validation and safe-path validation. This manifest describes shipped kit files, not task artifacts or event authority.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary809.json"
+    },
+    {
+      "path": "src/core/policy-adapters.js",
+      "sha256": "981d9975e5b961806289f4901a14dc807d6533fa1c473f9808e728be804cfb25",
+      "disposition": "Scans repository source for policy checks; excludes .forgeloop from recursive scans. Explicit source-file arrays remain policy inputs.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary797.json"
+    },
+    {
+      "path": "src/core/policy-baseline.js",
+      "sha256": "6b9bfa592f2529c64442466e8f609f219a65666a6d3085c402c009bca9a05424",
+      "disposition": "Baseline is human-reviewable policy input retained as file by original plan. Read schema/JSON validation and explicit artifact write retained; not task policy snapshot.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary803.json"
+    },
+    {
+      "path": "src/core/policy-discovery.js",
+      "sha256": "1d0a8af04f773bc95439207670a9aa5b606e04e777b8e454aedb2d47dd380f74",
+      "disposition": "Reads repository package/language/configuration files and source directory structure as project observations. No canonical task artifact reader or writer.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary803.json"
+    },
+    {
+      "path": "src/core/policy-engine.js",
+      "sha256": "780fc64459d8b9f12e1062029f6fe22d73e41b1cad3970033a5286a1d0c7d072",
+      "disposition": "Project policy rules/discovery/lock remain validated files; task policy snapshot selects native artifact presence/read before explicit legacy fallback.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary807.json"
+    },
+    {
+      "path": "src/core/profile.js",
+      "sha256": "88877cee83dd29b9aa06aa0bc2db148799bfb660a6b45ec6609b4e5b923f1f30",
+      "disposition": "Reads selected human-maintained profile; source registry uses artifact reader and is intentionally file-owned input.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary797.json"
+    },
+    {
+      "path": "src/core/project-detection.js",
+      "sha256": "96956accd87bb28890ac74dbaec95a02250cb6f9b9ba4a47ac507955fe21c530",
+      "disposition": "Enumerates bounded repository manifests/source to derive project evidence; .forgeloop excluded from recursive discovery. No operational artifact writer.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary807.json"
+    },
+    {
+      "path": "src/core/project-root.js",
+      "sha256": "ecf5cf4018f97d3a46f130b2649903fd23d5d6fe4d2dcef029e3850abacc5764",
+      "disposition": "Resolves and validates the actual project directory; filesystem identity is required before storage admission.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary807.json"
+    },
+    {
+      "path": "src/core/report.js",
+      "sha256": "c2cb300de2b1ebe0a88cee80a426371ef49b78b3f6949bc9f5095d91a82b4287",
+      "disposition": "Raw read is selected human-maintained PROJECT_PROFILE.md; operational completion and audit delegate to evaluateAudit.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary797.json"
+    },
+    {
+      "path": "src/core/revision/git.js",
+      "sha256": "7c424f9cd2606fee9e8f601744820075ebd4ec0e22947fed0fde9b602fcf555c",
+      "disposition": "Reads Git worktree material and explicit revision-provider content; source code and Git metadata remain file-owned. No operational artifact writer.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary808.json"
+    },
+    {
+      "path": "src/core/schema-validation.js",
+      "sha256": "670d4436e7b1b223ace35bbef99beb98e6928b8d2e5de265cc62369530a1ef7b",
+      "disposition": "Reads shipped schemas under packageRoot, caches parsed schema values and exposes schema health; schemas remain package assets.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary808.json"
+    },
+    {
+      "path": "src/core/signing/bundle-file.js",
+      "sha256": "055a6031cbd72bde093816b9da6c2fe1cbd5737cd63340ecb87851498711d5f3",
+      "disposition": "External signer writes temporary bundle; immutable attachment is staged through active preparation, with statement freshness and regular-file/no-symlink checks; canonical output without native preparation refuses.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary797.json"
+    },
+    {
+      "path": "src/core/signing/statement-file.js",
+      "sha256": "4b0db680c034bd21497e5fa96c01ea79a7faa14f6424c85965f4c9183304880b",
+      "disposition": "Writes selected canonical statement bytes to an OS temporary directory for external signing; refuses an active SQLite write transaction, rechecks canonical bytes after callback and removes the temporary directory in finally.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary809.json"
+    },
+    {
+      "path": "src/core/structural-quality/artifacts.js",
+      "sha256": "52dc875b78e605a1296bec92d3689b066b96c894cb27e7aad3493c4f9454a71f",
+      "disposition": "Existing native scope and native evaluation catalog before file enumeration.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary783.json"
+    },
+    {
+      "path": "src/core/structural-quality/source-fingerprint.js",
+      "sha256": "de166c936a7c4246fbd014f2ea9eee1faba98a586287aae0286d0a2515774735",
+      "disposition": "Fingerprints Git worktree or directory source material, excluding .forgeloop/.git/provider configuration. Operational baseline/evaluations are separate canonical artifacts.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary807.json"
+    },
+    {
+      "path": "src/core/task-discovery.js",
+      "sha256": "5a79849caef814dbf1208e297ee14116f892314df98e2481812dd5afcda3d5ad",
+      "disposition": "Native listTaskKeys selected before portable legacy directories; descriptorless source classification read-only.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary783.json"
+    },
+    {
+      "path": "src/core/task-lock.js",
+      "sha256": "00e5b217ca72c4b0fc7dab611d96b5e3d0d0c1b5f01116bce5900028ba38fefc",
+      "disposition": "Native task leases selected after existing project scope; filesystem lock reads retained for legacy owner inspection, not writable backend.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary783.json"
+    },
+    {
+      "path": "src/core/task-migration-validation.js",
+      "sha256": "5316075dcc6682315ce825bbfefb3ff0eb8c9da334cb1cbcd19285ea756e7b26",
+      "disposition": "Explicit legacy migration snapshot validation reads portable files and fingerprints source; no operational writer.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary783.json"
+    },
+    {
+      "path": "src/core/templates.js",
+      "sha256": "20e92251bc83f699890533fd397536755226b93b74ca04766f94212128faf8f8",
+      "disposition": "Reads package-owned template bytes for installation; guides/schemas/install metadata remain files.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary807.json"
+    },
+    {
+      "path": "src/core/test-intelligence/inventory.js",
+      "sha256": "11325818eaf83a522818e25ef3e75b10d0be39d485e0e8ffd94861a2632357d8",
+      "disposition": "Enumerates repository test source directories; source code remains file-owned by the plan.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary797.json"
+    },
+    {
+      "path": "src/core/test-intelligence/prune.js",
+      "sha256": "35589fb442033e16ddfeb28af2ea6a5f91aa31a2b2f1ad4719544def6bcb60f4",
+      "disposition": "Copies source into a disposable temporary probe workspace excluding .forgeloop and .git; modifies only the contained temporary test file and reports no live-worktree modification.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary812.json"
+    },
+    {
+      "path": "src/core/trajectory-evaluation.js",
+      "sha256": "0126cca076bebabbaac8c68c6355554871eab5a7c146ebc6476c64948386fcae",
+      "disposition": "scenarioPath is explicit validated project-local reference input; trace/metrics use a project read snapshot; evaluation and audit event publish through a task transaction.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary797.json"
+    },
+    {
+      "path": "src/core/transaction.js",
+      "sha256": "e34f4c1cfe99e1c5112d9117fcc845e8d49eb581d9adb13f4e52c42a8cdef4ef",
+      "disposition": "Native withTaskTransaction delegates to unit-of-work; old manifests are inspected for migration exclusion; filesystem recovery explicitly unsupported.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary783.json"
+    },
+    {
+      "path": "src/core/trusted-authority.js",
+      "sha256": "b8134ec73d784eaf7611f7adacab9ada9ecd42793d1d8ee9b6f3d1f86b92fe34",
+      "disposition": "Host-owned authority files are external to the target; target-contained sources refuse trusted admission. No task operational storage writer.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary797.json"
+    },
+    {
+      "path": "src/core/workspace-binding.js",
+      "sha256": "5a0aef7cb4c14a6ab29f4bf368ffb75e392ac72d1e39763e26ad75542c0c6be5",
+      "disposition": "Raw filesystem realpath resolves Git/worktree identity; operational workspace binding uses canonical artifacts and task transactions.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary797.json"
+    },
+    {
+      "path": "src/integration.js",
+      "sha256": "adaa63fe570f28cd65f27060c558213025672183cddf26e9386de761ccd30526",
+      "disposition": "Direct fs read obtains shipped core package version. Operational command/resource execution delegates through shared integration dispatch and project storage admission; package version is not task authority.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary814.json"
+    },
+    {
+      "path": "src/persistent-transport/client.js",
+      "sha256": "d0b61ee9c1673b769452283699fd2a34eb8d6c84af421462684d79bf367b2c80",
+      "disposition": "Reads package version and canonicalizes repository root for transport search. User-scoped process state comes through transport state/lifecycle/ownership modules; no direct operational task file reader/writer.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary814.json"
+    },
+    {
+      "path": "src/persistent-transport/lifecycle.js",
+      "sha256": "e6ce0e846153b3fb46cbda0d8af404340945d6051ce62ef17012d66b5e83f491",
+      "disposition": "Raw fs roles are package version, user-scoped transport directory and socket/endpoint cleanup. State removal checks observed ownership and nonce; startup lock uses the auxiliary repository-index lock primitive.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary814.json"
+    },
+    {
+      "path": "src/persistent-transport/server.js",
+      "sha256": "f071d3f0d2c35bb885e4b0e6ab2fd60ab0b177fd05ba81a16720a6ea38e387da",
+      "disposition": "Reads package version and manages socket mode/endpoint cleanup, with user-scoped process state delegated to transport state module. Search service process metadata is explicitly distinct from task storage.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary814.json"
+    },
+    {
+      "path": "src/persistent-transport/state.js",
+      "sha256": "a877435a1b4a7f5c7d4b6310538451f81079b70d4486d0ed990ed61819ccb86d",
+      "disposition": "Writes user-scoped persistent-search process identity, nonce, endpoint and activity metadata; caller path source is the home-directory transport root. This is search transport coordination, not project task/ledger authority.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary809.json"
+    },
+    {
+      "path": "src/repository-index/binary-manager.js",
+      "sha256": "e5445ac9306053478e2c9f694ca8d890509c4f27f33e36d1797ef404ed0a1888",
+      "disposition": "Writes downloaded archives and stages/renames checked tgrep binaries under managed engine storage and installation lock. Checks archive/binary digests and executable version; no operational artifact writer.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary812.json"
+    },
+    {
+      "path": "src/repository-index/lifecycle.js",
+      "sha256": "4c9bbb44eaa504fe5df73a5ea09ba6ae463fdf82f222239e5072d282693fe37d",
+      "disposition": "Raw lstat identifies a Git repository candidate. It observes source/Git layout, not task or event authority.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary815.json"
+    },
+    {
+      "path": "src/repository-index/lock.js",
+      "sha256": "77748809ef760e444dcdf09df280df956288cfeff379ef0a7755daf673f7892f",
+      "disposition": "Repository-index process lock uses exclusive file creation and owner identity for release. Renames quarantine stale search-engine lock metadata; this is auxiliary search coordination, not operational task authority.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary812.json"
+    },
+    {
+      "path": "src/repository-index/manifest.js",
+      "sha256": "93d9ecad4d7747fa95fd7a8bcdbf074aa2bb73b786dd057bb4ddecae4062fa45",
+      "disposition": "Reads the shipped tgrep asset manifest under packageRoot and validates engine/platform asset metadata. This is distributed engine installation input.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary815.json"
+    },
+    {
+      "path": "src/repository-index/normalize-json.js",
+      "sha256": "52eb60821e64829d2a719b7085b2c58dcc39445c63278da34163a73d8db693aa",
+      "disposition": "Canonicalizes the repository root before normalizing bounded search output paths. No operational file writer; normalized results are repository-discovery output.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary815.json"
+    },
+    {
+      "path": "src/repository-index/search.js",
+      "sha256": "e605e7ef407dd6b499d87de4bdeef43d94d16eeb798e55ab7720c33421069a44",
+      "disposition": "Canonicalizes repository root for repository-index readiness, setup and bounded search execution. Index source files and process metadata remain auxiliary repository discovery state.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary815.json"
+    },
+    {
+      "path": "src/repository-index/server.js",
+      "sha256": "4e18bcd059920281616a7ae0a368571ae5bb8c71c6f59929ded044cafcad4ef1",
+      "disposition": "Atomic JSON helper callers write repository-index engine-state.json for tgrep ownership/readiness. Paths are repository-index scoped and process ownership is inspected; these records are auxiliary search process metadata.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary809.json"
+    },
+    {
+      "path": "src/repository-index/status.js",
+      "sha256": "0e37e3796bc412c581d19f44090f85bcd215965285e907851009e6b5bc8f274f",
+      "disposition": "Reads repository-index engine/serve/meta JSON and verifies source-root and process ownership for search status. These are auxiliary index/process records, not task artifacts or ledger state.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary815.json"
+    },
+    {
+      "path": "src/storage/attachment-files.js",
+      "sha256": "10e3da12d126263bb4ef7ca2684911bc778048b90069a84ccc73029cd53b93f5",
+      "disposition": "Attachment publication is explicit immutable file authority allowed by the plan. Exclusive temporary files are streamed and synced, content-addressed hard-link publication is verified, and publication refuses an active database transaction before reference commit.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary812.json"
+    },
+    {
+      "path": "src/storage/backup.js",
+      "sha256": "32016e0aaf027c2d0084717a81f1e9b1f48286ce87abdfb05a8a5764a7d8dd9a",
+      "disposition": "SQLite native backup writes a private snapshot, validates integrity, syncs bytes and publishes by non-overwriting hard link. Restore refuses active-database replacement and validates schema metadata read-only.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary812.json"
+    },
+    {
+      "path": "src/storage/connection-owner.js",
+      "sha256": "0b53258b443150941e438596159f8259a6043f065a8faac67bd6019a7b4c33ae",
+      "disposition": "Uses canonical project root and bigint device/inode metadata for native connection leasing. Database replacement is refused while leases overlap; no filesystem operational artifact fallback or mirror writer.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary815.json"
+    },
+    {
+      "path": "src/storage/export-destination.js",
+      "sha256": "a5385331d4035e007f2f8edc92774bec513db3e99d257e34dc2219d3886def0b",
+      "disposition": "Observes physical output ancestors and native database/sidecar/marker evidence to refuse portable output inside selected operational namespaces. No task mutation; this is explicit export admission.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary816.json"
+    },
+    {
+      "path": "src/storage/exporter.js",
+      "sha256": "2e005a6784c73f42e53831a800b09b50730f901dd358d7463009f776b55a2a4b",
+      "disposition": "Explicit interchange export runs from a consistent storage snapshot and uses assertPortableExportDestination before task output allocation. Named writes produce portable artifact/event/session/catalog files and attachment outputs; export is not a live mirror.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary810.json"
+    },
+    {
+      "path": "src/storage/importer.js",
+      "sha256": "22dbd284184c72b7270de7bbb95d06a2ec7f529f3305b355a4a9671a403a6f6b",
+      "disposition": "Reads explicit portable/legacy input and allocates a fresh unpublished SQLite destination exclusively. Imported task/session namespaces commit together or roll back; source files are not a live operational mirror.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary816.json"
+    },
+    {
+      "path": "src/storage/ledger-relations.js",
+      "sha256": "8e056da18d958c11178c9f4a97ba9e2de1858dfab166142024b16398226029e2",
+      "disposition": "Creates and removes private temporary SQLite spill storage for primitive relation metadata/source positions. Spill relations are validation scratch rather than a second authoritative task store.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary815.json"
+    },
+    {
+      "path": "src/storage/legacy-maintenance-boundary.js",
+      "sha256": "4c3bc7a3c45b8fca61bd1b6e4d320c65466423bd96d08ea1b1947008c4c41f10",
+      "disposition": "Observes retained legacy claim/task locks and refuses native admission rather than clearing an unknown legacy owner. Bootstrap/migration exclusion compatibility input.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary816.json"
+    },
+    {
+      "path": "src/storage/legacy-signature.js",
+      "sha256": "f4e126a0ec08e538d4f105f46808fa01ad8940e2846711ad68f0ddd5c9a20d52",
+      "disposition": "Reads inventoried legacy signature/attachment sources for explicit conversion, checks recorded membership/size and publishes immutable attachment objects through the storage attachment boundary. Not normal task file persistence.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary816.json"
+    },
+    {
+      "path": "src/storage/maintenance-handoff.js",
+      "sha256": "79113b4f2c706ae35c0ffa775b433fbd085fd95d4d23d0d25072151f4c3887f5",
+      "disposition": "Immutable maintenance history and handoff claims use exclusive writes/hard links, bounded exact-owner chains, synced publication and promotion. These are bootstrap exclusion metadata, not task mirrors.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary812.json"
+    },
+    {
+      "path": "src/storage/maintenance-owner.js",
+      "sha256": "cf18aff27a8df3ccc2257048b787428ba03c7d5e55e0aecaa6560daefe16e64e",
+      "disposition": "Pre-database exclusion owner metadata remains file-owned. Reader uses no-follow where supported, shared file identity admission, a bounded 65537-byte short-read loop and UTF-8/schema/identity checks.",
+      "review": "direct-source-current"
+    },
+    {
+      "path": "src/storage/maintenance.js",
+      "sha256": "ce19d71c8507b70bd56b022667d63064c2b0b76f5722d8a304d27ec2e681478f",
+      "disposition": "Exclusive bootstrap maintenance owner metadata is synced before operation callbacks. Ordinary command admission is excluded; owner-bound contexts and exact dead-local-owner recovery control cutover and release.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary812.json"
+    },
+    {
+      "path": "src/storage/metadata-json.js",
+      "sha256": "a12fe17e3818325804f84447ac298b5a1c8cc423c98c0d2bcb91b317bb365e9c",
+      "disposition": "Explicit maintenance/catalog inputs use shared regular-handle admission and bounded streams; parsed JSON receives resource checks. No canonical operational write path.",
+      "review": "direct-source-current"
+    },
+    {
+      "path": "src/storage/migration-activate.js",
+      "sha256": "12b11a733f5a615ee1becbc8e3780fadfc7e55c92146cd07e82718c588871267",
+      "disposition": "Requires writer exclusion, maintenance ownership and verified archival. It publishes immutable attachment objects and a SQLite backup, verifies logical parity and integrity before marker activation, then records the publication journal. Journal writes are maintenance checkpoints, not task mirrors.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary810.json"
+    },
+    {
+      "path": "src/storage/migration-archive.js",
+      "sha256": "38848cc8ab285a2ce37ef7b7b3405cf51e024d023670f7dfbf46eac01bdda37a",
+      "disposition": "Under maintenance ownership and explicit writer exclusion, records archival progress and moves inventoried legacy roots to retained archive. It revalidates source partition and excludes immutable attachment roots from archival; no normal-path task file writer.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary810.json"
+    },
+    {
+      "path": "src/storage/migration-attachment-root.js",
+      "sha256": "a50bc04562a2e422ab15c1c59f87abac81f9c023bb9034fc7cee5fc82763f69c",
+      "disposition": "Builds an independent candidate immutable attachment root from recorded capture input and validates exact object membership and canonical references. Not a second operational task writer.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary816.json"
+    },
+    {
+      "path": "src/storage/migration-candidate.js",
+      "sha256": "41f01d20be6caac40ef541a8d6175e429bd595f5bd3a7a9f046571c880e88ecb",
+      "disposition": "Writes candidate task inventory, preparation manifest and recovery intent. Candidate work is maintenance-scoped, validates integrity and portable round-trip parity, checkpoints before PREPARED and retains interrupted candidate files; recovery refuses rebuilding after publication or cutover.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary811.json"
+    },
+    {
+      "path": "src/storage/migration-publication.js",
+      "sha256": "6e60f541f53f977bc1670d2c2f7577e5e718b1e1fff80ba49d4e7c026d8b38ed",
+      "disposition": "Maintains explicit publication-stage journals and independently retained backup bundles. Staging obtains maintenance ownership and verifies candidate/bundle bindings; recovery refuses rebuilding after marker or database publication and retains interrupted attempts.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary810.json"
+    },
+    {
+      "path": "src/storage/migration-rollback-admission.js",
+      "sha256": "da43ae3a2930f7adf3370898ff1e9a9689df8319f6c861e23f6aa52ce2cf5c73",
+      "disposition": "Observes native database/sidecars under maintenance ownership, requires closed checkpointed connections, compares current versus retained canonical snapshot and refuses accepted native changes before preserved-source rollback. Equality is not advertised as historical-write exclusion.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary816.json"
+    },
+    {
+      "path": "src/storage/migration-rollback-preparation.js",
+      "sha256": "1152bbb354970c43c8530d681790c08941408328e59654eb6e62044b2dcd9bfe",
+      "disposition": "Writes rollback preparation and owner-adoption journals under retained maintenance exclusion. READY requires current admission parity, matching native marker and independently verified native backup. Interrupted backups are retained rather than overwritten.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary811.json"
+    },
+    {
+      "path": "src/storage/migration-rollback-publication.js",
+      "sha256": "81ca1f7c72e57f885a137e33d428c4303db0f1bb859ac19c67372d9826553417",
+      "disposition": "Writes rollback publication and owner-adoption journals. Publication requires operator exclusion of native writes and verified source stage; native authority is retained before legacy roots are restored. Recovery validates partitions, exact owner chain and closed native WAL before adopting metadata.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary811.json"
+    },
+    {
+      "path": "src/storage/migration-rollback-source-stage.js",
+      "sha256": "6bfbf8e0ad81644596fff0f055593082e7627bbac66de070986f81aa4f8b2211",
+      "disposition": "Writes explicit rollback source-stage manifests during exclusive copy and owner recovery. Stage bindings, captured source membership and bytes, prepared native backup and exact owner continuity are revalidated; incomplete copies are retained independently.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary811.json"
+    },
+    {
+      "path": "src/storage/migration-source.js",
+      "sha256": "4e2b78e7be7b1641883b28d0b33fe34fd1264b047ce88e00e617e5607aa9ffdb",
+      "disposition": "Named atomic writes persist explicit legacy capture manifests and retained capture history. Initial capture requires writer exclusion and maintenance scope; recovery requires owned maintenance, unchanged original inventory, no cutover marker/candidate and bounded recorded membership.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary811.json"
+    },
+    {
+      "path": "src/storage/operational-context.js",
+      "sha256": "53fa9ed5fe2b0724071dda1c1594f8a2101fcf645bcf286da5407a4b9d37183f",
+      "disposition": "Raw realpathSync verifies project identity for selected operational context. Reads/presence checks delegate to the selected canonical store; expired and mismatched scopes are refused.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary816.json"
+    },
+    {
+      "path": "src/storage/project-backup.js",
+      "sha256": "66dffeb2ca6fa6f6c90a3eb19fafad8e5fd69596f2794c23ef95669fce5f1370",
+      "disposition": "Writes independent backup manifests and attachment inventories in exclusively allocated directories. Uses a committed SQLite backup, verifies referenced attachment bytes and digest bindings; restore backup output is fresh and independently verified.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary810.json"
+    },
+    {
+      "path": "src/storage/project-bootstrap.js",
+      "sha256": "b511b8eb18837fa217fc1c3fa2f892d1136456e464a3d10a777643908da68aaa",
+      "disposition": "Allocates an independent empty SQLite seed and verified backup, then delegates to journaled fresh-project restore. Requires explicit writer exclusion and freshness; no destructive legacy conversion during read-only commands.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary816.json"
+    },
+    {
+      "path": "src/storage/project-boundary.js",
+      "sha256": "72d5ff54501b9b31234d3ef6e7c9610c5f1dd5f248a671fcd6e03c38ac558b2c",
+      "disposition": "Observes storage marker/database/sidecars and retained legacy namespaces before canonical dispatch. Native selection refuses pending/missing/contradictory authority; read-only unselected access does not allocate a replacement database.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary816.json"
+    },
+    {
+      "path": "src/storage/project-replacement.js",
+      "sha256": "8edb1daa7f5a50a56c2762488db647d1e441d1f421d8dd6b2f1fbc5a813efa59",
+      "disposition": "Writes explicit replacement preparation intents in maintenance callbacks. Writer exclusion, exact owner continuity, unchanged source backup and validated incoming snapshot precede archival/publication. Recovery refuses conflicting publication checkpoints.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary811.json"
+    },
+    {
+      "path": "src/storage/project-restore.js",
+      "sha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+      "disposition": "Writes explicit restore publication/preparation journals under maintenance ownership. Fresh restore refuses existing authority; replacement requires verified outgoing archival. Published database logical parity, integrity, domain validation and referenced attachments are checked before ACTIVE; owner recovery revalidates recorded journals.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary811.json"
+    },
+    {
+      "path": "src/storage/restore-layout.js",
+      "sha256": "64a380833307e834fbcbf0cd1f6210151b014cbcce95e44615a2ed5c2ebb9e4c",
+      "disposition": "Observes publication namespace and verifies immutable objects against the retained incoming snapshot. Refuses legacy state and unbound object membership before restore publication.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary816.json"
+    },
+    {
+      "path": "src/storage/restore-preparation.js",
+      "sha256": "70c2db1ac984643434a5e1986028efc39f79b9d2f2576a4cbe35f39bd0161347",
+      "disposition": "Maintains owner-checked restore preparation journals and independently retained rebuild intents. Interrupted snapshots are retained before rebuilding from a fingerprint-bound, verified backup; temporary intent publication uses exclusive link semantics.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary810.json"
+    },
+    {
+      "path": "src/storage/restore-replacement-archive.js",
+      "sha256": "fbd0347cb136200ab4cdf848c47c1948f226913a3714c347b71d8fb541c4dd36",
+      "disposition": "Writes explicit replacement archival journals and exact owner-adoption metadata. Incoming/outgoing bindings and active-root partitions are verified before root moves; complete archive verification precedes ARCHIVED.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary811.json"
+    },
+    {
+      "path": "src/storage/restore-replacement-preparation.js",
+      "sha256": "07c55045508317bb70d20c7b4b687da662d9ab1f41e209d1972a3c7e06180014",
+      "disposition": "Writes missing allocation metadata and owner-checked rebuild intent. Reconstruction requires matching preparation baseline; ambiguous membership and changed outgoing authority are refused. Interrupted outgoing attempts and manifests remain independently retained.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary811.json"
+    },
+    {
+      "path": "src/storage/restore-replacement.js",
+      "sha256": "f7b7aed1fe54c4feb71a192a5c2aed9ff92bdb80f26d053ba1498d433cc1f138",
+      "disposition": "Writes retained outgoing replacement manifests through an owner-checked helper. Preparation validates outgoing authority, refuses live operation leases, records baseline before allocation, retains independent backup and requires closed connections before READY.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary811.json"
+    },
+    {
+      "path": "src/storage/singleton-import.js",
+      "sha256": "811af2a22679865f4bf8dfd0d47508444cafdf9f63fd289e5f462feb30ca06db",
+      "disposition": "Reads legacy singleton conversion input, validates schema/source fingerprints before and after selection, then imports into the caller-owned unpublished SQLite transaction. No writable temporary filesystem task namespace.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary816.json"
+    },
+    {
+      "path": "src/storage/snapshot.js",
+      "sha256": "52d0e9a891f630df71f34f9fd7fed008a7b97f0ad04efe4727422d7fe2e30d81",
+      "disposition": "Creates a private temporary SQLite backup and opens it read-only for isolated reads. Only owned live snapshots may be reused; snapshot handles and scratch directories are closed/removed in finally.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary815.json"
+    },
+    {
+      "path": "src/storage/storage-marker.js",
+      "sha256": "1664b9f2c1005507ee1aa256dc443f0d82c728646c2cf04a8460f1b270a0ca05",
+      "disposition": "Bootstrap/cutover marker remains file-owned under the plan. Reads enforce handle admission and bounded 64KiB encoding/schema checks; pending creation and activation require owned maintenance exclusion.",
+      "review": "direct-source-current"
+    },
+    {
+      "path": "src/storage/topology.js",
+      "sha256": "2c7b381abca72c4a4fc2173623ff5dce13ff6f5982d77ab4c2dbd302e2d6b1fa",
+      "disposition": "Reads filesystem topology metadata before SQLite creates storage/sidecars. Rejects named unsupported Linux network types and Windows UNC paths; the deny-list does not certify every other filesystem.",
+      "review": "unchanged-source-role",
+      "priorEvidence": "benchmarks/storage-sqlite/public-file-boundary815.json"
+    }
+  ],
+  "literalModuleRoleInventoryComplete": true,
+  "wholeConsumerClosure": false,
+  "limitations": [
+    "Module-role coverage is not complete transitive callgraph/parameter conformance.",
+    "The supplied-fingerprint route reproduction845 remains an open correction.",
+    "No new race-test or platform execution is inferred from source inspection."
+  ]
+}

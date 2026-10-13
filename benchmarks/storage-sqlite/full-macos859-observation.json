@@ -1,0 +1,20 @@
+{
+  "increment": 859,
+  "sourceRevision": "0a9765719dd9c7a1bdab6efe8b183bc3e5279200",
+  "status": "INTERRUPTED_OR_UNRECORDED",
+  "exitCode": null,
+  "terminalReceiptMissing": true,
+  "toolHandleMissing": 84478,
+  "wrapperAndVerifierProcessAbsent": true,
+  "admittedHashesUnchangedAtObservation": true,
+  "manifestFiles": 2975,
+  "cause": "Unknown; log ends during the core suite and no terminal result exists. No PASS or test-failure count inferred.",
+  "lastLogLines": [
+    "\u2714 rollback release refuses unsupported validator checkout (79.219708ms)",
+    "\u2714 rollback release refuses modified validator checkout (1876.7415ms)",
+    "\u2714 rollback source staging ready retains native authority (4315.972042ms)",
+    "\u2714 rollback source staging source-tamper retains native authority (4049.718542ms)",
+    "\u2714 rollback source staging extra-file retains native authority (3852.684417ms)"
+  ],
+  "observedAt": "2026-10-08T12:24:45.771698+00:00"
+}

@@ -1,0 +1,41 @@
+{
+  "increment": 819,
+  "baseRevision": "405fc8a",
+  "sourceHashes": {
+    "src/core/history.js": "2d1c34dd5fefd71ecb0173d05ea3fb00dd1aebd70f9ccaac6e68a1a7ade559ae",
+    "src/core/trace.js": "ef7e3ed565bdfc4b6d64478ab2bada61888f884ebee2d5bcabe6626204804867",
+    "tests/history-trace-reflect.test.js": "3ca6de3ce8074bd557a062eabe8519094b617d1d49bb64f1e9171107da16052a"
+  },
+  "preflight": "READY",
+  "focusedTests": {
+    "tests": 37,
+    "pass": 37,
+    "fail": 0,
+    "skip": 0
+  },
+  "checks": {
+    "fast": "PASS",
+    "changedFileLintErrors": 0,
+    "changedFileLintWarnings": 3,
+    "complexity": "PASS"
+  },
+  "scope": "History output selection during normalization; complete shared trace validation remains executed",
+  "controls": [
+    "Chronological tails at limits 0,1,2,5,event count and above count",
+    "Combined category/check/phase/time filters preserve results",
+    "Invalid date ignored as before",
+    "No matching event preserves whole-ledger history quality",
+    "Independent stored event tamper outside output still yields same invalid integrity",
+    "Read-only task bytes/logical rows preserved"
+  ],
+  "correctionNotes": [
+    "Initial additional phase-filter expectation incorrectly assumed VERIFYING; fixture ledger correctly reconstructs CORRECTING and expectation was corrected",
+    "Initial complexity regression removed by extracting normalized output projection"
+  ],
+  "limits": [
+    "Other trace projections and complete source auditing still run",
+    "No timing or RSS acceptance claim; current CI is live so benchmarks are not run",
+    "Whole consumer closure and inclusive 25 percent LOC target remain open",
+    "Full changed-source platform validation pending"
+  ]
+}

@@ -1,0 +1,197 @@
+{
+  "checkpoint": 572,
+  "scope": "Mac owned conditional pre-write source publication and exact pinned legacy validator; no public command or interrupted publication recovery",
+  "sourceHashes": {
+    "src/storage/migration-rollback-publication.js": "3d0a96503d365146d1427d00c6885ff9d1a3ebb5c761e331098b2f8cac6f62d5",
+    "tests/storage-migration-rollback-publication.test.js": "ef4a864fab8205654bfce8df0e0707d5a04ca1e59e72c9a6f48cb0cd235ec4e8",
+    "scripts/drill-storage-prewrite-source-rollback.mjs": "167807b6e7880d8bde708d9e38f04bac94acf639f37be7444617634f4571da79"
+  },
+  "macTests": {
+    "passed": 3,
+    "failed": 0,
+    "rawLog": "\u2714 owned source rollback publication restored preserves native authority (3118.359334ms)\n\u2714 owned source rollback publication source-tamper preserves native authority (3220.739666ms)\n\u2714 owned source rollback publication native-tamper preserves native authority (2933.763541ms)\n\u2139 tests 3\n\u2139 suites 0\n\u2139 pass 3\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 9441.633709\n"
+  },
+  "linkedWorktreeDrill": {
+    "scope": "Owned linked-worktree conditional pre-write source publication with exact-target legacy validation; no public command or interrupted recovery claim",
+    "publication": {
+      "root": "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-XAlcPl-linked/rollback-migration-retained/publication/source-rollback/source-publication",
+      "native": "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-XAlcPl-linked/rollback-migration-retained/publication/source-rollback/source-publication/retained-native",
+      "source": "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-XAlcPl-linked",
+      "journal": {
+        "schemaVersion": 1,
+        "kind": "MIGRATION_SOURCE_ROLLBACK_PUBLICATION",
+        "phase": "RESTORED",
+        "ownerId": "2faff42e-3b19-48cc-aa18-a9a0eabe7d3f",
+        "operationId": "6ab58547-49cd-4a54-b09b-2eb1316fc7f3",
+        "sourceInventoryFingerprint": "097f9de53d17435bc8896b84df4fba896d08ed2b3939e39b0da506148d1b720f",
+        "nativeFingerprint": "6b8b1a1c5776440dee01c2d5a8f85084f3b8d189c3ea036b59a8441ca6cdc6f4",
+        "nativeBackupFingerprint": "f018095444078b49e2f854828fe5c6a264d2bb160b009a24ad7cd0961d93ec87",
+        "nativeWritesExcludedByOperator": true,
+        "nativeInventory": {
+          "files": [
+            {
+              "path": ".forgeloop/state.sqlite",
+              "size": 217088,
+              "sha256": "01f3a67f820acaec779a73f31c41a431c8b357955107832a0f77a0fc4eb48c54"
+            },
+            {
+              "path": ".forgeloop/storage-version.json",
+              "size": 256,
+              "sha256": "31d6400d1fedbc11ca517b6b571c9e498f699f56665ccb3d0657889d5725aae0"
+            }
+          ],
+          "directories": []
+        }
+      },
+      "restored": true,
+      "nativeAuthorityRetained": true,
+      "historicalWritesExcluded": false,
+      "nativeWritesExcludedByOperator": true,
+      "targetVersionValidated": false
+    },
+    "before": {
+      "exit": 0,
+      "stdout": "{\n  \"status\": \"VALID\",\n  \"errors\": [],\n  \"incomplete\": [],\n  \"stale\": null,\n  \"delegation\": {\n    \"status\": \"NOT_APPLICABLE\",\n    \"required\": false,\n    \"errors\": []\n  },\n  \"continuity\": {\n    \"required\": false,\n    \"status\": \"NOT_APPLICABLE\",\n    \"classification\": \"ABSENT\",\n    \"errors\": [],\n    \"reasonCodes\": [],\n    \"reasons\": [\n      \"CONTINUITY_ABSENT\"\n    ],\n    \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n    \"evidenceAuthority\": \"NONE\"\n  },\n  \"evidence\": [\n    {\n      \"kind\": \"OBSERVED\",\n      \"source\": \"ForgeLoop protocol conformance\",\n      \"result\": \"VALID\"\n    }\n  ]\n}\n",
+      "stderr": ""
+    },
+    "migrated": {
+      "phase": "PUBLISHED",
+      "operationId": "6ab58547-49cd-4a54-b09b-2eb1316fc7f3",
+      "taskCount": 1,
+      "attachments": 0,
+      "currentStateVerified": true,
+      "restored": false,
+      "path": "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-XAlcPl-linked/.forgeloop/state.sqlite",
+      "destination": "rollback-migration-retained"
+    },
+    "nativeValidation": {
+      "ok": true,
+      "command": "validate-protocol",
+      "exitCode": 0,
+      "result": {
+        "status": "VALID",
+        "errors": [],
+        "incomplete": [],
+        "stale": null,
+        "delegation": {
+          "status": "NOT_APPLICABLE",
+          "required": false,
+          "errors": []
+        },
+        "continuity": {
+          "required": false,
+          "status": "NOT_APPLICABLE",
+          "classification": "ABSENT",
+          "errors": [],
+          "reasonCodes": [],
+          "reasons": [
+            "CONTINUITY_ABSENT"
+          ],
+          "authority": "OPERATIONAL_CONTEXT_ONLY",
+          "evidenceAuthority": "NONE"
+        },
+        "evidence": [
+          {
+            "kind": "OBSERVED",
+            "source": "ForgeLoop protocol conformance",
+            "result": "VALID"
+          }
+        ]
+      },
+      "error": null,
+      "metadata": {
+        "protocolVersion": 1,
+        "integrationApiVersion": 1,
+        "packageVersion": "2.0.0"
+      }
+    },
+    "after": {
+      "exit": 0,
+      "stdout": "{\n  \"status\": \"VALID\",\n  \"errors\": [],\n  \"incomplete\": [],\n  \"stale\": null,\n  \"delegation\": {\n    \"status\": \"NOT_APPLICABLE\",\n    \"required\": false,\n    \"errors\": []\n  },\n  \"continuity\": {\n    \"required\": false,\n    \"status\": \"NOT_APPLICABLE\",\n    \"classification\": \"ABSENT\",\n    \"errors\": [],\n    \"reasonCodes\": [],\n    \"reasons\": [\n      \"CONTINUITY_ABSENT\"\n    ],\n    \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n    \"evidenceAuthority\": \"NONE\"\n  },\n  \"evidence\": [\n    {\n      \"kind\": \"OBSERVED\",\n      \"source\": \"ForgeLoop protocol conformance\",\n      \"result\": \"VALID\"\n    }\n  ]\n}\n",
+      "stderr": ""
+    },
+    "nativeSnapshotUnchanged": true,
+    "retainedNativeLayout": true,
+    "preservedSourceRetained": true,
+    "sourceManifestPresent": true,
+    "fingerprint": "6b8b1a1c5776440dee01c2d5a8f85084f3b8d189c3ea036b59a8441ca6cdc6f4"
+  },
+  "acceptedNativeTaskControl": {
+    "scope": "Disposable post-write negative control",
+    "sourceRestorationRefused": true,
+    "productionAdmissionRefusal": true,
+    "restored": false,
+    "newNativeTaskPreserved": true,
+    "nativeValidation": {
+      "ok": true,
+      "command": "validate-protocol",
+      "exitCode": 0,
+      "result": {
+        "status": "VALID",
+        "errors": [],
+        "incomplete": [],
+        "stale": null,
+        "delegation": {
+          "status": "NOT_APPLICABLE",
+          "required": false,
+          "errors": []
+        },
+        "continuity": {
+          "required": false,
+          "status": "NOT_APPLICABLE",
+          "classification": "ABSENT",
+          "errors": [],
+          "reasonCodes": [],
+          "reasons": [
+            "CONTINUITY_ABSENT"
+          ],
+          "authority": "OPERATIONAL_CONTEXT_ONLY",
+          "evidenceAuthority": "NONE"
+        },
+        "evidence": [
+          {
+            "kind": "OBSERVED",
+            "source": "ForgeLoop protocol conformance",
+            "result": "VALID"
+          }
+        ]
+      },
+      "error": null,
+      "metadata": {
+        "protocolVersion": 1,
+        "integrationApiVersion": 1,
+        "packageVersion": "2.0.0"
+      }
+    },
+    "migrated": {
+      "phase": "PUBLISHED",
+      "operationId": "62bcb4e5-c29b-4dda-9b33-4eeef3c203b3",
+      "taskCount": 1,
+      "attachments": 0,
+      "currentStateVerified": true,
+      "restored": false,
+      "path": "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-ItMjoJ-linked/.forgeloop/state.sqlite",
+      "destination": "rollback-migration-retained"
+    }
+  },
+  "fastExit": 0,
+  "lintExit": 0,
+  "controls": [
+    "Requires explicit nativeWritesExcluded operator statement in addition to writer exclusion/content admission",
+    "Retains original native database and marker bytes by rename",
+    "Independent verified native backup and captured source retained",
+    "Exact source inventory restored",
+    "Source and retained native tampering rejected",
+    "Pinned legacy protocol VALID before/after same-path publication",
+    "Production admission refuses accepted native task; new task retained"
+  ],
+  "limitations": [
+    "Operator exclusion statement is a conditional operational boundary, not automatic historical-write proof",
+    "Maintenance exclusion retained for target-version validation and release procedure",
+    "Interrupted source publication recovery unimplemented",
+    "Current Windows/Linux publication checks pending",
+    "Binary publication test not yet separately exercised",
+    "Public rollback command and complete operator procedure pending",
+    "Full original plan acceptance incomplete"
+  ]
+}

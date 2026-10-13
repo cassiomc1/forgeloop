@@ -1,0 +1,81 @@
+{
+  "kind": "PUBLIC_TASK_FIXTURE_VALIDATION",
+  "parentRevision": "d870414",
+  "node": "v24.19.0",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "fixtureSourceHashes": {
+    "scripts/lib/benchmark-domain-fixture.mjs": "05c3b7d9398b30c861778166c700d5a2d1ceb2b74abe632faeabffb113e08ca4",
+    "scripts/benchmark-storage-populated-cli.mjs": "90df6176ef1c75e74702c40e00d973cf0e638890d8b02ae1bc6e988ee74baefe"
+  },
+  "results": [
+    {
+      "artifact": "public-basic-d870414-node2419.json.gz",
+      "rawSha256": "0395cfe3db84491abca7ea442c2007b40b5b0ac7640e6efaadc31f3c5e205f2a",
+      "operations": [
+        {
+          "operation": "paginated-task-list",
+          "tasks": 10,
+          "selectedEvents": 10,
+          "totalEvents": 100,
+          "outputContractVerified": true
+        },
+        {
+          "operation": "history-tail",
+          "tasks": 10,
+          "selectedEvents": 10,
+          "totalEvents": 100,
+          "outputContractVerified": true
+        }
+      ]
+    },
+    {
+      "artifact": "public-rich-d870414-node2419.json.gz",
+      "rawSha256": "3f1dd77cf78ba41f46a387c1050c3be957afbf5672c627c50499f49b99751b4b",
+      "operations": [
+        {
+          "operation": "paginated-task-list",
+          "tasks": 10,
+          "selectedEvents": 1000,
+          "totalEvents": 1090,
+          "outputContractVerified": true
+        },
+        {
+          "operation": "history-tail",
+          "tasks": 10,
+          "selectedEvents": 1000,
+          "totalEvents": 1090,
+          "outputContractVerified": true
+        }
+      ]
+    },
+    {
+      "artifact": "public-basic-edge-d870414-node2419.json.gz",
+      "rawSha256": "21e8e8da06f620033c66b1eca184bf6aab1a47a8f381a58813b3fa6702625f21",
+      "operations": [
+        {
+          "operation": "paginated-task-list",
+          "tasks": 1,
+          "selectedEvents": 3,
+          "totalEvents": 3,
+          "outputContractVerified": true
+        },
+        {
+          "operation": "history-tail",
+          "tasks": 1,
+          "selectedEvents": 3,
+          "totalEvents": 3,
+          "outputContractVerified": true
+        }
+      ]
+    }
+  ],
+  "targetedEslintExitCode": 0,
+  "releaseThresholdsVerified": false,
+  "limits": [
+    "Validation-only; no timing or performance acceptance",
+    "Slice hashes bind fixture code; final full-source verification remains required",
+    "Archive production drafts were present during validation; no migration/restore benchmark was run"
+  ],
+  "verifyFastExitCode": 0,
+  "verifyFastLimits": "Archive partition drafts changed during fast checks; combined frozen-source full prepush remains required"
+}

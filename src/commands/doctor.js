@@ -4,13 +4,14 @@ import { readTemplateEntries } from "../core/templates.js";
 import { createEvidence } from "../core/evidence.js";
 import { LAYOUT_VERSION } from "../core/target-layout.js";
 import { inspectNativeAdapter, validateNativeAdapterTargets } from "../core/native-adapters.js";
-import { findIncompleteTransactions, recoverIncompleteTransactions } from "../core/transaction.js";
+import { findIncompleteTransactions } from "../core/transaction.js";
 import { isRepositoryCandidate } from "../repository-index/lifecycle.js";
 import { getRepositoryIndexStatus, sanitizeRepositoryIndexStatus } from "../repository-index/status.js";
 import { searchRepository } from "../repository-index/search.js";
 import { getPersistentTransportStatus } from "../persistent-transport/client.js";
 import { hasTypesafeCredentials } from "../adapters/typesafe/client.js";
 import { PINNED_JEV_MODEL } from "../core/decision/constants.js";
+import { getOperationalStore } from "../storage/operational-context.js";
 
 function semanticDecisionPlaneFinding() {
   const credentialState = hasTypesafeCredentials() ? "credentials configured" : "credentials missing";
@@ -193,20 +194,39 @@ async function inspectRepositoryIndexForDoctor({ target, packageRoot, repository
   return result;
 }
 
+async function inspectStorageForDoctor(target, findings) {
+  let storage = null;
+  const store = getOperationalStore(target);
+  if (store) {
+    const { checkStorageIntegrity, readStorageMeta } = await import("../storage/connection.js");
+    const integrity = checkStorageIntegrity(store.db);
+    const metadata = readStorageMeta(store.db);
+    storage = { backend: "sqlite", storageVersion: metadata.storage_version, schemaVersion: metadata.schema_version, integrity };
+    findings.push(finding(
+      integrity.ok ? "sqlite-storage-integrity" : "E_STORAGE_INTEGRITY_INVALID",
+      integrity.ok ? "info" : "error",
+      ".forgeloop/state.sqlite",
+      integrity.ok ? "SQLite pages, foreign keys, ledger hashes and artifact bindings passed storage integrity checks." : "SQLite storage integrity checks failed; no automatic evidence repair was attempted.",
+      integrity.ok ? "Domain chronology and authority still require their existing validators." : "Preserve the database and diagnose the reported storage inconsistencies before writing or migrating.",
+    ));
+  }
+
+  return storage ? { storage } : {};
+}
+
+async function findDoctorTransactions(target) {
+  // SQLite recovery belongs to its native open/transaction boundary. Retained
+  // legacy manifests are import evidence, not operational recovery input.
+  return getOperationalStore(target) ? [] : findIncompleteTransactions(target);
+}
+
 export async function runDoctor({ target, packageRoot, adoptPaths = [], strict = false, fix = false, repositoryIndex, repositoryIndexOptions }) {
   const findings = [];
-  let incompleteTransactions = await findIncompleteTransactions(target);
-  if (fix && incompleteTransactions.some((transaction) => transaction.status === "COMMITTING")) {
-    const recovered = await recoverIncompleteTransactions(target);
-    for (const transaction of recovered) {
-      findings.push(finding(
-        transaction.status === "ROLLED_BACK" ? "TRANSACTION_RECOVERED" : "E_TRANSACTION_RECOVERY_FAILED",
-        transaction.status === "ROLLED_BACK" ? "info" : "error",
-        `.forgeloop/.txn/${transaction.transactionId}`,
-        `Transaction recovery result: ${transaction.status}.`,
-      ));
-    }
-    incompleteTransactions = await findIncompleteTransactions(target);
+  const incompleteTransactions = await findDoctorTransactions(target);
+  if (fix && incompleteTransactions.length) {
+    findings.push(finding("E_STORAGE_OPERATION_UNSUPPORTED", "error", ".forgeloop/.txn",
+      "Filesystem transaction repair is retired; retained evidence was preserved.",
+      "Reconcile incomplete transactions with the compatible pre-migration release before importing into SQLite."));
   }
   for (const transaction of incompleteTransactions) {
     findings.push(finding(
@@ -407,11 +427,14 @@ export async function runDoctor({ target, packageRoot, adoptPaths = [], strict =
 
   findings.push(semanticDecisionPlaneFinding());
 
+  const storageFields = await inspectStorageForDoctor(target, findings);
+
   const ok = findings.every((item) => item.severity !== "error")
     && (!strict || findings.every((item) => item.severity !== "warning"));
   return {
     ok,
     findings,
+    ...storageFields,
     repositoryIndex: repositoryIndexResult,
     evidence: [createEvidence({
       kind: "OBSERVED",

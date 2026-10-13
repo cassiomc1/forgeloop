@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { cp, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { cp, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -79,7 +80,7 @@ test("documentation reference generator is deterministic and idempotent", async 
     );
     assert.equal(checkRun.errors.length, 0);
   } finally {
-    await rm(tempDir, { recursive: true, force: true });
+    await removeTempTree(tempDir);
   }
 });
 
@@ -113,7 +114,7 @@ test("documentation generation and validation succeed in directory paths contain
       `documentation validation failed: ${JSON.stringify(confResult.errors, null, 2)}`,
     );
   } finally {
-    await rm(tempDir, { recursive: true, force: true });
+    await removeTempTree(tempDir);
   }
 });
 
@@ -129,7 +130,7 @@ test("Archify diagram check validates generated outputs and reproducibility", as
     assert.deepEqual(report.diagrams.map((diagram) => diagram.id), EXPECTED_DIAGRAM_IDS);
     assert.ok(report.diagrams.every((diagram) => diagram.composition === "pass"));
   } finally {
-    await rm(tempDir, { recursive: true, force: true });
+    await removeTempTree(tempDir);
   }
 });
 
@@ -226,6 +227,6 @@ test("generated documentation generator fails closed on missing, duplicate, inva
     assert.equal(nestedRes.valid, false);
     assert.ok(nestedRes.errors.some((e) => e.includes("DOC_GENERATED_REGION_NESTED")));
   } finally {
-    await rm(tempDir, { recursive: true, force: true });
+    await removeTempTree(tempDir);
   }
 });

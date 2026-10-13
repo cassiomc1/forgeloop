@@ -1,0 +1,40 @@
+{
+  "increment": 786,
+  "sourceRevision": "74ea4ac93957d4082ef173e6b08c2dc11bb976b4",
+  "status": "PASS",
+  "sourceFiles": 2863,
+  "sourceUnchanged": true,
+  "steps": [
+    {
+      "name": "startup786",
+      "exitCode": 0,
+      "elapsedSeconds": 11.051532745361328
+    },
+    {
+      "name": "commit786",
+      "exitCode": 0,
+      "elapsedSeconds": 15.495527982711792
+    },
+    {
+      "name": "populated-cli786",
+      "exitCode": 0,
+      "elapsedSeconds": 98.28464794158936
+    },
+    {
+      "name": "mcp-latency786",
+      "exitCode": 0,
+      "elapsedSeconds": 116.49306297302246
+    },
+    {
+      "name": "idempotency786",
+      "exitCode": 0,
+      "elapsedSeconds": 29.96494698524475
+    },
+    {
+      "name": "mcp-resources786",
+      "exitCode": 0,
+      "elapsedSeconds": 118.08777785301208
+    }
+  ],
+  "scope": "Serial latency measurements then separate MCP resource stage; no tests overlap. PASS means harness/parity, not release targets."
+}

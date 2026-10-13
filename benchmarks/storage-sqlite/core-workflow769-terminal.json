@@ -1,0 +1,165 @@
+{
+  "increment": 769,
+  "runId": 37684202204,
+  "url": "https://github.com/cassiomc1/forgeloop/actions/runs/37684202204",
+  "headSha": "aa29518f3242911838e387b73cd141e8847d3583",
+  "status": "completed",
+  "conclusion": "failure",
+  "jobs": [
+    {
+      "id": 113007696880,
+      "name": "Classify changed paths",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113007781679,
+      "name": "audit",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113007781681,
+      "name": "Lint and dependency policy",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113007781850,
+      "name": "tarball smoke (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113007781889,
+      "name": "Unit tests (Node 24, shard 3/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113007781891,
+      "name": "Unit tests (Node 24.19.0, shard 0/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113007781899,
+      "name": "Unit tests (Node 24, shard 1/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113007781912,
+      "name": "Verify generated Archify diagram",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 113007781976,
+      "name": "Unit tests (Node 24, shard 2/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113007782076,
+      "name": "Unit tests (Node 24, shard 4/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113017988463,
+      "name": "Coverage report (Node 24)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113018249808,
+      "name": "Repository Index native matrix / Classify Repository Index paths",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113018343294,
+      "name": "Repository Index native matrix / Verify Repository Index manifest",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113018439586,
+      "name": "Repository Index native matrix / Native Repository Index (Windows)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113018439664,
+      "name": "Repository Index native matrix / Native Repository Index (macOS)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113018439666,
+      "name": "Repository Index native matrix / Native Repository Index (Linux)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113018979154,
+      "name": "validate (22)",
+      "status": "completed",
+      "conclusion": "failure"
+    }
+  ],
+  "jobCount": 17,
+  "successfulJobs": 15,
+  "failedJobs": 2,
+  "linuxCoverage": {
+    "tests": 2871,
+    "passed": 2859,
+    "failed": 0,
+    "skipped": 12
+  },
+  "documentationFailure": "Seven MD012 extra blank-line errors; corrected in11e7949, renewed actual CI pending. Aggregate reflects documentation failure.",
+  "nativeIndexJobs": {
+    "windows": {
+      "conclusion": "success",
+      "id": 113018439586,
+      "labels": [
+        "self-hosted",
+        "Windows",
+        "X64",
+        "forgeloop-windows-remote"
+      ],
+      "name": "Repository Index native matrix / Native Repository Index (Windows)",
+      "runner_name": "forgeloop-windows-remote",
+      "status": "completed"
+    },
+    "macos": {
+      "conclusion": "success",
+      "id": 113018439664,
+      "labels": [
+        "self-hosted",
+        "macOS",
+        "ARM64",
+        "forgeloop-macos-local"
+      ],
+      "name": "Repository Index native matrix / Native Repository Index (macOS)",
+      "runner_name": "forgeloop-macos-local",
+      "status": "completed"
+    },
+    "linux": {
+      "conclusion": "success",
+      "id": 113018439666,
+      "labels": [
+        "self-hosted",
+        "Linux",
+        "X64",
+        "forgeloop-linux-remote"
+      ],
+      "name": "Repository Index native matrix / Native Repository Index (Linux)",
+      "runner_name": "forgeloop-linux-remote",
+      "status": "completed"
+    }
+  },
+  "runMetadataSha256": "bcb5d1dde60915efc178543f49d5dd2ec95800847742c9b0b877c501eba32c98",
+  "scope": "Terminal aa29518 parent workflow predates route765, quality767 and current preflight769."
+}

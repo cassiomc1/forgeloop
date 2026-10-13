@@ -1,0 +1,26 @@
+{
+  "increment": 871,
+  "sourceRevision": "d6a95496a3f507f1ba47524479a20a5fc85cb639",
+  "scope": "Current changed filesystem-import module source review; previous847 roles retained only where hashes match. AST closure is discovery, not exhaustive runtime conformance.",
+  "reviewed": [
+    {
+      "path": "src/storage/connection.js",
+      "sha256": "ca21ebb7d35aaf3ea74be04b767e755436934c52fd4db2c5e828aabdd20dee74",
+      "disposition": "Sync lstat and native realpath metadata checks only. Compare canonical opened/expected names, admitted main dev/inode, regular sidecars, project-root identity and modification/change stamps before configuration and cached reuse. Native SQLite remains sole operational writer. Eight actual Windows controls pass without skips on7a19829; no arbitrary privileged race or native descriptor-introspection proof."
+    },
+    {
+      "path": "src/storage/connection-owner.js",
+      "sha256": "081d7ca7d303c0e69e232007bf2d1b2cd7076dfa6b7f4e3e53405cd23611a6fe",
+      "disposition": "Async lstat/realpath only: choose physical project cache key, capture/recheck main identity, then call project admission guard before metadata/callback. Native handle close is lifecycle, not legacy filesystem publication."
+    },
+    {
+      "path": "src/storage/project-boundary.js",
+      "sha256": "0fe481357f6d5459a760ddfbf5a21bf6557315482f6612c6cfd829cfa9d8ab57",
+      "disposition": "Async lstat/realpath metadata only: refuse legacy coexistence and malformed topology, capture physical project root, root directory identity/stamps and main identity for internal SQLite admission. Fresh bootstrap and explicit maintenance retain separate service authority."
+    }
+  ],
+  "inventoryModules": 505,
+  "filesystemModules": 104,
+  "unresolvedImports": [],
+  "wholeConsumerClosure": false
+}

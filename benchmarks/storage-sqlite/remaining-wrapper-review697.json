@@ -1,0 +1,52 @@
+{
+  "increment": 697,
+  "method": "Direct source review of listed wrapper enclosing functions and guards",
+  "wholeScopeVerified": false,
+  "rows": [
+    {
+      "file": "src/storage/migration-source.js",
+      "sha256": "4e2b78e7be7b1641883b28d0b33fe34fd1264b047ce88e00e617e5607aa9ffdb",
+      "roles": [
+        "source-manifest.json records exclusive CAPTURING/CAPTURED source inventory under maintenance and explicit legacy writer exclusion",
+        "resume preserves prior manifest/history, refuses cutover/candidate preparation, validates original and retained membership/bytes before CAPTURED"
+      ]
+    },
+    {
+      "file": "src/storage/restore-replacement.js",
+      "sha256": "f7b7aed1fe54c4feb71a192a5c2aed9ff92bdb80f26d053ba1498d433cc1f138",
+      "roles": [
+        "replacement-manifest.json requires live maintenance owner, closed command scope, ACTIVE layout, validated outgoing backup and logical/physical inventory bindings",
+        "READY publication follows closed connections and unchanged marker/inventory; failure retains FAILED/PREPARING metadata"
+      ]
+    },
+    {
+      "file": "src/storage/restore-replacement-preparation.js",
+      "sha256": "07c55045508317bb70d20c7b4b687da662d9ab1f41e209d1972a3c7e06180014",
+      "roles": [
+        "reconstruct missing outgoing allocation only from exact operation preallocation manifest after original baseline/owner validation",
+        "replacement-intent.json records retained partial outgoing evidence and exact history fingerprints before new preparation"
+      ]
+    },
+    {
+      "file": "src/storage/restore-replacement-archive.js",
+      "sha256": "fbd0347cb136200ab4cdf848c47c1948f226913a3714c347b71d8fb541c4dd36",
+      "roles": [
+        "archive-journal.json binds outgoing/incoming fingerprints, exact maintenance adoption and verified source/archive partition",
+        "each rename rechecks owner and partition; ARCHIVED requires every outgoing root retained and archive verification"
+      ]
+    },
+    {
+      "file": "src/core/artifacts.js",
+      "sha256": "4667bc01b1f6416ee22e0de6788bb8ae21ce238b5ce9724961c92c06d0e92db2",
+      "roles": [
+        "readBytes reads explicit portable/configuration inputs with safe path, byte/JSON/schema limits",
+        "writeFileAtomic is limited to explicit non-operational portable/configuration output; operational writes stage canonical identities in task transactions"
+      ]
+    }
+  ],
+  "limitations": [
+    "No proof of arbitrary external process exclusion or concurrent filesystem alias resistance.",
+    "Operator-supplied writersQuiesced does not itself stop old binaries.",
+    "Direct required-artifact scope finding reproduced and corrected separately in required-artifact-scope697.json; whole consumer closure remains incomplete."
+  ]
+}

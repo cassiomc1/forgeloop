@@ -1,0 +1,18 @@
+{
+  "runId": 38046501649,
+  "sourceRevision": "da596a78adc188c489bc7b2aac34f047f7bb4d71",
+  "conclusion": "failure",
+  "failingTest": "initial replacement resumes SIGKILL at PUBLICATION_READY",
+  "error": "E_STORAGE_MAINTENANCE_IN_PROGRESS",
+  "recordedOwnerPid": 8712,
+  "killedWorkerPid": 8712,
+  "resumeCliPid": 4376,
+  "testPid": 5428,
+  "observedReusedProcess": "git",
+  "originalWorkerClosed": true,
+  "observationLimit": "Process identity captured after refusal; exact refusal-time identity not captured",
+  "diagnosis": "PID reuse now directly observed; close alone insufficient",
+  "productionDisposition": "Preserve conservative liveness refusal until safe process-incarnation proof implemented and validated",
+  "logSha256": "4066a976629e7a3515cf8610028c84106b9bbff7ea195254182b776a54449358",
+  "acceptanceClaim": false
+}

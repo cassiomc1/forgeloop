@@ -1,0 +1,35 @@
+{
+  "sourceRevision": "c89a9dbc55df4632d08fdabd681d9e7913834e77",
+  "capturedAt": "2026-10-09T22:18:52.865070+00:00",
+  "productionChanged": false,
+  "command": "node --test tests/storage-task-scope-git-boundary.test.js tests/storage-task-scope.test.js",
+  "tests": 5,
+  "passed": 5,
+  "failed": 0,
+  "observed": [
+    "Actual public runTaskScope claims mutation invokes the real Git status subprocess",
+    "Native store has no SQL or unit-of-work transaction before launch and after await",
+    "Independent SQLite connection can BEGIN IMMEDIATE and ROLLBACK at both observation points",
+    "Mutation subsequently commits src claim",
+    "Existing independent lease, overlap and snapshot controls still pass"
+  ],
+  "limitations": [
+    "Before/after observation does not sample every instant within the subprocess",
+    "Focused coverage does not establish universal transitive consumer or platform acceptance"
+  ],
+  "sourceHashes": {
+    "src/commands/task-scope.js": "899ee6197753c00e5aaab5d81cea0a75cbe8a9fca597f232a53a11960a34e550",
+    "src/core/task-scope.js": "c925b1a6daeffd3543cc596a15e14127a03926117b4b9e60f0fcaaa523187405",
+    "src/core/repository.js": "d58060afdea41fd9e4373b64956632d9b7b54cec14f71c5d5b5641c80b4218b5",
+    "src/core/task-lock.js": "5bf80d68ac6c13a7a31a0a4836043630df66d144441bcedf51be0e5c4cd93e72",
+    "src/storage/unit-of-work.js": "68d361d64bb345a10e99405e5d14d830143f5731a8b32900e0087e264760c307",
+    "tests/storage-task-scope.test.js": "eb893c50d48cedea609434d569fff36c32c8f407e5b86f049b3a651bf97efc70",
+    "tests/storage-task-scope-git-boundary.test.js": "e0b542dbf1b381a88b21cf6b7e8862b63cb26492c358edbf1289b90fba56f5ff",
+    "tests/helpers/task-scope-git-boundary-worker.mjs": "61487e7cac3532eccbb9c5379715f221bb03de6da546cfca5b2ec1e746bfbe35"
+  },
+  "log": {
+    "path": "/Users/cassio/.codex/verification/task-scope-git-boundary-focused.log",
+    "sha256": "ec8e1bae6355e12333aebaae9cf553e24d7936354ced0748b4f785f279a0e1f5"
+  },
+  "wholePlanAcceptance": false
+}

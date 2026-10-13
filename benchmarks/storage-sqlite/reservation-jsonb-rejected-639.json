@@ -1,0 +1,1370 @@
+{
+  "diagnosticOnly": true,
+  "releaseThresholdsVerified": false,
+  "productionSqlChanged": false,
+  "controlHashesChecked": 2682,
+  "controlMismatches": [],
+  "oracleCases": 87,
+  "results": [
+    {
+      "variant": "materialized",
+      "accepted": false,
+      "parityTestsPassed": 11,
+      "querySha256": "73ba2fcdf715e7a77b8661505bf17395a2f3a7438073aa9174000c0bb0e2e8f7",
+      "guardMedianMs": 352.567896,
+      "rawResult": "/Users/cassio/.codex/verification/sqlite-jsonb-diagnostic639/result.json",
+      "measurement": {
+        "schemaVersion": 1,
+        "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+        "node": "v24.19.0",
+        "platform": "darwin",
+        "architecture": "arm64",
+        "cpu": "Apple M2",
+        "repeats": 20,
+        "claimCount": 3,
+        "timestamp": "2026-09-11T00:00:00.000Z",
+        "runtime": "warm-cache public transaction API with per-call native connection",
+        "syntheticSeedOutsideMeasurement": true,
+        "durabilityQualification": "Native WAL/FULL and unchanged pinned filesystem fsync transaction implementation; power-loss equivalence requires separate evidence.",
+        "diagnosticOnly": true,
+        "releaseThresholdsVerified": false,
+        "results": [
+          {
+            "scanSamples": [
+              345.1693750000004,
+              360.4019580000004,
+              352.4075419999999,
+              364.7257920000002,
+              351.436917,
+              346.6205829999999,
+              353.1971249999997,
+              354.776249999999,
+              351.00245899999936,
+              347.72137499999917,
+              352.7282500000001,
+              356.91450000000077,
+              350.5444589999988,
+              345.69837499999994,
+              356.14629200000127,
+              355.7228749999995,
+              350.3919589999987,
+              350.0205420000002,
+              353.77549999999974,
+              353.5985840000012
+            ],
+            "stageSamples": {
+              "native": [
+                {
+                  "entryMs": 4.301334000000679,
+                  "stateMutationMs": 1.3208749999994325,
+                  "eventAppendMs": 0.8777499999996508,
+                  "commitMs": 346.4347909999997,
+                  "memoryAfter": {
+                    "rss": 109428736,
+                    "heapTotal": 39092224,
+                    "heapUsed": 26181312,
+                    "external": 3184802,
+                    "arrayBuffers": 695307
+                  },
+                  "totalMs": 352.9787500000002
+                },
+                {
+                  "entryMs": 3.4007080000001224,
+                  "stateMutationMs": 0.675958000000719,
+                  "eventAppendMs": 0.38916599999993196,
+                  "commitMs": 361.43933299999935,
+                  "memoryAfter": {
+                    "rss": 254115840,
+                    "heapTotal": 283181056,
+                    "heapUsed": 150556552,
+                    "external": 2687283,
+                    "arrayBuffers": 197748
+                  },
+                  "totalMs": 365.9305830000003
+                },
+                {
+                  "entryMs": 2.494416000000456,
+                  "stateMutationMs": 0.3249580000001515,
+                  "eventAppendMs": 0.24370899999939866,
+                  "commitMs": 353.5045420000006,
+                  "memoryAfter": {
+                    "rss": 254115840,
+                    "heapTotal": 283181056,
+                    "heapUsed": 151376696,
+                    "external": 2704963,
+                    "arrayBuffers": 215428
+                  },
+                  "totalMs": 356.595875
+                },
+                {
+                  "entryMs": 3.150292000000263,
+                  "stateMutationMs": 0.46258399999987887,
+                  "eventAppendMs": 0.3907920000001468,
+                  "commitMs": 365.91258300000027,
+                  "memoryAfter": {
+                    "rss": 362299392,
+                    "heapTotal": 389316608,
+                    "heapUsed": 256379072,
+                    "external": 2752819,
+                    "arrayBuffers": 263284
+                  },
+                  "totalMs": 369.9417090000006
+                },
+                {
+                  "entryMs": 2.430207999999766,
+                  "stateMutationMs": 0.33487500000046566,
+                  "eventAppendMs": 0.26120799999989686,
+                  "commitMs": 352.44174999999996,
+                  "memoryAfter": {
+                    "rss": 362348544,
+                    "heapTotal": 389316608,
+                    "heapUsed": 257263312,
+                    "external": 2770499,
+                    "arrayBuffers": 280964
+                  },
+                  "totalMs": 355.49733300000025
+                },
+                {
+                  "entryMs": 3.4820830000007845,
+                  "stateMutationMs": 0.5881669999998849,
+                  "eventAppendMs": 0.45287499999994907,
+                  "commitMs": 347.7820410000004,
+                  "memoryAfter": {
+                    "rss": 282640384,
+                    "heapTotal": 309690368,
+                    "heapUsed": 177888072,
+                    "external": 3276171,
+                    "arrayBuffers": 786636
+                  },
+                  "totalMs": 352.32325000000037
+                },
+                {
+                  "entryMs": 2.2599580000005517,
+                  "stateMutationMs": 0.31183299999975134,
+                  "eventAppendMs": 0.2380830000001879,
+                  "commitMs": 354.2056249999996,
+                  "memoryAfter": {
+                    "rss": 282673152,
+                    "heapTotal": 309952512,
+                    "heapUsed": 178692128,
+                    "external": 3293851,
+                    "arrayBuffers": 804316
+                  },
+                  "totalMs": 357.03029199999946
+                },
+                {
+                  "entryMs": 2.966042000000016,
+                  "stateMutationMs": 0.5570000000006985,
+                  "eventAppendMs": 0.4442090000011376,
+                  "commitMs": 355.88537499999984,
+                  "memoryAfter": {
+                    "rss": 280690688,
+                    "heapTotal": 306954240,
+                    "heapUsed": 175407392,
+                    "external": 3340875,
+                    "arrayBuffers": 851340
+                  },
+                  "totalMs": 359.8669170000012
+                },
+                {
+                  "entryMs": 2.4289169999992737,
+                  "stateMutationMs": 0.265332999999373,
+                  "eventAppendMs": 0.21937500000058208,
+                  "commitMs": 352.18145800000093,
+                  "memoryAfter": {
+                    "rss": 280739840,
+                    "heapTotal": 306954240,
+                    "heapUsed": 176258792,
+                    "external": 3358555,
+                    "arrayBuffers": 869020
+                  },
+                  "totalMs": 355.10812500000065
+                },
+                {
+                  "entryMs": 3.408000000001266,
+                  "stateMutationMs": 0.4967500000002474,
+                  "eventAppendMs": 0.4029580000005808,
+                  "commitMs": 348.89137499999924,
+                  "memoryAfter": {
+                    "rss": 283443200,
+                    "heapTotal": 309690368,
+                    "heapUsed": 177271256,
+                    "external": 3276380,
+                    "arrayBuffers": 786845
+                  },
+                  "totalMs": 353.2162079999998
+                },
+                {
+                  "entryMs": 2.7590000000000146,
+                  "stateMutationMs": 0.24054199999955017,
+                  "eventAppendMs": 0.1943329999994603,
+                  "commitMs": 353.7917500000003,
+                  "memoryAfter": {
+                    "rss": 283459584,
+                    "heapTotal": 309690368,
+                    "heapUsed": 178106568,
+                    "external": 3294060,
+                    "arrayBuffers": 804525
+                  },
+                  "totalMs": 357.0016250000008
+                },
+                {
+                  "entryMs": 3.0017919999991136,
+                  "stateMutationMs": 0.5101660000000265,
+                  "eventAppendMs": 0.42166699999870616,
+                  "commitMs": 358.1795000000002,
+                  "memoryAfter": {
+                    "rss": 283557888,
+                    "heapTotal": 309952512,
+                    "heapUsed": 177235744,
+                    "external": 3336984,
+                    "arrayBuffers": 852173
+                  },
+                  "totalMs": 362.1299170000002
+                },
+                {
+                  "entryMs": 2.2712499999997817,
+                  "stateMutationMs": 0.23324999999931606,
+                  "eventAppendMs": 0.18954200000007404,
+                  "commitMs": 351.4046670000007,
+                  "memoryAfter": {
+                    "rss": 283557888,
+                    "heapTotal": 309952512,
+                    "heapUsed": 178030480,
+                    "external": 3354664,
+                    "arrayBuffers": 869853
+                  },
+                  "totalMs": 354.11412499999824
+                },
+                {
+                  "entryMs": 3.1267079999997804,
+                  "stateMutationMs": 0.48400000000037835,
+                  "eventAppendMs": 0.39683399999921676,
+                  "commitMs": 346.66300000000047,
+                  "memoryAfter": {
+                    "rss": 280969216,
+                    "heapTotal": 306954240,
+                    "heapUsed": 174458880,
+                    "external": 3270413,
+                    "arrayBuffers": 785661
+                  },
+                  "totalMs": 350.68712499999856
+                },
+                {
+                  "entryMs": 2.4135839999999007,
+                  "stateMutationMs": 0.2344169999996666,
+                  "eventAppendMs": 0.19050000000061118,
+                  "commitMs": 357.1318339999998,
+                  "memoryAfter": {
+                    "rss": 280969216,
+                    "heapTotal": 306954240,
+                    "heapUsed": 175252864,
+                    "external": 3288093,
+                    "arrayBuffers": 803341
+                  },
+                  "totalMs": 359.98545900000136
+                },
+                {
+                  "entryMs": 3.20404199999939,
+                  "stateMutationMs": 0.5124160000013944,
+                  "eventAppendMs": 0.4810830000005808,
+                  "commitMs": 356.7931659999995,
+                  "memoryAfter": {
+                    "rss": 284442624,
+                    "heapTotal": 310001664,
+                    "heapUsed": 177788800,
+                    "external": 3336989,
+                    "arrayBuffers": 852237
+                  },
+                  "totalMs": 361.0089169999992
+                },
+                {
+                  "entryMs": 2.5314999999991414,
+                  "stateMutationMs": 0.2361670000009326,
+                  "eventAppendMs": 0.18966700000055425,
+                  "commitMs": 351.23766700000124,
+                  "memoryAfter": {
+                    "rss": 284442624,
+                    "heapTotal": 310001664,
+                    "heapUsed": 178582736,
+                    "external": 3354669,
+                    "arrayBuffers": 869917
+                  },
+                  "totalMs": 354.21129199999996
+                },
+                {
+                  "entryMs": 3.384208999999828,
+                  "stateMutationMs": 0.5395410000000993,
+                  "eventAppendMs": 0.4287499999991269,
+                  "commitMs": 351.1745840000003,
+                  "memoryAfter": {
+                    "rss": 283181056,
+                    "heapTotal": 308969472,
+                    "heapUsed": 176548928,
+                    "external": 3271037,
+                    "arrayBuffers": 786285
+                  },
+                  "totalMs": 355.54441699999916
+                },
+                {
+                  "entryMs": 2.240084000000934,
+                  "stateMutationMs": 0.2384170000004815,
+                  "eventAppendMs": 0.19499999999970896,
+                  "commitMs": 354.7616249999992,
+                  "memoryAfter": {
+                    "rss": 283181056,
+                    "heapTotal": 308969472,
+                    "heapUsed": 177344512,
+                    "external": 3288717,
+                    "arrayBuffers": 803965
+                  },
+                  "totalMs": 357.4516670000012
+                },
+                {
+                  "entryMs": 3.2254160000011325,
+                  "stateMutationMs": 0.5205409999998665,
+                  "eventAppendMs": 0.3794579999994312,
+                  "commitMs": 354.6150839999991,
+                  "memoryAfter": {
+                    "rss": 284000256,
+                    "heapTotal": 309723136,
+                    "heapUsed": 177316760,
+                    "external": 3336781,
+                    "arrayBuffers": 852029
+                  },
+                  "totalMs": 358.75566600000093
+                }
+              ],
+              "baseline": [
+                {
+                  "entryMs": 16.440459000000374,
+                  "stateMutationMs": 32.944791999999325,
+                  "eventAppendMs": 61.006500000000415,
+                  "commitMs": 59.52641700000004,
+                  "memoryAfter": {
+                    "rss": 162283520,
+                    "heapTotal": 191414272,
+                    "heapUsed": 54983512,
+                    "external": 2668563,
+                    "arrayBuffers": 179028
+                  },
+                  "totalMs": 169.94058399999994
+                },
+                {
+                  "entryMs": 5.366290999999364,
+                  "stateMutationMs": 13.997875000000022,
+                  "eventAppendMs": 55.02779199999986,
+                  "commitMs": 62.397917000000234,
+                  "memoryAfter": {
+                    "rss": 254066688,
+                    "heapTotal": 283181056,
+                    "heapUsed": 149665784,
+                    "external": 2669603,
+                    "arrayBuffers": 180068
+                  },
+                  "totalMs": 136.81133299999965
+                },
+                {
+                  "entryMs": 16.11108400000012,
+                  "stateMutationMs": 17.8764170000004,
+                  "eventAppendMs": 59.641082999999526,
+                  "commitMs": 50.82037500000024,
+                  "memoryAfter": {
+                    "rss": 273858560,
+                    "heapTotal": 302202880,
+                    "heapUsed": 167711728,
+                    "external": 2669603,
+                    "arrayBuffers": 180068
+                  },
+                  "totalMs": 144.46741699999984
+                },
+                {
+                  "entryMs": 6.547708000000057,
+                  "stateMutationMs": 12.941917000000103,
+                  "eventAppendMs": 56.64158300000054,
+                  "commitMs": 57.70508299999983,
+                  "memoryAfter": {
+                    "rss": 362299392,
+                    "heapTotal": 389316608,
+                    "heapUsed": 255574216,
+                    "external": 2735139,
+                    "arrayBuffers": 245604
+                  },
+                  "totalMs": 133.8578749999997
+                },
+                {
+                  "entryMs": 16.4907919999996,
+                  "stateMutationMs": 27.579291000000012,
+                  "eventAppendMs": 62.36012500000015,
+                  "commitMs": 58.16062500000044,
+                  "memoryAfter": {
+                    "rss": 190595072,
+                    "heapTotal": 217006080,
+                    "heapUsed": 83442896,
+                    "external": 3258491,
+                    "arrayBuffers": 768956
+                  },
+                  "totalMs": 164.62270799999988
+                },
+                {
+                  "entryMs": 5.8000419999998485,
+                  "stateMutationMs": 13.975374999999985,
+                  "eventAppendMs": 57.960542000000714,
+                  "commitMs": 63.523167000000285,
+                  "memoryAfter": {
+                    "rss": 282640384,
+                    "heapTotal": 309690368,
+                    "heapUsed": 177069672,
+                    "external": 3258491,
+                    "arrayBuffers": 768956
+                  },
+                  "totalMs": 141.27741699999933
+                },
+                {
+                  "entryMs": 16.907750000000306,
+                  "stateMutationMs": 23.988624999999956,
+                  "eventAppendMs": 60.95341600000029,
+                  "commitMs": 54.85462499999994,
+                  "memoryAfter": {
+                    "rss": 191512576,
+                    "heapTotal": 217104384,
+                    "heapUsed": 83506504,
+                    "external": 3257659,
+                    "arrayBuffers": 768124
+                  },
+                  "totalMs": 156.72758299999987
+                },
+                {
+                  "entryMs": 6.148666999999477,
+                  "stateMutationMs": 12.777207999999519,
+                  "eventAppendMs": 54.65020799999911,
+                  "commitMs": 58.915375000000495,
+                  "memoryAfter": {
+                    "rss": 280592384,
+                    "heapTotal": 306954240,
+                    "heapUsed": 174501544,
+                    "external": 3323195,
+                    "arrayBuffers": 833660
+                  },
+                  "totalMs": 132.5054170000003
+                },
+                {
+                  "entryMs": 14.303458000000319,
+                  "stateMutationMs": 28.64666700000089,
+                  "eventAppendMs": 59.78508300000067,
+                  "commitMs": 59.283541999999215,
+                  "memoryAfter": {
+                    "rss": 192544768,
+                    "heapTotal": 218054656,
+                    "heapUsed": 82826600,
+                    "external": 3258699,
+                    "arrayBuffers": 769164
+                  },
+                  "totalMs": 162.04070800000045
+                },
+                {
+                  "entryMs": 6.842291999999361,
+                  "stateMutationMs": 14.026041999999507,
+                  "eventAppendMs": 58.046542000000045,
+                  "commitMs": 60.14125000000058,
+                  "memoryAfter": {
+                    "rss": 283410432,
+                    "heapTotal": 309690368,
+                    "heapUsed": 176449360,
+                    "external": 3258700,
+                    "arrayBuffers": 769165
+                  },
+                  "totalMs": 139.07070799999929
+                },
+                {
+                  "entryMs": 16.398791999999958,
+                  "stateMutationMs": 17.135208000001512,
+                  "eventAppendMs": 62.06745799999953,
+                  "commitMs": 52.06183400000009,
+                  "memoryAfter": {
+                    "rss": 192626688,
+                    "heapTotal": 218578944,
+                    "heapUsed": 82773040,
+                    "external": 3253768,
+                    "arrayBuffers": 768957
+                  },
+                  "totalMs": 147.6849170000005
+                },
+                {
+                  "entryMs": 7.306250000001455,
+                  "stateMutationMs": 13.980916000000434,
+                  "eventAppendMs": 50.242333000000144,
+                  "commitMs": 64.04491700000108,
+                  "memoryAfter": {
+                    "rss": 283525120,
+                    "heapTotal": 309690368,
+                    "heapUsed": 176417088,
+                    "external": 3319304,
+                    "arrayBuffers": 834493
+                  },
+                  "totalMs": 135.58870800000113
+                },
+                {
+                  "entryMs": 19.195874999999432,
+                  "stateMutationMs": 29.94929200000115,
+                  "eventAppendMs": 54.7283750000006,
+                  "commitMs": 55.58708300000035,
+                  "memoryAfter": {
+                    "rss": 192430080,
+                    "heapTotal": 218415104,
+                    "heapUsed": 82835344,
+                    "external": 3252733,
+                    "arrayBuffers": 767981
+                  },
+                  "totalMs": 159.48270799999955
+                },
+                {
+                  "entryMs": 7.610292000001209,
+                  "stateMutationMs": 13.992583000001105,
+                  "eventAppendMs": 50.9898749999993,
+                  "commitMs": 59.378584000000046,
+                  "memoryAfter": {
+                    "rss": 280969216,
+                    "heapTotal": 306954240,
+                    "heapUsed": 173647328,
+                    "external": 3252733,
+                    "arrayBuffers": 767981
+                  },
+                  "totalMs": 131.9848750000001
+                },
+                {
+                  "entryMs": 16.34516700000131,
+                  "stateMutationMs": 19.770000000000437,
+                  "eventAppendMs": 63.20795800000087,
+                  "commitMs": 58.46812499999942,
+                  "memoryAfter": {
+                    "rss": 193527808,
+                    "heapTotal": 219136000,
+                    "heapUsed": 83383240,
+                    "external": 3253773,
+                    "arrayBuffers": 769021
+                  },
+                  "totalMs": 157.8134170000012
+                },
+                {
+                  "entryMs": 7.473875000001499,
+                  "stateMutationMs": 13.958875000000262,
+                  "eventAppendMs": 57.00162499999897,
+                  "commitMs": 61.40141700000095,
+                  "memoryAfter": {
+                    "rss": 284393472,
+                    "heapTotal": 310001664,
+                    "heapUsed": 176976480,
+                    "external": 3319309,
+                    "arrayBuffers": 834557
+                  },
+                  "totalMs": 139.85050000000047
+                },
+                {
+                  "entryMs": 17.5089169999992,
+                  "stateMutationMs": 28.947667000000365,
+                  "eventAppendMs": 57.88195799999994,
+                  "commitMs": 55.07312499999898,
+                  "memoryAfter": {
+                    "rss": 192905216,
+                    "heapTotal": 218726400,
+                    "heapUsed": 82745880,
+                    "external": 3253357,
+                    "arrayBuffers": 768605
+                  },
+                  "totalMs": 159.43316699999923
+                },
+                {
+                  "entryMs": 7.0210839999999735,
+                  "stateMutationMs": 13.944499999999607,
+                  "eventAppendMs": 54.79349999999977,
+                  "commitMs": 59.67249999999876,
+                  "memoryAfter": {
+                    "rss": 283148288,
+                    "heapTotal": 308969472,
+                    "heapUsed": 175734360,
+                    "external": 3253357,
+                    "arrayBuffers": 768605
+                  },
+                  "totalMs": 135.44837499999994
+                },
+                {
+                  "entryMs": 16.72808299999997,
+                  "stateMutationMs": 18.29254100000071,
+                  "eventAppendMs": 64.0283330000002,
+                  "commitMs": 61.36133300000074,
+                  "memoryAfter": {
+                    "rss": 193069056,
+                    "heapTotal": 218857472,
+                    "heapUsed": 82861576,
+                    "external": 3253565,
+                    "arrayBuffers": 768813
+                  },
+                  "totalMs": 160.4351659999993
+                },
+                {
+                  "entryMs": 7.591707999999926,
+                  "stateMutationMs": 13.984458999999333,
+                  "eventAppendMs": 55.988124999999854,
+                  "commitMs": 63.273708999999144,
+                  "memoryAfter": {
+                    "rss": 284000256,
+                    "heapTotal": 309723136,
+                    "heapUsed": 176497808,
+                    "external": 3319101,
+                    "arrayBuffers": 834349
+                  },
+                  "totalMs": 140.8532920000016
+                }
+              ]
+            },
+            "initialEvents": 100000,
+            "claimCount": 3,
+            "committedResultParity": true,
+            "persistedStateAndTailParity": true,
+            "ownershipClassificationParity": false,
+            "baselineOwnershipAudit": {
+              "status": "REFUSED",
+              "causeCode": "JSON_LIMIT_EXCEEDED",
+              "claimsRetained": true
+            },
+            "nativeOwnershipValid": true,
+            "nativeReservationsVerified": true,
+            "durability": {
+              "journalMode": "wal",
+              "synchronous": 2
+            },
+            "nativeSamplesMs": [
+              353.03049999999985,
+              365.94295799999963,
+              356.60504200000014,
+              369.9502500000008,
+              355.50666699999965,
+              352.3392080000003,
+              357.0402499999991,
+              359.8819169999988,
+              355.1179999999986,
+              353.23291699999936,
+              357.0135419999988,
+              362.1471249999995,
+              354.1257080000014,
+              350.704208000001,
+              359.99762499999997,
+              361.0276670000003,
+              354.22320899999977,
+              355.56254199999967,
+              357.46349999999984,
+              358.7718330000007
+            ],
+            "baselineSamplesMs": [
+              169.9501250000003,
+              136.82679200000075,
+              144.47599999999966,
+              133.86775000000034,
+              164.6450420000001,
+              141.29150000000027,
+              156.7375000000011,
+              132.52062500000102,
+              162.0511660000011,
+              139.08708300000035,
+              147.69537500000115,
+              135.60525000000052,
+              159.49433300000055,
+              132.0033339999991,
+              157.82366699999875,
+              139.86854099999982,
+              159.44395799999984,
+              135.47179200000028,
+              160.44641600000068,
+              140.87195800000154
+            ],
+            "nativeP95Ms": 365.94295799999963,
+            "baselineP95Ms": 164.6450420000001,
+            "reductionP95": -1.2226175386441298
+          }
+        ]
+      }
+    },
+    {
+      "variant": "streaming",
+      "accepted": false,
+      "parityTestsPassed": 11,
+      "querySha256": "b6a150c70b26c87853891f128318111c45ef56e1e6cb12e6805e65b14051136f",
+      "guardMedianMs": 229.61108349999995,
+      "rawResult": "/Users/cassio/.codex/verification/sqlite-jsonb-stream639/stream-result.json",
+      "measurement": {
+        "schemaVersion": 1,
+        "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+        "node": "v24.19.0",
+        "platform": "darwin",
+        "architecture": "arm64",
+        "cpu": "Apple M2",
+        "repeats": 20,
+        "claimCount": 3,
+        "timestamp": "2026-09-11T00:00:00.000Z",
+        "runtime": "warm-cache public transaction API with per-call native connection",
+        "syntheticSeedOutsideMeasurement": true,
+        "durabilityQualification": "Native WAL/FULL and unchanged pinned filesystem fsync transaction implementation; power-loss equivalence requires separate evidence.",
+        "diagnosticOnly": true,
+        "releaseThresholdsVerified": false,
+        "results": [
+          {
+            "scanSamples": [
+              223.9183750000002,
+              234.36333300000024,
+              225.0527920000004,
+              232.34449999999924,
+              224.74308400000064,
+              231.45416699999987,
+              227.76800000000003,
+              233.16441699999996,
+              225.7606249999999,
+              232.2514999999994,
+              223.10600000000068,
+              232.93162499999926,
+              223.5168339999982,
+              236.3778340000008,
+              224.74095900000066,
+              233.4087500000005,
+              225.30925000000025,
+              236.20924999999988,
+              224.68870900000002,
+              235.2786670000005
+            ],
+            "stageSamples": {
+              "native": [
+                {
+                  "entryMs": 4.393207999999504,
+                  "stateMutationMs": 1.409708000000137,
+                  "eventAppendMs": 0.7959579999997004,
+                  "commitMs": 225.37483299999985,
+                  "memoryAfter": {
+                    "rss": 107036672,
+                    "heapTotal": 36995072,
+                    "heapUsed": 22750144,
+                    "external": 3007762,
+                    "arrayBuffers": 518267
+                  },
+                  "totalMs": 232.01474999999937
+                },
+                {
+                  "entryMs": 3.434957999999824,
+                  "stateMutationMs": 0.7490410000000338,
+                  "eventAppendMs": 0.43883399999958783,
+                  "commitMs": 235.51054100000056,
+                  "memoryAfter": {
+                    "rss": 251854848,
+                    "heapTotal": 283181056,
+                    "heapUsed": 150503344,
+                    "external": 2686243,
+                    "arrayBuffers": 196708
+                  },
+                  "totalMs": 240.15504099999998
+                },
+                {
+                  "entryMs": 2.1174590000000535,
+                  "stateMutationMs": 0.2952500000001237,
+                  "eventAppendMs": 0.24445799999921292,
+                  "commitMs": 226.33745799999997,
+                  "memoryAfter": {
+                    "rss": 251854848,
+                    "heapTotal": 283181056,
+                    "heapUsed": 151323968,
+                    "external": 2703923,
+                    "arrayBuffers": 214388
+                  },
+                  "totalMs": 229.0245840000007
+                },
+                {
+                  "entryMs": 2.951000000000022,
+                  "stateMutationMs": 0.40370899999925314,
+                  "eventAppendMs": 0.34220900000036636,
+                  "commitMs": 233.8690000000006,
+                  "memoryAfter": {
+                    "rss": 360235008,
+                    "heapTotal": 389316608,
+                    "heapUsed": 256331456,
+                    "external": 2751779,
+                    "arrayBuffers": 262244
+                  },
+                  "totalMs": 237.5870420000001
+                },
+                {
+                  "entryMs": 2.7039999999997235,
+                  "stateMutationMs": 0.3111669999998412,
+                  "eventAppendMs": 0.24879199999941193,
+                  "commitMs": 225.9774580000003,
+                  "memoryAfter": {
+                    "rss": 360333312,
+                    "heapTotal": 389840896,
+                    "heapUsed": 257216528,
+                    "external": 2769459,
+                    "arrayBuffers": 279924
+                  },
+                  "totalMs": 229.2674589999997
+                },
+                {
+                  "entryMs": 2.8280000000004293,
+                  "stateMutationMs": 0.4706669999995938,
+                  "eventAppendMs": 0.3748750000004293,
+                  "commitMs": 232.93387499999972,
+                  "memoryAfter": {
+                    "rss": 280985600,
+                    "heapTotal": 310493184,
+                    "heapUsed": 178401856,
+                    "external": 3276379,
+                    "arrayBuffers": 786844
+                  },
+                  "totalMs": 236.62666700000045
+                },
+                {
+                  "entryMs": 2.462874999999258,
+                  "stateMutationMs": 0.30812499999956344,
+                  "eventAppendMs": 0.23670799999945302,
+                  "commitMs": 229.10520799999995,
+                  "memoryAfter": {
+                    "rss": 281001984,
+                    "heapTotal": 310493184,
+                    "heapUsed": 179206536,
+                    "external": 3294059,
+                    "arrayBuffers": 804524
+                  },
+                  "totalMs": 232.1265829999993
+                },
+                {
+                  "entryMs": 2.9903340000000753,
+                  "stateMutationMs": 0.6729169999998703,
+                  "eventAppendMs": 0.44741700000031415,
+                  "commitMs": 234.61312499999985,
+                  "memoryAfter": {
+                    "rss": 281837568,
+                    "heapTotal": 311017472,
+                    "heapUsed": 178549936,
+                    "external": 3341915,
+                    "arrayBuffers": 852380
+                  },
+                  "totalMs": 238.73908399999982
+                },
+                {
+                  "entryMs": 2.1076249999996435,
+                  "stateMutationMs": 0.2907500000001164,
+                  "eventAppendMs": 0.2516670000004524,
+                  "commitMs": 227.12824999999975,
+                  "memoryAfter": {
+                    "rss": 281886720,
+                    "heapTotal": 311017472,
+                    "heapUsed": 179388584,
+                    "external": 3359595,
+                    "arrayBuffers": 870060
+                  },
+                  "totalMs": 229.79133399999955
+                },
+                {
+                  "entryMs": 3.0415839999996024,
+                  "stateMutationMs": 0.5140000000001237,
+                  "eventAppendMs": 0.4480839999996533,
+                  "commitMs": 233.77466699999968,
+                  "memoryAfter": {
+                    "rss": 281018368,
+                    "heapTotal": 308559872,
+                    "heapUsed": 173577192,
+                    "external": 3276588,
+                    "arrayBuffers": 787053
+                  },
+                  "totalMs": 237.79454199999964
+                },
+                {
+                  "entryMs": 2.4420420000005834,
+                  "stateMutationMs": 0.238709000000199,
+                  "eventAppendMs": 0.22495900000012625,
+                  "commitMs": 224.8020830000005,
+                  "memoryAfter": {
+                    "rss": 281018368,
+                    "heapTotal": 308559872,
+                    "heapUsed": 174400448,
+                    "external": 3294268,
+                    "arrayBuffers": 804733
+                  },
+                  "totalMs": 227.72258299999976
+                },
+                {
+                  "entryMs": 2.8910420000011072,
+                  "stateMutationMs": 0.48458299999947485,
+                  "eventAppendMs": 0.4218330000003334,
+                  "commitMs": 234.72541699999965,
+                  "memoryAfter": {
+                    "rss": 278085632,
+                    "heapTotal": 305086464,
+                    "heapUsed": 172837656,
+                    "external": 3335944,
+                    "arrayBuffers": 851133
+                  },
+                  "totalMs": 238.5404580000013
+                },
+                {
+                  "entryMs": 2.4707909999997355,
+                  "stateMutationMs": 0.2470420000008744,
+                  "eventAppendMs": 0.19187500000043656,
+                  "commitMs": 224.85370799999873,
+                  "memoryAfter": {
+                    "rss": 278085632,
+                    "heapTotal": 305086464,
+                    "heapUsed": 173632808,
+                    "external": 3353624,
+                    "arrayBuffers": 868813
+                  },
+                  "totalMs": 227.7776249999988
+                },
+                {
+                  "entryMs": 3.195499999999811,
+                  "stateMutationMs": 0.47670800000014424,
+                  "eventAppendMs": 0.4004580000000715,
+                  "commitMs": 237.71641699999964,
+                  "memoryAfter": {
+                    "rss": 278151168,
+                    "heapTotal": 304824320,
+                    "heapUsed": 172839232,
+                    "external": 3270205,
+                    "arrayBuffers": 785453
+                  },
+                  "totalMs": 241.80533300000025
+                },
+                {
+                  "entryMs": 2.1384580000012647,
+                  "stateMutationMs": 0.22654200000033597,
+                  "eventAppendMs": 0.1884170000012091,
+                  "commitMs": 226.2016249999997,
+                  "memoryAfter": {
+                    "rss": 278151168,
+                    "heapTotal": 304824320,
+                    "heapUsed": 173633600,
+                    "external": 3287885,
+                    "arrayBuffers": 803133
+                  },
+                  "totalMs": 228.77000000000044
+                },
+                {
+                  "entryMs": 2.930957999999009,
+                  "stateMutationMs": 0.4927079999997659,
+                  "eventAppendMs": 0.40070899999955145,
+                  "commitMs": 234.8473329999997,
+                  "memoryAfter": {
+                    "rss": 278200320,
+                    "heapTotal": 304857088,
+                    "heapUsed": 172850504,
+                    "external": 3335741,
+                    "arrayBuffers": 850989
+                  },
+                  "totalMs": 238.6881659999999
+                },
+                {
+                  "entryMs": 2.262124999999287,
+                  "stateMutationMs": 0.25499999999919964,
+                  "eventAppendMs": 0.19666700000016135,
+                  "commitMs": 226.61204200000066,
+                  "memoryAfter": {
+                    "rss": 278200320,
+                    "heapTotal": 304857088,
+                    "heapUsed": 173645024,
+                    "external": 3353421,
+                    "arrayBuffers": 868669
+                  },
+                  "totalMs": 229.3408330000002
+                },
+                {
+                  "entryMs": 3.159249999998792,
+                  "stateMutationMs": 0.6008340000007593,
+                  "eventAppendMs": 0.43725000000085856,
+                  "commitMs": 237.74758399999882,
+                  "memoryAfter": {
+                    "rss": 278249472,
+                    "heapTotal": 304857088,
+                    "heapUsed": 172868216,
+                    "external": 3270205,
+                    "arrayBuffers": 785453
+                  },
+                  "totalMs": 241.96079199999986
+                },
+                {
+                  "entryMs": 2.132999999999811,
+                  "stateMutationMs": 0.23387499999989814,
+                  "eventAppendMs": 0.20525000000088767,
+                  "commitMs": 226.0462090000001,
+                  "memoryAfter": {
+                    "rss": 278249472,
+                    "heapTotal": 304857088,
+                    "heapUsed": 173663768,
+                    "external": 3287885,
+                    "arrayBuffers": 803133
+                  },
+                  "totalMs": 228.63158300000032
+                },
+                {
+                  "entryMs": 2.804667000000336,
+                  "stateMutationMs": 0.4865410000002157,
+                  "eventAppendMs": 0.4139159999995172,
+                  "commitMs": 236.67133300000023,
+                  "memoryAfter": {
+                    "rss": 278364160,
+                    "heapTotal": 304857088,
+                    "heapUsed": 172909336,
+                    "external": 3335741,
+                    "arrayBuffers": 850989
+                  },
+                  "totalMs": 240.391916999999
+                }
+              ],
+              "baseline": [
+                {
+                  "entryMs": 19.91545799999949,
+                  "stateMutationMs": 41.6649580000003,
+                  "eventAppendMs": 61.13804199999959,
+                  "commitMs": 54.264250000000175,
+                  "memoryAfter": {
+                    "rss": 159989760,
+                    "heapTotal": 190889984,
+                    "heapUsed": 55026272,
+                    "external": 2668563,
+                    "arrayBuffers": 179028
+                  },
+                  "totalMs": 177.00604199999998
+                },
+                {
+                  "entryMs": 6.652291999999761,
+                  "stateMutationMs": 12.97545799999989,
+                  "eventAppendMs": 59.00287500000013,
+                  "commitMs": 59.48499999999967,
+                  "memoryAfter": {
+                    "rss": 251822080,
+                    "heapTotal": 282918912,
+                    "heapUsed": 149611872,
+                    "external": 2668563,
+                    "arrayBuffers": 179028
+                  },
+                  "totalMs": 138.1375420000004
+                },
+                {
+                  "entryMs": 6.471166999999696,
+                  "stateMutationMs": 12.942707999999584,
+                  "eventAppendMs": 56.137291999999434,
+                  "commitMs": 57.425208000000566,
+                  "memoryAfter": {
+                    "rss": 271581184,
+                    "heapTotal": 302202880,
+                    "heapUsed": 167664616,
+                    "external": 2668563,
+                    "arrayBuffers": 179028
+                  },
+                  "totalMs": 132.99616700000024
+                },
+                {
+                  "entryMs": 7.499042000000372,
+                  "stateMutationMs": 14.001250000000255,
+                  "eventAppendMs": 60.99524999999994,
+                  "commitMs": 53.36195800000041,
+                  "memoryAfter": {
+                    "rss": 360235008,
+                    "heapTotal": 389316608,
+                    "heapUsed": 255527152,
+                    "external": 2734099,
+                    "arrayBuffers": 244564
+                  },
+                  "totalMs": 135.87779200000023
+                },
+                {
+                  "entryMs": 8.408540999999786,
+                  "stateMutationMs": 8.811875000000327,
+                  "eventAppendMs": 59.79591700000037,
+                  "commitMs": 53.650040999999874,
+                  "memoryAfter": {
+                    "rss": 189251584,
+                    "heapTotal": 218071040,
+                    "heapUsed": 83964216,
+                    "external": 3258699,
+                    "arrayBuffers": 769164
+                  },
+                  "totalMs": 130.69524999999976
+                },
+                {
+                  "entryMs": 6.626500000000306,
+                  "stateMutationMs": 10.659625000000233,
+                  "eventAppendMs": 53.06037500000002,
+                  "commitMs": 53.76495899999918,
+                  "memoryAfter": {
+                    "rss": 280985600,
+                    "heapTotal": 310493184,
+                    "heapUsed": 177583744,
+                    "external": 3258699,
+                    "arrayBuffers": 769164
+                  },
+                  "totalMs": 124.12845800000014
+                },
+                {
+                  "entryMs": 7.85149999999976,
+                  "stateMutationMs": 10.96337500000027,
+                  "eventAppendMs": 55.011999999999716,
+                  "commitMs": 51.429542000000765,
+                  "memoryAfter": {
+                    "rss": 190251008,
+                    "heapTotal": 218595328,
+                    "heapUsed": 84026656,
+                    "external": 3258699,
+                    "arrayBuffers": 769164
+                  },
+                  "totalMs": 125.27524999999969
+                },
+                {
+                  "entryMs": 5.259500000000116,
+                  "stateMutationMs": 13.04004199999963,
+                  "eventAppendMs": 55.25737500000014,
+                  "commitMs": 61.586083000000144,
+                  "memoryAfter": {
+                    "rss": 281788416,
+                    "heapTotal": 310755328,
+                    "heapUsed": 177665568,
+                    "external": 3324235,
+                    "arrayBuffers": 834700
+                  },
+                  "totalMs": 135.15800000000036
+                },
+                {
+                  "entryMs": 7.899334000000636,
+                  "stateMutationMs": 14.001874999999927,
+                  "eventAppendMs": 54.998375000000124,
+                  "commitMs": 59.317041999999674,
+                  "memoryAfter": {
+                    "rss": 214204416,
+                    "heapTotal": 241745920,
+                    "heapUsed": 106640208,
+                    "external": 3266395,
+                    "arrayBuffers": 776860
+                  },
+                  "totalMs": 136.2403750000003
+                },
+                {
+                  "entryMs": 7.569249999999556,
+                  "stateMutationMs": 14.064250000000357,
+                  "eventAppendMs": 52.98874999999953,
+                  "commitMs": 59.105249999999614,
+                  "memoryAfter": {
+                    "rss": 281018368,
+                    "heapTotal": 308559872,
+                    "heapUsed": 172767800,
+                    "external": 3258908,
+                    "arrayBuffers": 769373
+                  },
+                  "totalMs": 133.74133400000028
+                },
+                {
+                  "entryMs": 7.635041999999885,
+                  "stateMutationMs": 13.936499999999796,
+                  "eventAppendMs": 53.94550000000163,
+                  "commitMs": 57.08470900000066,
+                  "memoryAfter": {
+                    "rss": 190119936,
+                    "heapTotal": 216612864,
+                    "heapUsed": 82829440,
+                    "external": 3252728,
+                    "arrayBuffers": 767917
+                  },
+                  "totalMs": 132.62366699999984
+                },
+                {
+                  "entryMs": 5.880209000000832,
+                  "stateMutationMs": 13.00787499999933,
+                  "eventAppendMs": 55.0046250000014,
+                  "commitMs": 57.21804200000042,
+                  "memoryAfter": {
+                    "rss": 278036480,
+                    "heapTotal": 304824320,
+                    "heapUsed": 172018440,
+                    "external": 3318264,
+                    "arrayBuffers": 833453
+                  },
+                  "totalMs": 131.12470900000153
+                },
+                {
+                  "entryMs": 6.961083000000144,
+                  "stateMutationMs": 10.32091599999876,
+                  "eventAppendMs": 54.34912499999882,
+                  "commitMs": 57.37054199999875,
+                  "memoryAfter": {
+                    "rss": 190447616,
+                    "heapTotal": 216875008,
+                    "heapUsed": 82866728,
+                    "external": 3252525,
+                    "arrayBuffers": 767773
+                  },
+                  "totalMs": 129.02566599999955
+                },
+                {
+                  "entryMs": 5.56670800000029,
+                  "stateMutationMs": 15.232083999999304,
+                  "eventAppendMs": 53.425584000000526,
+                  "commitMs": 57.94112500000119,
+                  "memoryAfter": {
+                    "rss": 278134784,
+                    "heapTotal": 304824320,
+                    "heapUsed": 172026408,
+                    "external": 3252525,
+                    "arrayBuffers": 767773
+                  },
+                  "totalMs": 132.17845800000032
+                },
+                {
+                  "entryMs": 7.805125000000771,
+                  "stateMutationMs": 13.970999999999549,
+                  "eventAppendMs": 53.92333300000064,
+                  "commitMs": 60.14616699999897,
+                  "memoryAfter": {
+                    "rss": 190496768,
+                    "heapTotal": 216891392,
+                    "heapUsed": 82870704,
+                    "external": 3252525,
+                    "arrayBuffers": 767773
+                  },
+                  "totalMs": 135.86879100000078
+                },
+                {
+                  "entryMs": 6.841875000000073,
+                  "stateMutationMs": 13.998374999999214,
+                  "eventAppendMs": 56.014624999999796,
+                  "commitMs": 60.133624999998574,
+                  "memoryAfter": {
+                    "rss": 278200320,
+                    "heapTotal": 304857088,
+                    "heapUsed": 172037520,
+                    "external": 3318061,
+                    "arrayBuffers": 833309
+                  },
+                  "totalMs": 137.00304200000028
+                },
+                {
+                  "entryMs": 7.9869999999991705,
+                  "stateMutationMs": 12.721708000000945,
+                  "eventAppendMs": 53.25,
+                  "commitMs": 57.10237500000039,
+                  "memoryAfter": {
+                    "rss": 190496768,
+                    "heapTotal": 216891392,
+                    "heapUsed": 82883608,
+                    "external": 3252525,
+                    "arrayBuffers": 767773
+                  },
+                  "totalMs": 131.08491700000013
+                },
+                {
+                  "entryMs": 6.949207999999999,
+                  "stateMutationMs": 12.877875000000131,
+                  "eventAppendMs": 52.72225000000071,
+                  "commitMs": 64.6697920000006,
+                  "memoryAfter": {
+                    "rss": 278200320,
+                    "heapTotal": 304857088,
+                    "heapUsed": 172048112,
+                    "external": 3252525,
+                    "arrayBuffers": 767773
+                  },
+                  "totalMs": 137.2339579999989
+                },
+                {
+                  "entryMs": 7.915082999999868,
+                  "stateMutationMs": 13.025040999998964,
+                  "eventAppendMs": 54.95479200000045,
+                  "commitMs": 63.185583000000406,
+                  "memoryAfter": {
+                    "rss": 190545920,
+                    "heapTotal": 216891392,
+                    "heapUsed": 82897224,
+                    "external": 3252525,
+                    "arrayBuffers": 767773
+                  },
+                  "totalMs": 139.10658299999886
+                },
+                {
+                  "entryMs": 6.723958999999013,
+                  "stateMutationMs": 14.010041999999885,
+                  "eventAppendMs": 51.062291999998706,
+                  "commitMs": 58.14812499999971,
+                  "memoryAfter": {
+                    "rss": 278331392,
+                    "heapTotal": 304857088,
+                    "heapUsed": 172086432,
+                    "external": 3318061,
+                    "arrayBuffers": 833309
+                  },
+                  "totalMs": 129.95791699999972
+                }
+              ]
+            },
+            "initialEvents": 100000,
+            "claimCount": 3,
+            "committedResultParity": true,
+            "persistedStateAndTailParity": true,
+            "ownershipClassificationParity": false,
+            "baselineOwnershipAudit": {
+              "status": "REFUSED",
+              "causeCode": "JSON_LIMIT_EXCEEDED",
+              "claimsRetained": true
+            },
+            "nativeOwnershipValid": true,
+            "nativeReservationsVerified": true,
+            "durability": {
+              "journalMode": "wal",
+              "synchronous": 2
+            },
+            "nativeSamplesMs": [
+              232.07112499999948,
+              240.16562499999964,
+              229.03399999999965,
+              237.5962500000005,
+              229.27579200000037,
+              236.64224999999988,
+              232.13625000000047,
+              238.75325000000066,
+              229.80133299999943,
+              237.81074999999964,
+              227.7328749999997,
+              238.55695800000103,
+              227.7893329999988,
+              241.82366700000057,
+              228.78237500000068,
+              238.705750000001,
+              229.35208299999977,
+              241.97420799999963,
+              228.6422910000001,
+              240.40849999999955
+            ],
+            "baselineSamplesMs": [
+              177.01491700000042,
+              138.152333,
+              133.00595900000008,
+              135.88783299999977,
+              130.71637499999997,
+              124.14045800000076,
+              125.28495900000053,
+              135.17454199999975,
+              136.25104099999953,
+              133.75687500000004,
+              132.63450000000012,
+              131.14266599999974,
+              129.03770799999984,
+              132.19491600000038,
+              135.8795829999999,
+              137.02266699999927,
+              131.0961669999997,
+              137.25445799999943,
+              139.1190829999996,
+              129.97516600000017
+            ],
+            "nativeP95Ms": 241.82366700000057,
+            "baselineP95Ms": 139.1190829999996,
+            "reductionP95": -0.738249431963272
+          }
+        ]
+      }
+    }
+  ],
+  "setupFailure": "Initialguardparity fixture lackedGit metadata;added isolated sharedGit context andreran successfully.",
+  "conclusion": "BothJSONB variants preserve testedscalar/BLOB/error semantics but worsen scanlatency;rejected. Expandedoracle retained;fullpersistence targets remainopen."
+}

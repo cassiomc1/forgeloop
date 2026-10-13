@@ -1,0 +1,38 @@
+{
+  "increment": 608,
+  "mechanism": "One prepared task-row statement per connection; WeakMap ownership. Fresh query results, fingerprints and validation retained. Observation closures resolve current store.db after snapshot/live rebinding.",
+  "files": [
+    {
+      "path": "src/storage/unit-of-work.js",
+      "sha256": "bd4b113f24d838203b008213c5712a4a4df492d5da4931b1d838bd92c953f11c"
+    },
+    {
+      "path": "tests/storage-discovery-snapshot.test.js",
+      "sha256": "152775d2dc7d934d90fc77efcb5300f6b91e45a339df8bc0e4a8a92a64dcffe0"
+    }
+  ],
+  "focusedTests": {
+    "total": 7,
+    "passed": 7,
+    "failed": 0,
+    "raw": "/tmp/sqlite-task-query608-tests.log"
+  },
+  "controls": [
+    "Repeated reads observe changed row payloads",
+    "Detached closed-snapshot observations recheck live parent and reject concurrent changes",
+    "Cached statements are connection-specific across snapshots and fresh stores",
+    "Indexed task-key tampering still rejects"
+  ],
+  "fastVerification": "PASS",
+  "changedFileLint": "PASS",
+  "complexity": {
+    "status": "PASS",
+    "regressions": []
+  },
+  "measurement": "populated-cli-macos-608.json",
+  "limitations": [
+    "Full source608 macOS verification started; current source608 Windows/Linux suites pending",
+    "Sequential benchmark607/608 runs suggest improvement but are not randomized same-run optimization A/B",
+    "No whole original performance or LOC acceptance claim"
+  ]
+}

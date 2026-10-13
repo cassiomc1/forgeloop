@@ -1,0 +1,13 @@
+{
+  "failureClass": "VERIFICATION_FAILURE",
+  "observations": [
+    {"id": "obs-hosted-eaccs", "kind": "MANUAL_OBSERVATION", "provenance": "MANUAL_OBSERVATION", "statement": "Run 38158161159 (GitHub-hosted ubuntu-latest, mcp-resources-hosted.yml at 87b2e9a): all 3 matrix jobs failed the 'Admit paired hosted case' step fail-closed with E_PROCESS_INVENTORY_INCOMPLETE; the retained runner-before.json shows 147 /proc PIDs unreadable (EACCES), 5 readable records, 0 competing Node processes, 0 orphan workers."},
+    {"id": "obs-remote-stale-tmp", "kind": "MANUAL_OBSERVATION", "provenance": "MANUAL_OBSERVATION", "statement": "Run 38158407161 (self-hosted forgeloop-linux-remote, windows-full-suite.yml suite=mcp-resources at 87b2e9a): /proc admission passed (7/7 PIDs readable, 0 unreadable, 0 ancestry errors, 0 competing, 0 orphan) but the observer refused fail-closed with E_BENCHMARK_TEMP_PREEXISTS on stale tmpdir entry forgeloop-mcp-benchmark-ClN39x from a previous round; benchmark step and source checks were skipped."},
+    {"id": "obs-no-measurement", "kind": "PROTOCOL_STATE", "statement": "No paired benchmark-storage-mcp.mjs measurement has completed at 87b2e9a on any runner; hosted benchmark admission remains UNRESOLVED by requirement; stable inaccessible /proc entries alone do not establish isolation."}
+  ],
+  "contributors": [],
+  "hypotheses": [
+    {"id": "h-hosted-visibility", "statement": "The hosted benchmark observer cannot complete a complete process inventory on GitHub-hosted ubuntu-latest (host-protected /proc) nor pass the fail-closed temp-cleanliness gate on forgeloop-linux-remote (stale benchmark tmp entries); therefore failure is environmental admission, not measurement outcome.", "contributorRefs": [], "evidenceRefs": [], "settledBy": {"type": "PREDICATE", "statement": "Root run of scripts/ci/observe-benchmark-runner.mjs on the hosted lane reports 0 unreadable /proc PIDs and the runner tmpdir contains no forgeloop-mcp-benchmark-* entries, followed by a retained completed paired measurement at the tested revision."}, "status": "OPEN"}
+  ],
+  "nextSafeAction": {"statement": "Grant the hosted observer steps passwordless-root visibility without weakening any fail-closed check; keep the benchmark itself unprivileged; clean or scope the runner tmpdir via the documented per-run unique prefix; commit the successor revision and re-dispatch, then verify artifacts for complete /proc visibility, admission, actual paired measurement and cleanup."}
+}

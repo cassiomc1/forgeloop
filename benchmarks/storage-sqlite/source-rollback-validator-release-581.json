@@ -1,0 +1,113 @@
+{
+  "checkpoint": 581,
+  "scope": "Mac exact-target validation-backed source rollback maintenance release; public CLI not yet wired",
+  "sourceHashes": {
+    "src/storage/migration-rollback-release.js": "6838a25238dd71cd2b2c6d740fb32c3f1914bfd06ed376f154bd4dd7cb0b5cfb",
+    "src/storage/migration-rollback-publication.js": "c7dc4dd3fc87f80f2c398867424f8cce2425f6cb0bb7aa68de18eec0e8c36d00",
+    "tests/storage-migration-rollback-release.test.js": "b347d48f289ecfa05a1031bf7e5a9fb923467a6dbb4a7e87b60eaae9b66456a0",
+    "scripts/drill-storage-source-rollback-recovery.mjs": "8813ffe33e9818763d76aa6a3d082508ca8505d72e5a30d1db32c8f6522f763a"
+  },
+  "regression": {
+    "passed": 16,
+    "failed": 0,
+    "rawLog": "\u2714 dead source publication owner SWITCHING resumes only verified locations (4785.197208ms)\n\u2714 dead source publication owner DATABASE_RETAINED resumes only verified locations (4812.662708ms)\n\u2714 dead source publication owner NATIVE_RETAINED resumes only verified locations (4313.846208ms)\n\u2714 dead source publication owner PARTIAL_SOURCE resumes only verified locations (4311.824208ms)\n\u2714 dead source publication owner RESTORED resumes only verified locations (3527.063875ms)\n\u2714 dead source publication owner BINARY_PARTIAL_SOURCE resumes only verified locations (3989.15ms)\n\u2714 dead source publication owner duplicate-native resumes only verified locations (3092.309792ms)\n\u2714 dead source publication owner corrupt-source resumes only verified locations (3175.873917ms)\n\u2714 dead source publication owner substituted-owner resumes only verified locations (3072.128833ms)\n\u2714 owned source rollback publication restored preserves native authority (4811.194542ms)\n\u2714 owned source rollback publication source-tamper preserves native authority (4548.9275ms)\n\u2714 owned source rollback publication native-tamper preserves native authority (4259.110708ms)\n\u2714 owned source rollback publication binary-attachment preserves native authority (4974.496792ms)\n\u2714 rollback release refuses missing validator checkout (48.544666ms)\n\u2714 rollback release refuses unsupported validator checkout (145.277666ms)\n\u2714 rollback release refuses modified validator checkout (2439.766917ms)\n\u2139 tests 16\n\u2139 suites 0\n\u2139 pass 16\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 35252.531167\n"
+  },
+  "currentTargetTests": {
+    "passed": 3,
+    "failed": 0,
+    "rawLog": "\u2714 rollback release refuses missing validator checkout (65.416042ms)\n\u2714 rollback release refuses unsupported validator checkout (98.648375ms)\n\u2714 rollback release refuses modified validator checkout (1354.966792ms)\n\u2139 tests 3\n\u2139 suites 0\n\u2139 pass 3\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 1632.191708\n"
+  },
+  "canonicalBinaryReleaseDrill": {
+    "scope": "Canonical linked-worktree legacy VALID after actual owner-death source publication recovery; constructed persisted boundaries, not syscall power loss",
+    "phase": "PARTIAL_SOURCE",
+    "binary": true,
+    "before": {
+      "exit": 0,
+      "validation": {
+        "status": "VALID",
+        "errors": [],
+        "incomplete": [],
+        "stale": null,
+        "delegation": {
+          "status": "NOT_APPLICABLE",
+          "required": false,
+          "errors": []
+        },
+        "continuity": {
+          "required": false,
+          "status": "NOT_APPLICABLE",
+          "classification": "ABSENT",
+          "errors": [],
+          "reasonCodes": [],
+          "reasons": [
+            "CONTINUITY_ABSENT"
+          ],
+          "authority": "OPERATIONAL_CONTEXT_ONLY",
+          "evidenceAuthority": "NONE"
+        },
+        "evidence": [
+          {
+            "kind": "OBSERVED",
+            "source": "ForgeLoop protocol conformance",
+            "result": "VALID"
+          }
+        ]
+      }
+    },
+    "after": {
+      "exit": 0,
+      "validation": {
+        "status": "VALID",
+        "errors": [],
+        "incomplete": [],
+        "stale": null,
+        "delegation": {
+          "status": "NOT_APPLICABLE",
+          "required": false,
+          "errors": []
+        },
+        "continuity": {
+          "required": false,
+          "status": "NOT_APPLICABLE",
+          "classification": "ABSENT",
+          "errors": [],
+          "reasonCodes": [],
+          "reasons": [
+            "CONTINUITY_ABSENT"
+          ],
+          "authority": "OPERATIONAL_CONTEXT_ONLY",
+          "evidenceAuthority": "NONE"
+        },
+        "evidence": [
+          {
+            "kind": "OBSERVED",
+            "source": "ForgeLoop protocol conformance",
+            "result": "VALID"
+          }
+        ]
+      }
+    },
+    "restored": true,
+    "nativeBytesUnchanged": true,
+    "referencePreserved": {
+      "taskId": "phase2a-closure-task",
+      "referenceId": "recovery-binary",
+      "path": ".forgeloop/attachments/objects/3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5",
+      "size": 7,
+      "sha256": "3d1245b47763d9ebf86aa9059e473585ecd2975dc1ea655b8e9f9c98f76d1ed5"
+    },
+    "maintenanceExclusionRetained": false,
+    "maintenanceReleased": true,
+    "targetVersionValidatedInDrill": true
+  },
+  "limitations": [
+    "Public operator CLI/interface wiring pending",
+    "Current Windows/Linux release checks pending",
+    "Constructed persisted interruption, not syscall power loss",
+    "Supported target fixed to clean pinned commit; other target versions refused",
+    "Operator native-write exclusion required",
+    "Whole original plan incomplete"
+  ],
+  "fastExit": 0,
+  "lintExit": 0
+}

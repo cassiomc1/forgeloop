@@ -30,11 +30,23 @@ try {
 import { Client } from "@modelcontextprotocol/client";
 import { StdioClientTransport } from "@modelcontextprotocol/client/stdio";
 import { executeForgeLoopCommand } from "@cassiomc1/forgeloop/integration";
+import { access, readFile } from "node:fs/promises";
 
+// No private database setup: the first ordinary installed write bootstraps it.
+try { await access(".forgeloop/state.sqlite"); throw new Error("fresh package fixture unexpectedly has operational SQLite"); }
+catch (error) { if (error.code !== "ENOENT") throw error; }
 const init = await executeForgeLoopCommand({ command: "init", projectPath: process.cwd(), input: {} });
-if (!init.ok && !String(init.error?.message).match(/exist|already|manifest/i)) {
-  // init may legitimately refuse on non-empty dirs; only hard failures matter.
-}
+if (!init.ok) throw new Error("packed init failed: " + JSON.stringify(init.error));
+await access(".forgeloop/state.sqlite");
+const initializedMarker = JSON.parse(await readFile(".forgeloop/storage-version.json", "utf8"));
+if (initializedMarker.phase !== "ACTIVE") throw new Error("packed init did not activate canonical storage");
+const created = await executeForgeLoopCommand({ command: "task-create", projectPath: process.cwd(), input: { taskId: "packed-sqlite-task", claims: ["README.md"] } });
+if (!created.ok) throw new Error("packed SQLite task creation failed: " + created.error?.code);
+await access(".forgeloop/state.sqlite");
+const marker = JSON.parse(await readFile(".forgeloop/storage-version.json", "utf8"));
+if (marker.phase !== "ACTIVE") throw new Error("packed bootstrap did not activate storage marker");
+try { await access(".forgeloop/task-state"); throw new Error("packed SQLite task created legacy namespace"); }
+catch (error) { if (error.code !== "ENOENT") throw error; }
 
 const transport = new StdioClientTransport({
   command: process.execPath,
@@ -52,9 +64,18 @@ if (names.includes("forgeloop_task_recover")) throw new Error("recovery tool mus
 const info = await client.callTool({ name: "forgeloop_protocol_info", arguments: {} });
 const parsed = JSON.parse(info.content[0].text);
 if (!parsed.result.features.taskClaimRecovery.validatedClaimProjection) throw new Error("ownership features missing");
+const capabilities = await client.callTool({ name: "forgeloop_capabilities", arguments: {} });
+const installedCore = JSON.parse(await readFile("node_modules/@cassiomc1/forgeloop/package.json", "utf8"));
+const installedMcp = JSON.parse(await readFile("node_modules/@cassiomc1/forgeloop-mcp/package.json", "utf8"));
+if (capabilities.isError || capabilities.structuredContent?.packageVersion !== installedCore.version
+  || capabilities.structuredContent?.server?.version !== installedMcp.version) throw new Error("packed capability identities differ from installed manifests");
+if (JSON.stringify(capabilities.structuredContent).includes("projectRoot")) throw new Error("packed capabilities leaked projectRoot");
 
 const tasks = await client.readResource({ uri: "forgeloop://project/tasks" });
-JSON.parse(tasks.contents[0].text);
+const taskData = JSON.parse(tasks.contents[0].text);
+if (taskData.count !== 1 || taskData.tasks[0]?.taskId !== "packed-sqlite-task" || taskData.tasks[0]?.healthy !== true) throw new Error("packed MCP resource did not read canonical SQLite task");
+const actions = await client.readResource({ uri: "forgeloop://task/packed-sqlite-task/actions" });
+if (JSON.parse(actions.contents[0].text).actions.length !== 0) throw new Error("new packed SQLite task unexpectedly has actions");
 
 await client.close();
 console.log("mcp package smoke passed");

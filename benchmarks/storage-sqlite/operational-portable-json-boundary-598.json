@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "scope": "Separate canonical operational JSON reads from explicit portable source inspection",
+  "sourceSha256": {
+    "src/core/artifacts.js": "a48e73e5efeda5a94803479423c997dffca8184286188bc299f508d8a524b6ef",
+    "src/core/task-migration.js": "6b8e90705bc4cce7089a8885883b3a02bca3141beaa23e6a2213ef89550159a9",
+    "src/core/task-migration-validation.js": "530f865a3bdd54bef125707861c16b675e2680ac173057055af420b8f8833e77",
+    "src/storage/importer.js": "22dbd284184c72b7270de7bbb95d06a2ec7f529f3305b355a4a9671a403a6f6b",
+    "src/storage/singleton-import.js": "a0e2e91ae36c396ae2451481586f3aad4279915f6f3277f64bcfd0660c45e5f6",
+    "tests/storage-direct-artifacts.test.js": "a26861fcb33f03ffe32b6489a738d2d5d278d618f5811a52c3909b8489afc119"
+  },
+  "checks": {
+    "focusedArtifactMigrationAndSingleton": {
+      "pass": 35,
+      "fail": 0
+    },
+    "verifyFast": "PASS",
+    "lintErrors": 0,
+    "lintWarnings": 115
+  },
+  "initialDiagnosis": "First run30/34 exposed three explicit singleton migration callers and absent-artifact routing semantics. Migration callers now use portable inspection; absent operational artifacts preserve ARTIFACT_MISSING. Added independent legacy operational refusal and explicit portable schema/containment/byte-retention checks.",
+  "fullSnapshot": {
+    "root": "/tmp/forgeloop-artifact-boundary598",
+    "manifest": "/tmp/sqlite-artifact-boundary598-source.json",
+    "sourceFiles": 2601,
+    "status": "RUNNING_WITH_OBSERVED_FAILURES",
+    "log": "/tmp/sqlite-artifact-boundary598-prepush.log",
+    "exitFile": "/tmp/sqlite-artifact-boundary598-prepush.exit",
+    "observedFailuresSoFar": [
+      "\u2716 portable task bundles copy only canonical protocol artifacts (354.913667ms)",
+      "\u2716 readContract rejects manually persisted secret-like assumption values (2.641125ms)",
+      "\u2716 readContract rejects manually persisted whitespace-only assumption values (3.720875ms)",
+      "\u2716 readContract rejects manually persisted whitespace-only assumption reasons (5.300375ms)",
+      "\u2716 readContract rejects manually persisted whitespace-only assumption scopes (3.612ms)",
+      "\u2716 validateDocumentationConformance passes on repository docs (29.996167ms)",
+      "\u2716 negative fixtures & mutation tests: validateDocumentationConformance detects doc drift across LF and CRLF (224.924375ms)",
+      "\u2716 CLI example, mutation-claim, and legacy-path conformance regressions (DOC-CLI-*/DOC-MUT-*/DOC-PATH-*/DOC-COMP-*) (224.230084ms)",
+      "\u2716 DOC-LAYOUT-ARCH / DOC-TRANSITION / DOC-ADVANCE: architecture layout, canonical transitions, and advance prose conformance (229.415334ms)",
+      "\u2716 documentation generation and validation succeed in directory paths containing spaces (221.079875ms)",
+      "\u2716 docs:report emits documentation health metrics (119.697458ms)",
+      "\u2716 generated agent protocol summary is current and clearly non-authoritative (63.008208ms)"
+    ]
+  },
+  "limitations": [
+    "Full prepush is not passed and terminal result remains pending.",
+    "Portable bundle legacy consumer and historical contract fixtures need diagnosis/adaptation; documentation failures need diagnosis.",
+    "No final-current-source acceptance or complete retirement claim."
+  ]
+}

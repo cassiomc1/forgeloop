@@ -1,7 +1,20 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildInformationGainProjection } from "../src/core/information-gain-projection.js";
+import { buildInformationGainProjection as projectGain, summarizeInformationGain, evaluateStructuredDiagnosticStall } from "../src/core/information-gain-projection.js";
 import { computeFailureSignature } from "../src/core/failure-signature.js";
+
+import { withSpilledLedgerRelationsSync } from "../src/storage/ledger-relations.js";
+import { decodedLedgerSource } from "./helpers/ledger-event-collection.js";
+
+function buildInformationGainProjection(events, taskId) {
+  const expected = projectGain(events, taskId);
+  assert.deepEqual(projectGain(decodedLedgerSource(events), taskId), expected);
+  for (const verificationCycle of [null, 1, 2, 3, 999]) {
+    assert.deepEqual(summarizeInformationGain(decodedLedgerSource(events), taskId, { verificationCycle }),
+      evaluateStructuredDiagnosticStall(expected, { verificationCycle }));
+  }
+  return expected;
+}
 
 const TASK = "t-gain";
 
@@ -157,4 +170,43 @@ test("gain consistency: true stall after consecutive identical cycles; false-sta
   assert.equal(projection2.at(-1).effectiveGain, true);
 
   void computeFailureSignature;
+});
+
+test("native collection gain ignores large unrelated payload history without collection materialization", () => {
+  const events = [structuredCase(1, 1)];
+  for (let index = 0; index < 10000; index++) events.push(ev(index + 2, "OBSERVATION", { payload: "x".repeat(1024) }));
+  events.push(structuredCase(10002, 2));
+  const source = decodedLedgerSource(events);
+  const prototype = Object.getPrototypeOf(source);
+  const originals = Object.fromEntries(["filter", "map", "slice"].map(method => [method, prototype[method]]));
+  let projection;
+  try {
+    for (const method of Object.keys(originals)) prototype[method] = () => { throw new Error(`Unexpected event collection ${method}`); };
+    projection = projectGain(source, TASK);
+  } finally { Object.assign(prototype, originals); }
+  assert.deepEqual(projection, projectGain(events, TASK));
+  assert.equal(projection[1].effectiveGain, false);
+  assert.equal(projection[1].classification, "NONE");
+});
+
+test("gain preserves array sorting for out-of-order collection sequences and mixed task intervals", () => {
+  const events = [structuredCase(5, 2), ev(2, "INTERVENTION_RECORDED", { interventionSemanticFingerprint: "other" }, "foreign"),
+    structuredCase(1, 1), ev(3, "HYPOTHESIS_DISPOSITION_RECORDED"), ev(4, "INTERVENTION_RECORDED", { interventionSemanticFingerprint: "known" })];
+  const projection = buildInformationGainProjection(events, TASK);
+  assert.deepEqual(projection.map(entry => entry.sequence), [1, 5]);
+  assert.equal(projection[1].dimensions.hypothesisDispositionChanged, true);
+});
+
+
+test("spilled failure groups preserve latest gain across many distinct cycles and requirements", () => {
+  const events = [];
+  for (let cycle = 1; cycle <= 150; cycle++) {
+    events.push(failEvent(events.length + 1, cycle, `requirement-${cycle}`));
+    events.push(structuredCase(events.length + 1, cycle));
+  }
+  const expected = projectGain(events, TASK);
+  withSpilledLedgerRelationsSync(() => {
+    assert.deepEqual(projectGain(decodedLedgerSource(events), TASK), expected);
+    assert.deepEqual(summarizeInformationGain(decodedLedgerSource(events), TASK), evaluateStructuredDiagnosticStall(expected));
+  });
 });

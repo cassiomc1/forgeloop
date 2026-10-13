@@ -1,0 +1,164 @@
+{
+  "diagnosticOnly": true,
+  "forcedGC": true,
+  "releaseThresholdsVerified": false,
+  "sourceFilesChecked": 2669,
+  "sourceMismatches": [],
+  "outputParity": true,
+  "samples": [
+    {
+      "operation": "taskListTool",
+      "backend": "native",
+      "samples": [
+        {
+          "beforeGC": {
+            "rss": 340393984,
+            "heapTotal": 237780992,
+            "heapUsed": 105435376,
+            "external": 2888051,
+            "arrayBuffers": 210235
+          },
+          "afterGC": {
+            "rss": 334888960,
+            "heapTotal": 177537024,
+            "heapUsed": 37815128,
+            "external": 2821639,
+            "arrayBuffers": 143615
+          }
+        },
+        {
+          "beforeGC": {
+            "rss": 338952192,
+            "heapTotal": 194134016,
+            "heapUsed": 55191688,
+            "external": 2821891,
+            "arrayBuffers": 144075
+          },
+          "afterGC": {
+            "rss": 335560704,
+            "heapTotal": 176750592,
+            "heapUsed": 37831040,
+            "external": 2821639,
+            "arrayBuffers": 143615
+          }
+        }
+      ]
+    },
+    {
+      "operation": "taskListTool",
+      "backend": "baseline",
+      "samples": [
+        {
+          "beforeGC": {
+            "rss": 186892288,
+            "heapTotal": 124600320,
+            "heapUsed": 82039704,
+            "external": 3589810,
+            "arrayBuffers": 903299
+          },
+          "afterGC": {
+            "rss": 182910976,
+            "heapTotal": 111968256,
+            "heapUsed": 38191944,
+            "external": 2830334,
+            "arrayBuffers": 143615
+          }
+        },
+        {
+          "beforeGC": {
+            "rss": 186400768,
+            "heapTotal": 114442240,
+            "heapUsed": 59553048,
+            "external": 3306900,
+            "arrayBuffers": 620389
+          },
+          "afterGC": {
+            "rss": 183926784,
+            "heapTotal": 111706112,
+            "heapUsed": 38150344,
+            "external": 2830334,
+            "arrayBuffers": 143615
+          }
+        }
+      ]
+    },
+    {
+      "operation": "projectTasksResource",
+      "backend": "native",
+      "samples": [
+        {
+          "beforeGC": {
+            "rss": 336625664,
+            "heapTotal": 200458240,
+            "heapUsed": 51549432,
+            "external": 2821891,
+            "arrayBuffers": 144075
+          },
+          "afterGC": {
+            "rss": 335986688,
+            "heapTotal": 176750592,
+            "heapUsed": 37406488,
+            "external": 2821639,
+            "arrayBuffers": 143615
+          }
+        },
+        {
+          "beforeGC": {
+            "rss": 336642048,
+            "heapTotal": 190496768,
+            "heapUsed": 48755832,
+            "external": 2821891,
+            "arrayBuffers": 144075
+          },
+          "afterGC": {
+            "rss": 334807040,
+            "heapTotal": 175439872,
+            "heapUsed": 35310272,
+            "external": 2816832,
+            "arrayBuffers": 143615
+          }
+        }
+      ]
+    },
+    {
+      "operation": "projectTasksResource",
+      "backend": "baseline",
+      "samples": [
+        {
+          "beforeGC": {
+            "rss": 185335808,
+            "heapTotal": 112410624,
+            "heapUsed": 68629184,
+            "external": 3624056,
+            "arrayBuffers": 937545
+          },
+          "afterGC": {
+            "rss": 184893440,
+            "heapTotal": 111181824,
+            "heapUsed": 37709376,
+            "external": 2830334,
+            "arrayBuffers": 143615
+          }
+        },
+        {
+          "beforeGC": {
+            "rss": 185057280,
+            "heapTotal": 111329280,
+            "heapUsed": 53733592,
+            "external": 3271614,
+            "arrayBuffers": 585103
+          },
+          "afterGC": {
+            "rss": 184909824,
+            "heapTotal": 111181824,
+            "heapUsed": 37725720,
+            "external": 2830334,
+            "arrayBuffers": 143615
+          }
+        }
+      ]
+    }
+  ],
+  "interpretation": "Two forced-GC samples show similar retained JavaScript heap across backends, but substantially higher native RSS remains. This does not establish a leak or bounded natural memory behavior. No production change justified by this experiment alone.",
+  "rawResult": "/Users/cassio/.codex/verification/sqlite-memory-diagnostic625/result.json"
+}

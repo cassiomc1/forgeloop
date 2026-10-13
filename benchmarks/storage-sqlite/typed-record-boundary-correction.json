@@ -1,0 +1,50 @@
+{
+  "kind": "TYPED_RECORD_BOUNDARY_AND_PUBLIC_FIXTURE_CORRECTION",
+  "node": "24.19.0",
+  "focusedTests": 100,
+  "passed": 100,
+  "failed": 0,
+  "skipped": 0,
+  "verifyFastExitCode": 0,
+  "inheritedKindControl": "failed before own-key guard; passes after correction",
+  "eventContextParity": "cross-task append preserves E_TASK_CONTEXT_MISMATCH through shared canonical task admission",
+  "fixture": {
+    "validationOnly": true,
+    "allTasksPublic": true,
+    "tasks": 10,
+    "selectedEvents": 1000,
+    "otherTaskEvents": 10,
+    "totalEvents": 1090,
+    "publicPreludeEvents": 49,
+    "allTaskLedgerStateClaimParity": true,
+    "timingSamplesCollected": false
+  },
+  "sourceHashes": {
+    "src/core/actions.js": "b1ddaa039580058baa9024b56becf868158c049dc25bbe7184077c578f142f3d",
+    "src/core/approvals.js": "f26a1846502105abfde99a80bb0d2447d78756eda7dc53f15843ba67cd57d40e",
+    "src/core/artifacts.js": "40d193c8eb5c2dd71cef302a28ad648d18cbf79e3d0d7022ebbefec6abe5d47f",
+    "src/core/events.js": "401e8a5f7eea4ecc1637f486638487a3b3763fb5d763673ea6a632704fa1bbc2",
+    "src/core/execution.js": "32570d170ad5469a5f34f07872e53ae9a8253e7987500ea2ecb53f85514e4e17",
+    "src/core/native-storage.js": "7f6393d30d441c6e5b233312046dcf130422111a5e9b4cb09108a81177ce501b",
+    "src/core/task-claim-state.js": "af3bad7eab9a3190180a2bd4fd8fa9fd12e958e27575e7c5e9f2bf8abe8a3083",
+    "src/storage/project-read-snapshot.js": "f7e78f941c8d1390ff05470b23ad6d48b90fb612e27eda7a1b28b23832f6a17e",
+    "src/storage/unit-of-work.js": "56aaa5b46117c9edacd3fadce662a60ace09cbb0bc03c11dff5f5d6a4979d079",
+    "src/storage/record-definitions.js": "b386292cecfffadfd5ca7f559615ce0dd35dafc29723507371dbbb46ae755571",
+    "scripts/lib/benchmark-domain-fixture.mjs": "eb82e78e973a63ab63b3d455ce00fd0d3ad563d5a2b967aec4b380b091471937",
+    "scripts/benchmark-storage-populated-cli.mjs": "19097a005f18389d4c785913899fd812963069249c837c27ed1fd75ffe99f14e"
+  },
+  "retainedArtifacts": {
+    "typed-dispatch-root-final-focused.log.gz": "af4ba81f2639f2c003537b12bee43313aa758e415dc6bfe8913b49d8105026fa",
+    "typed-dispatch-root-fast.log.gz": "8ac29de7efeb791f4786fffde88980c066ef25d071dd00e8b5f18dd6a6aea787",
+    "typed-record-kind-allowlist-control.log.gz": "58e1f568f9f52b8f0707d20520a4a3b4db4fbcd3d2fc3ea37ffa643badd2b446",
+    "typed-record-kind-allowlist-corrected.log.gz": "a696720b6c9638ee773e9464d1a98fbedb0ba6b52f46583c00de0a9d6800fc4d",
+    "rich-all-fixture-root-validation.json.gz": "7fe34921f3bde97dc013c521958088bc3e342131b0296e881dab9a93866f4d25"
+  },
+  "releaseAcceptance": false,
+  "inclusiveLocAcceptance": false,
+  "limits": [
+    "Focused validation does not replace full regression or platform/package checks",
+    "New store definitions and all compatibility/import/export/maintenance code remain in inclusive LOC scope",
+    "Current original performance and 25 percent reduction gates remain open"
+  ]
+}

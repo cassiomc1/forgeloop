@@ -1,0 +1,113 @@
+{
+  "testFiles": [
+    "tests/storage-project-restore.test.js",
+    "tests/storage-restore-command.test.js",
+    "tests/storage-active-replacement.test.js",
+    "tests/storage-replacement-archive.test.js",
+    "tests/storage-replacement-publication.test.js",
+    "tests/storage-replacement-preparation.test.js"
+  ],
+  "sourceHashes": {
+    "tests/storage-project-restore.test.js": "16d1e6c14728d4868295fef7968d9f487461ca16251f605309c71feb3bdd8c44",
+    "tests/storage-restore-command.test.js": "2d312db28257f626763624e36d1b92195ee313b018b4438ad680e3088026aa62",
+    "tests/storage-active-replacement.test.js": "5bbb15c44d49eb2d3355b7d5d2a82ca7a9a7b73014231940a2002a63be718136",
+    "tests/storage-replacement-archive.test.js": "3a63116d05cfe1ef158b54cae2863993e26f7acfd99fba5159142300e30c5213",
+    "tests/storage-replacement-publication.test.js": "ef2b88d24e5ff8f345397aa60f70b44c8bf8527b2794ad145ac21567949df878",
+    "tests/storage-replacement-preparation.test.js": "ec09b23bb7c859315ef7f0f734f3704e341b45d916541f57299295a58507488c",
+    "tests/helpers/storage-replacement-failed-resume-worker.mjs": "57915e022a9a81e1d5f27ce2f43e9512b3b148ffd288068b26972dfbece76044",
+    "tests/helpers/storage-replacement-publication-worker.mjs": "86cafeb944688a736ee777dbf89832ff8f5678bff14e520ef0c43f49f8fe5b13",
+    "tests/helpers/active-replacement-archive-worker.mjs": "a7879c2e008db9811e6b8124a85f81770cd681ccb619886e3189f390c4db0a2d",
+    "tests/helpers/storage-replacement-preparation-worker.mjs": "7009eb61d9d0c0f71697d2823885ccaa0ff93e24fb75cefa5597e35e498aa0e1",
+    "tests/helpers/storage-restore-ready-worker.mjs": "c3114b31459f506ef1d6a248f1abacdf81277f0c8eba546be6a2a77523879726"
+  },
+  "checkpointInventory": [
+    {
+      "file": "tests/storage-project-restore.test.js",
+      "line": 115,
+      "checkpoints": [
+        "PARTIAL",
+        "MISSING",
+        "RETAINING",
+        "RETAINED",
+        "REBUILD",
+        "REBUILD_CONFLICT",
+        "PREPARING",
+        "PREPARING_CHANGED",
+        "READY",
+        "PENDING",
+        "OBJECT",
+        "DATABASE",
+        "ACTIVE_MARKER",
+        "UNBOUND",
+        "CHANGED_DATABASE",
+        "TERMINAL_CHANGED"
+      ]
+    },
+    {
+      "file": "tests/storage-replacement-archive.test.js",
+      "line": 85,
+      "checkpoints": [
+        "MARKER",
+        "ATTACHMENTS",
+        "DATABASE",
+        "ARCHIVED"
+      ]
+    },
+    {
+      "file": "tests/storage-replacement-publication.test.js",
+      "line": 43,
+      "checkpoints": [
+        "READY",
+        "PUBLISHING",
+        "PENDING_MARKER",
+        "ATTACHMENT",
+        "DATABASE",
+        "ACTIVE_MARKER",
+        "ACTIVE"
+      ]
+    },
+    {
+      "file": "tests/storage-replacement-preparation.test.js",
+      "line": 31,
+      "checkpoints": [
+        "OWNER",
+        "INTENT",
+        "OUTGOING_OWNER",
+        "OUTGOING_RETAINING",
+        "OUTGOING_RENAMED",
+        "OUTGOING_RETAINED",
+        "REBUILD_BASELINE",
+        "REBUILD_ALLOCATED"
+      ]
+    },
+    {
+      "file": "tests/storage-replacement-preparation.test.js",
+      "line": 68,
+      "checkpoints": [
+        "PREPARING",
+        "OUTGOING_BASELINE",
+        "OUTGOING_ALLOCATED",
+        "OUTGOING_PREPARING",
+        "PARTIAL_OUTGOING",
+        "OUTGOING_READY",
+        "PARTIAL_SNAPSHOT",
+        "READY",
+        "PUBLICATION_READY"
+      ]
+    }
+  ],
+  "scope": "Current-source fresh restore and active replacement with binary attachments and owner kill/resume; not power-loss-at-syscall evidence",
+  "mac": {
+    "tests": 67,
+    "passed": 67,
+    "failed": 0,
+    "exit": 0,
+    "rawLog": "\u2714 active replacement preparation retains outgoing authority and independent attachments without replacing state (1058.535ms)\n\u2714 active replacement requires explicit quiescence, exact operation and live maintenance ownership (831.071083ms)\n\u2714 active replacement refuses marker conflicts and preserves outgoing state (763.321541ms)\n\u2714 active replacement refuses database conflicts and preserves outgoing state (829.3195ms)\n\u2714 active replacement refuses reservation conflicts and preserves outgoing state (505.344584ms)\n\u2714 active replacement refuses legacy conflicts and preserves outgoing state (583.774708ms)\n\u2714 active replacement refuses a retained SQLite connection and preserves its failed backup evidence (704.093833ms)\n\u2714 verified restore activates canonical project dispatch and independent attachment bytes (1899.253292ms)\n\u2714 restore refuses unquiesced writers, corrupt backup and retained legacy state (1030.669459ms)\n\u2714 restore rejects schema-invalid canonical evidence before marker activation and retains exclusion (1076.469958ms)\n\u2714 PARTIAL restore reconciles owned SIGKILL and refuses live-owner adoption (1671.914208ms)\n\u2714 MISSING restore reconciles owned SIGKILL and refuses live-owner adoption (1403.466958ms)\n\u2714 RETAINING restore reconciles owned SIGKILL and refuses live-owner adoption (1371.791208ms)\n\u2714 RETAINED restore reconciles owned SIGKILL and refuses live-owner adoption (1227.122625ms)\n\u2714 REBUILD restore reconciles owned SIGKILL and refuses live-owner adoption (1319.315166ms)\n\u2714 REBUILD_CONFLICT restore reconciles owned SIGKILL and refuses live-owner adoption (909.823791ms)\n\u2714 PREPARING restore reconciles owned SIGKILL and refuses live-owner adoption (1195.332416ms)\n\u2714 PREPARING_CHANGED restore reconciles owned SIGKILL and refuses live-owner adoption (998.169041ms)\n\u2714 READY restore reconciles owned SIGKILL and refuses live-owner adoption (892.122708ms)\n\u2714 PENDING restore reconciles owned SIGKILL and refuses live-owner adoption (1057.941958ms)\n\u2714 OBJECT restore reconciles owned SIGKILL and refuses live-owner adoption (1001.329583ms)\n\u2714 DATABASE restore reconciles owned SIGKILL and refuses live-owner adoption (1012.030208ms)\n\u2714 ACTIVE_MARKER restore reconciles owned SIGKILL and refuses live-owner adoption (989.213334ms)\n\u2714 UNBOUND restore reconciles owned SIGKILL and refuses live-owner adoption (765.579041ms)\n\u2714 CHANGED_DATABASE restore reconciles owned SIGKILL and refuses live-owner adoption (723.351542ms)\n\u2714 TERMINAL_CHANGED restore reconciles owned SIGKILL and refuses live-owner adoption (740.959916ms)\n\u2714 retained archive verification binds publication intent independently of new active roots (2032.965958ms)\n\u2714 replacement archives exact outgoing roots and retains exclusion until validated activation (1783.861791ms)\n\u2714 replacement refuses missing incoming/archival evidence before moving active authority (1503.862041ms)\n\u2714 replacement refuses corrupt incoming/archival evidence before moving active authority (1182.773458ms)\n\u2714 replacement refuses unrecorded incoming/archival evidence before moving active authority (1213.975833ms)\n\u2714 replacement resumes actual SIGKILL after MARKER while refusing live-owner adoption (1701.374916ms)\n\u2714 replacement resumes actual SIGKILL after ATTACHMENTS while refusing live-owner adoption (1529.609958ms)\n\u2714 replacement resumes actual SIGKILL after DATABASE while refusing live-owner adoption (1380.776333ms)\n\u2714 replacement resumes actual SIGKILL after ARCHIVED while refusing live-owner adoption (1495.624166ms)\n\u2714 outgoing owner journal refuses altered evidence bindings and unrelated owners (1516.315708ms)\n\u2714 replacement reconciles SIGKILL between adoption records at OWNER (2803.017042ms)\n\u2714 replacement reconciles SIGKILL between adoption records at INTENT (2605.319292ms)\n\u2714 replacement reconciles SIGKILL between adoption records at OUTGOING_OWNER (2336.896334ms)\n\u2714 replacement reconciles SIGKILL between adoption records at OUTGOING_RETAINING (2300.525084ms)\n\u2714 replacement reconciles SIGKILL between adoption records at OUTGOING_RENAMED (2207.109792ms)\n\u2714 replacement reconciles SIGKILL between adoption records at OUTGOING_RETAINED (1832.763833ms)\n\u2714 replacement reconciles SIGKILL between adoption records at REBUILD_BASELINE (2019.592375ms)\n\u2714 replacement reconciles SIGKILL between adoption records at REBUILD_ALLOCATED (1921.465458ms)\n\u2714 initial replacement resumes SIGKILL at PREPARING (1207.009666ms)\n\u2714 initial replacement resumes SIGKILL at OUTGOING_BASELINE (1105.509958ms)\n\u2714 initial replacement resumes SIGKILL at OUTGOING_ALLOCATED (2235.894792ms)\n\u2714 initial replacement resumes SIGKILL at OUTGOING_PREPARING (2610.917459ms)\n\u2714 initial replacement resumes SIGKILL at PARTIAL_OUTGOING (3026.427917ms)\n\u2714 initial replacement resumes SIGKILL at OUTGOING_READY (1060.516916ms)\n\u2714 initial replacement resumes SIGKILL at PARTIAL_SNAPSHOT (989.19925ms)\n\u2714 initial replacement resumes SIGKILL at READY (916.587875ms)\n\u2714 initial replacement resumes SIGKILL at PUBLICATION_READY (1075.951375ms)\n\u2714 initial replacement orchestrates independent source through retained outgoing authority (2585.885917ms)\n\u2714 replacement resumes actual SIGKILL after publication READY (2737.513041ms)\n\u2714 replacement resumes actual SIGKILL after publication PUBLISHING (2283.408459ms)\n\u2714 replacement resumes actual SIGKILL after publication PENDING_MARKER (2036.499791ms)\n\u2714 replacement resumes actual SIGKILL after publication ATTACHMENT (1949.666792ms)\n\u2714 replacement resumes actual SIGKILL after publication DATABASE (1870.739292ms)\n\u2714 replacement resumes actual SIGKILL after publication ACTIVE_MARKER (1601.824292ms)\n\u2714 replacement resumes actual SIGKILL after publication ACTIVE (1740.546834ms)\n\u2714 archived replacement activates incoming authority and releases admission only after validation (1458.285ms)\n\u2714 incoming corruption after archival retains exclusion and refuses publication (1034.526333ms)\n\u2714 replacement admission rejects missing quiescence and nonboolean selection without allocating evidence (1348.168125ms)\n\u2714 explicit api replacement retains outgoing state and activates incoming authority (2228.057042ms)\n\u2714 explicit cli replacement retains outgoing state and activates incoming authority (2336.30425ms)\n\u2714 restore CLI and shared command API activate verified backups and reject missing writer exclusion (1761.991042ms)\n\u2139 tests 67\n\u2139 suites 0\n\u2139 pass 67\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 33980.264083\n"
+  },
+  "remoteStatus": "Windows and Docker Linux runs live; terminal proof not yet recorded",
+  "limitations": [
+    "Production source rollback remains incomplete",
+    "All-current-source release suite remains separate",
+    "Not hardware/power-loss-at-syscall evidence"
+  ]
+}

@@ -6,6 +6,7 @@ import { McpServer } from "@modelcontextprotocol/server";
 
 import {
   FORGELOOP_INTEGRATION_API_VERSION,
+  createForgeLoopContext,
   getForgeLoopCapabilities,
   getForgeLoopPackageVersion,
   INTEGRATION_RESOURCE_DEFINITIONS,
@@ -54,7 +55,9 @@ function capabilitiesResult({ policy, projectRoot }) {
  * context. Used directly by the stateless HTTP transport (one product per
  * request) and once by the stdio entrypoint.
  */
-export function buildForgeLoopMcpServer({ projectContext, policy, packageRoot, authorityContextProvider }) {
+export function buildForgeLoopMcpServer({ projectContext, policy, packageRoot, authorityContextProvider, storageRuntimeContext = undefined }) {
+  if (storageRuntimeContext && storageRuntimeContext.authorityContext?.trustMode !== "NONE") throw new Error("MCP storage runtime cannot supply host authority; use authorityContextProvider");
+  const runtimeContext = storageRuntimeContext ?? createForgeLoopContext({ persistentStorage: true });
   const server = new McpServer({
     name: "forgeloop-mcp",
     version: mcpServerVersion(),
@@ -92,6 +95,7 @@ export function buildForgeLoopMcpServer({ projectContext, policy, packageRoot, a
     projectRoot: projectContext.projectRoot,
     policy,
     authorityContextProvider,
+    runtimeContext,
   })) {
     server.registerTool(
       registration.name,
@@ -122,7 +126,12 @@ export function buildForgeLoopMcpServer({ projectContext, policy, packageRoot, a
   registerIntegrationResources(server, {
     projectRoot: projectContext.projectRoot,
     packageRoot,
+    runtimeContext,
   });
+  if (!storageRuntimeContext) {
+    const closeServer = server.close.bind(server);
+    server.close = async () => { try { await closeServer(); } finally { await runtimeContext.close?.(); } };
+  }
 
   return server;
 }

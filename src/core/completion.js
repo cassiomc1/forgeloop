@@ -18,7 +18,9 @@ import { readConfig } from "./config.js";
 import { resolveResponsibilityStatus } from "./responsibility.js";
 import { createCodeManifest, readCodeManifest, validateCodeManifestBindings, writeCodeManifest } from "./code-manifest.js";
 import { getTaskTransaction, withTaskTransaction } from "./transaction.js";
+import { operationalArtifactExists } from "../storage/operational-context.js";
 import { validateStructuralQualityCheckProvenance } from "./structural-quality/service.js";
+import { withNativeReadScope } from "./native-storage.js";
 
 async function attestationConfiguration(target, packageRoot, errors) {
   try {
@@ -77,6 +79,12 @@ export const VERIFICATION_STATUSES = Object.freeze([
 
 function issue(code, message, artifacts = [], details = {}) {
   return { code, message, artifacts, ...details };
+}
+
+export function receiptReadFailure(error, relativePath) {
+  return error.taskIdentityMismatch
+    ? issue("E_RECEIPT_TASK_MISMATCH", "Execution receipt does not belong to the current contract task", [relativePath])
+    : issue("E_RECEIPT_INVALID", `Repair or remove the invalid execution receipt before continuing: ${error.message}`, [relativePath]);
 }
 
 export function completionIdentityErrors({ contract, state, receipt } = {}) {
@@ -226,6 +234,10 @@ async function loadRequired(readArtifact, errorCode, errorMessage, artifacts, er
   try {
     return await readArtifact();
   } catch (error) {
+    if (errorCode === "E_RECEIPT_MISSING" && error.taskIdentityMismatch) {
+      errors.push(receiptReadFailure(error, artifacts[0]));
+      return null;
+    }
     if (error.code === "ARTIFACT_MISSING") {
       errors.push(issue(errorCode, errorMessage, artifacts));
       return null;
@@ -233,6 +245,19 @@ async function loadRequired(readArtifact, errorCode, errorMessage, artifacts, er
     errors.push(issue(error.code ?? errorCode, error.message ?? errorMessage, artifacts));
     return null;
   }
+}
+
+async function loadCompletionActions(target, packageRoot, taskId, errors) {
+  const { evaluateRequiredActionReadiness } = await import("./action-readiness.js");
+  const evidence = taskId ? await loadRequired(async () => ({
+    actions: await listActions(target, { packageRoot, taskId }),
+    readiness: await evaluateRequiredActionReadiness({ target, packageRoot, taskId }),
+  }), "E_ACTION_INVALID", "Durable action evidence is not available", [taskArtifactPath(taskId, "actions")], errors) : null;
+  return {
+    actions: evidence?.actions ?? [],
+    readiness: evidence?.readiness
+      ?? { total: 0, satisfied: 0, unresolved: 0, ambiguous: 0, failed: 0, untrusted: 0, actions: [] },
+  };
 }
 
 function publicationStatus(receipt) {
@@ -246,9 +271,10 @@ function publicationStatus(receipt) {
 async function validateLedger(target, scopedTaskId, contractTaskId, state, errors, packageRoot, options = {}) {
   const eventsRel = options.eventsPath ?? (scopedTaskId ? taskArtifactPath(scopedTaskId, "events") : ARTIFACT_PATHS.events);
   const stateRel = options.statePath ?? (scopedTaskId ? taskArtifactPath(scopedTaskId, "state") : ARTIFACT_PATHS.state);
-  await assertSafePath(target, eventsRel);
+  const operationalExists = operationalArtifactExists(target, eventsRel);
+  if (operationalExists === null) await assertSafePath(target, eventsRel);
   const eventsFilePath = ensureWithin(target, eventsRel);
-  if (!(await fileExists(eventsFilePath))) {
+  if (operationalExists === false || (operationalExists === null && !(await fileExists(eventsFilePath)))) {
     errors.push(issue("E_PHASE_CHRONOLOGY_INVALID", "Protocol event ledger is required before completion", [eventsRel]));
     return { valid: false, events: [], errors: [] };
   }
@@ -274,6 +300,35 @@ async function validateLedger(target, scopedTaskId, contractTaskId, state, error
 }
 
 export async function evaluateCompletion({
+  target,
+  packageRoot,
+  strict = false,
+  authorityContext,
+  runtimeContext,
+  taskId = null,
+  contractPath = null,
+  routePath = null,
+  statePath = null,
+  receiptPath = null,
+  eventsPath = null,
+  preflightPath = null,
+} = {}) {
+  const options = { target, packageRoot, strict, authorityContext, runtimeContext, taskId, contractPath, routePath, statePath, receiptPath, eventsPath, preflightPath };
+  return withNativeReadScope(target, async () => evaluateSelectedCompletion(await resolveCompletionTaskOptions(options)));
+}
+
+async function resolveCompletionTaskOptions(options) {
+  if (options.taskId) return options;
+  try {
+    const state = await readWorkState(options.target, { packageRoot: options.packageRoot, statePath: options.statePath });
+    return state ? { ...options, taskId: state.taskId } : options;
+  } catch {
+    // Preserve the evaluator's structured missing/invalid-state diagnostics.
+    return options;
+  }
+}
+
+async function evaluateSelectedCompletion({
   target,
   packageRoot,
   strict = false,
@@ -557,19 +612,14 @@ export async function evaluateCompletion({
   }
 
   const actionTaskId = contract?.value?.taskId ?? taskId;
-  const durableActions = actionTaskId
-    ? await listActions(target, { packageRoot, taskId: actionTaskId })
-    : [];
+
   const contractRequirements = new Set([
     ...(contract?.value?.verification ?? []), ...(contract?.value?.successCriteria ?? []),
   ]);
   // Completion truth consumes the canonical action-readiness projection, not
   // raw state labels: a forged VERIFIED label can never satisfy a required
   // action (INV-VERIFY-02).
-  const { evaluateRequiredActionReadiness } = await import("./action-readiness.js");
-  const requiredActionReadiness = actionTaskId
-    ? await evaluateRequiredActionReadiness({ target, packageRoot, taskId: actionTaskId })
-    : { total: 0, satisfied: 0, unresolved: 0, ambiguous: 0, failed: 0, untrusted: 0, actions: [] };
+  const { actions: durableActions, readiness: requiredActionReadiness } = await loadCompletionActions(target, packageRoot, actionTaskId, errors);
   for (const readiness of requiredActionReadiness.actions) {
     if (readiness.status === "SATISFIED") continue;
     const action = durableActions.find((candidate) => candidate.actionId === readiness.actionId);
@@ -853,6 +903,7 @@ async function runCompleteInternal({
 }
 
 export async function runComplete(options = {}) {
+  options = await resolveCompletionTaskOptions(options);
   const taskId = options.taskId ?? null;
   if (options.persist !== false && taskId && !(await getTaskTransaction(options.target))) {
     return withTaskTransaction({

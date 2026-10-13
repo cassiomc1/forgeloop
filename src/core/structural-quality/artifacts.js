@@ -1,4 +1,6 @@
+import { needsExistingProjectScope, withExistingProjectScope } from "../../storage/existing-project-scope.js";
 import { readdir } from "node:fs/promises";
+import { listOperationalArtifactNames, operationalArtifactExists } from "../../storage/operational-context.js";
 
 import {
   canonicalFingerprint,
@@ -205,21 +207,25 @@ export async function writeStructuralQualityBaseline(
 }
 
 export async function listStructuralQualityEvaluations(target, taskId, packageRoot = getPackageRoot()) {
-  const relativeDirectory = taskStructuralQualityEvaluationsDirectory(taskId);
-  await assertSafePath(target, relativeDirectory);
-  const absoluteDirectory = ensureWithin(target, relativeDirectory);
-  if (!(await fileExists(absoluteDirectory))) return [];
-  let entries;
-  try {
-    entries = await readdir(absoluteDirectory, { withFileTypes: true });
-  } catch (error) {
-    throw qualityArtifactError(E_STRUCTURAL_QUALITY_EVIDENCE_STALE, `Unable to list structural-quality evaluations: ${error.message}`, [relativeDirectory]);
+  if (await needsExistingProjectScope(target)) {
+    return withExistingProjectScope(target, () => listStructuralQualityEvaluations(target, taskId, packageRoot), { readOnly: true });
   }
-  const candidates = entries
-    .filter((entry) => entry.isFile())
-    .map((entry) => {
-      const match = /^cycle-(\d+)-attempt-(\d+)\.json$/u.exec(entry.name);
-      return match ? { name: entry.name, verificationCycle: Number(match[1]), attempt: Number(match[2]) } : null;
+  const relativeDirectory = taskStructuralQualityEvaluationsDirectory(taskId);
+  let names = listOperationalArtifactNames(target, taskId, "structural-quality/evaluations");
+  if (names === null) {
+    await assertSafePath(target, relativeDirectory);
+    const absoluteDirectory = ensureWithin(target, relativeDirectory);
+    if (!(await fileExists(absoluteDirectory))) return [];
+    try {
+      names = (await readdir(absoluteDirectory, { withFileTypes: true })).filter(entry => entry.isFile()).map(entry => entry.name);
+    } catch (error) {
+      throw qualityArtifactError(E_STRUCTURAL_QUALITY_EVIDENCE_STALE, `Unable to list structural-quality evaluations: ${error.message}`, [relativeDirectory]);
+    }
+  }
+  const candidates = names
+    .map((name) => {
+      const match = /^cycle-(\d+)-attempt-(\d+)\.json$/u.exec(name);
+      return match ? { name, verificationCycle: Number(match[1]), attempt: Number(match[2]) } : null;
     })
     .filter(Boolean)
     .filter((item) => item.verificationCycle >= 1 && item.attempt >= 1)
@@ -267,7 +273,7 @@ export async function writeStructuralQualityEvaluation(target, taskId, verificat
     throw qualityArtifactError(E_STRUCTURAL_QUALITY_EVIDENCE_STALE, `Evaluation identity does not match ${relativePath}`, [relativePath]);
   }
   validateStructuralQualityArtifact(value, relativePath);
-  const existing = await fileExists(ensureWithin(target, relativePath));
+  const existing = operationalArtifactExists(target, relativePath) ?? await fileExists(ensureWithin(target, relativePath));
   if (existing) {
     const current = await readStructuralQualityEvaluation(target, taskId, cycle, normalizedAttempt, packageRoot);
     if (current.fingerprint === canonicalFingerprint(value)) return { ...current, existing: true, identical: true };

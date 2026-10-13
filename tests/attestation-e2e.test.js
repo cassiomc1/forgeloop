@@ -1,3 +1,5 @@
+import { withTaskTransaction } from "../src/core/transaction.js";
+import { withSigningBundleFile } from "../src/core/signing/bundle-file.js";
 import assert from "node:assert/strict";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -11,7 +13,7 @@ import { runCheck } from "../src/commands/run-check.js";
 import { runPrepareCompletion } from "../src/commands/prepare-completion.js";
 import { createConfig, writeConfig } from "../src/core/config.js";
 import { currentRepositoryFingerprint } from "../src/core/repository.js";
-import { taskAttestationBundlePath } from "../src/core/task-paths.js";
+import { taskAttestationBundlePath, taskAttestationStatementPath } from "../src/core/task-paths.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { runComplete } from "../src/commands/complete.js";
 import { setupVerifyingTask } from "./helpers/durable-lifecycle.js";
@@ -110,7 +112,8 @@ test("completion, statement creation, content verification, and range coverage f
     assert.deepEqual(gap.uncoveredPaths, ["src/uncovered.js"]);
     assert.ok(gap.errors.some((error) => error.code === "E_ATTESTATION_COVERAGE_GAP"));
 
-    await writeFile(path.join(target, taskAttestationBundlePath(taskId)), "{}\n", "utf8");
+    await withTaskTransaction({ target, taskId, packageRoot, operation: "fixture-signature" }, () =>
+      withSigningBundleFile(target, taskAttestationBundlePath(taskId), taskAttestationStatementPath(taskId), filename => writeFile(filename, "{}\n", "utf8")));
     const signed = await runAttestationVerify({
       target,
       packageRoot,

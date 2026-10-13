@@ -16,6 +16,9 @@ const INLINE_TEMPLATE_CONTENT = Object.freeze({
   ".forgeloop/.gitignore": [
     "# Local resumable task state is untrusted, target-specific data.",
     "work-state.json",
+    "state.sqlite",
+    "state.sqlite-*",
+    "storage-version.json",
     "executions/",
     "repository-index/",
     "",

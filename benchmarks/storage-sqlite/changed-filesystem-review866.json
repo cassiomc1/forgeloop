@@ -1,0 +1,26 @@
+{
+  "increment": 866,
+  "sourceRevision": "3630a4ced0ab9497cfd276ef36ea06fe6ebec986",
+  "scope": "Changed filesystem-import modules since847; source review plus focused865 controls, not whole transitive conformance",
+  "reviewed": [
+    {
+      "path": "src/storage/connection.js",
+      "sha256": "d5f43afce9c391583cc264c5ecda8f5265aa3fce41b2e586c5ef3afc0b6be995",
+      "disposition": "Sync lstat/realpath only: validate opened SQLite filename, admitted main identity and non-symlink sidecars before configuration. SQLite remains operational writer. Deterministic Mac controls pass; actual Windows restored-path control remains pending. No native descriptor proof claimed."
+    },
+    {
+      "path": "src/storage/connection-owner.js",
+      "sha256": "081d7ca7d303c0e69e232007bf2d1b2cd7076dfa6b7f4e3e53405cd23611a6fe",
+      "disposition": "Async lstat/realpath only: choose physical project cache key, capture/recheck main identity, then call project admission guard before metadata/callback. Native handle close is lifecycle, not legacy filesystem publication."
+    },
+    {
+      "path": "src/storage/project-boundary.js",
+      "sha256": "1a8778fae814840a050172557eac445b39fabc628130ab01d0f0e0b0f4239feb",
+      "disposition": "Async lstat/realpath only: detect topology/legacy coexistence, capture physical root and main identity, pass internal admission to ordinary/cached SQLite opening. Fresh bootstrap and maintenance services retain their separately audited authority."
+    }
+  ],
+  "inventoryModules": 505,
+  "filesystemModules": 104,
+  "unresolvedImports": [],
+  "wholeConsumerClosure": false
+}

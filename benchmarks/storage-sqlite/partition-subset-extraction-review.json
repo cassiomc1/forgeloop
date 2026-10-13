@@ -1,0 +1,20 @@
+{
+  "kind": "PARTITION_HELPER_CONSOLIDATION",
+  "parentRevision": "1e43666",
+  "sourceHashes": {
+    "src/storage/migration-source-partition.js": "df6e264ae565197094a0cc7d37adea651d190b20420f8df292264638c7ff8dda",
+    "src/storage/migration-rollback-publication.js": "c2ee1682a3f837da9aacbfff042d2bc08d059faeacf79abb0527046c4b1a078b",
+    "src/storage/restore-replacement-archive.js": "116c1cb59d3e2e2d09df61b667cf5391ba80a6c9c3fc178026ee66da98cbc873"
+  },
+  "node": "v24.19.0",
+  "tests": 38,
+  "passed": 38,
+  "failed": 0,
+  "skipped": 0,
+  "nonblankLinesBefore": 381,
+  "nonblankLinesAfter": 379,
+  "rejectedAlternative": "compareInventoryRoot increased count by11 despite passing38 tests; removed",
+  "logSha256": "8908f79445928f258d91b9795ea39bdf9f6d9e33d569eb00e61453ada096c5c5",
+  "locGateMet": false,
+  "wholePlanComplete": false
+}

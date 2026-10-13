@@ -1,17 +1,18 @@
 import assert from "node:assert/strict";
-import { readFile, writeFile } from "node:fs/promises";
 import { test } from "node:test";
 
 import { runTaskRecover } from "../src/commands/task-recover.js";
 import { runTaskCreate } from "../src/commands/task-create.js";
 import { discoverTasks } from "../src/core/task-discovery.js";
 import { readEvents } from "../src/core/events.js";
-import { ensureWithin, fileExists } from "../src/core/filesystem.js";
-import { taskArtifactPath, taskLockPath } from "../src/core/task-paths.js";
+import { ensureWithin } from "../src/core/filesystem.js";
+import { taskArtifactPath } from "../src/core/task-paths.js";
 import { createWorkState, readWorkState, writeWorkState } from "../src/core/work-state.js";
 import { readTaskDescriptor } from "../src/core/task-descriptor.js";
 import { resolveTaskContext } from "../src/core/task-context.js";
 import { inspectTaskConflictState } from "../src/core/task-conflict-inspection.js";
+import { readTaskRecovery } from "../src/core/task-recovery.js";
+import { readRawFixtureText, overwriteFixtureText, overwriteFixtureLease, readRawFixtureLease } from "./helpers/native-storage-fixture.js";
 import { acquireTaskLock, readLockInfo } from "../src/core/task-lock.js";
 import {
   packageRoot,
@@ -35,7 +36,7 @@ test("task-resume reacquires released claims and removes recovery state transact
     assert.deepEqual(result.reacquiredClaims, ["tests"]);
     assert.deepEqual(await readWorkState(target, { packageRoot, taskId }), stateBeforeResume);
     assert.equal(
-      await fileExists(ensureWithin(target, taskArtifactPath(taskId, "recovery"))),
+      (await readTaskRecovery(target, { taskId, packageRoot })) !== null,
       false,
     );
 
@@ -66,7 +67,7 @@ test("task-resume refuses to reacquire a claim owned by another active task", as
     );
 
     assert.equal(
-      await fileExists(ensureWithin(target, taskArtifactPath(taskId, "recovery"))),
+      (await readTaskRecovery(target, { taskId, packageRoot })) !== null,
       true,
     );
     const tasks = await discoverTasks(target, packageRoot);
@@ -106,8 +107,8 @@ test("task-resume fails closed when historical descriptor claims no longer match
     await runTaskRecover({ target, packageRoot, taskId, acknowledgeRecovery: true });
 
     const descriptorPath = ensureWithin(target, taskArtifactPath(taskId, "descriptor"));
-    const descriptor = JSON.parse(await readFile(descriptorPath, "utf8"));
-    await writeFile(descriptorPath, `${JSON.stringify({
+    const descriptor = JSON.parse(await readRawFixtureText(target, descriptorPath));
+    await overwriteFixtureText(target, descriptorPath, `${JSON.stringify({
       ...descriptor,
       writeClaims: ["src"],
     }, null, 2)}\n`, "utf8");
@@ -117,7 +118,7 @@ test("task-resume fails closed when historical descriptor claims no longer match
       (error) => error.code === "E_TASK_RECOVERY_INCONSISTENT",
     );
     assert.equal(
-      await fileExists(ensureWithin(target, taskArtifactPath(taskId, "recovery"))),
+      (await readTaskRecovery(target, { taskId, packageRoot })) !== null,
       true,
     );
   });
@@ -221,8 +222,7 @@ test("task-resume CAS-settles an unchanged stale task lock", async () => {
       heartbeatAt: "2020-01-01T00:00:00.000Z",
       leaseMs: 1,
     };
-    const lockPath = ensureWithin(target, taskLockPath(taskId));
-    await writeFile(lockPath, `${JSON.stringify(stale)}\n`, "utf8");
+    await overwriteFixtureLease(target, taskId, stale);
 
     const result = await runTaskResume({ target, packageRoot, taskId });
     assert.equal(result.resumed, true);
@@ -251,15 +251,14 @@ test("task-resume fails closed for corrupt and unknown task-lock ownership", asy
   await withRecoveryTarget(async (target) => {
     const { taskId } = await setupAbandonedTask(target, { taskId: "resume-invalid-lock" });
     await runTaskRecover({ target, packageRoot, taskId, acknowledgeRecovery: true });
-    const lockPath = ensureWithin(target, taskLockPath(taskId));
 
     for (const invalidLock of ["{broken", `${JSON.stringify({ taskId, heartbeatAt: "not-a-date" })}\n`]) {
-      await writeFile(lockPath, invalidLock, "utf8");
+      await overwriteFixtureLease(target, taskId, invalidLock);
       await assert.rejects(
         () => runTaskResume({ target, packageRoot, taskId }),
         (error) => error.code === "E_TASK_RECOVERY_INCONSISTENT",
       );
-      assert.equal(await readFile(lockPath, "utf8"), invalidLock);
+      assert.equal(await readRawFixtureLease(target, taskId), invalidLock);
     }
   });
 });

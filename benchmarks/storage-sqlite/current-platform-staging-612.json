@@ -1,0 +1,46 @@
+{
+  "increment": 611,
+  "candidate": "611b",
+  "remoteIncrement": 612,
+  "sourceFiles": 2638,
+  "archiveBytes": 13275567,
+  "archiveSha256": "2b7893aef6fabe01c72fb6bb1cefb93cf9cde193acdc5c286bcd977e7ad77928",
+  "destination": "C:/forgeloop-tests/increment612/source",
+  "staging": [
+    {
+      "label": "isolated workspace admission",
+      "status": 0,
+      "output": "",
+      "error": ""
+    },
+    {
+      "label": "source transfer over existing private tunnel",
+      "status": 0,
+      "output": "",
+      "error": ""
+    },
+    {
+      "label": "verified source extraction",
+      "status": 0,
+      "output": "{\"Source\":\"C:\\\\Windows\\\\system32\\\\tar.exe\"}\r\n",
+      "error": ""
+    }
+  ],
+  "setupStatus": "PASS",
+  "fullWindowsStatus": "PASS",
+  "fullLinuxStatus": "PASS",
+  "fullCurrentAcceptance": false,
+  "setupEvidence": {
+    "exit": 0,
+    "sourceHashesVerified": 2638,
+    "lockedPackagesInstalled": 135,
+    "baselineGitObjectsAvailable": true
+  },
+  "fullWindowsPid": "1936",
+  "liveProcessVerified": false,
+  "fullWindowsTerminalEvidence": "full-windows-snapshot612-terminal-614.json",
+  "fullLinuxContainerId": "dfe48c1ce8b28be2e6e13a40359a872c20124f71123584940321ec646bdd9da1",
+  "fullLinuxLiveVerified": false,
+  "latestObservationIncrement": 616,
+  "fullLinuxTerminalEvidence": "full-linux-snapshot612-terminal-616.json"
+}

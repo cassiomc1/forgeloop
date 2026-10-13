@@ -1,0 +1,76 @@
+{
+  "scope": "Source-reviewed admission mapping for all nine commands excluded from ordinary executor boundary",
+  "commands": [
+    {
+      "command": "task-migrate",
+      "source": "src/core/task-storage-migration.js",
+      "entry": "migrateProjectStorage",
+      "admission": "withStorageMaintenance;dryRun/no-legacy return without mutation",
+      "sourceSha256": "219bbe05474d6a872091c20beef5ed06856a6214c49660e0f5ea807370f362c7"
+    },
+    {
+      "command": "migrate-protocol",
+      "source": "src/core/protocol-migration.js",
+      "entry": "migrateLegacyTaskStorage -> migrateProjectStorage",
+      "admission": "supported protocol target checked before admission;dryRun/no-legacy readonly",
+      "sourceSha256": "31d8571cfd8ceb9fd66b6b25d95d100c448e573c87488a6e810ef4ccc1706f39"
+    },
+    {
+      "command": "storage-migration-status",
+      "source": "src/commands/storage-migration-status.js",
+      "entry": "runStorageMigrationStatus",
+      "admission": "read-only lstat and owner metadata;no DB allocation/validation claimed",
+      "sourceSha256": "3d013e83b241d278d0eed4c52b192a3df4cfd482502bcc2fe64b01efafc87830"
+    },
+    {
+      "command": "storage-migrate",
+      "source": "src/storage/migration.js",
+      "entry": "migrateProjectStorage",
+      "admission": "withStorageMaintenance;explicit destination andwritersQuiesced",
+      "sourceSha256": "6d84791488206fc394c2501d2f6c4d34ba8e12fba34dede0e40c48b64c3e03fa"
+    },
+    {
+      "command": "storage-migration-resume",
+      "source": "src/storage/migration.js",
+      "entry": "resumeProjectStorageMigration",
+      "admission": "resumeStorageMaintenance;exact recorded owner andquiescence",
+      "sourceSha256": "6d84791488206fc394c2501d2f6c4d34ba8e12fba34dede0e40c48b64c3e03fa"
+    },
+    {
+      "command": "storage-rollback",
+      "source": "src/storage/migration-rollback.js",
+      "entry": "rollbackProjectStorage",
+      "admission": "withStorageMaintenance;writers/nativewritesexcluded;clean supported legacy target validation before acquisition",
+      "sourceSha256": "f4f054b19857ee4ebf0e423d79f2962a3f296199b978799ac47aca826a235060"
+    },
+    {
+      "command": "storage-rollback-resume",
+      "source": "src/storage/migration-rollback.js",
+      "entry": "resumeProjectStorageRollback",
+      "admission": "publication resume or resumeStorageMaintenance;exactowner,excludedwriters/nativewrites andsupportedtarget",
+      "sourceSha256": "f4f054b19857ee4ebf0e423d79f2962a3f296199b978799ac47aca826a235060"
+    },
+    {
+      "command": "storage-restore",
+      "source": "src/storage/project-restore.js",
+      "entry": "restoreProjectStorageToFreshProject or replaceActiveProjectStorage",
+      "admission": "validatedsource;quiescence;withStorageMaintenance;active replacement additionally retains outgoing authority",
+      "sourceSha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e"
+    },
+    {
+      "command": "storage-restore-resume",
+      "source": "src/storage/project-restore.js",
+      "entry": "resumeProjectStorageRestore or resumeActiveProjectReplacement",
+      "admission": "journal/owner continuity checked;resumeStorageMaintenance;quiescence;current owned checkpoint rechecked",
+      "sourceSha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e"
+    }
+  ],
+  "restoreReplacementSource": "src/storage/project-replacement.js",
+  "restoreReplacementSha256": "8edb1daa7f5a50a56c2762488db647d1e441d1f421d8dd6b2f1fbc5a813efa59",
+  "wholeMaintenanceVerified": false,
+  "remaining": [
+    "Per-call destructive ownership closure",
+    "Forward-repair mapping",
+    "Current620 remote verification"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "countingMethod": "Nonblank physical production lines including comments; same whole-module union on both sides; tests/scripts/package manifests excluded",
+  "scopeMethod": "Conservative candidate union: direct persistence/file-I/O signals in either version, every storage module, every changed/new production module. All omitted modules are listed too. Requires semantic scope review before release acceptance.",
+  "scopeReviewComplete": false,
+  "releaseThresholdsVerified": false,
+  "includedFiles": 282,
+  "baselineNonblankPhysicalLines": 43788,
+  "currentNonblankPhysicalLines": 52190,
+  "netReduction": -0.19187905362199698,
+  "candidateTargetMet": false,
+  "sourceRevision": "4794f0a85cc90eb95d67f590bec86a8acde99fef",
+  "inventorySha256": "df38a0b9c26c03f3c66da7bc52ace563d9f9fcf8aac4519d18438b599d637a73"
+}

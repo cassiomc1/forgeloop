@@ -1,0 +1,40 @@
+{
+  "increment": 765,
+  "parentHead": "aa29518f3242911838e387b73cd141e8847d3583",
+  "defect": "Direct persistRoute committed replacement route before failing synchronized work-state update.",
+  "beforeFix": "Corrected canonical ROUTED fixture and SQLite task-update ABORT reproduces changed route payload/fingerprint/digest after rejection. Initial fixture attempts used an invalid work type and then a stale contract checkpoint; neither is counted as defect evidence.",
+  "productionChange": "Explicit task IDs join/create a task transaction; inferred canonical contract IDs enter the same boundary and reread under it. Contract fingerprint inference now uses a mutable binding instead of assigning to a const.",
+  "regression": "Both explicit and contract-path-inferred task identities preserve exact tasks/artifacts/events on failure, then successful retry binds the state to the new route fingerprint.",
+  "checks": {
+    "focusedTests": 21,
+    "directCallerTests": 343,
+    "failures": 0,
+    "skips": 0,
+    "verifyFast": "PASS",
+    "finalLint": "PASS",
+    "complexity": "PASS",
+    "fullCurrentPlatforms": "PENDING"
+  },
+  "inventory": {
+    "modules": 324,
+    "exportsWithReachableWrites": 47,
+    "multiWriteDiscoveryCandidates": 13,
+    "method": "Static named/local/import/namespace/reexport call reachability, stopping traversal at named task transaction callback barriers. Conservative nested callbacks; excludes assigned aliases, export-star/object dispatch, shadowing resolution and dynamic calls. Discovery only; source review and faults required.",
+    "conclusion": "Path-insensitive scan includes already guarded conditional delegation branches; candidate presence does not establish a defect. Route defect verified independently. Complete transitive closure remains open."
+  },
+  "logHashes": {
+    "direct-route-atomicity765.log": "bc3f81a9570c8ac3eb72834ca34736169e993e941314084207da07322fe8dcc3",
+    "direct-route765-regression-final.log": "47d6b0533548d0a9cc20b4d6817d92e2651d3f8e94b471e5e706ceaec5a32231",
+    "direct-route765-callers.log": "6678204c676194d3f4411250171684b1398613883c45ddd3b37e6b3e5232d328",
+    "fast765.log": "9cf1fa0c5b88d4c35e1f04bc898bd4d6810aa5b368ce6c2b89a7f2aac60e9c62",
+    "lint765-final.log": "4807cdef8a6de4020301572dcc2c9ff9ef882f2fd400366f3959b0931996d5ef",
+    "complexity765.log": "32111f472b37a8b8941d21c72e18a3815643453328562aed2fd87e8a2f0417f2"
+  },
+  "diagnosticScriptSha256": "09bbad8fe1ce13cd3a522f5ef7cec02cbc6f47f9911a42828cef4815a865e9be",
+  "diagnosticInventorySha256": "0b38821a395a0991b020fe47de0db57fa5cc8bab9739858a3687857f6d6e715a",
+  "productionSha256": "96856a0a9a4865fda0fffb630f0919c827210745e37f099358cff5c7954d63ff",
+  "testSha256": "d0c57d8a452fbf1cbaead712413195a6ccd6e049acc5da0d0b96b5dc7d784486",
+  "progressPercent": 55,
+  "releaseThresholdsVerified": false,
+  "protocolComplete": false
+}

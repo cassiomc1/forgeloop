@@ -16,8 +16,9 @@ concurrency:
 
 jobs:
   classify:
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
     name: Classify Repository Index paths
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
     timeout-minutes: 5
     outputs:
       repository_index: ${{ steps.classify.outputs.repository_index }}
@@ -47,8 +48,8 @@ jobs:
   manifest:
     name: Verify Repository Index manifest
     needs: classify
-    if: ${{ needs.classify.outputs.repository_index == 'true' }}
-    runs-on: ubuntu-latest
+    if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (needs.classify.outputs.repository_index == 'true') }}
+    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
     timeout-minutes: 10
     steps:
       - name: Check out repository
@@ -70,15 +71,16 @@ jobs:
   native:
     name: Native Repository Index (${{ matrix.os }})
     strategy:
+      max-parallel: 1
       fail-fast: false
       matrix:
-        os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
-    runs-on: ${{ matrix.os }}
+        include:
+          - { os: Linux, runner: [self-hosted, Linux, X64, forgeloop-linux-remote] }
+          - { os: macOS, runner: [self-hosted, macOS, ARM64, forgeloop-macos-local] }
+          - { os: Windows, runner: [self-hosted, Windows, X64, forgeloop-windows-remote] }
+    runs-on: ${{ matrix.runner }}
     needs: [classify, manifest]
-    if: ${{ needs.classify.outputs.repository_index == 'true' && needs.manifest.result == 'success' }}
+    if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (needs.classify.outputs.repository_index == 'true' && needs.manifest.result == 'success') }}
     timeout-minutes: 20
     steps:
       - name: Check out repository

@@ -1,5 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -20,7 +22,7 @@ async function withTarget(run) {
   try {
     await run(target);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 }
 
@@ -56,6 +58,7 @@ test("verification uses one trusted adapter call and binds the disposable cwd", 
       },
     };
 
+    await ensureFixtureTask(target, "task-isolation", packageRoot);
     const result = await runCommandExecution({
       target,
       packageRoot,
@@ -88,6 +91,7 @@ test("verification uses one trusted adapter call and binds the disposable cwd", 
 
     const artifact = await readExecutionArtifact({
       target,
+      taskId: "task-isolation",
       executionRef: result.execution.executionId,
       packageRoot,
     });
@@ -132,6 +136,7 @@ test("required isolation fails closed without an adapter and writes no execution
 
 test("standalone native fallback is explicit and never claims isolation", async () => {
   await withTarget(async (target) => {
+    await ensureFixtureTask(target, "task-native", packageRoot);
     const result = await runCommandExecution({
       target,
       packageRoot,
@@ -157,6 +162,7 @@ test("standalone native fallback is explicit and never claims isolation", async 
 
 test("adapter output preserves timeout, termination, hashes, and truncation", async () => {
   await withTarget(async (target) => {
+    await ensureFixtureTask(target, "task-timeout", packageRoot);
     const result = await runCommandExecution({
       target,
       packageRoot,

@@ -1,0 +1,45 @@
+{
+  "increment": 849,
+  "sourceRevision": "5badf8dffef94b9bb3b5e7ab0e36abfc05cde464",
+  "sourceHashes": {
+    "package.json": "e7d830d6bd7dc11c7496e95c4272bdbb93eecd3b69a5f90620b8007ec3547765",
+    "src/cli.js": "30e8cf93ec2cf24061b58dc35e15a172836847b987229dd6e9d4a5436e3dfec3",
+    "src/integration.js": "adaa63fe570f28cd65f27060c558213025672183cddf26e9386de761ccd30526",
+    "src/core/command-runtime.js": "56085a5bddeccabcbcf008b1c26c4293cc8b4d7c321f9684fd9e5493f038afcf",
+    "src/core/command-executors.js": "2c32d0ad5fd2afcab246a357617e1b3e1040e20e3975a9cf9757f51525a94c3b",
+    "src/core/integration-resources.js": "e1d2820a430f44cd7cf75a5ff9c14d6d7d86abd9e0dc565b8fb3f9a04556984a",
+    "src/storage/project-boundary.js": "72d5ff54501b9b31234d3ef6e7c9610c5f1dd5f248a671fcd6e03c38ac558b2c",
+    "integrations/mcp/src/tool-registry.js": "f3f128a02cf5142df1db43f72cb8565f5791c856c71e104383284899f2316bc1",
+    "integrations/mcp/src/resource-registry.js": "6d022292824215ed6f339e59d208bc346408c25fe5db9d2a3944978f59d2ca84"
+  },
+  "declaredPublicExports": [
+    ".",
+    "./integration"
+  ],
+  "commands": 115,
+  "executors": 115,
+  "missingExecutors": [],
+  "extraExecutors": [],
+  "resources": 25,
+  "reviewedBoundaries": [
+    "CLI command branches select COMMAND_EXECUTORS; programmatic runtime selects the same registry after input validation.",
+    "MCP tools delegate executeForgeLoopCommand; MCP resources delegate readForgeLoopIntegrationResource.",
+    "Ordinary project commands select withProjectStorage; explicit migration/rollback/restore/status and protocol/task conversion exceptions retain dedicated maintenance admission.",
+    "Read-only missing-store dispatch does not bootstrap. Writable fresh-project admission bootstraps SQLite; legacy operational roots require explicit conversion.",
+    "Task resources select committed snapshots except the finite synchronous decisions catalog. Human configuration, package assets and excluded repository-index surfaces retain their declared file roles."
+  ],
+  "checks": {
+    "publicDispatchAuthoritySnapshotsAndCliParity": {
+      "tests": 47,
+      "passed": 47,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "wholeConsumerClosure": false,
+  "limitations": [
+    "Metadata/executor coverage does not prove every transitive reader or arbitrary parameter combination.",
+    "The 47 tests cover actual fixtures, not every resource/command combination or all maintenance interruption windows.",
+    "Final current platform and original performance/resource/LOC acceptance remain open."
+  ]
+}

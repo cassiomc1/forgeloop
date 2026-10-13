@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "scope": "Full Mac immutable603 prepush, before ledger604 and execution605 retirement",
+  "exitCode": 0,
+  "sourceRoot": "/tmp/forgeloop-complexity603",
+  "sourceFiles": 2609,
+  "sourceDrift": [],
+  "rawLogSha256": "7f28874eb537399f36e6015743997feb939497b08a1591b3cf16ea90a00338d3",
+  "testGroups": [
+    {
+      "tests": 2794,
+      "pass": 2783,
+      "fail": 0,
+      "skipped": 11
+    },
+    {
+      "tests": 67,
+      "pass": 67,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "tests": 73,
+      "pass": 73,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "tests": 12,
+      "pass": 12,
+      "fail": 0,
+      "skipped": 0
+    }
+  ],
+  "passedGates": [
+    "coverage (526.3s)",
+    "critical-coverage:check (0.3s)",
+    "lint (4.0s)",
+    "dependency:policy (0.1s)",
+    "complexity:check (1.7s)",
+    "docs:check (2.6s)",
+    "completions:check (0.1s)",
+    "summary:check (0.1s)",
+    "changelog:check (0.2s)",
+    "repository-index:manifest (0.1s)",
+    "repository:hygiene (0.2s)",
+    "poc:evidence:verify (0.2s)",
+    "poc:evidence:test (1.5s)",
+    "mcp:test:clean (6.3s)",
+    "mcp:pack:check (2.9s)",
+    "pack:check (1.7s)",
+    "python-unittest (0.9s)",
+    "markdown-self-test (0.0s)",
+    "markdown-validator (0.5s)",
+    "loop-self-test (0.2s)",
+    "loop-validator (0.1s)",
+    "secret-scan (3.7s)"
+  ],
+  "limitations": [
+    "Not final current source: production ledger604/execution605 changes require new full verification.",
+    "Windows602 and Linux602 independent jobs remain separate evidence;no GitHub changed workflow execution or PR claim."
+  ]
+}

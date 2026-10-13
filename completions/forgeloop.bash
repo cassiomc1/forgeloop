@@ -87,6 +87,14 @@ _forgeloop() {
       search) command="search" ;;
       semantic-plan) command="semantic-plan" ;;
       status) command="status" ;;
+      storage-backup) command="storage-backup" ;;
+      storage-migrate) command="storage-migrate" ;;
+      storage-migration-resume) command="storage-migration-resume" ;;
+      storage-migration-status) command="storage-migration-status" ;;
+      storage-restore) command="storage-restore" ;;
+      storage-restore-resume) command="storage-restore-resume" ;;
+      storage-rollback) command="storage-rollback" ;;
+      storage-rollback-resume) command="storage-rollback-resume" ;;
       task-abandon) command="task-abandon" ;;
       task-create) command="task-create" ;;
       task-list) command="task-list" ;;
@@ -116,7 +124,7 @@ _forgeloop() {
     esac
   done
   if [[ -z "\${command}" && "\${cur}" != -* ]]; then
-    COMPREPLY=( $(compgen -W 'action-authorize action-propose action-reconcile action-record action-show action-verify activate advance approval-request approval-resolve attestation-create attestation-status attestation-verify attestation-verify-range audit baseline bundle checkpoint-revalidate clear-continuity clear-state complete context-plan continuity contract-create contract-revise decision-show decision-status discover doctor efficiency eval gate-record gate-revalidate handoff-accept handoff-create handoff-list handoff-show history index-rebuild index-setup index-start index-status index-stop init inspect metrics migrate-protocol model-route next policy policy-diff policy-discover policy-status preflight prepare-completion profile-interview progress protocol-info quality-baseline quality-status quality-verify reconcile-closure reconcile-continuity record-check record-continuity record-decision-criterion record-diagnosis record-hypothesis-disposition record-intervention record-terminal-result reflect report responsibility-set responsibility-status route rule-verify run-action run-check search semantic-plan status task-abandon task-create task-list task-lock-status task-migrate task-migrate-contract-bootstrap-repair task-recover task-repair-contract-bootstrap task-repair-legacy-recovery task-resume task-scope task-show task-unlock test-inventory test-prune-plan test-prune-probe test-utility trace update usage-record validate-protocol validate-receipt validate-state verify-scope workspace-bind workspace-status' -- "$cur") )
+    COMPREPLY=( $(compgen -W 'action-authorize action-propose action-reconcile action-record action-show action-verify activate advance approval-request approval-resolve attestation-create attestation-status attestation-verify attestation-verify-range audit baseline bundle checkpoint-revalidate clear-continuity clear-state complete context-plan continuity contract-create contract-revise decision-show decision-status discover doctor efficiency eval gate-record gate-revalidate handoff-accept handoff-create handoff-list handoff-show history index-rebuild index-setup index-start index-status index-stop init inspect metrics migrate-protocol model-route next policy policy-diff policy-discover policy-status preflight prepare-completion profile-interview progress protocol-info quality-baseline quality-status quality-verify reconcile-closure reconcile-continuity record-check record-continuity record-decision-criterion record-diagnosis record-hypothesis-disposition record-intervention record-terminal-result reflect report responsibility-set responsibility-status route rule-verify run-action run-check search semantic-plan status storage-backup storage-migrate storage-migration-resume storage-migration-status storage-restore storage-restore-resume storage-rollback storage-rollback-resume task-abandon task-create task-list task-lock-status task-migrate task-migrate-contract-bootstrap-repair task-recover task-repair-contract-bootstrap task-repair-legacy-recovery task-resume task-scope task-show task-unlock test-inventory test-prune-plan test-prune-probe test-utility trace update usage-record validate-protocol validate-receipt validate-state verify-scope workspace-bind workspace-status' -- "$cur") )
     return
   fi
   case "\${command}" in
@@ -166,7 +174,7 @@ _forgeloop() {
     init) COMPREPLY=( $(compgen -W '--dry-run --help --path --version' -- "$cur") );;
     inspect) COMPREPLY=( $(compgen -W '--contract-file --help --json --path --task --version' -- "$cur") );;
     metrics) COMPREPLY=( $(compgen -W '--help --json --path --task --version' -- "$cur") );;
-    migrate-protocol) COMPREPLY=( $(compgen -W '--dry-run --help --json --path --to --version' -- "$cur") );;
+    migrate-protocol) COMPREPLY=( $(compgen -W '--destination --dry-run --help --json --path --to --version --writers-quiesced' -- "$cur") );;
     model-route) COMPREPLY=( $(compgen -W '--ambiguous --architecture-change --behavior-change --decision --executable-change --generation-required --help --json --path --platform --risk --surface --task --version --work' -- "$cur") );;
     next) COMPREPLY=( $(compgen -W '--compact --explain --help --json --path --task --version' -- "$cur") );;
     policy) COMPREPLY=( $(compgen -W '--help --json --path --task --version' -- "$cur") );;
@@ -201,11 +209,19 @@ _forgeloop() {
     search) COMPREPLY=( $(compgen -W '--after-context --before-context --context --files-with-matches --fixed-strings --glob --help --ignore-case --json --max-count --path --smart-case --stats --type --version --word-regexp' -- "$cur") );;
     semantic-plan) COMPREPLY=( $(compgen -W '--decision --help --input --json --kind --path --task --version' -- "$cur") );;
     status) COMPREPLY=( $(compgen -W '--contract-file --help --json --path --task --version' -- "$cur") );;
+    storage-backup) COMPREPLY=( $(compgen -W '--destination --help --include-attachments --json --path --version' -- "$cur") );;
+    storage-migrate) COMPREPLY=( $(compgen -W '--destination --help --json --path --version --writers-quiesced' -- "$cur") );;
+    storage-migration-resume) COMPREPLY=( $(compgen -W '--destination --expected-owner --help --json --path --version --writers-quiesced' -- "$cur") );;
+    storage-migration-status) COMPREPLY=( $(compgen -W '--help --json --path --version' -- "$cur") );;
+    storage-restore) COMPREPLY=( $(compgen -W '--help --json --path --replace-active --source --version --writers-quiesced' -- "$cur") );;
+    storage-restore-resume) COMPREPLY=( $(compgen -W '--expected-owner --help --json --operation --path --replace-active --version --writers-quiesced' -- "$cur") );;
+    storage-rollback) COMPREPLY=( $(compgen -W '--destination --help --json --legacy-root --native-writes-excluded --path --version --writers-quiesced' -- "$cur") );;
+    storage-rollback-resume) COMPREPLY=( $(compgen -W '--destination --expected-owner --help --json --legacy-root --native-writes-excluded --path --version --writers-quiesced' -- "$cur") );;
     task-abandon) COMPREPLY=( $(compgen -W '--acknowledge-abandonment --help --json --path --task --version' -- "$cur") );;
     task-create) COMPREPLY=( $(compgen -W '--claim --contract-file --help --json --path --preset --preview --task --version' -- "$cur") );;
     task-list) COMPREPLY=( $(compgen -W '--active --help --json --limit --offset --path --phase --version' -- "$cur") );;
     task-lock-status) COMPREPLY=( $(compgen -W '--help --json --path --task --version' -- "$cur") );;
-    task-migrate) COMPREPLY=( $(compgen -W '--dry-run --help --json --path --version' -- "$cur") );;
+    task-migrate) COMPREPLY=( $(compgen -W '--destination --dry-run --help --json --path --version --writers-quiesced' -- "$cur") );;
     task-migrate-contract-bootstrap-repair) COMPREPLY=( $(compgen -W '--acknowledge-migration --help --json --path --task --version' -- "$cur") );;
     task-recover) COMPREPLY=( $(compgen -W '--acknowledge-recovery --help --json --operator-authorized --path --task --version' -- "$cur") );;
     task-repair-contract-bootstrap) COMPREPLY=( $(compgen -W '--acknowledge-repair --help --json --path --task --version' -- "$cur") );;

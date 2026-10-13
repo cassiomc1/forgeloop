@@ -1,3 +1,4 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import path from "node:path";
@@ -103,6 +104,7 @@ test("recordDiagnosis persists in event ledger and updates work state projection
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-diag-test-"));
   try {
     const taskId = "task-test-1";
+    await ensureFixtureTask(target, taskId, packageRoot);
 
     // Setup initial events
     await appendProtocolEvent(target, { taskId, event: "TASK_RECEIVED" }, packageRoot, { taskId });
@@ -297,6 +299,7 @@ test("recordDiagnosis updates lastUpdated timestamp", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-diag-timestamp-"));
   try {
     const taskId = "task-timestamp";
+    await ensureFixtureTask(target, taskId, packageRoot);
     await appendProtocolEvent(target, { taskId, event: "TASK_RECEIVED" }, packageRoot, { taskId });
     await appendProtocolEvent(target, { taskId, event: "CONTRACT_VALIDATED" }, packageRoot, { taskId });
     await appendProtocolEvent(target, { taskId, event: "ROUTE_VALIDATED" }, packageRoot, { taskId });

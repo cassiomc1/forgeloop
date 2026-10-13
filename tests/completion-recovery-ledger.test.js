@@ -1,3 +1,5 @@
+import { buildTaskArtifactPaths } from "../src/core/task-paths.js";
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
@@ -9,7 +11,7 @@ import { runComplete } from "../src/commands/complete.js";
 import { runPreflight } from "../src/commands/preflight.js";
 import { prepareCompletion, recordCheck } from "../src/core/completion-artifacts.js";
 
-import { ARTIFACT_PATHS, readJsonArtifact } from "../src/core/artifacts.js";
+import { readJsonArtifact } from "../src/core/artifacts.js";
 import { createContract, contractFingerprint, writeContract } from "../src/core/contract.js";
 import { appendProtocolEvent, validateCompletionRecoveryAuthorization, validateEventLedger } from "../src/core/events.js";
 import { advanceWorkState } from "../src/core/phase.js";
@@ -20,10 +22,12 @@ import { getPackageRoot } from "../src/core/templates.js";
 import { createWorkState, readWorkState, writeWorkState } from "../src/core/work-state.js";
 
 const packageRoot = getPackageRoot();
+const ARTIFACT_PATHS = buildTaskArtifactPaths("task-ledger-recovery");
 
 async function withTarget(run) {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-ledger-recovery-"));
   try {
+    await ensureFixtureTask(target, "task-ledger-recovery", packageRoot);
     await run(target);
   } finally {
     await removeTempTree(target);
@@ -44,10 +48,11 @@ async function setupTarget(target, { successCriteria = ["tests", "build"] } = {}
     sourceRefs: [],
   });
   const contractHash = contractFingerprint(contract);
-  await writeContract(target, contract, packageRoot);
+  await writeContract(target, contract, packageRoot, { taskId: contract.taskId });
   const route = evaluateRoute({ workType: "code", surfaces: ["config"], platforms: [] });
   const persistedRoute = await persistRoute(target, route, packageRoot, {
     contractFingerprint: contractHash,
+    taskId: contract.taskId,
   });
   const state = createWorkState({
     taskId: contract.taskId,
@@ -66,12 +71,12 @@ async function setupTarget(target, { successCriteria = ["tests", "build"] } = {}
     blockers: [],
     verificationEvidence: [],
   });
-  await writeWorkState(target, state, { packageRoot });
-  await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot);
-  await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot);
-  const preflight = await runPreflight({ target, packageRoot });
+  await writeWorkState(target, state, { packageRoot, taskId: "task-ledger-recovery" });
+  await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot, { taskId: "task-ledger-recovery" });
+  await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot, { taskId: "task-ledger-recovery" });
+  const preflight = await runPreflight({ target, packageRoot, taskId: "task-ledger-recovery" });
   assert.equal(preflight.status, "READY");
-  await advanceWorkState(target, "EXECUTING", { packageRoot });
+  await advanceWorkState(target, "EXECUTING", { packageRoot, taskId: "task-ledger-recovery" });
 }
 
 test("completion rejection binds to ledger and authorizes REVIEWING -> VERIFYING cycle 2 (Matrix C)", async () => {
@@ -79,13 +84,14 @@ test("completion rejection binds to ledger and authorizes REVIEWING -> VERIFYING
     await setupTarget(target);
 
     // 1. Advance to VERIFYING (cycle 1)
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-ledger-recovery" });
+    await prepareCompletion({ target, packageRoot, taskId: "task-ledger-recovery" });
 
     // 2. Only record 1 of 2 checks ("tests" recorded, "build" missing)
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: "task-ledger-recovery",
       id: "unit-tests",
       requirement: "tests",
       status: "passed",
@@ -95,21 +101,21 @@ test("completion rejection binds to ledger and authorizes REVIEWING -> VERIFYING
     });
 
     // 3. Advance to REVIEWING
-    await advanceWorkState(target, "REVIEWING", { packageRoot });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId: "task-ledger-recovery" });
 
     // 4. Run complete - must be REJECTED because "build" evidence is missing
-    const completion = await runComplete({ target, packageRoot });
+    const completion = await runComplete({ target, packageRoot, taskId: "task-ledger-recovery" });
     assert.equal(completion.status, "REJECTED");
     assert.ok(completion.errors.some((e) => e.code === "E_EVIDENCE_REQUIRED"));
 
     // Verify state has lastCompletionAttempt
-    let state = await readWorkState(target, packageRoot);
+    let state = await readWorkState(target, { packageRoot, taskId: "task-ledger-recovery" });
     assert.equal(state.lastCompletionAttempt?.status, "REJECTED");
     assert.equal(state.lastCompletionAttempt?.verificationCycle, 1);
     assert.ok(state.lastCompletionAttempt?.missingRequirementIds?.length > 0);
 
     // Verify ledger has COMPLETION_REJECTED event
-    const ledger = await validateEventLedger(target, packageRoot);
+    const ledger = await validateEventLedger(target, packageRoot, { taskId: "task-ledger-recovery" });
     assert.equal(ledger.valid, true);
     const rejectionEvent = ledger.events.find((e) => e.event === "COMPLETION_REJECTED");
     assert.ok(rejectionEvent);
@@ -125,7 +131,7 @@ test("completion rejection binds to ledger and authorizes REVIEWING -> VERIFYING
     assert.equal(next.nextAction, NEXT_ACTIONS.ENTER_VERIFYING);
 
     // 5. Advance back to VERIFYING (cycle 2)
-    state = await advanceWorkState(target, "VERIFYING", { packageRoot });
+    state = await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-ledger-recovery" });
     assert.equal(state.phase, "VERIFYING");
     assert.equal(state.verificationCycle, 2);
     assert.equal(state.lastCompletionAttempt, undefined); // Cleared on re-entry
@@ -134,6 +140,7 @@ test("completion rejection binds to ledger and authorizes REVIEWING -> VERIFYING
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: "task-ledger-recovery",
       id: "build-check",
       requirement: "build",
       status: "passed",
@@ -143,13 +150,13 @@ test("completion rejection binds to ledger and authorizes REVIEWING -> VERIFYING
     });
 
     // 7. Advance to REVIEWING
-    await advanceWorkState(target, "REVIEWING", { packageRoot });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId: "task-ledger-recovery" });
 
     // 8. Run complete - should now be VALID
-    const secondCompletion = await runComplete({ target, packageRoot });
+    const secondCompletion = await runComplete({ target, packageRoot, taskId: "task-ledger-recovery" });
     assert.equal(secondCompletion.status, "VALID");
 
-    const finalState = await readWorkState(target, packageRoot);
+    const finalState = await readWorkState(target, { packageRoot, taskId: "task-ledger-recovery" });
     assert.equal(finalState.phase, "COMPLETE");
     assert.equal(finalState.verificationCycle, 2);
   });
@@ -158,11 +165,12 @@ test("completion rejection binds to ledger and authorizes REVIEWING -> VERIFYING
 test("forged recovery attempt (fake lastCompletionAttempt without ledger event) is rejected (Matrix F)", async () => {
   await withTarget(async (target) => {
     await setupTarget(target);
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-ledger-recovery" });
+    await prepareCompletion({ target, packageRoot, taskId: "task-ledger-recovery" });
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: "task-ledger-recovery",
       id: "unit-tests",
       requirement: "tests",
       status: "passed",
@@ -170,10 +178,10 @@ test("forged recovery attempt (fake lastCompletionAttempt without ledger event) 
       command: "npm test",
       result: "Passed",
     });
-    await advanceWorkState(target, "REVIEWING", { packageRoot });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId: "task-ledger-recovery" });
 
     // Manually forge lastCompletionAttempt in state without matching COMPLETION_REJECTED in ledger
-    const state = await readWorkState(target, packageRoot);
+    const state = await readWorkState(target, { packageRoot, taskId: "task-ledger-recovery" });
     state.lastCompletionAttempt = {
       status: "REJECTED",
       verificationCycle: 1,
@@ -183,16 +191,16 @@ test("forged recovery attempt (fake lastCompletionAttempt without ledger event) 
       stateFingerprint: "0000000000000000000000000000000000000000000000000000000000000000",
       receiptFingerprint: "0000000000000000000000000000000000000000000000000000000000000000",
     };
-    await writeWorkState(target, state, { packageRoot });
+    await writeWorkState(target, state, { packageRoot, taskId: "task-ledger-recovery" });
 
-    const ledger = await validateEventLedger(target, packageRoot);
+    const ledger = await validateEventLedger(target, packageRoot, { taskId: "task-ledger-recovery" });
     const auth = validateCompletionRecoveryAuthorization({ state, events: ledger.events });
     assert.equal(auth.authorized, false);
     assert.equal(auth.errors[0]?.code, "E_COMPLETION_RECOVERY_UNAUTHORIZED");
 
     // advanceWorkState to VERIFYING must fail
     await assert.rejects(
-      () => advanceWorkState(target, "VERIFYING", { packageRoot }),
+      () => advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-ledger-recovery" }),
       (err) => err.code === "E_COMPLETION_RECOVERY_UNAUTHORIZED" || err.code === "E_COMPLETION_REJECTION_LEDGER_MISMATCH",
     );
   });
@@ -201,9 +209,9 @@ test("forged recovery attempt (fake lastCompletionAttempt without ledger event) 
 test("wrong recovery cycle (state cycle=2, rejection event cycle=1) is rejected (Matrix G)", async () => {
   await withTarget(async (target) => {
     await setupTarget(target);
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
-    await advanceWorkState(target, "REVIEWING", { packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-ledger-recovery" });
+    await prepareCompletion({ target, packageRoot, taskId: "task-ledger-recovery" });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId: "task-ledger-recovery" });
 
     // Append rejection for cycle 1 in ledger
     await appendProtocolEvent(target, {
@@ -214,10 +222,10 @@ test("wrong recovery cycle (state cycle=2, rejection event cycle=1) is rejected 
         reasonCodes: ["E_EVIDENCE_REQUIRED"],
         missingRequirementIds: ["REQ_MISSING"],
       },
-    }, packageRoot);
+    }, packageRoot, { taskId: "task-ledger-recovery" });
 
     // State is at cycle 2 with lastCompletionAttempt claiming cycle 2
-    const state = await readWorkState(target, packageRoot);
+    const state = await readWorkState(target, { packageRoot, taskId: "task-ledger-recovery" });
     state.verificationCycle = 2;
     state.lastCompletionAttempt = {
       status: "REJECTED",
@@ -228,9 +236,9 @@ test("wrong recovery cycle (state cycle=2, rejection event cycle=1) is rejected 
       stateFingerprint: "0000000000000000000000000000000000000000000000000000000000000000",
       receiptFingerprint: "0000000000000000000000000000000000000000000000000000000000000000",
     };
-    await writeWorkState(target, state, { packageRoot });
+    await writeWorkState(target, state, { packageRoot, taskId: "task-ledger-recovery" });
 
-    const ledger = await validateEventLedger(target, packageRoot);
+    const ledger = await validateEventLedger(target, packageRoot, { taskId: "task-ledger-recovery" });
     const auth = validateCompletionRecoveryAuthorization({ state, events: ledger.events });
     assert.equal(auth.authorized, false);
     assert.equal(auth.errors[0]?.code, "E_COMPLETION_REJECTION_LEDGER_MISMATCH");
@@ -240,13 +248,14 @@ test("wrong recovery cycle (state cycle=2, rejection event cycle=1) is rejected 
 test("rejection event idempotency prevents duplicate events on repeated failed complete", async () => {
   await withTarget(async (target) => {
     await setupTarget(target);
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "task-ledger-recovery" });
+    await prepareCompletion({ target, packageRoot, taskId: "task-ledger-recovery" });
 
     // Record partial check
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: "task-ledger-recovery",
       id: "unit-tests",
       requirement: "tests",
       status: "passed",
@@ -255,17 +264,17 @@ test("rejection event idempotency prevents duplicate events on repeated failed c
       result: "Passed",
     });
 
-    await advanceWorkState(target, "REVIEWING", { packageRoot });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId: "task-ledger-recovery" });
 
     // First completion run fails
-    const run1 = await runComplete({ target, packageRoot });
+    const run1 = await runComplete({ target, packageRoot, taskId: "task-ledger-recovery" });
     assert.equal(run1.status, "REJECTED");
 
     // Second completion run fails with identical state
-    const run2 = await runComplete({ target, packageRoot });
+    const run2 = await runComplete({ target, packageRoot, taskId: "task-ledger-recovery" });
     assert.equal(run2.status, "REJECTED");
 
-    const ledger = await validateEventLedger(target, packageRoot);
+    const ledger = await validateEventLedger(target, packageRoot, { taskId: "task-ledger-recovery" });
     const rejections = ledger.events.filter((e) => e.event === "COMPLETION_REJECTED");
     assert.equal(rejections.length, 1); // Idempotent, did not duplicate
   });

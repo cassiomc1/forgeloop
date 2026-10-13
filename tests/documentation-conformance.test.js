@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { cp, mkdtemp, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
+import { cp, mkdtemp, readFile, readdir, stat, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -127,7 +128,7 @@ test("documentation manifest rejects an unmapped normative requirement", async (
     assert.equal(result.valid, false);
     assert.ok(result.errors.some((error) => error.includes("DOC_REQUIREMENT_MAPPING_MISSING: FL-CONT-001")));
   } finally {
-    await rm(tempDir, { recursive: true, force: true });
+    await removeTempTree(tempDir);
   }
 });
 
@@ -149,7 +150,7 @@ test("documentation manifest rejects an omitted packaged document", async () => 
     assert.equal(result.valid, false);
     assert.ok(result.errors.includes("DOC_MANIFEST_PACKAGED_DOCUMENT_MISSING: docs/JEV_BENCHMARKS.md"));
   } finally {
-    await rm(tempDir, { recursive: true, force: true });
+    await removeTempTree(tempDir);
   }
 });
 
@@ -327,7 +328,7 @@ test("negative fixtures & mutation tests: validateDocumentationConformance detec
     assert.equal(mut8.valid, false);
     assert.ok(mut8.errors.some((e) => e.includes("DOC_README_DIAGRAM_REFERENCE_INVALID")));
   } finally {
-    await rm(tempDir, { recursive: true, force: true });
+    await removeTempTree(tempDir);
   }
 });
 
@@ -528,7 +529,7 @@ test("CLI example, mutation-claim, and legacy-path conformance regressions (DOC-
     const restored = await validateDocumentationConformance({ rootDir: tempDir });
     assert.equal(restored.valid, true, restored.errors.join("\n"));
   } finally {
-    await rm(tempDir, { recursive: true, force: true });
+    await removeTempTree(tempDir);
   }
 });
 
@@ -726,6 +727,6 @@ test("DOC-LAYOUT-ARCH / DOC-TRANSITION / DOC-ADVANCE: architecture layout, canon
       `Expected DOC_ADVANCE_PHASE_SUBSET, got: ${staleAdvance.errors.join("\n")}`,
     );
   } finally {
-    await rm(tempDir, { recursive: true, force: true });
+    await removeTempTree(tempDir);
   }
 });

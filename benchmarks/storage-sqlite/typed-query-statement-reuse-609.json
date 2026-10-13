@@ -1,0 +1,48 @@
+{
+  "increment": 609,
+  "files": [
+    {
+      "path": "src/storage/ledger-event-snapshot.js",
+      "sha256": "fe4b836ec40799e7601744e9573f6876adaec426c1a787ac7d397b7e80468633"
+    },
+    {
+      "path": "tests/storage-ledger-snapshot.test.js",
+      "sha256": "f16b519a9a6b80196514a442083750b1fc304acd16647c00a896912dc2bbe89e"
+    }
+  ],
+  "mechanism": "Connection-bound WeakMap holds at most16 typed query arities. Active cursors borrow independent statements for nested same-arity scans. Finally releases cursor ownership on exhaustion, early return or throw. Only compiled SQL is reused; rows and validation are never cached.",
+  "focusedTests": {
+    "total": 34,
+    "passed": 34,
+    "failed": 0,
+    "raw": "/tmp/sqlite-typed-query609-tests.log"
+  },
+  "controls": [
+    "Nested same-arity scans with different type values retain all outer rows",
+    "Early return and callback failure preserve later queries",
+    "Later committed append is visible in a fresh snapshot",
+    "Seventeenth arity is prepared per call, retaining at most16 cached variants",
+    "Existing indexed tampering, noncontiguous chronology, full event audit and snapshot/CAS controls pass"
+  ],
+  "latencyAcceptance": "NOT_VERIFIED",
+  "validationProfiles": 4,
+  "validationArtifact": "populated-cli-validation-609.json",
+  "initialLintFailure": "Unused new test binding; corrected to assert yielded event type before throwing. No production change.",
+  "finalLedgerTests": {
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "overlapWithInitialFocusedSuite": 10
+  },
+  "targetedLint": "PASS",
+  "complexity": {
+    "status": "PASS",
+    "regressions": []
+  },
+  "finalFastVerification": "PASS",
+  "limits": [
+    "Four609parity profiles pass; no609timing started whileMac608full remains live",
+    "Mac608 full andLinux607 full still running prior production snapshots",
+    "Whole release acceptance remains incomplete"
+  ]
+}

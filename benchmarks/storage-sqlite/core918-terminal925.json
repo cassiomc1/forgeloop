@@ -1,0 +1,199 @@
+{
+  "kind": "CORE_CI_FAILURE_TERMINAL",
+  "runId": 37896839025,
+  "url": "https://github.com/cassiomc1/forgeloop/actions/runs/37896839025",
+  "executedRevision": "5aba2d0220b2b45dc961e32237c932997987d5b6",
+  "status": "completed",
+  "conclusion": "failure",
+  "jobs": [
+    {
+      "id": 113710012800,
+      "name": "Classify changed paths",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113710107375,
+      "name": "Verify generated Archify diagram",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113710107410,
+      "name": "tarball smoke (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113710107467,
+      "name": "audit",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113710107479,
+      "name": "Unit tests (Node 24, shard 1/4)",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 113710107490,
+      "name": "Unit tests (Node 24, shard 4/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113710107497,
+      "name": "Lint and dependency policy",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113710107512,
+      "name": "Unit tests (Node 24, shard 2/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113710107529,
+      "name": "Unit tests (Node 24.19.0, shard 0/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113710107552,
+      "name": "Unit tests (Node 24, shard 3/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113718246920,
+      "name": "Repository Index native matrix / Classify Repository Index paths",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113718247250,
+      "name": "Coverage report (Node 24)",
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    {
+      "id": 113718318752,
+      "name": "Repository Index native matrix / Verify Repository Index manifest",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113718395295,
+      "name": "Repository Index native matrix / Native Repository Index (Linux)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113718395363,
+      "name": "Repository Index native matrix / Native Repository Index (Windows)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113718395500,
+      "name": "Repository Index native matrix / Native Repository Index (macOS)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113718802070,
+      "name": "validate (22)",
+      "status": "completed",
+      "conclusion": "failure"
+    }
+  ],
+  "unitShards": [
+    {
+      "jobId": 113710107479,
+      "counts": {
+        "tests": [
+          731
+        ],
+        "pass": [
+          726
+        ],
+        "fail": [
+          1
+        ],
+        "skipped": [
+          4
+        ]
+      },
+      "logSha256": "4ed9d736435dcb3f424c83cf770073c5431e5d14a9b4f0247b4cffab752bca9f"
+    },
+    {
+      "jobId": 113710107490,
+      "counts": {
+        "tests": [
+          708
+        ],
+        "pass": [
+          705
+        ],
+        "fail": [
+          0
+        ],
+        "skipped": [
+          3
+        ]
+      },
+      "logSha256": "a07d539ee6cd80056ad5da9d4dc24c9936221d990adc422631acbb32507e4b28"
+    },
+    {
+      "jobId": 113710107512,
+      "counts": {
+        "tests": [
+          602
+        ],
+        "pass": [
+          601
+        ],
+        "fail": [
+          0
+        ],
+        "skipped": [
+          1
+        ]
+      },
+      "logSha256": "776293a1defe6009f319b52d27a3f0e99b0b3edce67bc24dab2080c752063c9f"
+    },
+    {
+      "jobId": 113710107552,
+      "counts": {
+        "tests": [
+          897
+        ],
+        "pass": [
+          893
+        ],
+        "fail": [
+          0
+        ],
+        "skipped": [
+          4
+        ]
+      },
+      "logSha256": "da8005bc01fc2855ab14047ce1f7d06c72edb4a62d71ce3b10b02359ff448546"
+    }
+  ],
+  "unitTotals": {
+    "tests": 2938,
+    "pass": 2925,
+    "fail": 1,
+    "skipped": 12
+  },
+  "sourceFailure": "Correction contention loser returned E_DECISION_LEDGER_INVALID instead of E_STATE_REVISION_CONFLICT. Deterministic real-writer control and correction919 preserve the exact conflict; full local prepush920 passes.",
+  "aggregateFailure": "Require applicable validation jobs refuses because core did not succeed: failure; dependent failure, not another source defect.",
+  "correctionCommit": "5222708738582c38ec51b688e48076738b176c6a",
+  "correctedSourceWindowsRun": 37899690295,
+  "correctedRemoteAcceptance": false,
+  "terminalSnapshotSha256": "50d425f056ffe524c70150b0327a0b80d5c982913bb871a7321550f7dd8e64be",
+  "aggregateLogSha256": "b4f7722ff1fdc24df52721ad511a5626e8054625c023e4ac04288e868c6a7ba5"
+}

@@ -2,7 +2,12 @@
 
 ## Unreleased
 
-- Changes for the next release will be recorded here.
+- Prepare the breaking ForgeLoop 2.0.0 storage release and MCP 1.0.0 companion.
+  SQLite cutover requires explicit legacy-writer exclusion and retained-source
+  validation; legacy filesystem apply and ledger index sidecars are retired.
+  The minimum Node.js runtime is 24.19.0. MCP requires a core 2.x peer and uses
+  the local core only for development. Publication remains gated on the full
+  migration plan, platform checks, and measured performance/code-size evidence.
 
 ## 1.14.0 - 2026-09-24
 

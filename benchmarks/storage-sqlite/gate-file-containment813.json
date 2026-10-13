@@ -1,0 +1,67 @@
+{
+  "increment": 813,
+  "sourceRevisionBeforeChange": "845d4311c2493e38f1a9a32f910f50c3ec1ca2eb",
+  "status": "LOCALLY_VERIFIED",
+  "problem": "A final-component symlink replacement after successful path resolution could make gate recording accept outside-project artifact bytes or JSON evidence.",
+  "before": {
+    "artifactRace": {
+      "swapped": true,
+      "accepted": true,
+      "storedOutsideDigest": true
+    },
+    "jsonEvidenceRegression": {
+      "pass": 3,
+      "fail": 1,
+      "failure": "Missing expected rejection",
+      "logSha256": "09eff9b0fb738368bb8525564d835e348376ab22739a383bdfe845319cc66448"
+    }
+  },
+  "after": {
+    "artifactRace": {
+      "swapped": true,
+      "accepted": false,
+      "errorCode": "E_GATE_INVALID",
+      "storedOutsideDigest": false
+    },
+    "focusedTests": {
+      "tests": 16,
+      "pass": 16,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "cd22bea97ba0a00f255c397fa23f7b13522ffdb7a93d4379e65722bc7f78c0ad"
+    }
+  },
+  "change": "Shared regular-file handle admission with no-follow where supported, descriptor/path identity comparison, containment recheck and streaming hashing. JSON evidence remains finite-byte bounded before and during reads. Canonical SQLite read-set selection remains first.",
+  "checks": {
+    "preflight": "READY",
+    "verifyFast": "PASS",
+    "lint": "PASS",
+    "complexity": "PASS",
+    "diffCheck": "PASS",
+    "documentation": "PASS",
+    "lintWarnings": 113
+  },
+  "sources": [
+    {
+      "path": "src/core/gate-artifact.js",
+      "sha256": "8262d4ea6d526b3cbf18ca6b4959ff9a2d8cbfcf11664ebd549a46b862b2645a"
+    },
+    {
+      "path": "src/commands/gate-record.js",
+      "sha256": "7ede10dbfaedf784d776639059f5a2cc5c9e6cdfd21d90ed5426cd105cc1993b"
+    },
+    {
+      "path": "src/commands/gate-revalidate.js",
+      "sha256": "722e7adb1be5dac37536a8c1ccab8e07e2aa7a82598c1e24088fff077f82420a"
+    },
+    {
+      "path": "tests/gate-file-containment.test.js",
+      "sha256": "ec5a2a1fe0bffc08c8775364fc883e2aee71835aacff403a584821e68ec61e5d"
+    }
+  ],
+  "limitations": [
+    "Four deterministic symlink controls are skipped on Windows; normal external-file and canonical gate controls still require current platform validation.",
+    "The tests prove this final-component replacement scenario, not universal protection from hostile concurrent filesystem topology changes.",
+    "Current full platform, resource, inclusive LOC and protocol completion remain open."
+  ]
+}

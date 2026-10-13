@@ -1,0 +1,34 @@
+{
+  "increment": 812,
+  "sourceRevision": "3a8993a512c91323f9984bc3816a066677002f0c",
+  "status": "LOCALLY_VERIFIED",
+  "changedWorkflow": ".github/workflows/package-smoke.yml",
+  "workflowSha256": "356b0b46bc74c62cb2707d3eef2f34155dad738eca9f8589560761b6aea75a8e",
+  "reason": "Expanded package validation could schedule Linux and Windows workload concurrently on the same remote host.",
+  "change": {
+    "releaseDependencies": [
+      "classify",
+      "tarball-smoke"
+    ],
+    "releaseMatrixMaxParallel": 1
+  },
+  "checks": {
+    "preflight": "READY",
+    "yamlDependencyValidation": "PASS",
+    "workflowPolicy": {
+      "tests": 6,
+      "pass": 6,
+      "fail": 0
+    },
+    "verifyFast": "PASS",
+    "documentation": "PASS",
+    "diffCheck": "PASS"
+  },
+  "logs": {
+    "workflow812-policy.log": "d67ecbcdceaf643e325b5bbe0074badc57725e36d212c3d2fbd462dd1a0b9379",
+    "workflow812-fast.log": "5101a6737d541dbeb43836ffbecc39d8f105eadeb7faed8ebb844207be6307ab",
+    "consumers812-docs.log": "dbe93d88cf10bdc2a49ded7643ba81cec73a29648abbdd8b7fee0755760c51ca"
+  },
+  "actualExpandedWorkflowAcceptance": false,
+  "limitation": "Actual expanded workflow execution is pending existing core workflow completion; local checks do not establish cross-platform workflow acceptance."
+}

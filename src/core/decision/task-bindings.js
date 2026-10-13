@@ -2,6 +2,7 @@ import { canonicalFingerprint } from "../artifacts.js";
 import { readContract } from "../contract.js";
 import { readPersistedRoute } from "../route-artifact.js";
 import { readWorkState } from "../work-state.js";
+import { withProjectReadSnapshot } from "../../storage/project-read-snapshot.js";
 
 async function readOptionalArtifact(reader) {
   try {
@@ -12,7 +13,11 @@ async function readOptionalArtifact(reader) {
   }
 }
 
-export async function readCurrentDecisionBindings(target, packageRoot, taskId, { candidateSetFingerprint, policyFingerprint } = {}) {
+export async function readCurrentDecisionBindings(target, packageRoot, taskId, options = {}) {
+  return withProjectReadSnapshot(target, () => readSnapshotBindings(target, packageRoot, taskId, options));
+}
+
+async function readSnapshotBindings(target, packageRoot, taskId, { candidateSetFingerprint, policyFingerprint }) {
   const state = await readWorkState(target, { packageRoot, taskId });
   const contract = await readOptionalArtifact(() => readContract(target, packageRoot, { taskId }));
   const route = await readOptionalArtifact(() => readPersistedRoute(target, packageRoot, { taskId }));

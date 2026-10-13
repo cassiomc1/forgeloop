@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile, writeFile } from "node:fs/promises";
+import { readRawFixtureText, overwriteFixtureText, overwriteFixtureLease, readRawFixtureLease } from "./helpers/native-storage-fixture.js";
 import { test } from "node:test";
 
 import { runTaskCreate } from "../src/commands/task-create.js";
@@ -7,9 +7,9 @@ import { runTaskRepairLegacyRecovery } from "../src/commands/task-repair-legacy-
 import { runTaskResume } from "../src/commands/task-resume.js";
 import { appendProtocolEvent, eventHash, validateEventLedger } from "../src/core/events.js";
 import { assertTaskMutationAllowed, resolveTaskClaimState } from "../src/core/task-claim-state.js";
-import { acquireTaskLock } from "../src/core/task-lock.js";
-import { taskArtifactPath, taskLockPath } from "../src/core/task-paths.js";
-import { ensureWithin, fileExists } from "../src/core/filesystem.js";
+import { acquireTaskLock, readLockInfo } from "../src/core/task-lock.js";
+import { taskArtifactPath } from "../src/core/task-paths.js";
+import { ensureWithin } from "../src/core/filesystem.js";
 import {
   legacyRecoveryMigrationId,
 } from "../src/core/task-recovery-migration.js";
@@ -38,7 +38,7 @@ async function setupLegacyBoundaryTask(target, { taskId = "legacy-boundary-task"
 
 async function rewriteLedger(target, taskId, mutateLastEvents) {
   const eventsPath = ensureWithin(target, taskArtifactPath(taskId, "events"));
-  const lines = (await readFile(eventsPath, "utf8")).trim().split("\n");
+  const lines = (await readRawFixtureText(target, eventsPath)).trim().split("\n");
   const events = lines.map((line) => JSON.parse(line));
   mutateLastEvents(events);
   let previousHash = null;
@@ -48,7 +48,7 @@ async function rewriteLedger(target, taskId, mutateLastEvents) {
     event.hash = eventHash(event);
     previousHash = event.hash;
   }
-  await writeFile(eventsPath, `${events.map((event) => JSON.stringify(event)).join("\n")}\n`, "utf8");
+  await overwriteFixtureText(target, eventsPath, `${events.map((event) => JSON.stringify(event)).join("\n")}\n`);
 }
 
 test("missing acknowledgement is refused before anything else", async () => {
@@ -228,12 +228,12 @@ test("tampered ledger refuses repair fail-closed", async () => {
   await withRecoveryTarget(async (target) => {
     const { taskId } = await setupLegacyBoundaryTask(target, {});
     const eventsPath = ensureWithin(target, taskArtifactPath(taskId, "events"));
-    const original = await readFile(eventsPath, "utf8");
+    const original = await readRawFixtureText(target, eventsPath);
     const lines = original.trim().split("\n");
     const first = JSON.parse(lines[0]);
     first.taskId = `${first.taskId}-x`;
     lines[0] = JSON.stringify(first);
-    await writeFile(eventsPath, `${lines.join("\n")}\n`, "utf8");
+    await overwriteFixtureText(target, eventsPath, `${lines.join("\n")}\n`);
 
     await assert.rejects(
       () => runTaskRepairLegacyRecovery({ target, packageRoot, taskId, acknowledgeRecovery: true }),
@@ -243,9 +243,7 @@ test("tampered ledger refuses repair fail-closed", async () => {
 });
 
 async function writeTaskLockFile(target, taskId, lockData) {
-  const lockPath = ensureWithin(target, taskLockPath(taskId));
-  await writeFile(lockPath, `${JSON.stringify(lockData)}\n`, "utf8");
-  return lockPath;
+  await overwriteFixtureLease(target, taskId, lockData);
 }
 
 function staleLockFixture(taskId) {
@@ -263,18 +261,18 @@ function staleLockFixture(taskId) {
 test("STALE task lock is CAS-settled by the official repair and repair succeeds", async () => {
   await withRecoveryTarget(async (target) => {
     const { taskId } = await setupLegacyBoundaryTask(target, {});
-    const lockPath = await writeTaskLockFile(target, taskId, staleLockFixture(taskId));
+    await writeTaskLockFile(target, taskId, staleLockFixture(taskId));
 
     const result = await runTaskRepairLegacyRecovery({ target, packageRoot, taskId, acknowledgeRecovery: true });
     assert.equal(result.repaired, 1);
-    assert.equal(await fileExists(lockPath), false);
+    assert.equal(await readLockInfo(target, taskId), null);
   });
 });
 
 test("STALE lock replaced by a live owner refuses repair and preserves the replacement", async () => {
   await withRecoveryTarget(async (target) => {
     const { taskId } = await setupLegacyBoundaryTask(target, {});
-    const lockPath = await writeTaskLockFile(target, taskId, staleLockFixture(taskId));
+    await writeTaskLockFile(target, taskId, staleLockFixture(taskId));
     const replacement = {
       ...staleLockFixture(taskId),
       lockId: "replacement-owner-lock",
@@ -289,7 +287,7 @@ test("STALE lock replaced by a live owner refuses repair and preserves the repla
       () => runTaskRepairLegacyRecovery({ target, packageRoot, taskId, acknowledgeRecovery: true }),
       (error) => error.code === "E_TASK_LOCKED",
     );
-    const preserved = JSON.parse(await readFile(lockPath, "utf8"));
+    const preserved = JSON.parse(await readRawFixtureLease(target, taskId));
     assert.equal(preserved.lockId, "replacement-owner-lock");
   });
 });
@@ -297,7 +295,7 @@ test("STALE lock replaced by a live owner refuses repair and preserves the repla
 test("UNKNOWN task lock refuses repair and preserves the lock", async () => {
   await withRecoveryTarget(async (target) => {
     const { taskId } = await setupLegacyBoundaryTask(target, {});
-    const lockPath = await writeTaskLockFile(target, taskId, {
+    await writeTaskLockFile(target, taskId, {
       taskId,
       acquiredAt: "2020-01-01T00:00:00.000Z",
       heartbeatAt: "2020-01-01T00:00:00.000Z",
@@ -308,21 +306,20 @@ test("UNKNOWN task lock refuses repair and preserves the lock", async () => {
       () => runTaskRepairLegacyRecovery({ target, packageRoot, taskId, acknowledgeRecovery: true }),
       (error) => error.code === "E_LEGACY_RECOVERY_MIGRATION_INVALID",
     );
-    assert.ok(await fileExists(lockPath));
+    assert.ok(await readRawFixtureLease(target, taskId));
   });
 });
 
 test("CORRUPT task lock refuses repair and preserves the lock", async () => {
   await withRecoveryTarget(async (target) => {
     const { taskId } = await setupLegacyBoundaryTask(target, {});
-    const lockPath = ensureWithin(target, taskLockPath(taskId));
-    await writeFile(lockPath, "{\"taskId\":", "utf8");
+    await overwriteFixtureLease(target, taskId, "{\"taskId\":");
 
     await assert.rejects(
       () => runTaskRepairLegacyRecovery({ target, packageRoot, taskId, acknowledgeRecovery: true }),
       (error) => error.code === "E_LEGACY_RECOVERY_MIGRATION_INVALID",
     );
-    assert.ok(await fileExists(lockPath));
+    assert.ok(await readRawFixtureLease(target, taskId));
   });
 });
 
@@ -334,8 +331,8 @@ async function repairOnce(target, taskId) {
 
 async function assertTamperRefused(target, taskId, mutate) {
   const recoveryPath = ensureWithin(target, taskArtifactPath(taskId, "recovery"));
-  const artifact = JSON.parse(await readFile(recoveryPath, "utf8"));
-  await writeFile(recoveryPath, `${JSON.stringify(mutate(artifact), null, 2)}\n`, "utf8");
+  const artifact = JSON.parse(await readRawFixtureText(target, recoveryPath));
+  await overwriteFixtureText(target, recoveryPath, `${JSON.stringify(mutate(artifact), null, 2)}\n`);
   await assert.rejects(
     () => runTaskRepairLegacyRecovery({ target, packageRoot, taskId, acknowledgeRecovery: true }),
     (error) => error.code === "E_TASK_RECOVERY_INCONSISTENT",
@@ -390,9 +387,9 @@ test("migration event authority HOST_ATTESTED is invalid for v1", async () => {
     delete forged.hash;
     forged.hash = eventHash(forged);
     const eventsPath = ensureWithin(target, taskArtifactPath(taskId, "events"));
-    const lines = (await readFile(eventsPath, "utf8")).trim().split("\n").map((line) => JSON.parse(line));
+    const lines = (await readRawFixtureText(target, eventsPath)).trim().split("\n").map((line) => JSON.parse(line));
     lines[lines.findIndex((line) => line.event === "LEGACY_RECOVERY_MIGRATION_RECORDED")] = forged;
-    await writeFile(eventsPath, `${lines.map((line) => JSON.stringify(line)).join("\n")}\n`, "utf8");
+    await overwriteFixtureText(target, eventsPath, `${lines.map((line) => JSON.stringify(line)).join("\n")}\n`);
 
     await assert.rejects(
       () => runTaskRepairLegacyRecovery({ target, packageRoot, taskId, acknowledgeRecovery: true }),

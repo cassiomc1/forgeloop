@@ -1,0 +1,12 @@
+{
+  "checkpoint": 587,
+  "scope": "Remote CLI staging failure before test launch",
+  "failure": {
+    "status": 1,
+    "output": "",
+    "error": "node:fs:622\r\n  return binding.open(\r\n                 ^\r\n\r\nError: EEXIST: file already exists, open 'C:\\forgeloop-tests\\checkpoint510-probe\\src\\cli.js'\r\n    at Object.openSync (node:fs:622:18)\r\n    at Object.writeFileSync (node:fs:2497:35)\r\n    at Object.<anonymous> (C:\\forgeloop-tests\\cli587-windows.js:1:34816)\r\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\r\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\r\n    at node:internal/main/run_main_module:33:47 {\r\n  errno: -4075,\r\n  code: 'EEXIST',\r\n  syscall: 'open',\r\n  path: 'C:\\\\forgeloop-tests\\\\checkpoint510-probe\\\\src\\\\cli.js'\r\n}\r\n\r\nNode.js v24.19.0\r\n"
+  },
+  "diagnosis": "Exclusive creation applied to existing baseline src/cli.js; three preceding patches were staged before refusal",
+  "priorAdoption": "Corrected588 verifies exact partial map (release.js, rollback.js, publication.js) and all untouched admitted baseline paths before any further write",
+  "testsStarted": false
+}

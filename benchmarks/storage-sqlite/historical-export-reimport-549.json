@@ -1,0 +1,217 @@
+{
+  "checkpoint": 549,
+  "scope": "Mac linked-worktree reverse-export reimport with legacy task creation, historical manifest admission and binary attachments",
+  "sourceHashes": {
+    "src/storage/migration-candidate.js": "bfe9de59e88e05eb61d70eca35f6f5540a766ba8155f6b26b5707f211dc7e94f",
+    "tests/storage-historical-export-manifest.test.js": "76c97421ec3b81e911da35c565cdcd6c062f9081534ed93edb3c356219576b4d",
+    "scripts/drill-storage-reverse-export-compatibility.mjs": "ef4978e694207059fa27dc9cb701539dfc5b828558e6afba875e1020756e2008"
+  },
+  "reimport": {
+    "legacyRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+    "scope": "Disposable offline same-project-path reverse export after canonical native task creation; retained native layout and pinned legacy read validation; no production conversion or universal downgrade claim",
+    "workspaceBinding": {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "taskId": "phase2a-closure-task",
+      "mode": "GIT_WORKTREE",
+      "repositoryIdentity": "ccf05abcb448cfea62c35ce0274eb50c452d6c5b5fe542581d827b2eae4b07bc",
+      "workspaceIdentity": "c518ae9c80ccdb566fab59c6efaa1adea6792f2db29cba54a61424f77eb35fb3",
+      "branchAtBind": "codex/reverse-export-fixture",
+      "headAtBind": "3951c8f50c698729a5660755b1a2f1d06177320a",
+      "boundAt": "2026-10-05T18:18:34.272Z",
+      "metadata": {
+        "objectFormat": "sha1"
+      }
+    },
+    "nativeValidation": {
+      "ok": true,
+      "command": "validate-protocol",
+      "exitCode": 0,
+      "result": {
+        "status": "VALID",
+        "errors": [],
+        "incomplete": [],
+        "stale": null,
+        "delegation": {
+          "status": "NOT_APPLICABLE",
+          "required": false,
+          "errors": []
+        },
+        "continuity": {
+          "required": false,
+          "status": "NOT_APPLICABLE",
+          "classification": "ABSENT",
+          "errors": [],
+          "reasonCodes": [],
+          "reasons": [
+            "CONTINUITY_ABSENT"
+          ],
+          "authority": "OPERATIONAL_CONTEXT_ONLY",
+          "evidenceAuthority": "NONE"
+        },
+        "evidence": [
+          {
+            "kind": "OBSERVED",
+            "source": "ForgeLoop protocol conformance",
+            "result": "VALID"
+          }
+        ]
+      },
+      "error": null,
+      "metadata": {
+        "protocolVersion": 1,
+        "integrationApiVersion": 1,
+        "packageVersion": "2.0.0"
+      }
+    },
+    "linkedWorktree": true,
+    "gitFixture": true,
+    "retainedNativeLayout": true,
+    "sameProjectPath": true,
+    "commands": [
+      {
+        "args": [
+          "task-list",
+          "--json"
+        ],
+        "exit": 0,
+        "stdout": "{\n  \"tasks\": [\n    {\n      \"taskId\": \"native-reverse-export-write\",\n      \"taskKey\": \"76f5f65e64df6514a2c82684fcf6435ef34bddd5ef86e6c6ffce0dd429e5b7c0\",\n      \"directory\": \".forgeloop/task-state/76f5f65e64df6514a2c82684fcf6435ef34bddd5ef86e6c6ffce0dd429e5b7c0\",\n      \"healthy\": true,\n      \"phase\": null,\n      \"writeClaims\": [],\n      \"historicalWriteClaims\": [],\n      \"effectiveWriteClaims\": [],\n      \"claimState\": \"ACTIVE\",\n      \"recovery\": null,\n      \"mutationAllowed\": true,\n      \"ownershipValid\": true,\n      \"ownershipErrors\": [],\n      \"reasonCodes\": [],\n      \"locked\": false,\n      \"hasContinuity\": false,\n      \"hasReceipt\": false,\n      \"createdAt\": \"2026-10-05T18:18:35.116Z\",\n      \"updatedAt\": \"2026-10-05T18:18:35.116Z\"\n    },\n    {\n      \"taskId\": \"phase2a-closure-task\",\n      \"taskKey\": \"d64bc038a23c20c820d91a0b4ea357176fcb05f2ea113b1f10c5325b5f2c5d62\",\n      \"directory\": \".forgeloop/task-state/d64bc038a23c20c820d91a0b4ea357176fcb05f2ea113b1f10c5325b5f2c5d62\",\n      \"healthy\": true,\n      \"phase\": \"DIAGNOSING\",\n      \"writeClaims\": [\n        \"src\"\n      ],\n      \"historicalWriteClaims\": [\n        \"src\"\n      ],\n      \"effectiveWriteClaims\": [\n        \"src\"\n      ],\n      \"claimState\": \"ACTIVE\",\n      \"recovery\": null,\n      \"mutationAllowed\": true,\n      \"ownershipValid\": true,\n      \"ownershipErrors\": [],\n      \"reasonCodes\": [],\n      \"locked\": false,\n      \"hasContinuity\": false,\n      \"hasReceipt\": true,\n      \"createdAt\": \"2026-10-05T18:18:34.263Z\",\n      \"updatedAt\": \"2026-10-05T18:18:34.263Z\"\n    }\n  ],\n  \"offset\": 0,\n  \"total\": 2,\n  \"hasMore\": false\n}\n",
+        "stderr": ""
+      },
+      {
+        "args": [
+          "status",
+          "--task",
+          "phase2a-closure-task",
+          "--json"
+        ],
+        "exit": 0,
+        "stdout": "{\n  \"path\": \".forgeloop/task-state/d64bc038a23c20c820d91a0b4ea357176fcb05f2ea113b1f10c5325b5f2c5d62/work-state.json\",\n  \"present\": true,\n  \"status\": \"REVALIDATION_REQUIRED\",\n  \"reasons\": [\n    \"CONTRACT_NOT_VERIFIED\"\n  ],\n  \"warnings\": [],\n  \"repositoryComparison\": \"MATCH\",\n  \"contractComparison\": \"NOT_VERIFIED\",\n  \"artifactComparison\": \"NOT_APPLICABLE\",\n  \"stateAgeMs\": 573,\n  \"state\": {\n    \"schemaVersion\": 1,\n    \"protocolVersion\": 1,\n    \"taskId\": \"phase2a-closure-task\",\n    \"contractFingerprint\": \"00775e8da9e6905c9fd061532eae2b56397c7e850f54d00d62404b07a2ec9aa3\",\n    \"routeFingerprint\": \"54a4df4160f2709522b0ef908d7704993d63e8aa6b83f1715a17df548615cad1\",\n    \"repositoryFingerprint\": {\n      \"branch\": \"codex/reverse-export-fixture\",\n      \"head\": \"3951c8f50c698729a5660755b1a2f1d06177320a\"\n    },\n    \"phase\": \"DIAGNOSING\",\n    \"selectedGuides\": [\n      \"test\",\n      \"clean\"\n    ],\n    \"requiredGates\": [],\n    \"satisfiedGates\": [],\n    \"evidenceCoverage\": [\n      {\n        \"schemaVersion\": 1,\n        \"protocolVersion\": 1,\n        \"requirement\": \"tests\",\n        \"requiredEvidence\": [\n          \"tests\"\n        ],\n        \"observedEvidence\": [],\n        \"status\": \"NOT_VERIFIED\"\n      },\n      {\n        \"schemaVersion\": 1,\n        \"protocolVersion\": 1,\n        \"requirement\": \"Diagnosis and correction preserve protocol integrity\",\n        \"requiredEvidence\": [\n          \"Diagnosis and correction preserve protocol integrity\"\n        ],\n        \"observedEvidence\": [],\n        \"status\": \"NOT_VERIFIED\"\n      }\n    ],\n    \"completedSteps\": [\n      \"contract\",\n      \"implementation\"\n    ],\n    \"pendingSteps\": [\n      \"route\",\n      \"planning\",\n      \"verification\"\n    ],\n    \"requiredArtifacts\": [],\n    \"checks\": [\n      {\n        \"schemaVersion\": 1,\n        \"protocolVersion\": 1,\n        \"id\": \"check-auth-boundary\",\n        \"kind\": \"command\",\n        \"requirement\": \"fixture-verification\",\n        \"status\": \"failed\",\n        \"evidenceKind\": \"OBSERVED\",\n        \"source\": \"/Users/cassio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node -e process.exit(1)\",\n        \"exitCode\": 1,\n        \"timestamp\": \"2026-10-05T18:18:35.028Z\",\n        \"executionRef\": \"exec-e7159fe1-c52e-4142-b16f-f6aae99d558e\",\n        \"provenance\": \"FORGELOOP_EXECUTED\",\n        \"details\": {\n          \"command\": \"/Users/cassio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node -e process.exit(1)\",\n          \"result\": \"process exited with code 1\",\n          \"verificationCycle\": 1,\n          \"execution\": {\n            \"executionRef\": \"exec-e7159fe1-c52e-4142-b16f-f6aae99d558e\",\n            \"argv\": [\n              \"/Users/cassio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node\",\n              \"-e\",\n              \"process.exit(1)\"\n            ],\n            \"cwd\": \"/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked\",\n            \"resolution\": {\n              \"resolutionMode\": \"LOCAL_EXECUTABLE\",\n              \"mayInstall\": false,\n              \"installer\": null,\n              \"tool\": null\n            },\n            \"status\": \"failed\",\n            \"exitCode\": 1,\n            \"resolutionMode\": \"LOCAL_EXECUTABLE\",\n            \"mayInstall\": false,\n            \"installationAuthorized\": false\n          }\n        }\n      }\n    ],\n    \"failures\": [],\n    \"blockers\": [],\n    \"verificationEvidence\": [\n      {\n        \"kind\": \"OBSERVED\",\n        \"source\": \"/Users/cassio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node -e process.exit(1)\",\n        \"result\": \"process exited with code 1\",\n        \"verificationCycle\": 1,\n        \"details\": {\n          \"verificationCycle\": 1\n        }\n      }\n    ],\n    \"lastUpdated\": \"2026-10-05T18:18:35.071Z\",\n    \"revision\": 7,\n    \"verificationCycle\": 1,\n    \"previousPhase\": \"VERIFYING\"\n  },\n  \"repository\": {\n    \"branch\": \"codex/reverse-export-fixture\",\n    \"head\": \"3951c8f50c698729a5660755b1a2f1d06177320a\"\n  },\n  \"error\": null,\n  \"contract\": {\n    \"path\": null,\n    \"status\": \"NOT_VERIFIED\"\n  },\n  \"evidence\": [\n    {\n      \"kind\": \"OBSERVED\",\n      \"source\": \"repository fingerprint\",\n      \"result\": \"MATCH\"\n    },\n    {\n      \"kind\": \"NOT_VERIFIED\",\n      \"source\": \"current contract\",\n      \"result\": \"NOT_VERIFIED\"\n    },\n    {\n      \"kind\": \"NOT_VERIFIED\",\n      \"source\": \"shipped target schemas\",\n      \"result\": \"missing\"\n    }\n  ],\n  \"phase\": \"DIAGNOSING\",\n  \"completed\": [\n    \"contract\",\n    \"implementation\"\n  ],\n  \"pending\": [\n    \"route\",\n    \"planning\",\n    \"verification\"\n  ],\n  \"taskId\": \"phase2a-closure-task\",\n  \"taskKey\": \"d64bc038a23c20c820d91a0b4ea357176fcb05f2ea113b1f10c5325b5f2c5d62\",\n  \"recovery\": null,\n  \"claimState\": \"ACTIVE\",\n  \"historicalWriteClaims\": [\n    \"src\"\n  ],\n  \"effectiveWriteClaims\": [\n    \"src\"\n  ],\n  \"mutationAllowed\": true,\n  \"ownershipValid\": true,\n  \"ownershipErrors\": [],\n  \"reasonCodes\": [],\n  \"protocol\": {\n    \"version\": 1,\n    \"status\": \"missing\",\n    \"schemas\": [\n      {\n        \"name\": \"routing-input\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/routing-input.schema.json'\"\n      },\n      {\n        \"name\": \"routing-result\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/routing-result.schema.json'\"\n      },\n      {\n        \"name\": \"work-state\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/work-state.schema.json'\"\n      },\n      {\n        \"name\": \"continuity\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/continuity.schema.json'\"\n      },\n      {\n        \"name\": \"execution-receipt\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/execution-receipt.schema.json'\"\n      },\n      {\n        \"name\": \"task-brief\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/task-brief.schema.json'\"\n      },\n      {\n        \"name\": \"delegated-result\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/delegated-result.schema.json'\"\n      },\n      {\n        \"name\": \"evidence\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/evidence.schema.json'\"\n      },\n      {\n        \"name\": \"current-contract\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/current-contract.schema.json'\"\n      },\n      {\n        \"name\": \"gate\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/gate.schema.json'\"\n      },\n      {\n        \"name\": \"source-registry\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/source-registry.schema.json'\"\n      },\n      {\n        \"name\": \"config\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/config.schema.json'\"\n      },\n      {\n        \"name\": \"preflight\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/preflight.schema.json'\"\n      },\n      {\n        \"name\": \"check\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/check.schema.json'\"\n      },\n      {\n        \"name\": \"evidence-coverage\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/evidence-coverage.schema.json'\"\n      },\n      {\n        \"name\": \"event\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/event.schema.json'\"\n      },\n      {\n        \"name\": \"activation\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/activation.schema.json'\"\n      },\n      {\n        \"name\": \"policy\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/policy.schema.json'\"\n      },\n      {\n        \"name\": \"policy-rules\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/policy-rules.schema.json'\"\n      },\n      {\n        \"name\": \"policy-discovery\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/policy-discovery.schema.json'\"\n      },\n      {\n        \"name\": \"policy-baseline\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/policy-baseline.schema.json'\"\n      },\n      {\n        \"name\": \"policy-lock\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/policy-lock.schema.json'\"\n      },\n      {\n        \"name\": \"policy-snapshot\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/policy-snapshot.schema.json'\"\n      },\n      {\n        \"name\": \"task-bundle\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/task-bundle.schema.json'\"\n      },\n      {\n        \"name\": \"execution\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/execution.schema.json'\"\n      },\n      {\n        \"name\": \"authority\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/authority.schema.json'\"\n      },\n      {\n        \"name\": \"task-descriptor\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/task-descriptor.schema.json'\"\n      },\n      {\n        \"name\": \"task-recovery\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/task-recovery.schema.json'\"\n      },\n      {\n        \"name\": \"diagnostic-case\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/diagnostic-case.schema.json'\"\n      },\n      {\n        \"name\": \"intervention\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/intervention.schema.json'\"\n      },\n      {\n        \"name\": \"hypothesis-disposition\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/hypothesis-disposition.schema.json'\"\n      },\n      {\n        \"name\": \"action\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/action.schema.json'\"\n      },\n      {\n        \"name\": \"approval\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/approval.schema.json'\"\n      },\n      {\n        \"name\": \"capability-policy\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/capability-policy.schema.json'\"\n      },\n      {\n        \"name\": \"trajectory-evaluation\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/trajectory-evaluation.schema.json'\"\n      },\n      {\n        \"name\": \"trajectory-scenario\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/trajectory-scenario.schema.json'\"\n      },\n      {\n        \"name\": \"workspace-binding\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/workspace-binding.schema.json'\"\n      },\n      {\n        \"name\": \"handoff-envelope\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/handoff-envelope.schema.json'\"\n      },\n      {\n        \"name\": \"responsibility\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/responsibility.schema.json'\"\n      },\n      {\n        \"name\": \"verification-scope\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/verification-scope.schema.json'\"\n      },\n      {\n        \"name\": \"code-manifest\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/code-manifest.schema.json'\"\n      },\n      {\n        \"name\": \"code-attestation\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/code-attestation.schema.json'\"\n      },\n      {\n        \"name\": \"attestation-verification-result\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/attestation-verification-result.schema.json'\"\n      },\n      {\n        \"name\": \"in-toto-statement\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/in-toto-statement.schema.json'\"\n      },\n      {\n        \"name\": \"usage\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/usage.schema.json'\"\n      },\n      {\n        \"name\": \"execution-profile-benchmark-scenario\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/execution-profile-benchmark-scenario.schema.json'\"\n      },\n      {\n        \"name\": \"execution-profile-benchmark-run\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/execution-profile-benchmark-run.schema.json'\"\n      },\n      {\n        \"name\": \"execution-profile-benchmark-aggregate\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/execution-profile-benchmark-aggregate.schema.json'\"\n      },\n      {\n        \"name\": \"structural-quality\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/structural-quality.schema.json'\"\n      },\n      {\n        \"name\": \"semantic-decision\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/semantic-decision.schema.json'\"\n      },\n      {\n        \"name\": \"context-plan\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/context-plan.schema.json'\"\n      },\n      {\n        \"name\": \"test-utility\",\n        \"version\": null,\n        \"status\": \"missing\",\n        \"error\": \"ENOENT: no such file or directory, open '/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/schemas/test-utility.schema.json'\"\n      }\n    ],\n    \"evidence\": [\n      {\n        \"kind\": \"NOT_VERIFIED\",\n        \"source\": \"shipped target schemas\",\n        \"result\": \"missing\"\n      }\n    ]\n  },\n  \"continuity\": {\n    \"classification\": \"ABSENT\",\n    \"taskMatches\": null,\n    \"workStateMatches\": null,\n    \"contractMatches\": null,\n    \"phaseMatches\": null,\n    \"repositoryComparison\": \"NOT_VERIFIED\",\n    \"changedPathComparison\": \"NOT_VERIFIED\",\n    \"reasonCodes\": [],\n    \"reasons\": [\n      \"CONTINUITY_ABSENT\"\n    ],\n    \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n    \"evidenceAuthority\": \"NONE\",\n    \"path\": \".forgeloop/continuity.json\",\n    \"present\": false,\n    \"latestHandoff\": null,\n    \"lint\": {\n      \"status\": \"PASS\",\n      \"findings\": []\n    },\n    \"diagnosticContext\": {\n      \"present\": true,\n      \"activeFailureSignatures\": [\n        \"165d0149e53bd1796a55040b57296e086fcce4d42c8c1158ee8258b60f37b680\"\n      ],\n      \"activeFailedRequirements\": [\n        \"fixture-verification\"\n      ],\n      \"openHypotheses\": [],\n      \"latestIntervention\": null,\n      \"nextExperiment\": null,\n      \"doNotRepeat\": []\n    }\n  }\n}\n",
+        "stderr": ""
+      },
+      {
+        "args": [
+          "validate-protocol",
+          "--task",
+          "phase2a-closure-task",
+          "--json"
+        ],
+        "exit": 0,
+        "stdout": "{\n  \"status\": \"VALID\",\n  \"errors\": [],\n  \"incomplete\": [],\n  \"stale\": null,\n  \"delegation\": {\n    \"status\": \"NOT_APPLICABLE\",\n    \"required\": false,\n    \"errors\": []\n  },\n  \"continuity\": {\n    \"required\": false,\n    \"status\": \"NOT_APPLICABLE\",\n    \"classification\": \"ABSENT\",\n    \"errors\": [],\n    \"reasonCodes\": [],\n    \"reasons\": [\n      \"CONTINUITY_ABSENT\"\n    ],\n    \"authority\": \"OPERATIONAL_CONTEXT_ONLY\",\n    \"evidenceAuthority\": \"NONE\"\n  },\n  \"evidence\": [\n    {\n      \"kind\": \"OBSERVED\",\n      \"source\": \"ForgeLoop protocol conformance\",\n      \"result\": \"VALID\"\n    }\n  ]\n}\n",
+        "stderr": ""
+      }
+    ],
+    "legacyWorkspaceCheck": {
+      "exit": 0,
+      "stdout": "{\n  \"taskId\": \"phase2a-closure-task\",\n  \"status\": \"MATCH\",\n  \"bound\": false,\n  \"alreadyBound\": true,\n  \"path\": \".forgeloop/task-state/d64bc038a23c20c820d91a0b4ea357176fcb05f2ea113b1f10c5325b5f2c5d62/workspace-binding.json\",\n  \"binding\": {\n    \"schemaVersion\": 1,\n    \"protocolVersion\": 1,\n    \"taskId\": \"phase2a-closure-task\",\n    \"mode\": \"GIT_WORKTREE\",\n    \"repositoryIdentity\": \"ccf05abcb448cfea62c35ce0274eb50c452d6c5b5fe542581d827b2eae4b07bc\",\n    \"workspaceIdentity\": \"c518ae9c80ccdb566fab59c6efaa1adea6792f2db29cba54a61424f77eb35fb3\",\n    \"branchAtBind\": \"codex/reverse-export-fixture\",\n    \"headAtBind\": \"3951c8f50c698729a5660755b1a2f1d06177320a\",\n    \"boundAt\": \"2026-10-05T18:18:34.272Z\",\n    \"metadata\": {\n      \"objectFormat\": \"sha1\"\n    }\n  },\n  \"fingerprint\": \"ec9b5636ffebb85c5ee62499e8644174b2781640b06284e6da460226859d32f0\"\n}\n",
+      "stderr": ""
+    },
+    "legacyWrite": {
+      "exit": 0,
+      "stdout": "{\n  \"taskId\": \"legacy-after-reverse-export\",\n  \"taskKey\": \"adefaf4ae78466b688951df362a89bc7048e007d7efd5163e194637b0f75da17\",\n  \"directory\": \".forgeloop/task-state/adefaf4ae78466b688951df362a89bc7048e007d7efd5163e194637b0f75da17\",\n  \"descriptorPath\": \".forgeloop/task-state/adefaf4ae78466b688951df362a89bc7048e007d7efd5163e194637b0f75da17/task.json\",\n  \"writeClaims\": [],\n  \"contractCopied\": false,\n  \"createdAt\": \"2026-10-05T18:18:36.214Z\"\n}\n",
+      "stderr": ""
+    },
+    "currentWriteOnLegacy": {
+      "exit": 1,
+      "stdout": "{\n  \"status\": \"ERROR\",\n  \"ok\": false,\n  \"error\": {\n    \"code\": \"E_STORAGE_MIGRATION_REQUIRED\",\n    \"message\": \"Legacy operational state requires explicit storage migration before mutation\"\n  }\n}\n",
+      "stderr": "{\n  \"status\": \"ERROR\",\n  \"ok\": false,\n  \"error\": {\n    \"code\": \"E_STORAGE_MIGRATION_REQUIRED\",\n    \"message\": \"Legacy operational state requires explicit storage migration before mutation\"\n  }\n}\n",
+      "nativeDatabaseAllocated": false
+    },
+    "legacyTaskIdsAfterWrite": [
+      "legacy-after-reverse-export",
+      "native-reverse-export-write",
+      "phase2a-closure-task"
+    ],
+    "attachmentPreservation": {
+      "reference": {
+        "taskId": "phase2a-closure-task",
+        "referenceId": "reverse-export-binary",
+        "path": ".forgeloop/attachments/objects/cbac33a143dde0abf0fba84550aa78d3788efd0d324d37bd1ec7d0adaf0c7663",
+        "size": 7,
+        "sha256": "cbac33a143dde0abf0fba84550aa78d3788efd0d324d37bd1ec7d0adaf0c7663"
+      },
+      "exportIndexMatched": true,
+      "exportedActiveAndRetainedBytesMatched": true,
+      "checkedAfterLegacyWrite": true,
+      "legacyAttachmentApiVerified": false,
+      "reimportAfterLegacyWriteVerified": true
+    },
+    "sourceFingerprintBefore": "0ca2e2d281dd9e3911a9eea7148563d00e0ab49fc03b4a9f066df545b5c9043e",
+    "sourceFingerprintAfter": "0ca2e2d281dd9e3911a9eea7148563d00e0ab49fc03b4a9f066df545b5c9043e",
+    "nativeWriteRetained": true,
+    "reimport": {
+      "migration": {
+        "phase": "PUBLISHED",
+        "operationId": "dee2bed5-1c97-44be-96e7-07b8efe18c8f",
+        "taskCount": 3,
+        "attachments": 1,
+        "currentStateVerified": true,
+        "restored": false,
+        "path": "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-canonical-diagnosis-git-FpaSuw-linked/.forgeloop/state.sqlite",
+        "destination": "reverse-export-reimport-retained"
+      },
+      "validation": {
+        "ok": true,
+        "command": "validate-protocol",
+        "exitCode": 0,
+        "result": {
+          "status": "VALID",
+          "errors": [],
+          "incomplete": [],
+          "stale": null,
+          "delegation": {
+            "status": "NOT_APPLICABLE",
+            "required": false,
+            "errors": []
+          },
+          "continuity": {
+            "required": false,
+            "status": "NOT_APPLICABLE",
+            "classification": "ABSENT",
+            "errors": [],
+            "reasonCodes": [],
+            "reasons": [
+              "CONTINUITY_ABSENT"
+            ],
+            "authority": "OPERATIONAL_CONTEXT_ONLY",
+            "evidenceAuthority": "NONE"
+          },
+          "evidence": [
+            {
+              "kind": "OBSERVED",
+              "source": "ForgeLoop protocol conformance",
+              "result": "VALID"
+            }
+          ]
+        },
+        "error": null,
+        "metadata": {
+          "protocolVersion": 1,
+          "integrationApiVersion": 1,
+          "packageVersion": "2.0.0"
+        }
+      },
+      "legacyCreatedTaskPreserved": true,
+      "portableIndexRetained": true
+    }
+  },
+  "focusedTests": {
+    "tests": 14,
+    "passed": 14,
+    "failed": 0,
+    "rawLog": "\u2714 migration retains historical export metadata and validates historical-prefix (2300.767458ms)\n\u2714 migration retains historical export metadata and validates identity (2236.538708ms)\n\u2714 migration retains historical export metadata and validates prefix-digest (2123.2695ms)\n\u2714 migration retains historical export metadata and validates membership (1540.863875ms)\n\u2714 migration verifies portable attachment bindings and retains bytes through publication and backup (3941.590125ms)\n\u2714 unmapped captured objects remain retained and prevent attachment coverage publication (1557.546709ms)\n\u2714 candidate preparation validates a real lifecycle and preserves source/export/round-trip parity (3016.180209ms)\n\u2714 candidate preparation rejects schema-invalid optional records and retains diagnostics and exclusion (625.941083ms)\n\u2714 candidate preparation refuses unmapped source artifacts and does not claim attachment references verified (1972.042584ms)\n\u2714 candidate validation refuses owned command evidence whose execution reference is missing (661.542584ms)\n\u2714 source parity refuses invalid UTF-8 even when decoded event hashes validate (938.455542ms)\n\u2714 an empty orphan namespace survives capture and aborts candidate import (451.203375ms)\n\u2714 candidate import refuses empty unknown namespaces and stray task-root files (939.365833ms)\n\u2714 candidate recovery refuses unbound files, changed fingerprints and staging without replacing evidence (418.636709ms)\n\u2139 tests 14\n\u2139 suites 0\n\u2139 pass 14\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 9173.621458\n"
+  },
+  "controls": [
+    "Historic valid ledger prefix accepted and source summary retained byte-for-byte",
+    "Altered task identity refused",
+    "Altered prefix digest refused",
+    "Altered listed membership refused"
+  ],
+  "limitations": [
+    "Current Windows/Linux correction and reimport unverified",
+    "Final full-source and release checks pending",
+    "Legacy attachment API remains unverified",
+    "Not universal downgrade claim"
+  ],
+  "fastVerificationExit": 0
+}

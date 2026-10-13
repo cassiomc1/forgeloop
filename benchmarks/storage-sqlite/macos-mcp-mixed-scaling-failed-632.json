@@ -1,0 +1,5636 @@
+{
+  "diagnosticOnly": true,
+  "snapshotConsistencyAssertionsPassed": 400,
+  "tasks": 1000,
+  "readers": 4,
+  "writer": {
+    "commits": 1000,
+    "elapsedMs": 8779.238583,
+    "memory": {
+      "rss": 91422720,
+      "heapTotal": 31490048,
+      "heapUsed": 12659416,
+      "external": 2636638,
+      "arrayBuffers": 178150
+    },
+    "peakRssKiB": 89312
+  },
+  "samples": [
+    {
+      "batch": 0,
+      "reader": 0,
+      "elapsedMs": 9073.229292,
+      "revision": 1000,
+      "memory": {
+        "rss": 207912960,
+        "heapTotal": 121470976,
+        "heapUsed": 57263712,
+        "external": 2793958,
+        "arrayBuffers": 144006
+      },
+      "peakRssKiB": 203040
+    },
+    {
+      "batch": 0,
+      "reader": 1,
+      "elapsedMs": 9078.977375,
+      "revision": 1000,
+      "memory": {
+        "rss": 212140032,
+        "heapTotal": 125665280,
+        "heapUsed": 62436760,
+        "external": 2793998,
+        "arrayBuffers": 144006
+      },
+      "peakRssKiB": 207168
+    },
+    {
+      "batch": 0,
+      "reader": 3,
+      "elapsedMs": 9084.734,
+      "revision": 1000,
+      "memory": {
+        "rss": 216383488,
+        "heapTotal": 129859584,
+        "heapUsed": 67611600,
+        "external": 2793998,
+        "arrayBuffers": 144006
+      },
+      "peakRssKiB": 211312
+    },
+    {
+      "batch": 0,
+      "reader": 2,
+      "elapsedMs": 9090.528458,
+      "revision": 1000,
+      "memory": {
+        "rss": 220626944,
+        "heapTotal": 134053888,
+        "heapUsed": 72784224,
+        "external": 2793998,
+        "arrayBuffers": 144006
+      },
+      "peakRssKiB": 215456
+    },
+    {
+      "batch": 1,
+      "reader": 1,
+      "elapsedMs": 301.317959,
+      "revision": 1000,
+      "memory": {
+        "rss": 223199232,
+        "heapTotal": 135430144,
+        "heapUsed": 76742968,
+        "external": 2793998,
+        "arrayBuffers": 144006
+      },
+      "peakRssKiB": 217968
+    },
+    {
+      "batch": 1,
+      "reader": 3,
+      "elapsedMs": 307.24575000000004,
+      "revision": 1000,
+      "memory": {
+        "rss": 227409920,
+        "heapTotal": 139624448,
+        "heapUsed": 81892592,
+        "external": 2793998,
+        "arrayBuffers": 144006
+      },
+      "peakRssKiB": 222080
+    },
+    {
+      "batch": 1,
+      "reader": 0,
+      "elapsedMs": 312.90749999999935,
+      "revision": 1000,
+      "memory": {
+        "rss": 231604224,
+        "heapTotal": 143818752,
+        "heapUsed": 86912184,
+        "external": 2793998,
+        "arrayBuffers": 144006
+      },
+      "peakRssKiB": 226176
+    },
+    {
+      "batch": 1,
+      "reader": 2,
+      "elapsedMs": 318.503917,
+      "revision": 1000,
+      "memory": {
+        "rss": 235847680,
+        "heapTotal": 148013056,
+        "heapUsed": 91974816,
+        "external": 2793998,
+        "arrayBuffers": 144006
+      },
+      "peakRssKiB": 230320
+    },
+    {
+      "batch": 2,
+      "reader": 0,
+      "elapsedMs": 294.20975,
+      "revision": 1000,
+      "memory": {
+        "rss": 237125632,
+        "heapTotal": 148865024,
+        "heapUsed": 92053264,
+        "external": 2793998,
+        "arrayBuffers": 144006
+      },
+      "peakRssKiB": 231568
+    },
+    {
+      "batch": 2,
+      "reader": 2,
+      "elapsedMs": 299.861832999999,
+      "revision": 1000,
+      "memory": {
+        "rss": 241336320,
+        "heapTotal": 153059328,
+        "heapUsed": 97090728,
+        "external": 2793998,
+        "arrayBuffers": 144006
+      },
+      "peakRssKiB": 235680
+    },
+    {
+      "batch": 2,
+      "reader": 3,
+      "elapsedMs": 305.338541000001,
+      "revision": 1000,
+      "memory": {
+        "rss": 245579776,
+        "heapTotal": 157253632,
+        "heapUsed": 102116296,
+        "external": 2793998,
+        "arrayBuffers": 144006
+      },
+      "peakRssKiB": 239824
+    },
+    {
+      "batch": 2,
+      "reader": 1,
+      "elapsedMs": 310.94074999999975,
+      "revision": 1000,
+      "memory": {
+        "rss": 249790464,
+        "heapTotal": 161447936,
+        "heapUsed": 107137072,
+        "external": 2793998,
+        "arrayBuffers": 144006
+      },
+      "peakRssKiB": 243936
+    },
+    {
+      "batch": 3,
+      "reader": 0,
+      "elapsedMs": 313.3242910000008,
+      "revision": 1000,
+      "memory": {
+        "rss": 251232256,
+        "heapTotal": 162988032,
+        "heapUsed": 103952080,
+        "external": 2793998,
+        "arrayBuffers": 144006
+      },
+      "peakRssKiB": 245344
+    },
+    {
+      "batch": 3,
+      "reader": 1,
+      "elapsedMs": 319.0037090000005,
+      "revision": 1000,
+      "memory": {
+        "rss": 255442944,
+        "heapTotal": 167182336,
+        "heapUsed": 108972936,
+        "external": 2793998,
+        "arrayBuffers": 144006
+      },
+      "peakRssKiB": 249456
+    },
+    {
+      "batch": 3,
+      "reader": 3,
+      "elapsedMs": 324.5096250000006,
+      "revision": 1000,
+      "memory": {
+        "rss": 259653632,
+        "heapTotal": 171376640,
+        "heapUsed": 113991912,
+        "external": 2793998,
+        "arrayBuffers": 144006
+      },
+      "peakRssKiB": 253568
+    },
+    {
+      "batch": 3,
+      "reader": 2,
+      "elapsedMs": 329.9350829999985,
+      "revision": 1000,
+      "memory": {
+        "rss": 263880704,
+        "heapTotal": 175570944,
+        "heapUsed": 119011872,
+        "external": 2793998,
+        "arrayBuffers": 144006
+      },
+      "peakRssKiB": 257696
+    },
+    {
+      "batch": 4,
+      "reader": 0,
+      "elapsedMs": 125.60079099999894,
+      "revision": 1000,
+      "memory": {
+        "rss": 263421952,
+        "heapTotal": 236306432,
+        "heapUsed": 130971824,
+        "external": 2793866,
+        "arrayBuffers": 143874
+      },
+      "peakRssKiB": 258064
+    },
+    {
+      "batch": 4,
+      "reader": 2,
+      "elapsedMs": 317.20266699999956,
+      "revision": 1000,
+      "memory": {
+        "rss": 334856192,
+        "heapTotal": 243826688,
+        "heapUsed": 150001680,
+        "external": 2793954,
+        "arrayBuffers": 143962
+      },
+      "peakRssKiB": 327008
+    },
+    {
+      "batch": 4,
+      "reader": 1,
+      "elapsedMs": 322.7924579999999,
+      "revision": 1000,
+      "memory": {
+        "rss": 339066880,
+        "heapTotal": 248020992,
+        "heapUsed": 155022128,
+        "external": 2793954,
+        "arrayBuffers": 143962
+      },
+      "peakRssKiB": 331120
+    },
+    {
+      "batch": 4,
+      "reader": 3,
+      "elapsedMs": 328.22783399999935,
+      "revision": 1000,
+      "memory": {
+        "rss": 343277568,
+        "heapTotal": 252215296,
+        "heapUsed": 160042208,
+        "external": 2793954,
+        "arrayBuffers": 143962
+      },
+      "peakRssKiB": 335232
+    },
+    {
+      "batch": 5,
+      "reader": 1,
+      "elapsedMs": 300.6050830000004,
+      "revision": 1000,
+      "memory": {
+        "rss": 348602368,
+        "heapTotal": 255934464,
+        "heapUsed": 159516728,
+        "external": 2793998,
+        "arrayBuffers": 144006
+      },
+      "peakRssKiB": 340432
+    },
+    {
+      "batch": 5,
+      "reader": 3,
+      "elapsedMs": 306.5549999999985,
+      "revision": 1000,
+      "memory": {
+        "rss": 352813056,
+        "heapTotal": 260128768,
+        "heapUsed": 164535872,
+        "external": 2793998,
+        "arrayBuffers": 144006
+      },
+      "peakRssKiB": 344544
+    },
+    {
+      "batch": 5,
+      "reader": 0,
+      "elapsedMs": 312.4997079999994,
+      "revision": 1000,
+      "memory": {
+        "rss": 357007360,
+        "heapTotal": 264323072,
+        "heapUsed": 169558752,
+        "external": 2793998,
+        "arrayBuffers": 144006
+      },
+      "peakRssKiB": 348640
+    },
+    {
+      "batch": 5,
+      "reader": 2,
+      "elapsedMs": 318.34520800000064,
+      "revision": 1000,
+      "memory": {
+        "rss": 361218048,
+        "heapTotal": 268517376,
+        "heapUsed": 174578632,
+        "external": 2793998,
+        "arrayBuffers": 144006
+      },
+      "peakRssKiB": 352752
+    },
+    {
+      "batch": 6,
+      "reader": 3,
+      "elapsedMs": 295.27883400000064,
+      "revision": 1000,
+      "memory": {
+        "rss": 325746688,
+        "heapTotal": 220676096,
+        "heapUsed": 65113440,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 352880
+    },
+    {
+      "batch": 6,
+      "reader": 1,
+      "elapsedMs": 300.79341699999895,
+      "revision": 1000,
+      "memory": {
+        "rss": 329957376,
+        "heapTotal": 224870400,
+        "heapUsed": 70133080,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 352880
+    },
+    {
+      "batch": 6,
+      "reader": 0,
+      "elapsedMs": 306.5634169999994,
+      "revision": 1000,
+      "memory": {
+        "rss": 334151680,
+        "heapTotal": 229064704,
+        "heapUsed": 75152624,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 352880
+    },
+    {
+      "batch": 6,
+      "reader": 2,
+      "elapsedMs": 312.1262079999997,
+      "revision": 1000,
+      "memory": {
+        "rss": 338362368,
+        "heapTotal": 233259008,
+        "heapUsed": 80172736,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 352880
+    },
+    {
+      "batch": 7,
+      "reader": 3,
+      "elapsedMs": 306.1076670000002,
+      "revision": 1000,
+      "memory": {
+        "rss": 331759616,
+        "heapTotal": 226508800,
+        "heapUsed": 89075136,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 352880
+    },
+    {
+      "batch": 7,
+      "reader": 2,
+      "elapsedMs": 311.94366699999955,
+      "revision": 1000,
+      "memory": {
+        "rss": 335953920,
+        "heapTotal": 230703104,
+        "heapUsed": 94095784,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 352880
+    },
+    {
+      "batch": 7,
+      "reader": 1,
+      "elapsedMs": 317.42141699999956,
+      "revision": 1000,
+      "memory": {
+        "rss": 340164608,
+        "heapTotal": 234897408,
+        "heapUsed": 99115088,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 352880
+    },
+    {
+      "batch": 7,
+      "reader": 0,
+      "elapsedMs": 322.93654199999946,
+      "revision": 1000,
+      "memory": {
+        "rss": 344358912,
+        "heapTotal": 239091712,
+        "heapUsed": 104135232,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 352880
+    },
+    {
+      "batch": 8,
+      "reader": 0,
+      "elapsedMs": 299.3210419999996,
+      "revision": 1000,
+      "memory": {
+        "rss": 338001920,
+        "heapTotal": 232079360,
+        "heapUsed": 102389000,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 352880
+    },
+    {
+      "batch": 8,
+      "reader": 3,
+      "elapsedMs": 305.02950000000055,
+      "revision": 1000,
+      "memory": {
+        "rss": 342196224,
+        "heapTotal": 236273664,
+        "heapUsed": 107409768,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 352880
+    },
+    {
+      "batch": 8,
+      "reader": 1,
+      "elapsedMs": 310.4778750000005,
+      "revision": 1000,
+      "memory": {
+        "rss": 346390528,
+        "heapTotal": 240467968,
+        "heapUsed": 112428760,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 352880
+    },
+    {
+      "batch": 8,
+      "reader": 2,
+      "elapsedMs": 315.9851669999989,
+      "revision": 1000,
+      "memory": {
+        "rss": 350584832,
+        "heapTotal": 244662272,
+        "heapUsed": 117448896,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 352880
+    },
+    {
+      "batch": 9,
+      "reader": 3,
+      "elapsedMs": 286.7594169999993,
+      "revision": 1000,
+      "memory": {
+        "rss": 343834624,
+        "heapTotal": 240795648,
+        "heapUsed": 115737184,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 352880
+    },
+    {
+      "batch": 9,
+      "reader": 2,
+      "elapsedMs": 292.4619589999984,
+      "revision": 1000,
+      "memory": {
+        "rss": 348045312,
+        "heapTotal": 244989952,
+        "heapUsed": 120766992,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 352880
+    },
+    {
+      "batch": 9,
+      "reader": 0,
+      "elapsedMs": 297.8752079999995,
+      "revision": 1000,
+      "memory": {
+        "rss": 352239616,
+        "heapTotal": 249184256,
+        "heapUsed": 125785808,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 352880
+    },
+    {
+      "batch": 9,
+      "reader": 1,
+      "elapsedMs": 303.425792,
+      "revision": 1000,
+      "memory": {
+        "rss": 356433920,
+        "heapTotal": 253378560,
+        "heapUsed": 130805344,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 352880
+    },
+    {
+      "batch": 10,
+      "reader": 2,
+      "elapsedMs": 294.2305840000008,
+      "revision": 1000,
+      "memory": {
+        "rss": 349962240,
+        "heapTotal": 254509056,
+        "heapUsed": 129708456,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 352880
+    },
+    {
+      "batch": 10,
+      "reader": 0,
+      "elapsedMs": 299.8075829999998,
+      "revision": 1000,
+      "memory": {
+        "rss": 354156544,
+        "heapTotal": 258703360,
+        "heapUsed": 134727176,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 352880
+    },
+    {
+      "batch": 10,
+      "reader": 1,
+      "elapsedMs": 305.3459590000002,
+      "revision": 1000,
+      "memory": {
+        "rss": 358350848,
+        "heapTotal": 262897664,
+        "heapUsed": 139747008,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 352880
+    },
+    {
+      "batch": 10,
+      "reader": 3,
+      "elapsedMs": 310.71466599999985,
+      "revision": 1000,
+      "memory": {
+        "rss": 362545152,
+        "heapTotal": 267091968,
+        "heapUsed": 144766544,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 354048
+    },
+    {
+      "batch": 11,
+      "reader": 3,
+      "elapsedMs": 347.0412919999999,
+      "revision": 1000,
+      "memory": {
+        "rss": 361480192,
+        "heapTotal": 268206080,
+        "heapUsed": 142923088,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 355296
+    },
+    {
+      "batch": 11,
+      "reader": 1,
+      "elapsedMs": 352.7190410000003,
+      "revision": 1000,
+      "memory": {
+        "rss": 365674496,
+        "heapTotal": 272400384,
+        "heapUsed": 147943848,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 357104
+    },
+    {
+      "batch": 11,
+      "reader": 0,
+      "elapsedMs": 358.29304199999933,
+      "revision": 1000,
+      "memory": {
+        "rss": 369868800,
+        "heapTotal": 276594688,
+        "heapUsed": 152962664,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 361200
+    },
+    {
+      "batch": 11,
+      "reader": 2,
+      "elapsedMs": 363.70208300000013,
+      "revision": 1000,
+      "memory": {
+        "rss": 374079488,
+        "heapTotal": 280788992,
+        "heapUsed": 157982200,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 365312
+    },
+    {
+      "batch": 12,
+      "reader": 1,
+      "elapsedMs": 333.157709000001,
+      "revision": 1000,
+      "memory": {
+        "rss": 374947840,
+        "heapTotal": 280854528,
+        "heapUsed": 156204304,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 368448
+    },
+    {
+      "batch": 12,
+      "reader": 0,
+      "elapsedMs": 338.6722499999996,
+      "revision": 1000,
+      "memory": {
+        "rss": 379158528,
+        "heapTotal": 285048832,
+        "heapUsed": 161223376,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 370272
+    },
+    {
+      "batch": 12,
+      "reader": 3,
+      "elapsedMs": 344.2541660000006,
+      "revision": 1000,
+      "memory": {
+        "rss": 383385600,
+        "heapTotal": 289243136,
+        "heapUsed": 166243320,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 374400
+    },
+    {
+      "batch": 12,
+      "reader": 2,
+      "elapsedMs": 349.66491700000006,
+      "revision": 1000,
+      "memory": {
+        "rss": 387596288,
+        "heapTotal": 293437440,
+        "heapUsed": 171262856,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 378512
+    },
+    {
+      "batch": 13,
+      "reader": 1,
+      "elapsedMs": 298.52079199999935,
+      "revision": 1000,
+      "memory": {
+        "rss": 388481024,
+        "heapTotal": 294289408,
+        "heapUsed": 169376680,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 381680
+    },
+    {
+      "batch": 13,
+      "reader": 3,
+      "elapsedMs": 304.093667000001,
+      "revision": 1000,
+      "memory": {
+        "rss": 392691712,
+        "heapTotal": 298483712,
+        "heapUsed": 174396464,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 383488
+    },
+    {
+      "batch": 13,
+      "reader": 0,
+      "elapsedMs": 309.6165000000001,
+      "revision": 1000,
+      "memory": {
+        "rss": 396902400,
+        "heapTotal": 302678016,
+        "heapUsed": 179415120,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 387600
+    },
+    {
+      "batch": 13,
+      "reader": 2,
+      "elapsedMs": 315.11212499999965,
+      "revision": 1000,
+      "memory": {
+        "rss": 401113088,
+        "heapTotal": 306872320,
+        "heapUsed": 184434576,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 391712
+    },
+    {
+      "batch": 14,
+      "reader": 3,
+      "elapsedMs": 294.56487500000003,
+      "revision": 1000,
+      "memory": {
+        "rss": 402833408,
+        "heapTotal": 308527104,
+        "heapUsed": 183207592,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 394864
+    },
+    {
+      "batch": 14,
+      "reader": 0,
+      "elapsedMs": 300.2876669999987,
+      "revision": 1000,
+      "memory": {
+        "rss": 407044096,
+        "heapTotal": 312721408,
+        "heapUsed": 188227960,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 397504
+    },
+    {
+      "batch": 14,
+      "reader": 1,
+      "elapsedMs": 305.8028750000012,
+      "revision": 1000,
+      "memory": {
+        "rss": 411254784,
+        "heapTotal": 316915712,
+        "heapUsed": 193246776,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 401616
+    },
+    {
+      "batch": 14,
+      "reader": 2,
+      "elapsedMs": 311.27691700000105,
+      "revision": 1000,
+      "memory": {
+        "rss": 415449088,
+        "heapTotal": 321110016,
+        "heapUsed": 198266536,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 405712
+    },
+    {
+      "batch": 15,
+      "reader": 1,
+      "elapsedMs": 294.68224999999984,
+      "revision": 1000,
+      "memory": {
+        "rss": 417792000,
+        "heapTotal": 322224128,
+        "heapUsed": 196246040,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 408576
+    },
+    {
+      "batch": 15,
+      "reader": 0,
+      "elapsedMs": 300.21679100000074,
+      "revision": 1000,
+      "memory": {
+        "rss": 422002688,
+        "heapTotal": 326418432,
+        "heapUsed": 201264976,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 412112
+    },
+    {
+      "batch": 15,
+      "reader": 3,
+      "elapsedMs": 305.6748340000013,
+      "revision": 1000,
+      "memory": {
+        "rss": 426196992,
+        "heapTotal": 330612736,
+        "heapUsed": 206283792,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 416208
+    },
+    {
+      "batch": 15,
+      "reader": 2,
+      "elapsedMs": 311.1197920000013,
+      "revision": 1000,
+      "memory": {
+        "rss": 430407680,
+        "heapTotal": 334807040,
+        "heapUsed": 211303328,
+        "external": 2794798,
+        "arrayBuffers": 144806
+      },
+      "peakRssKiB": 420320
+    },
+    {
+      "batch": 16,
+      "reader": 1,
+      "elapsedMs": 302.13045799999963,
+      "revision": 1000,
+      "memory": {
+        "rss": 428277760,
+        "heapTotal": 335937536,
+        "heapUsed": 209953216,
+        "external": 2860334,
+        "arrayBuffers": 210342
+      },
+      "peakRssKiB": 420336
+    },
+    {
+      "batch": 16,
+      "reader": 2,
+      "elapsedMs": 307.82837500000096,
+      "revision": 1000,
+      "memory": {
+        "rss": 432488448,
+        "heapTotal": 340131840,
+        "heapUsed": 214971936,
+        "external": 2860334,
+        "arrayBuffers": 210342
+      },
+      "peakRssKiB": 422352
+    },
+    {
+      "batch": 16,
+      "reader": 0,
+      "elapsedMs": 313.4818749999995,
+      "revision": 1000,
+      "memory": {
+        "rss": 436699136,
+        "heapTotal": 344326144,
+        "heapUsed": 219992056,
+        "external": 2860334,
+        "arrayBuffers": 210342
+      },
+      "peakRssKiB": 426464
+    },
+    {
+      "batch": 16,
+      "reader": 3,
+      "elapsedMs": 318.9483340000006,
+      "revision": 1000,
+      "memory": {
+        "rss": 440909824,
+        "heapTotal": 348520448,
+        "heapUsed": 225011592,
+        "external": 2860334,
+        "arrayBuffers": 210342
+      },
+      "peakRssKiB": 430576
+    },
+    {
+      "batch": 17,
+      "reader": 1,
+      "elapsedMs": 308.2666250000002,
+      "revision": 1000,
+      "memory": {
+        "rss": 438648832,
+        "heapTotal": 349650944,
+        "heapUsed": 223712296,
+        "external": 2860334,
+        "arrayBuffers": 210342
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 17,
+      "reader": 0,
+      "elapsedMs": 314.21583400000054,
+      "revision": 1000,
+      "memory": {
+        "rss": 442843136,
+        "heapTotal": 353845248,
+        "heapUsed": 228730936,
+        "external": 2860334,
+        "arrayBuffers": 210342
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 17,
+      "reader": 3,
+      "elapsedMs": 324.0883329999997,
+      "revision": 1000,
+      "memory": {
+        "rss": 369999872,
+        "heapTotal": 236175360,
+        "heapUsed": 51087624,
+        "external": 2860334,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 17,
+      "reader": 2,
+      "elapsedMs": 329.50987499999974,
+      "revision": 1000,
+      "memory": {
+        "rss": 374194176,
+        "heapTotal": 240369664,
+        "heapUsed": 56107080,
+        "external": 2860334,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 18,
+      "reader": 3,
+      "elapsedMs": 338.2409579999985,
+      "revision": 1000,
+      "memory": {
+        "rss": 374079488,
+        "heapTotal": 240173056,
+        "heapUsed": 63005656,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 18,
+      "reader": 0,
+      "elapsedMs": 343.87283300000126,
+      "revision": 1000,
+      "memory": {
+        "rss": 378273792,
+        "heapTotal": 244367360,
+        "heapUsed": 68026024,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 18,
+      "reader": 1,
+      "elapsedMs": 349.3077919999996,
+      "revision": 1000,
+      "memory": {
+        "rss": 382468096,
+        "heapTotal": 248561664,
+        "heapUsed": 73055392,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 18,
+      "reader": 2,
+      "elapsedMs": 354.76008399999955,
+      "revision": 1000,
+      "memory": {
+        "rss": 386662400,
+        "heapTotal": 252755968,
+        "heapUsed": 78085720,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 19,
+      "reader": 1,
+      "elapsedMs": 289.7090840000001,
+      "revision": 1000,
+      "memory": {
+        "rss": 380092416,
+        "heapTotal": 246005760,
+        "heapUsed": 87329496,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 19,
+      "reader": 3,
+      "elapsedMs": 295.46337499999936,
+      "revision": 1000,
+      "memory": {
+        "rss": 384286720,
+        "heapTotal": 250200064,
+        "heapUsed": 92349960,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 19,
+      "reader": 0,
+      "elapsedMs": 301.0058330000011,
+      "revision": 1000,
+      "memory": {
+        "rss": 388481024,
+        "heapTotal": 254394368,
+        "heapUsed": 97368680,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 19,
+      "reader": 2,
+      "elapsedMs": 306.6154999999999,
+      "revision": 1000,
+      "memory": {
+        "rss": 392675328,
+        "heapTotal": 258588672,
+        "heapUsed": 102389144,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 20,
+      "reader": 3,
+      "elapsedMs": 290.07687499999884,
+      "revision": 1000,
+      "memory": {
+        "rss": 386203648,
+        "heapTotal": 252116992,
+        "heapUsed": 101295888,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 20,
+      "reader": 1,
+      "elapsedMs": 295.92945899999904,
+      "revision": 1000,
+      "memory": {
+        "rss": 390397952,
+        "heapTotal": 256311296,
+        "heapUsed": 106332392,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 20,
+      "reader": 2,
+      "elapsedMs": 301.5124589999996,
+      "revision": 1000,
+      "memory": {
+        "rss": 394592256,
+        "heapTotal": 260505600,
+        "heapUsed": 111350712,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 20,
+      "reader": 0,
+      "elapsedMs": 307.1971659999999,
+      "revision": 1000,
+      "memory": {
+        "rss": 398786560,
+        "heapTotal": 264699904,
+        "heapUsed": 116463000,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 21,
+      "reader": 2,
+      "elapsedMs": 274.24112500000047,
+      "revision": 1000,
+      "memory": {
+        "rss": 392118272,
+        "heapTotal": 257949696,
+        "heapUsed": 114655024,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 21,
+      "reader": 3,
+      "elapsedMs": 279.9172920000001,
+      "revision": 1000,
+      "memory": {
+        "rss": 396312576,
+        "heapTotal": 262144000,
+        "heapUsed": 119739264,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 21,
+      "reader": 1,
+      "elapsedMs": 285.4219580000008,
+      "revision": 1000,
+      "memory": {
+        "rss": 400506880,
+        "heapTotal": 266338304,
+        "heapUsed": 124821648,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 21,
+      "reader": 0,
+      "elapsedMs": 291.0504999999994,
+      "revision": 1000,
+      "memory": {
+        "rss": 404701184,
+        "heapTotal": 270532608,
+        "heapUsed": 129904832,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 22,
+      "reader": 3,
+      "elapsedMs": 284.52191700000185,
+      "revision": 1000,
+      "memory": {
+        "rss": 398229504,
+        "heapTotal": 264060928,
+        "heapUsed": 128580128,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 22,
+      "reader": 2,
+      "elapsedMs": 290.04091699999844,
+      "revision": 1000,
+      "memory": {
+        "rss": 402423808,
+        "heapTotal": 268255232,
+        "heapUsed": 133672016,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 22,
+      "reader": 1,
+      "elapsedMs": 295.6477500000001,
+      "revision": 1000,
+      "memory": {
+        "rss": 406618112,
+        "heapTotal": 272449536,
+        "heapUsed": 138754280,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 22,
+      "reader": 0,
+      "elapsedMs": 301.2090420000022,
+      "revision": 1000,
+      "memory": {
+        "rss": 410812416,
+        "heapTotal": 276643840,
+        "heapUsed": 143837432,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 23,
+      "reader": 2,
+      "elapsedMs": 288.41783399999986,
+      "revision": 1000,
+      "memory": {
+        "rss": 404373504,
+        "heapTotal": 270172160,
+        "heapUsed": 141802424,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 23,
+      "reader": 0,
+      "elapsedMs": 293.89162499999657,
+      "revision": 1000,
+      "memory": {
+        "rss": 408567808,
+        "heapTotal": 274366464,
+        "heapUsed": 146885432,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 23,
+      "reader": 1,
+      "elapsedMs": 299.48858299999847,
+      "revision": 1000,
+      "memory": {
+        "rss": 412762112,
+        "heapTotal": 278560768,
+        "heapUsed": 151967680,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 23,
+      "reader": 3,
+      "elapsedMs": 304.87054200000057,
+      "revision": 1000,
+      "memory": {
+        "rss": 416956416,
+        "heapTotal": 282755072,
+        "heapUsed": 157050808,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 24,
+      "reader": 3,
+      "elapsedMs": 286.8025830000006,
+      "revision": 1000,
+      "memory": {
+        "rss": 410484736,
+        "heapTotal": 281001984,
+        "heapUsed": 155495304,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 24,
+      "reader": 0,
+      "elapsedMs": 292.5329579999998,
+      "revision": 1000,
+      "memory": {
+        "rss": 414679040,
+        "heapTotal": 285196288,
+        "heapUsed": 160579144,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 24,
+      "reader": 1,
+      "elapsedMs": 297.9258329999975,
+      "revision": 1000,
+      "memory": {
+        "rss": 418873344,
+        "heapTotal": 289390592,
+        "heapUsed": 165661456,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 24,
+      "reader": 2,
+      "elapsedMs": 303.3663329999981,
+      "revision": 1000,
+      "memory": {
+        "rss": 423067648,
+        "heapTotal": 293584896,
+        "heapUsed": 170744776,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 25,
+      "reader": 1,
+      "elapsedMs": 301.14366599999994,
+      "revision": 1000,
+      "memory": {
+        "rss": 416628736,
+        "heapTotal": 294715392,
+        "heapUsed": 169152984,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 25,
+      "reader": 3,
+      "elapsedMs": 306.83479199999783,
+      "revision": 1000,
+      "memory": {
+        "rss": 420823040,
+        "heapTotal": 298909696,
+        "heapUsed": 174238016,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 25,
+      "reader": 0,
+      "elapsedMs": 312.3329999999987,
+      "revision": 1000,
+      "memory": {
+        "rss": 425017344,
+        "heapTotal": 303104000,
+        "heapUsed": 179320360,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 25,
+      "reader": 2,
+      "elapsedMs": 317.7560420000009,
+      "revision": 1000,
+      "memory": {
+        "rss": 429211648,
+        "heapTotal": 307298304,
+        "heapUsed": 184403464,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 26,
+      "reader": 2,
+      "elapsedMs": 286.6320000000014,
+      "revision": 1000,
+      "memory": {
+        "rss": 422461440,
+        "heapTotal": 307888128,
+        "heapUsed": 182478144,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 26,
+      "reader": 0,
+      "elapsedMs": 292.24383300000045,
+      "revision": 1000,
+      "memory": {
+        "rss": 426655744,
+        "heapTotal": 312082432,
+        "heapUsed": 187562056,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 26,
+      "reader": 3,
+      "elapsedMs": 297.6674579999999,
+      "revision": 1000,
+      "memory": {
+        "rss": 430850048,
+        "heapTotal": 316276736,
+        "heapUsed": 192644368,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 26,
+      "reader": 1,
+      "elapsedMs": 303.1084579999988,
+      "revision": 1000,
+      "memory": {
+        "rss": 435044352,
+        "heapTotal": 320471040,
+        "heapUsed": 197727448,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 27,
+      "reader": 1,
+      "elapsedMs": 355.77770899999814,
+      "revision": 1000,
+      "memory": {
+        "rss": 428032000,
+        "heapTotal": 321585152,
+        "heapUsed": 195610832,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 27,
+      "reader": 0,
+      "elapsedMs": 361.25908400000117,
+      "revision": 1000,
+      "memory": {
+        "rss": 432226304,
+        "heapTotal": 325779456,
+        "heapUsed": 200693176,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 27,
+      "reader": 2,
+      "elapsedMs": 366.90187499999956,
+      "revision": 1000,
+      "memory": {
+        "rss": 436420608,
+        "heapTotal": 329973760,
+        "heapUsed": 205776512,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 27,
+      "reader": 3,
+      "elapsedMs": 372.30145800000173,
+      "revision": 1000,
+      "memory": {
+        "rss": 440614912,
+        "heapTotal": 334168064,
+        "heapUsed": 210859992,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 28,
+      "reader": 1,
+      "elapsedMs": 313.78291700000045,
+      "revision": 1000,
+      "memory": {
+        "rss": 434159616,
+        "heapTotal": 335298560,
+        "heapUsed": 209591088,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 28,
+      "reader": 3,
+      "elapsedMs": 321.93208400000003,
+      "revision": 1000,
+      "memory": {
+        "rss": 369508352,
+        "heapTotal": 247054336,
+        "heapUsed": 49614088,
+        "external": 2859502,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 28,
+      "reader": 0,
+      "elapsedMs": 327.53020800000013,
+      "revision": 1000,
+      "memory": {
+        "rss": 373702656,
+        "heapTotal": 251248640,
+        "heapUsed": 54697104,
+        "external": 2859502,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 28,
+      "reader": 2,
+      "elapsedMs": 332.9427910000013,
+      "revision": 1000,
+      "memory": {
+        "rss": 377896960,
+        "heapTotal": 255442944,
+        "heapUsed": 59781288,
+        "external": 2859502,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 29,
+      "reader": 2,
+      "elapsedMs": 326.0586660000008,
+      "revision": 1000,
+      "memory": {
+        "rss": 374439936,
+        "heapTotal": 251969536,
+        "heapUsed": 74202632,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 29,
+      "reader": 1,
+      "elapsedMs": 331.80025000000023,
+      "revision": 1000,
+      "memory": {
+        "rss": 378634240,
+        "heapTotal": 256163840,
+        "heapUsed": 79286368,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 29,
+      "reader": 0,
+      "elapsedMs": 337.2224169999972,
+      "revision": 1000,
+      "memory": {
+        "rss": 382828544,
+        "heapTotal": 260358144,
+        "heapUsed": 84368632,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 29,
+      "reader": 3,
+      "elapsedMs": 342.6845829999984,
+      "revision": 1000,
+      "memory": {
+        "rss": 387022848,
+        "heapTotal": 264552448,
+        "heapUsed": 89451712,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 30,
+      "reader": 0,
+      "elapsedMs": 291.50266700000066,
+      "revision": 1000,
+      "memory": {
+        "rss": 380551168,
+        "heapTotal": 258080768,
+        "heapUsed": 86726056,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 30,
+      "reader": 3,
+      "elapsedMs": 297.08416699999725,
+      "revision": 1000,
+      "memory": {
+        "rss": 384745472,
+        "heapTotal": 262275072,
+        "heapUsed": 91813960,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 30,
+      "reader": 1,
+      "elapsedMs": 302.56045900000026,
+      "revision": 1000,
+      "memory": {
+        "rss": 388939776,
+        "heapTotal": 266469376,
+        "heapUsed": 96896256,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 30,
+      "reader": 2,
+      "elapsedMs": 307.99933299999975,
+      "revision": 1000,
+      "memory": {
+        "rss": 393134080,
+        "heapTotal": 270663680,
+        "heapUsed": 101979336,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 31,
+      "reader": 3,
+      "elapsedMs": 291.32808300000033,
+      "revision": 1000,
+      "memory": {
+        "rss": 386695168,
+        "heapTotal": 263913472,
+        "heapUsed": 100088296,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 31,
+      "reader": 2,
+      "elapsedMs": 297.45458300000246,
+      "revision": 1000,
+      "memory": {
+        "rss": 390889472,
+        "heapTotal": 268107776,
+        "heapUsed": 105172136,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 31,
+      "reader": 1,
+      "elapsedMs": 302.91404200000034,
+      "revision": 1000,
+      "memory": {
+        "rss": 395083776,
+        "heapTotal": 272302080,
+        "heapUsed": 110255576,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 31,
+      "reader": 0,
+      "elapsedMs": 308.38687500000015,
+      "revision": 1000,
+      "memory": {
+        "rss": 399278080,
+        "heapTotal": 276496384,
+        "heapUsed": 115342880,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 32,
+      "reader": 0,
+      "elapsedMs": 280.276332999998,
+      "revision": 1000,
+      "memory": {
+        "rss": 392265728,
+        "heapTotal": 269484032,
+        "heapUsed": 113221256,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 32,
+      "reader": 2,
+      "elapsedMs": 285.7345000000023,
+      "revision": 1000,
+      "memory": {
+        "rss": 396460032,
+        "heapTotal": 273678336,
+        "heapUsed": 118303976,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 32,
+      "reader": 1,
+      "elapsedMs": 291.1809170000015,
+      "revision": 1000,
+      "memory": {
+        "rss": 400654336,
+        "heapTotal": 277872640,
+        "heapUsed": 123385912,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 32,
+      "reader": 3,
+      "elapsedMs": 296.6211250000015,
+      "revision": 1000,
+      "memory": {
+        "rss": 404848640,
+        "heapTotal": 282066944,
+        "heapUsed": 128468576,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 33,
+      "reader": 3,
+      "elapsedMs": 287.411250000001,
+      "revision": 1000,
+      "memory": {
+        "rss": 398393344,
+        "heapTotal": 275595264,
+        "heapUsed": 127100040,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 33,
+      "reader": 0,
+      "elapsedMs": 292.9390839999978,
+      "revision": 1000,
+      "memory": {
+        "rss": 402587648,
+        "heapTotal": 279789568,
+        "heapUsed": 132182352,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 33,
+      "reader": 2,
+      "elapsedMs": 298.32224999999744,
+      "revision": 1000,
+      "memory": {
+        "rss": 406781952,
+        "heapTotal": 283983872,
+        "heapUsed": 137264616,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 33,
+      "reader": 1,
+      "elapsedMs": 303.74199999999837,
+      "revision": 1000,
+      "memory": {
+        "rss": 410976256,
+        "heapTotal": 288178176,
+        "heapUsed": 142347480,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 34,
+      "reader": 0,
+      "elapsedMs": 296.7972919999993,
+      "revision": 1000,
+      "memory": {
+        "rss": 404226048,
+        "heapTotal": 281427968,
+        "heapUsed": 140363496,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 34,
+      "reader": 1,
+      "elapsedMs": 302.5814590000009,
+      "revision": 1000,
+      "memory": {
+        "rss": 408420352,
+        "heapTotal": 285622272,
+        "heapUsed": 145450304,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 34,
+      "reader": 3,
+      "elapsedMs": 308.00800000000163,
+      "revision": 1000,
+      "memory": {
+        "rss": 412614656,
+        "heapTotal": 289816576,
+        "heapUsed": 150532200,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 34,
+      "reader": 2,
+      "elapsedMs": 313.5179160000007,
+      "revision": 1000,
+      "memory": {
+        "rss": 416808960,
+        "heapTotal": 294010880,
+        "heapUsed": 155614856,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 35,
+      "reader": 1,
+      "elapsedMs": 239.93483399999968,
+      "revision": 1000,
+      "memory": {
+        "rss": 409796608,
+        "heapTotal": 286998528,
+        "heapUsed": 170360624,
+        "external": 2859458,
+        "arrayBuffers": 209466
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 35,
+      "reader": 0,
+      "elapsedMs": 294.9329579999976,
+      "revision": 1000,
+      "memory": {
+        "rss": 410992640,
+        "heapTotal": 288194560,
+        "heapUsed": 155727992,
+        "external": 2859458,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 35,
+      "reader": 3,
+      "elapsedMs": 300.3655839999992,
+      "revision": 1000,
+      "memory": {
+        "rss": 415186944,
+        "heapTotal": 292388864,
+        "heapUsed": 160809872,
+        "external": 2859458,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 35,
+      "reader": 2,
+      "elapsedMs": 307.70537500000137,
+      "revision": 1000,
+      "memory": {
+        "rss": 419381248,
+        "heapTotal": 296583168,
+        "heapUsed": 165906040,
+        "external": 2859370,
+        "arrayBuffers": 209378
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 36,
+      "reader": 0,
+      "elapsedMs": 323.4964160000018,
+      "revision": 1000,
+      "memory": {
+        "rss": 416186368,
+        "heapTotal": 293388288,
+        "heapUsed": 167563112,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 36,
+      "reader": 2,
+      "elapsedMs": 328.94083300000057,
+      "revision": 1000,
+      "memory": {
+        "rss": 420380672,
+        "heapTotal": 297582592,
+        "heapUsed": 172645272,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 36,
+      "reader": 1,
+      "elapsedMs": 334.54083399999945,
+      "revision": 1000,
+      "memory": {
+        "rss": 424574976,
+        "heapTotal": 301776896,
+        "heapUsed": 177727960,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 36,
+      "reader": 3,
+      "elapsedMs": 339.9270830000023,
+      "revision": 1000,
+      "memory": {
+        "rss": 428769280,
+        "heapTotal": 305971200,
+        "heapUsed": 182810664,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 37,
+      "reader": 3,
+      "elapsedMs": 294.33350000000064,
+      "revision": 1000,
+      "memory": {
+        "rss": 422035456,
+        "heapTotal": 306298880,
+        "heapUsed": 180972272,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 37,
+      "reader": 0,
+      "elapsedMs": 300.02966599999854,
+      "revision": 1000,
+      "memory": {
+        "rss": 426229760,
+        "heapTotal": 310493184,
+        "heapUsed": 186055360,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 37,
+      "reader": 2,
+      "elapsedMs": 305.50354199999856,
+      "revision": 1000,
+      "memory": {
+        "rss": 430424064,
+        "heapTotal": 314687488,
+        "heapUsed": 191153440,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 37,
+      "reader": 1,
+      "elapsedMs": 311.00658300000214,
+      "revision": 1000,
+      "memory": {
+        "rss": 434618368,
+        "heapTotal": 318881792,
+        "heapUsed": 196235696,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 38,
+      "reader": 2,
+      "elapsedMs": 300.1077499999992,
+      "revision": 1000,
+      "memory": {
+        "rss": 427655168,
+        "heapTotal": 319471616,
+        "heapUsed": 194162912,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 38,
+      "reader": 3,
+      "elapsedMs": 305.5623749999977,
+      "revision": 1000,
+      "memory": {
+        "rss": 431849472,
+        "heapTotal": 323665920,
+        "heapUsed": 199244432,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 38,
+      "reader": 1,
+      "elapsedMs": 311.036167000002,
+      "revision": 1000,
+      "memory": {
+        "rss": 436043776,
+        "heapTotal": 327860224,
+        "heapUsed": 204325912,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 38,
+      "reader": 0,
+      "elapsedMs": 316.7285410000004,
+      "revision": 1000,
+      "memory": {
+        "rss": 440238080,
+        "heapTotal": 332054528,
+        "heapUsed": 209408608,
+        "external": 2859502,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 432896
+    },
+    {
+      "batch": 39,
+      "reader": 3,
+      "elapsedMs": 308.575667000001,
+      "revision": 1000,
+      "memory": {
+        "rss": 396197888,
+        "heapTotal": 257638400,
+        "heapUsed": 100162152,
+        "external": 2859326,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 39,
+      "reader": 0,
+      "elapsedMs": 314.3012090000011,
+      "revision": 1000,
+      "memory": {
+        "rss": 400392192,
+        "heapTotal": 261832704,
+        "heapUsed": 105244592,
+        "external": 2859326,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 39,
+      "reader": 1,
+      "elapsedMs": 319.81658400000015,
+      "revision": 1000,
+      "memory": {
+        "rss": 404586496,
+        "heapTotal": 266027008,
+        "heapUsed": 110325936,
+        "external": 2859326,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 39,
+      "reader": 2,
+      "elapsedMs": 325.26037500000166,
+      "revision": 1000,
+      "memory": {
+        "rss": 408780800,
+        "heapTotal": 270221312,
+        "heapUsed": 115408000,
+        "external": 2859326,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 40,
+      "reader": 0,
+      "elapsedMs": 281.7269579999993,
+      "revision": 1000,
+      "memory": {
+        "rss": 402161664,
+        "heapTotal": 262946816,
+        "heapUsed": 110974464,
+        "external": 2859326,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 40,
+      "reader": 3,
+      "elapsedMs": 287.4844159999993,
+      "revision": 1000,
+      "memory": {
+        "rss": 406355968,
+        "heapTotal": 267141120,
+        "heapUsed": 116056976,
+        "external": 2859326,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 40,
+      "reader": 2,
+      "elapsedMs": 292.8691660000004,
+      "revision": 1000,
+      "memory": {
+        "rss": 410550272,
+        "heapTotal": 271335424,
+        "heapUsed": 121146256,
+        "external": 2859326,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 40,
+      "reader": 1,
+      "elapsedMs": 298.33950000000186,
+      "revision": 1000,
+      "memory": {
+        "rss": 414744576,
+        "heapTotal": 275529728,
+        "heapUsed": 126228544,
+        "external": 2859326,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 41,
+      "reader": 3,
+      "elapsedMs": 312.32958399999916,
+      "revision": 1000,
+      "memory": {
+        "rss": 408354816,
+        "heapTotal": 268369920,
+        "heapUsed": 124466768,
+        "external": 2859326,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 41,
+      "reader": 0,
+      "elapsedMs": 332.07274999999936,
+      "revision": 1000,
+      "memory": {
+        "rss": 397049856,
+        "heapTotal": 212189184,
+        "heapUsed": 47088232,
+        "external": 2854543,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 41,
+      "reader": 1,
+      "elapsedMs": 338.41870800000106,
+      "revision": 1000,
+      "memory": {
+        "rss": 401244160,
+        "heapTotal": 216383488,
+        "heapUsed": 52170360,
+        "external": 2854543,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 41,
+      "reader": 2,
+      "elapsedMs": 344.3673340000023,
+      "revision": 1000,
+      "memory": {
+        "rss": 405438464,
+        "heapTotal": 220577792,
+        "heapUsed": 57252616,
+        "external": 2854543,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 42,
+      "reader": 0,
+      "elapsedMs": 296.53420800000094,
+      "revision": 1000,
+      "memory": {
+        "rss": 402276352,
+        "heapTotal": 217382912,
+        "heapUsed": 71881056,
+        "external": 2854719,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 42,
+      "reader": 1,
+      "elapsedMs": 302.2530000000006,
+      "revision": 1000,
+      "memory": {
+        "rss": 406470656,
+        "heapTotal": 221577216,
+        "heapUsed": 76967432,
+        "external": 2854719,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 42,
+      "reader": 2,
+      "elapsedMs": 307.6937500000022,
+      "revision": 1000,
+      "memory": {
+        "rss": 410664960,
+        "heapTotal": 225771520,
+        "heapUsed": 82048856,
+        "external": 2854719,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 42,
+      "reader": 3,
+      "elapsedMs": 313.21195799999987,
+      "revision": 1000,
+      "memory": {
+        "rss": 414859264,
+        "heapTotal": 229965824,
+        "heapUsed": 87131112,
+        "external": 2854719,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 43,
+      "reader": 2,
+      "elapsedMs": 241.1422500000008,
+      "revision": 1000,
+      "memory": {
+        "rss": 407994368,
+        "heapTotal": 223100928,
+        "heapUsed": 100552864,
+        "external": 2854675,
+        "arrayBuffers": 209466
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 43,
+      "reader": 0,
+      "elapsedMs": 296.0352500000008,
+      "revision": 1000,
+      "memory": {
+        "rss": 408764416,
+        "heapTotal": 223870976,
+        "heapUsed": 85572088,
+        "external": 2854675,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 43,
+      "reader": 3,
+      "elapsedMs": 301.7155419999981,
+      "revision": 1000,
+      "memory": {
+        "rss": 412958720,
+        "heapTotal": 228065280,
+        "heapUsed": 90653256,
+        "external": 2854675,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 43,
+      "reader": 1,
+      "elapsedMs": 311.9255000000012,
+      "revision": 1000,
+      "memory": {
+        "rss": 417153024,
+        "heapTotal": 232259584,
+        "heapUsed": 95746176,
+        "external": 2854587,
+        "arrayBuffers": 209378
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 44,
+      "reader": 1,
+      "elapsedMs": 290.03749999999854,
+      "revision": 1000,
+      "memory": {
+        "rss": 413958144,
+        "heapTotal": 229064704,
+        "heapUsed": 97617800,
+        "external": 2854719,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 44,
+      "reader": 3,
+      "elapsedMs": 295.72858300000007,
+      "revision": 1000,
+      "memory": {
+        "rss": 418152448,
+        "heapTotal": 233259008,
+        "heapUsed": 102700256,
+        "external": 2854719,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 44,
+      "reader": 2,
+      "elapsedMs": 301.255374999997,
+      "revision": 1000,
+      "memory": {
+        "rss": 422346752,
+        "heapTotal": 237453312,
+        "heapUsed": 107781560,
+        "external": 2854719,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 44,
+      "reader": 0,
+      "elapsedMs": 306.76237500000207,
+      "revision": 1000,
+      "memory": {
+        "rss": 426541056,
+        "heapTotal": 241647616,
+        "heapUsed": 112863640,
+        "external": 2854719,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 45,
+      "reader": 1,
+      "elapsedMs": 294.66625000000204,
+      "revision": 1000,
+      "memory": {
+        "rss": 420069376,
+        "heapTotal": 237797376,
+        "heapUsed": 111304592,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 45,
+      "reader": 3,
+      "elapsedMs": 300.239708000001,
+      "revision": 1000,
+      "memory": {
+        "rss": 424263680,
+        "heapTotal": 241991680,
+        "heapUsed": 116387064,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 45,
+      "reader": 0,
+      "elapsedMs": 305.74833299999955,
+      "revision": 1000,
+      "memory": {
+        "rss": 428457984,
+        "heapTotal": 246185984,
+        "heapUsed": 121468352,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 45,
+      "reader": 2,
+      "elapsedMs": 311.1943749999991,
+      "revision": 1000,
+      "memory": {
+        "rss": 432652288,
+        "heapTotal": 250380288,
+        "heapUsed": 126550456,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 46,
+      "reader": 0,
+      "elapsedMs": 276.0553749999999,
+      "revision": 1000,
+      "memory": {
+        "rss": 425902080,
+        "heapTotal": 251494400,
+        "heapUsed": 124485088,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 46,
+      "reader": 3,
+      "elapsedMs": 281.5231249999997,
+      "revision": 1000,
+      "memory": {
+        "rss": 430096384,
+        "heapTotal": 255688704,
+        "heapUsed": 129566360,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 46,
+      "reader": 1,
+      "elapsedMs": 287.02266600000075,
+      "revision": 1000,
+      "memory": {
+        "rss": 434290688,
+        "heapTotal": 259883008,
+        "heapUsed": 134647648,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 46,
+      "reader": 2,
+      "elapsedMs": 292.5519999999997,
+      "revision": 1000,
+      "memory": {
+        "rss": 438484992,
+        "heapTotal": 264077312,
+        "heapUsed": 139730376,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 47,
+      "reader": 0,
+      "elapsedMs": 284.32287500000166,
+      "revision": 1000,
+      "memory": {
+        "rss": 432029696,
+        "heapTotal": 264945664,
+        "heapUsed": 138336928,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 47,
+      "reader": 3,
+      "elapsedMs": 289.9782500000001,
+      "revision": 1000,
+      "memory": {
+        "rss": 436224000,
+        "heapTotal": 269139968,
+        "heapUsed": 143419360,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 47,
+      "reader": 2,
+      "elapsedMs": 295.7796249999992,
+      "revision": 1000,
+      "memory": {
+        "rss": 440418304,
+        "heapTotal": 273334272,
+        "heapUsed": 148500624,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 47,
+      "reader": 1,
+      "elapsedMs": 301.1947919999984,
+      "revision": 1000,
+      "memory": {
+        "rss": 444612608,
+        "heapTotal": 277528576,
+        "heapUsed": 153582688,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 48,
+      "reader": 1,
+      "elapsedMs": 282.46366599999965,
+      "revision": 1000,
+      "memory": {
+        "rss": 437616640,
+        "heapTotal": 278118400,
+        "heapUsed": 151400304,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 48,
+      "reader": 0,
+      "elapsedMs": 287.9378749999996,
+      "revision": 1000,
+      "memory": {
+        "rss": 441810944,
+        "heapTotal": 282312704,
+        "heapUsed": 156481600,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 48,
+      "reader": 2,
+      "elapsedMs": 293.46783399999913,
+      "revision": 1000,
+      "memory": {
+        "rss": 446005248,
+        "heapTotal": 286507008,
+        "heapUsed": 161562872,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 48,
+      "reader": 3,
+      "elapsedMs": 298.86195900000166,
+      "revision": 1000,
+      "memory": {
+        "rss": 450199552,
+        "heapTotal": 290701312,
+        "heapUsed": 166652896,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 49,
+      "reader": 3,
+      "elapsedMs": 289.89445799999885,
+      "revision": 1000,
+      "memory": {
+        "rss": 443727872,
+        "heapTotal": 292356096,
+        "heapUsed": 165304728,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 49,
+      "reader": 2,
+      "elapsedMs": 295.5379580000008,
+      "revision": 1000,
+      "memory": {
+        "rss": 447922176,
+        "heapTotal": 296550400,
+        "heapUsed": 170387184,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 49,
+      "reader": 1,
+      "elapsedMs": 300.92754200000127,
+      "revision": 1000,
+      "memory": {
+        "rss": 452116480,
+        "heapTotal": 300744704,
+        "heapUsed": 175468488,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 49,
+      "reader": 0,
+      "elapsedMs": 306.3054579999989,
+      "revision": 1000,
+      "memory": {
+        "rss": 456310784,
+        "heapTotal": 304939008,
+        "heapUsed": 180550576,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 50,
+      "reader": 2,
+      "elapsedMs": 296.54583300000013,
+      "revision": 1000,
+      "memory": {
+        "rss": 449839104,
+        "heapTotal": 306069504,
+        "heapUsed": 178923720,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 50,
+      "reader": 3,
+      "elapsedMs": 302.2846669999999,
+      "revision": 1000,
+      "memory": {
+        "rss": 454033408,
+        "heapTotal": 310263808,
+        "heapUsed": 184006160,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 50,
+      "reader": 1,
+      "elapsedMs": 307.6903330000023,
+      "revision": 1000,
+      "memory": {
+        "rss": 458227712,
+        "heapTotal": 314458112,
+        "heapUsed": 189087456,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 50,
+      "reader": 0,
+      "elapsedMs": 313.07187500000146,
+      "revision": 1000,
+      "memory": {
+        "rss": 462422016,
+        "heapTotal": 318652416,
+        "heapUsed": 194169616,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 51,
+      "reader": 3,
+      "elapsedMs": 309.4082920000001,
+      "revision": 1000,
+      "memory": {
+        "rss": 455999488,
+        "heapTotal": 319782912,
+        "heapUsed": 192666696,
+        "external": 2920255,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 51,
+      "reader": 2,
+      "elapsedMs": 318.3715830000001,
+      "revision": 1000,
+      "memory": {
+        "rss": 396722176,
+        "heapTotal": 227393536,
+        "heapUsed": 47368200,
+        "external": 2920172,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 51,
+      "reader": 0,
+      "elapsedMs": 323.96554200000173,
+      "revision": 1000,
+      "memory": {
+        "rss": 400916480,
+        "heapTotal": 231587840,
+        "heapUsed": 52449496,
+        "external": 2920172,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 51,
+      "reader": 1,
+      "elapsedMs": 329.40270800000144,
+      "revision": 1000,
+      "memory": {
+        "rss": 405110784,
+        "heapTotal": 235782144,
+        "heapUsed": 57531576,
+        "external": 2920172,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 52,
+      "reader": 3,
+      "elapsedMs": 300.17112500000076,
+      "revision": 1000,
+      "memory": {
+        "rss": 401637376,
+        "heapTotal": 232308736,
+        "heapUsed": 71720752,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 52,
+      "reader": 2,
+      "elapsedMs": 305.8301670000001,
+      "revision": 1000,
+      "memory": {
+        "rss": 405831680,
+        "heapTotal": 236503040,
+        "heapUsed": 76803208,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 52,
+      "reader": 0,
+      "elapsedMs": 311.26641599999857,
+      "revision": 1000,
+      "memory": {
+        "rss": 410025984,
+        "heapTotal": 240697344,
+        "heapUsed": 81886432,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 52,
+      "reader": 1,
+      "elapsedMs": 316.63374999999724,
+      "revision": 1000,
+      "memory": {
+        "rss": 414220288,
+        "heapTotal": 244891648,
+        "heapUsed": 86968456,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 53,
+      "reader": 3,
+      "elapsedMs": 286.1687920000004,
+      "revision": 1000,
+      "memory": {
+        "rss": 407748608,
+        "heapTotal": 238419968,
+        "heapUsed": 84371824,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 53,
+      "reader": 1,
+      "elapsedMs": 291.9767079999983,
+      "revision": 1000,
+      "memory": {
+        "rss": 411942912,
+        "heapTotal": 242614272,
+        "heapUsed": 89454200,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 53,
+      "reader": 2,
+      "elapsedMs": 297.34662500000195,
+      "revision": 1000,
+      "memory": {
+        "rss": 416137216,
+        "heapTotal": 246808576,
+        "heapUsed": 94535560,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 53,
+      "reader": 0,
+      "elapsedMs": 302.7687499999993,
+      "revision": 1000,
+      "memory": {
+        "rss": 420331520,
+        "heapTotal": 251002880,
+        "heapUsed": 99617720,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 54,
+      "reader": 0,
+      "elapsedMs": 285.38795799999934,
+      "revision": 1000,
+      "memory": {
+        "rss": 413859840,
+        "heapTotal": 244531200,
+        "heapUsed": 98076728,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 54,
+      "reader": 2,
+      "elapsedMs": 290.98370799999975,
+      "revision": 1000,
+      "memory": {
+        "rss": 418054144,
+        "heapTotal": 248725504,
+        "heapUsed": 103158728,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 54,
+      "reader": 3,
+      "elapsedMs": 296.50216699999874,
+      "revision": 1000,
+      "memory": {
+        "rss": 422248448,
+        "heapTotal": 252919808,
+        "heapUsed": 108239992,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 54,
+      "reader": 1,
+      "elapsedMs": 301.96754200000214,
+      "revision": 1000,
+      "memory": {
+        "rss": 426442752,
+        "heapTotal": 257114112,
+        "heapUsed": 113322152,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 55,
+      "reader": 2,
+      "elapsedMs": 271.9448749999974,
+      "revision": 1000,
+      "memory": {
+        "rss": 419692544,
+        "heapTotal": 250363904,
+        "heapUsed": 111253960,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 55,
+      "reader": 1,
+      "elapsedMs": 277.5802079999994,
+      "revision": 1000,
+      "memory": {
+        "rss": 423886848,
+        "heapTotal": 254558208,
+        "heapUsed": 116336400,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 55,
+      "reader": 3,
+      "elapsedMs": 282.98208299999897,
+      "revision": 1000,
+      "memory": {
+        "rss": 428081152,
+        "heapTotal": 258752512,
+        "heapUsed": 121417648,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 55,
+      "reader": 0,
+      "elapsedMs": 288.4768750000003,
+      "revision": 1000,
+      "memory": {
+        "rss": 432275456,
+        "heapTotal": 262946816,
+        "heapUsed": 126499728,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 56,
+      "reader": 2,
+      "elapsedMs": 282.44754199999807,
+      "revision": 1000,
+      "memory": {
+        "rss": 425803776,
+        "heapTotal": 256475136,
+        "heapUsed": 125191504,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 56,
+      "reader": 3,
+      "elapsedMs": 287.91649999999936,
+      "revision": 1000,
+      "memory": {
+        "rss": 429998080,
+        "heapTotal": 260669440,
+        "heapUsed": 130272848,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 56,
+      "reader": 1,
+      "elapsedMs": 293.4552920000024,
+      "revision": 1000,
+      "memory": {
+        "rss": 434192384,
+        "heapTotal": 264863744,
+        "heapUsed": 135355112,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 56,
+      "reader": 0,
+      "elapsedMs": 298.9764589999977,
+      "revision": 1000,
+      "memory": {
+        "rss": 438386688,
+        "heapTotal": 269058048,
+        "heapUsed": 140437272,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 57,
+      "reader": 3,
+      "elapsedMs": 300.97100000000137,
+      "revision": 1000,
+      "memory": {
+        "rss": 431931392,
+        "heapTotal": 265207808,
+        "heapUsed": 138889880,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 57,
+      "reader": 2,
+      "elapsedMs": 306.6042500000003,
+      "revision": 1000,
+      "memory": {
+        "rss": 436125696,
+        "heapTotal": 269402112,
+        "heapUsed": 143972320,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 57,
+      "reader": 1,
+      "elapsedMs": 312.06537500000195,
+      "revision": 1000,
+      "memory": {
+        "rss": 440320000,
+        "heapTotal": 273596416,
+        "heapUsed": 149053568,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 57,
+      "reader": 0,
+      "elapsedMs": 317.6288749999985,
+      "revision": 1000,
+      "memory": {
+        "rss": 444514304,
+        "heapTotal": 277790720,
+        "heapUsed": 154135648,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 58,
+      "reader": 0,
+      "elapsedMs": 296.296792000001,
+      "revision": 1000,
+      "memory": {
+        "rss": 437764096,
+        "heapTotal": 278904832,
+        "heapUsed": 152150840,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 58,
+      "reader": 3,
+      "elapsedMs": 302.06825000000026,
+      "revision": 1000,
+      "memory": {
+        "rss": 441958400,
+        "heapTotal": 283099136,
+        "heapUsed": 157233272,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 58,
+      "reader": 2,
+      "elapsedMs": 307.4450829999987,
+      "revision": 1000,
+      "memory": {
+        "rss": 446152704,
+        "heapTotal": 287293440,
+        "heapUsed": 162314512,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 58,
+      "reader": 1,
+      "elapsedMs": 312.8588750000017,
+      "revision": 1000,
+      "memory": {
+        "rss": 450347008,
+        "heapTotal": 291487744,
+        "heapUsed": 167396536,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 59,
+      "reader": 1,
+      "elapsedMs": 298.99241600000096,
+      "revision": 1000,
+      "memory": {
+        "rss": 443875328,
+        "heapTotal": 292618240,
+        "heapUsed": 165998904,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 59,
+      "reader": 3,
+      "elapsedMs": 304.6391670000012,
+      "revision": 1000,
+      "memory": {
+        "rss": 448069632,
+        "heapTotal": 296812544,
+        "heapUsed": 171081344,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 59,
+      "reader": 2,
+      "elapsedMs": 310.04904199999874,
+      "revision": 1000,
+      "memory": {
+        "rss": 452263936,
+        "heapTotal": 301006848,
+        "heapUsed": 176162592,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 59,
+      "reader": 0,
+      "elapsedMs": 315.46500000000015,
+      "revision": 1000,
+      "memory": {
+        "rss": 456458240,
+        "heapTotal": 305201152,
+        "heapUsed": 181244672,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 60,
+      "reader": 1,
+      "elapsedMs": 198.9334170000002,
+      "revision": 1000,
+      "memory": {
+        "rss": 449085440,
+        "heapTotal": 301203456,
+        "heapUsed": 212081888,
+        "external": 2854548,
+        "arrayBuffers": 209422
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 60,
+      "reader": 0,
+      "elapsedMs": 304.9504159999997,
+      "revision": 1000,
+      "memory": {
+        "rss": 450658304,
+        "heapTotal": 306708480,
+        "heapUsed": 181037664,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 60,
+      "reader": 2,
+      "elapsedMs": 314.4587500000016,
+      "revision": 1000,
+      "memory": {
+        "rss": 454852608,
+        "heapTotal": 310902784,
+        "heapUsed": 186139320,
+        "external": 2854548,
+        "arrayBuffers": 209422
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 60,
+      "reader": 3,
+      "elapsedMs": 320.08395799999926,
+      "revision": 1000,
+      "memory": {
+        "rss": 459046912,
+        "heapTotal": 315097088,
+        "heapUsed": 191221832,
+        "external": 2854548,
+        "arrayBuffers": 209422
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 61,
+      "reader": 1,
+      "elapsedMs": 293.14429200000086,
+      "revision": 1000,
+      "memory": {
+        "rss": 396328960,
+        "heapTotal": 256786432,
+        "heapUsed": 72368376,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 61,
+      "reader": 3,
+      "elapsedMs": 298.8522499999999,
+      "revision": 1000,
+      "memory": {
+        "rss": 400523264,
+        "heapTotal": 260980736,
+        "heapUsed": 77450816,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 61,
+      "reader": 2,
+      "elapsedMs": 304.27220800000214,
+      "revision": 1000,
+      "memory": {
+        "rss": 404717568,
+        "heapTotal": 265175040,
+        "heapUsed": 82532104,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 61,
+      "reader": 0,
+      "elapsedMs": 309.6245420000014,
+      "revision": 1000,
+      "memory": {
+        "rss": 408911872,
+        "heapTotal": 269369344,
+        "heapUsed": 87614096,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 62,
+      "reader": 1,
+      "elapsedMs": 280.40066699999807,
+      "revision": 1000,
+      "memory": {
+        "rss": 402440192,
+        "heapTotal": 262897664,
+        "heapUsed": 96664272,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 62,
+      "reader": 0,
+      "elapsedMs": 285.8318340000005,
+      "revision": 1000,
+      "memory": {
+        "rss": 406634496,
+        "heapTotal": 267091968,
+        "heapUsed": 101745616,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 62,
+      "reader": 2,
+      "elapsedMs": 291.4709580000017,
+      "revision": 1000,
+      "memory": {
+        "rss": 410828800,
+        "heapTotal": 271286272,
+        "heapUsed": 106827880,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 62,
+      "reader": 3,
+      "elapsedMs": 296.95145799999955,
+      "revision": 1000,
+      "memory": {
+        "rss": 415023104,
+        "heapTotal": 275480576,
+        "heapUsed": 111910040,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 63,
+      "reader": 3,
+      "elapsedMs": 276.65799999999945,
+      "revision": 1000,
+      "memory": {
+        "rss": 408338432,
+        "heapTotal": 268730368,
+        "heapUsed": 109941288,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 63,
+      "reader": 0,
+      "elapsedMs": 282.36724999999933,
+      "revision": 1000,
+      "memory": {
+        "rss": 412532736,
+        "heapTotal": 272924672,
+        "heapUsed": 115028232,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 63,
+      "reader": 2,
+      "elapsedMs": 288.08670800000255,
+      "revision": 1000,
+      "memory": {
+        "rss": 416727040,
+        "heapTotal": 277118976,
+        "heapUsed": 120130928,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 63,
+      "reader": 1,
+      "elapsedMs": 293.6012090000004,
+      "revision": 1000,
+      "memory": {
+        "rss": 420921344,
+        "heapTotal": 281313280,
+        "heapUsed": 125215568,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 64,
+      "reader": 1,
+      "elapsedMs": 270.9696670000012,
+      "revision": 1000,
+      "memory": {
+        "rss": 414203904,
+        "heapTotal": 274563072,
+        "heapUsed": 123291592,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 64,
+      "reader": 3,
+      "elapsedMs": 276.49212500000067,
+      "revision": 1000,
+      "memory": {
+        "rss": 418398208,
+        "heapTotal": 278757376,
+        "heapUsed": 128373336,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 64,
+      "reader": 2,
+      "elapsedMs": 282.0110420000019,
+      "revision": 1000,
+      "memory": {
+        "rss": 422592512,
+        "heapTotal": 282951680,
+        "heapUsed": 133455032,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 64,
+      "reader": 0,
+      "elapsedMs": 287.6205000000009,
+      "revision": 1000,
+      "memory": {
+        "rss": 426786816,
+        "heapTotal": 287145984,
+        "heapUsed": 138537016,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 65,
+      "reader": 0,
+      "elapsedMs": 277.58000000000175,
+      "revision": 1000,
+      "memory": {
+        "rss": 420052992,
+        "heapTotal": 280395776,
+        "heapUsed": 136800976,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 65,
+      "reader": 3,
+      "elapsedMs": 283.1986250000009,
+      "revision": 1000,
+      "memory": {
+        "rss": 424247296,
+        "heapTotal": 284590080,
+        "heapUsed": 141883624,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 65,
+      "reader": 1,
+      "elapsedMs": 288.5978750000031,
+      "revision": 1000,
+      "memory": {
+        "rss": 428441600,
+        "heapTotal": 288784384,
+        "heapUsed": 146964984,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 65,
+      "reader": 2,
+      "elapsedMs": 294.06475000000137,
+      "revision": 1000,
+      "memory": {
+        "rss": 432635904,
+        "heapTotal": 292978688,
+        "heapUsed": 152047144,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 66,
+      "reader": 1,
+      "elapsedMs": 300.80162500000006,
+      "revision": 1000,
+      "memory": {
+        "rss": 426180608,
+        "heapTotal": 286507008,
+        "heapUsed": 150705184,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 66,
+      "reader": 0,
+      "elapsedMs": 309.20850000000064,
+      "revision": 1000,
+      "memory": {
+        "rss": 396951552,
+        "heapTotal": 231063552,
+        "heapUsed": 47536472,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 66,
+      "reader": 2,
+      "elapsedMs": 314.6621249999989,
+      "revision": 1000,
+      "memory": {
+        "rss": 401145856,
+        "heapTotal": 235257856,
+        "heapUsed": 52617744,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 66,
+      "reader": 3,
+      "elapsedMs": 320.16866599999776,
+      "revision": 1000,
+      "memory": {
+        "rss": 405340160,
+        "heapTotal": 239452160,
+        "heapUsed": 57699664,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 67,
+      "reader": 0,
+      "elapsedMs": 304.56720900000073,
+      "revision": 1000,
+      "memory": {
+        "rss": 402046976,
+        "heapTotal": 236142592,
+        "heapUsed": 72263056,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 67,
+      "reader": 1,
+      "elapsedMs": 310.18870799999786,
+      "revision": 1000,
+      "memory": {
+        "rss": 406241280,
+        "heapTotal": 240336896,
+        "heapUsed": 77345776,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 67,
+      "reader": 3,
+      "elapsedMs": 315.724041999998,
+      "revision": 1000,
+      "memory": {
+        "rss": 410435584,
+        "heapTotal": 244531200,
+        "heapUsed": 82427216,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 67,
+      "reader": 2,
+      "elapsedMs": 321.18116700000246,
+      "revision": 1000,
+      "memory": {
+        "rss": 414629888,
+        "heapTotal": 248725504,
+        "heapUsed": 87509376,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 68,
+      "reader": 1,
+      "elapsedMs": 291.0989580000023,
+      "revision": 1000,
+      "memory": {
+        "rss": 407879680,
+        "heapTotal": 241975296,
+        "heapUsed": 84194616,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 68,
+      "reader": 2,
+      "elapsedMs": 296.8310829999973,
+      "revision": 1000,
+      "memory": {
+        "rss": 412073984,
+        "heapTotal": 246169600,
+        "heapUsed": 89277280,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 68,
+      "reader": 0,
+      "elapsedMs": 302.20366600000125,
+      "revision": 1000,
+      "memory": {
+        "rss": 416268288,
+        "heapTotal": 250363904,
+        "heapUsed": 94358440,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 68,
+      "reader": 3,
+      "elapsedMs": 307.6163750000014,
+      "revision": 1000,
+      "memory": {
+        "rss": 420462592,
+        "heapTotal": 254558208,
+        "heapUsed": 99440384,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 69,
+      "reader": 2,
+      "elapsedMs": 281.05908400000044,
+      "revision": 1000,
+      "memory": {
+        "rss": 413712384,
+        "heapTotal": 247808000,
+        "heapUsed": 97642320,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 69,
+      "reader": 3,
+      "elapsedMs": 286.8105829999986,
+      "revision": 1000,
+      "memory": {
+        "rss": 417906688,
+        "heapTotal": 252002304,
+        "heapUsed": 102724992,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 69,
+      "reader": 0,
+      "elapsedMs": 292.3295419999995,
+      "revision": 1000,
+      "memory": {
+        "rss": 422100992,
+        "heapTotal": 256196608,
+        "heapUsed": 107806200,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 69,
+      "reader": 1,
+      "elapsedMs": 297.7715840000019,
+      "revision": 1000,
+      "memory": {
+        "rss": 426295296,
+        "heapTotal": 260390912,
+        "heapUsed": 112888096,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 70,
+      "reader": 2,
+      "elapsedMs": 284.95129200000156,
+      "revision": 1000,
+      "memory": {
+        "rss": 419823616,
+        "heapTotal": 253919232,
+        "heapUsed": 111522528,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 70,
+      "reader": 3,
+      "elapsedMs": 290.7328750000015,
+      "revision": 1000,
+      "memory": {
+        "rss": 424017920,
+        "heapTotal": 258113536,
+        "heapUsed": 116605192,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 70,
+      "reader": 1,
+      "elapsedMs": 296.2161669999987,
+      "revision": 1000,
+      "memory": {
+        "rss": 428212224,
+        "heapTotal": 262307840,
+        "heapUsed": 121686408,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 70,
+      "reader": 0,
+      "elapsedMs": 301.7519169999978,
+      "revision": 1000,
+      "memory": {
+        "rss": 432406528,
+        "heapTotal": 266502144,
+        "heapUsed": 126768296,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 71,
+      "reader": 1,
+      "elapsedMs": 279.14724999999817,
+      "revision": 1000,
+      "memory": {
+        "rss": 425984000,
+        "heapTotal": 260292608,
+        "heapUsed": 125216432,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 71,
+      "reader": 2,
+      "elapsedMs": 284.8311250000006,
+      "revision": 1000,
+      "memory": {
+        "rss": 430178304,
+        "heapTotal": 264486912,
+        "heapUsed": 130299024,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 71,
+      "reader": 0,
+      "elapsedMs": 290.4042499999996,
+      "revision": 1000,
+      "memory": {
+        "rss": 434372608,
+        "heapTotal": 268681216,
+        "heapUsed": 135380040,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 71,
+      "reader": 3,
+      "elapsedMs": 295.8135000000002,
+      "revision": 1000,
+      "memory": {
+        "rss": 438566912,
+        "heapTotal": 272875520,
+        "heapUsed": 140461872,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 72,
+      "reader": 2,
+      "elapsedMs": 297.7763339999983,
+      "revision": 1000,
+      "memory": {
+        "rss": 432095232,
+        "heapTotal": 266403840,
+        "heapUsed": 138915480,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 72,
+      "reader": 0,
+      "elapsedMs": 303.4480829999993,
+      "revision": 1000,
+      "memory": {
+        "rss": 436289536,
+        "heapTotal": 270598144,
+        "heapUsed": 143997096,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 72,
+      "reader": 3,
+      "elapsedMs": 309.44333400000323,
+      "revision": 1000,
+      "memory": {
+        "rss": 440483840,
+        "heapTotal": 274792448,
+        "heapUsed": 149078688,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 72,
+      "reader": 1,
+      "elapsedMs": 314.95820900000035,
+      "revision": 1000,
+      "memory": {
+        "rss": 444678144,
+        "heapTotal": 278986752,
+        "heapUsed": 154160504,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 73,
+      "reader": 3,
+      "elapsedMs": 286.58458299999984,
+      "revision": 1000,
+      "memory": {
+        "rss": 438222848,
+        "heapTotal": 279330816,
+        "heapUsed": 152557160,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 73,
+      "reader": 0,
+      "elapsedMs": 292.3623750000006,
+      "revision": 1000,
+      "memory": {
+        "rss": 442417152,
+        "heapTotal": 283525120,
+        "heapUsed": 157639696,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 73,
+      "reader": 1,
+      "elapsedMs": 297.7465830000001,
+      "revision": 1000,
+      "memory": {
+        "rss": 446611456,
+        "heapTotal": 287719424,
+        "heapUsed": 162721560,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 73,
+      "reader": 2,
+      "elapsedMs": 303.14624999999796,
+      "revision": 1000,
+      "memory": {
+        "rss": 450805760,
+        "heapTotal": 291913728,
+        "heapUsed": 167803368,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 74,
+      "reader": 1,
+      "elapsedMs": 282.3866659999985,
+      "revision": 1000,
+      "memory": {
+        "rss": 444334080,
+        "heapTotal": 293044224,
+        "heapUsed": 166260808,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 74,
+      "reader": 0,
+      "elapsedMs": 288.10362499999974,
+      "revision": 1000,
+      "memory": {
+        "rss": 448528384,
+        "heapTotal": 297238528,
+        "heapUsed": 171343384,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 74,
+      "reader": 2,
+      "elapsedMs": 293.57545899999604,
+      "revision": 1000,
+      "memory": {
+        "rss": 452722688,
+        "heapTotal": 301432832,
+        "heapUsed": 176424744,
+        "external": 2920172,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 74,
+      "reader": 3,
+      "elapsedMs": 298.9625419999975,
+      "revision": 1000,
+      "memory": {
+        "rss": 456916992,
+        "heapTotal": 305627136,
+        "heapUsed": 181506576,
+        "external": 2920172,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 75,
+      "reader": 1,
+      "elapsedMs": 323.7178749999948,
+      "revision": 1000,
+      "memory": {
+        "rss": 450445312,
+        "heapTotal": 307019776,
+        "heapUsed": 179951736,
+        "external": 2920172,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 75,
+      "reader": 3,
+      "elapsedMs": 329.3380000000034,
+      "revision": 1000,
+      "memory": {
+        "rss": 454639616,
+        "heapTotal": 311214080,
+        "heapUsed": 185034384,
+        "external": 2920172,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 75,
+      "reader": 0,
+      "elapsedMs": 334.7494169999991,
+      "revision": 1000,
+      "memory": {
+        "rss": 458833920,
+        "heapTotal": 315408384,
+        "heapUsed": 190115496,
+        "external": 2920172,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 75,
+      "reader": 2,
+      "elapsedMs": 340.184666000001,
+      "revision": 1000,
+      "memory": {
+        "rss": 463028224,
+        "heapTotal": 319602688,
+        "heapUsed": 195197304,
+        "external": 2920172,
+        "arrayBuffers": 275046
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 76,
+      "reader": 0,
+      "elapsedMs": 299.4490829999995,
+      "revision": 1000,
+      "memory": {
+        "rss": 396132352,
+        "heapTotal": 241418240,
+        "heapUsed": 45803072,
+        "external": 2920172,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 76,
+      "reader": 1,
+      "elapsedMs": 305.0071669999961,
+      "revision": 1000,
+      "memory": {
+        "rss": 400326656,
+        "heapTotal": 245612544,
+        "heapUsed": 50884096,
+        "external": 2920172,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 76,
+      "reader": 3,
+      "elapsedMs": 310.38483299999643,
+      "revision": 1000,
+      "memory": {
+        "rss": 404520960,
+        "heapTotal": 249806848,
+        "heapUsed": 55965136,
+        "external": 2920172,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 76,
+      "reader": 2,
+      "elapsedMs": 315.8699170000036,
+      "revision": 1000,
+      "memory": {
+        "rss": 408715264,
+        "heapTotal": 254001152,
+        "heapUsed": 61046976,
+        "external": 2920172,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 77,
+      "reader": 3,
+      "elapsedMs": 295.1785000000018,
+      "revision": 1000,
+      "memory": {
+        "rss": 402128896,
+        "heapTotal": 247414784,
+        "heapUsed": 71462152,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 77,
+      "reader": 0,
+      "elapsedMs": 300.9974999999977,
+      "revision": 1000,
+      "memory": {
+        "rss": 406323200,
+        "heapTotal": 251609088,
+        "heapUsed": 76544720,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 77,
+      "reader": 1,
+      "elapsedMs": 306.36070800000016,
+      "revision": 1000,
+      "memory": {
+        "rss": 410517504,
+        "heapTotal": 255803392,
+        "heapUsed": 81625832,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 77,
+      "reader": 2,
+      "elapsedMs": 311.78479199999856,
+      "revision": 1000,
+      "memory": {
+        "rss": 414711808,
+        "heapTotal": 259997696,
+        "heapUsed": 86707640,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 78,
+      "reader": 0,
+      "elapsedMs": 323.60558299999684,
+      "revision": 1000,
+      "memory": {
+        "rss": 408240128,
+        "heapTotal": 253526016,
+        "heapUsed": 83753480,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 78,
+      "reader": 3,
+      "elapsedMs": 329.3481660000034,
+      "revision": 1000,
+      "memory": {
+        "rss": 412434432,
+        "heapTotal": 257720320,
+        "heapUsed": 88836072,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 78,
+      "reader": 2,
+      "elapsedMs": 334.7999589999963,
+      "revision": 1000,
+      "memory": {
+        "rss": 416628736,
+        "heapTotal": 261914624,
+        "heapUsed": 93917176,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 78,
+      "reader": 1,
+      "elapsedMs": 340.2856250000041,
+      "revision": 1000,
+      "memory": {
+        "rss": 420823040,
+        "heapTotal": 266108928,
+        "heapUsed": 98998992,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 79,
+      "reader": 0,
+      "elapsedMs": 175.61070800000016,
+      "revision": 1000,
+      "memory": {
+        "rss": 413417472,
+        "heapTotal": 258703360,
+        "heapUsed": 129905088,
+        "external": 2854548,
+        "arrayBuffers": 209422
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 79,
+      "reader": 2,
+      "elapsedMs": 180.95912500000122,
+      "revision": 1000,
+      "memory": {
+        "rss": 417611776,
+        "heapTotal": 262897664,
+        "heapUsed": 134986168,
+        "external": 2854548,
+        "arrayBuffers": 209422
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 79,
+      "reader": 1,
+      "elapsedMs": 286.7338749999981,
+      "revision": 1000,
+      "memory": {
+        "rss": 415645696,
+        "heapTotal": 260931584,
+        "heapUsed": 100489680,
+        "external": 2854548,
+        "arrayBuffers": 209422
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 79,
+      "reader": 3,
+      "elapsedMs": 292.2099999999991,
+      "revision": 1000,
+      "memory": {
+        "rss": 419840000,
+        "heapTotal": 265125888,
+        "heapUsed": 105571512,
+        "external": 2854548,
+        "arrayBuffers": 209422
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 80,
+      "reader": 0,
+      "elapsedMs": 279.4904170000009,
+      "revision": 1000,
+      "memory": {
+        "rss": 419381248,
+        "heapTotal": 264667136,
+        "heapUsed": 109937512,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 80,
+      "reader": 2,
+      "elapsedMs": 284.9319170000017,
+      "revision": 1000,
+      "memory": {
+        "rss": 423575552,
+        "heapTotal": 268861440,
+        "heapUsed": 115018608,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 80,
+      "reader": 3,
+      "elapsedMs": 290.60733400000026,
+      "revision": 1000,
+      "memory": {
+        "rss": 427769856,
+        "heapTotal": 273055744,
+        "heapUsed": 120100848,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 80,
+      "reader": 1,
+      "elapsedMs": 296.10783300000185,
+      "revision": 1000,
+      "memory": {
+        "rss": 431964160,
+        "heapTotal": 277250048,
+        "heapUsed": 125182768,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 81,
+      "reader": 1,
+      "elapsedMs": 275.89920799999527,
+      "revision": 1000,
+      "memory": {
+        "rss": 425213952,
+        "heapTotal": 270499840,
+        "heapUsed": 123361528,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 81,
+      "reader": 0,
+      "elapsedMs": 281.54637500000536,
+      "revision": 1000,
+      "memory": {
+        "rss": 429408256,
+        "heapTotal": 274694144,
+        "heapUsed": 128444184,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 81,
+      "reader": 2,
+      "elapsedMs": 286.89929099999426,
+      "revision": 1000,
+      "memory": {
+        "rss": 433602560,
+        "heapTotal": 278888448,
+        "heapUsed": 133525216,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 81,
+      "reader": 3,
+      "elapsedMs": 292.3286669999943,
+      "revision": 1000,
+      "memory": {
+        "rss": 437796864,
+        "heapTotal": 283082752,
+        "heapUsed": 138607032,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 82,
+      "reader": 1,
+      "elapsedMs": 287.32850000000326,
+      "revision": 1000,
+      "memory": {
+        "rss": 431341568,
+        "heapTotal": 276611072,
+        "heapUsed": 137197584,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 82,
+      "reader": 3,
+      "elapsedMs": 292.7358749999985,
+      "revision": 1000,
+      "memory": {
+        "rss": 435535872,
+        "heapTotal": 280805376,
+        "heapUsed": 142278624,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 82,
+      "reader": 0,
+      "elapsedMs": 298.1128329999992,
+      "revision": 1000,
+      "memory": {
+        "rss": 439730176,
+        "heapTotal": 284999680,
+        "heapUsed": 147359648,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 82,
+      "reader": 2,
+      "elapsedMs": 303.578582999995,
+      "revision": 1000,
+      "memory": {
+        "rss": 443924480,
+        "heapTotal": 289193984,
+        "heapUsed": 152441472,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 83,
+      "reader": 2,
+      "elapsedMs": 295.369541,
+      "revision": 1000,
+      "memory": {
+        "rss": 437469184,
+        "heapTotal": 282722304,
+        "heapUsed": 150975336,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 83,
+      "reader": 0,
+      "elapsedMs": 301.0051669999957,
+      "revision": 1000,
+      "memory": {
+        "rss": 441663488,
+        "heapTotal": 286916608,
+        "heapUsed": 156057936,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 83,
+      "reader": 3,
+      "elapsedMs": 306.3812920000055,
+      "revision": 1000,
+      "memory": {
+        "rss": 445857792,
+        "heapTotal": 291110912,
+        "heapUsed": 161139024,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 83,
+      "reader": 1,
+      "elapsedMs": 311.7780829999974,
+      "revision": 1000,
+      "memory": {
+        "rss": 450052096,
+        "heapTotal": 295305216,
+        "heapUsed": 166220848,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 84,
+      "reader": 1,
+      "elapsedMs": 297.09404200000426,
+      "revision": 1000,
+      "memory": {
+        "rss": 443580416,
+        "heapTotal": 291454976,
+        "heapUsed": 164668240,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 84,
+      "reader": 2,
+      "elapsedMs": 302.8377499999988,
+      "revision": 1000,
+      "memory": {
+        "rss": 447774720,
+        "heapTotal": 295649280,
+        "heapUsed": 169750752,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 84,
+      "reader": 3,
+      "elapsedMs": 308.3746670000037,
+      "revision": 1000,
+      "memory": {
+        "rss": 452001792,
+        "heapTotal": 299843584,
+        "heapUsed": 174877144,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 84,
+      "reader": 0,
+      "elapsedMs": 313.765916999997,
+      "revision": 1000,
+      "memory": {
+        "rss": 456196096,
+        "heapTotal": 304037888,
+        "heapUsed": 179958976,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 85,
+      "reader": 2,
+      "elapsedMs": 309.93987500000367,
+      "revision": 1000,
+      "memory": {
+        "rss": 449724416,
+        "heapTotal": 305168384,
+        "heapUsed": 178385664,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 85,
+      "reader": 3,
+      "elapsedMs": 315.38812500000495,
+      "revision": 1000,
+      "memory": {
+        "rss": 453918720,
+        "heapTotal": 309362688,
+        "heapUsed": 183466744,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 85,
+      "reader": 1,
+      "elapsedMs": 320.9940409999981,
+      "revision": 1000,
+      "memory": {
+        "rss": 458113024,
+        "heapTotal": 313556992,
+        "heapUsed": 188548792,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 85,
+      "reader": 0,
+      "elapsedMs": 326.49204199999804,
+      "revision": 1000,
+      "memory": {
+        "rss": 462307328,
+        "heapTotal": 317751296,
+        "heapUsed": 193630688,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 86,
+      "reader": 0,
+      "elapsedMs": 291.7585420000032,
+      "revision": 1000,
+      "memory": {
+        "rss": 397213696,
+        "heapTotal": 266649600,
+        "heapUsed": 110616984,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 86,
+      "reader": 1,
+      "elapsedMs": 297.3530000000028,
+      "revision": 1000,
+      "memory": {
+        "rss": 401408000,
+        "heapTotal": 270843904,
+        "heapUsed": 115698080,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 86,
+      "reader": 3,
+      "elapsedMs": 303.11179199999606,
+      "revision": 1000,
+      "memory": {
+        "rss": 405602304,
+        "heapTotal": 275038208,
+        "heapUsed": 120780072,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 86,
+      "reader": 2,
+      "elapsedMs": 308.6177089999983,
+      "revision": 1000,
+      "memory": {
+        "rss": 409796608,
+        "heapTotal": 279232512,
+        "heapUsed": 125861968,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 87,
+      "reader": 2,
+      "elapsedMs": 233.955750000001,
+      "revision": 1000,
+      "memory": {
+        "rss": 403374080,
+        "heapTotal": 272793600,
+        "heapUsed": 138752176,
+        "external": 2854416,
+        "arrayBuffers": 209290
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 87,
+      "reader": 0,
+      "elapsedMs": 246.25920799999585,
+      "revision": 1000,
+      "memory": {
+        "rss": 407568384,
+        "heapTotal": 276987904,
+        "heapUsed": 143834272,
+        "external": 2854416,
+        "arrayBuffers": 209290
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 87,
+      "reader": 3,
+      "elapsedMs": 255.0277919999935,
+      "revision": 1000,
+      "memory": {
+        "rss": 404783104,
+        "heapTotal": 274202624,
+        "heapUsed": 88377240,
+        "external": 2854416,
+        "arrayBuffers": 209158
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 87,
+      "reader": 1,
+      "elapsedMs": 322.028416000001,
+      "revision": 1000,
+      "memory": {
+        "rss": 409960448,
+        "heapTotal": 279363584,
+        "heapUsed": 143961424,
+        "external": 2854328,
+        "arrayBuffers": 209202
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 88,
+      "reader": 0,
+      "elapsedMs": 283.5007919999989,
+      "revision": 1000,
+      "memory": {
+        "rss": 410255360,
+        "heapTotal": 279166976,
+        "heapUsed": 146358088,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 88,
+      "reader": 1,
+      "elapsedMs": 291.9669169999979,
+      "revision": 1000,
+      "memory": {
+        "rss": 397803520,
+        "heapTotal": 210616320,
+        "heapUsed": 47690768,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 88,
+      "reader": 2,
+      "elapsedMs": 297.4750000000058,
+      "revision": 1000,
+      "memory": {
+        "rss": 401997824,
+        "heapTotal": 214810624,
+        "heapUsed": 52772112,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 88,
+      "reader": 3,
+      "elapsedMs": 303.06104099999357,
+      "revision": 1000,
+      "memory": {
+        "rss": 406192128,
+        "heapTotal": 219004928,
+        "heapUsed": 57853968,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 89,
+      "reader": 0,
+      "elapsedMs": 283.9766249999957,
+      "revision": 1000,
+      "memory": {
+        "rss": 402915328,
+        "heapTotal": 215695360,
+        "heapUsed": 72324440,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 89,
+      "reader": 2,
+      "elapsedMs": 289.6360410000052,
+      "revision": 1000,
+      "memory": {
+        "rss": 407109632,
+        "heapTotal": 219889664,
+        "heapUsed": 77406976,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 89,
+      "reader": 3,
+      "elapsedMs": 295.1992089999985,
+      "revision": 1000,
+      "memory": {
+        "rss": 411303936,
+        "heapTotal": 224083968,
+        "heapUsed": 82488072,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 89,
+      "reader": 1,
+      "elapsedMs": 300.6339999999982,
+      "revision": 1000,
+      "memory": {
+        "rss": 415498240,
+        "heapTotal": 228278272,
+        "heapUsed": 87574424,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 90,
+      "reader": 1,
+      "elapsedMs": 281.8521250000049,
+      "revision": 1000,
+      "memory": {
+        "rss": 409026560,
+        "heapTotal": 221806592,
+        "heapUsed": 84814768,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 90,
+      "reader": 0,
+      "elapsedMs": 287.4227500000052,
+      "revision": 1000,
+      "memory": {
+        "rss": 413220864,
+        "heapTotal": 226000896,
+        "heapUsed": 89896512,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 90,
+      "reader": 2,
+      "elapsedMs": 292.94795899999735,
+      "revision": 1000,
+      "memory": {
+        "rss": 417415168,
+        "heapTotal": 230195200,
+        "heapUsed": 94978032,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 90,
+      "reader": 3,
+      "elapsedMs": 298.4736669999984,
+      "revision": 1000,
+      "memory": {
+        "rss": 421609472,
+        "heapTotal": 234389504,
+        "heapUsed": 100060112,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 91,
+      "reader": 3,
+      "elapsedMs": 238.33633299999929,
+      "revision": 1000,
+      "memory": {
+        "rss": 414613504,
+        "heapTotal": 227377152,
+        "heapUsed": 114651168,
+        "external": 2854592,
+        "arrayBuffers": 209466
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 91,
+      "reader": 2,
+      "elapsedMs": 293.0598339999997,
+      "revision": 1000,
+      "memory": {
+        "rss": 415809536,
+        "heapTotal": 228573184,
+        "heapUsed": 100080384,
+        "external": 2854592,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 91,
+      "reader": 0,
+      "elapsedMs": 298.6344160000008,
+      "revision": 1000,
+      "memory": {
+        "rss": 420003840,
+        "heapTotal": 232767488,
+        "heapUsed": 105161424,
+        "external": 2854592,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 91,
+      "reader": 1,
+      "elapsedMs": 305.2919589999947,
+      "revision": 1000,
+      "memory": {
+        "rss": 424198144,
+        "heapTotal": 236961792,
+        "heapUsed": 110253992,
+        "external": 2854504,
+        "arrayBuffers": 209378
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 92,
+      "reader": 1,
+      "elapsedMs": 294.7427919999973,
+      "revision": 1000,
+      "memory": {
+        "rss": 421019648,
+        "heapTotal": 237961216,
+        "heapUsed": 111895320,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 92,
+      "reader": 2,
+      "elapsedMs": 300.5014169999995,
+      "revision": 1000,
+      "memory": {
+        "rss": 425213952,
+        "heapTotal": 242155520,
+        "heapUsed": 116977912,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 92,
+      "reader": 0,
+      "elapsedMs": 306.6732499999998,
+      "revision": 1000,
+      "memory": {
+        "rss": 429408256,
+        "heapTotal": 246349824,
+        "heapUsed": 122058928,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 92,
+      "reader": 3,
+      "elapsedMs": 312.60783300000185,
+      "revision": 1000,
+      "memory": {
+        "rss": 433602560,
+        "heapTotal": 250544128,
+        "heapUsed": 127140760,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 93,
+      "reader": 3,
+      "elapsedMs": 197.02387499999895,
+      "revision": 1000,
+      "memory": {
+        "rss": 426196992,
+        "heapTotal": 246546432,
+        "heapUsed": 157972840,
+        "external": 2854548,
+        "arrayBuffers": 209422
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 93,
+      "reader": 1,
+      "elapsedMs": 301.87041700000555,
+      "revision": 1000,
+      "memory": {
+        "rss": 427769856,
+        "heapTotal": 252051456,
+        "heapUsed": 127006736,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 93,
+      "reader": 0,
+      "elapsedMs": 313.2169580000045,
+      "revision": 1000,
+      "memory": {
+        "rss": 431964160,
+        "heapTotal": 256245760,
+        "heapUsed": 132108440,
+        "external": 2854548,
+        "arrayBuffers": 209422
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 93,
+      "reader": 2,
+      "elapsedMs": 318.9082500000004,
+      "revision": 1000,
+      "memory": {
+        "rss": 436158464,
+        "heapTotal": 260440064,
+        "heapUsed": 137191096,
+        "external": 2854548,
+        "arrayBuffers": 209422
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 94,
+      "reader": 3,
+      "elapsedMs": 288.8744579999984,
+      "revision": 1000,
+      "memory": {
+        "rss": 432963584,
+        "heapTotal": 265109504,
+        "heapUsed": 138976096,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 94,
+      "reader": 1,
+      "elapsedMs": 294.58033300000534,
+      "revision": 1000,
+      "memory": {
+        "rss": 437157888,
+        "heapTotal": 269303808,
+        "heapUsed": 144058688,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 94,
+      "reader": 0,
+      "elapsedMs": 299.9994169999991,
+      "revision": 1000,
+      "memory": {
+        "rss": 441352192,
+        "heapTotal": 273498112,
+        "heapUsed": 149139784,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 94,
+      "reader": 2,
+      "elapsedMs": 305.37983299999905,
+      "revision": 1000,
+      "memory": {
+        "rss": 445546496,
+        "heapTotal": 277692416,
+        "heapUsed": 154221616,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 95,
+      "reader": 1,
+      "elapsedMs": 232.44320800000423,
+      "revision": 1000,
+      "memory": {
+        "rss": 438534144,
+        "heapTotal": 276185088,
+        "heapUsed": 168870616,
+        "external": 2854592,
+        "arrayBuffers": 209466
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 95,
+      "reader": 3,
+      "elapsedMs": 287.0451660000035,
+      "revision": 1000,
+      "memory": {
+        "rss": 439730176,
+        "heapTotal": 280002560,
+        "heapUsed": 154258720,
+        "external": 2854592,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 95,
+      "reader": 2,
+      "elapsedMs": 292.52037500000006,
+      "revision": 1000,
+      "memory": {
+        "rss": 443924480,
+        "heapTotal": 284196864,
+        "heapUsed": 159339760,
+        "external": 2854592,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 95,
+      "reader": 0,
+      "elapsedMs": 299.0792090000032,
+      "revision": 1000,
+      "memory": {
+        "rss": 448118784,
+        "heapTotal": 288391168,
+        "heapUsed": 164432320,
+        "external": 2854504,
+        "arrayBuffers": 209378
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 96,
+      "reader": 0,
+      "elapsedMs": 275.1695829999953,
+      "revision": 1000,
+      "memory": {
+        "rss": 444661760,
+        "heapTotal": 292519936,
+        "heapUsed": 165625160,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 96,
+      "reader": 1,
+      "elapsedMs": 280.57420800000546,
+      "revision": 1000,
+      "memory": {
+        "rss": 448856064,
+        "heapTotal": 296714240,
+        "heapUsed": 170706232,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 96,
+      "reader": 2,
+      "elapsedMs": 286.20737499999814,
+      "revision": 1000,
+      "memory": {
+        "rss": 453050368,
+        "heapTotal": 300908544,
+        "heapUsed": 175788496,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 96,
+      "reader": 3,
+      "elapsedMs": 291.70720900000015,
+      "revision": 1000,
+      "memory": {
+        "rss": 457244672,
+        "heapTotal": 305102848,
+        "heapUsed": 180870392,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 97,
+      "reader": 2,
+      "elapsedMs": 271.04354100000637,
+      "revision": 1000,
+      "memory": {
+        "rss": 450494464,
+        "heapTotal": 305692672,
+        "heapUsed": 179089192,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 97,
+      "reader": 1,
+      "elapsedMs": 276.6986659999966,
+      "revision": 1000,
+      "memory": {
+        "rss": 454688768,
+        "heapTotal": 309886976,
+        "heapUsed": 184171760,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 97,
+      "reader": 0,
+      "elapsedMs": 282.10541699999885,
+      "revision": 1000,
+      "memory": {
+        "rss": 458883072,
+        "heapTotal": 314081280,
+        "heapUsed": 189252800,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 97,
+      "reader": 3,
+      "elapsedMs": 287.47937499999534,
+      "revision": 1000,
+      "memory": {
+        "rss": 463077376,
+        "heapTotal": 318275584,
+        "heapUsed": 194334640,
+        "external": 2854636,
+        "arrayBuffers": 209510
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 98,
+      "reader": 3,
+      "elapsedMs": 293.3061660000021,
+      "revision": 1000,
+      "memory": {
+        "rss": 397836288,
+        "heapTotal": 236240896,
+        "heapUsed": 116468896,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 98,
+      "reader": 2,
+      "elapsedMs": 299.0261249999967,
+      "revision": 1000,
+      "memory": {
+        "rss": 402030592,
+        "heapTotal": 240435200,
+        "heapUsed": 121551456,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 98,
+      "reader": 0,
+      "elapsedMs": 304.46041599999444,
+      "revision": 1000,
+      "memory": {
+        "rss": 406224896,
+        "heapTotal": 244629504,
+        "heapUsed": 126632536,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 98,
+      "reader": 1,
+      "elapsedMs": 309.947666,
+      "revision": 1000,
+      "memory": {
+        "rss": 410419200,
+        "heapTotal": 248823808,
+        "heapUsed": 131714368,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 99,
+      "reader": 0,
+      "elapsedMs": 298.38324999999895,
+      "revision": 1000,
+      "memory": {
+        "rss": 404144128,
+        "heapTotal": 242499584,
+        "heapUsed": 127825944,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 99,
+      "reader": 1,
+      "elapsedMs": 304.1525830000028,
+      "revision": 1000,
+      "memory": {
+        "rss": 408338432,
+        "heapTotal": 246693888,
+        "heapUsed": 132908608,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 99,
+      "reader": 3,
+      "elapsedMs": 309.63116699999955,
+      "revision": 1000,
+      "memory": {
+        "rss": 412532736,
+        "heapTotal": 250888192,
+        "heapUsed": 137989688,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    },
+    {
+      "batch": 99,
+      "reader": 2,
+      "elapsedMs": 315.22899999999936,
+      "revision": 1000,
+      "memory": {
+        "rss": 416727040,
+        "heapTotal": 255082496,
+        "heapUsed": 143071528,
+        "external": 2854460,
+        "arrayBuffers": 209334
+      },
+      "peakRssKiB": 455856
+    }
+  ],
+  "progressObserved": false,
+  "mixedOverlapVerified": false,
+  "releaseThresholdsVerified": false,
+  "setupEvidence": {
+    "frozen20BatchExit": 1,
+    "frozen20BatchFailure": "Reads must observe writer progress",
+    "long100BatchExit": 1,
+    "long100BatchFailure": "Reads must observe writer progress",
+    "firstBatchLatenciesMs": [
+      9073.229292,
+      9078.977375,
+      9084.734,
+      9090.528458
+    ]
+  },
+  "harnessSha256": "2462bd1233a9c374b9d28179aa8f6af4288ff9793ee11e4a21f3988afe368f95"
+}

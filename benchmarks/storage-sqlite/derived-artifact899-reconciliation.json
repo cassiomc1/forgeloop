@@ -1,0 +1,95 @@
+{
+  "increment": 899,
+  "kind": "EXISTING_DERIVED_ARTIFACT_CONFORMANCE",
+  "sourceRevision": "8a5dea39cab4a132be4e4f923fd79311c040826a",
+  "executedRevision": "fe8705c",
+  "logSha256": "8022ee8b3e7095b342500eafe5e929fc99a19d5666dc7e550d68aaa001705aa0",
+  "cases": [
+    {
+      "domain": "attestations",
+      "testFile": "tests/attestation-e2e.test.js",
+      "sha256": "9e9ce197e6b2231c8086dca34b1cc12aa21a209fca082d2c7d3c3bf4c7cc36d8",
+      "testBytesMatchExecutedRevision": true,
+      "passingRecord": {
+        "line": 160,
+        "text": "\u2714 completion, statement creation, content verification, and range coverage form one end-to-end chain (2218.419416ms)"
+      }
+    },
+    {
+      "domain": "quality",
+      "testFile": "tests/structural-quality-artifacts.test.js",
+      "sha256": "d0637faddf8363d06e58aea098d690bc546566eb8a025381e4df7e997e8018b6",
+      "testBytesMatchExecutedRevision": true,
+      "passingRecord": {
+        "line": 2521,
+        "text": "\u2714 quality artifacts are task-scoped, schema-validated, and numerically listed (285.822291ms)"
+      }
+    },
+    {
+      "domain": "quality",
+      "testFile": "tests/structural-quality-artifacts.test.js",
+      "sha256": "d0637faddf8363d06e58aea098d690bc546566eb8a025381e4df7e997e8018b6",
+      "testBytesMatchExecutedRevision": true,
+      "passingRecord": {
+        "line": 2522,
+        "text": "\u2714 baseline capture is idempotent, replaceable only before execution, and records bindings (233.542833ms)"
+      }
+    },
+    {
+      "domain": "evaluations",
+      "testFile": "tests/trajectory-evaluation.test.js",
+      "sha256": "4ebd65119982386629b7055b06742a1fa7ca69ceda47ddf5d17a658df28a2388",
+      "testBytesMatchExecutedRevision": true,
+      "passingRecord": {
+        "line": 2805,
+        "text": "\u2714 native trajectory command adapters preserve derived evaluation and read-only efficiency (417.482041ms)"
+      }
+    },
+    {
+      "domain": "evaluations",
+      "testFile": "tests/trajectory-evaluation.test.js",
+      "sha256": "4ebd65119982386629b7055b06742a1fa7ca69ceda47ddf5d17a658df28a2388",
+      "testBytesMatchExecutedRevision": true,
+      "passingRecord": {
+        "line": 2806,
+        "text": "\u2714 trajectory evaluation persists a reproducible PASS and emits a bound event (339.886333ms)"
+      }
+    },
+    {
+      "domain": "handoffs",
+      "testFile": "tests/storage-handoff-read-snapshot.test.js",
+      "sha256": "d1e387a9aa0491ae493f5e52f37875c30bf125077a4c437d1497c0d7ddae90ab",
+      "testBytesMatchExecutedRevision": true,
+      "passingRecord": {
+        "line": 2109,
+        "text": "\u2714 handoff show projects artifact and acceptance from one snapshot across independent ledger writes (1061.605958ms)"
+      }
+    },
+    {
+      "domain": "handoffs",
+      "testFile": "tests/storage-handoff-read-snapshot.test.js",
+      "sha256": "d1e387a9aa0491ae493f5e52f37875c30bf125077a4c437d1497c0d7ddae90ab",
+      "testBytesMatchExecutedRevision": true,
+      "passingRecord": {
+        "line": 2110,
+        "text": "\u2714 handoff list projects artifact and acceptance from one snapshot across independent ledger writes (966.983792ms)"
+      }
+    },
+    {
+      "domain": "handoffs",
+      "testFile": "tests/storage-handoff-read-snapshot.test.js",
+      "sha256": "d1e387a9aa0491ae493f5e52f37875c30bf125077a4c437d1497c0d7ddae90ab",
+      "testBytesMatchExecutedRevision": true,
+      "passingRecord": {
+        "line": 2111,
+        "text": "\u2714 handoff resource projects artifact and acceptance from one snapshot across independent ledger writes (877.16ms)"
+      }
+    }
+  ],
+  "limits": [
+    "Current exact test bytes match retained observed PASS; no new execution",
+    "Tests prove their actual assertions: native persistence, mutability, consistent snapshots and content mismatch refusal",
+    "No whole27-registry-artifact/public-dispatch/maintenance closure claim",
+    "Target reduction and resources remain pending"
+  ]
+}

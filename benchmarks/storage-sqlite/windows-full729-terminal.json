@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "runId": 37668036690,
+  "jobId": 112952234677,
+  "url": "https://github.com/cassiomc1/forgeloop/actions/runs/37668036690",
+  "head": "dd7b4dea1a4f2ccf809c90e0a70c7389767e1309",
+  "conclusion": "success",
+  "runner": "forgeloop-windows-remote",
+  "host": "100.83.46.210",
+  "computer": "VM-CASSIO",
+  "counts": {
+    "tests": 2861,
+    "pass": 2847,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 14,
+    "todo": 0
+  },
+  "durationMs": 422314.7529,
+  "logSha256": "9e9069d64a3c9d49c5b60fe224c6ed5c864b572c5ff98dabdc0a19f4810579b1",
+  "coverageLimitation": "Full Windows core suite; does not establish Linux or full original migration acceptance."
+}

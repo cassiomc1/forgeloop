@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -74,7 +75,7 @@ test("trusted reconciled commit chain reaches SATISFIED through exact-requiremen
     const satisfied = await evaluateActionReadiness({ target: fixture.target, packageRoot,
       taskId, action: await readAction(fixture.target, { packageRoot, taskId, actionId: "action-publish" }) });
     assert.equal(satisfied.status, "SATISFIED");
-  } finally { await rm(fixture.target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(fixture.target); }
 });
 
 test("trusted NOT_COMMITTED reset keeps replay valid and re-evaluates changed policy before launch", async () => {
@@ -119,5 +120,5 @@ test("trusted NOT_COMMITTED reset keeps replay valid and re-evaluates changed po
     const replayAfter = await projectActionLedger({ target: fixture.target, packageRoot,
       taskId, actionId: "action-publish", artifact: after });
     assert.equal(replayAfter.valid, true);
-  } finally { await rm(fixture.target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(fixture.target); }
 });

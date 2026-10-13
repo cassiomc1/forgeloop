@@ -1,9 +1,10 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
-import { withTaskTransaction, recoverIncompleteTransactions, findIncompleteTransactions } from "../src/core/transaction.js";
+import { withTaskTransaction, findIncompleteTransactions } from "../src/core/transaction.js";
 import { writeJsonArtifact } from "../src/core/artifacts.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { resolveExecutionProfile } from "../src/core/execution-profile.js";
@@ -21,7 +22,7 @@ test("same task ID cannot join a transaction in a different project, including a
       await assert.rejects(writeJsonArtifact(b, "config.json", { schemaVersion: 1, protocolVersion: 1, complianceMode: "standard" }, "config", getPackageRoot(), { taskId: "same-id" }), /different project/);
     });
     for (const target of [a, b]) await assert.rejects(readFile(path.join(target, "wrong.txt")), { code: "ENOENT" });
-  } finally { await rm(root, { recursive: true, force: true }); }
+  } finally { await removeTempTree(root); }
 });
 
 test("nested aliases of the same physical project retain transaction identity", async () => {
@@ -32,20 +33,26 @@ test("nested aliases of the same physical project retain transaction identity", 
     await withTaskTransaction({ target, taskId: "same-id" }, async (outer) => {
       await withTaskTransaction({ target: alias, taskId: "same-id" }, async (inner) => assert.equal(inner, outer));
     });
-  } finally { await rm(root, { recursive: true, force: true }); }
+    await mkdir(path.join(target, ".forgeloop"), { recursive: true });
+    const database = path.join(target, ".forgeloop/state.sqlite");
+    await writeFile(database, "retained canonical storage");
+    await assert.rejects(withTaskTransaction({ target: alias, taskId: "same-id" }, () => assert.fail("A new operation must not bypass root symlink refusal")), /must not be a symlink/);
+    assert.equal(await readFile(database, "utf8"), "retained canonical storage");
+  } finally { await removeTempTree(root); }
 });
 
-test("successful rollback is terminal for recovery and subsequent doctor invocations", async () => {
+test("doctor keeps incomplete legacy transaction evidence visible and unchanged", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-recovered-health-"));
   try {
     const root = path.join(target, ".forgeloop/.txn/probe");
     await mkdir(root, { recursive: true });
     await writeFile(path.join(root, "manifest.json"), JSON.stringify({ transactionId: "probe", status: "COMMITTING", writes: [] }));
-    assert.equal((await recoverIncompleteTransactions(target))[0].status, "ROLLED_BACK");
-    assert.deepEqual(await findIncompleteTransactions(target), []);
+    const before = await readFile(path.join(root, "manifest.json"), "utf8");
+    assert.equal((await findIncompleteTransactions(target))[0].status, "COMMITTING");
     const doctor = await runDoctor({ target, packageRoot: getPackageRoot(), fix: true });
-    assert.equal(doctor.findings.some((f) => f.code === "E_TRANSACTION_INCOMPLETE"), false);
-  } finally { await rm(target, { recursive: true, force: true }); }
+    assert.equal(doctor.findings.some((f) => f.code === "E_TRANSACTION_INCOMPLETE"), true);
+    assert.equal(await readFile(path.join(root, "manifest.json"), "utf8"), before);
+  } finally { await removeTempTree(target); }
 });
 
 test("profile obligations normalize structured and nested requirements without scanning exclusions", () => {

@@ -1,0 +1,110 @@
+{
+  "increment": 880,
+  "sourceRevision": "ad45ae2",
+  "countingInput": "persistence-loc875-summary and full external persistence-loc871 inventory; production unchanged since inventory",
+  "method": "Same included whole-module union and nonblank counting; groups do not change acceptance scope or exclude importer/exporter/maintenance.",
+  "groups": {
+    "MCP": {
+      "modules": 4,
+      "baseline": 602,
+      "current": 616,
+      "delta": 14
+    },
+    "other included production": {
+      "modules": 14,
+      "baseline": 3812,
+      "current": 3777,
+      "delta": -35
+    },
+    "command wrappers": {
+      "modules": 66,
+      "baseline": 6005,
+      "current": 6254,
+      "delta": 249
+    },
+    "core domain and boundaries": {
+      "modules": 132,
+      "baseline": 33360,
+      "current": 34382,
+      "delta": 1022
+    },
+    "native storage and maintenance": {
+      "modules": 65,
+      "baseline": 0,
+      "current": 7130,
+      "delta": 7130
+    }
+  },
+  "largestRemoved": [
+    {
+      "path": "src/core/transaction.js",
+      "baseline": 303,
+      "current": 38,
+      "removed": 265
+    },
+    {
+      "path": "src/core/task-migration.js",
+      "baseline": 348,
+      "current": 102,
+      "removed": 246
+    },
+    {
+      "path": "src/core/task-lock.js",
+      "baseline": 396,
+      "current": 218,
+      "removed": 178
+    },
+    {
+      "path": "src/cli.js",
+      "baseline": 963,
+      "current": 899,
+      "removed": 64
+    },
+    {
+      "path": "src/core/transaction-maintenance.js",
+      "baseline": 67,
+      "current": 5,
+      "removed": 62
+    },
+    {
+      "path": "src/core/approvals.js",
+      "baseline": 377,
+      "current": 349,
+      "removed": 28
+    },
+    {
+      "path": "src/core/actions.js",
+      "baseline": 432,
+      "current": 407,
+      "removed": 25
+    },
+    {
+      "path": "src/core/execution.js",
+      "baseline": 133,
+      "current": 109,
+      "removed": 24
+    },
+    {
+      "path": "src/commands/gate-record.js",
+      "baseline": 193,
+      "current": 182,
+      "removed": 11
+    },
+    {
+      "path": "src/core/reflection.js",
+      "baseline": 275,
+      "current": 273,
+      "removed": 2
+    }
+  ],
+  "baseline": 43779,
+  "current": 52159,
+  "gapTo25PercentTarget": 19325,
+  "finding": "Native storage and maintenance additions outweigh retired filesystem machinery. Reducing or excluding valid domain/maintenance/validation code solely to satisfy the count is not justified.",
+  "releaseTargetMet": false,
+  "counterfactualNotAProposal": {
+    "allNativeStorageLines": 7130,
+    "remainingGapIfAllNativeStorageWereRemoved": 12195,
+    "interpretation": "Deleting the entire required native store would still fail the 25% whole-module target. Native-store simplification alone cannot close the measured gap."
+  }
+}

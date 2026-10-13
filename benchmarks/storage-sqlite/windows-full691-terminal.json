@@ -1,0 +1,19 @@
+{
+  "runId": 37645794295,
+  "head": "8bb0a0b2b21d6296247846582d6996bdaad0a585",
+  "platform": "Windows",
+  "host": "100.83.46.210",
+  "node": "24.21.0",
+  "tests": 2853,
+  "passed": 2836,
+  "failed": 3,
+  "skipped": 14,
+  "status": "FAILED",
+  "launcherCorrectionConfirmed": true,
+  "failures": [
+    "completion-guidance teardown EBUSY",
+    "integration-types tar drive-letter interpreted as remote host",
+    "repository-index-binary-manager tar drive-letter interpreted as remote host"
+  ],
+  "originalPlanComplete": false
+}

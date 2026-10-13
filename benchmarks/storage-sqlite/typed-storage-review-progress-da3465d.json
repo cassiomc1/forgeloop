@@ -1,0 +1,25 @@
+{
+  "kind": "SQLITE_TYPED_STORAGE_REVIEW_AND_FIXTURE_PROGRESS",
+  "productionDraftCommitted": false,
+  "releaseAcceptance": false,
+  "locAcceptance": false,
+  "testResults": {
+    "preparedSnapshotPredicates": 87,
+    "stagedIdempotencyConflict": 1,
+    "consumerSnapshots": 20
+  },
+  "executionSourceFrozen": false,
+  "limitations": [
+    "Focused checks do not prove whole migration acceptance",
+    "Sources remain under consolidation; rerun required checks before accepting final revision",
+    "Rich fixture validation collects no timing and still contains synthetic bulk tasks"
+  ],
+  "retainedArtifacts": {
+    "sqlite-typed-storage-followup-da3465d.json.gz": "9ac92e82cc674eeb35d7efb48caadf7775adbd339cd7c721e568902446b7c61d",
+    "typed-prepared-predicate-regressions.log.gz": "495367d8864d8083579376f7850aa4ca1f63d8e1fa3049a765b8b3e29d29acd8",
+    "typed-idempotency-conflict-regression.log.gz": "0a0f7ec379c64d0aed30867064b150582e0375fa70d84340287f5e4f84e73549",
+    "typed-storage-consumer-snapshots.log.gz": "4e492810808a8cfff79ada455378e01da24ce4e24af6c247ab2ccee6b815e2f6",
+    "rich-fixture-root-validation.json.gz": "9b8a42e1d698dcf4c8bef85682bc1ccd4a960554bd399ab8996d9d142af444b0",
+    "rich-fixture-root-validation-review.json.gz": "9756c6d7ca04ad75256a037b37f2e0d3fa95e5630c9b5cdb73d3148db26b90c1"
+  }
+}

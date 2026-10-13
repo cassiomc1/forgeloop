@@ -1,0 +1,31 @@
+{
+  "increment": 785,
+  "status": "SOURCE_CONFIRMED_RECOVERY_GAP",
+  "sourceRevision": "74ea4ac93957d4082ef173e6b08c2dc11bb976b4",
+  "retrieval": {
+    "exitCode": 0,
+    "relevantFiles": 49,
+    "logSha256": "864b51f5a6e1ebe153c08bec70d224a3762b3bf3bc2756be873274fb14d165b8"
+  },
+  "observation": "Repository-only drift in CORRECTING is classified RECOVERABLE and next recommends RECONCILE_CLOSURE. Closure command accepts only EXECUTING/VERIFYING/REVIEWING; checkpoint revalidation accepts ROUTED. Existing official next783 proves task is CORRECTING and nonterminal.",
+  "sources": [
+    {
+      "path": "src/core/task-conflict-inspection.js",
+      "sha256": "dd449755592e8f149437c0f126b078f2e76c7ad8300395ef2ceb1cc7f34ee027"
+    },
+    {
+      "path": "src/core/next-action-model.js",
+      "sha256": "4f064e30a195b3c164e275c8128b169fd509faaf28ec37156b4c14ebb91ab74f"
+    },
+    {
+      "path": "src/core/reconcile-closure.js",
+      "sha256": "57fb91254a376b1ec06b39e7bc35c86f2ce51c7cc8302839de883c8fbcf46a2d"
+    },
+    {
+      "path": "src/core/checkpoint-revalidation.js",
+      "sha256": "f58d2e258c3dd5e67103fc2c776467044241215f70f4ea41f077950dbbcb4a3d"
+    }
+  ],
+  "sourceChanged": false,
+  "limitation": "Source mismatch confirmed; no new recovery semantics implemented, no lifecycle state edited, and objective acceptance remains incomplete."
+}

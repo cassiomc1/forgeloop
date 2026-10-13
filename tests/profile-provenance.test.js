@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -19,7 +20,7 @@ test("profile source references require a target-local registry", async () => {
     assert.equal(result.status, "invalid");
     assert.ok(result.errors.some((error) => error.code === "E_PROFILE_SOURCE_MISSING"));
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -34,6 +35,6 @@ test("profile provenance rejects an agent decision labeled as a user fact", asyn
     assert.equal(result.status, "invalid");
     assert.ok(result.errors.some((error) => error.code === "E_PROFILE_SOURCE_MISCLASSIFIED"));
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });

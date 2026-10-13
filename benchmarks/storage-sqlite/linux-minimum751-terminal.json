@@ -1,0 +1,27 @@
+{
+  "runId": 37672672596,
+  "jobId": 112968255176,
+  "head": "f63dd90ffd1cb587df34a5b053b643a650d6704e",
+  "hostname": "51abbe357f3e",
+  "conclusion": "success",
+  "testGroups": {
+    "tests": [
+      80,
+      72
+    ],
+    "pass": [
+      80,
+      72
+    ],
+    "fail": [
+      0,
+      0
+    ],
+    "skipped": [
+      0,
+      0
+    ]
+  },
+  "logSha256": "2fa2efcb018e31084217712f335386eda877312513548c46971638cb7da7acc0",
+  "limitation": "Predates cross-task staging guard6b98c92; scoped job evidence."
+}

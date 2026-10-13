@@ -1,18 +1,13 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
 
-import { ensureWithin, fileExists } from "../src/core/filesystem.js";
-import {
-  acquireProjectClaimsLock,
-  CLAIMS_LOCK_REL_PATH,
-  classifyProjectClaimsLock,
-  readProjectClaimsLockInfo,
-  releaseStaleProjectClaimsLockIfUnchanged,
-  withProjectClaimsLock,
-} from "../src/core/task-lock.js";
+import { withProjectClaimsLock } from "../src/core/task-lock.js";
+import { runTaskCreate } from "../src/commands/task-create.js";
+import { getPackageRoot } from "../src/core/templates.js";
 
 async function withTarget(run) {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-project-claims-lock-"));
@@ -20,7 +15,7 @@ async function withTarget(run) {
     await mkdir(path.join(target, ".forgeloop"), { recursive: true });
     await run(target);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 }
 
@@ -40,79 +35,52 @@ function staleLock(overrides = {}) {
   };
 }
 
-test("project claims lock classifies NONE, LIVE, STALE, UNKNOWN, and CORRUPT", () => {
-  assert.equal(classifyProjectClaimsLock(null).status, "NONE");
-  assert.equal(classifyProjectClaimsLock({ corrupted: true }).status, "CORRUPT");
-  assert.equal(classifyProjectClaimsLock({ lockId: "unknown" }).status, "UNKNOWN");
-  assert.equal(classifyProjectClaimsLock(staleLock()).status, "STALE");
-  assert.equal(classifyProjectClaimsLock(staleLock({ heartbeatAt: new Date().toISOString(), leaseMs: 300000 })).status, "LIVE");
-});
-
-test("project claims lock acquisition auto-settles an unchanged stale lease", async () => {
-  await withTarget(async (target) => {
-    const lockPath = ensureWithin(target, CLAIMS_LOCK_REL_PATH);
-    await writeFile(lockPath, `${JSON.stringify(staleLock())}\n`, "utf8");
-
-    const handle = await acquireProjectClaimsLock(target, "replacement-operation");
-    assert.notEqual(handle.lockData.lockId, "stale-lock");
-    assert.equal((await readProjectClaimsLockInfo(target)).operation, "replacement-operation");
-    await handle.release();
-    assert.equal(await fileExists(lockPath), false);
+test("native admission preserves retained claims ownership", async () => {
+  await withTarget(async target => {
+    const lockPath = path.join(target, ".forgeloop/.claims.lock");
+    for (const lock of [staleLock(), staleLock({ heartbeatAt: new Date().toISOString(), leaseMs: 300000 })]) {
+      const bytes = `${JSON.stringify(lock)}\n`;
+      await writeFile(lockPath, bytes);
+      await assert.rejects(withProjectClaimsLock(target, () => "unsafe"), { code: "E_STORAGE_MIGRATION_REQUIRED" });
+      assert.equal(await readFile(lockPath, "utf8"), bytes);
+      await assert.rejects(readFile(path.join(target, ".forgeloop/state.sqlite")), { code: "ENOENT" });
+    }
   });
 });
 
-test("CAS stale project-lock release preserves a replacement owner", async () => {
-  await withTarget(async (target) => {
-    const lockPath = ensureWithin(target, CLAIMS_LOCK_REL_PATH);
-    const expected = staleLock();
-    const replacement = staleLock({
-      lockId: "replacement-lock",
-      ownerInstanceId: "replacement-owner",
-      heartbeatAt: new Date().toISOString(),
-      acquiredAt: new Date().toISOString(),
-      leaseMs: 300000,
-    });
-    await writeFile(lockPath, `${JSON.stringify(replacement)}\n`, "utf8");
-
-    const result = await releaseStaleProjectClaimsLockIfUnchanged(target, expected);
-    assert.equal(result.released, false);
-    assert.equal(result.reason, "LOCK_CHANGED");
-    assert.deepEqual(JSON.parse(await readFile(lockPath, "utf8")), replacement);
+test("native admission preserves a replacement legacy owner", async () => {
+  await withTarget(async target => {
+    const lockPath = path.join(target, ".forgeloop/.claims.lock");
+    const replacement = staleLock({ lockId: "replacement", ownerInstanceId: "replacement-owner" });
+    const bytes = `${JSON.stringify(replacement)}\n`;
+    await writeFile(lockPath, bytes);
+    await assert.rejects(withProjectClaimsLock(target, () => "unsafe"), { code: "E_STORAGE_MIGRATION_REQUIRED" });
+    assert.equal(await readFile(lockPath, "utf8"), bytes);
   });
 });
 
-test("project claims lock fails closed for corrupt and unknown ownership", async () => {
-  await withTarget(async (target) => {
-    const lockPath = ensureWithin(target, CLAIMS_LOCK_REL_PATH);
-    await writeFile(lockPath, "{\"lockId\":", "utf8");
-    await assert.rejects(
-      () => acquireProjectClaimsLock(target),
-      (error) => error.code === "E_PROJECT_CLAIMS_LOCK_INCONSISTENT",
-    );
-
-    await writeFile(lockPath, `${JSON.stringify({ lockId: "unknown" })}\n`, "utf8");
-    await assert.rejects(
-      () => acquireProjectClaimsLock(target),
-      (error) => error.code === "E_PROJECT_CLAIMS_LOCK_INCONSISTENT",
-    );
+test("native admission preserves corrupt and unknown legacy ownership", async () => {
+  await withTarget(async target => {
+    const lockPath = path.join(target, ".forgeloop/.claims.lock");
+    for (const bytes of ['{"lockId":', JSON.stringify({ lockId: "unknown" })]) {
+      await writeFile(lockPath, bytes);
+      await assert.rejects(withProjectClaimsLock(target, () => "unsafe"), { code: "E_STORAGE_MIGRATION_REQUIRED" });
+      assert.equal(await readFile(lockPath, "utf8"), bytes);
+      await assert.rejects(readFile(path.join(target, ".forgeloop/state.sqlite")), { code: "ENOENT" });
+    }
   });
 });
 
-test("project claims lock serializes contenders and releases after callback failure", async () => {
-  await withTarget(async (target) => {
-    const first = await acquireProjectClaimsLock(target, "first");
-    await assert.rejects(
-      () => acquireProjectClaimsLock(target, "second"),
-      (error) => error.code === "E_TASK_LOCKED",
-    );
-    await first.release();
-
-    await assert.rejects(
-      () => withProjectClaimsLock(target, "failing", async () => {
-        throw new Error("callback failed");
-      }),
-      /callback failed/,
-    );
-    assert.equal(await readProjectClaimsLockInfo(target), null);
+test("native claims exclude overlapping contenders and release callback failure", async () => {
+  await withTarget(async target => {
+    await mkdir(path.join(target, "src"));
+    await withProjectClaimsLock(target, "bootstrap", () => null);
+    const create = taskId => runTaskCreate({ target, packageRoot: getPackageRoot(), taskId, claims: ["src"] });
+    const outcomes = await Promise.allSettled([create("first"), create("second")]);
+    assert.equal(outcomes.filter(outcome => outcome.status === "fulfilled").length, 1);
+    const rejected = outcomes.find(outcome => outcome.status === "rejected");
+    assert.ok(["E_TASK_SCOPE_CONFLICT", "E_STATE_REVISION_CONFLICT"].includes(rejected.reason.code), rejected.reason.message);
+    await assert.rejects(withProjectClaimsLock(target, "failing", async () => { throw new Error("callback failed"); }), /callback failed/);
+    await runTaskCreate({ target, packageRoot: getPackageRoot(), taskId: "after-failure", claims: [] });
   });
 });

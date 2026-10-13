@@ -1,3 +1,5 @@
+import { ledgerEventsOfTypes } from "./ledger-event-collection.js";
+
 import { canonicalFingerprint } from "./artifacts.js";
 import { assertFailureClass } from "./protocol.js";
 
@@ -211,4 +213,13 @@ export function currentCycleDiagnosis(events, taskId, verificationCycle) {
     }
   }
   return null;
+}
+
+
+export function latestDiagnosisForTask(events, taskId) {
+  let latest = null;
+  for (const event of ledgerEventsOfTypes(events ?? [], ["DIAGNOSIS_RECORDED"])) {
+    if (!taskId || event.taskId === taskId) latest = event;
+  }
+  return latest;
 }

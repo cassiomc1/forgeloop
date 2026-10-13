@@ -1,0 +1,47 @@
+{
+  "kind": "FROZEN_SOURCE_FULL_PREPUSH",
+  "sourceRevision": "eb3a318e7f0fbbb53658f118209dba952e848797",
+  "exitCode": 0,
+  "sessionId": 13273,
+  "trackedFiles": 3131,
+  "trackedSourceUnchanged": true,
+  "stages": [
+    "coverage (612.3s)",
+    "critical-coverage:check (0.3s)",
+    "lint (4.7s)",
+    "dependency:policy (0.1s)",
+    "complexity:check (1.7s)",
+    "docs:check (2.8s)",
+    "completions:check (0.1s)",
+    "summary:check (0.1s)",
+    "changelog:check (0.2s)",
+    "repository-index:manifest (0.1s)",
+    "repository:hygiene (0.2s)",
+    "poc:evidence:verify (0.2s)",
+    "poc:evidence:test (1.5s)",
+    "mcp:test:clean (7.5s)",
+    "mcp:pack:check (2.9s)",
+    "pack:check (1.7s)",
+    "python-unittest (1.0s)",
+    "markdown-self-test (0.0s)",
+    "markdown-validator (0.8s)",
+    "loop-self-test (0.2s)",
+    "loop-validator (0.1s)",
+    "secret-scan (11.3s)"
+  ],
+  "core": {
+    "total": 2976,
+    "passed": 2965,
+    "failed": 0,
+    "skipped": 11
+  },
+  "log": {
+    "path": "/Users/cassio/.codex/verification/prepush-eb3a318.log",
+    "sha256": "c724ae0a3921e8f05cf7d927df2ab61d0181bb3aab545c64776a9baeb7f16bc6"
+  },
+  "startManifestSha256": "fbf013cf69c9a0b07044750b388e1f1d106125a9fa56e56378951909a0f7d269",
+  "limitations": [
+    "Local Node24.19 verification only; current platform/performance/memory and25percentLOC gates remain open.",
+    "External analyzer prototype is not part of this frozen tracked revision."
+  ]
+}

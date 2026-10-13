@@ -1,0 +1,39 @@
+{
+  "kind": "public-action-atomicity-regression",
+  "sourceRevision": "8ee9def",
+  "node": "v24.19.0",
+  "environmentRemoved": [
+    "TYPESAFE_API_KEY",
+    "NODE_OPTIONS"
+  ],
+  "tests": 8,
+  "passed": 8,
+  "failed": 0,
+  "skipped": 0,
+  "controls": [
+    "action-record STARTED",
+    "action-record COMMITTED",
+    "action-record FAILED",
+    "action-record COMMIT_UNKNOWN",
+    "action-authorize trusted host context",
+    "action-verify canonical evidence without execution retry",
+    "action-reconcile ACTION_RECONCILED fault",
+    "action-reconcile ACTION_COMMIT_RECORDED fault"
+  ],
+  "assertions": [
+    "all-table snapshot unchanged after event fault",
+    "transaction closed",
+    "retry one exact-operation commit witness",
+    "verify execution count unchanged"
+  ],
+  "testSha256": "779f83b5a411ea1999f56918c483699bf342af341b914c0f176d16cfa28534a0",
+  "log": {
+    "path": "/Users/cassio/.codex/verification/public-actions-8ee9def.log",
+    "sha256": "6d388f125a4d8f86a1218be2d7d6ef2efd25580b5da5a1c74a52498ac687c9d3"
+  },
+  "limits": [
+    "Fixture host authority is supplied out of band; caller payload cannot substitute it.",
+    "External outcomes are fixture observations; run-action/run-check finalization is a separate remaining control.",
+    "No production change, benchmark, or full-plan acceptance."
+  ]
+}

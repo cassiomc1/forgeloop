@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -14,11 +15,13 @@ import { persistRoute } from "../src/core/route-artifact.js";
 import { normalizeStructuralQualityConfig, structuralQualityPolicyFingerprint } from "../src/core/structural-quality/policy.js";
 import { writeStructuralQualityBaseline, writeStructuralQualityEvaluation } from "../src/core/structural-quality/artifacts.js";
 import { normalizeStructuralQualitySnapshot } from "../src/core/structural-quality/provider.js";
-import { ARTIFACT_PATHS } from "../src/core/artifacts.js";
+import { buildTaskArtifactPaths } from "../src/core/task-paths.js";
+import { ensureFixtureTask, readRawFixtureText } from "./helpers/native-storage-fixture.js";
 import { getPackageRoot } from "../src/core/templates.js";
 
 const packageRoot = getPackageRoot();
 const taskId = "structural-quality-bundle-task";
+const ARTIFACT_PATHS = buildTaskArtifactPaths(taskId);
 
 function snapshot(signal) {
   return normalizeStructuralQualitySnapshot({
@@ -36,6 +39,7 @@ function snapshot(signal) {
 }
 
 async function setupBundleTarget(target) {
+  await ensureFixtureTask(target, taskId, packageRoot);
   const config = createConfig({ structuralQuality: { mode: "gate", provider: "fake" } });
   await writeConfig(target, config, packageRoot);
   const contract = createContract({
@@ -44,9 +48,9 @@ async function setupBundleTarget(target) {
     verification: [],
     successCriteria: [],
   });
-  await writeContract(target, contract, packageRoot);
+  await writeContract(target, contract, packageRoot, { taskId });
   const route = evaluateRoute({ workType: "documentation" });
-  const routeArtifact = await persistRoute(target, route, packageRoot, { contractFingerprint: contractFingerprint(contract) });
+  const routeArtifact = await persistRoute(target, route, packageRoot, { contractFingerprint: contractFingerprint(contract), taskId });
   await writeJsonArtifact(target, ARTIFACT_PATHS.state, {
     schemaVersion: 1,
     protocolVersion: 1,
@@ -133,7 +137,7 @@ async function setupBundleTarget(target) {
       verificationCycle: 1,
     },
   }, { target, taskId, packageRoot });
-  const state = JSON.parse(await readFile(path.join(target, ARTIFACT_PATHS.state), "utf8"));
+  const state = JSON.parse(await readRawFixtureText(target, ARTIFACT_PATHS.state));
   state.checks = [check];
   await writeJsonArtifact(target, ARTIFACT_PATHS.state, state, "work-state", packageRoot);
   return { contract, evaluation, check };
@@ -151,7 +155,7 @@ test("bundle export/import preserves typed quality evidence without rescanning",
     assert.equal(loaded.artifacts.structuralQuality.evaluations[0].currentSignal, 9000);
     assert.equal(loaded.artifacts.state.checks[0].details.artifactFingerprint, prepared.evaluation.fingerprint);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -166,9 +170,9 @@ test("bundle reads reject tampered quality artifacts and stale check fingerprint
     await writeFile(evalPath, `${JSON.stringify(value, null, 2)}\n`, "utf8");
     await assert.rejects(
       () => readTaskBundle(target, taskId, packageRoot),
-      /fingerprint does not match|stale|does not match/i,
+      /fingerprint does not match|stale|does not match|bytes disagree with manifest/i,
     );
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });

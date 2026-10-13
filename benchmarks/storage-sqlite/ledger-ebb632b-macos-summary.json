@@ -1,0 +1,180 @@
+{
+  "kind": "MACOS_LEDGER_MEMORY_DIAGNOSTIC_OBSERVATION",
+  "sourceRevision": "ebb632b71b4b5dc6e92fd5ad0476e7c01133da97",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "runtime": "v24.19.0",
+  "platform": "darwin",
+  "cpu": "Apple M2",
+  "events": [
+    10,
+    1000,
+    100000
+  ],
+  "repeats": 3,
+  "warmup": 1,
+  "payloadBytes": 1024,
+  "seed": 42,
+  "parentExitCode": 0,
+  "workersClosed": 18,
+  "workerPidsAbsentAfter": true,
+  "sourceHashesUnchanged": true,
+  "trackedFiles": 3224,
+  "temporaryPrefixesAfter": [],
+  "rows": [
+    {
+      "events": 10,
+      "backend": "filesystem",
+      "operation": "iterator",
+      "status": "MEASURED",
+      "p95Ms": 1.289,
+      "peakProcessRssKiB": 74448
+    },
+    {
+      "events": 10,
+      "backend": "sqlite",
+      "operation": "iterator",
+      "status": "MEASURED",
+      "p95Ms": 1.175,
+      "peakProcessRssKiB": 73520
+    },
+    {
+      "events": 10,
+      "backend": "sqlite",
+      "operation": "audit",
+      "status": "MEASURED",
+      "p95Ms": 6.158,
+      "peakProcessRssKiB": 75296
+    },
+    {
+      "events": 10,
+      "backend": "sqlite",
+      "operation": "audit-array",
+      "status": "MEASURED",
+      "p95Ms": 1.223,
+      "peakProcessRssKiB": 73744
+    },
+    {
+      "events": 10,
+      "backend": "filesystem",
+      "operation": "audit",
+      "status": "MEASURED",
+      "p95Ms": 1.515,
+      "peakProcessRssKiB": 74528
+    },
+    {
+      "events": 10,
+      "backend": "sqlite",
+      "operation": "export",
+      "status": "MEASURED",
+      "p95Ms": 36.206,
+      "peakProcessRssKiB": 77696
+    },
+    {
+      "events": 1000,
+      "backend": "filesystem",
+      "operation": "iterator",
+      "status": "MEASURED",
+      "p95Ms": 15.714,
+      "peakProcessRssKiB": 109856
+    },
+    {
+      "events": 1000,
+      "backend": "sqlite",
+      "operation": "iterator",
+      "status": "MEASURED",
+      "p95Ms": 20.729,
+      "peakProcessRssKiB": 79648
+    },
+    {
+      "events": 1000,
+      "backend": "sqlite",
+      "operation": "audit",
+      "status": "MEASURED",
+      "p95Ms": 62.195,
+      "peakProcessRssKiB": 95328
+    },
+    {
+      "events": 1000,
+      "backend": "sqlite",
+      "operation": "audit-array",
+      "status": "MEASURED",
+      "p95Ms": 28.197,
+      "peakProcessRssKiB": 104672
+    },
+    {
+      "events": 1000,
+      "backend": "filesystem",
+      "operation": "audit",
+      "status": "MEASURED",
+      "p95Ms": 19.905,
+      "peakProcessRssKiB": 113008
+    },
+    {
+      "events": 1000,
+      "backend": "sqlite",
+      "operation": "export",
+      "status": "MEASURED",
+      "p95Ms": 53.377,
+      "peakProcessRssKiB": 92672
+    },
+    {
+      "events": 100000,
+      "backend": "filesystem",
+      "operation": "iterator",
+      "status": "REFUSED",
+      "p95Ms": null,
+      "peakProcessRssKiB": 351392
+    },
+    {
+      "events": 100000,
+      "backend": "sqlite",
+      "operation": "iterator",
+      "status": "MEASURED",
+      "p95Ms": 1694.191,
+      "peakProcessRssKiB": 126208
+    },
+    {
+      "events": 100000,
+      "backend": "sqlite",
+      "operation": "audit",
+      "status": "MEASURED",
+      "p95Ms": 9985.079,
+      "peakProcessRssKiB": 143344
+    },
+    {
+      "events": 100000,
+      "backend": "sqlite",
+      "operation": "audit-array",
+      "status": "MEASURED",
+      "p95Ms": 2051.334,
+      "peakProcessRssKiB": 546112
+    },
+    {
+      "events": 100000,
+      "backend": "filesystem",
+      "operation": "audit",
+      "status": "REFUSED",
+      "p95Ms": null,
+      "peakProcessRssKiB": 358464
+    },
+    {
+      "events": 100000,
+      "backend": "sqlite",
+      "operation": "export",
+      "status": "MEASURED",
+      "p95Ms": 5423.291,
+      "peakProcessRssKiB": 137072
+    }
+  ],
+  "releaseThresholdsVerified": false,
+  "limits": [
+    "Local background activity and cache state uncontrolled; three repetitions are diagnostic only.",
+    "Baseline 100000-event iterator and audit refusals cannot qualify an equal-output speedup.",
+    "Detached-snapshot audit and public array audit have different safety/representation boundaries.",
+    "Peak worker RSS includes startup, warmup and validation, not solely the measured operation.",
+    "No equivalent baseline export timer; native export is a standalone observation.",
+    "No declared memory ceiling invented from observed values.",
+    "Physical-host isolation, Windows guard scaling, realistic lifecycle workloads, cold startup and concurrency remain open.",
+    "Smaller native iterator/array-audit overhead requires diagnosis; no performance acceptance inferred."
+  ]
+}

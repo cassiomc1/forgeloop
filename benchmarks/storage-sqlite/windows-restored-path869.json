@@ -1,0 +1,19 @@
+{
+  "increment": 869,
+  "runId": 37784025559,
+  "sourceRevision": "b0e63161ed65a8445f8772eefa9464b11736fbc1",
+  "status": "FAILED",
+  "counts": {
+    "tests": 8,
+    "passed": 7,
+    "failed": 1,
+    "skipped": 0
+  },
+  "failure": "Restored parent path returns outside-sentinel as healthy. SQLite Windows location remains logical admitted path after original directory is restored; path and current inode checks cannot identify the already opened outside handle.",
+  "correction": "Capture project root directory dev/inode plus nanosecond modification/change times at admission; refuse root replacement or directory membership changes before configuration and cached reuse.",
+  "limits": [
+    "Directory metadata is an additional interleaving guard, not native SQLite descriptor introspection.",
+    "No arbitrary privileged filesystem mutation or timestamp-forgery proof is claimed.",
+    "Current Windows controls and final full-platform acceptance pending."
+  ]
+}

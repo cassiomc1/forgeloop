@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, realpath, rm } from "node:fs/promises";
+import { mkdtemp, realpath } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -49,7 +50,7 @@ async function withFakeSearch(callback) {
     await callback({ root, setupRepositoryIndexImpl, runTgrepImpl, getCounts: () => ({ setupCalls, runCalls }) });
   } finally {
     clearRepositoryIndexReadiness();
-    await rm(root, { recursive: true, force: true });
+    await removeTempTree(root);
   }
 }
 
@@ -110,7 +111,7 @@ test("readiness is isolated per repository", async () => {
     assert.equal(setupCalls, 2);
   } finally {
     clearRepositoryIndexReadiness();
-    await rm(first, { recursive: true, force: true });
-    await rm(second, { recursive: true, force: true });
+    await removeTempTree(first);
+    await removeTempTree(second);
   }
 });

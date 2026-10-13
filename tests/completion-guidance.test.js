@@ -1,5 +1,7 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
+import { removeTempTree } from "./helpers/rm-safe.js";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -31,9 +33,10 @@ test("completion findings expose repair-oriented next actions", async () => {
       sourceRefs: [],
     });
     const contractHash = contractFingerprint(contract);
-    await writeContract(target, contract, packageRoot);
+    await ensureFixtureTask(target, contract.taskId, packageRoot);
+    await writeContract(target, contract, packageRoot, { taskId: contract.taskId });
     const route = evaluateRoute({ workType: "api", surfaces: ["api"], platforms: [] });
-    const persistedRoute = await persistRoute(target, route, packageRoot, { contractFingerprint: contractHash });
+    const persistedRoute = await persistRoute(target, route, packageRoot, { contractFingerprint: contractHash, taskId: contract.taskId });
     await writeWorkState(target, createWorkState({
       taskId: contract.taskId,
       contractFingerprint: contractHash,
@@ -48,8 +51,8 @@ test("completion findings expose repair-oriented next actions", async () => {
       failures: [],
       blockers: [],
       verificationEvidence: [],
-    }), { packageRoot });
-    const result = await evaluateCompletion({ target, packageRoot });
+    }), { packageRoot, taskId: contract.taskId });
+    const result = await evaluateCompletion({ target, packageRoot, taskId: contract.taskId });
     const receipt = result.errors.find((error) => error.code === "E_RECEIPT_MISSING");
     const chronology = result.errors.find((error) => error.code === "E_PHASE_CHRONOLOGY_INVALID");
 
@@ -58,7 +61,7 @@ test("completion findings expose repair-oriented next actions", async () => {
     assert.equal(typeof chronology?.next, "string");
     assert.match(chronology.next, /phase|verification|event/i);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 

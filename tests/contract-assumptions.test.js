@@ -1,11 +1,13 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
+import { ensureFixtureTask, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 
-import { ARTIFACT_PATHS } from "../src/core/artifacts.js";
+import { taskArtifactPath } from "../src/core/task-paths.js";
 import { createContract, readContract, validateContract, writeContract } from "../src/core/contract.js";
 
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -41,9 +43,8 @@ function persistedContract(assumptions = []) {
 }
 
 async function writeManualContract(target, contract) {
-  const contractPath = path.join(target, ARTIFACT_PATHS.contract);
-  await mkdir(path.dirname(contractPath), { recursive: true });
-  await writeFile(contractPath, `${JSON.stringify(contract, null, 2)}\n`, "utf8");
+  await ensureFixtureTask(target, contract.taskId, packageRoot);
+  await overwriteFixtureText(target, taskArtifactPath(contract.taskId, "contract"), `${JSON.stringify(contract, null, 2)}\n`);
 }
 
 async function withTarget(run) {
@@ -51,7 +52,7 @@ async function withTarget(run) {
   try {
     await run(target);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 }
 
@@ -71,8 +72,9 @@ test("valid assumptions survive writeContract then readContract", async () => {
   });
 
   await withTarget(async (target) => {
-    await writeContract(target, contract, packageRoot);
-    const loaded = await readContract(target, packageRoot);
+    await ensureFixtureTask(target, contract.taskId, packageRoot);
+    await writeContract(target, contract, packageRoot, { taskId: contract.taskId });
+    const loaded = await readContract(target, packageRoot, { taskId: contract.taskId });
 
     assert.deepEqual(loaded.value.assumptions, [safeAssumption]);
     assert.deepEqual(loaded.value, contract);
@@ -121,7 +123,7 @@ for (const [label, assumption, expectedError] of invalidPersistedAssumptionCases
       await writeManualContract(target, persistedContract([assumption]));
 
       await assert.rejects(
-        () => readContract(target, packageRoot),
+        () => readContract(target, packageRoot, { taskId: validContractInput.taskId }),
         (error) => {
           assert.match(error.message, expectedError);
           assert.equal(error.message.includes(secretLikeAssumptionValue), false);

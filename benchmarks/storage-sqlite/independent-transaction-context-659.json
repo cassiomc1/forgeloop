@@ -1,0 +1,22 @@
+{
+  "increment": 659,
+  "productionChanged": false,
+  "tests": 59,
+  "failures": 0,
+  "verified": [
+    "active independent transaction nesting commits on each connection",
+    "expired context cannot reopen on another connection",
+    "both native transactions closed after rejection"
+  ],
+  "auditScope": [
+    "repository writers have guard including corrected releaseClaims",
+    "lease mutations enter runInTransaction",
+    "unit-of-work commit mutations enter runInTransaction",
+    "attachment reference insertion uses assertWritableContext"
+  ],
+  "limits": [
+    "source inspection is not exhaustive transitive/public writer proof",
+    "attachment publication and maintenance authority require separate boundary coverage"
+  ],
+  "releaseThresholdsVerified": false
+}

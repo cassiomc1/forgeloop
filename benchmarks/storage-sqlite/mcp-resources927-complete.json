@@ -1,0 +1,554 @@
+{
+  "kind": "PAIRED_RESOURCE_OBSERVATION",
+  "sourceRevision": "20aca2ba332ed86323722ef91812925ad9dadb83",
+  "trackedSourceUnchanged": true,
+  "trackedFiles": 3057,
+  "repeats": 200,
+  "results": [
+    {
+      "tasks": 1000,
+      "operation": "taskListTool",
+      "outputParity": true,
+      "native": {
+        "latencyP95Ms": 1972.8502270000172,
+        "rssEndpointMaxBytes": 447791104,
+        "workerLifetimePeakRssBytes": 448184320,
+        "timerLatenessMaxMs": 120.13614499999949,
+        "quartiles": [
+          {
+            "samples": [
+              0,
+              49
+            ],
+            "rssEndpointMinBytes": 283209728,
+            "rssEndpointMaxBytes": 405331968,
+            "rssEndpointMedianBytes": 374579200.0,
+            "latencyP95Ms": 2003.0734580000135
+          },
+          {
+            "samples": [
+              50,
+              99
+            ],
+            "rssEndpointMinBytes": 405856256,
+            "rssEndpointMaxBytes": 437764096,
+            "rssEndpointMedianBytes": 426614784.0,
+            "latencyP95Ms": 1880.7378719999979
+          },
+          {
+            "samples": [
+              100,
+              149
+            ],
+            "rssEndpointMinBytes": 435650560,
+            "rssEndpointMaxBytes": 447791104,
+            "rssEndpointMedianBytes": 439517184.0,
+            "latencyP95Ms": 1967.0086840000004
+          },
+          {
+            "samples": [
+              150,
+              199
+            ],
+            "rssEndpointMinBytes": 444846080,
+            "rssEndpointMaxBytes": 447234048,
+            "rssEndpointMedianBytes": 445792256.0,
+            "latencyP95Ms": 1972.8502270000172
+          }
+        ],
+        "resourceTotals": {
+          "cpuUserMicros": 313051792,
+          "cpuSystemMicros": 25235104,
+          "filesystemReadBlocks": 0,
+          "filesystemWriteBlocks": 0,
+          "eventLoopDelaySamples": 23378
+        },
+        "nodeAsyncFilesystemRequests": {
+          "FSREQPROMISE": 18800,
+          "FSREQCALLBACK": 2200
+        },
+        "eventLoopDelayObservedMaxMs": 121.110527,
+        "databaseEndpointMaxBytes": 7548928,
+        "walEndpointMaxBytes": 0
+      },
+      "baseline": {
+        "latencyP95Ms": 7797.36856699991,
+        "rssEndpointMaxBytes": 249573376,
+        "workerLifetimePeakRssBytes": 249626624,
+        "timerLatenessMaxMs": 19.76653499994427,
+        "quartiles": [
+          {
+            "samples": [
+              0,
+              49
+            ],
+            "rssEndpointMinBytes": 173264896,
+            "rssEndpointMaxBytes": 249200640,
+            "rssEndpointMedianBytes": 248655872.0,
+            "latencyP95Ms": 7771.541041999997
+          },
+          {
+            "samples": [
+              50,
+              99
+            ],
+            "rssEndpointMinBytes": 247652352,
+            "rssEndpointMaxBytes": 249352192,
+            "rssEndpointMedianBytes": 249151488.0,
+            "latencyP95Ms": 7859.34031400003
+          },
+          {
+            "samples": [
+              100,
+              149
+            ],
+            "rssEndpointMinBytes": 248520704,
+            "rssEndpointMaxBytes": 249356288,
+            "rssEndpointMedianBytes": 248983552.0,
+            "latencyP95Ms": 7750.2114190000575
+          },
+          {
+            "samples": [
+              150,
+              199
+            ],
+            "rssEndpointMinBytes": 248492032,
+            "rssEndpointMaxBytes": 249573376,
+            "rssEndpointMedianBytes": 249354240.0,
+            "latencyP95Ms": 7798.650720000034
+          }
+        ],
+        "resourceTotals": {
+          "cpuUserMicros": 687182983,
+          "cpuSystemMicros": 608328616,
+          "filesystemReadBlocks": 0,
+          "filesystemWriteBlocks": 0,
+          "eventLoopDelaySamples": 1446772
+        },
+        "nodeAsyncFilesystemRequests": {
+          "FSREQPROMISE": 13201200,
+          "FSREQCALLBACK": 0
+        },
+        "eventLoopDelayObservedMaxMs": 20.774911,
+        "databaseEndpointMaxBytes": 0,
+        "walEndpointMaxBytes": 0
+      },
+      "baselineOverNativeP95": 3.9523368070656093
+    },
+    {
+      "tasks": 1000,
+      "operation": "projectTasksResource",
+      "outputParity": true,
+      "native": {
+        "latencyP95Ms": 1977.4397500000196,
+        "rssEndpointMaxBytes": 471658496,
+        "workerLifetimePeakRssBytes": 473493504,
+        "timerLatenessMaxMs": 91.2150360000087,
+        "quartiles": [
+          {
+            "samples": [
+              0,
+              49
+            ],
+            "rssEndpointMinBytes": 447447040,
+            "rssEndpointMaxBytes": 454893568,
+            "rssEndpointMedianBytes": 450072576.0,
+            "latencyP95Ms": 1980.570865000016
+          },
+          {
+            "samples": [
+              50,
+              99
+            ],
+            "rssEndpointMinBytes": 450539520,
+            "rssEndpointMaxBytes": 456097792,
+            "rssEndpointMedianBytes": 452661248.0,
+            "latencyP95Ms": 1969.9879840000067
+          },
+          {
+            "samples": [
+              100,
+              149
+            ],
+            "rssEndpointMinBytes": 452554752,
+            "rssEndpointMaxBytes": 465068032,
+            "rssEndpointMedianBytes": 454686720.0,
+            "latencyP95Ms": 1962.5782299999846
+          },
+          {
+            "samples": [
+              150,
+              199
+            ],
+            "rssEndpointMinBytes": 462626816,
+            "rssEndpointMaxBytes": 471658496,
+            "rssEndpointMedianBytes": 465096704.0,
+            "latencyP95Ms": 1992.1026660000207
+          }
+        ],
+        "resourceTotals": {
+          "cpuUserMicros": 322979430,
+          "cpuSystemMicros": 25087391,
+          "filesystemReadBlocks": 0,
+          "filesystemWriteBlocks": 0,
+          "eventLoopDelaySamples": 22696
+        },
+        "nodeAsyncFilesystemRequests": {
+          "FSREQPROMISE": 18000,
+          "FSREQCALLBACK": 2200
+        },
+        "eventLoopDelayObservedMaxMs": 92.274687,
+        "databaseEndpointMaxBytes": 7548928,
+        "walEndpointMaxBytes": 0
+      },
+      "baseline": {
+        "latencyP95Ms": 7913.215319999959,
+        "rssEndpointMaxBytes": 254074880,
+        "workerLifetimePeakRssBytes": 254074880,
+        "timerLatenessMaxMs": 13.2794299996458,
+        "quartiles": [
+          {
+            "samples": [
+              0,
+              49
+            ],
+            "rssEndpointMinBytes": 249393152,
+            "rssEndpointMaxBytes": 251056128,
+            "rssEndpointMedianBytes": 250701824.0,
+            "latencyP95Ms": 8110.134625000181
+          },
+          {
+            "samples": [
+              50,
+              99
+            ],
+            "rssEndpointMinBytes": 250834944,
+            "rssEndpointMaxBytes": 252100608,
+            "rssEndpointMedianBytes": 251445248.0,
+            "latencyP95Ms": 7898.667260999791
+          },
+          {
+            "samples": [
+              100,
+              149
+            ],
+            "rssEndpointMinBytes": 251838464,
+            "rssEndpointMaxBytes": 253394944,
+            "rssEndpointMedianBytes": 252792832.0,
+            "latencyP95Ms": 7781.192643999588
+          },
+          {
+            "samples": [
+              150,
+              199
+            ],
+            "rssEndpointMinBytes": 253267968,
+            "rssEndpointMaxBytes": 254074880,
+            "rssEndpointMedianBytes": 253822976.0,
+            "latencyP95Ms": 7861.936377999838
+          }
+        ],
+        "resourceTotals": {
+          "cpuUserMicros": 694053177,
+          "cpuSystemMicros": 606782156,
+          "filesystemReadBlocks": 0,
+          "filesystemWriteBlocks": 0,
+          "eventLoopDelaySamples": 1449607
+        },
+        "nodeAsyncFilesystemRequests": {
+          "FSREQPROMISE": 13200400,
+          "FSREQCALLBACK": 0
+        },
+        "eventLoopDelayObservedMaxMs": 14.286847,
+        "databaseEndpointMaxBytes": 0,
+        "walEndpointMaxBytes": 0
+      },
+      "baselineOverNativeP95": 4.001747876262668
+    },
+    {
+      "tasks": 5000,
+      "operation": "taskListTool",
+      "outputParity": true,
+      "native": {
+        "latencyP95Ms": 9415.562486000126,
+        "rssEndpointMaxBytes": 699965440,
+        "workerLifetimePeakRssBytes": 702902272,
+        "timerLatenessMaxMs": 88.93952100002207,
+        "quartiles": [
+          {
+            "samples": [
+              0,
+              49
+            ],
+            "rssEndpointMinBytes": 526114816,
+            "rssEndpointMaxBytes": 619212800,
+            "rssEndpointMedianBytes": 614907904.0,
+            "latencyP95Ms": 9628.701969999995
+          },
+          {
+            "samples": [
+              50,
+              99
+            ],
+            "rssEndpointMinBytes": 616390656,
+            "rssEndpointMaxBytes": 690831360,
+            "rssEndpointMedianBytes": 680665088.0,
+            "latencyP95Ms": 9339.311103999964
+          },
+          {
+            "samples": [
+              100,
+              149
+            ],
+            "rssEndpointMinBytes": 682364928,
+            "rssEndpointMaxBytes": 693940224,
+            "rssEndpointMedianBytes": 687147008.0,
+            "latencyP95Ms": 9415.562486000126
+          },
+          {
+            "samples": [
+              150,
+              199
+            ],
+            "rssEndpointMinBytes": 686587904,
+            "rssEndpointMaxBytes": 699965440,
+            "rssEndpointMedianBytes": 691257344.0,
+            "latencyP95Ms": 9377.50043600006
+          }
+        ],
+        "resourceTotals": {
+          "cpuUserMicros": 1616986597,
+          "cpuSystemMicros": 125392031,
+          "filesystemReadBlocks": 0,
+          "filesystemWriteBlocks": 0,
+          "eventLoopDelaySamples": 91408
+        },
+        "nodeAsyncFilesystemRequests": {
+          "FSREQPROMISE": 18800,
+          "FSREQCALLBACK": 2200
+        },
+        "eventLoopDelayObservedMaxMs": 89.980927,
+        "databaseEndpointMaxBytes": 37220352,
+        "walEndpointMaxBytes": 0
+      },
+      "baseline": {
+        "latencyP95Ms": 38209.87091400003,
+        "rssEndpointMaxBytes": 259735552,
+        "workerLifetimePeakRssBytes": 259735552,
+        "timerLatenessMaxMs": 13.271823999471962,
+        "quartiles": [
+          {
+            "samples": [
+              0,
+              49
+            ],
+            "rssEndpointMinBytes": 248090624,
+            "rssEndpointMaxBytes": 253595648,
+            "rssEndpointMedianBytes": 251510784.0,
+            "latencyP95Ms": 39035.88816299988
+          },
+          {
+            "samples": [
+              50,
+              99
+            ],
+            "rssEndpointMinBytes": 253530112,
+            "rssEndpointMaxBytes": 256671744,
+            "rssEndpointMedianBytes": 255746048.0,
+            "latencyP95Ms": 37648.58919099998
+          },
+          {
+            "samples": [
+              100,
+              149
+            ],
+            "rssEndpointMinBytes": 256258048,
+            "rssEndpointMaxBytes": 258842624,
+            "rssEndpointMedianBytes": 257376256.0,
+            "latencyP95Ms": 37466.33074000012
+          },
+          {
+            "samples": [
+              150,
+              199
+            ],
+            "rssEndpointMinBytes": 258564096,
+            "rssEndpointMaxBytes": 259735552,
+            "rssEndpointMedianBytes": 259530752.0,
+            "latencyP95Ms": 39175.1134940004
+          }
+        ],
+        "resourceTotals": {
+          "cpuUserMicros": 3413013597,
+          "cpuSystemMicros": 3032968168,
+          "filesystemReadBlocks": 0,
+          "filesystemWriteBlocks": 0,
+          "eventLoopDelaySamples": 7207921
+        },
+        "nodeAsyncFilesystemRequests": {
+          "FSREQPROMISE": 66001200,
+          "FSREQCALLBACK": 0
+        },
+        "eventLoopDelayObservedMaxMs": 14.278655,
+        "databaseEndpointMaxBytes": 0,
+        "walEndpointMaxBytes": 0
+      },
+      "baselineOverNativeP95": 4.058161259172118
+    },
+    {
+      "tasks": 5000,
+      "operation": "projectTasksResource",
+      "outputParity": true,
+      "native": {
+        "latencyP95Ms": 9722.646638999693,
+        "rssEndpointMaxBytes": 715632640,
+        "workerLifetimePeakRssBytes": 718630912,
+        "timerLatenessMaxMs": 101.36606100015342,
+        "quartiles": [
+          {
+            "samples": [
+              0,
+              49
+            ],
+            "rssEndpointMinBytes": 691744768,
+            "rssEndpointMaxBytes": 703746048,
+            "rssEndpointMedianBytes": 696479744.0,
+            "latencyP95Ms": 9456.530835999642
+          },
+          {
+            "samples": [
+              50,
+              99
+            ],
+            "rssEndpointMinBytes": 695521280,
+            "rssEndpointMaxBytes": 708272128,
+            "rssEndpointMedianBytes": 702484480.0,
+            "latencyP95Ms": 9832.095811000094
+          },
+          {
+            "samples": [
+              100,
+              149
+            ],
+            "rssEndpointMinBytes": 700764160,
+            "rssEndpointMaxBytes": 714215424,
+            "rssEndpointMedianBytes": 706744320.0,
+            "latencyP95Ms": 9597.0774129997
+          },
+          {
+            "samples": [
+              150,
+              199
+            ],
+            "rssEndpointMinBytes": 704630784,
+            "rssEndpointMaxBytes": 715632640,
+            "rssEndpointMedianBytes": 709801984.0,
+            "latencyP95Ms": 9722.646638999693
+          }
+        ],
+        "resourceTotals": {
+          "cpuUserMicros": 1638085023,
+          "cpuSystemMicros": 122933294,
+          "filesystemReadBlocks": 0,
+          "filesystemWriteBlocks": 0,
+          "eventLoopDelaySamples": 89629
+        },
+        "nodeAsyncFilesystemRequests": {
+          "FSREQPROMISE": 18000,
+          "FSREQCALLBACK": 2200
+        },
+        "eventLoopDelayObservedMaxMs": 102.432767,
+        "databaseEndpointMaxBytes": 37220352,
+        "walEndpointMaxBytes": 0
+      },
+      "baseline": {
+        "latencyP95Ms": 38543.05755400099,
+        "rssEndpointMaxBytes": 266719232,
+        "workerLifetimePeakRssBytes": 266719232,
+        "timerLatenessMaxMs": 23.542263999581337,
+        "quartiles": [
+          {
+            "samples": [
+              0,
+              49
+            ],
+            "rssEndpointMinBytes": 154198016,
+            "rssEndpointMaxBytes": 262565888,
+            "rssEndpointMedianBytes": 244404224.0,
+            "latencyP95Ms": 38212.84432599973
+          },
+          {
+            "samples": [
+              50,
+              99
+            ],
+            "rssEndpointMinBytes": 248979456,
+            "rssEndpointMaxBytes": 261083136,
+            "rssEndpointMedianBytes": 258136064.0,
+            "latencyP95Ms": 38214.52702100016
+          },
+          {
+            "samples": [
+              100,
+              149
+            ],
+            "rssEndpointMinBytes": 261083136,
+            "rssEndpointMaxBytes": 266358784,
+            "rssEndpointMedianBytes": 266006528.0,
+            "latencyP95Ms": 37910.99346799962
+          },
+          {
+            "samples": [
+              150,
+              199
+            ],
+            "rssEndpointMinBytes": 266354688,
+            "rssEndpointMaxBytes": 266719232,
+            "rssEndpointMedianBytes": 266645504.0,
+            "latencyP95Ms": 39137.32937100157
+          }
+        ],
+        "resourceTotals": {
+          "cpuUserMicros": 3444258990,
+          "cpuSystemMicros": 3042889870,
+          "filesystemReadBlocks": 0,
+          "filesystemWriteBlocks": 0,
+          "eventLoopDelaySamples": 7256117
+        },
+        "nodeAsyncFilesystemRequests": {
+          "FSREQPROMISE": 66000400,
+          "FSREQCALLBACK": 0
+        },
+        "eventLoopDelayObservedMaxMs": 24.739839,
+        "databaseEndpointMaxBytes": 0,
+        "walEndpointMaxBytes": 0
+      },
+      "baselineOverNativeP95": 3.9642557201859248
+    }
+  ],
+  "artifactHashes": {
+    "source-before.json": "acffafd0446475f2a8d4bb8d787f29b4ec3e811c1343c18261ad0c525acfa209",
+    "source-after.json": "acffafd0446475f2a8d4bb8d787f29b4ec3e811c1343c18261ad0c525acfa209",
+    "comparison.json": "2b4a2212fea353dcae7840151471bedbddc99fe027fe8349178722c925aae36c",
+    "benchmark.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "workers/baseline-5000.json": "d34c7882543c43062bcc0e039285cf1a65af403d9bd18fc2b9e80e6a5ae5aa97",
+    "workers/native-5000.json": "cadbb47d941d69ebb3a9ed5e611e3f02a7a52c393272cdda70734a8abbdbcb72",
+    "workers/native-1000.json": "92099cc4181ccbad2fac8cf83c8c9db305b94fbf700a9ba5b9e2cc5f5800bcee",
+    "workers/parent.progress.ndjson": "3dfdef8aba8dd8348ac873ffd2b033de9bf7d16d44060c4a022888e74b96384a",
+    "workers/baseline-5000.json.progress.ndjson": "486d1a072c40da93226574a248da61552a2ce0b20ed0173ab7e9b050e2fa0549",
+    "workers/native-1000.json.progress.ndjson": "c84d465ab9a14c0ce98da17a04bae72462d10e6554dfe36fac941997599256b0",
+    "workers/native-5000.json.progress.ndjson": "e7ec1c6ff87bf1c449970ff32353bee83f25efc58d9c017a1aba83af9884e343",
+    "workers/baseline-1000.json": "1af365dba9d985daf3062af074c4a99c4e74c67583c264d6beb97b61236f7b0a",
+    "workers/baseline-1000.json.progress.ndjson": "7fd08ca89b9c07047d5caec63e4057cb8af24a2e8337be2b80f6a9dacfd46ca1"
+  },
+  "releaseThresholdsVerified": false,
+  "limits": [
+    "Resource-instrumented warm in-memory MCP request latency, not stdio/HTTP/filesystem-cold",
+    "Request RSS endpoints are not request peaks; lifetime peaks include worker setup",
+    "Quartiles report observed evolution, not a proof of an asymptotic bound or an invented RSS ceiling",
+    "No whole-goal acceptance inferred from four matched operation results",
+    "Async filesystem counters omit synchronous and SQLite I/O; zero block counters do not establish zero I/O",
+    "WAL and database sizes are sample endpoints, not peaks",
+    "Event-loop histogram includes post-command timer drain and may miss initial synchronous blocking"
+  ]
+}

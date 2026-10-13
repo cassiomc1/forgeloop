@@ -1,0 +1,26 @@
+{
+  "kind": "CONTINUITY_TASK_ID_CALLER_REVIEW",
+  "scope": "Exact direct reconcileContinuity/readContinuity references in src and MCP source; no reflection or arbitrary external caller claim",
+  "files": {
+    "src/commands/reconcile-continuity.js": "5d852e8649fbb0c8ff0f1b76cd6ec48f5adacf014731f74981f987454ab94078",
+    "src/commands/status.js": "826d0f912630f5df52f6d696780cd9a4cc77493dad072f3ebd3c5a2e432e118f",
+    "src/commands/continuity.js": "3130e72fb1de068da55fc36c0a39891b8fbdaae7462fce6a468c4d01e6730352",
+    "src/core/next-action-continuity.js": "7db3c5703ad881a94cb793404f3144c7db4f27c977794ef90c40d1f22257425a",
+    "src/core/inspect.js": "c92a5c9e9678bf6653f3ae871984653789b15dfd03ff38540fddd55c8752bddd",
+    "src/core/continuity-reconciliation.js": "65379a676d655d70a788c5c28650fe9e16e426e62ccb380e2514a7a1537d7393",
+    "src/core/handoff.js": "48f38209c4ad09c55a9877069c9e292fdcf3638fa6aae3b93a3165b1a1851bfd",
+    "src/core/command-executors.js": "2c32d0ad5fd2afcab246a357617e1b3e1040e20e3975a9cf9757f51525a94c3b",
+    "src/core/integration-resources.js": "e1d2820a430f44cd7cf75a5ff9c14d6d7d86abd9e0dc565b8fb3f9a04556984a"
+  },
+  "selectedIdentityPresent": [
+    "status effectiveTaskId",
+    "continuity/reconcile commands resolvedctx.taskId",
+    "inspect taskId",
+    "handoff taskId",
+    "programmatic command executors options.taskId",
+    "integration continuityresource taskId"
+  ],
+  "knownOmission": "src/core/next-action-continuity.js:63 dropscontext.taskId",
+  "runtimeReproduction": "Pending new tests/next-action-task-scope.test.js; no testsrun",
+  "wholeConsumerClosure": false
+}

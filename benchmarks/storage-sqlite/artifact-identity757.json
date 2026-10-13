@@ -1,0 +1,22 @@
+{
+  "increment": 757,
+  "parentHead": "56c2838e54f095e03664d466cdd123797cef9d47",
+  "scope": "Generic operational artifact taskId binding, matching migration validation; taskId absent remains accepted",
+  "preflight": "READY",
+  "reproduction": "Public writeJsonArtifact accepts another task gate payload when destination taskId is explicit; regression fails Missing expected rejection before fix",
+  "change": "Before generic putArtifact publication, reject a present payload.taskId that differs from canonical destination taskId",
+  "tests": {
+    "selected": 46,
+    "passed": 46,
+    "failed": 0
+  },
+  "fastVerification": "PASS",
+  "complexity": "PASS, no regressions",
+  "fullCurrentPlatforms": "PENDING",
+  "logs": {
+    "artifact-identity757-red.log": "50f3b6b86b3ddb7b1c2d88f201c3404cd6d1e73d5f3ac7002626e68c958c792d",
+    "artifact-identity757-green.log": "90a5f32181f3c758c595eaaf373e36eb66e6077216fa36563855019c6c3f7aa9",
+    "fast757.log": "b9f8477a711fe514d5cb242373923cdd8d19b18a20703b148660fdcfefe85859",
+    "complexity757.log": "32111f472b37a8b8941d21c72e18a3815643453328562aed2fd87e8a2f0417f2"
+  }
+}

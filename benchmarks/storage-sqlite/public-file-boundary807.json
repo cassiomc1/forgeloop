@@ -1,0 +1,52 @@
+{
+  "increment": 807,
+  "sourceRevision": "3357f4768e0f383c4bc17338d7c0c96886416bde",
+  "status": "SOURCE_REVIEWED_SUBSET",
+  "wholeConsumerClosure": false,
+  "reviewed": [
+    {
+      "path": "src/core/guide-registry.js",
+      "sha256": "6112ae9e5af389ce83131e216fb3dbd095d92c28a32872c3853cc6fb6296510e",
+      "disposition": "Reads shipped src/config/guides.json; immutable guide registry is distributed source asset."
+    },
+    {
+      "path": "src/core/guide-metadata.js",
+      "sha256": "1e50b9a40f3a01978b7db72ace559fd79112b061b6e14c74687d98e41e3ffbc5",
+      "disposition": "Reads shipped guide Markdown metadata; guide files remain package assets."
+    },
+    {
+      "path": "src/core/templates.js",
+      "sha256": "20e92251bc83f699890533fd397536755226b93b74ca04766f94212128faf8f8",
+      "disposition": "Reads package-owned template bytes for installation; guides/schemas/install metadata remain files."
+    },
+    {
+      "path": "src/core/project-root.js",
+      "sha256": "ecf5cf4018f97d3a46f130b2649903fd23d5d6fe4d2dcef029e3850abacc5764",
+      "disposition": "Resolves and validates the actual project directory; filesystem identity is required before storage admission."
+    },
+    {
+      "path": "src/core/project-detection.js",
+      "sha256": "96956accd87bb28890ac74dbaec95a02250cb6f9b9ba4a47ac507955fe21c530",
+      "disposition": "Enumerates bounded repository manifests/source to derive project evidence; .forgeloop excluded from recursive discovery. No operational artifact writer."
+    },
+    {
+      "path": "src/core/structural-quality/source-fingerprint.js",
+      "sha256": "de166c936a7c4246fbd014f2ea9eee1faba98a586287aae0286d0a2515774735",
+      "disposition": "Fingerprints Git worktree or directory source material, excluding .forgeloop/.git/provider configuration. Operational baseline/evaluations are separate canonical artifacts."
+    },
+    {
+      "path": "src/core/command-runtime.js",
+      "sha256": "56085a5bddeccabcbcf008b1c26c4293cc8b4d7c321f9684fd9e5493f038afcf",
+      "disposition": "Reads shipped package.json only to expose runtime package version; delegates commands through canonical executors."
+    },
+    {
+      "path": "src/core/policy-engine.js",
+      "sha256": "780fc64459d8b9f12e1062029f6fe22d73e41b1cad3970033a5286a1d0c7d072",
+      "disposition": "Project policy rules/discovery/lock remain validated files; task policy snapshot selects native artifact presence/read before explicit legacy fallback."
+    }
+  ],
+  "limitations": [
+    "Raw filesystem role review only; not exhaustive alias/dynamic/transitive closure.",
+    "No new behavioral or platform tests claimed for this source-only review."
+  ]
+}

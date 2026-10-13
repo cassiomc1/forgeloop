@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -33,7 +34,7 @@ test("MCP test wrapper reports one actionable prerequisite without installing", 
     assert.equal(await runMcpTests({ root, spawnProcess: () => { throw new Error("must not spawn"); } }), 1);
   } finally {
     console.error = originalError;
-    await rm(root, { recursive: true, force: true });
+    await removeTempTree(root);
   }
   assert.deepEqual(messages, [
     "MCP dependencies are not installed.",
@@ -65,6 +66,6 @@ test("MCP test wrapper launches the discovered suite with literal argv and prese
     assert.equal(invocation.options.cwd, root);
     assert.equal(invocation.options.shell, false);
   } finally {
-    await rm(root, { recursive: true, force: true });
+    await removeTempTree(root);
   }
 });

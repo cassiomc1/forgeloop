@@ -1,0 +1,48 @@
+{
+  "increment": 688,
+  "productionChanged": true,
+  "problem": "Gate artifact freshness reported present canonical SQLite bytes missing; recording and revalidation required operational filesystem mirrors.",
+  "beforeEvidence": "/Users/cassio/.codex/verification/gates-before688.log",
+  "correction": "Shared canonical byte binding through operational read observations in recording, freshness validation and revalidation. Direct freshness selects existing native scope; missing selected references never fall back to filesystem shadows. Canonical ledger hashes stream all rows and retain complete observation binding. External file branches retain containment/type/hash/size admission.",
+  "tests": {
+    "expandedGatePreflight": {
+      "total": 59,
+      "passed": 59,
+      "failed": 0,
+      "log": "/Users/cassio/.codex/verification/gates-expanded688.log"
+    },
+    "cases": [
+      "Public record/preflight/execution/revalidate cycle using canonical descriptor bytes without mirrors",
+      "Canonical changed/missing byte binding and physical shadow preservation; mixed-layout entry refuses admission",
+      "Independent writer changes captured descriptor and prevents staged gate commit with E_STATE_REVISION_CONFLICT",
+      "Ledger hash equals exported bytes and avoids whole event text materialization",
+      "Existing external evidence size, symlink, phase, contract-epoch and ledger provenance regressions"
+    ]
+  },
+  "checks": {
+    "verifyFast": "PASS",
+    "lint": "PASS",
+    "complexity": "PASS unchanged baseline",
+    "gitDiff": "PASS",
+    "mcpClean": {
+      "passed": 73,
+      "failed": 0,
+      "log": "/Users/cassio/.codex/verification/mcp688.log"
+    },
+    "docs": "PASS"
+  },
+  "sourceSha256": {
+    "src/core/gate-artifact.js": "0e81116939618b6e534719fe0cb7eab2485faedbc412c339681c1b9a03f840a7",
+    "src/commands/gate-record.js": "4f9049e8164087b250ebf13d7c90b4f881c568ab2f76f1bb4e70461dfd9a76b7",
+    "src/commands/gate-revalidate.js": "48679a857e9df5abbae507a1152de4faef83c3064c9fed5c5fe2ddc7cafdb50f",
+    "tests/gate-native-selection.test.js": "ae067ff3c1114881fd8cab9c7663e312963a10db6fb976da8947bfda1f61796a",
+    "tests/gate-revalidation.test.js": "e0d5fa96c43d62ba83aaf4769c504b802983c6dffa04eda0dd3bbc2b62f720b4"
+  },
+  "wholeScopeVerified": false,
+  "limits": [
+    "Full Mac686 predates this three-module correction.",
+    "Current remote platforms, actual candidate workflows, remaining public/transitive authority and maintenance closure, original resource/performance and inclusive LOC acceptance remain open.",
+    "Streaming test verifies mechanism and byte parity, not a measured memory budget or release benchmark.",
+    "Concurrent hostile filesystem check/use replacement remains unproven."
+  ]
+}

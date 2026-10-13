@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "scope": "Action listing and idempotency no longer enumerate legacy action directories; SQLite records and index remain authoritative",
+  "sourceSha256": {
+    "src/core/actions.js": "5238516e2b1196f2af5ef4b0f812aae822c3474735913676ecb81189f60c081b",
+    "src/core/transaction.js": "cf12f75b0ab3c0f4a83021ee7de9035d5bf180c041bcade455c1b0ddf12b090f",
+    "src/core/transaction-maintenance.js": "bf7da409cb63b288daca24a7205552506e31091a3f60bdb6446b0008e11df7e8",
+    "src/storage/migration-source.js": "4e2b78e7be7b1641883b28d0b33fe34fd1264b047ce88e00e617e5607aa9ffdb",
+    "tests/actions.test.js": "2712012c8661904ccc2123876b8520c7c50f6aa7efedf0f6865173f116c5717d",
+    "tests/action-readiness.test.js": "235270ca271069045bff11a8fdafbb4158ec2aa2c45972d76e6805b1da46eaac"
+  },
+  "checks": {
+    "focused": {
+      "pass": 20,
+      "fail": 0
+    },
+    "approvalAndDurableDependents": {
+      "pass": 49,
+      "fail": 0
+    },
+    "verifyFast": "PASS",
+    "lint": {
+      "errors": 0,
+      "warnings": 115
+    }
+  },
+  "diagnosis": "Initial focused run exposed a historical-readiness fixture still persisting its record as an operational file. Fixture now retains identical historical action payload in native storage and still proves untrusted chronology; production directory scanning was not restored.",
+  "audit": {
+    "filesystemTransactions": "No active filesystem staging/rollback implementation remains. Read-only .txn inspection remains for legacy migration admission and pre-native doctor; retired recovery/compaction refuse explicitly.",
+    "legacyActionDirectory": "Listing and idempotency refuse E_STORAGE_MIGRATION_REQUIRED and neither create SQLite nor mutate retained legacy bytes."
+  },
+  "logs": {
+    "/tmp/sqlite-actions596-tests.log": "365a94a2f6220b6ffdc3809a0582390db412fbf18753bb5523582ee1fa5a5f05",
+    "/tmp/sqlite-actions596-tests-corrected.log": "f03a22eafd7e62f24bd840c3092fe6c63f12dd150e2976321dce1d9c2c181b74",
+    "/tmp/sqlite-actions596-dependents.log": "799ffec9b584bbab0b3ecce75f72a83fef02ba3649eafde1b54138b0d918b996",
+    "/tmp/sqlite-actions596-fast.log": "30523817269024b387f9a1e9414ce1d88a69aa8fb64a89c76d29d6e07c4ba0cb",
+    "/tmp/sqlite-actions596-lint.log": "32866177a6c17d4a635a3163b211cd332a18647016e93cdbf58c2967842a8f7e"
+  },
+  "limitations": [
+    "Other legacy payload readers and approval directory consumers require continued audit.",
+    "Latest action change has local evidence only; fresh full Windows/Linux and GitHub checks remain required.",
+    "Inclusive LOC threshold remains missed; this removal does not establish Phase 4 completion."
+  ]
+}

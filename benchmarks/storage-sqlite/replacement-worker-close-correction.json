@@ -1,0 +1,44 @@
+{
+  "kind": "REPLACEMENT_WORKER_CLOSE_FIXTURE_CORRECTION",
+  "baseRevision": "7531da34d4ba5c7f95019b6b5cbf2f0b140428d2",
+  "failedWindowsRun": "38042718400",
+  "failure": "Recovery helper refused recorded owner PID before reaching REBUILD_ALLOCATED.",
+  "diagnosis": "Fixture awaited exit but not close; process-handle timing is a plausible cause, not yet proven on Windows. Diagnostic PowerShell status1 was inconclusive.",
+  "correction": "Register exit and close promises before SIGKILL; require killed exit then await close before recovery. Preserve all checkpoint/liveness assertions and production refusal.",
+  "productionChanged": false,
+  "sourceHashes": {
+    "tests/storage-replacement-preparation.test.js": "2033604d02ba3db117aa251398c7fc2e96606c7716c70c47db9f27d1ea014767",
+    "tests/helpers/storage-replacement-failed-resume-worker.mjs": "7d5b006e77a7ee51fa0d27dafbf5efe7aaf6f23949b8c70d18a1a145612e818b",
+    "tests/work-state-persistence-parity.test.js": "06ec9a0f1a52fa7aac0344646c44d7cec83ef17c82ff003b263f35d3a05f87db"
+  },
+  "validation": {
+    "node": "24.19.0",
+    "focusedTests": 23,
+    "pass": 23,
+    "fail": 0,
+    "skip": 0,
+    "verifyFast": "PASS",
+    "lint": "PASS"
+  },
+  "logs": [
+    {
+      "path": "/Users/cassio/.codex/verification/windows-full-d4a4856-failure.log",
+      "sha256": "dc12a1c51beb33cb5a80714f1a600646fd81532c2132d52effe94cff2758d4a2"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/replacement-close-parity-7531da3-root.log",
+      "sha256": "94a76110cf14f2488862a6094a00fa1bf05c56a158040857bd6b8c9783681f2f"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/runner-replacement-7531da3-fast.log",
+      "sha256": "5b445d2bb68d56d5eb938a4a11a871753f5c566447e801c4e92b2540aedf1271"
+    }
+  ],
+  "limits": [
+    "Corrected Windows execution pending.",
+    "No PID rewriting, bypass or blind retry.",
+    "Rejected task-state extraction removed; three independent parity controls retained against unchanged production.",
+    "Original full plan/performance/LOC/validator gates remain open."
+  ],
+  "acceptanceClaim": false
+}

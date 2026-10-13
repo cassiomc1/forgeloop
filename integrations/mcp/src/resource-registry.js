@@ -8,10 +8,9 @@ import { stringifyBoundedMcpJson } from "./output-policy.js";
 
 import { logResourceRead } from "./logging.js";
 
-const TASK_RESOURCE_KINDS = [
-  "status", "ownership", "contract", "continuity", "workspace-binding", "handoffs",
-  "responsibility", "verification-scope", "attestation", "structural-quality", "actions", "approvals", "metrics", "context", "evaluations",
-];
+const TASK_RESOURCE_KINDS = Object.entries(INTEGRATION_RESOURCE_DEFINITIONS)
+  .filter(([uri, definition]) => definition.scope === "TASK" && uri !== "task/action")
+  .map(([uri]) => uri.slice("task/".length));
 
 /**
  * Deterministic resource catalog from the canonical allowlist. Task-scoped
@@ -19,13 +18,14 @@ const TASK_RESOURCE_KINDS = [
  * read path always goes through readForgeLoopIntegrationResource, which
  * derives ownership exclusively from the canonical resolver.
  */
-export function registerIntegrationResources(server, { projectRoot, packageRoot }) {
+export function registerIntegrationResources(server, { projectRoot, packageRoot, runtimeContext }) {
   const readTaskResource = (kind) => async (uri, { taskId }) => {
     const startedAt = Date.now();
     try {
       const resource = await readForgeLoopIntegrationResource(`task/${kind}`, {
         projectPath: projectRoot,
         packageRoot,
+        runtimeContext,
         taskId,
       });
       logResourceRead({ uri: resource.uri, durationMs: Date.now() - startedAt, ok: true });
@@ -48,6 +48,7 @@ export function registerIntegrationResources(server, { projectRoot, packageRoot 
       const resource = await readForgeLoopIntegrationResource("protocol/info", {
         projectPath: projectRoot,
         packageRoot,
+        runtimeContext,
       });
       return { contents: [{ uri: uri.href, mimeType: "application/json", text: stringifyBoundedMcpJson(resource.data) }] };
     },
@@ -61,6 +62,7 @@ export function registerIntegrationResources(server, { projectRoot, packageRoot 
       const resource = await readForgeLoopIntegrationResource("project/tasks", {
         projectPath: projectRoot,
         packageRoot,
+        runtimeContext,
       });
       return { contents: [{ uri: uri.href, mimeType: "application/json", text: stringifyBoundedMcpJson(resource.data) }] };
     },
@@ -82,7 +84,7 @@ export function registerIntegrationResources(server, { projectRoot, packageRoot 
     new ResourceTemplate("forgeloop://task/{taskId}/action/{actionId}", { list: undefined }),
     { description: INTEGRATION_RESOURCE_DEFINITIONS["task/action"].description },
     async (uri, { taskId, actionId }) => {
-      const resource = await readForgeLoopIntegrationResource("task/action", { projectPath: projectRoot, packageRoot, taskId, actionId });
+      const resource = await readForgeLoopIntegrationResource("task/action", { projectPath: projectRoot, packageRoot, runtimeContext, taskId, actionId });
       return { contents: [{ uri: uri.href, mimeType: "application/json", text: stringifyBoundedMcpJson(resource.data) }] };
     },
   );
@@ -91,7 +93,7 @@ export function registerIntegrationResources(server, { projectRoot, packageRoot 
     "forgeloop://project/capability-policy",
     { description: INTEGRATION_RESOURCE_DEFINITIONS["project/capability-policy"].description },
     async (uri) => {
-      const resource = await readForgeLoopIntegrationResource("project/capability-policy", { projectPath: projectRoot, packageRoot });
+      const resource = await readForgeLoopIntegrationResource("project/capability-policy", { projectPath: projectRoot, packageRoot, runtimeContext });
       return { contents: [{ uri: uri.href, mimeType: "application/json", text: stringifyBoundedMcpJson(resource.data) }] };
     },
   );
@@ -103,6 +105,7 @@ export function registerIntegrationResources(server, { projectRoot, packageRoot 
       const resource = await readForgeLoopIntegrationResource("repository/index-status", {
         projectPath: projectRoot,
         packageRoot,
+        runtimeContext,
       });
       return { contents: [{ uri: uri.href, mimeType: "application/json", text: stringifyBoundedMcpJson(resource.data) }] };
     },

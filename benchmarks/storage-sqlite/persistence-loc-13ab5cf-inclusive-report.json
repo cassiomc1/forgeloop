@@ -1,0 +1,193 @@
+{
+  "acceptanceEligible": true,
+  "targetMet": false,
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "currentRevision": "13ab5cf8366e815cbd1a04d2a785efcb213ce5af",
+  "parserVersion": "7.0.2",
+  "baselineSourceClean": true,
+  "baselineSelectedLines": 25732,
+  "currentSelectedLines": 32896,
+  "threshold": "currentSelectedLines <= baselineSelectedLines * 0.75",
+  "netReduction": -0.2784082076791543,
+  "unresolvedMembership": [],
+  "declaredUnresolvedMembership": [],
+  "identityMappingsApplied": [
+    {
+      "id": "checkpoint-revalidate-selected-eligibility",
+      "baselineKey": "src/commands/checkpoint-revalidate.js::FunctionDeclaration::inspectEligibility",
+      "currentKey": "src/commands/checkpoint-revalidate.js::FunctionDeclaration::inspectSelectedEligibility"
+    },
+    {
+      "id": "attestation-coverage-selected-evaluation",
+      "baselineKey": "src/core/attestation-coverage.js::FunctionDeclaration::evaluateAttestationCoverage",
+      "currentKey": "src/core/attestation-coverage.js::FunctionDeclaration::evaluateSelectedAttestationCoverage"
+    },
+    {
+      "id": "audit-selected-evaluation",
+      "baselineKey": "src/core/audit.js::FunctionDeclaration::evaluateAudit",
+      "currentKey": "src/core/audit.js::FunctionDeclaration::evaluateSelectedAudit"
+    },
+    {
+      "id": "completion-artifacts-terminal-result-transaction",
+      "baselineKey": "src/core/completion-artifacts.js::FunctionDeclaration::recordTerminalResult",
+      "currentKey": "src/core/completion-artifacts.js::FunctionDeclaration::recordTerminalResultInTransaction"
+    },
+    {
+      "id": "completion-recovery-rebind-transaction",
+      "baselineKey": "src/core/completion-recovery-rebind.js::FunctionDeclaration::rebindCompletionRejectionSnapshot",
+      "currentKey": "src/core/completion-recovery-rebind.js::FunctionDeclaration::rebindRejectionInTransaction"
+    },
+    {
+      "id": "completion-selected-evaluation",
+      "baselineKey": "src/core/completion.js::FunctionDeclaration::evaluateCompletion",
+      "currentKey": "src/core/completion.js::FunctionDeclaration::evaluateSelectedCompletion"
+    },
+    {
+      "id": "continuity-loaded-reconciliation",
+      "baselineKey": "src/core/continuity-reconciliation.js::FunctionDeclaration::reconcileContinuity",
+      "currentKey": "src/core/continuity-reconciliation.js::FunctionDeclaration::reconcileLoadedContinuity"
+    },
+    {
+      "id": "decision-snapshot-bindings",
+      "baselineKey": "src/core/decision/task-bindings.js::FunctionDeclaration::readCurrentDecisionBindings",
+      "currentKey": "src/core/decision/task-bindings.js::FunctionDeclaration::readSnapshotBindings"
+    },
+    {
+      "id": "diagnosis-transaction-recording",
+      "baselineKey": "src/core/diagnosis.js::FunctionDeclaration::recordDiagnosis",
+      "currentKey": "src/core/diagnosis.js::FunctionDeclaration::recordDiagnosisInTransaction"
+    },
+    {
+      "id": "diagnostic-record-case",
+      "baselineKey": "src/core/diagnostic-record.js::FunctionDeclaration::recordStructuredDiagnosticCase",
+      "currentKey": "src/core/diagnostic-record.js::FunctionDeclaration::recordDiagnosticCase"
+    },
+    {
+      "id": "diagnostic-record-intervention",
+      "baselineKey": "src/core/diagnostic-record.js::FunctionDeclaration::recordIntervention",
+      "currentKey": "src/core/diagnostic-record.js::FunctionDeclaration::recordInterventionInternal"
+    },
+    {
+      "id": "diagnostic-record-disposition",
+      "baselineKey": "src/core/diagnostic-record.js::FunctionDeclaration::recordHypothesisDisposition",
+      "currentKey": "src/core/diagnostic-record.js::FunctionDeclaration::recordDisposition"
+    },
+    {
+      "id": "reconcile-closure-selected",
+      "baselineKey": "src/core/reconcile-closure.js::FunctionDeclaration::runReconcileClosure",
+      "currentKey": "src/core/reconcile-closure.js::FunctionDeclaration::reconcileSelectedClosure"
+    },
+    {
+      "id": "settlement-decision-criterion",
+      "baselineKey": "src/core/settlement.js::FunctionDeclaration::recordDecisionCriterion",
+      "currentKey": "src/core/settlement.js::FunctionDeclaration::recordCriterion"
+    },
+    {
+      "id": "structural-quality-context-observation",
+      "baselineKey": "src/core/structural-quality/service.js::FunctionDeclaration::resolveStructuralQualityContext",
+      "currentKey": "src/core/structural-quality/service.js::FunctionDeclaration::resolveStructuralQualityContextObservation"
+    },
+    {
+      "id": "structural-quality-status-observation",
+      "baselineKey": "src/core/structural-quality/service.js::FunctionDeclaration::projectStructuralQualityStatus",
+      "currentKey": "src/core/structural-quality/service.js::FunctionDeclaration::projectStructuralQualityStatusObservation"
+    },
+    {
+      "id": "verification-scope-transaction",
+      "baselineKey": "src/core/verification-scope.js::FunctionDeclaration::persistVerificationScope",
+      "currentKey": "src/core/verification-scope.js::FunctionDeclaration::persistVerificationScopeInTransaction"
+    }
+  ],
+  "renameCandidates": [],
+  "kind": "PERSISTENCE_LOC_13AB5CF_INCLUSIVE_EXACT_HEAD_REVIEW",
+  "currentProductionSourceClean": true,
+  "ceilingSelectedLines": 19299,
+  "remainingGap": 13597,
+  "netRemovalFrom32908": 12,
+  "selectedRegistryMappingNodes": [
+    {
+      "side": "current",
+      "path": "src/core/artifact-registry.js",
+      "key": "src/core/artifact-registry.js::FunctionDeclaration::portableSingletonMapping",
+      "sourceKey": "src/core/artifact-registry.js::FunctionDeclaration::portableSingletonMapping",
+      "kind": "FunctionDeclaration",
+      "name": "portableSingletonMapping",
+      "lineStart": 449,
+      "lineEnd": 453,
+      "nonblankPhysicalLines": 5,
+      "reason": "direct-operational-persistence",
+      "stable": true,
+      "fingerprint": "a389b3e0d2542358bd6f005b7efa452333e43d4759a6621e0e9e0a156afeac77",
+      "sourceSha256": "67848e5f13585453694d58de770bd18d2758bf8db59eb0b700bf7503100d4bf1",
+      "rawFileSha256": "67848e5f13585453694d58de770bd18d2758bf8db59eb0b700bf7503100d4bf1"
+    },
+    {
+      "side": "current",
+      "path": "src/core/artifact-registry.js",
+      "key": "src/core/artifact-registry.js::FunctionDeclaration::portableCollectionMapping",
+      "sourceKey": "src/core/artifact-registry.js::FunctionDeclaration::portableCollectionMapping",
+      "kind": "FunctionDeclaration",
+      "name": "portableCollectionMapping",
+      "lineStart": 455,
+      "lineEnd": 459,
+      "nonblankPhysicalLines": 5,
+      "reason": "direct-operational-persistence",
+      "stable": true,
+      "fingerprint": "069def3f0e7aef6af7c299f80e8d3cf63d0a74f1ff8f77dc44ca729dfcbc487e",
+      "sourceSha256": "67848e5f13585453694d58de770bd18d2758bf8db59eb0b700bf7503100d4bf1",
+      "rawFileSha256": "67848e5f13585453694d58de770bd18d2758bf8db59eb0b700bf7503100d4bf1"
+    },
+    {
+      "side": "current",
+      "path": "src/core/artifact-registry.js",
+      "key": "src/core/artifact-registry.js::VariableStatement::PORTABLE_ARTIFACT_MAPPINGS",
+      "sourceKey": "src/core/artifact-registry.js::top-level::VariableStatement::PORTABLE_ARTIFACT_MAPPINGS",
+      "kind": "VariableStatement",
+      "name": "PORTABLE_ARTIFACT_MAPPINGS",
+      "lineStart": 462,
+      "lineEnd": 475,
+      "nonblankPhysicalLines": 14,
+      "reason": "operational-top-level-declaration",
+      "stable": true,
+      "fingerprint": null,
+      "sourceSha256": "67848e5f13585453694d58de770bd18d2758bf8db59eb0b700bf7503100d4bf1",
+      "rawFileSha256": "67848e5f13585453694d58de770bd18d2758bf8db59eb0b700bf7503100d4bf1"
+    }
+  ],
+  "storageMembership": {
+    "mandatoryWholeModuleCount": 68,
+    "everyCurrentStorageSourceFileCountedWholly": true,
+    "selectedStorageLines": 7435,
+    "includes": [
+      "importer",
+      "exporter",
+      "compatibility",
+      "attachments",
+      "migration",
+      "backup",
+      "restore",
+      "maintenance",
+      "unit-of-work"
+    ]
+  },
+  "scopePolicy": "Original full inclusive membership retained; exact PORTABLE_ARTIFACT_MAPPINGS token appended symmetrically solely to include new persistence metadata. All prior tokens/dispositions retained. Original 25% threshold unchanged.",
+  "artifacts": {
+    "persistence-loc-function-analyzer.mjs": {
+      "path": "/Users/cassio/.codex/verification/persistence-loc-function-analyzer.mjs",
+      "sha256": "11616f80bddee55dab700992160f8fa674115eaa42f614b3c52a752c366a33aa"
+    },
+    "persistence-loc-function-scope-manifest-13ab5cf-inclusive.json": {
+      "path": "/Users/cassio/.codex/verification/persistence-loc-function-scope-manifest-13ab5cf-inclusive.json",
+      "sha256": "9363c2279eda4ab3643c4def0a0a6198dee1d57723d404d8c75f7004802cb2fb"
+    },
+    "persistence-loc-13ab5cf-inclusive-final-raw.json": {
+      "path": "/Users/cassio/.codex/verification/persistence-loc-13ab5cf-inclusive-final-raw.json",
+      "sha256": "5db117b3cad8f6c26f85792c7960a7fbeaee8bcd5404768f381332962ed4b6f9"
+    }
+  },
+  "limitations": [
+    "LOC eligibility establishes closed source membership only, not release acceptance or ForgeLoop VALID.",
+    "No tests, timing benchmarks, source edits, commits, PRs or publication performed in this review.",
+    "Target remains unmet; current total exceeds baseline by 7164 lines and ceiling by 13597 lines."
+  ]
+}

@@ -1,0 +1,677 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "file": "src/integration.js",
+    "sha256": "adaa63fe570f28cd65f27060c558213025672183cddf26e9386de761ccd30526"
+  },
+  "method": "AST enumeration matched against loaded module namespace; source-reviewed boundary classification, not automatic transitive writer proof",
+  "exports": [
+    {
+      "name": "getForgeLoopPackageVersion",
+      "module": "src/integration.js",
+      "line": 25,
+      "category": "INSTALLED_PACKAGE_METADATA_READ"
+    },
+    {
+      "name": "FORGELOOP_INTEGRATION_RUNTIME_VERSION",
+      "module": "./core/command-runtime.js",
+      "line": 34,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "executeForgeLoopCommand",
+      "module": "./core/command-runtime.js",
+      "line": 34,
+      "category": "CANONICAL_COMMAND_DISPATCH"
+    },
+    {
+      "name": "validateForgeLoopCommandInput",
+      "module": "./core/command-input.js",
+      "line": 34,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "defaultCommandInputValues",
+      "module": "./core/command-input.js",
+      "line": 34,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "getForgeLoopCapabilities",
+      "module": "./core/integration-invocation-policy.js",
+      "line": 34,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "classifyForgeLoopInvocation",
+      "module": "./core/integration-invocation-policy.js",
+      "line": 34,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "readForgeLoopIntegrationResource",
+      "module": "./core/integration-resources.js",
+      "line": 34,
+      "category": "CANONICAL_READ_RESOURCE"
+    },
+    {
+      "name": "resolveForgeLoopProjectRoot",
+      "module": "./core/project-root.js",
+      "line": 34,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "INTEGRATION_LIMITS",
+      "module": "./core/integration-limits.js",
+      "line": 34,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "AUDIT_UX_CATEGORIES",
+      "module": "./core/audit-ux.js",
+      "line": 34,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "AUDIT_UX_LIMITS",
+      "module": "./core/audit-ux.js",
+      "line": 34,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "AUDIT_UX_SCHEMA_VERSION",
+      "module": "./core/audit-ux.js",
+      "line": 34,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "INTEGRATION_RISK_CLASSES",
+      "module": "./core/integration-invocation-policy.js",
+      "line": 34,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "INTEGRATION_RESOURCE_DEFINITIONS",
+      "module": "./core/integration-resources.js",
+      "line": 34,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "CLI_COMMAND_DEFINITIONS",
+      "module": "./core/cli-command-definitions.js",
+      "line": 34,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "createForgeLoopContext",
+      "module": "./core/runtime-context.js",
+      "line": 52,
+      "category": "RUNTIME_CONTEXT_FACTORY"
+    },
+    {
+      "name": "searchRepository",
+      "module": "./repository-index/search.js",
+      "line": 53,
+      "category": "EXCLUDED_REPOSITORY_INDEX_LIFECYCLE"
+    },
+    {
+      "name": "getRepositoryIndexStatus",
+      "module": "./repository-index/status.js",
+      "line": 54,
+      "category": "EXCLUDED_REPOSITORY_INDEX_LIFECYCLE"
+    },
+    {
+      "name": "rebuildRepositoryIndex",
+      "module": "./repository-index/server.js",
+      "line": 55,
+      "category": "EXCLUDED_REPOSITORY_INDEX_LIFECYCLE"
+    },
+    {
+      "name": "restartRepositoryIndexServer",
+      "module": "./repository-index/server.js",
+      "line": 55,
+      "category": "EXCLUDED_REPOSITORY_INDEX_LIFECYCLE"
+    },
+    {
+      "name": "setupRepositoryIndex",
+      "module": "./repository-index/server.js",
+      "line": 55,
+      "category": "EXCLUDED_REPOSITORY_INDEX_LIFECYCLE"
+    },
+    {
+      "name": "startRepositoryIndexServer",
+      "module": "./repository-index/server.js",
+      "line": 55,
+      "category": "EXCLUDED_REPOSITORY_INDEX_LIFECYCLE"
+    },
+    {
+      "name": "stopRepositoryIndexServer",
+      "module": "./repository-index/server.js",
+      "line": 55,
+      "category": "EXCLUDED_REPOSITORY_INDEX_LIFECYCLE"
+    },
+    {
+      "name": "repositorySearch",
+      "module": "src/integration.js",
+      "line": 64,
+      "category": "EXCLUDED_REPOSITORY_INDEX_LIFECYCLE"
+    },
+    {
+      "name": "repositoryIndexStatus",
+      "module": "src/integration.js",
+      "line": 70,
+      "category": "EXCLUDED_REPOSITORY_INDEX_LIFECYCLE"
+    },
+    {
+      "name": "assertStructuralQualityProvider",
+      "module": "./core/structural-quality/provider.js",
+      "line": 74,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "createStructuralQualityProviderRegistry",
+      "module": "./core/structural-quality/provider.js",
+      "line": 74,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "normalizeStructuralQualityDetection",
+      "module": "./core/structural-quality/provider.js",
+      "line": 74,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "normalizeStructuralQualitySnapshot",
+      "module": "./core/structural-quality/provider.js",
+      "line": 74,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "resolveStructuralQualityProvider",
+      "module": "./core/structural-quality/provider.js",
+      "line": 74,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "STRUCTURAL_QUALITY_CHECK_ID",
+      "module": "./core/structural-quality/constants.js",
+      "line": 81,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "STRUCTURAL_QUALITY_MODES",
+      "module": "./core/structural-quality/constants.js",
+      "line": 81,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "STRUCTURAL_QUALITY_REQUIREMENT",
+      "module": "./core/structural-quality/constants.js",
+      "line": 81,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "STRUCTURAL_QUALITY_ROOT_CAUSES",
+      "module": "./core/structural-quality/constants.js",
+      "line": 81,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "STRUCTURAL_QUALITY_STATUSES",
+      "module": "./core/structural-quality/constants.js",
+      "line": 81,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "PROFILE_CONTEXT_POLICIES",
+      "module": "./core/execution-profile-context.js",
+      "line": 88,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "buildExecutionProfileContext",
+      "module": "./core/execution-profile-context.js",
+      "line": 88,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "getExecutionProfileContextPolicy",
+      "module": "./core/execution-profile-context.js",
+      "line": 88,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "legacyExecutionProfile",
+      "module": "./core/execution-profile-context.js",
+      "line": 88,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "projectExecutionProfileContext",
+      "module": "./core/execution-profile-context.js",
+      "line": 88,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "EXECUTION_PROFILES",
+      "module": "./core/execution-profile.js",
+      "line": 95,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "EXECUTION_PROFILE_REQUESTS",
+      "module": "./core/execution-profile.js",
+      "line": 95,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "LEGACY_EXECUTION_PROFILE",
+      "module": "./core/execution-profile.js",
+      "line": 95,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "projectExecutionProfile",
+      "module": "./core/execution-profile.js",
+      "line": 95,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "resolveExecutionProfile",
+      "module": "./core/execution-profile.js",
+      "line": 95,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "E_VERIFICATION_EXECUTION_INVALID",
+      "module": "./core/verification-execution.js",
+      "line": 102,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "E_VERIFICATION_ISOLATION_UNAVAILABLE",
+      "module": "./core/verification-execution.js",
+      "line": 102,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "VERIFICATION_EXECUTION_POLICY_MODES",
+      "module": "./core/verification-execution.js",
+      "line": 102,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "VERIFICATION_ISOLATION_MODES",
+      "module": "./core/verification-execution.js",
+      "line": 102,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "recallAdvisoryContext",
+      "module": "./core/advisory-context/service.js",
+      "line": 108,
+      "category": "PROVIDER_OBSERVATION_SERVICE"
+    },
+    {
+      "name": "runBrowserVerification",
+      "module": "./core/browser-verification/service.js",
+      "line": 109,
+      "category": "PROVIDER_OBSERVATION_SERVICE"
+    },
+    {
+      "name": "BROWSER_VERIFICATION_ASSERTION_KINDS",
+      "module": "./core/browser-verification/constants.js",
+      "line": 110,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "BROWSER_VERIFICATION_ASSERTION_STATUSES",
+      "module": "./core/browser-verification/constants.js",
+      "line": 110,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "BROWSER_VERIFICATION_CAPTURE_POLICIES",
+      "module": "./core/browser-verification/constants.js",
+      "line": 110,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "BROWSER_VERIFICATION_LIMITS",
+      "module": "./core/browser-verification/constants.js",
+      "line": 110,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "BROWSER_VERIFICATION_LOCATOR_KINDS",
+      "module": "./core/browser-verification/constants.js",
+      "line": 110,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "BROWSER_VERIFICATION_STEP_KINDS",
+      "module": "./core/browser-verification/constants.js",
+      "line": 110,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "BROWSER_VERIFICATION_TRUST",
+      "module": "./core/browser-verification/constants.js",
+      "line": 110,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "BROWSER_VERIFICATION_WAIT_CONDITIONS",
+      "module": "./core/browser-verification/constants.js",
+      "line": 110,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "normalizeBrowserVerificationRequestOptions",
+      "module": "./core/browser-verification/constants.js",
+      "line": 110,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "assertBrowserVerificationProvider",
+      "module": "./core/browser-verification/provider.js",
+      "line": 121,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "assertBrowserVerificationProviderIdentity",
+      "module": "./core/browser-verification/provider.js",
+      "line": 121,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "assertBrowserVerificationProviderRegistration",
+      "module": "./core/browser-verification/provider.js",
+      "line": 121,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "BROWSER_VERIFICATION_PROVIDER_ID_PATTERN",
+      "module": "./core/browser-verification/provider.js",
+      "line": 121,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "createBrowserVerificationProviderRegistry",
+      "module": "./core/browser-verification/provider.js",
+      "line": 121,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "normalizeBrowserVerificationRequest",
+      "module": "./core/browser-verification/provider.js",
+      "line": 121,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "resolveBrowserVerificationProvider",
+      "module": "./core/browser-verification/provider.js",
+      "line": 121,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "normalizeBrowserVerificationResult",
+      "module": "./core/browser-verification/normalize.js",
+      "line": 130,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "runSecurityReview",
+      "module": "./core/security-review/service.js",
+      "line": 131,
+      "category": "PROVIDER_OBSERVATION_SERVICE"
+    },
+    {
+      "name": "SECURITY_REVIEW_CATEGORIES",
+      "module": "./core/security-review/constants.js",
+      "line": 132,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "SECURITY_REVIEW_CONFIDENCE",
+      "module": "./core/security-review/constants.js",
+      "line": 132,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "SECURITY_REVIEW_LIMITS",
+      "module": "./core/security-review/constants.js",
+      "line": 132,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "SECURITY_REVIEW_SCOPES",
+      "module": "./core/security-review/constants.js",
+      "line": 132,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "SECURITY_REVIEW_SEVERITIES",
+      "module": "./core/security-review/constants.js",
+      "line": 132,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "SECURITY_REVIEW_TRUST",
+      "module": "./core/security-review/constants.js",
+      "line": 132,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "SECURITY_REVIEW_PROVIDER_ID_PATTERN",
+      "module": "./core/security-review/provider.js",
+      "line": 140,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "assertSecurityReviewProvider",
+      "module": "./core/security-review/provider.js",
+      "line": 140,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "assertSecurityReviewProviderIdentity",
+      "module": "./core/security-review/provider.js",
+      "line": 140,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "assertSecurityReviewProviderRegistration",
+      "module": "./core/security-review/provider.js",
+      "line": 140,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "createSecurityReviewProviderRegistry",
+      "module": "./core/security-review/provider.js",
+      "line": 140,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "normalizeSecurityReviewRequest",
+      "module": "./core/security-review/provider.js",
+      "line": 140,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "resolveSecurityReviewProvider",
+      "module": "./core/security-review/provider.js",
+      "line": 140,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "normalizeSecurityReviewResult",
+      "module": "./core/security-review/normalize.js",
+      "line": 149,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "createRipwireAdvisoryContextProvider",
+      "module": "./adapters/ripwire/provider.js",
+      "line": 150,
+      "category": "EXTERNAL_PROVIDER_FACTORY_OR_CONSTANT"
+    },
+    {
+      "name": "createOpenSrcAdvisoryContextProvider",
+      "module": "./adapters/opensrc/provider.js",
+      "line": 151,
+      "category": "EXTERNAL_PROVIDER_FACTORY_OR_CONSTANT"
+    },
+    {
+      "name": "createAgentBrowserVerificationProvider",
+      "module": "./adapters/agent-browser/provider.js",
+      "line": 152,
+      "category": "EXTERNAL_PROVIDER_FACTORY_OR_CONSTANT"
+    },
+    {
+      "name": "createEmulatedServicesProvider",
+      "module": "./adapters/emulated-services/index.js",
+      "line": 153,
+      "category": "EXTERNAL_PROVIDER_FACTORY_OR_CONSTANT"
+    },
+    {
+      "name": "EMULATED_SERVICES_ERROR_CODES",
+      "module": "./adapters/emulated-services/index.js",
+      "line": 153,
+      "category": "EXTERNAL_PROVIDER_FACTORY_OR_CONSTANT"
+    },
+    {
+      "name": "EMULATED_SERVICES_ID",
+      "module": "./adapters/emulated-services/index.js",
+      "line": 153,
+      "category": "EXTERNAL_PROVIDER_FACTORY_OR_CONSTANT"
+    },
+    {
+      "name": "EMULATED_SERVICES_PROCESS_LIMITS",
+      "module": "./adapters/emulated-services/index.js",
+      "line": 153,
+      "category": "EXTERNAL_PROVIDER_FACTORY_OR_CONSTANT"
+    },
+    {
+      "name": "EMULATED_SERVICES_SUPPORTED_VERSION",
+      "module": "./adapters/emulated-services/index.js",
+      "line": 153,
+      "category": "EXTERNAL_PROVIDER_FACTORY_OR_CONSTANT"
+    },
+    {
+      "name": "ADVISORY_CONTEXT_LIMITS",
+      "module": "./core/advisory-context/constants.js",
+      "line": 160,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "ADVISORY_CONTEXT_TRUST",
+      "module": "./core/advisory-context/constants.js",
+      "line": 160,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "normalizeAdvisoryRecallOptions",
+      "module": "./core/advisory-context/constants.js",
+      "line": 160,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "assertAdvisoryContextProvider",
+      "module": "./core/advisory-context/provider.js",
+      "line": 165,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "assertAdvisoryContextProviderIdentity",
+      "module": "./core/advisory-context/provider.js",
+      "line": 165,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "createAdvisoryContextProviderRegistry",
+      "module": "./core/advisory-context/provider.js",
+      "line": 165,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "normalizeAdvisoryContextResult",
+      "module": "./core/advisory-context/provider.js",
+      "line": 165,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "resolveAdvisoryContextProvider",
+      "module": "./core/advisory-context/provider.js",
+      "line": 165,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "normalizePortableText",
+      "module": "./core/portable-context.js",
+      "line": 172,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "assertPortableContextSafe",
+      "module": "./core/portable-context.js",
+      "line": 172,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "PortableContextError",
+      "module": "./core/portable-context.js",
+      "line": 172,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    },
+    {
+      "name": "acceptCanonicalHandoff",
+      "module": "./core/handoff-acceptance.js",
+      "line": 177,
+      "category": "DIRECT_CANONICAL_TRANSACTION"
+    },
+    {
+      "name": "resolveHandoffAcceptance",
+      "module": "./core/handoff-acceptance.js",
+      "line": 177,
+      "category": "PURE_HANDOFF_PROJECTION"
+    },
+    {
+      "name": "FORGELOOP_INTEGRATION_API_VERSION",
+      "module": "src/integration.js",
+      "line": 182,
+      "category": "CONSTANT_NORMALIZER_OR_POLICY_SURFACE"
+    }
+  ],
+  "categoryCounts": {
+    "INSTALLED_PACKAGE_METADATA_READ": 1,
+    "CONSTANT_NORMALIZER_OR_POLICY_SURFACE": 80,
+    "CANONICAL_COMMAND_DISPATCH": 1,
+    "CANONICAL_READ_RESOURCE": 1,
+    "RUNTIME_CONTEXT_FACTORY": 1,
+    "EXCLUDED_REPOSITORY_INDEX_LIFECYCLE": 9,
+    "PROVIDER_OBSERVATION_SERVICE": 3,
+    "EXTERNAL_PROVIDER_FACTORY_OR_CONSTANT": 8,
+    "DIRECT_CANONICAL_TRANSACTION": 1,
+    "PURE_HANDOFF_PROJECTION": 1
+  },
+  "reviewedPaths": {
+    "command": "src/core/command-runtime.js -> src/core/command-executors.js -> src/storage/project-boundary.js",
+    "resource": "src/core/integration-resources.js:307 -> withProjectStorage(readOnly:true)",
+    "handoff": "src/core/handoff-acceptance.js:129 -> src/core/transaction.js:36 -> withProjectStorage -> withOperationalTransaction; HANDOFF_ACCEPTED via appendProtocolEvent",
+    "providers": "Observation services call supplied providers and normalize results; external effects and callback implementations are not claimed SQLite writers",
+    "index": "Original plan excludes tgrep lifecycle files from first migration"
+  },
+  "jevgrep": {
+    "exitCode": 0,
+    "relevantFiles": 150,
+    "contextTruncated": true
+  },
+  "soleWriterVerified": false,
+  "remaining": [
+    "Complete transitive consumer closure across commands and resource projections",
+    "Review aliased/receiver/filehandle write leads and dependency/provider effects",
+    "Map every operational artifact and portable-file exception to the original plan",
+    "Linux verification of new admission and public API test changes"
+  ]
+}

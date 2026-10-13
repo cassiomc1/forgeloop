@@ -1,12 +1,17 @@
 import assert from "node:assert/strict";
+import { access } from "node:fs/promises";
+import path from "node:path";
 import { test } from "node:test";
 
 import { parseArgs } from "../src/cli.js";
+import { executeForgeLoopCommand } from "../src/core/command-runtime.js";
 import { runHandoffCreate } from "../src/commands/handoff-create.js";
 import { runHandoffList } from "../src/commands/handoff-list.js";
 import { runHandoffShow } from "../src/commands/handoff-show.js";
 import { formatHandoffAcceptResult } from "../src/commands/handoff-accept.js";
+import { validateLedgerEvents } from "../src/core/events.js";
 import { getPackageRoot } from "../src/core/templates.js";
+import { checkStorageIntegrity, listEvents, openStorageDatabase } from "../src/storage/index.js";
 import { setupVerifyingTask } from "./helpers/durable-lifecycle.js";
 import { createGitRepository } from "./helpers/git-fixture.js";
 import { removeTempTree } from "./helpers/rm-safe.js";
@@ -130,6 +135,78 @@ test("handoff-accept CLI parser and executor accept handoff and update inspectio
     assert.equal(inconsistentList.handoffs[0].acceptance.status, "INCONSISTENT");
     assert.equal(inconsistentShow.acceptance.status, "INCONSISTENT");
     assert.ok(inconsistentShow.acceptance.reasonCodes.includes("E_HANDOFF_ALREADY_ACCEPTED"));
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("public handoff lifecycle persists canonical SQLite evidence without legacy operational files", async () => {
+  const taskId = "handoff-public-native-001";
+  const target = await createGitRepository("forgeloop-handoff-public-native-");
+  try {
+    await setupVerifyingTask(target, packageRoot, { taskId });
+
+    const created = await executeForgeLoopCommand({
+      command: "handoff-create",
+      projectPath: target,
+      input: {
+        taskId,
+        recipientHint: "reviewer",
+        handoffNote: "Inspect the canonical evidence",
+      },
+    });
+    assert.equal(created.ok, true, JSON.stringify(created));
+    const handoffId = created.result.handoff.handoffId;
+
+    const accepted = await executeForgeLoopCommand({
+      command: "handoff-accept",
+      projectPath: target,
+      input: {
+        taskId,
+        handoffId,
+        consumerId: "agent-codex",
+        harness: "codex",
+      },
+    });
+    assert.equal(accepted.ok, true, JSON.stringify(accepted));
+    assert.equal(accepted.result.accepted, true);
+    assert.equal(accepted.result.idempotent, false);
+
+    const db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"), { readOnly: true });
+    try {
+      const artifact = db.prepare(
+        "SELECT payload_json FROM task_artifacts WHERE task_id = ? AND kind = 'handoff' AND artifact_id = ?",
+      ).get(taskId, handoffId);
+      assert.ok(artifact, "public handoff creation must retain its canonical artifact");
+      assert.equal(JSON.parse(artifact.payload_json).artifactDigest, created.result.handoff.artifactDigest);
+
+      const events = listEvents(db, taskId);
+      const createdEvents = events.filter((event) => event.event === "HANDOFF_CREATED");
+      const acceptedEvents = events.filter((event) => event.event === "HANDOFF_ACCEPTED");
+      assert.equal(createdEvents.length, 1);
+      assert.equal(createdEvents[0].details.handoffId, handoffId);
+      assert.equal(acceptedEvents.length, 1);
+      assert.deepEqual(acceptedEvents[0].details, {
+        handoffId,
+        handoffDigest: created.result.handoff.artifactDigest,
+        consumerId: "agent-codex",
+        harness: "codex",
+      });
+      assert.equal(validateLedgerEvents(events).valid, true);
+      assert.equal(checkStorageIntegrity(db).ok, true);
+    } finally {
+      db.close();
+    }
+
+    for (const relative of [
+      ".forgeloop/task-state",
+      ".forgeloop/events.ndjson",
+      ".forgeloop/sessions",
+      ".forgeloop/session.json",
+      ".forgeloop/.txn",
+    ]) {
+      await assert.rejects(access(path.join(target, relative)), { code: "ENOENT" });
+    }
   } finally {
     await removeTempTree(target);
   }

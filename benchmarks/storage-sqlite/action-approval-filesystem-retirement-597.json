@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "scope": "Operational action/approval readers and listing require selected SQLite; no JSON-file payload fallback or directory enumeration in these modules",
+  "sourceSha256": {
+    "src/core/actions.js": "bf9ce702df4b5cac2d609f2761a5aee8361a16a0ebdecfe650d45f31c9cdb2af",
+    "src/core/approvals.js": "6cc9020d81f308b8790fe0a0f8a23b90273f7079194bc4c9e2bd864c5336f705",
+    "tests/actions.test.js": "5b3a56813e47d4b70a57305d304700fd5a58fd11dc27981946eadf0cc70e823a",
+    "tests/approvals.test.js": "d2e8b2a84cb114fc9b381043792b20b7dd7769358f7666cd272d11ab1c9d67a4",
+    "tests/action-readiness.test.js": "235270ca271069045bff11a8fdafbb4158ec2aa2c45972d76e6805b1da46eaac"
+  },
+  "macos": {
+    "domainSuite": {
+      "tests": 80,
+      "pass": 80,
+      "fail": 0,
+      "skipped": 0
+    },
+    "addedApprovalRefusal": {
+      "tests": 1,
+      "pass": 1,
+      "fail": 0
+    },
+    "verifyFast": "PASS",
+    "lintErrors": 0,
+    "lintWarnings": 115
+  },
+  "remote": {
+    "windows": {
+      "sourceBefore": 2527,
+      "sourceAfter": 2527,
+      "counts": {
+        "tests": 81,
+        "pass": 80,
+        "fail": 0,
+        "skipped": 1
+      },
+      "rawSha256": "13781b6e4f9dd5dcafd20fa407b69be1ab780bbb77b37a1a7e56f3c98ab3e389"
+    },
+    "linux": {
+      "sourceBefore": 2527,
+      "sourceAfter": 2527,
+      "counts": {
+        "tests": 81,
+        "pass": 81,
+        "fail": 0,
+        "skipped": 0
+      },
+      "rawSha256": "3c5207e01988f2613816422fa8fed3891bbafb02c2598088d202dbe7ac4b70b7"
+    }
+  },
+  "behavior": "Legacy action/approval reads and listings return E_STORAGE_MIGRATION_REQUIRED, retain original bytes and do not create native authority; native action and approval validation, decision bindings, idempotency and durable flow checks pass.",
+  "limitations": [
+    "Windows existing symlink test remains skipped and is not verified by this suite.",
+    "Remote probes test an admitted prior source copy plus verified updated modules, not a fresh full final-source acceptance run.",
+    "Other operational consumers, LOC/performance targets, full platform and workflow gates remain open."
+  ]
+}

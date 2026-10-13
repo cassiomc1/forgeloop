@@ -1,5 +1,6 @@
+import { withProjectStorage } from "../src/storage/project-boundary.js";
 import assert from "node:assert/strict";
-import { mkdir, rm, writeFile } from "node:fs/promises";
+import { readRawFixtureText, deleteFixtureArtifact, overwriteFixtureArtifactBytes, overwriteFixtureDescriptorBytes, overwriteFixtureStateBytes, overwriteFixtureText, ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import { test } from "node:test";
 
 import { runStatus } from "../src/commands/status.js";
@@ -7,12 +8,11 @@ import { runTaskList } from "../src/commands/task-list.js";
 import { runTaskRecover } from "../src/commands/task-recover.js";
 import { runTaskResume } from "../src/commands/task-resume.js";
 import { runTaskShow } from "../src/commands/task-show.js";
-import { appendProtocolEvent } from "../src/core/events.js";
 import { resolveTaskClaimState } from "../src/core/task-claim-state.js";
 import { withTaskMutation } from "../src/core/task-command.js";
 import { ensureWithin } from "../src/core/filesystem.js";
 import { readTaskDescriptor } from "../src/core/task-descriptor.js";
-import { TASK_STATE_ROOT, taskArtifactPath } from "../src/core/task-paths.js";
+import { taskArtifactPath } from "../src/core/task-paths.js";
 import {
   createTaskRecovery,
   taskClaimProjection,
@@ -104,7 +104,7 @@ test("resolveTaskClaimState blocks claim resurrection when an active recovery to
   await withRecoveryTarget(async (target) => {
     const { taskId } = await setupAbandonedTask(target, { taskId: "claim-state-deleted" });
     await runTaskRecover({ target, packageRoot, taskId, acknowledgeRecovery: true });
-    await rm(ensureWithin(target, taskArtifactPath(taskId, "recovery")));
+    await deleteFixtureArtifact(target, taskArtifactPath(taskId, "recovery"));
 
     assertFailClosed(await resolveTaskClaimState(target, { taskId, packageRoot }));
   });
@@ -113,7 +113,8 @@ test("resolveTaskClaimState blocks claim resurrection when an active recovery to
 test("resolveTaskClaimState keeps historical claims when recovery JSON is corrupt", async () => {
   await withRecoveryTarget(async (target) => {
     const { taskId } = await setupAbandonedTask(target, { taskId: "claim-state-corrupt" });
-    await writeFile(ensureWithin(target, taskArtifactPath(taskId, "recovery")), "{\"status\":", "utf8");
+    await runTaskRecover({ target, packageRoot, taskId, acknowledgeRecovery: true });
+    await overwriteFixtureArtifactBytes(target, taskArtifactPath(taskId, "recovery"), "{\"status\":");
 
     assertFailClosed(await resolveTaskClaimState(target, { taskId, packageRoot }));
   });
@@ -122,7 +123,7 @@ test("resolveTaskClaimState keeps historical claims when recovery JSON is corrup
 test("resolveTaskClaimState fails closed when the task descriptor is corrupt", async () => {
   await withRecoveryTarget(async (target) => {
     const { taskId } = await setupAbandonedTask(target, { taskId: "claim-state-corrupt-descriptor" });
-    await writeFile(ensureWithin(target, taskArtifactPath(taskId, "descriptor")), "{\"taskId\":", "utf8");
+    await overwriteFixtureDescriptorBytes(target, taskId, "{\"taskId\":");
 
     assertFailClosed(await resolveTaskClaimState(target, { taskId, packageRoot }), []);
   });
@@ -131,9 +132,14 @@ test("resolveTaskClaimState fails closed when the task descriptor is corrupt", a
 test("resolveTaskClaimState fails closed when the work state is corrupt", async () => {
   await withRecoveryTarget(async (target) => {
     const { taskId } = await setupAbandonedTask(target, { taskId: "claim-state-corrupt-state" });
-    await writeFile(ensureWithin(target, taskArtifactPath(taskId, "state")), "{\"phase\":", "utf8");
+    const claims = () => withProjectStorage(target, store => store.db.prepare("SELECT * FROM claims WHERE task_id = ? ORDER BY claim_norm").all(taskId), { readOnly: true });
+    const beforeClaims = await claims();
+    await overwriteFixtureStateBytes(target, taskId, "{\"phase\":");
 
-    assertFailClosed(await resolveTaskClaimState(target, { taskId, packageRoot }));
+    // The indexed task payload is unreadable, so no claim summary is trusted.
+    // Authoritative reservations must remain byte-for-byte unchanged.
+    assertFailClosed(await resolveTaskClaimState(target, { taskId, packageRoot }), []);
+    assert.deepEqual(await claims(), beforeClaims);
   });
 });
 
@@ -157,16 +163,15 @@ test("resolveTaskClaimState rejects invalid supplied descriptor claims", async (
 test("resolveTaskClaimState rejects ledger events belonging to another task", async () => {
   await withRecoveryTarget(async (target) => {
     const { taskId } = await setupAbandonedTask(target, { taskId: "claim-state-cross-task-ledger" });
-    await appendProtocolEvent(target, {
-      taskId: "different-task",
-      event: "TASK_ACTIVITY_RECORDED",
-      details: { operation: "cross-task-test" },
-    }, packageRoot, { taskId });
+    const eventsPath = taskArtifactPath(taskId, "events");
+    const events = (await readRawFixtureText(target, eventsPath)).trim().split("\n").map(JSON.parse);
+    events.at(-1).taskId = "different-task";
+    await overwriteFixtureText(target, eventsPath, events.map(JSON.stringify).join("\n") + "\n");
 
     const result = await resolveTaskClaimState(target, { taskId, packageRoot });
 
     assertFailClosed(result);
-    assert.ok(result.errors.some((error) => /different task/.test(error.message)));
+    assert.ok(result.errors.some(error => error.causeCode === "E_STORAGE_PAYLOAD_MISMATCH"));
   });
 });
 
@@ -204,7 +209,7 @@ test("resolveTaskClaimState conservatively reserves both descriptor and recovery
     await runTaskRecover({ target, packageRoot, taskId, acknowledgeRecovery: true });
     const descriptorPath = ensureWithin(target, taskArtifactPath(taskId, "descriptor"));
     const descriptor = (await readTaskDescriptor(target, taskId, packageRoot)).value;
-    await writeFile(descriptorPath, `${JSON.stringify({ ...descriptor, writeClaims: ["src"] }, null, 2)}\n`, "utf8");
+    await overwriteFixtureText(target, descriptorPath, `${JSON.stringify({ ...descriptor, writeClaims: ["src"] }, null, 2)}\n`);
 
     const result = await resolveTaskClaimState(target, { taskId, packageRoot });
 
@@ -284,10 +289,9 @@ test("task-list, task-show, and status agree that forged COMPLETE is inconsisten
 test("task-list phase filtering returns only the requested lifecycle phase", async () => {
   await withRecoveryTarget(async (target) => {
     const { taskId } = await setupAbandonedTask(target, { taskId: "phase-filter-task" });
-    const corruptKey = "b".repeat(64);
-    const corruptDirectory = ensureWithin(target, `${TASK_STATE_ROOT}/${corruptKey}`);
-    await mkdir(corruptDirectory, { recursive: true });
-    await writeFile(`${corruptDirectory}/events.ndjson`, "corrupt\n", "utf8");
+    const corruptTaskId = "phase-filter-corrupt";
+    await ensureFixtureTask(target, corruptTaskId, packageRoot);
+    await overwriteFixtureDescriptorBytes(target, corruptTaskId, "{broken");
 
     const matching = await runTaskList({ target, packageRoot, phase: "VERIFYING" });
     assert.deepEqual(matching.tasks.map((task) => task.taskId), [taskId]);

@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { physicalTemporaryPath } from "../temporary-paths.js";
 
 import {
   EMULATED_SERVICES_ERROR_CODES,
@@ -202,15 +203,21 @@ export function createEmulatedServicesProvider(options = {}) {
       const normalized = normalizeRequest(request, { fsImpl, targetRoot });
       validateSignal(normalized.signal);
       assertNotCancelled(normalized.signal);
-      const tempPrefix = path.join(tempRoot, "forgeloop-emulated-");
       let stateRoot = null;
       let managed = null;
       let result = null;
       let operationError = null;
       try {
-        stateRoot = await mkdtempImpl(tempPrefix);
-        assertAbsolutePath(stateRoot, "Emulated Services temporary state");
-        assertTempRootSafe(stateRoot, targetRoot);
+        const physicalRoot = await physicalTemporaryPath(tempRoot);
+        const physicalTarget = targetRoot ? await physicalTemporaryPath(targetRoot) : null;
+        assertTempRootSafe(physicalRoot, physicalTarget);
+        const candidate = await mkdtempImpl(path.join(physicalRoot, "forgeloop-emulated-"));
+        assertAbsolutePath(candidate, "Emulated Services temporary state");
+        assertTempRootSafe(candidate, targetRoot);
+        const physicalState = await physicalTemporaryPath(candidate);
+        assertTempRootSafe(physicalState, physicalTarget);
+        // Rejected paths do not grant recursive cleanup authority.
+        stateRoot = physicalState;
         const versionResult = await runBoundedEmulatedServicesCommand(executablePath, ["--version"], {
           cwd: stateRoot,
           env: filteredEnvironment(),

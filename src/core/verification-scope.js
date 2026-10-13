@@ -1,3 +1,4 @@
+import { operationalArtifactExists } from "../storage/operational-context.js";
 import { canonicalFingerprint, readJsonArtifact, writeJsonArtifact } from "./artifacts.js";
 import { assertSchema, readSchema } from "./schema-validation.js";
 import { getPackageRoot } from "./templates.js";
@@ -5,6 +6,7 @@ import { currentRepositoryFingerprint } from "./repository.js";
 import { resolveRevisionProvider } from "./revision/provider.js";
 import { REVISION_PROVIDERS } from "./revision/registry.js";
 import { readScopedCheckerCapabilities } from "./verification-scope-capability.js";
+import { withNativeReadScope } from "./native-storage.js";
 import { readContract } from "./contract.js";
 import { readPersistedRoute } from "./route-artifact.js";
 import { readWorkState } from "./work-state.js";
@@ -123,17 +125,19 @@ export async function validateVerificationScope(scope, packageRoot = getPackageR
 }
 
 export async function readVerificationScope(target, { taskId, packageRoot = getPackageRoot(), scopePath = null } = {}) {
-  const relativePath = scopePath ?? taskVerificationScopePath(taskId);
-  if (!(await fileExists(ensureWithin(target, relativePath)))) {
-    throw scopeError("E_VERIFICATION_SCOPE_INVALID", `Verification scope is missing: ${relativePath}`, [relativePath]);
-  }
-  try {
-    const artifact = await readJsonArtifact(target, relativePath, "verification-scope", packageRoot);
-    return { ...artifact, value: await validateVerificationScope(artifact.value, packageRoot) };
-  } catch (error) {
-    if (error.code === "E_VERIFICATION_SCOPE_INVALID") throw error;
-    throw scopeError("E_VERIFICATION_SCOPE_INVALID", error.message, [relativePath]);
-  }
+  return withNativeReadScope(target, async () => {
+    const relativePath = scopePath ?? taskVerificationScopePath(taskId);
+    if (!(operationalArtifactExists(target, relativePath) ?? await fileExists(ensureWithin(target, relativePath)))) {
+      throw scopeError("E_VERIFICATION_SCOPE_INVALID", `Verification scope is missing: ${relativePath}`, [relativePath]);
+    }
+    try {
+      const artifact = await readJsonArtifact(target, relativePath, "verification-scope", packageRoot);
+      return { ...artifact, value: await validateVerificationScope(artifact.value, packageRoot) };
+    } catch (error) {
+      if (error.code === "E_VERIFICATION_SCOPE_INVALID") throw error;
+      throw scopeError("E_VERIFICATION_SCOPE_INVALID", error.message, [relativePath]);
+    }
+  });
 }
 
 export async function validateVerificationScopeFreshness(target, {
@@ -249,7 +253,11 @@ export async function resolveVerificationScope(target, {
   return { scope, inputs };
 }
 
-export async function persistVerificationScope(target, scope, { taskId, packageRoot = getPackageRoot() } = {}) {
+export async function persistVerificationScope(target, scope, options = {}) {
+  return withTaskTransaction({ target, taskId: options.taskId, packageRoot: options.packageRoot, operation: "verify-scope" }, () => persistVerificationScopeInTransaction(target, scope, options));
+}
+
+async function persistVerificationScopeInTransaction(target, scope, { taskId, packageRoot = getPackageRoot() } = {}) {
   const relativePath = taskVerificationScopePath(taskId);
   const artifact = await writeJsonArtifact(target, relativePath, scope, "verification-scope", packageRoot, { taskId, operation: "verify-scope" });
   await appendProtocolEvent(target, {

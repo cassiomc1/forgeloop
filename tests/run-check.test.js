@@ -1,5 +1,8 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { access, chmod, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { access, chmod, mkdtemp, writeFile } from "node:fs/promises";
+import { setTimeout as delay } from "node:timers/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -20,6 +23,8 @@ import { executionArtifactPath } from "../src/core/artifacts.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { captureVerificationScope } from "../src/core/verification-scope.js";
 import { taskVerificationScopePath } from "../src/core/task-paths.js";
+import { getOperationalStore } from "../src/storage/operational-context.js";
+import { withProjectStorage } from "../src/storage/project-boundary.js";
 import { setupVerifyingTask } from "./helpers/durable-lifecycle.js";
 import { createGitRepository } from "./helpers/git-fixture.js";
 import { removeTempTree } from "./helpers/rm-safe.js";
@@ -29,10 +34,27 @@ const packageRoot = getPackageRoot();
 async function withTarget(run) {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-run-check-"));
   try {
+    await ensureFixtureTask(target, "task-1", packageRoot);
     await run(target);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
+}
+
+async function waitForFile(filename, { timeoutMs = 5000, signal } = {}) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (signal?.aborted) throw signal.reason ?? new Error("File barrier was cancelled");
+    try {
+      await access(filename);
+      return;
+    } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+    }
+    const remaining = deadline - Date.now();
+    if (remaining > 0) await delay(Math.min(10, remaining), undefined, { signal });
+  }
+  throw new Error(`Timed out waiting for external execution marker: ${filename}`);
 }
 
 test("run-check launches the registered scoped checker with exact argv and scope evidence", async () => {
@@ -109,6 +131,109 @@ test("run-check rejects a scoped argv mismatch before launching a process", asyn
   }
 });
 
+test("public run-check external adapter runs without an open SQLite writer transaction", async () => {
+  const target = await createGitRepository("forgeloop-run-check-transaction-");
+  const taskId = "run-check-transaction-001";
+  const observations = [];
+  try {
+    await setupVerifyingTask(target, packageRoot, { taskId });
+    const result = await runCheck({
+      target,
+      packageRoot,
+      taskId,
+      id: "transaction-boundary",
+      requirement: "external verification runs outside the SQLite writer",
+      argv: [process.execPath, "-e", "process.exit(0)"],
+      runtimeContext: {
+        verificationExecutionAdapter: {
+          async execute(request) {
+            assert.equal(request.taskId, taskId);
+            const store = getOperationalStore(target);
+            assert.ok(store);
+            observations.push({ isTransaction: store.db.isTransaction, transaction: store.transaction });
+            return {
+              exitCode: 0,
+              signal: null,
+              timedOut: false,
+              stdout: "adapter passed\n",
+              stderr: "",
+              outputTruncated: false,
+              cwd: target,
+              isolation: {
+                mode: "NATIVE_PROJECT",
+                isolated: false,
+                liveProjectWritable: true,
+                networkPolicy: "INHERITED",
+                environmentPolicy: "INHERITED",
+              },
+            };
+          },
+        },
+      },
+    });
+
+    assert.equal(result.execution.status, "passed");
+    assert.deepEqual(observations, [{ isTransaction: false, transaction: null }]);
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
+test("public native run-check launches without an open SQLite writer transaction", async () => {
+  const target = await createGitRepository("forgeloop-run-check-native-transaction-");
+  const taskId = "run-check-native-transaction-001";
+  const marker = path.join(target, "external-check-started.txt");
+  const release = path.join(target, "external-check-release.txt");
+  try {
+    await setupVerifyingTask(target, packageRoot, { taskId });
+    await withProjectStorage(target, async store => {
+      const childScript = [
+        "const fs = require('node:fs');",
+        `const marker = ${JSON.stringify(marker)};`,
+        `const release = ${JSON.stringify(release)};`,
+        "fs.writeFileSync(marker, 'started');",
+        "const timer = setInterval(() => { if (fs.existsSync(release)) { clearInterval(timer); process.exit(0); } }, 10);",
+        "setTimeout(() => process.exit(2), 5000);",
+      ].join(" ");
+      const operation = runCheck({
+        target,
+        packageRoot,
+        taskId,
+        id: "native-transaction-boundary",
+        requirement: "native external verification runs outside the SQLite writer",
+        argv: [process.execPath, "-e", childScript],
+        timeoutMs: 3000,
+      });
+      const completion = operation.then(
+        result => ({ kind: "completed", result }),
+        error => ({ kind: "failed", error }),
+      );
+      const markerController = new AbortController();
+      const markerObserved = waitForFile(marker, { timeoutMs: 3000, signal: markerController.signal });
+      try {
+        const first = await Promise.race([
+          markerObserved.then(() => ({ kind: "marker" })),
+          completion,
+        ]);
+        if (first.kind === "failed") throw first.error;
+        if (first.kind === "completed") throw new Error("run-check completed before its native external marker was observed");
+        assert.equal(store.db.isTransaction, false);
+        assert.equal(store.transaction, null);
+        await writeFile(release, "release\n", "utf8");
+        const finished = await completion;
+        if (finished.kind === "failed") throw finished.error;
+        assert.equal(finished.result.execution.status, "passed");
+      } finally {
+        await writeFile(release, "release\n", "utf8").catch(() => {});
+        markerController.abort();
+        await Promise.allSettled([markerObserved, completion]);
+      }
+    });
+  } finally {
+    await removeTempTree(target);
+  }
+});
+
 test("classifyCommandResolution uses the exact argv vector", () => {
   assert.deepEqual(classifyCommandResolution(["npx", "@liustack/modlens", "image.png"]), {
     resolutionMode: "INSTALL_CAPABLE_RESOLUTION",
@@ -145,6 +270,7 @@ test("runCommandExecution captures exact argv, target cwd, and non-zero exit", a
     assert.deepEqual((await readExecutionArtifact({
       target,
       executionRef: result.execution.executionId,
+      taskId: "task-1",
       packageRoot,
     })).value, result.execution);
   });
@@ -152,6 +278,14 @@ test("runCommandExecution captures exact argv, target cwd, and non-zero exit", a
 
 test("runCommandExecution records bounded output provenance and terminates a timed-out check", async () => {
   await withTarget(async (target) => {
+    const output = "before timeout";
+    const captured = await runCommandExecution({ target, packageRoot, taskId: "task-1", checkId: "bounded-output",
+      requirement: "bounded-output", verificationCycle: 1, timeoutMs: 5000,
+      argv: [process.execPath, "-e", "process.stdout.write('before timeout')"] });
+    assert.equal(captured.execution.status, "passed");
+    assert.equal(captured.execution.stdoutBytes, Buffer.byteLength(output));
+    assert.equal(captured.execution.stdoutSha256, createHash("sha256").update(output).digest("hex"));
+    assert.equal(captured.execution.outputTruncated, false);
     const result = await runCommandExecution({
       target,
       packageRoot,
@@ -167,7 +301,7 @@ test("runCommandExecution records bounded output provenance and terminates a tim
     assert.equal(result.execution.termination, "timeout");
     assert.equal(result.execution.exitCode, null);
     assert.equal(result.execution.signal, "SIGTERM");
-    assert.equal(result.execution.stdoutBytes, Buffer.byteLength("before timeout"));
+    assert.ok(result.execution.stdoutBytes === 0 || result.execution.stdoutBytes === Buffer.byteLength(output));
     assert.match(result.execution.stdoutSha256, /^[a-f0-9]{64}$/);
     assert.match(result.execution.stderrSha256, /^[a-f0-9]{64}$/);
     assert.ok(result.execution.durationMs >= 0);

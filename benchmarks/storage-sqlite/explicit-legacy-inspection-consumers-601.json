@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "scope": "Explicit legacy receipt/task inspection and portable bundle export retain compatibility while canonical native reads select SQLite",
+  "sourceSha256": {
+    "src/core/task-descriptor.js": "16d424d050d8cd65eef3806e93eb1ad2d908fe925dd4b41d18b5e9160fc8e380",
+    "src/core/task-discovery.js": "e32c23adf3642b730fbe407572f9e6cd6cb7ec9358feb37951f0b2815c2cd907",
+    "src/core/bundles.js": "8d74bf947d73e3a9ae5b4149da78e6ff8584d48d6c04f12bf296fcaa487e1991",
+    "tests/bundle.test.js": "9b02b37955ebed548d75894059c7f63f9bf6e6d23fc8b0d86b98149024a3ed55",
+    ".github/workflows/pr-core.yml": "609586c985c20a56b1fddf5c594083ec29ead0e2119412d65903b1d22f8174e5",
+    ".github/workflows/windows-full-suite.yml": "b776ecb1fb5781ea57375f539e0b0cb9a86aa279dfb97709ab8b1286be9fe33f"
+  },
+  "checks": {
+    "receiptBundleAndDirectAuthority": {
+      "pass": 31,
+      "fail": 0
+    },
+    "augmentedBundleCases": {
+      "pass": 4,
+      "fail": 0,
+      "overlap": "Four bundle cases overlap the31-case suite; augmented nonempty legacy action and source-identity controls are additional assertions."
+    },
+    "workflowPolicy": {
+      "pass": 11,
+      "fail": 0
+    },
+    "verifyFast": "PASS",
+    "lintErrors": 0,
+    "lintWarnings": 115
+  },
+  "behavior": "Unselected legacy descriptor/discovery state and explicitly requested export sources use portable inspection. Native metadata still selects canonical store and refuses missing authority or orphan sidecars. Operational action listing remains SQLite-only; legacy action file enumeration is isolated to explicitly requested read-only bundle source inspection with schema/model/task/filename identity checks.",
+  "controls": [
+    "Corrupt task directory key is reported and cannot trigger singleton receipt fallback.",
+    "Healthy legacy receipt resolution coexists with diagnosed corrupt namespaces.",
+    "Native receipt/direct artifact authority refusal controls remain passing.",
+    "Legacy bundle preserves2MiB attachment and unchanged nonempty action payload; source action identity mismatch and linked signature bytes are refused."
+  ],
+  "ciHistory": "Full core and Windows suite checkouts now fetch complete Git history for the offline pinned filesystem parity baseline; no test-time network fallback or software installation.",
+  "limitations": [
+    "Fresh full current-source Mac verification remains required.",
+    "Updated consumers and fixture baseline still need fresh Windows/Linux full validation and actual GitHub workflow runs.",
+    "Original performance/LOC and all-consumer closure remain open."
+  ]
+}

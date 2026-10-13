@@ -1,5 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -109,6 +111,7 @@ function evaluationValue(baselineFingerprint, overrides = {}) {
 test("quality artifacts are task-scoped, schema-validated, and numerically listed", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-structural-artifacts-"));
   try {
+    await ensureFixtureTask(target, taskId, packageRoot);
     const baseline = await writeStructuralQualityBaseline(target, taskId, baselineValue(), packageRoot, { phase: "PLANNED", taskId });
     const evaluation = await writeStructuralQualityEvaluation(
       target,
@@ -126,13 +129,14 @@ test("quality artifacts are task-scoped, schema-validated, and numerically liste
     assert.deepEqual((await listStructuralQualityEvaluations(target, taskId, packageRoot)).map((item) => item.path), [evaluation.path]);
     assert.throws(() => structuralQualityArtifactRef(taskId, `${taskStructuralQualityBaselinePath(taskId)}/../latest.json`), { code: "E_STRUCTURAL_QUALITY_EVIDENCE_STALE" });
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
 test("baseline capture is idempotent, replaceable only before execution, and records bindings", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-structural-baseline-"));
   try {
+    await ensureFixtureTask(target, taskId, packageRoot);
     const first = await writeStructuralQualityBaseline(target, taskId, baselineValue(), packageRoot, { phase: "PLANNED", taskId });
     const identical = await writeStructuralQualityBaseline(target, taskId, baselineValue(), packageRoot, { phase: "PLANNED", taskId });
     assert.equal(identical.identical, true);
@@ -158,13 +162,14 @@ test("baseline capture is idempotent, replaceable only before execution, and rec
       providerId: "fake",
     }));
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
 test("semantic tampering is rejected even when the JSON schema still matches", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-structural-tamper-"));
   try {
+    await ensureFixtureTask(target, taskId, packageRoot);
     const baseline = await writeStructuralQualityBaseline(target, taskId, baselineValue(), packageRoot, { phase: "PLANNED", taskId });
     const invalid = evaluationValue(baseline.fingerprint, {
       status: "PASS",
@@ -185,7 +190,7 @@ test("semantic tampering is rejected even when the JSON schema still matches", a
     );
     await assert.rejects(() => readStructuralQualityEvaluation(target, taskId, 1, 1, packageRoot), { code: "E_STRUCTURAL_QUALITY_EVIDENCE_STALE" });
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 

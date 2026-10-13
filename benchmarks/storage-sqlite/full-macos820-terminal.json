@@ -1,0 +1,11 @@
+{
+  "increment": 820,
+  "sourceRevision": "c3b7f1fea08ce779b11edfe0bc0f5d6f476f7d01",
+  "cwd": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop",
+  "exitCode": 0,
+  "elapsedSeconds": 545.9564878940582,
+  "manifestFiles": 2928,
+  "admittedSourceUnchanged": true,
+  "status": "PASS",
+  "scope": "Full verify:prepush on working checkout, source manifest checked before and after; not frozen clone."
+}

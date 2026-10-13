@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "scope": "Immutable606currentproductionandCIreceiptfixtures stagedforremote607",
+  "sourceRoot": "/tmp/forgeloop-receipt606",
+  "sourceFiles": 2618,
+  "archiveBytes": 13238917,
+  "archiveSha256": "778b7058ddc83aae8520029f5e61078685fbc8b671c841105a86b5edc59013c7",
+  "steps": [
+    {
+      "label": "isolated workspace admission",
+      "status": 0
+    },
+    {
+      "label": "source transfer over existing private tunnel",
+      "status": 0
+    },
+    {
+      "label": "verified source extraction",
+      "status": 0
+    }
+  ],
+  "limitations": [
+    "Transfer/extraction is not dependencysetup or full remoteexecution.",
+    "Windows607setup/fulljob must wait for existingLinux602terminal.",
+    "Newbenchmarkharness607isnotinthissnapshot;production606matchesMacfullsource."
+  ]
+}

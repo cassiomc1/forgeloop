@@ -1,0 +1,18 @@
+{
+  "increment": 764,
+  "sourceRevision": "aa29518f3242911838e387b73cd141e8847d3583",
+  "status": "completed",
+  "conclusion": "success",
+  "runId": 37682508437,
+  "jobId": 113001895175,
+  "url": "https://github.com/cassiomc1/forgeloop/actions/runs/37682508437",
+  "host": "100.83.46.210",
+  "computer": "VM-CASSIO",
+  "tests": 2871,
+  "passed": 2857,
+  "failed": 0,
+  "skipped": 14,
+  "dockerLinuxContainer": "51abbe357f3e2a1958f8e89c83b430aa7d056cdbc4f6a435baaa3022e66b7a47",
+  "scope": "Full core Node suite only; MCP, packages and prepush are separate gates.",
+  "logSha256": "6bac9f4de18a866cac0fc7dc7ecb751393efe31d172284e9277c7eb52ccfccba"
+}

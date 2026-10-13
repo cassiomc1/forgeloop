@@ -1,0 +1,24 @@
+{
+  "increment": 860,
+  "sourceRevision": "0a9765719dd9c7a1bdab6efe8b183bc3e5279200",
+  "runId": 37721989459,
+  "url": "https://github.com/cassiomc1/forgeloop/actions/runs/37721989459",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "Windows full Node suite",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "coreTests": {
+    "tests": 2914,
+    "passed": 2890,
+    "failed": 0,
+    "skipped": 24
+  },
+  "scope": "Actual full Windows npm test on requested remote host. This workflow does not run MCP/package suites.",
+  "rawLog": "/Users/cassio/.codex/verification/windows860.log",
+  "rawLogSha256": "d2c111126e4cbc95f8291803f509b81de6ee847f20ceeb27f53b8f692edb037d"
+}

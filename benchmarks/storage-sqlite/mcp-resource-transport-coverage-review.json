@@ -1,0 +1,45 @@
+{
+  "kind": "MCP_RESOURCE_TRANSPORT_COVERAGE",
+  "preparationBase": "51105557fb55197438ec7f35ec501e844670c23f",
+  "checkoutAtRootReview": "85103497a00a1ec43e81bd282e06e38d5e4b87e7",
+  "executionRevisionCaptured": false,
+  "sourceRevisionCaveat": "Agent sourceHead labels identify task starting HEAD, not an independently captured full-suite execution manifest; no current-source whole-consumer acceptance inferred",
+  "testHashesVerified": {
+    "integrations/mcp/tests/resource-read-coverage.test.js": "f5822e89c3eec1b71bb5afbb77d61117a1ef3e3dbac0eafbbb7d25bde8b9d25a",
+    "integrations/mcp/tests/capabilities.test.js": "f039e36eec2f3115cb4e8b7d3869e01269d9ca24c13d1f763870ce8fc386439d"
+  },
+  "pinnedNode": "24.19.0",
+  "fullMcpSuite": {
+    "tests": 84,
+    "passed": 84,
+    "failed": 0,
+    "skipped": 0,
+    "logSha256": "4b626a567de4023bdbf539e9b07697c3c238c406ea92cecd621de385267e4fa1"
+  },
+  "ordinaryInstalledVersionAssertion": {
+    "tests": 1,
+    "passed": 1
+  },
+  "resourcesRead": [
+    "protocol/info",
+    "project/capability-policy",
+    "task/status",
+    "task/contract",
+    "task/continuity",
+    "task/metrics",
+    "task/context",
+    "task/audit-view",
+    "repository/index-status"
+  ],
+  "transport": "Real in-memory MCP client.readResource, not all stdio/HTTP resource paths",
+  "dependencyBinding": "Current integration ESM hook; preserved installed dependency package remains1.14.0 and is not package-release acceptance",
+  "rootEslintExitCode": 0,
+  "fullPlanAcceptance": false,
+  "retainedArtifacts": [
+    "mcp-resource-read-coverage-5110555.json.gz",
+    "mcp-full-current-binding-5110555-node2419.log.gz",
+    "current-integration-hook-5110555.mjs.gz",
+    "mcp-capabilities-ordinary-version-5110555-node2419.log.gz",
+    "mcp-resource-read-coverage-5110555-node2419.log.gz"
+  ]
+}

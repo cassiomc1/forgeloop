@@ -1,0 +1,26 @@
+{
+  "head": "993e0cb0073887a55d2d85494b09a5e2c06f33f2",
+  "run": 37659627713,
+  "job": 112923597615,
+  "runner": "forgeloop-linux-remote",
+  "conclusion": "success",
+  "identityLines": [
+    "{\"platform\":\"linux\",\"architecture\":\"x64\",\"hostname\":\"51abbe357f3e\",\"revision\":\"993e0cb0073887a55d2d85494b09a5e2c06f33f2\"}"
+  ],
+  "logSha256": "c643247a3a1cfcb04bdea535dc8402e74d805e5e23e1373d45e972ec2685232b",
+  "scope": "Minimum Node24.19 Linux compatibility:80 quick tests plus72 storage runtime/store/bootstrap tests and CLI help/protocol-info; not full core, current discovery-yield code or whole workflow acceptance.",
+  "suiteCounts": [
+    {
+      "tests": 80,
+      "pass": 80,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "tests": 72,
+      "pass": 72,
+      "fail": 0,
+      "skipped": 0
+    }
+  ]
+}

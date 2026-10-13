@@ -1,0 +1,41 @@
+{
+  "kind": "public-lifecycle-atomicity-regression",
+  "sourceRevision": "657dcb0",
+  "node": "v24.19.0",
+  "semanticNetworkDisabled": true,
+  "tests": 5,
+  "passed": 5,
+  "failed": 0,
+  "skipped": 0,
+  "commands": [
+    "discover",
+    "contract-create",
+    "contract-revise",
+    "gate-record",
+    "gate-revalidate"
+  ],
+  "assertions": [
+    "public command execution",
+    "event publication abort",
+    "all canonical table rows unchanged on fault",
+    "transaction closed",
+    "retry one domain event immediately followed by operation-bound commit witness"
+  ],
+  "test": {
+    "path": "tests/storage-public-lifecycle-atomicity.test.js",
+    "sha256": "5d1312c7d895a41ae73ccf42824c9ee2f69c745cd806b2a550203c8bbf3248bd"
+  },
+  "log": {
+    "path": "/Users/cassio/.codex/verification/public-lifecycle-657dcb0.log",
+    "sha256": "38a91e65ebfa79b91836147f8ab62382e08bd0f56808bcd28776440f5d8bf22c"
+  },
+  "verifyFast": {
+    "exitCode": 0,
+    "path": "/Users/cassio/.codex/verification/acceptance-657dcb0-fast.log",
+    "sha256": "6adee2bb33abe224f5213e2a73f926e4f30db99c9ed77e1f75fd879ba4c693e1"
+  },
+  "limits": [
+    "Domain-event fault controls; does not prove every public writer or all failure points.",
+    "No production changes or benchmark execution."
+  ]
+}

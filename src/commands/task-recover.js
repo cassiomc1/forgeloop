@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { resolveTaskContext } from "../core/task-context.js";
 import { inspectTaskConflictState } from "../core/task-conflict-inspection.js";
 import { appendProtocolEvent } from "../core/events.js";
-import { withTaskTransaction } from "../core/transaction.js";
+import { getTaskTransaction, withTaskTransaction } from "../core/transaction.js";
 import { currentRepositoryFingerprint } from "../core/repository.js";
 import {
   readLockInfo,
@@ -86,6 +86,7 @@ export async function runTaskRecover({
   acknowledgeRecovery = false,
   operatorAuthorized = false,
 } = {}) {
+  const nested = Boolean(await getTaskTransaction(target));
   const context = await resolveTaskContext(target, { taskId, packageRoot, explicitRequired: true });
   const effectiveTaskId = context.taskId;
 
@@ -130,7 +131,7 @@ export async function runTaskRecover({
       const inspection = await inspectTaskConflictState(target, {
         taskId: effectiveTaskId,
         packageRoot,
-        ignoredLockId: transaction.lock.lockId,
+        ignoredLockId: transaction.lock?.lockId ?? null,
       });
       assertRecoveryAllowed(effectiveTaskId, inspection);
       if (inspection.evidence.workStateRevision !== inspectionBeforeLock.evidence.workStateRevision
@@ -194,6 +195,13 @@ export async function runTaskRecover({
         message: `Task ${effectiveTaskId} recovered by caller acknowledgement; write claims released without completion claim`,
       };
     });
+  }).catch(async error => {
+    if (error.code === "E_STATE_REVISION_CONFLICT" && !nested) {
+      // The failed transaction has rolled back. Report a competing validated
+      // recovery through the existing domain error; never replay claim release.
+      await assertConsistentRecoverableOwnership(target, effectiveTaskId, packageRoot);
+    }
+    throw error;
   });
 }
 

@@ -1,0 +1,59 @@
+{
+  "kind": "SEED_PROGRESS_RECEIPTS",
+  "schemaVersion": 1,
+  "revision": "18c629f3b5fbcbdffa8ffbad7aae63f91cf16110",
+  "revisionShort": "18c629f",
+  "branch": "codex/sqlite-end-to-end",
+  "baseRevision": "05a2c4c (hosted §9 dispatch guard + Windows 1,000-rows-only lane; still local, evidence-only)",
+  "generatedAt": "2026-10-13T11:14:00Z",
+  "change": {
+    "scope": "scripts/benchmark-storage-mcp.mjs (repo tooling only), new scripts/lib/benchmark-seed-progress.mjs, optional onTaskSeeded hook in scripts/lib/benchmark-domain-fixture.mjs, focused tests in tests/benchmark-mcp-evidence.test.js",
+    "productBehaviorChange": "none; tasks-1000-both parity assertions, profile_guard step, and the removed-variant mapping untouched",
+    "motivation": "run 38313544390 sat 5h59m in seeding with a 2-line parent journal — a proven diagnosability defect closed by per-task heartbeats and a named stall watchdog"
+  },
+  "behaviors": [
+    {
+      "name": "parent progress journal emits SEEDING_HEARTBEAT every heartbeatTasks seeded tasks with tasksSeeded and elapsedMs",
+      "verifiedBy": "focused tests/benchmark-mcp-evidence.test.js (injected heartbeatTasks=2 seed of 7 tasks -> heartbeats at 2/4/6, elapsedMs asserted) AND real-driver dry run below with heartbeat interval 1"
+    },
+    {
+      "name": "stall watchdog aborts the seed with named E_BENCHMARK_SEED_STALLED error inside the configured grace window",
+      "verifiedBy": "focused test with 100ms grace and a real 400ms hang; error carries tasksSeeded=3 of 1000 and a SEEDING_STALLED journal record"
+    },
+    {
+      "name": "seed failure surfaces: journal records SEEDING_FAILED with code/message, error rethrows for the driver's non-zero exit; no SEEDED record",
+      "verifiedBy": "focused test; the driver's existing catch writes parent-failure.json and exits non-zero (same path exercised end-to-end when the dry run earlier refused the uncommitted new file: DRIVE_EXIT=1 with parent-failure.json written)"
+    }
+  ],
+  "receipts": [
+    {
+      "check": "node --test tests/benchmark-mcp-evidence.test.js",
+      "revision": "18c629f3b5fbcbdffa8ffbad7aae63f91cf16110",
+      "result": "6 pass, 0 fail, 0 skipped, duration 0.58s",
+      "exitCode": 0
+    },
+    {
+      "check": "npx eslint scripts/lib/benchmark-seed-progress.mjs tests/benchmark-mcp-evidence.test.js scripts/benchmark-storage-mcp.mjs scripts/lib/benchmark-domain-fixture.mjs",
+      "revision": "18c629f3b5fbcbdffa8ffbad7aae63f91cf16110",
+      "result": "0 problems (after fixing the 2 no-undef timer errors this change introduced; first verify:fast at 187e713 failed lint FAIL lint exit=1, fixed via node:timers import and amended)",
+      "exitCode": 0
+    },
+    {
+      "check": "npm run verify:fast",
+      "revision": "18c629f3b5fbcbdffa8ffbad7aae63f91cf16110",
+      "result": "PASS repository:hygiene; tier fast green",
+      "exitCode": 0
+    },
+    {
+      "check": "real driver dry run: benchmark-storage-mcp.mjs --baseline-root=/Users/cassio/.codex/verification/ee9ce11-snapshot --validate-only --sizes=3 --repeats=1 --fixture=synthetic --seed-heartbeat-tasks=1 --seed-stall-grace-ms=60000",
+      "revision": "18c629f3b5fbcbdffa8ffbad7aae63f91cf16110",
+      "result": "exit 0; parent.progress.ndjson: SEEDING -> 3x SEEDING_HEARTBEAT (tasksSeeded 1..3 with elapsedMs 11/16/19) -> SEEDED; pinned baseline ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5; scale fixture deterministic sub-second",
+      "exitCode": 0
+    }
+  ],
+  "publicationState": "local-only; no push, PR, publish, or deploy; no lifecycle/decision-plane commands (decision plane remains presence-only credentials=missing)",
+  "limitations": [
+    "the stall watchdog's real-interval firing was proven at the lib level with a real timer plus the driver wiring via the dry run; no CI lane dispatches the actual driver with the watchdog in this pass",
+    "the 117 pre-existing lint complexity warnings were not addressed (predate this change)"
+  ]
+}

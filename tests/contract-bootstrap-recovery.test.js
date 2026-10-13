@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -16,6 +16,7 @@ import { withTaskTransaction } from "../src/core/transaction.js";
 import { createWorkState, writeWorkState } from "../src/core/work-state.js";
 import { writeJsonArtifact } from "../src/core/artifacts.js";
 import { removeTempTree } from "./helpers/rm-safe.js";
+import { readRawFixtureText, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
 
 const packageRoot = getPackageRoot();
 const taskId = "contract-bootstrap-fixture";
@@ -98,17 +99,17 @@ test("repair is idempotent and marker tampering fails closed", async () => {
     const first = await runTaskRepairContractBootstrap({ target, packageRoot, taskId, acknowledgeRepair: true });
     const eventsPath = path.join(target, taskArtifactPath(taskId, "events"));
     const statePath = path.join(target, taskArtifactPath(taskId, "state"));
-    const eventText = await readFile(eventsPath, "utf8");
-    const stateText = await readFile(statePath, "utf8");
+    const eventText = await readRawFixtureText(target, eventsPath);
+    const stateText = await readRawFixtureText(target, statePath);
     const second = await runTaskRepairContractBootstrap({ target, packageRoot, taskId, acknowledgeRepair: true });
     assert.equal(second.alreadyRepaired, true);
-    assert.equal(await readFile(eventsPath, "utf8"), eventText);
-    assert.equal(await readFile(statePath, "utf8"), stateText);
+    assert.equal(await readRawFixtureText(target, eventsPath), eventText);
+    assert.equal(await readRawFixtureText(target, statePath), stateText);
     assert.equal(second.repairId, first.repairId);
 
     const events = eventText.trim().split("\n").map((line) => JSON.parse(line));
     events.at(-2).details.repairId = `repair-${"0".repeat(64)}`;
-    await writeFile(eventsPath, `${events.map((event) => JSON.stringify(event)).join("\n")}\n`);
+    await overwriteFixtureText(target, eventsPath, `${events.map((event) => JSON.stringify(event)).join("\n")}\n`);
     const tampered = await validateEventLedger(target, packageRoot, { taskId });
     assert.equal(tampered.valid, false);
     await assert.rejects(

@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -41,7 +42,7 @@ test("action-authorize delegates to the canonical authorization service under AL
     });
     assert.equal(result.action.state, "AUTHORIZED");
     assert.equal(result.authorization.capabilityDecision, "ALLOW");
-  } finally { await rm(fixture.target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(fixture.target); }
 });
 
 test("action-authorize REQUIRE_AUTHORITY fails without host context and succeeds with trusted host context", async () => {
@@ -76,7 +77,7 @@ test("action-authorize REQUIRE_AUTHORITY fails without host context and succeeds
     assert.equal(result.action.state, "AUTHORIZED");
     assert.equal(result.authorization.authorityKind, "HOST_ATTESTED");
     assert.equal(result.authorization.authorityRef, "grant-authorize-1");
-  } finally { await rm(withoutHost, { recursive: true, force: true }); }
+  } finally { await removeTempTree(withoutHost); }
 });
 
 test("action-authorize binds a host-approved approval into authorization evidence", async () => {
@@ -117,5 +118,5 @@ test("action-authorize binds a host-approved approval into authorization evidenc
 
     const current = await readAction(target, { packageRoot, taskId, actionId: action.actionId });
     assert.equal(current.state, "AUTHORIZED");
-  } finally { await rm(target, { recursive: true, force: true }); }
+  } finally { await removeTempTree(target); }
 });

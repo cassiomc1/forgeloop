@@ -1,0 +1,17 @@
+{
+  "kind": "PORTABLE_MAPPING_AND_PERSISTENT_LOOKUP_FOCUSED",
+  "baseRevision": "722523e",
+  "status": "PASS_FOCUSED",
+  "tests": 51,
+  "passed": 51,
+  "failed": 0,
+  "fast": "PASS",
+  "lint": "PASS",
+  "complexity": "PASS",
+  "earlierFailure": "Generic recovery payload lacked ledger-bound recovery identity and event sequence; preserved as explicit import refusal test.",
+  "callbackCorrection": "Fresh scopes pass store; nested scopes invoke callback without arguments. Ambient lookup handles both; original blanket bug claim withdrawn.",
+  "coverage": "17 artifact kinds byte round-trip; recovery byte export and invalid authority import refusal. No claim of 18 valid public-schema round trips.",
+  "wholePlanComplete": false,
+  "performanceAcceptance": false,
+  "locAcceptance": false
+}

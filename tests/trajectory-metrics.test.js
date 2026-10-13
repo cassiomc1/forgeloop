@@ -1,3 +1,4 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
@@ -12,6 +13,9 @@ import { createEvidence } from "../src/core/evidence.js";
 import { proposeAction, transitionAction, transitionAuthorizedAction, readAction } from "../src/core/actions.js";
 import { buildTrajectoryMetrics } from "../src/core/trajectory-metrics.js";
 import { providerUsage } from "../src/core/usage.js";
+import { openStorageDatabase } from "../src/storage/index.js";
+import { buildEfficiencyReport } from "../src/core/efficiency.js";
+import { createContract, writeContract } from "../src/core/contract.js";
 
 const packageRoot = getPackageRoot();
 
@@ -25,6 +29,7 @@ async function withTarget(run) {
 }
 
 async function seedTask(target, taskId = "task-metrics") {
+  await ensureFixtureTask(target, taskId, packageRoot);
   const fingerprint = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
   const state = createWorkState({
     taskId,
@@ -205,4 +210,51 @@ test("usage normalizer rejects negative and non-integer token values", () => {
     () => providerUsage({ source: "HOST_REPORTED", outputTokens: 1.5 }),
     (error) => error.code === "E_USAGE_INVALID",
   );
+});
+
+test("native metrics retain action readiness across a concurrent provider callback write", async () => {
+  await withTarget(async target => {
+    const taskId = "task-metrics-snapshot";
+    await seedTask(target, taskId);
+    await proposeAction(target, { packageRoot, taskId, input: {
+      actionId: "action-pending", effectClass: "EXTERNAL_PUBLICATION", capability: "repository.push",
+      operation: "push", target: "origin/main", idempotencyKey: "metrics:pending",
+      requiredForCompletion: true, requirement: "publication", provenance: "HOST_REPORTED",
+    } });
+    const before = await buildTrajectoryMetrics({ target, packageRoot, taskId });
+    assert.equal(before.actions.unresolvedRequired, 1);
+    const writer = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+    try {
+      const metrics = await buildTrajectoryMetrics({ target, packageRoot, taskId, runtimeContext: {
+        usageProvider: { async getTaskUsage() {
+          writer.prepare("DELETE FROM actions WHERE task_id = ?").run(taskId);
+          return null;
+        } },
+      } });
+      assert.equal(metrics.actions.total, before.actions.total);
+      assert.equal(metrics.actions.unresolvedRequired, before.actions.unresolvedRequired);
+      const after = await buildTrajectoryMetrics({ target, packageRoot, taskId });
+      assert.equal(after.actions.total, 0);
+      assert.equal(after.actions.unresolvedRequired, 0);
+    } finally { writer.close(); }
+  });
+});
+
+test("native efficiency binds its contract and metrics to the same read snapshot", async () => {
+  await withTarget(async target => {
+    const taskId = "task-efficiency-snapshot";
+    await seedTask(target, taskId);
+    await writeContract(target, createContract({ taskId, objective: "Measure efficiency", deliverables: ["src"],
+      verification: ["tests"], successCriteria: ["tests"] }), packageRoot, { taskId });
+    const before = await buildEfficiencyReport({ target, packageRoot, taskId });
+    assert.ok(before.comparison.metadata.promptSpecFingerprint);
+    const writer = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+    try {
+      const report = await buildEfficiencyReport({ target, packageRoot, taskId, runtimeContext: { usageProvider: {
+        async getTaskUsage() { writer.prepare("DELETE FROM task_artifacts WHERE task_id = ? AND kind = 'contract'").run(taskId); return null; },
+      } } });
+      assert.equal(report.comparison.metadata.promptSpecFingerprint, before.comparison.metadata.promptSpecFingerprint);
+      assert.equal((await buildEfficiencyReport({ target, packageRoot, taskId })).comparison.metadata.promptSpecFingerprint, null);
+    } finally { writer.close(); }
+  });
 });

@@ -1,0 +1,31 @@
+{
+  "kind": "DIRECT_HANDOFF_LIST_SNAPSHOT_CORRECTION",
+  "productionParent": "69a0aa0571c0ca76ea16b41ead2044ac852efac9",
+  "files": {
+    "src/core/handoff.js": "12192b558843e006e6f63591c8eb11219a376c93107131de1b7dcd59875be47c",
+    "tests/storage-handoff-read-snapshot.test.js": "c9f2a8fc44629af3d37be9d97260c2cd0ba7e75e50ba3d37e6dc271aa6362bd4"
+  },
+  "reproduction": "Independent deletion between canonical artifact reads caused E_HANDOFF_NOT_FOUND before correction. Stable maintained test deletes the other artifact regardless of generated ID sort order.",
+  "correction": "Wrap direct canonical list in shared project read snapshot; nested command snapshots and staged transaction scopes reuse existing semantics.",
+  "validation": {
+    "focusedPassed": 41,
+    "failed": 0,
+    "skipped": 0,
+    "fast": "PASS",
+    "complexity": "PASS",
+    "diffCheck": "PASS"
+  },
+  "loc": {
+    "baseline": 25732,
+    "current": 32422,
+    "ceiling": 19299,
+    "unresolved": 0,
+    "targetMet": false,
+    "scope": "benchmarks/storage-sqlite/persistence-loc/scope-direct-handoff-list.json.gz"
+  },
+  "scopeReview": "Previous outer direct readdir callsite moved into anonymous snapshot callback. Replaced stale callsite disposition with explicit full-function conservative inclusion; all other handoff bodies and decisions unchanged.",
+  "limitations": [
+    "Current hosted CI and last full local prepush predate this correction.",
+    "Original resource, LOC, whole-consumer and validator closure gates remain open."
+  ]
+}

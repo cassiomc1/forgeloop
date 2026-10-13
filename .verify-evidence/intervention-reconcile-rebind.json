@@ -1,0 +1,9 @@
+{
+  "id": "intervention-reconcile-rebind",
+  "kind": "CODE_CHANGE",
+  "statement": "Reconcile-closure rebind: extend reconcilable phases to include drifted DIAGNOSING and record the rebound cycle diagnosis from passed contract-bound evidence; no runtime storage behavior changed.",
+  "hypothesisRefs": ["h-reconcile-rebind"],
+  "targets": ["src/core/reconcile-closure.js", "tests/reconcile-closure.test.js"],
+  "expectedObservation": "Drifted DIAGNOSING becomes reconcilable; cycle-229 rebound diagnosis recorded with CHECK_STATUS settlement on the passed evidence execution.",
+  "reversible": true
+}

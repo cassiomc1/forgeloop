@@ -1,0 +1,116 @@
+{
+  "sourceRevision": "cd93184b0135ad5205909fe680bf6dd92edfc61b",
+  "parentExitCode": 0,
+  "sourceManifestsUnchanged": true,
+  "rows": [
+    {
+      "tasks": 10,
+      "operation": "paginated-task-list",
+      "outputContractVerified": true,
+      "nativeP95Ms": 147.0287500000004,
+      "baselineP95Ms": 163.51108299999987,
+      "speedupP95": 1.1121027894204325,
+      "regressionMs": -16.48233299999947,
+      "smallWorkspaceToleranceMs": 16.35110829999999
+    },
+    {
+      "tasks": 10,
+      "operation": "history-tail",
+      "outputContractVerified": true,
+      "nativeP95Ms": 300.4186669999999,
+      "baselineP95Ms": 195.9935000000005,
+      "speedupP95": 0.6524012038173399,
+      "regressionMs": 104.42516699999942,
+      "smallWorkspaceToleranceMs": 19.59935000000005
+    },
+    {
+      "tasks": 100,
+      "operation": "paginated-task-list",
+      "outputContractVerified": true,
+      "nativeP95Ms": 255.16695900000195,
+      "baselineP95Ms": 295.6626669999969,
+      "speedupP95": 1.158702788788554,
+      "regressionMs": -40.49570799999492,
+      "smallWorkspaceToleranceMs": 29.566266699999687
+    },
+    {
+      "tasks": 100,
+      "operation": "history-tail",
+      "outputContractVerified": true,
+      "nativeP95Ms": 286.76470900000277,
+      "baselineP95Ms": 155.44162499999948,
+      "speedupP95": 0.5420528402607518,
+      "regressionMs": 131.3230840000033,
+      "smallWorkspaceToleranceMs": 15.544162499999949
+    },
+    {
+      "tasks": 250,
+      "operation": "paginated-task-list",
+      "outputContractVerified": true,
+      "nativeP95Ms": 445.3584170000031,
+      "baselineP95Ms": 499.41475000000355,
+      "speedupP95": 1.1213771446470722,
+      "regressionMs": -54.05633300000045,
+      "smallWorkspaceToleranceMs": 49.94147500000036
+    },
+    {
+      "tasks": 250,
+      "operation": "history-tail",
+      "outputContractVerified": true,
+      "nativeP95Ms": 289.2150829999882,
+      "baselineP95Ms": 153.01574999999139,
+      "speedupP95": 0.5290725103711054,
+      "regressionMs": 136.19933299999684,
+      "smallWorkspaceToleranceMs": 15.30157499999914
+    },
+    {
+      "tasks": 1000,
+      "operation": "paginated-task-list",
+      "outputContractVerified": true,
+      "nativeP95Ms": 1077.4697920000035,
+      "baselineP95Ms": 1499.2741670000105,
+      "speedupP95": 1.3914767524173945,
+      "regressionMs": -421.804375000007,
+      "smallWorkspaceToleranceMs": 149.92741670000106
+    },
+    {
+      "tasks": 1000,
+      "operation": "history-tail",
+      "outputContractVerified": true,
+      "nativeP95Ms": 305.268167000002,
+      "baselineP95Ms": 153.64650000000256,
+      "speedupP95": 0.5033164823897329,
+      "regressionMs": 151.62166699999943,
+      "smallWorkspaceToleranceMs": 15.364650000000257
+    },
+    {
+      "tasks": 5000,
+      "operation": "paginated-task-list",
+      "outputContractVerified": true,
+      "nativeP95Ms": 4739.773291999998,
+      "baselineP95Ms": 8360.231250000012,
+      "speedupP95": 1.7638462295466293,
+      "regressionMs": -3620.4579580000136,
+      "smallWorkspaceToleranceMs": 836.0231250000012
+    },
+    {
+      "tasks": 5000,
+      "operation": "history-tail",
+      "outputContractVerified": true,
+      "nativeP95Ms": 402.29470799991395,
+      "baselineP95Ms": 152.97229199996218,
+      "speedupP95": 0.3802493270679437,
+      "regressionMs": 249.32241599995177,
+      "smallWorkspaceToleranceMs": 15.297229199996218
+    }
+  ],
+  "samplesPerBackendPerRow": 20,
+  "acceptanceClaim": false,
+  "performanceDisposition": "History tail regression requires diagnosis; listing large row below2x target",
+  "limits": [
+    "No filesystem-cold, persistent MCP, filesystem operation count, lock-wait, peak RSS, event-loop or WAL-peak claim",
+    "CLI hashes identify entrypoints, not a complete source manifest; bind final measurements to an immutable checkout",
+    "Validation-only mode emits no timing samples or latency acceptance claim",
+    "Local background/cache uncontrolled"
+  ]
+}

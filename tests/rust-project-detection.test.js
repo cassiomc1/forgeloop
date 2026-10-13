@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, rm, symlink, truncate, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, symlink, truncate, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -17,7 +18,7 @@ async function temporaryProject(prefix, callback) {
   try {
     return await callback(target);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 }
 
@@ -757,7 +758,7 @@ test("Rust traversal is bounded and does not follow symlinked directories", asyn
       });
       assert.equal(limited, null);
     } finally {
-      await rm(outside, { recursive: true, force: true });
+      await removeTempTree(outside);
     }
   });
 });

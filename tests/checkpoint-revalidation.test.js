@@ -1,7 +1,8 @@
+import { assertCollectionValidationParity } from "./helpers/ledger-event-collection.js";
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -20,6 +21,7 @@ import {
   validateStateLedgerCoherence,
 } from "../src/core/events.js";
 import { executeForgeLoopCommand } from "../src/core/command-runtime.js";
+import { withProjectStorage } from "../src/storage/project-boundary.js";
 import { getNextAction, NEXT_ACTIONS } from "../src/core/next-action.js";
 import { evaluateRoute } from "../src/core/router.js";
 import { readJsonArtifact, writeJsonArtifact } from "../src/core/artifacts.js";
@@ -34,6 +36,7 @@ import {
 } from "../src/core/contract-bootstrap-recovery.js";
 import { resolveTaskClaimState } from "../src/core/task-claim-state.js";
 import { createWorkState, readWorkState, writeWorkState } from "../src/core/work-state.js";
+import { readFixtureText, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
 import { removeTempTree } from "./helpers/rm-safe.js";
 
 const execFileAsync = promisify(execFile);
@@ -63,7 +66,7 @@ async function rewriteEvents(target, taskId, transform) {
     transformed[index].previousHash = index === 0 ? null : transformed[index - 1].hash;
     transformed[index].hash = eventHash(transformed[index]);
   }
-  await writeFile(eventsPath, `${transformed.map((event) => JSON.stringify(event)).join("\n")}\n`);
+  await overwriteFixtureText(target, eventsPath, `${transformed.map((event) => JSON.stringify(event)).join("\n")}\n`);
 }
 
 async function commitChange(target, fileName, contents, message) {
@@ -254,8 +257,8 @@ async function migratedRepairFixture() {
     events[index].hash = eventHash(events[index]);
     previousHash = events[index].hash;
   }
-  await writeFile(
-    path.join(target, taskArtifactPath(taskId, "events")),
+  await overwriteFixtureText(target,
+    taskArtifactPath(taskId, "events"),
     `${events.map((event) => JSON.stringify(event)).join("\n")}\n`,
   );
   await runTaskMigrateContractBootstrapRepair({ target, packageRoot, taskId, acknowledgeMigration: true });
@@ -265,7 +268,8 @@ async function migratedRepairFixture() {
 test("next exposes and the real executor revalidates repository-only ROUTED drift", async () => {
   const { target, taskId, contractHash, routeFingerprint } = await fixture();
   try {
-    const before = await getNextAction({ target, packageRoot, taskId });
+    const read = callback => withProjectStorage(target, callback, { readOnly: true });
+    const before = await read(() => getNextAction({ target, packageRoot, taskId }));
     assert.equal(before.nextAction, NEXT_ACTIONS.REVALIDATE_CHECKPOINT);
     assert.equal(before.commandSpecs[0].commandId, "checkpoint-revalidate");
 
@@ -278,15 +282,15 @@ test("next exposes and the real executor revalidates repository-only ROUTED drif
     assert.equal(execution.exitCode, 0);
     assert.equal(execution.result.revalidated, true);
 
-    const state = await readWorkState(target, { packageRoot, taskId });
+    const state = await read(() => readWorkState(target, { packageRoot, taskId }));
     assert.equal(state.phase, "ROUTED");
     assert.equal(state.revision, 1);
     assert.equal(state.contractFingerprint, contractHash);
     assert.equal(state.routeFingerprint, routeFingerprint);
-    const after = await getNextAction({ target, packageRoot, taskId });
+    const after = await read(() => getNextAction({ target, packageRoot, taskId }));
     assert.notEqual(after.nextAction, NEXT_ACTIONS.REVALIDATE_CHECKPOINT);
     assert.notEqual(after.nextAction, NEXT_ACTIONS.RESOLVE_BLOCKER);
-    const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    const ledger = await read(() => validateEventLedger(target, packageRoot, { taskId }));
     assert.equal(ledger.valid, true);
     const revalidation = ledger.events.find((event) => event.event === "CHECKPOINT_REVALIDATED");
     assert.ok(revalidation);
@@ -301,12 +305,12 @@ test("checkpoint revalidation is idempotent and does not append an empty transac
   const { target, taskId } = await fixture();
   try {
     await runCheckpointRevalidate({ target, packageRoot, taskId });
-    const beforeEvents = await readFile(path.join(target, taskArtifactPath(taskId, "events")), "utf8");
+    const beforeEvents = await readFixtureText(target, taskArtifactPath(taskId, "events"));
     const beforeState = await readWorkState(target, { packageRoot, taskId });
     const second = await runCheckpointRevalidate({ target, packageRoot, taskId });
     assert.equal(second.revalidated, false);
     assert.equal(second.alreadyFresh, true);
-    assert.equal(await readFile(path.join(target, taskArtifactPath(taskId, "events")), "utf8"), beforeEvents);
+    assert.equal(await readFixtureText(target, taskArtifactPath(taskId, "events")), beforeEvents);
     const afterState = await readWorkState(target, { packageRoot, taskId });
     assert.equal(afterState.revision, beforeState.revision);
   } finally {
@@ -323,6 +327,7 @@ test("concurrent revalidation commits one transition and makes the loser a no-op
     ]);
     assert.deepEqual(results.map((result) => result.revalidated).sort(), [false, true]);
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
     assert.equal(ledger.valid, true);
     assert.equal(ledger.events.filter((event) => event.event === "CHECKPOINT_REVALIDATED").length, 1);
     assert.equal(ledger.events.filter((event) => event.event === "TRANSACTION_COMMITTED"
@@ -336,9 +341,9 @@ test("checkpoint revalidation fails closed for route and contract identity drift
   const routeFixture = await fixture();
   try {
     const routePath = path.join(routeFixture.target, taskArtifactPath(routeFixture.taskId, "route"));
-    const route = JSON.parse(await readFile(routePath, "utf8"));
+    const route = JSON.parse(await readFixtureText(routeFixture.target, routePath));
     route.guides = ["clean"];
-    await writeFile(routePath, `${JSON.stringify(route, null, 2)}\n`);
+    await overwriteFixtureText(routeFixture.target, routePath, `${JSON.stringify(route, null, 2)}\n`);
     await assert.rejects(
       runCheckpointRevalidate({ target: routeFixture.target, packageRoot, taskId: routeFixture.taskId }),
       (error) => error.code === "E_CHECKPOINT_REVALIDATION_UNSAFE",
@@ -350,9 +355,9 @@ test("checkpoint revalidation fails closed for route and contract identity drift
   const contractFixture = await fixture();
   try {
     const contractPath = path.join(contractFixture.target, taskArtifactPath(contractFixture.taskId, "contract"));
-    const contract = JSON.parse(await readFile(contractPath, "utf8"));
+    const contract = JSON.parse(await readFixtureText(contractFixture.target, contractPath));
     contract.objective = "different identity";
-    await writeFile(contractPath, `${JSON.stringify(contract, null, 2)}\n`);
+    await overwriteFixtureText(contractFixture.target, contractPath, `${JSON.stringify(contract, null, 2)}\n`);
     await assert.rejects(
       runCheckpointRevalidate({ target: contractFixture.target, packageRoot, taskId: contractFixture.taskId }),
       (error) => error.code === "E_CHECKPOINT_REVALIDATION_UNSAFE",
@@ -374,8 +379,9 @@ test("rehashing a semantically altered revalidation event remains invalid", asyn
       events[cursor].previousHash = cursor === 0 ? null : events[cursor - 1].hash;
       events[cursor].hash = eventHash(events[cursor]);
     }
-    await writeFile(eventsPath, `${events.map((event) => JSON.stringify(event)).join("\n")}\n`);
+    await overwriteFixtureText(target, eventsPath, `${events.map((event) => JSON.stringify(event)).join("\n")}\n`);
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
     const state = await readWorkState(target, { packageRoot, taskId });
     const coherence = validateStateLedgerCoherence(state, ledger.events);
     assert.ok(coherence.some((error) => error.code === "E_CHECKPOINT_REVALIDATION_UNSAFE"));
@@ -385,7 +391,7 @@ test("rehashing a semantically altered revalidation event remains invalid", asyn
 });
 
 test("each checkpoint revalidation has an adjacent canonical transaction witness", async () => {
-  for (const mutation of [
+  for (const [mutationIndex, mutation] of [
     (events, index) => events.splice(index + 1, 1),
     (events, index) => { events[index + 1].details.operation = "other-operation"; },
     (events, index) => {
@@ -395,7 +401,7 @@ test("each checkpoint revalidation has an adjacent canonical transaction witness
       });
     },
     (events, index) => { events[index + 1].taskId = "different-task"; },
-  ]) {
+  ].entries()) {
     const { target, taskId } = await fixture();
     try {
       await runCheckpointRevalidate({ target, packageRoot, taskId });
@@ -404,8 +410,12 @@ test("each checkpoint revalidation has an adjacent canonical transaction witness
         mutation(events, index);
       });
       const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
       assert.equal(ledger.valid, false);
-      assert.ok(ledger.errors.some((error) => error.code === "E_CHECKPOINT_REVALIDATION_UNSAFE"));
+      // A different embedded task ID is rejected by native row authority
+      // before domain witness validation; all other mutations reach that rule.
+      const expectedCode = mutationIndex === 3 ? "E_STORAGE_PAYLOAD_MISMATCH" : "E_CHECKPOINT_REVALIDATION_UNSAFE";
+      assert.ok(ledger.errors.some((error) => error.code === expectedCode), JSON.stringify(ledger.errors));
     } finally {
       await removeTempTree(target);
     }
@@ -432,6 +442,7 @@ test("multiple repository-only revalidations preserve repository and revision co
     assert.equal(beforeSecond.nextAction, NEXT_ACTIONS.REVALIDATE_CHECKPOINT);
     const second = await runCheckpointRevalidate({ target, packageRoot, taskId });
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
     const revalidations = ledger.events.filter((event) => event.event === "CHECKPOINT_REVALIDATED");
     assert.equal(ledger.valid, true);
     assert.equal(revalidations.length, 2);
@@ -455,6 +466,7 @@ test("a migrated repair anchor survives two later checkpoint revalidations", asy
     await commitChange(target, "tracked.txt", "repaired-second-drift\n", "repaired second checkpoint drift");
     await runCheckpointRevalidate({ target, packageRoot, taskId });
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
     const claim = await resolveTaskClaimState(target, { packageRoot, taskId });
     assert.equal(ledger.valid, true);
     assert.equal(ledger.events.filter((event) => event.event === "CHECKPOINT_REVALIDATED").length, 2);
@@ -491,6 +503,7 @@ test("canonical reroute after migrated checkpoint revalidation preserves histori
     assert.equal(events[reboundIndex + 1].event, "TRANSACTION_COMMITTED");
     assert.equal(events[reboundIndex + 1].details.operation, "route");
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
     const coherence = validateStateLedgerCoherence(state, ledger.events);
     const claim = await resolveTaskClaimState(target, { packageRoot, taskId });
     assert.equal(ledger.valid, true);
@@ -527,6 +540,7 @@ test("canonical normal reroute binds the exact route evolution provenance", asyn
     assert.equal(events[reboundIndex + 1].event, "TRANSACTION_COMMITTED");
     assert.equal(events[reboundIndex + 1].details.operation, "route");
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
     const coherence = validateStateLedgerCoherence(state, ledger.events);
     const claim = await resolveTaskClaimState(target, { packageRoot, taskId });
     assert.equal(ledger.valid, true);
@@ -573,6 +587,7 @@ test("manual route and state rewrite without canonical route provenance remains 
     }, { packageRoot, taskId });
     const events = await readEvents(target, packageRoot, { taskId });
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
     const state = await readWorkState(target, { packageRoot, taskId });
     const coherence = validateStateLedgerCoherence(state, ledger.events);
     const claim = await resolveTaskClaimState(target, { packageRoot, taskId });
@@ -619,6 +634,7 @@ test("multi-hop route provenance reaches the exact current fingerprint", async (
     assert.equal(events[events.indexOf(rebounds[0]) + 1].details.operation, "route");
     assert.equal(events[events.indexOf(rebounds[1]) + 1].details.operation, "route");
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
     assert.equal(ledger.valid, true);
     assert.deepEqual(validateStateLedgerCoherence(state, ledger.events), []);
 
@@ -691,6 +707,7 @@ test("intermediate canonical route rollback is rejected as inconsistent", async 
 
     const eventsAfterRewrite = await readEvents(target, packageRoot, { taskId });
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
     const state = await readWorkState(target, { packageRoot, taskId });
     const coherence = validateStateLedgerCoherence(state, ledger.events);
     const claim = await resolveTaskClaimState(target, { packageRoot, taskId });
@@ -736,6 +753,7 @@ test("route provenance rejects a current target without the final canonical hop"
       revision: stateBefore.revision + 1,
     }, { packageRoot, taskId });
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
     const state = await readWorkState(target, { packageRoot, taskId });
     assert.equal(ledger.valid, true);
     assert.ok(validateStateLedgerCoherence(state, ledger.events)
@@ -779,6 +797,7 @@ test("a revalidation revision rollback remains invalid after hash-chain repair",
       events[index].details.revalidatedStateRevision = 1;
     });
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
     assert.equal(ledger.valid, false);
     assert.ok(ledger.errors.some((error) => error.code === "E_CHECKPOINT_REVALIDATION_UNSAFE"));
   } finally {
@@ -798,6 +817,7 @@ test("historical identity tampering remains visible after later checkpoint progr
       events[index].details.routeFingerprint = "0".repeat(64);
     });
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
     const state = await readWorkState(target, { packageRoot, taskId });
     assert.equal(ledger.valid, false);
     assert.ok(validateStateLedgerCoherence(state, ledger.events)
@@ -855,9 +875,9 @@ test("required-artifact drift, execution start, and invalid ownership never down
   const ownershipFixture = await fixture();
   try {
     const descriptorPath = path.join(ownershipFixture.target, taskArtifactPath(ownershipFixture.taskId, "descriptor"));
-    const descriptor = JSON.parse(await readFile(descriptorPath, "utf8"));
+    const descriptor = JSON.parse(await readFixtureText(ownershipFixture.target, descriptorPath));
     descriptor.writeClaims = ["../outside"];
-    await writeFile(descriptorPath, `${JSON.stringify(descriptor, null, 2)}\n`);
+    await overwriteFixtureText(ownershipFixture.target, descriptorPath, `${JSON.stringify(descriptor, null, 2)}\n`);
     await assert.rejects(
       runCheckpointRevalidate({ target: ownershipFixture.target, packageRoot, taskId: ownershipFixture.taskId }),
       (error) => error.code === "E_CHECKPOINT_REVALIDATION_UNSAFE",
@@ -866,3 +886,85 @@ test("required-artifact drift, execution start, and invalid ownership never down
     await removeTempTree(ownershipFixture.target);
   }
 });
+
+
+test("native fresh checkpoint eligibility retains one snapshot across concurrent route deletion", async () => {
+  const { target, taskId } = await fixture();
+  let db, writer;
+  try {
+    await runCheckpointRevalidate({ target, packageRoot, taskId });
+    const { openStorageDatabase } = await import("../src/storage/index.js");
+    const { withOperationalStore } = await import("../src/storage/unit-of-work.js");
+    db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+    writer = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+    await withOperationalStore({ db, target }, async source => {
+      const prototype = Object.getPrototypeOf(source);
+      const read = prototype.readText;
+      let changed = false;
+      prototype.readText = function(relativePath) {
+        const result = read.call(this, relativePath);
+        if (!changed && this.target === target && relativePath === taskArtifactPath(taskId, "state")) {
+          changed = true;
+          writer.prepare("DELETE FROM task_artifacts WHERE task_id = ? AND kind = 'route'").run(taskId);
+        }
+        return result;
+      };
+      try {
+        const result = await runCheckpointRevalidate({ target, packageRoot, taskId });
+        assert.equal(result.alreadyFresh, true);
+        assert.equal(changed, true);
+        assert.throws(() => source.commit(), { code: "E_STATE_REVISION_CONFLICT" });
+      } finally { prototype.readText = read; }
+    });
+    await assert.rejects(runCheckpointRevalidate({ target, packageRoot, taskId }));
+  } finally { writer?.close(); db?.close(); await removeTempTree(target); }
+});
+
+
+test("checkpoint classification preserves native revision conflicts instead of invalid contract", async () => {
+  const { target, taskId } = await fixture();
+  try {
+    const { classifyLoadedWorkState } = await import("../src/core/work-state.js");
+    const { getOperationalStore } = await import("../src/storage/operational-context.js");
+    await withProjectStorage(target, async () => {
+      const state = await readWorkState(target, { packageRoot, taskId });
+      const store = getOperationalStore(target);
+      const read = store.readText;
+      const conflict = Object.assign(new Error("Contract observation changed during preparation"), { code: "E_STATE_REVISION_CONFLICT" });
+      store.readText = function (relative) {
+        if (relative === taskArtifactPath(taskId, "contract")) throw conflict;
+        return read.call(this, relative);
+      };
+      try {
+        await assert.rejects(classifyLoadedWorkState({ target, state, contractFile: taskArtifactPath(taskId, "contract") }), error => error === conflict);
+      } finally { store.readText = read; }
+    }, { readOnly: true });
+  } finally { await removeTempTree(target); }
+});
+
+for (const subject of ["required artifact", "state"]) {
+  test(`checkpoint classification preserves native revision conflicts while reading ${subject}`, async () => {
+    const { target, taskId } = await fixture();
+    try {
+      const { classifyLoadedWorkState, readAndClassifyWorkState } = await import("../src/core/work-state.js");
+      const { getOperationalStore } = await import("../src/storage/operational-context.js");
+      await withTaskTransaction({ target, taskId, packageRoot, operation: "classification-conflict-probe", recordCommitEvent: false }, async () => {
+        const state = await readWorkState(target, { packageRoot, taskId });
+        const relative = taskArtifactPath(taskId, subject === "state" ? "state" : "contract");
+        const store = getOperationalStore(target);
+        const read = store.readText;
+        const conflict = Object.assign(new Error(`${subject} observation changed`), { code: "E_STATE_REVISION_CONFLICT" });
+        store.readText = function (filename) {
+          if (filename === relative) throw conflict;
+          return read.call(this, filename);
+        };
+        try {
+          const operation = subject === "state"
+            ? readAndClassifyWorkState({ target, packageRoot, taskId })
+            : classifyLoadedWorkState({ target, state: { ...state, requiredArtifacts: [{ path: relative, sha256: "a".repeat(64) }] } });
+          await assert.rejects(operation, error => error === conflict);
+        } finally { store.readText = read; }
+      });
+    } finally { await removeTempTree(target); }
+  });
+}

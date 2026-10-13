@@ -1,0 +1,20 @@
+{
+  "kind": "COMPLETION_TYPED_ADMISSION_STRUCTURED_REJECTION_CORRECTION",
+  "reproducedBefore": true,
+  "sourceBefore": "51065ccf32e51b0357ad8a6f7c08659eeeede626",
+  "behavior": "Typed descriptor admission errors remain authoritative and are collected into REJECTED completion diagnostics using existing loadRequired.",
+  "focusedTests": 114,
+  "passed": 114,
+  "failed": 0,
+  "skipped": 0,
+  "verifyFastExitCode": 0,
+  "completionSourceSha256": "e3632b19b784b5bb064c6083e13e4aedaf346bb86835834ba051a40ed2ab58fe",
+  "otherDraftWorkDuringFastChecks": true,
+  "fullPrepushStillRequired": true,
+  "releaseAcceptance": false,
+  "retainedArtifacts": {
+    "completion-identity-structured-correction.log.gz": "49286f78b0e2f823472a97adfd158aa364f697374ea6eb9d312ab26190240438",
+    "completion-structured-root-focused.log.gz": "d2d5d7a408c00e21edd77d784ea447e68cbea0b5b7bacaae5f76f2176de26c10",
+    "completion-structured-fast.log.gz": "6d0d9caaa609fb878ed7ed7cbc731b149200e24a3776d591de55081ac563bbc4"
+  }
+}

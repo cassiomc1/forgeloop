@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "failures": {
+    "windows": {
+      "status": 1,
+      "errorTail": "",
+      "rawSha256": "405f37ed3c685f997ab91ebd84169a34412c9b6343d6b4e48842bc314ee37345"
+    },
+    "linux": {
+      "status": 1,
+      "errorTail": "t([\"--phase=\"+phase]),{cwd:\"/probe\",encoding:\"utf8\",timeout:180000,maxBuffer:33554432});results.push({phase,status:r.status,stdout:r.stdout,stderr:r.stderr,error:r.error?.code});if(r.status!==0)break;}const status=results.length===9 && results.every(r=>r.status===0)?0:1;console.log(JSON.stringify({sourceBefore:before,sourceAfter:verify(),patches,results,status}));process.exit(status);\n                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            \n\nError: Source drift src/core/cli-command-definitions.js\n    at verify (eval at <anonymous> ([eval]:1:1), <anonymous>:1:5397)\n    at eval (eval at <anonymous> ([eval]:1:1), <anonymous>:1:5466)\n    at [eval]:1:1\n    at runScriptInThisContext (node:internal/vm:219:10)\n    at node:internal/process/execution:451:12\n    at [eval]-wrapper:6:24\n    at runScriptInContext (node:internal/process/execution:449:60)\n    at evalFunction (node:internal/process/execution:283:30)\n    at evalTypeScript (node:internal/process/execution:295:3)\n    at node:internal/main/eval_string:71:3\n\nNode.js v24.19.0\n",
+      "rawSha256": "527979ced2146122941b26336508e9cdf025506dffb1b0c903467c7931bb8374"
+    }
+  },
+  "diagnosis": "Runner substituted its own quoted split delimiter instead of inserting updates after admitted source check. Windows did not apply source updates and used prior drill; Linux rejected old remote hashes before cases ran.",
+  "correction": "Corrected 595 runner admits prior source before writes, inserts updates after header, rechecks hashes, then tests nine cases."
+}

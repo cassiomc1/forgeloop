@@ -1,3 +1,4 @@
+import { withExistingProjectScope } from "../src/storage/existing-project-scope.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { mkdtemp, readdir, readFile } from "node:fs/promises";
@@ -326,7 +327,7 @@ test("progress alignment: legacy informationGain NONE keeps stall semantics", ()
 
 // ---------- public lifecycle fixtures ----------
 
-async function setupToDiagnosing(target, { successCriteria = ["lint"], scoped = false } = {}) {
+async function setupToDiagnosing(target, { successCriteria = ["lint"], scoped = true } = {}) {
   const taskOptions = scoped ? { taskId: TASK_ID } : {};
   if (scoped) {
     await writeTaskDescriptor(target, createTaskDescriptor({ taskId: TASK_ID, writeClaims: ["src/app.js"] }), packageRoot);
@@ -412,7 +413,7 @@ function caseFileContent({ cycle, statement = "Unused import triggers lint rule.
   return content;
 }
 
-async function recordCase(target, fileName, content, scoped = false) {
+async function recordCase(target, fileName, content, scoped = true) {
   await writeFile(path.join(target, fileName), JSON.stringify(content));
   return recordStructuredDiagnosticCase({ target, packageRoot, caseFile: fileName, ...(scoped ? { taskId: TASK_ID } : {}) });
 }
@@ -421,19 +422,21 @@ test("public lifecycle: no-gain stall agrees across phase, progress, reflect and
   await withTarget(async (target) => {
     await setupToDiagnosing(target);
     await recordCase(target, "case-1.json", caseFileContent({}));
-    await advanceWorkState(target, "CORRECTING", { packageRoot });
+    await advanceWorkState(target, "CORRECTING", { packageRoot, taskId: TASK_ID });
     await recordIntervention({
       target,
       packageRoot,
+      taskId: TASK_ID,
       interventionInput: { id: "i-1", kind: "CODE_CHANGE", reversible: true, hypothesisRefs: ["h-unused-import"], statement: "Remove unused import." },
     });
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: TASK_ID });
 
     // same failure again in cycle 2
-    await prepareCompletion({ target, packageRoot });
+    await prepareCompletion({ target, packageRoot, taskId: TASK_ID });
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: TASK_ID,
       id: "check-lint",
       requirement: "lint",
       status: "failed",
@@ -442,20 +445,20 @@ test("public lifecycle: no-gain stall agrees across phase, progress, reflect and
       result: "no-unused-vars in app.js",
       exitCode: 1,
     });
-    await advanceWorkState(target, "DIAGNOSING", { packageRoot });
+    await advanceWorkState(target, "DIAGNOSING", { packageRoot, taskId: TASK_ID });
 
     // semantically equivalent diagnosis in cycle 2
     await recordCase(target, "case-2.json", caseFileContent({}));
 
     // phase must reject the blind retry
     await assert.rejects(
-      () => advanceWorkState(target, "CORRECTING", { packageRoot }),
+      () => advanceWorkState(target, "CORRECTING", { packageRoot, taskId: TASK_ID }),
       (error) => error.code === "E_DIAGNOSIS_NO_NEW_INFORMATION",
     );
 
     // same ledger feeds every consumer
-    const rawEvents = await readEvents(target, packageRoot);
-    const state = await readWorkState(target, { packageRoot });
+    const rawEvents = await readEvents(target, packageRoot, { taskId: TASK_ID });
+    const state = await readWorkState(target, { packageRoot, taskId: TASK_ID });
     const progress = evaluateProgress({ state, events: rawEvents });
     assert.equal(progress.status, "STALLED");
 
@@ -463,7 +466,7 @@ test("public lifecycle: no-gain stall agrees across phase, progress, reflect and
     assert.equal(reflection.status, "STALLED");
     assert.ok(reflection.signals.includes("NO_EFFECTIVE_INFORMATION_GAIN"));
 
-    const next = await getNextAction(target, packageRoot);
+    const next = await getNextAction({ target, packageRoot, taskId: TASK_ID });
     assert.equal(next.nextAction, NEXT_ACTIONS.CHANGE_STRATEGY);
     assert.equal(next.diagnosticGuidance?.action, NEXT_ACTIONS.REQUIRE_NEW_DIAGNOSTIC_INFORMATION);
 
@@ -473,16 +476,26 @@ test("public lifecycle: no-gain stall agrees across phase, progress, reflect and
       const entries = await readdir(dir, { recursive: true });
       const hash = createHash("sha256");
       for (const relative of entries.sort()) {
+        if (["state.sqlite-wal", "state.sqlite-shm"].includes(relative)) continue;
         hash.update(relative);
         try {
           hash.update(await readFile(path.join(dir, relative)));
         } catch { /* directories */ }
       }
+      const records = await withExistingProjectScope(target, store => {
+        const tables = store.db.prepare("SELECT name FROM sqlite_schema WHERE type = 'table' ORDER BY name").all();
+        return tables.map(({ name }) => {
+          assert.match(name, /^[a-z_]+$/u);
+          const rows = store.db.prepare(`SELECT * FROM "${name}"`).all();
+          return { name, rows: rows.map(row => JSON.stringify(row)).sort() };
+        });
+      }, { readOnly: true });
+      hash.update(JSON.stringify(records));
       return hash.digest("hex");
     }
     const before = await hashTree(forgeDir);
     await buildTaskReflection({ target, packageRoot, taskId: TASK_ID });
-    await getNextAction(target, packageRoot);
+    await getNextAction({ target, packageRoot, taskId: TASK_ID });
     evaluateProgress({ state, events: rawEvents });
     const after = await hashTree(forgeDir);
     assert.equal(before, after);
@@ -493,17 +506,19 @@ test("public lifecycle: meaningful new information clears the stall", async () =
   await withTarget(async (target) => {
     await setupToDiagnosing(target);
     await recordCase(target, "case-1.json", caseFileContent({}));
-    await advanceWorkState(target, "CORRECTING", { packageRoot });
+    await advanceWorkState(target, "CORRECTING", { packageRoot, taskId: TASK_ID });
     await recordIntervention({
       target,
       packageRoot,
+      taskId: TASK_ID,
       interventionInput: { id: "i-1", kind: "CODE_CHANGE", reversible: true, hypothesisRefs: ["h-unused-import"], statement: "Remove unused import." },
     });
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: TASK_ID });
+    await prepareCompletion({ target, packageRoot, taskId: TASK_ID });
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: TASK_ID,
       id: "check-lint",
       requirement: "lint",
       status: "failed",
@@ -512,12 +527,12 @@ test("public lifecycle: meaningful new information clears the stall", async () =
       result: "no-unused-vars in app.js",
       exitCode: 1,
     });
-    await advanceWorkState(target, "DIAGNOSING", { packageRoot });
+    await advanceWorkState(target, "DIAGNOSING", { packageRoot, taskId: TASK_ID });
 
     // equivalent diagnosis -> stall
     await recordCase(target, "case-2.json", caseFileContent({}));
-    const stateBefore = await readWorkState(target, { packageRoot });
-    const rawEventsBefore = await readEvents(target, packageRoot);
+    const stateBefore = await readWorkState(target, { packageRoot, taskId: TASK_ID });
+    const rawEventsBefore = await readEvents(target, packageRoot, { taskId: TASK_ID });
     assert.equal(evaluateProgress({ state: stateBefore, events: rawEventsBefore }).status, "STALLED");
 
     // new meaningful observation recorded as revision 2 in the same cycle
@@ -528,17 +543,17 @@ test("public lifecycle: meaningful new information clears the stall", async () =
       ],
     }));
 
-    const stateAfter = await readWorkState(target, { packageRoot });
-    const rawEventsAfter = await readEvents(target, packageRoot);
+    const stateAfter = await readWorkState(target, { packageRoot, taskId: TASK_ID });
+    const rawEventsAfter = await readEvents(target, packageRoot, { taskId: TASK_ID });
     assert.notEqual(evaluateProgress({ state: stateAfter, events: rawEventsAfter }).status, "STALLED");
 
     // DIAGNOSING -> CORRECTING becomes allowed again
-    const correcting = await advanceWorkState(target, "CORRECTING", { packageRoot });
+    const correcting = await advanceWorkState(target, "CORRECTING", { packageRoot, taskId: TASK_ID });
     assert.equal(correcting.phase, "CORRECTING");
   });
 });
 
-async function driveRepeatedFailureCycle(target, cycle, scoped = false) {
+async function driveRepeatedFailureCycle(target, cycle, scoped = true) {
   const taskOptions = scoped ? { taskId: TASK_ID } : {};
   await advanceWorkState(target, "CORRECTING", { packageRoot, ...taskOptions });
   await recordIntervention({

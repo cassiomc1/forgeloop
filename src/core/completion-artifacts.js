@@ -1,4 +1,5 @@
 import path from "node:path";
+import { getTaskTransaction, withTaskTransaction } from "./transaction.js";
 import {
   ARTIFACT_PATHS,
   canonicalFingerprint,
@@ -80,10 +81,18 @@ function requiredString(value, label) {
   return value;
 }
 
+async function readBoundReceiptArtifact(target, receiptRel, packageRoot) {
+  try { return await readJsonArtifact(target, receiptRel, "execution-receipt", packageRoot); }
+  catch (error) {
+    if (error.code === "E_STORAGE_PAYLOAD_MISMATCH" && error.taskIdentityMismatch) throw artifactError("E_RECEIPT_TASK_MISMATCH", "Execution receipt does not belong to the current contract task", [receiptRel]);
+    throw error;
+  }
+}
+
 async function readCurrentReceipt(target, packageRoot, options = {}) {
   const receiptRel = options.receiptPath ?? (options.taskId ? taskArtifactPath(options.taskId, "receipt") : ARTIFACT_PATHS.receipt);
   try {
-    return await readJsonArtifact(target, receiptRel, "execution-receipt", packageRoot);
+    return await readBoundReceiptArtifact(target, receiptRel, packageRoot);
   } catch (error) {
     if (error.code === "ARTIFACT_MISSING") {
       throw artifactError(
@@ -245,7 +254,21 @@ export async function requiredEvidenceForTarget({
   ])].sort();
 }
 
-export async function prepareCompletion({
+async function resolveCompletionTaskOptions(options) {
+  if (options.taskId) return options;
+  const state = await readWorkState(options.target, { packageRoot: options.packageRoot, statePath: options.statePath });
+  return { ...options, taskId: state?.taskId };
+}
+
+export async function prepareCompletion(options = {}) {
+  options = await resolveCompletionTaskOptions(options);
+  if (!options.taskId) return prepareSelectedCompletion(options);
+  return withTaskTransaction({ target: options.target, packageRoot: options.packageRoot,
+    taskId: options.taskId, operation: "prepare-completion", recordCommitEvent: true },
+  () => prepareSelectedCompletion(options));
+}
+
+async function prepareSelectedCompletion({
   target,
   packageRoot,
   authorityContext,
@@ -255,6 +278,7 @@ export async function prepareCompletion({
   routePath = null,
   statePath = null,
   receiptPath = null,
+  eventsPath,
 }) {
   const contract = await readContract(target, packageRoot, { taskId, contractPath });
   const route = await readPersistedRoute(target, packageRoot, { taskId, routePath });
@@ -266,12 +290,12 @@ export async function prepareCompletion({
     throw artifactError("E_STATE_MISSING", "Work state is required before preparing completion", [stateRel]);
   }
   if (hasExecutionStarted(state.phase)) {
-    await assertExecutionPrerequisites({ target, state, packageRoot, taskId, statePath, contractPath, routePath });
+    await assertExecutionPrerequisites({ target, state, packageRoot, taskId, statePath, contractPath, routePath, eventsPath });
   }
 
   let existing = null;
   try {
-    existing = await readJsonArtifact(target, receiptRel, "execution-receipt", packageRoot);
+    existing = await readBoundReceiptArtifact(target, receiptRel, packageRoot);
     await validateReceipt(existing.value, packageRoot, {
       target,
       taskId: contract.value.taskId,
@@ -463,7 +487,7 @@ export async function assertRecordCheckPrerequisites({
       [stateRel],
     );
   }
-  await assertExecutionPrerequisites({ target, state, packageRoot, taskId, statePath, contractPath, routePath });
+  await assertExecutionPrerequisites({ target, state, packageRoot, taskId, statePath, contractPath, routePath, eventsPath });
 
   const contract = await readContract(target, packageRoot, { taskId, contractPath });
   const route = await readPersistedRoute(target, packageRoot, { taskId, routePath });
@@ -521,29 +545,15 @@ export async function assertRecordCheckPrerequisites({
   };
 }
 
-export async function recordCheck({
-  target,
-  packageRoot,
-  id,
-  kind = "command",
-  requirement,
-  status,
-  evidenceKind,
-  command,
-  result,
-  exitCode,
-  details,
-  executionRef,
-  provenance,
-  authorityContext,
-  runtimeContext,
-  taskId = null,
-  contractPath = null,
-  routePath = null,
-  statePath = null,
-  receiptPath = null,
-  eventsPath = null,
-}) {
+export async function recordCheck(options) {
+  validateRecordCheckInput(options);
+  options = await resolveCompletionTaskOptions(options);
+  if (!options.taskId) return recordValidatedCheck(options);
+  return withTaskTransaction({ target: options.target, packageRoot: options.packageRoot,
+    taskId: options.taskId, operation: "record-check", recordCommitEvent: true }, () => recordValidatedCheck(options));
+}
+
+function validateRecordCheckInput({ id, kind = "command", requirement, status, evidenceKind, command, result, details, executionRef, provenance }) {
   requiredString(id, "check id");
   requiredString(kind, "check kind");
   requiredString(requirement, "check requirement");
@@ -568,7 +578,31 @@ export async function recordCheck({
     && (typeof result !== "string" || result.trim() === "")) {
     throw artifactError("E_CHECK_INVALID", "record-check requires --command or --result");
   }
+}
 
+async function recordValidatedCheck({
+  target,
+  packageRoot,
+  id,
+  kind = "command",
+  requirement,
+  status,
+  evidenceKind,
+  command,
+  result,
+  exitCode,
+  details,
+  executionRef,
+  provenance,
+  authorityContext,
+  runtimeContext,
+  taskId = null,
+  contractPath = null,
+  routePath = null,
+  statePath = null,
+  receiptPath = null,
+  eventsPath = null,
+}) {
   const context = await assertRecordCheckPrerequisites({
     target,
     packageRoot,
@@ -780,7 +814,15 @@ export async function recordCheck({
   };
 }
 
-export async function recordTerminalResult({
+export async function recordTerminalResult(options = {}) {
+  if (!options.target) return recordTerminalResultInTransaction(options);
+  if (await getTaskTransaction(options.target)) return recordTerminalResultInTransaction(options);
+  const state = await readWorkState(options.target, { packageRoot: options.packageRoot, taskId: options.taskId, statePath: options.statePath });
+  if (!state) return recordTerminalResultInTransaction(options);
+  return withTaskTransaction({ target: options.target, taskId: state.taskId, packageRoot: options.packageRoot, operation: "record-terminal-result" }, () => recordTerminalResultInTransaction({ ...options, taskId: options.taskId ?? state.taskId }));
+}
+
+async function recordTerminalResultInTransaction({
   target,
   packageRoot,
   requirement,

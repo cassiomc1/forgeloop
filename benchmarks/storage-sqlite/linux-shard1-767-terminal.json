@@ -1,0 +1,19 @@
+{
+  "increment": 767,
+  "runId": 37684202204,
+  "jobId": 113007781899,
+  "sourceRevision": "aa29518f3242911838e387b73cd141e8847d3583",
+  "shard": 1,
+  "status": "completed",
+  "conclusion": "success",
+  "platform": "linux",
+  "hostname": "51abbe357f3e",
+  "counts": {
+    "tests": 657,
+    "pass": 652,
+    "fail": 0,
+    "skipped": 5
+  },
+  "logSha256": "4323f111d5c19995a4f5f0a836fc11331ec7675dbee7f1fa22c04fd9532f0a96",
+  "scope": "One coverage shard only; parent workflow remains live and predates route765 and isolated quality767."
+}

@@ -1,3 +1,4 @@
+import { isLedgerEventCollection } from "./ledger-event-collection.js";
 import { PROTOCOL_VERSION } from "./protocol.js";
 import { createEvidence } from "./evidence.js";
 import { canonicalFingerprint } from "./artifacts.js";
@@ -36,7 +37,7 @@ export function delegationIsInScope({
   if (state?.delegatedTasks && state.delegatedTasks.length > 0) return true;
   if (state?.delegatedTaskIds && state.delegatedTaskIds.length > 0) return true;
   if (receipt?.delegatedTasks && receipt.delegatedTasks.length > 0) return true;
-  if (Array.isArray(events) && events.some((event) => typeof event?.type === "string" && event.type.toLowerCase().includes("delegat"))) {
+  if (isLedgerEventCollection(events) && events.some((event) => typeof event?.type === "string" && event.type.toLowerCase().includes("delegat"))) {
     return true;
   }
   return false;

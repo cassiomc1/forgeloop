@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "scope": "Full Windows immutable602 source601 before complexity603 and ledger604/execution605 changes",
+  "exitCode": 0,
+  "sourceFiles": 2607,
+  "sourceDrift": [],
+  "stdoutSha256": "3a20840f5378dad03498004bcc281a308dc1794194bcf5ed98c5bd6597e77102",
+  "stderrSha256": "b3783a798365a4cfb330b6cbf94f41a5efb6b9fe51c9c021fd3849221bf69fe3",
+  "testGroups": [
+    {
+      "tests": 2794,
+      "pass": 2781,
+      "fail": 0,
+      "skipped": 13
+    },
+    {
+      "tests": 73,
+      "pass": 73,
+      "fail": 0,
+      "skipped": 0
+    }
+  ],
+  "packageSmoke": "PASS",
+  "mcpPackageSmoke": "PASS",
+  "limitations": [
+    "Windows602 covers source601, not later production edits.",
+    "No current-source all-platform/workflow closure inferred."
+  ]
+}

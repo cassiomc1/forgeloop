@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "revision": "482ca553876a182d3514f660f61f6d5e3cb956a3",
+  "exitCode": 0,
+  "fullPrepushPassed": true,
+  "passedStages": [
+    "coverage",
+    "critical-coverage:check",
+    "lint",
+    "dependency:policy",
+    "complexity:check",
+    "docs:check",
+    "completions:check",
+    "summary:check",
+    "changelog:check",
+    "repository-index:manifest",
+    "repository:hygiene",
+    "poc:evidence:verify",
+    "poc:evidence:test",
+    "mcp:test:clean",
+    "mcp:pack:check",
+    "pack:check",
+    "python-unittest",
+    "markdown-self-test",
+    "markdown-validator",
+    "loop-self-test",
+    "loop-validator",
+    "secret-scan"
+  ],
+  "failedStages": [],
+  "trackedFiles": 3374,
+  "sourceUnchanged": true,
+  "changedFiles": [],
+  "core": {
+    "tests": 3070,
+    "passed": 3054,
+    "failed": 0,
+    "skipped": 16
+  },
+  "mcpClean": {
+    "tests": 84,
+    "passed": 84,
+    "failed": 0,
+    "skipped": 0
+  },
+  "log": "prepush-482ca55.log.gz",
+  "capturedAt": "2026-10-10T15:32:16.786083+00:00",
+  "limitations": [
+    "macOS local validation; Windows full suite remains active.",
+    "Original performance, inclusive 25% LOC and complete migration-plan closure are not proved by prepush."
+  ],
+  "sourceBefore": "prepush-482ca55-source-before.json.gz",
+  "sourceAfter": "prepush-482ca55-source-after.json.gz"
+}

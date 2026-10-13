@@ -1,3 +1,5 @@
+import { withTaskTransaction } from "./transaction.js";
+import { withProjectReadSnapshot } from "../storage/project-read-snapshot.js";
 import { canonicalFingerprint, readJsonArtifact, writeJsonArtifact } from "./artifacts.js";
 import { assertSchema, readSchema } from "./schema-validation.js";
 import { assertSecretFree } from "./receipt.js";
@@ -6,10 +8,11 @@ import { readCodeManifest, validateCodeManifestBindings } from "./code-manifest.
 import {
   taskAttestationStatementPath,
   taskAttestationStatementHistoryPath,
-  taskAttestationBundlePath,
 } from "./task-paths.js";
 import { appendProtocolEvent } from "./events.js";
 import { ensureWithin, fileExists } from "./filesystem.js";
+import { operationalArtifactExists } from "../storage/operational-context.js";
+import { resolveAttestationBundlePath } from "./attachment-paths.js";
 import { E_ATTESTATION_CONFIGURATION_INVALID } from "./error-codes.js";
 
 const STATEMENT_TYPE = "https://in-toto.io/Statement/v1";
@@ -136,8 +139,13 @@ export async function readAttestationStatement({ target, packageRoot = getPackag
 
 export async function writeAttestationStatement({ target, packageRoot = getPackageRoot(), taskId, statement } = {}) {
   await validateAttestationStatement(statement, packageRoot);
+  return withTaskTransaction({ target, taskId, packageRoot, operation: "attestation-create" }, () =>
+    writeValidatedAttestationStatement({ target, packageRoot, taskId, statement }));
+}
+
+async function writeValidatedAttestationStatement({ target, packageRoot, taskId, statement }) {
   const relativePath = taskAttestationStatementPath(taskId);
-  if (await fileExists(ensureWithin(target, relativePath))) {
+  if (operationalArtifactExists(target, relativePath) ?? await fileExists(ensureWithin(target, relativePath))) {
     let previous;
     try {
       previous = await readAttestationStatement({ target, packageRoot, taskId });
@@ -150,7 +158,7 @@ export async function writeAttestationStatement({ target, packageRoot = getPacka
       throw attestationError("E_ATTESTATION_STATEMENT_INVALID", "Attestation statement is immutable within a verification cycle", [relativePath]);
     }
     const historyPath = taskAttestationStatementHistoryPath(taskId, previousCycle);
-    if (!(await fileExists(ensureWithin(target, historyPath)))) {
+    if (!(operationalArtifactExists(target, historyPath) ?? await fileExists(ensureWithin(target, historyPath)))) {
       await writeJsonArtifact(target, historyPath, previous.value, "in-toto-statement", packageRoot, { taskId, operation: "attestation-statement-history" });
     }
   }
@@ -164,7 +172,11 @@ export async function writeAttestationStatement({ target, packageRoot = getPacka
   return { path: relativePath, fingerprint: artifact.fingerprint, statement };
 }
 
-export async function resolveAttestationStatus({ target, packageRoot = getPackageRoot(), taskId, revisionProvider = null, bundlePath = null, requireSignature = false, signingProvider = null, signerPolicy = {} } = {}) {
+export async function resolveAttestationStatus(options = {}) {
+  return withProjectReadSnapshot(options.target, () => resolveSelectedAttestationStatus(options));
+}
+
+async function resolveSelectedAttestationStatus({ target, packageRoot = getPackageRoot(), taskId, revisionProvider = null, bundlePath = null, requireSignature = false, signingProvider = null, signerPolicy = {} } = {}) {
   const result = {
     taskId,
     status: "MISSING",
@@ -192,7 +204,6 @@ export async function resolveAttestationStatus({ target, packageRoot = getPackag
       ...(configuredSigning.policy ?? {}),
       ...signerPolicy,
     };
-    if (effectiveRequireSignature && !effectiveBundlePath) effectiveBundlePath = taskAttestationBundlePath(taskId);
     result.signature = effectiveRequireSignature ? "REQUIRED" : "NOT_CHECKED";
     if ((config.attestation?.mode ?? "off") === "off" && !bundlePath && !effectiveRequireSignature) {
       result.status = "DISABLED";
@@ -208,8 +219,8 @@ export async function resolveAttestationStatus({ target, packageRoot = getPackag
     }
   }
   result.signature = effectiveRequireSignature ? "REQUIRED" : "NOT_CHECKED";
-  if (effectiveRequireSignature && !effectiveBundlePath) effectiveBundlePath = taskAttestationBundlePath(taskId);
   try {
+    if (effectiveBundlePath || effectiveRequireSignature) effectiveBundlePath = resolveAttestationBundlePath(target, taskId, effectiveBundlePath);
     const statement = await readAttestationStatement({ target, packageRoot, taskId });
     const manifest = await readCodeManifest({ target, packageRoot, taskId });
     const provider = revisionProvider ?? manifest.value.capture.revisionProvider;

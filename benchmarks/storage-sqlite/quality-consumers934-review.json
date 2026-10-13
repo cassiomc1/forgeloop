@@ -1,0 +1,84 @@
+{
+  "kind": "QUALITY_CONSUMER_SOURCE_BOUND_RECONCILIATION",
+  "sourceRevision": "cb3e388aa486c7ef76d0be120a3bf9647bcd7b1c",
+  "verificationRevision": "5222708738582c38ec51b688e48076738b176c6a",
+  "verificationLogSha256": "1f4ac5ad5d4b74cd11431d81ba9f98dbdd27813ac428d0381cc3b7f57adc25e1",
+  "files": [
+    {
+      "path": "src/commands/quality-baseline.js",
+      "sha256": "f19d2dfebb13a7b791ab6acea0c3f75910f85940515351a09dabd8f33d63901f",
+      "matchesPrepush920": true
+    },
+    {
+      "path": "src/commands/quality-status.js",
+      "sha256": "c0411a3355aa13ce27c4c308e3363f20c511b26067af407c705636f187677615",
+      "matchesPrepush920": true
+    },
+    {
+      "path": "src/core/structural-quality/service.js",
+      "sha256": "b79d77f508c683e5f8564e34edd7afddcfb24619e6f500a190582486a12f1dfa",
+      "matchesPrepush920": true
+    },
+    {
+      "path": "src/core/structural-quality/artifacts.js",
+      "sha256": "52dc875b78e605a1296bec92d3689b066b96c894cb27e7aad3493c4f9454a71f",
+      "matchesPrepush920": true
+    },
+    {
+      "path": "src/core/artifacts.js",
+      "sha256": "4667bc01b1f6416ee22e0de6788bb8ae21ce238b5ce9724961c92c06d0e92db2",
+      "matchesPrepush920": true
+    },
+    {
+      "path": "tests/storage-quality-context.test.js",
+      "sha256": "1deb0efe1f37b09829eb3b46d47cedd9e51e5ef0a921fc86e56c0e4e22195bce",
+      "matchesPrepush920": true
+    },
+    {
+      "path": "tests/structural-quality-artifacts.test.js",
+      "sha256": "d0637faddf8363d06e58aea098d690bc546566eb8a025381e4df7e997e8018b6",
+      "matchesPrepush920": true
+    },
+    {
+      "path": "tests/structural-quality-lifecycle.test.js",
+      "sha256": "b0d270175af757edb5dc3ac0cf02defc90d45bbc89cc496e3fff3ea844de5b30",
+      "matchesPrepush920": true
+    }
+  ],
+  "observedControls": [
+    {
+      "name": "structural-quality context observes one committed state/contract pair during independent replacement",
+      "retainedResult": "\u2714 structural-quality context observes one committed state/contract pair during independent replacement (418.326375ms)"
+    },
+    {
+      "name": "baseline capture is idempotent, replaceable only before execution, and records bindings",
+      "retainedResult": "\u2714 baseline capture is idempotent, replaceable only before execution, and records bindings (183.11575ms)"
+    },
+    {
+      "name": "direct baseline artifact and event roll back together and retry succeeds",
+      "retainedResult": "\u2714 direct baseline artifact and event roll back together and retry succeeds (426.732584ms)"
+    },
+    {
+      "name": "direct baseline rejects changed canonical bindings without provider replay",
+      "retainedResult": "\u2714 direct baseline rejects changed canonical bindings without provider replay (379.256958ms)"
+    },
+    {
+      "name": "native SQLite concurrent quality evaluations preserve attempt allocation and checks",
+      "retainedResult": "\u2714 native SQLite concurrent quality evaluations preserve attempt allocation and checks (1169.999708ms)"
+    }
+  ],
+  "reviewedBoundaries": [
+    "quality-baseline command enters withTaskMutation; direct service commits artifact and event in withTaskTransaction after rechecking phase, contract, route, policy and scope",
+    "quality-status and context use owned read snapshots for clean native stores; prepared overlays retain their own staged reads and CAS",
+    "baseline/evaluation writes use canonical writeJsonArtifact; operational identities are staged through native task transactions; portable writes reject canonical operational namespaces",
+    "evaluation listing uses native operational names; physical directory fallback is read-only and requires no native result"
+  ],
+  "remaining": [
+    "Full transitive dependency and every public projection reconciliation",
+    "Interprocedural filesystem/handle provenance and external effects",
+    "Whole-project sole-writer and resource acceptance"
+  ],
+  "wholeConsumerClosure": false,
+  "wholePlanAcceptance": false,
+  "newTestsRun": false
+}

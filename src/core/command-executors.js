@@ -1,113 +1,111 @@
-import { runDoctor } from "../commands/doctor.js";
-import { runStatus } from "../commands/status.js";
-import { runValidateState } from "../commands/validate-state.js";
-import { runClearState } from "../commands/clear-state.js";
-import { runCheckpointRevalidate } from "../commands/checkpoint-revalidate.js";
-import { inspectTarget } from "../commands/inspect.js";
-import { runInit } from "../commands/init.js";
-import { runRoute } from "../commands/route.js";
-import { runValidateReceipt } from "../commands/validate-receipt.js";
-import { runValidateProtocol } from "../commands/validate-protocol.js";
-import { runUpdate } from "../commands/update.js";
-import { runActivate } from "../commands/activate.js";
-import { runAdvance } from "../commands/advance.js";
-import { runPreflight } from "../commands/preflight.js";
-import { runQualityBaseline } from "../commands/quality-baseline.js";
-import { runQualityVerify } from "../commands/quality-verify.js";
-import { runQualityStatus } from "../commands/quality-status.js";
-import { runComplete } from "../commands/complete.js";
-import { runAudit } from "../commands/audit.js";
-import { runReport } from "../commands/report.js";
-import { runPolicy } from "../commands/policy.js";
-import { runPolicyDiscover } from "../commands/policy-discover.js";
-import { runPolicyStatus } from "../commands/policy-status.js";
-import { runPolicyDiff } from "../commands/policy-diff.js";
-import { runRuleVerify } from "../commands/rule-verify.js";
-import { runBaseline } from "../commands/baseline.js";
-import { runProfileInterview } from "../commands/profile-interview.js";
-import { runBundle } from "../commands/bundle.js";
-import { runPrepareCompletion } from "../commands/prepare-completion.js";
-import { runRecordCheck } from "../commands/record-check.js";
-import { runCheck } from "../commands/run-check.js";
-import { runAction } from "../commands/run-action.js";
-import { runActionPropose } from "../commands/action-propose.js";
-import { runActionRecord } from "../commands/action-record.js";
-import { runActionShow } from "../commands/action-show.js";
-import { runActionAuthorize } from "../commands/action-authorize.js";
-import { runActionVerify } from "../commands/action-verify.js";
-import { runActionReconcile } from "../commands/action-reconcile.js";
-import { runMetrics } from "../commands/metrics.js";
-import { runUsageRecord } from "../commands/usage-record.js";
-import { runEfficiency } from "../commands/efficiency.js";
-import { runEval } from "../commands/eval.js";
-import { runApprovalRequest } from "../commands/approval-request.js";
-import { runApprovalResolve } from "../commands/approval-resolve.js";
-import { reconcileClosure } from "../commands/reconcile-closure.js";
-import { runRecordTerminalResult } from "../commands/record-terminal-result.js";
-import { runRecordDiagnosis } from "../commands/record-diagnosis.js";
-import { runRecordIntervention } from "../commands/record-intervention.js";
-import { runRecordHypothesisDisposition } from "../commands/record-hypothesis-disposition.js";
-import { runHistory } from "../commands/history.js";
-import { runTrace } from "../commands/trace.js";
-import { runReflect } from "../commands/reflect.js";
-import { runProgress } from "../commands/progress.js";
-import { runRecordDecisionCriterion } from "../commands/record-decision-criterion.js";
-import { runNext } from "../commands/next.js";
-import { runContinuity } from "../commands/continuity.js";
-import { runRecordContinuity } from "../commands/record-continuity.js";
-import { runReconcileContinuity } from "../commands/reconcile-continuity.js";
-import { runClearContinuity } from "../commands/clear-continuity.js";
-import { runTaskCreate } from "../commands/task-create.js";
-import { runDiscover } from "../commands/discover.js";
-import { runContractCreate } from "../commands/contract-create.js";
-import { runContractRevise } from "../commands/contract-revise.js";
-import { runGateRecord } from "../commands/gate-record.js";
-import { runGateRevalidate } from "../commands/gate-revalidate.js";
-import { runTaskList } from "../commands/task-list.js";
-import { runTaskShow } from "../commands/task-show.js";
-import { runTaskScope } from "../commands/task-scope.js";
-import { runTaskMigrate } from "../commands/task-migrate.js";
-import { runMigrateProtocol } from "../commands/migrate-protocol.js";
-import { runTaskUnlock } from "../commands/task-unlock.js";
-import { runTaskRecover } from "../commands/task-recover.js";
-import { runTaskAbandon } from "../commands/task-abandon.js";
-import { runTaskResume } from "../commands/task-resume.js";
-import { runTaskRepairLegacyRecovery } from "../commands/task-repair-legacy-recovery.js";
-import { runTaskRepairContractBootstrap } from "../commands/task-repair-contract-bootstrap.js";
-import { runTaskMigrateContractBootstrapRepair } from "../commands/task-migrate-contract-bootstrap-repair.js";
-import { runTaskLockStatus } from "../commands/task-lock-status.js";
-import { runProtocolInfo } from "../commands/protocol-info.js";
-import { runDecisionStatus } from "../commands/decision-status.js";
-import { runDecisionShow } from "../commands/decision-show.js";
-import { runContextPlan } from "../commands/context-plan.js";
-import { runModelRoute } from "../commands/model-route.js";
-import { runSemanticPlan } from "../commands/semantic-plan.js";
-import { runTestInventory } from "../commands/test-inventory.js";
-import { runTestUtility } from "../commands/test-utility.js";
-import { runTestPrunePlan } from "../commands/test-prune-plan.js";
-import { runTestPruneProbe } from "../commands/test-prune-probe.js";
-import { runWorkspaceBind } from "../commands/workspace-bind.js";
-import { runWorkspaceStatus } from "../commands/workspace-status.js";
-import { runHandoffCreate } from "../commands/handoff-create.js";
-import { runHandoffList } from "../commands/handoff-list.js";
-import { runHandoffShow } from "../commands/handoff-show.js";
-import { runHandoffAccept } from "../commands/handoff-accept.js";
-import { runResponsibilitySet } from "../commands/responsibility-set.js";
-import { runResponsibilityStatus } from "../commands/responsibility-status.js";
-import { runVerifyScope } from "../commands/verify-scope.js";
-import { runAttestationCreate } from "../commands/attestation-create.js";
-import { runAttestationVerify } from "../commands/attestation-verify.js";
-import { runAttestationStatus } from "../commands/attestation-status.js";
-import { runAttestationVerifyRange } from "../commands/attestation-verify-range.js";
+const runDoctor = async (...args) => (await import("../commands/doctor.js")).runDoctor(...args);
+const runStatus = async (...args) => (await import("../commands/status.js")).runStatus(...args);
+const runValidateState = async (...args) => (await import("../commands/validate-state.js")).runValidateState(...args);
+const runClearState = async (...args) => (await import("../commands/clear-state.js")).runClearState(...args);
+const runCheckpointRevalidate = async (...args) => (await import("../commands/checkpoint-revalidate.js")).runCheckpointRevalidate(...args);
+const inspectTarget = async (...args) => (await import("../commands/inspect.js")).inspectTarget(...args);
+const runInit = async (...args) => (await import("../commands/init.js")).runInit(...args);
+const runRoute = async (...args) => (await import("../commands/route.js")).runRoute(...args);
+const runValidateReceipt = async (...args) => (await import("../commands/validate-receipt.js")).runValidateReceipt(...args);
+const runValidateProtocol = async (...args) => (await import("../commands/validate-protocol.js")).runValidateProtocol(...args);
+const runUpdate = async (...args) => (await import("../commands/update.js")).runUpdate(...args);
+const runActivate = async (...args) => (await import("../commands/activate.js")).runActivate(...args);
+const runAdvance = async (...args) => (await import("../commands/advance.js")).runAdvance(...args);
+const runPreflight = async (...args) => (await import("../commands/preflight.js")).runPreflight(...args);
+const runQualityBaseline = async (...args) => (await import("../commands/quality-baseline.js")).runQualityBaseline(...args);
+const runQualityVerify = async (...args) => (await import("../commands/quality-verify.js")).runQualityVerify(...args);
+const runQualityStatus = async (...args) => (await import("../commands/quality-status.js")).runQualityStatus(...args);
+const runComplete = async (...args) => (await import("../commands/complete.js")).runComplete(...args);
+const runAudit = async (...args) => (await import("../commands/audit.js")).runAudit(...args);
+const runReport = async (...args) => (await import("../commands/report.js")).runReport(...args);
+const runPolicy = async (...args) => (await import("../commands/policy.js")).runPolicy(...args);
+const runPolicyDiscover = async (...args) => (await import("../commands/policy-discover.js")).runPolicyDiscover(...args);
+const runPolicyStatus = async (...args) => (await import("../commands/policy-status.js")).runPolicyStatus(...args);
+const runPolicyDiff = async (...args) => (await import("../commands/policy-diff.js")).runPolicyDiff(...args);
+const runRuleVerify = async (...args) => (await import("../commands/rule-verify.js")).runRuleVerify(...args);
+const runBaseline = async (...args) => (await import("../commands/baseline.js")).runBaseline(...args);
+const runProfileInterview = async (...args) => (await import("../commands/profile-interview.js")).runProfileInterview(...args);
+const runBundle = async (...args) => (await import("../commands/bundle.js")).runBundle(...args);
+const runPrepareCompletion = async (...args) => (await import("../commands/prepare-completion.js")).runPrepareCompletion(...args);
+const runRecordCheck = async (...args) => (await import("../commands/record-check.js")).runRecordCheck(...args);
+const runCheck = async (...args) => (await import("../commands/run-check.js")).runCheck(...args);
+const runAction = async (...args) => (await import("../commands/run-action.js")).runAction(...args);
+const runActionPropose = async (...args) => (await import("../commands/action-propose.js")).runActionPropose(...args);
+const runActionRecord = async (...args) => (await import("../commands/action-record.js")).runActionRecord(...args);
+const runActionShow = async (...args) => (await import("../commands/action-show.js")).runActionShow(...args);
+const runActionAuthorize = async (...args) => (await import("../commands/action-authorize.js")).runActionAuthorize(...args);
+const runActionVerify = async (...args) => (await import("../commands/action-verify.js")).runActionVerify(...args);
+const runActionReconcile = async (...args) => (await import("../commands/action-reconcile.js")).runActionReconcile(...args);
+const runMetrics = async (...args) => (await import("../commands/metrics.js")).runMetrics(...args);
+const runUsageRecord = async (...args) => (await import("../commands/usage-record.js")).runUsageRecord(...args);
+const runEfficiency = async (...args) => (await import("../commands/efficiency.js")).runEfficiency(...args);
+const runEval = async (...args) => (await import("../commands/eval.js")).runEval(...args);
+const runApprovalRequest = async (...args) => (await import("../commands/approval-request.js")).runApprovalRequest(...args);
+const runApprovalResolve = async (...args) => (await import("../commands/approval-resolve.js")).runApprovalResolve(...args);
+const reconcileClosure = async (...args) => (await import("../commands/reconcile-closure.js")).reconcileClosure(...args);
+const runRecordTerminalResult = async (...args) => (await import("../commands/record-terminal-result.js")).runRecordTerminalResult(...args);
+const runRecordDiagnosis = async (...args) => (await import("../commands/record-diagnosis.js")).runRecordDiagnosis(...args);
+const runRecordIntervention = async (...args) => (await import("../commands/record-intervention.js")).runRecordIntervention(...args);
+const runRecordHypothesisDisposition = async (...args) => (await import("../commands/record-hypothesis-disposition.js")).runRecordHypothesisDisposition(...args);
+const runHistory = async (...args) => (await import("../commands/history.js")).runHistory(...args);
+const runTrace = async (...args) => (await import("../commands/trace.js")).runTrace(...args);
+const runReflect = async (...args) => (await import("../commands/reflect.js")).runReflect(...args);
+const runProgress = async (...args) => (await import("../commands/progress.js")).runProgress(...args);
+const runRecordDecisionCriterion = async (...args) => (await import("../commands/record-decision-criterion.js")).runRecordDecisionCriterion(...args);
+const runNext = async (...args) => (await import("../commands/next.js")).runNext(...args);
+const runContinuity = async (...args) => (await import("../commands/continuity.js")).runContinuity(...args);
+const runRecordContinuity = async (...args) => (await import("../commands/record-continuity.js")).runRecordContinuity(...args);
+const runReconcileContinuity = async (...args) => (await import("../commands/reconcile-continuity.js")).runReconcileContinuity(...args);
+const runClearContinuity = async (...args) => (await import("../commands/clear-continuity.js")).runClearContinuity(...args);
+const runTaskCreate = async (...args) => (await import("../commands/task-create.js")).runTaskCreate(...args);
+const runDiscover = async (...args) => (await import("../commands/discover.js")).runDiscover(...args);
+const runContractCreate = async (...args) => (await import("../commands/contract-create.js")).runContractCreate(...args);
+const runContractRevise = async (...args) => (await import("../commands/contract-revise.js")).runContractRevise(...args);
+const runGateRecord = async (...args) => (await import("../commands/gate-record.js")).runGateRecord(...args);
+const runGateRevalidate = async (...args) => (await import("../commands/gate-revalidate.js")).runGateRevalidate(...args);
+const runTaskList = async (...args) => (await import("../commands/task-list.js")).runTaskList(...args);
+const runTaskShow = async (...args) => (await import("../commands/task-show.js")).runTaskShow(...args);
+const runTaskScope = async (...args) => (await import("../commands/task-scope.js")).runTaskScope(...args);
+const runTaskMigrate = async (...args) => (await import("../commands/task-migrate.js")).runTaskMigrate(...args);
+const runMigrateProtocol = async (...args) => (await import("../commands/migrate-protocol.js")).runMigrateProtocol(...args);
+const runTaskUnlock = async (...args) => (await import("../commands/task-unlock.js")).runTaskUnlock(...args);
+const runTaskRecover = async (...args) => (await import("../commands/task-recover.js")).runTaskRecover(...args);
+const runTaskAbandon = async (...args) => (await import("../commands/task-abandon.js")).runTaskAbandon(...args);
+const runTaskResume = async (...args) => (await import("../commands/task-resume.js")).runTaskResume(...args);
+const runTaskRepairLegacyRecovery = async (...args) => (await import("../commands/task-repair-legacy-recovery.js")).runTaskRepairLegacyRecovery(...args);
+const runTaskRepairContractBootstrap = async (...args) => (await import("../commands/task-repair-contract-bootstrap.js")).runTaskRepairContractBootstrap(...args);
+const runTaskMigrateContractBootstrapRepair = async (...args) => (await import("../commands/task-migrate-contract-bootstrap-repair.js")).runTaskMigrateContractBootstrapRepair(...args);
+const runTaskLockStatus = async (...args) => (await import("../commands/task-lock-status.js")).runTaskLockStatus(...args);
+const runProtocolInfo = async (...args) => (await import("../commands/protocol-info.js")).runProtocolInfo(...args);
+const runDecisionStatus = async (...args) => (await import("../commands/decision-status.js")).runDecisionStatus(...args);
+const runDecisionShow = async (...args) => (await import("../commands/decision-show.js")).runDecisionShow(...args);
+const runContextPlan = async (...args) => (await import("../commands/context-plan.js")).runContextPlan(...args);
+const runModelRoute = async (...args) => (await import("../commands/model-route.js")).runModelRoute(...args);
+const runSemanticPlan = async (...args) => (await import("../commands/semantic-plan.js")).runSemanticPlan(...args);
+const runTestInventory = async (...args) => (await import("../commands/test-inventory.js")).runTestInventory(...args);
+const runTestUtility = async (...args) => (await import("../commands/test-utility.js")).runTestUtility(...args);
+const runTestPrunePlan = async (...args) => (await import("../commands/test-prune-plan.js")).runTestPrunePlan(...args);
+const runTestPruneProbe = async (...args) => (await import("../commands/test-prune-probe.js")).runTestPruneProbe(...args);
+const runWorkspaceBind = async (...args) => (await import("../commands/workspace-bind.js")).runWorkspaceBind(...args);
+const runWorkspaceStatus = async (...args) => (await import("../commands/workspace-status.js")).runWorkspaceStatus(...args);
+const runHandoffCreate = async (...args) => (await import("../commands/handoff-create.js")).runHandoffCreate(...args);
+const runHandoffList = async (...args) => (await import("../commands/handoff-list.js")).runHandoffList(...args);
+const runHandoffShow = async (...args) => (await import("../commands/handoff-show.js")).runHandoffShow(...args);
+const runHandoffAccept = async (...args) => (await import("../commands/handoff-accept.js")).runHandoffAccept(...args);
+const runResponsibilitySet = async (...args) => (await import("../commands/responsibility-set.js")).runResponsibilitySet(...args);
+const runResponsibilityStatus = async (...args) => (await import("../commands/responsibility-status.js")).runResponsibilityStatus(...args);
+const runVerifyScope = async (...args) => (await import("../commands/verify-scope.js")).runVerifyScope(...args);
+const runAttestationCreate = async (...args) => (await import("../commands/attestation-create.js")).runAttestationCreate(...args);
+const runAttestationVerify = async (...args) => (await import("../commands/attestation-verify.js")).runAttestationVerify(...args);
+const runAttestationStatus = async (...args) => (await import("../commands/attestation-status.js")).runAttestationStatus(...args);
+const runAttestationVerifyRange = async (...args) => (await import("../commands/attestation-verify-range.js")).runAttestationVerifyRange(...args);
 import { exitCodeForAttestationResult } from "./exit-codes.js";
-import {
-  runRepositoryIndexRebuild,
-  runRepositoryIndexSetup,
-  runRepositoryIndexStart,
-  runRepositoryIndexStatus,
-  runRepositoryIndexStop,
-  runSearch,
-} from "../commands/repository-index.js";
+const runRepositoryIndexRebuild = async (...args) => (await import("../commands/repository-index.js")).runRepositoryIndexRebuild(...args);
+const runRepositoryIndexSetup = async (...args) => (await import("../commands/repository-index.js")).runRepositoryIndexSetup(...args);
+const runRepositoryIndexStart = async (...args) => (await import("../commands/repository-index.js")).runRepositoryIndexStart(...args);
+const runRepositoryIndexStatus = async (...args) => (await import("../commands/repository-index.js")).runRepositoryIndexStatus(...args);
+const runRepositoryIndexStop = async (...args) => (await import("../commands/repository-index.js")).runRepositoryIndexStop(...args);
+const runSearch = async (...args) => (await import("../commands/repository-index.js")).runSearch(...args);
 
 /**
  * Canonical transport-neutral command executors.
@@ -120,7 +118,39 @@ import {
  * The CLI renders these results; MCP and other integrations consume them
  * directly. No ownership, recovery, or lifecycle logic may live here.
  */
-export const COMMAND_EXECUTORS = {
+const RAW_COMMAND_EXECUTORS = {
+  "storage-restore-resume": async ({ target, packageRoot, options }) => {
+    const { runStorageRestoreResume } = await import("../commands/storage-restore-resume.js");
+    return { result: await runStorageRestoreResume({ target, packageRoot, operationId: options.operationId, expectedOwnerId: options.expectedOwnerId, writersQuiesced: options.writersQuiesced, replaceActive: options.replaceActive }), exitCode: 0 };
+  },
+  "storage-restore": async ({ target, packageRoot, options }) => {
+    const { runStorageRestore } = await import("../commands/storage-restore.js");
+    return { result: await runStorageRestore({ target, packageRoot, source: options.source, writersQuiesced: options.writersQuiesced, replaceActive: options.replaceActive }), exitCode: 0 };
+  },
+  "storage-migration-status": async ({ target }) => {
+    const { runStorageMigrationStatus } = await import("../commands/storage-migration-status.js");
+    return { result: await runStorageMigrationStatus({ target }), exitCode: 0 };
+  },
+  "storage-migration-resume": async ({ target, packageRoot, options }) => {
+    const { runStorageMigrationResume } = await import("../commands/storage-migration-resume.js");
+    return { result: await runStorageMigrationResume({ target, packageRoot, destination: options.destination, expectedOwnerId: options.expectedOwnerId, writersQuiesced: options.writersQuiesced }), exitCode: 0 };
+  },
+  "storage-rollback-resume": async ({ target, packageRoot, options }) => {
+    const { resumeProjectStorageRollback } = await import("../storage/migration-rollback.js");
+    return { result: await resumeProjectStorageRollback(target, { packageRoot, destination: options.destination, legacyRoot: options.legacyRoot, expectedOwnerId: options.expectedOwnerId, writersQuiesced: options.writersQuiesced, nativeWritesExcluded: options.nativeWritesExcluded }), exitCode: 0 };
+  },
+  "storage-rollback": async ({ target, packageRoot, options }) => {
+    const { rollbackProjectStorage } = await import("../storage/migration-rollback.js");
+    return { result: await rollbackProjectStorage(target, { packageRoot, destination: options.destination, legacyRoot: options.legacyRoot, writersQuiesced: options.writersQuiesced, nativeWritesExcluded: options.nativeWritesExcluded }), exitCode: 0 };
+  },
+  "storage-migrate": async ({ target, packageRoot, options }) => {
+    const { runStorageMigrate } = await import("../commands/storage-migrate.js");
+    return { result: await runStorageMigrate({ target, packageRoot, destination: options.destination, writersQuiesced: options.writersQuiesced }), exitCode: 0 };
+  },
+  "storage-backup": async ({ target, options }) => {
+    const { runStorageBackup } = await import("../commands/storage-backup.js");
+    return { result: await runStorageBackup({ target, destination: options.destination, includeAttachments: options.includeAttachments }), exitCode: 0 };
+  },
   discover: async ({ target, packageRoot, options }) => ({
     result: await runDiscover({ target, packageRoot, taskId: options.taskId }),
     exitCode: 0,
@@ -252,6 +282,7 @@ export const COMMAND_EXECUTORS = {
       target,
       packageRoot,
       to: options.to,
+      persistence: runtimeContext?.forgeloopPersistence ?? null,
       taskId: options.taskId,
       authorityContext,
       runtimeContext,
@@ -495,20 +526,24 @@ export const COMMAND_EXECUTORS = {
     }),
     exitCode: 0,
   }),
-  "record-diagnosis": async ({ target, packageRoot, options }) => ({
-    result: await runRecordDiagnosis({
-      target,
-      packageRoot,
-      file: options.file ?? null,
-      hypothesis: options.hypothesis,
-      failureClass: options.failureClass,
-      evidenceRefs: options.evidenceRefs,
-      settledBy: options.settledBy,
-      nextSafeAction: options.nextSafeAction,
-      taskId: options.taskId,
-    }),
-    exitCode: 0,
-  }),
+  "record-diagnosis": async ({ target, packageRoot, options, runtimeContext }) => {
+    const persistence = runtimeContext?.forgeloopPersistence ?? null;
+    return {
+      result: await runRecordDiagnosis({
+        target,
+        packageRoot,
+        file: options.file ?? null,
+        hypothesis: options.hypothesis,
+        failureClass: options.failureClass,
+        evidenceRefs: options.evidenceRefs,
+        settledBy: options.settledBy,
+        nextSafeAction: options.nextSafeAction,
+        taskId: options.taskId,
+        persistence,
+      }),
+      exitCode: 0,
+    };
+  },
   "record-intervention": async ({ target, packageRoot, options }) => ({
     result: await runRecordIntervention({
       target,
@@ -720,11 +755,11 @@ export const COMMAND_EXECUTORS = {
     exitCode: 0,
   }),
   "task-migrate": async ({ target, packageRoot, options }) => ({
-    result: await runTaskMigrate({ target, packageRoot, dryRun: options.dryRun }),
+    result: await runTaskMigrate({ target, packageRoot, dryRun: options.dryRun, destination: options.destination, writersQuiesced: options.writersQuiesced }),
     exitCode: 0,
   }),
   "migrate-protocol": async ({ target, packageRoot, options }) => ({
-    result: await runMigrateProtocol({ target, packageRoot, to: options.to, dryRun: options.dryRun }),
+    result: await runMigrateProtocol({ target, packageRoot, to: options.to, dryRun: options.dryRun, destination: options.destination, writersQuiesced: options.writersQuiesced }),
     exitCode: 0,
   }),
   "task-unlock": async ({ target, packageRoot, options }) => ({
@@ -817,3 +852,24 @@ export const EXECUTOR_EXCEPTIONS = Object.freeze([
   // Bootstrap/presentation-only behaviors intentionally without executors:
   // none currently. Every canonical command definition must have an executor.
 ]);
+
+export const COMMAND_EXECUTORS = Object.fromEntries(Object.entries(RAW_COMMAND_EXECUTORS).map(([name, executor]) => [name, async context => {
+  // Reject unsupported migration targets before fresh-project storage admission
+  // can allocate a database or obscure the protocol error with a storage error.
+  if (name === "migrate-protocol") {
+    const { assertSupportedProtocolMigrationTarget } = await import("./protocol-migration.js");
+    assertSupportedProtocolMigrationTarget(context.options?.to);
+  }
+  if (name === "advance" || name === "record-diagnosis") {
+    const { assertCanonicalPersistence } = await import("../storage/operational-context.js");
+    assertCanonicalPersistence(context.runtimeContext?.forgeloopPersistence);
+  }
+  if (!context.target || name === "task-migrate" || name === "migrate-protocol" || name === "storage-migration-status" || name === "storage-rollback-resume" || name === "storage-rollback" || name === "storage-migrate" || name === "storage-migration-resume" || name === "storage-restore" || name === "storage-restore-resume") return executor(context);
+  const { withProjectStorage } = await import("../storage/project-boundary.js");
+  const { CLI_COMMAND_DEFINITIONS } = await import("./cli-command-definitions.js");
+  // Backup writes its destination, not the source store. Doctor repairs only
+  // when explicitly requested; inspecting either must not migrate the source.
+  const readOnly = CLI_COMMAND_DEFINITIONS[name]?.mutation === "READ_ONLY"
+    || context.options?.dryRun === true || name === "storage-backup" || (name === "doctor" && context.options?.fix !== true);
+  return withProjectStorage(context.target, () => executor(context), { readOnly, runtimeContext: context.runtimeContext });
+}]));

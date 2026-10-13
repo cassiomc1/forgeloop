@@ -1,0 +1,76 @@
+{
+  "head": "000503459f7344b7edb62bd3c1eccd9f8533b07c",
+  "runId": 38068997930,
+  "status": "completed",
+  "githubConclusion": "success",
+  "observedPackageMatrix": "PASS",
+  "rows": [
+    {
+      "lane": "linux",
+      "jobId": 114262435111,
+      "nodeVersion": "v24.19.0",
+      "runner": "forgeloop-linux-remote",
+      "mcp": {
+        "tests": 88,
+        "pass": 88,
+        "fail": 0,
+        "skipped": 0
+      },
+      "packageAndMcpPackSteps": "PASS",
+      "cleanupObserved": true,
+      "rawLog": "/Users/cassio/.codex/verification/package-0005034-linux.log",
+      "rawLogSha256": "d5d8131984a1c488934b60131d7ad19ae03adbb2594c43e186dbe9c3df2026d0"
+    },
+    {
+      "lane": "macos",
+      "jobId": 114262835666,
+      "nodeVersion": "v24.19.0",
+      "runner": "forgeloop-macos-local",
+      "mcp": {
+        "tests": 88,
+        "pass": 88,
+        "fail": 0,
+        "skipped": 0
+      },
+      "packageAndMcpPackSteps": "PASS",
+      "cleanupObserved": true,
+      "rawLog": "/Users/cassio/.codex/verification/package-0005034-macos.log",
+      "rawLogSha256": "1c7bea1292f228a6ff4fb52b45169017be1ab8e8a7b8394495feed38a71a8c7d"
+    },
+    {
+      "lane": "windows-minimum",
+      "jobId": 114262835563,
+      "nodeVersion": "v24.19.0",
+      "runner": "forgeloop-windows-remote",
+      "mcp": {
+        "tests": 88,
+        "pass": 88,
+        "fail": 0,
+        "skipped": 0
+      },
+      "packageAndMcpPackSteps": "PASS",
+      "cleanupObserved": true,
+      "rawLog": "/Users/cassio/.codex/verification/package-0005034-windows-minimum.log",
+      "rawLogSha256": "084c7ceb4c4358c42c6bb6260514f288417ed9b6b70f9bfaa003da87185369be"
+    },
+    {
+      "lane": "windows-current",
+      "jobId": 114262835482,
+      "nodeVersion": "v24.21.0",
+      "runner": "forgeloop-windows-remote",
+      "mcp": {
+        "tests": 88,
+        "pass": 88,
+        "fail": 0,
+        "skipped": 0
+      },
+      "packageAndMcpPackSteps": "PASS",
+      "cleanupObserved": true,
+      "rawLog": "/Users/cassio/.codex/verification/package-0005034-windows-current.log",
+      "rawLogSha256": "fb7e02a862d926fdc189bd8b2e059da549356a873df5e6ca9faa385e1b89bdde"
+    }
+  ],
+  "limits": [
+    "Package/MCP matrix only; not full regression, performance, LOC or validator-backed migration completion."
+  ]
+}

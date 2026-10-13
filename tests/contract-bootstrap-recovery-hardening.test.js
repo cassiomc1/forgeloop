@@ -1,5 +1,6 @@
+import { assertCollectionValidationParity } from "./helpers/ledger-event-collection.js";
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { access, mkdtemp, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -27,7 +28,7 @@ import { appendProtocolEvent, validateEventLedger, readEvents } from "../src/cor
 import { getNextAction, NEXT_ACTIONS } from "../src/core/next-action.js";
 import { evaluateRoute } from "../src/core/router.js";
 import { createTaskDescriptor, writeTaskDescriptor } from "../src/core/task-descriptor.js";
-import { taskArtifactPath, taskLockPath } from "../src/core/task-paths.js";
+import { taskArtifactPath } from "../src/core/task-paths.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { withTaskTransaction } from "../src/core/transaction.js";
 import {
@@ -40,7 +41,9 @@ import { parseArgs } from "../src/cli.js";
 import { acquireTaskLock, readLockInfo, releaseStaleTaskLockIfUnchanged, classifyLockStaleness } from "../src/core/task-lock.js";
 import { canonicalFingerprint } from "../src/core/artifacts.js";
 import { readPersistedRoute } from "../src/core/route-artifact.js";
+import { withProjectStorage } from "../src/storage/project-boundary.js";
 import { removeTempTree } from "./helpers/rm-safe.js";
+import { deleteFixtureArtifact, readRawFixtureText, overwriteFixtureText, overwriteFixtureArtifactBytes, overwriteFixtureLease } from "./helpers/native-storage-fixture.js";
 
 const packageRoot = getPackageRoot();
 const taskId = "bootstrap-hardening-fixture";
@@ -53,8 +56,8 @@ async function appendTransaction(target, tid, operation, event, details = undefi
   });
 }
 
-async function baseFixture() {
-  const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-bootstrap-hardening-"));
+async function baseFixture({ target = null } = {}) {
+  target ??= await mkdtemp(path.join(os.tmpdir(), "forgeloop-bootstrap-hardening-"));
   const contract = createContract({
     taskId,
     objective: "Hardening test fixture",
@@ -82,8 +85,8 @@ async function baseFixture() {
   return { target, contract, contractHash, route };
 }
 
-async function buggyStateFixture() {
-  const { target, contract, contractHash, route } = await baseFixture();
+async function buggyStateFixture(options = {}) {
+  const { target, contract, contractHash, route } = await baseFixture(options);
   await writeWorkState(target, createWorkState({
     taskId,
     contractFingerprint: contractHash,
@@ -169,6 +172,7 @@ test("existing contract + one CONTRACT_VALIDATED + no state → reconstruct CONT
     assert.equal(result.idempotent, true);
     assert.equal(result.reconstructed, true);
     const ledger = await validateEventLedger(target, packageRoot, { taskId: tid });
+    assertCollectionValidationParity(ledger.events);
     const validatedCount = ledger.events.filter((e) => e.event === "CONTRACT_VALIDATED").length;
     assert.equal(validatedCount, 1, "CONTRACT_VALIDATED count must stay 1");
   } finally {
@@ -186,6 +190,7 @@ test("existing contract + route + ROUTE_VALIDATED + no state → reconstruct ROU
     assert.equal(result.reconstructed, true);
     assert.equal(result.phase, "ROUTED");
     const ledger = await validateEventLedger(target, packageRoot, { taskId: tid });
+    assertCollectionValidationParity(ledger.events);
     const validatedCount = ledger.events.filter((e) => e.event === "CONTRACT_VALIDATED").length;
     assert.equal(validatedCount, 1, "No new CONTRACT_VALIDATED appended");
     const routeValidatedCount = ledger.events.filter((e) => e.event === "ROUTE_VALIDATED").length;
@@ -199,10 +204,10 @@ test("contract fingerprint != historical CONTRACT_VALIDATED fingerprint → cont
   const { target, tid } = await validLedgerNoStateFixture();
   try {
     const eventsPath = path.join(target, taskArtifactPath(tid, "events"));
-    const text = await readFile(eventsPath, "utf8");
+    const text = await readRawFixtureText(target, eventsPath);
     const events = text.trim().split("\n").map((l) => JSON.parse(l));
     events[3].details.contractFingerprint = "a".repeat(64);
-    await writeFile(eventsPath, `${events.map((e) => JSON.stringify(e)).join("\n")}\n`);
+    await overwriteFixtureText(target, eventsPath, `${events.map((e) => JSON.stringify(e)).join("\n")}\n`);
     await assert.rejects(
       runContractCreate({ target, packageRoot, taskId: tid, preset: "feature" }),
     );
@@ -241,7 +246,7 @@ test("ROUTE_VALIDATED exists but route artifact malformed → contract-create fa
   const { target, tid } = await validLedgerWithRouteNoStateFixture();
   try {
     const routePath = path.join(target, taskArtifactPath(tid, "route"));
-    await writeFile(routePath, "{ not json", "utf8");
+    await overwriteFixtureArtifactBytes(target, routePath, "{ not json");
     await assert.rejects(
       runContractCreate({ target, packageRoot, taskId: tid, preset: "feature" }),
       (error) => error.code === "E_CONTRACT_BOOTSTRAP_INCONSISTENT",
@@ -257,9 +262,9 @@ test("ROUTE_VALIDATED exists but route bound to a different contract → contrac
   const { target, tid } = await validLedgerWithRouteNoStateFixture();
   try {
     const routePath = path.join(target, taskArtifactPath(tid, "route"));
-    const route = JSON.parse(await readFile(routePath, "utf8"));
+    const route = JSON.parse(await readRawFixtureText(target, routePath));
     route.contractFingerprint = "a".repeat(64);
-    await writeFile(routePath, `${JSON.stringify(route, null, 2)}\n`, "utf8");
+    await overwriteFixtureText(target, routePath, `${JSON.stringify(route, null, 2)}\n`);
     await assert.rejects(
       runContractCreate({ target, packageRoot, taskId: tid, preset: "feature" }),
       (error) => error.code === "E_CONTRACT_BOOTSTRAP_INCONSISTENT",
@@ -275,10 +280,10 @@ test("invalid ledger → contract-create fails closed", async () => {
   const { target } = await baseFixture();
   try {
     const eventsPath = path.join(target, taskArtifactPath(taskId, "events"));
-    const text = await readFile(eventsPath, "utf8");
+    const text = await readRawFixtureText(target, eventsPath);
     const events = text.trim().split("\n").map((l) => JSON.parse(l));
     events[0].hash = "bad";
-    await writeFile(eventsPath, `${events.map((e) => JSON.stringify(e)).join("\n")}\n`);
+    await overwriteFixtureText(target, eventsPath, `${events.map((e) => JSON.stringify(e)).join("\n")}\n`);
     await assert.rejects(
       runContractCreate({ target, packageRoot, taskId, preset: "feature" }),
     );
@@ -295,6 +300,7 @@ test("repeat contract-create after reconstruction → idempotent, no new events"
     const second = await runContractCreate({ target, packageRoot, taskId: tid, preset: "feature" });
     assert.equal(second.idempotent, true);
     const ledger = await validateEventLedger(target, packageRoot, { taskId: tid });
+    assertCollectionValidationParity(ledger.events);
     const validatedCount = ledger.events.filter((e) => e.event === "CONTRACT_VALIDATED").length;
     assert.equal(validatedCount, 1, "CONTRACT_VALIDATED count remains 1");
   } finally {
@@ -363,6 +369,7 @@ async function assertLaterPhaseReconstruction(phase, expected) {
     assert.deepEqual([...state.selectedGuides].sort(), [...persistedRoute.guides].sort());
     // Reconstruction must not append any lifecycle event.
     const ledger = await validateEventLedger(target, packageRoot, { taskId: tid });
+    assertCollectionValidationParity(ledger.events);
     assert.equal(ledger.valid, true);
     assert.equal(ledger.events.filter((e) => e.event === "CONTRACT_VALIDATED").length, 1);
     assert.equal(ledger.events.filter((e) => e.event === "ROUTE_VALIDATED").length, 1);
@@ -420,6 +427,7 @@ test("contract-create reconstruction matches ordinary resumability identity fiel
     assert.equal(reconstructed.verificationCycle, 1);
     // The verify-cycle metadata in the ledger is the single source of truth.
     const ledger = await validateEventLedger(target, packageRoot, { taskId: tid });
+    assertCollectionValidationParity(ledger.events);
     const cycleEvent = ledger.events.find((e) => e.event === "VERIFICATION_STARTED");
     assert.equal(reconstructed.verificationCycle, cycleEvent.details.verificationCycle);
   } finally {
@@ -439,6 +447,7 @@ test("--contract-file missing on disk cannot block reconstruction of an existing
     assert.equal(result.reconstructed, true, "recovery must not depend on caller contract material");
     assert.equal(result.phase, "CONTRACT_READY");
     const ledger = await validateEventLedger(target, packageRoot, { taskId: tid });
+    assertCollectionValidationParity(ledger.events);
     assert.equal(ledger.events.filter((e) => e.event === "CONTRACT_VALIDATED").length, 1);
   } finally {
     await removeTempTree(target);
@@ -472,7 +481,7 @@ test("caller-supplied different contract file is rejected without overwriting th
     const different = { ...createPresetContract({ taskId: tid, preset: "bug" }), objective: "a genuinely different objective" };
     assert.notEqual(contractFingerprint(different), canonical.fingerprint, "fixture must differ from canonical contract");
     const contractFile = "different-contract.json";
-    await writeFile(path.join(target, contractFile), JSON.stringify(different, null, 2), "utf8");
+    await writeFile(path.join(target, contractFile), JSON.stringify(different, null, 2));
     await assert.rejects(
       runContractCreate({ target, packageRoot, taskId: tid, contractFile }),
       (error) => error.code === "E_CONTRACT_BOOTSTRAP_INCONSISTENT",
@@ -492,6 +501,7 @@ test("exact candidate recognized by isContractBootstrapRepairCandidate", async (
   const { target } = await buggyStateFixture();
   try {
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
     const candidate = isContractBootstrapRepairCandidate(ledger.events, ledger.errors, taskId);
     assert.ok(candidate, "should recognize the exact defect");
     assert.equal(candidate.taskId, taskId);
@@ -515,6 +525,7 @@ test("one CONTRACT_VALIDATED → not repairable", async () => {
     await appendTransaction(target, "one-cv", "discover", "DISCOVERY_STARTED", { source: "test" });
     await appendTransaction(target, "one-cv", "contract-create", "CONTRACT_VALIDATED", { contractFingerprint: contractFingerprint(contract) });
     const ledger = await validateEventLedger(target, packageRoot, { taskId: "one-cv" });
+    assertCollectionValidationParity(ledger.events);
     const candidate = isContractBootstrapRepairCandidate(ledger.events, ledger.errors, "one-cv");
     assert.equal(candidate, null, "single CONTRACT_VALIDATED is not a repair candidate");
   } finally {
@@ -539,6 +550,7 @@ test("three CONTRACT_VALIDATED → rejected", async () => {
     await appendTransaction(target, "three-cv", "contract-create", "CONTRACT_VALIDATED", { contractFingerprint: contractFingerprint(contract) });
     await appendTransaction(target, "three-cv", "contract-create", "CONTRACT_VALIDATED", { contractFingerprint: contractFingerprint(contract) });
     const ledger = await validateEventLedger(target, packageRoot, { taskId: "three-cv" });
+    assertCollectionValidationParity(ledger.events);
     const candidate = isContractBootstrapRepairCandidate(ledger.events, ledger.errors, "three-cv");
     assert.equal(candidate, null, "three CONTRACT_VALIDATED is not a repair candidate");
   } finally {
@@ -550,11 +562,12 @@ test("different fingerprints → unsafe, not a candidate", async () => {
   const { target } = await baseFixture();
   try {
     const eventsPath = path.join(target, taskArtifactPath(taskId, "events"));
-    const text = await readFile(eventsPath, "utf8");
+    const text = await readRawFixtureText(target, eventsPath);
     const events = text.trim().split("\n").map((l) => JSON.parse(l));
     events[4].details.contractFingerprint = "b".repeat(64);
-    await writeFile(eventsPath, `${events.map((e) => JSON.stringify(e)).join("\n")}\n`);
+    await overwriteFixtureText(target, eventsPath, `${events.map((e) => JSON.stringify(e)).join("\n")}\n`);
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
     const candidate = isContractBootstrapRepairCandidate(ledger.events, ledger.errors, taskId);
     assert.equal(candidate, null, "different fingerprints must not be recognized as candidate");
   } finally {
@@ -566,6 +579,7 @@ test("wrong taskId → rejected", async () => {
   const { target } = await buggyStateFixture();
   try {
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
     const candidate = isContractBootstrapRepairCandidate(ledger.events, ledger.errors, "wrong-task-id");
     assert.equal(candidate, null, "wrong taskId must not match");
   } finally {
@@ -577,11 +591,12 @@ test("invalid hash chain → rejected", async () => {
   const { target } = await baseFixture();
   try {
     const eventsPath = path.join(target, taskArtifactPath(taskId, "events"));
-    const text = await readFile(eventsPath, "utf8");
+    const text = await readRawFixtureText(target, eventsPath);
     const events = text.trim().split("\n").map((l) => JSON.parse(l));
     events[2].previousHash = "bad";
-    await writeFile(eventsPath, `${events.map((e) => JSON.stringify(e)).join("\n")}\n`);
+    await overwriteFixtureText(target, eventsPath, `${events.map((e) => JSON.stringify(e)).join("\n")}\n`);
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
     const candidate = isContractBootstrapRepairCandidate(ledger.events, ledger.errors, taskId);
     assert.equal(candidate, null, "broken hash chain must not be a candidate");
   } finally {
@@ -595,6 +610,7 @@ test("only exact two duplicate errors tolerated", async () => {
   const { target } = await buggyStateFixture();
   try {
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
     const chronologyErrors = ledger.errors.filter(
       (e) => e.code === "E_PHASE_CHRONOLOGY_INVALID",
     );
@@ -665,6 +681,7 @@ test("valid repaired ledger suppresses only the exact duplicate chronology error
     // Recompute the raw (unsuppressed) error set by revalidating a ledger copy
     // without the marker: it must produce exactly the tolerated errors.
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
     assert.equal(ledger.valid, true, "repaired ledger is valid");
     assert.ok(ledger.errors.length === 0, "no residual errors after suppression");
   } finally {
@@ -689,6 +706,7 @@ test("PLAN_RECORDED candidate rejected in repair v1", async () => {
     await appendTransaction(target, "plan-rejected", "contract-create", "CONTRACT_VALIDATED", { contractFingerprint: contractFingerprint(contract) });
     await appendTransaction(target, "plan-rejected", "plan", "PLAN_RECORDED");
     const ledger = await validateEventLedger(target, packageRoot, { taskId: "plan-rejected" });
+    assertCollectionValidationParity(ledger.events);
     const candidate = isContractBootstrapRepairCandidate(ledger.events, ledger.errors, "plan-rejected");
     assert.equal(candidate, null, "PLAN_RECORDED makes this beyond the repair v1 boundary");
   } finally {
@@ -713,6 +731,7 @@ test("execution candidate rejected in repair v1", async () => {
     await appendTransaction(target, "exec-rejected", "contract-create", "CONTRACT_VALIDATED", { contractFingerprint: contractFingerprint(contract) });
     await appendTransaction(target, "exec-rejected", "execute", "EXECUTION_STARTED");
     const ledger = await validateEventLedger(target, packageRoot, { taskId: "exec-rejected" });
+    assertCollectionValidationParity(ledger.events);
     const candidate = isContractBootstrapRepairCandidate(ledger.events, ledger.errors, "exec-rejected");
     assert.equal(candidate, null, "EXECUTION_STARTED makes this beyond the repair v1 boundary");
   } finally {
@@ -737,7 +756,7 @@ test("exact buggy CONTRACT_READY state accepted by repair", async () => {
 test("state task mismatch rejected by repair", async () => {
   const { target, contractHash } = await buggyStateFixture();
   try {
-    await writeWorkState(target, createWorkState({
+    await overwriteFixtureText(target, taskArtifactPath(taskId, "state"), JSON.stringify(createWorkState({
       taskId: "wrong-task",
       contractFingerprint: contractHash,
       repositoryFingerprint: { branch: null, head: null },
@@ -752,10 +771,10 @@ test("state task mismatch rejected by repair", async () => {
       failures: [],
       blockers: [],
       verificationEvidence: [],
-    }), { packageRoot, taskId });
+    })));
     await assert.rejects(
       runTaskRepairContractBootstrap({ target, packageRoot, taskId, acknowledgeRepair: true }),
-      (error) => error.code === "E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE",
+      (error) => error.code === "E_STORAGE_PAYLOAD_MISMATCH",
     );
   } finally {
     await removeTempTree(target);
@@ -872,6 +891,7 @@ test("multiple repair markers → ledger invalid", async () => {
       }, packageRoot, { taskId });
     });
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
     assert.equal(ledger.valid, false, "multiple markers should make ledger invalid");
   } finally {
     await removeTempTree(target);
@@ -950,7 +970,7 @@ test("repair state revision rollback fails closed", async () => {
 test("missing work-state after repair fails closed", async () => {
   const { target } = await repairedFixture();
   try {
-    await rm(path.join(target, taskArtifactPath(taskId, "state")), { force: true });
+    await deleteFixtureArtifact(target, path.join(target, taskArtifactPath(taskId, "state")));
     const claim = await resolveTaskClaimState(target, { taskId, packageRoot });
     assert.equal(claim.claimState, "INCONSISTENT");
     assert.equal(claim.mutationAllowed, false);
@@ -976,6 +996,7 @@ test("post-repair events remain outside the repair transaction boundary", async 
     assert.equal(isContractBootstrapRepairMarkerValid(events, events[markerIndex]), true);
     assert.equal(events.at(-2).event, "PLAN_RECORDED");
     const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
     assert.equal(ledger.valid, true);
   } finally {
     await removeTempTree(target);
@@ -999,10 +1020,10 @@ test("post-repair state reconstructedStateFingerprint tampered → ownership INC
   const { target } = await repairedFixture();
   try {
     const statePath = path.join(target, taskArtifactPath(taskId, "state"));
-    const stateText = await readFile(statePath, "utf8");
+    const stateText = await readRawFixtureText(target, statePath);
     const state = JSON.parse(stateText);
     state.contractFingerprint = "f".repeat(64);
-    await writeFile(statePath, JSON.stringify(state, null, 2));
+    await overwriteFixtureText(target, statePath, JSON.stringify(state, null, 2));
     const claim = await resolveTaskClaimState(target, { taskId, packageRoot });
     assert.equal(claim.claimState, "INCONSISTENT");
     assert.equal(claim.mutationAllowed, false);
@@ -1015,11 +1036,11 @@ test("post-repair repair marker tampered → ownership INCONSISTENT", async () =
   const { target } = await repairedFixture();
   try {
     const eventsPath = path.join(target, taskArtifactPath(taskId, "events"));
-    const text = await readFile(eventsPath, "utf8");
+    const text = await readRawFixtureText(target, eventsPath);
     const events = text.trim().split("\n").map((l) => JSON.parse(l));
     const markerIdx = events.findIndex((e) => e.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT);
     events[markerIdx].details.repairId = `repair-${"0".repeat(64)}`;
-    await writeFile(eventsPath, `${events.map((e) => JSON.stringify(e)).join("\n")}\n`);
+    await overwriteFixtureText(target, eventsPath, `${events.map((e) => JSON.stringify(e)).join("\n")}\n`);
     const claim = await resolveTaskClaimState(target, { taskId, packageRoot });
     assert.equal(claim.claimState, "INCONSISTENT");
     assert.equal(claim.mutationAllowed, false);
@@ -1059,7 +1080,7 @@ test("post-repair contract artifact replaced with a valid different contract →
 test("post-repair contract artifact deleted → ownership INCONSISTENT", async () => {
   const { target } = await repairedRoutedFixture();
   try {
-    await rm(path.join(target, taskArtifactPath(taskId, "contract")), { force: true });
+    await deleteFixtureArtifact(target, path.join(target, taskArtifactPath(taskId, "contract")));
     const claim = await resolveTaskClaimState(target, { taskId, packageRoot });
     assert.equal(claim.claimState, "INCONSISTENT");
     assert.equal(claim.mutationAllowed, false);
@@ -1088,7 +1109,7 @@ test("post-repair route artifact replaced with a different valid route → owner
 test("post-repair route artifact deleted → ownership INCONSISTENT", async () => {
   const { target } = await repairedRoutedFixture();
   try {
-    await rm(path.join(target, taskArtifactPath(taskId, "route")), { force: true });
+    await deleteFixtureArtifact(target, path.join(target, taskArtifactPath(taskId, "route")));
     const claim = await resolveTaskClaimState(target, { taskId, packageRoot });
     assert.equal(claim.claimState, "INCONSISTENT");
     assert.equal(claim.mutationAllowed, false);
@@ -1102,9 +1123,9 @@ test("post-repair route contractFingerprint rebound → ownership INCONSISTENT",
   const { target } = await repairedRoutedFixture();
   try {
     const routePath = path.join(target, taskArtifactPath(taskId, "route"));
-    const route = JSON.parse(await readFile(routePath, "utf8"));
+    const route = JSON.parse(await readRawFixtureText(target, routePath));
     route.contractFingerprint = "b".repeat(64);
-    await writeFile(routePath, `${JSON.stringify(route, null, 2)}\n`, "utf8");
+    await overwriteFixtureText(target, routePath, `${JSON.stringify(route, null, 2)}\n`);
     const claim = await resolveTaskClaimState(target, { taskId, packageRoot });
     assert.equal(claim.claimState, "INCONSISTENT");
     assert.equal(claim.mutationAllowed, false);
@@ -1236,14 +1257,14 @@ test("unsafe routed history without a route artifact does not repair", async () 
       blockers: [],
       verificationEvidence: [],
     }), { packageRoot, taskId: "routed-missing" });
-    const stateBefore = await readFile(path.join(target, taskArtifactPath("routed-missing", "state")), "utf8");
+    const stateBefore = await readRawFixtureText(target, path.join(target, taskArtifactPath("routed-missing", "state")));
     await assert.rejects(
       runTaskRepairContractBootstrap({ target, packageRoot, taskId: "routed-missing", acknowledgeRepair: true }),
       (error) => error.code === "E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE",
     );
     const events = await readEvents(target, packageRoot, { taskId: "routed-missing" });
     assert.equal(events.filter((event) => event.event === CONTRACT_BOOTSTRAP_REPAIR_EVENT).length, 0);
-    assert.equal(await readFile(path.join(target, taskArtifactPath("routed-missing", "state")), "utf8"), stateBefore);
+    assert.equal(await readRawFixtureText(target, path.join(target, taskArtifactPath("routed-missing", "state"))), stateBefore);
   } finally {
     await removeTempTree(target);
   }
@@ -1253,9 +1274,9 @@ test("unsafe routed history with a misbound route artifact does not repair", asy
   const { target } = await buggyStateFixture();
   try {
     const routePath = path.join(target, taskArtifactPath(taskId, "route"));
-    const route = JSON.parse(await readFile(routePath, "utf8"));
+    const route = JSON.parse(await readRawFixtureText(target, routePath));
     route.contractFingerprint = "a".repeat(64);
-    await writeFile(routePath, `${JSON.stringify(route, null, 2)}\n`, "utf8");
+    await overwriteFixtureText(target, routePath, `${JSON.stringify(route, null, 2)}\n`);
     await assert.rejects(
       runTaskRepairContractBootstrap({ target, packageRoot, taskId, acknowledgeRepair: true }),
       (error) => error.code === "E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE",
@@ -1272,7 +1293,7 @@ test("unsafe routed history with a malformed route artifact does not repair", as
   const { target } = await buggyStateFixture();
   try {
     const routePath = path.join(target, taskArtifactPath(taskId, "route"));
-    await writeFile(routePath, "{ malformed route", "utf8");
+    await overwriteFixtureArtifactBytes(target, routePath, "{ malformed route");
     await assert.rejects(
       runTaskRepairContractBootstrap({ target, packageRoot, taskId, acknowledgeRepair: true }),
       (error) => error.code === "E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE",
@@ -1563,13 +1584,13 @@ test("repaired late-phase reroute preserves checkpoint identity and ownership", 
     assert.equal(claim.claimState, "ACTIVE");
     assert.equal(claim.mutationAllowed, true);
     assert.equal(claim.ownershipValid, true);
-    const stateBeforeRepairRerun = await readFile(path.join(target, taskArtifactPath(taskId, "state")), "utf8");
-    const eventsBeforeRepairRerun = await readFile(path.join(target, taskArtifactPath(taskId, "events")), "utf8");
+    const stateBeforeRepairRerun = await readRawFixtureText(target, path.join(target, taskArtifactPath(taskId, "state")));
+    const eventsBeforeRepairRerun = await readRawFixtureText(target, path.join(target, taskArtifactPath(taskId, "events")));
     const rerun = await runTaskRepairContractBootstrap({ target, packageRoot, taskId, acknowledgeRepair: true });
     assert.equal(rerun.alreadyRepaired, true);
     assert.equal(rerun.phase, "PLANNED");
-    assert.equal(await readFile(path.join(target, taskArtifactPath(taskId, "state")), "utf8"), stateBeforeRepairRerun);
-    assert.equal(await readFile(path.join(target, taskArtifactPath(taskId, "events")), "utf8"), eventsBeforeRepairRerun);
+    assert.equal(await readRawFixtureText(target, path.join(target, taskArtifactPath(taskId, "state"))), stateBeforeRepairRerun);
+    assert.equal(await readRawFixtureText(target, path.join(target, taskArtifactPath(taskId, "events"))), eventsBeforeRepairRerun);
   } finally {
     await removeTempTree(target);
   }
@@ -1646,11 +1667,11 @@ test("coherent route substitution without a post-repair route transaction is inc
 test("valid rerun produces no new event or state write", async () => {
   const { target } = await repairedFixture();
   try {
-    const eventsBefore = await readFile(path.join(target, taskArtifactPath(taskId, "events")), "utf8");
-    const stateBefore = await readFile(path.join(target, taskArtifactPath(taskId, "state")), "utf8");
+    const eventsBefore = await readRawFixtureText(target, path.join(target, taskArtifactPath(taskId, "events")));
+    const stateBefore = await readRawFixtureText(target, path.join(target, taskArtifactPath(taskId, "state")));
     await runTaskRepairContractBootstrap({ target, packageRoot, taskId, acknowledgeRepair: true });
-    const eventsAfter = await readFile(path.join(target, taskArtifactPath(taskId, "events")), "utf8");
-    const stateAfter = await readFile(path.join(target, taskArtifactPath(taskId, "state")), "utf8");
+    const eventsAfter = await readRawFixtureText(target, path.join(target, taskArtifactPath(taskId, "events")));
+    const stateAfter = await readRawFixtureText(target, path.join(target, taskArtifactPath(taskId, "state")));
     assert.equal(eventsBefore, eventsAfter, "events file must not change on idempotent rerun");
     assert.equal(stateBefore, stateAfter, "state file must not change on idempotent rerun");
   } finally {
@@ -1662,11 +1683,11 @@ test("tampered rerun fails closed", async () => {
   const { target } = await repairedFixture();
   try {
     const statePath = path.join(target, taskArtifactPath(taskId, "state"));
-    const stateText = await readFile(statePath, "utf8");
+    const stateText = await readRawFixtureText(target, statePath);
     const state = JSON.parse(stateText);
     state.contractFingerprint = "0".repeat(64);
     state.revision = (state.revision ?? 0) + 1;
-    await writeFile(statePath, JSON.stringify(state, null, 2));
+    await overwriteFixtureText(target, statePath, JSON.stringify(state, null, 2));
     await assert.rejects(
       runTaskRepairContractBootstrap({ target, packageRoot, taskId, acknowledgeRepair: true }),
       (error) => error.code === "E_CONTRACT_BOOTSTRAP_REPAIR_INVALID",
@@ -1703,30 +1724,36 @@ test("next → REPAIR_CONTRACT_BOOTSTRAP → execute → repaired → next no lo
 });
 
 test("next commandSpec executes through the real COMMAND_EXECUTORS boundary", async () => {
-  const { target } = await buggyStateFixture();
+  const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-bootstrap-command-spec-"));
   try {
-    const nextBefore = await getNextAction({ target, packageRoot, taskId });
-    assert.equal(nextBefore.nextAction, NEXT_ACTIONS.REPAIR_CONTRACT_BOOTSTRAP);
-    const spec = nextBefore.commandSpecs[0];
-    // Registration: the recommended commandId maps to the canonical executor.
-    assert.equal(spec.commandId, "task-repair-contract-bootstrap");
-    assert.equal(typeof COMMAND_EXECUTORS[spec.commandId], "function",
-      "COMMAND_EXECUTORS must register the recommended commandId");
+    await withProjectStorage(target, async () => {
+      await buggyStateFixture({ target });
+      const nextBefore = await getNextAction({ target, packageRoot, taskId });
+      assert.equal(nextBefore.nextAction, NEXT_ACTIONS.REPAIR_CONTRACT_BOOTSTRAP);
+      const spec = nextBefore.commandSpecs[0];
+      // Registration: the recommended commandId maps to the canonical executor.
+      assert.equal(spec.commandId, "task-repair-contract-bootstrap");
+      assert.equal(typeof COMMAND_EXECUTORS[spec.commandId], "function",
+        "COMMAND_EXECUTORS must register the recommended commandId");
 
-    // Apply requiredInputs using the canonical CLI option mapping and dispatch
-    // through the real executor envelope, exactly like the CLI does.
-    const propagated = spec.requiredInputs.map((input) => input.option);
-    assert.ok(propagated.includes("--acknowledge-repair"));
-    const parsed = parseArgs([...spec.argv, ...propagated]);
-    const execution = await COMMAND_EXECUTORS[spec.commandId]({ target, packageRoot, options: parsed.options });
-    assert.equal(execution.exitCode, 0);
-    assert.equal(execution.result.repaired, true);
+      // Apply requiredInputs using the canonical CLI option mapping and dispatch
+      // through the real executor envelope, exactly like the CLI does.
+      const propagated = spec.requiredInputs.map((input) => input.option);
+      assert.ok(propagated.includes("--acknowledge-repair"));
+      const parsed = parseArgs([...spec.argv, ...propagated]);
+      const execution = await COMMAND_EXECUTORS[spec.commandId]({ target, packageRoot, options: parsed.options });
+      assert.equal(execution.exitCode, 0);
+      assert.equal(execution.result.repaired, true);
 
-    // The repaired task no longer recommends the repair command.
-    const nextAfter = await getNextAction({ target, packageRoot, taskId });
-    assert.notEqual(nextAfter.nextAction, NEXT_ACTIONS.REPAIR_CONTRACT_BOOTSTRAP);
-    const ledger = await validateEventLedger(target, packageRoot, { taskId });
-    assert.equal(ledger.valid, true);
+      // The repaired task no longer recommends the repair command.
+      const nextAfter = await getNextAction({ target, packageRoot, taskId });
+      assert.notEqual(nextAfter.nextAction, NEXT_ACTIONS.REPAIR_CONTRACT_BOOTSTRAP);
+      const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    assertCollectionValidationParity(ledger.events);
+      assert.equal(ledger.valid, true);
+    });
+    await access(path.join(target, ".forgeloop/state.sqlite"));
+    await assert.rejects(access(path.join(target, ".forgeloop/task-state")), { code: "ENOENT" });
   } finally {
     await removeTempTree(target);
   }
@@ -1746,8 +1773,8 @@ test("no lock → repair succeeds", async () => {
   }
 });
 
-function writeTaskLockFile(target, tid, lockData) {
-  return writeFile(path.join(target, taskLockPath(tid)), `${JSON.stringify(lockData, null, 2)}\n`, "utf8");
+function writeFixtureLease(target, tid, lockData) {
+  return overwriteFixtureLease(target, tid, lockData);
 }
 
 function staleLeaseOverrides() {
@@ -1795,7 +1822,7 @@ test("stale task lock → CAS-released and repair succeeds", async () => {
       ownerInstanceId: "instance-gone",
       ...staleLeaseOverrides(),
     };
-    await writeTaskLockFile(target, taskId, staleLock);
+    await writeFixtureLease(target, taskId, staleLock);
     const result = await runTaskRepairContractBootstrap({
       target, packageRoot, taskId, acknowledgeRepair: true,
     });
@@ -1820,7 +1847,7 @@ test("stale lock replaced during settlement → repair rejected, replacement loc
       ownerInstanceId: "instance-gone",
       ...staleLeaseOverrides(),
     };
-    await writeTaskLockFile(target, taskId, staleLock);
+    await writeFixtureLease(target, taskId, staleLock);
 
     // Simulate CAS replacement after classification but before settlement:
     // exercise the real helper with an observed lock that differs from the
@@ -1839,14 +1866,14 @@ test("stale lock replaced during settlement → repair rejected, replacement loc
       heartbeatAt: new Date().toISOString(),
       leaseMs: 300000,
     };
-    await writeTaskLockFile(target, taskId, replacement);
+    await writeFixtureLease(target, taskId, replacement);
     const released = await releaseStaleTaskLockIfUnchanged(target, taskId, classified);
     assert.equal(released.released, false);
     assert.equal(released.reason, "LOCK_CHANGED");
     const current = await readLockInfo(target, taskId);
     assert.equal(current.lockId, "lock-replacement", "replacement lock must be preserved");
 
-    // The repair path performs the same CAS against the file it classified, so
+    // The repair path performs the same CAS against the lease row it classified, so
     // a lock replaced between read and release must fail closed without any
     // repair mutation. The replacement is LIVE, so the repair refuses and
     // leaves the replacement lock, the ledger, and the state untouched.
@@ -1867,7 +1894,7 @@ test("stale lock replaced during settlement → repair rejected, replacement loc
 test("corrupt task lock → repair fails closed, no mutation", async () => {
   const { target } = await buggyStateFixture();
   try {
-    await writeFile(path.join(target, taskLockPath(taskId)), "{ corrupted lock", "utf8");
+    await overwriteFixtureLease(target, taskId, "{ corrupted lock");
     await assert.rejects(
       runTaskRepairContractBootstrap({ target, packageRoot, taskId, acknowledgeRepair: true }),
       (error) => error.code === "E_CONTRACT_BOOTSTRAP_REPAIR_UNSAFE",
@@ -1884,7 +1911,7 @@ test("corrupt task lock → repair fails closed, no mutation", async () => {
 test("structurally incomplete lock identity → repair fails closed", async () => {
   const { target } = await buggyStateFixture();
   try {
-    await writeTaskLockFile(target, taskId, {
+    await writeFixtureLease(target, taskId, {
       taskId,
       operation: "incomplete",
       // Missing lockId, ownerInstanceId, leaseMs.

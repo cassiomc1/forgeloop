@@ -1,0 +1,90 @@
+{
+  "increment": 675,
+  "scopeReviewComplete": false,
+  "releaseThresholdsVerified": false,
+  "entries": [
+    {
+      "path": "src/core/project-detection.js",
+      "role": "Unchanged repository manifest/source classification; direct IO open-read and readdir; candidate non-operational inspection exclusion requires full-scope approval",
+      "baseline": {
+        "nonblankPhysicalLines": 2073,
+        "bytes": 82916,
+        "sha256": "96956accd87bb28890ac74dbaec95a02250cb6f9b9ba4a47ac507955fe21c530",
+        "persistenceSignal": true
+      },
+      "current": {
+        "nonblankPhysicalLines": 2073,
+        "bytes": 82916,
+        "sha256": "96956accd87bb28890ac74dbaec95a02250cb6f9b9ba4a47ac507955fe21c530",
+        "persistenceSignal": true
+      },
+      "disposition": "REVIEW_NOTE_ONLY_NO_EXCLUSION_APPLIED"
+    },
+    {
+      "path": "src/core/cli-command-definitions.js",
+      "role": "Declarative CLI metadata and lookup; includes new maintenance commands and remains counted; zero direct IO does not exclude migration metadata costs",
+      "baseline": {
+        "nonblankPhysicalLines": 1685,
+        "bytes": 120877,
+        "sha256": "57abebde55b03509e14fbaed76eb35baa03ce16ac86e1929f8d2d94c3ea16e59",
+        "persistenceSignal": false
+      },
+      "current": {
+        "nonblankPhysicalLines": 1786,
+        "bytes": 133588,
+        "sha256": "9d084bb966b0cd529f632aee283fc163efda96d25a657462af3b61b283a4d5f1",
+        "persistenceSignal": false
+      },
+      "disposition": "REVIEW_NOTE_ONLY_NO_EXCLUSION_APPLIED"
+    },
+    {
+      "path": "src/core/structural-quality/service.js",
+      "role": "Mixed domain evaluation and canonical baseline/evaluation/event persistence; retain inclusion",
+      "baseline": {
+        "nonblankPhysicalLines": 1085,
+        "bytes": 49611,
+        "sha256": "db79a33a606f0ed1386e7e312079a3fcd2416588e4d564e385625a7604741083",
+        "persistenceSignal": true
+      },
+      "current": {
+        "nonblankPhysicalLines": 1118,
+        "bytes": 51582,
+        "sha256": "38981b46ae61b4ca173fd37d5855ac4ce6580719dcc51b429474a2f44417b363",
+        "persistenceSignal": true
+      },
+      "disposition": "REVIEW_NOTE_ONLY_NO_EXCLUSION_APPLIED"
+    },
+    {
+      "path": "src/core/completion-artifacts.js",
+      "role": "Mixed completion relationships and canonical checks/receipts/state/event persistence; retain inclusion",
+      "baseline": {
+        "nonblankPhysicalLines": 990,
+        "bytes": 36059,
+        "sha256": "c8ce293b50d3c65b0621319892dc77348b99ebfa10e8ef6fc3ee406568eb0274",
+        "persistenceSignal": true
+      },
+      "current": {
+        "nonblankPhysicalLines": 1005,
+        "bytes": 36971,
+        "sha256": "be023a51145e5b4d369eb4eb48afc4e645e3da0d0ca2468e552de079fa7ff4cb",
+        "persistenceSignal": true
+      },
+      "disposition": "REVIEW_NOTE_ONLY_NO_EXCLUSION_APPLIED"
+    }
+  ],
+  "symmetricProjectDetectionExclusionSensitivityOnly": {
+    "baseline": 41440,
+    "current": 49501,
+    "netReduction": -0.19452220077220073,
+    "targetMet": false,
+    "notApplied": true
+  },
+  "wholeConservativeInventoryUnchanged": true,
+  "allStorageImportExportMaintenanceCostsRetained": true,
+  "limits": [
+    "Direct source role review is not transitive dependency closure",
+    "No approved whole-repository semantic scope",
+    "CLI maintenance metadata is not excluded merely because it is declarative"
+  ],
+  "publication": "HOLD_RELEASE recommendation retained; goal remains active"
+}

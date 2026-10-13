@@ -1,0 +1,95 @@
+{
+  "runId": 38026044486,
+  "attempt": 1,
+  "sourceRevision": "c78f9f5cc01fdedbbc4f9805eb63ca4ad566fd33",
+  "jobs": [
+    {
+      "id": 114136990891,
+      "name": "Classify changed paths",
+      "conclusion": "success"
+    },
+    {
+      "id": 114137029806,
+      "name": "audit",
+      "conclusion": "success"
+    },
+    {
+      "id": 114137029813,
+      "name": "Lint and dependency policy",
+      "conclusion": "success"
+    },
+    {
+      "id": 114137029820,
+      "name": "Verify generated Archify diagram",
+      "conclusion": "failure"
+    },
+    {
+      "id": 114137029838,
+      "name": "tarball smoke (ubuntu-latest)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114137029915,
+      "name": "Unit tests (Node 24, shard 4/4)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114137029949,
+      "name": "Unit tests (Node 24, shard 3/4)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114137029958,
+      "name": "Unit tests (Node 24, shard 1/4)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114137029964,
+      "name": "Unit tests (Node 24.19.0, shard 0/4)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114137030018,
+      "name": "Unit tests (Node 24, shard 2/4)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114143442308,
+      "name": "Coverage report (Node 24)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114143855304,
+      "name": "Repository Index native matrix / Classify Repository Index paths",
+      "conclusion": "success"
+    },
+    {
+      "id": 114143898938,
+      "name": "Repository Index native matrix / Verify Repository Index manifest",
+      "conclusion": "success"
+    },
+    {
+      "id": 114143939126,
+      "name": "Repository Index native matrix / Native Repository Index (Linux)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114143939138,
+      "name": "Repository Index native matrix / Native Repository Index (macOS)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114143939145,
+      "name": "Repository Index native matrix / Native Repository Index (Windows)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114144299659,
+      "name": "validate (22)",
+      "conclusion": "failure"
+    }
+  ],
+  "diagnosis": "External documentation link check returned GitHub503 errors and ruby-doc timeout; docs gate and dependentvalidate failed. No waived checks. Failed-only rerun requested after terminal diagnosis.",
+  "failedLogSha256": "e6980caa54eb327bc75a05dcd2ca194a1212ef111721a7dab2b2d9d0e6ef0956",
+  "acceptance": "not accepted until rerun terminal success"
+}

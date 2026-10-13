@@ -1,0 +1,22 @@
+{
+  "kind": "WINDOWS_FULL_SUITE_TERMINAL",
+  "runId": 37896013277,
+  "url": "https://github.com/cassiomc1/forgeloop/actions/runs/37896013277",
+  "executedRevision": "4794f0a85cc90eb95d67f590bec86a8acde99fef",
+  "status": "completed",
+  "conclusion": "success",
+  "counts": {
+    "tests": 2938,
+    "pass": 2914,
+    "fail": 0,
+    "skipped": 24
+  },
+  "logSha256": "aafc15efb611a2fe48bbfd8299040d5cf0c27e51d1d33df8fef3e57173ad8eab",
+  "currentRevision": "5222708738582c38ec51b688e48076738b176c6a",
+  "currentSourceChangesSinceRun": [
+    "src/core/decision/events.js",
+    "tests/storage-event-audit.test.js"
+  ],
+  "currentAcceptance": false,
+  "limitation": "Historical run predates semantic decision revision-conflict correction919; it is not final current-source acceptance."
+}

@@ -1,6 +1,3 @@
-import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
-import path from "node:path";
-
 import { getTaskTransaction, withTaskTransaction } from "./transaction.js";
 import { appendProtocolEvent } from "./events.js";
 import { canonicalFingerprint } from "./artifacts.js";
@@ -16,11 +13,10 @@ import {
   E_APPROVAL_INVALID,
   E_APPROVAL_STALE,
 } from "./error-codes.js";
-import { assertSafePath, ensureWithin } from "./filesystem.js";
 import { isTrustedHostAuthorityContext } from "./capability-policy.js";
-import { taskApprovalPath, taskDirectory, TASK_ARTIFACT_FILES } from "./task-paths.js";
 import { readAction } from "./actions.js";
 import { readWorkState } from "./work-state.js";
+import { requireNativeStore, withNativeReadScope } from "./native-storage.js";
 
 function approvalError(code, message) {
   const error = new Error(message);
@@ -29,55 +25,25 @@ function approvalError(code, message) {
 }
 
 async function readApprovalFile(target, taskId, approvalId) {
-  const relPath = taskApprovalPath(taskId, approvalId);
-  await assertSafePath(target, relPath);
-  let text;
-  try {
-    text = await readFile(ensureWithin(target, relPath), "utf8");
-  } catch (error) {
-    if (error?.code === "ENOENT") return null;
-    throw error;
-  }
-  try {
-    return JSON.parse(text);
-  } catch {
-    throw approvalError(E_APPROVAL_INVALID, `approval artifact is not valid JSON: ${relPath}`);
-  }
+  return withNativeReadScope(target, () => requireNativeStore(
+    target,
+    approvalError,
+    "Approvals require canonical SQLite storage; migrate legacy operational state explicitly",
+  ).readApproval(taskId, approvalId));
 }
 
-async function writeApprovalFile(target, taskId, approval) {
-  const relPath = taskApprovalPath(taskId, approval.approvalId);
-  await assertSafePath(target, relPath);
-  const serialized = `${JSON.stringify(approval, null, 2)}\n`;
-  const activeTransaction = (await getTaskTransaction(target));
-  if (activeTransaction) {
-    await activeTransaction.stageText(relPath, serialized);
-  } else {
-    const absolute = ensureWithin(target, relPath);
-    await mkdir(path.dirname(absolute), { recursive: true });
-    await writeFile(absolute, serialized, "utf8");
-  }
+async function writeApprovalFile(target, approval) {
+  const transaction = await getTaskTransaction(target);
+  if (!transaction) throw approvalError("E_STORAGE_TRANSACTION_INVALID", "Approval persistence requires an active task transaction");
+  return transaction.stageApproval(approval);
 }
 
 async function listApprovalFiles(target, taskId) {
-  const relDir = `${taskDirectory(taskId)}/${TASK_ARTIFACT_FILES.approvals}`;
-  await assertSafePath(target, relDir);
-  const absoluteDir = ensureWithin(target, relDir);
-  let entries;
-  try {
-    entries = await readdir(absoluteDir);
-  } catch (error) {
-    if (error?.code === "ENOENT") return [];
-    throw error;
-  }
-  const approvals = [];
-  for (const entry of entries) {
-    if (!entry.endsWith(".json")) continue;
-    const parsed = await readApprovalFile(target, taskId, entry.replace(/\.json$/, ""));
-    if (parsed) approvals.push(parsed);
-  }
-  approvals.sort((left, right) => String(left.requestedAt).localeCompare(String(right.requestedAt)));
-  return approvals;
+  return withNativeReadScope(target, () => requireNativeStore(
+    target,
+    approvalError,
+    "Approval listing requires canonical SQLite storage; migrate legacy operational state explicitly",
+  ).listApprovals(taskId).sort((left, right) => String(left.requestedAt).localeCompare(String(right.requestedAt))));
 }
 
 function approvalBindingFields(approval) {
@@ -207,7 +173,7 @@ export async function requestApproval(target, { packageRoot, taskId, input }) {
       };
       validateApprovalArtifact(approval);
 
-      await writeApprovalFile(target, taskId, approval);
+      await writeApprovalFile(target, approval);
       await appendProtocolEvent(target, {
         taskId,
         event: "APPROVAL_REQUESTED",
@@ -295,7 +261,7 @@ export async function resolveApproval(target, {
         reason: reason ?? current.reason ?? null,
       };
       validateApprovalArtifact(resolved);
-      await writeApprovalFile(target, taskId, resolved);
+      await writeApprovalFile(target, resolved);
 
       const details = {
         approvalId: resolved.approvalId,

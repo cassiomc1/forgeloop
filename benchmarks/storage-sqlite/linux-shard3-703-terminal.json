@@ -1,0 +1,19 @@
+{
+  "increment": 703,
+  "head": "993e0cb0073887a55d2d85494b09a5e2c06f33f2",
+  "run": 37659627713,
+  "job": 112923597707,
+  "runner": "forgeloop-linux-remote",
+  "conclusion": "success",
+  "counts": {
+    "tests": 608,
+    "pass": 604,
+    "fail": 0,
+    "skipped": 4
+  },
+  "identityLines": [
+    "{\"platform\":\"linux\",\"architecture\":\"x64\",\"hostname\":\"51abbe357f3e\",\"revision\":\"993e0cb0073887a55d2d85494b09a5e2c06f33f2\"}"
+  ],
+  "logSha256": "d328f8367caa5c25d0c5e9dcbc9ec484368d822ea58655d67ba6e6f918300f89",
+  "scope": "Node24 Linux coverage shard3/4 on parent commit; not whole core workflow or newer discovery-yield source."
+}

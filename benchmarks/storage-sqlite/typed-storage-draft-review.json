@@ -1,0 +1,20 @@
+{
+  "kind": "TYPED_STORAGE_DRAFT_REVIEW",
+  "baseline": "d3d6b1e481cbae75a614c5a858d3e625c0e78eeb",
+  "status": "CORRECTION_REQUIRED",
+  "productionDraftCommitted": false,
+  "findings": [
+    "Canonical task descriptor admission and its read observation missing from typed reads",
+    "Staged mutable values escape through typed reads/list/idempotency",
+    "Typed staged names omitted from path compatibility enumeration",
+    "Malformed identity/error parity requires preservation",
+    "Detached precondition should include all staged typed queues"
+  ],
+  "idempotencyCaveat": "Staged early return also exists in prior path API; incomplete observation is not established as a newly introduced regression",
+  "actualReviewedPhysicalGrowth": 87,
+  "inclusiveLocAcceptance": false,
+  "reviewArtifacts": {
+    "sqlite-typed-task-mutation-design-5110555.json.gz": "4c7eaff35fed4bcefd5b73da98c92a0627647f700155e2eb64f98105ce24b93a",
+    "sqlite-typed-task-mutation-review-d3d6b1e.json.gz": "2a626eca5328051de058d7e178c4f0692dfca7b9ecf4a2f79cc9d9f044b49164"
+  }
+}

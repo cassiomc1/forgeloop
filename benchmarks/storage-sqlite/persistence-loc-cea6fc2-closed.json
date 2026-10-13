@@ -1,0 +1,26 @@
+{
+  "kind": "INCLUSIVE_PERSISTENCE_LOC",
+  "sourceRevision": "cea6fc2de071a71a23517a01cadf49896e854ca6",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "baselineLines": 25732,
+  "currentLines": 32525,
+  "targetCeiling": 19299,
+  "remainingReduction": 13226,
+  "acceptanceEligible": true,
+  "unresolvedMembership": 0,
+  "targetMet": false,
+  "scopeManifest": "persistence-loc/scope-30153c3.json.gz",
+  "scopeManifestSha256": "09b9e02b564665dfe14a63736a61d75da5a85026be39994a2d9cd4261b7a0532",
+  "scopeReview": "All storage modules are whole-module inclusions; the maintenance edit changes no reviewed helper or non-helper membership. Existing dispositions are unchanged.",
+  "fullResult": {
+    "path": "/Users/cassio/.codex/verification/persistence-loc-cea6fc2-published.json",
+    "sha256": "f7fe2e28ce30a23e6631bb2b8b34addde0f5ae8073df88092f6e74d740b724b5"
+  },
+  "limits": [
+    "Static eligible scope does not establish performance, runtime or release acceptance.",
+    "The original 25% target remains unmet.",
+    "Retain the separate historical conservative whole-module inventory."
+  ],
+  "publishedToolReproduced": true,
+  "sourceHashesMatchedPrecommitResult": true
+}

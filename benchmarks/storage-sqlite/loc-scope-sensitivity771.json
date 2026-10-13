@@ -1,0 +1,76 @@
+{
+  "increment": 771,
+  "sourceRevision": "f5230012e12c85ff5e6bd46c2d1488d83c6ebb1e",
+  "countingConvention": "Nonblank physical production lines including comments; same whole-module union on both sides; tests/scripts/package manifests excluded",
+  "rawInventorySha256": "9a58dc8923d97b57fb7728ed1ab1f82051ba705c4d4617de7240e9102fa8808e",
+  "mandatoryStorageModules": 65,
+  "mandatoryStorageLines": 7063,
+  "maximumExistingWholeModuleNetDeclines": 895,
+  "minimumNetGrowthWithAllStorageAndOnlyDecliningExistingModules": 6168,
+  "existingDeclines": [
+    {
+      "path": "src/core/transaction.js",
+      "baseline": 303,
+      "current": 38,
+      "removedNet": 265
+    },
+    {
+      "path": "src/core/task-migration.js",
+      "baseline": 348,
+      "current": 102,
+      "removedNet": 246
+    },
+    {
+      "path": "src/core/task-lock.js",
+      "baseline": 396,
+      "current": 218,
+      "removedNet": 178
+    },
+    {
+      "path": "src/cli.js",
+      "baseline": 963,
+      "current": 899,
+      "removedNet": 64
+    },
+    {
+      "path": "src/core/transaction-maintenance.js",
+      "baseline": 67,
+      "current": 5,
+      "removedNet": 62
+    },
+    {
+      "path": "src/core/approvals.js",
+      "baseline": 377,
+      "current": 349,
+      "removedNet": 28
+    },
+    {
+      "path": "src/core/actions.js",
+      "baseline": 432,
+      "current": 407,
+      "removedNet": 25
+    },
+    {
+      "path": "src/core/execution.js",
+      "baseline": 133,
+      "current": 109,
+      "removedNet": 24
+    },
+    {
+      "path": "src/core/reflection.js",
+      "baseline": 275,
+      "current": 273,
+      "removedNet": 2
+    },
+    {
+      "path": "src/core/contract-revision.js",
+      "baseline": 197,
+      "current": 196,
+      "removedNet": 1
+    }
+  ],
+  "scopeChanged": false,
+  "originalTargetWaived": false,
+  "releaseAccepted": false,
+  "qualification": "Sensitivity diagnostic for symmetric whole-module scopes only. Not a semantic function-level scope review, not a new approved denominator, and not a completion claim. Every current storage/import/export/maintenance module is included; all observed existing-file net reductions are credited, even outside persistence."
+}

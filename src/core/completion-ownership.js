@@ -1,6 +1,18 @@
+import { isLedgerEventCollection } from "./ledger-event-collection.js";
 import { LIFECYCLE_MILESTONES, validateStateLedgerCoherence } from "./events.js";
 
 export const CANONICAL_COMPLETION_EVENT = "COMPLETION_VALIDATED";
+
+function completionCandidates(events, taskId) {
+  let count = 0;
+  let candidate = null;
+  for (const event of events) {
+    if (event.event !== CANONICAL_COMPLETION_EVENT || event.taskId !== taskId) continue;
+    count += 1;
+    candidate = event;
+  }
+  return { count, candidate };
+}
 
 /**
  * Canonical completion ownership proof: the minimal, validator-backed evidence
@@ -28,31 +40,30 @@ export function validateCompletionOwnershipProof({ taskId, state, ledger }) {
   }
 
   let completionEvent = null;
-  if (ledger && Array.isArray(ledger.events)) {
+  if (ledger && isLedgerEventCollection(ledger.events)) {
     if (ledger.events.some((event) => event.taskId !== taskId)) {
       errors.push({
         code: "E_COMPLETION_OWNERSHIP_UNPROVEN",
         message: "Ledger contains an event belonging to a different task",
       });
     }
-    const candidates = ledger.events
-      .filter((event) => event.event === CANONICAL_COMPLETION_EVENT && event.taskId === taskId);
-    if (candidates.length === 0) {
+    const { count, candidate } = completionCandidates(ledger.events, taskId);
+    if (count === 0) {
       errors.push({
         code: "E_COMPLETION_OWNERSHIP_UNPROVEN",
         message: `No canonical ${CANONICAL_COMPLETION_EVENT} event exists for this task`,
       });
-    } else if (candidates.length > 1) {
+    } else if (count > 1) {
       errors.push({
         code: "E_COMPLETION_OWNERSHIP_UNPROVEN",
         message: `Multiple ${CANONICAL_COMPLETION_EVENT} events exist; completion is ambiguous`,
       });
     } else {
-      completionEvent = candidates[0];
+      completionEvent = candidate;
     }
   }
 
-  if (state && ledger && Array.isArray(ledger.events)) {
+  if (state && ledger && isLedgerEventCollection(ledger.events)) {
     const coherenceErrors = validateStateLedgerCoherence(state, ledger.events);
     if (coherenceErrors.length > 0) {
       for (const error of coherenceErrors) {
@@ -67,7 +78,7 @@ export function validateCompletionOwnershipProof({ taskId, state, ledger }) {
   // No contradictory lifecycle activity may follow the canonical completion:
   // any milestone at or after VERIFICATION_RECORDED occurring after the
   // completion event means the lifecycle moved past terminal state.
-  if (completionEvent && ledger && Array.isArray(ledger.events)) {
+  if (completionEvent && ledger && isLedgerEventCollection(ledger.events)) {
     const completionIndex = ledger.events.indexOf(completionEvent);
     const contradiction = ledger.events.slice(completionIndex + 1).find((event) => {
       const index = LIFECYCLE_MILESTONES.indexOf(event.event);

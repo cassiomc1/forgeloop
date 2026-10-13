@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "baseRevision": "030a019b63381e7c2fa174f582581e4d6830fab1",
+  "testedRunnerSha256": "cd38e2f5fc9d950133f2942995d7232b53bdc0812f8e789ec3a84bddf8fa12f5",
+  "positiveValidation": {
+    "actions": 10,
+    "approvals": 10,
+    "fullPublicParity": true,
+    "sourceUnchanged": true,
+    "timingSamples": 0,
+    "reuseStatus": "NOT_MEASURED_VALIDATION_ONLY"
+  },
+  "injectedFailureValidation": {
+    "firstCause": "E_TEST_EXPORT_FAILURE",
+    "stage": "PORTABLE_EXPORT",
+    "exitCode": 1,
+    "sourceUnchanged": true,
+    "fakeNativeProof": false,
+    "timingEligible": false
+  },
+  "fastVerification": "PASS",
+  "releaseThresholdsVerified": false,
+  "original5000Evidence": "public-actions5000-d5bc6bc-native-proof.json",
+  "limitations": [
+    "The 5,000-action native proof was executed on the earlier retained runner, not this final reporting revision.",
+    "No timing or persistent connection reuse is proved by validation-only runs.",
+    "Initial argument and source-admission errors occur before the measured-loop failure envelope."
+  ]
+}

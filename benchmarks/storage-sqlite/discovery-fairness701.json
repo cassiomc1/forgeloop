@@ -1,0 +1,63 @@
+{
+  "increment": 701,
+  "parentHead": "993e0cb0073887a55d2d85494b09a5e2c06f33f2",
+  "preflight": "READY",
+  "change": "Native discovery yields every16 task results outside active operational or SQL transactions, retaining owned immutable snapshot and full per-task validation.",
+  "regression": "Warmed64-task catalog schedules independent insertion after first descriptor read; old source finishes all64 before the event-loop turn and fails; corrected source allows turn before64, excludes inserted task from snapshot and rejects source.commit with E_STATE_REVISION_CONFLICT.",
+  "checks": {
+    "focusedSnapshotTests": 20,
+    "failures": 0,
+    "verifyFast": "PASS",
+    "lint": "PASS",
+    "complexity": "PASS unchanged limits",
+    "workflowYaml": "parsed",
+    "diffCheck": "PASS"
+  },
+  "retrieval": "Jevgrep partial context exit2; direct source reads used for verification.",
+  "workflowDiagnosis": {
+    "run": 37659627713,
+    "job": 112923597545,
+    "head": "993e0cb0073887a55d2d85494b09a5e2c06f33f2",
+    "markdownLintFiles": 170,
+    "markdownLintIssues": 0,
+    "failure": "Lychee executable not found after action installs into RUNNER_TEMP/lychee/bin",
+    "correction": "Prepend intended action binary directory through GITHUB_PATH in preceding workflow step; existing pinned action installation retained.",
+    "actualCorrectedExecution": "pending"
+  },
+  "logs": [
+    {
+      "name": "discovery-fairness-red701.log",
+      "sha256": "248c8cc4566bb7df43a3f227fa5dddea169ee5b9e387d75b5f7acad2f2cff3db"
+    },
+    {
+      "name": "discovery-fairness-green701.log",
+      "sha256": "307216f1abf69dbb19d98222559e9b752100cd5af37586cdd94d361023c00b6d"
+    },
+    {
+      "name": "discovery-fast701.log",
+      "sha256": "41fc5a533f3b48bebbd19159bb1124547fcbcb625f6b5bc019143c039ee77725"
+    },
+    {
+      "name": "discovery-lint701.log",
+      "sha256": "18e685066e68106db997cf0deb4496da19967b7200f1783c89abd3c57ac5cbe3"
+    },
+    {
+      "name": "discovery-complexity701.log",
+      "sha256": "32111f472b37a8b8941d21c72e18a3815643453328562aed2fd87e8a2f0417f2"
+    },
+    {
+      "name": "mcp-blocking-retrieval701.log",
+      "sha256": "a46a80b2d30a0960372d1abcac1c3c8bdb077102bfdf02f913d9a76a8fc3eab6"
+    },
+    {
+      "name": "core-docs701.log",
+      "sha256": "eb229196898c31a631dc0866090fd8e986bd26d6ad7ecd3fa1f4ad1c168f0284"
+    }
+  ],
+  "limitations": [
+    "Actual corrected MCP timer/RSS/latency measurements pending; no responsiveness target or whole resource PASS claimed.",
+    "Full corrected-source Mac/Windows/Linux acceptance pending.",
+    "Core workflow remains live on parent source; do not replace running jobs.",
+    "Original inclusive LOC target and full consumer/maintenance/protocol closure remain unresolved."
+  ]
+}

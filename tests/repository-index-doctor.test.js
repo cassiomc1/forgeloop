@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm } from "node:fs/promises";
+import { mkdir, mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -14,8 +15,8 @@ test("doctor defers Repository Index readiness for a non-repository target", asy
     const result = await runDoctor({ target, packageRoot, repositoryIndex: true, repositoryIndexOptions: { env: {}, homeDirectory } });
     assert.equal(result.repositoryIndex.status, "DEFERRED");
   } finally {
-    await rm(target, { recursive: true, force: true });
-    await rm(homeDirectory, { recursive: true, force: true });
+    await removeTempTree(target);
+    await removeTempTree(homeDirectory);
   }
 });
 
@@ -29,8 +30,8 @@ test("doctor treats the mandatory engine as unhealthy when a repository has no t
     assert.equal(result.repositoryIndex.status, "ENGINE_MISSING");
     assert.equal(result.ok, false);
   } finally {
-    await rm(target, { recursive: true, force: true });
-    await rm(homeDirectory, { recursive: true, force: true });
+    await removeTempTree(target);
+    await removeTempTree(homeDirectory);
   }
 });
 
@@ -56,6 +57,6 @@ test("doctor public JSON omits absolute Repository Index paths", async (t) => {
     assert.doesNotMatch(serialized, /repository-index-test/u);
   } finally {
     await removeFixtureRepository(target);
-    await rm(homeDirectory, { recursive: true, force: true });
+    await removeTempTree(homeDirectory);
   }
 });

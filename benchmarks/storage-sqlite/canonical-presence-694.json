@@ -1,0 +1,38 @@
+{
+  "increment": 694,
+  "source": [
+    {
+      "file": "src/core/inspect.js",
+      "sha256": "c92a5c9e9678bf6653f3ae871984653789b15dfd03ff38540fddd55c8752bddd"
+    },
+    {
+      "file": "src/core/continuity-lint.js",
+      "sha256": "47f36d581c19de82e3b90e530ffbffa7dc87d0c3df39bed0da15f767e9cd90b2"
+    },
+    {
+      "file": "tests/continuity-semantic-lint.test.js",
+      "sha256": "ebb428b4ae86c9d13dea8eb3674277bc8717246ca701b7ff871d993bc41d1831"
+    }
+  ],
+  "corrections": [
+    "inspect presence check extracted to preserve existing complexity 55 limit",
+    "continuity inspectFirst selects canonical artifact presence within existing read snapshot; missing canonical artifacts still warn; retained source file checks preserved",
+    "Observed Windows next-action teardown EBUSY uses existing retry helper; assertions unchanged"
+  ],
+  "validation": {
+    "targetedTests": 10,
+    "passed": 10,
+    "complexity": "PASS unchanged limits",
+    "lint": "PASS",
+    "fastVerification": "PASS",
+    "nextActionTests": {
+      "total": 77,
+      "passed": 77
+    },
+    "docs": "PASS"
+  },
+  "fullMac693": "FAILED complexity 56 vs 55, core suite completed, source manifest unchanged; corrected source has targeted verification only",
+  "wholeScopeVerified": false,
+  "progressPercent": 55,
+  "protocol": "next returns RECONCILE_CLOSURE; phase CORRECTING with repository drift has no applicable closure path; no direct state rewrite or VALID claim"
+}

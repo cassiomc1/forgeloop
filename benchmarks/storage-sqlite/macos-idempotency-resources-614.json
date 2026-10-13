@@ -1,0 +1,4250 @@
+{
+  "schemaVersion": 1,
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "node": "v24.19.0",
+  "platform": "darwin",
+  "architecture": "arm64",
+  "cpu": "Apple M2",
+  "repeats": 20,
+  "warmup": 0,
+  "timestamp": "2026-09-11T00:00:00.000Z",
+  "runtime": "warm-cache public API with per-call native connection",
+  "persistentConnectionReuseVerified": false,
+  "backendOrder": "alternating each repetition",
+  "seedOutsideMeasurement": true,
+  "resourceMode": true,
+  "linuxOperationPeakRssEnabled": false,
+  "resourceMeasurementLimits": [
+    "Instrumented command latency includes async_hooks overhead; resource snapshots are outside its timer; compare separately from uninstrumented results",
+    "Node async filesystem request counts exclude synchronous calls, SQLite internal I/O and external processes; they are not total filesystem operations",
+    "Filesystem block counters are OS process resource counters, not logical operation counts; zero may reflect caching or unsupported accounting",
+    "RSS endpoints are not operation peak RSS; processLifetimePeakRssKiB includes imports, fixture setup and previous samples",
+    "Event-loop histogram includes the short post-command timer drain, excludes fixture/session setup and validation, and is not MCP/HTTP transport evidence",
+    "A one-millisecond scheduled timer probe includes the post-command drain and scheduler noise; it complements the histogram, which can miss initial synchronous blocking",
+    "Database/WAL byte sizes are endpoints while the connection remains open, not peak live WAL or filesystem-cold measurements",
+    "The filesystem baseline has zero database/WAL bytes by design; these fields are not its total persisted data size",
+    "Direct lock-wait duration and external-process resource use are not measured",
+    "Opt-in Linux operation RSS uses resettable kernel VmHWM accounting, which is an estimate rather than a sampled smaps measurement; reset/read instrumentation and retained fixtures remain in scope"
+  ],
+  "fixtureMode": "synthetic",
+  "operation": "idempotency",
+  "profiling": false,
+  "fixtureLimits": [
+    "Synthetic schema-valid PROPOSED actions without approvals, execution records or lifecycle history",
+    "Found-key lookup is measured; missing-key and approval parity are validated outside measurement",
+    "This is not full action execution, claim reservation, recovery mutation or warm MCP acceptance"
+  ],
+  "releaseThresholdsVerified": false,
+  "results": [
+    {
+      "actions": 10,
+      "approvals": 0,
+      "ledgerEvents": 0,
+      "fixtureMs": 110.13950000000003,
+      "outputParity": true,
+      "missingKeyParity": true,
+      "nativeSamplesMs": [
+        3.2666659999999865,
+        2.990291999999954,
+        3.1890000000000214,
+        3.542459000000008,
+        3.2749580000000265,
+        4.040333000000032,
+        3.8670000000000186,
+        3.5539999999999736,
+        3.3879590000000235,
+        4.002915999999914,
+        3.8115000000000236,
+        4.168833000000063,
+        3.6653329999999187,
+        3.933708999999908,
+        3.9748330000001033,
+        4.106750000000034,
+        3.7747499999999263,
+        3.9626250000000027,
+        3.2869170000000167,
+        3.905750000000012
+      ],
+      "baselineSamplesMs": [
+        3.3040000000000305,
+        3.2926250000000437,
+        3.259625000000028,
+        3.416416999999967,
+        3.3349589999999694,
+        3.547374999999988,
+        4.130166000000031,
+        3.562082999999973,
+        4.068166000000019,
+        3.9683750000000373,
+        4.3368339999999534,
+        4.090874999999983,
+        4.164375000000064,
+        4.043000000000006,
+        3.9139999999999873,
+        4.270208000000025,
+        4.280250000000024,
+        3.7324579999999514,
+        4.012457999999924,
+        4.08420799999999
+      ],
+      "nativeP95Ms": 4.106750000000034,
+      "baselineP95Ms": 4.280250000000024,
+      "speedupP95": 1.042247519327933,
+      "rawResourceSamples": {
+        "native": [
+          {
+            "cpuUserMicros": 3736,
+            "cpuSystemMicros": 1442,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 85049344,
+            "rssAfterBytes": 85278720,
+            "processLifetimePeakRssKiB": 83296,
+            "eventLoopUtilization": {
+              "idle": 0.0789180000000016,
+              "active": 3.568290929061888,
+              "utilization": 0.9783620841210486
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 2.113535,
+            "eventLoopDelayP95Ms": 2.113535,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 1.1104170000000408
+            },
+            "filesBefore": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 2105,
+            "cpuSystemMicros": 1412,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 88014848,
+            "rssAfterBytes": 88637440,
+            "processLifetimePeakRssKiB": 86576,
+            "eventLoopUtilization": {
+              "idle": 0.110872999999998,
+              "active": 2.9199600059051534,
+              "utilization": 0.9634183078434286
+            },
+            "eventLoopDelaySamples": 7,
+            "eventLoopDelayMaxMs": 1.191935,
+            "eventLoopDelayP95Ms": 1.191935,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 0.19900000000001228
+            },
+            "filesBefore": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 2106,
+            "cpuSystemMicros": 1548,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 89030656,
+            "rssAfterBytes": 89161728,
+            "processLifetimePeakRssKiB": 87088,
+            "eventLoopUtilization": {
+              "idle": 0.11641800000001012,
+              "active": 3.1224570314712423,
+              "utilization": 0.9640560383254035
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.336319,
+            "eventLoopDelayP95Ms": 1.336319,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 0.3365000000000009
+            },
+            "filesBefore": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 2021,
+            "cpuSystemMicros": 1836,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 89964544,
+            "rssAfterBytes": 90062848,
+            "processLifetimePeakRssKiB": 87968,
+            "eventLoopUtilization": {
+              "idle": 0.16558299999999804,
+              "active": 3.4090830232543965,
+              "utilization": 0.9536787495886817
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.838079,
+            "eventLoopDelayP95Ms": 1.838079,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.8385830000000283
+            },
+            "filesBefore": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 3042,
+            "cpuSystemMicros": 1713,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 90095616,
+            "rssAfterBytes": 90144768,
+            "processLifetimePeakRssKiB": 88048,
+            "eventLoopUtilization": {
+              "idle": 0.17762799999999856,
+              "active": 3.1411220238418593,
+              "utilization": 0.9464774391792328
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.747967,
+            "eventLoopDelayP95Ms": 1.747967,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.7459999999999809
+            },
+            "filesBefore": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 2790,
+            "cpuSystemMicros": 2100,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 90652672,
+            "rssAfterBytes": 91209728,
+            "processLifetimePeakRssKiB": 89088,
+            "eventLoopUtilization": {
+              "idle": 0.30920800000001236,
+              "active": 3.7574169990463133,
+              "utilization": 0.9239644668312113
+            },
+            "eventLoopDelaySamples": 8,
+            "eventLoopDelayMaxMs": 1.635327,
+            "eventLoopDelayP95Ms": 1.635327,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 8,
+              "maximumLatenessMs": 0.6353330000000028
+            },
+            "filesBefore": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 2245,
+            "cpuSystemMicros": 1988,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 91619328,
+            "rssAfterBytes": 92143616,
+            "processLifetimePeakRssKiB": 90000,
+            "eventLoopUtilization": {
+              "idle": 0.289371999999986,
+              "active": 3.6030860812454364,
+              "utilization": 0.9256582873957633
+            },
+            "eventLoopDelaySamples": 8,
+            "eventLoopDelayMaxMs": 1.181695,
+            "eventLoopDelayP95Ms": 1.181695,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 8,
+              "maximumLatenessMs": 0.18191699999999855
+            },
+            "filesBefore": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 2250,
+            "cpuSystemMicros": 1742,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 93323264,
+            "rssAfterBytes": 93323264,
+            "processLifetimePeakRssKiB": 91152,
+            "eventLoopUtilization": {
+              "idle": 0.20166699999998627,
+              "active": 3.377749990280165,
+              "utilization": 0.9436592605590213
+            },
+            "eventLoopDelaySamples": 8,
+            "eventLoopDelayMaxMs": 1.172479,
+            "eventLoopDelayP95Ms": 1.172479,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 8,
+              "maximumLatenessMs": 0.1722920000000272
+            },
+            "filesBefore": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1721,
+            "cpuSystemMicros": 1724,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 93323264,
+            "rssAfterBytes": 93339648,
+            "processLifetimePeakRssKiB": 91168,
+            "eventLoopUtilization": {
+              "idle": 0.20558699999997998,
+              "active": 3.2075799998169146,
+              "utilization": 0.9397664983837565
+            },
+            "eventLoopDelaySamples": 7,
+            "eventLoopDelayMaxMs": 1.352703,
+            "eventLoopDelayP95Ms": 1.352703,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 8,
+              "maximumLatenessMs": 0.3523330000000442
+            },
+            "filesBefore": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 2648,
+            "cpuSystemMicros": 1959,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 93503488,
+            "rssAfterBytes": 93503488,
+            "processLifetimePeakRssKiB": 91328,
+            "eventLoopUtilization": {
+              "idle": 0.2547490000000039,
+              "active": 3.7742930055389365,
+              "utilization": 0.9367718183007805
+            },
+            "eventLoopDelaySamples": 7,
+            "eventLoopDelayMaxMs": 2.032639,
+            "eventLoopDelayP95Ms": 2.032639,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 1.0334589999999935
+            },
+            "filesBefore": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 4613,
+            "cpuSystemMicros": 1945,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 93503488,
+            "rssAfterBytes": 93503488,
+            "processLifetimePeakRssKiB": 91328,
+            "eventLoopUtilization": {
+              "idle": 0.27791799999999967,
+              "active": 3.559249024612427,
+              "utilization": 0.9275720868501754
+            },
+            "eventLoopDelaySamples": 7,
+            "eventLoopDelayMaxMs": 1.784831,
+            "eventLoopDelayP95Ms": 1.784831,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 0.7849999999999682
+            },
+            "filesBefore": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 2629,
+            "cpuSystemMicros": 2090,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 93880320,
+            "rssAfterBytes": 93896704,
+            "processLifetimePeakRssKiB": 91712,
+            "eventLoopUtilization": {
+              "idle": 0.3110830000000533,
+              "active": 3.879709083740181,
+              "utilization": 0.9257698798260554
+            },
+            "eventLoopDelaySamples": 8,
+            "eventLoopDelayMaxMs": 1.286143,
+            "eventLoopDelayP95Ms": 1.286143,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 8,
+              "maximumLatenessMs": 0.28595899999993435
+            },
+            "filesBefore": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1863,
+            "cpuSystemMicros": 1854,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 93896704,
+            "rssAfterBytes": 93896704,
+            "processLifetimePeakRssKiB": 91712,
+            "eventLoopUtilization": {
+              "idle": 0.2669569999999908,
+              "active": 3.42137603451539,
+              "utilization": 0.9276212322743608
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.756159,
+            "eventLoopDelayP95Ms": 1.756159,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.7543750000000955
+            },
+            "filesBefore": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 2095,
+            "cpuSystemMicros": 1962,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 93896704,
+            "rssAfterBytes": 93913088,
+            "processLifetimePeakRssKiB": 91728,
+            "eventLoopUtilization": {
+              "idle": 0.2729190000000017,
+              "active": 3.687872945457457,
+              "utilization": 0.9310948406888662
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.973247,
+            "eventLoopDelayP95Ms": 1.973247,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.9721249999998918
+            },
+            "filesBefore": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 2112,
+            "cpuSystemMicros": 1927,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 93913088,
+            "rssAfterBytes": 93913088,
+            "processLifetimePeakRssKiB": 91728,
+            "eventLoopUtilization": {
+              "idle": 0.277040999999997,
+              "active": 3.7209170640792877,
+              "utilization": 0.930704375693896
+            },
+            "eventLoopDelaySamples": 7,
+            "eventLoopDelayMaxMs": 1.507327,
+            "eventLoopDelayP95Ms": 1.507327,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 0.50649999999996
+            },
+            "filesBefore": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 3485,
+            "cpuSystemMicros": 1997,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 93913088,
+            "rssAfterBytes": 93929472,
+            "processLifetimePeakRssKiB": 91744,
+            "eventLoopUtilization": {
+              "idle": 0.2556640000000243,
+              "active": 3.880377998863196,
+              "utilization": 0.9381863143386133
+            },
+            "eventLoopDelaySamples": 7,
+            "eventLoopDelayMaxMs": 2.275327,
+            "eventLoopDelayP95Ms": 2.275327,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 1.27312500000005
+            },
+            "filesBefore": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1929,
+            "cpuSystemMicros": 1901,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 93929472,
+            "rssAfterBytes": 93929472,
+            "processLifetimePeakRssKiB": 91744,
+            "eventLoopUtilization": {
+              "idle": 0.26991700000002083,
+              "active": 3.529042016799906,
+              "utilization": 0.928949746810539
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.949695,
+            "eventLoopDelayP95Ms": 1.949695,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.9489999999999554
+            },
+            "filesBefore": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 5796,
+            "cpuSystemMicros": 2146,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 94044160,
+            "rssAfterBytes": 94306304,
+            "processLifetimePeakRssKiB": 92112,
+            "eventLoopUtilization": {
+              "idle": 0.2717089999999871,
+              "active": 3.7151659380111823,
+              "utilization": 0.9318491288980517
+            },
+            "eventLoopDelaySamples": 7,
+            "eventLoopDelayMaxMs": 2.089983,
+            "eventLoopDelayP95Ms": 2.089983,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 1.0889160000000402
+            },
+            "filesBefore": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1600,
+            "cpuSystemMicros": 1698,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 94519296,
+            "rssAfterBytes": 94519296,
+            "processLifetimePeakRssKiB": 92320,
+            "eventLoopUtilization": {
+              "idle": 0.20675200000005134,
+              "active": 3.1032480619887792,
+              "utilization": 0.9375371612906184
+            },
+            "eventLoopDelaySamples": 8,
+            "eventLoopDelayMaxMs": 1.232895,
+            "eventLoopDelayP95Ms": 1.232895,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 8,
+              "maximumLatenessMs": 0.23374999999998636
+            },
+            "filesBefore": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 2087,
+            "cpuSystemMicros": 2037,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 94519296,
+            "rssAfterBytes": 94519296,
+            "processLifetimePeakRssKiB": 92320,
+            "eventLoopUtilization": {
+              "idle": 0.30287399999997433,
+              "active": 3.6323760438690442,
+              "utilization": 0.9230356402709806
+            },
+            "eventLoopDelaySamples": 7,
+            "eventLoopDelayMaxMs": 2.053119,
+            "eventLoopDelayP95Ms": 2.053119,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 1.0517919999999776
+            },
+            "filesBefore": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 147456,
+              "walBytes": 0
+            }
+          }
+        ],
+        "baseline": [
+          {
+            "cpuUserMicros": 2389,
+            "cpuSystemMicros": 1765,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 129
+            },
+            "rssBeforeBytes": 85426176,
+            "rssAfterBytes": 86310912,
+            "processLifetimePeakRssKiB": 84288,
+            "eventLoopUtilization": {
+              "idle": 0.30183199999999033,
+              "active": 3.0437509620361425,
+              "utilization": 0.9097819413163515
+            },
+            "eventLoopDelaySamples": 7,
+            "eventLoopDelayMaxMs": 1.193983,
+            "eventLoopDelayP95Ms": 1.193983,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 0.18579199999999219
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 2415,
+            "cpuSystemMicros": 1790,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 129
+            },
+            "rssBeforeBytes": 86720512,
+            "rssAfterBytes": 87588864,
+            "processLifetimePeakRssKiB": 85536,
+            "eventLoopUtilization": {
+              "idle": 0.2882929999999959,
+              "active": 3.042248968345646,
+              "utilization": 0.9134396135103507
+            },
+            "eventLoopDelaySamples": 8,
+            "eventLoopDelayMaxMs": 1.268735,
+            "eventLoopDelayP95Ms": 1.268735,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 8,
+              "maximumLatenessMs": 0.2630839999999921
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 2107,
+            "cpuSystemMicros": 1707,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 129
+            },
+            "rssBeforeBytes": 89178112,
+            "rssAfterBytes": 89194496,
+            "processLifetimePeakRssKiB": 87104,
+            "eventLoopUtilization": {
+              "idle": 0.3835430000000031,
+              "active": 2.9126238968200653,
+              "utilization": 0.8836396905842295
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.521663,
+            "eventLoopDelayP95Ms": 1.521663,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 0.5172089999999798
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 2046,
+            "cpuSystemMicros": 1843,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 129
+            },
+            "rssBeforeBytes": 89571328,
+            "rssAfterBytes": 89587712,
+            "processLifetimePeakRssKiB": 87488,
+            "eventLoopUtilization": {
+              "idle": 0.4025000000000034,
+              "active": 3.048666987419125,
+              "utilization": 0.8833727833317613
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.767423,
+            "eventLoopDelayP95Ms": 1.767423,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.7629579999999692
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1862,
+            "cpuSystemMicros": 1773,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 129
+            },
+            "rssBeforeBytes": 90161152,
+            "rssAfterBytes": 90177536,
+            "processLifetimePeakRssKiB": 88064,
+            "eventLoopUtilization": {
+              "idle": 0.3906680000000051,
+              "active": 2.981291090232844,
+              "utilization": 0.8841421293835959
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.964031,
+            "eventLoopDelayP95Ms": 1.964031,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.9588750000000346
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1763,
+            "cpuSystemMicros": 1939,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 129
+            },
+            "rssBeforeBytes": 90177536,
+            "rssAfterBytes": 90226688,
+            "processLifetimePeakRssKiB": 88112,
+            "eventLoopUtilization": {
+              "idle": 0.45066899999997645,
+              "active": 3.1262480522690055,
+              "utilization": 0.8740063039163575
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 2.134015,
+            "eventLoopDelayP95Ms": 2.134015,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 1.1273330000000215
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 5538,
+            "cpuSystemMicros": 2363,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 129
+            },
+            "rssBeforeBytes": 92553216,
+            "rssAfterBytes": 93257728,
+            "processLifetimePeakRssKiB": 91072,
+            "eventLoopUtilization": {
+              "idle": 0.5290820000000167,
+              "active": 3.625042975204451,
+              "utilization": 0.8726369564810758
+            },
+            "eventLoopDelaySamples": 7,
+            "eventLoopDelayMaxMs": 1.854463,
+            "eventLoopDelayP95Ms": 1.854463,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 0.8512910000000034
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1789,
+            "cpuSystemMicros": 1992,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 129
+            },
+            "rssBeforeBytes": 93306880,
+            "rssAfterBytes": 93323264,
+            "processLifetimePeakRssKiB": 91136,
+            "eventLoopUtilization": {
+              "idle": 0.4862489999999866,
+              "active": 3.100084036422743,
+              "utilization": 0.8644161055145602
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 2.107391,
+            "eventLoopDelayP95Ms": 2.107391,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 1.101583000000005
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 4381,
+            "cpuSystemMicros": 2519,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 129
+            },
+            "rssBeforeBytes": 93339648,
+            "rssAfterBytes": 93487104,
+            "processLifetimePeakRssKiB": 91296,
+            "eventLoopUtilization": {
+              "idle": 0.7332530000000475,
+              "active": 3.3587049267501357,
+              "utilization": 0.8208063198288077
+            },
+            "eventLoopDelaySamples": 8,
+            "eventLoopDelayMaxMs": 1.336319,
+            "eventLoopDelayP95Ms": 1.336319,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 8,
+              "maximumLatenessMs": 0.3300409999999374
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 2054,
+            "cpuSystemMicros": 2257,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 129
+            },
+            "rssBeforeBytes": 93487104,
+            "rssAfterBytes": 93503488,
+            "processLifetimePeakRssKiB": 91312,
+            "eventLoopUtilization": {
+              "idle": 0.6278310000000147,
+              "active": 3.3695020497741552,
+              "utilization": 0.842937530552906
+            },
+            "eventLoopDelaySamples": 8,
+            "eventLoopDelayMaxMs": 1.271807,
+            "eventLoopDelayP95Ms": 1.271807,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 8,
+              "maximumLatenessMs": 0.26608299999998053
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 2318,
+            "cpuSystemMicros": 2466,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 129
+            },
+            "rssBeforeBytes": 93503488,
+            "rssAfterBytes": 93503488,
+            "processLifetimePeakRssKiB": 91328,
+            "eventLoopUtilization": {
+              "idle": 0.7312919999999963,
+              "active": 3.6438330505447425,
+              "utilization": 0.8328523204362023
+            },
+            "eventLoopDelaySamples": 7,
+            "eventLoopDelayMaxMs": 1.939455,
+            "eventLoopDelayP95Ms": 1.939455,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 0.9341249999999945
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1893,
+            "cpuSystemMicros": 2369,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 129
+            },
+            "rssBeforeBytes": 93503488,
+            "rssAfterBytes": 93503488,
+            "processLifetimePeakRssKiB": 91328,
+            "eventLoopUtilization": {
+              "idle": 0.6542100000000346,
+              "active": 3.4589149666213643,
+              "utilization": 0.8409457516343308
+            },
+            "eventLoopDelaySamples": 7,
+            "eventLoopDelayMaxMs": 1.656831,
+            "eventLoopDelayP95Ms": 1.656831,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 0.6522909999999911
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 2012,
+            "cpuSystemMicros": 2316,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 129
+            },
+            "rssBeforeBytes": 93896704,
+            "rssAfterBytes": 93896704,
+            "processLifetimePeakRssKiB": 91712,
+            "eventLoopUtilization": {
+              "idle": 0.6602499999999623,
+              "active": 3.5320419750214,
+              "utilization": 0.8425085838644152
+            },
+            "eventLoopDelaySamples": 8,
+            "eventLoopDelayMaxMs": 1.613823,
+            "eventLoopDelayP95Ms": 1.613823,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 8,
+              "maximumLatenessMs": 0.6102090000000544
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 2102,
+            "cpuSystemMicros": 2235,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 129
+            },
+            "rssBeforeBytes": 93896704,
+            "rssAfterBytes": 93896704,
+            "processLifetimePeakRssKiB": 91712,
+            "eventLoopUtilization": {
+              "idle": 0.6382500000000277,
+              "active": 3.432083003997775,
+              "utilization": 0.8431946478646463
+            },
+            "eventLoopDelaySamples": 8,
+            "eventLoopDelayMaxMs": 1.264639,
+            "eventLoopDelayP95Ms": 1.264639,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 8,
+              "maximumLatenessMs": 0.26908400000002075
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1937,
+            "cpuSystemMicros": 2464,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 129
+            },
+            "rssBeforeBytes": 93913088,
+            "rssAfterBytes": 93913088,
+            "processLifetimePeakRssKiB": 91728,
+            "eventLoopUtilization": {
+              "idle": 0.7027089999999703,
+              "active": 3.232248981109649,
+              "utilization": 0.8214189316954756
+            },
+            "eventLoopDelaySamples": 8,
+            "eventLoopDelayMaxMs": 1.193983,
+            "eventLoopDelayP95Ms": 1.193983,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 8,
+              "maximumLatenessMs": 0.1932080000000269
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 2046,
+            "cpuSystemMicros": 2396,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 129
+            },
+            "rssBeforeBytes": 93913088,
+            "rssAfterBytes": 93913088,
+            "processLifetimePeakRssKiB": 91728,
+            "eventLoopUtilization": {
+              "idle": 0.6651259999999866,
+              "active": 3.631581987785353,
+              "utilization": 0.845201023227363
+            },
+            "eventLoopDelaySamples": 9,
+            "eventLoopDelayMaxMs": 1.385471,
+            "eventLoopDelayP95Ms": 1.385471,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 9,
+              "maximumLatenessMs": 0.381040999999982
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 2476,
+            "cpuSystemMicros": 2303,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 129
+            },
+            "rssBeforeBytes": 93929472,
+            "rssAfterBytes": 93929472,
+            "processLifetimePeakRssKiB": 91744,
+            "eventLoopUtilization": {
+              "idle": 0.6452469999999835,
+              "active": 3.6565869872360395,
+              "utilization": 0.8500065316526634
+            },
+            "eventLoopDelaySamples": 8,
+            "eventLoopDelayMaxMs": 1.990655,
+            "eventLoopDelayP95Ms": 1.990655,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 8,
+              "maximumLatenessMs": 0.9855000000000018
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1818,
+            "cpuSystemMicros": 2079,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 129
+            },
+            "rssBeforeBytes": 93929472,
+            "rssAfterBytes": 93929472,
+            "processLifetimePeakRssKiB": 91744,
+            "eventLoopUtilization": {
+              "idle": 0.5447100000000091,
+              "active": 3.2132900162124542,
+              "utilization": 0.8550532204230802
+            },
+            "eventLoopDelaySamples": 8,
+            "eventLoopDelayMaxMs": 1.276927,
+            "eventLoopDelayP95Ms": 1.276927,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 8,
+              "maximumLatenessMs": 0.27195799999992687
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1891,
+            "cpuSystemMicros": 2300,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 129
+            },
+            "rssBeforeBytes": 94519296,
+            "rssAfterBytes": 94519296,
+            "processLifetimePeakRssKiB": 92320,
+            "eventLoopUtilization": {
+              "idle": 0.6319579999999974,
+              "active": 3.4026670534057644,
+              "utilization": 0.8433663620200493
+            },
+            "eventLoopDelaySamples": 8,
+            "eventLoopDelayMaxMs": 1.288191,
+            "eventLoopDelayP95Ms": 1.288191,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 8,
+              "maximumLatenessMs": 0.284041000000002
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 2073,
+            "cpuSystemMicros": 2376,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 129
+            },
+            "rssBeforeBytes": 94519296,
+            "rssAfterBytes": 94519296,
+            "processLifetimePeakRssKiB": 92320,
+            "eventLoopUtilization": {
+              "idle": 0.6715859999999907,
+              "active": 3.437122977699289,
+              "utilization": 0.8365457364721769
+            },
+            "eventLoopDelaySamples": 9,
+            "eventLoopDelayMaxMs": 1.289215,
+            "eventLoopDelayP95Ms": 1.289215,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 9,
+              "maximumLatenessMs": 0.28550000000007003
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "actions": 1000,
+      "approvals": 0,
+      "ledgerEvents": 0,
+      "fixtureMs": 6598.813333,
+      "outputParity": true,
+      "missingKeyParity": true,
+      "nativeSamplesMs": [
+        3.0600830000003043,
+        2.992000000000189,
+        2.163875000000189,
+        2.7956670000003214,
+        2.076915999999983,
+        2.808459000001676,
+        2.0987919999988662,
+        3.0322499999983847,
+        2.0377909999988333,
+        2.8001249999997526,
+        2.1159999999999854,
+        2.613832999999431,
+        2.487250000000131,
+        2.8092500000002474,
+        2.023084000000381,
+        2.7587920000005397,
+        2.1606659999997646,
+        2.735791999999492,
+        2.232958000000508,
+        2.785374999999476
+      ],
+      "baselineSamplesMs": [
+        232.61795900000016,
+        230.77158299999974,
+        227.1834170000002,
+        230.84104200000002,
+        226.6450420000001,
+        229.34341700000004,
+        230.36716700000034,
+        229.54004200000054,
+        221.30029099999956,
+        226.586041999999,
+        225.1854170000006,
+        228.2998749999988,
+        229.88283300000148,
+        232.58558300000004,
+        225.4912919999988,
+        228.36579100000017,
+        224.83845800000017,
+        227.42745900000045,
+        225.62595799999872,
+        227.61791600000106
+      ],
+      "nativeP95Ms": 3.0322499999983847,
+      "baselineP95Ms": 232.58558300000004,
+      "speedupP95": 76.70396009567942,
+      "rawResourceSamples": {
+        "native": [
+          {
+            "cpuUserMicros": 1392,
+            "cpuSystemMicros": 1553,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 108281856,
+            "rssAfterBytes": 108281856,
+            "processLifetimePeakRssKiB": 105760,
+            "eventLoopUtilization": {
+              "idle": 0.10225100000025122,
+              "active": 2.9918740324246755,
+              "utilization": 0.9669531777388727
+            },
+            "eventLoopDelaySamples": 7,
+            "eventLoopDelayMaxMs": 1.267711,
+            "eventLoopDelayP95Ms": 1.267711,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 0.2644579999996495
+            },
+            "filesBefore": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1963,
+            "cpuSystemMicros": 1464,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 122437632,
+            "rssAfterBytes": 122454016,
+            "processLifetimePeakRssKiB": 119600,
+            "eventLoopUtilization": {
+              "idle": 0.10233400000015536,
+              "active": 2.912874005904996,
+              "utilization": 0.9660607162757134
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 2.205695,
+            "eventLoopDelayP95Ms": 2.205695,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 1.2029170000005251
+            },
+            "filesBefore": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1029,
+            "cpuSystemMicros": 1162,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 122470400,
+            "rssAfterBytes": 122470400,
+            "processLifetimePeakRssKiB": 119616,
+            "eventLoopUtilization": {
+              "idle": 0.04595499999959429,
+              "active": 2.136961998863626,
+              "utilization": 0.9789478940227567
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.299455,
+            "eventLoopDelayP95Ms": 1.299455,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.2989580000012211
+            },
+            "filesBefore": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1256,
+            "cpuSystemMicros": 1351,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 124551168,
+            "rssAfterBytes": 124551168,
+            "processLifetimePeakRssKiB": 121648,
+            "eventLoopUtilization": {
+              "idle": 0.10162300000047253,
+              "active": 2.7309599505915685,
+              "utilization": 0.9641235572715594
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.394687,
+            "eventLoopDelayP95Ms": 1.394687,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 0.39433400000052643
+            },
+            "filesBefore": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 922,
+            "cpuSystemMicros": 1124,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 124551168,
+            "rssAfterBytes": 124551168,
+            "processLifetimePeakRssKiB": 121648,
+            "eventLoopUtilization": {
+              "idle": 0.06016799999997602,
+              "active": 2.0327899734802486,
+              "utilization": 0.971252170008972
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.168383,
+            "eventLoopDelayP95Ms": 1.168383,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.16745799999989686
+            },
+            "filesBefore": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1238,
+            "cpuSystemMicros": 1413,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 125911040,
+            "rssAfterBytes": 125911040,
+            "processLifetimePeakRssKiB": 122976,
+            "eventLoopUtilization": {
+              "idle": 0.09987400000045454,
+              "active": 2.7455849843745455,
+              "utilization": 0.9649005659372062
+            },
+            "eventLoopDelaySamples": 7,
+            "eventLoopDelayMaxMs": 1.236991,
+            "eventLoopDelayP95Ms": 1.236991,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 0.23629200000141282
+            },
+            "filesBefore": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 977,
+            "cpuSystemMicros": 1094,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 125911040,
+            "rssAfterBytes": 125911040,
+            "processLifetimePeakRssKiB": 122976,
+            "eventLoopUtilization": {
+              "idle": 0.05628800000067713,
+              "active": 2.0655870476830387,
+              "utilization": 0.9734725190052438
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.250303,
+            "eventLoopDelayP95Ms": 1.250303,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.2502500000009604
+            },
+            "filesBefore": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1306,
+            "cpuSystemMicros": 1501,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 126484480,
+            "rssAfterBytes": 126484480,
+            "processLifetimePeakRssKiB": 123696,
+            "eventLoopUtilization": {
+              "idle": 0.2081240000006801,
+              "active": 2.8569180188897008,
+              "utilization": 0.9320975051180453
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.559551,
+            "eventLoopDelayP95Ms": 1.559551,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.5593750000007276
+            },
+            "filesBefore": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 950,
+            "cpuSystemMicros": 1113,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 126484480,
+            "rssAfterBytes": 126484480,
+            "processLifetimePeakRssKiB": 123696,
+            "eventLoopUtilization": {
+              "idle": 0.06629200000043056,
+              "active": 2.0042490242076383,
+              "utilization": 0.9679832472646681
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.205247,
+            "eventLoopDelayP95Ms": 1.205247,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.20437499999934516
+            },
+            "filesBefore": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1388,
+            "cpuSystemMicros": 1360,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 126500864,
+            "rssAfterBytes": 126500864,
+            "processLifetimePeakRssKiB": 123696,
+            "eventLoopUtilization": {
+              "idle": 0.11062299999957759,
+              "active": 2.7297930737995557,
+              "utilization": 0.9610539452230263
+            },
+            "eventLoopDelaySamples": 7,
+            "eventLoopDelayMaxMs": 1.272831,
+            "eventLoopDelayP95Ms": 1.272831,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 0.2725829999999405
+            },
+            "filesBefore": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1026,
+            "cpuSystemMicros": 1092,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 126500864,
+            "rssAfterBytes": 126500864,
+            "processLifetimePeakRssKiB": 123696,
+            "eventLoopUtilization": {
+              "idle": 0.060124999999970896,
+              "active": 2.0877500705719285,
+              "utilization": 0.97200721735461
+            },
+            "eventLoopDelaySamples": 5,
+            "eventLoopDelayMaxMs": 1.339391,
+            "eventLoopDelayP95Ms": 1.339391,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.33937499999956344
+            },
+            "filesBefore": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1228,
+            "cpuSystemMicros": 1360,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 126566400,
+            "rssAfterBytes": 126566400,
+            "processLifetimePeakRssKiB": 123696,
+            "eventLoopUtilization": {
+              "idle": 0.10841999999956897,
+              "active": 2.542454972343876,
+              "utilization": 0.9591002966451779
+            },
+            "eventLoopDelaySamples": 5,
+            "eventLoopDelayMaxMs": 1.758207,
+            "eventLoopDelayP95Ms": 1.758207,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 5,
+              "maximumLatenessMs": 0.7572080000009009
+            },
+            "filesBefore": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1222,
+            "cpuSystemMicros": 1326,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 126566400,
+            "rssAfterBytes": 126566400,
+            "processLifetimePeakRssKiB": 123696,
+            "eventLoopUtilization": {
+              "idle": 0.14604099999996834,
+              "active": 2.3701250909653027,
+              "utilization": 0.9419589189583495
+            },
+            "eventLoopDelaySamples": 5,
+            "eventLoopDelayMaxMs": 1.723391,
+            "eventLoopDelayP95Ms": 1.723391,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 5,
+              "maximumLatenessMs": 0.7233329999999114
+            },
+            "filesBefore": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1287,
+            "cpuSystemMicros": 1303,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 156073984,
+            "rssAfterBytes": 156073984,
+            "processLifetimePeakRssKiB": 152432,
+            "eventLoopUtilization": {
+              "idle": 0.1079570000001695,
+              "active": 2.7379180247953627,
+              "utilization": 0.9620654459315459
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 2.006015,
+            "eventLoopDelayP95Ms": 2.006015,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.9984580000000278
+            },
+            "filesBefore": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 946,
+            "cpuSystemMicros": 1022,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 156073984,
+            "rssAfterBytes": 156073984,
+            "processLifetimePeakRssKiB": 152432,
+            "eventLoopUtilization": {
+              "idle": 0.036041999999724794,
+              "active": 2.004541968162812,
+              "utilization": 0.9823374090152344
+            },
+            "eventLoopDelaySamples": 5,
+            "eventLoopDelayMaxMs": 2.044927,
+            "eventLoopDelayP95Ms": 2.044927,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 5,
+              "maximumLatenessMs": 1.0392080000001442
+            },
+            "filesBefore": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1292,
+            "cpuSystemMicros": 1309,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 156123136,
+            "rssAfterBytes": 156123136,
+            "processLifetimePeakRssKiB": 152480,
+            "eventLoopUtilization": {
+              "idle": 0.10712399999920308,
+              "active": 2.7111259408729893,
+              "utilization": 0.9619891768839884
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.746943,
+            "eventLoopDelayP95Ms": 1.746943,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.7464159999999538
+            },
+            "filesBefore": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 990,
+            "cpuSystemMicros": 1121,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 156123136,
+            "rssAfterBytes": 156123136,
+            "processLifetimePeakRssKiB": 152480,
+            "eventLoopUtilization": {
+              "idle": 0.057501000000229396,
+              "active": 2.124832946227798,
+              "utilization": 0.9736516035505863
+            },
+            "eventLoopDelaySamples": 5,
+            "eventLoopDelayMaxMs": 1.448959,
+            "eventLoopDelayP95Ms": 1.448959,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.4483749999999418
+            },
+            "filesBefore": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1250,
+            "cpuSystemMicros": 1311,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 156123136,
+            "rssAfterBytes": 156123136,
+            "processLifetimePeakRssKiB": 152480,
+            "eventLoopUtilization": {
+              "idle": 0.11558400000012625,
+              "active": 2.680875078788631,
+              "utilization": 0.9586677306037357
+            },
+            "eventLoopDelaySamples": 5,
+            "eventLoopDelayMaxMs": 1.922047,
+            "eventLoopDelayP95Ms": 1.922047,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 5,
+              "maximumLatenessMs": 0.9219169999996666
+            },
+            "filesBefore": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1000,
+            "cpuSystemMicros": 1195,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 156123136,
+            "rssAfterBytes": 156123136,
+            "processLifetimePeakRssKiB": 152480,
+            "eventLoopUtilization": {
+              "idle": 0.08112499999970169,
+              "active": 2.169708034515679,
+              "utilization": 0.9639577886250597
+            },
+            "eventLoopDelaySamples": 5,
+            "eventLoopDelayMaxMs": 1.865727,
+            "eventLoopDelayP95Ms": 1.865727,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 5,
+              "maximumLatenessMs": 0.8617500000000291
+            },
+            "filesBefore": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1264,
+            "cpuSystemMicros": 1333,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 156188672,
+            "rssAfterBytes": 156188672,
+            "processLifetimePeakRssKiB": 152544,
+            "eventLoopUtilization": {
+              "idle": 0.13041699999939738,
+              "active": 2.7165830028616256,
+              "utilization": 0.954191429621237
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.998847,
+            "eventLoopDelayP95Ms": 1.998847,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.9986659999995027
+            },
+            "filesBefore": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 962560,
+              "walBytes": 0
+            }
+          }
+        ],
+        "baseline": [
+          {
+            "cpuUserMicros": 103513,
+            "cpuSystemMicros": 143151,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 12009
+            },
+            "rssBeforeBytes": 108331008,
+            "rssAfterBytes": 120537088,
+            "processLifetimePeakRssKiB": 117712,
+            "eventLoopUtilization": {
+              "idle": 23.860053999999764,
+              "active": 208.78665496530175,
+              "utilization": 0.89744082731229
+            },
+            "eventLoopDelaySamples": 235,
+            "eventLoopDelayMaxMs": 1.908735,
+            "eventLoopDelayP95Ms": 1.013247,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 235,
+              "maximumLatenessMs": 0.9041670000005979
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 100725,
+            "cpuSystemMicros": 141599,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 12009
+            },
+            "rssBeforeBytes": 120569856,
+            "rssAfterBytes": 122437632,
+            "processLifetimePeakRssKiB": 119568,
+            "eventLoopUtilization": {
+              "idle": 23.23178000000007,
+              "active": 207.58676200363152,
+              "utilization": 0.8993504603298528
+            },
+            "eventLoopDelaySamples": 235,
+            "eventLoopDelayMaxMs": 1.425407,
+            "eventLoopDelayP95Ms": 1.014271,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 235,
+              "maximumLatenessMs": 0.42400000000088767
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 104012,
+            "cpuSystemMicros": 138992,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 12009
+            },
+            "rssBeforeBytes": 122470400,
+            "rssAfterBytes": 123207680,
+            "processLifetimePeakRssKiB": 120320,
+            "eventLoopUtilization": {
+              "idle": 22.928839999999582,
+              "active": 204.28428499046368,
+              "utilization": 0.8990866394669675
+            },
+            "eventLoopDelaySamples": 230,
+            "eventLoopDelayMaxMs": 1.515519,
+            "eventLoopDelayP95Ms": 1.013247,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 231,
+              "maximumLatenessMs": 0.5147089999991294
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 113699,
+            "cpuSystemMicros": 141576,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 12009
+            },
+            "rssBeforeBytes": 123207680,
+            "rssAfterBytes": 124551168,
+            "processLifetimePeakRssKiB": 121632,
+            "eventLoopUtilization": {
+              "idle": 23.238108999999895,
+              "active": 207.63389097901927,
+              "utilization": 0.8993463520820555
+            },
+            "eventLoopDelaySamples": 233,
+            "eventLoopDelayMaxMs": 2.129919,
+            "eventLoopDelayP95Ms": 1.013759,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 233,
+              "maximumLatenessMs": 1.125292000000627
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 100111,
+            "cpuSystemMicros": 139096,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 12009
+            },
+            "rssBeforeBytes": 124551168,
+            "rssAfterBytes": 125288448,
+            "processLifetimePeakRssKiB": 122352,
+            "eventLoopUtilization": {
+              "idle": 22.62025900000026,
+              "active": 204.0486569870145,
+              "utilization": 0.9002057300115376
+            },
+            "eventLoopDelaySamples": 229,
+            "eventLoopDelayMaxMs": 1.854463,
+            "eventLoopDelayP95Ms": 1.015295,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 229,
+              "maximumLatenessMs": 0.8502499999995052
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 103034,
+            "cpuSystemMicros": 140899,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 12009
+            },
+            "rssBeforeBytes": 125288448,
+            "rssAfterBytes": 125911040,
+            "processLifetimePeakRssKiB": 122960,
+            "eventLoopUtilization": {
+              "idle": 23.445190000000366,
+              "active": 205.96418495231592,
+              "utilization": 0.8978019533644885
+            },
+            "eventLoopDelaySamples": 232,
+            "eventLoopDelayMaxMs": 1.954815,
+            "eventLoopDelayP95Ms": 1.013759,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 232,
+              "maximumLatenessMs": 0.9508750000004511
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 115795,
+            "cpuSystemMicros": 140822,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 12009
+            },
+            "rssBeforeBytes": 125911040,
+            "rssAfterBytes": 126468096,
+            "processLifetimePeakRssKiB": 123696,
+            "eventLoopUtilization": {
+              "idle": 23.043507000000318,
+              "active": 207.36411795994536,
+              "utilization": 0.8999880884844578
+            },
+            "eventLoopDelaySamples": 233,
+            "eventLoopDelayMaxMs": 1.790975,
+            "eventLoopDelayP95Ms": 1.012735,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 233,
+              "maximumLatenessMs": 0.7864159999990079
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 104451,
+            "cpuSystemMicros": 140720,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 12009
+            },
+            "rssBeforeBytes": 126468096,
+            "rssAfterBytes": 126484480,
+            "processLifetimePeakRssKiB": 123696,
+            "eventLoopUtilization": {
+              "idle": 23.38245900000038,
+              "active": 206.2002490011364,
+              "utilization": 0.8981523512655639
+            },
+            "eventLoopDelaySamples": 232,
+            "eventLoopDelayMaxMs": 2.031615,
+            "eventLoopDelayP95Ms": 1.011199,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 232,
+              "maximumLatenessMs": 1.026000000001659
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 107077,
+            "cpuSystemMicros": 136908,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 12009
+            },
+            "rssBeforeBytes": 126484480,
+            "rssAfterBytes": 126500864,
+            "processLifetimePeakRssKiB": 123696,
+            "eventLoopUtilization": {
+              "idle": 22.058735000000524,
+              "active": 199.2859319578547,
+              "utilization": 0.9003421437562777
+            },
+            "eventLoopDelaySamples": 224,
+            "eventLoopDelayMaxMs": 1.545215,
+            "eventLoopDelayP95Ms": 1.013247,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 225,
+              "maximumLatenessMs": 0.5410830000000715
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 101137,
+            "cpuSystemMicros": 139575,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 12009
+            },
+            "rssBeforeBytes": 126500864,
+            "rssAfterBytes": 126500864,
+            "processLifetimePeakRssKiB": 123696,
+            "eventLoopUtilization": {
+              "idle": 23.202425999999832,
+              "active": 203.43082399809282,
+              "utilization": 0.897621262545566
+            },
+            "eventLoopDelaySamples": 229,
+            "eventLoopDelayMaxMs": 1.957887,
+            "eventLoopDelayP95Ms": 1.016319,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 229,
+              "maximumLatenessMs": 0.9525830000002316
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 108474,
+            "cpuSystemMicros": 138670,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 12009
+            },
+            "rssBeforeBytes": 126500864,
+            "rssAfterBytes": 126550016,
+            "processLifetimePeakRssKiB": 123696,
+            "eventLoopUtilization": {
+              "idle": 22.835753000000295,
+              "active": 202.38958009459657,
+              "utilization": 0.8986093052400591
+            },
+            "eventLoopDelaySamples": 229,
+            "eventLoopDelayMaxMs": 1.399807,
+            "eventLoopDelayP95Ms": 1.014271,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 229,
+              "maximumLatenessMs": 0.39633299999877636
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 99674,
+            "cpuSystemMicros": 140457,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 12009
+            },
+            "rssBeforeBytes": 126550016,
+            "rssAfterBytes": 126566400,
+            "processLifetimePeakRssKiB": 123696,
+            "eventLoopUtilization": {
+              "idle": 23.435459000000264,
+              "active": 204.91212393628666,
+              "utilization": 0.8973693581572125
+            },
+            "eventLoopDelaySamples": 231,
+            "eventLoopDelayMaxMs": 1.670143,
+            "eventLoopDelayP95Ms": 1.012735,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 231,
+              "maximumLatenessMs": 0.6703330000000278
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 108866,
+            "cpuSystemMicros": 141427,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 12009
+            },
+            "rssBeforeBytes": 126566400,
+            "rssAfterBytes": 129253376,
+            "processLifetimePeakRssKiB": 126240,
+            "eventLoopUtilization": {
+              "idle": 23.115232999999535,
+              "active": 206.79930895976304,
+              "utilization": 0.8994616312523418
+            },
+            "eventLoopDelaySamples": 232,
+            "eventLoopDelayMaxMs": 2.121727,
+            "eventLoopDelayP95Ms": 1.013247,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 232,
+              "maximumLatenessMs": 1.1231250000000728
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 99685,
+            "cpuSystemMicros": 144503,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 12009
+            },
+            "rssBeforeBytes": 129253376,
+            "rssAfterBytes": 156073984,
+            "processLifetimePeakRssKiB": 152416,
+            "eventLoopUtilization": {
+              "idle": 23.877556999999797,
+              "active": 208.74731794945546,
+              "utilization": 0.8973559598680584
+            },
+            "eventLoopDelaySamples": 237,
+            "eventLoopDelayMaxMs": 1.198079,
+            "eventLoopDelayP95Ms": 1.014271,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 237,
+              "maximumLatenessMs": 0.1977920000008453
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 97574,
+            "cpuSystemMicros": 139409,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 12009
+            },
+            "rssBeforeBytes": 156073984,
+            "rssAfterBytes": 156106752,
+            "processLifetimePeakRssKiB": 152448,
+            "eventLoopUtilization": {
+              "idle": 22.731278000000202,
+              "active": 202.79818004595927,
+              "utilization": 0.8992092731612563
+            },
+            "eventLoopDelaySamples": 228,
+            "eventLoopDelayMaxMs": 2.092031,
+            "eventLoopDelayP95Ms": 1.013759,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 228,
+              "maximumLatenessMs": 1.0914169999996375
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 99784,
+            "cpuSystemMicros": 140320,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 12009
+            },
+            "rssBeforeBytes": 156106752,
+            "rssAfterBytes": 156123136,
+            "processLifetimePeakRssKiB": 152464,
+            "eventLoopUtilization": {
+              "idle": 23.378720000000612,
+              "active": 205.04969696739136,
+              "utilization": 0.8976540646283168
+            },
+            "eventLoopDelaySamples": 233,
+            "eventLoopDelayMaxMs": 1.175551,
+            "eventLoopDelayP95Ms": 1.014783,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 233,
+              "maximumLatenessMs": 0.17533299999922747
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 97391,
+            "cpuSystemMicros": 138349,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 12009
+            },
+            "rssBeforeBytes": 156123136,
+            "rssAfterBytes": 156123136,
+            "processLifetimePeakRssKiB": 152480,
+            "eventLoopUtilization": {
+              "idle": 22.50769599999967,
+              "active": 202.36330393228945,
+              "utilization": 0.8999084096803192
+            },
+            "eventLoopDelaySamples": 229,
+            "eventLoopDelayMaxMs": 1.180671,
+            "eventLoopDelayP95Ms": 1.014271,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 229,
+              "maximumLatenessMs": 0.1788750000014261
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 98628,
+            "cpuSystemMicros": 140016,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 12009
+            },
+            "rssBeforeBytes": 156123136,
+            "rssAfterBytes": 156123136,
+            "processLifetimePeakRssKiB": 152480,
+            "eventLoopUtilization": {
+              "idle": 22.972512999999708,
+              "active": 204.49061199046355,
+              "utilization": 0.8990055508955007
+            },
+            "eventLoopDelaySamples": 231,
+            "eventLoopDelayMaxMs": 1.596415,
+            "eventLoopDelayP95Ms": 1.013759,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 232,
+              "maximumLatenessMs": 0.5921250000010332
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 98644,
+            "cpuSystemMicros": 138742,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 12009
+            },
+            "rssBeforeBytes": 156123136,
+            "rssAfterBytes": 156188672,
+            "processLifetimePeakRssKiB": 152528,
+            "eventLoopUtilization": {
+              "idle": 22.294920999999704,
+              "active": 203.37053696394378,
+              "utilization": 0.9012036613793062
+            },
+            "eventLoopDelaySamples": 228,
+            "eventLoopDelayMaxMs": 2.051071,
+            "eventLoopDelayP95Ms": 1.011711,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 228,
+              "maximumLatenessMs": 1.0501669999994192
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 98427,
+            "cpuSystemMicros": 140072,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 12009
+            },
+            "rssBeforeBytes": 156188672,
+            "rssAfterBytes": 156188672,
+            "processLifetimePeakRssKiB": 152528,
+            "eventLoopUtilization": {
+              "idle": 23.243780999999217,
+              "active": 204.43409404196245,
+              "utilization": 0.8979093555062594
+            },
+            "eventLoopDelaySamples": 232,
+            "eventLoopDelayMaxMs": 1.200127,
+            "eventLoopDelayP95Ms": 1.015295,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 232,
+              "maximumLatenessMs": 0.1946669999997539
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "actions": 5000,
+      "approvals": 0,
+      "ledgerEvents": 0,
+      "fixtureMs": 33967.66875,
+      "outputParity": true,
+      "missingKeyParity": true,
+      "nativeSamplesMs": [
+        3.4463749999995343,
+        3.084708000002138,
+        2.3487089999980526,
+        2.8465829999986454,
+        2.4610840000023018,
+        2.8301250000004075,
+        2.215750000003027,
+        3.152457999996841,
+        2.04766699999891,
+        3.180916999997862,
+        2.0635000000038417,
+        3.0984580000003916,
+        1.8649999999979627,
+        4.006874999991851,
+        1.9269170000043232,
+        2.850416999994195,
+        2.154167000000598,
+        3.2547499999927823,
+        2.4348750000062864,
+        2.8042500000010477
+      ],
+      "baselineSamplesMs": [
+        1104.7619170000035,
+        1144.3347500000018,
+        1143.7790830000013,
+        1148.1386249999996,
+        1141.1930830000056,
+        1147.6123750000042,
+        1142.171540999996,
+        1147.124625000004,
+        1142.8396659999999,
+        1144.3567079999993,
+        1141.573209000002,
+        1145.1740419999987,
+        1140.9316249999974,
+        1146.1070829999953,
+        1143.5702499999898,
+        1147.639249999993,
+        1138.3862919999956,
+        1117.4837090000074,
+        1136.1782079999975,
+        1149.049250000011
+      ],
+      "nativeP95Ms": 3.4463749999995343,
+      "baselineP95Ms": 1148.1386249999996,
+      "speedupP95": 333.14384679559095,
+      "rawResourceSamples": {
+        "native": [
+          {
+            "cpuUserMicros": 2131,
+            "cpuSystemMicros": 1531,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 232734720,
+            "rssAfterBytes": 232734720,
+            "processLifetimePeakRssKiB": 227296,
+            "eventLoopUtilization": {
+              "idle": 0.10695899999700487,
+              "active": 3.38137398683466,
+              "utilization": 0.9693380762671536
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.670143,
+            "eventLoopDelayP95Ms": 1.670143,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.6674589999965974
+            },
+            "filesBefore": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1386,
+            "cpuSystemMicros": 1485,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 252723200,
+            "rssAfterBytes": 252723200,
+            "processLifetimePeakRssKiB": 246816,
+            "eventLoopUtilization": {
+              "idle": 0.13566500000160886,
+              "active": 2.974584996183694,
+              "utilization": 0.9563813197755805
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.250303,
+            "eventLoopDelayP95Ms": 1.250303,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 0.25658300000213785
+            },
+            "filesBefore": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1041,
+            "cpuSystemMicros": 1158,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 252723200,
+            "rssAfterBytes": 252723200,
+            "processLifetimePeakRssKiB": 246816,
+            "eventLoopUtilization": {
+              "idle": 0.041333000001031905,
+              "active": 2.350833018484991,
+              "utilization": 0.9827215169509049
+            },
+            "eventLoopDelaySamples": 5,
+            "eventLoopDelayMaxMs": 1.447935,
+            "eventLoopDelayP95Ms": 1.447935,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.4474579999950947
+            },
+            "filesBefore": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1330,
+            "cpuSystemMicros": 1341,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 253247488,
+            "rssAfterBytes": 253247488,
+            "processLifetimePeakRssKiB": 247328,
+            "eventLoopUtilization": {
+              "idle": 0.12579099999857135,
+              "active": 2.785209013352869,
+              "utilization": 0.9567877020193662
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.333247,
+            "eventLoopDelayP95Ms": 1.333247,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 0.3328330000003916
+            },
+            "filesBefore": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1053,
+            "cpuSystemMicros": 1218,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 253247488,
+            "rssAfterBytes": 253247488,
+            "processLifetimePeakRssKiB": 247328,
+            "eventLoopUtilization": {
+              "idle": 0.08274900000105845,
+              "active": 2.4105010123967077,
+              "utilization": 0.9668107892952627
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.567743,
+            "eventLoopDelayP95Ms": 1.567743,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.5679170000003069
+            },
+            "filesBefore": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1305,
+            "cpuSystemMicros": 1351,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 253771776,
+            "rssAfterBytes": 253771776,
+            "processLifetimePeakRssKiB": 247840,
+            "eventLoopUtilization": {
+              "idle": 0.10054400000080932,
+              "active": 2.755413984923507,
+              "utilization": 0.9647950003005826
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.281023,
+            "eventLoopDelayP95Ms": 1.281023,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 0.280665999998746
+            },
+            "filesBefore": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1011,
+            "cpuSystemMicros": 1141,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 253771776,
+            "rssAfterBytes": 253771776,
+            "processLifetimePeakRssKiB": 247840,
+            "eventLoopUtilization": {
+              "idle": 0.078125,
+              "active": 2.1684999465942383,
+              "utilization": 0.9652256153754398
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.297407,
+            "eventLoopDelayP95Ms": 1.297407,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.29683400000067195
+            },
+            "filesBefore": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1307,
+            "cpuSystemMicros": 1502,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 254312448,
+            "rssAfterBytes": 254312448,
+            "processLifetimePeakRssKiB": 248368,
+            "eventLoopUtilization": {
+              "idle": 0.13117300000158139,
+              "active": 3.0583270934585016,
+              "utilization": 0.9588734923474229
+            },
+            "eventLoopDelaySamples": 7,
+            "eventLoopDelayMaxMs": 1.342463,
+            "eventLoopDelayP95Ms": 1.342463,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 0.34275000000343425
+            },
+            "filesBefore": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 998,
+            "cpuSystemMicros": 1056,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 254312448,
+            "rssAfterBytes": 254312448,
+            "processLifetimePeakRssKiB": 248368,
+            "eventLoopUtilization": {
+              "idle": 0.034294999997655395,
+              "active": 2.0448718891930184,
+              "utilization": 0.9835054125881136
+            },
+            "eventLoopDelaySamples": 7,
+            "eventLoopDelayMaxMs": 1.171455,
+            "eventLoopDelayP95Ms": 1.171455,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 0.17083300000376767
+            },
+            "filesBefore": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1288,
+            "cpuSystemMicros": 1340,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 254771200,
+            "rssAfterBytes": 254771200,
+            "processLifetimePeakRssKiB": 248816,
+            "eventLoopUtilization": {
+              "idle": 0.10111999999935506,
+              "active": 3.1035050104910624,
+              "utilization": 0.9684456060636311
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.620991,
+            "eventLoopDelayP95Ms": 1.620991,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.6205420000042068
+            },
+            "filesBefore": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 960,
+            "cpuSystemMicros": 1129,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 254771200,
+            "rssAfterBytes": 254771200,
+            "processLifetimePeakRssKiB": 248816,
+            "eventLoopUtilization": {
+              "idle": 0.06783100000029663,
+              "active": 2.0294189847409143,
+              "utilization": 0.9676571698682518
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.228799,
+            "eventLoopDelayP95Ms": 1.228799,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.228291999999783
+            },
+            "filesBefore": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1315,
+            "cpuSystemMicros": 1483,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 255262720,
+            "rssAfterBytes": 255262720,
+            "processLifetimePeakRssKiB": 249296,
+            "eventLoopUtilization": {
+              "idle": 0.11071000000083586,
+              "active": 3.0242070207968936,
+              "utilization": 0.9646848706787575
+            },
+            "eventLoopDelaySamples": 7,
+            "eventLoopDelayMaxMs": 1.286143,
+            "eventLoopDelayP95Ms": 1.286143,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 0.28549999999813735
+            },
+            "filesBefore": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 913,
+            "cpuSystemMicros": 1092,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 255262720,
+            "rssAfterBytes": 255262720,
+            "processLifetimePeakRssKiB": 249296,
+            "eventLoopUtilization": {
+              "idle": 0.060459000000264496,
+              "active": 1.8294990240246989,
+              "utilization": 0.968010400637625
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.182719,
+            "eventLoopDelayP95Ms": 1.182719,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.18183300000237068
+            },
+            "filesBefore": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1475,
+            "cpuSystemMicros": 1570,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 255787008,
+            "rssAfterBytes": 255787008,
+            "processLifetimePeakRssKiB": 249808,
+            "eventLoopUtilization": {
+              "idle": 0.1100430000005872,
+              "active": 3.9357899915994494,
+              "utilization": 0.9728009039846532
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 2.463743,
+            "eventLoopDelayP95Ms": 2.463743,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 1.4624580000090646
+            },
+            "filesBefore": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 935,
+            "cpuSystemMicros": 1121,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 255787008,
+            "rssAfterBytes": 255787008,
+            "processLifetimePeakRssKiB": 249808,
+            "eventLoopUtilization": {
+              "idle": 0.059916999998677056,
+              "active": 1.8929999797910568,
+              "utilization": 0.9693192283037407
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.174527,
+            "eventLoopDelayP95Ms": 1.174527,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.17375000000174623
+            },
+            "filesBefore": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1293,
+            "cpuSystemMicros": 1350,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 256294912,
+            "rssAfterBytes": 256294912,
+            "processLifetimePeakRssKiB": 250304,
+            "eventLoopUtilization": {
+              "idle": 0.11741800000163494,
+              "active": 2.761623910169874,
+              "utilization": 0.9592162935916969
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.385471,
+            "eventLoopDelayP95Ms": 1.385471,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 7,
+              "maximumLatenessMs": 0.3846670000057202
+            },
+            "filesBefore": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1007,
+            "cpuSystemMicros": 1130,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 256294912,
+            "rssAfterBytes": 256294912,
+            "processLifetimePeakRssKiB": 250304,
+            "eventLoopUtilization": {
+              "idle": 0.062498999999661464,
+              "active": 2.110418008400302,
+              "utilization": 0.971237281608982
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.212415,
+            "eventLoopDelayP95Ms": 1.212415,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.2116249999962747
+            },
+            "filesBefore": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1357,
+            "cpuSystemMicros": 1402,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 256770048,
+            "rssAfterBytes": 256770048,
+            "processLifetimePeakRssKiB": 250768,
+            "eventLoopUtilization": {
+              "idle": 0.10558399999717949,
+              "active": 3.182582999819715,
+              "utilization": 0.9678897087638617
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 1.566719,
+            "eventLoopDelayP95Ms": 1.566719,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 0.5661249999975553
+            },
+            "filesBefore": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1171,
+            "cpuSystemMicros": 1297,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 256770048,
+            "rssAfterBytes": 256770048,
+            "processLifetimePeakRssKiB": 250768,
+            "eventLoopUtilization": {
+              "idle": 0.14053899999998976,
+              "active": 2.344919016395579,
+              "utilization": 0.9434554922783204
+            },
+            "eventLoopDelaySamples": 5,
+            "eventLoopDelayMaxMs": 1.626111,
+            "eventLoopDelayP95Ms": 1.626111,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 5,
+              "maximumLatenessMs": 0.6250839999993332
+            },
+            "filesBefore": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 1288,
+            "cpuSystemMicros": 1348,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 90
+            },
+            "rssBeforeBytes": 257245184,
+            "rssAfterBytes": 257245184,
+            "processLifetimePeakRssKiB": 251232,
+            "eventLoopUtilization": {
+              "idle": 0.10937400000693742,
+              "active": 2.7284179197013145,
+              "utilization": 0.9614580620772992
+            },
+            "eventLoopDelaySamples": 6,
+            "eventLoopDelayMaxMs": 2.008063,
+            "eventLoopDelayP95Ms": 2.008063,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 6,
+              "maximumLatenessMs": 1.0075419999920996
+            },
+            "filesBefore": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 4263936,
+              "walBytes": 0
+            }
+          }
+        ],
+        "baseline": [
+          {
+            "cpuUserMicros": 482904,
+            "cpuSystemMicros": 700749,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 60009
+            },
+            "rssBeforeBytes": 232734720,
+            "rssAfterBytes": 250396672,
+            "processLifetimePeakRssKiB": 244528,
+            "eventLoopUtilization": {
+              "idle": 122.57872800000041,
+              "active": 982.2208970391002,
+              "utilization": 0.8890489051390996
+            },
+            "eventLoopDelaySamples": 1109,
+            "eventLoopDelayMaxMs": 1.730559,
+            "eventLoopDelayP95Ms": 1.012735,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 1109,
+              "maximumLatenessMs": 0.7291249999980209
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 509856,
+            "cpuSystemMicros": 708571,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 60009
+            },
+            "rssBeforeBytes": 250396672,
+            "rssAfterBytes": 252723200,
+            "processLifetimePeakRssKiB": 246800,
+            "eventLoopUtilization": {
+              "idle": 122.63944199999969,
+              "active": 1021.738308039101,
+              "utilization": 0.8928330771934273
+            },
+            "eventLoopDelaySamples": 1147,
+            "eventLoopDelayMaxMs": 1.660927,
+            "eventLoopDelayP95Ms": 1.012735,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 1148,
+              "maximumLatenessMs": 0.6602500000008149
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 492319,
+            "cpuSystemMicros": 708274,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 60009
+            },
+            "rssBeforeBytes": 252723200,
+            "rssAfterBytes": 252739584,
+            "processLifetimePeakRssKiB": 246816,
+            "eventLoopUtilization": {
+              "idle": 123.0990129999991,
+              "active": 1020.7331539101724,
+              "utilization": 0.8923801790497587
+            },
+            "eventLoopDelaySamples": 1146,
+            "eventLoopDelayMaxMs": 2.083839,
+            "eventLoopDelayP95Ms": 1.012223,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 1146,
+              "maximumLatenessMs": 1.078165999999328
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 505964,
+            "cpuSystemMicros": 709766,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 60009
+            },
+            "rssBeforeBytes": 252739584,
+            "rssAfterBytes": 253247488,
+            "processLifetimePeakRssKiB": 247312,
+            "eventLoopUtilization": {
+              "idle": 123.5095469999942,
+              "active": 1024.673619027075,
+              "utilization": 0.8924304495533055
+            },
+            "eventLoopDelaySamples": 1151,
+            "eventLoopDelayMaxMs": 1.712127,
+            "eventLoopDelayP95Ms": 1.013759,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 1151,
+              "maximumLatenessMs": 0.711250000000291
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 494404,
+            "cpuSystemMicros": 706634,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 60009
+            },
+            "rssBeforeBytes": 253247488,
+            "rssAfterBytes": 253247488,
+            "processLifetimePeakRssKiB": 247328,
+            "eventLoopUtilization": {
+              "idle": 122.37581599999976,
+              "active": 1018.8569340581744,
+              "utilization": 0.8927687485363861
+            },
+            "eventLoopDelaySamples": 1145,
+            "eventLoopDelayMaxMs": 1.550335,
+            "eventLoopDelayP95Ms": 1.012223,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 1145,
+              "maximumLatenessMs": 0.549749999998312
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 504728,
+            "cpuSystemMicros": 709446,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 60009
+            },
+            "rssBeforeBytes": 253247488,
+            "rssAfterBytes": 253771776,
+            "processLifetimePeakRssKiB": 247824,
+            "eventLoopUtilization": {
+              "idle": 123.6639290000021,
+              "active": 1023.9912789915979,
+              "utilization": 0.8922464446299909
+            },
+            "eventLoopDelaySamples": 1150,
+            "eventLoopDelayMaxMs": 1.807359,
+            "eventLoopDelayP95Ms": 1.013759,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 1150,
+              "maximumLatenessMs": 0.8060420000037993
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 492742,
+            "cpuSystemMicros": 707535,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 60009
+            },
+            "rssBeforeBytes": 253771776,
+            "rssAfterBytes": 253771776,
+            "processLifetimePeakRssKiB": 247840,
+            "eventLoopUtilization": {
+              "idle": 122.21367900000041,
+              "active": 1019.982863024612,
+              "utilization": 0.8930011828057461
+            },
+            "eventLoopDelaySamples": 1146,
+            "eventLoopDelayMaxMs": 1.553407,
+            "eventLoopDelayP95Ms": 1.013759,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 1146,
+              "maximumLatenessMs": 0.5522920000003069
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 504525,
+            "cpuSystemMicros": 709016,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 60009
+            },
+            "rssBeforeBytes": 253771776,
+            "rssAfterBytes": 254312448,
+            "processLifetimePeakRssKiB": 248352,
+            "eventLoopUtilization": {
+              "idle": 122.74416000000201,
+              "active": 1024.417964991415,
+              "utilization": 0.893001906769786
+            },
+            "eventLoopDelaySamples": 1150,
+            "eventLoopDelayMaxMs": 2.230271,
+            "eventLoopDelayP95Ms": 1.013247,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 1150,
+              "maximumLatenessMs": 1.2287500000020373
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 493173,
+            "cpuSystemMicros": 707875,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 60009
+            },
+            "rssBeforeBytes": 254312448,
+            "rssAfterBytes": 254312448,
+            "processLifetimePeakRssKiB": 248368,
+            "eventLoopUtilization": {
+              "idle": 124.0299309999973,
+              "active": 1018.8618189780682,
+              "utilization": 0.8914770965820886
+            },
+            "eventLoopDelaySamples": 1146,
+            "eventLoopDelayMaxMs": 1.775615,
+            "eventLoopDelayP95Ms": 1.012735,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 1146,
+              "maximumLatenessMs": 0.7752499999987776
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 501011,
+            "cpuSystemMicros": 708472,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 60009
+            },
+            "rssBeforeBytes": 254312448,
+            "rssAfterBytes": 254771200,
+            "processLifetimePeakRssKiB": 248800,
+            "eventLoopUtilization": {
+              "idle": 122.81963900000119,
+              "active": 1021.5809440287921,
+              "utilization": 0.892677755655328
+            },
+            "eventLoopDelaySamples": 1147,
+            "eventLoopDelayMaxMs": 1.909759,
+            "eventLoopDelayP95Ms": 1.013759,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 1147,
+              "maximumLatenessMs": 0.9084999999977299
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 492543,
+            "cpuSystemMicros": 706586,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 60009
+            },
+            "rssBeforeBytes": 254771200,
+            "rssAfterBytes": 254787584,
+            "processLifetimePeakRssKiB": 248816,
+            "eventLoopUtilization": {
+              "idle": 122.5494319999998,
+              "active": 1019.0729430114443,
+              "utilization": 0.8926532672427945
+            },
+            "eventLoopDelaySamples": 1144,
+            "eventLoopDelayMaxMs": 1.687551,
+            "eventLoopDelayP95Ms": 1.012735,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 1144,
+              "maximumLatenessMs": 0.6871670000036829
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 503245,
+            "cpuSystemMicros": 708187,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 60009
+            },
+            "rssBeforeBytes": 254787584,
+            "rssAfterBytes": 255262720,
+            "processLifetimePeakRssKiB": 249280,
+            "eventLoopUtilization": {
+              "idle": 122.50254500000301,
+              "active": 1022.7228710642594,
+              "utilization": 0.8930319365239018
+            },
+            "eventLoopDelaySamples": 1148,
+            "eventLoopDelayMaxMs": 1.415167,
+            "eventLoopDelayP95Ms": 1.013247,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 1149,
+              "maximumLatenessMs": 0.41479200000321725
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 491584,
+            "cpuSystemMicros": 706631,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 60009
+            },
+            "rssBeforeBytes": 255262720,
+            "rssAfterBytes": 255262720,
+            "processLifetimePeakRssKiB": 249296,
+            "eventLoopUtilization": {
+              "idle": 122.07487799999944,
+              "active": 1018.9016220343328,
+              "utilization": 0.8930084204220453
+            },
+            "eventLoopDelaySamples": 1144,
+            "eventLoopDelayMaxMs": 1.937407,
+            "eventLoopDelayP95Ms": 1.012735,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 1144,
+              "maximumLatenessMs": 0.9365840000027674
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 513310,
+            "cpuSystemMicros": 709060,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 60009
+            },
+            "rssBeforeBytes": 255262720,
+            "rssAfterBytes": 255787008,
+            "processLifetimePeakRssKiB": 249792,
+            "eventLoopUtilization": {
+              "idle": 122.80846299999394,
+              "active": 1023.3462039006408,
+              "utilization": 0.892851753304739
+            },
+            "eventLoopDelaySamples": 1149,
+            "eventLoopDelayMaxMs": 1.821695,
+            "eventLoopDelayP95Ms": 1.013759,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 1149,
+              "maximumLatenessMs": 0.8201669999980368
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 492084,
+            "cpuSystemMicros": 707518,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 60009
+            },
+            "rssBeforeBytes": 255787008,
+            "rssAfterBytes": 255819776,
+            "processLifetimePeakRssKiB": 249824,
+            "eventLoopUtilization": {
+              "idle": 123.3219620000018,
+              "active": 1020.2997879971372,
+              "utilization": 0.8921654279482615
+            },
+            "eventLoopDelaySamples": 1146,
+            "eventLoopDelayMaxMs": 1.415167,
+            "eventLoopDelayP95Ms": 1.014783,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 1147,
+              "maximumLatenessMs": 0.4148750000022119
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 503015,
+            "cpuSystemMicros": 709689,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 60009
+            },
+            "rssBeforeBytes": 255819776,
+            "rssAfterBytes": 256294912,
+            "processLifetimePeakRssKiB": 250288,
+            "eventLoopUtilization": {
+              "idle": 123.98626199999853,
+              "active": 1023.6866540547271,
+              "utilization": 0.8919672493220304
+            },
+            "eventLoopDelaySamples": 1151,
+            "eventLoopDelayMaxMs": 1.811455,
+            "eventLoopDelayP95Ms": 1.013247,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 1151,
+              "maximumLatenessMs": 0.8107090000121389
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 489204,
+            "cpuSystemMicros": 704347,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 60009
+            },
+            "rssBeforeBytes": 256294912,
+            "rssAfterBytes": 256294912,
+            "processLifetimePeakRssKiB": 250304,
+            "eventLoopUtilization": {
+              "idle": 122.1418610000037,
+              "active": 1016.2764719343759,
+              "utilization": 0.8927091584293344
+            },
+            "eventLoopDelaySamples": 1141,
+            "eventLoopDelayMaxMs": 1.569791,
+            "eventLoopDelayP95Ms": 1.012223,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 1141,
+              "maximumLatenessMs": 0.569459000005736
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 491614,
+            "cpuSystemMicros": 697721,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 60009
+            },
+            "rssBeforeBytes": 256294912,
+            "rssAfterBytes": 256770048,
+            "processLifetimePeakRssKiB": 250752,
+            "eventLoopUtilization": {
+              "idle": 120.36453999999503,
+              "active": 997.1640020417835,
+              "utilization": 0.8922939902903212
+            },
+            "eventLoopDelaySamples": 1120,
+            "eventLoopDelayMaxMs": 1.699839,
+            "eventLoopDelayP95Ms": 1.012223,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 1120,
+              "maximumLatenessMs": 0.6988329999876441
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 489831,
+            "cpuSystemMicros": 704613,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 60009
+            },
+            "rssBeforeBytes": 256770048,
+            "rssAfterBytes": 256786432,
+            "processLifetimePeakRssKiB": 250768,
+            "eventLoopUtilization": {
+              "idle": 121.5167400000064,
+              "active": 1014.7082600238355,
+              "utilization": 0.8930522211732214
+            },
+            "eventLoopDelaySamples": 1140,
+            "eventLoopDelayMaxMs": 1.429503,
+            "eventLoopDelayP95Ms": 1.013759,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 1140,
+              "maximumLatenessMs": 0.4290000000037253
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          },
+          {
+            "cpuUserMicros": 507076,
+            "cpuSystemMicros": 709889,
+            "filesystemReadBlocks": 0,
+            "filesystemWriteBlocks": 0,
+            "nodeAsyncFilesystemRequests": {
+              "FSREQPROMISE": 60009
+            },
+            "rssBeforeBytes": 256786432,
+            "rssAfterBytes": 257245184,
+            "processLifetimePeakRssKiB": 251216,
+            "eventLoopUtilization": {
+              "idle": 123.35081399999763,
+              "active": 1025.7392269221673,
+              "utilization": 0.8926534826626759
+            },
+            "eventLoopDelaySamples": 1153,
+            "eventLoopDelayMaxMs": 1.824767,
+            "eventLoopDelayP95Ms": 1.013759,
+            "scheduledTimerProbe": {
+              "intervalMs": 1,
+              "samples": 1153,
+              "maximumLatenessMs": 0.8289169999916339
+            },
+            "filesBefore": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            },
+            "filesAfter": {
+              "databaseBytes": 0,
+              "walBytes": 0
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "collectedIncrement": 614,
+  "candidate": "611b",
+  "sourceFiles": 2638,
+  "sourceDrift": [],
+  "rawLog": "/tmp/sqlite-idempotency-resources614.json",
+  "quiescence": "Instrumented Mac run sequential after all uninstrumented benchmarks and before incremental verification;Linux full runs on separate host.",
+  "resourceAcceptanceVerified": false,
+  "limitation": "Scoped resource observations have no whole-plan peak-RSS,peak-WAL,lock-wait or persistent-MCP acceptance claim.",
+  "boundedSummary": [
+    {
+      "actions": 10,
+      "outputParity": true,
+      "missingKeyParity": true,
+      "native": {
+        "maxEndpointRssBytes": 94519296,
+        "maxLifetimePeakRssKiB": 92320,
+        "maxEventLoopDelayMs": 2.275327,
+        "maxDatabaseBytes": 147456,
+        "maxEndpointWalBytes": 0
+      },
+      "baseline": {
+        "maxEndpointRssBytes": 94519296,
+        "maxLifetimePeakRssKiB": 92320,
+        "maxEventLoopDelayMs": 2.134015,
+        "maxDatabaseBytes": 0,
+        "maxEndpointWalBytes": 0
+      }
+    },
+    {
+      "actions": 1000,
+      "outputParity": true,
+      "missingKeyParity": true,
+      "native": {
+        "maxEndpointRssBytes": 156188672,
+        "maxLifetimePeakRssKiB": 152544,
+        "maxEventLoopDelayMs": 2.205695,
+        "maxDatabaseBytes": 962560,
+        "maxEndpointWalBytes": 0
+      },
+      "baseline": {
+        "maxEndpointRssBytes": 156188672,
+        "maxLifetimePeakRssKiB": 152528,
+        "maxEventLoopDelayMs": 2.129919,
+        "maxDatabaseBytes": 0,
+        "maxEndpointWalBytes": 0
+      }
+    },
+    {
+      "actions": 5000,
+      "outputParity": true,
+      "missingKeyParity": true,
+      "native": {
+        "maxEndpointRssBytes": 257245184,
+        "maxLifetimePeakRssKiB": 251232,
+        "maxEventLoopDelayMs": 2.463743,
+        "maxDatabaseBytes": 4263936,
+        "maxEndpointWalBytes": 0
+      },
+      "baseline": {
+        "maxEndpointRssBytes": 257245184,
+        "maxLifetimePeakRssKiB": 251216,
+        "maxEventLoopDelayMs": 2.230271,
+        "maxDatabaseBytes": 0,
+        "maxEndpointWalBytes": 0
+      }
+    }
+  ]
+}

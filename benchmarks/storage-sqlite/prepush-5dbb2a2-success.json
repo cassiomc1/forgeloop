@@ -1,0 +1,44 @@
+{
+  "sourceRevision": "5dbb2a2bb56cfba6754fcee920fc6e673b5a0269",
+  "command": "npm run verify:prepush",
+  "exitCode": 0,
+  "completedAt": "2026-10-10T01:31:43.680229+00:00",
+  "stages": [
+    "coverage (528.4s)",
+    "critical-coverage:check (0.2s)",
+    "lint (4.2s)",
+    "dependency:policy (0.1s)",
+    "complexity:check (1.6s)",
+    "docs:check (2.6s)",
+    "completions:check (0.1s)",
+    "summary:check (0.1s)",
+    "changelog:check (0.2s)",
+    "repository-index:manifest (0.1s)",
+    "repository:hygiene (0.2s)",
+    "poc:evidence:verify (0.2s)",
+    "poc:evidence:test (1.5s)",
+    "mcp:test:clean (7.3s)",
+    "mcp:pack:check (3.0s)",
+    "pack:check (1.7s)",
+    "python-unittest (0.9s)",
+    "markdown-self-test (0.0s)",
+    "markdown-validator (0.8s)",
+    "loop-self-test (0.2s)",
+    "loop-validator (0.1s)",
+    "secret-scan (11.1s)"
+  ],
+  "core": {
+    "tests": 2983,
+    "passed": 2972,
+    "failed": 0,
+    "skipped": 11
+  },
+  "trackedFilesCompared": 3146,
+  "sourceUnchangedSinceDuringRunObservation": true,
+  "sourceObservationLimitation": "Captured during active validation, not before process start. Tracked checkout was clean at launch.",
+  "logSha256": "05603f4d2e157d5b3e157c0b2e25dd2cc12148d5800a2f5e99c43879b901fc8e",
+  "limitations": [
+    "Local validation only; Windows owner-history refusal remains under diagnosis.",
+    "Performance, memory, inclusive LOC target and whole-plan closure remain open."
+  ]
+}

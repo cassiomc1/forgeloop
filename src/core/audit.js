@@ -1,3 +1,4 @@
+import { withProjectReadSnapshot } from "../storage/project-read-snapshot.js";
 import { ARTIFACT_PATHS } from "./artifacts.js";
 import { evaluateCompletion } from "./completion.js";
 import { readManifest } from "./manifest.js";
@@ -108,7 +109,11 @@ async function evaluateLocalAttestation({ target, packageRoot, taskId, completio
   return { ...base, status: "VALID" };
 }
 
-export async function evaluateAudit({
+export async function evaluateAudit(options = {}) {
+  return withProjectReadSnapshot(options.target, () => evaluateSelectedAudit(options));
+}
+
+async function evaluateSelectedAudit({
   target,
   packageRoot,
   strict = false,

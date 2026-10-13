@@ -1,12 +1,14 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { writeFile } from "node:fs/promises";
+import { access, writeFile } from "node:fs/promises";
+import path from "node:path";
 import test from "node:test";
 
 import {
   acceptCanonicalHandoff,
   resolveHandoffAcceptance,
-} from "../src/core/handoff-acceptance.js";
+} from "../src/integration.js";
+import { openStorageDatabase } from "../src/storage/connection.js";
 import { createCanonicalHandoff } from "../src/core/handoff.js";
 import { bindTaskWorkspace } from "../src/core/workspace-binding.js";
 import { validateEventLedger } from "../src/core/events.js";
@@ -54,6 +56,16 @@ test("fresh handoff can be accepted once; same consumer retry is idempotent; dif
     assert.equal(acceptRes.idempotent, false);
     assert.equal(acceptRes.consumerId, "consumer-agent-1");
     assert.equal(acceptRes.harness, "codex");
+
+    const db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"), { readOnly: true });
+    try {
+      const rows = db.prepare("SELECT event_json FROM events WHERE task_id = ? AND event_type = 'HANDOFF_ACCEPTED'").all(taskId);
+      assert.equal(rows.length, 1);
+      assert.equal(JSON.parse(rows[0].event_json).details.consumerId, "consumer-agent-1");
+    } finally { db.close(); }
+    for (const relative of [".forgeloop/task-state", ".forgeloop/events.ndjson", ".forgeloop/.txn"]) {
+      await assert.rejects(access(path.join(target, relative)), { code: "ENOENT" });
+    }
 
     const ledgerAfterFirst = await validateEventLedger(target, packageRoot, { taskId });
     assert.equal(ledgerAfterFirst.valid, true);

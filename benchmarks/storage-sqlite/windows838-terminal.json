@@ -1,0 +1,118 @@
+{
+  "conclusion": "success",
+  "headSha": "f40b4b6951c0807c58009a827a7965a0a87667b1",
+  "jobs": [
+    {
+      "completedAt": "2026-10-08T01:47:04Z",
+      "conclusion": "success",
+      "databaseId": 113106278358,
+      "name": "Windows full Node suite",
+      "startedAt": "2026-10-08T01:39:43Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-08T01:39:46Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-08T01:39:44Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T01:39:46Z",
+          "conclusion": "success",
+          "name": "Set up runner",
+          "number": 2,
+          "startedAt": "2026-10-08T01:39:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T01:39:47Z",
+          "conclusion": "success",
+          "name": "Verify requested Windows host and Docker Linux runner identity",
+          "number": 3,
+          "startedAt": "2026-10-08T01:39:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T01:39:54Z",
+          "conclusion": "success",
+          "name": "Check out source",
+          "number": 4,
+          "startedAt": "2026-10-08T01:39:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T01:40:00Z",
+          "conclusion": "success",
+          "name": "Set up Node.js",
+          "number": 5,
+          "startedAt": "2026-10-08T01:39:54Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T01:40:03Z",
+          "conclusion": "success",
+          "name": "Install locked Node toolchain",
+          "number": 6,
+          "startedAt": "2026-10-08T01:40:00Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T01:46:58Z",
+          "conclusion": "success",
+          "name": "Run full Node suite with Windows process and filesystem semantics",
+          "number": 7,
+          "startedAt": "2026-10-08T01:40:03Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T01:46:58Z",
+          "conclusion": "success",
+          "name": "Post Set up Node.js",
+          "number": 13,
+          "startedAt": "2026-10-08T01:46:58Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T01:47:00Z",
+          "conclusion": "success",
+          "name": "Post Check out source",
+          "number": 14,
+          "startedAt": "2026-10-08T01:46:58Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T01:47:00Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 15,
+          "startedAt": "2026-10-08T01:47:00Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/cassiomc1/forgeloop/actions/runs/37714027990/job/113106278358"
+    }
+  ],
+  "status": "completed",
+  "url": "https://github.com/cassiomc1/forgeloop/actions/runs/37714027990",
+  "increment": 838,
+  "testCounts": {
+    "tests": 2912,
+    "pass": 2888,
+    "fail": 0,
+    "skip": 24
+  },
+  "actualControls": [
+    "owner parent junction",
+    "marker parent junction",
+    "metadata parent junction",
+    "owner short reads and post-stat growth",
+    "marker short reads and post-stat growth"
+  ],
+  "limits": [
+    "24 explicitly skipped controls remain excluded",
+    "Windows Node suite is distinct from prior successful package/MCP matrix",
+    "Whole migration acceptance remains incomplete"
+  ]
+}

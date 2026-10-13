@@ -1,6 +1,8 @@
+import { readFixtureText, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
+import { withProjectStorage } from "../src/storage/project-boundary.js";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -93,6 +95,7 @@ async function setupStaleExecutingTask(target, options = {}) {
     repositoryFingerprint: options.repositoryFingerprint ?? { branch: "main", head: STALE_HEAD },
     phase,
     previousPhase,
+    ...(options.diagnosedHypothesis ? { diagnosedHypothesis: options.diagnosedHypothesis } : {}),
     selectedGuides: route.guides,
     requiredGates: [],
     satisfiedGates: [],
@@ -220,7 +223,7 @@ test("reconcile-closure infers omitted verification type from the contract requi
 
 test("reconcile-closure CLI accepts only contract-bound verification evidence", async () => {
   await withTarget(async (target) => {
-    const { taskId } = await setupStaleExecutingTask(target);
+    const { taskId } = await withProjectStorage(target, () => setupStaleExecutingTask(target));
     const requirement = "pack tarball test asserts the README image is excluded from the npm package";
 
     const unknown = runCli(
@@ -264,20 +267,47 @@ test("reconcile-closure CLI accepts only contract-bound verification evidence", 
   });
 });
 
-test("reconcile-closure refuses tasks outside EXECUTING/VERIFYING/REVIEWING", async () => {
+test("reconcile-closure rebinds an undiagnosed drifted DIAGNOSING task and refuses tasks outside the reconcilable set", async () => {
   await withTarget(async (target) => {
+    // The drift stranded DIAGNOSING between entering the phase and recording
+    // the cycle's first diagnosis; reconcile is the only legal exit and records
+    // the rebound diagnosis itself, bound to the passed evidence.
     const { taskId } = await setupStaleExecutingTask(target, { phase: "DIAGNOSING", previousPhase: "VERIFYING" });
-    await assert.rejects(
-      () => runReconcileClosure({
-        target,
-        packageRoot,
-        taskId,
-        checkId: "regression-tests",
-        requirement: "pack tarball test asserts the README image is excluded from the npm package",
-        argv: ["node", "-e", "process.exit(0)"],
-      }),
-      (error) => error.code === "E_RECONCILE_PHASE_INVALID",
+    const requirement = "pack tarball test asserts the README image is excluded from the npm package";
+
+    const failing = runCli(
+      target,
+      "reconcile-closure",
+      "--task", taskId,
+      "--id", "regression-tests",
+      "--requirement", requirement,
+      "--",
+      "node", "-e", "process.exit(1)",
     );
+    assert.equal(failing.status, 1);
+    assert.match(failing.stderr, /E_RECONCILE_EVIDENCE_FAILED/);
+
+    const passing = runCli(
+      target,
+      "reconcile-closure",
+      "--task", taskId,
+      "--id", "regression-tests",
+      "--requirement", requirement,
+      "--json",
+      "--",
+      "node", "-e", "process.exit(0)",
+    );
+    assert.equal(passing.status, 0, passing.stderr);
+    const report = JSON.parse(passing.stdout);
+    assert.equal(report.reconciled, true);
+    assert.equal(report.event, "CHECKPOINT_RECONCILED");
+
+    const events = await readEvents(target, packageRoot, { taskId });
+    const caseEvent = events.filter((event) => event.event === "DIAGNOSTIC_CASE_RECORDED").at(-1);
+    assert.ok(caseEvent, "reconcile must record the rebound cycle diagnosis");
+    assert.equal(caseEvent.details.verificationCycle, 1);
+    assert.equal(caseEvent.details.hypotheses[0].settledBy.type, "CHECK_STATUS");
+    assert.ok(events.some((event) => event.event === "CHECKPOINT_RECONCILED"));
   });
 });
 
@@ -521,12 +551,12 @@ test("reconcile-closure refuses an invalid event ledger", async () => {
   await withTarget(async (target) => {
     const { taskId } = await setupStaleExecutingTask(target);
     const eventsPath = path.join(target, taskArtifactPath(taskId, "events"));
-    const raw = await readFile(eventsPath, "utf8");
+    const raw = await readFixtureText(target, eventsPath);
     const lines = raw.trimEnd().split("\n");
     const broken = lines.slice(0, -1).concat(
       JSON.stringify({ ...JSON.parse(lines.at(-1)), hash: "0000000000000000000000000000000000000000000000000000000000000000" }),
     );
-    await writeFile(eventsPath, `${broken.join("\n")}\n`, "utf8");
+    await overwriteFixtureText(target, eventsPath, `${broken.join("\n")}\n`);
     await assert.rejects(
       () => runReconcileClosure({
         target,
@@ -547,4 +577,62 @@ test("reconcile-closure help lists reconciliation options only", () => {
   assert.match(help.stdout, /reconcile-closure/);
   assert.match(help.stdout, /--requirement/);
   assert.doesNotMatch(help.stdout, /--status/);
+});
+
+
+test("direct native reconciliation rolls back execution, reconciliation event and state after state staging failure", async () => {
+  await withTarget(async target => {
+    const { taskId } = await setupStaleExecutingTask(target);
+    const { openStorageDatabase } = await import("../src/storage/index.js");
+    const { withOperationalStore } = await import("../src/storage/unit-of-work.js");
+    const db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+    const records = () => ({
+      tasks: db.prepare("SELECT * FROM tasks ORDER BY task_id").all(),
+      artifacts: db.prepare("SELECT * FROM task_artifacts ORDER BY task_id, kind, artifact_id").all(),
+      events: db.prepare("SELECT * FROM events ORDER BY task_id, seq").all(),
+      executions: db.prepare("SELECT * FROM executions ORDER BY task_id, execution_id").all(),
+    });
+    const before = records();
+    const options = { target, packageRoot, taskId, checkId: "regression-tests",
+      requirement: "pack tarball test asserts the README image is excluded from the npm package",
+      argv: [process.execPath, "-e", "process.exit(0)"] };
+    try {
+      await withOperationalStore({ db, target }, async source => {
+        const prototype = Object.getPrototypeOf(source);
+        const stage = prototype.stageText;
+        let reached = false;
+        prototype.stageText = function(relativePath, text) {
+          const result = stage.call(this, relativePath, text);
+          if (this.target === target && relativePath === taskArtifactPath(taskId, "state")) {
+            reached = true;
+            throw new Error("injected reconciliation state failure");
+          }
+          return result;
+        };
+        try { await assert.rejects(runReconcileClosure(options), /injected reconciliation state failure/); }
+        finally { prototype.stageText = stage; }
+        assert.equal(reached, true);
+      });
+      assert.deepEqual(records(), before);
+      const result = await runReconcileClosure(options);
+      assert.equal(result.reconciled, true);
+      assert.equal(records().events.at(-1).event_type, "TRANSACTION_COMMITTED");
+    } finally { db.close(); }
+  });
+});
+
+
+test("reconcile-closure refuses CORRECTING without a current-cycle diagnosis", async () => {
+  await withTarget(async (target) => {
+    const { taskId } = await setupStaleExecutingTask(target, { phase: "CORRECTING", previousPhase: "DIAGNOSING", diagnosedHypothesis: "A legacy hypothesis has no append-only diagnosis" });
+    const before = await readWorkState(target, { packageRoot, taskId });
+    const events = await readEvents(target, packageRoot, { taskId });
+    await assert.rejects(() => runReconcileClosure({ target, packageRoot, taskId,
+      checkId: "regression-tests",
+      requirement: "pack tarball test asserts the README image is excluded from the npm package",
+      argv: [process.execPath, "-e", "process.exit(0)"],
+    }), error => error.code === "E_DIAGNOSIS_REQUIRED");
+    assert.deepEqual(await readWorkState(target, { packageRoot, taskId }), before);
+    assert.deepEqual(await readEvents(target, packageRoot, { taskId }), events);
+  });
 });

@@ -1,10 +1,11 @@
+import { withNativeReadScope } from "./native-storage.js";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileExists } from "./filesystem.js";
 import { PROJECT_ARTIFACT_PATHS, taskArtifactPath } from "./task-paths.js";
 import { assertJsonLimits } from "./json-safety.js";
 import { assertSchema, readSchema } from "./schema-validation.js";
-import { canonicalFingerprint, writeJsonArtifact } from "./artifacts.js";
+import { canonicalFingerprint, readJsonArtifact, writeJsonArtifact } from "./artifacts.js";
 import { sha256 } from "./manifest.js";
 import { BUILTIN_POLICY_RULES, discoverPolicy } from "./policy-discovery.js";
 import { getPolicyAdapter } from "./policy-adapters.js";
@@ -82,24 +83,22 @@ export async function writePolicyLock(target, lock, packageRoot) {
 }
 
 export async function readTaskPolicySnapshot(target, taskId, packageRoot) {
-  const relPath = taskArtifactPath(taskId, "policySnapshot");
-  const fullPath = path.join(target, relPath);
-  if (!(await fileExists(fullPath))) {
-    return null;
-  }
-  const raw = await readFile(fullPath, "utf8");
-  assertJsonLimits(raw, relPath);
-  const parsed = JSON.parse(raw);
-  const schema = await readSchema("policy-snapshot", packageRoot);
-  assertSchema(parsed, schema, "policy-snapshot");
-  return parsed;
+  return withNativeReadScope(target, async () => {
+    const relPath = taskArtifactPath(taskId, "policySnapshot");
+    try {
+      return (await readJsonArtifact(target, relPath, "policy-snapshot", packageRoot)).value;
+    } catch (error) {
+      if (error.code === "ARTIFACT_MISSING") return null;
+      throw error;
+    }
+  });
 }
 
 export async function writeTaskPolicySnapshot(target, taskId, snapshot, packageRoot) {
   const relPath = taskArtifactPath(taskId, "policySnapshot");
   const schema = await readSchema("policy-snapshot", packageRoot);
   assertSchema(snapshot, schema, "policy-snapshot");
-  await writeJsonArtifact(target, relPath, snapshot, "policy-snapshot", packageRoot);
+  await writeJsonArtifact(target, relPath, snapshot, "policy-snapshot", packageRoot, { taskId });
   return snapshot;
 }
 

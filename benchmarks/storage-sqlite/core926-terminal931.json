@@ -1,0 +1,171 @@
+{
+  "kind": "CORRECTED_CORE_WORKFLOW_TERMINAL",
+  "runId": 37900647372,
+  "url": "https://github.com/cassiomc1/forgeloop/actions/runs/37900647372",
+  "sourceRevision": "20aca2ba332ed86323722ef91812925ad9dadb83",
+  "attempt": 2,
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "id": 113787974140,
+      "name": "Verify generated Archify diagram",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113787974279,
+      "name": "Classify changed paths",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113787975249,
+      "name": "tarball smoke (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113787975499,
+      "name": "audit",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113787975649,
+      "name": "Unit tests (Node 24, shard 1/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113787975742,
+      "name": "Unit tests (Node 24, shard 2/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113787975745,
+      "name": "Lint and dependency policy",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113787976066,
+      "name": "Unit tests (Node 24, shard 3/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113787976080,
+      "name": "Unit tests (Node 24, shard 4/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113787976426,
+      "name": "Unit tests (Node 24.19.0, shard 0/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113787976776,
+      "name": "Coverage report (Node 24)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113788251050,
+      "name": "Repository Index native matrix / Classify Repository Index paths",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113788326036,
+      "name": "Repository Index native matrix / Verify Repository Index manifest",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113788405661,
+      "name": "Repository Index native matrix / Native Repository Index (macOS)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113788405731,
+      "name": "Repository Index native matrix / Native Repository Index (Linux)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113788405767,
+      "name": "Repository Index native matrix / Native Repository Index (Windows)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113788827852,
+      "name": "validate (22)",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "unitTotals": {
+    "tests": 2939,
+    "pass": 2927,
+    "fail": 0,
+    "skipped": 12
+  },
+  "unitShards": [
+    {
+      "jobId": 113722209891,
+      "counts": {
+        "tests": 731,
+        "pass": 727,
+        "fail": 0,
+        "skipped": 4
+      },
+      "logSha256": "f9d737568edb93544686c5deef4207d74f571c02171988dbb5ab8aa20668efd5"
+    },
+    {
+      "jobId": 113722209940,
+      "counts": {
+        "tests": 708,
+        "pass": 705,
+        "fail": 0,
+        "skipped": 3
+      },
+      "logSha256": "ccb09349ff7e7485d068d124d9f2e98fef6535bf9a9e79c1a0777d4cd2da59fa"
+    },
+    {
+      "jobId": 113722209941,
+      "counts": {
+        "tests": 602,
+        "pass": 601,
+        "fail": 0,
+        "skipped": 1
+      },
+      "logSha256": "67c3d1018fff9f463b94ed23651e72677741ccffe1d66b875ba89a5f1ac403c1"
+    },
+    {
+      "jobId": 113722210017,
+      "counts": {
+        "tests": 898,
+        "pass": 894,
+        "fail": 0,
+        "skipped": 4
+      },
+      "logSha256": "5d4c6e1b67b678c2ae2966b5a2d783dfbf83803cc70c25f8ddd2ec86caa4a488"
+    }
+  ],
+  "retryDiagnosis": "Attempt1 external documentation checker received GitHub503 responses. Representative unchanged links returned200 with system curl; failed-job retry passed on identical source. Successful unit/platform jobs retained.",
+  "wholePlanAcceptance": false,
+  "packageMatrixRun": 37921165587,
+  "evidenceHashes": {
+    "core926-terminal931.json": "a4ff73fb18ebf0fd47ad8689f8f8bb54a58946395da799296b40214ad2c79f09",
+    "core926-terminal931-success.json": "74b589c9c5546d680719762014f8ae50a081d67c69bff9567b12240233a444a0",
+    "core926-docs931.log": "76554473a1765a18a331199825498109eed95e6504fec4ca9f967782e6ba9dfa",
+    "core926-docs931-retry.log": "caf606c6965ce079f002b2828ee889ce95b0774ab74d0a33f405fccdcae660b0",
+    "core926-docs931-live-links.json": "2621726175e0b9d90dd84f95f687a774b0fa1f16e20a469a885172c19b4f67d0"
+  }
+}

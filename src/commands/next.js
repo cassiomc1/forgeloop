@@ -3,8 +3,14 @@ import { withResolvedTask } from "../core/task-command.js";
 import { readPersistedRoute } from "../core/route-artifact.js";
 import { projectExecutionProfile } from "../core/execution-profile.js";
 import { explainNextAction } from "../core/next-explanation.js";
+import { withProjectReadSnapshot } from "../storage/project-read-snapshot.js";
 
-export async function runNext({ target, packageRoot, taskId, task, authorityContext, runtimeContext, compact = false, explain = false }) {
+export async function runNext(options) {
+  const read = () => projectNext(options);
+  return options.target ? withProjectReadSnapshot(options.target, read) : read();
+}
+
+async function projectNext({ target, packageRoot, taskId, task, authorityContext, runtimeContext, compact = false, explain = false }) {
   return withResolvedTask(target, { taskId: taskId ?? task, packageRoot }, async (ctx) => {
     const result = await getNextAction({
       target,

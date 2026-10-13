@@ -62,6 +62,8 @@ test("read command produces a deterministic envelope with metadata and no output
 
 test("domain rejection is not an invocation failure", async () => {
   await withTarget(async (target) => {
+    const created = await executeForgeLoopCommand({ command: "task-create", projectPath: target, input: { taskId: "domain-rejection", claims: [] } });
+    assert.equal(created.ok, true, JSON.stringify(created));
     const envelope = await executeForgeLoopCommand({
       command: "preflight",
       projectPath: target,
@@ -99,4 +101,16 @@ test("runtime never executes ForgeLoop through a shell", () => {
   // Structural guarantee: executors import command implementations directly
   // instead of spawning `forgeloop`. Assert no child-process usage in the
   // executor/runtime modules.
+});
+
+
+test("native preflight without a selected task is an invocation failure with no singleton publication", async () => {
+  await withTarget(async target => {
+    const envelope = await executeForgeLoopCommand({ command: "preflight", projectPath: target });
+    assert.equal(envelope.ok, false);
+    assert.equal(envelope.error.code, "E_TASK_REQUIRED");
+    assert.equal(envelope.exitCode, 1);
+    const { readFile } = await import("node:fs/promises");
+    await assert.rejects(readFile(path.join(target, ".forgeloop/preflight.json")), { code: "ENOENT" });
+  });
 });

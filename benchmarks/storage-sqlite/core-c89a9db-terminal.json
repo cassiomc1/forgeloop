@@ -1,0 +1,143 @@
+{
+  "runId": 37998303671,
+  "sourceRevision": "c89a9dbc55df4632d08fdabd681d9e7913834e77",
+  "status": "completed",
+  "conclusion": "success",
+  "capturedAt": "2026-10-09T23:39:43.442046+00:00",
+  "jobs": [
+    {
+      "id": 114049868734,
+      "name": "Classify changed paths",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114049912509,
+      "name": "audit",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114049912537,
+      "name": "Unit tests (Node 24, shard 1/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114049912539,
+      "name": "Unit tests (Node 24, shard 4/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114049912555,
+      "name": "Verify generated Archify diagram",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114049912569,
+      "name": "Unit tests (Node 24, shard 3/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114049912574,
+      "name": "tarball smoke (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114049912586,
+      "name": "Unit tests (Node 24.19.0, shard 0/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114049912611,
+      "name": "Lint and dependency policy",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114049912680,
+      "name": "Unit tests (Node 24, shard 2/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114060934774,
+      "name": "Coverage report (Node 24)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114061453111,
+      "name": "Repository Index native matrix / Classify Repository Index paths",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114061520718,
+      "name": "Repository Index native matrix / Verify Repository Index manifest",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114061597423,
+      "name": "Repository Index native matrix / Native Repository Index (macOS)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114061597434,
+      "name": "Repository Index native matrix / Native Repository Index (Linux)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114061597488,
+      "name": "Repository Index native matrix / Native Repository Index (Windows)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114073006552,
+      "name": "validate (22)",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 11649380920,
+      "name": "coverage-shard-1",
+      "size_in_bytes": 15535119,
+      "expired": false
+    },
+    {
+      "id": 11649120186,
+      "name": "coverage-shard-3",
+      "size_in_bytes": 23784640,
+      "expired": false
+    },
+    {
+      "id": 11648957354,
+      "name": "coverage-shard-2",
+      "size_in_bytes": 16690633,
+      "expired": false
+    },
+    {
+      "id": 11648800354,
+      "name": "coverage-shard-4",
+      "size_in_bytes": 13830729,
+      "expired": false
+    }
+  ],
+  "logs": {
+    "path": "/Users/cassio/.codex/verification/core-c89a9db-full.log",
+    "sha256": "a04549d2a414c363e77aa313ed77ca14f26f2c52e1a7f78539715732bac4e44f"
+  },
+  "latestProductionCorrectionCovered": false,
+  "wholePlanAcceptance": false
+}

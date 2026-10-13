@@ -1,0 +1,34 @@
+{
+  "increment": 674,
+  "decision": "HOLD_RELEASE",
+  "decisionScope": "Agent delivery recommendation under original plan; not user waiver or approval",
+  "originalTargetNetReduction": 0.25,
+  "candidateScopeReviewComplete": false,
+  "candidateCounts": {
+    "baseline": 43513,
+    "current": 51574,
+    "netReduction": -0.1852549812699653,
+    "storageModules": 65,
+    "storageNonblankLines": 7082
+  },
+  "countingIntegrity": {
+    "sameWholeModuleUnionBothSides": true,
+    "allStorageIncluded": true,
+    "importerExporterMaintenanceRetained": true,
+    "formattingCompressionNotApplied": true
+  },
+  "investigation": [
+    "Conservative union includes full domain and command modules when they contain persistence or file-I/O signals; scope is not yet semantically approved",
+    "New native store retains importer/exporter, migration interruption, restore publication, attachment and ownership logic; these costs are inclusive",
+    "Retained transaction scanner has two observed callers: legacy migration admission and non-native doctor; recovery/compaction writers are retired",
+    "Portable event readers remain explicit import/export inspection, not parallel operational write authority"
+  ],
+  "requiredNextEvidence": [
+    "Semantically reviewed symmetric persistence scope including every required new and retained owner",
+    "Safe removal or consolidation backed by behavior coverage; no stripped integrity/durability or excluded importer costs",
+    "Fresh current cross-platform and actual candidate workflow results",
+    "Original performance/resource acceptance and validator-backed closure"
+  ],
+  "publication": "No commit/push/PR/npm publication performed",
+  "releaseThresholdsVerified": false
+}

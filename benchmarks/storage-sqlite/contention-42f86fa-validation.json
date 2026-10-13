@@ -1,0 +1,21 @@
+{
+  "sourceRevision": "42f86fa",
+  "validationOnly": true,
+  "performanceAcceptance": false,
+  "rows": [
+    {
+      "mode": "public",
+      "evidence": "contention-42f86fa-public-validation.json.gz",
+      "status": "VALIDATED",
+      "samples": 0,
+      "cleanupVerified": true
+    },
+    {
+      "mode": "synthetic",
+      "evidence": "contention-42f86fa-synthetic-validation.json.gz",
+      "status": "VALIDATED",
+      "samples": 0,
+      "cleanupVerified": true
+    }
+  ]
+}

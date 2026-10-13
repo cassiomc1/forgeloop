@@ -1,5 +1,6 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { access, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { access, mkdir, mkdtemp, readFile, readdir, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -44,7 +45,7 @@ test("task-create preset preview validates scope but creates no lifecycle state"
     await assert.rejects(access(path.join(target, ".forgeloop", "task-state")));
     assert.equal((await runTaskList({ target, packageRoot })).tasks.length, 0);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -78,7 +79,7 @@ test("task-create preview does not acquire, remove, or rename an existing claims
     assert.deepEqual(await readdir(path.join(target, ".forgeloop")), [".claims.lock"]);
     await assert.rejects(access(path.join(target, ".forgeloop", "task-state")));
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -91,7 +92,7 @@ test("task-create preset writes the same validated contract used by preview", as
     assert.equal(listed.tasks.length, 1);
     assert.equal(listed.tasks[0].taskId, "created-bug");
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -115,6 +116,6 @@ test("task-list provides stable bounded pagination and active filtering", async 
       (error) => error.code === "E_TASK_PHASE_INVALID",
     );
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });

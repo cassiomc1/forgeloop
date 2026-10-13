@@ -43,6 +43,8 @@ test("CLI --json output matches the programmatic runtime result for read command
 test("CLI exit codes match runtime exit codes for domain outcomes", async () => {
   const target = await mkdtemp(path.join(tmpdir(), "forgeloop-cli-runtime-parity-exit-"));
   try {
+    const created = await executeForgeLoopCommand({ command: "task-create", projectPath: target, input: { taskId: "parity-domain", claims: [] } });
+    assert.equal(created.ok, true, JSON.stringify(created));
     let cliExit = 0;
     try {
       await runCliJson(["preflight", "--path", target, "--json"]);

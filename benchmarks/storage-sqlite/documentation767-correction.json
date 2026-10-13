@@ -1,0 +1,11 @@
+{
+  "increment": 767,
+  "runId": 37684202204,
+  "jobId": 113007781912,
+  "sourceRevision": "aa29518f3242911838e387b73cd141e8847d3583",
+  "conclusion": "failure",
+  "cause": "Markdown MD012: seven extra blank-line issues in two progress files. Earlier documentation diagram/conformance/generated/example/manifest checks passed; link check was not reached.",
+  "correction": "Collapse consecutive blank lines outside fenced code in docs/SQLITE_PROGRESS.md and docs/SQLITE_MIGRATION_PROGRESS.md; retain narrative and evidence. Current files include later progress entries, with thirteen extra blank lines removed.",
+  "verification": "docs:check passes locally; actual Markdown lint and links need renewed CI. No missing linter installed.",
+  "logSha256": "3be6236f13452330eca67663f27ac699f5d63efaaf2a9d86844478e10a23715c"
+}

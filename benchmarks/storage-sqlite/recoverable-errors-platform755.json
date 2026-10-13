@@ -1,0 +1,93 @@
+{
+  "scope": "Four named recoverable storage error controls, not whole maintenance acceptance",
+  "test": "tests/storage-recoverable-errors.test.js",
+  "testSha256": "791348e10202e2ba2378f1faa1a12ab96f6c6bd28084b024ef526ee4f780a5e1",
+  "platformEvidence": [
+    {
+      "platform": "macOS",
+      "passingRecords": [
+        {
+          "log": "full-macos750.log",
+          "record": "\u2714 a real page-budget exhaustion rolls back and exposes the recoverable full error (7.061792ms)",
+          "logSha256": "13e27fda131b5978a014d00ff9b4ba7d6178c95af719a313201aa0198c4b7d7f"
+        },
+        {
+          "log": "full-macos750.log",
+          "record": "\u2714 a read-only connection refuses a mutation without changing committed data (3.73025ms)",
+          "logSha256": "13e27fda131b5978a014d00ff9b4ba7d6178c95af719a313201aa0198c4b7d7f"
+        },
+        {
+          "log": "full-macos750.log",
+          "record": "\u2714 writer contention exposes busy and permits retry after the owner releases (3.075833ms)",
+          "logSha256": "13e27fda131b5978a014d00ff9b4ba7d6178c95af719a313201aa0198c4b7d7f"
+        },
+        {
+          "log": "full-macos750.log",
+          "record": "\u2714 a damaged database header exposes corrupt and preserves its bytes (1.515042ms)",
+          "logSha256": "13e27fda131b5978a014d00ff9b4ba7d6178c95af719a313201aa0198c4b7d7f"
+        }
+      ],
+      "head": "6b98c9273afbd1b028c83d3b6e94e10b20a32361",
+      "testSha256": "791348e10202e2ba2378f1faa1a12ab96f6c6bd28084b024ef526ee4f780a5e1"
+    },
+    {
+      "platform": "Windows",
+      "passingRecords": [
+        {
+          "log": "windows-full729.log",
+          "record": "2026-10-07T18:43:08.4735691Z \u2714 a real page-budget exhaustion rolls back and exposes the recoverable full error (38.3462ms)",
+          "logSha256": "9e9069d64a3c9d49c5b60fe224c6ed5c864b572c5ff98dabdc0a19f4810579b1"
+        },
+        {
+          "log": "windows-full729.log",
+          "record": "2026-10-07T18:43:08.4736313Z \u2714 a read-only connection refuses a mutation without changing committed data (22.9505ms)",
+          "logSha256": "9e9069d64a3c9d49c5b60fe224c6ed5c864b572c5ff98dabdc0a19f4810579b1"
+        },
+        {
+          "log": "windows-full729.log",
+          "record": "2026-10-07T18:43:08.4736913Z \u2714 writer contention exposes busy and permits retry after the owner releases (20.6841ms)",
+          "logSha256": "9e9069d64a3c9d49c5b60fe224c6ed5c864b572c5ff98dabdc0a19f4810579b1"
+        },
+        {
+          "log": "windows-full729.log",
+          "record": "2026-10-07T18:43:08.4737499Z \u2714 a damaged database header exposes corrupt and preserves its bytes (6.166ms)",
+          "logSha256": "9e9069d64a3c9d49c5b60fe224c6ed5c864b572c5ff98dabdc0a19f4810579b1"
+        }
+      ],
+      "head": "dd7b4dea1a4f2ccf809c90e0a70c7389767e1309",
+      "testSha256": "791348e10202e2ba2378f1faa1a12ab96f6c6bd28084b024ef526ee4f780a5e1"
+    },
+    {
+      "platform": "Linux Docker",
+      "passingRecords": [
+        {
+          "log": "linux-shard2-752.log",
+          "record": "2026-10-07T19:36:42.1765181Z \u2714 a real page-budget exhaustion rolls back and exposes the recoverable full error (47.25743ms)",
+          "logSha256": "b6a4171b2ef018eec00307d0fdc6726a3770875df9c9ffa41fcb8dee022eb93f"
+        },
+        {
+          "log": "linux-shard2-752.log",
+          "record": "2026-10-07T19:36:42.1766648Z \u2714 a read-only connection refuses a mutation without changing committed data (22.182868ms)",
+          "logSha256": "b6a4171b2ef018eec00307d0fdc6726a3770875df9c9ffa41fcb8dee022eb93f"
+        },
+        {
+          "log": "linux-shard2-752.log",
+          "record": "2026-10-07T19:36:42.1767638Z \u2714 writer contention exposes busy and permits retry after the owner releases (21.462393ms)",
+          "logSha256": "b6a4171b2ef018eec00307d0fdc6726a3770875df9c9ffa41fcb8dee022eb93f"
+        },
+        {
+          "log": "linux-shard2-752.log",
+          "record": "2026-10-07T19:36:42.1768533Z \u2714 a damaged database header exposes corrupt and preserves its bytes (4.811092ms)",
+          "logSha256": "b6a4171b2ef018eec00307d0fdc6726a3770875df9c9ffa41fcb8dee022eb93f"
+        }
+      ],
+      "head": "f63dd90ffd1cb587df34a5b053b643a650d6704e",
+      "testSha256": "791348e10202e2ba2378f1faa1a12ab96f6c6bd28084b024ef526ee4f780a5e1"
+    }
+  ],
+  "limitations": [
+    "Page-budget exhaustion exercises SQLITE_FULL without exhausting physical host disk.",
+    "Corrupt header preservation is not arbitrary corruption repair.",
+    "Remote logs predate latest staging guard; full corrected remote acceptance pending."
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "increment": 801,
+  "parentHead": "934ecce85455a09df04dda1ff977b07edf662e39",
+  "problem": "Direct decision criterion accepts stale contract after independent writer removes unresolved decision.",
+  "before": {
+    "independentCommitReached": true,
+    "accepted": true
+  },
+  "after": {
+    "errorCode": "E_STATE_REVISION_CONFLICT",
+    "independentRowsPreserved": true,
+    "retryError": "E_DECISION_NOT_UNRESOLVED"
+  },
+  "change": "Validate input first; infer canonical task from contract; create or join task transaction before rereading contract and ledger and publishing criterion event.",
+  "checks": {
+    "tests": 9,
+    "failures": 0,
+    "skipped": 0,
+    "verifyFast": "PASS",
+    "complexity": "PASS with unchanged limits",
+    "fullCurrentPlatforms": "PENDING"
+  },
+  "logHashes": {
+    "settlement800-before.log": "4c5d2f75e39552dd63089178db5e39d21a4e88f68b0f9220ab9f056234b161c5",
+    "settlement800-after.log": "75d2da37c3f77d7715704b8a9a31083e9a43d3adeb4c11bb7c94b2e39dc9eac3",
+    "settlement801-final-tests.log": "f70ec60133c4e2d48c7706182040e19e3a525b3669ef9cb036356a7d8bdd5a76",
+    "settlement801-fast.log": "f6bbd142c050bd1c7f323b6665ec2736ebbab6f10769d6c23c59db86e11c1218",
+    "settlement801-complexity.log": "32111f472b37a8b8941d21c72e18a3815643453328562aed2fd87e8a2f0417f2"
+  },
+  "progressPercent": 55,
+  "protocolComplete": false
+}

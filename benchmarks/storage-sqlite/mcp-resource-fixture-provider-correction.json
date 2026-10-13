@@ -1,0 +1,17 @@
+{
+  "kind": "MCP_RESOURCE_FIXTURE_SEMANTIC_PROVIDER_CORRECTION",
+  "parentRevision": "b570835",
+  "file": "tests/helpers/durable-lifecycle.js",
+  "sourceSha256": "8b0d5d8ead217fd762b28b74e728e802670beb6aaec9a9015150ed64ca439364",
+  "node": "v24.19.0",
+  "typeSafeKeyUnset": true,
+  "cleanPackedMcp": {
+    "tests": 84,
+    "passed": 84,
+    "failed": 0,
+    "skipped": 0
+  },
+  "verifyFastExitCode": 0,
+  "productionChanged": false,
+  "fullCurrentPrepushPassed": false
+}

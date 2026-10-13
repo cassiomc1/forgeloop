@@ -1,0 +1,275 @@
+{
+  "increment": 857,
+  "terminal": {
+    "increment": 857,
+    "sourceRevision": "956953091becf93b9eb00a40d78ec2ab4ae214d6",
+    "cwd": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop",
+    "exitCode": 0,
+    "elapsedSeconds": 716.1827409267426,
+    "manifestFiles": 2972,
+    "admittedSourceUnchanged": true,
+    "status": "PASS",
+    "scope": "Paginated (limit 100) MCP in-memory client/server discovery comparison across five task sizes and twenty repetitions; optional resource instrumentation enabled; resource latency is separate from uninstrumented timing; source manifest checked before and after. Full output parity except validated package version, not stdio/HTTP or filesystem-cold evidence."
+  },
+  "request": {
+    "limit": 100
+  },
+  "repeats": 20,
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "node": "v24.19.0",
+  "platform": "darwin",
+  "adapter": "same current MCP adapter with current or pinned core selected by module resolution hook",
+  "transport": "in-memory MCP client/server",
+  "parityException": "Only metadata.packageVersion;each raw value must equal its backend package manifest",
+  "limits": [
+    "Transport serialization/stdio/HTTP not measured",
+    "Synthetic valid tasks/claims and ten observation events per task",
+    "Resource samples are separately instrumented;RSS endpoints are not operation peak",
+    "Not complete MCP throughput/contention/resource acceptance"
+  ],
+  "retainedRawArtifact": "benchmarks/storage-sqlite/macos-mcp-resources857.json",
+  "results": [
+    {
+      "tasks": 10,
+      "events": 100,
+      "operation": "taskListTool",
+      "outputParity": true,
+      "native": {
+        "maxProcessLifetimeRssMiB": 167.109375,
+        "maxRssEndpointMiB": 167.09375,
+        "maxTimerLatenessMs": 8.963625000000036,
+        "maxAsyncFilesystemRequests": 102,
+        "medianCpuMicros": 12521.0,
+        "rssFirstAfterMiB": 134.625,
+        "rssLastAfterMiB": 167.09375
+      },
+      "baseline": {
+        "maxProcessLifetimeRssMiB": 158.140625,
+        "maxRssEndpointMiB": 158.140625,
+        "maxTimerLatenessMs": 1.1253749999999627,
+        "maxAsyncFilesystemRequests": 666,
+        "medianCpuMicros": 16626.5,
+        "rssFirstAfterMiB": 136.625,
+        "rssLastAfterMiB": 158.140625
+      }
+    },
+    {
+      "tasks": 10,
+      "events": 100,
+      "operation": "projectTasksResource",
+      "outputParity": true,
+      "native": {
+        "maxProcessLifetimeRssMiB": 171.4375,
+        "maxRssEndpointMiB": 171.421875,
+        "maxTimerLatenessMs": 7.470708000000059,
+        "maxAsyncFilesystemRequests": 98,
+        "medianCpuMicros": 9701.5,
+        "rssFirstAfterMiB": 167.96875,
+        "rssLastAfterMiB": 171.421875
+      },
+      "baseline": {
+        "maxProcessLifetimeRssMiB": 158.734375,
+        "maxRssEndpointMiB": 158.734375,
+        "maxTimerLatenessMs": 1.1018750000000637,
+        "maxAsyncFilesystemRequests": 662,
+        "medianCpuMicros": 13745.0,
+        "rssFirstAfterMiB": 158.1875,
+        "rssLastAfterMiB": 158.734375
+      }
+    },
+    {
+      "tasks": 100,
+      "events": 1000,
+      "operation": "taskListTool",
+      "outputParity": true,
+      "native": {
+        "maxProcessLifetimeRssMiB": 267.484375,
+        "maxRssEndpointMiB": 267.46875,
+        "maxTimerLatenessMs": 20.846541000000002,
+        "maxAsyncFilesystemRequests": 102,
+        "medianCpuMicros": 68119.0,
+        "rssFirstAfterMiB": 178.5,
+        "rssLastAfterMiB": 267.46875
+      },
+      "baseline": {
+        "maxProcessLifetimeRssMiB": 172.296875,
+        "maxRssEndpointMiB": 172.296875,
+        "maxTimerLatenessMs": 1.0825420000001031,
+        "maxAsyncFilesystemRequests": 6606,
+        "medianCpuMicros": 135784.0,
+        "rssFirstAfterMiB": 158.390625,
+        "rssLastAfterMiB": 172.296875
+      }
+    },
+    {
+      "tasks": 100,
+      "events": 1000,
+      "operation": "projectTasksResource",
+      "outputParity": true,
+      "native": {
+        "maxProcessLifetimeRssMiB": 277.8125,
+        "maxRssEndpointMiB": 277.796875,
+        "maxTimerLatenessMs": 17.047458000000006,
+        "maxAsyncFilesystemRequests": 98,
+        "medianCpuMicros": 61837.0,
+        "rssFirstAfterMiB": 274.234375,
+        "rssLastAfterMiB": 277.796875
+      },
+      "baseline": {
+        "maxProcessLifetimeRssMiB": 183.84375,
+        "maxRssEndpointMiB": 183.84375,
+        "maxTimerLatenessMs": 0.964125000000422,
+        "maxAsyncFilesystemRequests": 6602,
+        "medianCpuMicros": 132081.5,
+        "rssFirstAfterMiB": 173.15625,
+        "rssLastAfterMiB": 183.84375
+      }
+    },
+    {
+      "tasks": 250,
+      "events": 2500,
+      "operation": "taskListTool",
+      "outputParity": true,
+      "native": {
+        "maxProcessLifetimeRssMiB": 319.90625,
+        "maxRssEndpointMiB": 319.90625,
+        "maxTimerLatenessMs": 19.24683300000015,
+        "maxAsyncFilesystemRequests": 102,
+        "medianCpuMicros": 156859.0,
+        "rssFirstAfterMiB": 191.34375,
+        "rssLastAfterMiB": 319.90625
+      },
+      "baseline": {
+        "maxProcessLifetimeRssMiB": 177.125,
+        "maxRssEndpointMiB": 177.125,
+        "maxTimerLatenessMs": 1.1044169999995574,
+        "maxAsyncFilesystemRequests": 16506,
+        "medianCpuMicros": 331072.0,
+        "rssFirstAfterMiB": 159.1875,
+        "rssLastAfterMiB": 177.125
+      }
+    },
+    {
+      "tasks": 250,
+      "events": 2500,
+      "operation": "projectTasksResource",
+      "outputParity": true,
+      "native": {
+        "maxProcessLifetimeRssMiB": 342.859375,
+        "maxRssEndpointMiB": 342.859375,
+        "maxTimerLatenessMs": 18.536833000000115,
+        "maxAsyncFilesystemRequests": 98,
+        "medianCpuMicros": 146021.5,
+        "rssFirstAfterMiB": 326.375,
+        "rssLastAfterMiB": 342.859375
+      },
+      "baseline": {
+        "maxProcessLifetimeRssMiB": 245.0,
+        "maxRssEndpointMiB": 245.0,
+        "maxTimerLatenessMs": 1.936916000000565,
+        "maxAsyncFilesystemRequests": 16502,
+        "medianCpuMicros": 327562.5,
+        "rssFirstAfterMiB": 178.703125,
+        "rssLastAfterMiB": 245.0
+      }
+    },
+    {
+      "tasks": 1000,
+      "events": 10000,
+      "operation": "taskListTool",
+      "outputParity": true,
+      "native": {
+        "maxProcessLifetimeRssMiB": 402.90625,
+        "maxRssEndpointMiB": 402.90625,
+        "maxTimerLatenessMs": 19.058500000000095,
+        "maxAsyncFilesystemRequests": 102,
+        "medianCpuMicros": 580965.5,
+        "rssFirstAfterMiB": 276.59375,
+        "rssLastAfterMiB": 402.90625
+      },
+      "baseline": {
+        "maxProcessLifetimeRssMiB": 229.421875,
+        "maxRssEndpointMiB": 229.421875,
+        "maxTimerLatenessMs": 12.746500000000196,
+        "maxAsyncFilesystemRequests": 66006,
+        "medianCpuMicros": 1309506.0,
+        "rssFirstAfterMiB": 160.875,
+        "rssLastAfterMiB": 229.421875
+      }
+    },
+    {
+      "tasks": 1000,
+      "events": 10000,
+      "operation": "projectTasksResource",
+      "outputParity": true,
+      "native": {
+        "maxProcessLifetimeRssMiB": 408.34375,
+        "maxRssEndpointMiB": 408.34375,
+        "maxTimerLatenessMs": 18.428500000001804,
+        "maxAsyncFilesystemRequests": 98,
+        "medianCpuMicros": 567690.5,
+        "rssFirstAfterMiB": 404.65625,
+        "rssLastAfterMiB": 407.828125
+      },
+      "baseline": {
+        "maxProcessLifetimeRssMiB": 236.03125,
+        "maxRssEndpointMiB": 233.875,
+        "maxTimerLatenessMs": 4.326999999997497,
+        "maxAsyncFilesystemRequests": 66002,
+        "medianCpuMicros": 1306977.5,
+        "rssFirstAfterMiB": 231.265625,
+        "rssLastAfterMiB": 224.90625
+      }
+    },
+    {
+      "tasks": 5000,
+      "events": 50000,
+      "operation": "taskListTool",
+      "outputParity": true,
+      "native": {
+        "maxProcessLifetimeRssMiB": 565.671875,
+        "maxRssEndpointMiB": 563.21875,
+        "maxTimerLatenessMs": 50.22895900000003,
+        "maxAsyncFilesystemRequests": 102,
+        "medianCpuMicros": 2936175.0,
+        "rssFirstAfterMiB": 442.328125,
+        "rssLastAfterMiB": 488.84375
+      },
+      "baseline": {
+        "maxProcessLifetimeRssMiB": 235.265625,
+        "maxRssEndpointMiB": 235.265625,
+        "maxTimerLatenessMs": 12.288457999995444,
+        "maxAsyncFilesystemRequests": 330006,
+        "medianCpuMicros": 6659753.0,
+        "rssFirstAfterMiB": 235.234375,
+        "rssLastAfterMiB": 210.09375
+      }
+    },
+    {
+      "tasks": 5000,
+      "events": 50000,
+      "operation": "projectTasksResource",
+      "outputParity": true,
+      "native": {
+        "maxProcessLifetimeRssMiB": 609.375,
+        "maxRssEndpointMiB": 596.03125,
+        "maxTimerLatenessMs": 98.2329999999929,
+        "maxAsyncFilesystemRequests": 98,
+        "medianCpuMicros": 2942055.0,
+        "rssFirstAfterMiB": 487.59375,
+        "rssLastAfterMiB": 384.375
+      },
+      "baseline": {
+        "maxProcessLifetimeRssMiB": 235.265625,
+        "maxRssEndpointMiB": 193.65625,
+        "maxTimerLatenessMs": 21.145582999975886,
+        "maxAsyncFilesystemRequests": 330002,
+        "medianCpuMicros": 6684338.5,
+        "rssFirstAfterMiB": 189.265625,
+        "rssLastAfterMiB": 193.65625
+      }
+    }
+  ],
+  "wholeResourceAccepted": false,
+  "acceptanceGap": "Native lifetime RSS and timer lateness remain higher, especially at 5000 tasks. Endpoint/lifetime data do not establish operation peaks or a universal memory bound."
+}

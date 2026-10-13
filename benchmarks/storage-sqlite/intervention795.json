@@ -1,0 +1,44 @@
+{
+  "increment": 795,
+  "status": "MAIN_VALIDATED",
+  "parentHead": "57815bbfdb0df8b1dcd0b2a60368080be3258d8d",
+  "mainSourceChanged": true,
+  "problem": "Direct intervention accepts a stale ledger after an independent semantically identical intervention commits and reports repetition false.",
+  "before": {
+    "accepted": true,
+    "independentCommitReached": true,
+    "repeatedSemanticIntervention": false
+  },
+  "candidate": {
+    "accepted": false,
+    "errorCode": "E_STATE_REVISION_CONFLICT",
+    "independentCommitPreserved": true,
+    "retryRepeatedSemanticIntervention": true
+  },
+  "checks": {
+    "focusedAndCallerTests": 14,
+    "failures": 0,
+    "skipped": 0,
+    "complexity": "PASS with unchanged limits",
+    "lint": "PASS with two existing warnings",
+    "mainApplication": "APPLIED",
+    "additionalCallerTests": 14,
+    "mainTests": 28,
+    "verifyFast": "PASS",
+    "fullCurrentPlatforms": "PENDING"
+  },
+  "logHashes": {
+    "intervention-race793-before-final.log": "94d3a0e4968834b49ab5e991dcf846d00056ac3443db2067184ea4707f76a2e8",
+    "intervention-race793-candidate.log": "64d1043b3cee07317b4213e6f533930fe4866b6ed78275d330acbb762ae1c443",
+    "intervention793-candidate-tests.log": "985ae76e6d8eae4b56e1ccd0ba1045d4fdf0f72850c5a9a35fe1e8fa93bb48c0",
+    "intervention793-candidate-complexity.log": "32111f472b37a8b8941d21c72e18a3815643453328562aed2fd87e8a2f0417f2",
+    "intervention793-candidate-lint.log": "0d1ff7df2251ac443b4a34c4fcefea92f9af245991499dd846915c1c1bdba0c1",
+    "intervention794-candidate-callers.log": "a58bbeecc2adab4c222329552684a14d2068964399a6f4d1097a19796b929676",
+    "intervention795-main-tests.log": "2b29190c7c3dd36274d5db741cfff5ed6ec9ceb539925df9717bbc441cc0c1b3",
+    "intervention795-fast.log": "3e3f2c8f5755a5b08beddfc0ed0bda9e2f56634b46f9c4c7eddeeabe39c0b39a",
+    "intervention795-complexity.log": "32111f472b37a8b8941d21c72e18a3815643453328562aed2fd87e8a2f0417f2",
+    "intervention795-lint.log": "eb7b4380c64866e187190d79eb9c34b9993721334569273069265c44518f4edb"
+  },
+  "progressPercent": 55,
+  "protocolComplete": false
+}

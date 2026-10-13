@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile, writeFile } from "node:fs/promises";
+import { readFixtureText, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
 import { test } from "node:test";
 
 import { runAudit } from "../src/commands/audit.js";
@@ -34,8 +34,8 @@ test("descriptor tampering during recovery converges across every ownership surf
     const { taskId } = await setupAbandonedTask(target, { taskId: "tampered-owner-surfaces" });
     await runTaskRecover({ target, packageRoot, taskId, acknowledgeRecovery: true });
     const descriptorPath = ensureWithin(target, taskArtifactPath(taskId, "descriptor"));
-    const descriptor = JSON.parse(await readFile(descriptorPath, "utf8"));
-    await writeFile(descriptorPath, `${JSON.stringify({ ...descriptor, writeClaims: ["src"] }, null, 2)}\n`, "utf8");
+    const descriptor = JSON.parse(await readFixtureText(target, descriptorPath));
+    await overwriteFixtureText(target, descriptorPath, `${JSON.stringify({ ...descriptor, writeClaims: ["src"] }, null, 2)}\n`);
 
     const listed = (await runTaskList({ target, packageRoot })).tasks.find((task) => task.taskId === taskId);
     const shown = await runTaskShow({ target, packageRoot, taskId });

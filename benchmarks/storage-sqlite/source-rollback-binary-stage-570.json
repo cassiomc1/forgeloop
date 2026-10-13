@@ -1,0 +1,36 @@
+{
+  "checkpoint": 570,
+  "scope": "Mac captured-source staging including exact binary attachment preservation; no source publication",
+  "sourceHashes": {
+    "src/storage/migration-rollback-source-stage.js": "3cbb587dc3739c1f6279ab7e7561f53c3db584e049a4f85c809e527aa02dd777",
+    "tests/storage-migration-rollback-source-stage.test.js": "986f3cc62934521ec7be54d7efd6e7136911f21792fd770ddf4ab0fd0a4d4356"
+  },
+  "mac": {
+    "passed": 5,
+    "failed": 0,
+    "rawLog": "\u2714 rollback source staging ready retains native authority (3237.159709ms)\n\u2714 rollback source staging source-tamper retains native authority (3221.458209ms)\n\u2714 rollback source staging extra-file retains native authority (3359.223417ms)\n\u2714 rollback source staging binding-tamper retains native authority (3223.789083ms)\n\u2714 rollback source staging binary-attachment retains native authority (3810.072791ms)\n\u2139 tests 5\n\u2139 suites 0\n\u2139 pass 5\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 17012.8335\n"
+  },
+  "fastExit": 0,
+  "lintExit": 0,
+  "binaryBytes": [
+    0,
+    255,
+    128,
+    13,
+    10,
+    0,
+    65
+  ],
+  "binaryComparisons": [
+    "preserved capture",
+    "verified source stage",
+    "retained native backup",
+    "active native project"
+  ],
+  "limitations": [
+    "Current source staging Windows/Linux pending",
+    "Source switch and interrupted source stage/publication recovery unimplemented",
+    "Historical-write exclusion unproven",
+    "Whole original plan incomplete"
+  ]
+}

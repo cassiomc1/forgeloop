@@ -1,0 +1,1872 @@
+{
+  "schemaVersion": 1,
+  "kind": "SOURCE_BOUND_ATOMIC_WRITER_BEHAVIOR_BINDING_REVIEW",
+  "generatedAt": "2026-10-10T05:12:35.021761+00:00",
+  "source": {
+    "worktree": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop",
+    "currentRevision": "de6adb80a1ec5c29dab964c41d47b73acb1ec3a0",
+    "expectedProductionRevision": "ec0d0a059b17a888cbf722efb908c94bea233b78",
+    "branch": "codex/sqlite-end-to-end",
+    "productionCodeDiffSinceExpected": [],
+    "sourceCodeHashBasis": "Current hashes were read from the current worktree; retained ec0 prepush receipt covers the same source/test files and reports 3165 tracked files unchanged.",
+    "preservedUntrackedState": [
+      "integrations/mcp/node_modules",
+      "node_modules"
+    ]
+  },
+  "boundary": {
+    "originalPlan": "docs/SQLITE_MIGRATION_PLAN.md:153-157,279-290",
+    "supportedConsumers": "package root CLI, ./integration, transport-neutral command runtime, MCP registries, and built-in maintenance/cutover/backup/restore services",
+    "explicitExceptions": "portable export/import/attachment outputs, installation/configuration/manifest files, signing scratch, repository-index/tgrep transport metadata",
+    "explicitLimits": "A trusted raw node:sqlite DatabaseSync caller or arbitrary external process can cause side effects outside supported admission; dynamic dependency internals and universal arbitrary-code exclusion are not required by this finite supported-surface audit."
+  },
+  "terminalValidation": {
+    "status": "confirmed_local_exit_0",
+    "receipt": "/Users/cassio/.codex/verification/prepush-ec0d0a0-success.json",
+    "receiptSha256": "543eb05db2707f8d45a668e856208911ebf5cc83ffa9062bea4b085bc76a84fc",
+    "log": "/Users/cassio/.codex/verification/prepush-ec0d0a0.log",
+    "logSha256": "4bb4c723ccd86f2c8c6fabfdfa4ce06cfab25e6c953701f37a1992ed6d7cb246",
+    "sessionId": 81854,
+    "validatedRevision": "ec0d0a059b17a888cbf722efb908c94bea233b78",
+    "exitCode": 0,
+    "stages": 22,
+    "core": {
+      "tests": 2991,
+      "passed": 2980,
+      "failed": 0,
+      "skipped": 11
+    },
+    "trackedFilesUnchanged": 3165,
+    "interpretation": "This is a retained ec0 full prepush receipt. Current production source/test files are unchanged against ec0; hosted, platform and validator gates remain independent."
+  },
+  "evidenceGroups": {
+    "transport-state": {
+      "description": "Persistent transport discovery metadata is a user-scoped auxiliary file contract; the writer is exercised through the supported host/status/cleanup paths.",
+      "tests": [
+        {
+          "path": "tests/persistent-transport.test.js",
+          "lines": "59-145",
+          "sha256": "34d55932253dad0fe175c5748c6d2b70de073c2be5ba98f8112399db2630340a",
+          "status": "PASS",
+          "logLines": [
+            1299,
+            1300,
+            1301,
+            1302,
+            1303
+          ],
+          "maintainedTestNames": [
+            "persistent transport host publishes bounded status and shuts down through its nonce",
+            "persistent transport can verify a live host through its authenticated endpoint",
+            "endpoint-authenticated cleanup shuts down the verified host without killing a PID",
+            "persistent transport does not claim ownership of an unrelated live process",
+            "persistent transport constants keep bounded defaults explicit"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 1299,
+              "text": "✔ persistent transport host publishes bounded status and shuts down through its nonce (132.828458ms)"
+            },
+            {
+              "line": 1300,
+              "text": "✔ persistent transport can verify a live host through its authenticated endpoint (117.860792ms)"
+            },
+            {
+              "line": 1301,
+              "text": "✔ endpoint-authenticated cleanup shuts down the verified host without killing a PID (65.623833ms)"
+            },
+            {
+              "line": 1302,
+              "text": "✔ persistent transport does not claim ownership of an unrelated live process (15.096667ms)"
+            },
+            {
+              "line": 1303,
+              "text": "✔ persistent transport constants keep bounded defaults explicit (0.128083ms)"
+            }
+          ]
+        }
+      ],
+      "skippedControls": [
+        {
+          "path": "tests/persistent-transport-native.test.js",
+          "lines": "1-64",
+          "sha256": "0c0b2d75a5dc02830d23d205a470ad3be44cccf10862a0c4bf289d69408e0f12",
+          "status": "SKIPPED: explicit FORGELOOP_TGREP_BINARY required",
+          "logLines": [
+            1295
+          ],
+          "maintainedTestNames": [
+            "persistent transport preserves native search results, shares one host, and recovers"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 1295,
+              "text": "﹣ persistent transport preserves native search results, shares one host, and recovers (0.795583ms) # native Repository Index tests require an explicit FORGELOOP_TGREP_BINARY"
+            }
+          ]
+        }
+      ],
+      "status": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "scope": "State-file ownership and nonce/authenticated cleanup are covered. The native search integration is platform/tooling deferred and does not make this metadata writer an operational SQLite writer."
+    },
+    "repository-index": {
+      "description": "Repository-index/tgrep lifecycle JSON is an excluded auxiliary file contract; ownership and locking are covered, while native positive writer execution is skipped without the pinned tgrep binary.",
+      "tests": [
+        {
+          "path": "tests/repository-index-server.test.js",
+          "lines": "10-90",
+          "sha256": "489e2ea34fc6c5b545790a8a4a445f740101779a527f7abfdb3a8a022d690612",
+          "status": "PASS",
+          "logLines": [
+            1768,
+            1769
+          ],
+          "maintainedTestNames": [
+            "repository-index startup lock serializes concurrent operations",
+            "try-only repository-index lock still recovers a dead owner"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 1768,
+              "text": "✔ repository-index startup lock serializes concurrent operations (57.561958ms)"
+            },
+            {
+              "line": 1769,
+              "text": "✔ try-only repository-index lock still recovers a dead owner (2.04275ms)"
+            }
+          ]
+        }
+      ],
+      "skippedControls": [
+        {
+          "path": "tests/repository-index-concurrency.test.js",
+          "lines": "18-33",
+          "sha256": "06ca4fa8661de6a48f092bad7cf90506b61b08cb49d64b15c5554f0e09263dcf",
+          "status": "SKIPPED: explicit FORGELOOP_TGREP_BINARY required",
+          "logLines": [
+            1733
+          ],
+          "maintainedTestNames": [
+            "concurrent native setup and search clients converge on one owned server"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 1733,
+              "text": "﹣ concurrent native setup and search clients converge on one owned server (0.193125ms) # native Repository Index tests require an explicit FORGELOOP_TGREP_BINARY"
+            }
+          ]
+        },
+        {
+          "path": "tests/repository-index-live.test.js",
+          "lines": "28-111",
+          "sha256": "aad4509a6541d127b0b9df98925490776146af1c87712b30c89c67467c3ec845",
+          "status": "SKIPPED: explicit FORGELOOP_TGREP_BINARY required",
+          "logLines": [
+            1744,
+            1745,
+            1746
+          ],
+          "maintainedTestNames": [
+            "real pinned tgrep setup, live mutation, deletion, and no-match behavior",
+            "a crashed owned server is restarted by the next search",
+            "live watcher reconciles a Git branch switch with added and removed files"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 1744,
+              "text": "﹣ real pinned tgrep setup, live mutation, deletion, and no-match behavior (0.542125ms) # native Repository Index tests require an explicit FORGELOOP_TGREP_BINARY"
+            },
+            {
+              "line": 1745,
+              "text": "﹣ a crashed owned server is restarted by the next search (0.092375ms) # native Repository Index tests require an explicit FORGELOOP_TGREP_BINARY"
+            },
+            {
+              "line": 1746,
+              "text": "﹣ live watcher reconciles a Git branch switch with added and removed files (0.1095ms) # native Repository Index tests require an explicit FORGELOOP_TGREP_BINARY"
+            }
+          ]
+        },
+        {
+          "path": "tests/repository-index-native-cli.test.js",
+          "lines": "25-64",
+          "sha256": "575808cdaf9e1feeffba770ea1052e622d764bcfac799d9e4c9ac5794add9560",
+          "status": "SKIPPED: explicit FORGELOOP_TGREP_BINARY required",
+          "logLines": [
+            1750
+          ],
+          "maintainedTestNames": [
+            "native CLI acceptance covers init, doctor, search, rebuild, and stop"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 1750,
+              "text": "﹣ native CLI acceptance covers init, doctor, search, rebuild, and stop (0.492458ms) # native CLI acceptance requires an explicit FORGELOOP_TGREP_BINARY"
+            }
+          ]
+        }
+      ],
+      "status": "ROLE_AND_OWNER_PROVEN_AUXILIARY_WRITER_EXERCISE_DEFERRED",
+      "scope": "The source path is repository-index metadata under the canonical repository root and lock. No SQLite operational invariant is missing. If repository-index acceptance is required, retain a run with FORGELOOP_TGREP_BINARY; do not treat this excluded tgrep lifecycle as a migration writer defect."
+    },
+    "migration-archive": {
+      "description": "Migration archive journal persists only under the owner-bound maintenance callback and is covered by rename/exclusion and killed-owner resume controls.",
+      "tests": [
+        {
+          "path": "tests/storage-migration-archive.test.js",
+          "lines": "13-39",
+          "sha256": "39e94a4c2f6496a147aba7c8f68d18835a299139edf07995c1408a3222f31959",
+          "status": "PASS",
+          "logLines": [
+            2232
+          ],
+          "maintainedTestNames": [
+            "owner-bound archival recognizes a rename before journal update and retains exclusion until activation"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 2232,
+              "text": "✔ owner-bound archival recognizes a rename before journal update and retains exclusion until activation (1848.548125ms)"
+            }
+          ]
+        },
+        {
+          "path": "tests/storage-migration-resume.test.js",
+          "lines": "13-80",
+          "sha256": "291e919fa88f1697797b6dad3f1ba05ecb433ec27fefe3f7c2ad46aed8f8ec2f",
+          "status": "PASS",
+          "logLines": [
+            2259,
+            2260
+          ],
+          "maintainedTestNames": [
+            "killed PARTIAL_ARCHIVING owner resumes verified cutover without rewinding accepted state",
+            "killed ARCHIVED owner resumes verified cutover without rewinding accepted state"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 2259,
+              "text": "✔ killed PARTIAL_ARCHIVING owner resumes verified cutover without rewinding accepted state (2205.047125ms)"
+            },
+            {
+              "line": 2260,
+              "text": "✔ killed ARCHIVED owner resumes verified cutover without rewinding accepted state (2294.64625ms)"
+            }
+          ]
+        }
+      ],
+      "status": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "scope": "The named tests exercise archive journal persistence and both PARTIAL_ARCHIVING and ARCHIVED recovery under retained ownership; hosted/platform receipt remains separate."
+    },
+    "migration-candidate": {
+      "description": "Candidate inventory and manifest writes are owned by candidate preparation or owner-asserted candidate recovery.",
+      "tests": [
+        {
+          "path": "tests/storage-migration-candidate.test.js",
+          "lines": "18-208",
+          "sha256": "2f65295bf865b783b406575923e4c3dfe946cd5deaafedca71d36e70f72e936c",
+          "status": "PASS",
+          "logLines": [
+            2235,
+            2236,
+            2237,
+            2238,
+            2239,
+            2241,
+            2242,
+            2243
+          ],
+          "maintainedTestNames": [
+            "candidate preparation validates a real lifecycle and preserves source/export/round-trip parity",
+            "candidate preparation retains legacy event-index bytes without reproducing the sidecar",
+            "candidate preparation rejects schema-invalid optional records and retains diagnostics and exclusion",
+            "candidate preparation refuses unmapped source artifacts and does not claim attachment references verified",
+            "candidate validation refuses owned command evidence whose execution reference is missing",
+            "an empty orphan namespace survives capture and aborts candidate import",
+            "candidate import refuses empty unknown namespaces and stray task-root files",
+            "candidate recovery refuses unbound files, changed fingerprints and staging without replacing evidence"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 2235,
+              "text": "✔ candidate preparation validates a real lifecycle and preserves source/export/round-trip parity (1641.399208ms)"
+            },
+            {
+              "line": 2236,
+              "text": "✔ candidate preparation retains legacy event-index bytes without reproducing the sidecar (547.988792ms)"
+            },
+            {
+              "line": 2237,
+              "text": "✔ candidate preparation rejects schema-invalid optional records and retains diagnostics and exclusion (411.108708ms)"
+            },
+            {
+              "line": 2238,
+              "text": "✔ candidate preparation refuses unmapped source artifacts and does not claim attachment references verified (991.596208ms)"
+            },
+            {
+              "line": 2239,
+              "text": "✔ candidate validation refuses owned command evidence whose execution reference is missing (432.84875ms)"
+            },
+            {
+              "line": 2241,
+              "text": "✔ an empty orphan namespace survives capture and aborts candidate import (410.382167ms)"
+            },
+            {
+              "line": 2242,
+              "text": "✔ candidate import refuses empty unknown namespaces and stray task-root files (871.521167ms)"
+            },
+            {
+              "line": 2243,
+              "text": "✔ candidate recovery refuses unbound files, changed fingerprints and staging without replacing evidence (457.111667ms)"
+            }
+          ]
+        },
+        {
+          "path": "tests/storage-migration-resume.test.js",
+          "lines": "13-80",
+          "sha256": "291e919fa88f1697797b6dad3f1ba05ecb433ec27fefe3f7c2ad46aed8f8ec2f",
+          "status": "PASS",
+          "logLines": [
+            2254
+          ],
+          "maintainedTestNames": [
+            "killed PARTIAL_CANDIDATE_MOVE owner resumes verified cutover without rewinding accepted state"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 2254,
+              "text": "✔ killed PARTIAL_CANDIDATE_MOVE owner resumes verified cutover without rewinding accepted state (2190.0195ms)"
+            }
+          ]
+        }
+      ],
+      "status": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "scope": "Lifecycle parity, event-index exclusion, schema/unmapped evidence, orphan/unknown namespaces, candidate recovery and PARTIAL_CANDIDATE_MOVE owner resume cover both inventory and manifest sites."
+    },
+    "migration-publication": {
+      "description": "Publication journal writes occur within the owner-bound publication stage and are covered by parity, attachment, interrupted-stage and killed-owner controls.",
+      "tests": [
+        {
+          "path": "tests/storage-migration-publication.test.js",
+          "lines": "15-83",
+          "sha256": "044fc7f94d1d41a68185653c01fb6dfa10bf0cdc4e77241f36e86fd97922fa4b",
+          "status": "PASS",
+          "logLines": [
+            2247,
+            2248,
+            2249
+          ],
+          "maintainedTestNames": [
+            "publication staging retains a closed independent database and verifies canonical parity",
+            "publication staging refuses unresolved attachment coverage before creating publication files",
+            "interrupted stage rebuild refuses changed bindings and any active or pending publication"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 2247,
+              "text": "✔ publication staging retains a closed independent database and verifies canonical parity (1570.164125ms)"
+            },
+            {
+              "line": 2248,
+              "text": "✔ publication staging refuses unresolved attachment coverage before creating publication files (644.193625ms)"
+            },
+            {
+              "line": 2249,
+              "text": "✔ interrupted stage rebuild refuses changed bindings and any active or pending publication (1016.206958ms)"
+            }
+          ]
+        },
+        {
+          "path": "tests/storage-migration-resume.test.js",
+          "lines": "13-80",
+          "sha256": "291e919fa88f1697797b6dad3f1ba05ecb433ec27fefe3f7c2ad46aed8f8ec2f",
+          "status": "PASS",
+          "logLines": [
+            2257,
+            2258
+          ],
+          "maintainedTestNames": [
+            "killed STAGING owner resumes verified cutover without rewinding accepted state",
+            "killed STAGED owner resumes verified cutover without rewinding accepted state"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 2257,
+              "text": "✔ killed STAGING owner resumes verified cutover without rewinding accepted state (1561.143125ms)"
+            },
+            {
+              "line": 2258,
+              "text": "✔ killed STAGED owner resumes verified cutover without rewinding accepted state (1685.693541ms)"
+            }
+          ]
+        }
+      ],
+      "status": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "scope": "The tests cover publication journal creation, unresolved attachment refusal, binding changes and STAGING/STAGED recovery."
+    },
+    "rollback-preparation": {
+      "description": "Rollback preparation journal writes are owner-adopted only after validated native retention and are covered by native-retention plus dead-owner recovery modes.",
+      "tests": [
+        {
+          "path": "tests/storage-migration-rollback-preparation.test.js",
+          "lines": "16-31",
+          "sha256": "31b252eceae77b819a4421bbb8965ed67a01ed45544ef8c01e339ec1f27e1f17",
+          "status": "PASS",
+          "logLines": [
+            2273,
+            2274,
+            2275,
+            2276,
+            2277
+          ],
+          "maintainedTestNames": [
+            "rollback native retention validates ready without switching active authority",
+            "rollback native retention validates backup-tamper without switching active authority",
+            "rollback native retention validates owner-tamper without switching active authority",
+            "rollback native retention validates new-native-task without switching active authority",
+            "rollback native retention validates attachments without switching active authority"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 2273,
+              "text": "✔ rollback native retention validates ready without switching active authority (2770.872458ms)"
+            },
+            {
+              "line": 2274,
+              "text": "✔ rollback native retention validates backup-tamper without switching active authority (2928.969959ms)"
+            },
+            {
+              "line": 2275,
+              "text": "✔ rollback native retention validates owner-tamper without switching active authority (2913.457709ms)"
+            },
+            {
+              "line": 2276,
+              "text": "✔ rollback native retention validates new-native-task without switching active authority (2144.3865ms)"
+            },
+            {
+              "line": 2277,
+              "text": "✔ rollback native retention validates attachments without switching active authority (3121.155417ms)"
+            }
+          ]
+        },
+        {
+          "path": "tests/storage-migration-rollback-ready-resume.test.js",
+          "lines": "11-31",
+          "sha256": "87b059d29f60f35734082eeba90166f689b4a3de90b37c94f23f0d37d4faa91b",
+          "status": "PASS",
+          "logLines": [
+            2291,
+            2292,
+            2293,
+            2294,
+            2295,
+            2296
+          ],
+          "maintainedTestNames": [
+            "dead rollback preparation owner ready resumes only verified native retention",
+            "dead rollback preparation owner backup-tamper resumes only verified native retention",
+            "dead rollback preparation owner owner-tamper resumes only verified native retention",
+            "dead rollback preparation owner preparing-ready resumes only verified native retention",
+            "dead rollback preparation owner preparing-partial resumes only verified native retention",
+            "dead rollback preparation owner preparing-missing resumes only verified native retention"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 2291,
+              "text": "✔ dead rollback preparation owner ready resumes only verified native retention (3290.874709ms)"
+            },
+            {
+              "line": 2292,
+              "text": "✔ dead rollback preparation owner backup-tamper resumes only verified native retention (5054.468625ms)"
+            },
+            {
+              "line": 2293,
+              "text": "✔ dead rollback preparation owner owner-tamper resumes only verified native retention (3798.359166ms)"
+            },
+            {
+              "line": 2294,
+              "text": "✔ dead rollback preparation owner preparing-ready resumes only verified native retention (3569.676917ms)"
+            },
+            {
+              "line": 2295,
+              "text": "✔ dead rollback preparation owner preparing-partial resumes only verified native retention (3972.86575ms)"
+            },
+            {
+              "line": 2296,
+              "text": "✔ dead rollback preparation owner preparing-missing resumes only verified native retention (4031.284167ms)"
+            }
+          ]
+        }
+      ],
+      "status": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "scope": "Ready, backup-tamper, owner-tamper, new-native-task, attachment and preparing recovery modes exercise both owner-adoption and recovery journal sites."
+    },
+    "rollback-publication": {
+      "description": "Rollback publication journal writes are guarded by the source rollback owner and exact bindings during publication and resume.",
+      "tests": [
+        {
+          "path": "tests/storage-migration-rollback-publication.test.js",
+          "lines": "14-31",
+          "sha256": "30829a529814b8950d1505e3b89824bf34a07ef364a8ff1753e8fba9c58f16fe",
+          "status": "PASS",
+          "logLines": [
+            2287,
+            2288,
+            2289,
+            2290
+          ],
+          "maintainedTestNames": [
+            "owned source rollback publication restored preserves native authority",
+            "owned source rollback publication source-tamper preserves native authority",
+            "owned source rollback publication native-tamper preserves native authority",
+            "owned source rollback publication binary-attachment preserves native authority"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 2287,
+              "text": "✔ owned source rollback publication restored preserves native authority (3947.4565ms)"
+            },
+            {
+              "line": 2288,
+              "text": "✔ owned source rollback publication source-tamper preserves native authority (3957.372167ms)"
+            },
+            {
+              "line": 2289,
+              "text": "✔ owned source rollback publication native-tamper preserves native authority (3812.276041ms)"
+            },
+            {
+              "line": 2290,
+              "text": "✔ owned source rollback publication binary-attachment preserves native authority (4909.432166ms)"
+            }
+          ]
+        },
+        {
+          "path": "tests/storage-migration-rollback-publication-resume.test.js",
+          "lines": "12-29",
+          "sha256": "c50249933cd04c1e236e6713fd1a1de56a1d8ce4deb03b233ee8b9a68b77f299",
+          "status": "PASS",
+          "logLines": [
+            2278,
+            2279,
+            2280,
+            2281,
+            2282,
+            2283,
+            2284,
+            2285,
+            2286
+          ],
+          "maintainedTestNames": [
+            "dead source publication owner SWITCHING resumes only verified locations",
+            "dead source publication owner DATABASE_RETAINED resumes only verified locations",
+            "dead source publication owner NATIVE_RETAINED resumes only verified locations",
+            "dead source publication owner PARTIAL_SOURCE resumes only verified locations",
+            "dead source publication owner RESTORED resumes only verified locations",
+            "dead source publication owner BINARY_PARTIAL_SOURCE resumes only verified locations",
+            "dead source publication owner duplicate-native resumes only verified locations",
+            "dead source publication owner corrupt-source resumes only verified locations",
+            "dead source publication owner substituted-owner resumes only verified locations"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 2278,
+              "text": "✔ dead source publication owner SWITCHING resumes only verified locations (4065.427709ms)"
+            },
+            {
+              "line": 2279,
+              "text": "✔ dead source publication owner DATABASE_RETAINED resumes only verified locations (4209.208542ms)"
+            },
+            {
+              "line": 2280,
+              "text": "✔ dead source publication owner NATIVE_RETAINED resumes only verified locations (3872.692541ms)"
+            },
+            {
+              "line": 2281,
+              "text": "✔ dead source publication owner PARTIAL_SOURCE resumes only verified locations (4005.143625ms)"
+            },
+            {
+              "line": 2282,
+              "text": "✔ dead source publication owner RESTORED resumes only verified locations (3939.912917ms)"
+            },
+            {
+              "line": 2283,
+              "text": "✔ dead source publication owner BINARY_PARTIAL_SOURCE resumes only verified locations (4806.103083ms)"
+            },
+            {
+              "line": 2284,
+              "text": "✔ dead source publication owner duplicate-native resumes only verified locations (3879.261791ms)"
+            },
+            {
+              "line": 2285,
+              "text": "✔ dead source publication owner corrupt-source resumes only verified locations (6244.768375ms)"
+            },
+            {
+              "line": 2286,
+              "text": "✔ dead source publication owner substituted-owner resumes only verified locations (4025.392708ms)"
+            }
+          ]
+        }
+      ],
+      "status": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "scope": "Owned publication tamper modes and dead-source-owner phase recovery cover the inherited journal and resume journal writes, including binary attachment and substituted-owner cases."
+    },
+    "rollback-stage": {
+      "description": "Rollback source-stage manifests are written only after validated owner/binding checks and are covered by stage and dead-stage recovery modes.",
+      "tests": [
+        {
+          "path": "tests/storage-migration-rollback-source-stage.test.js",
+          "lines": "16-34",
+          "sha256": "6ed8408039459b4ee6939252228dcf5feec9dbffa6c5cfb5f5254b8eea11d117",
+          "status": "PASS",
+          "logLines": [
+            2300,
+            2301,
+            2302,
+            2303,
+            2304
+          ],
+          "maintainedTestNames": [
+            "rollback source staging ready retains native authority",
+            "rollback source staging source-tamper retains native authority",
+            "rollback source staging extra-file retains native authority",
+            "rollback source staging binding-tamper retains native authority",
+            "rollback source staging binary-attachment retains native authority"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 2300,
+              "text": "✔ rollback source staging ready retains native authority (4241.771833ms)"
+            },
+            {
+              "line": 2301,
+              "text": "✔ rollback source staging source-tamper retains native authority (4155.743791ms)"
+            },
+            {
+              "line": 2302,
+              "text": "✔ rollback source staging extra-file retains native authority (4149.534083ms)"
+            },
+            {
+              "line": 2303,
+              "text": "✔ rollback source staging binding-tamper retains native authority (4097.7545ms)"
+            },
+            {
+              "line": 2304,
+              "text": "✔ rollback source staging binary-attachment retains native authority (4793.98975ms)"
+            }
+          ]
+        },
+        {
+          "path": "tests/storage-migration-rollback-stage-resume.test.js",
+          "lines": "11-31",
+          "sha256": "d82392823dc58aca946403de4a7ae0f6b3feaaa9cb89014d11ae96debc5a8139",
+          "status": "PASS",
+          "logLines": [
+            2305,
+            2306,
+            2307,
+            2308,
+            2309,
+            2310,
+            2311,
+            2312
+          ],
+          "maintainedTestNames": [
+            "dead rollback source stage READY recovers only bound bytes",
+            "dead rollback source stage PREPARING_COMPLETE recovers only bound bytes",
+            "dead rollback source stage PREPARING_PARTIAL recovers only bound bytes",
+            "dead rollback source stage PREPARING_MISSING recovers only bound bytes",
+            "dead rollback source stage PREPARING_BINARY recovers only bound bytes",
+            "dead rollback source stage READY_TAMPER recovers only bound bytes",
+            "dead rollback source stage UNRECORDED recovers only bound bytes",
+            "dead rollback source stage OWNER_TAMPER recovers only bound bytes"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 2305,
+              "text": "✔ dead rollback source stage READY recovers only bound bytes (4809.964833ms)"
+            },
+            {
+              "line": 2306,
+              "text": "✔ dead rollback source stage PREPARING_COMPLETE recovers only bound bytes (4671.587833ms)"
+            },
+            {
+              "line": 2307,
+              "text": "✔ dead rollback source stage PREPARING_PARTIAL recovers only bound bytes (4532.251459ms)"
+            },
+            {
+              "line": 2308,
+              "text": "✔ dead rollback source stage PREPARING_MISSING recovers only bound bytes (4867.004333ms)"
+            },
+            {
+              "line": 2309,
+              "text": "✔ dead rollback source stage PREPARING_BINARY recovers only bound bytes (4782.034166ms)"
+            },
+            {
+              "line": 2310,
+              "text": "✔ dead rollback source stage READY_TAMPER recovers only bound bytes (2798.79375ms)"
+            },
+            {
+              "line": 2311,
+              "text": "✔ dead rollback source stage UNRECORDED recovers only bound bytes (2966.747583ms)"
+            },
+            {
+              "line": 2312,
+              "text": "✔ dead rollback source stage OWNER_TAMPER recovers only bound bytes (2974.672208ms)"
+            }
+          ]
+        }
+      ],
+      "status": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "scope": "Ready, source/binding/extra-file/binary tamper and all recorded dead-stage recovery modes cover both source-stage manifest sites."
+    },
+    "source-capture": {
+      "description": "Source capture manifests are written under the storage maintenance owner; resumed capture writes occur only after owner assertion and evidence checks.",
+      "tests": [
+        {
+          "path": "tests/storage-migration-source.test.js",
+          "lines": "60-326",
+          "sha256": "f29127a421a79c8bc15bdc3e2e34d39ff5de2c120eb4db4070ef30d23a3dc12b",
+          "status": "PASS",
+          "logLines": [
+            2315,
+            2320,
+            2321,
+            2323,
+            2324,
+            2325,
+            2326
+          ],
+          "maintainedTestNames": [
+            "retained source capture preserves operational and raw attachment bytes and reimports",
+            "source capture preserves empty directories and rejects directory-membership tampering",
+            "maintenance excludes public commands, lock acquisition and independent CLI processes",
+            "closed maintenance context cannot reopen an expired exclusion",
+            "a killed maintenance owner leaves exclusion for explicit recovery",
+            "live maintenance ownership cannot be adopted and failed recovery work retains exclusion",
+            "capture recovery refuses changed originals and unrecorded partial entries without altering evidence"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 2315,
+              "text": "✔ retained source capture preserves operational and raw attachment bytes and reimports (424.06475ms)"
+            },
+            {
+              "line": 2320,
+              "text": "✔ source capture preserves empty directories and rejects directory-membership tampering (405.579458ms)"
+            },
+            {
+              "line": 2321,
+              "text": "✔ maintenance excludes public commands, lock acquisition and independent CLI processes (514.87675ms)"
+            },
+            {
+              "line": 2323,
+              "text": "✔ closed maintenance context cannot reopen an expired exclusion (305.426625ms)"
+            },
+            {
+              "line": 2324,
+              "text": "✔ a killed maintenance owner leaves exclusion for explicit recovery (451.538542ms)"
+            },
+            {
+              "line": 2325,
+              "text": "✔ live maintenance ownership cannot be adopted and failed recovery work retains exclusion (321.582917ms)"
+            },
+            {
+              "line": 2326,
+              "text": "✔ capture recovery refuses changed originals and unrecorded partial entries without altering evidence (408.302125ms)"
+            }
+          ]
+        },
+        {
+          "path": "tests/storage-migration-resume.test.js",
+          "lines": "13-80",
+          "sha256": "291e919fa88f1697797b6dad3f1ba05ecb433ec27fefe3f7c2ad46aed8f8ec2f",
+          "status": "PASS",
+          "logLines": [
+            2250,
+            2251
+          ],
+          "maintainedTestNames": [
+            "killed CAPTURING owner resumes verified cutover without rewinding accepted state",
+            "killed PARTIAL_SOURCE owner resumes verified cutover without rewinding accepted state"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 2250,
+              "text": "✔ killed CAPTURING owner resumes verified cutover without rewinding accepted state (2211.239792ms)"
+            },
+            {
+              "line": 2251,
+              "text": "✔ killed PARTIAL_SOURCE owner resumes verified cutover without rewinding accepted state (2036.789709ms)"
+            }
+          ]
+        }
+      ],
+      "status": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "scope": "Raw/operational attachment capture, empty-directory and membership checks, maintenance exclusion, killed/live owner rules, changed-original refusal, and CAPTURING/PARTIAL_SOURCE recovery exercise both sites."
+    },
+    "backup": {
+      "description": "Backup manifest and attachment inventory are explicit backup outputs written by the public admitted backup command or owner-bound maintenance caller.",
+      "tests": [
+        {
+          "path": "tests/storage-project-backup.test.js",
+          "lines": "17-89",
+          "sha256": "3806e7f424ea4b51422e2704b245799218b18675f11c83bcc098918747ccdc3a",
+          "status": "PASS",
+          "logLines": [
+            2384,
+            2385,
+            2386
+          ],
+          "maintainedTestNames": [
+            "project backup and fresh restore retain snapshot references and exact binary bytes",
+            "project backup retains a refused incomplete bundle when source attachment bytes are corrupt",
+            "public API and CLI attachment backup select the canonical store and preserve source bindings"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 2384,
+              "text": "✔ project backup and fresh restore retain snapshot references and exact binary bytes (480.748708ms)"
+            },
+            {
+              "line": 2385,
+              "text": "✔ project backup retains a refused incomplete bundle when source attachment bytes are corrupt (313.873625ms)"
+            },
+            {
+              "line": 2386,
+              "text": "✔ public API and CLI attachment backup select the canonical store and preserve source bindings (494.246958ms)"
+            }
+          ]
+        },
+        {
+          "path": "tests/storage-migration-attachments.test.js",
+          "lines": "33-62",
+          "sha256": "debdd3c057c74b5de5ebc2a19201c73e6fc0771b329ae27eb93a555c24d78e62",
+          "status": "PASS",
+          "logLines": [
+            2233,
+            2234
+          ],
+          "maintainedTestNames": [
+            "migration verifies portable attachment bindings and retains bytes through publication and backup",
+            "unmapped captured objects remain retained and prevent attachment coverage publication"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 2233,
+              "text": "✔ migration verifies portable attachment bindings and retains bytes through publication and backup (2231.675084ms)"
+            },
+            {
+              "line": 2234,
+              "text": "✔ unmapped captured objects remain retained and prevent attachment coverage publication (833.899334ms)"
+            }
+          ]
+        }
+      ],
+      "status": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "scope": "Public API/CLI binding, exact binary bytes, corrupt/incomplete bundle refusal, attachment digest/reference coverage and unmapped-object retention cover both backup writes. Raw trusted DatabaseSync callers remain outside supported admission by design."
+    },
+    "restore": {
+      "description": "Restore journal writes are guarded by maintenance ownership and verified source/database/inventory bindings before publication or resume.",
+      "tests": [
+        {
+          "path": "tests/storage-project-restore.test.js",
+          "lines": "23-190",
+          "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+          "status": "PASS",
+          "logLines": [
+            2393,
+            2394,
+            2395,
+            2396,
+            2397,
+            2398,
+            2399,
+            2400,
+            2401,
+            2402,
+            2403,
+            2404,
+            2405,
+            2406,
+            2407,
+            2408,
+            2409,
+            2410,
+            2411
+          ],
+          "maintainedTestNames": [
+            "verified restore activates canonical project dispatch and independent attachment bytes",
+            "restore refuses unquiesced writers, corrupt backup and retained legacy state",
+            "restore rejects schema-invalid canonical evidence before marker activation and retains exclusion",
+            "PARTIAL restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "MISSING restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "RETAINING restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "RETAINED restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "REBUILD restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "REBUILD_CONFLICT restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "PREPARING restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "PREPARING_CHANGED restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "READY restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "PENDING restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "OBJECT restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "DATABASE restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "ACTIVE_MARKER restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "UNBOUND restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "CHANGED_DATABASE restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "TERMINAL_CHANGED restore reconciles owned SIGKILL and refuses live-owner adoption"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 2393,
+              "text": "✔ verified restore activates canonical project dispatch and independent attachment bytes (642.635125ms)"
+            },
+            {
+              "line": 2394,
+              "text": "✔ restore refuses unquiesced writers, corrupt backup and retained legacy state (319.439ms)"
+            },
+            {
+              "line": 2395,
+              "text": "✔ restore rejects schema-invalid canonical evidence before marker activation and retains exclusion (399.982666ms)"
+            },
+            {
+              "line": 2396,
+              "text": "✔ PARTIAL restore reconciles owned SIGKILL and refuses live-owner adoption (640.8975ms)"
+            },
+            {
+              "line": 2397,
+              "text": "✔ MISSING restore reconciles owned SIGKILL and refuses live-owner adoption (645.982167ms)"
+            },
+            {
+              "line": 2398,
+              "text": "✔ RETAINING restore reconciles owned SIGKILL and refuses live-owner adoption (627.86775ms)"
+            },
+            {
+              "line": 2399,
+              "text": "✔ RETAINED restore reconciles owned SIGKILL and refuses live-owner adoption (660.98025ms)"
+            },
+            {
+              "line": 2400,
+              "text": "✔ REBUILD restore reconciles owned SIGKILL and refuses live-owner adoption (686.578375ms)"
+            },
+            {
+              "line": 2401,
+              "text": "✔ REBUILD_CONFLICT restore reconciles owned SIGKILL and refuses live-owner adoption (479.188375ms)"
+            },
+            {
+              "line": 2402,
+              "text": "✔ PREPARING restore reconciles owned SIGKILL and refuses live-owner adoption (676.418584ms)"
+            },
+            {
+              "line": 2403,
+              "text": "✔ PREPARING_CHANGED restore reconciles owned SIGKILL and refuses live-owner adoption (579.292792ms)"
+            },
+            {
+              "line": 2404,
+              "text": "✔ READY restore reconciles owned SIGKILL and refuses live-owner adoption (669.090917ms)"
+            },
+            {
+              "line": 2405,
+              "text": "✔ PENDING restore reconciles owned SIGKILL and refuses live-owner adoption (815.119333ms)"
+            },
+            {
+              "line": 2406,
+              "text": "✔ OBJECT restore reconciles owned SIGKILL and refuses live-owner adoption (594.560042ms)"
+            },
+            {
+              "line": 2407,
+              "text": "✔ DATABASE restore reconciles owned SIGKILL and refuses live-owner adoption (685.276875ms)"
+            },
+            {
+              "line": 2408,
+              "text": "✔ ACTIVE_MARKER restore reconciles owned SIGKILL and refuses live-owner adoption (669.023041ms)"
+            },
+            {
+              "line": 2409,
+              "text": "✔ UNBOUND restore reconciles owned SIGKILL and refuses live-owner adoption (604.069125ms)"
+            },
+            {
+              "line": 2410,
+              "text": "✔ CHANGED_DATABASE restore reconciles owned SIGKILL and refuses live-owner adoption (656.26925ms)"
+            },
+            {
+              "line": 2411,
+              "text": "✔ TERMINAL_CHANGED restore reconciles owned SIGKILL and refuses live-owner adoption (648.513125ms)"
+            }
+          ]
+        },
+        {
+          "path": "tests/storage-restore-command.test.js",
+          "lines": "16-90",
+          "sha256": "7b34447e7d7d874f96bdda9756dac707ab49ec6d89b0e65a649c13a2f24bb276",
+          "status": "PASS",
+          "logLines": [
+            2483,
+            2484,
+            2485,
+            2486
+          ],
+          "maintainedTestNames": [
+            "replacement admission rejects missing quiescence and nonboolean selection without allocating evidence",
+            "explicit api replacement retains outgoing state and activates incoming authority",
+            "explicit cli replacement retains outgoing state and activates incoming authority",
+            "restore CLI and shared command API activate verified backups and reject missing writer exclusion"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 2483,
+              "text": "✔ replacement admission rejects missing quiescence and nonboolean selection without allocating evidence (513.28975ms)"
+            },
+            {
+              "line": 2484,
+              "text": "✔ explicit api replacement retains outgoing state and activates incoming authority (1099.12375ms)"
+            },
+            {
+              "line": 2485,
+              "text": "✔ explicit cli replacement retains outgoing state and activates incoming authority (1167.448834ms)"
+            },
+            {
+              "line": 2486,
+              "text": "✔ restore CLI and shared command API activate verified backups and reject missing writer exclusion (864.940792ms)"
+            }
+          ]
+        },
+        {
+          "path": "tests/storage-replacement-archive.test.js",
+          "lines": "20-150",
+          "sha256": "3a63116d05cfe1ef158b54cae2863993e26f7acfd99fba5159142300e30c5213",
+          "status": "PASS",
+          "logLines": [
+            2441,
+            2442,
+            2443,
+            2444
+          ],
+          "maintainedTestNames": [
+            "replacement resumes actual SIGKILL after MARKER while refusing live-owner adoption",
+            "replacement resumes actual SIGKILL after ATTACHMENTS while refusing live-owner adoption",
+            "replacement resumes actual SIGKILL after DATABASE while refusing live-owner adoption",
+            "replacement resumes actual SIGKILL after ARCHIVED while refusing live-owner adoption"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 2441,
+              "text": "✔ replacement resumes actual SIGKILL after MARKER while refusing live-owner adoption (1132.915041ms)"
+            },
+            {
+              "line": 2442,
+              "text": "✔ replacement resumes actual SIGKILL after ATTACHMENTS while refusing live-owner adoption (944.900083ms)"
+            },
+            {
+              "line": 2443,
+              "text": "✔ replacement resumes actual SIGKILL after DATABASE while refusing live-owner adoption (958.458958ms)"
+            },
+            {
+              "line": 2444,
+              "text": "✔ replacement resumes actual SIGKILL after ARCHIVED while refusing live-owner adoption (927.171708ms)"
+            }
+          ]
+        },
+        {
+          "path": "tests/storage-replacement-publication.test.js",
+          "lines": "16-126",
+          "sha256": "ef2b88d24e5ff8f345397aa60f70b44c8bf8527b2794ad145ac21567949df878",
+          "status": "PASS",
+          "logLines": [
+            2464,
+            2465,
+            2466,
+            2467,
+            2468,
+            2469,
+            2470,
+            2471,
+            2472
+          ],
+          "maintainedTestNames": [
+            "replacement resumes actual SIGKILL after publication READY",
+            "replacement resumes actual SIGKILL after publication PUBLISHING",
+            "replacement resumes actual SIGKILL after publication PENDING_MARKER",
+            "replacement resumes actual SIGKILL after publication ATTACHMENT",
+            "replacement resumes actual SIGKILL after publication DATABASE",
+            "replacement resumes actual SIGKILL after publication ACTIVE_MARKER",
+            "replacement resumes actual SIGKILL after publication ACTIVE",
+            "archived replacement activates incoming authority and releases admission only after validation",
+            "incoming corruption after archival retains exclusion and refuses publication"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 2464,
+              "text": "✔ replacement resumes actual SIGKILL after publication READY (1334.751208ms)"
+            },
+            {
+              "line": 2465,
+              "text": "✔ replacement resumes actual SIGKILL after publication PUBLISHING (1199.739542ms)"
+            },
+            {
+              "line": 2466,
+              "text": "✔ replacement resumes actual SIGKILL after publication PENDING_MARKER (1238.532666ms)"
+            },
+            {
+              "line": 2467,
+              "text": "✔ replacement resumes actual SIGKILL after publication ATTACHMENT (1270.576ms)"
+            },
+            {
+              "line": 2468,
+              "text": "✔ replacement resumes actual SIGKILL after publication DATABASE (1235.222917ms)"
+            },
+            {
+              "line": 2469,
+              "text": "✔ replacement resumes actual SIGKILL after publication ACTIVE_MARKER (1250.126709ms)"
+            },
+            {
+              "line": 2470,
+              "text": "✔ replacement resumes actual SIGKILL after publication ACTIVE (1351.254625ms)"
+            },
+            {
+              "line": 2471,
+              "text": "✔ archived replacement activates incoming authority and releases admission only after validation (1112.115125ms)"
+            },
+            {
+              "line": 2472,
+              "text": "✔ incoming corruption after archival retains exclusion and refuses publication (771.14825ms)"
+            }
+          ]
+        }
+      ],
+      "status": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "scope": "Fresh restore, refusal, all restore SIGKILL checkpoints, public API/CLI admission, replacement archive checkpoints and replacement publication checkpoints cover the restore journal persist path."
+    },
+    "restore-preparation": {
+      "description": "Temporary completed-intent writes are part of owner-bound restore preparation and are covered by fresh/replacement preparation and recovery controls.",
+      "tests": [
+        {
+          "path": "tests/storage-project-restore.test.js",
+          "lines": "116-190",
+          "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+          "status": "PASS",
+          "logLines": [
+            2396,
+            2397,
+            2398,
+            2399,
+            2400,
+            2401,
+            2402,
+            2403,
+            2404,
+            2405,
+            2406,
+            2407,
+            2408,
+            2409,
+            2410,
+            2411
+          ],
+          "maintainedTestNames": [
+            "PARTIAL restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "MISSING restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "RETAINING restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "RETAINED restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "REBUILD restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "REBUILD_CONFLICT restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "PREPARING restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "PREPARING_CHANGED restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "READY restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "PENDING restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "OBJECT restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "DATABASE restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "ACTIVE_MARKER restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "UNBOUND restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "CHANGED_DATABASE restore reconciles owned SIGKILL and refuses live-owner adoption",
+            "TERMINAL_CHANGED restore reconciles owned SIGKILL and refuses live-owner adoption"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 2396,
+              "text": "✔ PARTIAL restore reconciles owned SIGKILL and refuses live-owner adoption (640.8975ms)"
+            },
+            {
+              "line": 2397,
+              "text": "✔ MISSING restore reconciles owned SIGKILL and refuses live-owner adoption (645.982167ms)"
+            },
+            {
+              "line": 2398,
+              "text": "✔ RETAINING restore reconciles owned SIGKILL and refuses live-owner adoption (627.86775ms)"
+            },
+            {
+              "line": 2399,
+              "text": "✔ RETAINED restore reconciles owned SIGKILL and refuses live-owner adoption (660.98025ms)"
+            },
+            {
+              "line": 2400,
+              "text": "✔ REBUILD restore reconciles owned SIGKILL and refuses live-owner adoption (686.578375ms)"
+            },
+            {
+              "line": 2401,
+              "text": "✔ REBUILD_CONFLICT restore reconciles owned SIGKILL and refuses live-owner adoption (479.188375ms)"
+            },
+            {
+              "line": 2402,
+              "text": "✔ PREPARING restore reconciles owned SIGKILL and refuses live-owner adoption (676.418584ms)"
+            },
+            {
+              "line": 2403,
+              "text": "✔ PREPARING_CHANGED restore reconciles owned SIGKILL and refuses live-owner adoption (579.292792ms)"
+            },
+            {
+              "line": 2404,
+              "text": "✔ READY restore reconciles owned SIGKILL and refuses live-owner adoption (669.090917ms)"
+            },
+            {
+              "line": 2405,
+              "text": "✔ PENDING restore reconciles owned SIGKILL and refuses live-owner adoption (815.119333ms)"
+            },
+            {
+              "line": 2406,
+              "text": "✔ OBJECT restore reconciles owned SIGKILL and refuses live-owner adoption (594.560042ms)"
+            },
+            {
+              "line": 2407,
+              "text": "✔ DATABASE restore reconciles owned SIGKILL and refuses live-owner adoption (685.276875ms)"
+            },
+            {
+              "line": 2408,
+              "text": "✔ ACTIVE_MARKER restore reconciles owned SIGKILL and refuses live-owner adoption (669.023041ms)"
+            },
+            {
+              "line": 2409,
+              "text": "✔ UNBOUND restore reconciles owned SIGKILL and refuses live-owner adoption (604.069125ms)"
+            },
+            {
+              "line": 2410,
+              "text": "✔ CHANGED_DATABASE restore reconciles owned SIGKILL and refuses live-owner adoption (656.26925ms)"
+            },
+            {
+              "line": 2411,
+              "text": "✔ TERMINAL_CHANGED restore reconciles owned SIGKILL and refuses live-owner adoption (648.513125ms)"
+            }
+          ]
+        },
+        {
+          "path": "tests/storage-replacement-archive.test.js",
+          "lines": "86-150",
+          "sha256": "3a63116d05cfe1ef158b54cae2863993e26f7acfd99fba5159142300e30c5213",
+          "status": "PASS",
+          "logLines": [
+            2441,
+            2442,
+            2443,
+            2444
+          ],
+          "maintainedTestNames": [
+            "replacement resumes actual SIGKILL after MARKER while refusing live-owner adoption",
+            "replacement resumes actual SIGKILL after ATTACHMENTS while refusing live-owner adoption",
+            "replacement resumes actual SIGKILL after DATABASE while refusing live-owner adoption",
+            "replacement resumes actual SIGKILL after ARCHIVED while refusing live-owner adoption"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 2441,
+              "text": "✔ replacement resumes actual SIGKILL after MARKER while refusing live-owner adoption (1132.915041ms)"
+            },
+            {
+              "line": 2442,
+              "text": "✔ replacement resumes actual SIGKILL after ATTACHMENTS while refusing live-owner adoption (944.900083ms)"
+            },
+            {
+              "line": 2443,
+              "text": "✔ replacement resumes actual SIGKILL after DATABASE while refusing live-owner adoption (958.458958ms)"
+            },
+            {
+              "line": 2444,
+              "text": "✔ replacement resumes actual SIGKILL after ARCHIVED while refusing live-owner adoption (927.171708ms)"
+            }
+          ]
+        },
+        {
+          "path": "tests/storage-replacement-preparation.test.js",
+          "lines": "16-31",
+          "sha256": "1d95773566805fac20d4c5d577fc4726b0cebbccb42b05f755523f2ef646532e",
+          "status": "PASS",
+          "logLines": [
+            2447
+          ],
+          "maintainedTestNames": [
+            "replacement reconciles SIGKILL between adoption records at INTENT"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 2447,
+              "text": "✔ replacement reconciles SIGKILL between adoption records at INTENT (1409.65575ms)"
+            }
+          ]
+        },
+        {
+          "path": "tests/storage-replacement-publication.test.js",
+          "lines": "16-126",
+          "sha256": "ef2b88d24e5ff8f345397aa60f70b44c8bf8527b2794ad145ac21567949df878",
+          "status": "PASS",
+          "logLines": [
+            2454,
+            2455,
+            2456,
+            2457,
+            2458,
+            2459,
+            2460,
+            2461,
+            2462,
+            2463,
+            2464,
+            2465,
+            2466,
+            2467,
+            2468,
+            2469,
+            2470
+          ],
+          "maintainedTestNames": [
+            "initial replacement resumes SIGKILL at PREPARING",
+            "initial replacement resumes SIGKILL at OUTGOING_BASELINE",
+            "initial replacement resumes SIGKILL at OUTGOING_ALLOCATED",
+            "initial replacement resumes SIGKILL at OUTGOING_PREPARING",
+            "initial replacement resumes SIGKILL at PARTIAL_OUTGOING",
+            "initial replacement resumes SIGKILL at OUTGOING_READY",
+            "initial replacement resumes SIGKILL at PARTIAL_SNAPSHOT",
+            "initial replacement resumes SIGKILL at READY",
+            "initial replacement resumes SIGKILL at PUBLICATION_READY",
+            "initial replacement orchestrates independent source through retained outgoing authority",
+            "replacement resumes actual SIGKILL after publication READY",
+            "replacement resumes actual SIGKILL after publication PUBLISHING",
+            "replacement resumes actual SIGKILL after publication PENDING_MARKER",
+            "replacement resumes actual SIGKILL after publication ATTACHMENT",
+            "replacement resumes actual SIGKILL after publication DATABASE",
+            "replacement resumes actual SIGKILL after publication ACTIVE_MARKER",
+            "replacement resumes actual SIGKILL after publication ACTIVE"
+          ],
+          "fullLogEvidence": [
+            {
+              "line": 2454,
+              "text": "✔ initial replacement resumes SIGKILL at PREPARING (1243.170542ms)"
+            },
+            {
+              "line": 2455,
+              "text": "✔ initial replacement resumes SIGKILL at OUTGOING_BASELINE (1323.564916ms)"
+            },
+            {
+              "line": 2456,
+              "text": "✔ initial replacement resumes SIGKILL at OUTGOING_ALLOCATED (1507.08ms)"
+            },
+            {
+              "line": 2457,
+              "text": "✔ initial replacement resumes SIGKILL at OUTGOING_PREPARING (1354.579833ms)"
+            },
+            {
+              "line": 2458,
+              "text": "✔ initial replacement resumes SIGKILL at PARTIAL_OUTGOING (1610.376333ms)"
+            },
+            {
+              "line": 2459,
+              "text": "✔ initial replacement resumes SIGKILL at OUTGOING_READY (1272.80825ms)"
+            },
+            {
+              "line": 2460,
+              "text": "✔ initial replacement resumes SIGKILL at PARTIAL_SNAPSHOT (1281.293ms)"
+            },
+            {
+              "line": 2461,
+              "text": "✔ initial replacement resumes SIGKILL at READY (1272.151834ms)"
+            },
+            {
+              "line": 2462,
+              "text": "✔ initial replacement resumes SIGKILL at PUBLICATION_READY (1449.54475ms)"
+            },
+            {
+              "line": 2463,
+              "text": "✔ initial replacement orchestrates independent source through retained outgoing authority (1130.928125ms)"
+            },
+            {
+              "line": 2464,
+              "text": "✔ replacement resumes actual SIGKILL after publication READY (1334.751208ms)"
+            },
+            {
+              "line": 2465,
+              "text": "✔ replacement resumes actual SIGKILL after publication PUBLISHING (1199.739542ms)"
+            },
+            {
+              "line": 2466,
+              "text": "✔ replacement resumes actual SIGKILL after publication PENDING_MARKER (1238.532666ms)"
+            },
+            {
+              "line": 2467,
+              "text": "✔ replacement resumes actual SIGKILL after publication ATTACHMENT (1270.576ms)"
+            },
+            {
+              "line": 2468,
+              "text": "✔ replacement resumes actual SIGKILL after publication DATABASE (1235.222917ms)"
+            },
+            {
+              "line": 2469,
+              "text": "✔ replacement resumes actual SIGKILL after publication ACTIVE_MARKER (1250.126709ms)"
+            },
+            {
+              "line": 2470,
+              "text": "✔ replacement resumes actual SIGKILL after publication ACTIVE (1351.254625ms)"
+            }
+          ]
+        }
+      ],
+      "status": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "scope": "Restore and replacement preparation/adoption/recovery controls exercise temporary intent writes with owner continuity and source binding. Hosted/platform receipts remain separate."
+    }
+  },
+  "callSiteAudit": [
+    {
+      "id": "atomic-11",
+      "source": "src/persistent-transport/state.js:33",
+      "sourceSha256": "a877435a1b4a7f5c7d4b6310538451f81079b70d4486d0ed990ed61819ccb86d",
+      "currentSourceLine": "await writeFileAtomic(statePath, `${JSON.stringify(record)}\\n`);",
+      "category": "TRANSPORT_DISCOVERY_METADATA",
+      "authority": "user-scoped search transport discovery metadata",
+      "ownerEvidenceKind": "derived-user-scope-contract",
+      "ownerChain": "persistent transport server -> getPersistentTransportPaths(homeDirectory) -> ensure transport directory -> writePersistentTransportState -> writeFileAtomic",
+      "ownerEvidence": [
+        "src/persistent-transport/server.js:64-98",
+        "src/persistent-transport/state.js:20-34"
+      ],
+      "operationalSQLiteWriter": false,
+      "evidenceGroupIds": [
+        "transport-state"
+      ],
+      "finiteControlStatus": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "missingSQLiteInvariant": null,
+      "nextProofOrLimit": "State-file ownership and nonce/authenticated cleanup are covered. The native search integration is platform/tooling deferred and does not make this metadata writer an operational SQLite writer.",
+      "publicSupportedTriggerNeeded": "Existing supported storage migration/rollback/restore path named by the owner chain; no new trigger or production correction is indicated."
+    },
+    {
+      "id": "atomic-12",
+      "source": "src/repository-index/server.js:32",
+      "sourceSha256": "4e18bcd059920281616a7ae0a368571ae5bb8c71c6f59929ded044cafcad4ef1",
+      "currentSourceLine": "await writeFileAtomic(filePath, `${JSON.stringify(value, null, 2)}\\n`);",
+      "category": "EXCLUDED_TGREP_LIFECYCLE",
+      "authority": "repository-index/tgrep lifecycle metadata",
+      "ownerEvidenceKind": "derived-index-root-contract",
+      "ownerChain": "repository-index public operation -> canonical repository root -> assertIndexPaths -> start/build under lock -> writeJson -> writeFileAtomic",
+      "ownerEvidence": [
+        "src/repository-index/server.js:20-33",
+        "src/repository-index/server.js:311-430"
+      ],
+      "operationalSQLiteWriter": false,
+      "evidenceGroupIds": [
+        "repository-index"
+      ],
+      "finiteControlStatus": "ROLE_AND_OWNER_PROVEN_AUXILIARY_WRITER_EXERCISE_DEFERRED",
+      "missingSQLiteInvariant": "None. This is excluded repository-index/tgrep lifecycle metadata; only its direct native writer exercise is deferred because FORGELOOP_TGREP_BINARY is absent.",
+      "nextProofOrLimit": "The source path is repository-index metadata under the canonical repository root and lock. No SQLite operational invariant is missing. If repository-index acceptance is required, retain a run with FORGELOOP_TGREP_BINARY; do not treat this excluded tgrep lifecycle as a migration writer defect.",
+      "publicSupportedTriggerNeeded": "If repository-index acceptance is required, execute the existing native setup/search/CLI controls with the pinned FORGELOOP_TGREP_BINARY and retain the receipt; this is not a SQLite migration correction."
+    },
+    {
+      "id": "atomic-19",
+      "source": "src/storage/migration-archive.js:23",
+      "sourceSha256": "587ea45c6d8d605dd4738703f644d97429699d43891a8fb3075c24fe33894b04",
+      "currentSourceLine": "const persist = () => writeFileAtomic(journalPath, `${JSON.stringify(journal, null, 2)}\\n`);",
+      "category": "MAINTENANCE_OR_BACKUP_RECORD",
+      "authority": "maintenance journal/backup/restore record",
+      "ownerEvidenceKind": "function-entry-maintenance-owner",
+      "ownerChain": "storage-migrate -> owner callback -> archiveMigrationSources -> assertOwnedStorageMaintenance at entry -> journal persist",
+      "ownerEvidence": [
+        "src/storage/migration-archive.js:12-24"
+      ],
+      "operationalSQLiteWriter": false,
+      "evidenceGroupIds": [
+        "migration-archive"
+      ],
+      "finiteControlStatus": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "missingSQLiteInvariant": null,
+      "nextProofOrLimit": "The named tests exercise archive journal persistence and both PARTIAL_ARCHIVING and ARCHIVED recovery under retained ownership; hosted/platform receipt remains separate.",
+      "publicSupportedTriggerNeeded": "Existing supported storage migration/rollback/restore path named by the owner chain; no new trigger or production correction is indicated."
+    },
+    {
+      "id": "atomic-20",
+      "source": "src/storage/migration-candidate.js:45",
+      "sourceSha256": "8d291a6afa6b51321d6f2eba160b88ccb739bef7031ce60304e1a10627e76d20",
+      "currentSourceLine": "await writeFileAtomic(filename, records());",
+      "category": "MAINTENANCE_OR_BACKUP_RECORD",
+      "authority": "maintenance journal/backup/restore record",
+      "ownerEvidenceKind": "inherited-maintenance-owner",
+      "ownerChain": "prepareMigrationCandidate -> withStorageMaintenance -> prepareCapturedCandidate -> writeTaskInventory",
+      "ownerEvidence": [
+        "src/storage/migration-candidate.js:36-47",
+        "src/storage/migration-candidate.js:199-214"
+      ],
+      "operationalSQLiteWriter": false,
+      "evidenceGroupIds": [
+        "migration-candidate"
+      ],
+      "finiteControlStatus": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "missingSQLiteInvariant": null,
+      "nextProofOrLimit": "Lifecycle parity, event-index exclusion, schema/unmapped evidence, orphan/unknown namespaces, candidate recovery and PARTIAL_CANDIDATE_MOVE owner resume cover both inventory and manifest sites.",
+      "publicSupportedTriggerNeeded": "Existing supported storage migration/rollback/restore path named by the owner chain; no new trigger or production correction is indicated."
+    },
+    {
+      "id": "atomic-21",
+      "source": "src/storage/migration-candidate.js:211",
+      "sourceSha256": "8d291a6afa6b51321d6f2eba160b88ccb739bef7031ce60304e1a10627e76d20",
+      "currentSourceLine": "const persist = () => writeFileAtomic(manifestPath, `${JSON.stringify(manifest, null, 2)}\\n`);",
+      "category": "MAINTENANCE_OR_BACKUP_RECORD",
+      "authority": "maintenance journal/backup/restore record",
+      "ownerEvidenceKind": "inherited-maintenance-owner",
+      "ownerChain": "prepareMigrationCandidate or owner-asserted resumeMigrationCandidate -> prepareCapturedCandidate -> candidate manifest persist",
+      "ownerEvidence": [
+        "src/storage/migration-candidate.js:199-220",
+        "src/storage/migration-candidate.js:335-360"
+      ],
+      "operationalSQLiteWriter": false,
+      "evidenceGroupIds": [
+        "migration-candidate"
+      ],
+      "finiteControlStatus": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "missingSQLiteInvariant": null,
+      "nextProofOrLimit": "Lifecycle parity, event-index exclusion, schema/unmapped evidence, orphan/unknown namespaces, candidate recovery and PARTIAL_CANDIDATE_MOVE owner resume cover both inventory and manifest sites.",
+      "publicSupportedTriggerNeeded": "Existing supported storage migration/rollback/restore path named by the owner chain; no new trigger or production correction is indicated."
+    },
+    {
+      "id": "atomic-22",
+      "source": "src/storage/migration-candidate.js:357",
+      "sourceSha256": "8d291a6afa6b51321d6f2eba160b88ccb739bef7031ce60304e1a10627e76d20",
+      "currentSourceLine": "await writeFileAtomic(intentPath, `${JSON.stringify(intent)}\\n`);",
+      "category": "MAINTENANCE_OR_BACKUP_RECORD",
+      "authority": "maintenance journal/backup/restore record",
+      "ownerEvidenceKind": "function-entry-maintenance-owner",
+      "ownerChain": "resumeMigrationCandidate -> writersQuiesced check -> assertOwnedStorageMaintenance at entry -> recovery intent write",
+      "ownerEvidence": [
+        "src/storage/migration-candidate.js:334-358"
+      ],
+      "operationalSQLiteWriter": false,
+      "evidenceGroupIds": [
+        "migration-candidate"
+      ],
+      "finiteControlStatus": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "missingSQLiteInvariant": null,
+      "nextProofOrLimit": "Lifecycle parity, event-index exclusion, schema/unmapped evidence, orphan/unknown namespaces, candidate recovery and PARTIAL_CANDIDATE_MOVE owner resume cover both inventory and manifest sites.",
+      "publicSupportedTriggerNeeded": "Existing supported storage migration/rollback/restore path named by the owner chain; no new trigger or production correction is indicated."
+    },
+    {
+      "id": "atomic-23",
+      "source": "src/storage/migration-publication.js:72",
+      "sourceSha256": "60d9c865f6bb85130cf546ddeb80c0404990a403c2b88256871669b968eb15e6",
+      "currentSourceLine": "const persist = () => writeFileAtomic(journalPath, `${JSON.stringify(journal, null, 2)}\\n`);",
+      "category": "MAINTENANCE_OR_BACKUP_RECORD",
+      "authority": "maintenance journal/backup/restore record",
+      "ownerEvidenceKind": "inherited-maintenance-owner",
+      "ownerChain": "storage-migrate -> stageMigrationPublication -> withStorageMaintenance -> publication journal persist",
+      "ownerEvidence": [
+        "src/storage/migration-publication.js:61-73"
+      ],
+      "operationalSQLiteWriter": false,
+      "evidenceGroupIds": [
+        "migration-publication"
+      ],
+      "finiteControlStatus": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "missingSQLiteInvariant": null,
+      "nextProofOrLimit": "The tests cover publication journal creation, unresolved attachment refusal, binding changes and STAGING/STAGED recovery.",
+      "publicSupportedTriggerNeeded": "Existing supported storage migration/rollback/restore path named by the owner chain; no new trigger or production correction is indicated."
+    },
+    {
+      "id": "atomic-25",
+      "source": "src/storage/migration-rollback-preparation.js:87",
+      "sourceSha256": "1152bbb354970c43c8530d681790c08941408328e59654eb6e62044b2dcd9bfe",
+      "currentSourceLine": "await writeFileAtomic(await assertSafePath(verified.root,\"rollback-journal.json\"),`${JSON.stringify(journal,null,2)}\\n`);",
+      "category": "MAINTENANCE_OR_BACKUP_RECORD",
+      "authority": "maintenance journal/backup/restore record",
+      "ownerEvidenceKind": "function-entry-maintenance-owner",
+      "ownerChain": "resume rollback -> resumeStorageMaintenance -> recoverOwnedMigrationSourceRollbackPreparation -> owner asserts -> owner-adoption journal write",
+      "ownerEvidence": [
+        "src/storage/migration-rollback-preparation.js:74-88"
+      ],
+      "operationalSQLiteWriter": false,
+      "evidenceGroupIds": [
+        "rollback-preparation"
+      ],
+      "finiteControlStatus": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "missingSQLiteInvariant": null,
+      "nextProofOrLimit": "Ready, backup-tamper, owner-tamper, new-native-task, attachment and preparing recovery modes exercise both owner-adoption and recovery journal sites.",
+      "publicSupportedTriggerNeeded": "Existing supported storage migration/rollback/restore path named by the owner chain; no new trigger or production correction is indicated."
+    },
+    {
+      "id": "atomic-26",
+      "source": "src/storage/migration-rollback-preparation.js:109",
+      "sourceSha256": "1152bbb354970c43c8530d681790c08941408328e59654eb6e62044b2dcd9bfe",
+      "currentSourceLine": "const persist=()=>writeFileAtomic(journalPath,`${JSON.stringify(journal,null,2)}\\n`);",
+      "category": "MAINTENANCE_OR_BACKUP_RECORD",
+      "authority": "maintenance journal/backup/restore record",
+      "ownerEvidenceKind": "function-entry-maintenance-owner",
+      "ownerChain": "recoverOwnedMigrationSourceRollbackPreparation -> recoverPreparingBackup -> assertOwnedStorageMaintenance/continuity -> recovery journal persist",
+      "ownerEvidence": [
+        "src/storage/migration-rollback-preparation.js:91-110"
+      ],
+      "operationalSQLiteWriter": false,
+      "evidenceGroupIds": [
+        "rollback-preparation"
+      ],
+      "finiteControlStatus": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "missingSQLiteInvariant": null,
+      "nextProofOrLimit": "Ready, backup-tamper, owner-tamper, new-native-task, attachment and preparing recovery modes exercise both owner-adoption and recovery journal sites.",
+      "publicSupportedTriggerNeeded": "Existing supported storage migration/rollback/restore path named by the owner chain; no new trigger or production correction is indicated."
+    },
+    {
+      "id": "atomic-28",
+      "source": "src/storage/migration-rollback-publication.js:60",
+      "sourceSha256": "2674c6509e8903af24fe319aa6c68da750613e5b8f50a385eae2bc7e5e1390ae",
+      "currentSourceLine": "const persist=()=>writeFileAtomic(filename,`${JSON.stringify(journal,null,2)}\\n`);",
+      "category": "MAINTENANCE_OR_BACKUP_RECORD",
+      "authority": "maintenance journal/backup/restore record",
+      "ownerEvidenceKind": "inherited-maintenance-owner",
+      "ownerChain": "publishMigrationSourceRollback or resumeMigrationSourceRollbackPublication -> owner context -> continuePublication -> phase journal persist",
+      "ownerEvidence": [
+        "src/storage/migration-rollback-publication.js:47-68",
+        "src/storage/migration-rollback-publication.js:116-161"
+      ],
+      "operationalSQLiteWriter": false,
+      "evidenceGroupIds": [
+        "rollback-publication"
+      ],
+      "finiteControlStatus": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "missingSQLiteInvariant": null,
+      "nextProofOrLimit": "Owned publication tamper modes and dead-source-owner phase recovery cover the inherited journal and resume journal writes, including binary attachment and substituted-owner cases.",
+      "publicSupportedTriggerNeeded": "Existing supported storage migration/rollback/restore path named by the owner chain; no new trigger or production correction is indicated."
+    },
+    {
+      "id": "atomic-29",
+      "source": "src/storage/migration-rollback-publication.js:158",
+      "sourceSha256": "2674c6509e8903af24fe319aa6c68da750613e5b8f50a385eae2bc7e5e1390ae",
+      "currentSourceLine": "await writeFileAtomic(await assertSafePath(recordRoot,filename),`${JSON.stringify(recorded,null,2)}\\n`);",
+      "category": "MAINTENANCE_OR_BACKUP_RECORD",
+      "authority": "maintenance journal/backup/restore record",
+      "ownerEvidenceKind": "function-entry-maintenance-owner",
+      "ownerChain": "resume rollback publication -> resumeStorageMaintenance -> assertOwnedStorageMaintenance/owner bindings -> adopted journal writes",
+      "ownerEvidence": [
+        "src/storage/migration-rollback-publication.js:116-161"
+      ],
+      "operationalSQLiteWriter": false,
+      "evidenceGroupIds": [
+        "rollback-publication"
+      ],
+      "finiteControlStatus": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "missingSQLiteInvariant": null,
+      "nextProofOrLimit": "Owned publication tamper modes and dead-source-owner phase recovery cover the inherited journal and resume journal writes, including binary attachment and substituted-owner cases.",
+      "publicSupportedTriggerNeeded": "Existing supported storage migration/rollback/restore path named by the owner chain; no new trigger or production correction is indicated."
+    },
+    {
+      "id": "atomic-31",
+      "source": "src/storage/migration-rollback-source-stage.js:28",
+      "sourceSha256": "7ed5596cce62a32b0e9778c43ed795c7e4b46b20ba7d548eb3f26f176c2a18ca",
+      "currentSourceLine": "const persist=()=>writeFileAtomic(filename,`${JSON.stringify(manifest,null,2)}\\n`);",
+      "category": "MAINTENANCE_OR_BACKUP_RECORD",
+      "authority": "maintenance journal/backup/restore record",
+      "ownerEvidenceKind": "inherited-maintenance-owner",
+      "ownerChain": "stage rollback -> verifyPreparedMigrationSourceRollback owner validation -> source-stage journal persist",
+      "ownerEvidence": [
+        "src/storage/migration-rollback-source-stage.js:18-36"
+      ],
+      "operationalSQLiteWriter": false,
+      "evidenceGroupIds": [
+        "rollback-stage"
+      ],
+      "finiteControlStatus": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "missingSQLiteInvariant": null,
+      "nextProofOrLimit": "Ready, source/binding/extra-file/binary tamper and all recorded dead-stage recovery modes cover both source-stage manifest sites.",
+      "publicSupportedTriggerNeeded": "Existing supported storage migration/rollback/restore path named by the owner chain; no new trigger or production correction is indicated."
+    },
+    {
+      "id": "atomic-32",
+      "source": "src/storage/migration-rollback-source-stage.js:86",
+      "sourceSha256": "7ed5596cce62a32b0e9778c43ed795c7e4b46b20ba7d548eb3f26f176c2a18ca",
+      "currentSourceLine": "const persist=()=>writeFileAtomic(filename,`${JSON.stringify(manifest,null,2)}\\n`);",
+      "category": "MAINTENANCE_OR_BACKUP_RECORD",
+      "authority": "maintenance journal/backup/restore record",
+      "ownerEvidenceKind": "function-entry-maintenance-owner",
+      "ownerChain": "resume stage -> resumeStorageMaintenance -> owner asserts/continuity -> source-stage recovery journal persist",
+      "ownerEvidence": [
+        "src/storage/migration-rollback-source-stage.js:60-102"
+      ],
+      "operationalSQLiteWriter": false,
+      "evidenceGroupIds": [
+        "rollback-stage"
+      ],
+      "finiteControlStatus": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "missingSQLiteInvariant": null,
+      "nextProofOrLimit": "Ready, source/binding/extra-file/binary tamper and all recorded dead-stage recovery modes cover both source-stage manifest sites.",
+      "publicSupportedTriggerNeeded": "Existing supported storage migration/rollback/restore path named by the owner chain; no new trigger or production correction is indicated."
+    },
+    {
+      "id": "atomic-33",
+      "source": "src/storage/migration-source.js:146",
+      "sourceSha256": "2a7980a1e5a2e8be4b7857a8ad5aaacc58b9aea300071c9f5674d04302e19055",
+      "currentSourceLine": "const persist = () => writeFileAtomic(manifestPath, `${JSON.stringify(manifest, null, 2)}\\n`);",
+      "category": "MAINTENANCE_OR_BACKUP_RECORD",
+      "authority": "maintenance journal/backup/restore record",
+      "ownerEvidenceKind": "inherited-maintenance-owner",
+      "ownerChain": "captureLegacySource -> withStorageMaintenance -> captureExcludedLegacySource -> source capture manifest persist",
+      "ownerEvidence": [
+        "src/storage/migration-source.js:124-147"
+      ],
+      "operationalSQLiteWriter": false,
+      "evidenceGroupIds": [
+        "source-capture"
+      ],
+      "finiteControlStatus": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "missingSQLiteInvariant": null,
+      "nextProofOrLimit": "Raw/operational attachment capture, empty-directory and membership checks, maintenance exclusion, killed/live owner rules, changed-original refusal, and CAPTURING/PARTIAL_SOURCE recovery exercise both sites.",
+      "publicSupportedTriggerNeeded": "Existing supported storage migration/rollback/restore path named by the owner chain; no new trigger or production correction is indicated."
+    },
+    {
+      "id": "atomic-34",
+      "source": "src/storage/migration-source.js:223",
+      "sourceSha256": "2a7980a1e5a2e8be4b7857a8ad5aaacc58b9aea300071c9f5674d04302e19055",
+      "currentSourceLine": "await writeFileAtomic(await assertSafePath(attempt, \"source-manifest.json\"), `${JSON.stringify(manifest)}\\n`);",
+      "category": "MAINTENANCE_OR_BACKUP_RECORD",
+      "authority": "maintenance journal/backup/restore record",
+      "ownerEvidenceKind": "function-entry-maintenance-owner",
+      "ownerChain": "resumeLegacySourceCapture -> assertOwnedStorageMaintenance at entry -> retained attempt manifest write",
+      "ownerEvidence": [
+        "src/storage/migration-source.js:197-224"
+      ],
+      "operationalSQLiteWriter": false,
+      "evidenceGroupIds": [
+        "source-capture"
+      ],
+      "finiteControlStatus": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "missingSQLiteInvariant": null,
+      "nextProofOrLimit": "Raw/operational attachment capture, empty-directory and membership checks, maintenance exclusion, killed/live owner rules, changed-original refusal, and CAPTURING/PARTIAL_SOURCE recovery exercise both sites.",
+      "publicSupportedTriggerNeeded": "Existing supported storage migration/rollback/restore path named by the owner chain; no new trigger or production correction is indicated."
+    },
+    {
+      "id": "atomic-36",
+      "source": "src/storage/project-backup.js:30",
+      "sourceSha256": "d70b5f3992e36320723cad440f4ac2ab756700e88822acfc78beb74c2c88a609",
+      "currentSourceLine": "const persist = () => writeFileAtomic(manifestPath, `${JSON.stringify(manifest, null, 2)}\\n`);",
+      "category": "MAINTENANCE_OR_BACKUP_RECORD",
+      "authority": "maintenance journal/backup/restore record",
+      "ownerEvidenceKind": "explicit-trusted-caller-contract",
+      "ownerChain": "storage-backup public command or owner-bound maintenance caller -> admitted db,target,destination -> backupProjectStorage -> backup manifest write",
+      "ownerEvidence": [
+        "src/commands/storage-backup.js:4-14",
+        "src/storage/project-backup.js:23-38"
+      ],
+      "operationalSQLiteWriter": false,
+      "evidenceGroupIds": [
+        "backup"
+      ],
+      "finiteControlStatus": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "missingSQLiteInvariant": null,
+      "nextProofOrLimit": "Public API/CLI binding, exact binary bytes, corrupt/incomplete bundle refusal, attachment digest/reference coverage and unmapped-object retention cover both backup writes. Raw trusted DatabaseSync callers remain outside supported admission by design.",
+      "publicSupportedTriggerNeeded": "storage-backup public API/CLI; low-level helper callers must supply admitted db,target,destination. Universal proof against arbitrary raw DatabaseSync callers is outside the supported boundary."
+    },
+    {
+      "id": "atomic-37",
+      "source": "src/storage/project-backup.js:46",
+      "sourceSha256": "d70b5f3992e36320723cad440f4ac2ab756700e88822acfc78beb74c2c88a609",
+      "currentSourceLine": "await writeFileAtomic(inventoryPath, inventory());",
+      "category": "MAINTENANCE_OR_BACKUP_RECORD",
+      "authority": "maintenance journal/backup/restore record",
+      "ownerEvidenceKind": "explicit-trusted-caller-contract",
+      "ownerChain": "storage-backup public command or owner-bound maintenance caller -> admitted db,target,destination -> backupProjectStorage -> attachment inventory write",
+      "ownerEvidence": [
+        "src/commands/storage-backup.js:4-14",
+        "src/storage/project-backup.js:23-52"
+      ],
+      "operationalSQLiteWriter": false,
+      "evidenceGroupIds": [
+        "backup"
+      ],
+      "finiteControlStatus": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "missingSQLiteInvariant": null,
+      "nextProofOrLimit": "Public API/CLI binding, exact binary bytes, corrupt/incomplete bundle refusal, attachment digest/reference coverage and unmapped-object retention cover both backup writes. Raw trusted DatabaseSync callers remain outside supported admission by design.",
+      "publicSupportedTriggerNeeded": "storage-backup public API/CLI; low-level helper callers must supply admitted db,target,destination. Universal proof against arbitrary raw DatabaseSync callers is outside the supported boundary."
+    },
+    {
+      "id": "atomic-41",
+      "source": "src/storage/project-restore.js:86",
+      "sourceSha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+      "currentSourceLine": "const persist = () => writeFileAtomic(journalPath, `${JSON.stringify(journal, null, 2)}\\n`);",
+      "category": "MAINTENANCE_OR_BACKUP_RECORD",
+      "authority": "maintenance journal/backup/restore record",
+      "ownerEvidenceKind": "inherited-maintenance-owner",
+      "ownerChain": "restore command -> withStorageMaintenance -> restore journal persist helper",
+      "ownerEvidence": [
+        "src/storage/project-restore.js:71-103"
+      ],
+      "operationalSQLiteWriter": false,
+      "evidenceGroupIds": [
+        "restore"
+      ],
+      "finiteControlStatus": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "missingSQLiteInvariant": null,
+      "nextProofOrLimit": "Fresh restore, refusal, all restore SIGKILL checkpoints, public API/CLI admission, replacement archive checkpoints and replacement publication checkpoints cover the restore journal persist path.",
+      "publicSupportedTriggerNeeded": "Existing supported storage migration/rollback/restore path named by the owner chain; no new trigger or production correction is indicated."
+    },
+    {
+      "id": "atomic-42",
+      "source": "src/storage/project-restore.js:111",
+      "sourceSha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+      "currentSourceLine": "const persist = () => writeFileAtomic(journalPath, `${JSON.stringify(journal, null, 2)}\\n`);",
+      "category": "MAINTENANCE_OR_BACKUP_RECORD",
+      "authority": "maintenance journal/backup/restore record",
+      "ownerEvidenceKind": "inherited-maintenance-owner",
+      "ownerChain": "fresh restore or owner-adopted resume -> publishReadyRestore -> owner checks before publication -> restore journal persist",
+      "ownerEvidence": [
+        "src/storage/project-restore.js:106-133",
+        "src/storage/project-restore.js:158-179"
+      ],
+      "operationalSQLiteWriter": false,
+      "evidenceGroupIds": [
+        "restore"
+      ],
+      "finiteControlStatus": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "missingSQLiteInvariant": null,
+      "nextProofOrLimit": "Fresh restore, refusal, all restore SIGKILL checkpoints, public API/CLI admission, replacement archive checkpoints and replacement publication checkpoints cover the restore journal persist path.",
+      "publicSupportedTriggerNeeded": "Existing supported storage migration/rollback/restore path named by the owner chain; no new trigger or production correction is indicated."
+    },
+    {
+      "id": "atomic-45",
+      "source": "src/storage/restore-preparation.js:21",
+      "sourceSha256": "70c2db1ac984643434a5e1986028efc39f79b9d2f2576a4cbe35f39bd0161347",
+      "currentSourceLine": "await writeFileAtomic(temporary, `${JSON.stringify(record, null, 2)}\\n`);",
+      "category": "MAINTENANCE_OR_BACKUP_RECORD",
+      "authority": "maintenance journal/backup/restore record",
+      "ownerEvidenceKind": "inherited-maintenance-owner",
+      "ownerChain": "ensurePreparedRestoreSnapshot -> assertOwnedStorageMaintenance immediately before retainCompletedIntent -> temporary intent write",
+      "ownerEvidence": [
+        "src/storage/restore-preparation.js:13-31",
+        "src/storage/restore-preparation.js:69-77"
+      ],
+      "operationalSQLiteWriter": false,
+      "evidenceGroupIds": [
+        "restore-preparation"
+      ],
+      "finiteControlStatus": "FINITE_CONTROL_PROVEN_WITH_SCOPE",
+      "missingSQLiteInvariant": null,
+      "nextProofOrLimit": "Restore and replacement preparation/adoption/recovery controls exercise temporary intent writes with owner continuity and source binding. Hosted/platform receipts remain separate.",
+      "publicSupportedTriggerNeeded": "Existing supported storage migration/rollback/restore path named by the owner chain; no new trigger or production correction is indicated."
+    }
+  ],
+  "summary": {
+    "pendingCallSitesReviewed": 20,
+    "finiteControlProvenWithNamedSourceAndBehaviorEvidence": 19,
+    "auxiliaryExcludedWriterExerciseDeferred": 1,
+    "missingSQLiteOperationalWriterInvariant": 0,
+    "concreteBuiltInWriterDefectFound": false,
+    "publicTargetMisbindingFound": false,
+    "rawTrustedCallerBoundaryManufactured": false,
+    "soleWriterClaimClosed": false,
+    "wholeConsumerClosureClosed": false,
+    "hostedPlatformAcceptanceClosed": false,
+    "validatorBackedCompleteClosed": false
+  },
+  "conclusion": {
+    "result": "The 20 concrete-evidence-pending sites are now finite-bound: 19 are proven as non-operational maintenance/backup/restore or transport paths by current source owner chains plus named ec0 full-prepush behavior controls; one is an excluded repository-index/tgrep path whose role is proven but whose native positive exercise is skipped without the required binary.",
+    "actionableDefect": "None identified in supported SQLite operational authority or public target binding.",
+    "remainingEvidence": "Retain current-source hosted/platform receipts, performance/inclusive-LOC gates and ForgeLoop validator closure. If repository-index acceptance is in scope, run its existing native controls with FORGELOOP_TGREP_BINARY; do not convert the auxiliary skip into a SQLite writer defect.",
+    "capability": "No capability flag change and no COMPLETE/VALID claim from this report."
+  }
+}

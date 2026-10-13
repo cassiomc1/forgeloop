@@ -1,0 +1,35 @@
+{
+  "sourceRevision": "0a941c95a3323e2afb1a18ed75580672bdf59564",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "scopeClosed": true,
+  "unresolvedMembership": 0,
+  "acceptanceEligible": true,
+  "targetMet": false,
+  "baselineSelectedLines": 25732,
+  "currentSelectedLines": 32524,
+  "netReduction": -0.26395150007772417,
+  "targetCeiling": 19299,
+  "gapAboveTargetCeiling": 13225,
+  "allStorageIncluded": true,
+  "storageFiles": 66,
+  "storageNonblankLines": 7161,
+  "verifiedSourceFileHashes": 933,
+  "updatedBinding": "OperationalStore.apply table[2] offsets/filehash refreshed; function/call/argument tokenfingerprints unchanged; exactcall included",
+  "rawFiles": [
+    {
+      "path": "/Users/cassio/.codex/verification/persistence-loc-function-result-0a941c9-closed.json",
+      "sha256": "83598097840687212ee2481afc18cba814776a1519d21665358e1e4d8d84902b"
+    },
+    {
+      "path": "/Users/cassio/.codex/verification/persistence-loc-function-scope-manifest-0a941c9-closed.json",
+      "sha256": "8e607b269da6ba5ba56303427a3d5512cb9f20ef9ffe2c72d379cf139bd4627d"
+    }
+  ],
+  "limitations": [
+    "Staticmeasurementnotruntimeacceptance",
+    "Conservativemembershipretained",
+    "Original25percenttargetunmet",
+    "Wholeconsumer/performance/platform/protocolgatesremainopen"
+  ],
+  "wholePlanAcceptance": false
+}

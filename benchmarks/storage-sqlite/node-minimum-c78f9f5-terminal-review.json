@@ -1,0 +1,88 @@
+{
+  "kind": "MINIMUM_RUNTIME_HOSTED_TERMINAL_REVIEW",
+  "runId": 38026048934,
+  "jobId": 114137003357,
+  "sourceRevision": "c78f9f5cc01fdedbbc4f9805eb63ca4ad566fd33",
+  "runner": "forgeloop-linux-remote",
+  "completedAt": "2026-10-10T05:06:24Z",
+  "node": "v24.19.0",
+  "summary": {
+    "tests": [
+      80,
+      72
+    ],
+    "pass": [
+      80,
+      72
+    ],
+    "fail": [
+      0,
+      0
+    ],
+    "skipped": [
+      0,
+      0
+    ],
+    "cancelled": [
+      0,
+      0
+    ]
+  },
+  "checkoutRevisionConfirmedInLog": true,
+  "jobSteps": [
+    {
+      "name": "Set up job",
+      "conclusion": "success"
+    },
+    {
+      "name": "Set up runner",
+      "conclusion": "success"
+    },
+    {
+      "name": "Check out repository",
+      "conclusion": "success"
+    },
+    {
+      "name": "Set up Node.js",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install locked Node toolchain",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run targeted compatibility smoke",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Set up Node.js",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Check out repository",
+      "conclusion": "success"
+    },
+    {
+      "name": "Complete job",
+      "conclusion": "success"
+    }
+  ],
+  "logSha256": "d52ee5be729f612903ba7fa16f0e3a263cc5425a00f855c099c506a5d8bea32d",
+  "productionSourceReconciliation": {
+    "localHead": "e2d9e34c128f9559ea55c02e8520519c2ea55d2e",
+    "comparedTo": "ec0d0a059b17a888cbf722efb908c94bea233b78",
+    "unchangedPaths": [
+      "src",
+      "integrations",
+      "scripts",
+      "schemas",
+      "package.json",
+      "package-lock.json",
+      ".github/workflows"
+    ]
+  },
+  "limits": [
+    "Minimum Linux runtime smoke only; expanded matrix still pending.",
+    "Does not prove whole-plan acceptance, sole writer, performance, LOC or validator closure."
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "kind": "ASSIGNED_DESTRUCTURED_DEFAULT_BINDING_DISCOVERY",
+  "sourceRevision": "20aca2ba332ed86323722ef91812925ad9dadb83",
+  "modules": 505,
+  "resolvedCalls": 1028,
+  "additionalCalls": [
+    {
+      "file": "src/adapters/agent-browser/process.js",
+      "line": 45,
+      "from": "node:fs",
+      "member": "lstatSync",
+      "via": [
+        "fs"
+      ],
+      "expression": "fsImpl.lstatSync(value)",
+      "sha256": "847c26235795e56099178810945737c00f5d22cbbc52cbade33efd0fc38641e3",
+      "reviewedRole": "Regular executable-file read through fsImpl default; stat only."
+    },
+    {
+      "file": "src/adapters/agent-browser/process.js",
+      "line": 46,
+      "from": "node:fs",
+      "member": "statSync",
+      "via": [
+        "fs"
+      ],
+      "expression": "fsImpl.statSync(value)",
+      "sha256": "847c26235795e56099178810945737c00f5d22cbbc52cbade33efd0fc38641e3",
+      "reviewedRole": "Regular executable-file read through fsImpl default; stat only."
+    },
+    {
+      "file": "src/adapters/agent-browser/provider.js",
+      "line": 104,
+      "from": "node:fs/promises",
+      "member": "mkdtemp",
+      "via": [
+        "mkdtemp"
+      ],
+      "expression": "make(path.join(physicalRoot, \"forgeloop-agent-browser-\"))",
+      "sha256": "5c98d7eebbc24f8db8bb29853a4c6eddf4e3d5dd827d6c7d74b3ba63511abc66",
+      "reviewedRole": "Fallback mkdtemp creates validated physical outside-target browser cwd; returned target paths never become cleanup authority."
+    },
+    {
+      "file": "src/repository-index/normalize-json.js",
+      "line": 144,
+      "from": "node:fs/promises",
+      "member": "realpath",
+      "via": [
+        "realpath"
+      ],
+      "expression": "realpathImpl(repositoryRoot)",
+      "sha256": "52eb60821e64829d2a719b7085b2c58dcc39445c63278da34163a73d8db693aa",
+      "reviewedRole": "Default realpath canonicalizes advisory repository root; read only."
+    }
+  ],
+  "escapeLeads": 42,
+  "parserErrors": [],
+  "control": {
+    "assignedAlias": true,
+    "destructuredAlias": true,
+    "parameterDefault": true,
+    "shadowedParameterExcluded": true,
+    "resolvedCalls": 4
+  },
+  "wholeConsumerClosure": false,
+  "wholeSoleWriterProof": false,
+  "limitations": [
+    "First-origin propagation is discovery; reassigned or multi-source variables may have additional runtime origins.",
+    "Conditional/default origins establish possible native binding only; trusted injected host capabilities require separate controls.",
+    "Computed destructuring, dynamic-loaded functions, interprocedural object/handle propagation and arbitrary external effects remain outside this scan."
+  ],
+  "rawInventorySha256": "a2d4645ab9f21e1b5312cb78775fcdc827f1256b5b847a9e597adde3790794d2",
+  "producerSha256": "692c31dc4ba167ba14b25d7374b04f801d789c27a3e1f307ed9ec5f574f7779e",
+  "controlSha256": "bef5919bb678b1c4029df096777f158115231fb99c16d73305829e49604da3ac"
+}

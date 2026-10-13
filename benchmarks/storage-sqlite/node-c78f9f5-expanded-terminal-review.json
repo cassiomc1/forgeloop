@@ -1,0 +1,53 @@
+{
+  "kind": "EXPANDED_NODE_TERMINAL_REVIEW",
+  "runId": 38026048934,
+  "sourceRevision": "c78f9f5cc01fdedbbc4f9805eb63ca4ad566fd33",
+  "jobs": [
+    {
+      "id": 114137003357,
+      "name": "Minimum Node 24.19.0 compatibility",
+      "conclusion": "success",
+      "runner_name": "forgeloop-linux-remote"
+    },
+    {
+      "id": 114137967618,
+      "name": "Node compatibility (macOS, Node 24.19.0)",
+      "conclusion": "success",
+      "runner_name": "forgeloop-macos-local"
+    },
+    {
+      "id": 114137967624,
+      "name": "Node compatibility (macOS, Node 24)",
+      "conclusion": "success",
+      "runner_name": "forgeloop-macos-local"
+    },
+    {
+      "id": 114137967659,
+      "name": "Node compatibility (Linux, Node 24.19.0)",
+      "conclusion": "success",
+      "runner_name": "forgeloop-linux-remote"
+    },
+    {
+      "id": 114137967660,
+      "name": "Node compatibility (Windows, Node 24)",
+      "conclusion": "success",
+      "runner_name": "forgeloop-windows-remote"
+    },
+    {
+      "id": 114137967675,
+      "name": "Node compatibility (Windows, Node 24.19.0)",
+      "conclusion": "success",
+      "runner_name": "forgeloop-windows-remote"
+    },
+    {
+      "id": 114137967709,
+      "name": "Node compatibility (Linux, Node 26)",
+      "conclusion": "success",
+      "runner_name": "forgeloop-linux-remote"
+    }
+  ],
+  "logSha256": "eb48f876fc08bccf380bd7839adccab8b050f744a8518e43f6043eb31330afa0",
+  "limits": [
+    "Targeted compatibility smoke only; not whole consumer/performance/LOC/protocol completion."
+  ]
+}

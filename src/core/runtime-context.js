@@ -1,3 +1,4 @@
+import { attachStorageConnectionOwner } from "./storage-runtime-registry.js";
 import {
   E_VERIFICATION_ISOLATION_UNAVAILABLE,
   isVerificationExecutionAdapter,
@@ -220,5 +221,9 @@ export function createForgeLoopContext(options = {}) {
   if (options?.securityReviewProviders !== undefined) {
     configureSecurityReviewProviders(context, options.securityReviewProviders);
   }
+  if (options?.persistentStorage !== undefined && typeof options.persistentStorage !== "boolean") {
+    throw Object.assign(new Error("persistentStorage must be a boolean"), { code: "E_STORAGE_RUNTIME_CONFIGURATION_INVALID" });
+  }
+  if (options?.persistentStorage === true) context.close = attachStorageConnectionOwner(context);
   return Object.freeze(context);
 }

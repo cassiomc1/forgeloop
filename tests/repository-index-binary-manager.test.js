@@ -1,8 +1,9 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { execFile } from "node:child_process";
 import { EventEmitter } from "node:events";
-import { chmod, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { chmod, mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -54,7 +55,7 @@ test("checksum verification is exact and fails closed", async () => {
     assert.equal(await verifyArchiveChecksum(archive, digest), digest);
     await assert.rejects(() => verifyArchiveChecksum(archive, "0".repeat(64)), (error) => error.code === "E_REPOSITORY_INDEX_ENGINE_CHECKSUM_MISMATCH");
   } finally {
-    await rm(directory, { recursive: true, force: true });
+    await removeTempTree(directory);
   }
 });
 
@@ -69,7 +70,7 @@ test("managed binary checksum verification fails before version execution", asyn
       (error) => error.code === "E_REPOSITORY_INDEX_ENGINE_BINARY_CHECKSUM_MISMATCH",
     );
   } finally {
-    await rm(directory, { recursive: true, force: true });
+    await removeTempTree(directory);
   }
 });
 
@@ -88,7 +89,7 @@ test("managed same-version tampering is rejected before the version command runs
       (error) => error.code === "E_REPOSITORY_INDEX_ENGINE_BINARY_CHECKSUM_MISMATCH",
     );
   } finally {
-    await rm(homeDirectory, { recursive: true, force: true });
+    await removeTempTree(homeDirectory);
   }
 });
 
@@ -107,7 +108,7 @@ test("setup repairs a tampered managed binary only after verifying the replaceme
     const replacementPath = path.join(sourceDirectory, "tgrep");
     await writeFile(replacementPath, replacement);
     await chmod(replacementPath, 0o755);
-    await execFileAsync("tar", ["-czf", archivePath, "-C", sourceDirectory, "tgrep"]);
+    await execFileAsync("tar", ["-czf", path.basename(archivePath), "-C", "asset", "tgrep"], { cwd: directory });
     const archiveSha = createHash("sha256").update(await readFile(archivePath)).digest("hex");
 
     const manifest = JSON.parse(await readFile(path.join(packageRoot, "src", "repository-index", "tgrep-manifest.json"), "utf8"));
@@ -133,12 +134,20 @@ test("setup repairs a tampered managed binary only after verifying the replaceme
       homeDirectory: directory,
       assetPath: archivePath,
       spawnImpl: fakeVersionSpawn("1.0.3"),
+      execFileImpl(command, args, options, callback) {
+        assert.equal(command, "tar");
+        assert.equal(path.isAbsolute(args[1]), false);
+        assert.equal(args[1].includes(":"), false);
+        assert.equal(path.isAbsolute(options.cwd), true);
+        if (args.includes("-C")) assert.equal(path.isAbsolute(args[args.indexOf("-C") + 1]), false);
+        return execFile(command, args, options, callback);
+      },
     });
     assert.equal(descriptor.managed, true);
     assert.equal(descriptor.canonical, true);
     assert.equal(createHash("sha256").update(await readFile(managedBinary)).digest("hex"), replacementSha);
   } finally {
-    await rm(directory, { recursive: true, force: true });
+    await removeTempTree(directory);
   }
 });
 
@@ -157,7 +166,7 @@ test("explicit development override is version-checked without PATH lookup", asy
       (error) => error.code === "E_REPOSITORY_INDEX_ENGINE_VERSION_MISMATCH",
     );
   } finally {
-    await rm(directory, { recursive: true, force: true });
+    await removeTempTree(directory);
   }
 });
 
@@ -180,6 +189,6 @@ test("download rejects an untrusted asset URL before network access", async () =
       (error) => error.code === "E_REPOSITORY_INDEX_ENGINE_DOWNLOAD_FAILED",
     );
   } finally {
-    await rm(directory, { recursive: true, force: true });
+    await removeTempTree(directory);
   }
 });

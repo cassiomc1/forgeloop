@@ -1,0 +1,157 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import path from "node:path";
+import { createGitRepository } from "./helpers/git-fixture.js";
+import { removeTempTree } from "./helpers/rm-safe.js";
+import { setupVerifyingTask } from "./helpers/durable-lifecycle.js";
+import { getPackageRoot } from "../src/core/templates.js";
+import { runRecordCheck } from "../src/commands/record-check.js";
+import { prepareCompletion, recordCheck } from "../src/core/completion-artifacts.js";
+import { taskArtifactPath } from "../src/core/task-paths.js";
+import { openStorageDatabase } from "../src/storage/index.js";
+import { withOperationalStore } from "../src/storage/unit-of-work.js";
+import { runAdvance } from "../src/commands/advance.js";
+import { evaluateCompletion, runComplete } from "../src/core/completion.js";
+
+function taskRecords(db, taskId) {
+  return {
+    task: db.prepare("SELECT * FROM tasks WHERE task_id = ?").get(taskId),
+    artifacts: db.prepare("SELECT * FROM task_artifacts WHERE task_id = ? ORDER BY kind, artifact_id").all(taskId),
+    events: db.prepare("SELECT * FROM events WHERE task_id = ? ORDER BY seq").all(taskId),
+  };
+}
+
+test("completion canonical paths preserve selected evaluation and roll back rejection writes", async () => {
+  const target = await createGitRepository("forgeloop-complete-paths-atomic-");
+  const packageRoot = getPackageRoot();
+  const taskId = "complete-paths-atomic";
+  let db;
+  try {
+    await setupVerifyingTask(target, packageRoot, { taskId, requirement: "tests" });
+    await recordCheck({ target, packageRoot, taskId, id: "observed-tests", kind: "manual-review",
+      requirement: "tests", status: "passed", evidenceKind: "OBSERVED", result: "Fixture observation" });
+    await runAdvance({ target, packageRoot, taskId, to: "REVIEWING" });
+    db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+    const options = { target, packageRoot };
+    for (const kind of ["contract", "route", "state", "receipt", "events", "preflight"]) {
+      options[`${kind}Path`] = taskArtifactPath(taskId, kind);
+    }
+    const selected = await evaluateCompletion({ ...options, taskId });
+    const pathsOnly = await evaluateCompletion(options);
+    assert.deepEqual(pathsOnly, selected);
+    assert.equal(selected.status, "REJECTED");
+    assert.ok(selected.errors.every(error => error.code === "E_EVIDENCE_REQUIRED"));
+    const before = taskRecords(db, taskId);
+    await withOperationalStore({ db, target }, async source => {
+      const prototype = Object.getPrototypeOf(source);
+      const append = prototype.appendEvent;
+      let reached = false;
+      prototype.appendEvent = function(event) {
+        const result = append.call(this, event);
+        if (this.target === target && event?.taskId === taskId) {
+          reached = true;
+          throw new Error("injected completion rejection event failure");
+        }
+        return result;
+      };
+      try { await assert.rejects(runComplete(options), /injected completion rejection event failure/); }
+      finally { prototype.appendEvent = append; }
+      assert.equal(reached, true);
+    });
+    assert.deepEqual(taskRecords(db, taskId), before);
+    const result = await runComplete(options);
+    assert.equal(result.status, "REJECTED");
+    const after = taskRecords(db, taskId);
+    assert.equal(after.task.revision, before.task.revision + 1);
+    assert.ok(after.events.some(row => row.event_type === "COMPLETION_REJECTED"));
+    assert.equal(after.events.at(-1).event_type, "TRANSACTION_COMMITTED");
+  } finally { db?.close(); await removeTempTree(target); }
+});
+
+for (const entry of ["command", "direct API", "direct canonical paths"]) for (const point of ["receipt", "event"]) {
+  test(`record-check ${entry} rolls back state, receipt and ledger after ${point} staging failure`, async () => {
+    const target = await createGitRepository("forgeloop-record-check-atomic-");
+    const packageRoot = getPackageRoot();
+    const taskId = "atomic-check";
+    let db;
+    try {
+      await setupVerifyingTask(target, packageRoot, { taskId, requirement: "tests" });
+      db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+      const before = taskRecords(db, taskId);
+      const input = { target, packageRoot, taskId, id: "manual-check", kind: "manual-review",
+        requirement: "tests", status: "not-run", evidenceKind: "NOT_VERIFIED", result: "not observed" };
+      if (entry === "direct canonical paths") {
+        delete input.taskId;
+        for (const kind of ["contract", "route", "state", "receipt", "events"]) input[`${kind}Path`] = taskArtifactPath(taskId, kind);
+      }
+      const record = entry === "command" ? runRecordCheck : recordCheck;
+      await withOperationalStore({ db, target }, async source => {
+        const prototype = Object.getPrototypeOf(source);
+        const method = point === "receipt" ? "stageText" : "appendEvent";
+        const originalStage = prototype[method];
+        let reached = false;
+        prototype[method] = function(...args) {
+          const result = originalStage.call(this, ...args);
+          const relativePath = args[0];
+          const fail = point === "receipt" ? relativePath === taskArtifactPath(taskId, "receipt")
+            : args[0]?.taskId === taskId;
+          if (this.target === target && fail) { reached = true; throw new Error("injected check staging failure"); }
+          return result;
+        };
+        try { await assert.rejects(record(input), /injected check staging failure/); }
+        finally { prototype[method] = originalStage; }
+        assert.equal(reached, true);
+      });
+      assert.deepEqual(taskRecords(db, taskId), before);
+      const result = await record(input);
+      assert.equal(result.check.id, input.id);
+      const after = taskRecords(db, taskId);
+      assert.notDeepEqual(after.task.state_json, before.task.state_json);
+      assert.ok(after.events.length > before.events.length);
+      assert.ok(after.events.some(row => row.event_type === "VERIFICATION_RECORDED"));
+      assert.equal(after.events.at(-1).event_type, "TRANSACTION_COMMITTED");
+    } finally { db?.close(); await removeTempTree(target); }
+  });
+}
+
+
+for (const entry of ["command", "direct API", "direct canonical paths"]) {
+  test(`prepare-completion ${entry} rolls back receipt when commit witness staging fails`, async () => {
+    const { runPrepareCompletion } = await import("../src/commands/prepare-completion.js");
+    const target = await createGitRepository("forgeloop-prepare-atomic-");
+    const packageRoot = getPackageRoot();
+    const taskId = "prepare-atomic";
+    let db;
+    try {
+      await setupVerifyingTask(target, packageRoot, { taskId, requirement: "tests" });
+      db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+      const before = taskRecords(db, taskId);
+      const prepare = entry === "command" ? runPrepareCompletion : prepareCompletion;
+      const options = { target, packageRoot, taskId };
+      if (entry === "direct canonical paths") {
+        delete options.taskId;
+        for (const kind of ["contract", "route", "state", "receipt", "events"]) options[`${kind}Path`] = taskArtifactPath(taskId, kind);
+      }
+      await withOperationalStore({ db, target }, async source => {
+        const prototype = Object.getPrototypeOf(source);
+        const append = prototype.appendEvent;
+        let reached = false;
+        prototype.appendEvent = function(event) {
+          const value = append.call(this, event);
+          if (this.target === target && event?.taskId === taskId) {
+            reached = true;
+            throw new Error("injected preparation witness failure");
+          }
+          return value;
+        };
+        try { await assert.rejects(prepare(options), /injected preparation witness failure/); }
+        finally { prototype.appendEvent = append; }
+        assert.equal(reached, true);
+      });
+      assert.deepEqual(taskRecords(db, taskId), before);
+      const result = await prepare(options);
+      assert.equal(result.receipt.taskId, taskId);
+      assert.equal(taskRecords(db, taskId).events.at(-1).event_type, "TRANSACTION_COMMITTED");
+    } finally { db?.close(); await removeTempTree(target); }
+  });
+}

@@ -1,0 +1,20 @@
+{
+  "scope": "Original pending-list snapshot and next-call replacement visibility, direct classifier and public status",
+  "sourceHashes": {
+    "src/core/work-state.js": "fae79a89d33d170159195d3b3d6448a5ad45422df952422cd2dd18e722052ff9",
+    "src/commands/status.js": "826d0f912630f5df52f6d696780cd9a4cc77493dad072f3ebd3c5a2e432e118f",
+    "tests/storage-state-classification-snapshot.test.js": "e186b13feda4f90597cfd487bd177c8c199e581d8bb1c271fa2bd5e75e9dfe42"
+  },
+  "tests": "\u2714 direct state classification retains its original committed pair and the next call sees replacement (267.888125ms)\n\u2714 public status retains its original committed pair and the next call sees replacement (271.263709ms)\n\u2139 tests 2\n\u2139 suites 0\n\u2139 pass 2\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 636.333167\n",
+  "exit": 0,
+  "statusOuterWrapperAblation": {
+    "output": "\u2714 direct state classification retains its original committed pair and the next call sees replacement (297.202958ms)\n\u2714 public status retains its original committed pair and the next call sees replacement (275.956666ms)\n\u2139 tests 2\n\u2139 suites 0\n\u2139 pass 2\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 739.42825\n",
+    "exit": 0,
+    "interpretation": "Both checks still pass with only status outer wrapper removed, because nested direct classification retains its own snapshot. This oracle validates status state/contract payload only; it does not establish whole recovery/claim/continuity observation coherence or necessity of outer wrapper."
+  },
+  "limitations": [
+    "Lowlevel SQL coherent pair replacement, not domain-valid lifecycle transition or public falsePASS",
+    "Whole combined status and remote current-source acceptance pending"
+  ],
+  "wholePlanAccepted": false
+}

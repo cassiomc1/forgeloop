@@ -1,3 +1,4 @@
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
@@ -236,11 +237,13 @@ test("compound child FAIL drives DIAGNOSE (P1-5 Test A)", async () => {
       unresolvedDecisions: [],
       sourceRefs: [],
     });
+    await ensureFixtureTask(target, contract.taskId, packageRoot);
     const contractHash = contractFingerprint(contract);
-    await writeContract(target, contract, packageRoot);
+    await writeContract(target, contract, packageRoot, { taskId: contract.taskId });
     const route = evaluateRoute({ workType: "code", surfaces: ["config"], platforms: [] });
     const persistedRoute = await persistRoute(target, route, packageRoot, {
       contractFingerprint: contractHash,
+      taskId: contract.taskId,
     });
     const state = createWorkState({
       taskId: contract.taskId,
@@ -259,18 +262,19 @@ test("compound child FAIL drives DIAGNOSE (P1-5 Test A)", async () => {
       blockers: [],
       verificationEvidence: [],
     });
-    await writeWorkState(target, state, { packageRoot });
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot);
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot);
-    await runPreflight({ target, packageRoot });
-    await advanceWorkState(target, "EXECUTING", { packageRoot });
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await writeWorkState(target, state, { packageRoot, taskId: contract.taskId });
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot, { taskId: contract.taskId });
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot, { taskId: contract.taskId });
+    await runPreflight({ target, packageRoot, taskId: contract.taskId });
+    await advanceWorkState(target, "EXECUTING", { packageRoot, taskId: contract.taskId });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: contract.taskId });
+    await prepareCompletion({ target, packageRoot, taskId: contract.taskId });
 
     // Child 1 passes
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: contract.taskId,
       id: "chk-c1",
       requirement: "SC_CHILD_1",
       status: "passed",
@@ -283,6 +287,7 @@ test("compound child FAIL drives DIAGNOSE (P1-5 Test A)", async () => {
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: contract.taskId,
       id: "chk-c2",
       requirement: "SC_CHILD_2",
       status: "failed",
@@ -291,7 +296,7 @@ test("compound child FAIL drives DIAGNOSE (P1-5 Test A)", async () => {
       result: "failed",
     });
 
-    const next = await getNextAction(target, packageRoot);
+    const next = await getNextAction({ target, packageRoot, taskId: contract.taskId });
     assert.equal(next.nextAction, NEXT_ACTIONS.DIAGNOSE);
   });
 });
@@ -330,11 +335,13 @@ test("compound child BLOCKED drives RESOLVE_BLOCKER (P1-5 Test B)", async () => 
       unresolvedDecisions: [],
       sourceRefs: [],
     });
+    await ensureFixtureTask(target, contract.taskId, packageRoot);
     const contractHash = contractFingerprint(contract);
-    await writeContract(target, contract, packageRoot);
+    await writeContract(target, contract, packageRoot, { taskId: contract.taskId });
     const route = evaluateRoute({ workType: "code", surfaces: ["config"], platforms: [] });
     const persistedRoute = await persistRoute(target, route, packageRoot, {
       contractFingerprint: contractHash,
+      taskId: contract.taskId,
     });
     const state = createWorkState({
       taskId: contract.taskId,
@@ -353,18 +360,19 @@ test("compound child BLOCKED drives RESOLVE_BLOCKER (P1-5 Test B)", async () => 
       blockers: [],
       verificationEvidence: [],
     });
-    await writeWorkState(target, state, { packageRoot });
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot);
-    await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot);
-    await runPreflight({ target, packageRoot });
-    await advanceWorkState(target, "EXECUTING", { packageRoot });
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await prepareCompletion({ target, packageRoot });
+    await writeWorkState(target, state, { packageRoot, taskId: contract.taskId });
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "CONTRACT_VALIDATED" }, packageRoot, { taskId: contract.taskId });
+    await appendProtocolEvent(target, { taskId: contract.taskId, event: "ROUTE_VALIDATED" }, packageRoot, { taskId: contract.taskId });
+    await runPreflight({ target, packageRoot, taskId: contract.taskId });
+    await advanceWorkState(target, "EXECUTING", { packageRoot, taskId: contract.taskId });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: contract.taskId });
+    await prepareCompletion({ target, packageRoot, taskId: contract.taskId });
 
     // Child 1 passes
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: contract.taskId,
       id: "chk-c1",
       requirement: "SC_CHILD_1",
       status: "passed",
@@ -377,6 +385,7 @@ test("compound child BLOCKED drives RESOLVE_BLOCKER (P1-5 Test B)", async () => 
     await recordCheck({ kind: "manual-review",
       target,
       packageRoot,
+      taskId: contract.taskId,
       id: "chk-c2",
       requirement: "SC_CHILD_2",
       status: "blocked",
@@ -385,7 +394,7 @@ test("compound child BLOCKED drives RESOLVE_BLOCKER (P1-5 Test B)", async () => 
       result: "blocked",
     });
 
-    const next = await getNextAction(target, packageRoot);
+    const next = await getNextAction({ target, packageRoot, taskId: contract.taskId });
     assert.equal(next.nextAction, NEXT_ACTIONS.RESOLVE_BLOCKER);
   });
 });

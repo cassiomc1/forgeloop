@@ -1,5 +1,5 @@
 import { readJsonArtifact } from "./artifacts.js";
-import { evaluateCompletion } from "./completion.js";
+import { evaluateCompletion, receiptReadFailure } from "./completion.js";
 import { validateReceipt } from "./receipt.js";
 import { completionRelationshipErrors } from "./completion-relationships.js";
 import { evaluateRequiredEvidence, classifyRequirement, terminalRequirementsForContract } from "./evidence-readiness.js";
@@ -82,7 +82,7 @@ export async function resolveReviewingPhase({ state, context, requiredArtifacts,
         return decision(
           context,
           NEXT_ACTIONS.RESOLVE_BLOCKER,
-          artifactError("E_RECEIPT_INVALID", `Repair or remove the invalid execution receipt before continuing: ${receipt.error.message}`, [receiptRel]),
+          receiptReadFailure(receipt.error, receiptRel),
           [...requiredArtifacts, receiptRel],
         );
       }

@@ -51,7 +51,7 @@ test("pre-push and release tiers execute coverage once without a duplicate npm t
     const commands = getTierCommands(tier);
     assert.equal(commands.filter((command) => command.id === "coverage").length, 1);
     assert.equal(commands.some((command) => command.id === "test"), false);
-    assert.ok(commands.some((command) => command.id === "mcp:test"));
+    assert.ok(commands.some((command) => command.id === "mcp:test:clean"));
     assert.ok(commands.some((command) => command.id === "pack:check"));
   }
 });

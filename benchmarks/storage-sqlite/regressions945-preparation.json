@@ -1,0 +1,44 @@
+{
+  "kind": "UNEXECUTED_REGRESSION_PREPARATION",
+  "observedAt": "2026-10-09T15:05:45Z",
+  "head": "3bafbb1217c0f5a3dafac7070f44076c21325fdc",
+  "benchmarkRevision": "20aca2ba332ed86323722ef91812925ad9dadb83",
+  "files": {
+    "tests/next-action-task-scope.test.js": "ef3004109e8b0b700e71169b5c5345d8b55f0ffd59c0264ac6a9419b0d465699",
+    "tests/next-action-continuity.test.js": "e00af12ea1f6c8ed1d0cdae5bee399e42bc9acc7ccd8a7716083c273e71d0200",
+    "tests/bundle.test.js": "b69527197f7acc671dc85fd0b3ddc96cd63063b60cba8f391bbb35878add72f6",
+    "tests/storage-task-scope.test.js": "eb893c50d48cedea609434d569fff36c32c8f407e5b86f049b3a651bf97efc70",
+    "tests/storage-migration-candidate.test.js": "2f65295bf865b783b406575923e4c3dfe946cd5deaafedca71d36e70f72e936c",
+    "src/core/next-action-continuity.js": "7db3c5703ad881a94cb793404f3144c7db4f27c977794ef90c40d1f22257425a",
+    "src/core/bundles.js": "9867a424d43b5301b5fcfab49b807e2334415f2839804c6cbaffccf9a3b08928"
+  },
+  "testsRun": false,
+  "productionChanged": false,
+  "preflight": "READY observed before test edits",
+  "coverage": [
+    "Selected EXECUTING task continuity retrieval and integration projection",
+    "Task-scoped invalid/stale continuity artifact paths and guidance; singleton fallback",
+    "Foreign-task continuity rejected despite valid rebound manifest digests",
+    "Public task-scope lease and overlapping claim rejection preserves rows and cleanup",
+    "Legacy sidecar exact byte capture without regeneration",
+    "Non-overlapping task scope update proceeds while another task lease remains held"
+  ],
+  "expectedDefects": [
+    "Selected task ID dropped during next-action continuity retrieval",
+    "Legacy singleton paths in selected-task continuity response",
+    "Portable bundle continuity identity not explicitly checked"
+  ],
+  "nextAction": "After benchmark terminal and cleanup, execute focused regressions before production corrections. Update existing pure fresh-continuity assertion from singleton paths to task paths with correction.",
+  "wholePlanAcceptance": false,
+  "syntaxValidation": {
+    "runtime": "Node 24.19.0",
+    "command": "node --check <each of the five modified test files>",
+    "results": "5/5 exit0",
+    "testBodiesExecuted": false
+  },
+  "staticLintValidation": {
+    "command": "node node_modules/eslint/bin/eslint.js tests/bundle.test.js tests/next-action-continuity.test.js tests/next-action-task-scope.test.js tests/storage-migration-candidate.test.js tests/storage-task-scope.test.js",
+    "exitCode": 0,
+    "testBodiesExecuted": false
+  }
+}

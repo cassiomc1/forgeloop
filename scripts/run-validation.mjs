@@ -77,7 +77,7 @@ const PREPUSH_COMMANDS = [
   ["repository:hygiene"],
   ["poc:evidence:verify"],
   ["poc:evidence:test"],
-  ["mcp:test"],
+  ["mcp:test:clean"],
   ["mcp:pack:check"],
   ["pack:check"],
 ];

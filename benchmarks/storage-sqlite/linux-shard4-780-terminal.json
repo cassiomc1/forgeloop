@@ -1,0 +1,16 @@
+{
+  "increment": 780,
+  "runId": 37691118116,
+  "jobId": 113031340145,
+  "sourceRevision": "f5230012e12c85ff5e6bd46c2d1488d83c6ebb1e",
+  "status": "completed",
+  "conclusion": "success",
+  "counts": {
+    "tests": 925,
+    "passed": 922,
+    "failed": 0,
+    "skipped": 3
+  },
+  "logSha256": "e1a741350ec47d62f27db070e15e3381d14f9c2e155d366ec0d2869edfbbad98",
+  "scope": "One coverage shard only; parent live; predates record-check775 and completion preparation780."
+}

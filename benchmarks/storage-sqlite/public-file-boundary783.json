@@ -1,0 +1,78 @@
+{
+  "increment": 783,
+  "sourceParent": "0e4812b",
+  "status": "REVIEWED_SUBSET",
+  "retrieval": {
+    "tool": "jevgrep0.8.0",
+    "exitCode": 0,
+    "relevantFiles": 90,
+    "logSha256": "97b19e9b9116ab290780d0378fdf6019c88557e76936758183f82766612c18f1"
+  },
+  "rawNamedCoreIOSites": 60,
+  "rawNamedCoreIOModules": 34,
+  "rawIOSearchSha256": "48fb6bf237f34f42ab7070da1ac1b481c9d013fae4cd464c0613add13f4b809b",
+  "reviewed": [
+    {
+      "path": "src/core/artifacts.js",
+      "sha256": "4667bc01b1f6416ee22e0de6788bb8ae21ce238b5ce9724961c92c06d0e92db2",
+      "disposition": "Canonical operational reads select native store or refuse migration; operational writers enter native transactions; portable output refuses canonical namespaces."
+    },
+    {
+      "path": "src/core/events.js",
+      "sha256": "270d8cb19abc637e5e6a432269aa0041b2830713b7375c9432d9e842040d83a2",
+      "disposition": "Canonical ledger selects store; explicit portable reader inspects files; native absence is distinct from legacy migration refusal."
+    },
+    {
+      "path": "src/core/task-lock.js",
+      "sha256": "00e5b217ca72c4b0fc7dab611d96b5e3d0d0c1b5f01116bce5900028ba38fefc",
+      "disposition": "Native task leases selected after existing project scope; filesystem lock reads retained for legacy owner inspection, not writable backend."
+    },
+    {
+      "path": "src/core/transaction.js",
+      "sha256": "e34f4c1cfe99e1c5112d9117fcc845e8d49eb581d9adb13f4e52c42a8cdef4ef",
+      "disposition": "Native withTaskTransaction delegates to unit-of-work; old manifests are inspected for migration exclusion; filesystem recovery explicitly unsupported."
+    },
+    {
+      "path": "src/core/handoff.js",
+      "sha256": "48f38209c4ad09c55a9877069c9e292fdcf3638fa6aae3b93a3165b1a1851bfd",
+      "disposition": "Existing native scope and operational artifact names before legacy directory enumeration."
+    },
+    {
+      "path": "src/core/structural-quality/artifacts.js",
+      "sha256": "52dc875b78e605a1296bec92d3689b066b96c894cb27e7aad3493c4f9454a71f",
+      "disposition": "Existing native scope and native evaluation catalog before file enumeration."
+    },
+    {
+      "path": "src/core/integration-resources.js",
+      "sha256": "e1d2820a430f44cd7cf75a5ff9c14d6d7d86abd9e0dc565b8fb3f9a04556984a",
+      "disposition": "Native resource catalog selected before directory fallback, under resource snapshot wrapper."
+    },
+    {
+      "path": "src/core/decision/resolver.js",
+      "sha256": "39b42a877aa38cf12613c2c92b8a0ac3b7bc1a0d83997bf7391b7c95ed9aa0a6",
+      "disposition": "Required decision resolution owns project snapshot; native decision names precede portable directory enumeration."
+    },
+    {
+      "path": "src/core/bundles.js",
+      "sha256": "9867a424d43b5301b5fcfab49b807e2334415f2839804c6cbaffccf9a3b08928",
+      "disposition": "Native catalog/payload snapshot and explicit portable output. Gate path string stripping defect reproduced and corrected in783; remote verification pending."
+    },
+    {
+      "path": "src/core/manifest.js",
+      "sha256": "9e29e1c9466bb0fc6a2ae9371a4f8bec995a01f11377684f0d66bcfa58221f4f",
+      "disposition": "Installation manifest remains file-owned by original plan; not code-manifest operational artifact."
+    },
+    {
+      "path": "src/core/task-discovery.js",
+      "sha256": "5a79849caef814dbf1208e297ee14116f892314df98e2481812dd5afcda3d5ad",
+      "disposition": "Native listTaskKeys selected before portable legacy directories; descriptorless source classification read-only."
+    },
+    {
+      "path": "src/core/task-migration-validation.js",
+      "sha256": "5316075dcc6682315ce825bbfefb3ff0eb8c9da334cb1cbcd19285ea756e7b26",
+      "disposition": "Explicit legacy migration snapshot validation reads portable files and fingerprints source; no operational writer."
+    }
+  ],
+  "limitation": "Named raw-I/O scan excludes wrappers, aliases and non-core surfaces. Source review is bounded discovery/authority evidence, not exhaustive public-path closure. Native enumerator and portable API negative controls are covered by fullMac781 before gate783 correction; new gate783 tests separately verified.",
+  "wholeConsumerClosure": false
+}

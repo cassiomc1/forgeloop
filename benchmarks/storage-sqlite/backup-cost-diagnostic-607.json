@@ -1,0 +1,684 @@
+{
+  "increment": 607,
+  "diagnosticOnly": true,
+  "instrumentation": "Temporary preload wraps built-in SQLite backup; production files unchanged",
+  "instrumentationSha256": "474e1fb7d47a50b9c78fda4bf284a68b638a5093ffe6516cec3dcd1a7d9985b1",
+  "limitations": [
+    "Instrumentation changes timing; not release benchmark evidence",
+    "One validation invocation plus ten samples per profile",
+    "Backup duration excludes read-only open, snapshot cleanup and trace validation"
+  ],
+  "groups": [
+    {
+      "fixture": "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-E17JXd",
+      "operation": "task-list",
+      "calls": 11,
+      "p50Ms": 5.3336670000000055,
+      "maxMs": 13.218916999999998
+    },
+    {
+      "fixture": "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-E17JXd",
+      "operation": "history",
+      "calls": 11,
+      "p50Ms": 5.952500000000001,
+      "maxMs": 14.911500000000004
+    },
+    {
+      "fixture": "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-uF607k",
+      "operation": "task-list",
+      "calls": 11,
+      "p50Ms": 31.316166999999993,
+      "maxMs": 56.158500000000004
+    },
+    {
+      "fixture": "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-uF607k",
+      "operation": "history",
+      "calls": 11,
+      "p50Ms": 29.713250000000002,
+      "maxMs": 39.308334
+    }
+  ],
+  "rawBackupCalls": [
+    {
+      "pid": 96089,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/scripts/benchmark-storage-populated-cli.mjs",
+        "--baseline-root=/tmp/forgeloop-storage-baseline322",
+        "--sizes=10,1000",
+        "--events=10",
+        "--selected-events=1000",
+        "--repeats=10"
+      ],
+      "backupMs": 3.9145829999999933
+    },
+    {
+      "pid": 96114,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "task-list",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-E17JXd",
+        "--json"
+      ],
+      "backupMs": 5.3336670000000055
+    },
+    {
+      "pid": 96115,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "task-list",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-E17JXd",
+        "--json"
+      ],
+      "backupMs": 7.217499999999994
+    },
+    {
+      "pid": 96120,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "task-list",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-E17JXd",
+        "--json"
+      ],
+      "backupMs": 2.704041999999994
+    },
+    {
+      "pid": 96121,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "task-list",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-E17JXd",
+        "--json"
+      ],
+      "backupMs": 2.939
+    },
+    {
+      "pid": 96124,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "task-list",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-E17JXd",
+        "--json"
+      ],
+      "backupMs": 2.7455830000000034
+    },
+    {
+      "pid": 96125,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "task-list",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-E17JXd",
+        "--json"
+      ],
+      "backupMs": 2.655583
+    },
+    {
+      "pid": 96128,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "task-list",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-E17JXd",
+        "--json"
+      ],
+      "backupMs": 4.5056670000000025
+    },
+    {
+      "pid": 96129,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "task-list",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-E17JXd",
+        "--json"
+      ],
+      "backupMs": 9.218833000000004
+    },
+    {
+      "pid": 96132,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "task-list",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-E17JXd",
+        "--json"
+      ],
+      "backupMs": 7.735166000000007
+    },
+    {
+      "pid": 96133,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "task-list",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-E17JXd",
+        "--json"
+      ],
+      "backupMs": 7.645166999999994
+    },
+    {
+      "pid": 96136,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "task-list",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-E17JXd",
+        "--json"
+      ],
+      "backupMs": 13.218916999999998
+    },
+    {
+      "pid": 96138,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "history",
+        "--task",
+        "populated-cli-00000",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-E17JXd",
+        "--json"
+      ],
+      "backupMs": 5.952500000000001
+    },
+    {
+      "pid": 96139,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "history",
+        "--task",
+        "populated-cli-00000",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-E17JXd",
+        "--json"
+      ],
+      "backupMs": 8.443582999999997
+    },
+    {
+      "pid": 96142,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "history",
+        "--task",
+        "populated-cli-00000",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-E17JXd",
+        "--json"
+      ],
+      "backupMs": 14.911500000000004
+    },
+    {
+      "pid": 96143,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "history",
+        "--task",
+        "populated-cli-00000",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-E17JXd",
+        "--json"
+      ],
+      "backupMs": 6.369708999999993
+    },
+    {
+      "pid": 96146,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "history",
+        "--task",
+        "populated-cli-00000",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-E17JXd",
+        "--json"
+      ],
+      "backupMs": 4.987499999999997
+    },
+    {
+      "pid": 96147,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "history",
+        "--task",
+        "populated-cli-00000",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-E17JXd",
+        "--json"
+      ],
+      "backupMs": 4.698708000000003
+    },
+    {
+      "pid": 96150,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "history",
+        "--task",
+        "populated-cli-00000",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-E17JXd",
+        "--json"
+      ],
+      "backupMs": 4.229833999999997
+    },
+    {
+      "pid": 96151,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "history",
+        "--task",
+        "populated-cli-00000",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-E17JXd",
+        "--json"
+      ],
+      "backupMs": 8.040375000000004
+    },
+    {
+      "pid": 96155,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "history",
+        "--task",
+        "populated-cli-00000",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-E17JXd",
+        "--json"
+      ],
+      "backupMs": 5.967084
+    },
+    {
+      "pid": 96156,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "history",
+        "--task",
+        "populated-cli-00000",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-E17JXd",
+        "--json"
+      ],
+      "backupMs": 4.618791999999999
+    },
+    {
+      "pid": 96191,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "history",
+        "--task",
+        "populated-cli-00000",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-E17JXd",
+        "--json"
+      ],
+      "backupMs": 4.959833000000003
+    },
+    {
+      "pid": 96089,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/scripts/benchmark-storage-populated-cli.mjs",
+        "--baseline-root=/tmp/forgeloop-storage-baseline322",
+        "--sizes=10,1000",
+        "--events=10",
+        "--selected-events=1000",
+        "--repeats=10"
+      ],
+      "backupMs": 78.22245899999962
+    },
+    {
+      "pid": 96287,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "task-list",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-uF607k",
+        "--json"
+      ],
+      "backupMs": 56.158500000000004
+    },
+    {
+      "pid": 96289,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "task-list",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-uF607k",
+        "--json"
+      ],
+      "backupMs": 52.784583
+    },
+    {
+      "pid": 96326,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "task-list",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-uF607k",
+        "--json"
+      ],
+      "backupMs": 46.53908299999999
+    },
+    {
+      "pid": 96454,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "task-list",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-uF607k",
+        "--json"
+      ],
+      "backupMs": 29.208416
+    },
+    {
+      "pid": 96462,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "task-list",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-uF607k",
+        "--json"
+      ],
+      "backupMs": 28.152874999999995
+    },
+    {
+      "pid": 96464,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "task-list",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-uF607k",
+        "--json"
+      ],
+      "backupMs": 28.845249999999993
+    },
+    {
+      "pid": 96467,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "task-list",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-uF607k",
+        "--json"
+      ],
+      "backupMs": 47.61962499999999
+    },
+    {
+      "pid": 96469,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "task-list",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-uF607k",
+        "--json"
+      ],
+      "backupMs": 36.397208
+    },
+    {
+      "pid": 96472,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "task-list",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-uF607k",
+        "--json"
+      ],
+      "backupMs": 31.316166999999993
+    },
+    {
+      "pid": 96474,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "task-list",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-uF607k",
+        "--json"
+      ],
+      "backupMs": 30.101249999999993
+    },
+    {
+      "pid": 96478,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "task-list",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-uF607k",
+        "--json"
+      ],
+      "backupMs": 28.11025
+    },
+    {
+      "pid": 96481,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "history",
+        "--task",
+        "populated-cli-00000",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-uF607k",
+        "--json"
+      ],
+      "backupMs": 27.906415999999993
+    },
+    {
+      "pid": 96482,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "history",
+        "--task",
+        "populated-cli-00000",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-uF607k",
+        "--json"
+      ],
+      "backupMs": 28.851667
+    },
+    {
+      "pid": 96485,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "history",
+        "--task",
+        "populated-cli-00000",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-uF607k",
+        "--json"
+      ],
+      "backupMs": 28.679333
+    },
+    {
+      "pid": 96486,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "history",
+        "--task",
+        "populated-cli-00000",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-uF607k",
+        "--json"
+      ],
+      "backupMs": 39.308334
+    },
+    {
+      "pid": 96489,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "history",
+        "--task",
+        "populated-cli-00000",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-uF607k",
+        "--json"
+      ],
+      "backupMs": 30.436958000000004
+    },
+    {
+      "pid": 96490,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "history",
+        "--task",
+        "populated-cli-00000",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-uF607k",
+        "--json"
+      ],
+      "backupMs": 27.021167
+    },
+    {
+      "pid": 96494,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "history",
+        "--task",
+        "populated-cli-00000",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-uF607k",
+        "--json"
+      ],
+      "backupMs": 32.06162500000001
+    },
+    {
+      "pid": 96496,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "history",
+        "--task",
+        "populated-cli-00000",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-uF607k",
+        "--json"
+      ],
+      "backupMs": 29.713250000000002
+    },
+    {
+      "pid": 96501,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "history",
+        "--task",
+        "populated-cli-00000",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-uF607k",
+        "--json"
+      ],
+      "backupMs": 34.554458
+    },
+    {
+      "pid": 96502,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "history",
+        "--task",
+        "populated-cli-00000",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-uF607k",
+        "--json"
+      ],
+      "backupMs": 32.198541
+    },
+    {
+      "pid": 96505,
+      "args": [
+        "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop/src/cli.js",
+        "history",
+        "--task",
+        "populated-cli-00000",
+        "--limit",
+        "5",
+        "--path",
+        "/var/folders/x2/vdbmktcj2914nqfghghdwv_w0000gn/T/forgeloop-populated-native-uF607k",
+        "--json"
+      ],
+      "backupMs": 27.69904199999999
+    }
+  ],
+  "interpretation": "Large fixture backup median approximately30ms versus6ms small; observed contribution to history growth, not complete attribution. Snapshot isolation remains unchanged."
+}

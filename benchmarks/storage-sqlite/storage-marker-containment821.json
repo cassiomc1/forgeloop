@@ -1,0 +1,56 @@
+{
+  "increment": 821,
+  "baseRevision": "c3b7f1fea08ce779b11edfe0bc0f5d6f476f7d01",
+  "sourceHashes": {
+    "src/storage/storage-marker.js": "57f3921adb57030bd9374d38eff1f83fdbd7e2b0c58cc1d18c3edf8a0900facd",
+    "tests/storage-marker-containment.test.js": "eb1c2710491ca074a1494984ef31e845441f5d10e4582beb25a1ae547bf7fccd"
+  },
+  "before": {
+    "swapped": true,
+    "accepted": true,
+    "selectedOutsideMarker": true,
+    "errorCode": null
+  },
+  "parentBefore": {
+    "swapped": true,
+    "accepted": true,
+    "selectedOutsideMarker": true,
+    "errorCode": null
+  },
+  "after": {
+    "swapped": true,
+    "accepted": false,
+    "selectedOutsideMarker": false,
+    "errorCode": "E_STORAGE_VERSION_MARKER_INVALID"
+  },
+  "parentAfter": {
+    "swapped": true,
+    "accepted": false,
+    "selectedOutsideMarker": false,
+    "errorCode": "E_STORAGE_VERSION_MARKER_INVALID"
+  },
+  "focusedTests": {
+    "tests": 25,
+    "pass": 25,
+    "fail": 0,
+    "skip": 0
+  },
+  "preflight": "READY",
+  "complexity": "PASS",
+  "changedFileLint": "PASS",
+  "controls": [
+    "Native no-follow and descriptor fallback reject swapped final-component symlink",
+    "Containment rechecks reject swapped parent symlink",
+    "Outside evidence and retained swapped pathname preserved",
+    "Valid JSON survives seven-byte short reads",
+    "Growth after descriptor stat rejected with at most 65537 bytes returned"
+  ],
+  "limits": [
+    "Three symlink controls explicitly skip Windows",
+    "Descriptor fallback verified on Mac only",
+    "Full changed-source platform validation pending",
+    "Historical full Mac820 predates this correction",
+    "Whole maintenance/consumer closure not established"
+  ],
+  "fast": "PASS"
+}

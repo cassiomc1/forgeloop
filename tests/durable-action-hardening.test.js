@@ -1,5 +1,7 @@
+import { removeTempTree } from "./helpers/rm-safe.js";
+import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { access, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
+import { access, mkdir, mkdtemp, readFile, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -62,7 +64,7 @@ test("started side effect that times out becomes COMMIT_UNKNOWN", async () => {
     assert.equal(result.execution.termination, "timeout");
     assert.equal(result.action.state, "COMMIT_UNKNOWN");
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -81,7 +83,7 @@ test("started side effect with non-zero exit becomes COMMIT_UNKNOWN", async () =
     assert.equal(result.execution.exitCode, 2);
     assert.equal(result.action.state, "COMMIT_UNKNOWN");
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -101,7 +103,7 @@ test("ACTION_AUTHORIZED records the exact capability-policy decision", async () 
     assert.equal(authorized?.details?.capabilityDecision, "ALLOW");
     assert.match(authorized?.details?.capabilityPolicyFingerprint ?? "", /^[a-f0-9]{64}$/);
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -109,6 +111,7 @@ test("HOST_ATTESTED approval cannot be minted without a trusted host boundary", 
   const target = await makeTarget();
   const taskId = "task-approval-boundary";
   try {
+    await ensureFixtureTask(target, taskId, packageRoot);
     await writeWorkState(target, createWorkState({
       taskId,
       contractFingerprint: fingerprint,
@@ -143,7 +146,7 @@ test("HOST_ATTESTED approval cannot be minted without a trusted host boundary", 
       (error) => error.code === "E_ACTION_AUTHORITY_REQUIRED",
     );
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -160,7 +163,7 @@ test("public action-propose records caller provenance, never HOST_REPORTED", asy
     });
     assert.equal(result.action.provenance, "CALLER_REPORTED");
   } finally {
-    await rm(target, { recursive: true, force: true });
+    await removeTempTree(target);
   }
 });
 
@@ -191,11 +194,11 @@ test("durable action writes reject a symlinked actions directory", { skip: proce
         ...writeActionInput({ actionId: "action-escape", idempotencyKey: "escape:v1" }),
         provenance: "HOST_REPORTED",
       }}),
-      /symlink|inside target|safe path/i,
+      (error) => error.code === "E_STORAGE_MIGRATION_REQUIRED",
     );
     await assert.rejects(access(path.join(outside, "action-escape.json")));
   } finally {
-    await rm(target, { recursive: true, force: true });
-    await rm(outside, { recursive: true, force: true });
+    await removeTempTree(target);
+    await removeTempTree(outside);
   }
 });

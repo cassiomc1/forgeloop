@@ -1,0 +1,11 @@
+{
+  "increment": 826,
+  "sourceRevision": "adb3ff04179bd4c1606c2f16ee671d25be0d078d",
+  "cwd": "/Users/cassio/.codex/worktrees/sqlite-end-to-end/forgeloop",
+  "exitCode": 0,
+  "elapsedSeconds": 98.26284003257751,
+  "manifestFiles": 2939,
+  "admittedSourceUnchanged": true,
+  "status": "PASS",
+  "scope": "Matched populated CLI benchmark on frozen working checkout; manifest checked before and after; no concurrent tests admitted."
+}

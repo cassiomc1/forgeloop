@@ -1,0 +1,56 @@
+{
+  "kind": "CONTINUITY_SUPPLIED_CONTEXT_BOUNDARY",
+  "capturedAt": "2026-10-10T00:08:59.038809+00:00",
+  "sourceHashes": {
+    "src/core/continuity.js": "f16e6bf582bbc47db10bd235b5b367e14b0787cdc12799c904d2c61a6ef9acf5",
+    "src/core/continuity-reconciliation.js": "bbabc2bbeb9fc814320c5b441a1b32561bba3f2470cb88f663944e32e3c4b6d7",
+    "src/core/artifacts.js": "9918630246526217eb15d6f65f2f547cd73f5b0e34b0002bd46395a6d767c3ef",
+    "src/storage/unit-of-work.js": "68d361d64bb345a10e99405e5d14d830143f5731a8b32900e0087e264760c307",
+    "src/storage/project-boundary.js": "f9206ae43b67467556430679d6f925bb5dcad14cec1cab12b214af358ed470b3",
+    "tests/helpers/canonical-diagnosis-fixture.js": "add6d2df4664967e203ae93061e649fb3b16f132ee39626c151018679383769f"
+  },
+  "controls": {
+    "tests": 3,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "runtime": "Node 24.19.0/macOS arm64",
+    "productionChanged": false,
+    "testFile": "/Users/cassio/.codex/verification/continuity-supplied-context-controls.mjs",
+    "testSha256": "7026561d31fb6af1222889256c8c324a11ad585b99fa89fc6c68835bcfb7051e",
+    "log": "/Users/cassio/.codex/verification/continuity-supplied-context-controls-all-table.log",
+    "logSha256": "44ace5d54d3e5ee4ece056ce4895436b01244ad31814eb0e8c6afc90f1db31f9"
+  },
+  "findings": [
+    "A caller-supplied phase binds only advisory continuity; native reconciliation compares canonical work-state and refuses FRESH.",
+    "A caller-supplied replacement contract and matching supplied state do not replace canonical contract/state; native reconciliation refuses FRESH.",
+    "A different task identity rejects with E_TASK_CONTEXT_MISMATCH; every logical table is unchanged.",
+    "Accepted advisory writes change only one continuity artifact and optional ordinary transaction commit witnesses. All other artifacts/tables, existing events, canonical contract and lifecycle state remain unchanged."
+  ],
+  "fixtureDiagnosis": {
+    "initialExpectedCode": "E_STORAGE_PAYLOAD_MISMATCH",
+    "actualExistingBoundaryCode": "E_TASK_CONTEXT_MISMATCH",
+    "sourceReviewed": "src/storage/unit-of-work.js:assertMutationTask",
+    "initialLogSha256": "613da4b91fb0529f0c9da391156c741845deb030947c766175875192359ba958",
+    "productionFixRequired": false
+  },
+  "remaining": [
+    "The new tests were added after full prepush 40328bf and have focused/fast validation; final whole-source validation remains required.",
+    "Public projections/transport, race scenarios, complete transitive closure and current platform execution remain separate."
+  ],
+  "wholePlanAcceptance": false,
+  "productionSourceRevision": "40328bfa0932554ec7e638dd9928a089fd5f92a4",
+  "sourceRevision": "47ed1c9e24539aa84d773b126a0c89beb1fa77e5",
+  "maintainedTest": {
+    "path": "tests/storage-continuity-supplied-context.test.js",
+    "sha256": "de3e58305eb9d710b015ce3df0df167bda96403d5434c4a9375e962e38cd2371",
+    "focusedTests": 20,
+    "passed": 20,
+    "failed": 0,
+    "skipped": 0,
+    "log": "/Users/cassio/.codex/verification/continuity-supplied-context-maintained-focused.log",
+    "logSha256": "54893bf7542c3141956789cba6a3465862474f2927d926ac0c677958bfa7097f",
+    "fast": "passed",
+    "fastLogSha256": "3abfc2331d62daf141658ebfcee80b000df4ff6553d31abe84415614aa955265"
+  }
+}

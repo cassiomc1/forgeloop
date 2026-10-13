@@ -1,11 +1,13 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
 
 import { removeTempTree } from "./helpers/rm-safe.js";
-import { ARTIFACT_PATHS } from "../src/core/artifacts.js";
+import { buildTaskArtifactPaths } from "../src/core/task-paths.js";
+import { ensureFixtureTask, readRawFixtureText, deleteFixtureArtifact } from "./helpers/native-storage-fixture.js";
+const ARTIFACT_PATHS = buildTaskArtifactPaths("resumable-001");
 import { createContract, contractFingerprint, writeContract } from "../src/core/contract.js";
 import { validateEventLedger } from "../src/core/events.js";
 import { createGate } from "./helpers/gates.js";
@@ -25,6 +27,7 @@ const packageRoot = getPackageRoot();
 async function withTarget(run) {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-resumable-"));
   try {
+    await ensureFixtureTask(target, "resumable-001", packageRoot);
     await run(target);
   } finally {
     await removeTempTree(target);
@@ -44,12 +47,12 @@ async function prepareTarget(target, { threatBoundary = true } = {}) {
     unresolvedDecisions: [],
     sourceRefs: [],
   });
-  await writeContract(target, contract, packageRoot);
+  await writeContract(target, contract, packageRoot, { taskId: contract.taskId });
   await persistRoute(
     target,
     evaluateRoute({ workType: "complete-website", surfaces: ["ui"], platforms: ["web"] }),
     packageRoot,
-    { contractFingerprint: contractFingerprint(contract) },
+    { contractFingerprint: contractFingerprint(contract), taskId: contract.taskId },
   );
   for (const gate of ["design", "quality", ...(threatBoundary ? ["threat-boundary"] : [])]) {
     await persistGate(target, createGate({
@@ -62,7 +65,7 @@ async function prepareTarget(target, { threatBoundary = true } = {}) {
       unknowns: [],
       approvedAssumptions: [],
       evidence: [],
-    }), packageRoot);
+    }), packageRoot, { taskId: "resumable-001" });
   }
   return contract;
 }
@@ -70,9 +73,9 @@ async function prepareTarget(target, { threatBoundary = true } = {}) {
 test("READY preflight durably creates a resumable checkpoint and complete activation chronology", async () => {
   await withTarget(async (target) => {
     const contract = await prepareTarget(target);
-    const result = await runPreflight({ target, packageRoot });
-    const state = await readWorkState(target, packageRoot);
-    const ledger = await validateEventLedger(target, packageRoot);
+    const result = await runPreflight({ target, packageRoot, taskId: "resumable-001" });
+    const state = await readWorkState(target, { packageRoot, taskId: "resumable-001" });
+    const ledger = await validateEventLedger(target, packageRoot, { taskId: "resumable-001" });
 
     assert.equal(result.status, "READY");
     assert.equal(state.taskId, contract.taskId);
@@ -87,28 +90,29 @@ test("READY preflight durably creates a resumable checkpoint and complete activa
         "GATE_SATISFIED",
         "GATE_SATISFIED",
         "PREFLIGHT_READY",
+        "TRANSACTION_COMMITTED",
       ],
     );
     assert.equal(ledger.valid, true);
-    assert.notEqual((await getNextAction({ target, packageRoot })).nextAction, NEXT_ACTIONS.DISCOVER);
+    assert.notEqual((await getNextAction({ target, packageRoot, taskId: "resumable-001" })).nextAction, NEXT_ACTIONS.DISCOVER);
   });
 });
 
 test("rebuilt VERIFYING checkpoints preserve the verification cycle recorded by the ledger", async () => {
   await withTarget(async (target) => {
     await prepareTarget(target);
-    assert.equal((await runPreflight({ target, packageRoot })).status, "READY");
-    await advanceWorkState(target, "PLANNED", { packageRoot });
-    await advanceWorkState(target, "EXECUTING", { packageRoot });
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
+    assert.equal((await runPreflight({ target, packageRoot, taskId: "resumable-001" })).status, "READY");
+    await advanceWorkState(target, "PLANNED", { packageRoot, taskId: "resumable-001" });
+    await advanceWorkState(target, "EXECUTING", { packageRoot, taskId: "resumable-001" });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "resumable-001" });
 
-    const active = await readWorkState(target, packageRoot);
+    const active = await readWorkState(target, { packageRoot, taskId: "resumable-001" });
     assert.equal(active.phase, "VERIFYING");
     assert.equal(active.verificationCycle, 1);
 
-    await clearWorkState(target);
-    const restoredPreflight = await runPreflight({ target, packageRoot });
-    const restored = await readWorkState(target, packageRoot);
+    await clearWorkState(target, { packageRoot, taskId: "resumable-001" });
+    const restoredPreflight = await runPreflight({ target, packageRoot, taskId: "resumable-001" });
+    const restored = await readWorkState(target, { packageRoot, taskId: "resumable-001" });
 
     assert.equal(restoredPreflight.status, "READY");
     assert.equal(restored.phase, "VERIFYING");
@@ -119,21 +123,21 @@ test("rebuilt VERIFYING checkpoints preserve the verification cycle recorded by 
 test("rebuilt REVIEWING checkpoints restore the review phase instead of regressing to VERIFYING", async () => {
   await withTarget(async (target) => {
     await prepareTarget(target);
-    assert.equal((await runPreflight({ target, packageRoot })).status, "READY");
-    await advanceWorkState(target, "PLANNED", { packageRoot });
-    await advanceWorkState(target, "EXECUTING", { packageRoot });
-    await advanceWorkState(target, "VERIFYING", { packageRoot });
-    await advanceWorkState(target, "REVIEWING", { packageRoot });
+    assert.equal((await runPreflight({ target, packageRoot, taskId: "resumable-001" })).status, "READY");
+    await advanceWorkState(target, "PLANNED", { packageRoot, taskId: "resumable-001" });
+    await advanceWorkState(target, "EXECUTING", { packageRoot, taskId: "resumable-001" });
+    await advanceWorkState(target, "VERIFYING", { packageRoot, taskId: "resumable-001" });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId: "resumable-001" });
 
-    await clearWorkState(target);
-    const restoredPreflight = await runPreflight({ target, packageRoot });
-    const restored = await readWorkState(target, packageRoot);
+    await clearWorkState(target, { packageRoot, taskId: "resumable-001" });
+    const restoredPreflight = await runPreflight({ target, packageRoot, taskId: "resumable-001" });
+    const restored = await readWorkState(target, { packageRoot, taskId: "resumable-001" });
 
     assert.equal(restoredPreflight.status, "READY");
     assert.equal(restored.phase, "REVIEWING");
     assert.equal(restored.verificationCycle, 1);
 
-    const ledger = await validateEventLedger(target, packageRoot);
+    const ledger = await validateEventLedger(target, packageRoot, { taskId: "resumable-001" });
     assert.equal(ledger.valid, true, JSON.stringify(ledger.errors ?? []));
     const { validateStateLedgerCoherence } = await import("../src/core/events.js");
     assert.deepEqual(validateStateLedgerCoherence(restored, ledger.events), []);
@@ -143,16 +147,16 @@ test("rebuilt REVIEWING checkpoints restore the review phase instead of regressi
 test("next reports a dedicated blocker when a persisted READY preflight loses its checkpoint", async () => {
   await withTarget(async (target) => {
     await prepareTarget(target);
-    assert.equal((await runPreflight({ target, packageRoot })).status, "READY");
-    await rm(path.join(target, ARTIFACT_PATHS.state), { force: true });
+    assert.equal((await runPreflight({ target, packageRoot, taskId: "resumable-001" })).status, "READY");
+    await deleteFixtureArtifact(target, ARTIFACT_PATHS.state);
 
-    const next = await getNextAction({ target, packageRoot });
+    const next = await getNextAction({ target, packageRoot, taskId: "resumable-001" });
 
     assert.equal(next.nextAction, NEXT_ACTIONS.RESOLVE_BLOCKER);
     assert.ok(next.reasonCodes.includes("E_STATE_MISSING_AFTER_PREFLIGHT_READY"));
     assert.ok(next.missingArtifacts.includes(ARTIFACT_PATHS.state));
 
-    const audit = await evaluateAudit({ target, packageRoot });
+    const audit = await evaluateAudit({ target, packageRoot, taskId: "resumable-001" });
     assert.ok(audit.errors.some((error) => error.code === "E_STATE_MISSING_AFTER_PREFLIGHT_READY"));
     const protocol = await runValidateProtocol({
       target,
@@ -169,10 +173,10 @@ test("next reports a dedicated blocker when a persisted READY preflight loses it
 test("BLOCKED to READY recovery appends only recovery events and preserves the hash chain", async () => {
   await withTarget(async (target) => {
     const contract = await prepareTarget(target, { threatBoundary: false });
-    const blocked = await runPreflight({ target, packageRoot });
+    const blocked = await runPreflight({ target, packageRoot, taskId: "resumable-001" });
     assert.equal(blocked.status, "BLOCKED");
 
-    const blockedLedger = await validateEventLedger(target, packageRoot);
+    const blockedLedger = await validateEventLedger(target, packageRoot, { taskId: "resumable-001" });
     assert.equal(blockedLedger.valid, true);
     assert.ok(blockedLedger.events.some((event) => event.event === "PREFLIGHT_BLOCKED"));
 
@@ -186,20 +190,21 @@ test("BLOCKED to READY recovery appends only recovery events and preserves the h
       unknowns: [],
       approvedAssumptions: [],
       evidence: [],
-    }), packageRoot);
-    const ready = await runPreflight({ target, packageRoot });
-    const ledger = await validateEventLedger(target, packageRoot);
+    }), packageRoot, { taskId: "resumable-001" });
+    const ready = await runPreflight({ target, packageRoot, taskId: "resumable-001" });
+    const ledger = await validateEventLedger(target, packageRoot, { taskId: "resumable-001" });
     const names = ledger.events.map((event) => event.event);
 
     assert.equal(ready.status, "READY");
     assert.equal(ledger.valid, true);
     assert.equal(names.filter((event) => event === "PREFLIGHT_BLOCKED").length, 1);
-    assert.equal(names.at(-1), "PREFLIGHT_READY");
+    assert.equal(names.at(-2), "PREFLIGHT_READY");
+    assert.equal(names.at(-1), "TRANSACTION_COMMITTED");
     assert.equal(names.filter((event) => event === "GATE_SATISFIED").length, 3);
     for (let index = 1; index < ledger.events.length; index += 1) {
       assert.equal(ledger.events[index].previousHash, ledger.events[index - 1].hash);
     }
-    assert.equal((await getNextAction({ target, packageRoot })).nextAction, NEXT_ACTIONS.PLAN);
-    assert.ok(await readFile(path.join(target, ARTIFACT_PATHS.preflight), "utf8"));
+    assert.equal((await getNextAction({ target, packageRoot, taskId: "resumable-001" })).nextAction, NEXT_ACTIONS.PLAN);
+    assert.ok(await readRawFixtureText(target, ARTIFACT_PATHS.preflight));
   });
 });

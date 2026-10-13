@@ -1,0 +1,35 @@
+{
+  "kind": "public-secondary-atomicity-regression",
+  "sourceRevision": "62c8d3d",
+  "node": "v24.19.0",
+  "environmentRemoved": [
+    "TYPESAFE_API_KEY",
+    "NODE_OPTIONS"
+  ],
+  "tests": 5,
+  "passed": 5,
+  "failed": 0,
+  "skipped": 0,
+  "commands": [
+    "responsibility-set",
+    "handoff-accept",
+    "record-intervention",
+    "record-hypothesis-disposition",
+    "record-decision-criterion"
+  ],
+  "assertions": [
+    "public wrapper event publication failure",
+    "complete table snapshot unchanged",
+    "no open transaction",
+    "retry exactly one domain event followed by exact-operation commit witness"
+  ],
+  "testSha256": "1a454e0cd7ec4ea2a4f1043f81c491384dbb7fd3748b692513dcee501029b400",
+  "log": {
+    "path": "/Users/cassio/.codex/verification/public-secondary-62c8d3d.log",
+    "sha256": "f47791df8a40bdf5fd9b3850b25ed92ac442c9e443279b53cf25354c30fdc570"
+  },
+  "limitations": [
+    "Focused domain-event fault controls; remaining action/evaluation/repair/closure families still require evidence.",
+    "No production changes or performance measurement."
+  ]
+}

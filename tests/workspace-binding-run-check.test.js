@@ -1,5 +1,6 @@
+import { readFixtureText, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import { test } from "node:test";
 
 import { runCheck } from "../src/commands/run-check.js";
@@ -20,9 +21,9 @@ test("run-check refuses to launch verification when the bound worktree drifts", 
     await setupVerifyingTask(target, packageRoot, { taskId });
     await bindTaskWorkspace(target, { taskId, packageRoot });
     const bindingPath = taskWorkspaceBindingPath(taskId);
-    const binding = JSON.parse(await readFile(`${target}/${bindingPath}`, "utf8"));
+    const binding = JSON.parse(await readFixtureText(target, bindingPath));
     binding.workspaceIdentity = "e".repeat(64);
-    await writeFile(`${target}/${bindingPath}`, `${JSON.stringify(binding)}\n`, "utf8");
+    await overwriteFixtureText(target, bindingPath, `${JSON.stringify(binding)}\n`);
 
     await assert.rejects(
       () => runCheck({

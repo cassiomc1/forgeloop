@@ -1,7 +1,10 @@
+import { getOperationalStore } from "../storage/operational-context.js";
+import { withEventLedgerAudit } from "./events.js";
 import { canonicalFingerprint } from "./artifacts.js";
 import { assertContinuitySemantics, readContinuity } from "./continuity.js";
 import { WORK_TRANSITIONS } from "./protocol.js";
 import { lintContinuity } from "./continuity-lint.js";
+import { withNativeReadScope } from "./native-storage.js";
 
 const RECONCILIATION_CODE = "E_CONTINUITY_RECONCILIATION_REQUIRED";
 
@@ -171,6 +174,14 @@ export function classifyContinuity({
 }
 
 export async function reconcileContinuity({ target, packageRoot, taskId = null } = {}) {
+  const read = () => reconcileLoadedContinuity({ target, packageRoot, taskId });
+  return withNativeReadScope(target, () => {
+    if (getOperationalStore(target) && taskId) return withEventLedgerAudit(target, packageRoot, { taskId }, read);
+    return read();
+  });
+}
+
+async function reconcileLoadedContinuity({ target, packageRoot, taskId }) {
   const [{ readWorkState }, { readContract }, repository] = await Promise.all([
     import("./work-state.js"),
     import("./contract.js"),
@@ -267,12 +278,14 @@ async function resolveLatestHandoffSafe(target, { packageRoot, taskId } = {}) {
 
 async function deriveDiagnosticContextSafe({ target, packageRoot, state }) {
   try {
-    const [{ readEvents }, { deriveDiagnosticContext }] = await Promise.all([
+    const [{ withEventLedgerAudit }, { deriveDiagnosticContext }] = await Promise.all([
       import("./events.js"),
       import("./reflection.js"),
     ]);
-    const events = await readEvents(target, packageRoot, { taskId: state?.taskId ?? null });
-    return { present: true, ...deriveDiagnosticContext(events, state) };
+    return await withEventLedgerAudit(target, packageRoot, { taskId: state?.taskId ?? null }, audit => {
+      if (!audit.valid) return { present: false };
+      return { present: true, ...deriveDiagnosticContext(audit.events, state) };
+    });
   } catch {
     return { present: false };
   }

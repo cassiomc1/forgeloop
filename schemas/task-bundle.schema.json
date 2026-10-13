@@ -5,10 +5,15 @@
   "type": "object",
   "required": ["schemaVersion", "protocolVersion", "taskId", "artifacts"],
   "properties": {
-    "schemaVersion": { "const": 1 },
+    "schemaVersion": { "enum": [1, 2] },
     "protocolVersion": { "const": 1 },
     "taskId": { "type": "string", "minLength": 1 },
-    "artifacts": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+    "artifacts": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "files": { "type": "array", "items": { "type": "object", "required": ["path", "size", "sha256"], "properties": { "path": { "type": "string", "minLength": 1 }, "size": { "type": "integer", "minimum": 0 }, "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" } }, "additionalProperties": false } }
   },
+  "oneOf": [
+    { "properties": { "schemaVersion": { "const": 1 } } },
+    { "properties": { "schemaVersion": { "const": 2 } }, "required": ["files"] }
+  ],
   "additionalProperties": false
 }

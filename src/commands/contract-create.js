@@ -15,6 +15,7 @@ import {
 } from "../core/resumability.js";
 import { taskArtifactPath } from "../core/task-paths.js";
 import { ensureSemanticDecision } from "../core/decision/service.js";
+import { operationalArtifactExists } from "../storage/operational-context.js";
 
 function bootstrapInconsistent(message, candidate = false) {
   const error = new Error(message);
@@ -176,7 +177,8 @@ export async function runContractCreate({ target, packageRoot, taskId, task, con
     // fingerprint to prove idempotent equivalence; it never redefines the
     // canonical historical contract.
     const existingContractPath = taskArtifactPath(ctx.taskId, "contract");
-    if (await fileExists(ensureWithin(target, existingContractPath)).catch(() => false)) {
+    if (operationalArtifactExists(target, existingContractPath)
+      ?? await fileExists(ensureWithin(target, existingContractPath)).catch(() => false)) {
       const existingContract = await readContract(target, packageRoot, { taskId: ctx.taskId });
       const existingLedger = await validateEventLedger(target, packageRoot, { taskId: ctx.taskId });
       const validatedContractEvents = existingLedger.events.filter(

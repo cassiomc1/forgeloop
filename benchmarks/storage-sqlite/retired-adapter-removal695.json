@@ -1,0 +1,11 @@
+{
+  "removedFile": "src/storage/execution-prerequisites.js",
+  "previousSha256": "5f3456598a675a2e96e9ec97a1799801ab32b4e967d64dd1a29cdfbfe910bcd4",
+  "removedNonblankProductionLines": 101,
+  "reason": "Unused storage-side prerequisite adapter retained after active phase path consolidated on shared core validation",
+  "referenceAudit": "Exact function/module search across production, tests, docs and scripts finds no callers or imports; package exports only root and integration; storage index does not export this adapter",
+  "preserved": "Shared core execution prerequisites, phase validator, importer/exporter and maintenance owners retained",
+  "checks": "47 storage/preflight tests and 25 phase/package tests passed; lint and fast verification passed",
+  "wholeScopeVerified": false,
+  "releaseTargetMet": false
+}

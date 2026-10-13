@@ -324,6 +324,20 @@ export function defaultCommandInputValues() {
   };
 }
 
+function validateStorageRestoreInput(command, options, help) {
+  if (command === "storage-restore-resume" && !help && (options.writersQuiesced !== true || typeof options.operationId !== "string" || !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(options.operationId) || typeof options.expectedOwnerId !== "string" || !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(options.expectedOwnerId))) throw inputError("storage-restore-resume requires exact --operation and --expected-owner UUIDs and explicit --writers-quiesced");
+  if (["storage-restore", "storage-restore-resume"].includes(command) && options.replaceActive !== undefined && typeof options.replaceActive !== "boolean") throw inputError("Active replacement selection must be a boolean");
+  if (command === "storage-restore" && !help && (typeof options.source !== "string" || !options.source || options.writersQuiesced !== true)) throw inputError("storage-restore requires --source and explicit --writers-quiesced");
+  if (command === "storage-backup" && !help && (typeof options.destination !== "string" || !options.destination)) throw inputError("storage-backup requires --destination");
+}
+
+function validateStorageMigrationInput(command, options, help) {
+  if (command === "storage-rollback-resume" && !help && !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(options.expectedOwnerId ?? "")) throw inputError("storage-rollback-resume requires exact --expected-owner UUID");
+  if (["storage-rollback", "storage-rollback-resume"].includes(command) && !help && (typeof options.destination !== "string" || !options.destination || typeof options.legacyRoot !== "string" || !options.legacyRoot || options.writersQuiesced !== true || options.nativeWritesExcluded !== true)) throw inputError("storage-rollback requires --destination, --legacy-root, explicit --writers-quiesced and --native-writes-excluded");
+  if (command === "storage-migrate" && !help && (typeof options.destination !== "string" || !options.destination || options.writersQuiesced !== true)) throw inputError("storage-migrate requires --destination and explicit --writers-quiesced");
+  if (command === "storage-migration-resume" && !help && (typeof options.destination !== "string" || !options.destination || options.writersQuiesced !== true || typeof options.expectedOwnerId !== "string" || !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(options.expectedOwnerId))) throw inputError("storage-migration-resume requires --destination, exact --expected-owner UUID and explicit --writers-quiesced");
+}
+
 /**
  * Canonical semantic validation shared by the CLI argv parser and
  * programmatic integrations. JSON-Schema style checks cannot express these
@@ -332,7 +346,8 @@ export function defaultCommandInputValues() {
 export function validateForgeLoopCommandInput({ command, input, help = false } = {}) {
   const options = input ?? {};
   if (!command) return;
-
+  validateStorageRestoreInput(command, options, help);
+  validateStorageMigrationInput(command, options, help);
   validatePolicyInput(command, options);
   validateTaskCreationInput(command, options, help);
   validateGateRecordInput(command, options, help);

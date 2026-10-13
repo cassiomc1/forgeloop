@@ -1,0 +1,36 @@
+{
+  "increment": 610,
+  "sourceSnapshot": "609b",
+  "sourceFiles": 2631,
+  "archiveSha256": "6edf7a8e6b7e561cf489bdb70d07ac8471b910283cfd68fd104d7442ef006fe1",
+  "archiveBytes": 13263981,
+  "destination": "C:/forgeloop-tests/increment610/source",
+  "staging": [
+    {
+      "label": "isolated workspace admission",
+      "status": 0,
+      "output": "",
+      "error": ""
+    },
+    {
+      "label": "source transfer over existing private tunnel",
+      "status": 0,
+      "output": "",
+      "error": ""
+    },
+    {
+      "label": "verified source extraction",
+      "status": 0,
+      "output": "{\"Source\":\"C:\\\\Windows\\\\system32\\\\tar.exe\"}\r\n",
+      "error": ""
+    }
+  ],
+  "remoteSourceIntegrity": {
+    "files": 2631,
+    "sourceDrift": []
+  },
+  "setupAndFullRunLaunched": false,
+  "stagingTimeReason": "Linux607 full remains live on shared remote host; Windows610 setup/full then Linux610 are queued sequentially.",
+  "executionAdmission": "DEFERRED_UNTIL_PHASE_CONFLICT_CORRECTION",
+  "reason": "Linux607 terminal exposed phase conflict wrapping;staged610 remains preserved pre-correction source. Final full runs require corrected source."
+}

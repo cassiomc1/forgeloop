@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "kind": "PUBLIC_MCP_FIXTURE_AND_HOSTED_WORKFLOW_PREPARATION",
+  "status": "LOCALLY_VALIDATED_HOSTED_UNEXECUTED",
+  "baseRevision": "4af531d75848c232416de6a7783bcb9ea95ac5e2",
+  "node": "24.19.0",
+  "checks": {
+    "publicFixtures": [
+      {
+        "file": "mcp-basic-4af531d-working-validation.json.gz",
+        "fixture": "canonical-basic-all",
+        "validationOnly": true,
+        "operations": [
+          "taskListTool",
+          "projectTasksResource"
+        ],
+        "parity": true,
+        "zeroSamples": true,
+        "sourceStatus": "DIRTY_VALIDATE_ONLY"
+      },
+      {
+        "file": "mcp-rich-4af531d-working-validation.json.gz",
+        "fixture": "canonical-rich-all",
+        "validationOnly": true,
+        "operations": [
+          "taskListTool",
+          "projectTasksResource"
+        ],
+        "parity": true,
+        "zeroSamples": true,
+        "sourceStatus": "DIRTY_VALIDATE_ONLY"
+      },
+      {
+        "file": "mcp-filter-4af531d-working-validation.json.gz",
+        "fixture": "canonical-basic-all",
+        "validationOnly": true,
+        "operations": [
+          "projectTasksResource"
+        ],
+        "parity": true,
+        "zeroSamples": true,
+        "sourceStatus": "DIRTY_VALIDATE_ONLY"
+      }
+    ],
+    "shortRichRefusal": "E_BENCHMARK_FIXTURE_EVENT_COUNT_UNSUPPORTED at SEEDING, source unchanged",
+    "verifyFast": true,
+    "targetedLintAfterFailureContextCorrection": true,
+    "workflowYamlParsed": true,
+    "inlineJavaScriptSyntax": true,
+    "diffCheck": true
+  },
+  "sourceHashes": {
+    "scripts/benchmark-storage-mcp.mjs": "a21292328dd60a7ae89c4e3539e30b057a23eac98b81012178a0a6e962df45c6",
+    "scripts/lib/storage-mcp-benchmark-worker.mjs": "9c008affad9066196afadea60f566abcad237b0d9b8c5671386c949393f6ca32",
+    ".github/workflows/mcp-resources-hosted.yml": "ec1bd77ab90b0fd91a6ec0a90594457cedeed54cfb9079af303d8d05c06c4928"
+  },
+  "limitations": [
+    "Working-source validation is explicitly DIRTY_VALIDATE_ONLY, not performance acceptance.",
+    "Hosted workflow has not run; 200-sample cases need execution and retained cleanup evidence.",
+    "Original whole task/event/action/concurrency matrix, resource metrics, LOC and official closure remain required.",
+    "Full prepush passed before this harness/workflow slice; current complete validation remains required."
+  ]
+}

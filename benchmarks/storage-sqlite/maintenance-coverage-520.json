@@ -1,0 +1,169 @@
+{
+  "scope": "Original section8 requirement mapping and five current Mac test modules; not all interruption/platform/downgrade acceptance",
+  "requirements": [
+    {
+      "number": 1,
+      "requirement": "Refuse ambiguous legacy source and incomplete transactions",
+      "source": [
+        "src/storage/migration-source.js"
+      ],
+      "testsOrProcedure": [
+        "tests/storage-migration-source.test.js"
+      ],
+      "acceptance": "PARTIAL"
+    },
+    {
+      "number": 2,
+      "requirement": "Quiesce writers and exclude older binaries",
+      "source": [
+        "src/storage/migration-source.js"
+      ],
+      "testsOrProcedure": [
+        "tests/storage-migration-source.test.js",
+        "scripts/drill-storage-old-client-exclusion.mjs"
+      ],
+      "acceptance": "PARTIAL"
+    },
+    {
+      "number": 3,
+      "requirement": "Preserve source bytes and inventory",
+      "source": [
+        "src/storage/migration-source.js",
+        "src/storage/migration-archive.js"
+      ],
+      "testsOrProcedure": [
+        "tests/storage-migration-source.test.js"
+      ],
+      "acceptance": "PARTIAL"
+    },
+    {
+      "number": 4,
+      "requirement": "Temporary import and canonical validation",
+      "source": [
+        "src/storage/migration-candidate.js"
+      ],
+      "testsOrProcedure": [
+        "tests/storage-migration-candidate.test.js"
+      ],
+      "acceptance": "PARTIAL"
+    },
+    {
+      "number": 5,
+      "requirement": "Logical/integrity/foreign-key parity",
+      "source": [
+        "src/storage/migration-candidate.js",
+        "src/storage/exporter.js"
+      ],
+      "testsOrProcedure": [
+        "tests/storage-migration-candidate.test.js"
+      ],
+      "acceptance": "PARTIAL"
+    },
+    {
+      "number": 6,
+      "requirement": "Closed publication and restart boundaries",
+      "source": [
+        "src/storage/migration-publication.js"
+      ],
+      "testsOrProcedure": [
+        "tests/storage-migration-publication.test.js",
+        "tests/storage-migration-resume.test.js"
+      ],
+      "acceptance": "PARTIAL"
+    },
+    {
+      "number": 7,
+      "requirement": "Archive old active layout and prevent old-client writes",
+      "source": [
+        "src/storage/migration-archive.js"
+      ],
+      "testsOrProcedure": [
+        "scripts/drill-storage-old-client-exclusion.mjs"
+      ],
+      "acceptance": "PARTIAL"
+    },
+    {
+      "number": 8,
+      "requirement": "Explicit manual retention, no automatic source-backup deletion",
+      "source": [
+        "src/storage/migration-archive.js"
+      ],
+      "testsOrProcedure": [
+        "docs/SQLITE_OLD_CLIENT_EXCLUSION.md"
+      ],
+      "acceptance": "PARTIAL"
+    }
+  ],
+  "sourceHashes": {
+    "src/storage/backup.js": "32016e0aaf027c2d0084717a81f1e9b1f48286ce87abdfb05a8a5764a7d8dd9a",
+    "src/storage/project-backup.js": "66dffeb2ca6fa6f6c90a3eb19fafad8e5fd69596f2794c23ef95669fce5f1370",
+    "src/storage/project-restore.js": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+    "src/storage/migration.js": "6d84791488206fc394c2501d2f6c4d34ba8e12fba34dede0e40c48b64c3e03fa",
+    "src/storage/migration-source.js": "4e2b78e7be7b1641883b28d0b33fe34fd1264b047ce88e00e617e5607aa9ffdb",
+    "src/storage/migration-candidate.js": "61ffd9f2125a4546db3278b04a3884350bf85254d6aed5cec6e022bfd511e329",
+    "src/storage/migration-publication.js": "6e60f541f53f977bc1670d2c2f7577e5e718b1e1fff80ba49d4e7c026d8b38ed",
+    "src/storage/migration-archive.js": "38848cc8ab285a2ce37ef7b7b3405cf51e024d023670f7dfbf46eac01bdda37a",
+    "src/storage/exporter.js": "1360717c60d12a8959dc209781699483d562e22e496d461624df7f90aba30076",
+    "tests/storage-project-backup.test.js": "1be76e1ad5635a89829b813358b21b625dc6092125e8b121eefe1cdb179bef8a",
+    "tests/storage-restore-command.test.js": "2d312db28257f626763624e36d1b92195ee313b018b4438ad680e3088026aa62",
+    "tests/storage-migration-source.test.js": "1c542faab2e9f3d7a709d2b14d578f93ae19e90899ec7c97b7a2c7c122b0d917",
+    "tests/storage-migration-candidate.test.js": "b0e55cdbce771524d6c4105f43aca3f0c312f6fe311fe091073081be30d6ecc7",
+    "tests/storage-migration-attachments.test.js": "1728a2c72c43058709dd5c19396b6401bb42fbc6589b7c710d8328678c7b3e6b"
+  },
+  "testInventory": {
+    "tests/storage-project-backup.test.js": [
+      "project backup and fresh restore retain snapshot references and exact binary bytes",
+      "project backup retains a refused incomplete bundle when source attachment bytes are corrupt",
+      "public API and CLI attachment backup select the canonical store and preserve source bindings"
+    ],
+    "tests/storage-restore-command.test.js": [
+      "replacement admission rejects missing quiescence and nonboolean selection without allocating evidence",
+      "restore CLI and shared command API activate verified backups and reject missing writer exclusion"
+    ],
+    "tests/storage-migration-source.test.js": [
+      "namespace import refuses every unconverted singleton task artifact without allocating or discarding source",
+      "capture verification rejects oversized and invalid UTF-8 manifests without altering retained source",
+      "retained source capture preserves operational and raw attachment bytes and reimports",
+      "capture leaves filesystem-owned policy identity intact without treating it as a writer lock",
+      "capture requires explicit writer quiescence and refuses retained task locks",
+      "capture rejects incomplete transactions, source overlap and symlinks",
+      "capture verification refuses incomplete manifests and changed membership",
+      "source capture preserves empty directories and rejects directory-membership tampering",
+      "maintenance excludes public commands, lock acquisition and independent CLI processes",
+      "public migration status reports incomplete or malformed bootstrap state without opening a database",
+      "closed maintenance context cannot reopen an expired exclusion",
+      "a killed maintenance owner leaves exclusion for explicit recovery",
+      "live maintenance ownership cannot be adopted and failed recovery work retains exclusion",
+      "capture recovery refuses changed originals and unrecorded partial entries without altering evidence"
+    ],
+    "tests/storage-migration-candidate.test.js": [
+      "candidate preparation validates a real lifecycle and preserves source/export/round-trip parity",
+      "candidate preparation rejects schema-invalid optional records and retains diagnostics and exclusion",
+      "candidate preparation refuses unmapped source artifacts and does not claim attachment references verified",
+      "candidate validation refuses owned command evidence whose execution reference is missing",
+      "source parity refuses invalid UTF-8 even when decoded event hashes validate",
+      "an empty orphan namespace survives capture and aborts candidate import",
+      "candidate import refuses empty unknown namespaces and stray task-root files",
+      "candidate recovery refuses unbound files, changed fingerprints and staging without replacing evidence"
+    ],
+    "tests/storage-migration-attachments.test.js": [
+      "migration verifies portable attachment bindings and retains bytes through publication and backup",
+      "unmapped captured objects remain retained and prevent attachment coverage publication"
+    ]
+  },
+  "currentMac": {
+    "exit": 0,
+    "tests": 31,
+    "rawOutput": "\u2714 migration verifies portable attachment bindings and retains bytes through publication and backup (3986.688417ms)\n\u2714 unmapped captured objects remain retained and prevent attachment coverage publication (1317.330292ms)\n\u2714 candidate preparation validates a real lifecycle and preserves source/export/round-trip parity (2942.5725ms)\n\u2714 candidate preparation rejects schema-invalid optional records and retains diagnostics and exclusion (803.34925ms)\n\u2714 candidate preparation refuses unmapped source artifacts and does not claim attachment references verified (1693.320875ms)\n\u2714 candidate validation refuses owned command evidence whose execution reference is missing (589.606042ms)\n\u2714 source parity refuses invalid UTF-8 even when decoded event hashes validate (463.177959ms)\n\u2714 an empty orphan namespace survives capture and aborts candidate import (441.357541ms)\n\u2714 candidate import refuses empty unknown namespaces and stray task-root files (892.77425ms)\n\u2714 candidate recovery refuses unbound files, changed fingerprints and staging without replacing evidence (462.27725ms)\n\u2714 namespace import refuses every unconverted singleton task artifact without allocating or discarding source (948.544708ms)\n\u2714 capture verification rejects oversized and invalid UTF-8 manifests without altering retained source (919.947417ms)\n\u2714 retained source capture preserves operational and raw attachment bytes and reimports (880.394583ms)\n\u2714 capture leaves filesystem-owned policy identity intact without treating it as a writer lock (728.488875ms)\n\u2714 capture requires explicit writer quiescence and refuses retained task locks (582.086917ms)\n\u2714 capture rejects incomplete transactions, source overlap and symlinks (543.160833ms)\n\u2714 capture verification refuses incomplete manifests and changed membership (701.893375ms)\n\u2714 source capture preserves empty directories and rejects directory-membership tampering (518.283417ms)\n\u2714 maintenance excludes public commands, lock acquisition and independent CLI processes (567.966ms)\n\u2714 public migration status reports incomplete or malformed bootstrap state without opening a database (367.965125ms)\n\u2714 closed maintenance context cannot reopen an expired exclusion (363.103834ms)\n\u2714 a killed maintenance owner leaves exclusion for explicit recovery (506.788375ms)\n\u2714 live maintenance ownership cannot be adopted and failed recovery work retains exclusion (375.260167ms)\n\u2714 capture recovery refuses changed originals and unrecorded partial entries without altering evidence (379.531833ms)\n\u2714 project backup and fresh restore retain snapshot references and exact binary bytes (1038.144292ms)\n\u2714 project backup retains a refused incomplete bundle when source attachment bytes are corrupt (949.798709ms)\n\u2714 public API and CLI attachment backup select the canonical store and preserve source bindings (1151.962958ms)\n\u2714 replacement admission rejects missing quiescence and nonboolean selection without allocating evidence (900.518959ms)\n\u2714 explicit api replacement retains outgoing state and activates incoming authority (2012.230375ms)\n\u2714 explicit cli replacement retains outgoing state and activates incoming authority (1772.203625ms)\n\u2714 restore CLI and shared command API activate verified backups and reject missing writer exclusion (1367.311541ms)\n\u2139 tests 31\n\u2139 suites 0\n\u2139 pass 31\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 8508.558041\n"
+  },
+  "publishedCrossPlatformOldClientDrill": "old-client-exclusion-497.json",
+  "backupMechanism": "node:sqlite backup API, integrity validation, fsync and exclusive hard-link publication; project bundle retains referenced bytes/digests",
+  "remaining": [
+    "Complete interruption cases and current-source supported-host consolidation",
+    "Pre-write rollback procedure execution evidence",
+    "Compatible reverse export or forward-repair support boundary after native writes",
+    "No unconditional downgrade or privileged/uninventoried-client exclusion claim"
+  ],
+  "wholeMaintenanceAccepted": false,
+  "wholePlanAccepted": false
+}

@@ -1,0 +1,74 @@
+{
+  "increment": 809,
+  "sourceRevision": "7c57dae04d651c4bed4bad4a0d93c5ad903daf9b",
+  "status": "SOURCE_REVIEWED_SUBSET",
+  "reviewed": [
+    {
+      "path": "src/core/artifacts.js",
+      "sha256": "4667bc01b1f6416ee22e0de6788bb8ae21ce238b5ce9724961c92c06d0e92db2",
+      "disposition": "writeJsonArtifact routes canonical operational paths through project scope and task transactions. writePortableJsonArtifact rejects canonical operational identities and active operational transactions before writing interchange/configuration files."
+    },
+    {
+      "path": "src/core/manifest.js",
+      "sha256": "9e29e1c9466bb0fc6a2ae9371a4f8bec995a01f11377684f0d66bcfa58221f4f",
+      "disposition": "Writes .forgeloop/manifest.json installation ownership metadata after manifest validation and safe-path validation. This manifest describes shipped kit files, not task artifacts or event authority."
+    },
+    {
+      "path": "src/core/bundles.js",
+      "sha256": "9867a424d43b5301b5fcfab49b807e2334415f2839804c6cbaffccf9a3b08928",
+      "disposition": "Named atomic writes publish explicit portable bundle attachment and event outputs. Native ledger bytes come from selected SQLite rows; retained filesystem ledger reads occur only in the unselected branch."
+    },
+    {
+      "path": "src/core/signing/statement-file.js",
+      "sha256": "4b0db680c034bd21497e5fa96c01ea79a7faa14f6424c85965f4c9183304880b",
+      "disposition": "Writes selected canonical statement bytes to an OS temporary directory for external signing; refuses an active SQLite write transaction, rechecks canonical bytes after callback and removes the temporary directory in finally."
+    },
+    {
+      "path": "src/commands/init.js",
+      "sha256": "dbd6aff6b7e27d3fa26e06921ad54c7e569413ee5717f20111c639c77d073dde",
+      "disposition": "Named write publishes shipped template entries from TEMPLATE_PATHS with ownership planning and preservation. Reviewed TEMPLATE_PATHS contains kit documents, schemas and ignore rules, not live operational task artifacts."
+    },
+    {
+      "path": "src/commands/update.js",
+      "sha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+      "disposition": "Named writes publish managed kit templates and staged hidden-layout kit updates; source entries derive from TEMPLATE_PATHS. Hash verification precedes installation manifest authority changes. This role does not establish all migration writer coverage."
+    },
+    {
+      "path": "src/commands/doctor.js",
+      "sha256": "1ea77fd088a1277b03bc2edeb034462f8f56df5ce3eb95dd7b68000dd5a983d1",
+      "disposition": "Named write restores missing managed kit template bytes and records installation ownership. Native stores bypass legacy transaction recovery; filesystem transaction repair remains explicitly refused."
+    },
+    {
+      "path": "src/repository-index/server.js",
+      "sha256": "4e18bcd059920281616a7ae0a368571ae5bb8c71c6f59929ded044cafcad4ef1",
+      "disposition": "Atomic JSON helper callers write repository-index engine-state.json for tgrep ownership/readiness. Paths are repository-index scoped and process ownership is inspected; these records are auxiliary search process metadata."
+    },
+    {
+      "path": "src/persistent-transport/state.js",
+      "sha256": "a877435a1b4a7f5c7d4b6310538451f81079b70d4486d0ed990ed61819ccb86d",
+      "disposition": "Writes user-scoped persistent-search process identity, nonce, endpoint and activity metadata; caller path source is the home-directory transport root. This is search transport coordination, not project task/ledger authority."
+    }
+  ],
+  "supportingSources": [
+    {
+      "path": "src/core/templates.js",
+      "sha256": "20e92251bc83f699890533fd397536755226b93b74ca04766f94212128faf8f8"
+    },
+    {
+      "path": "src/persistent-transport/paths.js",
+      "sha256": "4027ed8f397b2cd60be95a8843f0e335a39866ad85ff2af8c3f463f83697a62c"
+    },
+    {
+      "path": "src/persistent-transport/constants.js",
+      "sha256": "18d008a6243d93603ea39dd7b4467180f74d698fbda39fd2a1fc7a191fbaeb03"
+    }
+  ],
+  "namedCallerModulesReviewed": 9,
+  "namedCallerModulesStillPending": 19,
+  "wholeConsumerClosure": false,
+  "limitations": [
+    "Source role review is bounded to named static writes and listed supporting sources. It does not prove alias, dynamic or external caller coverage.",
+    "Migration, backup and restore writer authority remains under review.",
+    "Search process metadata classification does not validate arbitrary callers supplying a statePath."
+  ]
+}

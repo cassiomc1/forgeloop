@@ -1,5 +1,6 @@
+import { ensureFixtureTask, overwriteFixtureText } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -39,6 +40,7 @@ test("revision skip in the event chronology is audit-visible", async () => {
   const target = await freshTarget("revskip");
   const taskId = "replay-task-1";
   try {
+    await ensureFixtureTask(target, taskId, packageRoot);
     const { action } = await proposeAction(target, { packageRoot, taskId, input: {
       actionId: "action-rev", effectClass: "REVERSIBLE_WRITE", capability: "filesystem.write",
       target: "f", operation: "op", idempotencyKey: "replay:rev:v1",
@@ -51,7 +53,7 @@ test("revision skip in the event chronology is audit-visible", async () => {
       details: AUTHORIZATION_EVIDENCE(action.actionFingerprint) });
     const current = await readAction(target, { packageRoot, taskId, actionId: action.actionId });
     const forged = { ...current, state: "STARTED", revision: 5 };
-    await writeFile(path.join(target, taskActionPath(taskId, action.actionId)), JSON.stringify(forged, null, 2) + "\n", "utf8");
+    await overwriteFixtureText(target, taskActionPath(taskId, action.actionId), JSON.stringify(forged, null, 2) + "\n", "utf8");
 
     const issues = await validateActionLedgerConsistency(target, { packageRoot, taskId });
     assert.ok(issues.some((i) => i.actionId === "action-rev"), "forged revision/state divergence is detected");
@@ -62,6 +64,7 @@ test("STARTED without trusted authorization evidence makes VERIFIED untrusted", 
   const target = await freshTarget("legacyauth");
   const taskId = "replay-task-2";
   try {
+    await ensureFixtureTask(target, taskId, packageRoot);
     const { action } = await proposeAction(target, { packageRoot, taskId, input: {
       actionId: "action-legacy", effectClass: "REVERSIBLE_WRITE", capability: "filesystem.write",
       target: "f", operation: "op", idempotencyKey: "replay:legacy:v1",
@@ -111,6 +114,7 @@ test("direct artifact edits remain audit-visible via replay divergence", async (
   const target = await freshTarget("artifact-edit");
   const taskId = "replay-task-3";
   try {
+    await ensureFixtureTask(target, taskId, packageRoot);
     const { action } = await proposeAction(target, { packageRoot, taskId, input: {
       actionId: "action-edit", effectClass: "REVERSIBLE_WRITE", capability: "filesystem.write",
       target: "f", operation: "op", idempotencyKey: "replay:edit:v1",
@@ -124,7 +128,7 @@ test("direct artifact edits remain audit-visible via replay divergence", async (
     // Hand-edit artifact to COMMITTED with no matching event.
     const current = await readAction(target, { packageRoot, taskId, actionId: action.actionId });
     const edited = { ...current, state: "COMMITTED" };
-    await writeFile(path.join(target, taskActionPath(taskId, action.actionId)), JSON.stringify(edited, null, 2) + "\n", "utf8");
+    await overwriteFixtureText(target, taskActionPath(taskId, action.actionId), JSON.stringify(edited, null, 2) + "\n", "utf8");
 
     const projection = await projectActionLedger({ target, packageRoot, taskId, actionId: "action-edit", artifact: edited });
     assert.equal(projection.valid, false);

@@ -1,0 +1,426 @@
+{
+  "increment": 907,
+  "kind": "EXISTING_NAMED_ACTION_APPROVAL_CONFORMANCE",
+  "sourceRevision": "158938ba95f6d016cc53463c76c35fa5fda51c70",
+  "executedRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+  "evidence": "benchmarks/storage-sqlite/full-macos873-terminal.json",
+  "log": {
+    "path": "/Users/cassio/.codex/verification/full-macos873.log",
+    "sha256": "8022ee8b3e7095b342500eafe5e929fc99a19d5666dc7e550d68aaa001705aa0"
+  },
+  "cases": [
+    {
+      "testFile": "tests/actions.test.js",
+      "sha256": "3bebe130bf10ed98fb0c5e0721cab6d52e13558fd62cc01218694dd498bfedf4",
+      "name": "proposeAction atomically creates the artifact and appends ACTION_PROPOSED",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 63,
+        "text": "\u2714 proposeAction atomically creates the artifact and appends ACTION_PROPOSED (262.037541ms)"
+      }
+    },
+    {
+      "testFile": "tests/actions.test.js",
+      "sha256": "3bebe130bf10ed98fb0c5e0721cab6d52e13558fd62cc01218694dd498bfedf4",
+      "name": "proposeAction is idempotent per key and conflicts on fingerprint drift",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 64,
+        "text": "\u2714 proposeAction is idempotent per key and conflicts on fingerprint drift (216.8515ms)"
+      }
+    },
+    {
+      "testFile": "tests/actions.test.js",
+      "sha256": "3bebe130bf10ed98fb0c5e0721cab6d52e13558fd62cc01218694dd498bfedf4",
+      "name": "READ_ONLY actions do not require an idempotency key",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 65,
+        "text": "\u2714 READ_ONLY actions do not require an idempotency key (166.745583ms)"
+      }
+    },
+    {
+      "testFile": "tests/actions.test.js",
+      "sha256": "3bebe130bf10ed98fb0c5e0721cab6d52e13558fd62cc01218694dd498bfedf4",
+      "name": "transitionAction enforces the state machine, revision, and ledger pairing",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 66,
+        "text": "\u2714 transitionAction enforces the state machine, revision, and ledger pairing (227.015125ms)"
+      }
+    },
+    {
+      "testFile": "tests/actions.test.js",
+      "sha256": "3bebe130bf10ed98fb0c5e0721cab6d52e13558fd62cc01218694dd498bfedf4",
+      "name": "listActions and findActionByIdempotencyKey project canonical artifacts",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 67,
+        "text": "\u2714 listActions and findActionByIdempotencyKey project canonical artifacts (240.848666ms)"
+      }
+    },
+    {
+      "testFile": "tests/actions.test.js",
+      "sha256": "3bebe130bf10ed98fb0c5e0721cab6d52e13558fd62cc01218694dd498bfedf4",
+      "name": "an action without its matching proposal event is reported as an orphan",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 68,
+        "text": "\u2714 an action without its matching proposal event is reported as an orphan (222.082ms)"
+      }
+    },
+    {
+      "testFile": "tests/actions.test.js",
+      "sha256": "3bebe130bf10ed98fb0c5e0721cab6d52e13558fd62cc01218694dd498bfedf4",
+      "name": "action listing and idempotency refuse legacy directory scans without creating native authority",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 69,
+        "text": "\u2714 action listing and idempotency refuse legacy directory scans without creating native authority (6.968125ms)"
+      }
+    },
+    {
+      "testFile": "tests/approval-authority-boundary.test.js",
+      "sha256": "0a7bbb92669904d16adf6ad11d87e008ffb62c67e03ab68edaf837b3cfe89531",
+      "name": "CALLER_ACKNOWLEDGED approval does not satisfy REQUIRE_APPROVAL",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 118,
+        "text": "\u2714 CALLER_ACKNOWLEDGED approval does not satisfy REQUIRE_APPROVAL (265.541ms)"
+      }
+    },
+    {
+      "testFile": "tests/approval-authority-boundary.test.js",
+      "sha256": "0a7bbb92669904d16adf6ad11d87e008ffb62c67e03ab68edaf837b3cfe89531",
+      "name": "HOST_ATTESTED approval from a trusted host boundary satisfies REQUIRE_APPROVAL",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 119,
+        "text": "\u2714 HOST_ATTESTED approval from a trusted host boundary satisfies REQUIRE_APPROVAL (234.690041ms)"
+      }
+    },
+    {
+      "testFile": "tests/approval-authority-boundary.test.js",
+      "sha256": "0a7bbb92669904d16adf6ad11d87e008ffb62c67e03ab68edaf837b3cfe89531",
+      "name": "replaced approval content after authorization is detectable via the bound fingerprint",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 120,
+        "text": "\u2714 replaced approval content after authorization is detectable via the bound fingerprint (245.097959ms)"
+      }
+    },
+    {
+      "testFile": "tests/action-authorization.test.js",
+      "sha256": "1c3674539c8e761d3bafe8d1ccea3d6f6428490fb623e5fc21fdf24fa062e6c1",
+      "name": "capability-policy drift after the task snapshot blocks before launch",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 14,
+        "text": "\u2714 capability-policy drift after the task snapshot blocks before launch (363.908625ms)"
+      }
+    },
+    {
+      "testFile": "tests/action-authorization.test.js",
+      "sha256": "1c3674539c8e761d3bafe8d1ccea3d6f6428490fb623e5fc21fdf24fa062e6c1",
+      "name": "raw transitionAction cannot mint AUTHORIZED on the modern flow",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 15,
+        "text": "\u2714 raw transitionAction cannot mint AUTHORIZED on the modern flow (222.360958ms)"
+      }
+    },
+    {
+      "testFile": "tests/action-authorization.test.js",
+      "sha256": "1c3674539c8e761d3bafe8d1ccea3d6f6428490fb623e5fc21fdf24fa062e6c1",
+      "name": "canonical authorization binds full policy evidence to the event",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 16,
+        "text": "\u2714 canonical authorization binds full policy evidence to the event (262.425125ms)"
+      }
+    },
+    {
+      "testFile": "tests/action-authorization.test.js",
+      "sha256": "1c3674539c8e761d3bafe8d1ccea3d6f6428490fb623e5fc21fdf24fa062e6c1",
+      "name": "REQUIRE_APPROVAL authorization events must bind approval and authority evidence",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 17,
+        "text": "\u2714 REQUIRE_APPROVAL authorization events must bind approval and authority evidence (212.765084ms)"
+      }
+    },
+    {
+      "testFile": "tests/action-verification.test.js",
+      "sha256": "7e3dd26dc9759767af8cb3c0893c021c443aa37ab6889aa71a3c5a948c97584a",
+      "name": "arbitrary evidence strings cannot verify an action",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 58,
+        "text": "\u2714 arbitrary evidence strings cannot verify an action (789.348417ms)"
+      }
+    },
+    {
+      "testFile": "tests/action-verification.test.js",
+      "sha256": "7e3dd26dc9759767af8cb3c0893c021c443aa37ab6889aa71a3c5a948c97584a",
+      "name": "the action's own commit execution is not independent postcondition verification",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 59,
+        "text": "\u2714 the action's own commit execution is not independent postcondition verification (629.007292ms)"
+      }
+    },
+    {
+      "testFile": "tests/action-verification.test.js",
+      "sha256": "7e3dd26dc9759767af8cb3c0893c021c443aa37ab6889aa71a3c5a948c97584a",
+      "name": "a canonical independent passed check verifies the action",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 60,
+        "text": "\u2714 a canonical independent passed check verifies the action (764.644ms)"
+      }
+    },
+    {
+      "testFile": "tests/action-verification.test.js",
+      "sha256": "7e3dd26dc9759767af8cb3c0893c021c443aa37ab6889aa71a3c5a948c97584a",
+      "name": "a passed check for a different requirement cannot verify the action",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 61,
+        "text": "\u2714 a passed check for a different requirement cannot verify the action (782.935708ms)"
+      }
+    },
+    {
+      "testFile": "tests/action-verification.test.js",
+      "sha256": "7e3dd26dc9759767af8cb3c0893c021c443aa37ab6889aa71a3c5a948c97584a",
+      "name": "new required proposals cannot omit a requirement",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 62,
+        "text": "\u2714 new required proposals cannot omit a requirement (300.482708ms)"
+      }
+    },
+    {
+      "testFile": "tests/action-reconciliation.test.js",
+      "sha256": "7f4d83fb49117d6809ebfd5d9440bd8180c0185c914f9df41e35228ff7be1717",
+      "name": "settlement-class outcomes are classified correctly",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 46,
+        "text": "\u2714 settlement-class outcomes are classified correctly (0.563583ms)"
+      }
+    },
+    {
+      "testFile": "tests/action-reconciliation.test.js",
+      "sha256": "7f4d83fb49117d6809ebfd5d9440bd8180c0185c914f9df41e35228ff7be1717",
+      "name": "arbitrary COMMITTED settlement without trusted authority is rejected",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 47,
+        "text": "\u2714 arbitrary COMMITTED settlement without trusted authority is rejected (236.9335ms)"
+      }
+    },
+    {
+      "testFile": "tests/action-reconciliation.test.js",
+      "sha256": "7f4d83fb49117d6809ebfd5d9440bd8180c0185c914f9df41e35228ff7be1717",
+      "name": "arbitrary NOT_COMMITTED settlement without trusted authority is rejected",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 48,
+        "text": "\u2714 arbitrary NOT_COMMITTED settlement without trusted authority is rejected (196.440875ms)"
+      }
+    },
+    {
+      "testFile": "tests/action-reconciliation.test.js",
+      "sha256": "7f4d83fb49117d6809ebfd5d9440bd8180c0185c914f9df41e35228ff7be1717",
+      "name": "settling without any evidence reference is rejected even with trusted authority",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 49,
+        "text": "\u2714 settling without any evidence reference is rejected even with trusted authority (228.97375ms)"
+      }
+    },
+    {
+      "testFile": "tests/action-reconciliation.test.js",
+      "sha256": "7f4d83fb49117d6809ebfd5d9440bd8180c0185c914f9df41e35228ff7be1717",
+      "name": "UNKNOWN observation remains caller-recordable and keeps COMMIT_UNKNOWN",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 50,
+        "text": "\u2714 UNKNOWN observation remains caller-recordable and keeps COMMIT_UNKNOWN (346.0125ms)"
+      }
+    },
+    {
+      "testFile": "tests/action-reconciliation.test.js",
+      "sha256": "7f4d83fb49117d6809ebfd5d9440bd8180c0185c914f9df41e35228ff7be1717",
+      "name": "trusted COMMITTED settlement settles the action",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 51,
+        "text": "\u2714 trusted COMMITTED settlement settles the action (293.297875ms)"
+      }
+    },
+    {
+      "testFile": "tests/action-reconciliation.test.js",
+      "sha256": "7f4d83fb49117d6809ebfd5d9440bd8180c0185c914f9df41e35228ff7be1717",
+      "name": "trusted NOT_COMMITTED returns the action to PROPOSED for reauthorization",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 52,
+        "text": "\u2714 trusted NOT_COMMITTED returns the action to PROPOSED for reauthorization (288.308625ms)"
+      }
+    },
+    {
+      "testFile": "tests/action-reconciliation.test.js",
+      "sha256": "7f4d83fb49117d6809ebfd5d9440bd8180c0185c914f9df41e35228ff7be1717",
+      "name": "retry after trusted NOT_COMMITTED re-evaluates changed policy before launch",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 53,
+        "text": "\u2714 retry after trusted NOT_COMMITTED re-evaluates changed policy before launch (306.556542ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-operational-bootstrap.test.js",
+      "sha256": "04ec7b1d316f0b8bf352dfc6721ad3ca1f4db7778444766eaaab9a6ce43b20e2",
+      "name": "canonical action idempotency and single-decision approvals use the SQLite record store",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 2317,
+        "text": "\u2714 canonical action idempotency and single-decision approvals use the SQLite record store (30.719542ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-operational-bootstrap.test.js",
+      "sha256": "04ec7b1d316f0b8bf352dfc6721ad3ca1f4db7778444766eaaab9a6ce43b20e2",
+      "name": "SQLite propose rolls back its record and ledger when event publication fails",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 2318,
+        "text": "\u2714 SQLite propose rolls back its record and ledger when event publication fails (26.544125ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-operational-bootstrap.test.js",
+      "sha256": "04ec7b1d316f0b8bf352dfc6721ad3ca1f4db7778444766eaaab9a6ce43b20e2",
+      "name": "SQLite request rolls back its record and ledger when event publication fails",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 2319,
+        "text": "\u2714 SQLite request rolls back its record and ledger when event publication fails (12.232834ms)"
+      }
+    },
+    {
+      "testFile": "tests/storage-operational-bootstrap.test.js",
+      "sha256": "04ec7b1d316f0b8bf352dfc6721ad3ca1f4db7778444766eaaab9a6ce43b20e2",
+      "name": "SQLite resolve rolls back its record and ledger when event publication fails",
+      "wholeTestBytesMatchExecutedRevision": true,
+      "record": {
+        "line": 2320,
+        "text": "\u2714 SQLite resolve rolls back its record and ledger when event publication fails (13.669125ms)"
+      }
+    }
+  ],
+  "reviewedSource": [
+    {
+      "path": "src/core/actions.js",
+      "sha256": "bf9ce702df4b5cac2d609f2761a5aee8361a16a0ebdecfe650d45f31c9cdb2af",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/core/approvals.js",
+      "sha256": "6cc9020d81f308b8790fe0a0f8a23b90273f7079194bc4c9e2bd864c5336f705",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/core/action-authorization.js",
+      "sha256": "4523902b938600c7873feb60a9fa5624e2fa9d352c36d824c11c3b8834a5c3d3",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/core/action-verification.js",
+      "sha256": "46e1405ddda3573cf734eed4f37acb21d908471b25ce88656479a23131497294",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/core/action-reconciliation.js",
+      "sha256": "2475063ef3c44b6386935a12432fb45ee28e9828fa2dc4289190b2f21710759c",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/core/action-ledger-projection.js",
+      "sha256": "9b0af7e23a8ea2ee0ece8581926d0109bcc6df1fa94f56e4926e667ce21080f5",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/core/action-model.js",
+      "sha256": "bf5197aaf205522dc243c507f4b65ff09d064244cea88d4e0b2a3213b87c1a25",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/core/transaction.js",
+      "sha256": "e34f4c1cfe99e1c5112d9117fcc845e8d49eb581d9adb13f4e52c42a8cdef4ef",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/storage/unit-of-work.js",
+      "sha256": "02eea758e34845de2a655c8e9bf4851c2b89a5117a4cfdb0d4aae16400283605",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/commands/action-propose.js",
+      "sha256": "10a58e6e15ab8a57782ba481729518aed225ae382dce44de253bf88a7a55cb50",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/commands/action-show.js",
+      "sha256": "161935a5214e38701978b52ec90465554de466633db5c8e0af28824f49b9cc1e",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/commands/action-record.js",
+      "sha256": "7039f0d33718a543e350b3399eb4df2fca6f3d7260f7b755d67453c1f3d2abe0",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/commands/action-authorize.js",
+      "sha256": "6bb415d3ed34b7ff7debc90d77f3b6fb3024f4be02cf2a964a2bf0c561be44e1",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/commands/action-verify.js",
+      "sha256": "a3ff2f57610101b572093a193bd5016628609399c0b833ca909f2550c2324991",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/commands/action-reconcile.js",
+      "sha256": "824f1b4e9e59452c5cf3f44b075b36fb376f65c5b27b795a63f4e0429c9197a9",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/commands/approval-request.js",
+      "sha256": "ebaa86744d7fbd2056c557be7d77a8ab34d18825aa685f158a78ef66b22eb41a",
+      "bytesMatchExecutedRevision": true
+    },
+    {
+      "path": "src/commands/approval-resolve.js",
+      "sha256": "4980c1d9d2b5184877e7d5b625af65eff418de55f7347102826a868080c904f0",
+      "bytesMatchExecutedRevision": true
+    }
+  ],
+  "sourceReview": [
+    "Action/approval readers admit existing SQLite and refuse legacy operational directories; writes stageText only within task transactions.",
+    "Action proposal pairs immutable idempotency identity and ACTION_PROPOSED in the same native transaction; native index and column/payload validation remain required.",
+    "Approval request/resolution pairs guarded immutable binding, resolution authority and event publication; caller acknowledgment does not become trusted host approval.",
+    "Public mutators join withTaskMutation; action-propose forces caller provenance and approval-resolve accepts trusted authority only out of band.",
+    "action-show resolves task context then reads and validates one canonical action artifact. Task-selection/action cross-read snapshot coherence is not proven by this reconciliation."
+  ],
+  "wholeConsumerClosure": false,
+  "allPublicActionAdapterFaultsProven": false,
+  "limits": [
+    "Read-only reconciliation of previously executed named cases; no tests ran during the902resource benchmark.",
+    "The3native event-trigger atomicity cases exercise direct domain APIs, not every public action/approval adapter.",
+    "Named passing cases do not establish every public dispatch, snapshot interleaving or runtime parameter authority.",
+    "Two recovery/command-description production files changed after the retained full Mac run; final current-source prepush/platform checks remain required.",
+    "External effect/host authority controls use configured deterministic fixtures; no live publication was attempted."
+  ]
+}

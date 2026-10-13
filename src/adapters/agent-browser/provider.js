@@ -3,6 +3,7 @@ import fs from "node:fs";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { physicalTemporaryPath } from "../temporary-paths.js";
 
 import {
   E_BROWSER_VERIFICATION_ORIGIN_DENIED,
@@ -74,7 +75,7 @@ function assertBooleanObservation(data, label) {
 
 function isWithin(parent, child) {
   const relative = path.relative(path.resolve(parent), path.resolve(child));
-  return relative === "" || (!relative.startsWith(`..${path.sep}`) && relative !== "..");
+  return relative === "" || (!relative.startsWith(`..${path.sep}`) && relative !== ".." && !path.isAbsolute(relative));
 }
 
 function assertTempRootOutsideTarget(root, target) {
@@ -96,18 +97,20 @@ async function createCwd(tempRoot, fsImpl, target) {
   const root = tempRoot ?? os.tmpdir();
   if (typeof root !== "string" || !path.isAbsolute(root)) throw providerError(E_BROWSER_VERIFICATION_PROVIDER_INVALID, "Agent Browser tempRoot must be absolute");
   assertTempRootOutsideTarget(root, target);
+  const physicalRoot = await physicalTemporaryPath(root);
+  const physicalTarget = typeof target === "string" && path.isAbsolute(target) ? await physicalTemporaryPath(target) : target;
+  assertTempRootOutsideTarget(physicalRoot, physicalTarget);
   const make = fsImpl?.mkdtemp ?? mkdtemp;
-  const cwd = await make(path.join(root, "forgeloop-agent-browser-"));
-  try {
-    if (typeof cwd !== "string" || !path.isAbsolute(cwd)) {
-      throw providerError(E_BROWSER_VERIFICATION_PROVIDER_INVALID, "Agent Browser temporary cwd is invalid");
-    }
-    assertTempRootOutsideTarget(cwd, target);
-  } catch (error) {
-    try { await fsImpl?.rm?.(cwd, { recursive: true, force: true }); } catch { /* preserve the boundary failure */ }
-    throw error;
+  const cwd = await make(path.join(physicalRoot, "forgeloop-agent-browser-"));
+  if (typeof cwd !== "string" || !path.isAbsolute(cwd)) {
+    throw providerError(E_BROWSER_VERIFICATION_PROVIDER_INVALID, "Agent Browser temporary cwd is invalid");
   }
-  return cwd;
+  assertTempRootOutsideTarget(cwd, target);
+  const physicalCwd = await physicalTemporaryPath(cwd);
+  assertTempRootOutsideTarget(physicalCwd, physicalTarget);
+  // A rejected returned path is not owned cleanup authority. Only a validated
+  // private cwd reaches the caller's process execution and cleanup block.
+  return physicalCwd;
 }
 
 function screenshotRef(verificationId, digest) { return `agent-browser/${verificationId}/${digest}.png`; }

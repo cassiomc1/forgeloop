@@ -1,3 +1,4 @@
+import { isLedgerEventCollection, ledgerEventAt, ledgerEventsOfTypes, ledgerTypeSummary } from "./ledger-event-collection.js";
 import { canonicalFingerprint } from "./artifacts.js";
 
 export const CONTRACT_REVISED_EVENT = "CONTRACT_REVISED";
@@ -87,13 +88,13 @@ function validRevisionCommit(revisionEvent, commitEvent) {
 }
 
 export function resolveContractRevisionBoundary(events, revisionEvent) {
-  if (!Array.isArray(events) || !revisionEvent || revisionEvent.event !== CONTRACT_REVISED_EVENT) return null;
+  if (!isLedgerEventCollection(events) || !revisionEvent || revisionEvent.event !== CONTRACT_REVISED_EVENT) return null;
   const index = events.findIndex((event) => event === revisionEvent
     || (event?.seq === revisionEvent.seq
       && event?.taskId === revisionEvent.taskId
       && event?.event === CONTRACT_REVISED_EVENT));
   if (index < 0) return null;
-  const commitEvent = events[index + 1];
+  const commitEvent = ledgerEventAt(events, index + 1);
   return validRevisionCommit(revisionEvent, commitEvent)
     ? { revisionEvent, transactionCommitEvent: commitEvent }
     : null;
@@ -105,7 +106,7 @@ export function resolveCanonicalContractEvolution(events, {
   sourceContractFingerprint,
   targetContractFingerprint,
 } = {}) {
-  if (!Array.isArray(events)
+  if (!isLedgerEventCollection(events)
     || typeof taskId !== "string" || !taskId
     || !Number.isInteger(sourceSeq) || sourceSeq < 0
     || !isFingerprint(sourceContractFingerprint)
@@ -138,12 +139,12 @@ export function resolveCanonicalContractEvolution(events, {
 }
 
 export function latestContractRevision(events = []) {
-  return events.filter((event) => event.event === CONTRACT_REVISED_EVENT).at(-1) ?? null;
+  return ledgerTypeSummary(events, CONTRACT_REVISED_EVENT).latest ?? null;
 }
 
 export function validateContractRevisionEventBindings(events = []) {
   const errors = [];
-  const revisions = events.filter((event) => event.event === CONTRACT_REVISED_EVENT);
+  const revisions = ledgerEventsOfTypes(events, [CONTRACT_REVISED_EVENT]);
   let currentContractFingerprint = null;
   let currentStateRevision = null;
   for (const event of revisions) {
@@ -184,10 +185,8 @@ export function validateContractRevisionEventBindings(events = []) {
 
 export function validateContractRevisionCurrentBinding(state, events = []) {
   const errors = [];
-  const revisions = events.filter((event) => event.event === CONTRACT_REVISED_EVENT);
-  if (revisions.length === 0) return errors;
-  const first = revisions[0];
-  const latest = revisions.at(-1);
+  const { count, first, latest } = ledgerTypeSummary(events, CONTRACT_REVISED_EVENT);
+  if (!count) return errors;
   const initial = events.find((event) => event.taskId === state?.taskId && event.event === "CONTRACT_VALIDATED");
   const evolution = resolveCanonicalContractEvolution(events, {
     taskId: state?.taskId,

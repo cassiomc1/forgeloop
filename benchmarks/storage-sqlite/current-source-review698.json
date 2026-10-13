@@ -1,0 +1,47 @@
+{
+  "increment": 698,
+  "method": "Direct current source review of the listed named-import wrapper call branches and enclosing entry points",
+  "wholeScopeVerified": false,
+  "rows": [
+    {
+      "file": "src/storage/project-restore.js",
+      "sha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+      "calls": 5,
+      "role": "Retained restore-journal maintenance metadata for archived replacement readiness, fresh-project preparation/publication, owner adoption and resumed snapshot readiness.",
+      "guards": "Verified independent backup, freshness/layout checks, exact source/incoming/outgoing bindings, live maintenance scope and owner continuity; ACTIVE requires integrity, logical parity and attachment validation."
+    },
+    {
+      "file": "src/commands/validate-protocol.js",
+      "sha256": "7890edf1f54a84eef70a5fea1fa90e65d86ad93b61b85891caef7e34c4938ba7",
+      "calls": 1,
+      "role": "readBytes for external/portable validation input only when operational selection does not recognize the requested identity.",
+      "guards": "Outer read snapshot selects existing canonical authority; missing selected rows report missing, not fallback; safe path, JSON bounds and subsequent domain/schema validation."
+    },
+    {
+      "file": "src/commands/validate-receipt.js",
+      "sha256": "6f90636670ded6b747f70638c7084681b07c4b6213341feb811b7f8e864e9a6b",
+      "calls": 1,
+      "role": "readBytes for explicit portable receipt or legacy source inspection; canonical receipt text selected when native identity recognized.",
+      "guards": "Operational requests select existing project scope; selected missing receipt errors; contained paths, JSON limits and receipt semantic validation."
+    },
+    {
+      "file": "src/core/gate-artifact.js",
+      "sha256": "0e81116939618b6e534719fe0cb7eab2485faedbc412c339681c1b9a03f840a7",
+      "calls": 1,
+      "role": "readBytes hashes external material evidence after canonical binding selection.",
+      "guards": "Existing native scope selected; canonical missing/changed binding stays canonical; external input containment retained."
+    },
+    {
+      "file": "src/commands/gate-revalidate.js",
+      "sha256": "48679a857e9df5abbae507a1152de4faef83c3064c9fed5c5fe2ddc7cafdb50f",
+      "calls": 1,
+      "role": "readBytes hashes external regular material evidence after canonical binding selection.",
+      "guards": "Canonical source binding first; external lstat/realpath containment/type checks; errors map to unsafe revalidation."
+    }
+  ],
+  "limitations": [
+    "Named-import direct calls only; no whole transitive or arbitrary external effect proof.",
+    "Legacy writer exclusion still requires operator action.",
+    "Source review is distinct from test evidence and publication authority."
+  ]
+}

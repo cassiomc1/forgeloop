@@ -1,0 +1,55 @@
+{
+  "increment": 806,
+  "sourceRevision": "445892b0cffdf1dfe9c267ebd4a254f8271b382d",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "scope": "All9 changed workflow definitions; source-role review, not execution proof.",
+  "workflows": [
+    {
+      "path": ".github/workflows/docs.yml",
+      "sha256": "217e44645996a5dab0883ebadc4dee4dd41a47dc4a0e93d186eb771036338d20",
+      "disposition": "Documentationvalidation calledbycore; currentjob queued; actualresult pending."
+    },
+    {
+      "path": ".github/workflows/forgeloop-audit.yml",
+      "sha256": "291148bbd1ee6db77386826317dcfa500538f7df78ab0f71dbebad87edab2b1e",
+      "disposition": "Audit jobin currentcore passes; standalone workflow execution requirement remainsdistinct."
+    },
+    {
+      "path": ".github/workflows/mcp-publish.yml",
+      "sha256": "752bbb1e6d95e1056e52f1fba32b7920a81bcfc4af87a05d5f5cc057999f0466",
+      "disposition": "Publication authority required; do notdispatch merely forverification. MCP/package smoke validates candidatebytes independently."
+    },
+    {
+      "path": ".github/workflows/node-compat.yml",
+      "sha256": "7e7c5d1cbce60c678613940a7a687abe0176ea0679810ba11c391a78e980c689",
+      "disposition": "Pending standalone expanded matrix; max-parallel1 serializes its own platforms. Dispatch only after currentremote workflow terminal."
+    },
+    {
+      "path": ".github/workflows/npm-publish.yml",
+      "sha256": "2728a8062c820a639a5ab035a249d76b5caae4e802fd0a5015709ff2b4682dcf",
+      "disposition": "Publication authority required; do notdispatch merely forverification. Verify equivalent checks separately; publishing isnotrequired byrequestedPR."
+    },
+    {
+      "path": ".github/workflows/package-smoke.yml",
+      "sha256": "c301935722ca5224b107220c69611b63e450a0600bc825cd3f140dd0a08f7935",
+      "disposition": "Pending standalone full_matrix for actualMCP/package onallrequested hosts; serial matrix. Dispatch after otherremote workloads terminal."
+    },
+    {
+      "path": ".github/workflows/pr-core.yml",
+      "sha256": "30154616e7620797204761bf981c2bb1ebdecd412fc3f1e86e9eb08d850cf2c9",
+      "disposition": "Current37701918510 live onf1f8f95; do notrestart."
+    },
+    {
+      "path": ".github/workflows/repository-index.yml",
+      "sha256": "223aab47a7809538fb575fb85410892cec50a0e170d343fdf1ff219896fc9597",
+      "disposition": "Called bycore; actualnative jobs arepart ofcurrent workflow oncecreated."
+    },
+    {
+      "path": ".github/workflows/windows-full-suite.yml",
+      "sha256": "f384e60231f80939bf5c98064b5456466ec7aeac313909cf5dd14480e42cf5c1",
+      "disposition": "Windows803 successful on934ecce; settlement801 andadded805 test needrenewedWindows acceptance."
+    }
+  ],
+  "wholeWorkflowAcceptance": false,
+  "publication": "No publishing workflow dispatched; noPR created."
+}

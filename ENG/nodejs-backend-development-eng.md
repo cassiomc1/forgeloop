@@ -589,9 +589,9 @@ Useful primary references include:
 - [Node.js documentation](https://nodejs.org/docs/latest/api/)
 - [Node.js LLM documentation index](https://nodejs.org/docs/latest-v26.x/llms.txt)
 - [Node.js release policy](https://nodejs.org/en/about/previous-releases)
-- [Node.js HTTP](https://nodejs.org/api/http.html), [HTTP/2](https://nodejs.org/api/http2.html),
-  [net](https://nodejs.org/api/net.html), and [TLS](https://nodejs.org/api/tls.html)
-- [Node.js package exports](https://nodejs.org/api/packages.html)
+- [Node.js HTTP](https://nodejs.org/docs/latest-v24.x/api/http.html), [HTTP/2](https://nodejs.org/docs/latest-v24.x/api/http2.html),
+  [net](https://nodejs.org/docs/latest-v24.x/api/net.html), and [TLS](https://nodejs.org/docs/latest-v24.x/api/tls.html)
+- [Node.js package exports](https://nodejs.org/docs/latest-v24.x/api/packages.html)
 - [Express](https://expressjs.com/), [Fastify](https://fastify.dev/docs/latest/),
   [NestJS](https://docs.nestjs.com/), [Koa](https://koajs.com/), and
   [hapi](https://hapi.dev/)

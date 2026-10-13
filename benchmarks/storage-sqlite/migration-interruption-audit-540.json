@@ -1,0 +1,40 @@
+{
+  "checkpoint": 540,
+  "currentMacTests": {
+    "tests": 19,
+    "passed": 19,
+    "failed": 0,
+    "rawLog": "\u2714 validated archival activates an independent SQLite copy and releases public dispatch (4463.207458ms)\n\u2714 owner-bound archival recognizes a rename before journal update and retains exclusion until activation (3387.916167ms)\n\u2714 source partition inspection derives interrupted archival location and refuses duplicated or changed roots (972.068583ms)\n\u2714 empty captured roots remain distinguishable from missing and duplicated roots (955.202166ms)\n\u2714 published attachment growth preserves captured bytes and refuses unmanaged additions (992.736625ms)\n\u2714 publication staging retains a closed independent database and verifies canonical parity (2829.853167ms)\n\u2714 publication staging refuses unresolved attachment coverage before creating publication files (982.237542ms)\n\u2714 interrupted stage rebuild refuses changed bindings and any active or pending publication (1265.066917ms)\n\u2714 killed CAPTURING owner resumes verified cutover without rewinding accepted state (3733.176625ms)\n\u2714 killed PARTIAL_SOURCE owner resumes verified cutover without rewinding accepted state (2058.176ms)\n\u2714 killed CAPTURED owner resumes verified cutover without rewinding accepted state (1516.561166ms)\n\u2714 killed PREPARING owner resumes verified cutover without rewinding accepted state (4054.257916ms)\n\u2714 killed PARTIAL_CANDIDATE_MOVE owner resumes verified cutover without rewinding accepted state (2374.028958ms)\n\u2714 killed PREPARED owner resumes verified cutover without rewinding accepted state (1759.561375ms)\n\u2714 killed EMPTY_STAGE owner resumes verified cutover without rewinding accepted state (1536.531792ms)\n\u2714 killed STAGING owner resumes verified cutover without rewinding accepted state (2542.62025ms)\n\u2714 killed STAGED owner resumes verified cutover without rewinding accepted state (2049.898375ms)\n\u2714 killed ARCHIVED owner resumes verified cutover without rewinding accepted state (1638.033417ms)\n\u2714 killed PUBLISHED owner resumes verified cutover without rewinding accepted state (1695.621917ms)\n\u2139 tests 19\n\u2139 suites 0\n\u2139 pass 19\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 25109.172\n"
+  },
+  "sourceHashes": {
+    "tests/storage-migration-resume.test.js": "dd94b0bbf6f09f66c7a7e1d55d7643fd5e002cc8b5cf3e0c7bd9fb3eed223535",
+    "tests/helpers/storage-migration-crash-worker.mjs": "0eb9f5413259fa52cebb59853827e34a3d02efd7f79304e5030f23bf0943dd8b",
+    "tests/storage-migration-publication.test.js": "6f6e645e436b9b10740a60d8445438e3b5fda6f1fc7c1cc4c89a2a70ef3644c1",
+    "tests/storage-migration-archive.test.js": "70a809c3d14e1e6eb7e780d236f55b2556505ff441a8166099816aa451b85fe4",
+    "tests/storage-migration-activate.test.js": "41d4d8a321259e93da5a5c11cdf0a7dc10d634863ae1ada6d884ada96c099c7e",
+    "tests/storage-migration-partition.test.js": "806294f3626f2677f9260d8d18f0191712511151aa1dca8311a15b55293427f8"
+  },
+  "killedOwnerCases": [
+    "CAPTURING",
+    "PARTIAL_SOURCE",
+    "CAPTURED",
+    "PREPARING",
+    "PARTIAL_CANDIDATE_MOVE",
+    "PREPARED",
+    "EMPTY_STAGE",
+    "STAGING",
+    "STAGED",
+    "ARCHIVED",
+    "PUBLISHED"
+  ],
+  "missingKilledOwnerCases": [
+    "partial ARCHIVING after one source root rename",
+    "activated database before ACTIVE marker",
+    "ACTIVE marker before PUBLISHED journal"
+  ],
+  "limitations": [
+    "Existing lower-level tests cover some equivalent states but are not a killed-owner proof at every boundary",
+    "Current Windows/Linux interruption suite reruns pending",
+    "Not whole maintenance acceptance"
+  ]
+}

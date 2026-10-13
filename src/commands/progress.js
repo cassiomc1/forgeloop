@@ -1,5 +1,5 @@
 import { evaluateProgress, PROGRESS_STATUS } from "../core/progress.js";
-import { readEvents } from "../core/events.js";
+import { withEventLedgerAudit } from "../core/events.js";
 import { readWorkState } from "../core/work-state.js";
 import { resolveTaskContext, TASK_SELECTION_MODES } from "../core/task-context.js";
 
@@ -13,16 +13,22 @@ export async function runProgress({ target, packageRoot, taskId, task }) {
   });
   const activeTaskId = resolved.taskId;
 
-  const state = await readWorkState(target, { packageRoot, taskId: activeTaskId });
-  const events = await readEvents(target, packageRoot, { taskId: activeTaskId });
+  return withEventLedgerAudit(target, packageRoot, { taskId: activeTaskId }, async ledger => {
+    if (!ledger.valid) {
+      const first = ledger.errors[0] ?? { code: "E_LEDGER_INVALID", message: "Progress requires a valid event ledger" };
+      throw Object.assign(new Error(first.message), { code: first.code });
+    }
+    const state = await readWorkState(target, { packageRoot, taskId: activeTaskId });
+    const events = ledger.events;
 
-  const progress = evaluateProgress({ state, events });
-  return {
-    taskId: activeTaskId ?? state?.taskId ?? "unknown",
-    phase: state?.phase ?? "UNKNOWN",
-    verificationCycle: state?.verificationCycle ?? 1,
-    ...progress,
-  };
+    const progress = evaluateProgress({ state, events });
+    return {
+      taskId: activeTaskId ?? state?.taskId ?? "unknown",
+      phase: state?.phase ?? "UNKNOWN",
+      verificationCycle: state?.verificationCycle ?? 1,
+      ...progress,
+    };
+  });
 }
 
 export function formatProgressResult(result) {

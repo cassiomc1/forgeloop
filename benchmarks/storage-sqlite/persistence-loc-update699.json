@@ -1,0 +1,41 @@
+{
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "productionRoots": [
+    "src",
+    "integrations/mcp/src"
+  ],
+  "countingMethod": "Nonblank physical production lines including comments; same whole-module union on both sides; tests/scripts/package manifests excluded",
+  "scopeMethod": "Conservative candidate union: direct persistence/file-I/O signals in either version, every storage module, every changed/new production module. All omitted modules are listed too. Requires semantic scope review before release acceptance.",
+  "scopeReviewComplete": false,
+  "releaseThresholdsVerified": false,
+  "includedFiles": 279,
+  "baselineNonblankPhysicalLines": 43592,
+  "currentNonblankPhysicalLines": 51674,
+  "netReduction": -0.18540099100752427,
+  "candidateTargetMet": false,
+  "increment": 699,
+  "baseInventory": "benchmarks/storage-sqlite/persistence-loc698.json",
+  "sameWholeModuleUnion": true,
+  "changedModuleRecords": [
+    {
+      "path": "src/storage/maintenance-handoff.js",
+      "included": true,
+      "scopeReview": "PENDING",
+      "reasons": [
+        "current-direct-persistence-or-file-IO-signal",
+        "complete-storage-import-export-maintenance-owner",
+        "changed-production-module-included-conservatively",
+        "new-production-module-included-conservatively"
+      ],
+      "baseline": null,
+      "current": {
+        "nonblankPhysicalLines": 100,
+        "bytes": 5460,
+        "sha256": "79113b4f2c706ae35c0ffa775b433fbd085fd95d4d23d0d25072151f4c3887f5",
+        "persistenceSignal": true
+      }
+    }
+  ],
+  "rawResultSha256": "4f8018d9c8aa6f41bc23b7bc5335ea9e7b12995704308a7b923d6ebbc1a86712",
+  "method": "Apply listed full changed module records to the retained698 inventory; all other records and symmetric inclusion are unchanged. Reproduce with the maintained LOC script and pinned baseline."
+}

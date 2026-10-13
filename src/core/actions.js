@@ -1,8 +1,5 @@
-import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
-import path from "node:path";
-
 import { getTaskTransaction, withTaskTransaction } from "./transaction.js";
-import { appendProtocolEvent, readEvents } from "./events.js";
+import { appendProtocolEvent, iterateEvents } from "./events.js";
 import {
   canonicalActionFingerprint,
   actionRequiresIdempotency,
@@ -22,8 +19,7 @@ import {
   E_ACTION_STATE_MISMATCH,
   E_ACTION_VERIFICATION_REQUIRED,
 } from "./error-codes.js";
-import { assertSafePath, ensureWithin } from "./filesystem.js";
-import { taskActionPath, taskDirectory, TASK_ARTIFACT_FILES } from "./task-paths.js";
+import { requireNativeStore, withNativeReadScope } from "./native-storage.js";
 
 const STATE_EVENT_NAMES = Object.freeze({
   AUTHORIZED: "ACTION_AUTHORIZED",
@@ -41,61 +37,26 @@ function actionError(code, message) {
   return error;
 }
 
-async function readActionFile(target, packageRoot, taskId, actionId) {
-  const relPath = taskActionPath(taskId, actionId);
-  await assertSafePath(target, relPath);
-  const absolute = ensureWithin(target, relPath);
-  let text;
-  try {
-    text = await readFile(absolute, "utf8");
-  } catch (error) {
-    if (error?.code === "ENOENT") return null;
-    throw error;
-  }
-  try {
-    return JSON.parse(text);
-  } catch (error) {
-    throw actionError(E_ACTION_INVALID, `durable action artifact is not valid JSON: ${relPath}`);
-  }
+async function readActionFile(target, taskId, actionId) {
+  return withNativeReadScope(target, () => requireNativeStore(
+    target,
+    actionError,
+    "Actions require canonical SQLite storage; migrate legacy operational state explicitly",
+  ).readAction(taskId, actionId));
 }
 
-async function writeActionFile(target, packageRoot, taskId, action) {
-  const relPath = taskActionPath(taskId, action.actionId);
-  await assertSafePath(target, relPath);
-  const serialized = `${JSON.stringify(action, null, 2)}\n`;
-  const activeTransaction = (await getTaskTransaction(target));
-  if (activeTransaction) {
-    await activeTransaction.stageText(relPath, serialized);
-  } else {
-    const absolute = ensureWithin(target, relPath);
-    await mkdir(path.dirname(absolute), { recursive: true });
-    await writeFile(absolute, serialized, "utf8");
-  }
+async function writeActionFile(target, action) {
+  const transaction = await getTaskTransaction(target);
+  if (!transaction) throw actionError("E_STORAGE_TRANSACTION_INVALID", "Action persistence requires an active task transaction");
+  return transaction.stageAction(action);
 }
 
-function taskActionsDirectory(taskId) {
-  return `${taskDirectory(taskId)}/${TASK_ARTIFACT_FILES.actions}`;
-}
-
-async function listActionFiles(target, packageRoot, taskId) {
-  const relDir = taskActionsDirectory(taskId);
-  await assertSafePath(target, relDir);
-  const absoluteDir = ensureWithin(target, relDir);
-  let entries;
-  try {
-    entries = await readdir(absoluteDir);
-  } catch (error) {
-    if (error?.code === "ENOENT") return [];
-    throw error;
-  }
-  const actions = [];
-  for (const entry of entries) {
-    if (!entry.endsWith(".json")) continue;
-    const parsed = await readActionFile(target, packageRoot, taskId, entry.replace(/\.json$/, ""));
-    if (parsed) actions.push(parsed);
-  }
-  actions.sort((left, right) => String(left.createdAt).localeCompare(String(right.createdAt)));
-  return actions;
+async function listActionFiles(target, taskId) {
+  return withNativeReadScope(target, () => requireNativeStore(
+    target,
+    actionError,
+    "Action listing requires canonical SQLite storage; migrate legacy operational state explicitly",
+  ).listActions(taskId).sort((left, right) => String(left.createdAt).localeCompare(String(right.createdAt))));
 }
 
 function assertProposeInput(input) {
@@ -152,7 +113,7 @@ export async function proposeAction(target, { packageRoot, taskId, input }) {
         );
       }
 
-      const existingById = await readActionFile(target, packageRoot, taskId, input.actionId);
+      const existingById = await readActionFile(target, taskId, input.actionId);
       if (existingById) {
         if (existingById.actionFingerprint === identityFingerprint) {
           validateActionArtifact(existingById);
@@ -185,7 +146,7 @@ export async function proposeAction(target, { packageRoot, taskId, input }) {
       };
       validateActionArtifact(action);
 
-      await writeActionFile(target, packageRoot, taskId, action);
+      await writeActionFile(target, action);
       await appendProtocolEvent(target, {
         taskId,
         event: "ACTION_PROPOSED",
@@ -207,25 +168,28 @@ export async function proposeAction(target, { packageRoot, taskId, input }) {
   );
 }
 
-export async function readAction(target, { packageRoot, taskId, actionId }) {
-  const action = await readActionFile(target, packageRoot, taskId, actionId);
+export async function readAction(target, { taskId, actionId }) {
+  const action = await readActionFile(target, taskId, actionId);
   if (!action) {
     throw actionError(E_ACTION_NOT_FOUND, `durable action ${actionId} does not exist for task ${taskId}`);
   }
   return validateActionArtifact(action);
 }
 
-export async function listActions(target, { packageRoot, taskId }) {
-  const actions = await listActionFiles(target, packageRoot, taskId);
+export async function listActions(target, { taskId }) {
+  const actions = await listActionFiles(target, taskId);
   return actions.map((action) => validateActionArtifact(action));
 }
 
-export async function findActionByIdempotencyKey(target, { packageRoot, taskId, idempotencyKey }) {
+export async function findActionByIdempotencyKey(target, { taskId, idempotencyKey }) {
   if (typeof idempotencyKey !== "string" || !idempotencyKey) {
     throw actionError(E_ACTION_INVALID, "idempotencyKey must be a non-empty string");
   }
-  const actions = await listActionFiles(target, packageRoot, taskId);
-  const found = actions.find((action) => action.idempotencyKey === idempotencyKey);
+  const found = await withNativeReadScope(target, () => requireNativeStore(
+    target,
+    actionError,
+    "Action listing requires canonical SQLite storage; migrate legacy operational state explicitly",
+  ).findActionByIdempotencyKey(taskId, idempotencyKey));
   return found ? validateActionArtifact(found) : null;
 }
 
@@ -289,7 +253,7 @@ async function applyTransition(target, {
         next.commitResultCode = details.commitResultCode;
       }
       validateActionArtifact(next);
-      await writeActionFile(target, packageRoot, taskId, next);
+      await writeActionFile(target, next);
 
       const baseDetails = {
         actionId: next.actionId,
@@ -413,13 +377,12 @@ export async function transitionVerifiedAction(target, {
 }
 
 export async function detectOrphanActions(target, { packageRoot, taskId }) {
-  const actions = await listActionFiles(target, packageRoot, taskId);
-  const events = await readEvents(target, packageRoot, { taskId });
-  const proposedFingerprints = new Set(
-    events
-      .filter((event) => event.event === "ACTION_PROPOSED")
-      .map((event) => event.details?.actionFingerprint),
-  );
+  const actions = await listActionFiles(target, taskId);
+  const candidates = new Set(actions.map(action => action.actionFingerprint));
+  const proposedFingerprints = new Set();
+  for await (const event of iterateEvents(target, packageRoot, { taskId })) {
+    if (event.event === "ACTION_PROPOSED" && candidates.has(event.details?.actionFingerprint)) proposedFingerprints.add(event.details?.actionFingerprint);
+  }
   return actions
     .filter((action) => !proposedFingerprints.has(action.actionFingerprint))
     .map((action) => action.actionId);
@@ -431,7 +394,7 @@ export async function detectOrphanActions(target, { packageRoot, taskId }) {
  * authorization, reconciliation, verification) and compared to its artifact.
  */
 export async function validateActionLedgerConsistency(target, { packageRoot, taskId }) {
-  const actions = await listActionFiles(target, packageRoot, taskId);
+  const actions = await listActionFiles(target, taskId);
   const { projectActionLedger } = await import("./action-ledger-projection.js");
   const issues = [];
   for (const action of actions) {

@@ -1,0 +1,44 @@
+{
+  "increment": 684,
+  "kind": "scoped-source-role-review",
+  "productionChanged": false,
+  "wholeScopeVerified": false,
+  "inventoryRef": "benchmarks/storage-sqlite/filesystem-wrapper-calls-683.json",
+  "reviewedWrapperSites": 2,
+  "roles": [
+    {
+      "file": "src/persistent-transport/state.js",
+      "line": 33,
+      "role": "retained transport lifecycle metadata",
+      "destination": "Normal host caller uses private paths derived from configured home/.forgeloop/persistent-search/state.json. Search dispatch only forwards repository identity and projected query fields; it does not select host statePath.",
+      "limits": [
+        "Home is trusted host configuration and can be overridden.",
+        "Deep-imported write helper accepts arbitrary statePath.",
+        "Final-file lstat is not proof against parent aliases or concurrent replacement."
+      ]
+    },
+    {
+      "file": "src/repository-index/server.js",
+      "line": 32,
+      "role": "retained repository-index lifecycle metadata",
+      "destination": "Four private writeJson callers use repository-index engine-state.json from canonical repository-root path factories. Public start/rebuild/stop normalize root and assert index/state paths before lifecycle operations.",
+      "limits": [
+        "External managed index processes are not sandboxed by path factories.",
+        "Check/use races and whole dependency effects remain unproven."
+      ]
+    }
+  ],
+  "sourceSha256": {
+    "src/persistent-transport/state.js": "a877435a1b4a7f5c7d4b6310538451f81079b70d4486d0ed990ed61819ccb86d",
+    "src/persistent-transport/server.js": "f071d3f0d2c35bb885e4b0e6ab2fd60ab0b177fd05ba81a16720a6ea38e387da",
+    "src/persistent-transport/paths.js": "4027ed8f397b2cd60be95a8843f0e335a39866ad85ff2af8c3f463f83697a62c",
+    "src/persistent-transport/constants.js": "18d008a6243d93603ea39dd7b4467180f74d698fbda39fd2a1fc7a191fbaeb03",
+    "src/persistent-transport/protocol.js": "7a672f31b5d3a0f5aae91f329658deb8f841ffe5b2745efbdd2a60f7387851b2",
+    "src/persistent-transport/lifecycle.js": "e6ce0e846153b3fb46cbda0d8af404340945d6051ce62ef17012d66b5e83f491",
+    "src/repository-index/server.js": "4e18bcd059920281616a7ae0a368571ae5bb8c71c6f59929ded044cafcad4ef1",
+    "src/repository-index/paths.js": "5e5297c4b096ca45c3fe372482bfc2b3f9d8491ccbcdb8dcebbf712ed72fe136",
+    "src/integration.js": "adaa63fe570f28cd65f27060c558213025672183cddf26e9386de761ccd30526"
+  },
+  "validation": "Direct current source review. Existing full Mac676 remains current for unchanged production; no new runtime test is claimed.",
+  "releaseAcceptance": "OPEN"
+}

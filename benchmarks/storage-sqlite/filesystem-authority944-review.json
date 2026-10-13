@@ -1,0 +1,1449 @@
+{
+  "kind": "BOUNDED_FILESYSTEM_AUTHORITY_REVIEW",
+  "sourceRevision": "20aca2ba332ed86323722ef91812925ad9dadb83",
+  "reviewHead": "3bafbb1217c0f5a3dafac7070f44076c21325fdc",
+  "resolvedAtomicWriteCalls": 54,
+  "reviewedEscapeEntries": 42,
+  "sourceAndInventoryIdentityValidated": true,
+  "reports": [
+    {
+      "externalRecord": "filesystem-atomic942-storage.json",
+      "externalSha256": "19bb1fe17faac2d5437d82bb01bce8b3ac0769b28b976afac6f1c325feb76ae7",
+      "rows": [
+        {
+          "file": "src/storage/exporter.js",
+          "line": 139,
+          "expression": "writeFileAtomic(filename, countedBytes())",
+          "sourceSha256": "2e005a6784c73f42e53831a800b09b50730f901dd358d7463009f776b55a2a4b",
+          "namespace": "PORTABLE_EXPORT",
+          "destinationOwnership": "Caller supplies a separate interchange directory; exporter owns only paths below that destination and does not make it live operational authority.",
+          "destinationGuard": "exportTask() first calls assertPortableExportDestination(destination); exportTaskSnapshot validates task identity, asserts directory/name containment, and publish() revalidates the filename before writing.",
+          "publicCallerGuard": "exportTask/exportDatabase are re-exported by src/storage/index.js, but package exports expose the CLI and ./integration surfaces; current production migration use is the retained candidate parity-export path. The destination guard is the verified boundary for this internal API.",
+          "guard": {
+            "destination": "exportTask() first calls assertPortableExportDestination(destination); exportTaskSnapshot validates task identity, asserts directory/name containment, and publish() revalidates the filename before writing.",
+            "publicCaller": "exportTask/exportDatabase are re-exported by src/storage/index.js, but package exports expose the CLI and ./integration surfaces; current production migration use is the retained candidate parity-export path. The destination guard is the verified boundary for this internal API."
+          }
+        },
+        {
+          "file": "src/storage/exporter.js",
+          "line": 271,
+          "expression": "writeFileAtomic(await assertSafePath(destination, relativePath), bytes)",
+          "sourceSha256": "2e005a6784c73f42e53831a800b09b50730f901dd358d7463009f776b55a2a4b",
+          "namespace": "PORTABLE_EXPORT",
+          "destinationOwnership": "Caller supplies a separate interchange directory; exporter owns only paths below that destination and does not make it live operational authority.",
+          "destinationGuard": "exportDatabase() first calls assertPortableExportDestination(destination); session identity is checked against activation_json, portableId rejects path separators, and assertSafePath(destination, relativePath) guards the file.",
+          "publicCallerGuard": "exportTask/exportDatabase are re-exported by src/storage/index.js, but package exports expose the CLI and ./integration surfaces; current production migration use is the retained candidate parity-export path. The destination guard is the verified boundary for this internal API.",
+          "guard": {
+            "destination": "exportDatabase() first calls assertPortableExportDestination(destination); session identity is checked against activation_json, portableId rejects path separators, and assertSafePath(destination, relativePath) guards the file.",
+            "publicCaller": "exportTask/exportDatabase are re-exported by src/storage/index.js, but package exports expose the CLI and ./integration surfaces; current production migration use is the retained candidate parity-export path. The destination guard is the verified boundary for this internal API."
+          }
+        },
+        {
+          "file": "src/storage/exporter.js",
+          "line": 277,
+          "expression": "writeFileAtomic(await assertSafePath(destination, \".forgeloop/session.json\"), serialize(JSON.parse(active.activation_json)))",
+          "sourceSha256": "2e005a6784c73f42e53831a800b09b50730f901dd358d7463009f776b55a2a4b",
+          "namespace": "PORTABLE_EXPORT",
+          "destinationOwnership": "Caller supplies a separate interchange directory; exporter owns only paths below that destination and does not make it live operational authority.",
+          "destinationGuard": "exportDatabase() first calls assertPortableExportDestination(destination); active session payload is selected from the canonical database and assertSafePath(destination, fixed relative path) guards the file.",
+          "publicCallerGuard": "exportTask/exportDatabase are re-exported by src/storage/index.js, but package exports expose the CLI and ./integration surfaces; current production migration use is the retained candidate parity-export path. The destination guard is the verified boundary for this internal API.",
+          "guard": {
+            "destination": "exportDatabase() first calls assertPortableExportDestination(destination); active session payload is selected from the canonical database and assertSafePath(destination, fixed relative path) guards the file.",
+            "publicCaller": "exportTask/exportDatabase are re-exported by src/storage/index.js, but package exports expose the CLI and ./integration surfaces; current production migration use is the retained candidate parity-export path. The destination guard is the verified boundary for this internal API."
+          }
+        },
+        {
+          "file": "src/storage/exporter.js",
+          "line": 282,
+          "expression": "writeFileAtomic(await assertSafePath(destination, \"export-index.json\"), catalog)",
+          "sourceSha256": "2e005a6784c73f42e53831a800b09b50730f901dd358d7463009f776b55a2a4b",
+          "namespace": "PORTABLE_EXPORT",
+          "destinationOwnership": "Caller supplies a separate interchange directory; exporter owns only paths below that destination and does not make it live operational authority.",
+          "destinationGuard": "exportDatabase() first calls assertPortableExportDestination(destination); catalog limits and byte limits are checked before assertSafePath(destination, fixed filename) and the atomic write.",
+          "publicCallerGuard": "exportTask/exportDatabase are re-exported by src/storage/index.js, but package exports expose the CLI and ./integration surfaces; current production migration use is the retained candidate parity-export path. The destination guard is the verified boundary for this internal API.",
+          "guard": {
+            "destination": "exportDatabase() first calls assertPortableExportDestination(destination); catalog limits and byte limits are checked before assertSafePath(destination, fixed filename) and the atomic write.",
+            "publicCaller": "exportTask/exportDatabase are re-exported by src/storage/index.js, but package exports expose the CLI and ./integration surfaces; current production migration use is the retained candidate parity-export path. The destination guard is the verified boundary for this internal API."
+          }
+        },
+        {
+          "file": "src/storage/exporter.js",
+          "line": 304,
+          "expression": "writeFileAtomic(filename, createReadStream(source))",
+          "sourceSha256": "2e005a6784c73f42e53831a800b09b50730f901dd358d7463009f776b55a2a4b",
+          "namespace": "PORTABLE_EXPORT",
+          "destinationOwnership": "Caller supplies a separate interchange directory; exporter owns only paths below that destination and does not make it live operational authority.",
+          "destinationGuard": "exportDatabase() first calls assertPortableExportDestination(destination); attachment reference and signature binding are validated, assertSafePath guards the relative destination, and withVerifiedAttachmentFile verifies source bytes before the write.",
+          "publicCallerGuard": "exportTask/exportDatabase are re-exported by src/storage/index.js, but package exports expose the CLI and ./integration surfaces; current production migration use is the retained candidate parity-export path. The destination guard is the verified boundary for this internal API.",
+          "guard": {
+            "destination": "exportDatabase() first calls assertPortableExportDestination(destination); attachment reference and signature binding are validated, assertSafePath guards the relative destination, and withVerifiedAttachmentFile verifies source bytes before the write.",
+            "publicCaller": "exportTask/exportDatabase are re-exported by src/storage/index.js, but package exports expose the CLI and ./integration surfaces; current production migration use is the retained candidate parity-export path. The destination guard is the verified boundary for this internal API."
+          }
+        },
+        {
+          "file": "src/storage/migration-activate.js",
+          "line": 56,
+          "expression": "writeFileAtomic(journalPath, `${JSON.stringify(journal, null, 2)}\\n`)",
+          "sourceSha256": "12b11a733f5a615ee1becbc8e3780fadfc7e55c92146cd07e82718c588871267",
+          "namespace": "MIGRATION_PUBLICATION_JOURNAL",
+          "destinationOwnership": "Retained migration publication directory selected by the already verified staged operation.",
+          "destinationGuard": "journalPath is asserted below staged.path; write follows final attachment copy, database integrity/logical parity, owner recheck, and publication-stage verification.",
+          "publicCallerGuard": "activateArchivedMigration requires writersQuiesced=true and assertOwnedStorageMaintenance; caller migrateProjectStorage sequences candidate, publication, archive, activation, and terminal verification inside withStorageMaintenance.",
+          "guard": {
+            "destination": "journalPath is asserted below staged.path; write follows final attachment copy, database integrity/logical parity, owner recheck, and publication-stage verification.",
+            "publicCaller": "activateArchivedMigration requires writersQuiesced=true and assertOwnedStorageMaintenance; caller migrateProjectStorage sequences candidate, publication, archive, activation, and terminal verification inside withStorageMaintenance."
+          }
+        },
+        {
+          "file": "src/storage/migration-archive.js",
+          "line": 31,
+          "expression": "writeFileAtomic(journalPath, `${JSON.stringify(journal, null, 2)}\\n`)",
+          "sourceSha256": "38848cc8ab285a2ce37ef7b7b3405cf51e024d023670f7dfbf46eac01bdda37a",
+          "namespace": "MIGRATION_PUBLICATION_JOURNAL",
+          "destinationOwnership": "Retained migration publication directory; journal records source archival progress.",
+          "destinationGuard": "journalPath is asserted below staged.path; archive loop re-inspects source partition, rejects unexpected locations, renames only ACTIVE roots, and persists phase checkpoints.",
+          "publicCallerGuard": "archiveMigrationSources requires writersQuiesced=true and assertOwnedStorageMaintenance; migration orchestration keeps the exclusion retained until activation/terminal validation.",
+          "guard": {
+            "destination": "journalPath is asserted below staged.path; archive loop re-inspects source partition, rejects unexpected locations, renames only ACTIVE roots, and persists phase checkpoints.",
+            "publicCaller": "archiveMigrationSources requires writersQuiesced=true and assertOwnedStorageMaintenance; migration orchestration keeps the exclusion retained until activation/terminal validation."
+          }
+        },
+        {
+          "file": "src/storage/migration-candidate.js",
+          "line": 44,
+          "expression": "writeFileAtomic(filename, records())",
+          "sourceSha256": "41f01d20be6caac40ef541a8d6175e429bd595f5bd3a7a9f046571c880e88ecb",
+          "namespace": "MIGRATION_CANDIDATE_TASK_INVENTORY",
+          "destinationOwnership": "Private candidate/recheck directory allocated by migration code; never live project authority.",
+          "destinationGuard": "writeTaskInventory asserts the fixed filename beneath the supplied directory; callers pass captured.path or a private recheck temp directory.",
+          "publicCallerGuard": "prepareMigrationCandidate requires writersQuiesced=true and withStorageMaintenance; verifyMigrationCandidate writes only a private recheck directory after source/candidate verification. The helper itself is private.",
+          "guard": {
+            "destination": "writeTaskInventory asserts the fixed filename beneath the supplied directory; callers pass captured.path or a private recheck temp directory.",
+            "publicCaller": "prepareMigrationCandidate requires writersQuiesced=true and withStorageMaintenance; verifyMigrationCandidate writes only a private recheck directory after source/candidate verification. The helper itself is private."
+          }
+        },
+        {
+          "file": "src/storage/migration-candidate.js",
+          "line": 216,
+          "expression": "writeFileAtomic(manifestPath, `${JSON.stringify(manifest, null, 2)}\\n`)",
+          "sourceSha256": "41f01d20be6caac40ef541a8d6175e429bd595f5bd3a7a9f046571c880e88ecb",
+          "namespace": "MIGRATION_CANDIDATE_MANIFEST",
+          "destinationOwnership": "Retained candidate directory under the captured legacy source operation; manifest is recovery metadata, not SQLite authority.",
+          "destinationGuard": "captured.path is obtained from a verified source capture and manifestPath is asserted below it; state, source, attachment, parity, and JSON validations precede later status updates.",
+          "publicCallerGuard": "prepareMigrationCandidate requires explicit writer quiescence and owns the maintenance exclusion; resumeMigrationCandidate requires quiescence, assertOwnedStorageMaintenance, verified capture, no marker/database/publication, and exact source bindings.",
+          "guard": {
+            "destination": "captured.path is obtained from a verified source capture and manifestPath is asserted below it; state, source, attachment, parity, and JSON validations precede later status updates.",
+            "publicCaller": "prepareMigrationCandidate requires explicit writer quiescence and owns the maintenance exclusion; resumeMigrationCandidate requires quiescence, assertOwnedStorageMaintenance, verified capture, no marker/database/publication, and exact source bindings."
+          }
+        },
+        {
+          "file": "src/storage/migration-candidate.js",
+          "line": 363,
+          "expression": "writeFileAtomic(intentPath, `${JSON.stringify(intent)}\\n`)",
+          "sourceSha256": "41f01d20be6caac40ef541a8d6175e429bd595f5bd3a7a9f046571c880e88ecb",
+          "namespace": "MIGRATION_CANDIDATE_RECOVERY_INTENT",
+          "destinationOwnership": "Retained candidate directory; recovery intent records which partial candidate files may be moved to history.",
+          "destinationGuard": "intentPath is asserted below the verified capture; the write occurs only after exact source fingerprint, candidate file membership, and pre-cutover checks.",
+          "publicCallerGuard": "resumeMigrationCandidate requires writersQuiesced=true and assertOwnedStorageMaintenance; active marker/database/publication presence blocks rebuild.",
+          "guard": {
+            "destination": "intentPath is asserted below the verified capture; the write occurs only after exact source fingerprint, candidate file membership, and pre-cutover checks.",
+            "publicCaller": "resumeMigrationCandidate requires writersQuiesced=true and assertOwnedStorageMaintenance; active marker/database/publication presence blocks rebuild."
+          }
+        },
+        {
+          "file": "src/storage/migration-publication.js",
+          "line": 71,
+          "expression": "writeFileAtomic(journalPath, `${JSON.stringify(journal, null, 2)}\\n`)",
+          "sourceSha256": "6e60f541f53f977bc1670d2c2f7577e5e718b1e1fff80ba49d4e7c026d8b38ed",
+          "namespace": "MIGRATION_PUBLICATION_JOURNAL",
+          "destinationOwnership": "Exclusive retained candidate/publication directory; journal is a staging checkpoint and never sufficient by itself to authorize publication.",
+          "destinationGuard": "candidate is revalidated, attachments are verified, publication directory is allocated exclusively, and journal is asserted/validated on read before any resume.",
+          "publicCallerGuard": "stageMigrationPublication requires writersQuiesced=true and executes inside withStorageMaintenance; resumeMigrationPublicationStage requires quiescence, assertOwnedStorageMaintenance, exact phase/identity, no pending marker/database, and candidate parity.",
+          "guard": {
+            "destination": "candidate is revalidated, attachments are verified, publication directory is allocated exclusively, and journal is asserted/validated on read before any resume.",
+            "publicCaller": "stageMigrationPublication requires writersQuiesced=true and executes inside withStorageMaintenance; resumeMigrationPublicationStage requires quiescence, assertOwnedStorageMaintenance, exact phase/identity, no pending marker/database, and candidate parity."
+          }
+        },
+        {
+          "file": "src/storage/migration-rollback-preparation.js",
+          "line": 29,
+          "expression": "writeFileAtomic(journalPath,`${JSON.stringify(journal,null,2)}\\n`)",
+          "sourceSha256": "1152bbb354970c43c8530d681790c08941408328e59654eb6e62044b2dcd9bfe",
+          "namespace": "MIGRATION_SOURCE_ROLLBACK_JOURNAL",
+          "destinationOwnership": "Retained rollback operation directory selected from the migration destination; journal binds native backup and source fingerprints.",
+          "destinationGuard": "operation root and journal filename are asserted; preparation validates rollback admission, marker binding, backup logical fingerprint, schema, and source/native parity.",
+          "publicCallerGuard": "rollbackProjectStorage validates destination, writersQuiesced, nativeWritesExcluded, and pinned clean legacy target before withStorageMaintenance; resume path requires exact expectedOwnerId and the same exclusions.",
+          "guard": {
+            "destination": "operation root and journal filename are asserted; preparation validates rollback admission, marker binding, backup logical fingerprint, schema, and source/native parity.",
+            "publicCaller": "rollbackProjectStorage validates destination, writersQuiesced, nativeWritesExcluded, and pinned clean legacy target before withStorageMaintenance; resume path requires exact expectedOwnerId and the same exclusions."
+          }
+        },
+        {
+          "file": "src/storage/migration-rollback-preparation.js",
+          "line": 87,
+          "expression": "writeFileAtomic(await assertSafePath(verified.root,\"rollback-journal.json\"),`${JSON.stringify(journal,null,2)}\\n`)",
+          "sourceSha256": "1152bbb354970c43c8530d681790c08941408328e59654eb6e62044b2dcd9bfe",
+          "namespace": "MIGRATION_SOURCE_ROLLBACK_JOURNAL",
+          "destinationOwnership": "Retained rollback operation directory selected from the migration destination; journal binds native backup and source fingerprints.",
+          "destinationGuard": "operation root and journal filename are asserted; preparation validates rollback admission, marker binding, backup logical fingerprint, schema, and source/native parity.",
+          "publicCallerGuard": "rollbackProjectStorage validates destination, writersQuiesced, nativeWritesExcluded, and pinned clean legacy target before withStorageMaintenance; resume path requires exact expectedOwnerId and the same exclusions.",
+          "guard": {
+            "destination": "operation root and journal filename are asserted; preparation validates rollback admission, marker binding, backup logical fingerprint, schema, and source/native parity.",
+            "publicCaller": "rollbackProjectStorage validates destination, writersQuiesced, nativeWritesExcluded, and pinned clean legacy target before withStorageMaintenance; resume path requires exact expectedOwnerId and the same exclusions."
+          }
+        },
+        {
+          "file": "src/storage/migration-rollback-preparation.js",
+          "line": 109,
+          "expression": "writeFileAtomic(journalPath,`${JSON.stringify(journal,null,2)}\\n`)",
+          "sourceSha256": "1152bbb354970c43c8530d681790c08941408328e59654eb6e62044b2dcd9bfe",
+          "namespace": "MIGRATION_SOURCE_ROLLBACK_JOURNAL",
+          "destinationOwnership": "Retained rollback operation directory selected from the migration destination; journal binds native backup and source fingerprints.",
+          "destinationGuard": "operation root and journal filename are asserted; preparation validates rollback admission, marker binding, backup logical fingerprint, schema, and source/native parity.",
+          "publicCallerGuard": "rollbackProjectStorage validates destination, writersQuiesced, nativeWritesExcluded, and pinned clean legacy target before withStorageMaintenance; resume path requires exact expectedOwnerId and the same exclusions.",
+          "guard": {
+            "destination": "operation root and journal filename are asserted; preparation validates rollback admission, marker binding, backup logical fingerprint, schema, and source/native parity.",
+            "publicCaller": "rollbackProjectStorage validates destination, writersQuiesced, nativeWritesExcluded, and pinned clean legacy target before withStorageMaintenance; resume path requires exact expectedOwnerId and the same exclusions."
+          }
+        },
+        {
+          "file": "src/storage/migration-rollback-publication.js",
+          "line": 45,
+          "expression": "writeFileAtomic(filename,`${JSON.stringify(journal,null,2)}\\n`)",
+          "sourceSha256": "81ca1f7c72e57f885a137e33d428c4303db0f1bb859ac19c67372d9826553417",
+          "namespace": "MIGRATION_SOURCE_ROLLBACK_PUBLICATION",
+          "destinationOwnership": "Retained source-rollback publication directory; journal records native retention and source restoration phases.",
+          "destinationGuard": "retainedRoot and every recordRoot/filename are asserted; publication refuses existing destinations, verifies native/source inventories and fingerprints, and moves roots exclusively.",
+          "publicCallerGuard": "publishMigrationSourceRollback requires nativeWritesExcluded=true, verified rollback stage, and assertOwnedStorageMaintenance; resume requires exact dead owner adoption, continuity, quiesced writers, and the same exclusion.",
+          "guard": {
+            "destination": "retainedRoot and every recordRoot/filename are asserted; publication refuses existing destinations, verifies native/source inventories and fingerprints, and moves roots exclusively.",
+            "publicCaller": "publishMigrationSourceRollback requires nativeWritesExcluded=true, verified rollback stage, and assertOwnedStorageMaintenance; resume requires exact dead owner adoption, continuity, quiesced writers, and the same exclusion."
+          }
+        },
+        {
+          "file": "src/storage/migration-rollback-publication.js",
+          "line": 63,
+          "expression": "writeFileAtomic(filename,`${JSON.stringify(journal,null,2)}\\n`)",
+          "sourceSha256": "81ca1f7c72e57f885a137e33d428c4303db0f1bb859ac19c67372d9826553417",
+          "namespace": "MIGRATION_SOURCE_ROLLBACK_PUBLICATION",
+          "destinationOwnership": "Retained source-rollback publication directory; journal records native retention and source restoration phases.",
+          "destinationGuard": "retainedRoot and every recordRoot/filename are asserted; publication refuses existing destinations, verifies native/source inventories and fingerprints, and moves roots exclusively.",
+          "publicCallerGuard": "publishMigrationSourceRollback requires nativeWritesExcluded=true, verified rollback stage, and assertOwnedStorageMaintenance; resume requires exact dead owner adoption, continuity, quiesced writers, and the same exclusion.",
+          "guard": {
+            "destination": "retainedRoot and every recordRoot/filename are asserted; publication refuses existing destinations, verifies native/source inventories and fingerprints, and moves roots exclusively.",
+            "publicCaller": "publishMigrationSourceRollback requires nativeWritesExcluded=true, verified rollback stage, and assertOwnedStorageMaintenance; resume requires exact dead owner adoption, continuity, quiesced writers, and the same exclusion."
+          }
+        },
+        {
+          "file": "src/storage/migration-rollback-publication.js",
+          "line": 161,
+          "expression": "writeFileAtomic(await assertSafePath(recordRoot,filename),`${JSON.stringify(recorded,null,2)}\\n`)",
+          "sourceSha256": "81ca1f7c72e57f885a137e33d428c4303db0f1bb859ac19c67372d9826553417",
+          "namespace": "MIGRATION_SOURCE_ROLLBACK_PUBLICATION",
+          "destinationOwnership": "Retained source-rollback publication directory; journal records native retention and source restoration phases.",
+          "destinationGuard": "retainedRoot and every recordRoot/filename are asserted; publication refuses existing destinations, verifies native/source inventories and fingerprints, and moves roots exclusively.",
+          "publicCallerGuard": "publishMigrationSourceRollback requires nativeWritesExcluded=true, verified rollback stage, and assertOwnedStorageMaintenance; resume requires exact dead owner adoption, continuity, quiesced writers, and the same exclusion.",
+          "guard": {
+            "destination": "retainedRoot and every recordRoot/filename are asserted; publication refuses existing destinations, verifies native/source inventories and fingerprints, and moves roots exclusively.",
+            "publicCaller": "publishMigrationSourceRollback requires nativeWritesExcluded=true, verified rollback stage, and assertOwnedStorageMaintenance; resume requires exact dead owner adoption, continuity, quiesced writers, and the same exclusion."
+          }
+        },
+        {
+          "file": "src/storage/migration-rollback-release.js",
+          "line": 62,
+          "expression": "writeFileAtomic(await assertSafePath(published.root,\"target-validation.json\"),`${JSON.stringify(receipt,null,2)}\\n`)",
+          "sourceSha256": "6838a25238dd71cd2b2c6d740fb32c3f1914bfd06ed376f154bd4dd7cb0b5cfb",
+          "namespace": "MIGRATION_SOURCE_ROLLBACK_VALIDATION_RECEIPT",
+          "destinationOwnership": "Retained rollback publication directory; target-validation.json is a terminal validation receipt.",
+          "destinationGuard": "published rollback is reverified, exact pinned clean legacy checkout is validated, every task is protocol-validated, and assertSafePath guards the receipt destination.",
+          "publicCallerGuard": "Release retains maintenance exclusion, requires the exact supported target and canonical backup bindings, and only calls allowStorageMaintenanceRelease after writing and re-verifying the receipt.",
+          "guard": {
+            "destination": "published rollback is reverified, exact pinned clean legacy checkout is validated, every task is protocol-validated, and assertSafePath guards the receipt destination.",
+            "publicCaller": "Release retains maintenance exclusion, requires the exact supported target and canonical backup bindings, and only calls allowStorageMaintenanceRelease after writing and re-verifying the receipt."
+          }
+        },
+        {
+          "file": "src/storage/migration-rollback-source-stage.js",
+          "line": 27,
+          "expression": "writeFileAtomic(filename,`${JSON.stringify(manifest,null,2)}\\n`)",
+          "sourceSha256": "6bfbf8e0ad81644596fff0f055593082e7627bbac66de070986f81aa4f8b2211",
+          "namespace": "MIGRATION_SOURCE_ROLLBACK_STAGE",
+          "destinationOwnership": "Exclusive retained source-stage directory; source-stage.json binds copied legacy bytes to native rollback evidence.",
+          "destinationGuard": "source-stage root and filename are asserted; stage allocation is exclusive, captured source inventory is verified after copy, and READY is written only after revalidation.",
+          "publicCallerGuard": "rollbackProjectStorage calls staging inside withStorageMaintenance after rollback preparation; recovery requires exact owner adoption, continuity, quiescence, and retained native authority.",
+          "guard": {
+            "destination": "source-stage root and filename are asserted; stage allocation is exclusive, captured source inventory is verified after copy, and READY is written only after revalidation.",
+            "publicCaller": "rollbackProjectStorage calls staging inside withStorageMaintenance after rollback preparation; recovery requires exact owner adoption, continuity, quiescence, and retained native authority."
+          }
+        },
+        {
+          "file": "src/storage/migration-rollback-source-stage.js",
+          "line": 90,
+          "expression": "writeFileAtomic(filename,`${JSON.stringify(manifest,null,2)}\\n`)",
+          "sourceSha256": "6bfbf8e0ad81644596fff0f055593082e7627bbac66de070986f81aa4f8b2211",
+          "namespace": "MIGRATION_SOURCE_ROLLBACK_STAGE",
+          "destinationOwnership": "Exclusive retained source-stage directory; source-stage.json binds copied legacy bytes to native rollback evidence.",
+          "destinationGuard": "source-stage root and filename are asserted; stage allocation is exclusive, captured source inventory is verified after copy, and READY is written only after revalidation.",
+          "publicCallerGuard": "rollbackProjectStorage calls staging inside withStorageMaintenance after rollback preparation; recovery requires exact owner adoption, continuity, quiescence, and retained native authority.",
+          "guard": {
+            "destination": "source-stage root and filename are asserted; stage allocation is exclusive, captured source inventory is verified after copy, and READY is written only after revalidation.",
+            "publicCaller": "rollbackProjectStorage calls staging inside withStorageMaintenance after rollback preparation; recovery requires exact owner adoption, continuity, quiescence, and retained native authority."
+          }
+        },
+        {
+          "file": "src/storage/migration-source.js",
+          "line": 161,
+          "expression": "writeFileAtomic(manifestPath, `${JSON.stringify(manifest, null, 2)}\\n`)",
+          "sourceSha256": "4e2b78e7be7b1641883b28d0b33fe34fd1264b047ce88e00e617e5607aa9ffdb",
+          "namespace": "MIGRATION_SOURCE_CAPTURE",
+          "destinationOwnership": "Retained source capture directory outside legacy operational roots; source-manifest binds the captured inventory.",
+          "destinationGuard": "retained is asserted under target; capture rejects overlap with every legacy source root, allocates the directory exclusively, and records the inventoried files/directories before copying.",
+          "publicCallerGuard": "captureLegacySource requires writersQuiesced=true and wraps captureExcludedLegacySource in withStorageMaintenance; assertLegacyIdle rejects native database, legacy locks, and incomplete transactions.",
+          "guard": {
+            "destination": "retained is asserted under target; capture rejects overlap with every legacy source root, allocates the directory exclusively, and records the inventoried files/directories before copying.",
+            "publicCaller": "captureLegacySource requires writersQuiesced=true and wraps captureExcludedLegacySource in withStorageMaintenance; assertLegacyIdle rejects native database, legacy locks, and incomplete transactions."
+          }
+        },
+        {
+          "file": "src/storage/migration-source.js",
+          "line": 239,
+          "expression": "writeFileAtomic(await assertSafePath(attempt, \"source-manifest.json\"), `${JSON.stringify(manifest)}\\n`)",
+          "sourceSha256": "4e2b78e7be7b1641883b28d0b33fe34fd1264b047ce88e00e617e5607aa9ffdb",
+          "namespace": "MIGRATION_SOURCE_CAPTURE_RECOVERY",
+          "destinationOwnership": "Unique source-history attempt directory retained as forensic recovery evidence.",
+          "destinationGuard": "attempt is asserted below the retained capture and allocated exclusively; the recovery manifest is written before completing partial files.",
+          "publicCallerGuard": "resumeLegacySourceCapture requires writersQuiesced=true, assertOwnedStorageMaintenance, valid capture state, unchanged original inventory, and no cutover/candidate/publication markers.",
+          "guard": {
+            "destination": "attempt is asserted below the retained capture and allocated exclusively; the recovery manifest is written before completing partial files.",
+            "publicCaller": "resumeLegacySourceCapture requires writersQuiesced=true, assertOwnedStorageMaintenance, valid capture state, unchanged original inventory, and no cutover/candidate/publication markers."
+          }
+        },
+        {
+          "file": "src/storage/migration-source.js",
+          "line": 251,
+          "expression": "writeFileAtomic(manifestPath, `${JSON.stringify(manifest, null, 2)}\\n`)",
+          "sourceSha256": "4e2b78e7be7b1641883b28d0b33fe34fd1264b047ce88e00e617e5607aa9ffdb",
+          "namespace": "MIGRATION_SOURCE_CAPTURE",
+          "destinationOwnership": "Original retained source capture directory; final CAPTURED manifest is the source admission record.",
+          "destinationGuard": "manifestPath is asserted below the retained capture and final source/capture inventories are compared before the write.",
+          "publicCallerGuard": "resumeLegacySourceCapture has rechecked source inventory, capture membership, bytes, and assertOwnedStorageMaintenance immediately before finalization.",
+          "guard": {
+            "destination": "manifestPath is asserted below the retained capture and final source/capture inventories are compared before the write.",
+            "publicCaller": "resumeLegacySourceCapture has rechecked source inventory, capture membership, bytes, and assertOwnedStorageMaintenance immediately before finalization."
+          }
+        },
+        {
+          "file": "src/storage/project-backup.js",
+          "line": 35,
+          "expression": "writeFileAtomic(manifestPath, `${JSON.stringify(manifest, null, 2)}\\n`)",
+          "sourceSha256": "66dffeb2ca6fa6f6c90a3eb19fafad8e5fd69596f2794c23ef95669fce5f1370",
+          "namespace": "PROJECT_STORAGE_BACKUP",
+          "destinationOwnership": "Caller-selected fresh backup directory; manifest and attachment inventory are retained evidence paired with a copied SQLite database.",
+          "destinationGuard": "runStorageBackup first binds the destination under the canonical project with assertSafePath; backupProjectStorage then resolves and rechecks the destination parent, allocates the directory exclusively, and asserts fixed child paths. Its database helper uses a private same-parent temporary directory, validates the native backup with storage integrity, and publishes by a non-overwriting hard link. Attachment paths are content-addressed and rechecked below the project root. Direct storage APIs accept caller-selected retained destinations and do not independently assert that the destination is below the source project; that remains an explicit caller boundary for internal backup destinations.",
+          "publicCallerGuard": "Ordinary storage-backup intentionally admits online writers: runStorageBackup requires the canonical operational SQLite store and safe destination, while the native SQLite backup creates a committed snapshot and the attachment-inclusive path reads references from that retained read-only snapshot. The exported backupProjectStorage API does not require writersQuiesced or assertOwnedStorageMaintenance because those guards belong to migration and active replacement cutover, not ongoing backup. Source attachment bytes are verified before copy and the copied content-addressed bytes are verified after copy. Direct callers remain responsible for pairing the database, source root, and destination according to the API contract.",
+          "guard": {
+            "destination": "runStorageBackup first binds the destination under the canonical project with assertSafePath; backupProjectStorage then resolves and rechecks the destination parent, allocates the directory exclusively, and asserts fixed child paths. Its database helper uses a private same-parent temporary directory, validates the native backup with storage integrity, and publishes by a non-overwriting hard link. Attachment paths are content-addressed and rechecked below the project root. Direct storage APIs accept caller-selected retained destinations and do not independently assert that the destination is below the source project; that remains an explicit caller boundary for internal backup destinations.",
+            "publicCaller": "Ordinary storage-backup intentionally admits online writers: runStorageBackup requires the canonical operational SQLite store and safe destination, while the native SQLite backup creates a committed snapshot and the attachment-inclusive path reads references from that retained read-only snapshot. The exported backupProjectStorage API does not require writersQuiesced or assertOwnedStorageMaintenance because those guards belong to migration and active replacement cutover, not ongoing backup. Source attachment bytes are verified before copy and the copied content-addressed bytes are verified after copy. Direct callers remain responsible for pairing the database, source root, and destination according to the API contract.",
+            "sourceIdentity": "runStorageBackup binds store.db to target through getOperationalStore(target). The direct backupProjectStorage(db, target, destination) signature accepts the database and source root separately and does not independently prove that they belong to the same project; reviewed command/tests and internal callsites supply matching roots. References still come from the retained SQLite snapshot, and attachment-files requires the canonical .forgeloop/attachments/objects/<sha256> path, project containment, regular-file identity, and matching size/SHA-256 before copy. publishAttachmentFile returns and rechecks the same content-addressed binding; copyAttachment rechecks the published bytes, so a source byte change fails rather than silently producing an unverified bundle."
+          }
+        },
+        {
+          "file": "src/storage/project-backup.js",
+          "line": 51,
+          "expression": "writeFileAtomic(inventoryPath, inventory())",
+          "sourceSha256": "66dffeb2ca6fa6f6c90a3eb19fafad8e5fd69596f2794c23ef95669fce5f1370",
+          "namespace": "PROJECT_STORAGE_BACKUP",
+          "destinationOwnership": "Caller-selected fresh backup directory; manifest and attachment inventory are retained evidence paired with a copied SQLite database.",
+          "destinationGuard": "runStorageBackup first binds the destination under the canonical project with assertSafePath; backupProjectStorage then resolves and rechecks the destination parent, allocates the directory exclusively, and asserts fixed child paths. Its database helper uses a private same-parent temporary directory, validates the native backup with storage integrity, and publishes by a non-overwriting hard link. Attachment paths are content-addressed and rechecked below the project root. Direct storage APIs accept caller-selected retained destinations and do not independently assert that the destination is below the source project; that remains an explicit caller boundary for internal backup destinations.",
+          "publicCallerGuard": "Ordinary storage-backup intentionally admits online writers: runStorageBackup requires the canonical operational SQLite store and safe destination, while the native SQLite backup creates a committed snapshot and the attachment-inclusive path reads references from that retained read-only snapshot. The exported backupProjectStorage API does not require writersQuiesced or assertOwnedStorageMaintenance because those guards belong to migration and active replacement cutover, not ongoing backup. Source attachment bytes are verified before copy and the copied content-addressed bytes are verified after copy. Direct callers remain responsible for pairing the database, source root, and destination according to the API contract.",
+          "guard": {
+            "destination": "runStorageBackup first binds the destination under the canonical project with assertSafePath; backupProjectStorage then resolves and rechecks the destination parent, allocates the directory exclusively, and asserts fixed child paths. Its database helper uses a private same-parent temporary directory, validates the native backup with storage integrity, and publishes by a non-overwriting hard link. Attachment paths are content-addressed and rechecked below the project root. Direct storage APIs accept caller-selected retained destinations and do not independently assert that the destination is below the source project; that remains an explicit caller boundary for internal backup destinations.",
+            "publicCaller": "Ordinary storage-backup intentionally admits online writers: runStorageBackup requires the canonical operational SQLite store and safe destination, while the native SQLite backup creates a committed snapshot and the attachment-inclusive path reads references from that retained read-only snapshot. The exported backupProjectStorage API does not require writersQuiesced or assertOwnedStorageMaintenance because those guards belong to migration and active replacement cutover, not ongoing backup. Source attachment bytes are verified before copy and the copied content-addressed bytes are verified after copy. Direct callers remain responsible for pairing the database, source root, and destination according to the API contract.",
+            "sourceIdentity": "runStorageBackup binds store.db to target through getOperationalStore(target). The direct backupProjectStorage(db, target, destination) signature accepts the database and source root separately and does not independently prove that they belong to the same project; reviewed command/tests and internal callsites supply matching roots. References still come from the retained SQLite snapshot, and attachment-files requires the canonical .forgeloop/attachments/objects/<sha256> path, project containment, regular-file identity, and matching size/SHA-256 before copy. publishAttachmentFile returns and rechecks the same content-addressed binding; copyAttachment rechecks the published bytes, so a source byte change fails rather than silently producing an unverified bundle."
+          }
+        },
+        {
+          "file": "src/storage/project-replacement.js",
+          "line": 72,
+          "expression": "writeFileAtomic(await assertSafePath(current.root, \"replacement-intent.json\"), `${JSON.stringify(intent, null, 2)}\\n`)",
+          "sourceSha256": "8edb1daa7f5a50a56c2762488db647d1e441d1f421d8dd6b2f1fbc5a813efa59",
+          "namespace": "ACTIVE_PROJECT_REPLACEMENT_INTENT",
+          "destinationOwnership": "Retained active-replacement operation directory selected by exact operationId; replacement-intent.json controls preparation/recovery only.",
+          "destinationGuard": "Both writes use assertSafePath; the persist closure asserts the live maintenance owner before writing, and intent fields are verified against exact operation, source, phase, and snapshot bindings.",
+          "publicCallerGuard": "Initial replacement requires writersQuiesced=true, verified source backup, and withStorageMaintenance; recovery requires exact operationId, expectedOwnerId continuity, quiescence, and resumeStorageMaintenance.",
+          "guard": {
+            "destination": "Both writes use assertSafePath; the persist closure asserts the live maintenance owner before writing, and intent fields are verified against exact operation, source, phase, and snapshot bindings.",
+            "publicCaller": "Initial replacement requires writersQuiesced=true, verified source backup, and withStorageMaintenance; recovery requires exact operationId, expectedOwnerId continuity, quiescence, and resumeStorageMaintenance."
+          }
+        },
+        {
+          "file": "src/storage/project-replacement.js",
+          "line": 115,
+          "expression": "writeFileAtomic(await assertSafePath(operationRoot, \"replacement-intent.json\"), `${JSON.stringify(intent, null, 2)}\\n`)",
+          "sourceSha256": "8edb1daa7f5a50a56c2762488db647d1e441d1f421d8dd6b2f1fbc5a813efa59",
+          "namespace": "ACTIVE_PROJECT_REPLACEMENT_INTENT",
+          "destinationOwnership": "Retained active-replacement operation directory selected by exact operationId; replacement-intent.json controls preparation/recovery only.",
+          "destinationGuard": "Both writes use assertSafePath; the persist closure asserts the live maintenance owner before writing, and intent fields are verified against exact operation, source, phase, and snapshot bindings.",
+          "publicCallerGuard": "Initial replacement requires writersQuiesced=true, verified source backup, and withStorageMaintenance; recovery requires exact operationId, expectedOwnerId continuity, quiescence, and resumeStorageMaintenance.",
+          "guard": {
+            "destination": "Both writes use assertSafePath; the persist closure asserts the live maintenance owner before writing, and intent fields are verified against exact operation, source, phase, and snapshot bindings.",
+            "publicCaller": "Initial replacement requires writersQuiesced=true, verified source backup, and withStorageMaintenance; recovery requires exact operationId, expectedOwnerId continuity, quiescence, and resumeStorageMaintenance."
+          }
+        },
+        {
+          "file": "src/storage/project-restore.js",
+          "line": 44,
+          "expression": "writeFileAtomic(journalPath, `${JSON.stringify(journal, null, 2)}\\n`)",
+          "sourceSha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+          "namespace": "PROJECT_RESTORE_JOURNAL",
+          "destinationOwnership": "Retained restore operation directory; restore-journal.json is the resumable checkpoint for an explicitly selected operation.",
+          "destinationGuard": "operationRoot/journalPath are asserted; write follows verified incoming backup, complete outgoing archive, fresh-state checks, and an assertOwnedStorageMaintenance call inside the backup callback.",
+          "publicCallerGuard": "Fresh restore requires writersQuiesced=true, verified source backup, fresh target state, and owner-held maintenance; resume requires exact operationId/expectedOwnerId, continuity, quiescence, and retained exclusion.",
+          "guard": {
+            "destination": "operationRoot/journalPath are asserted; write follows verified incoming backup, complete outgoing archive, fresh-state checks, and an assertOwnedStorageMaintenance call inside the backup callback.",
+            "publicCaller": "Fresh restore requires writersQuiesced=true, verified source backup, fresh target state, and owner-held maintenance; resume requires exact operationId/expectedOwnerId, continuity, quiescence, and retained exclusion."
+          }
+        },
+        {
+          "file": "src/storage/project-restore.js",
+          "line": 86,
+          "expression": "writeFileAtomic(journalPath, `${JSON.stringify(journal, null, 2)}\\n`)",
+          "sourceSha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+          "namespace": "PROJECT_RESTORE_JOURNAL",
+          "destinationOwnership": "Retained restore operation directory; restore-journal.json is the resumable checkpoint for an explicitly selected operation.",
+          "destinationGuard": "operationRoot/journalPath are asserted; initial journal creation follows verified source backup, fresh operational-state checks, writersQuiesced=true, and withStorageMaintenance allocation.",
+          "publicCallerGuard": "Fresh restore requires writersQuiesced=true, verified source backup, fresh target state, and owner-held maintenance; resume requires exact operationId/expectedOwnerId, continuity, quiescence, and retained exclusion.",
+          "guard": {
+            "destination": "operationRoot/journalPath are asserted; initial journal creation follows verified source backup, fresh operational-state checks, writersQuiesced=true, and withStorageMaintenance allocation.",
+            "publicCaller": "Fresh restore requires writersQuiesced=true, verified source backup, fresh target state, and owner-held maintenance; resume requires exact operationId/expectedOwnerId, continuity, quiescence, and retained exclusion."
+          }
+        },
+        {
+          "file": "src/storage/project-restore.js",
+          "line": 111,
+          "expression": "writeFileAtomic(journalPath, `${JSON.stringify(journal, null, 2)}\\n`)",
+          "sourceSha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+          "namespace": "PROJECT_RESTORE_JOURNAL",
+          "destinationOwnership": "Retained restore operation directory; restore-journal.json is the resumable checkpoint for an explicitly selected operation.",
+          "destinationGuard": "operationRoot/journalPath are asserted; caller has verified the retained snapshot, validation, owner, restore journal, publication layout, and existing database parity before PUBLISHING/ACTIVE checkpoints.",
+          "publicCallerGuard": "Fresh restore requires writersQuiesced=true, verified source backup, fresh target state, and owner-held maintenance; resume requires exact operationId/expectedOwnerId, continuity, quiescence, and retained exclusion.",
+          "guard": {
+            "destination": "operationRoot/journalPath are asserted; caller has verified the retained snapshot, validation, owner, restore journal, publication layout, and existing database parity before PUBLISHING/ACTIVE checkpoints.",
+            "publicCaller": "Fresh restore requires writersQuiesced=true, verified source backup, fresh target state, and owner-held maintenance; resume requires exact operationId/expectedOwnerId, continuity, quiescence, and retained exclusion."
+          }
+        },
+        {
+          "file": "src/storage/project-restore.js",
+          "line": 169,
+          "expression": "writeFileAtomic(await assertSafePath(current.root, \"restore-journal.json\"), `${JSON.stringify(current.journal, null, 2)}\\n`)",
+          "sourceSha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+          "namespace": "PROJECT_RESTORE_JOURNAL",
+          "destinationOwnership": "Retained restore operation directory; restore-journal.json is the resumable checkpoint for an explicitly selected operation.",
+          "destinationGuard": "current.root and fixed filename are asserted; write follows owner continuity, verified journal identity, and an immediate assertOwnedStorageMaintenance call.",
+          "publicCallerGuard": "Fresh restore requires writersQuiesced=true, verified source backup, fresh target state, and owner-held maintenance; resume requires exact operationId/expectedOwnerId, continuity, quiescence, and retained exclusion.",
+          "guard": {
+            "destination": "current.root and fixed filename are asserted; write follows owner continuity, verified journal identity, and an immediate assertOwnedStorageMaintenance call.",
+            "publicCaller": "Fresh restore requires writersQuiesced=true, verified source backup, fresh target state, and owner-held maintenance; resume requires exact operationId/expectedOwnerId, continuity, quiescence, and retained exclusion."
+          }
+        },
+        {
+          "file": "src/storage/project-restore.js",
+          "line": 195,
+          "expression": "writeFileAtomic(await assertSafePath(root, \"restore-journal.json\"), `${JSON.stringify(journal, null, 2)}\\n`)",
+          "sourceSha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+          "namespace": "PROJECT_RESTORE_JOURNAL",
+          "destinationOwnership": "Retained restore operation directory; restore-journal.json is the resumable checkpoint for an explicitly selected operation.",
+          "destinationGuard": "root and fixed filename are asserted; write follows verified source/snapshot backup parity, migration validation, and assertOwnedStorageMaintenance immediately before binding the READY journal.",
+          "publicCallerGuard": "Fresh restore requires writersQuiesced=true, verified source backup, fresh target state, and owner-held maintenance; resume requires exact operationId/expectedOwnerId, continuity, quiescence, and retained exclusion.",
+          "guard": {
+            "destination": "root and fixed filename are asserted; write follows verified source/snapshot backup parity, migration validation, and assertOwnedStorageMaintenance immediately before binding the READY journal.",
+            "publicCaller": "Fresh restore requires writersQuiesced=true, verified source backup, fresh target state, and owner-held maintenance; resume requires exact operationId/expectedOwnerId, continuity, quiescence, and retained exclusion."
+          }
+        },
+        {
+          "file": "src/storage/restore-preparation.js",
+          "line": 21,
+          "expression": "writeFileAtomic(temporary, `${JSON.stringify(record, null, 2)}\\n`)",
+          "sourceSha256": "70c2db1ac984643434a5e1986028efc39f79b9d2f2576a4cbe35f39bd0161347",
+          "namespace": "RESTORE_SNAPSHOT_INTENT_HISTORY",
+          "destinationOwnership": "Unique snapshot-intents history record under a retained restore operation; temporary file is linked into an immutable intent name.",
+          "destinationGuard": "root and generated history paths are asserted; temporary write precedes exclusive link, existing intent bytes are fingerprint-compared, then temporary bytes are removed.",
+          "publicCallerGuard": "Private retainCompletedIntent is reached from ensurePreparedRestoreSnapshot while restore/replacement recovery owns maintenance and has verified the source manifest; the helper itself is not a public export.",
+          "guard": {
+            "destination": "root and generated history paths are asserted; temporary write precedes exclusive link, existing intent bytes are fingerprint-compared, then temporary bytes are removed.",
+            "publicCaller": "Private retainCompletedIntent is reached from ensurePreparedRestoreSnapshot while restore/replacement recovery owns maintenance and has verified the source manifest; the helper itself is not a public export."
+          }
+        },
+        {
+          "file": "src/storage/restore-preparation.js",
+          "line": 45,
+          "expression": "writeFileAtomic(journalPath, `${JSON.stringify(journal, null, 2)}\\n`)",
+          "sourceSha256": "70c2db1ac984643434a5e1986028efc39f79b9d2f2576a4cbe35f39bd0161347",
+          "namespace": "RESTORE_PREPARATION_JOURNAL",
+          "destinationOwnership": "Retained restore or replacement operation directory; journal filename is allowlisted by the helper.",
+          "destinationGuard": "journal filename is allowlisted, root/journalPath are asserted, source fingerprint is checked, and persist explicitly calls assertOwnedStorageMaintenance before writing.",
+          "publicCallerGuard": "ensurePreparedRestoreSnapshot is used only from owner-held restore/replacement recovery after verified source backup and bounded retention intent.",
+          "guard": {
+            "destination": "journal filename is allowlisted, root/journalPath are asserted, source fingerprint is checked, and persist explicitly calls assertOwnedStorageMaintenance before writing.",
+            "publicCaller": "ensurePreparedRestoreSnapshot is used only from owner-held restore/replacement recovery after verified source backup and bounded retention intent."
+          }
+        },
+        {
+          "file": "src/storage/restore-replacement-archive.js",
+          "line": 132,
+          "expression": "writeFileAtomic(filename, `${JSON.stringify(journal, null, 2)}\\n`)",
+          "sourceSha256": "fbd0347cb136200ab4cdf848c47c1948f226913a3714c347b71d8fb541c4dd36",
+          "namespace": "ACTIVE_REPLACEMENT_ARCHIVE_JOURNAL",
+          "destinationOwnership": "Retained outgoing replacement root; archive-journal.json binds outgoing and incoming fingerprints during root archival.",
+          "destinationGuard": "retained root and fixed filename are asserted; writes follow outgoing/incoming evidence verification, owner adoption/continuity, and exact active-root partition checks.",
+          "publicCallerGuard": "archiveActiveStorageReplacement requires assertOwnedStorageMaintenance, retained exclusion, verified outgoing authority, and verified incoming snapshot; all root moves recheck owner and location.",
+          "guard": {
+            "destination": "retained root and fixed filename are asserted; writes follow outgoing/incoming evidence verification, owner adoption/continuity, and exact active-root partition checks.",
+            "publicCaller": "archiveActiveStorageReplacement requires assertOwnedStorageMaintenance, retained exclusion, verified outgoing authority, and verified incoming snapshot; all root moves recheck owner and location."
+          }
+        },
+        {
+          "file": "src/storage/restore-replacement-archive.js",
+          "line": 139,
+          "expression": "writeFileAtomic(filename, `${JSON.stringify(journal, null, 2)}\\n`)",
+          "sourceSha256": "fbd0347cb136200ab4cdf848c47c1948f226913a3714c347b71d8fb541c4dd36",
+          "namespace": "ACTIVE_REPLACEMENT_ARCHIVE_JOURNAL",
+          "destinationOwnership": "Retained outgoing replacement root; archive-journal.json binds outgoing and incoming fingerprints during root archival.",
+          "destinationGuard": "retained root and fixed filename are asserted; writes follow outgoing/incoming evidence verification, owner adoption/continuity, and exact active-root partition checks.",
+          "publicCallerGuard": "archiveActiveStorageReplacement requires assertOwnedStorageMaintenance, retained exclusion, verified outgoing authority, and verified incoming snapshot; all root moves recheck owner and location.",
+          "guard": {
+            "destination": "retained root and fixed filename are asserted; writes follow outgoing/incoming evidence verification, owner adoption/continuity, and exact active-root partition checks.",
+            "publicCaller": "archiveActiveStorageReplacement requires assertOwnedStorageMaintenance, retained exclusion, verified outgoing authority, and verified incoming snapshot; all root moves recheck owner and location."
+          }
+        },
+        {
+          "file": "src/storage/restore-replacement-archive.js",
+          "line": 167,
+          "expression": "writeFileAtomic(filename, `${JSON.stringify(journal, null, 2)}\\n`)",
+          "sourceSha256": "fbd0347cb136200ab4cdf848c47c1948f226913a3714c347b71d8fb541c4dd36",
+          "namespace": "ACTIVE_REPLACEMENT_ARCHIVE_JOURNAL",
+          "destinationOwnership": "Retained outgoing replacement root; archive-journal.json binds outgoing and incoming fingerprints during root archival.",
+          "destinationGuard": "retained root and fixed filename are asserted; writes follow outgoing/incoming evidence verification, owner adoption/continuity, and exact active-root partition checks.",
+          "publicCallerGuard": "archiveActiveStorageReplacement requires assertOwnedStorageMaintenance, retained exclusion, verified outgoing authority, and verified incoming snapshot; all root moves recheck owner and location.",
+          "guard": {
+            "destination": "retained root and fixed filename are asserted; writes follow outgoing/incoming evidence verification, owner adoption/continuity, and exact active-root partition checks.",
+            "publicCaller": "archiveActiveStorageReplacement requires assertOwnedStorageMaintenance, retained exclusion, verified outgoing authority, and verified incoming snapshot; all root moves recheck owner and location."
+          }
+        },
+        {
+          "file": "src/storage/restore-replacement-owner.js",
+          "line": 29,
+          "expression": "writeFileAtomic(await assertSafePath(retained.root, \"owner-journal.json\"), `${JSON.stringify(journal, null, 2)}\\n`)",
+          "sourceSha256": "9d3bd4fa498f1f42befe30d1d5d01d1e420996b2887006cecadfdc2011553cbc",
+          "namespace": "REPLACEMENT_OUTGOING_OWNER_JOURNAL",
+          "destinationOwnership": "Retained outgoing replacement root; owner-journal.json records mutable owner adoption while outgoing evidence stays independently fingerprinted.",
+          "destinationGuard": "retained root and fixed filename are asserted; existing journal is schema/operation/fingerprint validated, owner continuity is checked, and assertOwnedStorageMaintenance runs immediately before writing.",
+          "publicCallerGuard": "adoptPreparedReplacementOwner is called from owner-held replacement archival/recovery after verified outgoing preparation and exact expected owner adoption.",
+          "guard": {
+            "destination": "retained root and fixed filename are asserted; existing journal is schema/operation/fingerprint validated, owner continuity is checked, and assertOwnedStorageMaintenance runs immediately before writing.",
+            "publicCaller": "adoptPreparedReplacementOwner is called from owner-held replacement archival/recovery after verified outgoing preparation and exact expected owner adoption."
+          }
+        },
+        {
+          "file": "src/storage/restore-replacement-preparation.js",
+          "line": 78,
+          "expression": "writeFileAtomic(await assertSafePath(outgoing, \"replacement-manifest.json\"), `${JSON.stringify(allocated, null, 2)}\\n`)",
+          "sourceSha256": "07c55045508317bb70d20c7b4b687da662d9ab1f41e209d1972a3c7e06180014",
+          "namespace": "ACTIVE_REPLACEMENT_OUTGOING_MANIFEST",
+          "destinationOwnership": "Outgoing preparation directory; replacement-manifest.json reconstructs only metadata already admitted by the root allocation record.",
+          "destinationGuard": "outgoing is asserted; allocation operation/fingerprint and preparation baseline are validated, with owner assertion immediately before reconstruction.",
+          "publicCallerGuard": "ensurePreparedOutgoingReplacement requires assertOwnedStorageMaintenance, validates rebuild intent, and is reached from owner-held active replacement recovery.",
+          "guard": {
+            "destination": "outgoing is asserted; allocation operation/fingerprint and preparation baseline are validated, with owner assertion immediately before reconstruction.",
+            "publicCaller": "ensurePreparedOutgoingReplacement requires assertOwnedStorageMaintenance, validates rebuild intent, and is reached from owner-held active replacement recovery."
+          }
+        },
+        {
+          "file": "src/storage/restore-replacement-preparation.js",
+          "line": 89,
+          "expression": "writeFileAtomic(await assertSafePath(root, \"replacement-intent.json\"), `${JSON.stringify(intent, null, 2)}\\n`)",
+          "sourceSha256": "07c55045508317bb70d20c7b4b687da662d9ab1f41e209d1972a3c7e06180014",
+          "namespace": "ACTIVE_REPLACEMENT_INTENT",
+          "destinationOwnership": "Retained active-replacement operation directory; replacement-intent.json tracks outgoing rebuild intent.",
+          "destinationGuard": "root is asserted and the persist closure explicitly asserts the current maintenance owner before writing; intent schema and history bounds are validated.",
+          "publicCallerGuard": "ensurePreparedOutgoingReplacement runs inside owner-held replacement recovery and retains exclusion on errors.",
+          "guard": {
+            "destination": "root is asserted and the persist closure explicitly asserts the current maintenance owner before writing; intent schema and history bounds are validated.",
+            "publicCaller": "ensurePreparedOutgoingReplacement runs inside owner-held replacement recovery and retains exclusion on errors."
+          }
+        },
+        {
+          "file": "src/storage/restore-replacement.js",
+          "line": 59,
+          "expression": "writeFileAtomic(await assertSafePath(root, \"replacement-manifest.json\"), text)",
+          "sourceSha256": "f7b7aed1fe54c4feb71a192a5c2aed9ff92bdb80f26d053ba1498d433cc1f138",
+          "namespace": "ACTIVE_REPLACEMENT_OUTGOING_MANIFEST",
+          "destinationOwnership": "Outgoing replacement root selected by exact operationId; replacement-manifest.json binds the active authority retained before archival.",
+          "destinationGuard": "persistManifest asserts live owner, applies JSON size/shape limits, asserts the root/fixed filename, and is called only after active marker/database/attachment/integrity checks.",
+          "publicCallerGuard": "prepareActiveStorageReplacement requires writersQuiesced=true, exact operationId, no active operational scope, ACTIVE marker/layout, closed/checkpointed DB, and owner-held maintenance.",
+          "guard": {
+            "destination": "persistManifest asserts live owner, applies JSON size/shape limits, asserts the root/fixed filename, and is called only after active marker/database/attachment/integrity checks.",
+            "publicCaller": "prepareActiveStorageReplacement requires writersQuiesced=true, exact operationId, no active operational scope, ACTIVE marker/layout, closed/checkpointed DB, and owner-held maintenance."
+          }
+        },
+        {
+          "file": "src/storage/storage-marker.js",
+          "line": 77,
+          "expression": "writeFileAtomic(await assertSafePath(target, MARKER), `${JSON.stringify(active)}\\n`)",
+          "sourceSha256": "1664b9f2c1005507ee1aa256dc443f0d82c728646c2cf04a8460f1b270a0ca05",
+          "namespace": "NATIVE_STORAGE_VERSION_MARKER",
+          "destinationOwnership": "Canonical project operational namespace `.forgeloop/storage-version.json`; marker is cutover/active authority metadata.",
+          "destinationGuard": "activateStorageVersionMarker asserts owner, reads and validates the existing CUTOVER_PENDING marker, matches operation/source/schema bindings, then asserts the fixed marker path before the atomic ACTIVE write.",
+          "publicCallerGuard": "The marker module is used by migration activation/archive and restore publication under maintenance-owned orchestration; package CLI entry points require explicit writer quiescence. Pending-marker creation is a separate exclusive-open path outside this writeFileAtomic call inventory.",
+          "guard": {
+            "destination": "activateStorageVersionMarker asserts owner, reads and validates the existing CUTOVER_PENDING marker, matches operation/source/schema bindings, then asserts the fixed marker path before the atomic ACTIVE write.",
+            "publicCaller": "The marker module is used by migration activation/archive and restore publication under maintenance-owned orchestration; package CLI entry points require explicit writer quiescence. Pending-marker creation is a separate exclusive-open path outside this writeFileAtomic call inventory."
+          }
+        }
+      ],
+      "limits": [
+        "This review follows the 42 statically resolved storage callsites in filesystem-bindings929.json and verifies their current source hashes; it does not claim arbitrary dynamic imports, external in-process callers, or a complete dependency closure.",
+        "Destination ownership is classified from current caller guards and path construction. It is not a full sole-writer proof; the binding inventory itself reports wholeSoleWriterProof=false.",
+        "Ordinary storage-backup intentionally permits online writers through the native SQLite snapshot path. This review does not prove that every future backup caller preserves that contract, that a direct backupProjectStorage caller pairs db with target, or that a direct destination is owned by the source project; migration and restore replacement quiescence remain separate obligations."
+      ]
+    },
+    {
+      "externalRecord": "filesystem-atomic942-bootstrap.json",
+      "externalSha256": "2a68428fbc7c964d54966b4f41556def00dd9af1b9b023558aa4940cf5b720ae",
+      "rows": [
+        {
+          "file": "src/commands/doctor.js",
+          "line": 313,
+          "expression": "writeFileAtomic(destination, entry.bytes)",
+          "sha256": "1ea77fd088a1277b03bc2edeb034462f8f56df5ce3eb95dd7b68000dd5a983d1",
+          "namespace": "Shipped kit/adapter/gitignore or fixed installation manifest; excludes canonical task records",
+          "guard": "Missing shipped template repair only when fix and valid manifest/layout; destination from shipped entry; safe-path admission; preserves legacy conflicting copy."
+        },
+        {
+          "file": "src/commands/init.js",
+          "line": 306,
+          "expression": "writeFileAtomic(destination, entry.bytes, { dryRun })",
+          "sha256": "dbd6aff6b7e27d3fa26e06921ad54c7e569413ee5717f20111c639c77d073dde",
+          "namespace": "Shipped kit/adapter/gitignore or fixed installation manifest; excludes canonical task records",
+          "guard": "Fixed shipped TEMPLATE_PATHS through targetPathForSource; safe-path admission precedes all template writes; preserves preexisting custom files; dryRun propagated."
+        },
+        {
+          "file": "src/commands/update.js",
+          "line": 284,
+          "expression": "writeFileAtomic(plan.destination, plan.bytes, { dryRun })",
+          "sha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+          "namespace": "Shipped kit/adapter/gitignore or fixed installation manifest; excludes canonical task records",
+          "guard": "Plans derive from shipped template entries, not arbitrary manifest filenames; fixed native adapter/kit paths; safe-path admission; ownership hashes control replacement/legacy cleanup."
+        },
+        {
+          "file": "src/commands/update.js",
+          "line": 446,
+          "expression": "writeFileAtomic(plan.destination, plan.entry.bytes, { dryRun })",
+          "sha256": "5cbc605c1c6f097548827d2b4714adb6e08b1dc62cb7631de1cf063ab6ce5869",
+          "namespace": "Shipped kit/adapter/gitignore or fixed installation manifest; excludes canonical task records",
+          "guard": "Plans derive from shipped template entries, not arbitrary manifest filenames; fixed native adapter/kit paths; safe-path admission; ownership hashes control replacement/legacy cleanup."
+        },
+        {
+          "file": "src/core/manifest.js",
+          "line": 80,
+          "expression": "writeFileAtomic(\n    manifestPath,\n    `${JSON.stringify(manifest, null, 2)}\\n`,\n    { dryRun },\n  )",
+          "sha256": "9e29e1c9466bb0fc6a2ae9371a4f8bec995a01f11377684f0d66bcfa58221f4f",
+          "namespace": "Shipped kit/adapter/gitignore or fixed installation manifest; excludes canonical task records",
+          "guard": "Fixed .forgeloop/manifest.json installation ownership metadata; validateManifest and safe-path admission; not task state."
+        }
+      ],
+      "limits": [
+        "Source review of fixed atomic output sites, not all bootstrap policy/cache writes or arbitrary subprocess effects",
+        "Package-supplied template list treated as shipped code; no arbitrary custom package-root trust claim",
+        "Current source unchanged from full run; retained controls cover specific preservation/diagnostic behaviors"
+      ]
+    },
+    {
+      "externalRecord": "filesystem-atomic942-portable.json",
+      "externalSha256": "d4dcc6eb85467699a518be0d5c3317868377d943223d8e982128ed7dc3524bba",
+      "rows": [
+        {
+          "file": "src/core/artifacts.js",
+          "line": 210,
+          "expression": "writeFileAtomic(artifactPath, serialized, { dryRun })",
+          "sha256": "4667bc01b1f6416ee22e0de6788bb8ae21ce238b5ce9724961c92c06d0e92db2",
+          "namespace": "Portable/configuration output",
+          "guard": "Operational namespaces refused; native recognized records stage SQLite in task transaction; portable output refuses active operational transaction and database metadata."
+        },
+        {
+          "file": "src/core/bundles.js",
+          "line": 229,
+          "expression": "writeFileAtomic(destination, createReadStream(source))",
+          "sha256": "9867a424d43b5301b5fcfab49b807e2334415f2839804c6cbaffccf9a3b08928",
+          "namespace": "Portable .forgeloop/tasks/<safeTaskId>",
+          "guard": "safeTaskId permits only alphanumeric/underscore/hyphen; fixed portable root; assertSafePath; native sources selected in read snapshot."
+        },
+        {
+          "file": "src/core/bundles.js",
+          "line": 617,
+          "expression": "writeFileAtomic(await assertSafePath(target, `${directory}/events.ndjson`), ledgerBytes())",
+          "sha256": "9867a424d43b5301b5fcfab49b807e2334415f2839804c6cbaffccf9a3b08928",
+          "namespace": "Portable .forgeloop/tasks/<safeTaskId>",
+          "guard": "safeTaskId permits only alphanumeric/underscore/hyphen; fixed portable root; assertSafePath; native sources selected in read snapshot."
+        },
+        {
+          "file": "src/core/bundles.js",
+          "line": 626,
+          "expression": "writeFileAtomic(ensureWithin(target, `${directory}/events.ndjson`), await readBytes(eventsPath))",
+          "sha256": "9867a424d43b5301b5fcfab49b807e2334415f2839804c6cbaffccf9a3b08928",
+          "namespace": "Portable .forgeloop/tasks/<safeTaskId>",
+          "guard": "safeTaskId permits only alphanumeric/underscore/hyphen; fixed portable root; assertSafePath; native sources selected in read snapshot."
+        },
+        {
+          "file": "src/core/signing/statement-file.js",
+          "line": 22,
+          "expression": "writeFileAtomic(filename, source.text)",
+          "sha256": "4b0db680c034bd21497e5fa96c01ea79a7faa14f6424c85965f4c9183304880b",
+          "namespace": "Owned os.tmpdir signing statement",
+          "guard": "mkdtemp outside canonical namespace; selected bytes copied for external signer; no open SQLite transaction; reread detects changed statement; finally removes owned directory."
+        },
+        {
+          "file": "src/persistent-transport/state.js",
+          "line": 33,
+          "expression": "writeFileAtomic(statePath, `${JSON.stringify(record)}\\n`)",
+          "sha256": "a877435a1b4a7f5c7d4b6310538451f81079b70d4486d0ed990ed61819ccb86d",
+          "namespace": "User persistent-search ownership state",
+          "guard": "Production server selects getPersistentTransportPaths(homeDirectory), .forgeloop/persistent-search/state.json; PID/nonce/endpoint ownership rather than task lifecycle authority."
+        },
+        {
+          "file": "src/repository-index/server.js",
+          "line": 32,
+          "expression": "writeFileAtomic(filePath, `${JSON.stringify(value, null, 2)}\\n`)",
+          "sha256": "4e18bcd059920281616a7ae0a368571ae5bb8c71c6f59929ded044cafcad4ef1",
+          "namespace": "Advisory .forgeloop/repository-index/engine-state.json",
+          "guard": "Private writeJson callers select getRepositoryIndexStatePath; fixed advisory namespace with safe-path admission. Not task protocol state."
+        }
+      ],
+      "limits": [
+        "Export identity defect separately covered by new unexecuted bundle regression",
+        "Generic helper exported API accepts caller-selected destination; fixed namespace claims apply only to inspected production callers",
+        "External trusted host effects are not inferred from filesystem binding inventory",
+        "Review covers these seven resolved atomic output calls, not every filesystem method or consumer"
+      ]
+    },
+    {
+      "externalRecord": "filesystem-escapes942-adapters.json",
+      "externalSha256": "a512b2aa6076ea74f0deb6fbdb913bd84ff3bca7e2c9858e0be3bb1f36c58dff",
+      "rows": [
+        {
+          "index": 0,
+          "file": "src/adapters/agent-browser/process.js",
+          "line": 37,
+          "expression": "fsImpl = fs",
+          "sourceSha256": "847c26235795e56099178810945737c00f5d22cbbc52cbade33efd0fc38641e3",
+          "consumer": "assertAbsoluteRegularFile at lines 37-53 reads fsImpl.lstatSync and fsImpl.statSync to validate an absolute regular executable without symlink indirection.",
+          "classification": "external_metadata",
+          "operationalAuthority": "NONE_OBSERVED",
+          "effect": "Read-only executable metadata validation. No canonical project path is written.",
+          "tests": [
+            "AB-PROC",
+            "AB-PROV"
+          ]
+        },
+        {
+          "index": 1,
+          "file": "src/adapters/agent-browser/process.js",
+          "line": 110,
+          "expression": "fsImpl = fs",
+          "sourceSha256": "847c26235795e56099178810945737c00f5d22cbbc52cbade33efd0fc38641e3",
+          "consumer": "runAgentBrowserCommand at lines 102-113 forwards fsImpl to assertAbsoluteRegularFile before every child-process invocation.",
+          "classification": "external_metadata",
+          "operationalAuthority": "NONE_OBSERVED",
+          "effect": "The bound object is used for executable validation only; child process execution is a separate external-effect boundary.",
+          "tests": [
+            "AB-PROC",
+            "AB-PROV"
+          ]
+        },
+        {
+          "index": 2,
+          "file": "src/adapters/agent-browser/process.js",
+          "line": 113,
+          "expression": "assertAbsoluteRegularFile(executablePath, \"Agent Browser executable\", fsImpl)",
+          "sourceSha256": "847c26235795e56099178810945737c00f5d22cbbc52cbade33efd0fc38641e3",
+          "consumer": "assertAbsoluteRegularFile consumes lstatSync and statSync at lines 45-46; no other fsImpl member is used in process.js.",
+          "classification": "external_metadata",
+          "operationalAuthority": "NONE_OBSERVED",
+          "effect": "Read-only validation of the executable path. The function does not grant canonical lifecycle or evidence persistence authority.",
+          "tests": [
+            "AB-PROC",
+            "AB-PROV"
+          ]
+        },
+        {
+          "index": 3,
+          "file": "src/adapters/agent-browser/provider.js",
+          "line": 217,
+          "expression": "fs.lstatSync",
+          "sourceSha256": "5c98d7eebbc24f8db8bb29853a4c6eddf4e3d5dd827d6c7d74b3ba63511abc66",
+          "consumer": "createAgentBrowserVerificationProvider builds fileSystem at lines 216-222 and passes it to assertAbsoluteRegularFile for the configured agent-browser executable and optional browserExecutablePath.",
+          "classification": "external_metadata",
+          "operationalAuthority": "NONE_OBSERVED",
+          "effect": "Read-only executable metadata validation.",
+          "tests": [
+            "AB-PROV"
+          ]
+        },
+        {
+          "index": 4,
+          "file": "src/adapters/agent-browser/provider.js",
+          "line": 217,
+          "expression": "fs.lstatSync.bind(fs)",
+          "sourceSha256": "5c98d7eebbc24f8db8bb29853a4c6eddf4e3d5dd827d6c7d74b3ba63511abc66",
+          "consumer": "The bound method is consumed by assertAbsoluteRegularFile at provider lines 223-225 and by runAgentBrowserCommand through fileSystem at lines 235-248 and 260-265.",
+          "classification": "external_metadata",
+          "operationalAuthority": "NONE_OBSERVED",
+          "effect": "Binding preserves the receiver for metadata reads; it does not add a writer path.",
+          "tests": [
+            "AB-PROV"
+          ]
+        },
+        {
+          "index": 5,
+          "file": "src/adapters/agent-browser/provider.js",
+          "line": 218,
+          "expression": "fs.statSync",
+          "sourceSha256": "5c98d7eebbc24f8db8bb29853a4c6eddf4e3d5dd827d6c7d74b3ba63511abc66",
+          "consumer": "createAgentBrowserVerificationProvider passes fileSystem to assertAbsoluteRegularFile for executable and browser executable validation.",
+          "classification": "external_metadata",
+          "operationalAuthority": "NONE_OBSERVED",
+          "effect": "Read-only regular-file metadata validation.",
+          "tests": [
+            "AB-PROV"
+          ]
+        },
+        {
+          "index": 6,
+          "file": "src/adapters/agent-browser/provider.js",
+          "line": 218,
+          "expression": "fs.statSync.bind(fs)",
+          "sourceSha256": "5c98d7eebbc24f8db8bb29853a4c6eddf4e3d5dd827d6c7d74b3ba63511abc66",
+          "consumer": "The bound method is consumed by assertAbsoluteRegularFile at process lines 45-46 through provider calls at lines 223-225, 235-248, 260-265, and 302-308.",
+          "classification": "external_metadata",
+          "operationalAuthority": "NONE_OBSERVED",
+          "effect": "Receiver-safe metadata read only.",
+          "tests": [
+            "AB-PROV"
+          ]
+        },
+        {
+          "index": 7,
+          "file": "src/adapters/agent-browser/provider.js",
+          "line": 103,
+          "expression": "fsImpl?.mkdtemp ?? mkdtemp",
+          "sourceSha256": "5c98d7eebbc24f8db8bb29853a4c6eddf4e3d5dd827d6c7d74b3ba63511abc66",
+          "consumer": "createCwd at lines 96-113 calls the selected function with a prefix under the physical temporary root, then canonicalizes and rechecks the returned directory before use.",
+          "classification": "externalTemp",
+          "operationalAuthority": "NONE_OBSERVED",
+          "effect": "Creates browser process working state outside the verification target. A returned path inside or physically resolving into the target is rejected before process launch or cleanup.",
+          "tests": [
+            "AB-PROV"
+          ]
+        },
+        {
+          "index": 8,
+          "file": "src/adapters/agent-browser/provider.js",
+          "line": 219,
+          "expression": "mkdtemp",
+          "sourceSha256": "5c98d7eebbc24f8db8bb29853a4c6eddf4e3d5dd827d6c7d74b3ba63511abc66",
+          "consumer": "createCwd selects fileSystem.mkDtemp-like behavior at line 103 and creates the external browser cwd at line 104.",
+          "classification": "externalTemp",
+          "operationalAuthority": "NONE_OBSERVED",
+          "effect": "Temporary directory creation only, bounded by physical target exclusion.",
+          "tests": [
+            "AB-PROV"
+          ]
+        },
+        {
+          "index": 9,
+          "file": "src/adapters/agent-browser/provider.js",
+          "line": 220,
+          "expression": "readFile",
+          "sourceSha256": "5c98d7eebbc24f8db8bb29853a4c6eddf4e3d5dd827d6c7d74b3ba63511abc66",
+          "consumer": "captureScreenshot at lines 195-203 reads verification.png from the validated temporary cwd, hashes its bytes, and returns bounded screenshot metadata.",
+          "classification": "externalEvidence",
+          "operationalAuthority": "NONE_OBSERVED",
+          "effect": "Reads external temporary evidence bytes. The provider result is returned with artifact metadata; tests verify persisted is false and do not establish canonical evidence storage.",
+          "tests": [
+            "AB-PROV"
+          ]
+        },
+        {
+          "index": 10,
+          "file": "src/adapters/agent-browser/provider.js",
+          "line": 221,
+          "expression": "rm",
+          "sourceSha256": "5c98d7eebbc24f8db8bb29853a4c6eddf4e3d5dd827d6c7d74b3ba63511abc66",
+          "consumer": "The verify finally block at lines 299-312 removes only the previously validated cwd.",
+          "classification": "externalTemp",
+          "operationalAuthority": "NONE_OBSERVED",
+          "effect": "Best-effort recursive cleanup of external temporary browser state. The physical path checks and rejected-return tests prevent the adapter from granting cleanup authority to a target directory.",
+          "tests": [
+            "AB-PROV"
+          ]
+        },
+        {
+          "index": 11,
+          "file": "src/adapters/emulated-services/provider.js",
+          "line": 181,
+          "expression": "options.fsImpl ?? fs",
+          "sourceSha256": "adbe1bdde4616a412a177bf33653f6cce770fcf3732c98b64ceb8276961f5170",
+          "consumer": "createEmulatedServicesProvider selects fsImpl at line 181; create-time executable validation is line 182 and request-time seed validation is normalizeRequest lines 109-129.",
+          "classification": "external_metadata",
+          "operationalAuthority": "NONE_OBSERVED",
+          "effect": "The reviewed fsImpl path performs lstatSync metadata reads only. It does not write project or canonical SQLite state.",
+          "tests": [
+            "EMU"
+          ]
+        },
+        {
+          "index": 12,
+          "file": "src/adapters/emulated-services/provider.js",
+          "line": 190,
+          "expression": "fs.promises",
+          "sourceSha256": "adbe1bdde4616a412a177bf33653f6cce770fcf3732c98b64ceb8276961f5170",
+          "consumer": "createEmulatedServicesProvider sets mkdtempImpl at line 190; start calls it at line 214 to create a service state root under the physically validated external temp root.",
+          "classification": "externalTemp",
+          "operationalAuthority": "NONE_OBSERVED",
+          "effect": "Creates temporary emulated-service state outside the target root. The result is rejected if physical canonicalization crosses the target boundary.",
+          "tests": [
+            "EMU"
+          ]
+        },
+        {
+          "index": 13,
+          "file": "src/adapters/emulated-services/provider.js",
+          "line": 191,
+          "expression": "fs.promises",
+          "sourceSha256": "adbe1bdde4616a412a177bf33653f6cce770fcf3732c98b64ceb8276961f5170",
+          "consumer": "createEmulatedServicesProvider sets rmImpl at line 191; start calls it at lines 272-275 to remove the validated service state root.",
+          "classification": "externalTemp",
+          "operationalAuthority": "NONE_OBSERVED",
+          "effect": "Recursive cleanup is scoped to external stateRoot. Rejected returned paths are not assigned cleanup authority.",
+          "tests": [
+            "EMU"
+          ]
+        },
+        {
+          "index": 14,
+          "file": "src/adapters/emulated-services/provider.js",
+          "line": 182,
+          "expression": "assertRegularFile(options.executablePath, \"executablePath\", fsImpl)",
+          "sourceSha256": "adbe1bdde4616a412a177bf33653f6cce770fcf3732c98b64ceb8276961f5170",
+          "consumer": "assertRegularFile at lines 51-62 calls fsImpl.lstatSync and rejects non-files and symlinked executables.",
+          "classification": "external_metadata",
+          "operationalAuthority": "NONE_OBSERVED",
+          "effect": "Read-only host executable validation.",
+          "tests": [
+            "EMU"
+          ]
+        },
+        {
+          "index": 15,
+          "file": "src/adapters/emulated-services/provider.js",
+          "line": 203,
+          "expression": "fsImpl",
+          "sourceSha256": "adbe1bdde4616a412a177bf33653f6cce770fcf3732c98b64ceb8276961f5170",
+          "consumer": "start passes fsImpl to normalizeRequest at line 203; seedPath validation at lines 123-129 calls assertRegularFile with the same namespace.",
+          "classification": "external_metadata",
+          "operationalAuthority": "NONE_OBSERVED",
+          "effect": "Read-only seed-file metadata validation. The seed file itself is passed as one argv value to the external service process.",
+          "tests": [
+            "EMU"
+          ]
+        },
+        {
+          "index": 16,
+          "file": "src/adapters/opensrc/search.js",
+          "line": 48,
+          "expression": "lstat",
+          "sourceSha256": "13ce23e8d4ad9e620ae5d7af1cdb99be6aa33ecc366acefdae4ae839d612ba6f",
+          "consumer": "defaultHooks at lines 47-49 and hook merge at lines 211-214 provide lstatImpl to resolveEntryTarget and processDirectoryEntry at lines 86-119.",
+          "classification": "advisoryCache",
+          "operationalAuthority": "NONE_OBSERVED",
+          "effect": "Reads directory-entry metadata while searching a resolved source root. No write primitive is bound.",
+          "tests": [
+            "OS-SEARCH",
+            "OS-PROV"
+          ]
+        },
+        {
+          "index": 17,
+          "file": "src/adapters/opensrc/search.js",
+          "line": 48,
+          "expression": "readdir",
+          "sourceSha256": "13ce23e8d4ad9e620ae5d7af1cdb99be6aa33ecc366acefdae4ae839d612ba6f",
+          "consumer": "scanDirectory at lines 243-263 calls readdirImpl with withFileTypes, sorts entries, and walks only bounded non-generated directories.",
+          "classification": "advisoryCache",
+          "operationalAuthority": "NONE_OBSERVED",
+          "effect": "Read-only directory enumeration of cache/source content with entry ceilings.",
+          "tests": [
+            "OS-SEARCH",
+            "OS-PROV"
+          ]
+        },
+        {
+          "index": 18,
+          "file": "src/adapters/opensrc/search.js",
+          "line": 48,
+          "expression": "readFile",
+          "sourceSha256": "13ce23e8d4ad9e620ae5d7af1cdb99be6aa33ecc366acefdae4ae839d612ba6f",
+          "consumer": "processDirectoryEntry at lines 108-149 reads bounded regular text files, applies binary and byte-budget checks, and emits in-memory matches.",
+          "classification": "advisoryCache",
+          "operationalAuthority": "NONE_OBSERVED",
+          "effect": "Reads source/cache bytes into bounded in-memory advisory matches. No canonical artifact write occurs in searchSourceRoot.",
+          "tests": [
+            "OS-SEARCH",
+            "OS-PROV"
+          ]
+        },
+        {
+          "index": 19,
+          "file": "src/adapters/opensrc/search.js",
+          "line": 48,
+          "expression": "realpath",
+          "sourceSha256": "13ce23e8d4ad9e620ae5d7af1cdb99be6aa33ecc366acefdae4ae839d612ba6f",
+          "consumer": "searchSourceRoot canonicalizes sourceRoot at lines 215-219; resolveEntryTarget canonicalizes file symlinks at lines 86-101 and rejects paths outside the resolved root.",
+          "classification": "advisoryCache",
+          "operationalAuthority": "NONE_OBSERVED",
+          "effect": "Read-only physical-boundary validation for cache/source traversal.",
+          "tests": [
+            "OS-SEARCH",
+            "OS-PROV"
+          ]
+        }
+      ],
+      "limits": [
+        {
+          "flow": "OpenSrc external child process",
+          "evidence": "src/adapters/opensrc/provider.js:164-174 and 275-321 pass projectRoot as cwd and cacheRoot as OPENSRC_HOME; tests/opensrc-advisory-provider.test.js:133-156 asserts the same transport.",
+          "impact": "The reviewed filesystem hooks are read-only, but a sole-writer claim for the whole adapter would require separate evidence about the actual OpenSrc executable and subprocess writes. The advisory result remains non-persistent and has no lifecycle/completion authority."
+        },
+        {
+          "flow": "Injected host/test implementations",
+          "evidence": "agent-browser provider accepts fsImpl and spawnImpl; emulated-services accepts fsImpl, mkdtempImpl, rmImpl, fetchImpl, sleepImpl, nowImpl; searchSourceRoot accepts hooks.",
+          "impact": "The default production bindings are classified above. A caller-provided implementation can have effects outside the static call graph; the input evidence does not establish a universal authority proof for arbitrary injected implementations."
+        },
+        {
+          "flow": "Child process effects for Agent Browser and Emulated Services",
+          "evidence": "agent-browser process.js:124-140 and emulated-services/provider.js:221-251 launch external processes after validating external cwd roots.",
+          "impact": "The adapter-level filesystem calls do not write canonical SQLite state, but they do not by themselves prove the child binary cannot access other paths. Treat this as external-effect coverage, not a sole-writer proof."
+        },
+        {
+          "flow": "Concurrent hostile path replacement",
+          "evidence": "Agent Browser physical-root tests cover returned target directories before use; Emulated Services tests cover rejected temporary paths. The source comments explicitly limit these checks to the observed path boundary.",
+          "impact": "The reviewed tests do not establish an interleaving proof against a hostile replacement after validation. Do not promote the adapter review to a universal physical-path or deletion-authority guarantee."
+        }
+      ]
+    },
+    {
+      "externalRecord": "filesystem-escapes942-core-storage.json",
+      "externalSha256": "9c17d92477a345879f7727f8eb45eacb5e6dbbcd2b7b7a21070e841405e74522",
+      "rows": [
+        {
+          "escapes": [
+            20,
+            21,
+            22,
+            23
+          ],
+          "file": "src/core/filesystem.js",
+          "sourceLines": "17-60, 108-161",
+          "sourceSha256": "4174506b0832bdadadd9b7b676baa835b15b2b7e68fc980902dedeacb2564a57",
+          "bindingKind": "callable retry callbacks with native defaults",
+          "trace": "realpathWithTransientWindowsRetry and lstatWithTransientWindowsRetry pass the supplied callback to fsCallWithTransientWindowsRetry. The retry wrapper retries only Windows EPERM/EACCES, then throws the original error; downstream assertSafePath and identity checks use these wrappers for path admission and containment.",
+          "reads": [
+            "realpath and lstat metadata",
+            "regular-file identity metadata",
+            "path containment state"
+          ],
+          "writes": [],
+          "authority": "Path-admission and file-identity guard. These helpers do not select domain records or write artifacts; callers decide the operational authority after the path is admitted.",
+          "tests": [
+            {
+              "file": "tests/filesystem-realpath-retry.test.js",
+              "sha256": "0f291fa74ad1956944410607d148b309e81c1a91bcc13691be61e2037b8ca828",
+              "cases": [
+                "Windows realpath retries transient EPERM before succeeding",
+                "realpath retry fails closed for persistent Windows EPERM",
+                "non-Windows realpath errors are not retried",
+                "Windows lstat retries transient EPERM before succeeding",
+                "lstat retry fails closed for persistent Windows EPERM",
+                "non-Windows lstat errors are not retried"
+              ]
+            },
+            {
+              "file": "tests/gate-file-containment.test.js",
+              "sha256": "ec5a2a1fe0bffc08c8775364fc883e2aee71835aacff403a584821e68ec61e5d",
+              "cases": [
+                "gate record/evidence/validate/revalidate refuse outside symlink replacement after path resolution"
+              ]
+            }
+          ]
+        },
+        {
+          "escapes": [
+            24,
+            25
+          ],
+          "file": "src/core/gate-artifact.js",
+          "sourceLines": "52-69, 71-118, 121-144",
+          "sourceSha256": "8262d4ea6d526b3cbf18ca6b4959ff9a2d8cbfcf11664ebd549a46b862b2645a",
+          "bindingKind": "static flag constants, not callable",
+          "trace": "withGateFile resolves and admits an external evidence path, opens it with O_RDONLY | O_NOFOLLOW, rechecks descriptor/path identity and size, then passes the descriptor to hashGateFile or readGateFileJson. The flag expression itself has no write capability.",
+          "reads": [
+            "external gate evidence through an admitted regular descriptor",
+            "canonical SQLite event/artifact rows through readCanonicalGateArtifactBinding"
+          ],
+          "writes": [],
+          "authority": "Native operational gate bindings use the selected SQLite store; explicit file evidence is bounded external input. Native validation does not fall back to a filesystem shadow.",
+          "tests": [
+            {
+              "file": "tests/gate-file-containment.test.js",
+              "sha256": "ec5a2a1fe0bffc08c8775364fc883e2aee71835aacff403a584821e68ec61e5d",
+              "cases": [
+                "gate record/evidence/validate/revalidate refuse outside symlink replacement after path resolution"
+              ]
+            },
+            {
+              "file": "tests/gate-native-selection.test.js",
+              "sha256": "ae067ff3c1114881fd8cab9c7663e312963a10db6fb976da8947bfda1f61796a",
+              "cases": [
+                "direct optional gate read selects existing SQLite authority without allocating an empty project",
+                "gate freshness selects canonical bytes and ignores missing-artifact filesystem shadows",
+                "canonical gate binding participates in commit conflict detection",
+                "canonical gate ledger hashing streams rows"
+              ]
+            },
+            {
+              "file": "tests/gate-revalidation.test.js",
+              "sha256": "78dadf300b04de23990344823e5af3db176e9fea4a72e68e896d4f81c9b2552a",
+              "cases": [
+                "record and revalidate bind canonical gate evidence without operational filesystem mirrors"
+              ]
+            }
+          ]
+        },
+        {
+          "escapes": [
+            26,
+            27
+          ],
+          "file": "src/core/signing/bundle-file.js",
+          "sourceLines": "11-52",
+          "sourceSha256": "055a6031cbd72bde093816b9da6c2fe1cbd5737cd63340ecb87851498711d5f3",
+          "bindingKind": "static flag constants, not callable",
+          "trace": "withSigningBundleFile creates a private temporary directory, admits signer output with O_RDONLY | O_NOFOLLOW, stats the handle, and streams it into transaction.stageAttachment. The caller callback may write the temporary bundle; the flagged open is read-only and the temporary directory is removed in finally.",
+          "reads": [
+            "canonical statement text",
+            "private signer output through an admitted descriptor"
+          ],
+          "writes": [
+            "caller-provided signer callback writes private temporary bundle",
+            "transaction stages verified bytes as a SQLite attachment"
+          ],
+          "authority": "For native storage, the canonical statement and active preparation transaction determine the accepted signature. Operational destination paths are rejected without canonical SQLite preparation.",
+          "tests": [
+            {
+              "file": "tests/attestation-e2e.test.js",
+              "sha256": "9e9ce197e6b2231c8086dca34b1cc12aa21a209fca082d2c7d3c3bf4c7cc36d8",
+              "cases": [
+                "fixture signer writes through withSigningBundleFile"
+              ]
+            },
+            {
+              "file": "tests/storage-signing-statement.test.js",
+              "sha256": "421640f5f34482370f14e45594a9aea72e13d34440132f326656858d598bd2eb",
+              "cases": [
+                "SQLite Sigstore signing stages immutable bundles and rolls back bindings",
+                "SQLite signing refuses linked output and removes failed signer temporary files",
+                "legacy operational bundle publication is refused without altering source or invoking signer"
+              ]
+            }
+          ]
+        },
+        {
+          "escapes": [
+            28,
+            29,
+            30
+          ],
+          "file": "src/core/trusted-authority.js",
+          "sourceLines": "142-164, 214-247, 250-295",
+          "sourceSha256": "b8134ec73d784eaf7611f7adacab9ada9ecd42793d1d8ee9b6f3d1f86b92fe34",
+          "bindingKind": "static access-mode constants, not callable",
+          "trace": "readExternalJson checks R_OK before lstat/readFile/JSON parsing; resolveFromExternalDirectory checks directory R_OK; projectLocalAuthorityExists checks F_OK only to identify a local reference. No call writes through these constants.",
+          "reads": [
+            "trusted authority file bytes",
+            "trusted authority directory and selected authority file",
+            "project-local authority pathname existence"
+          ],
+          "writes": [],
+          "authority": "External authority is trusted only with HOST_ATTESTED context and an out-of-target source. In-memory host authority is resolved separately. Project-local authority files are explicitly reference-only and untrusted; F_OK is a detection signal, not authority.",
+          "tests": [
+            {
+              "file": "tests/authority.test.js",
+              "sha256": "d2891e858ea5f8d136e4996fc08114727eca00276d3861d524c30becea8b95de",
+              "cases": [
+                "audit and complete revalidate installation authority from the external host source"
+              ]
+            },
+            {
+              "file": "tests/integration-authority-context.test.js",
+              "sha256": "bd335d938498997e01f4d0bc745b75f8d9027d2041d0659485ce49e381614c05",
+              "cases": [
+                "trusted out-of-band authority context resolves a HOST_ATTESTED approval",
+                "actor-supplied authorityContext inside input cannot self-mint host authority",
+                "trusted top-level authority reaches reconciliation through the programmatic runtime",
+                "actor-supplied authority in input still cannot settle reconciliation",
+                "action-authorize through the programmatic runtime: input cannot mint authority, host context can"
+              ]
+            },
+            {
+              "file": "tests/approval-authority-boundary.test.js",
+              "sha256": "0a7bbb92669904d16adf6ad11d87e008ffb62c67e03ab68edaf837b3cfe89531",
+              "cases": [
+                "CALLER_ACKNOWLEDGED approval does not satisfy REQUIRE_APPROVAL",
+                "HOST_ATTESTED approval from a trusted host boundary satisfies REQUIRE_APPROVAL",
+                "replaced approval content after authorization is detectable via the bound fingerprint"
+              ]
+            }
+          ]
+        },
+        {
+          "escapes": [
+            31,
+            32
+          ],
+          "file": "src/repository-index/binary-manager.js",
+          "sourceLines": "55-77, 111-145",
+          "sourceSha256": "e5445ac9306053478e2c9f694ca8d890509c4f27f33e36d1797ef404ed0a1888",
+          "bindingKind": "static permission constant, not callable",
+          "trace": "verifyExecutable and explicit override verification call access(..., X_OK) after regular-file admission. This is a read-only executable permission check before managed/override tgrep execution; ensureManagedTgrep separately performs download/extraction writes after URL, archive, and checksum validation.",
+          "reads": [
+            "managed or explicitly overridden binary metadata and execute permission"
+          ],
+          "writes": [
+            "only higher-level ensureManagedTgrep setup may download/extract/replace a binary; X_OK itself writes nothing"
+          ],
+          "authority": "Managed binary manifest/checksum/version is the repository-index execution authority; explicit override is a version-checked development path.",
+          "tests": [
+            {
+              "file": "tests/repository-index-binary-manager.test.js",
+              "sha256": "ee8755f690a0e3578dd667aa21ddb850c570c8914e38bcf7e5916897ec4548d3",
+              "cases": [
+                "managed binary checksum verification fails before version execution",
+                "managed same-version tampering is rejected before the version command runs",
+                "setup repairs a tampered managed binary only after verifying the replacement",
+                "explicit development override is version-checked without PATH lookup"
+              ]
+            }
+          ]
+        },
+        {
+          "escapes": [
+            33
+          ],
+          "file": "src/repository-index/normalize-json.js",
+          "sourceLines": "132-175 and downstream path normalization",
+          "sourceSha256": "52eb60821e64829d2a719b7085b2c58dcc39445c63278da34163a73d8db693aa",
+          "bindingKind": "callable default realpath callback",
+          "trace": "normalizeTgrepJson canonicalizes repositoryRoot with realpathImpl before normalizing provider JSON-lines paths and rejecting paths outside that root.",
+          "reads": [
+            "repository-root canonical path"
+          ],
+          "writes": [],
+          "authority": "Provider-neutral repository-index discovery output; malformed/outside paths fail closed and results do not become lifecycle or storage authority.",
+          "tests": [
+            {
+              "file": "tests/repository-index-search.test.js",
+              "sha256": "4c661b41d38119b9c2ed36a71077d2c719232146e2a050b77c20c608599d7112",
+              "cases": [
+                "normalizes tgrep match, context, stats, unknown events, and relative paths",
+                "normalizes no-match file lists and Windows paths without leaking absolute paths",
+                "known malformed events and paths outside the repository fail closed"
+              ]
+            }
+          ]
+        },
+        {
+          "escapes": [
+            34,
+            35
+          ],
+          "file": "src/storage/attachment-files.js",
+          "sourceLines": "29-68",
+          "sourceSha256": "10e3da12d126263bb4ef7ca2684911bc778048b90069a84ccc73029cd53b93f5",
+          "bindingKind": "static flag constants, not callable",
+          "trace": "withVerifiedAttachmentFile admits the canonical object path, opens the source with O_RDONLY | O_NOFOLLOW, streams through bounded size/hash verification into a private wx temporary file, invokes the consumer on that private file, then removes it.",
+          "reads": [
+            "canonical attachment object bytes through a verified descriptor"
+          ],
+          "writes": [
+            "private temporary snapshot only; publishAttachmentFile separately writes immutable object bytes and links them after digest verification"
+          ],
+          "authority": "SQLite attachment reference path, size, and digest define the accepted object. Consumers receive private verified bytes; the source object is not treated as mutable operational state.",
+          "tests": [
+            {
+              "file": "tests/storage-attachment-files.test.js",
+              "sha256": "3d7c89f8c89ee03541d07e9e3f77a7ca0580fa2cc0c88d32f04e052351e792d4",
+              "cases": [
+                "immutable attachment publication verifies bytes and refuses corrupted deduplication",
+                "storage integrity refuses malformed references even when native SQLite checks pass"
+              ]
+            },
+            {
+              "file": "tests/storage-attachment-consumer.test.js",
+              "sha256": "d4754a2de719a76efa868ad80d5264cf693df1ec846d1eb2e8a1d06e75675500",
+              "cases": [
+                "attachment consumers receive private verified bytes and clean up after success/failure",
+                "attachment consumers refuse corrupt, oversized, missing, linked and unbound objects before use"
+              ]
+            }
+          ]
+        },
+        {
+          "escapes": [
+            36,
+            37
+          ],
+          "file": "src/storage/maintenance-owner.js",
+          "sourceLines": "18-42",
+          "sourceSha256": "cf18aff27a8df3ccc2257048b787428ba03c7d5e55e0aecaa6560daefe16e64e",
+          "bindingKind": "static flag constants, not callable",
+          "trace": "readMaintenanceOwner admits the owner pathname, checks lstat/realpath containment, opens it with O_RDONLY | O_NOFOLLOW, rechecks descriptor identity, then performs a bounded UTF-8 JSON read.",
+          "reads": [
+            "maintenance owner metadata"
+          ],
+          "writes": [],
+          "authority": "Maintenance owner metadata controls maintenance admission and recovery ownership; it is coordination authority, not task/event/artifact domain authority.",
+          "tests": [
+            {
+              "file": "tests/storage-maintenance-owner-containment.test.js",
+              "sha256": "dbc7cc956ead6179909b51de84c1d78603ed89217401b4fcfb7392d1080846cb",
+              "cases": [
+                "maintenance owner refuses a symlink replacement before open",
+                "maintenance owner refuses a parent link after path validation",
+                "maintenance owner bounds reads after admission"
+              ]
+            },
+            {
+              "file": "tests/storage-maintenance-handoff.test.js",
+              "sha256": "7d99a51fd9cd8f5f492681bad9fc5d83211fcbd075810cf7751ae3699558dec4",
+              "cases": [
+                "maintenance handoff preserves exclusion and permits exact dead-owner recovery"
+              ]
+            },
+            {
+              "file": "tests/storage-migration-resume.test.js",
+              "sha256": "291e919fa88f1697797b6dad3f1ba05ecb433ec27fefe3f7c2ad46aed8f8ec2f",
+              "cases": [
+                "killed maintenance owner resumes verified cutover without rewinding accepted state"
+              ]
+            }
+          ]
+        },
+        {
+          "escapes": [
+            38,
+            39
+          ],
+          "file": "src/storage/metadata-json.js",
+          "sourceLines": "10-35",
+          "sourceSha256": "a12fe17e3818325804f84447ac298b5a1c8cc423c98c0d2bcb91b317bb365e9c",
+          "bindingKind": "static flag constants, not callable",
+          "trace": "readStorageMetadataJson admits the relative path, canonicalizes the root, lstat/open-rechecks regular-file identity, enforces byte and JSON limits while streaming, and closes the read descriptor.",
+          "reads": [
+            "bounded UTF-8 JSON metadata"
+          ],
+          "writes": [],
+          "authority": "Migration, backup, rollback, attachment, and publication metadata is control evidence for those flows; this reader does not create domain task/event authority.",
+          "tests": [
+            {
+              "file": "tests/storage-metadata-json.test.js",
+              "sha256": "386ce63396caf7ef40d12027c3ba2f93fa1c4ff716e2d1d1b82b573c7bb3d59b",
+              "cases": [
+                "storage catalog reads reject oversized files, invalid encoding and excessive structure",
+                "portable import rejects an oversized sparse catalog before creating a native database",
+                "backup restore refuses an oversized manifest without allocating a destination"
+              ]
+            },
+            {
+              "file": "tests/storage-metadata-containment.test.js",
+              "sha256": "e72f33ed9ee3aa17f12bd50d119a80c4340f870553aab98ffee2388ea0aaa2a8",
+              "cases": [
+                "storage metadata refuses a symlink replacement before open",
+                "storage metadata refuses a parent link after path validation"
+              ]
+            }
+          ]
+        },
+        {
+          "escapes": [
+            40,
+            41
+          ],
+          "file": "src/storage/storage-marker.js",
+          "sourceLines": "18-47, 49-79",
+          "sourceSha256": "1664b9f2c1005507ee1aa256dc443f0d82c728646c2cf04a8460f1b270a0ca05",
+          "bindingKind": "static flag constant, not callable",
+          "trace": "readStorageVersionMarker opens storage-version.json with O_RDONLY | O_NOFOLLOW after containment and identity checks, then performs a bounded read and schema validation. The same module has separate writePendingStorageVersionMarker wx creation and activateStorageVersionMarker writeFileAtomic publication.",
+          "reads": [
+            "cutover marker metadata"
+          ],
+          "writes": [
+            "pending CUTOVER_PENDING marker under owned maintenance",
+            "ACTIVE marker after exact pending operation/fingerprint/schema validation"
+          ],
+          "authority": "The marker is migration coordination authority that blocks filesystem fallback and coordinates cutover; it is not a task/event/artifact writer or alternate domain store.",
+          "tests": [
+            {
+              "file": "tests/storage-marker-containment.test.js",
+              "sha256": "97f8279da5e1d1ac47583f4bd1489ab4f238820a3d095313112fc8daa587f4e2",
+              "cases": [
+                "storage marker refuses a symlink replacement before open",
+                "storage marker refuses a parent link after path validation",
+                "storage marker bounds reads after admission"
+              ]
+            },
+            {
+              "file": "tests/storage-marker.test.js",
+              "sha256": "5c070b650e1733c0c4afdfcdaffaa08496fc6a856d881efa9c95cdb0b561989a",
+              "cases": [
+                "pending and missing-database markers prevent filesystem fallback after exclusion release",
+                "marked writable dispatch refuses schema disagreement without upgrading database bytes"
+              ]
+            },
+            {
+              "file": "tests/storage-project-restore.test.js",
+              "sha256": "c5c6f102e5dbbf14b36b6f2eabfeab55d31d213bdbe8c54a18ce673b7c6ee672",
+              "cases": [
+                "verified restore activates canonical project dispatch and independent attachment bytes",
+                "restore refuses unquiesced writers, corrupt backup and retained legacy state"
+              ]
+            }
+          ]
+        }
+      ],
+      "limits": [
+        "This is a finite escape review only; it does not prove whole-repository consumer closure or sole-writer closure.",
+        "Static callback tracing does not prove behavior of arbitrary injected hooks, dynamic loading, reassigned aliases, returned handles, privileged races, or external provider effects.",
+        "The named tests are mapped by current file hashes only; no test result is asserted because execution was intentionally skipped during the active benchmark."
+      ]
+    }
+  ],
+  "testsExecutedForThisReview": false,
+  "wholeConsumerClosure": false,
+  "soleWriterVerified": false,
+  "backupContract": "Ordinary backup supports online writers; migration and active replacement require separately enforced quiescence.",
+  "limits": [
+    "Finite resolved inventory does not prove every filesystem origin, wrapper, dynamic dependency or external process effect",
+    "Existing tests named in review are coverage leads unless exact retained result and tested-source equality are separately provided",
+    "Unexecuted new regressions and outstanding original LOC/performance requirements prevent full acceptance"
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "increment": 780,
+  "status": "MAIN_VALIDATED",
+  "mainSourceChanged": true,
+  "sourceParent": "2fe68ee",
+  "problem": "Canonical paths without taskId refuse valid completion preparation at the wrong prerequisite ledger.",
+  "correction": "Shared completion task-options resolver reads canonical state identity before existing transaction wrappers. Completion preparation forwards its optional eventsPath to execution prerequisite admission.",
+  "checks": {
+    "finalTests": 46,
+    "failures": 0,
+    "skips": 0,
+    "lint": "PASS",
+    "complexity": "PASS",
+    "mainApplication": "PASS",
+    "mainTests": 46,
+    "verifyFast": "PASS",
+    "docsCheck": "PASS",
+    "fullCurrentPlatforms": "PENDING"
+  },
+  "controls": "Existing commit-witness staging fault includes canonical paths without taskId. Exact rows unchanged on failure; retry creates receipt and commit witness. Separate SQLite trigger reproduction also passes.",
+  "discardedCandidate": "Defaulted eventsPath parameter increased existing prepare function complexity from57to58. Optional undefined retains identical downstream nullish path selection and keeps existing limit57.",
+  "patchSha256": "ba6d872987349d3a35d2a04f77fb6b2493c433fca743defe803c0dd737713e1c",
+  "productionSha256": "13ec0a5ede8f2c955983dd411c50bcabfe68598cd857fde9cfe981b300c2e4cb",
+  "testSha256": "3dcd5a49c513b2635aa4ea21b8eb4bdb68bcafd4b434f2399f61265ac72a196d",
+  "logHashes": {
+    "direct-prepare-path776.log": "1fd7abf714bda2e43f502d7f670ee7e62d8072d16fefaad2bfad0bd6815b7dbf",
+    "direct-prepare-path776-candidate.log": "0b2c86dd2637710092cd4bb8a7eccde959fd55f55ba124d8495730533e81f4fa",
+    "direct-prepare778-final-tests.log": "daff9c3948d3843f1b22be27ffdefecd4f373ad15e3bbe065ddeeda531fb179d",
+    "direct-prepare778-lint.log": "0b4ad9345eb2f78a05b1546f1eb1e9fe610ef7ab8ed6422867ef81a99cf71a69",
+    "direct-prepare777-final2-complexity.log": "32111f472b37a8b8941d21c72e18a3815643453328562aed2fd87e8a2f0417f2",
+    "direct-prepare780-tests.log": "e5d358205be52a84cd5a95f26be566a927d04d18be53674d64d83401f9f51a9d",
+    "direct-prepare780-fast.log": "5571b3cb11782b5809ab3f572f06239d34c64e655c6503ef140713a46f97b2a9",
+    "direct-prepare780-complexity.log": "32111f472b37a8b8941d21c72e18a3815643453328562aed2fd87e8a2f0417f2",
+    "direct-prepare780-docs.log": "dbe93d88cf10bdc2a49ded7643ba81cec73a29648abbdd8b7fee0755760c51ca",
+    "direct-prepare780-lint.log": "4c55ea1927852f1fa440a7f40a34e6bc733b93451467565ab469924ab388be78"
+  },
+  "releaseThresholdsVerified": false,
+  "progressPercent": 55,
+  "parentHead": "2fe68eec3b79cd0fb39b570ce338f8666c6472a3"
+}

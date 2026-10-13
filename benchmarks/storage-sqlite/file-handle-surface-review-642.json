@@ -1,0 +1,414 @@
+{
+  "schemaVersion": 1,
+  "increment": 642,
+  "method": "Direct source review of imported open/writeFile/createWriteStream calls. Flags classify access, not complete caller authority.",
+  "calls": [
+    {
+      "file": "src/core/events.js",
+      "line": 584,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(eventsPath, \"r\")"
+    },
+    {
+      "file": "src/core/events.js",
+      "line": 866,
+      "kind": "resolved-import-call",
+      "from": "node:fs",
+      "method": "openSync",
+      "expression": "openSync(filename, \"r\")"
+    },
+    {
+      "file": "src/core/filesystem.js",
+      "line": 197,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(temporaryPath, \"w\", 0o644)"
+    },
+    {
+      "file": "src/core/filesystem.js",
+      "line": 204,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(path.dirname(filePath), \"r\")"
+    },
+    {
+      "file": "src/core/project-detection.js",
+      "line": 1129,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(filePath, \"r\")"
+    },
+    {
+      "file": "src/core/signing/bundle-file.js",
+      "line": 40,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(filename, constants.O_RDONLY | constants.O_NOFOLLOW)"
+    },
+    {
+      "file": "src/core/test-intelligence/prune.js",
+      "line": 60,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "writeFile",
+      "expression": "writeFile(candidatePath, disabled, \"utf8\")"
+    },
+    {
+      "file": "src/repository-index/binary-manager.js",
+      "line": 311,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "writeFile",
+      "expression": "writeFile(destination, bytes, { flag: \"w\" })"
+    },
+    {
+      "file": "src/repository-index/lock.js",
+      "line": 74,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(lockPath, \"wx\")"
+    },
+    {
+      "file": "src/storage/attachment-files.js",
+      "line": 21,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(directory, \"r\")"
+    },
+    {
+      "file": "src/storage/attachment-files.js",
+      "line": 51,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(source, constants.O_RDONLY | constants.O_NOFOLLOW)"
+    },
+    {
+      "file": "src/storage/attachment-files.js",
+      "line": 62,
+      "kind": "resolved-import-call",
+      "from": "node:fs",
+      "method": "createWriteStream",
+      "expression": "createWriteStream(filename, { flags: \"wx\", mode: 0o600 })"
+    },
+    {
+      "file": "src/storage/attachment-files.js",
+      "line": 79,
+      "kind": "resolved-import-call",
+      "from": "node:fs",
+      "method": "createWriteStream",
+      "expression": "createWriteStream(filename, { flags: \"wx\", mode: 0o600 })"
+    },
+    {
+      "file": "src/storage/attachment-files.js",
+      "line": 81,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(filename, \"r+\")"
+    },
+    {
+      "file": "src/storage/backup.js",
+      "line": 24,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(filename, \"r+\")"
+    },
+    {
+      "file": "src/storage/backup.js",
+      "line": 30,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(parent, \"r\")"
+    },
+    {
+      "file": "src/storage/importer.js",
+      "line": 300,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(databasePath, \"wx\", 0o600)"
+    },
+    {
+      "file": "src/storage/maintenance-handoff.js",
+      "line": 11,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(filename, \"r\")"
+    },
+    {
+      "file": "src/storage/maintenance-handoff.js",
+      "line": 30,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(intent, \"wx\", 0o600)"
+    },
+    {
+      "file": "src/storage/maintenance-owner.js",
+      "line": 10,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(filename, \"r\")"
+    },
+    {
+      "file": "src/storage/maintenance.js",
+      "line": 79,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(ownerPath, \"wx\", 0o600)"
+    },
+    {
+      "file": "src/storage/metadata-json.js",
+      "line": 14,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(filename, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0))"
+    },
+    {
+      "file": "src/storage/migration-archive.js",
+      "line": 12,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(directory, \"r\")"
+    },
+    {
+      "file": "src/storage/migration-candidate.js",
+      "line": 243,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(candidatePath, \"r+\")"
+    },
+    {
+      "file": "src/storage/migration-candidate.js",
+      "line": 326,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(directory, \"r\")"
+    },
+    {
+      "file": "src/storage/migration-publication.js",
+      "line": 98,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(directory, \"r\")"
+    },
+    {
+      "file": "src/storage/migration-rollback-publication.js",
+      "line": 17,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(directory,\"r\")"
+    },
+    {
+      "file": "src/storage/migration-rollback-source-stage.js",
+      "line": 55,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(directory,\"r\")"
+    },
+    {
+      "file": "src/storage/migration-source.js",
+      "line": 45,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(directory, \"r\")"
+    },
+    {
+      "file": "src/storage/migration-source.js",
+      "line": 206,
+      "kind": "resolved-import-call",
+      "from": "node:fs",
+      "method": "createWriteStream",
+      "expression": "createWriteStream(copied, { flags: \"wx\", mode: 0o600 })"
+    },
+    {
+      "file": "src/storage/migration-source.js",
+      "line": 207,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(copied, \"r+\")"
+    },
+    {
+      "file": "src/storage/restore-preparation.js",
+      "line": 31,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(directory, \"r\")"
+    },
+    {
+      "file": "src/storage/restore-replacement-archive.js",
+      "line": 24,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(directory, \"r\")"
+    },
+    {
+      "file": "src/storage/restore-replacement-preparation.js",
+      "line": 38,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(directory, \"r\")"
+    },
+    {
+      "file": "src/storage/storage-marker.js",
+      "line": 22,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(filename, \"r\")"
+    },
+    {
+      "file": "src/storage/storage-marker.js",
+      "line": 45,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(filename, \"wx\", 0o600)"
+    },
+    {
+      "file": "src/storage/storage-marker.js",
+      "line": 48,
+      "kind": "resolved-import-call",
+      "from": "node:fs/promises",
+      "method": "open",
+      "expression": "open(await assertSafePath(target, \".forgeloop\"), \"r\")"
+    }
+  ],
+  "currentFiles": [
+    {
+      "file": "src/core/events.js",
+      "sha256": "270d8cb19abc637e5e6a432269aa0041b2830713b7375c9432d9e842040d83a2"
+    },
+    {
+      "file": "src/core/filesystem.js",
+      "sha256": "daef6207f2bf5676414f81a635b054cb0cd06d01a2cfaa900f677683d53d00a4"
+    },
+    {
+      "file": "src/core/project-detection.js",
+      "sha256": "96956accd87bb28890ac74dbaec95a02250cb6f9b9ba4a47ac507955fe21c530"
+    },
+    {
+      "file": "src/core/signing/bundle-file.js",
+      "sha256": "055a6031cbd72bde093816b9da6c2fe1cbd5737cd63340ecb87851498711d5f3"
+    },
+    {
+      "file": "src/core/test-intelligence/prune.js",
+      "sha256": "35589fb442033e16ddfeb28af2ea6a5f91aa31a2b2f1ad4719544def6bcb60f4"
+    },
+    {
+      "file": "src/repository-index/binary-manager.js",
+      "sha256": "99c6fd6917fd2a49d1ce7416dbe49e1642b20c8e643926d938843f489d9c103e"
+    },
+    {
+      "file": "src/repository-index/lock.js",
+      "sha256": "77748809ef760e444dcdf09df280df956288cfeff379ef0a7755daf673f7892f"
+    },
+    {
+      "file": "src/storage/attachment-files.js",
+      "sha256": "f9b7bc28c820b7d9183f8e92d38c1a3ab19f731d6b0751488db8b643a30432c5"
+    },
+    {
+      "file": "src/storage/backup.js",
+      "sha256": "32016e0aaf027c2d0084717a81f1e9b1f48286ce87abdfb05a8a5764a7d8dd9a"
+    },
+    {
+      "file": "src/storage/importer.js",
+      "sha256": "22dbd284184c72b7270de7bbb95d06a2ec7f529f3305b355a4a9671a403a6f6b"
+    },
+    {
+      "file": "src/storage/maintenance-handoff.js",
+      "sha256": "38749c972924c900cb746ffaa8483428369435f7bd67739fc12837ba9667dcba"
+    },
+    {
+      "file": "src/storage/maintenance-owner.js",
+      "sha256": "8f22e1cf930bff4a40ba24d8017bff84ac54822e30b17f12a8204ea5d6c4c4bf"
+    },
+    {
+      "file": "src/storage/maintenance.js",
+      "sha256": "ce19d71c8507b70bd56b022667d63064c2b0b76f5722d8a304d27ec2e681478f"
+    },
+    {
+      "file": "src/storage/metadata-json.js",
+      "sha256": "a34e07736bda5d4fc662ceb3527e9a80bf70d404c5bb238f4f7a5576886df28c"
+    },
+    {
+      "file": "src/storage/migration-archive.js",
+      "sha256": "38848cc8ab285a2ce37ef7b7b3405cf51e024d023670f7dfbf46eac01bdda37a"
+    },
+    {
+      "file": "src/storage/migration-candidate.js",
+      "sha256": "41f01d20be6caac40ef541a8d6175e429bd595f5bd3a7a9f046571c880e88ecb"
+    },
+    {
+      "file": "src/storage/migration-publication.js",
+      "sha256": "6e60f541f53f977bc1670d2c2f7577e5e718b1e1fff80ba49d4e7c026d8b38ed"
+    },
+    {
+      "file": "src/storage/migration-rollback-publication.js",
+      "sha256": "81ca1f7c72e57f885a137e33d428c4303db0f1bb859ac19c67372d9826553417"
+    },
+    {
+      "file": "src/storage/migration-rollback-source-stage.js",
+      "sha256": "6bfbf8e0ad81644596fff0f055593082e7627bbac66de070986f81aa4f8b2211"
+    },
+    {
+      "file": "src/storage/migration-source.js",
+      "sha256": "4e2b78e7be7b1641883b28d0b33fe34fd1264b047ce88e00e617e5607aa9ffdb"
+    },
+    {
+      "file": "src/storage/restore-preparation.js",
+      "sha256": "70c2db1ac984643434a5e1986028efc39f79b9d2f2576a4cbe35f39bd0161347"
+    },
+    {
+      "file": "src/storage/restore-replacement-archive.js",
+      "sha256": "fbd0347cb136200ab4cdf848c47c1948f226913a3714c347b71d8fb541c4dd36"
+    },
+    {
+      "file": "src/storage/restore-replacement-preparation.js",
+      "sha256": "07c55045508317bb70d20c7b4b687da662d9ab1f41e209d1972a3c7e06180014"
+    },
+    {
+      "file": "src/storage/storage-marker.js",
+      "sha256": "be4744869306bfba37f02f2ab58152761c12d079360eb4220917019e5d8ad79d"
+    }
+  ],
+  "findings": {
+    "readOnlyAndDirectorySync": "r/O_RDONLY handles read metadata or sync directories; r+ handles in attachment-files, backup, migration-candidate and migration-source only sync owned staged files.",
+    "exclusiveCreation": "Importer creates a fresh database pathname with wx; maintenance owner/intent and storage marker use wx coordination metadata; generic atomic writer writes a staged file and renames it, requiring caller authority.",
+    "streams": "Three createWriteStream calls: private verified attachment copy, immutable attachment publication staging, retained migration capture. Binary attachments remain deliberately file-backed.",
+    "directWriteFile": "Repository-index download excluded by original plan. Prune probe now checks source and copied candidate containment and rejects symlink candidates.",
+    "regression": "5 test-pruning tests pass, including persisted absolute/traversal/symlink candidates with external bytes unchanged."
+  },
+  "remaining": [
+    "Assigned aliases and transitive dependency effects",
+    "Complete per-call public namespace and maintenance authority",
+    "Current Windows/Linux and full Mac verification after prune correction"
+  ],
+  "soleWriterVerified": false
+}

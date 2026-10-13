@@ -1,0 +1,60 @@
+{
+  "increment": 896,
+  "sourceRevision": "57b894a542d2347a5234c494c20126bb8820774f",
+  "scope": "Current production src/schemas/MCP src and core/MCP package manifests and locks compared with completed platform and package evidence; excludes tests, scripts, workflows and docs. Module hash inventory comparison is discovery consistency, not a conformance proof.",
+  "comparisonMethod": "git ls-tree blob identity, with current files checked against current HEAD; exact SHA256 check of all previously inventoried module source files",
+  "productionFiles": 565,
+  "records": [
+    {
+      "evidence": "benchmarks/storage-sqlite/full-macos873-terminal.json",
+      "evidenceSha256": "2328baf3d56b111978f3bc9b857b3ae136e2c6e51fa5ef2a5f186ddd177963a2",
+      "sourceRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+      "comparedFiles": 565,
+      "productionDifferences": [],
+      "unchanged": true
+    },
+    {
+      "evidence": "benchmarks/storage-sqlite/windows-full885-terminal.json",
+      "evidenceSha256": "708f5725c42b8b3ec7acb0167a062d1bf583fc950e87b6b94be8728d53e1f133",
+      "sourceRevision": "c15264cff66b27ff8ad40f65ab07c580da13fb23",
+      "comparedFiles": 565,
+      "productionDifferences": [],
+      "unchanged": true
+    },
+    {
+      "evidence": "benchmarks/storage-sqlite/core881-terminal.json",
+      "evidenceSha256": "da8e075825aded8e7cb1214ce86641a05a3e2a5db6b0719b171c9305f184b8a3",
+      "sourceRevision": "fe8705cbbf92bca5de1fa91ddfc7a054be2c30bd",
+      "comparedFiles": 565,
+      "productionDifferences": [],
+      "unchanged": true
+    },
+    {
+      "evidence": "benchmarks/storage-sqlite/package886-terminal.json",
+      "evidenceSha256": "00a237e556f9debe8503ac4f2fc8d0f6001b93c735844782ae251ea9f351890c",
+      "sourceRevision": "9ced7f2252fbd47b2201989dfc19ef4a3d41c401",
+      "comparedFiles": 565,
+      "productionDifferences": [],
+      "unchanged": true
+    },
+    {
+      "evidence": "benchmarks/storage-sqlite/compat887-terminal.json",
+      "evidenceSha256": "f9c814894ebf057c066e1ed7ea52d14d251af53f752323cd1a1635451c4b113b",
+      "sourceRevision": "5d5d0665e32012dad4acca4cc124b12c8a381931",
+      "comparedFiles": 565,
+      "productionDifferences": [],
+      "unchanged": true
+    }
+  ],
+  "moduleInventory": {
+    "modules": 505,
+    "changed": []
+  },
+  "currentWholeReleaseVerified": false,
+  "remaining": [
+    "Final pre-PR checks on final complete source",
+    "Consumer/maintenance conformance reconciliation",
+    "Performance/resource acceptance and inclusive LOC release decision",
+    "Validator-backed closure and PR"
+  ]
+}

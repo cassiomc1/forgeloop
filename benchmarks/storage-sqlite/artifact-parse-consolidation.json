@@ -1,0 +1,41 @@
+{
+  "kind": "SHARED_ARTIFACT_PARSE_CONSOLIDATION",
+  "parentRevision": "ec7a50e",
+  "behavior": "Portable reads share byte admission, JSON parse, structural/schema validation and canonical fingerprint with captured artifact parser. Portable path, existence and I/O error boundaries retained.",
+  "checks": {
+    "affected": 20,
+    "parityControls": 2,
+    "failed": 0,
+    "skipped": 0,
+    "fastExitCode": 0,
+    "eslintExitCode": 0
+  },
+  "loc": {
+    "baselineSelectedLines": 25732,
+    "currentSelectedLines": 32393,
+    "unresolvedMembership": [],
+    "targetMet": false
+  },
+  "sourceHashes": {
+    "src/core/artifacts.js": "a28d2abf4628fc88ab9c6826a836628e6c24c3a917647399c12d705067a2d8f9",
+    "tests/artifact-parser-parity.test.js": "a702b7b72f55998a4cbb9c615bacc297a8303a60f470c7f1e816d3285ed58f00"
+  },
+  "logs": {
+    "artifact-consolidation-focused.log": {
+      "path": "/Users/cassio/.codex/verification/artifact-consolidation-focused.log",
+      "sha256": "f844e6e0ac8b502ddcb272e53f7a6c83bd76366c844d7bd64e1afc9679bd7272"
+    },
+    "artifact-consolidation-fast.log": {
+      "path": "/Users/cassio/.codex/verification/artifact-consolidation-fast.log",
+      "sha256": "8c7384f5236031ff3c427771b4651875e69b86a0845eda4ceb18e71087b183db"
+    },
+    "artifact-byte-parity-after.log": {
+      "path": "/Users/cassio/.codex/verification/artifact-byte-parity-after.log",
+      "sha256": "1e79c532d6b49f464219794731348affad06200084e7815d4df1191ea2d75154"
+    }
+  },
+  "limitations": [
+    "Fullprepush/platform/resource acceptance predates this production change.",
+    "Original25percentLOC and whole-plan closure remain open."
+  ]
+}

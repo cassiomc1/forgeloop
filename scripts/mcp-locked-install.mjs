@@ -6,8 +6,13 @@ import { fileURLToPath } from "node:url";
 import { runNpm } from "./npm-command.mjs";
 const source = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../integrations/mcp");
 
+function readTarballManifest(tarball) {
+  return JSON.parse(execFileSync("tar", ["-xOf", `./${path.basename(tarball)}`, "package/package.json"],
+    { cwd: path.dirname(path.resolve(tarball)), encoding: "utf8" }));
+}
+
 function replaceLocalPackage(target, tarball) {
-  const manifest = JSON.parse(execFileSync("tar", ["-xOf", tarball, "package/package.json"], { encoding: "utf8" }));
+  const manifest = readTarballManifest(tarball);
   if (!["@cassiomc1/forgeloop", "@cassiomc1/forgeloop-mcp"].includes(manifest.name)) {
     throw new Error(`Unexpected local package: ${manifest.name}`);
   }
@@ -16,7 +21,8 @@ function replaceLocalPackage(target, tarball) {
   // locally built packages without asking npm to resolve registry metadata again.
   rmSync(destination, { recursive: true, force: true });
   mkdirSync(destination, { recursive: true });
-  execFileSync("tar", ["-xzf", tarball, "--strip-components=1", "-C", destination]);
+  execFileSync("tar", ["-xzf", `./${path.basename(tarball)}`, "--strip-components=1", "-C", path.relative(path.dirname(path.resolve(tarball)), path.resolve(destination)).split(path.sep).join("/")],
+    { cwd: path.dirname(path.resolve(tarball)) });
 }
 
 export function installLockedMcp({ target, tarballs }) {
@@ -30,10 +36,20 @@ export function installLockedMcp({ target, tarballs }) {
     const smokeLock = structuredClone(lock);
     smokeLock.name = manifest.name;
     smokeLock.packages[""].name = manifest.name;
+    const coreTarball = tarballs.find(tarball => readTarballManifest(tarball).name === "@cassiomc1/forgeloop");
+    if (!coreTarball) throw new Error("Clean MCP smoke requires the actual local core tarball");
+    const coreManifest = readTarballManifest(coreTarball);
+    const coreRecord = smokeLock.packages["node_modules/@cassiomc1/forgeloop"];
+    if (coreManifest.version !== coreRecord.version) throw new Error("Local core tarball differs from the locked core version");
+    const fileSpec = `file:${path.resolve(coreTarball)}`;
+    manifest.devDependencies["@cassiomc1/forgeloop"] = fileSpec;
+    smokeLock.packages[""].devDependencies["@cassiomc1/forgeloop"] = fileSpec;
+    coreRecord.resolved = fileSpec;
+    coreRecord.integrity = `sha512-${createHash("sha512").update(readFileSync(coreTarball)).digest("base64")}`;
     writeFileSync(path.join(target, "package.json"), JSON.stringify(manifest, null, 2));
     writeFileSync(path.join(target, "package-lock.json"), JSON.stringify(smokeLock, null, 2));
   }
-  runNpm(["ci", "--ignore-scripts", "--no-audit", "--no-fund"], { cwd: target, stdio: "pipe" });
+  runNpm(["ci", "--install-links", "--ignore-scripts", "--no-audit", "--no-fund"], { cwd: target, stdio: "pipe" });
   for (const tarball of tarballs) replaceLocalPackage(target, tarball);
   const installed = {};
   for (const [relative, record] of Object.entries(lock.packages)) {

@@ -1,3 +1,4 @@
+import { withProjectStorage } from "../src/storage/project-boundary.js";
 import assert from "node:assert/strict";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
@@ -15,10 +16,12 @@ import { runRecordDiagnosis } from "../src/commands/record-diagnosis.js";
 import { runRoute } from "../src/commands/route.js";
 import { runTaskCreate } from "../src/commands/task-create.js";
 import { createConfig, writeConfig } from "../src/core/config.js";
-import { createContract, writeContract } from "../src/core/contract.js";
+import { createContract, readContract, writeContract } from "../src/core/contract.js";
 import { createForgeLoopContext } from "../src/core/runtime-context.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { readWorkState } from "../src/core/work-state.js";
+import { captureStructuralQualityBaseline } from "../src/core/structural-quality/service.js";
+import { openStorageDatabase } from "../src/storage/index.js";
 
 const packageRoot = getPackageRoot();
 const taskId = "structural-quality-lifecycle-task";
@@ -62,7 +65,7 @@ async function setupTask(target, selectedTaskId = taskId, qualityConfig = { mode
   await runAdvance({ target, packageRoot, taskId: selectedTaskId, to: "PLANNED" });
 }
 
-function fakeContext(sequence, scopeBinding = null) {
+function fakeContext(sequence, scopeBinding = null, onScan = null) {
   let index = 0;
   const provider = {
     id: "fake",
@@ -70,6 +73,7 @@ function fakeContext(sequence, scopeBinding = null) {
       return { available: true, providerId: "fake", providerVersion: "1.0.0", transport: "test", reasonCode: null };
     },
     async scan() {
+      await onScan?.();
       const value = sequence[Math.min(index, sequence.length - 1)];
       index += 1;
       return { snapshot: snapshot(value), provider: { id: "fake", version: "1.0.0", transport: "test", executionMode: "test" } };
@@ -254,6 +258,60 @@ test("concurrent quality evaluations allocate unique attempts under the task loc
   }
 });
 
+test("native SQLite concurrent quality evaluations preserve attempt allocation and checks", { timeout: 60_000 }, async () => {
+  const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-structural-native-concurrent-"));
+  const selectedTaskId = `${taskId}-native-concurrent`;
+  try {
+    await setupTask(target, selectedTaskId, {
+      mode: "gate",
+      provider: "fake",
+      optimization: { mode: "bounded", maxExtraEvaluations: 2, minGainPoints: 25 },
+    });
+    let providerCalls = 0;
+    let releaseObservations;
+    const overlappingObservations = new Promise(resolve => { releaseObservations = resolve; });
+    const runtimeContext = fakeContext([9000, 9000], null, () => {
+      providerCalls += 1;
+      if (providerCalls === 1) return; // Baseline is captured before verification.
+      if (providerCalls === 3) releaseObservations();
+      // Both observations must precede persistence. A later caller may instead
+      // reconcile an existing unprojected evaluation without taking a new scan.
+      return overlappingObservations;
+    });
+    await runQualityBaseline({ target, packageRoot, taskId: selectedTaskId, runtimeContext });
+    await runAdvance({ target, packageRoot, taskId: selectedTaskId, to: "EXECUTING" });
+    await runAdvance({ target, packageRoot, taskId: selectedTaskId, to: "VERIFYING" });
+
+    await withProjectStorage(target, store => {
+      assert.equal(store.db.prepare("PRAGMA integrity_check").get().integrity_check, "ok");
+    }, { readOnly: true });
+    const verify = () => withProjectStorage(target, () => runQualityVerify({ target, packageRoot, taskId: selectedTaskId, runtimeContext }), { runtimeContext });
+    const results = await Promise.all([
+      verify(),
+      verify(),
+    ]);
+    assert.deepEqual(results.map((result) => result.evaluation.attempt).sort((a, b) => a - b), [1, 2]);
+    assert.ok(results.every((result) => result.evaluation.status === "PASS"));
+    assert.equal(providerCalls, 3, "one baseline and two observations; persistence retries must not call the provider");
+    const status = await withProjectStorage(target, () => runQualityStatus({ target, packageRoot, taskId: selectedTaskId }), { readOnly: true, runtimeContext });
+    assert.equal(status.current.attempt, 2);
+    assert.equal(status.optimization.attempts, 2);
+    assert.equal(status.optimization.gain, 0);
+    assert.equal(status.optimization.converged, true);
+    const state = await withProjectStorage(target, () => readWorkState(target, { packageRoot, taskId: selectedTaskId }), { readOnly: true, runtimeContext });
+    const qualityCheck = state.checks.find((check) => check.id === "structural-quality");
+    assert.equal(qualityCheck.details.attempt, 2);
+    assert.equal(qualityCheck.status, "passed");
+    const optional = await verify();
+    assert.equal(optional.evaluation.status, "PASS");
+    const converged = await verify();
+    assert.equal(converged.status, "CONVERGED");
+    assert.equal(converged.evaluation.status, "PASS");
+  } finally {
+    await rm(target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
+  }
+});
+
 test("bounded attempt limits preserve a blocked gate outcome", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-structural-limit-"));
   const selectedTaskId = `${taskId}-limit`;
@@ -277,4 +335,55 @@ test("bounded attempt limits preserve a blocked gate outcome", async () => {
   } finally {
     await rm(target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
   }
+});
+
+
+function withQualityDatabase(target, callback) {
+  const db = openStorageDatabase(path.join(target, ".forgeloop/state.sqlite"));
+  try { return callback(db); } finally { db.close(); }
+}
+
+function qualityPersistenceRows(target) {
+  return withQualityDatabase(target, db => ({
+    tasks: db.prepare("SELECT * FROM tasks ORDER BY task_id").all(),
+    artifacts: db.prepare("SELECT * FROM task_artifacts ORDER BY task_id, kind, artifact_id").all(),
+    events: db.prepare("SELECT * FROM events ORDER BY task_id, seq").all(),
+  }));
+}
+
+test("direct baseline artifact and event roll back together and retry succeeds", async () => {
+  const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-direct-quality-"));
+  try {
+    await setupTask(target);
+    const before = qualityPersistenceRows(target);
+    let scans = 0;
+    const runtimeContext = fakeContext([9000], null, () => { scans += 1; });
+    withQualityDatabase(target, db => db.exec("CREATE TRIGGER fail_direct_quality BEFORE INSERT ON events WHEN NEW.event_type = 'STRUCTURAL_QUALITY_BASELINE_RECORDED' BEGIN SELECT RAISE(ABORT, 'injected quality baseline event failure'); END"));
+    await assert.rejects(() => captureStructuralQualityBaseline({ target, packageRoot, taskId, runtimeContext }), /injected quality baseline event failure/);
+    assert.deepEqual(qualityPersistenceRows(target), before);
+    assert.equal(scans, 1);
+    withQualityDatabase(target, db => db.exec("DROP TRIGGER fail_direct_quality"));
+    const result = await captureStructuralQualityBaseline({ target, packageRoot, taskId, runtimeContext });
+    assert.equal(result.status, "CAPTURED");
+    assert.equal(scans, 2);
+    assert.equal(qualityPersistenceRows(target).events.filter(row => row.event_type === "STRUCTURAL_QUALITY_BASELINE_RECORDED").length, 1);
+  } finally { await rm(target, { recursive: true, force: true }); }
+});
+
+test("direct baseline rejects changed canonical bindings without provider replay", async () => {
+  const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-quality-binding-"));
+  try {
+    await setupTask(target);
+    let afterMutation;
+    let scans = 0;
+    const runtimeContext = fakeContext([9000], null, async () => {
+      scans += 1;
+      const contract = await readContract(target, packageRoot, { taskId });
+      await writeContract(target, { ...contract.value, objective: "independent contract changed during observation" }, packageRoot, { taskId });
+      afterMutation = qualityPersistenceRows(target);
+    });
+    await assert.rejects(() => captureStructuralQualityBaseline({ target, packageRoot, taskId, runtimeContext }), error => error.code === "E_STRUCTURAL_QUALITY_OBSERVATION_EPOCH_STALE");
+    assert.equal(scans, 1);
+    assert.deepEqual(qualityPersistenceRows(target), afterMutation);
+  } finally { await rm(target, { recursive: true, force: true }); }
 });
