@@ -146,6 +146,11 @@ test("generated regions unit tests: validateGeneratedRegionBody rejects object s
   assert.ok(errors.some((error) => error.includes("DOC_GENERATED_OUTPUT_INVALID") && error.includes("DOC_GENERATED_OUTPUT_OBJECT_STRING")));
 });
 
+test("documentation table cells escape backslashes and pipes and flatten newlines", async () => {
+  const { escapeMarkdownTableCell } = await import("../scripts/generate_documentation_reference.mjs");
+  assert.equal(escapeMarkdownTableCell("path\\segment|value\nnext"), "path\\\\segment\\|value next");
+});
+
 test("generated regions unit tests: validateGeneratedRegionBody rejects NaN and malformed patterns", async () => {
   const { validateGeneratedRegionBody } = await import("../scripts/generate_documentation_reference.mjs");
   const nanErrors = validateGeneratedRegionBody({

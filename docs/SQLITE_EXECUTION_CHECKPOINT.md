@@ -2,7 +2,7 @@
 
 ## Current checkpoint — 2026-10-13
 
-This checkout is `codex/sqlite-end-to-end` at `ef5a0cbb6a123bb14dbb49343177943f1b37706a`. SQLite is implemented and canonical in the tested source, but migration release acceptance is still open: consumer/platform and lifecycle requirements in §10 of the plan are not all verified at this revision. The accepted replacement performance criterion has a passing 1,000-task receipt at `207f7e6` (hosted run `38356645442`); that receipt predates this documentation/workflow-only branch tip. No current-revision hosted rerun is requested in this pass. LOC reduction was retired by the owner’s A+C decision; do not use the former 25% threshold as a current gate. No production data migration or release is claimed.
+The active review is on `codex/sqlite-end-to-end`. SQLite is implemented and canonical in the tested source, but migration release acceptance is still open: consumer/platform and lifecycle requirements in §10 of the plan are not all verified at this revision. The accepted replacement performance criterion has a passing 1,000-task receipt at `207f7e6` (hosted run `38356645442`); that receipt predates this review. No current-revision hosted rerun is requested in this pass. LOC reduction was retired by the owner’s A+C decision; do not use the former 25% threshold as a current gate. No production data migration or release is claimed.
 
 The historical checkpoint below is preserved as recorded and is not current state.
 
