@@ -10,6 +10,7 @@ import {
   captureBenchmarkSourceManifest,
 } from "./lib/benchmark-source-manifest.mjs";
 import { createBenchmarkProgressJournal } from "./lib/benchmark-progress-journal.mjs";
+import { DEFAULT_SEED_HEARTBEAT_TASKS, DEFAULT_SEED_STALL_GRACE_MS, seedWithProgress } from "./lib/benchmark-seed-progress.mjs";
 import { assertStorageResourceSamples, assertTimingSamples } from "./lib/benchmark-mcp-sample-validation.mjs";
 import { createTaskDescriptor } from "../src/core/task-descriptor.js";
 import { createWorkState } from "../src/core/work-state.js";
@@ -47,6 +48,10 @@ if (fixtureMode !== "synthetic") {
 }
 const sourceManifest = sourceManifestPath ? JSON.parse(await readFile(path.resolve(sourceManifestPath), "utf8")) : null;
 const pairedCase = pairedCasePath ? JSON.parse(await readFile(path.resolve(pairedCasePath), "utf8")) : null;
+const seedHeartbeatTasks = Number(argument("seed-heartbeat-tasks") ?? DEFAULT_SEED_HEARTBEAT_TASKS);
+const seedStallGraceMs = Number(argument("seed-stall-grace-ms") ?? DEFAULT_SEED_STALL_GRACE_MS);
+assert.ok(Number.isInteger(seedHeartbeatTasks) && seedHeartbeatTasks >= 1);
+assert.ok(Number.isInteger(seedStallGraceMs) && seedStallGraceMs >= 1000, "seed-stall-grace-ms must be at least 1000 in real driver runs (focused tests exercise smaller windows through the lib directly)");
 const parentOutputPath = argument("output") ? path.resolve(argument("output")) : null;
 let sourceBefore = null;
 let sourceAfter = null;
@@ -240,7 +245,7 @@ function comparable(value, backend) {
   return copy;
 }
 
-async function seedSynthetic(native, portable, size) {
+async function seedSynthetic(native, portable, size, onTaskSeeded = () => {}) {
   await mkdir(path.join(native, ".forgeloop"));
   const db = openStorageDatabase(path.join(native, ".forgeloop/state.sqlite"));
   try {
@@ -257,6 +262,7 @@ async function seedSynthetic(native, portable, size) {
           appendEvent(db, { taskId, event });
           checkpoint = { seq: event.seq, lastHash: event.hash };
         }
+        onTaskSeeded();
       }
     });
     await exportDatabase(db, portable);
@@ -283,7 +289,7 @@ async function seedSynthetic(native, portable, size) {
   };
 }
 
-async function seedPublic(native, portable, size) {
+async function seedPublic(native, portable, size, onTaskSeeded = () => {}) {
   // Public modes must use the maintained lifecycle builders. SQL setup above
   // remains an explicit synthetic diagnostic path and is never selected here.
   const { appendCanonicalObservationEvents, buildPublicTaskDataset, buildRichSelectedTaskFixture, describePublicFixtureEventComposition, validatePublicTaskParity, validateRichFixtureAcrossBackends } =
@@ -308,6 +314,7 @@ async function seedPublic(native, portable, size) {
     selectedLedgerEvents = appended.ledger.length;
     assert.equal(selectedLedgerEvents, selectedEvents);
     taskIds.push(selectedTaskId);
+    onTaskSeeded();
   }
   const publicTaskIds = await buildPublicTaskDataset({
     target: native, packageRoot: currentRoot, size, startIndex: fixtureMode === "canonical-rich-all" ? 1 : 0, taskIdAt,
@@ -316,6 +323,7 @@ async function seedPublic(native, portable, size) {
     eventCountForIndex: fixtureMode === "canonical-rich-all"
       ? () => eventsPerTask
       : index => index === 0 ? selectedEvents : eventsPerTask,
+    onTaskSeeded,
   });
   taskIds.push(...publicTaskIds);
   const db = openStorageDatabase(path.join(native, ".forgeloop/state.sqlite"));
@@ -364,8 +372,10 @@ async function seedPublic(native, portable, size) {
   };
 }
 
-async function seed(native, portable, size) {
-  return fixtureMode === "synthetic" ? seedSynthetic(native, portable, size) : seedPublic(native, portable, size);
+async function seed(native, portable, size, onTaskSeeded) {
+  return fixtureMode === "synthetic"
+    ? seedSynthetic(native, portable, size, onTaskSeeded)
+    : seedPublic(native, portable, size, onTaskSeeded);
 }
 
 async function readProgressRecords(filename, label) {
@@ -452,8 +462,12 @@ try {
       try {
         const native = path.join(directory, "native"), portable = path.join(directory, "portable");
         await mkdir(native);
-        checkpoint({ stage: "SEEDING", tasks: size });
-        const fixture = await seed(native, portable, size);
+        const fixture = await seedWithProgress(progressJournal, {
+          seed: onTaskSeeded => seed(native, portable, size, onTaskSeeded),
+          size,
+          heartbeatTasks: seedHeartbeatTasks,
+          stallGraceMs: seedStallGraceMs,
+        });
         checkpoint({ stage: "SEEDED", tasks: size, fixture: fixture.fixtureManifest });
         const backends = {};
         const order = sizeIndex % 2 ? ["baseline", "native"] : ["native", "baseline"];

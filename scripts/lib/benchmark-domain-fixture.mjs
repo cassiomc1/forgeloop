@@ -241,11 +241,13 @@ export async function buildPublicTaskDataset({
   pathForIndex,
   eventCount,
   eventCountForIndex,
+  onTaskSeeded = () => {},
 } = {}) {
   assert.ok(Number.isInteger(size) && size >= 1);
   assert.ok(Number.isInteger(startIndex) && startIndex >= 0 && startIndex <= size);
   assert.equal(typeof taskIdAt, "function");
   assert.ok(typeof eventCountForIndex === "function" || Number.isInteger(eventCount));
+  assert.equal(typeof onTaskSeeded, "function");
   const taskIds = [];
   for (let index = startIndex; index < size; index++) {
     const taskId = taskIdAt(index);
@@ -263,6 +265,7 @@ export async function buildPublicTaskDataset({
       pathPrefix,
     });
     taskIds.push(taskId);
+    onTaskSeeded(taskId);
   }
   return taskIds;
 }
