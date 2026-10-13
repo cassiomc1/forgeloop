@@ -336,6 +336,7 @@ function validateStorageMigrationInput(command, options, help) {
   if (["storage-rollback", "storage-rollback-resume"].includes(command) && !help && (typeof options.destination !== "string" || !options.destination || typeof options.legacyRoot !== "string" || !options.legacyRoot || options.writersQuiesced !== true || options.nativeWritesExcluded !== true)) throw inputError("storage-rollback requires --destination, --legacy-root, explicit --writers-quiesced and --native-writes-excluded");
   if (command === "storage-migrate" && !help && (typeof options.destination !== "string" || !options.destination || options.writersQuiesced !== true)) throw inputError("storage-migrate requires --destination and explicit --writers-quiesced");
   if (command === "storage-migration-resume" && !help && (typeof options.destination !== "string" || !options.destination || options.writersQuiesced !== true || typeof options.expectedOwnerId !== "string" || !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(options.expectedOwnerId))) throw inputError("storage-migration-resume requires --destination, exact --expected-owner UUID and explicit --writers-quiesced");
+  if (command === "storage-migration-resume" && options.acknowledgeUnboundHandoff !== undefined && typeof options.acknowledgeUnboundHandoff !== "boolean") throw inputError("--reconcile-unbound-handoff must be a boolean acknowledgement");
 }
 
 /**

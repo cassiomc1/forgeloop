@@ -162,6 +162,38 @@ test("coexisting flat and scoped continuation identities refuse recovery and ret
   });
 });
 
+test("explicit legacy handoff reconciliation archives opaque bytes before exact dead-owner resume", async () => {
+  await withDeadOwner(async (target, owner) => {
+    const handoffPath = path.join(target, ".forgeloop/.storage-maintenance/handoff");
+    await mkdir(path.join(handoffPath, "nested"), { recursive: true });
+    const original = Buffer.from("legacy handoff bytes\0preserved", "utf8");
+    await writeFile(path.join(handoffPath, "nested", "payload.bin"), original);
+    await assert.rejects(
+      resumeStorageMaintenance(target, { expectedOwnerId: owner.ownerId, writersQuiesced: true }, () => undefined),
+      { code: "E_STORAGE_MAINTENANCE_IN_PROGRESS" },
+    );
+    let archive;
+    await resumeStorageMaintenance(target, {
+      expectedOwnerId: owner.ownerId,
+      writersQuiesced: true,
+      acknowledgeUnboundHandoff: true,
+    }, async () => {
+      const history = path.join(target, ".forgeloop/storage-maintenance-history/unbound-handoffs");
+      const receiptName = (await readdir(history)).find(name => name.endsWith(".json"));
+      assert.ok(receiptName);
+      const receipt = JSON.parse(await readFile(path.join(history, receiptName), "utf8"));
+      archive = path.join(target, receipt.archivePath);
+      assert.equal(receipt.previousOwnerId, owner.ownerId);
+      assert.equal(receipt.sourcePath, ".forgeloop/.storage-maintenance/handoff");
+      assert.equal(receipt.interpretation.includes("no ownership or liveness is inferred"), true);
+      assert.deepEqual(await readFile(path.join(archive, "nested", "payload.bin")), original);
+      await assert.rejects(readFile(handoffPath), { code: "ENOENT" });
+    });
+    assert.ok(archive);
+    assert.equal((await executeForgeLoopCommand({ command: "task-list", projectPath: target })).ok, true);
+  });
+});
+
 test("tampered, foreign and cyclic handoff claims refuse recovery without replacing owner or evidence", async () => {
   await withDeadOwner(async (target, owner, original, children) => {
     const child = await start(target, "CLAIM", owner.ownerId); children.push(child);

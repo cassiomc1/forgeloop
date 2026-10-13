@@ -43,6 +43,7 @@ Requires externally excluded writers and the exact retained dead local owner UUI
 - `--destination <path>`: retained migration directory relative to the project
 - `--expected-owner <uuid>`: exact retained maintenance owner reported by storage-migration-status
 - `--writers-quiesced`: assert that all writers, including older clients, have been externally stopped
+- `--reconcile-unbound-handoff`: preserve an unbound legacy handoff by atomic archival before resuming the exact dead owner
 - `--json`: emit recovery verification metadata
 
 <!-- END FORGELOOP GENERATED: cli:storage-migration-resume:options -->

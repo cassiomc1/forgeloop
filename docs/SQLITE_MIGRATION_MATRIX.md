@@ -694,6 +694,19 @@ recovery. This replaces new unbound handoff locks; legacy unbound handoffs remai
 refused. Initial admission windows, power-loss and full OS acceptance remain
 separate unfinished requirements.
 
+## Explicit legacy handoff reconciliation (2026-10-13)
+
+`storage-migration-resume` still refuses an unbound legacy handoff by default.
+An operator who confirms the exact dead owner and externally quiesces every
+writer can pass `--reconcile-unbound-handoff`; the command atomically moves the
+opaque handoff directory into retained maintenance history and records the old
+owner, original path and immediate entry names before continuing verified
+resume. It never interprets or deletes the legacy contents. The focused
+regression preserves a nested binary payload byte-for-byte and confirms that
+the default refusal remains. This enables controlled recovery on a named target;
+it does not establish sole-writer, whole-consumer, physical power-loss or full
+platform acceptance.
+
 ## Direct transaction dispatch (increment213)
 
 `withTaskTransaction` selects the canonical project storage boundary for an

@@ -24,11 +24,11 @@ export async function migrateProjectStorage(target, { destination, writersQuiesc
 
 
 /** Resume retained publication, rebuilding only verified unpublished staging. */
-export async function resumeProjectStorageMigration(target, { destination, expectedOwnerId, writersQuiesced = false, packageRoot } = {}) {
+export async function resumeProjectStorageMigration(target, { destination, expectedOwnerId, writersQuiesced = false, acknowledgeUnboundHandoff = false, packageRoot } = {}) {
   if (typeof destination !== "string" || !destination) {
     throw Object.assign(new Error("Migration resume requires the retained destination"), { code: "E_CLI_INVOCATION_INVALID" });
   }
-  return resumeStorageMaintenance(target, { expectedOwnerId, writersQuiesced }, async () => {
+  return resumeStorageMaintenance(target, { expectedOwnerId, writersQuiesced, acknowledgeUnboundHandoff }, async () => {
     const options = { writersQuiesced, packageRoot };
     await resumeLegacySourceCapture(target, destination, options);
     await resumeMigrationCandidate(target, destination, options);

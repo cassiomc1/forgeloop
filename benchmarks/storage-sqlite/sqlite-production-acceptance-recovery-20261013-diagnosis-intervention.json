@@ -1,0 +1,15 @@
+{
+  "id": "checkout.sqlite.status.acceptance.reconcile",
+  "kind": "NO_MUTATION_EXPERIMENT",
+  "statement": "Performed a read-only status check against the current checkout and reconciled the checkpoint to distinguish local checkout state from an unnamed external production target. The current checkout is already SQLite-present with no legacy operational paths or retained maintenance owner; the status command did not validate database contents or publication. Preserved the sole-writer capability as false and did not cut over data.",
+  "targets": [
+    "node src/cli.js storage-migration-status --json",
+    "docs/SQLITE_EXECUTION_CHECKPOINT.md",
+    "benchmarks/storage-sqlite/sqlite-production-acceptance-recovery-20261013-focused-checks.json"
+  ],
+  "hypothesisRefs": [
+    "h-legacy"
+  ],
+  "expectedObservation": "The current checkout reports SQLITE_PRESENT and no retained maintenance operation; the observation is explicitly limited to this checkout and does not satisfy physical power-loss, whole-consumer, external-target or platform acceptance.",
+  "reversible": true
+}

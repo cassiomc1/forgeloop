@@ -661,8 +661,16 @@ revalidates retained candidate, source partitions and publication bundle before
 continuing STAGED/ARCHIVING archival or ARCHIVED activation. For PUBLISHED it
 verifies current state without restoring or rewinding accepted writes. Success
 releases exclusion; refusal retains the newly adopted owner, which must be
-inspected before any further recovery. Unrecorded capture and interrupted owner handoffs still require future recovery
-work. SIGKILL fixture coverage proves durable STAGED, ARCHIVED and PUBLISHED
+inspected before any further recovery. If status reports an unbound legacy
+`.storage-maintenance/handoff` directory, the command continues to refuse it
+unless the operator also supplies `--reconcile-unbound-handoff`. That explicit
+acknowledgement atomically renames the opaque directory into
+`.forgeloop/storage-maintenance-history/unbound-handoffs/`, writes a receipt
+with its prior owner and immediate entry names, and never interprets or deletes
+the retained bytes. The operator must still establish writer quiescence and
+inspect the exact target before using either acknowledgement. Unrecorded capture
+and other interrupted owner handoffs still require future recovery work.
+SIGKILL fixture coverage proves durable STAGED, ARCHIVED and PUBLISHED
 boundaries on macOS/Node 24, not every write window or power-loss/platform behavior.
 
 Resume also handles a verified PREPARED candidate before publication begins,

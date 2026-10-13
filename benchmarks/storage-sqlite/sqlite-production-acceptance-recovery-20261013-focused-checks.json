@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "taskId": "sqlite-production-acceptance-recovery-20261013",
+  "baseRevision": "c7df99e655a1a9a09f53179fa976e0457879e256",
+  "command": "node --test tests/storage-migration-publication.test.js tests/storage-migration-rollback-publication.test.js tests/storage-migration-rollback-publication-resume.test.js tests/storage-active-replacement.test.js tests/storage-attachment-consumer.test.js tests/storage-attachment-aliases.test.js tests/storage-maintenance-handoff.test.js tests/storage-migration-source.test.js",
+  "result": {
+    "tests": 50,
+    "passed": 50,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 37279.955792
+  },
+  "coverage": [
+    "publication staging and attachment coverage refusal",
+    "owner-bound migration archive resume across recorded interruption states",
+    "rollback publication integrity and source/native tamper refusal",
+    "active replacement ownership and preservation controls",
+    "attachment consumer verification, private-byte use, cleanup, and unbound-object refusal"
+  ],
+  "limitations": [
+    "No physical power-loss, cross-platform, whole-consumer audit, external target, or production cutover claim is made.",
+    "A new explicit reconciliation path is covered locally; no separate target was supplied to exercise any existing unbound marker.",
+    "Direct output for the additional four targeted attachment recovery tests was observed in-session; no separate raw log was retained."
+  ],
+  "additionalChecks": [
+    {
+      "command": "node --test --test-name-pattern='migration verifies portable attachment|unmapped captured objects remain retained|verified restore activates canonical|SIGKILL after signature-object publication' tests/storage-migration-attachments.test.js tests/storage-project-restore.test.js tests/storage-legacy-signature.test.js",
+      "tests": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "durationMs": 3507.022417,
+      "coverage": [
+        "attachment bindings preserved through migration, publication and backup",
+        "unmapped attachment objects remain retained and block publication",
+        "restore activates canonical dispatch with independent attachment bytes",
+        "SIGKILL after signature object publication resumes without replacing bytes or losing partial evidence"
+      ]
+    }
+  ],
+  "currentCheckoutObservation": {
+    "revision": "c7df99e655a1a9a09f53179fa976e0457879e256",
+    "command": "node src/cli.js storage-migration-status --json",
+    "status": "observed",
+    "result": {
+      "layout": "SQLITE_PRESENT",
+      "databasePresent": true,
+      "legacyOperationalPaths": [],
+      "maintenanceStatus": "NONE",
+      "databaseValidation": "NOT_RUN",
+      "publicationValidation": "NOT_VERIFIED"
+    },
+    "limits": [
+      "This read-only observation covers only the current checkout; no separate external production target was identified or inspected.",
+      "It does not reconcile a legacy unbound handoff on another target, prove physical power-loss durability, or establish whole-consumer or supported-platform closure."
+    ]
+  },
+  "aggregateFocusedTotals": {
+    "tests": 50,
+    "passed": 50,
+    "failed": 0,
+    "skipped": 0
+  },
+  "currentWorkingTreeVerification": {
+    "state": "PASS",
+    "baseRevision": "c7df99e655a1a9a09f53179fa976e0457879e256",
+    "sourceFix": [
+      "src/storage/maintenance.js",
+      "src/storage/migration.js",
+      "src/core/cli-command-definitions.js",
+      "src/core/command-executors.js",
+      "src/core/command-input.js",
+      "tests/storage-maintenance-handoff.test.js",
+      "tests/cli-parser-parity.test.js"
+    ],
+    "checks": [
+      {
+        "name": "targeted storage migration, attachment and handoff tests",
+        "executionId": "exec-ffbfafd1-a231-47d5-928e-0496d1ea824b",
+        "testCount": 50,
+        "exitCode": 0
+      },
+      {
+        "name": "verify:fast",
+        "executionId": "exec-964d5d19-6e50-44a3-822b-ea5daa5faf88",
+        "exitCode": 0
+      },
+      {
+        "name": "verify:fast after final documentation updates",
+        "executionId": "exec-e7eedd52-f992-4604-86d0-9f877c8f4712",
+        "exitCode": 0
+      },
+      {
+        "name": "CLI parser parity",
+        "executionId": "exec-76fcd0b0-08f0-44db-a4b5-78917ef3a986",
+        "exitCode": 0
+      },
+      {
+        "name": "generated documentation check",
+        "executionId": "exec-9bcb5c5b-9e28-4b60-8b42-54e6ad4279c2",
+        "exitCode": 0
+      }
+    ],
+    "limitations": [
+      "These checks cover the working tree based on the listed commit; they are not hosted checks on a commit containing the new change.",
+      "No full verify:prepush, physical power-loss test, complete transitive consumer closure or supported-platform run was performed."
+    ]
+  }
+}

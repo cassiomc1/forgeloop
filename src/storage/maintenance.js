@@ -1,6 +1,6 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import { randomUUID } from "node:crypto";
-import { lstat, mkdir, open, readdir, rmdir, unlink } from "node:fs/promises";
+import { lstat, mkdir, open, readdir, rename, rmdir, unlink } from "node:fs/promises";
 import os from "node:os";
 import { assertSafePath } from "../core/filesystem.js";
 import { MAINTENANCE_OWNER_ID, readMaintenanceOwner } from "./maintenance-owner.js";
@@ -180,19 +180,57 @@ export async function assertStorageMaintenanceOwnerContinuity(target, { expected
   throw busy("Maintenance owner history exceeds bounded recovery depth");
 }
 
+async function archiveUnboundLegacyHandoff(target, expectedOwnerId) {
+  const relative = `${EXCLUSION}/handoff`;
+  const source = await assertSafePath(target, relative);
+  let info;
+  try { info = await lstat(source); }
+  catch (error) { if (error.code === "ENOENT") return null; throw error; }
+  if (!info.isDirectory()) throw busy("Unbound legacy handoff is not a directory; reconciliation refused");
+  const entries = (await readdir(source, { withFileTypes: true }))
+    .map(entry => ({ name: entry.name, type: entry.isDirectory() ? "directory" : entry.isFile() ? "file" : entry.isSymbolicLink() ? "symlink" : "other" }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+  const root = await assertSafePath(target, ".forgeloop/storage-maintenance-history/unbound-handoffs");
+  await mkdir(root, { recursive: true });
+  const archivedName = `${expectedOwnerId}-${randomUUID()}`;
+  const archive = await assertSafePath(target, `.forgeloop/storage-maintenance-history/unbound-handoffs/${archivedName}`);
+  const receiptPath = await assertSafePath(target, `.forgeloop/storage-maintenance-history/unbound-handoffs/${archivedName}.json`);
+  try { await lstat(archive); throw busy("Legacy handoff archive identity already exists"); }
+  catch (error) { if (error.code !== "ENOENT") throw error; }
+  await rename(source, archive);
+  const durability = await import("./file-durability.js");
+  await durability.syncDirectory(await assertSafePath(target, EXCLUSION));
+  await durability.syncDirectory(root);
+  const receipt = {
+    schemaVersion: 1,
+    kind: "UNBOUND_LEGACY_MAINTENANCE_HANDOFF_ARCHIVE",
+    previousOwnerId: expectedOwnerId,
+    sourcePath: relative,
+    archivePath: `.forgeloop/storage-maintenance-history/unbound-handoffs/${archivedName}`,
+    archivedAt: new Date().toISOString(),
+    entries,
+    interpretation: "Opaque legacy bytes preserved by atomic rename; no ownership or liveness is inferred from the archived contents.",
+  };
+  const handle = await open(receiptPath, "wx", 0o600);
+  try { await handle.writeFile(`${JSON.stringify(receipt)}\n`); await handle.sync(); }
+  finally { await handle.close(); }
+  await durability.syncDirectory(root);
+  return receipt;
+}
+
 /** Adopt a retained dead local owner without dropping the exclusion. */
-export async function resumeStorageMaintenance(target, { expectedOwnerId, writersQuiesced = false } = {}, callback) {
+export async function resumeStorageMaintenance(target, { expectedOwnerId, writersQuiesced = false, acknowledgeUnboundHandoff = false } = {}, callback) {
   if (writersQuiesced !== true) throw Object.assign(new Error("Stop and exclude all writers before maintenance resume"), { code: "E_STORAGE_MIGRATION_QUIESCENCE_REQUIRED" });
   if (typeof callback !== "function" || typeof expectedOwnerId !== "string" || !MAINTENANCE_OWNER_ID.test(expectedOwnerId)) throw busy("Resume requires an exact owner identity and recovery operation");
   const previous = await readMaintenanceOwner(target);
   if (previous.value.ownerId !== expectedOwnerId) throw busy("Retained owner differs from the requested resume identity");
   await assertLocalOwnerDead(previous.value);
   const directory = await assertSafePath(target, EXCLUSION);
-  const handoff = await assertSafePath(target, `${EXCLUSION}/handoff`);
-  try {
-    await lstat(handoff);
-    throw busy("Unbound legacy handoff requires reconciliation");
-  } catch (error) { if (error.code !== "ENOENT") throw error; }
+  let handoffPresent = false;
+  try { await lstat(await assertSafePath(target, `${EXCLUSION}/handoff`)); handoffPresent = true; }
+  catch (error) { if (error.code !== "ENOENT") throw error; }
+  if (handoffPresent && acknowledgeUnboundHandoff !== true) throw busy("Unbound legacy handoff requires explicit --reconcile-unbound-handoff acknowledgement");
+  if (handoffPresent) await archiveUnboundLegacyHandoff(target, expectedOwnerId);
   const ownerData = await createOwner({ resumedFrom: expectedOwnerId });
   const rechecked = await readMaintenanceOwner(target);
   if (rechecked.text !== previous.text) throw busy("Owner changed during resume preparation");
