@@ -1,0 +1,41 @@
+{
+  "kind": "DISPATCH_PROFILE_GUARD_VERIFICATION",
+  "schemaVersion": 1,
+  "date": "2026-10-13T11:03:50.387Z",
+  "sourceStep": "profile_guard in .github/workflows/mcp-resources-hosted.yml (extracted verbatim from the committed YAML, executed with bash)",
+  "profiles": [
+    {
+      "events": "10",
+      "repeats": "200",
+      "size": "1000",
+      "expect": "pass",
+      "exit": 0,
+      "ok": true
+    },
+    {
+      "events": "1000",
+      "repeats": "200",
+      "size": "1000",
+      "expect": "reject",
+      "exit": 1,
+      "ok": true
+    },
+    {
+      "events": "10",
+      "repeats": "300",
+      "size": "1000",
+      "expect": "reject",
+      "exit": 1,
+      "ok": true
+    },
+    {
+      "events": "11",
+      "repeats": "200",
+      "size": "1000",
+      "expect": "reject",
+      "exit": 1,
+      "ok": true
+    }
+  ],
+  "allOk": true
+}

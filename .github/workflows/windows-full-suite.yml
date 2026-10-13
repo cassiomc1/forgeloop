@@ -199,7 +199,11 @@ jobs:
           const manifest = files.map(file => ({ path: file, sha256: createHash("sha256").update(readFileSync(file)).digest("hex") }));
           writeFileSync(path.join(process.env.MCP_RESOURCE_OUTPUT, "source-before.json"), JSON.stringify(manifest, null, 2) + "\n", { flag: "wx" });
           NODE
-          node scripts/benchmark-storage-mcp.mjs --baseline-root=../legacy --resources=true --task-list-limit=100 --sizes=1000,5000 --repeats=200 --worker-evidence-directory="$MCP_RESOURCE_OUTPUT/workers" --output="$MCP_RESOURCE_OUTPUT/comparison.json" > "$MCP_RESOURCE_OUTPUT/benchmark.log" 2>&1
+          # 1,000-task rows only per plan §9 amendment: "keep the hosted
+          # workflow at the 1,000-task case rows only". The removed 5,000-row
+          # variant's invariant is mapped in docs/SQLITE_MIGRATION_PLAN.md
+          # (removed-variant mapping table); never restore it here.
+          node scripts/benchmark-storage-mcp.mjs --baseline-root=../legacy --resources=true --task-list-limit=100 --sizes=1000 --repeats=200 --worker-evidence-directory="$MCP_RESOURCE_OUTPUT/workers" --output="$MCP_RESOURCE_OUTPUT/comparison.json" > "$MCP_RESOURCE_OUTPUT/benchmark.log" 2>&1
       - name: Verify tracked source remains unchanged
         if: always()
         env:

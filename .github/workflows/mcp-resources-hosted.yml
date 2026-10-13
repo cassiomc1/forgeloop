@@ -100,6 +100,38 @@ jobs:
           status=EVIDENCE_DIRECTORY_INITIALIZED
           EOF
 
+      # Fail-closed dispatch-profile guard, derived from plan §9 (replacement
+      # acceptance criterion: "keep the hosted workflow at the 1,000-task case
+      # rows only" with 200 timed samples per side) and the only
+      # measured-successful receipts for this envelope: run 38356645442 at
+      # 207f7e6 and run 38253963898 at 85f4cce (both eventsPerTask=10,
+      # repeats=200, parity true). Nothing in this envelope has ever succeeded
+      # outside those values, so larger dispatches are not retriable
+      # experiments to admit — run 38313544390 was cancelled at GitHub's hard
+      # 6h job wall after events=1000 passed unchecked to
+      # scripts/benchmark-storage-mcp.mjs (1,000,000 seeded events). Reject
+      # impossible dispatches before any checkout, install, or seeding work.
+      - name: Guard dispatch profile against the plan §9 acceptance envelope
+        id: profile_guard
+        working-directory: ${{ github.workspace }}
+        run: |
+          set -eu
+          if [ "$MCP_CASE" = "tasks-1000-both" ]; then
+            if [ "$MCP_EVENTS" != "10" ]; then
+              echo "::error::Dispatch rejected before seeding: case tasks-1000-both requires eventsPerTask=10, the only measured-successful value (plan §9 receipts 38356645442/38253963898). Attempted events=$MCP_EVENTS; the same over-budget dispatch was how run 38313544390 was cancelled on the 6h wall."
+              exit 1
+            fi
+            if [ "$MCP_REPEATS" != "200" ]; then
+              echo "::error::Dispatch rejected before seeding: repeats must be 200 for the §9 acceptance profile (200 timed samples per side). Attempted repeats=$MCP_REPEATS."
+              exit 1
+            fi
+            workload=$(( $MCP_SIZE * $MCP_EVENTS ))
+            if [ "$workload" -gt 10990 ]; then
+              echo "::error::Dispatch rejected before seeding: workload of $workload events exceeds the measured §9 envelope of 10,990 (1,000 selected + 999 ordinary x 10). Attempted size=$MCP_SIZE events=$MCP_EVENTS."
+              exit 1
+            fi
+          fi
+
       - name: Check out current source at the dispatched SHA
         id: checkout_current
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

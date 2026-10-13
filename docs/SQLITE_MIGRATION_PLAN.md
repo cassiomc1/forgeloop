@@ -277,6 +277,18 @@ These are design targets to approve before measurement, not observed results:
 
 Failing a target triggers investigation and a release decision. It does not justify lowering durability, skipping integrity checks, hiding importer code from the LOC count, or retaining both write backends indefinitely.
 
+### Removed-variant mapping (2026-10-13)
+
+Per the §9 amendment, longer benchmark-harness variants were removed from required test lanes. Each removed variant's invariant is carried by one of the retained checks; no coverage was dropped silently:
+
+| Removed variant | Where (before) | Invariant | Now carried by |
+| --- | --- | --- | --- |
+| 5,000-task benchmark row (`--sizes=…,5000`) | Windows full suite, hosted MCP comparison step | Correctness and parity reasoning survive a workspace 5× the acceptance scale | Intentionally skipped, documented here: the §9 criterion binds acceptance to the 1,000-task rows only, and the hosted driver's fixture validation asserts exact event composition at that scale. Scale-behavior above 1,000 remains a diagnostic-only option (`scripts/benchmark-storage-mcp.mjs` still accepts `--sizes` up to 5,000; it is simply no longer a required lane). |
+| `eventsPerTask=1000` ordinary rows | Hosted MCP host-workflow dispatches (`events=1000`) | Event-chain correctness on deep ordinary tasks | The retained §9 case already carries this invariant: the canonical-rich-all fixture's selected task has a validated 1,000-event chain (`selectedEvents=1000`), asserted by the driver's fixture composition checks in every run (receipts 38253963898/85f4cce and 38356645442/207f7e6). |
+| `eventsPerTask=100000` row | Plan §258 benchmark matrix only — never dispatched in CI | Rendering/lookup under a 100-thousand-event chain | Intentionally skipped, documented here: out of the §9 acceptance envelope, and no retained check depends on it. Dispatches are now refused pre-seed by the hosted workflow's profile guard. |
+
+The dispatch profile guard added to `.github/workflows/mcp-resources-hosted.yml` rejects any pre-seed dispatch whose envelope exceeds the measured §9 acceptance case (`eventsPerTask=10`, `repeats=200`, workload ≤ 10,990 events for `tasks-1000-both`); the missing guard is exactly how run `38313544390` was cancelled on GitHub's 6-hour job wall after an `events=1000` dispatch seeded 1,000,000 events.
+
 ## 10. Definition of done
 
 - [ ] SQLite is the sole authoritative operational writer in the migrated release.
