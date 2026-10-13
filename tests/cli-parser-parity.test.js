@@ -447,6 +447,23 @@ test("task-recover distinguishes caller acknowledgement from its deprecated alia
   assert.equal(deprecated.options.acknowledgeRecovery, undefined);
 });
 
+test("storage migration resume requires a separate explicit unbound-handoff reconciliation acknowledgement", () => {
+  const parsed = parseArgs([
+    "storage-migration-resume",
+    "--destination", "retained",
+    "--expected-owner", "00000000-0000-0000-0000-000000000001",
+    "--writers-quiesced",
+    "--reconcile-unbound-handoff",
+  ]);
+  assert.equal(parsed.options.acknowledgeUnboundHandoff, true);
+  assert.equal(parseArgs([
+    "storage-migration-resume",
+    "--destination", "retained",
+    "--expected-owner", "00000000-0000-0000-0000-000000000001",
+    "--writers-quiesced",
+  ]).options.acknowledgeUnboundHandoff, undefined);
+});
+
 test("generated CLI options never duplicate repeatable marker", () => {
   for (const command of COMMANDS) {
     const generated = generateCliOptionsForCommand(command);

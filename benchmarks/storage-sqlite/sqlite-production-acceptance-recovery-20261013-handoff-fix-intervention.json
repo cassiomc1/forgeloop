@@ -1,0 +1,22 @@
+{
+  "id": "preserve-and-reconcile-unbound-legacy-handoff",
+  "kind": "CODE_CHANGE",
+  "statement": "Added an explicit --reconcile-unbound-handoff option to storage-migration-resume. With an exact dead local owner and writersQuiesced=true, it atomically archives the unbound handoff directory without interpreting or deleting its contents and writes an owner-bound archival receipt. Without the acknowledgement, recovery remains fail-closed. Added byte-preservation and parser regressions and documented the boundary.",
+  "targets": [
+    "src/storage/maintenance.js",
+    "src/storage/migration.js",
+    "src/commands/storage-migration-resume.js",
+    "src/core/cli-command-definitions.js",
+    "src/core/command-input.js",
+    "src/core/command-executors.js",
+    "tests/storage-maintenance-handoff.test.js",
+    "tests/cli-parser-parity.test.js",
+    "docs/SQLITE_STORAGE.md",
+    "docs/SQLITE_MIGRATION_MATRIX.md"
+  ],
+  "hypothesisRefs": [
+    "h-legacy"
+  ],
+  "expectedObservation": "The normal resume path still refuses an unbound handoff. The explicit flag archives nested opaque bytes exactly, creates a receipt, and permits exact dead-owner recovery while exclusion remains held.",
+  "reversible": true
+}

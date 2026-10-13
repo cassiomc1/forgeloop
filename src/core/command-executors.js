@@ -133,7 +133,7 @@ const RAW_COMMAND_EXECUTORS = {
   },
   "storage-migration-resume": async ({ target, packageRoot, options }) => {
     const { runStorageMigrationResume } = await import("../commands/storage-migration-resume.js");
-    return { result: await runStorageMigrationResume({ target, packageRoot, destination: options.destination, expectedOwnerId: options.expectedOwnerId, writersQuiesced: options.writersQuiesced }), exitCode: 0 };
+    return { result: await runStorageMigrationResume({ target, packageRoot, destination: options.destination, expectedOwnerId: options.expectedOwnerId, writersQuiesced: options.writersQuiesced, acknowledgeUnboundHandoff: options.acknowledgeUnboundHandoff }), exitCode: 0 };
   },
   "storage-rollback-resume": async ({ target, packageRoot, options }) => {
     const { resumeProjectStorageRollback } = await import("../storage/migration-rollback.js");

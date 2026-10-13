@@ -99,10 +99,11 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
       "--destination": Object.freeze({ targetKey: "destination", parseType: "string", takesValue: true, valueName: "path", missingValueMessage: "--destination requires a path", description: "retained migration directory relative to the project" }),
       "--expected-owner": Object.freeze({ targetKey: "expectedOwnerId", parseType: "string", takesValue: true, valueName: "uuid", missingValueMessage: "--expected-owner requires a UUID", description: "exact retained maintenance owner reported by storage-migration-status" }),
       "--writers-quiesced": Object.freeze({ targetKey: "writersQuiesced", parseType: "boolean", takesValue: false, description: "assert that all writers, including older clients, have been externally stopped" }),
+      "--reconcile-unbound-handoff": Object.freeze({ targetKey: "acknowledgeUnboundHandoff", parseType: "boolean", takesValue: false, description: "preserve an unbound legacy handoff by atomic archival before resuming the exact dead owner" }),
       "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit recovery verification metadata" }),
     }),
     writes: ["<destination>", ".forgeloop/state.sqlite", ".forgeloop/storage-version.json", ".forgeloop/.storage-maintenance", ".forgeloop/storage-maintenance-history"], removes: [], mayExecuteExternalProcess: false,
-    description: "Adopts an exact dead local owner and continues verified publication stages. Unrecorded capture, unbound candidate files and interrupted owner handoffs remain refused; identified unpublished staging can be retained and rebuilt.",
+    description: "Adopts an exact dead local owner and continues verified publication stages. Unrecorded capture and unbound candidate files remain refused; an unbound legacy handoff is archived opaquely only with explicit --reconcile-unbound-handoff acknowledgement.",
   }),
   "storage-rollback": Object.freeze({
     name: "storage-rollback", category: "project-maintenance", mutation: "MUTATING",

@@ -2,9 +2,9 @@
 
 Current checkpoint progress: [SQLite migration progress](SQLITE_PROGRESS.md).
 
-## Current source and acceptance boundary — 2026-10-13
+## Current source and acceptance boundary — 2026-10-14
 
-The active review is on `codex/sqlite-end-to-end`. The owner retired the numeric LOC-reduction gate and selected performance parity as its replacement; the passing hosted 1,000-task receipt is run `38356645442` at `207f7e6`, not a measurement of this review branch. The 5,000-task and oversized-event benchmark lanes are not required and are removed from the hosted dispatch choices; short workflow-policy tests protect the single measured profile. Overall migration acceptance remains open because other plan §10 consumer, platform, recovery, and release checks remain unverified. This merge must not be represented as a completed production migration.
+The active review is on `codex/sqlite-end-to-end`, based at `108269e`, with a local maintenance lazy-load correction. The owner retired the numeric LOC-reduction gate and confirmed on 2026-10-13 that performance acceptance requires exact output and validated worker parity with native p95 strictly lower for both operations; no 2x ratio is required. Hosted run `38356645442` at `207f7e6` passes that criterion for its measured source, but later maintenance/recovery changes mean it is not current-source performance evidence. The 5,000-task and oversized-event benchmark lanes remain excluded from hosted dispatch choices. The 48-test migration/recovery/backup/restore/rollback selection, public migration simulation, and SQLite integrity checks pass for the earlier `108269e` source. The added readonly-admission regression passes 9/9, focused maintenance tests pass 14/14, `verify:fast` passes, and `verify:prepush` passes after correcting the eager durability import. `soleSQLiteWriter` remains false because complete transitive consumer closure is unproven. Current-source hosted performance, supported-platform/release evidence, and an authorized production target with writer-quiescence proof remain open; no production migration or live cutover is claimed.
 
 The source-bound snapshots below are historical and retain their original results.
 
@@ -54,9 +54,9 @@ Query live CI separately from these source-bound historical receipts.
 | Public file-path consumers | Maintained CLI/API/MCP controls exist; final complete consumer reconciliation remains open. |
 | Migration, recovery, backup, restore, downgrade | Retained platform drills cover defined finite cases; final source-bound acceptance and limitations remain required. |
 | Legacy-client exclusion | Corrected Linux/Windows and macOS drills are retained; no live rollout has occurred. |
-| Obsolete machinery retirement | Implementation removes operational legacy paths; inclusive net LOC gate still fails. |
-| Reproducible performance/code-size comparison | LOC inputs/results retained; original equal-work performance and resource gates remain open. |
-| CLI/MCP/API/package/platform checks | Full local recorded-source checks and finite hosted runs pass; current full platform matrix remains open. |
+| Obsolete machinery retirement | Operational legacy paths are absent in the current checkout; complete consumer closure remains open. The owner retired the numeric LOC gate. |
+| Reproducible performance comparison | The owner-approved parity criterion passes at `207f7e6`; a current-source hosted pair and remaining resource acceptance are open. The numeric LOC gate is retired. |
+| CLI/MCP/API/package/platform checks | Focused current-source migration checks pass; current full supported-platform/package matrix remains open. |
 | Runtime/storage compatibility declarations | Maintained declarations and package checks exist; final unchanged-source package/runtime acceptance remains required. |
 
 Current implementation includes direct canonical handoff-list snapshot reads and
@@ -693,6 +693,19 @@ contention accepts one callback, and live/tampered/foreign/cyclic claims refuse
 recovery. This replaces new unbound handoff locks; legacy unbound handoffs remain
 refused. Initial admission windows, power-loss and full OS acceptance remain
 separate unfinished requirements.
+
+## Explicit legacy handoff reconciliation (2026-10-13)
+
+`storage-migration-resume` still refuses an unbound legacy handoff by default.
+An operator who confirms the exact dead owner and externally quiesces every
+writer can pass `--reconcile-unbound-handoff`; the command atomically moves the
+opaque handoff directory into retained maintenance history and records the old
+owner, original path and immediate entry names before continuing verified
+resume. It never interprets or deletes the legacy contents. The focused
+regression preserves a nested binary payload byte-for-byte and confirms that
+the default refusal remains. This enables controlled recovery on a named target;
+it does not establish sole-writer, whole-consumer, physical power-loss or full
+platform acceptance.
 
 ## Direct transaction dispatch (increment213)
 

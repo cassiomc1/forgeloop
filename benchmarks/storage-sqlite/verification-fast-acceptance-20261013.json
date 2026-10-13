@@ -1,0 +1,29 @@
+{
+  "kind": "SQLITE_ACCEPTANCE_VERIFICATION",
+  "schemaVersion": 1,
+  "observedAt": "2026-10-13",
+  "taskId": "sqlite-production-acceptance-20261013",
+  "sourceRevision": "a64ed454ec04b5faaf47f000219027fcc335463e",
+  "command": [
+    "npm",
+    "run",
+    "verify:fast"
+  ],
+  "exitCode": 0,
+  "summary": {
+    "test:quick": "80 passed, 0 failed, 0 skipped",
+    "lint": "passed, 0 errors; existing complexity warnings",
+    "dependency:policy": "passed",
+    "docs:generated:check": "passed",
+    "repository:hygiene": "passed"
+  },
+  "changedTrackedFiles": [
+    "docs/SQLITE_EXECUTION_CHECKPOINT.md",
+    "docs/SQLITE_MIGRATION_MATRIX.md",
+    "docs/SQLITE_MIGRATION_PLAN.md",
+    "docs/SQLITE_MIGRATION_PROGRESS.md"
+  ],
+  "diffCheck": "passed",
+  "evidenceSha256": "923b0bb859bd589dd39f7b60dc51121fc227cacc41d5bdccea2ea815492ccf6e",
+  "finalDocumentationCheck": "npm run docs:generated:check and git diff --check passed after the final section 9 wording amendment."
+}

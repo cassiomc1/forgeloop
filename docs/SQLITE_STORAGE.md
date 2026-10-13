@@ -5,20 +5,26 @@ filesystem transaction layer to a single SQLite database per project state
 root. This document records the implemented storage layer, its verified
 behavior, and the boundaries that are deliberately **not** migrated yet.
 
-## Status — 2026-10-13
+## Status — 2026-10-14
 
 The current plan in `SQLITE_MIGRATION_PLAN.md` remains authoritative. Public
 command and resource boundaries select canonical SQLite. Fresh writable projects
 bootstrap a journaled SQLite store; fresh read-only and dry-run commands do not
 allocate one. Existing legacy operational state requires explicit migration
-before ordinary mutation. A real selected
-SQLite lifecycle fixture reaches validator-backed completion. This does not
-establish a released sole writer: complete crash-window cutover recovery,
-consumer audit, attachment recovery, obsolete-code retirement and platform and
-release checks remain unfinished. The numeric LOC gate was retired by the owner
-and replaced by the performance-parity criterion; its prior evidence is bound to
-an earlier revision. See `SQLITE_MIGRATION_PROGRESS.md` for implementation-
-specific verification results.
+before ordinary mutation. A real selected SQLite lifecycle fixture reaches
+validator-backed completion. The current checkout also passes 48 focused
+migration/recovery/backup/restore/rollback tests and the public two-case migration
+simulation; SQLite integrity checks pass. The owner retired the numeric LOC gate
+and accepted the documented performance-parity criterion, whose hosted receipt
+is bound to an earlier revision. This does not establish a released sole writer:
+complete transitive consumer closure, current-source hosted performance and
+supported-platform/release checks, physical power-loss evidence, and a named
+production target with writer-quiescence proof remain open. The later
+readonly-admission lazy-load regression passes 9/9, focused
+maintenance/admission/handoff tests pass 14/14, and `verify:fast` plus the full
+`verify:prepush` pass after deferring the durability import until maintenance
+writes. See
+`SQLITE_MIGRATION_PROGRESS.md` for source-bound verification and limitations.
 
 The sections below retain incremental design and verification notes. Statements
 about unfinished transitions describe their historical checkpoint unless
@@ -38,8 +44,8 @@ diagnostics and LOC measurements do not reinstate retired gates.
 | Canonical diagnosis and correction | Shared domain commands on selected SQLite; temporary private transitions removed |
 | Public CLI/API/resource selection | Fresh writable SQLite bootstrap and existing-store selection; mixed legacy state refused |
 | Public backup and doctor | Native database or referenced-attachment-inclusive backup; read-only integrity findings |
-| Active-project replacement | Explicit CLI/API initial replacement and resume available; native process-kill controls and owner-bound handoff checkpoints pass; earliest intent, legacy unbound handoff and full platform acceptance pending |
-| Controlled legacy cutover | Public initial migration, recorded-stage recovery and owner-bound handoff recovery; unrecorded windows and legacy unbound handoffs remain unresolved |
+| Active-project replacement | Explicit CLI/API replacement and resume available; native process-kill controls and owner-bound checkpoints pass; earliest-intent/every-write-window and full platform acceptance remain pending |
+| Controlled legacy cutover | Public initial migration and recorded-stage recovery available; unbound legacy handoff can be archived only with explicit acknowledgement; other unrecorded windows and full target/platform acceptance remain unresolved |
 | Legacy transaction writer/locks/compaction | Writer, filesystem locks and compaction retired; minimal discovery/refusal compatibility remains |
 
 ## Canonical diagnosis and correction
@@ -661,8 +667,16 @@ revalidates retained candidate, source partitions and publication bundle before
 continuing STAGED/ARCHIVING archival or ARCHIVED activation. For PUBLISHED it
 verifies current state without restoring or rewinding accepted writes. Success
 releases exclusion; refusal retains the newly adopted owner, which must be
-inspected before any further recovery. Unrecorded capture and interrupted owner handoffs still require future recovery
-work. SIGKILL fixture coverage proves durable STAGED, ARCHIVED and PUBLISHED
+inspected before any further recovery. If status reports an unbound legacy
+`.storage-maintenance/handoff` directory, the command continues to refuse it
+unless the operator also supplies `--reconcile-unbound-handoff`. That explicit
+acknowledgement atomically renames the opaque directory into
+`.forgeloop/storage-maintenance-history/unbound-handoffs/`, writes a receipt
+with its prior owner and immediate entry names, and never interprets or deletes
+the retained bytes. The operator must still establish writer quiescence and
+inspect the exact target before using either acknowledgement. Unrecorded capture
+and other interrupted owner handoffs still require future recovery work.
+SIGKILL fixture coverage proves durable STAGED, ARCHIVED and PUBLISHED
 boundaries on macOS/Node 24, not every write window or power-loss/platform behavior.
 
 Resume also handles a verified PREPARED candidate before publication begins,
@@ -1040,6 +1054,17 @@ controls establish selected local process recovery windows; earliest intent,
 handoff-lock, power-loss and hosted platform acceptance remain incomplete.
 
 ## Owner-bound maintenance handoff (increment210)
+
+Maintenance admission now writes and syncs `owner.json` in a unique staging
+directory beside `.storage-maintenance`, syncs the staging and parent
+directories where supported, and atomically renames the complete directory to
+the exclusion path. A process interrupted before the rename cannot leave an
+ownerless active exclusion; an unpublished staging directory is inert and its
+owner bytes are retained for inspection. A competing admission loses the
+rename race and remains blocked by the winning owner. Focused SIGKILL and
+concurrent-admission tests cover these process-level boundaries. They do not
+prove physical power-loss durability or directory-sync support on every
+filesystem/platform.
 
 A resume archives the already durable owner marker by a non-replacing hard link.
 It writes and syncs a complete new owner intent under
