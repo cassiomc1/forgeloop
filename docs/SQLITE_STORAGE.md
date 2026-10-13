@@ -1049,6 +1049,17 @@ handoff-lock, power-loss and hosted platform acceptance remain incomplete.
 
 ## Owner-bound maintenance handoff (increment210)
 
+Maintenance admission now writes and syncs `owner.json` in a unique staging
+directory beside `.storage-maintenance`, syncs the staging and parent
+directories where supported, and atomically renames the complete directory to
+the exclusion path. A process interrupted before the rename cannot leave an
+ownerless active exclusion; an unpublished staging directory is inert and its
+owner bytes are retained for inspection. A competing admission loses the
+rename race and remains blocked by the winning owner. Focused SIGKILL and
+concurrent-admission tests cover these process-level boundaries. They do not
+prove physical power-loss durability or directory-sync support on every
+filesystem/platform.
+
 A resume archives the already durable owner marker by a non-replacing hard link.
 It writes and syncs a complete new owner intent under
 `.forgeloop/storage-maintenance-history/handoff-intents/<owner-id>.json`, then

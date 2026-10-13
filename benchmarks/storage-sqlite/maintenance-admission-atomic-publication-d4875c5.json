@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "taskId": "sqlite-production-acceptance-recovery-20261013",
+  "testedBaseRevision": "d4875c563533590c97e5c3118a310a40197183e5",
+  "sourceFilesSha256": {
+    "src/storage/maintenance.js": "0a10b5435d6f9dc19cd8e9379924fc211bcb878466399fa6197bb3358db102b4",
+    "src/core/command-input.js": "7feb674e930c6f8311688020c5c64dd1fe22c731086e18ba175e0a975a631390",
+    "tests/storage-maintenance-admission.test.js": "fb2ca2dc0291579c832f162d342d43b64a3c79e3a8fa044ee92b287408e8702c",
+    "docs/SQLITE_STORAGE.md": "580077551d6adfa060e272571817d8f6bd4c4d16d1010c503051fed0f8dfe8a6",
+    "docs/SQLITE_EXECUTION_CHECKPOINT.md": "bd57109192ea2357705435dc3ec678ee7e1ea62df3ecf10f95c793ceb251bf3d"
+  },
+  "checks": [
+    {
+      "id": "sqlite-maintenance-admission-final",
+      "executionRef": "exec-bea72a94-f0b6-43ee-b834-8dc7b7caa572",
+      "command": "node --test tests/storage-maintenance-admission.test.js tests/storage-maintenance.test.js tests/storage-maintenance-handoff.test.js tests/storage-maintenance-handoff-async.test.js tests/storage-migration-source.test.js",
+      "tests": 28,
+      "passed": 28,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "id": "sqlite-maintenance-complexity-final",
+      "executionRef": "exec-c68e24fc-31fd-47fb-b500-4fb1aea991fd",
+      "command": "npm run complexity:check",
+      "status": "passed",
+      "exitCode": 0
+    },
+    {
+      "id": "sqlite-maintenance-final-fast-rerun",
+      "executionRef": "exec-794bf8d5-810a-481b-9811-a6d50ab72b9a",
+      "command": "npm run verify:fast",
+      "status": "passed",
+      "exitCode": 0
+    }
+  ],
+  "consumerDiscovery": {
+    "command": "node scripts/inventory-operational-storage.mjs",
+    "signalFiles": 252,
+    "entrySurfaces": 127,
+    "classification": "DISCOVERY_ONLY",
+    "limitations": [
+      "Relative-import and named-I/O-symbol scan only",
+      "Does not prove dynamic/transitive consumer closure",
+      "Not acceptance evidence for soleSQLiteWriter"
+    ]
+  },
+  "currentTargetObservation": {
+    "command": "node src/cli.js storage-migration-status --json",
+    "layout": "SQLITE_PRESENT",
+    "databasePresent": true,
+    "legacyOperationalPaths": [],
+    "maintenanceOwner": null,
+    "databaseValidation": "NOT_RUN",
+    "publicationValidation": "NOT_VERIFIED"
+  },
+  "unresolvedAcceptance": [
+    "Complete supported-surface consumer audit",
+    "Current supported-platform receipts",
+    "Physical power-loss durability evidence",
+    "Named external production target and authorized writer quiescence"
+  ],
+  "capabilityDecision": {
+    "soleSQLiteWriter": false,
+    "productionMigrationClaimed": false
+  }
+}

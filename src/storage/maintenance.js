@@ -5,8 +5,10 @@ import os from "node:os";
 import { assertSafePath } from "../core/filesystem.js";
 import { MAINTENANCE_OWNER_ID, readMaintenanceOwner } from "./maintenance-owner.js";
 import { archiveMaintenanceOwner, claimMaintenanceHandoff, publishMaintenanceOwner } from "./maintenance-handoff.js";
+import { syncDirectory } from "./file-durability.js";
 
 const EXCLUSION = ".forgeloop/.storage-maintenance";
+const EXCLUSION_STAGING_PREFIX = `${EXCLUSION}.staging-`;
 // Single bounded retry for the Windows kill-to-observation race. Small enough
 // to stay inside resume timeouts, long enough for the kernel to release the
 // exited process handle. The retry re-reads the owner observation; it never
@@ -91,6 +93,67 @@ export async function allowStorageMaintenanceRelease(target) {
   active.getStore().releaseBlocked = false;
 }
 
+async function removeUnpublishedExclusionStage(target, relativePath) {
+  let directory;
+  try { directory = await assertSafePath(target, relativePath); }
+  catch (error) { if (error.code === "ENOENT") return; throw error; }
+  let entries;
+  try { entries = await readdir(directory); }
+  catch (error) { if (error.code === "ENOENT") return; throw error; }
+  if (entries.some(entry => entry !== "owner.json")) return;
+  if (entries.includes("owner.json")) {
+    const ownerPath = await assertSafePath(target, `${relativePath}/owner.json`);
+    const info = await lstat(ownerPath);
+    if (!info.isFile()) return;
+    await unlink(ownerPath);
+  }
+  await rmdir(directory);
+  await syncDirectory(await assertSafePath(target, ".forgeloop"));
+}
+
+/**
+ * Persist the owner before atomically publishing the exclusion directory.
+ * `beforePublish` is an internal fault-injection seam used by crash tests.
+ */
+export async function publishMaintenanceExclusion(target, ownerData, { beforePublish } = {}) {
+  const relativeStage = `${EXCLUSION_STAGING_PREFIX}${randomUUID()}`;
+  const stage = await assertSafePath(target, relativeStage);
+  const destination = await assertSafePath(target, EXCLUSION);
+  await mkdir(stage, { mode: 0o700 });
+  try {
+    const ownerPath = await assertSafePath(target, `${relativeStage}/owner.json`);
+    const owner = await open(ownerPath, "wx", 0o600);
+    try {
+      await owner.writeFile(`${JSON.stringify(ownerData)}\n`);
+      await owner.sync();
+    } finally { await owner.close(); }
+    await syncDirectory(stage);
+    await syncDirectory(await assertSafePath(target, ".forgeloop"));
+    if (beforePublish) await beforePublish({ stage, destination });
+    try {
+      await lstat(destination);
+      throw busy("A retained storage maintenance operation requires reconciliation");
+    } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+    }
+    try { await rename(stage, destination); }
+    catch (error) {
+      try {
+        await lstat(destination);
+        throw busy("A retained storage maintenance operation requires reconciliation");
+      } catch (inspectionError) {
+        if (inspectionError.code !== "ENOENT") throw inspectionError;
+        throw error;
+      }
+    }
+    await syncDirectory(await assertSafePath(target, ".forgeloop"));
+    return destination;
+  } catch (error) {
+    await removeUnpublishedExclusionStage(target, relativeStage).catch(() => {});
+    throw error;
+  }
+}
+
 /** Excludes version-aware clients. Legacy binaries still require operator exclusion. */
 export async function withStorageMaintenance(target, callback, options = {}) {
   const directory = await assertSafePath(target, EXCLUSION);
@@ -101,14 +164,7 @@ export async function withStorageMaintenance(target, callback, options = {}) {
     return callback();
   }
   const ownerData = await createOwner();
-  try { await mkdir(directory); }
-  catch (error) { if (error.code === "EEXIST") throw busy("A retained storage maintenance operation requires reconciliation"); throw error; }
-  const ownerPath = await assertSafePath(target, `${EXCLUSION}/owner.json`);
-  const owner = await open(ownerPath, "wx", 0o600);
-  try {
-    await owner.writeFile(`${JSON.stringify(ownerData)}\n`);
-    await owner.sync();
-  } finally { await owner.close(); }
+  await publishMaintenanceExclusion(target, ownerData);
   return runOwnedMaintenance(target, directory, ownerData, callback, options);
 }
 
