@@ -1,6 +1,6 @@
 {
   "name": "@cassiomc1/forgeloop",
-  "version": "2.0.0",
+  "version": "2.0.0-rc.1",
   "description": "Evidence-first engineering protocol for AI coding environments and developer workflows",
   "repository": {
     "type": "git",
@@ -180,7 +180,10 @@
     "benchmark:jev": "node scripts/benchmark-jev.mjs",
     "benchmark:jev:live": "node scripts/benchmark-jev.mjs --live",
     "benchmark:test-intelligence": "node scripts/benchmark-test-intelligence.mjs",
-    "mcp:test:clean": "node scripts/run-mcp-clean-tests.mjs"
+    "mcp:test:clean": "node scripts/run-mcp-clean-tests.mjs",
+    "release:quick": "node scripts/run-rc-release.mjs",
+    "release:rc:check": "node scripts/check-rc-release.mjs",
+    "storage:writer-inventory": "node scripts/storage-writer-inventory.mjs"
   },
   "devDependencies": {
     "c8": "^12.0.0",

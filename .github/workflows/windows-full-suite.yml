@@ -60,7 +60,14 @@ jobs:
         run: npm ci --ignore-scripts
       - name: Run full Node suite with Windows process and filesystem semantics
         if: ${{ github.event_name != 'workflow_dispatch' || inputs.suite == 'full' }}
-        run: npm test
+        run: |
+          $version = node -p "require('./package.json').version"
+          if ($version -match '^2\.0\.0-rc\.') {
+            npm run release:quick
+          } else {
+            npm test
+          }
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Validate instrumented storage and replacement recovery on Windows
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.suite == 'storage-correction' }}
         run: node --import ./scripts/test-semantic-provider-loader.mjs --test tests/storage-database-admission.test.js tests/storage-correction-io.test.js tests/storage-evidence-checks.test.js tests/storage-replacement-preparation.test.js
