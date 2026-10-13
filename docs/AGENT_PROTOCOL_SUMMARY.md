@@ -175,6 +175,7 @@ capability-family versions.
 | typescript | ENG/typescript-development-eng.md | yes |
 | php | ENG/php-development-eng.md | yes |
 | swift | ENG/swift-development-eng.md | yes |
+| python | ENG/python-development-eng.md | yes |
 
 ## Public artifact registry
 

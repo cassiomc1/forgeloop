@@ -66,14 +66,14 @@ The repository-only [execution PoC](https://github.com/cassiomc1/forgeloop/blob/
 | SQL | [guide](./ENG/sql-development-eng.md) |
 | Go | [guide](./ENG/go-development-eng.md) |
 | TypeScript | [guide](./ENG/typescript-development-eng.md) |
+| Python | [guide](./ENG/python-development-eng.md) |
 | PHP | [guide](./ENG/php-development-eng.md) |
 | Swift | [guide](./ENG/swift-development-eng.md) |
 | Structural quality feedback | [`docs/STRUCTURAL_QUALITY.md`](./docs/STRUCTURAL_QUALITY.md) |
 
-Routing uses bounded structural evidence for supported frameworks and languages.
-SQL remains a scoped schema/query/migration overlay. Extensions, tool files,
-lockfiles, runtime images, and prose alone are insufficient where stronger
-project identity is required. The public project-evidence schema remains v1.
+Routing uses bounded structural evidence; SQL remains a schema/query/migration
+overlay. Extensions, tool files, lockfiles, runtime images, and prose alone do
+not establish project identity. Public project evidence remains v1.
 
 ## Distribution and license
 
@@ -202,9 +202,6 @@ forgeloop protocol-info --json
 | Validate completion | Yes | Provides real work and evidence |
 | Schedule agents or LLM inference | No | External to the protocol |
 
-For a concrete exchange between tools, see
-[cross-harness continuity](./docs/CROSS_HARNESS_CONTINUITY.md).
-
 From the privately delivered package, initialize a target project with:
 
 ```bash
@@ -212,10 +209,11 @@ npx @cassiomc1/forgeloop init
 npx @cassiomc1/forgeloop doctor
 ```
 
-The CLI installs canonical documents under `.forgeloop/kit/`, keeps small
-native discovery shims at the project root, stores project-scoped
-configuration under `.forgeloop/`, and stores task-scoped protocol artifacts
-under `.forgeloop/task-state/<taskKey>/`.
+The CLI installs canonical documents under `.forgeloop/kit/`, keeps native
+discovery shims at the project root, and stores project configuration under
+`.forgeloop/`. Task artifacts use `.forgeloop/task-state/<taskKey>/` as their
+logical portable export path; SQLite mode stores mutable records in
+`.forgeloop/state.sqlite`.
 `update` preserves target-specific profile facts and locally modified files.
 
 ForgeLoop adapts protocol depth to task risk and scope, preserving verifiable

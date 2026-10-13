@@ -3,7 +3,7 @@ name: cpp-development-eng
 language: en
 description: "Specialist guidance for production C++ libraries, services, tools, and native build systems."
 version: "2026.09"
-last-reviewed: "2026-09-12"
+last-reviewed: "2026-10-13"
 guide-id: cpp
 requires-gates:
   - threat-boundary
@@ -32,7 +32,7 @@ Repository architecture, standard mode, ABI, supported compilers, target
 platforms, and public compatibility policy win over generic best practice.
 Use WG21, the actual compiler documentation, and version-matched platform
 documentation after repository evidence. C++23 (ISO/IEC 14882:2024) is the
-published reference in the 2026-09 plan snapshot. C++26 compiler support is
+published reference as of 2026-10-13. C++26 compiler support is
 not permission to migrate a C++17/20/23 repository.
 
 ## Project and standard discovery

@@ -3,7 +3,7 @@ name: typescript-development-eng
 language: en
 description: "Specialist guidance for TypeScript applications, libraries, build configurations, and typed JavaScript boundaries."
 version: "2026.09"
-last-reviewed: "2026-09-12"
+last-reviewed: "2026-10-13"
 guide-id: typescript
 requires-gates:
   - threat-boundary
@@ -33,9 +33,9 @@ compiler, package script, or project code.
 Repository compiler/configuration, emitted module contract, runtime support,
 public type compatibility, and build policy win over generic advice. Use the
 matching repository TypeScript version/config first, then official TypeScript
-documentation and release notes, then runtime/framework documentation. The
-2026-09 plan snapshot records TypeScript 7.0 as the current reference. TS 7.0
-uses the native Go-based toolset and does not provide a stable programmatic
+documentation and release notes, then runtime/framework documentation. As of
+2026-10-13, TypeScript 7.0 is the current reference. TS 7.0 uses the native
+Go-based toolset and does not provide a stable programmatic
 compiler API; TS 6 compatibility can remain necessary for tooling. Do not
 auto-migrate TS 6 projects or compiler integrations to TS 7.
 

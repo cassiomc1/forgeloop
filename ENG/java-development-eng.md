@@ -3,7 +3,7 @@ name: java-development-eng
 language: en
 description: "Specialist guidance for production Java services, libraries, workers, and JVM build systems."
 version: "2026.09"
-last-reviewed: "2026-09-12"
+last-reviewed: "2026-10-13"
 guide-id: java
 requires-gates:
   - threat-boundary
@@ -40,8 +40,8 @@ boundaries remain isolated.
 Repository architecture, toolchain/build configuration, source/target policy,
 ABI, and supported runtime win over generic advice. Then use the matching Java
 Language Specification/API, official Maven/Gradle/Bazel documentation, and
-version-matched framework documentation. The 2026-09 plan snapshot identifies
-JDK 26 as the current Java SE release and JDK 25 as the latest Oracle LTS;
+version-matched framework documentation. JDK 27 is the current Java SE release
+and JDK 25 is the latest Oracle LTS as of 2026-10-13;
 neither is an automatic migration target.
 
 Keep separate the JDK running the build tool, Java source level, `--release`,

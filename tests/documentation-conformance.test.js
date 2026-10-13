@@ -660,8 +660,8 @@ test("DOC-LAYOUT-ARCH / DOC-TRANSITION / DOC-ADVANCE: architecture layout, canon
     const systemDesign = await readFile(systemDesignFile, "utf8");
     const layoutMut = mustReplace(
       systemDesign,
-      "and modern mutable task protocol state is isolated under `.forgeloop/task-state/<taskKey>/`.",
-      "and mutable protocol artifacts remain directly under `.forgeloop/work-state.json`.",
+      "operational task records use `.forgeloop/state.sqlite` in SQLite mode.",
+      "`.forgeloop/work-state.json` is the active operational store in SQLite mode.",
       "DOC-LAYOUT-ARCH-2 singleton reintroduction",
     );
     await writeFile(systemDesignFile, layoutMut, "utf8");

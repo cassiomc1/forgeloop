@@ -1283,7 +1283,7 @@
     {
       "path": "ENG/flutter-development-eng.md",
       "status": "reviewed",
-      "action": "new",
+      "action": "updated",
       "sourceOfTruth": [
         "src/config/guides.json",
         "ENG/flutter-development-eng.md"
@@ -1299,7 +1299,7 @@
     {
       "path": "ENG/dotnet-aspnetcore-development-eng.md",
       "status": "reviewed",
-      "action": "new",
+      "action": "updated",
       "sourceOfTruth": [
         "src/config/guides.json",
         "ENG/dotnet-aspnetcore-development-eng.md"
@@ -1315,7 +1315,7 @@
     {
       "path": "ENG/nodejs-backend-development-eng.md",
       "status": "reviewed",
-      "action": "new",
+      "action": "updated",
       "sourceOfTruth": [
         "src/config/guides.json",
         "ENG/nodejs-backend-development-eng.md"
@@ -1331,7 +1331,7 @@
     {
       "path": "ENG/rust-development-eng.md",
       "status": "reviewed",
-      "action": "new",
+      "action": "updated",
       "sourceOfTruth": [
         "src/config/guides.json",
         "ENG/rust-development-eng.md"
@@ -1347,7 +1347,7 @@
     {
       "path": "ENG/c-development-eng.md",
       "status": "reviewed",
-      "action": "new",
+      "action": "updated",
       "sourceOfTruth": [
         "src/config/guides.json",
         "ENG/c-development-eng.md"
@@ -1363,7 +1363,7 @@
     {
       "path": "ENG/cpp-development-eng.md",
       "status": "reviewed",
-      "action": "new",
+      "action": "updated",
       "sourceOfTruth": [
         "src/config/guides.json",
         "ENG/cpp-development-eng.md"
@@ -1379,7 +1379,7 @@
     {
       "path": "ENG/java-development-eng.md",
       "status": "reviewed",
-      "action": "new",
+      "action": "updated",
       "sourceOfTruth": [
         "src/config/guides.json",
         "ENG/java-development-eng.md"
@@ -1395,7 +1395,7 @@
     {
       "path": "ENG/sql-development-eng.md",
       "status": "reviewed",
-      "action": "new",
+      "action": "updated",
       "sourceOfTruth": [
         "src/config/guides.json",
         "ENG/sql-development-eng.md"
@@ -1411,7 +1411,7 @@
     {
       "path": "ENG/go-development-eng.md",
       "status": "reviewed",
-      "action": "new",
+      "action": "updated",
       "sourceOfTruth": [
         "src/config/guides.json",
         "ENG/go-development-eng.md"
@@ -1427,7 +1427,7 @@
     {
       "path": "ENG/typescript-development-eng.md",
       "status": "reviewed",
-      "action": "new",
+      "action": "updated",
       "sourceOfTruth": [
         "src/config/guides.json",
         "ENG/typescript-development-eng.md"
@@ -1443,7 +1443,7 @@
     {
       "path": "ENG/php-development-eng.md",
       "status": "reviewed",
-      "action": "new",
+      "action": "updated",
       "sourceOfTruth": [
         "src/config/guides.json",
         "ENG/php-development-eng.md"
@@ -1457,9 +1457,23 @@
       "packageInclusion": "npm"
     },
     {
-      "path": "ENG/swift-development-eng.md",
+      "path": "ENG/python-development-eng.md",
       "status": "reviewed",
       "action": "new",
+      "sourceOfTruth": [
+        "ENG/python-development-eng.md"
+      ],
+      "canonicalSources": [
+        "ENG/python-development-eng.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "ENG/swift-development-eng.md",
+      "status": "reviewed",
+      "action": "updated",
       "sourceOfTruth": [
         "src/config/guides.json",
         "ENG/swift-development-eng.md"

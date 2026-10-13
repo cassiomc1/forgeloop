@@ -63,7 +63,13 @@ project commands.
 | `typescript` | [TypeScript development engineering](./ENG/typescript-development-eng.md) | Type-system/compiler contracts, runtime boundaries, module compatibility, testing, and release |
 | `php` | [PHP development engineering](./ENG/php-development-eng.md) | Composer applications, web services, workers, runtime constraints, security, testing, and deployment |
 | `swift` | [Swift development engineering](./ENG/swift-development-eng.md) | SwiftPM/Xcode applications, concurrency, platform boundaries, interoperability, testing, and release |
+| `python` | [Python development engineering](./ENG/python-development-eng.md) | Python applications, packages, CLIs, async services, data pipelines, and native extensions (reference guide; project auto-routing is not implemented) |
 | `rust` | [Rust development engineering](./ENG/rust-development-eng.md) | Architecture, implementation, testing, security, performance, reproducibility, and release of production Rust applications, services, libraries, and workers |
+
+The Python guide is available as bounded reference material, but the current
+`forgeloop route` project-evidence schema does not detect Python projects or
+select the guide automatically. Do not claim automatic Python routing until
+structural detection and route tests are implemented.
 
 ## Domain rules
 

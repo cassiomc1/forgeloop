@@ -24,7 +24,7 @@ The system should use every guide that materially helps the task without loading
 - The loop continues while safe progress is possible. Repetition without new evidence triggers hypothesis reassessment or a blocked result, not infinite retries.
 - Third-party provenance and reuse boundaries remain part of every portable copy.
 - Qwen-MM-Plugins is an optional, task-scoped capability extension: the agent checks native support first, installs the smallest missing capability when needed, and verifies it before use; it is not a package or runtime dependency.
-- Canonical documents are installed under `.forgeloop/kit/`; root native adapters remain small discovery shims; project-scoped configuration remains under `.forgeloop/`; and modern mutable task protocol state is isolated under `.forgeloop/task-state/<taskKey>/`.
+- Canonical documents are installed under `.forgeloop/kit/`; root native adapters remain small discovery shims; project-scoped configuration remains under `.forgeloop/`; operational task records use `.forgeloop/state.sqlite` in SQLite mode. `.forgeloop/task-state/<taskKey>/` remains the logical and portable export path for task artifacts. Legacy filesystem mode remains a separate compatibility path, and SQLite capability still reports `soleSQLiteWriter: false` while legacy writers remain.
 - `PREFLIGHT_READY` is a resumable protocol checkpoint reconciled with work state, activation events, fingerprints, and the append-only hash chain.
 
 ## Alternatives considered
@@ -446,15 +446,15 @@ The validator also exercises seven routing scenarios:
 The npm CLI installs the kit into the current directory or an existing
 directory selected with `--path` when the package is available in the npm
 registry. If it is not available yet, the same commands can run as
-`node src/cli.js ...` from a repository checkout. The CLI maps canonical
-documents into `.forgeloop/kit/`, keeps only native instruction shims at the
-target root, and leaves project-scoped configuration under `.forgeloop/` while
-isolating modern mutable task protocol state (contract, route, gate, state,
-event, preflight, receipt, and recovery artifacts) under
-`.forgeloop/task-state/<taskKey>/`. Legacy singleton artifacts remain under
-`.forgeloop/` for compatibility and migration only. Manual copying must
-preserve that target layout; copying package-source root files directly is not
-equivalent to `forgeloop init`.
+`node src/cli.js ...` from a repository checkout. The CLI maps canonical documents into `.forgeloop/kit/`, keeps only native
+instruction shims at the target root, and leaves project-scoped configuration
+under `.forgeloop/`. In SQLite mode, mutable task records are stored in
+`.forgeloop/state.sqlite`; `.forgeloop/task-state/<taskKey>/` is the logical
+task-artifact and portable export path, not a claim that each artifact exists
+as a live filesystem file. Legacy filesystem mode remains a separate
+compatibility path, and SQLite mode must not share writable operational state
+with it. Manual copying must preserve the target layout; copying package-source
+root files directly is not equivalent to `forgeloop init`.
 
 Recovery uses a relational state model: `work-state.json` owns the lifecycle
 phase, `task.json` retains historical claims, `recovery.json` records current

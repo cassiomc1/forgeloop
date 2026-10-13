@@ -1276,6 +1276,19 @@
       "packaged": true
     },
     {
+      "path": "ENG/python-development-eng.md",
+      "id": "guide-python",
+      "class": "guide",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "guide-python"
+      ],
+      "packaged": true
+    },
+    {
       "path": "ENG/swift-development-eng.md",
       "id": "guide-swift",
       "class": "guide",

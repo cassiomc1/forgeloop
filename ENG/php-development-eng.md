@@ -3,7 +3,7 @@ name: php-development-eng
 language: en
 description: "Specialist guidance for production PHP applications, Composer packages, web services, and command-line workers."
 version: "2026.09"
-last-reviewed: "2026-09-12"
+last-reviewed: "2026-10-13"
 guide-id: php
 requires-gates:
   - threat-boundary
@@ -32,8 +32,8 @@ package resolution, or project code, and it does not access the network.
 Repository PHP/Composer constraints, runtime platform, extensions, deployment
 model, and compatibility policy win over generic advice. Then use the matching
 official PHP manual/migration guide, Composer documentation, and
-version-matched framework documentation. The 2026-09 plan snapshot records PHP
-8.5.10 as a current reference and supported branches 8.2–8.5; neither changes
+version-matched framework documentation. As of 2026-10-13, PHP 8.5.10 is the
+current patch reference and supported branches are 8.2–8.5; neither changes
 the repository runtime constraint automatically.
 
 Keep PHP language version, engine/runtime, extensions, Composer platform

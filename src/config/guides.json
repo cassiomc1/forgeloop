@@ -86,5 +86,9 @@
   "swift": {
     "path": "ENG/swift-development-eng.md",
     "install": true
+  },
+  "python": {
+    "path": "ENG/python-development-eng.md",
+    "install": true
   }
 }
