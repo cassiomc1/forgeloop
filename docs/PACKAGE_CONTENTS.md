@@ -104,9 +104,11 @@ The tarball intentionally omits repository-only material:
 - historical release plans and retired MCP adapter sources; the MCP adapter
   is published as its own package;
 - the repository-only README hero assets
-  `docs/assets/forgeloop-architecture.svg` and
-  `docs/assets/forgeloop-lifecycle-animated.svg`. They are referenced by the
-  repository README and are intentionally outside the core tarball.
+  `docs/assets/forgeloop-architecture.png`,
+  `docs/assets/forgeloop-architecture.svg`, and
+  `docs/assets/forgeloop-lifecycle-animated.svg`. The PNG and animated SVG are
+  referenced by the repository README; all three are intentionally outside
+  the core tarball.
 - the execution PoC, its audit, and its evidence package. Packaged README and
   index links to this repository-only material use GitHub URLs so they remain
   truthful for npm consumers.

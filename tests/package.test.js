@@ -221,6 +221,7 @@ test("npm tarball contains the CLI, templates, published scenarios, and license 
     "scripts/scan_secrets.py",
     ".forgeloop/work-state.json",
     "docs/assets/forgeloop-architecture.svg",
+    "docs/assets/forgeloop-architecture.png",
     "docs/assets/forgeloop-lifecycle-animated.svg",
     "docs/superpowers/plans/2026-08-11-10-of-10-roadmap-implementation.md",
     "docs/RELEASE_CHECKLIST_1_4.md",

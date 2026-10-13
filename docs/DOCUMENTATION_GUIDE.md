@@ -233,14 +233,16 @@ not the canonical protocol diagram. The typed Archify workflow under
 `docs/diagrams/` remains the canonical lifecycle architecture source, with
 generated outputs under `docs/assets/diagrams/`; the CLI-only persistent search
 transport is explained by `docs/PERSISTENT_SEARCH_TRANSPORT.md`. The current
-repository-only assets are `docs/assets/forgeloop-architecture.svg` and
-`docs/assets/forgeloop-lifecycle-animated.svg`; neither is a package file.
+repository-only assets are `docs/assets/forgeloop-architecture.png`, the
+alternate [architecture SVG](./assets/forgeloop-architecture.svg), and
+`docs/assets/forgeloop-lifecycle-animated.svg`; none is a package file.
 
 The README hero is intentionally GitHub-repository-only:
 
-- `README.md` references `docs/assets/forgeloop-architecture.svg` for the hero
+- `README.md` references `docs/assets/forgeloop-architecture.png` for the hero
   and `docs/assets/forgeloop-lifecycle-animated.svg` for the looping overview;
-  both are repository-only and excluded from the npm package.
+  both are repository-only and excluded from the npm package. The architecture
+  SVG remains available as a repository-only alternate.
 - `tests/package.test.js` asserts those exclusions so they cannot be silently
   re-included.
 - The packaged README is therefore not self-contained for that relative hero
