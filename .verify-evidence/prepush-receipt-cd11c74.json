@@ -1,0 +1,42 @@
+{
+  "kind": "PREPUSH_RECEIPT",
+  "schemaVersion": 1,
+  "revision": "cd11c7436514234ccb716b0e9b461759341a842e",
+  "revisionShort": "cd11c74",
+  "branch": "codex/sqlite-end-to-end",
+  "generatedAt": "2026-10-13T12:10:00Z",
+  "check": "npm run verify:prepush (node scripts/run-validation.mjs --tier prepush)",
+  "exitStatus": {
+    "command": "npm run verify:prepush > /tmp/prepush-cd11c74.log 2>&1",
+    "captured": "raw, unfiltered exit code",
+    "exitCode": 0,
+    "backgroundLaunchPid": 75449
+  },
+  "logArtifact": {
+    "path": "/Users/cassio/.codex/verification/prepush-cd11c74-full.log",
+    "lines": 4397,
+    "sha256": "7ac725c26bf9546ef01d54f69364f9030bb67dab11be123f59955233cd09dc60",
+    "retentionPolicy": "outside the committed tree, per scratch-output policy; hash binds the raw log"
+  },
+  "laneSummary": {
+    "passLines": "PASS for all 22 lanes including coverage (592.7s), lint, dependency:policy, complexity:check, mcp:test:clean (14.1s), mcp:pack:check, pack:check, python-unittest, markdown/loop validators, secret-scan (4181 text files)",
+    "failLines": 0,
+    "notes": "lint passed with 117 pre-existing complexity warnings (0 errors); 3171 pass markers in the raw log"
+  },
+  "distinctionFromEarlierReceipt": {
+    "earlierPrepushRevision": "4d507d5",
+    "deltaSince": [
+      "207f7e6: re-verification evidence binding commit (test-only)",
+      "9b327a2: platform acceptance receipts + legacy-refusal evidence (evidence-only)",
+      "05a2c4c: hosted §9 dispatch-profile guard step and Windows lane pinned to --sizes=1000 (workflow-only)",
+      "18c629f: seed heartbeat + stall watchdog in the MCP driver, new focused tests (tooling + tests)"
+    ],
+    "significance": "first prepush green covering the guard/workflow edits and the driver tooling change; production code remains untouched since 4d507d5"
+  },
+  "constraintsRespected": {
+    "lifecycleOrDecisionPlane": "none run; decision plane remains presence-only credentials=missing",
+    "publication": "no push, PR, publish, deploy, or live migration; no hosted re-dispatch",
+    "untouched": "tasks-1000-both parity assertions, profile_guard step, removed-variant mapping"
+  },
+  "publicationState": "local-only; branch cd11c74 not pushed"
+}
