@@ -5,7 +5,6 @@ import os from "node:os";
 import { assertSafePath } from "../core/filesystem.js";
 import { MAINTENANCE_OWNER_ID, readMaintenanceOwner } from "./maintenance-owner.js";
 import { archiveMaintenanceOwner, claimMaintenanceHandoff, publishMaintenanceOwner } from "./maintenance-handoff.js";
-import { syncDirectory } from "./file-durability.js";
 
 const EXCLUSION = ".forgeloop/.storage-maintenance";
 const EXCLUSION_STAGING_PREFIX = `${EXCLUSION}.staging-`;
@@ -17,6 +16,13 @@ const WINDOWS_OWNER_REQUERY_DELAY_MS = 250;
 const active = new AsyncLocalStorage();
 
 function busy(message) { return Object.assign(new Error(message), { code: "E_STORAGE_MAINTENANCE_IN_PROGRESS" }); }
+
+// Readonly admission can inspect maintenance ownership without loading the
+// filesystem durability kernel. Load it only when maintenance writes run.
+async function syncDirectory(directory) {
+  const durability = await import("./file-durability.js");
+  return durability.syncDirectory(directory);
+}
 
 async function createOwner(extra = {}) {
   const owner = { schemaVersion: 1, ownerId: randomUUID(), pid: process.pid, hostname: os.hostname(), acquiredAt: new Date().toISOString(), ...extra };

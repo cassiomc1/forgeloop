@@ -611,6 +611,7 @@ complete -c forgeloop -f -n '__fish_seen_subcommand_from storage-migration-resum
 complete -c forgeloop -f -n '__fish_seen_subcommand_from storage-migration-resume' -l 'help' -d 'show this help'
 complete -c forgeloop -f -n '__fish_seen_subcommand_from storage-migration-resume' -l 'json' -d 'emit recovery verification metadata'
 complete -c forgeloop -f -n '__fish_seen_subcommand_from storage-migration-resume' -l 'path' -d 'target project directory (default: current directory)'
+complete -c forgeloop -f -n '__fish_seen_subcommand_from storage-migration-resume' -l 'reconcile-unbound-handoff' -d 'preserve an unbound legacy handoff by atomic archival before resuming the exact dead owner'
 complete -c forgeloop -f -n '__fish_seen_subcommand_from storage-migration-resume' -l 'version' -d 'show the installed package version'
 complete -c forgeloop -f -n '__fish_seen_subcommand_from storage-migration-resume' -l 'writers-quiesced' -d 'assert that all writers, including older clients, have been externally stopped'
 complete -c forgeloop -f -n '__fish_seen_subcommand_from storage-migration-status' -l 'help' -d 'show this help'

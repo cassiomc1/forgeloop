@@ -56,8 +56,9 @@ jobs:
             **/*.{md,markdown}
             #vendor/archify/**
       - name: Check external documentation links
-        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        uses: ./.github/actions/lychee
         with:
+          linuxTarget: musl
           args: >-
             --config .lychee.toml
             --verbose

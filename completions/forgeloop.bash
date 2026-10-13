@@ -211,7 +211,7 @@ _forgeloop() {
     status) COMPREPLY=( $(compgen -W '--contract-file --help --json --path --task --version' -- "$cur") );;
     storage-backup) COMPREPLY=( $(compgen -W '--destination --help --include-attachments --json --path --version' -- "$cur") );;
     storage-migrate) COMPREPLY=( $(compgen -W '--destination --help --json --path --version --writers-quiesced' -- "$cur") );;
-    storage-migration-resume) COMPREPLY=( $(compgen -W '--destination --expected-owner --help --json --path --version --writers-quiesced' -- "$cur") );;
+    storage-migration-resume) COMPREPLY=( $(compgen -W '--destination --expected-owner --help --json --path --reconcile-unbound-handoff --version --writers-quiesced' -- "$cur") );;
     storage-migration-status) COMPREPLY=( $(compgen -W '--help --json --path --version' -- "$cur") );;
     storage-restore) COMPREPLY=( $(compgen -W '--help --json --path --replace-active --source --version --writers-quiesced' -- "$cur") );;
     storage-restore-resume) COMPREPLY=( $(compgen -W '--expected-owner --help --json --operation --path --replace-active --version --writers-quiesced' -- "$cur") );;

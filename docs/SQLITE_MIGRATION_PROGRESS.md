@@ -1,16 +1,48 @@
 # SQLite migration progress
 
-## Current review pointer — 2026-10-13
+## Current review pointer — 2026-10-14
 
-Current review checkout: branch `codex/sqlite-end-to-end`. The owner’s A+C decision retired
+Current review checkout: branch `codex/sqlite-end-to-end`, based at `108269e`, with a local maintenance lazy-load correction. The owner’s A+C decision retired
 the numeric LOC gate. On 2026-10-13 the owner confirmed the replacement rule:
 exact output and worker parity, with native p95 strictly lower for both
 operations; no 2x ratio is required. Hosted run `38356645442` at `207f7e6`
-passes this rule, and the measured application source is byte-identical to the
-current merged source. Migration acceptance remains open against plan §10
+passes this rule for its source `207f7e6`; later maintenance/recovery changes
+mean that receipt is not bound to the current source. Migration acceptance remains open against plan §10
 because consumer, recovery, and current platform/release criteria are not all
 closed. Historical measurements below retain their original conclusions; do
 not read their dates as current status.
+
+## Current-source verification — 2026-10-14
+
+At `108269e`, the bounded migration, recovery, backup, restore and rollback
+regression selection passes 48/48 tests with zero failures or skips. The public
+`storage-migrate` fixture simulation separately passes both cases: explicit
+writer-quiescence is required before publication, the successful fixture reaches
+`PUBLISHED` and accepts subsequent task writes/reads, and a destination conflict
+preserves existing bytes while retaining maintenance exclusion. These are local
+temporary fixtures, not a live project cutover. `verify:fast` and generated
+documentation/completion checks pass on this checkout. The storage-specific
+doctor checks report SQLite integrity `ok`, zero foreign-key violations, and no
+artifact, event, attachment, or ledger-binding errors; the doctor’s overall
+repository result is not clean because it reports separate legacy-kit/profile
+findings. The later readonly-admission regression passes 9/9, the focused
+maintenance/admission/handoff set passes 14/14, and `npm run complexity:check`,
+`npm run verify:fast`, and the full `npm run verify:prepush` pass after deferring
+the durability import until maintenance writes. This preserves owner-publication
+sync calls while keeping `file-durability.js` outside fresh readonly admission.
+Historical hosted performance and platform evidence remain bound to their
+recorded sources; no current-source hosted pair or production cutover is claimed.
+
+The checkout reports `SQLITE_PRESENT`, no legacy operational paths, and no
+maintenance owner. `soleSQLiteWriter` remains `false`: the available consumer
+inventory does not establish complete transitive writer closure. Hosted
+performance evidence is bound to `207f7e6`, not `108269e`; current-source hosted
+performance, current supported-platform/release checks, physical power-loss
+evidence, and a named production cutover target with writer-quiescence proof
+remain open. No live data was migrated and production acceptance is not claimed.
+The branch is three commits ahead of its remote; the Lychee workflow and generated
+documentation/completion updates are local working-tree changes pending PR
+validation.
 
 ## Current populated CLI and Windows PID reuse findings
 
