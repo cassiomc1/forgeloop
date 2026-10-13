@@ -3,12 +3,14 @@
 ## Current review pointer — 2026-10-13
 
 Current review checkout: branch `codex/sqlite-end-to-end`. The owner’s A+C decision retired
-the numeric LOC gate and accepted measured performance parity in its place.
-The 1,000-task hosted receipt `38356645442` is valid for its recorded source
-`207f7e6`, not a fresh measurement at this tip. Migration acceptance remains
-open against plan §10. Every “Current” entry below is a dated historical
-snapshot unless its source revision matches the current review tip; do not read
-those labels as live status.
+the numeric LOC gate. On 2026-10-13 the owner confirmed the replacement rule:
+exact output and worker parity, with native p95 strictly lower for both
+operations; no 2x ratio is required. Hosted run `38356645442` at `207f7e6`
+passes this rule, and the measured application source is byte-identical to the
+current merged source. Migration acceptance remains open against plan §10
+because consumer, recovery, and current platform/release criteria are not all
+closed. Historical measurements below retain their original conclusions; do
+not read their dates as current status.
 
 ## Current populated CLI and Windows PID reuse findings
 

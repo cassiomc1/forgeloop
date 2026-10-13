@@ -2,7 +2,9 @@
 
 ## Current checkpoint — 2026-10-13
 
-The active review is on `codex/sqlite-end-to-end`. SQLite is implemented and canonical in the tested source, but migration release acceptance is still open: consumer/platform and lifecycle requirements in §10 of the plan are not all verified at this revision. The accepted replacement performance criterion has a passing 1,000-task receipt at `207f7e6` (hosted run `38356645442`); that receipt predates this review. No current-revision hosted rerun is requested in this pass. LOC reduction was retired by the owner’s A+C decision; do not use the former 25% threshold as a current gate. No production data migration or release is claimed.
+The active review is on `codex/sqlite-end-to-end`. SQLite is implemented and canonical in the tested source. The owner clarified the replacement performance criterion on 2026-10-13: exact output parity and validated worker completion, with native p95 strictly lower for both measured operations; no 2x ratio is required. Hosted run `38356645442` at `207f7e6` meets that criterion (taskList 1,223.656/2,166.257 ms; projectTasks 1,280.756/2,129.931 ms; 200 samples per backend and operation; both worker journals `VALIDATED`). The application source measured is byte-identical to the current merged source. The former numeric LOC target is retired. Section 10 still has unverified consumer, recovery and platform/release criteria, so production migration acceptance remains open. No external project data migration, package publication or release is claimed.
+
+The current acceptance work is tracked by `sqlite-production-acceptance-20261013`. The owner’s decision is in its append-only decision ledger; the canonical source registry now includes every contract source. The implementation did not need a new long benchmark or production-source change in this review.
 
 The historical checkpoint below is preserved as recorded and is not current state.
 

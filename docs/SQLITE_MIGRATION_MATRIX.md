@@ -4,7 +4,7 @@ Current checkpoint progress: [SQLite migration progress](SQLITE_PROGRESS.md).
 
 ## Current source and acceptance boundary — 2026-10-13
 
-The active review is on `codex/sqlite-end-to-end`. The owner retired the numeric LOC-reduction gate and selected performance parity as its replacement; the passing hosted 1,000-task receipt is run `38356645442` at `207f7e6`, not a measurement of this review branch. The 5,000-task and oversized-event benchmark lanes are not required and are removed from the hosted dispatch choices; short workflow-policy tests protect the single measured profile. Overall migration acceptance remains open because other plan §10 consumer, platform, recovery, and release checks remain unverified. This merge must not be represented as a completed production migration.
+The active review is on `codex/sqlite-end-to-end`. The owner retired the numeric LOC-reduction gate and confirmed on 2026-10-13 that performance acceptance requires exact output and validated worker parity with native p95 strictly lower for both operations; no 2x ratio is required. Hosted run `38356645442` at `207f7e6` passes this rule, and the measured application source is byte-identical to the merged review source. The 5,000-task and oversized-event benchmark lanes are not required and are removed from the hosted dispatch choices; short workflow-policy tests protect the single measured profile. Overall migration acceptance remains open because other plan §10 consumer, recovery, platform, and release checks remain unverified. This merge must not be represented as a completed production migration.
 
 The source-bound snapshots below are historical and retain their original results.
 

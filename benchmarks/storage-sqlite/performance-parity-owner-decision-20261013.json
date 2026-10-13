@@ -1,0 +1,148 @@
+{
+  "kind": "SQLITE_PERFORMANCE_PARITY_ACCEPTANCE",
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-13",
+  "ownerDecision": {
+    "criterion": "Exact output parity and validated worker completion, with native p95 strictly lower than baseline for both operations; 2x improvement is not required.",
+    "source": "Owner reply to the ForgeLoop performance-gate question on 2026-10-13."
+  },
+  "run": {
+    "id": 38356645442,
+    "url": "https://github.com/cassiomc1/forgeloop/actions/runs/38356645442",
+    "workflow": "Hosted Linux MCP resource matrix",
+    "revision": "207f7e651c38b1c72ccedcef9e3fcf9364a62d9e",
+    "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+    "fixtureMode": "canonical-rich-all",
+    "tasks": 1000,
+    "eventsPerTask": 10,
+    "selectedEvents": 1000,
+    "totalFixtureEvents": 10990,
+    "repeatsPerSide": 200,
+    "resources": "true",
+    "runtime": {
+      "node": "v24.19.0",
+      "platform": "linux",
+      "architecture": "x64",
+      "cpu": "AMD EPYC 9V45 96-Core Processor",
+      "logicalCpus": 4,
+      "runnerName": "GitHub Actions 1000017862",
+      "workflowRun": "38356645442",
+      "workflowAttempt": "1"
+    },
+    "sourceManifestStatus": "CLEAN",
+    "sourceManifestBeforeMatchesAfter": true,
+    "automaticReleaseThresholdField": false
+  },
+  "results": [
+    {
+      "operation": "taskListTool",
+      "tasks": 1000,
+      "events": 10990,
+      "outputParity": true,
+      "nativeP95Ms": 1223.6564059999946,
+      "baselineP95Ms": 2166.256660999992,
+      "sampleCounts": {
+        "native": 200,
+        "baseline": 200
+      },
+      "resourceSampleCounts": {
+        "native": 200,
+        "baseline": 200
+      },
+      "fixtureAdmission": "VALIDATED",
+      "fixtureManifest": "VALIDATED"
+    },
+    {
+      "operation": "projectTasksResource",
+      "tasks": 1000,
+      "events": 10990,
+      "outputParity": true,
+      "nativeP95Ms": 1280.755730999983,
+      "baselineP95Ms": 2129.9307290000143,
+      "sampleCounts": {
+        "native": 200,
+        "baseline": 200
+      },
+      "resourceSampleCounts": {
+        "native": 200,
+        "baseline": 200
+      },
+      "fixtureAdmission": "VALIDATED",
+      "fixtureManifest": "VALIDATED"
+    }
+  ],
+  "workers": {
+    "parent": {
+      "status": "VALIDATED",
+      "terminalStage": "COMPLETED",
+      "pid": 2580,
+      "journalRecords": 11
+    },
+    "backends": [
+      {
+        "file": "native-1000.json",
+        "sha256": "0b69d39702a340cfcabd86ee40385e9d45c2427c1c7ef5567cb0874e583b1481",
+        "status": "VALIDATED",
+        "pid": 3877,
+        "startedAt": "2026-10-13T06:40:00.883Z",
+        "endedAt": "2026-10-13T06:48:06.569Z",
+        "operations": [
+          "taskListTool",
+          "projectTasksResource"
+        ],
+        "sampleCounts": {
+          "taskListTool": 200,
+          "projectTasksResource": 200
+        },
+        "resourceSampleCounts": {
+          "taskListTool": 200,
+          "projectTasksResource": 200
+        }
+      },
+      {
+        "file": "baseline-1000.json",
+        "sha256": "9e97def04fe96880a5551a798b9b9c924242890d085db896e956dde185a25c63",
+        "status": "VALIDATED",
+        "pid": 3940,
+        "startedAt": "2026-10-13T06:48:06.673Z",
+        "endedAt": "2026-10-13T07:01:58.396Z",
+        "operations": [
+          "taskListTool",
+          "projectTasksResource"
+        ],
+        "sampleCounts": {
+          "taskListTool": 200,
+          "projectTasksResource": 200
+        },
+        "resourceSampleCounts": {
+          "taskListTool": 200,
+          "projectTasksResource": 200
+        }
+      }
+    ]
+  },
+  "rawArtifacts": {
+    "comparisonJson": {
+      "source": "GitHub Actions run artifact sqlite-mcp-hosted-tasks-1000-both/comparison.json",
+      "sha256": "a14b06b50e8ba2d3db7d021b0b774ceb754e1eb5f047986d5069498eb39e4a45"
+    },
+    "pairedCaseJsonSha256": "abc6f3dbaf2e1e906fadbf131221db25a23588308ddae8166c1a85f404ddbc0c",
+    "sourceManifestSha256": "5db2420fe431ad1c47473fa6a6fca7a68c0840000a0315a10850e3298605e706",
+    "runnerBeforeSha256": "97fb790abc1bb04dd18bcb5e1a6d635213628d29fa2e3d23f95a520a5e3e55cf",
+    "runnerAfterSha256": "300d11cddbcb06f00a588fa574f3763a3231e6630db4136681f9ea4b852fd360"
+  },
+  "revisionEquivalence": {
+    "applicationCodeChangedSinceMeasuredRevision": false,
+    "verifiedPaths": [
+      "src",
+      "integrations/mcp/src",
+      "package.json",
+      "package-lock.json"
+    ],
+    "comparisonHead": "a64ed454ec04b5faaf47f000219027fcc335463e"
+  },
+  "limitations": [
+    "The benchmark producer sets releaseThresholdsVerified=false; this field is not acceptance authority. Acceptance is reconciled manually against the owner decision and the raw measurements above.",
+    "This record satisfies the replacement performance-parity criterion only; it does not close every plan section 10 item or authorize an external live-state cutover."
+  ]
+}
