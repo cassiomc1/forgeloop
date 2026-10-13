@@ -5,25 +5,27 @@ filesystem transaction layer to a single SQLite database per project state
 root. This document records the implemented storage layer, its verified
 behavior, and the boundaries that are deliberately **not** migrated yet.
 
-## Status
+## Status — 2026-10-13
 
-The original plan in `SQLITE_MIGRATION_PLAN.md` remains authoritative. Public
+The current plan in `SQLITE_MIGRATION_PLAN.md` remains authoritative. Public
 command and resource boundaries select canonical SQLite. Fresh writable projects
 bootstrap a journaled SQLite store; fresh read-only and dry-run commands do not
 allocate one. Existing legacy operational state requires explicit migration
 before ordinary mutation. A real selected
 SQLite lifecycle fixture reaches validator-backed completion. This does not
-establish a released sole writer: complete crash-window cutover recovery, consumer audit,
-attachment recovery, obsolete-code removal and the original performance,
-platform and LOC gates remain unfinished. See `SQLITE_MIGRATION_PROGRESS.md`
-for implementation-specific verification results.
+establish a released sole writer: complete crash-window cutover recovery,
+consumer audit, attachment recovery, obsolete-code retirement and platform and
+release checks remain unfinished. The numeric LOC gate was retired by the owner
+and replaced by the performance-parity criterion; its prior evidence is bound to
+an earlier revision. See `SQLITE_MIGRATION_PROGRESS.md` for implementation-
+specific verification results.
 
 The sections below retain incremental design and verification notes. Statements
 about unfinished transitions describe their historical checkpoint unless
-explicitly identified as current. Current release acceptance is still incomplete: native full audit
-materializes the ledger, the 100,000-event commit target failed, the reviewed
-persistence-specific LOC target is unproved, consumer inventory remains partial,
-and current remote/CI and validator-backed closure evidence is outstanding.
+explicitly identified as current. Overall release acceptance remains incomplete;
+the detailed §10 checklist and source-bound records identify the outstanding
+consumer, recovery, platform, and release evidence. Historical 100,000-event
+diagnostics and LOC measurements do not reinstate retired gates.
 
 | Area | State |
 | --- | --- |

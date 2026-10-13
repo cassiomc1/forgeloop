@@ -1,5 +1,16 @@
 # SQLite migration progress
 
+## Current review pointer — 2026-10-13
+
+Current review checkout: `codex/sqlite-end-to-end` at
+`ef5a0cbb6a123bb14dbb49343177943f1b37706a`. The owner’s A+C decision retired
+the numeric LOC gate and accepted measured performance parity in its place.
+The 1,000-task hosted receipt `38356645442` is valid for its recorded source
+`207f7e6`, not a fresh measurement at this tip. Migration acceptance remains
+open against plan §10. Every “Current” entry below is a dated historical
+snapshot unless its source revision matches the current review tip; do not read
+those labels as live status.
+
 ## Current populated CLI and Windows PID reuse findings
 
 Frozen `cd93184` completed all ten populated CLI rows (10/100/250/1,000/5,000 tasks; listing and history tail), twenty samples per backend, full response parity and unchanged source manifests. At ten tasks native history-tail p95 was 300.4 ms versus 196.0 ms, exceeding the original small-workspace tolerance. At 5,000 tasks listing was 4,739.8 versus 8,360.2 ms (1.76x), while history tail was 402.3 versus 153.0 ms. These failures require diagnosis; no performance acceptance is claimed. Raw source-bound evidence is retained under `benchmarks/storage-sqlite/populated-cli-cd93184-*`.

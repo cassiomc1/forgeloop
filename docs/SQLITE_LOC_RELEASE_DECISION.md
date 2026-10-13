@@ -6,14 +6,15 @@ the documented Option A+C in
 [SQLITE_LOC_OWNER_RECOMMENDATION.md](SQLITE_LOC_OWNER_RECOMMENDATION.md):
 the numeric 25% reduction gate is retired and replaced by the
 performance-parity acceptance criterion (migration plan §9 as amended in
-commit `831b139`+ this record's commit). This document no longer blocks
-acceptance; its investigation content is retained unchanged below.
+commit `831b139`+ this record's commit). This closes the LOC decision only;
+overall migration acceptance remains subject to plan §10. The investigation
+content below is historical evidence, not the current governing threshold.
 
 **Prepared:** 2026-10-11, at source revision `4504270e1509f202330b7f58cb99231b15376147`
 (branch `codex/sqlite-end-to-end`), with unchanged inclusive scope and an exact,
 zero-unresolved-membership analyzer run.
 
-## Governing rule (quoted, unchanged)
+## Superseded governing rule (historical quotation)
 
 From [SQLITE_MIGRATION_PLAN.md](SQLITE_MIGRATION_PLAN.md), §9 "Proposed release
 thresholds":

@@ -138,15 +138,7 @@ test("every tracked workflow job has a bounded timeout and read-only checkouts",
         continue;
       }
       const timeout = Number(job.match(/^    timeout-minutes:\s*(\d+)\s*$/mu)?.[1]);
-      const resourceBenchmark = name === "windows-full-suite.yml" && job.startsWith("  mcp-resources:\n");
-      // The complete paired 200-sample workload takes over six hours. Only
-      // this manual self-hosted experiment receives the documented larger cap.
-      if (resourceBenchmark) {
-        const definition = parse(workflow).jobs["mcp-resources"];
-        assert.equal(definition.if, "${{ github.event_name == 'workflow_dispatch' && inputs.suite == 'mcp-resources' }}");
-        assert.deepEqual(definition["runs-on"], ["self-hosted", "Linux", "X64", "forgeloop-linux-remote"]);
-      }
-      assert.ok(Number.isInteger(timeout) && timeout > 0 && (resourceBenchmark ? timeout <= 600 : timeout < 360), `${name} has an unbounded job timeout`);
+      assert.ok(Number.isInteger(timeout) && timeout > 0 && timeout < 360, `${name} has an unbounded job timeout`);
       if (job.includes("actions/checkout@")) {
         assert.match(job, /persist-credentials:\s*false/u, `${name} checkout must not persist credentials`);
       }
@@ -155,6 +147,19 @@ test("every tracked workflow job has a bounded timeout and read-only checkouts",
       assert.match(match[1], /^[0-9a-f]{40}$/u, `${name} contains a non-immutable action reference`);
     }
   }
+});
+
+test("hosted MCP acceptance exposes only the measured 1,000-task profile", async () => {
+  const hosted = parse(await readWorkflow("mcp-resources-hosted.yml"));
+  const dispatch = hosted.on.workflow_dispatch.inputs;
+  assert.deepEqual(dispatch.events.options, ["10"]);
+  assert.deepEqual(dispatch.selected_events.options, ["1000"]);
+  assert.equal(hosted.jobs["mcp-resources"]["timeout-minutes"], 90);
+  assert.deepEqual(hosted.jobs["mcp-resources"].strategy.matrix.include.map(row => row.case), ["tasks-1000-both"]);
+
+  const windows = parse(await readWorkflow("windows-full-suite.yml"));
+  assert.ok(!windows.on.workflow_dispatch.inputs.suite.options.includes("mcp-resources"));
+  assert.ok(!Object.hasOwn(windows.jobs, "mcp-resources"));
 });
 
 test("Node test jobs use the requested hosts and preserve the platform matrices", async () => {

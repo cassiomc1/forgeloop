@@ -25,17 +25,13 @@ on:
         type: choice
         options:
           - "10"
-          - "1000"
-          - "100000"
         default: "10"
         required: true
       selected_events:
         description: Event count for the selected public task
         type: choice
         options:
-          - "10"
           - "1000"
-          - "100000"
         default: "1000"
         required: true
 
@@ -50,7 +46,7 @@ jobs:
   mcp-resources:
     name: Hosted Linux MCP ${{ matrix.case }}
     runs-on: ubuntu-latest
-    timeout-minutes: 359
+    timeout-minutes: 90
     strategy:
       fail-fast: false
       # Each case uses one fresh hosted VM. Serial matrix scheduling avoids

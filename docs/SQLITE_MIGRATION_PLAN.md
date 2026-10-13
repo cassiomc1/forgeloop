@@ -5,7 +5,7 @@
 **Repository:** [cassiomc1/forgeloop](https://github.com/cassiomc1/forgeloop)\
 **Analysis baseline:** `ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5` (`main`, package version `1.14.0`)\
 **Prepared:** September 30, 2026\
-**Status:** proposed implementation plan, based on static source inspection. No migration, benchmark, or implementation has been performed. Reconcile this plan against the implementation checkout before starting.
+**Status (2026-10-13):** implementation and the first hosted performance-parity measurement exist. The owner retired the numeric LOC-reduction gate and approved performance parity as its replacement; receipt `38356645442` is bound to source `207f7e6`. The active review checkout is `codex/sqlite-end-to-end` at `ef5a0cbb6a123bb14dbb49343177943f1b37706a`; that receipt predates the current tip. Plan §10 remains the migration definition of done and is not fully satisfied, so this document does not claim production migration completion. The initial design proposal and its historical decisions remain below.
 
 ## 1. Recommended decision
 
