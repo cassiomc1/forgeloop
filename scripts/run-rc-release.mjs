@@ -6,7 +6,7 @@ const python = process.platform === "win32" ? "py" : "python3";
 const groups = [
   ["node", ["scripts/check-rc-release.mjs"]],
   ["node", ["scripts/storage-writer-inventory.mjs"]],
-  ["node", ["--import=./scripts/test-semantic-provider-loader.mjs", "--test", "--test-concurrency=2", "tests/rc-release-policy.test.js", "tests/storage-sole-writer-boundary.test.js", "tests/storage-attachment-transaction.test.js", "tests/storage-maintenance-admission.test.js", "tests/storage-project-backup.test.js", "tests/storage-runtime.test.js", "tests/storage-project-bootstrap.test.js"]],
+  ["node", ["scripts/run-rc-tests.mjs"]],
   ...["lint", "dependency:policy", "docs:check", "pack:check", "pack:smoke", "mcp:pack:check", "repository:hygiene"].map(script => [npm, ["run", script]]),
   [python, [...(process.platform === "win32" ? ["-3"] : []), "scripts/scan_secrets.py"]],
 ];

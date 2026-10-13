@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { readFileSync, lstatSync } from "node:fs";
+import { readFileSync, lstatSync, readdirSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
@@ -49,6 +49,20 @@ export function validateMcpMetadata({ baselinePackage, currentPackage, baselineL
   if (canonical(newPackage) !== canonical(baselinePackage) || canonical(newLock) !== canonical(baselineLock)) throw new Error("MCP resolved dependency graph changed beyond approved peer/version metadata");
 }
 
+export function collectRuntimeFiles(root) {
+  const files = [];
+  const walk = directory => {
+    for (const entry of readdirSync(path.join(root, directory), { withFileTypes: true })) {
+      if (entry.name === "node_modules" || entry.name === ".git") continue;
+      const filename = `${directory}/${entry.name}`;
+      if (entry.isDirectory()) walk(filename);
+      else if (runtimePath(filename)) files.push(filename);
+    }
+  };
+  for (const directory of ["src", "schemas", "integrations", "bin"]) if (existsSync(path.join(root, directory))) walk(directory);
+  return files.sort();
+}
+
 export function checkRcRelease(root = process.cwd()) {
   const git = args => execFileSync("git", args, { cwd: root, encoding: "utf8", maxBuffer: 16 * 1024 * 1024 });
   git(["merge-base", "--is-ancestor", RC_BASELINE, "HEAD"]);
@@ -57,7 +71,7 @@ export function checkRcRelease(root = process.cwd()) {
     const [metadata, filename] = row.split("\t");
     if (runtimePath(filename)) baselineFiles[filename] = metadata.split(" ")[2];
   }
-  const filenames = git(["ls-files", "-z", "--cached", "--others", "--exclude-standard"]).split("\0").filter(runtimePath).sort();
+  const filenames = collectRuntimeFiles(root);
   for (const filename of filenames) {
     if (/[\r\n]/u.test(filename) || !lstatSync(path.join(root, filename)).isFile()) throw new Error(`Non-regular runtime source: ${filename}`);
   }

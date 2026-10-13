@@ -3588,3 +3588,22 @@ The current-main Windows workflow `38476485247` at `d3152e1` failed one test: `t
 The focused test passes 1/1, changed-file ESLint passes, `verify:fast` passes 80/80 plus lint, dependency policy, generated docs and hygiene, and local `verify:prepush` exits 0 on the tree represented by `3aa14e7`. Documentation checks pass after the release-checklist and migration-status updates. These macOS results do not replace the pending Windows workflow on `3aa14e7`. Main documentation run `38476485263` separately failed because SQLite's upstream timeline returned HTTP 503; a retry is needed before treating the link check as current evidence.
 
 `soleSQLiteWriter` remains false because complete transitive consumer closure is unproven. The accepted hosted performance receipt remains bound to `207f7e6`, not this source. Current-source hosted parity, complete supported-platform/release evidence, external-target cutover evidence and final protocol acceptance remain open. No tag, PR, merge, publication or live data migration is claimed here.
+
+
+### Increment 840: bounded RC release policy
+
+The owner approved execution of the short-release plan on 2026-10-13, including
+the RC fallback when stable acceptance cannot be established. The current audit
+inventories 495 source modules and 55 potential writer modules; static calls and
+imports do not prove all aliases, paths or external callers. Whole consumer
+closure remains false. The runtime and resolved dependencies are constrained to
+baseline 14008f5 by an executable equivalence guard; the only permitted MCP
+changes admit the RC peer and update the local core version metadata.
+
+Windows run 38483385848 passes at the baseline. The new short RC path is explicit
+in PR and npm publishing policies, caps each test group at three minutes, and
+never promotes timeout, unexpected skip or missing evidence to a pass. Stable
+publication requires sole-writer acceptance and retains its full verification.
+No new full-coverage, full-platform, physical power-loss or p95 claim is made.
+The existing 1,000-task hosted run is retained; no new long benchmark is started.
+RC publication and final protocol validation are pending their actual results.
