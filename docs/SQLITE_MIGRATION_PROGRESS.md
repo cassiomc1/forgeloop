@@ -3580,3 +3580,11 @@ Full Mac834 onf40b4b6 passes all prepush gates in535.62seconds with all2,947 adm
 ### Increment 838: full Windows terminal validation
 
 Windows37714027990 onf40b4b6 passes2912tests:2888passed,24skipped,zero failures. Actual Windows log confirms owner/marker/metadata parent-junction rejection plus owner/marker short-read and post-stat-growth controls executed successfully. Final-component symlink skips remain explicit; no blanket Windows race claim is made. Evidence: `windows838-terminal.json`. Prior package835 independently verifies package/MCP onall3hosts. After Windows reached terminal state, current core workflow was dispatched on6433e56; no overlapping Windows/Linux workload or benchmark was started. Final Linux, performance/resource, inclusiveLOC, transitive consumer and protocol requirements remainopen; progress55%; noPR orpublication.
+
+### Increment 839: isolate deterministic doctor JSON fixture
+
+The current-main Windows workflow `38476485247` at `d3152e1` failed one test: `tests/json-output.test.js` compared repeated `doctor` output while the test inherited the runner's user-scoped persistent-search state. The two runs observed `OWNERSHIP_UNVERIFIED` and `STALE`; the test now sets `HOME` and `USERPROFILE` to its disposable project so unrelated host state cannot affect the JSON assertion. No production output or status field is suppressed.
+
+The focused test passes 1/1, changed-file ESLint passes, `verify:fast` passes 80/80 plus lint, dependency policy, generated docs and hygiene, and local `verify:prepush` exits 0 on the tree represented by `3aa14e7`. Documentation checks pass after the release-checklist and migration-status updates. These macOS results do not replace the pending Windows workflow on `3aa14e7`. Main documentation run `38476485263` separately failed because SQLite's upstream timeline returned HTTP 503; a retry is needed before treating the link check as current evidence.
+
+`soleSQLiteWriter` remains false because complete transitive consumer closure is unproven. The accepted hosted performance receipt remains bound to `207f7e6`, not this source. Current-source hosted parity, complete supported-platform/release evidence, external-target cutover evidence and final protocol acceptance remain open. No tag, PR, merge, publication or live data migration is claimed here.

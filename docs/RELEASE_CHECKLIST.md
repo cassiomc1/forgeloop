@@ -4,11 +4,32 @@ This is the current release checklist for the PolyForm Noncommercial-licensed
 `@cassiomc1/forgeloop` package. It is a preparation and verification checklist;
 it does not authorize publication.
 
-## ForgeLoop 1.14.0 candidate scope
+## ForgeLoop 2.0.0 candidate scope
 
-The 1.14.0 candidate carries the protocol, routing, provider, documentation,
-and package changes present in current `main`. The candidate must keep these
-boundaries explicit:
+The 2.0.0 candidate is not release-ready while SQLite migration plan §10 has
+open consumer-closure, current-source performance, or platform evidence. Keep
+all acceptance boxes open until their evidence is bound to the exact candidate
+revision.
+
+The 2.0.0 candidate carries the SQLite storage transition alongside the
+existing protocol, routing, provider, documentation, and package surfaces. The
+existing checklist remains applicable to those surfaces; SQLite release
+acceptance additionally requires every item below:
+
+- [ ] All plan §9 acceptance rows are current for the exact candidate SHA,
+      including an accepted 1,000-task hosted parity run with exact output,
+      validated workers, clean observer admission, cleanup, and lower native
+      p95 for both operations.
+- [ ] Plan §10 consumer closure is complete and `soleSQLiteWriter` is true
+      based on source audit and tests; fail-closed migration boundaries remain
+      in place until that evidence exists.
+- [ ] Migration, crash recovery, legacy-unbound handoff, attachment recovery,
+      backup, restore, rollback, and SQLite integrity checks pass on the exact
+      candidate.
+- [ ] Required Linux, macOS, Windows, supported Node runtime, MCP, API, and
+      package workflows pass at the exact candidate SHA.
+- [ ] Release identity and npm version availability are verified, and the
+      matching tag workflow completes its verification job before publishing.
 
 - [ ] README catalog and architecture fallback identify
       `ENG/flutter-development-eng.md` and explain that the specialist is
@@ -42,9 +63,10 @@ boundaries explicit:
 - [ ] Lifecycle, evidence, completion, and publication remain independent of
       Repository Index and persistent-host health.
 
-This branch prepares the candidate and its pull request. npm publication,
-tagging, GitHub Release, deployment, and merge remain separately authorized
-actions.
+This checklist does not authorize publication by itself. The owner authorized
+conditional npm publication through the GitHub workflow; the action remains
+prohibited until every release gate passes. Tagging, GitHub Release,
+deployment, and live data migration remain separate actions.
 
 ## CI minimization validation
 
