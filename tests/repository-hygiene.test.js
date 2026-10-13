@@ -62,6 +62,7 @@ test("repository hygiene requires explicit visual ownership", () => {
   const result = validateRepositoryHygiene(validInput({ trackedPaths: ["docs/assets/unowned.svg"] }));
   assert.ok(result.errors.includes("REPOSITORY_HYGIENE_UNOWNED_VISUAL_ASSET: docs/assets/unowned.svg"));
   assert.deepEqual([...REPOSITORY_ONLY_VISUALS], [
+    "docs/assets/forgeloop-architecture.png",
     "docs/assets/forgeloop-architecture.svg",
     "docs/assets/forgeloop-lifecycle-animated.svg",
   ]);

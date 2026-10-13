@@ -15,6 +15,7 @@ export const ROOT_MARKDOWN = new Set([
   "TERMINOLOGY.md", "THIRD_PARTY_NOTICES.md", "THREAT_MODEL.md",
 ]);
 export const REPOSITORY_ONLY_VISUALS = new Set([
+  "docs/assets/forgeloop-architecture.png",
   "docs/assets/forgeloop-architecture.svg",
   "docs/assets/forgeloop-lifecycle-animated.svg",
 ]);
