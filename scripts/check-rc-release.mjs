@@ -75,7 +75,7 @@ export function checkRcRelease(root = process.cwd()) {
   for (const filename of filenames) {
     if (/[\r\n]/u.test(filename) || !lstatSync(path.join(root, filename)).isFile()) throw new Error(`Non-regular runtime source: ${filename}`);
   }
-  const hashes = execFileSync("git", ["hash-object", "--stdin-paths"], { cwd: root, encoding: "utf8", input: `${filenames.join("\n")}\n` }).trim().split("\n");
+  const hashes = execFileSync("git", ["hash-object", "--no-filters", "--stdin-paths"], { cwd: root, encoding: "utf8", input: `${filenames.join("\n")}\n` }).trim().split("\n");
   const currentFiles = Object.fromEntries(filenames.map((filename, index) => [filename, hashes[index]]));
   const fromGit = filename => JSON.parse(git(["show", `${RC_BASELINE}:${filename}`]));
   const current = filename => JSON.parse(readFileSync(path.join(root, filename), "utf8"));

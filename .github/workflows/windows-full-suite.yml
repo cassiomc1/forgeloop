@@ -63,6 +63,9 @@ jobs:
         run: |
           $version = node -p "require('./package.json').version"
           if ($version -match '^2\.0\.0-rc\.') {
+            git config core.autocrlf false
+            git checkout-index --force --all
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
             npm run release:quick
           } else {
             npm test
