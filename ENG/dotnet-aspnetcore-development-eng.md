@@ -3,7 +3,7 @@ name: dotnet-aspnetcore-development-eng
 language: en
 description: "Specialist guide for architecture, implementation, testing, performance, security, data access, hosting, observability, and release of production .NET and ASP.NET Core applications."
 version: "2026.09"
-last-reviewed: "2026-09-11"
+last-reviewed: "2026-10-13"
 guide-id: dotnet
 ---
 
@@ -74,6 +74,10 @@ Record, when discoverable:
 Use structural project evidence for routing, but use source and configuration inspection for implementation decisions. A detector result is discovery input, not proof that an application is healthy.
 
 ## 4. Version-sensitive decisions
+
+As of 2026-10-13, .NET 10 is the current LTS line; its latest patch is 10.0.12.
+.NET 9 is in maintenance and reaches end of support on 2026-11-10. These are
+dated references only: use the repository's pinned SDK and target framework.
 
 Treat these as version-sensitive:
 
@@ -387,6 +391,8 @@ Accepted structural primary evidence:
 The router must not activate this guide from prose, source snippets, `Dockerfile`, `*.deps.json`, `project.assets.json`, package-lock files, an arbitrary package name, or an unrelated nested project. Documentation-only and UI-copy work does not activate project specialist guides by project evidence alone.
 
 Official references for version-sensitive work:
+
+- [.NET support policy](https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core)
 
 - [ASP.NET Core best practices](https://learn.microsoft.com/aspnet/core/fundamentals/best-practices)
 - [.NET SDK overview](https://learn.microsoft.com/dotnet/core/sdk)

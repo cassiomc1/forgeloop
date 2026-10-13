@@ -3,7 +3,7 @@ name: sql-development-eng
 language: en
 description: "Specialist overlay guidance for SQL schemas, queries, migrations, and database-boundary changes."
 version: "2026.09"
-last-reviewed: "2026-09-12"
+last-reviewed: "2026-10-13"
 guide-id: sql
 requires-gates:
   - threat-boundary
@@ -37,9 +37,9 @@ migration, reads credentials, or introspects a schema.
 The repository's database engine, version, migration policy, transaction model,
 compatibility window, and deployment process win over generic SQL advice. Use
 the matching engine's official reference first, then ISO/IEC 9075:2023 for
-portable semantics. The research snapshot covers PostgreSQL 18.6, MySQL 9.7
-Innovation and 8.4 LTS, SQL Server 17 T-SQL, Oracle AI Database 26, and
-SQLite; these are reference points, not automatic upgrade targets.
+portable semantics. The 2026-10-13 reference check covers PostgreSQL 18.6, MySQL 9.7 Innovation
+and 8.4 LTS, SQL Server 17 T-SQL, Oracle AI Database 26, and SQLite 3.54.0.
+These are reference points, not automatic upgrade targets.
 
 Never infer a dialect, isolation guarantee, identifier rule, timestamp
 behavior, JSON extension, or migration capability from a file extension.

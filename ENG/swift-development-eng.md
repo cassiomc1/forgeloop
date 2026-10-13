@@ -3,7 +3,7 @@ name: swift-development-eng
 language: en
 description: "Specialist guidance for production Swift applications, packages, services, and Apple-platform components."
 version: "2026.09"
-last-reviewed: "2026-09-12"
+last-reviewed: "2026-10-13"
 guide-id: swift
 requires-gates:
   - threat-boundary
@@ -34,9 +34,8 @@ plugins, build scripts, tests, or network resolution.
 Repository package manifest, toolchain, deployment target, SDK, target triple,
 entitlements, signing policy, ABI, and platform support win over generic
 advice. Use version-matched Swift language, SwiftPM, Apple SDK, and Xcode
-documentation after repository evidence. Swift 6.3 is the stable reference in
-the 2026-09 plan snapshot; the online language book's 6.4 beta material is not
-an automatic target.
+documentation after repository evidence. Swift 6.4 is the current stable reference as of 2026-10-13; it is not an
+automatic migration target.
 
 Keep Swift language mode, compiler/toolchain, SDK, deployment target, runtime
 OS, architecture, signing, entitlements, and package/platform compatibility
@@ -102,6 +101,8 @@ structural Swift package/project analysis, not full SwiftPM resolution, build
 setting evaluation, macro execution, or Xcode build execution.
 
 ## Official sources
+
+- [Swift 6.4 release](https://www.swift.org/blog/swift-6.4-released/)
 
 - [The Swift Programming Language](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/)
 - [Swift.org documentation](https://www.swift.org/documentation/)

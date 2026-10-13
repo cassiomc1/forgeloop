@@ -3,7 +3,7 @@ name: c-development-eng
 language: en
 description: "Specialist guidance for production C libraries, services, embedded components, and native build systems."
 version: "2026.09"
-last-reviewed: "2026-09-12"
+last-reviewed: "2026-10-13"
 guide-id: c
 requires-gates:
   - threat-boundary
@@ -31,7 +31,7 @@ Repository architecture, supported platforms, compiler configuration, ABI,
 warning policy, and minimum supported toolchain win over generic advice. Use
 the matching repository standard and toolchain first, then the ISO/WG14
 material and version-matched platform documentation. C23 (ISO/IEC 9899:2024)
-is the current published reference in the 2026-09 plan snapshot; C2y remains
+is the current published C language standard; C2y remains
 development work and is not an automatic migration target.
 
 ## Project and standard discovery

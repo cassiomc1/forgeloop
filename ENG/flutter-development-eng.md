@@ -3,14 +3,14 @@ name: flutter-development-eng
 language: en
 description: "Specialist guide for architecture, implementation, testing, performance, accessibility, platform integration, and release of production Flutter applications."
 version: "2026.09"
-last-reviewed: "2026-09-09"
+last-reviewed: "2026-10-13"
 guide-id: flutter
 ---
 # Flutter Development Engineering Guide
 
 > Production-oriented Flutter specialist guidance for ForgeLoop-enabled AI coding agents and developers.
 >
-> This guide is an operational synthesis of the official Flutter documentation at `https://docs.flutter.dev/`, reviewed against the documentation baseline current on 2026-09-09. The Flutter documentation reviewed for this guide generally reports Flutter 3.47.2. Version-sensitive behavior MUST be verified against the project's pinned SDK and the current official documentation before changing code.
+> This guide is an operational synthesis of the official Flutter documentation at `https://docs.flutter.dev/`, reviewed on 2026-10-13. The current stable release line is Flutter 3.47. Version-sensitive behavior MUST be verified against the project's pinned SDK and the current official documentation before changing code.
 >
 > This guide complements, rather than replaces, ForgeLoop's general engineering guides. For code structure and maintainability use `clean-code-eng.md`; for verification strategy use `test-code-eng.md`; for threat modeling and trust boundaries use `sec-code-eng.md`; for measured optimization use `perf-code-eng.md`; for visual design use `design-code-eng.md`; and for inclusive interfaces use `accessibility-eng.md`.
 >
@@ -1990,6 +1990,8 @@ flutter-deep-link-validation
 Do not add identifiers to ForgeLoop protocol schemas without updating validators, tests, documentation, and compatibility surfaces together.
 
 ## 56. Official documentation map
+
+- [Flutter SDK archive](https://docs.flutter.dev/install/archive)
 
 Primary official Flutter documentation areas used to synthesize this guide:
 

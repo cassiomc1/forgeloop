@@ -3,7 +3,7 @@ name: rust-development-eng
 language: en
 description: "Specialist guidance for architecture, implementation, testing, security, performance, and release of production Rust applications, services, libraries, and workers."
 version: "2026.09"
-last-reviewed: "2026-09-11"
+last-reviewed: "2026-10-13"
 guide-id: rust
 requires-gates:
   - threat-boundary
@@ -107,6 +107,9 @@ ownership boundaries. A parent project must not claim a nested child's
 manifest, lockfile, configuration, source, or generated output.
 
 ## 2. Authority, discovery, and version truth
+
+Rust 1.99.0 is the latest stable release as of 2026-10-13. This dated reference
+does not change a project's declared MSRV, toolchain, or edition.
 
 Resolve conflicts in this order:
 

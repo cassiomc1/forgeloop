@@ -3,7 +3,7 @@ name: go-development-eng
 language: en
 description: "Specialist guidance for production Go services, workers, CLIs, modules, and concurrent systems."
 version: "2026.09"
-last-reviewed: "2026-09-12"
+last-reviewed: "2026-10-13"
 guide-id: go
 requires-gates:
   - threat-boundary
@@ -31,7 +31,7 @@ Repository module boundaries, supported Go versions, build tags, target
 matrix, compatibility policy, and release process win over generic advice.
 Use the matching Go specification, standard-library documentation, module and
 workspace documentation, and official Go security guidance after repository
-evidence. The 2026-09 plan snapshot uses Go 1.27/1.27.1 as a current reference;
+evidence. Go 1.27.2 is the current stable reference as of 2026-10-13;
 that is not permission to upgrade a repository.
 
 Keep the `go` language minimum directive distinct from `toolchain`, the build
