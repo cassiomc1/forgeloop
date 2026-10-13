@@ -14,6 +14,10 @@ function run(target, ...args) {
   return spawnSync(process.execPath, [cliPath, ...args, "--path", target], {
     cwd: repositoryRoot,
     encoding: "utf8",
+    // `doctor` reports user-scoped persistent-search state. Keep that input
+    // inside this disposable fixture so another test or host process cannot
+    // change the JSON between otherwise identical invocations.
+    env: { ...process.env, HOME: target, USERPROFILE: target },
   });
 }
 
