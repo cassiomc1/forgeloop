@@ -82,8 +82,9 @@ jobs:
             #vendor/archify/**
       - name: Check links
         if: steps.release_mode.outputs.bounded_rc != 'true'
-        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        uses: ./.github/actions/lychee
         with:
+          linuxTarget: musl
           args: --config .lychee.toml './**/*.md'
           fail: true
         env:

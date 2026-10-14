@@ -9,6 +9,24 @@ import { parse } from "yaml";
 
 const pinnedAction = /uses:\s+[^\s]+@[0-9a-f]{40}\s+#/g;
 
+test("RC3 documentation uses full validation and publication uses the runner-compatible link checker", async () => {
+  const workflow = parse(await readWorkflow("docs.yml"));
+  const selector = workflow.jobs.docs.steps.find(step => step.id === "release_mode");
+  const script = /node --input-type=module <<'NODE'\n([\s\S]*?)\nNODE/u.exec(selector.run)?.[1];
+  assert.ok(script, "documentation selector must use the shared Node release policy");
+  const directory = await mkdtemp(path.join(os.tmpdir(), "forgeloop-docs-release-policy-"));
+  try {
+    const output = path.join(directory, "github-output");
+    execFileSync(process.execPath, ["--input-type=module", "-e", script], { env: { ...process.env, GITHUB_OUTPUT: output } });
+    assert.match(await readFile(output, "utf8"), /^rc=false$/mu);
+  } finally { await removeTempTree(directory); }
+  const publication = parse(await readWorkflow("npm-publish.yml"));
+  const links = publication.jobs.verify.steps.find(step => step.name === "Check links");
+  assert.equal(links.uses, "./.github/actions/lychee");
+  assert.equal(links.with.linuxTarget, "musl");
+  assert.equal(links.with.fail, true);
+});
+
 test("core manual dispatch selects every gate without PR revision metadata and preserves PR path routing", { skip: process.platform === "win32" }, async () => {
   const workflow = parse(await readWorkflow("pr-core.yml"));
   const classify = workflow.jobs.classify.steps.find(step => step.id === "classify");
