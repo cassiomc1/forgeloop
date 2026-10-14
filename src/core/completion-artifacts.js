@@ -195,11 +195,15 @@ export async function validateCheckExecutionProvenance(check, {
     );
   }
   if (!allowForeignCwd && path.resolve(protocolProjectRoot) !== path.resolve(target)) {
-    throw artifactError(
-      "E_EXECUTION_REF_INVALID",
-      "Execution artifact protocol project root does not match the current target",
-      [taskId ? taskExecutionPath(taskId, check.executionRef) : ARTIFACT_PATHS.executionDirectory],
-    );
+    const { isRetainedRestoreExecution } = await import("../storage/restore-execution-provenance.js");
+    const restored = !executionArtifacts && await isRetainedRestoreExecution(target, execution, { taskId });
+    if (!restored) {
+      throw artifactError(
+        "E_EXECUTION_REF_INVALID",
+        "Execution artifact protocol project root does not match the current target",
+        [taskId ? taskExecutionPath(taskId, check.executionRef) : ARTIFACT_PATHS.executionDirectory],
+      );
+    }
   }
   if (check.status === "passed" && (execution.status !== "passed" || execution.exitCode !== 0)) {
     throw artifactError(

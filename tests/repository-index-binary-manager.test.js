@@ -17,11 +17,19 @@ import {
   verifyManagedTgrep,
   verifyTgrepVersion,
   validateArchiveEntry,
+  resolveArchiveTool,
 } from "../src/repository-index/binary-manager.js";
 import { getManagedTgrepBinaryPath } from "../src/repository-index/paths.js";
 import { packageRoot } from "./helpers/repository-index.js";
 
 const execFileAsync = promisify(execFile);
+
+test("Windows archive tools bypass PATH tar implementations that cannot inspect ZIP", () => {
+  assert.equal(resolveArchiveTool("zip", { platform: "win32", env: { SystemRoot: "C:\\Windows" } }), "C:\\Windows\\System32\\tar.exe");
+  assert.equal(resolveArchiveTool("tar.gz", { platform: "win32", env: { SystemRoot: "D:\\Windows" } }), "D:\\Windows\\System32\\tar.exe");
+  assert.equal(resolveArchiveTool("zip", { platform: "linux", env: {} }), "unzip");
+  assert.equal(resolveArchiveTool("tar.gz", { platform: "darwin", env: {} }), "tar");
+});
 
 async function fakeBinary(directory, version = "1.0.3") {
   const binary = path.join(directory, "tgrep");

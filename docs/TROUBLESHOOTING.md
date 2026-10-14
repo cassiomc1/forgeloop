@@ -1,5 +1,38 @@
 # ForgeLoop Troubleshooting Guide
 
+## Windows Repository Index ZIP extraction
+
+When `init` reports `E_REPOSITORY_INDEX_ENGINE_EXTRACTION_FAILED` and
+`tar: This does not look like a tar archive`, a GNU tar from Git may be
+shadowing Windows' ZIP-capable system tool. RC3 selects
+`%SystemRoot%\System32\tar.exe` explicitly for inspection and extraction.
+Archive and binary checksum verification and unsafe-entry rejection still
+apply. A missing system tool remains an explicit extraction failure; ForgeLoop
+does not install replacement software automatically.
+
+## Restoring completed tasks into another directory
+
+Use an attachment-inclusive `storage-backup` and `storage-restore` with
+externally stopped writers. Historical execution records keep their original
+project root and exact bytes. RC3 accepts them only when they exactly match
+the snapshot bound to the destination's restore journal and storage marker.
+Keep `.forgeloop/storage-restores/<operation-id>/snapshot` and its journal;
+they are retained provenance evidence, not a disposable search cache.
+An altered record, missing snapshot or broken binding remains rejected.
+
+Storage restore does not install project code or instruction adapters. Restore
+the project files separately, then run `forgeloop init` in the destination to
+install the kit before expecting the complete `doctor` report to be healthy.
+
+## Concurrent task creation
+
+Task creation revalidates write claims atomically. If the catalog changes while
+a command is prepared, RC3 refreshes authoritative claim inputs with bounded
+backoff and jitter without replaying the command or its external effects.
+Overlapping claims still fail. Sustained contention can exhaust the retry
+bound and return `E_STORAGE_CATALOG_CHANGED`; inspect fresh task discovery
+before deciding whether to retry.
+
 This guide provides symptom-first recovery procedures for common ForgeLoop protocol, state, and verification issues.
 
 ---

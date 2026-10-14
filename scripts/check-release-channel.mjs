@@ -17,7 +17,7 @@ export function validateReleaseChannel(version, channel, storage) {
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {
     const result = validateReleaseChannel(JSON.parse(readFileSync("package.json", "utf8")).version, process.env.NPM_DIST_TAG, getStorageCapabilities());
-    if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, `rc=${result.rc}\n`);
+    if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, `rc=${result.rc}\nbounded_rc=${/^2\.0\.0-rc\.[12]$/u.test(result.version)}\n`);
     console.log(JSON.stringify(result));
   } catch (error) { console.error(error.message); process.exitCode = 1; }
 }

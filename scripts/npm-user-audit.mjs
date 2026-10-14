@@ -8,6 +8,10 @@ import { DatabaseSync } from 'node:sqlite';
 const prefix = path.resolve(process.argv[2]);
 const root = path.resolve(process.argv[3]);
 mkdirSync(root, { recursive: true });
+const home = path.join(root, 'new-user-home');
+mkdirSync(home, { recursive: true });
+process.env.HOME = home;
+if (process.platform === 'win32') process.env.USERPROFILE = home;
 const cli = path.join(prefix, 'node_modules/@cassiomc1/forgeloop/src/cli.js');
 const project = path.join(root, 'fresh-project');
 mkdirSync(project, { recursive: true });
@@ -25,7 +29,7 @@ async function check(name, fn) {
   catch (e) { report.checks.push({ name, status: 'FAIL', error: e.message }); }
   writeFileSync(path.join(root,'report.json'), JSON.stringify(report,null,2));
 }
-await check('published-version', () => { assert.equal(report.package,'2.0.0-rc.2'); run(['--version']); run(['protocol-info','--json']); });
+await check('published-version', () => { assert.equal(report.package,process.env.FORGELOOP_AUDIT_VERSION || '2.0.0-rc.3'); run(['--version']); run(['protocol-info','--json']); });
 await check('live-jev-health', () => { assert.equal(run(['decision-status','--health','--json']).json.health.status,'healthy'); });
 await check('fresh-git-init', () => {
   const r = spawnSync('git',['init',project],{encoding:'utf8'}); assert.equal(r.status,0);
@@ -65,17 +69,9 @@ await check('concurrent-distinct-task-writes', async () => {
     child.on('close',code=>resolve({code,stdout,stderr}));child.on('error',e=>resolve({error:e.message}));
   })));
   report.concurrency=outcomes;
-  const retries=[];
-  for(const [i,r] of outcomes.entries()) {
-    if(r.code===0) continue;
-    assert.match(r.stdout+r.stderr,/E_STORAGE_CATALOG_CHANGED/);
-    const refreshed=run(['task-list','--json']).json;
-    assert.ok(!refreshed.tasks.some(t=>t.taskId===`parallel-${i}`));
-    run(['task-create','--task',`parallel-${i}`,'--claim',`parallel/${i}`,'--json']);
-    retries.push(`parallel-${i}`);
-  }
+  assert.ok(outcomes.every(r=>r.code===0),JSON.stringify(outcomes));
   assert.equal(run(['task-list','--json']).json.total,9);
-  return {firstAttemptAccepted:outcomes.filter(r=>r.code===0).length,retriedAfterCatalogRefresh:retries};
+  return {firstAttemptAccepted:outcomes.filter(r=>r.code===0).length,retriedAfterCatalogRefresh:[]};
 });
 await check('sqlite-integrity-foreign-keys-and-authority', () => {
   const db=new DatabaseSync(path.join(project,'.forgeloop/state.sqlite'),{readOnly:true});
@@ -132,6 +128,8 @@ await check('completed-task-backup-restore-to-new-directory', () => {
   const restored=run(['storage-restore','--source',path.join(project,'completed-task-backup'),'--writers-quiesced','--json'],{target});
   assert.equal(restored.json.active,true);
   assert.equal(run(['task-list','--json'],{target}).json.total,9);
+  // Storage restore does not install the kit/adapters in the destination.
+  run(['init'],{target});
   assert.equal(run(['doctor','--json'],{target}).json.storage.integrity.ok,true);
 });
 run(['index-stop','--json'],{allowFailure:true});

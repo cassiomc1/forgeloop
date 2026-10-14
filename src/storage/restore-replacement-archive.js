@@ -22,7 +22,7 @@ const belongs = (name, root) => name === root || name.startsWith(`${root}/`);
 async function incomingSnapshot(target, operationId, packageRoot) {
   const root = await assertSafePath(target, `.forgeloop/storage-restores/${operationId}/snapshot`);
   return withVerifiedProjectStorageBackup(root, async ({ db, manifest }) => {
-    await validateMigrationDatabase(db, { target: root, packageRoot });
+    await validateMigrationDatabase(db, { target: root, packageRoot, archivedExecutions: true });
     return { root, fingerprint: canonicalFingerprint(manifest) };
   });
 }

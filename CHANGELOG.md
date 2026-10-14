@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+## 2.0.0-rc.3 - 2026-10-14
+
+- Restore SQLite backups containing real verification executions into another
+  directory while preserving original execution bytes and roots. Foreign-root
+  evidence requires an exact match in the verified retained restore snapshot.
+- Use Windows' system archive tool so Git GNU tar cannot break first-run ZIP
+  extraction of the pinned Repository Index engine.
+- Refresh contended task-creation claims internally with bounded backoff and
+  jitter, preserving atomic overlap checks and prepared-command identity.
+- Add a clean-user package audit for Windows, macOS and Linux, including
+  lifecycle completion and completed-task backup restoration.
+- Require fresh full verification for RC3 runtime changes; the historical
+  source-equivalent RC1/RC2 shortcut does not apply.
+
+## 2.0.0-rc.2 default channel - 2026-10-14
+
 - Add the owner-authorized tag-only promotion of existing RC2 to npm `latest`.
   Preserve the published artifact, `next`, and incomplete stable acceptance.
 

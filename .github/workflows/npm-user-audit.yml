@@ -1,7 +1,18 @@
 name: Published npm new-user SQLite audit
 on:
   push:
-    branches: [codex/npm-user-audit-20261014]
+    branches: [codex/npm-user-audit-20261014, codex/npm-sqlite-recovery-fixes-20261014]
+  workflow_dispatch:
+    inputs:
+      package_source:
+        description: Package to test
+        type: choice
+        options: [candidate, npm]
+        default: candidate
+      version:
+        description: Exact expected package version
+        type: string
+        default: 2.0.0-rc.3
 permissions:
   contents: read
 jobs:
@@ -9,6 +20,9 @@ jobs:
     name: npm SQLite (${{ matrix.os }})
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 20
+    env:
+      PACKAGE_SOURCE: ${{ inputs.package_source || 'candidate' }}
+      FORGELOOP_AUDIT_VERSION: ${{ inputs.version || '2.0.0-rc.3' }}
     strategy:
       fail-fast: false
       max-parallel: 1
@@ -30,8 +44,15 @@ jobs:
         env:
           TYPESAFE_API_KEY: ${{ secrets.FORGELOOP_NPM_AUDIT_JEV_KEY }}
         run: |
-          npm view @cassiomc1/forgeloop dist-tags dist.integrity --json
-          npm install --prefix "$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID/install" --no-audit --no-fund @cassiomc1/forgeloop@2.0.0-rc.2
+          mkdir -p "$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID"
+          if [ "$PACKAGE_SOURCE" = npm ]; then
+            npm view "@cassiomc1/forgeloop@$FORGELOOP_AUDIT_VERSION" dist.integrity --json
+            package_spec="@cassiomc1/forgeloop@$FORGELOOP_AUDIT_VERSION"
+          else
+            npm pack --pack-destination "$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID"
+            package_spec="$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID/cassiomc1-forgeloop-$FORGELOOP_AUDIT_VERSION.tgz"
+          fi
+          npm install --prefix "$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID/install" --no-audit --no-fund "$package_spec"
           node scripts/npm-user-audit.mjs "$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID/install" "$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID/results"
       - name: Install and test using native Windows PowerShell
         if: runner.os == 'Windows'
@@ -43,8 +64,16 @@ jobs:
           $auditRoot = Join-Path $env:RUNNER_TEMP "npm-user-$env:GITHUB_RUN_ID"
           $installRoot = Join-Path $auditRoot 'install'
           $resultRoot = Join-Path $auditRoot 'results'
-          npm view @cassiomc1/forgeloop dist-tags dist.integrity --json
-          npm install --prefix $installRoot --no-audit --no-fund @cassiomc1/forgeloop@2.0.0-rc.2
+          New-Item -ItemType Directory -Force $auditRoot | Out-Null
+          if ($env:PACKAGE_SOURCE -eq 'npm') {
+            $packageSpec = "@cassiomc1/forgeloop@$env:FORGELOOP_AUDIT_VERSION"
+            npm view $packageSpec dist.integrity --json
+          } else {
+            npm pack --pack-destination $auditRoot
+            if ($LASTEXITCODE -ne 0) { throw 'npm pack failed' }
+            $packageSpec = Join-Path $auditRoot "cassiomc1-forgeloop-$env:FORGELOOP_AUDIT_VERSION.tgz"
+          }
+          npm install --prefix $installRoot --no-audit --no-fund $packageSpec
           if ($LASTEXITCODE -ne 0) { throw 'npm install failed' }
           node scripts/npm-user-audit.mjs $installRoot $resultRoot
           exit $LASTEXITCODE

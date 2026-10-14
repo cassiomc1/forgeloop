@@ -165,7 +165,7 @@ async function writeGitHubOutputs(result) {
   const outputPath = process.env.GITHUB_OUTPUT;
   if (!outputPath) throw new Error("--github-output requires GITHUB_OUTPUT");
   const packageJson = JSON.parse(await readFile("package.json", "utf8"));
-  const rcQuick = /^2\.0\.0-rc\./u.test(packageJson.version);
+  const rcQuick = /^2\.0\.0-rc\.[12]$/u.test(packageJson.version);
   if (rcQuick) checkRcRelease();
   const values = [
     ["rc_quick", rcQuick],

@@ -38,7 +38,7 @@ jobs:
           persist-credentials: false
       - name: Select bounded RC platform
         id: mode
-        run: node -e 'const fs = require("fs"); const rc = /^2\.0\.0-rc\./.test(require("./package.json").version); fs.appendFileSync(process.env.GITHUB_OUTPUT, "rc=" + rc + "\n");'
+        run: node -e 'const fs = require("fs"); const rc = /^2\.0\.0-rc\.[12]$/.test(require("./package.json").version); fs.appendFileSync(process.env.GITHUB_OUTPUT, "rc=" + rc + "\n");'
   test:
     needs: release-mode
     if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && inputs.suite != 'public-rollback' }}
@@ -77,7 +77,7 @@ jobs:
         if: ${{ github.event_name != 'workflow_dispatch' || inputs.suite == 'full' }}
         run: |
           $version = node -p "require('./package.json').version"
-          if ($version -match '^2\.0\.0-rc\.') {
+          if ($version -match '^2\.0\.0-rc\.[12]$') {
             git config core.autocrlf false
             git checkout-index --force --all
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
