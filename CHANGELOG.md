@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Validate RC3 installation and SQLite backup recovery across all supported
+  operating systems; release details follow below.
+
 ## 2.0.0-rc.3 - 2026-10-14
 
 - Restore SQLite backups containing real verification executions into another
