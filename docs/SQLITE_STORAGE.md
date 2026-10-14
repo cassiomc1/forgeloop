@@ -4,7 +4,8 @@
 policy in [the release checklist](./RELEASE_CHECKLIST.md). It retains
 `soleSQLiteWriter: false`; complete transitive consumer closure, stable
 acceptance, physical power-loss proof, and external production cutover remain
-unclaimed. The RC is published only to npm `next`.
+unclaimed. The RC is published to npm `next`; the owner also authorizes existing RC2 as
+the default `latest` through a verified tag-only promotion.
 ForgeLoop is migrating machine-managed operational state from a hand-written
 filesystem transaction layer to a single SQLite database per project state
 root. This document records the implemented storage layer, its verified

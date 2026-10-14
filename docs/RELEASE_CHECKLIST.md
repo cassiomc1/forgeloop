@@ -7,8 +7,9 @@ it does not authorize publication.
 ## Bounded 2.0.0-rc.2 publication
 
 The owner approved short verification and an RC fallback on 2026-10-13. This
-candidate is published only to npm `next`; stable `latest` remains blocked while
-`soleSQLiteWriter` is false. A release candidate does not assert completed
+candidate is published to npm `next`. The owner subsequently authorized moving
+`latest` to the existing RC2 through a guarded tag-only promotion. Publishing a
+new stable version remains blocked while `soleSQLiteWriter` is false. A release candidate does not assert completed
 migration acceptance or production readiness.
 
 After npm rejected restricted RC1 publication with `E402`, the owner authorized
@@ -49,6 +50,16 @@ ancestry, tag `v2.0.0-rc.2`, dispatch `npm-publish.yml` with channel `next` and
 confirmation `PUBLISH PUBLIC PACKAGE`, then verify npm version, Git commit,
 tarball integrity, and provenance. Stable publishing retains full checks and
 additionally refuses incomplete sole-writer acceptance.
+
+## Owner-authorized RC2 default channel
+
+Dispatch `npm-publish.yml` on `main` with operation `promote-latest` and
+confirmation `POINT LATEST TO RC2`. This moves only `latest` to the already
+published public `2.0.0-rc.2`; it neither republishes nor modifies the RC2 tag.
+The promotion checks the exact release commit and downloaded SHA-512, refuses
+unexpected existing tags, and requires npm trusted-publisher `manageDistTags`
+authority. No credentials are logged or stored. The version remains an RC;
+stable SQLite acceptance and production readiness are still incomplete.
 
 ## ForgeLoop 2.0.0 candidate scope
 
