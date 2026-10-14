@@ -50,16 +50,16 @@ jobs:
         env:
           TYPESAFE_API_KEY: ${{ secrets.FORGELOOP_NPM_AUDIT_JEV_KEY }}
         run: |
-          mkdir -p "$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID"
+          mkdir -p "$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           if [ "$PACKAGE_SOURCE" = npm ]; then
             npm view "@cassiomc1/forgeloop@$FORGELOOP_AUDIT_VERSION" dist.integrity --json
             package_spec="@cassiomc1/forgeloop@$FORGELOOP_AUDIT_VERSION"
           else
-            npm pack --pack-destination "$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID"
-            package_spec="$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID/cassiomc1-forgeloop-$FORGELOOP_AUDIT_VERSION.tgz"
+            npm pack --pack-destination "$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+            package_spec="$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT/cassiomc1-forgeloop-$FORGELOOP_AUDIT_VERSION.tgz"
           fi
-          npm install --prefix "$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID/install" --no-audit --no-fund "$package_spec"
-          node scripts/npm-user-audit.mjs "$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID/install" "$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID/results"
+          npm install --prefix "$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT/install" --no-audit --no-fund "$package_spec"
+          node scripts/npm-user-audit.mjs "$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT/install" "$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT/results"
       - name: Install and test using native Windows PowerShell
         if: runner.os == 'Windows'
         shell: powershell
@@ -67,7 +67,7 @@ jobs:
           TYPESAFE_API_KEY: ${{ secrets.FORGELOOP_NPM_AUDIT_JEV_KEY }}
         run: |
           $ErrorActionPreference = 'Stop'
-          $auditRoot = Join-Path $env:RUNNER_TEMP "npm-user-$env:GITHUB_RUN_ID"
+          $auditRoot = Join-Path $env:RUNNER_TEMP "npm-user-$env:GITHUB_RUN_ID-$env:GITHUB_RUN_ATTEMPT"
           $installRoot = Join-Path $auditRoot 'install'
           $resultRoot = Join-Path $auditRoot 'results'
           New-Item -ItemType Directory -Force $auditRoot | Out-Null
@@ -87,6 +87,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: npm-user-audit-${{ matrix.os }}
-          path: ${{ runner.temp }}/npm-user-${{ github.run_id }}/results/report.json
+          name: npm-user-audit-${{ matrix.os }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/npm-user-${{ github.run_id }}-${{ github.run_attempt }}/results/report.json
           if-no-files-found: error
