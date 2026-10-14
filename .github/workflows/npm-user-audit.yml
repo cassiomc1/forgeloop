@@ -1,7 +1,7 @@
 name: Published npm new-user SQLite audit
 on:
   push:
-    branches: [codex/npm-user-audit-20261014, codex/npm-sqlite-recovery-fixes-20261014]
+    branches: [codex/npm-user-audit-20261014, codex/npm-sqlite-recovery-fixes-20261014, codex/rc4-windows-release-20261014]
   workflow_dispatch:
     inputs:
       package_source:
@@ -12,7 +12,7 @@ on:
       version:
         description: Exact expected package version
         type: string
-        default: 2.0.0-rc.3
+        default: 2.0.0-rc.4
 permissions:
   contents: read
 jobs:
@@ -23,7 +23,7 @@ jobs:
     timeout-minutes: 20
     env:
       PACKAGE_SOURCE: ${{ inputs.package_source || 'candidate' }}
-      FORGELOOP_AUDIT_VERSION: ${{ inputs.version || '2.0.0-rc.3' }}
+      FORGELOOP_AUDIT_VERSION: ${{ inputs.version || '2.0.0-rc.4' }}
     strategy:
       fail-fast: false
       max-parallel: 1

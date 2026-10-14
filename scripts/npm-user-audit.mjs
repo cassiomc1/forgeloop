@@ -29,7 +29,7 @@ async function check(name, fn) {
   catch (e) { report.checks.push({ name, status: 'FAIL', error: e.message }); }
   writeFileSync(path.join(root,'report.json'), JSON.stringify(report,null,2));
 }
-await check('published-version', () => { assert.equal(report.package,process.env.FORGELOOP_AUDIT_VERSION || '2.0.0-rc.3'); run(['--version']); run(['protocol-info','--json']); });
+await check('published-version', () => { assert.equal(report.package,process.env.FORGELOOP_AUDIT_VERSION || '2.0.0-rc.4'); run(['--version']); run(['protocol-info','--json']); });
 await check('live-jev-health', () => { assert.equal(run(['decision-status','--health','--json']).json.health.status,'healthy'); });
 await check('fresh-git-init', () => {
   const r = spawnSync('git',['init',project],{encoding:'utf8'}); assert.equal(r.status,0);
