@@ -4,6 +4,24 @@ This is the current release checklist for the PolyForm Noncommercial-licensed
 `@cassiomc1/forgeloop` package. It is a preparation and verification checklist;
 it does not authorize publication.
 
+## Runtime corrections after RC2
+
+RC3 and later candidates with runtime changes require fresh full repository
+verification and the clean-user audit on Windows, macOS and Linux. The bounded
+source-equivalence shortcut below applies only to RC1 and RC2. Stable SQLite
+acceptance remains separate; a passing new-user audit does not change
+`soleSQLiteWriter` or authorize a stable 2.x release. Candidates publish to
+`next` under the existing release-channel policy.
+
+The `Published npm new-user SQLite audit` workflow supports `candidate` and
+`npm` package sources. Before a PR, test the packed candidate in an isolated
+installation, home directory and project on each platform. After publication,
+dispatch the same workflow with source `npm` and the exact new version. Require
+every check to pass, including live Jev health, concurrent task creation,
+SQLite integrity and a completed-task backup restored to a fresh directory.
+Supply `FORGELOOP_NPM_AUDIT_JEV_KEY` through GitHub Actions secrets and remove
+temporary credentials after the runs finish.
+
 ## Bounded 2.0.0-rc.2 publication
 
 The owner approved short verification and an RC fallback on 2026-10-13. This

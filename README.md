@@ -11,9 +11,9 @@
 [![Package smoke](https://github.com/cassiomc1/forgeloop/actions/workflows/package-smoke.yml/badge.svg?branch=main)](https://github.com/cassiomc1/forgeloop/actions/workflows/package-smoke.yml)
 [![Release notes](https://github.com/cassiomc1/forgeloop/actions/workflows/release-notes.yml/badge.svg?branch=main)](https://github.com/cassiomc1/forgeloop/actions/workflows/release-notes.yml)
 
-ForgeLoop is the deterministic governor for AI-assisted engineering. Jev provides bounded System One semantic input; the host coding model provides System Two implementation. ForgeLoop owns lifecycle, claims, gates, evidence, completion, recovery, and publication truth.
+ForgeLoop governs AI-assisted engineering. Jev supplies bounded semantic input; the host model implements changes. ForgeLoop owns lifecycle, claims, gates, evidence, completion, recovery, and publication truth.
 
-Operational sources: [`DOCS_INDEX.md`](./DOCS_INDEX.md); [`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md) is canonical; [`PROTOCOL_INTEGRATION.md`](./PROTOCOL_INTEGRATION.md) defines discovery; [`PROJECT_PROFILE.md`](./PROJECT_PROFILE.md) stores project facts; [`GUIDE_ROUTER.md`](./GUIDE_ROUTER.md) selects guides.
+Sources: [`DOCS_INDEX.md`](./DOCS_INDEX.md); canonical [`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md); discovery [`PROTOCOL_INTEGRATION.md`](./PROTOCOL_INTEGRATION.md); project facts [`PROJECT_PROFILE.md`](./PROJECT_PROFILE.md); guides [`GUIDE_ROUTER.md`](./GUIDE_ROUTER.md).
 
 ## Where should I start?
 
@@ -33,7 +33,6 @@ Operational sources: [`DOCS_INDEX.md`](./DOCS_INDEX.md); [`LOOP_ENGINEERING.md`]
 - **Troubleshooting & error codes** → [`docs/TROUBLESHOOTING.md`](./docs/TROUBLESHOOTING.md)
 - **Code attestation & revision coverage** → [`docs/CODE_ATTESTATION.md`](./docs/CODE_ATTESTATION.md)
 - **System architecture & safety** → [`LOOP_SYSTEM_DESIGN.md`](./LOOP_SYSTEM_DESIGN.md) & [`THREAT_MODEL.md`](./THREAT_MODEL.md)
-- **Documentation index & ownership** → [`DOCS_INDEX.md`](./DOCS_INDEX.md)
 
 ## Real execution proof
 

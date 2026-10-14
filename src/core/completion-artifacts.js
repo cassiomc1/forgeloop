@@ -124,6 +124,19 @@ function commandProvenanceError(message = "Observed command evidence requires a 
   return artifactError("E_COMMAND_PROVENANCE_UNATTESTED", message, [ARTIFACT_PATHS.receipt]);
 }
 
+async function validateExecutionProjectRoot({ target, taskId, check, execution, protocolProjectRoot, allowForeignCwd, executionArtifacts }) {
+  if (allowForeignCwd || path.resolve(protocolProjectRoot) === path.resolve(target)) return;
+  const { isRetainedRestoreExecution } = await import("../storage/restore-execution-provenance.js");
+  const restored = !executionArtifacts && await isRetainedRestoreExecution(target, execution, { taskId });
+  if (!restored) {
+    throw artifactError(
+      "E_EXECUTION_REF_INVALID",
+      "Execution artifact protocol project root does not match the current target",
+      [taskId ? taskExecutionPath(taskId, check.executionRef) : ARTIFACT_PATHS.executionDirectory],
+    );
+  }
+}
+
 /**
  * Revalidate the ForgeLoop-owned execution artifact behind an observed command
  * check. This is intentionally asynchronous so completion and audit can verify
@@ -194,13 +207,7 @@ export async function validateCheckExecutionProvenance(check, {
       [taskId ? taskExecutionPath(taskId, check.executionRef) : ARTIFACT_PATHS.executionDirectory],
     );
   }
-  if (!allowForeignCwd && path.resolve(protocolProjectRoot) !== path.resolve(target)) {
-    throw artifactError(
-      "E_EXECUTION_REF_INVALID",
-      "Execution artifact protocol project root does not match the current target",
-      [taskId ? taskExecutionPath(taskId, check.executionRef) : ARTIFACT_PATHS.executionDirectory],
-    );
-  }
+  await validateExecutionProjectRoot({ target, taskId, check, execution, protocolProjectRoot, allowForeignCwd, executionArtifacts });
   if (check.status === "passed" && (execution.status !== "passed" || execution.exitCode !== 0)) {
     throw artifactError(
       "E_EXECUTION_REF_INVALID",

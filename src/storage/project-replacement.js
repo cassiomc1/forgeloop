@@ -77,7 +77,7 @@ export async function resumeProjectReplacementPreparation(target, { operationId,
     if (intent.phase === "PREPARING") {
       await ensurePreparedRestoreSnapshot(target, current.root, intent, { journalFilename: "replacement-intent.json" });
       await withVerifiedProjectStorageBackup(await assertSafePath(current.root, "snapshot"), async retained => {
-        await validateMigrationDatabase(retained.db, { target: retained.root, packageRoot });
+        await validateMigrationDatabase(retained.db, { target: retained.root, packageRoot, archivedExecutions: true });
         await withVerifiedProjectStorageBackup(intent.source, source => {
           if (canonicalFingerprint(source.manifest) !== intent.sourceFingerprint
             || canonicalFingerprint(logicalSnapshot(source.db)) !== canonicalFingerprint(logicalSnapshot(retained.db))) throw invalid("Replacement recovery snapshot differs from recorded source");
@@ -99,7 +99,7 @@ export async function resumeProjectReplacementPreparation(target, { operationId,
 export async function replaceActiveProjectStorage(source, target, { writersQuiesced = false, packageRoot = getPackageRoot() } = {}) {
   if (writersQuiesced !== true) throw Object.assign(new Error("Exclude writers and close their database connections before active replacement"), { code: "E_STORAGE_MIGRATION_QUIESCENCE_REQUIRED" });
   return withVerifiedProjectStorageBackup(source, async ({ db, root, manifest }) => {
-    await validateMigrationDatabase(db, { target: root, packageRoot });
+    await validateMigrationDatabase(db, { target: root, packageRoot, archivedExecutions: true });
     const relative = path.relative(path.resolve(target), root).split(path.sep).join("/");
     if (REPLACEMENT_ACTIVE_ROOTS.some(name => relative === name || relative.startsWith(`${name}/`))) throw invalid("Replacement source cannot be archived outgoing operational state");
     return withStorageMaintenance(target, async () => {
@@ -119,7 +119,7 @@ export async function replaceActiveProjectStorage(source, target, { writersQuies
       const snapshot = await assertSafePath(operationRoot, "snapshot");
       await backupProjectStorage(db, root, snapshot);
       await withVerifiedProjectStorageBackup(snapshot, async retained => {
-        await validateMigrationDatabase(retained.db, { target: retained.root, packageRoot });
+        await validateMigrationDatabase(retained.db, { target: retained.root, packageRoot, archivedExecutions: true });
         await withVerifiedProjectStorageBackup(root, current => {
           if (canonicalFingerprint(current.manifest) !== intent.sourceFingerprint
             || canonicalFingerprint(logicalSnapshot(current.db)) !== canonicalFingerprint(logicalSnapshot(retained.db))) throw invalid("Incoming source changed during replacement preparation");

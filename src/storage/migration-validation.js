@@ -26,7 +26,7 @@ function artifactSchema(row) {
 }
 
 /** Validate imported payloads with their existing protocol schemas and rules. */
-export async function validateMigrationDatabase(db, { target, packageRoot }) {
+export async function validateMigrationDatabase(db, { target, packageRoot, archivedExecutions = false }) {
   const schemas = new Map();
   const validate = async (text, name, label, taskId = null) => {
     if (!name) throw Object.assign(new Error(`Unmapped operational artifact: ${label}`), { code: "E_STORAGE_MIGRATION_UNMAPPED_SOURCE" });
@@ -55,13 +55,13 @@ export async function validateMigrationDatabase(db, { target, packageRoot }) {
       validator?.(value);
     }
   }
-  return withOperationalStore({ db, target }, async () => {
+  return withOperationalStore({ db, target, readOnly: true }, async () => {
     const tasks = [];
     for (const row of db.prepare("SELECT task_id FROM tasks ORDER BY task_id").iterate()) {
       const state = await readWorkState(target, { taskId: row.task_id, packageRoot });
       for (const check of state?.checks ?? []) {
         if (check.provenance === "FORGELOOP_EXECUTED") {
-          await validateCheckExecutionProvenance(check, { target, packageRoot, taskId: row.task_id });
+          await validateCheckExecutionProvenance(check, { target, packageRoot, taskId: row.task_id, allowForeignCwd: archivedExecutions });
         }
       }
       const ledger = await validateEventLedger(target, packageRoot, { taskId: row.task_id });

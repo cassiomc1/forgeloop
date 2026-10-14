@@ -1,7 +1,8 @@
 import { publishAttachmentFile, verifyAttachmentFile } from "./attachment-files.js";
 import { insertVerifiedAttachmentReference, validateAttachmentReference } from "./attachment-references.js";
 import path from "node:path";
-import { randomUUID, createHash } from "node:crypto";
+import { randomUUID, createHash, randomInt } from "node:crypto";
+import { setTimeout as delay } from "node:timers/promises";
 import { operationalContext, getOperationalStore } from "./operational-context.js";
 import { canonicalFingerprint } from "../core/artifacts.js";
 import { taskStorageKey } from "../core/task-identity.js";
@@ -547,7 +548,10 @@ async function commitPreparedStore(store, packageRoot) {
   for (let refresh = 0; ; refresh += 1) {
     try { store.commit(); return; }
     catch (error) {
-      if (error.code !== "E_STORAGE_CATALOG_CHANGED" || refresh >= 3) throw error;
+      if (error.code !== "E_STORAGE_CATALOG_CHANGED" || refresh >= 16) throw error;
+      // Spread simultaneous creators before refreshing their authoritative
+      // claim inputs. The prepared command and external effects are not replayed.
+      await delay(Math.min(5 * (2 ** refresh), 100) + randomInt(0, 20));
       store.reads.delete("task-catalog");
       const { discoverTasks } = await import("../core/task-discovery.js");
       const { assertNoScopeConflicts } = await import("../core/task-scope.js");

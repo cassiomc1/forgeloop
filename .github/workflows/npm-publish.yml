@@ -29,7 +29,7 @@ concurrency:
 jobs:
   verify:
     if: github.event_name == 'workflow_dispatch' && inputs.operation != 'promote-latest' && inputs.confirm == 'PUBLISH PUBLIC PACKAGE'
-    runs-on: ${{ inputs.channel == 'next' && 'ubuntu-latest' || fromJSON('["self-hosted", "Linux", "X64", "forgeloop-linux-remote"]') }}
+    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
     timeout-minutes: 60
     permissions:
       contents: read
@@ -73,7 +73,7 @@ jobs:
           console.log(`${packageJson.name}@${packageJson.version} is not published`);
           NODE
       - name: Lint Markdown
-        if: steps.release_mode.outputs.rc != 'true'
+        if: steps.release_mode.outputs.bounded_rc != 'true'
         uses: DavidAnson/markdownlint-cli2-action@21c1be1b93ad9ed58fa840aacc3f279cde2a72ff # v24.2.0
         with:
           globs: |
@@ -81,9 +81,10 @@ jobs:
             **/*.{md,markdown}
             #vendor/archify/**
       - name: Check links
-        if: steps.release_mode.outputs.rc != 'true'
-        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        if: steps.release_mode.outputs.bounded_rc != 'true'
+        uses: ./.github/actions/lychee
         with:
+          linuxTarget: musl
           args: --config .lychee.toml './**/*.md'
           fail: true
         env:
@@ -91,33 +92,33 @@ jobs:
       - name: Install locked Node toolchain
         run: npm ci --ignore-scripts
       - name: Verify RC baseline evidence
-        if: steps.release_mode.outputs.rc == 'true'
+        if: steps.release_mode.outputs.bounded_rc == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/check-rc-release.mjs --require-ci
       - name: Run bounded RC checks
-        if: steps.release_mode.outputs.rc == 'true'
+        if: steps.release_mode.outputs.bounded_rc == 'true'
         run: npm run release:quick
       - name: Enforce repository hygiene
-        if: steps.release_mode.outputs.rc != 'true'
+        if: steps.release_mode.outputs.bounded_rc != 'true'
         run: npm run repository:hygiene
       - name: Enforce dependency policy
-        if: steps.release_mode.outputs.rc != 'true'
+        if: steps.release_mode.outputs.bounded_rc != 'true'
         run: npm run dependency:policy
       - name: Lint JavaScript
-        if: steps.release_mode.outputs.rc != 'true'
+        if: steps.release_mode.outputs.bounded_rc != 'true'
         run: npm run lint
       - name: Measure test coverage
-        if: steps.release_mode.outputs.rc != 'true'
+        if: steps.release_mode.outputs.bounded_rc != 'true'
         run: npm run coverage
       - name: Enforce critical-module coverage
-        if: steps.release_mode.outputs.rc != 'true'
+        if: steps.release_mode.outputs.bounded_rc != 'true'
         run: npm run critical-coverage:check
       - name: Verify package contents
-        if: steps.release_mode.outputs.rc != 'true'
+        if: steps.release_mode.outputs.bounded_rc != 'true'
         run: npm run pack:check
       - name: Inspect package contents
-        if: steps.release_mode.outputs.rc != 'true'
+        if: steps.release_mode.outputs.bounded_rc != 'true'
         run: |
           npm pack --dry-run --json > package-dry-run.json
           node --input-type=module <<'NODE'
@@ -148,13 +149,13 @@ jobs:
           console.log(`Inspected ${paths.length} package files (${report.size} bytes packed)`);
           NODE
       - name: Smoke-test packed package
-        if: steps.release_mode.outputs.rc != 'true'
+        if: steps.release_mode.outputs.bounded_rc != 'true'
         run: npm run pack:smoke
       - name: Verify documentation conformance
-        if: steps.release_mode.outputs.rc != 'true'
+        if: steps.release_mode.outputs.bounded_rc != 'true'
         run: npm run docs:check
       - name: Run repository validators
-        if: steps.release_mode.outputs.rc != 'true'
+        if: steps.release_mode.outputs.bounded_rc != 'true'
         run: |
           python3 -c 'import sys; assert sys.version_info >= (3, 9), "Python 3.9+ is required"'
           python3 -m unittest discover -s tests -v
@@ -214,7 +215,7 @@ jobs:
       - name: Install locked Node toolchain
         run: npm ci --ignore-scripts
       - name: Recheck RC baseline before publication
-        if: steps.release_mode.outputs.rc == 'true'
+        if: steps.release_mode.outputs.bounded_rc == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/check-rc-release.mjs --require-ci

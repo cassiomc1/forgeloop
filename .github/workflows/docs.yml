@@ -50,13 +50,15 @@ jobs:
       - name: Select bounded source-equivalent RC documentation policy
         id: release_mode
         run: |
-          version="$(node -p "JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version")"
-          if [[ "$version" == 2.0.0-rc.* ]]; then
-            node scripts/check-rc-release.mjs
-            echo "rc=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "rc=false" >> "$GITHUB_OUTPUT"
-          fi
+          node --input-type=module <<'NODE'
+          import { appendFileSync, readFileSync } from "node:fs";
+          import { usesBoundedRcVerification } from "./scripts/check-release-channel.mjs";
+          import { checkRcRelease } from "./scripts/check-rc-release.mjs";
+          const version = JSON.parse(readFileSync("package.json", "utf8")).version;
+          const bounded = usesBoundedRcVerification(version);
+          if (bounded) checkRcRelease();
+          appendFileSync(process.env.GITHUB_OUTPUT, `rc=${bounded}\n`);
+          NODE
       - name: Validate documentation and diagrams
         run: npm run docs:check
       - name: Lint Markdown

@@ -3,6 +3,7 @@
 import { execFileSync } from "node:child_process";
 import { appendFile, readFile } from "node:fs/promises";
 import { checkRcRelease } from "./check-rc-release.mjs";
+import { usesBoundedRcVerification } from "./check-release-channel.mjs";
 
 const DOCS_SCRIPT_PATH = /^scripts\/(?:check-documentation|generate-documentation|documentation-diagram|generate_documentation_reference|validate_documentation|run-docs-check|validate_markdown|CI_VALIDATORS)/u;
 const SKILL_GENERATOR_PATH = /^scripts\/generate-forgeloop-skill\.mjs$/u;
@@ -165,7 +166,7 @@ async function writeGitHubOutputs(result) {
   const outputPath = process.env.GITHUB_OUTPUT;
   if (!outputPath) throw new Error("--github-output requires GITHUB_OUTPUT");
   const packageJson = JSON.parse(await readFile("package.json", "utf8"));
-  const rcQuick = /^2\.0\.0-rc\./u.test(packageJson.version);
+  const rcQuick = usesBoundedRcVerification(packageJson.version);
   if (rcQuick) checkRcRelease();
   const values = [
     ["rc_quick", rcQuick],

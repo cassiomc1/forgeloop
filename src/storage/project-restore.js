@@ -92,7 +92,7 @@ export async function restoreProjectStorageToFreshProject(source, target, { writ
           if (canonicalFingerprint(current.manifest) !== canonicalFingerprint(sourceManifest)
             || canonicalFingerprint(logicalSnapshot(current.db)) !== canonicalFingerprint(logicalSnapshot(snapshot))) throw invalid("Source backup changed during restore preparation");
         });
-        await validateMigrationDatabase(snapshot, { target: retained, packageRoot });
+        await validateMigrationDatabase(snapshot, { target: retained, packageRoot, archivedExecutions: true });
         const binding = { operationId, databaseSchemaVersion: readStorageMeta(snapshot).schema_version,
           sourceInventoryFingerprint: canonicalFingerprint({ database: manifest.databaseSha256, inventory: manifest.inventorySha256, references: manifest.references }) };
         Object.assign(journal, { phase: "READY", binding, snapshotFingerprint: canonicalFingerprint(manifest) });
@@ -111,7 +111,7 @@ async function publishReadyRestore(target, operationRoot, journal, { packageRoot
   const persist = () => writeFileAtomic(journalPath, `${JSON.stringify(journal, null, 2)}\n`);
   const { operationId, binding } = journal;
   return withVerifiedProjectStorageBackup(retained, async ({ db: snapshot, manifest }) => {
-    await validateMigrationDatabase(snapshot, { target: retained, packageRoot });
+    await validateMigrationDatabase(snapshot, { target: retained, packageRoot, archivedExecutions: true });
     await assertOwnedStorageMaintenance(target);
     await verifyProjectRestoreJournal(target, operationId, { expectedOwnerId: await assertOwnedStorageMaintenance(target) });
     await assertRestorePublicationLayout(target, snapshot);
@@ -186,7 +186,7 @@ async function validatePreparedRestore(target, root, journal, packageRoot) {
     await withVerifiedProjectStorageBackup(journal.source, async source => {
       if (canonicalFingerprint(source.manifest) !== journal.sourceFingerprint
         || canonicalFingerprint(logicalSnapshot(source.db)) !== canonicalFingerprint(logicalSnapshot(snapshot))) throw invalid("Prepared restore differs from its recorded source backup");
-      await validateMigrationDatabase(snapshot, { target: snapshotPath, packageRoot });
+      await validateMigrationDatabase(snapshot, { target: snapshotPath, packageRoot, archivedExecutions: true });
     });
     await assertOwnedStorageMaintenance(target);
     Object.assign(journal, { phase: "READY", snapshotFingerprint: canonicalFingerprint(manifest), binding: {

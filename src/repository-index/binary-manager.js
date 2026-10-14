@@ -181,8 +181,14 @@ export function validateArchiveEntry(entry) {
   return normalized;
 }
 
+export function resolveArchiveTool(archive, { platform = process.platform, env = process.env } = {}) {
+  // Windows ships a ZIP-capable bsdtar. Git's GNU tar can shadow it on PATH.
+  if (platform === "win32") return path.win32.join(env.SystemRoot || "C:\\Windows", "System32", "tar.exe");
+  return archive === "zip" ? "unzip" : "tar";
+}
+
 async function listArchiveEntries(archivePath, { archive = "tar.gz", execFileImpl = nodeExecFile } = {}) {
-  const listCommand = archive === "zip" && process.platform !== "win32" ? "unzip" : "tar";
+  const listCommand = resolveArchiveTool(archive);
   const archiveName = path.basename(archivePath);
   const listArgs = listCommand === "unzip" ? ["-Z1", archiveName] : ["-tf", archiveName];
   try {
@@ -195,7 +201,7 @@ async function listArchiveEntries(archivePath, { archive = "tar.gz", execFileImp
 
 async function extractArchive(archivePath, extractionDirectory, { archive = "tar.gz", execFileImpl = nodeExecFile } = {}) {
   await listArchiveEntries(archivePath, { archive, execFileImpl });
-  const extractCommand = archive === "zip" && process.platform !== "win32" ? "unzip" : "tar";
+  const extractCommand = resolveArchiveTool(archive);
   const destination = path.relative(path.dirname(archivePath), extractionDirectory).replaceAll("\\", "/") || ".";
   const extractArgs = extractCommand === "unzip"
     ? ["-q", path.basename(archivePath), "-d", destination]
