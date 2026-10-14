@@ -137,7 +137,7 @@ Structural Quality documentation's packaged diagram references. The
 package-boundary tests also assert
 that every registered guide path, including all language specialists, is
 present in the candidate. The manual, explicitly authorized publication workflow runs the same smoke
-gate before `npm publish --provenance --access restricted`.
+gate before `npm publish --provenance --access public`.
 Publication therefore remains owned by the authorized manual GitHub Actions
-workflow and uses restricted npm access; local package inspection proves the
+workflow and uses public npm access for the core package; local package inspection proves the
 candidate boundary but does not publish it.

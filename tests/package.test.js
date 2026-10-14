@@ -331,7 +331,7 @@ test("release workflow requires an OIDC-compatible provenance publishing step", 
   assert.ok(Number(setup.with["node-version"]) >= 24);
   const publish = job.steps.find(step => step.run?.includes("npm publish"));
   assert.match(publish.run, /npm publish[^\n]*--provenance/u);
-  assert.match(publish.run, /--access restricted/u);
+  assert.match(publish.run, /--access public/u);
   assert.deepEqual(job.needs, "verify", "publication must depend on completed verification");
   const verification = workflow.jobs.verify;
   assert.ok(verification.steps.some(step => step.run?.includes("npm run pack:smoke")), "verification must smoke-test the packed package before publishing");
@@ -410,12 +410,12 @@ test("required validation context rejects failed, unexpected, or missing prerequ
   }));
 });
 
-test("private package metadata declares the repository license and integration types", async () => {
+test("public core and restricted MCP metadata declare the repository license and integration types", async () => {
   const packageJson = JSON.parse(await readFile("package.json", "utf8"));
   const mcpPackageJson = JSON.parse(await readFile("integrations/mcp/package.json", "utf8"));
   assert.equal(packageJson.license, "PolyForm-Noncommercial-1.0.0");
   assert.equal(mcpPackageJson.license, "PolyForm-Noncommercial-1.0.0");
-  assert.equal(packageJson.publishConfig.access, "restricted");
+  assert.equal(packageJson.publishConfig.access, "public");
   assert.equal(mcpPackageJson.publishConfig.access, "restricted");
   assert.equal(packageJson.private, undefined);
   assert.equal(mcpPackageJson.private, undefined);

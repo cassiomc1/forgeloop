@@ -10,7 +10,7 @@ import { assertTestSummary } from "../scripts/run-rc-tests.mjs";
 
 function fixture() {
   const baselinePackage = { version: "2.0.0", scripts: { test: "node --test" }, dependencies: { example: "1.0.0" }, publishConfig: { access: "restricted" } };
-  return { baselinePackage, currentPackage: { ...structuredClone(baselinePackage), version: "2.0.0-rc.1", scripts: { ...baselinePackage.scripts, ...RC_SCRIPTS } },
+  return { baselinePackage, currentPackage: { ...structuredClone(baselinePackage), version: "2.0.0-rc.1", publishConfig: { access: "public" }, scripts: { ...baselinePackage.scripts, ...RC_SCRIPTS } },
     baselineLock: { version: "2.0.0", packages: { "": { version: "2.0.0" }, dependency: { integrity: "fixed" } } },
     currentLock: { version: "2.0.0-rc.1", packages: { "": { version: "2.0.0-rc.1" }, dependency: { integrity: "fixed" } } },
     baselineFiles: { "src/cli.js": "fixed" }, currentFiles: { "src/cli.js": "fixed" } };
@@ -31,6 +31,8 @@ test("RC gate refuses stable versions, source drift, added runtime files and dep
     value => { value.currentPackage.dependencies.example = "2.0.0"; },
     value => { value.currentLock.packages.dependency.integrity = "changed"; },
     value => { value.currentPackage.scripts.test = "echo skipped"; },
+    value => { value.currentPackage.publishConfig.access = "restricted"; },
+    value => { value.currentPackage.publishConfig.registry = "https://untrusted.invalid"; },
     value => { value.currentLock.version = "different"; },
   ]) {
     const value = fixture(); mutate(value); assert.throws(() => validateRcSnapshot(value));
@@ -75,6 +77,8 @@ test("writer inventory records imports and potential handle/wrapper writes and r
 test("bounded RC publishing is explicit, targets next and keeps stable coverage verification", () => {
   const workflow = readFileSync(new URL("../.github/workflows/npm-publish.yml", import.meta.url), "utf8");
   assert.match(workflow, /channel:/u);
+  assert.match(workflow, /--access public/u);
+  assert.match(workflow, /PUBLISH PUBLIC PACKAGE/u);
   assert.match(workflow, /check-rc-release\.mjs --require-ci/u);
   assert.match(workflow, /npm run release:quick/u);
   assert.match(workflow, /npm run coverage/u);
