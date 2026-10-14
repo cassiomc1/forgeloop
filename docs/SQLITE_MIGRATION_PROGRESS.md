@@ -3589,7 +3589,6 @@ The focused test passes 1/1, changed-file ESLint passes, `verify:fast` passes 80
 
 `soleSQLiteWriter` remains false because complete transitive consumer closure is unproven. The accepted hosted performance receipt remains bound to `207f7e6`, not this source. Current-source hosted parity, complete supported-platform/release evidence, external-target cutover evidence and final protocol acceptance remain open. No tag, PR, merge, publication or live data migration is claimed here.
 
-
 ### Increment 840: bounded RC release policy
 
 The owner approved execution of the short-release plan on 2026-10-13, including

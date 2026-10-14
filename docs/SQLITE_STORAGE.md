@@ -1,6 +1,5 @@
 # SQLite Storage Migration
 
-
 **Release candidate:** `2.0.0-rc.1` uses the owner-approved bounded publication
 policy in [the release checklist](./RELEASE_CHECKLIST.md). It retains
 `soleSQLiteWriter: false`; complete transitive consumer closure, stable
