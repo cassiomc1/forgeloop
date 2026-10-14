@@ -19,11 +19,13 @@ export function validateRcSnapshot({ baselinePackage, currentPackage, baselineLo
   const oldPackage = structuredClone(baselinePackage);
   const newPackage = structuredClone(currentPackage);
   delete oldPackage.version; delete newPackage.version;
+  if (newPackage.publishConfig?.access !== "public") throw new Error("RC core publication requires owner-authorized public access");
+  oldPackage.publishConfig.access = "public";
   for (const [name, command] of Object.entries(RC_SCRIPTS)) {
     if (newPackage.scripts[name] !== command) throw new Error(`Missing or changed RC command: ${name}`);
     delete newPackage.scripts[name];
   }
-  if (canonical(oldPackage) !== canonical(newPackage)) throw new Error("RC package metadata or dependencies changed beyond version and approved scripts");
+  if (canonical(oldPackage) !== canonical(newPackage)) throw new Error("RC package metadata or dependencies changed beyond version, approved scripts and public access");
   const normalizeLock = value => {
     const copy = structuredClone(value);
     delete copy.version; delete copy.packages[""].version;

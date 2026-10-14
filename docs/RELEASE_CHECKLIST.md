@@ -4,12 +4,16 @@ This is the current release checklist for the PolyForm Noncommercial-licensed
 `@cassiomc1/forgeloop` package. It is a preparation and verification checklist;
 it does not authorize publication.
 
-## Bounded 2.0.0-rc.1 publication
+## Bounded 2.0.0-rc.2 publication
 
 The owner approved short verification and an RC fallback on 2026-10-13. This
 candidate is published only to npm `next`; stable `latest` remains blocked while
 `soleSQLiteWriter` is false. A release candidate does not assert completed
 migration acceptance or production readiness.
+
+After npm rejected restricted RC1 publication with `E402`, the owner authorized
+public core-package access. RC2 preserves the immutable RC1 tag; the MCP
+companion is not published and retains restricted access.
 
 `npm run release:quick` is the RC PR and publishing check. Each check group has
 an enforced three-minute timeout; timeout or failure refuses release. It runs
@@ -21,7 +25,7 @@ or stable-release validation policy.
 
 `scripts/check-rc-release.mjs` requires all 593 runtime/schema/integration files
 to match baseline `14008f58f8ad255692997ce3fff359591fb695d1`. Root package
-metadata may change only its RC version and the three approved RC scripts.
+metadata may change only its RC version, the three approved RC scripts, and owner-authorized public access.
 Resolved dependency locks must be unchanged apart from local package versions;
 MCP metadata may only admit the explicit RC peer and bind the local core version.
 Changed runtime or dependency bytes refuse this fast path.
@@ -41,8 +45,8 @@ transitive-authority review remain incomplete. The inventory explicitly keeps
 `soleSQLiteWriter` to true.
 
 RC release sequence: reviewed PR checks pass, merge preserving baseline
-ancestry, tag `v2.0.0-rc.1`, dispatch `npm-publish.yml` with channel `next` and
-confirmation `PUBLISH PRIVATE PACKAGE`, then verify npm version, Git commit,
+ancestry, tag `v2.0.0-rc.2`, dispatch `npm-publish.yml` with channel `next` and
+confirmation `PUBLISH PUBLIC PACKAGE`, then verify npm version, Git commit,
 tarball integrity, and provenance. Stable publishing retains full checks and
 additionally refuses incomplete sole-writer acceptance.
 
@@ -143,7 +147,7 @@ deployment, and live data migration remain separate actions.
 - [ ] `package.json` and `package-lock.json` contain the same package version.
 - [ ] The package metadata declares the intended license
       (`PolyForm-Noncommercial-1.0.0`), includes the official license text,
-      and retains restricted publication access.
+      and retains public core-package publication access.
 - [ ] `PROTOCOL_VERSION` and the integration API version remain compatible.
 - [ ] `npm run release:identity` passes for the candidate version.
 - [ ] No release tag or registry version collision exists.

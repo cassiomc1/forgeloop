@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       confirm:
-        description: "Type PUBLISH PRIVATE PACKAGE to authorize this manual release"
+        description: "Type PUBLISH PUBLIC PACKAGE to authorize this manual release"
         required: true
         type: string
       channel:
@@ -23,7 +23,7 @@ concurrency:
 
 jobs:
   verify:
-    if: github.event_name == 'workflow_dispatch' && inputs.confirm == 'PUBLISH PRIVATE PACKAGE'
+    if: github.event_name == 'workflow_dispatch' && inputs.confirm == 'PUBLISH PUBLIC PACKAGE'
     runs-on: ${{ inputs.channel == 'next' && 'ubuntu-latest' || fromJSON('["self-hosted", "Linux", "X64", "forgeloop-linux-remote"]') }}
     timeout-minutes: 60
     permissions:
@@ -161,7 +161,7 @@ jobs:
 
   publish:
     needs: verify
-    if: github.event_name == 'workflow_dispatch' && inputs.confirm == 'PUBLISH PRIVATE PACKAGE'
+    if: github.event_name == 'workflow_dispatch' && inputs.confirm == 'PUBLISH PUBLIC PACKAGE'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -216,4 +216,4 @@ jobs:
       - name: Publish with trusted publishing
         env:
           NPM_DIST_TAG: ${{ inputs.channel }}
-        run: npm publish --provenance --access restricted --tag "$NPM_DIST_TAG"
+        run: npm publish --provenance --access public --tag "$NPM_DIST_TAG"

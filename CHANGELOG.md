@@ -2,9 +2,17 @@
 
 ## Unreleased
 
+## 2.0.0-rc.2 - 2026-10-14
+
+- Publish the owner-authorized public core package to npm `next` through GitHub
+  with provenance. Preserve the immutable RC1 tag after its restricted npm
+  publication was refused with `E402`; the MCP companion remains restricted.
+- Keep runtime, resolved dependencies, fail-closed storage and stable acceptance
+  unchanged. Validate the access policy with bounded package and release checks.
+
 ## 2.0.0-rc.1 - 2026-10-13
 
-- Publish the SQLite core as an explicit release candidate on npm `next`.
+- Prepare the SQLite core as an explicit release candidate for npm `next`.
   Stable 2.0.0 migration acceptance remains incomplete; `soleSQLiteWriter`
   remains false, and no production data cutover is claimed.
 - Add bounded RC verification, a source/import/writer inventory drift guard,
