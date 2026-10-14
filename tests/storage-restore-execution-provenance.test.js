@@ -41,3 +41,18 @@ test("restore preserves exact execution history and refuses foreign records outs
     await assert.rejects(validateCheckExecutionProvenance(check, { target: unbound, taskId, packageRoot }), { code: "E_EXECUTION_REF_INVALID" });
   } finally { await source.cleanup(); await removeTempTree(target); await removeTempTree(unbound); }
 });
+
+test("active replacement retains outgoing execution history and validates incoming historical roots", async () => {
+  const source = await buildCanonicalDiagnosisProject({ taskId: "incoming-history", includePassingCheck: true });
+  const outgoing = await buildCanonicalDiagnosisProject({ taskId: "outgoing-history", includePassingCheck: true });
+  try {
+    const backed = await executeForgeLoopCommand({ command: "storage-backup", projectPath: source.target, input: { destination: "backup", includeAttachments: true } });
+    assert.equal(backed.ok, true, JSON.stringify(backed));
+    const restored = await executeForgeLoopCommand({ command: "storage-restore", projectPath: outgoing.target,
+      input: { source: path.join(source.target, "backup"), writersQuiesced: true, replaceActive: true } });
+    assert.equal(restored.ok, true, JSON.stringify(restored));
+    assert.equal(restored.result.replaced, true);
+    const state = await readWorkState(outgoing.target, { taskId: source.taskId, packageRoot: source.packageRoot });
+    for (const check of state.checks) await validateCheckExecutionProvenance(check, { target: outgoing.target, taskId: source.taskId, packageRoot: source.packageRoot });
+  } finally { await source.cleanup(); await outgoing.cleanup(); }
+});

@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { RC_BASELINE, RC_SCRIPTS, validateRcSnapshot, validateBaselineRun, validateMcpMetadata, collectRuntimeFiles } from "../scripts/check-rc-release.mjs";
 import { inventorySource, assertInventory } from "../scripts/storage-writer-inventory.mjs";
-import { validateReleaseChannel } from "../scripts/check-release-channel.mjs";
+import { validateReleaseChannel, usesBoundedRcVerification } from "../scripts/check-release-channel.mjs";
 import { assertTestSummary } from "../scripts/run-rc-tests.mjs";
 
 function fixture() {
@@ -15,6 +15,12 @@ function fixture() {
     currentLock: { version: "2.0.0-rc.1", packages: { "": { version: "2.0.0-rc.1" }, dependency: { integrity: "fixed" } } },
     baselineFiles: { "src/cli.js": "fixed" }, currentFiles: { "src/cli.js": "fixed" } };
 }
+
+test("runtime correction candidates require fresh full verification rather than RC1/RC2 baseline reuse", () => {
+  for (const version of ["2.0.0-rc.1", "2.0.0-rc.2"]) assert.equal(usesBoundedRcVerification(version), true);
+  for (const version of ["2.0.0-rc.3", "2.0.0-rc.12", "2.0.0", "1.14.0"]) assert.equal(usesBoundedRcVerification(version), false);
+  assert.equal(validateReleaseChannel("2.0.0-rc.3", "next", { soleSQLiteWriter: false }).rc, true);
+});
 
 test("RC equivalence accepts metadata-only candidate and makes no stable/coverage claim", () => {
   const result = validateRcSnapshot(fixture());

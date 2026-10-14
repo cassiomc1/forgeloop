@@ -55,7 +55,7 @@ export async function validateMigrationDatabase(db, { target, packageRoot, archi
       validator?.(value);
     }
   }
-  return withOperationalStore({ db, target }, async () => {
+  return withOperationalStore({ db, target, readOnly: true }, async () => {
     const tasks = [];
     for (const row of db.prepare("SELECT task_id FROM tasks ORDER BY task_id").iterate()) {
       const state = await readWorkState(target, { taskId: row.task_id, packageRoot });

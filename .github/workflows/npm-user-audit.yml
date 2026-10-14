@@ -38,6 +38,11 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: '24.19.0'
+      - name: Verify restore provenance and release-policy regressions
+        shell: bash
+        run: |
+          npm ci --ignore-scripts
+          node --import=./scripts/test-semantic-provider-loader.mjs --test tests/storage-restore-execution-provenance.test.js tests/storage-restore-command.test.js tests/rc-release-policy.test.js
       - name: Install published npm artifact and test fresh user project
         if: runner.os != 'Windows'
         shell: bash

@@ -2,9 +2,16 @@ import { canonicalFingerprint } from "../core/artifacts.js";
 import { readStorageVersionMarker } from "./storage-marker.js";
 import { verifyProjectRestoreJournal } from "./restore-journal.js";
 import { withVerifiedProjectStorageBackup } from "./project-backup.js";
+import { operationalContext } from "./operational-context.js";
 
 /** Historical roots remain valid only for exact records in the bound snapshot. */
 export async function isRetainedRestoreExecution(target, execution, { taskId } = {}) {
+  // Replacement journals also audit incoming archives. Those read-only audits
+  // must not select their snapshot as the caller's live operational project.
+  return operationalContext.run(null, () => verifyRetainedExecution(target, execution, taskId));
+}
+
+async function verifyRetainedExecution(target, execution, taskId) {
   const marker = await readStorageVersionMarker(target);
   if (!marker?.operationId) return false;
   let retained;

@@ -80,7 +80,7 @@ export async function prepareActiveStorageReplacement(target, operationId, { wri
     const backup = await assertSafePath(root, "backup");
     await backupProjectStorage(db, target, backup);
     await withVerifiedProjectStorageBackup(backup, async retained => {
-      await validateMigrationDatabase(retained.db, { target: retained.root, packageRoot });
+      await validateMigrationDatabase(retained.db, { target: retained.root, packageRoot, archivedExecutions: true });
       const logicalFingerprint = canonicalFingerprint(logicalSnapshot(retained.db));
       if (logicalFingerprint !== canonicalFingerprint(logicalSnapshot(db))) throw invalid("Outgoing state changed while its retained backup was prepared");
       Object.assign(manifest, { backupFingerprint: canonicalFingerprint(retained.manifest), logicalFingerprint });
