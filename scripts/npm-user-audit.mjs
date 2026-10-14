@@ -126,6 +126,14 @@ await check('verification-review-and-completion', () => {
   assert.equal(run(['complete','--task','user-task','--json']).json.status,'VALID');
   assert.equal(run(['next','--task','user-task','--json']).json.terminal,true);
 });
+await check('completed-task-backup-restore-to-new-directory', () => {
+  run(['storage-backup','--destination','completed-task-backup','--include-attachments','--json']);
+  const target=path.join(root,'restored-completed-project');mkdirSync(target,{recursive:true});
+  const restored=run(['storage-restore','--source',path.join(project,'completed-task-backup'),'--writers-quiesced','--json'],{target});
+  assert.equal(restored.json.active,true);
+  assert.equal(run(['task-list','--json'],{target}).json.total,9);
+  assert.equal(run(['doctor','--json'],{target}).json.storage.integrity.ok,true);
+});
 run(['index-stop','--json'],{allowFailure:true});
 report.status=report.checks.every(c=>c.status==='PASS')?'PASS':'FAIL';
 writeFileSync(path.join(root,'report.json'),JSON.stringify(report,null,2));
