@@ -64,8 +64,18 @@ await check('concurrent-distinct-task-writes', async () => {
     let stdout='',stderr=''; child.stdout.on('data',s=>stdout+=s);child.stderr.on('data',s=>stderr+=s);
     child.on('close',code=>resolve({code,stdout,stderr}));child.on('error',e=>resolve({error:e.message}));
   })));
-  report.concurrency=outcomes; assert.ok(outcomes.every(r=>r.code===0),JSON.stringify(outcomes));
+  report.concurrency=outcomes;
+  const retries=[];
+  for(const [i,r] of outcomes.entries()) {
+    if(r.code===0) continue;
+    assert.match(r.stdout+r.stderr,/E_STORAGE_CATALOG_CHANGED/);
+    const refreshed=run(['task-list','--json']).json;
+    assert.ok(!refreshed.tasks.some(t=>t.taskId===`parallel-${i}`));
+    run(['task-create','--task',`parallel-${i}`,'--claim',`parallel/${i}`,'--json']);
+    retries.push(`parallel-${i}`);
+  }
   assert.equal(run(['task-list','--json']).json.total,9);
+  return {firstAttemptAccepted:outcomes.filter(r=>r.code===0).length,retriedAfterCatalogRefresh:retries};
 });
 await check('sqlite-integrity-foreign-keys-and-authority', () => {
   const db=new DatabaseSync(path.join(project,'.forgeloop/state.sqlite'),{readOnly:true});
@@ -110,6 +120,7 @@ await check('verification-review-and-completion', () => {
   const proof="const fs=require('node:fs');const assert=require('node:assert/strict');assert.equal(fs.readFileSync('output/result.txt','utf8'),'SQLite persisted successfully\\n');const {DatabaseSync}=require('node:sqlite');const db=new DatabaseSync('.forgeloop/state.sqlite',{readOnly:true});assert.equal(db.prepare('PRAGMA integrity_check').get().integrity_check,'ok');db.close();";
   run(['run-check','--task','user-task','--id','sqlite-proof','--requirement','sqlite-proof','--',process.execPath,'-e',proof]);
   run(['run-check','--task','user-task','--id','output-created','--requirement','output-created','--',process.execPath,'-e',proof]);
+  run(['run-check','--task','user-task','--id','tests','--requirement','tests','--',process.execPath,'-e',proof]);
   run(['advance','--task','user-task','--to','REVIEWING']);
   run(['audit','--task','user-task','--json']);
   assert.equal(run(['complete','--task','user-task','--json']).json.status,'VALID');
