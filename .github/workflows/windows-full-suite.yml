@@ -66,7 +66,13 @@ jobs:
             git config core.autocrlf false
             git checkout-index --force --all
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-            node --input-type=module -e 'import { writeFileSync } from "node:fs"; import { execFileSync } from "node:child_process"; for (const file of ["integrations/generic-ci/verify.sh", "integrations/mcp/LICENSE", "src/integration.d.ts"]) writeFileSync(file, execFileSync("git", ["cat-file", "blob", "HEAD:" + file]));'
+            @'
+          import { writeFileSync } from "node:fs";
+          import { execFileSync } from "node:child_process";
+          for (const file of ["integrations/generic-ci/verify.sh", "integrations/mcp/LICENSE", "src/integration.d.ts"]) {
+            writeFileSync(file, execFileSync("git", ["cat-file", "blob", "HEAD:" + file]));
+          }
+          '@ | node --input-type=module
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
             npm run release:quick
           } else {
