@@ -78,7 +78,9 @@ not establish project identity. Public project evidence remains v1.
 ## Distribution and license
 
 GitHub hosts source and issues. The core npm package is publicly available;
-the MCP companion retains restricted distribution.
+the MCP companion retains restricted distribution. The owner-selected default
+`latest` channel targets `2.0.0-rc.2`, which remains a release candidate with
+incomplete stable SQLite acceptance.
 ForgeLoop-owned source and documentation are licensed under the
 [PolyForm Noncommercial License 1.0.0](./LICENSE). Commercial use is not granted
 by this license. Third-party notices are documented in

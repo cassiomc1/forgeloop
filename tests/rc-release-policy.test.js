@@ -89,9 +89,9 @@ test("bounded RC publishing is explicit, targets next and keeps stable coverage 
 });
 
 test("short test receipt refuses missing cases, failed cases, skips and partial output", () => {
-  const output = "# tests 36\n# pass 36\n# fail 0\n# skipped 0\n# todo 0\n";
+  const output = "# tests 40\n# pass 40\n# fail 0\n# skipped 0\n# todo 0\n";
   assert.doesNotThrow(() => assertTestSummary(output));
-  for (const changed of [output.replace("tests 36", "tests 35"), output.replace("skipped 0", "skipped 1"), output.replace("fail 0", "fail 1"), "partial"]) assert.throws(() => assertTestSummary(changed));
+  for (const changed of [output.replace("tests 40", "tests 39"), output.replace("skipped 0", "skipped 1"), output.replace("fail 0", "fail 1"), "partial"]) assert.throws(() => assertTestSummary(changed));
 });
 
 test("runtime collection includes hidden and untracked source rather than relying on Git ignore rules", () => {

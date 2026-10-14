@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add the owner-authorized tag-only promotion of existing RC2 to npm `latest`.
+  Preserve the published artifact, `next`, and incomplete stable acceptance.
+
 ## 2.0.0-rc.2 - 2026-10-14
 
 - Publish the owner-authorized public core package to npm `next` through GitHub

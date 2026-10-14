@@ -3,8 +3,13 @@ name: Publish npm package
 on:
   workflow_dispatch:
     inputs:
+      operation:
+        description: Publish a version or promote the owner-approved existing RC2
+        type: choice
+        default: publish
+        options: [publish, promote-latest]
       confirm:
-        description: "Type PUBLISH PUBLIC PACKAGE to authorize this manual release"
+        description: "Type PUBLISH PUBLIC PACKAGE or POINT LATEST TO RC2 for the selected operation"
         required: true
         type: string
       channel:
@@ -23,7 +28,7 @@ concurrency:
 
 jobs:
   verify:
-    if: github.event_name == 'workflow_dispatch' && inputs.confirm == 'PUBLISH PUBLIC PACKAGE'
+    if: github.event_name == 'workflow_dispatch' && inputs.operation != 'promote-latest' && inputs.confirm == 'PUBLISH PUBLIC PACKAGE'
     runs-on: ${{ inputs.channel == 'next' && 'ubuntu-latest' || fromJSON('["self-hosted", "Linux", "X64", "forgeloop-linux-remote"]') }}
     timeout-minutes: 60
     permissions:
@@ -161,7 +166,7 @@ jobs:
 
   publish:
     needs: verify
-    if: github.event_name == 'workflow_dispatch' && inputs.confirm == 'PUBLISH PUBLIC PACKAGE'
+    if: github.event_name == 'workflow_dispatch' && inputs.operation != 'promote-latest' && inputs.confirm == 'PUBLISH PUBLIC PACKAGE'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -217,3 +222,26 @@ jobs:
         env:
           NPM_DIST_TAG: ${{ inputs.channel }}
         run: npm publish --provenance --access public --tag "$NPM_DIST_TAG"
+
+  promote-latest:
+    if: inputs.operation == 'promote-latest' && inputs.confirm == 'POINT LATEST TO RC2'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Check out promotion policy
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - name: Promote verified existing RC2 to latest
+        env:
+          PROMOTION_CONFIRM: ${{ inputs.confirm }}
+        run: node scripts/promote-rc-latest.mjs
