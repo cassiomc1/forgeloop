@@ -5,6 +5,13 @@
 - Validate RC3 installation and SQLite backup recovery across all supported
   operating systems; release details follow below.
 
+## 2.0.0-rc.4 - 2026-10-14
+
+- Correct the archive-repair test to assert the platform-selected system tool
+  on Windows. Preserve every repair and checksum assertion.
+- Keep the existing RC3 tag after its publication was cancelled; RC4 carries
+  the same runtime corrections with full Windows-suite validation.
+
 ## 2.0.0-rc.3 - 2026-10-14
 
 - Restore SQLite backups containing real verification executions into another

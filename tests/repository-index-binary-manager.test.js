@@ -143,7 +143,7 @@ test("setup repairs a tampered managed binary only after verifying the replaceme
       assetPath: archivePath,
       spawnImpl: fakeVersionSpawn("1.0.3"),
       execFileImpl(command, args, options, callback) {
-        assert.equal(command, "tar");
+        assert.equal(command, resolveArchiveTool("tar.gz"));
         assert.equal(path.isAbsolute(args[1]), false);
         assert.equal(args[1].includes(":"), false);
         assert.equal(path.isAbsolute(options.cwd), true);
