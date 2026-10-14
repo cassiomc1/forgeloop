@@ -31,7 +31,10 @@ export function validateRcSnapshot({ baselinePackage, currentPackage, baselineLo
   };
   if (currentLock.version !== currentPackage.version || currentLock.packages[""].version !== currentPackage.version) throw new Error("RC lock version mismatch");
   if (normalizeLock(baselineLock) !== normalizeLock(currentLock)) throw new Error("RC dependency lock changed");
-  if (canonical(baselineFiles) !== canonical(currentFiles)) throw new Error("RC runtime source changed; baseline evidence cannot be reused");
+  if (canonical(baselineFiles) !== canonical(currentFiles)) {
+    const changed = [...new Set([...Object.keys(baselineFiles), ...Object.keys(currentFiles)])].filter(file => baselineFiles[file] !== currentFiles[file]).sort();
+    throw new Error(`RC runtime source changed (${changed.length} paths): ${changed.slice(0, 12).join(", ")}; baseline evidence cannot be reused`);
+  }
   return { status: "RC_ONLY_SOURCE_EQUIVALENT", baseline: RC_BASELINE, version: currentPackage.version,
     runtimeFiles: Object.keys(currentFiles).length, stableAcceptance: false, coverageClaim: "NO_NEW_FULL_COVERAGE_CLAIM" };
 }

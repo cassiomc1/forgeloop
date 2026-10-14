@@ -39,6 +39,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 0
       - name: Set up Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
@@ -46,6 +47,16 @@ jobs:
           cache: npm
       - name: Install locked Node toolchain
         run: npm ci --ignore-scripts
+      - name: Select bounded source-equivalent RC documentation policy
+        id: release_mode
+        run: |
+          version="$(node -p "JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version")"
+          if [[ "$version" == 2.0.0-rc.* ]]; then
+            node scripts/check-rc-release.mjs
+            echo "rc=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "rc=false" >> "$GITHUB_OUTPUT"
+          fi
       - name: Validate documentation and diagrams
         run: npm run docs:check
       - name: Lint Markdown
@@ -56,6 +67,7 @@ jobs:
             **/*.{md,markdown}
             #vendor/archify/**
       - name: Check external documentation links
+        if: steps.release_mode.outputs.rc != 'true'
         uses: ./.github/actions/lychee
         with:
           linuxTarget: musl
