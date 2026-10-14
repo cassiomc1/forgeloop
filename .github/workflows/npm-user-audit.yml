@@ -17,6 +17,7 @@ permissions:
   contents: read
 jobs:
   audit:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     name: npm SQLite (${{ matrix.os }})
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 20
@@ -84,7 +85,7 @@ jobs:
           exit $LASTEXITCODE
       - name: Upload observed results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: npm-user-audit-${{ matrix.os }}
           path: ${{ runner.temp }}/npm-user-${{ github.run_id }}/results/report.json

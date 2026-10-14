@@ -178,7 +178,7 @@ test("Node test jobs use the requested hosts and preserve the platform matrices"
       } else {
         assert.deepEqual(job["runs-on"], labels[id === "test" && name === "windows-full-suite.yml" ? "Windows" : "Linux"], `${name}/${id} test location`);
       }
-      assert.match(job.if, /github\.event_name != 'pull_request'|inputs\.confirm == 'PUBLISH PRIVATE PACKAGE'/u, `${name}/${id} admission`);
+      assert.match(job.if, /github\.event_name != 'pull_request'|inputs\.confirm == 'PUBLISH (?:PRIVATE|PUBLIC) PACKAGE'/u, `${name}/${id} admission`);
     }
   }
   const compatibility = parse(await readWorkflow("node-compat.yml"));
@@ -203,7 +203,10 @@ test("Node test jobs use the requested hosts and preserve the platform matrices"
     assert.equal(jobs.publish["runs-on"], "ubuntu-latest");
     assert.equal(jobs.verify.permissions["id-token"], undefined);
     assert.equal(jobs.publish.permissions["id-token"], "write");
-    assert.ok(jobs.publish.steps.some(step => step.run === "npm publish --provenance --access restricted"));
+    const publishCommand = name === "npm-publish.yml"
+      ? "npm publish --provenance --access public --tag \"$NPM_DIST_TAG\""
+      : "npm publish --provenance --access restricted";
+    assert.ok(jobs.publish.steps.some(step => step.run === publishCommand));
     assert.ok(!jobs.verify.steps.some(step => step.run?.includes("npm publish")));
   }
 });

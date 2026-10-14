@@ -29,7 +29,7 @@ concurrency:
 jobs:
   verify:
     if: github.event_name == 'workflow_dispatch' && inputs.operation != 'promote-latest' && inputs.confirm == 'PUBLISH PUBLIC PACKAGE'
-    runs-on: ${{ inputs.channel == 'next' && 'ubuntu-latest' || fromJSON('["self-hosted", "Linux", "X64", "forgeloop-linux-remote"]') }}
+    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
     timeout-minutes: 60
     permissions:
       contents: read

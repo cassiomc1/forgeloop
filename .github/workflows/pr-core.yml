@@ -51,7 +51,7 @@ jobs:
     name: Unit tests (Node ${{ matrix.node-version }}, shard ${{ matrix.shard }}/4)
     needs: classify
     if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true') }}
-    runs-on: ${{ needs.classify.outputs.rc_quick == 'true' && 'ubuntu-latest' || fromJSON('["self-hosted", "Linux", "X64", "forgeloop-linux-remote"]') }}
+    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
     timeout-minutes: 30
     strategy:
       fail-fast: false
@@ -125,7 +125,7 @@ jobs:
     name: Coverage report (Node 24)
     needs: [classify, core]
     if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (needs.classify.outputs.source == 'true') && needs.classify.outputs.rc_quick != 'true' }}
-    runs-on: ${{ needs.classify.outputs.rc_quick == 'true' && 'ubuntu-latest' || fromJSON('["self-hosted", "Linux", "X64", "forgeloop-linux-remote"]') }}
+    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
     timeout-minutes: 15
     steps:
       - name: Check out source changes
@@ -154,7 +154,7 @@ jobs:
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
     name: Lint and dependency policy
     needs: classify
-    runs-on: ${{ needs.classify.outputs.rc_quick == 'true' && 'ubuntu-latest' || fromJSON('["self-hosted", "Linux", "X64", "forgeloop-linux-remote"]') }}
+    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
     timeout-minutes: 15
     steps:
       - name: Check out source changes
@@ -185,7 +185,7 @@ jobs:
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
     name: Verify generated Archify diagram
     needs: classify
-    runs-on: ${{ needs.classify.outputs.rc_quick == 'true' && 'ubuntu-latest' || fromJSON('["self-hosted", "Linux", "X64", "forgeloop-linux-remote"]') }}
+    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
     timeout-minutes: 30
     steps:
       - name: Check out repository for documentation changes
@@ -248,7 +248,7 @@ jobs:
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
     name: audit
     needs: classify
-    runs-on: ${{ needs.classify.outputs.rc_quick == 'true' && 'ubuntu-latest' || fromJSON('["self-hosted", "Linux", "X64", "forgeloop-linux-remote"]') }}
+    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
     timeout-minutes: 15
     steps:
       - name: Check out repository for audit changes
@@ -275,7 +275,7 @@ jobs:
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
     name: tarball smoke (ubuntu-latest)
     needs: classify
-    runs-on: ${{ needs.classify.outputs.rc_quick == 'true' && 'ubuntu-latest' || fromJSON('["self-hosted", "Linux", "X64", "forgeloop-linux-remote"]') }}
+    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
     timeout-minutes: 30
     steps:
       - name: Check out repository for package changes

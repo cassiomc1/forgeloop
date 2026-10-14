@@ -30,7 +30,7 @@ Task creation revalidates write claims atomically. If the catalog changes while
 a command is prepared, RC3 refreshes authoritative claim inputs with bounded
 backoff and jitter without replaying the command or its external effects.
 Overlapping claims still fail. Sustained contention can exhaust the retry
-bound and return `E_STORAGE_CATALOG_CHANGED`; inspect fresh task discovery
+bound and return a catalog-change refusal; inspect fresh task discovery
 before deciding whether to retry.
 
 This guide provides symptom-first recovery procedures for common ForgeLoop protocol, state, and verification issues.
