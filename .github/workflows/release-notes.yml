@@ -35,4 +35,11 @@ jobs:
       - name: Create GitHub release with generated notes
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" --verify-tag --generate-notes --title "$GITHUB_REF_NAME" "$RELEASE_TARBALL.sha256"
+        run: |
+          actual="$(node -p "JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version")"
+          test "${GITHUB_REF_NAME#v}" = "$actual"
+          if [[ "$GITHUB_REF_NAME" == *-* ]]; then
+            gh release create "$GITHUB_REF_NAME" --verify-tag --generate-notes --prerelease --latest=false --title "$GITHUB_REF_NAME" "$RELEASE_TARBALL.sha256"
+          else
+            gh release create "$GITHUB_REF_NAME" --verify-tag --generate-notes --title "$GITHUB_REF_NAME" "$RELEASE_TARBALL.sha256"
+          fi

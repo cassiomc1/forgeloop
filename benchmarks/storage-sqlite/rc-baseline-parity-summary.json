@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "run": "https://github.com/cassiomc1/forgeloop/actions/runs/38483369676",
+  "sourceRevision": "14008f58f8ad255692997ce3fff359591fb695d1",
+  "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+  "comparisonSha256": "58ab979e0bf0ae3eb5db1099d3df32d960a4c5fbdcee2256a01918110470ab26",
+  "sourceUnchanged": true,
+  "sourceAdmission": {
+    "status": "VALIDATED",
+    "currentRevision": "14008f58f8ad255692997ce3fff359591fb695d1",
+    "baselineRevision": "ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5",
+    "currentTrackedFiles": 3522,
+    "baselineTrackedFiles": 2261
+  },
+  "observations": [
+    {
+      "phase": "before",
+      "status": "PASS",
+      "temporaryEntries": [],
+      "unreadable": 0,
+      "competing": 0,
+      "orphans": 0
+    },
+    {
+      "phase": "after",
+      "status": "PASS",
+      "temporaryEntries": [],
+      "unreadable": 0,
+      "competing": 0,
+      "orphans": 0
+    }
+  ],
+  "workers": [
+    {
+      "status": "VALIDATED",
+      "backend": "native",
+      "tasks": 1000,
+      "pid": 3831,
+      "terminalStage": "CLOSED",
+      "terminalSequence": 51,
+      "journalRecords": 51
+    },
+    {
+      "status": "VALIDATED",
+      "backend": "baseline",
+      "tasks": 1000,
+      "pid": 3963,
+      "terminalStage": "CLOSED",
+      "terminalSequence": 51,
+      "journalRecords": 51
+    }
+  ],
+  "parent": {
+    "status": "VALIDATED",
+    "pid": 2569,
+    "terminalStage": "COMPLETED",
+    "terminalSequence": 21,
+    "journalRecords": 21
+  },
+  "ownerApprovedParityCriterion": "PASS",
+  "originalReleaseThresholdsVerified": false,
+  "results": [
+    {
+      "operation": "taskListTool",
+      "tasks": 1000,
+      "events": 10990,
+      "outputParity": true,
+      "fixtureAdmission": "VALIDATED",
+      "nativeP95Ms": 1691.2451890000084,
+      "baselineP95Ms": 2969.6505279999983,
+      "sampleCounts": {
+        "native": 200,
+        "baseline": 200
+      }
+    },
+    {
+      "operation": "projectTasksResource",
+      "tasks": 1000,
+      "events": 10990,
+      "outputParity": true,
+      "fixtureAdmission": "VALIDATED",
+      "nativeP95Ms": 1677.8889879999915,
+      "baselineP95Ms": 2979.1032340000384,
+      "sampleCounts": {
+        "native": 200,
+        "baseline": 200
+      }
+    }
+  ],
+  "limitations": [
+    "Measured at baseline 14008f5, not the final RC tag; the RC runtime equivalence guard separately binds unchanged code.",
+    "Original complete release thresholds are not verified; this summary evaluates only the owner-approved MCP output/worker/lower-p95 criterion.",
+    "Consumer closure and physical power-loss/full release acceptance remain incomplete."
+  ]
+}
