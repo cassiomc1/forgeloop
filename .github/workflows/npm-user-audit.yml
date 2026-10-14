@@ -1,0 +1,41 @@
+name: Published npm new-user SQLite audit
+on:
+  push:
+    branches: [codex/npm-user-audit-20261014]
+permissions:
+  contents: read
+jobs:
+  audit:
+    name: npm SQLite (${{ matrix.os }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        include:
+          - { os: Linux, runner: [self-hosted, Linux, X64, forgeloop-linux-remote] }
+          - { os: macOS, runner: [self-hosted, macOS, ARM64, forgeloop-macos-local] }
+          - { os: Windows, runner: [self-hosted, Windows, X64, forgeloop-windows-remote] }
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24.19.0'
+      - name: Install published npm artifact and test fresh user project
+        shell: bash
+        env:
+          TYPESAFE_API_KEY: ${{ secrets.FORGELOOP_NPM_AUDIT_JEV_KEY }}
+        run: |
+          npm view @cassiomc1/forgeloop dist-tags dist.integrity --json
+          npm install --prefix "$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID/install" --no-audit --no-fund @cassiomc1/forgeloop@2.0.0-rc.2
+          node scripts/npm-user-audit.mjs "$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID/install" "$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID/results"
+      - name: Upload observed results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-user-audit-${{ matrix.os }}
+          path: ${{ runner.temp }}/npm-user-${{ github.run_id }}/results/report.json
+          if-no-files-found: error
