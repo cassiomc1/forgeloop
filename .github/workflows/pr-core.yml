@@ -17,6 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
+      rc_quick: ${{ steps.classify.outputs.rc_quick }}
       docs: ${{ steps.classify.outputs.docs }}
       docs_only: ${{ steps.classify.outputs.docs_only }}
       repository_index: ${{ steps.classify.outputs.repository_index }}
@@ -50,7 +51,7 @@ jobs:
     name: Unit tests (Node ${{ matrix.node-version }}, shard ${{ matrix.shard }}/4)
     needs: classify
     if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true') }}
-    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
+    runs-on: ${{ needs.classify.outputs.rc_quick == 'true' && 'ubuntu-latest' || fromJSON('["self-hosted", "Linux", "X64", "forgeloop-linux-remote"]') }}
     timeout-minutes: 30
     strategy:
       fail-fast: false
@@ -68,36 +69,39 @@ jobs:
             shard: 0
     steps:
       - name: Check out repository
-        if: ${{ (matrix.node-version == 24 && (needs.classify.outputs.docs_only != 'true' || matrix.shard == 1)) || (matrix.node-version == '24.19.0' && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true')) }}
+        if: ${{ (matrix.node-version == 24 && ((needs.classify.outputs.docs_only != 'true' && needs.classify.outputs.rc_quick != 'true') || matrix.shard == 1)) || (matrix.node-version == '24.19.0' && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true')) }}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
       - name: Set up Node.js
-        if: ${{ (matrix.node-version == 24 && (needs.classify.outputs.docs_only != 'true' || matrix.shard == 1)) || (matrix.node-version == '24.19.0' && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true')) }}
+        if: ${{ (matrix.node-version == 24 && ((needs.classify.outputs.docs_only != 'true' && needs.classify.outputs.rc_quick != 'true') || matrix.shard == 1)) || (matrix.node-version == '24.19.0' && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true')) }}
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
       - name: Install locked Node toolchain
-        if: ${{ (matrix.node-version == 24 && (needs.classify.outputs.docs_only != 'true' || matrix.shard == 1)) || (matrix.node-version == '24.19.0' && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true')) }}
+        if: ${{ (matrix.node-version == 24 && ((needs.classify.outputs.docs_only != 'true' && needs.classify.outputs.rc_quick != 'true') || matrix.shard == 1)) || (matrix.node-version == '24.19.0' && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true')) }}
         run: npm ci --ignore-scripts
       - name: Record Linux runner identity
-        if: ${{ (matrix.node-version == 24 && (needs.classify.outputs.docs_only != 'true' || matrix.shard == 1)) || (matrix.node-version == '24.19.0' && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true')) }}
+        if: ${{ (matrix.node-version == 24 && ((needs.classify.outputs.docs_only != 'true' && needs.classify.outputs.rc_quick != 'true') || matrix.shard == 1)) || (matrix.node-version == '24.19.0' && (needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true')) }}
         run: node --input-type=module -e 'import os from "node:os"; console.log(JSON.stringify({ platform:process.platform, architecture:process.arch, hostname:os.hostname(), revision:process.env.GITHUB_SHA }));'
       - name: Run the Node 24 unit suite shard with coverage
-        if: ${{ matrix.node-version == 24 && (needs.classify.outputs.docs_only != 'true' || matrix.shard == 1) }}
+        if: ${{ matrix.node-version == 24 && ((needs.classify.outputs.docs_only != 'true' && needs.classify.outputs.rc_quick != 'true') || matrix.shard == 1) }}
         env:
           DOCS_ONLY: ${{ needs.classify.outputs.docs_only }}
+          RC_QUICK: ${{ needs.classify.outputs.rc_quick }}
         run: |
-          if [ "$DOCS_ONLY" = "true" ]; then
+          if [ "$RC_QUICK" = "true" ]; then
+            npm run release:quick
+          elif [ "$DOCS_ONLY" = "true" ]; then
             npm run test:quick
           else
             export FORGELOOP_TEST_SHARD="${{ matrix.shard }}/4"
             npm run coverage:shard
           fi
       - name: Upload Node 24 coverage shard
-        if: ${{ matrix.node-version == 24 && needs.classify.outputs.docs_only != 'true' }}
+        if: ${{ matrix.node-version == 24 && (needs.classify.outputs.docs_only != 'true' && needs.classify.outputs.rc_quick != 'true') }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: coverage-shard-${{ matrix.shard }}
@@ -114,14 +118,14 @@ jobs:
         if: ${{ matrix.node-version == '24.19.0' && needs.classify.outputs.source != 'true' && needs.classify.outputs.node_compat != 'true' }}
         run: echo "Minimum Node 24.19.0 compatibility is not applicable for this change."
       - name: Node 24 shard not applicable
-        if: ${{ matrix.node-version == 24 && needs.classify.outputs.docs_only == 'true' && matrix.shard != 1 }}
+        if: ${{ matrix.node-version == 24 && (needs.classify.outputs.docs_only == 'true' || needs.classify.outputs.rc_quick == 'true') && matrix.shard != 1 }}
         run: echo "Additional Node 24 shards are not applicable for documentation-only changes."
 
   coverage-report:
     name: Coverage report (Node 24)
     needs: [classify, core]
-    if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (needs.classify.outputs.source == 'true') }}
-    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
+    if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (needs.classify.outputs.source == 'true') && needs.classify.outputs.rc_quick != 'true' }}
+    runs-on: ${{ needs.classify.outputs.rc_quick == 'true' && 'ubuntu-latest' || fromJSON('["self-hosted", "Linux", "X64", "forgeloop-linux-remote"]') }}
     timeout-minutes: 15
     steps:
       - name: Check out source changes
@@ -150,7 +154,7 @@ jobs:
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
     name: Lint and dependency policy
     needs: classify
-    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
+    runs-on: ${{ needs.classify.outputs.rc_quick == 'true' && 'ubuntu-latest' || fromJSON('["self-hosted", "Linux", "X64", "forgeloop-linux-remote"]') }}
     timeout-minutes: 15
     steps:
       - name: Check out source changes
@@ -181,7 +185,7 @@ jobs:
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
     name: Verify generated Archify diagram
     needs: classify
-    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
+    runs-on: ${{ needs.classify.outputs.rc_quick == 'true' && 'ubuntu-latest' || fromJSON('["self-hosted", "Linux", "X64", "forgeloop-linux-remote"]') }}
     timeout-minutes: 30
     steps:
       - name: Check out repository for documentation changes
@@ -210,7 +214,7 @@ jobs:
             **/*.{md,markdown}
             #vendor/archify/**
       - name: Check external documentation links
-        if: ${{ needs.classify.outputs.docs == 'true' }}
+        if: ${{ needs.classify.outputs.docs == 'true' && needs.classify.outputs.rc_quick != 'true' }}
         uses: ./.github/actions/lychee
         with:
           linuxTarget: musl
@@ -244,7 +248,7 @@ jobs:
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
     name: audit
     needs: classify
-    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
+    runs-on: ${{ needs.classify.outputs.rc_quick == 'true' && 'ubuntu-latest' || fromJSON('["self-hosted", "Linux", "X64", "forgeloop-linux-remote"]') }}
     timeout-minutes: 15
     steps:
       - name: Check out repository for audit changes
@@ -271,7 +275,7 @@ jobs:
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
     name: tarball smoke (ubuntu-latest)
     needs: classify
-    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
+    runs-on: ${{ needs.classify.outputs.rc_quick == 'true' && 'ubuntu-latest' || fromJSON('["self-hosted", "Linux", "X64", "forgeloop-linux-remote"]') }}
     timeout-minutes: 30
     steps:
       - name: Check out repository for package changes
@@ -289,12 +293,14 @@ jobs:
         if: ${{ needs.classify.outputs.package == 'true' }}
         run: npm ci --ignore-scripts
       - name: Install MCP test dependencies
-        if: ${{ needs.classify.outputs.package == 'true' }}
+        if: ${{ needs.classify.outputs.package == 'true' && needs.classify.outputs.rc_quick != 'true' }}
         run: npm run mcp:setup
       - name: Run Linux package and MCP smoke
         if: ${{ needs.classify.outputs.package == 'true' }}
+        env:
+          RC_QUICK: ${{ needs.classify.outputs.rc_quick }}
         run: |
-          npm run mcp:test
+          if [ "$RC_QUICK" != "true" ]; then npm run mcp:test; fi
           npm run mcp:pack:check
           npm run pack:smoke
       - name: Package smoke not applicable
@@ -319,7 +325,7 @@ jobs:
           REQUIRED_RESULTS: ${{ toJSON(needs) }}
           CORE_APPLICABLE: ${{ needs.classify.outputs.source == 'true' || needs.classify.outputs.node_compat == 'true' }}
           REPOSITORY_INDEX_APPLICABLE: ${{ needs.classify.outputs.repository_index }}
-          COVERAGE_APPLICABLE: ${{ needs.classify.outputs.source }}
+          COVERAGE_APPLICABLE: ${{ needs.classify.outputs.source == 'true' && needs.classify.outputs.rc_quick != 'true' }}
         run: |
           node --input-type=module <<'NODE'
           const needs = JSON.parse(process.env.REQUIRED_RESULTS);

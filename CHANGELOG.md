@@ -2,12 +2,26 @@
 
 ## Unreleased
 
+## 2.0.0-rc.1 - 2026-10-13
+
+- Publish the SQLite core as an explicit release candidate on npm `next`.
+  Stable 2.0.0 migration acceptance remains incomplete; `soleSQLiteWriter`
+  remains false, and no production data cutover is claimed.
+- Add bounded RC verification, a source/import/writer inventory drift guard,
+  exact runtime and resolved-dependency equivalence checks, and trusted
+  baseline Windows evidence. No new full coverage or p95 claim is made.
+- Keep stable publishing gated on sole-writer acceptance and full validation.
+  RC publishing requires `next`, matching tag/version, restricted access,
+  packed CLI/API/MCP smoke checks, and GitHub OIDC provenance.
+- Admit the 2.0.0 RC explicitly in the MCP companion peer metadata without
+  changing its runtime or resolved dependency versions.
+
 - Prepare the breaking ForgeLoop 2.0.0 storage release and MCP 1.0.0 companion.
   SQLite cutover requires explicit legacy-writer exclusion and retained-source
   validation; legacy filesystem apply and ledger index sidecars are retired.
   The minimum Node.js runtime is 24.19.0. MCP requires a core 2.x peer and uses
-  the local core only for development. Publication remains gated on the full
-  migration plan, platform checks, and measured performance/code-size evidence.
+  the local core only for development. Stable publication remains gated on migration acceptance; the RC uses the
+  explicitly bounded policy described in the release checklist.
 
 ## 1.14.0 - 2026-09-24
 
