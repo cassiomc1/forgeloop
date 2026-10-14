@@ -26,13 +26,28 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  release-mode:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      rc: ${{ steps.mode.outputs.rc }}
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Select bounded RC platform
+        id: mode
+        run: node -e 'const fs = require("fs"); const rc = /^2\.0\.0-rc\./.test(require("./package.json").version); fs.appendFileSync(process.env.GITHUB_OUTPUT, "rc=" + rc + "\n");'
   test:
+    needs: release-mode
     if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && inputs.suite != 'public-rollback' }}
     name: Windows full Node suite
-    runs-on: [self-hosted, Windows, X64, forgeloop-windows-remote]
+    runs-on: ${{ needs.release-mode.outputs.rc == 'true' && (github.event_name != 'workflow_dispatch' || inputs.suite == 'full') && 'windows-latest' || fromJSON('["self-hosted", "Windows", "X64", "forgeloop-windows-remote"]') }}
     timeout-minutes: 35
     steps:
       - name: Verify requested Windows host and Docker Linux runner identity
+        if: runner.environment == 'self-hosted'
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
