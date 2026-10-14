@@ -69,7 +69,7 @@ jobs:
             @'
           import { writeFileSync } from "node:fs";
           import { execFileSync } from "node:child_process";
-          for (const file of ["integrations/generic-ci/verify.sh", "integrations/mcp/LICENSE", "src/integration.d.ts"]) {
+          for (const file of ["LICENSE", "integrations/generic-ci/verify.sh", "integrations/mcp/LICENSE", "src/integration.d.ts"]) {
             writeFileSync(file, execFileSync("git", ["cat-file", "blob", "HEAD:" + file]));
           }
           '@ | node --input-type=module
