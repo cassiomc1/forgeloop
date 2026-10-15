@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "executionId": "exec-checkout-integration-tests",
+  "taskId": "TASK-003",
+  "checkId": "checkout-integration-tests",
+  "requirement": "Checkout integration tests pass",
+  "verificationCycle": 1,
+  "kind": "COMMAND_EXECUTION",
+  "executionKind": "VERIFICATION",
+  "argv": [
+    "npx",
+    "vitest",
+    "run",
+    "tests/checkout.test.ts"
+  ],
+  "protocolProjectRoot": "/workspace/forgeshop",
+  "cwd": "/workspace/forgeshop",
+  "executionIsolation": "NATIVE_PROJECT",
+  "isolation": {
+    "mode": "NATIVE_PROJECT",
+    "isolated": false,
+    "liveProjectWritable": true,
+    "networkPolicy": "INHERITED",
+    "environmentPolicy": "INHERITED"
+  },
+  "resolution": {
+    "resolutionMode": "direct",
+    "mayInstall": false,
+    "installer": null,
+    "tool": null
+  },
+  "startedAt": "2026-08-05T09:07:00.000Z",
+  "finishedAt": "2026-08-05T09:10:00.000Z",
+  "durationMs": 42000,
+  "termination": "exit",
+  "signal": null,
+  "stdoutSha256": "3689e8e1db8ddd0cea1fe4223c2a238a1fa79779117c50b1ed170c7ac8da0967",
+  "stderrSha256": "56509838a2644f6f075c9a362ab4ece6728f73ceada8295b585ce418c84ac611",
+  "status": "passed",
+  "exitCode": 0
+}

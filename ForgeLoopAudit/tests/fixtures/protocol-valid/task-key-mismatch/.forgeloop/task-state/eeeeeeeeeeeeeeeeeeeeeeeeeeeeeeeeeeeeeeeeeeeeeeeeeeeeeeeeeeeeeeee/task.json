@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "conformance-task-key-mismatch",
+  "taskKey": "5f40698f8cc949c30244b9d2216050f79422c3f16547c4ef9e00b580ef48a05d",
+  "createdAt": "2026-01-01T00:00:00.000Z",
+  "updatedAt": "2026-01-01T00:00:00.000Z",
+  "writeClaims": []
+}

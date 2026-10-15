@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://forgeloop.dev/schemas/task-descriptor.schema.json",
+  "title": "ForgeLoop Task Descriptor Schema",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "protocolVersion",
+    "taskId",
+    "taskKey",
+    "createdAt",
+    "updatedAt",
+    "writeClaims"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1,
+      "description": "Task descriptor schema version (must be 1)"
+    },
+    "protocolVersion": {
+      "type": "integer",
+      "const": 1,
+      "description": "ForgeLoop protocol version (must be 1)"
+    },
+    "taskId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Canonical human-readable task identifier"
+    },
+    "taskKey": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 hex digest of the canonical taskId (filesystem-safe namespace identifier)"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 UTC creation timestamp"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 UTC last updated timestamp"
+    },
+    "writeClaims": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Normalized project-relative path prefixes claimed for mutations by this task"
+    }
+  }
+}

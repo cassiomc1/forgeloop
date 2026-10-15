@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-002",
+  "contractFingerprint": "ee600048df668bf09a3ad628a42f9a8b8a9cc6872e3fe86ff187d9cfe44b2c13",
+  "routeFingerprint": "9fc57834bfa2b1d73067ed122a863da6a3636a3c31dcecbd6b91bfd15455da11",
+  "repositoryFingerprint": {
+    "branch": "main",
+    "head": "3f9c1d2e77a4b5089c6e12ab34f5d6e7890abcde"
+  },
+  "phase": "VERIFYING",
+  "revision": 0,
+  "selectedGuides": [
+    "test",
+    "design"
+  ],
+  "requiredGates": [
+    "unit-tests",
+    "typecheck"
+  ],
+  "satisfiedGates": [
+    "unit-tests",
+    "typecheck"
+  ],
+  "complianceMode": "standard",
+  "completedSteps": [
+    "Cart store",
+    "Storage adapter",
+    "Launch hydration"
+  ],
+  "pendingSteps": [
+    "Harden hydration against corrupted payloads",
+    "Re-run verification cycle"
+  ],
+  "checks": [
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "id": "cart-unit-tests",
+      "kind": "command",
+      "requirement": "Cart unit tests pass",
+      "status": "passed",
+      "evidenceKind": "NOT_VERIFIED",
+      "source": "vitest run",
+      "exitCode": 0,
+      "timestamp": "2026-08-04T10:20:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "id": "corrupt-cart-hydration",
+      "kind": "command",
+      "requirement": "Corrupted persisted carts are discarded safely",
+      "status": "failed",
+      "evidenceKind": "NOT_VERIFIED",
+      "source": "manual observation",
+      "timestamp": "2026-08-04T10:55:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "id": "typecheck",
+      "kind": "command",
+      "requirement": "TypeScript compiles without errors",
+      "status": "passed",
+      "evidenceKind": "NOT_VERIFIED",
+      "source": "tsc --noEmit",
+      "exitCode": 0,
+      "timestamp": "2026-08-04T10:58:00.000Z"
+    }
+  ],
+  "failures": [],
+  "blockers": [],
+  "verificationEvidence": [],
+  "evidenceCoverage": [
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "requirement": "Cart survives a simulated restart",
+      "requiredEvidence": [
+        "Cart survives a simulated restart"
+      ],
+      "observedEvidence": [
+        "Cart survives a simulated restart"
+      ],
+      "status": "COVERED"
+    },
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "requirement": "Corrupted carts are dropped with a warning",
+      "requiredEvidence": [
+        "Corrupted carts are dropped with a warning"
+      ],
+      "observedEvidence": [
+        "Corrupted carts are dropped with a warning"
+      ],
+      "details": {
+        "readinessStatus": "PARTIAL"
+      },
+      "status": "PARTIAL"
+    },
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "requirement": "Cart unit tests pass (8 cases)",
+      "requiredEvidence": [
+        "Cart unit tests pass (8 cases)"
+      ],
+      "observedEvidence": [
+        "Cart unit tests pass (8 cases)"
+      ],
+      "status": "COVERED"
+    },
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "requirement": "Hydration edge case regression test exists",
+      "requiredEvidence": [
+        "Hydration edge case regression test exists"
+      ],
+      "observedEvidence": [],
+      "status": "NOT_VERIFIED"
+    }
+  ],
+  "lastUpdated": "2026-08-04T11:02:00.000Z",
+  "previousPhase": "EXECUTING",
+  "verificationCycle": 1,
+  "lastCompletionAttempt": {
+    "status": "REJECTED",
+    "reasonCodes": [
+      "MISSING_VERIFICATION_EVIDENCE"
+    ],
+    "missingRequirementIds": [
+      "corrupt-cart-hydration"
+    ],
+    "verificationCycle": 1,
+    "receiptFingerprint": null,
+    "timestamp": "2026-08-04T11:00:00.000Z"
+  }
+}

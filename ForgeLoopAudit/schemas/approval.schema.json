@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/approval.schema.json",
+  "title": "ForgeLoop durable action approval artifact",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "taskId",
+    "approvalId",
+    "actionId",
+    "actionFingerprint",
+    "contractFingerprint",
+    "taskRevision",
+    "capability",
+    "status",
+    "requestedAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "taskId": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "approvalId": { "type": "string", "pattern": "^approval-[A-Za-z0-9_-]+$" },
+    "actionId": { "type": "string", "pattern": "^action-[A-Za-z0-9_-]+$" },
+    "actionFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "contractFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "taskRevision": { "type": "integer", "minimum": 0 },
+    "capability": {
+      "enum": [
+        "filesystem.read",
+        "filesystem.write",
+        "process.execute",
+        "dependency.install",
+        "network.read",
+        "network.write",
+        "repository.commit",
+        "repository.push",
+        "repository.pull_request",
+        "external.publish",
+        "external.delete",
+        "deployment.execute"
+      ]
+    },
+    "status": { "enum": ["PENDING", "APPROVED", "REJECTED"] },
+    "requestedAt": { "type": "string", "minLength": 1 },
+    "reason": { "oneOf": [{ "type": "string", "maxLength": 512 }, { "type": "null" }] },
+    "decision": { "enum": ["APPROVED", "REJECTED"] },
+    "resolvedAt": { "oneOf": [{ "type": "string", "minLength": 1 }, { "type": "null" }] },
+    "authorityKind": { "enum": ["CALLER_ACKNOWLEDGED", "HOST_ATTESTED"] },
+    "hostGrantRef": { "oneOf": [{ "type": "string", "maxLength": 256 }, { "type": "null" }] }
+  },
+  "additionalProperties": false
+}

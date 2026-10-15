@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/policy-snapshot.schema.json",
+  "title": "ForgeLoop task policy snapshot",
+  "type": "object",
+  "required": ["schemaVersion", "policyDigest", "rules"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "policyDigest": { "type": "string", "minLength": 1 },
+    "rules": { "type": "array", "items": { "type": ["string", "object"] } },
+    "baseline": { "type": "object" },
+    "baselineDigest": { "type": "string" },
+    "capabilityPolicyDigest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "capabilityPolicyFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "capturedAt": { "type": "string" }
+  },
+  "additionalProperties": false
+}

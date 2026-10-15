@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "contractFingerprint": "ee600048df668bf09a3ad628a42f9a8b8a9cc6872e3fe86ff187d9cfe44b2c13",
+  "input": {
+    "taskId": "TASK-002",
+    "project": "forgeshop"
+  },
+  "primary": "implementation",
+  "guides": [
+    "test",
+    "design"
+  ],
+  "reasons": {
+    "implementation": [
+      "Store plus adapter pattern"
+    ]
+  },
+  "excluded": {}
+}

@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "conformance-active-claims",
+  "contractFingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "repositoryFingerprint": {
+    "branch": "main",
+    "head": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "phase": "EXECUTING",
+  "selectedGuides": [],
+  "requiredGates": [],
+  "satisfiedGates": [],
+  "complianceMode": "standard",
+  "completedSteps": [],
+  "pendingSteps": [],
+  "checks": [],
+  "failures": [],
+  "blockers": [],
+  "verificationEvidence": [],
+  "evidenceCoverage": [],
+  "lastUpdated": "2026-01-01T00:00:00.000Z"
+}

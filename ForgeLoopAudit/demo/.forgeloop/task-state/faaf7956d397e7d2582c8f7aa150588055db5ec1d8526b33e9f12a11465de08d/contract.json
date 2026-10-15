@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-006",
+  "objective": "Review the checkout flow for security weaknesses before integration ships.",
+  "deliverables": [
+    "Threat model for checkout",
+    "Scan results with dispositions",
+    "Sign-off for TASK-003 integration"
+  ],
+  "constraints": [
+    "Findings must map to OWASP categories",
+    "No real credentials anywhere in the demo"
+  ],
+  "risks": [
+    "Review fatigue could miss injection paths"
+  ],
+  "verification": [
+    "Security scan reports no critical findings",
+    "Checkout flow reviewed against the threat model"
+  ],
+  "successCriteria": [
+    "No critical or high findings remain untriaged"
+  ],
+  "stopConditions": [
+    "Any critical finding halts the review until triaged"
+  ],
+  "unresolvedDecisions": [],
+  "sourceRefs": [
+    "src/checkout.ts"
+  ]
+}

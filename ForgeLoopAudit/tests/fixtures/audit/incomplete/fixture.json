@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "scenario": "incomplete",
+  "compatibilityMode": "INTEGRATION_V1",
+  "expected": { "canonicalStatus": "INCOMPLETE", "completionReadiness": "INCOMPLETE", "integrity": "VALID" }
+}

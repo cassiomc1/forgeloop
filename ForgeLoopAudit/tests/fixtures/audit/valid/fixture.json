@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "scenario": "valid",
+  "compatibilityMode": "INTEGRATION_V1",
+  "expected": { "canonicalStatus": "VALID", "integrity": "VALID", "completionReadiness": "VALID", "blockingFindings": 0 }
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/preflight.schema.json",
+  "title": "ForgeLoop preflight result",
+  "type": "object",
+  "required": ["schemaVersion", "protocolVersion", "taskId", "status", "profile", "contract", "routing", "requiredGates", "satisfiedGates", "errors"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "protocolVersion": { "const": 1 },
+    "taskId": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["READY", "BLOCKED"] },
+    "profile": { "type": "object" },
+    "contract": { "type": "object" },
+    "routing": { "type": "object" },
+    "requiredGates": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "satisfiedGates": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "errors": { "type": "array", "items": { "type": "object" } },
+    "fingerprints": { "type": "object" },
+    "sources": { "type": "object" },
+    "policy": { "type": "object" },
+    "structuralQuality": { "type": "object" }
+  },
+  "additionalProperties": false
+}

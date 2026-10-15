@@ -1,0 +1,155 @@
+{
+  "schemaVersion": 1,
+  "rules": [
+    {
+      "id": "security-no-critical-findings",
+      "severity": "HIGH",
+      "source": "project",
+      "blocking": true,
+      "why": "Critical security findings must never ship in the checkout flow.",
+      "fix": "Triage and fix every critical finding, then re-run the security scan.",
+      "confidence": "HIGH",
+      "scope": {
+        "includes": [
+          "src/checkout.ts"
+        ],
+        "excludes": []
+      },
+      "check": {
+        "type": "command",
+        "command": [
+          "node",
+          "tests/security-scan.mjs"
+        ],
+        "threshold": 0
+      }
+    },
+    {
+      "id": "security-no-secrets",
+      "severity": "HIGH",
+      "source": "project",
+      "blocking": true,
+      "why": "Secrets in source control are irreversible exposure.",
+      "fix": "Remove the secret, rotate it, and add a scanning guard.",
+      "confidence": "HIGH",
+      "scope": {
+        "includes": [
+          "src/**",
+          "tests/**"
+        ],
+        "excludes": []
+      },
+      "check": {
+        "type": "command",
+        "command": [
+          "node",
+          "tests/secret-scan.mjs"
+        ]
+      }
+    },
+    {
+      "id": "accessibility-keyboard-navigation",
+      "severity": "HIGH",
+      "source": "project",
+      "blocking": true,
+      "why": "Keyboard users must reach every interactive control.",
+      "fix": "Use native focusable elements and verify tab order in the walkthrough.",
+      "confidence": "MEDIUM",
+      "scope": {
+        "includes": [
+          "src/**"
+        ],
+        "excludes": []
+      },
+      "check": {
+        "type": "audit",
+        "adapter": "axe",
+        "parameters": {
+          "standard": "WCAG 2.1 AA"
+        }
+      }
+    },
+    {
+      "id": "testing-required-checks",
+      "severity": "HIGH",
+      "source": "project",
+      "blocking": true,
+      "why": "Unit and integration tests are the executable specification.",
+      "fix": "Add or repair the failing tests before requesting review.",
+      "confidence": "HIGH",
+      "scope": {
+        "includes": [
+          "tests/**"
+        ],
+        "excludes": []
+      },
+      "check": {
+        "type": "command",
+        "command": [
+          "npm",
+          "test"
+        ]
+      }
+    },
+    {
+      "id": "performance-lcp-budget",
+      "severity": "MEDIUM",
+      "source": "project",
+      "blocking": false,
+      "why": "Perceived performance is part of the premium positioning.",
+      "fix": "Optimize loading until LCP is at most 1.8 seconds.",
+      "confidence": "MEDIUM",
+      "scope": {
+        "includes": [
+          "src/catalog.ts"
+        ],
+        "excludes": []
+      },
+      "check": {
+        "type": "metric",
+        "adapter": "lighthouse",
+        "threshold": 1800
+      }
+    },
+    {
+      "id": "clean-code-no-dead-code",
+      "severity": "LOW",
+      "source": "project",
+      "blocking": false,
+      "why": "Dead code obscures intent for future tasks.",
+      "fix": "Delete unused exports during touch-and-improve passes.",
+      "confidence": "LOW",
+      "scope": {
+        "includes": [
+          "src/**"
+        ],
+        "excludes": []
+      },
+      "check": {
+        "type": "lint",
+        "adapter": "eslint"
+      }
+    },
+    {
+      "id": "design-consistent-tokens",
+      "severity": "INFO",
+      "source": "project",
+      "blocking": false,
+      "why": "Consistent design tokens keep the storefront premium.",
+      "fix": "Prefer shared tokens over ad-hoc colors and spacing.",
+      "confidence": "LOW",
+      "scope": {
+        "includes": [
+          "src/**"
+        ],
+        "excludes": []
+      },
+      "check": {
+        "type": "review",
+        "parameters": {
+          "checklist": "design-tokens"
+        }
+      }
+    }
+  ]
+}

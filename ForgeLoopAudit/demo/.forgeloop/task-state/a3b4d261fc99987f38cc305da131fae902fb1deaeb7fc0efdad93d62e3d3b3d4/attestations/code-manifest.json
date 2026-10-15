@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-001",
+  "verificationCycle": 1,
+  "capture": {
+    "mode": "WORKTREE",
+    "revisionProvider": "git",
+    "baseRevision": null,
+    "observedRevision": "3f9c1d2e77a4b5089c6e12ab34f5d6e7890abcde",
+    "providerMetadata": {
+      "fixture": true
+    }
+  },
+  "bindings": {
+    "contractFingerprint": "602eb28811d403d9b2fbcfa84397aa4c4cbb50101dd6a781d6a484bc1e94e26d",
+    "routeFingerprint": "91399201a7d304b09f126e1cf48317611e2e82253e6d46e61f8aa837abca6b69",
+    "stateFingerprint": "cc86f1ab115d3054d13092992593c75ef17483b93185878419440694ae381b03",
+    "receiptFingerprint": "28e5d0a6f30b624a49b48b5d7b327bd1c6db2159dd6dac21dcd82bee7d5d8c1e",
+    "ledgerSeq": 18,
+    "ledgerHash": "2f9dc007971a3050c7a0f301badd46fab488050d07091ea4fbac45bb9a37916b"
+  },
+  "entries": [],
+  "contentDigest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+}

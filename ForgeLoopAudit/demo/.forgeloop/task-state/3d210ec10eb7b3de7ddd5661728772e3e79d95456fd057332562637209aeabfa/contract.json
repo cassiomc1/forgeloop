@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-004",
+  "objective": "Audit and fix accessibility gaps with emphasis on keyboard navigation.",
+  "deliverables": [
+    "Keyboard navigation audit report",
+    "Fixes for all blocking findings",
+    "Regression checks for focus order"
+  ],
+  "constraints": [
+    "WCAG 2.1 AA targets",
+    "No visual regressions allowed"
+  ],
+  "risks": [
+    "Focus fixes could introduce tab loops"
+  ],
+  "verification": [
+    "axe scan reports no critical findings",
+    "Keyboard-only walkthrough completes checkout"
+  ],
+  "successCriteria": [
+    "Every interactive control is reachable by keyboard",
+    "Focus order matches visual order"
+  ],
+  "stopConditions": [
+    "A regression in screen-reader labels halts the audit"
+  ],
+  "unresolvedDecisions": [],
+  "sourceRefs": [
+    "src/app.ts",
+    "src/catalog.ts"
+  ]
+}

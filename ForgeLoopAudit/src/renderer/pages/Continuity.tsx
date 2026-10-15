@@ -1,0 +1,46 @@
+import { useState, useEffect } from 'react';
+import type { ContinuityLintView, ProjectSnapshot, TaskSummary } from '@shared/domain';
+import { EmptyState } from '../components/ui/EmptyState';
+import { CanonicalHandoffsPanel } from '../components/tasks/CanonicalHandoffsPanel';
+import { Repeat, AlertTriangle } from 'lucide-react';
+import { auditApi } from '../lib/audit-client';
+
+export function Continuity({ snapshot, selectedTaskId, onSelectedTaskChange, onOpenDiagnostics, handoffRefreshToken = 0 }: { snapshot: ProjectSnapshot; selectedTaskId?: string | null; onSelectedTaskChange?: (taskId: string) => void; onOpenDiagnostics?: () => void; handoffRefreshToken?: number }) {
+  const [selectedTask, setSelectedTask] = useState<TaskSummary | null>(snapshot.tasks.find((t) => t.taskId === snapshot.activeTaskId) || snapshot.tasks[0] || null);
+  const [continuityLint, setContinuityLint] = useState<ContinuityLintView | null>(null);
+  useEffect(() => { setSelectedTask(snapshot.tasks.find((t) => t.taskId === selectedTaskId) || snapshot.tasks.find((t) => t.taskId === snapshot.activeTaskId) || snapshot.tasks[0] || null); }, [snapshot, selectedTaskId]);
+  useEffect(() => {
+    let cancelled = false;
+    setContinuityLint(null);
+    if (!selectedTask) return () => { cancelled = true; };
+    auditApi.getTaskContinuityLint(selectedTask.taskId).then((result) => { if (!cancelled) setContinuityLint(result); }).catch(() => { if (!cancelled) setContinuityLint(null); });
+    return () => { cancelled = true; };
+  }, [selectedTask, handoffRefreshToken]);
+  if (!snapshot.tasks.length) return <EmptyState title="No tasks available" description="Select a task to view continuity information." />;
+  const continuity = selectedTask?.continuity;
+  const diagnosticContext = continuity?.diagnosticContext;
+  const diagnosticContextPresent = diagnosticContext?.present === true;
+  return <div className="space-y-6 animate-fade-in">
+    <div className="flex items-center justify-between"><div><h1 className="text-xl font-semibold text-forge-text-primary">Continuity</h1><p className="text-sm text-forge-text-muted mt-1">Canonical ForgeLoop continuity state</p></div><select className="input w-48" value={selectedTask?.taskId || ''} onChange={(e) => { const task = snapshot.tasks.find((t) => t.taskId === e.target.value) || null; setSelectedTask(task); if (task) onSelectedTaskChange?.(task.taskId); }}>{snapshot.tasks.map((task) => <option key={task.taskId} value={task.taskId}>{task.taskId}</option>)}</select></div>
+    {!continuity ? <div className="bg-forge-primary-surface border border-forge-border-subtle rounded-10 p-8 text-center text-sm text-forge-text-muted"><Repeat className="w-8 h-8 mx-auto mb-3" /><p>No canonical continuity information available.</p></div> : <div className="space-y-6"><div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-forge-primary-surface border border-forge-border-subtle rounded-10 p-6"><Field label="Task" value={continuity.taskId} /><Field label="Phase" value={continuity.phase} /><Field label="Updated" value={continuity.updatedAt} /><Field label="Resume note" value={continuity.resumeNote} /></div><List label="Remaining work" items={continuity.remainingWork} /><List label="Known issues" items={continuity.knownIssues} danger /><List label="Inspect first" items={continuity.inspectFirst} /><List label="Changed areas" items={continuity.changedAreas} /><div className="bg-forge-primary-surface border border-forge-border-subtle rounded-10 p-4"><div className="flex items-center justify-between gap-3 mb-3"><h3 className="text-xs font-semibold uppercase tracking-wider text-forge-text-muted">Diagnostic context</h3>{onOpenDiagnostics && <button className="btn-secondary text-xs" onClick={onOpenDiagnostics}>Open Diagnostics</button>}</div>{!diagnosticContextPresent ? <p className="text-sm text-forge-text-muted">Diagnostic context unavailable.</p> : <><div className="grid grid-cols-1 md:grid-cols-2 gap-4"><List label="Active failure signatures" items={diagnosticContext.activeFailureSignatures} /><List label="Failed requirements" items={diagnosticContext.activeFailedRequirements} danger /></div><div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4"><List label="Open hypotheses" items={diagnosticContext.openHypotheses} /><Field label="Latest intervention" value={diagnosticContext.latestIntervention ?? undefined} /><Field label="Next experiment" value={diagnosticContext.nextExperiment ?? undefined} /></div><div className="mt-4"><List label="Do not repeat" items={diagnosticContext.doNotRepeat.map((item) => `${item.id ? `${item.id}: ` : ''}${item.summary}${item.reason ? ` — ${item.reason}` : ''}`)} danger /></div></>}</div></div>}
+    {selectedTask && <CanonicalHandoffsPanel taskId={selectedTask.taskId} featureSupport={snapshot.protocol.featureSupport} handoffRefreshToken={handoffRefreshToken} />}
+    {selectedTask && <ContinuityReconciliationPanel view={continuityLint} />}
+    <div className="bg-forge-primary-surface border border-forge-border-subtle rounded-10 p-4"><h3 className="text-xs font-semibold text-forge-text-muted uppercase tracking-wider mb-3">Sessions</h3>{snapshot.sessions.length === 0 ? <p className="text-sm text-forge-text-muted">No sessions recorded</p> : snapshot.sessions.map((session) => <div key={session.id} className="flex items-center justify-between p-3 bg-forge-secondary-surface rounded-6"><span className="font-mono text-xs">{session.id}</span><span className="text-xs text-forge-text-muted">{session.createdAt || 'Unknown creation time'}</span></div>)}</div>
+  </div>;
+}
+function ContinuityReconciliationPanel({ view }: { view: ContinuityLintView | null }) {
+  return <section className="bg-forge-primary-surface border border-forge-border-subtle rounded-10 p-4" aria-labelledby="continuity-reconciliation-heading">
+    <div className="flex items-center justify-between gap-3">
+      <div><h2 id="continuity-reconciliation-heading" className="text-sm font-semibold text-forge-text-primary">Continuity reconciliation</h2><p className="mt-1 text-xs text-forge-text-muted">Read-only operational diagnostics from ForgeLoop.</p></div>
+      {view?.available && <span className={`rounded-6 px-2 py-1 text-[11px] font-semibold ${view.status === 'WARN' ? 'bg-forge-warning/10 text-forge-warning' : 'bg-forge-success/10 text-forge-success'}`}>{view.status}</span>}
+    </div>
+    {!view ? <p className="mt-4 text-sm text-forge-text-muted">Loading canonical reconciliation…</p> : !view.available ? <p className="mt-4 text-sm text-forge-warning">Canonical continuity reconciliation is unavailable.</p> : <>
+      <div className="mt-4 grid grid-cols-1 gap-3 text-xs md:grid-cols-3"><div><span className="text-forge-text-muted">Classification</span><p className="mt-1 font-mono text-forge-text-primary">{view.classification || 'Unknown'}</p></div><div><span className="text-forge-text-muted">Authority</span><p className="mt-1 font-mono text-forge-text-primary">{view.authority}</p></div><div><span className="text-forge-text-muted">Evidence authority</span><p className="mt-1 font-mono text-forge-text-primary">{view.evidenceAuthority}</p></div></div>
+      <div className="mt-4"><p className="text-xs font-semibold uppercase tracking-wider text-forge-text-muted">Findings</p>{view.findings.length === 0 ? <p className="mt-1 text-sm text-forge-text-muted">None recorded</p> : <ul className="mt-2 space-y-2">{view.findings.map((finding, index) => <li key={`${finding.code}-${finding.field}-${index}`} className="rounded-6 bg-forge-secondary-surface px-3 py-2 text-xs text-forge-text-secondary"><span className="font-mono text-forge-text-primary">{finding.code}</span> · {finding.severity}{finding.field ? ` · ${finding.field}` : ''}{finding.itemId ? ` · ${finding.itemId}` : ''}</li>)}</ul>}</div>
+      {view.reasonCodes.length > 0 && <p className="mt-3 text-xs text-forge-text-muted">Reason codes: <span className="font-mono">{view.reasonCodes.join(', ')}</span></p>}
+      <p className="mt-4 border-t border-forge-border-subtle/60 pt-3 text-[11px] text-forge-text-muted">Warnings remain operational diagnostics. They do not fail the task, create evidence, or authorize a continuity mutation.</p>
+    </>}
+  </section>;
+}
+function Field({ label, value }: { label: string; value?: string }) { return <div><h3 className="text-xs font-semibold text-forge-text-muted uppercase tracking-wider mb-2">{label}</h3><p className="text-sm text-forge-text-secondary">{value || 'Unknown / not verified'}</p></div>; }
+function List({ label, items, danger = false }: { label: string; items?: Array<{ id: string; summary: string } | string>; danger?: boolean }) { return <div className={`bg-forge-primary-surface border rounded-10 p-4 ${danger ? 'border-forge-danger/20' : 'border-forge-border-subtle'}`}><h3 className={`text-xs font-semibold uppercase tracking-wider mb-3 flex items-center gap-2 ${danger ? 'text-forge-danger' : 'text-forge-text-muted'}`}>{danger && <AlertTriangle className="w-4 h-4" />}{label}</h3>{items?.length ? <ul className="space-y-2">{items.map((item, i) => <li key={i} className="text-sm text-forge-text-secondary"><span className="font-mono text-xs">{typeof item === 'string' ? item : item.id}</span>{typeof item !== 'string' && ` — ${item.summary}`}</li>)}</ul> : <p className="text-sm text-forge-text-muted">None recorded</p>}</div>; }

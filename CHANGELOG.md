@@ -2,8 +2,16 @@
 
 ## Unreleased
 
-- Validate RC3 installation and SQLite backup recovery across all supported
-  operating systems; release details follow below.
+- Align public installation, Node 24.19.0 prerequisites, release-channel and
+  SQLite documentation with the published RC4 and verified clean-user audits.
+
+## 2.0.0-rc.4 default channel - 2026-10-14
+
+- Promote the existing public RC4 to owner-authorized npm `latest`; `next`
+  also points to RC4. Preserve the published artifact and incomplete stable
+  SQLite acceptance.
+- Verify fresh unversioned npm installations on native Windows, macOS and
+  Linux: all 15 new-user checks pass on each platform.
 
 ## 2.0.0-rc.4 - 2026-10-14
 

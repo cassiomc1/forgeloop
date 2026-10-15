@@ -1,0 +1,11 @@
+{
+  "forgeloopVersion": "1.5.0",
+  "protocolVersion": 1,
+  "schemaVersion": 1,
+  "expectedAuditHealth": "VALID",
+  "expectedPhase": "COMPLETE",
+  "expectedClaimState": "RELEASED_BY_COMPLETION",
+  "expectedArtifactErrors": false,
+  "taskKeyMatchesDirectory": true,
+  "legacy": false
+}

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-001",
+  "workStateFingerprint": "cc86f1ab115d3054d13092992593c75ef17483b93185878419440694ae381b03",
+  "contractFingerprint": "602eb28811d403d9b2fbcfa84397aa4c4cbb50101dd6a781d6a484bc1e94e26d",
+  "phase": "COMPLETE",
+  "repositoryFingerprint": {
+    "branch": "main",
+    "head": "3f9c1d2e77a4b5089c6e12ab34f5d6e7890abcde"
+  },
+  "updatedAt": "2026-08-03T10:06:00.000Z",
+  "remainingWork": [
+    {
+      "id": "follow-up-seo",
+      "summary": "Consider SEO metadata for catalog routes in a future task"
+    }
+  ],
+  "knownIssues": [],
+  "changedAreas": [
+    "src/catalog.ts",
+    "tests/catalog.test.ts"
+  ],
+  "inspectFirst": [],
+  "resumeNote": "Completed; kept as reference lifecycle for the ForgeShop demo."
+}

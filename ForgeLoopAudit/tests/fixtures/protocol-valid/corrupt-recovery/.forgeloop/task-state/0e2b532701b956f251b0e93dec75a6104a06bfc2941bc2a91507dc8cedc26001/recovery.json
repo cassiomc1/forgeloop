@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "conformance-corrupt-recovery",
+  "status": "NOT_RECOVERED",
+  "recoveredAt": "2026-01-01T00:01:00.000Z",
+  "recoveryId": "recovery-corrupt-fixture",
+  "recoveryEventSeq": 2,
+  "classificationAtRecovery": "STALE",
+  "reasonCodes": [
+    "E_TASK_CLAIM_STALE"
+  ],
+  "releasedClaims": [
+    "src/feature.ts"
+  ],
+  "previousPhase": "BLOCKED",
+  "previousRevision": 2,
+  "repositoryFingerprint": {
+    "branch": "main",
+    "head": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "authority": {
+    "kind": "HOST_ATTESTED",
+    "grantRef": "host-attestation:fixture-lock-controller"
+  }
+}

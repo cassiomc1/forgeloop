@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "conformance-recovered-resume-required",
+  "taskKey": "e5ae79dbba8bafd99265b48b3c498d1a2306f0f33f2e9c10da8e38e3265f950c",
+  "createdAt": "2026-01-01T00:00:00.000Z",
+  "updatedAt": "2026-01-01T00:00:00.000Z",
+  "writeClaims": [
+    "src/feature.ts"
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/gate.schema.json",
+  "title": "ForgeLoop gate",
+  "type": "object",
+  "required": ["schemaVersion", "protocolVersion", "taskId", "gate", "status", "requiredBy", "artifacts", "decisions", "unknowns", "approvedAssumptions", "evidence"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "protocolVersion": { "const": 1 },
+    "taskId": { "type": "string", "minLength": 1 },
+    "gate": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["satisfied", "unverified", "blocked"] },
+    "requiredBy": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "decisions": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "unknowns": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "approvedAssumptions": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "evidence": { "type": "array", "items": { "type": "object" } }
+  },
+  "additionalProperties": false
+}

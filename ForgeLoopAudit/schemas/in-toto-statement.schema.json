@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/in-toto-statement.schema.json",
+  "title": "ForgeLoop in-toto Statement v1",
+  "type": "object",
+  "required": ["schemaVersion", "_type", "subject", "predicateType", "predicate"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "_type": { "const": "https://in-toto.io/Statement/v1" },
+    "subject": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "digest"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "digest": {
+            "type": "object",
+            "required": ["sha256"],
+            "additionalProperties": false,
+            "properties": { "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" } }
+          }
+        }
+      }
+    },
+    "predicateType": { "const": "https://forgeloop.dev/attestation/v1" },
+    "predicate": { "type": "object" }
+  }
+}

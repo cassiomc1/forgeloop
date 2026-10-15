@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "sources": {
+    "user-request-forgeshop": {
+      "kind": "user-request",
+      "summary": "Build ForgeShop, a small premium e-commerce web application, through ForgeLoop."
+    },
+    "repository-fact-stack": {
+      "kind": "repository-fact",
+      "summary": "TypeScript sources under src/ with vitest tests under tests/.",
+      "path": "package.json"
+    },
+    "observation-catalog-lcp": {
+      "kind": "observation",
+      "summary": "Seeded catalog page measured LCP 3.1s before optimization."
+    },
+    "agent-decision-task-order": {
+      "kind": "agent-decision",
+      "summary": "Security review of checkout runs before checkout integration completes."
+    }
+  }
+}

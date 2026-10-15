@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "contractFingerprint": "a4c50337ff2d99e1946fa14c7f4ae4c9f8e22c9603a83c36c9fab9cf65a8d63f",
+  "input": {
+    "taskId": "TASK-007",
+    "project": "forgeshop"
+  },
+  "primary": "planning",
+  "guides": [
+    "design",
+    "performance"
+  ],
+  "reasons": {
+    "planning": [
+      "Read-only exploration before any cutover decision"
+    ]
+  },
+  "excluded": {}
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "taskId": "TASK-002",
+  "actionId": "action-cart-inspect",
+  "actionFingerprint": "859780097cb7204edb6e81a93eabca39172cba40581450c9eccf3ce51a0b3fce",
+  "effectClass": "READ_ONLY",
+  "capability": "filesystem.read",
+  "operation": "Inspect persisted cart payload",
+  "target": "src/cart.ts",
+  "idempotencyKey": null,
+  "requiredForCompletion": false,
+  "requirement": null,
+  "provenance": "EXTERNAL_OBSERVED",
+  "state": "VERIFIED",
+  "revision": 1,
+  "createdAt": "2026-08-04T10:45:00.000Z",
+  "updatedAt": "2026-08-04T10:46:00.000Z",
+  "lastEvidenceRef": "cart-unit-tests"
+}

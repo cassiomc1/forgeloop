@@ -1,0 +1,41 @@
+name: Public release verification
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to verify'
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate requested release tag shape
+        shell: bash
+        run: |
+          TAG="${{ inputs.tag || github.event.release.tag_name }}"
+          case "$TAG" in
+            v[0-9]*) ;;
+            *) echo "::error::tag must start with 'v' followed by a version (got: $TAG)"; exit 1 ;;
+          esac
+      - name: Checkout exact release tag
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ format('refs/tags/{0}', inputs.tag || github.event.release.tag_name) }}
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with: { node-version: 24.19.0, cache: npm }
+      - run: npm ci
+      - run: npm run verify:full
+      - name: Rebuild the tagged npm package
+        run: |
+          mkdir -p release-assets
+          npm pack --pack-destination release-assets
+          sha256sum release-assets/*.tgz > release-assets/SHA256SUMS
+          npm sbom --sbom-format cyclonedx --sbom-type application > release-assets/SBOM-cyclonedx.json

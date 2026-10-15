@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/activation.schema.json",
+  "title": "ForgeLoop activation marker",
+  "type": "object",
+  "required": ["schemaVersion", "protocolVersion", "sessionId", "activationMarker", "createdAt"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "protocolVersion": { "const": 1 },
+    "sessionId": { "type": "string", "minLength": 1 },
+    "activationMarker": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": false
+}

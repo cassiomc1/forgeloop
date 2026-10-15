@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "contractFingerprint": "47a1842cce5b1d5ea332cafa57309fcf9c60e012836257608e0bc23453d280d5",
+  "input": {
+    "taskId": "TASK-003",
+    "project": "forgeshop"
+  },
+  "primary": "implementation",
+  "guides": [
+    "security",
+    "test"
+  ],
+  "reasons": {
+    "implementation": [
+      "Client with explicit error taxonomy"
+    ]
+  },
+  "excluded": {}
+}
