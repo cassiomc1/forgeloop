@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Align public installation, Node 24.19.0 prerequisites, release-channel and
+  SQLite documentation with the published RC4 and verified clean-user audits.
+
 ## 2.0.0-rc.5 - 2026-10-15
 
 - Maintain ForgeLoopAudit inside this repository with its own build, verification
@@ -15,8 +18,6 @@
 - Add ForgeLoopAudit setup, project inspection, view walkthrough and demo
   screenshots in a dedicated guide linked from the parent repository README.
 
-- Align public installation, Node 24.19.0 prerequisites, release-channel and
-  SQLite documentation with the published RC4 and verified clean-user audits.
 
 ## 2.0.0-rc.4 default channel - 2026-10-14
 
