@@ -27,7 +27,7 @@ install the kit before expecting the complete `doctor` report to be healthy.
 ## Concurrent task creation
 
 Task creation revalidates write claims atomically. If the catalog changes while
-a command is prepared, RC3 refreshes authoritative claim inputs with bounded
+a command is prepared, RC4 refreshes authoritative claim inputs with bounded
 backoff and jitter without replaying the command or its external effects.
 Overlapping claims still fail. Sustained contention can exhaust the retry
 bound and return a catalog-change refusal; inspect fresh task discovery
@@ -133,7 +133,8 @@ tests or change assertions. Local coverage remains an explicit command because
 instrumentation adds measurable overhead; the PR unit lane wraps that same
 `test:ci` process across four deterministic shards, then aggregates coverage
 without running the suite again. Docs-only changes run the quick suite only on
-the first Node 24 shard; the other shards and the Node 20 lane do not install.
+the first Node 24 shard; the other shards do not install. The minimum Node
+24.19.0 compatibility lane runs only for applicable source or runtime changes.
 
 #### Native Windows guidance
 

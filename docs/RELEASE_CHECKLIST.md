@@ -4,6 +4,37 @@ This is the current release checklist for the PolyForm Noncommercial-licensed
 `@cassiomc1/forgeloop` package. It is a preparation and verification checklist;
 it does not authorize publication.
 
+## Current published candidate — 2026-10-14
+
+The public core package is `2.0.0-rc.4`; npm `latest` and `next` both resolve
+to RC4. It requires Node.js 24.19.0+ with built-in `node:sqlite`. The MCP
+companion retains restricted distribution. RC4 is a release candidate;
+`soleSQLiteWriter` remains false and stable/production acceptance is open.
+
+Observed release evidence:
+
+- [RC4 verification and publication](https://github.com/cassiomc1/forgeloop/actions/runs/38629809865)
+  passed full release checks and published with provenance.
+- [Exact-version npm audit](https://github.com/cassiomc1/forgeloop/actions/runs/38638055749)
+  passed 15/15 checks on each native Windows, macOS and Linux host.
+- [Default latest-install audit](https://github.com/cassiomc1/forgeloop/actions/runs/38669237414)
+  installed the unversioned public package with a fresh npm cache,
+  configuration, install prefix and project; all 15 checks passed on each OS.
+  This run uses the test-harness branch `codex/latest-user-audit-20261014`;
+  its `latest` input is not present in the main-branch workflow.
+
+The published npm `gitHead` and immutable `v2.0.0-rc.4` tag identify
+`d05c17cddda6a09581d526732b08eb0789b9734f`. The RC3 tag is retained; its
+publication was cancelled before npm publication. RC4 carries those runtime
+fixes plus the Windows archive-repair test correction.
+
+Verify the live registry before relying on a channel:
+
+```bash
+npm view @cassiomc1/forgeloop version dist-tags --json
+npm view @cassiomc1/forgeloop@2.0.0-rc.4 gitHead dist.integrity --json
+```
+
 ## Runtime corrections after RC2
 
 RC3 and later candidates with runtime changes require fresh full repository
@@ -22,7 +53,7 @@ SQLite integrity and a completed-task backup restored to a fresh directory.
 Supply `FORGELOOP_NPM_AUDIT_JEV_KEY` through GitHub Actions secrets and remove
 temporary credentials after the runs finish.
 
-## Bounded 2.0.0-rc.2 publication
+## Historical bounded 2.0.0-rc.2 publication
 
 The owner approved short verification and an RC fallback on 2026-10-13. This
 candidate is published to npm `next`. The owner subsequently authorized moving
@@ -69,19 +100,35 @@ confirmation `PUBLISH PUBLIC PACKAGE`, then verify npm version, Git commit,
 tarball integrity, and provenance. Stable publishing retains full checks and
 additionally refuses incomplete sole-writer acceptance.
 
-## Owner-authorized RC2 default channel
+## Owner-authorized default-channel promotion
 
-Dispatch `npm-publish.yml` on `main` with operation `promote-latest` and
-confirmation `POINT LATEST TO RC2`. This moves only `latest` to the already
-published public `2.0.0-rc.2`; it neither republishes nor modifies the RC2 tag.
-The promotion checks the exact release commit and downloaded SHA-512, refuses
-unexpected existing tags, and requires npm trusted-publisher `manageDistTags`
-authority. No credentials are logged or stored. The version remains an RC;
-stable SQLite acceptance and production readiness are still incomplete.
+Publishing a new release candidate still uses `next`. Moving an already
+published candidate to `latest` is a separate owner-authorized tag operation;
+it neither republishes the package nor changes the immutable Git tag.
+The owner authorized RC4 after its cross-platform npm audits passed.
+
+For that explicitly authorized RC4 operation, authenticated npm CLI access
+was used:
+
+```bash
+npm dist-tag add @cassiomc1/forgeloop@2.0.0-rc.4 latest
+npm view @cassiomc1/forgeloop dist-tags --json
+```
+
+npm may require separate browser/security-key verification for login and
+for the tag mutation. Credentials belong in npm's authentication flow,
+never documentation, Git or task artifacts. Confirm the registry result
+before reporting success. The version remains an RC; promotion does not
+establish stable SQLite acceptance or production readiness.
+
+The older `promote-latest` operation in `npm-publish.yml` and
+`scripts/promote-rc-latest.mjs` is hard-bound to RC2. It is historical tooling,
+not an RC4 promotion path; do not dispatch `POINT LATEST TO RC2` for the
+current release. Its exact-identity and tag guards are retained.
 
 ## ForgeLoop 2.0.0 candidate scope
 
-The 2.0.0 candidate is not release-ready while SQLite migration plan §10 has
+A stable 2.0.0 release is not ready while SQLite migration plan §10 has
 open consumer-closure, current-source performance, or platform evidence. Keep
 all acceptance boxes open until their evidence is bound to the exact candidate
 revision.

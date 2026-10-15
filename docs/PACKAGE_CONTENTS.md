@@ -1,6 +1,6 @@
 # Core npm package contents
 
-This page describes the intentional boundary of the privately delivered
+This page describes the intentional boundary of the publicly distributed
 `@cassiomc1/forgeloop` package. The [`files`](../package.json) list in
 `package.json` is the packaging source of truth, while the repository's
 `tests/package.test.js` and clean-room `scripts/package_smoke.mjs` checks keep
@@ -13,7 +13,9 @@ The package exposes the `forgeloop` executable from `src/cli.js` and the
 `@cassiomc1/forgeloop/integration` subpath from `src/integration.js`, with its
 declaration file. The package has the approved exact `@typesafe-ai/sdk`
 dependency for the pinned semantic decision plane and `smol-toml` for bounded
-Cargo manifest parsing. It requires Node.js 20 or newer.
+Cargo manifest parsing. It requires Node.js 24.19.0 or newer with built-in
+`node:sqlite`, matching `package.json#engines`. The MCP companion retains
+restricted distribution.
 
 ## Included files
 
