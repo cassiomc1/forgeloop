@@ -37,7 +37,7 @@ Raw native ledger and JSON previews are unavailable; use canonical projections.
 ## Current documentation owners
 
 | Topic | Canonical document | Implementation or machine source |
-|---|---|---|
+| --- | --- | --- |
 | Product purpose and getting started | [Root README](../README.md) | `src/renderer/`, `src/server/`, `package.json` |
 | Architecture and security | [Implementation specification](../FORGELOOP_AUDIT_IMPLEMENTATION_SPEC.md) | `src/server/`, `src/main/core/`, `src/renderer/` |
 | Audit findings, coverage and provenance | [Implementation specification](../FORGELOOP_AUDIT_IMPLEMENTATION_SPEC.md) | `src/shared/audit.ts`, `src/main/core/audit/` |

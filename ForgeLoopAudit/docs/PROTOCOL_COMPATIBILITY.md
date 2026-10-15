@@ -40,7 +40,7 @@ stable SQLite or production-cutover acceptance.
 ## Compatibility matrix
 
 | Surface | ForgeLoop | ForgeLoopAudit handling |
-|---|---|---|
+| --- | --- | --- |
 | Protocol | v1 | Read-only supported |
 | Schema | v1 | Validated/read-only |
 | Integration API | v1 | Supported |
@@ -57,7 +57,7 @@ stable SQLite or production-cutover acceptance.
 | Continuity `NOT_APPLICABLE` | Current | Supported as a canonical continuity state, distinct from invalid continuity |
 
 | Project / Build | Integration API | Result |
-|---|---|---|
+| --- | --- | --- |
 | Pinned ForgeLoop build (`2.0.0-rc.4 @ d05c17c...`) | Integration API v1 valid (`INTEGRATION_V1`) | Full tested ForgeLoopAudit capability set, including the Audit UX read model, provider-extension boundaries, canonical handoffs v2 with exactly-once ledger-backed acceptance, advisory context providers v1, Repository Index/Search and multi-language/nested-project routing context; protocol/schema/API remain v1 |
 | Other protocol-v1 / Integration API v1 build | Required core capabilities present; optional capability absent | Core support remains `INTEGRATION_V1`; optional panels and verification-execution provenance are enabled only when their individual capability contracts are advertised; the affected feature is unavailable |
 | Any protocol-v1 build | Missing CORE required resources or capability drift | Rejected with `INCOMPATIBLE` (fails closed; missing core resources, unsupported recovery contract, or broken executor parity) |
@@ -132,7 +132,7 @@ statuses are observational diagnostics and never change lifecycle authority.
 The optional resources are consumed from the ForgeLoop Integration API rather than reconstructed from local artifacts:
 
 | Resource | ForgeLoopAudit presentation | Non-goal |
-|---|---|---|
+| --- | --- | --- |
 | `task/workspace-binding` | Current binding status and bounded identity details | ForgeLoopAudit never binds or rebinds a workspace |
 | `task/handoffs` | Immutable handoff snapshots and normalized acceptance in a separate Continuity surface | A handoff or acceptance receipt is not evidence, authority or delegation |
 | `task/responsibility` | Responsibility status, frozen inputs, changed paths and errors | ForgeLoopAudit never sets responsibility |

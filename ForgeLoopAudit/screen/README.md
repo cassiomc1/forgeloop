@@ -32,7 +32,7 @@ orphaned screenshot files.
 ## Capture mapping
 
 | File | Surface | Selected task | Scenario |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `audit-summary.png` | Audit Summary | — | Separate integrity, completion, quality, trust and coverage verdicts |
 | `projects.png` | Projects | — | Two registered ForgeLoop projects with task counts, health and live-watch status |
 | `kanban.png` | Task Board | — | Cross-project task board, one column per canonical status, with a project filter |

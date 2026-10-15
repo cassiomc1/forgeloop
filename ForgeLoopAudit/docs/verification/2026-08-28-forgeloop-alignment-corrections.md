@@ -39,7 +39,7 @@ Read from `schemas/provenance.json`:
 ## Verification commands
 
 | Command | Exit status | Result |
-|---|---:|---|
+| --- | ---: | --- |
 | `npm run protocol:schemas:verify` | `0` | 23 schemas verified against ForgeLoop 1.6.1 |
 | `npm run demo:verify` | `0` | 6 tasks, 70 events, 23/23 artifact categories; protocol-valid |
 | `npm run typecheck` | `0` | TypeScript check passed |

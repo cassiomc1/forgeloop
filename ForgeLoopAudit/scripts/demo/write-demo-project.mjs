@@ -215,7 +215,7 @@ No external service, network access or build step is required.
 ## Task map
 
 | Task | Title | Phase | Demonstrates |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | TASK-001 | Implement premium product catalog | COMPLETE | Full lifecycle plus unsigned code-attestation artifacts; policy does not claim a signature |
 | TASK-002 | Add shopping cart persistence | VERIFYING | Verification cycle with a rejected completion attempt and AUTO → CHANGED scope |
 | TASK-003 | Implement checkout API integration | EXECUTING | Portable workspace-binding warning plus intentional INVALID Responsibility Contract |

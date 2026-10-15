@@ -4,7 +4,7 @@ This is a current-state matrix for the web migration, not an unchecked
 backlog.
 
 | Status | Meaning |
-|---|---|
+| --- | --- |
 | `[x]` | Implemented and covered by the current verification contract |
 | `[~]` | Partial, bounded or environment-specific |
 | `[ ]` | Not implemented or not verified |

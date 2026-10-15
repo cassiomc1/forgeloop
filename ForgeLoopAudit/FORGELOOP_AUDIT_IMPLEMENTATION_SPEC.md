@@ -47,7 +47,7 @@ commands, or treat a local observation as canonical evidence.
 The UI preserves three authority labels:
 
 | Label | Meaning |
-|---|---|
+| --- | --- |
 | Canonical ForgeLoop | A protocol fact or decision returned by the bundled Integration API |
 | ForgeLoopAudit derived | A deterministic interpretation with visible evidence and a stable rule/fingerprint |
 | Application observation | A local runtime condition, availability result or diagnostic; never protocol success |

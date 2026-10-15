@@ -37,7 +37,7 @@ by a local build or a successful CI job.
 ## Verification boundaries
 
 | Stage | Proves | Does not prove |
-|---|---|---|
+| --- | --- | --- |
 | Local verification | The shared `verify:full` contract passes in the current checkout | Public publication, deployment or tag identity |
 | Pull-request CI | The contract and browser smoke pass on Ubuntu, macOS and Windows | Publication or signed trust |
 | Workflow rehearsal | The web package, checksum and `SBOM-cyclonedx.json` can be generated | Public release availability |

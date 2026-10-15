@@ -118,7 +118,7 @@ work. Real schema, artifact, gate, integrity and policy errors remain real
 failures.
 
 | Task | Demonstrates |
-|---|---|
+| --- | --- |
 | TASK-001 | Complete lifecycle and unsigned attestation artifacts |
 | TASK-002 | Verification/review and `AUTO` → `CHANGED` scope |
 | TASK-003 | Execution, workspace binding and responsibility constraints |
@@ -146,7 +146,7 @@ The images below are captured from the production renderer through the local
 web server at 1440 × 900 in the default dark theme.
 
 | Audit Summary | Projects |
-|---|---|
+| --- | --- |
 | ![ForgeShop audit summary](./screen/audit-summary.png) | ![ForgeLoopAudit projects workspace](./screen/projects.png) |
 | Task Board | Project Timeline |
 | ![ForgeLoopAudit cross-project task board](./screen/kanban.png) | ![ForgeShop project timeline](./screen/timeline.png) |
