@@ -498,30 +498,8 @@ see [CONTRIBUTING.md](./CONTRIBUTING.md#focused-verification-and-maintenance).
 
 ## ForgeLoopAudit workspace
 
-ForgeLoopAudit is maintained at `ForgeLoopAudit/` inside the ForgeLoop
-repository, replacing the standalone repository and sibling workspace location
-`../ForgeLoopAudit`. It is a read-only engineering auditor for ForgeLoop projects.
-
-The Audit component keeps its own `package.json`, documentation, build, and
-verification commands within this repository. Use ForgeLoop as its source and
-contribution home. This source layout does not bundle the Audit application in
-the core ForgeLoop npm package; the application package boundary remains separate.
-
-From the ForgeLoop checkout root, run Audit commands in its directory:
-
-```bash
-cd ForgeLoopAudit
-npm run dev:web
-```
-
-For Audit validation, run `npm run verify:full` from that same directory.
-Consult `ForgeLoopAudit/README.md` and `ForgeLoopAudit/docs/README.md` for its
-prerequisites and operating instructions. Run core ForgeLoop commands from the
-parent root with `node src/cli.js`; resolve Audit protocol instructions and its
-configured ForgeLoop runtime from the Audit root. The directory move does not
-merge task state or rebind existing receipts, workspace bindings, or stored
-project paths. Inspect root-sensitive artifacts through supported tooling
-before resuming affected work; do not rewrite protocol state to match the move.
+Audit is maintained in `ForgeLoopAudit/`. Its [workspace guidance](./docs/AGENT_SKILL.md#forgeloopaudit-workspace-guidance)
+explains command roots and package boundaries.
 
 ## Protocol compatibility
 
@@ -643,17 +621,15 @@ docs/diagrams/          typed Archify diagram source and inventory
 docs/assets/diagrams/   committed HTML, SVG, and generation receipt
 scripts/                checks, renderer, release identity, CI notes
 tests/                  Node and Python regression coverage
-.forgeloop/             project-scoped ForgeLoop configuration
+.forgeloop/             project-scoped configuration
 .forgeloop/task-state/  isolated live task protocol state
 DOCS_INDEX.md           documentation map and ownership boundaries
 ```
 
-Project-scoped configuration remains under `.forgeloop/`.
 Task-scoped mutable protocol state is stored under
 `.forgeloop/task-state/<taskKey>/`.
 
-For document ownership, guide routing, capability degradation, and integration
-details, start at [`DOCS_INDEX.md`](./DOCS_INDEX.md).
+For documentation ownership and integrations, see [`DOCS_INDEX.md`](./DOCS_INDEX.md).
 
 ## Programmatic integration and MCP
 
@@ -663,8 +639,7 @@ ForgeLoop exposes a stable programmatic surface:
 import { executeForgeLoopCommand } from "@cassiomc1/forgeloop/integration";
 ```
 
-The local MCP server (`@cassiomc1/forgeloop-mcp`, stdio) is an adapter over
-this exact API — it never reimplements ForgeLoop. See
+The local MCP server (`@cassiomc1/forgeloop-mcp`, stdio) wraps this API. See
 [`docs/UNIVERSAL_INTEGRATION.md`](./docs/UNIVERSAL_INTEGRATION.md) and
 [`docs/MCP.md`](./docs/MCP.md). MCP is optional; the CLI and instruction-only
 hosts remain fully supported without it.
