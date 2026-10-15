@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-008",
+  "objective": "Rework the checkout contract so the retry policy and idempotency key are part of the agreed scope.",
+  "deliverables": [
+    "Revised checkout contract",
+    "Idempotency key requirement",
+    "Revised verification plan"
+  ],
+  "constraints": [
+    "Revision must stay pre-execution",
+    "No client code changes in this task"
+  ],
+  "risks": [
+    "Downstream planning artifacts are invalidated by the revision"
+  ],
+  "verification": [
+    "Checkout tests pass against the revised contract",
+    "Idempotency key is verified in tests"
+  ],
+  "successCriteria": [
+    "Revised contract is routed with fresh plan and preflight evidence"
+  ],
+  "stopConditions": [
+    "Any execution-start before the revision blocks the task"
+  ],
+  "unresolvedDecisions": [],
+  "sourceRefs": [
+    "src/checkout.ts"
+  ]
+}

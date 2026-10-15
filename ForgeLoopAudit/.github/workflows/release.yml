@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  web-package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with: { node-version: 24.19.0, cache: npm }
+      - run: npm ci
+      - name: Verify tag matches package version
+        if: ${{ github.ref_type == 'tag' }}
+        run: node scripts/assert-release-version.mjs "${{ github.ref_name }}"
+      - name: Run full release verification contract
+        run: npm run verify:full
+      - name: Build the local web package
+        run: npm pack --pack-destination release-assets
+      - name: Generate checksums and SBOM
+        run: |
+          sha256sum release-assets/*.tgz > release-assets/SHA256SUMS
+          npm sbom --sbom-format cyclonedx --sbom-type application > release-assets/SBOM-cyclonedx.json
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: forgeloop-audit-web
+          path: release-assets/*

@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-004",
+  "workStateFingerprint": "59a7c31ffd253630c4389e695e6ebb010f042ef0940b72b06e83ff4a9f183ac1",
+  "contractFingerprint": "5e7d4a963c5252a6081a64942a9bfdb8d1b12fa28bf5d03a3be78936c283aca0",
+  "phase": "BLOCKED",
+  "repositoryFingerprint": {
+    "branch": "main",
+    "head": "3f9c1d2e77a4b5089c6e12ab34f5d6e7890abcde"
+  },
+  "updatedAt": "2026-08-06T11:25:00.000Z",
+  "remainingWork": [
+    {
+      "id": "fix-focus-trap",
+      "summary": "Replace pagination div with a real button and restore filter focus flow"
+    },
+    {
+      "id": "rerun-audit",
+      "summary": "Re-run keyboard walkthrough and axe scan"
+    }
+  ],
+  "knownIssues": [
+    {
+      "id": "keyboard-navigation-finding",
+      "summary": "2 keyboard navigation findings in grid pagination"
+    }
+  ],
+  "changedAreas": [
+    "src/catalog.ts"
+  ],
+  "inspectFirst": [
+    "src/catalog.ts"
+  ],
+  "currentFocus": {
+    "id": "fix-focus-trap",
+    "summary": "Replace pagination div with a real button and restore filter focus flow"
+  },
+  "resumeNote": "Recovered from a stale claim lock after the harness-a → harness-b handoff; mutations stay blocked until an authorized harness performs task-resume."
+}

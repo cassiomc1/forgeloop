@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/action.schema.json",
+  "title": "ForgeLoop durable action artifact",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "taskId",
+    "actionId",
+    "actionFingerprint",
+    "effectClass",
+    "capability",
+    "operation",
+    "target",
+    "idempotencyKey",
+    "requiredForCompletion",
+    "requirement",
+    "provenance",
+    "state",
+    "revision",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "taskId": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "actionId": { "type": "string", "pattern": "^action-[A-Za-z0-9_-]+$" },
+    "actionFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "effectClass": {
+      "enum": [
+        "READ_ONLY",
+        "REVERSIBLE_WRITE",
+        "IRREVERSIBLE_WRITE",
+        "EXTERNAL_PUBLICATION",
+        "DESTRUCTIVE"
+      ]
+    },
+    "capability": {
+      "enum": [
+        "filesystem.read",
+        "filesystem.write",
+        "process.execute",
+        "dependency.install",
+        "network.read",
+        "network.write",
+        "repository.commit",
+        "repository.push",
+        "repository.pull_request",
+        "external.publish",
+        "external.delete",
+        "deployment.execute"
+      ]
+    },
+    "operation": { "type": "string", "minLength": 1, "maxLength": 512 },
+    "target": { "type": "string", "minLength": 1, "maxLength": 512 },
+    "idempotencyKey": { "oneOf": [{ "type": "string", "minLength": 1, "maxLength": 512 }, { "type": "null" }] },
+    "requiredForCompletion": { "type": "boolean" },
+    "requirement": { "oneOf": [{ "type": "string", "minLength": 1, "maxLength": 256 }, { "type": "null" }] },
+    "provenance": {
+      "enum": [
+        "FORGELOOP_EXECUTED",
+        "HOST_ATTESTED",
+        "CALLER_REPORTED",
+        "HOST_REPORTED",
+        "EXTERNAL_OBSERVED"
+      ]
+    },
+    "state": {
+      "enum": [
+        "PROPOSED",
+        "AUTHORIZED",
+        "STARTED",
+        "COMMITTED",
+        "VERIFIED",
+        "FAILED",
+        "COMMIT_UNKNOWN",
+        "CANCELLED"
+      ]
+    },
+    "revision": { "type": "integer", "minimum": 0 },
+    "createdAt": { "type": "string", "minLength": 1 },
+    "updatedAt": { "type": "string", "minLength": 1 },
+    "lastEvidenceRef": { "oneOf": [{ "type": "string", "minLength": 1, "maxLength": 256 }, { "type": "null" }] },
+    "lastReconciliationAt": { "oneOf": [{ "type": "string", "minLength": 1 }, { "type": "null" }] },
+    "commitResultCode": {
+      "oneOf": [
+        {
+          "enum": [
+            "IDEMPOTENCY_PROTECTED",
+            "RECONCILED_COMMITTED",
+            "RECONCILED_NOT_COMMITTED",
+            "AMBIGUOUS"
+          ]
+        },
+        { "type": "null" }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

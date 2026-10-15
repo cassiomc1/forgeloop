@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-007",
+  "workStateFingerprint": "cae0181a55fd0b50e66d7af5a6ed50ac6d0d9c9aefe6d18d455a2de55a4490fb",
+  "contractFingerprint": "a4c50337ff2d99e1946fa14c7f4ae4c9f8e22c9603a83c36c9fab9cf65a8d63f",
+  "phase": "PLANNED",
+  "repositoryFingerprint": {
+    "branch": "main",
+    "head": "3f9c1d2e77a4b5089c6e12ab34f5d6e7890abcde"
+  },
+  "updatedAt": "2026-08-08T09:45:00.000Z",
+  "remainingWork": [
+    {
+      "id": "ssr-prototype",
+      "summary": "Prototype the streaming render before revisiting the decision"
+    }
+  ],
+  "knownIssues": [],
+  "changedAreas": [],
+  "inspectFirst": [
+    "src/app.ts"
+  ],
+  "resumeNote": "Abandoned by the caller: keep the baseline, do not resume without an explicit new task."
+}

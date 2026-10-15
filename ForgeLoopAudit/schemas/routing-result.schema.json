@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/routing-result.schema.json",
+  "title": "ForgeLoop routing result",
+  "type": "object",
+  "required": ["schemaVersion", "protocolVersion", "input", "primary", "guides", "reasons", "excluded"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "protocolVersion": { "const": 1 },
+    "contractFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "executionProfile": {
+      "type": "object",
+      "required": ["requested", "floor", "resolved", "reasons", "escalated"],
+      "additionalProperties": false,
+      "properties": {
+        "requested": { "enum": ["auto", "light", "balanced", "full"] },
+        "floor": { "enum": ["light", "balanced", "full"] },
+        "resolved": { "enum": ["light", "balanced", "full"] },
+        "reasons": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "escalated": { "type": "boolean" }
+      }
+    },
+    "input": { "type": "object" },
+    "primary": { "oneOf": [{ "type": "string" }, { "type": "null" }] },
+    "guides": { "type": "array", "items": { "type": "string" } },
+    "reasons": { "type": "object", "additionalProperties": { "type": "array", "items": { "type": "string" } } },
+    "excluded": { "type": "object", "additionalProperties": { "type": "array", "items": { "type": "string" } } }
+  },
+  "additionalProperties": false
+}

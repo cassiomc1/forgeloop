@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "scenario": "receipt-mismatch",
+  "compatibilityMode": "INTEGRATION_V1",
+  "expected": { "canonicalStatus": "INVALID", "completionReadiness": "INVALID", "highFindingDomain": "RECEIPT", "showsCanonicalNext": true }
+}

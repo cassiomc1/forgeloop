@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "executionId": "exec-security-scan",
+  "taskId": "TASK-006",
+  "checkId": "security-scan",
+  "requirement": "Dependency and flow scan reports no critical findings",
+  "verificationCycle": 1,
+  "kind": "COMMAND_EXECUTION",
+  "executionKind": "VERIFICATION",
+  "argv": [
+    "node",
+    "tests/security-scan.mjs"
+  ],
+  "protocolProjectRoot": "/workspace/forgeshop",
+  "cwd": "/workspace/forgeshop",
+  "executionIsolation": "NATIVE_PROJECT",
+  "isolation": {
+    "mode": "NATIVE_PROJECT",
+    "isolated": false,
+    "liveProjectWritable": true,
+    "networkPolicy": "INHERITED",
+    "environmentPolicy": "INHERITED"
+  },
+  "resolution": {
+    "resolutionMode": "direct",
+    "mayInstall": false,
+    "installer": null,
+    "tool": null
+  },
+  "startedAt": "2026-08-07T14:38:00.000Z",
+  "finishedAt": "2026-08-07T14:40:00.000Z",
+  "durationMs": 42000,
+  "termination": "exit",
+  "signal": null,
+  "stdoutSha256": "9c98d2214b009e55299ee6bb895dd965b50608196bab49593f67a92ba88ff85d",
+  "stderrSha256": "8cbf8819aea96c6861b461a82399ce562f9494b68fde59d25a9660e54fca0ba7",
+  "status": "passed",
+  "exitCode": 0
+}

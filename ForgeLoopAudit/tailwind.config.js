@@ -1,0 +1,63 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    './src/renderer/**/*.{ts,tsx}',
+    './index.html',
+  ],
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        forge: {
+          background: 'rgb(var(--color-background) / <alpha-value>)',
+          'primary-surface': 'rgb(var(--color-primary-surface) / <alpha-value>)',
+          'secondary-surface': 'rgb(var(--color-secondary-surface) / <alpha-value>)',
+          'elevated-surface': 'rgb(var(--color-elevated-surface) / <alpha-value>)',
+          'hover-surface': 'rgb(var(--color-hover-surface) / <alpha-value>)',
+          'border-subtle': 'rgb(var(--color-border-subtle) / <alpha-value>)',
+          'border-strong': 'rgb(var(--color-border-strong) / <alpha-value>)',
+          'text-primary': 'rgb(var(--color-text-primary) / <alpha-value>)',
+          'text-secondary': 'rgb(var(--color-text-secondary) / <alpha-value>)',
+          'text-muted': 'rgb(var(--color-text-muted) / <alpha-value>)',
+          accent: 'rgb(var(--color-accent) / <alpha-value>)',
+          'accent-hover': 'rgb(var(--color-accent-hover) / <alpha-value>)',
+          success: 'rgb(var(--color-success) / <alpha-value>)',
+          warning: 'rgb(var(--color-warning) / <alpha-value>)',
+          danger: 'rgb(var(--color-danger) / <alpha-value>)',
+          info: 'rgb(var(--color-info) / <alpha-value>)',
+        },
+        background: 'hsl(var(--background) / <alpha-value>)',
+        foreground: 'hsl(var(--foreground) / <alpha-value>)',
+        card: 'hsl(var(--card) / <alpha-value>)',
+        'card-foreground': 'hsl(var(--card-foreground) / <alpha-value>)',
+        primary: 'hsl(var(--primary) / <alpha-value>)',
+        'primary-foreground': 'hsl(var(--primary-foreground) / <alpha-value>)',
+        secondary: 'hsl(var(--secondary) / <alpha-value>)',
+        'secondary-foreground': 'hsl(var(--secondary-foreground) / <alpha-value>)',
+        muted: 'hsl(var(--muted) / <alpha-value>)',
+        'muted-foreground': 'hsl(var(--muted-foreground) / <alpha-value>)',
+        border: 'hsl(var(--border) / <alpha-value>)',
+        input: 'hsl(var(--input) / <alpha-value>)',
+        ring: 'hsl(var(--ring) / <alpha-value>)',
+        destructive: 'hsl(var(--destructive) / <alpha-value>)',
+        'destructive-foreground': 'hsl(var(--destructive-foreground) / <alpha-value>)',
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+      },
+      borderRadius: {
+        '6': '6px',
+        '8': '8px',
+        '10': '10px',
+        '12': '12px',
+      },
+      spacing: {
+        '18': '4.5rem',
+        '22': '5.5rem',
+        '30': '7.5rem',
+      },
+    },
+  },
+  plugins: [],
+};

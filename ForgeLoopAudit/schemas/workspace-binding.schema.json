@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/workspace-binding.schema.json",
+  "title": "ForgeLoop task workspace binding",
+  "type": "object",
+  "required": ["schemaVersion", "protocolVersion", "taskId", "mode", "repositoryIdentity", "workspaceIdentity", "branchAtBind", "headAtBind", "boundAt"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "protocolVersion": { "const": 1 },
+    "taskId": { "type": "string", "minLength": 1 },
+    "mode": { "const": "GIT_WORKTREE" },
+    "repositoryIdentity": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "workspaceIdentity": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "branchAtBind": { "oneOf": [{ "type": "string" }, { "type": "null" }] },
+    "headAtBind": { "oneOf": [{ "type": "string" }, { "type": "null" }] },
+    "boundAt": { "type": "string", "minLength": 1 },
+    "metadata": { "type": "object" }
+  }
+}

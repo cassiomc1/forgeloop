@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "typescript"
+  ],
+  "testing": {
+    "detected": true,
+    "framework": "vitest",
+    "command": [
+      "npx",
+      "vitest",
+      "run"
+    ],
+    "confidence": "HIGH"
+  },
+  "linting": {
+    "detected": true,
+    "tool": "eslint",
+    "command": [
+      "npx",
+      "eslint",
+      "."
+    ],
+    "confidence": "HIGH"
+  },
+  "architecture": {
+    "value": "feature-modules",
+    "confidence": "MEDIUM",
+    "enforcement": "ADVISORY"
+  },
+  "discoveredRules": [
+    {
+      "id": "clean-code-no-dead-code",
+      "origin": "eslint config inspection"
+    },
+    {
+      "id": "design-consistent-tokens",
+      "origin": "design token inventory review"
+    }
+  ]
+}

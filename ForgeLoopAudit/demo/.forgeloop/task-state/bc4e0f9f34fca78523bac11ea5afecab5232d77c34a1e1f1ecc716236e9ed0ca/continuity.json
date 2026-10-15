@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-005",
+  "workStateFingerprint": "fa44366adf181af1130497a0be7f88578c8386c7dbfba0d848b87164fc442bb9",
+  "contractFingerprint": "0bdbb5271e2d3ccf5c07a161c545f84486753afbd51232680709ab7e129f0bac",
+  "phase": "PLANNED",
+  "repositoryFingerprint": {
+    "branch": "main",
+    "head": "3f9c1d2e77a4b5089c6e12ab34f5d6e7890abcde"
+  },
+  "updatedAt": "2026-08-07T11:55:00.000Z",
+  "remainingWork": [
+    {
+      "id": "lazy-loading",
+      "summary": "Add lazy loading and responsive sizes to catalog imagery"
+    }
+  ],
+  "knownIssues": [],
+  "changedAreas": [],
+  "inspectFirst": [
+    "src/catalog.ts"
+  ],
+  "resumeNote": "Planned; baseline LCP 3.1s recorded, target 1.8s."
+}

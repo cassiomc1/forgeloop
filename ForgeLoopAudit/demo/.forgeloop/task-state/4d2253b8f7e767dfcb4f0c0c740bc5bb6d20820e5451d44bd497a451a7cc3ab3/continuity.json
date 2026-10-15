@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-002",
+  "workStateFingerprint": "a7690bf97334a6f30ea5737ac28f5becc8f3ad7e950a967f39d202f642abff5d",
+  "contractFingerprint": "ee600048df668bf09a3ad628a42f9a8b8a9cc6872e3fe86ff187d9cfe44b2c13",
+  "phase": "VERIFYING",
+  "repositoryFingerprint": {
+    "branch": "main",
+    "head": "3f9c1d2e77a4b5089c6e12ab34f5d6e7890abcde"
+  },
+  "updatedAt": "2026-08-04T11:03:00.000Z",
+  "remainingWork": [
+    {
+      "id": "harden-hydration",
+      "summary": "Discard corrupted carts and surface a user-visible warning"
+    },
+    {
+      "id": "reverify",
+      "summary": "Run verification cycle 2 with new hydration tests"
+    }
+  ],
+  "knownIssues": [
+    {
+      "id": "corrupt-cart-hydration",
+      "summary": "Corrupted payload currently throws instead of being discarded"
+    }
+  ],
+  "changedAreas": [
+    "src/cart.ts",
+    "tests/cart.test.ts"
+  ],
+  "inspectFirst": [
+    "src/cart.ts",
+    "tests/cart.test.ts"
+  ],
+  "currentFocus": {
+    "id": "harden-hydration",
+    "summary": "Discard corrupted carts and surface a user-visible warning"
+  },
+  "resumeNote": "Verification cycle 1 rejected: hydration edge case still open. Resume in VERIFYING."
+}

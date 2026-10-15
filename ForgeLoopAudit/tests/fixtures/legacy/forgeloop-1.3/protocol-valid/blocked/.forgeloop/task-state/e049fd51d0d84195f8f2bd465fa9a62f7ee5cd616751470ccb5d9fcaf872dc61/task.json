@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "conformance-blocked",
+  "taskKey": "e049fd51d0d84195f8f2bd465fa9a62f7ee5cd616751470ccb5d9fcaf872dc61",
+  "createdAt": "2026-01-01T00:00:00.000Z",
+  "updatedAt": "2026-01-01T00:00:00.000Z",
+  "writeClaims": []
+}

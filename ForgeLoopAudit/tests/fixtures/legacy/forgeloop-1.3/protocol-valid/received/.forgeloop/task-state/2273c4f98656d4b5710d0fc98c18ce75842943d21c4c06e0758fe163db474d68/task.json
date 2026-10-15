@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "conformance-received",
+  "taskKey": "2273c4f98656d4b5710d0fc98c18ce75842943d21c4c06e0758fe163db474d68",
+  "createdAt": "2026-01-01T00:00:00.000Z",
+  "updatedAt": "2026-01-01T00:00:00.000Z",
+  "writeClaims": []
+}

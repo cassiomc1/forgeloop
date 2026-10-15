@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/handoff-envelope.schema.json",
+  "title": "ForgeLoop canonical handoff envelope",
+  "type": "object",
+  "required": ["schemaVersion", "protocolVersion", "handoffId", "taskId", "createdAt", "intent", "state", "evidence", "continuity", "artifactDigest"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "protocolVersion": { "const": 1 },
+    "handoffId": { "type": "string", "pattern": "^handoff-[A-Za-z0-9_-]+$" },
+    "taskId": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "minLength": 1 },
+    "intent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "recipientHint": { "type": "string", "minLength": 1 },
+        "note": { "type": "string", "minLength": 1 }
+      }
+    },
+    "state": {
+      "type": "object",
+      "required": ["phase", "revision", "verificationCycle", "contractFingerprint", "routeFingerprint", "repositoryFingerprint", "writeClaims", "changedPaths"],
+      "additionalProperties": false,
+      "properties": {
+        "phase": { "type": "string", "minLength": 1 },
+        "revision": { "type": "integer", "minimum": 0 },
+        "verificationCycle": { "type": "integer", "minimum": 1 },
+        "workStateFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "contractFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "routeFingerprint": { "oneOf": [{ "type": "string", "pattern": "^[a-f0-9]{64}$" }, { "type": "null" }] },
+        "repositoryFingerprint": { "type": "object" },
+        "writeClaims": { "type": "array", "items": { "type": "string" } },
+        "changedPaths": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["executionRefs", "checkIds"],
+      "additionalProperties": false,
+      "properties": {
+        "executionRefs": { "type": "array", "items": { "type": "string" } },
+        "checkIds": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "continuity": {
+      "type": "object",
+      "required": ["ref", "fingerprint"],
+      "additionalProperties": false,
+      "properties": {
+        "ref": { "type": "string", "minLength": 1 },
+        "fingerprint": { "oneOf": [{ "type": "string", "pattern": "^[a-f0-9]{64}$" }, { "type": "null" }] }
+      }
+    },
+    "artifactDigest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

@@ -1,0 +1,2 @@
+{"seq":1,"schemaVersion":1,"protocolVersion":1,"taskId":"conformance-planned","event":"TASK_CREATED","at":"2026-01-01T00:00:00.000Z","previousHash":null,"details":{},"hash":"7faa439ed594013fb8da9a588ee657b9e0780d44d9b8c9926214d2397b2ead0e"}
+{"seq":2,"schemaVersion":1,"protocolVersion":1,"taskId":"conformance-planned","event":"PLANNING_STARTED","at":"2026-01-01T00:01:00.000Z","previousHash":"7faa439ed594013fb8da9a588ee657b9e0780d44d9b8c9926214d2397b2ead0e","details":{},"hash":"13f90b32e59909124e71599d3d7e2a54a557e699d7ad8fd225dfed9fb4e4e604"}

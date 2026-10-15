@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "taskId": "TASK-002",
+  "actionId": "action-cart-repair",
+  "actionFingerprint": "8d67613085ae320fde5b112de78d47a92ddfa4baf43efbd2a9281af38ac6426e",
+  "effectClass": "REVERSIBLE_WRITE",
+  "capability": "filesystem.write",
+  "operation": "Discard malformed persisted cart payload",
+  "target": "src/cart.ts",
+  "idempotencyKey": "forgeshop:TASK-002:cart-repair:v1",
+  "requiredForCompletion": true,
+  "requirement": "Corrupted persisted carts are discarded safely",
+  "provenance": "CALLER_REPORTED",
+  "state": "COMMIT_UNKNOWN",
+  "revision": 2,
+  "createdAt": "2026-08-04T10:50:00.000Z",
+  "updatedAt": "2026-08-04T11:01:00.000Z",
+  "commitResultCode": "AMBIGUOUS"
+}

@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/policy-discovery.schema.json",
+  "title": "ForgeLoop policy discovery result",
+  "type": "object",
+  "required": ["schemaVersion", "languages", "testing", "linting", "architecture", "discoveredRules"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "languages": { "type": "array", "items": { "type": "string" } },
+    "testing": {
+      "type": "object",
+      "required": ["detected", "confidence"],
+      "properties": {
+        "detected": { "type": "boolean" },
+        "command": { "type": "array", "items": { "type": "string" } },
+        "framework": { "type": "string" },
+        "confidence": { "enum": ["HIGH", "MEDIUM", "LOW", "UNKNOWN"] }
+      },
+      "additionalProperties": true
+    },
+    "linting": {
+      "type": "object",
+      "required": ["detected", "confidence"],
+      "properties": {
+        "detected": { "type": "boolean" },
+        "command": { "type": "array", "items": { "type": "string" } },
+        "tool": { "type": "string" },
+        "confidence": { "enum": ["HIGH", "MEDIUM", "LOW", "UNKNOWN"] }
+      },
+      "additionalProperties": true
+    },
+    "architecture": {
+      "type": "object",
+      "required": ["confidence", "enforcement"],
+      "properties": {
+        "value": { "type": ["string", "null"] },
+        "confidence": { "enum": ["HIGH", "MEDIUM", "LOW", "UNKNOWN"] },
+        "enforcement": { "enum": ["BLOCKING", "ADVISORY", "NONE"] }
+      },
+      "additionalProperties": true
+    },
+    "discoveredRules": { "type": "array", "items": { "type": "object" } }
+  },
+  "additionalProperties": false
+}

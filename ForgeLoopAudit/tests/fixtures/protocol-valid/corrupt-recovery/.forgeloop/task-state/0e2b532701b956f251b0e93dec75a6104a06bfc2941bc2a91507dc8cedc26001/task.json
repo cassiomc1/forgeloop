@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "conformance-corrupt-recovery",
+  "taskKey": "0e2b532701b956f251b0e93dec75a6104a06bfc2941bc2a91507dc8cedc26001",
+  "createdAt": "2026-01-01T00:00:00.000Z",
+  "updatedAt": "2026-01-01T00:00:00.000Z",
+  "writeClaims": [
+    "src/feature.ts"
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "scenario": "quality-gate-fail",
+  "compatibilityMode": "INTEGRATION_V1",
+  "expected": { "quality": "FAIL", "severity": "HIGH", "completionAffected": true }
+}

@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/config.schema.json",
+  "title": "ForgeLoop configuration",
+  "type": "object",
+  "required": ["schemaVersion", "protocolVersion", "complianceMode"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "protocolVersion": { "const": 1 },
+    "complianceMode": { "enum": ["advisory", "standard", "strict"] },
+    "executionProfile": { "enum": ["auto", "light", "balanced", "full"] },
+    "policy": { "type": "string", "minLength": 1 },
+    "requiredGates": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "requiredEvidence": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "decisionEngine": {
+      "type": "object",
+      "required": ["required", "provider", "model", "policyVersion", "requestTimeoutMs", "maxRetries", "cache"],
+      "additionalProperties": false,
+      "properties": {
+        "required": { "const": true },
+        "provider": { "const": "typesafe-jev" },
+        "model": { "const": "jev-1.13.0" },
+        "policyVersion": { "const": 1 },
+        "requestTimeoutMs": { "type": "integer", "minimum": 500, "maximum": 60000 },
+        "maxRetries": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "cache": { "type": "boolean" }
+      }
+    },
+    "structuralQuality": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "enum": ["off", "observe", "gate"] },
+        "provider": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,63}$" },
+        "maxRegressionPoints": { "type": "integer", "minimum": 0, "maximum": 10000 },
+        "dimensionBudgets": { "$ref": "#/$defs/dimensionMap" },
+        "forbidNewCycles": { "type": "boolean" },
+        "minQualitySignal": { "oneOf": [{ "type": "integer", "minimum": 0, "maximum": 10000 }, { "type": "null" }] },
+        "minimums": { "$ref": "#/$defs/minimumMap" },
+        "optimization": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "mode": { "enum": ["off", "bounded"] },
+            "maxExtraEvaluations": { "type": "integer", "minimum": 0, "maximum": 2 },
+            "minGainPoints": { "type": "integer", "minimum": 1, "maximum": 10000 }
+          }
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "required": ["checkers"],
+      "additionalProperties": false,
+      "properties": {
+        "checkers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["checkId", "scopeMode", "argvPrefix", "pathInsertion"],
+            "additionalProperties": false,
+            "properties": {
+              "checkId": { "type": "string", "minLength": 1 },
+              "scopeMode": { "const": "PATH_ARGUMENTS" },
+              "argvPrefix": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+              "pathInsertion": { "const": "APPEND" }
+            }
+          }
+        }
+      }
+    },
+    "attestation": {
+      "type": "object",
+      "required": ["mode", "revisionProvider", "requireCompleteCoverage", "coverage", "signing"],
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "enum": ["off", "optional", "required"] },
+        "revisionProvider": { "type": "string", "minLength": 1 },
+        "requireCompleteCoverage": { "type": "boolean" },
+        "coverage": {
+          "type": "object",
+          "required": ["exclude"],
+          "additionalProperties": false,
+          "properties": { "exclude": { "type": "array", "items": { "type": "string", "minLength": 1 } } }
+        },
+        "signing": {
+          "type": "object",
+          "required": ["provider", "required", "policy"],
+          "additionalProperties": false,
+          "properties": {
+            "provider": { "enum": ["none", "sigstore"] },
+            "required": { "type": "boolean" },
+            "policy": {
+              "type": "object",
+              "required": ["identities", "requireTransparencyLog"],
+              "additionalProperties": false,
+              "properties": {
+                "issuer": { "type": "string" },
+                "identities": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+                "requireTransparencyLog": { "type": "boolean" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "dimensionMap": {
+      "type": "object",
+      "properties": {
+        "modularity": { "oneOf": [{ "type": "integer", "minimum": 0, "maximum": 10000 }, { "type": "null" }] },
+        "acyclicity": { "oneOf": [{ "type": "integer", "minimum": 0, "maximum": 10000 }, { "type": "null" }] },
+        "depth": { "oneOf": [{ "type": "integer", "minimum": 0, "maximum": 10000 }, { "type": "null" }] },
+        "equality": { "oneOf": [{ "type": "integer", "minimum": 0, "maximum": 10000 }, { "type": "null" }] },
+        "redundancy": { "oneOf": [{ "type": "integer", "minimum": 0, "maximum": 10000 }, { "type": "null" }] }
+      },
+      "additionalProperties": false
+    },
+    "minimumMap": {
+      "type": "object",
+      "properties": {
+        "modularity": { "type": "integer", "minimum": 0, "maximum": 10000 },
+        "acyclicity": { "type": "integer", "minimum": 0, "maximum": 10000 },
+        "depth": { "type": "integer", "minimum": 0, "maximum": 10000 },
+        "equality": { "type": "integer", "minimum": 0, "maximum": 10000 },
+        "redundancy": { "type": "integer", "minimum": 0, "maximum": 10000 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

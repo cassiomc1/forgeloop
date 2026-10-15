@@ -78,7 +78,7 @@ not establish project identity. Public project evidence remains v1.
 
 GitHub hosts source and issues. The core npm package is publicly available;
 the MCP companion retains restricted distribution. The owner-selected default
-`latest` channel targets `2.0.0-rc.2`, which remains a release candidate with
+`latest` and `next` channels target `2.0.0-rc.4`, which remains a release candidate with
 incomplete stable SQLite acceptance.
 ForgeLoop-owned source and documentation are licensed under the
 [PolyForm Noncommercial License 1.0.0](./LICENSE). Commercial use is not granted
@@ -89,7 +89,7 @@ by this license. Third-party notices are documented in
 
 ### Installation
 
-After your organization grants access, configure npm authentication and install:
+Install the public core package from npm; no organization access is required:
 
 ```bash
 npm install --global @cassiomc1/forgeloop
@@ -204,7 +204,7 @@ forgeloop protocol-info --json
 | Validate completion | Yes | Provides real work and evidence |
 | Schedule agents or LLM inference | No | External to the protocol |
 
-From the privately delivered package, initialize a target project with:
+Initialize a target project using the public npm package:
 
 ```bash
 npx @cassiomc1/forgeloop init
@@ -247,7 +247,7 @@ host-reported or `UNKNOWN`; values are never estimated.
 capability, but advisory recall remains Integration API only. The stock CLI
 does not auto-recall providers and does not expose a `context-recall` command.
 
-Validate the source checkout offline before any private release:
+Validate the source checkout before preparing a release:
 
 ```bash
 node src/cli.js init
@@ -496,6 +496,11 @@ CI audits each supplied task receipt explicitly. With no receipt it reports
 completion or attestation. For contributor checks and safe payload retention,
 see [CONTRIBUTING.md](./CONTRIBUTING.md#focused-verification-and-maintenance).
 
+## ForgeLoopAudit workspace
+
+Audit is maintained in `ForgeLoopAudit/`. Its [workspace guidance](./docs/AGENT_SKILL.md#forgeloopaudit-workspace-guidance)
+explains command roots and package boundaries.
+
 ## Protocol compatibility
 
 The npm package version is independent of protocol version. The current
@@ -616,17 +621,15 @@ docs/diagrams/          typed Archify diagram source and inventory
 docs/assets/diagrams/   committed HTML, SVG, and generation receipt
 scripts/                checks, renderer, release identity, CI notes
 tests/                  Node and Python regression coverage
-.forgeloop/             project-scoped ForgeLoop configuration
+.forgeloop/             project-scoped configuration
 .forgeloop/task-state/  isolated live task protocol state
 DOCS_INDEX.md           documentation map and ownership boundaries
 ```
 
-Project-scoped configuration remains under `.forgeloop/`.
 Task-scoped mutable protocol state is stored under
 `.forgeloop/task-state/<taskKey>/`.
 
-For document ownership, guide routing, capability degradation, and integration
-details, start at [`DOCS_INDEX.md`](./DOCS_INDEX.md).
+For documentation ownership and integrations, see [`DOCS_INDEX.md`](./DOCS_INDEX.md).
 
 ## Programmatic integration and MCP
 
@@ -636,8 +639,7 @@ ForgeLoop exposes a stable programmatic surface:
 import { executeForgeLoopCommand } from "@cassiomc1/forgeloop/integration";
 ```
 
-The local MCP server (`@cassiomc1/forgeloop-mcp`, stdio) is an adapter over
-this exact API — it never reimplements ForgeLoop. See
+The local MCP server (`@cassiomc1/forgeloop-mcp`, stdio) wraps this API. See
 [`docs/UNIVERSAL_INTEGRATION.md`](./docs/UNIVERSAL_INTEGRATION.md) and
 [`docs/MCP.md`](./docs/MCP.md). MCP is optional; the CLI and instruction-only
 hosts remain fully supported without it.

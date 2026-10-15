@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-008",
+  "contractFingerprint": "8afa0e494df95a135967ee3bc50bb006ad9233580f89837936b57be1ef4e7317",
+  "routeFingerprint": "a034d02f91bb0e62488fa62cfeebb18e6e4677cb2bad1f8f891bfbf82b07f1ad",
+  "repositoryFingerprint": {
+    "branch": "main",
+    "head": "b7c4e0d92a1f5b3c8e6d0a24f91b7c3d5e8f0a12"
+  },
+  "phase": "ROUTED",
+  "revision": 2,
+  "selectedGuides": [
+    "typescript",
+    "test"
+  ],
+  "requiredGates": [
+    "unit-tests"
+  ],
+  "satisfiedGates": [],
+  "complianceMode": "standard",
+  "completedSteps": [
+    "Retry policy decision",
+    "Revised checkout contract"
+  ],
+  "pendingSteps": [
+    "Implement revised checkout client",
+    "Re-run checkout tests"
+  ],
+  "checks": [],
+  "failures": [],
+  "blockers": [],
+  "verificationEvidence": [],
+  "evidenceCoverage": [
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "requirement": "Checkout tests pass against the revised contract",
+      "requiredEvidence": [
+        "Checkout tests pass against the revised contract"
+      ],
+      "observedEvidence": [],
+      "status": "NOT_VERIFIED"
+    },
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "requirement": "Idempotency key is verified in tests",
+      "requiredEvidence": [
+        "Idempotency key is verified in tests"
+      ],
+      "observedEvidence": [],
+      "status": "NOT_VERIFIED"
+    }
+  ],
+  "lastUpdated": "2026-08-08T14:05:00.000Z"
+}

@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-003",
+  "workStateFingerprint": "b448d6a6260eedddac20adb4604830b9315947eec511d0afde4c92b1df3a1b9e",
+  "contractFingerprint": "47a1842cce5b1d5ea332cafa57309fcf9c60e012836257608e0bc23453d280d5",
+  "phase": "EXECUTING",
+  "repositoryFingerprint": {
+    "branch": "main",
+    "head": "3f9c1d2e77a4b5089c6e12ab34f5d6e7890abcde"
+  },
+  "updatedAt": "2026-08-05T09:16:00.000Z",
+  "remainingWork": [
+    {
+      "id": "retry-policy",
+      "summary": "Implement exponential backoff retry for transient checkout failures"
+    },
+    {
+      "id": "security-review",
+      "summary": "Pass the checkout security review gate"
+    }
+  ],
+  "knownIssues": [],
+  "changedAreas": [
+    "src/checkout.ts"
+  ],
+  "inspectFirst": [
+    "src/checkout.ts"
+  ],
+  "currentFocus": {
+    "id": "retry-policy",
+    "summary": "Implement exponential backoff retry for transient checkout failures"
+  },
+  "resumeNote": "Execution in progress; integration tests green, retry policy next."
+}

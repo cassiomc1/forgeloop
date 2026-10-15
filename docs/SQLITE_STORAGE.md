@@ -1,11 +1,22 @@
 # SQLite Storage Migration
 
-**Release candidate:** `2.0.0-rc.1` uses the owner-approved bounded publication
-policy in [the release checklist](./RELEASE_CHECKLIST.md). It retains
+**Current release candidate:** `2.0.0-rc.4` is published on npm `latest` and
+`next` after owner-authorized tag promotion. RC3 and later runtime changes use
+fresh full verification, not the historical RC1/RC2 bounded shortcut in
+[the release checklist](./RELEASE_CHECKLIST.md). RC4 retains
 `soleSQLiteWriter: false`; complete transitive consumer closure, stable
 acceptance, physical power-loss proof, and external production cutover remain
-unclaimed. The RC is published to npm `next`; the owner also authorizes existing RC2 as
-the default `latest` through a verified tag-only promotion.
+unclaimed.
+
+The [clean latest-install audit](https://github.com/cassiomc1/forgeloop/actions/runs/38669237414)
+passed 15/15 new-user checks on each native Windows x64, macOS ARM64 and Linux
+x64 host using Node 24.19.0. It installed the unversioned public npm package
+with fresh installation, cache, configuration and project directories. SQLite
+persistence, eight concurrent writes, page/foreign-key integrity, tampering
+refusal and completed-task backup restoration to a new directory passed.
+These bounded release checks supplement the historical measurements below;
+they do not close the separate stable/production acceptance obligations.
+
 ForgeLoop is migrating machine-managed operational state from a hand-written
 filesystem transaction layer to a single SQLite database per project state
 root. This document records the implemented storage layer, its verified
