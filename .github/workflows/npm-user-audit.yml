@@ -23,8 +23,6 @@ jobs:
     timeout-minutes: 20
     env:
       PACKAGE_SOURCE: ${{ inputs.package_source || 'candidate' }}
-      NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-user-${{ github.run_id }}-${{ github.run_attempt }}/cache
-      NPM_CONFIG_USERCONFIG: ${{ runner.temp }}/npm-user-${{ github.run_id }}-${{ github.run_attempt }}/empty.npmrc
       FORGELOOP_AUDIT_VERSION: ${{ inputs.version || '2.0.0-rc.4' }}
     strategy:
       fail-fast: false
@@ -51,6 +49,8 @@ jobs:
         shell: bash
         env:
           TYPESAFE_API_KEY: ${{ secrets.FORGELOOP_NPM_AUDIT_JEV_KEY }}
+          NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-user-${{ github.run_id }}-${{ github.run_attempt }}/cache
+          NPM_CONFIG_USERCONFIG: ${{ runner.temp }}/npm-user-${{ github.run_id }}-${{ github.run_attempt }}/empty.npmrc
         run: |
           mkdir -p "$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           if [ "$PACKAGE_SOURCE" = latest ]; then
@@ -70,6 +70,8 @@ jobs:
         shell: powershell
         env:
           TYPESAFE_API_KEY: ${{ secrets.FORGELOOP_NPM_AUDIT_JEV_KEY }}
+          NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-user-${{ github.run_id }}-${{ github.run_attempt }}/cache
+          NPM_CONFIG_USERCONFIG: ${{ runner.temp }}/npm-user-${{ github.run_id }}-${{ github.run_attempt }}/empty.npmrc
         run: |
           $ErrorActionPreference = 'Stop'
           $auditRoot = Join-Path $env:RUNNER_TEMP "npm-user-$env:GITHUB_RUN_ID-$env:GITHUB_RUN_ATTEMPT"
