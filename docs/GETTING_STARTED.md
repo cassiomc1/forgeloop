@@ -117,6 +117,12 @@ and numeric limits.
 
 ### Global installation
 
+The public core package is available without organization access. As of
+2026-10-14, both npm `latest` and `next` resolve to `2.0.0-rc.4`. The default
+installation below uses `latest`; use `@cassiomc1/forgeloop@2.0.0-rc.4` when an
+exact reproducible version is required. RC4 remains a release candidate;
+its passing new-user checks do not establish stable SQLite acceptance.
+
 Install the ForgeLoop CLI globally to make the `forgeloop` command available
 in your terminal:
 

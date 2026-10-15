@@ -78,7 +78,7 @@ not establish project identity. Public project evidence remains v1.
 
 GitHub hosts source and issues. The core npm package is publicly available;
 the MCP companion retains restricted distribution. The owner-selected default
-`latest` channel targets `2.0.0-rc.2`, which remains a release candidate with
+`latest` and `next` channels target `2.0.0-rc.4`, which remains a release candidate with
 incomplete stable SQLite acceptance.
 ForgeLoop-owned source and documentation are licensed under the
 [PolyForm Noncommercial License 1.0.0](./LICENSE). Commercial use is not granted
@@ -89,7 +89,7 @@ by this license. Third-party notices are documented in
 
 ### Installation
 
-After your organization grants access, configure npm authentication and install:
+Install the public core package from npm; no organization access is required:
 
 ```bash
 npm install --global @cassiomc1/forgeloop
@@ -204,7 +204,7 @@ forgeloop protocol-info --json
 | Validate completion | Yes | Provides real work and evidence |
 | Schedule agents or LLM inference | No | External to the protocol |
 
-From the privately delivered package, initialize a target project with:
+Initialize a target project using the public npm package:
 
 ```bash
 npx @cassiomc1/forgeloop init
@@ -247,7 +247,7 @@ host-reported or `UNKNOWN`; values are never estimated.
 capability, but advisory recall remains Integration API only. The stock CLI
 does not auto-recall providers and does not expose a `context-recall` command.
 
-Validate the source checkout offline before any private release:
+Validate the source checkout before preparing a release:
 
 ```bash
 node src/cli.js init
