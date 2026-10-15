@@ -5,6 +5,8 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
+    // Bound file fan-out on the two-core CI runner, including native fixtures.
+    maxWorkers: 2,
     include: ['src/**/*.test.ts', 'src/**/*.spec.ts'],
     coverage: {
       provider: 'v8',

@@ -40,7 +40,7 @@ export function createNativeDemoFixture(source = resolve('demo')) {
         writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`);
       }
     }
-    const output = execFileSync(process.execPath, [fileURLToPath(import.meta.resolve('@cassiomc1/forgeloop')), 'storage-migrate', '--path', root, '--destination', '.retained-migration', '--writers-quiesced', '--json'], { encoding: 'utf8' });
+    const output = execFileSync(process.execPath, [fileURLToPath(import.meta.resolve('@cassiomc1/forgeloop')), 'storage-migrate', '--path', root, '--destination', '.retained-migration', '--writers-quiesced', '--json'], { encoding: 'utf8', timeout: 90_000 });
     const result = JSON.parse(output);
     if (result.phase !== 'PUBLISHED' || result.currentStateVerified !== true) throw new Error(`Native fixture migration failed: ${output}`);
     return { root, cleanup: () => rmSync(parent, { recursive: true, force: true }) };

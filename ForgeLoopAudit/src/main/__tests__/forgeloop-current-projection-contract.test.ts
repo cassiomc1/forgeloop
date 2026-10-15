@@ -17,7 +17,8 @@ describe('real vendored ForgeLoop projection contract', () => {
     native = createNativeDemoFixture(join(process.cwd(), 'demo'));
     DEMO_ROOT = native.root;
     adapter = await createForgeLoopIntegration();
-  }, 60_000);
+  // Cold Linux fixture migration took 62s; the child has its own 90s bound.
+  }, 120_000);
 
   afterAll(() => native?.cleanup());
 

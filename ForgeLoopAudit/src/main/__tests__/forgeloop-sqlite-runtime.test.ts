@@ -22,7 +22,8 @@ describe('ForgeLoop 2 native storage through the public Integration API', () => 
     native = createNativeDemoFixture();
     appRoot = mkdtempSync(join(tmpdir(), 'forgeloop-audit-native-app-'));
     runtime = new AuditRuntime({ auditVersion: '0.3.0-rc.3', applicationDataRoot: appRoot, appPath: process.cwd(), schemaDirectory: join(process.cwd(), 'schemas') });
-  }, 60_000);
+  // Cold Linux fixture migration took 62s; the child has its own 90s bound.
+  }, 120_000);
 
   afterAll(async () => {
     await runtime?.shutdown();
