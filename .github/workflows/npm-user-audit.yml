@@ -7,7 +7,7 @@ on:
       package_source:
         description: Package to test
         type: choice
-        options: [candidate, npm]
+        options: [candidate, npm, latest]
         default: candidate
       version:
         description: Exact expected package version
@@ -23,6 +23,8 @@ jobs:
     timeout-minutes: 20
     env:
       PACKAGE_SOURCE: ${{ inputs.package_source || 'candidate' }}
+      NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-user-${{ github.run_id }}-${{ github.run_attempt }}/cache
+      NPM_CONFIG_USERCONFIG: ${{ runner.temp }}/npm-user-${{ github.run_id }}-${{ github.run_attempt }}/empty.npmrc
       FORGELOOP_AUDIT_VERSION: ${{ inputs.version || '2.0.0-rc.4' }}
     strategy:
       fail-fast: false
@@ -51,7 +53,10 @@ jobs:
           TYPESAFE_API_KEY: ${{ secrets.FORGELOOP_NPM_AUDIT_JEV_KEY }}
         run: |
           mkdir -p "$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
-          if [ "$PACKAGE_SOURCE" = npm ]; then
+          if [ "$PACKAGE_SOURCE" = latest ]; then
+            package_spec="@cassiomc1/forgeloop"
+            npm view "$package_spec" version dist.integrity --json
+          elif [ "$PACKAGE_SOURCE" = npm ]; then
             npm view "@cassiomc1/forgeloop@$FORGELOOP_AUDIT_VERSION" dist.integrity --json
             package_spec="@cassiomc1/forgeloop@$FORGELOOP_AUDIT_VERSION"
           else
@@ -71,7 +76,11 @@ jobs:
           $installRoot = Join-Path $auditRoot 'install'
           $resultRoot = Join-Path $auditRoot 'results'
           New-Item -ItemType Directory -Force $auditRoot | Out-Null
-          if ($env:PACKAGE_SOURCE -eq 'npm') {
+          if ($env:PACKAGE_SOURCE -eq 'latest') {
+            $packageSpec = '@cassiomc1/forgeloop'
+            npm view $packageSpec version dist.integrity --json
+            if ($LASTEXITCODE -ne 0) { throw 'npm latest lookup failed' }
+          } elseif ($env:PACKAGE_SOURCE -eq 'npm') {
             $packageSpec = "@cassiomc1/forgeloop@$env:FORGELOOP_AUDIT_VERSION"
             npm view $packageSpec dist.integrity --json
           } else {
