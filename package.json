@@ -1,6 +1,6 @@
 {
   "name": "@cassiomc1/forgeloop",
-  "version": "2.0.0-rc.4",
+  "version": "2.0.0-rc.5",
   "description": "Evidence-first engineering protocol for AI coding environments and developer workflows",
   "repository": {
     "type": "git",
@@ -82,6 +82,7 @@
     "docs/MCP.md",
     "docs/UNIVERSAL_INTEGRATION.md",
     "docs/AUDIT_UX.md",
+    "docs/FORGELOOP_AUDIT.md",
     "docs/DIAGNOSTIC_MODEL.md",
     "docs/EXECUTION_TRACE.md",
     "docs/CODE_ATTESTATION.md",

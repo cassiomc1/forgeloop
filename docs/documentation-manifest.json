@@ -1405,6 +1405,17 @@
         "self-hosted-node-validation"
       ],
       "packaged": true
+    },
+    {
+      "path": "docs/FORGELOOP_AUDIT.md",
+      "id": "forgeloop-audit",
+      "class": "operational",
+      "audience": [
+        "user",
+        "maintainer"
+      ],
+      "canonicalFor": [],
+      "packaged": true
     }
   ]
 }

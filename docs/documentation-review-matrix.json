@@ -1629,6 +1629,24 @@
       "origin": "handwritten",
       "currency": "current",
       "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/FORGELOOP_AUDIT.md",
+      "status": "reviewed",
+      "action": "updated",
+      "sourceOfTruth": [
+        "ForgeLoopAudit/README.md",
+        "ForgeLoopAudit/src/server/cli.ts",
+        "ForgeLoopAudit/screen/manifest.json"
+      ],
+      "canonicalSources": [
+        "ForgeLoopAudit/README.md",
+        "ForgeLoopAudit/src/server/cli.ts",
+        "ForgeLoopAudit/screen/manifest.json"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
     }
   ]
 }

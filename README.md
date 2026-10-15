@@ -77,9 +77,8 @@ not establish project identity. Public project evidence remains v1.
 ## Distribution and license
 
 GitHub hosts source and issues. The core npm package is publicly available;
-the MCP companion retains restricted distribution. The owner-selected default
-`latest` and `next` channels target `2.0.0-rc.4`, which remains a release candidate with
-incomplete stable SQLite acceptance.
+the MCP companion retains restricted distribution. RC5 targets `next`; `latest`
+remains at RC4. Stable SQLite acceptance is incomplete.
 ForgeLoop-owned source and documentation are licensed under the
 [PolyForm Noncommercial License 1.0.0](./LICENSE). Commercial use is not granted
 by this license. Third-party notices are documented in
@@ -498,8 +497,9 @@ see [CONTRIBUTING.md](./CONTRIBUTING.md#focused-verification-and-maintenance).
 
 ## ForgeLoopAudit workspace
 
-Audit is maintained in `ForgeLoopAudit/`. Its [workspace guidance](./docs/AGENT_SKILL.md#forgeloopaudit-workspace-guidance)
-explains command roots and package boundaries.
+The read-only auditor lives in `ForgeLoopAudit/`. See
+[setup, usage and screenshots](./docs/FORGELOOP_AUDIT.md) for the demo,
+project inspection and audit views.
 
 ## Protocol compatibility
 

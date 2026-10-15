@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+## 2.0.0-rc.5 - 2026-10-15
+
+- Maintain ForgeLoopAudit inside this repository with its own build, verification
+  and read-only Integration API boundary; exclude Audit from the core npm package.
+- Update the runtime TOML parser to `smol-toml` 1.9.0 and align the MCP flat lock.
+- Update development brace-expansion dependencies and the MCP test client to 2.2.0.
+  Preserve the MCP server's pinned runtime version.
+- Publish this release candidate to npm `next`; stable SQLite acceptance remains
+  incomplete, and the default `latest` channel remains at RC4.
+
+- Add ForgeLoopAudit setup, project inspection, view walkthrough and demo
+  screenshots in a dedicated guide linked from the parent repository README.
+
 - Align public installation, Node 24.19.0 prerequisites, release-channel and
   SQLite documentation with the published RC4 and verified clean-user audits.
 
