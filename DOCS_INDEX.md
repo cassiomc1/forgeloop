@@ -36,7 +36,7 @@ integration and guide context. Use this map before editing documentation.
 | Platform adapters | [`docs/PLATFORM_ADAPTERS.md`](./docs/PLATFORM_ADAPTERS.md) | Generic CI boundary and platform mapping guidance |
 | Universal integration API | [`docs/UNIVERSAL_INTEGRATION.md`](./docs/UNIVERSAL_INTEGRATION.md) | Programmatic integration subpath, envelope semantics, and consumer map |
 | Audit UX read model | [`docs/AUDIT_UX.md`](./docs/AUDIT_UX.md) | Bounded read-only task timeline, health, verification, ownership, and completion projection |
-| ForgeLoopAudit workspace | [`README.md#forgeloopaudit-workspace`](./README.md#forgeloopaudit-workspace) | In-repository Audit component, command roots, and development and verification commands |
+| ForgeLoopAudit workspace | [`docs/FORGELOOP_AUDIT.md`](./docs/FORGELOOP_AUDIT.md) | In-repository Audit setup, project inspection, view walkthrough, screenshots and verification links |
 | Advisory context providers | [`docs/ADVISORY_CONTEXT.md`](./docs/ADVISORY_CONTEXT.md) | Optional external host context, non-evidence trust boundary, allowlist normalization, and safety rules |
 | Provider extension architecture | [`docs/PROVIDER_ARCHITECTURE.md`](./docs/PROVIDER_ARCHITECTURE.md) | Provider-neutral architecture, invocation lifecycle, strict snapshots, cancellation, trust, and authority boundaries |
 | Provider extension reference | [`docs/PROVIDERS.md`](./docs/PROVIDERS.md) | Capability discovery, provider kinds, common contract, limits, errors, and maintainer checklist |
