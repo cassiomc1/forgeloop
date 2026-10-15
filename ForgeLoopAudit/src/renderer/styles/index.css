@@ -1,0 +1,403 @@
+@import "tailwindcss";
+@config "../../../tailwind.config.js";
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --primary: 24 95% 44%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 24 95% 44%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --color-background: 248 250 252;
+    --color-primary-surface: 255 255 255;
+    --color-secondary-surface: 241 245 249;
+    --color-elevated-surface: 255 255 255;
+    --color-hover-surface: 226 232 240;
+    --color-border-subtle: 226 232 240;
+    --color-border-strong: 203 213 225;
+    --color-text-primary: 15 23 42;
+    --color-text-secondary: 71 85 105;
+    --color-text-muted: 100 116 139;
+    --color-accent: 234 88 12;
+    --color-accent-hover: 249 115 22;
+    --color-success: 22 163 74;
+    --color-warning: 217 119 6;
+    --color-danger: 220 38 38;
+    --color-info: 37 99 235;
+  }
+
+  .dark {
+    --background: 240 10% 4%;
+    --foreground: 240 5% 96%;
+    --card: 240 10% 5%;
+    --card-foreground: 240 5% 96%;
+    --primary: 24 100% 55%;
+    --primary-foreground: 240 10% 4%;
+    --secondary: 240 10% 7%;
+    --secondary-foreground: 240 5% 96%;
+    --muted: 240 6% 12%;
+    --muted-foreground: 240 5% 64%;
+    --border: 240 6% 16%;
+    --input: 240 6% 16%;
+    --ring: 24 100% 55%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 100%;
+    --color-background: 9 9 11;
+    --color-primary-surface: 13 13 16;
+    --color-secondary-surface: 18 18 22;
+    --color-elevated-surface: 23 23 28;
+    --color-hover-surface: 28 28 34;
+    --color-border-subtle: 36 36 42;
+    --color-border-strong: 48 48 56;
+    --color-text-primary: 245 245 246;
+    --color-text-secondary: 161 161 170;
+    --color-text-muted: 113 113 122;
+    --color-accent: 255 122 24;
+    --color-accent-hover: 255 138 50;
+    --color-success: 34 197 94;
+    --color-warning: 245 158 11;
+    --color-danger: 239 68 68;
+    --color-info: 96 165 250;
+  }
+
+  * {
+    @apply border-forge-border-subtle;
+  }
+
+  html {
+    @apply font-sans antialiased;
+    font-size: 14px;
+  }
+
+  body {
+    background-color: rgb(var(--color-background));
+    @apply text-forge-text-primary min-h-screen;
+    background-image: radial-gradient(circle at top right, rgb(var(--color-accent) / 0.06), transparent 32rem);
+    transition: background-color 180ms ease, color 180ms ease;
+  }
+
+  ::selection {
+    @apply bg-forge-accent/30 text-forge-text-primary;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-forge-accent ring-offset-2 ring-offset-forge-background;
+  }
+
+  ::-webkit-scrollbar {
+    @apply w-1.5 h-1.5;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-forge-border-strong rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-forge-text-muted;
+  }
+
+  ::-webkit-scrollbar-corner {
+    @apply bg-transparent;
+  }
+}
+
+@layer components {
+  .btn, .btn-primary, .btn-secondary, .btn-ghost, .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 px-3 py-1.5 text-sm font-medium rounded-8 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forge-accent focus-visible:ring-offset-2 focus-visible:ring-offset-forge-background disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply bg-forge-accent text-forge-background hover:bg-forge-accent-hover;
+  }
+
+  .btn-secondary {
+    @apply bg-forge-secondary-surface text-forge-text-primary hover:bg-forge-hover-surface;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent text-forge-text-secondary hover:bg-forge-hover-surface hover:text-forge-text-primary;
+  }
+
+  .btn-danger {
+    @apply bg-forge-danger/10 text-forge-danger hover:bg-forge-danger/20;
+  }
+
+  .input {
+    @apply w-full px-3 py-2 text-sm bg-forge-secondary-surface border border-forge-border-subtle rounded-8 text-forge-text-primary placeholder-forge-text-muted focus:border-forge-accent focus:ring-1 focus:ring-forge-accent focus:outline-none transition-colors duration-150;
+  }
+
+  .card, .metric-card {
+    @apply bg-forge-primary-surface border border-forge-border-subtle rounded-10;
+  }
+
+  .card-elevated {
+    @apply bg-forge-elevated-surface border border-forge-border-subtle rounded-10 shadow-lg;
+  }
+
+  .sidebar-item {
+    @apply flex items-center gap-3 px-3 py-2 text-sm font-medium text-forge-text-secondary rounded-8 hover:bg-forge-hover-surface hover:text-forge-text-primary transition-colors duration-150 cursor-pointer;
+  }
+
+  .sidebar-item-active {
+    @apply bg-forge-accent/10 text-forge-accent;
+  }
+
+  .status-badge, .status-badge-success, .status-badge-warning, .status-badge-danger, .status-badge-info, .status-badge-neutral {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-medium rounded-6;
+  }
+
+  .status-badge-success {
+    @apply bg-forge-success/10 text-forge-success;
+  }
+
+  .status-badge-warning {
+    @apply bg-forge-warning/10 text-forge-warning;
+  }
+
+  .status-badge-danger {
+    @apply bg-forge-danger/10 text-forge-danger;
+  }
+
+  .status-badge-info {
+    @apply bg-forge-info/10 text-forge-info;
+  }
+
+  .status-badge-neutral {
+    @apply bg-forge-border-subtle text-forge-text-secondary;
+  }
+
+  .phase-badge, .phase-badge-completed, .phase-badge-current, .phase-badge-pending, .phase-badge-blocked, .phase-badge-failed {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-medium rounded-6;
+  }
+
+  .phase-badge-completed {
+    @apply bg-forge-success/10 text-forge-success;
+  }
+
+  .phase-badge-current {
+    @apply bg-forge-accent/10 text-forge-accent ring-1 ring-forge-accent/20;
+  }
+
+  .phase-badge-pending {
+    @apply bg-forge-border-subtle text-forge-text-muted;
+  }
+
+  .phase-badge-blocked {
+    @apply bg-forge-danger/10 text-forge-danger;
+  }
+
+  .phase-badge-failed {
+    @apply bg-forge-warning/10 text-forge-warning;
+  }
+
+  .inspector-panel {
+    @apply fixed inset-y-0 right-0 z-50 w-96 max-w-[440px] bg-forge-primary-surface border-l border-forge-border-subtle shadow-xl transform transition-transform duration-200 ease-out;
+  }
+
+  .table-container {
+    @apply overflow-x-auto;
+  }
+
+  .table {
+    @apply w-full text-sm;
+  }
+
+  .table th {
+    @apply px-3 py-2 text-left font-medium text-forge-text-muted uppercase tracking-wider border-b border-forge-border-subtle;
+  }
+
+  .table td {
+    @apply px-3 py-2 border-b border-forge-border-subtle/50;
+  }
+
+  .table tr:hover td {
+    @apply bg-forge-hover-surface/50;
+  }
+
+  .empty-state {
+    @apply flex flex-col items-center justify-center py-12 px-6 text-center text-forge-text-muted;
+  }
+
+  .empty-state-icon {
+    @apply text-forge-border-strong mb-3;
+  }
+
+  .empty-state-title {
+    @apply text-sm font-medium text-forge-text-secondary mb-1;
+  }
+
+  .empty-state-description {
+    @apply text-xs text-forge-text-muted max-w-xs;
+  }
+
+  .loading-state {
+    @apply flex items-center justify-center py-8;
+  }
+
+  .error-state {
+    @apply flex flex-col items-center justify-center py-12 px-6 text-center text-forge-danger;
+  }
+
+  .metric-card {
+    @apply p-4;
+  }
+
+  .metric-value {
+    @apply text-2xl font-semibold text-forge-text-primary;
+  }
+
+  .metric-label {
+    @apply text-xs text-forge-text-muted uppercase tracking-wider mt-1;
+  }
+
+  .divider {
+    @apply border-t border-forge-border-subtle;
+  }
+
+  .section-header {
+    @apply flex items-center justify-between mb-4;
+  }
+
+  .section-title {
+    @apply text-sm font-semibold text-forge-text-primary;
+  }
+
+  .section-description {
+    @apply text-xs text-forge-text-muted;
+  }
+
+  .monospace {
+    @apply font-mono text-xs;
+  }
+
+  .hash-text {
+    @apply font-mono text-xs text-forge-text-muted break-all;
+  }
+}
+
+@layer utilities {
+  .app-drag-region {
+    -webkit-app-region: drag;
+  }
+
+  .app-no-drag {
+    -webkit-app-region: no-drag;
+  }
+
+  .forge-background {
+    background-color: rgb(var(--color-background));
+  }
+
+  .forge-primary-surface {
+    background-color: rgb(var(--color-primary-surface));
+  }
+
+  .forge-secondary-surface {
+    background-color: rgb(var(--color-secondary-surface));
+  }
+
+  .forge-elevated-surface {
+    background-color: rgb(var(--color-elevated-surface));
+  }
+
+  .forge-hover-surface {
+    background-color: rgb(var(--color-hover-surface));
+  }
+
+  .forge-border-subtle {
+    border-color: rgb(var(--color-border-subtle));
+  }
+
+  .forge-border-strong {
+    border-color: rgb(var(--color-border-strong));
+  }
+
+  .forge-text-primary {
+    color: rgb(var(--color-text-primary));
+  }
+
+  .forge-text-secondary {
+    color: rgb(var(--color-text-secondary));
+  }
+
+  .forge-text-muted {
+    color: rgb(var(--color-text-muted));
+  }
+
+  .forge-accent {
+    color: rgb(var(--color-accent));
+  }
+
+  .forge-accent-hover {
+    color: rgb(var(--color-accent-hover));
+  }
+
+  .forge-success {
+    color: rgb(var(--color-success));
+  }
+
+  .forge-warning {
+    color: rgb(var(--color-warning));
+  }
+
+  .forge-danger {
+    color: rgb(var(--color-danger));
+  }
+
+  .forge-info {
+    color: rgb(var(--color-info));
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 150ms ease-out;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 200ms ease-out;
+  }
+
+  .animate-pulse-subtle {
+    animation: pulseSubtle 2s ease-in-out infinite;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  @keyframes pulseSubtle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-in,
+    .animate-slide-in-right,
+    .animate-pulse-subtle {
+      animation: none;
+    }
+
+    * {
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

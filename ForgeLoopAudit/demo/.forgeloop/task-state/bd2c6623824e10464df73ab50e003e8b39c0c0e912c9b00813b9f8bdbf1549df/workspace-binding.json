@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-003",
+  "mode": "GIT_WORKTREE",
+  "repositoryIdentity": "79835ed2e13debd10bf496bf2869f26422bb9f6e3fb7b22917b53e992b824ef7",
+  "workspaceIdentity": "617b1176e3a9f56ef627a494bb7cadaffa0e3526f66b8449adeb78443c301e01",
+  "branchAtBind": "main",
+  "headAtBind": "3f9c1d2e77a4b5089c6e12ab34f5d6e7890abcde",
+  "boundAt": "2026-08-05T08:20:00.000Z",
+  "metadata": {
+    "fixture": true
+  }
+}

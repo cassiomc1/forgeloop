@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/policy-baseline.schema.json",
+  "title": "ForgeLoop policy baseline",
+  "type": "object",
+  "required": ["schemaVersion", "createdAt", "entries"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "createdAt": { "type": "string", "minLength": 1 },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ruleId", "fingerprints"],
+        "properties": {
+          "ruleId": { "type": "string", "minLength": 1 },
+          "fingerprints": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+          "reviewBy": { "type": "string" },
+          "details": { "type": "array", "items": { "type": "object" } }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

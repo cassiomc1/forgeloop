@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/work-state.schema.json",
+  "title": "ForgeLoop work state",
+  "type": "object",
+  "required": ["schemaVersion", "protocolVersion", "taskId", "contractFingerprint", "repositoryFingerprint", "phase", "selectedGuides", "completedSteps", "pendingSteps", "checks", "failures", "blockers", "lastUpdated"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "protocolVersion": { "const": 1 },
+    "taskId": { "type": "string", "minLength": 1 },
+    "contractFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "routeFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "repositoryFingerprint": {
+      "type": "object",
+      "required": ["branch", "head"],
+      "properties": {
+        "branch": { "oneOf": [{ "type": "string" }, { "type": "null" }] },
+        "head": { "oneOf": [{ "type": "string" }, { "type": "null" }] }
+      },
+      "additionalProperties": false
+    },
+    "phase": {
+      "type": "string",
+      "enum": [
+        "RECEIVED",
+        "DISCOVERING",
+        "CONTRACT_READY",
+        "ROUTED",
+        "DESIGNING",
+        "PLANNED",
+        "EXECUTING",
+        "VERIFYING",
+        "DIAGNOSING",
+        "CORRECTING",
+        "REVIEWING",
+        "COMPLETE",
+        "BLOCKED"
+      ]
+    },
+    "selectedGuides": { "type": "array", "items": { "type": "string" } },
+    "requiredGates": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "satisfiedGates": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "complianceMode": { "enum": ["advisory", "standard", "strict"] },
+    "completedSteps": { "type": "array", "items": { "type": "string" } },
+    "pendingSteps": { "type": "array", "items": { "type": "string" } },
+    "requiredArtifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "checks": { "type": "array", "items": { "type": "object" } },
+    "failures": { "type": "array", "items": { "type": "object" } },
+    "blockers": { "type": "array", "items": { "type": "object" } },
+    "lastUpdated": { "type": "string", "minLength": 1 },
+    "revision": { "type": "integer", "minimum": 0 },
+    "previousPhase": { "type": "string" },
+    "diagnosedHypothesis": { "type": "string", "minLength": 1 },
+    "verificationEvidence": { "type": "array", "items": { "type": "object" } },
+    "evidenceCoverage": { "type": "array", "items": { "type": "object" } },
+    "publicationStatus": { "enum": ["not-published", "local-only", "committed", "pushed", "published", "deployed"] },
+    "verificationCycle": { "type": "integer", "minimum": 1 },
+    "lastCompletionAttempt": {
+      "type": "object",
+      "required": [
+        "status",
+        "reasonCodes",
+        "missingRequirementIds",
+        "verificationCycle",
+        "timestamp"
+      ],
+      "properties": {
+        "status": { "const": "REJECTED" },
+        "reasonCodes": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "missingRequirementIds": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "verificationCycle": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "stateFingerprint": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "receiptFingerprint": {
+          "oneOf": [
+            { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+            { "type": "null" }
+          ]
+        },
+        "timestamp": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

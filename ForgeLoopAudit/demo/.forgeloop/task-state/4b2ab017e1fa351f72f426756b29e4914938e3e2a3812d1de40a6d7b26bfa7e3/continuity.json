@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-008",
+  "workStateFingerprint": "c700f22377872dfb4b2f6774a699209ab5ebe452a052b66dcf50529ebf999507",
+  "contractFingerprint": "8afa0e494df95a135967ee3bc50bb006ad9233580f89837936b57be1ef4e7317",
+  "phase": "ROUTED",
+  "repositoryFingerprint": {
+    "branch": "main",
+    "head": "b7c4e0d92a1f5b3c8e6d0a24f91b7c3d5e8f0a12"
+  },
+  "updatedAt": "2026-08-08T14:10:00.000Z",
+  "remainingWork": [
+    {
+      "id": "checkout-client",
+      "summary": "Implement the revised checkout client against the revised contract"
+    }
+  ],
+  "knownIssues": [],
+  "changedAreas": [],
+  "inspectFirst": [
+    "src/checkout.ts"
+  ],
+  "resumeNote": "Contract revised and checkpoint revalidated; earlier plan artifacts were invalidated by the revision."
+}

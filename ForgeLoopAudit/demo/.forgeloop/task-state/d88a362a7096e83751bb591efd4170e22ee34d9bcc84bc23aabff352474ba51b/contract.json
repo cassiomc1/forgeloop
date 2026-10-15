@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-007",
+  "objective": "Explore a server-side rendering migration for the storefront without shipping a partial cutover.",
+  "deliverables": [
+    "Rendering cost baseline",
+    "Prototype streaming render",
+    "Rollout and rollback plan"
+  ],
+  "constraints": [
+    "No breaking changes to existing client routes",
+    "Must preserve current SEO metadata"
+  ],
+  "risks": [
+    "Streaming could complicate the cart hydration boundary"
+  ],
+  "verification": [
+    "Prototype keeps LCP under 2 seconds",
+    "Cart hydration remains functional"
+  ],
+  "successCriteria": [
+    "A measured decision on whether to adopt server-side rendering"
+  ],
+  "stopConditions": [
+    "Abort the exploration if hydration cost cannot be reduced measurably"
+  ],
+  "unresolvedDecisions": [
+    "Renderer vendor choice"
+  ],
+  "sourceRefs": [
+    "src/app.ts"
+  ]
+}

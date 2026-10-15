@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-001",
+  "status": "READY",
+  "profile": {
+    "languages": [
+      "typescript"
+    ],
+    "framework": "vite-react",
+    "packageManager": "npm"
+  },
+  "contract": {
+    "fingerprint": "74b4d7bb8fc7c112b45b5166e6e427022df7203c364e48478580b9cad61ff7ed",
+    "objectivePresent": true
+  },
+  "routing": {
+    "primary": "implementation",
+    "guidesSelected": true
+  },
+  "requiredGates": [
+    "unit-tests",
+    "typecheck",
+    "lint"
+  ],
+  "satisfiedGates": [
+    "unit-tests",
+    "typecheck",
+    "lint"
+  ],
+  "errors": []
+}

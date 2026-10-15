@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "conformance-complete-released",
+  "contractFingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "repositoryFingerprint": {
+    "branch": "main",
+    "head": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "phase": "COMPLETE",
+  "selectedGuides": [],
+  "requiredGates": [],
+  "satisfiedGates": [],
+  "complianceMode": "standard",
+  "completedSteps": [],
+  "pendingSteps": [],
+  "checks": [
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "id": "unit-tests",
+      "kind": "command",
+      "requirement": "Fixture unit tests pass",
+      "status": "passed",
+      "evidenceKind": "OBSERVED",
+      "source": "fixture",
+      "provenance": "FORGELOOP_EXECUTED",
+      "exitCode": 0
+    }
+  ],
+  "failures": [],
+  "blockers": [],
+  "verificationEvidence": [
+    {
+      "id": "verif-fixture-cycle-1",
+      "summary": "Fixture criteria observed.",
+      "status": "OBSERVED",
+      "timestamp": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "evidenceCoverage": [
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "requirement": "Fixture success criterion",
+      "requiredEvidence": [
+        "Fixture success criterion"
+      ],
+      "observedEvidence": [
+        "Fixture success criterion"
+      ],
+      "status": "COVERED"
+    }
+  ],
+  "lastUpdated": "2026-01-01T00:00:00.000Z"
+}

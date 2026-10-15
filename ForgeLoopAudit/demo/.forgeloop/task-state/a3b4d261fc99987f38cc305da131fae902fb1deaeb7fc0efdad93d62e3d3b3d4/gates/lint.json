@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-001",
+  "gate": "lint",
+  "status": "satisfied",
+  "requiredBy": [
+    "policy:lint"
+  ],
+  "artifacts": [
+    {
+      "path": "src/catalog.ts",
+      "sha256": "41aae0ba77a12b151e6abf0b4e71d8ad61ea48620c15a6dcc09fc7bf15a17f18"
+    }
+  ],
+  "decisions": [],
+  "unknowns": [],
+  "approvedAssumptions": [],
+  "evidence": [
+    {
+      "kind": "OBSERVED",
+      "source": "eslint",
+      "result": "clean"
+    }
+  ]
+}

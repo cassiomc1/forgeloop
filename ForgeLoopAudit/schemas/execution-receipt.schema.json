@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/execution-receipt.schema.json",
+  "title": "ForgeLoop execution receipt",
+  "type": "object",
+  "required": ["schemaVersion", "protocolVersion", "taskId", "contractFingerprint", "selectedGuides", "changedPaths", "checks", "review", "limitations", "publication"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "protocolVersion": { "const": 1 },
+    "taskId": { "type": "string", "minLength": 1 },
+    "contractFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "routeFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "stateFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "verificationCycle": { "type": "integer", "minimum": 1 },
+    "status": { "enum": ["in-progress", "complete", "blocked", "complete-with-concerns"] },
+    "taskStatus": { "enum": ["in-progress", "complete", "blocked", "incomplete"] },
+    "verificationStatus": { "enum": ["valid", "invalid", "not-verified", "blocked"] },
+    "publicationStatus": { "enum": ["not-published", "local-only", "committed", "pushed", "published", "deployed"] },
+    "productionReadiness": { "enum": ["ready", "not-verified", "blocked"] },
+    "selectedGuides": { "type": "array", "items": { "type": "string" } },
+    "changedPaths": { "type": "array", "items": { "type": "string" } },
+    "checks": { "type": "array", "items": { "type": "object" } },
+    "actions": {
+      "type": "object",
+      "required": ["count", "required", "verified", "failed", "ambiguous", "pending", "actionRefs"],
+      "properties": {
+        "count": { "type": "integer", "minimum": 0 },
+        "required": { "type": "integer", "minimum": 0 },
+        "verified": { "type": "integer", "minimum": 0 },
+        "trustedSatisfied": { "type": "integer", "minimum": 0 },
+        "unresolvedRequired": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "ambiguous": { "type": "integer", "minimum": 0 },
+        "pending": { "type": "integer", "minimum": 0 },
+        "actionRefs": { "type": "array", "items": { "type": "string", "pattern": "^action-[A-Za-z0-9_-]+$" } }
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind", "source", "result"],
+        "properties": {
+          "schemaVersion": { "const": 1 },
+          "kind": { "enum": ["OBSERVED", "INFERRED", "NOT_VERIFIED", "BLOCKED"] },
+          "source": { "type": "string", "minLength": 1 },
+          "result": { "type": "string", "minLength": 1 },
+          "verificationCycle": { "type": "integer", "minimum": 1 },
+          "details": { "type": "object" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "evidenceCoverage": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "review": { "type": "object" },
+    "limitations": { "type": "array", "items": { "type": "string" } },
+    "publication": {
+      "type": "object",
+      "required": ["committed", "pushed", "pullRequest", "deployed"],
+      "properties": {
+        "committed": { "type": "boolean" },
+        "pushed": { "type": "boolean" },
+        "pullRequest": { "oneOf": [{ "type": "string" }, { "type": "null" }] },
+        "deployed": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

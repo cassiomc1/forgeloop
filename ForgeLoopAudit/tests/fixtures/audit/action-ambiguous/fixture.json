@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "scenario": "action-ambiguous",
+  "compatibilityMode": "INTEGRATION_V1",
+  "expected": { "findingDomain": "ACTIONS", "severity": "HIGH", "completionAffected": true }
+}

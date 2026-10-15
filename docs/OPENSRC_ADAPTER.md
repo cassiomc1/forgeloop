@@ -235,7 +235,7 @@ are added; `providerExtensions.publicRegistryApi` and
 - Protocol v1, schema v1, Integration API v1 unchanged.
 - `advisoryContextProviders` v1 and `providerExtensions` v1 unchanged; the
   `ADVISORY_CONTEXT` provider kind covers this adapter.
-- Requires Node.js 20+.
+- The ForgeLoop host requires Node.js 24.19.0+ with built-in `node:sqlite`.
 - Upstream behaviors referenced: `opensrc path <source> [--cwd]`,
   `OPENSRC_HOME` override, fetch-on-miss, `opensrc 0.7.3` observed at
   authoring time (never hardcoded into behavior).

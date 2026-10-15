@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/continuity.schema.json",
+  "title": "ForgeLoop execution continuity",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "protocolVersion",
+    "taskId",
+    "workStateFingerprint",
+    "contractFingerprint",
+    "phase",
+    "repositoryFingerprint",
+    "updatedAt",
+    "remainingWork",
+    "knownIssues",
+    "changedAreas",
+    "inspectFirst"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "protocolVersion": { "const": 1 },
+    "taskId": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "workStateFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "contractFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "phase": { "type": "string", "minLength": 1 },
+    "verificationCycle": { "type": "integer", "minimum": 1 },
+    "repositoryFingerprint": {
+      "type": "object",
+      "required": ["branch", "head"],
+      "properties": {
+        "branch": { "oneOf": [{ "type": "string" }, { "type": "null" }] },
+        "head": { "oneOf": [{ "type": "string" }, { "type": "null" }] }
+      },
+      "additionalProperties": false
+    },
+    "updatedAt": { "type": "string", "minLength": 1 },
+    "currentFocus": { "$ref": "#/$defs/workItem" },
+    "remainingWork": { "type": "array", "maxItems": 40, "items": { "$ref": "#/$defs/workItem" } },
+    "knownIssues": { "type": "array", "maxItems": 40, "items": { "$ref": "#/$defs/workItem" } },
+    "changedAreas": { "type": "array", "maxItems": 80, "items": { "type": "string", "minLength": 1, "maxLength": 1024 } },
+    "inspectFirst": { "type": "array", "maxItems": 40, "items": { "type": "string", "minLength": 1, "maxLength": 1024 } },
+    "resumeNote": { "type": "string", "minLength": 1, "maxLength": 2000 }
+  },
+  "$defs": {
+    "workItem": {
+      "type": "object",
+      "required": ["id", "summary"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "summary": { "type": "string", "minLength": 1, "maxLength": 1000 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

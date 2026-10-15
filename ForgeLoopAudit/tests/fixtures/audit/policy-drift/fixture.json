@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "scenario": "policy-drift",
+  "compatibilityMode": "INTEGRATION_V1",
+  "expected": { "integrity": "VALID", "findingDomain": "POLICY", "severity": "MEDIUM" }
+}

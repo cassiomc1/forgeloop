@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-004",
+  "contractFingerprint": "5e7d4a963c5252a6081a64942a9bfdb8d1b12fa28bf5d03a3be78936c283aca0",
+  "routeFingerprint": "71be7802895ca329ce9730f2d8df3e59aff898f97fd97934db4613cc2fb077e6",
+  "repositoryFingerprint": {
+    "branch": "main",
+    "head": "3f9c1d2e77a4b5089c6e12ab34f5d6e7890abcde"
+  },
+  "phase": "BLOCKED",
+  "revision": 0,
+  "selectedGuides": [
+    "accessibility",
+    "test"
+  ],
+  "requiredGates": [
+    "accessibility-audit"
+  ],
+  "satisfiedGates": [],
+  "complianceMode": "standard",
+  "completedSteps": [
+    "Automated axe scan",
+    "Manual keyboard walkthrough (partial)"
+  ],
+  "pendingSteps": [
+    "Fix grid pagination focus trap",
+    "Re-run accessibility audit"
+  ],
+  "checks": [
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "id": "keyboard-navigation",
+      "kind": "audit",
+      "requirement": "All interactive controls are reachable by keyboard",
+      "status": "failed",
+      "evidenceKind": "BLOCKED",
+      "source": "audit:keyboard-navigation",
+      "timestamp": "2026-08-06T10:40:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "id": "screen-reader-labels",
+      "kind": "audit",
+      "requirement": "Dynamic regions expose accessible names",
+      "status": "passed",
+      "evidenceKind": "OBSERVED",
+      "source": "axe scan",
+      "timestamp": "2026-08-06T10:38:00.000Z"
+    }
+  ],
+  "failures": [
+    {
+      "id": "keyboard-navigation-finding",
+      "description": "Pagination next button traps focus and skips filters",
+      "severity": "HIGH"
+    }
+  ],
+  "blockers": [
+    {
+      "id": "accessibility-gate",
+      "reason": "ACCESSIBILITY_GATE_FAILED",
+      "detail": "2 keyboard navigation findings block completion"
+    }
+  ],
+  "verificationEvidence": [],
+  "evidenceCoverage": [
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "requirement": "Every interactive control is reachable by keyboard",
+      "requiredEvidence": [
+        "Every interactive control is reachable by keyboard"
+      ],
+      "observedEvidence": [],
+      "status": "BLOCKED"
+    },
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "requirement": "Focus order matches visual order",
+      "requiredEvidence": [
+        "Focus order matches visual order"
+      ],
+      "observedEvidence": [],
+      "status": "BLOCKED"
+    }
+  ],
+  "lastUpdated": "2026-08-06T11:20:00.000Z",
+  "previousPhase": "VERIFYING",
+  "diagnosedHypothesis": "Pagination control renders a div with a click handler instead of a button, trapping sequential focus."
+}

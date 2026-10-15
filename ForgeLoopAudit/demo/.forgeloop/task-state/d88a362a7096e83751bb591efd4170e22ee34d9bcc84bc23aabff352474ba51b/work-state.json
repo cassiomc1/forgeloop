@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-007",
+  "contractFingerprint": "a4c50337ff2d99e1946fa14c7f4ae4c9f8e22c9603a83c36c9fab9cf65a8d63f",
+  "routeFingerprint": "0c0c18ef64db6bd2cfd2dc472a1e9d13809e1adeac07a6e91eea70a5e8138669",
+  "repositoryFingerprint": {
+    "branch": "main",
+    "head": "3f9c1d2e77a4b5089c6e12ab34f5d6e7890abcde"
+  },
+  "phase": "PLANNED",
+  "revision": 1,
+  "selectedGuides": [
+    "design",
+    "performance"
+  ],
+  "requiredGates": [
+    "unit-tests"
+  ],
+  "satisfiedGates": [],
+  "complianceMode": "standard",
+  "completedSteps": [
+    "Hydration cost baseline"
+  ],
+  "pendingSteps": [
+    "Prototype streaming render",
+    "Rollout decision"
+  ],
+  "checks": [],
+  "failures": [],
+  "blockers": [],
+  "verificationEvidence": [],
+  "evidenceCoverage": [
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "requirement": "Streaming render removes the hydration cliff on the catalog route",
+      "requiredEvidence": [
+        "Streaming render removes the hydration cliff on the catalog route"
+      ],
+      "observedEvidence": [],
+      "status": "NOT_VERIFIED"
+    },
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "requirement": "No layout shift above 0.1 CLS after the migration",
+      "requiredEvidence": [
+        "No layout shift above 0.1 CLS after the migration"
+      ],
+      "observedEvidence": [],
+      "status": "NOT_VERIFIED"
+    }
+  ],
+  "lastUpdated": "2026-08-08T09:40:00.000Z",
+  "previousPhase": "ROUTED"
+}

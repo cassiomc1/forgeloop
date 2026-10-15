@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "conformance-diagnosing",
+  "contractFingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "repositoryFingerprint": {
+    "branch": "main",
+    "head": "fixture"
+  },
+  "phase": "DIAGNOSING",
+  "selectedGuides": [],
+  "completedSteps": [],
+  "pendingSteps": [],
+  "checks": [],
+  "failures": [],
+  "blockers": [],
+  "lastUpdated": "2026-01-01T00:00:00.000Z"
+}

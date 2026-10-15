@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/policy-rules.schema.json",
+  "title": "ForgeLoop executable policy rules",
+  "type": "object",
+  "required": ["schemaVersion", "rules"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "severity", "source", "blocking", "why", "fix", "check"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "severity": { "enum": ["HIGH", "MEDIUM", "LOW", "INFO"] },
+          "source": { "enum": ["builtin", "discovered", "project"] },
+          "blocking": { "type": "boolean" },
+          "why": { "type": "string", "minLength": 1 },
+          "fix": { "type": "string", "minLength": 1 },
+          "confidence": { "enum": ["HIGH", "MEDIUM", "LOW", "UNKNOWN"] },
+          "scope": {
+            "type": "object",
+            "properties": {
+              "includes": { "type": "array", "items": { "type": "string" } },
+              "excludes": { "type": "array", "items": { "type": "string" } }
+            },
+            "additionalProperties": false
+          },
+          "check": {
+            "type": "object",
+            "required": ["type"],
+            "properties": {
+              "type": { "type": "string", "minLength": 1 },
+              "adapter": { "type": "string" },
+              "command": { "type": "array", "items": { "type": "string" } },
+              "threshold": { "type": "number" },
+              "parameters": { "type": "object" }
+            },
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

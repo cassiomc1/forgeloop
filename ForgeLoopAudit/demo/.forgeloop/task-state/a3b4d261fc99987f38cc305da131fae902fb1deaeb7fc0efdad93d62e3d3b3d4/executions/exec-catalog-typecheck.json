@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "executionId": "exec-catalog-typecheck",
+  "taskId": "TASK-001",
+  "checkId": "typecheck",
+  "requirement": "TypeScript compiles without errors",
+  "verificationCycle": 1,
+  "kind": "COMMAND_EXECUTION",
+  "executionKind": "VERIFICATION",
+  "argv": [
+    "npx",
+    "tsc",
+    "--noEmit"
+  ],
+  "protocolProjectRoot": "/workspace/forgeshop",
+  "cwd": "/workspace/forgeshop",
+  "executionIsolation": "NATIVE_PROJECT",
+  "isolation": {
+    "mode": "NATIVE_PROJECT",
+    "isolated": false,
+    "liveProjectWritable": true,
+    "networkPolicy": "INHERITED",
+    "environmentPolicy": "INHERITED"
+  },
+  "resolution": {
+    "resolutionMode": "direct",
+    "mayInstall": false,
+    "installer": null,
+    "tool": null
+  },
+  "startedAt": "2026-08-03T09:38:00.000Z",
+  "finishedAt": "2026-08-03T09:40:00.000Z",
+  "durationMs": 42000,
+  "termination": "exit",
+  "signal": null,
+  "stdoutSha256": "39b384602d05bd21ea7006ee26cfb99ae644a7ba5576019e2368ac1ca4c19466",
+  "stderrSha256": "4aac326b2c3153b584ada2f9f3821092ca35f49927a97367ee40515861e40cbe",
+  "status": "passed",
+  "exitCode": 0
+}

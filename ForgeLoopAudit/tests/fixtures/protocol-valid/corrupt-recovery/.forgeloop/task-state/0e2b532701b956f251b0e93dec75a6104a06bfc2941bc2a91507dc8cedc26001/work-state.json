@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "conformance-corrupt-recovery",
+  "contractFingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "repositoryFingerprint": {
+    "branch": "main",
+    "head": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "phase": "BLOCKED",
+  "selectedGuides": [],
+  "requiredGates": [],
+  "satisfiedGates": [],
+  "complianceMode": "standard",
+  "completedSteps": [],
+  "pendingSteps": [],
+  "checks": [],
+  "failures": [],
+  "blockers": [
+    {
+      "id": "fixture-blocker",
+      "reason": "FIXTURE_STALE_LOCK",
+      "detail": "Recovered from a stale lock."
+    }
+  ],
+  "verificationEvidence": [],
+  "evidenceCoverage": [],
+  "lastUpdated": "2026-01-01T00:00:00.000Z"
+}

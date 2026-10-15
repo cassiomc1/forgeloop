@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-001",
+  "gate": "unit-tests",
+  "status": "satisfied",
+  "requiredBy": [
+    "policy:unit-tests"
+  ],
+  "artifacts": [
+    {
+      "path": "src/catalog.ts",
+      "sha256": "505069a2508974540777788b7c2dd5ae68e2ef557ec23b2ceac5a4d2a960d1a1"
+    }
+  ],
+  "decisions": [],
+  "unknowns": [],
+  "approvedAssumptions": [],
+  "evidence": [
+    {
+      "kind": "OBSERVED",
+      "source": "vitest run",
+      "result": "14 passed"
+    }
+  ]
+}

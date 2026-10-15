@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-003",
+  "taskKey": "bd2c6623824e10464df73ab50e003e8b39c0c0e912c9b00813b9f8bdbf1549df",
+  "createdAt": "2026-08-05T08:15:00.000Z",
+  "updatedAt": "2026-08-05T09:15:00.000Z",
+  "writeClaims": [
+    "src/checkout.ts"
+  ]
+}

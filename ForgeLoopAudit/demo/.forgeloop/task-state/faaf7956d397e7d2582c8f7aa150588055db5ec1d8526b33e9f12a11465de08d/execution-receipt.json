@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-006",
+  "contractFingerprint": "2715311427a1ebd52271d85d407a99bba2893dd4fa40215f815847c7eb24739a",
+  "routeFingerprint": "77992d3eb88ae9f11eef11435267255ded9cfdec7ce46b3e7758a70b4d149c41",
+  "stateFingerprint": "6f71732ba39c48c5fe99b3d6dd7e7b0e8ee4e5e631d9854fb678a06a29ecd100",
+  "selectedGuides": [
+    "security"
+  ],
+  "changedPaths": [],
+  "checks": [
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "id": "security-scan",
+      "kind": "command",
+      "requirement": "Dependency and flow scan reports no critical findings",
+      "status": "passed",
+      "evidenceKind": "OBSERVED",
+      "source": "node tests/security-scan.mjs",
+      "exitCode": 0,
+      "timestamp": "2026-08-07T14:40:00.000Z",
+      "executionRef": "exec-security-scan",
+      "provenance": "FORGELOOP_EXECUTED"
+    },
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "id": "secret-scan",
+      "kind": "command",
+      "requirement": "No secrets committed in checkout flow",
+      "status": "passed",
+      "evidenceKind": "OBSERVED",
+      "source": "node tests/secret-scan.mjs",
+      "exitCode": 0,
+      "timestamp": "2026-08-07T14:45:00.000Z",
+      "executionRef": "exec-secret-scan",
+      "provenance": "FORGELOOP_EXECUTED"
+    }
+  ],
+  "review": {
+    "reviewer": "harness-b",
+    "outcome": "approved",
+    "notes": "Checkout flow cleared for integration continuation."
+  },
+  "limitations": [
+    "Static review only; no live payment traffic is exercised in the demo."
+  ],
+  "publication": {
+    "committed": true,
+    "pushed": true,
+    "pullRequest": null,
+    "deployed": false
+  },
+  "status": "complete",
+  "taskStatus": "complete",
+  "verificationStatus": "valid",
+  "publicationStatus": "pushed",
+  "productionReadiness": "not-verified",
+  "evidence": [
+    {
+      "kind": "OBSERVED",
+      "source": "audit:security-scan",
+      "result": "no critical findings"
+    },
+    {
+      "kind": "OBSERVED",
+      "source": "audit:secret-scan",
+      "result": "no secrets detected"
+    }
+  ],
+  "evidenceCoverage": [
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "requirement": "No critical or high findings remain untriaged",
+      "requiredEvidence": [
+        "No critical or high findings remain untriaged"
+      ],
+      "observedEvidence": [
+        "No critical or high findings remain untriaged"
+      ],
+      "status": "COVERED"
+    },
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "requirement": "Security scan reports no critical findings",
+      "requiredEvidence": [
+        "Security scan reports no critical findings"
+      ],
+      "observedEvidence": [
+        "Security scan reports no critical findings"
+      ],
+      "status": "COVERED"
+    },
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "requirement": "Checkout flow reviewed against the threat model",
+      "requiredEvidence": [
+        "Checkout flow reviewed against the threat model"
+      ],
+      "observedEvidence": [
+        "Checkout flow reviewed against the threat model"
+      ],
+      "status": "COVERED"
+    }
+  ]
+}

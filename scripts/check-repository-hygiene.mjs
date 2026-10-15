@@ -51,6 +51,8 @@ const SCRATCH_PATTERNS = [
   /^docs\/assets\/diagrams\/\.archify-/u,
   /\/results\/(?:raw|aggregate)\/(?:scratch|tmp|temp)(?:\/|$)/u,
 ];
+// Required by Audit's locked file: dependency; its verifier checks the digest.
+const AUDIT_VENDOR_ARCHIVE = "ForgeLoopAudit/vendor/cassiomc1-forgeloop-2.0.0-rc.4-d05c17c.tgz";
 
 function trackedFiles(rootDir) {
   const output = execFileSync("git", ["ls-files", "-z"], { cwd: rootDir, encoding: "utf8" });
@@ -81,7 +83,7 @@ export function validateRepositoryHygiene({ trackedPaths, manifest, ignoredSenti
     if (trackedPath.endsWith(".md") && !trackedPath.includes("/") && !ROOT_MARKDOWN.has(trackedPath)) {
       errors.push(`REPOSITORY_HYGIENE_UNEXPECTED_ROOT_DOCUMENT: ${trackedPath}`);
     }
-    if (SCRATCH_PATTERNS.some((pattern) => pattern.test(trackedPath))) {
+    if (trackedPath !== AUDIT_VENDOR_ARCHIVE && SCRATCH_PATTERNS.some((pattern) => pattern.test(trackedPath))) {
       errors.push(`REPOSITORY_HYGIENE_TRACKED_SCRATCH_PATH: ${trackedPath}`);
     }
     if (trackedPath.startsWith("docs/assets/") && VISUAL_EXTENSIONS.has(path.posix.extname(trackedPath).toLowerCase())

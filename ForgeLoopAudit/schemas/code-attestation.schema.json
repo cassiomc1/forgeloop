@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/code-attestation.schema.json",
+  "title": "ForgeLoop code attestation predicate",
+  "type": "object",
+  "required": ["schemaVersion", "protocol", "task", "content", "evidence", "verification"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "protocol": {
+      "type": "object",
+      "required": ["name", "protocolVersion"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "const": "ForgeLoop" },
+        "protocolVersion": { "const": 1 }
+      }
+    },
+    "task": {
+      "type": "object",
+      "required": ["taskId", "verificationCycle"],
+      "additionalProperties": false,
+      "properties": {
+        "taskId": { "type": "string", "minLength": 1 },
+        "verificationCycle": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "content": {
+      "type": "object",
+      "required": ["manifestFingerprint", "contentDigest", "coveredPaths"],
+      "additionalProperties": false,
+      "properties": {
+        "manifestFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "contentDigest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "coveredPaths": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["contractFingerprint", "routeFingerprint", "stateFingerprint", "receiptFingerprint", "ledgerSeq", "ledgerHash"],
+      "additionalProperties": false,
+      "properties": {
+        "contractFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "routeFingerprint": { "oneOf": [{ "type": "string", "pattern": "^[a-f0-9]{64}$" }, { "type": "null" }] },
+        "stateFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "receiptFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "ledgerSeq": { "type": "integer", "minimum": 1 },
+        "ledgerHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "required": ["completion", "audit"],
+      "additionalProperties": false,
+      "properties": {
+        "completion": { "const": "VALID" },
+        "audit": { "const": "VALID" }
+      }
+    }
+  }
+}

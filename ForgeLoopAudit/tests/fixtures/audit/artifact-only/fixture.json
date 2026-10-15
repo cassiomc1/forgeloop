@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "scenario": "artifact-only",
+  "compatibilityMode": "ARTIFACT_ONLY",
+  "expected": { "canonicalStatus": "UNKNOWN", "integrity": "UNKNOWN", "completionReadiness": "UNKNOWN", "score": "UNAVAILABLE" }
+}

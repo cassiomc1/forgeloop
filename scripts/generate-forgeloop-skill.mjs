@@ -42,6 +42,12 @@ Runtime registries and validators outrank canonical protocol docs; canonical doc
 
 In ForgeLoop's own source repository, use \`node src/cli.js\`. In a consumer repository, use that repository's configured local invocation. Never silently install or upgrade ForgeLoop, and never use a stale global CLI when repository-local code exists. If compatibility is uncertain, inspect \`protocol-info --json\`.
 
+## ForgeLoopAudit Workspace
+
+ForgeLoopAudit is maintained at \`ForgeLoopAudit/\` inside the ForgeLoop repository, replacing the standalone repository and sibling path \`../ForgeLoopAudit\`. ForgeLoop is its source and contribution home. This source layout is not a prerequisite for consumer projects or npm installations. Audit remains a read-only auditor with its own package, documentation, build, and verification commands; it is not included in the core ForgeLoop npm package.
+
+Resolve the target root before running commands. For core work, stay at the ForgeLoop root and use \`node src/cli.js\`. For Audit work, enter \`ForgeLoopAudit/\`, read its own project instructions and \`README.md\`, and resolve its configured ForgeLoop runtime there. Audit development uses \`npm run dev:web\`; its full verification uses \`npm run verify:full\`, both from the Audit root. Do not apply the parent's CLI path blindly in the child directory or merge their task state. A directory move does not rebind receipts, workspace bindings, or stored project paths; inspect affected artifacts through supported tooling and never rewrite protocol state to repair a moved root.
+
 ## Operating Workflow
 
 1. Discover existing work with \`node src/cli.js task-list --json\`.

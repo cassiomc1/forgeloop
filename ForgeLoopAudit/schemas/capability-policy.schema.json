@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/capability-policy.schema.json",
+  "title": "ForgeLoop project capability policy",
+  "type": "object",
+  "required": ["schemaVersion", "defaultDecision", "rules"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "defaultDecision": { "enum": ["ALLOW", "DENY"] },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["capability", "decision"],
+        "properties": {
+          "capability": {
+            "enum": [
+              "filesystem.read",
+              "filesystem.write",
+              "process.execute",
+              "dependency.install",
+              "network.read",
+              "network.write",
+              "repository.commit",
+              "repository.push",
+              "repository.pull_request",
+              "external.publish",
+              "external.delete",
+              "deployment.execute"
+            ]
+          },
+          "decision": {
+            "enum": ["ALLOW", "DENY", "REQUIRE_AUTHORITY", "REQUIRE_APPROVAL"]
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,26 @@
+name: CI
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix: { os: [ubuntu-latest, macos-latest, windows-latest] }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with: { node-version: 24.19.0, cache: npm }
+      - run: npm ci
+      - name: Run shared verification contract
+        run: npm run verify:full
+        env:
+          FORGELOOP_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:web-smoke

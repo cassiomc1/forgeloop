@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "executionId": "exec-catalog-unit-tests",
+  "taskId": "TASK-001",
+  "checkId": "catalog-unit-tests",
+  "requirement": "Catalog unit tests pass",
+  "verificationCycle": 1,
+  "kind": "COMMAND_EXECUTION",
+  "executionKind": "VERIFICATION",
+  "argv": [
+    "npx",
+    "vitest",
+    "run",
+    "tests/catalog.test.ts"
+  ],
+  "protocolProjectRoot": "/workspace/forgeshop",
+  "cwd": "/tmp/forgeloop/forgeshop-checkout",
+  "executionIsolation": "PROJECT_ISOLATED",
+  "isolation": {
+    "mode": "PROJECT_ISOLATED",
+    "isolated": true,
+    "liveProjectWritable": false,
+    "networkPolicy": "INHERITED",
+    "environmentPolicy": "SANITIZED"
+  },
+  "resolution": {
+    "resolutionMode": "direct",
+    "mayInstall": false,
+    "installer": null,
+    "tool": null
+  },
+  "startedAt": "2026-08-03T09:33:00.000Z",
+  "finishedAt": "2026-08-03T09:35:00.000Z",
+  "durationMs": 42000,
+  "termination": "exit",
+  "signal": null,
+  "stdoutSha256": "2b79d33a37c81aa471e24f38a0afbfd6127a569645f73dddae890463ebd396d1",
+  "stderrSha256": "9639493eae2c35ba1cae785c328ba53061a3df12d277f2f5cecd6ffa172fa87f",
+  "status": "passed",
+  "exitCode": 0
+}

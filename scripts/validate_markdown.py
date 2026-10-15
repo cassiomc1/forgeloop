@@ -690,6 +690,8 @@ http://apache.org/xml/features/disallow-doctype-decl
 
 def _markdown_files(root: Path) -> list[Path]:
     excluded_parts = {
+        # Audit has its own documentation conformance and history rules.
+        "ForgeLoopAudit",
         ".git",
         ".worktrees",
         ".superpowers",

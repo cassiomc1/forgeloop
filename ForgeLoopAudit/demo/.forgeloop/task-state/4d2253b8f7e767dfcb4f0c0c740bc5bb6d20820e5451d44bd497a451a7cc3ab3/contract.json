@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-002",
+  "objective": "Persist the shopping cart across sessions using a local storage adapter.",
+  "deliverables": [
+    "Typed cart store",
+    "Storage adapter with corruption handling",
+    "Hydration on application launch"
+  ],
+  "constraints": [
+    "Storage quota must stay under 1 MiB",
+    "No personal data may be persisted"
+  ],
+  "risks": [
+    "Corrupted storage payloads could break hydration"
+  ],
+  "verification": [
+    "Cart unit tests pass (8 cases)",
+    "Corrupted payloads are discarded safely"
+  ],
+  "successCriteria": [
+    "Cart survives a simulated restart",
+    "Corrupted carts are dropped with a warning"
+  ],
+  "stopConditions": [
+    "Data loss beyond the current cart must halt execution"
+  ],
+  "unresolvedDecisions": [
+    "Whether to version the storage payload format"
+  ],
+  "sourceRefs": [
+    "src/cart.ts",
+    "tests/cart.test.ts"
+  ]
+}

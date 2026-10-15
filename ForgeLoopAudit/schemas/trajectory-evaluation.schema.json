@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/trajectory-evaluation.schema.json",
+  "title": "ForgeLoop trajectory evaluation artifact",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "evaluationId",
+    "scenarioId",
+    "taskId",
+    "result",
+    "completionValid",
+    "safetyValid",
+    "evaluationFingerprint"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "evaluationId": { "type": "string", "pattern": "^eval-[A-Za-z0-9_-]+$" },
+    "scenarioId": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "scenarioFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "taskId": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "result": { "enum": ["PASS", "FAIL"] },
+    "completionValid": { "type": "boolean" },
+    "safetyValid": { "type": "boolean" },
+    "missingMilestones": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["actual"],
+        "properties": {
+          "actual": { "type": ["integer", "null"] },
+          "max": { "type": "integer" },
+          "pass": { "type": "boolean" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "efficiency": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["referenceComparableSteps", "actualComparableSteps", "ratio"],
+          "properties": {
+            "referenceComparableSteps": { "type": "integer", "minimum": 1 },
+            "actualComparableSteps": { "type": "integer", "minimum": 0 },
+            "ratio": { "type": "number", "minimum": 0 }
+          },
+          "additionalProperties": false
+        },
+        { "type": "null" }
+      ]
+    },
+    "computedAt": { "type": "string", "minLength": 1 },
+    "source": {
+      "enum": ["PROJECT_LOCAL_REFERENCE"]
+    },
+    "evaluationFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  },
+  "additionalProperties": false
+}

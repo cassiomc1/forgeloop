@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-002",
+  "taskKey": "4d2253b8f7e767dfcb4f0c0c740bc5bb6d20820e5451d44bd497a451a7cc3ab3",
+  "createdAt": "2026-08-04T09:30:00.000Z",
+  "updatedAt": "2026-08-04T11:00:00.000Z",
+  "writeClaims": [
+    "src/cart.ts"
+  ]
+}
