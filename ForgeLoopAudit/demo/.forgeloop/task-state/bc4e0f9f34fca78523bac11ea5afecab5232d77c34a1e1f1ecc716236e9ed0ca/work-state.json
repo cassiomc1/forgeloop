@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-005",
+  "contractFingerprint": "0bdbb5271e2d3ccf5c07a161c545f84486753afbd51232680709ab7e129f0bac",
+  "routeFingerprint": "14a4bf8cade3035e1c8bc09d61e7d7398a4a236db95c8013f868aedcb0274782",
+  "repositoryFingerprint": {
+    "branch": "main",
+    "head": "3f9c1d2e77a4b5089c6e12ab34f5d6e7890abcde"
+  },
+  "phase": "PLANNED",
+  "revision": 0,
+  "selectedGuides": [
+    "performance",
+    "design"
+  ],
+  "requiredGates": [
+    "performance-budget"
+  ],
+  "satisfiedGates": [],
+  "complianceMode": "standard",
+  "completedSteps": [
+    "Baseline measurement"
+  ],
+  "pendingSteps": [
+    "Lazy loading",
+    "Responsive sizes",
+    "Budget verification"
+  ],
+  "checks": [],
+  "failures": [],
+  "blockers": [],
+  "verificationEvidence": [],
+  "evidenceCoverage": [
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "requirement": "LCP at most 1.8s on the seeded catalog page",
+      "requiredEvidence": [
+        "LCP at most 1.8s on the seeded catalog page"
+      ],
+      "observedEvidence": [],
+      "status": "NOT_VERIFIED"
+    }
+  ],
+  "lastUpdated": "2026-08-07T11:50:00.000Z"
+}

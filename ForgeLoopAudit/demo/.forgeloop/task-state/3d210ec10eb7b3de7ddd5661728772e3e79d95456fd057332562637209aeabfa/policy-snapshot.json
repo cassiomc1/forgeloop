@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "policyDigest": "a353cfef07efb14b9da47eb3c6b1e5f230b5332a303c9ed78a82efce02ffcd27",
+  "rules": [
+    "accessibility-keyboard-navigation",
+    "testing-required-checks"
+  ],
+  "capturedAt": "2026-08-06T10:05:00.000Z"
+}

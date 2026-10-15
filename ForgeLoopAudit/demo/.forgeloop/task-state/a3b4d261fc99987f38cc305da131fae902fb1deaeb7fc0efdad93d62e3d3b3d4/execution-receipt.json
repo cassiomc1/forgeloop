@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-001",
+  "contractFingerprint": "74b4d7bb8fc7c112b45b5166e6e427022df7203c364e48478580b9cad61ff7ed",
+  "routeFingerprint": "2c74afe691930ed7def7a158cb7fff02d63fe217284b7f36d0206230dad14773",
+  "stateFingerprint": "cc86f1ab115d3054d13092992593c75ef17483b93185878419440694ae381b03",
+  "selectedGuides": [
+    "test",
+    "clean"
+  ],
+  "changedPaths": [
+    "src/catalog.ts",
+    "tests/catalog.test.ts"
+  ],
+  "checks": [
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "id": "catalog-unit-tests",
+      "kind": "command",
+      "requirement": "Catalog unit tests pass",
+      "status": "passed",
+      "evidenceKind": "OBSERVED",
+      "source": "vitest run",
+      "exitCode": 0,
+      "timestamp": "2026-08-03T09:35:00.000Z",
+      "executionRef": "exec-catalog-unit-tests",
+      "provenance": "FORGELOOP_EXECUTED"
+    },
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "id": "typecheck",
+      "kind": "command",
+      "requirement": "TypeScript compiles without errors",
+      "status": "passed",
+      "evidenceKind": "OBSERVED",
+      "source": "tsc --noEmit",
+      "exitCode": 0,
+      "timestamp": "2026-08-03T09:40:00.000Z",
+      "executionRef": "exec-catalog-typecheck",
+      "provenance": "FORGELOOP_EXECUTED"
+    },
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "id": "lint",
+      "kind": "command",
+      "requirement": "Lint passes on changed files",
+      "status": "passed",
+      "evidenceKind": "OBSERVED",
+      "source": "eslint",
+      "exitCode": 0,
+      "timestamp": "2026-08-03T09:42:00.000Z",
+      "executionRef": "exec-catalog-lint",
+      "provenance": "FORGELOOP_EXECUTED"
+    }
+  ],
+  "review": {
+    "reviewer": "harness-a",
+    "outcome": "approved",
+    "notes": "Grid keyboard focus order verified manually."
+  },
+  "limitations": [
+    "Demo fixture only; no real storefront is built."
+  ],
+  "publication": {
+    "committed": true,
+    "pushed": true,
+    "pullRequest": null,
+    "deployed": false
+  },
+  "status": "complete",
+  "taskStatus": "complete",
+  "verificationStatus": "valid",
+  "publicationStatus": "pushed",
+  "productionReadiness": "not-verified",
+  "evidence": [
+    {
+      "kind": "OBSERVED",
+      "source": "vitest run",
+      "result": "catalog unit tests: 14 passed"
+    },
+    {
+      "kind": "OBSERVED",
+      "source": "tsc --noEmit",
+      "result": "no type errors"
+    }
+  ],
+  "evidenceCoverage": [
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "requirement": "Products render in a responsive grid",
+      "requiredEvidence": [
+        "Products render in a responsive grid"
+      ],
+      "observedEvidence": [
+        "Products render in a responsive grid"
+      ],
+      "status": "COVERED"
+    },
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "requirement": "Filters combine category and price range",
+      "requiredEvidence": [
+        "Filters combine category and price range"
+      ],
+      "observedEvidence": [
+        "Filters combine category and price range"
+      ],
+      "status": "COVERED"
+    },
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "requirement": "Catalog unit tests pass (14 cases)",
+      "requiredEvidence": [
+        "Catalog unit tests pass (14 cases)"
+      ],
+      "observedEvidence": [
+        "Catalog unit tests pass (14 cases)"
+      ],
+      "status": "COVERED"
+    },
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "requirement": "Filtering logic covered by table-driven tests",
+      "requiredEvidence": [
+        "Filtering logic covered by table-driven tests"
+      ],
+      "observedEvidence": [
+        "Filtering logic covered by table-driven tests"
+      ],
+      "status": "COVERED"
+    }
+  ]
+}

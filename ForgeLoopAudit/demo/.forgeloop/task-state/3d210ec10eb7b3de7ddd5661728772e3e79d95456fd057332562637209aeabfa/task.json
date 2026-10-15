@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-004",
+  "taskKey": "3d210ec10eb7b3de7ddd5661728772e3e79d95456fd057332562637209aeabfa",
+  "createdAt": "2026-08-06T10:00:00.000Z",
+  "updatedAt": "2026-08-06T11:20:00.000Z",
+  "writeClaims": [
+    "src/catalog.ts"
+  ]
+}

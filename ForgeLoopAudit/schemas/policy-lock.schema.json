@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/policy-lock.schema.json",
+  "title": "ForgeLoop policy lockfile",
+  "type": "object",
+  "required": ["schemaVersion", "algorithm", "digest", "rulesDigest", "baselineDigest"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "algorithm": { "const": "sha256" },
+    "digest": { "type": "string", "minLength": 1 },
+    "rulesDigest": { "type": "string" },
+    "baselineDigest": { "type": "string" },
+    "capabilityPolicyDigest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "capturedAt": { "type": "string" }
+  },
+  "additionalProperties": false
+}

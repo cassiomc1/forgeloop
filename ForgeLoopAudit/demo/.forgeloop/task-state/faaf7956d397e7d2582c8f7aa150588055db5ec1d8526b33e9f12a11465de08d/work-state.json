@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-006",
+  "contractFingerprint": "0caf4cf4be85f7209c2ab016f9dc12924d73a9c7ae9cce6101e26427cf5cf24c",
+  "routeFingerprint": "83b50752725d69134c6f762739086884892ca1a0c6cbd7302c9ad6ae805ca252",
+  "repositoryFingerprint": {
+    "branch": "main",
+    "head": "3f9c1d2e77a4b5089c6e12ab34f5d6e7890abcde"
+  },
+  "phase": "COMPLETE",
+  "revision": 2,
+  "selectedGuides": [
+    "security"
+  ],
+  "requiredGates": [
+    "security-review"
+  ],
+  "satisfiedGates": [
+    "security-review"
+  ],
+  "complianceMode": "standard",
+  "completedSteps": [
+    "Threat model",
+    "Dependency scan",
+    "Flow review",
+    "Sign-off"
+  ],
+  "pendingSteps": [],
+  "checks": [
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "id": "security-scan",
+      "kind": "command",
+      "requirement": "Dependency and flow scan reports no critical findings",
+      "status": "passed",
+      "evidenceKind": "OBSERVED",
+      "source": "node tests/security-scan.mjs",
+      "exitCode": 0,
+      "timestamp": "2026-08-07T14:40:00.000Z",
+      "executionRef": "exec-security-scan",
+      "provenance": "FORGELOOP_EXECUTED"
+    },
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "id": "secret-scan",
+      "kind": "command",
+      "requirement": "No secrets committed in checkout flow",
+      "status": "passed",
+      "evidenceKind": "OBSERVED",
+      "source": "node tests/secret-scan.mjs",
+      "exitCode": 0,
+      "timestamp": "2026-08-07T14:45:00.000Z",
+      "executionRef": "exec-secret-scan",
+      "provenance": "FORGELOOP_EXECUTED"
+    }
+  ],
+  "failures": [],
+  "blockers": [],
+  "verificationEvidence": [
+    {
+      "id": "verif-security-cycle-1",
+      "summary": "Security review sign-off recorded during verification cycle 1.",
+      "status": "OBSERVED",
+      "timestamp": "2026-08-07T14:55:00.000Z"
+    }
+  ],
+  "evidenceCoverage": [
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "requirement": "No critical or high findings remain untriaged",
+      "requiredEvidence": [
+        "No critical or high findings remain untriaged"
+      ],
+      "observedEvidence": [
+        "No critical or high findings remain untriaged"
+      ],
+      "status": "COVERED"
+    },
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "requirement": "Security scan reports no critical findings",
+      "requiredEvidence": [
+        "Security scan reports no critical findings"
+      ],
+      "observedEvidence": [
+        "Security scan reports no critical findings"
+      ],
+      "status": "COVERED"
+    },
+    {
+      "schemaVersion": 1,
+      "protocolVersion": 1,
+      "requirement": "Checkout flow reviewed against the threat model",
+      "requiredEvidence": [
+        "Checkout flow reviewed against the threat model"
+      ],
+      "observedEvidence": [
+        "Checkout flow reviewed against the threat model"
+      ],
+      "status": "COVERED"
+    }
+  ],
+  "lastUpdated": "2026-08-07T15:00:00.000Z",
+  "verificationCycle": 1,
+  "publicationStatus": "committed"
+}

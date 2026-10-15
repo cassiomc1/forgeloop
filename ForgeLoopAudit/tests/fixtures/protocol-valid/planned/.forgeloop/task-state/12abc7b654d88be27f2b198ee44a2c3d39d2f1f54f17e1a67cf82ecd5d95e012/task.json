@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "conformance-planned",
+  "taskKey": "12abc7b654d88be27f2b198ee44a2c3d39d2f1f54f17e1a67cf82ecd5d95e012",
+  "createdAt": "2026-01-01T00:00:00.000Z",
+  "updatedAt": "2026-01-01T00:00:00.000Z",
+  "writeClaims": []
+}

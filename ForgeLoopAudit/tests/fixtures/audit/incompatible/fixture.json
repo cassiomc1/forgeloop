@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "scenario": "incompatible",
+  "compatibilityMode": "INCOMPATIBLE",
+  "expected": { "canonicalStatus": "UNKNOWN", "integrity": "UNKNOWN", "completionReadiness": "UNKNOWN", "syntheticAudit": false }
+}

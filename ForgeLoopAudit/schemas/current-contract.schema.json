@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/current-contract.schema.json",
+  "title": "ForgeLoop current execution contract",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "protocolVersion",
+    "taskId",
+    "objective",
+    "deliverables",
+    "constraints",
+    "risks",
+    "verification",
+    "successCriteria",
+    "stopConditions",
+    "unresolvedDecisions",
+    "sourceRefs"
+  ],
+  "$defs": {
+    "requirement": {
+      "type": "object",
+      "required": ["text"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "text": { "type": "string", "minLength": 1 },
+        "type": { "enum": ["PRODUCT", "VERIFICATION", "LIFECYCLE", "PUBLICATION", "PRODUCTION_READINESS"] },
+        "operator": { "enum": ["SINGLE", "ALL"] },
+        "requiredEvidenceKind": { "enum": ["OBSERVED", "INFERRED", "NOT_VERIFIED", "BLOCKED", "HYPOTHESIS"] },
+        "lifecycleOwned": { "type": "boolean" },
+        "terminalOwned": { "type": "boolean" },
+        "mixedTerminal": { "type": "boolean" },
+        "requiredPublicationStatus": {
+          "type": "string",
+          "enum": ["committed", "pushed", "published", "deployed"]
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              { "type": "string", "minLength": 1 },
+              { "$ref": "#/$defs/requirement" }
+            ]
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "protocolVersion": { "const": 1 },
+    "taskId": { "type": "string", "minLength": 1 },
+    "objective": { "type": "string", "minLength": 1 },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["value", "reason", "scope", "reversible", "source"],
+        "properties": {
+          "value": { "type": "string", "minLength": 1 },
+          "reason": { "type": "string", "minLength": 1 },
+          "scope": { "type": "string", "minLength": 1 },
+          "reversible": { "const": true },
+          "source": { "const": "agent-default" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "deliverables": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "constraints": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "risks": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "verification": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          { "type": "string", "minLength": 1 },
+          { "$ref": "#/$defs/requirement" }
+        ]
+      }
+    },
+    "successCriteria": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          { "type": "string", "minLength": 1 },
+          { "$ref": "#/$defs/requirement" }
+        ]
+      }
+    },
+    "stopConditions": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "unresolvedDecisions": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "sourceRefs": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+  },
+  "additionalProperties": false
+}

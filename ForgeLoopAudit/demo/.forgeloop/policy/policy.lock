@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "algorithm": "sha256",
+  "digest": "4379bd86fb3670d958c971be8ae685dd54e7a828f52273546c58e6589402a152",
+  "rulesDigest": "a09518a9c843be4ff1d81609284521edaf77e2d3f7563ecba2f06be4d6a87087",
+  "baselineDigest": "b0143d19d92c50536a8bce18c376370d4e75026b23118efe4832a0c70a45b752",
+  "capturedAt": "2026-08-01T09:00:00.000Z"
+}

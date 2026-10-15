@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/attestation-verification-result.schema.json",
+  "title": "ForgeLoop attestation verification result",
+  "type": "object",
+  "required": ["schemaVersion", "status", "level", "revisionProvider", "baseRevision", "headRevision", "changedPaths", "coveredPaths", "uncoveredPaths", "tasks", "signature"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "status": { "enum": ["VALID", "INVALID"] },
+    "level": { "enum": ["PROCESSED", "VERIFIED", "ATTESTED"] },
+    "revisionProvider": { "type": "string", "minLength": 1 },
+    "baseRevision": { "type": "string", "minLength": 1 },
+    "headRevision": { "type": "string", "minLength": 1 },
+    "changedPaths": { "type": "integer", "minimum": 0 },
+    "coveredPaths": { "type": "integer", "minimum": 0 },
+    "uncoveredPaths": { "type": "array", "items": { "type": "string" } },
+    "tasks": { "type": "integer", "minimum": 0 },
+    "overlaps": { "type": "array", "items": { "type": "object" } },
+    "errors": { "type": "array", "items": { "type": "object" } },
+    "signature": {
+      "type": "object",
+      "required": ["required", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "required": { "type": "boolean" },
+        "status": { "enum": ["UNSIGNED", "VALID", "INVALID", "UNAVAILABLE", "UNTRUSTED", "NOT_CHECKED"] },
+        "provider": { "type": "string" },
+        "identity": { "type": "string" },
+        "issuer": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "_type": "https://in-toto.io/Statement/v1",
+  "subject": [
+    {
+      "name": "forgeloop-task:TASK-001",
+      "digest": {
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    }
+  ],
+  "predicateType": "https://forgeloop.dev/attestation/v1",
+  "predicate": {
+    "schemaVersion": 1,
+    "protocol": {
+      "name": "ForgeLoop",
+      "protocolVersion": 1
+    },
+    "task": {
+      "taskId": "TASK-001",
+      "verificationCycle": 1
+    },
+    "content": {
+      "manifestFingerprint": "f277099b5ea3b3d784f2acc19e7ec33053841111d5cc6a293d2a9652d0e5a2b3",
+      "contentDigest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "coveredPaths": []
+    },
+    "evidence": {
+      "contractFingerprint": "602eb28811d403d9b2fbcfa84397aa4c4cbb50101dd6a781d6a484bc1e94e26d",
+      "routeFingerprint": "91399201a7d304b09f126e1cf48317611e2e82253e6d46e61f8aa837abca6b69",
+      "stateFingerprint": "cc86f1ab115d3054d13092992593c75ef17483b93185878419440694ae381b03",
+      "receiptFingerprint": "28e5d0a6f30b624a49b48b5d7b327bd1c6db2159dd6dac21dcd82bee7d5d8c1e",
+      "ledgerSeq": 18,
+      "ledgerHash": "2f9dc007971a3050c7a0f301badd46fab488050d07091ea4fbac45bb9a37916b"
+    },
+    "verification": {
+      "completion": "VALID",
+      "audit": "VALID"
+    }
+  }
+}

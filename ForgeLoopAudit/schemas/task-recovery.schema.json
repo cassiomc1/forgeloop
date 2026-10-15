@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/task-recovery.schema.json",
+  "title": "ForgeLoop Task Recovery State",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "protocolVersion",
+    "taskId",
+    "status",
+    "recoveredAt",
+    "recoveryId",
+    "recoveryEventSeq",
+    "classificationAtRecovery",
+    "reasonCodes",
+    "releasedClaims",
+    "previousPhase",
+    "previousRevision",
+    "repositoryFingerprint",
+    "authority"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "protocolVersion": { "const": 1 },
+    "taskId": { "type": "string", "minLength": 1 },
+    "status": { "const": "RECOVERED" },
+    "recoveredAt": { "type": "string", "format": "date-time" },
+    "recoveryId": { "type": "string", "pattern": "^recovery-[A-Za-z0-9-]+$" },
+    "recoveryEventSeq": { "type": "integer", "minimum": 1 },
+    "classificationAtRecovery": { "enum": ["STALE", "ABANDONED", "LEGACY_BOUNDARY_MIGRATED"] },
+    "reasonCodes": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "releasedClaims": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "previousPhase": { "type": "string", "minLength": 1 },
+    "previousRevision": { "type": "integer", "minimum": 0 },
+    "repositoryFingerprint": {
+      "type": "object",
+      "required": ["branch", "head"],
+      "additionalProperties": false,
+      "properties": {
+        "branch": { "type": ["string", "null"] },
+        "head": { "type": ["string", "null"] }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "required": ["kind"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "enum": ["CALLER_ACKNOWLEDGED", "HOST_ATTESTED"] },
+        "grantRef": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}
