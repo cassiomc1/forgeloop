@@ -247,9 +247,9 @@ class HttpAuditClient implements ForgeLoopAuditAPI {
 
   private ensureSession(): Promise<void> {
     if (this.bootstrapPromise) return this.bootstrapPromise;
-    const token = new URLSearchParams(window.location.search).get('bootstrap');
-    this.bootstrapPromise = token
-      ? fetch('/api/v1/session/bootstrap', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ token }) })
+    const bootstrapValue = new URLSearchParams(window.location.search).get('bootstrap');
+    this.bootstrapPromise = bootstrapValue
+      ? fetch('/api/v1/session/bootstrap', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ token: bootstrapValue }) })
         .then(async (response) => {
           const payload = await response.json() as ApiEnvelope<unknown>;
           if (!response.ok || payload.ok !== true) throw new AuditHttpError(payload.error?.message ?? 'Browser bootstrap failed', payload.error?.code ?? 'BOOTSTRAP_FAILED', false);

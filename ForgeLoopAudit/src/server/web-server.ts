@@ -123,10 +123,10 @@ export class AuditWebServer {
   private async handleBootstrap(request: IncomingMessage, response: ServerResponse, url: URL): Promise<void> {
     if (request.method !== 'POST') return this.sendError(response, 405, new Error('Method not allowed'));
     const body = await readJson(request);
-    const token = typeof body === 'object' && body !== null && typeof (body as { token?: unknown }).token === 'string'
+    const bootstrapValue = typeof body === 'object' && body !== null && typeof (body as { token?: unknown }).token === 'string'
       ? (body as { token: string }).token
       : url.searchParams.get('token');
-    if (!token || token !== this.bootstrapToken || (this.bootstrapConsumed && process.env.FORGELOOP_AUDIT_TEST_REUSABLE_BOOTSTRAP !== '1')) return this.sendError(response, 401, new Error('Invalid bootstrap token'));
+    if (!bootstrapValue || bootstrapValue !== this.bootstrapToken || (this.bootstrapConsumed && process.env.FORGELOOP_AUDIT_TEST_REUSABLE_BOOTSTRAP !== '1')) return this.sendError(response, 401, new Error('Invalid bootstrap token'));
     if (process.env.FORGELOOP_AUDIT_TEST_REUSABLE_BOOTSTRAP !== '1') this.bootstrapConsumed = true;
     const sessionId = randomBytes(32).toString('base64url');
     this.sessions.set(sessionId, { expiresAt: Date.now() + SESSION_TTL_MS });

@@ -32,11 +32,11 @@ describe('local web server security boundary', () => {
     const forbidden = await fetch(`${address.origin}/api/v1/app`, { headers: { Origin: 'http://evil.example' } });
     expect(forbidden.status).toBe(403);
 
-    const token = new URL(address.bootstrapUrl).searchParams.get('bootstrap');
+    const bootstrapValue = new URL(address.bootstrapUrl).searchParams.get('bootstrap');
     const bootstrap = await fetch(`${address.origin}/api/v1/session/bootstrap`, {
       method: 'POST',
       headers: { Origin: address.origin, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token }),
+      body: JSON.stringify({ token: bootstrapValue }),
     });
     expect(bootstrap.status).toBe(200);
     const cookie = bootstrap.headers.get('set-cookie');

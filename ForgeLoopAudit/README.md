@@ -202,7 +202,14 @@ record and intentionally retains its old Electron-era values.
 
 ## ForgeLoop
 
-ForgeLoopAudit is a companion project for [ForgeLoop](https://github.com/cassiomc1/forgeloop).
+ForgeLoopAudit is maintained in the [ForgeLoop repository](https://github.com/cassiomc1/forgeloop)
+under `ForgeLoopAudit/`. Run this application's npm commands from that directory;
+use the parent repository for issues, pull requests, and source updates. Its
+package, pinned ForgeLoop dependency, demo fixtures, and verification contract
+remain scoped to the Audit application. The parent `Audit component` workflow
+runs this contract and the browser smoke on Linux, macOS, and Windows. The
+workflows retained under this directory's `.github/` are historical standalone
+templates; GitHub discovers active workflows only in the parent `.github/workflows/`.
 
 ### Portable agent skill
 

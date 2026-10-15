@@ -199,7 +199,7 @@ Refresh the trusted schema set only from a controlled ForgeLoop checkout:
 
 ```bash
 node scripts/generate-schema-provenance.mjs \
-  --source ../forgeloop \
+  --source .. \
   --commit d05c17cddda6a09581d526732b08eb0789b9734f \
   --package-version 2.0.0-rc.4
 npm run protocol:schemas:verify

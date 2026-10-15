@@ -1,0 +1,49 @@
+name: Audit component
+
+on:
+  pull_request:
+    paths:
+      - 'ForgeLoopAudit/**'
+      - '.github/workflows/audit-component.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'ForgeLoopAudit/**'
+      - '.github/workflows/audit-component.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: audit-component-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Audit verify (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: ForgeLoopAudit
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24.19.0
+          cache: npm
+          cache-dependency-path: ForgeLoopAudit/package-lock.json
+      - run: npm ci
+      - name: Run Audit verification contract
+        run: npm run verify:full
+        env:
+          FORGELOOP_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      - run: npx --no-install playwright install --with-deps chromium
+      - run: npm run test:web-smoke
