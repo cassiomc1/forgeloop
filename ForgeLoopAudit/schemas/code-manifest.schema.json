@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/code-manifest.schema.json",
+  "title": "ForgeLoop code content manifest",
+  "type": "object",
+  "required": ["schemaVersion", "protocolVersion", "taskId", "verificationCycle", "capture", "bindings", "entries", "contentDigest"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "protocolVersion": { "const": 1 },
+    "taskId": { "type": "string", "minLength": 1 },
+    "verificationCycle": { "type": "integer", "minimum": 1 },
+    "capture": {
+      "type": "object",
+      "required": ["mode", "revisionProvider", "baseRevision", "observedRevision", "providerMetadata"],
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "enum": ["WORKTREE", "INDEX", "COMMIT"] },
+        "revisionProvider": { "type": "string", "minLength": 1 },
+        "baseRevision": { "oneOf": [{ "type": "string" }, { "type": "null" }] },
+        "observedRevision": { "type": "string", "minLength": 1 },
+        "providerMetadata": { "type": "object" }
+      }
+    },
+    "bindings": {
+      "type": "object",
+      "required": ["contractFingerprint", "routeFingerprint", "stateFingerprint", "receiptFingerprint", "ledgerSeq", "ledgerHash"],
+      "additionalProperties": false,
+      "properties": {
+        "contractFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "routeFingerprint": { "oneOf": [{ "type": "string", "pattern": "^[a-f0-9]{64}$" }, { "type": "null" }] },
+        "stateFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "receiptFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "ledgerSeq": { "type": "integer", "minimum": 1 },
+        "ledgerHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "operation", "kind"],
+        "additionalProperties": false,
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "sourcePath": { "type": "string", "minLength": 1 },
+          "operation": { "enum": ["ADDED", "MODIFIED", "DELETED", "RENAMED", "COPIED", "TYPE_CHANGED"] },
+          "kind": { "enum": ["FILE", "SYMLINK", "GITLINK", "DELETED"] },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "providerContentId": { "type": "string", "minLength": 1 },
+          "providerMetadata": { "type": "object" }
+        }
+      }
+    },
+    "contentDigest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

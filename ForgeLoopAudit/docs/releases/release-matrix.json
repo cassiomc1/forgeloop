@@ -1,0 +1,9 @@
+{
+  "packageName": "forgeloop-audit",
+  "assetType": "npm-tarball",
+  "runtime": "node-local-web-server",
+  "renderer": "browser",
+  "supportedPlatforms": ["ubuntu", "macos", "windows"],
+  "requiredMetadata": ["SHA256SUMS", "SBOM-cyclonedx.json"],
+  "signing": "unsigned-preview"
+}

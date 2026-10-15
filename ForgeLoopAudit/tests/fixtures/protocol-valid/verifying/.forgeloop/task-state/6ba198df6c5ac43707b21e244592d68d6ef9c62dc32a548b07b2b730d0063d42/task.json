@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "conformance-verifying",
+  "taskKey": "6ba198df6c5ac43707b21e244592d68d6ef9c62dc32a548b07b2b730d0063d42",
+  "createdAt": "2026-01-01T00:00:00.000Z",
+  "updatedAt": "2026-01-01T00:00:00.000Z",
+  "writeClaims": []
+}

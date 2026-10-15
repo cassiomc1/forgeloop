@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "scenario": "attestation-invalid",
+  "compatibilityMode": "INTEGRATION_V1",
+  "expected": { "integrity": "INVALID", "criticalFindingDomain": "ATTESTATION" }
+}

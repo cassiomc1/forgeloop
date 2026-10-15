@@ -1,0 +1,97 @@
+{
+  "manifestVersion": 1,
+  "sourceProject": "demo",
+  "sourceProjectName": "ForgeShop",
+  "auditVersion": "0.3.0-rc.3",
+  "forgeLoopVersion": "2.0.0-rc.4",
+  "forgeLoopCommit": "d05c17cddda6a09581d526732b08eb0789b9734f",
+  "protocolVersion": 1,
+  "schemaVersion": 1,
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "theme": "dark",
+  "captureScript": "scripts/capture-readme-screenshots.mjs",
+  "screenshots": [
+    {
+      "file": "audit-summary.png",
+      "page": "Audit Summary",
+      "taskId": null,
+      "scenario": "Project integrity, completion readiness, quality, trust and coverage"
+    },
+    {
+      "file": "projects.png",
+      "page": "Projects",
+      "taskId": null,
+      "scenario": "Several registered ForgeLoop projects with per-project task, health and live-watch status"
+    },
+    {
+      "file": "kanban.png",
+      "page": "Task Board",
+      "taskId": null,
+      "scenario": "Cross-project task board with one column per canonical status and a project filter"
+    },
+    {
+      "file": "timeline.png",
+      "page": "Project Timeline",
+      "taskId": null,
+      "scenario": "Git-backed project evolution, current architecture and bounded evidence"
+    },
+    {
+      "file": "findings.png",
+      "page": "Findings",
+      "taskId": null,
+      "scenario": "Canonical and derived findings with provenance"
+    },
+    {
+      "file": "task-audit.png",
+      "page": "Tasks",
+      "taskId": null,
+      "scenario": "Six ForgeShop tasks with canonical audit state and finding counts"
+    },
+    {
+      "file": "evidence.png",
+      "page": "Evidence",
+      "taskId": "TASK-002",
+      "scenario": "Evidence coverage, verification scope and attestation boundary"
+    },
+    {
+      "file": "quality.png",
+      "page": "Quality",
+      "taskId": "TASK-001",
+      "scenario": "Canonical structural-quality projection without provider execution"
+    },
+    {
+      "file": "policy-trust.png",
+      "page": "Policy & Trust",
+      "taskId": "TASK-006",
+      "scenario": "Policy, workspace, responsibility, handoff and attestation boundaries"
+    },
+    {
+      "file": "history-diff.png",
+      "page": "Audit History",
+      "taskId": null,
+      "scenario": "Manual audit snapshots stored outside the audited project"
+    },
+    {
+      "file": "report.png",
+      "page": "Reports",
+      "taskId": null,
+      "scenario": "Deterministic JSON, Markdown and SARIF report export"
+    },
+    {
+      "file": "diagnostics.png",
+      "page": "Diagnostics",
+      "taskId": "TASK-004",
+      "scenario": "Canonical history, trace, reflection and evaluation signals"
+    },
+    {
+      "file": "settings.png",
+      "page": "Settings",
+      "taskId": null,
+      "scenario": "ForgeLoopAudit preferences and ForgeLoop capability metadata"
+    }
+  ],
+  "captureStorage": "sqlite-disposable-fixture"
+}

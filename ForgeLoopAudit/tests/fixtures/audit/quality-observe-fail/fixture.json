@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "scenario": "quality-observe-fail",
+  "compatibilityMode": "INTEGRATION_V1",
+  "expected": { "quality": "FAIL", "severity": "MEDIUM", "completionAffected": false }
+}

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "defaultDecision": "DENY",
+  "rules": [
+    {
+      "capability": "filesystem.read",
+      "decision": "ALLOW"
+    },
+    {
+      "capability": "filesystem.write",
+      "decision": "REQUIRE_APPROVAL"
+    },
+    {
+      "capability": "process.execute",
+      "decision": "REQUIRE_AUTHORITY"
+    },
+    {
+      "capability": "external.publish",
+      "decision": "DENY"
+    }
+  ]
+}

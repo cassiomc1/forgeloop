@@ -48,6 +48,21 @@ behavioral certification for every external harness. Existing native
 `AGENTS.md`, `CLAUDE.md`, Cursor, and Copilot integration surfaces remain
 intact.
 
+## ForgeLoopAudit workspace guidance
+
+The generated Skill documents the Audit component at `ForgeLoopAudit/` inside
+the ForgeLoop repository, replacing the standalone repository and
+`../ForgeLoopAudit`. It directs agents to
+resolve the target project root before running commands: core ForgeLoop uses
+the parent root; Audit uses its own directory, instructions, package scripts,
+and configured protocol runtime. ForgeLoop is the source and contribution home
+for both components; their package commands, task state, and receipt provenance
+remain scoped to the target root. Audit remains a read-only auditor.
+
+Maintain this guidance in `scripts/generate-forgeloop-skill.mjs`, then run
+`npm run skill:generate` and `npm run skill:check`. An independently installed
+Skill must be updated separately; generation only writes the repository copy.
+
 ## Safety Boundaries
 
 Agents must discover tasks first, follow `next`, respect claims, require

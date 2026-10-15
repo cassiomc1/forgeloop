@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-007",
+  "status": "RECOVERED",
+  "recoveredAt": "2026-08-08T09:28:00.000Z",
+  "recoveryId": "recovery-ssr-exploration-abandoned",
+  "recoveryEventSeq": 5,
+  "classificationAtRecovery": "ABANDONED",
+  "reasonCodes": [
+    "CALLER_ABANDONED"
+  ],
+  "releasedClaims": [
+    "worker-implementer-3"
+  ],
+  "previousPhase": "PLANNED",
+  "previousRevision": 1,
+  "repositoryFingerprint": {
+    "branch": "main",
+    "head": "3f9c1d2e77a4b5089c6e12ab34f5d6e7890abcde"
+  },
+  "authority": {
+    "kind": "CALLER_ACKNOWLEDGED"
+  }
+}

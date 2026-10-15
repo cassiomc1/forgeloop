@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-002",
+  "requestedMode": "AUTO",
+  "resolvedMode": "CHANGED",
+  "verificationCycle": 1,
+  "changedPaths": [
+    "src/cart.ts",
+    "tests/cart.test.ts"
+  ],
+  "claimedPaths": [
+    "src/cart.ts",
+    "tests/cart.test.ts"
+  ],
+  "selectedPaths": [
+    "src/cart.ts",
+    "tests/cart.test.ts"
+  ],
+  "reasons": [
+    "Selected exact canonical changed paths inside effective task claims."
+  ],
+  "fallback": null,
+  "contractFingerprint": "ee600048df668bf09a3ad628a42f9a8b8a9cc6872e3fe86ff187d9cfe44b2c13",
+  "repositoryFingerprint": {
+    "branch": "main",
+    "head": "3f9c1d2e77a4b5089c6e12ab34f5d6e7890abcde"
+  },
+  "claimsFingerprint": "19824f313c1dbb41ba6f4561ba41065cc1e495727914f09cc9a5f14ec2f3a8a9",
+  "checkerCapabilityFingerprint": "177b1c2be8b5078c3205cf26aa506b13737a14f4dec282dcd45c15b9c6af1cf0",
+  "createdAt": "2026-08-04T11:05:00.000Z"
+}

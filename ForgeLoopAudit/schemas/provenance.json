@@ -1,0 +1,132 @@
+{
+  "forgeLoopPackageVersion": "2.0.0-rc.4",
+  "forgeLoopGitCommit": "d05c17cddda6a09581d526732b08eb0789b9734f",
+  "protocolVersion": 1,
+  "generatedAt": "2026-10-15T03:05:11.690849Z",
+  "schemas": {
+    "action.schema.json": {
+      "sha256": "0066f1d303781060b3ccde0a7235eabcdff69940928a9e75fab5e68e70717e18",
+      "upstreamPath": "schemas/action.schema.json"
+    },
+    "activation.schema.json": {
+      "sha256": "19c60c9b8dd99467d7b639031179f1df00971bc5a276bcb00a6b74e7f60f0f6f",
+      "upstreamPath": "schemas/activation.schema.json"
+    },
+    "approval.schema.json": {
+      "sha256": "f4c2c6b1315f8cfd79b2555c3d7ad8ad73acf6b8e02b6bef6927a231bdef7183",
+      "upstreamPath": "schemas/approval.schema.json"
+    },
+    "attestation-verification-result.schema.json": {
+      "sha256": "8c668edc3c367f57c41c4c2ee2b3bad628b532645baaf2479a8bc9f2f9be625a",
+      "upstreamPath": "schemas/attestation-verification-result.schema.json"
+    },
+    "capability-policy.schema.json": {
+      "sha256": "4aa97885ff8eebdbf24c404711a3e8360614a102f905fe17a9a8026a8ce6a1f5",
+      "upstreamPath": "schemas/capability-policy.schema.json"
+    },
+    "code-attestation.schema.json": {
+      "sha256": "6626c491b180ab046dcac50b9a744783db9ae10b704bfd42c4241a47a6a0234a",
+      "upstreamPath": "schemas/code-attestation.schema.json"
+    },
+    "code-manifest.schema.json": {
+      "sha256": "cdcf9c47e4da762e5a3655e484a2e1452a33cadd132122de39601a3bce41fdda",
+      "upstreamPath": "schemas/code-manifest.schema.json"
+    },
+    "config.schema.json": {
+      "sha256": "824eb9b90538795b196e08fe401dfba029f57296b1b545758996dfd6acb95433",
+      "upstreamPath": "schemas/config.schema.json"
+    },
+    "continuity.schema.json": {
+      "sha256": "3c761dabec38e795e8a84e9a517c83dbcb971fe88682379a2bceec345fe52285",
+      "upstreamPath": "schemas/continuity.schema.json"
+    },
+    "current-contract.schema.json": {
+      "sha256": "9b9e8e2a17701b4aa0561f1e50b54c71588e0d0a304124e23b1fa5be49a791e7",
+      "upstreamPath": "schemas/current-contract.schema.json"
+    },
+    "event.schema.json": {
+      "sha256": "5e16cfd7700ebc70b6b439717b3b2256087ce9fb3b8eeaef730ea2fcb6556b71",
+      "upstreamPath": "schemas/event.schema.json"
+    },
+    "execution-receipt.schema.json": {
+      "sha256": "a60ee896302f7ef0237f1820c0b0acb6eb99e8cc28b9760dac5bf466bde9255e",
+      "upstreamPath": "schemas/execution-receipt.schema.json"
+    },
+    "execution.schema.json": {
+      "sha256": "a2c5dfe9b776b9717feee6bad3ce926473549b424f87143d57a50cfb59eae448",
+      "upstreamPath": "schemas/execution.schema.json"
+    },
+    "gate.schema.json": {
+      "sha256": "7e7e1350838586c0b0385c19f5fb4520abf8f290ea60c9d36bdba2d3682b9690",
+      "upstreamPath": "schemas/gate.schema.json"
+    },
+    "handoff-envelope.schema.json": {
+      "sha256": "2dd553852d53a02d93af8915b3c9fd055aad86efd4c97a5a96bda710cb28ecd6",
+      "upstreamPath": "schemas/handoff-envelope.schema.json"
+    },
+    "in-toto-statement.schema.json": {
+      "sha256": "7eaf21f72164d860f40c8851d6fb26a380fcfe425a5be38e7cd22a4146ee699e",
+      "upstreamPath": "schemas/in-toto-statement.schema.json"
+    },
+    "policy-baseline.schema.json": {
+      "sha256": "a08c49d13f67c660727c08602c25162bfc1ba7f5aa3b938896ea81d4841fd1f0",
+      "upstreamPath": "schemas/policy-baseline.schema.json"
+    },
+    "policy-discovery.schema.json": {
+      "sha256": "5f4d86d9592daf527cd294e9b18429be96b5d176ac8409e7d580358672b14e6b",
+      "upstreamPath": "schemas/policy-discovery.schema.json"
+    },
+    "policy-lock.schema.json": {
+      "sha256": "c3d6489fc59a661cec5c9176ccf94f26f0e8f1dd69f3620766fc1ac6a6ddabd0",
+      "upstreamPath": "schemas/policy-lock.schema.json"
+    },
+    "policy-rules.schema.json": {
+      "sha256": "9a3a67c5223313297fbd3660f5da83c16b22f77582a6877bc27541b6e495a41f",
+      "upstreamPath": "schemas/policy-rules.schema.json"
+    },
+    "policy-snapshot.schema.json": {
+      "sha256": "25465478759b57c20746d84436379f6a59df3c0df4eb05ea13246c12bdd4d19d",
+      "upstreamPath": "schemas/policy-snapshot.schema.json"
+    },
+    "preflight.schema.json": {
+      "sha256": "64b474725abc9004d3a39e39e324e5ad3bfb8a02fc94e73cd84b272a5abe2e68",
+      "upstreamPath": "schemas/preflight.schema.json"
+    },
+    "responsibility.schema.json": {
+      "sha256": "54ab530d6f3feb66fc09eca4afbd68eecb08c551d2f2d1f523bb40a8340a8657",
+      "upstreamPath": "schemas/responsibility.schema.json"
+    },
+    "routing-result.schema.json": {
+      "sha256": "dd38c7fae737f681ac5992686830719314792149de83498dfabe22fc2d25d9f1",
+      "upstreamPath": "schemas/routing-result.schema.json"
+    },
+    "source-registry.schema.json": {
+      "sha256": "8e5e31df83cfa083f135260cc10ffaa6f971c825a285758ba549181401426239",
+      "upstreamPath": "schemas/source-registry.schema.json"
+    },
+    "task-descriptor.schema.json": {
+      "sha256": "b6ab6835c2512d050da3cb6a47a1c9ee3827b21e9a23a020e801db29994e959e",
+      "upstreamPath": "schemas/task-descriptor.schema.json"
+    },
+    "task-recovery.schema.json": {
+      "sha256": "ac8bcca5d9ed9f93a3db3908cc03f0e50cad45032c8d73b1f2131941d2396ec1",
+      "upstreamPath": "schemas/task-recovery.schema.json"
+    },
+    "trajectory-evaluation.schema.json": {
+      "sha256": "1003b18977ee3b4bfb264aedf35ccdb07edd09bb7f076f11b266607697c07fb9",
+      "upstreamPath": "schemas/trajectory-evaluation.schema.json"
+    },
+    "verification-scope.schema.json": {
+      "sha256": "5d6a94fea1eb55b309eaa2c7781571d5f69be5b498253f5bcc79d2a025a84918",
+      "upstreamPath": "schemas/verification-scope.schema.json"
+    },
+    "work-state.schema.json": {
+      "sha256": "5f227628f07aa926327022396bb8cb3619aca313aaa28300700874b0e3f678b4",
+      "upstreamPath": "schemas/work-state.schema.json"
+    },
+    "workspace-binding.schema.json": {
+      "sha256": "7cf67e6e0c9abda7c7f86cdb69d56c4212cfea5a3791d7e765f9fbe69f86337c",
+      "upstreamPath": "schemas/workspace-binding.schema.json"
+    }
+  }
+}

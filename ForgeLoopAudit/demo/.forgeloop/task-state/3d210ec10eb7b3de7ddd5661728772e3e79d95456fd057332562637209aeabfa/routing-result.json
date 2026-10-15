@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "contractFingerprint": "5e7d4a963c5252a6081a64942a9bfdb8d1b12fa28bf5d03a3be78936c283aca0",
+  "input": {
+    "taskId": "TASK-004",
+    "project": "forgeshop"
+  },
+  "primary": "diagnosis",
+  "guides": [
+    "accessibility",
+    "test"
+  ],
+  "reasons": {
+    "diagnosis": [
+      "Failed audit requires correction before resuming"
+    ]
+  },
+  "excluded": {}
+}

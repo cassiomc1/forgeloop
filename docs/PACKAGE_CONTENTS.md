@@ -92,6 +92,9 @@ The published tarball includes the following consumer-facing groups:
 
 The tarball intentionally omits repository-only material:
 
+- the `ForgeLoopAudit/` application source, dependencies, builds, and application
+  package; maintaining it inside the repository does not add it to the core
+  package's `files` allowlist;
 - tests, conformance fixtures, coverage output, and secret-scanning helpers;
   Harness-specific Agent Skill installation directories and Skill caches are
   not packaged.

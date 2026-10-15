@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-003",
+  "objective": "Integrate the checkout API client with error mapping and a retry policy.",
+  "deliverables": [
+    "Checkout API client",
+    "Typed error mapping",
+    "Retry policy for transient failures"
+  ],
+  "constraints": [
+    "No secrets in demo code",
+    "All network calls mocked in tests"
+  ],
+  "risks": [
+    "Payment provider outages could hang checkout"
+  ],
+  "verification": [
+    "Checkout integration tests pass (6 cases)",
+    "Retry policy handles transient failures"
+  ],
+  "successCriteria": [
+    "Orders submit through the client",
+    "Transient errors retry with backoff"
+  ],
+  "stopConditions": [
+    "Any leaked credential stops execution immediately"
+  ],
+  "unresolvedDecisions": [
+    "Final retry backoff ceiling"
+  ],
+  "sourceRefs": [
+    "src/checkout.ts",
+    "tests/checkout.test.ts"
+  ]
+}

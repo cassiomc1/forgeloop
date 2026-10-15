@@ -496,6 +496,11 @@ CI audits each supplied task receipt explicitly. With no receipt it reports
 completion or attestation. For contributor checks and safe payload retention,
 see [CONTRIBUTING.md](./CONTRIBUTING.md#focused-verification-and-maintenance).
 
+## ForgeLoopAudit workspace
+
+Audit is maintained in `ForgeLoopAudit/`. Its [workspace guidance](./docs/AGENT_SKILL.md#forgeloopaudit-workspace-guidance)
+explains command roots and package boundaries.
+
 ## Protocol compatibility
 
 The npm package version is independent of protocol version. The current
@@ -616,17 +621,15 @@ docs/diagrams/          typed Archify diagram source and inventory
 docs/assets/diagrams/   committed HTML, SVG, and generation receipt
 scripts/                checks, renderer, release identity, CI notes
 tests/                  Node and Python regression coverage
-.forgeloop/             project-scoped ForgeLoop configuration
+.forgeloop/             project-scoped configuration
 .forgeloop/task-state/  isolated live task protocol state
 DOCS_INDEX.md           documentation map and ownership boundaries
 ```
 
-Project-scoped configuration remains under `.forgeloop/`.
 Task-scoped mutable protocol state is stored under
 `.forgeloop/task-state/<taskKey>/`.
 
-For document ownership, guide routing, capability degradation, and integration
-details, start at [`DOCS_INDEX.md`](./DOCS_INDEX.md).
+For documentation ownership and integrations, see [`DOCS_INDEX.md`](./DOCS_INDEX.md).
 
 ## Programmatic integration and MCP
 
@@ -636,8 +639,7 @@ ForgeLoop exposes a stable programmatic surface:
 import { executeForgeLoopCommand } from "@cassiomc1/forgeloop/integration";
 ```
 
-The local MCP server (`@cassiomc1/forgeloop-mcp`, stdio) is an adapter over
-this exact API — it never reimplements ForgeLoop. See
+The local MCP server (`@cassiomc1/forgeloop-mcp`, stdio) wraps this API. See
 [`docs/UNIVERSAL_INTEGRATION.md`](./docs/UNIVERSAL_INTEGRATION.md) and
 [`docs/MCP.md`](./docs/MCP.md). MCP is optional; the CLI and instruction-only
 hosts remain fully supported without it.

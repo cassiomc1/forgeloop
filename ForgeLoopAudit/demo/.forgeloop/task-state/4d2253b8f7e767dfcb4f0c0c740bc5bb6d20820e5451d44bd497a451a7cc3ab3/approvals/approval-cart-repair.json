@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "taskId": "TASK-002",
+  "approvalId": "approval-cart-repair",
+  "actionId": "action-cart-repair",
+  "actionFingerprint": "8d67613085ae320fde5b112de78d47a92ddfa4baf43efbd2a9281af38ac6426e",
+  "contractFingerprint": "171ccd526116e7597454057e8b1ce5effdb5a5da1179c2e7d073eb092fd9191e",
+  "taskRevision": 2,
+  "capability": "filesystem.write",
+  "status": "PENDING",
+  "requestedAt": "2026-08-04T11:01:30.000Z",
+  "reason": "The completion-critical repair action needs an explicit decision before any external mutation."
+}

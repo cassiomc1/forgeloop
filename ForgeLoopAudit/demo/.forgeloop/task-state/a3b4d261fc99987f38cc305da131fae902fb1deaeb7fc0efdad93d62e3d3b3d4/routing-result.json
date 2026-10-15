@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "contractFingerprint": "602eb28811d403d9b2fbcfa84397aa4c4cbb50101dd6a781d6a484bc1e94e26d",
+  "input": {
+    "taskId": "TASK-001",
+    "project": "forgeshop"
+  },
+  "primary": "implementation",
+  "guides": [
+    "test",
+    "clean"
+  ],
+  "reasons": {
+    "implementation": [
+      "Direct feature work with test coverage"
+    ]
+  },
+  "excluded": {}
+}

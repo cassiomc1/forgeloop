@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "conformance-ownership-inconsistent",
+  "taskKey": "73ac28ba4e069f9d051e32e3038808b4197355ea590d90979b655f7bdde8206e",
+  "createdAt": "2026-01-01T00:00:00.000Z",
+  "updatedAt": "2026-01-01T00:00:00.000Z",
+  "writeClaims": []
+}

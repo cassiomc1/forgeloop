@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "TASK-005",
+  "objective": "Improve image loading performance so the largest contentful paint stays under 2 seconds.",
+  "deliverables": [
+    "Lazy-loaded product imagery",
+    "Responsive image sizes",
+    "Performance budget check"
+  ],
+  "constraints": [
+    "No layout shifts above 0.1 CLS",
+    "Keep bundle size neutral"
+  ],
+  "risks": [
+    "Lazy loading could delay above-the-fold images"
+  ],
+  "verification": [
+    "Measured LCP improves from 3.1s to at most 1.8s",
+    "CLS stays under 0.1"
+  ],
+  "successCriteria": [
+    "LCP at most 1.8s on the seeded catalog page"
+  ],
+  "stopConditions": [
+    "A CLS regression above 0.1 stops optimization work"
+  ],
+  "unresolvedDecisions": [
+    "CDN choice for demo imagery"
+  ],
+  "sourceRefs": [
+    "src/catalog.ts"
+  ]
+}

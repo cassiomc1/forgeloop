@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forgeloop://schemas/source-registry.schema.json",
+  "title": "ForgeLoop source registry",
+  "type": "object",
+  "required": ["schemaVersion", "protocolVersion", "sources"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "protocolVersion": { "const": 1 },
+    "sources": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["kind", "summary"],
+        "properties": {
+          "kind": { "enum": ["user-request", "repository-fact", "observation", "command", "agent-decision", "inference", "unknown"] },
+          "summary": { "type": "string", "minLength": 1 },
+          "path": { "type": "string", "minLength": 1 },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "command": { "type": "string", "minLength": 1 },
+          "result": { "type": "string", "minLength": 1 },
+          "status": { "type": "string", "minLength": 1 }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

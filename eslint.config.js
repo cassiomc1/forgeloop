@@ -17,6 +17,8 @@ export default [
   {
     ignores: [
       "**/node_modules/**",
+      // Audit owns its TypeScript configuration and generated output checks.
+      "ForgeLoopAudit/**",
       "coverage/**",
       ".worktrees/**",
       "docs/assets/**",

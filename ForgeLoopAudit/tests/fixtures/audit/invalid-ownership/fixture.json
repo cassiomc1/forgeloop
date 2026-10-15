@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "scenario": "invalid-ownership",
+  "compatibilityMode": "INTEGRATION_V1",
+  "expected": { "canonicalStatus": "INVALID", "integrity": "INVALID", "criticalFindingDomain": "OWNERSHIP" }
+}

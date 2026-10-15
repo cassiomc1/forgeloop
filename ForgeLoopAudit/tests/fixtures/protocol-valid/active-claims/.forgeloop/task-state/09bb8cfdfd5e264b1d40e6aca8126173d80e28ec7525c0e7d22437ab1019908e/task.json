@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "conformance-active-claims",
+  "taskKey": "09bb8cfdfd5e264b1d40e6aca8126173d80e28ec7525c0e7d22437ab1019908e",
+  "createdAt": "2026-01-01T00:00:00.000Z",
+  "updatedAt": "2026-01-01T00:00:00.000Z",
+  "writeClaims": [
+    "src/feature.ts"
+  ]
+}

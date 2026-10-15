@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "scenario": "stale",
+  "compatibilityMode": "INTEGRATION_V1",
+  "expected": { "canonicalStatus": "STALE", "completionReadiness": "STALE", "highFinding": true }
+}

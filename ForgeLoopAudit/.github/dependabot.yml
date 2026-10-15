@@ -1,0 +1,26 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule: { interval: weekly }
+    groups:
+      npm-minor-patches: { update-types: [minor, patch] }
+    ignore:
+      # TypeScript majors are a toolchain migration, not a dependency bump:
+      # the stable typescript-eslint line declares
+      # `peerDependencies.typescript = ">=4.8.4 <6.1.0"`, so `npm ci` fails
+      # with ERESOLVE and the `npm run lint` gate cannot run at all.
+      # Revisit when typescript-eslint ships TypeScript 7 support.
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
+      # `@types/node` must track the Node major that CI and the release
+      # workflows actually execute (`node-version: 24.19.0` in ci.yml, release.yml
+      # and public-release-verification.yml). Moving the type definitions
+      # ahead of the runtime would let the build type-check against APIs that
+      # do not exist on the supported Node version, which no test can catch.
+      # Revisit when the Node baseline itself is upgraded.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: weekly }
