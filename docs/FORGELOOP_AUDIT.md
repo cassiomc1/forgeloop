@@ -69,4 +69,3 @@ For development, verification and command-root details, see the
 Audit has its own dependencies, build and verification commands. Its application
 source and screenshots are excluded from the core npm package; npm users can
 [read this section and its images on GitHub](https://github.com/cassiomc1/forgeloop#forgeloopaudit-workspace).
-

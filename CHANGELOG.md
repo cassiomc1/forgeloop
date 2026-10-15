@@ -18,7 +18,6 @@
 - Add ForgeLoopAudit setup, project inspection, view walkthrough and demo
   screenshots in a dedicated guide linked from the parent repository README.
 
-
 ## 2.0.0-rc.4 default channel - 2026-10-14
 
 - Promote the existing public RC4 to owner-authorized npm `latest`; `next`
