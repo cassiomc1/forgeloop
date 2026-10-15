@@ -496,6 +496,33 @@ CI audits each supplied task receipt explicitly. With no receipt it reports
 completion or attestation. For contributor checks and safe payload retention,
 see [CONTRIBUTING.md](./CONTRIBUTING.md#focused-verification-and-maintenance).
 
+## ForgeLoopAudit workspace
+
+ForgeLoopAudit is maintained at `ForgeLoopAudit/` inside the ForgeLoop
+repository, replacing the standalone repository and sibling workspace location
+`../ForgeLoopAudit`. It is a read-only engineering auditor for ForgeLoop projects.
+
+The Audit component keeps its own `package.json`, documentation, build, and
+verification commands within this repository. Use ForgeLoop as its source and
+contribution home. This source layout does not bundle the Audit application in
+the core ForgeLoop npm package; the application package boundary remains separate.
+
+From the ForgeLoop checkout root, run Audit commands in its directory:
+
+```bash
+cd ForgeLoopAudit
+npm run dev:web
+```
+
+For Audit validation, run `npm run verify:full` from that same directory.
+Consult `ForgeLoopAudit/README.md` and `ForgeLoopAudit/docs/README.md` for its
+prerequisites and operating instructions. Run core ForgeLoop commands from the
+parent root with `node src/cli.js`; resolve Audit protocol instructions and its
+configured ForgeLoop runtime from the Audit root. The directory move does not
+merge task state or rebind existing receipts, workspace bindings, or stored
+project paths. Inspect root-sensitive artifacts through supported tooling
+before resuming affected work; do not rewrite protocol state to match the move.
+
 ## Protocol compatibility
 
 The npm package version is independent of protocol version. The current
