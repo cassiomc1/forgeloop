@@ -11,6 +11,7 @@ export function ThemeToggle() {
       title={`Switch to ${nextTheme} theme`}
       variant="ghost"
       size="icon"
+      className="h-11 w-11 shrink-0 text-forge-text-secondary"
       onClick={() => setTheme(nextTheme)}
     >
       {resolvedTheme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
