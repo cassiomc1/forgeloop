@@ -24,7 +24,9 @@ pull requests were merged and their public release identities were verified.
 
 ### ForgeLoopStudio
 
-- Sync PR: [#83](https://github.com/cassiomc1/ForgeLoopStudio/pull/83), merged.
+- Sync PR: #83, merged, in `cassiomc1/ForgeLoopStudio` (now
+  `cassiomc1/ForgeLoopAudit`). The repository is now private; viewing the
+  historical PR requires repository access.
 - Final main commit: `94fab2d27decda5c95d89d2b88f55ff3578d46da`.
 - Studio version: `0.1.0-rc.7`.
 - Vendored archive:
