@@ -3,7 +3,7 @@ name: taste-frontend-eng
 language: en
 description: "Contextual visual-taste review for premium frontend and brand-heavy work."
 version: "2026.09"
-last-reviewed: "2026-08-17"
+last-reviewed: "2026-10-16"
 guide-id: taste
 ---
 
@@ -20,6 +20,25 @@ approach. ForgeLoop keeps the useful review vocabulary while applying its own
 protocol boundaries: user evidence, accessibility, performance, security, and
 the active product constraints have priority over aesthetic preference.
 
+## Upstream Baseline and Intentional Differences
+
+Reviewed baseline: [Taste Skill v2.0.0](https://github.com/Leonxlnx/taste-skill/tree/v2.0.0/skills/taste-skill),
+released 2026-10-13 and reviewed for this adaptation on 2026-10-16. See the
+[versioned instructions](https://github.com/Leonxlnx/taste-skill/blob/v2.0.0/skills/taste-skill/SKILL.md)
+and [changelog](https://github.com/Leonxlnx/taste-skill/blob/v2.0.0/CHANGELOG.md).
+This identifies the upstream reference, not full feature parity or automatic
+synchronization. The guide's frontmatter version follows ForgeLoop's guide
+versioning separately.
+
+ForgeLoop adapts the content inventory, subject-specific concept, and screenshot
+correction practices. It deliberately keeps direction selection contextual
+rather than requiring a scripted draw. It does not adopt universal bans on
+colors, gradients, borders, fonts, or headline line counts, or minimum image
+and animated-element counts. Existing brand constraints, language expansion,
+content needs, reduced motion, accessibility, and performance determine those
+choices. An aesthetic preference never becomes lifecycle or completion
+authority.
+
 ## Design Read
 
 Before editing, describe the existing or proposed system in observable terms:
@@ -34,6 +53,39 @@ Before editing, describe the existing or proposed system in observable terms:
 
 Separate observed evidence from inference. If the implementation is not yet
 available, record the read as a hypothesis and keep it reversible.
+
+## Client Content Inventory
+
+Collect a small, source-backed inventory before choosing a visual direction:
+
+- the client's actual product, audience, vocabulary, location, materials, and
+  distinguishing constraints, where relevant and supported;
+- available product views, photographs, illustrations, documents, and brand
+  assets, with their source and permitted use;
+- the content each requested section must deliver and the evidence supporting
+  its claims;
+- missing content, representative examples, and facts requiring confirmation.
+
+Reuse the inventory from the premium website brief when it exists. Do not
+invent a differentiator, price, metric, testimonial, customer, or asset to make
+the direction work. Label representative content and keep unsupported proof
+out of release claims. For each section, connect the visitor's question, the
+proposed claim, and its supporting source before committing to a layout.
+
+## Visual Concept
+
+Write one sentence connecting an evidenced client detail to a concrete visual
+decision and the visitor's goal. For example, an existing product workflow can
+organize the page's composition and sequence. Explain how that decision
+extends beyond the hero into supporting sections and narrow layouts.
+
+Check whether the sentence would fit a nearby competitor unchanged. If it
+would, refine it using the inventory rather than inventing a distinction.
+Keep an established brand or design system when appropriate. Add a distinctive
+interaction only when it serves the authorized scope and has an accessible
+fallback; a new interaction is not required merely to make the page unusual.
+Record reversible choices in the existing design artifact or contract
+assumptions, following the normal decision policy.
 
 ## Design Dials
 
@@ -129,6 +181,61 @@ Before calling a visual task ready, check the smallest useful evidence set:
 If visual evidence is unavailable, record `NOT_VERIFIED` or a bounded
 limitation. Never turn an imagined screenshot or an unrun browser check into
 an observed result.
+
+## Screenshot Review
+
+Use an already available, authorized browser to capture and inspect the real
+page. A useful starting set is 1440, 768, and 390 CSS pixels wide; adapt it to
+the supported device matrix and include required reflow, zoom, and interaction
+checks. These widths do not replace accessibility requirements.
+
+1. Record the tested URL or build, browser, viewport dimensions, relevant
+   state, and screenshot references in the task's evidence.
+2. Inspect each capture for hierarchy, content completeness, concept continuity,
+   typography, contrast, crops, overflow, and obscured or missing content.
+   Check interactive behavior separately; a screenshot alone cannot establish
+   keyboard access, form behavior, or runtime performance.
+3. Identify up to three actionable problems with their location, visible
+   evidence, and user impact. Prioritize required acceptance criteria over
+   stylistic preferences.
+4. Correct the scoped issues through the existing ForgeLoop diagnosis and
+   correction loop when verification fails. Re-run affected checks, capture
+   the changed states, and inspect them again.
+
+Use at most three review rounds by default, within the task contract's limits.
+Stop earlier when the applicable criteria are satisfied. The round limit does
+not waive a failure: report unresolved issues and their verification status,
+then follow the canonical next action or blocker. Do not fabricate aesthetic
+scores or claim browser, inspector, or screenshot evidence that was not
+actually obtained. This procedure adds no separate approval gate.
+
+## Optional Upstream Tools
+
+The upstream v2 scripts, direction library, and reference collection are not
+bundled with this guide or required by ForgeLoop runtime:
+
+| Upstream tool | Optional purpose |
+| --- | --- |
+| `scripts/draw.mjs` | Propose directions and composition blueprints |
+| `scripts/lint.mjs` | Review source against upstream style patterns |
+| `scripts/inspect.mjs` | Measure a page in a browser and capture screenshots |
+| `scripts/assets.mjs` | Find external media and record source and credit information |
+
+Use a separately available, reviewed copy only when appropriate and authorized;
+do not install, fetch, or execute it automatically. The reviewed inspector
+requires Node 22+ and an installed Chrome, Edge, or Chromium; the other scripts
+require Node 18+, and media discovery requires network access. Check the
+selected copy's requirements and output paths before use. Upstream tools may
+write project artifacts and user-level history outside ForgeLoop's evidence
+store; those files do not become attested evidence merely by existing.
+
+Prefer an available equivalent when it supports the same task checks. Treat
+upstream style findings as contextual recommendations, not new ForgeLoop gates.
+For external media, confirm the exact asset's license, attribution, and
+relevance; search results alone do not establish reuse rights. Identify found
+or generated imagery honestly rather than presenting it as the client's own.
+Record the tool version and checks actually run, and mark unavailable required
+evidence `NOT_VERIFIED` without claiming upstream tool coverage.
 
 ## Redesign Audit
 

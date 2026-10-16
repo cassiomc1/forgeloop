@@ -207,10 +207,15 @@ The contextual frontend taste guide is informed by Taste Skill:
 
 - Taste Skill, Copyright (c) 2026 Leonxlnx, MIT License.
 - Source: <https://github.com/leonxlnx/taste-skill>
+- Reviewed baseline: [v2.0.0](https://github.com/Leonxlnx/taste-skill/tree/v2.0.0/skills/taste-skill),
+  released 2026-10-13; adaptation reviewed 2026-10-16.
 
 ForgeLoop includes a short, adapted guide under `ENG/taste-frontend-eng.md`.
-It does not vendor upstream runtime code, depend on its repository at runtime,
-or make its prescriptive examples universal.
+It incorporates selected content-inventory, visual-concept, and screenshot-review
+practices. It does not vendor upstream scripts or the direction library,
+depend on its repository at runtime, or claim full upstream feature parity.
+Upstream tooling is optional and separately supplied; its prescriptive style
+rules and media or motion counts are not universal ForgeLoop requirements.
 
 ## Runtime dependencies with upstream notices
 

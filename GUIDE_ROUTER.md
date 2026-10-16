@@ -188,12 +188,16 @@ require GSAP or a static-site approach, prescribe fonts/layouts, or override
 accessibility, performance, security, or product evidence.
 
 ```bash
-rg -n '^## (Design Read|Design Dials|Anti-Slop Checks|Typography Quality|Layout Composition|Motion Restraint|Responsive Composition|Design-System Selection|Visual Pre-Flight|Redesign Audit)' ENG/taste-frontend-eng.md
+rg -n '^## (Upstream Baseline and Intentional Differences|Design Read|Client Content Inventory|Visual Concept|Design Dials|Anti-Slop Checks|Typography Quality|Layout Composition|Motion Restraint|Responsive Composition|Design-System Selection|Visual Pre-Flight|Screenshot Review|Optional Upstream Tools|Redesign Audit)' ENG/taste-frontend-eng.md
 ```
 
-**Expected evidence:** a contextual design read, intentional dials, bounded
-anti-slop review, and only the visual/accessibility/performance checks that are
-in scope. Mark unavailable visual evidence `NOT_VERIFIED`.
+**Expected evidence:** a source-backed client inventory, contextual design read,
+visual concept, intentional dials, bounded anti-slop review, and screenshot
+review with up to three correction rounds within the task contract. Run only
+the visual/accessibility/performance checks in scope and retain unresolved
+failures. Upstream scripts remain optional and unbundled; see the guide's
+versioned baseline and intentional differences. Mark unavailable visual
+evidence `NOT_VERIFIED`.
 
 ### `games` — web game architecture and operation
 
