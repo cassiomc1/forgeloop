@@ -1,4 +1,6 @@
-import type { ProjectAuditSnapshot } from '@shared/audit';
+import { ArrowRight, Activity, FileCheck2, Fingerprint, RefreshCw, ShieldCheck } from 'lucide-react';
+import type { ReactNode } from 'react';
+import type { AuditFinding, ProjectAuditSnapshot } from '@shared/audit';
 import type { ProjectDetectionResult, ProjectSnapshot } from '@shared/domain';
 import { StatusBadge } from '../components/ui/StatusBadge';
 
@@ -11,22 +13,110 @@ interface AuditSummaryProps {
   onViewFindings: () => void;
 }
 
-function Verdict({ label, value }: { label: string; value: string }) {
-  return <div className="bg-forge-secondary-surface border border-forge-border-subtle rounded-8 p-4"><p className="text-xs text-forge-text-muted uppercase tracking-wider">{label}</p><div className="mt-2"><StatusBadge status={value} size="md" /></div></div>;
+function Verdict({ label, value, icon }: { label: string; value: string; icon: ReactNode }) {
+  return (
+    <div className="audit-verdict">
+      <div className="audit-verdict-label"><span>{label}</span>{icon}</div>
+      <StatusBadge status={value} size="md" />
+    </div>
+  );
+}
+
+function FindingRow({ finding, onTaskSelect }: { finding: AuditFinding; onTaskSelect: (taskId: string) => void }) {
+  const content = <>
+    <div className="audit-finding-meta"><StatusBadge status={finding.severity} /><code>{finding.code}</code></div>
+    <p>{finding.summary}</p>
+  </>;
+  return finding.taskId
+    ? <button className="audit-finding audit-interactive-row" onClick={() => onTaskSelect(finding.taskId!)}>{content}</button>
+    : <div className="audit-finding">{content}</div>;
 }
 
 export function AuditSummary({ audit, snapshot, detection, onRefresh, onTaskSelect, onViewFindings }: AuditSummaryProps) {
-  if (!audit) {
-    return <div className="space-y-6 animate-fade-in"><div><h1 className="text-xl font-semibold text-forge-text-primary">Audit Summary</h1><p className="text-sm text-forge-text-muted mt-1">Read-only engineering audit for {snapshot.project.name}</p></div><div className="bg-forge-warning/10 border border-forge-warning/30 rounded-10 p-5"><p className="font-medium text-forge-warning">Canonical audit unavailable</p><p className="mt-1 text-sm text-forge-text-secondary">Compatibility: {detection.compatibilityMode ?? 'UNKNOWN'}. Artifact inspection remains available, but completion authority is not available.</p><button className="btn-secondary mt-4" onClick={onRefresh}>Retry audit</button></div></div>;
-  }
+  const attention = audit?.findings.filter((finding) => finding.severity === 'CRITICAL' || finding.severity === 'HIGH').slice(0, 5) ?? [];
+  const pendingTasks = audit?.taskAudits.filter((task) => task.status !== 'VALID') ?? [];
 
-  const attention = audit.findings.filter((finding) => finding.severity === 'CRITICAL' || finding.severity === 'HIGH').slice(0, 5);
-  return <div className="space-y-6 animate-fade-in">
-    <div className="flex items-start justify-between gap-4"><div><h1 className="text-xl font-semibold text-forge-text-primary">Audit Summary</h1><p className="text-sm text-forge-text-muted mt-1">{audit.project.name} · ForgeLoop {audit.provenance.forgeLoopPackageVersion} · protocol v{audit.protocol.protocolVersion} · schema v{audit.protocol.schemaVersion}</p><p className="text-xs text-forge-text-muted mt-1 font-mono">HEAD {audit.gitHead ?? 'Unavailable'}</p></div><button className="btn-secondary" onClick={onRefresh}>Run audit</button></div>
-    {audit.compatibilityMode === 'ARTIFACT_ONLY' && <div className="bg-forge-warning/10 border border-forge-warning/30 rounded-10 p-4 text-sm text-forge-warning">Audit capability limited. Canonical ForgeLoop Integration API unavailable; artifact inspection is available, but completion authority is not.</div>}
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3"><Verdict label="Integrity" value={audit.verdict.integrity} /><Verdict label="Completion readiness" value={audit.verdict.completionReadiness} /><Verdict label="Engineering quality" value={audit.verdict.quality} /><Verdict label="Trust / attestation" value={audit.verdict.trust} /></div>
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">{[['Critical', audit.counts.critical], ['High', audit.counts.high], ['Medium', audit.counts.medium], ['Info', audit.counts.info]].map(([label, count]) => <div key={String(label)} className="bg-forge-primary-surface border border-forge-border-subtle rounded-8 p-4"><p className="text-xs text-forge-text-muted">{label}</p><p className="text-2xl font-semibold text-forge-text-primary mt-1">{count}</p></div>)}</div>
-    <div className="bg-forge-primary-surface border border-forge-border-subtle rounded-10 p-5"><div className="flex items-center justify-between gap-3"><div><h2 className="font-semibold text-forge-text-primary">Audit coverage</h2><p className="text-sm text-forge-text-muted mt-1">Unavailable capabilities remain visible.</p></div><span className="text-2xl font-semibold text-forge-text-primary">{audit.coverage.percent}%</span></div><div className="mt-3 h-2 bg-forge-border-subtle rounded-full overflow-hidden"><div className="h-full bg-forge-accent rounded-full" style={{ width: `${audit.coverage.percent}%` }} /></div>{audit.coverage.unavailable.length > 0 && <p className="mt-3 text-xs text-forge-warning">Unavailable: {audit.coverage.unavailable.join(', ')}</p>}<p className="mt-3 text-sm text-forge-text-secondary">{audit.score ? `Audit score ${audit.score.score ?? 'unavailable'} (${audit.score.grade}) · ${audit.score.methodologyVersion}` : 'Score unavailable — insufficient audit coverage.'}</p></div>
-    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4"><div className="bg-forge-primary-surface border border-forge-border-subtle rounded-10 p-5"><div className="flex items-center justify-between"><h2 className="font-semibold text-forge-text-primary">Needs attention</h2><button className="btn-secondary text-xs" onClick={onViewFindings}>View findings</button></div>{attention.length === 0 ? <p className="text-sm text-forge-text-muted mt-4">No critical or high findings.</p> : <div className="mt-3 space-y-2">{attention.map((finding) => <button key={finding.fingerprint} className="w-full text-left p-3 rounded-8 bg-forge-secondary-surface hover:bg-forge-hover-surface" onClick={() => finding.taskId && onTaskSelect(finding.taskId)}><div className="flex items-center gap-2"><StatusBadge status={finding.severity} /><span className="font-mono text-xs text-forge-text-muted">{finding.code}</span></div><p className="mt-1 text-sm text-forge-text-primary">{finding.summary}</p></button>)}</div>}</div><div className="bg-forge-primary-surface border border-forge-border-subtle rounded-10 p-5"><h2 className="font-semibold text-forge-text-primary">Tasks not ready for completion</h2><div className="mt-3 space-y-2">{audit.taskAudits.filter((task) => task.status !== 'VALID').slice(0, 6).map((task) => <button key={task.taskId} className="w-full flex items-center justify-between p-3 rounded-8 bg-forge-secondary-surface hover:bg-forge-hover-surface" onClick={() => onTaskSelect(task.taskId)}><span className="font-mono text-sm text-forge-text-primary">{task.taskId}</span><StatusBadge status={task.status} /></button>)}{audit.taskAudits.every((task) => task.status === 'VALID') && <p className="text-sm text-forge-text-muted">All audited tasks are canonically valid.</p>}</div></div></div>
-  </div>;
+  return (
+    <div className="audit-summary animate-fade-in">
+      <header className="audit-page-header">
+        <div className="min-w-0">
+          <h1>Audit Summary</h1>
+          <p className="audit-page-description">Read-only engineering audit for <span className="font-medium text-forge-text-primary">{audit?.project.name ?? snapshot.project.name}</span></p>
+          {audit && <div className="audit-source-meta">
+            <span>ForgeLoop {audit.provenance.forgeLoopPackageVersion}</span>
+            <span>Protocol v{audit.protocol.protocolVersion} · Schema v{audit.protocol.schemaVersion}</span>
+            <code title={audit.gitHead ?? undefined}>HEAD {audit.gitHead ?? 'Unavailable'}</code>
+          </div>}
+        </div>
+        <button className={audit ? 'btn-primary' : 'btn-secondary'} onClick={onRefresh}>
+          <RefreshCw className="h-4 w-4" aria-hidden="true" />{audit ? 'Run audit' : 'Retry audit'}
+        </button>
+      </header>
+
+      {!audit ? (
+        <section className="audit-limitation" aria-labelledby="audit-unavailable-title">
+          <ShieldCheck className="h-6 w-6 shrink-0" aria-hidden="true" />
+          <div><h2 id="audit-unavailable-title">Canonical audit unavailable</h2>
+            <p>Compatibility: {detection.compatibilityMode ?? 'UNKNOWN'}. Artifact inspection remains available, but completion authority is not available.</p>
+          </div>
+        </section>
+      ) : <>
+        {audit.compatibilityMode === 'ARTIFACT_ONLY' && <div className="audit-limitation">Audit capability limited. Canonical ForgeLoop Integration API unavailable; artifact inspection is available, but completion authority is not.</div>}
+
+        <section className="audit-verdict-grid" aria-label="Canonical audit verdicts">
+          <Verdict label="Integrity" value={audit.verdict.integrity} icon={<ShieldCheck aria-hidden="true" />} />
+          <Verdict label="Completion readiness" value={audit.verdict.completionReadiness} icon={<FileCheck2 aria-hidden="true" />} />
+          <Verdict label="Engineering quality" value={audit.verdict.quality} icon={<Activity aria-hidden="true" />} />
+          <Verdict label="Trust / attestation" value={audit.verdict.trust} icon={<Fingerprint aria-hidden="true" />} />
+        </section>
+
+        <div className="audit-evidence-grid">
+          <section className="audit-panel audit-coverage" aria-labelledby="audit-coverage-title">
+            <div className="audit-panel-heading">
+              <div><h2 id="audit-coverage-title">Audit coverage</h2><p>Unavailable capabilities remain visible.</p></div>
+              <span className="audit-coverage-value">{audit.coverage.percent}<span>%</span></span>
+            </div>
+            <div className="audit-coverage-track" role="progressbar" aria-label="Audit coverage" aria-valuemin={0} aria-valuemax={100} aria-valuenow={audit.coverage.percent}>
+              <div style={{ width: `${audit.coverage.percent}%` }} />
+            </div>
+            {audit.coverage.unavailable.length > 0 && <p className="audit-unavailable-capabilities">Unavailable: {audit.coverage.unavailable.join(', ')}</p>}
+            <p className="audit-score">{audit.score ? `Audit score ${audit.score.score ?? 'unavailable'} (${audit.score.grade}) · ${audit.score.methodologyVersion}` : 'Score unavailable — insufficient audit coverage.'}</p>
+          </section>
+
+          <section className="audit-panel" aria-labelledby="audit-severity-title">
+            <div className="audit-panel-heading"><h2 id="audit-severity-title">Findings by severity</h2></div>
+            <dl className="audit-severity-grid">
+              {([
+                ['Critical', audit.counts.critical, 'danger'],
+                ['High', audit.counts.high, 'warning'],
+                ['Medium', audit.counts.medium, 'primary'],
+                ['Info', audit.counts.info, 'muted'],
+              ] as const).map(([label, count, tone]) => <div key={label}>
+                <dt>{label}</dt><dd className={count > 0 ? `audit-count-${tone}` : undefined}>{count}</dd>
+              </div>)}
+            </dl>
+          </section>
+        </div>
+
+        <div className="audit-review-grid">
+          <section className="audit-panel" aria-labelledby="audit-attention-title">
+            <div className="audit-panel-heading">
+              <h2 id="audit-attention-title">Needs attention</h2>
+              <button className="audit-text-action" onClick={onViewFindings}>View findings<ArrowRight className="h-4 w-4" aria-hidden="true" /></button>
+            </div>
+            {attention.length === 0 ? <p className="audit-empty-message">No critical or high findings.</p> : <div className="audit-finding-list">{attention.map((finding) => <FindingRow key={finding.fingerprint} finding={finding} onTaskSelect={onTaskSelect} />)}</div>}
+          </section>
+          <section className="audit-panel" aria-labelledby="audit-pending-title">
+            <div className="audit-panel-heading"><h2 id="audit-pending-title">Tasks not ready for completion</h2></div>
+            <div className="audit-task-list">
+              {pendingTasks.slice(0, 6).map((task) => <button key={task.taskId} className="audit-task-row audit-interactive-row" onClick={() => onTaskSelect(task.taskId)}>
+                <code>{task.taskId}</code><span className="flex shrink-0 items-center gap-2"><StatusBadge status={task.status} /><ArrowRight className="h-4 w-4 text-forge-text-muted" aria-hidden="true" /></span>
+              </button>)}
+              {pendingTasks.length === 0 && <p className="audit-empty-message">All audited tasks are canonically valid.</p>}
+            </div>
+          </section>
+        </div>
+      </>}
+    </div>
+  );
 }

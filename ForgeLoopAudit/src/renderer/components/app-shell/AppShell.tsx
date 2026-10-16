@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import type { NavItemId } from '@renderer/App';
 import type { WatcherStatus } from '@shared/domain';
 import { FolderOpen, ChevronLeft, ChevronRight, X, GitBranch } from 'lucide-react';
@@ -6,6 +6,7 @@ import { clsx } from 'clsx';
 import { NAV_ITEMS } from '@renderer/App';
 import { TitleBar } from './TitleBar';
 import { DemoProjectBanner } from '@renderer/components/demo/DemoProjectBanner';
+import { useNavigationDrawer } from './useNavigationDrawer';
 
 interface AppShellProps {
   projectName: string;
@@ -133,6 +134,11 @@ export function AppShell({
   children,
 }: AppShellProps) {
   const [, setShowCloseConfirm] = useState(false);
+  const drawer = useNavigationDrawer();
+  const selectNav = (nav: NavItemId) => {
+    onNavChange(nav);
+    drawer.setOpen(false);
+  };
 
   const getHealthColor = (status: string) => {
     switch (status) {
@@ -157,19 +163,32 @@ export function AppShell({
   };
 
   return (
-    <div className="flex h-screen w-full flex-col forge-background overflow-hidden">
-      <TitleBar projectName={projectName} />
+    <div className="audit-shell flex w-full flex-col forge-background overflow-hidden">
+      <a className="audit-skip-link" href="#audit-main" onClick={(event) => { event.preventDefault(); document.getElementById('audit-main')?.focus(); }}>Skip to audit content</a>
+      <TitleBar projectName={projectName} navigationOpen={drawer.open} onNavigationToggle={() => drawer.setOpen(!drawer.open)} />
+
+      {drawer.open && <button type="button" className="audit-navigation-backdrop" aria-label="Close navigation" tabIndex={-1} onClick={() => drawer.setOpen(false)} />}
 
       <div className="flex flex-1 overflow-hidden">
       <aside
+        id="audit-navigation"
+        ref={drawer.ref}
+        role={drawer.open ? 'dialog' : undefined}
+        aria-modal={drawer.open || undefined}
+        aria-label="Project navigation"
+        aria-hidden={drawer.compact && !drawer.open || undefined}
+        inert={drawer.compact && !drawer.open}
         className={clsx(
-          'flex flex-col forge-primary-surface border-r forge-border-subtle transition-all duration-200',
+          'audit-sidebar flex shrink-0 flex-col forge-primary-surface border-r forge-border-subtle',
+          drawer.open && 'is-open',
           sidebarCollapsed ? 'w-16' : 'w-64'
         )}
       >
-        <div className="flex h-10 items-center justify-end px-3">
+        <div className="audit-sidebar-heading flex items-center justify-between px-4">
+          {(!sidebarCollapsed || drawer.compact) && <span className="text-xs font-medium text-forge-text-muted">Workspace</span>}
+          <button type="button" className="audit-mobile-menu" aria-label="Close navigation" onClick={() => drawer.setOpen(false)}><X className="h-5 w-5" aria-hidden="true" /></button>
           <button
-            className="p-1.5 rounded-6 text-forge-text-muted hover:bg-forge-hover-surface hover:text-forge-text-primary transition-colors"
+            className="audit-sidebar-toggle p-1.5 rounded-6 text-forge-text-muted hover:bg-forge-hover-surface hover:text-forge-text-primary transition-colors"
             onClick={onSidebarToggle}
             aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
@@ -177,10 +196,11 @@ export function AppShell({
           </button>
         </div>
 
-        <nav className="flex-1 px-2 py-3 space-y-1 overflow-y-auto" role="navigation" aria-label="Main navigation">
+        <nav className="audit-main-navigation flex-1 px-3 pb-3 space-y-1 overflow-y-auto" aria-label="Main navigation">
           {navItems.map((item) => (
+            <Fragment key={item.id}>
+            {(!sidebarCollapsed || drawer.compact) && (item.id === 'findings' || item.id === 'repository') && <p className="audit-nav-group">{item.id === 'findings' ? 'Audit & evidence' : 'Tools'}</p>}
             <button
-              key={item.id}
               className={clsx(
                 'w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-8 transition-colors duration-150',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forge-accent focus-visible:ring-offset-2 focus-visible:ring-offset-forge-primary-surface',
@@ -188,19 +208,21 @@ export function AppShell({
                   ? 'bg-forge-accent/10 text-forge-accent'
                   : 'text-forge-text-secondary hover:bg-forge-hover-surface hover:text-forge-text-primary'
               )}
-              onClick={() => onNavChange(item.id)}
+              onClick={() => selectNav(item.id)}
+              aria-label={item.label}
               aria-current={activeNav === item.id ? 'page' : undefined}
               title={sidebarCollapsed ? item.label : undefined}
             >
               {NAV_ICONS[item.icon]}
-              {!sidebarCollapsed && <span>{item.label}</span>}
+              {(!sidebarCollapsed || drawer.compact) && <span>{item.label}</span>}
             </button>
+            </Fragment>
           ))}
         </nav>
 
         {selectedTaskId && (
           <div className="border-t forge-border-subtle px-2 py-3">
-            {!sidebarCollapsed && <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-wider text-forge-text-muted">Task detail · {selectedTaskId}</p>}
+            {(!sidebarCollapsed || drawer.compact) && <p className="px-3 pb-2 text-xs font-medium text-forge-text-muted break-all">Task detail · {selectedTaskId}</p>}
             <nav className="space-y-1" role="navigation" aria-label="Task detail navigation">
               {taskDetailItems.map((item) => (
                 <button
@@ -212,12 +234,13 @@ export function AppShell({
                       ? 'bg-forge-accent/10 text-forge-accent'
                       : 'text-forge-text-muted hover:bg-forge-hover-surface hover:text-forge-text-primary'
                   )}
-                  onClick={() => onNavChange(item.id)}
+                  onClick={() => selectNav(item.id)}
+                  aria-label={item.label}
                   aria-current={activeNav === item.id ? 'page' : undefined}
                   title={sidebarCollapsed ? item.label : undefined}
                 >
                   {NAV_ICONS[item.icon]}
-                  {!sidebarCollapsed && <span>{item.label}</span>}
+                  {(!sidebarCollapsed || drawer.compact) && <span>{item.label}</span>}
                 </button>
               ))}
             </nav>
@@ -231,16 +254,17 @@ export function AppShell({
               'text-forge-text-secondary hover:bg-forge-hover-surface hover:text-forge-text-primary'
             )}
             onClick={onCloseProject}
+            aria-label="Close Project"
             title={sidebarCollapsed ? 'Close project' : undefined}
           >
             <FolderOpen className="w-5 h-5" />
-            {!sidebarCollapsed && <span>Close Project</span>}
+            {(!sidebarCollapsed || drawer.compact) && <span>Close Project</span>}
           </button>
         </div>
       </aside>
 
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="h-12 flex items-center justify-between px-4 border-b forge-border-subtle forge-primary-surface">
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden" inert={drawer.open}>
+        <header className="audit-context-bar flex items-center justify-between gap-3 border-b forge-border-subtle forge-primary-surface">
           <div className="flex items-center gap-4 flex-1 min-w-0">
             {branch && (
               <span className="flex items-center gap-1.5 px-2 py-1 text-xs font-mono text-forge-text-muted bg-forge-secondary-surface rounded-6">
@@ -255,7 +279,7 @@ export function AppShell({
             )}
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <span className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-6 bg-forge-secondary-surface">
               <span className="text-forge-text-muted">Protocol</span>
               <span className="font-mono text-forge-text-primary">v{protocolVersion}</span>
@@ -290,7 +314,7 @@ export function AppShell({
 
         {isDemoProject && <DemoProjectBanner />}
 
-        <main className="flex-1 overflow-auto p-4 md:p-6">
+        <main id="audit-main" tabIndex={-1} className="audit-main flex-1 overflow-auto">
           {error && (
             <div className="mb-4 p-3 bg-forge-danger/10 border border-forge-danger/20 rounded-8 flex items-center justify-between animate-fade-in">
               <div className="flex items-center gap-2 text-sm text-forge-danger">

@@ -1,14 +1,17 @@
 import { clsx } from 'clsx';
 import { auditApi } from '../../lib/audit-client';
 import { ThemeToggle } from '../ui/theme-toggle';
+import { Menu } from 'lucide-react';
 
 interface TitleBarProps {
   projectName?: string;
   className?: string;
   children?: React.ReactNode;
+  navigationOpen?: boolean;
+  onNavigationToggle?: () => void;
 }
 
-export function TitleBar({ projectName, className, children }: TitleBarProps) {
+export function TitleBar({ projectName, className, children, navigationOpen, onNavigationToggle }: TitleBarProps) {
   const handleDoubleClick = () => {
     void auditApi.toggleMaximizeWindow().catch(() => undefined);
   };
@@ -16,11 +19,23 @@ export function TitleBar({ projectName, className, children }: TitleBarProps) {
   return (
     <div
       className={clsx(
-        'app-drag-region relative z-50 flex h-12 shrink-0 items-center gap-3 pl-[78px] pr-4 border-b forge-border-subtle forge-primary-surface select-none',
+        'audit-titlebar app-drag-region relative flex h-14 shrink-0 items-center gap-3 px-4 sm:px-6 border-b forge-border-subtle forge-primary-surface select-none',
         className
       )}
       onDoubleClick={handleDoubleClick}
     >
+      {onNavigationToggle && (
+        <button
+          type="button"
+          className="audit-mobile-menu app-no-drag"
+          aria-label="Open navigation"
+          aria-expanded={navigationOpen}
+          aria-controls="audit-navigation"
+          onClick={onNavigationToggle}
+        >
+          <Menu className="h-5 w-5" aria-hidden="true" />
+        </button>
+      )}
       <div className="flex items-center gap-2 pointer-events-none">
         <div className="w-7 h-7 rounded-8 bg-forge-accent flex items-center justify-center">
           <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
