@@ -73,7 +73,7 @@ structural detection and route tests are implemented.
 
 ## Domain rules
 
-For catalog upkeep, use the [engineering guide maintenance map](https://github.com/cassiomc1/forgeloop/blob/main/docs/GUIDE_MAINTENANCE.md).
+For catalog upkeep, use the [engineering guide maintenance map](https://github.com/cassiomc1/forgeloop/blob/b9a16e9f665116306e9fca3b905b1f0fe2abd633/docs/GUIDE_MAINTENANCE.md).
 It distinguishes guide discovery, implemented routing, contextual defaults,
 and observed verification; it does not add runtime routing rules.
 

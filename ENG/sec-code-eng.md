@@ -38,7 +38,7 @@ For security questions and focused vulnerability investigation, the optional
 Cloudflare [security-audit skill](https://github.com/cloudflare/security-audit-skill)
 provides source-first guidance. ForgeLoop ships a pinned copy under
 `skills/security-audit/` in its package and source checkout. See the
-[setup and authority boundaries](https://github.com/cassiomc1/forgeloop/blob/main/docs/SECURITY_AUDIT_SKILL.md)
+[setup and authority boundaries](https://github.com/cassiomc1/forgeloop/blob/b9a16e9f665116306e9fca3b905b1f0fe2abd633/docs/SECURITY_AUDIT_SKILL.md)
 before enabling host discovery or requesting a full audit.
 
 Use guidance mode for focused work. Reserve the complete six-phase audit for
