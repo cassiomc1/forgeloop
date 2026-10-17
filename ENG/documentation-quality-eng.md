@@ -3,7 +3,7 @@ name: documentation-quality-eng
 language: en
 description: "Quality standards for accurate, task-oriented, maintainable, accessible, and verifiable technical documentation."
 version: "2026.09"
-last-reviewed: "2026-08-17"
+last-reviewed: "2026-10-17"
 guide-id: documentation
 ---
 
@@ -11,7 +11,7 @@ guide-id: documentation
 
 > **Related documents**: use [`clean-code-eng.md`](./clean-code-eng.md) when software behavior or code structure changes; [`test-code-eng.md`](./test-code-eng.md) for executable examples and verification strategy; [`sec-code-eng.md`](./sec-code-eng.md) for secrets, authentication, authorization, privacy, and sensitive examples; [`accessibility-eng.md`](./accessibility-eng.md) when a published documentation surface has additional accessibility requirements. This guide owns documentation architecture, factual quality, freshness, maintainability, and reader usability.
 >
-> **Tooling policy**: identify the documentation surface, canonical sources, and existing project checks first. Prefer already available project-native tools. Ask for authorization before installing tooling or changing the environment. If a required check cannot be executed, record it as blocked or `NOT_VERIFIED`; never claim it passed.
+> **Tooling policy**: identify the documentation surface, canonical sources, and existing project checks first. Prefer already available project-native tools. Installation or environment changes require authority; reuse scoped authorization already given rather than asking again. If a required check cannot be executed, record it as blocked or `NOT_VERIFIED`; never claim it passed.
 
 ## Context
 
@@ -127,6 +127,14 @@ For each task, assess whether it changes:
 Update affected documentation in the same task when the change is required for correct use.
 
 ## Freshness and timeless wording
+
+When reviewing engineering guides, compare the full catalog with its registry,
+activation implementation, and metadata. Separate implemented capability from
+proposed integration, sample check names from required evidence identifiers,
+and contextual defaults from protocol or user-approval gates. A named tool
+does not become mandatory merely because an example uses it. Record the
+review's scope and unavailable consumer/platform checks; a fresh review date
+does not certify every referenced API or framework.
 
 Avoid time-sensitive words such as `new`, `currently`, `latest`, `now`, or `soon` in evergreen technical documentation when they will age without adding information.
 

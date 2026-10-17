@@ -3,7 +3,7 @@ name: rust-development-eng
 language: en
 description: "Specialist guidance for architecture, implementation, testing, security, performance, and release of production Rust applications, services, libraries, and workers."
 version: "2026.09"
-last-reviewed: "2026-10-13"
+last-reviewed: "2026-10-17"
 guide-id: rust
 requires-gates:
   - threat-boundary
@@ -113,37 +113,27 @@ does not change a project's declared MSRV, toolchain, or edition.
 
 ### Rust 1.99.0 release review
 
-The [Rust 1.99.0 release notes](https://releases.rs/docs/1.99.0/) report a
-stable release on 2026-10-01. Apply these changes only when the affected
-project's toolchain and compatibility policy permit them:
+The [official Rust 1.99.0 announcement](https://blog.rust-lang.org/2026/10/01/Rust-1.99.0/)
+and its linked standard-library documentation describe the stable release on
+2026-10-01. Review changes against the project's toolchain and compatibility
+policy:
 
-- **Language and unsafe code:** C-variadic function definitions are stable;
-  naked C-variadic functions remain behind the nightly
-  `c_variadic_naked_functions` feature. The new
-  `raw_borrows_via_references` lint is allow-by-default, so it does not replace
-  an explicit lint policy. Review unsafe code that relies on `UnsafeCell`
-  access or reference-to-raw-borrow behavior alongside the release's adjusted
-  `invalid_reference_casting` lint; do not infer that these changes relax
-  aliasing or safety invariants.
-- **Cargo and workspaces:** Cargo adds a `debug` profile that is currently
-  identical to `dev` and prepares for a possible later profile transition.
-  On edition 2024 or later, a workspace member can override an inherited
-  dependency's `default-features`; on earlier editions,
-  `default-features = false` remains ignored with a warning. Check the edition
-  before relying on the override.
-- **Library APIs and targets:** the release stabilizes APIs including
-  `Vec::into_parts`/`Vec::from_parts`, `Box::into_non_null`/`Box::from_non_null`,
-  `String::from_utf8_lossy_owned`, `VecDeque::retain_back`, and
-  `std::fs::set_times`. `riscv64-unknown-linux-musl` is promoted to Tier 2
-  with host tools. Check each API's stabilization version and target support
-  against the package MSRV and supported deployment matrix before adoption.
-- **Compatibility checks:** legacy integral modules such as `std::i32` are
-  fully deprecated, `no_mangle_generic_items` is a hard error, and the safety
-  invariants of `Pin::new_unchecked` have changed slightly. Rust 1.99 also
-  disables Cargo incremental compilation by default in CI and expands the
-  non-local macro semicolon warning to macros from dependencies. Review these
-  changes when diagnosing new warnings, build-time shifts, or compatibility
-  failures.
+- **FFI:** C-ABI variadic definitions are stable. Distinguish those from naked
+  variadic functions with non-C ABIs, which require inline assembly. Preserve
+  ABI, argument-type, and caller-safety invariants.
+- **Raw-pointer layout:** `Layout::for_value_raw`, `mem::size_of_val_raw`, and
+  `mem::align_of_val_raw` are stabilized; their availability does not remove
+  each API's unsafe preconditions.
+- **Ownership:** the standard-library guidance discourages leaking a `Box`
+  and later reconstructing it for deallocation. Use deliberate ownership
+  transfer through `Box::into_raw` or `Box::into_non_null` when appropriate.
+- **Library compatibility:** examples of stabilized APIs include
+  `Vec::into_parts`/`Vec::from_parts`, `Box::from_non_null`, and
+  `VecDeque::retain_back`. Check exact stabilization versions against MSRV.
+
+Consult the official detailed release notes for Cargo, target, compiler, and
+lint changes before changing profiles, features, flags, or supported targets.
+Do not infer such changes from a third-party release summary.
 
 These release notes are a version-specific review aid, not a reason to raise
 MSRV or change edition, lint levels, profiles, or targets without an explicit

@@ -125,7 +125,8 @@
     "scripts/run-mcp-clean-tests.mjs",
     "docs/SECURITY_AUDIT_SKILL.md",
     "scripts/verify-security-audit-skill.mjs",
-    "skills/security-audit"
+    "skills/security-audit",
+    "docs/GUIDE_MAINTENANCE.md"
   ],
   "scripts": {
     "test": "node scripts/run-tests.js",

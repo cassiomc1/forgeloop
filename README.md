@@ -74,6 +74,8 @@ Routing uses bounded structural evidence; SQL remains a schema/query/migration
 overlay. Extensions, tool files, lockfiles, runtime images, and prose alone do
 not establish project identity. Public project evidence remains v1.
 
+See the [23-guide maintenance map](./docs/GUIDE_MAINTENANCE.md) for review scope and revalidation.
+
 ## Distribution and license
 
 GitHub hosts source and issues. The core npm package is publicly available;
@@ -503,16 +505,13 @@ project inspection and audit views.
 
 ## Protocol compatibility
 
-The npm package version is independent of protocol version. The current
-serializable artifact contract is `schemaVersion: 1` and `protocolVersion: 1`.
+The npm package version is independent of protocol version. Artifacts use
+`schemaVersion: 1` and `protocolVersion: 1`.
 
-- Patch releases preserve the v1 schemas, enums, transitions, and existing
-  command contracts while correcting implementation defects.
-- Minor releases preserve existing v1 artifacts and commands; they may add
-  documentation, commands, guides, or an explicitly named schema.
+- Patch releases preserve the v1 schemas and existing command contracts.
+- Minor releases preserve existing v1 artifacts; additions remain compatible.
 - Major releases may change required fields, enums, transitions, or safety
-  semantics and must document migration requirements with a protocol version
-  change.
+  semantics, requiring a new protocol version and documented migration.
 
 Consumers must reject unknown artifact fields rather than silently treating
 unrecognized protocol data as valid. The compatibility marker is
@@ -525,12 +524,8 @@ it must not infer current ownership from `task.json` or `recovery.json` alone.
 
 ## Security and dependency boundary
 
-For source security questions and explicitly requested audits, ForgeLoop ships
-the optional [Cloudflare security audit companion](./docs/SECURITY_AUDIT_SKILL.md),
-pinned with its MIT license and offline integrity checker. It supports focused
-guidance and a six-phase audit with independent verification. Enable it through
-your agent's skill discovery or ask the agent to read the bundled skill;
-reports remain advisory and do not establish ForgeLoop completion.
+Optional [Cloudflare security audits](./docs/SECURITY_AUDIT_SKILL.md) ship pinned
+with MIT attribution and integrity checks; findings remain advisory.
 
 Runtime uses Node built-ins and the approved exact `@typesafe-ai/sdk` and
 `smol-toml` dependencies; it installs no agents, providers, plugins, services,

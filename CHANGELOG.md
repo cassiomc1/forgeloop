@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Bundle the optional commit-pinned Cloudflare security audit skill, upstream
+  MIT license, report validators, offline integrity checker, and consumer guide.
+- Review the full 23-guide catalog; correct accessibility default/contrast and
+  keyboard guidance, optional design tooling, Flutter/Python routing claims,
+  CPU-offloading advice, PHP source fallback, Rust release references, and
+  runtime dependency notices. Add a catalog maintenance and revalidation map.
+
 - Align public installation, Node 24.19.0 prerequisites, release-channel and
   SQLite documentation with the published RC4 and verified clean-user audits.
 

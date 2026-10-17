@@ -3,7 +3,7 @@ name: accessibility-eng
 language: en
 description: "Practical WCAG 2.2-oriented accessibility protocol for web, mobile, and desktop."
 version: "2026.09"
-last-reviewed: "2026-08-31"
+last-reviewed: "2026-10-17"
 guide-id: accessibility
 completion-evidence:
   - keyboard-navigation
@@ -15,7 +15,7 @@ completion-evidence:
 
 > Accessibility instructions adapted from the [A11Y.md](https://github.com/fecarrico/A11Y.md) project (Felipe A. Carriço, MIT license) — a validation protocol and persistent context system for building accessible software from the very first line of code, informed by **WCAG 2.2** and **ISO 9241-171**. It can support evidence for applicable **ADA** or **EAA** obligations, but does not itself determine legal compliance.
 > **Related documents**: for visual/UX direction (palettes, typography, motion), see [`design-code-eng.md`](./design-code-eng.md). For automated testing tools (axe-core, Lighthouse, visual regression), see [`test-code-eng.md`](./test-code-eng.md). For code quality/structure, see [`clean-code-eng.md`](./clean-code-eng.md). For HTML-based video and motion, also see [HyperFrames](https://hyperframes.heygen.com). This file is the canonical reference for **accessibility rules** (WCAG, ARIA, keyboard, focus, screen readers) — it does not repeat the content of the others.
-> **Tooling policy**: identify the stack, the stage, and the applicable checks; prefer an already available equivalent that produces compatible evidence. Ask for authorization before installing a tool or changing the environment. If no safe equivalent exists, record the required check as blocked and never claim that it passed. Do not install merely optional resources.
+> **Tooling policy**: identify the stack, the stage, and the applicable checks; prefer an already available equivalent that produces compatible evidence. Installation or environment changes require authority; reuse scoped authorization already given rather than asking again. If no safe equivalent exists, record the required check as blocked and never claim that it passed. Do not install merely optional resources.
 
 ## 0. Principle Zero: accessibility as a pre-condition
 
@@ -25,7 +25,7 @@ completion-evidence:
 
 ## 0.1. Compliance profiles
 
-This document's default implementation target is **Standard (AA)**. It supports WCAG-oriented implementation; it does not certify a product or establish automatic legal compliance. Certification and legal obligations depend on an assessment with defined scope, evidence, and the applicable jurisdiction. When generating or reviewing interface code, the agent **MUST ask** the user which profile to apply if not already specified:
+This document's default implementation target is **Standard (AA)**. Preserve a stronger existing requirement. If no profile is specified, record AA as a reversible assumption and continue; profile selection alone is not a user-approval gate. Ask only when a genuine blocking obligation cannot be established from project evidence, following Loop Engineering's decision classification. This guide supports WCAG-oriented implementation; it does not certify a product or establish automatic legal compliance. Certification and legal obligations depend on an assessment with defined scope, evidence, and the applicable jurisdiction.
 
 | Profile | Target | Contrast (text / UI) | Min font† | Min target | Use case |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -67,14 +67,14 @@ To ensure technical integrity, any AI interacting with the project **MUST**:
 
 ### Perceivable
 
-- **Contrast (SC 1.4.3, 1.4.11):** text **MUST** have 4.5:1; UI components and meaningful graphics **MUST** have 3:1. Prioritize real **luminance difference** (light vs dark) beyond hue.
+- **Contrast (SC 1.4.3, 1.4.6, 1.4.11):** at AA, normal text needs at least 4.5:1 and large-scale text at least 3:1; at AAA, those thresholds are 7:1 and 4.5:1. Use WCAG's large-scale definition and applicable exceptions, not an arbitrary heading label. Required non-text component/state and graphic contrast is 3:1 where SC 1.4.11 applies. Do not round a failing ratio up. See the [W3C contrast explanation](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html); prioritize luminance difference beyond hue.
 - **Alt text (SC 1.1.1):** informative images **MUST** have a functional description in `alt`; decorative images use `alt=""` or `aria-hidden="true"`.
 - **Channels beyond color (SC 1.4.1):** **MUST NOT** convey state, action, response, or information with color alone. Choose the additional channel appropriate to the meaning — visible text, icon, pattern, or programmatic semantics — without imposing the same visual redundancy in every case.
 - **Visual patterns:** when differentiation in charts or dashboards depends on color, patterns, labels, textures, or distinct line styles **MUST** enable users to distinguish series without color.
 
 ### Operable
 
-- **Keyboard (SC 2.1.1):** all functionality **MUST** be operable without a mouse. Where the function depends on the path of movement rather than only its endpoints, document why the WCAG exception applies and provide a practical alternative when possible. Avoid purely pointer-based listeners without keyboard event equivalents (`onKeyDown`).
+- **Keyboard (SC 2.1.1):** all functionality **MUST** be operable without a mouse. Prefer native controls and their built-in keyboard activation; do not add duplicate `onKeyDown` activation to a native button. Custom widgets need the complete applicable keyboard pattern. Where the function depends on the path of movement rather than only its endpoints, document why the WCAG exception applies and provide a practical alternative when possible.
 - **Focus (SC 2.4.7, 2.4.11):** focus **MUST** be visible, never entirely obscured by author content (e.g., sticky headers/footers), persistent, and never suppressed via CSS (`outline: none` without fallback is forbidden).
 - **SPA routing:** after client-side routing changes, focus **MUST** be managed and properly reset (e.g., sending focus to the top or an `h1`). Avoid lost focus on the screen.
 - **Focus order and lifecycle (SC 2.4.3):** the sequential keyboard path **MUST** preserve meaning and operability. Prefer alignment between DOM order, reading order, and visual order when divergence would create confusing or illogical navigation. Avoid positive `tabindex` as a ForgeLoop accessibility best practice; repair the document structure whenever practical. When content is inserted, removed, expanded, collapsed, replaced, or routed, define the next logical focus destination and do not leave focus on a removed or unavailable node.
@@ -118,7 +118,7 @@ These directives combine WCAG requirements where identified and this guide's erg
 When identifying an unmapped or highly complex component (e.g., charts, dynamic grids):
 
 1. **Identify:** look for a similar pattern in the [WAI-ARIA APG](https://www.w3.org/WAI/ARIA/apg/).
-2. **Validate:** request human validation with a screen reader — the AI **MUST NOT** claim this test was performed, nor fabricate its results.
+2. **Validate:** test the pattern in the supported screen-reader/browser combinations when available. If human validation is required and unavailable, record the exact unverified combination and owner action; continue independent work. An AI **MUST NOT** claim an unperformed test or fabricate its results.
 3. **Document:** document the expected behavior (keyboard and announcements).
 4. **Scale:** record the resolved pattern in `A11Y-DECISIONS.md` so future components reuse it instead of re-deriving it.
 

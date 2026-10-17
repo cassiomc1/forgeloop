@@ -120,6 +120,8 @@ canonical runtime and validators retain all completion authority.
 - [PIN.json](../skills/security-audit/PIN.json) records SHA-256 hashes of every
   upstream file, including the license. The checker rejects changed, missing,
   extra, or symlinked entries without executing the skill.
+  The repository's `.gitattributes` preserves the entire companion tree as
+  bytes, including CJS validators and the license, across CRLF checkout settings.
 
 The hashes detect drift against the reviewed manifest; they are not a
 signature or a sandbox. Updating the companion is an explicit maintenance

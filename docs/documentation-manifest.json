@@ -1595,6 +1595,20 @@
       ],
       "canonicalFor": [],
       "packaged": true
+    },
+    {
+      "path": "docs/GUIDE_MAINTENANCE.md",
+      "id": "guide-maintenance",
+      "class": "guide",
+      "audience": [
+        "maintainer",
+        "harness",
+        "user"
+      ],
+      "canonicalFor": [
+        "guide-maintenance"
+      ],
+      "packaged": true
     }
   ]
 }

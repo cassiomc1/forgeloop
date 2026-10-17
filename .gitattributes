@@ -11,3 +11,6 @@ vendor/archify/v2.15.0/archify/** -text
 *.js text eol=lf
 *.html text eol=lf
 *.svg text eol=lf
+
+# The pinned audit companion includes byte-hashed CJS and license files.
+skills/security-audit/** -text

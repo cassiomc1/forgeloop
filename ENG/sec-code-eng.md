@@ -3,7 +3,7 @@ name: sec-code-eng
 language: en
 description: "Verifiable security guidance for web, mobile, desktop, APIs, and the software supply chain."
 version: "2026.09"
-last-reviewed: "2026-08-10"
+last-reviewed: "2026-10-17"
 guide-id: security
 requires-gates:
   - threat-boundary
@@ -27,8 +27,8 @@ reference; secrets, authorization, cryptography, and OWASP rules live here,
 not in the other files.
 
 **Tooling policy**: identify the stack, stage, and applicable checks; prefer an
-already-available equivalent that produces compatible evidence. Ask for
-authorization before installing a tool or changing the environment. If no
+already-available equivalent that produces compatible evidence. Installation or environment changes require authority; reuse scoped
+authorization already given rather than asking again. If no
 safe equivalent exists, record the required check as blocked and never claim
 it passed. Do not install merely optional resources.
 

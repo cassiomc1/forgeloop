@@ -3,7 +3,7 @@ name: games-code-design-web-eng
 language: en
 description: "Architecture, design, testing, and operation of 2D, 3D, and procedural web games."
 version: "2026.09"
-last-reviewed: "2026-08-10"
+last-reviewed: "2026-10-17"
 guide-id: games
 requires-gates:
   - simulation
@@ -18,7 +18,7 @@ completion-evidence:
 >
 > **Related documents**: for general code structure, naming, dependency injection, and debugging, see [`clean-code-eng.md`](./clean-code-eng.md). For test strategy and tools such as Vitest and Playwright, see [`test-code-eng.md`](./test-code-eng.md). For browser security, CSP, dependency scanning, and multiplayer threat models, see [`sec-code-eng.md`](./sec-code-eng.md). For budgets, profiling, WebAssembly, PWA, CDN, and device performance, see [`perf-code-eng.md`](./perf-code-eng.md). For visual direction, UX, motion, and responsive design, see [`design-code-eng.md`](./design-code-eng.md). For WCAG 2.2-oriented implementation, assistive technology, and manual testing, see [`accessibility-eng.md`](./accessibility-eng.md). For HTML-based gameplay trailers, devlogs, and demos, see [HyperFrames](https://hyperframes.heygen.com). This guide focuses on game architecture and delivery; it does not replace those documents.
 >
-> **Tooling policy**: identify the stack, the stage, and the applicable checks; prefer an already available equivalent that produces compatible evidence. Ask for authorization before installing a tool or changing the environment. If no safe equivalent exists, record the required check as blocked and never claim that it passed. Do not install merely optional resources.
+> **Tooling policy**: identify the stack, the stage, and the applicable checks; prefer an already available equivalent that produces compatible evidence. Installation or environment changes require authority; reuse scoped authorization already given rather than asking again. If no safe equivalent exists, record the required check as blocked and never claim that it passed. Do not install merely optional resources.
 
 ## How to use this guide (mandatory process)
 

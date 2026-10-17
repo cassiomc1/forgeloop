@@ -3,7 +3,7 @@ name: test-code-eng
 language: en
 description: "Risk-based testing strategy and tools for modern languages and platforms."
 version: "2026.09"
-last-reviewed: "2026-08-10"
+last-reviewed: "2026-10-17"
 guide-id: test
 completion-evidence:
   - tests
@@ -15,7 +15,7 @@ completion-evidence:
 
 **Related documents**: for general clean code principles (names, small functions, formatting), see [`clean-code-eng.md`](./clean-code-eng.md). For security, including SAST/DAST, see [`sec-code-eng.md`](./sec-code-eng.md). For accessibility, use the repository's specific guide together with [WCAG 2.2](https://www.w3.org/TR/WCAG22/). For HTML video and motion, see [HyperFrames](https://hyperframes.heygen.com). This file is the canonical reference for deciding the testing strategy by language and platform.
 
-**Tooling policy**: identify the stack, the stage, and the applicable checks; prefer an already available equivalent that produces compatible evidence. Ask for authorization before installing a tool or changing the environment. If no safe equivalent exists, record the required check as blocked and never claim that it passed. Do not install merely optional resources.
+**Tooling policy**: identify the stack, the stage, and the applicable checks; prefer an already available equivalent that produces compatible evidence. Installation or environment changes require authority; reuse scoped authorization already given rather than asking again. If no safe equivalent exists, record the required check as blocked and never claim that it passed. Do not install merely optional resources.
 
 ## Start with risk, not a tool
 

@@ -3,7 +3,7 @@ name: perf-code-eng
 language: en
 description: "Performance measurement, diagnosis, and improvement for web, mobile, desktop, APIs, and data."
 version: "2026.09"
-last-reviewed: "2026-08-10"
+last-reviewed: "2026-10-17"
 guide-id: performance
 completion-evidence:
   - performance-validation
@@ -13,7 +13,7 @@ completion-evidence:
 
 > Practical instructions for designing, measuring, diagnosing, and improving performance in web, mobile (iOS/Android), desktop (Windows/macOS), APIs, infrastructure, and databases. Use this document to guide AI agents and developers. Performance must be measured in real scenarios before and after the change — do not optimize based on assumptions.
 > **Related documents**: for code structure and readability, see [`clean-code-eng.md`](./clean-code-eng.md). For functional, integration, and E2E testing, see [`test-code-eng.md`](./test-code-eng.md). For security and cache, secrets, and infrastructure trade-offs, see [`sec-code-eng.md`](./sec-code-eng.md). For perceived performance, UX, motion, and responsive design, see [`design-code-eng.md`](./design-code-eng.md). For HTML video preview and rendering performance, see [HyperFrames](https://hyperframes.heygen.com). This file is the canonical performance reference.
-> **Tooling policy**: identify the stack, the stage, and the applicable checks; prefer an already available equivalent that produces compatible evidence. Ask for authorization before installing a tool or changing the environment. If no safe equivalent exists, record the required check as blocked and never claim that it passed. Do not install merely optional resources.
+> **Tooling policy**: identify the stack, the stage, and the applicable checks; prefer an already available equivalent that produces compatible evidence. Installation or environment changes require authority; reuse scoped authorization already given rather than asking again. If no safe equivalent exists, record the required check as blocked and never claim that it passed. Do not install merely optional resources.
 
 ## General principles
 
@@ -22,7 +22,7 @@ completion-evidence:
 - **Optimize the critical path**: prioritize what blocks the first render, the first interaction, the most-used operation, or the flow that has the greatest impact on the user.
 - **Distribution metrics**: track median (p50), p75, p95, and p99. A healthy average can hide a minority of users with a very poor experience.
 - **Perceived performance matters**: immediate feedback, skeleton/loading state, streaming, and progressive updates can improve the experience without masking a slow operation.
-- **Do not block the main thread**: CPU work, I/O, parsing, serialization, and heavy processing should be asynchronous, parallelized, or moved to a worker/background when possible.
+- **Do not block the main thread**: use asynchronous APIs for I/O and bound parsing, serialization, and CPU-heavy work. An `async` function or Promise does not move CPU work off the event loop. Measure whether partitioning work or a bounded worker/background pool improves responsiveness, including transfer and scheduling cost. See [Node.js event-loop guidance](https://nodejs.org/en/learn/asynchronous-work/dont-block-the-event-loop).
 - **Less work is better than faster work**: eliminate unnecessary calls, renders, queries, allocations, payloads, and initializations before micro-optimizing an algorithm.
 - **Avoid speculative optimization**: do not add cache, pooling, memoization, or complexity without evidence of a bottleneck and without measuring invalidation, memory, and maintenance cost.
 - **Control concurrency and resources**: use timeouts, queue limits, backpressure, quotas, circuit breakers, and cancellation to prevent slowness from becoming resource exhaustion.

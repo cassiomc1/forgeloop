@@ -86,7 +86,9 @@ forwarded to Node. Unsupported options and unmatched selectors fail explicitly.
 Run `npm run complexity:check` with lint. Reductions are welcome; increases to
 the committed hotspot budget require an explicit explanation and review.
 TypeScript and YAML are development-only dependencies for packed-consumer and
-semantic workflow verification; the core runtime has no npm dependencies.
+semantic workflow verification. The core runtime exact-pins `@typesafe-ai/sdk`
+for the mandatory semantic decision plane and `smol-toml` for structural Cargo
+parsing; `scripts/check-dependency-policy.mjs` owns the allowlist.
 
 Filesystem transaction-payload maintenance is retired with the SQLite
 migration. Preserve legacy evidence for explicit migration and diagnosis. See

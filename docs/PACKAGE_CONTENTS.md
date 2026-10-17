@@ -56,6 +56,9 @@ The published tarball includes the following consumer-facing groups:
   ASP.NET Core and ABP are conditional routing overlays on the `dotnet` guide,
   not additional package guides. The package does not install or invoke
   framework, compiler, build, package-manager, or database tooling.
+  `docs/GUIDE_MAINTENANCE.md` ships the full catalog maintenance map and
+  revalidation boundaries; it does not add automatic Python routing or new
+  lifecycle gates.
 - **Initialization material:** the root protocol and integration documents,
   the PolyForm Noncommercial license, third-party notices, the target profile template, and every path listed by
   `src/core/templates.js`. These files are read by `init` and `update`, so

@@ -117,9 +117,11 @@ dependencies, version, and distribution conditions before adoption.
 
 The distributed CLI and repository validators use Node.js and Python standard
 libraries plus the JSON Schema documents shipped in this repository. The core
-CLI has one approved runtime package, `smol-toml`, for structural Cargo
-manifest parsing; it is not used as an agent, provider, plugin, remote trace
-service, or model. Every future runtime capability must review its own license,
+CLI exact-pins `smol-toml` for structural Cargo manifest parsing and
+`@typesafe-ai/sdk` for the semantic decision plane. Parsing is local; configured
+semantic-required operations use the external TypeSafe service under the
+canonical decision contract. Neither dependency gains lifecycle or evidence
+authority. Every future runtime capability must review its own license,
 dependency tree, credentials, network behavior, and distribution terms
 separately.
 
@@ -235,7 +237,7 @@ rules and media or motion counts are not universal ForgeLoop requirements.
 
 ## Runtime dependencies with upstream notices
 
-### smol-toml 1.8.0
+### smol-toml 1.9.0
 
 - Project/source: [squirrelchat/smol-toml](https://github.com/squirrelchat/smol-toml).
 - License declared by the upstream package: BSD-3-Clause.
@@ -244,6 +246,18 @@ rules and media or motion counts are not universal ForgeLoop requirements.
 - Boundary: the exact version is pinned in `package.json` and
   `package-lock.json`; the dependency has no role in routing authority beyond
   the parser result and is not exposed as a public ForgeLoop integration.
+
+### TypeSafe AI SDK 0.6.0
+
+- Package: `@typesafe-ai/sdk`; source:
+  [typesafe-ai/typesafe-sdk-js](https://github.com/typesafe-ai/typesafe-sdk-js).
+- License declared by the installed upstream package: MIT.
+- Use in this collection: exact-pinned client for the bounded semantic
+  decision plane documented in `docs/SEMANTIC_DECISION_PLANE.md`.
+- Boundary: credentials stay outside protocol artifacts. The SDK's responses
+  cannot execute commands, grant ownership, record evidence, or establish
+  completion. Network requirements remain explicit for semantic-required
+  operations; this is separate from optional security audit guidance.
 
 ### Microsoft tgrep
 
