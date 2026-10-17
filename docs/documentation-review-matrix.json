@@ -1647,6 +1647,262 @@
       "origin": "handwritten",
       "currency": "current",
       "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/SECURITY_AUDIT_SKILL.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "skills/security-audit/PIN.json",
+        "skills/security-audit/LICENSE",
+        "scripts/verify-security-audit-skill.mjs"
+      ],
+      "canonicalSources": [
+        "docs/SECURITY_AUDIT_SKILL.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "skills/security-audit/AI-AND-LLM.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "skills/security-audit/PIN.json",
+        "skills/security-audit/LICENSE",
+        "scripts/verify-security-audit-skill.mjs"
+      ],
+      "canonicalSources": [
+        "skills/security-audit/AI-AND-LLM.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "skills/security-audit/ATTACK-CLASSES.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "skills/security-audit/PIN.json",
+        "skills/security-audit/LICENSE",
+        "scripts/verify-security-audit-skill.mjs"
+      ],
+      "canonicalSources": [
+        "skills/security-audit/ATTACK-CLASSES.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "skills/security-audit/CLIENT-SIDE.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "skills/security-audit/PIN.json",
+        "skills/security-audit/LICENSE",
+        "scripts/verify-security-audit-skill.mjs"
+      ],
+      "canonicalSources": [
+        "skills/security-audit/CLIENT-SIDE.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "skills/security-audit/CLOUD-AND-DEPLOYMENT.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "skills/security-audit/PIN.json",
+        "skills/security-audit/LICENSE",
+        "scripts/verify-security-audit-skill.mjs"
+      ],
+      "canonicalSources": [
+        "skills/security-audit/CLOUD-AND-DEPLOYMENT.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "skills/security-audit/DATA-ISOLATION-AND-LIFECYCLE.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "skills/security-audit/PIN.json",
+        "skills/security-audit/LICENSE",
+        "scripts/verify-security-audit-skill.mjs"
+      ],
+      "canonicalSources": [
+        "skills/security-audit/DATA-ISOLATION-AND-LIFECYCLE.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "skills/security-audit/DESKTOP-MOBILE-AND-LOCAL-IPC.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "skills/security-audit/PIN.json",
+        "skills/security-audit/LICENSE",
+        "scripts/verify-security-audit-skill.mjs"
+      ],
+      "canonicalSources": [
+        "skills/security-audit/DESKTOP-MOBILE-AND-LOCAL-IPC.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "skills/security-audit/HUNTING.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "skills/security-audit/PIN.json",
+        "skills/security-audit/LICENSE",
+        "scripts/verify-security-audit-skill.mjs"
+      ],
+      "canonicalSources": [
+        "skills/security-audit/HUNTING.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "skills/security-audit/MEMORY-SAFETY-AND-BINARY.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "skills/security-audit/PIN.json",
+        "skills/security-audit/LICENSE",
+        "scripts/verify-security-audit-skill.mjs"
+      ],
+      "canonicalSources": [
+        "skills/security-audit/MEMORY-SAFETY-AND-BINARY.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "skills/security-audit/PROTOCOLS-RPC-AND-MESSAGING.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "skills/security-audit/PIN.json",
+        "skills/security-audit/LICENSE",
+        "scripts/verify-security-audit-skill.mjs"
+      ],
+      "canonicalSources": [
+        "skills/security-audit/PROTOCOLS-RPC-AND-MESSAGING.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "skills/security-audit/RECONNAISSANCE.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "skills/security-audit/PIN.json",
+        "skills/security-audit/LICENSE",
+        "scripts/verify-security-audit-skill.mjs"
+      ],
+      "canonicalSources": [
+        "skills/security-audit/RECONNAISSANCE.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "skills/security-audit/RESOURCE-EXHAUSTION-AND-AVAILABILITY.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "skills/security-audit/PIN.json",
+        "skills/security-audit/LICENSE",
+        "scripts/verify-security-audit-skill.mjs"
+      ],
+      "canonicalSources": [
+        "skills/security-audit/RESOURCE-EXHAUSTION-AND-AVAILABILITY.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "skills/security-audit/SKILL.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "skills/security-audit/PIN.json",
+        "skills/security-audit/LICENSE",
+        "scripts/verify-security-audit-skill.mjs"
+      ],
+      "canonicalSources": [
+        "skills/security-audit/SKILL.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "skills/security-audit/SUPPLY-CHAIN-AND-RELEASE.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "skills/security-audit/PIN.json",
+        "skills/security-audit/LICENSE",
+        "scripts/verify-security-audit-skill.mjs"
+      ],
+      "canonicalSources": [
+        "skills/security-audit/SUPPLY-CHAIN-AND-RELEASE.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "skills/security-audit/VALIDATION-AND-REPORTING.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "skills/security-audit/PIN.json",
+        "skills/security-audit/LICENSE",
+        "scripts/verify-security-audit-skill.mjs"
+      ],
+      "canonicalSources": [
+        "skills/security-audit/VALIDATION-AND-REPORTING.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "skills/security-audit/WEB-PROTOCOL-AND-AUTH.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "skills/security-audit/PIN.json",
+        "skills/security-audit/LICENSE",
+        "scripts/verify-security-audit-skill.mjs"
+      ],
+      "canonicalSources": [
+        "skills/security-audit/WEB-PROTOCOL-AND-AUTH.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
     }
   ]
 }

@@ -525,6 +525,13 @@ it must not infer current ownership from `task.json` or `recovery.json` alone.
 
 ## Security and dependency boundary
 
+For source security questions and explicitly requested audits, ForgeLoop ships
+the optional [Cloudflare security audit companion](./docs/SECURITY_AUDIT_SKILL.md),
+pinned with its MIT license and offline integrity checker. It supports focused
+guidance and a six-phase audit with independent verification. Enable it through
+your agent's skill discovery or ask the agent to read the bundled skill;
+reports remain advisory and do not establish ForgeLoop completion.
+
 Runtime uses Node built-ins and the approved exact `@typesafe-ai/sdk` and
 `smol-toml` dependencies; it installs no agents, providers, plugins, services,
 or telemetry. Paths, symlinks, JSON,

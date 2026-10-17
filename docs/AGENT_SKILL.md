@@ -76,6 +76,13 @@ CI. ForgeLoop adds no runtime Skill installation or synchronization command.
 
 ## Packaging
 
+The optional [Cloudflare security audit companion](./SECURITY_AUDIT_SKILL.md)
+ships separately at `skills/security-audit/`. The generated ForgeLoop Skill
+points to it for requested security work without starting a full audit or
+requiring installation. Its upstream files, license, and hash manifest remain
+separate from the generated ForgeLoop Skill. Host discovery copies are opt-in
+and are not synchronized by the generator or by `init`/`update`.
+
 The generated Skill, this document, and the bounded generator ship in the npm
 package as instruction/documentation content. They add no runtime dependency.
 Harness-specific installed copies and caches are not shipped.

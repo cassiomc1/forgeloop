@@ -32,6 +32,22 @@ authorization before installing a tool or changing the environment. If no
 safe equivalent exists, record the required check as blocked and never claim
 it passed. Do not install merely optional resources.
 
+## Optional source security audit workflow
+
+For security questions and focused vulnerability investigation, the optional
+Cloudflare [security-audit skill](https://github.com/cloudflare/security-audit-skill)
+provides source-first guidance. ForgeLoop ships a pinned copy under
+`skills/security-audit/` in its package and source checkout. See the
+[setup and authority boundaries](https://github.com/cassiomc1/forgeloop/blob/main/docs/SECURITY_AUDIT_SKILL.md)
+before enabling host discovery or requesting a full audit.
+
+Use guidance mode for focused work. Reserve the complete six-phase audit for
+an explicit audit or report request; it requires independent verification and
+the upstream execution isolation controls. Keep `confirmed`,
+`needs_validation`, and `rejected` distinct, and disclose missing capabilities.
+The companion neither installs itself into target projects nor replaces this
+guide's gates, negative tests, canonical evidence, or completion validation.
+
 ## General principles (valid for any platform)
 
 - **Secure by design**: think about security during the design phase, not as a "review" at the end. Perform threat modeling for sensitive features (login, payment, file upload).

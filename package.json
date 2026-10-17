@@ -122,7 +122,10 @@
     "!src/core/workflow-compatibility.js",
     "!src/core/cli-metadata.js",
     "LICENSE",
-    "scripts/run-mcp-clean-tests.mjs"
+    "scripts/run-mcp-clean-tests.mjs",
+    "docs/SECURITY_AUDIT_SKILL.md",
+    "scripts/verify-security-audit-skill.mjs",
+    "skills/security-audit"
   ],
   "scripts": {
     "test": "node scripts/run-tests.js",
@@ -184,7 +187,8 @@
     "mcp:test:clean": "node scripts/run-mcp-clean-tests.mjs",
     "release:quick": "node scripts/run-rc-release.mjs",
     "release:rc:check": "node scripts/check-rc-release.mjs",
-    "storage:writer-inventory": "node scripts/storage-writer-inventory.mjs"
+    "storage:writer-inventory": "node scripts/storage-writer-inventory.mjs",
+    "security-skill:check": "node scripts/verify-security-audit-skill.mjs"
   },
   "devDependencies": {
     "c8": "^12.0.0",

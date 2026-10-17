@@ -41,6 +41,7 @@ integration and guide context. Use this map before editing documentation.
 | Provider extension architecture | [`docs/PROVIDER_ARCHITECTURE.md`](./docs/PROVIDER_ARCHITECTURE.md) | Provider-neutral architecture, invocation lifecycle, strict snapshots, cancellation, trust, and authority boundaries |
 | Provider extension reference | [`docs/PROVIDERS.md`](./docs/PROVIDERS.md) | Capability discovery, provider kinds, common contract, limits, errors, and maintainer checklist |
 | Security Review provider | [`docs/SECURITY_REVIEW.md`](./docs/SECURITY_REVIEW.md) | Bounded host-injected observation API, strict findings, timeout/cancellation, and non-authority boundary |
+| Cloudflare security audit companion | [`docs/SECURITY_AUDIT_SKILL.md`](./docs/SECURITY_AUDIT_SKILL.md) | Pinned optional source-audit workflow, host setup, report validation, and ForgeLoop authority boundary |
 | Ripwire advisory adapter | [`docs/RIPWIRE_ADAPTER.md`](./docs/RIPWIRE_ADAPTER.md) | Ripwire-specific registration, process contract, JSON mapping, limits, and verification |
 | OpenSrc advisory adapter | [`docs/OPENSRC_ADAPTER.md`](./docs/OPENSRC_ADAPTER.md) | OpenSrc-specific registration, version qualification, cache containment, deterministic search, limits, and verification |
 | Agent Browser verification adapter | [`docs/AGENT_BROWSER_ADAPTER.md`](./docs/AGENT_BROWSER_ADAPTER.md) | Optional host-owned browser executable, bounded observation mapping, isolation, exact origins, screenshots, and trust boundary |

@@ -117,6 +117,12 @@ rg -n '^## |authentication|authorization|upload|SSRF|CSP|OAuth|JWT|secrets|suppl
 
 **Expected evidence:** explicit trust boundaries, server-side validation, least privilege, no secrets in Git, and negative tests.
 
+For requested source audits or focused vulnerability investigations, consult
+the optional bundled Cloudflare `security-audit` companion described by the
+security guide. Ordinary security routing does not start a full audit or
+require the companion. Its reports remain advisory; canonical security gates
+and verification remain unchanged.
+
 ### `performance` — measurable cost
 
 **Activate when:** the request involves latency, scale, a critical path, rendering, bundles, databases, networking, memory, battery, load, Web Vitals, FPS, or a budget.

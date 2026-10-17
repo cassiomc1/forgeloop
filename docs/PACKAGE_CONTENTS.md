@@ -76,6 +76,12 @@ The published tarball includes the following consumer-facing groups:
    documentation are also packaged.
    The generated portable ForgeLoop Agent Skill and `docs/AGENT_SKILL.md` are
    packaged as instruction/documentation content, not runtime authority.
+   The optional Cloudflare companion at `skills/security-audit/` also ships,
+   including its upstream references, schema, validators and tests, MIT
+   license, and `PIN.json`. Its usage guide at `docs/SECURITY_AUDIT_SKILL.md`
+   and offline `scripts/verify-security-audit-skill.mjs` checker are packaged.
+   It adds no runtime dependency or automatic scan and is not copied by
+   `init`/`update` into host skill directories.
   Provider implementation modules ship under `src/`, but packaged source file
   does not mean a supported public import path; the generic `./providers`
   subpath remains unexported.

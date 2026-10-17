@@ -1416,6 +1416,185 @@
       ],
       "canonicalFor": [],
       "packaged": true
+    },
+    {
+      "path": "docs/SECURITY_AUDIT_SKILL.md",
+      "id": "security-audit-skill",
+      "class": "guide",
+      "audience": [
+        "user",
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "security-audit-companion"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "skills/security-audit/AI-AND-LLM.md",
+      "id": "cloudflare-audit-ai-and-llm",
+      "class": "reference",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [],
+      "packaged": true
+    },
+    {
+      "path": "skills/security-audit/ATTACK-CLASSES.md",
+      "id": "cloudflare-audit-attack-classes",
+      "class": "reference",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [],
+      "packaged": true
+    },
+    {
+      "path": "skills/security-audit/CLIENT-SIDE.md",
+      "id": "cloudflare-audit-client-side",
+      "class": "reference",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [],
+      "packaged": true
+    },
+    {
+      "path": "skills/security-audit/CLOUD-AND-DEPLOYMENT.md",
+      "id": "cloudflare-audit-cloud-and-deployment",
+      "class": "reference",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [],
+      "packaged": true
+    },
+    {
+      "path": "skills/security-audit/DATA-ISOLATION-AND-LIFECYCLE.md",
+      "id": "cloudflare-audit-data-isolation-and-lifecycle",
+      "class": "reference",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [],
+      "packaged": true
+    },
+    {
+      "path": "skills/security-audit/DESKTOP-MOBILE-AND-LOCAL-IPC.md",
+      "id": "cloudflare-audit-desktop-mobile-and-local-ipc",
+      "class": "reference",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [],
+      "packaged": true
+    },
+    {
+      "path": "skills/security-audit/HUNTING.md",
+      "id": "cloudflare-audit-hunting",
+      "class": "reference",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [],
+      "packaged": true
+    },
+    {
+      "path": "skills/security-audit/MEMORY-SAFETY-AND-BINARY.md",
+      "id": "cloudflare-audit-memory-safety-and-binary",
+      "class": "reference",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [],
+      "packaged": true
+    },
+    {
+      "path": "skills/security-audit/PROTOCOLS-RPC-AND-MESSAGING.md",
+      "id": "cloudflare-audit-protocols-rpc-and-messaging",
+      "class": "reference",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [],
+      "packaged": true
+    },
+    {
+      "path": "skills/security-audit/RECONNAISSANCE.md",
+      "id": "cloudflare-audit-reconnaissance",
+      "class": "reference",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [],
+      "packaged": true
+    },
+    {
+      "path": "skills/security-audit/RESOURCE-EXHAUSTION-AND-AVAILABILITY.md",
+      "id": "cloudflare-audit-resource-exhaustion-and-availability",
+      "class": "reference",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [],
+      "packaged": true
+    },
+    {
+      "path": "skills/security-audit/SKILL.md",
+      "id": "cloudflare-audit-skill",
+      "class": "reference",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [],
+      "packaged": true
+    },
+    {
+      "path": "skills/security-audit/SUPPLY-CHAIN-AND-RELEASE.md",
+      "id": "cloudflare-audit-supply-chain-and-release",
+      "class": "reference",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [],
+      "packaged": true
+    },
+    {
+      "path": "skills/security-audit/VALIDATION-AND-REPORTING.md",
+      "id": "cloudflare-audit-validation-and-reporting",
+      "class": "reference",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [],
+      "packaged": true
+    },
+    {
+      "path": "skills/security-audit/WEB-PROTOCOL-AND-AUTH.md",
+      "id": "cloudflare-audit-web-protocol-and-auth",
+      "class": "reference",
+      "audience": [
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [],
+      "packaged": true
     }
   ]
 }

@@ -97,6 +97,22 @@ dependencies, version, and distribution conditions before adoption.
   configure, or enable its CI/agent integrations. Verify current upstream
   license, CLI, telemetry, network behavior, and dependencies before use.
 
+### Cloudflare security audit skill — optional bundled companion
+
+- Project: [cloudflare/security-audit-skill](https://github.com/cloudflare/security-audit-skill).
+- Pinned source commit: `c1c8a8c1471069fb0e188eeaff69b8e8db6564a8`.
+- License: MIT, copyright (c) 2025-2026 Cloudflare, Inc.; the complete upstream
+  notice is preserved at `skills/security-audit/LICENSE`.
+- Use in this collection: the unchanged upstream `skills/security-audit/`
+  tree, including references, schema, validators and tests, is bundled for
+  optional agent guidance and explicitly requested source audits. The root
+  upstream license is copied alongside it. ForgeLoop-owned `PIN.json` records
+  the source and per-file SHA-256 digests.
+- Boundary: instruction content and local report validators, not a runtime
+  dependency, automatic scanner, Security Review provider, evidence importer,
+  or completion gate. It is not installed into a host by `init` or `update`.
+  The upstream files retain MIT terms independently of ForgeLoop's license.
+
 ### Runtime and validator boundary
 
 The distributed CLI and repository validators use Node.js and Python standard

@@ -57,6 +57,12 @@ ForgeLoop-owned validation and evidence contract.
 
 ## Operational rules
 
+The optional bundled [Cloudflare security audit companion](./SECURITY_AUDIT_SKILL.md)
+is an agent workflow with a separate report schema. It does not register a
+Security Review provider or automatically import its findings. An upstream
+`needs_validation` record must not be promoted to a severity-bearing confirmed
+finding or canonical evidence by an adapter.
+
 - Keep registration lazy and explicit.
 - Use a host-owned provider and a bounded request.
 - Treat findings as advisory observations, not proof of `VALID`, `COMPLETE`,
