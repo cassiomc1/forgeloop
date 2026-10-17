@@ -20,6 +20,8 @@
     "**/*.md"
   ],
   "ignores": [
+    // Pinned third-party source stays byte-exact; security-skill:check verifies it.
+    "skills/security-audit/**",
     "**/.worktrees/**",
     "**/.superpowers/**",
     "**/docs/superpowers/**",
