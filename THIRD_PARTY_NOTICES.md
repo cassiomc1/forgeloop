@@ -282,3 +282,21 @@ rules and media or motion counts are not universal ForgeLoop requirements.
 - Boundary: the ForgeLoop core package (`@cassiomc1/forgeloop`) has no
   dependency on the MCP SDK; the SDK ships only inside
   `@cassiomc1/forgeloop-mcp`. Review upstream terms before redistribution.
+
+## Revenue-centric design companion
+
+- Source: [heliocosta-dev/revenue-centric-design](https://github.com/heliocosta-dev/revenue-centric-design/tree/1942760c2242f609bf63ce2c97204f5a1791bd68).
+- Ideas, frameworks and the term Revenue-Centric Design: Richard
+  ([@richardrx](https://x.com/richardrx)); upstream curation is used with permission.
+- Terms: [complete custom source-available license](./skills/forgeloop/references/revenue-centric-design/LICENSE),
+  retained in full. Attribution and preservation of those terms are required.
+  Gambling, betting, casino and real-money games-of-chance uses, including
+  loot boxes, are excluded by the author's permission. These terms apply to
+  this companion, separately from ForgeLoop's PolyForm license; they are not
+  an OSI-approved open-source license.
+- Adaptation: a focused advisory skill and offline journey playbook under
+  `skills/forgeloop/references/revenue-centric-design/`, with a reviewed commit
+  and normalized-text integrity pin. Upstream themes are pinned links; media,
+  updater scripts and scraping dependencies are not bundled.
+- Authority: the companion adds no runtime dependency, guide ID, automatic
+  gate or completion authority. See [setup and boundaries](./docs/REVENUE_CENTRIC_DESIGN.md).

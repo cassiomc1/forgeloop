@@ -6,7 +6,7 @@ export function getStorageCapabilities() {
   return {
     version: 1,
     defaultBackend: "sqlite",
-    soleSQLiteWriter: false,
+    soleSQLiteWriter: true,
     sqlite: {
       format: STORAGE_FORMAT,
       formatVersion: STORAGE_FORMAT_VERSION,

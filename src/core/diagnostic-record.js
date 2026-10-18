@@ -11,6 +11,7 @@ import {
   interventionSemanticFingerprint,
 } from "./diagnostic-model.js";
 import { projectHypothesisStates, getHypothesisState } from "./hypothesis-projection.js";
+import { assertDiagnosisPhase, assertReviewChronology, requiresFailureBinding } from "./review-correction.js";
 
 const TERMINAL_STATUSES = Object.freeze(["FALSIFIED", "SUPERSEDED", "UNRESOLVED"]);
 
@@ -112,10 +113,9 @@ async function recordDiagnosticCase({
   }
 
   const state = await requireActiveState(target, { packageRoot, taskId });
-  if (state.phase !== "DIAGNOSING") {
-    throw stateError("E_PHASE_PREREQUISITE_MISSING", `Recording a structured diagnostic case requires phase DIAGNOSING, currently ${state.phase}`);
-  }
+  assertDiagnosisPhase(state);
   const ledger = await requireValidLedger(target, packageRoot, taskId);
+  assertReviewChronology(state, ledger.events);
 
   if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
     throw stateError("E_DIAGNOSTIC_CASE_INVALID", "diagnostic case must be a JSON object");
@@ -156,7 +156,7 @@ async function recordDiagnosticCase({
 
   // A VERIFICATION_FAILURE case must bind to failed/blocked evidence from the
   // active correction cycle so it cannot be formally valid yet semantically empty.
-  if (parsed.failureClass === "VERIFICATION_FAILURE") {
+  if (requiresFailureBinding(state, parsed.failureClass)) {
     const bindsToFailure = [
       ...parsed.hypotheses.flatMap((hypothesis) => hypothesis.evidenceRefs ?? []),
       ...(parsed.observations ?? [])

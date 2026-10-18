@@ -4,7 +4,7 @@ import { cp, mkdtemp, readFile, rename, rm } from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
 import { execFileSync, spawnSync } from "node:child_process";
-import { buildCanonicalDiagnosisProject } from "../tests/helpers/canonical-diagnosis-fixture.js";
+import { buildLegacyDiagnosisProject } from "./lib/legacy-diagnosis-fixture.mjs";
 import { TEST_TASK_ID } from "../tests/helpers/storage-fixtures.js";
 import { openStorageDatabase } from "../src/storage/connection.js";
 import { exportDatabase } from "../src/storage/exporter.js";
@@ -37,7 +37,7 @@ assert.equal(execFileSync("git",["-C",legacy,"status","--porcelain","--untracked
 const postwriteOption=process.argv.find(value=>value.startsWith("--postwrite-control="))?.slice("--postwrite-control=".length) ?? "false";
 assert.ok(["true","false"].includes(postwriteOption));
 const postwrite=postwriteOption === "true";
-const {target,cleanup}=await buildCanonicalDiagnosisProject({taskId:TEST_TASK_ID,git:true,linkedWorktree:true});
+const {target,cleanup}=await buildLegacyDiagnosisProject({legacyRoot:legacy,taskId:TEST_TASK_ID});
 const retained=await mkdtemp(path.join(os.tmpdir(),"forgeloop-prewrite-rollback-retained-"));
 let db;
 const runLegacy=()=>{

@@ -74,6 +74,15 @@ authorization headers must never be persisted in ForgeLoop artifacts.
 External Agent Skills tooling is not a ForgeLoop dependency and is not used in
 CI. ForgeLoop adds no runtime Skill installation or synchronization command.
 
+## Optional product design guidance
+
+The [revenue-centric design companion](./REVENUE_CENTRIC_DESIGN.md) lives under
+`skills/forgeloop/references/revenue-centric-design/`. Its focused skill and
+local journey playbook support relevant product work with source attribution,
+custom license terms, informed choice and measurable hypotheses. It adds no
+runtime dependency, guide ID or lifecycle authority. The generator links to
+this maintained reference tree and does not overwrite or install it.
+
 ## Packaging
 
 The optional [Cloudflare security audit companion](./SECURITY_AUDIT_SKILL.md)

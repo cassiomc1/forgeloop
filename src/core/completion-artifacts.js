@@ -27,6 +27,7 @@ import { assertClaimsCoverChangedPaths } from "./task-scope.js";
 import { discoverTasks } from "./task-discovery.js";
 import { listActions } from "./actions.js";
 import { STRUCTURAL_QUALITY_REQUIREMENT } from "./structural-quality/constants.js";
+import { assertCheckPhase, assertReviewChronology, assertReviewRequirement } from "./review-correction.js";
 
 async function actionReceiptSummary(target, packageRoot, taskId) {
   const actions = await listActions(target, { packageRoot, taskId });
@@ -487,13 +488,7 @@ export async function assertRecordCheckPrerequisites({
   if (["COMPLETE", "BLOCKED"].includes(state.phase)) {
     throw artifactError("E_PHASE_TRANSITION_INVALID", `Cannot record a check in ${state.phase}`, [stateRel]);
   }
-  if (state.phase !== "VERIFYING") {
-    throw artifactError(
-      "E_PHASE_PREREQUISITE_MISSING",
-      `record-check requires VERIFYING before review; found ${state.phase}`,
-      [stateRel],
-    );
-  }
+  assertCheckPhase(state, status, evidenceKind, stateRel);
   await assertExecutionPrerequisites({ target, state, packageRoot, taskId, statePath, contractPath, routePath, eventsPath });
 
   const contract = await readContract(target, packageRoot, { taskId, contractPath });
@@ -514,6 +509,7 @@ export async function assertRecordCheckPrerequisites({
   }).find((item) => (
     item.id === requirement || item.text === requirement
   ));
+  assertReviewRequirement(state, requirement, requested ?? terminalRequested);
   if ((requested?.terminalOwned || terminalRequested) && status === "passed" && evidenceKind === "OBSERVED") {
     throw artifactError(
       "E_FUTURE_LIFECYCLE_EVIDENCE",
@@ -534,6 +530,7 @@ export async function assertRecordCheckPrerequisites({
     const first = ledger.errors[0];
     throw artifactError(first.code, first.message, [eventsRel]);
   }
+  assertReviewChronology(state, ledger.events, [eventsRel]);
   if (!ledger.events.some((event) => event.taskId === state.taskId && event.event === "VERIFICATION_STARTED")) {
     throw artifactError(
       "E_PHASE_CHRONOLOGY_INVALID",

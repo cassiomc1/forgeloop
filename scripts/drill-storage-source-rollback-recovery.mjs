@@ -5,7 +5,7 @@ import path from "node:path";
 import os from "node:os";
 import { execFileSync, fork, spawnSync } from "node:child_process";
 import { once } from "node:events";
-import { buildCanonicalDiagnosisProject } from "../tests/helpers/canonical-diagnosis-fixture.js";
+import { buildLegacyDiagnosisProject } from "./lib/legacy-diagnosis-fixture.mjs";
 import { TEST_TASK_ID } from "../tests/helpers/storage-fixtures.js";
 import { openStorageDatabase } from "../src/storage/connection.js";
 import { exportDatabase } from "../src/storage/exporter.js";
@@ -22,7 +22,7 @@ const release=argument("release") ?? "false";assert.ok(["true","false"].includes
 const phase=argument("phase") ?? "PARTIAL_SOURCE";
 assert.ok(["SWITCHING","DATABASE_RETAINED","NATIVE_RETAINED","PARTIAL_SOURCE","RESTORED","STAGE_READY","STAGE_PREPARING_COMPLETE","STAGE_PREPARING_PARTIAL","STAGE_PREPARING_MISSING","STAGE_PREPARING_BINARY","PREP_READY","PREP_PREPARING_COMPLETE","PREP_PREPARING_PARTIAL","PREP_PREPARING_MISSING"].includes(phase));
 const binary=argument("binary") ?? "false";assert.ok(["true","false"].includes(binary));
-const {target,cleanup}=await buildCanonicalDiagnosisProject({taskId:TEST_TASK_ID,git:true,linkedWorktree:true});
+const {target,cleanup}=await buildLegacyDiagnosisProject({legacyRoot:legacy,taskId:TEST_TASK_ID});
 const retained=await mkdtemp(path.join(os.tmpdir(),"forgeloop-canonical-source-recovery-"));
 let db,worker;
 function validateLegacy(){

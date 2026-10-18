@@ -7,12 +7,12 @@ on:
       package_source:
         description: Package to test
         type: choice
-        options: [candidate, npm]
+        options: [candidate, npm, latest]
         default: candidate
       version:
         description: Exact expected package version
         type: string
-        default: 2.0.0-rc.4
+        default: 2.0.0
 permissions:
   contents: read
 jobs:
@@ -23,7 +23,7 @@ jobs:
     timeout-minutes: 20
     env:
       PACKAGE_SOURCE: ${{ inputs.package_source || 'candidate' }}
-      FORGELOOP_AUDIT_VERSION: ${{ inputs.version || '2.0.0-rc.4' }}
+      FORGELOOP_AUDIT_VERSION: ${{ inputs.version || '2.0.0' }}
     strategy:
       fail-fast: false
       max-parallel: 1
@@ -50,8 +50,18 @@ jobs:
         env:
           TYPESAFE_API_KEY: ${{ secrets.FORGELOOP_NPM_AUDIT_JEV_KEY }}
         run: |
-          mkdir -p "$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
-          if [ "$PACKAGE_SOURCE" = npm ]; then
+          set -eu
+          audit_root="$RUNNER_TEMP/npm-user-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir -p "$audit_root/home" "$audit_root/results"
+          export HOME="$audit_root/home"
+          export npm_config_cache="$audit_root/cache"
+          export npm_config_userconfig="$audit_root/npmrc"
+          export npm_config_registry=https://registry.npmjs.org
+          : > "$npm_config_userconfig"
+          if [ "$PACKAGE_SOURCE" = latest ]; then
+            npm view @cassiomc1/forgeloop version dist-tags gitHead dist.integrity --json > "$audit_root/results/registry.json"
+            package_spec="@cassiomc1/forgeloop"
+          elif [ "$PACKAGE_SOURCE" = npm ]; then
             npm view "@cassiomc1/forgeloop@$FORGELOOP_AUDIT_VERSION" dist.integrity --json
             package_spec="@cassiomc1/forgeloop@$FORGELOOP_AUDIT_VERSION"
           else
@@ -70,10 +80,22 @@ jobs:
           $auditRoot = Join-Path $env:RUNNER_TEMP "npm-user-$env:GITHUB_RUN_ID-$env:GITHUB_RUN_ATTEMPT"
           $installRoot = Join-Path $auditRoot 'install'
           $resultRoot = Join-Path $auditRoot 'results'
-          New-Item -ItemType Directory -Force $auditRoot | Out-Null
-          if ($env:PACKAGE_SOURCE -eq 'npm') {
+          New-Item -ItemType Directory -Force $auditRoot, $resultRoot | Out-Null
+          $env:HOME = Join-Path $auditRoot 'home'
+          $env:USERPROFILE = $env:HOME
+          New-Item -ItemType Directory -Force $env:HOME | Out-Null
+          $env:npm_config_cache = Join-Path $auditRoot 'cache'
+          $env:npm_config_userconfig = Join-Path $auditRoot 'npmrc'
+          $env:npm_config_registry = 'https://registry.npmjs.org'
+          Set-Content -Path $env:npm_config_userconfig -Value ''
+          if ($env:PACKAGE_SOURCE -eq 'latest') {
+            npm view '@cassiomc1/forgeloop' version dist-tags gitHead dist.integrity --json | Set-Content (Join-Path $resultRoot 'registry.json')
+            if ($LASTEXITCODE -ne 0) { throw 'npm metadata failed' }
+            $packageSpec = '@cassiomc1/forgeloop'
+          } elseif ($env:PACKAGE_SOURCE -eq 'npm') {
             $packageSpec = "@cassiomc1/forgeloop@$env:FORGELOOP_AUDIT_VERSION"
             npm view $packageSpec dist.integrity --json
+            if ($LASTEXITCODE -ne 0) { throw 'npm metadata failed' }
           } else {
             npm pack --pack-destination $auditRoot
             if ($LASTEXITCODE -ne 0) { throw 'npm pack failed' }
@@ -88,5 +110,5 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: npm-user-audit-${{ matrix.os }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/npm-user-${{ github.run_id }}-${{ github.run_attempt }}/results/report.json
+          path: ${{ runner.temp }}/npm-user-${{ github.run_id }}-${{ github.run_attempt }}/results/*.json
           if-no-files-found: error

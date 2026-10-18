@@ -29,7 +29,15 @@ async function check(name, fn) {
   catch (e) { report.checks.push({ name, status: 'FAIL', error: e.message }); }
   writeFileSync(path.join(root,'report.json'), JSON.stringify(report,null,2));
 }
-await check('published-version', () => { assert.equal(report.package,process.env.FORGELOOP_AUDIT_VERSION || '2.0.0-rc.4'); run(['--version']); run(['protocol-info','--json']); });
+await check('published-version', () => { assert.equal(report.package,process.env.FORGELOOP_AUDIT_VERSION || '2.0.0'); run(['--version']); run(['protocol-info','--json']); });
+await check('bundled-design-and-security-companions', () => {
+  for (const name of ['verify-revenue-design-skill.mjs','verify-security-audit-skill.mjs']) {
+    const filename=path.join(prefix,'node_modules/@cassiomc1/forgeloop/scripts',name);
+    const result=spawnSync(process.execPath,[filename],{encoding:'utf8',timeout:30000});
+    assert.equal(result.status,0,result.stderr);
+    assert.equal(JSON.parse(result.stdout).valid,true);
+  }
+});
 await check('live-jev-health', () => { assert.equal(run(['decision-status','--health','--json']).json.health.status,'healthy'); });
 await check('fresh-git-init', () => {
   const r = spawnSync('git',['init',project],{encoding:'utf8'}); assert.equal(r.status,0);
@@ -117,6 +125,23 @@ await check('verification-review-and-completion', () => {
   run(['run-check','--task','user-task','--id','sqlite-proof','--requirement','sqlite-proof','--',process.execPath,'-e',proof]);
   run(['run-check','--task','user-task','--id','output-created','--requirement','output-created','--',process.execPath,'-e',proof]);
   run(['run-check','--task','user-task','--id','tests','--requirement','tests','--',process.execPath,'-e',proof]);
+  run(['advance','--task','user-task','--to','REVIEWING']);
+  const reviewMarker=path.join(project,'output/review-regression.txt');
+  assert.equal(existsSync(reviewMarker),false);
+  run(['record-check','--task','user-task','--id','review-finding','--requirement','tests','--kind','manual-review',
+    '--status','failed','--evidence-kind','OBSERVED','--result','The disposable fixture is missing output/review-regression.txt']);
+  assert.equal(run(['next','--task','user-task','--json']).json.nextAction,'RECORD_DIAGNOSIS');
+  run(['record-diagnosis','--task','user-task','--hypothesis','The review edge case needs a fresh verification cycle',
+    '--failure-class','VERIFICATION_FAILURE','--evidence-ref','review-finding','--settled-by','Fresh SQLite output proof passes',
+    '--next-safe-action','Rerun the SQLite proof in the correction cycle']);
+  run(['advance','--task','user-task','--to','CORRECTING']);
+  writeFileSync(reviewMarker,'Review regression corrected\n');
+  const correctedProof=proof+"assert.equal(fs.readFileSync('output/review-regression.txt','utf8'),'Review regression corrected\\n');";
+  assert.equal(run(['advance','--task','user-task','--to','VERIFYING','--json']).json.verificationCycle,2);
+  for (const requirement of ['sqlite-proof','output-created','tests']) {
+    run(['run-check','--task','user-task','--id',requirement,'--requirement',requirement,'--',process.execPath,'-e',correctedProof]);
+  }
+  run(['prepare-completion','--task','user-task','--json']);
   run(['advance','--task','user-task','--to','REVIEWING']);
   run(['audit','--task','user-task','--json']);
   assert.equal(run(['complete','--task','user-task','--json']).json.status,'VALID');

@@ -155,3 +155,12 @@ gate before `npm publish --provenance --access public`.
 Publication therefore remains owned by the authorized manual GitHub Actions
 workflow and uses public npm access for the core package; local package inspection proves the
 candidate boundary but does not publish it.
+
+## Optional product design companion
+
+The generated ForgeLoop skill includes the maintained
+`skills/forgeloop/references/revenue-centric-design/` reference tree. It ships
+a focused skill, local journey playbook, complete custom source-available
+license and integrity pin. `docs/REVENUE_CENTRIC_DESIGN.md` and
+`scripts/verify-revenue-design-skill.mjs` describe and verify it. Upstream media
+and updater scripts are excluded; external theme references are pinned links.

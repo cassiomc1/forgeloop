@@ -6,17 +6,18 @@ import { evaluateRequiredEvidence, classifyRequirement, terminalRequirementsForC
 import { validateEventLedger, validateCompletionRecoveryAuthorization } from "./events.js";
 import { NEXT_ACTIONS, commandFor, decision, recordTerminalResultCommandSpec, result } from "./next-action-model.js";
 import { artifactError, checkListReasons, loadArtifact, requirementsAndCoverage } from "./next-action-artifacts.js";
+import { reviewCorrectionAction } from "./next-action-review-correction.js";
 
-export async function resolveReviewingPhase({ state, context, requiredArtifacts, target, packageRoot, contract, route, preflight, authorityContext, runtimeContext, explicitTaskId, eventsRel, receiptRel, stateRel, policyRecoveryAction }) {
-    const invalidChecks = checkListReasons(state);
-    if (invalidChecks.length > 0) {
-      return result({
-        ...context,
-        nextAction: NEXT_ACTIONS.RESOLVE_BLOCKER,
-        reasons: invalidChecks,
-        requiredArtifacts,
-      });
-    }
+export async function resolveReviewingPhase(options) {
+  const { target, packageRoot, explicitTaskId, state, context, requiredArtifacts } = options;
+  const invalidChecks = checkListReasons(state);
+  if (invalidChecks.length > 0) return result({ ...context, nextAction: NEXT_ACTIONS.RESOLVE_BLOCKER, reasons: invalidChecks, requiredArtifacts });
+  const correction = await reviewCorrectionAction({ target, packageRoot, taskId: explicitTaskId, state, context, requiredArtifacts });
+  if (correction) return correction;
+  return resolveReviewingEvidence(options);
+}
+
+async function resolveReviewingEvidence({ state, context, requiredArtifacts, target, packageRoot, contract, route, preflight, authorityContext, runtimeContext, explicitTaskId, eventsRel, receiptRel, stateRel, policyRecoveryAction }) {
     const evidence = await requirementsAndCoverage({
       target,
       packageRoot,

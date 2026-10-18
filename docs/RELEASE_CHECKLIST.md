@@ -4,14 +4,30 @@ This is the current release checklist for the PolyForm Noncommercial-licensed
 `@cassiomc1/forgeloop` package. It is a preparation and verification checklist;
 it does not authorize publication.
 
-## Current published candidate — 2026-10-14
+## Stable 2.0.0 candidate — 2026-10-18
 
-The public core package is `2.0.0-rc.4`; npm `latest` and `next` both resolve
-to RC4. It requires Node.js 24.19.0+ with built-in `node:sqlite`. The MCP
-companion retains restricted distribution. RC4 is a release candidate;
-`soleSQLiteWriter` remains false and stable/production acceptance is open.
+The core package version is `2.0.0`, targeting npm `latest`, with Node.js
+24.19.0+ and built-in `node:sqlite`. The MCP companion retains restricted
+distribution and admits the stable core peer. Canonical SQLite is the sole
+supported operational writer; configuration, portable exports, immutable
+attachments and owner-bound maintenance evidence retain explicit file roles.
 
-Observed release evidence:
+The [release acceptance record](STABLE_2_ACCEPTANCE.md) identifies source-bound
+writer review, full verification, native user checks and recovery/exclusion
+receipts. A fresh hosted pair on the final release source and exact-head PR
+checks remain mandatory before publication. Do not bypass the release guard,
+reuse an earlier-source benchmark as final evidence, or infer publication from
+package metadata. Physical power-loss and production cutover are separate claims.
+
+Verify the live registry and immutable release identity after publication:
+
+```bash
+npm view @cassiomc1/forgeloop version dist-tags --json
+npm view @cassiomc1/forgeloop@2.0.0 gitHead dist.integrity --json
+npm run release:identity -- --version 2.0.0 --release-commit <release-tag-commit>
+```
+
+## Historical RC4 release evidence
 
 - [RC4 verification and publication](https://github.com/cassiomc1/forgeloop/actions/runs/38629809865)
   passed full release checks and published with provenance.
@@ -20,20 +36,11 @@ Observed release evidence:
 - [Default latest-install audit](https://github.com/cassiomc1/forgeloop/actions/runs/38669237414)
   installed the unversioned public package with a fresh npm cache,
   configuration, install prefix and project; all 15 checks passed on each OS.
-  This run uses the test-harness branch `codex/latest-user-audit-20261014`;
-  its `latest` input is not present in the main-branch workflow.
+  Those results describe RC4, not a later stable package.
 
-The published npm `gitHead` and immutable `v2.0.0-rc.4` tag identify
+The published RC4 npm `gitHead` and immutable `v2.0.0-rc.4` tag identify
 `d05c17cddda6a09581d526732b08eb0789b9734f`. The RC3 tag is retained; its
-publication was cancelled before npm publication. RC4 carries those runtime
-fixes plus the Windows archive-repair test correction.
-
-Verify the live registry before relying on a channel:
-
-```bash
-npm view @cassiomc1/forgeloop version dist-tags --json
-npm view @cassiomc1/forgeloop@2.0.0-rc.4 gitHead dist.integrity --json
-```
+publication was cancelled before npm publication.
 
 ## Runtime corrections after RC2
 
@@ -44,12 +51,18 @@ acceptance remains separate; a passing new-user audit does not change
 `soleSQLiteWriter` or authorize a stable 2.x release. Candidates publish to
 `next` under the existing release-channel policy.
 
-The `Published npm new-user SQLite audit` workflow supports `candidate` and
-`npm` package sources. Before a PR, test the packed candidate in an isolated
+The `Published npm new-user SQLite audit` workflow supports `candidate`, `npm` and
+`latest` package sources. Before a PR, test the packed candidate in an isolated
 installation, home directory and project on each platform. After publication,
-dispatch the same workflow with source `npm` and the exact new version. Require
-every check to pass, including live Jev health, concurrent task creation,
-SQLite integrity and a completed-task backup restored to a fresh directory.
+dispatch the same workflow with source `latest` and the exact expected new version.
+The `latest` mode installs the unversioned package with fresh home, cache, npm
+configuration, install prefix and project directories. It retains registry
+metadata alongside the observed audit report. Use `npm` for a separate exact-version
+control. Require
+every check to pass, including both bundled companion integrity checks, live
+Jev health, concurrent task creation,
+SQLite integrity, current-cycle review diagnosis/correction, and a completed-task
+backup restored to a fresh directory.
 Supply `FORGELOOP_NPM_AUDIT_JEV_KEY` through GitHub Actions secrets and remove
 temporary credentials after the runs finish.
 
@@ -89,8 +102,8 @@ p95 result is claimed by the short path. The existing 1,000-task parity run
 `38483369676` is retained for review; no fresh 200-repeat benchmark is dispatched.
 
 The writer inventory covers every current `src` JavaScript module and records
-imports plus potential write sites. Alias, computed-path, external-caller, and
-transitive-authority review remain incomplete. The inventory explicitly keeps
+imports plus potential write sites. At that historical RC checkpoint, alias, computed-path, external-caller, and
+transitive-authority review remained incomplete. The inventory explicitly keeps
 `wholeConsumerClosure: false`; it prevents drift and does not authorize setting
 `soleSQLiteWriter` to true.
 
@@ -128,10 +141,9 @@ current release. Its exact-identity and tag guards are retained.
 
 ## ForgeLoop 2.0.0 candidate scope
 
-A stable 2.0.0 release is not ready while SQLite migration plan §10 has
-open consumer-closure, current-source performance, or platform evidence. Keep
-all acceptance boxes open until their evidence is bound to the exact candidate
-revision.
+A stable 2.0.0 publication requires the source-bound acceptance record and final
+release-source checks. The preparation checklist below is not itself a pass;
+retain exact evidence for each applicable requirement.
 
 The 2.0.0 candidate carries the SQLite storage transition alongside the
 existing protocol, routing, provider, documentation, and package surfaces. The

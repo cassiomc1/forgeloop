@@ -1609,6 +1609,57 @@
         "guide-maintenance"
       ],
       "packaged": true
+    },
+    {
+      "path": "docs/REVENUE_CENTRIC_DESIGN.md",
+      "id": "revenue-centric-design",
+      "class": "guide",
+      "audience": [
+        "user",
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "revenue-design-companion"
+      ],
+      "packaged": true
+    },
+    {
+      "path": "skills/forgeloop/references/revenue-centric-design/SKILL.md",
+      "id": "revenue-centric-design-skill",
+      "class": "reference",
+      "audience": [
+        "user",
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [],
+      "packaged": true
+    },
+    {
+      "path": "skills/forgeloop/references/revenue-centric-design/references/playbook.md",
+      "id": "revenue-centric-design-playbook",
+      "class": "reference",
+      "audience": [
+        "user",
+        "harness",
+        "maintainer"
+      ],
+      "canonicalFor": [],
+      "packaged": true
+    },
+    {
+      "path": "docs/STABLE_2_ACCEPTANCE.md",
+      "id": "stable-2-acceptance",
+      "class": "reference",
+      "audience": [
+        "user",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "stable-storage-release-acceptance"
+      ],
+      "packaged": true
     }
   ]
 }

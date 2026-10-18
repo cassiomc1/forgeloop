@@ -32,6 +32,6 @@
     "@cassiomc1/forgeloop": "file:../.."
   },
   "peerDependencies": {
-    "@cassiomc1/forgeloop": ">=2.0.0-rc.1 <3"
+    "@cassiomc1/forgeloop": ">=2.0.0 <3"
   }
 }

@@ -79,8 +79,8 @@ See the [23-guide maintenance map](./docs/GUIDE_MAINTENANCE.md) for review scope
 ## Distribution and license
 
 GitHub hosts source and issues. The core npm package is publicly available;
-the MCP companion retains restricted distribution. RC5 targets `next`; `latest`
-remains at RC4. Stable SQLite acceptance is incomplete.
+the MCP companion retains restricted distribution. Stable `2.0.0` targets
+`latest`; publication requires verified release identity and native user audits.
 ForgeLoop-owned source and documentation are licensed under the
 [PolyForm Noncommercial License 1.0.0](./LICENSE). Commercial use is not granted
 by this license. Third-party notices are documented in
@@ -499,9 +499,8 @@ see [CONTRIBUTING.md](./CONTRIBUTING.md#focused-verification-and-maintenance).
 
 ## ForgeLoopAudit workspace
 
-The read-only auditor lives in `ForgeLoopAudit/`. See
-[setup, usage and screenshots](./docs/FORGELOOP_AUDIT.md) for the demo,
-project inspection and audit views.
+The read-only auditor lives in `ForgeLoopAudit/`; see its
+[setup, demo and screenshots](./docs/FORGELOOP_AUDIT.md).
 
 ## Protocol compatibility
 
@@ -524,8 +523,9 @@ it must not infer current ownership from `task.json` or `recovery.json` alone.
 
 ## Security and dependency boundary
 
-Optional [Cloudflare security audits](./docs/SECURITY_AUDIT_SKILL.md) ship pinned
-with MIT attribution and integrity checks; findings remain advisory.
+Optional [security audits](./docs/SECURITY_AUDIT_SKILL.md) and
+[product design](./docs/REVENUE_CENTRIC_DESIGN.md) ship with pinned attribution,
+integrity checks and their respective licenses; guidance remains advisory.
 
 Runtime uses Node built-ins and the approved exact `@typesafe-ai/sdk` and
 `smol-toml` dependencies; it installs no agents, providers, plugins, services,

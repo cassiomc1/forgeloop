@@ -17,11 +17,77 @@ import { NEXT_ACTIONS, getNextAction } from "../src/core/next-action.js";
 import { evaluateRoute } from "../src/core/router.js";
 import { persistRoute } from "../src/core/route-artifact.js";
 import { recordDiagnosis } from "../src/core/diagnosis.js";
+import { recordStructuredDiagnosticCase } from "../src/core/diagnostic-record.js";
 import { getPackageRoot } from "../src/core/templates.js";
 import { createWorkState, writeWorkState } from "../src/core/work-state.js";
 
 const packageRoot = getPackageRoot();
 const taskId = "task-correction";
+
+async function enterReview(target) {
+  await setupTarget(target);
+  await advanceWorkState(target, "VERIFYING", { packageRoot, taskId });
+  await prepareCompletion({ target, packageRoot, taskId });
+  await recordCheck({ target, packageRoot, taskId, kind: "manual-review", id: "initial-tests",
+    requirement: "tests", status: "passed", evidenceKind: "OBSERVED", result: "Initial tests passed" });
+  await advanceWorkState(target, "REVIEWING", { packageRoot, taskId });
+}
+
+test("a failed review finding can be diagnosed and reverified without bypassing the current cycle", async () => {
+  await withTarget(async (target) => {
+    await enterReview(target);
+    const finding = { target, packageRoot, taskId, kind: "manual-review", id: "review-finding",
+      requirement: "tests", evidenceKind: "OBSERVED", result: "Review found a missing edge case" };
+    await assert.rejects(recordCheck({ ...finding, status: "passed" }), { code: "E_PHASE_PREREQUISITE_MISSING" });
+    await assert.rejects(recordCheck({ ...finding, status: "failed", requirement: "unrelated criterion" }), { code: "E_CHECK_INVALID" });
+    await recordCheck({ ...finding, status: "failed" });
+    assert.equal((await getNextAction({ target, packageRoot, taskId })).nextAction, NEXT_ACTIONS.RECORD_DIAGNOSIS);
+    const diagnosis = { target, packageRoot, taskId, hypothesis: "Review exposed missing edge-case coverage",
+      failureClass: "VERIFICATION_FAILURE", settledBy: "Edge-case regression passes", nextSafeAction: "Add the missing edge-case handling" };
+    await assert.rejects(recordDiagnosis({ ...diagnosis, evidenceRefs: ["initial-tests"] }), { code: "E_DIAGNOSIS_EVIDENCE_INVALID" });
+    await assert.rejects(recordDiagnosis({ ...diagnosis, evidenceRefs: ["unrelated-check"] }), { code: "E_DIAGNOSIS_EVIDENCE_INVALID" });
+    await recordDiagnosis({ ...diagnosis, evidenceRefs: ["review-finding"] });
+    await advanceWorkState(target, "CORRECTING", { packageRoot, taskId });
+    assert.equal((await getNextAction({ target, packageRoot, taskId })).nextAction, NEXT_ACTIONS.ENTER_VERIFYING);
+    const state = await advanceWorkState(target, "VERIFYING", { packageRoot, taskId });
+    assert.equal(state.verificationCycle, 2);
+    assert.notEqual((await getNextAction({ target, packageRoot, taskId })).nextAction, NEXT_ACTIONS.ENTER_REVIEWING);
+    await recordCheck({ ...finding, status: "passed", result: "Regression and all tests passed in the new cycle" });
+    await advanceWorkState(target, "REVIEWING", { packageRoot, taskId });
+    assert.equal((await runComplete({ target, packageRoot, taskId })).status, "VALID");
+  });
+});
+
+test("review requires an observed negative finding before diagnosis and cannot accept passed evidence", async () => {
+  await withTarget(async (target) => {
+    await enterReview(target);
+    const finding = { target, packageRoot, taskId, kind: "manual-review", id: "late-review-finding",
+      requirement: "tests", result: "Hosted validation is blocked" };
+    await assert.rejects(recordCheck({ ...finding, status: "passed", evidenceKind: "OBSERVED" }), { code: "E_PHASE_PREREQUISITE_MISSING" });
+    await assert.rejects(recordCheck({ ...finding, status: "failed", evidenceKind: "INFERRED" }), { code: "E_PHASE_PREREQUISITE_MISSING" });
+    await recordCheck({ ...finding, status: "blocked", evidenceKind: "BLOCKED" });
+    assert.equal((await getNextAction({ target, packageRoot, taskId })).nextAction, NEXT_ACTIONS.RECORD_DIAGNOSIS);
+    await assert.rejects(advanceWorkState(target, "VERIFYING", { packageRoot, taskId }), { code: "E_COMPLETION_RECOVERY_UNAUTHORIZED" });
+  });
+});
+
+test("structured review diagnosis must bind a real failed finding regardless of its failure class", async () => {
+  await withTarget(async (target) => {
+    await enterReview(target);
+    const caseInput = { failureClass: "ENVIRONMENT_FAILURE", observations: [], contributors: [],
+      hypotheses: [{ id: "review-hypothesis", statement: "An edge case is missing", evidenceRefs: ["initial-tests"],
+        settledBy: { type: "CHECK_STATUS", checkId: "review-finding", expectedStatus: "passed" } }],
+      nextSafeAction: { statement: "Correct and rerun the edge case" } };
+    await assert.rejects(recordStructuredDiagnosticCase({ target, packageRoot, taskId, caseInput }), { code: "E_DIAGNOSTIC_CASE_EVIDENCE_INVALID" });
+    await recordCheck({ target, packageRoot, taskId, id: "review-finding", kind: "manual-review",
+      requirement: "tests", status: "failed", evidenceKind: "OBSERVED", result: "Missing edge case observed during review" });
+    caseInput.hypotheses[0].evidenceRefs = ["review-finding"];
+    await recordStructuredDiagnosticCase({ target, packageRoot, taskId, caseInput });
+    assert.equal((await getNextAction({ target, packageRoot, taskId })).nextAction, NEXT_ACTIONS.CORRECT);
+    await advanceWorkState(target, "CORRECTING", { packageRoot, taskId });
+    assert.equal((await advanceWorkState(target, "VERIFYING", { packageRoot, taskId })).verificationCycle, 2);
+  });
+});
 
 async function withTarget(run) {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-correction-"));

@@ -1920,6 +1920,70 @@
       "origin": "handwritten",
       "currency": "current",
       "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/REVENUE_CENTRIC_DESIGN.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "skills/forgeloop/references/revenue-centric-design/PIN.json",
+        "skills/forgeloop/references/revenue-centric-design/LICENSE",
+        "scripts/verify-revenue-design-skill.mjs"
+      ],
+      "canonicalSources": [
+        "docs/REVENUE_CENTRIC_DESIGN.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "skills/forgeloop/references/revenue-centric-design/SKILL.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "skills/forgeloop/references/revenue-centric-design/PIN.json",
+        "skills/forgeloop/references/revenue-centric-design/LICENSE",
+        "scripts/verify-revenue-design-skill.mjs"
+      ],
+      "canonicalSources": [
+        "skills/forgeloop/references/revenue-centric-design/SKILL.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "skills/forgeloop/references/revenue-centric-design/references/playbook.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "skills/forgeloop/references/revenue-centric-design/PIN.json",
+        "skills/forgeloop/references/revenue-centric-design/LICENSE",
+        "scripts/verify-revenue-design-skill.mjs"
+      ],
+      "canonicalSources": [
+        "skills/forgeloop/references/revenue-centric-design/references/playbook.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/STABLE_2_ACCEPTANCE.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/SQLITE_MIGRATION_PLAN.md",
+        "src/storage/capabilities.js",
+        ".github/workflows/npm-publish.yml"
+      ],
+      "canonicalSources": [
+        "docs/STABLE_2_ACCEPTANCE.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
     }
   ]
 }

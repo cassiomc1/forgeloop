@@ -2296,7 +2296,7 @@
     },
     {
       "path": "src/core/completion-artifacts.js",
-      "sha256": "13ec0a5ede8f2c955983dd411c50bcabfe68598cd857fde9cfe981b300c2e4cb",
+      "sha256": "0ede01312b1e39e8d5cf2e3d3e7fc14738b3af42e3aae304284406284bf32741",
       "imports": [
         "node:path",
         "./transaction.js",
@@ -2321,7 +2321,9 @@
         "./task-scope.js",
         "./task-discovery.js",
         "./actions.js",
-        "./structural-quality/constants.js"
+        "./structural-quality/constants.js",
+        "./review-correction.js",
+        "../storage/restore-execution-provenance.js"
       ],
       "potentialWrites": []
     },
@@ -2844,11 +2846,12 @@
     },
     {
       "path": "src/core/diagnosis.js",
-      "sha256": "d656e4f4d77430cb5740e3346867a1d8864c7b4a8e5fca8c299f9ae0d23e71e1",
+      "sha256": "0e1b54564163a5eafd5f1fa8ea6a408a302a7ffa80e6c514e9dfac1f3e5f1727",
       "imports": [
         "./events.js",
         "./work-state.js",
         "./transaction.js",
+        "./review-correction.js",
         "./diagnosis-model.js"
       ],
       "potentialWrites": []
@@ -2872,13 +2875,14 @@
     },
     {
       "path": "src/core/diagnostic-record.js",
-      "sha256": "9d472e4d87a8a7c7fa6fdaeb473f60c7904b15357ec203c690e4bea589982240",
+      "sha256": "3927adc522d5dab2de0c03505d383a85e47301e1685c6e3421864cb863aa9d0d",
       "imports": [
         "./events.js",
         "./work-state.js",
         "./transaction.js",
         "./diagnostic-model.js",
         "./hypothesis-projection.js",
+        "./review-correction.js",
         "node:fs/promises",
         "./filesystem.js",
         "node:fs/promises",
@@ -3538,14 +3542,15 @@
     },
     {
       "path": "src/core/next-action-recovery-phases.js",
-      "sha256": "bd4be464ef3b8a1ebdc04235b4f42b43e96ad9e3b82214daab2f25d6e2faf663",
+      "sha256": "b681fcf0db1df5426ece51e47a2984c7f6185770e613ffa2753f703dfa1c8d3d",
       "imports": [
         "./events.js",
         "./next-action-model.js",
         "./next-action-artifacts.js",
         "./diagnostic-projection.js",
         "./reflection.js",
-        "./progress.js"
+        "./progress.js",
+        "./next-action-review-correction.js"
       ],
       "potentialWrites": []
     },
@@ -3563,8 +3568,20 @@
       "potentialWrites": []
     },
     {
+      "path": "src/core/next-action-review-correction.js",
+      "sha256": "2b735574eaacb5d492aa2fc81266cacfe42a2713911b6db0088f661e7dede6f5",
+      "imports": [
+        "./events.js",
+        "./diagnostic-projection.js",
+        "./review-correction.js",
+        "./next-action-model.js",
+        "./next-action-artifacts.js"
+      ],
+      "potentialWrites": []
+    },
+    {
       "path": "src/core/next-action-review-phase.js",
-      "sha256": "a709969b30d316f59812016605ddcd8fda784b0562411ea1ebc459c2aedbe6d2",
+      "sha256": "d91ef2c30e3718766d4c9032aa84e0fe6b5751d40c64b29c397b1a3758fa3ef1",
       "imports": [
         "./artifacts.js",
         "./completion.js",
@@ -3573,7 +3590,8 @@
         "./evidence-readiness.js",
         "./events.js",
         "./next-action-model.js",
-        "./next-action-artifacts.js"
+        "./next-action-artifacts.js",
+        "./next-action-review-correction.js"
       ],
       "potentialWrites": []
     },
@@ -3964,7 +3982,7 @@
     },
     {
       "path": "src/core/reconcile-closure.js",
-      "sha256": "45f6ffce0301e97574d6d054d222b3d94688803fe364ea2413b690513bb83129",
+      "sha256": "652087717d45887fd3ce35cac0fa481374c8fa0a9c91c087cb4d8a3d4a48ea87",
       "imports": [
         "./transaction.js",
         "./contract.js",
@@ -3980,7 +3998,8 @@
         "./work-state.js",
         "./evidence-readiness.js",
         "./phase.js",
-        "./diagnostic-projection.js"
+        "./diagnostic-projection.js",
+        "./review-correction.js"
       ],
       "potentialWrites": []
     },
@@ -4064,6 +4083,12 @@
         "./events.js",
         "./work-state.js"
       ],
+      "potentialWrites": []
+    },
+    {
+      "path": "src/core/review-correction.js",
+      "sha256": "f9ffe66fb9e28332289079e57021c70e8d36c95f8f66f640f94aa605d47e2030",
+      "imports": [],
       "potentialWrites": []
     },
     {
@@ -5301,7 +5326,7 @@
     },
     {
       "path": "src/repository-index/binary-manager.js",
-      "sha256": "e5445ac9306053478e2c9f694ca8d890509c4f27f33e36d1797ef404ed0a1888",
+      "sha256": "d61f2ab5ac1a18d90b0ec01a1ea2562cee78d30649b76303f891d5adbb95c925",
       "imports": [
         "node:crypto",
         "node:child_process",
@@ -5319,34 +5344,29 @@
       ],
       "potentialWrites": [
         {
-          "line": 296,
+          "line": 302,
           "expression": "mkdir",
           "primitive": "mkdir"
         },
         {
-          "line": 313,
+          "line": 319,
           "expression": "writeFile",
           "primitive": "writeFile"
         },
         {
-          "line": 375,
+          "line": 381,
           "expression": "mkdir",
           "primitive": "mkdir"
         },
         {
-          "line": 381,
+          "line": 387,
           "expression": "copyFile",
           "primitive": "copyFile"
         },
         {
-          "line": 383,
+          "line": 389,
           "expression": "mkdir",
           "primitive": "mkdir"
-        },
-        {
-          "line": 390,
-          "expression": "rename",
-          "primitive": "rename"
         },
         {
           "line": 396,
@@ -5354,22 +5374,27 @@
           "primitive": "rename"
         },
         {
-          "line": 403,
-          "expression": "rm",
-          "primitive": "rm"
-        },
-        {
-          "line": 404,
+          "line": 402,
           "expression": "rename",
           "primitive": "rename"
         },
         {
-          "line": 407,
+          "line": 409,
           "expression": "rm",
           "primitive": "rm"
         },
         {
           "line": 410,
+          "expression": "rename",
+          "primitive": "rename"
+        },
+        {
+          "line": 413,
+          "expression": "rm",
+          "primitive": "rm"
+        },
+        {
+          "line": 416,
           "expression": "rm",
           "primitive": "rm"
         }
@@ -5726,7 +5751,7 @@
     },
     {
       "path": "src/storage/capabilities.js",
-      "sha256": "59be8434f95b1926f44f7f13750e5492036efa3d4b7a844970a62cb37ee6e814",
+      "sha256": "9adc92b6d529de9198cde18c9a40b7ad86c981010a5423dec99eec2937e6ddb4",
       "imports": [
         "./schema.js",
         "./runtime.js"
@@ -6723,7 +6748,7 @@
     },
     {
       "path": "src/storage/migration-validation.js",
-      "sha256": "c8517c81062f0609444b82929962ede9cb805236e599265ba26872edeb903ab3",
+      "sha256": "fe8b4c73caa88521edd962a5d3e7941d43eae1a0f73d8e90b1dbb80a0d14c903",
       "imports": [
         "node:path",
         "../core/schema-validation.js",
@@ -6870,7 +6895,7 @@
     },
     {
       "path": "src/storage/project-replacement.js",
-      "sha256": "8edb1daa7f5a50a56c2762488db647d1e441d1f421d8dd6b2f1fbc5a813efa59",
+      "sha256": "22defac325ac0d68de7d1fb8a58b3cdd9e272673a0b7609826366797782705ee",
       "imports": [
         "node:crypto",
         "node:fs/promises",
@@ -6918,7 +6943,7 @@
     },
     {
       "path": "src/storage/project-restore.js",
-      "sha256": "53ea3d71bf277a825845126c4ebe2c277e35418661be958045aefcb806b1f15e",
+      "sha256": "5281b97ac86ca866d6a2a179de3a76a70b75c7f6a6d7b32d9133a7798a62ae16",
       "imports": [
         "node:crypto",
         "node:fs",
@@ -7014,6 +7039,18 @@
       "potentialWrites": []
     },
     {
+      "path": "src/storage/restore-execution-provenance.js",
+      "sha256": "cbfc9f3aeff5b9ec563587b0b53e45f0018b213984c2cc51064acd3f2d30cf1d",
+      "imports": [
+        "../core/artifacts.js",
+        "./storage-marker.js",
+        "./restore-journal.js",
+        "./project-backup.js",
+        "./operational-context.js"
+      ],
+      "potentialWrites": []
+    },
+    {
       "path": "src/storage/restore-journal.js",
       "sha256": "50e68dd1a61a9080a833e1e2e05476934b652317cdfe22f11af36cad379f838f",
       "imports": [
@@ -7101,7 +7138,7 @@
     },
     {
       "path": "src/storage/restore-replacement-archive.js",
-      "sha256": "116c1cb59d3e2e2d09df61b667cf5391ba80a6c9c3fc178026ee66da98cbc873",
+      "sha256": "be02b77b54170828f4e056d40c9ac2e29e8772a60e5d82f8fdf0b9be6ed5211a",
       "imports": [
         "node:fs/promises",
         "node:path",
@@ -7222,7 +7259,7 @@
     },
     {
       "path": "src/storage/restore-replacement.js",
-      "sha256": "108b700e2574b560ca77b0d9f318844a4bf971069ba7201feb2efde84605bd27",
+      "sha256": "ebddcb7d533cbca6ab78cef3ad479fa2ac3bf994b810610c2196a46d28b88819",
       "imports": [
         "node:fs/promises",
         "./file-durability.js",
@@ -7404,12 +7441,13 @@
     },
     {
       "path": "src/storage/unit-of-work.js",
-      "sha256": "476f87826ea3eb6215e26e7d315f40590f6039689830e97a17562de162d9fc7e",
+      "sha256": "dc7b3905474bf3bf0e690ddac67376c7955aa2c9b863039593237a2b4a03f9bd",
       "imports": [
         "./attachment-files.js",
         "./attachment-references.js",
         "node:path",
         "node:crypto",
+        "node:timers/promises",
         "./operational-context.js",
         "../core/artifacts.js",
         "../core/task-identity.js",
