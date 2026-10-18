@@ -95,6 +95,7 @@ async function setupStaleExecutingTask(target, options = {}) {
     repositoryFingerprint: options.repositoryFingerprint ?? { branch: "main", head: STALE_HEAD },
     phase,
     previousPhase,
+    ...(options.verificationCycle ? { verificationCycle: options.verificationCycle } : {}),
     ...(options.diagnosedHypothesis ? { diagnosedHypothesis: options.diagnosedHypothesis } : {}),
     selectedGuides: route.guides,
     requiredGates: [],
@@ -634,5 +635,23 @@ test("reconcile-closure refuses CORRECTING without a current-cycle diagnosis", a
     }), error => error.code === "E_DIAGNOSIS_REQUIRED");
     assert.deepEqual(await readWorkState(target, { packageRoot, taskId }), before);
     assert.deepEqual(await readEvents(target, packageRoot, { taskId }), events);
+  });
+});
+
+test("review correction can refresh repository drift without manufacturing a diagnosis or authorizing retry", async () => {
+  await withTarget(async (target) => {
+    const { taskId } = await setupStaleExecutingTask(target, { phase: "CORRECTING", previousPhase: "REVIEWING", verificationCycle: 1, diagnosedHypothesis: "A hypothesis retained from an earlier cycle" });
+    await appendProtocolEvent(target, { taskId, event: "VERIFICATION_STARTED", details: { verificationCycle: 1 } }, packageRoot, { taskId });
+    await appendProtocolEvent(target, { taskId, event: "REVIEW_STARTED", details: { verificationCycle: 1 } }, packageRoot, { taskId });
+    const result = await runReconcileClosure({ target, packageRoot, taskId, checkId: "regression-tests",
+      requirement: "pack tarball test asserts the README image is excluded from the npm package",
+      argv: [process.execPath, "-e", "process.exit(0)"],
+    });
+    assert.equal(result.reconciled, true);
+    const state = await readWorkState(target, { packageRoot, taskId });
+    assert.equal(state.phase, "CORRECTING");
+    const events = await readEvents(target, packageRoot, { taskId });
+    assert.equal(events.some(event => ["DIAGNOSIS_RECORDED", "DIAGNOSTIC_CASE_RECORDED"].includes(event.event)), false);
+    await assert.rejects(() => advanceWorkState(target, "VERIFYING", { packageRoot, taskId }), { code: "E_DIAGNOSIS_REQUIRED" });
   });
 });

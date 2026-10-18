@@ -4,6 +4,7 @@ import { artifactError } from "./next-action-artifacts.js";
 import { resolveCurrentCycleDiagnostic } from "./diagnostic-projection.js";
 import { buildTaskReflection } from "./reflection.js";
 import { evaluateProgress, PROGRESS_STATUS } from "./progress.js";
+import { reviewCorrectionAction } from "./next-action-review-correction.js";
 
 export async function resolveDiagnosingPhase({ target, packageRoot, normalized, state, context, eventsRel, requiredArtifacts, stateRel }) {
     const ledger = await validateEventLedger(target, packageRoot, { taskId: normalized.taskId ?? null });
@@ -65,6 +66,8 @@ export async function resolveDiagnosingPhase({ target, packageRoot, normalized, 
   }
 
 export async function resolveCorrectingPhase({ target, packageRoot, normalized, state, context, requiredArtifacts }) {
+    const correction = await reviewCorrectionAction({ target, packageRoot, taskId: normalized.taskId ?? null, state, context, requiredArtifacts });
+    if (correction) return correction;
     const ledgerForCorrection = await validateEventLedger(target, packageRoot, { taskId: normalized.taskId ?? null });
     const correctionCycle = state.verificationCycle ?? 1;
     const hasStructuredCase = ledgerForCorrection.events.some(

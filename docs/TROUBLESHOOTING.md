@@ -280,6 +280,18 @@ forgeloop record-diagnosis --task <id> \
   --next-safe-action="Smallest safe action to address the hypothesis"
 ```
 
+A new finding discovered in `REVIEWING` can also be diagnosed there. First
+record the actual negative observation with `record-check --kind manual-review
+--status failed --evidence-kind OBSERVED`, binding it to the affected
+requirement. A blocked finding uses `--status blocked --evidence-kind BLOCKED`.
+Passed evidence remains restricted to `VERIFYING`. Both legacy and structured
+diagnoses must reference a failed or blocked check from the current cycle.
+Then follow `next`, enter `CORRECTING`, and rerun verification in the new cycle.
+A task already in `CORRECTING` from review follows the same finding and
+diagnosis requirements. Repository-only drift may be refreshed through
+`reconcile-closure` after its contract-bound check passes; that refresh neither
+creates a diagnosis nor authorizes a retry.
+
 Then advance to `CORRECTING`:
 
 ```bash

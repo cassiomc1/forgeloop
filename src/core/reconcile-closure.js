@@ -13,6 +13,7 @@ import { classifyLoadedWorkState, readWorkState, mutateWorkState } from "./work-
 import { classifyRequirement } from "./evidence-readiness.js";
 import { assertDiagnosingToCorrectingTransition } from "./phase.js";
 import { resolveCurrentCycleDiagnostic } from "./diagnostic-projection.js";
+import { hasCurrentReview } from "./review-correction.js";
 
 export const RECONCILE_EVENT = "CHECKPOINT_RECONCILED";
 
@@ -214,6 +215,10 @@ async function rebindReconciliationState(target, {
     // reconcile itself records the cycle diagnosis below (provenance bound to
     // the passed evidence execution).
     const cycleDiagnosis = resolveCurrentCycleDiagnostic(ledger.events, state.taskId, state.verificationCycle ?? 1);
+    // Refresh only the repository binding for a task that entered correction
+    // from review before recording its new finding. No diagnosis is invented;
+    // advance to VERIFYING still requires one from this cycle.
+    if (state.phase === "CORRECTING" && !cycleDiagnosis && hasCurrentReview(state, ledger.events)) return state;
     if (state.phase === "DIAGNOSING" && !cycleDiagnosis) {
       return { ...state, undiagnosedDiagnosingRebind: true };
     }

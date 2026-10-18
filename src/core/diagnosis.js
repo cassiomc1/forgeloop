@@ -1,6 +1,7 @@
 import { appendProtocolEvent, validateEventLedger } from "./events.js";
 import { readWorkState, mutateWorkState } from "./work-state.js";
 import { getTaskTransaction, withTaskTransaction } from "./transaction.js";
+import { assertDiagnosisPhase, assertReviewChronology } from "./review-correction.js";
 import {
   DIAGNOSIS_INFORMATION_GAIN,
   assertDiagnosisDetails,
@@ -49,11 +50,7 @@ async function recordDiagnosisInTransaction({
     error.code = "E_STATE_MISSING";
     throw error;
   }
-  if (state.phase !== "DIAGNOSING") {
-    const error = new Error(`Recording a diagnosis requires phase DIAGNOSING, currently ${state.phase}`);
-    error.code = "E_PHASE_PREREQUISITE_MISSING";
-    throw error;
-  }
+  assertDiagnosisPhase(state);
   if (typeof state.verificationCycle !== "number" || state.verificationCycle < 1) {
     const error = new Error("Active verification cycle must be an integer >= 1");
     error.code = "E_DIAGNOSIS_INVALID";
@@ -67,6 +64,7 @@ async function recordDiagnosisInTransaction({
     error.code = first.code;
     throw error;
   }
+  assertReviewChronology(state, ledger.events);
 
   const verificationStarted = ledger.events.some(
     (e) => e.taskId === state.taskId && e.event === "VERIFICATION_STARTED",

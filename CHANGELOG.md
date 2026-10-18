@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Recover new failed review findings through current-cycle diagnosis and
+  correction without editing protocol state or accepting passed review evidence.
+- Add isolated unversioned npm `latest` audits on native macOS, Windows and Linux,
+  including the review-correction lifecycle and fresh registry metadata.
+
 - Bundle the optional commit-pinned Cloudflare security audit skill, upstream
   MIT license, report validators, offline integrity checker, and consumer guide.
 - Review the full 23-guide catalog; correct accessibility default/contrast and

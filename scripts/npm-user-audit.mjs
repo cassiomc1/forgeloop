@@ -29,7 +29,7 @@ async function check(name, fn) {
   catch (e) { report.checks.push({ name, status: 'FAIL', error: e.message }); }
   writeFileSync(path.join(root,'report.json'), JSON.stringify(report,null,2));
 }
-await check('published-version', () => { assert.equal(report.package,process.env.FORGELOOP_AUDIT_VERSION || '2.0.0-rc.4'); run(['--version']); run(['protocol-info','--json']); });
+await check('published-version', () => { assert.equal(report.package,process.env.FORGELOOP_AUDIT_VERSION || '2.0.0'); run(['--version']); run(['protocol-info','--json']); });
 await check('live-jev-health', () => { assert.equal(run(['decision-status','--health','--json']).json.health.status,'healthy'); });
 await check('fresh-git-init', () => {
   const r = spawnSync('git',['init',project],{encoding:'utf8'}); assert.equal(r.status,0);
@@ -117,6 +117,18 @@ await check('verification-review-and-completion', () => {
   run(['run-check','--task','user-task','--id','sqlite-proof','--requirement','sqlite-proof','--',process.execPath,'-e',proof]);
   run(['run-check','--task','user-task','--id','output-created','--requirement','output-created','--',process.execPath,'-e',proof]);
   run(['run-check','--task','user-task','--id','tests','--requirement','tests','--',process.execPath,'-e',proof]);
+  run(['advance','--task','user-task','--to','REVIEWING']);
+  run(['record-check','--task','user-task','--id','review-finding','--requirement','tests','--kind','manual-review',
+    '--status','failed','--evidence-kind','OBSERVED','--result','User audit observed a missing review edge-case check']);
+  assert.equal(run(['next','--task','user-task','--json']).json.nextAction,'RECORD_DIAGNOSIS');
+  run(['record-diagnosis','--task','user-task','--hypothesis','The review edge case needs a fresh verification cycle',
+    '--failure-class','VERIFICATION_FAILURE','--evidence-ref','review-finding','--settled-by','Fresh SQLite output proof passes',
+    '--next-safe-action','Rerun the SQLite proof in the correction cycle']);
+  run(['advance','--task','user-task','--to','CORRECTING']);
+  assert.equal(run(['advance','--task','user-task','--to','VERIFYING','--json']).json.verificationCycle,2);
+  for (const requirement of ['sqlite-proof','output-created','tests']) {
+    run(['run-check','--task','user-task','--id',requirement,'--requirement',requirement,'--',process.execPath,'-e',proof]);
+  }
   run(['advance','--task','user-task','--to','REVIEWING']);
   run(['audit','--task','user-task','--json']);
   assert.equal(run(['complete','--task','user-task','--json']).json.status,'VALID');
