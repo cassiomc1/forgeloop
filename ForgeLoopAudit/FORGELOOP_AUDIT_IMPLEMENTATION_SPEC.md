@@ -2,17 +2,17 @@
 
 This document describes the shipped web implementation. It is the current
 implementation and design reference for ForgeLoopAudit `0.3.0-rc.3`, aligned to
-ForgeLoop `2.0.0-rc.4` at immutable commit
-`d05c17cddda6a09581d526732b08eb0789b9734f` with protocol v1, schema v1 and
+ForgeLoop `2.0.0` at immutable commit
+`4ff11bb4bc4be39b095a151a323f1388dad0d819` with protocol v1, schema v1 and
 Integration API v1.
 
-ForgeLoop `2.0.0-rc.4` owns deterministic multi-language and nested-project detection, monorepo scope
+ForgeLoop `2.0.0` owns deterministic multi-language and nested-project detection, monorepo scope
 matching and canonical guide routing. ForgeLoopAudit consumes the resulting
 bounded route/context projection, preserves guide IDs such as `flutter`, and
 does not reimplement detection or promote selected guides to evidence,
 authority or completion.
 
-ForgeLoop `2.0.0-rc.4` retains a bounded, read-only Audit UX read
+ForgeLoop `2.0.0` retains a bounded, read-only Audit UX read
 model (`task/audit-view`) and a provider-neutral, experimental
 `providerExtensions` capability. ForgeLoopAudit consumes the Audit UX projection
 for task presentation when the complete contract is advertised and displays
@@ -20,7 +20,7 @@ provider extensions as observation metadata only. It never executes provider
 code, installs providers, or converts provider output into lifecycle,
 ownership, evidence or completion state.
 
-ForgeLoop `2.0.0-rc.4` also makes task abandonment, pre-execution contract
+ForgeLoop `2.0.0` also makes task abandonment, pre-execution contract
 revision, repository-only checkpoint revalidation and the `REVIEWING`
 reconciliation bootstrap explicit canonical events. ForgeLoopAudit renders
 abandonment distinctly from completion, renders contract revisions and
@@ -28,7 +28,7 @@ checkpoint revalidations as provenance refreshes rather than execution, and
 never shows artifacts invalidated by a contract revision as current
 authoritative state.
 
-ForgeLoop 2.0.0-rc.4 uses SQLite operational storage and requires Node.js
+ForgeLoop 2.0.0 uses SQLite operational storage and requires Node.js
 24.19.0 or newer. Native task discovery, summary and inspector reads use the
 public Integration API; database/WAL changes invalidate cached observations.
 Legacy JSON remains `ARTIFACT_ONLY`. Audit never migrates inspected projects.

@@ -1,80 +1,127 @@
 # Stable ForgeLoop 2.0.0 acceptance
 
-This record separates supported operational-writer acceptance from publication,
-production cutover and universal process exclusion. Historical migration
-scoreboards retain their original source and dates; this record is the current
-release pointer.
+ForgeLoop **2.0.0** is published on npm **latest**. The immutable `v2.0.0` tag
+and registry `gitHead` identify `4ff11bb4bc4be39b095a151a323f1388dad0d819`.
+[PR #229](https://github.com/cassiomc1/forgeloop/pull/229) merged after all six
+required checks passed on that head. The protected merge has the same release
+tree and retains the reviewed commit as an ancestor.
 
-## Supported writer boundary
+## Published identity and native user checks
 
-The source review covers every core/MCP runtime JavaScript module, 105 literal
-filesystem modules, 457 lexically bound filesystem/wrapper references and 16
-indirect references. The inventory has no nonliteral runtime imports. Ninety-five
-filesystem modules match the prior reviewed bytes; ten changed modules were
-reviewed against their exact deltas. Source hashes, roles, indirect-reference
-dispositions, authority chains and limits are retained in the
-[source review](https://github.com/cassiomc1/forgeloop/blob/61447313c5b13e6eb8d80240a5be5c6eea56a410/benchmarks/storage-sqlite/stable-2.0.0-writer-review.json.gz).
+The [trusted publication](https://github.com/cassiomc1/forgeloop/actions/runs/39133661722)
+passed full verification and published with GitHub OIDC and signed provenance.
+`release:identity` independently verified the version, remote tag, `gitHead`,
+SHA-1 and SHA-512 of the actual registry tarball. npm processing completed
+before user tests began. The archive SHA-256 is
+`326fbd81db54b9164f862a383fba4861817bd31ee325cf07252fb0b1101bc835`.
+
+The [fresh latest-install matrix](https://github.com/cassiomc1/forgeloop/actions/runs/39135810569)
+installed the **unversioned** package with separate fresh home, npm cache,
+configuration, prefix and project directories. Each host resolved **2.0.0**,
+with matching registry identity and all sixteen checks passing:
+
+| Native host | Runtime | Result |
+| --- | --- | --- |
+| macOS ARM64 | Node 24.19.0 | 16/16 PASS |
+| Windows x64 | Node 24.19.0 | 16/16 PASS |
+| Linux x64 | Node 24.19.0 | 16/16 PASS |
+
+Checks cover both bundled companions, live Jev health, initialization and
+persistence, claim conflicts, contract/routing/preflight, eight concurrent
+writers, WAL/SQLite/foreign-key integrity, tamper detection, mixed-state
+refusal, backup/no-overwrite, a real review finding and correction with fresh
+verification, validator-backed completion and completed-task restore into a new
+directory. The temporary GitHub TypeSafe secret was removed after all reports
+were retained and verified. Raw registry/user receipts are retained as
+`benchmarks/storage-sqlite/stable-2.0.0-latest-*.json.gz`.
+
+## Supported operational writer boundary
+
+The [source review at the release tag](https://github.com/cassiomc1/forgeloop/blob/v2.0.0/benchmarks/storage-sqlite/stable-2.0.0-writer-review.json.gz)
+binds all 511 core/MCP runtime JavaScript modules, 105 literal filesystem
+modules, 457 lexical filesystem/wrapper references and sixteen indirect
+references. Ninety-five filesystem modules retain reviewed bytes; ten deltas
+have explicit dispositions. No nonliteral runtime import is present in that
+inventory. Source hashes and the collector are retained with the review.
 
 Supported CLI, Integration API and MCP dispatch select canonical SQLite.
-Operational state, events, receipts, claims and indexed domain records share the
-native transaction boundary. Portable writers reject operational namespaces;
-mixed native/legacy layouts, foreign or expired contexts and actor-supplied
-persistence capabilities fail closed. Explicit migration and restore admission
-retain independent ownership and quiescence checks.
+Operational state, events, receipts, claims and indexed domain records share
+the native transaction boundary. Portable writers reject operational namespaces;
+mixed layouts, foreign or expired contexts and actor-supplied persistence
+capabilities fail closed. Explicit migration/restore retain ownership and
+quiescence admission. The package advertises `soleSQLiteWriter: true` for this
+supported boundary.
 
-Configuration, installation manifests, exports/bundles, backups, immutable
-attachments, owner-bound maintenance journals/archives, repository-index caches,
-transport state and private scratch files are explicit file-owned exceptions.
-They are not writable operational mirrors. Legacy data requires explicit
-migration; a migrated active project does not silently fall back to JSON.
+Configuration, installation manifests, portable exports/bundles and backups,
+immutable attachments, owner-bound maintenance journals/archives, repository
+index/cache, transport state and private scratch files remain explicit file
+roles. They are not writable operational mirrors. Legacy data requires explicit
+migration; native projects do not silently fall back to JSON.
 
-The candidate advertises `soleSQLiteWriter: true` for this reviewed supported
-operational boundary. Source acceptance does not imply final release, registry,
-performance, or production acceptance.
+`scripts/verify-stable-storage-review.mjs` checks complete runtime-module
+membership and normalized source SHA-256 hashes. The stable channel guard
+requires that source check. New modules or changed runtime bytes require review.
+The manifest is not a signature, universal absence proof or substitute for
+behavioral verification. The older call-name inventory retains
+`wholeConsumerClosure: false` and remains discovery-only.
 
-## Validation evidence
+## Source-bound release validation
 
-- [Native candidate audit](https://github.com/cassiomc1/forgeloop/actions/runs/39125623599):
-  15/15 checks on macOS ARM64, Windows x64 and Linux x64, including the new
-  review-finding → diagnosis → correction → fresh verification flow.
-- [Windows full suite](https://github.com/cassiomc1/forgeloop/actions/runs/39083442557):
-  successful on the runtime correction candidate.
-- [Old-client exclusion](https://github.com/cassiomc1/forgeloop/actions/runs/39125628347):
-  successful on native Linux and Windows. Retained evidence records the precise
-  inventoried identity/installation and cleanup boundary.
-- macOS source `61447313`: all sixteen real public rollback/owner-death cases
-  pass with unchanged source; the separate old-client drill passes with cleanup.
-  Raw records are retained under `benchmarks/storage-sqlite/stable-candidate-6144731-darwin-*`.
-- The [earlier-source hosted pair](https://github.com/cassiomc1/forgeloop/actions/runs/39083441154)
-  at `e9139a55` passes the owner-approved comparison: 1,000 canonical-rich-all
-  tasks, ordinary 10 events, selected 1,000 events, 200 samples per side,
-  exact output parity and validated worker completion. Native p95 is 2,205.943 ms
-  versus 5,162.466 ms for task listing, and 2,190.628 ms versus 5,177.674 ms for
-  project tasks. This is preparation evidence; the final release source must
-  repeat the same hosted case before publication.
+Full local pre-push on `780b9338` passed 3,109 tests with zero failures and sixteen
+optional skips, plus coverage, critical coverage, lint, dependency/complexity,
+documentation, package, MCP and Python validators. The final delta at `4ff11bb4`
+corrected only three Markdown formatting errors; exact-head required CI and
+full tag-publication verification passed on that final source. The
+[native candidate matrix](https://github.com/cassiomc1/forgeloop/actions/runs/39128718653)
+also passed 16/16 on each host before publication. All post-merge workflows,
+including full Windows, Node compatibility, package, documentation and CodeQL,
+passed on the identical protected-merge tree.
 
-`scripts/verify-stable-storage-review.mjs` checks complete core/MCP runtime
-module membership and normalized source SHA-256 hashes against the reviewed
-manifest. The stable channel guard requires this check; any new module or source
-drift requires review. This is a repository release check, not a signature or
-substitute for the behavioral checks below.
+The [final-source hosted pair](https://github.com/cassiomc1/forgeloop/actions/runs/39128716481)
+meets the owner-approved plan §9 criterion: 1,000 canonical-rich-all tasks,
+ordinary ten events, one selected task with 1,000 events, 200 timed/resource
+samples per side, exact output parity, validated closed workers and parent,
+matching before/after source manifests, and successful root cleanup observers.
 
-Final-source full pre-push/release verification, native candidate checks,
-required exact-head PR checks and the final hosted comparison must all be
-successful. The immutable `v2.0.0` publication workflow preserves the stable
-channel guard and runs full verification; the RC1/RC2 shortcut is inapplicable.
-After publication, verify registry `gitHead`, SHA-512 integrity and tag identity,
-then run fresh unversioned `latest` installations with the expected exact version
-on all three native hosts. The audit also checks both bundled companions.
-Update this source record with terminal release links in the post-publication
-documentation/Audit alignment change; never treat a pending run as successful.
+| Operation | Native p95 | Pinned baseline p95 |
+| --- | --- | --- |
+| taskListTool | 2,161.862 ms | 4,361.678 ms |
+| projectTasksResource | 2,141.102 ms | 4,364.023 ms |
+
+Both native p95 values are lower than baseline
+`ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5`. This proves the recorded replacement
+criterion, not every original benchmark dimension. The raw receipt deliberately
+retains `releaseThresholdsVerified: false`; it has not been relabeled as full
+original-matrix acceptance. Final-source artifacts are retained under
+`benchmarks/storage-sqlite/stable-2.0.0-hosted-*`.
+
+[Linux and Windows public rollback](https://github.com/cassiomc1/forgeloop/actions/runs/39126195649)
+passed all sixteen cases per host at `61447313`; macOS passed the same sixteen
+cases at that revision with unchanged source. The
+[Linux/Windows old-client exclusion drill](https://github.com/cassiomc1/forgeloop/actions/runs/39125628347)
+passed at `e9139a55`; the macOS drill passed at `61447313` with cleanup. These
+receipts retain their precise source revisions and inventoried installation
+boundary. Later stable metadata and documentation changes do not expand those
+exclusion claims. Current-source full tests and fresh registry checks remain
+separate evidence.
+
+## ForgeLoopAudit alignment
+
+[ForgeLoopAudit](https://github.com/cassiomc1/forgeloop/tree/main/ForgeLoopAudit) pins the actual public 2.0.0 archive
+and release commit. All 52 shipped schema files were compared with the exact
+release source before regenerating its trusted 31-schema provenance. Its own
+lineage checks and recaptured README images identify stable core 2.0.0. Audit
+retains its separate full verification, native-platform and browser gates; core
+publication does not publish an Audit binary. Audit remains a read-only unsigned
+preview and uses the public Integration API.
 
 ## Limits
 
-These checks establish the supported release boundary. Process-kill drills do
-not prove physical power-loss behavior. Raw privileged SQLite access, arbitrary
-host providers/external commands and uninventoried legacy installations are
-outside this proof. Production migration still requires a named target, backup,
-writer inventory and operator-enforced quiescence; no live project was migrated
-by these release tests. No production deployment or Audit binary publication
-is implied by core npm publication.
+Process-kill drills do not establish physical power-loss behavior. Privileged
+raw SQLite access, arbitrary host providers/external commands and uninventoried
+legacy installations are outside this proof. Production migration still needs a
+named target, backup, writer inventory and operator-enforced quiescence. No live
+user project was migrated by these release tests. Historical migration
+scoreboards retain their original source/date and do not describe current
+release completion. No production deployment or Audit binary publication is
+implied.

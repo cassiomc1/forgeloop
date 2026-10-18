@@ -1,10 +1,10 @@
 # SQLite migration progress
 
-> **Stable 2.0.0 preparation — 2026-10-18:** see the current
+> **Stable 2.0.0 published — 2026-10-18:** see the current
 > [release acceptance record](STABLE_2_ACCEPTANCE.md) and
 > [release checklist](RELEASE_CHECKLIST.md). The dated checkpoints below are
 > historical evidence; their open tasks and percentages do not describe the
-> present candidate. Publication and production cutover remain separate results.
+> stable release. Publication and production cutover remain separate results.
 
 ## Current review pointer — 2026-10-14
 

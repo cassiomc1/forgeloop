@@ -50,7 +50,7 @@ uploading a repository through the browser.
 
 These are existing captures of the ForgeShop demo, taken from the production
 renderer at 1440 × 900 in the dark theme, aligned to Audit `0.3.0-rc.3` and
-ForgeLoop `2.0.0-rc.4`. The demo deliberately includes invalid, stale, blocked and
+ForgeLoop `2.0.0`. The demo deliberately includes invalid, stale, blocked and
 unverified scenarios. Its warnings and coverage values do not establish
 completion or production readiness for your project.
 

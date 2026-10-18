@@ -1,14 +1,13 @@
 # SQLite Storage Migration
 
-**Stable 2.0.0 candidate — 2026-10-18:** the supported operational writer is
-canonical SQLite (`soleSQLiteWriter: true`). The
-[current acceptance record](STABLE_2_ACCEPTANCE.md) binds the consumer review,
-validation and native recovery/user checks. Final publication still requires
-release-source hosted parity, exact-head CI and trusted npm publication; query
-the registry rather than inferring publication from this source version.
-Physical power-loss proof, privileged external writers and production cutover
-remain outside these release claims. Explicit legacy migration and operator
-writer exclusion are retained.
+**Stable 2.0.0 published — 2026-10-18:** npm `latest` resolves to **2.0.0**.
+The [current acceptance record](STABLE_2_ACCEPTANCE.md) binds the supported
+SQLite operational-writer review (`soleSQLiteWriter: true`), full verification,
+final-source hosted parity, native recovery receipts and 16/16 fresh registry
+checks on each OS. Registry identity matches the immutable release tag.
+Physical power-loss, privileged external writers and production cutover remain
+outside these release claims. Explicit migration and operator writer exclusion
+remain required for legacy projects.
 
 The [clean latest-install audit](https://github.com/cassiomc1/forgeloop/actions/runs/38669237414)
 passed 15/15 RC4 new-user checks on each native Windows x64, macOS ARM64 and Linux

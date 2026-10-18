@@ -1,12 +1,12 @@
 # Release model
 
 ForgeLoopAudit `0.3.0-rc.3` is an unsigned preview npm package aligned to
-ForgeLoop `2.0.0-rc.4` at immutable commit
-`d05c17cddda6a09581d526732b08eb0789b9734f`, with protocol v1, schema v1 and
+ForgeLoop `2.0.0` at immutable commit
+`4ff11bb4bc4be39b095a151a323f1388dad0d819`, with protocol v1, schema v1 and
 Integration API v1. The current release asset is the package produced by
 `npm pack`; native Electron packaging is no longer part of the product.
 
-The upstream 2.0.0-rc.4 alignment changes operational storage to SQLite: ForgeLoop owns
+The upstream 2.0.0 alignment changes operational storage to SQLite: ForgeLoop owns
 project classification — including the canonical Flutter specialist route and
 the expanded multi-language guide set — provider execution, lifecycle events
 and completion authority, while ForgeLoopAudit remains a read-only consumer of

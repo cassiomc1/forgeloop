@@ -109,7 +109,7 @@ publication, deployment or signed distribution.
 entry, schema provenance or documented baseline disagree. The expected archive
 name embeds the ForgeLoop version and the first seven characters of the pinned
 source SHA, for example
-`vendor/cassiomc1-forgeloop-2.0.0-rc.4-d05c17c.tgz`. Check out the pinned ForgeLoop
+`vendor/cassiomc1-forgeloop-2.0.0-4ff11bb.tgz`. Check out the pinned ForgeLoop
 commit, run its `npm pack`, replace the archive, update `vendor/README.md` with
 the new SHA-256, regenerate `schemas/provenance.json`, and rerun both
 `npm run verify:forgeloop-lineage` and `npm run protocol:schemas:verify`. Do not
@@ -125,7 +125,7 @@ registry. Regenerate provenance only from a controlled ForgeLoop checkout with
 
 ## ForgeLoop storage migration and package access
 
-ForgeLoop 2.0.0-rc.4 uses SQLite for operational state. Audit does not migrate
+ForgeLoop 2.0.0 uses SQLite for operational state. Audit does not migrate
 real projects. Legacy JSON projects open in `ARTIFACT_ONLY`; stop all writers
 and follow ForgeLoop's explicit `storage-migrate` procedure to obtain native
 canonical projections. Pending cutover, invalid markers and missing selected
@@ -179,7 +179,7 @@ and is surfaced as a finding.
 
 ## Restored SQLite project is not detected
 
-An attachment-inclusive ForgeLoop 2.0.0-rc.4 `storage-restore` activates the database and retained
+An attachment-inclusive ForgeLoop 2.0.0 `storage-restore` activates the database and retained
 restore provenance; it does not install project code or the kit/identity
 manifest. After restoring through the public ForgeLoop CLI, run `forgeloop init`
 in the restored directory, then open it in Audit. Audit remains read-only and

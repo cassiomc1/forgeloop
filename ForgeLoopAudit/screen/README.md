@@ -14,7 +14,7 @@ The capture uses the built
 loopback web server with a 1440 × 900 browser viewport, 100% zoom, an expanded
 sidebar and reduced motion. The capture excludes operating-system chrome, local
 paths, credentials and transient loading state. The current capture is aligned
-to ForgeLoopAudit `0.3.0-rc.3` and ForgeLoop `2.0.0-rc.4`.
+to ForgeLoopAudit `0.3.0-rc.3` and ForgeLoop `2.0.0`.
 
 Regenerate the complete set after a user-visible layout, demo-state,
 terminology, theme or navigation change:
@@ -45,7 +45,7 @@ orphaned screenshot files.
 | `history-diff.png` | Audit History | — | Manual snapshots stored outside the audited project |
 | `report.png` | Reports | — | Deterministic report formats and provenance |
 | `diagnostics.png` | Diagnostics | `TASK-004` | Canonical diagnostic signals |
-| `settings.png` | Settings | — | Project context, ForgeLoopAudit preferences, ForgeLoop 2.0.0-rc.4 and advisory capability metadata |
+| `settings.png` | Settings | — | Project context, ForgeLoopAudit preferences, ForgeLoop 2.0.0 and advisory capability metadata |
 
 ## Review checklist
 

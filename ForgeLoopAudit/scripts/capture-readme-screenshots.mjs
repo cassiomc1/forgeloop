@@ -211,7 +211,7 @@ try {
   await capture(page, 'settings.png', async () => {
     await expect(page.getByText(`ForgeLoopAudit v${packageVersion}`, { exact: true })).toBeVisible();
     const protocolPanel = page.getByRole('heading', { name: 'ForgeLoop protocol', exact: true }).locator('..');
-    await expect(protocolPanel).toContainText('2.0.0-rc.4');
+    await expect(protocolPanel).toContainText('2.0.0');
     await expect(protocolPanel).toContainText('Advisory context providers');
     await expect(protocolPanel).toContainText('Supported by ForgeLoop');
     await expect(protocolPanel).toContainText('INTEGRATION_V1');

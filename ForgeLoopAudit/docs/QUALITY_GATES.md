@@ -1,10 +1,10 @@
 # Quality gates
 
 The current release is ForgeLoopAudit `0.3.0-rc.3` with vendored ForgeLoop
-`2.0.0-rc.4` at `d05c17cddda6a09581d526732b08eb0789b9734f` (protocol v1, schema v1,
+`2.0.0` at `4ff11bb4bc4be39b095a151a323f1388dad0d819` (protocol v1, schema v1,
 Integration API v1). `npm run verify:full` is the shared fail-fast contract.
 
-ForgeLoop 2.0.0-rc.4 uses SQLite operational storage and requires Node.js
+ForgeLoop 2.0.0 uses SQLite operational storage and requires Node.js
 24.19.0 or newer. Native task discovery, summary and inspector reads use the
 public Integration API; database/WAL changes invalidate cached observations.
 Legacy JSON remains `ARTIFACT_ONLY`. Audit never migrates inspected projects.

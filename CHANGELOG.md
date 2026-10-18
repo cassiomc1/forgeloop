@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Align ForgeLoopAudit with the exact published stable 2.0.0 archive, trusted
+  schema provenance, current documentation and actual browser captures. Retain
+  read-only authority and its separate unsigned-preview release state.
+- Record stable npm identity, all three fresh latest-install audits and final
+  hosted parity receipts without extending power-loss or production claims.
+
 ## 2.0.0 - 2026-10-18
 
 - Advertise canonical SQLite as the sole supported operational writer after

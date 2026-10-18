@@ -2,11 +2,11 @@
 
 This index separates current product guidance from historical records. The
 current product is ForgeLoopAudit `0.3.0-rc.3`, a local-first web auditor
-aligned to ForgeLoop `2.0.0-rc.4` at immutable commit
-`d05c17cddda6a09581d526732b08eb0789b9734f` with protocol v1, schema v1 and
+aligned to ForgeLoop `2.0.0` at immutable commit
+`4ff11bb4bc4be39b095a151a323f1388dad0d819` with protocol v1, schema v1 and
 Integration API v1. ForgeLoop remains the protocol authority.
 
-ForgeLoop `2.0.0-rc.4` retains the bounded Audit UX read model, the provider-neutral
+ForgeLoop `2.0.0` retains the bounded Audit UX read model, the provider-neutral
 `providerExtensions` boundary, explicit `task-abandon`, canonical `contract-revise`
 and `checkpoint-revalidate`, the `REVIEWING` reconciliation bootstrap, the
 advisory OpenSrc context, host-injected Browser Verification/Security Review/
@@ -16,7 +16,7 @@ ForgeLoopAudit
 reads canonical selected guides without classifying projects or treating guide
 selection as evidence.
 
-ForgeLoop 2.0.0-rc.4 uses SQLite operational storage and requires Node.js
+ForgeLoop 2.0.0 uses SQLite operational storage and requires Node.js
 24.19.0 or newer. Native task discovery, summary and inspector reads use the
 public Integration API; database/WAL changes invalidate cached observations.
 Legacy JSON remains `ARTIFACT_ONLY`. Audit never migrates inspected projects.

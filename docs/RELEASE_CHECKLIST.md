@@ -4,20 +4,21 @@ This is the current release checklist for the PolyForm Noncommercial-licensed
 `@cassiomc1/forgeloop` package. It is a preparation and verification checklist;
 it does not authorize publication.
 
-## Stable 2.0.0 candidate — 2026-10-18
+## Stable 2.0.0 publication — 2026-10-18
 
-The core package version is `2.0.0`, targeting npm `latest`, with Node.js
+The published core package is `2.0.0` on npm `latest`, with Node.js
 24.19.0+ and built-in `node:sqlite`. The MCP companion retains restricted
 distribution and admits the stable core peer. Canonical SQLite is the sole
 supported operational writer; configuration, portable exports, immutable
 attachments and owner-bound maintenance evidence retain explicit file roles.
 
 The [release acceptance record](STABLE_2_ACCEPTANCE.md) identifies source-bound
-writer review, full verification, native user checks and recovery/exclusion
-receipts. A fresh hosted pair on the final release source and exact-head PR
-checks remain mandatory before publication. Do not bypass the release guard,
-reuse an earlier-source benchmark as final evidence, or infer publication from
-package metadata. Physical power-loss and production cutover are separate claims.
+writer review, full verification, accepted final-source hosted parity, native
+candidate and actual unversioned registry-user checks. Trusted publication and
+release identity are verified. Its retained evidence separates the supported
+writer boundary from physical power-loss, privileged external writers and
+production cutover. Future releases require fresh exact-source checks; earlier
+receipts are not evidence for changed runtime bytes.
 
 Verify the live registry and immutable release identity after publication:
 

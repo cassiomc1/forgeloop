@@ -9,12 +9,12 @@ authority and `.forgeloop/` remains the source of truth.
 
 ## Current release
 
-The current release candidate is `v0.3.0-rc.3`, aligned to vendored ForgeLoop `2.0.0-rc.4` at immutable source commit
-`d05c17cddda6a09581d526732b08eb0789b9734f` (protocol v1, schema v1 and
+The current release candidate is `v0.3.0-rc.3`, aligned to vendored ForgeLoop `2.0.0` at immutable source commit
+`4ff11bb4bc4be39b095a151a323f1388dad0d819` (protocol v1, schema v1 and
 Integration API v1). The vendored archive and schema provenance are checked by
 `npm run verify:forgeloop-lineage` and `npm run protocol:schemas:verify`.
 
-ForgeLoop `2.0.0-rc.4` retains a provider-neutral `providerExtensions` architecture, a
+ForgeLoop `2.0.0` retains a provider-neutral `providerExtensions` architecture, a
 bounded read-only **Audit UX read model** (`task/audit-view`), explicit
 `task-abandon`, canonical pre-execution `contract-revise`, repository-only
 `checkpoint-revalidate`, a `REVIEWING` reconciliation bootstrap path, the
@@ -27,7 +27,7 @@ without reclassifying projects, and treats every provider surface as
 observation-only metadata. It never invokes providers, installs them, or turns
 their output into lifecycle state, ownership, claims, evidence or completion.
 
-ForgeLoop 2.0.0-rc.4 moves operational records and the ledger to SQLite.
+ForgeLoop 2.0.0 stores operational records and the ledger in canonical SQLite.
 ForgeLoopAudit reads native tasks through the public Integration API and watches
 `state.sqlite` and its WAL sidecars for refreshes. Node.js **24.19.0 or newer**
 is required. Legacy JSON projects remain available as `ARTIFACT_ONLY`; migrate
@@ -41,7 +41,7 @@ publish access. Audit retains an immutable local archive for offline operation.
 The ForgeLoop license is included in that archive; commercial use is not granted.
 Package metadata alone is not evidence of registry publication.
 
-The release is an unsigned preview. Checksums, the lockfile SBOM and exact
+The Audit release remains an unsigned preview; the vendored core is stable. Checksums, the lockfile SBOM and exact
 source lineage are verification artifacts; none of them implies signing,
 notarization, publication or production deployment.
 
