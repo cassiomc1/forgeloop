@@ -3,7 +3,7 @@ name: sec-code-eng
 language: en
 description: "Verifiable security guidance for web, mobile, desktop, APIs, and the software supply chain."
 version: "2026.09"
-last-reviewed: "2026-08-10"
+last-reviewed: "2026-10-17"
 guide-id: security
 requires-gates:
   - threat-boundary
@@ -27,10 +27,26 @@ reference; secrets, authorization, cryptography, and OWASP rules live here,
 not in the other files.
 
 **Tooling policy**: identify the stack, stage, and applicable checks; prefer an
-already-available equivalent that produces compatible evidence. Ask for
-authorization before installing a tool or changing the environment. If no
+already-available equivalent that produces compatible evidence. Installation or environment changes require authority; reuse scoped
+authorization already given rather than asking again. If no
 safe equivalent exists, record the required check as blocked and never claim
 it passed. Do not install merely optional resources.
+
+## Optional source security audit workflow
+
+For security questions and focused vulnerability investigation, the optional
+Cloudflare [security-audit skill](https://github.com/cloudflare/security-audit-skill)
+provides source-first guidance. ForgeLoop ships a pinned copy under
+`skills/security-audit/` in its package and source checkout. See the
+[setup and authority boundaries](https://github.com/cassiomc1/forgeloop/blob/b9a16e9f665116306e9fca3b905b1f0fe2abd633/docs/SECURITY_AUDIT_SKILL.md)
+before enabling host discovery or requesting a full audit.
+
+Use guidance mode for focused work. Reserve the complete six-phase audit for
+an explicit audit or report request; it requires independent verification and
+the upstream execution isolation controls. Keep `confirmed`,
+`needs_validation`, and `rejected` distinct, and disclose missing capabilities.
+The companion neither installs itself into target projects nor replaces this
+guide's gates, negative tests, canonical evidence, or completion validation.
 
 ## General principles (valid for any platform)
 

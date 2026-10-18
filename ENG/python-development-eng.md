@@ -3,7 +3,7 @@ name: python-development-eng
 language: en
 description: "Specialist guidance for production Python applications, libraries, command-line tools, data pipelines, and native extensions."
 version: "2026.09"
-last-reviewed: "2026-10-13"
+last-reviewed: "2026-10-17"
 guide-id: python
 requires-gates:
   - threat-boundary
@@ -21,6 +21,12 @@ actual project from owned `.py` files and its packaging/build metadata, such as
 `pyproject.toml`, `setup.cfg`, `setup.py`, or a declared requirements file.
 Do not infer Python project identity from documentation, editor settings,
 Jupyter output, a Python executable used only by CI, or a transitive package.
+
+This is reference guidance in ForgeLoop's catalog. The current structural
+project-evidence schema and router do not automatically detect Python or
+select this specialist from Python manifests. Load it explicitly when Python
+work is in scope, and inspect the canonical route for the selected guides;
+the presence of this document is not automatic-routing support.
 
 This guide is based on the official Python 3.15.0 documentation. Python 3.15.0
 was released as a stable release on 2026-10-09. Its release highlights include

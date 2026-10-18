@@ -3,7 +3,7 @@ name: design-code-eng
 language: en
 description: "Visual direction, UX, motion, and perceived performance for premium digital experiences."
 version: "2026.09"
-last-reviewed: "2026-08-31"
+last-reviewed: "2026-10-17"
 guide-id: design
 requires-gates:
   - design
@@ -13,25 +13,25 @@ completion-evidence:
 
 # Web Design Premium v2 — Practical Guidelines
 
-> This guide provides strong defaults, not a blind recipe. Use its values, palettes, and snippets as a verifiable starting point; depart from them only for an explicit user/product requirement or a documented exception that preserves hierarchy, accessibility, and performance. Do not invent values "by eye".
+> This guide provides starting points for a coherent interface. Preserve the product's existing tokens, components, platform conventions, and brand before selecting a new palette or font. Numeric values, example layouts, aesthetic bans, and snippets below are contextual defaults, not universal compliance rules or approval gates. Record meaningful departures with a short rationale and validate hierarchy, accessibility, and performance.
 > **Related documents**: for the complete studio-level website production process, see [`premium-sites-studio-eng.md`](./premium-sites-studio-eng.md). For the quality/structure of the code that implements this design, see [`clean-code-eng.md`](./clean-code-eng.md). For accessibility/visual/E2E testing, see [`test-code-eng.md`](./test-code-eng.md). For form security, authentication, and client-side storage, see [`sec-code-eng.md`](./sec-code-eng.md). To translate visual direction into HTML video, see [HyperFrames](https://hyperframes.heygen.com). This file focuses exclusively on UI/UX/visuals — it does not repeat code, testing, or security rules.
 >
-> **Tooling policy**: identify the stack, the stage, and the applicable checks; prefer an already available equivalent that produces compatible evidence. Ask for authorization before installing a tool or changing the environment. If no safe equivalent exists, record the required check as blocked and never claim that it passed. Do not install merely optional resources.
+> **Tooling policy**: identify the stack, the stage, and the applicable checks; prefer an already available equivalent that produces compatible evidence. Installation or environment changes require authority; reuse scoped authorization already given rather than asking again. If no safe equivalent exists, record the required check as blocked and never claim that it passed. Do not install merely optional resources.
 
 ## How to use this guide (strong default process)
 
 Adopt this order as the default when creating a page from scratch; document an exception when the product, platform, or user requires a different sequence:
 
-1. **Choose 1 ready-made semantic palette** from the "Ready-made semantic palettes" section (do not mix palettes).
-2. **Choose 1 ready-made typographic combination** from the "Typographic Combinations" section.
-3. **Define the page's section list** using the "Premium Page Anatomy".
-4. **Apply the exact grid and spacing** from the "Layout & Spacing" section.
-5. **Apply components** (buttons, cards, nav) with the exact specs from the "Components" section.
-6. **Add motion** only according to the snippets in the "Motion" section — never "creative" motion outside the standard.
+1. **Confirm semantic color roles** from the existing design system; use a sample palette when no system exists.
+2. **Confirm typography roles and language coverage**; use a sample combination when appropriate.
+3. **Define the section list from the content and user journey**; use the anatomy as a reference.
+4. **Apply a coherent grid and spacing scale** with responsive content checks.
+5. **Reuse components and their interaction states**; adapt sample specifications to the product.
+6. **Add purposeful motion** only when it helps the experience, with reduced-motion and static fallbacks.
 7. **Run the Anti-Slop Checklist** before considering it ready.
-8. **Audit and polish the entire interface with Impeccable**: run `/impeccable audit` to identify quality issues and `/impeccable polish` to apply improvements. Evaluate the complete interface, not only one component, preserve the existing design system, and repeat the audit after the changes.
+8. **Audit and polish the affected experience** with the available project tools and direct browser/device inspection. Impeccable is an optional aid when installed and relevant; its availability is not a completion gate. Preserve the design system and recheck the changed states.
 
-Do not skip steps 1 and 2 without a documented exception. The biggest cause of an "amateur" result is mixing random palettes/fonts or using framework defaults (e.g., Bootstrap blue, Inter everywhere, generic shadow `box-shadow: 0 0 10px rgba(0,0,0,0.1)`).
+Keep color and type decisions intentional. A familiar font, framework default, or repeated component is not a defect by itself; assess its fit, readability, hierarchy, and consistency in the actual interface.
 
 > **This guide covers 3 contexts.** For web sites/products (desktop and mobile), follow the flow above normally. For **native mobile apps** (iOS/Android), go directly to the "Premium Mobile Apps" section. For **native desktop apps** (Windows/macOS), go to "Premium Desktop Apps". In the latter two cases, this guide's palettes and typography still serve as tone references, but platform guidelines (HIG, Material Design, Fluent) take priority over the generic values defined here.
 
@@ -227,7 +227,7 @@ When the output is a video, trailer, product demo, or motion graphic rendered fr
 - Prefer deterministic, frame-controllable animation with a paused/seekable timeline so preview, tests, and rendering reproduce the same result.
 - Keep text large enough for the output format, maintain AA contrast and safe areas, and do not make meaning depend on audio or motion.
 - Respect `prefers-reduced-motion` in interactive previews and provide a static or reduced-motion alternative when appropriate.
-- Start with the [official quickstart](https://hyperframes.heygen.com/quickstart) and use `npx hyperframes preview`, `npx hyperframes lint`, and `npx hyperframes render` in the quality loop when the project uses the CLI.
+- Start with the [official quickstart](https://hyperframes.heygen.com/quickstart). Use the project's pinned, already-installed CLI for `preview`, `lint`, `check`, and `render`, verifying the installed command help. Do not use an install-capable launcher merely to obtain a missing verifier; installation authority remains separate.
 
 Motion rules:
 
@@ -594,7 +594,7 @@ For React-specific supplemental diagnostics after implementation, including desi
 - [ ] Where the platform exposes contrast/transparency preferences, including `prefers-contrast` or `forced-colors` when applicable, the opaque/less-transparent variant works; without a reliable media query, there is an equivalent in-product control.
 - [ ] No item from the "Blacklist" is present.
 - [ ] Tested at 320 CSS px reflow and desktop (1440px).
-- [ ] Ran `/impeccable audit` and `/impeccable polish` across the entire interface and addressed applicable findings.
+- [ ] Reviewed the affected interface and states with available tools and browser/device evidence; optional Impeccable findings were addressed when that tool was used.
 
 ---
 

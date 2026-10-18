@@ -97,13 +97,31 @@ dependencies, version, and distribution conditions before adoption.
   configure, or enable its CI/agent integrations. Verify current upstream
   license, CLI, telemetry, network behavior, and dependencies before use.
 
+### Cloudflare security audit skill — optional bundled companion
+
+- Project: [cloudflare/security-audit-skill](https://github.com/cloudflare/security-audit-skill).
+- Pinned source commit: `c1c8a8c1471069fb0e188eeaff69b8e8db6564a8`.
+- License: MIT, copyright (c) 2025-2026 Cloudflare, Inc.; the complete upstream
+  notice is preserved at `skills/security-audit/LICENSE`.
+- Use in this collection: the unchanged upstream `skills/security-audit/`
+  tree, including references, schema, validators and tests, is bundled for
+  optional agent guidance and explicitly requested source audits. The root
+  upstream license is copied alongside it. ForgeLoop-owned `PIN.json` records
+  the source and per-file SHA-256 digests.
+- Boundary: instruction content and local report validators, not a runtime
+  dependency, automatic scanner, Security Review provider, evidence importer,
+  or completion gate. It is not installed into a host by `init` or `update`.
+  The upstream files retain MIT terms independently of ForgeLoop's license.
+
 ### Runtime and validator boundary
 
 The distributed CLI and repository validators use Node.js and Python standard
 libraries plus the JSON Schema documents shipped in this repository. The core
-CLI has one approved runtime package, `smol-toml`, for structural Cargo
-manifest parsing; it is not used as an agent, provider, plugin, remote trace
-service, or model. Every future runtime capability must review its own license,
+CLI exact-pins `smol-toml` for structural Cargo manifest parsing and
+`@typesafe-ai/sdk` for the semantic decision plane. Parsing is local; configured
+semantic-required operations use the external TypeSafe service under the
+canonical decision contract. Neither dependency gains lifecycle or evidence
+authority. Every future runtime capability must review its own license,
 dependency tree, credentials, network behavior, and distribution terms
 separately.
 
@@ -219,7 +237,7 @@ rules and media or motion counts are not universal ForgeLoop requirements.
 
 ## Runtime dependencies with upstream notices
 
-### smol-toml 1.8.0
+### smol-toml 1.9.0
 
 - Project/source: [squirrelchat/smol-toml](https://github.com/squirrelchat/smol-toml).
 - License declared by the upstream package: BSD-3-Clause.
@@ -228,6 +246,18 @@ rules and media or motion counts are not universal ForgeLoop requirements.
 - Boundary: the exact version is pinned in `package.json` and
   `package-lock.json`; the dependency has no role in routing authority beyond
   the parser result and is not exposed as a public ForgeLoop integration.
+
+### TypeSafe AI SDK 0.6.0
+
+- Package: `@typesafe-ai/sdk`; source:
+  [typesafe-ai/typesafe-sdk-js](https://github.com/typesafe-ai/typesafe-sdk-js).
+- License declared by the installed upstream package: MIT.
+- Use in this collection: exact-pinned client for the bounded semantic
+  decision plane documented in `docs/SEMANTIC_DECISION_PLANE.md`.
+- Boundary: credentials stay outside protocol artifacts. The SDK's responses
+  cannot execute commands, grant ownership, record evidence, or establish
+  completion. Network requirements remain explicit for semantic-required
+  operations; this is separate from optional security audit guidance.
 
 ### Microsoft tgrep
 

@@ -3,7 +3,7 @@ name: php-development-eng
 language: en
 description: "Specialist guidance for production PHP applications, Composer packages, web services, and command-line workers."
 version: "2026.09"
-last-reviewed: "2026-10-13"
+last-reviewed: "2026-10-17"
 guide-id: php
 requires-gates:
   - threat-boundary
@@ -51,7 +51,7 @@ do not edit generated/vendor content as if it were application source.
 PHP extensions deserve special care: an extension or C-extension package may
 compose with the C specialist, but does not imply PHP implementation. Keep
 Composer-less source fallback limited to owned files with an executable
-`<?php` opening tag and do not promote generated/vendor trees.
+`<?php` or `<?=` opening tag and do not promote generated/vendor trees.
 
 ## Architecture and language semantics
 

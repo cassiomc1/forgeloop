@@ -40,6 +40,12 @@ Persistent transport truth -> src/persistent-transport/*, CLI search dispatcher,
 
 Operational documentation must explain canonical behavior, not redefine it.
 
+For the 23 engineering guides, use the
+[guide maintenance map](./GUIDE_MAINTENANCE.md). Check activation descriptions
+against the detector/router and frontmatter requirements before changing a
+guide. Keep contextual styling and optional tools separate from lifecycle
+gates; do not update review dates on untouched material.
+
 Terminology must remain consistent across active documents: say “advisory
 context,” not “canonical memory”; “handoff acceptance,” not “ownership
 transfer”; and “operational receipt,” not “delegation.” Advisory output is

@@ -64,6 +64,10 @@ Respect active write claims. Do not steal, override, manually release, or edit o
 
 \`run-check\` executes the exact command and records ForgeLoop-owned provenance. \`record-check\` is serialization-only; its command text is metadata and is never executed. Claims, provider/advisory output, screenshots, and actor summaries are not evidence by themselves. Missing tools remain unavailable; do not auto-install a verifier.
 
+## Optional Security Audit Companion
+
+For requested source security questions or vulnerability reviews, ForgeLoop bundles Cloudflare's pinned \`security-audit\` companion under \`skills/security-audit/\` in its package/source root. Consult \`docs/SECURITY_AUDIT_SKILL.md\` there for setup, provenance, and authority boundaries. Load the companion only when available and relevant. Host discovery is opt-in; \`init\` and \`update\` do not install it. Routine security routing does not require a full audit. Full audits require an explicit audit/report request, independent verifiers, and the upstream execution isolation controls; unavailable capabilities remain explicit blockers. Preserve \`confirmed\`, \`needs_validation\`, and \`rejected\`; reports and report-validator success do not establish canonical evidence or ForgeLoop completion. This companion is separate from ForgeLoopAudit and the host-injected Security Review provider.
+
 ## Recovery Rules
 
 Use supported recovery only. Preserve failed evidence and follow \`next\` through diagnosis/correction. For state or ledger divergence, stop lifecycle mutation and inspect validation/classification. Never edit task state, receipts, recovery, continuity, claims, hashes, or \`events.ndjson\` manually. Reconcile \`COMMIT_UNKNOWN\` before any retry.

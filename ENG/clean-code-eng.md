@@ -3,7 +3,7 @@ name: clean-code-eng
 language: en
 description: "Practices for readable, observable, secure code operated by AI agents."
 version: "2026.09"
-last-reviewed: "2026-08-10"
+last-reviewed: "2026-10-17"
 guide-id: clean
 ---
 
@@ -13,7 +13,7 @@ guide-id: clean
 >
 > **Related documents**: for language-specific testing frameworks and tools, see [`test-code-eng.md`](./test-code-eng.md). For security, see [`sec-code-eng.md`](./sec-code-eng.md), the canonical reference for secrets, authorization, cryptography, and sensitive-data redaction. For visual/UX guidelines, see [`design-code-eng.md`](./design-code-eng.md). For HTML-based video and motion, see [HyperFrames](https://hyperframes.heygen.com). This guide focuses on code quality, structure, and operation.
 >
-> **Tooling policy**: identify the stack, the stage, and the applicable checks; prefer an already available equivalent that produces compatible evidence. Ask for authorization before installing a tool or changing the environment. If no safe equivalent exists, record the required check as blocked and never claim that it passed. Do not install merely optional resources.
+> **Tooling policy**: identify the stack, the stage, and the applicable checks; prefer an already available equivalent that produces compatible evidence. Installation or environment changes require authority; reuse scoped authorization already given rather than asking again. If no safe equivalent exists, record the required check as blocked and never claim that it passed. Do not install merely optional resources.
 
 ## Context
 

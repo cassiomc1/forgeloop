@@ -73,6 +73,10 @@ structural detection and route tests are implemented.
 
 ## Domain rules
 
+For catalog upkeep, use the [engineering guide maintenance map](https://github.com/cassiomc1/forgeloop/blob/b9a16e9f665116306e9fca3b905b1f0fe2abd633/docs/GUIDE_MAINTENANCE.md).
+It distinguishes guide discovery, implemented routing, contextual defaults,
+and observed verification; it does not add runtime routing rules.
+
 ### `clean` — code and structure
 
 **Activate when:** creating or modifying code, fixing a bug, refactoring, changing architecture, reviewing quality, or producing development instructions.
@@ -116,6 +120,12 @@ rg -n '^## |authentication|authorization|upload|SSRF|CSP|OAuth|JWT|secrets|suppl
 ```
 
 **Expected evidence:** explicit trust boundaries, server-side validation, least privilege, no secrets in Git, and negative tests.
+
+For requested source audits or focused vulnerability investigations, consult
+the optional bundled Cloudflare `security-audit` companion described by the
+security guide. Ordinary security routing does not start a full audit or
+require the companion. Its reports remain advisory; canonical security gates
+and verification remain unchanged.
 
 ### `performance` — measurable cost
 

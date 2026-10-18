@@ -8,6 +8,7 @@ import { test } from "node:test";
 import { TEMPLATE_PATHS } from "../src/core/templates.js";
 import { STORAGE_MINIMUM_NODE } from "../src/storage/runtime.js";
 import { APPROVED_DEV_DEPENDENCIES, APPROVED_RUNTIME_DEPENDENCIES } from "../scripts/check-dependency-policy.mjs";
+import { verifySecurityAuditSkill } from "../scripts/verify-security-audit-skill.mjs";
 
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 
@@ -56,6 +57,18 @@ function packageListing() {
   }))[0].files.map((entry) => entry.path);
   return cachedListing;
 }
+
+test("npm tarball includes the complete pinned security audit companion", async () => {
+  await verifySecurityAuditSkill();
+  const pin = JSON.parse(await readFile("skills/security-audit/PIN.json", "utf8"));
+  const listing = packageListing();
+  for (const name of [...Object.keys(pin.files), "PIN.json"]) {
+    assert.ok(listing.includes(`skills/security-audit/${name}`), `missing companion resource ${name}`);
+  }
+  for (const resource of ["docs/SECURITY_AUDIT_SKILL.md", "scripts/verify-security-audit-skill.mjs"]) {
+    assert.ok(listing.includes(resource), `missing ${resource}`);
+  }
+});
 
 test("npm tarball contains the CLI, templates, published scenarios, and license notices", () => {
   const listing = packageListing();

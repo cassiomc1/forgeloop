@@ -56,6 +56,9 @@ The published tarball includes the following consumer-facing groups:
   ASP.NET Core and ABP are conditional routing overlays on the `dotnet` guide,
   not additional package guides. The package does not install or invoke
   framework, compiler, build, package-manager, or database tooling.
+  `docs/GUIDE_MAINTENANCE.md` ships the full catalog maintenance map and
+  revalidation boundaries; it does not add automatic Python routing or new
+  lifecycle gates.
 - **Initialization material:** the root protocol and integration documents,
   the PolyForm Noncommercial license, third-party notices, the target profile template, and every path listed by
   `src/core/templates.js`. These files are read by `init` and `update`, so
@@ -76,6 +79,12 @@ The published tarball includes the following consumer-facing groups:
    documentation are also packaged.
    The generated portable ForgeLoop Agent Skill and `docs/AGENT_SKILL.md` are
    packaged as instruction/documentation content, not runtime authority.
+   The optional Cloudflare companion at `skills/security-audit/` also ships,
+   including its upstream references, schema, validators and tests, MIT
+   license, and `PIN.json`. Its usage guide at `docs/SECURITY_AUDIT_SKILL.md`
+   and offline `scripts/verify-security-audit-skill.mjs` checker are packaged.
+   It adds no runtime dependency or automatic scan and is not copied by
+   `init`/`update` into host skill directories.
   Provider implementation modules ship under `src/`, but packaged source file
   does not mean a supported public import path; the generic `./providers`
   subpath remains unexported.

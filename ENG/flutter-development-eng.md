@@ -3,7 +3,7 @@ name: flutter-development-eng
 language: en
 description: "Specialist guide for architecture, implementation, testing, performance, accessibility, platform integration, and release of production Flutter applications."
 version: "2026.09"
-last-reviewed: "2026-10-13"
+last-reviewed: "2026-10-17"
 guide-id: flutter
 ---
 # Flutter Development Engineering Guide
@@ -1922,39 +1922,13 @@ A Flutter task is complete only when the applicable items are satisfied.
 
 ## 53. ForgeLoop guide routing integration
 
-This file is designed to live at:
+The `flutter` guide is registered in `src/config/guides.json` and already
+participates in the canonical router. The bounded project detector confirms
+Flutter from a parsed `pubspec.yaml` with an actual Flutter SDK dependency,
+then matches the affected claims to that project root. It does not execute
+Flutter, Dart, package scripts, generators, or SDK discovery during routing.
 
-```text
-ENG/flutter-development-eng.md
-```
-
-To make the current ForgeLoop `GUIDE_ROUTER.md` select it automatically, the repository should add a canonical catalog entry similar to:
-
-```markdown
-| `flutter` | [Flutter development](ENG/flutter-development-eng.md) | Architecture, UI, state, platform integration, testing, performance, and release for Flutter applications |
-```
-
-Add a domain rule similar to:
-
-```markdown
-### `flutter` — Flutter application engineering
-
-Activate when: designing, implementing, testing, debugging, profiling, integrating, or releasing a Flutter or Dart application where Flutter is an actual project stack.
-
-Do not activate merely because: documentation mentions Flutter, a generated Flutter example exists, or a dependency name contains "flutter" without the affected application being a Flutter project.
-
-Usually combine with: `clean` and `test`; add `design` and `accessibility` for user-facing UI, `security` for networking/auth/data/plugins/release, and `performance` for rendering/startup/memory/network critical paths.
-
-    rg -n '^## |architecture|ViewModel|state|widget|layout|navigation|deep link|network|serialization|isolate|platform|plugin|FFI|web|accessibility|performance|test|release|Definition of Done' ENG/flutter-development-eng.md
-
-Expected evidence: Flutter/Dart version awareness, architecture-consistent implementation, analyzer/test evidence, accessibility/adaptive checks for UI, platform-boundary validation where changed, and an affected-target build when feasible.
-```
-
-The deterministic router may also need an explicit stack signal or routing rule if the current schema cannot identify Flutter from verified project manifests. Do not make natural-language string matching the sole proof that a project is Flutter. A strong deterministic signal is the presence and parsed content of `pubspec.yaml` with an actual Flutter SDK dependency, combined with affected surfaces/platform signals.
-
-## 54. Suggested deterministic Flutter stack evidence
-
-A repository can be classified as Flutter when evidence such as the following is confirmed:
+The primary manifest signal is:
 
 ```yaml
 dependencies:
@@ -1962,32 +1936,37 @@ dependencies:
     sdk: flutter
 ```
 
-Useful supporting signals:
+Pure Dart packages, platform runner directories, `.metadata`, `flutter_test`,
+CI tooling, generated examples, and transitive package names do not substitute
+for that primary Flutter identity. Preserve nested project ownership.
 
-- `.metadata` identifies a Flutter project;
-- Flutter platform runners exist and are part of build/release configuration;
-- `flutter_test` is present under development dependencies;
-- CI invokes Flutter tooling.
+For implementation, use the route returned by the current runtime and combine
+it with the guides selected for the actual surfaces and risks. UI may require
+design/accessibility checks; trust boundaries require security checks;
+performance work requires measured evidence. Do not manually invent a routed
+guide set or duplicate routing rules in a host integration.
 
-Do not classify as Flutter only because a lockfile contains a transitive package with "flutter" in its name.
+## 54. Discovery versus verification
 
-## 55. Suggested completion evidence identifiers
+A confirmed manifest establishes project identity, not analyzer success,
+compilation, device support, accessibility, or release readiness. Inspect the
+repository's pinned SDK, dependency graph, platform configuration, and actual
+commands after routing. Collect those outcomes separately through the normal
+verification flow; missing SDKs, devices, signing, and platform checks remain
+explicitly unverified.
 
-If ForgeLoop's evidence schema is extended for Flutter, useful semantic identifiers may include:
+## 55. Task-specific verification checks
 
-```text
-flutter-format
-flutter-analyze
-flutter-unit-widget-tests
-flutter-integration-tests
-flutter-target-build
-flutter-accessibility-validation
-flutter-performance-profile
-flutter-native-integration
-flutter-deep-link-validation
-```
+Choose check IDs that explain the observation, such as `flutter-analyze`,
+`flutter-unit-widget-tests`, `flutter-target-build`, or
+`flutter-deep-link-validation`, and bind each check to a requirement from the
+active contract or selected guide metadata. These are example check names,
+not new protocol enums or automatic completion requirements.
 
-Do not add identifiers to ForgeLoop protocol schemas without updating validators, tests, documentation, and compatibility surfaces together.
+This guide's frontmatter does not declare an extra Flutter-specific gate or
+completion-evidence ID. Required gates and evidence come from the actual
+contract, route, metadata, and canonical runtime. Record executed commands
+with `run-check`; a formatted check name or manifest match is not evidence.
 
 ## 56. Official documentation map
 

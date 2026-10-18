@@ -3,7 +3,7 @@ name: premium-sites-studio-eng
 language: en
 description: "Complete process for building premium websites at major design-studio quality."
 version: "2026.09"
-last-reviewed: "2026-08-10"
+last-reviewed: "2026-10-17"
 guide-id: premium
 requires-gates:
   - design
@@ -19,7 +19,7 @@ completion-evidence:
 
 > This guide defines the production process. For detailed visual rules, also use [`design-code-eng.md`](./design-code-eng.md). For accessibility, code quality, testing, security, and performance, consult the related documents at the end. A high-end website is not only a beautiful interface: it is a coherent, useful, fast, accessible, measurable, and maintainable experience.
 >
-> **Tooling policy**: identify the stack, the stage, and the applicable checks; prefer an already available equivalent that produces compatible evidence. Ask for authorization before installing a tool or changing the environment. If no safe equivalent exists, record the required check as blocked and never claim that it passed. Do not install merely optional resources.
+> **Tooling policy**: identify the stack, the stage, and the applicable checks; prefer an already available equivalent that produces compatible evidence. Installation or environment changes require authority; reuse scoped authorization already given rather than asking again. If no safe equivalent exists, record the required check as blocked and never claim that it passed. Do not install merely optional resources.
 
 ## 1. Quality bar
 
@@ -48,6 +48,13 @@ Follow the gates in order. Within each gate, use the canonical [Loop Engineering
 8. **Launch and operations:** deploy with observability, rollback plan, analytics, documentation, and an accountable owner.
 
 Each gate must have a verifiable output. If a decision remains ambiguous, record the hypothesis, risk, owner, and next test; do not hide uncertainty behind aesthetics.
+
+These production stages do not create extra ForgeLoop lifecycle gates or
+mandatory user approvals. In autonomous work, resolve reversible brief,
+layout, and direction choices as recorded assumptions and continue. Ask only
+for a genuine blocking decision under Loop Engineering. Client approval and
+publication authority remain required when the actual engagement or requested
+external action requires them; a generic checklist cannot invent that boundary.
 
 ## 3. Gate 1 — Brief, strategy, and success
 
