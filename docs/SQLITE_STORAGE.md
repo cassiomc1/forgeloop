@@ -1,11 +1,14 @@
 # SQLite Storage Migration
 
-**Stable release preparation — 2026-10-17:** the registry currently serves
-`2.0.0-rc.5` on `latest` and `next`. Stable `2.0.0` is being prepared under
-[the release checklist](./RELEASE_CHECKLIST.md). The current source still
-advertises `soleSQLiteWriter: false`; source review does not replace full
-behavioral, native-platform and current-source hosted performance acceptance.
-Physical power-loss proof and external production cutover remain unclaimed.
+**Stable 2.0.0 candidate — 2026-10-18:** the supported operational writer is
+canonical SQLite (`soleSQLiteWriter: true`). The
+[current acceptance record](STABLE_2_ACCEPTANCE.md) binds the consumer review,
+validation and native recovery/user checks. Final publication still requires
+release-source hosted parity, exact-head CI and trusted npm publication; query
+the registry rather than inferring publication from this source version.
+Physical power-loss proof, privileged external writers and production cutover
+remain outside these release claims. Explicit legacy migration and operator
+writer exclusion are retained.
 
 The [clean latest-install audit](https://github.com/cassiomc1/forgeloop/actions/runs/38669237414)
 passed 15/15 RC4 new-user checks on each native Windows x64, macOS ARM64 and Linux
@@ -21,7 +24,7 @@ filesystem transaction layer to a single SQLite database per project state
 root. This document records the implemented storage layer, its verified
 behavior, and the boundaries that are deliberately **not** migrated yet.
 
-## Status — 2026-10-14
+## Historical status — 2026-10-14
 
 The current plan in `SQLITE_MIGRATION_PLAN.md` remains authoritative. Public
 command and resource boundaries select canonical SQLite. Fresh writable projects
@@ -524,7 +527,7 @@ At this historical checkpoint, fresh and legacy projects still used the
 filesystem adapter. Current CLI, API and MCP boundaries select existing SQLite
 storage and bootstrap fresh writable projects into SQLite; ordinary legacy
 mutation requires explicit migration. Fresh read-only commands do not create a
-store. Current capabilities still advertise `soleSQLiteWriter: false` because
+store. At that checkpoint, capabilities advertised `soleSQLiteWriter: false` because
 the complete consumer audit and original release acceptance remain unfinished.
 
 `storage-backup` opens the source store read-only even though it writes a new
@@ -758,7 +761,7 @@ explicit migration/quiescence/recorded-inventory requirements and database or
 referenced-attachment backup support. This is package capability metadata, not a
 probe of the current project or proof of platform compatibility. It explicitly
 reports `defaultBackend: sqlite` for ordinary fresh writable dispatch while
-retaining `soleSQLiteWriter: false` until remaining direct filesystem writers
+historically retaining `soleSQLiteWriter: false` until remaining direct filesystem writers
 and temporary adapters are removed. Metadata reads do not load SQLite, open a
 project database or mutate project state; each caller receives an independent
 object. Existing human `protocol-info` output remains unchanged.

@@ -1,5 +1,12 @@
 # SQLite migration progress
 
+> **Stable 2.0.0 preparation — 2026-10-18:** see the current
+> [release acceptance record](STABLE_2_ACCEPTANCE.md) and
+> [release checklist](RELEASE_CHECKLIST.md). The dated checkpoints below are
+> historical evidence; their open tasks and percentages do not describe the
+> present candidate. Publication and production cutover remain separate results.
+
+
 > **Current status (2026-10-13):** the numeric LOC gate was retired by the owner’s A+C decision and replaced with measured performance parity. The accepted 1,000-task hosted receipt (`38356645442`, source `207f7e6`) passes output parity and reports better native p95 for both operations. This is prior-revision evidence, not a measurement of the current `codex/sqlite-end-to-end` review branch. Overall migration acceptance remains open. The percentage and scoreboard below are a historical snapshot, not a live completion estimate.
 
 **60% — 12/20 verified checkpoints**

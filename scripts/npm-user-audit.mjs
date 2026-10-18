@@ -126,17 +126,22 @@ await check('verification-review-and-completion', () => {
   run(['run-check','--task','user-task','--id','output-created','--requirement','output-created','--',process.execPath,'-e',proof]);
   run(['run-check','--task','user-task','--id','tests','--requirement','tests','--',process.execPath,'-e',proof]);
   run(['advance','--task','user-task','--to','REVIEWING']);
+  const reviewMarker=path.join(project,'output/review-regression.txt');
+  assert.equal(existsSync(reviewMarker),false);
   run(['record-check','--task','user-task','--id','review-finding','--requirement','tests','--kind','manual-review',
-    '--status','failed','--evidence-kind','OBSERVED','--result','User audit observed a missing review edge-case check']);
+    '--status','failed','--evidence-kind','OBSERVED','--result','The disposable fixture is missing output/review-regression.txt']);
   assert.equal(run(['next','--task','user-task','--json']).json.nextAction,'RECORD_DIAGNOSIS');
   run(['record-diagnosis','--task','user-task','--hypothesis','The review edge case needs a fresh verification cycle',
     '--failure-class','VERIFICATION_FAILURE','--evidence-ref','review-finding','--settled-by','Fresh SQLite output proof passes',
     '--next-safe-action','Rerun the SQLite proof in the correction cycle']);
   run(['advance','--task','user-task','--to','CORRECTING']);
+  writeFileSync(reviewMarker,'Review regression corrected\n');
+  const correctedProof=proof+"assert.equal(fs.readFileSync('output/review-regression.txt','utf8'),'Review regression corrected\\n');";
   assert.equal(run(['advance','--task','user-task','--to','VERIFYING','--json']).json.verificationCycle,2);
   for (const requirement of ['sqlite-proof','output-created','tests']) {
-    run(['run-check','--task','user-task','--id',requirement,'--requirement',requirement,'--',process.execPath,'-e',proof]);
+    run(['run-check','--task','user-task','--id',requirement,'--requirement',requirement,'--',process.execPath,'-e',correctedProof]);
   }
+  run(['prepare-completion','--task','user-task','--json']);
   run(['advance','--task','user-task','--to','REVIEWING']);
   run(['audit','--task','user-task','--json']);
   assert.equal(run(['complete','--task','user-task','--json']).json.status,'VALID');

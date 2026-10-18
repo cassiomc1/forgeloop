@@ -4,31 +4,27 @@ This is the current release checklist for the PolyForm Noncommercial-licensed
 `@cassiomc1/forgeloop` package. It is a preparation and verification checklist;
 it does not authorize publication.
 
-## Stable 2.0.0 preparation — 2026-10-17
+## Stable 2.0.0 candidate — 2026-10-18
 
-The requested next release is stable `2.0.0` on npm `latest`. Publication remains
-blocked until the source-bound SQLite acceptance, full verification, native
-candidate checks and current-source hosted performance comparison pass. Keep
-`soleSQLiteWriter: false` while those obligations remain open; never bypass
-`scripts/check-release-channel.mjs` to publish a stable candidate.
+The core package version is `2.0.0`, targeting npm `latest`, with Node.js
+24.19.0+ and built-in `node:sqlite`. The MCP companion retains restricted
+distribution and admits the stable core peer. Canonical SQLite is the sole
+supported operational writer; configuration, portable exports, immutable
+attachments and owner-bound maintenance evidence retain explicit file roles.
 
-The current registry package is `2.0.0-rc.5`; both `latest` and `next` resolve to
-RC5, with npm `gitHead` `1f35d45fea1391ef40c079b5eb1518f28c96d9fa`.
-It requires Node.js 24.19.0+ with built-in `node:sqlite`. The MCP companion
-retains restricted distribution.
+The [release acceptance record](STABLE_2_ACCEPTANCE.md) identifies source-bound
+writer review, full verification, native user checks and recovery/exclusion
+receipts. A fresh hosted pair on the final release source and exact-head PR
+checks remain mandatory before publication. Do not bypass the release guard,
+reuse an earlier-source benchmark as final evidence, or infer publication from
+package metadata. Physical power-loss and production cutover are separate claims.
 
-The [current supported writer review](../benchmarks/storage-sqlite/stable-2.0.0-writer-review.json.gz)
-binds 511 core/MCP source modules, 105 literal filesystem modules and 457
-lexically resolved filesystem/wrapper references. It retains 95 unchanged
-reviewed modules and reviews ten changed modules plus sixteen indirect
-references. This is source-boundary evidence. Its acceptance status remains
-pending until the required behavioral, platform and release receipts exist.
-
-Verify the live registry before relying on a channel:
+Verify the live registry and immutable release identity after publication:
 
 ```bash
 npm view @cassiomc1/forgeloop version dist-tags --json
-npm view @cassiomc1/forgeloop@2.0.0-rc.5 gitHead dist.integrity --json
+npm view @cassiomc1/forgeloop@2.0.0 gitHead dist.integrity --json
+npm run release:identity -- --version 2.0.0 --release-commit <release-tag-commit>
 ```
 
 ## Historical RC4 release evidence
@@ -106,8 +102,8 @@ p95 result is claimed by the short path. The existing 1,000-task parity run
 `38483369676` is retained for review; no fresh 200-repeat benchmark is dispatched.
 
 The writer inventory covers every current `src` JavaScript module and records
-imports plus potential write sites. Alias, computed-path, external-caller, and
-transitive-authority review remain incomplete. The inventory explicitly keeps
+imports plus potential write sites. At that historical RC checkpoint, alias, computed-path, external-caller, and
+transitive-authority review remained incomplete. The inventory explicitly keeps
 `wholeConsumerClosure: false`; it prevents drift and does not authorize setting
 `soleSQLiteWriter` to true.
 
@@ -145,10 +141,9 @@ current release. Its exact-identity and tag guards are retained.
 
 ## ForgeLoop 2.0.0 candidate scope
 
-A stable 2.0.0 release is not ready while SQLite migration plan §10 has
-open consumer-closure, current-source performance, or platform evidence. Keep
-all acceptance boxes open until their evidence is bound to the exact candidate
-revision.
+A stable 2.0.0 publication requires the source-bound acceptance record and final
+release-source checks. The preparation checklist below is not itself a pass;
+retain exact evidence for each applicable requirement.
 
 The 2.0.0 candidate carries the SQLite storage transition alongside the
 existing protocol, routing, provider, documentation, and package surfaces. The

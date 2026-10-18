@@ -1,5 +1,12 @@
 # SQLite migration progress
 
+> **Stable 2.0.0 preparation — 2026-10-18:** see the current
+> [release acceptance record](STABLE_2_ACCEPTANCE.md) and
+> [release checklist](RELEASE_CHECKLIST.md). The dated checkpoints below are
+> historical evidence; their open tasks and percentages do not describe the
+> present candidate. Publication and production cutover remain separate results.
+
+
 ## Current review pointer — 2026-10-14
 
 Current review checkout: branch `codex/sqlite-end-to-end`, based at `108269e`, with a local maintenance lazy-load correction. The owner’s A+C decision retired

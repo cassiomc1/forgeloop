@@ -1968,6 +1968,22 @@
       "origin": "handwritten",
       "currency": "current",
       "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/STABLE_2_ACCEPTANCE.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/SQLITE_MIGRATION_PLAN.md",
+        "src/storage/capabilities.js",
+        ".github/workflows/npm-publish.yml"
+      ],
+      "canonicalSources": [
+        "docs/STABLE_2_ACCEPTANCE.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
     }
   ]
 }

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="980" viewBox="0 0 1600 980" role="img" aria-labelledby="title description">
 <title id="title">ForgeLoop architecture</title>
-<desc id="description">A coding host connects through ForgeLoop entry points to deterministic project and task governance. ForgeLoop records task state in SQLite mode, consumes host-executed checks as evidence, and validates closure. Jev is a bounded semantic input and has no lifecycle authority. Legacy filesystem storage remains a separate compatibility path while soleSQLiteWriter is false.</desc>
+<desc id="description">A coding host connects through ForgeLoop entry points to deterministic project and task governance. ForgeLoop records task state in SQLite mode, consumes host-executed checks as evidence, and validates closure. Jev is a bounded semantic input and has no lifecycle authority. Legacy operational state requires explicit migration; portable exports remain interchange.</desc>
 <defs>
   <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#081323"/><stop offset="1" stop-color="#101c31"/></linearGradient>
   <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#5eead4"/><stop offset="1" stop-color="#60a5fa"/></linearGradient>
@@ -72,7 +72,7 @@
 <text x="112" y="736" class="body">.forgeloop/state.sqlite — selected SQLite mode</text>
 <text x="112" y="766" class="body">Task records · claims · event history · artifacts</text>
 <text x="112" y="796" class="small">Legacy filesystem mode remains a separate compatibility path.</text>
-<text x="112" y="825" class="tiny">Capability currently reports soleSQLiteWriter: false.</text>
+<text x="112" y="825" class="tiny">Canonical operational writer: SQLite. Portable exports are interchange.</text>
 <path d="M785 574V634H365V654" class="mint"/>
 <text x="720" y="704" class="label">Host tools</text>
 <text x="752" y="738" class="body">Tests · builds · platform checks</text>

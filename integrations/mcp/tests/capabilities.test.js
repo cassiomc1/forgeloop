@@ -51,7 +51,7 @@ test("forgeloop_capabilities exists and reports versions, features, policy, and 
     assert.equal(data.features.operationalStorage.sqlite.format, "sqlite");
     assert.equal(data.features.operationalStorage.sqlite.schemaVersion, 5);
     assert.equal(data.features.operationalStorage.sqlite.minimumNode, "24.19.0");
-    assert.equal(data.features.operationalStorage.soleSQLiteWriter, false);
+    assert.equal(data.features.operationalStorage.soleSQLiteWriter, true);
     assert.equal(data.features.operationalStorage.migration.requiresWritersQuiesced, true);
     assert.equal(data.features.operationalStorage.backup.referencedAttachments, true);
     assert.equal(data.features.taskClaimRecovery.validatedClaimProjection, true);

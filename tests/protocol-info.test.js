@@ -129,12 +129,12 @@ test("CLI advertises the provider extension boundary without a public registry",
   assert.equal(feature.packageSubpathExported, false);
 });
 
-test("storage handshake describes implemented selection without claiming sole-writer completion", () => {
+test("storage handshake describes the reviewed supported SQLite writer boundary", () => {
   const info = protocolInfo();
   const storage = info.features.operationalStorage;
   assert.equal(storage.version, 1);
   assert.equal(storage.defaultBackend, "sqlite");
-  assert.equal(storage.soleSQLiteWriter, false);
+  assert.equal(storage.soleSQLiteWriter, true);
   assert.equal(storage.sqlite.format, "sqlite");
   assert.equal(storage.sqlite.formatVersion, 1);
   assert.equal(storage.sqlite.schemaVersion, 5);

@@ -79,8 +79,8 @@ See the [23-guide maintenance map](./docs/GUIDE_MAINTENANCE.md) for review scope
 ## Distribution and license
 
 GitHub hosts source and issues. The core npm package is publicly available;
-the MCP companion retains restricted distribution. RC5 targets `next`; `latest`
-remains at RC4. Stable SQLite acceptance is incomplete.
+the MCP companion retains restricted distribution. Stable `2.0.0` targets
+`latest`; publication requires verified release identity and native user audits.
 ForgeLoop-owned source and documentation are licensed under the
 [PolyForm Noncommercial License 1.0.0](./LICENSE). Commercial use is not granted
 by this license. Third-party notices are documented in

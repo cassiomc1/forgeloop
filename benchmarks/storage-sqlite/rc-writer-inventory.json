@@ -5751,7 +5751,7 @@
     },
     {
       "path": "src/storage/capabilities.js",
-      "sha256": "59be8434f95b1926f44f7f13750e5492036efa3d4b7a844970a62cb37ee6e814",
+      "sha256": "9adc92b6d529de9198cde18c9a40b7ad86c981010a5423dec99eec2937e6ddb4",
       "imports": [
         "./schema.js",
         "./runtime.js"

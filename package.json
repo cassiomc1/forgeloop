@@ -1,6 +1,6 @@
 {
   "name": "@cassiomc1/forgeloop",
-  "version": "2.0.0-rc.5",
+  "version": "2.0.0",
   "description": "Evidence-first engineering protocol for AI coding environments and developer workflows",
   "repository": {
     "type": "git",
@@ -128,7 +128,8 @@
     "skills/security-audit",
     "docs/GUIDE_MAINTENANCE.md",
     "docs/REVENUE_CENTRIC_DESIGN.md",
-    "scripts/verify-revenue-design-skill.mjs"
+    "scripts/verify-revenue-design-skill.mjs",
+    "docs/STABLE_2_ACCEPTANCE.md"
   ],
   "scripts": {
     "test": "node scripts/run-tests.js",

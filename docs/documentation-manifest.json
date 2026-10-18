@@ -1647,6 +1647,19 @@
       ],
       "canonicalFor": [],
       "packaged": true
+    },
+    {
+      "path": "docs/STABLE_2_ACCEPTANCE.md",
+      "id": "stable-2-acceptance",
+      "class": "reference",
+      "audience": [
+        "user",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "stable-storage-release-acceptance"
+      ],
+      "packaged": true
     }
   ]
 }

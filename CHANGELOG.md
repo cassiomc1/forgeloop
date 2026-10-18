@@ -1,6 +1,13 @@
 # Changelog
 
-## Unreleased
+## 2.0.0 - 2026-10-18
+
+- Advertise canonical SQLite as the sole supported operational writer after
+  source-bound consumer review, native user checks and recovery/exclusion drills.
+  Preserve explicit file-owned exports, attachments, configuration and maintenance
+  evidence, fail-closed legacy admission, and operator exclusion requirements.
+- Prepare the stable core package for npm latest with full verification and a
+  fresh release-source hosted parity run; retain MCP restricted distribution.
 
 - Add an optional focused revenue-centric design companion adapted from
   heliocosta-dev/revenue-centric-design, with Richard attribution, the complete
