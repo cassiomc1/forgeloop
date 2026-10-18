@@ -11,13 +11,15 @@ import { STRUCTURAL_QUALITY_MEASUREMENT_MODEL, STRUCTURAL_QUALITY_SENTRUX_COMPAT
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const fixture = path.join(here, "fixtures", "fake-sentrux-mcp.mjs");
+// Allow instrumented child startup; the timeout test overrides this to 25 ms.
+const fixtureTimeoutMs = 3000;
 
 function provider(projectPath, mode = "valid", extra = {}) {
   return createSentruxStructuralQualityProvider({
     projectPath,
     executable: process.execPath,
     args: [fixture],
-    timeoutMs: 500,
+    timeoutMs: fixtureTimeoutMs,
     maxOutputBytes: 2 * 1024 * 1024,
     env: {
       SENTRUX_FAKE_MODE: mode,
@@ -30,7 +32,7 @@ function input(projectPath, overrides = {}) {
   return {
     projectPath,
     taskId: "sentrux-provider-task",
-    timeoutMs: 500,
+    timeoutMs: fixtureTimeoutMs,
     maxOutputBytes: 2 * 1024 * 1024,
     ...overrides,
   };
@@ -110,7 +112,7 @@ test("the adapter invokes a trusted process without a shell", async () => {
     executable: process.execPath,
     args: [fixture],
     spawnImpl: wrappedSpawn,
-    timeoutMs: 500,
+    timeoutMs: fixtureTimeoutMs,
   });
   await trusted.detect(input(projectPath));
   assert.equal(spawnOptions.shell, false);

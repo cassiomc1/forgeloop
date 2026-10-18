@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, rmSync, readFileSync } from 'fs';
+import { mkdtempSync, rmSync, readFileSync, readdirSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
 import { createForgeLoopIntegration, FORGELOOP_PACKAGE_VERSION, FORGELOOP_UPSTREAM_COMMIT, hasRequiredResources } from '@main/core/integration/forgeloop-integration';
@@ -20,7 +20,7 @@ describe('core/integration/forgeloop-integration', () => {
 
   describe('package identity', () => {
     it('exposes the bundled ForgeLoop package version', () => {
-      expect(adapter.getPackageVersion()).toBe('2.0.0-rc.4');
+      expect(adapter.getPackageVersion()).toBe('2.0.0');
     });
 
     it('keeps the version constant synchronized with the installed dependency pin', () => {
@@ -28,7 +28,7 @@ describe('core/integration/forgeloop-integration', () => {
         readFileSync(join(process.cwd(), 'node_modules', '@cassiomc1', 'forgeloop', 'package.json'), 'utf8'),
       ) as { version: string };
       expect(installed.version).toBe(FORGELOOP_PACKAGE_VERSION);
-      expect(FORGELOOP_UPSTREAM_COMMIT).toBe('d05c17cddda6a09581d526732b08eb0789b9734f');
+      expect(FORGELOOP_UPSTREAM_COMMIT).toBe('4ff11bb4bc4be39b095a151a323f1388dad0d819');
       const dependencySpec = JSON.parse(readFileSync(join(process.cwd(), 'package.json'), 'utf8')).dependencies as Record<string, string>;
       expect(dependencySpec).toHaveProperty('@cassiomc1/forgeloop');
     });
@@ -168,6 +168,19 @@ describe('core/integration/forgeloop-integration', () => {
   });
 
   describe('readProtocolInfo', () => {
+    it('observes stable SQLite capabilities without initializing an inspected directory', async () => {
+      const before = readdirSync(scratchDir);
+      const info = await adapter.readProtocolInfo(scratchDir);
+      const features = info.features as Record<string, unknown>;
+      expect(features.operationalStorage).toMatchObject({
+        defaultBackend: 'sqlite',
+        soleSQLiteWriter: true,
+        sqlite: { schemaVersion: 5, minimumNode: '24.19.0' },
+        migration: { explicit: true, requiresWritersQuiesced: true, automaticDowngrade: false },
+      });
+      expect(readdirSync(scratchDir)).toEqual(before);
+    });
+
     it('reads compatibility.schemaVersion from the canonical resource', async () => {
       const protocolInfo = await adapter.readProtocolInfo(scratchDir);
       expect(protocolInfo.compatibility).toBeDefined();

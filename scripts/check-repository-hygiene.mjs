@@ -52,7 +52,7 @@ const SCRATCH_PATTERNS = [
   /\/results\/(?:raw|aggregate)\/(?:scratch|tmp|temp)(?:\/|$)/u,
 ];
 // Required by Audit's locked file: dependency; its verifier checks the digest.
-const AUDIT_VENDOR_ARCHIVE = "ForgeLoopAudit/vendor/cassiomc1-forgeloop-2.0.0-rc.4-d05c17c.tgz";
+const AUDIT_VENDOR_ARCHIVE = "ForgeLoopAudit/vendor/cassiomc1-forgeloop-2.0.0-4ff11bb.tgz";
 
 function trackedFiles(rootDir) {
   const output = execFileSync("git", ["ls-files", "-z"], { cwd: rootDir, encoding: "utf8" });

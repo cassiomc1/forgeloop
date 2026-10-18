@@ -1,15 +1,15 @@
 # Vendored ForgeLoop runtime dependency
 
-`cassiomc1-forgeloop-2.0.0-rc.4-d05c17c.tgz` is the packed ForgeLoop `2.0.0-rc.4` runtime used
+`cassiomc1-forgeloop-2.0.0-4ff11bb.tgz` is the packed ForgeLoop `2.0.0` runtime used
 by ForgeLoopAudit through the public `@cassiomc1/forgeloop/integration`
 subpath.
 
 - Source repository: `cassiomc1/forgeloop`
-- Pinned commit: `d05c17cddda6a09581d526732b08eb0789b9734f`
-- Package version: `2.0.0-rc.4`
-- SHA-256: `10253b24d2e3404603d51e467222b5855dd0c6becda837de0d7d7e7646c8eae6`
+- Pinned commit: `4ff11bb4bc4be39b095a151a323f1388dad0d819`
+- Package version: `2.0.0`
+- SHA-256: `326fbd81db54b9164f862a383fba4861817bd31ee325cf07252fb0b1101bc835`
 
-The archive is the exact public npm ForgeLoop 2.0.0-rc.4 artifact, verified against the registry
+The archive is the exact public npm ForgeLoop 2.0.0 artifact, verified against the registry
 SHA-512 integrity and pinned release commit above. Its
 package-boundary verifier confirms the canonical `flutter` guide and the
 complete installable-guide file closure without making ForgeLoopAudit a guide
@@ -20,6 +20,12 @@ and `publishConfig.access: public`. The archive includes ForgeLoop's `LICENSE`;
 commercial use is not granted. Metadata does not prove registry publication.
 The local archive keeps runtime resolution offline and immutable.
 Node.js 24.19.0 or newer is required for native SQLite storage.
+
+The archive also retains the optional security and revenue-design companions'
+own licenses and attribution. Revenue-design material has custom source-available
+terms, including its no-gambling-use restriction; the core package license does
+not replace those terms. Audit neither activates the companions nor invokes
+their upstream tools.
 
 ForgeLoopAudit uses its Integration API v1 for canonical audit resources and
 the explicit Repository Index/Search operations. Repository discovery results
