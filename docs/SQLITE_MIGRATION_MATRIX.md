@@ -6,7 +6,6 @@
 > historical evidence; their open tasks and percentages do not describe the
 > present candidate. Publication and production cutover remain separate results.
 
-
 Current checkpoint progress: [SQLite migration progress](SQLITE_PROGRESS.md).
 
 ## Current source and acceptance boundary — 2026-10-14

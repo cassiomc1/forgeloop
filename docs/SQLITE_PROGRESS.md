@@ -6,6 +6,7 @@
 > historical evidence; their open tasks and percentages do not describe the
 > present candidate. Publication and production cutover remain separate results.
 
+## Historical checkpoint — 2026-10-13
 
 > **Current status (2026-10-13):** the numeric LOC gate was retired by the owner’s A+C decision and replaced with measured performance parity. The accepted 1,000-task hosted receipt (`38356645442`, source `207f7e6`) passes output parity and reports better native p95 for both operations. This is prior-revision evidence, not a measurement of the current `codex/sqlite-end-to-end` review branch. Overall migration acceptance remains open. The percentage and scoreboard below are a historical snapshot, not a live completion estimate.
 
