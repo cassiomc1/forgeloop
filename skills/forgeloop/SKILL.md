@@ -53,6 +53,10 @@ Respect active write claims. Do not steal, override, manually release, or edit o
 
 For requested source security questions or vulnerability reviews, ForgeLoop bundles Cloudflare's pinned `security-audit` companion under `skills/security-audit/` in its package/source root. Consult `docs/SECURITY_AUDIT_SKILL.md` there for setup, provenance, and authority boundaries. Load the companion only when available and relevant. Host discovery is opt-in; `init` and `update` do not install it. Routine security routing does not require a full audit. Full audits require an explicit audit/report request, independent verifiers, and the upstream execution isolation controls; unavailable capabilities remain explicit blockers. Preserve `confirmed`, `needs_validation`, and `rejected`; reports and report-validator success do not establish canonical evidence or ForgeLoop completion. This companion is separate from ForgeLoopAudit and the host-injected Security Review provider.
 
+## Optional Product Design Companion
+
+For relevant SaaS product journeys, activation, pricing clarity or retention work, read the bundled `references/revenue-centric-design/SKILL.md` relative to this skill directory. Consult `docs/REVENUE_CENTRIC_DESIGN.md` in the package root for setup and provenance. The adaptation credits Richard (@richardrx) and preserves the full custom source-available license, including its gambling/betting/casino-use exclusion. It is advisory, adds no guide ID or gate, and grants no lifecycle, evidence, payment or publication authority. Use measured user value, informed choice and accessibility as constraints; do not claim conversion lift from UI tests. No updater or media is bundled, and host discovery copies remain opt-in.
+
 ## Recovery Rules
 
 Use supported recovery only. Preserve failed evidence and follow `next` through diagnosis/correction. For state or ledger divergence, stop lifecycle mutation and inspect validation/classification. Never edit task state, receipts, recovery, continuity, claims, hashes, or `events.ndjson` manually. Reconcile `COMMIT_UNKNOWN` before any retry.

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add an optional focused revenue-centric design companion adapted from
+  heliocosta-dev/revenue-centric-design, with Richard attribution, the complete
+  custom source-available license, offline journey playbook and pinned references.
+
 - Recover new failed review findings through current-cycle diagnosis and
   correction without editing protocol state or accepting passed review evidence.
 - Add isolated unversioned npm `latest` audits on native macOS, Windows and Linux,

@@ -499,9 +499,8 @@ see [CONTRIBUTING.md](./CONTRIBUTING.md#focused-verification-and-maintenance).
 
 ## ForgeLoopAudit workspace
 
-The read-only auditor lives in `ForgeLoopAudit/`. See
-[setup, usage and screenshots](./docs/FORGELOOP_AUDIT.md) for the demo,
-project inspection and audit views.
+The read-only auditor lives in `ForgeLoopAudit/`; see its
+[setup, demo and screenshots](./docs/FORGELOOP_AUDIT.md).
 
 ## Protocol compatibility
 
@@ -524,8 +523,9 @@ it must not infer current ownership from `task.json` or `recovery.json` alone.
 
 ## Security and dependency boundary
 
-Optional [Cloudflare security audits](./docs/SECURITY_AUDIT_SKILL.md) ship pinned
-with MIT attribution and integrity checks; findings remain advisory.
+Optional [security audits](./docs/SECURITY_AUDIT_SKILL.md) and
+[product design](./docs/REVENUE_CENTRIC_DESIGN.md) ship with pinned attribution,
+integrity checks and their respective licenses; guidance remains advisory.
 
 Runtime uses Node built-ins and the approved exact `@typesafe-ai/sdk` and
 `smol-toml` dependencies; it installs no agents, providers, plugins, services,

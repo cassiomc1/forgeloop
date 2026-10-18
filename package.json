@@ -126,7 +126,9 @@
     "docs/SECURITY_AUDIT_SKILL.md",
     "scripts/verify-security-audit-skill.mjs",
     "skills/security-audit",
-    "docs/GUIDE_MAINTENANCE.md"
+    "docs/GUIDE_MAINTENANCE.md",
+    "docs/REVENUE_CENTRIC_DESIGN.md",
+    "scripts/verify-revenue-design-skill.mjs"
   ],
   "scripts": {
     "test": "node scripts/run-tests.js",
@@ -189,7 +191,8 @@
     "release:quick": "node scripts/run-rc-release.mjs",
     "release:rc:check": "node scripts/check-rc-release.mjs",
     "storage:writer-inventory": "node scripts/storage-writer-inventory.mjs",
-    "security-skill:check": "node scripts/verify-security-audit-skill.mjs"
+    "security-skill:check": "node scripts/verify-security-audit-skill.mjs",
+    "revenue-skill:check": "node scripts/verify-revenue-design-skill.mjs"
   },
   "devDependencies": {
     "c8": "^12.0.0",

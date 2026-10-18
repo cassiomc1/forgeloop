@@ -2296,7 +2296,7 @@
     },
     {
       "path": "src/core/completion-artifacts.js",
-      "sha256": "100a2c7158847bd9313a450cb3f78890143df8394432ffe196bf9063eae679ea",
+      "sha256": "0ede01312b1e39e8d5cf2e3d3e7fc14738b3af42e3aae304284406284bf32741",
       "imports": [
         "node:path",
         "./transaction.js",
@@ -4087,7 +4087,7 @@
     },
     {
       "path": "src/core/review-correction.js",
-      "sha256": "0d25fdff09b1b791913b68fbd2c327a4623099722c5d254e7a58b5c2795cc9e6",
+      "sha256": "f9ffe66fb9e28332289079e57021c70e8d36c95f8f66f640f94aa605d47e2030",
       "imports": [],
       "potentialWrites": []
     },

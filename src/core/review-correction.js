@@ -43,3 +43,9 @@ export function assertReviewChronology(state, events, artifacts = []) {
 export function requiresFailureBinding(state, failureClass) {
   return failureClass === "VERIFICATION_FAILURE" || isReviewCorrection(state);
 }
+
+export function assertReviewRequirement(state, requirement, canonicalRequirement) {
+  if (isReviewCorrection(state) && !canonicalRequirement) {
+    throw prerequisite("E_CHECK_INVALID", `Review finding must reference a required contract or guide check: ${requirement}`);
+  }
+}

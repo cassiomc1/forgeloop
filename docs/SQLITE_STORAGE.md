@@ -1,15 +1,14 @@
 # SQLite Storage Migration
 
-**Current release candidate:** `2.0.0-rc.4` is published on npm `latest` and
-`next` after owner-authorized tag promotion. RC3 and later runtime changes use
-fresh full verification, not the historical RC1/RC2 bounded shortcut in
-[the release checklist](./RELEASE_CHECKLIST.md). RC4 retains
-`soleSQLiteWriter: false`; complete transitive consumer closure, stable
-acceptance, physical power-loss proof, and external production cutover remain
-unclaimed.
+**Stable release preparation — 2026-10-17:** the registry currently serves
+`2.0.0-rc.5` on `latest` and `next`. Stable `2.0.0` is being prepared under
+[the release checklist](./RELEASE_CHECKLIST.md). The current source still
+advertises `soleSQLiteWriter: false`; source review does not replace full
+behavioral, native-platform and current-source hosted performance acceptance.
+Physical power-loss proof and external production cutover remain unclaimed.
 
 The [clean latest-install audit](https://github.com/cassiomc1/forgeloop/actions/runs/38669237414)
-passed 15/15 new-user checks on each native Windows x64, macOS ARM64 and Linux
+passed 15/15 RC4 new-user checks on each native Windows x64, macOS ARM64 and Linux
 x64 host using Node 24.19.0. It installed the unversioned public npm package
 with fresh installation, cache, configuration and project directories. SQLite
 persistence, eight concurrent writes, page/foreign-key integrity, tampering

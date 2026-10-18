@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "repository": "https://github.com/heliocosta-dev/revenue-centric-design",
+  "commit": "1942760c2242f609bf63ce2c97204f5a1791bd68",
+  "license": "Custom source-available; attribution and no gambling/betting/casino use",
+  "adaptation": "ForgeLoop-focused entry point and local playbook; full upstream license retained; upstream references linked at the pinned commit; no updater or media bundled.",
+  "digestFormat": "SHA-256 of UTF-8 file bytes after CRLF to LF normalization",
+  "upstreamLicenseSha256": "29e6d8b0a1e3dd78776b46b22b9a9a3df94fdbf6a73482f59d688dee7fd38e32",
+  "files": {
+    "LICENSE": "29e6d8b0a1e3dd78776b46b22b9a9a3df94fdbf6a73482f59d688dee7fd38e32",
+    "SKILL.md": "666ca4a0a7a1b2a8adf2882aa4571c30d51316c2163ea1ba1fd4d3424183d655",
+    "references/playbook.md": "0cdf065d41e4baa33a45bd0ad0e13bc57fcb237e768a27f8b494415aebb24805"
+  }
+}

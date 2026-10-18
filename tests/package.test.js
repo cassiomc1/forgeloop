@@ -1,3 +1,4 @@
+import { verifyRevenueDesignSkill } from "../scripts/verify-revenue-design-skill.mjs";
 import { parse as parseYaml } from "yaml";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
@@ -57,6 +58,17 @@ function packageListing() {
   }))[0].files.map((entry) => entry.path);
   return cachedListing;
 }
+
+test("npm tarball preserves the focused revenue design companion and its complete custom license", async () => {
+  await verifyRevenueDesignSkill();
+  const directory = "skills/forgeloop/references/revenue-centric-design";
+  const pin = JSON.parse(await readFile(`${directory}/PIN.json`, "utf8"));
+  const listing = packageListing();
+  for (const name of [...Object.keys(pin.files), "PIN.json"]) assert.ok(listing.includes(`${directory}/${name}`));
+  assert.ok(listing.includes("docs/REVENUE_CENTRIC_DESIGN.md"));
+  assert.ok(listing.includes("scripts/verify-revenue-design-skill.mjs"));
+  assert.ok(!listing.some(name => name.startsWith(`${directory}/updater/`) || name.startsWith(`${directory}/assets/`)));
+});
 
 test("npm tarball includes the complete pinned security audit companion", async () => {
   await verifySecurityAuditSkill();

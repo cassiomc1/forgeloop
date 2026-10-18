@@ -27,7 +27,7 @@ import { assertClaimsCoverChangedPaths } from "./task-scope.js";
 import { discoverTasks } from "./task-discovery.js";
 import { listActions } from "./actions.js";
 import { STRUCTURAL_QUALITY_REQUIREMENT } from "./structural-quality/constants.js";
-import { assertCheckPhase, assertReviewChronology } from "./review-correction.js";
+import { assertCheckPhase, assertReviewChronology, assertReviewRequirement } from "./review-correction.js";
 
 async function actionReceiptSummary(target, packageRoot, taskId) {
   const actions = await listActions(target, { packageRoot, taskId });
@@ -509,6 +509,7 @@ export async function assertRecordCheckPrerequisites({
   }).find((item) => (
     item.id === requirement || item.text === requirement
   ));
+  assertReviewRequirement(state, requirement, requested ?? terminalRequested);
   if ((requested?.terminalOwned || terminalRequested) && status === "passed" && evidenceKind === "OBSERVED") {
     throw artifactError(
       "E_FUTURE_LIFECYCLE_EVIDENCE",

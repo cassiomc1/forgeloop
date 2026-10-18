@@ -39,6 +39,7 @@ test("a failed review finding can be diagnosed and reverified without bypassing 
     const finding = { target, packageRoot, taskId, kind: "manual-review", id: "review-finding",
       requirement: "tests", evidenceKind: "OBSERVED", result: "Review found a missing edge case" };
     await assert.rejects(recordCheck({ ...finding, status: "passed" }), { code: "E_PHASE_PREREQUISITE_MISSING" });
+    await assert.rejects(recordCheck({ ...finding, status: "failed", requirement: "unrelated criterion" }), { code: "E_CHECK_INVALID" });
     await recordCheck({ ...finding, status: "failed" });
     assert.equal((await getNextAction({ target, packageRoot, taskId })).nextAction, NEXT_ACTIONS.RECORD_DIAGNOSIS);
     const diagnosis = { target, packageRoot, taskId, hypothesis: "Review exposed missing edge-case coverage",
