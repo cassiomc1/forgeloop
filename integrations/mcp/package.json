@@ -22,7 +22,7 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@modelcontextprotocol/server": "2.0.0"
+    "@modelcontextprotocol/server": "2.3.0"
   },
   "scripts": {
     "test": "node --test \"tests/*.test.js\""
