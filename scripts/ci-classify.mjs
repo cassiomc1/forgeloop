@@ -2,6 +2,8 @@
 
 import { execFileSync } from "node:child_process";
 import { appendFile, readFile } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { checkRcRelease } from "./check-rc-release.mjs";
 import { usesBoundedRcVerification } from "./check-release-channel.mjs";
 
@@ -195,7 +197,7 @@ export async function classifyFromArguments(argv = process.argv.slice(2), { even
   return result;
 }
 
-if (process.argv[1]?.endsWith("/ci-classify.mjs")) {
+if (typeof process.argv[1] === "string" && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {
     await classifyFromArguments();
   } catch (error) {

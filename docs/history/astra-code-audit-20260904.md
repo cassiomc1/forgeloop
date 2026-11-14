@@ -201,7 +201,7 @@ The 1,351-line command-definition table and 1,337-line error-code catalog are mo
 | Candidate | Evidence | Suggested action |
 | --- | --- | --- |
 | `requiredChecksSatisfied`, `requiredChecksSatisfiedForRequirements`, and private `requiredChecksSatisfiedBy` | [checks.js](../../src/core/checks.js#L138); symbol searches found only these definitions/internal calls | Remove the unused block after confirming no supported external import commitment. |
-| `requiredGatePaths` | [gates.js](../../src/core/gates.js#L55); no consumers found | Remove this unused export. |
+| `requiredGatePaths` | [gates.js](https://github.com/cassiomc1/forgeloop/blob/fe13c597b3ba669dab93dc72d3d8e6d099dd129b/src/core/gates.js#L55); no consumers found | Remove this unused export. |
 
 These names are not re-exported by `src/integration.js`. The first block is about 32 lines of inactive alternative check-selection logic, so removing it also avoids maintaining a second interpretation of evidence satisfaction.
 
@@ -211,10 +211,10 @@ Do not infer that all of `checks.js` is unused: its validation functions have re
 
 Literal import/re-export/dynamic-import analysis, followed by repository symbol searches, found four `src/` modules with no production caller from the CLI, integration, commands, or scripts:
 
-- [cli-metadata.js](../../src/core/cli-metadata.js): constructs a projection of `CLI_COMMAND_DEFINITIONS`, consumed by a documentation-conformance test;
-- [decision-classification.js](../../src/core/decision-classification.js): consumed by its tests and the next module;
-- [workflow-compatibility.js](../../src/core/workflow-compatibility.js): consumed by its tests;
-- [gates.js](../../src/core/gates.js): `createGate` is used by test setup; `requiredGatePaths` has no caller.
+- [cli-metadata.js](https://github.com/cassiomc1/forgeloop/blob/fe13c597b3ba669dab93dc72d3d8e6d099dd129b/src/core/cli-metadata.js): constructs a projection of `CLI_COMMAND_DEFINITIONS`, consumed by a documentation-conformance test;
+- [decision-classification.js](https://github.com/cassiomc1/forgeloop/blob/fe13c597b3ba669dab93dc72d3d8e6d099dd129b/src/core/decision-classification.js): consumed by its tests and the next module;
+- [workflow-compatibility.js](https://github.com/cassiomc1/forgeloop/blob/fe13c597b3ba669dab93dc72d3d8e6d099dd129b/src/core/workflow-compatibility.js): consumed by its tests;
+- [gates.js](https://github.com/cassiomc1/forgeloop/blob/fe13c597b3ba669dab93dc72d3d8e6d099dd129b/src/core/gates.js): `createGate` is used by test setup; `requiredGatePaths` has no caller.
 
 **Recommended decision:** keep useful fixture builders under test helpers unless they are an intentionally supported API. For decision/workflow classification, either expose and integrate a supported advisory feature with real consumers, or stop shipping the unused implementation and keep the normative policy/examples where they belong. Moving helpers requires updating imports; this is not a recommendation to delete their tests without preserving their purpose.
 

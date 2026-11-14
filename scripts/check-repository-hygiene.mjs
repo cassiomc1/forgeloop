@@ -51,6 +51,11 @@ const SCRATCH_PATTERNS = [
   /^docs\/assets\/diagrams\/\.archify-/u,
   /\/results\/(?:raw|aggregate)\/(?:scratch|tmp|temp)(?:\/|$)/u,
 ];
+// Historical storage evidence is frozen at its reviewed size. Raising this budget is
+// an explicit review decision; prefer release assets for new bulk measurements.
+export const STORAGE_EVIDENCE_PREFIX = "benchmarks/storage-sqlite/";
+export const STORAGE_EVIDENCE_FILE_BUDGET = 978;
+const AMBIGUOUS_EVIDENCE_EXTENSION = /\.gz\.(?:json|log|txt)$/u;
 // Required by Audit's locked file: dependency; its verifier checks the digest.
 const AUDIT_VENDOR_ARCHIVE = "ForgeLoopAudit/vendor/cassiomc1-forgeloop-2.0.0-4ff11bb.tgz";
 
@@ -93,6 +98,15 @@ export function validateRepositoryHygiene({ trackedPaths, manifest, ignoredSenti
     const benchmarkMatch = trackedPath.match(/^benchmarks\/execution-profiles\/results\/(?:raw|aggregate)\/([^/]+)(?:\/|$)/u);
     if (benchmarkMatch && !BENCHMARK_RUN_SETS.has(benchmarkMatch[1])) {
       errors.push(`REPOSITORY_HYGIENE_UNAPPROVED_BENCHMARK_RUN: ${benchmarkMatch[1]}`);
+    }
+  }
+  const storageEvidence = [...tracked].filter((trackedPath) => trackedPath.startsWith(STORAGE_EVIDENCE_PREFIX));
+  if (storageEvidence.length > STORAGE_EVIDENCE_FILE_BUDGET) {
+    errors.push(`REPOSITORY_HYGIENE_STORAGE_EVIDENCE_BUDGET: ${storageEvidence.length} tracked files exceed ${STORAGE_EVIDENCE_FILE_BUDGET}`);
+  }
+  for (const trackedPath of storageEvidence) {
+    if (AMBIGUOUS_EVIDENCE_EXTENSION.test(trackedPath)) {
+      errors.push(`REPOSITORY_HYGIENE_AMBIGUOUS_EVIDENCE_EXTENSION: ${trackedPath}`);
     }
   }
   for (const sentinel of IGNORE_SENTINELS) {

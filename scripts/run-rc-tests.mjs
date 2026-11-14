@@ -8,7 +8,7 @@ export function assertTestSummary(output, expected = 40) {
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const files = ["rc-release-policy", "rc-latest-promotion", "storage-sole-writer-boundary", "storage-attachment-transaction", "storage-maintenance-admission", "storage-project-backup", "storage-runtime", "storage-project-bootstrap"];
+  const files = ["rc-release-policy", "storage-sole-writer-boundary", "storage-attachment-transaction", "storage-maintenance-admission", "storage-project-backup", "storage-runtime", "storage-project-bootstrap"];
   const child = spawn(process.execPath, ["--import=./scripts/test-semantic-provider-loader.mjs", "--test", "--test-reporter=tap", "--test-concurrency=2", ...files.map(file => `tests/${file}.test.js`)], { shell: false, timeout: 180000 });
   let output = ""; let bytes = 0;
   child.stdout.on("data", data => {

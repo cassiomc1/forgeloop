@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+- Extract the bounded pubspec YAML and .NET project XML parsers into
+  `src/core/parsers/`, cap inline flow-map nesting at 32 levels (deep nesting
+  previously overflowed the call stack), and add seeded malformed-input tests.
+- Fail closed when a completion-recovery receipt is unreadable instead of
+  treating every read error as an absent receipt.
+- Report missing installed dependencies before running validation tiers and fix
+  the `run-validation`/`ci-classify` entry guards that never ran on Windows paths.
+- Guard `benchmarks/storage-sqlite` with a tracked-file budget and reject
+  ambiguous `.gz.json` names; retire the RC2-only npm promotion path and the four
+  comment-only historical stubs in `src/core`.
+- Share one applicability gate across PR core setup steps and align
+  `upload-artifact` v7.0.2 / `download-artifact` v8.0.2 pins.
+- Load `LOOP_ENGINEERING.md` sections on demand from adapters, and refresh the
+  .NET, Node.js and SQL specialist guides for the 2026-11 support landscape.
 - Align ForgeLoopAudit with the exact published stable 2.0.0 archive, trusted
   schema provenance, current documentation and actual browser captures. Retain
   read-only authority and its separate unsigned-preview release state.

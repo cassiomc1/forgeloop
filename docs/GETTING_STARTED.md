@@ -227,7 +227,7 @@ Discover the deterministic task state path using `task-show`:
 forgeloop task-show --task task-contact-form-001 --json
 ```
 
-Then write the task contract to `.forgeloop/task-state/<taskKey>/contract.json`:
+Write the contract to a project-relative input file outside `.forgeloop/task-state/` (for example `contract-input.json`). Writing it directly into the task-state directory creates legacy operational state next to canonical SQLite and makes later commands fail with `E_STORAGE_MIGRATION_REQUIRED`:
 
 ```json
 {
@@ -269,6 +269,13 @@ Then write the task contract to `.forgeloop/task-state/<taskKey>/contract.json`:
   "unresolvedDecisions": [],
   "sourceRefs": []
 }
+```
+
+Then let ForgeLoop record it transactionally (discovery first, when `next` asks for it):
+
+```bash
+forgeloop discover --task task-contact-form-001 --json
+forgeloop contract-create --task task-contact-form-001 --contract-file contract-input.json --json
 ```
 
 ---

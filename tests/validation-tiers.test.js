@@ -67,3 +67,16 @@ test("Windows uses the portable npm and Python launchers", () => {
   assert.equal(getTierCommands("local", "win32").find((command) => command.id === "python-unittest").command, "py");
   assert.deepEqual(getTierCommands("local", "win32").find((command) => command.id === "python-unittest").args.slice(0, 2), ["-3", "-m"]);
 });
+
+test("validation preflight names undeclared installs and the entry guard is separator-agnostic", async () => {
+  const { missingDependencies, isDirectInvocation } = await import("../scripts/run-validation.mjs");
+  const root = process.cwd();
+  const installed = new Set();
+  assert.ok(missingDependencies(root, (candidate) => installed.has(candidate)).includes("smol-toml"));
+  assert.deepEqual(missingDependencies(root, () => true), []);
+  const { fileURLToPath } = await import("node:url");
+  const scriptPath = fileURLToPath(new URL("../scripts/run-validation.mjs", import.meta.url));
+  assert.equal(isDirectInvocation(scriptPath, new URL("../scripts/run-validation.mjs", import.meta.url).href), true);
+  assert.equal(isDirectInvocation(undefined), false);
+  assert.equal(isDirectInvocation("/elsewhere/run-validation.mjs", new URL("../scripts/run-validation.mjs", import.meta.url).href), false);
+});

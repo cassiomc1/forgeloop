@@ -3,7 +3,7 @@ name: nodejs-backend-development-eng
 language: en
 description: "Specialist guidance for architecture, implementation, testing, security, performance, observability, and release of production Node.js backend services and workers."
 version: "2026.09"
-last-reviewed: "2026-10-13"
+last-reviewed: "2026-11-14"
 guide-id: nodejs
 requires-gates:
   - threat-boundary
@@ -148,9 +148,12 @@ descendants; unrelated frontend packages remain isolated.
 
 ## 3. Runtime and module-system decisions
 
-As of 2026-10-13, Node.js 26 is Current and Node.js 24 is the latest LTS
-release. Production deployments should use an Active or Maintenance LTS line;
-check the official release schedule again when selecting a runtime.
+As of 2026-11-14, Node.js 26 is Active LTS (promoted 2026-10-28) and Node.js 24
+is Maintenance LTS. Node.js 26 is the last release on the twice-yearly
+schedule; from Node.js 27 the project ships one major per year (April) and
+promotes it to LTS each October. Production deployments should use an Active or
+Maintenance LTS line; check the official release schedule again when selecting
+a runtime.
 
 Record the actual runtime range before changing APIs:
 
