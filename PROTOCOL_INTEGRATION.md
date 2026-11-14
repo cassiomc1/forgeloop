@@ -8,6 +8,27 @@ an execution environment appears in a compatibility list.
 
 <!-- FORGELOOP_PROJECT_PROTOCOL=REQUIRED -->
 
+## Navigation
+
+- [Universal applicability](#universal-applicability)
+- [Integration levels](#integration-levels)
+- [Discovery surfaces](#discovery-surfaces)
+- [Adaptive execution profiles and context presentation](#adaptive-execution-profiles-and-context-presentation)
+- [Capability negotiation](#capability-negotiation)
+- [CLI resolution policy](#cli-resolution-policy)
+- [Protocol-owned state and no-simulation policy](#protocol-owned-state-and-no-simulation-policy)
+- [Trusted command provenance](#trusted-command-provenance)
+- [Missing tool capability](#missing-tool-capability)
+- [Optional capability extensions](#optional-capability-extensions)
+- [Delegation scope](#delegation-scope)
+- [Instruction precedence](#instruction-precedence)
+- [External workflow interaction](#external-workflow-interaction)
+- [Harness and session continuity](#harness-and-session-continuity)
+- [Structural quality integration](#structural-quality-integration)
+- [Executable Policy Protocol Integration](#executable-policy-protocol-integration)
+- [Structured integration surfaces](#structured-integration-surfaces)
+- [Durable actions and authority boundary](#durable-actions-and-authority-boundary)
+
 ## Universal applicability
 
 If the active execution environment discovers a ForgeLoop project adapter,
