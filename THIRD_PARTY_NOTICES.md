@@ -225,6 +225,7 @@ The contextual frontend taste guide is informed by Taste Skill:
 
 - Taste Skill, Copyright (c) 2026 Leonxlnx, MIT License.
 - Source: <https://github.com/leonxlnx/taste-skill>
+- Project site: <https://www.tasteskill.dev/>
 - Reviewed baseline: [v2.0.0](https://github.com/Leonxlnx/taste-skill/tree/v2.0.0/skills/taste-skill),
   released 2026-10-13; adaptation reviewed 2026-10-16.
 

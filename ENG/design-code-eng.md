@@ -3,7 +3,7 @@ name: design-code-eng
 language: en
 description: "Visual direction, UX, motion, and perceived performance for premium digital experiences."
 version: "2026.09"
-last-reviewed: "2026-10-17"
+last-reviewed: "2026-11-14"
 guide-id: design
 requires-gates:
   - design
@@ -29,7 +29,7 @@ Adopt this order as the default when creating a page from scratch; document an e
 5. **Reuse components and their interaction states**; adapt sample specifications to the product.
 6. **Add purposeful motion** only when it helps the experience, with reduced-motion and static fallbacks.
 7. **Run the Anti-Slop Checklist** before considering it ready.
-8. **Audit and polish the affected experience** with the available project tools and direct browser/device inspection. Impeccable is an optional aid when installed and relevant; its availability is not a completion gate. Preserve the design system and recheck the changed states.
+8. **Audit and polish the affected experience** with the available project tools and direct browser/device inspection. When [Impeccable](https://impeccable.style/) is already available, its `audit` and `critique` commands can surface quality issues and `polish`/`harden` can address them in the changed scope; record the Impeccable version and the commands actually run. It is an optional aid: its availability or findings are not a completion gate, and it must not override the project's design system. Preserve the design system and recheck the changed states.
 
 Keep color and type decisions intentional. A familiar font, framework default, or repeated component is not a defect by itself; assess its fit, readability, hierarchy, and consistency in the actual interface.
 
@@ -594,7 +594,7 @@ For React-specific supplemental diagnostics after implementation, including desi
 - [ ] Where the platform exposes contrast/transparency preferences, including `prefers-contrast` or `forced-colors` when applicable, the opaque/less-transparent variant works; without a reliable media query, there is an equivalent in-product control.
 - [ ] No item from the "Blacklist" is present.
 - [ ] Tested at 320 CSS px reflow and desktop (1440px).
-- [ ] Reviewed the affected interface and states with available tools and browser/device evidence; optional Impeccable findings were addressed when that tool was used.
+- [ ] Reviewed the affected interface and states with available tools and browser/device evidence; optional Impeccable findings (with the version and commands run) were addressed when that tool was used.
 
 ---
 
@@ -696,7 +696,7 @@ For React-specific supplemental diagnostics after implementation, including desi
 
 ## Sources and References (Base Skills)
 
-- TasteSkill / Anti-Slop: https://github.com/Leonxlnx/taste-skill | https://www.tasteskill.dev/
+- Taste Skill (art direction and anti-slop review; MIT; adapted and version-pinned in the [Taste frontend guide](./taste-frontend-eng.md)): https://www.tasteskill.dev/ | https://github.com/Leonxlnx/taste-skill
 - Emil Kowalski (Design Engineering / Motion): https://github.com/emilkowalski/skills
 - GSAP: https://github.com/greensock/gsap-skills
 - ScrollWorld: https://github.com/oso95/scroll-world
@@ -716,7 +716,7 @@ For React-specific supplemental diagnostics after implementation, including desi
 - Pointer enhancement (only when `(hover: hover) and (pointer: fine)`; retain native controls/default cursor and equivalent tap interaction for touch/coarse pointers): https://cursify.ui-layouts.com/
 - Typography discovery (verify each font's author, license, weights, and hosting rights): https://uncut.wtf/
 - Creative coding and WebGL (semantic fallback, pause/offscreen behavior, performance budget, and asset/operator provenance): https://cables.gl/
-- Impeccable (interface auditing and polish): https://impeccable.style/
+- Impeccable (design vocabulary and commands for building, auditing, refining, hardening, and documenting interfaces; Apache-2.0; referenced, not adapted; v4.9.1 current as of 2026-11-14): https://impeccable.style/ | https://github.com/pbakaus/impeccable | [command reference](https://impeccable.style/docs)
 - Gradient Studio (external procedural gradient exploration with CSS, Tailwind, and SCSS export by Amit Gajare; validate current provenance, reuse terms, output contrast, and performance budgets before adoption): https://gradientsaas.blogspot.com/
 - Liquid Glass Design (an independent inspiration gallery, not affiliated with Apple; not a specification or asset library): https://liquidglassdesign.com/
   - Guide to the material, glassmorphism, and web implementation: https://liquidglassdesign.com/what-is-liquid-glass
