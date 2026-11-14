@@ -4,6 +4,29 @@ This is the current release checklist for the PolyForm Noncommercial-licensed
 `@cassiomc1/forgeloop` package. It is a preparation and verification checklist;
 it does not authorize publication.
 
+## Stable 2.1.0 candidate — 2026-11-14
+
+`2.1.0` is a minor release of the core package (the published error registry
+gains every emitted code, 159 of them as `PUBLIC_UNCLASSIFIED`). Its runtime
+changes are bound by
+[`stable-2.1.0-writer-review.json.gz`](../benchmarks/storage-sqlite/stable-2.1.0-writer-review.json.gz),
+a delta review against 2.0.0 with identical filesystem bindings and an explicit
+disposition for every changed, added and removed module.
+`scripts/check-release-channel.mjs` selects the review by exact package version
+and never falls back to an earlier report.
+
+Before dispatching `npm-publish.yml`: merge the release commit to `main`, tag it
+`v2.1.0`, and dispatch from that tag with channel `latest` and confirmation
+`PUBLISH PUBLIC PACKAGE`. Hosted parity, native Windows, rollback drills and
+registry-user audits from 2.0.0 are not carried forward as evidence for these
+bytes; the review records them as not repeated or post-publication. After
+publication run:
+
+```bash
+npm view @cassiomc1/forgeloop version dist-tags --json
+npm run release:identity -- --version 2.1.0 --release-commit <release-tag-commit>
+```
+
 ## Stable 2.0.0 publication — 2026-10-18
 
 The published core package is `2.0.0` on npm `latest`, with Node.js
@@ -248,8 +271,7 @@ deployment, and live data migration remain separate actions.
       other `src/config/guides.json` path; no repository-only guide state is
       packaged.
 - [ ] Every maintained `src/**/*.js` module is present in the candidate
-      tarball; only the four explicitly retired compatibility helpers are
-      excluded.
+      tarball; no runtime module is excluded.
 
 ## Protocol and attestation
 

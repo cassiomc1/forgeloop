@@ -38,10 +38,9 @@ The published tarball includes the following consumer-facing groups:
 
 - **Runtime and protocol:** every maintained JavaScript module under `src/`,
   the guide registry, protocol templates, JSON schemas, completions, and the
-  generic CI verifier. Four retired compatibility helpers remain in the
-  repository for historical context and are explicitly excluded:
-  `src/core/cli-metadata.js`, `src/core/decision-classification.js`,
-  `src/core/gates.js`, and `src/core/workflow-compatibility.js`.
+  generic CI verifier. The four retired compatibility helpers that 2.0.0
+  excluded (`cli-metadata`, `decision-classification`, `gates`,
+  `workflow-compatibility`) were removed from `src/core` in 2.1.0.
   This includes the provider-neutral Repository Index runtime and its pinned
   `src/repository-index/tgrep-manifest.json`; native engine binaries are
   provisioned outside the npm tarball.
@@ -129,7 +128,7 @@ The tarball intentionally omits repository-only material:
 
 The package test checks all registered guide paths and these exclusion classes. It
 also enumerates `src/**/*.js` and fails if a maintained runtime module is
-missing from the candidate tarball or if a retired helper is reintroduced.
+missing from the candidate tarball.
 The repository index remains a catalog: links from `DOCS_INDEX.md` to tests,
 historical plans, and source trees may intentionally resolve only in the full
 repository and are not package dependencies. The canonical documentation and
