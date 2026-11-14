@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.1.0 - 2026-11-14
 
 - Extract the bounded pubspec YAML and .NET project XML parsers into
   `src/core/parsers/`, cap inline flow-map nesting at 32 levels (deep nesting
@@ -21,6 +21,17 @@
   read-only authority and its separate unsigned-preview release state.
 - Record stable npm identity, all three fresh latest-install audits and final
   hosted parity receipts without extending power-loss or production claims.
+- Publish every error code emitted under `src/` in the `protocol-info` error
+  registry: 159 previously unlisted codes ship as `PUBLIC_UNCLASSIFIED` (no
+  stable compatibility promise), and a test now fails on registry drift.
+- Bind stable storage admission to the exact package version: 2.1.0 carries its
+  own delta writer review (identical filesystem bindings, explicit dispositions
+  for every changed module) and the gate never falls back to an earlier report.
+- Add navigation to `PROTOCOL_INTEGRATION.md`; create task contracts through
+  `contract-create --contract-file` in the getting-started guide.
+- Reference Taste Skill, Impeccable and GoogleChrome Modern Web Guidance in the
+  design guides with provenance, licenses and versions; upstream Taste Skill
+  tools now require 2.1.5 or later.
 
 ## 2.0.0 - 2026-10-18
 
