@@ -1,14 +1,31 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { copyFileSync, cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, readFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, readFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
 import { verifyStableStorageReview } from "../scripts/verify-stable-storage-review.mjs";
+
+// The retained review binds the source published as v2.0.0, not the moving
+// working tree. Unreleased source changes are admitted for development; the
+// stable publication gate (check-release-channel.mjs) still verifies HEAD and
+// refuses a stable release until a fresh writer review covers the change set.
+const REVIEWED_RELEASE_TAG = "v2.0.0";
+
+function extractReviewedSource(root) {
+  try {
+    execFileSync("git", ["rev-parse", "--verify", `${REVIEWED_RELEASE_TAG}^{commit}`], { stdio: "pipe" });
+  } catch {
+    throw new Error(`${REVIEWED_RELEASE_TAG} is required to verify the retained storage review; fetch tags (fetch-depth: 0)`);
+  }
+  const archive = execFileSync("git", ["archive", "--format=tar", REVIEWED_RELEASE_TAG, "src", "integrations/mcp/src"], { maxBuffer: 256 * 1024 * 1024 });
+  execFileSync("tar", ["-xf", "-", "-C", root], { input: archive });
+}
 
 test("stable storage admission binds complete runtime membership and reviewed source", () => {
   const root = mkdtempSync(path.join(os.tmpdir(), "forgeloop-reviewed-source-"));
   try {
-    for (const directory of ["src", "integrations/mcp/src"]) cpSync(directory, path.join(root, directory), { recursive: true });
+    extractReviewedSource(root);
     mkdirSync(path.join(root, "benchmarks/storage-sqlite"), { recursive: true });
     const report = "benchmarks/storage-sqlite/stable-2.0.0-writer-review.json.gz";
     copyFileSync(report, path.join(root, report));

@@ -6,6 +6,8 @@ import {
   OBSOLETE_LICENSE_PATHS,
   IGNORE_SENTINELS,
   REPOSITORY_ONLY_VISUALS,
+  STORAGE_EVIDENCE_FILE_BUDGET,
+  STORAGE_EVIDENCE_PREFIX,
   validateRepositoryHygiene,
 } from "../scripts/check-repository-hygiene.mjs";
 
@@ -83,4 +85,13 @@ test("repository hygiene rejects tracked scratch outputs and missing ignore cove
   }));
   assert.ok(result.errors.includes("REPOSITORY_HYGIENE_TRACKED_SCRATCH_PATH: package-dry-run.json"));
   assert.ok(result.errors.includes("REPOSITORY_HYGIENE_IGNORE_RULE_MISSING: coverage-data/example.json"));
+});
+
+test("storage evidence is budgeted and rejects ambiguous compressed extensions", () => {
+  const atBudget = Array.from({ length: STORAGE_EVIDENCE_FILE_BUDGET }, (_, index) => `${STORAGE_EVIDENCE_PREFIX}run-${index}.json.gz`);
+  assert.equal(validateRepositoryHygiene(validInput({ trackedPaths: [...validInput().trackedPaths, ...atBudget] })).valid, true);
+  const overBudget = validateRepositoryHygiene(validInput({ trackedPaths: [...validInput().trackedPaths, ...atBudget, `${STORAGE_EVIDENCE_PREFIX}extra.json.gz`] }));
+  assert.ok(overBudget.errors.some((error) => error.startsWith("REPOSITORY_HYGIENE_STORAGE_EVIDENCE_BUDGET")));
+  const ambiguous = validateRepositoryHygiene(validInput({ trackedPaths: [...validInput().trackedPaths, `${STORAGE_EVIDENCE_PREFIX}run.json.gz.json`] }));
+  assert.deepEqual(ambiguous.errors, [`REPOSITORY_HYGIENE_AMBIGUOUS_EVIDENCE_EXTENSION: ${STORAGE_EVIDENCE_PREFIX}run.json.gz.json`]);
 });

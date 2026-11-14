@@ -135,10 +135,8 @@ never documentation, Git or task artifacts. Confirm the registry result
 before reporting success. The version remains an RC; promotion does not
 establish stable SQLite acceptance or production readiness.
 
-The older `promote-latest` operation in `npm-publish.yml` and
-`scripts/promote-rc-latest.mjs` is hard-bound to RC2. It is historical tooling,
-not an RC4 promotion path; do not dispatch `POINT LATEST TO RC2` for the
-current release. Its exact-identity and tag guards are retained.
+The RC2-bound `promote-latest` operation and its promotion script were retired
+after the stable 2.0.0 publication; `npm-publish.yml` now only publishes.
 
 ## ForgeLoop 2.0.0 candidate scope
 

@@ -3,7 +3,7 @@ name: dotnet-aspnetcore-development-eng
 language: en
 description: "Specialist guide for architecture, implementation, testing, performance, security, data access, hosting, observability, and release of production .NET and ASP.NET Core applications."
 version: "2026.09"
-last-reviewed: "2026-10-13"
+last-reviewed: "2026-11-14"
 guide-id: dotnet
 ---
 
@@ -75,9 +75,13 @@ Use structural project evidence for routing, but use source and configuration in
 
 ## 4. Version-sensitive decisions
 
-As of 2026-10-13, .NET 10 is the current LTS line; its latest patch is 10.0.12.
-.NET 9 is in maintenance and reaches end of support on 2026-11-10. These are
-dated references only: use the repository's pinned SDK and target framework.
+.NET 10 is the current LTS line (supported until 2028-11-14; latest patch 10.0.15). .NET 8 and .NET 9
+both reached end of support on 2026-11-10 and no longer receive security
+updates; treat a repository still targeting them as carrying a supported-runtime
+risk, and plan migration explicitly rather than as incidental cleanup. These are
+dated references (reviewed 2026-11-14): use the repository's pinned SDK and
+target framework, and check the official .NET support policy for the current
+patch.
 
 Treat these as version-sensitive:
 

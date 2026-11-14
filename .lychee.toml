@@ -42,6 +42,9 @@ exclude = [
   # Keep the references visible while checking every other URL normally.
   '^https://uncut\.wtf/$',
   '^https://gameaccessibilityguidelines\.com/$',
+  # open-std.org (ISO WG14/WG21) timed out from CI runners and locally on
+  # 2026-11-14; keep the official C/C++ committee references visible.
+  '^https://www\.open-std\.org/jtc1/sc22/wg(?:14|21)/(?:www/projects)?$',
 ]
 
 [hosts."docs.ansible.com"]

@@ -31,12 +31,6 @@ test("package engine and minimum platform CI agree with SQLite runtime admission
     assert.match(job.steps.at(-1).run, /tests\/storage-operational-bootstrap\.test\.js/);
   }
 });
-const RETIRED_RUNTIME_SOURCES = new Set([
-  "src/core/cli-metadata.js",
-  "src/core/decision-classification.js",
-  "src/core/gates.js",
-  "src/core/workflow-compatibility.js",
-]);
 
 async function runtimeSourcePaths(directory = "src") {
   const paths = [];
@@ -237,10 +231,6 @@ test("npm tarball contains the CLI, templates, published scenarios, and license 
   }
   for (const excluded of [
     "src/core/agent-support.js",
-    "src/core/gates.js",
-    "src/core/decision-classification.js",
-    "src/core/workflow-compatibility.js",
-    "src/core/cli-metadata.js",
 
     "tests/cli.test.js",
     "scripts/scan_secrets.py",
@@ -297,14 +287,7 @@ test("npm tarball ships every maintained runtime module", async () => {
 
   assert.ok(runtimeSources.length > 0, "src must contain runtime JavaScript modules");
   for (const sourcePath of runtimeSources) {
-    const retired = RETIRED_RUNTIME_SOURCES.has(sourcePath);
-    assert.equal(
-      listing.includes(sourcePath),
-      !retired,
-      retired
-        ? `retired runtime module was unexpectedly packaged: ${sourcePath}`
-        : `maintained runtime module is missing from the package: ${sourcePath}`,
-    );
+    assert.ok(listing.includes(sourcePath), `maintained runtime module is missing from the package: ${sourcePath}`);
   }
 });
 
@@ -377,8 +360,9 @@ test("PR CI shards one covered Node execution and targets Node compatibility", a
   assert.equal(core.jobs.coverage, undefined, "coverage must not rerun the full suite in a separate job");
   assert.match(core.jobs["coverage-report"].steps.find(step => step.name === "Enforce aggregate coverage").run, /npm run coverage:report/);
   const setupCondition = coreJob.steps.find(step => step.name === "Install locked Node toolchain").if;
-  assert.match(setupCondition, /needs\.classify\.outputs\.source/);
-  assert.match(setupCondition, /needs\.classify\.outputs\.node_compat/);
+  assert.equal(setupCondition, "${{ env.CORE_SETUP == 'true' }}", "setup steps must share the single job-level applicability gate");
+  assert.match(coreJob.env.CORE_SETUP, /needs\.classify\.outputs\.source/);
+  assert.match(coreJob.env.CORE_SETUP, /needs\.classify\.outputs\.node_compat/);
   const minimumNodeStep = coreJob.steps.find(step => step.name.includes("targeted Minimum Node 24.19.0"));
   assert.match(minimumNodeStep.if, /needs\.classify\.outputs\.source/);
   assert.match(minimumNodeStep.if, /needs\.classify\.outputs\.node_compat/);

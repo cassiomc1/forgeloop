@@ -8,6 +8,19 @@ import { NEXT_ACTIONS, commandFor, decision, recordTerminalResultCommandSpec, re
 import { artifactError, checkListReasons, loadArtifact, requirementsAndCoverage } from "./next-action-artifacts.js";
 import { reviewCorrectionAction } from "./next-action-review-correction.js";
 
+
+// Only an absent receipt is an expected recovery input; corrupt or unreadable
+// storage propagates so the caller fails closed.
+async function readRecoveryReceipt(target, receiptRel, packageRoot) {
+  try {
+    const receiptArtifact = await readJsonArtifact(target, receiptRel, "execution-receipt", packageRoot);
+    return receiptArtifact?.value ?? null;
+  } catch (error) {
+    if (error?.code !== "ARTIFACT_MISSING") throw error;
+    return null;
+  }
+}
+
 export async function resolveReviewingPhase(options) {
   const { target, packageRoot, explicitTaskId, state, context, requiredArtifacts } = options;
   const invalidChecks = checkListReasons(state);
@@ -40,11 +53,7 @@ async function resolveReviewingEvidence({ state, context, requiredArtifacts, tar
       if (state.lastCompletionAttempt?.status === "REJECTED") {
         try {
           const ledger = await validateEventLedger(target, packageRoot, { taskId: explicitTaskId, eventsPath: eventsRel });
-          let currentReceipt = null;
-          try {
-            const receiptArtifact = await readJsonArtifact(target, receiptRel, "execution-receipt", packageRoot);
-            currentReceipt = receiptArtifact?.value;
-          } catch {}
+          const currentReceipt = await readRecoveryReceipt(target, receiptRel, packageRoot);
           const recoveryAuth = validateCompletionRecoveryAuthorization({
             state,
             receipt: currentReceipt,

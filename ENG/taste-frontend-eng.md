@@ -3,7 +3,7 @@ name: taste-frontend-eng
 language: en
 description: "Contextual visual-taste review for premium frontend and brand-heavy work."
 version: "2026.09"
-last-reviewed: "2026-10-16"
+last-reviewed: "2026-11-14"
 guide-id: taste
 ---
 
@@ -15,8 +15,9 @@ ForgeLoop router only when the work has that visual context. It is advisory: it
 does not create an approval gate, block an autonomous task, or require a
 specific framework, font, layout, animation library, or visual tool.
 
-The upstream inspiration is Taste Skill's design-read and anti-default
-approach. ForgeLoop keeps the useful review vocabulary while applying its own
+The upstream inspiration is [Taste Skill](https://www.tasteskill.dev/)
+([source](https://github.com/Leonxlnx/taste-skill), MIT) and its design-read and
+anti-default approach. ForgeLoop keeps the useful review vocabulary while applying its own
 protocol boundaries: user evidence, accessibility, performance, security, and
 the active product constraints have priority over aesthetic preference.
 
@@ -29,6 +30,15 @@ and [changelog](https://github.com/Leonxlnx/taste-skill/blob/v2.0.0/CHANGELOG.md
 This identifies the upstream reference, not full feature parity or automatic
 synchronization. The guide's frontmatter version follows ForgeLoop's guide
 versioning separately.
+
+As of 2026-11-14 the upstream repository is at
+[v2.5.1](https://github.com/Leonxlnx/taste-skill/releases/tag/v2.5.1); that
+release is not yet reviewed for this adaptation, so the guidance above still
+reflects v2.0.0. When the optional upstream tools are used, use a copy whose
+`design-taste-frontend` skill is 2.1.5 or later (see the
+[upstream changelog](https://www.tasteskill.dev/changelog)): 2.1.5 escapes text
+that `charts.js` and the split-heading fallback insert from user data, and
+2.1.4 stops one inspector run from deleting another run's browser profile.
 
 ForgeLoop adapts the content inventory, subject-specific concept, and screenshot
 correction practices. It deliberately keeps direction selection contextual
@@ -229,7 +239,9 @@ selected copy's requirements and output paths before use. Upstream tools may
 write project artifacts and user-level history outside ForgeLoop's evidence
 store; those files do not become attested evidence merely by existing.
 
-Prefer an available equivalent when it supports the same task checks. Treat
+Prefer an available equivalent when it supports the same task checks; for
+example, [Impeccable](https://impeccable.style/)'s `audit` and `critique`
+commands cover a comparable interface review (see the Design guide). Treat
 upstream style findings as contextual recommendations, not new ForgeLoop gates.
 For external media, confirm the exact asset's license, attribution, and
 relevance; search results alone do not establish reuse rights. Identify found
@@ -242,7 +254,9 @@ evidence `NOT_VERIFIED` without claiming upstream tool coverage.
 For an existing interface, scan first and classify each issue as hierarchy,
 typography, color/contrast, composition, content, interaction, responsive
 behavior, accessibility, performance, or evidence. Fix the highest-leverage
-issues in small coherent batches. Re-read the whole system after each batch so
+issues in small coherent batches. An optional interface auditor such as
+Impeccable's `audit`/`critique` can seed this scan when it is already
+available; its findings are recommendations, not ForgeLoop evidence. Re-read the whole system after each batch so
 local polish does not create a new inconsistency elsewhere.
 
 The final decision remains protocol-owned: this guide can recommend a visual

@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 
 import { execFileSync, spawn } from "node:child_process";
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const npmCommand = (platform = process.platform) => platform === "win32" ? "npm.cmd" : "npm";
 const pythonCommand = (platform = process.platform) => platform === "win32" ? "py" : "python3";
@@ -188,6 +191,25 @@ function run(command, tier) {
   });
 }
 
+/**
+ * Lists declared dependencies that are not installed under `root/node_modules`.
+ * Without this check a missing `npm ci` surfaces as unrelated test failures.
+ */
+export function missingDependencies(root = process.cwd(), exists = existsSync) {
+  let manifest;
+  try {
+    manifest = JSON.parse(readFileSync(path.join(root, "package.json"), "utf8"));
+  } catch {
+    return [];
+  }
+  const names = Object.keys({ ...manifest.dependencies, ...manifest.devDependencies });
+  return names.filter((name) => !exists(path.join(root, "node_modules", ...name.split("/"), "package.json"))).sort();
+}
+
+export function isDirectInvocation(argvPath = process.argv[1], moduleUrl = import.meta.url) {
+  return typeof argvPath === "string" && path.resolve(argvPath) === fileURLToPath(moduleUrl);
+}
+
 async function main(argv = process.argv.slice(2)) {
   const options = parseArguments(argv);
   const commands = getTierCommands(options.tier, process.platform);
@@ -199,6 +221,11 @@ async function main(argv = process.argv.slice(2)) {
     return 0;
   }
   printEnvironment(options.tier);
+  const missing = missingDependencies();
+  if (missing.length > 0) {
+    console.error(`NOT_VERIFIED dependencies: not installed (${missing.join(", ")}); run \`npm ci --ignore-scripts\` first`);
+    return 2;
+  }
   for (const command of commands) {
     const status = await run(command, options.tier);
     if (status !== 0) return status;
@@ -206,7 +233,7 @@ async function main(argv = process.argv.slice(2)) {
   return 0;
 }
 
-if (process.argv[1]?.endsWith("/run-validation.mjs")) {
+if (isDirectInvocation()) {
   try {
     process.exitCode = await main();
   } catch (error) {

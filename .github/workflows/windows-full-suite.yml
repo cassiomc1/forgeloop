@@ -150,7 +150,7 @@ jobs:
         run: node scripts/drill-storage-public-rollback.mjs --legacy-root=../legacy --output="${{ runner.temp }}/sqlite-public-rollback-${{ github.run_id }}-${{ github.run_attempt }}"
       - name: Retain complete drill evidence
         if: ${{ always() && inputs.suite == 'public-rollback' }}
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: sqlite-public-rollback-${{ matrix.os }}
           path: ${{ runner.temp }}/sqlite-public-rollback-${{ github.run_id }}-${{ github.run_attempt }}
@@ -161,7 +161,7 @@ jobs:
         run: node scripts/ci/record-old-client-exclusion-evidence.mjs --legacy-root=../legacy --output="${{ runner.temp }}/sqlite-old-client-${{ github.run_id }}-${{ github.run_attempt }}"
       - name: Retain complete old-client exclusion evidence
         if: ${{ always() && inputs.suite == 'old-client' }}
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: sqlite-old-client-${{ matrix.os }}
           path: ${{ runner.temp }}/sqlite-old-client-${{ github.run_id }}-${{ github.run_attempt }}
