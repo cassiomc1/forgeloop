@@ -324,6 +324,7 @@ appearance but cannot prove the state behavior or accessibility.
 
 **UI libraries and data visualization**
 
+- Before adding JavaScript or a dependency for a UI behavior the platform may already provide (dialogs, popovers, tooltips via anchor positioning, view/entry-exit transitions, container queries, `field-sizing`, `:user-invalid` validation, scroll-driven effects), consult [Modern Web Guidance](https://developer.chrome.com/docs/modern-web-guidance) for the current native pattern and its fallback. Confirm each feature's Baseline status against the project's supported browser matrix, keep a lightweight fallback or progressive enhancement where support is incomplete, and preserve the design system and accessibility semantics. It is optional reference material: do not auto-install its CLI or skill, and treat its guidance as advice, not ForgeLoop evidence.
 - For accessible, composable, and customizable web components, consult [shadcn/ui](https://ui.shadcn.com/); adapt tokens, states, and composition to the project's visual system instead of copying defaults without intent.
 - For charts and data visualization, consult [TanStack Charts](https://github.com/TanStack/charts); preserve responsiveness, contrast, keyboard readability, and never rely on color alone to communicate series or states.
 - For subtle interaction sounds, consult [Cuelume](https://cuelume-site.pages.dev/); provide volume/mute controls and never rely on audio to communicate essential information.
@@ -706,6 +707,7 @@ For React-specific supplemental diagnostics after implementation, including desi
 - Apple Human Interface Guidelines (iOS/macOS): https://developer.apple.com/design/human-interface-guidelines/
 - Material Design 3 (Android): https://m3.material.io/
 - Microsoft Fluent Design / WinUI 3 (Windows): https://learn.microsoft.com/windows/apps/design/
+- Modern Web Guidance (native web-platform patterns, fallbacks, and Baseline browser-compatibility guidance for coding agents; stewarded by the Chrome, Edge, Firefox, and MDN teams; Apache-2.0; referenced, not adapted; v1.0.0 current as of 2026-11-14): https://developer.chrome.com/docs/modern-web-guidance | https://github.com/GoogleChrome/modern-web-guidance
 - shadcn/ui (accessible, composable web components): https://ui.shadcn.com/
 - TanStack Charts (data visualization): https://github.com/TanStack/charts
 - Cuelume (web interaction sounds): https://cuelume-site.pages.dev/

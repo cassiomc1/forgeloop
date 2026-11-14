@@ -104,6 +104,6 @@ execution.
 
 - [SQLite SQL language](https://www.sqlite.org/lang.html)
 - [PostgreSQL documentation](https://www.postgresql.org/docs/)
-- [MySQL reference manuals](https://dev.mysql.com/doc/)
+- [MySQL 9.7 reference manual](https://docs.oracle.com/cd/E17952_01/mysql-9.7-en/)
 - [Microsoft T-SQL reference](https://learn.microsoft.com/sql/t-sql/)
 - [Oracle Database SQL Language Reference](https://docs.oracle.com/en/database/oracle/oracle-database/)
