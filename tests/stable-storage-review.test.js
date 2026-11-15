@@ -54,10 +54,41 @@ test("stable storage admission selects the exact version's review and never fall
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
 
-test("the current stable package version carries a valid review of the current runtime", () => {
+function releaseTagExists(tag) {
+  try {
+    execFileSync("git", ["rev-parse", "--verify", `${tag}^{commit}`], { stdio: "pipe" });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// Before the stable tag exists (release preparation) the review must cover the
+// live runtime. Once the version is tagged, the review is bound to the tagged
+// tree and unreleased development changes are admitted; publication admission
+// (check-release-channel.mjs) still refuses a stable release without a review
+// of HEAD.
+test("the current stable package version carries a valid review of its runtime", () => {
   const version = JSON.parse(readFileSync("package.json", "utf8")).version;
   if (!/^\d+\.\d+\.\d+$/u.test(version) || version === "2.0.0") return;
-  const result = verifyStableStorageReview(process.cwd(), version);
-  assert.equal(result.valid, true);
-  assert.equal(result.version, version);
+  const tag = `v${version}`;
+  if (!releaseTagExists(tag)) {
+    const result = verifyStableStorageReview(process.cwd(), version);
+    assert.equal(result.valid, true);
+    assert.equal(result.version, version);
+    return;
+  }
+  const root = mkdtempSync(path.join(os.tmpdir(), "forgeloop-tagged-source-"));
+  try {
+    const archive = execFileSync("git", ["archive", "--format=tar", tag, "src", "integrations/mcp/src"], { maxBuffer: 256 * 1024 * 1024 });
+    execFileSync("tar", ["-xf", "-", "-C", root], { input: archive });
+    mkdirSync(path.join(root, "benchmarks/storage-sqlite"), { recursive: true });
+    copyFileSync(stableStorageReviewPath(version), path.join(root, stableStorageReviewPath(version)));
+    writeFileSync(path.join(root, "package.json"), JSON.stringify({ version }));
+    const result = verifyStableStorageReview(root, version);
+    assert.equal(result.valid, true);
+    assert.equal(result.version, version);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });

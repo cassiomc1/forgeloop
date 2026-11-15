@@ -318,6 +318,11 @@ export const COMMAND_HANDLERS = Object.freeze({
     renderJsonOr(options, result, (await import("./commands/semantic-plan.js")).formatSemanticPlanResult);
     return 0;
   },
+  assess: async ({ target, options }) => {
+    const { result } = await COMMAND_EXECUTORS.assess({ target, options });
+    renderJsonOr(options, result, (await import("./commands/assess.js")).formatAssessResult);
+    return 0;
+  },
   "test-inventory": async ({ target, options }) => {
     const { result } = await COMMAND_EXECUTORS["test-inventory"]({ target, options });
     renderJsonOr(options, result, (await import("./commands/test-inventory.js")).formatTestInventoryResult);

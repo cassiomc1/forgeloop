@@ -256,6 +256,17 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
     writes: [], removes: [], mayExecuteExternalProcess: false,
     description: "Discovers tests deterministically and assigns stable semantic test IDs without pruning authority.",
   }),
+  assess: Object.freeze({
+    name: "assess",
+    category: "diagnostics",
+    mutation: "READ_ONLY",
+    options: Object.freeze({
+      ...CLI_COMMON_OPTIONS,
+      "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit the repository assessment plan as JSON" }),
+    }),
+    writes: [], removes: [], mayExecuteExternalProcess: false,
+    description: "Assesses an existing repository read-only: stack, areas, tests, candidate checks, observed gaps, and a guide-routed review plan without executing target code.",
+  }),
   "test-utility": Object.freeze({
     name: "test-utility",
     category: "diagnostics",

@@ -13,11 +13,12 @@
 
 ForgeLoop governs AI-assisted engineering. Jev supplies bounded semantic input; the host model implements changes. ForgeLoop owns lifecycle, claims, gates, evidence, completion, recovery, and publication truth.
 
-Sources: [`DOCS_INDEX.md`](./DOCS_INDEX.md); canonical [`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md); discovery [`PROTOCOL_INTEGRATION.md`](./PROTOCOL_INTEGRATION.md); project facts [`PROJECT_PROFILE.md`](./PROJECT_PROFILE.md); guides [`GUIDE_ROUTER.md`](./GUIDE_ROUTER.md).
+Sources: [`DOCS_INDEX.md`](./DOCS_INDEX.md); project facts [`PROJECT_PROFILE.md`](./PROJECT_PROFILE.md); guides [`GUIDE_ROUTER.md`](./GUIDE_ROUTER.md).
 
 ## Where should I start?
 
 - **New to ForgeLoop** → [`docs/GETTING_STARTED.md`](./docs/GETTING_STARTED.md)
+- **Improve an existing repository** → [`docs/ASSESSMENT.md`](./docs/ASSESSMENT.md)
 - **Inspect a real ForgeLoop execution** → [repository PoC](https://github.com/cassiomc1/forgeloop/blob/main/poc/README.md)
 - **Full protocol specification** → [`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md)
 - **Integrating an AI harness** → [`PROTOCOL_INTEGRATION.md`](./PROTOCOL_INTEGRATION.md)
@@ -36,7 +37,7 @@ Sources: [`DOCS_INDEX.md`](./DOCS_INDEX.md); canonical [`LOOP_ENGINEERING.md`](.
 
 ## Real execution proof
 
-The repository-only [execution PoC](https://github.com/cassiomc1/forgeloop/blob/main/poc/README.md) demonstrates workload, protocol artifacts, trusted provenance, receipts, evidence, audit, and validator-backed `COMPLETE / VALID`.
+The repository-only [execution PoC](https://github.com/cassiomc1/forgeloop/blob/main/poc/README.md) reaches validator-backed `COMPLETE / VALID` with provenance, receipts, and audit.
 
 - [Canonical technical audit](https://github.com/cassiomc1/forgeloop/blob/main/poc/reports/poc-20260826-real-execution-technical-audit-v2.md)
 - [Evidence package](https://github.com/cassiomc1/forgeloop/tree/main/poc/evidence/poc-20260826-real-execution/)
@@ -78,14 +79,14 @@ See the [23-guide maintenance map](./docs/GUIDE_MAINTENANCE.md) for review scope
 
 ## Distribution and license
 
-GitHub hosts source and issues. The core npm package is publicly available;
-the MCP companion retains restricted distribution. Stable `2.1.0` is published
-on npm `latest` with provenance and verified release identity.
+GitHub hosts source and issues. The core npm package is public; the MCP
+companion has restricted distribution. Stable `2.1.0` is on npm `latest` with
+provenance and verified release identity.
 ForgeLoop-owned source and documentation are licensed under the
 [PolyForm Noncommercial License 1.0.0](./LICENSE): free for noncommercial use.
 Commercial use requires a [commercial license](https://forgeloop.monster/#pricing)
 at USD 199 per developer per year ([buy](https://buy.stripe.com/dRm14n8AQ3ra2OodkT43S00)).
-Third-party notices are documented in
+Third-party notices:
 [`THIRD_PARTY_NOTICES.md`](./THIRD_PARTY_NOTICES.md).
 
 ## Quickstart
