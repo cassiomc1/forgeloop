@@ -45,6 +45,9 @@ exclude = [
   # open-std.org (ISO WG14/WG21) timed out from CI runners and locally on
   # 2026-11-14; keep the official C/C++ committee references visible.
   '^https://www\.open-std\.org/jtc1/sc22/wg(?:14|21)/(?:www/projects)?$',
+  # cmake.org's TLS certificate expired on 2026-11-15 07:06 GMT. Temporary:
+  # remove once `curl -I https://cmake.org/` verifies again.
+  '^https://cmake\.org/cmake/help/latest/command/project\.html$',
 ]
 
 [hosts."docs.ansible.com"]
