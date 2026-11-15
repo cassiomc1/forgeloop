@@ -28,7 +28,7 @@ forgeloop assess --path ../existing-app
 ## Output
 
 | Field | Meaning |
-|---|---|
+| --- | --- |
 | `facts.stack` | Project detection result. `NOT_DETERMINED` when detection finds no project or exhausts its traversal budget; this is never reported as "no stack". |
 | `facts.areas` | `backend`, `database`, `frontend`, `infrastructure`, `mobile`, each with the signals that selected it. Frontend and backend come from known dependencies and detected frameworks. |
 | `facts.policy` | Languages and the test and lint commands from policy discovery. |
