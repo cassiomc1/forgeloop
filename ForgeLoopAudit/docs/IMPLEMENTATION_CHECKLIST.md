@@ -25,8 +25,8 @@ Evidence: `src/server/`, `src/renderer/lib/audit-client.ts`,
 
 ## ForgeLoop integration and trust boundary
 
-- [x] Vendored ForgeLoop `2.0.0` at
-  `4ff11bb4bc4be39b095a151a323f1388dad0d819`.
+- [x] Vendored ForgeLoop `2.1.0` at
+  `bbf0f2a30d356812834c85098179250f07d78842`.
 - [x] Protocol v1, schema v1 and Integration API v1 provenance verification.
 - [x] Node.js 24.19.0 minimum, matching CI and release workflows.
 - [x] Native SQLite task discovery and inspector projections without JSON namespaces.

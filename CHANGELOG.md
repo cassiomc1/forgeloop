@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Align ForgeLoopAudit with the published 2.1.0 core: vendor the exact npm
+  archive (SHA-512 verified), update lineage, provenance and recaptured
+  screenshots, and resolve its vite and fast-uri advisories.
+- Record the 2.1.0 publication identity in the release checklist and status docs.
+
 ## 2.1.0 - 2026-11-14
 
 - Extract the bounded pubspec YAML and .NET project XML parsers into
