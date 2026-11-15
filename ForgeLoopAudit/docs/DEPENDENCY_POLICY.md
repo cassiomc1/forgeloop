@@ -1,7 +1,7 @@
 # Dependency policy
 
 The current dependency baseline is ForgeLoopAudit `0.3.0-rc.3` with ForgeLoop
-`2.0.0` from `4ff11bb4bc4be39b095a151a323f1388dad0d819` (protocol v1, schema
+`2.1.0` from `bbf0f2a30d356812834c85098179250f07d78842` (protocol v1, schema
 v1, Integration API v1). The ForgeLoop dependency is a pinned local tarball;
 the lockfile and archive are part of the review surface.
 

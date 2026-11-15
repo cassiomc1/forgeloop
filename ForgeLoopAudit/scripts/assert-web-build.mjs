@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 
-const required = ['dist/renderer/index.html', 'dist/server/cli.mjs', 'schemas/provenance.json', 'vendor/cassiomc1-forgeloop-2.0.0-4ff11bb.tgz'];
+const required = ['dist/renderer/index.html', 'dist/server/cli.mjs', 'schemas/provenance.json', 'vendor/cassiomc1-forgeloop-2.1.0-bbf0f2a.tgz'];
 const missing = required.filter((path) => !existsSync(path));
 if (missing.length > 0) throw new Error(`Web build is incomplete: ${missing.join(', ')}`);
 

@@ -4,7 +4,7 @@ This is the current release checklist for the PolyForm Noncommercial-licensed
 `@cassiomc1/forgeloop` package. It is a preparation and verification checklist;
 it does not authorize publication.
 
-## Stable 2.1.0 candidate — 2026-11-14
+## Stable 2.1.0 publication — 2026-11-14
 
 `2.1.0` is a minor release of the core package (the published error registry
 gains every emitted code, 159 of them as `PUBLIC_UNCLASSIFIED`). Its runtime
@@ -15,12 +15,16 @@ disposition for every changed, added and removed module.
 `scripts/check-release-channel.mjs` selects the review by exact package version
 and never falls back to an earlier report.
 
-Before dispatching `npm-publish.yml`: merge the release commit to `main`, tag it
-`v2.1.0`, and dispatch from that tag with channel `latest` and confirmation
-`PUBLISH PUBLIC PACKAGE`. Hosted parity, native Windows, rollback drills and
+Published from tag `v2.1.0` (commit `bbf0f2a30d356812834c85098179250f07d78842`)
+through `npm-publish.yml` with trusted OIDC publishing: npm `latest` is `2.1.0`,
+`dist.integrity` is
+`sha512-Kcv3h+k8SUVfohiHOHsvgaXwf8OitwDn6f62Mgm5hu3TKR7WKTOHhuLAf5q+oKPmzZ33pJDP3iXBhOJyCyrRKg==`,
+the provenance statement is in the Sigstore transparency log (index
+3890066512), and `release:identity` returns `RELEASE_IDENTITY_VALID`.
+ForgeLoopAudit vendors this exact archive. Hosted parity, native Windows, rollback drills and
 registry-user audits from 2.0.0 are not carried forward as evidence for these
-bytes; the review records them as not repeated or post-publication. After
-publication run:
+bytes; the review records them as not repeated or post-publication. Re-check
+the published identity with:
 
 ```bash
 npm view @cassiomc1/forgeloop version dist-tags --json

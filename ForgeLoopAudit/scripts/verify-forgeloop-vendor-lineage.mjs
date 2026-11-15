@@ -3,8 +3,8 @@ import { gunzipSync } from 'node:zlib';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
 
-const EXPECTED_VERSION = '2.0.0';
-const EXPECTED_COMMIT = '4ff11bb4bc4be39b095a151a323f1388dad0d819';
+const EXPECTED_VERSION = '2.1.0';
+const EXPECTED_COMMIT = 'bbf0f2a30d356812834c85098179250f07d78842';
 const EXPECTED_PACKAGE_NAME = '@cassiomc1/forgeloop';
 
 function readTarEntry(archivePath, entryName) {

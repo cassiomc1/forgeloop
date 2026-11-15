@@ -1,6 +1,6 @@
 {
-  "forgeLoopPackageVersion": "2.0.0",
-  "forgeLoopGitCommit": "4ff11bb4bc4be39b095a151a323f1388dad0d819",
+  "forgeLoopPackageVersion": "2.1.0",
+  "forgeLoopGitCommit": "bbf0f2a30d356812834c85098179250f07d78842",
   "protocolVersion": 1,
   "generatedAt": "2026-10-18T14:24:20.282Z",
   "schemas": {
