@@ -350,7 +350,7 @@ error codes. Default output and default JSON remain unchanged.
 | **workspace** | [`workspace-bind`](#workspace-bind), [`workspace-status`](#workspace-status) |
 | **task** | [`handoff-accept`](#handoff-accept) |
 | **scope** | [`responsibility-set`](#responsibility-set), [`responsibility-status`](#responsibility-status) |
-| **attestation** | [`attestation-create`](#attestation-create), [`attestation-verify`](#attestation-verify), [`attestation-status`](#attestation-status), [`attestation-verify-range`](#attestation-verify-range) |
+| **attestation** | [`attestation-create`](#attestation-create), [`attestation-verify`](#attestation-verify), [`attestation-status`](#attestation-status), [`evidence-export`](#evidence-export), [`evidence-verify`](#evidence-verify), [`attestation-verify-range`](#attestation-verify-range) |
 
 <!-- END FORGELOOP GENERATED: cli-command-index -->
 
@@ -776,6 +776,44 @@ Reports local attestation status and trust level without network access.
   ```bash
   forgeloop attestation-status --task task-001 --json
   ```
+
+### `evidence-export`
+
+Exports a completed task's attestation as a portable, redacted evidence bundle
+to commit with the change. See [`EVIDENCE_BUNDLES.md`](./EVIDENCE_BUNDLES.md).
+
+<!-- BEGIN FORGELOOP GENERATED: cli:evidence-export:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--dir <path>`: tracked evidence directory (default: .forgeloop-evidence)
+- `--json`: emit the export result as JSON
+
+<!-- END FORGELOOP GENERATED: cli:evidence-export:options -->
+
+### `evidence-verify`
+
+Verifies committed evidence bundles for a revision range without local
+ForgeLoop state. Unsigned bundles yield `INTEGRITY_ONLY`; signatures under the
+verifier's policy yield `ATTESTED`.
+
+<!-- BEGIN FORGELOOP GENERATED: cli:evidence-verify:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--revision-provider <provider>`: revision provider (default: git)
+- `--base <revision>`: base revision of the verified range
+- `--head <revision>`: head revision of the verified range
+- `--dir <path>`: tracked evidence directory (default: .forgeloop-evidence)
+- `--exclude <path>`: changed path or dir/** excluded from coverage (verifier policy) (repeatable)
+- `--allow-partial-coverage`: report uncovered changed paths without failing
+- `--require-signature`: require a valid Sigstore signature for every bundle used
+- `--identity <identity>`: exact signer identity policy
+- `--issuer <issuer>`: exact signer issuer policy
+- `--trusted-root <path>`: trusted signing root path
+- `--format <text|markdown>`: human output format (default: text)
+- `--json`: emit the verification result as JSON
+
+<!-- END FORGELOOP GENERATED: cli:evidence-verify:options -->
 
 ### `attestation-verify-range`
 

@@ -82,6 +82,8 @@ const runDecisionShow = async (...args) => (await import("../commands/decision-s
 const runContextPlan = async (...args) => (await import("../commands/context-plan.js")).runContextPlan(...args);
 const runModelRoute = async (...args) => (await import("../commands/model-route.js")).runModelRoute(...args);
 const runSemanticPlan = async (...args) => (await import("../commands/semantic-plan.js")).runSemanticPlan(...args);
+const runEvidenceExport = async (...args) => (await import("../commands/evidence-export.js")).runEvidenceExport(...args);
+const runEvidenceVerify = async (...args) => (await import("../commands/evidence-verify.js")).runEvidenceVerify(...args);
 const runAssess = async (...args) => (await import("../commands/assess.js")).runAssess(...args);
 const runTestInventory = async (...args) => (await import("../commands/test-inventory.js")).runTestInventory(...args);
 const runTestUtility = async (...args) => (await import("../commands/test-utility.js")).runTestUtility(...args);
@@ -415,6 +417,14 @@ const RAW_COMMAND_EXECUTORS = {
   },
   "attestation-status": async ({ target, packageRoot, options }) => {
     const result = await runAttestationStatus({ target, packageRoot, taskId: options.taskId });
+    return { result, exitCode: exitCodeForAttestationResult(result) };
+  },
+  "evidence-export": async ({ target, packageRoot, options }) => ({
+    result: await runEvidenceExport({ target, packageRoot, taskId: options.taskId, evidenceDirectory: options.evidenceDirectory }),
+    exitCode: 0,
+  }),
+  "evidence-verify": async ({ target, packageRoot, options }) => {
+    const result = await runEvidenceVerify({ target, packageRoot, ...options });
     return { result, exitCode: exitCodeForAttestationResult(result) };
   },
   "attestation-verify-range": async ({ target, packageRoot, options }) => {
