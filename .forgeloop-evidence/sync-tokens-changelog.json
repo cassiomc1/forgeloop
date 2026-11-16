@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "sync-tokens-changelog",
+  "forgeloopVersion": "2.1.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:sync-tokens-changelog\",\n      \"digest\": {\n        \"sha256\": \"65109d30025031af29fbd5700438016f1179d28daa886e4ff6bb8088d9e71ee7\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"sync-tokens-changelog\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"ad2d28da035a7b6ce4061c310ad6a960ec1cfde59150cb17cac020637ccf9221\",\n      \"contentDigest\": \"65109d30025031af29fbd5700438016f1179d28daa886e4ff6bb8088d9e71ee7\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"8fc05e37836e88a72a0e892d58471951d2c234e71e2fbc6d394b481c6e0331c6\",\n      \"routeFingerprint\": \"1ad05456d779575c77bddfe8ac806fbf13e69c4446cc898e8d84ddbcf5d02f76\",\n      \"stateFingerprint\": \"47636ce40427690a9490bd5ac6e2d002587a6386c777dc9017a9e4b61064ef6a\",\n      \"receiptFingerprint\": \"13c927c51609bf30cac68317cb7e7a59e7eb1fa3d50cb353f34206b218f56186\",\n      \"ledgerSeq\": 34,\n      \"ledgerHash\": \"1a31e933064d1e0aed4e7904264e807ef2363852120f148d0bd964c2b99a009f\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "sync-tokens-changelog",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "9d25a2c16f3a084669867d36ccc77036992677ba",
+      "observedRevision": "9d25a2c16f3a084669867d36ccc77036992677ba",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/sync-tokens-ui",
+        "head": "9d25a2c16f3a084669867d36ccc77036992677ba"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "8fc05e37836e88a72a0e892d58471951d2c234e71e2fbc6d394b481c6e0331c6",
+      "routeFingerprint": "1ad05456d779575c77bddfe8ac806fbf13e69c4446cc898e8d84ddbcf5d02f76",
+      "stateFingerprint": "47636ce40427690a9490bd5ac6e2d002587a6386c777dc9017a9e4b61064ef6a",
+      "receiptFingerprint": "13c927c51609bf30cac68317cb7e7a59e7eb1fa3d50cb353f34206b218f56186",
+      "ledgerSeq": 34,
+      "ledgerHash": "1a31e933064d1e0aed4e7904264e807ef2363852120f148d0bd964c2b99a009f"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "d1ad24fbc3aa61a6c43e82131d17050913b14eee6ff8ae4830712ca1bb0a8b95",
+        "providerContentId": "08a2e7e21b486ae0a1371bc3903d94ac81b45a43",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "65109d30025031af29fbd5700438016f1179d28daa886e4ff6bb8088d9e71ee7"
+  },
+  "manifestFingerprint": "ad2d28da035a7b6ce4061c310ad6a960ec1cfde59150cb17cac020637ccf9221",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Update the cloud-sync CHANGELOG entry to say that sync tokens are issued and revoked from the hosted dashboard, and re-attest CHANGELOG.md after main was merged into the sync-tokens-ui branch",
+    "successCriteria": [
+      "CHANGELOG.md states that sync tokens are managed from the hosted dashboard"
+    ],
+    "checks": [
+      {
+        "id": "requirement-84ec621f66b5f483",
+        "requirement": "CHANGELOG.md states that sync tokens are managed from the hosted dashboard",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-fast",
+        "requirement": "npm run verify:fast passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-16T17:38:17.439Z",
+    "completedAt": "2026-11-16T17:39:54.255Z",
+    "durationMs": 96816,
+    "phaseDurationsMs": {
+      "planning": 2586,
+      "executing": 437,
+      "verifying": 93525,
+      "reviewing": 268
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 2,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "cb1fdd5147dd6971cd68bb92ce52a4cca1dab0b18068672f9e899d24e1dd5ebe"
+}
