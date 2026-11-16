@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FolderGit2, GitPullRequest, ListChecks, LogIn, LogOut, RefreshCw, ShieldCheck, Timer } from 'lucide-react';
+import { FolderGit2, GitPullRequest, ListChecks, LogIn, LogOut, Plus, RefreshCw, ShieldCheck, Timer } from 'lucide-react';
 import { Badge, type BadgeVariant } from '../renderer/components/ui/badge';
 import { Button } from '../renderer/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../renderer/components/ui/card';
@@ -97,6 +97,14 @@ function RepositoryCard({ repository }: { repository: HostedRepository }) {
   );
 }
 
+function InstallAppLink({ url, primary = false }: { url: string; primary?: boolean }) {
+  return (
+    <a className={`${primary ? 'btn-primary' : 'btn-secondary'} inline-flex items-center gap-2`} href={url} rel="noreferrer" target="_blank">
+      <Plus className="h-4 w-4" />Install GitHub App
+    </a>
+  );
+}
+
 function Dashboard({ summary }: { summary: DashboardSummary }) {
   const totals = dashboardTotals(summary);
   const repositories = summary.accounts.flatMap((account) => account.repositories);
@@ -113,7 +121,12 @@ function Dashboard({ summary }: { summary: DashboardSummary }) {
         {totals.tasks === 0 ? 'No tasks yet.' : `${totals.tasksWithRework} of ${totals.tasks} tasks needed rework (more than one verification cycle or a diagnosis).`}
       </p>
       {summary.notes.map((note) => <p className="text-xs text-forge-text-secondary" key={note}>{note}</p>)}
-      {repositories.length === 0 ? <EmptyState title="No repositories yet" description="Install the ForgeLoop Evidence GitHub App on an allowlisted account to see evidence here." /> : repositories.map((repository) => <RepositoryCard key={repository.fullName} repository={repository} />)}
+      {repositories.length === 0 ? (
+        <div className="flex flex-col items-center gap-2">
+          <EmptyState title="No repositories yet" description="Install the ForgeLoop Evidence GitHub App on an allowlisted account and choose the repositories to show here." />
+          {summary.installUrl && <InstallAppLink url={summary.installUrl} primary />}
+        </div>
+      ) : repositories.map((repository) => <RepositoryCard key={repository.fullName} repository={repository} />)}
     </div>
   );
 }
@@ -136,6 +149,7 @@ export function HostedDashboard() {
           <p className="text-sm text-forge-text-secondary">Team view of committed ForgeLoop evidence. Self-reported; signatures are verified by the ForgeLoop GitHub Action, not here.</p>
         </div>
         <div className="flex items-center gap-2">
+          {ready?.installUrl && <InstallAppLink url={ready.installUrl} />}
           {ready?.viewer.username && <span className="text-sm text-forge-text-secondary">{ready.viewer.name ?? ready.viewer.username}</span>}
           <Button variant="ghost" size="icon" aria-label="Refresh" title="Refresh" onClick={load}><RefreshCw className="h-4 w-4" /></Button>
           <ThemeToggle />
