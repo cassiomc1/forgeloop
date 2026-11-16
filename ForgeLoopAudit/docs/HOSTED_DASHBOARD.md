@@ -37,6 +37,11 @@ emails, and GitHub installation accounts.
   diagnosis.
 - The contract rejects any repository or pull-request link that is not a
   `https://github.com/` URL.
+- The "Cloud sync tokens" section lists, issues and revokes tokens for
+  `forgeloop sync-push` and `sync-pull` through `/api/sync-tokens`. A token can
+  be issued only for repositories shown on the dashboard, and it is shown
+  once. It stays in component state only, never in browser storage. Demo
+  mode never calls the token API.
 - The optional `installUrl` drives the "Install GitHub App" button. Only a
   `https://github.com/apps/` link is kept; anything else hides the button.
 

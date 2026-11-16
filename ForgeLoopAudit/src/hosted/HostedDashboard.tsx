@@ -10,6 +10,7 @@ import { ThemeToggle } from '../renderer/components/ui/theme-toggle';
 import { dashboardTotals, formatDuration, parseDashboardSummary, type CheckConclusion, type DashboardSummary, type HostedRepository } from '@shared/hosted';
 import { loadDashboard, type DashboardLoadResult } from '@shared/hosted-client';
 import demoSummary from './fixtures/dashboard-summary.json';
+import { SyncTokens } from './SyncTokens';
 
 const CONCLUSION_BADGE: Record<CheckConclusion, { label: string; variant: BadgeVariant }> = {
   success: { label: 'Evidence passed', variant: 'success' },
@@ -105,7 +106,7 @@ function InstallAppLink({ url, primary = false }: { url: string; primary?: boole
   );
 }
 
-function Dashboard({ summary }: { summary: DashboardSummary }) {
+function Dashboard({ summary, demo }: { summary: DashboardSummary; demo: boolean }) {
   const totals = dashboardTotals(summary);
   const repositories = summary.accounts.flatMap((account) => account.repositories);
   return (
@@ -127,6 +128,7 @@ function Dashboard({ summary }: { summary: DashboardSummary }) {
           {summary.installUrl && <InstallAppLink url={summary.installUrl} primary />}
         </div>
       ) : repositories.map((repository) => <RepositoryCard key={repository.fullName} repository={repository} />)}
+      <SyncTokens demo={demo} repositories={repositories.map((repository) => repository.fullName.toLowerCase())} />
     </div>
   );
 }
@@ -156,7 +158,7 @@ export function HostedDashboard() {
           {ready && !demo && <Button variant="ghost" onClick={() => void signOut()}><LogOut className="mr-2 h-4 w-4" />Sign out</Button>}
         </div>
       </header>
-      {result === null ? <LoadingState /> : result.kind === 'ready' ? <Dashboard summary={result.summary} /> : <StateMessage result={result} onRetry={load} />}
+      {result === null ? <LoadingState /> : result.kind === 'ready' ? <Dashboard summary={result.summary} demo={demo} /> : <StateMessage result={result} onRetry={load} />}
     </div>
   );
 }

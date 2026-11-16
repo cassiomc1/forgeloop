@@ -1,0 +1,170 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "sync-tokens-ui",
+  "forgeloopVersion": "2.1.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:sync-tokens-ui\",\n      \"digest\": {\n        \"sha256\": \"9624bea61b30cd3ae7cfcde8efd57aeec842e0d5ced30916842203df2254f8b4\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"sync-tokens-ui\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"0dde9bd176dcf9fb6e5ccc9f72ddc6c6736fc630826cfb1a7568b9c9de67077e\",\n      \"contentDigest\": \"9624bea61b30cd3ae7cfcde8efd57aeec842e0d5ced30916842203df2254f8b4\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"ForgeLoopAudit/docs/HOSTED_DASHBOARD.md\",\n        \"ForgeLoopAudit/src/hosted/HostedDashboard.tsx\",\n        \"ForgeLoopAudit/src/hosted/SyncTokens.tsx\",\n        \"ForgeLoopAudit/src/shared/__tests__/hosted-tokens.test.ts\",\n        \"ForgeLoopAudit/src/shared/hosted-tokens.ts\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"cf72eaa5d78d2e14316dd74c756642e1c7c33ea2b0929dbe990a5b8e101710ca\",\n      \"routeFingerprint\": \"9a55eabc8649a304d0b02c0d1ca9a907d04fe3aa4a975afc13d9219e5e5424a7\",\n      \"stateFingerprint\": \"76f8e1856b58f49d60e0b01b9442f54dd9ac8c87ed63a9ba982831b2ec0a9bc9\",\n      \"receiptFingerprint\": \"d55ab78b1735cad9f7ce3dc3ba5a69d2863a776dcea8d7fc4873865bcbf7b35a\",\n      \"ledgerSeq\": 43,\n      \"ledgerHash\": \"a7c8e3f16fcdd4eee4210ee3370f16a72d82c1cf5f781c7bc9568fa7fae96510\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "sync-tokens-ui",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "251775b01e349466c04bec58baf8242eab6476e2",
+      "observedRevision": "251775b01e349466c04bec58baf8242eab6476e2",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/sync-tokens-ui",
+        "head": "251775b01e349466c04bec58baf8242eab6476e2"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "cf72eaa5d78d2e14316dd74c756642e1c7c33ea2b0929dbe990a5b8e101710ca",
+      "routeFingerprint": "9a55eabc8649a304d0b02c0d1ca9a907d04fe3aa4a975afc13d9219e5e5424a7",
+      "stateFingerprint": "76f8e1856b58f49d60e0b01b9442f54dd9ac8c87ed63a9ba982831b2ec0a9bc9",
+      "receiptFingerprint": "d55ab78b1735cad9f7ce3dc3ba5a69d2863a776dcea8d7fc4873865bcbf7b35a",
+      "ledgerSeq": 43,
+      "ledgerHash": "a7c8e3f16fcdd4eee4210ee3370f16a72d82c1cf5f781c7bc9568fa7fae96510"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "131ad6530b4d2f314aa203dcc9325a43ae6d356e17ff1ad69d51b053d7320ed5",
+        "providerContentId": "3658a1a1cf30beedbcdcf913cb83d4665c452b5e",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/docs/HOSTED_DASHBOARD.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "3695b098754880ab472c6b34efd9f28442c2b7d4c0c29e68e46e7ef06d8386da",
+        "providerContentId": "c15815ac2ce728cf233992f7255ad0c814e9860b",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/src/hosted/HostedDashboard.tsx",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "5e59e3be12eeb830f7cc100acd542d9a82530e530337297161327d235fd8909e",
+        "providerContentId": "1e0b1b088067678c89a46bc6aad3039deb28cf8a",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/src/hosted/SyncTokens.tsx",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "d1c4d5ef51e8ce15ce7999ab0d8c05574685e25b2cfa8022563bec0a5b09c68d",
+        "providerContentId": "5c1e6b0906d8c5e2e5dbced9647b55fc5a757197",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/src/shared/__tests__/hosted-tokens.test.ts",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "ec08bda79e580556c7875bd541c4fd3483d9540236b7022e70a0dd6aa4cba12d",
+        "providerContentId": "a0a10c5289e0d31eff3979cd8ba0e402c32e558e",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/src/shared/hosted-tokens.ts",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "adbd0ab138712b6609c494a4b99d82f48eba71e28c9e9a17edfbfb25e5f300ab",
+        "providerContentId": "87fb21ce88bc9a0b099139af76efcf9055f1b454",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "9624bea61b30cd3ae7cfcde8efd57aeec842e0d5ced30916842203df2254f8b4"
+  },
+  "manifestFingerprint": "0dde9bd176dcf9fb6e5ccc9f72ddc6c6736fc630826cfb1a7568b9c9de67077e",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Add a Cloud sync tokens section to the hosted ForgeLoopAudit dashboard: list issued tokens, issue a token for chosen repositories and show it once with copy and setup instructions, and revoke tokens, using the forgeloop-site /api/sync-tokens API",
+    "successCriteria": [
+      "Viewers can issue, see once, list and revoke sync tokens from the dashboard"
+    ],
+    "checks": [
+      {
+        "id": "audit-verify",
+        "requirement": "ForgeLoopAudit npm run verify:full passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-5eb39c98aa0a244e",
+        "requirement": "Viewers can issue, see once, list and revoke sync tokens from the dashboard",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "tokens-tests",
+        "requirement": "ForgeLoopAudit hosted token client tests pass",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-16T15:50:18.943Z",
+    "completedAt": "2026-11-16T16:04:29.228Z",
+    "durationMs": 850285,
+    "phaseDurationsMs": {
+      "planning": 2443,
+      "executing": 74832,
+      "verifying": 772732,
+      "reviewing": 278
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 5,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "f397a39d8a6aa0a320106f9b8e8ea5960d69927c5a3d0308aaffc4e19d8f98ae"
+}

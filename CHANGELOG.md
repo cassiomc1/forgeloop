@@ -9,7 +9,8 @@
   (`npm run build:hosted`, `docs/HOSTED_DASHBOARD.md`) that renders evidence
   aggregated across repositories by the forgeloop-site API. Viewers sign in
   with Google and are allowlisted by verified email. An "Install GitHub App"
-  button links to the ForgeLoop Evidence App installation page.
+  button links to the ForgeLoop Evidence App installation page. A "Cloud sync
+  tokens" section issues, shows once, lists and revokes sync tokens.
 - Add `forgeloop evidence-export` and `forgeloop evidence-verify`: completed,
   attested tasks export a redacted, committable evidence bundle, and pull-request
   CI verifies changed-path coverage from the bundles without local `.forgeloop/`
