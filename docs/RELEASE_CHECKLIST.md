@@ -4,6 +4,35 @@ This is the current release checklist for the PolyForm Noncommercial-licensed
 `@cassiomc1/forgeloop` package. It is a preparation and verification checklist;
 it does not authorize publication.
 
+## Stable 2.2.0 candidate — 2026-11-16
+
+`2.2.0` is a minor release of the core package. It adds `forgeloop assess`,
+`evidence-export` and `evidence-verify` with ledger metrics, and the cloud-sync
+`sync-push` and `sync-pull` commands, with their error codes. Its runtime
+changes are bound by
+[`stable-2.2.0-writer-review.json.gz`](../benchmarks/storage-sqlite/stable-2.2.0-writer-review.json.gz),
+a delta review against 2.1.0:
+
+- Every changed module keeps identical filesystem bindings.
+- 23 added bindings, all in new modules, each have an explicit role.
+- `sync-pull` is a tenth explicit maintenance-admission command; a test proves
+  that it leaves a project under retained maintenance unchanged.
+
+Before dispatching `npm-publish.yml`:
+
+1. Merge the release commit to `main`.
+2. Tag it `v2.2.0`.
+3. Dispatch from that tag with channel `latest` and confirmation
+   `PUBLISH PUBLIC PACKAGE`.
+
+Windows, rollback drills, hosted parity and registry-user audits are recorded
+as not repeated or post-publication. After publication run:
+
+```bash
+npm view @cassiomc1/forgeloop version dist-tags --json
+npm run release:identity -- --version 2.2.0 --release-commit <release-tag-commit>
+```
+
 ## Stable 2.1.0 publication — 2026-11-14
 
 `2.1.0` is a minor release of the core package (the published error registry

@@ -1,7 +1,13 @@
 # Changelog
 
-## Unreleased
+## 2.2.0 - 2026-11-16
 
+- Minor release. Its runtime changes are bound by
+  `benchmarks/storage-sqlite/stable-2.2.0-writer-review.json.gz`, a delta
+  review against 2.1.0 that gives an explicit role to every added filesystem
+  binding (all in new modules; changed modules keep identical bindings).
+- `sync-pull` is a maintenance-admission command like `storage-restore`; a
+  test proves it leaves a project under retained maintenance unchanged.
 - Add `forgeloop sync-push` and `forgeloop sync-pull` (cloud sync, phase 5).
   They hand a project's ForgeLoop state between machines as one snapshot per
   repository, encrypted on the client with `FORGELOOP_SYNC_KEY`. A pull is

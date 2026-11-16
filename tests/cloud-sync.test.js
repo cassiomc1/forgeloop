@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readdir } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { mkdir, mkdtemp, readdir, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -48,6 +49,16 @@ async function setup() {
   const stateDir = await mkdtemp(path.join(os.tmpdir(), "forgeloop-sync-state-"));
   const env = { FORGELOOP_SYNC_TOKEN: "s".repeat(40), FORGELOOP_SYNC_KEY: "correct horse battery staple", FORGELOOP_SYNC_STATE_DIR: stateDir };
   return { stateDir, env, remote: fakeRemote(env.FORGELOOP_SYNC_TOKEN) };
+}
+
+async function inventory(root, relative = "") {
+  const entries = [];
+  for (const entry of (await readdir(path.join(root, relative), { withFileTypes: true })).sort((a, b) => a.name.localeCompare(b.name))) {
+    const name = path.join(relative, entry.name);
+    if (entry.isDirectory()) entries.push([name, "directory"], ...await inventory(root, name));
+    else entries.push([name, createHash("sha256").update(await readFile(path.join(root, name))).digest("hex")]);
+  }
+  return entries;
 }
 
 const push = (target, env, fetchImpl) => withProjectStorage(target, () => runSyncPush({ target, packageRoot, remote: REMOTE, repository: REPOSITORY, env, fetchImpl }), { readOnly: true });
@@ -140,4 +151,27 @@ test("snapshots bind the repository, reject unsafe paths and require configurati
   assert.equal(resolveRemote("http://localhost:8787/api/sync"), "http://localhost:8787/api/sync");
   assert.throws(() => resolveRemote("https://user:pass@sync.example.test/"), { code: "E_SYNC_CONFIG" });
   await assert.rejects(runSyncPull({ target: directory, writersQuiesced: true, env: {} }), { code: "E_SYNC_CONFIG" });
+});
+
+test("sync-pull leaves a project under retained maintenance unchanged", async () => {
+  const { stateDir, env, remote } = await setup();
+  const source = await buildDiagnosisProject();
+  const target = await buildDiagnosisProject();
+  try {
+    await push(source, env, remote.fetchImpl);
+    const exclusion = path.join(target, ".forgeloop/.storage-maintenance");
+    await mkdir(exclusion);
+    await writeFile(path.join(exclusion, "owner.json"), JSON.stringify({ schemaVersion: 1, ownerId: "sync-maintenance-test", pid: process.pid }));
+    const before = await inventory(target);
+    for (const replaceActive of [false, true]) {
+      // Without --replace-active the restore refuses a non-fresh project; with it,
+      // the retained maintenance owner blocks the replacement.
+      await assert.rejects(pull(target, env, remote.fetchImpl, { replaceActive }), { code: replaceActive ? "E_STORAGE_MAINTENANCE_IN_PROGRESS" : "E_STORAGE_RESTORE_INVALID" });
+      assert.deepEqual(await inventory(target), before);
+    }
+  } finally {
+    await removeTempTree(source);
+    await removeTempTree(target);
+    await removeTempTree(stateDir);
+  }
 });
