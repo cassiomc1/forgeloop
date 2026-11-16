@@ -16,6 +16,8 @@ exclude_path = ["tests/fixtures/legacy-0.1.6", "ForgeLoopAudit/docs/superpowers"
 exclude_loopback = true
 exclude = [
   '^https?://(?:www\.)?example\.(?:com|org|net)(?:/|$)',
+  # API endpoints (e.g. the cloud-sync default --remote) require auth; they are not doc links.
+  '^https://forgeloop\.monster/api/',
   # Phaser returns 403 to automation; more specific links remain checked.
   '^https://phaser\.io/$',
   # The article works in browsers but intermittently times out on the runner.
