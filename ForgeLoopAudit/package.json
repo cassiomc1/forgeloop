@@ -41,7 +41,8 @@
     "test:e2e": "npm run build:web && playwright test",
     "package": "npm run build:web && npm pack --dry-run",
     "verify": "npm run typecheck && npm run lint && npm test && npm run brand:check && npm run docs:check && npm run build",
-    "test:web-smoke": "npm run build:web && playwright test tests/e2e/web-smoke.spec.ts"
+    "test:web-smoke": "npm run build:web && playwright test tests/e2e/web-smoke.spec.ts",
+    "build:hosted": "vite build --config vite.hosted.config.ts"
   },
   "keywords": [
     "forgeloop",

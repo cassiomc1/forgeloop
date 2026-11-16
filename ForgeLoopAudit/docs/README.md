@@ -33,6 +33,8 @@ Raw native ledger and JSON previews are unavailable; use canonical projections.
 - [ForgeShop demo guide](../demo/README.md) — generated fixture truth and
   intentional scenario states.
 - [Screenshot guide](../screen/README.md) — source, mappings and freshness rules.
+- [Hosted team dashboard](HOSTED_DASHBOARD.md) — read-only team view of
+  committed evidence, served by forgeloop-site.
 
 ## Current documentation owners
 

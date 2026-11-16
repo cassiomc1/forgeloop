@@ -27,7 +27,14 @@ A bundle contains:
 - the optional Sigstore signature bundle;
 - an informational summary of the contract objective, success criteria, and
   check results;
+- an informational `metrics` block derived from the task ledger: received
+  and completed times, total and per-phase durations (planning, executing,
+  verifying, reviewing), verification cycles, diagnoses, and passed and failed
+  checks;
 - a SHA-256 digest over all fields.
+
+The summary and metrics are self-reported and not cryptographically bound.
+The ledger does not record the harness or model, so bundles omit them.
 
 It never contains ledger events, command argv or output, environment values,
 or absolute paths. Export refuses to write a bundle that would contain the
