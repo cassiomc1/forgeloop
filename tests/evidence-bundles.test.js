@@ -79,6 +79,13 @@ test("an exported bundle verifies the committed change at INTEGRITY_ONLY and is 
     const text = await readFile(path.join(target, exported.path), "utf8");
     assert.equal(text.includes(target), false, "bundle must not contain the absolute project path");
     assert.equal(/"argv"|"stdout"|"stderr"|events\.ndjson/u.test(text), false);
+    const metrics = JSON.parse(text).metrics;
+    assert.equal(metrics.bound, false);
+    assert.equal(metrics.verificationCycles >= 1, true);
+    assert.equal(metrics.checksPassed, 2);
+    assert.equal(metrics.checksFailed, 0);
+    assert.ok(Number.isInteger(metrics.durationMs) && metrics.durationMs >= 0);
+    assert.ok(["planning", "executing", "verifying", "reviewing"].every((phase) => Number.isInteger(metrics.phaseDurationsMs[phase])));
     const head = commitAll(target, "change with evidence");
     const result = await verify(target, base, head);
     assert.equal(result.status, "VALID");

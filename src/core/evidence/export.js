@@ -4,6 +4,7 @@ import { canonicalFingerprint, readJsonArtifact } from "../artifacts.js";
 import { readAttestationStatement } from "../attestation.js";
 import { resolveAttestationBundlePath } from "../attachment-paths.js";
 import { readCodeManifest } from "../code-manifest.js";
+import { validateEventLedger } from "../events.js";
 import { E_EVIDENCE_EXPORT_UNAVAILABLE } from "../error-codes.js";
 import { assertSafePath, ensureWithin, writeFileAtomic } from "../filesystem.js";
 import { withSigningStatementFile } from "../signing/statement-file.js";
@@ -54,6 +55,53 @@ function checkSummary(receipt) {
   })).sort((left, right) => String(left.id).localeCompare(String(right.id)));
 }
 
+const PHASE_BOUNDARIES = Object.freeze([
+  ["planning", "TASK_RECEIVED", "EXECUTION_STARTED"],
+  ["executing", "EXECUTION_STARTED", "VERIFICATION_STARTED"],
+  ["verifying", "VERIFICATION_STARTED", "REVIEW_STARTED"],
+  ["reviewing", "REVIEW_STARTED", "COMPLETION_VALIDATED"],
+]);
+
+function firstAt(events, name) {
+  const value = events.find((event) => event.event === name)?.at;
+  const time = value ? Date.parse(value) : Number.NaN;
+  return Number.isFinite(time) ? time : null;
+}
+
+// Informational lifecycle metrics from the task ledger. Self-reported and not
+// cryptographically bound; harness and model are not recorded by the ledger.
+export function lifecycleMetrics(events, receipt) {
+  const received = firstAt(events, "TASK_RECEIVED");
+  const completed = firstAt(events, "COMPLETION_VALIDATED");
+  const phaseDurationsMs = {};
+  for (const [phase, start, end] of PHASE_BOUNDARIES) {
+    const from = firstAt(events, start);
+    const to = firstAt(events, end);
+    if (from !== null && to !== null && to >= from) phaseDurationsMs[phase] = to - from;
+  }
+  const checks = Array.isArray(receipt?.checks) ? receipt.checks : [];
+  return {
+    bound: false,
+    receivedAt: received === null ? null : new Date(received).toISOString(),
+    completedAt: completed === null ? null : new Date(completed).toISOString(),
+    durationMs: received !== null && completed !== null && completed >= received ? completed - received : null,
+    phaseDurationsMs,
+    verificationCycles: events.filter((event) => event.event === "VERIFICATION_STARTED").length,
+    diagnoses: events.filter((event) => event.event === "DIAGNOSIS_RECORDED").length,
+    checksPassed: checks.filter((check) => check.status === "passed").length,
+    checksFailed: checks.filter((check) => check.status === "failed").length,
+  };
+}
+
+async function readLedgerEvents(target, taskId, packageRoot) {
+  try {
+    const ledger = await validateEventLedger(target, packageRoot, { taskId });
+    return ledger.valid ? ledger.events : [];
+  } catch {
+    return [];
+  }
+}
+
 function informationalSummary(contract, receipt) {
   return {
     bound: false,
@@ -86,6 +134,7 @@ async function collectEvidence(target, taskId, packageRoot) {
     signatureText: await readSignatureText(target, taskId),
     contract: await readOptional(target, taskArtifactPath(taskId, "contract"), "current-contract", packageRoot),
     receipt: await readOptional(target, taskArtifactPath(taskId, "receipt"), "execution-receipt", packageRoot),
+    events: await readLedgerEvents(target, taskId, packageRoot),
   };
 }
 
@@ -109,6 +158,7 @@ export async function exportEvidenceBundle({ target, taskId, packageRoot = getPa
     manifestFingerprint: canonicalFingerprint(evidence.manifest),
     signature: evidence.signatureText === null ? null : { provider: "sigstore", bundleText: evidence.signatureText },
     summary: informationalSummary(evidence.contract, evidence.receipt),
+    metrics: lifecycleMetrics(evidence.events, evidence.receipt),
     redactions: [...EVIDENCE_REDACTIONS],
   });
   const text = serializeEvidenceBundle(bundle);
