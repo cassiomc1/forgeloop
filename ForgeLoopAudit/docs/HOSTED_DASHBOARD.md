@@ -20,8 +20,8 @@ dashboard needs only committed ForgeLoop evidence bundles.
 The forgeloop-site project serves the build at `/dashboard/` and provides
 `GET /api/dashboard`. That API reads evidence bundles and
 "ForgeLoop evidence" check runs through the ForgeLoop Evidence GitHub App. It
-is protected by Sign in with Vercel and two allowlists: Vercel users, and
-GitHub installation accounts.
+is protected by Sign in with Google and two allowlists: Google-verified
+emails, and GitHub installation accounts.
 
 ## Data rules
 
@@ -43,8 +43,8 @@ GitHub installation accounts.
 | API response | Dashboard state |
 | --- | --- |
 | `200` with a valid summary | Dashboard |
-| `401` | Sign-in prompt (Sign in with Vercel) |
-| `403` | Access not granted, with the viewer's Vercel user ID to add to the allowlist |
+| `401` | Sign-in prompt (Sign in with Google) |
+| `403` | Access not granted, with the signed-in email to add to the allowlist |
 | `503` | Not configured |
 | Anything else, or an invalid payload | Error with retry |
 

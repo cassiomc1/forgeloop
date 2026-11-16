@@ -78,9 +78,9 @@ describe('hosted dashboard client', () => {
   it('maps API states to explicit load results', async () => {
     expect((await loadDashboard(respond(200, clone()))).kind).toBe('ready');
     expect(await loadDashboard(respond(401))).toEqual({ kind: 'signin' });
-    expect(await loadDashboard(respond(403))).toEqual({ kind: 'forbidden', userId: null });
-    expect(await loadDashboard(respond(403, { userId: 'user_123' }))).toEqual({ kind: 'forbidden', userId: 'user_123' });
-    expect(await loadDashboard(async () => new Response('x', { status: 403 }))).toEqual({ kind: 'forbidden', userId: null });
+    expect(await loadDashboard(respond(403))).toEqual({ kind: 'forbidden', account: null });
+    expect(await loadDashboard(respond(403, { account: 'viewer@example.com' }))).toEqual({ kind: 'forbidden', account: 'viewer@example.com' });
+    expect(await loadDashboard(async () => new Response('x', { status: 403 }))).toEqual({ kind: 'forbidden', account: null });
     expect(await loadDashboard(respond(503))).toEqual({ kind: 'unconfigured' });
     expect(await loadDashboard(respond(500))).toEqual({ kind: 'error', message: 'The dashboard API returned 500.' });
     expect((await loadDashboard(respond(200, { schemaVersion: 9 }))).kind).toBe('error');

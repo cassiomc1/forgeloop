@@ -3,7 +3,7 @@ import { parseDashboardSummary, type DashboardSummary } from './hosted';
 export type DashboardLoadResult =
   | { kind: 'ready'; summary: DashboardSummary }
   | { kind: 'signin' }
-  | { kind: 'forbidden'; userId: string | null }
+  | { kind: 'forbidden'; account: string | null }
   | { kind: 'unconfigured' }
   | { kind: 'error'; message: string };
 
@@ -21,8 +21,8 @@ export async function loadDashboard(fetchImpl: FetchLike = fetch): Promise<Dashb
   if (response.status === 401) return { kind: 'signin' };
   if (response.status === 403) {
     const body: unknown = await response.json().catch(() => null);
-    const userId = body && typeof body === 'object' && typeof (body as { userId?: unknown }).userId === 'string' ? (body as { userId: string }).userId : null;
-    return { kind: 'forbidden', userId };
+    const account = body && typeof body === 'object' && typeof (body as { account?: unknown }).account === 'string' ? (body as { account: string }).account : null;
+    return { kind: 'forbidden', account };
   }
   if (response.status === 503) return { kind: 'unconfigured' };
   if (!response.ok) return { kind: 'error', message: `The dashboard API returned ${response.status}.` };

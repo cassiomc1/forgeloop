@@ -31,14 +31,14 @@ function StateMessage({ result, onRetry }: { result: Exclude<DashboardLoadResult
     return (
       <div className="flex flex-col items-center gap-4 py-16 text-center">
         <h2 className="text-xl font-semibold">Sign in to view your team's evidence</h2>
-        <p className="max-w-md text-sm text-forge-text-secondary">Access is limited to allowlisted Vercel accounts. Evidence comes from repositories where the ForgeLoop Evidence GitHub App is installed.</p>
-        <a className="btn-primary inline-flex items-center gap-2" href="/api/auth/authorize"><LogIn className="h-4 w-4" />Sign in with Vercel</a>
+        <p className="max-w-md text-sm text-forge-text-secondary">Access is limited to allowlisted Google accounts. Evidence comes from repositories where the ForgeLoop Evidence GitHub App is installed.</p>
+        <a className="btn-primary inline-flex items-center gap-2" href="/api/auth/authorize"><LogIn className="h-4 w-4" />Sign in with Google</a>
       </div>
     );
   }
   const copy = {
-    forbidden: ['Access not granted', `Your Vercel account is signed in but not on this dashboard's allowlist.${result.kind === 'forbidden' && result.userId ? ` Ask the owner to add your Vercel user ID: ${result.userId}` : ''}`],
-    unconfigured: ['Dashboard not configured', 'The dashboard is waiting for its Sign in with Vercel and GitHub App settings.'],
+    forbidden: ['Access not granted', `Your Google account is signed in but not on this dashboard's allowlist.${result.kind === 'forbidden' && result.account ? ` Ask the owner to add ${result.account}, or sign out and use another account.` : ''}`],
+    unconfigured: ['Dashboard not configured', 'The dashboard is waiting for its Sign in with Google and GitHub App settings.'],
     error: ['Could not load evidence', result.kind === 'error' ? result.message : ''],
   }[result.kind];
   return <EmptyState title={copy[0]} description={copy[1]} action={result.kind === 'error' ? { label: 'Retry', onClick: onRetry } : undefined} />;
