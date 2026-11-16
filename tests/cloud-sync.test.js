@@ -31,7 +31,8 @@ function fakeRemote(token) {
     const repository = searchParams.get("repo");
     const current = store.get(repository);
     if (init.method === "GET") {
-      return current ? new Response(current.body, { headers: { etag: current.etag } }) : Response.json({ error: "none" }, { status: 404 });
+      // Like the hosting edge, reads may return a weak validator for the same version.
+      return current ? new Response(current.body, { headers: { etag: `W/${current.etag}` } }) : Response.json({ error: "none" }, { status: 404 });
     }
     const ifMatch = init.headers["if-match"];
     if (init.headers["if-none-match"] === "*" ? current : current?.etag !== ifMatch) return Response.json({ error: "The remote snapshot changed since your last pull; pull before pushing again" }, { status: 412 });
@@ -69,6 +70,7 @@ test("a pushed snapshot restores into a fresh project and stale pushes are refus
     const pulled = await pull(fresh, env, remote.fetchImpl);
     assert.equal(pulled.status, "PULLED");
     assert.equal(pulled.restore.active, true);
+    assert.equal(pulled.etag, '"v1"');
     const listed = await executeForgeLoopCommand({ command: "task-list", projectPath: fresh, input: {} });
     assert.equal(listed.ok, true, JSON.stringify(listed));
     assert.match(JSON.stringify(listed.result), new RegExp(TEST_TASK_ID));

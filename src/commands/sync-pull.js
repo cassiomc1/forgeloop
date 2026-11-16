@@ -2,7 +2,7 @@ import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
-import { readSyncCredentials, remoteError, resolveRemote, resolveRepository, syncRequest, writeSyncState } from "../core/sync/remote.js";
+import { readSyncCredentials, remoteError, strongEtag, resolveRemote, resolveRepository, syncRequest, writeSyncState } from "../core/sync/remote.js";
 import { MAX_SNAPSHOT_BYTES, openSnapshot, syncError, unpackDirectory } from "../core/sync/snapshot.js";
 import { runStorageRestore } from "./storage-restore.js";
 
@@ -18,7 +18,7 @@ export async function runSyncPull({ target, packageRoot, remote, repository, wri
   const response = await syncRequest({ remote: resolvedRemote, repository: resolvedRepository, token, method: "GET", fetchImpl });
   if (response.status === 404) throw syncError("E_SYNC_REMOTE", `No snapshot has been pushed for ${resolvedRepository}`);
   if (!response.ok) throw await remoteError(response);
-  const etag = response.headers.get("etag");
+  const etag = strongEtag(response.headers.get("etag"));
   const body = Buffer.from(await response.arrayBuffer());
   if (body.length > MAX_SNAPSHOT_BYTES) throw syncError("E_SYNC_TOO_LARGE", "Remote snapshot exceeds the size limit");
   const { envelope, payload } = openSnapshot(body, { passphrase, repository: resolvedRepository });
