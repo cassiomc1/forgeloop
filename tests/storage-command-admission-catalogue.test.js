@@ -13,7 +13,7 @@ import { buildDiagnosisProject } from "./helpers/storage-fixtures.js";
 const MAINTENANCE_COMMANDS = [
   "task-migrate", "migrate-protocol", "storage-migration-status",
   "storage-rollback-resume", "storage-rollback", "storage-migrate",
-  "storage-migration-resume", "storage-restore", "storage-restore-resume",
+  "storage-migration-resume", "storage-restore", "storage-restore-resume", "sync-pull",
 ];
 
 async function inventory(root, relative = "") {

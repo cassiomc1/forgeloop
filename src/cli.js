@@ -373,6 +373,16 @@ export const COMMAND_HANDLERS = Object.freeze({
     renderJsonOr(options, result, value => `storage backup: ${value.path}\nattachments included: ${value.attachmentsIncluded}`);
     return exitCode;
   },
+  "sync-push": async ({ target, packageRoot, options }) => {
+    const { result, exitCode } = await COMMAND_EXECUTORS["sync-push"]({ target, packageRoot, options });
+    renderJsonOr(options, result, (await import("./commands/sync-push.js")).formatSyncPushResult);
+    return exitCode;
+  },
+  "sync-pull": async ({ target, packageRoot, options }) => {
+    const { result, exitCode } = await COMMAND_EXECUTORS["sync-pull"]({ target, packageRoot, options });
+    renderJsonOr(options, result, (await import("./commands/sync-pull.js")).formatSyncPullResult);
+    return exitCode;
+  },
   "storage-restore": async ({ target, packageRoot, options }) => {
     const { result, exitCode } = await COMMAND_EXECUTORS["storage-restore"]({ target, packageRoot, options });
     renderJsonOr(options, result, value => `storage restore: ${value.path}\nactive: ${value.active}\nretained snapshot: ${value.retainedSnapshot}`);

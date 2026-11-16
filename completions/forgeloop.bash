@@ -98,6 +98,8 @@ _forgeloop() {
       storage-restore-resume) command="storage-restore-resume" ;;
       storage-rollback) command="storage-rollback" ;;
       storage-rollback-resume) command="storage-rollback-resume" ;;
+      sync-pull) command="sync-pull" ;;
+      sync-push) command="sync-push" ;;
       task-abandon) command="task-abandon" ;;
       task-create) command="task-create" ;;
       task-list) command="task-list" ;;
@@ -127,7 +129,7 @@ _forgeloop() {
     esac
   done
   if [[ -z "\${command}" && "\${cur}" != -* ]]; then
-    COMPREPLY=( $(compgen -W 'action-authorize action-propose action-reconcile action-record action-show action-verify activate advance approval-request approval-resolve assess attestation-create attestation-status attestation-verify attestation-verify-range audit baseline bundle checkpoint-revalidate clear-continuity clear-state complete context-plan continuity contract-create contract-revise decision-show decision-status discover doctor efficiency eval evidence-export evidence-verify gate-record gate-revalidate handoff-accept handoff-create handoff-list handoff-show history index-rebuild index-setup index-start index-status index-stop init inspect metrics migrate-protocol model-route next policy policy-diff policy-discover policy-status preflight prepare-completion profile-interview progress protocol-info quality-baseline quality-status quality-verify reconcile-closure reconcile-continuity record-check record-continuity record-decision-criterion record-diagnosis record-hypothesis-disposition record-intervention record-terminal-result reflect report responsibility-set responsibility-status route rule-verify run-action run-check search semantic-plan status storage-backup storage-migrate storage-migration-resume storage-migration-status storage-restore storage-restore-resume storage-rollback storage-rollback-resume task-abandon task-create task-list task-lock-status task-migrate task-migrate-contract-bootstrap-repair task-recover task-repair-contract-bootstrap task-repair-legacy-recovery task-resume task-scope task-show task-unlock test-inventory test-prune-plan test-prune-probe test-utility trace update usage-record validate-protocol validate-receipt validate-state verify-scope workspace-bind workspace-status' -- "$cur") )
+    COMPREPLY=( $(compgen -W 'action-authorize action-propose action-reconcile action-record action-show action-verify activate advance approval-request approval-resolve assess attestation-create attestation-status attestation-verify attestation-verify-range audit baseline bundle checkpoint-revalidate clear-continuity clear-state complete context-plan continuity contract-create contract-revise decision-show decision-status discover doctor efficiency eval evidence-export evidence-verify gate-record gate-revalidate handoff-accept handoff-create handoff-list handoff-show history index-rebuild index-setup index-start index-status index-stop init inspect metrics migrate-protocol model-route next policy policy-diff policy-discover policy-status preflight prepare-completion profile-interview progress protocol-info quality-baseline quality-status quality-verify reconcile-closure reconcile-continuity record-check record-continuity record-decision-criterion record-diagnosis record-hypothesis-disposition record-intervention record-terminal-result reflect report responsibility-set responsibility-status route rule-verify run-action run-check search semantic-plan status storage-backup storage-migrate storage-migration-resume storage-migration-status storage-restore storage-restore-resume storage-rollback storage-rollback-resume sync-pull sync-push task-abandon task-create task-list task-lock-status task-migrate task-migrate-contract-bootstrap-repair task-recover task-repair-contract-bootstrap task-repair-legacy-recovery task-resume task-scope task-show task-unlock test-inventory test-prune-plan test-prune-probe test-utility trace update usage-record validate-protocol validate-receipt validate-state verify-scope workspace-bind workspace-status' -- "$cur") )
     return
   fi
   case "\${command}" in
@@ -223,6 +225,8 @@ _forgeloop() {
     storage-restore-resume) COMPREPLY=( $(compgen -W '--expected-owner --help --json --operation --path --replace-active --version --writers-quiesced' -- "$cur") );;
     storage-rollback) COMPREPLY=( $(compgen -W '--destination --help --json --legacy-root --native-writes-excluded --path --version --writers-quiesced' -- "$cur") );;
     storage-rollback-resume) COMPREPLY=( $(compgen -W '--destination --expected-owner --help --json --legacy-root --native-writes-excluded --path --version --writers-quiesced' -- "$cur") );;
+    sync-pull) COMPREPLY=( $(compgen -W '--help --json --path --remote --replace-active --repo --version --writers-quiesced' -- "$cur") );;
+    sync-push) COMPREPLY=( $(compgen -W '--help --json --path --remote --repo --version' -- "$cur") );;
     task-abandon) COMPREPLY=( $(compgen -W '--acknowledge-abandonment --help --json --path --task --version' -- "$cur") );;
     task-create) COMPREPLY=( $(compgen -W '--claim --contract-file --help --json --path --preset --preview --task --version' -- "$cur") );;
     task-list) COMPREPLY=( $(compgen -W '--active --help --json --limit --offset --path --phase --version' -- "$cur") );;

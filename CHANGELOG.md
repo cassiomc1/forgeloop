@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Add `forgeloop sync-push` and `forgeloop sync-pull` (cloud sync, phase 5).
+  They hand a project's ForgeLoop state between machines as one snapshot per
+  repository, encrypted on the client with `FORGELOOP_SYNC_KEY`. A pull is
+  verified and activated only through `storage-restore`. A push based on a
+  stale remote version is refused with `E_SYNC_CONFLICT`; ledgers are never
+  merged. See `docs/CLOUD_SYNC.md`.
 - Evidence bundles now carry an informational `metrics` block from the task
   ledger: total and per-phase durations, verification cycles, diagnoses, and
   check counts. It is self-reported and not bound.

@@ -158,6 +158,40 @@ destination is never replaced. External attachments are not included.
 
 <!-- END FORGELOOP GENERATED: cli:storage-backup:options -->
 
+### `sync-push`
+
+Uploads an encrypted backup of this project's ForgeLoop state to the cloud-sync
+remote so another machine can continue the work. The snapshot is encrypted on
+this machine with `FORGELOOP_SYNC_KEY`; `FORGELOOP_SYNC_TOKEN` authenticates the
+request. A push based on a remote version this machine has not pushed or pulled
+is refused with `E_SYNC_CONFLICT`. See [`CLOUD_SYNC.md`](./CLOUD_SYNC.md).
+
+<!-- BEGIN FORGELOOP GENERATED: cli:sync-push:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--remote <url>`: sync endpoint (default: https://forgeloop.monster/api/sync)
+- `--repo <owner/name>`: repository the snapshot belongs to (default: from the git origin)
+- `--json`: emit the push result as JSON
+
+<!-- END FORGELOOP GENERATED: cli:sync-push:options -->
+
+### `sync-pull`
+
+Downloads, decrypts and verifies the repository's snapshot, then activates it
+through `storage-restore`: into a fresh project, or over existing local state
+only with `--replace-active`. Requires `--writers-quiesced`.
+
+<!-- BEGIN FORGELOOP GENERATED: cli:sync-pull:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--remote <url>`: sync endpoint (default: https://forgeloop.monster/api/sync)
+- `--repo <owner/name>`: repository the snapshot belongs to (default: from the git origin)
+- `--replace-active`: replace existing local state; the outgoing state is retained and archived
+- `--writers-quiesced`: assert that all writers have been externally stopped
+- `--json`: emit the pull and restore result as JSON
+
+<!-- END FORGELOOP GENERATED: cli:sync-pull:options -->
+
 ## Semantic decision projections
 
 ### `decision-status`
@@ -340,7 +374,7 @@ error codes. Default output and default JSON remain unchanged.
 
 | Category | Commands |
 | --- | --- |
-| **Setup & Maintenance** | [`storage-restore-resume`](#storage-restore-resume), [`storage-restore`](#storage-restore), [`storage-migration-status`](#storage-migration-status), [`storage-migration-resume`](#storage-migration-resume), [`storage-rollback`](#storage-rollback), [`storage-rollback-resume`](#storage-rollback-resume), [`storage-migrate`](#storage-migrate), [`storage-backup`](#storage-backup), [`contract-revise`](#contract-revise), [`init`](#init), [`index-setup`](#index-setup), [`index-start`](#index-start), [`index-stop`](#index-stop), [`index-rebuild`](#index-rebuild), [`update`](#update), [`checkpoint-revalidate`](#checkpoint-revalidate), [`task-migrate`](#task-migrate), [`migrate-protocol`](#migrate-protocol), [`task-unlock`](#task-unlock), [`task-recover`](#task-recover), [`task-abandon`](#task-abandon), [`task-repair-contract-bootstrap`](#task-repair-contract-bootstrap), [`task-migrate-contract-bootstrap-repair`](#task-migrate-contract-bootstrap-repair), [`task-repair-legacy-recovery`](#task-repair-legacy-recovery), [`task-resume`](#task-resume) |
+| **Setup & Maintenance** | [`storage-restore-resume`](#storage-restore-resume), [`storage-restore`](#storage-restore), [`storage-migration-status`](#storage-migration-status), [`storage-migration-resume`](#storage-migration-resume), [`storage-rollback`](#storage-rollback), [`storage-rollback-resume`](#storage-rollback-resume), [`storage-migrate`](#storage-migrate), [`storage-backup`](#storage-backup), [`sync-push`](#sync-push), [`sync-pull`](#sync-pull), [`contract-revise`](#contract-revise), [`init`](#init), [`index-setup`](#index-setup), [`index-start`](#index-start), [`index-stop`](#index-stop), [`index-rebuild`](#index-rebuild), [`update`](#update), [`checkpoint-revalidate`](#checkpoint-revalidate), [`task-migrate`](#task-migrate), [`migrate-protocol`](#migrate-protocol), [`task-unlock`](#task-unlock), [`task-recover`](#task-recover), [`task-abandon`](#task-abandon), [`task-repair-contract-bootstrap`](#task-repair-contract-bootstrap), [`task-migrate-contract-bootstrap-repair`](#task-migrate-contract-bootstrap-repair), [`task-repair-legacy-recovery`](#task-repair-legacy-recovery), [`task-resume`](#task-resume) |
 | **Inspection & Diagnostics** | [`protocol-info`](#protocol-info), [`decision-status`](#decision-status), [`decision-show`](#decision-show), [`context-plan`](#context-plan), [`model-route`](#model-route), [`semantic-plan`](#semantic-plan), [`test-inventory`](#test-inventory), [`assess`](#assess), [`test-utility`](#test-utility), [`test-prune-plan`](#test-prune-plan), [`doctor`](#doctor), [`index-status`](#index-status), [`search`](#search), [`metrics`](#metrics), [`usage-record`](#usage-record), [`efficiency`](#efficiency), [`eval`](#eval), [`history`](#history), [`trace`](#trace), [`reflect`](#reflect), [`progress`](#progress), [`profile-interview`](#profile-interview), [`inspect`](#inspect), [`status`](#status), [`validate-state`](#validate-state), [`validate-protocol`](#validate-protocol) |
 | **Verification & Completion** | [`test-prune-probe`](#test-prune-probe), [`quality-baseline`](#quality-baseline), [`quality-verify`](#quality-verify), [`quality-status`](#quality-status), [`prepare-completion`](#prepare-completion), [`run-check`](#run-check), [`record-check`](#record-check), [`record-terminal-result`](#record-terminal-result), [`audit`](#audit), [`report`](#report), [`validate-receipt`](#validate-receipt), [`verify-scope`](#verify-scope) |
 | **Lifecycle & State** | [`discover`](#discover), [`contract-create`](#contract-create), [`gate-record`](#gate-record), [`gate-revalidate`](#gate-revalidate), [`activate`](#activate), [`route`](#route), [`preflight`](#preflight), [`advance`](#advance), [`next`](#next), [`record-diagnosis`](#record-diagnosis), [`record-intervention`](#record-intervention), [`record-hypothesis-disposition`](#record-hypothesis-disposition), [`record-decision-criterion`](#record-decision-criterion), [`complete`](#complete), [`clear-state`](#clear-state), [`reconcile-closure`](#reconcile-closure), [`task-create`](#task-create), [`task-list`](#task-list), [`task-show`](#task-show), [`task-lock-status`](#task-lock-status), [`task-scope`](#task-scope) |
