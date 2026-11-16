@@ -37,6 +37,8 @@ emails, and GitHub installation accounts.
   diagnosis.
 - The contract rejects any repository or pull-request link that is not a
   `https://github.com/` URL.
+- The optional `installUrl` drives the "Install GitHub App" button. Only a
+  `https://github.com/apps/` link is kept; anything else hides the button.
 
 ## States
 

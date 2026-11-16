@@ -55,6 +55,8 @@ export interface DashboardSummary {
   schemaVersion: 1;
   generatedAt: string;
   viewer: { name: string | null; username: string | null };
+  /** GitHub App installation page; null when the API does not provide one. */
+  installUrl: string | null;
   accounts: HostedAccount[];
   notes: string[];
 }
@@ -146,6 +148,19 @@ function parseRepository(value: unknown): HostedRepository {
   };
 }
 
+const INSTALL_URL_PREFIX = 'https://github.com/apps/';
+
+// Only a github.com App installation link is rendered; anything else is dropped.
+function installUrl(value: unknown): string | null {
+  if (typeof value !== 'string' || !value.startsWith(INSTALL_URL_PREFIX)) return null;
+  try {
+    const url = new URL(value);
+    return url.origin === 'https://github.com' && url.pathname.startsWith('/apps/') ? url.toString() : null;
+  } catch {
+    return null;
+  }
+}
+
 export function parseDashboardSummary(value: unknown): DashboardSummary {
   if (!isRecord(value) || value.schemaVersion !== 1) fail('Unsupported dashboard summary');
   const viewer = isRecord(value.viewer) ? value.viewer : {};
@@ -153,6 +168,7 @@ export function parseDashboardSummary(value: unknown): DashboardSummary {
     schemaVersion: 1,
     generatedAt: text(value.generatedAt, 'generatedAt'),
     viewer: { name: optionalText(viewer.name), username: optionalText(viewer.username) },
+    installUrl: installUrl(value.installUrl),
     accounts: list(value.accounts, 'accounts').map((account) => {
       if (!isRecord(account)) fail('account must be an object');
       return { login: text(account.login, 'login'), repositories: list(account.repositories, 'repositories').map(parseRepository) };

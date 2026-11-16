@@ -65,6 +65,18 @@ describe('hosted dashboard contract', () => {
     expect(formatDuration(5_400_000)).toBe('1 h 30 min');
   });
 
+  it('keeps only github.com App installation links', () => {
+    expect(parseDashboardSummary(clone()).installUrl).toBe('https://github.com/apps/forgeloop-evidence/installations/new');
+    for (const unsafe of ['https://evil.example/apps/x', 'https://github.com.evil.example/apps/x', 'javascript:alert(1)', 'https://github.com/cassiomc1/forgeloop', 42]) {
+      const value = clone() as Record<string, unknown>;
+      value.installUrl = unsafe;
+      expect(parseDashboardSummary(value).installUrl).toBeNull();
+    }
+    const value = clone() as Record<string, unknown>;
+    delete value.installUrl;
+    expect(parseDashboardSummary(value).installUrl).toBeNull();
+  });
+
   it('defaults the viewer when absent', () => {
     const value = clone();
     delete value.viewer;

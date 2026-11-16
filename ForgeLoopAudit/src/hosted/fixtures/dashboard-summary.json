@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "generatedAt": "2026-11-16T02:00:00.000Z",
   "viewer": { "name": "Demo Owner", "username": "demo-owner" },
+  "installUrl": "https://github.com/apps/forgeloop-evidence/installations/new",
   "accounts": [
     {
       "login": "acme",
