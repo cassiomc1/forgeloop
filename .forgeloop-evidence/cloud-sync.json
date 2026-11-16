@@ -1,0 +1,321 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "cloud-sync",
+  "forgeloopVersion": "2.1.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:cloud-sync\",\n      \"digest\": {\n        \"sha256\": \"3d5c85f39e4c545a43548578d32286f70d6acae35c344f07cc9245f38be44221\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"cloud-sync\",\n      \"verificationCycle\": 2\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"b52ce2881ee756ebc58ee340924d29968a376fa0ac5b67c6a13e7c0aa957bb57\",\n      \"contentDigest\": \"3d5c85f39e4c545a43548578d32286f70d6acae35c344f07cc9245f38be44221\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"completions/_forgeloop\",\n        \"completions/forgeloop.bash\",\n        \"completions/forgeloop.fish\",\n        \"docs/AGENT_PROTOCOL_SUMMARY.md\",\n        \"docs/CLI_REFERENCE.md\",\n        \"docs/CLOUD_SYNC.md\",\n        \"docs/TROUBLESHOOTING.md\",\n        \"src/cli.js\",\n        \"src/commands/sync-pull.js\",\n        \"src/commands/sync-push.js\",\n        \"src/core/cli-command-definitions.js\",\n        \"src/core/command-executors.js\",\n        \"src/core/error-codes.js\",\n        \"src/core/integration-invocation-policy.js\",\n        \"src/core/sync/remote.js\",\n        \"src/core/sync/snapshot.js\",\n        \"tests/cloud-sync.test.js\",\n        \"tests/storage-command-admission-catalogue.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"24fc8ea1ed15726cd7df25f29e06ed791a57629ddcda441957c64ba2f8471b35\",\n      \"routeFingerprint\": \"edcbd893a0a81d36d717258d3eab2fff49e54751e4d9a8aa2684adee2adfb836\",\n      \"stateFingerprint\": \"8e7dd634bbad16d1a17c6c78adaab413a10f35805f3af451d05885b888742c4a\",\n      \"receiptFingerprint\": \"4c0fb36ab3aec81bb7f70496b3b57b666e4362b1af551d6a5d2b2a879ec0fb68\",\n      \"ledgerSeq\": 71,\n      \"ledgerHash\": \"8d14d261ff6626d142cf686a0853002143db28db41e4e6668d8057de3579dbbd\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "cloud-sync",
+    "verificationCycle": 2,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "251775b01e349466c04bec58baf8242eab6476e2",
+      "observedRevision": "251775b01e349466c04bec58baf8242eab6476e2",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/cloud-sync",
+        "head": "251775b01e349466c04bec58baf8242eab6476e2"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "24fc8ea1ed15726cd7df25f29e06ed791a57629ddcda441957c64ba2f8471b35",
+      "routeFingerprint": "edcbd893a0a81d36d717258d3eab2fff49e54751e4d9a8aa2684adee2adfb836",
+      "stateFingerprint": "8e7dd634bbad16d1a17c6c78adaab413a10f35805f3af451d05885b888742c4a",
+      "receiptFingerprint": "4c0fb36ab3aec81bb7f70496b3b57b666e4362b1af551d6a5d2b2a879ec0fb68",
+      "ledgerSeq": 71,
+      "ledgerHash": "8d14d261ff6626d142cf686a0853002143db28db41e4e6668d8057de3579dbbd"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "91c8cc4d3b10c69f8aaee523b6a151e5fd850a43ec41238cef0576552dbd4c40",
+        "providerContentId": "c29778ed5aacf2c9a802430369499a47b845ccc3",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "completions/_forgeloop",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "152f88d6ae13e5f338340ca99630e89d43c304eb8aa9ce6ab86404419fa89fe9",
+        "providerContentId": "1f02508ffc994d9122c1fbf04483ea28b1031341",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "completions/forgeloop.bash",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "7b6e65da2e440ee5237fa45b4605964841b3a502f1f16c809bfebbdd04c2688f",
+        "providerContentId": "11d418ed620222fd9ec29de6a283f64e43dca0a9",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "completions/forgeloop.fish",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "01bd6e09fd26965d36fec88dcbe3a0249a6645eb3d9bdb19e10c4a7320090834",
+        "providerContentId": "eca7525488885451635d51eba15316950894d33e",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/AGENT_PROTOCOL_SUMMARY.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "921b0e983c46fb35702270ae1aea9774ee2c1d5dfa7e0298562590f0d039c0b6",
+        "providerContentId": "b97861a39ef74fced2af8a1c7d2983fc431959ea",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/CLI_REFERENCE.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "6b0b343be5f2a8be769e22538a88d9fabf55bf543cc8f6585c729e85209bcef0",
+        "providerContentId": "e13a82c6bd7bbfe7339430483817039519498ba1",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/CLOUD_SYNC.md",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "3e1de74289f61db38b2584105735c5348e14d3a3403c02c873fbf636087f1e64",
+        "providerContentId": "853ea1d2d8b9c2e158b39268ab85a78db7e6befd",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/TROUBLESHOOTING.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "2bb0572f28952b84b866d73c39ad3dee394e413d3d89dfd133572a2e798c2b20",
+        "providerContentId": "ef1b66bee1f8b28e6a2449477ce3ff2c0b802cb8",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/cli.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "a5fa67b482f5acd520b5477b4132f7ad03a89fb404485a6f3e7f7b75608abb51",
+        "providerContentId": "812e2b095cfcab89ce3c07faaf7291a01f6d74b2",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/commands/sync-pull.js",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "acd4bdc9f9705a82fb3b64e87e153239884bd1a4c8b789c307a67114aa66c9e1",
+        "providerContentId": "4fe98a623ac422edbcd610804ad5fdfa342c0bd1",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/commands/sync-push.js",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "da56c24b4ebc70a489553dabb6e4be8bc057c3e3d45f2e28cac94370c6c07c51",
+        "providerContentId": "6f51c47c1b28136e99b188a848c32815809385bf",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/cli-command-definitions.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "8e621ed25d080b10d63bab30220972bf1121012db88160193ae959e7796ad1ff",
+        "providerContentId": "608f3ad4ce61c32052b5b168a3a6da363374d90d",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/command-executors.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "cfde5e7210fc596cbfc2ca55efb1ab8310042f8a039880ca09a7e6090a7b3635",
+        "providerContentId": "ab15c8b698b7abc6943de89907ebdc12639c11e2",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/error-codes.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "069dc043dd1d35a18f6eeea6c0e824b7ba49de84de927b7a2c66487c2029d0cb",
+        "providerContentId": "34fbbb85024a58b9b3d7324ce3ca09c2bdd2996a",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/integration-invocation-policy.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "f42407a4fb0dd65e3e0a2d5cd9cb262798d44f0ac37a914749e818e61cc2fa55",
+        "providerContentId": "2e25e0ddd936b5f16aefae54639a48ee9ca56ffd",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/sync/remote.js",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "10e4d2dc4766895f91ca63503975be22b97537280e8177b1ca25be201b7e7c15",
+        "providerContentId": "1e21286340d3231c711a4fa0f0501d4fc4bbc385",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/sync/snapshot.js",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "95c8fb983521af5fedd46af1103109ffefd67e8208cb6211d800ded5957afe75",
+        "providerContentId": "e150e1b389943890f97ff3ff4d1e6a64110cfab4",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/cloud-sync.test.js",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "7506872f928ff44172084ded6b2552be51ecb03db7e474e35e15d5d75b471b55",
+        "providerContentId": "ee8bd0887877b3d08758ee86a6a1e329c2b29b7c",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/storage-command-admission-catalogue.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "76e59c5dea15b553b53b018b71cc1076fd806ace5574f09146aab68f4f3802ff",
+        "providerContentId": "1775a72c6356c55e59c6d1d9c4a044b8fc5cddc1",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "3d5c85f39e4c545a43548578d32286f70d6acae35c344f07cc9245f38be44221"
+  },
+  "manifestFingerprint": "b52ce2881ee756ebc58ee340924d29968a376fa0ac5b67c6a13e7c0aa957bb57",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Phase 5 MVP: add forgeloop sync-push and sync-pull, which transfer a client-side encrypted (AES-256-GCM, scrypt) attachment-inclusive project-state snapshot through the forgeloop-site /api/sync endpoint, reusing storage-backup and the verified storage-restore path, with ETag-conditional writes that refuse concurrent pushes",
+    "successCriteria": [
+      "A snapshot pushed from one project can be pulled and restored into a fresh project with identical tasks",
+      "A push based on a stale ETag is refused with E_SYNC_CONFLICT",
+      "A wrong passphrase or tampered snapshot is refused before restore"
+    ],
+    "checks": [
+      {
+        "id": "requirement-54af2644fc21c7b4",
+        "requirement": "A push based on a stale ETag is refused with E_SYNC_CONFLICT",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-55ecdc1969e84d36",
+        "requirement": "A snapshot pushed from one project can be pulled and restored into a fresh project with identical tasks",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-bcf652184a0d9fba",
+        "requirement": "A wrong passphrase or tampered snapshot is refused before restore",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "sync-tests",
+        "requirement": "node --test tests/cloud-sync.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-16T14:58:39.706Z",
+    "completedAt": "2026-11-16T15:40:45.054Z",
+    "durationMs": 2525348,
+    "phaseDurationsMs": {
+      "planning": 15420,
+      "executing": 390148,
+      "verifying": 2119476,
+      "reviewing": 304
+    },
+    "verificationCycles": 2,
+    "diagnoses": 1,
+    "checksPassed": 6,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "2136fa670ec585210340089b4566ffdc3ee1cf47c11b27ff82861c203acfa1f4"
+}

@@ -150,6 +150,14 @@ const RAW_COMMAND_EXECUTORS = {
     const { runStorageMigrate } = await import("../commands/storage-migrate.js");
     return { result: await runStorageMigrate({ target, packageRoot, destination: options.destination, writersQuiesced: options.writersQuiesced }), exitCode: 0 };
   },
+  "sync-push": async ({ target, packageRoot, options }) => {
+    const { runSyncPush } = await import("../commands/sync-push.js");
+    return { result: await runSyncPush({ target, packageRoot, remote: options.syncRemote, repository: options.syncRepository }), exitCode: 0 };
+  },
+  "sync-pull": async ({ target, packageRoot, options }) => {
+    const { runSyncPull } = await import("../commands/sync-pull.js");
+    return { result: await runSyncPull({ target, packageRoot, remote: options.syncRemote, repository: options.syncRepository, writersQuiesced: options.writersQuiesced, replaceActive: options.replaceActive }), exitCode: 0 };
+  },
   "storage-backup": async ({ target, options }) => {
     const { runStorageBackup } = await import("../commands/storage-backup.js");
     return { result: await runStorageBackup({ target, destination: options.destination, includeAttachments: options.includeAttachments }), exitCode: 0 };
@@ -879,12 +887,12 @@ export const COMMAND_EXECUTORS = Object.fromEntries(Object.entries(RAW_COMMAND_E
     const { assertCanonicalPersistence } = await import("../storage/operational-context.js");
     assertCanonicalPersistence(context.runtimeContext?.forgeloopPersistence);
   }
-  if (!context.target || name === "task-migrate" || name === "migrate-protocol" || name === "storage-migration-status" || name === "storage-rollback-resume" || name === "storage-rollback" || name === "storage-migrate" || name === "storage-migration-resume" || name === "storage-restore" || name === "storage-restore-resume") return executor(context);
+  if (!context.target || name === "task-migrate" || name === "migrate-protocol" || name === "storage-migration-status" || name === "storage-rollback-resume" || name === "storage-rollback" || name === "storage-migrate" || name === "storage-migration-resume" || name === "storage-restore" || name === "storage-restore-resume" || name === "sync-pull") return executor(context);
   const { withProjectStorage } = await import("../storage/project-boundary.js");
   const { CLI_COMMAND_DEFINITIONS } = await import("./cli-command-definitions.js");
-  // Backup writes its destination, not the source store. Doctor repairs only
+  // Backup (and sync-push, which backs up) writes its destination, not the source store. Doctor repairs only
   // when explicitly requested; inspecting either must not migrate the source.
   const readOnly = CLI_COMMAND_DEFINITIONS[name]?.mutation === "READ_ONLY"
-    || context.options?.dryRun === true || name === "storage-backup" || (name === "doctor" && context.options?.fix !== true);
+    || context.options?.dryRun === true || name === "storage-backup" || name === "sync-push" || (name === "doctor" && context.options?.fix !== true);
   return withProjectStorage(context.target, () => executor(context), { readOnly, runtimeContext: context.runtimeContext });
 }]));

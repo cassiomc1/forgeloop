@@ -11,6 +11,12 @@ import {
   E_VERIFICATION_ISOLATION_UNAVAILABLE,
 } from "./verification-execution.js";
 
+export const E_SYNC_CONFIG = "E_SYNC_CONFIG";
+export const E_SYNC_UNAUTHORIZED = "E_SYNC_UNAUTHORIZED";
+export const E_SYNC_CONFLICT = "E_SYNC_CONFLICT";
+export const E_SYNC_REMOTE = "E_SYNC_REMOTE";
+export const E_SYNC_SNAPSHOT_INVALID = "E_SYNC_SNAPSHOT_INVALID";
+export const E_SYNC_TOO_LARGE = "E_SYNC_TOO_LARGE";
 export const E_REPOSITORY_INDEX_PLATFORM_UNSUPPORTED = "E_REPOSITORY_INDEX_PLATFORM_UNSUPPORTED";
 export const E_REPOSITORY_INDEX_ENGINE_MISSING = "E_REPOSITORY_INDEX_ENGINE_MISSING";
 export const E_REPOSITORY_INDEX_ENGINE_DOWNLOAD_FAILED = "E_REPOSITORY_INDEX_ENGINE_DOWNLOAD_FAILED";
@@ -667,6 +673,39 @@ const REPOSITORY_INDEX_ERROR_METADATA = Object.freeze(Object.fromEntries([
   safeResolution,
 })])));
 
+const CLOUD_SYNC_ERROR_METADATA = Object.freeze(Object.fromEntries([
+  [E_SYNC_CONFIG, [
+    "Cloud sync is missing FORGELOOP_SYNC_TOKEN or a FORGELOOP_SYNC_KEY of at least 16 characters, or --remote or --repo is invalid.",
+    "Set both environment variables and pass an https --remote and an owner/name --repo, or a GitHub git origin.",
+  ]],
+  [E_SYNC_UNAUTHORIZED, [
+    "The sync remote rejected FORGELOOP_SYNC_TOKEN, or the token is not allowed for this repository.",
+    "Use a token whose SHA-256 hash the remote owner configured for this repository.",
+  ]],
+  [E_SYNC_CONFLICT, [
+    "The remote snapshot changed since this machine last pushed or pulled, so the push was refused instead of overwriting it.",
+    "Run forgeloop sync-pull --writers-quiesced --replace-active to adopt the remote state, then continue and push again.",
+  ]],
+  [E_SYNC_REMOTE, [
+    "The sync remote is unreachable, has no snapshot for this repository, or refused the request.",
+    "Check --remote and network access, push a first snapshot, or retry later.",
+  ]],
+  [E_SYNC_SNAPSHOT_INVALID, [
+    "The remote snapshot could not be decrypted with FORGELOOP_SYNC_KEY, belongs to another repository, or its contents failed integrity checks.",
+    "Use the same FORGELOOP_SYNC_KEY as the pushing machine; never restore a snapshot that fails these checks.",
+  ]],
+  [E_SYNC_TOO_LARGE, [
+    "The encrypted snapshot exceeds the 4 MiB sync limit.",
+    "Sync a project with less retained state; cloud sync does not split snapshots.",
+  ]],
+].map(([code, [meaning, safeResolution]]) => [code, Object.freeze({
+  code,
+  category: "cloud-sync",
+  classification: "PUBLIC_STABLE",
+  meaning,
+  safeResolution,
+})])));
+
 const PERSISTENT_TRANSPORT_ERROR_METADATA = Object.freeze(Object.fromEntries([
   [E_PERSISTENT_TRANSPORT_FRAME_INVALID, [
     "The local persistent-search byte stream did not contain a complete valid JSON frame.",
@@ -724,6 +763,7 @@ export const PUBLIC_ERROR_CODES = Object.freeze({
   ...STRUCTURAL_QUALITY_ERROR_METADATA,
   ...ADVISORY_CONTEXT_AND_HANDOFF_ERROR_METADATA,
   ...REPOSITORY_INDEX_ERROR_METADATA,
+  ...CLOUD_SYNC_ERROR_METADATA,
   ...PERSISTENT_TRANSPORT_ERROR_METADATA,
   E_PREFLIGHT_NOT_READY: Object.freeze({
     code: "E_PREFLIGHT_NOT_READY",
@@ -1860,6 +1900,12 @@ export const ALL_KNOWN_ERROR_CODES = Object.freeze(new Set([
   E_BASELINE_RECORD_DURING_ACTIVE_TASK,
   E_POLICY_INITIALIZATION_FAILED,
   E_INIT_KIT_CONFLICT,
+  E_SYNC_CONFIG,
+  E_SYNC_UNAUTHORIZED,
+  E_SYNC_CONFLICT,
+  E_SYNC_REMOTE,
+  E_SYNC_SNAPSHOT_INVALID,
+  E_SYNC_TOO_LARGE,
   E_REPOSITORY_INDEX_PLATFORM_UNSUPPORTED,
   E_REPOSITORY_INDEX_ENGINE_MISSING,
   E_REPOSITORY_INDEX_ENGINE_DOWNLOAD_FAILED,
