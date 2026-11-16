@@ -156,6 +156,30 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
     writes: ["<destination>"], removes: [], mayExecuteExternalProcess: false,
     description: "Creates an exclusive native SQLite backup, optionally including canonically referenced attachments in a retained directory.",
   }),
+  "sync-push": Object.freeze({
+    name: "sync-push", category: "project-maintenance", mutation: "MUTATING",
+    options: Object.freeze({
+      ...CLI_COMMON_OPTIONS,
+      "--remote": Object.freeze({ targetKey: "syncRemote", parseType: "string", takesValue: true, valueName: "url", missingValueMessage: "--remote requires a URL", description: "sync endpoint (default: https://forgeloop.monster/api/sync)" }),
+      "--repo": Object.freeze({ targetKey: "syncRepository", parseType: "string", takesValue: true, valueName: "owner/name", missingValueMessage: "--repo requires owner/name", description: "repository the snapshot belongs to (default: from the git origin)" }),
+      "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit the push result as JSON" }),
+    }),
+    writes: ["<user config>/forgeloop/sync/<project>.json"], removes: [], mayExecuteExternalProcess: true,
+    description: "Uploads a client-side encrypted (FORGELOOP_SYNC_KEY) backup of this project's ForgeLoop state to the sync remote, authenticated by FORGELOOP_SYNC_TOKEN. A push based on a stale remote version is refused with E_SYNC_CONFLICT.",
+  }),
+  "sync-pull": Object.freeze({
+    name: "sync-pull", category: "project-maintenance", mutation: "MUTATING",
+    options: Object.freeze({
+      ...CLI_COMMON_OPTIONS,
+      "--remote": Object.freeze({ targetKey: "syncRemote", parseType: "string", takesValue: true, valueName: "url", missingValueMessage: "--remote requires a URL", description: "sync endpoint (default: https://forgeloop.monster/api/sync)" }),
+      "--repo": Object.freeze({ targetKey: "syncRepository", parseType: "string", takesValue: true, valueName: "owner/name", missingValueMessage: "--repo requires owner/name", description: "repository the snapshot belongs to (default: from the git origin)" }),
+      "--replace-active": Object.freeze({ targetKey: "replaceActive", parseType: "boolean", takesValue: false, description: "replace existing local state; the outgoing state is retained and archived" }),
+      "--writers-quiesced": Object.freeze({ targetKey: "writersQuiesced", parseType: "boolean", takesValue: false, description: "assert that all writers have been externally stopped" }),
+      "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit the pull and restore result as JSON" }),
+    }),
+    writes: [".forgeloop/storage-restores", ".forgeloop/state.sqlite", ".forgeloop/attachments", ".forgeloop/storage-version.json", ".forgeloop/.storage-maintenance", "<user config>/forgeloop/sync/<project>.json"], removes: [], mayExecuteExternalProcess: true,
+    description: "Downloads, decrypts and verifies the repository's sync snapshot, then activates it through storage-restore: into a fresh project, or replacing local state only with --replace-active.",
+  }),
   "protocol-info": Object.freeze({
     name: "protocol-info",
     category: "diagnostics",

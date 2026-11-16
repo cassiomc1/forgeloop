@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "lychee-api-exclusion",
+  "forgeloopVersion": "2.1.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:lychee-api-exclusion\",\n      \"digest\": {\n        \"sha256\": \"dc15bf90cc505b96d69b744521e1c05c3b06579e92edd5ece915289a70fa4689\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"lychee-api-exclusion\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"1f529f4898837ab0797b321a429d5f951edf9b576f676ca25513020df7f2ac81\",\n      \"contentDigest\": \"dc15bf90cc505b96d69b744521e1c05c3b06579e92edd5ece915289a70fa4689\",\n      \"coveredPaths\": [\n        \".lychee.toml\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"4b79faf06d19de559d92cd57d920b6073ef5e454d736766d8a1aa2ca6a024dc3\",\n      \"routeFingerprint\": \"7a551125b3bb70eaacfc50787130e99effeae06390649ed34459600836cda621\",\n      \"stateFingerprint\": \"8562f839c59fd18647f658989b4a0ecfa303e960c0ac2712c24c517f82a2b467\",\n      \"receiptFingerprint\": \"6013a847682ff48f8d86c9e643f69de41e802a84c7788345561d1d22aa3e4ce6\",\n      \"ledgerSeq\": 37,\n      \"ledgerHash\": \"f69ade242882a55449941989b373cb5eef17c4f73211ddd7974f1999a4b4c184\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "lychee-api-exclusion",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "5f1aa5630a4b1f06aae2c4a0d230ab5d41b0d922",
+      "observedRevision": "5f1aa5630a4b1f06aae2c4a0d230ab5d41b0d922",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/cloud-sync",
+        "head": "5f1aa5630a4b1f06aae2c4a0d230ab5d41b0d922"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "4b79faf06d19de559d92cd57d920b6073ef5e454d736766d8a1aa2ca6a024dc3",
+      "routeFingerprint": "7a551125b3bb70eaacfc50787130e99effeae06390649ed34459600836cda621",
+      "stateFingerprint": "8562f839c59fd18647f658989b4a0ecfa303e960c0ac2712c24c517f82a2b467",
+      "receiptFingerprint": "6013a847682ff48f8d86c9e643f69de41e802a84c7788345561d1d22aa3e4ce6",
+      "ledgerSeq": 37,
+      "ledgerHash": "f69ade242882a55449941989b373cb5eef17c4f73211ddd7974f1999a4b4c184"
+    },
+    "entries": [
+      {
+        "path": ".lychee.toml",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "d40f6e7540eaa74097f58155eb2d40339f889e301031c0d74a6d15ef962b3bb1",
+        "providerContentId": "50a740c7426504b049c1aa409d412a53ab51e446",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "dc15bf90cc505b96d69b744521e1c05c3b06579e92edd5ece915289a70fa4689"
+  },
+  "manifestFingerprint": "1f529f4898837ab0797b321a429d5f951edf9b576f676ca25513020df7f2ac81",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Exclude https://forgeloop.monster/api/ endpoints from lychee link checking, because the generated CLI reference names the cloud-sync API as the default --remote and API endpoints answer 401/404 to unauthenticated link checks",
+    "successCriteria": [
+      "lychee no longer checks forgeloop.monster/api/ URLs while other links remain checked"
+    ],
+    "checks": [
+      {
+        "id": "requirement-0c09ca4fe2bd5380",
+        "requirement": "lychee no longer checks forgeloop.monster/api/ URLs while other links remain checked",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-fast",
+        "requirement": "npm run verify:fast passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-16T16:05:13.663Z",
+    "completedAt": "2026-11-16T16:06:58.067Z",
+    "durationMs": 104404,
+    "phaseDurationsMs": {
+      "planning": 2489,
+      "executing": 6264,
+      "verifying": 95357,
+      "reviewing": 294
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 3,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "38a101fcbb24caac22bc839f9f9e9dd1a3723c4564bc719bc67dab0cb2fb87ee"
+}
