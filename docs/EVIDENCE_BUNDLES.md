@@ -20,6 +20,30 @@ forgeloop evidence-verify --base origin/main --head HEAD --format markdown
 3. Run `forgeloop evidence-export --task <taskId>`. It writes
    `.forgeloop-evidence/<taskId>.json`; `--dir` changes the directory.
 
+Only a task completed while attestation mode is `required` can be exported.
+Completion captures the code manifest in the same transaction as the final
+state, so a task completed with attestation `off` or `optional` has no
+manifest. `evidence-export` then fails with `E_EVIDENCE_EXPORT_UNAVAILABLE`,
+and the manifest cannot be added afterwards. Enable attestation before you
+start the task, in the local `.forgeloop/config.json`:
+
+```json
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "attestation": {
+    "mode": "required",
+    "revisionProvider": "git",
+    "requireCompleteCoverage": true,
+    "coverage": { "exclude": [] },
+    "signing": { "provider": "none", "required": false }
+  }
+}
+```
+
+With `"provider": "none"` the bundles are unsigned and verify as
+`INTEGRITY_ONLY`.
+
 A bundle contains:
 
 - the exact attestation statement bytes;

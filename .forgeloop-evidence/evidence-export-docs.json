@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "evidence-export-docs",
+  "forgeloopVersion": "2.1.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:evidence-export-docs\",\n      \"digest\": {\n        \"sha256\": \"fed1ac4714b373ade5c1f5d8676c06370776876ccd0f6f90a4c32bb128655540\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"evidence-export-docs\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"b0e7cdcaaf7ee1d0e4019d578e017f8efd3224cc994549d823d41266d1147fd4\",\n      \"contentDigest\": \"fed1ac4714b373ade5c1f5d8676c06370776876ccd0f6f90a4c32bb128655540\",\n      \"coveredPaths\": [\n        \"docs/EVIDENCE_BUNDLES.md\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"423f444a7311deeff73923283ba21132e8e55d1d1d0ba35def5886d25a2c206a\",\n      \"routeFingerprint\": \"1e43910d414032682068fe36f63946b2c9cb51a13a704334fedf1291dac809d0\",\n      \"stateFingerprint\": \"635f3265ddc0a2a4339fb78208d83fc93e0cd6692350677c9f0596137972351b\",\n      \"receiptFingerprint\": \"f8f8e762643298533a7b88f013b63db7a4ccab5faeb973ea158a1db347a1bc57\",\n      \"ledgerSeq\": 33,\n      \"ledgerHash\": \"fb6b20407c0e5147ba6bc6de1a2b8fd83a9ce93e58756713f5b4f3e22b85f925\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "evidence-export-docs",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "e642d36b86a424fb5cbd225f6343c02c4259c567",
+      "observedRevision": "e642d36b86a424fb5cbd225f6343c02c4259c567",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/evidence-bundles-export",
+        "head": "e642d36b86a424fb5cbd225f6343c02c4259c567"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "423f444a7311deeff73923283ba21132e8e55d1d1d0ba35def5886d25a2c206a",
+      "routeFingerprint": "1e43910d414032682068fe36f63946b2c9cb51a13a704334fedf1291dac809d0",
+      "stateFingerprint": "635f3265ddc0a2a4339fb78208d83fc93e0cd6692350677c9f0596137972351b",
+      "receiptFingerprint": "f8f8e762643298533a7b88f013b63db7a4ccab5faeb973ea158a1db347a1bc57",
+      "ledgerSeq": 33,
+      "ledgerHash": "fb6b20407c0e5147ba6bc6de1a2b8fd83a9ce93e58756713f5b4f3e22b85f925"
+    },
+    "entries": [
+      {
+        "path": "docs/EVIDENCE_BUNDLES.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "1c0cac1b02a7cf3194f708d8e17b74c10dab02581e04b2037c953d4914b2bd29",
+        "providerContentId": "6132734b044a622da2fbc923177460da4ce3c72b",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "fed1ac4714b373ade5c1f5d8676c06370776876ccd0f6f90a4c32bb128655540"
+  },
+  "manifestFingerprint": "b0e7cdcaaf7ee1d0e4019d578e017f8efd3224cc994549d823d41266d1147fd4",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Document in docs/EVIDENCE_BUNDLES.md that only tasks completed with attestation mode required can be exported, since the code manifest is captured at completion and cannot be added afterwards, and show the minimal .forgeloop/config.json to enable it",
+    "successCriteria": [
+      "The guide states that tasks completed without attestation mode required cannot be exported and shows how to enable it"
+    ],
+    "checks": [
+      {
+        "id": "requirement-72c3b5e869df15a6",
+        "requirement": "The guide states that tasks completed without attestation mode required cannot be exported and shows how to enable it",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-16T14:36:20.696Z",
+    "completedAt": "2026-11-16T14:37:36.614Z",
+    "durationMs": 75918,
+    "phaseDurationsMs": {
+      "planning": 8288,
+      "executing": 14768,
+      "verifying": 52566,
+      "reviewing": 296
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 1,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "f1b6cf9b35a6b1c0a4d377fd6580c1e0d0a04e585d1e8031c454f3852fbc4180"
+}
