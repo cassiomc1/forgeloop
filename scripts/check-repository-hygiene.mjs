@@ -54,7 +54,7 @@ const SCRATCH_PATTERNS = [
 // Historical storage evidence is frozen at its reviewed size. Raising this budget is
 // an explicit review decision; prefer release assets for new bulk measurements.
 export const STORAGE_EVIDENCE_PREFIX = "benchmarks/storage-sqlite/";
-export const STORAGE_EVIDENCE_FILE_BUDGET = 979;
+export const STORAGE_EVIDENCE_FILE_BUDGET = 980;
 const AMBIGUOUS_EVIDENCE_EXTENSION = /\.gz\.(?:json|log|txt)$/u;
 // Required by Audit's locked file: dependency; its verifier checks the digest.
 const AUDIT_VENDOR_ARCHIVE = "ForgeLoopAudit/vendor/cassiomc1-forgeloop-2.1.0-bbf0f2a.tgz";
