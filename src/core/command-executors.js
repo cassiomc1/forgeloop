@@ -82,6 +82,7 @@ const runDecisionShow = async (...args) => (await import("../commands/decision-s
 const runContextPlan = async (...args) => (await import("../commands/context-plan.js")).runContextPlan(...args);
 const runModelRoute = async (...args) => (await import("../commands/model-route.js")).runModelRoute(...args);
 const runSemanticPlan = async (...args) => (await import("../commands/semantic-plan.js")).runSemanticPlan(...args);
+const runAssess = async (...args) => (await import("../commands/assess.js")).runAssess(...args);
 const runTestInventory = async (...args) => (await import("../commands/test-inventory.js")).runTestInventory(...args);
 const runTestUtility = async (...args) => (await import("../commands/test-utility.js")).runTestUtility(...args);
 const runTestPrunePlan = async (...args) => (await import("../commands/test-prune-plan.js")).runTestPrunePlan(...args);
@@ -208,6 +209,10 @@ const RAW_COMMAND_EXECUTORS = {
       kind: options.semanticPlanKind,
       input: options.semanticPlanInput ?? {},
     }),
+    exitCode: 0,
+  }),
+  assess: async ({ target }) => ({
+    result: await runAssess({ target }),
     exitCode: 0,
   }),
   "test-inventory": async ({ target }) => ({

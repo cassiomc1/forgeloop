@@ -257,6 +257,7 @@ capability-family versions.
 
 | Command | Mutation | Purpose |
 | --- | --- | --- |
+| assess | READ_ONLY | Assesses an existing repository read-only: stack, areas, tests, candidate checks, observed gaps, and a guide-routed review plan without executing target code. |
 | context-plan | READ_ONLY | Compiles a bounded non-authoritative context plan from deterministic candidates. |
 | decision-show | READ_ONLY | Shows one persisted semantic decision artifact without performing a live request. |
 | decision-status | READ_ONLY | Reports the pinned semantic decision-plane configuration without exposing credentials. |

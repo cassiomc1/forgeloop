@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Add the read-only `forgeloop assess` command: for an existing repository it
+  reports stack, frontend/backend/database/infrastructure/mobile areas, test
+  inventory, deduplicated candidate checks (never executed), observed gaps, and
+  a guide-routed review plan with a finding contract. See `docs/ASSESSMENT.md`.
+- Verify the current stable writer review against its released tag tree, so
+  post-release development no longer requires regenerating the published review;
+  stable publication still requires a review of HEAD.
 - Align ForgeLoopAudit with the published 2.1.0 core: vendor the exact npm
   archive (SHA-512 verified), update lineage, provenance and recaptured
   screenshots, and resolve its vite and fast-uri advisories.
