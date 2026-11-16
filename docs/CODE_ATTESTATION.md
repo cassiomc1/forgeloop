@@ -140,6 +140,13 @@ distinguished from invalid attestations by the stable exit-code contract:
 See [`REVISION_PROVIDERS.md`](./REVISION_PROVIDERS.md) and
 [`SIGNING_PROVIDERS.md`](./SIGNING_PROVIDERS.md) for extension boundaries.
 
+## Verifying in pull-request CI
+
+Attestations live in the local `.forgeloop/` state. To verify them in CI,
+export each completed task with `forgeloop evidence-export` and commit the
+bundle; `forgeloop evidence-verify` then checks the range without local state.
+See [`EVIDENCE_BUNDLES.md`](./EVIDENCE_BUNDLES.md).
+
 ## Receipt availability in repository CI
 
 The repository audit workflow checks supplied task receipts individually with

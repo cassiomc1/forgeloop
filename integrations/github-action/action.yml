@@ -1,0 +1,83 @@
+name: ForgeLoop evidence
+description: Verify committed ForgeLoop evidence bundles for the changes in a pull request.
+author: ForgeLoop
+branding:
+  icon: check-circle
+  color: green
+
+inputs:
+  base:
+    description: Base revision of the verified range. Defaults to the pull request base SHA.
+    required: false
+    default: ""
+  head:
+    description: Head revision of the verified range. Defaults to the pull request head SHA, else GITHUB_SHA.
+    required: false
+    default: ""
+  forgeloop-version:
+    description: Exact @cassiomc1/forgeloop version that provides evidence-verify.
+    required: true
+  evidence-dir:
+    description: Tracked evidence directory.
+    required: false
+    default: .forgeloop-evidence
+  exclude:
+    description: Newline-separated changed paths or dir/** patterns excluded from coverage.
+    required: false
+    default: ""
+  allow-partial-coverage:
+    description: Report uncovered changed paths without failing.
+    required: false
+    default: "false"
+  require-signature:
+    description: Require a valid Sigstore signature for every bundle (level ATTESTED).
+    required: false
+    default: "false"
+  identity:
+    description: Exact signer identity required when require-signature is true.
+    required: false
+    default: ""
+  issuer:
+    description: Exact signer OIDC issuer required when require-signature is true.
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Verify ForgeLoop evidence
+      shell: bash
+      env:
+        FORGELOOP_VERSION: ${{ inputs.forgeloop-version }}
+        INPUT_BASE: ${{ inputs.base }}
+        INPUT_HEAD: ${{ inputs.head }}
+        PR_BASE: ${{ github.event.pull_request.base.sha }}
+        PR_HEAD: ${{ github.event.pull_request.head.sha }}
+        EVIDENCE_DIR: ${{ inputs.evidence-dir }}
+        EXCLUDE: ${{ inputs.exclude }}
+        ALLOW_PARTIAL: ${{ inputs.allow-partial-coverage }}
+        REQUIRE_SIGNATURE: ${{ inputs.require-signature }}
+        SIGNER_IDENTITY: ${{ inputs.identity }}
+        SIGNER_ISSUER: ${{ inputs.issuer }}
+      run: |
+        set -euo pipefail
+        base="${INPUT_BASE:-${PR_BASE:-}}"
+        head="${INPUT_HEAD:-${PR_HEAD:-$GITHUB_SHA}}"
+        if [ -z "$base" ]; then echo "::error::base revision is required outside pull_request events"; exit 2; fi
+        if ! [[ "$FORGELOOP_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]]; then echo "::error::forgeloop-version must be an exact version"; exit 2; fi
+        args=(evidence-verify --base "$base" --head "$head" --dir "$EVIDENCE_DIR")
+        while IFS= read -r pattern; do
+          if [ -n "$pattern" ]; then args+=(--exclude "$pattern"); fi
+        done <<< "$EXCLUDE"
+        if [ "$ALLOW_PARTIAL" = "true" ]; then args+=(--allow-partial-coverage); fi
+        if [ "$REQUIRE_SIGNATURE" = "true" ]; then
+          if [ -z "$SIGNER_IDENTITY" ] || [ -z "$SIGNER_ISSUER" ]; then echo "::error::require-signature needs identity and issuer"; exit 2; fi
+          args+=(--require-signature --identity "$SIGNER_IDENTITY" --issuer "$SIGNER_ISSUER")
+        fi
+        set +e
+        npx --yes "@cassiomc1/forgeloop@${FORGELOOP_VERSION}" "${args[@]}" --format markdown > "$RUNNER_TEMP/forgeloop-evidence.md"
+        status=$?
+        set -e
+        cat "$RUNNER_TEMP/forgeloop-evidence.md" >> "$GITHUB_STEP_SUMMARY"
+        cat "$RUNNER_TEMP/forgeloop-evidence.md"
+        exit "$status"

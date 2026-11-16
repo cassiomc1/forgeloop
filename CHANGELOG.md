@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- Add `forgeloop evidence-export` and `forgeloop evidence-verify`: completed,
+  attested tasks export a redacted, committable evidence bundle, and pull-request
+  CI verifies changed-path coverage from the bundles without local `.forgeloop/`
+  state. Unsigned bundles report `INTEGRITY_ONLY`; Sigstore signatures under the
+  verifier's policy report `ATTESTED`. A later task's matching entry supersedes
+  an earlier one for the same path. See `docs/EVIDENCE_BUNDLES.md`.
+- Add the `integrations/github-action` composite action that runs
+  `evidence-verify` and writes the result to the job summary.
 - Add the read-only `forgeloop assess` command: for an existing repository it
   reports stack, frontend/backend/database/infrastructure/mobile areas, test
   inventory, deduplicated candidate checks (never executed), observed gaps, and

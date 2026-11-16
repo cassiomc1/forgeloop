@@ -563,6 +563,17 @@ export const COMMAND_HANDLERS = Object.freeze({
     renderJsonOr(options, result, (await import("./commands/attestation-status.js")).formatAttestationStatusResult);
     return exitCode;
   },
+  "evidence-export": async ({ target, packageRoot, options }) => {
+    const { result } = await COMMAND_EXECUTORS["evidence-export"]({ target, packageRoot, options });
+    renderJsonOr(options, result, (await import("./commands/evidence-export.js")).formatEvidenceExportResult);
+    return 0;
+  },
+  "evidence-verify": async ({ target, packageRoot, options }) => {
+    const { result, exitCode } = await COMMAND_EXECUTORS["evidence-verify"]({ target, packageRoot, options });
+    const { formatEvidenceVerifyResult } = await import("./commands/evidence-verify.js");
+    renderJsonOr(options, result, (value) => formatEvidenceVerifyResult(value, options));
+    return exitCode;
+  },
   "attestation-verify-range": async ({ target, packageRoot, options }) => {
     const { result, exitCode } = await COMMAND_EXECUTORS["attestation-verify-range"]({ target, packageRoot, options });
     renderJsonOr(options, result, (await import("./commands/attestation-verify-range.js")).formatAttestationVerifyRangeResult);

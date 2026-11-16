@@ -240,6 +240,8 @@ capability-family versions.
 | attestation-status | READ_ONLY | Reports local ForgeLoop attestation status and trust level without network access. |
 | attestation-verify | READ_ONLY | Verifies a task attestation and current revision without mutating task state. |
 | attestation-verify-range | READ_ONLY | Verifies complete attestation coverage for an opaque revision range through a provider-neutral contract. |
+| evidence-export | MUTATING | Exports a completed task's attestation as a portable, redacted evidence bundle to commit with the change. |
+| evidence-verify | READ_ONLY | Verifies committed evidence bundles for a revision range without local ForgeLoop state; signatures raise the level from INTEGRITY_ONLY to ATTESTED. |
 
 ### continuity
 
