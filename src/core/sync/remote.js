@@ -17,6 +17,12 @@ const OWNER = /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})$/u;
 const NAME = /^[A-Za-z0-9._-]{1,100}$/u;
 const REQUEST_TIMEOUT_MS = 60_000;
 
+// The hosting edge may weaken a validator (W/"x") for the same version the
+// store reports as "x"; sync always stores and sends the strong form.
+export function strongEtag(value) {
+  return typeof value === "string" && value ? value.replace(/^W\//u, "") : null;
+}
+
 export function normalizeRepository(value) {
   const [owner, name, extra] = String(value ?? "").split("/");
   if (extra !== undefined || !OWNER.test(owner ?? "") || !NAME.test(name ?? "") || name === "." || name === "..") return null;

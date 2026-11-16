@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { readFile, rm } from "node:fs/promises";
 import path from "node:path";
 
-import { readSyncCredentials, readSyncState, remoteError, resolveRemote, resolveRepository, syncRequest, writeSyncState } from "../core/sync/remote.js";
+import { readSyncCredentials, readSyncState, strongEtag, remoteError, resolveRemote, resolveRepository, syncRequest, writeSyncState } from "../core/sync/remote.js";
 import { packDirectory, sealSnapshot } from "../core/sync/snapshot.js";
 import { runStorageBackup } from "./storage-backup.js";
 
@@ -28,11 +28,11 @@ export async function runSyncPush({ target, packageRoot, remote, repository, env
   const previous = await readSyncState(target, { remote: resolvedRemote, repository: resolvedRepository, env });
   const response = await syncRequest({
     remote: resolvedRemote, repository: resolvedRepository, token, method: "PUT", body, fetchImpl,
-    headers: previous ? { "if-match": previous.etag } : { "if-none-match": "*" },
+    headers: previous ? { "if-match": strongEtag(previous.etag) } : { "if-none-match": "*" },
   });
   if (!response.ok) throw await remoteError(response);
   const result = await response.json().catch(() => ({}));
-  const etag = typeof result.etag === "string" ? result.etag : response.headers.get("etag");
+  const etag = strongEtag(typeof result.etag === "string" ? result.etag : response.headers.get("etag"));
   if (etag) await writeSyncState(target, { remote: resolvedRemote, repository: resolvedRepository, etag, direction: "push", at: new Date().toISOString() }, { env });
   return { status: "PUSHED", repository: resolvedRepository, remote: resolvedRemote, etag, files, bytes: body.length, firstPush: previous === null };
 }

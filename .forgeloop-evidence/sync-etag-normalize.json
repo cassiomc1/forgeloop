@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "sync-etag-normalize",
+  "forgeloopVersion": "2.1.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:sync-etag-normalize\",\n      \"digest\": {\n        \"sha256\": \"f9bafae79fe9fefdcceadf61e6ad78f99e7fe241ae9ac80397a2010ec3070b5b\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"sync-etag-normalize\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"f1a471d8adb84398d00e7b34a6d17132a029533a1452833e8d93e983570f7ac6\",\n      \"contentDigest\": \"f9bafae79fe9fefdcceadf61e6ad78f99e7fe241ae9ac80397a2010ec3070b5b\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"src/commands/sync-pull.js\",\n        \"src/commands/sync-push.js\",\n        \"src/core/sync/remote.js\",\n        \"tests/cloud-sync.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"403429eff3fecc9a3b26b7b66650b7e11026097bf59b700000e584441df953b7\",\n      \"routeFingerprint\": \"7ce4d1a26f8b6211c184ced16ee3811dde5fee98c51a95e4d5cde58fd9e61367\",\n      \"stateFingerprint\": \"ee2a1e1ed813fd03fcf266a7a945489bd3ac93ccfa5c8bef35809c581461c1b3\",\n      \"receiptFingerprint\": \"6b5660e52504da11fa14093415f3a791eacb364f0de9e287fc2004eb8b68d14f\",\n      \"ledgerSeq\": 40,\n      \"ledgerHash\": \"b312637a370c69325f171be426c9c54e809d263b0c23db7462b5b252bcea4a9b\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "sync-etag-normalize",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "96fd6a1c3828d512eb5daf93ac5b3aa9acc4e62f",
+      "observedRevision": "96fd6a1c3828d512eb5daf93ac5b3aa9acc4e62f",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/sync-etag-normalize",
+        "head": "96fd6a1c3828d512eb5daf93ac5b3aa9acc4e62f"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "403429eff3fecc9a3b26b7b66650b7e11026097bf59b700000e584441df953b7",
+      "routeFingerprint": "7ce4d1a26f8b6211c184ced16ee3811dde5fee98c51a95e4d5cde58fd9e61367",
+      "stateFingerprint": "ee2a1e1ed813fd03fcf266a7a945489bd3ac93ccfa5c8bef35809c581461c1b3",
+      "receiptFingerprint": "6b5660e52504da11fa14093415f3a791eacb364f0de9e287fc2004eb8b68d14f",
+      "ledgerSeq": 40,
+      "ledgerHash": "b312637a370c69325f171be426c9c54e809d263b0c23db7462b5b252bcea4a9b"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "8284d9d1cebe0c2e689994285003a20ca2a0e4edc81620dd10fbe3cfa9d94c82",
+        "providerContentId": "281232afa1c360f09d3f641126c2b4b983c0d625",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/commands/sync-pull.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "2905fed859e98394dc6900f4424c4f9ed4c9007441a224cc45067c0b9689c599",
+        "providerContentId": "30b9bf1a38b4fcbda58b3f561c44cc51be2e407a",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/commands/sync-push.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "13b7ff7d0aba2663d3de5285282c0c9ec5bd509535866b10906fe5ffa88236f8",
+        "providerContentId": "55fe319a5bec07e8bf5abc114a723fe2a76363a1",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/sync/remote.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "1a5cbfaaee44bb2766a8a77d00cfb4a4cac79c123f86085302ce04bde8d9033d",
+        "providerContentId": "f9a9e5d8b8510b115590ec95a93d998367eb0a68",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/cloud-sync.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "793cb4d4033dfff1cc18f2f9811272b240ea0fddb192b98c8eef288cce209a06",
+        "providerContentId": "0472023ce5a77b9e687a29f3441567fcfd84135f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "f9bafae79fe9fefdcceadf61e6ad78f99e7fe241ae9ac80397a2010ec3070b5b"
+  },
+  "manifestFingerprint": "f1a471d8adb84398d00e7b34a6d17132a029533a1452833e8d93e983570f7ac6",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Normalize sync ETags to their strong form in the CLI: strip a W/ weak-validator prefix from pull and push responses before storing or printing, and from the stored ETag before sending If-Match",
+    "successCriteria": [
+      "A machine that pulled a weak ETag stores and sends the strong form and can push next"
+    ],
+    "checks": [
+      {
+        "id": "requirement-4927e82c44dba142",
+        "requirement": "A machine that pulled a weak ETag stores and sends the strong form and can push next",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "sync-tests",
+        "requirement": "node --test tests/cloud-sync.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-fast",
+        "requirement": "npm run verify:fast passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-16T19:09:41.530Z",
+    "completedAt": "2026-11-16T19:12:38.828Z",
+    "durationMs": 177298,
+    "phaseDurationsMs": {
+      "planning": 2753,
+      "executing": 11228,
+      "verifying": 163033,
+      "reviewing": 284
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "277d9c66036139da31e21a63f71229e114a79e116711aa901c94ecba4ee8eff0"
+}

@@ -9,6 +9,8 @@
   stale remote version is refused with `E_SYNC_CONFLICT`; ledgers are never
   merged. Sync tokens are issued and revoked from the hosted dashboard and
   stored only as hashes. See `docs/CLOUD_SYNC.md`.
+- Cloud sync stores and sends ETags in their strong form, so a machine that
+  just pulled is not refused on its next push when the edge weakens the ETag.
 - Evidence bundles now carry an informational `metrics` block from the task
   ledger: total and per-phase durations, verification cycles, diagnoses, and
   check counts. It is self-reported and not bound.
