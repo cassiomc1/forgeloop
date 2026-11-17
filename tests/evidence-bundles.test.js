@@ -267,3 +267,65 @@ test("a failed automatic export keeps the completion VALID and reports the manua
     assert.match(result.evidence.next, /evidence-export --task auto-fail/);
   });
 });
+
+async function useSigstoreConfig(target) {
+  await writeConfig(target, createConfig({
+    attestation: { mode: "required", revisionProvider: "git", requireCompleteCoverage: true, signing: { provider: "sigstore", required: false, policy: {} } },
+  }), packageRoot);
+}
+
+test("with Sigstore configured, the automatic export signs the statement before exporting", async () => {
+  const { autoExportEvidence } = await import("../src/core/evidence/auto-export.js");
+  const { createSigstoreSigningProvider } = await import("../src/core/signing/sigstore.js");
+  await withRepository(async (target) => {
+    await useSigstoreConfig(target);
+    await reachReviewing(target, "auto-sign", () => writeFile(path.join(target, "src", "index.js"), "export const fixture = 10;\n"));
+    assert.equal((await runComplete({ target, packageRoot, taskId: "auto-sign" })).status, "VALID");
+    const calls = [];
+    const signer = createSigstoreSigningProvider({
+      execFileImpl: async (command, args) => {
+        calls.push([command, ...args]);
+        await writeFile(args[args.indexOf("--bundle") + 1], "{\"fixture\":\"sigstore\"}\n", "utf8");
+        return { stdout: "", stderr: "" };
+      },
+    });
+    const result = await autoExportEvidence({ target, packageRoot, taskId: "auto-sign", signer });
+    assert.equal(result.status, "EXPORTED");
+    assert.equal(result.signature.status, "SIGNED");
+    assert.equal(result.signed, true);
+    assert.deepEqual(calls.map((call) => call.slice(0, 2)), [["cosign", "attest-blob"]]);
+    const bundle = JSON.parse(await readFile(path.join(target, result.path), "utf8"));
+    assert.equal(bundle.signature.bundleText, "{\"fixture\":\"sigstore\"}\n");
+    const again = await autoExportEvidence({ target, packageRoot, taskId: "auto-sign", signer });
+    assert.equal(again.signature.status, "EXISTING");
+    assert.equal(calls.length, 1, "an existing signature is never replaced");
+  });
+});
+
+test("a Sigstore signing failure still exports the bundle unsigned", async () => {
+  const { autoExportEvidence } = await import("../src/core/evidence/auto-export.js");
+  const { createSigstoreSigningProvider } = await import("../src/core/signing/sigstore.js");
+  await withRepository(async (target) => {
+    await useSigstoreConfig(target);
+    await reachReviewing(target, "auto-sign-fail", () => writeFile(path.join(target, "src", "index.js"), "export const fixture = 11;\n"));
+    assert.equal((await runComplete({ target, packageRoot, taskId: "auto-sign-fail" })).status, "VALID");
+    const signer = createSigstoreSigningProvider({
+      execFileImpl: async () => { throw Object.assign(new Error("spawn cosign ENOENT"), { code: "ENOENT" }); },
+    });
+    const result = await autoExportEvidence({ target, packageRoot, taskId: "auto-sign-fail", signer });
+    assert.equal(result.status, "EXPORTED");
+    assert.equal(result.signed, false);
+    assert.equal(result.signature.status, "FAILED");
+    assert.equal(result.signature.code, "E_ATTESTATION_SIGNER_UNAVAILABLE");
+  });
+});
+
+test("the default none provider never signs", async () => {
+  await withRepository(async (target) => {
+    await reachReviewing(target, "auto-nosign", () => writeFile(path.join(target, "src", "index.js"), "export const fixture = 12;\n"));
+    const result = JSON.parse(cliComplete(target, "auto-nosign").stdout);
+    assert.equal(result.evidence.status, "EXPORTED");
+    assert.equal(result.evidence.signature.status, "NOT_CONFIGURED");
+    assert.equal(result.evidence.signed, false);
+  });
+});

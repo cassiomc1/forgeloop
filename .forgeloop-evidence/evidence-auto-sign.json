@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "evidence-auto-sign",
+  "forgeloopVersion": "2.2.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:evidence-auto-sign\",\n      \"digest\": {\n        \"sha256\": \"c08b7256c1556e8f07b88cb486c72350baee37c443805b075e378bf9857f53b5\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"evidence-auto-sign\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"97230013b080c2d871a5c561b27f39e015bc1cde95994c6c5d4b3caf6d6cc678\",\n      \"contentDigest\": \"c08b7256c1556e8f07b88cb486c72350baee37c443805b075e378bf9857f53b5\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"docs/EVIDENCE_BUNDLES.md\",\n        \"src/core/evidence/auto-export.js\",\n        \"src/core/evidence/export.js\",\n        \"tests/evidence-bundles.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"1b709cbf42fa90823250ffeceab4cd51eee2077870ac67da3473eb726c2930f1\",\n      \"routeFingerprint\": \"f2712cd47f886e8f9ce9af53fbf2e62e85c94068a8733ab74f25806bbd338274\",\n      \"stateFingerprint\": \"b40901ebaba272f12e8956acc82260bfe3399ebeb49a8066261a5f12ae72b9af\",\n      \"receiptFingerprint\": \"3b89ba0606b6bcf69b992f238f480d37810d17d39b532401be69471ae191a40f\",\n      \"ledgerSeq\": 40,\n      \"ledgerHash\": \"3047ca31407b988ab90b19cd3dc54fa46b374aa26e6c66e0611e38f2c66ab1d6\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "evidence-auto-sign",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "660a4d8c7c7d18c55e38a2de4f8c261979520686",
+      "observedRevision": "660a4d8c7c7d18c55e38a2de4f8c261979520686",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/evidence-auto-sign",
+        "head": "660a4d8c7c7d18c55e38a2de4f8c261979520686"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "1b709cbf42fa90823250ffeceab4cd51eee2077870ac67da3473eb726c2930f1",
+      "routeFingerprint": "f2712cd47f886e8f9ce9af53fbf2e62e85c94068a8733ab74f25806bbd338274",
+      "stateFingerprint": "b40901ebaba272f12e8956acc82260bfe3399ebeb49a8066261a5f12ae72b9af",
+      "receiptFingerprint": "3b89ba0606b6bcf69b992f238f480d37810d17d39b532401be69471ae191a40f",
+      "ledgerSeq": 40,
+      "ledgerHash": "3047ca31407b988ab90b19cd3dc54fa46b374aa26e6c66e0611e38f2c66ab1d6"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "db66b3af0e24df2975bf270f2a551e2ca8a017faa608f8f128fba26a1bcbf252",
+        "providerContentId": "ddceca44d81fb6e0dac85f201567dea09ecb14e7",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/EVIDENCE_BUNDLES.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "59ad891f9727ba83138e46d90564e21e5610993dc7fdfb3f20350028f70a69f5",
+        "providerContentId": "2713f7cf8cb93308672e28a65a357edeec85c998",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/evidence/auto-export.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "cef1ef2471fb157f088fc41ec6bfcaa4197ab8718d9d1fdc907d65bc3efd5b37",
+        "providerContentId": "8c6e43e0122d4d5e888b11d82109664b12a63333",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/evidence/export.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "23474078910bbbfde4acd3d5267ff04488efdd80b81daa45d47efbb86038e5f6",
+        "providerContentId": "1662178d361ba1c789d23ee34fd587226ebbdca4",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/evidence-bundles.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "a18ff6cd957f8f3f5d4c25039d4403705ef036c91e83c7a63574c6ebfcba5e1c",
+        "providerContentId": "5ccaeda0c0f34ac47ed787d624066aab9395bd68",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "c08b7256c1556e8f07b88cb486c72350baee37c443805b075e378bf9857f53b5"
+  },
+  "manifestFingerprint": "97230013b080c2d871a5c561b27f39e015bc1cde95994c6c5d4b3caf6d6cc678",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "When attestation.signing.provider is sigstore, the automatic evidence export on complete signs the attestation statement with the configured Sigstore provider (cosign attest-blob) before exporting, so the bundle carries the signature. Signing failures are reported in the evidence result and the bundle is still exported unsigned; an existing signature is never replaced. The hosted App check is unchanged and stays INTEGRITY_ONLY.",
+    "successCriteria": [
+      "With signing.provider sigstore, complete exports a bundle that carries the Sigstore signature, and a signing failure still exports an unsigned bundle"
+    ],
+    "checks": [
+      {
+        "id": "evidence-tests",
+        "requirement": "node --test tests/evidence-bundles.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-bce1cc125b0633aa",
+        "requirement": "With signing.provider sigstore, complete exports a bundle that carries the Sigstore signature, and a signing failure still exports an unsigned bundle",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-17T19:52:00.570Z",
+    "completedAt": "2026-11-17T20:21:40.413Z",
+    "durationMs": 1779843,
+    "phaseDurationsMs": {
+      "planning": 2652,
+      "executing": 142524,
+      "verifying": 1634348,
+      "reviewing": 319
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "d8dcd9917446e3cd14aefa59f44f3250683c19f31f09b26316d2f4d953b9b592"
+}
