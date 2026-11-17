@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "windows-tar-extract",
+  "forgeloopVersion": "2.2.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:windows-tar-extract\",\n      \"digest\": {\n        \"sha256\": \"6cba4fbddaaf3eed5ac2bd34e06f1682892c4610b65cd9cc49875a6f2db3af5f\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"windows-tar-extract\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"122b72e3b55aa1680eb87885f6bafda95afcc587d5b409eea852e7a13db019fb\",\n      \"contentDigest\": \"6cba4fbddaaf3eed5ac2bd34e06f1682892c4610b65cd9cc49875a6f2db3af5f\",\n      \"coveredPaths\": [\n        \"tests/stable-storage-review.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"f65f47169273e59ca61c9c94f1b64c8072b6e3f76b33cf7e41126d20d6d1607e\",\n      \"routeFingerprint\": \"bf837f3a1ebda997b5ecde92e641d5abe080d8bdb40b754636d005d41424688c\",\n      \"stateFingerprint\": \"1ae5cb40b106fcef2cffcf5034d5529a1f8c8ea258c87f59b53f799a6e8c76a6\",\n      \"receiptFingerprint\": \"2251a2bb3d8355997b95fd64b5191ef8f04f786bb157e46dd095ef45802d6a92\",\n      \"ledgerSeq\": 40,\n      \"ledgerHash\": \"c059ee945308562675c96fab5383cad43f8389a08f225fedcccc272e63daf3ea\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "windows-tar-extract",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "a83f541c5fc4061e211285e07ae7c14703408b35",
+      "observedRevision": "a83f541c5fc4061e211285e07ae7c14703408b35",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/windows-tar-extract",
+        "head": "a83f541c5fc4061e211285e07ae7c14703408b35"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "f65f47169273e59ca61c9c94f1b64c8072b6e3f76b33cf7e41126d20d6d1607e",
+      "routeFingerprint": "bf837f3a1ebda997b5ecde92e641d5abe080d8bdb40b754636d005d41424688c",
+      "stateFingerprint": "1ae5cb40b106fcef2cffcf5034d5529a1f8c8ea258c87f59b53f799a6e8c76a6",
+      "receiptFingerprint": "2251a2bb3d8355997b95fd64b5191ef8f04f786bb157e46dd095ef45802d6a92",
+      "ledgerSeq": 40,
+      "ledgerHash": "c059ee945308562675c96fab5383cad43f8389a08f225fedcccc272e63daf3ea"
+    },
+    "entries": [
+      {
+        "path": "tests/stable-storage-review.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "56d029bd0675f443537b30caab2583b09904cf10100ecb851b4a4d3c3276cc6b",
+        "providerContentId": "e005c23426bc113f994d670250b4a583d40303c8",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "6cba4fbddaaf3eed5ac2bd34e06f1682892c4610b65cd9cc49875a6f2db3af5f"
+  },
+  "manifestFingerprint": "122b72e3b55aa1680eb87885f6bafda95afcc587d5b409eea852e7a13db019fb",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Fix the two stable-storage-review tests that fail on the Windows full suite: they extract a git archive with tar -C <absolute Windows path>, which GNU tar misreads as a remote host (C:). Extract with the target directory as the process cwd instead.",
+    "successCriteria": [
+      "The stable-storage-review tests extract the reviewed source without passing an absolute path to tar"
+    ],
+    "checks": [
+      {
+        "id": "requirement-21a68544303f8fed",
+        "requirement": "The stable-storage-review tests extract the reviewed source without passing an absolute path to tar",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "review-test",
+        "requirement": "node --test tests/stable-storage-review.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-17T13:32:32.327Z",
+    "completedAt": "2026-11-17T13:56:44.173Z",
+    "durationMs": 1451846,
+    "phaseDurationsMs": {
+      "planning": 2604,
+      "executing": 21807,
+      "verifying": 1427145,
+      "reviewing": 290
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "b208e1f1b5f685fce8cdebeb863bfa981824ed85a05703f17d8a4ca9569ef5cf"
+}

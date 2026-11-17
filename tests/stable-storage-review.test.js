@@ -12,14 +12,20 @@ import { stableStorageReviewPath, verifyStableStorageReview } from "../scripts/v
 // refuses a stable release until a fresh writer review covers the change set.
 const REVIEWED_RELEASE_TAG = "v2.0.0";
 
+// Extract with the target directory as cwd: GNU tar on Windows reads a
+// drive-letter path passed to -C (C:\...) as a remote host and fails.
+function extractTaggedSource(tag, root) {
+  const archive = execFileSync("git", ["archive", "--format=tar", tag, "src", "integrations/mcp/src"], { maxBuffer: 256 * 1024 * 1024 });
+  execFileSync("tar", ["-xf", "-"], { input: archive, cwd: root });
+}
+
 function extractReviewedSource(root) {
   try {
     execFileSync("git", ["rev-parse", "--verify", `${REVIEWED_RELEASE_TAG}^{commit}`], { stdio: "pipe" });
   } catch {
     throw new Error(`${REVIEWED_RELEASE_TAG} is required to verify the retained storage review; fetch tags (fetch-depth: 0)`);
   }
-  const archive = execFileSync("git", ["archive", "--format=tar", REVIEWED_RELEASE_TAG, "src", "integrations/mcp/src"], { maxBuffer: 256 * 1024 * 1024 });
-  execFileSync("tar", ["-xf", "-", "-C", root], { input: archive });
+  extractTaggedSource(REVIEWED_RELEASE_TAG, root);
 }
 
 test("stable storage admission binds complete runtime membership and reviewed source", () => {
@@ -80,8 +86,7 @@ test("the current stable package version carries a valid review of its runtime",
   }
   const root = mkdtempSync(path.join(os.tmpdir(), "forgeloop-tagged-source-"));
   try {
-    const archive = execFileSync("git", ["archive", "--format=tar", tag, "src", "integrations/mcp/src"], { maxBuffer: 256 * 1024 * 1024 });
-    execFileSync("tar", ["-xf", "-", "-C", root], { input: archive });
+    extractTaggedSource(tag, root);
     mkdirSync(path.join(root, "benchmarks/storage-sqlite"), { recursive: true });
     copyFileSync(stableStorageReviewPath(version), path.join(root, stableStorageReviewPath(version)));
     writeFileSync(path.join(root, "package.json"), JSON.stringify({ version }));
