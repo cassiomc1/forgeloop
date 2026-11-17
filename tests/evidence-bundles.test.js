@@ -13,7 +13,7 @@ import { runComplete } from "../src/commands/complete.js";
 import { runEvidenceExport } from "../src/commands/evidence-export.js";
 import { runPrepareCompletion } from "../src/commands/prepare-completion.js";
 import { createConfig, writeConfig } from "../src/core/config.js";
-import { evidenceBundleDigest, sealEvidenceBundle, serializeEvidenceBundle } from "../src/core/evidence/bundle-format.js";
+import { assertEvidenceTaskId, evidenceBundleDigest, sealEvidenceBundle, serializeEvidenceBundle } from "../src/core/evidence/bundle-format.js";
 import { formatEvidenceMarkdown } from "../src/core/evidence/markdown.js";
 import { verifyEvidenceRange } from "../src/core/evidence/verify.js";
 import { withSigningBundleFile } from "../src/core/signing/bundle-file.js";
@@ -123,6 +123,19 @@ test("verification fails closed for uncovered paths, tampering, stale content an
     assert.ok(tampered.errors.some((error) => error.code === "E_EVIDENCE_BUNDLE_INVALID"));
     assert.equal(tampered.bundles[0].integrity, "INVALID");
   });
+});
+
+test("task IDs with dots export and verify; unsafe IDs stay rejected", async () => {
+  await withRepository(async (target, base) => {
+    const exported = await completeAttestedTask(target, "release-2.2.0-final", () => writeFile(path.join(target, "src", "index.js"), "export const fixture = 3;\n"));
+    assert.equal(exported.path, ".forgeloop-evidence/release-2.2.0-final.json");
+    const head = commitAll(target, "dotted task id");
+    assert.equal((await verify(target, base, head)).status, "VALID");
+  });
+  for (const unsafe of [".hidden", "../escape", "a/b", "a\\b", "", "x".repeat(201), "with space"]) {
+    assert.throws(() => assertEvidenceTaskId(unsafe), { code: "E_EVIDENCE_BUNDLE_INVALID" }, unsafe);
+  }
+  assert.equal(assertEvidenceTaskId("a.b_c-1"), "a.b_c-1");
 });
 
 test("a later task supersedes an earlier task's entry for the same path", async () => {
