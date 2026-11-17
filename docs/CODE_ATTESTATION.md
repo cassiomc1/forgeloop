@@ -85,6 +85,12 @@ forgeloop attestation-status --task <taskId> --json
 forgeloop attestation-verify --task <taskId> --ref HEAD --json
 ```
 
+With mode `required`, `forgeloop complete --task <taskId>` also creates the
+statement and exports the evidence bundle automatically; see
+[`EVIDENCE_BUNDLES.md`](./EVIDENCE_BUNDLES.md). `attestation-create` returns
+the existing statement (`reused: true`) when one already binds the current
+manifest.
+
 `attestation-verify` and `attestation-verify-range` are read-only. They never
 write verification records or append ledger events.
 

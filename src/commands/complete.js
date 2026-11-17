@@ -34,6 +34,9 @@ export function formatCompleteResult(result) {
     lines.push(`PUBLICATION: ${result.publicationStatus}`);
     lines.push(`PRODUCTION_READINESS: ${result.productionReadiness}`);
   }
+  const evidence = result.evidence;
+  if (evidence?.status === "EXPORTED") lines.push(`EVIDENCE: exported ${evidence.path} (commit it with the change)`);
+  else if (evidence?.status === "FAILED") lines.push(`EVIDENCE: export failed (${evidence.code}): ${evidence.message}`, `NEXT: ${evidence.next}`);
   for (const error of result.errors) {
     lines.push(`${error.code}: ${error.message}`);
     if (error.next) lines.push(`NEXT: ${error.next}`);

@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "evidence-auto-export-audit",
+  "forgeloopVersion": "2.2.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:evidence-auto-export-audit\",\n      \"digest\": {\n        \"sha256\": \"9ebedeae0f5bcb9b4f589b78e8815a37dbd2c2e194f8c1dad5aed32dc234fbc9\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"evidence-auto-export-audit\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"fcfbe90b50d48f42a18aec31934c56a46837ba1f3576112d93d96a7d05665380\",\n      \"contentDigest\": \"9ebedeae0f5bcb9b4f589b78e8815a37dbd2c2e194f8c1dad5aed32dc234fbc9\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"docs/EVIDENCE_BUNDLES.md\",\n        \"src/core/audit.js\",\n        \"tests/evidence-bundles.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"0581d1aea9f712ecca69ee63148fb3d57b9e41d163bcd0a9963e8ef6410b9645\",\n      \"routeFingerprint\": \"31a031a58798dd63f21e498cabdeb216ed452ba0161394dac24d85273db4e3af\",\n      \"stateFingerprint\": \"271d2413d9a9410beda4fefcefc79dcb1b10f460240685c8417cdd85046b8988\",\n      \"receiptFingerprint\": \"1330114a1dbbdb728c8b689bacb40e9b68a22c53f482242f9a442c48b6ef0c77\",\n      \"ledgerSeq\": 40,\n      \"ledgerHash\": \"6f370d9bd451bfd6c28c5831f3d4040371b44b6dc7192c4cc556db61b1e07adc\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "evidence-auto-export-audit",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "9d77555976390a8d2e43f95b99ef59ed2da4a3a0",
+      "observedRevision": "9d77555976390a8d2e43f95b99ef59ed2da4a3a0",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/evidence-auto-export",
+        "head": "9d77555976390a8d2e43f95b99ef59ed2da4a3a0"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "0581d1aea9f712ecca69ee63148fb3d57b9e41d163bcd0a9963e8ef6410b9645",
+      "routeFingerprint": "31a031a58798dd63f21e498cabdeb216ed452ba0161394dac24d85273db4e3af",
+      "stateFingerprint": "271d2413d9a9410beda4fefcefc79dcb1b10f460240685c8417cdd85046b8988",
+      "receiptFingerprint": "1330114a1dbbdb728c8b689bacb40e9b68a22c53f482242f9a442c48b6ef0c77",
+      "ledgerSeq": 40,
+      "ledgerHash": "6f370d9bd451bfd6c28c5831f3d4040371b44b6dc7192c4cc556db61b1e07adc"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "b5470aa2c1ccabf4d5acd21de7c3a3dbb2d9eeb710ea9f5c50a12929b831827e",
+        "providerContentId": "54361204a8a0783df56a5dce2a6f1324ec1d567e",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/EVIDENCE_BUNDLES.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "b8fade0b8c25e1589d76b34ed960b47a5594d1177c1484b97f0cde44631f3562",
+        "providerContentId": "26c4bd661e772d142efb680f0fc1c63306b56f52",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/audit.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "d23dcb2242eb51d4471fe1bb4e9331accec8e1176cceaf0ea9f2f9006eeee2e9",
+        "providerContentId": "ceeb94d06e3c4a660e792028c8042985cb1b4aba",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/evidence-bundles.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "964c12619bfc2ab293fbbe8a6341d30156c232a895f41fab7ced3eae76a29594",
+        "providerContentId": "102ba724f38f12d3d6a75f8059d5cf2457df4f45",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "9ebedeae0f5bcb9b4f589b78e8815a37dbd2c2e194f8c1dad5aed32dc234fbc9"
+  },
+  "manifestFingerprint": "fcfbe90b50d48f42a18aec31934c56a46837ba1f3576112d93d96a7d05665380",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Keep audit and report VALID after a completed task's evidence bundle is exported: the receipt's changed-path comparison ignores the task's own .forgeloop-evidence/<taskId>.json, which is written after completion by design. Also cover the auto-export FAILED branch with a test proving a failed export leaves the VALID completion intact.",
+    "successCriteria": [
+      "audit and report stay VALID after complete exports the task's evidence bundle, and a failed export keeps the completion VALID"
+    ],
+    "checks": [
+      {
+        "id": "evidence-tests",
+        "requirement": "node --test tests/evidence-bundles.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-d151448e09ebf024",
+        "requirement": "audit and report stay VALID after complete exports the task's evidence bundle, and a failed export keeps the completion VALID",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-17T16:52:16.211Z",
+    "completedAt": "2026-11-17T17:26:13.013Z",
+    "durationMs": 2036802,
+    "phaseDurationsMs": {
+      "planning": 2840,
+      "executing": 133346,
+      "verifying": 1900317,
+      "reviewing": 299
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "409937f850e969103000d6f6b6c8e12ead7cc0d6cf5054ba4da7b8e94bde0517"
+}

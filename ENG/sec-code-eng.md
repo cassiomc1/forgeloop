@@ -723,5 +723,5 @@ data independently of that choice.
 - ChaCha20-Poly1305, RFC 8439: https://datatracker.ietf.org/doc/html/rfc8439
 - GitHub Actions: use full-length commit SHA: https://docs.github.com/en/actions/reference/security/secure-use
 - GitHub artifact attestations: https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/use-artifact-attestations
-- Apple Platform Security Guide: https://support.apple.com/guide/security/
+- Apple Platform Security Guide: https://help.apple.com/pdf/security/en_US/apple-platform-security-guide.pdf
 - Microsoft Security Development Lifecycle (SDL): https://www.microsoft.com/sdl

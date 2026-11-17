@@ -25,48 +25,55 @@ function configurationError(message) {
   return error;
 }
 
+function booleanOption(value, name) {
+  if (typeof value !== "boolean") throw configurationError(`${name} must be a boolean`);
+  return value;
+}
+
+function normalizeAttestationConfig(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+    throw configurationError("attestation must be an object");
+  }
+  const mode = raw.mode ?? "optional";
+  if (!ATTESTATION_MODES.includes(mode)) throw configurationError(`Unknown attestation mode: ${mode}`);
+  const revisionProvider = raw.revisionProvider ?? "git";
+  if (typeof revisionProvider !== "string" || !revisionProvider.trim()) throw configurationError("attestation.revisionProvider must be a non-empty string");
+  const signing = raw.signing ?? {};
+  if (!signing || typeof signing !== "object" || Array.isArray(signing)) {
+    throw configurationError("attestation.signing must be an object");
+  }
+  const provider = signing.provider ?? "none";
+  if (!["none", "sigstore"].includes(provider)) throw configurationError(`Unknown attestation signing provider: ${provider}`);
+  const policy = signing.policy ?? {};
+  if (!policy || typeof policy !== "object" || Array.isArray(policy)) {
+    throw configurationError("attestation.signing.policy must be an object");
+  }
+  if (policy.issuer !== undefined && typeof policy.issuer !== "string") throw configurationError("attestation.signing.policy.issuer must be a string");
+  if (policy.identities !== undefined) stringArray(policy.identities, "attestation.signing.policy.identities");
+  return {
+    mode,
+    revisionProvider,
+    requireCompleteCoverage: raw.requireCompleteCoverage === true,
+    ...(raw.autoExportEvidence !== undefined ? { autoExportEvidence: booleanOption(raw.autoExportEvidence, "attestation.autoExportEvidence") } : {}),
+    coverage: { exclude: stringArray(raw.coverage?.exclude ?? [], "attestation.coverage.exclude") },
+    signing: {
+      provider,
+      required: signing.required === true,
+      policy: {
+        ...(policy.issuer !== undefined ? { issuer: policy.issuer } : {}),
+        identities: [...(policy.identities ?? [])],
+        requireTransparencyLog: policy.requireTransparencyLog !== false,
+      },
+    },
+  };
+}
+
 export function createConfig(input = {}) {
   const complianceMode = input.complianceMode ?? "standard";
   if (!COMPLIANCE_MODES.includes(complianceMode)) {
     throw configurationError(`Unknown compliance mode: ${complianceMode}`);
   }
-  let attestation;
-  if (input.attestation !== undefined) {
-    if (!input.attestation || typeof input.attestation !== "object" || Array.isArray(input.attestation)) {
-      throw configurationError("attestation must be an object");
-    }
-    const mode = input.attestation.mode ?? "optional";
-    if (!ATTESTATION_MODES.includes(mode)) throw configurationError(`Unknown attestation mode: ${mode}`);
-    const revisionProvider = input.attestation.revisionProvider ?? "git";
-    if (typeof revisionProvider !== "string" || !revisionProvider.trim()) throw configurationError("attestation.revisionProvider must be a non-empty string");
-    const signing = input.attestation.signing ?? {};
-    if (!signing || typeof signing !== "object" || Array.isArray(signing)) {
-      throw configurationError("attestation.signing must be an object");
-    }
-    const provider = signing.provider ?? "none";
-    if (!["none", "sigstore"].includes(provider)) throw configurationError(`Unknown attestation signing provider: ${provider}`);
-    const policy = signing.policy ?? {};
-    if (!policy || typeof policy !== "object" || Array.isArray(policy)) {
-      throw configurationError("attestation.signing.policy must be an object");
-    }
-    if (policy.issuer !== undefined && typeof policy.issuer !== "string") throw configurationError("attestation.signing.policy.issuer must be a string");
-    if (policy.identities !== undefined) stringArray(policy.identities, "attestation.signing.policy.identities");
-    attestation = {
-      mode,
-      revisionProvider,
-      requireCompleteCoverage: input.attestation.requireCompleteCoverage === true,
-      coverage: { exclude: stringArray(input.attestation.coverage?.exclude ?? [], "attestation.coverage.exclude") },
-      signing: {
-        provider,
-        required: signing.required === true,
-        policy: {
-          ...(policy.issuer !== undefined ? { issuer: policy.issuer } : {}),
-          identities: [...(policy.identities ?? [])],
-          requireTransparencyLog: policy.requireTransparencyLog !== false,
-        },
-      },
-    };
-  }
+  const attestation = input.attestation === undefined ? undefined : normalizeAttestationConfig(input.attestation);
   let verification;
   if (input.verification !== undefined) {
     try {

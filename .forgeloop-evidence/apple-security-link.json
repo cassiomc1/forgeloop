@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "apple-security-link",
+  "forgeloopVersion": "2.2.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:apple-security-link\",\n      \"digest\": {\n        \"sha256\": \"7b8f3dd5707cdae3b237e20d4fc9cbdcefc0b86341972767f8bf5a3e4a6cbafc\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"apple-security-link\",\n      \"verificationCycle\": 2\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"93e87278b4a37cf72c1fcb1cfd5f8a965ab4b3191aba5388514c5b4cbeef67c8\",\n      \"contentDigest\": \"7b8f3dd5707cdae3b237e20d4fc9cbdcefc0b86341972767f8bf5a3e4a6cbafc\",\n      \"coveredPaths\": [\n        \"ENG/sec-code-eng.md\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"fa33c959334e5aeee5e65076fcc3736563159bd11a4a55673d7537c6f407df3c\",\n      \"routeFingerprint\": \"6cd64c72661fe89634b44fb690b6c11202be68d9f294f3c630259d01a1b829dd\",\n      \"stateFingerprint\": \"36593e60767916d35f6ea413d2a7bd952057e14c282e6626f5a5b7f2cb3725f2\",\n      \"receiptFingerprint\": \"a4153c73f77abaa2737a02e87240b1d028b6d62a585a91e572bd93201b2ca9c5\",\n      \"ledgerSeq\": 47,\n      \"ledgerHash\": \"daf91fc84a98aa37a19a019d76ba195001f1bb50fa6fc121f80417591a86b7cc\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "apple-security-link",
+    "verificationCycle": 2,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "3a7e68a88a138e4e5331d96ec793e99bdf66c4e6",
+      "observedRevision": "3a7e68a88a138e4e5331d96ec793e99bdf66c4e6",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/evidence-auto-export",
+        "head": "3a7e68a88a138e4e5331d96ec793e99bdf66c4e6"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "fa33c959334e5aeee5e65076fcc3736563159bd11a4a55673d7537c6f407df3c",
+      "routeFingerprint": "6cd64c72661fe89634b44fb690b6c11202be68d9f294f3c630259d01a1b829dd",
+      "stateFingerprint": "36593e60767916d35f6ea413d2a7bd952057e14c282e6626f5a5b7f2cb3725f2",
+      "receiptFingerprint": "a4153c73f77abaa2737a02e87240b1d028b6d62a585a91e572bd93201b2ca9c5",
+      "ledgerSeq": 47,
+      "ledgerHash": "daf91fc84a98aa37a19a019d76ba195001f1bb50fa6fc121f80417591a86b7cc"
+    },
+    "entries": [
+      {
+        "path": "ENG/sec-code-eng.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "5afb504ee061708fdc12f322c42b777136375063928da42e5be16fbf8e75b65e",
+        "providerContentId": "2b64000dcc71b4a0c9fef386905f9ed2c4471908",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "7b8f3dd5707cdae3b237e20d4fc9cbdcefc0b86341972767f8bf5a3e4a6cbafc"
+  },
+  "manifestFingerprint": "93e87278b4a37cf72c1fcb1cfd5f8a965ab4b3191aba5388514c5b4cbeef67c8",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Replace the dead Apple Platform Security Guide link in ENG/sec-code-eng.md (https://support.apple.com/guide/security/ now returns 404 and fails the external link check on every documentation PR) with Apple's published guide PDF, which returns 200.",
+    "successCriteria": [
+      "ENG/sec-code-eng.md links to a reachable Apple Platform Security Guide"
+    ],
+    "checks": [
+      {
+        "id": "requirement-5dbe442cdd53f48f",
+        "requirement": "ENG/sec-code-eng.md links to a reachable Apple Platform Security Guide",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-17T18:15:12.751Z",
+    "completedAt": "2026-11-17T19:02:51.506Z",
+    "durationMs": 2858755,
+    "phaseDurationsMs": {
+      "planning": 6555,
+      "executing": 18162,
+      "verifying": 2833763,
+      "reviewing": 275
+    },
+    "verificationCycles": 2,
+    "diagnoses": 1,
+    "checksPassed": 2,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "506a8e31649cc27be594eac9b5b812f0fdc6bb6302791e6eb622536a2a2d6fdf"
+}
