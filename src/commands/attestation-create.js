@@ -1,4 +1,6 @@
-import { buildAttestationStatement, writeAttestationStatement } from "../core/attestation.js";
+import { buildAttestationStatement, readAttestationStatement, writeAttestationStatement } from "../core/attestation.js";
+import { readCodeManifest } from "../core/code-manifest.js";
+import { taskAttestationStatementPath } from "../core/task-paths.js";
 import { withTaskTransaction } from "../core/transaction.js";
 import { assertTaskMutationAllowed } from "../core/task-claim-state.js";
 import { readWorkState } from "../core/work-state.js";
@@ -19,6 +21,24 @@ export async function runAttestationCreate({ target, packageRoot, taskId } = {})
       if (error.code !== "E_TASK_COMPLETE") throw error;
     });
     await assertWorkspaceBinding(target, { taskId, packageRoot, operation: "attestation-create" });
+    // complete may already have attested this cycle (automatic evidence
+    // export), and the exported bundle then sits in the worktree. The
+    // statement is immutable within a cycle, so return it unchanged while it
+    // still binds the current manifest instead of rebuilding.
+    const existing = await readAttestationStatement({ target, packageRoot, taskId }).catch(() => null);
+    if (existing) {
+      const manifest = await readCodeManifest({ target, packageRoot, taskId }).catch(() => null);
+      if (manifest && existing.value.predicate.content.manifestFingerprint === manifest.fingerprint) {
+        return {
+          path: taskAttestationStatementPath(taskId),
+          fingerprint: existing.fingerprint,
+          statement: existing.value,
+          statementFingerprint: existing.fingerprint,
+          manifestFingerprint: manifest.fingerprint,
+          reused: true,
+        };
+      }
+    }
     const built = await buildAttestationStatement({ target, packageRoot, taskId });
     const written = await writeAttestationStatement({ target, packageRoot, taskId, statement: built.statement });
     return { ...written, statementFingerprint: built.fingerprint, manifestFingerprint: built.manifest.fingerprint };

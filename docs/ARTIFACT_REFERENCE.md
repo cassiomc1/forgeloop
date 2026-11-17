@@ -405,6 +405,7 @@ Local ForgeLoop configuration settings and policy bindings.
   - `mode` *(string, required, enum: `off`, `optional`, `required`)*
   - `revisionProvider` *(string, required, minLength: 1)*
   - `requireCompleteCoverage` *(boolean, required)*
+  - `autoExportEvidence` *(boolean, optional)*
   - `coverage` *(object, required)*
     - `exclude` *(array<string>, required)*
   - `signing` *(object, required)*

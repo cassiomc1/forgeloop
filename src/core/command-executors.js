@@ -636,6 +636,10 @@ const RAW_COMMAND_EXECUTORS = {
       authorityContext,
       runtimeContext,
     });
+    if (result.status === "VALID") {
+      const { autoExportEvidence } = await import("./evidence/auto-export.js");
+      result.evidence = await autoExportEvidence({ target, packageRoot, taskId: options.taskId ?? null });
+    }
     return { result, exitCode: result.status === "VALID" ? 0 : 1 };
   },
   audit: async ({ target, packageRoot, options, authorityContext, runtimeContext }) => {

@@ -6,7 +6,7 @@ portable bundle. You commit it with the change, and the verifier checks the
 committed code against it.
 
 ```bash
-forgeloop evidence-export --task <taskId>
+forgeloop complete --task <taskId>      # exports the bundle automatically
 git add .forgeloop-evidence/<taskId>.json
 forgeloop evidence-verify --base origin/main --head HEAD --format markdown
 ```
@@ -15,12 +15,26 @@ forgeloop evidence-verify --base origin/main --head HEAD --format markdown
 
 1. Enable attestation (`"attestation": { "mode": "required" }`) so completion
    captures a code manifest. See [`CODE_ATTESTATION.md`](./CODE_ATTESTATION.md).
-2. Complete the task, then run `forgeloop attestation-create --task <taskId>`.
-   Optionally sign the statement with a Sigstore identity.
-3. Run `forgeloop evidence-export --task <taskId>`. It writes
-   `.forgeloop-evidence/<taskId>.json`; `--dir` changes the directory. The
-   task ID must start with a letter or digit and contain only letters,
-   digits, `.`, `_` and `-` (at most 200 characters).
+2. Run `forgeloop complete --task <taskId>`. After a `VALID` completion the
+   CLI creates the attestation statement and writes
+   `.forgeloop-evidence/<taskId>.json`. The result reports this in an
+   `evidence` field:
+   - `EXPORTED` gives the bundle path to commit;
+   - `SKIPPED` gives the reason (attestation not required, the export
+     turned off, `complete` run without `--task`, or a task ID that cannot
+     name a bundle);
+   - `FAILED` gives the error and the manual commands to run.
+
+   A failed export never changes the `VALID` completion.
+3. To export by hand, or after signing the statement with a Sigstore
+   identity, run `forgeloop attestation-create --task <taskId>` and then
+   `forgeloop evidence-export --task <taskId>`. `attestation-create` returns
+   the statement already written for the current verification cycle
+   (`reused: true`) instead of failing. `--dir` changes the export directory.
+
+The task ID must start with a letter or digit and contain only letters,
+digits, `.`, `_` and `-` (at most 200 characters). Set
+`"autoExportEvidence": false` inside `attestation` to keep exports manual.
 
 Only a task completed while attestation mode is `required` can be exported.
 Completion captures the code manifest in the same transaction as the final

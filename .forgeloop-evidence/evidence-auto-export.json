@@ -1,0 +1,219 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "evidence-auto-export",
+  "forgeloopVersion": "2.2.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:evidence-auto-export\",\n      \"digest\": {\n        \"sha256\": \"f0a3fdd2c3ba6ed5c6d1d86526af5f116eba5bc93c5d234f23e3d787a48aceea\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"evidence-auto-export\",\n      \"verificationCycle\": 2\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"d67bb365b4076f067bf75f5ce21209ca377a79903405c849a116af379ea6fe23\",\n      \"contentDigest\": \"f0a3fdd2c3ba6ed5c6d1d86526af5f116eba5bc93c5d234f23e3d787a48aceea\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"docs/ARTIFACT_REFERENCE.md\",\n        \"docs/CODE_ATTESTATION.md\",\n        \"docs/EVIDENCE_BUNDLES.md\",\n        \"schemas/config.schema.json\",\n        \"src/commands/attestation-create.js\",\n        \"src/commands/complete.js\",\n        \"src/core/command-executors.js\",\n        \"src/core/config.js\",\n        \"src/core/evidence/auto-export.js\",\n        \"tests/evidence-bundles.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"1b4a72c5703c55661d7d4405c7de401754035ed292d162f2c3b5ae71a3fe5074\",\n      \"routeFingerprint\": \"9cc270888773b660d9148aac62da4d555762cfddd123cff4dc68ec6a183339b9\",\n      \"stateFingerprint\": \"7d0a6919a2b6c6dd81c6a0cf3ffec33415a7951e339ef8eddbafcd84bc38284f\",\n      \"receiptFingerprint\": \"0176442750156a8cb3ec4183beeb1dffb5b6f20226e01bf963496492b896120f\",\n      \"ledgerSeq\": 59,\n      \"ledgerHash\": \"52f2b2079c4e0186d66ab79a3e09a5dce1028738b9a13f0daa79e64e0e8eb241\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "evidence-auto-export",
+    "verificationCycle": 2,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "f0df024956d02bbd17f2b16d944598dc8db29f78",
+      "observedRevision": "f0df024956d02bbd17f2b16d944598dc8db29f78",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/evidence-auto-export",
+        "head": "f0df024956d02bbd17f2b16d944598dc8db29f78"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "1b4a72c5703c55661d7d4405c7de401754035ed292d162f2c3b5ae71a3fe5074",
+      "routeFingerprint": "9cc270888773b660d9148aac62da4d555762cfddd123cff4dc68ec6a183339b9",
+      "stateFingerprint": "7d0a6919a2b6c6dd81c6a0cf3ffec33415a7951e339ef8eddbafcd84bc38284f",
+      "receiptFingerprint": "0176442750156a8cb3ec4183beeb1dffb5b6f20226e01bf963496492b896120f",
+      "ledgerSeq": 59,
+      "ledgerHash": "52f2b2079c4e0186d66ab79a3e09a5dce1028738b9a13f0daa79e64e0e8eb241"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "b0501b834e4e381c96bc432c3fdf3f972b44522cb394a195cdffd0345c409eaa",
+        "providerContentId": "3ea809614dbb5e004da0409bb3a381d88ec21496",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/ARTIFACT_REFERENCE.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "704313a48bf80f823bf0b6c6ae011efa5affe7737b4418c947a9f4f36d8de49c",
+        "providerContentId": "719423012919d1e224bc582bd8fdd25c88a6e6ab",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/CODE_ATTESTATION.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "2007679002b185ac1ce21afa1481d9d2ad7a52064b68fe6a7db5a0845259e4d8",
+        "providerContentId": "ce815a895618ef3e39c4973593fac8df38720cff",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/EVIDENCE_BUNDLES.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "cb03612c74be0df3b7142891b77cfbb7bce984214a99b2321305dcd439248a0a",
+        "providerContentId": "8ab0a431e613af53874a4bb54646279fde7c255f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "schemas/config.schema.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "4f0502d0c9f79b06b69691990e95f43a19440c3f54755c5a020e4eff92ace688",
+        "providerContentId": "5f84cfb7a2471bbfade9274d952096902a870706",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/commands/attestation-create.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "c23d4e4e1d7b5553c625709e7aa383e8f1b26fd6aaf1ea1eae1dacb5b7113c43",
+        "providerContentId": "53bc612fe6e6ddc45261009b7380a5dc1e47e5f9",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/commands/complete.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "71a53f536a561e17b6239ce98f91529d67ca27b70aeb5319dd740095ff172b2b",
+        "providerContentId": "b4c086059c7325728c7b22483448be13aa2eb6aa",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/command-executors.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "eca4123ce303d1d19e8ddca4f91c29ba3b7c58d854d170bd439ae236bc14771f",
+        "providerContentId": "9038291189c33c8e53c6ab50d16320036a46100c",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/config.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "9ed47b0ca601bea357cc82a4d4f700a9bd4a195269eaf746cb47ee95f45f493c",
+        "providerContentId": "1fe0e717daa5815efd69a9d1bfa952682cc0f024",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/evidence/auto-export.js",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "3eb61d84a97d45adfab03fde5b5570a2b6ab42e595dfd61564cd095a4b70e145",
+        "providerContentId": "88cd72f3f0f878d744641c0c9bbb6c929d7eccac",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/evidence-bundles.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "44d127b8b9dfc4b2c697c11bf02b66ed7fb18af71bcb140034c0adafacfc4e5d",
+        "providerContentId": "49c3bea7a7c52cccc76dc1f5fb44c7a41aa9cd72",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "f0a3fdd2c3ba6ed5c6d1d86526af5f116eba5bc93c5d234f23e3d787a48aceea"
+  },
+  "manifestFingerprint": "d67bb365b4076f067bf75f5ce21209ca377a79903405c849a116af379ea6fe23",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Export the evidence bundle automatically when the CLI completes a task with attestation mode required: after a VALID completion, create the attestation statement (reusing one already written for the current verification cycle) and write .forgeloop-evidence/<taskId>.json. Export failures are reported in the complete result and never change the VALID completion. attestation.autoExportEvidence: false opts out; attestation-create becomes idempotent within a verification cycle so the existing manual flow keeps working.",
+    "successCriteria": [
+      "forgeloop complete on an attestation-required task writes a verifiable evidence bundle without a separate export step"
+    ],
+    "checks": [
+      {
+        "id": "evidence-tests",
+        "requirement": "node --test tests/evidence-bundles.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-0cec4f5433356bd5",
+        "requirement": "forgeloop complete on an attestation-required task writes a verifiable evidence bundle without a separate export step",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-17T15:42:33.981Z",
+    "completedAt": "2026-11-17T16:49:01.479Z",
+    "durationMs": 3987498,
+    "phaseDurationsMs": {
+      "planning": 2624,
+      "executing": 186778,
+      "verifying": 3797779,
+      "reviewing": 317
+    },
+    "verificationCycles": 2,
+    "diagnoses": 1,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "f5e80752d8177ff8f93247672a2c2aa4a2f6fa0c3bbc3556d6f966998dd61a5d"
+}

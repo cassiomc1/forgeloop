@@ -196,3 +196,47 @@ test("bundle digests cover every field and the CLI verifies a clean clone withou
     }
   });
 });
+
+async function reachReviewing(target, taskId, edit) {
+  await setupVerifyingTask(target, packageRoot, { taskId, requirement: "tests" });
+  await edit();
+  await runPrepareCompletion({ target, packageRoot, taskId });
+  for (const [id, requirement] of [[`${taskId}-check`, "tests"], [`${taskId}-completion`, "required action satisfies tests"]]) {
+    const check = await runCheck({ target, packageRoot, taskId, id, requirement, argv: [process.execPath, "-e", "process.exit(0)"] });
+    assert.equal(check.execution.status, "passed");
+  }
+  await runAdvance({ target, packageRoot, taskId, to: "REVIEWING" });
+}
+
+const cliComplete = (target, taskId) => spawnSync(process.execPath, [cli, "complete", "--task", taskId, "--path", target, "--json"], { encoding: "utf8" });
+
+test("CLI complete exports a verifiable bundle and attestation-create stays idempotent", async () => {
+  await withRepository(async (target, base) => {
+    await reachReviewing(target, "auto-a", () => writeFile(path.join(target, "src", "index.js"), "export const fixture = 5;\n"));
+    const run = cliComplete(target, "auto-a");
+    assert.equal(run.status, 0, run.stderr);
+    const result = JSON.parse(run.stdout);
+    assert.equal(result.status, "VALID");
+    assert.equal(result.evidence.status, "EXPORTED");
+    assert.equal(result.evidence.path, ".forgeloop-evidence/auto-a.json");
+    const again = await runAttestationCreate({ target, packageRoot, taskId: "auto-a" });
+    assert.equal(again.reused, true);
+    const head = commitAll(target, "auto-export change");
+    assert.equal((await verify(target, base, head)).status, "VALID");
+  });
+});
+
+test("CLI complete skips the export when autoExportEvidence is false", async () => {
+  await withRepository(async (target) => {
+    await writeConfig(target, createConfig({
+      attestation: { mode: "required", revisionProvider: "git", requireCompleteCoverage: true, autoExportEvidence: false, signing: { provider: "none", required: false, policy: {} } },
+    }), packageRoot);
+    await reachReviewing(target, "auto-off", () => writeFile(path.join(target, "src", "index.js"), "export const fixture = 6;\n"));
+    const run = cliComplete(target, "auto-off");
+    assert.equal(run.status, 0, run.stderr);
+    const result = JSON.parse(run.stdout);
+    assert.equal(result.status, "VALID");
+    assert.equal(result.evidence.status, "SKIPPED");
+    assert.equal(spawnSync("git", ["-C", target, "ls-files", "--others", "--exclude-standard", ".forgeloop-evidence"], { encoding: "utf8" }).stdout, "");
+  });
+});
