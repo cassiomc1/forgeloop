@@ -13,6 +13,7 @@ import { readCodeManifest } from "./code-manifest.js";
 import { readAttestationStatement, validateAttestationStatement } from "./attestation.js";
 import { assertAttestationStatementBindings, verifyCodeManifestContent } from "./attestation-verifier.js";
 import { projectStructuralQualityStatus } from "./structural-quality/status.js";
+import { DEFAULT_EVIDENCE_DIRECTORY } from "./evidence/bundle-format.js";
 
 function sortErrors(errors) {
   return [...errors].sort((left, right) => left.code.localeCompare(right.code)
@@ -47,6 +48,12 @@ async function compareChangedPaths(target, packageRoot, options = {}) {
 
   if (observed === null) {
     return { status: "NOT_VERIFIED", expected: receipt.changedPaths ?? [], observed: [], missing: [], unexpected: [] };
+  }
+  // complete exports the task's own evidence bundle after the receipt is
+  // final; it is a protocol-owned derivative, not an unexpected change.
+  if (options.taskId) {
+    const ownBundle = `${DEFAULT_EVIDENCE_DIRECTORY}/${options.taskId}.json`;
+    observed = observed.filter((relativePath) => relativePath !== ownBundle);
   }
   const expected = [...new Set(receipt.changedPaths ?? [])].sort();
   const missing = expected.filter((relativePath) => !observed.includes(relativePath));

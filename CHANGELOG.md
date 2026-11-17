@@ -10,6 +10,8 @@
   - Set `attestation.autoExportEvidence: false` to keep exports manual.
   - `attestation-create` now returns the statement already written for the
     current manifest (`reused: true`) instead of failing.
+  - `audit` and `report` ignore the task's own exported bundle when they
+    compare the receipt's changed paths, so they stay `VALID` after export.
 - Evidence bundles accept task IDs containing dots (for example
   `release-2.2.0-final`); IDs with separators or a leading dot stay rejected.
 - Align ForgeLoopAudit with the published 2.2.0 core: vendor the exact npm

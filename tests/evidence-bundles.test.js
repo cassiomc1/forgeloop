@@ -240,3 +240,30 @@ test("CLI complete skips the export when autoExportEvidence is false", async () 
     assert.equal(spawnSync("git", ["-C", target, "ls-files", "--others", "--exclude-standard", ".forgeloop-evidence"], { encoding: "utf8" }).stdout, "");
   });
 });
+
+test("audit and report stay VALID after complete exports the task's own bundle", async () => {
+  await withRepository(async (target) => {
+    await reachReviewing(target, "auto-audit", () => writeFile(path.join(target, "src", "index.js"), "export const fixture = 7;\n"));
+    assert.equal(JSON.parse(cliComplete(target, "auto-audit").stdout).evidence.status, "EXPORTED");
+    for (const command of ["audit", "report"]) {
+      const run = spawnSync(process.execPath, [cli, command, "--task", "auto-audit", "--path", target, "--json"], { encoding: "utf8" });
+      assert.equal(run.status, 0, `${command}: ${run.stdout}`);
+    }
+    await writeFile(path.join(target, ".forgeloop-evidence", "other-task.json"), "{}\n");
+    const audit = spawnSync(process.execPath, [cli, "audit", "--task", "auto-audit", "--path", target, "--json"], { encoding: "utf8" });
+    assert.equal(audit.status, 1, "an unrelated new bundle is still an unexpected change");
+  });
+});
+
+test("a failed automatic export keeps the completion VALID and reports the manual commands", async () => {
+  await withRepository(async (target) => {
+    await reachReviewing(target, "auto-fail", () => writeFile(path.join(target, "src", "index.js"), "export const fixture = 8;\n"));
+    await writeFile(path.join(target, ".forgeloop-evidence"), "not a directory\n");
+    const run = cliComplete(target, "auto-fail");
+    assert.equal(run.status, 0, run.stderr);
+    const result = JSON.parse(run.stdout);
+    assert.equal(result.status, "VALID");
+    assert.equal(result.evidence.status, "FAILED");
+    assert.match(result.evidence.next, /evidence-export --task auto-fail/);
+  });
+});

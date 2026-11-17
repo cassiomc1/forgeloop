@@ -25,7 +25,11 @@ forgeloop evidence-verify --base origin/main --head HEAD --format markdown
      name a bundle);
    - `FAILED` gives the error and the manual commands to run.
 
-   A failed export never changes the `VALID` completion.
+   A failed export never changes the `VALID` completion. `audit` and
+   `report` ignore the task's own bundle (`.forgeloop-evidence/<taskId>.json`)
+   when they compare the receipt's changed paths, so they stay `VALID`. Any
+   other new file still counts as an unexpected change. The MCP and
+   integration `complete` run the same executor and export the same way.
 3. To export by hand, or after signing the statement with a Sigstore
    identity, run `forgeloop attestation-create --task <taskId>` and then
    `forgeloop evidence-export --task <taskId>`. `attestation-create` returns
