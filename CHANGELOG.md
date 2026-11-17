@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- With `attestation.signing.provider: "sigstore"`, the automatic evidence
+  export on `complete` signs the statement with `cosign attest-blob` before
+  exporting, so the bundle carries the signature.
+  - `evidence.signature.status` reports `SIGNED`, `EXISTING`, `FAILED` or
+    `NOT_CONFIGURED`.
+  - A signing failure still exports the bundle unsigned.
+  - An existing signature is never replaced.
 - `forgeloop complete --task <id>` exports the evidence bundle automatically
   when attestation mode is `required`. After a `VALID` completion it creates
   the attestation statement and writes `.forgeloop-evidence/<id>.json`. The

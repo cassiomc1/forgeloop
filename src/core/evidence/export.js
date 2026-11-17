@@ -42,6 +42,11 @@ async function readSignatureText(target, taskId) {
   }
 }
 
+// True when a Sigstore bundle is already stored for the task's statement.
+export async function hasAttestationSignature(target, taskId) {
+  return withProjectReadSnapshot(target, async () => (await readSignatureText(target, taskId)) !== null);
+}
+
 async function readOptional(target, relativePath, schemaName, packageRoot) {
   try { return (await readJsonArtifact(target, relativePath, schemaName, packageRoot)).value; } catch { return null; }
 }

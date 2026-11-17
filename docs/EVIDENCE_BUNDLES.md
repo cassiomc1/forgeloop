@@ -30,6 +30,22 @@ forgeloop evidence-verify --base origin/main --head HEAD --format markdown
    when they compare the receipt's changed paths, so they stay `VALID`. Any
    other new file still counts as an unexpected change. The MCP and
    integration `complete` run the same executor and export the same way.
+   With `"signing": { "provider": "sigstore" }` in `attestation`, the
+   automatic export also signs the statement with `cosign attest-blob`
+   before exporting, so the bundle carries the signature. The result's
+   `evidence.signature.status` is:
+   - `SIGNED` when the signature is attached;
+   - `EXISTING` when a signature was already stored (it is never replaced);
+   - `FAILED`, with a code such as `E_ATTESTATION_SIGNER_UNAVAILABLE` when
+     `cosign` is missing. The bundle is still exported, unsigned.
+   - `NOT_CONFIGURED` for the default `none` provider.
+
+   Keyless Sigstore signing records the signer's identity (for example an
+   email address) in the public Rekor transparency log. Enable it only for
+   identities that may be published. The hosted GitHub App check does not
+   verify signatures and reports `INTEGRITY_ONLY`; use `evidence-verify
+   --require-signature` with an identity and issuer policy to reach
+   `ATTESTED`.
 3. To export by hand, or after signing the statement with a Sigstore
    identity, run `forgeloop attestation-create --task <taskId>` and then
    `forgeloop evidence-export --task <taskId>`. `attestation-create` returns
