@@ -17,6 +17,7 @@ export const E_SYNC_CONFLICT = "E_SYNC_CONFLICT";
 export const E_SYNC_REMOTE = "E_SYNC_REMOTE";
 export const E_SYNC_SNAPSHOT_INVALID = "E_SYNC_SNAPSHOT_INVALID";
 export const E_SYNC_TOO_LARGE = "E_SYNC_TOO_LARGE";
+export const E_SYNC_MERGE_CONFLICT = "E_SYNC_MERGE_CONFLICT";
 export const E_EVIDENCE_PUBLISH_CONFIG = "E_EVIDENCE_PUBLISH_CONFIG";
 export const E_EVIDENCE_PUBLISH_UNAUTHORIZED = "E_EVIDENCE_PUBLISH_UNAUTHORIZED";
 export const E_REPOSITORY_INDEX_PLATFORM_UNSUPPORTED = "E_REPOSITORY_INDEX_PLATFORM_UNSUPPORTED";
@@ -699,6 +700,10 @@ const CLOUD_SYNC_ERROR_METADATA = Object.freeze(Object.fromEntries([
   [E_SYNC_TOO_LARGE, [
     "The encrypted snapshot exceeds the 4 MiB sync limit.",
     "Sync a project with less retained state; cloud sync does not split snapshots.",
+  ]],
+  [E_SYNC_MERGE_CONFLICT, [
+    "sync-pull --merge found tasks changed on both machines, or merged tasks would hold overlapping active claims, so nothing was changed.",
+    "Finish or abandon the task on one machine and sync it first, or run sync-pull --replace-active to adopt the remote state.",
   ]],
   [E_EVIDENCE_PUBLISH_CONFIG, [
     "evidence-publish is missing FORGELOOP_SYNC_TOKEN, has nothing to publish, or --remote, --repo or a task ID is invalid.",
@@ -1916,6 +1921,7 @@ export const ALL_KNOWN_ERROR_CODES = Object.freeze(new Set([
   E_SYNC_REMOTE,
   E_SYNC_SNAPSHOT_INVALID,
   E_SYNC_TOO_LARGE,
+  E_SYNC_MERGE_CONFLICT,
   E_EVIDENCE_PUBLISH_CONFIG,
   E_EVIDENCE_PUBLISH_UNAUTHORIZED,
   E_REPOSITORY_INDEX_PLATFORM_UNSUPPORTED,

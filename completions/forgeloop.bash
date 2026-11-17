@@ -227,7 +227,7 @@ _forgeloop() {
     storage-restore-resume) COMPREPLY=( $(compgen -W '--expected-owner --help --json --operation --path --replace-active --version --writers-quiesced' -- "$cur") );;
     storage-rollback) COMPREPLY=( $(compgen -W '--destination --help --json --legacy-root --native-writes-excluded --path --version --writers-quiesced' -- "$cur") );;
     storage-rollback-resume) COMPREPLY=( $(compgen -W '--destination --expected-owner --help --json --legacy-root --native-writes-excluded --path --version --writers-quiesced' -- "$cur") );;
-    sync-pull) COMPREPLY=( $(compgen -W '--help --json --path --remote --replace-active --repo --version --writers-quiesced' -- "$cur") );;
+    sync-pull) COMPREPLY=( $(compgen -W '--dry-run --help --json --merge --path --remote --replace-active --repo --version --writers-quiesced' -- "$cur") );;
     sync-push) COMPREPLY=( $(compgen -W '--help --json --path --remote --repo --version' -- "$cur") );;
     task-abandon) COMPREPLY=( $(compgen -W '--acknowledge-abandonment --help --json --path --task --version' -- "$cur") );;
     task-create) COMPREPLY=( $(compgen -W '--claim --contract-file --help --json --path --preset --preview --task --version' -- "$cur") );;

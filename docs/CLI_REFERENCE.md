@@ -187,6 +187,8 @@ only with `--replace-active`. Requires `--writers-quiesced`.
 - `--remote <url>`: sync endpoint (default: https://forgeloop.monster/api/sync)
 - `--repo <owner/name>`: repository the snapshot belongs to (default: from the git origin)
 - `--replace-active`: replace existing local state; the outgoing state is retained and archived
+- `--merge`: combine whole tasks three-way with local state instead of replacing it
+- `--dry-run`: with --merge, report the per-task plan without changing anything
 - `--writers-quiesced`: assert that all writers have been externally stopped
 - `--json`: emit the pull and restore result as JSON
 

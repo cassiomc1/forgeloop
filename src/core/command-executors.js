@@ -128,11 +128,11 @@ const READ_ONLY_STORAGE_COMMANDS = new Set(["storage-backup", "sync-push", "evid
 const RAW_COMMAND_EXECUTORS = {
   "storage-restore-resume": async ({ target, packageRoot, options }) => {
     const { runStorageRestoreResume } = await import("../commands/storage-restore-resume.js");
-    return { result: await runStorageRestoreResume({ target, packageRoot, operationId: options.operationId, expectedOwnerId: options.expectedOwnerId, writersQuiesced: options.writersQuiesced, replaceActive: options.replaceActive }), exitCode: 0 };
+    return { result: await runStorageRestoreResume({ target, packageRoot, operationId: options.operationId, expectedOwnerId: options.expectedOwnerId, writersQuiesced: options.writersQuiesced, replaceActive: options.replaceActive, merge: options.syncMerge, dryRun: options.dryRun }), exitCode: 0 };
   },
   "storage-restore": async ({ target, packageRoot, options }) => {
     const { runStorageRestore } = await import("../commands/storage-restore.js");
-    return { result: await runStorageRestore({ target, packageRoot, source: options.source, writersQuiesced: options.writersQuiesced, replaceActive: options.replaceActive }), exitCode: 0 };
+    return { result: await runStorageRestore({ target, packageRoot, source: options.source, writersQuiesced: options.writersQuiesced, replaceActive: options.replaceActive, merge: options.syncMerge, dryRun: options.dryRun }), exitCode: 0 };
   },
   "storage-migration-status": async ({ target }) => {
     const { runStorageMigrationStatus } = await import("../commands/storage-migration-status.js");
@@ -160,7 +160,7 @@ const RAW_COMMAND_EXECUTORS = {
   },
   "sync-pull": async ({ target, packageRoot, options }) => {
     const { runSyncPull } = await import("../commands/sync-pull.js");
-    return { result: await runSyncPull({ target, packageRoot, remote: options.syncRemote, repository: options.syncRepository, writersQuiesced: options.writersQuiesced, replaceActive: options.replaceActive }), exitCode: 0 };
+    return { result: await runSyncPull({ target, packageRoot, remote: options.syncRemote, repository: options.syncRepository, writersQuiesced: options.writersQuiesced, replaceActive: options.replaceActive, merge: options.syncMerge, dryRun: options.dryRun }), exitCode: 0 };
   },
   "storage-backup": async ({ target, options }) => {
     const { runStorageBackup } = await import("../commands/storage-backup.js");

@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+- `forgeloop sync-pull --merge` combines whole tasks from both machines
+  instead of replacing local state.
+  - Every push and pull records a digest of each task. A merge classifies
+    each task three-way against that base: take the remote task, keep the
+    local one, or report a conflict.
+  - A task changed on both machines, or overlapping active claims, fails with
+    `E_SYNC_MERGE_CONFLICT` and changes nothing.
+  - The merged state is built offline, sealed as a verified storage backup,
+    and activated through the retained replace-active restore.
+  - `--dry-run` reports the plan only.
 - Add `forgeloop evidence-publish` (opt-in): it uploads redacted evidence
   bundles to the team dashboard, authenticated by `FORGELOOP_SYNC_TOKEN`.
   - Bundles wait in an offline queue under the user config directory, and
