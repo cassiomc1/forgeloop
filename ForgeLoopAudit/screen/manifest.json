@@ -3,8 +3,8 @@
   "sourceProject": "demo",
   "sourceProjectName": "ForgeShop",
   "auditVersion": "0.3.0-rc.3",
-  "forgeLoopVersion": "2.1.0",
-  "forgeLoopCommit": "bbf0f2a30d356812834c85098179250f07d78842",
+  "forgeLoopVersion": "2.2.0",
+  "forgeLoopCommit": "8b472a2fff30034a5d23a9a380250136930b5e67",
   "protocolVersion": 1,
   "schemaVersion": 1,
   "viewport": {
