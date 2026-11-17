@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- Add `forgeloop evidence-publish` (opt-in): it uploads redacted evidence
+  bundles to the team dashboard, authenticated by `FORGELOOP_SYNC_TOKEN`.
+  - Bundles wait in an offline queue under the user config directory, and
+    every run retries it.
+  - The remote stores each bundle once by digest.
+  - The command exits `1` while a bundle stays queued or was rejected.
+  - New error codes: `E_EVIDENCE_PUBLISH_CONFIG` and
+    `E_EVIDENCE_PUBLISH_UNAUTHORIZED`.
 - With `attestation.signing.provider: "sigstore"`, the automatic evidence
   export on `complete` signs the statement with `cosign attest-blob` before
   exporting, so the bundle carries the signature.

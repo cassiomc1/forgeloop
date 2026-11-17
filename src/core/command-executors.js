@@ -121,6 +121,10 @@ const runSearch = async (...args) => (await import("../commands/repository-index
  * The CLI renders these results; MCP and other integrations consume them
  * directly. No ownership, recovery, or lifecycle logic may live here.
  */
+// Commands that write outside the project store (a backup destination, a
+// user-config file) and therefore open the store read-only.
+const READ_ONLY_STORAGE_COMMANDS = new Set(["storage-backup", "sync-push", "evidence-publish"]);
+
 const RAW_COMMAND_EXECUTORS = {
   "storage-restore-resume": async ({ target, packageRoot, options }) => {
     const { runStorageRestoreResume } = await import("../commands/storage-restore-resume.js");
@@ -431,6 +435,11 @@ const RAW_COMMAND_EXECUTORS = {
     result: await runEvidenceExport({ target, packageRoot, taskId: options.taskId, evidenceDirectory: options.evidenceDirectory }),
     exitCode: 0,
   }),
+  "evidence-publish": async ({ target, options }) => {
+    const { runEvidencePublish } = await import("../commands/evidence-publish.js");
+    const result = await runEvidencePublish({ target, taskId: options.taskId, all: options.all, evidenceDirectory: options.evidenceDirectory, remote: options.evidenceRemote, repository: options.evidenceRepository });
+    return { result, exitCode: result.status === "PUBLISHED" ? 0 : 1 };
+  },
   "evidence-verify": async ({ target, packageRoot, options }) => {
     const result = await runEvidenceVerify({ target, packageRoot, ...options });
     return { result, exitCode: exitCodeForAttestationResult(result) };
@@ -894,9 +903,10 @@ export const COMMAND_EXECUTORS = Object.fromEntries(Object.entries(RAW_COMMAND_E
   if (!context.target || name === "task-migrate" || name === "migrate-protocol" || name === "storage-migration-status" || name === "storage-rollback-resume" || name === "storage-rollback" || name === "storage-migrate" || name === "storage-migration-resume" || name === "storage-restore" || name === "storage-restore-resume" || name === "sync-pull") return executor(context);
   const { withProjectStorage } = await import("../storage/project-boundary.js");
   const { CLI_COMMAND_DEFINITIONS } = await import("./cli-command-definitions.js");
-  // Backup (and sync-push, which backs up) writes its destination, not the source store. Doctor repairs only
+  // Backup (and sync-push, which backs up) writes its destination, not the source store, and
+  // evidence-publish writes only its user-config queue. Doctor repairs only
   // when explicitly requested; inspecting either must not migrate the source.
   const readOnly = CLI_COMMAND_DEFINITIONS[name]?.mutation === "READ_ONLY"
-    || context.options?.dryRun === true || name === "storage-backup" || name === "sync-push" || (name === "doctor" && context.options?.fix !== true);
+    || context.options?.dryRun === true || READ_ONLY_STORAGE_COMMANDS.has(name) || (name === "doctor" && context.options?.fix !== true);
   return withProjectStorage(context.target, () => executor(context), { readOnly, runtimeContext: context.runtimeContext });
 }]));

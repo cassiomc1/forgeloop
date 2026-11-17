@@ -100,6 +100,39 @@ It never contains ledger events, command argv or output, environment values,
 or absolute paths. Export refuses to write a bundle that would contain the
 absolute project path.
 
+## Publishing to the team dashboard (opt-in)
+
+`forgeloop evidence-publish` uploads bundles to the hosted team dashboard,
+so it shows tasks that are not on the default branch yet. Nothing is sent
+unless you run the command, and it sends only bundles that `evidence-export`
+already redacted and that still match their digest.
+
+```bash
+export FORGELOOP_SYNC_TOKEN=...          # a token issued for this repository
+forgeloop evidence-publish --task <taskId>
+forgeloop evidence-publish --all         # every bundle in .forgeloop-evidence
+forgeloop evidence-publish               # retry the queue only
+```
+
+- **Authentication:** the same `FORGELOOP_SYNC_TOKEN` as cloud sync. The
+  token is read from the environment and never written.
+- **Remote and repository:** the remote defaults to
+  `https://forgeloop.monster/api/evidence`, and the repository comes from
+  the git origin. `--remote` and `--repo` override them.
+- **Offline queue:** requested bundles enter a queue kept outside the
+  repository, under `<config>/forgeloop/evidence-queue/`, and every run
+  retries it:
+  - published or unchanged bundles leave the queue;
+  - network and server errors keep them queued;
+  - bundles the remote rejects as invalid are dropped and reported.
+
+  A refused token stops the run with `E_EVIDENCE_PUBLISH_UNAUTHORIZED` and
+  keeps the queue.
+- **Idempotence:** the remote stores each bundle once by digest, so
+  republishing reports `UNCHANGED`.
+- **Exit code:** `0` only when every bundle was published or unchanged;
+  otherwise `1`.
+
 ## Verifying a range
 
 `evidence-verify` is read-only and needs only a git checkout that contains the

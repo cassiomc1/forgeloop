@@ -17,6 +17,8 @@ export const E_SYNC_CONFLICT = "E_SYNC_CONFLICT";
 export const E_SYNC_REMOTE = "E_SYNC_REMOTE";
 export const E_SYNC_SNAPSHOT_INVALID = "E_SYNC_SNAPSHOT_INVALID";
 export const E_SYNC_TOO_LARGE = "E_SYNC_TOO_LARGE";
+export const E_EVIDENCE_PUBLISH_CONFIG = "E_EVIDENCE_PUBLISH_CONFIG";
+export const E_EVIDENCE_PUBLISH_UNAUTHORIZED = "E_EVIDENCE_PUBLISH_UNAUTHORIZED";
 export const E_REPOSITORY_INDEX_PLATFORM_UNSUPPORTED = "E_REPOSITORY_INDEX_PLATFORM_UNSUPPORTED";
 export const E_REPOSITORY_INDEX_ENGINE_MISSING = "E_REPOSITORY_INDEX_ENGINE_MISSING";
 export const E_REPOSITORY_INDEX_ENGINE_DOWNLOAD_FAILED = "E_REPOSITORY_INDEX_ENGINE_DOWNLOAD_FAILED";
@@ -697,6 +699,14 @@ const CLOUD_SYNC_ERROR_METADATA = Object.freeze(Object.fromEntries([
   [E_SYNC_TOO_LARGE, [
     "The encrypted snapshot exceeds the 4 MiB sync limit.",
     "Sync a project with less retained state; cloud sync does not split snapshots.",
+  ]],
+  [E_EVIDENCE_PUBLISH_CONFIG, [
+    "evidence-publish is missing FORGELOOP_SYNC_TOKEN, has nothing to publish, or --remote, --repo or a task ID is invalid.",
+    "Set FORGELOOP_SYNC_TOKEN, pass --task <id> or --all with an https --remote and an owner/name --repo (or a GitHub git origin).",
+  ]],
+  [E_EVIDENCE_PUBLISH_UNAUTHORIZED, [
+    "The evidence remote rejected FORGELOOP_SYNC_TOKEN, or the token is not allowed for this repository. The bundles stay queued.",
+    "Use a token issued for this repository, then run evidence-publish again to retry the queue.",
   ]],
 ].map(([code, [meaning, safeResolution]]) => [code, Object.freeze({
   code,
@@ -1906,6 +1916,8 @@ export const ALL_KNOWN_ERROR_CODES = Object.freeze(new Set([
   E_SYNC_REMOTE,
   E_SYNC_SNAPSHOT_INVALID,
   E_SYNC_TOO_LARGE,
+  E_EVIDENCE_PUBLISH_CONFIG,
+  E_EVIDENCE_PUBLISH_UNAUTHORIZED,
   E_REPOSITORY_INDEX_PLATFORM_UNSUPPORTED,
   E_REPOSITORY_INDEX_ENGINE_MISSING,
   E_REPOSITORY_INDEX_ENGINE_DOWNLOAD_FAILED,

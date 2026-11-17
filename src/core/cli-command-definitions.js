@@ -1781,6 +1781,22 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
     writes: [".forgeloop-evidence/<taskId>.json"], removes: [], mayExecuteExternalProcess: false,
     description: "Exports a completed task's attestation as a portable, redacted evidence bundle to commit with the change.",
   }),
+  "evidence-publish": Object.freeze({
+    name: "evidence-publish",
+    category: "attestation",
+    mutation: "MUTATING",
+    options: Object.freeze({
+      ...CLI_COMMON_OPTIONS,
+      "--task": Object.freeze({ targetKey: "taskId", parseType: "string", takesValue: true, valueName: "id", missingValueMessage: "--task requires a task ID", description: "publish this task's exported bundle" }),
+      "--all": Object.freeze({ targetKey: "all", parseType: "boolean", takesValue: false, description: "publish every bundle in the evidence directory" }),
+      "--dir": Object.freeze({ targetKey: "evidenceDirectory", parseType: "string", takesValue: true, valueName: "path", missingValueMessage: "--dir requires a path", description: "tracked evidence directory (default: .forgeloop-evidence)" }),
+      "--remote": Object.freeze({ targetKey: "evidenceRemote", parseType: "string", takesValue: true, valueName: "url", missingValueMessage: "--remote requires a URL", description: "evidence endpoint (default: https://forgeloop.monster/api/evidence)" }),
+      "--repo": Object.freeze({ targetKey: "evidenceRepository", parseType: "string", takesValue: true, valueName: "owner/name", missingValueMessage: "--repo requires owner/name", description: "repository the bundles belong to (default: from the git origin)" }),
+      "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit the publish result as JSON" }),
+    }),
+    writes: ["<user config>/forgeloop/evidence-queue/<project>.json"], removes: [], mayExecuteExternalProcess: true,
+    description: "Opt-in: uploads redacted evidence bundles to the team dashboard, authenticated by FORGELOOP_SYNC_TOKEN. Bundles wait in an offline queue outside the repository until the remote accepts them.",
+  }),
   "evidence-verify": Object.freeze({
     name: "evidence-verify",
     category: "attestation",
