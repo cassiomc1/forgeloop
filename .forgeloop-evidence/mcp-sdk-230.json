@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "mcp-sdk-230",
+  "forgeloopVersion": "2.2.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:mcp-sdk-230\",\n      \"digest\": {\n        \"sha256\": \"df7f5e8ef5f654a901951daf2f1cf9fe32e377bdb57d23e9bdcb124337ec53eb\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"mcp-sdk-230\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"f05176b1562416f84e143fba4cf5defee23e51d1eb979b46ee12bc461d04a652\",\n      \"contentDigest\": \"df7f5e8ef5f654a901951daf2f1cf9fe32e377bdb57d23e9bdcb124337ec53eb\",\n      \"coveredPaths\": [\n        \"integrations/mcp/package-lock.json\",\n        \"integrations/mcp/package.json\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"baa00aeab72db3fac1b517c24d12a97c7e18ebf1c57bb8690b66d8aad7ca3c8a\",\n      \"routeFingerprint\": \"1e9076ac7ff15be6aabcfbee46bad358b7892125d0feea0a36ca7395ea1101a3\",\n      \"stateFingerprint\": \"5168786f22f51cdfd1224caa0871cdd8042150942a846102b2b622791855ba0e\",\n      \"receiptFingerprint\": \"943a272759ef7724e4855febc713f65cf3bdd2c06c2d6bc5937fda449be14aa2\",\n      \"ledgerSeq\": 40,\n      \"ledgerHash\": \"d19effb6fdb34da0b1a875336a53d9c3f3c498d2ca583aefc348e766f4adb2a3\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "mcp-sdk-230",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "bc349ee3e5e9b737967210e509f57aa481345271",
+      "observedRevision": "bc349ee3e5e9b737967210e509f57aa481345271",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/mcp-sdk-2.3.0",
+        "head": "bc349ee3e5e9b737967210e509f57aa481345271"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "baa00aeab72db3fac1b517c24d12a97c7e18ebf1c57bb8690b66d8aad7ca3c8a",
+      "routeFingerprint": "1e9076ac7ff15be6aabcfbee46bad358b7892125d0feea0a36ca7395ea1101a3",
+      "stateFingerprint": "5168786f22f51cdfd1224caa0871cdd8042150942a846102b2b622791855ba0e",
+      "receiptFingerprint": "943a272759ef7724e4855febc713f65cf3bdd2c06c2d6bc5937fda449be14aa2",
+      "ledgerSeq": 40,
+      "ledgerHash": "d19effb6fdb34da0b1a875336a53d9c3f3c498d2ca583aefc348e766f4adb2a3"
+    },
+    "entries": [
+      {
+        "path": "integrations/mcp/package-lock.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "202c78d54bfb4e4c8e05dd23b4ff73e69d8ff7755384886977407bfc39127d06",
+        "providerContentId": "b23c6da6d2dd53924da126d611e1fbdc66d0667d",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "integrations/mcp/package.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "cad432e8df9a75325c4df65e2ab6b11c9dc454ffcc5cf715a81b0e7acc2ab631",
+        "providerContentId": "af759830e7ee3d33c6fa24827cab37a76fe78364",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "df7f5e8ef5f654a901951daf2f1cf9fe32e377bdb57d23e9bdcb124337ec53eb"
+  },
+  "manifestFingerprint": "f05176b1562416f84e143fba4cf5defee23e51d1eb979b46ee12bc461d04a652",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Bump the MCP integration to @modelcontextprotocol/server 2.3.0 and @modelcontextprotocol/client 2.3.0 with a lock regenerated against the current core, superseding Dependabot PRs 231 and 232 whose locks miss the core's newer dependencies.",
+    "successCriteria": [
+      "The MCP integration installs with npm ci --install-links and its tests pass on SDK 2.3.0"
+    ],
+    "checks": [
+      {
+        "id": "mcp-test",
+        "requirement": "integrations/mcp npm test passes on SDK 2.3.0",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-7f7843f8cf579cb9",
+        "requirement": "The MCP integration installs with npm ci --install-links and its tests pass on SDK 2.3.0",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-17T12:00:19.563Z",
+    "completedAt": "2026-11-17T12:25:35.415Z",
+    "durationMs": 1515852,
+    "phaseDurationsMs": {
+      "planning": 4036,
+      "executing": 41497,
+      "verifying": 1470044,
+      "reviewing": 275
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "89da2083b49bab6d0b3f485ac338262846fff721a4a487b484044c31985c4afb"
+}
