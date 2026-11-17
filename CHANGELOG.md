@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- Evidence bundles accept task IDs containing dots (for example
+  `release-2.2.0-final`); IDs with separators or a leading dot stay rejected.
+- Align ForgeLoopAudit with the published 2.2.0 core: vendor the exact npm
+  archive (SHA-512 verified against the registry, release commit 8b472a2) and
+  update lineage, provenance, docs and tests; record the 2.2.0 publication
+  identity.
+
 ## 2.2.0 - 2026-11-16
 
 - Minor release. Its runtime changes are bound by

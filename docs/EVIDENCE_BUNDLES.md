@@ -18,7 +18,9 @@ forgeloop evidence-verify --base origin/main --head HEAD --format markdown
 2. Complete the task, then run `forgeloop attestation-create --task <taskId>`.
    Optionally sign the statement with a Sigstore identity.
 3. Run `forgeloop evidence-export --task <taskId>`. It writes
-   `.forgeloop-evidence/<taskId>.json`; `--dir` changes the directory.
+   `.forgeloop-evidence/<taskId>.json`; `--dir` changes the directory. The
+   task ID must start with a letter or digit and contain only letters,
+   digits, `.`, `_` and `-` (at most 200 characters).
 
 Only a task completed while attestation mode is `required` can be exported.
 Completion captures the code manifest in the same transaction as the final

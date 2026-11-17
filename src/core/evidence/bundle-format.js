@@ -19,7 +19,9 @@ export const EVIDENCE_REDACTIONS = Object.freeze([
   "ledger-events",
 ]);
 
-const TASK_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9_-]*$/u;
+// Task IDs may contain dots (release-2.2.0); a leading letter or digit and the
+// absence of separators keep the bundle file name inside the evidence directory.
+const TASK_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]{0,199}$/u;
 
 export function evidenceError(code, message, details = {}) {
   return Object.assign(new Error(message), { code, ...details });
@@ -27,7 +29,7 @@ export function evidenceError(code, message, details = {}) {
 
 export function assertEvidenceTaskId(taskId) {
   if (typeof taskId !== "string" || !TASK_ID_PATTERN.test(taskId)) {
-    throw evidenceError(E_EVIDENCE_BUNDLE_INVALID, `Invalid evidence task ID: ${taskId}`);
+    throw evidenceError(E_EVIDENCE_BUNDLE_INVALID, `Invalid evidence task ID: ${taskId} (bundles need letters, digits, ".", "_" or "-", starting with a letter or digit)`);
   }
   return taskId;
 }

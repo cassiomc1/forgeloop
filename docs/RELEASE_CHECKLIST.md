@@ -4,7 +4,7 @@ This is the current release checklist for the PolyForm Noncommercial-licensed
 `@cassiomc1/forgeloop` package. It is a preparation and verification checklist;
 it does not authorize publication.
 
-## Stable 2.2.0 candidate — 2026-11-16
+## Stable 2.2.0 publication — 2026-11-16
 
 `2.2.0` is a minor release of the core package. It adds `forgeloop assess`,
 `evidence-export` and `evidence-verify` with ledger metrics, and the cloud-sync
@@ -18,15 +18,15 @@ a delta review against 2.1.0:
 - `sync-pull` is a tenth explicit maintenance-admission command; a test proves
   that it leaves a project under retained maintenance unchanged.
 
-Before dispatching `npm-publish.yml`:
-
-1. Merge the release commit to `main`.
-2. Tag it `v2.2.0`.
-3. Dispatch from that tag with channel `latest` and confirmation
-   `PUBLISH PUBLIC PACKAGE`.
-
-Windows, rollback drills, hosted parity and registry-user audits are recorded
-as not repeated or post-publication. After publication run:
+Published from tag `v2.2.0` (commit `8b472a2fff30034a5d23a9a380250136930b5e67`)
+through `npm-publish.yml` with trusted OIDC publishing: npm `latest` is `2.2.0`,
+`dist.integrity` is
+`sha512-UOCK/KJGUjsiQrpFmMwrFz1haoWKhbWlQ/aELO6Use0py+0fl+z7l75LOnN0m94j1C0jU3f6YjagwMcXmhAB2A==`,
+the provenance statement is in the Sigstore transparency log (index
+3937130126), and `release:identity` returns `RELEASE_IDENTITY_VALID`.
+ForgeLoopAudit vendors this exact archive. Windows, rollback drills, hosted
+parity and registry-user audits are recorded as not repeated or
+post-publication. Re-check the published identity with:
 
 ```bash
 npm view @cassiomc1/forgeloop version dist-tags --json

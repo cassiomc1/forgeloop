@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "audit-align-changelog",
+  "forgeloopVersion": "2.2.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:audit-align-changelog\",\n      \"digest\": {\n        \"sha256\": \"16e7eeebf70814aaa75b2ad8cb79d2f58ee640c5b49f0b16947295f4f8a9caf1\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"audit-align-changelog\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"2a7a068aed41d6548e280872a3d4ab867632f20973b55d09e57b6f4e845480b9\",\n      \"contentDigest\": \"16e7eeebf70814aaa75b2ad8cb79d2f58ee640c5b49f0b16947295f4f8a9caf1\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"bfa22d068b7738e00f9a59131e4d4ee37999f6f077f703aafda57457a9e66920\",\n      \"routeFingerprint\": \"86a6c54cc0f22a568b9569cdd4c3e863a6b61ece288a2d965a4347cb83db95bd\",\n      \"stateFingerprint\": \"93e8594346e0b81fffcc566a9d02c93ab94a810b3dde510b0a83accccfe8b40d\",\n      \"receiptFingerprint\": \"599c12718462d8ef0e938dbdf016c3a21be31d7a1ca2ad276a9f3437d8d922d6\",\n      \"ledgerSeq\": 34,\n      \"ledgerHash\": \"edf1ef273ee3adf3af6161095804f164c1f00c2fde0739e5ec00864e42ce7e0d\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "audit-align-changelog",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "9bf9883c1c1f30ef65a618f236fe5caa6b2c0612",
+      "observedRevision": "9bf9883c1c1f30ef65a618f236fe5caa6b2c0612",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/audit-align-2.2.0",
+        "head": "9bf9883c1c1f30ef65a618f236fe5caa6b2c0612"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "bfa22d068b7738e00f9a59131e4d4ee37999f6f077f703aafda57457a9e66920",
+      "routeFingerprint": "86a6c54cc0f22a568b9569cdd4c3e863a6b61ece288a2d965a4347cb83db95bd",
+      "stateFingerprint": "93e8594346e0b81fffcc566a9d02c93ab94a810b3dde510b0a83accccfe8b40d",
+      "receiptFingerprint": "599c12718462d8ef0e938dbdf016c3a21be31d7a1ca2ad276a9f3437d8d922d6",
+      "ledgerSeq": 34,
+      "ledgerHash": "edf1ef273ee3adf3af6161095804f164c1f00c2fde0739e5ec00864e42ce7e0d"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "fa9c3a65b8e93491826e7ee6302d7d4cdcd67c15605b9da06f68047b6c3e046a",
+        "providerContentId": "b56be2cc3752f39f74cd7ee3dade4e96ab3380c4",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "16e7eeebf70814aaa75b2ad8cb79d2f58ee640c5b49f0b16947295f4f8a9caf1"
+  },
+  "manifestFingerprint": "2a7a068aed41d6548e280872a3d4ab867632f20973b55d09e57b6f4e845480b9",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Combine the Unreleased CHANGELOG entries of the ForgeLoopAudit 2.2.0 alignment and the merged dotted-task-ID fix so the branch carries the exact merged CHANGELOG content, and attest it",
+    "successCriteria": [
+      "CHANGELOG.md Unreleased lists both the dotted task ID fix and the ForgeLoopAudit 2.2.0 alignment"
+    ],
+    "checks": [
+      {
+        "id": "requirement-5ce34f99f964e9e2",
+        "requirement": "CHANGELOG.md Unreleased lists both the dotted task ID fix and the ForgeLoopAudit 2.2.0 alignment",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-fast",
+        "requirement": "npm run verify:fast passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-17T03:20:25.144Z",
+    "completedAt": "2026-11-17T03:21:55.565Z",
+    "durationMs": 90421,
+    "phaseDurationsMs": {
+      "planning": 2488,
+      "executing": 427,
+      "verifying": 87242,
+      "reviewing": 264
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 2,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "e276ca27edd9c696c139a21d5709467e81f514c90fa71239a435d290969674e1"
+}
