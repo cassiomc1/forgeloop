@@ -80,7 +80,7 @@ See the [23-guide maintenance map](./docs/GUIDE_MAINTENANCE.md) for review scope
 ## Distribution and license
 
 GitHub hosts source and issues. The core npm package is public; the MCP
-companion has restricted distribution. Stable `2.1.0` is on npm `latest` with
+companion has restricted distribution. Stable `2.2.0` is on npm `latest` with
 provenance and verified release identity.
 ForgeLoop-owned source and documentation are licensed under the
 [PolyForm Noncommercial License 1.0.0](./LICENSE): free for noncommercial use.
