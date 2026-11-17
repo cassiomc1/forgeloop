@@ -1,0 +1,210 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "release-2.2.0-final",
+  "forgeloopVersion": "2.2.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:release-2.2.0-final\",\n      \"digest\": {\n        \"sha256\": \"746805d668df0ce81470d24b6e1c52c8495493951bc2446413a2a1d8c9c92a3d\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"release-2.2.0-final\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"7a0d4dfa5fac88dbec18b6b980f815220bd84525306e411c0e8c8d2100793f71\",\n      \"contentDigest\": \"746805d668df0ce81470d24b6e1c52c8495493951bc2446413a2a1d8c9c92a3d\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"benchmarks/storage-sqlite/stable-2.2.0-writer-review.json.gz\",\n        \"docs/AGENT_PROTOCOL_SUMMARY.md\",\n        \"docs/RELEASE_CHECKLIST.md\",\n        \"integrations/mcp/package-lock.json\",\n        \"package-lock.json\",\n        \"package.json\",\n        \"scripts/check-repository-hygiene.mjs\",\n        \"tests/cloud-sync.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"3bab79d349a02b6529202e824d3a26679f943b86e29b25d3e601eab0104cd980\",\n      \"routeFingerprint\": \"1767066928ce75589aac369f8a5a6f5ddd3496b369886b4f94246efd4ebb3e5e\",\n      \"stateFingerprint\": \"a5ad78d4a8c6054e22b18bbe7d68873598f33c78251c09ce11b4a165f28c2be9\",\n      \"receiptFingerprint\": \"bd0adcf5aed9ee9d3fc68b8e26660c6280661b56f150a544816edde2b4a93f4d\",\n      \"ledgerSeq\": 46,\n      \"ledgerHash\": \"b20574dfe11ef56c702669225c9801c7d0779ff5cea8ee96292024019ffdacbd\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "release-2.2.0-final",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "74a1a6f3228badb843fec246493fcec482f57c01",
+      "observedRevision": "74a1a6f3228badb843fec246493fcec482f57c01",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/release-2.2.0",
+        "head": "74a1a6f3228badb843fec246493fcec482f57c01"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "3bab79d349a02b6529202e824d3a26679f943b86e29b25d3e601eab0104cd980",
+      "routeFingerprint": "1767066928ce75589aac369f8a5a6f5ddd3496b369886b4f94246efd4ebb3e5e",
+      "stateFingerprint": "a5ad78d4a8c6054e22b18bbe7d68873598f33c78251c09ce11b4a165f28c2be9",
+      "receiptFingerprint": "bd0adcf5aed9ee9d3fc68b8e26660c6280661b56f150a544816edde2b4a93f4d",
+      "ledgerSeq": 46,
+      "ledgerHash": "b20574dfe11ef56c702669225c9801c7d0779ff5cea8ee96292024019ffdacbd"
+    },
+    "entries": [
+      {
+        "path": "benchmarks/storage-sqlite/stable-2.2.0-writer-review.json.gz",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "c666100702dca37c732e54c8a195cf51c916fac54f251b96987388356763ad9b",
+        "providerContentId": "cb894c35c1e012e7ed71098a0fa45321570df9e5",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "8f61c080200a976d5d424bb32e7fc04ee01dbecb104079aa7d02bee847b1a51b",
+        "providerContentId": "874c2ad030a9cc790eb473fbab3abefbf9ccacd9",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/AGENT_PROTOCOL_SUMMARY.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "e8dc5dd9e1373781bbfd531a18a675a03fc827c1e1a5ffcc8ae8c2225309649e",
+        "providerContentId": "1912eede129d5b6df6ec816020d56330dbf1f098",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/RELEASE_CHECKLIST.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "811e0c0844154714b35c38fa2bcf5de6272082f33cdf59abc7004b6c161c4b63",
+        "providerContentId": "7bdcb6e0dda0746e0ee2b715104ca2b0c29048e1",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "integrations/mcp/package-lock.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "0fa52608d623009b7aea871ffce26797b67028bddeb132ea6c9a797af4c6ed96",
+        "providerContentId": "ed0f5d1d46b9cc256907f80d629ce8cfdc98a3b8",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "package-lock.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "086b0f7a97bca95ec7004ad77b4db17f3645d2771fe7af9ac1296106c5c5be06",
+        "providerContentId": "49d1607496b5293c0bbd50514ca24df6b22ecadc",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "package.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "26bf926739427423ba5b9e516f43f30b68909055105220b994fc22cd50b5f85e",
+        "providerContentId": "3746db04cf76a224ad7f93aa8fb7c83b5481bd0e",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/check-repository-hygiene.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "4f05e5968434466b5e4a4013a78ad55f6a33cfc45a604935645a5a5f3ff696ea",
+        "providerContentId": "4c61ccca979931631cd6a3686ef04c9e542521b9",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/cloud-sync.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "e6dd0c76827d3fc68c70c66deb5cbbf4aab57c0b9256483408e7e5d8dc66f760",
+        "providerContentId": "c03df94ee78302c51139c3feec8878a4a1970dac",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "746805d668df0ce81470d24b6e1c52c8495493951bc2446413a2a1d8c9c92a3d"
+  },
+  "manifestFingerprint": "7a0d4dfa5fac88dbec18b6b980f815220bd84525306e411c0e8c8d2100793f71",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Prepare stable minor release 2.2.0 (assess, evidence-export/evidence-verify with metrics, sync-push/sync-pull; additive only) with a version-bound supported-writer delta review against 2.1.0 that gives an explicit role to every added filesystem binding, a sync-pull maintenance-admission test, and the 2.2.0 changelog and release checklist. Continues the abandoned task release-2.2.0, whose verification cycle was invalidated by a commit made during a bound run.",
+    "successCriteria": [
+      "The 2.2.0 writer review binds the exact runtime bytes and dispositions every added binding",
+      "sync-pull refuses a project under retained maintenance without changing it"
+    ],
+    "checks": [
+      {
+        "id": "requirement-53abef60f80cb8d1",
+        "requirement": "sync-pull refuses a project under retained maintenance without changing it",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-980807a90c5c7b87",
+        "requirement": "The 2.2.0 writer review binds the exact runtime bytes and dispositions every added binding",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "stable-review",
+        "requirement": "node scripts/verify-stable-storage-review.mjs passes for 2.2.0",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "sync-tests",
+        "requirement": "node --test tests/cloud-sync.test.js tests/stable-storage-review.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-16T21:43:50.117Z",
+    "completedAt": "2026-11-16T22:10:09.546Z",
+    "durationMs": 1579429,
+    "phaseDurationsMs": {
+      "planning": 2671,
+      "executing": 10511,
+      "verifying": 1565923,
+      "reviewing": 324
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 6,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "bc265e04925c560520fe1c5a122edad4280115f0c498d222fa2d0ebdac00b93f"
+}

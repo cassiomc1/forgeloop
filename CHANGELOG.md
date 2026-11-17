@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Evidence bundles accept task IDs containing dots (for example
+  `release-2.2.0-final`); IDs with separators or a leading dot stay rejected.
+
 ## 2.2.0 - 2026-11-16
 
 - Minor release. Its runtime changes are bound by

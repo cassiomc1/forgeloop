@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "evidence-dotted-ids",
+  "forgeloopVersion": "2.2.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:evidence-dotted-ids\",\n      \"digest\": {\n        \"sha256\": \"f193f81267735d53c457ce901b8e4e1ca288ce08fe6dfaca395b71c0650e8831\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"evidence-dotted-ids\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"bed9fb134044b4e93495e7d45d0e48d4c6d48913721d053f5ff483afaa4bb52d\",\n      \"contentDigest\": \"f193f81267735d53c457ce901b8e4e1ca288ce08fe6dfaca395b71c0650e8831\",\n      \"coveredPaths\": [\n        \".forgeloop-evidence/release-2.2.0-final.json\",\n        \"CHANGELOG.md\",\n        \"docs/EVIDENCE_BUNDLES.md\",\n        \"src/core/evidence/bundle-format.js\",\n        \"tests/evidence-bundles.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"17d8e32994370125410ad783e7becf35e5c2ebfb677cbfcd1e958540fe9fdd79\",\n      \"routeFingerprint\": \"2852c28869cb90145d0de864383d97b4a91153aff46406e4d8e0f7bdc15b000f\",\n      \"stateFingerprint\": \"ddb5b22a915ebe1229d28bacee777fb4df71b26929e1e6f7b7a6bd4cca8ce8ed\",\n      \"receiptFingerprint\": \"0e2d9c6ce050e6f000ed23dd4b6d26641e74211ca9a33dd876b0897fcaedcbd8\",\n      \"ledgerSeq\": 40,\n      \"ledgerHash\": \"dd5d41c805b7302f6cc27532982edeac85cf5d3ca0d92d5ec4836d71e701f2a9\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "evidence-dotted-ids",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "8b472a2fff30034a5d23a9a380250136930b5e67",
+      "observedRevision": "8b472a2fff30034a5d23a9a380250136930b5e67",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/evidence-dotted-task-ids",
+        "head": "8b472a2fff30034a5d23a9a380250136930b5e67"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "17d8e32994370125410ad783e7becf35e5c2ebfb677cbfcd1e958540fe9fdd79",
+      "routeFingerprint": "2852c28869cb90145d0de864383d97b4a91153aff46406e4d8e0f7bdc15b000f",
+      "stateFingerprint": "ddb5b22a915ebe1229d28bacee777fb4df71b26929e1e6f7b7a6bd4cca8ce8ed",
+      "receiptFingerprint": "0e2d9c6ce050e6f000ed23dd4b6d26641e74211ca9a33dd876b0897fcaedcbd8",
+      "ledgerSeq": 40,
+      "ledgerHash": "dd5d41c805b7302f6cc27532982edeac85cf5d3ca0d92d5ec4836d71e701f2a9"
+    },
+    "entries": [
+      {
+        "path": ".forgeloop-evidence/release-2.2.0-final.json",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "5353c1e2ca882d298c39bc8a73e8ca3fbf649c35e25c6f0815d201050563fc46",
+        "providerContentId": "489cb7c03312ab583c2fee0153b6d559126c6e12",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "5a36df122b76b4f50ee1f75641d84b660338642b4c9be6ed6539b41cc8cbcdc0",
+        "providerContentId": "adfcc5cc23b088b7362f2a75db8480950df5a0a4",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/EVIDENCE_BUNDLES.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "f0529dd8117430f600eb55c2967f60a2b029bb9c6f22f97430069c0aa5b6cf52",
+        "providerContentId": "54873784b69654173197bb8c5986a64efc6f1a1f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/evidence/bundle-format.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "6eabbf1ae6a90c819bdc457cd152ba7c434eea0bd9084a9536b816fc2d5ceebb",
+        "providerContentId": "fefeca2c9fd285b488b40040d4924d84779cc2c0",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/evidence-bundles.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "be73194a7aae20fc39362df0c6536e37d5a4ab0c2a4b25374195e4855a259837",
+        "providerContentId": "148328759cc63555c9be3cc6289d5bd4209f654f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "f193f81267735d53c457ce901b8e4e1ca288ce08fe6dfaca395b71c0650e8831"
+  },
+  "manifestFingerprint": "bed9fb134044b4e93495e7d45d0e48d4c6d48913721d053f5ff483afaa4bb52d",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Let evidence-export and evidence-verify accept task IDs containing dots (such as release-2.2.0-final), which ForgeLoop task IDs allow, while keeping bundle file names path-safe; then export and commit the bundle of the completed release-2.2.0-final task",
+    "successCriteria": [
+      "A completed task whose ID contains a dot can be exported and verified, and IDs with path separators or a leading dot are still rejected"
+    ],
+    "checks": [
+      {
+        "id": "evidence-tests",
+        "requirement": "node --test tests/evidence-bundles.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-7c309dcdbbf4c980",
+        "requirement": "A completed task whose ID contains a dot can be exported and verified, and IDs with path separators or a leading dot are still rejected",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-16T23:34:21.935Z",
+    "completedAt": "2026-11-17T00:03:48.679Z",
+    "durationMs": 1766744,
+    "phaseDurationsMs": {
+      "planning": 2762,
+      "executing": 44396,
+      "verifying": 1719227,
+      "reviewing": 359
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "edd14c81175061d3a43e156bf0ce5c3f4c6fa86e5b4965bc3c28631c8ad5bc3c"
+}
