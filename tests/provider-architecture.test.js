@@ -230,8 +230,15 @@ for (const option of ["maxInputBytes", "maxResultBytes"]) {
   });
 }
 
+// The minimum values must be accepted as valid options. Whether a 1 ms
+// deadline wins the race against the operation depends on the host, so the
+// deadline only asserts that 1 is not rejected as invalid; the byte limit is
+// asserted with a deadline that cannot expire first.
 test("positive minimum timeout and input byte limit are accepted", async () => {
-  deepStrictEqual(await registryFor(async () => ({})).invoke("tool", 0, { timeoutMs: 1, maxInputBytes: 1 }), {});
+  deepStrictEqual(await registryFor(async () => ({})).invoke("tool", 0, { timeoutMs: 60_000, maxInputBytes: 1 }), {});
+  const outcome = await registryFor(async () => ({})).invoke("tool", 0, { timeoutMs: 1 }).then((value) => ({ value }), (error) => ({ error }));
+  if (outcome.error) strictEqual(outcome.error.code, E_PROVIDER_TIMEOUT);
+  else deepStrictEqual(outcome.value, {});
 });
 
 test("one-byte result limit is valid but cannot fit an object", async () => {

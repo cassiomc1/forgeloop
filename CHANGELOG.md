@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- Add `npm run test:landmines`, a dependency-free check in the fast, local
+  and pre-push tiers. It is modelled on `interfere-inc/landmines` and fails on
+  new behaviour-replacing mocks, fixed sleeps, retries and raised per-test
+  timeouts in tests.
+  - Existing occurrences are allowed with exact per-file counts that may
+    only shrink.
+  - The testing guide gains an "Honest tests: test landmines" section.
+  - The flaky 1 ms provider deadline test no longer depends on winning a
+    timing race.
 - The external link check (Lychee) now runs only when publishing to npm, in
   the `verify` job on the self-hosted `forgeloop-linux-remote` runner. It no
   longer runs in the PR Core and Documentation workflows, where transient

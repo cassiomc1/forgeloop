@@ -1,0 +1,31 @@
+{
+  "no-fixed-sleep": {
+    "tests/advisory-context-service.test.js": 1,
+    "tests/benchmark-mcp-evidence.test.js": 1,
+    "tests/persistent-transport.test.js": 1,
+    "tests/reconcile-closure.test.js": 1,
+    "tests/repository-index-live.test.js": 1,
+    "tests/repository-index-server.test.js": 1,
+    "tests/run-action.test.js": 1,
+    "tests/run-check.test.js": 1,
+    "tests/security-review-provider.test.js": 2
+  },
+  "no-flake-masking": {
+    "tests/execution-profile-benchmarks.test.js": 1,
+    "tests/provider-architecture.test.js": 4,
+    "tests/storage-legacy-signature.test.js": 1,
+    "tests/storage-migration-resume.test.js": 1,
+    "tests/storage-migration-rollback-admission.test.js": 1,
+    "tests/storage-migration-rollback-publication-resume.test.js": 1,
+    "tests/storage-migration-rollback-ready-resume.test.js": 1,
+    "tests/storage-migration-rollback-stage-resume.test.js": 1,
+    "tests/storage-project-restore.test.js": 1,
+    "tests/storage-replacement-archive.test.js": 1,
+    "tests/storage-replacement-preparation.test.js": 2,
+    "tests/storage-replacement-publication.test.js": 1,
+    "tests/structural-quality-lifecycle.test.js": 1
+  },
+  "no-test-doubles": {
+    "tests/storage-file-durability.test.js": 1
+  }
+}

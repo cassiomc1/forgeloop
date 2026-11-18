@@ -1,0 +1,214 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "test-landmines",
+  "forgeloopVersion": "2.2.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:test-landmines\",\n      \"digest\": {\n        \"sha256\": \"c18a3a85b861c063bfbcd07bf0c7ae60755da5c15efe6418a844bee7b43622a0\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"test-landmines\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"fd29c30deb30dbd793ffcf51403cd90be4843281b860dd7207ebf825498be74d\",\n      \"contentDigest\": \"c18a3a85b861c063bfbcd07bf0c7ae60755da5c15efe6418a844bee7b43622a0\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"CONTRIBUTING.md\",\n        \"ENG/test-code-eng.md\",\n        \"package.json\",\n        \"scripts/check-test-landmines.mjs\",\n        \"scripts/run-validation.mjs\",\n        \"scripts/test-landmines-allowlist.json\",\n        \"tests/provider-architecture.test.js\",\n        \"tests/test-landmines.test.js\",\n        \"tests/validation-tiers.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"0d4642b56108ec5b9ad56e4dd7b178f77fea2fb564d705263060691376c9bf91\",\n      \"routeFingerprint\": \"5884438ae36d319c5471d2a08fc24c53e2f4498b9ad66320e9d836a0e89dacff\",\n      \"stateFingerprint\": \"8df3559a2a7dcc7cd45d0b5368a58a654c06112cc49880fa03cc3f6cc814b0d0\",\n      \"receiptFingerprint\": \"1a0e046506143db2e17428aff8d0840464cd20df8d9fd08e9c2e186578ae8144\",\n      \"ledgerSeq\": 61,\n      \"ledgerHash\": \"ff9042cec237e80a2eabf9c562fb6a35be79916db8773b405dfd3211c7d91aaa\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "test-landmines",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "337d67422aa30a9ed4d8b7824d71c6574596ece4",
+      "observedRevision": "337d67422aa30a9ed4d8b7824d71c6574596ece4",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/test-landmines",
+        "head": "337d67422aa30a9ed4d8b7824d71c6574596ece4"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "0d4642b56108ec5b9ad56e4dd7b178f77fea2fb564d705263060691376c9bf91",
+      "routeFingerprint": "5884438ae36d319c5471d2a08fc24c53e2f4498b9ad66320e9d836a0e89dacff",
+      "stateFingerprint": "8df3559a2a7dcc7cd45d0b5368a58a654c06112cc49880fa03cc3f6cc814b0d0",
+      "receiptFingerprint": "1a0e046506143db2e17428aff8d0840464cd20df8d9fd08e9c2e186578ae8144",
+      "ledgerSeq": 61,
+      "ledgerHash": "ff9042cec237e80a2eabf9c562fb6a35be79916db8773b405dfd3211c7d91aaa"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "d05abceae39f2555d037cc99e3ab9ec86cd3b0254072202ced26bc3949e8ebcd",
+        "providerContentId": "d3f076a1d9c629cd161ffeb01b20dff0fe1b4dd5",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "CONTRIBUTING.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "aa10e54f9de2204393fbbce945f7ac4f31983a1be29b501992456a2293291aeb",
+        "providerContentId": "aed866c920fe79c092737074243790fb7c6d3d0b",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ENG/test-code-eng.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "bdcbe3b76809f778742fba0919f52a79d8b4bfb115bb03e33281e6e84a17fdcf",
+        "providerContentId": "10a1b4b0fcffd05b61e4d29aa190d1b96bb75a50",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "package.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "f7da9a60cf45194d225ea5de77cfd42174cfdc0129756195ddc5347a661525f0",
+        "providerContentId": "4333fa0db6ec737b64c4c13d7e85841c9769e2a0",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/check-test-landmines.mjs",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "7f3a897093681addae5af1fff0a8fb47341f6ff74ace161285b10deac3f7dcfd",
+        "providerContentId": "4423e89e39904cc71f8f990d37cdf0e93c3c98df",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/run-validation.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "b7689279f134be80e6c417a3c38ab7af1e57a6d49b5cb44f35f07839df9a8c89",
+        "providerContentId": "28adfe035e07df9023b2c7c3800fc5482d781bdb",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/test-landmines-allowlist.json",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "39281d6f2eccca9037521af1b48ef79ea2a2870bc8b01f66e9b7f339da607462",
+        "providerContentId": "9fc36daa77082b7ccbab7654e1bdd6090ee4b2f5",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/provider-architecture.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "e958f6401e45a3af7991982f779a4b4354d02f9d90175e74bfa6e1e1a4d5417e",
+        "providerContentId": "ab5e7dba7b6a02d4ce8268d23aa49f5c08167074",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/test-landmines.test.js",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "bb37c2cc53af8b8d5aeccd9977094d52239eb88ff518cdf1a7cde80daff0595b",
+        "providerContentId": "f96f879fd0c3725a876c33ceb7625ead7e764b53",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/validation-tiers.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "d7c0133333ffe6b2682f351668f8b08b198b9d1a8973e9cc00d7e6984ff20801",
+        "providerContentId": "d291bda4a4199874f3eb3d7bba755a8ca7f80a7d",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "c18a3a85b861c063bfbcd07bf0c7ae60755da5c15efe6418a844bee7b43622a0"
+  },
+  "manifestFingerprint": "fd29c30deb30dbd793ffcf51403cd90be4843281b860dd7207ebf825498be74d",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Review the test suite against the landmines principles (https://github.com/interfere-inc/landmines: no test doubles that replace real behaviour, no fixed sleeps, no flake masking through retries or raised timeouts) and adopt them in the best fitting way for this node:test + ESLint project: a dependency-free ratchet check (npm run test:landmines) with an exact per-file allowance that may only shrink, wired into the fast, local and prepush validation tiers; fix the confirmed flaky 1 ms deadline test; and document the rules in the testing guide ENG/test-code-eng.md with attribution.",
+    "successCriteria": [
+      "npm run test:landmines fails on a new fixed sleep, flake-masking timeout or behaviour-replacing mock in tests and on a stale allowance, and runs in the fast, local and prepush tiers"
+    ],
+    "checks": [
+      {
+        "id": "landmines-check",
+        "requirement": "npm run test:landmines passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "landmines-tests",
+        "requirement": "node --test tests/test-landmines.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-fa651347b9897e03",
+        "requirement": "npm run test:landmines fails on a new fixed sleep, flake-masking timeout or behaviour-replacing mock in tests and on a stale allowance, and runs in the fast, local and prepush tiers",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-18T01:53:17.352Z",
+    "completedAt": "2026-11-18T02:18:25.860Z",
+    "durationMs": 1508508,
+    "phaseDurationsMs": {
+      "planning": 31584,
+      "executing": 161078,
+      "verifying": 1315548,
+      "reviewing": 298
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 5,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "ab521c8ea0ec988ba054c4aad81e5d343301e4c44a2b34fc9f66966831aaa043"
+}

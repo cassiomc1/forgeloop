@@ -49,6 +49,7 @@ const FAST_COMMANDS = [
   ["dependency:policy"],
   ["docs:generated:check"],
   ["repository:hygiene"],
+  ["test:landmines"],
 ];
 
 const LOCAL_COMMANDS = [
@@ -58,6 +59,7 @@ const LOCAL_COMMANDS = [
   ["complexity:check"],
   ["docs:generated:check"],
   ["repository:hygiene"],
+  ["test:landmines"],
   ["docs:conformance"],
   ["docs:examples:check"],
   ["completions:check"],
@@ -78,6 +80,7 @@ const PREPUSH_COMMANDS = [
   ["changelog:check"],
   ["repository-index:manifest"],
   ["repository:hygiene"],
+  ["test:landmines"],
   ["poc:evidence:verify"],
   ["poc:evidence:test"],
   ["mcp:test:clean"],

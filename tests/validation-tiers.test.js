@@ -10,7 +10,7 @@ function ids(tier) {
 
 test("fast tier is short and deterministic", () => {
   const fast = ids("fast");
-  assert.deepEqual(fast, ["test:quick", "lint", "dependency:policy", "docs:generated:check", "repository:hygiene"]);
+  assert.deepEqual(fast, ["test:quick", "lint", "dependency:policy", "docs:generated:check", "repository:hygiene", "test:landmines"]);
   assert.equal(fast.includes("coverage"), false);
   assert.equal(fast.some((id) => id.startsWith("python-")), false);
 });
@@ -39,6 +39,7 @@ test("local tier owns deterministic source and documentation checks", () => {
     "changelog:check",
     "repository-index:manifest",
     "repository:hygiene",
+    "test:landmines",
     "python-unittest",
     "markdown-validator",
     "loop-validator",
@@ -53,6 +54,7 @@ test("pre-push and release tiers execute coverage once without a duplicate npm t
     assert.equal(commands.some((command) => command.id === "test"), false);
     assert.ok(commands.some((command) => command.id === "mcp:test:clean"));
     assert.ok(commands.some((command) => command.id === "pack:check"));
+    assert.ok(commands.some((command) => command.id === "test:landmines"));
   }
 });
 
