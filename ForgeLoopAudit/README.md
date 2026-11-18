@@ -9,12 +9,12 @@ authority and `.forgeloop/` remains the source of truth.
 
 ## Current release
 
-The current release candidate is `v0.3.0-rc.3`, aligned to vendored ForgeLoop `2.2.0` at immutable source commit
-`8b472a2fff30034a5d23a9a380250136930b5e67` (protocol v1, schema v1 and
+The current release candidate is `v0.3.0-rc.3`, aligned to vendored ForgeLoop `2.3.0` at immutable source commit
+`8655d4288e1bf6cba307a2e0981627db8117c12c` (protocol v1, schema v1 and
 Integration API v1). The vendored archive and schema provenance are checked by
 `npm run verify:forgeloop-lineage` and `npm run protocol:schemas:verify`.
 
-ForgeLoop `2.2.0` retains a provider-neutral `providerExtensions` architecture, a
+ForgeLoop `2.3.0` retains a provider-neutral `providerExtensions` architecture, a
 bounded read-only **Audit UX read model** (`task/audit-view`), explicit
 `task-abandon`, canonical pre-execution `contract-revise`, repository-only
 `checkpoint-revalidate`, a `REVIEWING` reconciliation bootstrap path, the
@@ -27,7 +27,7 @@ without reclassifying projects, and treats every provider surface as
 observation-only metadata. It never invokes providers, installs them, or turns
 their output into lifecycle state, ownership, claims, evidence or completion.
 
-ForgeLoop 2.2.0 stores operational records and the ledger in canonical SQLite.
+ForgeLoop 2.3.0 stores operational records and the ledger in canonical SQLite.
 ForgeLoopAudit reads native tasks through the public Integration API and watches
 `state.sqlite` and its WAL sidecars for refreshes. Node.js **24.19.0 or newer**
 is required. Legacy JSON projects remain available as `ARTIFACT_ONLY`; migrate

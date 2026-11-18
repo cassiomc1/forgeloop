@@ -1,8 +1,8 @@
 {
-  "forgeLoopPackageVersion": "2.2.0",
-  "forgeLoopGitCommit": "8b472a2fff30034a5d23a9a380250136930b5e67",
+  "forgeLoopPackageVersion": "2.3.0",
+  "forgeLoopGitCommit": "8655d4288e1bf6cba307a2e0981627db8117c12c",
   "protocolVersion": 1,
-  "generatedAt": "2026-10-18T14:24:20.282Z",
+  "generatedAt": "2026-11-18T15:22:40.719Z",
   "schemas": {
     "action.schema.json": {
       "sha256": "0066f1d303781060b3ccde0a7235eabcdff69940928a9e75fab5e68e70717e18",
@@ -33,7 +33,7 @@
       "upstreamPath": "schemas/code-manifest.schema.json"
     },
     "config.schema.json": {
-      "sha256": "824eb9b90538795b196e08fe401dfba029f57296b1b545758996dfd6acb95433",
+      "sha256": "4f0502d0c9f79b06b69691990e95f43a19440c3f54755c5a020e4eff92ace688",
       "upstreamPath": "schemas/config.schema.json"
     },
     "continuity.schema.json": {

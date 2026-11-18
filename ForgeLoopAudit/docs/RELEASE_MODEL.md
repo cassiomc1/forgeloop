@@ -1,8 +1,8 @@
 # Release model
 
 ForgeLoopAudit `0.3.0-rc.3` is an unsigned preview npm package aligned to
-ForgeLoop `2.2.0` at immutable commit
-`8b472a2fff30034a5d23a9a380250136930b5e67`, with protocol v1, schema v1 and
+ForgeLoop `2.3.0` at immutable commit
+`8655d4288e1bf6cba307a2e0981627db8117c12c`, with protocol v1, schema v1 and
 Integration API v1. The current release asset is the package produced by
 `npm pack`; native Electron packaging is no longer part of the product.
 

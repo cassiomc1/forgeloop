@@ -4,7 +4,7 @@ This is the current release checklist for the PolyForm Noncommercial-licensed
 `@cassiomc1/forgeloop` package. It is a preparation and verification checklist;
 it does not authorize publication.
 
-## Stable 2.3.0 candidate — 2026-11-18
+## Stable 2.3.0 publication — 2026-11-18
 
 `2.3.0` is a minor release of the core package.
 
@@ -26,16 +26,20 @@ a delta review against 2.2.0:
   The live store changes only through existing transaction writers or
   `storage-restore`.
 
-Before dispatching `npm-publish.yml`:
+Published from tag `v2.3.0` (commit `8655d4288e1bf6cba307a2e0981627db8117c12c`)
+through `npm-publish.yml` with trusted OIDC publishing:
 
-1. Merge the release commit to `main`.
-2. Tag it `v2.3.0`.
-3. Dispatch from that tag with channel `latest` and confirmation
-   `PUBLISH PUBLIC PACKAGE`. The external link check runs in that
-   workflow's `verify` job on the self-hosted Linux runner.
+- npm `latest` is `2.3.0`;
+- `dist.integrity` is
+  `sha512-cIWgbmYpgs8aNqbPpVlRZvVCfEwX76SB9jbPCICQ0pNxr+REGygcFHuS6pIoZT0ptSPrbcKHXTrW+HG9sVKYtA==`;
+- the provenance statement is in the Sigstore transparency log (index
+  3971716082);
+- `release:identity` returns `RELEASE_IDENTITY_VALID`;
+- ForgeLoopAudit vendors this exact archive, with schema copies regenerated
+  from `v2.3.0`.
 
 Windows, rollback drills, hosted parity and registry-user audits are recorded
-as not repeated or post-publication. After publication run:
+as not repeated or post-publication. Re-check the published identity with:
 
 ```bash
 npm view @cassiomc1/forgeloop version dist-tags --json

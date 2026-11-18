@@ -1,0 +1,470 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "audit-align-230",
+  "forgeloopVersion": "2.3.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:audit-align-230\",\n      \"digest\": {\n        \"sha256\": \"3244eb956fb989535f9cb11475c7e266e66bd7e5c5b5d9f94cca964f29ff1500\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"audit-align-230\",\n      \"verificationCycle\": 2\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"a65a57d2e8589b59c059168c513568b260f6b7dafe12e7701bb984dd2c02741d\",\n      \"contentDigest\": \"3244eb956fb989535f9cb11475c7e266e66bd7e5c5b5d9f94cca964f29ff1500\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"ForgeLoopAudit/FORGELOOP_AUDIT_IMPLEMENTATION_SPEC.md\",\n        \"ForgeLoopAudit/README.md\",\n        \"ForgeLoopAudit/docs/DEPENDENCY_POLICY.md\",\n        \"ForgeLoopAudit/docs/IMPLEMENTATION_CHECKLIST.md\",\n        \"ForgeLoopAudit/docs/PROTOCOL_COMPATIBILITY.md\",\n        \"ForgeLoopAudit/docs/QUALITY_GATES.md\",\n        \"ForgeLoopAudit/docs/README.md\",\n        \"ForgeLoopAudit/docs/RELEASE_MODEL.md\",\n        \"ForgeLoopAudit/docs/TROUBLESHOOTING.md\",\n        \"ForgeLoopAudit/docs/UI_DESIGN_DIRECTION.md\",\n        \"ForgeLoopAudit/package-lock.json\",\n        \"ForgeLoopAudit/package.json\",\n        \"ForgeLoopAudit/schemas/README.md\",\n        \"ForgeLoopAudit/schemas/config.schema.json\",\n        \"ForgeLoopAudit/schemas/provenance.json\",\n        \"ForgeLoopAudit/screen/README.md\",\n        \"ForgeLoopAudit/screen/manifest.json\",\n        \"ForgeLoopAudit/scripts/__tests__/docs-conformance.test.mjs\",\n        \"ForgeLoopAudit/scripts/__tests__/forgeloop-vendor-lineage.test.mjs\",\n        \"ForgeLoopAudit/scripts/assert-web-build.mjs\",\n        \"ForgeLoopAudit/scripts/capture-readme-screenshots.mjs\",\n        \"ForgeLoopAudit/scripts/check-doc-conformance.mjs\",\n        \"ForgeLoopAudit/scripts/verify-forgeloop-vendor-lineage.mjs\",\n        \"ForgeLoopAudit/src/main/__tests__/forgeloop-integration.test.ts\",\n        \"ForgeLoopAudit/src/main/__tests__/schema-provenance.test.ts\",\n        \"ForgeLoopAudit/vendor/README.md\",\n        \"ForgeLoopAudit/vendor/cassiomc1-forgeloop-2.2.0-8b472a2.tgz\",\n        \"ForgeLoopAudit/vendor/cassiomc1-forgeloop-2.3.0-8655d42.tgz\",\n        \"README.md\",\n        \"docs/RELEASE_CHECKLIST.md\",\n        \"docs/SQLITE_STORAGE.md\",\n        \"scripts/check-repository-hygiene.mjs\",\n        \"tests/repository-hygiene.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"ed609ce74ec57b8f564aadec90bf9112031dda909bb382a0561f68bab5661cd8\",\n      \"routeFingerprint\": \"b14f8af9756ef8f1a5603aa16814f68dd97385e150c8dcd632875a23e1a59124\",\n      \"stateFingerprint\": \"dc744e0fd4c2582d2398b7e46fda0aeac14a59802690810bfc2e05b492337f8f\",\n      \"receiptFingerprint\": \"c6e3ec731513f1a6599be61a958b7e7f1c0cf79b4b375d7c04e9321eee41e564\",\n      \"ledgerSeq\": 59,\n      \"ledgerHash\": \"ff6d01f2faf9c4e7f04ab71d8152e8da28a958704a9961276a06904c9447b58f\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "audit-align-230",
+    "verificationCycle": 2,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "8655d4288e1bf6cba307a2e0981627db8117c12c",
+      "observedRevision": "8655d4288e1bf6cba307a2e0981627db8117c12c",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/audit-align-2.3.0",
+        "head": "8655d4288e1bf6cba307a2e0981627db8117c12c"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "ed609ce74ec57b8f564aadec90bf9112031dda909bb382a0561f68bab5661cd8",
+      "routeFingerprint": "b14f8af9756ef8f1a5603aa16814f68dd97385e150c8dcd632875a23e1a59124",
+      "stateFingerprint": "dc744e0fd4c2582d2398b7e46fda0aeac14a59802690810bfc2e05b492337f8f",
+      "receiptFingerprint": "c6e3ec731513f1a6599be61a958b7e7f1c0cf79b4b375d7c04e9321eee41e564",
+      "ledgerSeq": 59,
+      "ledgerHash": "ff6d01f2faf9c4e7f04ab71d8152e8da28a958704a9961276a06904c9447b58f"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "4ad1884d3eee5cf2b520e2c47ab26fc646a585280ba0f8faa140f0f24c8e674f",
+        "providerContentId": "da92163a2262ceb934a4a1ddc5b17bdb12d151e5",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/RELEASE_CHECKLIST.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "31f6c2f352292ce9e1e78354b8e787c342ce0e74cd961b09390f6366978e3322",
+        "providerContentId": "33a6953f92fe64646592a4c8c04d642231c3db07",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/SQLITE_STORAGE.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "9d8867e1188f7a8c0fafc10c5a514f62f3f16a7940f3b52dfbecbd56af1b9415",
+        "providerContentId": "61e76f177d7b9ea7f5f1abc3b3bc1185f68a0d98",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/docs/DEPENDENCY_POLICY.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "012fc1b1cc1830cf2421af97e675baa575513abfe5c1c9c3ad369423f108e286",
+        "providerContentId": "d8982231f8ee31442ec31490c8c5cd5a61209fb2",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/docs/IMPLEMENTATION_CHECKLIST.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "508f4d802e85e0400251545a37bc84380c0974c0e4da6ade13df6a8ba79d7087",
+        "providerContentId": "fc5e14f1ec12af69bcc752aee410c0bac5de6c25",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/docs/PROTOCOL_COMPATIBILITY.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "514494c536a03a97d10e11a55f76ff491b23241c0a9010fed614c6796176c2bd",
+        "providerContentId": "de0556ee3809ec4bd0ec6b1ac8b16b5186d7f077",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/docs/QUALITY_GATES.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "3f638b662046fa8ff8594e49710646d952d3231bc3cb3bfc12d6a799bf1cc135",
+        "providerContentId": "a7f39e5691688d5d01b9cdf22ce4d40fad90957b",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/docs/README.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "0f2e2035ad8a2e3a63f0683ab5d3687d45a2d80a83acc6d04edc15139e842dd3",
+        "providerContentId": "c369b49e8a05743f370c73b468aa23656b0715f8",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/docs/RELEASE_MODEL.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "2f54620bf4e84245da3da04f90b9cb7a8e057a7cadd3195cf4147d6e2e2c5a6b",
+        "providerContentId": "b6f8499fba86b151f6ceb88e6588714e35b377ae",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/docs/TROUBLESHOOTING.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "e8393ec84576cb7d4178564648860c8c546bdb7bb3ebffe33cffdbf87179982a",
+        "providerContentId": "d43cc2553d88a81036616b1ab01a12215c875b54",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/docs/UI_DESIGN_DIRECTION.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "3bf4d385f2a72b2b63fe06ed623bbbb44afd866a8590e1ebee37472e2cad6b60",
+        "providerContentId": "e918dece7c6136717cccc41b6c21aafdbb47fa64",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/FORGELOOP_AUDIT_IMPLEMENTATION_SPEC.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "14f8c3776c2fac6e59c062adc9aae24e3f1e3cf810244778f567a8c926005434",
+        "providerContentId": "2f3ad9d1fc8d557a2a0c3155d95715c213417e15",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/package-lock.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "b82e7af216494e0cb2a4456e42f46b64864a68c8714448b092d36ca76b2f26c2",
+        "providerContentId": "995d477a8bcdc8aa8a9d8c79b179758b8867aca3",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/package.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "941a9a70c7f0212237badf74a5a358e448eedef1db761dd083e28d66974138ce",
+        "providerContentId": "6839c5ed75702a0191b77e8106fd9e81c4922643",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/README.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "309afaa14a684f093d1d630dc9f2e77de897da807fe381f064d545df9368aaa1",
+        "providerContentId": "df4a24e1969aa8d9bb1f80173f269fab703b9508",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/schemas/config.schema.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "4f0502d0c9f79b06b69691990e95f43a19440c3f54755c5a020e4eff92ace688",
+        "providerContentId": "5f84cfb7a2471bbfade9274d952096902a870706",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/schemas/provenance.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "28ad0bce1da029ba326a6c46130bd4ff8118420476cbb5e000661560e57cd1d1",
+        "providerContentId": "1a01866221281db08b5f4b123d408913460ccb22",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/schemas/README.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "a80ba5cfb3fee5f0883384395fb7c9035e452f82ddd920e951536d79512768f7",
+        "providerContentId": "98642c3c6d383ee18aceb9f3b79cddd450dbf850",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/screen/manifest.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "7c1c8a9a4de1c8f9c3412433486177a45052ecc0f1102d83c01765980b37337f",
+        "providerContentId": "2b4f0d066a51a98d03805aeaecd780638a6cf9dd",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/screen/README.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "5eeff7f952b6a6f975481b6e23b8e98e9832026086b91b505eebb2b5c72efad8",
+        "providerContentId": "e1ef03be77e10b0fe9c680972b7bb72ec2554583",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/scripts/__tests__/docs-conformance.test.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "402980898ba12cc04fb3922811d173904164a8feccd8ff565d30d0ed8f679c3c",
+        "providerContentId": "0092a48ca38dfa58483f628cafe86e95f9695fea",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/scripts/__tests__/forgeloop-vendor-lineage.test.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "8f0f5c982963e3124f649de7b9dc4a07b95bd3ac9d83fdd307da4472670e0051",
+        "providerContentId": "84b1791fbd0e1a760d2e77d409df847d145331b9",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/scripts/assert-web-build.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "7b928a47fd7206aef0980cd723e37ec5cbb7347b4b27b2baf8668afba4b66754",
+        "providerContentId": "5879eb3dac05015ccafee790ebfeb5c2847f5fd6",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/scripts/capture-readme-screenshots.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "645c602f1e2d3cab3bbc58ddfa5c555ba500ca5e4d88a8f915f29bfac25b39ac",
+        "providerContentId": "ce436273f4c31c01187e6befd8c009975e9a59ff",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/scripts/check-doc-conformance.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "80b77c356f43248b3b4b23fd178a8f4de65415d2f9b2fc215bad902d0f85a699",
+        "providerContentId": "0951bd9c217f7ef8a38314f78424c2974259ecf1",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/scripts/verify-forgeloop-vendor-lineage.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "108b22cff1148954767bb1c6febf7c7d84e4b9d8ed884c1e3c4576eed6f322e6",
+        "providerContentId": "82c074a3c6df075896365ccfb1a222c6ce61fba4",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/src/main/__tests__/forgeloop-integration.test.ts",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "841f63c3874972579ec642b2c54d22f23cce29278fce0b26e0278a3706c4dd4e",
+        "providerContentId": "b5bd994075db7481834b011b5eba5b9d2dd27e2d",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/src/main/__tests__/schema-provenance.test.ts",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "caf3171c0f55eb4d0937ae45e88bc40378b3d5c79ffe0046f97ef602e2c3a823",
+        "providerContentId": "da12d32220005b4613d6a84b74d86e96c1161897",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/vendor/cassiomc1-forgeloop-2.2.0-8b472a2.tgz",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/vendor/cassiomc1-forgeloop-2.3.0-8655d42.tgz",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "ba1d7a5baac52bde41568c53178c6ae84b7c1157d27300caa80105a9e6e8d45e",
+        "providerContentId": "987d42021f5a65cffd284a0e614ae4d318c45f3c",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/vendor/README.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "ec35958de5349c62c6260a5b27e0ef10643756fac79da500bccf357e243b2d22",
+        "providerContentId": "f8dbafdf1a64a40279fdb0f9a48c886c99b57e9b",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "README.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "e740c57a0c2ba331f82a139573c4feb63831f0f24b80704fff5bc3ab39da20e9",
+        "providerContentId": "31e3b8d51eb5abcf25e5fc2be2ff72d1e9c9bda2",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/check-repository-hygiene.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "ab44409ea1f57221aafa83d89e8826f66e97f1f8c935793c9da93e825de05d49",
+        "providerContentId": "b9d8671f8072d5642091e2c2007e9fb27fa6f0bc",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/repository-hygiene.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "be82cb2fca7866ff2770beb72d620e5c389e4d2ed2deb250973141e139d99279",
+        "providerContentId": "94892cb12d9dcdd0d4ba85de2e4c298d672643c3",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "3244eb956fb989535f9cb11475c7e266e66bd7e5c5b5d9f94cca964f29ff1500"
+  },
+  "manifestFingerprint": "a65a57d2e8589b59c059168c513568b260f6b7dafe12e7701bb984dd2c02741d",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Align the repository and ForgeLoopAudit with the published stable 2.3.0: vendor the exact npm 2.3.0 archive (SHA-512 equal to the registry dist.integrity, release commit 8655d42) in place of 2.2.0, regenerate the Audit schema copies and provenance from the v2.3.0 source (config.schema.json gained autoExportEvidence), update lineage, pins, docs and tests, record the 2.3.0 publication identity in the release checklist, README and SQLite status, and point repository hygiene at the new archive.",
+    "successCriteria": [
+      "ForgeLoopAudit builds and tests against the vendored npm 2.3.0 archive and its regenerated schema provenance"
+    ],
+    "checks": [
+      {
+        "id": "audit-verify",
+        "requirement": "ForgeLoopAudit npm run verify:full passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-8074f1a1c9f7a3f0",
+        "requirement": "ForgeLoopAudit builds and tests against the vendored npm 2.3.0 archive and its regenerated schema provenance",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-18T15:22:21.707Z",
+    "completedAt": "2026-11-18T16:18:28.683Z",
+    "durationMs": 3366976,
+    "phaseDurationsMs": {
+      "planning": 2690,
+      "executing": 116981,
+      "verifying": 3247029,
+      "reviewing": 276
+    },
+    "verificationCycles": 2,
+    "diagnoses": 1,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "64602b05c77936c2bfa28ff8ca454a4e99dc7b399fde4870723cf0e92a232c2b"
+}
