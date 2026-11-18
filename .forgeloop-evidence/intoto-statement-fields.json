@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "intoto-statement-fields",
+  "forgeloopVersion": "2.3.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:intoto-statement-fields\",\n      \"digest\": {\n        \"sha256\": \"cdb2f4268c7ead397f65d8ac9ee5c14681d162d1deee22efee035bed6e27ab36\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"intoto-statement-fields\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"533d97e40f8150ff12a0eabb1242a529574f2bf251f8aa215a29d6cd7d5778c8\",\n      \"contentDigest\": \"cdb2f4268c7ead397f65d8ac9ee5c14681d162d1deee22efee035bed6e27ab36\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"docs/ARTIFACT_REFERENCE.md\",\n        \"schemas/in-toto-statement.schema.json\",\n        \"src/core/attestation.js\",\n        \"tests/attestation.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"cf1bcb7499dee7d18606d95601a7408f5fdae043a865a685085c8aef3fa55d3f\",\n      \"routeFingerprint\": \"8e7607fa71dc0b7154f6a7eb4a9d9ec5071dc69e273ce32f4e858d0198270657\",\n      \"stateFingerprint\": \"52bdcba324d1cd721648331cc9a758c1569b30342d021d6fa703d2a42365bb0b\",\n      \"receiptFingerprint\": \"373b903ebf4e81d1027837f81400ca89e84229076ff068a5abf26fcd1ddd3985\",\n      \"ledgerSeq\": 40,\n      \"ledgerHash\": \"4ccda7ea4e8d729d97b3d4dbc8b87a45a9df8c8be642cac9c4044c6ddd34483e\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "intoto-statement-fields",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "5fb4a8eff2f7d04fcf6584b9eb2bf7f8e7618a68",
+      "observedRevision": "5fb4a8eff2f7d04fcf6584b9eb2bf7f8e7618a68",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/intoto-statement-fields",
+        "head": "5fb4a8eff2f7d04fcf6584b9eb2bf7f8e7618a68"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "cf1bcb7499dee7d18606d95601a7408f5fdae043a865a685085c8aef3fa55d3f",
+      "routeFingerprint": "8e7607fa71dc0b7154f6a7eb4a9d9ec5071dc69e273ce32f4e858d0198270657",
+      "stateFingerprint": "52bdcba324d1cd721648331cc9a758c1569b30342d021d6fa703d2a42365bb0b",
+      "receiptFingerprint": "373b903ebf4e81d1027837f81400ca89e84229076ff068a5abf26fcd1ddd3985",
+      "ledgerSeq": 40,
+      "ledgerHash": "4ccda7ea4e8d729d97b3d4dbc8b87a45a9df8c8be642cac9c4044c6ddd34483e"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "7eba4fe0d267cb6b43e4b11f62b79d4b3f05d03bee1c3c2d4317a216bcc5bad0",
+        "providerContentId": "5caf64b72fb53910ef7c2ce5e5d653bc4534dcd9",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/ARTIFACT_REFERENCE.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "1f0043a0065f3af561768e8b75d24abfa3341e698802af0457f67afc9daa893a",
+        "providerContentId": "11ffc40026214b984f163a06d093e83e9e6d8092",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "schemas/in-toto-statement.schema.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "4d8c7676374e7a84bcd8ef9b67df213f1a43edf0e99b52854a2a863a3f7e07b4",
+        "providerContentId": "624bf441da2c005e23e0249539907b048f8bd885",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/attestation.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "fae20216698287bc93814e8f01212414f7d1fc2795e8415f806293ede7e54856",
+        "providerContentId": "b755177a481e3ea99b29c2f7808474ebdc9724ef",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/attestation.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "9959181229093c81adc55f4e860f0451c57f7b9f5cec30b11a430731ef5ab161",
+        "providerContentId": "55a1e07f2cbeebdca0e5ffa8a7615e1bcf4d6926",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "cdb2f4268c7ead397f65d8ac9ee5c14681d162d1deee22efee035bed6e27ab36"
+  },
+  "manifestFingerprint": "533d97e40f8150ff12a0eabb1242a529574f2bf251f8aa215a29d6cd7d5778c8",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Make ForgeLoop attestation statements valid in-toto Statement v1 documents that cosign accepts: stop writing the non-standard top-level schemaVersion field (the predicate keeps its own schemaVersion), keep accepting existing statements that carry it, and pin the exact top-level key set with a test. The first real cosign attest-blob run (Evidence signing workflow run 44403639050) failed with 'invalid attestation: decoding json' on the extra field.",
+    "successCriteria": [
+      "New attestation statements contain exactly _type, subject, predicateType and predicate, and statements with the legacy schemaVersion still validate"
+    ],
+    "checks": [
+      {
+        "id": "attestation-tests",
+        "requirement": "node --test tests/attestation.test.js tests/evidence-bundles.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-edaaea656563ac32",
+        "requirement": "New attestation statements contain exactly _type, subject, predicateType and predicate, and statements with the legacy schemaVersion still validate",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-18T21:40:21.746Z",
+    "completedAt": "2026-11-18T22:04:56.846Z",
+    "durationMs": 1475100,
+    "phaseDurationsMs": {
+      "planning": 2704,
+      "executing": 88455,
+      "verifying": 1383340,
+      "reviewing": 601
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "abc3244193d5d82b7668e557c3cb9d65c8d077b7263750d9b7f0bfc47d5dd073"
+}

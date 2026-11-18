@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Attestation statements are now plain in-toto Statement v1 documents
+  without a top-level `schemaVersion`; the predicate keeps its own. The first
+  real `cosign attest-blob` run (Evidence signing workflow) rejected the
+  extra field with `invalid attestation: decoding json`, so Sigstore signing
+  could not work with real `cosign` before this change. Statements that carry
+  the legacy field still validate.
 - Add the manually dispatched **Evidence signing** workflow
   (`.github/workflows/evidence-sign.yml`), which runs only from `main`. It:
   - verifies a committed evidence bundle with `evidence-verify` against the

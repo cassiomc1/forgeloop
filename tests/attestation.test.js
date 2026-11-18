@@ -53,6 +53,14 @@ test("ForgeLoop attestation statements validate subject, predicate, and evidence
   );
 });
 
+test("statements are plain in-toto Statement v1 documents and legacy schemaVersion statements still validate", async () => {
+  const { schemaVersion: _legacy, ...standard } = statement();
+  assert.deepEqual(Object.keys(standard).sort(), ["_type", "predicate", "predicateType", "subject"]);
+  assert.equal((await validateAttestationStatement(standard, packageRoot))._type, "https://in-toto.io/Statement/v1");
+  assert.equal((await validateAttestationStatement(statement(), packageRoot)).schemaVersion, 1);
+  await assert.rejects(() => validateAttestationStatement({ ...standard, extra: true }, packageRoot));
+});
+
 test("attestation statements are versioned by verification cycle without overwriting history", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-attestation-"));
   try {

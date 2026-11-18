@@ -1232,7 +1232,7 @@ back-reference itself from the execution receipt.
 
 <!-- BEGIN FORGELOOP GENERATED: schema:in-toto-statement -->
 
-- `schemaVersion` *(number, required, const: 1)*
+- `schemaVersion` *(number, optional, const: 1)*
 - `_type` *(string, required, const: `https://in-toto.io/Statement/v1`)*
 - `subject` *(array<object>, required, minItems: 1)*
   - `name` *(string, required, minLength: 1)*
