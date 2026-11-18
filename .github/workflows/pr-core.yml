@@ -216,24 +216,6 @@ jobs:
             --no-globs
             **/*.{md,markdown}
             #vendor/archify/**
-      - name: Check external documentation links
-        if: ${{ needs.classify.outputs.docs == 'true' && needs.classify.outputs.rc_quick != 'true' }}
-        uses: ./.github/actions/lychee
-        with:
-          linuxTarget: musl
-          args: >-
-            --config .lychee.toml
-            --verbose
-            --no-progress
-            --exclude-path '(^|/)node_modules(/|$)'
-            --exclude-path '(^|/)coverage(/|$)'
-            --exclude-path '(^|/)\.worktrees(/|$)'
-            --exclude-path '(^|/)\.superpowers(/|$)'
-            --exclude-path '(^|/)docs/superpowers(/|$)'
-            './**/*.md'
-          fail: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Validate frozen Markdown and loop contracts
         if: ${{ needs.classify.outputs.docs == 'true' }}
         run: |

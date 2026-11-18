@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "lychee-release-only",
+  "forgeloopVersion": "2.2.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:lychee-release-only\",\n      \"digest\": {\n        \"sha256\": \"0939945a18cbc063371577095a43842cd2a91e8da8edab26d7c4834c13f4094b\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"lychee-release-only\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"55d2934fc1aafdc4fe4d45f332d6d50e2dc846849796b89d75f3169ee4411ab9\",\n      \"contentDigest\": \"0939945a18cbc063371577095a43842cd2a91e8da8edab26d7c4834c13f4094b\",\n      \"coveredPaths\": [\n        \".github/workflows/docs.yml\",\n        \".github/workflows/pr-core.yml\",\n        \"CHANGELOG.md\",\n        \"CONTRIBUTING.md\",\n        \"tests/workflow-policy.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"22f12e9f6a90fa4a0387d7d97dd54a0e9f11c72502b603557ad7154108317873\",\n      \"routeFingerprint\": \"641b1f00b826c45b747843464ae1d6e116cb330714983fc58a07b93e8b4f0ffe\",\n      \"stateFingerprint\": \"8b6201c6785cbf64ec934ff5fd255bd44e1095d1ffd8a8ab3c3e27b4bd7377cd\",\n      \"receiptFingerprint\": \"355280dcd3ee82169d2e4c0763d960aa17efd5b8656bc9722048fb964b42983f\",\n      \"ledgerSeq\": 53,\n      \"ledgerHash\": \"45fec22bc6c88a950aa1daa09d292e07df632dd8dfacd1f9be0c5b45c433eadc\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "lychee-release-only",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "bbebab291b9cb7158c2dd8ca918d971294a860c9",
+      "observedRevision": "bbebab291b9cb7158c2dd8ca918d971294a860c9",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/lychee-release-only",
+        "head": "bbebab291b9cb7158c2dd8ca918d971294a860c9"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "22f12e9f6a90fa4a0387d7d97dd54a0e9f11c72502b603557ad7154108317873",
+      "routeFingerprint": "641b1f00b826c45b747843464ae1d6e116cb330714983fc58a07b93e8b4f0ffe",
+      "stateFingerprint": "8b6201c6785cbf64ec934ff5fd255bd44e1095d1ffd8a8ab3c3e27b4bd7377cd",
+      "receiptFingerprint": "355280dcd3ee82169d2e4c0763d960aa17efd5b8656bc9722048fb964b42983f",
+      "ledgerSeq": 53,
+      "ledgerHash": "45fec22bc6c88a950aa1daa09d292e07df632dd8dfacd1f9be0c5b45c433eadc"
+    },
+    "entries": [
+      {
+        "path": ".github/workflows/docs.yml",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "5ed16cee57b28defc0319e91e355ef0d6f4d073d265fabb256448e7444719551",
+        "providerContentId": "db95b2fa62eba2ec7191a11fc7bbcbb20a6aa268",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": ".github/workflows/pr-core.yml",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "4070260ce095f8630b6543e21aed3b772033e8abc3dd4b482a54e72c141172d6",
+        "providerContentId": "e20acfa0e310e709a2b21876137ebca50be87f20",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "1ff916c1789635b5201806db48a779199bf38a37afda117f75fbc939d3efc6d2",
+        "providerContentId": "a0d9766ff9113e4b89378695d597e35ccb06fd7b",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "CONTRIBUTING.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "7194fc65ead4b23eab0fb70c51795b3baeecd1e5a949806b2fbd063fb4fd4add",
+        "providerContentId": "872a7093f04c72b0659eddac2aaad90aaf3d2473",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/workflow-policy.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "f6ac71968b884663957546faf71085c34dacdb847621ca181b591d7242f2245a",
+        "providerContentId": "57f29de9980bf6c3db240ee402a8fae2727b61b2",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "0939945a18cbc063371577095a43842cd2a91e8da8edab26d7c4834c13f4094b"
+  },
+  "manifestFingerprint": "55d2934fc1aafdc4fe4d45f332d6d50e2dc846849796b89d75f3169ee4411ab9",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Run the Lychee external link check only when publishing a new npm version (user request): remove the 'Check external documentation links' step from the PR Core and Documentation workflows, keeping the existing 'Check links' step in npm-publish.yml, and pin that policy with a workflow test.",
+    "successCriteria": [
+      "Only the npm publication workflow runs the external link check"
+    ],
+    "checks": [
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-725b3bb70c9bd6d1",
+        "requirement": "Only the npm publication workflow runs the external link check",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "workflow-tests",
+        "requirement": "node --test tests/workflow-policy.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-18T00:26:24.554Z",
+    "completedAt": "2026-11-18T00:50:44.361Z",
+    "durationMs": 1459807,
+    "phaseDurationsMs": {
+      "planning": 14327,
+      "executing": 77455,
+      "verifying": 1367723,
+      "reviewing": 302
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "d609529a7d606b9e3f6fab0b83ac9589420a96b9bae4d634dce2f79a07f57e21"
+}

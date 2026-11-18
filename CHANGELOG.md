@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- The external link check (Lychee) now runs only when publishing to npm. It
+  no longer runs in the PR Core and Documentation workflows, where
+  transient GitHub `503` responses blocked unrelated pull requests. A
+  workflow test pins this policy.
 - With `attestation.signing.provider: "sigstore"`, the automatic evidence
   export on `complete` signs the statement with `cosign attest-blob` before
   exporting, so the bundle carries the signature.
