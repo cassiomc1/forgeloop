@@ -4,8 +4,8 @@
 
 Make ForgeLoop state readable at a glance in a calm, precise local web
 interface. The current implementation is ForgeLoopAudit `0.3.0-rc.3` aligned to
-ForgeLoop `2.2.0` at
-`8b472a2fff30034a5d23a9a380250136930b5e67` (protocol v1, schema v1, Integration
+ForgeLoop `2.3.0` at
+`8655d4288e1bf6cba307a2e0981627db8117c12c` (protocol v1, schema v1, Integration
 API v1).
 
 ## Visual language

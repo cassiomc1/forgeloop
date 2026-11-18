@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- Align ForgeLoopAudit with the published 2.3.0 core.
+  - Vendor the exact npm archive: SHA-512 verified against the registry,
+    release commit 8655d42.
+  - Regenerate the schema copies and provenance from `v2.3.0`;
+    `config.schema.json` gains `autoExportEvidence`.
+  - Update lineage, pins, docs and tests, and record the 2.3.0 publication
+    identity.
+
 ## 2.3.0 - 2026-11-18
 
 - Minor release. Its runtime changes are bound by

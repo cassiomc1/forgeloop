@@ -1,6 +1,6 @@
 # SQLite Storage Migration
 
-**Stable 2.0.0 published — 2026-10-18;** npm `latest` now resolves to **2.2.0** (2026-11-16), whose changed runtime carries its own [writer review](../benchmarks/storage-sqlite/stable-2.2.0-writer-review.json.gz).
+**Stable 2.0.0 published — 2026-10-18;** npm `latest` now resolves to **2.3.0** (2026-11-18), whose changed runtime carries its own [writer review](../benchmarks/storage-sqlite/stable-2.3.0-writer-review.json.gz).
 The [current acceptance record](STABLE_2_ACCEPTANCE.md) binds the supported
 SQLite operational-writer review (`soleSQLiteWriter: true`), full verification,
 final-source hosted parity, native recovery receipts and 16/16 fresh registry

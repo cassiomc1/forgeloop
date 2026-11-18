@@ -54,7 +54,7 @@ export const STORAGE_EVIDENCE_PREFIX = "benchmarks/storage-sqlite/";
 export const STORAGE_EVIDENCE_FILE_BUDGET = 981;
 const AMBIGUOUS_EVIDENCE_EXTENSION = /\.gz\.(?:json|log|txt)$/u;
 // Required by Audit's locked file: dependency; its verifier checks the digest.
-const AUDIT_VENDOR_ARCHIVE = "ForgeLoopAudit/vendor/cassiomc1-forgeloop-2.2.0-8b472a2.tgz";
+const AUDIT_VENDOR_ARCHIVE = "ForgeLoopAudit/vendor/cassiomc1-forgeloop-2.3.0-8655d42.tgz";
 
 function trackedFiles(rootDir) {
   const output = execFileSync("git", ["ls-files", "-z"], { cwd: rootDir, encoding: "utf8" });
