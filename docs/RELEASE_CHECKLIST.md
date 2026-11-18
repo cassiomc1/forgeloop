@@ -4,6 +4,44 @@ This is the current release checklist for the PolyForm Noncommercial-licensed
 `@cassiomc1/forgeloop` package. It is a preparation and verification checklist;
 it does not authorize publication.
 
+## Stable 2.3.0 candidate — 2026-11-18
+
+`2.3.0` is a minor release of the core package.
+
+- **Automatic evidence:** with attestation mode `required`, `complete`
+  exports the evidence bundle automatically and, with the `sigstore`
+  provider, signs it.
+- **New commands and options:** the opt-in `evidence-publish` command with an
+  offline queue, and `sync-pull --merge`, a task-level three-way merge.
+- **New error codes:** `E_SYNC_MERGE_CONFLICT`, `E_EVIDENCE_PUBLISH_CONFIG`
+  and `E_EVIDENCE_PUBLISH_UNAUTHORIZED`.
+
+Its runtime changes are bound by
+[`stable-2.3.0-writer-review.json.gz`](../benchmarks/storage-sqlite/stable-2.3.0-writer-review.json.gz),
+a delta review against 2.2.0:
+
+- 13 changed and 4 added modules each have a disposition.
+- The 9 added filesystem bindings write only a user-config queue
+  (`evidence-publish`) or private OS temp staging (`sync-pull --merge`).
+  The live store changes only through existing transaction writers or
+  `storage-restore`.
+
+Before dispatching `npm-publish.yml`:
+
+1. Merge the release commit to `main`.
+2. Tag it `v2.3.0`.
+3. Dispatch from that tag with channel `latest` and confirmation
+   `PUBLISH PUBLIC PACKAGE`. The external link check runs in that
+   workflow's `verify` job on the self-hosted Linux runner.
+
+Windows, rollback drills, hosted parity and registry-user audits are recorded
+as not repeated or post-publication. After publication run:
+
+```bash
+npm view @cassiomc1/forgeloop version dist-tags --json
+npm run release:identity -- --version 2.3.0 --release-commit <release-tag-commit>
+```
+
 ## Stable 2.2.0 publication — 2026-11-16
 
 `2.2.0` is a minor release of the core package. It adds `forgeloop assess`,
