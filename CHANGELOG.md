@@ -2,10 +2,29 @@
 
 ## Unreleased
 
-- The external link check (Lychee) now runs only when publishing to npm. It
-  no longer runs in the PR Core and Documentation workflows, where
-  transient GitHub `503` responses blocked unrelated pull requests. A
-  workflow test pins this policy.
+- The external link check (Lychee) now runs only when publishing to npm, in
+  the `verify` job on the self-hosted `forgeloop-linux-remote` runner. It no
+  longer runs in the PR Core and Documentation workflows, where transient
+  GitHub `503` responses blocked unrelated pull requests. A workflow test
+  pins this policy.
+- `forgeloop sync-pull --merge` combines whole tasks from both machines
+  instead of replacing local state.
+  - Every push and pull records a digest of each task. A merge classifies
+    each task three-way against that base: take the remote task, keep the
+    local one, or report a conflict.
+  - A task changed on both machines, or overlapping active claims, fails with
+    `E_SYNC_MERGE_CONFLICT` and changes nothing.
+  - The merged state is built offline, sealed as a verified storage backup,
+    and activated through the retained replace-active restore.
+  - `--dry-run` reports the plan only.
+- Add `forgeloop evidence-publish` (opt-in): it uploads redacted evidence
+  bundles to the team dashboard, authenticated by `FORGELOOP_SYNC_TOKEN`.
+  - Bundles wait in an offline queue under the user config directory, and
+    every run retries it.
+  - The remote stores each bundle once by digest.
+  - The command exits `1` while a bundle stays queued or was rejected.
+  - New error codes: `E_EVIDENCE_PUBLISH_CONFIG` and
+    `E_EVIDENCE_PUBLISH_UNAUTHORIZED`.
 - With `attestation.signing.provider: "sigstore"`, the automatic evidence
   export on `complete` signs the statement with `cosign attest-blob` before
   exporting, so the bundle carries the signature.

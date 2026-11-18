@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "lychee-changelog-merge",
+  "forgeloopVersion": "2.2.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:lychee-changelog-merge\",\n      \"digest\": {\n        \"sha256\": \"53d02a5b2298497ad5943049842e5fe4c6fc6bf4485d202f97154740f1f318d8\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"lychee-changelog-merge\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"4d45691edcd32a87aa1656692e106698e5dac5d253e10bc32e6cc48d1536fc2b\",\n      \"contentDigest\": \"53d02a5b2298497ad5943049842e5fe4c6fc6bf4485d202f97154740f1f318d8\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"05eb233b7b6cd09089b9ffe4b7e9354d073e9b8c48b01ee3e3365223c1fc4265\",\n      \"routeFingerprint\": \"420711db3d7242ca480e329e7934c90b39231e3bea2c318456201921e7480649\",\n      \"stateFingerprint\": \"aa32ed220b1932b32cdcd80defca187a19993e1f18ad9d57a190223bbf1109bd\",\n      \"receiptFingerprint\": \"0f3e3b50d9032de4b41cd2c5859565551c9cc31a040f36dac3b4f0860bd2efb3\",\n      \"ledgerSeq\": 37,\n      \"ledgerHash\": \"f7ade4a87776233beb3d6496d42c12fec4e28b0b990d46676b9b9c6c82f47dd3\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "lychee-changelog-merge",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "fba3a01db8b0327acea7ae092fc9c2e3d6fde4cb",
+      "observedRevision": "fba3a01db8b0327acea7ae092fc9c2e3d6fde4cb",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/lychee-release-only",
+        "head": "fba3a01db8b0327acea7ae092fc9c2e3d6fde4cb"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "05eb233b7b6cd09089b9ffe4b7e9354d073e9b8c48b01ee3e3365223c1fc4265",
+      "routeFingerprint": "420711db3d7242ca480e329e7934c90b39231e3bea2c318456201921e7480649",
+      "stateFingerprint": "aa32ed220b1932b32cdcd80defca187a19993e1f18ad9d57a190223bbf1109bd",
+      "receiptFingerprint": "0f3e3b50d9032de4b41cd2c5859565551c9cc31a040f36dac3b4f0860bd2efb3",
+      "ledgerSeq": 37,
+      "ledgerHash": "f7ade4a87776233beb3d6496d42c12fec4e28b0b990d46676b9b9c6c82f47dd3"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "262839d2272170ebe67afd2357900c1955a00c53b92a232766ba6da0a6729041",
+        "providerContentId": "4787e2f063f7026764cec4dc87ea8e9291b0d4c8",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "53d02a5b2298497ad5943049842e5fe4c6fc6bf4485d202f97154740f1f318d8"
+  },
+  "manifestFingerprint": "4d45691edcd32a87aa1656692e106698e5dac5d253e10bc32e6cc48d1536fc2b",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Combine CHANGELOG.md for merging main into claude/lychee-release-only: main's Unreleased entries (evidence-publish, sync-pull --merge) plus the link-check entry, attested as the exact content the merge commit keeps.",
+    "successCriteria": [
+      "CHANGELOG.md holds main's Unreleased entries and the link-check entry"
+    ],
+    "checks": [
+      {
+        "id": "changelog-check",
+        "requirement": "npm run changelog:check passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-d841e5b87b074ea1",
+        "requirement": "CHANGELOG.md holds main's Unreleased entries and the link-check entry",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-fast",
+        "requirement": "npm run verify:fast passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-18T01:03:26.132Z",
+    "completedAt": "2026-11-18T01:04:29.061Z",
+    "durationMs": 62929,
+    "phaseDurationsMs": {
+      "planning": 2887,
+      "executing": 7968,
+      "verifying": 51791,
+      "reviewing": 283
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 3,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "2ac5ad8b7ebcd8709f4ba430e60dbfa243bc0af233468809e5f9c0769f1b9329"
+}
