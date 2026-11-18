@@ -578,6 +578,11 @@ export const COMMAND_HANDLERS = Object.freeze({
     renderJsonOr(options, result, (await import("./commands/evidence-export.js")).formatEvidenceExportResult);
     return 0;
   },
+  "evidence-publish": async ({ target, packageRoot, options }) => {
+    const { result, exitCode } = await COMMAND_EXECUTORS["evidence-publish"]({ target, packageRoot, options });
+    renderJsonOr(options, result, (await import("./commands/evidence-publish.js")).formatEvidencePublishResult);
+    return exitCode;
+  },
   "evidence-verify": async ({ target, packageRoot, options }) => {
     const { result, exitCode } = await COMMAND_EXECUTORS["evidence-verify"]({ target, packageRoot, options });
     const { formatEvidenceVerifyResult } = await import("./commands/evidence-verify.js");

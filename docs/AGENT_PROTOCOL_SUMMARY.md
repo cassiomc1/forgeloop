@@ -241,6 +241,7 @@ capability-family versions.
 | attestation-verify | READ_ONLY | Verifies a task attestation and current revision without mutating task state. |
 | attestation-verify-range | READ_ONLY | Verifies complete attestation coverage for an opaque revision range through a provider-neutral contract. |
 | evidence-export | MUTATING | Exports a completed task's attestation as a portable, redacted evidence bundle to commit with the change. |
+| evidence-publish | MUTATING | Opt-in: uploads redacted evidence bundles to the team dashboard, authenticated by FORGELOOP_SYNC_TOKEN. Bundles wait in an offline queue outside the repository until the remote accepts them. |
 | evidence-verify | READ_ONLY | Verifies committed evidence bundles for a revision range without local ForgeLoop state; signatures raise the level from INTEGRITY_ONLY to ATTESTED. |
 
 ### continuity
@@ -344,7 +345,7 @@ capability-family versions.
 | storage-restore-resume | MUTATING | Adopts an exact dead local maintenance owner and resumes restore. Incomplete snapshots and prior rebuild intents are retained before rebuilding from bound source; completed preparation requires source parity/domain validation. Use --replace-active for preparation or publication replacement recovery. Conflicting intents and retained handoff locks remain refused. |
 | storage-rollback | MUTATING | Conditionally restores preserved source before native writes, retaining original native bytes and validating every task with the supported pinned legacy target before release. Failures retain exclusion; post-write restoration is refused. |
 | storage-rollback-resume | MUTATING | Resumes recorded rollback preparation, staging or publication under exact dead-owner adoption, revalidates native/source locations, and validates every task with the pinned target before release. Unbound attempts remain refused. |
-| sync-pull | MUTATING | Downloads, decrypts and verifies the repository's sync snapshot, then activates it through storage-restore: into a fresh project, or replacing local state only with --replace-active. |
+| sync-pull | MUTATING | Downloads, decrypts and verifies the repository's sync snapshot, then activates it through storage-restore: into a fresh project, replacing local state with --replace-active, or merged task by task with local state with --merge. |
 | sync-push | MUTATING | Uploads a client-side encrypted (FORGELOOP_SYNC_KEY) backup of this project's ForgeLoop state to the sync remote, authenticated by FORGELOOP_SYNC_TOKEN. A push based on a stale remote version is refused with E_SYNC_CONFLICT. |
 | task-abandon | MUTATING | Explicitly abandons an active non-terminal task; records append-only evidence and releases claims without completion authority. |
 | task-migrate | MUTATING | Migrates legacy singleton task state into SQLite with retained source and verified publication evidence. |

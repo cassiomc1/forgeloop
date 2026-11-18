@@ -1,0 +1,274 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "evidence-publish",
+  "forgeloopVersion": "2.2.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:evidence-publish\",\n      \"digest\": {\n        \"sha256\": \"4c72eeab700b95df13b8ec22213b638181c3e54175e3fb5e0b4acd7bff82a1ee\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"evidence-publish\",\n      \"verificationCycle\": 4\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"489f35ae6fed5dec7c9d56509f24d553ee5b10d5e95a09c41b70b05fd3097ea1\",\n      \"contentDigest\": \"4c72eeab700b95df13b8ec22213b638181c3e54175e3fb5e0b4acd7bff82a1ee\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"completions/_forgeloop\",\n        \"completions/forgeloop.bash\",\n        \"completions/forgeloop.fish\",\n        \"docs/AGENT_PROTOCOL_SUMMARY.md\",\n        \"docs/CLI_REFERENCE.md\",\n        \"docs/EVIDENCE_BUNDLES.md\",\n        \"docs/TROUBLESHOOTING.md\",\n        \"src/cli.js\",\n        \"src/commands/evidence-publish.js\",\n        \"src/core/cli-command-definitions.js\",\n        \"src/core/command-executors.js\",\n        \"src/core/error-codes.js\",\n        \"src/core/evidence/publish.js\",\n        \"src/core/integration-invocation-policy.js\",\n        \"tests/evidence-publish.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"35f01a3221aa956e41a98b11f938049efe60481150d2c86ddd94815a8f3a236c\",\n      \"routeFingerprint\": \"d7c4d14892beca75afdcf1f1caf3964c012ce4ad88684489b8c436d524d1d953\",\n      \"stateFingerprint\": \"ea6c4716855ca642dc86bce1d05d2d1e03b5e0e900fb172a4de2cfce651fa0c9\",\n      \"receiptFingerprint\": \"db8922b8141114612601574620806ffa25b5110fc2f5623adfce27756e95bcd5\",\n      \"ledgerSeq\": 97,\n      \"ledgerHash\": \"b8802d235951d16b785c78713b0d740ac3c0e84e5aadc33d83f6a770a741be14\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "evidence-publish",
+    "verificationCycle": 4,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "bbebab291b9cb7158c2dd8ca918d971294a860c9",
+      "observedRevision": "bbebab291b9cb7158c2dd8ca918d971294a860c9",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/evidence-publish",
+        "head": "bbebab291b9cb7158c2dd8ca918d971294a860c9"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "35f01a3221aa956e41a98b11f938049efe60481150d2c86ddd94815a8f3a236c",
+      "routeFingerprint": "d7c4d14892beca75afdcf1f1caf3964c012ce4ad88684489b8c436d524d1d953",
+      "stateFingerprint": "ea6c4716855ca642dc86bce1d05d2d1e03b5e0e900fb172a4de2cfce651fa0c9",
+      "receiptFingerprint": "db8922b8141114612601574620806ffa25b5110fc2f5623adfce27756e95bcd5",
+      "ledgerSeq": 97,
+      "ledgerHash": "b8802d235951d16b785c78713b0d740ac3c0e84e5aadc33d83f6a770a741be14"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "606ec810fc5b1f6748691ad812aab3e5aeb5acf6f86f4968de5fca144d3e6f21",
+        "providerContentId": "007b489cec2170abf037c2c00488f54468c4c003",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "completions/_forgeloop",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "756ad6e9a7be8a1661c42f7cc14a337c5cb83a902d430d1ed3f3fc889f707264",
+        "providerContentId": "fdf7e4a39f30f38c8457526f879d08457bb18116",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "completions/forgeloop.bash",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "46aef67c12cc0295e00f57b5b4d21feedc300a90317676efc5ee09800cfa38cd",
+        "providerContentId": "e7cac8fceec44f0c7f166944041f2627677ea455",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "completions/forgeloop.fish",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "2f1361cd54b5b67618280436f91d925cfebddeba8827f606bc38bad165265788",
+        "providerContentId": "26510c673f361cae1a3a45744abfc79c80e17323",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/AGENT_PROTOCOL_SUMMARY.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "26d1223005bccf02aa2f28044ffc0db3382c9e66ef3619663d8b90302e927b80",
+        "providerContentId": "68655b5730e48bf1a7e9e0973397483453fc03f5",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/CLI_REFERENCE.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "b8f2c99f5e2bdebc4b6a7cb9b40a8cd9f5b16a779f469fe69151b6f8147e8339",
+        "providerContentId": "df7c67f1ce3fb168abffcc031ac9375b88842556",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/EVIDENCE_BUNDLES.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "ac90b0fb1205fc03576213d1c4a88eb39f84b3652bf9fa4f69b3d27df8926bda",
+        "providerContentId": "6b41e5ad5292691d56456c42c37f4a4b585f1754",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/TROUBLESHOOTING.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "5d8f9e931c3d229f6350d99a65d20aaa95ad4c0d87ab0afcb0b337cf1000b51b",
+        "providerContentId": "e68ea0f05eca9518ae23fce9acc802a563e12266",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/cli.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "9bda96b8ff0eaf2dd5d3d41fe186efb0fd52db0c5b27287b49cbb22b274db630",
+        "providerContentId": "02dd1d020d06e52629d31c14f83718b4d33aa46c",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/commands/evidence-publish.js",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "fc237132f5406085395e42a849c15cacd06705364af4cada88aecbec70db98c8",
+        "providerContentId": "b64e72bc1e125d84998a3ec69533e4e057c09500",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/cli-command-definitions.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "fcc702fd4ccf999c2fbcadca91ab397e3aba5cd4ce8801885d7ac23fa04408ac",
+        "providerContentId": "11c14d97adcff72d855771e56ca7d202f174757e",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/command-executors.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "a3f192735de2791e9053e909c46bee8820863475c191ca722025e1d8b6211882",
+        "providerContentId": "df5ea5b57d3fd859f4062d82155278c901638315",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/error-codes.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "74dd3a65dbaabf4ce81739af2f31e3378edaa9805b51c8d9346feaa83a8f95f5",
+        "providerContentId": "c7a64afc051821157a7ac50eacdbcbcbbc477f31",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/evidence/publish.js",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "dd615e3a095f77c1a68aa348a9954cb6e1d5b053c9a6479ab1efb29c9c5d7125",
+        "providerContentId": "dbf09b59534e998aba863a28a852097759e20a7a",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/integration-invocation-policy.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "cfa49517b596a396a57ddc951aa0cc51547da86b9c19b25e9f44f1d5f763f363",
+        "providerContentId": "4804907d946fb68f754991e3b6d643de151a6a74",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/evidence-publish.test.js",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "249254a0edfa26c0bce3e4d12fcde06fbf90ccde79fa3addecd50897d36eebcb",
+        "providerContentId": "e576b51c9ee221143fee661c9874a1af9fdf3a2f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "4c72eeab700b95df13b8ec22213b638181c3e54175e3fb5e0b4acd7bff82a1ee"
+  },
+  "manifestFingerprint": "489f35ae6fed5dec7c9d56509f24d553ee5b10d5e95a09c41b70b05fd3097ea1",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Add forgeloop evidence-publish: an explicit, opt-in command that uploads already-redacted evidence bundles from .forgeloop-evidence to the ForgeLoop evidence endpoint (default https://forgeloop.monster/api/evidence) authenticated by FORGELOOP_SYNC_TOKEN. Bundles to publish enter an offline queue kept outside the repository under the user config directory; every run retries the queue, removes published or unchanged items, keeps items on network or server errors, and drops items the remote rejects.",
+    "successCriteria": [
+      "evidence-publish uploads requested bundles, queues them offline when the remote is unreachable, and publishes the queue on a later run"
+    ],
+    "checks": [
+      {
+        "id": "publish-tests",
+        "requirement": "node --test tests/evidence-publish.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-04770186d283d64a",
+        "requirement": "evidence-publish uploads requested bundles, queues them offline when the remote is unreachable, and publishes the queue on a later run",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-17T21:08:34.427Z",
+    "completedAt": "2026-11-17T23:11:08.719Z",
+    "durationMs": 7354292,
+    "phaseDurationsMs": {
+      "planning": 2506,
+      "executing": 207078,
+      "verifying": 7144393,
+      "reviewing": 315
+    },
+    "verificationCycles": 4,
+    "diagnoses": 3,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "c4b78defcef1a2e378676cf692fc3badc7a1fd74a43643f86e3313ec378d6f14"
+}

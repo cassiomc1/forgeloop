@@ -1,0 +1,269 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "sync-merge",
+  "forgeloopVersion": "2.2.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:sync-merge\",\n      \"digest\": {\n        \"sha256\": \"9df31b1a8c533d548471ec23a56a3e73c74e73fe3fd8c80c12fc31cd75a1f3f0\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"sync-merge\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"a8017e7b122fc81e078afe8df7c59a16ae4999b1c009e19a64390568f383afd2\",\n      \"contentDigest\": \"9df31b1a8c533d548471ec23a56a3e73c74e73fe3fd8c80c12fc31cd75a1f3f0\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"completions/_forgeloop\",\n        \"completions/forgeloop.bash\",\n        \"completions/forgeloop.fish\",\n        \"docs/AGENT_PROTOCOL_SUMMARY.md\",\n        \"docs/CLI_REFERENCE.md\",\n        \"docs/CLOUD_SYNC.md\",\n        \"docs/TROUBLESHOOTING.md\",\n        \"src/commands/sync-pull.js\",\n        \"src/commands/sync-push.js\",\n        \"src/core/cli-command-definitions.js\",\n        \"src/core/command-executors.js\",\n        \"src/core/error-codes.js\",\n        \"src/core/sync/merge.js\",\n        \"tests/sync-merge.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"625cb2b1a8f62687137e98ceb2714b89d911d9a91fde77cdfbb5e65cd84076aa\",\n      \"routeFingerprint\": \"24ba75b4ccc0e13510942ef23848f8b40c6e58f4850325ff2d7eca5958aa17bf\",\n      \"stateFingerprint\": \"390bde666502ad8e194b6ef889162eaafb6e8b7d253a7bbcb1c6c6c816f64e7c\",\n      \"receiptFingerprint\": \"a776b6b79a5c12c0b3a27cf34d2e2cb4fc326e23169a328fd679bb6405a9b9f1\",\n      \"ledgerSeq\": 43,\n      \"ledgerHash\": \"2112bb2962a0d0887cf33e791d66a79b259a9f96ce8510cf06a9c8ed9403caca\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "sync-merge",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "1f0e86b0c76afac60a4619afce5c1067636f0603",
+      "observedRevision": "1f0e86b0c76afac60a4619afce5c1067636f0603",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/sync-merge",
+        "head": "1f0e86b0c76afac60a4619afce5c1067636f0603"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "625cb2b1a8f62687137e98ceb2714b89d911d9a91fde77cdfbb5e65cd84076aa",
+      "routeFingerprint": "24ba75b4ccc0e13510942ef23848f8b40c6e58f4850325ff2d7eca5958aa17bf",
+      "stateFingerprint": "390bde666502ad8e194b6ef889162eaafb6e8b7d253a7bbcb1c6c6c816f64e7c",
+      "receiptFingerprint": "a776b6b79a5c12c0b3a27cf34d2e2cb4fc326e23169a328fd679bb6405a9b9f1",
+      "ledgerSeq": 43,
+      "ledgerHash": "2112bb2962a0d0887cf33e791d66a79b259a9f96ce8510cf06a9c8ed9403caca"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "2437b44530cb80b30d7c6c9ad47d9810c4889b31863bc49545c3115fcb1337b5",
+        "providerContentId": "2bf11723d1f6fdde2aea61464a5c0b329f3da6f2",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "completions/_forgeloop",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "3211d10af53d8d97a708bead05387d9e4129f1d583d58cc8d8d80390e9e51595",
+        "providerContentId": "5953629c62669b5dffb7244f5918631a463313c4",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "completions/forgeloop.bash",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "ba1a32e3e5cb28f3448dc96da4aea2d17b6405b7d89ea4a1da91a5f21a0b77b3",
+        "providerContentId": "af446c48aff3f9f4ccc8a8f3015d9cb563c326e4",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "completions/forgeloop.fish",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "dd2df9351e753ebc4afe392237d6b318efa435e69dc2b38c6453cc6449cd14a8",
+        "providerContentId": "2ff4186189b80d3b2331bc775dd47689e6925b65",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/AGENT_PROTOCOL_SUMMARY.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "2def077e4b59665f9c0e3dc31c14ccb1a2e1d227f31ab87c4fd6554005f54f87",
+        "providerContentId": "b3c53bebeeeb361f63399e41568643686bb3ac7c",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/CLI_REFERENCE.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "44fe65f248436715a82c9d87f05a1764433457a2a973c27c4a1b320f7408354c",
+        "providerContentId": "c535f876e9ed1c12f5c699720c0ef1f96174b7c7",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/CLOUD_SYNC.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "d96830fa35a4ec4c05078817ebe660fa09ac6c8290362db1f15f24f645dc7b87",
+        "providerContentId": "c465bab32682943c0c1b8591204e887689d3811c",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/TROUBLESHOOTING.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "dcca40701539ad38fa292b569f029d028a8c6a5899262592dbef3f6afc8d229a",
+        "providerContentId": "07837c4c8b17fac60573f2f7f17460825e862acb",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/commands/sync-pull.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "7006352868d6042ae7611f4c10291b439677dc9f538291b5ad261440bc90d111",
+        "providerContentId": "17f381d42c9fada00a7bb4285c9244757b14ed3a",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/commands/sync-push.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "b160006cdcf916aefb9984a7bd09a1c4a77b730838120087bc062037f6bb81c7",
+        "providerContentId": "660a2032dce884263a4b32ba1b6986283daf2051",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/cli-command-definitions.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "4fcb373278689817ceebbcbc8e0dc01b286717854c8f4e0b47ee500a337b1f9c",
+        "providerContentId": "3d96af273ed1f6ed1fa2f0e2c55034557102ec1d",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/command-executors.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "f1dd1e02d3e547faf499d05414826b0cae1c2670aaa51d4b1ac4fa009dfdbc9e",
+        "providerContentId": "22ba1e68de39141a1db5ca8c9a11d43613040aa2",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/error-codes.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "4be8fcf67f71525a58dadd6302ba637e5c7b914fa48691c12cb10581ccb5e108",
+        "providerContentId": "c649419de681cf8e7d14912d832d1db02f67b4a1",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/sync/merge.js",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "0ffa6997b07d2dc7cfd785a07f22ed5c52468961105b7aa5fe21aa5bff1cc0af",
+        "providerContentId": "59d5b5e0fa903578fcbbb9a416b224a4042d29d7",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/sync-merge.test.js",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "2b5b9b3bd4a44600b4fe23d7903cde214d59d1e258a20b9aba6a996363c8f971",
+        "providerContentId": "8da6f954143d604ec65451bacb4bd37aad34a5e6",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "9df31b1a8c533d548471ec23a56a3e73c74e73fe3fd8c80c12fc31cd75a1f3f0"
+  },
+  "manifestFingerprint": "a8017e7b122fc81e078afe8df7c59a16ae4999b1c009e19a64390568f383afd2",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Let sync-pull merge instead of only replacing: sync-pull --merge classifies every task of the local state and the remote snapshot three-way against per-task digests recorded at the last push or pull. Tasks changed on one side only, or present on one side only, are taken from that side; tasks changed on both sides are conflicts and the merge fails closed naming them. Without a recorded base only disjoint or identical tasks merge. The merged state is built offline from a local backup plus whole remote tasks copied row for row (the event chain is per task, so no history is rewritten), sealed with the canonical backup, verified, and activated through the same replace-active restore as sync-pull. --dry-run reports the classification without changing anything.",
+    "successCriteria": [
+      "sync-pull --merge combines tasks created on two machines into one verified state, and refuses tasks changed on both sides"
+    ],
+    "checks": [
+      {
+        "id": "merge-tests",
+        "requirement": "node --test tests/sync-merge.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-8d0062b1a42b832d",
+        "requirement": "sync-pull --merge combines tasks created on two machines into one verified state, and refuses tasks changed on both sides",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "sync-tests",
+        "requirement": "node --test tests/cloud-sync.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-17T23:12:37.143Z",
+    "completedAt": "2026-11-17T23:42:15.676Z",
+    "durationMs": 1778533,
+    "phaseDurationsMs": {
+      "planning": 2674,
+      "executing": 291520,
+      "verifying": 1484044,
+      "reviewing": 295
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 5,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "26b741d65d9c6903566fd0a937434321e9b4e19b95f660a89c261e46f58517dc"
+}
