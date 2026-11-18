@@ -203,5 +203,16 @@
       "types": "./src/integration.d.ts",
       "default": "./src/integration.js"
     }
+  },
+  "overrides": {
+    "glob": {
+      "minimatch": "^11.0.8"
+    },
+    "test-exclude": {
+      "minimatch": "^11.0.8"
+    },
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "^11.0.8"
+    }
   }
 }
