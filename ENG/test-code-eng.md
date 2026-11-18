@@ -3,7 +3,7 @@ name: test-code-eng
 language: en
 description: "Risk-based testing strategy and tools for modern languages and platforms."
 version: "2026.09"
-last-reviewed: "2026-10-17"
+last-reviewed: "2026-11-17"
 guide-id: test
 completion-evidence:
   - tests
@@ -221,6 +221,36 @@ Document hardware, region, build, configuration, dataset, and interference. Sepa
 - Expose flakiness count and rate per test/suite. Exceeding the local budget fails the gate or blocks suite expansion according to the recorded policy.
 - Fix synchronization, isolation, state, dependency, and environment; do not use increasing `sleep` as a solution. Remove a redundant test only with proof of equivalent coverage.
 
+## Honest tests: test landmines
+
+Coding agents optimise for green checks. Left alone, they replace the
+dependency under test, sleep until a race usually goes their way, retry the
+flake, and raise the timeout. Each of these passes CI, and none of them
+proves the behaviour. Treat the following as landmines: a change that adds
+one fails review unless the record explains why no honest alternative
+exists.
+
+| Landmine | Instead |
+| --- | --- |
+| **Test doubles that replace real behaviour**: module, method or property mocks, patched globals, prototypes, clocks or `fetch`, hand-written fake responses for your own code. | Run the real implementation. Inject real collaborators, use a local server or emulator for the network, and use fakes only at true external boundaries you do not own. Observation-only spies are fine. |
+| **Fixed sleeps**: awaiting a fixed real-time delay in a test or hook. | Await the operation or an event it emits. Control time with the framework's mock clock, such as `t.mock.timers` or `vi.useFakeTimers`. |
+| **Unsignaled polling**: polling spy or recorder state until a deadline. | Await the signal (a promise, an event, a callback) that the state changed. |
+| **Flake masking**: retries and raised per-test timeouts. | Fix the race, isolation or state. A test that passes only on rerun or with more time is a flake to fix (see the previous section). |
+| **Unchecked network**: a request mock that lets unmatched requests reach the real network. | Fail on unhandled requests, for example MSW `onUnhandledRequest: "error"`. |
+
+**Adoption in an existing suite.** Enforce these rules mechanically. Record
+today's occurrences as an exact count per file, and fail both on a file
+above its allowance (a new landmine) and on a file below it (a stale
+allowance to lower). The list then only shrinks.
+
+- **JavaScript and TypeScript with Oxlint:** use
+  [`@interfere/landmines`](https://github.com/interfere-inc/landmines). Its
+  rules target Vitest and MSW.
+- **Other stacks:** encode the same rules in a small repository check.
+- **ForgeLoop:** this repository does this with `npm run test:landmines`
+  (`scripts/check-test-landmines.mjs`), which runs in the fast, local and
+  pre-push tiers.
+
 ## CI cadence and evidence
 
 | Event | Expected gates |
@@ -296,6 +326,7 @@ Time-sensitive statements in this revision were verified on **2026-08-08**. Reva
 - [W3C — WebDriver](https://www.w3.org/TR/webdriver2/): standardized protocol used by drivers.
 - [Grafana k6 — thresholds](https://grafana.com/docs/k6/latest/using-k6/thresholds/) and [test types](https://grafana.com/docs/k6/latest/testing-guides/test-types/): pass/fail criteria, percentiles, smoke, spike, and soak.
 - [Playwright — retries](https://playwright.dev/docs/test-retries): distinguishes passed, flaky, and failed-after-retry outcomes.
+- [interfere-inc/landmines](https://github.com/interfere-inc/landmines) (MIT): lint rules against test doubles, fixed sleeps, unsignaled polling and flake masking in AI-written tests, with per-file allowances that only shrink.
 - [VCR.py — filtering sensitive data](https://vcrpy.readthedocs.io/en/latest/advanced.html#filter-sensitive-data-from-the-request): filtering headers, query, body, and responses before recording.
 - [Prisma — expand-and-contract migrations](https://docs.prisma.io/docs/guides/database/data-migration): expand, migrate data, and contract sequence for production.
 - [Stryker — mutation testing](https://stryker-mutator.io/docs/): mutants used to evaluate the suite's detection ability.

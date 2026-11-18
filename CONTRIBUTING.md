@@ -52,6 +52,22 @@ The supported local Python command is `python3 -m unittest discover -s tests`.
 The frozen validators require Python 3.9 or newer and are compatibility tools
 used by CI; they are not a replacement for the Node test suite.
 
+## Honest tests
+
+`npm run test:landmines` keeps new tests free of the landmines described in
+[`ENG/test-code-eng.md`](./ENG/test-code-eng.md#honest-tests-test-landmines):
+
+- behaviour-replacing mocks and patched globals;
+- fixed sleeps;
+- retries and raised per-test timeouts.
+
+Existing occurrences are listed with an exact count per file in
+`scripts/test-landmines-allowlist.json`, and the list may only shrink:
+
+- **New occurrence:** the check fails. Use the honest alternative instead.
+- **Occurrence removed:** the check also fails until you lower the
+  allowance to match.
+
 ## Release and performance checks
 
 Use `npm run coverage` followed by `npm run critical-coverage:check` for

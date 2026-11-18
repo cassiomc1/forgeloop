@@ -173,6 +173,7 @@
     "complexity:check": "node scripts/check-complexity.mjs",
     "repository-index:manifest": "node scripts/verify-tgrep-manifest.mjs",
     "repository:hygiene": "node scripts/check-repository-hygiene.mjs",
+    "test:landmines": "node scripts/check-test-landmines.mjs",
     "task-discovery:benchmark": "node scripts/benchmark-task-discovery.mjs",
     "storage:benchmark": "node scripts/benchmark-storage-sqlite.mjs",
     "storage:benchmark:diagnosis": "node scripts/benchmark-diagnosis-parity.mjs",
