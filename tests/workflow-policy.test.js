@@ -27,6 +27,21 @@ test("RC3 documentation uses full validation and publication uses the runner-com
   assert.equal(links.with.fail, true);
 });
 
+test("the external link check runs only when publishing to npm", async () => {
+  const usesLychee = (workflow) => Object.values(workflow.jobs).flatMap((job) => job.steps ?? []).filter((step) => step.uses === "./.github/actions/lychee");
+  for (const name of await readdir(path.join(path.dirname(new URL(import.meta.url).pathname), "..", ".github", "workflows"))) {
+    if (!name.endsWith(".yml")) continue;
+    const steps = usesLychee(parse(await readWorkflow(name)));
+    if (name === "npm-publish.yml") {
+      assert.deepEqual(steps.map((step) => step.name), ["Check links"]);
+      // The link check runs on the project's own Linux runner, not a GitHub-hosted one.
+      const job = Object.values(parse(await readWorkflow(name)).jobs).find((candidate) => (candidate.steps ?? []).some((step) => step.name === "Check links"));
+      assert.deepEqual(job["runs-on"], ["self-hosted", "Linux", "X64", "forgeloop-linux-remote"]);
+    }
+    else assert.deepEqual(steps, [], `${name} must not run the external link check`);
+  }
+});
+
 test("core manual dispatch selects every gate without PR revision metadata and preserves PR path routing", { skip: process.platform === "win32" }, async () => {
   const workflow = parse(await readWorkflow("pr-core.yml"));
   const classify = workflow.jobs.classify.steps.find(step => step.id === "classify");
@@ -103,8 +118,9 @@ test("PR and release quality workflows enforce the intended validation boundary"
   assert.match(docs, /npm ci --ignore-scripts/);
   assert.match(docs, /npm run docs:check/);
   assert.match(docs, /paths:/);
-  assert.match(docs, /--exclude-path '\(\^\|\/\)node_modules\(\/\|\$\)'/);
-  assert.match(docs, /--exclude-path '\(\^\|\/\)coverage\(\/\|\$\)'/);
+  // The external link check runs only at npm publication, before npm ci, so
+  // the PR documentation workflow has no Lychee exclusions to pin.
+  assert.doesNotMatch(docs, /actions\/lychee/);
   assert.match(await readFile(".markdownlint-cli2.jsonc", "utf8"), /"ignores"/);
   assert.match(await readFile(".markdownlint-cli2.jsonc", "utf8"), /"\*\*\/node_modules\/\*\*"/);
   assert.match(audit, /npm ci --ignore-scripts/);

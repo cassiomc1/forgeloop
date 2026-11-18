@@ -59,6 +59,10 @@ coverage gates; coverage is intentionally not part of the default test command
 or the PR unit-test job. `npm run performance:check` measures the median
 startup time of the read-only `protocol-info` command using a broad
 shared-runner budget.
+The external link check (Lychee) runs only in the npm publication workflow,
+not on pull requests or pushes to `main`. Its network failures would
+otherwise block unrelated changes. Run
+`lychee --config .lychee.toml './**/*.md'` locally after changing links.
 Historical link exclusions in `.lychee.toml` are reviewed manually at least
 quarterly and must not be removed automatically.
 

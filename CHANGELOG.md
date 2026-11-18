@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- The external link check (Lychee) now runs only when publishing to npm, in
+  the `verify` job on the self-hosted `forgeloop-linux-remote` runner. It no
+  longer runs in the PR Core and Documentation workflows, where transient
+  GitHub `503` responses blocked unrelated pull requests. A workflow test
+  pins this policy.
 - `forgeloop sync-pull --merge` combines whole tasks from both machines
   instead of replacing local state.
   - Every push and pull records a digest of each task. A merge classifies
