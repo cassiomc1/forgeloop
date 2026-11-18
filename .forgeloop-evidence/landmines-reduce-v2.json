@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "landmines-reduce-v2",
+  "forgeloopVersion": "2.3.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:landmines-reduce-v2\",\n      \"digest\": {\n        \"sha256\": \"609c45edb079377c25ba64973bda4fecbe84d93d3ce5f0b7b1b175a30585354f\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"landmines-reduce-v2\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"9535a6031f04bc908d22070118df4c1e629b8f5333683faf449e562c46a25a63\",\n      \"contentDigest\": \"609c45edb079377c25ba64973bda4fecbe84d93d3ce5f0b7b1b175a30585354f\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"scripts/test-landmines-allowlist.json\",\n        \"tests/advisory-context-service.test.js\",\n        \"tests/security-review-provider.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"d81a742927111b338cba53345bfe02dc445aa4b16e59121101c673c4ffbd947d\",\n      \"routeFingerprint\": \"03ab7ce7ecbd1fc043dd4aeeac468a50514d8dd98081b46449df098d6acf9c54\",\n      \"stateFingerprint\": \"9cba52fb051f4df438508cd5f778ad870af6a6a68dea5c6029d35f2d4782c4eb\",\n      \"receiptFingerprint\": \"12619ff0de8b7a302e83dc4b679a77f2ae98dfd7e30f56ee5055bf0853076e56\",\n      \"ledgerSeq\": 40,\n      \"ledgerHash\": \"4c412a003146af7b92fbcdb605e5a162d20f294ccb6fc354d0a764aba65207d9\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "landmines-reduce-v2",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "503e072bc3aee157f0202c21257d88db158d2d84",
+      "observedRevision": "503e072bc3aee157f0202c21257d88db158d2d84",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/landmines-reduce",
+        "head": "503e072bc3aee157f0202c21257d88db158d2d84"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "d81a742927111b338cba53345bfe02dc445aa4b16e59121101c673c4ffbd947d",
+      "routeFingerprint": "03ab7ce7ecbd1fc043dd4aeeac468a50514d8dd98081b46449df098d6acf9c54",
+      "stateFingerprint": "9cba52fb051f4df438508cd5f778ad870af6a6a68dea5c6029d35f2d4782c4eb",
+      "receiptFingerprint": "12619ff0de8b7a302e83dc4b679a77f2ae98dfd7e30f56ee5055bf0853076e56",
+      "ledgerSeq": 40,
+      "ledgerHash": "4c412a003146af7b92fbcdb605e5a162d20f294ccb6fc354d0a764aba65207d9"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "b08cb7ade7e6840114019ca3860ff9e48ed0ce5dc6fe47be5a2bc69423d9d679",
+        "providerContentId": "b64e59467ccec6586d49a5d40825e0cfa2cf9adb",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/test-landmines-allowlist.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "f9e4e98c8473f46f33fe92ac5386f6fa88223d7fec233fd412b1f3a802c64088",
+        "providerContentId": "64d578ee7dc82bb16e8bb79dd5439f14bfcbf389",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/advisory-context-service.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "722c899cabc4658ca44613549913644403e7ba34e9360c1f90a76b7efdc01797",
+        "providerContentId": "fab42b5ce83ac606ee8dc7040c968d1274cfc5e5",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/security-review-provider.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "00f8d6249e14e2063ca3a3f19144c6427ec967f6f49a78d9b51c881485cbaeee",
+        "providerContentId": "d7aac9fd6f08ee489e2d1a40492e430fef02a12b",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "609c45edb079377c25ba64973bda4fecbe84d93d3ce5f0b7b1b175a30585354f"
+  },
+  "manifestFingerprint": "9535a6031f04bc908d22070118df4c1e629b8f5333683faf449e562c46a25a63",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Lower the test landmine allowances by fixing tests, never by narrowing patterns: replace the fixed sleeps in advisory-context-service (a never-settling slow provider) and security-review-provider (wait for the provider to start, racing the review so an early settle fails instead of hanging; gate the late provider explicitly so the late-completion test awaits a release it controls and fails clearly if the provider was never invoked). Continues abandoned task landmines-reduce, whose first rewrite could hang under load when the 2 ms deadline won before the provider was invoked.",
+    "successCriteria": [
+      "test:landmines passes with three fewer allowed fixed sleeps and the rewritten tests are stable and cannot hang"
+    ],
+    "checks": [
+      {
+        "id": "requirement-4fc705a96976a410",
+        "requirement": "test:landmines passes with three fewer allowed fixed sleeps and the rewritten tests are stable and cannot hang",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "rewritten-tests",
+        "requirement": "The rewritten test files pass 40 consecutive runs, each bounded by a timeout",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-18T19:47:39.144Z",
+    "completedAt": "2026-11-18T20:12:38.529Z",
+    "durationMs": 1499385,
+    "phaseDurationsMs": {
+      "planning": 2636,
+      "executing": 78469,
+      "verifying": 1417988,
+      "reviewing": 292
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "020567070d08a06dfcb154e313d67d773c0054eddeab559888f58dbd8f9a845a"
+}

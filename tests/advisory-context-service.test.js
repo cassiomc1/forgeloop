@@ -94,7 +94,8 @@ test("slow provider recall times out", async () => {
       "slow-memory": {
         id: "slow-memory",
         recall() {
-          return new Promise((resolve) => setTimeout(resolve, 500));
+          // Never settles: the service deadline alone must end the call.
+          return new Promise(() => {});
         },
       },
     },

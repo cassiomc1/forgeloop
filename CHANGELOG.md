@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Lower the test landmine allowances from 28 to 25 by rewriting three
+  fixed-sleep tests:
+  - a slow advisory provider never settles, so only the deadline ends it;
+  - the security-review cancellation test waits for the provider to start,
+    racing the review so an early settle fails instead of hanging;
+  - the late-completion test gates the provider and releases it after the
+    deadline, so no real-time race decides the result.
 - The hosted team dashboard reads the task source and the signature status:
   - a "Published · not on main yet" badge marks tasks uploaded with
     `evidence-publish`;

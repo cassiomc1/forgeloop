@@ -211,26 +211,41 @@ test("security-review shares a deadline with provider factories and review calls
 test("security-review caller cancellation aborts the provider and returns no observation", async () => {
   const controller = new AbortController();
   let received;
+  let started;
+  const reviewStarted = new Promise((resolve) => { started = resolve; });
   const pending = runSecurityReview({ ...request, signal: controller.signal, runtimeContext: {
     securityReviewProviders: { "test-review": provider({ review(input) {
       received = input;
+      started();
       return new Promise(() => {});
     } }) },
   } });
-  await new Promise((resolve) => setTimeout(resolve, 1));
+  // If the review settles before the provider starts, abort anyway and let the
+  // assertion below fail instead of waiting forever.
+  await Promise.race([reviewStarted, pending.catch(() => {})]);
   controller.abort();
   await assert.rejects(pending, (error) => error.code === E_SECURITY_REVIEW_CANCELLED);
   assert.equal(received.signal.aborted, true);
 });
 
 test("security-review late provider completion cannot produce a result after timeout", async () => {
+  // The provider resolves only when the test releases it, after the deadline
+  // has already rejected the review; no real-time race decides the outcome.
   let completed = false;
-  await assert.rejects(() => runSecurityReview({ ...request, timeoutMs: 2, runtimeContext: {
-    securityReviewProviders: { "test-review": provider({ review: () => new Promise((resolve) => setTimeout(() => {
-      completed = true;
-      resolve({ findings: [] });
-    }, 25)) }) },
+  let release;
+  const gate = new Promise((resolve) => { release = resolve; });
+  let lateReview = null;
+  await assert.rejects(() => runSecurityReview({ ...request, timeoutMs: 20, runtimeContext: {
+    securityReviewProviders: { "test-review": provider({ review: () => {
+      lateReview = gate.then(() => {
+        completed = true;
+        return { findings: [] };
+      });
+      return lateReview;
+    } }) },
   } }), (error) => error.code === E_SECURITY_REVIEW_TIMEOUT);
-  await new Promise((resolve) => setTimeout(resolve, 35));
+  assert.ok(lateReview, "the provider must have been invoked before the deadline");
+  release();
+  await lateReview;
   assert.equal(completed, true);
 });
