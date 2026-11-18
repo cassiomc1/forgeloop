@@ -22,12 +22,26 @@ export interface HostedTaskMetrics {
   checksFailed: number;
 }
 
+export type TaskSource = 'committed' | 'published';
+export type SignatureStatus = 'verified' | 'invalid' | 'attached' | 'unsigned';
+
 export interface HostedTask {
   taskId: string;
   objective: string | null;
   coveredPaths: number;
   signed: boolean;
+  signatureStatus: SignatureStatus;
+  source: TaskSource;
+  publishedAt: string | null;
   metrics: HostedTaskMetrics | null;
+}
+
+const SIGNATURE_STATUSES = new Set<SignatureStatus>(['verified', 'invalid', 'attached', 'unsigned']);
+
+// Older payloads carry only `signed`; an unknown status never claims verification.
+function parseSignatureStatus(value: unknown, signed: boolean): SignatureStatus {
+  if (SIGNATURE_STATUSES.has(value as SignatureStatus)) return value as SignatureStatus;
+  return signed ? 'attached' : 'unsigned';
 }
 
 export interface HostedPullRequest {
@@ -126,6 +140,9 @@ function parseTask(value: unknown): HostedTask {
     objective: optionalText(value.objective),
     coveredPaths: count(value.coveredPaths, 'coveredPaths'),
     signed: value.signed === true,
+    signatureStatus: parseSignatureStatus(value.signatureStatus, value.signed === true),
+    source: value.source === 'published' ? 'published' : 'committed',
+    publishedAt: value.source === 'published' ? optionalText(value.publishedAt) : null,
     metrics: parseMetrics(value.metrics),
   };
 }
