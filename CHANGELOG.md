@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+- Add the manually dispatched **Evidence signing** workflow
+  (`.github/workflows/evidence-sign.yml`), which runs only from `main`. It:
+  - verifies a committed evidence bundle with `evidence-verify` against the
+    commit that introduced it;
+  - signs its in-toto statement keylessly with the GitHub Actions OIDC
+    identity, using the same `cosign attest-blob` arguments as the core
+    Sigstore provider;
+  - checks the signature against that exact workflow identity and uploads it
+    as a run artifact.
+
+  The signature certifies CI verification, not that ForgeLoop produced the
+  bundle.
 - Lower the test landmine allowances from 28 to 25 by rewriting three
   fixed-sleep tests:
   - a slow advisory provider never settles, so only the deadline ends it;

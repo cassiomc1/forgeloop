@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "evidence-sign-workflow",
+  "forgeloopVersion": "2.3.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:evidence-sign-workflow\",\n      \"digest\": {\n        \"sha256\": \"b1a5c0aa8dd641d5121590c53fec404d167b0673bff282e60577a615a7ff55a5\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"evidence-sign-workflow\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"fbfebdc832c6376944f6949ea769102d309cedc2ecc80119a1510488bbae49d9\",\n      \"contentDigest\": \"b1a5c0aa8dd641d5121590c53fec404d167b0673bff282e60577a615a7ff55a5\",\n      \"coveredPaths\": [\n        \".github/workflows/evidence-sign.yml\",\n        \"CHANGELOG.md\",\n        \"tests/workflow-policy.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"40bc887ec3d8eea7eb61ce5b67a91ee3f03fe0b991eca089657533446e21e3b7\",\n      \"routeFingerprint\": \"e3d07a75b6d7a4c9cf6d72b3a86a956ff0c3c554b1904e8c07cf8a206cbfe1e1\",\n      \"stateFingerprint\": \"bbfef64f217dcbb28b550c33326ed761a12bb2a9973d6f2c16e5a1f4ac475780\",\n      \"receiptFingerprint\": \"49d86f90a1469b0d9630283bb53ee81a8cf2b39ad8da60cb1d16394c865069f8\",\n      \"ledgerSeq\": 40,\n      \"ledgerHash\": \"839e60772ee902d8d5558b35fbe2f12cf0314503cb8be8f489c1788dc0840ecf\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "evidence-sign-workflow",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "efbb072084b2ecb7095ba673a8c0a115ae048fb1",
+      "observedRevision": "efbb072084b2ecb7095ba673a8c0a115ae048fb1",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/evidence-sign-workflow",
+        "head": "efbb072084b2ecb7095ba673a8c0a115ae048fb1"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "40bc887ec3d8eea7eb61ce5b67a91ee3f03fe0b991eca089657533446e21e3b7",
+      "routeFingerprint": "e3d07a75b6d7a4c9cf6d72b3a86a956ff0c3c554b1904e8c07cf8a206cbfe1e1",
+      "stateFingerprint": "bbfef64f217dcbb28b550c33326ed761a12bb2a9973d6f2c16e5a1f4ac475780",
+      "receiptFingerprint": "49d86f90a1469b0d9630283bb53ee81a8cf2b39ad8da60cb1d16394c865069f8",
+      "ledgerSeq": 40,
+      "ledgerHash": "839e60772ee902d8d5558b35fbe2f12cf0314503cb8be8f489c1788dc0840ecf"
+    },
+    "entries": [
+      {
+        "path": ".github/workflows/evidence-sign.yml",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "7d9a3b45a2ef573da21141d259a742cd121ed8963d4dd395594e6c6c59076bab",
+        "providerContentId": "13b078f5856b31159e629b7f89e93aac170955e2",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "38e7c1f0b5e508e9157091e8d076b85bbf6a58d1fdcc6f1168d64b67e2697e62",
+        "providerContentId": "a928119c7983606c722eea0bab9af8049b8bd7bc",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/workflow-policy.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "4860ab707cf87e881b740b1911e06c9e78ff3c63825b6e6170c0b4e53f8623f5",
+        "providerContentId": "a566c4f4fadf4477c95b0d3e3c53f824caa851c7",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "b1a5c0aa8dd641d5121590c53fec404d167b0673bff282e60577a615a7ff55a5"
+  },
+  "manifestFingerprint": "fbfebdc832c6376944f6949ea769102d309cedc2ecc80119a1510488bbae49d9",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Add a manually dispatched Evidence signing workflow that runs only on main: it verifies a committed evidence bundle against the commit that introduced it with evidence-verify, signs the bundle's in-toto statement keylessly with the GitHub Actions OIDC identity using the same cosign attest-blob arguments as the core Sigstore provider, verifies that signature against the exact workflow identity and the Actions issuer, and uploads the statement and Sigstore bundle as a run artifact. This is the first real exercise of the shipped cosign path and of the certificate identity the hosted App will later trust.",
+    "successCriteria": [
+      "The evidence signing workflow is main-only, least-privilege and pinned, and the policy test enforces it"
+    ],
+    "checks": [
+      {
+        "id": "requirement-1c1d399593d23e69",
+        "requirement": "The evidence signing workflow is main-only, least-privilege and pinned, and the policy test enforces it",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-fast",
+        "requirement": "npm run verify:fast passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "workflow-tests",
+        "requirement": "node --test tests/workflow-policy.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-18T20:13:29.902Z",
+    "completedAt": "2026-11-18T20:27:05.469Z",
+    "durationMs": 815567,
+    "phaseDurationsMs": {
+      "planning": 2621,
+      "executing": 71069,
+      "verifying": 741569,
+      "reviewing": 308
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "3b5ec4b332890507a00ac298705e0fb98f2036714fb7d9a5a677b411620f59f8"
+}

@@ -245,3 +245,21 @@ test("Node test jobs use the requested hosts and preserve the platform matrices"
     assert.ok(!jobs.verify.steps.some(step => step.run?.includes("npm publish")));
   }
 });
+
+test("evidence signing runs only from main with the OIDC permission confined to its job", async () => {
+  const text = await readWorkflow("evidence-sign.yml");
+  const workflow = parse(text);
+  assert.deepEqual(Object.keys(workflow.on), ["workflow_dispatch"]);
+  assert.deepEqual(workflow.permissions, { contents: "read" });
+  const job = workflow.jobs.sign;
+  assert.equal(job.if, "${{ github.ref == 'refs/heads/main' }}");
+  assert.deepEqual(job.permissions, { contents: "read", "id-token": "write" });
+  assert.equal(job.env.TASK_ID, "${{ inputs.task }}");
+  for (const step of job.steps.filter((candidate) => candidate.run)) {
+    assert.doesNotMatch(step.run, /\$\{\{\s*inputs\./u, `${step.name} must read the task through TASK_ID`);
+  }
+  assert.ok(job.steps.some((step) => /node src\/cli\.js evidence-verify/u.test(step.run ?? "")), "the evidence must be verified before signing");
+  assert.ok(job.steps.some((step) => step.run === "cosign attest-blob --statement statement.json --bundle statement.sigstore.json --yes"), "signing must use the core Sigstore provider arguments");
+  assert.match(text, /--certificate-identity "https:\/\/github\.com\/\$\{GITHUB_REPOSITORY\}\/\.github\/workflows\/evidence-sign\.yml@refs\/heads\/main"/u);
+  assert.match(text, /--certificate-oidc-issuer https:\/\/token\.actions\.githubusercontent\.com/u);
+});
