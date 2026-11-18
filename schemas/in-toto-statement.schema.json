@@ -3,7 +3,7 @@
   "$id": "forgeloop://schemas/in-toto-statement.schema.json",
   "title": "ForgeLoop in-toto Statement v1",
   "type": "object",
-  "required": ["schemaVersion", "_type", "subject", "predicateType", "predicate"],
+  "required": ["_type", "subject", "predicateType", "predicate"],
   "additionalProperties": false,
   "properties": {
     "schemaVersion": { "const": 1 },

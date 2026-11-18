@@ -108,8 +108,10 @@ export async function buildAttestationStatement({
     },
     verification: { completion: "VALID", audit: "VALID" },
   }, packageRoot);
+  // Exactly the in-toto Statement v1 fields: Sigstore tooling decodes the
+  // statement strictly and rejects unknown top-level keys. The predicate
+  // carries the ForgeLoop schemaVersion.
   const statement = await validateAttestationStatement({
-    schemaVersion: 1,
     _type: STATEMENT_TYPE,
     subject: [{ name: `forgeloop-task:${taskId}`, digest: { sha256: manifest.contentDigest } }],
     predicateType: PREDICATE_TYPE,
