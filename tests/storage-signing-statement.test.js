@@ -17,6 +17,16 @@ import { createSigstoreSigningProvider } from "../src/core/signing/sigstore.js";
 import { verifyAttestation } from "../src/core/attestation-verifier.js";
 import { resolveAttestationStatus } from "../src/core/attestation.js";
 
+// cosign 3 verifies the DSSE envelope and the in-toto subject digest; the
+// provider then requires the signed payload to be the statement itself, so the
+// fixtures are in-toto statements and Sigstore-shaped DSSE bundles.
+const SUBJECT = "a".repeat(64);
+const inToto = (marker) => ({ _type: "https://in-toto.io/Statement/v1", subject: [{ name: "fixture", digest: { sha256: SUBJECT } }], predicateType: "fixture", predicate: { marker } });
+const dsseBundle = (statement, signature = "sig") => JSON.stringify({
+  mediaType: "application/vnd.dev.sigstore.bundle.v0.3+json",
+  dsseEnvelope: { payloadType: "application/vnd.in-toto+json", payload: Buffer.from(JSON.stringify(statement)).toString("base64"), signatures: [{ sig: signature }] },
+});
+
 test("statement signature lookup accepts duplicate byte bindings and rejects corrupt bindings", async () => {
   const target = await buildDiagnosisProject({ legacy: true });
   const { db } = await importProjectState(target, path.join(target, "state.sqlite"));
@@ -44,7 +54,9 @@ test("SQLite Sigstore signing stages immutable bundles, cleans temporary files, 
   const target = await buildDiagnosisProject({ legacy: true });
   const { db } = await importProjectState(target, path.join(target, "state.sqlite"));
   const statementPath = taskAttestationStatementPath(TEST_TASK_ID);
-  putArtifact(db, { taskId: TEST_TASK_ID, kind: "attestation", artifactId: "statement", payload: { marker: "canonical" } });
+  const canonical = inToto("canonical");
+  putArtifact(db, { taskId: TEST_TASK_ID, kind: "attestation", artifactId: "statement", payload: canonical });
+  const signatureBytes = (index) => dsseBundle(canonical, `signature ${index}`);
   let temporary;
   let calls = 0;
   const provider = createSigstoreSigningProvider({ execFileImpl: async (_command, args) => {
@@ -52,8 +64,8 @@ test("SQLite Sigstore signing stages immutable bundles, cleans temporary files, 
     temporary = args[args.indexOf("--bundle") + 1];
     assert.equal(db.isTransaction, false);
     assert.equal(temporary.startsWith(`${target}${path.sep}`), false);
-    assert.deepEqual(JSON.parse(await readFile(args[args.indexOf("--statement") + 1], "utf8")), { marker: "canonical" });
-    await writeFile(temporary, `signature bytes ${calls}`);
+    assert.deepEqual(JSON.parse(await readFile(args[args.indexOf("--statement") + 1], "utf8")), canonical);
+    await writeFile(temporary, signatureBytes(calls));
   } });
   try {
     await withOperationalStore({ db, target }, async () => {
@@ -70,14 +82,14 @@ test("SQLite Sigstore signing stages immutable bundles, cleans temporary files, 
         assert.equal(resolveAttestationBundlePath(target, TEST_TASK_ID), signed.path);
         const stagedVerifier = createSigstoreSigningProvider({ execFileImpl: async (_command, args) => {
           assert.equal(db.isTransaction, false);
-          assert.equal(await readFile(args[args.indexOf("--bundle") + 1], "utf8"), "signature bytes 1");
+          assert.equal(await readFile(args[args.indexOf("--bundle") + 1], "utf8"), signatureBytes(1));
         } });
         assert.equal((await stagedVerifier.verify({ target, statementPath, bundlePath: signed.path })).status, "VALID");
         await assert.rejects(readFile(temporary), { code: "ENOENT" });
       });
       assert.deepEqual([...iterateAttachmentReferences(db)], [signed.attachment]);
       assert.equal(resolveAttestationBundlePath(target, TEST_TASK_ID, taskAttestationBundlePath(TEST_TASK_ID)), signed.path);
-      assert.equal(await readFile(path.join(target, signed.path), "utf8"), "signature bytes 1");
+      assert.equal(await readFile(path.join(target, signed.path), "utf8"), signatureBytes(1));
       assert.equal(db.prepare("SELECT COUNT(*) AS count FROM events").get().count, beforeEvents + 1);
       let rolledBack;
       await assert.rejects(withOperationalTransaction(options, async () => {
@@ -90,7 +102,7 @@ test("SQLite Sigstore signing stages immutable bundles, cleans temporary files, 
       assert.deepEqual([...iterateAttachmentReferences(db)], [signed.attachment]);
       assert.equal(resolveAttestationBundlePath(target, TEST_TASK_ID), signed.path);
       assert.equal(db.prepare("SELECT COUNT(*) AS count FROM events").get().count, beforeEvents + 1);
-      assert.equal(await readFile(path.join(target, rolledBack.path), "utf8"), "signature bytes 2");
+      assert.equal(await readFile(path.join(target, rolledBack.path), "utf8"), signatureBytes(2));
       await assert.rejects(readFile(temporary), { code: "ENOENT" });
       await assert.rejects(readFile(path.join(target, "signature.json")), { code: "ENOENT" });
       await assert.rejects(withOperationalTransaction(options, async () => {
@@ -105,7 +117,7 @@ test("SQLite Sigstore signing stages immutable bundles, cleans temporary files, 
         verificationCalls += 1;
         privateBundle = args[args.indexOf("--bundle") + 1];
         assert.notEqual(privateBundle, path.join(target, signed.path));
-        assert.equal(await readFile(privateBundle, "utf8"), "signature bytes 1");
+        assert.equal(await readFile(privateBundle, "utf8"), signatureBytes(1));
       } });
       assert.equal((await verify.verify({ target, statementPath, bundlePath: resolveAttestationBundlePath(target, TEST_TASK_ID) })).status, "VALID");
       await assert.rejects(readFile(privateBundle), { code: "ENOENT" });
@@ -115,7 +127,7 @@ test("SQLite Sigstore signing stages immutable bundles, cleans temporary files, 
       await rm(path.join(target, signed.path));
       assert.equal((await verify.verify({ target, statementPath, bundlePath: signed.path })).code, "E_ATTESTATION_SIGNATURE_INVALID");
       assert.equal(verificationCalls, 1);
-      await writeFile(path.join(target, signed.path), "signature bytes 1");
+      await writeFile(path.join(target, signed.path), signatureBytes(1));
       let additional;
       await withOperationalTransaction(options, async () => { additional = await provider.sign(input); });
       assert.equal(additional.status, "VALID");
@@ -126,37 +138,44 @@ test("SQLite Sigstore signing stages immutable bundles, cleans temporary files, 
         assert.equal(result.errors[0].code, "E_ATTESTATION_SIGNATURE_INVALID");
       }
       assert.equal(resolveAttestationBundlePath(target, TEST_TASK_ID, signed.path), signed.path);
-      putArtifact(db, { taskId: TEST_TASK_ID, kind: "attestation", artifactId: "statement", payload: { marker: "new statement" } });
+      putArtifact(db, { taskId: TEST_TASK_ID, kind: "attestation", artifactId: "statement", payload: inToto("new statement") });
       assert.notEqual(resolveAttestationBundlePath(target, TEST_TASK_ID), signed.path);
       assert.notEqual(resolveAttestationBundlePath(target, TEST_TASK_ID), additional.path);
     });
   } finally { db.close(); await removeTempTree(target); }
 });
 
-test("SQLite Sigstore verification receives private canonical bytes and cleans up success and failure", async () => {
+test("SQLite Sigstore verification binds the subject digest and the signed payload to the private statement", async () => {
   const target = await buildDiagnosisProject({ legacy: true });
   const { db } = await importProjectState(target, path.join(target, "state.sqlite"));
   const statementPath = taskAttestationStatementPath(TEST_TASK_ID);
-  const statement = { predicateType: "fixture", predicate: { taskId: TEST_TASK_ID } };
+  const statement = inToto("verify");
   putArtifact(db, { taskId: TEST_TASK_ID, kind: "attestation", artifactId: "statement", payload: statement });
-  let temporary;
+  await writeFile(path.join(target, "signature.json"), dsseBundle(statement));
+  const calls = [];
   try {
     const provider = createSigstoreSigningProvider({ execFileImpl: async (_command, args) => {
-      temporary = args[args.indexOf("--statement") + 1];
-      assert.notEqual(temporary, path.join(target, statementPath));
-      assert.deepEqual(JSON.parse(await readFile(temporary, "utf8")), statement);
+      calls.push(args);
+      assert.equal(args.includes("--statement"), false, "cosign 3 has no --statement flag");
+      assert.deepEqual(args.slice(0, 1), ["verify-blob-attestation"]);
+      assert.equal(args[args.indexOf("--type") + 1], "fixture");
+      assert.equal(args[args.indexOf("--digest") + 1], SUBJECT);
+      assert.equal(args[args.indexOf("--digestAlg") + 1], "sha256");
+      assert.equal(args.some((value) => value === path.join(target, statementPath)), false);
       assert.equal(db.isTransaction, false);
       return {};
     } });
     await withOperationalStore({ db, target }, async () => {
       assert.equal((await provider.verify({ target, statementPath, bundlePath: "signature.json" })).status, "VALID");
-      await assert.rejects(readFile(temporary), { code: "ENOENT" });
-      const failure = createSigstoreSigningProvider({ execFileImpl: async (_command, args) => {
-        temporary = args[args.indexOf("--statement") + 1];
-        throw new Error("verification failed");
-      } });
+      await writeFile(path.join(target, "signature.json"), dsseBundle(inToto("another statement")));
+      const mismatch = await provider.verify({ target, statementPath, bundlePath: "signature.json" });
+      assert.deepEqual([mismatch.status, mismatch.code], ["INVALID", "E_ATTESTATION_SIGNATURE_INVALID"]);
+      assert.match(mismatch.message, /different statement/u);
+      await writeFile(path.join(target, "signature.json"), "not a bundle");
+      assert.equal((await provider.verify({ target, statementPath, bundlePath: "signature.json" })).status, "INVALID");
+      assert.equal(calls.length, 3);
+      const failure = createSigstoreSigningProvider({ execFileImpl: async () => { throw new Error("verification failed"); } });
       assert.equal((await failure.verify({ target, statementPath, bundlePath: "signature.json" })).status, "INVALID");
-      await assert.rejects(readFile(temporary), { code: "ENOENT" });
     });
     await assert.rejects(readFile(path.join(target, statementPath)), { code: "ENOENT" });
   } finally { db.close(); await removeTempTree(target); }
@@ -193,12 +212,13 @@ test("SQLite signer refuses changed canonical statements and active writer trans
   const target = await buildDiagnosisProject({ legacy: true });
   const { db } = await importProjectState(target, path.join(target, "state.sqlite"));
   const statementPath = taskAttestationStatementPath(TEST_TASK_ID);
-  putArtifact(db, { taskId: TEST_TASK_ID, kind: "attestation", artifactId: "statement", payload: { marker: "before" } });
+  putArtifact(db, { taskId: TEST_TASK_ID, kind: "attestation", artifactId: "statement", payload: inToto("before") });
+  await writeFile(path.join(target, "signature.json"), dsseBundle(inToto("before")));
   let calls = 0;
   try {
     const provider = createSigstoreSigningProvider({ execFileImpl: async () => {
       calls += 1;
-      putArtifact(db, { taskId: TEST_TASK_ID, kind: "attestation", artifactId: "statement", payload: { marker: "after" } });
+      putArtifact(db, { taskId: TEST_TASK_ID, kind: "attestation", artifactId: "statement", payload: inToto("after") });
       return {};
     } });
     await withOperationalStore({ db, target }, async () => {
@@ -220,22 +240,19 @@ test("direct native signer verification binds private statement and attachment b
   const { withProjectStorage } = await import("../src/storage/project-boundary.js");
   const { withOperationalAttachmentFile } = await import("../src/storage/operational-attachments.js");
   const statementPath = taskAttestationStatementPath(TEST_TASK_ID);
-  const statement = { predicateType: "fixture", predicate: { taskId: TEST_TASK_ID } };
+  const statement = inToto("direct");
   let signature;
   let calls = 0;
-  let privateStatement;
   let privateBundle;
   const provider = createSigstoreSigningProvider({ execFileImpl: async (_command, args) => {
     calls += 1;
     if (args[0] === "attest-blob") {
-      await writeFile(args[args.indexOf("--bundle") + 1], "direct signature");
+      await writeFile(args[args.indexOf("--bundle") + 1], dsseBundle(statement));
     } else {
-      privateStatement = args[args.indexOf("--statement") + 1];
       privateBundle = args[args.indexOf("--bundle") + 1];
-      assert.notEqual(privateStatement, path.join(target, statementPath));
       assert.notEqual(privateBundle, path.join(target, signature.path));
-      assert.deepEqual(JSON.parse(await readFile(privateStatement, "utf8")), statement);
-      assert.equal(await readFile(privateBundle, "utf8"), "direct signature");
+      assert.equal(args[args.indexOf("--digest") + 1], SUBJECT);
+      assert.equal(await readFile(privateBundle, "utf8"), dsseBundle(statement));
     }
   } });
   try {
@@ -250,7 +267,6 @@ test("direct native signer verification binds private statement and attachment b
     assert.equal(calls, 1, "unprepared native signing cannot invoke an external signer");
     assert.equal((await provider.verify({ target, statementPath, bundlePath: signature.path })).status, "VALID");
     assert.equal(calls, 2);
-    await assert.rejects(readFile(privateStatement), { code: "ENOENT" });
     await assert.rejects(readFile(privateBundle), { code: "ENOENT" });
     let consumed = false;
     await assert.rejects(withOperationalAttachmentFile(target, signature.path, "foreign-task", () => { consumed = true; }), { code: "E_STORAGE_ATTACHMENT_INVALID" });

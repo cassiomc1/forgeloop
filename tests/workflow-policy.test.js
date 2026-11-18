@@ -262,4 +262,8 @@ test("evidence signing runs only from main with the OIDC permission confined to 
   assert.ok(job.steps.some((step) => step.run === "cosign attest-blob --statement statement.json --bundle statement.sigstore.json --yes"), "signing must use the core Sigstore provider arguments");
   assert.match(text, /--certificate-identity "https:\/\/github\.com\/\$\{GITHUB_REPOSITORY\}\/\.github\/workflows\/evidence-sign\.yml@refs\/heads\/main"/u);
   assert.match(text, /--certificate-oidc-issuer https:\/\/token\.actions\.githubusercontent\.com/u);
+  const verifyStep = job.steps.find((step) => step.name === "Verify the signature against this workflow identity");
+  assert.doesNotMatch(verifyStep.run, /--statement/u, "cosign 3 verify-blob-attestation has no --statement flag");
+  assert.match(verifyStep.run, /--digest "\$subject_digest"/u);
+  assert.match(verifyStep.run, /payload\.equals/u, "the signed payload must be compared with the statement");
 });

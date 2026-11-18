@@ -1,0 +1,197 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "sigstore-verify-cosign3-v2",
+  "forgeloopVersion": "2.3.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:sigstore-verify-cosign3-v2\",\n      \"digest\": {\n        \"sha256\": \"1d4b851d0dfcd0dd095cf212d291f03e5d904995594ba67444b2a698827d87b1\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"sigstore-verify-cosign3-v2\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"8b90e4930d9f6bff40c24ab767617efd61c064968cfcf3915db4778490ff723f\",\n      \"contentDigest\": \"1d4b851d0dfcd0dd095cf212d291f03e5d904995594ba67444b2a698827d87b1\",\n      \"coveredPaths\": [\n        \".github/workflows/evidence-sign.yml\",\n        \"CHANGELOG.md\",\n        \"docs/SIGNING_PROVIDERS.md\",\n        \"src/core/signing/sigstore.js\",\n        \"tests/signing-provider-conformance.test.js\",\n        \"tests/signing-provider.test.js\",\n        \"tests/sigstore.test.js\",\n        \"tests/storage-signing-statement.test.js\",\n        \"tests/workflow-policy.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"8e0461e0235ba32aac779aae6ddc19994238fe7b00df24d382af317086cd9a37\",\n      \"routeFingerprint\": \"723fc64b5872e559726cf19561453569bc2cfee38a70e862b3ef73973d34bbd4\",\n      \"stateFingerprint\": \"829a680ed9c2d6e001681b60427afdadf859098cda6c4ef74bec99e5c0a03ae0\",\n      \"receiptFingerprint\": \"06522de77597d23114bc54c3d238a68cbbb8e744a00419ce942e8afa53d71b08\",\n      \"ledgerSeq\": 40,\n      \"ledgerHash\": \"b3a85275188d99cef715046be39e06c3e98a4f0be64d5ca9b74938d7efb20815\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "sigstore-verify-cosign3-v2",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "153477da9aec67d3a3e21e7d65674f17264382ae",
+      "observedRevision": "153477da9aec67d3a3e21e7d65674f17264382ae",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/sigstore-verify-cosign3",
+        "head": "153477da9aec67d3a3e21e7d65674f17264382ae"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "8e0461e0235ba32aac779aae6ddc19994238fe7b00df24d382af317086cd9a37",
+      "routeFingerprint": "723fc64b5872e559726cf19561453569bc2cfee38a70e862b3ef73973d34bbd4",
+      "stateFingerprint": "829a680ed9c2d6e001681b60427afdadf859098cda6c4ef74bec99e5c0a03ae0",
+      "receiptFingerprint": "06522de77597d23114bc54c3d238a68cbbb8e744a00419ce942e8afa53d71b08",
+      "ledgerSeq": 40,
+      "ledgerHash": "b3a85275188d99cef715046be39e06c3e98a4f0be64d5ca9b74938d7efb20815"
+    },
+    "entries": [
+      {
+        "path": ".github/workflows/evidence-sign.yml",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "f53f79475e249203295a6f56ce758311639025ced6ec74cff18d18dc4f69132d",
+        "providerContentId": "c09ceeb8d3cd640f0cd9b91544c3fe7dce2c98bb",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "bd6fcd928f2a74009e05e9ebe7f2e03b6a011b2b77dd7ae07bc6717fde5806d8",
+        "providerContentId": "36cec780157d5a691dc4229fe9dc147d4a7669b6",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/SIGNING_PROVIDERS.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "f21e3d29980193247f51b65c052a5fd3c4212674658622ae9c83d984df8e09b4",
+        "providerContentId": "ece75ff2da108273143c9958d8b766e7af8c6eed",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/signing/sigstore.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "8e834ca0f2fe9f53e30acb1bb63215dba77a15ce70ef2044ec361dea0e347d5b",
+        "providerContentId": "f36987a94f87588e1db703603fb193a34a04acf7",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/signing-provider-conformance.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "663e7fac010ef8d71c0ef5e03366d1b894c2b25ea4a3af62c49287e52b30cb7c",
+        "providerContentId": "bbe8a9293c3f7c80b5f23997f9729a7894ec37c6",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/signing-provider.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "dd94214cecb9f46aa61af81443c3b7ff040cf964a147f561cbdf4d2de7af2175",
+        "providerContentId": "79b5b211aa0c08e7f6b42113b638fa8591752c9d",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/sigstore.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "e10b861c301cb5651cdbe68f764362e0765c96fa3a706796412090965f822728",
+        "providerContentId": "c498d791d4e8df91023e4d75e7e8a0f4d077b438",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/storage-signing-statement.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "878f573d76a75e682688c752d725dbd5ac7c5fb6c3fc5559c21d47163d300423",
+        "providerContentId": "be2e8abd091ad6d028b78cfc6b27aafc0611ee98",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/workflow-policy.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "79481570247f51c894c4e09792ad4584ed260259c817ace7d130d3bfc2ec9c9e",
+        "providerContentId": "e0ecff2f161382d75bfc27b006bae100bd708ef2",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "1d4b851d0dfcd0dd095cf212d291f03e5d904995594ba67444b2a698827d87b1"
+  },
+  "manifestFingerprint": "8b90e4930d9f6bff40c24ab767617efd61c064968cfcf3915db4778490ff723f",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Make Sigstore verification work with current cosign (3.x): verify-blob-attestation no longer accepts --statement (Evidence signing run 44414500869: 'unknown flag: --statement'). The core Sigstore provider and the Evidence signing workflow verify with --type <predicateType> --digest <subject sha256> --digestAlg sha256 plus the identity and issuer policy, then require the signed DSSE payload to be exactly the statement. Continues abandoned task sigstore-verify-cosign3, whose frozen scope missed tests/sigstore.test.js and tests/signing-provider-conformance.test.js.",
+    "successCriteria": [
+      "Sigstore verification calls cosign 3 supported flags and rejects a signed payload that differs from the statement"
+    ],
+    "checks": [
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-ba74041cde0e3d1d",
+        "requirement": "Sigstore verification calls cosign 3 supported flags and rejects a signed payload that differs from the statement",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "signing-tests",
+        "requirement": "node --test tests/signing-provider.test.js tests/storage-signing-statement.test.js tests/sigstore.test.js tests/signing-provider-conformance.test.js tests/workflow-policy.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-18T23:24:56.108Z",
+    "completedAt": "2026-11-18T23:51:12.542Z",
+    "durationMs": 1576434,
+    "phaseDurationsMs": {
+      "planning": 3391,
+      "executing": 71193,
+      "verifying": 1501480,
+      "reviewing": 370
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "4a4cc8c1d2dde64a2c5387d1eab19e64924a19ebd262e2845e14793d934e62ea"
+}

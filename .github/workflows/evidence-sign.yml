@@ -72,14 +72,23 @@ jobs:
       - name: Verify the signature against this workflow identity
         run: |
           set -euo pipefail
+          predicate_type=$(node -e 'console.log(JSON.parse(require("node:fs").readFileSync("statement.json", "utf8")).predicateType)')
+          subject_digest=$(node -e 'console.log(JSON.parse(require("node:fs").readFileSync("statement.json", "utf8")).subject[0].digest.sha256)')
           cosign verify-blob-attestation \
-            --statement statement.json \
             --bundle statement.sigstore.json \
+            --type "$predicate_type" \
+            --digest "$subject_digest" \
+            --digestAlg sha256 \
             --certificate-identity "https://github.com/${GITHUB_REPOSITORY}/.github/workflows/evidence-sign.yml@refs/heads/main" \
             --certificate-oidc-issuer https://token.actions.githubusercontent.com
+          # cosign checks the envelope and the subject; the signed payload must
+          # also be exactly the committed statement.
           node -e '
-            const bundle = JSON.parse(require("node:fs").readFileSync("statement.sigstore.json", "utf8"));
-            console.log(`mediaType: ${bundle.mediaType ?? "(none)"}`);
+            const fs = require("node:fs");
+            const bundle = JSON.parse(fs.readFileSync("statement.sigstore.json", "utf8"));
+            const payload = Buffer.from(bundle.dsseEnvelope.payload, "base64");
+            if (!payload.equals(fs.readFileSync("statement.json"))) throw new Error("The signed payload is not the committed statement");
+            console.log(`mediaType: ${bundle.mediaType ?? "(none)"}; signed payload equals the committed statement`);
           ' | tee -a "$GITHUB_STEP_SUMMARY"
       - name: Upload the statement and signature
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

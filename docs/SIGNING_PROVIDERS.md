@@ -52,6 +52,23 @@ cosign attest-blob \
   --yes
 ```
 
+Verification uses the cosign 3 form. `verify-blob-attestation` no longer
+accepts `--statement`; it checks the DSSE envelope and the in-toto subject
+digest:
+
+```bash
+cosign verify-blob-attestation \
+  --bundle statement.sigstore.json \
+  --type <predicateType> --digest <subject sha256> --digestAlg sha256 \
+  --certificate-identity <identity> --certificate-oidc-issuer <issuer>
+```
+
+cosign does not check that the signed statement is the one being verified.
+After cosign succeeds, ForgeLoop also requires the bundle's DSSE payload to be
+exactly the attestation statement; a valid signature over a different
+statement with the same subject is `E_ATTESTATION_SIGNATURE_INVALID`. Only
+bundles with a `dsseEnvelope`, the format cosign 3 writes, can be verified.
+
 ForgeLoop never stores the private key, OIDC token, access token, or signing
 credential. A bundle file is not trusted merely because it exists.
 

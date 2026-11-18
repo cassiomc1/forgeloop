@@ -1,6 +1,6 @@
 import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp } from "node:fs/promises";
+import { mkdtemp, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -9,8 +9,14 @@ import { createNoneSigningProvider } from "../src/core/signing/none.js";
 import { createSigstoreSigningProvider, verifySigstoreBundle } from "../src/core/signing/sigstore.js";
 import { assertSigningProvider, resolveSigningProvider } from "../src/core/signing/provider.js";
 
+// An in-toto statement and a DSSE bundle signing exactly it, as cosign 3
+// writes them; verification checks the signed payload against the statement.
+const STATEMENT = { _type: "https://in-toto.io/Statement/v1", subject: [{ name: "fixture", digest: { sha256: "c".repeat(64) } }], predicateType: "https://forgeloop.dev/attestation/v1", predicate: {} };
+
 async function withTarget(fn) {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-signing-conformance-"));
+  await writeFile(path.join(target, "statement.json"), JSON.stringify(STATEMENT));
+  await writeFile(path.join(target, "bundle.json"), JSON.stringify({ dsseEnvelope: { payload: Buffer.from(JSON.stringify(STATEMENT)).toString("base64") } }));
   try {
     await fn(target);
   } finally {
@@ -64,6 +70,8 @@ test("Sigstore provider uses explicit bounded process arguments and exact identi
     const identityIndex = calls[2].args.indexOf("--certificate-identity-regexp");
     assert.match(calls[2].args[identityIndex + 1], /^\^\(\?:/u);
     assert.ok(calls[2].args.includes("--certificate-oidc-issuer"));
+    assert.equal(calls[2].args.includes("--statement"), false);
+    assert.equal(calls[2].args[calls[2].args.indexOf("--digest") + 1], "c".repeat(64));
   });
 });
 

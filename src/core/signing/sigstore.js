@@ -1,8 +1,10 @@
 import { needsExistingProjectScope, withExistingProjectScope } from "../../storage/existing-project-scope.js";
 import { execFile } from "node:child_process";
+import { readFile } from "node:fs/promises";
 import { promisify } from "node:util";
 
 import path from "node:path";
+import { canonicalFingerprint } from "../artifacts.js";
 import { ensureWithin, assertSafePath } from "../filesystem.js";
 import { withSigningStatementFile } from "./statement-file.js";
 import { withSigningBundleFile } from "./bundle-file.js";
@@ -23,6 +25,21 @@ function signingTaskId(target, statementPath) {
   const taskKey = /^\.forgeloop\/task-state\/([a-f0-9]{64})\/attestations\/statement\.json$/u.exec(statementPath)?.[1];
   const taskId = store && taskKey ? store.taskRow(taskKey)?.task_id : null;
   return taskId;
+}
+
+// The DSSE payload of a Sigstore bundle must be exactly the statement being
+// verified; cosign checks the signature and the subject digest, not this.
+export function assertSignedPayloadIsStatement(bundleText, statement) {
+  let payload;
+  try {
+    const bundle = JSON.parse(bundleText);
+    payload = JSON.parse(Buffer.from(bundle?.dsseEnvelope?.payload ?? "", "base64").toString("utf8"));
+  } catch {
+    throw Object.assign(new Error("The Sigstore bundle has no readable DSSE payload"), { code: "PAYLOAD_MISMATCH" });
+  }
+  if (canonicalFingerprint(payload) !== canonicalFingerprint(statement)) {
+    throw Object.assign(new Error("The Sigstore signature covers a different statement"), { code: "PAYLOAD_MISMATCH" });
+  }
 }
 
 export function createSigstoreSigningProvider({
@@ -88,40 +105,50 @@ export function createSigstoreSigningProvider({
           await assertSafePath(target, statementPath);
           await assertSafePath(target, bundlePath);
           const taskId = signingTaskId(target, statementPath);
-          const statementAbsolute = ensureWithin(target, statementPath);
           const bundleAbsolute = ensureWithin(target, bundlePath);
-          const args = [
-            "verify-blob-attestation",
-            "--statement", statementAbsolute,
-            "--bundle", bundleAbsolute,
-          ];
           const identities = Array.isArray(policy.identities)
             ? [...new Set(policy.identities.filter((value) => typeof value === "string" && value.length > 0))]
             : [];
-          if (policy.identity) args.push("--certificate-identity", policy.identity);
-          else if (identities.length === 1) args.push("--certificate-identity", identities[0]);
-          else if (identities.length > 1) {
-            const exactAlternatives = identities
-              .map((value) => value.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&"))
-              .join("|");
-            args.push("--certificate-identity-regexp", `^(?:${exactAlternatives})$`);
-          }
-          if (policy.issuer) args.push("--certificate-oidc-issuer", policy.issuer);
-          if (policy.trustedRoot) {
-            await assertSafePath(target, policy.trustedRoot);
-            args.push("--trusted-root", ensureWithin(target, policy.trustedRoot));
-          }
-          await withSigningStatementFile(target, statementPath, statementFilename => {
-            args[args.indexOf("--statement") + 1] = statementFilename;
-            return withOperationalAttachmentFile(target, bundlePath, taskId, bundleFilename => {
+          if (policy.trustedRoot) await assertSafePath(target, policy.trustedRoot);
+          // cosign 3 verifies the DSSE envelope and the in-toto subject digest;
+          // it no longer takes the statement, so the signed payload is compared
+          // with the private statement copy, which stays guarded while cosign runs.
+          await withSigningStatementFile(target, statementPath, async (statementFilename) => {
+            const statement = JSON.parse(await readFile(statementFilename, "utf8"));
+            const subjectDigest = statement?.subject?.[0]?.digest?.sha256;
+            if (typeof statement?.predicateType !== "string" || !/^[a-f0-9]{64}$/u.test(subjectDigest ?? "")) {
+              throw Object.assign(new Error("The statement has no in-toto predicate type or subject digest"), { code: "STATEMENT_SHAPE" });
+            }
+            const args = [
+              "verify-blob-attestation",
+              "--bundle", bundleAbsolute,
+              "--type", statement.predicateType,
+              "--digest", subjectDigest,
+              "--digestAlg", "sha256",
+            ];
+            if (policy.identity) args.push("--certificate-identity", policy.identity);
+            else if (identities.length === 1) args.push("--certificate-identity", identities[0]);
+            else if (identities.length > 1) {
+              const exactAlternatives = identities
+                .map((value) => value.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&"))
+                .join("|");
+              args.push("--certificate-identity-regexp", `^(?:${exactAlternatives})$`);
+            }
+            if (policy.issuer) args.push("--certificate-oidc-issuer", policy.issuer);
+            if (policy.trustedRoot) args.push("--trusted-root", ensureWithin(target, policy.trustedRoot));
+            return withOperationalAttachmentFile(target, bundlePath, taskId, async (bundleFilename) => {
               args[args.indexOf("--bundle") + 1] = bundleFilename;
-              return run(args, { cwd: path.resolve(target) });
+              await run(args, { cwd: path.resolve(target) });
+              assertSignedPayloadIsStatement(await readFile(bundleFilename, "utf8"), statement);
             });
           });
           return { status: "VALID", signer: policy.identity ?? (identities.length === 1 ? identities[0] : null) };
         });
       } catch (error) {
         if (error.code === "E_ATTESTATION_SIGNER_UNAVAILABLE") throw error;
+        if (error.code === "PAYLOAD_MISMATCH" || error.code === "STATEMENT_SHAPE") {
+          return { status: "INVALID", code: "E_ATTESTATION_SIGNATURE_INVALID", message: error.message };
+        }
         const unavailable = error.code === "ENOENT" || error.cause?.code === "ENOENT";
         const timedOut = error.code === "ETIMEDOUT" || error.killed === true || error.signal === "SIGTERM";
         const outputLimit = error.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER";
