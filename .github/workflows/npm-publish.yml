@@ -74,7 +74,6 @@ jobs:
           globs: |
             --no-globs
             **/*.{md,markdown}
-            #vendor/archify/**
       - name: Check links
         if: steps.release_mode.outputs.bounded_rc != 'true'
         uses: ./.github/actions/lychee

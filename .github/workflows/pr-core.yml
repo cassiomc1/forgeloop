@@ -184,9 +184,9 @@ jobs:
         if: ${{ needs.classify.outputs.source != 'true' }}
         run: echo "Source lint and dependency policy are not applicable for this change."
 
-  docs-diagram:
+  docs:
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
-    name: Verify generated Archify diagram
+    name: Documentation validation
     needs: classify
     runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
     timeout-minutes: 30
@@ -205,7 +205,7 @@ jobs:
       - name: Install documentation toolchain
         if: ${{ needs.classify.outputs.docs == 'true' }}
         run: npm ci --ignore-scripts
-      - name: Validate documentation and diagrams
+      - name: Validate documentation
         if: ${{ needs.classify.outputs.docs == 'true' }}
         run: npm run docs:check
       - name: Lint Markdown
@@ -215,7 +215,6 @@ jobs:
           globs: |
             --no-globs
             **/*.{md,markdown}
-            #vendor/archify/**
       - name: Validate frozen Markdown and loop contracts
         if: ${{ needs.classify.outputs.docs == 'true' }}
         run: |
@@ -227,7 +226,7 @@ jobs:
           python3 scripts/validate_loop_system.py
       - name: Documentation validation not applicable
         if: ${{ needs.classify.outputs.docs != 'true' }}
-        run: echo "Documentation and diagram validation not applicable for this change."
+        run: echo "Documentation validation not applicable for this change."
 
   audit:
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
@@ -294,13 +293,13 @@ jobs:
 
   repository-index:
     name: Repository Index native matrix
-    needs: [classify, core, coverage-report, lint, docs-diagram, audit, tarball-smoke]
+    needs: [classify, core, coverage-report, lint, docs, audit, tarball-smoke]
     if: ${{ always() && needs.classify.result == 'success' && needs.classify.outputs.repository_index == 'true' }}
     uses: ./.github/workflows/repository-index.yml
 
   required-validation:
     name: validate (22)
-    needs: [classify, core, coverage-report, lint, docs-diagram, audit, tarball-smoke, repository-index]
+    needs: [classify, core, coverage-report, lint, docs, audit, tarball-smoke, repository-index]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     timeout-minutes: 2
@@ -320,7 +319,7 @@ jobs:
           } else if (coreResult !== "skipped") {
             throw new Error(`core ran unexpectedly: ${coreResult ?? "missing"}`);
           }
-          for (const name of ["classify", "lint", "docs-diagram", "audit", "tarball-smoke"]) {
+          for (const name of ["classify", "lint", "docs", "audit", "tarball-smoke"]) {
             if (needs[name]?.result !== "success") {
               throw new Error(`${name} did not succeed: ${needs[name]?.result ?? "missing"}`);
             }

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { execFileSync, spawnSync } from "node:child_process";
-import { access, readFile } from "node:fs/promises";
+import { access } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -29,7 +29,6 @@ export const OBSOLETE_LICENSE_PATHS = Object.freeze([
 ]);
 export const REQUIRED_THIRD_PARTY_PATHS = Object.freeze([
   "THIRD_PARTY_NOTICES.md",
-  "vendor/archify/v2.15.0/archify/LICENSE",
 ]);
 export const IGNORE_SENTINELS = [
   "coverage-data/example.json",
@@ -38,7 +37,6 @@ export const IGNORE_SENTINELS = [
   ".mcp-smoke-example/file",
   "integrations/mcp/.core-tarball-example/file",
   "example.forgeloop-tmp-file",
-  "docs/assets/diagrams/.archify-render-example/file",
   "benchmarks/execution-profiles/results/raw/scratch/run.json",
 ];
 const SCRATCH_PATTERNS = [
@@ -48,7 +46,6 @@ const SCRATCH_PATTERNS = [
   /^\.mcp-smoke-/u,
   /^integrations\/mcp\/\.core-tarball-/u,
   /\.forgeloop-tmp-/u,
-  /^docs\/assets\/diagrams\/\.archify-/u,
   /\/results\/(?:raw|aggregate)\/(?:scratch|tmp|temp)(?:\/|$)/u,
 ];
 // Historical storage evidence is frozen at its reviewed size. Raising this budget is
@@ -64,18 +61,9 @@ function trackedFiles(rootDir) {
   return output.split("\0").filter(Boolean);
 }
 
-function manifestVisuals(manifest) {
-  const paths = new Set();
-  for (const diagram of manifest?.diagrams ?? []) {
-    for (const field of ["html", "svg"]) paths.add(diagram[field]);
-  }
-  return paths;
-}
-
-export function validateRepositoryHygiene({ trackedPaths, manifest, ignoredSentinels = [] } = {}) {
+export function validateRepositoryHygiene({ trackedPaths, ignoredSentinels = [] } = {}) {
   const errors = [];
   const tracked = new Set(trackedPaths ?? []);
-  const declaredVisuals = manifestVisuals(manifest);
   const ignored = new Set(ignoredSentinels);
 
   for (const trackedPath of tracked) {
@@ -92,7 +80,7 @@ export function validateRepositoryHygiene({ trackedPaths, manifest, ignoredSenti
       errors.push(`REPOSITORY_HYGIENE_TRACKED_SCRATCH_PATH: ${trackedPath}`);
     }
     if (trackedPath.startsWith("docs/assets/") && VISUAL_EXTENSIONS.has(path.posix.extname(trackedPath).toLowerCase())
-      && !declaredVisuals.has(trackedPath) && !REPOSITORY_ONLY_VISUALS.has(trackedPath)) {
+      && !REPOSITORY_ONLY_VISUALS.has(trackedPath)) {
       errors.push(`REPOSITORY_HYGIENE_UNOWNED_VISUAL_ASSET: ${trackedPath}`);
     }
     const benchmarkMatch = trackedPath.match(/^benchmarks\/execution-profiles\/results\/(?:raw|aggregate)\/([^/]+)(?:\/|$)/u);
@@ -128,7 +116,6 @@ function ignoredSentinels(rootDir) {
 export async function checkRepositoryHygiene({ rootDir = repositoryRoot } = {}) {
   const errors = [];
   const root = path.resolve(rootDir);
-  const manifest = JSON.parse(await readFile(path.join(root, "docs", "diagrams", "manifest.json"), "utf8"));
   for (const requiredPath of REQUIRED_THIRD_PARTY_PATHS) {
     try {
       await access(path.join(root, requiredPath));
@@ -146,7 +133,6 @@ export async function checkRepositoryHygiene({ rootDir = repositoryRoot } = {}) 
   }
   const result = validateRepositoryHygiene({
     trackedPaths: trackedFiles(root),
-    manifest,
     ignoredSentinels: ignoredSentinels(root),
   });
   errors.push(...result.errors);

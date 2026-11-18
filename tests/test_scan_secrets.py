@@ -187,9 +187,6 @@ class SecretScannerTests(unittest.TestCase):
         self.assertFalse(should_scan_path(Path(".git/config")))
         self.assertFalse(should_scan_path(Path(".superpowers/sdd/task-report.md")))
         self.assertFalse(should_scan_path(Path(".worktrees/feature/README.md")))
-        self.assertFalse(
-            should_scan_path(Path("vendor/archify/v2.15.0/archify/runtime.mjs"))
-        )
         self.assertFalse(should_scan_path(Path("scripts/__pycache__/module.pyc")))
         self.assertFalse(should_scan_path(Path("assets/logo.png")))
         self.assertTrue(should_scan_path(Path("PROJECT_PROFILE.md")))

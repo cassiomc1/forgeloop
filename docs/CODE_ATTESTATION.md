@@ -40,13 +40,9 @@ state, and ledger fingerprints. Configured coverage exclusions must be
 explicit and are still reported; an excluded path is not silently represented
 as covered source content.
 
-The [Code Attestation Chain](./assets/diagrams/forgeloop-code-attestation-flow.html)
-is the interactive visual fallback for this sequence, with a
-[self-contained SVG](./assets/diagrams/forgeloop-code-attestation-flow.svg).
-It also shows why verification scope and attestation coverage are separate
-questions.
-
-Its canonical source is `docs/diagrams/forgeloop-code-attestation-flow.workflow.json`.
+Verification scope and attestation coverage are separate questions: scope
+decides what a check runs against, and coverage decides which changed paths a
+statement binds.
 
 ## Completion flow
 

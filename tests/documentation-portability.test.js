@@ -7,24 +7,6 @@ import { test } from "node:test";
 
 import { processGeneratedDocumentation } from "../scripts/generate_documentation_reference.mjs";
 import { validateDocumentationConformance } from "../scripts/validate_documentation_conformance.mjs";
-import { checkDocumentationDiagrams } from "../scripts/check-documentation-diagrams.mjs";
-
-const EXPECTED_DIAGRAM_IDS = [
-  "forgeloop-engineering-flow",
-  "forgeloop-verification-trust-flow",
-  "forgeloop-code-attestation-flow",
-];
-
-async function copyDiagramFixture(rootDir) {
-  await cp("docs", path.join(rootDir, "docs"), {
-    recursive: true,
-    filter: (source) => !path.basename(source).startsWith(".archify-"),
-  });
-  await cp("vendor", path.join(rootDir, "vendor"), { recursive: true });
-  for (const file of ["README.md", "DOCS_INDEX.md", "LOOP_SYSTEM_DESIGN.md", "QUALITY_SCORECARD.md"]) {
-    await cp(file, path.join(rootDir, file));
-  }
-}
 
 test("documentation reference generator is deterministic and idempotent", async () => {
   const tempDir = await mkdtemp(path.join(os.tmpdir(), "forgeloop-portability-"));
@@ -113,22 +95,6 @@ test("documentation generation and validation succeed in directory paths contain
       true,
       `documentation validation failed: ${JSON.stringify(confResult.errors, null, 2)}`,
     );
-  } finally {
-    await removeTempTree(tempDir);
-  }
-});
-
-test("Archify diagram check validates generated outputs and reproducibility", async () => {
-  const tempDir = await mkdtemp(path.join(os.tmpdir(), "forgeloop-diagram-check-"));
-  try {
-    await copyDiagramFixture(tempDir);
-    const report = await checkDocumentationDiagrams({ rootDir: tempDir, reproducible: true });
-    assert.equal(report.renderer.version, "2.15.0");
-    assert.equal(report.renderer.commit, "e1ac748f19cf805e44bf74fb93c796662152e273");
-    assert.equal(report.inventory.activeMermaid, false);
-    assert.deepEqual(report.inventory.unreferencedVisualAssets, []);
-    assert.deepEqual(report.diagrams.map((diagram) => diagram.id), EXPECTED_DIAGRAM_IDS);
-    assert.ok(report.diagrams.every((diagram) => diagram.composition === "pass"));
   } finally {
     await removeTempTree(tempDir);
   }

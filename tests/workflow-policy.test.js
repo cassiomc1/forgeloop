@@ -110,7 +110,8 @@ test("PR and release quality workflows enforce the intended validation boundary"
   assert.match(core, /needs\.classify\.outputs\.node_compat/);
   assert.match(core, /name: Lint and dependency policy/);
   assert.match(core, /name: validate \(22\)/);
-  assert.match(core, /name: Verify generated Archify diagram/);
+  assert.match(core, /name: Documentation validation/);
+  assert.doesNotMatch(core, /Archify/u);
   assert.match(core, /name: tarball smoke \(ubuntu-latest\)/);
   assert.match(core, /steps\.classify\.outputs\.docs/);
   assert.match(core, /steps\.classify\.outputs\.audit/);

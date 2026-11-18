@@ -64,21 +64,6 @@ inclusion does not install, bundle, or declare any project as a dependency of
 this collection. Check the specific project's current license, terms,
 dependencies, version, and distribution conditions before adoption.
 
-### Archify v2.15.0 — vendored documentation renderer
-
-- Project/source: [tt-a1i/archify](https://github.com/tt-a1i/archify/tree/v2.15.0).
-- Pinned source commit: `e1ac748f19cf805e44bf74fb93c796662152e273`.
-- License declared by the upstream project: MIT; the vendored license is at
-  `vendor/archify/v2.15.0/archify/LICENSE`.
-- Use in this collection: deterministic generation and validation of the
-  typed workflow diagram under `docs/diagrams/`.
-- Boundary: this is a documentation-only vendored toolchain, not a ForgeLoop
-  runtime dependency. It is not installed from a registry, and its exact pin,
-  source, license, and raw-byte tree hashes are recorded in
-  `vendor/archify/v2.15.0/PIN.json`; output hashes are recorded in the receipt.
-  The vendor integrity check rejects modified, missing, extra, renamed, or
-  symlinked files before the renderer is trusted.
-
 ### Superpowers
 
 - Project: [Superpowers](https://github.com/obra/superpowers).

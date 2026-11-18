@@ -207,20 +207,6 @@ test("npm tarball contains the CLI, templates, published scenarios, and license 
     "skills/forgeloop/references/lifecycle.md",
     "skills/forgeloop/references/verification.md",
     "skills/forgeloop/references/recovery.md",
-    "docs/diagrams/README.md",
-    "docs/diagrams/manifest.json",
-    "docs/diagrams/forgeloop-code-attestation-flow.workflow.json",
-    "docs/diagrams/forgeloop-engineering-flow.workflow.json",
-    "docs/diagrams/forgeloop-verification-trust-flow.workflow.json",
-    "docs/assets/diagrams/forgeloop-code-attestation-flow.html",
-    "docs/assets/diagrams/forgeloop-code-attestation-flow.svg",
-    "docs/assets/diagrams/forgeloop-code-attestation-flow.receipt.json",
-    "docs/assets/diagrams/forgeloop-engineering-flow.html",
-    "docs/assets/diagrams/forgeloop-engineering-flow.svg",
-    "docs/assets/diagrams/forgeloop-engineering-flow.receipt.json",
-    "docs/assets/diagrams/forgeloop-verification-trust-flow.html",
-    "docs/assets/diagrams/forgeloop-verification-trust-flow.svg",
-    "docs/assets/diagrams/forgeloop-verification-trust-flow.receipt.json",
     "scripts/CI_VALIDATORS.md",
     "completions/forgeloop.bash",
     "completions/_forgeloop",
@@ -386,7 +372,7 @@ test("required validation context rejects failed, unexpected, or missing prerequ
   assert.ok(gate.needs.includes("core"));
   assert.ok(gate.needs.includes("coverage-report"));
   assert.ok(gate.needs.includes("lint"));
-  assert.ok(gate.needs.includes("docs-diagram"));
+  assert.ok(gate.needs.includes("docs"));
   assert.ok(gate.needs.includes("audit"));
   assert.ok(gate.needs.includes("tarball-smoke"));
   assert.ok(gate.needs.includes("repository-index"));

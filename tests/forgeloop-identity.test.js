@@ -80,7 +80,6 @@ test("architecture diagram is canonical and discoverable", async () => {
   }
   assert.match(readme, /LOOP_SYSTEM_DESIGN\.md/);
   for (const marker of [
-    "forgeloop-engineering-flow.svg",
     "PREFLIGHT_READY",
     "append-only event ledger",
     ".forgeloop/kit/",

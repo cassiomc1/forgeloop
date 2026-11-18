@@ -235,9 +235,8 @@ acceptance additionally requires every item below:
 - [ ] README catalog and architecture fallback identify the C, C++, Java, SQL,
       Go, TypeScript, PHP, and Swift specialists and explain their bounded
       structural evidence and same-root composition rules.
-- [ ] The canonical engineering-flow source and regenerated HTML/SVG diagram
-      explain project detection as routing context, not verification or
-      completion evidence.
+- [ ] `LOOP_SYSTEM_DESIGN.md` explains project detection as routing context,
+      not verification or completion evidence.
 - [ ] Positive clean-room package routing selects `flutter`, `clean`, and
       `test` for a Flutter root.
 - [ ] Documentation-only mentions, lockfiles, hosted packages, malformed
@@ -275,8 +274,8 @@ deployment, and live data migration remain separate actions.
 - [ ] `npm run verify:prepush` passes before the release pull request; MCP
       setup, when needed, was run explicitly with `npm run mcp:setup`.
 - [ ] Ordinary PR validation uses `.github/workflows/pr-core.yml` with the
-      unchanged required contexts `audit`, `CodeQL`, `Verify generated Archify
-      diagram`, `validate (22)`, `tarball smoke (ubuntu-latest)`, and
+      unchanged required contexts `audit`, `CodeQL`, `Documentation
+      validation`, `validate (22)`, `tarball smoke (ubuntu-latest)`, and
       `dependency-review`.
 - [ ] `validate (22)` is always present and fails closed on an applicable
       prerequisite failure, cancellation, or unexpected skip.
@@ -361,10 +360,6 @@ deployment, and live data migration remain separate actions.
 - [ ] `npm run coverage` passes the configured global and critical-module gates.
 - [ ] `npm run docs:check`, `npm run docs:generated:check`,
       `npm run docs:conformance`, and `npm run docs:examples:check` pass.
-- [ ] `npm run docs:diagrams:check` and `npm run docs:diagram:inventory` pass;
-      every active diagram has typed source, dark-first animated HTML/SVG,
-      reduced-motion handling, a deterministic receipt, a text fallback, and
-      a current source-bound visual review.
 - [ ] `npm run completions:check` and `npm run summary:check` pass.
 - [ ] Workspace binding, handoff, responsibility, verification scope, revision,
       manifest, statement, signature, and range-coverage tests pass.

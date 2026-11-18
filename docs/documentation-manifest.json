@@ -350,19 +350,6 @@
       "packaged": true
     },
     {
-      "path": "docs/diagrams/README.md",
-      "id": "documentation-diagrams",
-      "class": "guide",
-      "audience": [
-        "maintainer",
-        "integrator"
-      ],
-      "canonicalFor": [
-        "documentation-diagrams"
-      ],
-      "packaged": true
-    },
-    {
       "path": "docs/RELEASE_CHECKLIST_1_4.md",
       "id": "release-checklist-1-4",
       "class": "reference",

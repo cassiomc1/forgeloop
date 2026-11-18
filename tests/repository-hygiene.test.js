@@ -11,21 +11,13 @@ import {
   validateRepositoryHygiene,
 } from "../scripts/check-repository-hygiene.mjs";
 
-const manifest = {
-  diagrams: [
-    { html: "docs/assets/diagrams/example.html", svg: "docs/assets/diagrams/example.svg" },
-  ],
-};
-
 function validInput(overrides = {}) {
   return {
     trackedPaths: [
       "README.md",
-      "docs/assets/diagrams/example.html",
-      "docs/assets/diagrams/example.svg",
+      "docs/assets/forgeloop-architecture.svg",
       "benchmarks/execution-profiles/results/raw/codex-repeat5-20260831/run.json",
     ],
-    manifest,
     ignoredSentinels: IGNORE_SENTINELS,
     ...overrides,
   };
@@ -80,7 +72,7 @@ test("repository hygiene requires explicit visual ownership", () => {
 
 test("repository hygiene rejects tracked scratch outputs and missing ignore coverage", () => {
   const result = validateRepositoryHygiene(validInput({
-    trackedPaths: ["package-dry-run.json", "docs/assets/diagrams/.archify-render-example/file"],
+    trackedPaths: ["package-dry-run.json"],
     ignoredSentinels: [],
   }));
   assert.ok(result.errors.includes("REPOSITORY_HYGIENE_TRACKED_SCRATCH_PATH: package-dry-run.json"));

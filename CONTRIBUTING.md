@@ -16,8 +16,8 @@ aligned. Do not add vendor-specific runtime behavior: ForgeLoop uses canonical
 SQLite operational storage and explicit file interchange.
 
 The ordinary PR workflow is intentionally path-aware. `pr-core.yml` always
-publishes the ruleset contexts `audit`, `CodeQL`, `Verify generated Archify
-diagram`, `validate (22)`, `tarball smoke (ubuntu-latest)`, and
+publishes the ruleset contexts `audit`, `CodeQL`, `Documentation validation`,
+`validate (22)`, `tarball smoke (ubuntu-latest)`, and
 `dependency-review`; `validate (22)` fails closed if an applicable job fails
 or is skipped unexpectedly. Broader main-branch and release workflows provide
 the explicit cross-platform, package, Windows, documentation, and audit

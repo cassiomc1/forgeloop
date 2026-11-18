@@ -1,0 +1,2090 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "remove-archify",
+  "forgeloopVersion": "2.2.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:remove-archify\",\n      \"digest\": {\n        \"sha256\": \"c981f4e7d692529b8556c4b352587e01fdcaf2b91f19d8df1932cfed5f33bc13\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"remove-archify\",\n      \"verificationCycle\": 2\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"e1367c0d248e5acd075366a55ae98ddf9b8e784db647d18be6607ccff479fcd0\",\n      \"contentDigest\": \"c981f4e7d692529b8556c4b352587e01fdcaf2b91f19d8df1932cfed5f33bc13\",\n      \"coveredPaths\": [\n        \".gitattributes\",\n        \".github/workflows/docs.yml\",\n        \".github/workflows/npm-publish.yml\",\n        \".github/workflows/pr-core.yml\",\n        \".gitignore\",\n        \"CHANGELOG.md\",\n        \"CONTRIBUTING.md\",\n        \"DOCS_INDEX.md\",\n        \"LOOP_SYSTEM_DESIGN.md\",\n        \"QUALITY_SCORECARD.md\",\n        \"README.md\",\n        \"THIRD_PARTY_NOTICES.md\",\n        \"docs/CODE_ATTESTATION.md\",\n        \"docs/DOCUMENTATION_GUIDE.md\",\n        \"docs/PACKAGE_CONTENTS.md\",\n        \"docs/RELEASE_CHECKLIST.md\",\n        \"docs/REVISION_PROVIDERS.md\",\n        \"docs/assets/diagrams/forgeloop-code-attestation-flow.html\",\n        \"docs/assets/diagrams/forgeloop-code-attestation-flow.receipt.json\",\n        \"docs/assets/diagrams/forgeloop-code-attestation-flow.svg\",\n        \"docs/assets/diagrams/forgeloop-engineering-flow.html\",\n        \"docs/assets/diagrams/forgeloop-engineering-flow.receipt.json\",\n        \"docs/assets/diagrams/forgeloop-engineering-flow.svg\",\n        \"docs/assets/diagrams/forgeloop-verification-trust-flow.html\",\n        \"docs/assets/diagrams/forgeloop-verification-trust-flow.receipt.json\",\n        \"docs/assets/diagrams/forgeloop-verification-trust-flow.svg\",\n        \"docs/diagrams/README.md\",\n        \"docs/diagrams/forgeloop-code-attestation-flow.workflow.json\",\n        \"docs/diagrams/forgeloop-engineering-flow.workflow.json\",\n        \"docs/diagrams/forgeloop-verification-trust-flow.workflow.json\",\n        \"docs/diagrams/manifest.json\",\n        \"docs/diagrams/reviews/forgeloop-code-attestation-flow.review.json\",\n        \"docs/diagrams/reviews/forgeloop-engineering-flow.review.json\",\n        \"docs/diagrams/reviews/forgeloop-verification-trust-flow.review.json\",\n        \"docs/documentation-manifest.json\",\n        \"docs/documentation-review-matrix.json\",\n        \"package.json\",\n        \"scripts/CI_VALIDATORS.md\",\n        \"scripts/archify-toolchain.mjs\",\n        \"scripts/check-documentation-diagrams.mjs\",\n        \"scripts/check-repository-hygiene.mjs\",\n        \"scripts/ci-classify.mjs\",\n        \"scripts/codeql-config.yml\",\n        \"scripts/documentation-diagram-inventory.mjs\",\n        \"scripts/documentation-diagram-manifest.mjs\",\n        \"scripts/generate-documentation-diagrams.mjs\",\n        \"scripts/run-docs-check.js\",\n        \"scripts/scan_secrets.py\",\n        \"tests/archify-toolchain.test.js\",\n        \"tests/documentation-diagram-inventory.test.js\",\n        \"tests/documentation-diagram-manifest.test.js\",\n        \"tests/documentation-diagrams.test.js\",\n        \"tests/documentation-portability.test.js\",\n        \"tests/documentation-surfaces.test.js\",\n        \"tests/forgeloop-identity.test.js\",\n        \"tests/package.test.js\",\n        \"tests/repository-hygiene.test.js\",\n        \"tests/test_scan_secrets.py\",\n        \"tests/workflow-policy.test.js\",\n        \"vendor/archify/v2.15.0/PIN.json\",\n        \"vendor/archify/v2.15.0/archify/LICENSE\",\n        \"vendor/archify/v2.15.0/archify/SKILL.md\",\n        \"vendor/archify/v2.15.0/archify/assets/template.html\",\n        \"vendor/archify/v2.15.0/archify/bin/archify.mjs\",\n        \"vendor/archify/v2.15.0/archify/bin/open-artifact.mjs\",\n        \"vendor/archify/v2.15.0/archify/bin/preview.mjs\",\n        \"vendor/archify/v2.15.0/archify/bin/visual-check.mjs\",\n        \"vendor/archify/v2.15.0/archify/brand-marks/README.md\",\n        \"vendor/archify/v2.15.0/archify/brand-marks/catalog.json\",\n        \"vendor/archify/v2.15.0/archify/delta/architecture-delta.mjs\",\n        \"vendor/archify/v2.15.0/archify/examples/agent-run.lifecycle.json\",\n        \"vendor/archify/v2.15.0/archify/examples/agent-tool-call.workflow.json\",\n        \"vendor/archify/v2.15.0/archify/examples/async-job-roundtrip.sequence.json\",\n        \"vendor/archify/v2.15.0/archify/examples/brand-aware-delivery.architecture.json\",\n        \"vendor/archify/v2.15.0/archify/examples/cache-miss-request.sequence.json\",\n        \"vendor/archify/v2.15.0/archify/examples/checkout-platform.base.architecture.json\",\n        \"vendor/archify/v2.15.0/archify/examples/checkout-platform.head.architecture.json\",\n        \"vendor/archify/v2.15.0/archify/examples/dataflow-product-analytics.html\",\n        \"vendor/archify/v2.15.0/archify/examples/deployment-release.lifecycle.json\",\n        \"vendor/archify/v2.15.0/archify/examples/event-stream.dataflow.json\",\n        \"vendor/archify/v2.15.0/archify/examples/incident-response.workflow.json\",\n        \"vendor/archify/v2.15.0/archify/examples/lifecycle-agent-run.html\",\n        \"vendor/archify/v2.15.0/archify/examples/product-analytics.dataflow.json\",\n        \"vendor/archify/v2.15.0/archify/examples/production-deployment.architecture.json\",\n        \"vendor/archify/v2.15.0/archify/examples/release-delivery.workflow.json\",\n        \"vendor/archify/v2.15.0/archify/examples/sequence-cache-miss-request.html\",\n        \"vendor/archify/v2.15.0/archify/examples/web-app-rendered.html\",\n        \"vendor/archify/v2.15.0/archify/examples/web-app.architecture.json\",\n        \"vendor/archify/v2.15.0/archify/examples/workflow-agent-tool-call-rendered.html\",\n        \"vendor/archify/v2.15.0/archify/package-lock.json\",\n        \"vendor/archify/v2.15.0/archify/package.json\",\n        \"vendor/archify/v2.15.0/archify/recipes/scenarios.mjs\",\n        \"vendor/archify/v2.15.0/archify/references/authoring-contract.md\",\n        \"vendor/archify/v2.15.0/archify/references/brand-marks.md\",\n        \"vendor/archify/v2.15.0/archify/references/delivery-contract.md\",\n        \"vendor/archify/v2.15.0/archify/references/viewer-runtime.md\",\n        \"vendor/archify/v2.15.0/archify/renderers/architecture/grid.mjs\",\n        \"vendor/archify/v2.15.0/archify/renderers/architecture/render-architecture.mjs\",\n        \"vendor/archify/v2.15.0/archify/renderers/dataflow/README.md\",\n        \"vendor/archify/v2.15.0/archify/renderers/dataflow/render-dataflow.mjs\",\n        \"vendor/archify/v2.15.0/archify/renderers/lifecycle/README.md\",\n        \"vendor/archify/v2.15.0/archify/renderers/lifecycle/render-lifecycle.mjs\",\n        \"vendor/archify/v2.15.0/archify/renderers/sequence/README.md\",\n        \"vendor/archify/v2.15.0/archify/renderers/sequence/render-sequence.mjs\",\n        \"vendor/archify/v2.15.0/archify/renderers/shared/brand-marks.mjs\",\n        \"vendor/archify/v2.15.0/archify/renderers/shared/cli.mjs\",\n        \"vendor/archify/v2.15.0/archify/renderers/shared/diagnostics.mjs\",\n        \"vendor/archify/v2.15.0/archify/renderers/shared/engineering-profiles.mjs\",\n        \"vendor/archify/v2.15.0/archify/renderers/shared/generated-brand-marks.mjs\",\n        \"vendor/archify/v2.15.0/archify/renderers/shared/generated-validators.mjs\",\n        \"vendor/archify/v2.15.0/archify/renderers/shared/geometry.mjs\",\n        \"vendor/archify/v2.15.0/archify/renderers/shared/layout-report.mjs\",\n        \"vendor/archify/v2.15.0/archify/renderers/shared/legend.mjs\",\n        \"vendor/archify/v2.15.0/archify/renderers/shared/output-path.mjs\",\n        \"vendor/archify/v2.15.0/archify/renderers/shared/repository-evidence.mjs\",\n        \"vendor/archify/v2.15.0/archify/renderers/shared/text-fit.mjs\",\n        \"vendor/archify/v2.15.0/archify/renderers/shared/utils.mjs\",\n        \"vendor/archify/v2.15.0/archify/renderers/shared/validator.mjs\",\n        \"vendor/archify/v2.15.0/archify/renderers/workflow/README.md\",\n        \"vendor/archify/v2.15.0/archify/renderers/workflow/render-workflow.mjs\",\n        \"vendor/archify/v2.15.0/archify/schemas/README.md\",\n        \"vendor/archify/v2.15.0/archify/schemas/architecture.schema.json\",\n        \"vendor/archify/v2.15.0/archify/schemas/common.schema.json\",\n        \"vendor/archify/v2.15.0/archify/schemas/dataflow.schema.json\",\n        \"vendor/archify/v2.15.0/archify/schemas/lifecycle.schema.json\",\n        \"vendor/archify/v2.15.0/archify/schemas/sequence.schema.json\",\n        \"vendor/archify/v2.15.0/archify/schemas/workflow.schema.json\",\n        \"vendor/archify/v2.15.0/archify/scripts/check-render-output.mjs\",\n        \"vendor/archify/v2.15.0/archify/scripts/generate-brand-marks.mjs\",\n        \"vendor/archify/v2.15.0/archify/scripts/generate-validators.mjs\",\n        \"vendor/archify/v2.15.0/archify/scripts/render-examples.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/adaptive-reader-layout.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/animation.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/architecture-delta.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/authored-reachability.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/authoring-safety-contract.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/automatic-port-spread.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/brand-marks.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/chapter-delta-preview.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/chapter-handoff.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/chapter-rail.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/cli.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/community-proof-intake.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/cursor-onboarding.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/degraded.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/delivery-contract.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/diagram-guide.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/engineering-profile.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/finder.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/fixtures/v1-baseline/agent-run.lifecycle.json\",\n        \"vendor/archify/v2.15.0/archify/test/fixtures/v1-baseline/agent-tool-call.workflow.json\",\n        \"vendor/archify/v2.15.0/archify/test/fixtures/v1-baseline/cache-miss-request.sequence.json\",\n        \"vendor/archify/v2.15.0/archify/test/fixtures/v1-baseline/product-analytics.dataflow.json\",\n        \"vendor/archify/v2.15.0/archify/test/fixtures/v1-baseline/web-app.architecture.json\",\n        \"vendor/archify/v2.15.0/archify/test/gallery.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/generate-validators.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/geometry.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/golden.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/grid.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/guide-page.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/guide.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/guided-views.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/intent-trace.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/landing.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/layout-rules.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/legend-contract.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/motion-governor.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/open-artifact.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/ordinary-model-floor.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/output-path.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/presentation.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/preset-tryon.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/preview-contract.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/preview.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/proof-aperture.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/reach-share-card.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/readme-showcase.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/real-repository-proof.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/relationship-direct-explorer.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/relationship-lens.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/relationship-permalink.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/relationship-pulse.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/release-identity.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/release-package-gates.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/render-output-checks.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/repair-receipt.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/repository-evidence.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/route-journey.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/route-probe.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/route-share-card.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/semantic-camera.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/semantic-flow.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/semantic-legend-gateway.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/semantic-lens.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/semantic-passport.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/semantic-radar.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/semantic-zoom.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/sequence-column-fit.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/settled-flow.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/share-card-export.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/skill-metadata.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/start-page.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/story-beat-navigator.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/story-carrier.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/story-director-strip.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/story-follow-camera.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/story-horizon.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/story-moment-link.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/story-shelf.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/story-trail.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/toolbar-polish.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/v1-compatibility.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/visual-check.test.mjs\",\n        \"vendor/archify/v2.15.0/archify/test/webm-artifact.smoke.mjs\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"57105ed7cdc22f3ab2a9bd03424767132c05b2f288760514ec8063130b38573c\",\n      \"routeFingerprint\": \"cc3b7f956042b837727e16bd881f2bb99faef9c5b3fb3e969fdd31a5326dfd2d\",\n      \"stateFingerprint\": \"ba70383fb6b44a8255a9b5379166b08aa83f7c91817e4910671b504341bfa9e5\",\n      \"receiptFingerprint\": \"c05bdc13ff4a6e6b67b3e79df1e52412b0119ac509e11e94f83a5b4d16e52659\",\n      \"ledgerSeq\": 59,\n      \"ledgerHash\": \"5fd10cac775a8c3ef1c034d79635dfcabb8c89a0284b2cadcd0dafb9c861b975\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "remove-archify",
+    "verificationCycle": 2,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "a43469813eb71812cc0d66acbc1a2458a1043662",
+      "observedRevision": "a43469813eb71812cc0d66acbc1a2458a1043662",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/remove-archify",
+        "head": "a43469813eb71812cc0d66acbc1a2458a1043662"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "57105ed7cdc22f3ab2a9bd03424767132c05b2f288760514ec8063130b38573c",
+      "routeFingerprint": "cc3b7f956042b837727e16bd881f2bb99faef9c5b3fb3e969fdd31a5326dfd2d",
+      "stateFingerprint": "ba70383fb6b44a8255a9b5379166b08aa83f7c91817e4910671b504341bfa9e5",
+      "receiptFingerprint": "c05bdc13ff4a6e6b67b3e79df1e52412b0119ac509e11e94f83a5b4d16e52659",
+      "ledgerSeq": 59,
+      "ledgerHash": "5fd10cac775a8c3ef1c034d79635dfcabb8c89a0284b2cadcd0dafb9c861b975"
+    },
+    "entries": [
+      {
+        "path": ".gitattributes",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "73c5af44b87b36be9ded529f8b0c0c4cec617fcb5264ca376ef44394af4be4eb",
+        "providerContentId": "276a2c6346038720b5a64f51046f9e7546569d5e",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": ".github/workflows/docs.yml",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "1889aa9869cd5e2f193ae1588a2ac889d57010f94c223a3f02adbdcebadd1dee",
+        "providerContentId": "dd9bbbf2134703050d711a7dc6d90bbfb647a221",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": ".github/workflows/npm-publish.yml",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "7a985e18cc1891d2c481d41433dade75ca983afd5cf0624d26ea0aeadf7b0617",
+        "providerContentId": "ad362fb6128f3973a0c52183aa31afb86f654301",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": ".github/workflows/pr-core.yml",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "c8a936f2850df41c29e7c284089fc77af6f33d5a9d16c5c8a96de7d33e7c22ee",
+        "providerContentId": "820f766b65131f289fa0dbbc849969b3c651686a",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": ".gitignore",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "65602623428fd097c122051d0703ad2e49d9b80b94dd526fbc3f2495c0442708",
+        "providerContentId": "5d9a0fadbe4463ae9479d4e7c4afd6d689327a57",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "6f852b27104153e5b283763c81bc43fdc9e5a6b5b7805bb844095a93f0032c03",
+        "providerContentId": "dcad25bfc0c50e574748aa25e43152eeb07f0849",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "CONTRIBUTING.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "3f5d0723559ab386b3f4077addc356afc135413f0039e487ff063ca4bff2636a",
+        "providerContentId": "c3a6992c4262d6fad64df49a2f1a34589fce3c67",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "DOCS_INDEX.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "3add29bca6134f1534389b0c4577c0914d48eab81aea511e56b5438ca792e9d2",
+        "providerContentId": "d9675548bf9b71816087e325d4f9c82ad7f990a0",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/assets/diagrams/forgeloop-code-attestation-flow.html",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/assets/diagrams/forgeloop-code-attestation-flow.receipt.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/assets/diagrams/forgeloop-code-attestation-flow.svg",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/assets/diagrams/forgeloop-engineering-flow.html",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/assets/diagrams/forgeloop-engineering-flow.receipt.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/assets/diagrams/forgeloop-engineering-flow.svg",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/assets/diagrams/forgeloop-verification-trust-flow.html",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/assets/diagrams/forgeloop-verification-trust-flow.receipt.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/assets/diagrams/forgeloop-verification-trust-flow.svg",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/CODE_ATTESTATION.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "290c93325d42e9b8d92a0741be0fa3d7527a10c875803b57d2738fe1c9cec410",
+        "providerContentId": "27d258143706a890fb53963a1f3b78bbb3eda0f8",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/diagrams/forgeloop-code-attestation-flow.workflow.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/diagrams/forgeloop-engineering-flow.workflow.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/diagrams/forgeloop-verification-trust-flow.workflow.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/diagrams/manifest.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/diagrams/README.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/diagrams/reviews/forgeloop-code-attestation-flow.review.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/diagrams/reviews/forgeloop-engineering-flow.review.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/diagrams/reviews/forgeloop-verification-trust-flow.review.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/DOCUMENTATION_GUIDE.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "6382c2b9771a588690cac70388794ea558258f66dbd46129691385cae9c93f80",
+        "providerContentId": "21db4dd15979ed298ee905a577a4afa07a6f370d",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/documentation-manifest.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "b1d48f622ba5ccc854fa5eb9a614a6890b70397006412568cec607aa59fb7242",
+        "providerContentId": "e4d3f380895aa8abe68f88578b10eb039174d690",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/documentation-review-matrix.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "39ba02e391bf0b1d46d6b7bd27fa93294498a2df463128eea4ab5184e3ed94e0",
+        "providerContentId": "355eae4796b188d5f94ef2e6a4f610755da01220",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/PACKAGE_CONTENTS.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "da6e65c0503ba9f813c04b077d83523856e626a565a44f501b5f308e986d4243",
+        "providerContentId": "e09afc567c418c05271955005b20c7e8a3ec20fd",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/RELEASE_CHECKLIST.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "e0b4b26e42e4c4df1acb1a645223572b01ad3e584c306fcd0ade146f32426a85",
+        "providerContentId": "c32a681b4816470ea8c7cc56c6f285e8f3331f13",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/REVISION_PROVIDERS.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "eb98a7f4e3a587fbd42c0d07b8ef888a9e39fda343ece6e0a85794eb48733fdf",
+        "providerContentId": "a195b5b35cca890e6302dc40195bb35038873ef5",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "LOOP_SYSTEM_DESIGN.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "eba0b55ba2862586f60a47d43433a9bf306ae9278a3856cec511a54197c2793e",
+        "providerContentId": "98a40fe018f40aaafeaed55f18a1196f8fb77f43",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "package.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "a18a988503304c479fc7f1ba6b6b4eda4788ad8c631e93434d35d25a03051bd3",
+        "providerContentId": "d4b2ea61e35081757ac075a64984367e62848734",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "QUALITY_SCORECARD.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "24e8d15a91c00620152072722fd87f1198c297bf1c951230829ad0db84242ed9",
+        "providerContentId": "6b60d5eaad04962d61958de2ad9896d92be931d6",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "README.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "bfed71512f5b34945cd9a20b026e8737d9720711439e2b1b6a0c23055239bdaf",
+        "providerContentId": "315edc2fd2d6ec4dc0bc6fc7cd48b8a823497e93",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/archify-toolchain.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/check-documentation-diagrams.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/check-repository-hygiene.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "f3952cf70e98dab903a7110b4185553cc32c313fdca21abece47716e58b21847",
+        "providerContentId": "8a585b3a71da33f21fffd1f802547c35f63a4459",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/CI_VALIDATORS.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "f73033f210c8eeba69c5f5fad10197f4f708d0ec865d3b66ae31c01d23ece0e5",
+        "providerContentId": "26d847889a2ddd71fa6dec8aed7074e92bc42a1f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/ci-classify.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "1d51f8a9de07d0ec69edc3879f1cd35b3e796992517faa7f8c53cef046b6f888",
+        "providerContentId": "7c64f6e9367d04e99f5e5145614033b5c9b1c4da",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/codeql-config.yml",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "8dbc52c2ef1c809ada866bd3d0215be02ad283b2b93db9f08ce11a01cfc6d8b8",
+        "providerContentId": "18411959f9b292f9704edc8a4801712466d358c3",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/documentation-diagram-inventory.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/documentation-diagram-manifest.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/generate-documentation-diagrams.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/run-docs-check.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "bf80aaf332305f048eee77236f997ad852aa6e3243a8268d3ec2e43d6a4d4527",
+        "providerContentId": "98a202ec730b31e7928d69552f04cbca8f5c859e",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/scan_secrets.py",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "a62310a9a740547cd6370becc3d2955d992eedcd70060924dcc6c54899d67a2f",
+        "providerContentId": "a40c76d7a7d6440a21433420cea733849460b434",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/archify-toolchain.test.js",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/documentation-diagram-inventory.test.js",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/documentation-diagram-manifest.test.js",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/documentation-diagrams.test.js",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/documentation-portability.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "3aea73472b507a2aa1e7cd941c0cdb96d7140ad4bd4ca71521c437c3a57c94ea",
+        "providerContentId": "4ee20010db6f8adfcc5f495a37603a028f0d2f63",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/documentation-surfaces.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "8f4fb237d4f2f6dcc216d84c83664eba6920321494b6ac5a52155f5737dddb9f",
+        "providerContentId": "40aadff9e6790d81c2047d26faad7e009fb81fc1",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/forgeloop-identity.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "485d3e00fc328bd9b340cfb4a2e4b9f333d1ba787876cec6250aa609180740bf",
+        "providerContentId": "fdb489af0dfd09a402137834c0ca2a840e9875a4",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/package.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "905427003faf15e39b633da8eab7110cd3914830f029a9c592ddf3a5486c17a7",
+        "providerContentId": "57f54188178841cb6503a348bf7ed8c774fd551e",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/repository-hygiene.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "fe1c5d2502cf6b5fccb6682db2923cccbe105fa7924fe3a28784fb70aa7910e6",
+        "providerContentId": "92a34dda7b03ab824d9d406a0dd71b2e0605094c",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/test_scan_secrets.py",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "80b93073cc4edef0899e5f118e69dc9491712c6711354fe63885b715e31da761",
+        "providerContentId": "d5507444f61eefe060f80a76e69535992753d944",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/workflow-policy.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "b8db38470bc79fc301d0230c95d59b2a15d3e5890ccd55fa3da35f2150446b4d",
+        "providerContentId": "a26f036caef4fb2cb3a889c468cc1cc9eb4b91f0",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "THIRD_PARTY_NOTICES.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "d62079a37f3b708dfa2419f46fbab430db7fedc6b1841693f5e9dcc84cbaf8e1",
+        "providerContentId": "68801e1ffd7976acea6557810591de7fa9296e25",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/assets/template.html",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/bin/archify.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/bin/open-artifact.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/bin/preview.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/bin/visual-check.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/brand-marks/catalog.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/brand-marks/README.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/delta/architecture-delta.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/examples/agent-run.lifecycle.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/examples/agent-tool-call.workflow.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/examples/async-job-roundtrip.sequence.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/examples/brand-aware-delivery.architecture.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/examples/cache-miss-request.sequence.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/examples/checkout-platform.base.architecture.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/examples/checkout-platform.head.architecture.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/examples/dataflow-product-analytics.html",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/examples/deployment-release.lifecycle.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/examples/event-stream.dataflow.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/examples/incident-response.workflow.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/examples/lifecycle-agent-run.html",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/examples/product-analytics.dataflow.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/examples/production-deployment.architecture.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/examples/release-delivery.workflow.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/examples/sequence-cache-miss-request.html",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/examples/web-app-rendered.html",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/examples/web-app.architecture.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/examples/workflow-agent-tool-call-rendered.html",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/LICENSE",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/package-lock.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/package.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/recipes/scenarios.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/references/authoring-contract.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/references/brand-marks.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/references/delivery-contract.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/references/viewer-runtime.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/renderers/architecture/grid.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/renderers/architecture/render-architecture.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/renderers/dataflow/README.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/renderers/dataflow/render-dataflow.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/renderers/lifecycle/README.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/renderers/lifecycle/render-lifecycle.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/renderers/sequence/README.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/renderers/sequence/render-sequence.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/renderers/shared/brand-marks.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/renderers/shared/cli.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/renderers/shared/diagnostics.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/renderers/shared/engineering-profiles.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/renderers/shared/generated-brand-marks.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/renderers/shared/generated-validators.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/renderers/shared/geometry.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/renderers/shared/layout-report.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/renderers/shared/legend.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/renderers/shared/output-path.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/renderers/shared/repository-evidence.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/renderers/shared/text-fit.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/renderers/shared/utils.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/renderers/shared/validator.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/renderers/workflow/README.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/renderers/workflow/render-workflow.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/schemas/architecture.schema.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/schemas/common.schema.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/schemas/dataflow.schema.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/schemas/lifecycle.schema.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/schemas/README.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/schemas/sequence.schema.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/schemas/workflow.schema.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/scripts/check-render-output.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/scripts/generate-brand-marks.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/scripts/generate-validators.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/scripts/render-examples.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/SKILL.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/adaptive-reader-layout.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/animation.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/architecture-delta.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/authored-reachability.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/authoring-safety-contract.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/automatic-port-spread.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/brand-marks.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/chapter-delta-preview.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/chapter-handoff.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/chapter-rail.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/cli.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/community-proof-intake.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/cursor-onboarding.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/degraded.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/delivery-contract.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/diagram-guide.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/engineering-profile.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/finder.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/fixtures/v1-baseline/agent-run.lifecycle.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/fixtures/v1-baseline/agent-tool-call.workflow.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/fixtures/v1-baseline/cache-miss-request.sequence.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/fixtures/v1-baseline/product-analytics.dataflow.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/fixtures/v1-baseline/web-app.architecture.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/gallery.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/generate-validators.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/geometry.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/golden.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/grid.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/guide-page.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/guide.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/guided-views.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/intent-trace.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/landing.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/layout-rules.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/legend-contract.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/motion-governor.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/open-artifact.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/ordinary-model-floor.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/output-path.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/presentation.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/preset-tryon.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/preview-contract.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/preview.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/proof-aperture.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/reach-share-card.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/readme-showcase.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/real-repository-proof.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/relationship-direct-explorer.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/relationship-lens.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/relationship-permalink.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/relationship-pulse.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/release-identity.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/release-package-gates.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/render-output-checks.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/repair-receipt.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/repository-evidence.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/route-journey.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/route-probe.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/route-share-card.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/semantic-camera.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/semantic-flow.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/semantic-legend-gateway.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/semantic-lens.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/semantic-passport.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/semantic-radar.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/semantic-zoom.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/sequence-column-fit.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/settled-flow.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/share-card-export.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/skill-metadata.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/start-page.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/story-beat-navigator.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/story-carrier.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/story-director-strip.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/story-follow-camera.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/story-horizon.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/story-moment-link.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/story-shelf.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/story-trail.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/toolbar-polish.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/v1-compatibility.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/visual-check.test.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/archify/test/webm-artifact.smoke.mjs",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "vendor/archify/v2.15.0/PIN.json",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "c981f4e7d692529b8556c4b352587e01fdcaf2b91f19d8df1932cfed5f33bc13"
+  },
+  "manifestFingerprint": "e1367c0d248e5acd075366a55ae98ddf9b8e784db647d18be6607ccff479fcd0",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Remove the Archify diagrams from the project (user request): delete the vendored renderer vendor/archify, the diagram sources docs/diagrams and generated outputs docs/assets/diagrams, the diagram generation/check/inventory/manifest scripts and their tests and npm scripts, and every live reference (README, docs index and guides, package files, CI, CodeQL, secret scan, repository hygiene, notices). The PR job keeps validating documentation and Markdown but is renamed from 'Verify generated Archify diagram' to 'Documentation validation'; the main-protection ruleset's required context is updated to match (user approved). Historical records under benchmarks/ and docs/history/ stay unchanged.",
+    "successCriteria": [
+      "The repository has no Archify renderer, diagram sources, outputs, scripts or tests, and documentation validation still passes"
+    ],
+    "checks": [
+      {
+        "id": "docs-check",
+        "requirement": "npm run docs:check passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-d9cf929756206a36",
+        "requirement": "The repository has no Archify renderer, diagram sources, outputs, scripts or tests, and documentation validation still passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-18T11:25:27.143Z",
+    "completedAt": "2026-11-18T12:26:18.434Z",
+    "durationMs": 3651291,
+    "phaseDurationsMs": {
+      "planning": 2530,
+      "executing": 285111,
+      "verifying": 3363360,
+      "reviewing": 290
+    },
+    "verificationCycles": 2,
+    "diagnoses": 1,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "7005cdfd2c9dbecd0bc266c965133766bcc208c421f877526ee3c180595697e5"
+}

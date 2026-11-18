@@ -46,7 +46,6 @@ EXCLUDED_PARTS = {
     "coverage",
 }
 EXCLUDED_PREFIXES = {
-    ("vendor", "archify"),
 }
 
 TOKEN_PATTERNS = (

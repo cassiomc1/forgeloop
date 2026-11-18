@@ -5,19 +5,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const forwardedArgs = process.argv.slice(2);
 
 const steps = [
-  {
-    name: "Archify Diagram Verification",
-    script: "scripts/check-documentation-diagrams.mjs",
-    args: forwardedArgs,
-  },
-  {
-    name: "Documentation Diagram Inventory",
-    script: "scripts/documentation-diagram-inventory.mjs",
-    args: ["--check"],
-  },
   {
     name: "Generated Documentation Freshness",
     script: "scripts/generate_documentation_reference.mjs",
