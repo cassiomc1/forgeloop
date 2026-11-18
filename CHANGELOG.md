@@ -1,7 +1,14 @@
 # Changelog
 
-## Unreleased
+## 2.3.0 - 2026-11-18
 
+- Minor release. Its runtime changes are bound by
+  `benchmarks/storage-sqlite/stable-2.3.0-writer-review.json.gz`, a delta
+  review against 2.2.0. Every changed and added module has a disposition, and
+  the 9 added filesystem bindings each have an explicit role: the
+  `evidence-publish` user-config queue, and the `sync-pull --merge` private
+  temp staging. The live store is changed only through existing transaction
+  writers or `storage-restore`.
 - Remove the Archify diagrams. This deletes the vendored renderer
   (`vendor/archify`), the diagram sources (`docs/diagrams`) and outputs
   (`docs/assets/diagrams`), and the generation and check scripts, tests and

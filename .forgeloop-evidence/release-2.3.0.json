@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "release-2.3.0",
+  "forgeloopVersion": "2.3.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:release-2.3.0\",\n      \"digest\": {\n        \"sha256\": \"fb952b18a30beb6102d3c66e7e0f1a2915363e2d28594739419f27b5f4e1cc1f\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"release-2.3.0\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"6e2c367d2659e8050edd7741fe87996b6b7617f9560880b5875a41345a246b9e\",\n      \"contentDigest\": \"fb952b18a30beb6102d3c66e7e0f1a2915363e2d28594739419f27b5f4e1cc1f\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"benchmarks/storage-sqlite/stable-2.3.0-writer-review.json.gz\",\n        \"docs/AGENT_PROTOCOL_SUMMARY.md\",\n        \"docs/RELEASE_CHECKLIST.md\",\n        \"integrations/mcp/package-lock.json\",\n        \"package-lock.json\",\n        \"package.json\",\n        \"scripts/check-repository-hygiene.mjs\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"3f60dd33d606d8ff04a0914412716c3724865767947f7f4d4f653b19866cf35e\",\n      \"routeFingerprint\": \"1651869026e0f56b62c76063d69f5e6e249cdeb1ab807f5fe7aaef14018d435d\",\n      \"stateFingerprint\": \"8eff0605326b7da961addb1eb48145c5df68e99299f125fc02395993bbb3c430\",\n      \"receiptFingerprint\": \"b6c6fe8374dd3f431ea48ccce4e1ad86c8f4bea69ccab6f0add6176760ac246f\",\n      \"ledgerSeq\": 40,\n      \"ledgerHash\": \"2bd0b3a57e4535a14349b6ae002dfe0b37fda1855922fe3402b44e6f0c1565b4\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "release-2.3.0",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "9b0237f668c240646512426a1f519ca71c737196",
+      "observedRevision": "9b0237f668c240646512426a1f519ca71c737196",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/release-2.3.0",
+        "head": "9b0237f668c240646512426a1f519ca71c737196"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "3f60dd33d606d8ff04a0914412716c3724865767947f7f4d4f653b19866cf35e",
+      "routeFingerprint": "1651869026e0f56b62c76063d69f5e6e249cdeb1ab807f5fe7aaef14018d435d",
+      "stateFingerprint": "8eff0605326b7da961addb1eb48145c5df68e99299f125fc02395993bbb3c430",
+      "receiptFingerprint": "b6c6fe8374dd3f431ea48ccce4e1ad86c8f4bea69ccab6f0add6176760ac246f",
+      "ledgerSeq": 40,
+      "ledgerHash": "2bd0b3a57e4535a14349b6ae002dfe0b37fda1855922fe3402b44e6f0c1565b4"
+    },
+    "entries": [
+      {
+        "path": "benchmarks/storage-sqlite/stable-2.3.0-writer-review.json.gz",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "b3afc84b3d7a5b07d4049d3202d1510d16510fca2d783b1f1c502ecb350ab5da",
+        "providerContentId": "095bd6b977ba975f2422979dce658979fffc7580",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "457825bbd271e558aed4df5363869af8bdc9e9760bd8fb20665b5371584d75b9",
+        "providerContentId": "dd69cf5985cdff88b5788002b88c0ec2b187b72b",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/AGENT_PROTOCOL_SUMMARY.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "9520624cb99925b3fa739b6a10d6f849fe6e0ef9b234448f416da8447624fc48",
+        "providerContentId": "a383e75cf25aa7de48d21daafa604028434aa361",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/RELEASE_CHECKLIST.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "0247e3c9f2055b2d0ab8ceb515282accc45bc6c547e92180f7aa9e2421ec7734",
+        "providerContentId": "a752f622f06d37c79ff53735deb2ca9295ae7b49",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "integrations/mcp/package-lock.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "b9faed4e498c1a2cf1e65dd841d7d76ae4bc541eff4c0aa9c2cf8941aab51e65",
+        "providerContentId": "47b812305b934f9318e569eb2affa2e9dd139f42",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "package-lock.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "5695946c2e06ec579878817014b6df8023a01538d71da31b985fec5333d1942d",
+        "providerContentId": "b26a173b5e579a10bf4a35f306cd66ba5da59ab6",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "package.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "e3a91e507f4d7d17273a2c81ad59dc9e9dc7717d1abdd1980fa9ec04123ce07a",
+        "providerContentId": "212ccd3b651de2342ed94b988eac8462a5525f5d",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/check-repository-hygiene.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "ad759e8063e8adb40f4ea74e40072d06eafb1a7bf0ac4347cbffdb077b453bfb",
+        "providerContentId": "8fffda1a079d70a8d4be2f14def1e0aa2b7a7183",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "fb952b18a30beb6102d3c66e7e0f1a2915363e2d28594739419f27b5f4e1cc1f"
+  },
+  "manifestFingerprint": "6e2c367d2659e8050edd7741fe87996b6b7617f9560880b5875a41345a246b9e",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Prepare the stable 2.3.0 release of @cassiomc1/forgeloop: bump the version (package, locks, generated summary), cut the 2.3.0 changelog and release checklist entry, and add the version-bound writer review benchmarks/storage-sqlite/stable-2.3.0-writer-review.json.gz as a delta review against 2.2.0 that dispositions every changed and added runtime module and every added filesystem binding (evidence-publish queue, sync merge staging). Publication itself is a separate, explicitly confirmed step.",
+    "successCriteria": [
+      "The 2.3.0 source carries a valid version-bound writer review and passes the pre-push tier"
+    ],
+    "checks": [
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-7b03337c5cd97d43",
+        "requirement": "The 2.3.0 source carries a valid version-bound writer review and passes the pre-push tier",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "storage-review",
+        "requirement": "node scripts/verify-stable-storage-review.mjs passes for 2.3.0",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-18T13:10:04.279Z",
+    "completedAt": "2026-11-18T13:34:51.582Z",
+    "durationMs": 1487303,
+    "phaseDurationsMs": {
+      "planning": 2603,
+      "executing": 80584,
+      "verifying": 1403823,
+      "reviewing": 293
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "31037c292f518d476f5b041bc1a481ce21b2df7bd4dea671d64889f32fd051b5"
+}
