@@ -32,6 +32,21 @@ describe('hosted dashboard contract', () => {
     expect(dashboardTotals(summary).medianDurationMs).toBe(900000);
   });
 
+  it('parses task source and signature status with safe fallbacks', () => {
+    const value = clone();
+    const [first, second] = value.accounts[0].repositories[0].tasks;
+    Object.assign(first, { source: 'published', publishedAt: '2026-11-18T10:00:00.000Z', signatureStatus: 'verified' });
+    Object.assign(second, { source: 'elsewhere', publishedAt: '2026-11-18T10:00:00.000Z', signatureStatus: 'trust-me' });
+    const [parsedFirst, parsedSecond] = parseDashboardSummary(value).accounts[0].repositories[0].tasks;
+    expect([parsedFirst.source, parsedFirst.publishedAt, parsedFirst.signatureStatus]).toEqual(['published', '2026-11-18T10:00:00.000Z', 'verified']);
+    expect([parsedSecond.source, parsedSecond.publishedAt, parsedSecond.signatureStatus]).toEqual(['committed', null, 'unsigned']);
+    const legacy = parseDashboardSummary(clone()).accounts[0].repositories[0].tasks;
+    expect(legacy.map((task) => [task.source, task.signatureStatus])).toEqual([['committed', 'attached'], ['committed', 'unsigned']]);
+    const invalid = clone();
+    invalid.accounts[0].repositories[0].tasks[0].signatureStatus = 'invalid';
+    expect(parseDashboardSummary(invalid).accounts[0].repositories[0].tasks[0].signatureStatus).toBe('invalid');
+  });
+
   it('rejects malformed or unsafe payloads', () => {
     const cases: Array<(value: ReturnType<typeof clone>) => void> = [
       (value) => { value.schemaVersion = 2; },

@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "dependabot-fixes",
+  "forgeloopVersion": "2.3.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:dependabot-fixes\",\n      \"digest\": {\n        \"sha256\": \"05eb848c5f1f55dccb3878ae5044e7b7f99a905482c825f54c601af6e87cb43e\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"dependabot-fixes\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"ca64b105369d0d89f67df77052255937796a7734b9944e974d50b0d471ea388b\",\n      \"contentDigest\": \"05eb848c5f1f55dccb3878ae5044e7b7f99a905482c825f54c601af6e87cb43e\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"ForgeLoopAudit/package-lock.json\",\n        \"ForgeLoopAudit/package.json\",\n        \"integrations/mcp/package-lock.json\",\n        \"package-lock.json\",\n        \"package.json\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"7e5f1148e2c2a1fd5fdc56c9391bd30041927b5ac6dde76e921174ac61aa117d\",\n      \"routeFingerprint\": \"fc7c3db0ab37266fd170a8d9e75f3cc174437f05899d58af8acfd3bf09c6826d\",\n      \"stateFingerprint\": \"0efb250ac1f390000a4489b6f5035630794f21a01cc4ab3609faffcee198c770\",\n      \"receiptFingerprint\": \"a208e9dc2cdceb767321f82630ab3f7f63ff267a617dcffd1f79fcfe6bfc59f0\",\n      \"ledgerSeq\": 40,\n      \"ledgerHash\": \"ea6b9b51de7426ee1a4c897cc5daea1aece1ccf30ce15613a079a433729374fe\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "dependabot-fixes",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "8446a070840932493d704708e9edf7c0a6a4a0cb",
+      "observedRevision": "8446a070840932493d704708e9edf7c0a6a4a0cb",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/dependabot-fixes",
+        "head": "8446a070840932493d704708e9edf7c0a6a4a0cb"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "7e5f1148e2c2a1fd5fdc56c9391bd30041927b5ac6dde76e921174ac61aa117d",
+      "routeFingerprint": "fc7c3db0ab37266fd170a8d9e75f3cc174437f05899d58af8acfd3bf09c6826d",
+      "stateFingerprint": "0efb250ac1f390000a4489b6f5035630794f21a01cc4ab3609faffcee198c770",
+      "receiptFingerprint": "a208e9dc2cdceb767321f82630ab3f7f63ff267a617dcffd1f79fcfe6bfc59f0",
+      "ledgerSeq": 40,
+      "ledgerHash": "ea6b9b51de7426ee1a4c897cc5daea1aece1ccf30ce15613a079a433729374fe"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "a9a0a43aeccdfc5eb787d1eeb9ca0c9c0b3ce1ecba6249ec7980bbb7ae3888a8",
+        "providerContentId": "f1ef55193a23781009509d347dfe03df0f215136",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/package-lock.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "3bbfcf401d003be24ccc50d8d2411210952b119b31864b594145be6e4b3ed53a",
+        "providerContentId": "05da33e1aa18f7fcabb32f4a5e6146395ea387f4",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/package.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "4b86242cf537b11bdc80fd3a97779455bcf4b15dd884982305e0e081141f79e9",
+        "providerContentId": "f7d5390c90945bd0a725536ea2261e8ec5153955",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "integrations/mcp/package-lock.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "c0ac290460f0807b23d14abfa5f31479c0ad7b00d009379b3762d09d03a04f9c",
+        "providerContentId": "0ee77fd435a6317699ed997c102545a63935c4bb",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "package-lock.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "17abcdb948350deb9c02f6a0fb11b980b4dee0b034c64a76ea204686d1e1b087",
+        "providerContentId": "1093623a630159483fc2bfdf4d12093c2bfb1113",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "package.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "d50d8d39e5dd4caa52fa6ec8b77e4fdad1acd69f582c863e67d9d0d44289756a",
+        "providerContentId": "78272b649cdc633f06465bbfce11217c1d5983d5",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "05eb848c5f1f55dccb3878ae5044e7b7f99a905482c825f54c601af6e87cb43e"
+  },
+  "manifestFingerprint": "ca64b105369d0d89f67df77052255937796a7734b9944e974d50b0d471ea388b",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Resolve the open Dependabot alerts: zod < 4.6.6 (GHSA-mrhx-c7xc-m3w5, high, runtime) in integrations/mcp via an in-range lock update to the patched zod, and minimatch >= 7 < 11.0.1 (GHSA-g3hv-75wg-m249, medium, development) in the root and ForgeLoopAudit locks via scoped npm overrides that move only the minimatch ^10 consumers (glob, test-exclude, @typescript-eslint/typescript-estree) to patched minimatch 11.",
+    "successCriteria": [
+      "No lock resolves zod below 4.6.6 or minimatch between 7.0.0 and 11.0.1, and the core, MCP and Audit checks pass"
+    ],
+    "checks": [
+      {
+        "id": "audit-verify",
+        "requirement": "ForgeLoopAudit npm run verify:full passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-e0ed40ccbc2e762f",
+        "requirement": "No lock resolves zod below 4.6.6 or minimatch between 7.0.0 and 11.0.1, and the core, MCP and Audit checks pass",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-18T17:16:05.675Z",
+    "completedAt": "2026-11-18T17:46:12.526Z",
+    "durationMs": 1806851,
+    "phaseDurationsMs": {
+      "planning": 2660,
+      "executing": 84066,
+      "verifying": 1719824,
+      "reviewing": 301
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "ac3dd76af2958d3b2d968463e3227ad0b5d2078b67ec19588ac8e0fe6d862147"
+}

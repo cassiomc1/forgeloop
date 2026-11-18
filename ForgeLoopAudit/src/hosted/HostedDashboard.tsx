@@ -7,10 +7,19 @@ import { EmptyState } from '../renderer/components/ui/EmptyState';
 import { LoadingState } from '../renderer/components/ui/LoadingState';
 import { MetricCard } from '../renderer/components/ui/MetricCard';
 import { ThemeToggle } from '../renderer/components/ui/theme-toggle';
-import { dashboardTotals, formatDuration, parseDashboardSummary, type CheckConclusion, type DashboardSummary, type HostedRepository } from '@shared/hosted';
+import { dashboardTotals, formatDuration, parseDashboardSummary, type CheckConclusion, type DashboardSummary, type HostedRepository, type SignatureStatus } from '@shared/hosted';
 import { loadDashboard, type DashboardLoadResult } from '@shared/hosted-client';
 import demoSummary from './fixtures/dashboard-summary.json';
 import { SyncTokens } from './SyncTokens';
+
+const publishedCount = (repository: HostedRepository) => repository.tasks.filter((task) => task.source === 'published').length;
+
+const SIGNATURE_BADGE: Record<SignatureStatus, { label: string; variant: BadgeVariant }> = {
+  verified: { label: 'Signature verified', variant: 'success' },
+  invalid: { label: 'Signature invalid', variant: 'danger' },
+  attached: { label: 'Signature attached, not verified', variant: 'secondary' },
+  unsigned: { label: 'Unsigned', variant: 'secondary' },
+};
 
 const CONCLUSION_BADGE: Record<CheckConclusion, { label: string; variant: BadgeVariant }> = {
   success: { label: 'Evidence passed', variant: 'success' },
@@ -54,7 +63,7 @@ function RepositoryCard({ repository }: { repository: HostedRepository }) {
           {repository.invalidBundles > 0 && <Badge variant="danger">{repository.invalidBundles} invalid bundle{repository.invalidBundles === 1 ? '' : 's'}</Badge>}
           {repository.truncated && <Badge variant="warning">Partial: limits reached</Badge>}
         </CardTitle>
-        <CardDescription>{repository.tasks.length} task{repository.tasks.length === 1 ? '' : 's'} with committed evidence</CardDescription>
+        <CardDescription>{repository.tasks.length} task{repository.tasks.length === 1 ? '' : 's'} with evidence{publishedCount(repository) > 0 ? ` (${publishedCount(repository)} published, not on the default branch yet)` : ''}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {repository.tasks.length === 0 ? (
@@ -68,12 +77,18 @@ function RepositoryCard({ repository }: { repository: HostedRepository }) {
               <tbody>
                 {repository.tasks.map((task) => (
                   <tr className="border-t border-forge-border align-top" key={task.taskId}>
-                    <td className="py-2 pr-4"><div className="font-mono text-xs">{task.taskId}</div>{task.objective && <div className="text-forge-text-secondary">{task.objective}</div>}</td>
+                    <td className="py-2 pr-4">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-mono text-xs">{task.taskId}</span>
+                        {task.source === 'published' && <Badge title={task.publishedAt ? `Published ${task.publishedAt}` : undefined} variant="outline">Published · not on main yet</Badge>}
+                      </div>
+                      {task.objective && <div className="text-forge-text-secondary">{task.objective}</div>}
+                    </td>
                     <td className="py-2 pr-4">{task.coveredPaths}</td>
                     <td className="py-2 pr-4">{formatDuration(task.metrics?.durationMs ?? null)}</td>
                     <td className="py-2 pr-4">{task.metrics ? task.metrics.verificationCycles : '—'}</td>
                     <td className="py-2 pr-4">{task.metrics ? `${task.metrics.checksPassed} passed${task.metrics.checksFailed ? `, ${task.metrics.checksFailed} failed` : ''}` : '—'}</td>
-                    <td className="py-2">{task.signed ? <Badge variant="success">Signature attached</Badge> : <Badge variant="secondary">Unsigned</Badge>}</td>
+                    <td className="py-2"><Badge variant={SIGNATURE_BADGE[task.signatureStatus].variant}>{SIGNATURE_BADGE[task.signatureStatus].label}</Badge></td>
                   </tr>
                 ))}
               </tbody>

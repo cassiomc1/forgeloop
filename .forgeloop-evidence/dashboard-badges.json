@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "dashboard-badges",
+  "forgeloopVersion": "2.3.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:dashboard-badges\",\n      \"digest\": {\n        \"sha256\": \"50f5c904715350dd8af26513f7dcbfff4bf6025f11eb8ec13ed157d70d3050e1\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"dashboard-badges\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"f8aa204d4ea466f49e29f61658edb507cdf81946190bd9e133a5c385cc10b92b\",\n      \"contentDigest\": \"50f5c904715350dd8af26513f7dcbfff4bf6025f11eb8ec13ed157d70d3050e1\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"ForgeLoopAudit/src/hosted/HostedDashboard.tsx\",\n        \"ForgeLoopAudit/src/shared/__tests__/hosted.test.ts\",\n        \"ForgeLoopAudit/src/shared/hosted.ts\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"4b96ca34bc59581bd8f6c3de027c057d55cd330e8553a25d16614581d17bc55e\",\n      \"routeFingerprint\": \"bf1d845558557bf6f12a79055bfe8d49837bc62e2ef4db4bcfc0661a2bb88b59\",\n      \"stateFingerprint\": \"f8925f9f8b6cf2ba2375dcb5ee16c23f8aae366478905c999825e732e2e8b339\",\n      \"receiptFingerprint\": \"fcddeed8bad1f89e5f0ff19664f2fdd7177040ac6921cb62fe6421a078f1b1e9\",\n      \"ledgerSeq\": 40,\n      \"ledgerHash\": \"0af4c4b62167c459d09ca23534cd4c9fe39833893576cccf0034970beebb3b81\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "dashboard-badges",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "97611200f7e1cdcf8339e708550a5ab4b09557cd",
+      "observedRevision": "97611200f7e1cdcf8339e708550a5ab4b09557cd",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/dashboard-badges",
+        "head": "97611200f7e1cdcf8339e708550a5ab4b09557cd"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "4b96ca34bc59581bd8f6c3de027c057d55cd330e8553a25d16614581d17bc55e",
+      "routeFingerprint": "bf1d845558557bf6f12a79055bfe8d49837bc62e2ef4db4bcfc0661a2bb88b59",
+      "stateFingerprint": "f8925f9f8b6cf2ba2375dcb5ee16c23f8aae366478905c999825e732e2e8b339",
+      "receiptFingerprint": "fcddeed8bad1f89e5f0ff19664f2fdd7177040ac6921cb62fe6421a078f1b1e9",
+      "ledgerSeq": 40,
+      "ledgerHash": "0af4c4b62167c459d09ca23534cd4c9fe39833893576cccf0034970beebb3b81"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "3033b687f7dfed3af6241b68682f731300555c77a80807c2dbfb14d984c60517",
+        "providerContentId": "553768d331edd20ba4c8ecb07fd83f81810c1392",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/src/hosted/HostedDashboard.tsx",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "8711caaa12b0928079344c23d924c71e2351d860f97cb8148a08178327a0b835",
+        "providerContentId": "467e5405dd5953b16915169b50a8b09bb228a2f4",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/src/shared/__tests__/hosted.test.ts",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "7dfc61f9d5b7fac471cf25976a2f26081641ba45fbca3e2eac6651f5ddc13bb0",
+        "providerContentId": "6b7f513f3327f1052c97ea4ac2c617cfd04ea067",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ForgeLoopAudit/src/shared/hosted.ts",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "b3567156c44180096442129bfbb68f742f93cfba3e0a749fbd58b605e184024f",
+        "providerContentId": "386ee2e65c4055ce46b4269ff19e97c14ca648c2",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "50f5c904715350dd8af26513f7dcbfff4bf6025f11eb8ec13ed157d70d3050e1"
+  },
+  "manifestFingerprint": "f8aa204d4ea466f49e29f61658edb507cdf81946190bd9e133a5c385cc10b92b",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Show where each dashboard task comes from and how far its signature was checked: the hosted dashboard parses the optional task source (committed or published, with publishedAt) and signature status (verified, invalid, attached, unsigned) from /api/dashboard and renders a Published badge and the signature state. Older payloads without these fields keep rendering as committed with attached or unsigned signatures.",
+    "successCriteria": [
+      "The hosted dashboard marks published tasks and shows verified, invalid, attached or unsigned signatures"
+    ],
+    "checks": [
+      {
+        "id": "audit-verify",
+        "requirement": "ForgeLoopAudit npm run verify:full passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-ba3ba6f58497ce6d",
+        "requirement": "The hosted dashboard marks published tasks and shows verified, invalid, attached or unsigned signatures",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-fast",
+        "requirement": "npm run verify:fast passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-18T17:46:49.369Z",
+    "completedAt": "2026-11-18T18:07:42.071Z",
+    "durationMs": 1252702,
+    "phaseDurationsMs": {
+      "planning": 3115,
+      "executing": 45494,
+      "verifying": 1203774,
+      "reviewing": 319
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "d0a5e83884a657c6724dce89e96a71f23e003c47dc29d2ee9d91c01c56dccdc6"
+}

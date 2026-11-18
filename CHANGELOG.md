@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+- The hosted team dashboard reads the task source and the signature status:
+  - a "Published · not on main yet" badge marks tasks uploaded with
+    `evidence-publish`;
+  - the signature column shows verified, invalid, attached-but-not-verified
+    or unsigned;
+  - older payloads without these fields render as committed, with the
+    signature attached or unsigned.
+- Resolve the open Dependabot alerts:
+  - `zod` 4.6.7 in `integrations/mcp`, fixing GHSA-mrhx-c7xc-m3w5;
+  - patched `minimatch` 11 for the development-only `glob`, `test-exclude`
+    and `typescript-eslint` consumers through scoped `overrides` in the root
+    and ForgeLoopAudit, fixing GHSA-g3hv-75wg-m249.
 - Align ForgeLoopAudit with the published 2.3.0 core.
   - Vendor the exact npm archive: SHA-512 verified against the registry,
     release commit 8655d42.
