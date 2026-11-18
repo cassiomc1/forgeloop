@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "lychee-local-runner",
+  "forgeloopVersion": "2.2.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:lychee-local-runner\",\n      \"digest\": {\n        \"sha256\": \"621106cff602fa99c2a6444e85a408ad2463054f7a46ed9fd152e550fdf81058\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"lychee-local-runner\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"d8249baf6da6ac43ed74c633890e98ec798fffd833f65104f4dffcb1aada640e\",\n      \"contentDigest\": \"621106cff602fa99c2a6444e85a408ad2463054f7a46ed9fd152e550fdf81058\",\n      \"coveredPaths\": [\n        \"tests/workflow-policy.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"122d55da0ace789e132e1adb9028e37b448bfadb857690df6cd83cbd795b7175\",\n      \"routeFingerprint\": \"0cefdd51d00857253a72d1b59ce94f3a3a1ad83a2c3ffeb073514edb61ad84dc\",\n      \"stateFingerprint\": \"48d853f062a486d28634dedfbebd4dfdbb6c90b026837a9ca328245e9301f4e9\",\n      \"receiptFingerprint\": \"a7968f9f10698d2dae14e721dea0687c1da9a9c6818d09dc99bb1d04f48cc830\",\n      \"ledgerSeq\": 40,\n      \"ledgerHash\": \"3255e5875158946d4ecf6c3bfe9d41180efda59aa08c40868eb89c9987de194a\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "lychee-local-runner",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "8777c2cc6fdf586cfc1967b153c38bf1932adc83",
+      "observedRevision": "8777c2cc6fdf586cfc1967b153c38bf1932adc83",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/lychee-release-only",
+        "head": "8777c2cc6fdf586cfc1967b153c38bf1932adc83"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "122d55da0ace789e132e1adb9028e37b448bfadb857690df6cd83cbd795b7175",
+      "routeFingerprint": "0cefdd51d00857253a72d1b59ce94f3a3a1ad83a2c3ffeb073514edb61ad84dc",
+      "stateFingerprint": "48d853f062a486d28634dedfbebd4dfdbb6c90b026837a9ca328245e9301f4e9",
+      "receiptFingerprint": "a7968f9f10698d2dae14e721dea0687c1da9a9c6818d09dc99bb1d04f48cc830",
+      "ledgerSeq": 40,
+      "ledgerHash": "3255e5875158946d4ecf6c3bfe9d41180efda59aa08c40868eb89c9987de194a"
+    },
+    "entries": [
+      {
+        "path": "tests/workflow-policy.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "b350e389737a4176442d7185248326a715870b853d64fd7e399a8d1fb1ed1788",
+        "providerContentId": "1e55c05a336ee6c90958be2523e8bd940fdd366e",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "621106cff602fa99c2a6444e85a408ad2463054f7a46ed9fd152e550fdf81058"
+  },
+  "manifestFingerprint": "d8249baf6da6ac43ed74c633890e98ec798fffd833f65104f4dffcb1aada640e",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Pin that the npm publication link check runs on the project's own self-hosted Linux runner (forgeloop-linux-remote), not on a GitHub-hosted runner, with a workflow policy assertion.",
+    "successCriteria": [
+      "The workflow test fails if the npm publication link check leaves the self-hosted forgeloop-linux-remote runner"
+    ],
+    "checks": [
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-f9a7a10f5c8c02f7",
+        "requirement": "The workflow test fails if the npm publication link check leaves the self-hosted forgeloop-linux-remote runner",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-fast",
+        "requirement": "npm run verify:fast passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "workflow-tests",
+        "requirement": "node --test tests/workflow-policy.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-18T00:50:45.835Z",
+    "completedAt": "2026-11-18T01:02:56.802Z",
+    "durationMs": 730967,
+    "phaseDurationsMs": {
+      "planning": 3136,
+      "executing": 18424,
+      "verifying": 709112,
+      "reviewing": 295
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "47f2a3b309a632139ff027daa412779cca5b2976784611537a9ad8d8d9e83e7d"
+}

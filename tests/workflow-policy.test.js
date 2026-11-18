@@ -32,7 +32,12 @@ test("the external link check runs only when publishing to npm", async () => {
   for (const name of await readdir(path.join(path.dirname(new URL(import.meta.url).pathname), "..", ".github", "workflows"))) {
     if (!name.endsWith(".yml")) continue;
     const steps = usesLychee(parse(await readWorkflow(name)));
-    if (name === "npm-publish.yml") assert.deepEqual(steps.map((step) => step.name), ["Check links"]);
+    if (name === "npm-publish.yml") {
+      assert.deepEqual(steps.map((step) => step.name), ["Check links"]);
+      // The link check runs on the project's own Linux runner, not a GitHub-hosted one.
+      const job = Object.values(parse(await readWorkflow(name)).jobs).find((candidate) => (candidate.steps ?? []).some((step) => step.name === "Check links"));
+      assert.deepEqual(job["runs-on"], ["self-hosted", "Linux", "X64", "forgeloop-linux-remote"]);
+    }
     else assert.deepEqual(steps, [], `${name} must not run the external link check`);
   }
 });
