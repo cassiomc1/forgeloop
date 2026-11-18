@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "test-landmines-mdlint",
+  "forgeloopVersion": "2.2.0",
+  "statement": {
+    "text": "{\n  \"schemaVersion\": 1,\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:test-landmines-mdlint\",\n      \"digest\": {\n        \"sha256\": \"92cc3b5304db38f0fdd537b1cd1002f1478ea743062947bc50471fc7b2694fcc\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"test-landmines-mdlint\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"416c67eb23185550b7f8429e5e366b1fb8a806d7b1be692166e8990c5ebc80ff\",\n      \"contentDigest\": \"92cc3b5304db38f0fdd537b1cd1002f1478ea743062947bc50471fc7b2694fcc\",\n      \"coveredPaths\": [\n        \"CONTRIBUTING.md\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"7467e93d50b12f76f6f8d6c01e75162aafa760581f71117eecafb13d8afaa2e5\",\n      \"routeFingerprint\": \"032814ba7a6b279005f50a2d7f24922f69c8fc0c74fac90d6c1ba2a69fb1bdb3\",\n      \"stateFingerprint\": \"37d81e6dcca845684ce857dd98142c8d2a988f4eda2c578d4615b15a5cbf7f53\",\n      \"receiptFingerprint\": \"971a806cb9dbc93b4647c8d2c55787452300864d749f0d44c1cb9fea8365fb5d\",\n      \"ledgerSeq\": 34,\n      \"ledgerHash\": \"863315e095ce367ac288e450a0f9574791bc475e98031024852c3b1fe675a676\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "test-landmines-mdlint",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "61d93bb2684bf12c51095a4bf5f6f3908e7b4126",
+      "observedRevision": "61d93bb2684bf12c51095a4bf5f6f3908e7b4126",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/test-landmines",
+        "head": "61d93bb2684bf12c51095a4bf5f6f3908e7b4126"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "7467e93d50b12f76f6f8d6c01e75162aafa760581f71117eecafb13d8afaa2e5",
+      "routeFingerprint": "032814ba7a6b279005f50a2d7f24922f69c8fc0c74fac90d6c1ba2a69fb1bdb3",
+      "stateFingerprint": "37d81e6dcca845684ce857dd98142c8d2a988f4eda2c578d4615b15a5cbf7f53",
+      "receiptFingerprint": "971a806cb9dbc93b4647c8d2c55787452300864d749f0d44c1cb9fea8365fb5d",
+      "ledgerSeq": 34,
+      "ledgerHash": "863315e095ce367ac288e450a0f9574791bc475e98031024852c3b1fe675a676"
+    },
+    "entries": [
+      {
+        "path": "CONTRIBUTING.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "064f7b9e144b92007a4cec38773bac79d105fe891169cf2eaf1fc4102b50b8cf",
+        "providerContentId": "2fe12742fa13c689dfb9c096a9d38c72c226bcc8",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "92cc3b5304db38f0fdd537b1cd1002f1478ea743062947bc50471fc7b2694fcc"
+  },
+  "manifestFingerprint": "416c67eb23185550b7f8429e5e366b1fb8a806d7b1be692166e8990c5ebc80ff",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Fix markdownlint MD032 (blanks-around-lists) in the CONTRIBUTING.md Honest tests section added by test-landmines: add the blank lines before its two lists.",
+    "successCriteria": [
+      "Every list in the CONTRIBUTING.md Honest tests section is surrounded by blank lines"
+    ],
+    "checks": [
+      {
+        "id": "requirement-a7464e48c0ea851a",
+        "requirement": "Every list in the CONTRIBUTING.md Honest tests section is surrounded by blank lines",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-fast",
+        "requirement": "npm run verify:fast passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-18T03:07:14.251Z",
+    "completedAt": "2026-11-18T03:08:14.472Z",
+    "durationMs": 60221,
+    "phaseDurationsMs": {
+      "planning": 2561,
+      "executing": 8607,
+      "verifying": 48801,
+      "reviewing": 252
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 2,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "0f820e0f37d299af063b2e3b7dddb4379129e344e7a357916c30ce80696eddfa"
+}
