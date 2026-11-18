@@ -103,14 +103,11 @@ and `CLAIMED` requests fail closed. A mismatched scoped argv is rejected
 before the checker process starts, and successful binding records the scope
 and capability fingerprints with the execution evidence.
 
-The [Verification Trust Flow](./assets/diagrams/forgeloop-verification-trust-flow.html)
-explorer and its [animated SVG fallback](./assets/diagrams/forgeloop-verification-trust-flow.svg)
-show the claims, provider changes, checker capability, fingerprints, exact
-argv, and observed evidence boundary. If no trusted checker exists, `AUTO`
+The verification trust boundary covers the claims, provider changes, checker
+capability, fingerprints, exact argv, and observed evidence. If no trusted
+checker exists, `AUTO`
 falls back to `FULL`; an explicit `CHANGED` or `CLAIMED` request returns
 `E_VERIFICATION_SCOPE_UNRESOLVED` rather than guessing.
-
-The canonical source is `docs/diagrams/forgeloop-verification-trust-flow.workflow.json`.
 
 ## Error boundary
 

@@ -1,7 +1,1 @@
 name: ForgeLoop CodeQL configuration
-
-# Archify is vendored as an audited, pinned third-party renderer. It is
-# validated by the repository's Archify and SVG safety checks, but is not
-# project-authored code and should not produce project CodeQL findings.
-paths-ignore:
-  - vendor/archify/**

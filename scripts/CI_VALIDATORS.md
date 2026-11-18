@@ -79,7 +79,7 @@ ruleset's exact required contexts:
 
 - `audit`
 - `CodeQL`
-- `Verify generated Archify diagram`
+- `Documentation validation`
 - `validate (22)`
 - `tarball smoke (ubuntu-latest)`
 - `dependency-review`
@@ -101,7 +101,7 @@ node scripts/ci-classify.mjs --all --json
 ```
 
 Documentation-only pull requests use quick core validation plus the
-documentation/diagram path; the Node 20 matrix steps do not install or run for
+documentation path; the Node 20 matrix steps do not install or run for
 docs-only changes. Runtime and package changes use Node 20 compatibility checks
 and four Node 24 unit shards wrapped by the coverage gate, followed by a
 coverage-only aggregation. Repository Index changes retain the native reusable

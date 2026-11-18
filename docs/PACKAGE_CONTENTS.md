@@ -89,9 +89,6 @@ The published tarball includes the following consumer-facing groups:
   subpath remains unexported.
   The lifecycle recovery surface includes the explicit `task-abandon` command;
   it releases validated claims without asserting completion or publication.
-  The typed diagram sources, generated HTML/SVG/receipt artifacts, and
-  source-bound review records under `docs/diagrams/` are included together so
-  the packaged documentation keeps its visual provenance.
 - **Release tooling:** the selected deterministic generators, validators,
   benchmark helpers, and shell completions needed by maintainers who consume
   the source kit.

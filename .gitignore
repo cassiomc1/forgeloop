@@ -10,7 +10,6 @@ package-dry-run.json
 .mcp-smoke-*/
 integrations/mcp/.core-tarball-*/
 *.forgeloop-tmp-*
-docs/assets/diagrams/.archify-*/
 benchmarks/execution-profiles/results/raw/scratch/
 benchmarks/execution-profiles/results/aggregate/scratch/
 .forgeloop/.txn/

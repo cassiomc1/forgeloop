@@ -78,9 +78,6 @@ integration and guide context. Use this map before editing documentation.
 | Artifact and phase schemas | [`schemas/`](./schemas/) and [`CONTRACT_COVERAGE.md`](./CONTRACT_COVERAGE.md) | Versioned machine-readable contract |
 | CLI/package behavior | [`src/`](./src/) and [`tests/`](./tests/) | Executable implementation and regression evidence |
 | Guide content | [`ENG/`](./ENG/) | Context-specific, English-only operational guides, including Flutter, .NET, Node.js, Rust, C, C++, Java, SQL, Go, TypeScript, PHP, Swift, and Python specialist guides; Python is documentation-only and is not yet selected automatically by the router; ASP.NET Core and ABP remain .NET overlays |
-| Diagram governance | [`docs/diagrams/manifest.json`](./docs/diagrams/manifest.json) | Authoritative taxonomy, renderer mapping, canonical purposes, artifact ownership, and references |
-| Diagram maintainer entrypoint | [`docs/diagrams/README.md`](./docs/diagrams/README.md) | Typed Archify source, animated HTML explorer, animated SVG fallback, review, and regeneration workflow |
-| Engineering flow diagram | [`docs/assets/diagrams/forgeloop-engineering-flow.html`](./docs/assets/diagrams/forgeloop-engineering-flow.html) | Conceptual lifecycle from request through validator-backed completion |
 | Verification Trust Flow | [`docs/REVISION_PROVIDERS.md`](./docs/REVISION_PROVIDERS.md#differential-verification-scope) | Claims, changed paths, trusted checker capability, exact argv, and observed evidence |
 | Code Attestation Chain | [`docs/CODE_ATTESTATION.md`](./docs/CODE_ATTESTATION.md#completion-flow) | Completion, exact-content manifest, in-toto statement, optional signing, and range coverage |
 | Real Execution Proof of Concept (PoC) | [`poc/README.md`](./poc/README.md) | Non-normative, reproducible public engineering workload, audit evidence, and technical audit. Normative behavior remains owned by [`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md). |
@@ -118,7 +115,6 @@ is historical evidence and is not part of the published core package.
 | **Understanding provider extensions** | [`docs/PROVIDER_ARCHITECTURE.md`](./docs/PROVIDER_ARCHITECTURE.md) → [`docs/PROVIDERS.md`](./docs/PROVIDERS.md) |
 | **Understanding verification trust** | [`docs/REVISION_PROVIDERS.md`](./docs/REVISION_PROVIDERS.md#differential-verification-scope) |
 | **Understanding attestation trust** | [`docs/CODE_ATTESTATION.md`](./docs/CODE_ATTESTATION.md#trust-levels) |
-| **Maintaining generated diagrams** | [`docs/diagrams/README.md`](./docs/diagrams/README.md) |
 | **Documentation contributor** | [`docs/DOCUMENTATION_GUIDE.md`](./docs/DOCUMENTATION_GUIDE.md) |
 | **Release maintainer (current)** | [`docs/RELEASE_CHECKLIST.md`](./docs/RELEASE_CHECKLIST.md) |
 | **Release maintainer (historical 1.5/MCP)** | [`docs/RELEASE_CHECKLIST_1_5_MCP.md`](./docs/RELEASE_CHECKLIST_1_5_MCP.md) |
@@ -148,7 +144,6 @@ is historical evidence and is not part of the published core package.
 - **Audit the npm package boundary**: [`docs/PACKAGE_CONTENTS.md`](./docs/PACKAGE_CONTENTS.md)
 - **Verify source-content attestations**: [`docs/CODE_ATTESTATION.md`](./docs/CODE_ATTESTATION.md)
 - **Understand narrow verification and checker binding**: [`docs/REVISION_PROVIDERS.md`](./docs/REVISION_PROVIDERS.md#differential-verification-scope)
-- **Inspect the governed diagrams**: [`docs/diagrams/README.md`](./docs/diagrams/README.md)
 - **Understand mandatory Jev semantics**: [`docs/SEMANTIC_DECISION_PLANE.md`](./docs/SEMANTIC_DECISION_PLANE.md)
 - **Understand model routing**: [`docs/MODEL_ROUTING.md`](./docs/MODEL_ROUTING.md)
 - **Review test utility and pruning safety**: [`docs/TEST_INTELLIGENCE.md`](./docs/TEST_INTELLIGENCE.md) and [`docs/TEST_PRUNING.md`](./docs/TEST_PRUNING.md)
@@ -180,8 +175,8 @@ process into adapters or README sections; link to the canonical source.
 ## Verification and release
 
 The Node regression suite, ESLint, c8, dependency policy, package boundary,
-attestation coverage, generated summaries/completions, and Archify diagram
-render are the local executable checks. Python validators remain
+attestation coverage, and generated summaries/completions are the local
+executable checks. Python validators remain
 frozen CI-only compatibility tools because they cover historical Markdown,
 loop, and secret-scanning contracts that have not been migrated to Node. Their
 scope, exact commands, and migration boundary are recorded in
@@ -197,12 +192,8 @@ and is not implied by local verification.
 
 ## Editing rules
 
-- Keep lifecycle prose, the typed Archify source, generated outputs, and the
-  text-only README fallback synchronized.
-- Keep the generated HTML, SVG, and receipt synchronized with the Archify
-  source by running `npm run docs:diagrams` and `npm run docs:check`. CI
-  validates the renderer pin, source fingerprint, artifact hashes, and SVG
-  safety constraints.
+- Keep lifecycle prose and the text-only README fallback synchronized, and
+  run `npm run docs:check` after documentation changes.
 - Preserve the distinction between implemented behavior, local evidence, and
   external publication or production state.
 - Run `npm run lint`, `npm run coverage`, `npm run pack:check`, and the Python

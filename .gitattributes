@@ -1,8 +1,6 @@
 # The frozen published-package fixture is hash-addressed; preserve its bytes on every host.
 tests/fixtures/legacy-0.1.6/** -text
 
-# The vendored Archify tree is verified byte-for-byte before renderer execution.
-vendor/archify/v2.15.0/archify/** -text
 
 # Generated documentation and protocol artifacts compare canonical bytes across hosts.
 *.md text eol=lf

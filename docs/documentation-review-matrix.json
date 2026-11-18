@@ -1,13 +1,8 @@
 {
   "version": 1,
-  "purpose": "Record the current repository-wide source-of-truth documentation review; diagramMigration preserves the historical Archify migration context.",
+  "purpose": "Record the current repository-wide source-of-truth documentation review; diagramMigration records that no Mermaid or generated diagram artifacts are active.",
   "diagramMigration": {
-    "activeMermaidArtifacts": [],
-    "canonicalSource": "docs/diagrams/forgeloop-engineering-flow.workflow.json",
-    "interactiveOutput": "docs/assets/diagrams/forgeloop-engineering-flow.html",
-    "staticOutput": "docs/assets/diagrams/forgeloop-engineering-flow.svg",
-    "receipt": "docs/assets/diagrams/forgeloop-engineering-flow.receipt.json",
-    "textFallback": "README.md#architecture-flow"
+    "activeMermaidArtifacts": []
   },
   "documents": [
     {
@@ -397,20 +392,6 @@
       ],
       "canonicalSources": [
         "docs/DOCUMENTATION_GUIDE.md"
-      ],
-      "origin": "handwritten",
-      "currency": "current",
-      "packageInclusion": "npm"
-    },
-    {
-      "path": "docs/diagrams/README.md",
-      "status": "reviewed",
-      "action": "updated",
-      "sourceOfTruth": [
-        "docs/diagrams/README.md"
-      ],
-      "canonicalSources": [
-        "docs/diagrams/README.md"
       ],
       "origin": "handwritten",
       "currency": "current",

@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { checkRcRelease } from "./check-rc-release.mjs";
 import { usesBoundedRcVerification } from "./check-release-channel.mjs";
 
-const DOCS_SCRIPT_PATH = /^scripts\/(?:check-documentation|generate-documentation|documentation-diagram|generate_documentation_reference|validate_documentation|run-docs-check|validate_markdown|CI_VALIDATORS)/u;
+const DOCS_SCRIPT_PATH = /^scripts\/(?:generate_documentation_reference|validate_documentation|run-docs-check|validate_markdown|CI_VALIDATORS)/u;
 const SKILL_GENERATOR_PATH = /^scripts\/generate-forgeloop-skill\.mjs$/u;
 const DOCS_PATHS = [
   /\.(?:md|markdown)$/u,

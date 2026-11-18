@@ -433,46 +433,18 @@ See [`docs/CLI_REFERENCE.md`](./docs/CLI_REFERENCE.md) and [`LOOP_SYSTEM_DESIGN.
 
 ## Architecture flow
 
-<a href="./docs/assets/diagrams/forgeloop-engineering-flow.html">
-  <img src="./docs/assets/forgeloop-lifecycle-animated.svg" alt="Animated ForgeLoop evidence-first loop: Contract, Route, Preflight, Execute, Evidence, Review, VALID, with an evidence-only correction loop" width="100%">
-</a>
+<img src="./docs/assets/forgeloop-lifecycle-animated.svg" alt="Animated ForgeLoop evidence-first loop: Contract, Route, Preflight, Execute, Evidence, Review, VALID, with an evidence-only correction loop" width="100%">
 
 *Animation: the rail pulses through each step in order. It loops forever and
-respects reduced-motion settings. Select the image to open the full animated
-interactive explorer.*
+respects reduced-motion settings.*
 
-The canonical source is the typed Archify workflow
-[`docs/diagrams/forgeloop-engineering-flow.workflow.json`](./docs/diagrams/forgeloop-engineering-flow.workflow.json).
-The committed animated interactive explorer is
-[`docs/assets/diagrams/forgeloop-engineering-flow.html`](./docs/assets/diagrams/forgeloop-engineering-flow.html),
-which traces it. The
-detailed, self-contained SVG fallback is
-[`docs/assets/diagrams/forgeloop-engineering-flow.svg`](./docs/assets/diagrams/forgeloop-engineering-flow.svg),
-and the deterministic hash receipt is
-[`docs/assets/diagrams/forgeloop-engineering-flow.receipt.json`](./docs/assets/diagrams/forgeloop-engineering-flow.receipt.json).
-The governance source is [`docs/diagrams/manifest.json`](./docs/diagrams/manifest.json),
-and the source-bound visual approval is kept in
-[`docs/diagrams/reviews/forgeloop-engineering-flow.review.json`](./docs/diagrams/reviews/forgeloop-engineering-flow.review.json).
 The broader architecture and the CLI-only search boundary are in
 [`LOOP_SYSTEM_DESIGN.md`](./LOOP_SYSTEM_DESIGN.md) and
 [`PERSISTENT_SEARCH_TRANSPORT.md`](./docs/PERSISTENT_SEARCH_TRANSPORT.md).
-
-[Open the animated ForgeLoop evidence-first engineering flow](./docs/assets/diagrams/forgeloop-engineering-flow.html)
-
-Two focused, source-bound workflow
-diagrams complement it. The [Verification Trust Flow source](./docs/diagrams/forgeloop-verification-trust-flow.workflow.json),
-[animated explorer](./docs/assets/diagrams/forgeloop-verification-trust-flow.html),
-[SVG fallback](./docs/assets/diagrams/forgeloop-verification-trust-flow.svg),
-[receipt](./docs/assets/diagrams/forgeloop-verification-trust-flow.receipt.json),
-and [visual review](./docs/diagrams/reviews/forgeloop-verification-trust-flow.review.json)
-show fail-closed verification. The [Code Attestation Chain
-source](./docs/diagrams/forgeloop-code-attestation-flow.workflow.json),
-[animated explorer](./docs/assets/diagrams/forgeloop-code-attestation-flow.html),
-[SVG fallback](./docs/assets/diagrams/forgeloop-code-attestation-flow.svg),
-[receipt](./docs/assets/diagrams/forgeloop-code-attestation-flow.receipt.json),
-and [visual review](./docs/diagrams/reviews/forgeloop-code-attestation-flow.review.json)
-show exact content binding, optional signing, and separate revision-range
-coverage.
+Fail-closed verification is described in
+[`docs/REVISION_PROVIDERS.md`](./docs/REVISION_PROVIDERS.md#differential-verification-scope).
+Exact content binding, optional signing and revision-range coverage are
+described in [`docs/CODE_ATTESTATION.md`](./docs/CODE_ATTESTATION.md#completion-flow).
 
 Text-only fallback: discovery creates the contract and route; parsed project
 manifests/build metadata select the corresponding language specialist; owned
@@ -538,8 +510,7 @@ Install-capable verification requires trusted host authority; see
 [`THREAT_MODEL.md`](./THREAT_MODEL.md).
 
 c8, ESLint, TypeScript, and YAML remain development-only. The dependency
-policy rejects unapproved runtime or development dependencies. Archify is
-vendored at `vendor/archify/v2.15.0/` rather than installed as a package.
+policy rejects unapproved runtime or development dependencies.
 
 To report vulnerabilities or contribute changes, see
 [`SECURITY.md`](./SECURITY.md) and [`CONTRIBUTING.md`](./CONTRIBUTING.md).
@@ -609,7 +580,6 @@ npm run lint
 npm run coverage
 npm run pack:check
 npm run dependency:policy
-npm run docs:diagrams
 npm run docs:check
 npm run completions:check
 npm run summary:check
@@ -622,9 +592,7 @@ npm run changelog:check
 src/                    npm CLI and protocol implementation
 schemas/                versioned artifact schemas
 ENG/                    package-source engineering guides
-docs/diagrams/          typed Archify diagram source and inventory
-docs/assets/diagrams/   committed HTML, SVG, and generation receipt
-scripts/                checks, renderer, release identity, CI notes
+scripts/                checks, release identity, CI notes
 tests/                  Node and Python regression coverage
 .forgeloop/             project-scoped configuration
 .forgeloop/task-state/  isolated live task protocol state

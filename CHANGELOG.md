@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- Remove the Archify diagrams. This deletes the vendored renderer
+  (`vendor/archify`), the diagram sources (`docs/diagrams`) and outputs
+  (`docs/assets/diagrams`), and the generation and check scripts, tests and
+  `docs:diagrams*` npm scripts. The diagrams are no longer in the package.
+  - The flows stay described in prose in `LOOP_SYSTEM_DESIGN.md`,
+    `docs/REVISION_PROVIDERS.md` and `docs/CODE_ATTESTATION.md`.
+  - The PR documentation job is renamed from `Verify generated Archify
+    diagram` to `Documentation validation`, and the required context is
+    renamed with it.
 - Add `npm run test:landmines`, a dependency-free check in the fast, local
   and pre-push tiers. It is modelled on `interfere-inc/landmines` and fails on
   new behaviour-replacing mocks, fixed sleeps, retries and raised per-test

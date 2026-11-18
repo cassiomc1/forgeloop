@@ -387,9 +387,8 @@ in a revision range are covered. These relationships are intentionally not
 interchangeable.
 
 The [Verification Trust Flow](./docs/REVISION_PROVIDERS.md#differential-verification-scope)
-(`docs/diagrams/forgeloop-verification-trust-flow.workflow.json`) and [Code
-Attestation Chain](./docs/CODE_ATTESTATION.md#completion-flow) diagrams provide
-the focused visual fallbacks for these two boundaries.
+and the [Code Attestation Chain](./docs/CODE_ATTESTATION.md#completion-flow)
+describe these two boundaries in detail.
 
 ## Precedence and conflicts
 

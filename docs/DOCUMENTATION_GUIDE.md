@@ -14,7 +14,6 @@ ForgeLoop strictly separates normative protocol definitions from operational doc
 | **Operational & Reference** | `docs/` (`GETTING_STARTED.md`, `CROSS_HARNESS_CONTINUITY.md`, `CLI_REFERENCE.md`, `ARTIFACT_REFERENCE.md`, `TROUBLESHOOTING.md`, `RECIPES.md`, `REPOSITORY_INDEX.md`, `PERSISTENT_SEARCH_TRANSPORT.md`) | Tutorials, command reference, handoff workflows, repository search, transport behavior, and troubleshooting | Explains how to operate the system. Links to normative sources for formal specifications. |
 | **Domain Engineering** | `ENG/` (`clean-code-eng.md`, `design-code-eng.md`, `test-code-eng.md`, etc.) | Domain-specific implementation and quality standards | Frontmatter must adhere to `validate_loop_system.py` standards. |
 | **Consumer Documentation Quality** | [`ENG/documentation-quality-eng.md`](../ENG/documentation-quality-eng.md) | Quality standards for documentation work in projects using ForgeLoop | Governs client/consumer project documentation tasks via guide routing. |
-| **Visual Architecture** | `docs/diagrams/manifest.json` + the three typed workflow sources under `docs/diagrams/` | Governance metadata and canonical typed Archify workflow sources | Animated HTML explorers, animated SVG fallbacks, deterministic receipts, and source-bound human reviews are committed under `docs/assets/diagrams/` and `docs/diagrams/reviews/`. |
 | **Documentation Index** | `DOCS_INDEX.md` | Single repository index and ownership map | Updated whenever documentation structure changes. |
 
 ---
@@ -78,8 +77,7 @@ either consolidated into a canonical document and deleted or moved to the
 history index with their current owner links.
 
 Repository and npm decisions are separate. GitHub may retain reproducible
-benchmarks, PoC evidence, source-bound diagram artifacts, vendored renderer
-sources, and historical records that consumers do not need. The npm package
+benchmarks, PoC evidence, and historical records that consumers do not need. The npm package
 ships only intentional runtime, integration, legal, harness, and canonical user
 documentation surfaces. `npm run repository:hygiene` enforces explicit root,
 tracked-state, visual-ownership, benchmark-run-set, and scratch-output policy;
@@ -119,7 +117,6 @@ documentation validation (.github/workflows/docs.yml) and the PR aggregator
 | **CLI Command Options** | `CLI_COMMAND_DEFINITIONS` (`src/core/cli-command-definitions.js`) | `docs/CLI_REFERENCE.md` | `<!-- BEGIN FORGELOOP GENERATED: cli:<command>:options -->` |
 | **Work-State Transitions** | `WORK_PHASES` / `WORK_TRANSITIONS` (`src/core/protocol.js`) | `ORCHESTRATOR_INTEGRATION.md` | `<!-- BEGIN FORGELOOP GENERATED: work-transitions -->` |
 | **Public Error Codes** | `PUBLIC_ERROR_CODES` (`src/core/error-codes.js`) | `docs/TROUBLESHOOTING.md` | `<!-- BEGIN FORGELOOP GENERATED: public-error-codes -->` |
-| **Architecture and trust diagrams** | `docs/diagrams/manifest.json` + typed workflow sources | Generated HTML/SVG/receipt/review files for Engineering Flow, Verification Trust Flow, and Code Attestation Chain | Verified via the pinned Archify renderer, trace-animation and reduced-motion markers, source/SVG fingerprints, artifact hashes, persistent review, and composition checks |
 
 ### Maintenance Workflow
 
@@ -132,7 +129,7 @@ npm run docs:generate
 # 2. Run the test suite (includes parser parity and unit tests)
 npm test
 
-# 3. Verify freshness, diagram fingerprints, and semantic conformance
+# 3. Verify freshness and semantic conformance
 npm run docs:check
 ```
 
@@ -159,7 +156,6 @@ conformance checks detect omissions.
 | **Package-shipped docs and runtime** | `package.json` (`files`) + `docs/PACKAGE_CONTENTS.md` | `tests/package.test.js` + `scripts/package_smoke.mjs` |
 | **Repository Index contract** | `src/repository-index/*`, `src/core/cli-command-definitions.js`, `src/integration.js` | Repository Index unit/native tests + `scripts/verify-tgrep-manifest.mjs` |
 | **Persistent CLI search transport** | `src/persistent-transport/*`, `src/commands/repository-index.js`, `src/repository-index/search.js` | Persistent transport unit/native tests + Repository Index integration tests |
-| **Architecture and trust diagrams** | `docs/diagrams/manifest.json` plus each typed workflow source | `scripts/check-documentation-diagrams.mjs` and `scripts/documentation-diagram-inventory.mjs` |
 
 ---
 
@@ -214,30 +210,21 @@ migration, or security-sensitive require `npm run docs:check` before merge.
 
 ---
 
-## 7. Archify Diagrams and Animated SVG Generation
+## 7. Diagrams
 
-1. **Typed source is canonical**: The Engineering Flow, Verification Trust Flow, and Code Attestation Chain are authored in Archify workflow IR under `docs/diagrams/`; the high-level source is `docs/diagrams/forgeloop-engineering-flow.workflow.json`. Never modify generated HTML, SVG, or receipt files directly.
-2. **Pinned local renderer**: Generation uses only the vendored Archify v2.15.0 source at the reviewed commit recorded in `docs/diagrams/manifest.json` and `vendor/archify/v2.15.0/PIN.json`.
-3. **Animated committed outputs**: Every active source uses `meta.animation: "trace"`. Each interactive HTML is the primary animated explorer, and each self-contained SVG fallback carries trace-capable edge/node animation while remaining usable in repository previews. Deterministic receipts are committed under `docs/assets/diagrams/`.
-4. **GitHub-safe SVG**: The SVG must not embed `<script>` or `<foreignObject>`, must expose accessible title/description metadata, and must remain visible through standard Markdown image syntax.
-5. **Fingerprint and review verification**: The generated SVG embeds a `data-forgeloop-source-sha256` attribute, the outputs expose trace markers, and the receipt binds the source, HTML, and SVG hashes. The review at `docs/diagrams/reviews/` binds the current source and SVG hashes as a review assertion and is never generated or overwritten; the checker does not independently authenticate the reviewer. Run `npm run docs:diagrams:check` before review.
-6. **Scoped wrapper**: The ForgeLoop Archify wrapper is intentionally documentation-scoped. It reads canonical inputs only from `docs/diagrams/` and permits deliver outputs only under `docs/assets/diagrams/`.
-
-ForgeLoop governs five documentation-diagram categories: workflow,
-architecture, sequence, dataflow, and lifecycle. The active repository set has
-three canonical workflow diagrams: the Engineering Flow, Verification Trust
-Flow, and Code Attestation Chain. The pinned wrapper currently maps only
-`workflow`; governance support does not imply renderer support, so a new type
-requires an explicit mapping and tests before activation.
+The repository does not generate diagrams. Lifecycle, verification-trust and
+attestation flows are described in prose in their canonical documents
+(`LOOP_SYSTEM_DESIGN.md`, `docs/REVISION_PROVIDERS.md` and
+`docs/CODE_ATTESTATION.md`). The only visuals are the README assets listed
+below.
 
 ---
 
 ## 8. README Hero and Package Boundary
 
 README hero assets are branding/conceptual architecture illustrations. They are
-not the canonical protocol diagram. The typed Archify workflow under
-`docs/diagrams/` remains the canonical lifecycle architecture source, with
-generated outputs under `docs/assets/diagrams/`; the CLI-only persistent search
+not a canonical protocol diagram. The lifecycle architecture is defined in
+prose by `LOOP_SYSTEM_DESIGN.md`; the CLI-only persistent search
 transport is explained by `docs/PERSISTENT_SEARCH_TRANSPORT.md`. The current
 repository-only assets are `docs/assets/forgeloop-architecture.png`, the
 alternate [architecture SVG](./assets/forgeloop-architecture.svg), and
@@ -256,11 +243,6 @@ The README hero is intentionally GitHub-repository-only:
 - If a portable hero is ever shipped, any relative README asset referenced by
   packaged Markdown must be present in the package and covered by
   `tests/package.test.js`.
-
-Never edit or delete a generated diagram output independently of its source;
-regenerate all declared outputs from the typed workflow sources and keep each
-receipt and human-owned review binding in sync. Every diagram must also have a
-concise text fallback in the canonical document named by its manifest.
 
 ---
 
