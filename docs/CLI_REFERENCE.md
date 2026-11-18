@@ -187,6 +187,8 @@ only with `--replace-active`. Requires `--writers-quiesced`.
 - `--remote <url>`: sync endpoint (default: https://forgeloop.monster/api/sync)
 - `--repo <owner/name>`: repository the snapshot belongs to (default: from the git origin)
 - `--replace-active`: replace existing local state; the outgoing state is retained and archived
+- `--merge`: combine whole tasks three-way with local state instead of replacing it
+- `--dry-run`: with --merge, report the per-task plan without changing anything
 - `--writers-quiesced`: assert that all writers have been externally stopped
 - `--json`: emit the pull and restore result as JSON
 
@@ -384,7 +386,7 @@ error codes. Default output and default JSON remain unchanged.
 | **workspace** | [`workspace-bind`](#workspace-bind), [`workspace-status`](#workspace-status) |
 | **task** | [`handoff-accept`](#handoff-accept) |
 | **scope** | [`responsibility-set`](#responsibility-set), [`responsibility-status`](#responsibility-status) |
-| **attestation** | [`attestation-create`](#attestation-create), [`attestation-verify`](#attestation-verify), [`attestation-status`](#attestation-status), [`evidence-export`](#evidence-export), [`evidence-verify`](#evidence-verify), [`attestation-verify-range`](#attestation-verify-range) |
+| **attestation** | [`attestation-create`](#attestation-create), [`attestation-verify`](#attestation-verify), [`attestation-status`](#attestation-status), [`evidence-export`](#evidence-export), [`evidence-publish`](#evidence-publish), [`evidence-verify`](#evidence-verify), [`attestation-verify-range`](#attestation-verify-range) |
 
 <!-- END FORGELOOP GENERATED: cli-command-index -->
 
@@ -824,6 +826,27 @@ to commit with the change. See [`EVIDENCE_BUNDLES.md`](./EVIDENCE_BUNDLES.md).
 - `--json`: emit the export result as JSON
 
 <!-- END FORGELOOP GENERATED: cli:evidence-export:options -->
+
+### `evidence-publish`
+
+Opt-in. Uploads redacted evidence bundles to the team dashboard (default
+`https://forgeloop.monster/api/evidence`), authenticated by
+`FORGELOOP_SYNC_TOKEN`. Bundles wait in an offline queue under the user
+config directory until the remote accepts them, and every run retries the
+queue. Exits `1` while anything stays queued or was rejected. See
+[`EVIDENCE_BUNDLES.md`](./EVIDENCE_BUNDLES.md).
+
+<!-- BEGIN FORGELOOP GENERATED: cli:evidence-publish:options -->
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: publish this task's exported bundle
+- `--all`: publish every bundle in the evidence directory
+- `--dir <path>`: tracked evidence directory (default: .forgeloop-evidence)
+- `--remote <url>`: evidence endpoint (default: https://forgeloop.monster/api/evidence)
+- `--repo <owner/name>`: repository the bundles belong to (default: from the git origin)
+- `--json`: emit the publish result as JSON
+
+<!-- END FORGELOOP GENERATED: cli:evidence-publish:options -->
 
 ### `evidence-verify`
 

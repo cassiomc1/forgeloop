@@ -26,6 +26,9 @@ sync.
 - Ledgers are never merged. When two machines change the same project, the
   later push is refused with `E_SYNC_CONFLICT` instead of overwriting the other
   machine's work.
+- `sync-pull --merge` combines whole tasks from both machines instead of
+  replacing local state. A task is never merged internally; see
+  [Merging](#merging).
 
 ## Configuration
 
@@ -58,6 +61,44 @@ config dir is `$XDG_CONFIG_HOME` or `~/.config`.
 
 `--replace-active` retains and archives the outgoing local state before
 activation, as `storage-restore --replace-active` does.
+
+## Merging
+
+When both machines did work, `--replace-active` would drop the local tasks.
+Merge instead:
+
+```bash
+forgeloop sync-pull --merge --dry-run            # show the per-task plan
+forgeloop sync-pull --merge --writers-quiesced   # apply it
+forgeloop sync-push                              # publish the merged state
+```
+
+Each push and pull also records a digest of every task: all of its rows,
+with attachments bound by their SHA-256. This record is the base of the next
+merge. Each task is then classified on its own:
+
+| Local vs. base | Remote vs. base | Result |
+| --- | --- | --- |
+| unchanged | changed or new | **take** the remote task |
+| changed or new | unchanged or absent | **keep** the local task |
+| equal to remote | equal to local | same |
+| changed | changed | **conflict** |
+
+- **Conflicts:** a conflict fails the merge with `E_SYNC_MERGE_CONFLICT` and
+  changes nothing. Finish the task on one machine and sync it first, or adopt
+  the remote state with `--replace-active`.
+- **No recorded base** (state from 2.2.0, or a first merge): only tasks that
+  exist on one side or are identical merge.
+- **Deletions:** a task missing on one side is kept, never deleted.
+- **Claims:** active claims of taken tasks must not overlap active claims of
+  kept tasks; an overlap is a conflict.
+- **Activation:** the merged state is built offline from a local backup and
+  the remote's tasks, copied row for row. Each task's ledger is its own hash
+  chain, so no history is rewritten. The result is sealed and verified as a
+  canonical storage backup, then activated through the same retained
+  `--replace-active` restore. The live database is never written directly.
+- **After merging:** the next push is conditional on the remote version that
+  was merged.
 
 ## Security model
 
@@ -97,3 +138,4 @@ hashes, each scoped to a list of repositories.
 | `E_SYNC_REMOTE` | The remote is unreachable, has no snapshot, or refused the request. |
 | `E_SYNC_SNAPSHOT_INVALID` | The snapshot cannot be decrypted or failed integrity checks. |
 | `E_SYNC_TOO_LARGE` | The encrypted snapshot exceeds 4 MiB. |
+| `E_SYNC_MERGE_CONFLICT` | `--merge` found tasks changed on both machines, or overlapping active claims; nothing changed. |

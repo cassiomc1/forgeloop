@@ -4,6 +4,7 @@ import path from "node:path";
 
 import { readSyncCredentials, readSyncState, strongEtag, remoteError, resolveRemote, resolveRepository, syncRequest, writeSyncState } from "../core/sync/remote.js";
 import { packDirectory, sealSnapshot } from "../core/sync/snapshot.js";
+import { readDatabaseDigests } from "../core/sync/merge.js";
 import { runStorageBackup } from "./storage-backup.js";
 
 // Uploads an encrypted, attachment-inclusive backup of this project's ForgeLoop
@@ -16,8 +17,10 @@ export async function runSyncPush({ target, packageRoot, remote, repository, env
   const staging = path.join(".forgeloop", `sync-staging-${randomUUID()}`);
   let body;
   let files;
+  let tasks;
   try {
     await runStorageBackup({ target, destination: staging, includeAttachments: true });
+    tasks = readDatabaseDigests(path.join(target, staging, "state.sqlite"));
     const payload = await packDirectory(path.join(target, staging));
     files = payload.files.length;
     const version = packageRoot ? JSON.parse(await readFile(path.join(packageRoot, "package.json"), "utf8")).version ?? null : null;
@@ -33,7 +36,7 @@ export async function runSyncPush({ target, packageRoot, remote, repository, env
   if (!response.ok) throw await remoteError(response);
   const result = await response.json().catch(() => ({}));
   const etag = strongEtag(typeof result.etag === "string" ? result.etag : response.headers.get("etag"));
-  if (etag) await writeSyncState(target, { remote: resolvedRemote, repository: resolvedRepository, etag, direction: "push", at: new Date().toISOString() }, { env });
+  if (etag) await writeSyncState(target, { remote: resolvedRemote, repository: resolvedRepository, etag, direction: "push", at: new Date().toISOString(), tasks }, { env });
   return { status: "PUSHED", repository: resolvedRepository, remote: resolvedRemote, etag, files, bytes: body.length, firstPush: previous === null };
 }
 
