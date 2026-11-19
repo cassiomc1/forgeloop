@@ -258,7 +258,7 @@ test("concurrent quality evaluations allocate unique attempts under the task loc
   }
 });
 
-test("native SQLite concurrent quality evaluations preserve attempt allocation and checks", { timeout: 60_000 }, async () => {
+test("native SQLite concurrent quality evaluations preserve attempt allocation and checks", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-structural-native-concurrent-"));
   const selectedTaskId = `${taskId}-native-concurrent`;
   try {

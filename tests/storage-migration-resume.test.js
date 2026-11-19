@@ -11,7 +11,7 @@ import { readMaintenanceOwner } from "../src/storage/maintenance-owner.js";
 import { executeForgeLoopCommand } from "../src/core/command-runtime.js";
 
 for (const phase of ["CAPTURING", "PARTIAL_SOURCE", "CAPTURED", "PREPARING", "PARTIAL_CANDIDATE_MOVE", "PREPARED", "EMPTY_STAGE", "STAGING", "STAGED", "PARTIAL_ARCHIVING", "ARCHIVED", "DATABASE_PENDING_MARKER", "ACTIVE_PENDING_JOURNAL", "PUBLISHED"]) {
-  test(`killed ${phase} owner resumes verified cutover without rewinding accepted state`, { timeout: 60000 }, async () => {
+  test(`killed ${phase} owner resumes verified cutover without rewinding accepted state`, async () => {
     const target = await buildDiagnosisProject({ legacy: true });
     let worker;
     try {

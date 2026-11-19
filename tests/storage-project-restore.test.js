@@ -113,7 +113,7 @@ test("restore rejects schema-invalid canonical evidence before marker activation
   } finally { db.close(); await removeTempTree(original); await removeTempTree(target); }
 });
 
-for (const checkpoint of ["PARTIAL", "MISSING", "RETAINING", "RETAINED", "REBUILD", "REBUILD_CONFLICT", "PREPARING", "PREPARING_CHANGED", "READY", "PENDING", "OBJECT", "DATABASE", "ACTIVE_MARKER", "UNBOUND", "CHANGED_DATABASE", "TERMINAL_CHANGED"]) test(`${checkpoint} restore reconciles owned SIGKILL and refuses live-owner adoption`, { timeout: 60000 }, async () => {
+for (const checkpoint of ["PARTIAL", "MISSING", "RETAINING", "RETAINED", "REBUILD", "REBUILD_CONFLICT", "PREPARING", "PREPARING_CHANGED", "READY", "PENDING", "OBJECT", "DATABASE", "ACTIVE_MARKER", "UNBOUND", "CHANGED_DATABASE", "TERMINAL_CHANGED"]) test(`${checkpoint} restore reconciles owned SIGKILL and refuses live-owner adoption`, async () => {
   const original = await buildDiagnosisProject({ legacy: true });
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-killed-restore-"));
   const { db } = await importProjectState(original, path.join(original, "source.sqlite"));

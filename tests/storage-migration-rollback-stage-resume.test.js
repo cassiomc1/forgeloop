@@ -8,7 +8,7 @@ import path from "node:path";
 import { buildDiagnosisProject } from "./helpers/storage-fixtures.js";
 import { resumeMigrationSourceRollbackStage } from "../src/storage/migration-rollback-source-stage.js";
 import { BINARY_SOURCE_BYTES } from "./helpers/storage-binary-source-fixture.js";
-for(const mode of ["READY","PREPARING_COMPLETE","PREPARING_PARTIAL","PREPARING_MISSING","PREPARING_BINARY","READY_TAMPER","UNRECORDED","OWNER_TAMPER"])test(`dead rollback source stage ${mode} recovers only bound bytes`,{timeout:60000},async()=>{
+for(const mode of ["READY","PREPARING_COMPLETE","PREPARING_PARTIAL","PREPARING_MISSING","PREPARING_BINARY","READY_TAMPER","UNRECORDED","OWNER_TAMPER"])test(`dead rollback source stage ${mode} recovers only bound bytes`, async()=>{
  const target=await buildDiagnosisProject({legacy:true});let worker;
  try{
   worker=fork(new URL("./helpers/storage-rollback-stage-worker.mjs",import.meta.url),[target,mode],{silent:true});

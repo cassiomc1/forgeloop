@@ -44,7 +44,7 @@ for (const mode of ["unchanged","new-task","orphan-bytes","altered-source","reta
  });
 }
 
-test("source rollback admission refuses an independent busy writer without changing authority",{timeout:60000},async()=>{
+test("source rollback admission refuses an independent busy writer without changing authority", async()=>{
  const { fork }=await import("node:child_process");
  const { once }=await import("node:events");
  const target=await buildDiagnosisProject({legacy:true});

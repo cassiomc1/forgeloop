@@ -83,7 +83,7 @@ for (const failure of ["missing", "corrupt", "unrecorded"]) {
 }
 
 for (const checkpoint of ["MARKER", "ATTACHMENTS", "DATABASE", "ARCHIVED"]) {
-  test(`replacement resumes actual SIGKILL after ${checkpoint} while refusing live-owner adoption`, { timeout: 60000 }, async () => {
+  test(`replacement resumes actual SIGKILL after ${checkpoint} while refusing live-owner adoption`, async () => {
     const fixture = await buildActiveReplacementFixture();
     let worker;
     try {

@@ -58,7 +58,7 @@ async function killWorker(worker) {
 }
 
 for (const checkpoint of ["OWNER", "INTENT", "OUTGOING_OWNER", "OUTGOING_RETAINING", "OUTGOING_RENAMED", "OUTGOING_RETAINED", "REBUILD_BASELINE", "REBUILD_ALLOCATED"]) {
-  test(`replacement reconciles SIGKILL between adoption records at ${checkpoint}`, { timeout: 60000 }, async () => {
+  test(`replacement reconciles SIGKILL between adoption records at ${checkpoint}`, async () => {
     const fixture = await buildActiveReplacementFixture();
     let worker;
     const start = async (url, args) => {
@@ -94,7 +94,7 @@ for (const checkpoint of ["OWNER", "INTENT", "OUTGOING_OWNER", "OUTGOING_RETAINI
 }
 
 for (const checkpoint of ["PREPARING", "OUTGOING_BASELINE", "OUTGOING_ALLOCATED", "OUTGOING_PREPARING", "PARTIAL_OUTGOING", "OUTGOING_READY", "PARTIAL_SNAPSHOT", "READY", "PUBLICATION_READY"]) {
-  test(`initial replacement resumes SIGKILL at ${checkpoint}`, { timeout: 60000 }, async () => {
+  test(`initial replacement resumes SIGKILL at ${checkpoint}`, async () => {
     const fixture = await buildActiveReplacementFixture();
     let worker;
     try {

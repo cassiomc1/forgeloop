@@ -1,0 +1,285 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "landmines-runner-timeout",
+  "forgeloopVersion": "2.3.1",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:landmines-runner-timeout\",\n      \"digest\": {\n        \"sha256\": \"278be86f590e8a42bef3ae27d8ccbe268c43b9e58e20ed76ddbfeace91d29c1b\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"landmines-runner-timeout\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"208d6a14c9ebaebdb4bfb1f34512cb9b47d0051b01601ad0cf9766aedd66a538\",\n      \"contentDigest\": \"278be86f590e8a42bef3ae27d8ccbe268c43b9e58e20ed76ddbfeace91d29c1b\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"ENG/test-code-eng.md\",\n        \"scripts/test-landmines-allowlist.json\",\n        \"scripts/test-selection.mjs\",\n        \"tests/provider-architecture.test.js\",\n        \"tests/storage-legacy-signature.test.js\",\n        \"tests/storage-migration-resume.test.js\",\n        \"tests/storage-migration-rollback-admission.test.js\",\n        \"tests/storage-migration-rollback-publication-resume.test.js\",\n        \"tests/storage-migration-rollback-ready-resume.test.js\",\n        \"tests/storage-migration-rollback-stage-resume.test.js\",\n        \"tests/storage-project-restore.test.js\",\n        \"tests/storage-replacement-archive.test.js\",\n        \"tests/storage-replacement-preparation.test.js\",\n        \"tests/storage-replacement-publication.test.js\",\n        \"tests/structural-quality-lifecycle.test.js\",\n        \"tests/test-selection.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"5b40d22ffbc2d23b95615c72dc46f701d6ec65e4949fd450ddca290079ca83d6\",\n      \"routeFingerprint\": \"617533b974b0129eb371134a7b9f7b4d18154817072c1b814b79b4475f6db4f8\",\n      \"stateFingerprint\": \"5d9e95010773b66eabad04e36df3fe2753c3a5fa7d8eb8cd7ed944556db9dda1\",\n      \"receiptFingerprint\": \"afad6fc70fd6d2b77446a09784957317ca1b8695b9431d1a088e3f0ca261e710\",\n      \"ledgerSeq\": 40,\n      \"ledgerHash\": \"84620f44390a382349d34165aefde8547633a639c072d9ccf381f29be4761490\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "landmines-runner-timeout",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "87a4d46da19ac93d1688072c0ce70a794d2afedd",
+      "observedRevision": "87a4d46da19ac93d1688072c0ce70a794d2afedd",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/landmines-runner-timeout",
+        "head": "87a4d46da19ac93d1688072c0ce70a794d2afedd"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "5b40d22ffbc2d23b95615c72dc46f701d6ec65e4949fd450ddca290079ca83d6",
+      "routeFingerprint": "617533b974b0129eb371134a7b9f7b4d18154817072c1b814b79b4475f6db4f8",
+      "stateFingerprint": "5d9e95010773b66eabad04e36df3fe2753c3a5fa7d8eb8cd7ed944556db9dda1",
+      "receiptFingerprint": "afad6fc70fd6d2b77446a09784957317ca1b8695b9431d1a088e3f0ca261e710",
+      "ledgerSeq": 40,
+      "ledgerHash": "84620f44390a382349d34165aefde8547633a639c072d9ccf381f29be4761490"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "314b33e58285ae36deb360bdfe83097a55f62f279fab67d1efe4c7349ab43065",
+        "providerContentId": "e0f73660c6cf8f64c415809bdb3030dc48389d4d",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "ENG/test-code-eng.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "81fc289d79bd1bac8d87f37086f5877e6b48093c0f861d1e38735211176b7887",
+        "providerContentId": "8d8dc7f0d3c0e1d48f4257aa4a88ea8b58e18c72",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/test-landmines-allowlist.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "31ad13c6e5a8f4f64fa02c156838244ad7d731595bcd87f5510cd5491a123305",
+        "providerContentId": "86c8456607fcf13df5fdee606d790a0a09ba8800",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/test-selection.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "c817a74e9d09410d879c72e1bd7dec589ee053ef3fe110f4ec61f8a2c2679984",
+        "providerContentId": "f96c664bb932b83ffd9e1d8897f841cbca83dd9e",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/provider-architecture.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "2d71ea352d854f946f2b93ec7c84b8df38a1ef3eee9a7c11a973659ba8b0eab9",
+        "providerContentId": "5549564ef24910b8ae22ac6c8450e40770294a11",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/storage-legacy-signature.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "a6bcc104ae931d3b6d672d52d63493bcb2d19a2c3917e0c5f45daeb67fa077b0",
+        "providerContentId": "735fdbda88d6ef7e49b506efefbd8ed6b035544f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/storage-migration-resume.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "866b34e59ff3c33b749481d06431659d6ecc0fadba7b752caea6d6b56ac54b4c",
+        "providerContentId": "f425488a074b9f60a0a9351c22d6d1ba673cf266",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/storage-migration-rollback-admission.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "fcb8bbdc388a678177778cb3a46d31e001bcd203eb4b235387418a1d8f8d0209",
+        "providerContentId": "3ea0c5bd75edec6a76310a19d98755dad6689eaf",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/storage-migration-rollback-publication-resume.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "29a82a5354da742c35a3f46ad319b069a2ce5e0c959df975c194ebca34f436fa",
+        "providerContentId": "911595bea04a16d241fd83ea6d1813eeea12494b",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/storage-migration-rollback-ready-resume.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "08cfc904e3cfc551080aaf9278cc82b01d553bab99fb905d5cd49033414e9632",
+        "providerContentId": "f0d8c9425bfa11fe00b22f128e4ddbfefd928764",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/storage-migration-rollback-stage-resume.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "eaa2d94234c2ddd8a02f7324f7918c9fea5e05eed6852d604cfb566a40792c7c",
+        "providerContentId": "8bfea70f69377619405154dcf3377c5be7a836a1",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/storage-project-restore.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "e67d79abc16b8157df71d051a44e5b7f0f995698e7109385475a7b827c59e6a5",
+        "providerContentId": "efd659f8cae18908e24a4e17011b9ecb5f42775c",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/storage-replacement-archive.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "f7990c02141f21c302a1b6082dd99b34c19cfdab41a78fd5d33c0e4ac1c9c87f",
+        "providerContentId": "2e9ba8e541b1cd53909b3a97c763e861a0629d95",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/storage-replacement-preparation.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "0f24bdbbf42a1b73fc1da6e7e64f1425465077bd748fb8de2149151f5c5d7ed3",
+        "providerContentId": "996eee974189886564188560cfe602c74e93a7af",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/storage-replacement-publication.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "78c873b168b98397b7c1b747a1c4be251b3b5ad79e384b366bb17b93458c2ec8",
+        "providerContentId": "399f802febd881a9b5c86e8d75d51523a8dfe61e",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/structural-quality-lifecycle.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "8acb00aae4493c2ba44427ea579ab93a3cfc4eac6913321c7802d48aff558573",
+        "providerContentId": "1ce8f2c31151b1ddd1fb116faa91aa8dde08349b",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/test-selection.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "06890d6e87dab266e7567bc0d3ff9ea6962182b89616184cf43b010d363cd7f5",
+        "providerContentId": "7cbef77977e184fce2e1b111cb1d436eb5b2c4eb",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "278be86f590e8a42bef3ae27d8ccbe268c43b9e58e20ed76ddbfeace91d29c1b"
+  },
+  "manifestFingerprint": "208d6a14c9ebaebdb4bfb1f34512cb9b47d0051b01601ad0cf9766aedd66a538",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Reduce the test landmine allowances by moving the per-test hang bounds ({ timeout: N } on individual tests) into one suite-wide --test-timeout applied by the central test runner, removing the fifteen per-test timeout overrides in the storage, structural-quality and provider-architecture tests, and lowering the allowlist accordingly.",
+    "successCriteria": [
+      "The landmine allowlist drops by fifteen and every test run through the central runner keeps a per-test hang bound"
+    ],
+    "checks": [
+      {
+        "id": "landmines",
+        "requirement": "npm run test:landmines passes with the lower allowlist",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-0962cc0243d34e9e",
+        "requirement": "The landmine allowlist drops by fifteen and every test run through the central runner keeps a per-test hang bound",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-19T17:10:47.089Z",
+    "completedAt": "2026-11-19T17:38:47.272Z",
+    "durationMs": 1680183,
+    "phaseDurationsMs": {
+      "planning": 3296,
+      "executing": 48390,
+      "verifying": 1623667,
+      "reviewing": 4830
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "a386fd1dc52411e97f5d7d14e7bb9112b9978539f90ac6ba2c856a2fad55a0c6"
+}

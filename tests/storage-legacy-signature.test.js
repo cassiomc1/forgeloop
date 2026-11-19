@@ -299,7 +299,7 @@ test("pending signature publication accepts known objects, refuses unrelated gro
   });
 });
 
-test("SIGKILL after signature-object publication resumes without replacing bytes or losing partial evidence", { timeout: 60000 }, async () => {
+test("SIGKILL after signature-object publication resumes without replacing bytes or losing partial evidence", async () => {
   await fixture(async ({ target, signature, signatureBytes }) => {
     const worker = fork(new URL("./helpers/storage-migration-crash-worker.mjs", import.meta.url), [target, "SIGNATURE_OBJECT"], { silent: true });
     let errors = "";
