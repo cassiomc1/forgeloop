@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- The Evidence signing workflow uploads its verified Sigstore bundle to
+  ForgeLoop Cloud (`POST https://forgeloop.monster/api/signatures`) when the
+  repository has a `FORGELOOP_SYNC_TOKEN` secret, so the hosted dashboard can
+  verify detached signatures. Without the secret the upload is skipped; the
+  token reaches only the two steps that need it.
 - ForgeLoop Audit moves to ForgeLoop Cloud, the paid team dashboard at
   `https://forgeloop.monster/dashboard/`, and the local `ForgeLoopAudit/`
   workspace leaves this repository with its CI workflow and its lint,

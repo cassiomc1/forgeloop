@@ -266,4 +266,13 @@ test("evidence signing runs only from main with the OIDC permission confined to 
   assert.doesNotMatch(verifyStep.run, /--statement/u, "cosign 3 verify-blob-attestation has no --statement flag");
   assert.match(verifyStep.run, /--digest "\$subject_digest"/u);
   assert.match(verifyStep.run, /payload\.equals/u, "the signed payload must be compared with the statement");
+  const names = job.steps.map((step) => step.name);
+  const upload = job.steps.find((step) => step.name === "Upload the signature to ForgeLoop Cloud");
+  assert.ok(names.indexOf("Upload the signature to ForgeLoop Cloud") > names.indexOf("Verify the signature against this workflow identity"), "only a verified signature is uploaded");
+  assert.equal(upload.if, "${{ steps.cloud.outputs.enabled == 'true' }}", "the upload is skipped without the secret");
+  assert.equal(upload.env.FORGELOOP_SYNC_TOKEN, "${{ secrets.FORGELOOP_SYNC_TOKEN }}");
+  assert.equal(job.env.FORGELOOP_SYNC_TOKEN, undefined, "the token is scoped to the steps that need it");
+  assert.match(upload.run, /--data-binary @statement\.sigstore\.json/u);
+  assert.match(upload.run, /https:\/\/forgeloop\.monster\/api\/signatures\?repo=\$\{GITHUB_REPOSITORY\}/u);
+  assert.doesNotMatch(upload.run, /echo[^\n]*FORGELOOP_SYNC_TOKEN/u, "the token is never echoed");
 });

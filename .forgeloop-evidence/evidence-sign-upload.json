@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "evidence-sign-upload",
+  "forgeloopVersion": "2.3.1",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:evidence-sign-upload\",\n      \"digest\": {\n        \"sha256\": \"76442c345529df347572a69980f91f3ed18e1667a86022ef14650ab4fbfba279\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"evidence-sign-upload\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"c5a6f8da8c95b364efdc550d1cb46cffb315353e3344f3eb0b69b301f4f71e95\",\n      \"contentDigest\": \"76442c345529df347572a69980f91f3ed18e1667a86022ef14650ab4fbfba279\",\n      \"coveredPaths\": [\n        \".github/workflows/evidence-sign.yml\",\n        \"CHANGELOG.md\",\n        \"docs/SIGNING_PROVIDERS.md\",\n        \"tests/workflow-policy.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"803c5821c4aadcd7ba91d91f0487c62ca74932e3a9a448951bb57c79c32a8bd5\",\n      \"routeFingerprint\": \"59d3b0ede2a76b826dace13761902c0a789e8898882a8fad81e38e25f0fad46c\",\n      \"stateFingerprint\": \"4c5929f5893912f1574ace44a30984eea3c7f8f8ed5c679ff624aecb00363aba\",\n      \"receiptFingerprint\": \"e1e640c1a6ea39d416d5505819165048d4e38537f9e27f4a07b939f3119de82b\",\n      \"ledgerSeq\": 43,\n      \"ledgerHash\": \"5c7a633d19e08b3ed1d7beba91dda0f5a5956ee61d90bcdb7c383af69d3a8e75\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "evidence-sign-upload",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "2e42758d636d206356a1d031673899a95e948d24",
+      "observedRevision": "2e42758d636d206356a1d031673899a95e948d24",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/evidence-sign-upload",
+        "head": "2e42758d636d206356a1d031673899a95e948d24"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "803c5821c4aadcd7ba91d91f0487c62ca74932e3a9a448951bb57c79c32a8bd5",
+      "routeFingerprint": "59d3b0ede2a76b826dace13761902c0a789e8898882a8fad81e38e25f0fad46c",
+      "stateFingerprint": "4c5929f5893912f1574ace44a30984eea3c7f8f8ed5c679ff624aecb00363aba",
+      "receiptFingerprint": "e1e640c1a6ea39d416d5505819165048d4e38537f9e27f4a07b939f3119de82b",
+      "ledgerSeq": 43,
+      "ledgerHash": "5c7a633d19e08b3ed1d7beba91dda0f5a5956ee61d90bcdb7c383af69d3a8e75"
+    },
+    "entries": [
+      {
+        "path": ".github/workflows/evidence-sign.yml",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "fd1e169ce6cf66e31371b8dc79e8eed23783a621df74053ef06a22bbd62f00ea",
+        "providerContentId": "cce8d5d349c1a889f83d4bc1f8d5725c1a757ef8",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "9d04ccec852f13f179bf957c8c866f4896cba7953cb316d509e7e81530cb80af",
+        "providerContentId": "bf64a3de7ff86947a0d885b526e0a5724833d451",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/SIGNING_PROVIDERS.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "667ec0577706bcb97345bb86757d2bf36980d74f36b4f449752496c4004c0d25",
+        "providerContentId": "ddd2f96e0f1c04385fda1809c66a7d01e4a299b6",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/workflow-policy.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "3df2a1b6e99cae7284854c7113df97ce90555242b9e1edc495b4770694b440a8",
+        "providerContentId": "433498545798cb1bbbb151d74e4199c02b21af7d",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "76442c345529df347572a69980f91f3ed18e1667a86022ef14650ab4fbfba279"
+  },
+  "manifestFingerprint": "c5a6f8da8c95b364efdc550d1cb46cffb315353e3344f3eb0b69b301f4f71e95",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Make the Evidence signing workflow upload its verified Sigstore bundle to ForgeLoop Cloud (POST https://forgeloop.monster/api/signatures?repo=<owner/name>) when a FORGELOOP_SYNC_TOKEN repository secret exists, so the hosted dashboard can verify detached signatures, and document it.",
+    "successCriteria": [
+      "The Evidence signing workflow uploads its verified bundle to ForgeLoop Cloud when the secret exists and skips it otherwise"
+    ],
+    "checks": [
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-62ca2afe622c4965",
+        "requirement": "The Evidence signing workflow uploads its verified bundle to ForgeLoop Cloud when the secret exists and skips it otherwise",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "workflow-policy",
+        "requirement": "node --test tests/workflow-policy.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-19T11:58:02.531Z",
+    "completedAt": "2026-11-19T12:23:42.400Z",
+    "durationMs": 1539869,
+    "phaseDurationsMs": {
+      "planning": 2630,
+      "executing": 99447,
+      "verifying": 1437511,
+      "reviewing": 281
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "7afd689f76d3f1b3650edfb2ab1b7a3936c2b3704c3da24b4c288ee8d061fe2c"
+}

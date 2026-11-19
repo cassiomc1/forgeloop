@@ -72,6 +72,20 @@ bundles with a `dsseEnvelope`, the format cosign 3 writes, can be verified.
 ForgeLoop never stores the private key, OIDC token, access token, or signing
 credential. A bundle file is not trusted merely because it exists.
 
+## CI signing and ForgeLoop Cloud
+
+The manually dispatched **Evidence signing** workflow
+(`.github/workflows/evidence-sign.yml`) runs from `main`. It verifies a
+committed bundle with `evidence-verify`, signs its statement keylessly with
+the workflow's GitHub Actions identity, checks that signature, and uploads it
+as a run artifact. When the repository has a `FORGELOOP_SYNC_TOKEN` secret (a
+ForgeLoop sync token for that repository, issued from the ForgeLoop Cloud
+dashboard), it also uploads the Sigstore bundle to
+`https://forgeloop.monster/api/signatures`. The dashboard then verifies it
+with the Sigstore trust root and a policy pinned to the repository's own
+workflows on its default branch. Without the secret, that step is skipped.
+The token is passed only to the steps that need it and is never printed.
+
 ## Policy
 
 ```json
