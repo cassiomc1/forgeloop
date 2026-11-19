@@ -3,8 +3,9 @@ name: Evidence signing
 # Signs a committed ForgeLoop evidence bundle with this repository's GitHub
 # Actions OIDC identity. The signature certifies that this workflow, running
 # from main, verified the evidence against the commit that introduced it; it
-# does not prove that ForgeLoop produced the bundle. Manual dispatch only while
-# the hosted check learns to verify detached signatures.
+# does not prove that ForgeLoop produced the bundle. With a FORGELOOP_SYNC_TOKEN
+# secret, the signature is also uploaded to ForgeLoop Cloud, whose dashboard
+# verifies it. Manual dispatch only.
 
 on:
   workflow_dispatch:
@@ -90,6 +91,26 @@ jobs:
             if (!payload.equals(fs.readFileSync("statement.json"))) throw new Error("The signed payload is not the committed statement");
             console.log(`mediaType: ${bundle.mediaType ?? "(none)"}; signed payload equals the committed statement`);
           ' | tee -a "$GITHUB_STEP_SUMMARY"
+      # ForgeLoop Cloud verifies detached signatures on its dashboard. The
+      # token is a ForgeLoop sync token for this repository, stored as the
+      # FORGELOOP_SYNC_TOKEN repository secret; without it the upload is skipped.
+      - name: Check for a ForgeLoop Cloud token
+        id: cloud
+        env:
+          FORGELOOP_SYNC_TOKEN: ${{ secrets.FORGELOOP_SYNC_TOKEN }}
+        run: |
+          if [ -n "$FORGELOOP_SYNC_TOKEN" ]; then echo "enabled=true" >> "$GITHUB_OUTPUT"; else echo "enabled=false" >> "$GITHUB_OUTPUT"; fi
+      - name: Upload the signature to ForgeLoop Cloud
+        if: ${{ steps.cloud.outputs.enabled == 'true' }}
+        env:
+          FORGELOOP_SYNC_TOKEN: ${{ secrets.FORGELOOP_SYNC_TOKEN }}
+        run: |
+          set -euo pipefail
+          curl --fail-with-body --silent --show-error --max-time 60 \
+            --request POST "https://forgeloop.monster/api/signatures?repo=${GITHUB_REPOSITORY}" \
+            --header "authorization: Bearer ${FORGELOOP_SYNC_TOKEN}" \
+            --header "content-type: application/json" \
+            --data-binary @statement.sigstore.json | tee -a "$GITHUB_STEP_SUMMARY"
       - name: Upload the statement and signature
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
