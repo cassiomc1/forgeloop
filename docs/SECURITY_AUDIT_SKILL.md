@@ -8,7 +8,7 @@ the canonical [security guide](../ENG/sec-code-eng.md).
 
 The companion is instruction content with local report validators. It adds no
 runtime dependency, scanner service, automatic scan, or ForgeLoop completion
-gate. ForgeLoopAudit inspects protocol evidence; this companion investigates
+gate. ForgeLoop Audit inspects protocol evidence; this companion investigates
 source-level security boundaries. These are separate capabilities.
 
 ## Availability and setup

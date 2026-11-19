@@ -1616,14 +1616,12 @@
       "status": "reviewed",
       "action": "updated",
       "sourceOfTruth": [
-        "ForgeLoopAudit/README.md",
-        "ForgeLoopAudit/src/server/cli.ts",
-        "ForgeLoopAudit/screen/manifest.json"
+        "docs/FORGELOOP_AUDIT.md",
+        "docs/EVIDENCE_BUNDLES.md"
       ],
       "canonicalSources": [
-        "ForgeLoopAudit/README.md",
-        "ForgeLoopAudit/src/server/cli.ts",
-        "ForgeLoopAudit/screen/manifest.json"
+        "docs/FORGELOOP_AUDIT.md",
+        "docs/EVIDENCE_BUNDLES.md"
       ],
       "origin": "handwritten",
       "currency": "current",

@@ -41,10 +41,9 @@ Treat principles, anecdotes and claimed statistics as hypotheses requiring
 context and original-source verification. Browser checks establish behavior;
 conversion and retention claims require appropriate real measurement.
 
-For ForgeLoopAudit, relevant work concerns read-only project selection, a first
-successful inspection, understandable evidence, useful errors and navigation.
-This addition does not add commercial flows, tracking or paid experiments to
-the auditor. Audit remains read-only and keeps its own verification commands.
+For ForgeLoop Audit, relevant work concerns a first successful inspection,
+understandable evidence, useful errors and navigation. This addition does not
+add tracking or paid experiments to the auditor, which remains read-only.
 
 The canonical contract, guide router, runtime, gates and validators retain
 all authority. This companion adds no guide ID, runtime dependency, provider,

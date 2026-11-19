@@ -5,8 +5,6 @@ coverage/
 coverage-data/
 package-dry-run.json
 *.tgz
-# The vendored, integrity-verified core archive is tracked on purpose.
-!ForgeLoopAudit/vendor/*.tgz
 .mcp-smoke-*/
 integrations/mcp/.core-tarball-*/
 *.forgeloop-tmp-*

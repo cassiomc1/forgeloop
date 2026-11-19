@@ -150,7 +150,7 @@ and [`docs/SIGNING_PROVIDERS.md`](./docs/SIGNING_PROVIDERS.md).
 The optional, paid ForgeLoop Cloud adds an encrypted state handoff between
 machines (`sync-push`, `sync-pull`, task-level `sync-pull --merge`; see
 [`docs/CLOUD_SYNC.md`](./docs/CLOUD_SYNC.md)), `evidence-publish` for work that
-is not merged yet, and a team dashboard at
+is not merged yet, and a team dashboard with ForgeLoop Audit at
 [forgeloop.monster/dashboard](https://forgeloop.monster/dashboard/). The local
 protocol never depends on it.
 
@@ -494,10 +494,10 @@ CI audits each supplied task receipt explicitly. With no receipt it reports
 completion or attestation. For contributor checks and safe payload retention,
 see [CONTRIBUTING.md](./CONTRIBUTING.md#focused-verification-and-maintenance).
 
-## ForgeLoopAudit workspace
+## ForgeLoop Audit
 
-The read-only auditor lives in `ForgeLoopAudit/`; see its
-[setup, demo and screenshots](./docs/FORGELOOP_AUDIT.md).
+The Audit runs only in ForgeLoop Cloud; the local workspace is retired. See
+[`docs/FORGELOOP_AUDIT.md`](./docs/FORGELOOP_AUDIT.md).
 
 ## Protocol compatibility
 
@@ -601,9 +601,7 @@ npm run verify:fast      # while editing
 npm run verify:prepush   # before a pull request
 ```
 
-The tiers are defined in `scripts/run-validation.mjs`; individual checks such as
-`npm run docs:check`, `npm run pack:check` and `npm run changelog:check` remain
-available for focused work.
+The tiers are defined in `scripts/run-validation.mjs`.
 
 ## Repository structure
 
@@ -619,7 +617,6 @@ tests/                  Node and Python regression coverage
 benchmarks/             measured benchmarks and storage writer reviews
 .forgeloop/             project-scoped configuration and state.sqlite
 .forgeloop-evidence/    committed evidence bundles of this repository's tasks
-ForgeLoopAudit/         read-only auditor workspace
 DOCS_INDEX.md           documentation map and ownership boundaries
 ```
 
