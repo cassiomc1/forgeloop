@@ -2,7 +2,6 @@ import { ensureFixtureTask } from "./helpers/native-storage-fixture.js";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { access, chmod, mkdtemp, writeFile } from "node:fs/promises";
-import { setTimeout as delay } from "node:timers/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -28,6 +27,7 @@ import { withProjectStorage } from "../src/storage/project-boundary.js";
 import { setupVerifyingTask } from "./helpers/durable-lifecycle.js";
 import { createGitRepository } from "./helpers/git-fixture.js";
 import { removeTempTree } from "./helpers/rm-safe.js";
+import { pollUntil } from "./helpers/poll.js";
 
 const packageRoot = getPackageRoot();
 
@@ -41,20 +41,12 @@ async function withTarget(run) {
   }
 }
 
-async function waitForFile(filename, { timeoutMs = 5000, signal } = {}) {
-  const deadline = Date.now() + timeoutMs;
-  while (Date.now() < deadline) {
-    if (signal?.aborted) throw signal.reason ?? new Error("File barrier was cancelled");
-    try {
-      await access(filename);
-      return;
-    } catch (error) {
-      if (error.code !== "ENOENT") throw error;
-    }
-    const remaining = deadline - Date.now();
-    if (remaining > 0) await delay(Math.min(10, remaining), undefined, { signal });
-  }
-  throw new Error(`Timed out waiting for external execution marker: ${filename}`);
+// The marker is written by another process: poll for it.
+function waitForFile(filename, { timeoutMs = 5000, signal } = {}) {
+  return pollUntil(async () => {
+    await access(filename);
+    return true;
+  }, { timeoutMs, signal, isTransient: (error) => error.code === "ENOENT", what: `external execution marker ${filename}` });
 }
 
 test("run-check launches the registered scoped checker with exact argv and scope evidence", async () => {

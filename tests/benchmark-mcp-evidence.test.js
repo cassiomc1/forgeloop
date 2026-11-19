@@ -62,9 +62,8 @@ test("parent seeding journal emits heartbeats at the bounded per-task interval",
 });
 
 test("seed stall watchdog aborts with a named diagnosable failure inside the grace window", async () => {
-  // Wall-clock based: the harness can hang 400ms real time while the last
-  // progress stamp stays old; a 100ms grace window then fires the watchdog
-  // well inside that hang, reproducibly and sub-second.
+  // A real stall: the seed never settles, so only the wall-clock watchdog
+  // (100ms grace window, 10ms ticks) can end it, reproducibly and sub-second.
   const { records, error } = await seedProgressRecords({
     size: 1000,
     heartbeatTasks: 100,
@@ -73,8 +72,7 @@ test("seed stall watchdog aborts with a named diagnosable failure inside the gra
     now: () => Date.now(),
     seed: async onTaskSeeded => {
       for (let index = 0; index < 3; index++) onTaskSeeded(`seed-${index}`);
-      await new Promise(resolve => setTimeout(resolve, 400));
-      return {};
+      return new Promise(() => {});
     },
   });
   assert.ok(error, "stalled seed must be rejected");

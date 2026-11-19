@@ -58,7 +58,10 @@ test("repository-index startup lock serializes concurrent operations", async () 
         order.push("first:start");
         active += 1;
         maxActive = Math.max(maxActive, active);
-        await new Promise((resolve) => setTimeout(resolve, 30));
+        // A real filesystem probe while holding the lock: it must see the
+        // lock taken, and gives the concurrent operation time to interleave
+        // if the lock were broken.
+        assert.equal(await acquireRepositoryIndexLock(path.join(target, ".forgeloop", "repository-index", "operation.lock"), "probe", { tryOnly: true }), null);
         active -= 1;
         order.push("first:end");
       }),

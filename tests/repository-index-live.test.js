@@ -13,16 +13,19 @@ import {
   removeFixtureRepository,
   execFileAsync,
 } from "./helpers/repository-index.js";
+import { pollUntil } from "./helpers/poll.js";
 
+// The native index updates in another process: poll until it reflects the change.
 async function waitForSearch(target, request, predicate) {
-  const deadline = Date.now() + 15_000;
   let result;
-  while (Date.now() < deadline) {
-    result = await searchRepository(target, request);
-    if (predicate(result)) return result;
-    await new Promise((resolve) => setTimeout(resolve, 100));
+  try {
+    return await pollUntil(async () => {
+      result = await searchRepository(target, request);
+      return predicate(result) ? result : undefined;
+    }, { timeoutMs: 15_000, intervalMs: 100, what: "the live repository index" });
+  } catch {
+    return result;
   }
-  return result;
 }
 
 test("real pinned tgrep setup, live mutation, deletion, and no-match behavior", async (t) => {

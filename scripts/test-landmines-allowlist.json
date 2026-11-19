@@ -1,17 +1,1 @@
-{
-  "no-fixed-sleep": {
-    "tests/benchmark-mcp-evidence.test.js": 1,
-    "tests/persistent-transport.test.js": 1,
-    "tests/reconcile-closure.test.js": 1,
-    "tests/repository-index-live.test.js": 1,
-    "tests/repository-index-server.test.js": 1,
-    "tests/run-action.test.js": 1,
-    "tests/run-check.test.js": 1
-  },
-  "no-flake-masking": {
-    "tests/execution-profile-benchmarks.test.js": 1
-  },
-  "no-test-doubles": {
-    "tests/storage-file-durability.test.js": 1
-  }
-}
+{}

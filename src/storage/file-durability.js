@@ -4,10 +4,11 @@ import { open } from "node:fs/promises";
 
 const IGNORABLE_DIRECTORY_SYNC_ERRORS = new Set(["EINVAL", "EPERM", "EISDIR", "ENOTSUP", "UNKNOWN"]);
 
-export async function syncDirectory(directory, { catchOpenErrors = true, catchCloseErrors = true } = {}) {
+// openDirectory defaults to fs.promises.open; tests pass their own handle.
+export async function syncDirectory(directory, { catchOpenErrors = true, catchCloseErrors = true, openDirectory = open } = {}) {
   if (catchCloseErrors) {
     try {
-      const handle = await open(directory, "r");
+      const handle = await openDirectory(directory, "r");
       try {
         await handle.sync();
       } finally {
@@ -20,7 +21,7 @@ export async function syncDirectory(directory, { catchOpenErrors = true, catchCl
   }
   let handle;
   try {
-    handle = await open(directory, "r");
+    handle = await openDirectory(directory, "r");
   } catch (error) {
     if (!catchOpenErrors || !IGNORABLE_DIRECTORY_SYNC_ERRORS.has(error.code)) throw error;
     return;

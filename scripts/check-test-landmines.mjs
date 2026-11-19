@@ -27,7 +27,8 @@ export const RULES = Object.freeze({
   },
   "no-flake-masking": {
     advice: "Fix the race instead of raising the timeout or retrying; a test that passes on rerun is a flake.",
-    patterns: [/\b(?:test|it|describe)\s*\([^\n]*\{[^{}\n]*\btimeout\s*:/gu, /\bretr(?:y|ies)\s*:\s*\d/gu],
+    // Retry options on a test call; a field named "retries" in data is not one.
+    patterns: [/\b(?:test|it|describe)\s*\([^\n]*\{[^{}\n]*\btimeout\s*:/gu, /\b(?:test|it|describe)\s*\([^\n]*\{[^{}\n]*\bretr(?:y|ies)\s*:\s*\d/gu],
   },
   "no-test-doubles": {
     advice: "Use the real implementation (inject it, or run a local server) instead of mocking it; t.mock.timers is allowed.",

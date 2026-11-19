@@ -12,7 +12,8 @@ import { removeTempTree } from "./helpers/rm-safe.js";
 const sleep = ["await new Promise((resolve) => set", "Timeout(resolve, 50));"].join("");
 const awaitedDelay = ["await de", "lay(10);"].join("");
 const raisedTimeout = ["te", "st(\"slow\", { time", "out: 60000 }, async () => {});"].join("");
-const retries = ["{ retr", "ies: 3 }"].join("");
+const retries = ["it(\"flaky\", { retr", "ies: 3 }, () => {});"].join("");
+const retriesData = ["const metrics = { retr", "ies: 1 };"].join("");
 const moduleMock = ["mock.mod", "ule(\"node:fs\", {});"].join("");
 const patchedGlobal = ["globalThis.fe", "tch = async () => null;"].join("");
 const patchedClock = ["Date.n", "ow = () => 0;"].join("");
@@ -22,6 +23,7 @@ test("each rule counts its patterns and allows controlled timers", () => {
   assert.deepEqual(countLandmines(`${sleep}\n${awaitedDelay}`), { "no-fixed-sleep": 2 });
   assert.deepEqual(countLandmines(`${raisedTimeout}\n${retries}`), { "no-flake-masking": 2 });
   assert.deepEqual(countLandmines(`${moduleMock}\n${patchedGlobal}\n${patchedClock}`), { "no-test-doubles": 3 });
+  assert.deepEqual(countLandmines(retriesData), {}, "a data field named retries is not a retry option");
   assert.deepEqual(countLandmines(timers), {});
   assert.deepEqual(countLandmines(["globalThis.fetch ", "=== undefined"].join("")), {});
 });
