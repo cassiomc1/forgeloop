@@ -12,6 +12,11 @@ export async function discoverTests(directory) {
   return files.sort();
 }
 
+// Every test run through the central runner gets one hang bound, instead of
+// per-test { timeout } overrides (a test-landmines rule). The slowest test
+// takes seconds; this only stops a hang from blocking CI indefinitely.
+export const DEFAULT_TEST_TIMEOUT_MS = 120_000;
+
 export function selectTests(files, args, root) {
   const options = [];
   const selectors = [];
@@ -50,6 +55,7 @@ export function selectTests(files, args, root) {
     ? selected.filter((_, index) => index % shard.total === shard.index - 1)
     : selected;
   if (sharded.length === 0) throw new Error(`Shard ${shard.index}/${shard.total} has no selected test files`);
+  if (!options.some((option) => option.startsWith("--test-timeout"))) options.push(`--test-timeout=${DEFAULT_TEST_TIMEOUT_MS}`);
   return ["--test", ...options, ...sharded.map((file) => path.relative(root, file))];
 }
 

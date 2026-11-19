@@ -41,7 +41,7 @@ test("initial replacement orchestrates independent source through retained outgo
 });
 
 for (const checkpoint of ["READY", "PUBLISHING", "PENDING_MARKER", "ATTACHMENT", "DATABASE", "ACTIVE_MARKER", "ACTIVE"]) {
-  test(`replacement resumes actual SIGKILL after publication ${checkpoint}`, { timeout: 60000 }, async () => {
+  test(`replacement resumes actual SIGKILL after publication ${checkpoint}`, async () => {
     const fixture = await buildActiveReplacementFixture();
     let worker;
     try {

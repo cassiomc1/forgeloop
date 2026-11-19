@@ -115,7 +115,7 @@ test("factory and operation receive shared invocation context", async () => {
   strictEqual(factoryContext.signal.aborted, false);
 });
 
-test("hanging factory is bounded by invocation timeout", { timeout: 500 }, async (t) => {
+test("hanging factory is bounded by invocation timeout", async (t) => {
   const keepAlive = setInterval(() => {}, 50);
   t.after(() => clearInterval(keepAlive));
   const registry = createProviderRegistry({ providers: { tool: () => new Promise(() => {}) } });
@@ -123,7 +123,7 @@ test("hanging factory is bounded by invocation timeout", { timeout: 500 }, async
 });
 
 for (const stage of ["factory", "operation"]) {
-  test(`${stage} receives abort on timeout even when it rejects on cancellation`, { timeout: 500 }, async (t) => {
+  test(`${stage} receives abort on timeout even when it rejects on cancellation`, async (t) => {
     const keepAlive = setInterval(() => {}, 50);
     t.after(() => clearInterval(keepAlive));
     let context;
@@ -148,7 +148,7 @@ for (const stage of ["factory", "operation"]) {
   });
 }
 
-test("late factory resolution after timeout never starts operation", { timeout: 500 }, async (t) => {
+test("late factory resolution after timeout never starts operation", async (t) => {
   const keepAlive = setInterval(() => {}, 50);
   t.after(() => clearInterval(keepAlive));
   let resolveFactory;
@@ -164,7 +164,7 @@ test("late factory resolution after timeout never starts operation", { timeout: 
   strictEqual(operations, 0);
 });
 
-test("factory and operation consume one timeout budget", { timeout: 500 }, async (t) => {
+test("factory and operation consume one timeout budget", async (t) => {
   t.mock.timers.enable({ apis: ["setTimeout"] });
   let resolveFactory;
   let operationStarted = false;

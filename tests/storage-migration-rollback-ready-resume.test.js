@@ -8,7 +8,7 @@ import path from "node:path";
 import { buildDiagnosisProject } from "./helpers/storage-fixtures.js";
 import { resumePreparedMigrationSourceRollback } from "../src/storage/migration-rollback-preparation.js";
 import { executeForgeLoopCommand } from "../src/core/command-runtime.js";
-for(const mode of ["ready","backup-tamper","owner-tamper","preparing-ready","preparing-partial","preparing-missing"]) test(`dead rollback preparation owner ${mode} resumes only verified native retention`,{timeout:60000},async()=>{
+for(const mode of ["ready","backup-tamper","owner-tamper","preparing-ready","preparing-partial","preparing-missing"]) test(`dead rollback preparation owner ${mode} resumes only verified native retention`, async()=>{
  const target=await buildDiagnosisProject({legacy:true});let worker;
  try {
   worker=fork(new URL("./helpers/storage-rollback-ready-worker.mjs",import.meta.url),[target,mode],{silent:true});

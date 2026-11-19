@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Lower the test landmine allowances from 25 to 9. The central test runner
+  now gives every test one suite-wide hang bound (`--test-timeout=120000`,
+  overridable by the caller), replacing sixteen per-test `{ timeout }`
+  overrides in the storage, structural-quality and provider-architecture
+  tests. The engineering testing guide recommends the same pattern.
 - The Evidence signing workflow uploads its verified Sigstore bundle to
   ForgeLoop Cloud (`POST https://forgeloop.monster/api/signatures`) when the
   repository has a `FORGELOOP_SYNC_TOKEN` secret, so the hosted dashboard can

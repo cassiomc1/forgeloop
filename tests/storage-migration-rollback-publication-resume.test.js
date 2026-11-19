@@ -9,7 +9,7 @@ import { buildDiagnosisProject, TEST_TASK_ID } from "./helpers/storage-fixtures.
 import { taskStorageKey } from "../src/core/task-identity.js";
 import { resumeMigrationSourceRollbackPublication } from "../src/storage/migration-rollback-publication.js";
 import { BINARY_SOURCE_BYTES } from "./helpers/storage-binary-source-fixture.js";
-for(const mode of ["SWITCHING","DATABASE_RETAINED","NATIVE_RETAINED","PARTIAL_SOURCE","RESTORED","BINARY_PARTIAL_SOURCE","duplicate-native","corrupt-source","substituted-owner"])test(`dead source publication owner ${mode} resumes only verified locations`,{timeout:60000},async()=>{
+for(const mode of ["SWITCHING","DATABASE_RETAINED","NATIVE_RETAINED","PARTIAL_SOURCE","RESTORED","BINARY_PARTIAL_SOURCE","duplicate-native","corrupt-source","substituted-owner"])test(`dead source publication owner ${mode} resumes only verified locations`, async()=>{
  const target=await buildDiagnosisProject({legacy:true});let worker;
  try{
   worker=fork(new URL("./helpers/storage-rollback-publication-worker.mjs",import.meta.url),[target,mode === "BINARY_PARTIAL_SOURCE" ? "PARTIAL_SOURCE" : mode.includes("-")?"NATIVE_RETAINED":mode,mode === "BINARY_PARTIAL_SOURCE" ? "binary" : "none"],{silent:true});
