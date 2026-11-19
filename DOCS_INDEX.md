@@ -29,10 +29,11 @@ integration and guide context. Use this map before editing documentation.
 | Operational recipes | [`docs/RECIPES.md`](./docs/RECIPES.md) | Short copy-paste recipes for daily workflows |
 | Structural quality feedback | [`docs/STRUCTURAL_QUALITY.md`](./docs/STRUCTURAL_QUALITY.md) | Provider-neutral baseline, delta policy, Sentrux boundary, lifecycle integration, and troubleshooting |
 | Diagnostic model | [`docs/DIAGNOSTIC_MODEL.md`](./docs/DIAGNOSTIC_MODEL.md) | Structured diagnostic cases, interventions, hypothesis dispositions, information gain |
-| Execution trace and observability | [`docs/EXECUTION_TRACE.md`](./docs/EXECUTION_TRACE.md) | `history`, `trace`, `reflect`, and task-level `inspect` read-only projections |
-| Workspace, handoff, responsibility, and scope | [`docs/ARTIFACT_REFERENCE.md`](./docs/ARTIFACT_REFERENCE.md) and [`docs/CLI_REFERENCE.md`](./docs/CLI_REFERENCE.md) | Optional task boundaries, immutable handoffs, and deterministic verification planning |
-| Handoff acceptance | [`docs/CROSS_HARNESS_CONTINUITY.md`](./docs/CROSS_HARNESS_CONTINUITY.md) | Ledger-backed operational receipt; no claim transfer, evidence, or authority |
 | Code attestation and revision coverage | [`docs/CODE_ATTESTATION.md`](./docs/CODE_ATTESTATION.md) | Source-content manifests, in-toto statements, signatures, and range verification |
+| Evidence bundles | [`docs/EVIDENCE_BUNDLES.md`](./docs/EVIDENCE_BUNDLES.md) | Portable redacted evidence exported on completion, `evidence-verify` in pull-request CI, the GitHub App check, and `evidence-publish` |
+| Cloud sync | [`docs/CLOUD_SYNC.md`](./docs/CLOUD_SYNC.md) | Encrypted single-writer snapshot handoff between machines with `sync-push`, `sync-pull` and the task-level `--merge` |
+| Repository assessment | [`docs/ASSESSMENT.md`](./docs/ASSESSMENT.md) | Read-only `forgeloop assess` report for an existing repository |
+| SQLite storage | [`docs/SQLITE_STORAGE.md`](./docs/SQLITE_STORAGE.md) and [`docs/STABLE_2_ACCEPTANCE.md`](./docs/STABLE_2_ACCEPTANCE.md) | Operational SQLite store, explicit migration, backup and restore, and the stable 2 acceptance boundary |
 | Revision and signing providers | [`docs/REVISION_PROVIDERS.md`](./docs/REVISION_PROVIDERS.md) and [`docs/SIGNING_PROVIDERS.md`](./docs/SIGNING_PROVIDERS.md) | Provider-neutral extension contracts |
 | Platform adapters | [`docs/PLATFORM_ADAPTERS.md`](./docs/PLATFORM_ADAPTERS.md) | Generic CI boundary and platform mapping guidance |
 | Universal integration API | [`docs/UNIVERSAL_INTEGRATION.md`](./docs/UNIVERSAL_INTEGRATION.md) | Programmatic integration subpath, envelope semantics, and consumer map |
@@ -43,32 +44,23 @@ integration and guide context. Use this map before editing documentation.
 | Provider extension reference | [`docs/PROVIDERS.md`](./docs/PROVIDERS.md) | Capability discovery, provider kinds, common contract, limits, errors, and maintainer checklist |
 | Security Review provider | [`docs/SECURITY_REVIEW.md`](./docs/SECURITY_REVIEW.md) | Bounded host-injected observation API, strict findings, timeout/cancellation, and non-authority boundary |
 | Cloudflare security audit companion | [`docs/SECURITY_AUDIT_SKILL.md`](./docs/SECURITY_AUDIT_SKILL.md) | Pinned optional source-audit workflow, host setup, report validation, and ForgeLoop authority boundary |
+| Revenue-centric design companion | [`docs/REVENUE_CENTRIC_DESIGN.md`](./docs/REVENUE_CENTRIC_DESIGN.md) | Pinned optional product-journey guidance and its ForgeLoop authority boundary |
 | Ripwire advisory adapter | [`docs/RIPWIRE_ADAPTER.md`](./docs/RIPWIRE_ADAPTER.md) | Ripwire-specific registration, process contract, JSON mapping, limits, and verification |
 | OpenSrc advisory adapter | [`docs/OPENSRC_ADAPTER.md`](./docs/OPENSRC_ADAPTER.md) | OpenSrc-specific registration, version qualification, cache containment, deterministic search, limits, and verification |
 | Agent Browser verification adapter | [`docs/AGENT_BROWSER_ADAPTER.md`](./docs/AGENT_BROWSER_ADAPTER.md) | Optional host-owned browser executable, bounded observation mapping, isolation, exact origins, screenshots, and trust boundary |
 | Local-first MCP adapter | [`docs/MCP.md`](./docs/MCP.md) | stdio default, optional strict loopback HTTP; server modes/capabilities and canonical resources |
 | Adaptive execution-profile benchmarks | [`docs/EXECUTION_PROFILE_BENCHMARKS.md`](./docs/EXECUTION_PROFILE_BENCHMARKS.md) | Measured provider/host runs, robust statistics, paired/distribution deltas, tail status, outliers, and profile-aware host context |
-| Knowledge integration gap analysis | [`docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md`](./docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md) | Repository-only research audit of candidate coverage, proven gaps, canonical homes, context cost, and intentional skip/defer decisions |
 | Knowledge sources and provenance | [`docs/KNOWLEDGE_SOURCES.md`](./docs/KNOWLEDGE_SOURCES.md) | Snapshot, licensing observations, source roles, accepted/skipped concepts, and reuse boundaries |
 | Semantic decision plane | [`docs/SEMANTIC_DECISION_PLANE.md`](./docs/SEMANTIC_DECISION_PLANE.md) | Mandatory bounded Jev/TypeSafe System One decisions, typed non-authoritative results, freshness, and fail-closed boundaries |
 | Model routing | [`docs/MODEL_ROUTING.md`](./docs/MODEL_ROUTING.md) | Model-route tiers, host-model selection, deterministic safety floors, and ForgeLoop authority boundaries |
 | Jev benchmarks | [`docs/JEV_BENCHMARKS.md`](./docs/JEV_BENCHMARKS.md) | Offline fixtures, live interoperability smoke, live benchmark calls, usage, latency, and non-generalized claims |
 | Test intelligence | [`docs/TEST_INTELLIGENCE.md`](./docs/TEST_INTELLIGENCE.md) | Bounded test utility analysis, protected-test rules, semantic classification, and non-evidence status |
 | Test pruning | [`docs/TEST_PRUNING.md`](./docs/TEST_PRUNING.md) | Keep/probe/block planning, isolated probes, and deterministic proof before any removal or rewrite |
-| Repository Index | [`docs/REPOSITORY_INDEX.md`](./docs/REPOSITORY_INDEX.md) | Managed engine, index lifecycle, CLI/API/MCP behavior, privacy, recovery, and search boundaries |
-| Persistent search transport | [`docs/PERSISTENT_SEARCH_TRANSPORT.md`](./docs/PERSISTENT_SEARCH_TRANSPORT.md) | CLI-only local IPC, host ownership, recovery, limits, and direct API/MCP differences |
-| Provider architecture | [`docs/PROVIDER_ARCHITECTURE.md`](./docs/PROVIDER_ARCHITECTURE.md) and [`docs/PROVIDERS.md`](./docs/PROVIDERS.md) | Provider-neutral invocation, strict normalization, cancellation, trust, and non-authority boundaries |
-| Structural quality | [`docs/STRUCTURAL_QUALITY.md`](./docs/STRUCTURAL_QUALITY.md) | Optional provider-neutral baseline, delta policy, and evidence boundaries |
-| Security review | [`docs/SECURITY_REVIEW.md`](./docs/SECURITY_REVIEW.md) | Host-injected bounded security observations and non-authoritative findings |
-| Agent Browser verification | [`docs/AGENT_BROWSER_ADAPTER.md`](./docs/AGENT_BROWSER_ADAPTER.md) and [`docs/AGENT_BROWSER_VERIFICATION.md`](./docs/AGENT_BROWSER_VERIFICATION.md) | Optional browser adapter, exact-origin observations, screenshots, and non-evidence limits |
-| Documentation history | [`docs/history/README.md`](./docs/history/README.md) | Archived audits, release evidence, and completed validation records with current-owner links |
+| Documentation history | [`docs/history/README.md`](./docs/history/README.md) | Archived audits, superseded release checklists, the SQLite migration records, the knowledge gap analysis, and completed validation records with current-owner links |
 | Documentation guide | [`docs/DOCUMENTATION_GUIDE.md`](./docs/DOCUMENTATION_GUIDE.md) | Rules and checklist for modifying documentation |
 | Current release checklist | [`docs/RELEASE_CHECKLIST.md`](./docs/RELEASE_CHECKLIST.md) | Package, protocol, attestation, integration, and publication gates |
 | Self-hosted Node tests | [`docs/SELF_HOSTED_TESTS.md`](./docs/SELF_HOSTED_TESTS.md) | Local macOS, remote Windows/Linux Docker runners, event admission and verification boundaries |
 | Core npm package contents | [`docs/PACKAGE_CONTENTS.md`](./docs/PACKAGE_CONTENTS.md) | Published consumer surface, intentional inclusions, exclusions, and clean-room verification |
-| ForgeLoop 1.6.1 release checklist (historical) | [`docs/RELEASE_CHECKLIST_1_6_1.md`](./docs/RELEASE_CHECKLIST_1_6_1.md) | Verification adapter boundary, isolation invariants, and publication gates |
-| ForgeLoop 1.5/MCP release checklist (historical) | [`docs/RELEASE_CHECKLIST_1_5_MCP.md`](./docs/RELEASE_CHECKLIST_1_5_MCP.md) | Integration API v1, MCP package, and publication gates |
-| ForgeLoop 1.4 release checklist | [`docs/RELEASE_CHECKLIST_1_4.md`](./docs/RELEASE_CHECKLIST_1_4.md) | Claim-recovery, compatibility, package, and publication gates |
 | Lifecycle, gates, planning, verification, and recovery | [`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md) | Normative process for agents and developer workflows |
 | Capability levels, discovery, and degradation | [`PROTOCOL_INTEGRATION.md`](./PROTOCOL_INTEGRATION.md) | Vendor-neutral harness contract |
 | Host/orchestrator integration | [`ORCHESTRATOR_INTEGRATION.md`](./ORCHESTRATOR_INTEGRATION.md) | Serializable phases, transition boundaries, host responsibilities, and no-runtime integration contract |
@@ -78,16 +70,7 @@ integration and guide context. Use this map before editing documentation.
 | Artifact and phase schemas | [`schemas/`](./schemas/) and [`CONTRACT_COVERAGE.md`](./CONTRACT_COVERAGE.md) | Versioned machine-readable contract |
 | CLI/package behavior | [`src/`](./src/) and [`tests/`](./tests/) | Executable implementation and regression evidence |
 | Guide content | [`ENG/`](./ENG/) | Context-specific, English-only operational guides, including Flutter, .NET, Node.js, Rust, C, C++, Java, SQL, Go, TypeScript, PHP, Swift, and Python specialist guides; Python is documentation-only and is not yet selected automatically by the router; ASP.NET Core and ABP remain .NET overlays |
-| Verification Trust Flow | [`docs/REVISION_PROVIDERS.md`](./docs/REVISION_PROVIDERS.md#differential-verification-scope) | Claims, changed paths, trusted checker capability, exact argv, and observed evidence |
-| Code Attestation Chain | [`docs/CODE_ATTESTATION.md`](./docs/CODE_ATTESTATION.md#completion-flow) | Completion, exact-content manifest, in-toto statement, optional signing, and range coverage |
 | Real Execution Proof of Concept (PoC) | [`poc/README.md`](./poc/README.md) | Non-normative, reproducible public engineering workload, audit evidence, and technical audit. Normative behavior remains owned by [`LOOP_ENGINEERING.md`](./LOOP_ENGINEERING.md). |
-
-## Recent implementation review
-
-The repository-local [Astra implementation record](./docs/ASTRA_IMPLEMENTATION.md)
-maps the completed findings to code, tests, measurements, and remaining limits.
-Use the canonical guides below for operational instructions; the audit record
-is historical evidence and is not part of the published core package.
 
 ## Audience map
 
@@ -107,6 +90,9 @@ is historical evidence and is not part of the published core package.
 | **Looking up CLI commands** | [`docs/CLI_REFERENCE.md`](./docs/CLI_REFERENCE.md) |
 | **Understanding persistent CLI search transport** | [`docs/PERSISTENT_SEARCH_TRANSPORT.md`](./docs/PERSISTENT_SEARCH_TRANSPORT.md) |
 | **Inspecting `.forgeloop/` files** | [`docs/ARTIFACT_REFERENCE.md`](./docs/ARTIFACT_REFERENCE.md) |
+| **Verifying evidence in pull requests** | [`docs/EVIDENCE_BUNDLES.md`](./docs/EVIDENCE_BUNDLES.md) → [`docs/CODE_ATTESTATION.md`](./docs/CODE_ATTESTATION.md) |
+| **Moving work between machines** | [`docs/CLOUD_SYNC.md`](./docs/CLOUD_SYNC.md) |
+| **Assessing an existing repository** | [`docs/ASSESSMENT.md`](./docs/ASSESSMENT.md) |
 | **Fixing a broken or stale state** | [`docs/TROUBLESHOOTING.md`](./docs/TROUBLESHOOTING.md) |
 | **Looking for quick recipes** | [`docs/RECIPES.md`](./docs/RECIPES.md) |
 | **Configuring structural quality feedback** | [`docs/STRUCTURAL_QUALITY.md`](./docs/STRUCTURAL_QUALITY.md) |
@@ -117,8 +103,6 @@ is historical evidence and is not part of the published core package.
 | **Understanding attestation trust** | [`docs/CODE_ATTESTATION.md`](./docs/CODE_ATTESTATION.md#trust-levels) |
 | **Documentation contributor** | [`docs/DOCUMENTATION_GUIDE.md`](./docs/DOCUMENTATION_GUIDE.md) |
 | **Release maintainer (current)** | [`docs/RELEASE_CHECKLIST.md`](./docs/RELEASE_CHECKLIST.md) |
-| **Release maintainer (historical 1.5/MCP)** | [`docs/RELEASE_CHECKLIST_1_5_MCP.md`](./docs/RELEASE_CHECKLIST_1_5_MCP.md) |
-| **Release maintainer (historical 1.4)** | [`docs/RELEASE_CHECKLIST_1_4.md`](./docs/RELEASE_CHECKLIST_1_4.md) |
 | **Protocol architect / maintainer** | [`LOOP_SYSTEM_DESIGN.md`](./LOOP_SYSTEM_DESIGN.md) + [`schemas/`](./schemas/) |
 | **Security auditor** | [`THREAT_MODEL.md`](./THREAT_MODEL.md) |
 | **Engineering guide author** | [`GUIDE_ROUTER.md`](./GUIDE_ROUTER.md) + [`ENG/`](./ENG/) |
@@ -143,6 +127,9 @@ is historical evidence and is not part of the published core package.
 - **Edit documentation safely**: [`docs/DOCUMENTATION_GUIDE.md`](./docs/DOCUMENTATION_GUIDE.md)
 - **Audit the npm package boundary**: [`docs/PACKAGE_CONTENTS.md`](./docs/PACKAGE_CONTENTS.md)
 - **Verify source-content attestations**: [`docs/CODE_ATTESTATION.md`](./docs/CODE_ATTESTATION.md)
+- **Export, verify, sign or publish evidence**: [`docs/EVIDENCE_BUNDLES.md`](./docs/EVIDENCE_BUNDLES.md) and [`docs/SIGNING_PROVIDERS.md`](./docs/SIGNING_PROVIDERS.md)
+- **Continue a task on another machine**: [`docs/CLOUD_SYNC.md`](./docs/CLOUD_SYNC.md)
+- **Assess an existing repository**: [`docs/ASSESSMENT.md`](./docs/ASSESSMENT.md)
 - **Understand narrow verification and checker binding**: [`docs/REVISION_PROVIDERS.md`](./docs/REVISION_PROVIDERS.md#differential-verification-scope)
 - **Understand mandatory Jev semantics**: [`docs/SEMANTIC_DECISION_PLANE.md`](./docs/SEMANTIC_DECISION_PLANE.md)
 - **Understand model routing**: [`docs/MODEL_ROUTING.md`](./docs/MODEL_ROUTING.md)

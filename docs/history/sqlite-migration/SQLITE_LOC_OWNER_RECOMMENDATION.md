@@ -10,9 +10,9 @@ change was performed or is authorized by this record.
 
 **Evidence base:** the acceptance-eligible, zero-unresolved-membership analyzer
 run bound to `a7738796c2859524fad0933037b142089fb90e3c`
-([result summary](../benchmarks/storage-sqlite/persistence-loc/result-a773879-summary.json),
-[raw result](../benchmarks/storage-sqlite/persistence-loc/loc-a773879-r5.json.gz),
-[rebound scope manifest](../benchmarks/storage-sqlite/persistence-loc/scope-a773879-rebound.json)).
+([result summary](../../../benchmarks/storage-sqlite/persistence-loc/result-a773879-summary.json),
+[raw result](../../../benchmarks/storage-sqlite/persistence-loc/loc-a773879-r5.json.gz),
+[rebound scope manifest](../../../benchmarks/storage-sqlite/persistence-loc/scope-a773879-rebound.json)).
 Baseline `ee9ce11` selected 25,732 lines; current 32,996; unchanged ceiling
 19,299 (25 % net reduction). **Target not met; gap 13,697 lines.**
 

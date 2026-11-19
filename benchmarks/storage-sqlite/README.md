@@ -504,7 +504,7 @@ Windows480 full core verification failed the raw-file mutation assertion even th
 
 ### Inventoried old-client exclusion drill497
 
-`old-client-exclusion-497.json` publishes the actual pinned filesystem CLI/lock operational drill on Mac, Windows and Docker Linux, including raw refusal results, observed process shutdown, captured source digests, archival, current native post-cutover write and terminal three-task validation. Remote source admission covers2496 files; Linux checks all before/after, Windows checks the2494 base files and four changed/new file hashes after completion. See the [operator procedure and privilege limits](../../docs/SQLITE_OLD_CLIENT_EXCLUSION.md). This is correctness/exclusion evidence, not a latency/resource benchmark or proof that unknown privileged installations cannot write a production project.
+`old-client-exclusion-497.json` publishes the actual pinned filesystem CLI/lock operational drill on Mac, Windows and Docker Linux, including raw refusal results, observed process shutdown, captured source digests, archival, current native post-cutover write and terminal three-task validation. Remote source admission covers2496 files; Linux checks all before/after, Windows checks the2494 base files and four changed/new file hashes after completion. See the [operator procedure and privilege limits](../../docs/history/sqlite-migration/SQLITE_OLD_CLIENT_EXCLUSION.md). This is correctness/exclusion evidence, not a latency/resource benchmark or proof that unknown privileged installations cannot write a production project.
 
 ### Inclusive current-source LOC503
 
@@ -552,11 +552,11 @@ Windows480 full core verification failed the raw-file mutation assertion even th
 
 ### Maintenance coverage520
 
-`maintenance-coverage-520.json` maps all eight original safe-migration requirements and ongoing backup/restore boundaries to source hashes and named tests. Current Mac31/31 focused source/candidate/attachment/project-backup/public-restore cases pass. [Coverage and gaps](../../docs/SQLITE_MAINTENANCE_COVERAGE.md) preserves the interruption/platform and rollback/downgrade requirements. It does not close the whole maintenance checkpoint.
+`maintenance-coverage-520.json` maps all eight original safe-migration requirements and ongoing backup/restore boundaries to source hashes and named tests. Current Mac31/31 focused source/candidate/attachment/project-backup/public-restore cases pass. [Coverage and gaps](../../docs/history/sqlite-migration/SQLITE_MAINTENANCE_COVERAGE.md) preserves the interruption/platform and rollback/downgrade requirements. It does not close the whole maintenance checkpoint.
 
 ### Exact reverse-export compatibility525
 
-`reverse-export-compatibility-525.json` records Mac disposable exact-target reverse export after a canonical native task write: native and pinned old validation both VALID at the same project path; new native task preserved; old CLI accepts a subsequent legacy task; current client refuses legacy mutation without allocating a database. Retained native logical state is unchanged. Relocation correctly fails execution-root provenance, and an incomplete fixture remains incomplete on both readers. [Boundary and limits](../../docs/SQLITE_REVERSE_EXPORT_BOUNDARY.md) retains Windows/Linux, attachments, pre-write rollback and full maintenance acceptance gaps.
+`reverse-export-compatibility-525.json` records Mac disposable exact-target reverse export after a canonical native task write: native and pinned old validation both VALID at the same project path; new native task preserved; old CLI accepts a subsequent legacy task; current client refuses legacy mutation without allocating a database. Retained native logical state is unchanged. Relocation correctly fails execution-root provenance, and an incomplete fixture remains incomplete on both readers. [Boundary and limits](../../docs/history/sqlite-migration/SQLITE_REVERSE_EXPORT_BOUNDARY.md) retains Windows/Linux, attachments, pre-write rollback and full maintenance acceptance gaps.
 
 ### Exact reverse-export platform526
 

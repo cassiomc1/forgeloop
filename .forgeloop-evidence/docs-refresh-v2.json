@@ -1,0 +1,577 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "docs-refresh-v2",
+  "forgeloopVersion": "2.3.1",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:docs-refresh-v2\",\n      \"digest\": {\n        \"sha256\": \"628fc07a7a63d8d256a2d5ecd15d0f25c51492dcdcb2dbc56be72ebfd9c5540b\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"docs-refresh-v2\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"5fc1fca1b15ef15cfa497aac3e470b6843e30226cf2f184632ee72abd1251e32\",\n      \"contentDigest\": \"628fc07a7a63d8d256a2d5ecd15d0f25c51492dcdcb2dbc56be72ebfd9c5540b\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"CONTRIBUTING.md\",\n        \"DOCS_INDEX.md\",\n        \"README.md\",\n        \"benchmarks/storage-sqlite/README.md\",\n        \"docs/ASTRA_IMPLEMENTATION.md\",\n        \"docs/DOCUMENTATION_GUIDE.md\",\n        \"docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md\",\n        \"docs/KNOWLEDGE_SOURCES.md\",\n        \"docs/RELEASE_CHECKLIST_1_4.md\",\n        \"docs/RELEASE_CHECKLIST_1_5_MCP.md\",\n        \"docs/RELEASE_CHECKLIST_1_6_1.md\",\n        \"docs/SQLITE_EXECUTION_CHECKPOINT.md\",\n        \"docs/SQLITE_LOC_OWNER_RECOMMENDATION.md\",\n        \"docs/SQLITE_LOC_RELEASE_DECISION.md\",\n        \"docs/SQLITE_MAINTENANCE_COVERAGE.md\",\n        \"docs/SQLITE_MIGRATION_MATRIX.md\",\n        \"docs/SQLITE_MIGRATION_PLAN.md\",\n        \"docs/SQLITE_MIGRATION_PROGRESS.md\",\n        \"docs/SQLITE_OLD_CLIENT_EXCLUSION.md\",\n        \"docs/SQLITE_PROGRESS.md\",\n        \"docs/SQLITE_REVERSE_EXPORT_BOUNDARY.md\",\n        \"docs/SQLITE_RUNTIME_REVIEW.md\",\n        \"docs/SQLITE_STORAGE.md\",\n        \"docs/assets/forgeloop-architecture.png\",\n        \"docs/assets/forgeloop-architecture.svg\",\n        \"docs/documentation-manifest.json\",\n        \"docs/documentation-review-matrix.json\",\n        \"docs/history/ASTRA_IMPLEMENTATION.md\",\n        \"docs/history/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md\",\n        \"docs/history/README.md\",\n        \"docs/history/releases/RELEASE_CHECKLIST_1_4.md\",\n        \"docs/history/releases/RELEASE_CHECKLIST_1_5_MCP.md\",\n        \"docs/history/releases/RELEASE_CHECKLIST_1_6_1.md\",\n        \"docs/history/sqlite-migration/SQLITE_EXECUTION_CHECKPOINT.md\",\n        \"docs/history/sqlite-migration/SQLITE_LOC_OWNER_RECOMMENDATION.md\",\n        \"docs/history/sqlite-migration/SQLITE_LOC_RELEASE_DECISION.md\",\n        \"docs/history/sqlite-migration/SQLITE_MAINTENANCE_COVERAGE.md\",\n        \"docs/history/sqlite-migration/SQLITE_MIGRATION_MATRIX.md\",\n        \"docs/history/sqlite-migration/SQLITE_MIGRATION_PLAN.md\",\n        \"docs/history/sqlite-migration/SQLITE_MIGRATION_PROGRESS.md\",\n        \"docs/history/sqlite-migration/SQLITE_OLD_CLIENT_EXCLUSION.md\",\n        \"docs/history/sqlite-migration/SQLITE_PROGRESS.md\",\n        \"docs/history/sqlite-migration/SQLITE_REVERSE_EXPORT_BOUNDARY.md\",\n        \"docs/history/sqlite-migration/SQLITE_RUNTIME_REVIEW.md\",\n        \"scripts/validate_documentation_conformance.mjs\",\n        \"tests/package.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"8bd45d56b0b7b082e97b80dead12165f53c7a7b3f7ef03ea253bef441e0c6669\",\n      \"routeFingerprint\": \"44d2bdb5c36f5069f7c4738159ae1bde848df170ff15746688033a312db64a0c\",\n      \"stateFingerprint\": \"8d6bb692fc4fc40a65c72964b91586a68aeb99738564ceeb11b4de20b4286f61\",\n      \"receiptFingerprint\": \"3fe7a5079677c577626f67593299f528dfa8914bd95ffd86c3c8af3d134c4fcd\",\n      \"ledgerSeq\": 37,\n      \"ledgerHash\": \"a0bb9a150ea044299809911cace7aeb247a90171d7eed792a52c43261663f3de\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "docs-refresh-v2",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "74592e2549cd405a29aec52478539a42801e324c",
+      "observedRevision": "74592e2549cd405a29aec52478539a42801e324c",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/docs-refresh",
+        "head": "74592e2549cd405a29aec52478539a42801e324c"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "8bd45d56b0b7b082e97b80dead12165f53c7a7b3f7ef03ea253bef441e0c6669",
+      "routeFingerprint": "44d2bdb5c36f5069f7c4738159ae1bde848df170ff15746688033a312db64a0c",
+      "stateFingerprint": "8d6bb692fc4fc40a65c72964b91586a68aeb99738564ceeb11b4de20b4286f61",
+      "receiptFingerprint": "3fe7a5079677c577626f67593299f528dfa8914bd95ffd86c3c8af3d134c4fcd",
+      "ledgerSeq": 37,
+      "ledgerHash": "a0bb9a150ea044299809911cace7aeb247a90171d7eed792a52c43261663f3de"
+    },
+    "entries": [
+      {
+        "path": "benchmarks/storage-sqlite/README.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "619fcbde14a0d10b6d5afef048e3841ad09f7b4e50591da8979df24224a9103b",
+        "providerContentId": "af120755b7e2db96a5d99677c083e20f10323c34",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "4118290091d224cb91263c5a54d592bd16e7ab20277289551c70a1daa3f15649",
+        "providerContentId": "97523f624121150aa30f462b0c54e2baf3b368df",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "CONTRIBUTING.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "361cfe1d882cabee82de4711b7354d8491729588570462b032064e86466a0709",
+        "providerContentId": "c1b8d21651b419b65458cae9c64262bc666f1c73",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "DOCS_INDEX.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "fefe6fe939955b7089e9556a34d238ab71cbc4bbd01ca289f24794ec38b1005a",
+        "providerContentId": "24174c6f7dcbec954d04967011a044cc25354767",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/assets/forgeloop-architecture.png",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "d01bc73b25fe05c4e0ca6ddfa5908a56d9db9517876b415d12d9dd6a4b4a62c6",
+        "providerContentId": "214f7434bc00ba41c1379e5e1c050a810fbfdb8d",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/assets/forgeloop-architecture.svg",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "6b36147d9db0fca91c7ee4e618f0aa8706cd5386923126f5af7b2b29d892bc2b",
+        "providerContentId": "7ade1d63c474a00074d037c1075a6a74084a372a",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/ASTRA_IMPLEMENTATION.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/DOCUMENTATION_GUIDE.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "930c08fdd2d50c2f88a6dc605a77dd0352d0353a16e30b10ec43ae1900648ecf",
+        "providerContentId": "cc08f7ce59f9f74a41e6ba3b736e5838a3546ce7",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/documentation-manifest.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "bf0198807262fd6379f8c0ecc3d55202a4e682b30b79aa6a0a1e12d6773c7032",
+        "providerContentId": "fbb8414a0f7c1574553af5c1a0447cba8f43d160",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/documentation-review-matrix.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "cf0d985512299bf962e9adde037d9e2cf7cf7edc703b732087deac48920f2a55",
+        "providerContentId": "88351e43a268ae38a969eaa94247320e045e574b",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/history/ASTRA_IMPLEMENTATION.md",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "a91cf8169c4dd95f7fbf5415836f1800c836f3db62bf32784690e9eea45b9891",
+        "providerContentId": "115ca16dc04e0afff6a1f7532bc8a84476a36d7f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/history/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "4643acb009b2b85e2ed7ac61cc81f6ee8d4d38befec7cdc6adbcbc7fb39e67c4",
+        "providerContentId": "6881ed688ac7e80ab979f0fc0733d80d90ee066b",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/history/README.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "166d293590d34b8e728085184ed7a59bf175382b09e70224d174bce2aa869a88",
+        "providerContentId": "4a62f2ec6c608bb1e0876d97686f4d37fd201b72",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/history/releases/RELEASE_CHECKLIST_1_4.md",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "2a72ae892b690face287fc33fbeaddcb0152ad72764c88a9b0a5e87525154aeb",
+        "providerContentId": "83f7b6a24cec85d5a9d63523bfa07adaf7907190",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/history/releases/RELEASE_CHECKLIST_1_5_MCP.md",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "cb50cbd23754da28046c6ea3d77ca8c115539bcd051f2e308b1ec8ad36ea9d2d",
+        "providerContentId": "2659a0ef062875cb419086f7c8c2fe7036eeff86",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/history/releases/RELEASE_CHECKLIST_1_6_1.md",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "cc4de8a81145f0668776d139573093561e6261a294979b86fc69f3c7e9d82fc1",
+        "providerContentId": "a55b6718ab8b6b20f19d07cfd80bd4674ee6690d",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/history/sqlite-migration/SQLITE_EXECUTION_CHECKPOINT.md",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "0bbce45445b9ed201fad525b5580bf1c89bb46b0697c0056abb1a15856d4361a",
+        "providerContentId": "23e71ab71ebdfe4bb7010800191751c46e27ab3b",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/history/sqlite-migration/SQLITE_LOC_OWNER_RECOMMENDATION.md",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "fb4114fd74bca330c7ff7bd8a62f254cb1cfcec5de2fe69e43cfffd93dce07cd",
+        "providerContentId": "f1ce384e001b2ab1dd088a499e3adaf095e2fd0f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/history/sqlite-migration/SQLITE_LOC_RELEASE_DECISION.md",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "3de4f728410babfed960a5d2e7f08590730846c33d64ebfcae7d3364c94c096d",
+        "providerContentId": "2421425a1961c493b6c42600b0546fd16bdd6465",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/history/sqlite-migration/SQLITE_MAINTENANCE_COVERAGE.md",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "095547ca07150166f4f34fafe3d102801063d8dd7f933013a2d94585761e5a99",
+        "providerContentId": "3f819dbef1d24f08c46aef45f9bbb796c26633fc",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/history/sqlite-migration/SQLITE_MIGRATION_MATRIX.md",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "66f0ef499def3030aac82efa2069aadedb7dc61f8869b28a72333b057e7d0cae",
+        "providerContentId": "b781604f9df54ca50ff3a479be6793df4c7b301e",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/history/sqlite-migration/SQLITE_MIGRATION_PLAN.md",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "98237b29aacadb07427a91d3b5f79ddf97b6cee2de4007b1a0ddc69032088457",
+        "providerContentId": "61431e085032518cd5726c784cb02cb94b7807c3",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/history/sqlite-migration/SQLITE_MIGRATION_PROGRESS.md",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "bf2ffe0b7e7877c15e1d9ac9167fe3fd59f8b0eadaa136fb1cb896df11407dfb",
+        "providerContentId": "e90cd34f2a2763d97725c2dcf3907fd541ad9874",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/history/sqlite-migration/SQLITE_OLD_CLIENT_EXCLUSION.md",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "1f6ca279a4241a9fede0985ced9a4255fdcaa4fd07d88f7370778b2ed5faa3ee",
+        "providerContentId": "13a327bf4a8c0e141692e04592e7c5d91fa8381a",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/history/sqlite-migration/SQLITE_PROGRESS.md",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "e0879aeb2bf0277085ef648c3593ccfe1897e621658367c8a5ba2e870663738d",
+        "providerContentId": "6cf7ec7d862f15fe54f15918aa3e0d0e18cdbba0",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/history/sqlite-migration/SQLITE_REVERSE_EXPORT_BOUNDARY.md",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "2410e02fb02275dd4dbed24ecd255fac505d929f23e3d59fed730a1c9cbec9f5",
+        "providerContentId": "6daff7e4ed8c71a74a6af77cf346c239da293e66",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/history/sqlite-migration/SQLITE_RUNTIME_REVIEW.md",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "60973550833484156523c1c64617796c2d55944177c46f61874d3b2977d5fead",
+        "providerContentId": "017953b69346c8ffb1816d540ff5324f792927fd",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/KNOWLEDGE_SOURCES.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "f14be66aefa13f180758d1735dd9ab7bc2f4d61d3869c81bb7da6c6bd8fb81ba",
+        "providerContentId": "3644e8dd964aa10fe9f38f6f9c936094794f5d38",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/RELEASE_CHECKLIST_1_4.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/RELEASE_CHECKLIST_1_5_MCP.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/RELEASE_CHECKLIST_1_6_1.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/SQLITE_EXECUTION_CHECKPOINT.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/SQLITE_LOC_OWNER_RECOMMENDATION.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/SQLITE_LOC_RELEASE_DECISION.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/SQLITE_MAINTENANCE_COVERAGE.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/SQLITE_MIGRATION_MATRIX.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/SQLITE_MIGRATION_PLAN.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/SQLITE_MIGRATION_PROGRESS.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/SQLITE_OLD_CLIENT_EXCLUSION.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/SQLITE_PROGRESS.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/SQLITE_REVERSE_EXPORT_BOUNDARY.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/SQLITE_RUNTIME_REVIEW.md",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/SQLITE_STORAGE.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "fb085804cceba4497a904f2faa1eb7c156e1e23cc9e11521b747d28849f18bc0",
+        "providerContentId": "bd8609a8d5e34f820736f57e3c1b19422b730168",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "README.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "66fa0a3a179f94fe9c84559962b4e53c9014720a37a2e15ece772ef0428d8347",
+        "providerContentId": "f6be100f03f78dec167e341db6a0028b883823f8",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/validate_documentation_conformance.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "e42d4f390003b95669ebfb577b09c9046897b95e772dbf6ccc33532eb7e2ffee",
+        "providerContentId": "120c7f64902d5245f4255a43520286c75449f79f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/package.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "8e5cfb3134d9dcf9a72b6ee0afbb3466f8085b20c740b6eab5c28bd3bbacc0fc",
+        "providerContentId": "a12d69d81fb7fc426963bdcf442a06888aba31bf",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "628fc07a7a63d8d256a2d5ecd15d0f25c51492dcdcb2dbc56be72ebfd9c5540b"
+  },
+  "manifestFingerprint": "5fc1fca1b15ef15cfa497aac3e470b6843e30226cf2f184632ee72abd1251e32",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Review the repository documentation after 2.3.1: replace the README architecture image with a current one generated from the SVG source, add the evidence, signing and ForgeLoop Cloud features to README and DOCS_INDEX, index the undocumented current docs (evidence bundles, cloud sync, assessment, SQLite storage), remove duplicate DOCS_INDEX rows, and move superseded release checklists, the Astra record, the knowledge gap analysis and the SQLite migration-era records into docs/history with every reference (manifest, review matrix, conformance check, package test, benchmark README) updated.",
+    "successCriteria": [
+      "Current docs are indexed, archived docs live under docs/history with working references, and the README shows the regenerated architecture image"
+    ],
+    "checks": [
+      {
+        "id": "docs-check",
+        "requirement": "npm run docs:check passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-1420fad01be569e0",
+        "requirement": "Current docs are indexed, archived docs live under docs/history with working references, and the README shows the regenerated architecture image",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-19T03:42:33.844Z",
+    "completedAt": "2026-11-19T03:54:40.639Z",
+    "durationMs": 726795,
+    "phaseDurationsMs": {
+      "planning": 2599,
+      "executing": 59405,
+      "verifying": 664525,
+      "reviewing": 266
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 3,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "b0b67153fca359a407598b3368f76cf8b24892e324bac35caeafc0823777a158"
+}

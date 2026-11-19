@@ -398,14 +398,14 @@
       "packageInclusion": "npm"
     },
     {
-      "path": "docs/RELEASE_CHECKLIST_1_4.md",
+      "path": "docs/history/releases/RELEASE_CHECKLIST_1_4.md",
       "status": "reviewed",
       "action": "unchanged",
       "sourceOfTruth": [
-        "docs/RELEASE_CHECKLIST_1_4.md"
+        "docs/history/releases/RELEASE_CHECKLIST_1_4.md"
       ],
       "canonicalSources": [
-        "docs/RELEASE_CHECKLIST_1_4.md"
+        "docs/history/releases/RELEASE_CHECKLIST_1_4.md"
       ],
       "origin": "handwritten",
       "currency": "historical",
@@ -454,28 +454,28 @@
       "packageInclusion": "npm"
     },
     {
-      "path": "docs/RELEASE_CHECKLIST_1_5_MCP.md",
+      "path": "docs/history/releases/RELEASE_CHECKLIST_1_5_MCP.md",
       "status": "reviewed",
       "action": "unchanged",
       "sourceOfTruth": [
-        "docs/RELEASE_CHECKLIST_1_5_MCP.md"
+        "docs/history/releases/RELEASE_CHECKLIST_1_5_MCP.md"
       ],
       "canonicalSources": [
-        "docs/RELEASE_CHECKLIST_1_5_MCP.md"
+        "docs/history/releases/RELEASE_CHECKLIST_1_5_MCP.md"
       ],
       "origin": "handwritten",
       "currency": "historical",
       "packageInclusion": "repository-only"
     },
     {
-      "path": "docs/RELEASE_CHECKLIST_1_6_1.md",
+      "path": "docs/history/releases/RELEASE_CHECKLIST_1_6_1.md",
       "status": "reviewed",
       "action": "new",
       "sourceOfTruth": [
-        "docs/RELEASE_CHECKLIST_1_6_1.md"
+        "docs/history/releases/RELEASE_CHECKLIST_1_6_1.md"
       ],
       "canonicalSources": [
-        "docs/RELEASE_CHECKLIST_1_6_1.md"
+        "docs/history/releases/RELEASE_CHECKLIST_1_6_1.md"
       ],
       "origin": "handwritten",
       "currency": "historical",
@@ -640,17 +640,17 @@
       "packageInclusion": "npm"
     },
     {
-      "path": "docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md",
+      "path": "docs/history/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md",
       "status": "reviewed",
       "action": "new",
       "sourceOfTruth": [
-        "docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md"
+        "docs/history/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md"
       ],
       "canonicalSources": [
-        "docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md"
+        "docs/history/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md"
       ],
       "origin": "handwritten",
-      "currency": "current",
+      "currency": "historical",
       "packageInclusion": "repository-only"
     },
     {
@@ -934,14 +934,14 @@
       "packageInclusion": "npm"
     },
     {
-      "path": "docs/ASTRA_IMPLEMENTATION.md",
+      "path": "docs/history/ASTRA_IMPLEMENTATION.md",
       "status": "reviewed",
       "action": "new",
       "sourceOfTruth": [
-        "docs/ASTRA_IMPLEMENTATION.md"
+        "docs/history/ASTRA_IMPLEMENTATION.md"
       ],
       "canonicalSources": [
-        "docs/ASTRA_IMPLEMENTATION.md"
+        "docs/history/ASTRA_IMPLEMENTATION.md"
       ],
       "origin": "handwritten",
       "currency": "historical",
@@ -972,7 +972,7 @@
         "docs/history/README.md"
       ],
       "origin": "handwritten",
-      "currency": "current",
+      "currency": "historical",
       "packageInclusion": "repository-only"
     },
     {
@@ -1955,7 +1955,7 @@
       "status": "reviewed",
       "action": "updated",
       "sourceOfTruth": [
-        "docs/SQLITE_MIGRATION_PLAN.md",
+        "docs/history/sqlite-migration/SQLITE_MIGRATION_PLAN.md",
         "src/storage/capabilities.js",
         ".github/workflows/npm-publish.yml"
       ],
@@ -1965,6 +1965,216 @@
       "origin": "handwritten",
       "currency": "current",
       "packageInclusion": "npm"
+    },
+    {
+      "path": "docs/EVIDENCE_BUNDLES.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/EVIDENCE_BUNDLES.md"
+      ],
+      "canonicalSources": [
+        "docs/EVIDENCE_BUNDLES.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/CLOUD_SYNC.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/CLOUD_SYNC.md"
+      ],
+      "canonicalSources": [
+        "docs/CLOUD_SYNC.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/ASSESSMENT.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/ASSESSMENT.md"
+      ],
+      "canonicalSources": [
+        "docs/ASSESSMENT.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/SQLITE_STORAGE.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/SQLITE_STORAGE.md"
+      ],
+      "canonicalSources": [
+        "docs/SQLITE_STORAGE.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/history/sqlite-migration/SQLITE_EXECUTION_CHECKPOINT.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/history/sqlite-migration/SQLITE_EXECUTION_CHECKPOINT.md"
+      ],
+      "canonicalSources": [
+        "docs/history/sqlite-migration/SQLITE_EXECUTION_CHECKPOINT.md"
+      ],
+      "origin": "handwritten",
+      "currency": "historical",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/history/sqlite-migration/SQLITE_LOC_OWNER_RECOMMENDATION.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/history/sqlite-migration/SQLITE_LOC_OWNER_RECOMMENDATION.md"
+      ],
+      "canonicalSources": [
+        "docs/history/sqlite-migration/SQLITE_LOC_OWNER_RECOMMENDATION.md"
+      ],
+      "origin": "handwritten",
+      "currency": "historical",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/history/sqlite-migration/SQLITE_LOC_RELEASE_DECISION.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/history/sqlite-migration/SQLITE_LOC_RELEASE_DECISION.md"
+      ],
+      "canonicalSources": [
+        "docs/history/sqlite-migration/SQLITE_LOC_RELEASE_DECISION.md"
+      ],
+      "origin": "handwritten",
+      "currency": "historical",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/history/sqlite-migration/SQLITE_MAINTENANCE_COVERAGE.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/history/sqlite-migration/SQLITE_MAINTENANCE_COVERAGE.md"
+      ],
+      "canonicalSources": [
+        "docs/history/sqlite-migration/SQLITE_MAINTENANCE_COVERAGE.md"
+      ],
+      "origin": "handwritten",
+      "currency": "historical",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/history/sqlite-migration/SQLITE_MIGRATION_MATRIX.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/history/sqlite-migration/SQLITE_MIGRATION_MATRIX.md"
+      ],
+      "canonicalSources": [
+        "docs/history/sqlite-migration/SQLITE_MIGRATION_MATRIX.md"
+      ],
+      "origin": "handwritten",
+      "currency": "historical",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/history/sqlite-migration/SQLITE_MIGRATION_PLAN.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/history/sqlite-migration/SQLITE_MIGRATION_PLAN.md"
+      ],
+      "canonicalSources": [
+        "docs/history/sqlite-migration/SQLITE_MIGRATION_PLAN.md"
+      ],
+      "origin": "handwritten",
+      "currency": "historical",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/history/sqlite-migration/SQLITE_MIGRATION_PROGRESS.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/history/sqlite-migration/SQLITE_MIGRATION_PROGRESS.md"
+      ],
+      "canonicalSources": [
+        "docs/history/sqlite-migration/SQLITE_MIGRATION_PROGRESS.md"
+      ],
+      "origin": "handwritten",
+      "currency": "historical",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/history/sqlite-migration/SQLITE_OLD_CLIENT_EXCLUSION.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/history/sqlite-migration/SQLITE_OLD_CLIENT_EXCLUSION.md"
+      ],
+      "canonicalSources": [
+        "docs/history/sqlite-migration/SQLITE_OLD_CLIENT_EXCLUSION.md"
+      ],
+      "origin": "handwritten",
+      "currency": "historical",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/history/sqlite-migration/SQLITE_PROGRESS.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/history/sqlite-migration/SQLITE_PROGRESS.md"
+      ],
+      "canonicalSources": [
+        "docs/history/sqlite-migration/SQLITE_PROGRESS.md"
+      ],
+      "origin": "handwritten",
+      "currency": "historical",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/history/sqlite-migration/SQLITE_REVERSE_EXPORT_BOUNDARY.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/history/sqlite-migration/SQLITE_REVERSE_EXPORT_BOUNDARY.md"
+      ],
+      "canonicalSources": [
+        "docs/history/sqlite-migration/SQLITE_REVERSE_EXPORT_BOUNDARY.md"
+      ],
+      "origin": "handwritten",
+      "currency": "historical",
+      "packageInclusion": "repository-only"
+    },
+    {
+      "path": "docs/history/sqlite-migration/SQLITE_RUNTIME_REVIEW.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/history/sqlite-migration/SQLITE_RUNTIME_REVIEW.md"
+      ],
+      "canonicalSources": [
+        "docs/history/sqlite-migration/SQLITE_RUNTIME_REVIEW.md"
+      ],
+      "origin": "handwritten",
+      "currency": "historical",
+      "packageInclusion": "repository-only"
     }
   ]
 }

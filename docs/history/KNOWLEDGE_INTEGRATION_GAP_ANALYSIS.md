@@ -2,7 +2,7 @@
 
 > **Status:** Historical gap analysis. The provider-neutral advisory-context
 > boundary described here was implemented in ForgeLoop 1.10.0. Current
-> operational guidance lives in [`docs/ADVISORY_CONTEXT.md`](./ADVISORY_CONTEXT.md).
+> operational guidance lives in [`docs/ADVISORY_CONTEXT.md`](../ADVISORY_CONTEXT.md).
 
 Snapshot date: 2026-09-01
 Target package: ForgeLoop 1.8.0

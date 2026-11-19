@@ -24,7 +24,7 @@ The helper only creates disposable fixtures and exports. It does not accept an e
 
 This tests one target version and the state/task/provenance boundary on all three requested hosts. Linked Git worktrees, old-target attachment coverage, pre-write source rollback and complete interruption-stage acceptance remain open. It does not establish unrestricted downgrade or support for arbitrary old versions. Production activation requires authority, writer quiescence and operational exclusion of the inactive client generation. Retain the original and current native backups under the explicit manual retention policy. Do not replace accepted native work with the older captured source. Do not run both generations as writers against the same active project, and require explicit migration before reactivating the native client on a legacy export.
 
-Raw commands, negative controls and source hashes: [reverse-export compatibility525](../benchmarks/storage-sqlite/reverse-export-compatibility-525.json) [platform526](../benchmarks/storage-sqlite/reverse-export-platform-526.json) and [Git platform529](../benchmarks/storage-sqlite/reverse-export-git-platform-529.json).
+Raw commands, negative controls and source hashes: [reverse-export compatibility525](../../../benchmarks/storage-sqlite/reverse-export-compatibility-525.json) [platform526](../../../benchmarks/storage-sqlite/reverse-export-platform-526.json) and [Git platform529](../../../benchmarks/storage-sqlite/reverse-export-git-platform-529.json).
 
 ### Binary attachment preservation (checkpoint 530)
 

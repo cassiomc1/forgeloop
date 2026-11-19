@@ -41,7 +41,7 @@ Skipped concepts:
 
 Canonical homes:
 
-- `docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md` for decisions;
+- `docs/history/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md` for decisions;
 - `docs/KNOWLEDGE_SOURCES.md` for provenance;
 - existing `ENG/` and protocol documents for operational rules.
 

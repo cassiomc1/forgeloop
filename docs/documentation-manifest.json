@@ -350,9 +350,9 @@
       "packaged": true
     },
     {
-      "path": "docs/RELEASE_CHECKLIST_1_4.md",
+      "path": "docs/history/releases/RELEASE_CHECKLIST_1_4.md",
       "id": "release-checklist-1-4",
-      "class": "reference",
+      "class": "historical",
       "audience": [
         "maintainer"
       ],
@@ -400,9 +400,9 @@
       "packaged": true
     },
     {
-      "path": "docs/RELEASE_CHECKLIST_1_5_MCP.md",
+      "path": "docs/history/releases/RELEASE_CHECKLIST_1_5_MCP.md",
       "id": "release-checklist-1-5-mcp",
-      "class": "reference",
+      "class": "historical",
       "audience": [
         "maintainer"
       ],
@@ -412,9 +412,9 @@
       "packaged": false
     },
     {
-      "path": "docs/RELEASE_CHECKLIST_1_6_1.md",
+      "path": "docs/history/releases/RELEASE_CHECKLIST_1_6_1.md",
       "id": "release-checklist-1-6-1",
-      "class": "reference",
+      "class": "historical",
       "audience": [
         "maintainer"
       ],
@@ -566,9 +566,9 @@
       "packaged": true
     },
     {
-      "path": "docs/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md",
+      "path": "docs/history/KNOWLEDGE_INTEGRATION_GAP_ANALYSIS.md",
       "id": "knowledge-integration-gap-analysis",
-      "class": "reference",
+      "class": "historical",
       "audience": [
         "maintainer",
         "integrator"
@@ -845,7 +845,7 @@
       "packaged": true
     },
     {
-      "path": "docs/ASTRA_IMPLEMENTATION.md",
+      "path": "docs/history/ASTRA_IMPLEMENTATION.md",
       "id": "astra-implementation",
       "class": "historical",
       "audience": [
@@ -872,7 +872,7 @@
     {
       "path": "docs/history/README.md",
       "id": "documentation-history-index",
-      "class": "index",
+      "class": "historical",
       "audience": [
         "maintainer"
       ],
@@ -1647,6 +1647,191 @@
         "stable-storage-release-acceptance"
       ],
       "packaged": true
+    },
+    {
+      "path": "docs/EVIDENCE_BUNDLES.md",
+      "id": "evidence-bundles",
+      "class": "operational",
+      "audience": [
+        "user",
+        "maintainer",
+        "integrator"
+      ],
+      "canonicalFor": [
+        "evidence-bundles"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "docs/CLOUD_SYNC.md",
+      "id": "cloud-sync",
+      "class": "operational",
+      "audience": [
+        "user",
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "cloud-sync"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "docs/ASSESSMENT.md",
+      "id": "assessment",
+      "class": "operational",
+      "audience": [
+        "user"
+      ],
+      "canonicalFor": [
+        "repository-assessment"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "docs/SQLITE_STORAGE.md",
+      "id": "sqlite-storage",
+      "class": "reference",
+      "audience": [
+        "user",
+        "maintainer",
+        "integrator"
+      ],
+      "canonicalFor": [
+        "sqlite-storage"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "docs/history/sqlite-migration/SQLITE_EXECUTION_CHECKPOINT.md",
+      "id": "sqlite-execution-checkpoint",
+      "class": "historical",
+      "audience": [
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "sqlite-execution-checkpoint-history"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "docs/history/sqlite-migration/SQLITE_LOC_OWNER_RECOMMENDATION.md",
+      "id": "sqlite-loc-owner-recommendation",
+      "class": "historical",
+      "audience": [
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "sqlite-loc-owner-recommendation-history"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "docs/history/sqlite-migration/SQLITE_LOC_RELEASE_DECISION.md",
+      "id": "sqlite-loc-release-decision",
+      "class": "historical",
+      "audience": [
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "sqlite-loc-release-decision-history"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "docs/history/sqlite-migration/SQLITE_MAINTENANCE_COVERAGE.md",
+      "id": "sqlite-maintenance-coverage",
+      "class": "historical",
+      "audience": [
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "sqlite-maintenance-coverage-history"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "docs/history/sqlite-migration/SQLITE_MIGRATION_MATRIX.md",
+      "id": "sqlite-migration-matrix",
+      "class": "historical",
+      "audience": [
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "sqlite-migration-matrix-history"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "docs/history/sqlite-migration/SQLITE_MIGRATION_PLAN.md",
+      "id": "sqlite-migration-plan",
+      "class": "historical",
+      "audience": [
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "sqlite-migration-plan-history"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "docs/history/sqlite-migration/SQLITE_MIGRATION_PROGRESS.md",
+      "id": "sqlite-migration-progress",
+      "class": "historical",
+      "audience": [
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "sqlite-migration-progress-history"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "docs/history/sqlite-migration/SQLITE_OLD_CLIENT_EXCLUSION.md",
+      "id": "sqlite-old-client-exclusion",
+      "class": "historical",
+      "audience": [
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "sqlite-old-client-exclusion-history"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "docs/history/sqlite-migration/SQLITE_PROGRESS.md",
+      "id": "sqlite-progress",
+      "class": "historical",
+      "audience": [
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "sqlite-progress-history"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "docs/history/sqlite-migration/SQLITE_REVERSE_EXPORT_BOUNDARY.md",
+      "id": "sqlite-reverse-export-boundary",
+      "class": "historical",
+      "audience": [
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "sqlite-reverse-export-boundary-history"
+      ],
+      "packaged": false
+    },
+    {
+      "path": "docs/history/sqlite-migration/SQLITE_RUNTIME_REVIEW.md",
+      "id": "sqlite-runtime-review",
+      "class": "historical",
+      "audience": [
+        "maintainer"
+      ],
+      "canonicalFor": [
+        "sqlite-runtime-review-history"
+      ],
+      "packaged": false
     }
   ]
 }

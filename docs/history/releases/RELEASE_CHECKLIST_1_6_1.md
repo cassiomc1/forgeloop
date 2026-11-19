@@ -2,8 +2,8 @@
 
 Preparation checklist for the `@cassiomc1/forgeloop` 1.6.1 release. It does not
 authorize publication. Historical checklists:
-[`RELEASE_CHECKLIST_1_5_MCP.md`](./RELEASE_CHECKLIST_1_5_MCP.md),
-[`RELEASE_CHECKLIST_1_4.md`](./RELEASE_CHECKLIST_1_4.md).
+[`RELEASE_CHECKLIST_1_5_MCP.md`](RELEASE_CHECKLIST_1_5_MCP.md),
+[`RELEASE_CHECKLIST_1_4.md`](RELEASE_CHECKLIST_1_4.md).
 
 ## Version and contract identity
 
