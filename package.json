@@ -1,6 +1,6 @@
 {
   "name": "@cassiomc1/forgeloop",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Evidence-first engineering protocol for AI coding environments and developer workflows",
   "repository": {
     "type": "git",

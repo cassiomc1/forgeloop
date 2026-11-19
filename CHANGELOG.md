@@ -1,7 +1,13 @@
 # Changelog
 
-## Unreleased
+## 2.3.1 - 2026-11-19
 
+- Patch release. Its runtime changes are bound by
+  `benchmarks/storage-sqlite/stable-2.3.1-writer-review.json.gz`, a delta
+  review against 2.3.0. Both changed modules have a disposition, and the two
+  added filesystem bindings are read-only `readFile` calls in
+  `src/core/signing/sigstore.js` over private temporary copies of the
+  statement and the bundle. No write path is added.
 - Sigstore verification works with cosign 3. `verify-blob-attestation` no
   longer accepts `--statement` (Evidence signing run 44414500869:
   `unknown flag: --statement`), so the core provider and the Evidence signing
