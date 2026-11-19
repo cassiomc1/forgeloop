@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Sigstore verification works with cosign 3. `verify-blob-attestation` no
+  longer accepts `--statement` (Evidence signing run 44414500869:
+  `unknown flag: --statement`), so the core provider and the Evidence signing
+  workflow now verify with `--type`, `--digest` and `--digestAlg sha256`.
+  After cosign succeeds, they also require the signed DSSE payload to be
+  exactly the attestation statement, so a signature over a different
+  statement with the same subject is rejected.
 - Attestation statements are now plain in-toto Statement v1 documents
   without a top-level `schemaVersion`; the predicate keeps its own. The first
   real `cosign attest-blob` run (Evidence signing workflow) rejected the

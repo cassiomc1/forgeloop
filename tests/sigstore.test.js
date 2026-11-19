@@ -1,6 +1,6 @@
 import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
-import { mkdtemp } from "node:fs/promises";
+import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -10,6 +10,10 @@ import { verifySigstoreBundle } from "../src/core/signing/sigstore.js";
 test("the Sigstore convenience verifier keeps policy and process execution bounded", async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), "forgeloop-sigstore-"));
   const calls = [];
+  const statement = { _type: "https://in-toto.io/Statement/v1", subject: [{ name: "fixture", digest: { sha256: "d".repeat(64) } }], predicateType: "https://forgeloop.dev/attestation/v1", predicate: {} };
+  await mkdir(path.join(target, "attestations"));
+  await writeFile(path.join(target, "attestations/statement.json"), JSON.stringify(statement));
+  await writeFile(path.join(target, "attestations/statement.sigstore.json"), JSON.stringify({ dsseEnvelope: { payload: Buffer.from(JSON.stringify(statement)).toString("base64") } }));
   try {
     const result = await verifySigstoreBundle({
       target,
@@ -30,6 +34,7 @@ test("the Sigstore convenience verifier keeps policy and process execution bound
     assert.ok(calls[0].options.timeout > 0);
     assert.ok(calls[0].args.includes("--certificate-identity"));
     assert.ok(calls[0].args.includes("--certificate-oidc-issuer"));
+    assert.equal(calls[0].args[calls[0].args.indexOf("--digest") + 1], "d".repeat(64));
   } finally {
     await removeTempTree(target);
   }
