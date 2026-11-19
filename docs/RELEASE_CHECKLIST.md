@@ -4,6 +4,27 @@ This is the current release checklist for the PolyForm Noncommercial-licensed
 `@cassiomc1/forgeloop` package. It is a preparation and verification checklist;
 it does not authorize publication.
 
+## Stable 2.3.1 preparation — 2026-11-19
+
+`2.3.1` is a patch release of the core package. It makes Sigstore signing
+work with real `cosign`:
+
+- attestation statements are plain in-toto Statement v1 documents (cosign
+  rejected the extra top-level `schemaVersion`);
+- verification uses cosign 3 `verify-blob-attestation` with `--type`,
+  `--digest` and `--digestAlg`, then requires the signed DSSE payload to equal
+  the statement.
+
+The Evidence signing workflow ran the same cosign signing and cosign 3
+verification commands on GitHub Actions (run 44432197043); the core
+provider's verification is covered by tests with in-toto and DSSE fixtures.
+
+Its runtime changes are bound by
+[`stable-2.3.1-writer-review.json.gz`](../benchmarks/storage-sqlite/stable-2.3.1-writer-review.json.gz),
+a delta review against 2.3.0: 2 changed modules with dispositions, and 2 added
+read-only `readFile` bindings in `src/core/signing/sigstore.js`. Publication
+is a separate confirmed step.
+
 ## Stable 2.3.0 publication — 2026-11-18
 
 `2.3.0` is a minor release of the core package.
