@@ -12,8 +12,8 @@ This directory preserves completed audits, release evidence, validation reports,
 
 ## Preserved records
 
-- [`astra-code-audit-20260904.md`](./astra-code-audit-20260904.md) records the dated repository audit that produced the Astra implementation record.
-- [`releases/RELEASE_EVIDENCE_1_10_ECOSYSTEM.md`](./releases/RELEASE_EVIDENCE_1_10_ECOSYSTEM.md) preserves the 1.10 ecosystem publication evidence.
-- [`validation/`](./validation/) contains completed validation reports and the implemented Ripwire plan.
+- [`astra-code-audit-20260904.md`](astra-code-audit-20260904.md) records the dated repository audit that produced the Astra implementation record.
+- [`releases/RELEASE_EVIDENCE_1_10_ECOSYSTEM.md`](releases/RELEASE_EVIDENCE_1_10_ECOSYSTEM.md) preserves the 1.10 ecosystem publication evidence.
+- [`validation/`](validation) contains completed validation reports and the implemented Ripwire plan.
 
 Historical measurements, check counts, package sizes, and performance values describe their recorded revisions and environments. They are not current guarantees or release checklists.

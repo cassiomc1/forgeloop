@@ -1,91 +1,224 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="980" viewBox="0 0 1600 980" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1282" viewBox="0 0 1600 1282" role="img" aria-labelledby="title description">
 <title id="title">ForgeLoop architecture</title>
-<desc id="description">A coding host connects through ForgeLoop entry points to deterministic project and task governance. ForgeLoop records task state in SQLite mode, consumes host-executed checks as evidence, and validates closure. Jev is a bounded semantic input and has no lifecycle authority. Legacy operational state requires explicit migration; portable exports remain interchange.</desc>
+<desc id="description">A developer request reaches an AI coding host, which works through ForgeLoop entry points. The deterministic control plane takes each task through contract, routing, preflight, execution with evidence, and review with a diagnosis and correction loop. It records state in SQLite, consumes host-run checks, and treats Jev as advisory. Completed tasks produce evidence bundles with an in-toto statement, optional Sigstore signatures and evidence-verify checks in CI and a GitHub App. The optional ForgeLoop Cloud adds encrypted sync, evidence publishing and a team dashboard.</desc>
 <defs>
-  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#081323"/><stop offset="1" stop-color="#101c31"/></linearGradient>
-  <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#5eead4"/><stop offset="1" stop-color="#60a5fa"/></linearGradient>
-  <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#020617" flood-opacity=".35"/></filter>
-  <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#6f8eae"/></marker>
-  <marker id="arrowMint" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#5eead4"/></marker>
-  <style>
-    text{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#e5eef9}
-    .kicker{font-size:15px;font-weight:700;letter-spacing:2.4px;fill:#7dd3fc}
-    .title{font-size:42px;font-weight:750;letter-spacing:-1px}
-    .subtitle{font-size:18px;fill:#9db0c8}
-    .section{font-size:14px;font-weight:700;letter-spacing:1.8px;fill:#8ca3bd}
-    .label{font-size:18px;font-weight:700}
-    .body{font-size:14px;fill:#aebed1}
-    .small{font-size:13px;fill:#9db0c8}
-    .tiny{font-size:12px;fill:#8da2ba}
-    .box{fill:#14243a;stroke:#2a405a;stroke-width:1.5}
-    .core{fill:#112a3c;stroke:#2dd4bf;stroke-width:1.8}
-    .store{fill:#182541;stroke:#818cf8;stroke-width:1.8}
-    .external{fill:#172237;stroke:#506985;stroke-width:1.4}
-    .line{fill:none;stroke:#6f8eae;stroke-width:2;marker-end:url(#arrow)}
-    .dashed{fill:none;stroke:#a78bfa;stroke-width:2;stroke-dasharray:7 7;marker-end:url(#arrow)}
-    .mint{fill:none;stroke:#5eead4;stroke-width:2;marker-end:url(#arrowMint)}
-  </style>
-</defs>
-<rect width="1600" height="980" rx="28" fill="url(#bg)"/>
-<path d="M60 180H1540" stroke="url(#accent)" stroke-width="2" opacity=".8"/>
-<text x="80" y="62" class="kicker">EVIDENCE-FIRST ENGINEERING GOVERNANCE</text>
-<text x="80" y="112" class="title">ForgeLoop architecture</text>
-<text x="80" y="155" class="subtitle">A deterministic protocol between the coding host, project, and verified outcome</text>
-
-<text x="80" y="210" class="section">HOST AND PROJECT CONTEXT</text>
-<g filter="url(#shadow)">
-  <rect x="80" y="230" width="290" height="118" rx="18" class="external"/>
-  <rect x="440" y="230" width="340" height="118" rx="18" class="box"/>
-  <rect x="850" y="230" width="650" height="118" rx="18" class="box"/>
-</g>
-<text x="110" y="272" class="label">Developer request</text><text x="110" y="302" class="body">Intent, constraints, and repository</text>
-<path d="M370 289H432" class="line"/>
-<text x="470" y="272" class="label">AI coding host / harness</text><text x="470" y="302" class="body">Understands the task and performs the implementation</text>
-<path d="M780 289H842" class="line"/>
-<text x="882" y="272" class="label">Portable project instructions</text><text x="882" y="302" class="body">Native shims → LOOP_ENGINEERING → GUIDE_ROUTER → selected ENG guides</text>
-
-<text x="80" y="406" class="section">FORGELOOP CONTROL PLANE</text>
-<g filter="url(#shadow)">
-  <rect x="80" y="432" width="250" height="142" rx="18" class="core"/>
-  <rect x="370" y="432" width="250" height="142" rx="18" class="core"/>
-  <rect x="660" y="432" width="250" height="142" rx="18" class="core"/>
-  <rect x="950" y="432" width="250" height="142" rx="18" class="core"/>
-  <rect x="1240" y="432" width="260" height="142" rx="18" class="core"/>
-</g>
-<text x="110" y="475" class="label">CLI + Integration API</text><text x="110" y="505" class="body">Stable host boundary</text><text x="110" y="529" class="body">and command provenance</text>
-<path d="M330 503H362" class="line"/>
-<text x="400" y="475" class="label">Discover + scope</text><text x="400" y="505" class="body">Project evidence</text><text x="400" y="529" class="body">Claims + task contract</text>
-<path d="M620 503H652" class="line"/>
-<text x="690" y="475" class="label">Route + preflight</text><text x="690" y="505" class="body">Guides, policy, gates</text><text x="690" y="529" class="body">PREFLIGHT_READY</text>
-<path d="M910 503H942" class="line"/>
-<text x="980" y="475" class="label">Execute + verify</text><text x="980" y="505" class="body">Host runs checks</text><text x="980" y="529" class="body">ForgeLoop records results</text>
-<path d="M1200 503H1232" class="line"/>
-<text x="1270" y="475" class="label">Review + validate</text><text x="1270" y="505" class="body">Completion validator</text><text x="1270" y="529" class="body">VALID or non-valid</text>
-
-<text x="80" y="612" class="section">STATE, EVIDENCE, AND EXTERNAL INPUTS</text>
-<g filter="url(#shadow)">
-  <rect x="80" y="662" width="570" height="196" rx="18" class="store"/>
-  <rect x="720" y="662" width="340" height="196" rx="18" class="external"/>
-  <rect x="1130" y="662" width="370" height="196" rx="18" class="external"/>
-</g>
-<text x="112" y="704" class="label">SQLite-backed operational storage</text>
-<text x="112" y="736" class="body">.forgeloop/state.sqlite — selected SQLite mode</text>
-<text x="112" y="766" class="body">Task records · claims · event history · artifacts</text>
-<text x="112" y="796" class="small">Legacy filesystem mode remains a separate compatibility path.</text>
-<text x="112" y="825" class="tiny">Canonical operational writer: SQLite. Portable exports are interchange.</text>
-<path d="M785 574V634H365V654" class="mint"/>
-<text x="720" y="704" class="label">Host tools</text>
-<text x="752" y="738" class="body">Tests · builds · platform checks</text>
-<text x="752" y="768" class="body">Return observed results to evidence</text>
-<text x="752" y="812" class="small">The host, not ForgeLoop, implements code.</text>
-<path d="M712 758H658" class="mint"/>
-<text x="1162" y="704" class="label">Jev semantic input</text>
-<text x="1162" y="738" class="body">Bounded typed judgment at required</text>
-<text x="1162" y="768" class="body">semantic checkpoints</text>
-<text x="1162" y="812" class="small">Advisory to the protocol; never lifecycle authority.</text>
-<path d="M1240 662V622H785V582" class="dashed"/>
-
-<rect x="80" y="878" width="1420" height="58" rx="16" fill="#0b1728" stroke="#263c56"/>
-<circle cx="110" cy="907" r="7" fill="#5eead4"/><text x="132" y="913" class="body">ForgeLoop owns state transitions, claims, gates, evidence binding, and completion validation.</text>
-<text x="1070" y="913" class="small">Read-only advisory context stays outside authority.</text>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#040a18"/><stop offset=".55" stop-color="#071431"/><stop offset="1" stop-color="#0b0f2e"/></linearGradient>
+<linearGradient id="tg" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#22d3ee"/><stop offset="1" stop-color="#60a5fa"/></linearGradient>
+<radialGradient id="halo" cx=".5" cy="0" r=".8"><stop stop-color="#1e40af" stop-opacity=".35"/><stop offset="1" stop-color="#1e40af" stop-opacity="0"/></radialGradient>
+<filter id="glow" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<marker id="ah" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto"><path d="M0 0L9 5L0 10z" fill="#22d3ee"/></marker>
+<marker id="ahv" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto"><path d="M0 0L9 5L0 10z" fill="#c084fc"/></marker>
+<marker id="aha" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto"><path d="M0 0L9 5L0 10z" fill="#fbbf24"/></marker>
+<style>
+text{font-family:Inter,"SF Pro Display",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:#e6f0ff}
+.title{font-size:54px;font-weight:800;letter-spacing:-1.5px}
+.sub{font-size:21px;fill:#7dd3fc}
+.num{font-size:40px;font-weight:800;fill:#38bdf8}
+.sname{font-size:17px;font-weight:800;letter-spacing:1.2px;fill:#7dd3fc}
+.sdesc{font-size:13.5px;fill:#94a3b8}
+.ct{font-weight:700;fill:#f1f5ff}
+.cb{font-size:14.5px;fill:#a9bbd6}
+.small{font-size:13px;fill:#94a3b8}
+.panel{fill:#081430;fill-opacity:.85;stroke:#1d4ed8;stroke-opacity:.55;stroke-width:1.5}
+.panelglow{fill:#081733;stroke:#22d3ee;stroke-width:2;filter:url(#glow)}
+.card{fill:#0c1d3d;stroke:#2f5a8f;stroke-width:1.4}
+.cardc{fill:#0b2440;stroke:#22d3ee;stroke-opacity:.8;stroke-width:1.6}
+.cardv{fill:#151a40;stroke:#8b5cf6;stroke-width:1.6}
+.carda{fill:#1d1a2a;stroke:#f59e0b;stroke-opacity:.8;stroke-width:1.6}
+.arr{fill:none;stroke:#22d3ee;stroke-width:2.6;marker-end:url(#ah)}
+.arrv{fill:none;stroke:#c084fc;stroke-width:2.2;stroke-dasharray:6 6;marker-end:url(#ahv)}
+.arra{fill:none;stroke:#fbbf24;stroke-width:2.4;marker-end:url(#aha)}
+.loop{fill:none;stroke:#c084fc;stroke-width:2.4;marker-end:url(#ahv)}
+.chip{fill:#0c1d3d;stroke:#2f5a8f;stroke-width:1.3}
+.chipt{font-size:16px;font-weight:650;fill:#e6f0ff}
+.pill{font-size:14px;font-weight:650}
+</style></defs>
+<rect width="1600" height="1282" fill="url(#bg)"/><rect width="1600" height="420" fill="url(#halo)"/>
+<text x="800.0" y="70" text-anchor="middle" class="title"><tspan fill="url(#tg)">ForgeLoop</tspan> Architecture</text>
+<text x="800.0" y="106" text-anchor="middle" class="sub">Verifiable engineering protocol for AI coding environments</text>
+<rect x="24" y="130" width="1552" height="140" rx="20" class="panel"/>
+<text x="48" y="176" class="num">01</text>
+<text x="48" y="202" class="sname">INPUTS</text>
+<text x="48" y="223" class="sname">AND CONTEXT</text>
+<text x="48" y="248" class="sdesc">The request, the host</text>
+<text x="48" y="265" class="sdesc">and portable guidance.</text>
+<rect x="270" y="148" width="360" height="104" rx="14" class="card"/>
+<g transform="translate(314,194)"><rect x="-28.0" y="-28.0" width="56" height="56" rx="14" fill="#1d4ed8" fill-opacity=".28" stroke="#60a5fa" stroke-width="1.6"/><g fill="none" stroke="#60a5fa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="0" cy="-7" r="8"/><path d="M-14 14c2-10 8-14 14-14s12 4 14 14"/></g></g>
+<text x="356" y="186" class="ct" style="font-size:18px">Developer request</text>
+<text x="356" y="213" class="cb">Intent, constraints and</text>
+<text x="356" y="233" class="cb">the repository</text>
+<path d="M636 200L676 200" class="arr"/>
+<rect x="684" y="148" width="400" height="104" rx="14" class="card"/>
+<g transform="translate(728,194)"><rect x="-28.0" y="-28.0" width="56" height="56" rx="14" fill="#6d28d9" fill-opacity=".28" stroke="#a78bfa" stroke-width="1.6"/><g fill="none" stroke="#a78bfa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="-16" y="-13" width="32" height="26" rx="4"/><path d="M-9-4l6 5-6 5M1 7h8"/></g></g>
+<text x="770" y="186" class="ct" style="font-size:18px">AI coding host / harness</text>
+<text x="770" y="213" class="cb">Writes the code and runs tools;</text>
+<text x="770" y="233" class="cb">reaches ForgeLoop by CLI, MCP or API</text>
+<path d="M1090 200L1130 200" class="arr"/>
+<rect x="1138" y="148" width="414" height="104" rx="14" class="card"/>
+<g transform="translate(1182,194)"><rect x="-28.0" y="-28.0" width="56" height="56" rx="14" fill="#0f766e" fill-opacity=".28" stroke="#2dd4bf" stroke-width="1.6"/><g fill="none" stroke="#2dd4bf" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M-11-15h14l8 8v22h-22z"/><path d="M3-15v8h8M-6 0h12M-6 7h12"/></g></g>
+<text x="1224" y="186" class="ct" style="font-size:18px">Portable project instructions</text>
+<text x="1224" y="213" class="cb">AGENTS.md · CLAUDE.md · GUIDE_ROUTER</text>
+<text x="1224" y="233" class="cb">LOOP_ENGINEERING · ENG guides</text>
+<rect x="24" y="290" width="1552" height="248" rx="20" class="panelglow"/>
+<text x="48" y="336" class="num">02</text>
+<text x="48" y="362" class="sname">FORGELOOP</text>
+<text x="48" y="383" class="sname">CONTROL PLANE</text>
+<text x="48" y="408" class="sdesc">Deterministic lifecycle,</text>
+<text x="48" y="425" class="sdesc">verification and</text>
+<text x="48" y="442" class="sdesc">trusted completion.</text>
+<text x="270" y="330" class="ct" style="font-size:24px"><tspan fill="url(#tg)">ForgeLoop</tspan> deterministic control plane</text>
+<rect x="1062" y="306" width="490" height="36" rx="18" fill="#0b2440" stroke="#22d3ee" stroke-opacity=".7"/>
+<g transform="translate(1084,324)"><rect x="-13.0" y="-13.0" width="26" height="26" rx="14" fill="#0e7490" fill-opacity=".28" stroke="#22d3ee" stroke-width="1.6"/><g fill="none" stroke="#22d3ee" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M0-16l13 5v8c0 9-6 15-13 18-7-3-13-9-13-18v-8z"/><path d="M-6 0l4 4 8-8"/></g></g>
+<text x="1104" y="329" class="small" style="fill:#a5f3fc">Owns lifecycle, claims, gates, evidence binding and completion</text>
+<rect x="270" y="352" width="234" height="150" rx="14" class="cardc"/>
+<g transform="translate(310,390)"><rect x="-24.0" y="-24.0" width="48" height="48" rx="14" fill="#0e7490" fill-opacity=".28" stroke="#22d3ee" stroke-width="1.6"/><g fill="none" stroke="#22d3ee" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="-14" y="-14" width="28" height="28" rx="4"/><path d="M-8-6h3M-1-6h9M-8 1h3M-1 1h9M-8 8h3M-1 8h9"/></g></g>
+<text x="288" y="442" class="ct" style="font-size:18px">Contract + scope</text>
+<text x="288" y="466" class="cb">Task contract, claims</text>
+<text x="288" y="486" class="cb">and file scope</text>
+<path d="M507 427L529 427" class="arr"/>
+<rect x="532" y="352" width="234" height="150" rx="14" class="cardc"/>
+<g transform="translate(572,390)"><rect x="-24.0" y="-24.0" width="48" height="48" rx="14" fill="#0e7490" fill-opacity=".28" stroke="#22d3ee" stroke-width="1.6"/><g fill="none" stroke="#22d3ee" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="0" cy="-10" r="4"/><circle cx="-10" cy="10" r="4"/><circle cx="10" cy="10" r="4"/><path d="M0-6v6M0 0l-8 7M0 0l8 7"/></g></g>
+<text x="550" y="442" class="ct" style="font-size:18px">Route + guides</text>
+<text x="550" y="466" class="cb">Deterministic routing</text>
+<text x="550" y="486" class="cb">and ENG guide choice</text>
+<path d="M769 427L791 427" class="arr"/>
+<rect x="794" y="352" width="234" height="150" rx="14" class="cardc"/>
+<g transform="translate(834,390)"><rect x="-24.0" y="-24.0" width="48" height="48" rx="14" fill="#0e7490" fill-opacity=".28" stroke="#22d3ee" stroke-width="1.6"/><g fill="none" stroke="#22d3ee" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M0-16l13 5v8c0 9-6 15-13 18-7-3-13-9-13-18v-8z"/><path d="M-6 0l4 4 8-8"/></g></g>
+<text x="812" y="442" class="ct" style="font-size:18px">Preflight gates</text>
+<text x="812" y="466" class="cb">Required gates reach</text>
+<text x="812" y="486" class="cb">PREFLIGHT_READY</text>
+<path d="M1031 427L1053 427" class="arr"/>
+<rect x="1056" y="352" width="234" height="150" rx="14" class="cardc"/>
+<g transform="translate(1096,390)"><rect x="-24.0" y="-24.0" width="48" height="48" rx="14" fill="#0e7490" fill-opacity=".28" stroke="#22d3ee" stroke-width="1.6"/><g fill="none" stroke="#22d3ee" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle r="6"/><circle r="13" stroke-dasharray="5 4"/></g></g>
+<text x="1074" y="442" class="ct" style="font-size:18px">Execute + evidence</text>
+<text x="1074" y="466" class="cb">The host runs checks;</text>
+<text x="1074" y="486" class="cb">ForgeLoop records them</text>
+<path d="M1293 427L1315 427" class="arr"/>
+<rect x="1318" y="352" width="234" height="150" rx="14" class="cardc"/>
+<g transform="translate(1358,390)"><rect x="-24.0" y="-24.0" width="48" height="48" rx="14" fill="#0e7490" fill-opacity=".28" stroke="#22d3ee" stroke-width="1.6"/><g fill="none" stroke="#22d3ee" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="-13" y="-14" width="26" height="28" rx="4"/><path d="M-6 8v-6M0 8v-14M6 8v-9"/></g></g>
+<text x="1336" y="442" class="ct" style="font-size:18px">Review + complete</text>
+<text x="1336" y="466" class="cb">Validator-backed</text>
+<text x="1336" y="486" class="cb">completion receipt</text>
+<path d="M1173.0 504V522H649.0V510" class="loop"/>
+<rect x="781.0" y="508" width="260" height="28" rx="14" fill="#1a1240" stroke="#c084fc"/>
+<text x="911.0" y="527" text-anchor="middle" class="pill" style="fill:#e9d5ff">Diagnosis → correction loop</text>
+<rect x="24" y="558" width="1552" height="160" rx="20" class="panel"/>
+<text x="48" y="604" class="num">03</text>
+<text x="48" y="630" class="sname">STATE, TOOLS</text>
+<text x="48" y="651" class="sname">AND INPUTS</text>
+<text x="48" y="676" class="sdesc">Systems the control</text>
+<text x="48" y="693" class="sdesc">plane reads and records.</text>
+<rect x="270" y="578" width="262" height="120" rx="14" class="card"/>
+<g transform="translate(314,624)"><rect x="-28.0" y="-28.0" width="56" height="56" rx="14" fill="#1d4ed8" fill-opacity=".28" stroke="#60a5fa" stroke-width="1.6"/><g fill="none" stroke="#60a5fa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="0" cy="-10" rx="12" ry="5"/><path d="M-12-10v20c0 3 5 5 12 5s12-2 12-5v-20M-12 0c0 3 5 5 12 5s12-2 12-5"/></g></g>
+<text x="356" y="616" class="ct" style="font-size:18px">Operational state</text>
+<text x="356" y="643" class="cb">.forgeloop/state.sqlite</text>
+<text x="356" y="663" class="cb">Ledger, events, claims</text>
+<rect x="548" y="578" width="262" height="120" rx="14" class="card"/>
+<g transform="translate(592,624)"><rect x="-28.0" y="-28.0" width="56" height="56" rx="14" fill="#1d4ed8" fill-opacity=".28" stroke="#60a5fa" stroke-width="1.6"/><g fill="none" stroke="#60a5fa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="-3" cy="-3" r="9"/><path d="M4 4l9 9"/></g></g>
+<text x="634" y="616" class="ct" style="font-size:18px">Repository index</text>
+<text x="634" y="643" class="cb">Provider-neutral</text>
+<text x="634" y="663" class="cb">repository search</text>
+<rect x="826" y="578" width="262" height="120" rx="14" class="card"/>
+<g transform="translate(870,624)"><rect x="-28.0" y="-28.0" width="56" height="56" rx="14" fill="#0f766e" fill-opacity=".28" stroke="#2dd4bf" stroke-width="1.6"/><g fill="none" stroke="#2dd4bf" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="-14" y="-14" width="28" height="28" rx="6"/><path d="M-7 0l5 5 9-10"/></g></g>
+<text x="912" y="616" class="ct" style="font-size:18px">Host tools + checks</text>
+<text x="912" y="643" class="cb">Tests, builds and</text>
+<text x="912" y="663" class="cb">platform checks</text>
+<rect x="1104" y="578" width="262" height="120" rx="14" class="cardv"/>
+<g transform="translate(1148,624)"><rect x="-28.0" y="-28.0" width="56" height="56" rx="14" fill="#6d28d9" fill-opacity=".28" stroke="#a78bfa" stroke-width="1.6"/><g fill="none" stroke="#a78bfa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M0-15l3 10 10 3-10 3-3 10-3-10-10-3 10-3z"/><circle cx="11" cy="-11" r="2"/></g></g>
+<text x="1190" y="616" class="ct" style="font-size:18px">Jev decision plane</text>
+<text x="1190" y="643" class="cb">Bounded semantic input;</text>
+<text x="1190" y="663" class="cb">advisory, never authority</text>
+<rect x="1382" y="578" width="170" height="120" rx="14" class="card"/>
+<text x="1400" y="602" class="ct" style="font-size:15px">Outcome status</text>
+<circle cx="1408" cy="618" r="5" fill="#34d399"/><text x="1422" y="622" style="font-size:13px;font-weight:700;fill:#34d399">VALID</text>
+<circle cx="1408" cy="635" r="5" fill="#fde047"/><text x="1422" y="639" style="font-size:13px;font-weight:700;fill:#fde047">INCOMPLETE</text>
+<circle cx="1408" cy="652" r="5" fill="#fb923c"/><text x="1422" y="656" style="font-size:13px;font-weight:700;fill:#fb923c">STALE</text>
+<circle cx="1408" cy="669" r="5" fill="#f87171"/><text x="1422" y="673" style="font-size:13px;font-weight:700;fill:#f87171">INCONSISTENT</text>
+<circle cx="1408" cy="686" r="5" fill="#f43f5e"/><text x="1422" y="690" style="font-size:13px;font-weight:700;fill:#f43f5e">INVALID</text>
+<path d="M401.0 578V544" class="arr"/>
+<path d="M957.0 578V544" class="arr"/>
+<path d="M1235.0 578V544" class="arrv"/>
+<rect x="24" y="738" width="1552" height="150" rx="20" class="panel"/>
+<text x="48" y="784" class="num">04</text>
+<text x="48" y="810" class="sname">EVIDENCE</text>
+<text x="48" y="831" class="sname">AND TRUST</text>
+<text x="48" y="856" class="sdesc">Portable proof of each</text>
+<text x="48" y="873" class="sdesc">completed task.</text>
+<rect x="270" y="758" width="302" height="110" rx="14" class="card"/>
+<g transform="translate(314,804)"><rect x="-28.0" y="-28.0" width="56" height="56" rx="14" fill="#0f766e" fill-opacity=".28" stroke="#2dd4bf" stroke-width="1.6"/><g fill="none" stroke="#2dd4bf" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M0-15l13 7v15l-13 8-13-8v-15z"/><path d="M-13-8l13 7 13-7M0-1v16"/></g></g>
+<text x="356" y="796" class="ct" style="font-size:18px">Evidence bundle</text>
+<text x="356" y="823" class="cb">.forgeloop-evidence/&lt;task&gt;</text>
+<text x="356" y="843" class="cb">written on complete</text>
+<path d="M574 813L595 813" class="arr"/>
+<rect x="597" y="758" width="302" height="110" rx="14" class="card"/>
+<g transform="translate(641,804)"><rect x="-28.0" y="-28.0" width="56" height="56" rx="14" fill="#0f766e" fill-opacity=".28" stroke="#2dd4bf" stroke-width="1.6"/><g fill="none" stroke="#2dd4bf" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="-13" y="-15" width="22" height="26" rx="3"/><path d="M-8-7h12M-8-1h8"/><circle cx="8" cy="9" r="7"/><path d="M5 9l2 2 4-4"/></g></g>
+<text x="683" y="796" class="ct" style="font-size:18px">in-toto statement</text>
+<text x="683" y="823" class="cb">Binds contract, state, ledger</text>
+<text x="683" y="843" class="cb">and changed-file digests</text>
+<path d="M901 813L922 813" class="arr"/>
+<rect x="924" y="758" width="302" height="110" rx="14" class="carda"/>
+<g transform="translate(968,804)"><rect x="-28.0" y="-28.0" width="56" height="56" rx="14" fill="#b45309" fill-opacity=".28" stroke="#fbbf24" stroke-width="1.6"/><g fill="none" stroke="#fbbf24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="-6" cy="0" r="7"/><path d="M1 0h14M10 0v6M14 0v4"/></g></g>
+<text x="1010" y="796" class="ct" style="font-size:18px">Sigstore signature</text>
+<text x="1010" y="823" class="cb">Keyless cosign with CI</text>
+<text x="1010" y="843" class="cb">OIDC identity (optional)</text>
+<path d="M1228 813L1249 813" class="arr"/>
+<rect x="1251" y="758" width="302" height="110" rx="14" class="card"/>
+<g transform="translate(1295,804)"><rect x="-28.0" y="-28.0" width="56" height="56" rx="14" fill="#1d4ed8" fill-opacity=".28" stroke="#60a5fa" stroke-width="1.6"/><g fill="none" stroke="#60a5fa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle r="14"/><path d="M-5 13v-5c-6 1-7-3-8-4M5 13v-5c0-2-1-3-2-3 4 0 7-2 7-7 0-2-1-3-2-4 0-2 0-3-1-4-1 0-3 1-4 2-2-1-4-1-6 0-1-1-3-2-4-2-1 1-1 2-1 4-1 1-2 2-2 4 0 5 3 7 7 7-1 0-2 1-2 3"/></g></g>
+<text x="1337" y="796" class="ct" style="font-size:18px">evidence-verify</text>
+<text x="1337" y="823" class="cb">PR check via GitHub Action</text>
+<text x="1337" y="843" class="cb">and the GitHub App</text>
+<rect x="24" y="908" width="1552" height="150" rx="20" class="panel"/>
+<text x="48" y="954" class="num">05</text>
+<text x="48" y="980" class="sname">FORGELOOP</text>
+<text x="48" y="1001" class="sname">CLOUD</text>
+<text x="48" y="1026" class="sdesc">Optional paid plan on</text>
+<text x="48" y="1043" class="sdesc">top of the local core.</text>
+<rect x="270" y="928" width="418" height="110" rx="14" class="cardc"/>
+<g transform="translate(314,974)"><rect x="-28.0" y="-28.0" width="56" height="56" rx="14" fill="#0e7490" fill-opacity=".28" stroke="#22d3ee" stroke-width="1.6"/><g fill="none" stroke="#22d3ee" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M-10 9h20a8 8 0 0 0 0-16 11 11 0 0 0-21-2 8 8 0 0 0 1 18z"/><path d="M-3 3l3-4 3 4M0-1v8"/></g></g>
+<text x="356" y="966" class="ct" style="font-size:18px">Encrypted cloud sync</text>
+<text x="356" y="993" class="cb">sync-push / sync-pull --merge;</text>
+<text x="356" y="1013" class="cb">AES-256-GCM before upload</text>
+<rect x="707" y="928" width="418" height="110" rx="14" class="cardc"/>
+<g transform="translate(751,974)"><rect x="-28.0" y="-28.0" width="56" height="56" rx="14" fill="#0e7490" fill-opacity=".28" stroke="#22d3ee" stroke-width="1.6"/><g fill="none" stroke="#22d3ee" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M-13 6v7h26v-7M0 6v-18M-7-5l7-7 7 7"/></g></g>
+<text x="793" y="966" class="ct" style="font-size:18px">Evidence publish</text>
+<text x="793" y="993" class="cb">evidence-publish with an offline</text>
+<text x="793" y="1013" class="cb">queue for unmerged work</text>
+<rect x="1144" y="928" width="418" height="110" rx="14" class="cardc"/>
+<g transform="translate(1188,974)"><rect x="-28.0" y="-28.0" width="56" height="56" rx="14" fill="#0e7490" fill-opacity=".28" stroke="#22d3ee" stroke-width="1.6"/><g fill="none" stroke="#22d3ee" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="-14" y="-14" width="12" height="12" rx="2"/><rect x="2" y="-14" width="12" height="12" rx="2"/><rect x="-14" y="2" width="12" height="12" rx="2"/><rect x="2" y="2" width="12" height="12" rx="2"/></g></g>
+<text x="1230" y="966" class="ct" style="font-size:18px">Team dashboard</text>
+<text x="1230" y="993" class="cb">Projects, tasks, PR checks and</text>
+<text x="1230" y="1013" class="cb">signatures across repositories</text>
+<rect x="24" y="1078" width="1552" height="130" rx="20" class="panel"/>
+<text x="48" y="1124" class="num">06</text>
+<text x="48" y="1150" class="sname">ENGINEERING</text>
+<text x="48" y="1171" class="sname">SPECIALISTS</text>
+<text x="270" y="1110" class="ct" style="font-size:18px">Language and engineering guides</text><text x="612" y="1110" class="small">selected by routing for each task</text>
+<rect x="270" y="1126" width="86.39999999999999" height="32" rx="16" class="chip"/><text x="313.2" y="1147" text-anchor="middle" class="chipt" style="font-size:14.5px">Node.js</text>
+<rect x="366.4" y="1126" width="114.0" height="32" rx="16" class="chip"/><text x="423.4" y="1147" text-anchor="middle" class="chipt" style="font-size:14.5px">TypeScript</text>
+<rect x="490.4" y="1126" width="77.19999999999999" height="32" rx="16" class="chip"/><text x="529.0" y="1147" text-anchor="middle" class="chipt" style="font-size:14.5px">Python</text>
+<rect x="577.5999999999999" y="1126" width="40.4" height="32" rx="16" class="chip"/><text x="597.8" y="1147" text-anchor="middle" class="chipt" style="font-size:14.5px">Go</text>
+<rect x="627.9999999999999" y="1126" width="58.8" height="32" rx="16" class="chip"/><text x="657.3999999999999" y="1147" text-anchor="middle" class="chipt" style="font-size:14.5px">Java</text>
+<rect x="696.7999999999998" y="1126" width="58.8" height="32" rx="16" class="chip"/><text x="726.1999999999998" y="1147" text-anchor="middle" class="chipt" style="font-size:14.5px">Rust</text>
+<rect x="765.5999999999998" y="1126" width="31.2" height="32" rx="16" class="chip"/><text x="781.1999999999998" y="1147" text-anchor="middle" class="chipt" style="font-size:14.5px">C</text>
+<rect x="806.7999999999998" y="1126" width="49.599999999999994" height="32" rx="16" class="chip"/><text x="831.5999999999998" y="1147" text-anchor="middle" class="chipt" style="font-size:14.5px">C++</text>
+<rect x="866.3999999999999" y="1126" width="49.599999999999994" height="32" rx="16" class="chip"/><text x="891.1999999999998" y="1147" text-anchor="middle" class="chipt" style="font-size:14.5px">PHP</text>
+<rect x="925.9999999999999" y="1126" width="68.0" height="32" rx="16" class="chip"/><text x="959.9999999999999" y="1147" text-anchor="middle" class="chipt" style="font-size:14.5px">Swift</text>
+<rect x="1003.9999999999999" y="1126" width="49.599999999999994" height="32" rx="16" class="chip"/><text x="1028.8" y="1147" text-anchor="middle" class="chipt" style="font-size:14.5px">SQL</text>
+<rect x="1063.6" y="1126" width="196.79999999999998" height="32" rx="16" class="chip"/><text x="1162.0" y="1147" text-anchor="middle" class="chipt" style="font-size:14.5px">.NET / ASP.NET Core</text>
+<rect x="1270.3999999999999" y="1126" width="86.39999999999999" height="32" rx="16" class="chip"/><text x="1313.6" y="1147" text-anchor="middle" class="chipt" style="font-size:14.5px">Flutter</text>
+<rect x="1366.8" y="1126" width="95.6" height="32" rx="16" class="chip"/><text x="1414.6" y="1147" text-anchor="middle" class="chipt" style="font-size:14.5px">Security</text>
+<rect x="270" y="1166" width="86.39999999999999" height="32" rx="16" class="chip"/><text x="313.2" y="1187" text-anchor="middle" class="chipt" style="font-size:14.5px">Testing</text>
+<rect x="366.4" y="1166" width="123.19999999999999" height="32" rx="16" class="chip"/><text x="428.0" y="1187" text-anchor="middle" class="chipt" style="font-size:14.5px">Performance</text>
+<rect x="499.59999999999997" y="1166" width="141.6" height="32" rx="16" class="chip"/><text x="570.4" y="1187" text-anchor="middle" class="chipt" style="font-size:14.5px">Accessibility</text>
+<rect x="651.1999999999999" y="1166" width="160.0" height="32" rx="16" class="chip"/><text x="731.1999999999999" y="1187" text-anchor="middle" class="chipt" style="font-size:14.5px">Frontend design</text>
+<rect x="821.1999999999999" y="1166" width="141.6" height="32" rx="16" class="chip"/><text x="891.9999999999999" y="1187" text-anchor="middle" class="chipt" style="font-size:14.5px">Documentation</text>
+<rect x="24.0" y="1224" width="506.6666666666667" height="44" rx="12" fill="#0a1736" stroke="#1d4ed8" stroke-opacity=".6"/>
+<g transform="translate(50.0,1246)"><rect x="-15.0" y="-15.0" width="30" height="30" rx="14" fill="#0e7490" fill-opacity=".28" stroke="#22d3ee" stroke-width="1.6"/><g fill="none" stroke="#22d3ee" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M0-16l13 5v8c0 9-6 15-13 18-7-3-13-9-13-18v-8z"/><path d="M-6 0l4 4 8-8"/></g></g>
+<text x="74.0" y="1251" class="small" style="fill:#c7d7ee;font-size:13.5px">ForgeLoop owns lifecycle, gates, evidence and completion.</text>
+<rect x="546.6666666666667" y="1224" width="506.6666666666667" height="44" rx="12" fill="#0a1736" stroke="#1d4ed8" stroke-opacity=".6"/>
+<g transform="translate(572.6666666666667,1246)"><rect x="-15.0" y="-15.0" width="30" height="30" rx="14" fill="#6d28d9" fill-opacity=".28" stroke="#a78bfa" stroke-width="1.6"/><g fill="none" stroke="#a78bfa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="-16" y="-13" width="32" height="26" rx="4"/><path d="M-9-4l6 5-6 5M1 7h8"/></g></g>
+<text x="596.6666666666667" y="1251" class="small" style="fill:#c7d7ee;font-size:13.5px">The host implements the code; ForgeLoop never does.</text>
+<rect x="1069.3333333333335" y="1224" width="506.6666666666667" height="44" rx="12" fill="#0a1736" stroke="#1d4ed8" stroke-opacity=".6"/>
+<g transform="translate(1095.3333333333335,1246)"><rect x="-15.0" y="-15.0" width="30" height="30" rx="14" fill="#6d28d9" fill-opacity=".28" stroke="#a78bfa" stroke-width="1.6"/><g fill="none" stroke="#a78bfa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M0-15l3 10 10 3-10 3-3 10-3-10-10-3 10-3z"/><circle cx="11" cy="-11" r="2"/></g></g>
+<text x="1119.3333333333335" y="1251" class="small" style="fill:#c7d7ee;font-size:13.5px">Jev and advisory context never hold lifecycle authority.</text>
 </svg>

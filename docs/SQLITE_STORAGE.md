@@ -1,6 +1,6 @@
 # SQLite Storage Migration
 
-**Stable 2.0.0 published — 2026-10-18;** npm `latest` now resolves to **2.3.0** (2026-11-18), whose changed runtime carries its own [writer review](../benchmarks/storage-sqlite/stable-2.3.0-writer-review.json.gz).
+**Stable 2.0.0 published — 2026-10-18;** npm `latest` now resolves to **2.3.1** (2026-11-19), whose changed runtime carries its own [writer review](../benchmarks/storage-sqlite/stable-2.3.1-writer-review.json.gz).
 The [current acceptance record](STABLE_2_ACCEPTANCE.md) binds the supported
 SQLite operational-writer review (`soleSQLiteWriter: true`), full verification,
 final-source hosted parity, native recovery receipts and 16/16 fresh registry
@@ -334,7 +334,7 @@ constant total validation work.
 
 Frozen macOS core run 321 completed 2,632 tests: 2,621 passed, 0 failed, 11 skipped
 on Node 24.19.0. All 2,419 source hashes remained unchanged after termination.
-Detailed source/result evidence is in `docs/SQLITE_MIGRATION_PROGRESS.md`.
+Detailed source/result evidence is in `docs/history/sqlite-migration/SQLITE_MIGRATION_PROGRESS.md`.
 This scoped run does not establish full-plan acceptance or current remote
 platform, MCP and packaging results. The individual counts below describe
 historical focused runs and do not replace current regression evidence.

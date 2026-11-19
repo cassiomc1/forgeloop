@@ -1,7 +1,7 @@
 # ForgeLoop — Verifiable Engineering Protocol
 
 <p align="center">
-  <img src="./docs/assets/forgeloop-architecture.png" alt="ForgeLoop architecture infographic" width="100%">
+  <img src="./docs/assets/forgeloop-architecture.png" alt="ForgeLoop architecture: inputs and context, the deterministic control plane with its diagnosis loop, state and tools, evidence and trust, the optional ForgeLoop Cloud, and the engineering specialist guides" width="100%">
 </p>
 
 [![CodeQL](https://github.com/cassiomc1/forgeloop/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/cassiomc1/forgeloop/actions/workflows/codeql.yml)
@@ -33,6 +33,8 @@ Sources: [`DOCS_INDEX.md`](./DOCS_INDEX.md); project facts [`PROJECT_PROFILE.md`
 - **Structural quality feedback** → [`docs/STRUCTURAL_QUALITY.md`](./docs/STRUCTURAL_QUALITY.md)
 - **Troubleshooting & error codes** → [`docs/TROUBLESHOOTING.md`](./docs/TROUBLESHOOTING.md)
 - **Code attestation & revision coverage** → [`docs/CODE_ATTESTATION.md`](./docs/CODE_ATTESTATION.md)
+- **Evidence bundles, PR verification and signing** → [`docs/EVIDENCE_BUNDLES.md`](./docs/EVIDENCE_BUNDLES.md) and [`docs/SIGNING_PROVIDERS.md`](./docs/SIGNING_PROVIDERS.md)
+- **Continuing a task on another machine** → [`docs/CLOUD_SYNC.md`](./docs/CLOUD_SYNC.md)
 - **System architecture & safety** → [`LOOP_SYSTEM_DESIGN.md`](./LOOP_SYSTEM_DESIGN.md) & [`THREAT_MODEL.md`](./THREAT_MODEL.md)
 
 ## Real execution proof
@@ -80,7 +82,7 @@ See the [23-guide maintenance map](./docs/GUIDE_MAINTENANCE.md) for review scope
 ## Distribution and license
 
 GitHub hosts source and issues. The core npm package is public; the MCP
-companion has restricted distribution. Stable `2.3.0` is on npm `latest` with
+companion has restricted distribution. Stable `2.3.1` is on npm `latest` with
 provenance and verified release identity.
 ForgeLoop-owned source and documentation are licensed under the
 [PolyForm Noncommercial License 1.0.0](./LICENSE): free for noncommercial use.
@@ -131,6 +133,26 @@ attestation binds an exact source snapshot to the ForgeLoop evidence chain; it
 does not prove authorship or absolute security. See
 [`docs/CODE_ATTESTATION.md`](./docs/CODE_ATTESTATION.md) for configuration,
 read-only verification, signatures, and revision-range coverage.
+
+### Evidence bundles and ForgeLoop Cloud
+
+With attestation mode `required`, `complete` exports a redacted, portable
+evidence bundle to `.forgeloop-evidence/<task>.json`. Commit it with the change;
+`evidence-verify` then checks the committed code against it in pull-request CI
+without the developer's local state, through the
+[generic CI script](./integrations/generic-ci/), the
+[GitHub Action](./integrations/github-action/README.md) or the ForgeLoop
+Evidence GitHub App. Statements are in-toto Statement v1 documents; the
+optional Sigstore provider and the main-only Evidence signing workflow sign
+them with `cosign`. See [`docs/EVIDENCE_BUNDLES.md`](./docs/EVIDENCE_BUNDLES.md)
+and [`docs/SIGNING_PROVIDERS.md`](./docs/SIGNING_PROVIDERS.md).
+
+The optional, paid ForgeLoop Cloud adds an encrypted state handoff between
+machines (`sync-push`, `sync-pull`, task-level `sync-pull --merge`; see
+[`docs/CLOUD_SYNC.md`](./docs/CLOUD_SYNC.md)), `evidence-publish` for work that
+is not merged yet, and a team dashboard at
+[forgeloop.monster/dashboard](https://forgeloop.monster/dashboard/). The local
+protocol never depends on it.
 
 ### Optional structural quality feedback
 
@@ -575,16 +597,13 @@ documented in [`scripts/CI_VALIDATORS.md`](./scripts/CI_VALIDATORS.md).
 
 ```bash
 npm ci
-npm test
-npm run lint
-npm run coverage
-npm run pack:check
-npm run dependency:policy
-npm run docs:check
-npm run completions:check
-npm run summary:check
-npm run changelog:check
+npm run verify:fast      # while editing
+npm run verify:prepush   # before a pull request
 ```
+
+The tiers are defined in `scripts/run-validation.mjs`; individual checks such as
+`npm run docs:check`, `npm run pack:check` and `npm run changelog:check` remain
+available for focused work.
 
 ## Repository structure
 
@@ -592,15 +611,21 @@ npm run changelog:check
 src/                    npm CLI and protocol implementation
 schemas/                versioned artifact schemas
 ENG/                    package-source engineering guides
+skills/                 portable ForgeLoop Agent Skill and optional companions
+integrations/           MCP server, GitHub Action and generic CI adapters
+docs/                   reference, operations and docs/history records
 scripts/                checks, release identity, CI notes
 tests/                  Node and Python regression coverage
-.forgeloop/             project-scoped configuration
-.forgeloop/task-state/  isolated live task protocol state
+benchmarks/             measured benchmarks and storage writer reviews
+.forgeloop/             project-scoped configuration and state.sqlite
+.forgeloop-evidence/    committed evidence bundles of this repository's tasks
+ForgeLoopAudit/         read-only auditor workspace
 DOCS_INDEX.md           documentation map and ownership boundaries
 ```
 
-Task-scoped mutable protocol state is stored under
-`.forgeloop/task-state/<taskKey>/`.
+Mutable protocol state lives in `.forgeloop/state.sqlite`; task-scoped
+records use `.forgeloop/task-state/<taskKey>/` as their logical portable
+export path.
 
 For documentation ownership and integrations, see [`DOCS_INDEX.md`](./DOCS_INDEX.md).
 

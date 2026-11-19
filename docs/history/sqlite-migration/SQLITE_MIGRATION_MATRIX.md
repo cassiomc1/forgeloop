@@ -1,8 +1,8 @@
 # SQLite migration consumer matrix
 
 > **Stable 2.0.0 published — 2026-10-18:** see the current
-> [release acceptance record](STABLE_2_ACCEPTANCE.md) and
-> [release checklist](RELEASE_CHECKLIST.md). The dated checkpoints below are
+> [release acceptance record](../../STABLE_2_ACCEPTANCE.md) and
+> [release checklist](../../RELEASE_CHECKLIST.md). The dated checkpoints below are
 > historical evidence; their open tasks and percentages do not describe the
 > stable release. Publication and production cutover remain separate results.
 
@@ -280,7 +280,7 @@ included. Existing membership dispositions were preserved; only metadata for
 unchanged function/call fingerprints was refreshed. All 933 source hashes
 were checked. See `benchmarks/storage-sqlite/persistence-loc-9dd179c-closed.json`.
 The analyzer and exact reviewed scope are now retained in the repository;
-[reproduction instructions](../benchmarks/storage-sqlite/persistence-loc/README.md)
+[reproduction instructions](../../../benchmarks/storage-sqlite/persistence-loc/README.md)
 include the pinned baseline and explicit failed-target interpretation. Negative
 controls confirm unresolved membership and stale source hashes cannot produce
 acceptance, even when normalized token fingerprints match.
@@ -851,7 +851,7 @@ Full Windows480 exited1 after2722 core tests:2708 passed,1 failed,13 skipped. Th
 
 The [reproducible drill and operator procedure](SQLITE_OLD_CLIENT_EXCLUSION.md) uses the actual pinned filesystem CLI and lock implementation. Docker Linux485 passes with a separate legacy UID65534 denied project write access after stop; Mac488 passes with the temporary old installation disabled. Both verify actual PID termination, refusal of the real legacy lock, retained dead-owner adoption, source archival/inventory preservation and a current native post-cutover write. Mac488 also validates the resulting three-task current project. Windows and the final portable Linux script remain pending. Shared dependency links are removed before installation ACL propagation; only disposable fixtures are modified. This is an operational procedure for inventoried clients, not a marker capable of stopping unknown or privileged old processes.
 
-Final portable497 passes on all three requested platforms. Windows ordinary old-client subprocesses remove backup/restore privileges before Node starts; independent source-read probes return EPERM both before and after cutover, while the privileged native controller proves the pinned source is still present byte-for-byte. Exact main-entrypoint MODULE_NOT_FOUND masking is accepted only with those independent controls; missing dependency errors remain rejected. Docker Linux497 verifies2496 source hashes before/after. Every final drill validates the three-task current native project after a new write and unchanged retained source. [Raw results and source admission](../benchmarks/storage-sqlite/old-client-exclusion-497.json) cover this named operational boundary. Whole migration acceptance remains open.
+Final portable497 passes on all three requested platforms. Windows ordinary old-client subprocesses remove backup/restore privileges before Node starts; independent source-read probes return EPERM both before and after cutover, while the privileged native controller proves the pinned source is still present byte-for-byte. Exact main-entrypoint MODULE_NOT_FOUND masking is accepted only with those independent controls; missing dependency errors remain rejected. Docker Linux497 verifies2496 source hashes before/after. Every final drill validates the three-task current native project after a new write and unchanged retained source. [Raw results and source admission](../../../benchmarks/storage-sqlite/old-client-exclusion-497.json) cover this named operational boundary. Whole migration acceptance remains open.
 
 ## Current Mac499 and structural-quality context501
 
@@ -887,11 +887,11 @@ Current inclusive LOC503 is published:267 included modules,43098 baseline/50487 
 
 Corrected source611b passes all22 Mac pre-push gates:2814 core tests,2803
 passed,11 skipped,zero failed;MCP73,PoC67 and package12 also pass. All2638
-frozen source hashes are unchanged. [Terminal evidence](../benchmarks/storage-sqlite/full-macos-snapshot611b-terminal-612.json)
+frozen source hashes are unchanged. [Terminal evidence](../../../benchmarks/storage-sqlite/full-macos-snapshot611b-terminal-612.json)
 records the source-specific result;Windows612 remains running and Linux612
 is queued sequentially on the same remote host.
 
-[Binding-aware discovery](../benchmarks/storage-sqlite/writer-binding-discovery-612.json)
+[Binding-aware discovery](../../../benchmarks/storage-sqlite/writer-binding-discovery-612.json)
 parses all504 production JavaScript modules with Espree and eslint-scope,
 with no parse errors. It records219 import-bound filesystem calls,22
 receiver-write review leads,325 literal dynamic imports and one require
@@ -921,7 +921,7 @@ behavioral refusal evidence. Static parsing alone cannot close the sole-writer
 checkpoint. The original performance,LOC,maintenance and workflow requirements
 remain in scope.
 
-The corrected-source [twenty-repetition CLI timing](../benchmarks/storage-sqlite/populated-cli-macos-612.json)
+The corrected-source [twenty-repetition CLI timing](../../../benchmarks/storage-sqlite/populated-cli-macos-612.json)
 passes output parity for all four small/large discovery/history profiles. Large
 discovery p95 is1494.224ms for the pinned filesystem baseline and741.170ms
 for native SQLite (2.016x);this individual profile meets the2x target. Small
@@ -940,7 +940,7 @@ a task-bound portable manifest/ledger and creates no singleton contract mirror;
 a symlinked destination is refused,preserving database bytes and creating no
 redirected bundle manifest. Both controls pass on Mac,and the combined bundle
 and event-export regression passes7/7.
-[Evidence](../benchmarks/storage-sqlite/public-bundle-authority-boundary-613.json)
+[Evidence](../../../benchmarks/storage-sqlite/public-bundle-authority-boundary-613.json)
 retains the source hash and bounded assertions. No production code changes.
 The new controls still require Windows/Linux execution;they do not establish
 whole transitive authority or power-loss proof. The611b full platform runs
@@ -948,7 +948,7 @@ continue against their immutable source.
 
 ### Corrected Windows result and sequential performance refresh (increment614)
 
-[Windows612 terminal evidence](../benchmarks/storage-sqlite/full-windows-snapshot612-terminal-614.json)
+[Windows612 terminal evidence](../../../benchmarks/storage-sqlite/full-windows-snapshot612-terminal-614.json)
 confirms exit0,absent worker PID1936,2814 core tests (2801 passed,13 skipped,
 zero failed),MCP73/73 and both package checks. All2638 frozen source hashes
 match. Only after this verified terminal result was Linux612 launched on the
@@ -956,12 +956,12 @@ same host against the same archive;its terminal acceptance remains pending.
 
 Sequential quiescent Mac refreshes preserve the corrected611b source unchanged:
 
-- [Startup](../benchmarks/storage-sqlite/macos-cli-startup-614.json):30 alternating
+- [Startup](../../../benchmarks/storage-sqlite/macos-cli-startup-614.json):30 alternating
   fresh-process repetitions;version p95 native42.325ms/baseline122.121ms;empty
   task-list73.462/122.858ms. Both small-workspace profiles meet tolerance and
   empty startup allocates no storage. These are current measurements,not a new
   optimization;earlier results remain retained.
-- [State/event commits](../benchmarks/storage-sqlite/macos-state-event-commit-614.json):
+- [State/event commits](../../../benchmarks/storage-sqlite/macos-state-event-commit-614.json):
  20 alternating warm-API repetitions with3 claims. At10/1000 initial events,
   native p95 is9.395/12.842ms vs127.435/117.464ms baseline:92.63%/89.07%
   reductions with state,event and ownership parity. At100000 events,native
@@ -970,7 +970,7 @@ Sequential quiescent Mac refreshes preserve the corrected611b source unchanged:
   match,but this large profile does not prove equal-guarantee acceptance. Native
   WAL/FULL and the unchanged pinned fsync filesystem implementation are retained;
   this timing does not establish physical power-loss equivalence.
-- [Idempotency](../benchmarks/storage-sqlite/macos-idempotency-614.json):20
+- [Idempotency](../../../benchmarks/storage-sqlite/macos-idempotency-614.json):20
   repetitions;1000/5000 actions produce75.84x/276.12x lower p95;10 actions
   native2.122ms/baseline2.242ms. These are synthetic equal-output lookup
   profiles,not public approval-volume or persistent-MCP resource acceptance.
@@ -979,7 +979,7 @@ Whole performance remains PARTIAL:large commit validation-cost investigation,
 persistent integration,resource budgets and required contention profiles stay
 open. No durability or integrity check was weakened to meet a target.
 
-[Supplemental instrumented idempotency observations](../benchmarks/storage-sqlite/macos-idempotency-resources-614.json)
+[Supplemental instrumented idempotency observations](../../../benchmarks/storage-sqlite/macos-idempotency-resources-614.json)
 cover the same10/1000/5000-action fixtures with20 repetitions per backend.
 Output and missing-key parity pass. The artifact preserves raw CPU,async
 filesystem request,RSS endpoint,process-lifetime high-water mark,event-loop
@@ -990,7 +990,7 @@ Instrumentation timing is separate from the uninstrumented latency comparison.
 
 ### Large state/event commit diagnosis (increment615)
 
-[CPU and isolated SQL diagnostics](../benchmarks/storage-sqlite/state-event-commit-cpu-diagnostic-615.json)
+[CPU and isolated SQL diagnostics](../../../benchmarks/storage-sqlite/state-event-commit-cpu-diagnostic-615.json)
 identify the reservation projection payload-binding query inside the writer as
 the dominant sampled cost:169ms in SQLite statement get beneath
 resolveStoreReservationState in one instrumented100000-event transaction.
@@ -1008,7 +1008,7 @@ validation-cost investigation remains open;integrity and durability are retained
 
 ### Grouped-query rejection and retained error-parity controls (increment616)
 
-[Expanded reservation controls](../benchmarks/storage-sqlite/reservation-query-error-parity-616.json)
+[Expanded reservation controls](../../../benchmarks/storage-sqlite/reservation-query-error-parity-616.json)
 compare74 canonical-payload variations and five indexed BLOB-column cases
 against the independent pre-optimization scalar predicate. The grouped query
 passes the payload controls but fails BLOB tampering:ERR_SQLITE_ERROR
@@ -1018,7 +1018,7 @@ reverted;the retained expanded guard/classification/multiprocess suite passes
 match the previously verified611b bytes. New test controls still need remote
 execution.
 
-The [candidate commit measurement](../benchmarks/storage-sqlite/rejected-grouped-query-commit-616.json)
+The [candidate commit measurement](../../../benchmarks/storage-sqlite/rejected-grouped-query-commit-616.json)
 ran before full verification and is preserved as rejected-candidate evidence:
 100000-event native p95 is163.655ms vs138.551ms filesystem baseline,and
 10/1000-event matched ownership profiles retain their large reductions. It
@@ -1031,7 +1031,7 @@ Linux612 continues against the accepted611b production source.
 
 ### Current platform checkpoint closure (scope617, collected increment616)
 
-[Current-source platform evidence](../benchmarks/storage-sqlite/current-platform-closure-617.json)
+[Current-source platform evidence](../../../benchmarks/storage-sqlite/current-platform-closure-617.json)
 closes checkpoint15. Accepted611b full Mac/Windows/Linux runs pass2814 core
 tests per host (2803/2801/2802 passed and11/13/12 platform skips,zero failures),
 MCP73 per host and package checks. Each full source verifies2638 hashes;Linux

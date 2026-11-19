@@ -1,5 +1,20 @@
 # Changelog
 
+## Unreleased
+
+- Documentation review after 2.3.1:
+  - the README hero is a new architecture image rendered from
+    `docs/assets/forgeloop-architecture.svg`, now its source, with evidence and
+    trust and ForgeLoop Cloud layers; `docs/DOCUMENTATION_GUIDE.md` shows how
+    to regenerate it;
+  - README and `DOCS_INDEX.md` cover evidence bundles, signing, cloud sync
+    and assessment, list the verification tiers, and describe the current
+    repository layout; duplicate index rows are gone;
+  - superseded release checklists (1.4, 1.5 and MCP, 1.6.1), the Astra
+    implementation record, the knowledge gap analysis and the SQLite
+    migration-era records move to `docs/history/`, with the documentation
+    manifest, review matrix, conformance check and package test updated.
+
 ## 2.3.1 - 2026-11-19
 
 - Patch release. Its runtime changes are bound by

@@ -112,5 +112,5 @@ parsing; `scripts/check-dependency-policy.mjs` owns the allowlist.
 
 Filesystem transaction-payload maintenance is retired with the SQLite
 migration. Preserve legacy evidence for explicit migration and diagnosis. See
-the [Astra implementation record](docs/ASTRA_IMPLEMENTATION.md) for historical
+the [Astra implementation record](docs/history/ASTRA_IMPLEMENTATION.md) for historical
 boundaries.

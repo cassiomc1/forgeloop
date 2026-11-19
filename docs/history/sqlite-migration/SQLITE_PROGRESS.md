@@ -1,8 +1,8 @@
 # SQLite migration progress
 
 > **Stable 2.0.0 published — 2026-10-18:** see the current
-> [release acceptance record](STABLE_2_ACCEPTANCE.md) and
-> [release checklist](RELEASE_CHECKLIST.md). The dated checkpoints below are
+> [release acceptance record](../../STABLE_2_ACCEPTANCE.md) and
+> [release checklist](../../RELEASE_CHECKLIST.md). The dated checkpoints below are
 > historical evidence; their open tasks and percentages do not describe the
 > stable release. Publication and production cutover remain separate results.
 
@@ -45,7 +45,7 @@ Done:12. Partial:7. Pending:1. Historical scoped evidence remains recorded below
 
 Keep this page current when a checkpoint is verified, invalidated by a later change or reopened by a failure. Recalculate the bar from DONE rows; do not award fractional credit for implementation without the stated evidence.
 
-Detailed evidence: [migration matrix](SQLITE_MIGRATION_MATRIX.md), [original plan](SQLITE_MIGRATION_PLAN.md), [benchmark results and limits](../benchmarks/storage-sqlite/README.md), [self-hosted test setup](SELF_HOSTED_TESTS.md).
+Detailed evidence: [migration matrix](SQLITE_MIGRATION_MATRIX.md), [original plan](SQLITE_MIGRATION_PLAN.md), [benchmark results and limits](../../../benchmarks/storage-sqlite/README.md), [self-hosted test setup](../../SELF_HOSTED_TESTS.md).
 
 ## Original-plan completion audit878
 
