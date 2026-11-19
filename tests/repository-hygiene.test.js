@@ -28,10 +28,8 @@ test("repository hygiene accepts the explicit repository policy", () => {
   assert.deepEqual(result.errors, []);
 });
 
-test("repository hygiene permits only the pinned Audit dependency archive", () => {
-  const archive = "ForgeLoopAudit/vendor/cassiomc1-forgeloop-2.3.0-8655d42.tgz";
-  assert.deepEqual(validateRepositoryHygiene(validInput({ trackedPaths: [archive] })).errors, []);
-  for (const other of ["ForgeLoopAudit/vendor/unknown.tgz", "ForgeLoopAudit/output.tgz", "example.tgz"]) {
+test("repository hygiene rejects tracked archives", () => {
+  for (const other of ["ForgeLoopAudit/vendor/cassiomc1-forgeloop-2.3.0-8655d42.tgz", "vendor/unknown.tgz", "example.tgz"]) {
     assert.ok(validateRepositoryHygiene(validInput({ trackedPaths: [other] })).errors.includes(`REPOSITORY_HYGIENE_TRACKED_SCRATCH_PATH: ${other}`));
   }
 });

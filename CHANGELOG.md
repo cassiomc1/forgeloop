@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- ForgeLoop Audit moves to ForgeLoop Cloud, the paid team dashboard at
+  `https://forgeloop.monster/dashboard/`, and the local `ForgeLoopAudit/`
+  workspace leaves this repository with its CI workflow and its lint,
+  Markdown, link-check, gitignore and hygiene exceptions.
+  `docs/FORGELOOP_AUDIT.md` now explains the cloud Audit and the local
+  read-only alternatives; the `task/audit-view` Integration API is unchanged.
+  The architecture image shows the dashboard with the Audit, and the release
+  checklist records the published 2.3.1 identity.
 - Documentation review after 2.3.1:
   - the README hero is a new architecture image rendered from
     `docs/assets/forgeloop-architecture.svg`, now its source, with evidence and

@@ -53,8 +53,6 @@ const SCRATCH_PATTERNS = [
 export const STORAGE_EVIDENCE_PREFIX = "benchmarks/storage-sqlite/";
 export const STORAGE_EVIDENCE_FILE_BUDGET = 982;
 const AMBIGUOUS_EVIDENCE_EXTENSION = /\.gz\.(?:json|log|txt)$/u;
-// Required by Audit's locked file: dependency; its verifier checks the digest.
-const AUDIT_VENDOR_ARCHIVE = "ForgeLoopAudit/vendor/cassiomc1-forgeloop-2.3.0-8655d42.tgz";
 
 function trackedFiles(rootDir) {
   const output = execFileSync("git", ["ls-files", "-z"], { cwd: rootDir, encoding: "utf8" });
@@ -76,7 +74,7 @@ export function validateRepositoryHygiene({ trackedPaths, ignoredSentinels = [] 
     if (trackedPath.endsWith(".md") && !trackedPath.includes("/") && !ROOT_MARKDOWN.has(trackedPath)) {
       errors.push(`REPOSITORY_HYGIENE_UNEXPECTED_ROOT_DOCUMENT: ${trackedPath}`);
     }
-    if (trackedPath !== AUDIT_VENDOR_ARCHIVE && SCRATCH_PATTERNS.some((pattern) => pattern.test(trackedPath))) {
+    if (SCRATCH_PATTERNS.some((pattern) => pattern.test(trackedPath))) {
       errors.push(`REPOSITORY_HYGIENE_TRACKED_SCRATCH_PATH: ${trackedPath}`);
     }
     if (trackedPath.startsWith("docs/assets/") && VISUAL_EXTENSIONS.has(path.posix.extname(trackedPath).toLowerCase())

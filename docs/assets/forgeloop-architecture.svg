@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1282" viewBox="0 0 1600 1282" role="img" aria-labelledby="title description">
 <title id="title">ForgeLoop architecture</title>
-<desc id="description">A developer request reaches an AI coding host, which works through ForgeLoop entry points. The deterministic control plane takes each task through contract, routing, preflight, execution with evidence, and review with a diagnosis and correction loop. It records state in SQLite, consumes host-run checks, and treats Jev as advisory. Completed tasks produce evidence bundles with an in-toto statement, optional Sigstore signatures and evidence-verify checks in CI and a GitHub App. The optional ForgeLoop Cloud adds encrypted sync, evidence publishing and a team dashboard.</desc>
+<desc id="description">A developer request reaches an AI coding host, which works through ForgeLoop entry points. The deterministic control plane takes each task through contract, routing, preflight, execution with evidence, and review with a diagnosis and correction loop. It records state in SQLite, consumes host-run checks, and treats Jev as advisory. Completed tasks produce evidence bundles with an in-toto statement, optional Sigstore signatures and evidence-verify checks in CI and a GitHub App. The optional ForgeLoop Cloud adds encrypted sync, evidence publishing and a team dashboard with ForgeLoop Audit.</desc>
 <defs>
 <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#040a18"/><stop offset=".55" stop-color="#071431"/><stop offset="1" stop-color="#0b0f2e"/></linearGradient>
 <linearGradient id="tg" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#22d3ee"/><stop offset="1" stop-color="#60a5fa"/></linearGradient>
@@ -185,9 +185,9 @@ text{font-family:Inter,"SF Pro Display",-apple-system,BlinkMacSystemFont,"Segoe 
 <text x="793" y="1013" class="cb">queue for unmerged work</text>
 <rect x="1144" y="928" width="418" height="110" rx="14" class="cardc"/>
 <g transform="translate(1188,974)"><rect x="-28.0" y="-28.0" width="56" height="56" rx="14" fill="#0e7490" fill-opacity=".28" stroke="#22d3ee" stroke-width="1.6"/><g fill="none" stroke="#22d3ee" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="-14" y="-14" width="12" height="12" rx="2"/><rect x="2" y="-14" width="12" height="12" rx="2"/><rect x="-14" y="2" width="12" height="12" rx="2"/><rect x="2" y="2" width="12" height="12" rx="2"/></g></g>
-<text x="1230" y="966" class="ct" style="font-size:18px">Team dashboard</text>
-<text x="1230" y="993" class="cb">Projects, tasks, PR checks and</text>
-<text x="1230" y="1013" class="cb">signatures across repositories</text>
+<text x="1230" y="966" class="ct" style="font-size:18px">Team dashboard + Audit</text>
+<text x="1230" y="993" class="cb">Projects, task audits, findings</text>
+<text x="1230" y="1013" class="cb">and quality across repositories</text>
 <rect x="24" y="1078" width="1552" height="130" rx="20" class="panel"/>
 <text x="48" y="1124" class="num">06</text>
 <text x="48" y="1150" class="sname">ENGINEERING</text>

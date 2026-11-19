@@ -4,7 +4,7 @@ This is the current release checklist for the PolyForm Noncommercial-licensed
 `@cassiomc1/forgeloop` package. It is a preparation and verification checklist;
 it does not authorize publication.
 
-## Stable 2.3.1 preparation — 2026-11-19
+## Stable 2.3.1 publication — 2026-11-19
 
 `2.3.1` is a patch release of the core package. It makes Sigstore signing
 work with real `cosign`:
@@ -22,8 +22,26 @@ provider's verification is covered by tests with in-toto and DSSE fixtures.
 Its runtime changes are bound by
 [`stable-2.3.1-writer-review.json.gz`](../benchmarks/storage-sqlite/stable-2.3.1-writer-review.json.gz),
 a delta review against 2.3.0: 2 changed modules with dispositions, and 2 added
-read-only `readFile` bindings in `src/core/signing/sigstore.js`. Publication
-is a separate confirmed step.
+read-only `readFile` bindings in `src/core/signing/sigstore.js`.
+
+Published from tag `v2.3.1` (commit `f934e85137ae2692861d9887e3667d4d31b21983`)
+through `npm-publish.yml` with trusted OIDC publishing:
+
+- npm `latest` is `2.3.1`;
+- `dist.integrity` is
+  `sha512-hiCHGW8gdvF10SAQDgflxzDfonmKbjO3IVFlvhB+00PxIireq5328WpCF6oZinTu7E58KM8DiACMfMjrU6SG3w==`;
+- the provenance statement is in the Sigstore transparency log (index
+  3986378561);
+- `release:identity` returns `RELEASE_IDENTITY_VALID`.
+
+npm `next` still points to `2.3.0`; the owner moves it with
+`npm dist-tag add @cassiomc1/forgeloop@2.3.1 next`. ForgeLoopAudit no longer
+vendors the core: the Audit moved to ForgeLoop Cloud after this release.
+
+```bash
+npm view @cassiomc1/forgeloop version dist-tags --json
+npm run release:identity -- --version 2.3.1 --release-commit <release-tag-commit>
+```
 
 ## Stable 2.3.0 publication — 2026-11-18
 

@@ -42,11 +42,9 @@ Runtime registries and validators outrank canonical protocol docs; canonical doc
 
 In ForgeLoop's own source repository, use \`node src/cli.js\`. In a consumer repository, use that repository's configured local invocation. Never silently install or upgrade ForgeLoop, and never use a stale global CLI when repository-local code exists. If compatibility is uncertain, inspect \`protocol-info --json\`.
 
-## ForgeLoopAudit Workspace
+## ForgeLoop Audit
 
-ForgeLoopAudit is maintained at \`ForgeLoopAudit/\` inside the ForgeLoop repository, replacing the standalone repository and sibling path \`../ForgeLoopAudit\`. ForgeLoop is its source and contribution home. This source layout is not a prerequisite for consumer projects or npm installations. Audit remains a read-only auditor with its own package, documentation, build, and verification commands; it is not included in the core ForgeLoop npm package.
-
-Resolve the target root before running commands. For core work, stay at the ForgeLoop root and use \`node src/cli.js\`. For Audit work, enter \`ForgeLoopAudit/\`, read its own project instructions and \`README.md\`, and resolve its configured ForgeLoop runtime there. Audit development uses \`npm run dev:web\`; its full verification uses \`npm run verify:full\`, both from the Audit root. Do not apply the parent's CLI path blindly in the child directory or merge their task state. A directory move does not rebind receipts, workspace bindings, or stored project paths; inspect affected artifacts through supported tooling and never rewrite protocol state to repair a moved root.
+ForgeLoop Audit runs only in ForgeLoop Cloud, the paid team dashboard at \`https://forgeloop.monster/dashboard/\`. It reads published and committed evidence bundles; it is not part of this repository or the core npm package, and agents never need it to follow the protocol. The \`task/audit-view\` Integration API resource remains the local read-only audit projection.
 
 ## Operating Workflow
 
@@ -66,7 +64,7 @@ Respect active write claims. Do not steal, override, manually release, or edit o
 
 ## Optional Security Audit Companion
 
-For requested source security questions or vulnerability reviews, ForgeLoop bundles Cloudflare's pinned \`security-audit\` companion under \`skills/security-audit/\` in its package/source root. Consult \`docs/SECURITY_AUDIT_SKILL.md\` there for setup, provenance, and authority boundaries. Load the companion only when available and relevant. Host discovery is opt-in; \`init\` and \`update\` do not install it. Routine security routing does not require a full audit. Full audits require an explicit audit/report request, independent verifiers, and the upstream execution isolation controls; unavailable capabilities remain explicit blockers. Preserve \`confirmed\`, \`needs_validation\`, and \`rejected\`; reports and report-validator success do not establish canonical evidence or ForgeLoop completion. This companion is separate from ForgeLoopAudit and the host-injected Security Review provider.
+For requested source security questions or vulnerability reviews, ForgeLoop bundles Cloudflare's pinned \`security-audit\` companion under \`skills/security-audit/\` in its package/source root. Consult \`docs/SECURITY_AUDIT_SKILL.md\` there for setup, provenance, and authority boundaries. Load the companion only when available and relevant. Host discovery is opt-in; \`init\` and \`update\` do not install it. Routine security routing does not require a full audit. Full audits require an explicit audit/report request, independent verifiers, and the upstream execution isolation controls; unavailable capabilities remain explicit blockers. Preserve \`confirmed\`, \`needs_validation\`, and \`rejected\`; reports and report-validator success do not establish canonical evidence or ForgeLoop completion. This companion is separate from ForgeLoop Audit and the host-injected Security Review provider.
 
 ## Optional Product Design Companion
 
