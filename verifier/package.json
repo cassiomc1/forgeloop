@@ -1,0 +1,28 @@
+{
+  "name": "@cassiomc1/forgeloop-verify",
+  "version": "1.0.0",
+  "description": "Independent, dependency-free verifier for ForgeLoop evidence bundles",
+  "type": "module",
+  "license": "Apache-2.0",
+  "bin": {
+    "forgeloop-verify": "forgeloop-verify.mjs"
+  },
+  "files": [
+    "forgeloop-verify.mjs",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cassiomc1/forgeloop.git",
+    "directory": "verifier"
+  },
+  "homepage": "https://github.com/cassiomc1/forgeloop/tree/main/verifier#readme",
+  "keywords": ["forgeloop", "evidence", "verifier", "in-toto", "ai-agents"],
+  "publishConfig": {
+    "access": "public"
+  }
+}
