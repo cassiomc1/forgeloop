@@ -13,18 +13,11 @@ import { inspectPersistentTransport, startPersistentSearchHost } from "../src/pe
 import { terminateOwnedPersistentTransport } from "../src/persistent-transport/ownership.js";
 import { readPersistentTransportState } from "../src/persistent-transport/state.js";
 import { assertSearchParams, createRequest, validateRequest } from "../src/persistent-transport/protocol.js";
+import { pollUntil } from "./helpers/poll.js";
 
-async function waitForHost(homeDirectory) {
-  let lastError;
-  for (let attempt = 0; attempt < 100; attempt += 1) {
-    try {
-      return await pingPersistentSearchHost({ homeDirectory, timeoutMs: 500 });
-    } catch (error) {
-      lastError = error;
-      await new Promise((resolve) => setTimeout(resolve, 25));
-    }
-  }
-  throw lastError;
+// The host is another process: poll its ping until it answers.
+function waitForHost(homeDirectory) {
+  return pollUntil(() => pingPersistentSearchHost({ homeDirectory, timeoutMs: 500 }), { timeoutMs: 30_000, intervalMs: 25, what: "the persistent search host" });
 }
 
 test("persistent transport framing accepts partial and multiple frames", () => {

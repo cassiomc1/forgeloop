@@ -35,18 +35,10 @@ function runCli(target, ...args) {
   });
 }
 
-async function rimrafWithRetry(target) {
-  for (let attempt = 0; attempt < 5; attempt++) {
-    try {
-      await rm(target, { recursive: true, force: true });
-      return;
-    } catch (error) {
-      const code = error?.code;
-      const isTransient = code === "EBUSY" || code === "EPERM" || code === "ENOTEMPTY";
-      if (!isTransient || attempt === 4) throw error;
-      await new Promise((resolve) => setTimeout(resolve, 30 * (attempt + 1)));
-    }
-  }
+// fs.rm retries EBUSY, EMFILE, ENFILE, ENOTEMPTY and EPERM itself, with a
+// linear backoff, which covers transient Windows file locks.
+function rimrafWithRetry(target) {
+  return rm(target, { recursive: true, force: true, maxRetries: 4, retryDelay: 30 });
 }
 
 async function withTarget(run) {

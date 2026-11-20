@@ -1,7 +1,6 @@
 import { removeTempTree } from "./helpers/rm-safe.js";
 import assert from "node:assert/strict";
 import { access, mkdtemp, readFile, writeFile } from "node:fs/promises";
-import { setTimeout as delay } from "node:timers/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -13,6 +12,7 @@ import { seedPolicyEpoch } from "./helpers/durable-policy.js";
 import { setupVerifyingTask } from "./helpers/durable-lifecycle.js";
 import { createGitRepository } from "./helpers/git-fixture.js";
 import { getPackageRoot } from "../src/core/templates.js";
+import { pollUntil } from "./helpers/poll.js";
 
 const packageRoot = getPackageRoot();
 
@@ -32,20 +32,12 @@ function input(overrides = {}) {
     ...overrides };
 }
 
-async function waitForFile(filename, { timeoutMs = 5000, signal } = {}) {
-  const deadline = Date.now() + timeoutMs;
-  while (Date.now() < deadline) {
-    if (signal?.aborted) throw signal.reason ?? new Error("File barrier was cancelled");
-    try {
-      await access(filename);
-      return;
-    } catch (error) {
-      if (error.code !== "ENOENT") throw error;
-    }
-    const remaining = deadline - Date.now();
-    if (remaining > 0) await delay(Math.min(10, remaining), undefined, { signal });
-  }
-  throw new Error(`Timed out waiting for external execution marker: ${filename}`);
+// The marker is written by another process: poll for it.
+function waitForFile(filename, { timeoutMs = 5000, signal } = {}) {
+  return pollUntil(async () => {
+    await access(filename);
+    return true;
+  }, { timeoutMs, signal, isTransient: (error) => error.code === "ENOENT", what: `external execution marker ${filename}` });
 }
 
 test("public native run-action launches without an open SQLite writer transaction", async () => {

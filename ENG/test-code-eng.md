@@ -235,6 +235,7 @@ exists.
 | **Test doubles that replace real behaviour**: module, method or property mocks, patched globals, prototypes, clocks or `fetch`, hand-written fake responses for your own code. | Run the real implementation. Inject real collaborators, use a local server or emulator for the network, and use fakes only at true external boundaries you do not own. Observation-only spies are fine. |
 | **Fixed sleeps**: awaiting a fixed real-time delay in a test or hook. | Await the operation or an event it emits. Control time with the framework's mock clock, such as `t.mock.timers` or `vi.useFakeTimers`. |
 | **Unsignaled polling**: polling spy or recorder state until a deadline. | Await the signal (a promise, an event, a callback) that the state changed. |
+| **Ad-hoc waits on another process**: a hand-written sleep loop until a host answers or a file appears. | When the other process emits no event, use the shared deadline-bounded `pollUntil` in `tests/helpers/poll.js`, naming what it waits for. |
 | **Flake masking**: retries and raised per-test timeouts. | Fix the race, isolation or state. A test that passes only on rerun or with more time is a flake to fix (see the previous section). Bound hangs once, with a suite-wide timeout in the test runner, not with per-test overrides. |
 | **Unchecked network**: a request mock that lets unmatched requests reach the real network. | Fail on unhandled requests, for example MSW `onUnhandledRequest: "error"`. |
 

@@ -1,19 +1,18 @@
 import assert from "node:assert/strict";
-import { mock, test } from "node:test";
-import { execFileSync } from "node:child_process";
-import { fileURLToPath } from "node:url";
+import { test } from "node:test";
 
-const supportsModuleMocks = typeof mock.module === "function";
-let importSequence = 0;
+import { syncDirectory } from "../src/storage/file-durability.js";
 
 function failure(code) {
   return Object.assign(new Error(code), { code });
 }
 
+// syncDirectory takes the directory opener as an option, so these contracts
+// drive it with a handle that records each call and fails on demand, without
+// replacing node:fs/promises.
 async function invokeSyncDirectory({ openError = null, syncError = null, closeError = null, options } = {}) {
-  const fsPromises = await import("node:fs/promises");
   const events = [];
-  const open = async () => {
+  const openDirectory = async () => {
     events.push("open");
     if (openError) throw openError;
     return {
@@ -27,38 +26,15 @@ async function invokeSyncDirectory({ openError = null, syncError = null, closeEr
       },
     };
   };
-  const mockedFs = { ...fsPromises, open };
   try {
-    const major = Number(process.versions.node.split(".", 1)[0]);
-    mock.module("node:fs/promises", major >= 26 ? { exports: mockedFs } : { namedExports: mockedFs });
-    const { syncDirectory } = await import(`../src/storage/file-durability.js?durability-error-${++importSequence}`);
-    await syncDirectory("/virtual/storage-directory", options);
+    await syncDirectory("/virtual/storage-directory", { ...options, openDirectory });
     return { events, error: null };
   } catch (error) {
     return { events, error };
-  } finally {
-    mock.restoreAll();
   }
 }
 
-const mockTestOptions = { concurrency: false };
-
-if (!supportsModuleMocks) {
-  test("storage durability error contracts run in an isolated module-mock process", () => {
-    const environment = { ...process.env };
-    delete environment.NODE_TEST_CONTEXT;
-    const output = execFileSync(process.execPath, ["--experimental-test-module-mocks", "--test", fileURLToPath(import.meta.url)], {
-      encoding: "utf8",
-      timeout: 30_000,
-      env: environment,
-    });
-    assert.match(output, /tests 4/u);
-    assert.match(output, /pass 4/u);
-    assert.match(output, /fail 0/u);
-  });
-} else {
-
-test("storage durability default mode preserves tolerated open, sync, and close errors", mockTestOptions, async () => {
+test("storage durability default mode preserves tolerated open, sync, and close errors", async () => {
   const openIgnored = await invokeSyncDirectory({ openError: failure("EISDIR") });
   assert.equal(openIgnored.error, null);
   assert.deepEqual(openIgnored.events, ["open"]);
@@ -82,7 +58,7 @@ test("storage durability default mode preserves tolerated open, sync, and close 
   assert.deepEqual(closeIgnored.events, ["open", "sync", "close"]);
 });
 
-test("storage durability default mode preserves close-error precedence over a sync failure", mockTestOptions, async () => {
+test("storage durability default mode preserves close-error precedence over a sync failure", async () => {
   const result = await invokeSyncDirectory({
     syncError: failure("EIO"),
     closeError: failure("EISDIR"),
@@ -96,7 +72,7 @@ test("storage durability default mode preserves close-error precedence over a sy
   assert.deepEqual(nonIgnoredClose.events, ["open", "sync", "close"]);
 });
 
-test("storage durability propagates unexpected open and sync errors by identity", mockTestOptions, async () => {
+test("storage durability propagates unexpected open and sync errors by identity", async () => {
   for (const options of [undefined, { catchOpenErrors: false, catchCloseErrors: false }]) {
     const openError = failure("EIO");
     const opened = await invokeSyncDirectory({ openError, options });
@@ -110,7 +86,7 @@ test("storage durability propagates unexpected open and sync errors by identity"
   }
 });
 
-test("storage durability strict mode propagates open and close failures while tolerating sync failures", mockTestOptions, async () => {
+test("storage durability strict mode propagates open and close failures while tolerating sync failures", async () => {
   const options = { catchOpenErrors: false, catchCloseErrors: false };
 
   const strictOpenFailure = failure("EISDIR");
@@ -140,4 +116,3 @@ test("storage durability strict mode propagates open and close failures while to
   assert.equal(strictPrecedence.error?.code, "EISDIR");
   assert.deepEqual(strictPrecedence.events, ["open", "sync", "close"]);
 });
-}
