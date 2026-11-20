@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "protocol-licensing-hygiene",
+  "forgeloopVersion": "2.4.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:protocol-licensing-hygiene\",\n      \"digest\": {\n        \"sha256\": \"cad65e004895ce996d0ebe694016404b8f12958ef335ec145f3c810dea98ee30\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"protocol-licensing-hygiene\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"480ca03f0f194ae2a3df6c55be901035b2c6089ae1f0ea75924ac0dbc0cb92f8\",\n      \"contentDigest\": \"cad65e004895ce996d0ebe694016404b8f12958ef335ec145f3c810dea98ee30\",\n      \"coveredPaths\": [\n        \"scripts/check-repository-hygiene.mjs\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"77a07cde549ee4b3101142dc4b9f6265a443226b011d18c62f53d8d5e84cbab6\",\n      \"routeFingerprint\": \"6128a8d38f0d109c1c78f8857985352a1086c4785f1a9e7002a6d13673ffb0e8\",\n      \"stateFingerprint\": \"616800fcd406b43738a8982029f5743c7d89efe17c358e9ba1d1361c535ac61b\",\n      \"receiptFingerprint\": \"b3cf6c50208361b5d980f01abee4bfbf7074c03fa1cfa12af5440f4c5380b53c\",\n      \"ledgerSeq\": 37,\n      \"ledgerHash\": \"7349effb13d55a1634bba637e3057ee9be6d4bd60a9f85ca349b2acd1d612a04\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "protocol-licensing-hygiene",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "6c341b246dd0954a16207e9b22e5df312571b23c",
+      "observedRevision": "6c341b246dd0954a16207e9b22e5df312571b23c",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/protocol-open-verifier",
+        "head": "6c341b246dd0954a16207e9b22e5df312571b23c"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "77a07cde549ee4b3101142dc4b9f6265a443226b011d18c62f53d8d5e84cbab6",
+      "routeFingerprint": "6128a8d38f0d109c1c78f8857985352a1086c4785f1a9e7002a6d13673ffb0e8",
+      "stateFingerprint": "616800fcd406b43738a8982029f5743c7d89efe17c358e9ba1d1361c535ac61b",
+      "receiptFingerprint": "b3cf6c50208361b5d980f01abee4bfbf7074c03fa1cfa12af5440f4c5380b53c",
+      "ledgerSeq": 37,
+      "ledgerHash": "7349effb13d55a1634bba637e3057ee9be6d4bd60a9f85ca349b2acd1d612a04"
+    },
+    "entries": [
+      {
+        "path": "scripts/check-repository-hygiene.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "80f6b57b5ec86c33d4d155d485cf83decfccb267e384165fc1245931c6b88809",
+        "providerContentId": "a4fd1c461ff653889330f4997998e3921723703f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "cad65e004895ce996d0ebe694016404b8f12958ef335ec145f3c810dea98ee30"
+  },
+  "manifestFingerprint": "480ca03f0f194ae2a3df6c55be901035b2c6089ae1f0ea75924ac0dbc0cb92f8",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Fix the Lint and dependency policy failure on PR #276: the repository hygiene check rejects the new root LICENSING.md (REPOSITORY_HYGIENE_UNEXPECTED_ROOT_DOCUMENT); add it to the allowed root Markdown documents.",
+    "successCriteria": [
+      "npm run repository:hygiene reports no errors with LICENSING.md tracked"
+    ],
+    "checks": [
+      {
+        "id": "hygiene",
+        "requirement": "npm run repository:hygiene passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-bcb59dcdf5bbf5d2",
+        "requirement": "npm run repository:hygiene reports no errors with LICENSING.md tracked",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-20T15:13:53.596Z",
+    "completedAt": "2026-11-20T15:24:03.376Z",
+    "durationMs": 609780,
+    "phaseDurationsMs": {
+      "planning": 2645,
+      "executing": 936,
+      "verifying": 605901,
+      "reviewing": 298
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 3,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "6b647ee57869c50dd07f22b6b6d9fa11874693312d351a95a22a6b9f0887e864"
+}
