@@ -1,0 +1,236 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "contract-from-ticket",
+  "forgeloopVersion": "2.4.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:contract-from-ticket\",\n      \"digest\": {\n        \"sha256\": \"8a6ee0d1494b0cf004ecbf16ff9d1e733e348e7224a6ddfc0613931c63463627\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 2,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"contract-from-ticket\",\n      \"verificationCycle\": 2\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"6a8d376d7635c9ff92493e0bb277c21a2c1ea9bbe04d1ec4833d9a870228bcfa\",\n      \"contentDigest\": \"8a6ee0d1494b0cf004ecbf16ff9d1e733e348e7224a6ddfc0613931c63463627\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"completions/_forgeloop\",\n        \"completions/forgeloop.bash\",\n        \"completions/forgeloop.fish\",\n        \"docs/CLI_REFERENCE.md\",\n        \"docs/TROUBLESHOOTING.md\",\n        \"src/commands/contract-create.js\",\n        \"src/core/cli-command-definitions.js\",\n        \"src/core/command-executors.js\",\n        \"src/core/error-codes.js\",\n        \"src/core/ticket-contract.js\",\n        \"tests/contract-from-ticket.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"651960d233c35ccd26f993568ac251d2b2d45f4dc04b5ba53ee68e2fdb7cb15e\",\n      \"routeFingerprint\": \"268e278faab2fce5867b606ebe18d0f717c704c66c36760cc6a0dce94b69bc75\",\n      \"stateFingerprint\": \"0bf228fbb8a69df618f5c7492a16925d65d16e2ba85f8446003bd454fd117c9b\",\n      \"receiptFingerprint\": \"1449e168b4d9f1fa99cef195d1188f2e2a3e85d630ac97b351a6eef3830c315a\",\n      \"ledgerSeq\": 64,\n      \"ledgerHash\": \"d45462217133224d7b86c005c61c9496b9b42e91fa9c8bfe203a0aa39aa7ee41\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\",\n      \"checks\": [\n        {\n          \"id\": \"docs-check\",\n          \"requirement\": \"npm run docs:check passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"90feade86f0fe5eeb934e3ec3eefe02bc9660d41d14310d2c80be18ca5254976\"\n        },\n        {\n          \"id\": \"from-ticket-tests\",\n          \"requirement\": \"node --test tests/contract-from-ticket.test.js passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"a8adc43ce36759713f3eb1b9c0b844e7c03b8d732d55e311230b6c7b9ab75d79\"\n        },\n        {\n          \"id\": \"requirement-59830ebc3a418411\",\n          \"requirement\": \"tests\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"527c484bcc3bb219e92ed61f99ff968f31143f89e53fda93d09b74c0ce3177d4\"\n        },\n        {\n          \"id\": \"requirement-830afe2508668f26\",\n          \"requirement\": \"contract-create --from-ticket persists an approved Cloud contract and refuses proposals, missing tokens and invalid contracts\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"a8adc43ce36759713f3eb1b9c0b844e7c03b8d732d55e311230b6c7b9ab75d79\"\n        },\n        {\n          \"id\": \"verify-fast\",\n          \"requirement\": \"npm run verify:fast passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"5730e2a87ecd718b046cc9bd54056300f5712eb2ea3f77adc925f53c26b76226\"\n        }\n      ]\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "contract-from-ticket",
+    "verificationCycle": 2,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "d5af4f9e4be6fd255de3547f8baa28ff76f29fee",
+      "observedRevision": "d5af4f9e4be6fd255de3547f8baa28ff76f29fee",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/contract-from-ticket",
+        "head": "d5af4f9e4be6fd255de3547f8baa28ff76f29fee"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "651960d233c35ccd26f993568ac251d2b2d45f4dc04b5ba53ee68e2fdb7cb15e",
+      "routeFingerprint": "268e278faab2fce5867b606ebe18d0f717c704c66c36760cc6a0dce94b69bc75",
+      "stateFingerprint": "0bf228fbb8a69df618f5c7492a16925d65d16e2ba85f8446003bd454fd117c9b",
+      "receiptFingerprint": "1449e168b4d9f1fa99cef195d1188f2e2a3e85d630ac97b351a6eef3830c315a",
+      "ledgerSeq": 64,
+      "ledgerHash": "d45462217133224d7b86c005c61c9496b9b42e91fa9c8bfe203a0aa39aa7ee41"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "c817f195742c6dbccb79c971efdc651528ad9b9a0f49c95db61f4a3cebac496a",
+        "providerContentId": "b46cc87f5f937d186696abc0e1da30e409dc21d6",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "completions/_forgeloop",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "542ad7b76945ada56a3c1bb6a32153075ce0c9040f1a144973a6f6de51565e44",
+        "providerContentId": "c686054d871592a24f1b28cb7782b4352aaa9fc1",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "completions/forgeloop.bash",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "d214d78bb3cc30ee9b76ed354d942746e3cc54a67aa2f82e4214e016b4cf6621",
+        "providerContentId": "d42d03e2092451500e800edb42f2a9e5e5dd9ff8",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "completions/forgeloop.fish",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "ba9cb5dd26636e373a600039da91ee8f5f068178222fd652effedf1c838092f1",
+        "providerContentId": "1ba19e88103c2219b521472498b65306f2079022",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/CLI_REFERENCE.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "399d52091aac4dd00376e4c7f169eeacf33f8584324fbb18953cd373b9c695fb",
+        "providerContentId": "78a743aa60725de77cf1afd2606927654172f3d2",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/TROUBLESHOOTING.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "783446d41a3cd739365e3b455c7007e26f67fcccdfdfc9ff0c2461debc6a1964",
+        "providerContentId": "91f3c19eb05454c3217e3a803b0a42d60c31188d",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/commands/contract-create.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "31d49e027d9a5bc856009f2d6b31ef98abaf067efda5b79a2bf4496646da026e",
+        "providerContentId": "981a7cecc173eb616bc1eb32f44a59e22fd707fa",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/cli-command-definitions.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "d1c8b6134967d63da7227fd9f45f686cf5fc6a88da7d8cc3d754f50d0820290b",
+        "providerContentId": "5ef0fbf634be6a5fcdac22fde17cf8fe0fee7312",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/command-executors.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "b5b1079abfbac383c75a6e45f1a17562dda66bbfc3f46a09261da1b4a3acf6c7",
+        "providerContentId": "94d1fc44f634df9798b8e0670e9eeed4cec7d4b8",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/error-codes.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "9603ea1f959f2b747ff3f0a0446475ec007979dee2af2ee333b9d4b773da2ddd",
+        "providerContentId": "4f3784484aedd726a4949001b8a02d77b2ba1782",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/ticket-contract.js",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "a856a3db56d44d7b763e576f1c2efe2680d4c6bdae4fc9ef03462c7ce80382d0",
+        "providerContentId": "35d25dfd22dbfaa99f49dd2bf3dc5ce93ebbed1c",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/contract-from-ticket.test.js",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "22d85fe0fd6524e915a27d8019fc6d3c0bd9c27c1e8d1992ecb82178dac7d2d4",
+        "providerContentId": "f028943be14a559e02467666b5d24d1abb25d1d7",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "8a6ee0d1494b0cf004ecbf16ff9d1e733e348e7224a6ddfc0613931c63463627"
+  },
+  "manifestFingerprint": "6a8d376d7635c9ff92493e0bb277c21a2c1ea9bbe04d1ec4833d9a870228bcfa",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Let an agent start from a contract a team approved in ForgeLoop Cloud for a ticket from any tracker: forgeloop contract-create --task <id> --from-ticket <source:externalId> fetches the approved contract with a team token, validates it exactly like a contract file and persists it, so the task reaches CONTRACT_READY without writing the contract by hand.",
+    "successCriteria": [
+      "contract-create --from-ticket persists an approved Cloud contract and refuses proposals, missing tokens and invalid contracts"
+    ],
+    "checks": [
+      {
+        "id": "docs-check",
+        "requirement": "npm run docs:check passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "from-ticket-tests",
+        "requirement": "node --test tests/contract-from-ticket.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-830afe2508668f26",
+        "requirement": "contract-create --from-ticket persists an approved Cloud contract and refuses proposals, missing tokens and invalid contracts",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-fast",
+        "requirement": "npm run verify:fast passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-20T18:06:17.992Z",
+    "completedAt": "2026-11-20T18:28:26.486Z",
+    "durationMs": 1328494,
+    "phaseDurationsMs": {
+      "planning": 2582,
+      "executing": 96755,
+      "verifying": 1228869,
+      "reviewing": 288
+    },
+    "verificationCycles": 2,
+    "diagnoses": 1,
+    "checksPassed": 5,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "038f1267f7284cc428fdd53762ca4c0cf6d3524e5c159cfd2766192733e89322"
+}

@@ -340,6 +340,7 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
       ...CLI_TASK_OPTION,
       "--contract-file": Object.freeze({ targetKey: "contractFile", parseType: "string", takesValue: true, valueName: "path", missingValueMessage: "--contract-file requires a path", description: "validated JSON contract relative to the target" }),
       "--preset": Object.freeze({ targetKey: "preset", parseType: "string", takesValue: true, valueName: "name", missingValueMessage: "--preset requires a name", description: "bounded contract preset: documentation, bug, feature, or release" }),
+      "--from-ticket": Object.freeze({ targetKey: "fromTicket", parseType: "string", takesValue: true, valueName: "source:id", missingValueMessage: "--from-ticket requires a ticket key such as linear:ENG-42", description: "the contract approved in ForgeLoop Cloud for this ticket (needs FORGELOOP_CLOUD_TOKEN)" }),
       "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit structured contract output as JSON" }),
     }),
     writes: [".forgeloop/task-state/<taskKey>/contract.json", ".forgeloop/task-state/<taskKey>/work-state.json", ".forgeloop/task-state/<taskKey>/events.ndjson"],

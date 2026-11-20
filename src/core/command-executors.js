@@ -171,7 +171,7 @@ const RAW_COMMAND_EXECUTORS = {
     exitCode: 0,
   }),
   "contract-create": async ({ target, packageRoot, options }) => ({
-    result: await runContractCreate({ target, packageRoot, taskId: options.taskId, preset: options.preset, contractFile: options.contractFile }),
+    result: await runContractCreate({ target, packageRoot, taskId: options.taskId, preset: options.preset, contractFile: options.contractFile, fromTicket: options.fromTicket }),
     exitCode: 0,
   }),
   "contract-revise": async ({ target, packageRoot, options }) => ({

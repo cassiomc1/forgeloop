@@ -171,6 +171,7 @@ complete -c forgeloop -f -n '__fish_seen_subcommand_from continuity' -l 'path' -
 complete -c forgeloop -f -n '__fish_seen_subcommand_from continuity' -l 'task' -d 'task ID to operate on (when omitted, resolved from context or single active task)'
 complete -c forgeloop -f -n '__fish_seen_subcommand_from continuity' -l 'version' -d 'show the installed package version'
 complete -c forgeloop -f -n '__fish_seen_subcommand_from contract-create' -l 'contract-file' -d 'validated JSON contract relative to the target'
+complete -c forgeloop -f -n '__fish_seen_subcommand_from contract-create' -l 'from-ticket' -d 'the contract approved in ForgeLoop Cloud for this ticket (needs FORGELOOP_CLOUD_TOKEN)'
 complete -c forgeloop -f -n '__fish_seen_subcommand_from contract-create' -l 'help' -d 'show this help'
 complete -c forgeloop -f -n '__fish_seen_subcommand_from contract-create' -l 'json' -d 'emit structured contract output as JSON'
 complete -c forgeloop -f -n '__fish_seen_subcommand_from contract-create' -l 'path' -d 'target project directory (default: current directory)'

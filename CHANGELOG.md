@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Ticket contracts: `contract-create --task <id> --from-ticket <source:id>`
+  starts a task from the contract a team approved in ForgeLoop Cloud for a
+  ticket from any tracker (for example `linear:ENG-42` or
+  `github:acme/app#12`). It authenticates with the team's Cloud MCP token in
+  `FORGELOOP_CLOUD_TOKEN` (read scope), refuses proposals that are not yet
+  approved (`E_TICKET_CONTRACT_NOT_APPROVED`) and validates the contract like
+  a contract file. The token is never written to state or output.
 - Attestation: new statements use predicate schema version 2, which binds
   every recorded check (id, requirement, status, provenance, exit code and a
   SHA-256 digest of its argv) into the signed statement. Verifiers keep
