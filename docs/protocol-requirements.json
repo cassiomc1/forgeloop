@@ -96,6 +96,48 @@
       "statement": "The generic provider registry MUST remain absent from the public package subpath exports.",
       "tests": ["tests/provider-architecture.test.js", "tests/package.test.js"],
       "validator": "package.json"
+    },
+    "FL-SPEC-001": {
+      "source": "docs/PROTOCOL_SPEC.md",
+      "statement": "A conforming runtime MUST enforce the core lifecycle invariants.",
+      "tests": ["tests/completion.test.js", "tests/completion-verification-failed.test.js"],
+      "validator": "src/core/completion.js"
+    },
+    "FL-SPEC-002": {
+      "source": "docs/PROTOCOL_SPEC.md",
+      "statement": "If the latest check bound to a contract verification item failed or was blocked, completion MUST be rejected.",
+      "tests": ["tests/completion-verification-failed.test.js"],
+      "validator": "src/core/completion-relationships.js"
+    },
+    "FL-SPEC-003": {
+      "source": "docs/PROTOCOL_SPEC.md",
+      "statement": "COMPLETE is reached only through the completion validator; an actor MUST NOT write completion state directly.",
+      "tests": ["tests/completion.test.js", "tests/completion-cli.test.js"],
+      "validator": "src/core/completion.js"
+    },
+    "FL-SPEC-004": {
+      "source": "docs/PROTOCOL_SPEC.md",
+      "statement": "A runtime MUST expose a next-action operation returning the single valid next lifecycle action.",
+      "tests": ["tests/next-action.test.js"],
+      "validator": "src/core/next-action-model.js"
+    },
+    "FL-SPEC-005": {
+      "source": "docs/PROTOCOL_SPEC.md",
+      "statement": "Verifiers MUST NOT base a decision on the unbound summary or metrics of an evidence bundle.",
+      "tests": ["tests/evidence-bundles.test.js"],
+      "validator": "src/core/evidence/verify.js"
+    },
+    "FL-SPEC-006": {
+      "source": "docs/PROTOCOL_SPEC.md",
+      "statement": "A verifier MUST check that every changed path in a revision range is covered by a bundle whose digest matches the head content.",
+      "tests": ["tests/evidence-bundles.test.js", "scripts/run-conformance.mjs"],
+      "validator": "src/core/evidence/verify.js"
+    },
+    "FL-SPEC-007": {
+      "source": "docs/PROTOCOL_SPEC.md",
+      "statement": "Readers MUST reject object schema versions they do not know.",
+      "tests": ["tests/evidence-bundles.test.js"],
+      "validator": "src/core/evidence/bundle-format.js"
     }
   }
 }

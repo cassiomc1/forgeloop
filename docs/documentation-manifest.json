@@ -489,6 +489,20 @@
       "packaged": true
     },
     {
+      "path": "docs/PROTOCOL_SPEC.md",
+      "id": "protocol-spec",
+      "class": "normative",
+      "audience": [
+        "integrator",
+        "maintainer",
+        "harness"
+      ],
+      "canonicalFor": [
+        "protocol-core"
+      ],
+      "packaged": true
+    },
+    {
       "path": "docs/REVISION_PROVIDERS.md",
       "id": "revision-providers",
       "class": "reference",

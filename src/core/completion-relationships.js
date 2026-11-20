@@ -2,7 +2,7 @@ import { ARTIFACT_PATHS, canonicalFingerprint } from "./artifacts.js";
 import { assertCheckList } from "./checks.js";
 import { assertCoverageList, coverageForRequirements } from "./coverage.js";
 import { assertEvidenceList } from "./evidence.js";
-import { evaluateRequiredEvidence } from "./evidence-readiness.js";
+import { evaluateRequiredEvidence, latestAuthoritativeCheck, matchesRequirement } from "./evidence-readiness.js";
 import { validateVerificationAuthority } from "./verification-capability.js";
 
 function issue(code, message, artifacts = [], details = {}) {
@@ -56,6 +56,30 @@ export function assertStateIdentity(input) {
   error.code = first.code;
   error.artifacts = first.artifacts;
   throw error;
+}
+
+// Protocol core invariant 4.1.5: a contract verification item whose latest
+// bound check failed or was blocked rejects completion. A later passing run of
+// the same item supersedes the failure; an item with no check is left to the
+// required-evidence rules.
+export function failedVerificationPlanErrors(contractValue, checks = []) {
+  const errors = [];
+  for (const item of contractValue?.verification ?? []) {
+    const requirement = typeof item === "string" ? { text: item } : item;
+    if (!requirement?.text || (requirement.type && requirement.type !== "VERIFICATION")) continue;
+    const latest = latestAuthoritativeCheck((checks ?? []).filter((check) => (
+      (requirement.id && check?.id === requirement.id) || matchesRequirement(check, requirement)
+    )));
+    if (latest && (latest.status === "failed" || latest.status === "blocked")) {
+      errors.push(issue(
+        "E_CHECK_FAILED",
+        `Contract verification ${requirement.id ? `"${requirement.id}" ` : ""}ends in a ${latest.status} check (${latest.id}): ${requirement.text}`,
+        [ARTIFACT_PATHS.contract, ARTIFACT_PATHS.receipt],
+        { requirementId: requirement.id ?? null, checkId: latest.id },
+      ));
+    }
+  }
+  return errors;
 }
 
 export function completionRelationshipErrors({
@@ -117,6 +141,7 @@ export function completionRelationshipErrors({
       }
     }
     if (requireRequiredChecks) {
+      errors.push(...failedVerificationPlanErrors(contractValue, receipt.checks));
       const readiness = evaluateRequiredEvidence({ requirements: requiredEvidence, checks: receipt.checks, options: authOptions });
       for (const requirement of readiness.missing) {
         errors.push(issue("E_EVIDENCE_REQUIRED", `Required check is missing: ${requirement.text}`, [ARTIFACT_PATHS.receipt], { requirementId: requirement.id }));

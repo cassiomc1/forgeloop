@@ -1,0 +1,261 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "protocol-core",
+  "forgeloopVersion": "2.4.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:protocol-core\",\n      \"digest\": {\n        \"sha256\": \"f91de04f115a399e14b6ab19aa80bd708c71048d711c8268bc9f42703fc9466c\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"protocol-core\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"261d43bdd2b0e2a6c417a1b94a29c393f0b4aec5384af6837734e784c725ce45\",\n      \"contentDigest\": \"f91de04f115a399e14b6ab19aa80bd708c71048d711c8268bc9f42703fc9466c\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"README.md\",\n        \"conformance/cases.json\",\n        \"conformance/fixtures/single-file/bundle.json\",\n        \"conformance/fixtures/single-file/tree/.lychee.toml\",\n        \"docs/PROTOCOL_SPEC.md\",\n        \"docs/documentation-manifest.json\",\n        \"docs/documentation-review-matrix.json\",\n        \"docs/protocol-requirements.json\",\n        \"package.json\",\n        \"scripts/run-conformance.mjs\",\n        \"src/core/completion-relationships.js\",\n        \"tests/completion-verification-failed.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"290adaefc191963e9ed41d951fc095baf3852d6b7e038bbf9c59a0a57e1a3777\",\n      \"routeFingerprint\": \"ec9eff2098c617c0798541c2018bc65e81358f66a098d31b51952fdd680d0adf\",\n      \"stateFingerprint\": \"6308077e40c53d134704ee758793a82226479676ed462298000a4697ae0ae798\",\n      \"receiptFingerprint\": \"6d82d22311d1cee4080197ee5bfd615b7ae235c139fd1ced14ac9e241d7f1468\",\n      \"ledgerSeq\": 49,\n      \"ledgerHash\": \"3af9fe6a2174396d684261a263723b8a53e97b35fd7680b7ece6cd9324d8d5ed\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "protocol-core",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "d081d1e135755290df3e35e28a9f87f41710096e",
+      "observedRevision": "d081d1e135755290df3e35e28a9f87f41710096e",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/protocol-core",
+        "head": "d081d1e135755290df3e35e28a9f87f41710096e"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "290adaefc191963e9ed41d951fc095baf3852d6b7e038bbf9c59a0a57e1a3777",
+      "routeFingerprint": "ec9eff2098c617c0798541c2018bc65e81358f66a098d31b51952fdd680d0adf",
+      "stateFingerprint": "6308077e40c53d134704ee758793a82226479676ed462298000a4697ae0ae798",
+      "receiptFingerprint": "6d82d22311d1cee4080197ee5bfd615b7ae235c139fd1ced14ac9e241d7f1468",
+      "ledgerSeq": 49,
+      "ledgerHash": "3af9fe6a2174396d684261a263723b8a53e97b35fd7680b7ece6cd9324d8d5ed"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "8c85955da608ace576badb690ad56284b9bae09ee4fa9e6f89bd1d376c17e9ed",
+        "providerContentId": "93478196f970611ef0434510183863ca37968d71",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "conformance/cases.json",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "31013f277083f4bce206cb52b4924593549c8826813b46e0a2e1efe1f0c450fb",
+        "providerContentId": "eaece593d7db970314698853f79216d6ef5c51f8",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "conformance/fixtures/single-file/bundle.json",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "782696e9488f4a122c1af26c2bcb0eaf33d10ba5966de7041fb267ae72252a06",
+        "providerContentId": "b150c058f7a3af09fbf51ef0fbec673b8db83055",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "conformance/fixtures/single-file/tree/.lychee.toml",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "d40f6e7540eaa74097f58155eb2d40339f889e301031c0d74a6d15ef962b3bb1",
+        "providerContentId": "50a740c7426504b049c1aa409d412a53ab51e446",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/documentation-manifest.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "cb08c378977159adc0f2e84fdab58ae4efeb253e17c2d7e2edaf9c1d811fe943",
+        "providerContentId": "c3b81703853dcb8a101030a08a29c18434b36259",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/documentation-review-matrix.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "3fff336ac25bc0ceba492146ac0a1e778923042e27086c6836c5060797bb2c0a",
+        "providerContentId": "d87de7e871f6301937a4d090448ab069bcdd0a00",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/PROTOCOL_SPEC.md",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "34108eb0d249862280beaa118aa6de3e672758b7a6e216f49330f2069f9f1e87",
+        "providerContentId": "10b185f9c2e89136b3eeea250d3c41f3cc77690f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/protocol-requirements.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "caf3847d1ac46a6800760dc2fccd6910383ce42a72d09fc8bf56c76a45b7811a",
+        "providerContentId": "35c732094a8ef995d7880b1a4e77255899e9fda2",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "package.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "82376b9fc046a1df076731455079301de14f9e61864fa7282b2b922cf4d6eea1",
+        "providerContentId": "20871037b3ec08cb1261f5695b71e089c8a2c47a",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "README.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "2efdb24b2324eec7da798a79a2e676581ad76e9c0eea83ac5104176a0e66bab7",
+        "providerContentId": "ca015c1632216d27db9c8a4d5b9d1a9bbf60dbb0",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/run-conformance.mjs",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "1d3838c7de62476b8e95f758eba1f1853263073f137b92372e5b01c06ea6e5cc",
+        "providerContentId": "3df8f74f474f4a6ccef98e183f3565d06ae3ca1f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/completion-relationships.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "02eb8342db354fe97a3c1dd696adb2311523975089a09644c35606056e2743c9",
+        "providerContentId": "20dec8870c7e6845de9bc551d6302361dd50d192",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/completion-verification-failed.test.js",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "af4c2af9eb344b6fd909ffd1d01d27bbe5a4432752443b61a9236f0ec4e71c19",
+        "providerContentId": "4cb322cb1c684ea3d3577ebd178a997a9fa44c81",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "f91de04f115a399e14b6ab19aa80bd708c71048d711c8268bc9f42703fc9466c"
+  },
+  "manifestFingerprint": "261d43bdd2b0e2a6c417a1b94a29c393f0b4aec5384af6837734e784c725ce45",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Define the ForgeLoop core as a normative, implementation-neutral specification (docs/PROTOCOL_SPEC.md) whose MUST requirements are mapped to tests and validators, make the runtime enforce its failed-check invariant (a contract verification item whose latest bound check failed or was blocked rejects completion), and add a verifier conformance suite (conformance/ fixtures plus npm run conformance) that any implementation can run.",
+    "successCriteria": [
+      "A failed contract verification check rejects completion with E_CHECK_FAILED",
+      "npm run conformance passes against the reference implementation",
+      "Every MUST in docs/PROTOCOL_SPEC.md is mapped to tests and a validator"
+    ],
+    "checks": [
+      {
+        "id": "conformance",
+        "requirement": "npm run conformance passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "doc-requirements",
+        "requirement": "node --test tests/documentation-conformance.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "failed-check-test",
+        "requirement": "node --test tests/completion-verification-failed.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-494422b9252ae534",
+        "requirement": "Every MUST in docs/PROTOCOL_SPEC.md is mapped to tests and a validator",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-6f6c990c5fa2994d",
+        "requirement": "A failed contract verification check rejects completion with E_CHECK_FAILED",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-f1d3fae5036c2be1",
+        "requirement": "npm run conformance passes against the reference implementation",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-20T12:26:04.871Z",
+    "completedAt": "2026-11-20T12:37:20.759Z",
+    "durationMs": 675888,
+    "phaseDurationsMs": {
+      "planning": 8470,
+      "executing": 5929,
+      "verifying": 658758,
+      "reviewing": 2731
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 7,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "8ba6cecda5957e0853fdc9258a808f30fce9f01ea692015ebf551207267f0b69"
+}

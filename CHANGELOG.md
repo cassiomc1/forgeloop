@@ -1,5 +1,24 @@
 # Changelog
 
+## Unreleased
+
+- Protocol: `docs/PROTOCOL_SPEC.md` is the normative, implementation-neutral
+  core specification: roles, core objects, the lifecycle and its invariants,
+  the in-toto statement and predicate, evidence bundles, two trust axes
+  (integrity and execution assurance), evidence-based delegation, profiles,
+  conformance and versioning. Predicate schema version 2 and execution
+  assurance are specified as Draft and implemented in a follow-up.
+- Completion: a contract verification item whose latest bound check failed or
+  was blocked now rejects completion with `E_CHECK_FAILED`; a later passing run
+  of the same item supersedes the failure. Before, only success criteria,
+  guide evidence and configured evidence were required, so a failed
+  verification check could reach `COMPLETE`.
+- Conformance: `npm run conformance` runs the verifier conformance suite in
+  `conformance/cases.json` (valid evidence, tampered content, uncovered
+  changes, edited statements, forged digests, renamed bundles, missing
+  signatures). Other verifiers run it through
+  `FORGELOOP_CONFORMANCE_VERIFIER`.
+
 ## 2.4.0 - 2026-11-19
 
 - Minor release. Its runtime change is bound by

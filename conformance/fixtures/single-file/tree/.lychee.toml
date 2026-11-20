@@ -1,0 +1,61 @@
+# Deterministic, bounded execution for local documentation and CI.
+cache = true
+max_cache_age = "1d"
+# Avoid aggressive fan-out against hundreds of targets on a shared runner.
+max_concurrency = 14
+max_retries = 3
+retry_wait_time = 2
+timeout = 30
+no_progress = true
+
+# Legacy fixtures preserve historical package contents (frozen 0.1.6 state used
+# by migration tests) and are not subject to live third-party URL validation.
+exclude_path = ["tests/fixtures/legacy-0.1.6", "ForgeLoopAudit/docs/superpowers", "ForgeLoopAudit/tests/fixtures"]
+
+# Local examples and loopback addresses are not publishable targets.
+exclude_loopback = true
+exclude = [
+  '^https?://(?:www\.)?example\.(?:com|org|net)(?:/|$)',
+  # API endpoints (e.g. the cloud-sync default --remote) require auth; they are not doc links.
+  '^https://forgeloop\.monster/api/',
+  # Phaser returns 403 to automation; more specific links remain checked.
+  '^https://phaser\.io/$',
+  # The article works in browsers but intermittently times out on the runner.
+  '^https://akitaonrails\.com/en/2026/04/20/clean-code-for-ai-agents/$',
+  # The site returns 429 to shared CI runners; keep the requested reference
+  # visible while checking every other URL normally.
+  '^https://(?:www\.)?motion-primitives\.com/$',
+  # Blogspot rate-limits shared CI runners; keep the reference visible.
+  '^https://gradientsaas\.blogspot\.com(?:/|$)',
+  # The fast-check landing page currently fails connection checks on shared CI runners; keep the reference visible.
+  '^https://fast-check\.dev/$',
+  # Cursify is an optional pointer-enhancement reference whose host intermittently
+  # fails connection checks from GitHub-hosted runners; keep the link visible.
+  '^https://cursify\.ui-layouts\.com(?:/|$)',
+  # Ansible Molecule documentation rate-limits shared CI runners.
+  # Keep the official references visible while checking other Ansible URLs normally.
+  '^https://docs\.ansible\.com/projects/molecule(?:/.*)?$',
+  # Testcontainers blocks automated checks on shared CI runners.
+  '^https://(?:www\.)?testcontainers\.com(?:/.*)?$',
+  # The official OWASP OAuth2 cheat sheet intermittently returns 503 to shared CI runners.
+  # Keep the exact reference visible while continuing to validate every other OWASP URL.
+  '^https://cheatsheetseries\.owasp\.org/cheatsheets/OAuth2_Cheat_Sheet\.html$',
+  # These established design references rate-limit or time out shared CI runners.
+  # Keep the references visible while checking every other URL normally.
+  '^https://uncut\.wtf/$',
+  '^https://gameaccessibilityguidelines\.com/$',
+  # open-std.org (ISO WG14/WG21) timed out from CI runners and locally on
+  # 2026-11-14; keep the official C/C++ committee references visible.
+  '^https://www\.open-std\.org/jtc1/sc22/wg(?:14|21)/(?:www/projects)?$',
+  # cmake.org's TLS certificate expired on 2026-11-15 07:06 GMT. Temporary:
+  # remove once `curl -I https://cmake.org/` verifies again.
+  '^https://cmake\.org/cmake/help/latest/command/project\.html$',
+]
+
+[hosts."docs.ansible.com"]
+concurrency = 1
+request_interval = "5s"
+
+# Link exclusions are compatibility exceptions, not permanent truth. Review
+# this list manually at least once per quarter and remove entries when the
+# referenced host becomes reliably checkable.

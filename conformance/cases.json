@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "spec": "docs/PROTOCOL_SPEC.md",
+  "conformanceClass": "verifier",
+  "description": "Each case builds a two-commit Git repository from a fixture, applies one mutation, runs the verifier over base..head and compares status, level and error codes.",
+  "cases": [
+    {
+      "id": "valid-unsigned",
+      "clause": "6, 7.1",
+      "fixture": "single-file",
+      "mutations": [],
+      "args": [],
+      "expect": { "status": "VALID", "level": "INTEGRITY_ONLY", "errorCodes": [] }
+    },
+    {
+      "id": "content-tampered",
+      "clause": "6",
+      "fixture": "single-file",
+      "mutations": [{ "type": "append-file", "path": ".lychee.toml", "content": "# changed after the evidence was recorded\n" }],
+      "args": [],
+      "expect": { "status": "INVALID", "level": "NONE", "errorCodes": ["E_ATTESTATION_CONTENT_MISMATCH", "E_ATTESTATION_COVERAGE_GAP"] }
+    },
+    {
+      "id": "uncovered-change",
+      "clause": "6",
+      "fixture": "single-file",
+      "mutations": [{ "type": "write-file", "path": "src/unproven.js", "content": "export const unproven = true;\n" }],
+      "args": [],
+      "expect": { "status": "INVALID", "level": "NONE", "errorCodes": ["E_ATTESTATION_COVERAGE_GAP"] }
+    },
+    {
+      "id": "uncovered-change-excluded-by-policy",
+      "clause": "6",
+      "fixture": "single-file",
+      "mutations": [{ "type": "write-file", "path": "src/unproven.js", "content": "export const unproven = true;\n" }],
+      "args": ["--exclude", "src/unproven.js"],
+      "expect": { "status": "VALID", "level": "INTEGRITY_ONLY", "errorCodes": [] }
+    },
+    {
+      "id": "statement-edited",
+      "clause": "5, 6",
+      "fixture": "single-file",
+      "mutations": [{ "type": "edit-statement", "find": "\"verificationCycle\": 1", "replace": "\"verificationCycle\": 2" }],
+      "args": [],
+      "expect": { "status": "INVALID", "level": "NONE", "errorCodes": ["E_ATTESTATION_COVERAGE_GAP", "E_EVIDENCE_BUNDLE_INVALID"] }
+    },
+    {
+      "id": "manifest-digest-forged",
+      "clause": "6",
+      "fixture": "single-file",
+      "mutations": [{ "type": "edit-bundle", "pointer": "/manifest/entries/0/sha256", "value": "0000000000000000000000000000000000000000000000000000000000000000" }],
+      "args": [],
+      "expect": { "status": "INVALID", "level": "NONE", "errorCodes": ["E_ATTESTATION_COVERAGE_GAP", "E_EVIDENCE_BUNDLE_INVALID"] }
+    },
+    {
+      "id": "bundle-renamed-to-another-task",
+      "clause": "3, 6",
+      "fixture": "single-file",
+      "mutations": [{ "type": "rename-bundle", "taskId": "another-task" }],
+      "args": [],
+      "expect": { "status": "INVALID", "level": "NONE", "errorCodes": ["E_ATTESTATION_COVERAGE_GAP", "E_EVIDENCE_BUNDLE_INVALID"] }
+    },
+    {
+      "id": "signature-required-but-absent",
+      "clause": "7.1",
+      "fixture": "single-file",
+      "mutations": [],
+      "args": ["--require-signature"],
+      "expect": { "status": "INVALID", "level": "NONE", "errorCodes": ["E_ATTESTATION_UNSIGNED"] }
+    }
+  ]
+}
