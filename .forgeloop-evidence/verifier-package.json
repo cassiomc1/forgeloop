@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "verifier-package",
+  "forgeloopVersion": "2.4.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:verifier-package\",\n      \"digest\": {\n        \"sha256\": \"317b1ad89034bc5e5d266283df0b3782e87c9b56679a7babd6eb51bda5888466\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 2,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"verifier-package\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"4f95c37d7212dd0ae87fea1d7536f6cd336e5b35873b3da095bc6a631c5a1b86\",\n      \"contentDigest\": \"317b1ad89034bc5e5d266283df0b3782e87c9b56679a7babd6eb51bda5888466\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"tests/verifier-package.test.js\",\n        \"verifier/LICENSE\",\n        \"verifier/README.md\",\n        \"verifier/package.json\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"707fb0be687dfe7ffb2f8c98fda018385b0bf4f4256778d2c4706877e4fa9743\",\n      \"routeFingerprint\": \"dfce896689893e0fdcfb0fe2175c002d05469983b5fb3273aa63ebb6450ec80e\",\n      \"stateFingerprint\": \"5647997dda6f3d9f7365353236838d830ebd99a49bf6d1063e930e37c7227530\",\n      \"receiptFingerprint\": \"498529a3473f91e959faf6bb0122206955c95ca10c90b4b9d2bbceab2e0250d0\",\n      \"ledgerSeq\": 43,\n      \"ledgerHash\": \"49372fd76d034780204a5ef1776c3615097744da0a8a2f47ec6ec8c3c3c90871\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\",\n      \"checks\": [\n        {\n          \"id\": \"docs-check\",\n          \"requirement\": \"npm run docs:check passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"90feade86f0fe5eeb934e3ec3eefe02bc9660d41d14310d2c80be18ca5254976\"\n        },\n        {\n          \"id\": \"package-tests\",\n          \"requirement\": \"node --test tests/verifier-package.test.js tests/verifier-conformance.test.js passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"efcbf44af4436c638cd87d83666cf82759d6e80c5b5d1099f8de5bd2c5f3ac33\"\n        },\n        {\n          \"id\": \"requirement-527a79b97711c72e\",\n          \"requirement\": \"npm pack of verifier/ contains only forgeloop-verify.mjs, README.md, LICENSE and package.json, with license Apache-2.0 and a forgeloop-verify bin\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"70158d8f8bfa2478c5c4316b4f2262f7cd5000712ce4ff51bc79bfaea2198a40\"\n        },\n        {\n          \"id\": \"requirement-59830ebc3a418411\",\n          \"requirement\": \"tests\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"5730e2a87ecd718b046cc9bd54056300f5712eb2ea3f77adc925f53c26b76226\"\n        },\n        {\n          \"id\": \"verify-fast\",\n          \"requirement\": \"npm run verify:fast passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"5730e2a87ecd718b046cc9bd54056300f5712eb2ea3f77adc925f53c26b76226\"\n        }\n      ]\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "verifier-package",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "df8ca50f89626975884dab013346da707bf2fab5",
+      "observedRevision": "df8ca50f89626975884dab013346da707bf2fab5",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/verifier-package",
+        "head": "df8ca50f89626975884dab013346da707bf2fab5"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "707fb0be687dfe7ffb2f8c98fda018385b0bf4f4256778d2c4706877e4fa9743",
+      "routeFingerprint": "dfce896689893e0fdcfb0fe2175c002d05469983b5fb3273aa63ebb6450ec80e",
+      "stateFingerprint": "5647997dda6f3d9f7365353236838d830ebd99a49bf6d1063e930e37c7227530",
+      "receiptFingerprint": "498529a3473f91e959faf6bb0122206955c95ca10c90b4b9d2bbceab2e0250d0",
+      "ledgerSeq": 43,
+      "ledgerHash": "49372fd76d034780204a5ef1776c3615097744da0a8a2f47ec6ec8c3c3c90871"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "24fb314e2fcd84b5ba8215aedef51528ab80301610dfda521182b6c6ceff2bad",
+        "providerContentId": "16b2831503101833d4024ab3491ae93a66db69df",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/verifier-package.test.js",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "e86410a20035c52745f2674a4bf8df422e98a3475f346003e7af4e4db322f2ff",
+        "providerContentId": "65a34e0f31d506b08f2c8ab608c166de71850ae3",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "verifier/LICENSE",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "providerContentId": "d645695673349e3947e8e5ae42332d0ac3164cd7",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "verifier/package.json",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "c5b128447cb389ac5f9aba1a77eb8a7d06543d079f4d8190e4b98f1de51c1324",
+        "providerContentId": "b1aa1e94467ae261288e55db0bf9c7885433aa10",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "verifier/README.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "0e96d62ce1451b836c1ca2f7b06bcdffcf0554478ea52f0318d3cf2e22b8a857",
+        "providerContentId": "1fcbf7fe9ff35d2ff29e2c6586acf725c10e38d5",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "317b1ad89034bc5e5d266283df0b3782e87c9b56679a7babd6eb51bda5888466"
+  },
+  "manifestFingerprint": "4f95c37d7212dd0ae87fea1d7536f6cd336e5b35873b3da095bc6a631c5a1b86",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Make the independent verifier installable on its own: add verifier/package.json for @cassiomc1/forgeloop-verify (Apache-2.0, zero dependencies, bin forgeloop-verify) with its own LICENSE, document npx/global install in verifier/README.md, and test that the packed tarball contains exactly the verifier, README and licence.",
+    "successCriteria": [
+      "npm pack of verifier/ contains only forgeloop-verify.mjs, README.md, LICENSE and package.json, with license Apache-2.0 and a forgeloop-verify bin"
+    ],
+    "checks": [
+      {
+        "id": "docs-check",
+        "requirement": "npm run docs:check passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "package-tests",
+        "requirement": "node --test tests/verifier-package.test.js tests/verifier-conformance.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-527a79b97711c72e",
+        "requirement": "npm pack of verifier/ contains only forgeloop-verify.mjs, README.md, LICENSE and package.json, with license Apache-2.0 and a forgeloop-verify bin",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-fast",
+        "requirement": "npm run verify:fast passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-20T20:15:20.948Z",
+    "completedAt": "2026-11-20T20:17:30.972Z",
+    "durationMs": 130024,
+    "phaseDurationsMs": {
+      "planning": 2640,
+      "executing": 18352,
+      "verifying": 108667,
+      "reviewing": 365
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 5,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "34a8557c0c4ff028e95a9fcb44b577c4eb0e241a2b6da6d23bf510f401f19353"
+}

@@ -1,7 +1,13 @@
 # Changelog
 
-## Unreleased
+## 2.5.0 - 2026-11-20
 
+- Minor release. Its runtime change is bound by
+  `benchmarks/storage-sqlite/stable-2.5.0-writer-review.json.gz`, a delta
+  review against 2.4.0: three changed filesystem modules with dispositions,
+  one new module with no filesystem access (`src/core/ticket-contract.js`) and
+  one added binding, a confined read of a delegation brief. No write path is
+  added.
 - Ticket contracts: `contract-create --task <id> --from-ticket <source:id>`
   starts a task from the contract a team approved in ForgeLoop Cloud for a
   ticket from any tracker (for example `linear:ENG-42` or
@@ -9,6 +15,10 @@
   `FORGELOOP_CLOUD_TOKEN` (read scope), refuses proposals that are not yet
   approved (`E_TICKET_CONTRACT_NOT_APPROVED`) and validates the contract like
   a contract file. The token is never written to state or output.
+- Independent verifier: `verifier/` is packaged on its own as
+  `@cassiomc1/forgeloop-verify` (Apache-2.0, no dependencies), so anyone can
+  run `npx @cassiomc1/forgeloop-verify --base <rev> --head <rev>` without the
+  ForgeLoop CLI.
 - Delegation: `evidence-verify --brief <task-brief.json>` accepts a
   delegate's work only on evidence. It fails with
   `E_DELEGATION_EVIDENCE_MISSING`, `E_DELEGATION_SCOPE_VIOLATION` or

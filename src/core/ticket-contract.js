@@ -21,20 +21,7 @@ export function resolveCloudUrl(value) {
   return url.origin;
 }
 
-export async function fetchApprovedTicketContract(key, { env = process.env, fetchImpl = fetch } = {}) {
-  if (typeof key !== "string" || !KEY.test(key)) throw unavailable(`--from-ticket must be a ticket key "source:externalId", for example linear:ENG-42 (got ${key})`);
-  const token = env.FORGELOOP_CLOUD_TOKEN ?? "";
-  if (!/^[A-Za-z0-9._~+/-]{32,512}$/u.test(token)) throw unavailable("FORGELOOP_CLOUD_TOKEN must be set to a ForgeLoop Cloud MCP token for your team");
-  const base = resolveCloudUrl(env.FORGELOOP_CLOUD_URL);
-  let response;
-  try {
-    response = await fetchImpl(`${base}/api/contracts?key=${encodeURIComponent(key)}`, {
-      headers: { authorization: `Bearer ${token}`, accept: "application/json" },
-      signal: globalThis.AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-    });
-  } catch (error) {
-    throw unavailable(`ForgeLoop Cloud is unreachable at ${base}: ${error.message}`);
-  }
+async function approvedRecord(response, key) {
   let body = null;
   try { body = await response.json(); } catch { /* reported below */ }
   if (response.status === 404) throw unavailable(`ForgeLoop Cloud has no contract for ${key}; compile and approve the ticket first`);
@@ -43,6 +30,24 @@ export async function fetchApprovedTicketContract(key, { env = process.env, fetc
   if (body.status !== "approved" || !body.approved?.contract || typeof body.approved.contract !== "object") {
     throw Object.assign(new Error(`The contract for ${key} is ${body.status ?? "not stored"}, not approved; approve it in ForgeLoop Cloud (contract_approve) or on the ticket first`), { code: E_TICKET_CONTRACT_NOT_APPROVED });
   }
+  return body;
+}
+
+export async function fetchApprovedTicketContract(key, { env = process.env, fetchImpl = fetch } = {}) {
+  if (typeof key !== "string" || !KEY.test(key)) throw unavailable(`--from-ticket must be a ticket key "source:externalId", for example linear:ENG-42 (got ${key})`);
+  const cloudToken = env.FORGELOOP_CLOUD_TOKEN ?? "";
+  if (!/^[A-Za-z0-9._~+/-]{32,512}$/u.test(cloudToken)) throw unavailable("FORGELOOP_CLOUD_TOKEN must be set to a ForgeLoop Cloud MCP token for your team");
+  const base = resolveCloudUrl(env.FORGELOOP_CLOUD_URL);
+  let response;
+  try {
+    response = await fetchImpl(`${base}/api/contracts?key=${encodeURIComponent(key)}`, {
+      headers: { authorization: `Bearer ${cloudToken}`, accept: "application/json" },
+      signal: globalThis.AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    });
+  } catch (error) {
+    throw unavailable(`ForgeLoop Cloud is unreachable at ${base}: ${error.message}`);
+  }
+  const body = await approvedRecord(response, key);
   const sourceRef = body.url ?? key;
   const contract = body.approved.contract;
   return {

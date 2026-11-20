@@ -18,8 +18,8 @@ anything, runs checks whose execution is recorded, and can only declare the
 work complete through a validator. The result is a portable evidence bundle
 that a third party verifies with nothing but the repository checkout.
 
-ForgeLoop is not a scheduler, a transport, a source-control authority or a
-secret manager. It composes with them: MCP or A2A carry the messages, Git (or
+ForgeLoop is not a scheduler, a transport, a source-control authority or a secret
+manager. It composes with them: MCP or A2A carry the messages, Git (or
 another revision provider) holds the content, Sigstore holds the signing
 identity, and ForgeLoop defines what must be true for "done" to mean done.
 

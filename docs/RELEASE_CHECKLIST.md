@@ -4,6 +4,38 @@ This is the current release checklist for the PolyForm Noncommercial-licensed
 `@cassiomc1/forgeloop` package. It is a preparation and verification checklist;
 it does not authorize publication.
 
+## Stable 2.5.0 candidate — 2026-11-20
+
+`2.5.0` is a minor release of the core package.
+
+- **Protocol:** `docs/PROTOCOL_SPEC.md` is normative, with a 25-case
+  conformance suite and an Apache-2.0 independent verifier.
+- **Completion:** a contract verification item whose latest bound check
+  failed blocks completion (`E_CHECK_FAILED`).
+- **Attestation:** predicate schema version 2 binds every recorded check;
+  verifiers report execution assurance and accept `--min-assurance`.
+- **Delegation:** `evidence-verify --brief` accepts a delegate's work only on
+  evidence.
+- **Ticket contracts:** `contract-create --from-ticket` starts a task from a
+  contract approved in ForgeLoop Cloud.
+
+Its runtime change is bound by
+[`stable-2.5.0-writer-review.json.gz`](../benchmarks/storage-sqlite/stable-2.5.0-writer-review.json.gz),
+a delta review against 2.4.0: three changed filesystem modules with
+dispositions, one new module without filesystem access, and one added
+confined read.
+
+Publish from the merged release commit with `npm-publish.yml`
+(`confirm: PUBLISH PUBLIC PACKAGE`, dist-tag `latest`), then verify:
+
+```bash
+npm view @cassiomc1/forgeloop version dist-tags --json
+npm run release:identity -- --version 2.5.0 --release-commit <release-tag-commit>
+```
+
+The independent verifier is published separately from `verifier/` as
+`@cassiomc1/forgeloop-verify` 1.0.0.
+
 ## Stable 2.4.0 candidate — 2026-11-19
 
 `2.4.0` is a minor release of the core package.
