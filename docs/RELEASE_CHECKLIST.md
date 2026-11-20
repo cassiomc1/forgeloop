@@ -4,6 +4,33 @@ This is the current release checklist for the PolyForm Noncommercial-licensed
 `@cassiomc1/forgeloop` package. It is a preparation and verification checklist;
 it does not authorize publication.
 
+## Stable 2.4.0 candidate — 2026-11-19
+
+`2.4.0` is a minor release of the core package.
+
+- **Tests:** the test landmine allowlist is empty. One suite-wide runner
+  timeout bounds every test, fixed sleeps became awaited conditions or one
+  shared deadline-bounded poller, and the `node:fs/promises` module mock is
+  gone.
+- **Runtime:** `syncDirectory` accepts an optional `openDirectory`; without
+  it, behaviour is unchanged.
+- **Evidence signing:** the workflow uploads verified Sigstore bundles to
+  ForgeLoop Cloud when the repository has `FORGELOOP_SYNC_TOKEN`.
+- **Audit:** ForgeLoop Audit lives in ForgeLoop Cloud.
+
+Its runtime change is bound by
+[`stable-2.4.0-writer-review.json.gz`](../benchmarks/storage-sqlite/stable-2.4.0-writer-review.json.gz),
+a delta review against 2.3.1: one changed module with a disposition, and
+every one of the 491 filesystem bindings identical to 2.3.1.
+
+Publish from the merged release commit with `npm-publish.yml`
+(`confirm: PUBLISH PUBLIC PACKAGE`, dist-tag `latest`), then verify:
+
+```bash
+npm view @cassiomc1/forgeloop version dist-tags --json
+npm run release:identity -- --version 2.4.0 --release-commit <release-tag-commit>
+```
+
 ## Stable 2.3.1 publication — 2026-11-19
 
 `2.3.1` is a patch release of the core package. It makes Sigstore signing
