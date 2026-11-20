@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "protocol-spec-tables",
+  "forgeloopVersion": "2.4.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:protocol-spec-tables\",\n      \"digest\": {\n        \"sha256\": \"72d47e5dd3bdeb2e2d0e108b4398d23861da58a9207b925f95b49aeacd172f3b\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"protocol-spec-tables\",\n      \"verificationCycle\": 2\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"c04ee260df5e44b77ec58f5d214a1c7acff0f1edf2f57daaaa12489917e9c7b1\",\n      \"contentDigest\": \"72d47e5dd3bdeb2e2d0e108b4398d23861da58a9207b925f95b49aeacd172f3b\",\n      \"coveredPaths\": [\n        \"docs/PROTOCOL_SPEC.md\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"14466d84a59025f799386b35695715e5129c1d88575c96aa77b448cdb9b96837\",\n      \"routeFingerprint\": \"250ad32a2fa5d20135d5e6eac7a77fb6ce94cc4cc188fd41633d9fab470a7ca8\",\n      \"stateFingerprint\": \"731b4f80506569810a40350cbc87e158635e7707897003564ca0ef34822158aa\",\n      \"receiptFingerprint\": \"30bb8d1ddfa60a3aed29deee807da593b06152c0212109014a7f6de7e05826d6\",\n      \"ledgerSeq\": 58,\n      \"ledgerHash\": \"44a97da902851f966195733535d32409295ba33e7d9603063a64fd17c64e4d39\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "protocol-spec-tables",
+    "verificationCycle": 2,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "205134d223bc8192d2755a221a04fc1bdc05ef58",
+      "observedRevision": "205134d223bc8192d2755a221a04fc1bdc05ef58",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/protocol-core",
+        "head": "205134d223bc8192d2755a221a04fc1bdc05ef58"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "14466d84a59025f799386b35695715e5129c1d88575c96aa77b448cdb9b96837",
+      "routeFingerprint": "250ad32a2fa5d20135d5e6eac7a77fb6ce94cc4cc188fd41633d9fab470a7ca8",
+      "stateFingerprint": "731b4f80506569810a40350cbc87e158635e7707897003564ca0ef34822158aa",
+      "receiptFingerprint": "30bb8d1ddfa60a3aed29deee807da593b06152c0212109014a7f6de7e05826d6",
+      "ledgerSeq": 58,
+      "ledgerHash": "44a97da902851f966195733535d32409295ba33e7d9603063a64fd17c64e4d39"
+    },
+    "entries": [
+      {
+        "path": "docs/PROTOCOL_SPEC.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "b55c3c885ea3317ee89f63e448ad2226aa863795831a329fc42cffe3f93269a8",
+        "providerContentId": "5adb6dff0b650e15e2b964bb156a2f8efbcd8481",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "72d47e5dd3bdeb2e2d0e108b4398d23861da58a9207b925f95b49aeacd172f3b"
+  },
+  "manifestFingerprint": "c04ee260df5e44b77ec58f5d214a1c7acff0f1edf2f57daaaa12489917e9c7b1",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Fix the markdownlint failure on PR #274: the FL-SPEC-005 requirement anchor sits after the closing pipe of a table row in docs/PROTOCOL_SPEC.md, adding a fourth column (MD055, MD056); move it inside the last cell.",
+    "successCriteria": [
+      "docs/PROTOCOL_SPEC.md tables are well formed and every FL-SPEC requirement anchor is kept"
+    ],
+    "checks": [
+      {
+        "id": "doc-requirements",
+        "requirement": "node --test tests/documentation-conformance.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-caf4189ec81bb53a",
+        "requirement": "docs/PROTOCOL_SPEC.md tables are well formed and every FL-SPEC requirement anchor is kept",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "table-structure",
+        "requirement": "Every table row in docs/PROTOCOL_SPEC.md has leading and trailing pipes and the header's column count",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-20T13:25:21.546Z",
+    "completedAt": "2026-11-20T13:55:07.905Z",
+    "durationMs": 1786359,
+    "phaseDurationsMs": {
+      "planning": 3497,
+      "executing": 822,
+      "verifying": 1781704,
+      "reviewing": 336
+    },
+    "verificationCycles": 2,
+    "diagnoses": 1,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "c75f68b06ebf7bbe742eb4b9bdd433cb768987709fd0f7b0eb5c84a54044a498"
+}

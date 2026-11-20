@@ -144,7 +144,7 @@ committed alongside the change it proves.
 | `statement.text` | signed | the exact Statement text that is signed |
 | `manifest` | by fingerprint | per-path SHA-256, revisions, bindings |
 | `signature` | — | optional Sigstore bundle over `statement.text` |
-| `summary`, `metrics` | **no** | informational; verifiers MUST NOT base a decision on them | <a id="FL-SPEC-005"></a>
+| `summary`, `metrics` | **no** | informational; verifiers MUST NOT base a decision on them <a id="FL-SPEC-005"></a> |
 | `redactions` | — | what was removed before export (argv, output, absolute paths, environment, ledger events) |
 | `digest` | — | SHA-256 of the bundle without `digest` |
 
