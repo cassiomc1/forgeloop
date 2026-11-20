@@ -7,8 +7,12 @@ makes it the second implementation of
 [`docs/PROTOCOL_SPEC.md`](../docs/PROTOCOL_SPEC.md) Sections 5–7.
 
 ```bash
-node verifier/forgeloop-verify.mjs --base origin/main --head HEAD
+npx @cassiomc1/forgeloop-verify --base origin/main --head HEAD
 ```
+
+It is published on its own as `@cassiomc1/forgeloop-verify` (Node.js 22 or
+later, no dependencies). In this repository you can also run
+`node verifier/forgeloop-verify.mjs` directly.
 
 | Option | Meaning |
 | --- | --- |

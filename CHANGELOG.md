@@ -9,6 +9,10 @@
   `FORGELOOP_CLOUD_TOKEN` (read scope), refuses proposals that are not yet
   approved (`E_TICKET_CONTRACT_NOT_APPROVED`) and validates the contract like
   a contract file. The token is never written to state or output.
+- Independent verifier: `verifier/` is packaged on its own as
+  `@cassiomc1/forgeloop-verify` (Apache-2.0, no dependencies), so anyone can
+  run `npx @cassiomc1/forgeloop-verify --base <rev> --head <rev>` without the
+  ForgeLoop CLI.
 - Delegation: `evidence-verify --brief <task-brief.json>` accepts a
   delegate's work only on evidence. It fails with
   `E_DELEGATION_EVIDENCE_MISSING`, `E_DELEGATION_SCOPE_VIOLATION` or
