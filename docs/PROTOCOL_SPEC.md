@@ -1,6 +1,7 @@
 # ForgeLoop Protocol — Core Specification 1.0
 
-Status: **Draft**. Protocol version `1`. This document is the normative
+Status: **Draft**. Protocol version `1`. Licensed Apache-2.0 (see
+[`LICENSING.md`](../LICENSING.md)). This document is the normative
 definition of the ForgeLoop core. The `@cassiomc1/forgeloop` CLI is the
 reference implementation; where it and this document disagree, the
 disagreement is a defect in one of them and is resolved here.
@@ -220,10 +221,30 @@ There are two conformance classes.
 - **Runtime.** Enforces Section 4.1, emits bundles that a conforming verifier
   accepts, and emits predicate schema version 2.
 
-`npm run conformance` runs the suite against the reference implementation.
-Another implementation conforms when it produces the same statuses on the same
-fixtures. Each case states its input, the expected status and the clause of
+`npm run conformance` runs the suite against the reference implementation, and
+`npm run conformance:independent` runs it against `verifier/forgeloop-verify.mjs`,
+a dependency-free verifier that shares no code with the runtime. Another
+implementation conforms when it produces the same status, level and error
+codes on the same fixtures; set `FORGELOOP_CONFORMANCE_VERIFIER` to its argv as
+a JSON array. Each case states its input, the expected status and the clause of
 this specification it tests.
+
+### 10.1 Verifier error codes
+
+Conformance compares error codes as well as status and level, so a verifier
+reports these codes for these conditions.
+
+| Code | Condition |
+| --- | --- |
+| `E_EVIDENCE_BUNDLE_INVALID` | The bundle is not valid JSON, has an unknown kind or version, does not match its file name, or its digest or manifest fingerprint does not match its content. |
+| `E_ATTESTATION_STATEMENT_INVALID` | The statement is not an in-toto Statement v1 with the ForgeLoop predicate type, or the predicate is malformed. |
+| `E_ATTESTATION_SUBJECT_MISMATCH` | The subject does not name the task or carry the content digest, or the statement does not bind the bundle's manifest. |
+| `E_ATTESTATION_SCOPE_MISMATCH` | The statement's task, verification cycle or covered paths differ from the manifest. |
+| `E_ATTESTATION_MANIFEST_INVALID` | Manifest entries are unsorted or duplicated, or the manifest content digest does not match its entries. |
+| `E_ATTESTATION_CONTRACT_MISMATCH`, `E_ATTESTATION_ROUTE_MISMATCH`, `E_ATTESTATION_STATE_MISMATCH`, `E_ATTESTATION_RECEIPT_MISMATCH`, `E_ATTESTATION_LEDGER_MISMATCH` | The statement's evidence fingerprint differs from the manifest binding of the same name. |
+| `E_ATTESTATION_CONTENT_MISMATCH` | An entry does not match the content at the head revision and no other bundle covers that path. |
+| `E_ATTESTATION_COVERAGE_GAP` | A changed path is covered by no intact, matching bundle. |
+| `E_ATTESTATION_UNSIGNED` | A signature is required and a bundle used has none. |
 
 ## 11. Versioning
 

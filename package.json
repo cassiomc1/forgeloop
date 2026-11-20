@@ -85,6 +85,10 @@
     "docs/EXECUTION_TRACE.md",
     "docs/CODE_ATTESTATION.md",
     "docs/PROTOCOL_SPEC.md",
+    "verifier/forgeloop-verify.mjs",
+    "verifier/README.md",
+    "LICENSE-APACHE",
+    "LICENSING.md",
     "docs/REVISION_PROVIDERS.md",
     "docs/SIGNING_PROVIDERS.md",
     "docs/PLATFORM_ADAPTERS.md",
@@ -129,6 +133,7 @@
   "scripts": {
     "test": "node scripts/run-tests.js",
     "conformance": "node scripts/run-conformance.mjs",
+    "conformance:independent": "node scripts/run-conformance.mjs --independent",
     "test:ci": "node scripts/run-tests.js --test-concurrency=2",
     "test:watch": "node scripts/run-tests.js --watch",
     "coverage:shard": "c8 --all --include=src/**/*.js --temp-directory=coverage-data npm run test:ci",

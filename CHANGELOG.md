@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+- Licensing: the protocol is open. `docs/PROTOCOL_SPEC.md`, `schemas/`, the
+  conformance suite and the new independent verifier are Apache-2.0
+  (`LICENSE-APACHE`); the reference runtime stays PolyForm Noncommercial 1.0.0.
+  `LICENSING.md` lists the paths; the package ships both licence texts.
+- Verifier: `verifier/forgeloop-verify.mjs` is a second, dependency-free
+  implementation of evidence verification that imports nothing from the
+  runtime. It checks integrity, statement bindings, the manifest, head content
+  and coverage, and reports execution assurance; it does not verify Sigstore
+  signatures. `npm run conformance:independent` runs the suite against it.
+- Conformance: five more cases, four of them "resealed" (the manifest
+  fingerprint and bundle digest are recomputed after tampering, so only the
+  statement, manifest and binding checks can catch them). Both verifiers pass
+  all 13.
 - Protocol: `docs/PROTOCOL_SPEC.md` is the normative, implementation-neutral
   core specification: roles, core objects, the lifecycle and its invariants,
   the in-toto statement and predicate, evidence bundles, two trust axes
