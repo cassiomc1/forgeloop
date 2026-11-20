@@ -212,9 +212,14 @@ export async function readSchema(name, packageRoot = getPackageRoot()) {
   return schema;
 }
 
+// Schemas that accept more than one schemaVersion report the newest one.
+const MULTI_VERSION_SCHEMAS = Object.freeze({ "task-bundle": 2, "code-attestation": 2 });
+
 function schemaHealthVersion(schema, name) {
   const versions = schema?.properties?.schemaVersion?.enum ?? null;
-  const version = schema?.properties?.schemaVersion?.const ?? (name === "task-bundle" && JSON.stringify(versions) === "[1,2]" ? 2 : null);
+  const newest = MULTI_VERSION_SCHEMAS[name];
+  const declared = newest ? JSON.stringify(Array.from({ length: newest }, (_, index) => index + 1)) : null;
+  const version = schema?.properties?.schemaVersion?.const ?? (newest && JSON.stringify(versions) === declared ? newest : null);
   return version;
 }
 
@@ -234,7 +239,7 @@ export async function inspectSchemaHealth(packageRoot = getPackageRoot()) {
       if (!schema || typeof schema !== "object" || Array.isArray(schema)) {
         status = "invalid";
         error = "schema root must be an object";
-      } else if (version !== 1 && !(name === "task-bundle" && version === 2)) {
+      } else if (version !== 1 && version !== MULTI_VERSION_SCHEMAS[name]) {
         status = "unsupported-version";
         error = `schemaVersion ${version ?? "missing"} is not supported`;
       }

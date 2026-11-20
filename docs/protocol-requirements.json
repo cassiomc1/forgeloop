@@ -138,6 +138,30 @@
       "statement": "Readers MUST reject object schema versions they do not know.",
       "tests": ["tests/evidence-bundles.test.js"],
       "validator": "src/core/evidence/bundle-format.js"
+    },
+    "FL-SPEC-008": {
+      "source": "docs/PROTOCOL_SPEC.md",
+      "statement": "A version-2 predicate MUST carry verification.checks and a version-1 predicate MUST NOT.",
+      "tests": ["tests/attestation-predicate-v2.test.js", "tests/verifier-conformance.test.js"],
+      "validator": "src/core/attestation.js"
+    },
+    "FL-SPEC-009": {
+      "source": "docs/PROTOCOL_SPEC.md",
+      "statement": "Verifiers MUST accept predicate schema versions 1 and 2.",
+      "tests": ["tests/verifier-conformance.test.js"],
+      "validator": "src/core/evidence/verify.js"
+    },
+    "FL-SPEC-010": {
+      "source": "docs/PROTOCOL_SPEC.md",
+      "statement": "Verification reports MUST state both integrity level and execution assurance.",
+      "tests": ["tests/verifier-conformance.test.js", "tests/attestation-predicate-v2.test.js"],
+      "validator": "src/core/evidence/verify.js"
+    },
+    "FL-SPEC-011": {
+      "source": "docs/PROTOCOL_SPEC.md",
+      "statement": "A verifier given a minimum execution assurance MUST fail a range that falls below it.",
+      "tests": ["tests/verifier-conformance.test.js"],
+      "validator": "src/core/evidence/verify.js"
     }
   }
 }

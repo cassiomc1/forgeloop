@@ -5,7 +5,9 @@ import { assertSchema, readSchema } from "./schema-validation.js";
 import { assertSecretFree } from "./receipt.js";
 import { getPackageRoot } from "./templates.js";
 import { readCodeManifest, validateCodeManifestBindings } from "./code-manifest.js";
+import { createHash } from "node:crypto";
 import {
+  taskArtifactPath,
   taskAttestationStatementPath,
   taskAttestationStatementHistoryPath,
 } from "./task-paths.js";
@@ -26,9 +28,41 @@ function attestationError(code, message, artifacts = []) {
   return error;
 }
 
+// Predicate schema version 2 binds the recorded checks into the signed
+// statement (docs/PROTOCOL_SPEC.md Section 5); version 1 carries none.
+export const PREDICATE_SCHEMA_VERSION = 2;
+const CHECK_PROVENANCES = new Set(["FORGELOOP_EXECUTED", "ACTOR_REPORTED", "MANUAL_OBSERVATION"]);
+
+const argvDigest = (argv) => (Array.isArray(argv) && argv.length > 0
+  ? createHash("sha256").update(JSON.stringify(argv)).digest("hex")
+  : null);
+
+/** The latest receipt check per id, projected to the predicate's check shape. */
+export function predicateChecks(receipt) {
+  const latest = new Map();
+  for (const check of Array.isArray(receipt?.checks) ? receipt.checks : []) {
+    if (!check?.id || !check.requirement) continue;
+    const previous = latest.get(check.id);
+    const cycle = (item) => item.details?.verificationCycle ?? item.verificationCycle ?? 1;
+    if (!previous || cycle(check) > cycle(previous)
+      || (cycle(check) === cycle(previous) && String(check.timestamp ?? "") >= String(previous.timestamp ?? ""))) latest.set(check.id, check);
+  }
+  return [...latest.values()].map((check) => ({
+    id: check.id,
+    requirement: check.requirement,
+    status: check.status,
+    provenance: CHECK_PROVENANCES.has(check.provenance) ? check.provenance : "UNKNOWN",
+    exitCode: Number.isInteger(check.exitCode) ? check.exitCode : null,
+    argvDigest: argvDigest(check.details?.execution?.argv),
+  })).sort((left, right) => left.id.localeCompare(right.id));
+}
+
 export async function validateAttestationPredicate(predicate, packageRoot = getPackageRoot()) {
   try {
     assertSchema(predicate, await readSchema("code-attestation", packageRoot), "ForgeLoop attestation predicate");
+    const hasChecks = Array.isArray(predicate.verification?.checks);
+    if (predicate.schemaVersion === 1 && hasChecks) throw new Error("Predicate schema version 1 must not carry verification.checks");
+    if (predicate.schemaVersion >= 2 && !hasChecks) throw new Error("Predicate schema version 2 requires verification.checks");
     assertSecretFree(predicate);
     return predicate;
   } catch (error) {
@@ -89,8 +123,12 @@ export async function buildAttestationStatement({
   const manifest = binding.manifest;
   const evidence = manifest.bindings;
   const coveredPaths = [...new Set(manifest.entries.flatMap((entry) => [entry.path, entry.sourcePath].filter(Boolean)))].sort();
+  const receipt = await readJsonArtifact(target, taskArtifactPath(taskId, "receipt"), "execution-receipt", packageRoot);
+  if (receipt.fingerprint !== manifest.bindings.receiptFingerprint) {
+    throw attestationError("E_ATTESTATION_STATEMENT_INVALID", "The execution receipt changed after the code manifest was captured");
+  }
   const predicate = await validateAttestationPredicate({
-    schemaVersion: 1,
+    schemaVersion: PREDICATE_SCHEMA_VERSION,
     protocol: { name: "ForgeLoop", protocolVersion: 1 },
     task: { taskId, verificationCycle: manifest.verificationCycle },
     content: {
@@ -106,7 +144,7 @@ export async function buildAttestationStatement({
       ledgerSeq: evidence.ledgerSeq,
       ledgerHash: evidence.ledgerHash,
     },
-    verification: { completion: "VALID", audit: "VALID" },
+    verification: { completion: "VALID", audit: "VALID", checks: predicateChecks(receipt.value) },
   }, packageRoot);
   // Exactly the in-toto Statement v1 fields: Sigstore tooling decodes the
   // statement strictly and rejects unknown top-level keys. The predicate

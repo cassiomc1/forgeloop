@@ -123,12 +123,16 @@ The predicate binds four things:
 | `evidence` | contract, route, state and receipt fingerprints; ledger sequence and hash |
 | `verification` | completion and audit validation results |
 
-**Predicate schema version 2** adds `verification.checks`: one entry per check
-bound to a contract requirement, with `id`, `requirement`, `status`,
-`provenance`, `exitCode` and `argvDigest` (SHA-256 of the canonical argv, so
-the command is bound without disclosing it). With version 2 a verifier knows
-*what* was checked and *how* without trusting the unsigned summary. Verifiers
-accept predicate schema versions 1 and 2 once version 2 leaves Draft; producers SHOULD emit 2.
+**Predicate schema version 2** adds `verification.checks`: the latest check per
+id from the execution receipt (which the predicate already binds by
+fingerprint), with `id`, `requirement`, `status`, `provenance`, `exitCode` and
+`argvDigest` (SHA-256 of the argv as a JSON array, so the command is bound
+without disclosing it). With version 2 a verifier knows *what* was checked and
+*how* without trusting the unsigned summary.
+
+- A version-2 predicate MUST carry `verification.checks`; a version-1 predicate MUST NOT. <a id="FL-SPEC-008"></a>
+- Producers SHOULD emit version 2, as the reference runtime does from 2.5.0.
+- Verifiers MUST accept predicate schema versions 1 and 2. <a id="FL-SPEC-009"></a>
 
 Using in-toto means existing supply-chain tooling (cosign, policy engines,
 SLSA verifiers) can store, sign and gate on ForgeLoop evidence without knowing
@@ -155,7 +159,7 @@ head revision. A changed path without such a bundle is a coverage gap.
 
 ## 7. Trust levels
 
-Trust has two independent axes. Reports state both; execution assurance is Draft until predicate version 2 ships.
+Trust has two independent axes. Verification reports MUST state both. <a id="FL-SPEC-010"></a>
 
 ### 7.1 Integrity — can the record be trusted as unmodified?
 
@@ -177,9 +181,16 @@ Trust has two independent axes. Reports state both; execution assurance is Draft
 | `HOST_ATTESTED` | `EXECUTED`, and the bundle is signed by a workload identity of a host the verifier trusts (for example a CI workflow's OIDC identity), so the execution happened outside the actor's control. |
 
 Execution assurance requires predicate schema version 2; a version-1 predicate
-reports `UNKNOWN`. A verifier policy SHOULD state a minimum on both axes,
-for example `ATTESTED` + `HOST_ATTESTED` for release branches and
-`VERIFIED` + `EXECUTED` for feature branches.
+or one without checks reports `UNKNOWN`. A range reports the lowest assurance
+of the bundles it uses. A verifier given a minimum assurance
+MUST fail the range below it with `E_EVIDENCE_ASSURANCE_INSUFFICIENT`. <a id="FL-SPEC-011"></a>
+`HOST_ATTESTED` needs the signature itself verified under an issuer policy
+naming a workload identity issuer (`https://token.actions.githubusercontent.com`
+in the reference CLI); a verifier that does not check signatures reports at
+most `EXECUTED`. A verifier policy SHOULD state a minimum on both axes, for
+example `ATTESTED` + `HOST_ATTESTED` for release branches and `VERIFIED` +
+`EXECUTED` for feature branches (`--require-signature` and
+`--min-assurance`).
 
 ## 8. Delegation
 
@@ -245,6 +256,7 @@ reports these codes for these conditions.
 | `E_ATTESTATION_CONTENT_MISMATCH` | An entry does not match the content at the head revision and no other bundle covers that path. |
 | `E_ATTESTATION_COVERAGE_GAP` | A changed path is covered by no intact, matching bundle. |
 | `E_ATTESTATION_UNSIGNED` | A signature is required and a bundle used has none. |
+| `E_EVIDENCE_ASSURANCE_INSUFFICIENT` | A minimum execution assurance is required and the range falls below it. |
 
 ## 11. Versioning
 

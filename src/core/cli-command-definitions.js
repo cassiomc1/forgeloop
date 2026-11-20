@@ -1812,6 +1812,7 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
       "--exclude": Object.freeze({ targetKey: "evidenceExclusions", parseType: "string", takesValue: true, repeatable: true, valueName: "path", missingValueMessage: "--exclude requires a path", description: "changed path or dir/** excluded from coverage (verifier policy)" }),
       "--allow-partial-coverage": Object.freeze({ targetKey: "allowPartialCoverage", parseType: "boolean", takesValue: false, description: "report uncovered changed paths without failing" }),
       "--require-signature": Object.freeze({ targetKey: "requireSignature", parseType: "boolean", takesValue: false, description: "require a valid Sigstore signature for every bundle used" }),
+      "--min-assurance": Object.freeze({ targetKey: "minAssurance", parseType: "string", takesValue: true, valueName: "level", missingValueMessage: "--min-assurance requires REPORTED, EXECUTED or HOST_ATTESTED", description: "minimum execution assurance: REPORTED, EXECUTED or HOST_ATTESTED" }),
       "--identity": Object.freeze({ targetKey: "attestationIdentity", parseType: "string", takesValue: true, valueName: "identity", missingValueMessage: "--identity requires an identity", description: "exact signer identity policy" }),
       "--issuer": Object.freeze({ targetKey: "attestationIssuer", parseType: "string", takesValue: true, valueName: "issuer", missingValueMessage: "--issuer requires an issuer", description: "exact signer issuer policy" }),
       "--trusted-root": Object.freeze({ targetKey: "trustedRoot", parseType: "string", takesValue: true, valueName: "path", missingValueMessage: "--trusted-root requires a path", description: "trusted signing root path" }),
@@ -1819,7 +1820,7 @@ export const CLI_COMMAND_DEFINITIONS = Object.freeze({
       "--json": Object.freeze({ targetKey: "json", parseType: "boolean", takesValue: false, description: "emit the verification result as JSON" }),
     }),
     writes: [], removes: [], mayExecuteExternalProcess: true,
-    description: "Verifies committed evidence bundles for a revision range without local ForgeLoop state; signatures raise the level from INTEGRITY_ONLY to ATTESTED.",
+    description: "Verifies committed evidence bundles for a revision range without local ForgeLoop state; signatures raise the level from INTEGRITY_ONLY to ATTESTED, and version-2 predicates report execution assurance.",
   }),
   "attestation-verify-range": Object.freeze({
     name: "attestation-verify-range",

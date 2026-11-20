@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "spec": "docs/PROTOCOL_SPEC.md",
   "conformanceClass": "verifier",
-  "description": "Each case builds a two-commit Git repository from a fixture, applies one mutation, runs the verifier over base..head and compares status, level and error codes. Cases with \"reseal\" recompute the manifest fingerprint and bundle digest after mutating, so only deeper checks can catch them.",
+  "description": "Each case builds a two-commit Git repository from a fixture, applies one mutation, runs the verifier over base..head and compares status, level and error codes. Cases with \"reseal\" recompute the manifest fingerprint and bundle digest after mutating, so only deeper checks can catch them. When a case expects \"assurance\", the execution assurance must match too.",
   "cases": [
     {
       "id": "valid-unsigned",
@@ -262,6 +262,119 @@
         "status": "VALID",
         "level": "INTEGRITY_ONLY",
         "errorCodes": []
+      }
+    },
+    {
+      "id": "v2-executed",
+      "clause": "5, 7.2",
+      "fixture": "single-file-v2",
+      "mutations": [],
+      "args": [],
+      "expect": {
+        "status": "VALID",
+        "level": "INTEGRITY_ONLY",
+        "assurance": "EXECUTED",
+        "errorCodes": []
+      }
+    },
+    {
+      "id": "v2-min-assurance-met",
+      "clause": "7.2",
+      "fixture": "single-file-v2",
+      "mutations": [],
+      "args": [
+        "--min-assurance",
+        "EXECUTED"
+      ],
+      "expect": {
+        "status": "VALID",
+        "level": "INTEGRITY_ONLY",
+        "assurance": "EXECUTED",
+        "errorCodes": []
+      }
+    },
+    {
+      "id": "v2-reported-below-minimum",
+      "clause": "7.2",
+      "fixture": "single-file-v2",
+      "reseal": true,
+      "mutations": [
+        {
+          "type": "edit-statement",
+          "find": "\"provenance\": \"FORGELOOP_EXECUTED\"",
+          "replace": "\"provenance\": \"ACTOR_REPORTED\""
+        }
+      ],
+      "args": [
+        "--min-assurance",
+        "EXECUTED"
+      ],
+      "expect": {
+        "status": "INVALID",
+        "level": "NONE",
+        "assurance": "REPORTED",
+        "errorCodes": [
+          "E_EVIDENCE_ASSURANCE_INSUFFICIENT"
+        ]
+      }
+    },
+    {
+      "id": "v2-unsigned-not-host-attested",
+      "clause": "7.2",
+      "fixture": "single-file-v2",
+      "mutations": [],
+      "args": [
+        "--min-assurance",
+        "HOST_ATTESTED"
+      ],
+      "expect": {
+        "status": "INVALID",
+        "level": "NONE",
+        "assurance": "EXECUTED",
+        "errorCodes": [
+          "E_EVIDENCE_ASSURANCE_INSUFFICIENT"
+        ]
+      }
+    },
+    {
+      "id": "v1-assurance-unknown",
+      "clause": "7.2",
+      "fixture": "single-file",
+      "mutations": [],
+      "args": [
+        "--min-assurance",
+        "REPORTED"
+      ],
+      "expect": {
+        "status": "INVALID",
+        "level": "NONE",
+        "assurance": "UNKNOWN",
+        "errorCodes": [
+          "E_EVIDENCE_ASSURANCE_INSUFFICIENT"
+        ]
+      }
+    },
+    {
+      "id": "v1-predicate-with-checks",
+      "clause": "5",
+      "fixture": "single-file-v2",
+      "reseal": true,
+      "mutations": [
+        {
+          "type": "edit-statement",
+          "find": "\"schemaVersion\": 2",
+          "replace": "\"schemaVersion\": 1"
+        }
+      ],
+      "args": [],
+      "expect": {
+        "status": "INVALID",
+        "level": "NONE",
+        "assurance": "UNKNOWN",
+        "errorCodes": [
+          "E_ATTESTATION_COVERAGE_GAP",
+          "E_ATTESTATION_STATEMENT_INVALID"
+        ]
       }
     }
   ]

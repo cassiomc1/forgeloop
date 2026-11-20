@@ -864,6 +864,7 @@ verifier's policy yield `ATTESTED`.
 - `--exclude <path>`: changed path or dir/** excluded from coverage (verifier policy) (repeatable)
 - `--allow-partial-coverage`: report uncovered changed paths without failing
 - `--require-signature`: require a valid Sigstore signature for every bundle used
+- `--min-assurance <level>`: minimum execution assurance: REPORTED, EXECUTED or HOST_ATTESTED
 - `--identity <identity>`: exact signer identity policy
 - `--issuer <issuer>`: exact signer issuer policy
 - `--trusted-root <path>`: trusted signing root path

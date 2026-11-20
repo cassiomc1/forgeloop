@@ -244,6 +244,7 @@ complete -c forgeloop -f -n '__fish_seen_subcommand_from evidence-verify' -l 'he
 complete -c forgeloop -f -n '__fish_seen_subcommand_from evidence-verify' -l 'identity' -d 'exact signer identity policy'
 complete -c forgeloop -f -n '__fish_seen_subcommand_from evidence-verify' -l 'issuer' -d 'exact signer issuer policy'
 complete -c forgeloop -f -n '__fish_seen_subcommand_from evidence-verify' -l 'json' -d 'emit the verification result as JSON'
+complete -c forgeloop -f -n '__fish_seen_subcommand_from evidence-verify' -l 'min-assurance' -d 'minimum execution assurance: REPORTED, EXECUTED or HOST_ATTESTED'
 complete -c forgeloop -f -n '__fish_seen_subcommand_from evidence-verify' -l 'path' -d 'target project directory (default: current directory)'
 complete -c forgeloop -f -n '__fish_seen_subcommand_from evidence-verify' -l 'require-signature' -d 'require a valid Sigstore signature for every bundle used'
 complete -c forgeloop -f -n '__fish_seen_subcommand_from evidence-verify' -l 'revision-provider' -d 'revision provider (default: git)'

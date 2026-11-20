@@ -17,6 +17,7 @@ export async function runEvidenceVerify(options = {}) {
       trustedRoot: options.trustedRoot,
     },
     exclusions: Array.isArray(options.evidenceExclusions) ? options.evidenceExclusions : [],
+    minAssurance: options.minAssurance ?? null,
   });
 }
 
@@ -25,6 +26,7 @@ export function formatEvidenceVerifyResult(result, options = {}) {
   return [
     `FORGELOOP EVIDENCE VERIFICATION: ${result.status}`,
     `LEVEL: ${result.level}`,
+    `ASSURANCE: ${result.assurance}`,
     `CHANGED: ${result.changedPaths}`,
     `COVERED: ${result.coveredPaths}`,
     `UNCOVERED: ${result.uncoveredPaths.length}`,

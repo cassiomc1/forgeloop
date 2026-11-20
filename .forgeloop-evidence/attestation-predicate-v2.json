@@ -1,0 +1,403 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "attestation-predicate-v2",
+  "forgeloopVersion": "2.4.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:attestation-predicate-v2\",\n      \"digest\": {\n        \"sha256\": \"88275c80bb5e0b71cca07ef29bfa5f9c69a4825247f0eb7a86359ed1c742f615\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 2,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"attestation-predicate-v2\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"bf05afe40eb9225d1c97781dd3847a829d16f5c84a31c01699d30ff1cb35020b\",\n      \"contentDigest\": \"88275c80bb5e0b71cca07ef29bfa5f9c69a4825247f0eb7a86359ed1c742f615\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"completions/_forgeloop\",\n        \"completions/forgeloop.bash\",\n        \"completions/forgeloop.fish\",\n        \"conformance/cases.json\",\n        \"conformance/fixtures/single-file-v2/bundle.json\",\n        \"conformance/fixtures/single-file-v2/tree/.lychee.toml\",\n        \"docs/AGENT_PROTOCOL_SUMMARY.md\",\n        \"docs/CLI_REFERENCE.md\",\n        \"docs/EVIDENCE_BUNDLES.md\",\n        \"docs/PROTOCOL_SPEC.md\",\n        \"docs/TROUBLESHOOTING.md\",\n        \"docs/protocol-requirements.json\",\n        \"schemas/code-attestation.schema.json\",\n        \"scripts/run-conformance.mjs\",\n        \"src/commands/evidence-verify.js\",\n        \"src/core/attestation.js\",\n        \"src/core/cli-command-definitions.js\",\n        \"src/core/error-codes.js\",\n        \"src/core/evidence/markdown.js\",\n        \"src/core/evidence/verify.js\",\n        \"src/core/schema-validation.js\",\n        \"tests/attestation-predicate-v2.test.js\",\n        \"tests/schema-health.test.js\",\n        \"verifier/README.md\",\n        \"verifier/forgeloop-verify.mjs\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"f5aceac13dbc831c444e70cd6b274918c113b6c13d13f9f7ff5c1bc196275362\",\n      \"routeFingerprint\": \"ff4cd09e04bfd584aec8494207d795273c6bdb4bf232b15f92fd2774a9e324ff\",\n      \"stateFingerprint\": \"23cc9f68d102984dee6a8f448ba214682ec099bcbf4cb9275629822a7d57f422\",\n      \"receiptFingerprint\": \"3b1a64dd78aac3602a73b4a141a94ed8f7d6d4a517a8d8fa21981882096fde1c\",\n      \"ledgerSeq\": 49,\n      \"ledgerHash\": \"0240fb21bc1b73b9e0b482181d5111a83b64e96bbacbf9ac36279964f43dd401\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\",\n      \"checks\": [\n        {\n          \"id\": \"both-verifiers\",\n          \"requirement\": \"node --test tests/verifier-conformance.test.js passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"20b274079ad15657b42f2bd3e5ccfc65beabff85e4dae1bb9998e9a62d32d7f8\"\n        },\n        {\n          \"id\": \"docs-check\",\n          \"requirement\": \"npm run docs:check passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"90feade86f0fe5eeb934e3ec3eefe02bc9660d41d14310d2c80be18ca5254976\"\n        },\n        {\n          \"id\": \"requirement-59830ebc3a418411\",\n          \"requirement\": \"tests\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"527c484bcc3bb219e92ed61f99ff968f31143f89e53fda93d09b74c0ce3177d4\"\n        },\n        {\n          \"id\": \"requirement-c5bca6c590507153\",\n          \"requirement\": \"attestation-create emits predicate schema version 2 with bound checks\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"fa024b23f5b98d3fc11162fbeb9f5c4204670ec7c7193e95205d6aa97ebcc186\"\n        },\n        {\n          \"id\": \"requirement-f6d9c1adb7be6ee4\",\n          \"requirement\": \"Both verifiers report execution assurance and enforce --min-assurance on the conformance suite\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"20b274079ad15657b42f2bd3e5ccfc65beabff85e4dae1bb9998e9a62d32d7f8\"\n        },\n        {\n          \"id\": \"v2-tests\",\n          \"requirement\": \"node --test tests/attestation-predicate-v2.test.js passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"fa024b23f5b98d3fc11162fbeb9f5c4204670ec7c7193e95205d6aa97ebcc186\"\n        },\n        {\n          \"id\": \"verify-fast\",\n          \"requirement\": \"npm run verify:fast passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"5730e2a87ecd718b046cc9bd54056300f5712eb2ea3f77adc925f53c26b76226\"\n        }\n      ]\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "attestation-predicate-v2",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "83b53924eecf738afe98e42e9d66a596c619a8e4",
+      "observedRevision": "83b53924eecf738afe98e42e9d66a596c619a8e4",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/protocol-predicate-v2",
+        "head": "83b53924eecf738afe98e42e9d66a596c619a8e4"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "f5aceac13dbc831c444e70cd6b274918c113b6c13d13f9f7ff5c1bc196275362",
+      "routeFingerprint": "ff4cd09e04bfd584aec8494207d795273c6bdb4bf232b15f92fd2774a9e324ff",
+      "stateFingerprint": "23cc9f68d102984dee6a8f448ba214682ec099bcbf4cb9275629822a7d57f422",
+      "receiptFingerprint": "3b1a64dd78aac3602a73b4a141a94ed8f7d6d4a517a8d8fa21981882096fde1c",
+      "ledgerSeq": 49,
+      "ledgerHash": "0240fb21bc1b73b9e0b482181d5111a83b64e96bbacbf9ac36279964f43dd401"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "b7db95063e3676178dadada9deb0676a2a98a42207235f62bf30973460592ce9",
+        "providerContentId": "1cb18deccb75d823fc0acd502eac24d8b72e8b46",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "completions/_forgeloop",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "0ef67ff373cdc0162d3c5b11cd9122b840cc78182b03f8270ced2fddc9f53815",
+        "providerContentId": "b65b1b1bca3570bfcc5c2fd7eb87edb0f2ce7902",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "completions/forgeloop.bash",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "12e906b34849e104774ac5251c383db4224b34c3dc711049b11269c0040ff9f6",
+        "providerContentId": "cc66db366990006216f43acf13964b651278db6b",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "completions/forgeloop.fish",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "b93a884809cd4d1f2f5175057a3a11d4e1f6f0b0fa863bb542fce5122a3f4c28",
+        "providerContentId": "68106c1ad6481021cb01443905437eb6fe94da8b",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "conformance/cases.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "86575ce800bf235cd12a2e64c98df6895ea931119ff3a4a39dc91f453c227633",
+        "providerContentId": "9bd4a987bcfca885ded43ea126dfca6b16c4d537",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "conformance/fixtures/single-file-v2/bundle.json",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "c8f78f4186bf36a50bfaece7c9d435d5e7a8b4cac3e20f1981614eb230e20e07",
+        "providerContentId": "141bae91585cc40edc0507895acb86e8a3de3149",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "conformance/fixtures/single-file-v2/tree/.lychee.toml",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "d40f6e7540eaa74097f58155eb2d40339f889e301031c0d74a6d15ef962b3bb1",
+        "providerContentId": "50a740c7426504b049c1aa409d412a53ab51e446",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/AGENT_PROTOCOL_SUMMARY.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "c99f51ab9ae87b32e4351c6b25a1b81371ef7a669c1a1892fab727f2b939f9f6",
+        "providerContentId": "82842c67000b050671146232510e4b641aa2de7e",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/CLI_REFERENCE.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "f30ec8ae7ac74278de1e50f0b36a22e06edaef053a1c88b1f0ab2bd3552d7f97",
+        "providerContentId": "307b7adcf955c385ed05f3e27106a017066ada7a",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/EVIDENCE_BUNDLES.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "e0385dce76fc8951fb244281de25142359cd6537c3d7f50da19fa2ee16ca7fba",
+        "providerContentId": "e42af147729bdf307732d50f38e55ed0584d392a",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/PROTOCOL_SPEC.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "4335dd8dee70a8558e78caff6c2d35b4d963646987c5ab7de3de1781f14fc1a3",
+        "providerContentId": "41a641e1d20757f4e20b5a0e5cda29802c5be1dd",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/protocol-requirements.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "6210f1c177f6dc72401b540b2a5227a35c011f89542d9bac852f3c48b2b46b79",
+        "providerContentId": "50bd978035bdfaf359cfd3b1d413cc2f394dd19f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/TROUBLESHOOTING.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "2a83a151259c0fdb614e4177462a4c15a7b342959ae24fb2d17557da93e17260",
+        "providerContentId": "4eca7762e57b15c6bef08234b059eb899126b344",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "schemas/code-attestation.schema.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "f5755d22126d83f01498848391d8d71e60de9d1ce4bdb652f48e60d3baf16ca1",
+        "providerContentId": "ea817d025ee70c8850c93353630e977e085d98be",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/run-conformance.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "050c189e615c8232f09648c142ced41f86ac2934481f068c10f6c3d0158d3cf2",
+        "providerContentId": "52e47d07daf09f7a6598e1a0126e71b9a2499ace",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/commands/evidence-verify.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "15ce8643c143b47faea65740f18847887f956845a34d1464aab86d84546f77da",
+        "providerContentId": "b401a2d5e42edde8ad94400c6277c71f9da6a414",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/attestation.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "585d81c370741938f1914b10eb1f8b4485dedee8b64175959f191869c683c035",
+        "providerContentId": "8dbae6a2b4e1fabb8766b664b7735f8d7c04c7cc",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/cli-command-definitions.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "4ba071e5908ec00515a423852cd02cec01c38949e6f51817ba48eb3323b14720",
+        "providerContentId": "af104618d7cde0f84356508e85fd3378ccf0ae46",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/error-codes.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "8c33d4a338538a466b945b63d51b5f1070386f61cdb06448a612725b3b85f41d",
+        "providerContentId": "9b62c7af55ccd1a258d0f535b42db826c9063554",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/evidence/markdown.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "860fcfef67fc80aa4d7d0722056b1f67ace6554cdbe810ccc2627760740d08b0",
+        "providerContentId": "303e8a308d25a85155bad21ce103146d350d9cbc",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/evidence/verify.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "32fdd409c4fa4dd401344c5693edf85306f4ce9ab5444130049155519a64f393",
+        "providerContentId": "9203aeb45f09ad320c49a4188d09eea0ce80f954",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/schema-validation.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "113b9531d4f33e1385d772f2026aabaa167b0ebb555cbd898be8524f1aae2179",
+        "providerContentId": "7948f59f9db0228ba47983bd16a5d8a81bb80ee0",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/attestation-predicate-v2.test.js",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "6eb8cb836866a2eb6df6b92d2e923797322c6ae2aefdea330fa2d6a03b29b1b9",
+        "providerContentId": "5e796383cb5de88fbcbd29ca8295793a3de291bf",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/schema-health.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "2b48870154edf5789e36faaef44ecd39b5808aebbe9a38ddd844088b18bfe0f7",
+        "providerContentId": "429b0b61ad03d42ed9d5f0f59c4bef063f7579eb",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "verifier/forgeloop-verify.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "40a3c5b4b640d207687d7d1500ef57e996c818db50b80bc754fe89ced65d6ca5",
+        "providerContentId": "d63256043c518e96b51acd5873d1a5d87a29151c",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "verifier/README.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "d80e2ad2de88a6fb8c78bcf1458bd4d63da8115e1f10509766b7e5da048eab72",
+        "providerContentId": "8f21e531cf35b5ca9d0b58b426af0b5e051b3913",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "88275c80bb5e0b71cca07ef29bfa5f9c69a4825247f0eb7a86359ed1c742f615"
+  },
+  "manifestFingerprint": "bf05afe40eb9225d1c97781dd3847a829d16f5c84a31c01699d30ff1cb35020b",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Ship ForgeLoop attestation predicate schema version 2, which binds every recorded check (id, requirement, status, provenance, exit code and an argv digest) into the signed statement, and derive execution assurance (UNKNOWN, REPORTED, EXECUTED, HOST_ATTESTED) from it in evidence-verify and the independent verifier, with a --min-assurance verifier policy; make the spec's Section 5 and 7.2 normative.",
+    "successCriteria": [
+      "attestation-create emits predicate schema version 2 with bound checks",
+      "Both verifiers report execution assurance and enforce --min-assurance on the conformance suite"
+    ],
+    "checks": [
+      {
+        "id": "both-verifiers",
+        "requirement": "node --test tests/verifier-conformance.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "docs-check",
+        "requirement": "npm run docs:check passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-c5bca6c590507153",
+        "requirement": "attestation-create emits predicate schema version 2 with bound checks",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-f6d9c1adb7be6ee4",
+        "requirement": "Both verifiers report execution assurance and enforce --min-assurance on the conformance suite",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "v2-tests",
+        "requirement": "node --test tests/attestation-predicate-v2.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-fast",
+        "requirement": "npm run verify:fast passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-20T16:30:29.068Z",
+    "completedAt": "2026-11-20T16:40:52.335Z",
+    "durationMs": 623267,
+    "phaseDurationsMs": {
+      "planning": 2723,
+      "executing": 45977,
+      "verifying": 574294,
+      "reviewing": 273
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 7,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "45c36ffa287dc3e5c0c7a0b5e2980a6a1dfd680b0ce5918f2be67d5f2a0615c1"
+}

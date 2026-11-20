@@ -113,6 +113,7 @@ async function runCase(testCase) {
     const actual = {
       status: result.status,
       level: result.level,
+      ...("assurance" in testCase.expect ? { assurance: result.assurance } : {}),
       errorCodes: [...new Set((result.errors ?? []).map((error) => error.code))].sort(),
     };
     const expected = { ...testCase.expect, errorCodes: [...testCase.expect.errorCodes].sort() };

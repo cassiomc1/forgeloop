@@ -12,7 +12,8 @@
 // cosign, or use the reference CLI, when a signature is required.
 //
 // Usage: forgeloop-verify --base <rev> --head <rev> [--path <dir>] [--dir <evidence dir>]
-//          [--exclude <path or dir/**>]... [--allow-partial-coverage] [--require-signature] [--json]
+//          [--exclude <path or dir/**>]... [--allow-partial-coverage] [--require-signature]
+//          [--min-assurance REPORTED|EXECUTED|HOST_ATTESTED] [--json]
 
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -39,7 +40,7 @@ const sha256 = (data) => createHash("sha256").update(data).digest("hex");
 const fingerprint = (value) => sha256(JSON.stringify(canonicalize(value)));
 
 function parseArgs(argv) {
-  const options = { path: ".", dir: ".forgeloop-evidence", exclude: [], allowPartial: false, requireSignature: false, json: false };
+  const options = { path: ".", dir: ".forgeloop-evidence", exclude: [], allowPartial: false, requireSignature: false, minAssurance: null, json: false };
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
     const next = () => { index += 1; if (index >= argv.length) throw new Error(`${arg} needs a value`); return argv[index]; };
@@ -50,6 +51,7 @@ function parseArgs(argv) {
     else if (arg === "--exclude") options.exclude.push(next());
     else if (arg === "--allow-partial-coverage") options.allowPartial = true;
     else if (arg === "--require-signature") options.requireSignature = true;
+    else if (arg === "--min-assurance") options.minAssurance = next();
     else if (arg === "--json") options.json = true;
     else if (arg === "--help" || arg === "-h") options.help = true;
     else throw new Error(`Unknown option: ${arg}`);
@@ -130,6 +132,15 @@ function checkBundle(text, expectedTaskId) {
   require(typeof predicate.task?.taskId === "string" && Number.isInteger(predicate.task?.verificationCycle), "E_ATTESTATION_STATEMENT_INVALID", "Predicate task is malformed");
   require(HEX64.test(predicate.content?.manifestFingerprint ?? "") && HEX64.test(predicate.content?.contentDigest ?? "") && Array.isArray(predicate.content?.coveredPaths), "E_ATTESTATION_STATEMENT_INVALID", "Predicate content is malformed");
   require(predicate.verification?.completion === "VALID" && predicate.verification?.audit === "VALID", "E_ATTESTATION_STATEMENT_INVALID", "Predicate does not record a VALID completion and audit");
+  const checks = predicate.verification.checks;
+  require(predicate.schemaVersion === 1 ? checks === undefined : Array.isArray(checks), "E_ATTESTATION_STATEMENT_INVALID", predicate.schemaVersion === 1 ? "Predicate schema version 1 must not carry verification.checks" : "Predicate schema version 2 requires verification.checks");
+  for (const check of checks ?? []) {
+    require(typeof check?.id === "string" && typeof check.requirement === "string"
+      && ["passed", "failed", "blocked", "not-run"].includes(check.status)
+      && ["FORGELOOP_EXECUTED", "ACTOR_REPORTED", "MANUAL_OBSERVATION", "UNKNOWN"].includes(check.provenance)
+      && (check.exitCode === null || Number.isInteger(check.exitCode))
+      && (check.argvDigest === null || HEX64.test(check.argvDigest)), "E_ATTESTATION_STATEMENT_INVALID", "Predicate check entry is malformed");
+  }
   require(Array.isArray(statement.subject) && statement.subject.length === 1, "E_ATTESTATION_STATEMENT_INVALID", "Statement must have exactly one subject");
   require(statement.subject[0].name === `forgeloop-task:${predicate.task.taskId}`, "E_ATTESTATION_SUBJECT_MISMATCH", "Statement subject does not match the attested task");
   require(statement.subject[0].digest?.sha256 === predicate.content.contentDigest, "E_ATTESTATION_SUBJECT_MISMATCH", "Statement subject digest does not match the predicate content digest");
@@ -169,11 +180,14 @@ function entryMatches(git, head, entry) {
 
 // Section 7.2, derived from a version-2 predicate; version 1 carries no checks.
 function executionAssurance(predicate) {
-  if (predicate.schemaVersion < 2 || !Array.isArray(predicate.verification?.checks)) return "UNKNOWN";
+  if (predicate.schemaVersion < 2 || !Array.isArray(predicate.verification?.checks) || predicate.verification.checks.length === 0) return "UNKNOWN";
   return predicate.verification.checks.every((check) => check.provenance === "FORGELOOP_EXECUTED") ? "EXECUTED" : "REPORTED";
 }
 
-export function verifyRange({ path = ".", base, head, dir = ".forgeloop-evidence", exclude = [], allowPartial = false, requireSignature = false } = {}) {
+const ASSURANCE = ["UNKNOWN", "REPORTED", "EXECUTED", "HOST_ATTESTED"];
+
+export function verifyRange({ path = ".", base, head, dir = ".forgeloop-evidence", exclude = [], allowPartial = false, requireSignature = false, minAssurance = null } = {}) {
+  if (minAssurance !== null && !ASSURANCE.includes(minAssurance)) throw new Error(`Unknown execution assurance: ${minAssurance}`);
   const git = gitClient(path);
   const baseRevision = git.resolve(base);
   const headRevision = git.resolve(head);
@@ -225,9 +239,13 @@ export function verifyRange({ path = ".", base, head, dir = ".forgeloop-evidence
       else errors.push({ code: "E_ATTESTATION_SIGNATURE_NOT_VERIFIED", taskId: bundle.taskId, message: "This verifier does not check signatures; verify them with cosign or the reference CLI" });
     }
   }
+  // HOST_ATTESTED needs a verified CI signature, which this verifier does not
+  // check, so the highest assurance it reports is EXECUTED.
+  const assurance = valid.length === 0 ? "UNKNOWN" : valid.map((bundle) => bundle.assurance).reduce((low, value) => (ASSURANCE.indexOf(value) < ASSURANCE.indexOf(low) ? value : low));
+  if (minAssurance !== null && ASSURANCE.indexOf(assurance) < ASSURANCE.indexOf(minAssurance)) {
+    errors.push({ code: "E_EVIDENCE_ASSURANCE_INSUFFICIENT", message: `Execution assurance ${assurance} is below the required ${minAssurance}`, assurance, required: minAssurance });
+  }
   const status = errors.length === 0 ? "VALID" : "INVALID";
-  const order = ["UNKNOWN", "REPORTED", "EXECUTED", "HOST_ATTESTED"];
-  const assurance = valid.length === 0 ? "UNKNOWN" : valid.map((bundle) => bundle.assurance).reduce((low, value) => (order.indexOf(value) < order.indexOf(low) ? value : low));
   return {
     schemaVersion: 1,
     kind: "forgeloop-evidence-verification",
@@ -251,7 +269,7 @@ if (isMain) {
   let options;
   try { options = parseArgs(process.argv.slice(2)); } catch (error) { console.error(error.message); process.exit(2); }
   if (options.help || !options.base || !options.head) {
-    console.log("Usage: forgeloop-verify --base <rev> --head <rev> [--path <dir>] [--dir <evidence dir>] [--exclude <path>]... [--allow-partial-coverage] [--require-signature] [--json]");
+    console.log("Usage: forgeloop-verify --base <rev> --head <rev> [--path <dir>] [--dir <evidence dir>] [--exclude <path>]... [--allow-partial-coverage] [--require-signature] [--min-assurance <level>] [--json]");
     process.exit(options.help ? 0 : 2);
   }
   const result = verifyRange(options);
