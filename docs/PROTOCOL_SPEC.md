@@ -1,6 +1,7 @@
 # ForgeLoop Protocol — Core Specification 1.0
 
-Status: **Draft**. Protocol version `1`. This document is the normative
+Status: **Draft**. Protocol version `1`. Licensed Apache-2.0 (see
+[`LICENSING.md`](../LICENSING.md)). This document is the normative
 definition of the ForgeLoop core. The `@cassiomc1/forgeloop` CLI is the
 reference implementation; where it and this document disagree, the
 disagreement is a defect in one of them and is resolved here.
@@ -220,9 +221,12 @@ There are two conformance classes.
 - **Runtime.** Enforces Section 4.1, emits bundles that a conforming verifier
   accepts, and emits predicate schema version 2.
 
-`npm run conformance` runs the suite against the reference implementation.
-Another implementation conforms when it produces the same statuses on the same
-fixtures. Each case states its input, the expected status and the clause of
+`npm run conformance` runs the suite against the reference implementation, and
+`npm run conformance:independent` runs it against `verifier/forgeloop-verify.mjs`,
+a dependency-free verifier that shares no code with the runtime. Another
+implementation conforms when it produces the same status, level and error
+codes on the same fixtures; set `FORGELOOP_CONFORMANCE_VERIFIER` to its argv as
+a JSON array. Each case states its input, the expected status and the clause of
 this specification it tests.
 
 ## 11. Versioning

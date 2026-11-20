@@ -566,6 +566,34 @@
       "packageInclusion": "npm"
     },
     {
+      "path": "LICENSING.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "LICENSING.md"
+      ],
+      "canonicalSources": [
+        "LICENSING.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
+      "path": "verifier/README.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "verifier/README.md"
+      ],
+      "canonicalSources": [
+        "verifier/README.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
       "path": "docs/REVISION_PROVIDERS.md",
       "status": "reviewed",
       "action": "new",

@@ -1,0 +1,254 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "protocol-open",
+  "forgeloopVersion": "2.4.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:protocol-open\",\n      \"digest\": {\n        \"sha256\": \"1c38c66187bdb50671966041a97afb17337f7ce5ff169d9ecb009d0129db99ef\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"protocol-open\",\n      \"verificationCycle\": 2\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"e7bc4dffbcc9a5759265281efa105df2afe858edc9673231f71cb94fe9dc06be\",\n      \"contentDigest\": \"1c38c66187bdb50671966041a97afb17337f7ce5ff169d9ecb009d0129db99ef\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"LICENSE-APACHE\",\n        \"LICENSING.md\",\n        \"README.md\",\n        \"conformance/cases.json\",\n        \"docs/PROTOCOL_SPEC.md\",\n        \"docs/documentation-manifest.json\",\n        \"docs/documentation-review-matrix.json\",\n        \"package.json\",\n        \"scripts/run-conformance.mjs\",\n        \"tests/verifier-conformance.test.js\",\n        \"verifier/README.md\",\n        \"verifier/forgeloop-verify.mjs\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"795e225a7587da64f3126af179a285c0b1fd6482c35d53a62df3e48fb3c506a0\",\n      \"routeFingerprint\": \"e5b6e6fa937ecf9326069bbfdbf99f34de20214441361c0235075dedd2215140\",\n      \"stateFingerprint\": \"4f1d2b8588088facfe3afbef83d35fb64eb8fd10947a9f800cfe837ce656584c\",\n      \"receiptFingerprint\": \"9bdd098b8629af734753953f85cc5ef0528733e4234bb54d420b15bb0553b869\",\n      \"ledgerSeq\": 70,\n      \"ledgerHash\": \"b62967b2606bbdb20eb2dc1cadc802ec17fbce2471e9d4114effad3336025aea\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "protocol-open",
+    "verificationCycle": 2,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "205134d223bc8192d2755a221a04fc1bdc05ef58",
+      "observedRevision": "205134d223bc8192d2755a221a04fc1bdc05ef58",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/protocol-open-verifier",
+        "head": "205134d223bc8192d2755a221a04fc1bdc05ef58"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "795e225a7587da64f3126af179a285c0b1fd6482c35d53a62df3e48fb3c506a0",
+      "routeFingerprint": "e5b6e6fa937ecf9326069bbfdbf99f34de20214441361c0235075dedd2215140",
+      "stateFingerprint": "4f1d2b8588088facfe3afbef83d35fb64eb8fd10947a9f800cfe837ce656584c",
+      "receiptFingerprint": "9bdd098b8629af734753953f85cc5ef0528733e4234bb54d420b15bb0553b869",
+      "ledgerSeq": 70,
+      "ledgerHash": "b62967b2606bbdb20eb2dc1cadc802ec17fbce2471e9d4114effad3336025aea"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "d4378a5fdd84673d2e81f21e0314d2696786593ddd4e8271ab8557707d83afc4",
+        "providerContentId": "3408ca31b7227369c49a31fb116de00cf71f5283",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "conformance/cases.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "2533220e74cf65066f5746493fc1d5b5928a6776a1f7a10eae58352d28e6b474",
+        "providerContentId": "639f733d1a4234ebbdd7821db61b259f13599838",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/documentation-manifest.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "c104cca0c2dc42b3f6668ed85f02bb583f0285d53e3061aac4f4d99dede1112e",
+        "providerContentId": "4be2924b8c1d7f04a79a5fc10b40dea85e086af2",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/documentation-review-matrix.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "8cfa6ae6d7ddb309138cd5aac2ce86fac0ac76efc97c5d21f52600c1a47a8153",
+        "providerContentId": "93237d59cab578fd6c7663be0272b30c16feb5da",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/PROTOCOL_SPEC.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "ec000146797af891c29cf2efc7dbb1da141db28da82f3455fd06b1186d59d3fb",
+        "providerContentId": "397b965c8b194767096937a890b252e37aa10a13",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "LICENSE-APACHE",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "providerContentId": "d645695673349e3947e8e5ae42332d0ac3164cd7",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "LICENSING.md",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "ad28ee6716fc8708d6cc2b3cc69071fe6fce8951bf75bf29d1a21d7cc83ef1d3",
+        "providerContentId": "ce1259136841d43d46da0877b16acb180c50efc3",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "package.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "ad41de84d56d106dc60488142a098dd8f6c8c787f12b4f9cdf3fb844ef3628f0",
+        "providerContentId": "9ad4069c1206b460eec8b6d06af8c32ccb5d694c",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "README.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "b47e671cbeb822f04d509ecc3f494e1c2fea76996e77de1d97f7bb61b7a4f983",
+        "providerContentId": "cdbcec5091a86b8d245c0a1b6b71cfb6aeeb29b2",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/run-conformance.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "c20c054d5ca771304e64177c26afd38b08462c92bd235d06bab9db9cffd210b2",
+        "providerContentId": "26ede10157450e47f9684c905cbc5607a8c7e55d",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/verifier-conformance.test.js",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "b5b041a75fe5d3f34ef4e4fbd5707a63c0f34938bedd86d23008986d9a5b3c2d",
+        "providerContentId": "83eb2532b28f3c63381f232777192dda24b5bb7d",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "verifier/forgeloop-verify.mjs",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "880099b16f63ed0cecb6cd17bf500c379067c665f90ac788663ea846d9a63bdd",
+        "providerContentId": "f916fbf7cdb4c9b84a76855637daf8a7dd7ab44f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "verifier/README.md",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "98e7eb50873c813322c639129afc1e584714002b83d45235c856a86e85152d25",
+        "providerContentId": "7b0feb0f2c3508e369554a5ae9ce3e11945159d0",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "1c38c66187bdb50671966041a97afb17337f7ce5ff169d9ecb009d0129db99ef"
+  },
+  "manifestFingerprint": "e7bc4dffbcc9a5759265281efa105df2afe858edc9673231f71cb94fe9dc06be",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Open the protocol surface under Apache-2.0 (the specification, schemas, conformance suite and an independent verifier) while the runtime keeps PolyForm Noncommercial, ship verifier/forgeloop-verify.mjs as a dependency-free second implementation that passes the conformance suite, and strengthen the suite with resealed tampering cases that cannot be caught by the bundle digest alone.",
+    "successCriteria": [
+      "The reference CLI and the independent verifier both pass every conformance case",
+      "LICENSING.md states which paths are Apache-2.0 and which stay PolyForm Noncommercial"
+    ],
+    "checks": [
+      {
+        "id": "docs-check",
+        "requirement": "npm run docs:check passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-5cc9432a0614914b",
+        "requirement": "The reference CLI and the independent verifier both pass every conformance case",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-8c9331ec217622c1",
+        "requirement": "LICENSING.md states which paths are Apache-2.0 and which stay PolyForm Noncommercial",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verifier-conformance-test",
+        "requirement": "node --test tests/verifier-conformance.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-fast",
+        "requirement": "npm run verify:fast passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-20T12:45:40.695Z",
+    "completedAt": "2026-11-20T13:24:06.389Z",
+    "durationMs": 2305694,
+    "phaseDurationsMs": {
+      "planning": 2705,
+      "executing": 5412,
+      "verifying": 2297235,
+      "reviewing": 342
+    },
+    "verificationCycles": 2,
+    "diagnoses": 1,
+    "checksPassed": 6,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "3d9229585d8e1bbd827007faef10110822c04ffa865b758b9f4c628976b98079"
+}

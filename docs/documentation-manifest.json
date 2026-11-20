@@ -503,6 +503,28 @@
       "packaged": true
     },
     {
+      "path": "LICENSING.md",
+      "id": "licensing",
+      "class": "operational",
+      "audience": [
+        "integrator",
+        "maintainer"
+      ],
+      "canonicalFor": [],
+      "packaged": true
+    },
+    {
+      "path": "verifier/README.md",
+      "id": "independent-verifier",
+      "class": "operational",
+      "audience": [
+        "integrator",
+        "maintainer"
+      ],
+      "canonicalFor": [],
+      "packaged": true
+    },
+    {
       "path": "docs/REVISION_PROVIDERS.md",
       "id": "revision-providers",
       "class": "reference",

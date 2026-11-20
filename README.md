@@ -85,8 +85,9 @@ See the [23-guide maintenance map](./docs/GUIDE_MAINTENANCE.md) for review scope
 GitHub hosts source and issues. The core npm package is public; the MCP
 companion has restricted distribution. Stable `2.3.1` is on npm `latest` with
 provenance and verified release identity.
-ForgeLoop-owned source and documentation are licensed under the
-[PolyForm Noncommercial License 1.0.0](./LICENSE): free for noncommercial use.
+The protocol (spec, schemas, conformance, [verifier](./verifier/)) is
+[Apache-2.0](./LICENSE-APACHE); the runtime is [PolyForm Noncommercial
+1.0.0](./LICENSE), free for noncommercial use ([`LICENSING.md`](./LICENSING.md)).
 Commercial use requires a [commercial license](https://forgeloop.monster/#pricing)
 at USD 199 per developer per year ([buy](https://buy.stripe.com/dRm14n8AQ3ra2OodkT43S00)).
 Third-party notices:

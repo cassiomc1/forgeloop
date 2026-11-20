@@ -7,9 +7,11 @@
 // The verifier is the reference CLI by default. Any other implementation is
 // tested by setting FORGELOOP_CONFORMANCE_VERIFIER to a JSON array argv prefix,
 // for example '["my-verifier","verify"]'; the runner appends
-// --path, --base, --head, --json and the case's own arguments.
+// --path, --base, --head, --json and the case's own arguments. --independent
+// selects the Apache-2.0 verifier in verifier/forgeloop-verify.mjs.
 
 import { execFileSync, spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -17,10 +19,14 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const suite = JSON.parse(await readFile(path.join(root, "conformance/cases.json"), "utf8"));
-const verifier = process.env.FORGELOOP_CONFORMANCE_VERIFIER
-  ? JSON.parse(process.env.FORGELOOP_CONFORMANCE_VERIFIER)
-  : [process.execPath, path.join(root, "src/cli.js"), "evidence-verify"];
-const only = process.argv.slice(2);
+const args = process.argv.slice(2);
+const independent = args.includes("--independent");
+const verifier = independent
+  ? [process.execPath, path.join(root, "verifier/forgeloop-verify.mjs")]
+  : process.env.FORGELOOP_CONFORMANCE_VERIFIER
+    ? JSON.parse(process.env.FORGELOOP_CONFORMANCE_VERIFIER)
+    : [process.execPath, path.join(root, "src/cli.js"), "evidence-verify"];
+const only = args.filter((arg) => arg !== "--independent");
 
 const git = (cwd, ...args) => execFileSync("git", args, { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }).trim();
 
@@ -29,6 +35,21 @@ function setPointer(object, pointer, value) {
   let node = object;
   for (const key of keys.slice(0, -1)) node = node[key];
   node[keys.at(-1)] = value;
+}
+
+// "reseal": recompute the manifest fingerprint and bundle digest after the
+// mutations, so a verifier must catch the inconsistency in the statement,
+// manifest or bindings instead of in the outer digest.
+function canonicalize(value) {
+  if (Array.isArray(value)) return value.map(canonicalize);
+  if (value && typeof value === "object") return Object.fromEntries(Object.keys(value).sort().map((key) => [key, canonicalize(value[key])]));
+  return value;
+}
+const sha256 = (text) => createHash("sha256").update(text).digest("hex");
+function reseal(bundle) {
+  bundle.manifestFingerprint = sha256(JSON.stringify(canonicalize(bundle.manifest)));
+  const { digest: _digest, ...body } = bundle;
+  bundle.digest = sha256(JSON.stringify(body));
 }
 
 async function applyMutation(directory, bundleState, mutation) {
@@ -78,6 +99,7 @@ async function runCase(testCase) {
     const bundle = JSON.parse(await readFile(path.join(fixture, "bundle.json"), "utf8"));
     const bundleState = { bundle, fileTaskId: bundle.taskId };
     for (const mutation of testCase.mutations) await applyMutation(directory, bundleState, mutation);
+    if (testCase.reseal) reseal(bundleState.bundle);
     await mkdir(path.join(directory, ".forgeloop-evidence"), { recursive: true });
     await writeFile(path.join(directory, ".forgeloop-evidence", `${bundleState.fileTaskId}.json`), `${JSON.stringify(bundleState.bundle, null, 2)}\n`);
     git(directory, "add", "-A");
