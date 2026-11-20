@@ -106,8 +106,15 @@ async function runCase(testCase) {
     git(directory, "commit", "-q", "-m", "head");
     const head = git(directory, "rev-parse", "HEAD");
 
+    // A delegation brief is written after the head commit, so it is never a
+    // changed path; the verifier reads it from the working tree.
+    const briefArgs = [];
+    if (testCase.brief) {
+      await writeFile(path.join(directory, ".delegation-brief.json"), await readFile(path.join(fixture, testCase.brief), "utf8"));
+      briefArgs.push("--brief", ".delegation-brief.json");
+    }
     const [command, ...prefix] = verifier;
-    const run = spawnSync(command, [...prefix, "--path", directory, "--base", base, "--head", head, "--json", ...testCase.args], { encoding: "utf8" });
+    const run = spawnSync(command, [...prefix, "--path", directory, "--base", base, "--head", head, "--json", ...testCase.args, ...briefArgs], { encoding: "utf8" });
     let result;
     try { result = JSON.parse(run.stdout); } catch { return { ok: false, detail: `verifier did not print JSON (exit ${run.status}): ${run.stderr.trim().slice(0, 300)}` }; }
     const actual = {

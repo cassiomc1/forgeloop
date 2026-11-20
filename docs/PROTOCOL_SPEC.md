@@ -202,11 +202,19 @@ deliverables. The delegate runs its own ForgeLoop task and returns a
 The delegator SHOULD NOT accept the delegated result on the delegate's word.
 It accepts only when the delegate's bundle verifies and:
 
-1. the bundle's `taskId` equals the brief's `taskId`;
-2. every covered path is inside `allowedPaths` and none is in `readOnlyPaths`;
-3. every brief `verification` item is satisfied by a passing bound check in
-   the predicate (schema version 2);
+1. the range has an intact bundle whose `taskId` equals the brief's `taskId`
+   (otherwise `E_DELEGATION_EVIDENCE_MISSING`);
+2. every covered path is inside `allowedPaths` and none is in `readOnlyPaths`,
+   where a path covers itself and everything below it
+   (otherwise `E_DELEGATION_SCOPE_VIOLATION`);
+3. every brief `verification` item is satisfied by a passing bound check whose
+   `requirement` or `id` equals the item; a version-1 predicate binds no checks
+   and satisfies none (otherwise `E_DELEGATION_VERIFICATION_UNMET`);
 4. both trust axes meet the delegator's policy.
+
+A verifier given a task brief MUST reject the delivery when any of these fails. <a id="FL-SPEC-012"></a>
+The reference CLI does this with `evidence-verify --brief <task-brief.json>`,
+combined with `--min-assurance` and `--require-signature` for item 4.
 
 ForgeLoop does not schedule the delegate or transport the brief. MCP, A2A or
 any other channel carries them; the evidence is what crosses the trust
@@ -257,6 +265,7 @@ reports these codes for these conditions.
 | `E_ATTESTATION_COVERAGE_GAP` | A changed path is covered by no intact, matching bundle. |
 | `E_ATTESTATION_UNSIGNED` | A signature is required and a bundle used has none. |
 | `E_EVIDENCE_ASSURANCE_INSUFFICIENT` | A minimum execution assurance is required and the range falls below it. |
+| `E_DELEGATION_EVIDENCE_MISSING`, `E_DELEGATION_SCOPE_VIOLATION`, `E_DELEGATION_VERIFICATION_UNMET` | A task brief is given and the delivery fails Section 8 items 1, 2 or 3. |
 
 ## 11. Versioning
 

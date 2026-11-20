@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- Delegation: `evidence-verify --brief <task-brief.json>` accepts a
+  delegate's work only on evidence. It fails with
+  `E_DELEGATION_EVIDENCE_MISSING`, `E_DELEGATION_SCOPE_VIOLATION` or
+  `E_DELEGATION_VERIFICATION_UNMET` when the brief's task has no intact bundle,
+  changed paths outside its brief, or has no passing bound check for a brief
+  verification item. The independent verifier supports `--brief` too, both
+  pass six delegation conformance cases (25 total), and spec Section 8 is
+  normative (`FL-SPEC-012`).
 - Attestation: new statements use predicate schema version 2, which binds
   every recorded check (id, requirement, status, provenance, exit code and a
   SHA-256 digest of its argv) into the signed statement. Verifiers keep

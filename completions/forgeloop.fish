@@ -236,6 +236,7 @@ complete -c forgeloop -f -n '__fish_seen_subcommand_from evidence-publish' -l 't
 complete -c forgeloop -f -n '__fish_seen_subcommand_from evidence-publish' -l 'version' -d 'show the installed package version'
 complete -c forgeloop -f -n '__fish_seen_subcommand_from evidence-verify' -l 'allow-partial-coverage' -d 'report uncovered changed paths without failing'
 complete -c forgeloop -f -n '__fish_seen_subcommand_from evidence-verify' -l 'base' -d 'base revision of the verified range'
+complete -c forgeloop -f -n '__fish_seen_subcommand_from evidence-verify' -l 'brief' -d 'verify the range as the delivery for this task brief (delegation)'
 complete -c forgeloop -f -n '__fish_seen_subcommand_from evidence-verify' -l 'dir' -d 'tracked evidence directory (default: .forgeloop-evidence)'
 complete -c forgeloop -f -n '__fish_seen_subcommand_from evidence-verify' -l 'exclude' -d 'changed path or dir/** excluded from coverage (verifier policy)'
 complete -c forgeloop -f -n '__fish_seen_subcommand_from evidence-verify' -l 'format' -d 'human output format (default: text)'

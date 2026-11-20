@@ -70,6 +70,15 @@ Valid statuses are `complete`, `complete-with-concerns`, `needs-context`, and
 Complete results also require structured observed or inferred verification
 evidence.
 
+A delegated result is the delegate's account, not proof. The delegator verifies
+the delivery against the brief with
+`forgeloop evidence-verify --base <rev> --head <rev> --brief <task-brief.json>`:
+it fails unless the delegate's evidence bundle is intact, stays inside
+`allowedPaths` and out of `readOnlyPaths`, and binds a passing check for every
+brief `verification` item (predicate schema version 2). Add `--min-assurance`
+and `--require-signature` to also require who ran the checks and a signature.
+See `docs/PROTOCOL_SPEC.md` Section 8.
+
 Canonical handoff acceptance is not delegation acceptance. A handoff envelope
 and its `HANDOFF_ACCEPTED` operational receipt do not create a delegated task,
 approve a brief, transfer claims, or establish reviewer authority. Delegation

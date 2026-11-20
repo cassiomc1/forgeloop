@@ -4,7 +4,7 @@ import path from "node:path";
 import { validateAttestationStatement } from "../attestation.js";
 import { assertAttestationStatementBindings, verifyCodeManifestContent } from "../attestation-verifier.js";
 import { validateCodeManifest } from "../code-manifest.js";
-import { E_ATTESTATION_CONTENT_MISMATCH, E_ATTESTATION_COVERAGE_GAP, E_ATTESTATION_UNSIGNED, E_EVIDENCE_ASSURANCE_INSUFFICIENT, E_EVIDENCE_BUNDLE_INVALID } from "../error-codes.js";
+import { E_ATTESTATION_CONTENT_MISMATCH, E_ATTESTATION_COVERAGE_GAP, E_ATTESTATION_UNSIGNED, E_DELEGATION_EVIDENCE_MISSING, E_DELEGATION_SCOPE_VIOLATION, E_DELEGATION_VERIFICATION_UNMET, E_EVIDENCE_ASSURANCE_INSUFFICIENT, E_EVIDENCE_BUNDLE_INVALID } from "../error-codes.js";
 import { resolveRevisionProvider } from "../revision/provider.js";
 import { REVISION_PROVIDERS } from "../revision/registry.js";
 import { createSigstoreSigningProvider } from "../signing/sigstore.js";
@@ -94,6 +94,8 @@ async function loadBundle(context, bundlePath) {
     record.integrity = "VALID";
     record.signature = await verifySignature({ statementText: bundle.statement.text, signature: bundle.signature, signer, policy });
     record.assurance = predicateExecutionAssurance(statement.predicate);
+    record.coveredPaths = statement.predicate.content.coveredPaths.map(normalize);
+    record.checks = Array.isArray(statement.predicate.verification?.checks) ? statement.predicate.verification.checks : null;
     if (record.assurance === "EXECUTED" && record.signature.status === "VALID" && HOST_WORKLOAD_ISSUERS.includes(policy.issuer)) {
       record.assurance = "HOST_ATTESTED";
     }
@@ -142,6 +144,36 @@ function overallLevel(status, usedBundles) {
   return usedBundles.length > 0 && usedBundles.every((bundle) => bundle.signature.status === "VALID") ? EVIDENCE_LEVELS.ATTESTED : EVIDENCE_LEVELS.INTEGRITY_ONLY;
 }
 
+const withinPath = (value, root) => value === root || value.startsWith(`${root}/`);
+
+// docs/PROTOCOL_SPEC.md Section 8: accept a delegate's work only on evidence.
+// The brief is already validated (validateTaskBrief).
+export function delegationErrors(brief, bundles) {
+  const bundle = bundles.find((item) => item.taskId === brief.taskId && item.integrity === "VALID");
+  if (!bundle) {
+    return [{ code: E_DELEGATION_EVIDENCE_MISSING, taskId: brief.taskId, message: `No intact evidence bundle for delegated task ${brief.taskId} in the range` }];
+  }
+  const errors = [];
+  const outside = bundle.coveredPaths.filter((value) => !brief.allowedPaths.some((root) => withinPath(value, root)));
+  const readOnly = bundle.coveredPaths.filter((value) => brief.readOnlyPaths.some((root) => withinPath(value, root)));
+  if (outside.length > 0 || readOnly.length > 0) {
+    errors.push({ code: E_DELEGATION_SCOPE_VIOLATION, taskId: brief.taskId, paths: [...new Set([...outside, ...readOnly])].sort(), message: `Delegated task ${brief.taskId} changed paths outside its brief: ${[...new Set([...outside, ...readOnly])].sort().join(", ")}` });
+  }
+  const passed = (bundle.checks ?? []).filter((check) => check.status === "passed");
+  const unmet = brief.verification.filter((item) => !passed.some((check) => check.requirement === item || check.id === item));
+  if (unmet.length > 0) {
+    errors.push({
+      code: E_DELEGATION_VERIFICATION_UNMET,
+      taskId: brief.taskId,
+      requirements: unmet,
+      message: bundle.checks === null
+        ? `Delegated task ${brief.taskId} has a version-1 predicate, which binds no checks; its brief verification cannot be proven`
+        : `Delegated task ${brief.taskId} has no passing bound check for: ${unmet.join("; ")}`,
+    });
+  }
+  return errors;
+}
+
 export async function verifyEvidenceRange({
   target,
   packageRoot = getPackageRoot(),
@@ -155,6 +187,7 @@ export async function verifyEvidenceRange({
   signingProvider = null,
   exclusions = [],
   minAssurance = null,
+  brief = null,
 } = {}) {
   if (minAssurance !== null && !EXECUTION_ASSURANCE.includes(minAssurance)) {
     throw Object.assign(new Error(`Unknown execution assurance: ${minAssurance} (expected ${EXECUTION_ASSURANCE.join(", ")})`), { code: "E_CLI_INVOCATION_INVALID" });
@@ -182,6 +215,8 @@ export async function verifyEvidenceRange({
   if (minAssurance !== null && assuranceRank(assurance) < assuranceRank(minAssurance)) {
     errors.push({ code: E_EVIDENCE_ASSURANCE_INSUFFICIENT, message: `Execution assurance ${assurance} is below the required ${minAssurance}`, assurance, required: minAssurance });
   }
+  const delegation = brief ? delegationErrors(brief, bundles) : null;
+  if (delegation) errors.push(...delegation);
   const status = errors.length === 0 ? "VALID" : "INVALID";
   const level = overallLevel(status, usedBundles);
   return {
@@ -191,6 +226,7 @@ export async function verifyEvidenceRange({
     level,
     assurance,
     ...(minAssurance !== null ? { minAssurance } : {}),
+    ...(brief ? { delegation: { taskId: brief.taskId, status: delegation.length === 0 ? "ACCEPTED" : "REJECTED" } } : {}),
     revisionProvider: provider.name ?? "unknown",
     baseRevision: baseRevision ?? null,
     headRevision: headRevision ?? null,
@@ -199,7 +235,7 @@ export async function verifyEvidenceRange({
     coveredPaths: changedPaths.length - coverage.uncoveredPaths.length,
     uncoveredPaths: coverage.uncoveredPaths,
     superseded: coverage.superseded,
-    bundles: bundles.map(({ entries, ...bundle }) => ({ ...bundle, entries: entries.length, matchingEntries: entries.filter((entry) => entry.matches).length })),
+    bundles: bundles.map(({ entries, coveredPaths: _coveredPaths, checks: _checks, ...bundle }) => ({ ...bundle, entries: entries.length, matchingEntries: entries.filter((entry) => entry.matches).length })),
     signature: { required: requireSignature, ...policy },
     warnings: level === EVIDENCE_LEVELS.INTEGRITY_ONLY ? [UNSIGNED_WARNING] : [],
     errors,

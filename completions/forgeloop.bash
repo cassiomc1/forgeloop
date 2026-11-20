@@ -168,7 +168,7 @@ _forgeloop() {
     eval) COMPREPLY=( $(compgen -W '--help --json --path --scenario --task --version' -- "$cur") );;
     evidence-export) COMPREPLY=( $(compgen -W '--dir --help --json --path --task --version' -- "$cur") );;
     evidence-publish) COMPREPLY=( $(compgen -W '--all --dir --help --json --path --remote --repo --task --version' -- "$cur") );;
-    evidence-verify) COMPREPLY=( $(compgen -W '--allow-partial-coverage --base --dir --exclude --format --head --help --identity --issuer --json --min-assurance --path --require-signature --revision-provider --trusted-root --version' -- "$cur") );;
+    evidence-verify) COMPREPLY=( $(compgen -W '--allow-partial-coverage --base --brief --dir --exclude --format --head --help --identity --issuer --json --min-assurance --path --require-signature --revision-provider --trusted-root --version' -- "$cur") );;
     gate-record) COMPREPLY=( $(compgen -W '--artifact --assumption --decision --evidence-file --gate --help --json --path --status --task --unknown --version' -- "$cur") );;
     gate-revalidate) COMPREPLY=( $(compgen -W '--acknowledge-stale --gate --help --json --path --task --version' -- "$cur") );;
     handoff-accept) COMPREPLY=( $(compgen -W '--consumer-id --handoff --harness --help --json --path --task --version' -- "$cur") );;
