@@ -28,7 +28,7 @@ export function formatEvidenceMarkdown(result) {
   return [
     `## ${icon} ForgeLoop evidence: ${STATUS_LABEL[result.level] ?? result.level}`,
     "",
-    `Status \`${result.status}\`, level \`${result.level}\`: ${result.coveredPaths}/${result.changedPaths} changed paths covered.`,
+    `Status \`${result.status}\`, level \`${result.level}\`${result.assurance && result.assurance !== "UNKNOWN" ? `, execution assurance \`${result.assurance}\`` : ""}: ${result.coveredPaths}/${result.changedPaths} changed paths covered.`,
     "",
     ...bundleRows(result),
     ...listSection("Uncovered paths", result.uncoveredPaths.map((value) => `\`${escapeCell(value)}\``)),

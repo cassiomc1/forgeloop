@@ -242,7 +242,7 @@ capability-family versions.
 | attestation-verify-range | READ_ONLY | Verifies complete attestation coverage for an opaque revision range through a provider-neutral contract. |
 | evidence-export | MUTATING | Exports a completed task's attestation as a portable, redacted evidence bundle to commit with the change. |
 | evidence-publish | MUTATING | Opt-in: uploads redacted evidence bundles to the team dashboard, authenticated by FORGELOOP_SYNC_TOKEN. Bundles wait in an offline queue outside the repository until the remote accepts them. |
-| evidence-verify | READ_ONLY | Verifies committed evidence bundles for a revision range without local ForgeLoop state; signatures raise the level from INTEGRITY_ONLY to ATTESTED. |
+| evidence-verify | READ_ONLY | Verifies committed evidence bundles for a revision range without local ForgeLoop state; signatures raise the level from INTEGRITY_ONLY to ATTESTED, and version-2 predicates report execution assurance. |
 
 ### continuity
 

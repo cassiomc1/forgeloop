@@ -151,6 +151,14 @@ base and head revisions. It works as follows:
    Otherwise it is a content mismatch.
 5. With `--require-signature`, every bundle used must carry a signature that
    verifies under the verifier's `--identity` and `--issuer`.
+6. Each bundle also reports **execution assurance** from its predicate
+   (schema version 2 binds every recorded check): `EXECUTED` when ForgeLoop
+   ran every check itself, `REPORTED` when any check was only reported by the
+   actor, `HOST_ATTESTED` when it is `EXECUTED` and signed under a CI workload
+   issuer policy (`--issuer https://token.actions.githubusercontent.com`), and
+   `UNKNOWN` for version-1 predicates. The range reports the lowest, and
+   `--min-assurance <level>` fails it below that level with
+   `E_EVIDENCE_ASSURANCE_INSUFFICIENT`.
 
 | Result | Meaning |
 | --- | --- |

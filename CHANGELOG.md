@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+- Attestation: new statements use predicate schema version 2, which binds
+  every recorded check (id, requirement, status, provenance, exit code and a
+  SHA-256 digest of its argv) into the signed statement. Verifiers keep
+  accepting version 1.
+- Verification: `evidence-verify` and the independent verifier report
+  execution assurance (`UNKNOWN`, `REPORTED`, `EXECUTED`, `HOST_ATTESTED`), and
+  `--min-assurance <level>` fails a range below it with
+  `E_EVIDENCE_ASSURANCE_INSUFFICIENT`. `HOST_ATTESTED` needs a signature
+  verified under a CI workload issuer policy.
+- Conformance: six predicate-v2 and assurance cases (19 total); both
+  verifiers pass them. The spec's predicate and execution-assurance sections
+  are now normative (`FL-SPEC-008`..`011`).
 - Licensing: the protocol is open. `docs/PROTOCOL_SPEC.md`, `schemas/`, the
   conformance suite and the new independent verifier are Apache-2.0
   (`LICENSE-APACHE`); the reference runtime stays PolyForm Noncommercial 1.0.0.

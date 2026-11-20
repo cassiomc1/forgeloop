@@ -35,7 +35,7 @@ test("schema health parses every shipped schema and reports valid status", async
   assert.equal(report.schemas.length, SHIPPED_SCHEMA_NAMES.length);
   for (const schema of report.schemas) {
     assert.equal(schema.status, "valid", schema.name);
-    assert.equal(schema.version, schema.name === "task-bundle" ? 2 : 1, schema.name);
+    assert.equal(schema.version, ["task-bundle", "code-attestation"].includes(schema.name) ? 2 : 1, schema.name);
   }
 });
 

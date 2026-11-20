@@ -4,7 +4,7 @@ import path from "node:path";
 import { validateAttestationStatement } from "../attestation.js";
 import { assertAttestationStatementBindings, verifyCodeManifestContent } from "../attestation-verifier.js";
 import { validateCodeManifest } from "../code-manifest.js";
-import { E_ATTESTATION_CONTENT_MISMATCH, E_ATTESTATION_COVERAGE_GAP, E_ATTESTATION_UNSIGNED, E_EVIDENCE_BUNDLE_INVALID } from "../error-codes.js";
+import { E_ATTESTATION_CONTENT_MISMATCH, E_ATTESTATION_COVERAGE_GAP, E_ATTESTATION_UNSIGNED, E_EVIDENCE_ASSURANCE_INSUFFICIENT, E_EVIDENCE_BUNDLE_INVALID } from "../error-codes.js";
 import { resolveRevisionProvider } from "../revision/provider.js";
 import { REVISION_PROVIDERS } from "../revision/registry.js";
 import { createSigstoreSigningProvider } from "../signing/sigstore.js";
@@ -12,6 +12,19 @@ import { getPackageRoot } from "../templates.js";
 import { DEFAULT_EVIDENCE_DIRECTORY, parseEvidenceBundle } from "./bundle-format.js";
 
 export const EVIDENCE_LEVELS = Object.freeze({ ATTESTED: "ATTESTED", INTEGRITY_ONLY: "INTEGRITY_ONLY", NONE: "NONE" });
+// Execution assurance (docs/PROTOCOL_SPEC.md Section 7.2): who ran the checks.
+export const EXECUTION_ASSURANCE = Object.freeze(["UNKNOWN", "REPORTED", "EXECUTED", "HOST_ATTESTED"]);
+// A workload identity issuer: a signature under this issuer policy was made by
+// a CI job, outside the actor's control.
+export const HOST_WORKLOAD_ISSUERS = Object.freeze(["https://token.actions.githubusercontent.com"]);
+const assuranceRank = (value) => EXECUTION_ASSURANCE.indexOf(value);
+
+export function predicateExecutionAssurance(predicate) {
+  const checks = predicate?.verification?.checks;
+  if (!(predicate?.schemaVersion >= 2) || !Array.isArray(checks) || checks.length === 0) return "UNKNOWN";
+  return checks.every((check) => check.provenance === "FORGELOOP_EXECUTED") ? "EXECUTED" : "REPORTED";
+}
+
 export const UNSIGNED_WARNING = "Unsigned evidence bundles prove internal consistency with the committed code, not that ForgeLoop produced them; require signatures to use this check as a trust gate.";
 
 const normalize = (value) => String(value).replaceAll("\\", "/").replace(/^\.\//u, "");
@@ -70,7 +83,7 @@ async function verifyEntries({ target, manifest, provider, headRevision }) {
 async function loadBundle(context, bundlePath) {
   const { target, provider, headRevision, packageRoot, signer, policy } = context;
   const expectedTaskId = path.posix.basename(bundlePath, ".json");
-  const record = { path: bundlePath, taskId: expectedTaskId, integrity: "INVALID", signature: { status: "NOT_CHECKED" }, entries: [] };
+  const record = { path: bundlePath, taskId: expectedTaskId, integrity: "INVALID", signature: { status: "NOT_CHECKED" }, assurance: "UNKNOWN", entries: [] };
   try {
     const bytes = await provider.readContent({ target, revision: headRevision, path: bundlePath });
     const { bundle, statement } = parseEvidenceBundle(Buffer.from(bytes).toString("utf8"), expectedTaskId);
@@ -80,6 +93,10 @@ async function loadBundle(context, bundlePath) {
     record.entries = await verifyEntries({ target, manifest, provider, headRevision });
     record.integrity = "VALID";
     record.signature = await verifySignature({ statementText: bundle.statement.text, signature: bundle.signature, signer, policy });
+    record.assurance = predicateExecutionAssurance(statement.predicate);
+    if (record.assurance === "EXECUTED" && record.signature.status === "VALID" && HOST_WORKLOAD_ISSUERS.includes(policy.issuer)) {
+      record.assurance = "HOST_ATTESTED";
+    }
   } catch (error) {
     if (error.code?.startsWith("E_REVISION_")) throw error;
     record.error = { code: error.code?.startsWith("E_") ? error.code : E_EVIDENCE_BUNDLE_INVALID, message: error.message };
@@ -137,7 +154,11 @@ export async function verifyEvidenceRange({
   signerPolicy = {},
   signingProvider = null,
   exclusions = [],
+  minAssurance = null,
 } = {}) {
+  if (minAssurance !== null && !EXECUTION_ASSURANCE.includes(minAssurance)) {
+    throw Object.assign(new Error(`Unknown execution assurance: ${minAssurance} (expected ${EXECUTION_ASSURANCE.join(", ")})`), { code: "E_CLI_INVOCATION_INVALID" });
+  }
   const evidenceDirectory = normalize(directory).replace(/\/+$/u, "");
   const provider = await resolveProvider(target, revisionProvider);
   const changedEntries = await provider.getChangedEntries({ target, baseRevision, headRevision });
@@ -156,6 +177,11 @@ export async function verifyEvidenceRange({
   }
   const usedBundles = bundles.filter((bundle) => bundle.integrity === "VALID");
   if (requireSignature) errors.push(...signatureErrors(usedBundles));
+  const assurance = usedBundles.length === 0 ? "UNKNOWN"
+    : usedBundles.map((bundle) => bundle.assurance).reduce((low, value) => (assuranceRank(value) < assuranceRank(low) ? value : low));
+  if (minAssurance !== null && assuranceRank(assurance) < assuranceRank(minAssurance)) {
+    errors.push({ code: E_EVIDENCE_ASSURANCE_INSUFFICIENT, message: `Execution assurance ${assurance} is below the required ${minAssurance}`, assurance, required: minAssurance });
+  }
   const status = errors.length === 0 ? "VALID" : "INVALID";
   const level = overallLevel(status, usedBundles);
   return {
@@ -163,6 +189,8 @@ export async function verifyEvidenceRange({
     kind: "forgeloop-evidence-verification",
     status,
     level,
+    assurance,
+    ...(minAssurance !== null ? { minAssurance } : {}),
     revisionProvider: provider.name ?? "unknown",
     baseRevision: baseRevision ?? null,
     headRevision: headRevision ?? null,

@@ -6,7 +6,7 @@
   "required": ["schemaVersion", "protocol", "task", "content", "evidence", "verification"],
   "additionalProperties": false,
   "properties": {
-    "schemaVersion": { "const": 1 },
+    "schemaVersion": { "enum": [1, 2] },
     "protocol": {
       "type": "object",
       "required": ["name", "protocolVersion"],
@@ -54,7 +54,24 @@
       "additionalProperties": false,
       "properties": {
         "completion": { "const": "VALID" },
-        "audit": { "const": "VALID" }
+        "audit": { "const": "VALID" },
+        "checks": {
+          "type": "array",
+          "description": "Predicate schema version 2 only: the latest recorded check per id from the execution receipt.",
+          "items": {
+            "type": "object",
+            "required": ["id", "requirement", "status", "provenance", "exitCode", "argvDigest"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "requirement": { "type": "string", "minLength": 1 },
+              "status": { "enum": ["passed", "failed", "blocked", "not-run"] },
+              "provenance": { "enum": ["FORGELOOP_EXECUTED", "ACTOR_REPORTED", "MANUAL_OBSERVATION", "UNKNOWN"] },
+              "exitCode": { "oneOf": [{ "type": "integer" }, { "type": "null" }] },
+              "argvDigest": { "oneOf": [{ "type": "string", "pattern": "^[a-f0-9]{64}$" }, { "type": "null" }] }
+            }
+          }
+        }
       }
     }
   }

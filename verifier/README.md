@@ -18,11 +18,13 @@ node verifier/forgeloop-verify.mjs --base origin/main --head HEAD
 | `--exclude` | changed path or `dir/**` left out of coverage (repeatable) |
 | `--allow-partial-coverage` | report uncovered paths without failing |
 | `--require-signature` | fail unless every bundle used is signed |
+| `--min-assurance` | fail below this execution assurance: `REPORTED`, `EXECUTED` or `HOST_ATTESTED` |
 | `--json` | print the result as JSON |
 
 It checks bundle integrity, the in-toto statement and its bindings, the code
 manifest, content at the head revision and coverage of every changed path. It
-reports execution assurance from predicate schema version 2. It does **not**
+reports execution assurance from predicate schema version 2 (at most
+`EXECUTED`, since `HOST_ATTESTED` needs a verified CI signature). It does **not**
 verify Sigstore signatures: a signed bundle is reported as
 `SIGNATURE_NOT_VERIFIED`. Verify those with `cosign` or the reference CLI
 (`forgeloop evidence-verify --require-signature`).
