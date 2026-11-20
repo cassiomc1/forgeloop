@@ -11,9 +11,9 @@
   empty. Fixed sleeps became awaited conditions: a real hang for the seed
   watchdog, `fs.rm` retries for transient Windows locks, a lock probe instead
   of a delay, and one shared `tests/helpers/poll.js` for processes that emit
-  no event. `syncDirectory` accepts an optional `openDirectory`, replacing the
-  `node:fs/promises` module mock, and a data field named `retries` is no
-  longer mistaken for a test retry option.
+  no event. Tests pass their own handle to `syncDirectory` instead of
+  mocking `node:fs/promises`, and a data field named `retries` is no longer
+  mistaken for a test retry option.
 
 - Lower the test landmine allowances from 25 to 9. The central test runner
   now gives every test one suite-wide hang bound (`--test-timeout=120000`,
