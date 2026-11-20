@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "release-2.4.0-final",
+  "forgeloopVersion": "2.4.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:release-2.4.0-final\",\n      \"digest\": {\n        \"sha256\": \"4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"release-2.4.0-final\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"3885327bdba7830f2da87d3ef14aa89c299f19108ef27313f05948e6e7bb28c6\",\n      \"contentDigest\": \"4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945\",\n      \"coveredPaths\": []\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"a8a361b7ce4ef7866cbd1ce44f1cb6f75a89f86e0543c957bcceedbcf3d0d1a5\",\n      \"routeFingerprint\": \"d617f76c3e22226ef97774fdf1291061e1fca7d14068965bb4266adc96cc93cd\",\n      \"stateFingerprint\": \"97569126ac0a6d6baa86bf6cc9b6277a73abf47f10df311308e57b8514474232\",\n      \"receiptFingerprint\": \"df9d06a3c41838202055b893f2748a21f8c8d7ad0d904409f6fd695c49ea879a\",\n      \"ledgerSeq\": 37,\n      \"ledgerHash\": \"21cf246ae3a42d026a943efcd82783bb97b5e54867c83577e010bd380ed47363\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "release-2.4.0-final",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "3204e52fbb444cafe362bec9deb7060ee5804371",
+      "observedRevision": "3204e52fbb444cafe362bec9deb7060ee5804371",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/release-2.4.0",
+        "head": "3204e52fbb444cafe362bec9deb7060ee5804371"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "a8a361b7ce4ef7866cbd1ce44f1cb6f75a89f86e0543c957bcceedbcf3d0d1a5",
+      "routeFingerprint": "d617f76c3e22226ef97774fdf1291061e1fca7d14068965bb4266adc96cc93cd",
+      "stateFingerprint": "97569126ac0a6d6baa86bf6cc9b6277a73abf47f10df311308e57b8514474232",
+      "receiptFingerprint": "df9d06a3c41838202055b893f2748a21f8c8d7ad0d904409f6fd695c49ea879a",
+      "ledgerSeq": 37,
+      "ledgerHash": "21cf246ae3a42d026a943efcd82783bb97b5e54867c83577e010bd380ed47363"
+    },
+    "entries": [],
+    "contentDigest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  "manifestFingerprint": "3885327bdba7830f2da87d3ef14aa89c299f19108ef27313f05948e6e7bb28c6",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Record a passing npm run verify:prepush for the committed 2.4.0 release candidate. In task release-2.4.0 it failed only on changelog:check, because an empty Unreleased heading preceded the 2.4.0 section; the release commit now replaces that heading with the 2.4.0 section, as 2.3.1 did.",
+    "successCriteria": [
+      "npm run verify:prepush passes on the 2.4.0 release candidate"
+    ],
+    "checks": [
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-66e435bce9714208",
+        "requirement": "npm run verify:prepush passes on the 2.4.0 release candidate",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-20T00:49:33.155Z",
+    "completedAt": "2026-11-20T01:24:35.765Z",
+    "durationMs": 2102610,
+    "phaseDurationsMs": {
+      "planning": 2853,
+      "executing": 568,
+      "verifying": 2098912,
+      "reviewing": 277
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 3,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "eb459d422df1ac087d63f2ae018018264820d87baf29b809301c87aaf4e0b70e"
+}
