@@ -1,0 +1,235 @@
+# ForgeLoop Protocol — Core Specification 1.0
+
+Status: **Draft**. Protocol version `1`. This document is the normative
+definition of the ForgeLoop core. The `@cassiomc1/forgeloop` CLI is the
+reference implementation; where it and this document disagree, the
+disagreement is a defect in one of them and is resolved here.
+
+Requirement key words in capitals (the RFC 2119 set) are to be read as
+described in RFC 2119 and RFC 8174 when, and only when, they appear in
+capitals.
+
+## 1. Purpose
+
+ForgeLoop makes engineering work done by an agent *verifiable by someone who
+did not watch it happen*. An agent agrees to a contract before it changes
+anything, runs checks whose execution is recorded, and can only declare the
+work complete through a validator. The result is a portable evidence bundle
+that a third party verifies with nothing but the repository checkout.
+
+ForgeLoop is not a scheduler, a transport, a source-control authority or a
+secret manager. It composes with them: MCP or A2A carry the messages, Git (or
+another revision provider) holds the content, Sigstore holds the signing
+identity, and ForgeLoop defines what must be true for "done" to mean done.
+
+## 2. Roles
+
+| Role | Responsibility |
+| --- | --- |
+| **Actor** | The agent (or human) doing the work. Proposes the contract, edits files, requests checks. Never grants itself completion. |
+| **Runtime** | An implementation of this specification. Owns task state, the append-only ledger, check execution records and the completion validator. |
+| **Host** | The environment the runtime runs in: a developer machine, a CI job, a sandbox. A host MAY attest execution (Section 7). |
+| **Verifier** | Anyone who checks an evidence bundle later, without access to the runtime's state. |
+| **Delegator** | An actor that hands a bounded part of its task to another actor and accepts the result only on evidence (Section 8). |
+
+## 3. Core objects
+
+Every object carries `schemaVersion` and `protocolVersion`. JSON Schemas in
+`schemas/` are normative for shape; this section is normative for meaning.
+
+| Object | Schema | Meaning |
+| --- | --- | --- |
+| Task | `task-bundle.schema.json` | One unit of work with a stable `taskId`, its claims on paths, and its phase. |
+| Contract | `current-contract.schema.json` | What the task will deliver, under which constraints, and which verification proves it. |
+| Check | `check.schema.json` | One verification result with its `status`, `evidenceKind` and `provenance`. |
+| Execution receipt | `execution-receipt.schema.json` | The actor's account of the finished work, bound to the contract by fingerprint. |
+| Evidence bundle | `evidence-bundle` (Section 6) | The portable proof: statement, manifest, optional signature, informational summary. |
+| Statement | `in-toto-statement.schema.json` | An in-toto Statement v1 whose predicate is the ForgeLoop attestation. |
+| Task brief | `task-brief.schema.json` | A delegator's bounded assignment to another actor (Section 8). |
+| Delegated result | `delegated-result.schema.json` | The delegate's account of the assignment; never sufficient on its own. |
+
+Fingerprints are lowercase hex SHA-256 over the canonical JSON serialization
+of the object (keys sorted, no insignificant whitespace).
+
+## 4. Lifecycle
+
+A task moves through these phases. Transitions not listed are invalid.
+
+```text
+RECEIVED → DISCOVERING → CONTRACT_READY → ROUTED → (DESIGNING →) PLANNED
+PLANNED → EXECUTING → VERIFYING
+VERIFYING → REVIEWING | DIAGNOSING
+DIAGNOSING → CORRECTING → VERIFYING
+REVIEWING → COMPLETE | CORRECTING | VERIFYING
+any non-terminal phase → BLOCKED
+```
+
+`COMPLETE` and `BLOCKED` are terminal. The **core path** is
+`RECEIVED → … → EXECUTING → VERIFYING → REVIEWING → COMPLETE`; `DESIGNING`,
+`DIAGNOSING` and `CORRECTING` are part of the core state machine but only
+entered when needed.
+
+### 4.1 Invariants
+
+A conforming runtime MUST enforce all of the following. <a id="FL-SPEC-001"></a>
+
+1. **Contract before change.** No phase at or after `EXECUTING` is entered
+   without a persisted contract whose `verification` list is non-empty.
+2. **Claims before change.** A task claims the paths it may change; changes
+   outside the claim are reported as scope violations, not silently included.
+3. **Recorded execution.** A check with provenance `FORGELOOP_EXECUTED` records
+   the exact argv, exit code and timing of a command the runtime itself
+   started. Output the actor merely reports is `ACTOR_REPORTED`.
+4. **Requirement binding.** Every contract verification item is satisfied by
+   at least one check bound to it by requirement. An unbound passing check
+   satisfies nothing.
+5. **Failed checks block.** If the latest check bound to a requirement has
+   status `failed` or `blocked`, completion MUST be rejected. A later passing <a id="FL-SPEC-002"></a>
+   run of the same requirement supersedes the failure; nothing else does.
+6. **Validator-only completion.** `COMPLETE` is reached only when the runtime's
+   completion validator returns `VALID`. An actor MUST NOT write completion <a id="FL-SPEC-003"></a>
+   state directly.
+7. **Append-only history.** Every lifecycle transition and check is appended
+   to a hash-chained ledger. Rewriting history invalidates every later
+   fingerprint.
+8. **No secrets at rest.** Signing keys, tokens and credentials are never
+   persisted in task state or evidence.
+
+### 4.2 Driving the loop
+
+A runtime MUST expose a *next action* operation that, given a task, returns <a id="FL-SPEC-004"></a>
+the single valid next lifecycle action and, when that action is a command,
+the exact argv to run. An actor that follows *next* until a terminal phase
+SHOULD need no other documentation. Runtimes expose it as `forgeloop next`
+and as the MCP tool of the same name.
+
+## 5. Statement and predicate
+
+The signed object is an in-toto Statement v1:
+
+- `_type`: `https://in-toto.io/Statement/v1`
+- `subject`: one entry per covered path, with its SHA-256 digest
+- `predicateType`: `https://forgeloop.dev/attestation/v1`
+- `predicate`: the ForgeLoop attestation
+
+The predicate binds four things:
+
+| Field | Binds |
+| --- | --- |
+| `protocol` | protocol name and version |
+| `task` | `taskId` and verification cycle |
+| `content` | manifest fingerprint, aggregate content digest, covered paths |
+| `evidence` | contract, route, state and receipt fingerprints; ledger sequence and hash |
+| `verification` | completion and audit validation results |
+
+**Predicate schema version 2** adds `verification.checks`: one entry per check
+bound to a contract requirement, with `id`, `requirement`, `status`,
+`provenance`, `exitCode` and `argvDigest` (SHA-256 of the canonical argv, so
+the command is bound without disclosing it). With version 2 a verifier knows
+*what* was checked and *how* without trusting the unsigned summary. Verifiers
+accept predicate schema versions 1 and 2 once version 2 leaves Draft; producers SHOULD emit 2.
+
+Using in-toto means existing supply-chain tooling (cosign, policy engines,
+SLSA verifiers) can store, sign and gate on ForgeLoop evidence without knowing
+ForgeLoop.
+
+## 6. Evidence bundle
+
+A bundle is a JSON file, conventionally `.forgeloop-evidence/<taskId>.json`,
+committed alongside the change it proves.
+
+| Field | Bound | Content |
+| --- | --- | --- |
+| `kind` | — | `forgeloop-evidence-bundle` |
+| `statement.text` | signed | the exact Statement text that is signed |
+| `manifest` | by fingerprint | per-path SHA-256, revisions, bindings |
+| `signature` | — | optional Sigstore bundle over `statement.text` |
+| `summary`, `metrics` | **no** | informational; verifiers MUST NOT base a decision on them | <a id="FL-SPEC-005"></a>
+| `redactions` | — | what was removed before export (argv, output, absolute paths, environment, ledger events) |
+| `digest` | — | SHA-256 of the bundle without `digest` |
+
+A verifier given a revision range MUST check, for every changed path, that <a id="FL-SPEC-006"></a>
+some bundle's statement covers it with a digest equal to the content at the
+head revision. A changed path without such a bundle is a coverage gap.
+
+## 7. Trust levels
+
+Trust has two independent axes. Reports state both; execution assurance is Draft until predicate version 2 ships.
+
+### 7.1 Integrity — can the record be trusted as unmodified?
+
+| Level | Meaning |
+| --- | --- |
+| `PROCESSED` | Parsed, but verification incomplete or failed. |
+| `VERIFIED` | Statement, manifest, bindings and current content all validate. |
+| `ATTESTED` | `VERIFIED` plus a valid signature from a signer the verifier's policy trusts. |
+
+`evidence-verify` reports an unsigned but intact range as `INTEGRITY_ONLY`
+(equivalent to `VERIFIED`) and a signed one as `ATTESTED`.
+
+### 7.2 Execution assurance — who ran the checks?
+
+| Level | Meaning |
+| --- | --- |
+| `REPORTED` | At least one requirement is satisfied only by an `ACTOR_REPORTED` or `MANUAL_OBSERVATION` check. |
+| `EXECUTED` | Every requirement is satisfied by a `FORGELOOP_EXECUTED` check: the runtime started the command and recorded its argv and exit code. |
+| `HOST_ATTESTED` | `EXECUTED`, and the bundle is signed by a workload identity of a host the verifier trusts (for example a CI workflow's OIDC identity), so the execution happened outside the actor's control. |
+
+Execution assurance requires predicate schema version 2; a version-1 predicate
+reports `UNKNOWN`. A verifier policy SHOULD state a minimum on both axes,
+for example `ATTESTED` + `HOST_ATTESTED` for release branches and
+`VERIFIED` + `EXECUTED` for feature branches.
+
+## 8. Delegation
+
+A delegator MAY assign part of its task to another actor with a **task
+brief**: allowed paths, read-only paths, required verification and
+deliverables. The delegate runs its own ForgeLoop task and returns a
+**delegated result** plus its **evidence bundle**.
+
+The delegator SHOULD NOT accept the delegated result on the delegate's word.
+It accepts only when the delegate's bundle verifies and:
+
+1. the bundle's `taskId` equals the brief's `taskId`;
+2. every covered path is inside `allowedPaths` and none is in `readOnlyPaths`;
+3. every brief `verification` item is satisfied by a passing bound check in
+   the predicate (schema version 2);
+4. both trust axes meet the delegator's policy.
+
+ForgeLoop does not schedule the delegate or transport the brief. MCP, A2A or
+any other channel carries them; the evidence is what crosses the trust
+boundary.
+
+## 9. Profiles
+
+Everything outside Sections 3–8 is an optional **profile**. A runtime declares
+the profiles it supports with their versions (`forgeloop protocol-info`).
+Absent profiles are reported `NOT_APPLICABLE`, never silently skipped when the
+contract requires them. Current profiles include: adaptive execution profiles,
+canonical handoffs, continuity, structural quality, durable actions and
+approvals, responsibility constraints, verification scope, repository index,
+semantic decisions, browser verification, usage telemetry, trajectory
+evaluation and cloud sync.
+
+## 10. Conformance
+
+There are two conformance classes.
+
+- **Verifier.** Given the fixtures in `conformance/`, produces the expected
+  status for every case. A verifier needs no runtime state.
+- **Runtime.** Enforces Section 4.1, emits bundles that a conforming verifier
+  accepts, and emits predicate schema version 2.
+
+`npm run conformance` runs the suite against the reference implementation.
+Another implementation conforms when it produces the same statuses on the same
+fixtures. Each case states its input, the expected status and the clause of
+this specification it tests.
+
+## 11. Versioning
+
+- `protocolVersion` changes only for incompatible changes to Sections 3–8.
+- Object `schemaVersion`s change independently; readers MUST reject versions <a id="FL-SPEC-007"></a>
+  they do not know rather than guess.
+- New profiles and new optional fields are compatible changes.
+- The predicate type URI changes only with an incompatible predicate change;
+  additive changes bump the predicate `schemaVersion` instead.

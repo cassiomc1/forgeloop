@@ -32,6 +32,7 @@ Sources: [`DOCS_INDEX.md`](./DOCS_INDEX.md); project facts [`PROJECT_PROFILE.md`
 - **Operational recipes** → [`docs/RECIPES.md`](./docs/RECIPES.md)
 - **Structural quality feedback** → [`docs/STRUCTURAL_QUALITY.md`](./docs/STRUCTURAL_QUALITY.md)
 - **Troubleshooting & error codes** → [`docs/TROUBLESHOOTING.md`](./docs/TROUBLESHOOTING.md)
+- **Protocol specification (normative core, trust levels, conformance)** → [`docs/PROTOCOL_SPEC.md`](./docs/PROTOCOL_SPEC.md)
 - **Code attestation & revision coverage** → [`docs/CODE_ATTESTATION.md`](./docs/CODE_ATTESTATION.md)
 - **Evidence bundles, PR verification and signing** → [`docs/EVIDENCE_BUNDLES.md`](./docs/EVIDENCE_BUNDLES.md) and [`docs/SIGNING_PROVIDERS.md`](./docs/SIGNING_PROVIDERS.md)
 - **Continuing a task on another machine** → [`docs/CLOUD_SYNC.md`](./docs/CLOUD_SYNC.md)

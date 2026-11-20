@@ -552,6 +552,20 @@
       "packageInclusion": "npm"
     },
     {
+      "path": "docs/PROTOCOL_SPEC.md",
+      "status": "reviewed",
+      "action": "new",
+      "sourceOfTruth": [
+        "docs/PROTOCOL_SPEC.md"
+      ],
+      "canonicalSources": [
+        "docs/PROTOCOL_SPEC.md"
+      ],
+      "origin": "handwritten",
+      "currency": "current",
+      "packageInclusion": "npm"
+    },
+    {
       "path": "docs/REVISION_PROVIDERS.md",
       "status": "reviewed",
       "action": "new",
