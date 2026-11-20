@@ -229,6 +229,23 @@ codes on the same fixtures; set `FORGELOOP_CONFORMANCE_VERIFIER` to its argv as
 a JSON array. Each case states its input, the expected status and the clause of
 this specification it tests.
 
+### 10.1 Verifier error codes
+
+Conformance compares error codes as well as status and level, so a verifier
+reports these codes for these conditions.
+
+| Code | Condition |
+| --- | --- |
+| `E_EVIDENCE_BUNDLE_INVALID` | The bundle is not valid JSON, has an unknown kind or version, does not match its file name, or its digest or manifest fingerprint does not match its content. |
+| `E_ATTESTATION_STATEMENT_INVALID` | The statement is not an in-toto Statement v1 with the ForgeLoop predicate type, or the predicate is malformed. |
+| `E_ATTESTATION_SUBJECT_MISMATCH` | The subject does not name the task or carry the content digest, or the statement does not bind the bundle's manifest. |
+| `E_ATTESTATION_SCOPE_MISMATCH` | The statement's task, verification cycle or covered paths differ from the manifest. |
+| `E_ATTESTATION_MANIFEST_INVALID` | Manifest entries are unsorted or duplicated, or the manifest content digest does not match its entries. |
+| `E_ATTESTATION_CONTRACT_MISMATCH`, `E_ATTESTATION_ROUTE_MISMATCH`, `E_ATTESTATION_STATE_MISMATCH`, `E_ATTESTATION_RECEIPT_MISMATCH`, `E_ATTESTATION_LEDGER_MISMATCH` | The statement's evidence fingerprint differs from the manifest binding of the same name. |
+| `E_ATTESTATION_CONTENT_MISMATCH` | An entry does not match the content at the head revision and no other bundle covers that path. |
+| `E_ATTESTATION_COVERAGE_GAP` | A changed path is covered by no intact, matching bundle. |
+| `E_ATTESTATION_UNSIGNED` | A signature is required and a bundle used has none. |
+
 ## 11. Versioning
 
 - `protocolVersion` changes only for incompatible changes to Sections 3–8.

@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "protocol-error-codes",
+  "forgeloopVersion": "2.4.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:protocol-error-codes\",\n      \"digest\": {\n        \"sha256\": \"650a02a6a8f421934ae6257423502d3608ac34c4125b687614ce0706c3ad7b96\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"protocol-error-codes\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"024927ce88fa4d74939bfd8674baada25fcc89c8b10e93c25a2651ce05dc50b4\",\n      \"contentDigest\": \"650a02a6a8f421934ae6257423502d3608ac34c4125b687614ce0706c3ad7b96\",\n      \"coveredPaths\": [\n        \"docs/PROTOCOL_SPEC.md\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"ae897669fd8518d1401a3a544e71a7044c2e1c3d2420e29c2bd9399cecc99af5\",\n      \"routeFingerprint\": \"bb69446f3a6593bde5847d3f9230fa8a69b4693d78b1278b58a5a168c3709aab\",\n      \"stateFingerprint\": \"2ee6826b0a6dc59b4a9b3343dbd130d1e89ab2cd7e64a9918252b22bbea78756\",\n      \"receiptFingerprint\": \"91cf3e2eeeb9431b5bcf4b80ba6256accf2200b7f6ff66786fb79ba7cf0e8114\",\n      \"ledgerSeq\": 40,\n      \"ledgerHash\": \"b27e03ddd9516b40c3c75f0067d3b2ecc1a5d42d8ef9deabe87b604073ec4c17\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "protocol-error-codes",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "9950a79a24b6953ee9332bacdad43fbce428acb8",
+      "observedRevision": "9950a79a24b6953ee9332bacdad43fbce428acb8",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/protocol-open-verifier",
+        "head": "9950a79a24b6953ee9332bacdad43fbce428acb8"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "ae897669fd8518d1401a3a544e71a7044c2e1c3d2420e29c2bd9399cecc99af5",
+      "routeFingerprint": "bb69446f3a6593bde5847d3f9230fa8a69b4693d78b1278b58a5a168c3709aab",
+      "stateFingerprint": "2ee6826b0a6dc59b4a9b3343dbd130d1e89ab2cd7e64a9918252b22bbea78756",
+      "receiptFingerprint": "91cf3e2eeeb9431b5bcf4b80ba6256accf2200b7f6ff66786fb79ba7cf0e8114",
+      "ledgerSeq": 40,
+      "ledgerHash": "b27e03ddd9516b40c3c75f0067d3b2ecc1a5d42d8ef9deabe87b604073ec4c17"
+    },
+    "entries": [
+      {
+        "path": "docs/PROTOCOL_SPEC.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "2c63d110752c0984a1a99b3d74ffc2755ef7e65d7918ca6b2e65b88c579e0aaa",
+        "providerContentId": "a282b1f41e1a92c0fe1d279b12f3479e2008eea2",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "650a02a6a8f421934ae6257423502d3608ac34c4125b687614ce0706c3ad7b96"
+  },
+  "manifestFingerprint": "024927ce88fa4d74939bfd8674baada25fcc89c8b10e93c25a2651ce05dc50b4",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Specify the verifier error codes in docs/PROTOCOL_SPEC.md Section 10, since conformance compares them across implementations, and bring docs/PROTOCOL_SPEC.md under evidence for PR #276 after its rebase onto the table fix.",
+    "successCriteria": [
+      "docs/PROTOCOL_SPEC.md lists every verifier error code used by the conformance suite"
+    ],
+    "checks": [
+      {
+        "id": "codes-exist",
+        "requirement": "Every error code listed in docs/PROTOCOL_SPEC.md Section 10 exists in src/core/error-codes.js and every code expected by conformance/cases.json is listed",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-1a36d63037589ec9",
+        "requirement": "docs/PROTOCOL_SPEC.md lists every verifier error code used by the conformance suite",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verifier-conformance",
+        "requirement": "node --test tests/verifier-conformance.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-20T14:04:45.389Z",
+    "completedAt": "2026-11-20T14:13:24.990Z",
+    "durationMs": 519601,
+    "phaseDurationsMs": {
+      "planning": 2720,
+      "executing": 19832,
+      "verifying": 496780,
+      "reviewing": 269
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "f534b53990de29eb261a0e1e20255e9345b64f06b466170a25d4f4c4467cda16"
+}
