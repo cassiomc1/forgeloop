@@ -158,7 +158,7 @@ _forgeloop() {
     complete) COMPREPLY=( $(compgen -W '--help --json --path --strict --task --version' -- "$cur") );;
     context-plan) COMPREPLY=( $(compgen -W '--decision --help --json --path --profile --task --version' -- "$cur") );;
     continuity) COMPREPLY=( $(compgen -W '--help --json --path --task --version' -- "$cur") );;
-    contract-create) COMPREPLY=( $(compgen -W '--contract-file --help --json --path --preset --task --version' -- "$cur") );;
+    contract-create) COMPREPLY=( $(compgen -W '--contract-file --from-ticket --help --json --path --preset --task --version' -- "$cur") );;
     contract-revise) COMPREPLY=( $(compgen -W '--contract-file --help --json --path --preset --task --version' -- "$cur") );;
     decision-show) COMPREPLY=( $(compgen -W '--decision --help --json --path --task --version' -- "$cur") );;
     decision-status) COMPREPLY=( $(compgen -W '--health --help --json --path --version' -- "$cur") );;

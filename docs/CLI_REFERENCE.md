@@ -1245,6 +1245,7 @@ Persists a validated contract and materializes the first real lifecycle checkpoi
 - `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
 - `--contract-file <path>`: validated JSON contract relative to the target
 - `--preset <name>`: bounded contract preset: documentation, bug, feature, or release
+- `--from-ticket <source:id>`: the contract approved in ForgeLoop Cloud for this ticket (needs FORGELOOP_CLOUD_TOKEN)
 - `--json`: emit structured contract output as JSON
 
 <!-- END FORGELOOP GENERATED: cli:contract-create:options -->

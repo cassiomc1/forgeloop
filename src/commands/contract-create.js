@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 
 import { createPresetContract } from "../core/contract-presets.js";
+import { fetchApprovedTicketContract } from "../core/ticket-contract.js";
 import { contractFingerprint, readContract, validateContract, writeContract } from "../core/contract.js";
 import { appendProtocolEvent, readEvents, validateEventLedger } from "../core/events.js";
 import { isContractBootstrapRepairCandidate } from "../core/contract-bootstrap-recovery.js";
@@ -125,9 +126,13 @@ async function reconstructFromExistingContract(target, packageRoot, taskId, requ
   };
 }
 
-export async function runContractCreate({ target, packageRoot, taskId, task, contractFile = null, preset = null, semanticProvider = null } = {}) {
-  if (!preset && !contractFile) throw new Error("contract-create requires --preset or --contract-file");
-  if (preset && contractFile) throw new Error("contract-create accepts either --preset or --contract-file, not both");
+export async function runContractCreate({ target, packageRoot, taskId, task, contractFile = null, preset = null, fromTicket = null, semanticProvider = null, env = process.env, fetchImpl = fetch } = {}) {
+  const sources = [preset, contractFile, fromTicket].filter(Boolean).length;
+  if (sources === 0) throw new Error("contract-create requires --preset, --contract-file or --from-ticket");
+  if (sources > 1) throw new Error("contract-create accepts one of --preset, --contract-file or --from-ticket");
+  // The approved Cloud contract is fetched before the task transaction, so no
+  // network call happens while the task is locked.
+  const ticket = fromTicket ? await fetchApprovedTicketContract(fromTicket, { env, fetchImpl }) : null;
 
   const effectiveTaskId = taskId ?? task;
   const hasCanonicalContract = await hasValidatedContractHistory(target, packageRoot, effectiveTaskId);
@@ -198,7 +203,15 @@ export async function runContractCreate({ target, packageRoot, taskId, task, con
         }
 
         let requestedFingerprint = null;
-        if (contractFile) {
+        if (ticket) {
+          try {
+            const candidate = { ...ticket.contract, taskId: ctx.taskId };
+            await validateContract(candidate, packageRoot);
+            requestedFingerprint = contractFingerprint(candidate);
+          } catch {
+            requestedFingerprint = undefined;
+          }
+        } else if (contractFile) {
           const source = ensureWithin(target, contractFile);
           if (await fileExists(source).catch(() => false)) {
             try {
@@ -225,6 +238,8 @@ export async function runContractCreate({ target, packageRoot, taskId, task, con
     let contract;
     if (preset) {
       contract = createPresetContract({ taskId: ctx.taskId, preset, claims: ctx.descriptor.writeClaims });
+    } else if (ticket) {
+      contract = { ...ticket.contract, taskId: ctx.taskId };
     } else {
       const source = ensureWithin(target, contractFile);
       if (!(await fileExists(source))) throw new Error(`Specified contract file not found: ${contractFile}`);

@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Ticket contracts: `contract-create --task <id> --from-ticket <source:id>`
+  starts a task from the contract a team approved in ForgeLoop Cloud for a
+  ticket from any tracker (for example `linear:ENG-42` or
+  `github:acme/app#12`). It authenticates with the team's Cloud MCP token in
+  `FORGELOOP_CLOUD_TOKEN` (read scope), refuses proposals that are not yet
+  approved (`E_TICKET_CONTRACT_NOT_APPROVED`) and validates the contract like
+  a contract file. The token is never written to state or output.
 - Delegation: `evidence-verify --brief <task-brief.json>` accepts a
   delegate's work only on evidence. It fails with
   `E_DELEGATION_EVIDENCE_MISSING`, `E_DELEGATION_SCOPE_VIOLATION` or
