@@ -17,8 +17,8 @@ import { removeTempTree } from "./helpers/rm-safe.js";
 // the task's contract (contract-create --from-ticket).
 
 const packageRoot = getPackageRoot();
-const TOKEN = `flmcp_${"a".repeat(64)}`;
-const env = { FORGELOOP_CLOUD_TOKEN: TOKEN };
+const TEAM_TOKEN = `flmcp_${"a".repeat(64)}`;
+const env = { FORGELOOP_CLOUD_TOKEN: TEAM_TOKEN };
 const approvedContract = {
   schemaVersion: 1,
   protocolVersion: 1,
@@ -50,7 +50,7 @@ test("the approved contract is fetched with the team token and bound to its tick
   const server = cloud(stored());
   const result = await fetchApprovedTicketContract("linear:ENG-42", { env, fetchImpl: server.fetchImpl });
   assert.equal(server.requests[0].url, "https://forgeloop.monster/api/contracts?key=linear%3AENG-42");
-  assert.equal(server.requests[0].authorization, `Bearer ${TOKEN}`);
+  assert.equal(server.requests[0].authorization, `Bearer ${TEAM_TOKEN}`);
   assert.equal(result.approvedBy, "alice@acme.com");
   assert.deepEqual(result.contract.sourceRefs, ["linear:ENG-42", "https://linear.app/acme/issue/ENG-42"]);
 });

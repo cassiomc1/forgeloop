@@ -35,13 +35,13 @@ async function approvedRecord(response, key) {
 
 export async function fetchApprovedTicketContract(key, { env = process.env, fetchImpl = fetch } = {}) {
   if (typeof key !== "string" || !KEY.test(key)) throw unavailable(`--from-ticket must be a ticket key "source:externalId", for example linear:ENG-42 (got ${key})`);
-  const token = env.FORGELOOP_CLOUD_TOKEN ?? "";
-  if (!/^[A-Za-z0-9._~+/-]{32,512}$/u.test(token)) throw unavailable("FORGELOOP_CLOUD_TOKEN must be set to a ForgeLoop Cloud MCP token for your team");
+  const cloudToken = env.FORGELOOP_CLOUD_TOKEN ?? "";
+  if (!/^[A-Za-z0-9._~+/-]{32,512}$/u.test(cloudToken)) throw unavailable("FORGELOOP_CLOUD_TOKEN must be set to a ForgeLoop Cloud MCP token for your team");
   const base = resolveCloudUrl(env.FORGELOOP_CLOUD_URL);
   let response;
   try {
     response = await fetchImpl(`${base}/api/contracts?key=${encodeURIComponent(key)}`, {
-      headers: { authorization: `Bearer ${token}`, accept: "application/json" },
+      headers: { authorization: `Bearer ${cloudToken}`, accept: "application/json" },
       signal: globalThis.AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     });
   } catch (error) {
