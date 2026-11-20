@@ -1,7 +1,13 @@
 # Changelog
 
-## Unreleased
+## 2.5.0 - 2026-11-20
 
+- Minor release. Its runtime change is bound by
+  `benchmarks/storage-sqlite/stable-2.5.0-writer-review.json.gz`, a delta
+  review against 2.4.0: three changed filesystem modules with dispositions,
+  one new module with no filesystem access (`src/core/ticket-contract.js`) and
+  one added binding, a confined read of a delegation brief. No write path is
+  added.
 - Ticket contracts: `contract-create --task <id> --from-ticket <source:id>`
   starts a task from the contract a team approved in ForgeLoop Cloud for a
   ticket from any tracker (for example `linear:ENG-42` or
