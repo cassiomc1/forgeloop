@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "lychee-api-exclusion",
+  "parentTaskId": "release-coordinator",
+  "objective": "Exclude the API endpoint from the link check",
+  "allowedPaths": [
+    ".lychee.toml"
+  ],
+  "readOnlyPaths": [
+    "docs"
+  ],
+  "dependencies": [],
+  "constraints": [],
+  "requiredGuides": [],
+  "verification": [
+    "tests",
+    "npm run e2e passes"
+  ],
+  "authority": [],
+  "deliverables": [
+    ".lychee.toml"
+  ],
+  "executionMode": "delegated"
+}

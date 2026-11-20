@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "taskId": "another-delegate",
+  "parentTaskId": "release-coordinator",
+  "objective": "Exclude the API endpoint from the link check",
+  "allowedPaths": [
+    ".lychee.toml"
+  ],
+  "readOnlyPaths": [
+    "docs"
+  ],
+  "dependencies": [],
+  "constraints": [],
+  "requiredGuides": [],
+  "verification": [
+    "tests"
+  ],
+  "authority": [],
+  "deliverables": [
+    ".lychee.toml"
+  ],
+  "executionMode": "delegated"
+}

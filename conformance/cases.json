@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "spec": "docs/PROTOCOL_SPEC.md",
   "conformanceClass": "verifier",
-  "description": "Each case builds a two-commit Git repository from a fixture, applies one mutation, runs the verifier over base..head and compares status, level and error codes. Cases with \"reseal\" recompute the manifest fingerprint and bundle digest after mutating, so only deeper checks can catch them. When a case expects \"assurance\", the execution assurance must match too.",
+  "description": "Each case builds a two-commit Git repository from a fixture, applies one mutation, runs the verifier over base..head and compares status, level and error codes. Cases with \"reseal\" recompute the manifest fingerprint and bundle digest after mutating, so only deeper checks can catch them. When a case expects \"assurance\", the execution assurance must match too. Cases with \"brief\" verify the range as the delivery for that task brief (spec Section 8).",
   "cases": [
     {
       "id": "valid-unsigned",
@@ -374,6 +374,104 @@
         "errorCodes": [
           "E_ATTESTATION_COVERAGE_GAP",
           "E_ATTESTATION_STATEMENT_INVALID"
+        ]
+      }
+    },
+    {
+      "id": "delegation-accepted",
+      "clause": "8",
+      "fixture": "single-file-v2",
+      "brief": "briefs/accepted.json",
+      "mutations": [],
+      "args": [],
+      "expect": {
+        "status": "VALID",
+        "level": "INTEGRITY_ONLY",
+        "errorCodes": []
+      }
+    },
+    {
+      "id": "delegation-scope-violation",
+      "clause": "8",
+      "fixture": "single-file-v2",
+      "brief": "briefs/scope-violation.json",
+      "mutations": [],
+      "args": [],
+      "expect": {
+        "status": "INVALID",
+        "level": "NONE",
+        "errorCodes": [
+          "E_DELEGATION_SCOPE_VIOLATION"
+        ]
+      }
+    },
+    {
+      "id": "delegation-verification-unmet",
+      "clause": "8",
+      "fixture": "single-file-v2",
+      "brief": "briefs/verification-unmet.json",
+      "mutations": [],
+      "args": [],
+      "expect": {
+        "status": "INVALID",
+        "level": "NONE",
+        "errorCodes": [
+          "E_DELEGATION_VERIFICATION_UNMET"
+        ]
+      }
+    },
+    {
+      "id": "delegation-evidence-missing",
+      "clause": "8",
+      "fixture": "single-file-v2",
+      "brief": "briefs/evidence-missing.json",
+      "mutations": [],
+      "args": [],
+      "expect": {
+        "status": "INVALID",
+        "level": "NONE",
+        "errorCodes": [
+          "E_DELEGATION_EVIDENCE_MISSING"
+        ]
+      }
+    },
+    {
+      "id": "delegation-v1-cannot-prove-verification",
+      "clause": "5, 8",
+      "fixture": "single-file",
+      "brief": "../single-file-v2/briefs/accepted.json",
+      "mutations": [],
+      "args": [],
+      "expect": {
+        "status": "INVALID",
+        "level": "NONE",
+        "errorCodes": [
+          "E_DELEGATION_VERIFICATION_UNMET"
+        ]
+      }
+    },
+    {
+      "id": "delegation-with-assurance-floor",
+      "clause": "7.2, 8",
+      "fixture": "single-file-v2",
+      "brief": "briefs/accepted.json",
+      "reseal": true,
+      "mutations": [
+        {
+          "type": "edit-statement",
+          "find": "\"provenance\": \"FORGELOOP_EXECUTED\"",
+          "replace": "\"provenance\": \"ACTOR_REPORTED\""
+        }
+      ],
+      "args": [
+        "--min-assurance",
+        "EXECUTED"
+      ],
+      "expect": {
+        "status": "INVALID",
+        "level": "NONE",
+        "errorCodes": [
+          "E_EVIDENCE_ASSURANCE_INSUFFICIENT"
         ]
       }
     }

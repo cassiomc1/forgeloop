@@ -19,6 +19,7 @@ node verifier/forgeloop-verify.mjs --base origin/main --head HEAD
 | `--allow-partial-coverage` | report uncovered paths without failing |
 | `--require-signature` | fail unless every bundle used is signed |
 | `--min-assurance` | fail below this execution assurance: `REPORTED`, `EXECUTED` or `HOST_ATTESTED` |
+| `--brief` | verify the range as the delivery for this task brief (delegation, spec Section 8) |
 | `--json` | print the result as JSON |
 
 It checks bundle integrity, the in-toto statement and its bindings, the code

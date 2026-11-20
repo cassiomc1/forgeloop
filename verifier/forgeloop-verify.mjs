@@ -13,10 +13,12 @@
 //
 // Usage: forgeloop-verify --base <rev> --head <rev> [--path <dir>] [--dir <evidence dir>]
 //          [--exclude <path or dir/**>]... [--allow-partial-coverage] [--require-signature]
-//          [--min-assurance REPORTED|EXECUTED|HOST_ATTESTED] [--json]
+//          [--min-assurance REPORTED|EXECUTED|HOST_ATTESTED] [--brief <task-brief.json>] [--json]
 
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 const STATEMENT_TYPE = "https://in-toto.io/Statement/v1";
 const PREDICATE_TYPE = "https://forgeloop.dev/attestation/v1";
@@ -40,7 +42,7 @@ const sha256 = (data) => createHash("sha256").update(data).digest("hex");
 const fingerprint = (value) => sha256(JSON.stringify(canonicalize(value)));
 
 function parseArgs(argv) {
-  const options = { path: ".", dir: ".forgeloop-evidence", exclude: [], allowPartial: false, requireSignature: false, minAssurance: null, json: false };
+  const options = { path: ".", dir: ".forgeloop-evidence", exclude: [], allowPartial: false, requireSignature: false, minAssurance: null, brief: null, json: false };
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
     const next = () => { index += 1; if (index >= argv.length) throw new Error(`${arg} needs a value`); return argv[index]; };
@@ -52,6 +54,7 @@ function parseArgs(argv) {
     else if (arg === "--allow-partial-coverage") options.allowPartial = true;
     else if (arg === "--require-signature") options.requireSignature = true;
     else if (arg === "--min-assurance") options.minAssurance = next();
+    else if (arg === "--brief") options.brief = next();
     else if (arg === "--json") options.json = true;
     else if (arg === "--help" || arg === "-h") options.help = true;
     else throw new Error(`Unknown option: ${arg}`);
@@ -186,7 +189,34 @@ function executionAssurance(predicate) {
 
 const ASSURANCE = ["UNKNOWN", "REPORTED", "EXECUTED", "HOST_ATTESTED"];
 
-export function verifyRange({ path = ".", base, head, dir = ".forgeloop-evidence", exclude = [], allowPartial = false, requireSignature = false, minAssurance = null } = {}) {
+// Section 8: a task brief names the delegated task, the paths it may change
+// and the verification it owes.
+function readBrief(root, briefPath) {
+  let brief;
+  try { brief = JSON.parse(readFileSync(join(root, briefPath), "utf8")); } catch (error) { fail("E_DELEGATION_BRIEF_INVALID", `Task brief ${briefPath} cannot be read: ${error.message}`); }
+  const strings = (value) => Array.isArray(value) && value.every((item) => typeof item === "string" && item.length > 0);
+  require(typeof brief?.taskId === "string" && strings(brief.allowedPaths) && strings(brief.readOnlyPaths) && strings(brief.verification) && brief.verification.length > 0,
+    "E_DELEGATION_BRIEF_INVALID", `Task brief ${briefPath} is missing taskId, allowedPaths, readOnlyPaths or verification`);
+  const paths = (list) => list.map((item) => normalize(item).replace(/\/+$/u, ""));
+  return { taskId: brief.taskId, allowedPaths: paths(brief.allowedPaths), readOnlyPaths: paths(brief.readOnlyPaths), verification: brief.verification };
+}
+
+const within = (value, root) => value === root || value.startsWith(`${root}/`);
+
+function delegationErrors(brief, bundles) {
+  const bundle = bundles.find((item) => item.taskId === brief.taskId && item.integrity === "VALID");
+  if (!bundle) return [{ code: "E_DELEGATION_EVIDENCE_MISSING", taskId: brief.taskId, message: `No intact evidence bundle for delegated task ${brief.taskId} in the range` }];
+  const errors = [];
+  const offending = [...new Set(bundle.coveredPaths.filter((value) => !brief.allowedPaths.some((root) => within(value, root)) || brief.readOnlyPaths.some((root) => within(value, root))))].sort();
+  if (offending.length > 0) errors.push({ code: "E_DELEGATION_SCOPE_VIOLATION", taskId: brief.taskId, paths: offending, message: `Delegated task ${brief.taskId} changed paths outside its brief: ${offending.join(", ")}` });
+  const passed = (bundle.checks ?? []).filter((check) => check.status === "passed");
+  const unmet = brief.verification.filter((item) => !passed.some((check) => check.requirement === item || check.id === item));
+  if (unmet.length > 0) errors.push({ code: "E_DELEGATION_VERIFICATION_UNMET", taskId: brief.taskId, requirements: unmet, message: `Delegated task ${brief.taskId} has no passing bound check for: ${unmet.join("; ")}` });
+  return errors;
+}
+
+export function verifyRange({ path = ".", base, head, dir = ".forgeloop-evidence", exclude = [], allowPartial = false, requireSignature = false, minAssurance = null, brief = null } = {}) {
+  const delegationBrief = brief ? readBrief(path, brief) : null;
   if (minAssurance !== null && !ASSURANCE.includes(minAssurance)) throw new Error(`Unknown execution assurance: ${minAssurance}`);
   const git = gitClient(path);
   const baseRevision = git.resolve(base);
@@ -207,6 +237,8 @@ export function verifyRange({ path = ".", base, head, dir = ".forgeloop-evidence
       record.integrity = "VALID";
       record.signature = { status: bundle.signature ? "SIGNATURE_NOT_VERIFIED" : "UNSIGNED" };
       record.assurance = executionAssurance(predicate);
+      record.coveredPaths = predicate.content.coveredPaths.map(normalize);
+      record.checks = Array.isArray(predicate.verification.checks) ? predicate.verification.checks : null;
     } catch (error) {
       if (!(error instanceof VerifyError)) throw error;
       record.error = { code: error.code, message: error.message };
@@ -245,6 +277,8 @@ export function verifyRange({ path = ".", base, head, dir = ".forgeloop-evidence
   if (minAssurance !== null && ASSURANCE.indexOf(assurance) < ASSURANCE.indexOf(minAssurance)) {
     errors.push({ code: "E_EVIDENCE_ASSURANCE_INSUFFICIENT", message: `Execution assurance ${assurance} is below the required ${minAssurance}`, assurance, required: minAssurance });
   }
+  const delegation = delegationBrief ? delegationErrors(delegationBrief, bundles) : null;
+  if (delegation) errors.push(...delegation);
   const status = errors.length === 0 ? "VALID" : "INVALID";
   return {
     schemaVersion: 1,
@@ -253,13 +287,14 @@ export function verifyRange({ path = ".", base, head, dir = ".forgeloop-evidence
     status,
     level: status === "VALID" ? "INTEGRITY_ONLY" : "NONE",
     assurance,
+    ...(delegationBrief ? { delegation: { taskId: delegationBrief.taskId, status: delegation.length === 0 ? "ACCEPTED" : "REJECTED" } } : {}),
     baseRevision,
     headRevision,
     evidenceDirectory: directory,
     changedPaths: changedPaths.length,
     coveredPaths: changedPaths.length - uncoveredPaths.length,
     uncoveredPaths,
-    bundles: bundles.map(({ entries, ...bundle }) => ({ ...bundle, entries: entries.length, matchingEntries: entries.filter((entry) => entry.matches).length })),
+    bundles: bundles.map(({ entries, coveredPaths: _coveredPaths, checks: _checks, ...bundle }) => ({ ...bundle, entries: entries.length, matchingEntries: entries.filter((entry) => entry.matches).length })),
     errors,
   };
 }
@@ -269,7 +304,7 @@ if (isMain) {
   let options;
   try { options = parseArgs(process.argv.slice(2)); } catch (error) { console.error(error.message); process.exit(2); }
   if (options.help || !options.base || !options.head) {
-    console.log("Usage: forgeloop-verify --base <rev> --head <rev> [--path <dir>] [--dir <evidence dir>] [--exclude <path>]... [--allow-partial-coverage] [--require-signature] [--min-assurance <level>] [--json]");
+    console.log("Usage: forgeloop-verify --base <rev> --head <rev> [--path <dir>] [--dir <evidence dir>] [--exclude <path>]... [--allow-partial-coverage] [--require-signature] [--min-assurance <level>] [--brief <task-brief.json>] [--json]");
     process.exit(options.help ? 0 : 2);
   }
   const result = verifyRange(options);
