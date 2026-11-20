@@ -162,6 +162,12 @@
       "statement": "A verifier given a minimum execution assurance MUST fail a range that falls below it.",
       "tests": ["tests/verifier-conformance.test.js"],
       "validator": "src/core/evidence/verify.js"
+    },
+    "FL-SPEC-012": {
+      "source": "docs/PROTOCOL_SPEC.md",
+      "statement": "A verifier given a task brief MUST reject a delivery with missing evidence, a scope violation or unmet brief verification.",
+      "tests": ["tests/delegation-evidence.test.js", "tests/verifier-conformance.test.js"],
+      "validator": "src/core/evidence/verify.js"
     }
   }
 }

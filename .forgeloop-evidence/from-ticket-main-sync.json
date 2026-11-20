@@ -1,0 +1,386 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "from-ticket-main-sync",
+  "forgeloopVersion": "2.4.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:from-ticket-main-sync\",\n      \"digest\": {\n        \"sha256\": \"f55d07927f7911141ba244581cc7367fd9b2a0817909eddb9af348007104d1ed\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 2,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"from-ticket-main-sync\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"46442a143576e87019409a71a927fafb02428c65b1d233ad44abe8faf5a2156e\",\n      \"contentDigest\": \"f55d07927f7911141ba244581cc7367fd9b2a0817909eddb9af348007104d1ed\",\n      \"coveredPaths\": [\n        \".forgeloop-evidence/delegation-evidence-verify.json\",\n        \"CHANGELOG.md\",\n        \"DELEGATION_PROTOCOL.md\",\n        \"completions/_forgeloop\",\n        \"completions/forgeloop.bash\",\n        \"completions/forgeloop.fish\",\n        \"conformance/cases.json\",\n        \"conformance/fixtures/single-file-v2/briefs/accepted.json\",\n        \"conformance/fixtures/single-file-v2/briefs/evidence-missing.json\",\n        \"conformance/fixtures/single-file-v2/briefs/scope-violation.json\",\n        \"conformance/fixtures/single-file-v2/briefs/verification-unmet.json\",\n        \"docs/CLI_REFERENCE.md\",\n        \"docs/EVIDENCE_BUNDLES.md\",\n        \"docs/PROTOCOL_SPEC.md\",\n        \"docs/TROUBLESHOOTING.md\",\n        \"docs/protocol-requirements.json\",\n        \"scripts/run-conformance.mjs\",\n        \"src/commands/evidence-verify.js\",\n        \"src/core/cli-command-definitions.js\",\n        \"src/core/error-codes.js\",\n        \"src/core/evidence/verify.js\",\n        \"tests/contract-from-ticket.test.js\",\n        \"tests/delegation-evidence.test.js\",\n        \"verifier/README.md\",\n        \"verifier/forgeloop-verify.mjs\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"af3af2658be08845b70166d26540a225bc1dd94d35b6515c9f68867d1845ad9e\",\n      \"routeFingerprint\": \"2803cdfb506b231c50625b1c5a4915544f0bab6957966e6064f3368dbb48921f\",\n      \"stateFingerprint\": \"1e974bdc6f19b1600b50d63b88718ec95e70c2ab327d705cb04f3f7c939b2aa9\",\n      \"receiptFingerprint\": \"ac299ff790e8611487150800f2b8c32ac21acb1c32bba6dd894816d838601018\",\n      \"ledgerSeq\": 46,\n      \"ledgerHash\": \"31e82f8fd7cf59e0aea3a60ed6ec2add067874f4d8e1930813b9c2d42a9681dd\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\",\n      \"checks\": [\n        {\n          \"id\": \"docs-check\",\n          \"requirement\": \"npm run docs:check passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"90feade86f0fe5eeb934e3ec3eefe02bc9660d41d14310d2c80be18ca5254976\"\n        },\n        {\n          \"id\": \"merged-tests\",\n          \"requirement\": \"node --test tests/contract-from-ticket.test.js tests/delegation-evidence.test.js tests/verifier-conformance.test.js passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"3142d85f24d3a2f40042a700d07eccfdc57d22a75eda00c296dc6d92872a9304\"\n        },\n        {\n          \"id\": \"requirement-4f8655812cd04d8f\",\n          \"requirement\": \"The test asserts the exact persisted sourceRefs\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"4cf9020a5c040d66751f5e16cf061d75b2370c2594c0f5007cb4299f90340414\"\n        },\n        {\n          \"id\": \"requirement-59830ebc3a418411\",\n          \"requirement\": \"tests\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"5730e2a87ecd718b046cc9bd54056300f5712eb2ea3f77adc925f53c26b76226\"\n        },\n        {\n          \"id\": \"requirement-6eb6dac7baf90f20\",\n          \"requirement\": \"Both the delegation and ticket-contract changes are intact after the merge\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"4cf9020a5c040d66751f5e16cf061d75b2370c2594c0f5007cb4299f90340414\"\n        },\n        {\n          \"id\": \"verify-fast\",\n          \"requirement\": \"npm run verify:fast passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"5730e2a87ecd718b046cc9bd54056300f5712eb2ea3f77adc925f53c26b76226\"\n        }\n      ]\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "from-ticket-main-sync",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "eac9532932c36804ab664ba2b795b5d2d742ba7c",
+      "observedRevision": "eac9532932c36804ab664ba2b795b5d2d742ba7c",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/contract-from-ticket",
+        "head": "eac9532932c36804ab664ba2b795b5d2d742ba7c"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "af3af2658be08845b70166d26540a225bc1dd94d35b6515c9f68867d1845ad9e",
+      "routeFingerprint": "2803cdfb506b231c50625b1c5a4915544f0bab6957966e6064f3368dbb48921f",
+      "stateFingerprint": "1e974bdc6f19b1600b50d63b88718ec95e70c2ab327d705cb04f3f7c939b2aa9",
+      "receiptFingerprint": "ac299ff790e8611487150800f2b8c32ac21acb1c32bba6dd894816d838601018",
+      "ledgerSeq": 46,
+      "ledgerHash": "31e82f8fd7cf59e0aea3a60ed6ec2add067874f4d8e1930813b9c2d42a9681dd"
+    },
+    "entries": [
+      {
+        "path": ".forgeloop-evidence/delegation-evidence-verify.json",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "0de8e45cb08127d00e31ceec991dc90f05a1aae77126c38be95b667b105fd44d",
+        "providerContentId": "4fb127786c2a60d7265fe76aa1d5f40dfa8961c2",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "cf0990038e3916c748374744f520abf8132dadef0fdcb8ec2cc130d00cf33807",
+        "providerContentId": "b60b05076a8fcc3eed5d8544fc235b01c45afd45",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "completions/_forgeloop",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "7c09592aa3207bf71079a5aaf0a2f761e31ddae743686a0a562e81a9a1c8f835",
+        "providerContentId": "4a3f35b252e9877d16e49d46376318a455c37998",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "completions/forgeloop.bash",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "6118d80e772d143ef867250b43820940ffdd324781adb3bc12900f240a21c45b",
+        "providerContentId": "9041372e393a712f81387a8e103ba1dd53082e0c",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "completions/forgeloop.fish",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "6f62ed827ebf232a250dba7e71834837eabed57470553dba758761d5b8bb8dec",
+        "providerContentId": "ce0c71169d2c8cac8b02bce2844454cce28b2c86",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "conformance/cases.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "ee5eef059438aa432255e67e8b18d8154e5cb7ea78e8a95b46a98daebdf48264",
+        "providerContentId": "054302e4f3b07d93571639bbc8910c973ffcd8c4",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "conformance/fixtures/single-file-v2/briefs/accepted.json",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "82acfc9e8d6e8dbca273208222f02db765cce4715d512b18477ad256be93852d",
+        "providerContentId": "1b0c59600a984e91d362d4067ee0ce1f1eb5fe78",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "conformance/fixtures/single-file-v2/briefs/evidence-missing.json",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "f660e64ec82f9cda829f5dee5cb0e84b5e2ee09e48a6286ffc8ff194e3461a5f",
+        "providerContentId": "4980d5c8c16b47fa31df5d630d15e0a463090e1f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "conformance/fixtures/single-file-v2/briefs/scope-violation.json",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "1dcbc1de5945500ca64836c4c398c7b5cb596b1ac5fec87f4e9cc1bc0928f71a",
+        "providerContentId": "1af7b784411c1d9539e4c420e123cf28d077d665",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "conformance/fixtures/single-file-v2/briefs/verification-unmet.json",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "500a53aab42c5be5312d89d80a4761d6eb57c9568fde2e6232974f48813a5bc3",
+        "providerContentId": "a4b3f81fba636b7f5e9108e5c083ab7dddeda08f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "DELEGATION_PROTOCOL.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "30f79b656a4828648fe51a00c93ba92b24e7dcffa583f89da082a2d93cb5cd1d",
+        "providerContentId": "9b8a5f09a0ec96dee6108c999634e45dfe1b405a",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/CLI_REFERENCE.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "388dadffad7ebea060e9dabba71641e0899c26583ac094cb5651970e1a711bfb",
+        "providerContentId": "6977819302d91d9e2a06131c9e87f784f22c8f49",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/EVIDENCE_BUNDLES.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "ea09d1c16c9e2b93a3dae77771fd0b38722d47934f4158bab7a1e13783b1518d",
+        "providerContentId": "0775e5b9657b096219dd15499e83977e1d9c73de",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/PROTOCOL_SPEC.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "0e8cca14b8c13a83d4a04f31007bb9d6e6395516c3cd532d30f5d668153eb158",
+        "providerContentId": "912b18e5e1adb5745c1ec5fd2a1652180e1a0fb7",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/protocol-requirements.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "565eaf8acbf0989e333980e2aa3f9190ad67046ff79baec2939045e17ff2b6d6",
+        "providerContentId": "e52e2a1ef3924c1884d71731e0b93d5d73af529f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/TROUBLESHOOTING.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "af436d7935176ffa07c0ec52415354bf3b3e3f48db0846f268705615cc89acd6",
+        "providerContentId": "1441f4ffa2099f10d6a62ae1465a9b4f742e8f91",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/run-conformance.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "7e3598caabfc6fcdf225ffba76513c2cba0ab1f05a08fa10bdd5557dcface4a6",
+        "providerContentId": "a643d38bed481f8fc6d46299ea59ee86d7775327",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/commands/evidence-verify.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "ebd6477d0437cd15401f6b54d42a7364493c2d1c1d72417ceb92e4cef89db12c",
+        "providerContentId": "1530e11fc0fe7f35780bfa1911c0abb21f9cf597",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/cli-command-definitions.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "50a05edf581f65e8b6ee5f95c8718b3c7422c99e643c288f90e60d6c650735a6",
+        "providerContentId": "75f5110543b0921993f550a5ce47f4ae1cc42f9f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/error-codes.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "0c212af121be00a1826309f496cb80a1fdafdf14e2fc4c5a61d102b29867682e",
+        "providerContentId": "249c55b7e843b20a51f4b3dcbf1da25c612db55e",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/evidence/verify.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "7aae1d41b30b1fb86375148af7a131e081818e065cd9e6a4623d954a1fe54d30",
+        "providerContentId": "857e6d85d2730f1e1204b20f8932bbd7beb13cb8",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/contract-from-ticket.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "981629a98c813838544dc1ab43c605e6f27001ac467cf5f705567498fed366ce",
+        "providerContentId": "8da85625b508fecd9224b6bcd442b47d7282f435",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/delegation-evidence.test.js",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "9d0883a72eb3848912ed51495d079f1e60bc32cbf779a7a6b60bcc3cbbe27f46",
+        "providerContentId": "6f41d0624262638f268f9322ae23244ff6eb0f61",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "verifier/forgeloop-verify.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "9480696dce3aeb67aa7397815160d9333372604d5c4f82e00c92f6ea4940240e",
+        "providerContentId": "bc104ae835a88b227e46953240db276bec1b50bc",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "verifier/README.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "ddc52e7d6370b2d6a8576c76325bf8a6c80bde9137ce387454ee800f87fd1b26",
+        "providerContentId": "2cc0490b629315aeec07e352835aea447b3fe436",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "f55d07927f7911141ba244581cc7367fd9b2a0817909eddb9af348007104d1ed"
+  },
+  "manifestFingerprint": "46442a143576e87019409a71a927fafb02428c65b1d233ad44abe8faf5a2156e",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Bring contract-create --from-ticket up to date with main (required: main only accepts branches that contain it): merge origin/main, keeping both CHANGELOG entries and both sets of CLI definitions, error codes, completions and docs, verify the merged result, and clear the CodeQL js/incomplete-url-substring-sanitization alert on tests/contract-from-ticket.test.js by asserting the exact sourceRefs array.",
+    "successCriteria": [
+      "The test asserts the exact persisted sourceRefs",
+      "Both the delegation and ticket-contract changes are intact after the merge"
+    ],
+    "checks": [
+      {
+        "id": "docs-check",
+        "requirement": "npm run docs:check passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "merged-tests",
+        "requirement": "node --test tests/contract-from-ticket.test.js tests/delegation-evidence.test.js tests/verifier-conformance.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-4f8655812cd04d8f",
+        "requirement": "The test asserts the exact persisted sourceRefs",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-6eb6dac7baf90f20",
+        "requirement": "Both the delegation and ticket-contract changes are intact after the merge",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-fast",
+        "requirement": "npm run verify:fast passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-20T20:12:37.045Z",
+    "completedAt": "2026-11-20T20:14:38.967Z",
+    "durationMs": 121922,
+    "phaseDurationsMs": {
+      "planning": 2880,
+      "executing": 6602,
+      "verifying": 112146,
+      "reviewing": 294
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 6,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "78f735f7c2e48e5afe20bcecc8a7fbab1fece19fced2f25afb9041998237738b"
+}

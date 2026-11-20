@@ -80,7 +80,7 @@ test("contract-create --from-ticket persists the approved contract under the loc
     assert.equal(contract.value.taskId, taskId, "the local task ID wins over the suggested one");
     assert.equal(contract.value.objective, approvedContract.objective);
     assert.deepEqual(contract.value.successCriteria, approvedContract.successCriteria);
-    assert.ok(contract.value.sourceRefs.includes("https://linear.app/acme/issue/ENG-42"));
+    assert.deepEqual(contract.value.sourceRefs, ["linear:ENG-42", "https://linear.app/acme/issue/ENG-42"]);
     await assert.rejects(() => runContractCreate({ target, packageRoot, taskId, fromTicket: "linear:ENG-42", preset: "feature", env, fetchImpl: server.fetchImpl }), /one of --preset, --contract-file or --from-ticket/u);
     const broken = cloud(stored({ approved: { contract: { ...approvedContract, objective: "" }, by: "x", at: "y" } }));
     await assert.rejects(

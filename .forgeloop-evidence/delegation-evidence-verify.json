@@ -1,0 +1,370 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "delegation-evidence-verify",
+  "forgeloopVersion": "2.4.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:delegation-evidence-verify\",\n      \"digest\": {\n        \"sha256\": \"dd4dad9d60ad6d6372c7aacce43b44657141f7ee937a958982e59f779ca2deda\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 2,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"delegation-evidence-verify\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"23234135ec739b70b2c304d16986e7ac015187ebbcc4f1cbd62eba5310bde165\",\n      \"contentDigest\": \"dd4dad9d60ad6d6372c7aacce43b44657141f7ee937a958982e59f779ca2deda\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"DELEGATION_PROTOCOL.md\",\n        \"completions/_forgeloop\",\n        \"completions/forgeloop.bash\",\n        \"completions/forgeloop.fish\",\n        \"conformance/cases.json\",\n        \"conformance/fixtures/single-file-v2/briefs/accepted.json\",\n        \"conformance/fixtures/single-file-v2/briefs/evidence-missing.json\",\n        \"conformance/fixtures/single-file-v2/briefs/scope-violation.json\",\n        \"conformance/fixtures/single-file-v2/briefs/verification-unmet.json\",\n        \"docs/CLI_REFERENCE.md\",\n        \"docs/EVIDENCE_BUNDLES.md\",\n        \"docs/PROTOCOL_SPEC.md\",\n        \"docs/TROUBLESHOOTING.md\",\n        \"docs/protocol-requirements.json\",\n        \"scripts/run-conformance.mjs\",\n        \"src/commands/evidence-verify.js\",\n        \"src/core/cli-command-definitions.js\",\n        \"src/core/error-codes.js\",\n        \"src/core/evidence/verify.js\",\n        \"tests/delegation-evidence.test.js\",\n        \"verifier/README.md\",\n        \"verifier/forgeloop-verify.mjs\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"0ccef4d4cf085506f71edefeb4fb47bc59caf3c6e5f43bf8a1e104358fdb8a94\",\n      \"routeFingerprint\": \"7339b8b5e1adf84cebb05479f4092af6ea3391b4f98638233f8e7b6187acaf88\",\n      \"stateFingerprint\": \"c43a1bd2c8e539b3a05d279b5be76377545c352f5f05165fb1aefb777e641c8f\",\n      \"receiptFingerprint\": \"e14e087fac4c5c18b77c1718033c094ceb6715236608af2d585e38ff24a543f4\",\n      \"ledgerSeq\": 49,\n      \"ledgerHash\": \"2568c2ac86f3f36fff4344cc18a01a42c2850829c5bbcddc69e092d62a4c28dd\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\",\n      \"checks\": [\n        {\n          \"id\": \"both-verifiers\",\n          \"requirement\": \"node --test tests/verifier-conformance.test.js passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"20b274079ad15657b42f2bd3e5ccfc65beabff85e4dae1bb9998e9a62d32d7f8\"\n        },\n        {\n          \"id\": \"delegation-tests\",\n          \"requirement\": \"node --test tests/delegation-evidence.test.js passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"3978927b050416017f9d6133ff0536714ab58a6d77144c87e8251fa8df5adda9\"\n        },\n        {\n          \"id\": \"docs-check\",\n          \"requirement\": \"npm run docs:check passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"90feade86f0fe5eeb934e3ec3eefe02bc9660d41d14310d2c80be18ca5254976\"\n        },\n        {\n          \"id\": \"requirement-59830ebc3a418411\",\n          \"requirement\": \"tests\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"527c484bcc3bb219e92ed61f99ff968f31143f89e53fda93d09b74c0ce3177d4\"\n        },\n        {\n          \"id\": \"requirement-cee5be0d632a2592\",\n          \"requirement\": \"evidence-verify --brief rejects missing evidence, scope violations and unmet brief verification\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"3978927b050416017f9d6133ff0536714ab58a6d77144c87e8251fa8df5adda9\"\n        },\n        {\n          \"id\": \"requirement-f8a87f1db5d85129\",\n          \"requirement\": \"Both verifiers pass the delegation conformance cases\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"20b274079ad15657b42f2bd3e5ccfc65beabff85e4dae1bb9998e9a62d32d7f8\"\n        },\n        {\n          \"id\": \"verify-fast\",\n          \"requirement\": \"npm run verify:fast passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"5730e2a87ecd718b046cc9bd54056300f5712eb2ea3f77adc925f53c26b76226\"\n        }\n      ]\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "delegation-evidence-verify",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "701ebb104d56dde80f7b02107559a67f4ec9911d",
+      "observedRevision": "701ebb104d56dde80f7b02107559a67f4ec9911d",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/protocol-delegation-verify",
+        "head": "701ebb104d56dde80f7b02107559a67f4ec9911d"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "0ccef4d4cf085506f71edefeb4fb47bc59caf3c6e5f43bf8a1e104358fdb8a94",
+      "routeFingerprint": "7339b8b5e1adf84cebb05479f4092af6ea3391b4f98638233f8e7b6187acaf88",
+      "stateFingerprint": "c43a1bd2c8e539b3a05d279b5be76377545c352f5f05165fb1aefb777e641c8f",
+      "receiptFingerprint": "e14e087fac4c5c18b77c1718033c094ceb6715236608af2d585e38ff24a543f4",
+      "ledgerSeq": 49,
+      "ledgerHash": "2568c2ac86f3f36fff4344cc18a01a42c2850829c5bbcddc69e092d62a4c28dd"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "02c68c760d7fcac022ef8abeb63cd5575339cf40fec9b14a73316ea4fb893c6e",
+        "providerContentId": "0280f533a9e55f2f9055aa3115786b4b0db2bc0b",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "completions/_forgeloop",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "634548277a8280533011c0107f07fc9e33325b5b02e324169d51b14d56649f4d",
+        "providerContentId": "9d3de5c73440cb66797066ffc3d716fdfc7416d2",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "completions/forgeloop.bash",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "89ae66da92beda09ddf8d6f91bf86bafd0ce4f7323a40d4ae1182ac00913552a",
+        "providerContentId": "a200dfe371a129441507b6716b4d1974f805d6b0",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "completions/forgeloop.fish",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "c2c1725a23e4a77cc3210f1b06a3535b128b79a028e94e363bc29520eeb6540b",
+        "providerContentId": "7bd958aa0709033dcb032d950bfc9aec1ba03e16",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "conformance/cases.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "ee5eef059438aa432255e67e8b18d8154e5cb7ea78e8a95b46a98daebdf48264",
+        "providerContentId": "054302e4f3b07d93571639bbc8910c973ffcd8c4",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "conformance/fixtures/single-file-v2/briefs/accepted.json",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "82acfc9e8d6e8dbca273208222f02db765cce4715d512b18477ad256be93852d",
+        "providerContentId": "1b0c59600a984e91d362d4067ee0ce1f1eb5fe78",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "conformance/fixtures/single-file-v2/briefs/evidence-missing.json",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "f660e64ec82f9cda829f5dee5cb0e84b5e2ee09e48a6286ffc8ff194e3461a5f",
+        "providerContentId": "4980d5c8c16b47fa31df5d630d15e0a463090e1f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "conformance/fixtures/single-file-v2/briefs/scope-violation.json",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "1dcbc1de5945500ca64836c4c398c7b5cb596b1ac5fec87f4e9cc1bc0928f71a",
+        "providerContentId": "1af7b784411c1d9539e4c420e123cf28d077d665",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "conformance/fixtures/single-file-v2/briefs/verification-unmet.json",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "500a53aab42c5be5312d89d80a4761d6eb57c9568fde2e6232974f48813a5bc3",
+        "providerContentId": "a4b3f81fba636b7f5e9108e5c083ab7dddeda08f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "DELEGATION_PROTOCOL.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "30f79b656a4828648fe51a00c93ba92b24e7dcffa583f89da082a2d93cb5cd1d",
+        "providerContentId": "9b8a5f09a0ec96dee6108c999634e45dfe1b405a",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/CLI_REFERENCE.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "62db1c3f6b4ba80334808faba1739ad7eb8e9282a31ffb7d312c9d67143cda11",
+        "providerContentId": "f22f06df061e19173ba38bebd4a1aff40bba150e",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/EVIDENCE_BUNDLES.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "ea09d1c16c9e2b93a3dae77771fd0b38722d47934f4158bab7a1e13783b1518d",
+        "providerContentId": "0775e5b9657b096219dd15499e83977e1d9c73de",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/PROTOCOL_SPEC.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "0e8cca14b8c13a83d4a04f31007bb9d6e6395516c3cd532d30f5d668153eb158",
+        "providerContentId": "912b18e5e1adb5745c1ec5fd2a1652180e1a0fb7",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/protocol-requirements.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "565eaf8acbf0989e333980e2aa3f9190ad67046ff79baec2939045e17ff2b6d6",
+        "providerContentId": "e52e2a1ef3924c1884d71731e0b93d5d73af529f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/TROUBLESHOOTING.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "e6133c975a5521c1dff640a0fa18579eb78acb9f0a94aa3f9ed3f28c8e11a36d",
+        "providerContentId": "637a49234e2d0862191dc537ec721f1bf2973234",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/run-conformance.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "7e3598caabfc6fcdf225ffba76513c2cba0ab1f05a08fa10bdd5557dcface4a6",
+        "providerContentId": "a643d38bed481f8fc6d46299ea59ee86d7775327",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/commands/evidence-verify.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "ebd6477d0437cd15401f6b54d42a7364493c2d1c1d72417ceb92e4cef89db12c",
+        "providerContentId": "1530e11fc0fe7f35780bfa1911c0abb21f9cf597",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/cli-command-definitions.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "01bf243fed769c90edb2aff5f6aa0854d8326deb9909cea093f20cebeaee0f6d",
+        "providerContentId": "6ba1be45e2b6d75da069856e555e3b7b1bb480d8",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/error-codes.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "f6c8e1a94e1e598a5de8a3a7984b286a9bf421680f998c0374d94f23ccfdb833",
+        "providerContentId": "a349dd0c4f03123009b242f7ee9bd45f85e6303f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/evidence/verify.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "7aae1d41b30b1fb86375148af7a131e081818e065cd9e6a4623d954a1fe54d30",
+        "providerContentId": "857e6d85d2730f1e1204b20f8932bbd7beb13cb8",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/delegation-evidence.test.js",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "9d0883a72eb3848912ed51495d079f1e60bc32cbf779a7a6b60bcc3cbbe27f46",
+        "providerContentId": "6f41d0624262638f268f9322ae23244ff6eb0f61",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "verifier/forgeloop-verify.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "9480696dce3aeb67aa7397815160d9333372604d5c4f82e00c92f6ea4940240e",
+        "providerContentId": "bc104ae835a88b227e46953240db276bec1b50bc",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "verifier/README.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "ddc52e7d6370b2d6a8576c76325bf8a6c80bde9137ce387454ee800f87fd1b26",
+        "providerContentId": "2cc0490b629315aeec07e352835aea447b3fe436",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "dd4dad9d60ad6d6372c7aacce43b44657141f7ee937a958982e59f779ca2deda"
+  },
+  "manifestFingerprint": "23234135ec739b70b2c304d16986e7ac015187ebbcc4f1cbd62eba5310bde165",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Let a delegator accept another agent's work only on evidence (docs/PROTOCOL_SPEC.md Section 8): evidence-verify --brief <task-brief.json> verifies the range as the delivery for that brief, failing when the brief's task has no intact bundle, when covered paths leave allowedPaths or touch readOnlyPaths, or when a brief verification item has no passing bound check; implement the same in the independent verifier and make Section 8 normative.",
+    "successCriteria": [
+      "evidence-verify --brief rejects missing evidence, scope violations and unmet brief verification",
+      "Both verifiers pass the delegation conformance cases"
+    ],
+    "checks": [
+      {
+        "id": "both-verifiers",
+        "requirement": "node --test tests/verifier-conformance.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "delegation-tests",
+        "requirement": "node --test tests/delegation-evidence.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "docs-check",
+        "requirement": "npm run docs:check passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-cee5be0d632a2592",
+        "requirement": "evidence-verify --brief rejects missing evidence, scope violations and unmet brief verification",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-f8a87f1db5d85129",
+        "requirement": "Both verifiers pass the delegation conformance cases",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-fast",
+        "requirement": "npm run verify:fast passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-20T16:41:46.772Z",
+    "completedAt": "2026-11-20T16:52:28.679Z",
+    "durationMs": 641907,
+    "phaseDurationsMs": {
+      "planning": 2566,
+      "executing": 124348,
+      "verifying": 514706,
+      "reviewing": 287
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 7,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "e7c1b377aeacbbc3b11928fbaf5aa3ddcb222ac88e0e8f0a989225402d8d5e15"
+}

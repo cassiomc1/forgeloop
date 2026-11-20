@@ -159,6 +159,10 @@ base and head revisions. It works as follows:
    `UNKNOWN` for version-1 predicates. The range reports the lowest, and
    `--min-assurance <level>` fails it below that level with
    `E_EVIDENCE_ASSURANCE_INSUFFICIENT`.
+7. With `--brief <task-brief.json>`, the range is verified as the delivery
+   for that delegation brief: the brief's task needs an intact bundle, its
+   covered paths must stay inside `allowedPaths` and out of `readOnlyPaths`,
+   and every brief verification item needs a passing bound check.
 
 | Result | Meaning |
 | --- | --- |
