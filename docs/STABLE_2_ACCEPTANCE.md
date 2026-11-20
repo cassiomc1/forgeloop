@@ -107,7 +107,7 @@ separate evidence.
 
 ## ForgeLoopAudit alignment
 
-[ForgeLoopAudit](https://github.com/cassiomc1/forgeloop/tree/main/ForgeLoopAudit) pins the actual public 2.0.0 archive
+[ForgeLoopAudit](https://github.com/cassiomc1/forgeloop/tree/c831f8698f1040d7303b2521827587f9380e61a3/ForgeLoopAudit) pins the actual public 2.0.0 archive
 and release commit. All 52 shipped schema files were compared with the exact
 release source before regenerating its trusted 31-schema provenance. Its own
 lineage checks and recaptured README images identify stable core 2.0.0. Audit

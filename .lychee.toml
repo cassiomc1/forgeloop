@@ -50,6 +50,10 @@ exclude = [
   # cmake.org's TLS certificate expired on 2026-11-15 07:06 GMT. Temporary:
   # remove once `curl -I https://cmake.org/` verifies again.
   '^https://cmake\.org/cmake/help/latest/command/project\.html$',
+  # github.com answers 503 to lychee for commit pages (curl gets 200) since
+  # 2026-11-20, which blocked the 2.4.0 publish. Commit permalinks into this
+  # repository are immutable; git verifies they exist (every SHA is in history).
+  '^https://github\.com/cassiomc1/forgeloop/commit/[0-9a-f]{40}$',
 ]
 
 [hosts."docs.ansible.com"]

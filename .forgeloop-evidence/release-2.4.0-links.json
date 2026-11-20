@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "release-2.4.0-links",
+  "forgeloopVersion": "2.4.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:release-2.4.0-links\",\n      \"digest\": {\n        \"sha256\": \"1adbd131a421cf14daa9341db6944fc8eb2b7918903116a4eca5402ac5ef5f63\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"release-2.4.0-links\",\n      \"verificationCycle\": 2\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"0f7c774a76d94292caf455aa1a0a2f1ae95705c3ba679b000fa0f9e330290276\",\n      \"contentDigest\": \"1adbd131a421cf14daa9341db6944fc8eb2b7918903116a4eca5402ac5ef5f63\",\n      \"coveredPaths\": [\n        \".lychee.toml\",\n        \"docs/STABLE_2_ACCEPTANCE.md\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"8fa666a2a982aaab84107df34899109c747d6d3553b3e11d405139d2aa2ce168\",\n      \"routeFingerprint\": \"6b7fefd3b71db76ca045f1900b7c7c9a20a60fc2811995b2c3e597c653e78f77\",\n      \"stateFingerprint\": \"987b611922d8ee492b42272377f86b16f2d7e48b3371c617cd23630987e6e94e\",\n      \"receiptFingerprint\": \"fbb3f9e7ce1e7d6f8b76275d7329dafa926d4e960444f55c25d5bda75f9ca531\",\n      \"ledgerSeq\": 50,\n      \"ledgerHash\": \"de618e31d47077e28f6cdcc8754a60dd4fb5e2a930b457b8d71ec97ef258d205\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "release-2.4.0-links",
+    "verificationCycle": 2,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "50a2ae81391341b732b9e220aa2aed97a27a22bc",
+      "observedRevision": "50a2ae81391341b732b9e220aa2aed97a27a22bc",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/release-2.4.0-links",
+        "head": "50a2ae81391341b732b9e220aa2aed97a27a22bc"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "8fa666a2a982aaab84107df34899109c747d6d3553b3e11d405139d2aa2ce168",
+      "routeFingerprint": "6b7fefd3b71db76ca045f1900b7c7c9a20a60fc2811995b2c3e597c653e78f77",
+      "stateFingerprint": "987b611922d8ee492b42272377f86b16f2d7e48b3371c617cd23630987e6e94e",
+      "receiptFingerprint": "fbb3f9e7ce1e7d6f8b76275d7329dafa926d4e960444f55c25d5bda75f9ca531",
+      "ledgerSeq": 50,
+      "ledgerHash": "de618e31d47077e28f6cdcc8754a60dd4fb5e2a930b457b8d71ec97ef258d205"
+    },
+    "entries": [
+      {
+        "path": ".lychee.toml",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "10d87c622dcc360f90e8acd1e3579f8ec02de894dd55c8c768fb71980da23d32",
+        "providerContentId": "790d0af282b0abc18e9d1e87a6923df95cb7b0bf",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/STABLE_2_ACCEPTANCE.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "ca11bef009d7e575789b4352fec1ce9cbd390f06f02cb36cbdcf4e8528833b34",
+        "providerContentId": "1c781f1f3d2ccf9f74a05555440c03f82d367677",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "1adbd131a421cf14daa9341db6944fc8eb2b7918903116a4eca5402ac5ef5f63"
+  },
+  "manifestFingerprint": "0f7c774a76d94292caf455aa1a0a2f1ae95705c3ba679b000fa0f9e330290276",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Unblock the 2.4.0 npm publish, whose link check failed: point the ForgeLoopAudit link in docs/STABLE_2_ACCEPTANCE.md at the last commit that still had the directory (it moved to ForgeLoop Cloud in 2.4.0), and throttle lychee against github.com, whose commit pages returned 503 to the runner.",
+    "successCriteria": [
+      "lychee reports no errors for docs/STABLE_2_ACCEPTANCE.md and poc/FORGELOOP_REAL_EXECUTION_POC.md"
+    ],
+    "checks": [
+      {
+        "id": "lychee-doc",
+        "requirement": "lychee docs/STABLE_2_ACCEPTANCE.md passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-d8f3e87c050bde01",
+        "requirement": "lychee reports no errors for docs/STABLE_2_ACCEPTANCE.md and poc/FORGELOOP_REAL_EXECUTION_POC.md",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-20T12:32:46.720Z",
+    "completedAt": "2026-11-20T12:45:03.910Z",
+    "durationMs": 737190,
+    "phaseDurationsMs": {
+      "planning": 17920,
+      "executing": 6132,
+      "verifying": 712851,
+      "reviewing": 287
+    },
+    "verificationCycles": 2,
+    "diagnoses": 1,
+    "checksPassed": 3,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "78a8b6f841bf55359e5dba80ee6dba512f1b0a121bf256bc65931794c88dc00b"
+}
