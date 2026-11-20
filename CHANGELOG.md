@@ -1,14 +1,19 @@
 # Changelog
 
-## Unreleased
+## 2.4.0 - 2026-11-19
 
+- Minor release. Its runtime change is bound by
+  `benchmarks/storage-sqlite/stable-2.4.0-writer-review.json.gz`, a delta
+  review against 2.3.1: `syncDirectory` gains an optional `openDirectory`,
+  used instead of `fs.promises.open` only when given. Every filesystem binding
+  is identical to 2.3.1 and no write path is added.
 - Tests: the last nine test landmine allowances are gone, so the allowlist is
   empty. Fixed sleeps became awaited conditions: a real hang for the seed
   watchdog, `fs.rm` retries for transient Windows locks, a lock probe instead
   of a delay, and one shared `tests/helpers/poll.js` for processes that emit
-  no event. `syncDirectory` takes an injected `openDirectory`, replacing the
-  `node:fs/promises` module mock, and a data field named `retries` is no
-  longer mistaken for a test retry option.
+  no event. Tests pass their own handle to `syncDirectory` instead of
+  mocking `node:fs/promises`, and a data field named `retries` is no longer
+  mistaken for a test retry option.
 
 - Lower the test landmine allowances from 25 to 9. The central test runner
   now gives every test one suite-wide hang bound (`--test-timeout=120000`,

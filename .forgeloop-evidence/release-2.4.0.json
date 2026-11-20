@@ -1,0 +1,197 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "release-2.4.0",
+  "forgeloopVersion": "2.4.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:release-2.4.0\",\n      \"digest\": {\n        \"sha256\": \"d7aeb3b83022be58ad5728576f9dc97eef801e1a5258e0fd2333ff19af92c34a\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"release-2.4.0\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"0eb96a740988895cc8a6f5686c295658ef2f62be40f866383ebd3d7dad0a49f8\",\n      \"contentDigest\": \"d7aeb3b83022be58ad5728576f9dc97eef801e1a5258e0fd2333ff19af92c34a\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"benchmarks/storage-sqlite/stable-2.4.0-writer-review.json.gz\",\n        \"docs/AGENT_PROTOCOL_SUMMARY.md\",\n        \"docs/RELEASE_CHECKLIST.md\",\n        \"integrations/mcp/package-lock.json\",\n        \"package-lock.json\",\n        \"package.json\",\n        \"scripts/check-repository-hygiene.mjs\",\n        \"src/storage/file-durability.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"133d1b6632b6fadfe07c4ad40c6e8a06692b658da2ba8d8f192ad93ea9f3d584\",\n      \"routeFingerprint\": \"b2b1f133258fe8fe429e854dd6fdc123158a273cd334f54434e22a451709f5f1\",\n      \"stateFingerprint\": \"7fb208e5a613f493b4d91738f2107667ac536ad36f93a7b5463f8958a8a46e23\",\n      \"receiptFingerprint\": \"e8b09b397e4e4d594c662d7b7755873b4d29496bb55785385ed0eaf0be8388b1\",\n      \"ledgerSeq\": 40,\n      \"ledgerHash\": \"96b9ad4452fed2e869d46bce147905c9b0cf66da4b529fdc656fb724252e5f1a\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "release-2.4.0",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "511b15747713d90712685ac6f53ccf82fc6d9d19",
+      "observedRevision": "511b15747713d90712685ac6f53ccf82fc6d9d19",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/release-2.4.0",
+        "head": "511b15747713d90712685ac6f53ccf82fc6d9d19"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "133d1b6632b6fadfe07c4ad40c6e8a06692b658da2ba8d8f192ad93ea9f3d584",
+      "routeFingerprint": "b2b1f133258fe8fe429e854dd6fdc123158a273cd334f54434e22a451709f5f1",
+      "stateFingerprint": "7fb208e5a613f493b4d91738f2107667ac536ad36f93a7b5463f8958a8a46e23",
+      "receiptFingerprint": "e8b09b397e4e4d594c662d7b7755873b4d29496bb55785385ed0eaf0be8388b1",
+      "ledgerSeq": 40,
+      "ledgerHash": "96b9ad4452fed2e869d46bce147905c9b0cf66da4b529fdc656fb724252e5f1a"
+    },
+    "entries": [
+      {
+        "path": "benchmarks/storage-sqlite/stable-2.4.0-writer-review.json.gz",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "52122e093a961f71c75d4c6567cf7d9a1e6366265cf0fac7e7b4d385f6e9718e",
+        "providerContentId": "cb3e76efe680d03d093acf06824cee5c5ead24fd",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "eb49007033eea0aabdc56816d0d1d6bdf60f8c95a48afbf8d61ec595911fe152",
+        "providerContentId": "6f306deea0069ef097e63f668f03c89e20aa2f39",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/AGENT_PROTOCOL_SUMMARY.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "2ed2977ee8ae073ad0eb93a70ff0d796ada41550b20f432fd764aecf19ebcaca",
+        "providerContentId": "bd05f91e9d60abc6bef7a62a2296b7e819bf9ab6",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/RELEASE_CHECKLIST.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "cc1857bde4d65349b3ae8ba3d4334a2c3ea4e73e3cb11565f364b67996d64661",
+        "providerContentId": "2e594a26bd09399cbe197ebbef75fd5658ddf3fe",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "integrations/mcp/package-lock.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "91e613855f180a43ab628035b37eac868330e61dc43a72734a7b3380740eb442",
+        "providerContentId": "889eb364472d47264f08bb75d585514de24dd958",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "package-lock.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "0277c9acc0b265331f766c522c00d930c3221ebbad72b4386ba55675521fc7e3",
+        "providerContentId": "c4eae17f5ecd87229b25456388f4a2c504226cf5",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "package.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "f364d9c44d2693b8515a61a311cd045cb208fd115dd8d81113e7ab15b5ca5356",
+        "providerContentId": "621c391b297d16ec0f9880db639d726e78f65513",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/check-repository-hygiene.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "a644d0bcff0bd2615c730f1f0270bdb3be955bd0e315a9d3fc22ab877db3ed35",
+        "providerContentId": "f0c32b4be483b279a408d294be882ea95d241fc3",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/storage/file-durability.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "49621ba8dd3491792f9dedeb80b54398c2b100ae50ecbdfc6ee4fdb07b6dc177",
+        "providerContentId": "7ac8961fdbbc6f8ece30e9769b0b438260819212",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "d7aeb3b83022be58ad5728576f9dc97eef801e1a5258e0fd2333ff19af92c34a"
+  },
+  "manifestFingerprint": "0eb96a740988895cc8a6f5686c295658ef2f62be40f866383ebd3d7dad0a49f8",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Prepare stable 2.4.0 of the core package: bump the version, cut the changelog and release checklist, regenerate the agent protocol summary, and bind the runtime change since 2.3.1 (an optional injected opener in syncDirectory) with a version-bound delta writer review against 2.3.1, keeping every filesystem binding identical.",
+    "successCriteria": [
+      "The release PR carries a 2.4.0 writer review whose bindings match 2.3.1 exactly"
+    ],
+    "checks": [
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-bc457e8933817575",
+        "requirement": "The release PR carries a 2.4.0 writer review whose bindings match 2.3.1 exactly",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "stable-review",
+        "requirement": "node scripts/verify-stable-storage-review.mjs passes for 2.4.0",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "failed",
+        "exitCode": 1
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-20T00:07:29.734Z",
+    "completedAt": "2026-11-20T00:28:12.803Z",
+    "durationMs": 1243069,
+    "phaseDurationsMs": {
+      "planning": 2818,
+      "executing": 107006,
+      "verifying": 1132965,
+      "reviewing": 280
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 3,
+    "checksFailed": 1
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "c2d2dd401365b8c170a422f499481924edb072c16fe50c41aee82d068b27b9f5"
+}

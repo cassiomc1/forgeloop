@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "release-2.4.0-changelog",
+  "forgeloopVersion": "2.4.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:release-2.4.0-changelog\",\n      \"digest\": {\n        \"sha256\": \"df1a0ba0d3eafbf8155f232740c6f1ba7fb98a13ecbcf3f615f05fafed95eaa3\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 1,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"release-2.4.0-changelog\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"16cbac43ead9258ced9dfd32df7595ca00527cb49338a24d0a17c4d552900f12\",\n      \"contentDigest\": \"df1a0ba0d3eafbf8155f232740c6f1ba7fb98a13ecbcf3f615f05fafed95eaa3\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"9c3776b479840a60b3326c538163acf5a5e6545b04dcf5cafd61ac35c734fb9e\",\n      \"routeFingerprint\": \"36d663c3966109da12f0c7a0572be2d326e450c1c9e4e2c34d20e1b0573033df\",\n      \"stateFingerprint\": \"5ce929774c907174f1a1e72632791e8aad355000596f5d1c97b99a6ff24c9b0a\",\n      \"receiptFingerprint\": \"9e97e66667bb2ceeb6e4948bf1df589c6250cefc94ab03084ae72a951535903e\",\n      \"ledgerSeq\": 40,\n      \"ledgerHash\": \"fa0b32323d63a23f99f7e7377bd7a5912f82520adbaf84949f557ecbb0db104e\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\"\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "release-2.4.0-changelog",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "a66b570bc435a275bb6b3eb56e5422c055473592",
+      "observedRevision": "a66b570bc435a275bb6b3eb56e5422c055473592",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/release-2.4.0",
+        "head": "a66b570bc435a275bb6b3eb56e5422c055473592"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "9c3776b479840a60b3326c538163acf5a5e6545b04dcf5cafd61ac35c734fb9e",
+      "routeFingerprint": "36d663c3966109da12f0c7a0572be2d326e450c1c9e4e2c34d20e1b0573033df",
+      "stateFingerprint": "5ce929774c907174f1a1e72632791e8aad355000596f5d1c97b99a6ff24c9b0a",
+      "receiptFingerprint": "9e97e66667bb2ceeb6e4948bf1df589c6250cefc94ab03084ae72a951535903e",
+      "ledgerSeq": 40,
+      "ledgerHash": "fa0b32323d63a23f99f7e7377bd7a5912f82520adbaf84949f557ecbb0db104e"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "69d57b4b3fbfa9208574de87afa3942482dbdc8a05e64fe171dcff6b65927da7",
+        "providerContentId": "cf92c8a314bcee704e621d08980be3cd164d55dc",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "df1a0ba0d3eafbf8155f232740c6f1ba7fb98a13ecbcf3f615f05fafed95eaa3"
+  },
+  "manifestFingerprint": "16cbac43ead9258ced9dfd32df7595ca00527cb49338a24d0a17c4d552900f12",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Bring CHANGELOG.md under task evidence for the 2.4.0 release PR (the evidence check found its head content uncovered) by removing the duplicated syncDirectory openDirectory sentence from the 2.4.0 tests bullet, which the first 2.4.0 bullet already states.",
+    "successCriteria": [
+      "changelog:check and docs:check pass with the 2.4.0 section intact"
+    ],
+    "checks": [
+      {
+        "id": "changelog-check",
+        "requirement": "npm run changelog:check passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "docs-check",
+        "requirement": "npm run docs:check passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-76a9a296762bbd27",
+        "requirement": "changelog:check and docs:check pass with the 2.4.0 section intact",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-20T10:38:25.184Z",
+    "completedAt": "2026-11-20T10:48:46.157Z",
+    "durationMs": 620973,
+    "phaseDurationsMs": {
+      "planning": 3334,
+      "executing": 809,
+      "verifying": 616521,
+      "reviewing": 309
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "627e314b6f1c7afe8d33ac13435a545f6f6a2f2f6bd39038b9d70fb0d66cad0f"
+}
