@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "complexity-2.5.0",
+  "forgeloopVersion": "2.4.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:complexity-2.5.0\",\n      \"digest\": {\n        \"sha256\": \"d94d36532bc9f42e936fe40efc6e68879f34ae1c9c557d6aa2f11e255a6007ad\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 2,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"complexity-2.5.0\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"9e240c6d00dfcae20c9da96561bfabb37dbb350d8a93e5b59e6daa9aa96f83ab\",\n      \"contentDigest\": \"d94d36532bc9f42e936fe40efc6e68879f34ae1c9c557d6aa2f11e255a6007ad\",\n      \"coveredPaths\": [\n        \"src/core/evidence/verify.js\",\n        \"src/core/ticket-contract.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"7e4d19677d2b62cf8a4e6cefbfb8673fa81abbe5cd56f9d03255e9871f5e2d03\",\n      \"routeFingerprint\": \"9616bb7018d64f365a68f53334cfdf3350bde50f62dd33f0563cf38d3fa4aaa2\",\n      \"stateFingerprint\": \"5ec63b23241f53518ea63bff5db7832e050421f7764104f6b27d4278b246f10c\",\n      \"receiptFingerprint\": \"92042f7c13bd57eb0ad116d22c18b7de0a4502733ff9e5cf90c3607c6ac89846\",\n      \"ledgerSeq\": 43,\n      \"ledgerHash\": \"adcc7750dc754440427b12045d3447d815a5a5d61596a9e05b7ab07020783577\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\",\n      \"checks\": [\n        {\n          \"id\": \"behavior-tests\",\n          \"requirement\": \"node --test tests/contract-from-ticket.test.js tests/delegation-evidence.test.js tests/attestation-predicate-v2.test.js tests/verifier-conformance.test.js tests/conformance.test.js passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"78c0ce978a6233213db80ea8879a30a6d2bf50a770fa450c00f3a87df96e512f\"\n        },\n        {\n          \"id\": \"complexity\",\n          \"requirement\": \"npm run complexity:check passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"63e85ca926af35ab80d31189be2e9e09a5cb57c27108f508c99fe4c3e06a1c86\"\n        },\n        {\n          \"id\": \"requirement-59830ebc3a418411\",\n          \"requirement\": \"tests\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"5730e2a87ecd718b046cc9bd54056300f5712eb2ea3f77adc925f53c26b76226\"\n        },\n        {\n          \"id\": \"requirement-c1401d9cb11d4faa\",\n          \"requirement\": \"Both functions are at most complexity 25 with unchanged test results\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"63e85ca926af35ab80d31189be2e9e09a5cb57c27108f508c99fe4c3e06a1c86\"\n        },\n        {\n          \"id\": \"verify-fast\",\n          \"requirement\": \"npm run verify:fast passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"5730e2a87ecd718b046cc9bd54056300f5712eb2ea3f77adc925f53c26b76226\"\n        }\n      ]\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "complexity-2.5.0",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "5b44b7618938509fd8062314ca5eff51d956a25f",
+      "observedRevision": "5b44b7618938509fd8062314ca5eff51d956a25f",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/release-2.5.0",
+        "head": "5b44b7618938509fd8062314ca5eff51d956a25f"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "7e4d19677d2b62cf8a4e6cefbfb8673fa81abbe5cd56f9d03255e9871f5e2d03",
+      "routeFingerprint": "9616bb7018d64f365a68f53334cfdf3350bde50f62dd33f0563cf38d3fa4aaa2",
+      "stateFingerprint": "5ec63b23241f53518ea63bff5db7832e050421f7764104f6b27d4278b246f10c",
+      "receiptFingerprint": "92042f7c13bd57eb0ad116d22c18b7de0a4502733ff9e5cf90c3607c6ac89846",
+      "ledgerSeq": 43,
+      "ledgerHash": "adcc7750dc754440427b12045d3447d815a5a5d61596a9e05b7ab07020783577"
+    },
+    "entries": [
+      {
+        "path": "src/core/evidence/verify.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "fad198a0123b85869dfc03f9829df74dd3ae26e9d04add7b4f683d7c80b330a8",
+        "providerContentId": "c07b2a3ff72e6cfc4c42ed1b94bcab3cac00d57d",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/ticket-contract.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "456e614ef96895fffb70ec07738ecd43dcaf979c3955e9f7057721f59c75a145",
+        "providerContentId": "1048465bf7d434e9ccd39c96bb3f6c42553537c1",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "d94d36532bc9f42e936fe40efc6e68879f34ae1c9c557d6aa2f11e255a6007ad"
+  },
+  "manifestFingerprint": "9e240c6d00dfcae20c9da96561bfabb37dbb350d8a93e5b59e6daa9aa96f83ab",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Bring verifyEvidenceRange (src/core/evidence/verify.js, complexity 32) and fetchApprovedTicketContract (src/core/ticket-contract.js, complexity 27) back under the complexity limit of 25 so verify:prepush passes, by extracting helpers without changing behavior.",
+    "successCriteria": [
+      "Both functions are at most complexity 25 with unchanged test results"
+    ],
+    "checks": [
+      {
+        "id": "behavior-tests",
+        "requirement": "node --test tests/contract-from-ticket.test.js tests/delegation-evidence.test.js tests/attestation-predicate-v2.test.js tests/verifier-conformance.test.js tests/conformance.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "complexity",
+        "requirement": "npm run complexity:check passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-c1401d9cb11d4faa",
+        "requirement": "Both functions are at most complexity 25 with unchanged test results",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-fast",
+        "requirement": "npm run verify:fast passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-20T21:59:48.074Z",
+    "completedAt": "2026-11-20T22:02:21.110Z",
+    "durationMs": 153036,
+    "phaseDurationsMs": {
+      "planning": 2653,
+      "executing": 52024,
+      "verifying": 98087,
+      "reviewing": 272
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 5,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "07d3fc32d3def4b699573984041a9bddbe62261ec3aa3ef0ac14106b35cbe134"
+}

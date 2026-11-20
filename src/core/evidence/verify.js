@@ -174,33 +174,22 @@ export function delegationErrors(brief, bundles) {
   return errors;
 }
 
-export async function verifyEvidenceRange({
-  target,
-  packageRoot = getPackageRoot(),
-  revisionProvider = "git",
-  baseRevision,
-  headRevision,
-  directory = DEFAULT_EVIDENCE_DIRECTORY,
-  requireCompleteCoverage = true,
-  requireSignature = false,
-  signerPolicy = {},
-  signingProvider = null,
-  exclusions = [],
-  minAssurance = null,
-  brief = null,
-} = {}) {
+function assertKnownAssurance(minAssurance) {
   if (minAssurance !== null && !EXECUTION_ASSURANCE.includes(minAssurance)) {
     throw Object.assign(new Error(`Unknown execution assurance: ${minAssurance} (expected ${EXECUTION_ASSURANCE.join(", ")})`), { code: "E_CLI_INVOCATION_INVALID" });
   }
-  const evidenceDirectory = normalize(directory).replace(/\/+$/u, "");
-  const provider = await resolveProvider(target, revisionProvider);
-  const changedEntries = await provider.getChangedEntries({ target, baseRevision, headRevision });
-  const changedPaths = [...new Set(changedEntries.flatMap(entryPaths))].filter((value) => !isExcluded(value, evidenceDirectory, exclusions)).sort();
-  const policy = signerPolicyFrom(signerPolicy);
-  const context = { target, provider, headRevision, packageRoot, signer: signingProvider ?? createSigstoreSigningProvider(), policy };
-  const bundles = [];
-  for (const bundlePath of changedBundlePaths(changedEntries, evidenceDirectory)) bundles.push(await loadBundle(context, bundlePath));
-  const coverage = coverageFor(changedPaths, bundles);
+}
+
+function rangeAssurance(usedBundles, minAssurance) {
+  const assurance = usedBundles.length === 0 ? "UNKNOWN"
+    : usedBundles.map((bundle) => bundle.assurance).reduce((low, value) => (assuranceRank(value) < assuranceRank(low) ? value : low));
+  const errors = minAssurance !== null && assuranceRank(assurance) < assuranceRank(minAssurance)
+    ? [{ code: E_EVIDENCE_ASSURANCE_INSUFFICIENT, message: `Execution assurance ${assurance} is below the required ${minAssurance}`, assurance, required: minAssurance }]
+    : [];
+  return { assurance, errors };
+}
+
+function rangeErrors({ bundles, coverage, requireCompleteCoverage, requireSignature, usedBundles }) {
   const errors = [
     ...bundles.filter((bundle) => bundle.error).map((bundle) => ({ ...bundle.error, taskId: bundle.taskId, path: bundle.path })),
     ...coverage.errors,
@@ -208,17 +197,11 @@ export async function verifyEvidenceRange({
   if (requireCompleteCoverage && coverage.uncoveredPaths.length > 0) {
     errors.push({ code: E_ATTESTATION_COVERAGE_GAP, message: `Changed paths are not covered by evidence: ${coverage.uncoveredPaths.join(", ")}`, paths: coverage.uncoveredPaths });
   }
-  const usedBundles = bundles.filter((bundle) => bundle.integrity === "VALID");
   if (requireSignature) errors.push(...signatureErrors(usedBundles));
-  const assurance = usedBundles.length === 0 ? "UNKNOWN"
-    : usedBundles.map((bundle) => bundle.assurance).reduce((low, value) => (assuranceRank(value) < assuranceRank(low) ? value : low));
-  if (minAssurance !== null && assuranceRank(assurance) < assuranceRank(minAssurance)) {
-    errors.push({ code: E_EVIDENCE_ASSURANCE_INSUFFICIENT, message: `Execution assurance ${assurance} is below the required ${minAssurance}`, assurance, required: minAssurance });
-  }
-  const delegation = brief ? delegationErrors(brief, bundles) : null;
-  if (delegation) errors.push(...delegation);
-  const status = errors.length === 0 ? "VALID" : "INVALID";
-  const level = overallLevel(status, usedBundles);
+  return errors;
+}
+
+function verificationResult({ status, level, assurance, minAssurance, brief, delegation, provider, baseRevision, headRevision, evidenceDirectory, changedPaths, coverage, bundles, requireSignature, policy, errors }) {
   return {
     schemaVersion: 1,
     kind: "forgeloop-evidence-verification",
@@ -240,4 +223,40 @@ export async function verifyEvidenceRange({
     warnings: level === EVIDENCE_LEVELS.INTEGRITY_ONLY ? [UNSIGNED_WARNING] : [],
     errors,
   };
+}
+
+export async function verifyEvidenceRange({
+  target,
+  packageRoot = getPackageRoot(),
+  revisionProvider = "git",
+  baseRevision,
+  headRevision,
+  directory = DEFAULT_EVIDENCE_DIRECTORY,
+  requireCompleteCoverage = true,
+  requireSignature = false,
+  signerPolicy = {},
+  signingProvider = null,
+  exclusions = [],
+  minAssurance = null,
+  brief = null,
+} = {}) {
+  assertKnownAssurance(minAssurance);
+  const evidenceDirectory = normalize(directory).replace(/\/+$/u, "");
+  const provider = await resolveProvider(target, revisionProvider);
+  const changedEntries = await provider.getChangedEntries({ target, baseRevision, headRevision });
+  const changedPaths = [...new Set(changedEntries.flatMap(entryPaths))].filter((value) => !isExcluded(value, evidenceDirectory, exclusions)).sort();
+  const policy = signerPolicyFrom(signerPolicy);
+  const context = { target, provider, headRevision, packageRoot, signer: signingProvider ?? createSigstoreSigningProvider(), policy };
+  const bundles = [];
+  for (const bundlePath of changedBundlePaths(changedEntries, evidenceDirectory)) bundles.push(await loadBundle(context, bundlePath));
+  const coverage = coverageFor(changedPaths, bundles);
+  const usedBundles = bundles.filter((bundle) => bundle.integrity === "VALID");
+  const errors = rangeErrors({ bundles, coverage, requireCompleteCoverage, requireSignature, usedBundles });
+  const { assurance, errors: assuranceErrors } = rangeAssurance(usedBundles, minAssurance);
+  errors.push(...assuranceErrors);
+  const delegation = brief ? delegationErrors(brief, bundles) : null;
+  if (delegation) errors.push(...delegation);
+  const status = errors.length === 0 ? "VALID" : "INVALID";
+  const level = overallLevel(status, usedBundles);
+  return verificationResult({ status, level, assurance, minAssurance, brief, delegation, provider, baseRevision, headRevision, evidenceDirectory, changedPaths, coverage, bundles, requireSignature, policy, errors });
 }

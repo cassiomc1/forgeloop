@@ -21,6 +21,18 @@ export function resolveCloudUrl(value) {
   return url.origin;
 }
 
+async function approvedRecord(response, key) {
+  let body = null;
+  try { body = await response.json(); } catch { /* reported below */ }
+  if (response.status === 404) throw unavailable(`ForgeLoop Cloud has no contract for ${key}; compile and approve the ticket first`);
+  if (response.status === 401 || response.status === 403) throw unavailable(`ForgeLoop Cloud refused the token (HTTP ${response.status}); check FORGELOOP_CLOUD_TOKEN`);
+  if (!response.ok || !body || typeof body !== "object") throw unavailable(`ForgeLoop Cloud returned HTTP ${response.status}${body?.error ? `: ${body.error}` : ""}`);
+  if (body.status !== "approved" || !body.approved?.contract || typeof body.approved.contract !== "object") {
+    throw Object.assign(new Error(`The contract for ${key} is ${body.status ?? "not stored"}, not approved; approve it in ForgeLoop Cloud (contract_approve) or on the ticket first`), { code: E_TICKET_CONTRACT_NOT_APPROVED });
+  }
+  return body;
+}
+
 export async function fetchApprovedTicketContract(key, { env = process.env, fetchImpl = fetch } = {}) {
   if (typeof key !== "string" || !KEY.test(key)) throw unavailable(`--from-ticket must be a ticket key "source:externalId", for example linear:ENG-42 (got ${key})`);
   const token = env.FORGELOOP_CLOUD_TOKEN ?? "";
@@ -35,14 +47,7 @@ export async function fetchApprovedTicketContract(key, { env = process.env, fetc
   } catch (error) {
     throw unavailable(`ForgeLoop Cloud is unreachable at ${base}: ${error.message}`);
   }
-  let body = null;
-  try { body = await response.json(); } catch { /* reported below */ }
-  if (response.status === 404) throw unavailable(`ForgeLoop Cloud has no contract for ${key}; compile and approve the ticket first`);
-  if (response.status === 401 || response.status === 403) throw unavailable(`ForgeLoop Cloud refused the token (HTTP ${response.status}); check FORGELOOP_CLOUD_TOKEN`);
-  if (!response.ok || !body || typeof body !== "object") throw unavailable(`ForgeLoop Cloud returned HTTP ${response.status}${body?.error ? `: ${body.error}` : ""}`);
-  if (body.status !== "approved" || !body.approved?.contract || typeof body.approved.contract !== "object") {
-    throw Object.assign(new Error(`The contract for ${key} is ${body.status ?? "not stored"}, not approved; approve it in ForgeLoop Cloud (contract_approve) or on the ticket first`), { code: E_TICKET_CONTRACT_NOT_APPROVED });
-  }
+  const body = await approvedRecord(response, key);
   const sourceRef = body.url ?? key;
   const contract = body.approved.contract;
   return {
