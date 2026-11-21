@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "maintenance-owner-replace",
+  "forgeloopVersion": "2.5.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:maintenance-owner-replace\",\n      \"digest\": {\n        \"sha256\": \"5f69c341d22e5272a50b7a4c46aa0642b2d111e1b5db265449c8e6c8f5e46871\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 2,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"maintenance-owner-replace\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"a53888fcee74207f67848a6b75d7f2763058e1476974d44c7f9d53fc7ea4e044\",\n      \"contentDigest\": \"5f69c341d22e5272a50b7a4c46aa0642b2d111e1b5db265449c8e6c8f5e46871\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"src/storage/maintenance-owner.js\",\n        \"tests/storage-maintenance-owner-replace.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"7430b0c4206f03fc036a1fea5da5aeb9852753e65dcbfe4f7861d9d88e04168e\",\n      \"routeFingerprint\": \"74657775c784b869ae990ab6ac8f2cb6b9bd50a6e282c3ead40d7d7114502209\",\n      \"stateFingerprint\": \"ed262b7e1d9e22e72409a8a9015e863adac75e4a7f662093eea34dc6ce224ae8\",\n      \"receiptFingerprint\": \"0507ddc9b797d22b3f77f5fc2465fae319c6d92d8b4b6b8e6fffeae6d494306a\",\n      \"ledgerSeq\": 43,\n      \"ledgerHash\": \"badf82f150c8751b7b3d4c3a62009484470eca93ad885c896ad89a4ad7c832cd\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\",\n      \"checks\": [\n        {\n          \"id\": \"replace-tests\",\n          \"requirement\": \"node --test tests/storage-maintenance-owner-replace.test.js tests/storage-maintenance-handoff.test.js passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"312393dcf81dff72c0e2e3a2f337d8f53540e0c14906e0bf392a50bcb9ba5212\"\n        },\n        {\n          \"id\": \"requirement-59830ebc3a418411\",\n          \"requirement\": \"tests\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"5730e2a87ecd718b046cc9bd54056300f5712eb2ea3f77adc925f53c26b76226\"\n        },\n        {\n          \"id\": \"requirement-dcaf5528ff82569d\",\n          \"requirement\": \"A deterministic test replaces owner.json between lstat and open: before the fix it fails with OWNER_INVALID, after it returns the new owner\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"460b19ea9769dcb2abc40db4ee7e377ab9253f35ec4d87f1c23d869438bfca1f\"\n        },\n        {\n          \"id\": \"requirement-feab006e7beb08d6\",\n          \"requirement\": \"A symlink or out-of-root swap still fails with OWNER_INVALID\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"460b19ea9769dcb2abc40db4ee7e377ab9253f35ec4d87f1c23d869438bfca1f\"\n        },\n        {\n          \"id\": \"verify-prepush\",\n          \"requirement\": \"npm run verify:prepush passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"7dfb922deb580ef32e918a3ed10011e56554dd41879e218dcf1a44753509d1ff\"\n        }\n      ]\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "maintenance-owner-replace",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "c968462ff6b442cd80ced7e9d1bbac53fdd967b7",
+      "observedRevision": "c968462ff6b442cd80ced7e9d1bbac53fdd967b7",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/maintenance-owner-replace",
+        "head": "c968462ff6b442cd80ced7e9d1bbac53fdd967b7"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "7430b0c4206f03fc036a1fea5da5aeb9852753e65dcbfe4f7861d9d88e04168e",
+      "routeFingerprint": "74657775c784b869ae990ab6ac8f2cb6b9bd50a6e282c3ead40d7d7114502209",
+      "stateFingerprint": "ed262b7e1d9e22e72409a8a9015e863adac75e4a7f662093eea34dc6ce224ae8",
+      "receiptFingerprint": "0507ddc9b797d22b3f77f5fc2465fae319c6d92d8b4b6b8e6fffeae6d494306a",
+      "ledgerSeq": 43,
+      "ledgerHash": "badf82f150c8751b7b3d4c3a62009484470eca93ad885c896ad89a4ad7c832cd"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "db0567520838ac598ec087931372d29b76b33f20270c7fac6b8099ba16833947",
+        "providerContentId": "eee5490a9b7d77dc4b823f30fe07ab9436e2763b",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/storage/maintenance-owner.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "d4921ce4f22bd32d98430a0409b8c16b99b00c3b757b3ddba952732a55407df6",
+        "providerContentId": "d1f3e9248e537a7e81661a0da8123c98f725d383",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/storage-maintenance-owner-replace.test.js",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "d0a8af09f93c4e8db8f75eda5a7d1090aff27fab11031a0bd69c5d9f725368d8",
+        "providerContentId": "638f82f35e17cd540a599d47879698e7583b34f8",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "5f69c341d22e5272a50b7a4c46aa0642b2d111e1b5db265449c8e6c8f5e46871"
+  },
+  "manifestFingerprint": "a53888fcee74207f67848a6b75d7f2763058e1476974d44c7f9d53fc7ea4e044",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Stop readMaintenanceOwner from reporting E_STORAGE_MAINTENANCE_OWNER_INVALID when owner.json is atomically replaced (rename) between its lstat and open: re-read, with every safety check, a bounded number of times when a fresh lstat shows a different regular in-root file, so a losing concurrent resumer sees the winner's owner and gets E_STORAGE_MAINTENANCE_IN_PROGRESS. Reproduced 1 in 80-100 runs of the two-resumer test under load (stack: filesystem.js:115 via maintenance.js:287).",
+    "successCriteria": [
+      "A deterministic test replaces owner.json between lstat and open: before the fix it fails with OWNER_INVALID, after it returns the new owner",
+      "A symlink or out-of-root swap still fails with OWNER_INVALID"
+    ],
+    "checks": [
+      {
+        "id": "replace-tests",
+        "requirement": "node --test tests/storage-maintenance-owner-replace.test.js tests/storage-maintenance-handoff.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-dcaf5528ff82569d",
+        "requirement": "A deterministic test replaces owner.json between lstat and open: before the fix it fails with OWNER_INVALID, after it returns the new owner",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-feab006e7beb08d6",
+        "requirement": "A symlink or out-of-root swap still fails with OWNER_INVALID",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-21T01:27:13.360Z",
+    "completedAt": "2026-11-21T01:40:05.419Z",
+    "durationMs": 772059,
+    "phaseDurationsMs": {
+      "planning": 2695,
+      "executing": 79097,
+      "verifying": 690000,
+      "reviewing": 267
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 5,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "9989efe26cb11820364f9aca4e5d39ca1bb39108506e45cc3f7b1046ba2c5c0f"
+}

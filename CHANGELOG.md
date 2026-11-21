@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Storage: a maintenance owner record atomically replaced by a concurrent
+  resumer between observation and open is re-read (at most three attempts)
+  instead of being reported as malformed, so the losing resumer gets
+  `E_STORAGE_MAINTENANCE_IN_PROGRESS`. Symlinks, non-files and out-of-root
+  swaps still fail with `E_STORAGE_MAINTENANCE_OWNER_INVALID`.
+
 ## 2.5.0 - 2026-11-20
 
 - Minor release. Its runtime change is bound by
