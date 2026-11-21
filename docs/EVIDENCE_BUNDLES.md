@@ -173,6 +173,13 @@ base and head revisions. It works as follows:
 Exit codes match `attestation-verify-range`: `0` valid, `1` invalid,
 uncovered, or untrusted, and `2` invocation, provider, or environment error.
 
+The same checks run without the ForgeLoop CLI in the independent,
+dependency-free verifier (Apache-2.0):
+`npx @cassiomc1/forgeloop-verify --base <rev> --head <rev>`. It accepts
+`--min-assurance` and `--brief` but does not verify Sigstore signatures; use
+version 1.0.1 or later, since 1.0.0 does nothing when run through `npx`. See
+[`verifier/README.md`](../verifier/README.md).
+
 ## Trust boundary
 
 - Signer identity, issuer, and exclusions are verifier policy. Supply them

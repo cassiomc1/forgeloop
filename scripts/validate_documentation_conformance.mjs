@@ -850,9 +850,9 @@ export async function validateDocumentationConformance({ rootDir = repositoryRoo
       errors.push(`DOC_README_DUPLICATE_TOPIC: README.md contains duplicate "Cross-harness continuity" heading`);
     }
 
-    const diagramMatch = readmeContent.match(/((\.\/)?docs\/assets\/forgeloop-lifecycle-animated\.svg)/);
+    const diagramMatch = readmeContent.match(/((\.\/)?docs\/assets\/forgeloop-architecture\.png)/);
     if (!diagramMatch) {
-      errors.push(`DOC_README_DIAGRAM_REFERENCE_INVALID: README.md must reference ./docs/assets/forgeloop-lifecycle-animated.svg`);
+      errors.push(`DOC_README_DIAGRAM_REFERENCE_INVALID: README.md must reference ./docs/assets/forgeloop-architecture.png`);
     } else {
       const diagramRelPath = diagramMatch[1];
       const diagramAbsPath = path.resolve(rootDir, diagramRelPath);

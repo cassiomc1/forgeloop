@@ -31,6 +31,7 @@ integration and guide context. Use this map before editing documentation.
 | Diagnostic model | [`docs/DIAGNOSTIC_MODEL.md`](./docs/DIAGNOSTIC_MODEL.md) | Structured diagnostic cases, interventions, hypothesis dispositions, information gain |
 | Code attestation and revision coverage | [`docs/CODE_ATTESTATION.md`](./docs/CODE_ATTESTATION.md) | Source-content manifests, in-toto statements, signatures, and range verification |
 | Evidence bundles | [`docs/EVIDENCE_BUNDLES.md`](./docs/EVIDENCE_BUNDLES.md) | Portable redacted evidence exported on completion, `evidence-verify` in pull-request CI, the GitHub App check, and `evidence-publish` |
+| Protocol specification and independent verifier | [`docs/PROTOCOL_SPEC.md`](./docs/PROTOCOL_SPEC.md) and [`verifier/README.md`](./verifier/README.md) | Normative, implementation-neutral core spec (Apache-2.0), conformance suite, and the dependency-free `npx @cassiomc1/forgeloop-verify` |
 | Cloud sync | [`docs/CLOUD_SYNC.md`](./docs/CLOUD_SYNC.md) | Encrypted single-writer snapshot handoff between machines with `sync-push`, `sync-pull` and the task-level `--merge` |
 | Repository assessment | [`docs/ASSESSMENT.md`](./docs/ASSESSMENT.md) | Read-only `forgeloop assess` report for an existing repository |
 | SQLite storage | [`docs/SQLITE_STORAGE.md`](./docs/SQLITE_STORAGE.md) and [`docs/STABLE_2_ACCEPTANCE.md`](./docs/STABLE_2_ACCEPTANCE.md) | Operational SQLite store, explicit migration, backup and restore, and the stable 2 acceptance boundary |

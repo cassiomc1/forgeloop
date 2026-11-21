@@ -64,7 +64,6 @@ test("repository hygiene requires explicit visual ownership", () => {
   assert.deepEqual([...REPOSITORY_ONLY_VISUALS], [
     "docs/assets/forgeloop-architecture.png",
     "docs/assets/forgeloop-architecture.svg",
-    "docs/assets/forgeloop-lifecycle-animated.svg",
   ]);
 });
 
