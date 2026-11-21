@@ -83,8 +83,8 @@ See the [23-guide maintenance map](./docs/GUIDE_MAINTENANCE.md) for review scope
 ## Distribution and license
 
 GitHub hosts source and issues. The core npm package is public; the MCP
-companion has restricted distribution. Stable `2.3.1` is on npm `latest` with
-provenance and verified release identity.
+companion has restricted distribution. Stable `2.5.0` is on npm `latest` and
+`next` with provenance and verified release identity.
 The protocol (spec, schemas, conformance, [verifier](./verifier/)) is
 [Apache-2.0](./LICENSE-APACHE); the runtime is [PolyForm Noncommercial
 1.0.0](./LICENSE), free for noncommercial use ([`LICENSING.md`](./LICENSING.md)).
@@ -147,12 +147,15 @@ without the developer's local state, through the
 Evidence GitHub App. Statements are in-toto Statement v1 documents; the
 optional Sigstore provider and the main-only Evidence signing workflow sign
 them with `cosign`. See [`docs/EVIDENCE_BUNDLES.md`](./docs/EVIDENCE_BUNDLES.md)
-and [`docs/SIGNING_PROVIDERS.md`](./docs/SIGNING_PROVIDERS.md).
+and [`docs/SIGNING_PROVIDERS.md`](./docs/SIGNING_PROVIDERS.md). Without the CLI:
+`npx @cassiomc1/forgeloop-verify --base <rev> --head <rev>`
+([independent verifier](./verifier/README.md)).
 
 The optional, paid ForgeLoop Cloud adds an encrypted state handoff between
 machines (`sync-push`, `sync-pull`, task-level `sync-pull --merge`; see
 [`docs/CLOUD_SYNC.md`](./docs/CLOUD_SYNC.md)), `evidence-publish` for work that
-is not merged yet, and a team dashboard with ForgeLoop Audit at
+is not merged yet, approved contracts from any tracker's tickets
+(`contract-create --from-ticket <source:id>`), and a team dashboard with ForgeLoop Audit at
 [forgeloop.monster/dashboard](https://forgeloop.monster/dashboard/). The local
 protocol never depends on it.
 
@@ -457,11 +460,6 @@ See [`docs/CLI_REFERENCE.md`](./docs/CLI_REFERENCE.md) and [`LOOP_SYSTEM_DESIGN.
 
 ## Architecture flow
 
-<img src="./docs/assets/forgeloop-lifecycle-animated.svg" alt="Animated ForgeLoop evidence-first loop: Contract, Route, Preflight, Execute, Evidence, Review, VALID, with an evidence-only correction loop" width="100%">
-
-*Animation: the rail pulses through each step in order. It loops forever and
-respects reduced-motion settings.*
-
 The broader architecture and the CLI-only search boundary are in
 [`LOOP_SYSTEM_DESIGN.md`](./LOOP_SYSTEM_DESIGN.md) and
 [`PERSISTENT_SEARCH_TRANSPORT.md`](./docs/PERSISTENT_SEARCH_TRANSPORT.md).
@@ -470,7 +468,7 @@ Fail-closed verification is described in
 Exact content binding, optional signing and revision-range coverage are
 described in [`docs/CODE_ATTESTATION.md`](./docs/CODE_ATTESTATION.md#completion-flow).
 
-Text-only fallback: discovery creates the contract and route; parsed project
+In short: discovery creates the contract and route; parsed project
 manifests/build metadata select the corresponding language specialist; owned
 SQL migrations overlay their host project; parsed
 `dependencies.flutter.sdk: flutter` selects Flutter for that root; a supported

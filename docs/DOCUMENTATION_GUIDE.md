@@ -227,8 +227,9 @@ not a canonical protocol diagram. The lifecycle architecture is defined in
 prose by `LOOP_SYSTEM_DESIGN.md`; the CLI-only persistent search
 transport is explained by `docs/PERSISTENT_SEARCH_TRANSPORT.md`. The current
 repository-only assets are `docs/assets/forgeloop-architecture.png`, its
-source [architecture SVG](./assets/forgeloop-architecture.svg), and
-`docs/assets/forgeloop-lifecycle-animated.svg`; none is a package file.
+source [architecture SVG](./assets/forgeloop-architecture.svg); neither is a
+package file. The README has no other image; its "Architecture flow" section
+is prose.
 
 The architecture PNG is rendered from the SVG, so edit the SVG and regenerate
 the PNG instead of editing the image. Render it at 1.25× with a headless
@@ -242,9 +243,8 @@ chrome --headless=new --hide-scrollbars --force-device-scale-factor=1.25 \
 
 The README hero is intentionally GitHub-repository-only:
 
-- `README.md` references `docs/assets/forgeloop-architecture.png` for the hero
-  and `docs/assets/forgeloop-lifecycle-animated.svg` for the looping overview;
-  both are repository-only and excluded from the npm package. The architecture
+- `README.md` references `docs/assets/forgeloop-architecture.png` for the hero;
+  it is repository-only and excluded from the npm package. The architecture
   SVG is the repository-only source of the PNG.
 - `tests/package.test.js` asserts those exclusions so they cannot be silently
   re-included.

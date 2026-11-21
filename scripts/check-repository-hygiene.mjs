@@ -17,7 +17,6 @@ export const ROOT_MARKDOWN = new Set([
 export const REPOSITORY_ONLY_VISUALS = new Set([
   "docs/assets/forgeloop-architecture.png",
   "docs/assets/forgeloop-architecture.svg",
-  "docs/assets/forgeloop-lifecycle-animated.svg",
 ]);
 export const BENCHMARK_RUN_SETS = new Set([
   "codex-quality-repeat5-20260831",

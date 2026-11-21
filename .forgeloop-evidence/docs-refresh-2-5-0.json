@@ -1,0 +1,246 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "docs-refresh-2-5-0",
+  "forgeloopVersion": "2.5.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:docs-refresh-2-5-0\",\n      \"digest\": {\n        \"sha256\": \"0feafdaeb2a49343e4639f4b09b07be934353a562b0292edacdec8a5349fb0c8\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 2,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"docs-refresh-2-5-0\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"ee7628ff24974ad98a12cb3dc7c385fe0cae90b3bb0790292f761361b6d3a76e\",\n      \"contentDigest\": \"0feafdaeb2a49343e4639f4b09b07be934353a562b0292edacdec8a5349fb0c8\",\n      \"coveredPaths\": [\n        \"DOCS_INDEX.md\",\n        \"README.md\",\n        \"docs/DOCUMENTATION_GUIDE.md\",\n        \"docs/EVIDENCE_BUNDLES.md\",\n        \"docs/GETTING_STARTED.md\",\n        \"docs/PACKAGE_CONTENTS.md\",\n        \"docs/SQLITE_STORAGE.md\",\n        \"docs/assets/forgeloop-lifecycle-animated.svg\",\n        \"scripts/check-repository-hygiene.mjs\",\n        \"scripts/validate_documentation_conformance.mjs\",\n        \"tests/documentation-conformance.test.js\",\n        \"tests/documentation-surfaces.test.js\",\n        \"tests/repository-hygiene.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"e39c925e75c15b957cbec38fd99e5716af59ee18726d3d84c4b7a6b03629ee0d\",\n      \"routeFingerprint\": \"1fbf0cbd75269e1ba22ffa169d1fcaa15ff143ab87ce7279eef2e1e4ec5bd764\",\n      \"stateFingerprint\": \"c196ab233a6d16061f15cad3c4cd44c4a979d936c9a4a62b4546285094595966\",\n      \"receiptFingerprint\": \"0ce71abc21449aacce8cf378846b9b8b966c1f0f5f6624695af341eb6f7258b5\",\n      \"ledgerSeq\": 46,\n      \"ledgerHash\": \"9672faae9ffa314b8c0536ecd933f0e20c6abf529f662a66b17976dcca05925b\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\",\n      \"checks\": [\n        {\n          \"id\": \"docs-check\",\n          \"requirement\": \"npm run docs:check passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"90feade86f0fe5eeb934e3ec3eefe02bc9660d41d14310d2c80be18ca5254976\"\n        },\n        {\n          \"id\": \"docs-tests\",\n          \"requirement\": \"Documentation, hygiene and package tests pass\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"6808376fede8969eaaf323c1793dc62dfec932b7f45eec029c145fbecb37416f\"\n        },\n        {\n          \"id\": \"requirement-4985a01d6733a08b\",\n          \"requirement\": \"README, GETTING_STARTED and SQLITE_STORAGE name 2.5.0 as current stable\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"78f1b4d81c52e25370c2f42445fdac75e20067de60d0bcf06df2bd5c57562125\"\n        },\n        {\n          \"id\": \"requirement-e3a3d33f2c209df4\",\n          \"requirement\": \"README has no animated architecture-flow image and the asset is removed\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"6e6ef44cf9c50304040de48ec086da24049eae211f248d9efa6854231b20e1a4\"\n        },\n        {\n          \"id\": \"verify-prepush\",\n          \"requirement\": \"npm run verify:prepush passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"7dfb922deb580ef32e918a3ed10011e56554dd41879e218dcf1a44753509d1ff\"\n        }\n      ]\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "docs-refresh-2-5-0",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "d36861a428f52fc67accac13f973009fdb2da129",
+      "observedRevision": "d36861a428f52fc67accac13f973009fdb2da129",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/docs-2-5-0",
+        "head": "d36861a428f52fc67accac13f973009fdb2da129"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "e39c925e75c15b957cbec38fd99e5716af59ee18726d3d84c4b7a6b03629ee0d",
+      "routeFingerprint": "1fbf0cbd75269e1ba22ffa169d1fcaa15ff143ab87ce7279eef2e1e4ec5bd764",
+      "stateFingerprint": "c196ab233a6d16061f15cad3c4cd44c4a979d936c9a4a62b4546285094595966",
+      "receiptFingerprint": "0ce71abc21449aacce8cf378846b9b8b966c1f0f5f6624695af341eb6f7258b5",
+      "ledgerSeq": 46,
+      "ledgerHash": "9672faae9ffa314b8c0536ecd933f0e20c6abf529f662a66b17976dcca05925b"
+    },
+    "entries": [
+      {
+        "path": "DOCS_INDEX.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "630b497e783f8e625cc598307711265436dc129fff4f5a94fbe5bc9cc8942550",
+        "providerContentId": "8c4ab1fc24004a3c628c2aaf1cb60c31c208de5e",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/assets/forgeloop-lifecycle-animated.svg",
+        "operation": "DELETED",
+        "kind": "DELETED",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/DOCUMENTATION_GUIDE.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "e4418d04eeffba1700d09a149bcbe6310467792dbf658aa8155c0eceb62cfa88",
+        "providerContentId": "3aeebba4bb0a0be564e36efe826d5e85246862d8",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/EVIDENCE_BUNDLES.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "4b8719dcc5f0adf41208eb53fd58db7d495508a456b200b783af74d5d16d5f1f",
+        "providerContentId": "1e2e73f3b48b750fcc4cca8548e041f879487605",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/GETTING_STARTED.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "3ea68db3cd1c8079691f955f8a7ab14d6146d19dfaae0115a3f1cc3bb214e152",
+        "providerContentId": "ac0fe3abae41ffa5754fa605e4eeed2af1f8c01f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/PACKAGE_CONTENTS.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "99ecd907ec08a60ace2419643af1326db5f0417eac1473aefcb4ae7e57444859",
+        "providerContentId": "58a70a95d29bb66eb32648097e260669f7857f0a",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/SQLITE_STORAGE.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "ed8e5979de9f73816777065cc3b138a9be00d8c0e9285105a91d6be1c363880e",
+        "providerContentId": "cfdb7dc81c0b2dbf3bdab18c5647670016f2acd5",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "README.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "342cc3d42fb44f8f20048414553dc9ba6394e228e1b0eef6e50f4c3e4124bfb4",
+        "providerContentId": "8132eb83254db9056829ace09be70da8d1a25c84",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/check-repository-hygiene.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "850e399aaf6dd7ff985b2f536f5a9077db6539ff9924d9f057884dfbe21c555b",
+        "providerContentId": "8c620609b5e12ca46506c3bc5ad1da7cc4fd833c",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/validate_documentation_conformance.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "47c9ccfbe98edd7c75228f78ac2e15d5bd83e7ca5627174e583967a12a57d21c",
+        "providerContentId": "15ad0ed64c73e0bc2da18616f1e8683f2e88ba15",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/documentation-conformance.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "d67576dd0f5cdf581141f8557b331908c6831a90802953d57c243a4b0eb595ca",
+        "providerContentId": "59a7f1cfe98fc1b59df94d3afeb81b9399031fa7",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/documentation-surfaces.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "0023a72d72c7dcd8737f0b46a97716554c43cb432dc079d2130849efe7d5e058",
+        "providerContentId": "89cd6322153c1a30d61867c2e30328bbb9af6c4e",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/repository-hygiene.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "7dca4896701f533c3da0c7bd10dc6aedacb9bf43eb9e8f96bc7a0ce59f33d8ae",
+        "providerContentId": "21eb68e1ad111263225dd5d6c57583ca993f0655",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "0feafdaeb2a49343e4639f4b09b07be934353a562b0292edacdec8a5349fb0c8"
+  },
+  "manifestFingerprint": "ee7628ff24974ad98a12cb3dc7c385fe0cae90b3bb0790292f761361b6d3a76e",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Refresh the GitHub documentation for 2.5.0: remove the animated image from the README Architecture flow section (with its asset and the checks that required it), fix stale release versions, and document ticket contracts and the independent npx verifier.",
+    "successCriteria": [
+      "README has no animated architecture-flow image and the asset is removed",
+      "README, GETTING_STARTED and SQLITE_STORAGE name 2.5.0 as current stable"
+    ],
+    "checks": [
+      {
+        "id": "docs-check",
+        "requirement": "npm run docs:check passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "docs-tests",
+        "requirement": "Documentation, hygiene and package tests pass",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-4985a01d6733a08b",
+        "requirement": "README, GETTING_STARTED and SQLITE_STORAGE name 2.5.0 as current stable",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-e3a3d33f2c209df4",
+        "requirement": "README has no animated architecture-flow image and the asset is removed",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-21T11:32:00.624Z",
+    "completedAt": "2026-11-21T12:03:38.797Z",
+    "durationMs": 1898173,
+    "phaseDurationsMs": {
+      "planning": 13301,
+      "executing": 809,
+      "verifying": 1883787,
+      "reviewing": 276
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 5,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "b089c5ddc4714f43873b7ab299b91d3f83676fab182fddb499eb5fc6526deee1"
+}

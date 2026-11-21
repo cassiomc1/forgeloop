@@ -25,7 +25,8 @@ test("README keeps the lifecycle contract, modern multi-task layout, and accessi
     assert.match(readme, new RegExp(marker.replaceAll(".", "\\.")), marker);
   }
   assert.match(readme, /\.forgeloop\/task-state\/<taskKey>\//);
-  assert.match(readme, /docs\/assets\/forgeloop-lifecycle-animated\.svg/);
+  assert.match(readme, /docs\/assets\/forgeloop-architecture\.png/);
+  assert.doesNotMatch(readme, /forgeloop-lifecycle-animated/u);
   assert.doesNotMatch(readme, /docs\/diagrams|assets\/diagrams|Archify/u);
   assert.match(readme, /project-scoped configuration/i);
   assert.match(readme, /task-scoped/i);
