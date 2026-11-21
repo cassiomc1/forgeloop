@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Documentation: `docs/CLI_REFERENCE.md` and `docs/GETTING_STARTED.md` explain
+  `TYPESAFE_API_KEY`: where to get it, which commands need it, how to set it
+  locally and in CI, and that evidence verification does not.
 - Independent verifier 1.0.1: `@cassiomc1/forgeloop-verify` 1.0.0 did
   nothing and exited 0 when run through `npx` or an installed bin, because
   its entry check compared `import.meta.url` with the `node_modules/.bin`

@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "docs-typesafe-key-cli",
+  "forgeloopVersion": "2.5.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:docs-typesafe-key-cli\",\n      \"digest\": {\n        \"sha256\": \"476dba94193ce9091e492c2c727d49266b6904d310bad94afdd4af219c9b94d0\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 2,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"docs-typesafe-key-cli\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"ceade5f39790203e50816a4d9ddfb64c5e179cb16daaea9f2f0a3ea4056de5ed\",\n      \"contentDigest\": \"476dba94193ce9091e492c2c727d49266b6904d310bad94afdd4af219c9b94d0\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"docs/CLI_REFERENCE.md\",\n        \"docs/GETTING_STARTED.md\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"3d861df7da30bbaa5a6c3f84b67bfb2e9b5f3cad833cba58ac3ecbe495414905\",\n      \"routeFingerprint\": \"c7337c6d7228fcbb15cd8c3ea42decda482d9cc8ad272acea8c407910d0325d7\",\n      \"stateFingerprint\": \"085911eaf4a345d00cdfb79485c4a2739f0e27ad63252239ed65488ce87fb80a\",\n      \"receiptFingerprint\": \"63440f9f4d130373957894751b5152f84f5222de2361269fe1e1b979b6284f8c\",\n      \"ledgerSeq\": 37,\n      \"ledgerHash\": \"04f25ff483ea186c52b280fb34277aacd1d5124f1f98fc10842f63501edb57ae\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\",\n      \"checks\": [\n        {\n          \"id\": \"docs-check\",\n          \"requirement\": \"npm run docs:check passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"90feade86f0fe5eeb934e3ec3eefe02bc9660d41d14310d2c80be18ca5254976\"\n        },\n        {\n          \"id\": \"requirement-f002465d355d4bd0\",\n          \"requirement\": \"CLI_REFERENCE and GETTING_STARTED both explain TYPESAFE_API_KEY\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"20d5ce72fcea2ccb184b4191cb515a4e303b3bb60ba57f268fd8853a0a91be76\"\n        },\n        {\n          \"id\": \"verify-fast\",\n          \"requirement\": \"npm run verify:fast passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"5730e2a87ecd718b046cc9bd54056300f5712eb2ea3f77adc925f53c26b76226\"\n        }\n      ]\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "docs-typesafe-key-cli",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "3337ce232b2d20c55ee28dbcd3442b75ed6c271c",
+      "observedRevision": "3337ce232b2d20c55ee28dbcd3442b75ed6c271c",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/docs-typesafe-key-cli",
+        "head": "3337ce232b2d20c55ee28dbcd3442b75ed6c271c"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "3d861df7da30bbaa5a6c3f84b67bfb2e9b5f3cad833cba58ac3ecbe495414905",
+      "routeFingerprint": "c7337c6d7228fcbb15cd8c3ea42decda482d9cc8ad272acea8c407910d0325d7",
+      "stateFingerprint": "085911eaf4a345d00cdfb79485c4a2739f0e27ad63252239ed65488ce87fb80a",
+      "receiptFingerprint": "63440f9f4d130373957894751b5152f84f5222de2361269fe1e1b979b6284f8c",
+      "ledgerSeq": 37,
+      "ledgerHash": "04f25ff483ea186c52b280fb34277aacd1d5124f1f98fc10842f63501edb57ae"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "75ba2218906b9179105fb9d75b9df3ba5a7522ab7c30df38a54f3de43bcd7942",
+        "providerContentId": "74c3ed7394660a9bee82627760eb82c3457b69d2",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/CLI_REFERENCE.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "91cf25a168aafed0df8c1c512810741e5ee5eafeb5af8f32717a84ca221c034e",
+        "providerContentId": "8a901da48aee8b9093f91bc5a7a095465d29b90b",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/GETTING_STARTED.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "0a5e605df736b60c8e7005f9490bdaae22fdb3caff583e7e1e88f8bd601da2e9",
+        "providerContentId": "8ea74bf2e067e05b3dcbd7caf1150e0e246418ac",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "476dba94193ce9091e492c2c727d49266b6904d310bad94afdd4af219c9b94d0"
+  },
+  "manifestFingerprint": "ceade5f39790203e50816a4d9ddfb64c5e179cb16daaea9f2f0a3ea4056de5ed",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Document TYPESAFE_API_KEY where users start: a section in docs/CLI_REFERENCE.md and a step in docs/GETTING_STARTED.md saying where to get it, which commands need it and how to set it locally and in CI.",
+    "successCriteria": [
+      "CLI_REFERENCE and GETTING_STARTED both explain TYPESAFE_API_KEY"
+    ],
+    "checks": [
+      {
+        "id": "docs-check",
+        "requirement": "npm run docs:check passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-f002465d355d4bd0",
+        "requirement": "CLI_REFERENCE and GETTING_STARTED both explain TYPESAFE_API_KEY",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-fast",
+        "requirement": "npm run verify:fast passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-21T14:43:02.293Z",
+    "completedAt": "2026-11-21T14:45:35.052Z",
+    "durationMs": 152759,
+    "phaseDurationsMs": {
+      "planning": 2787,
+      "executing": 47140,
+      "verifying": 102501,
+      "reviewing": 331
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 3,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "e55fff31f2c4c16fa6d26c29d412e999c01a472c9d3fe38f3ee5415fe85d3512"
+}

@@ -130,6 +130,22 @@ npm install --global @cassiomc1/forgeloop
 forgeloop --version
 ```
 
+### TypeSafe API key
+
+Lifecycle commands that make a semantic decision, such as `contract-create`
+and `route`, need a TypeSafe API key. Create one in your TypeSafe account at
+[typesafe.ai](https://typesafe.ai) and expose it in the environment that runs
+ForgeLoop (your shell, IDE or agent, and CI secrets). ForgeLoop never writes
+it anywhere. Without it those commands stop with
+`E_DECISION_ENGINE_AUTH_REQUIRED`.
+
+```bash
+export TYPESAFE_API_KEY=<your TypeSafe API key>
+```
+
+See [the CLI reference](./CLI_REFERENCE.md#environment-the-typesafe-api-key)
+for which commands need it and how to set it in CI.
+
 In your project repository:
 
 Confirm the installed CLI exposes the compatible protocol before creating
