@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "windows-workflow-test-path",
+  "forgeloopVersion": "2.5.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:windows-workflow-test-path\",\n      \"digest\": {\n        \"sha256\": \"e4eff7c975dbc5f4a684877caeec2ad141d8bfd9cd48bae2f7b8872e980c8158\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 2,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"windows-workflow-test-path\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"fa180933c99aff1ab4405487335d97d070504ef4ab84110b7eae45ad8630b097\",\n      \"contentDigest\": \"e4eff7c975dbc5f4a684877caeec2ad141d8bfd9cd48bae2f7b8872e980c8158\",\n      \"coveredPaths\": [\n        \"tests/workflow-policy.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"2c15eb285de0b43b981bfcfd9e8863b4863817e322f727a68293af72c59ffb02\",\n      \"routeFingerprint\": \"3d0794ea889bcf2e2b00362f72e482724213e74472a65d067ea6b4eb1df57c89\",\n      \"stateFingerprint\": \"8e858f89373ac71d0682181f2343ea28de628feeb813bfa6777580ce00e29a5e\",\n      \"receiptFingerprint\": \"654f6d2d0896ecc73da5982e515f91d165e67a5db3dedca98e662c279c3a60bb\",\n      \"ledgerSeq\": 40,\n      \"ledgerHash\": \"e3ddf1a97ddd99d28c470493a1008cf6edf2897423f457eae95d3e2aa57397a9\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\",\n      \"checks\": [\n        {\n          \"id\": \"requirement-0c64cd6201e89057\",\n          \"requirement\": \"The test no longer derives a path from URL.pathname\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"f9f159783ccd43fe9001498faee1275b285061267ed36eaee2d3c7d0f5dc3817\"\n        },\n        {\n          \"id\": \"requirement-59830ebc3a418411\",\n          \"requirement\": \"tests\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"5730e2a87ecd718b046cc9bd54056300f5712eb2ea3f77adc925f53c26b76226\"\n        },\n        {\n          \"id\": \"verify-fast\",\n          \"requirement\": \"npm run verify:fast passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"5730e2a87ecd718b046cc9bd54056300f5712eb2ea3f77adc925f53c26b76226\"\n        },\n        {\n          \"id\": \"workflow-policy-test\",\n          \"requirement\": \"node --test tests/workflow-policy.test.js passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"de4c88886a1bfc7211f471ca6eb998d9c0afbd1d75626f7a8c70fb1b54b2d9f2\"\n        }\n      ]\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "windows-workflow-test-path",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "3337ce232b2d20c55ee28dbcd3442b75ed6c271c",
+      "observedRevision": "3337ce232b2d20c55ee28dbcd3442b75ed6c271c",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/windows-workflow-test-path",
+        "head": "3337ce232b2d20c55ee28dbcd3442b75ed6c271c"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "2c15eb285de0b43b981bfcfd9e8863b4863817e322f727a68293af72c59ffb02",
+      "routeFingerprint": "3d0794ea889bcf2e2b00362f72e482724213e74472a65d067ea6b4eb1df57c89",
+      "stateFingerprint": "8e858f89373ac71d0682181f2343ea28de628feeb813bfa6777580ce00e29a5e",
+      "receiptFingerprint": "654f6d2d0896ecc73da5982e515f91d165e67a5db3dedca98e662c279c3a60bb",
+      "ledgerSeq": 40,
+      "ledgerHash": "e3ddf1a97ddd99d28c470493a1008cf6edf2897423f457eae95d3e2aa57397a9"
+    },
+    "entries": [
+      {
+        "path": "tests/workflow-policy.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "2585b896c46154d03bd78c77a561f9eefef0f21a8902bda962cc06f963e57959",
+        "providerContentId": "a6910c110fce89c204bcc8977a6fe99a2de413ad",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "e4eff7c975dbc5f4a684877caeec2ad141d8bfd9cd48bae2f7b8872e980c8158"
+  },
+  "manifestFingerprint": "fa180933c99aff1ab4405487335d97d070504ef4ab84110b7eae45ad8630b097",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Make the external link check workflow test pass on Windows: it builds the workflows directory from URL.pathname, which yields C:\\\\C:\\\\... on Windows (ENOENT). Read the directory relative to the repository root like the other workflow tests.",
+    "successCriteria": [
+      "The test no longer derives a path from URL.pathname"
+    ],
+    "checks": [
+      {
+        "id": "requirement-0c64cd6201e89057",
+        "requirement": "The test no longer derives a path from URL.pathname",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-fast",
+        "requirement": "npm run verify:fast passes",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "workflow-policy-test",
+        "requirement": "node --test tests/workflow-policy.test.js passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-21T14:17:07.965Z",
+    "completedAt": "2026-11-21T14:19:05.036Z",
+    "durationMs": 117071,
+    "phaseDurationsMs": {
+      "planning": 2847,
+      "executing": 6180,
+      "verifying": 107752,
+      "reviewing": 292
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 4,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "4e486e87ec2e878446ffffdae983cccf9d13238f4b2f75a3d2663ecfc6ce91f8"
+}
