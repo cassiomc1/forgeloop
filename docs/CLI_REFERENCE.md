@@ -18,6 +18,46 @@ Commands that support structured machine-readable output document `--json` in th
 
 <!-- END FORGELOOP GENERATED: cli-common-options -->
 
+## Environment: the TypeSafe API key
+
+ForgeLoop uses TypeSafe's pinned Jev model for bounded semantic decisions
+(intake, route and guide relevance, context ranking, failure triage, review
+planning). Jev only advises; ForgeLoop stays the authority for state, gates,
+evidence and completion (see
+[`SEMANTIC_DECISION_PLANE.md`](./SEMANTIC_DECISION_PLANE.md)).
+
+- **Get a key** from your TypeSafe account at [typesafe.ai](https://typesafe.ai)
+  (SDK documentation: [docs.typesafe.ai](https://docs.typesafe.ai/)).
+- **Set it** as `TYPESAFE_API_KEY` in every shell, IDE or agent that runs
+  ForgeLoop, and as a CI secret for jobs that run lifecycle commands.
+  ForgeLoop reads it only from the environment and never writes it to state,
+  evidence, events, diagnostics or logs.
+- **Needed by** commands that make a live semantic decision, such as
+  `contract-create`, `route`, `context-plan`, `model-route` and
+  `semantic-plan`. Without it they stop with `E_DECISION_ENGINE_AUTH_REQUIRED`
+  (a rejected key gives `E_DECISION_ENGINE_AUTH_INVALID`). `doctor` reports
+  whether it is set, and `decision-status --health` checks it live.
+- **Not needed** to verify evidence: `evidence-verify` and the independent
+  `npx @cassiomc1/forgeloop-verify` run without it. Inspection and recovery
+  stay local.
+
+```bash
+export TYPESAFE_API_KEY=<your TypeSafe API key>   # current shell only
+forgeloop doctor
+```
+
+In GitHub Actions, store it as a repository secret and pass it to the steps
+that run lifecycle commands:
+
+```yaml
+env:
+  TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
+```
+
+Prefer a secret manager or your agent's environment settings over a dotfile.
+If a key is ever pasted into a chat, an issue or a log, revoke it and create a
+new one.
+
 ## Storage maintenance
 
 ### `storage-migration-status`
