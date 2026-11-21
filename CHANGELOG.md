@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Independent verifier 1.0.1: `@cassiomc1/forgeloop-verify` 1.0.0 did
+  nothing and exited 0 when run through `npx` or an installed bin, because
+  its entry check compared `import.meta.url` with the `node_modules/.bin`
+  symlink path. It now compares real paths, so the bin verifies (or prints
+  usage and exits 2). Use 1.0.1; 1.0.0 should not gate CI.
 - Storage: a maintenance owner record atomically replaced by a concurrent
   resumer between observation and open is re-read (at most three attempts)
   instead of being reported as malformed, so the losing resumer gets

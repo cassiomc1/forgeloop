@@ -1,6 +1,6 @@
 {
   "name": "@cassiomc1/forgeloop-verify",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Independent, dependency-free verifier for ForgeLoop evidence bundles",
   "type": "module",
   "license": "Apache-2.0",

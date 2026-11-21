@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "verifier-npx-entry",
+  "forgeloopVersion": "2.5.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:verifier-npx-entry\",\n      \"digest\": {\n        \"sha256\": \"d6e9b41ccd732eee614bdc9cef28d24b854cce5922f0a652ed8c3645884e3df3\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 2,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"verifier-npx-entry\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"0c6a0e21819add25b343abbbbc807cf4e69cb2dfdcc090fe6696fb5dfbfbc4ed\",\n      \"contentDigest\": \"d6e9b41ccd732eee614bdc9cef28d24b854cce5922f0a652ed8c3645884e3df3\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"tests/verifier-package.test.js\",\n        \"verifier/forgeloop-verify.mjs\",\n        \"verifier/package.json\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"5e850ef445ab6aa434116c953b8f5fd8cfd75eb5198653f2c8f2c8da14b47836\",\n      \"routeFingerprint\": \"1f22017b7640ca6085a6a76f0c4eb9e2630e164b65962054bf8a4ce31ca957c8\",\n      \"stateFingerprint\": \"5a663b95fc8b7df8ca3a7b95920f884908bf672200eb6a300053cd760c0f541d\",\n      \"receiptFingerprint\": \"938c4801e20ce39cb510af55018ee959e3684e0ba4537c31cd9455ba76470a0d\",\n      \"ledgerSeq\": 58,\n      \"ledgerHash\": \"3ecc351ffed2b955361dc810945dfd04ab20455000dff48e4f8d3f4cd1cad8af\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\",\n      \"checks\": [\n        {\n          \"id\": \"requirement-3f6e33d05c3339c1\",\n          \"requirement\": \"Importing the module does not run the CLI\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"622318e803bbe4e34cb187eed2d1e9f9cf692fa59162d8c8f361a54924772df6\"\n        },\n        {\n          \"id\": \"requirement-59830ebc3a418411\",\n          \"requirement\": \"tests\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"5730e2a87ecd718b046cc9bd54056300f5712eb2ea3f77adc925f53c26b76226\"\n        },\n        {\n          \"id\": \"requirement-787b614f2224fb62\",\n          \"requirement\": \"Running the bin through a symlink prints usage for --help and exits 2 without --base/--head\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"21015f05d1e516d19055fbaf0376b470efbae3603fc42f406f2ea969071e6796\"\n        },\n        {\n          \"id\": \"verifier-tests\",\n          \"requirement\": \"node --test tests/verifier-package.test.js tests/verifier-conformance.test.js passes, including a run through a symlinked bin\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"efcbf44af4436c638cd87d83666cf82759d6e80c5b5d1099f8de5bd2c5f3ac33\"\n        },\n        {\n          \"id\": \"verify-prepush\",\n          \"requirement\": \"npm run verify:prepush passes\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"7dfb922deb580ef32e918a3ed10011e56554dd41879e218dcf1a44753509d1ff\"\n        }\n      ]\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "verifier-npx-entry",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "c586d4d7a7babb8d647671770a5c8e60a75f75c3",
+      "observedRevision": "c586d4d7a7babb8d647671770a5c8e60a75f75c3",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/verifier-npx-entry",
+        "head": "c586d4d7a7babb8d647671770a5c8e60a75f75c3"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "5e850ef445ab6aa434116c953b8f5fd8cfd75eb5198653f2c8f2c8da14b47836",
+      "routeFingerprint": "1f22017b7640ca6085a6a76f0c4eb9e2630e164b65962054bf8a4ce31ca957c8",
+      "stateFingerprint": "5a663b95fc8b7df8ca3a7b95920f884908bf672200eb6a300053cd760c0f541d",
+      "receiptFingerprint": "938c4801e20ce39cb510af55018ee959e3684e0ba4537c31cd9455ba76470a0d",
+      "ledgerSeq": 58,
+      "ledgerHash": "3ecc351ffed2b955361dc810945dfd04ab20455000dff48e4f8d3f4cd1cad8af"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "c0a139abfabff62de685880d120079e01aefe6d47923038c3c14039f4ebb6891",
+        "providerContentId": "f1740618a73356a1864c1234440aad7f183eb370",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/verifier-package.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "c76504352945019e62507f76b534c2cc8f7c083fae0816faff336072fc0d5475",
+        "providerContentId": "50776124553a6e59f8ad1140747f3da40fba2d97",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "verifier/forgeloop-verify.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "d759ba0c020e6f7a2f82256bf48ac62d6ba33f451a0099316076a76e8c130d66",
+        "providerContentId": "bff0e5afce92339e522c057aaad671ff3e5e1159",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "verifier/package.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "097da50e774bfee486e6f2546744985f6d10aa5823e81058846f091f2e65b758",
+        "providerContentId": "939b90b6c6efd95ab27d053c8269cd1f94027f96",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "d6e9b41ccd732eee614bdc9cef28d24b854cce5922f0a652ed8c3645884e3df3"
+  },
+  "manifestFingerprint": "0c6a0e21819add25b343abbbbc807cf4e69cb2dfdcc090fe6696fb5dfbfbc4ed",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Make the published forgeloop-verify bin actually run when invoked through npx or a node_modules/.bin symlink; 1.0.0 exits 0 without verifying because its main-module check compares against the symlink path. The fix ships as @cassiomc1/forgeloop-verify 1.0.1, published by the user.",
+    "successCriteria": [
+      "Running the bin through a symlink prints usage for --help and exits 2 without --base/--head",
+      "Importing the module does not run the CLI"
+    ],
+    "checks": [
+      {
+        "id": "requirement-3f6e33d05c3339c1",
+        "requirement": "Importing the module does not run the CLI",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-787b614f2224fb62",
+        "requirement": "Running the bin through a symlink prints usage for --help and exits 2 without --base/--head",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verifier-tests",
+        "requirement": "node --test tests/verifier-package.test.js tests/verifier-conformance.test.js passes, including a run through a symlinked bin",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-prepush",
+        "requirement": "npm run verify:prepush passes",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-21T10:38:17.144Z",
+    "completedAt": "2026-11-21T10:51:41.108Z",
+    "durationMs": 803964,
+    "phaseDurationsMs": {
+      "planning": 45948,
+      "executing": 37418,
+      "verifying": 720310,
+      "reviewing": 288
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 5,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "d702eb468080d0e358457cdcc60d5ed22f79932bdef135ddd9c4a208272f315a"
+}

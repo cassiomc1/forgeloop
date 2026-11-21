@@ -17,7 +17,8 @@
 
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
+import { readFileSync, realpathSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 
 const STATEMENT_TYPE = "https://in-toto.io/Statement/v1";
@@ -299,7 +300,14 @@ export function verifyRange({ path = ".", base, head, dir = ".forgeloop-evidence
   };
 }
 
-const isMain = process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).href;
+// npx and installed bins run through a node_modules/.bin symlink, so compare
+// real paths; a literal argv[1] comparison never matches and exits 0 silently.
+function invokedDirectly() {
+  if (!process.argv[1]) return false;
+  try { return realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url)); } catch { return false; }
+}
+
+const isMain = invokedDirectly();
 if (isMain) {
   let options;
   try { options = parseArgs(process.argv.slice(2)); } catch (error) { console.error(error.message); process.exit(2); }
