@@ -29,7 +29,7 @@ test("RC3 documentation uses full validation and publication uses the runner-com
 
 test("the external link check runs only when publishing to npm", async () => {
   const usesLychee = (workflow) => Object.values(workflow.jobs).flatMap((job) => job.steps ?? []).filter((step) => step.uses === "./.github/actions/lychee");
-  for (const name of await readdir(path.join(path.dirname(new URL(import.meta.url).pathname), "..", ".github", "workflows"))) {
+  for (const name of await readdir(".github/workflows")) {
     if (!name.endsWith(".yml")) continue;
     const steps = usesLychee(parse(await readWorkflow(name)));
     if (name === "npm-publish.yml") {
