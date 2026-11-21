@@ -3,7 +3,7 @@ import { runReport } from "../commands/report.js";
 import { runStatus } from "../commands/status.js";
 import { evaluateAudit } from "./audit.js";
 import { listApprovals } from "./approvals.js";
-import { buildTaskHistory } from "./history.js";
+import { withEventLedgerAudit } from "./events.js";
 import { INTEGRATION_LIMITS } from "./integration-limits.js";
 import { resolveTaskClaimState } from "./task-claim-state.js";
 import { findTaskById } from "./task-discovery.js";
@@ -365,6 +365,17 @@ function projectReasonCodes(...collections) {
   }).map((value) => safeIdentifier(value)).filter(Boolean));
 }
 
+// An unfiltered `history` is the same trace build over the same snapshot, with
+// the events counted instead of collected. Derive the fields this projection
+// reads from the trace instead of building and auditing the trace twice.
+function unfilteredHistoryOf(trace) {
+  return {
+    integrity: trace.integrity,
+    historyQuality: trace.historyQuality,
+    summary: { totalEventCount: trace.events.length },
+  };
+}
+
 function buildProjection({ status, audit, report, history, trace, ownership, next, approvals, timeline }) {
   const integrityErrors = [
     ...projectErrors(audit.errors),
@@ -491,21 +502,25 @@ export async function buildAuditUxView({
     throw auditUxError("E_TASK_REQUIRED", "Resource task/audit-view requires a taskId");
   }
   const options = normalizeOptions({ limit, beforeSequence, afterSequence, categories });
-  const task = await findTaskById(target, taskId, packageRoot);
-  if (!task) throw auditUxError("E_TASK_NOT_FOUND", `Task ${taskId} does not exist`);
-
-  const [status, audit, report, history, trace, ownership, next, approvals] = await Promise.all([
-    runStatus({ target, packageRoot, taskId }),
-    evaluateAudit({ target, packageRoot, taskId, authorityContext, runtimeContext }),
-    runReport({ target, packageRoot, taskId }),
-    buildTaskHistory({ target, packageRoot, taskId }),
-    buildTaskTrace({ target, packageRoot, taskId }),
-    resolveTaskClaimState(target, { packageRoot, taskId }),
-    runNext({ target, packageRoot, taskId, authorityContext, runtimeContext, compact: false }),
-    listApprovals(target, { packageRoot, taskId }),
-  ]);
-  const timeline = projectTimeline(trace.events, options);
-  const projection = buildProjection({ status, audit, report, history, trace, ownership, next, approvals, timeline });
+  // Compose every resolver inside one owned ledger audit. Their nested audits
+  // reuse this immutable source and its validation proof instead of each
+  // re-validating the same snapshot; every event read still runs the full
+  // owned-snapshot guard.
+  const projection = await withEventLedgerAudit(target, packageRoot, { taskId }, async () => {
+    const task = await findTaskById(target, taskId, packageRoot);
+    if (!task) throw auditUxError("E_TASK_NOT_FOUND", `Task ${taskId} does not exist`);
+    const [status, audit, report, trace, ownership, next, approvals] = await Promise.all([
+      runStatus({ target, packageRoot, taskId }),
+      evaluateAudit({ target, packageRoot, taskId, authorityContext, runtimeContext }),
+      runReport({ target, packageRoot, taskId }),
+      buildTaskTrace({ target, packageRoot, taskId }),
+      resolveTaskClaimState(target, { packageRoot, taskId }),
+      runNext({ target, packageRoot, taskId, authorityContext, runtimeContext, compact: false }),
+      listApprovals(target, { packageRoot, taskId }),
+    ]);
+    const timeline = projectTimeline(trace.events, options);
+    return buildProjection({ status, audit, report, history: unfilteredHistoryOf(trace), trace, ownership, next, approvals, timeline });
+  });
   const serializedBytes = Buffer.byteLength(JSON.stringify(projection), "utf8");
   if (serializedBytes > AUDIT_UX_LIMITS.maxOutputBytes || serializedBytes > INTEGRATION_LIMITS.maxOutputBytes) {
     throw auditUxError("E_AUDIT_UX_OUTPUT_LIMIT", "Audit UX projection exceeds its bounded output limit");
