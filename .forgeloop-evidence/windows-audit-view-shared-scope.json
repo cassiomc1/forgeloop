@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "windows-audit-view-shared-scope",
+  "forgeloopVersion": "2.5.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:windows-audit-view-shared-scope\",\n      \"digest\": {\n        \"sha256\": \"4efcb198053572ab7e755a8305db1e22932040118388f80413fe57bfd929cf9e\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 2,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"windows-audit-view-shared-scope\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"303c30d03012489a93cd9c1139d28d8c26f18ef4ecd0eebbfb7462d8ca890e30\",\n      \"contentDigest\": \"4efcb198053572ab7e755a8305db1e22932040118388f80413fe57bfd929cf9e\",\n      \"coveredPaths\": [\n        \"CHANGELOG.md\",\n        \"src/core/audit-ux.js\",\n        \"tests/audit-ux.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"c689b216b61d3009de9cb2105b0bd0c898e698ccbefd8352d5cb30cd73f270b4\",\n      \"routeFingerprint\": \"15f89970af2bcea17697f64a79f14aadc97a50ca9e944ad39c69a2db0b5c0f33\",\n      \"stateFingerprint\": \"05c22473fc075f83e336d64acf64f3146fb11b12eb24742b8e88385193a0f93a\",\n      \"receiptFingerprint\": \"cc0edb1fc9766bfd8aab6c8e03353fbd1d5f3ed73c2c1d363b35f19dd68a27f4\",\n      \"ledgerSeq\": 59,\n      \"ledgerHash\": \"9e240762e435c9618de0f99f61be3eb4cffeb660220b681817201c8803d9e253\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\",\n      \"checks\": [\n        {\n          \"id\": \"requirement-0b3fcab17933eb47\",\n          \"requirement\": \"An audit-view read on the Windows runner is measurably faster and audit-ux passes under the 120 s timeout\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"dbff1e0a6596feb734331e57e78ec38eea30e5ee8d8138ec61c79012a171f7d7\"\n        },\n        {\n          \"id\": \"requirement-59830ebc3a418411\",\n          \"requirement\": \"tests\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"7dfb922deb580ef32e918a3ed10011e56554dd41879e218dcf1a44753509d1ff\"\n        },\n        {\n          \"id\": \"requirement-8677668ad4015f3e\",\n          \"requirement\": \"Audit-view projections are unchanged on existing fixtures\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"ab08e66874da059f63c345af231fd33605368a737899504ae38da78213800554\"\n        }\n      ]\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "windows-audit-view-shared-scope",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "e7e763e75e6bbc00c87e486249a116723ae75ad4",
+      "observedRevision": "e7e763e75e6bbc00c87e486249a116723ae75ad4",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/quizzical-northcutt-c2d50e",
+        "head": "e7e763e75e6bbc00c87e486249a116723ae75ad4"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "c689b216b61d3009de9cb2105b0bd0c898e698ccbefd8352d5cb30cd73f270b4",
+      "routeFingerprint": "15f89970af2bcea17697f64a79f14aadc97a50ca9e944ad39c69a2db0b5c0f33",
+      "stateFingerprint": "05c22473fc075f83e336d64acf64f3146fb11b12eb24742b8e88385193a0f93a",
+      "receiptFingerprint": "cc0edb1fc9766bfd8aab6c8e03353fbd1d5f3ed73c2c1d363b35f19dd68a27f4",
+      "ledgerSeq": 59,
+      "ledgerHash": "9e240762e435c9618de0f99f61be3eb4cffeb660220b681817201c8803d9e253"
+    },
+    "entries": [
+      {
+        "path": "CHANGELOG.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "a21852850c32d20e6078ff67ba20273dc2dfeb991ad993138d9372341024cb2e",
+        "providerContentId": "8a451840da110687e7268d0417daba8e60bf38e1",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "src/core/audit-ux.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "7f9d2b8e915259433a277f9adcd9c048ba6645e219f0eb32f0cd4ef384f4d877",
+        "providerContentId": "76df415f4a687cfc237384cbaab777493b708dcb",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/audit-ux.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "7784910e6dd50f21c11ab6dfe842cc170e7fc92a56cd9a46a051badc751a4f63",
+        "providerContentId": "6c20cf206024c6247a8f944eab2eb9a154c70730",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "4efcb198053572ab7e755a8305db1e22932040118388f80413fe57bfd929cf9e"
+  },
+  "manifestFingerprint": "303c30d03012489a93cd9c1139d28d8c26f18ef4ecd0eebbfb7462d8ca890e30",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Make a task/audit-view read on Windows fast enough that tests/audit-ux.test.js passes under the suite-wide 120 s test timeout, by removing redundant owned-ledger audits inside one audit-view composition without weakening the owned-snapshot tamper guard or the Windows process incarnation rule.",
+    "successCriteria": [
+      "[object Object]",
+      "[object Object]"
+    ],
+    "checks": [
+      {
+        "id": "requirement-0b3fcab17933eb47",
+        "requirement": "An audit-view read on the Windows runner is measurably faster and audit-ux passes under the 120 s timeout",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-8677668ad4015f3e",
+        "requirement": "Audit-view projections are unchanged on existing fixtures",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-21T14:39:05.064Z",
+    "completedAt": "2026-11-21T16:24:58.027Z",
+    "durationMs": 6352963,
+    "phaseDurationsMs": {
+      "planning": 151261,
+      "executing": 4865875,
+      "verifying": 1151841,
+      "reviewing": 183986
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 3,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "d3673474efec779d23289b00cf2877ae6b603e8fc5ee4119bdc39bf200b19fe1"
+}

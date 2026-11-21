@@ -78,7 +78,11 @@ test("task/audit-view pagination is gap-free in both directions", async () => {
   await withRecoveryTarget(async (target) => {
     const taskId = "audit-ux-pagination";
     await setupVerifyingTask(target, packageRoot, { taskId, requirement: "pagination" });
-    for (let index = 0; index < 20; index += 1) {
+    // Every page is a complete audit-view read, which is expensive on Windows,
+    // so the fixture stays small: six checks give 32 timeline items and every
+    // walk below spans several pages and ends on a partial page.
+    const checkCount = 6;
+    for (let index = 0; index < checkCount; index += 1) {
       await recordCheck({
         target,
         packageRoot,
@@ -107,47 +111,59 @@ test("task/audit-view pagination is gap-free in both directions", async () => {
     });
     assert.deepEqual(secondForward.data.timeline.items.map((item) => item.sequence), sequences.slice(10, 15));
 
-    const collectedForward = [];
-    let afterSequence = forwardStart;
-    for (let page = 0; page < 100; page += 1) {
-      const result = await resource(target, taskId, { afterSequence, limit: 5 });
+    // Continue the same forward walk from the second page's cursor with a
+    // different page size, so the cursor must not depend on the page size.
+    // Seventeen items remain: 8 + 8 + 1 crosses a page holding exactly one
+    // more item than the limit.
+    const collectedForward = [firstForward, secondForward]
+      .flatMap((result) => result.data.timeline.items.map((item) => item.sequence));
+    let afterSequence = secondForward.data.timeline.cursor.nextAfterSequence;
+    let forwardPages = 0;
+    for (let page = 0; page < 100 && afterSequence !== null; page += 1) {
+      const result = await resource(target, taskId, { afterSequence, limit: 8 });
       collectedForward.push(...result.data.timeline.items.map((item) => item.sequence));
-      const next = result.data.timeline.cursor.nextAfterSequence;
-      if (next === null) break;
-      afterSequence = next;
+      afterSequence = result.data.timeline.cursor.nextAfterSequence;
+      forwardPages += 1;
     }
+    assert.equal(forwardPages, 3);
     assert.deepEqual(collectedForward, sequences.slice(5));
     assert.equal(new Set(collectedForward).size, collectedForward.length);
 
     const backwardPages = [];
     let beforeSequence = Number.MAX_SAFE_INTEGER;
     for (let page = 0; page < 100; page += 1) {
-      const result = await resource(target, taskId, { beforeSequence, limit: 5 });
+      const result = await resource(target, taskId, { beforeSequence, limit: 9 });
       backwardPages.unshift(result.data.timeline.items.map((item) => item.sequence));
       const next = result.data.timeline.cursor.nextBeforeSequence;
       if (next === null) break;
       beforeSequence = next;
     }
+    assert.ok(backwardPages.length >= 3);
+    assert.ok(backwardPages[0].length < 9, "the oldest backward page is partial");
     const collectedBackward = backwardPages.flat();
     assert.deepEqual(collectedBackward, sequences);
     assert.equal(new Set(collectedBackward).size, sequences.length);
 
     const checks = await resource(target, taskId, { categories: ["CHECK"], limit: 200 });
     const checkSequences = checks.data.timeline.items.map((item) => item.sequence);
-    assert.ok(checkSequences.length >= 20);
+    assert.ok(checkSequences.length >= checkCount);
     const collectedChecks = [];
     let checkCursor = checkSequences[0];
+    let checkPages = 0;
     for (let page = 0; page < 100; page += 1) {
       const result = await resource(target, taskId, {
         categories: ["CHECK"],
         afterSequence: checkCursor,
-        limit: 3,
+        limit: 4,
       });
       collectedChecks.push(...result.data.timeline.items.map((item) => item.sequence));
+      checkPages += 1;
       const next = result.data.timeline.cursor.nextAfterSequence;
       if (next === null) break;
       checkCursor = next;
     }
+    // Five checks remain after the cursor: 4 + 1, again limit + 1 items.
+    assert.equal(checkPages, 2);
     assert.deepEqual(collectedChecks, checkSequences.slice(1));
     assert.equal(new Set(collectedChecks).size, collectedChecks.length);
   });

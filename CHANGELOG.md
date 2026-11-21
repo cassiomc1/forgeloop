@@ -15,6 +15,16 @@
   instead of being reported as malformed, so the losing resumer gets
   `E_STORAGE_MAINTENANCE_IN_PROGRESS`. Symlinks, non-files and out-of-root
   swaps still fail with `E_STORAGE_MAINTENANCE_OWNER_INVALID`.
+- `task/audit-view` resolves the task and builds its status, audit, report,
+  trace, ownership, next-action and approval sections inside one owned ledger
+  audit instead of one per section, and derives its history fields from the
+  same trace instead of building the trace twice. One read now opens 2 owned
+  audits instead of 15 and makes about 60% fewer owned-snapshot guard checks.
+  On Windows that guard hashes the whole snapshot file on every event read,
+  which made one read take about 5 s there and timed out the Windows
+  pagination test. Projections are unchanged and the guard is untouched.
+  The pagination test now walks a 32-item timeline in 13 reads instead of
+  about 36, with the same gap-free assertions in both directions.
 
 ## 2.5.0 - 2026-11-20
 
