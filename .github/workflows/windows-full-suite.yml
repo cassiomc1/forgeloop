@@ -55,8 +55,8 @@ jobs:
           if (-not (Get-NetIPAddress -AddressFamily IPv4 | Where-Object IPAddress -eq $requestedHost)) {
             throw 'The Windows runner is not on the requested host.'
           }
-          $dockerExe = Join-Path $env:ProgramFiles 'Docker\Docker\resources\bin\docker.exe'
-          $identity = & $dockerExe --config 'C:\forgeloop-ci\docker-config' --host 'npipe:////./pipe/dockerDesktopLinuxEngine' inspect forgeloop-linux-remote --format '{{.Id}} {{.Image}} {{.State.Running}} {{.Config.Hostname}}'
+          $dockerExe = Join-Path $env:LOCALAPPDATA 'Kiri\bin\docker.exe'
+          $identity = & $dockerExe --config 'C:\forgeloop-ci\docker-config' --host 'npipe:////./pipe/kiri' inspect forgeloop-linux-remote --format '{{.Id}} {{.Image}} {{.State.Running}} {{.Config.Hostname}}'
           if ($LASTEXITCODE -ne 0) { throw 'Docker Linux runner inspection failed.' }
           if ($identity -notmatch '^[a-f0-9]{64} sha256:[a-f0-9]{64} true [A-Za-z0-9][A-Za-z0-9_.-]{0,252}$') { throw 'The Docker Linux runner is not running with a verifiable identity.' }
           Write-Output "Windows host: $requestedHost; computer: $env:COMPUTERNAME"

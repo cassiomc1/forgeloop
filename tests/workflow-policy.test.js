@@ -197,6 +197,15 @@ test("hosted MCP acceptance exposes only the measured 1,000-task profile", async
   assert.ok(!Object.hasOwn(windows.jobs, "mcp-resources"));
 });
 
+test("Windows host identity inspects the Linux runner through Kiri", async () => {
+  const windows = parse(await readWorkflow("windows-full-suite.yml"));
+  const identity = windows.jobs.test.steps.find(step => step.name === "Verify requested Windows host and Docker Linux runner identity");
+  assert.ok(identity, "Windows host identity step must exist");
+  assert.match(identity.run, /Join-Path \$env:LOCALAPPDATA 'Kiri\\bin\\docker\.exe'/u);
+  assert.match(identity.run, /--host 'npipe:\/\/\/\/\.\/pipe\/kiri' inspect forgeloop-linux-remote /u);
+  assert.doesNotMatch(identity.run, /dockerDesktopLinuxEngine|Docker\\Docker\\resources/u);
+});
+
 test("Node test jobs use the requested hosts and preserve the platform matrices", async () => {
   const labels = {
     Linux: ["self-hosted", "Linux", "X64", "forgeloop-linux-remote"],
