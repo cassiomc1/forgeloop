@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "windows-workflow-kiri",
+  "forgeloopVersion": "2.5.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:windows-workflow-kiri\",\n      \"digest\": {\n        \"sha256\": \"9d169bdbde0e18bb442d6b3514e27f7a47fe8899a2ad69ada0af21368736fd4f\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 2,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"windows-workflow-kiri\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"aaa5ecfa354abb7c0dfeb3a34039b6b4f6797a4cc316cf45a72f49f4a1b60f67\",\n      \"contentDigest\": \"9d169bdbde0e18bb442d6b3514e27f7a47fe8899a2ad69ada0af21368736fd4f\",\n      \"coveredPaths\": [\n        \".github/workflows/windows-full-suite.yml\",\n        \"tests/workflow-policy.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"8d67462f783a646a56e7bca34747996f0e3d00423dee4583f680749df132096a\",\n      \"routeFingerprint\": \"02cfebd7cd9b90c4ddaa1cac220610ba16a6596d85fb3cd37efe26c30c1f1569\",\n      \"stateFingerprint\": \"32fc4813c46d16825583a8094163741b01f2cc4b65ff9cb57ddc9dc06fd8b4ae\",\n      \"receiptFingerprint\": \"3fa62d4c011f2f4e96a9c07df0ed762e551d80af9ea741fba23977253e4d56c8\",\n      \"ledgerSeq\": 41,\n      \"ledgerHash\": \"e5da0dec7dbf28ede20ae7a370f1d8828e69d855dbda0866674266d1e0a9de72\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\",\n      \"checks\": [\n        {\n          \"id\": \"requirement-59830ebc3a418411\",\n          \"requirement\": \"tests\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"5730e2a87ecd718b046cc9bd54056300f5712eb2ea3f77adc925f53c26b76226\"\n        },\n        {\n          \"id\": \"requirement-5b17c662732c267f\",\n          \"requirement\": \"security-validation\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"de4c88886a1bfc7211f471ca6eb998d9c0afbd1d75626f7a8c70fb1b54b2d9f2\"\n        },\n        {\n          \"id\": \"requirement-5ca3009631d6ad19\",\n          \"requirement\": \"windows-full-suite.yml inspects forgeloop-linux-remote through Kiri's docker CLI and npipe:////./pipe/kiri.\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"75f8d2bd74b9a9848db190217b52e5bbbb94f49d95d1b34817f35400d3698804\"\n        }\n      ]\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "windows-workflow-kiri",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "d0df7e7a9fbec726adfe742fdbdfaaf56a511258",
+      "observedRevision": "d0df7e7a9fbec726adfe742fdbdfaaf56a511258",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/windows-workflow-kiri",
+        "head": "d0df7e7a9fbec726adfe742fdbdfaaf56a511258"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "8d67462f783a646a56e7bca34747996f0e3d00423dee4583f680749df132096a",
+      "routeFingerprint": "02cfebd7cd9b90c4ddaa1cac220610ba16a6596d85fb3cd37efe26c30c1f1569",
+      "stateFingerprint": "32fc4813c46d16825583a8094163741b01f2cc4b65ff9cb57ddc9dc06fd8b4ae",
+      "receiptFingerprint": "3fa62d4c011f2f4e96a9c07df0ed762e551d80af9ea741fba23977253e4d56c8",
+      "ledgerSeq": 41,
+      "ledgerHash": "e5da0dec7dbf28ede20ae7a370f1d8828e69d855dbda0866674266d1e0a9de72"
+    },
+    "entries": [
+      {
+        "path": ".github/workflows/windows-full-suite.yml",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "d0abd0427493b7eaac2308905496e7b51be0ad08f1b9cb8eb2c45e38decce299",
+        "providerContentId": "d510fe23d0b7b890bd98d5929bd7b8fdee1d2b56",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/workflow-policy.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "71ebe72bb33d1a724610e79020ea87420f3fc51b2fd6e406efee8b76b3755ce7",
+        "providerContentId": "e928c8fdbe9402974d6414d9a20533fc1551f7d3",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "9d169bdbde0e18bb442d6b3514e27f7a47fe8899a2ad69ada0af21368736fd4f"
+  },
+  "manifestFingerprint": "aaa5ecfa354abb7c0dfeb3a34039b6b4f6797a4cc316cf45a72f49f4a1b60f67",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Point the Windows full-suite host identity check at the Kiri engine that now runs the Linux runner containers on 100.83.46.210, replacing the stopped Docker Desktop CLI and pipe.",
+    "successCriteria": [
+      "[object Object]"
+    ],
+    "checks": [
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-5b17c662732c267f",
+        "requirement": "security-validation",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-5ca3009631d6ad19",
+        "requirement": "windows-full-suite.yml inspects forgeloop-linux-remote through Kiri's docker CLI and npipe:////./pipe/kiri.",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-22T00:35:21.282Z",
+    "completedAt": "2026-11-22T09:56:23.388Z",
+    "durationMs": 33662106,
+    "phaseDurationsMs": {
+      "planning": 33564880,
+      "executing": 13513,
+      "verifying": 78202,
+      "reviewing": 5511
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 3,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "346b80f8504624cdc836c4261c8214c0224f832046bf515cccbfba176032d303"
+}
