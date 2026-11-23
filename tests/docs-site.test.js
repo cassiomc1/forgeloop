@@ -11,6 +11,7 @@ import {
   GITHUB_BLOB_BASE,
   GITHUB_TREE_BASE,
   rewriteLinkTarget,
+  stripHtmlComments,
   toLatin1,
 } from "../scripts/build-docs-site.mjs";
 
@@ -63,6 +64,17 @@ test("convertMarkdownToMdx keeps an opening paragraph with links in the body", (
   const mdx = convertMarkdownToMdx("# T\n\nSee [CLI](./CLI_REFERENCE.md).\n", { sourcePath: "docs/G.md", kindOf });
   assert.match(mdx, /^---\ntitle: "T"\n---\n/);
   assert.match(mdx, /See \[CLI\]\(\/CLI_REFERENCE\)\./);
+});
+
+test("stripHtmlComments removes nested comment openers left by a single pass", () => {
+  assert.equal(stripHtmlComments("a<!<!---->-- b -->c"), "ac");
+  assert.equal(stripHtmlComments("x <!-- one --> y <!-- two --> z"), "x  y  z");
+  const mdx = convertMarkdownToMdx("# T\n\nIntro.\n\nbefore <!<!---->-- hidden --> after\n", {
+    sourcePath: "docs/G.md",
+    kindOf,
+  });
+  assert.doesNotMatch(mdx, /<!--|hidden/);
+  assert.match(mdx, /^before {2}after$/m);
 });
 
 test("toLatin1 folds typographic characters for docs.page metadata", () => {

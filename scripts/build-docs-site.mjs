@@ -124,6 +124,18 @@ function frontmatter(title, description) {
   return lines.join("\n");
 }
 
+// Removes complete HTML comments until none remain, so overlapping input such as
+// "<!<!---->--" cannot leave a new "<!--" behind after a single pass.
+export function stripHtmlComments(text) {
+  let current = text;
+  let previous;
+  do {
+    previous = current;
+    current = current.replace(/<!--[\s\S]*?-->/g, "");
+  } while (current !== previous);
+  return current;
+}
+
 /**
  * Converts one canonical Markdown document into docs.page-compatible MDX.
  * @param {string} source Markdown source
@@ -160,7 +172,7 @@ export function convertMarkdownToMdx(source, { sourcePath, kindOf }) {
       text = text.slice(end + 3);
       inComment = false;
     }
-    text = text.replace(/<!--[\s\S]*?-->/g, "");
+    text = stripHtmlComments(text);
     const open = text.indexOf("<!--");
     if (open !== -1) {
       text = text.slice(0, open);

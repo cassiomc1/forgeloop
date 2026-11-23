@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "docs-site-codeql",
+  "forgeloopVersion": "2.5.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:docs-site-codeql\",\n      \"digest\": {\n        \"sha256\": \"f79f0d93f9822d3ba1c33ae9080b279b483d90006a2252bd07eab36333d3fdea\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 2,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"docs-site-codeql\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"0d4fd5ba537d1f457572ce1dc9af66f1521da467fc1f807d8552f9e8146c88ad\",\n      \"contentDigest\": \"f79f0d93f9822d3ba1c33ae9080b279b483d90006a2252bd07eab36333d3fdea\",\n      \"coveredPaths\": [\n        \"scripts/build-docs-site.mjs\",\n        \"tests/docs-site.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"7b7f130129027a011bf6e55e342a11630b6202af8a1bcfb404bcb7b097d00816\",\n      \"routeFingerprint\": \"f00e53b1f042f11678e0f57e5b7462b07b49aeecc198eef2e183fdbae74ebb84\",\n      \"stateFingerprint\": \"cecf8b41fb0e67a8fca9c832276e821474c0dae1f2a9f4b2367f0b01fa4bf859\",\n      \"receiptFingerprint\": \"96303e53023ac89ff479f0554bf6e9e85fed49b42a128dc2c7d7201f5566d849\",\n      \"ledgerSeq\": 34,\n      \"ledgerHash\": \"1e7df4ab7e1bcd2c59c582e118555206ba2d4dd9012cf21c30ac77f3d05dc31c\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\",\n      \"checks\": [\n        {\n          \"id\": \"requirement-59830ebc3a418411\",\n          \"requirement\": \"tests\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"5730e2a87ecd718b046cc9bd54056300f5712eb2ea3f77adc925f53c26b76226\"\n        },\n        {\n          \"id\": \"requirement-948c77dcf08168c7\",\n          \"requirement\": \"The reported behavior is corrected and the regression is covered.\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"7e4e9b4d16433cbc371117349394027d5c1e469a090ea10751db1c43ea7efbad\"\n        }\n      ]\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "docs-site-codeql",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "f244760d0c5c74f45e5ae849bf6c79e1cf28da8a",
+      "observedRevision": "f244760d0c5c74f45e5ae849bf6c79e1cf28da8a",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/docs-page-site",
+        "head": "f244760d0c5c74f45e5ae849bf6c79e1cf28da8a"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "7b7f130129027a011bf6e55e342a11630b6202af8a1bcfb404bcb7b097d00816",
+      "routeFingerprint": "f00e53b1f042f11678e0f57e5b7462b07b49aeecc198eef2e183fdbae74ebb84",
+      "stateFingerprint": "cecf8b41fb0e67a8fca9c832276e821474c0dae1f2a9f4b2367f0b01fa4bf859",
+      "receiptFingerprint": "96303e53023ac89ff479f0554bf6e9e85fed49b42a128dc2c7d7201f5566d849",
+      "ledgerSeq": 34,
+      "ledgerHash": "1e7df4ab7e1bcd2c59c582e118555206ba2d4dd9012cf21c30ac77f3d05dc31c"
+    },
+    "entries": [
+      {
+        "path": "scripts/build-docs-site.mjs",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "9ef0a5d538f66d625dc67c835bce292414c3dc3b8bb0e518fda815ad9d9a9346",
+        "providerContentId": "d535adcf85e56ff3430e8eb867648d1702382012",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/docs-site.test.js",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "c53664e70a301a601727631a725c65cdb2ca0043cbc9cea27a9a550c868aaa1f",
+        "providerContentId": "2683b42c7d8bc10cd46ff58168950b62f10345f5",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "f79f0d93f9822d3ba1c33ae9080b279b483d90006a2252bd07eab36333d3fdea"
+  },
+  "manifestFingerprint": "0d4fd5ba537d1f457572ce1dc9af66f1521da467fc1f807d8552f9e8146c88ad",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Diagnose and correct the requested bug without changing unrelated behavior.",
+    "successCriteria": [
+      "[object Object]"
+    ],
+    "checks": [
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-948c77dcf08168c7",
+        "requirement": "The reported behavior is corrected and the regression is covered.",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-23T17:20:05.203Z",
+    "completedAt": "2026-11-23T17:21:25.771Z",
+    "durationMs": 80568,
+    "phaseDurationsMs": {
+      "planning": 14711,
+      "executing": 17615,
+      "verifying": 47720,
+      "reviewing": 522
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 2,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "ac17fa20d5ab2303b0337ff723ea50ff5302100524f89633ba7ba90045e54b3f"
+}
