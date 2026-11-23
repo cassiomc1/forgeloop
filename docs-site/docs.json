@@ -1,0 +1,115 @@
+{
+  "$schema": "https://docs.page/schema.json",
+  "name": "ForgeLoop",
+  "description": "Evidence-first engineering protocol for AI coding environments and developer workflows.",
+  "header": {
+    "showName": true,
+    "links": [
+      { "title": "GitHub", "href": "https://github.com/cassiomc1/forgeloop" },
+      { "title": "Get started", "href": "/GETTING_STARTED", "cta": true }
+    ]
+  },
+  "social": {
+    "github": "https://github.com/cassiomc1/forgeloop"
+  },
+  "anchors": [
+    { "icon": "book", "title": "Protocol (LOOP_ENGINEERING)", "href": "https://github.com/cassiomc1/forgeloop/blob/main/LOOP_ENGINEERING.md" },
+    { "icon": "plug", "title": "Protocol integration", "href": "https://github.com/cassiomc1/forgeloop/blob/main/PROTOCOL_INTEGRATION.md" },
+    { "icon": "box", "title": "npm package", "href": "https://www.npmjs.com/package/@cassiomc1/forgeloop" }
+  ],
+  "sidebar": [
+    {
+      "group": "Start here",
+      "pages": [
+        { "title": "Overview", "href": "/" },
+        { "title": "Getting started", "href": "/GETTING_STARTED" },
+        { "title": "Operational recipes", "href": "/RECIPES" },
+        { "title": "Troubleshooting", "href": "/TROUBLESHOOTING" },
+        { "title": "Repository assessment", "href": "/ASSESSMENT" }
+      ]
+    },
+    {
+      "group": "Reference",
+      "pages": [
+        { "title": "CLI reference", "href": "/CLI_REFERENCE" },
+        { "title": "Artifact reference", "href": "/ARTIFACT_REFERENCE" },
+        { "title": "Protocol specification", "href": "/PROTOCOL_SPEC" },
+        { "title": "Agent protocol summary", "href": "/AGENT_PROTOCOL_SUMMARY" },
+        { "title": "Agent skill", "href": "/AGENT_SKILL" },
+        { "title": "Package contents", "href": "/PACKAGE_CONTENTS" }
+      ]
+    },
+    {
+      "group": "Lifecycle and evidence",
+      "pages": [
+        { "title": "Cross-harness continuity", "href": "/CROSS_HARNESS_CONTINUITY" },
+        { "title": "Execution trace", "href": "/EXECUTION_TRACE" },
+        { "title": "Diagnostic model", "href": "/DIAGNOSTIC_MODEL" },
+        { "title": "Stale gate revalidation", "href": "/STALE_GATE_REVALIDATION" },
+        { "title": "Evidence bundles", "href": "/EVIDENCE_BUNDLES" },
+        { "title": "Code attestation", "href": "/CODE_ATTESTATION" },
+        { "title": "Structural quality", "href": "/STRUCTURAL_QUALITY" }
+      ]
+    },
+    {
+      "group": "Storage, search and sync",
+      "pages": [
+        { "title": "SQLite storage", "href": "/SQLITE_STORAGE" },
+        { "title": "Stable 2.0.0 acceptance", "href": "/STABLE_2_ACCEPTANCE" },
+        { "title": "Repository index", "href": "/REPOSITORY_INDEX" },
+        { "title": "Persistent search transport", "href": "/PERSISTENT_SEARCH_TRANSPORT" },
+        { "title": "Cloud sync", "href": "/CLOUD_SYNC" }
+      ]
+    },
+    {
+      "group": "Semantic decisions and models",
+      "pages": [
+        { "title": "Semantic decision plane", "href": "/SEMANTIC_DECISION_PLANE" },
+        { "title": "Model routing", "href": "/MODEL_ROUTING" },
+        { "title": "Jev benchmarks", "href": "/JEV_BENCHMARKS" },
+        { "title": "Execution-profile benchmarks", "href": "/EXECUTION_PROFILE_BENCHMARKS" },
+        { "title": "Test intelligence", "href": "/TEST_INTELLIGENCE" },
+        { "title": "Test pruning", "href": "/TEST_PRUNING" }
+      ]
+    },
+    {
+      "group": "Integrations",
+      "pages": [
+        { "title": "Universal integration API", "href": "/UNIVERSAL_INTEGRATION" },
+        { "title": "MCP", "href": "/FORGELOOP_MCP" },
+        { "title": "Platform adapters", "href": "/PLATFORM_ADAPTERS" },
+        { "title": "Audit UX read model", "href": "/AUDIT_UX" },
+        { "title": "ForgeLoop Audit", "href": "/FORGELOOP_AUDIT" }
+      ]
+    },
+    {
+      "group": "Providers and adapters",
+      "pages": [
+        { "title": "Provider architecture", "href": "/PROVIDER_ARCHITECTURE" },
+        { "title": "Provider reference", "href": "/PROVIDERS" },
+        { "title": "Revision providers", "href": "/REVISION_PROVIDERS" },
+        { "title": "Signing providers", "href": "/SIGNING_PROVIDERS" },
+        { "title": "Advisory context", "href": "/ADVISORY_CONTEXT" },
+        { "title": "Ripwire adapter", "href": "/RIPWIRE_ADAPTER" },
+        { "title": "OpenSrc adapter", "href": "/OPENSRC_ADAPTER" },
+        { "title": "Security review provider", "href": "/SECURITY_REVIEW" },
+        { "title": "Browser verification", "href": "/BROWSER_VERIFICATION" },
+        { "title": "Agent Browser adapter", "href": "/AGENT_BROWSER_ADAPTER" },
+        { "title": "Agent Browser verification", "href": "/AGENT_BROWSER_VERIFICATION" },
+        { "title": "Security audit companion", "href": "/SECURITY_AUDIT_SKILL" },
+        { "title": "Revenue-centric design companion", "href": "/REVENUE_CENTRIC_DESIGN" }
+      ]
+    },
+    {
+      "group": "Maintainers",
+      "pages": [
+        { "title": "Documentation guide", "href": "/DOCUMENTATION_GUIDE" },
+        { "title": "Guide maintenance", "href": "/GUIDE_MAINTENANCE" },
+        { "title": "Knowledge sources", "href": "/KNOWLEDGE_SOURCES" },
+        { "title": "Release checklist", "href": "/RELEASE_CHECKLIST" },
+        { "title": "Self-hosted tests", "href": "/SELF_HOSTED_TESTS" },
+        { "title": "Documentation history", "href": "/history/README" }
+      ]
+    }
+  ]
+}

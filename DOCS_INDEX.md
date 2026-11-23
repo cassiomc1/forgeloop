@@ -8,6 +8,12 @@ guide registry additionally define the shipped consumer surface. Normative
 requirements and their implementation/test mappings are in
 [`docs/protocol-requirements.json`](./docs/protocol-requirements.json).
 
+The pages under `docs/` are also published as a browsable site at
+[docs.page/cassiomc1/forgeloop~docs-site](https://docs.page/cassiomc1/forgeloop~docs-site).
+The site is generated from these Markdown files; they remain the source of
+truth and keep their relative links (see
+[`docs/DOCUMENTATION_GUIDE.md`](./docs/DOCUMENTATION_GUIDE.md#10-published-documentation-site-docspage)).
+
 ForgeLoop keeps one canonical process and separates protocol behavior from
 integration and guide context. Use this map before editing documentation.
 

@@ -147,6 +147,7 @@
     "docs:examples:check": "node scripts/validate_documentation_examples.mjs",
     "docs:report": "node scripts/report_documentation_health.mjs",
     "docs:check": "node scripts/run-docs-check.js",
+    "docs:site": "node scripts/build-docs-site.mjs",
     "lint": "eslint .",
     "coverage": "c8 --all --include=src/**/*.js --reporter=text --reporter=lcov --reporter=json-summary --check-coverage --lines=80 --functions=75 --branches=70 --statements=80 npm run test:ci",
     "dependency:policy": "node scripts/check-dependency-policy.mjs",

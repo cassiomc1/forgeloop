@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "readme-size-site-link",
+  "forgeloopVersion": "2.5.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:readme-size-site-link\",\n      \"digest\": {\n        \"sha256\": \"2b0e9b2ef73113c0fdad7f0611f1dfda30d339f1d5c2dcfdaca7b74990cb2c51\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 2,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"readme-size-site-link\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"1dffe270b1dd22014b2790a51868a1a0da44b4be4f3931c1719eef3aa972da08\",\n      \"contentDigest\": \"2b0e9b2ef73113c0fdad7f0611f1dfda30d339f1d5c2dcfdaca7b74990cb2c51\",\n      \"coveredPaths\": [\n        \"README.md\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"30ef2fccf77bb43a702b7fab80c320e375703bcbe79046df36e9ac109ad1f116\",\n      \"routeFingerprint\": \"543dd2d6ae4c8e1dfebdb24930d9c5273ee0b1312417b660b9c78b7bd4958554\",\n      \"stateFingerprint\": \"8ce36e6624b8515d5c777a89ff5cce3a97fb8081337beb6bb15544707ff3751f\",\n      \"receiptFingerprint\": \"7050be22601b833da9751864151a27811f62cdcae56604dd45450392db4700a2\",\n      \"ledgerSeq\": 31,\n      \"ledgerHash\": \"ddcaf8ac9e436667066f66cae596e4e66a4200834b4b6c7fb3b0da00a5234d1a\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\",\n      \"checks\": [\n        {\n          \"id\": \"requirement-948c77dcf08168c7\",\n          \"requirement\": \"The reported behavior is corrected and the regression is covered.\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"527c484bcc3bb219e92ed61f99ff968f31143f89e53fda93d09b74c0ce3177d4\"\n        }\n      ]\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "readme-size-site-link",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "6aad30068a6837ca75617343fbc9d615e6b3ddd0",
+      "observedRevision": "6aad30068a6837ca75617343fbc9d615e6b3ddd0",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/docs-page-site",
+        "head": "6aad30068a6837ca75617343fbc9d615e6b3ddd0"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "30ef2fccf77bb43a702b7fab80c320e375703bcbe79046df36e9ac109ad1f116",
+      "routeFingerprint": "543dd2d6ae4c8e1dfebdb24930d9c5273ee0b1312417b660b9c78b7bd4958554",
+      "stateFingerprint": "8ce36e6624b8515d5c777a89ff5cce3a97fb8081337beb6bb15544707ff3751f",
+      "receiptFingerprint": "7050be22601b833da9751864151a27811f62cdcae56604dd45450392db4700a2",
+      "ledgerSeq": 31,
+      "ledgerHash": "ddcaf8ac9e436667066f66cae596e4e66a4200834b4b6c7fb3b0da00a5234d1a"
+    },
+    "entries": [
+      {
+        "path": "README.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "ded175f59bb50b18506a3b93aab14be3ec61b729faadacad3a2533558995dac5",
+        "providerContentId": "3a5c04815fc4d578b1b920e75be610bd89795899",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "2b0e9b2ef73113c0fdad7f0611f1dfda30d339f1d5c2dcfdaca7b74990cb2c51"
+  },
+  "manifestFingerprint": "1dffe270b1dd22014b2790a51868a1a0da44b4be4f3931c1719eef3aa972da08",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Diagnose and correct the requested bug without changing unrelated behavior.",
+    "successCriteria": [
+      "[object Object]"
+    ],
+    "checks": [
+      {
+        "id": "requirement-948c77dcf08168c7",
+        "requirement": "The reported behavior is corrected and the regression is covered.",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-23T17:58:07.986Z",
+    "completedAt": "2026-11-23T18:07:01.671Z",
+    "durationMs": 533685,
+    "phaseDurationsMs": {
+      "planning": 5011,
+      "executing": 10204,
+      "verifying": 517941,
+      "reviewing": 529
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 1,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "14e2b523baa0a148e6c943458448320b93832804f6e6ba4774143cc28f716333"
+}

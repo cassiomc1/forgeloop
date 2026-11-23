@@ -13,7 +13,7 @@
 
 ForgeLoop governs AI-assisted engineering. Jev supplies bounded semantic input; the host model implements changes. ForgeLoop owns lifecycle, claims, gates, evidence, completion, recovery, and publication truth.
 
-Sources: [`DOCS_INDEX.md`](./DOCS_INDEX.md); project facts [`PROJECT_PROFILE.md`](./PROJECT_PROFILE.md); guides [`GUIDE_ROUTER.md`](./GUIDE_ROUTER.md).
+[Documentation site](https://docs.page/cassiomc1/forgeloop~docs-site). Sources: [`DOCS_INDEX.md`](./DOCS_INDEX.md); project facts [`PROJECT_PROFILE.md`](./PROJECT_PROFILE.md); guides [`GUIDE_ROUTER.md`](./GUIDE_ROUTER.md).
 
 ## Where should I start?
 

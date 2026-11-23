@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "docs-page-site",
+  "forgeloopVersion": "2.5.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:docs-page-site\",\n      \"digest\": {\n        \"sha256\": \"417204c3aa39acffdfb489b9d3ebfefefadcf360ed3adde041486adf49bf0aa9\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 2,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"docs-page-site\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"31adc833bc4c19d04b9c24ed2292c2fa7b3c589e6ccf3a09ca80a7249f1f8fcf\",\n      \"contentDigest\": \"417204c3aa39acffdfb489b9d3ebfefefadcf360ed3adde041486adf49bf0aa9\",\n      \"coveredPaths\": [\n        \"docs.json\",\n        \"docs/DOCUMENTATION_GUIDE.md\",\n        \"docs/index.mdx\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"7833b3b52ad56f8e4980449bd787c6020cbe65217bda24fdf58e2d5b2b853554\",\n      \"routeFingerprint\": \"102b72b92b3f12f310314728a2136040bc919605b6c2c981ba5d891c271f2c85\",\n      \"stateFingerprint\": \"365a82d9046770f5c59ae48b418892bb35b7f0ec02ca385a08791c88de756dec\",\n      \"receiptFingerprint\": \"8caa4476128852a6ff8c69545cdda7b961c63a326a4e877db6d9f727721dc60a\",\n      \"ledgerSeq\": 34,\n      \"ledgerHash\": \"fb5f583460f780de5e24769d6837831ab514d75afe095e3a0e7efe16df6ed685\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\",\n      \"checks\": [\n        {\n          \"id\": \"requirement-55e4c5db353b1585\",\n          \"requirement\": \"The requested documentation change is complete and accurate.\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"90feade86f0fe5eeb934e3ec3eefe02bc9660d41d14310d2c80be18ca5254976\"\n        },\n        {\n          \"id\": \"verify-fast\",\n          \"requirement\": \"The requested documentation change is complete and accurate.\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"5730e2a87ecd718b046cc9bd54056300f5712eb2ea3f77adc925f53c26b76226\"\n        }\n      ]\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "docs-page-site",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "46c47abd0c4631c2fc24253e494217e68caef338",
+      "observedRevision": "46c47abd0c4631c2fc24253e494217e68caef338",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/docs-page-site",
+        "head": "46c47abd0c4631c2fc24253e494217e68caef338"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "7833b3b52ad56f8e4980449bd787c6020cbe65217bda24fdf58e2d5b2b853554",
+      "routeFingerprint": "102b72b92b3f12f310314728a2136040bc919605b6c2c981ba5d891c271f2c85",
+      "stateFingerprint": "365a82d9046770f5c59ae48b418892bb35b7f0ec02ca385a08791c88de756dec",
+      "receiptFingerprint": "8caa4476128852a6ff8c69545cdda7b961c63a326a4e877db6d9f727721dc60a",
+      "ledgerSeq": 34,
+      "ledgerHash": "fb5f583460f780de5e24769d6837831ab514d75afe095e3a0e7efe16df6ed685"
+    },
+    "entries": [
+      {
+        "path": "docs.json",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "e3e3ecc0667f513e6738b6fa094cc2c8ecbe4b456e485e152bfd25183d4f1184",
+        "providerContentId": "6c293a4fcd6c91d5967ffa4dbc4e4b7d8af6906a",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/DOCUMENTATION_GUIDE.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "8508ff80375e06c5a6abd50e62e723104d7de32811af9388122b31bd182253f1",
+        "providerContentId": "a9038233d8ecea66eaf9020672429ff1a66d6aed",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/index.mdx",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "6e88c0489273f785702c0567db4abd61df456575a60b17b7e050fc9ab07ff4e6",
+        "providerContentId": "f64911f1370dc45a7acc9f4fc9bd48a70f0cb6ad",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "417204c3aa39acffdfb489b9d3ebfefefadcf360ed3adde041486adf49bf0aa9"
+  },
+  "manifestFingerprint": "31adc833bc4c19d04b9c24ed2292c2fa7b3c589e6ccf3a09ca80a7249f1f8fcf",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Complete the requested documentation change with verified project facts.",
+    "successCriteria": [
+      "[object Object]"
+    ],
+    "checks": [
+      {
+        "id": "requirement-55e4c5db353b1585",
+        "requirement": "The requested documentation change is complete and accurate.",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-fast",
+        "requirement": "The requested documentation change is complete and accurate.",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-23T16:43:49.291Z",
+    "completedAt": "2026-11-23T16:49:50.290Z",
+    "durationMs": 360999,
+    "phaseDurationsMs": {
+      "planning": 109297,
+      "executing": 180597,
+      "verifying": 66648,
+      "reviewing": 4457
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 2,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "b9c6c4efd111521e3ab1587f945fccf97dcd6ecc19c92e90cdac60f6e41e1481"
+}

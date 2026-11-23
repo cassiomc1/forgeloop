@@ -272,3 +272,36 @@ For documentation-impacting changes, verify each item before merging:
 - [ ] Did documentation conformance CI pass (`npm run docs:check`)?
 - [ ] If normative language changed, are stable IDs and mappings current?
 - [ ] Is the documentation impact classification recorded in the PR?
+
+---
+
+## 10. Published Documentation Site (docs.page)
+
+The pages under `docs/` are also published as a website by
+[docs.page](https://docs.page) at
+`https://docs.page/cassiomc1/forgeloop~docs-site`. docs.page only serves
+`.mdx` pages, so the site is generated rather than hand-written:
+
+- **Sources stay Markdown**: the canonical files remain `docs/**/*.md`, with the
+  relative links, generated markers and validators described above. Do not
+  add `.mdx` copies to `docs/` or rewrite source links for the site.
+- **Site sources**: [`docs-site/docs.json`](../docs-site/docs.json) holds the
+  site name, header links and sidebar, and `docs-site/index.mdx` is the home
+  page. Neither is part of the npm package.
+- **Generator**: `scripts/build-docs-site.mjs` (`npm run docs:site`) converts
+  every `docs/**/*.md` to `.mdx`. It moves the first `#` heading into the page
+  title, drops HTML comments, escapes `<`, `{` and `}` outside code, and points
+  links to other `docs/` pages at their site path (`/CLI_REFERENCE`; `MCP.md` is published as `/FORGELOOP_MCP` because docs.page reserves `/mcp`). Links to
+  every other repository file go to GitHub on `main`.
+- **Publication**: the `Documentation site` workflow
+  (`.github/workflows/docs-site.yml`) runs on pushes to `main` that touch
+  `docs/` or `docs-site/`. It builds the tree, runs `docs.page check`, and
+  force-pushes the result to the `docs-site` branch. Never edit that branch by
+  hand.
+- **Adding or renaming a page**: add or update its entry in the `sidebar` of
+  `docs-site/docs.json` in the same change. The generator fails when a
+  top-level `docs/` page is missing from the sidebar or a sidebar link has no
+  page.
+- **Checking locally**: run `npm run docs:site`, then
+  `npx @docs.page/cli@2.2.0 check --external-links off` inside the printed
+  output directory.

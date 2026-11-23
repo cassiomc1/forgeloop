@@ -1,0 +1,66 @@
+---
+title: ForgeLoop
+description: Evidence-first engineering protocol for AI coding environments and developer workflows.
+---
+
+ForgeLoop is an evidence-first engineering protocol for AI coding agents and
+developer workflows. It moves each task through a validated lifecycle: contract,
+routing, execution, verification, review and a validator-backed completion. The
+ForgeLoop CLI stays the authority for state, gates, evidence and completion.
+
+<Info>
+  The pages on this site are rendered from the Markdown files in the
+  repository's `docs/` folder. The normative protocol documents live at the
+  repository root on [GitHub](https://github.com/cassiomc1/forgeloop).
+</Info>
+
+## Start here
+
+<CardGroup cols={2}>
+  <Card title="Getting started" href="/GETTING_STARTED">
+    Your first task, from `forgeloop init` to validator-backed completion.
+  </Card>
+  <Card title="CLI reference" href="/CLI_REFERENCE">
+    Syntax, options and JSON examples for every command.
+  </Card>
+  <Card title="Operational recipes" href="/RECIPES">
+    Copy-paste recipes for daily workflows.
+  </Card>
+  <Card title="Troubleshooting" href="/TROUBLESHOOTING">
+    Symptom-first recovery and the stable error code reference.
+  </Card>
+</CardGroup>
+
+## Install
+
+```bash
+npm install --global @cassiomc1/forgeloop
+forgeloop init
+forgeloop doctor
+```
+
+Requires Node 24.19.0+ with `node:sqlite`.
+
+## Find your path
+
+| I am a... | Start here |
+| --- | --- |
+| First-time user or developer | [Getting started](/GETTING_STARTED) |
+| AI coding agent or harness | [Agent protocol summary](/AGENT_PROTOCOL_SUMMARY) |
+| Resuming work from another tool or session | [Cross-harness continuity](/CROSS_HARNESS_CONTINUITY) |
+| Inspecting `.forgeloop/` files | [Artifact reference](/ARTIFACT_REFERENCE) |
+| Verifying evidence in pull requests | [Evidence bundles](/EVIDENCE_BUNDLES) |
+| Moving work between machines | [Cloud sync](/CLOUD_SYNC) |
+| Integrating a host or tool | [Universal integration API](/UNIVERSAL_INTEGRATION) and [MCP](/FORGELOOP_MCP) |
+| Building a provider extension | [Provider architecture](/PROVIDER_ARCHITECTURE) |
+| Documentation contributor | [Documentation guide](/DOCUMENTATION_GUIDE) |
+
+## Normative documents
+
+These root-level documents define the protocol and are read directly on GitHub:
+
+- [LOOP_ENGINEERING.md](https://github.com/cassiomc1/forgeloop/blob/main/LOOP_ENGINEERING.md): lifecycle, gates, verification and recovery
+- [PROTOCOL_INTEGRATION.md](https://github.com/cassiomc1/forgeloop/blob/main/PROTOCOL_INTEGRATION.md): capability levels, discovery and degradation
+- [GUIDE_ROUTER.md](https://github.com/cassiomc1/forgeloop/blob/main/GUIDE_ROUTER.md): deterministic guide routing
+- [LOOP_SYSTEM_DESIGN.md](https://github.com/cassiomc1/forgeloop/blob/main/LOOP_SYSTEM_DESIGN.md) and [THREAT_MODEL.md](https://github.com/cassiomc1/forgeloop/blob/main/THREAT_MODEL.md): architecture and safety boundaries
+- [DOCS_INDEX.md](https://github.com/cassiomc1/forgeloop/blob/main/DOCS_INDEX.md): the full documentation ownership map
