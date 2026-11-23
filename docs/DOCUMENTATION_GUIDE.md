@@ -272,3 +272,29 @@ For documentation-impacting changes, verify each item before merging:
 - [ ] Did documentation conformance CI pass (`npm run docs:check`)?
 - [ ] If normative language changed, are stable IDs and mappings current?
 - [ ] Is the documentation impact classification recorded in the PR?
+
+---
+
+## 10. Published Documentation Site (docs.page)
+
+The pages under `docs/` are also published as a website by
+[docs.page](https://docs.page) at `https://docs.page/cassiomc1/forgeloop`,
+rendered straight from the default branch. Any pushed branch or pull request
+can be previewed at `https://docs.page/cassiomc1/forgeloop~<branch-or-PR-number>`.
+
+- **Configuration**: `docs.json` at the repository root holds the site name,
+  header links and sidebar. `docs/index.mdx` is the site home page. Neither is
+  part of the npm package.
+- **Sources stay Markdown**: the canonical files remain `docs/**/*.md`, with the
+  relative links, generated markers and validators described above. Do not
+  rename them to `.mdx` or rewrite their links for the site.
+- **Page URLs**: a page's path is its file path under `docs/` without the
+  extension, case-sensitive (`docs/CLI_REFERENCE.md` is `/CLI_REFERENCE`).
+- **Adding or renaming a page**: add or update its entry in the `sidebar` of
+  `docs.json` in the same change. Root-level documents are not served by the
+  site; link them through their GitHub URL from `docs/index.mdx` or `docs.json`.
+- **Checking**: run
+  `npx @docs.page/cli check --external-links off --internal-links warn` for the
+  `.mdx` home page. The CLI only indexes `.mdx` files, so it reports links to
+  `.md` pages as missing; treat those warnings as noise and confirm rendering
+  on the branch preview URL before merging.
